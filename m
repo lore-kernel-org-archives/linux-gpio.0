@@ -1,96 +1,131 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtSRkMgUkVTRU5EXSBHUElPOiBncGlvLWdlbmVyaWM6IEFkZCBEVCBz?=
- =?UTF-8?B?dXBwb3J0?=
-Date: Fri, 09 Aug 2013 20:44:58 +0400
-Message-ID: <1376066698.904045799@f229.i.mail.ru>
-References: <1375183115-30237-1-git-send-email-shc_work@mail.ru>
- <20130809090938.GJ27325@e106331-lin.cambridge.arm.com>
- <52051950.50501@wwwdotorg.org>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH V4 1/4] gpio: clean up gpio-ranges documentation
+Date: Fri,  9 Aug 2013 10:57:46 -0600
+Message-ID: <1376067469-8811-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fallback1.mail.ru ([94.100.176.18]:53868 "EHLO
-	fallback1.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S968112Ab3HIQpb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2013 12:45:31 -0400
-In-Reply-To: <52051950.50501@wwwdotorg.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:34528 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S968170Ab3HIQ57 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2013 12:57:59 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?U3RlcGhlbiBXYXJyZW4=?= <swarren@wwwdotorg.org>
-Cc: =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland@arm.com>, =?UTF-8?B?UGF3ZWwgTW9sbA==?= <Pawel.Moll@arm.com>, =?UTF-8?B?T2xvZiBKb2hhbnNzb24=?= <olof@lixom.net>, =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, =?UTF-8?B?ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc=?= <devicetree@vger.kernel.org>, =?UTF-8?B?cm9iLmhlcnJpbmdAY2FseGVkYS5jb20=?= <rob.herring@calxeda.com>, =?UTF-8?B?SWFuIENhbXBiZWxs?= <ian.campbell@citrix.com>, =?UTF-8?B?Z3JhbnQubGlrZWx5QGxpbmFyby5vcmc=?= <grant.likely@linaro.org>, =?UTF-8?B?TWlrZSBUdXJxdWV0dGU=?= <mturquette@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@kernel.crashing.org>, Stephen Warren <swarren@nvidia.com>
 
-PiA+Pj4+Pj4gT24gV2VkLCAyMDEzLTA3LTMxIGF0IDE2OjU2ICswMTAwLCBNYXJrIFJ1dGxhbmQg
-d3JvdGU6Cj4gPj4+Pj4+Pj4gQWgsIEkgZ3Vlc3MgdGhlIHF1ZXN0aW9uIG1vcmU6IERvIHdlIHdh
-bnQgZ2VuZXJpYyBiaW5kaW5ncyB0aGF0IGRlc2NyaWJlCj4gPj4+Pj4+Pj4gdGhlIGxvdy1sZXZl
-bCBkZXRhaWxzIG9mIHRoZSBIVyBpbiBhIGNvbXBsZXRlbHkgZ2VuZXJpYyBmYXNoaW9uIHNvIHRo
-YXQKPiA+Pj4+Pj4+PiBuZXcgSFcgY2FuIGJlIHN1cHBvcnRlZCB3aXRoIHplcm8ga2VybmVsIGNo
-YW5nZXMsIG9yIGRvIHdlIHdhbnQgYSBzaW1wbGUKPiA+Pj4+Pj4+PiBkcml2ZXIgd2l0aCBhIGxv
-b2t1cCB0YWJsZSB0aGF0IG1hcHMgZnJvbSBjb21wYXRpYmxlIHZhbHVlIHRvIHRoZSBIVwo+ID4+
-Pj4+Pj4+IGNvbmZpZ3VyYXRpb24/IE9uZSBvZiB0aGUgcG90ZW50aWFsIGJlbmVmaXRzIG9mIERU
-IGlzIHRvIGJlIGFibGUgdG8KPiA+Pj4+Pj4+PiBzdXBwb3J0IG5ldyBIVyB3aXRob3V0IGNvZGUg
-Y2hhbmdlcywgYWx0aG91Z2ggcGVyaGFwcyB0aGF0J3MgbW9yZQo+ID4+Pj4+Pj4+IHR5cGljYWxs
-eSBjb25zaWRlcmVkIGluIHRoZSBjb250ZXh0IG9mIG5ldyBib2FyZHMgcmF0aGVyIHRoYW4gbmV3
-IElQCj4gPj4+Pj4+Pj4gYmxvY2tzIG9yIFNvQ3MuCj4gPj4+Pj4+Cj4gPj4+Pj4+IC4uLiBvciBG
-UEdBcyB0aGF0IGNhbiBiZSBzeW50aGVzaXplZCB3aXRoIHJhbmRvbSBjb2xsZWN0aW9uIG9mIHN0
-YW5kYXJkCj4gPj4+Pj4+IElQIGJsb2Nrcy4gV2l0aCBYaWxpbngncyBaeW5xIGFuZCBBbHRlcmEn
-cyBTT0NGUEdBIHRoaXMgaXMgZ2V0dGluZwo+ID4+Pj4+PiBzaW1wbGVyIGFuZCBzaW1wbGVyLi4u
-Cj4gPj4+Pj4+Cj4gPj4+Pj4+PiBJIHRoaW5rIHRoYXQgZ29pbmcgZm9yd2FyZCBpdCB3b3VsZCBi
-ZSBiZXR0ZXIgdG8gaGF2ZSBoYXZlIGEgY29tcGF0aWJsZQo+ID4+Pj4+Pj4gc3RyaW5nIHBlciBk
-aWZmZXJlbnQgZGV2aWNlLiBBcyBPbG9mIHBvaW50ZWQgb3V0LCB3ZSdyZSBsZWFraW5nIHRoZSB3
-YXkKPiA+Pj4+Pj4+IHdlIGN1cnJlbnRseSBoYW5kbGUgdGhpbmdzIGluIExpbnV4IGludG8gdGhl
-IGJpbmRpbmcsIHJhdGhlciB0aGFuCj4gPj4+Pj4+PiBwcmVjaXNlbHkgZGVzY3JpYmluZyB0aGUg
-aGFyZHdhcmUgKHdpdGggYSB1bmlxdWUgY29tcGF0aWJsZSBzdHJpbmcpLiBJJ20KPiA+Pj4+Pj4+
-IG5vdCBzdXJlIGlmIHRoaXMgaXMgbXVjaCBiZXR0ZXIgdGhhbiBlbWJlZGRpbmcgYSBieXRlY29k
-ZSBkZXNjcmliaW5nIGhvdwo+ID4+Pj4+Pj4gdG8gcG9rZSBkZXZpY2VzLgo+ID4+Pj4KPiA+Pj4+
-IFRoaXMgcmVhbGx5IGlzbid0IGxlYWtpbmcgaW5mb3JtYXRpb24gYWJvdXQgaG93IExpbnV4IGhh
-bmRsZXMgdGhlCj4gPj4+PiBkZXZpY2UuIEl0J3Mgc2ltcGx5IHNheWluZyB0aGF0IHRoZXJlIGlz
-IGEgR1BJTyBjb250cm9sbGVyIHdob3NlIEhXIGlzCj4gPj4+PiBhYmxlIHRvIGJlIGRlc2NyaWJl
-ZCBieSBhIHNpbXBsZS9nZW5lcmljIGJpbmRpbmcsIGFuZCB0aGF0IGJpbmRpbmcKPiA+Pj4+IHBy
-b3ZpZGVzIGZ1bGwgZGV0YWlscyBvZiB0aGUgcmVnaXN0ZXIgbGF5b3V0LiBPdGhlciBPU3MgY2Fu
-IGhhbmRsZSB0aGlzCj4gPj4+PiBkaWZmZXJlbnRseTsgc2VlIGJlbG93IC4uLgo+ID4+Pgo+ID4+
-PiBJIHdvcnJ5IHRoYXQgaXQgZG9lc24ndCBwcm92aWRlIGEgZnVsbCBkZXNjcmlwdGlvbiwgYnV0
-IHJhdGhlciBhCj4gPj4+IGRlc2NyaXB0aW9uIG9mIHRoZSBzdWJzZXQgb2YgdGhlIGhhcmR3YXJl
-IHVzZWQgYnkgdGhlIGRyaXZlci4KPiA+Pgo+ID4+IEkgZG9uJ3Qgc2VlIHRoYXQgYXMgYSBwcm9i
-bGVtLgo+ID4+Cj4gPj4gQSBwYXJ0aWN1bGFyIERUIGZpbGUgcHJvdmlkZXMgYSBkZXNjcmlwdGlv
-biBvZiBhbiBpbnRlcmZhY2UgdG8gSFcuIFRvIG15Cj4gPj4gbWluZCwgaWYgdGhhdCBwYXJ0aWN1
-bGFyIERUIGRvZXNuJ3QgZGVzY3JpYmUgZXZlcnl0aGluZyBhYm91dCBhCj4gPj4gcGFydGljdWxh
-ciBIVyBtb2R1bGUgKGUuZy4gc29tZSBhZHZhbmNlZCBmZWF0dXJlIGNhbid0IGJlIGVuYWJsZWQp
-LAo+ID4+IHRoYXQncyBiYXNpY2FsbHkgZXF1aXZhbGVudCB0byBub3QgZGVzY3JpYmluZyBhc3Bl
-Y3Qgb2YgdGhlIGJvYXJkL3N5c3RlbQo+ID4+IChzbyBlLmcuIHNvbWUgSTJDIGRldmljZSBpc24n
-dCByZXByZXNlbnRlZCBhdCBhbGwsIGFuZCBoZW5jZSBzb21lCj4gPj4gdGVtcGVyYXR1cmUgcHJv
-YmUgY2FuJ3QgYmUgbW9uaXRvcmVkKS4KPiA+IAo+ID4gTXkgY29uY2VybiBpcyBzaW1wbHkgdGhh
-dCBpZiBwZW9wbGUgY2FuIGdldCBiYXNpYyBmdW5jdGlvbmFsaXR5IHdpdGggdGhlCj4gPiBnZW5l
-cmljIGRyaXZlciB0aGV5IHdvbid0IGJvdGhlciBkZXNjcmliaW5nIHRoZSBkZXRhaWxzIG9mIHRo
-ZSBtb3JlCj4gPiBzcGVjaWZpYyBiaW5kaW5nLCBhbmQgeW91J2xsIG5ldmVyIGJlIGFibGUgdG8g
-dXNlIHRoZSBib2FyZCB3aXRoIGEKPiA+IGJldHRlciBkcml2ZXIgd2l0aG91dCBoYXZpbmcgdG8g
-bW9kaWZ5IHRoZSBkdCBsYXRlci4KPiA+IAo+ID4gSSBndWVzcyB0aGUgcXVlc3Rpb24gYm9pbHMg
-ZG93biB0byBob3cgbXVjaCB3ZSBjYXJlIGFib3V0IHRoYXQKPiA+IHNpdHVhdGlvbi4KPiAKPiBJ
-IHBlcnNvbmFsbHkgdGhpbmsgaXQncyBmaW5lLiBJZiBwZW9wbGUgb25seSB3YW50IHRvIGV4cG9z
-ZSB0aGUgYmFzaWMKPiBmdW5jdGlvbmFsaXR5IGFuZCBjYW4gZG8gc28gd2l0aCBzaW1wbGUtZ3Bp
-bywgSSBkb24ndCBzZWUgYW55IHByb2JsZW0gYXQKPiBhbGwgd2l0aCB0aGF0LiAoV2h5IHNob3Vs
-ZCB3ZSBjYXJlIHRoYXQgYSBiaW5kaW5nIGRvZXNuJ3QgZXhwb3NlIGFsbAo+IGZlYXR1cmVzIG9m
-IHRoZSBkZXZpY2U/IEknbSBzdXJlIHRoZXJlIGFyZSBtYW55IHVuZG9jdW1lbnRlZCBmZWF0dXJl
-cywKPiBlLmcuIGRlYnVnL2JhY2tkb29yLCBpbiBIVyB0aGF0IHdlIGRvbid0IGV2ZW4ga25vdyBl
-eGlzdCBhbmQgc28gZG9uJ3QKPiBrbm93IGFyZW4ndCBleHBvc2VkIGJ5IHZhcmlvdXMgYmluZGlu
-Z3MpCj4gCj4gSWYgc29tZW9uZSBsYXRlciBmaW5kcyBpdCB1c2VmdWwgdG8gZXhwb3NlIG1vcmUg
-ZnVuY3Rpb25hbGl0eSB0aGFuIGlzCj4gc2Vuc2libGUgdG8gZXhwb3NlIHRocm91Z2ggc2ltcGxl
-LWdwaW8sIHRoZW4gYSBIVy1zcGVjaWZpYyBiaW5kaW5nIGNhbgo+IGJlIGFkZGVkIGZvciB0aGF0
-IHB1cnBvc2UsIGFuZCB0aGUgLmR0cyBmaWxlIGFtZW5kZWQgdG8gdXNlIHRoYXQuCj4gCj4gVGhl
-IG1vcmUgSSB0aGluayBhYm91dCB0aGlzLCB0aGUgbW9yZSBJIHRoaW5rIHRoYXQgc2ltcGx5IGhh
-dmluZwo+IGRpc2pvaW50IHNpbXBsZSBhbmQgSFctc3BlY2lmaWMgYmluZGluZ3MgbWFrZXMgc2Vu
-c2UuCj4gCj4gSW4gdGhhdCBjYXNlLCB0aGUgbmV3IERUIHdvbid0IGJlIGNvbXBhdGlibGUgd2l0
-aCBhbiBvbGQga2VybmVsLCBidXQgSQo+IHRoaW5rIHRoYXQncyByZWFzb25hYmxlLCBzaW5jZSBp
-dCB3YXMgZXhwbGljaXRseSBjaGFuZ2VkIHRvIGltcGxlbWVudAo+IG5ldyBmZWF0dXJlcy4KPiAK
-PiBJIHRoaW5rIHdlIHNob3VsZCByZXNvbHZlIHRoaXMgYXNwZWN0IGZpcnN0IGJlZm9yZSBjb25z
-aWRlcmluZyB0aGUKPiBkZXRhaWxzLiBJJ20gY3VyaW91cyB3aGF0IG90aGVyIERUIG1haW50YWlu
-ZXJzIGFuZCB1c2VycyB0aGluayBhYm91dAo+IHRoaXMgdG9waWM/CgpJIHdhbnQgdG8gYWRkIGZy
-b20gbXlzZWxmIHRoYXQgdGhlIGFiaWxpdHkgdG8gdXNlIGEgc2ltcGxlLWdwaW8gaW50ZXJmYWNl
-Cm1ha2VzIHRoaW5ncyB2ZXJ5IHNpbXBsZSA6KSBBcyBhbiBleGFtcGxlLCBJIGNpdGUgb25lIG9m
-IHRoZSBhcmNoaXRlY3R1cmVzCm9uIHdoaWNoIEkgd29yay4gQVJNIENMUFM3MTFYLiBJIGNhbiBm
-cmVlbHkgdXNlIGEgc2ltcGxlLWdwaW8gZHJpdmVyIGluc3RlYWQKb2YgdGhlIHNwZWNpYWwgZHJp
-dmVyLCBzaW5jZSB0aGUgYXJjaGl0ZWN0dXJlIGRvZXMgbm90IGhhdmUgYW55IG90aGVyIGNhcGFj
-aXR5CmZvciB0aGUgcGlucyAoaW50ZXJydXB0cywgZXRjLikuCkJ1dCBtb3N0bHksIEkgaW50ZW5k
-ZWQgdG8gdXNlIHRoaXMgZHJpdmVyIGZvciBzdWNoIHRoaW5ncyBsaWtlIFBMRCwgNzRIQzI0eCwK
-NzRIQzU3eCwgZXRjLiBvbiB0aGUgYnVzLgotLS0K
+From: Stephen Warren <swarren@nvidia.com>
+
+This change makes documentation of the the gpio-ranges property shorter
+and more succinct, more consistent with the style of the rest of the
+document, and not mention Linux-specifics such as the API
+pinctrl_request_gpio(); DT binding documents should be OS independant
+where at all possible. As part of this, the gpio-ranges property's format
+is described in BNF form, in order to match the rest of the document.
+
+This change also deprecates the #gpio-range-cells property. Such
+properties are useful when one node references a second node, and that
+second node dictates the format of the reference. However, that is not
+the case here; the definition of gpio-ranges itself always dictates its
+format entirely, and hence the value #gpio-range-cells must always be 3,
+and hence there is no point requiring any referenced node to include
+this property. The only remaining need for this property is to ensure
+compatibility of DTs with older SW that was written to support the
+previous version of the binding.
+
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+---
+v4:
+* Mention #gpio-range-cells as being deprecated, rather than removing all
+  documentation of that property. This allows DTs to be written in a
+  backwards-compatible way if desired, and also allows older DTs to be
+  interpreted fully using the latest documentation.
+v3:
+* Mention BNF in commit description.
+* Fixed typo.
+* Dropped patch that removed the deprecated property from *.dts, since
+  it's required to boot older kernels.
+
+Patches 2-4 need to be applied in the same branch, since they all build
+upon each-other.
+---
+ Documentation/devicetree/bindings/gpio/gpio.txt | 55 ++++++++++++++-----------
+ 1 file changed, 30 insertions(+), 25 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index d933af3..6cec6ff 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -75,23 +75,36 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
+ 		gpio-controller;
+ 	};
+ 
+-2.1) gpio-controller and pinctrl subsystem
+-------------------------------------------
++2.1) gpio- and pin-controller interaction
++-----------------------------------------
+ 
+-gpio-controller on a SOC might be tightly coupled with the pinctrl
+-subsystem, in the sense that the pins can be used by other functions
+-together with optional gpio feature.
++Some or all of the GPIOs provided by a GPIO controller may be routed to pins
++on the package via a pin controller. This allows muxing those pins between
++GPIO and other functions.
+ 
+-While the pin allocation is totally managed by the pin ctrl subsystem,
+-gpio (under gpiolib) is still maintained by gpio drivers. It may happen
+-that different pin ranges in a SoC is managed by different gpio drivers.
++It is useful to represent which GPIOs correspond to which pins on which pin
++controllers. The gpio-ranges property described below represents this, and
++contains information structures as follows:
+ 
+-This makes it logical to let gpio drivers announce their pin ranges to
+-the pin ctrl subsystem and call 'pinctrl_request_gpio' in order to
+-request the corresponding pin before any gpio usage.
++	gpio-range-list ::= <single-gpio-range> [gpio-range-list]
++	single-gpio-range ::=
++			<pinctrl-phandle> <gpio-base> <pinctrl-base> <count>
++	gpio-phandle : phandle to pin controller node.
++	gpio-base : Base GPIO ID in the GPIO controller
++	pinctrl-base : Base pinctrl pin ID in the pin controller
++	count : The number of GPIOs/pins in this range
+ 
+-For this, the gpio controller can use a pinctrl phandle and pins to
+-announce the pinrange to the pin ctrl subsystem. For example,
++The "pin controller node" mentioned above must conform to the bindings
++described in ../pinctrl/pinctrl-bindings.txt.
++
++Previous versions of this binding required all pin controller nodes that
++were referenced by any gpio-ranges property to contain a property named
++#gpio-range-cells with value <3>. This requirement is now deprecated.
++However, that property may still exist in older device trees for
++compatibility reasons, and would still be required even in new device
++trees that need to be compatible with older software.
++
++Example:
+ 
+ 	qe_pio_e: gpio-controller@1460 {
+ 		#gpio-cells = <2>;
+@@ -99,16 +112,8 @@ announce the pinrange to the pin ctrl subsystem. For example,
+ 		reg = <0x1460 0x18>;
+ 		gpio-controller;
+ 		gpio-ranges = <&pinctrl1 0 20 10>, <&pinctrl2 10 50 20>;
++	};
+ 
+-    }
+-
+-where,
+-   &pinctrl1 and &pinctrl2 is the phandle to the pinctrl DT node.
+-
+-   Next values specify the base pin and number of pins for the range
+-   handled by 'qe_pio_e' gpio. In the given example from base pin 20 to
+-   pin 29 under pinctrl1 with gpio offset 0 and pin 50 to pin 69 under
+-   pinctrl2 with gpio offset 10 is handled by this gpio controller.
+-
+-The pinctrl node must have "#gpio-range-cells" property to show number of
+-arguments to pass with phandle from gpio controllers node.
++Here, a single GPIO controller has GPIOs 0..9 routed to pin controller
++pinctrl1's pins 20..29, and GPIOs 10..19 routed to pin controller pinctrl2's
++pins 50..59.
+-- 
+1.8.1.5
+
