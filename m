@@ -1,32 +1,35 @@
-From: Gabor Juhos <juhosg@openwrt.org>
-Subject: Re: [PATCH 2/2] GPIO: MIPS: ralink: add gpio driver for ralink SoC
-Date: Fri, 09 Aug 2013 17:09:39 +0200
-Message-ID: <52050633.8010806@openwrt.org>
-References: <1375954733-30675-1-git-send-email-blogic@openwrt.org> <1375954733-30675-2-git-send-email-blogic@openwrt.org>
+From: Michael Brunner <mibru@gmx.de>
+Subject: [PATCH] gpio: Fix platform driver name in Kontron PLD GPIO driver
+Date: Fri, 9 Aug 2013 17:33:06 +0200
+Message-ID: <20130809173306.1ba24b59@mail.gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1375954733-30675-2-git-send-email-blogic@openwrt.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: John Crispin <blogic@openwrt.org>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-mips@linux-mips.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Kevin Strasser <strassek@engr.orst.edu>, Darren Hart <dvhart@linux.intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Chris Healy <chealy@imsco-us.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-2013.08.08. 11:38 keltez=E9ssel, John Crispin =EDrta:
-> Add gpio driver for Ralink SoC. This driver makes the gpio core on
-> RT2880, RT305x, rt3352, rt3662, rt3883, rt5350 and mt7620 work.
->=20
-> Signed-off-by: John Crispin <blogic@openwrt.org>
-> Cc: linux-mips@linux-mips.org
-> Cc: linux-gpio@vger.kernel.org
+This patch changes the driver name to be consistent with the name that
+is registered as cell name in the MFD driver. Otherwise the driver won't
+load.
 
-Signed-off-by: Gabor Juhos <juhosg@openwrt.org>
+Signed-off-by: Michael Brunner <michael.brunner@kontron.com>
+---
+ drivers/gpio/gpio-kempld.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-kempld.c b/drivers/gpio/gpio-kempld.c
+index 1bdc3a2..d3ed563 100644
+--- a/drivers/gpio/gpio-kempld.c
++++ b/drivers/gpio/gpio-kempld.c
+@@ -210,7 +210,7 @@ static int kempld_gpio_remove(struct
+platform_device *pdev) 
+ static struct platform_driver kempld_gpio_driver = {
+        .driver = {
+-               .name = "gpio-kempld",
++               .name = "kempld-gpio",
+                .owner = THIS_MODULE,
+        },
+        .probe          = kempld_gpio_probe,
