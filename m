@@ -1,12 +1,14 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V4 1/4] gpio: clean up gpio-ranges documentation
-Date: Fri,  9 Aug 2013 10:57:46 -0600
-Message-ID: <1376067469-8811-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V4 3/4] of: introduce of_parse_phandle_with_fixed_args
+Date: Fri,  9 Aug 2013 10:57:48 -0600
+Message-ID: <1376067469-8811-3-git-send-email-swarren@wwwdotorg.org>
+References: <1376067469-8811-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:34528 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:40583 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S968170Ab3HIQ57 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2013 12:57:59 -0400
+	with ESMTP id S968243Ab3HIQ6C (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2013 12:58:02 -0400
+In-Reply-To: <1376067469-8811-1-git-send-email-swarren@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>
@@ -14,118 +16,152 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Pawel Moll <pawel.mo
 
 From: Stephen Warren <swarren@nvidia.com>
 
-This change makes documentation of the the gpio-ranges property shorter
-and more succinct, more consistent with the style of the rest of the
-document, and not mention Linux-specifics such as the API
-pinctrl_request_gpio(); DT binding documents should be OS independant
-where at all possible. As part of this, the gpio-ranges property's format
-is described in BNF form, in order to match the rest of the document.
-
-This change also deprecates the #gpio-range-cells property. Such
-properties are useful when one node references a second node, and that
-second node dictates the format of the reference. However, that is not
-the case here; the definition of gpio-ranges itself always dictates its
-format entirely, and hence the value #gpio-range-cells must always be 3,
-and hence there is no point requiring any referenced node to include
-this property. The only remaining need for this property is to ensure
-compatibility of DTs with older SW that was written to support the
-previous version of the binding.
+This is identical to of_parse_phandle_with_args(), except that the
+number of argument cells is fixed, rather than being parsed out of the
+node referenced by each phandle.
 
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 Acked-by: Mark Rutland <mark.rutland@arm.com>
 ---
-v4:
-* Mention #gpio-range-cells as being deprecated, rather than removing all
-  documentation of that property. This allows DTs to be written in a
-  backwards-compatible way if desired, and also allows older DTs to be
-  interpreted fully using the latest documentation.
-v3:
-* Mention BNF in commit description.
-* Fixed typo.
-* Dropped patch that removed the deprecated property from *.dts, since
-  it's required to boot older kernels.
+Rob, Grant, Linus needs your ack on this so he can take the change through
+the GPIO tree along with the others.
 
-Patches 2-4 need to be applied in the same branch, since they all build
-upon each-other.
+v3: s/cells_count/cell_count, add missing braces per coding style
 ---
- Documentation/devicetree/bindings/gpio/gpio.txt | 55 ++++++++++++++-----------
- 1 file changed, 30 insertions(+), 25 deletions(-)
+ drivers/of/base.c  | 66 +++++++++++++++++++++++++++++++++++++++++++++++-------
+ include/linux/of.h | 10 +++++++++
+ 2 files changed, 68 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index d933af3..6cec6ff 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -75,23 +75,36 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
- 		gpio-controller;
- 	};
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 23e7073..2c9a808 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1106,7 +1106,8 @@ EXPORT_SYMBOL(of_parse_phandle);
  
--2.1) gpio-controller and pinctrl subsystem
--------------------------------------------
-+2.1) gpio- and pin-controller interaction
-+-----------------------------------------
- 
--gpio-controller on a SOC might be tightly coupled with the pinctrl
--subsystem, in the sense that the pins can be used by other functions
--together with optional gpio feature.
-+Some or all of the GPIOs provided by a GPIO controller may be routed to pins
-+on the package via a pin controller. This allows muxing those pins between
-+GPIO and other functions.
- 
--While the pin allocation is totally managed by the pin ctrl subsystem,
--gpio (under gpiolib) is still maintained by gpio drivers. It may happen
--that different pin ranges in a SoC is managed by different gpio drivers.
-+It is useful to represent which GPIOs correspond to which pins on which pin
-+controllers. The gpio-ranges property described below represents this, and
-+contains information structures as follows:
- 
--This makes it logical to let gpio drivers announce their pin ranges to
--the pin ctrl subsystem and call 'pinctrl_request_gpio' in order to
--request the corresponding pin before any gpio usage.
-+	gpio-range-list ::= <single-gpio-range> [gpio-range-list]
-+	single-gpio-range ::=
-+			<pinctrl-phandle> <gpio-base> <pinctrl-base> <count>
-+	gpio-phandle : phandle to pin controller node.
-+	gpio-base : Base GPIO ID in the GPIO controller
-+	pinctrl-base : Base pinctrl pin ID in the pin controller
-+	count : The number of GPIOs/pins in this range
- 
--For this, the gpio controller can use a pinctrl phandle and pins to
--announce the pinrange to the pin ctrl subsystem. For example,
-+The "pin controller node" mentioned above must conform to the bindings
-+described in ../pinctrl/pinctrl-bindings.txt.
+ static int __of_parse_phandle_with_args(const struct device_node *np,
+ 					const char *list_name,
+-					const char *cells_name, int index,
++					const char *cells_name,
++					int cell_count, int index,
+ 					struct of_phandle_args *out_args)
+ {
+ 	const __be32 *list, *list_end;
+@@ -1142,11 +1143,17 @@ static int __of_parse_phandle_with_args(const struct device_node *np,
+ 					 np->full_name);
+ 				goto err;
+ 			}
+-			if (of_property_read_u32(node, cells_name, &count)) {
+-				pr_err("%s: could not get %s for %s\n",
+-					 np->full_name, cells_name,
+-					 node->full_name);
+-				goto err;
 +
-+Previous versions of this binding required all pin controller nodes that
-+were referenced by any gpio-ranges property to contain a property named
-+#gpio-range-cells with value <3>. This requirement is now deprecated.
-+However, that property may still exist in older device trees for
-+compatibility reasons, and would still be required even in new device
-+trees that need to be compatible with older software.
++			if (cells_name) {
++				if (of_property_read_u32(node, cells_name,
++							 &count)) {
++					pr_err("%s: could not get %s for %s\n",
++						np->full_name, cells_name,
++						node->full_name);
++					goto err;
++				}
++			} else {
++				count = cell_count;
+ 			}
+ 
+ 			/*
+@@ -1244,11 +1251,53 @@ int of_parse_phandle_with_args(const struct device_node *np, const char *list_na
+ {
+ 	if (index < 0)
+ 		return -EINVAL;
+-	return __of_parse_phandle_with_args(np, list_name, cells_name, index, out_args);
++	return __of_parse_phandle_with_args(np, list_name, cells_name, 0,
++					    index, out_args);
+ }
+ EXPORT_SYMBOL(of_parse_phandle_with_args);
+ 
+ /**
++ * of_parse_phandle_with_fixed_args() - Find a node pointed by phandle in a list
++ * @np:		pointer to a device tree node containing a list
++ * @list_name:	property name that contains a list
++ * @cell_count: number of argument cells following the phandle
++ * @index:	index of a phandle to parse out
++ * @out_args:	optional pointer to output arguments structure (will be filled)
++ *
++ * This function is useful to parse lists of phandles and their arguments.
++ * Returns 0 on success and fills out_args, on error returns appropriate
++ * errno value.
++ *
++ * Caller is responsible to call of_node_put() on the returned out_args->node
++ * pointer.
++ *
++ * Example:
++ *
++ * phandle1: node1 {
++ * }
++ *
++ * phandle2: node2 {
++ * }
++ *
++ * node3 {
++ * 	list = <&phandle1 0 2 &phandle2 2 3>;
++ * }
++ *
++ * To get a device_node of the `node2' node you may call this:
++ * of_parse_phandle_with_fixed_args(node3, "list", 2, 1, &args);
++ */
++int of_parse_phandle_with_fixed_args(const struct device_node *np,
++				const char *list_name, int cell_count,
++				int index, struct of_phandle_args *out_args)
++{
++	if (index < 0)
++		return -EINVAL;
++	return __of_parse_phandle_with_args(np, list_name, NULL, cell_count,
++					   index, out_args);
++}
++EXPORT_SYMBOL(of_parse_phandle_with_fixed_args);
 +
-+Example:
++/**
+  * of_count_phandle_with_args() - Find the number of phandles references in a property
+  * @np:		pointer to a device tree node containing a list
+  * @list_name:	property name that contains a list
+@@ -1266,7 +1315,8 @@ EXPORT_SYMBOL(of_parse_phandle_with_args);
+ int of_count_phandle_with_args(const struct device_node *np, const char *list_name,
+ 				const char *cells_name)
+ {
+-	return __of_parse_phandle_with_args(np, list_name, cells_name, -1, NULL);
++	return __of_parse_phandle_with_args(np, list_name, cells_name, 0, -1,
++					    NULL);
+ }
+ EXPORT_SYMBOL(of_count_phandle_with_args);
  
- 	qe_pio_e: gpio-controller@1460 {
- 		#gpio-cells = <2>;
-@@ -99,16 +112,8 @@ announce the pinrange to the pin ctrl subsystem. For example,
- 		reg = <0x1460 0x18>;
- 		gpio-controller;
- 		gpio-ranges = <&pinctrl1 0 20 10>, <&pinctrl2 10 50 20>;
-+	};
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 1fd08ca..0c457f5 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -280,6 +280,9 @@ extern struct device_node *of_parse_phandle(const struct device_node *np,
+ extern int of_parse_phandle_with_args(const struct device_node *np,
+ 	const char *list_name, const char *cells_name, int index,
+ 	struct of_phandle_args *out_args);
++extern int of_parse_phandle_with_fixed_args(const struct device_node *np,
++	const char *list_name, int cells_count, int index,
++	struct of_phandle_args *out_args);
+ extern int of_count_phandle_with_args(const struct device_node *np,
+ 	const char *list_name, const char *cells_name);
  
--    }
--
--where,
--   &pinctrl1 and &pinctrl2 is the phandle to the pinctrl DT node.
--
--   Next values specify the base pin and number of pins for the range
--   handled by 'qe_pio_e' gpio. In the given example from base pin 20 to
--   pin 29 under pinctrl1 with gpio offset 0 and pin 50 to pin 69 under
--   pinctrl2 with gpio offset 10 is handled by this gpio controller.
--
--The pinctrl node must have "#gpio-range-cells" property to show number of
--arguments to pass with phandle from gpio controllers node.
-+Here, a single GPIO controller has GPIOs 0..9 routed to pin controller
-+pinctrl1's pins 20..29, and GPIOs 10..19 routed to pin controller pinctrl2's
-+pins 50..59.
+@@ -488,6 +491,13 @@ static inline int of_parse_phandle_with_args(struct device_node *np,
+ 	return -ENOSYS;
+ }
+ 
++static inline int of_parse_phandle_with_fixed_args(const struct device_node *np,
++	const char *list_name, int cells_count, int index,
++	struct of_phandle_args *out_args)
++{
++	return -ENOSYS;
++}
++
+ static inline int of_count_phandle_with_args(struct device_node *np,
+ 					     const char *list_name,
+ 					     const char *cells_name)
 -- 
 1.8.1.5
 
