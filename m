@@ -1,27 +1,45 @@
-From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [RFC RESEND] GPIO: gpio-generic: Add DT support
-Date: Thu, 08 Aug 2013 21:21:58 -0600
-Message-ID: <20130809032158.3BA173E08A0@localhost>
-References: <1375183115-30237-1-git-send-email-shc_work@mail.ru> <20130730162241.GA13634@quad.lixom.net> <51F7FEE5.1010608@wwwdotorg.org> <20130731155608.GR29859@e106331-lin.cambridge.arm.com> <1375786850.12043.22.camel@hornet> <20130807140702.GE28558@e106331-lin.cambridge.arm.com> <520271DC.2020006@wwwdotorg.org> <20130808091155.GD14648@e106331-lin.cambridge.arm.com> <5203E4B4.6080600@wwwdotorg.org>
+From: Kevin Strasser <strassek@engr.orst.edu>
+Subject: Re: [PATCH] gpio: Fix platform driver name in Kontron PLD GPIO driver
+Date: Sat, 10 Aug 2013 15:10:43 -0700
+Message-ID: <20130810221043.GC18039@flip3.engr.oregonstate.edu>
+References: <20130809173306.1ba24b59@mail.gmx.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:59468 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758862Ab3HJV7F (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Aug 2013 17:59:05 -0400
-Received: by mail-ee0-f46.google.com with SMTP id c13so2747050eek.5
-        for <linux-gpio@vger.kernel.org>; Sat, 10 Aug 2013 14:59:03 -0700 (PDT)
-In-Reply-To: <5203E4B4.6080600@wwwdotorg.org>
+Received: from smtp7.oregonstate.edu ([128.193.15.44]:57758 "EHLO
+	smtp7.oregonstate.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758875Ab3HJWSc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Aug 2013 18:18:32 -0400
+Content-Disposition: inline
+In-Reply-To: <20130809173306.1ba24b59@mail.gmx.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Pawel Moll <Pawel.Moll@arm.com>, Olof Johansson <olof@lixom.net>, Alexander Shiyan <shc_work@mail.ru>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Ian Campbell <ian.campbell@citrix.com>, Mike Turquette <mturquette@linaro.org>
+To: Michael Brunner <mibru@gmx.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Darren Hart <dvhart@linux.intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Chris Healy <chealy@imsco-us.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Thu, 08 Aug 2013 12:34:28 -0600, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> I'd tend to lean towards new kernels maintaining at least old
-> functionality, rather than requiring that no DT changes are required to
-> enable new functionality.
+On Fri, Aug 09, 2013 at 05:33:06PM +0200, Michael Brunner wrote:
+> This patch changes the driver name to be consistent with the name that
+> is registered as cell name in the MFD driver. Otherwise the driver won't
+> load.
+> 
+> Signed-off-by: Michael Brunner <michael.brunner@kontron.com>
 
-+1
+Acked-by: Kevin Strasser <strassek@engr.orst.edu>
 
-g.
-
+> ---
+>  drivers/gpio/gpio-kempld.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-kempld.c b/drivers/gpio/gpio-kempld.c
+> index 1bdc3a2..d3ed563 100644
+> --- a/drivers/gpio/gpio-kempld.c
+> +++ b/drivers/gpio/gpio-kempld.c
+> @@ -210,7 +210,7 @@ static int kempld_gpio_remove(struct
+> platform_device *pdev) 
+>  static struct platform_driver kempld_gpio_driver = {
+>         .driver = {
+> -               .name = "gpio-kempld",
+> +               .name = "kempld-gpio",
+>                 .owner = THIS_MODULE,
+>         },
+>         .probe          = kempld_gpio_probe,
