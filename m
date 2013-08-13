@@ -1,61 +1,62 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH v2] RFC: interrupt consistency check for OF GPIO IRQs
-Date: Tue, 13 Aug 2013 08:22:58 -0700
-Message-ID: <87eh9xobsd.fsf@kernel.org>
-References: <1376387195-27469-1-git-send-email-larsi@wh2.tu-dresden.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V5 4/6] of: call __of_parse_phandle_with_args from of_parse_phandle
+Date: Tue, 13 Aug 2013 09:54:02 -0600
+Message-ID: <520A569A.5040805@wwwdotorg.org>
+References: <1376328992-3115-1-git-send-email-swarren@wwwdotorg.org> <1376328992-3115-4-git-send-email-swarren@wwwdotorg.org> <20130813090851.GG27165@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1376387195-27469-1-git-send-email-larsi@wh2.tu-dresden.de> (Lars
-	Poeschel's message of "Tue, 13 Aug 2013 11:46:35 +0200")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lars Poeschel <larsi@wh2.tu-dresden.de>
-Cc: poeschel@lemonage.de, grant.likely@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:45139 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758522Ab3HMPyG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Aug 2013 11:54:06 -0400
+In-Reply-To: <20130813090851.GG27165@e106331-lin.cambridge.arm.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@kernel.crashing.org>, Stephen Warren <swarren@nvidia.com>
 
-Lars Poeschel <larsi@wh2.tu-dresden.de> writes:
+On 08/13/2013 03:08 AM, Mark Rutland wrote:
+> On Mon, Aug 12, 2013 at 06:36:30PM +0100, Stephen Warren wrote:
+>> From: Stephen Warren <swarren@nvidia.com>
+>>
+>> The simplest case of __of_parse_phandle_with_args() implements
+>> of_parse_phandle(), except that it doesn't return the node referenced by
+>> the phandle. Modify it to do so, and then rewrite of_parse_phandle() to
+>> call __of_parse_phandle_with_args() rather than open-coding the simple
+>> case.
+> 
+> That commit message doesn't seem to match the patch (which doesn't
+> modify __of_parse_phandle_with_args).
+> 
+> Rather, now that __of_parse_phandle_with_args can handle parsing with a
+> fixed number of argument cells, it's possible to write of_parse_phandle
+> in terms of it.
 
-> From: Linus Walleij <linus.walleij@linaro.org>
->
-> Currently the kernel is ambigously treating GPIOs and interrupts
-> from a GPIO controller: GPIOs and interrupts are treated as
-> orthogonal. This unfortunately makes it unclear how to actually
-> retrieve and request a GPIO line or interrupt from a GPIO
-> controller in the device tree probe path.
->
-> In the non-DT probe path it is clear that the GPIO number has to
-> be passed to the consuming device, and if it is to be used as
-> an interrupt, the consumer shall performa a gpio_to_irq() mapping
-> and request the resulting IRQ number.
->
-> In the DT boot path consumers may have been given one or more
-> interrupts from the interrupt-controller side of the GPIO chip
-> in an abstract way, such that the driver is not aware of the
-> fact that a GPIO chip is backing this interrupt, and the GPIO
-> side of the same line is never requested with gpio_request().
-> A typical case for this is ethernet chips which just take some
-> interrupt line which may be a "hard" interrupt line (such as an
-> external interrupt line from an SoC) or a cascaded interrupt
-> connected to a GPIO line.
->
-> This has the following undesired effects:
->
-> - The GPIOlib subsystem is not aware that the line is in use
->   and willingly lets some other consumer perform gpio_request()
->   on it, leading to a complex resource conflict if it occurs.
+True. I originally hadn't realized that __of_parse_phandle_with_args()
+does already return the node and so started to add that feature, then
+forgot to re-write the commit description. How about:
 
-And another reason, which happens on OMAP (not that the others aren't
-already enough to make the case):
+-----
+of: call __of_parse_phandle_with_args from of_parse_phandle
 
- - Platform-specific power management code may gate clocks or power to
-   unused GPIO banks resulting in faults when accessing a GPIO that
-   has not been properly requested via gpio_request().
+The simplest case of __of_parse_phandle_with_args() now implements the
+semantics of of_parse_phandle(). Rewrite of_parse_phandle() to call
+__of_parse_phandle_with_args() rather than open-coding the simple case.
+-----
 
-> - The GPIO debugfs file claims this GPIO line is "free".
->
-> - The line direction of the interrupt GPIO line is not
->   explicitly set as input, even though it is obvious that such
->   a line need to be set up in this way, often making the system
->   depend on boot-on defaults for this kind of settings.
+> What's the overhead over the old of_parse_phandle? It looks like this is
+> going to do a lot of pointless work beyond what it already does --
+> parsing each prior entry in the list, and for each prior entry walking
+> the tree in of_find_node_by_phandle. Maybe we don't use long enough
+> phandle lists anywhere for that to be noticeable.
 
-Kevin
+I think the overhead is pretty minimal. The main difference is that the
+new code will loop over the property cell by cell rather than directly
+jump into the required index. That's not likely to be much work for
+typical properties. In particular, no extra DT property lookups are
+performed, since of_parse_phandle() passes in cells_name=NULL,
+cell_count=0, so the cells_name property is not looked up.
+
+Besides, Grant told me to do this change:-)
