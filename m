@@ -1,55 +1,86 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 1/5 v2] drivers/gpio/gpio-omap.c: convert comma to semicolon
-Date: Tue, 13 Aug 2013 09:16:56 +0200
-Message-ID: <1376378216-18473-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH V5 4/6] of: call __of_parse_phandle_with_args from
+ of_parse_phandle
+Date: Tue, 13 Aug 2013 10:08:51 +0100
+Message-ID: <20130813090851.GG27165@e106331-lin.cambridge.arm.com>
+References: <1376328992-3115-1-git-send-email-swarren@wwwdotorg.org>
+ <1376328992-3115-4-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:32847 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755934Ab3HMJJH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 13 Aug 2013 05:09:07 -0400
+Content-Disposition: inline
+In-Reply-To: <1376328992-3115-4-git-send-email-swarren@wwwdotorg.org>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@kernel.crashing.org>, Stephen Warren <swarren@nvidia.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Mon, Aug 12, 2013 at 06:36:30PM +0100, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+> 
+> The simplest case of __of_parse_phandle_with_args() implements
+> of_parse_phandle(), except that it doesn't return the node referenced by
+> the phandle. Modify it to do so, and then rewrite of_parse_phandle() to
+> call __of_parse_phandle_with_args() rather than open-coding the simple
+> case.
 
-Replace a comma between expression statements by a semicolon.  This changes
-the semantics of the code, but given the current indentation appears to be
-what is intended.
+That commit message doesn't seem to match the patch (which doesn't
+modify __of_parse_phandle_with_args).
 
-A simplified version of the semantic patch that performs this
-transformation is as follows: (http://coccinelle.lip6.fr/)
+Rather, now that __of_parse_phandle_with_args can handle parsing with a
+fixed number of argument cells, it's possible to write of_parse_phandle
+in terms of it.
 
-// <smpl>
-@r@
-expression e1,e2,e;
-type T;
-identifier i;
-@@
+What's the overhead over the old of_parse_phandle? It looks like this is
+going to do a lot of pointless work beyond what it already does --
+parsing each prior entry in the list, and for each prior entry walking
+the tree in of_find_node_by_phandle. Maybe we don't use long enough
+phandle lists anywhere for that to be noticeable.
 
- e1
--,
-+;
- e2;
-// </smpl>
+Thanks,
+Mark.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not tested.  The first version did a different transformation to avoid
-changing the semantics.  This one leaves the layout as it is, but changes
-the semantics.
-
- drivers/gpio/gpio-omap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index dfeb3a3..9f19ec9 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1030,7 +1030,7 @@ omap_mpuio_alloc_gc(struct gpio_bank *bank, unsigned int irq_start,
- 	ct->chip.irq_set_type = gpio_irq_type;
- 
- 	if (bank->regs->wkup_en)
--		ct->chip.irq_set_wake = gpio_wake_enable,
-+		ct->chip.irq_set_wake = gpio_wake_enable;
- 
- 	ct->regs.mask = OMAP_MPUIO_GPIO_INT / bank->stride;
- 	irq_setup_generic_chip(gc, IRQ_MSK(num), IRQ_GC_INIT_MASK_CACHE,
+> 
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> v5: New patch.
+> ---
+>  drivers/of/base.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 2f92522..79ed82c 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -1202,14 +1202,16 @@ static int __of_parse_phandle_with_args(const struct device_node *np,
+>  struct device_node *of_parse_phandle(const struct device_node *np,
+>  				     const char *phandle_name, int index)
+>  {
+> -	const __be32 *phandle;
+> -	int size;
+> +	struct of_phandle_args args;
+>  
+> -	phandle = of_get_property(np, phandle_name, &size);
+> -	if ((!phandle) || (size < sizeof(*phandle) * (index + 1)))
+> +	if (index < 0)
+> +		return NULL;
+> +
+> +	if (__of_parse_phandle_with_args(np, phandle_name, NULL, 0,
+> +					 index, &args))
+>  		return NULL;
+>  
+> -	return of_find_node_by_phandle(be32_to_cpup(phandle + index));
+> +	return args.np;
+>  }
+>  EXPORT_SYMBOL(of_parse_phandle);
+>  
+> -- 
+> 1.8.1.5
+> 
+> 
