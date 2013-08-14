@@ -1,13 +1,13 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V6 4/5] of: call __of_parse_phandle_with_args from of_parse_phandle
-Date: Wed, 14 Aug 2013 15:27:11 -0600
-Message-ID: <1376515632-12594-4-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V6 5/5] gpio: implement gpio-ranges binding document fix
+Date: Wed, 14 Aug 2013 15:27:12 -0600
+Message-ID: <1376515632-12594-5-git-send-email-swarren@wwwdotorg.org>
 References: <1376515632-12594-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:44723 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:53683 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933329Ab3HNV1Z (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Aug 2013 17:27:25 -0400
+	with ESMTP id S933291Ab3HNV11 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Aug 2013 17:27:27 -0400
 In-Reply-To: <1376515632-12594-1-git-send-email-swarren@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -16,77 +16,29 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Pawel Moll <Pawel.Mo
 
 From: Stephen Warren <swarren@nvidia.com>
 
-The simplest case of __of_parse_phandle_with_args() now implements the
-semantics of of_parse_phandle(). Rewrite of_parse_phandle() to call
-__of_parse_phandle_with_args() rather than open-coding the simple case.
-
-Optimize __of_parse_phandle_with_args() so that it doesn't call
-of_find_node_by_phandle() except when it's strictly needed. This avoids
-introducing too much overhead when replacing of_parse_phandle().
+Use the new of_parse_phandle_with_fixed_args() to implement the
+corrected gpio-ranges DT property definition.
 
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 Acked-by: Mark Rutland <mark.rutland@arm.com>
 ---
-v6: Fixed commit description to match code change. Enhance
-    __of_parse_phandle_with_args() to avoid calling
-    of_find_node_by_phandle() except when needed.
-v5: New patch.
----
- drivers/of/base.c | 31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+ drivers/gpio/gpiolib-of.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 3a5cd9e..c8be59d 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1112,13 +1112,20 @@ static int __of_parse_phandle_with_args(const struct device_node *np,
- 		if (phandle) {
- 			/*
- 			 * Find the provider node and parse the #*-cells
--			 * property to determine the argument length
-+			 * property to determine the argument length.
-+			 *
-+			 * This is not needed if the cell count is hard-coded
-+			 * (i.e. cells_name not set, but cell_count is set),
-+			 * except when we're going to return the found node
-+			 * below.
- 			 */
--			node = of_find_node_by_phandle(phandle);
--			if (!node) {
--				pr_err("%s: could not find phandle\n",
--					 np->full_name);
--				goto err;
-+			if (cells_name || cur_index == index) {
-+				node = of_find_node_by_phandle(phandle);
-+				if (!node) {
-+					pr_err("%s: could not find phandle\n",
-+						np->full_name);
-+					goto err;
-+				}
- 			}
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 665f953..48cda3c 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -194,8 +194,8 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 		return;
  
- 			if (cells_name) {
-@@ -1203,14 +1210,16 @@ static int __of_parse_phandle_with_args(const struct device_node *np,
- struct device_node *of_parse_phandle(const struct device_node *np,
- 				     const char *phandle_name, int index)
- {
--	const __be32 *phandle;
--	int size;
-+	struct of_phandle_args args;
-+
-+	if (index < 0)
-+		return NULL;
- 
--	phandle = of_get_property(np, phandle_name, &size);
--	if ((!phandle) || (size < sizeof(*phandle) * (index + 1)))
-+	if (__of_parse_phandle_with_args(np, phandle_name, NULL, 0,
-+					 index, &args))
- 		return NULL;
- 
--	return of_find_node_by_phandle(be32_to_cpup(phandle + index));
-+	return args.np;
- }
- EXPORT_SYMBOL(of_parse_phandle);
+ 	for (;; index++) {
+-		ret = of_parse_phandle_with_args(np, "gpio-ranges",
+-				"#gpio-range-cells", index, &pinspec);
++		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
++				index, &pinspec);
+ 		if (ret)
+ 			break;
  
 -- 
 1.8.1.5
