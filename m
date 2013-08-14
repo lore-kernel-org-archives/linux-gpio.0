@@ -1,62 +1,54 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V5 4/6] of: call __of_parse_phandle_with_args from of_parse_phandle
-Date: Tue, 13 Aug 2013 12:12:41 -0600
-Message-ID: <520A7719.1090007@wwwdotorg.org>
-References: <1376328992-3115-1-git-send-email-swarren@wwwdotorg.org> <1376328992-3115-4-git-send-email-swarren@wwwdotorg.org> <20130813090851.GG27165@e106331-lin.cambridge.arm.com> <520A569A.5040805@wwwdotorg.org> <20130813162928.GS27165@e106331-lin.cambridge.arm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 0/29] simplify use of devm_ioremap_resource
+Date: Wed, 14 Aug 2013 11:11:04 +0200
+Message-ID: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:40616 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751265Ab3HMSMq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Aug 2013 14:12:46 -0400
-In-Reply-To: <20130813162928.GS27165@e106331-lin.cambridge.arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: dri-devel@lists.freedesktop.org
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, rtc-linux@googlegroups.com, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@kernel.crashing.org>, Stephen Warren <swarren@nvidia.com>
 
-On 08/13/2013 10:29 AM, Mark Rutland wrote:
-> On Tue, Aug 13, 2013 at 04:54:02PM +0100, Stephen Warren wrote:
->> On 08/13/2013 03:08 AM, Mark Rutland wrote:
->>> On Mon, Aug 12, 2013 at 06:36:30PM +0100, Stephen Warren wrote:
->>>> From: Stephen Warren <swarren@nvidia.com>
->>>>
->>>> The simplest case of __of_parse_phandle_with_args() implements
->>>> of_parse_phandle(), except that it doesn't return the node referenced by
->>>> the phandle. Modify it to do so, and then rewrite of_parse_phandle() to
->>>> call __of_parse_phandle_with_args() rather than open-coding the simple
->>>> case.
-...
->>> What's the overhead over the old of_parse_phandle? It looks like this is
->>> going to do a lot of pointless work beyond what it already does --
->>> parsing each prior entry in the list, and for each prior entry walking
->>> the tree in of_find_node_by_phandle. Maybe we don't use long enough
->>> phandle lists anywhere for that to be noticeable.
->>
->> I think the overhead is pretty minimal. The main difference is that the
->> new code will loop over the property cell by cell rather than directly
->> jump into the required index. That's not likely to be much work for
->> typical properties. In particular, no extra DT property lookups are
->> performed, since of_parse_phandle() passes in cells_name=NULL,
->> cell_count=0, so the cells_name property is not looked up.
-> 
-> I thought even with your patch we still call of_find_node_by_phandle on
-> each (phandle) cell as we go over the property, before we hit the check
-> for cells_name?
-> 
-> Given that of_find_node_by_phandle does a pretty naive linear search of
-> the of_allnodes list, that could get significant, especially if all the
-> elements referred to in the property are near the end of the of_allnodes
-> list.
+devm_ioremap_resource often uses the result of a call to
+platform_get_resource as its last argument.  devm_ioremap_resource does
+appropriate error handling on this argument, so error handling can be
+removed from the call site.  To make the connection between the call to
+platform_get_resource and the call to devm_ioremap_resource more clear, the
+former is also moved down to be adjacent to the latter.
 
-Oh yes, that is true.
+In many cases, this patch changes the specific error value that is
+returned on failure of platform_get_resource.
 
-I suppose it'd be possible to make the call to of_find_node_by_phandle()
-conditional; it'd be needed:
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-if (cells_name /* Need to get property from it */ ||
-	cur_index == index /* Need to return it */)
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
 
-Do you think it's worth making that change?
+(
+  res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+- if (res == NULL) { ... \(goto l;\|return ret;\) }
+  e = devm_ioremap_resource(e1, res);
+|
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res == NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+)
+// </smpl>
