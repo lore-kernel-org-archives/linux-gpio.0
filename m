@@ -1,35 +1,38 @@
-From: Andrew Ruder <andy@aeruder.net>
-Subject: Re: [PATCH] gpio: pca953x: fix gpio input on gpio offsets >= 8
-Date: Wed, 14 Aug 2013 08:44:19 -0500
-Message-ID: <20130814134419.GA17639@gmail.com>
-References: <20130807215240.GA31924@gmail.com>
- <5208B8A5.3030702@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:46450 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759890Ab3HNNrT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Aug 2013 09:47:19 -0400
-Received: by mail-ie0-f169.google.com with SMTP id qd12so12653007ieb.14
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Aug 2013 06:47:18 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <5208B8A5.3030702@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH] gpio-pca953x: Fix read for chips with more than 8 gpios
+Date: Wed, 14 Aug 2013 16:20:38 +0200
+Message-ID: <1376490038-32382-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-On Mon, Aug 12, 2013 at 12:27:49PM +0200, Gregory CLEMENT wrote:
-> Good catch. I forgot this one and as on my board I wasn't able to
-> test the input I didn't noticed it.
-> Thanks
-> 
-> Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+pca953x_read_single returns ONLY the value of the 8 inputs of the
+same bank.
 
-Linus,
+off can have a value from 0 to 15, therefore we have to find the
+offset of that gpio within that bank.
 
-Any chance you can take this one into your tree?
+Without this patch gpios 8-15 will always be read as zero.
 
-Thanks,
-Andy
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/gpio/gpio-pca953x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 426c51d..1a7ab13 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -308,7 +308,7 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
+ 		return 0;
+ 	}
+ 
+-	return (reg_val & (1u << off)) ? 1 : 0;
++	return (reg_val & (1u << (off % BANK_SZ))) ? 1 : 0;
+ }
+ 
+ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+-- 
+1.7.10.4
