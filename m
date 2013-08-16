@@ -1,29 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/29] drivers/gpio: simplify use of devm_ioremap_resource
-Date: Fri, 16 Aug 2013 17:17:21 +0200
-Message-ID: <CACRpkdYuV9UG8XBu6Ti5Ef+M-SrwKi02jAEuH=zbqG9q+3oRcQ@mail.gmail.com>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1376471493-22215-4-git-send-email-Julia.Lawall@lip6.fr>
+Subject: Re: [PATCH] gpio: pca953x: fix gpio input on gpio offsets >= 8
+Date: Fri, 16 Aug 2013 17:19:58 +0200
+Message-ID: <CACRpkdZ25a70wyzHbAn4dDRJcoCj02fkxUzB89Y2f-LJVXrEmA@mail.gmail.com>
+References: <20130807215240.GA31924@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1376471493-22215-4-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:43070 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755048Ab3HPPT6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 11:19:58 -0400
+Received: by mail-ob0-f178.google.com with SMTP id ef5so2205772obb.9
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Aug 2013 08:19:58 -0700 (PDT)
+In-Reply-To: <20130807215240.GA31924@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Ruder <andy@aeruder.net>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-On Wed, Aug 14, 2013 at 11:11 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+On Wed, Aug 7, 2013 at 11:52 PM, Andrew Ruder <andy@aeruder.net> wrote:
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> This change fixes a regression introduced by commit
+> f5f0b7aa8 (gpio: pca953x: make the register access by GPIO bank)
 >
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
+> When the pca953x driver was converted to using 8-bit reads/writes
+> the bitmask in pca953x_gpio_get_value wasn't adjusted with a
+> modulus BANK_SZ and consequently looks at the wrong bits in the
+> input register.
 >
-> Move the call to platform_get_resource adjacent to the call to
-> devm_ioremap_resource to make the connection between them more clear.
+> Signed-off-by: Andrew Ruder <andrew.ruder@elecsyscorp.com>
 
-Patch applied with Viresh's ACK.
+Patch applied with Gregory's ACK.
 
 Yours,
 Linus Walleij
