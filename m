@@ -1,29 +1,38 @@
-From: John Crispin <john@phrozen.org>
-Subject: Re: [PATCH v2 2/2] gpio MIPS/OCTEON: Add a driver for OCTEON's on-chip
- GPIO pins.
-Date: Fri, 16 Aug 2013 16:43:10 +0200
-Message-ID: <520E3A7E.7010507@phrozen.org>
-References: <1375133350-18828-1-git-send-email-ddaney.cavm@gmail.com>        <1375133350-18828-3-git-send-email-ddaney.cavm@gmail.com> <CACRpkdaM=hqwHhNxCLCEZudRNYsyW-bZMXzZyvuW4qs2fGaREw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: adnp: Fix segfault if request_threaded_irq fails
+Date: Fri, 16 Aug 2013 16:53:53 +0200
+Message-ID: <CACRpkdZX5tNmY0KcUrghv8TzVVP_vmgfxje+LMKpEbFfyQMTUA@mail.gmail.com>
+References: <1375889038-7953-1-git-send-email-larsi@wh2.tu-dresden.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from nbd.name ([46.4.11.11]:37328 "EHLO nbd.name"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754411Ab3HPOu2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 16 Aug 2013 10:50:28 -0400
-In-Reply-To: <CACRpkdaM=hqwHhNxCLCEZudRNYsyW-bZMXzZyvuW4qs2fGaREw@mail.gmail.com>
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:54481 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752409Ab3HPOxx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 10:53:53 -0400
+Received: by mail-oa0-f51.google.com with SMTP id h1so2385571oag.10
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Aug 2013 07:53:53 -0700 (PDT)
+In-Reply-To: <1375889038-7953-1-git-send-email-larsi@wh2.tu-dresden.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: David Daney <ddaney.cavm@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-mips@linux-mips.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Daney <david.daney@cavium.com>
+To: Lars Poeschel <larsi@wh2.tu-dresden.de>
+Cc: Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 
-On 16/08/13 15:16, Linus Walleij wrote:
-> I guess you will merge both patches through the MIPS arch
-> tree?
+On Wed, Aug 7, 2013 at 5:23 PM, Lars Poeschel <larsi@wh2.tu-dresden.de> wrote:
 
-Hi Linus,
+> From: Lars Poeschel <poeschel@lemonage.de>
+>
+> In case request_threaded_irq inside adnp_irq_setup fails, the driver
+> segfaults. This is because irq_domain_remove is called twice with
+> the same pointer. First time in adnp_irq_setup and then a second time
+> after leaving adnp_irq_setup in the error path of adnp_i2c_probe
+> inside adnp_teardown.
+> This fixes this by removing the call to irq_domain_remove from
+> adnp_irq_setup.
+>
+> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
 
-sure, we can take them via the MIPS tree
+Patch applied.
 
-	John
+Yours,
+Linus Walleij
