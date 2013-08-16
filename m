@@ -1,64 +1,82 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Subject: RE: [PATCH] gpio: (gpio-pca953x) move header to linux/platform_data/
-Date: Fri, 16 Aug 2013 14:06:24 -0500
-Message-ID: <ADE657CA350FB648AAC2C43247A983F0021DAC7DA184@AUSP01VMBX24.collaborationhost.net>
-References: <CACRpkdZdeVNtJSmc6Lr6j=oO9FLsAvjyrwhYS0j4OoAEhxCN9g@mail.gmail.com>
- <82440653.410050.1376665340121.JavaMail.root@mail>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] added ams AS3722 gpio support
+Date: Fri, 16 Aug 2013 20:00:19 +0100
+Message-ID: <20130816190019.GR30073@sirena.org.uk>
+References: <1376492358-16005-1-git-send-email-florian.lobmaier@ams.com>
+ <CACRpkdbMUz3ujrb-QP4d_Mrc7SxKUsNLOF9_qsBphfqp5nF76w@mail.gmail.com>
+ <20130816182052.GP30073@sirena.org.uk>
+ <CACRpkdZLuEnYn35GGk-DJSLE64tHzQnRRw-1YmLsC1kcKc+Lcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <82440653.410050.1376665340121.JavaMail.root@mail>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel@savoirfairelinux.com" <kernel@savoirfairelinux.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9lPOKfY2vCV97ybw"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:47687 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752373Ab3HPWdW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 18:33:22 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZLuEnYn35GGk-DJSLE64tHzQnRRw-1YmLsC1kcKc+Lcw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Florian Lobmaier <florian.lobmaier@ams.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Friday, August 16, 2013 8:02 AM, Vivien Didelot wrote:
-> Hi Linus,
->
-> You wrote:
-> > But:
->>
->>>  drivers/gpio/gpio-pca953x.c                 |  2 +-
->> (...)
->>> diff --git a/drivers/gpio/gpio-pca953x.c
->>> b/drivers/gpio/gpio-pca953x.c
->>> index 426c51d..8804aec 100644
->>> --- a/drivers/gpio/gpio-pca953x.c
->>> +++ b/drivers/gpio/gpio-pca953x.c
->>> @@ -18,7 +18,7 @@
->>>  #include <linux/irq.h>
->>>  #include <linux/irqdomain.h>
->>>  #include <linux/i2c.h>
->>> -#include <linux/i2c/pca953x.h>
->>> +#include <linux/platform_data/pca953x.h>
->> 
->> Why does the GPIO driver need platform data from the
->> I2C driver???
->> 
->> Can't this just be made to go away?
->
-> I didn't dig that much in the driver, but I cannot imagine
-> another way to pass, for instance, the setup callback.
->
-> What would be a good alternative for you?
 
-I think the confusion here is because the pca953x.h header was initially
-placed in linux/i2c.
+--9lPOKfY2vCV97ybw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This device is an I2C connected GPIO expander. The pca953x.h header has
-the information needed for the platform to hook up to the device. It doesn't
-really expose the fact that it's an I2C driver.
+On Fri, Aug 16, 2013 at 08:28:08PM +0200, Linus Walleij wrote:
+> On Fri, Aug 16, 2013 at 8:20 PM, Mark Brown <broonie@kernel.org> wrote:
 
-Just by 2 cents...
-Hartley
+> > It's common to have inline wrappers for the regmap ops which take the
+> > device specific struct and fish the regmap pointer out of it.
+
+> I had no clue ... hm this is another side effect of not getting the
+> whole patch set I guess.
+
+Yeah.  I think from a subsystem point of view it's probably best to just
+not worry about this sort of functions and just assume it'll get caught
+in the review of the MFD driver.  If there's regmap helpers for the
+subsystem it's a bit different of course.
+
+> Hmmm I've been irritated about the "v" in "virq" because these
+> interrupt numbers are and have always been Linux interrupt
+> numbers, that they sometimes, on some systems, for the low
+> IRQs, correspond to the hardware IRQ numbers is pure pattern
+> matching and luck.
+
+> They are no more "virtual" than any other IRQ numbers in the
+> kernel. They are all "virtual" in a sense.
+
+> Well nevermind that, it's probably just another try at tilting
+> windmills to get it changed anyway.
+
+Yeah, I agree with you there.  If I'd seen irqdomain when I wrote the
+function I'd probably have called it _create_mapping() but as it was I
+wanted to distinguish which of the IRQ number spaces was being looked up
+in.  Possibly more trouble than it's worth to do the rename now though.
+
+--9lPOKfY2vCV97ybw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSDnbAAAoJELSic+t+oim9mWgP/1rILhGER9RgC8Q9LkCwYSnP
+e+UcjuJ/0OlykOyli8mgp+NI3eGV6n7WZqSavm/6UYV9c1BeMGbEtR1J+ld7jKNR
+pPrhKMiNsvegz2Gxrelll07+38h0QdqTI7+j3vpIQUZpfGj8RVP8aVW3VQkldyH0
+hGOcZokxNAe38yDVMLD9w+q/tT3BErcMkw27MluIl6QuMFRcYGLCdn6LajCP8DZW
+aSs0sSbOnzcdrz+avo51xfyfK262bS4WUYa1J4XILc7ciIw2LFDTa3NfvOHSN3Tr
+S+bI6KcFuznZqhNbXJMJ/bIbJJ50Bt5fJAngRxa1AFESckdrxFX4gknC9ekdXYtv
+lYdlvIL7Dcnbsy77qvqomRziKTuqYcvpltyxhVHa0D+nGNu1ilkbMxc4kC5vKWfs
+ScFFm0Els0D/ERvWtHhi3bCjUXck6iotMtaTqYuCkaybP7YJuC005YdY/r8bBuvg
+zwyTISxjSTTMvDFDJsB7LTmKr0MOCACsIeiOI86VkCMxWNOSZKAWSBi7hdzuGsgJ
+qvHtLzzOmq4ESuxBhn9Tlrykyl5zF5kTT0PrHr5a8VJAHCiUbcaumORuR37g5OFf
+5GuoI5oF5ZRnM1zlPnziblz9x7qsT1JyOS+4BhTZGVUdMhvV1St1i21IN7IqAEC1
+nPyl3UdSV8VYNbIDJJZG
+=T95E
+-----END PGP SIGNATURE-----
+
+--9lPOKfY2vCV97ybw--
