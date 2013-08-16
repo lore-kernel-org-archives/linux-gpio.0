@@ -1,33 +1,29 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: msm: Staticize local variable 'msm_gpio'
-Date: Fri, 16 Aug 2013 16:47:53 +0200
-Message-ID: <CACRpkdak0MjAP=omZz1krJZdO-DtuAXq_YWM=mweH6bmU90X4g@mail.gmail.com>
-References: <000301ce9289$61df6bd0$259e4370$@samsung.com>
+From: John Crispin <john@phrozen.org>
+Subject: Re: [PATCH v2 2/2] gpio MIPS/OCTEON: Add a driver for OCTEON's on-chip
+ GPIO pins.
+Date: Fri, 16 Aug 2013 16:43:10 +0200
+Message-ID: <520E3A7E.7010507@phrozen.org>
+References: <1375133350-18828-1-git-send-email-ddaney.cavm@gmail.com>        <1375133350-18828-3-git-send-email-ddaney.cavm@gmail.com> <CACRpkdaM=hqwHhNxCLCEZudRNYsyW-bZMXzZyvuW4qs2fGaREw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:40209 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752791Ab3HPOry (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 10:47:54 -0400
-Received: by mail-oa0-f46.google.com with SMTP id l10so2349884oag.33
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Aug 2013 07:47:53 -0700 (PDT)
-In-Reply-To: <000301ce9289$61df6bd0$259e4370$@samsung.com>
+Received: from nbd.name ([46.4.11.11]:37328 "EHLO nbd.name"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754411Ab3HPOu2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 16 Aug 2013 10:50:28 -0400
+In-Reply-To: <CACRpkdaM=hqwHhNxCLCEZudRNYsyW-bZMXzZyvuW4qs2fGaREw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rohit Vaswani <rvaswani@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Daney <ddaney.cavm@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-mips@linux-mips.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Daney <david.daney@cavium.com>
 
-On Tue, Aug 6, 2013 at 11:43 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+On 16/08/13 15:16, Linus Walleij wrote:
+> I guess you will merge both patches through the MIPS arch
+> tree?
 
-> The local variable 'msm_gpio' is used only in this file.
-> Fix the following sparse warning:
->
-> drivers/gpio/gpio-msm-v2.c:109:21: warning: symbol 'msm_gpio' was not declared. Should it be static?
->
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Hi Linus,
 
-Patch applied.
+sure, we can take them via the MIPS tree
 
-Yours,
-Linus Walleij
+	John
