@@ -1,192 +1,174 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4] gpio: Add MOXA ART GPIO driver
-Date: Fri, 16 Aug 2013 16:05:30 +0200
-Message-ID: <CACRpkdZ9wukeXmVbLSNYanWMUOouKduhmxgNyJ=iq-pCTQSAtQ@mail.gmail.com>
-References: <1374053693-6166-1-git-send-email-jonas.jensen@gmail.com>
-	<1375103161-12460-1-git-send-email-jonas.jensen@gmail.com>
+Subject: Re: [PATCH] gpio: New driver for LSI ZEVIO SoCs
+Date: Fri, 16 Aug 2013 16:46:43 +0200
+Message-ID: <CACRpkdbLSDiSAGiZ_PpJganrSoar+2fFPaEjbu_L1Ezx5V8DMg@mail.gmail.com>
+References: <op.w1c50xgmu7prd4@fabians-laptop.fritz.box>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1375103161-12460-1-git-send-email-jonas.jensen@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonas Jensen <jonas.jensen@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <op.w1c50xgmu7prd4@fabians-laptop.fritz.box>
+Sender: linux-doc-owner@vger.kernel.org
+To: Fabian Vogt <fabian@ritter-vogt.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 29, 2013 at 3:06 PM, Jonas Jensen <jonas.jensen@gmail.com> wrote:
+On Mon, Aug 5, 2013 at 11:59 PM, Fabian Vogt <fabian@ritter-vogt.de> wrote:
 
-> Add GPIO driver for MOXA ART SoCs.
+> From: Fabian Vogt <fabian@ritter-vogt.de>
 >
-> Signed-off-by: Jonas Jensen <jonas.jensen@gmail.com>
+> This driver supports the GPIO controller found in LSI ZEVIO SoCs.
+> It has been successfully tested on a TI nspire CX calculator.
+>
+> Signed-off-by: Fabian Vogt <fabian@ritter-vogt.de>
+
+Hi Fabian, sorry for taking so long for getting around to review this.
+
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+
+I want an ACK from one of the DT bindings maintainers for this
+portion of the driver ideally. (It looks all right to me.)
+
+> +config GPIO_ZEVIO
+> +       bool "LSI ZEVIO SoC memory mapped GPIOs"
+> +       depends on ARCH_NSPIRE
+
+Can't this appear in some other SoC?
+
+It doesn't seem very arch-dependent in itself.
+
+I would rather have this depend on OF so any device-tree enabled
+SoC may use it, plus we get compile coverage by allmodconfig.
+
+> diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
 (...)
-> +++ b/Documentation/devicetree/bindings/gpio/moxa,moxart-gpio.txt
-
-This needs to be copied to devicetree@vger.kernel.org and I want
-an ACK from some DT maintainer as well.
-
-> @@ -0,0 +1,23 @@
-> +MOXA ART GPIO Controller
-> +
-> +Required properties:
-> +
-> +- #gpio-cells : Should be 2
-> +- compatible : Must be "moxa,moxart-gpio"
-> +- reg : Should contain registers location and length
-> +       index 0 : input, output, and direction control
-> +       index 1 : enable/disable individual pins, pin 0-31
-
-What? Why is the same block deploying these things in two
-totally different places in memory?? Random HW engineer
-having fun at work or...?
-
-> +- gpio-ready-led : ready LED gpio, with zero flags
-> +- gpio-reset-switch : reset switch gpio, with zero flags
-
-This does not belong in the GPIO node, or in the GPIO
-driver for that matter. This shall be handled by e.g. connecting
-drivers/leds/leds-gpio.c to a GPIO using device tree by
-selecting that driver in your config and do like this in your
-device tree:
-
-        leds {
-                compatible = "gpio-leds";
-                user-led {
-                        label = "user_led";
-                        gpios = <&gpio0 2 0x1>;
-                        default-state = "off";
-                        linux,default-trigger = "heartbeat";
-                };
-        };
-
-(Gives a headtbeat trigger as well, skip that if you don't
-want it.)
-
-We have a generic reset-over-gpio driver as well, see
-drivers/power/reset/gpio-poweroff.c
-
-> +++ b/drivers/gpio/gpio-moxart.c
-> @@ -0,0 +1,189 @@
 > +/*
-> + * MOXA ART SoCs GPIO driver.
+> + * Memory layout:
+> + * This chip has four gpio sections, each controls 8 GPIOs.
+> + * Bit 0 in section 0 is GPIO 0, bit 2 in section 1 is GPIO 10.
+> + * Disclaimer: Reverse engineered!
+> + * For more information refer to:
 > + *
-> + * Copyright (C) 2013 Jonas Jensen
-> + *
-> + * Jonas Jensen <jonas.jensen@gmail.com>
-> + *
-> + * This file is licensed under the terms of the GNU General Public
-> + * License version 2.  This program is licensed "as is" without any
-> + * warranty of any kind, whether express or implied.
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/irq.h>
-> +#include <linux/io.h>
-> +#include <linux/gpio.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/pinctrl/consumer.h>
-> +#include <linux/delay.h>
-> +#include <linux/timer.h>
-> +
-> +#define GPIO_DATA_OUT          0x00
-> +#define GPIO_DATA_IN           0x04
-> +#define GPIO_PIN_DIRECTION     0x08
-> +
-> +static void __iomem *moxart_pincontrol_base;
-> +static void __iomem *moxart_gpio_base;
-> +
-> +void moxart_gpio_enable(u32 gpio)
+> http://hackspire.unsads.com/wiki/index.php/Memory-mapped_I/O_ports#90000000_-_General_Purpose_I.2FO_.28GPIO.29
+
+Very ambitious. Impressive!
+
+> + * 0x00-0x3F: Section 0
+> + *     +0x00: Masked interrupt status (read-only)
+> + *     +0x04: R: Interrupt status W: Reset interrupt status
+> + *     +0x08: R: Interrupt mask W: Mask interrupt
+> + *     +0x0C: W: Unmask interrupt (write-only)
+> + *     +0x10: Direction: I/O=1/0
+> + *     +0x14: Output
+> + *     +0x18: Input (read-only)
+> + *     +0x20: R: Sticky interrupts W: Set sticky interrupt
+
+What is a sticky interrupt? Do you mean it is a level IRQ?
+Then it's edge triggered if zero and level triggered if "sticky"
+is set to 1, right?
+
+> +/* Functions for struct gpio_chip */
+> +static int zevio_gpio_get(struct gpio_chip *chip, unsigned pin)
 > +{
-> +       writel(readl(moxart_pincontrol_base) | gpio, moxart_pincontrol_base);
-> +}
+> +       struct zevio_gpio *controller = to_zevio_gpio(chip);
 > +
-> +void moxart_gpio_disable(u32 gpio)
-> +{
-> +       writel(readl(moxart_pincontrol_base) & ~gpio, moxart_pincontrol_base);
-> +}
+> +       /* Only reading allowed, so no spinlock needed */
+> +       uint16_t val = readw(ZEVIO_GPIO(controller, pin, INPUT));
+
+Use just u16 please. uint16_t is some portable C type.
+
+Please replace uint16_t with u16 everywhere.
+
 > +
-> +static int moxart_gpio_request(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       moxart_gpio_enable(1 << offset);
-
-Do this:
-#include <linux/bitops.h>
-
-moxart_gpio_enable(BIT(offset));
-
-Repeat the comment for every similar instance below.
-
-> +static void moxart_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-> +{
-> +       void __iomem *ioaddr = moxart_gpio_base + GPIO_DATA_OUT;
-> +       u32 reg = readl(ioaddr);
-> +
-> +       (value) ?       writel(reg | (1 << offset), ioaddr) :
-> +                       writel(reg & ~(1 << offset), ioaddr);
-
-Isn't that a bit hard to read?
-
-if (value)
-  reg |= BIT(offset);
-else
-  reg &= ~BIT(offset);
-writel(reg, ioaddr);
-
-
-> +static int moxart_gpio_get(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       u32 ret = readl(moxart_gpio_base + GPIO_PIN_DIRECTION);
-> +
-> +       if (ret & (1 << offset))
-> +               ret = readl(moxart_gpio_base + GPIO_DATA_OUT) & (1 << offset);
-> +       else
-> +               ret = readl(moxart_gpio_base + GPIO_DATA_IN) & (1 << offset);
-
+> +       return (val >> ZEVIO_GPIO_BIT(pin)) & 0x1;
 
 Use this construct:
+return !!(val & ZEVIO_GPIO_BIT(pin));
 
-if (ret & BIT(offset)
-   return !!(readl(moxart_gpio_base + GPIO_DATA_OUT) & BIT(offset));
-return !!(readl(moxart_gpio_base + GPIO_DATA_IN) & BIT(offset));
-
-> +       ret = gpiochip_add(&moxart_gpio_chip);
-> +       if (ret)
-> +               dev_err(dev, "%s: gpiochip_add failed\n",
-> +                       dev->of_node->full_name);
-
-You need to bail out here, right? Not continue to do
-dangerous stuff.
-
-> +       gpio_ready_led = of_get_named_gpio(dev->of_node,
-> +                                          "gpio-ready-led", 0);
-> +       if (!gpio_is_valid(gpio_ready_led)) {
-> +               dev_err(dev, "invalid gpio (gpio-ready-led): %d\n",
-> +                       gpio_ready_led);
-> +               return gpio_ready_led;
-> +       }
-> +
-> +       gpio_reset_switch = of_get_named_gpio(dev->of_node,
-> +                                             "gpio-reset-switch", 0);
-> +       if (!gpio_is_valid(gpio_reset_switch)) {
-> +               dev_err(dev, "invalid gpio (gpio-reset-switch): %d\n",
-> +                       gpio_reset_switch);
-> +               return gpio_reset_switch;
-> +       }
-
-Please get rid of this. Use standard drivers as described above.
-
-
-> +static int __init moxart_gpio_init(void)
+> +static void zevio_gpio_set(struct gpio_chip *chip, unsigned pin, int value)
 > +{
-> +       return platform_driver_register(&moxart_gpio_driver);
+> +       struct zevio_gpio *controller = to_zevio_gpio(chip);
+> +       uint16_t val;
+> +
+> +       spin_lock(&controller->lock);
+> +       val = readw(ZEVIO_GPIO(controller, pin, OUTPUT));
+> +       if (value)
+> +               val |= 1<<ZEVIO_GPIO_BIT(pin);
+
+I usually do this:
+
+#include <linux/bitops.h>
+
+val |= BIT(ZEVIO_GPIO_BIT(pin));
+
+> +       else
+> +               val &= ~(1<<ZEVIO_GPIO_BIT(pin));
+
+Dito, sort of...
+
+> +
+> +       writew(val, ZEVIO_GPIO(controller, pin, OUTPUT));
+> +       spin_unlock(&controller->lock);
 > +}
 > +
-> +postcore_initcall(moxart_gpio_init);
+> +static int zevio_gpio_direction_input(struct gpio_chip *chip, unsigned pin)
+> +{
+> +       struct zevio_gpio *controller = to_zevio_gpio(chip);
+> +       uint16_t val;
+> +
+> +       spin_lock(&controller->lock);
+> +
+> +       val = readw(ZEVIO_GPIO(controller, pin, DIRECTION));
+> +       val |= 1<<ZEVIO_GPIO_BIT(pin);
 
-Do you really need to have them this early?
+Same idea as above.
+
+> +       writew(val, ZEVIO_GPIO(controller, pin, DIRECTION));
+> +
+> +       spin_unlock(&controller->lock);
+> +
+> +       return 0;
+> +}
+> +
+> +static int zevio_gpio_direction_output(struct gpio_chip *chip,
+> +                                      unsigned pin, int value)
+> +{
+> +       struct zevio_gpio *controller = to_zevio_gpio(chip);
+> +       uint16_t val;
+> +
+> +       spin_lock(&controller->lock);
+> +       val = readw(ZEVIO_GPIO(controller, pin, OUTPUT));
+> +       if (value)
+> +               val |= 1<<ZEVIO_GPIO_BIT(pin);
+> +       else
+> +               val &= ~(1<<ZEVIO_GPIO_BIT(pin));
+
+And here too.
+
+> +
+> +       writew(val, ZEVIO_GPIO(controller, pin, OUTPUT));
+> +       val = readw(ZEVIO_GPIO(controller, pin, DIRECTION));
+> +       val &= ~(1<<ZEVIO_GPIO_BIT(pin));
+> +       writew(val, ZEVIO_GPIO(controller, pin, DIRECTION));
+
+And here.
+
+> +
+> +       spin_unlock(&controller->lock);
+> +
+> +       return 0;
+> +}
+> +
+> +static int zevio_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
+> +{
+> +       /* Not implemented due to weird lockups */
+> +       return -ENXIO;
+
+Hm. I guess this should be marked TODO: or something.
+
+So when you figure this out you also add an irqchip.
+
+The way this looks I was thinking it could use the
+drivers/gpio/gpio-generic.c driver, but maybe not?
 
 Yours,
 Linus Walleij
