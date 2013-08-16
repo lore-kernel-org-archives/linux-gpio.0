@@ -1,82 +1,92 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] added ams AS3722 gpio support
-Date: Fri, 16 Aug 2013 20:00:19 +0100
-Message-ID: <20130816190019.GR30073@sirena.org.uk>
-References: <1376492358-16005-1-git-send-email-florian.lobmaier@ams.com>
- <CACRpkdbMUz3ujrb-QP4d_Mrc7SxKUsNLOF9_qsBphfqp5nF76w@mail.gmail.com>
- <20130816182052.GP30073@sirena.org.uk>
- <CACRpkdZLuEnYn35GGk-DJSLE64tHzQnRRw-1YmLsC1kcKc+Lcw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9lPOKfY2vCV97ybw"
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 3/3] ARM: nomadik: retire ethernet IRQ request mechanism
+Date: Sat, 17 Aug 2013 01:55:51 +0200
+Message-ID: <1376697351-18918-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:47687 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752373Ab3HPWdW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 18:33:22 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZLuEnYn35GGk-DJSLE64tHzQnRRw-1YmLsC1kcKc+Lcw@mail.gmail.com>
+Received: from mail-lb0-f179.google.com ([209.85.217.179]:39541 "EHLO
+	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753115Ab3HPX4A (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 19:56:00 -0400
+Received: by mail-lb0-f179.google.com with SMTP id v1so1774067lbd.24
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Aug 2013 16:55:58 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Florian Lobmaier <florian.lobmaier@ams.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
+I was a bit picky and did actually define the ethernet GPIO line
+as both a plain GPIO line in one place and as an interrupt line
+in another place - as a GPIO line it would be requested and set
+to input and then left like that.
 
---9lPOKfY2vCV97ybw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Now that the GPIO OF core will request and set as input any GPIO
+line used as interrupt, we can remove this mechanism and delete
+the corresponding device tree node.
 
-On Fri, Aug 16, 2013 at 08:28:08PM +0200, Linus Walleij wrote:
-> On Fri, Aug 16, 2013 at 8:20 PM, Mark Brown <broonie@kernel.org> wrote:
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ arch/arm/boot/dts/ste-nomadik-s8815.dts |  4 ----
+ arch/arm/mach-nomadik/cpu-8815.c        | 32 --------------------------------
+ 2 files changed, 36 deletions(-)
 
-> > It's common to have inline wrappers for the regmap ops which take the
-> > device specific struct and fish the regmap pointer out of it.
+diff --git a/arch/arm/boot/dts/ste-nomadik-s8815.dts b/arch/arm/boot/dts/ste-nomadik-s8815.dts
+index 16c3888..f557feb 100644
+--- a/arch/arm/boot/dts/ste-nomadik-s8815.dts
++++ b/arch/arm/boot/dts/ste-nomadik-s8815.dts
+@@ -67,10 +67,6 @@
+ 
+ 	/* Custom board node with GPIO pins to active etc */
+ 	usb-s8815 {
+-		/* The S8815 is using this very GPIO pin for the SMSC91x IRQs */
+-		ethernet-gpio {
+-			gpios = <&gpio3 8 0x1>;
+-		};
+ 		/* This will bias the MMC/SD card detect line */
+ 		mmcsd-gpio {
+ 			gpios = <&gpio3 16 0x1>;
+diff --git a/arch/arm/mach-nomadik/cpu-8815.c b/arch/arm/mach-nomadik/cpu-8815.c
+index 13e0df9..b5c7244 100644
+--- a/arch/arm/mach-nomadik/cpu-8815.c
++++ b/arch/arm/mach-nomadik/cpu-8815.c
+@@ -158,38 +158,6 @@ static struct fsmc_nand_platform_data cpu8815_nand_data = {
+ };
+ 
+ /*
+- * The SMSC911x IRQ is connected to a GPIO pin, but the driver expects
+- * to simply request an IRQ passed as a resource. So the GPIO pin needs
+- * to be requested by this hog and set as input.
+- */
+-static int __init cpu8815_eth_init(void)
+-{
+-	struct device_node *eth;
+-	int gpio, irq, err;
+-
+-	eth = of_find_node_by_path("/usb-s8815/ethernet-gpio");
+-	if (!eth) {
+-		pr_info("could not find any ethernet GPIO\n");
+-		return 0;
+-	}
+-	gpio = of_get_gpio(eth, 0);
+-	err = gpio_request(gpio, "eth_irq");
+-	if (err) {
+-		pr_info("failed to request ethernet GPIO\n");
+-		return -ENODEV;
+-	}
+-	err = gpio_direction_input(gpio);
+-	if (err) {
+-		pr_info("failed to set ethernet GPIO as input\n");
+-		return -ENODEV;
+-	}
+-	irq = gpio_to_irq(gpio);
+-	pr_info("enabled USB-S8815 ethernet GPIO %d, IRQ %d\n", gpio, irq);
+-	return 0;
+-}
+-device_initcall(cpu8815_eth_init);
+-
+-/*
+  * TODO:
+  * cannot be set from device tree, convert to a proper DT
+  * binding.
+-- 
+1.8.1.4
 
-> I had no clue ... hm this is another side effect of not getting the
-> whole patch set I guess.
-
-Yeah.  I think from a subsystem point of view it's probably best to just
-not worry about this sort of functions and just assume it'll get caught
-in the review of the MFD driver.  If there's regmap helpers for the
-subsystem it's a bit different of course.
-
-> Hmmm I've been irritated about the "v" in "virq" because these
-> interrupt numbers are and have always been Linux interrupt
-> numbers, that they sometimes, on some systems, for the low
-> IRQs, correspond to the hardware IRQ numbers is pure pattern
-> matching and luck.
-
-> They are no more "virtual" than any other IRQ numbers in the
-> kernel. They are all "virtual" in a sense.
-
-> Well nevermind that, it's probably just another try at tilting
-> windmills to get it changed anyway.
-
-Yeah, I agree with you there.  If I'd seen irqdomain when I wrote the
-function I'd probably have called it _create_mapping() but as it was I
-wanted to distinguish which of the IRQ number spaces was being looked up
-in.  Possibly more trouble than it's worth to do the rename now though.
-
---9lPOKfY2vCV97ybw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSDnbAAAoJELSic+t+oim9mWgP/1rILhGER9RgC8Q9LkCwYSnP
-e+UcjuJ/0OlykOyli8mgp+NI3eGV6n7WZqSavm/6UYV9c1BeMGbEtR1J+ld7jKNR
-pPrhKMiNsvegz2Gxrelll07+38h0QdqTI7+j3vpIQUZpfGj8RVP8aVW3VQkldyH0
-hGOcZokxNAe38yDVMLD9w+q/tT3BErcMkw27MluIl6QuMFRcYGLCdn6LajCP8DZW
-aSs0sSbOnzcdrz+avo51xfyfK262bS4WUYa1J4XILc7ciIw2LFDTa3NfvOHSN3Tr
-S+bI6KcFuznZqhNbXJMJ/bIbJJ50Bt5fJAngRxa1AFESckdrxFX4gknC9ekdXYtv
-lYdlvIL7Dcnbsy77qvqomRziKTuqYcvpltyxhVHa0D+nGNu1ilkbMxc4kC5vKWfs
-ScFFm0Els0D/ERvWtHhi3bCjUXck6iotMtaTqYuCkaybP7YJuC005YdY/r8bBuvg
-zwyTISxjSTTMvDFDJsB7LTmKr0MOCACsIeiOI86VkCMxWNOSZKAWSBi7hdzuGsgJ
-qvHtLzzOmq4ESuxBhn9Tlrykyl5zF5kTT0PrHr5a8VJAHCiUbcaumORuR37g5OFf
-5GuoI5oF5ZRnM1zlPnziblz9x7qsT1JyOS+4BhTZGVUdMhvV1St1i21IN7IqAEC1
-nPyl3UdSV8VYNbIDJJZG
-=T95E
------END PGP SIGNATURE-----
-
---9lPOKfY2vCV97ybw--
