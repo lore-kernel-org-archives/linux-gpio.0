@@ -1,79 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: pcf857x: Add OF support
-Date: Fri, 16 Aug 2013 17:00:29 +0200
-Message-ID: <CACRpkdarBoKge2Z5wFW46KAsd0N942TYzpoxCRt0AmcU8ad0Rw@mail.gmail.com>
-References: <1375123145-31648-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<1375123145-31648-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Subject: Re: [PATCH] gpio: (gpio-pca953x) move header to
+ linux/platform_data/
+Date: Fri, 16 Aug 2013 11:02:20 -0400 (EDT)
+Message-ID: <82440653.410050.1376665340121.JavaMail.root@mail>
+References: <CACRpkdZdeVNtJSmc6Lr6j=oO9FLsAvjyrwhYS0j4OoAEhxCN9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:36429 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752280Ab3HPPA3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 11:00:29 -0400
-Received: by mail-oa0-f44.google.com with SMTP id l20so2374023oag.3
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Aug 2013 08:00:29 -0700 (PDT)
-In-Reply-To: <1375123145-31648-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from mail.savoirfairelinux.com ([209.172.62.77]:54654 "EHLO
+	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753375Ab3HPPCV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 11:02:21 -0400
+In-Reply-To: <CACRpkdZdeVNtJSmc6Lr6j=oO9FLsAvjyrwhYS0j4OoAEhxCN9g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@savoirfairelinux.com
 
-On Mon, Jul 29, 2013 at 8:39 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
+Hi Linus,
 
-> Add DT bindings for the pcf857x-compatible chips and parse the device
-> tree node in the driver.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-pcf857x.txt      | 69 ++++++++++++++++++++++
+You wrote:
+> But:
+> 
+> >  drivers/gpio/gpio-pca953x.c                 |  2 +-
+> (...)
+> > diff --git a/drivers/gpio/gpio-pca953x.c
+> > b/drivers/gpio/gpio-pca953x.c
+> > index 426c51d..8804aec 100644
+> > --- a/drivers/gpio/gpio-pca953x.c
+> > +++ b/drivers/gpio/gpio-pca953x.c
+> > @@ -18,7 +18,7 @@
+> >  #include <linux/irq.h>
+> >  #include <linux/irqdomain.h>
+> >  #include <linux/i2c.h>
+> > -#include <linux/i2c/pca953x.h>
+> > +#include <linux/platform_data/pca953x.h>
+> 
+> Why does the GPIO driver need platform data from the
+> I2C driver???
+> 
+> Can't this just be made to go away?
 
-Do you think you can get one of the DT bindings mainatiners to ACK
-this part?
+I didn't dig that much in the driver, but I cannot imagine
+another way to pass, for instance, the setup callback.
 
-I am told we need to get more strict on binding review.
+What would be a good alternative for you?
 
-It will be subject to timeout if it takes to long and you made a reasonable
-effort to get their consent though.
-
-> +  - interrupt-controller: Identifies the node as an interrupt controller.
-> +  - #interrupt-cells: Number of cells to encode an interrupt source, shall be 2.
-> +  - interrupt-parent: phandle of the parent interrupt controller.
-> +  - interrupts: Interrupt specifier for the controllers interrupt.
-
-So this is another one of of those GPIO controller that are
-also interrupt controllers.
-
-So it will be subject to the same dilemma as the OMAP
-expander that has caused so much stir :-(
-
-Can you provide your input in the discussion regarding my
-patch with the subject:
-"RFC: interrupt consistency check for OF GPIO IRQs"
-
-This patch will affect this driver also, in a very direct way, by just
-stealing and setting as input any GPIO line used for an IRQ.
-
-> +Please refer to gpio.txt in this directory for details of the common GPIO
-> +bindings used by client devices.
-> +
-> +Example: PCF8575 I/O expander node
-> +
-> +       pcf8575: gpio@20 {
-> +               compatible = "nxp,pcf8575";
-> +               reg = <0x20>;
-> +               interrupt-parent = <&irqpin2>;
-> +               interrupts = <3 0>;
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-
-Not gpio-controller?
-
-Apart from that it looks good, please help out with the
-gpio-controller vs interrupt-controller dilemma if you can
-because it's getting really frustrating...
-
-Yours,
-Linus Walleij
+Regards,
+Vivien
