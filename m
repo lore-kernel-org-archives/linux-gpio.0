@@ -1,112 +1,150 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/3] pinctrl: nomadik: queue pinctrl_request_gpio()
-Date: Sat, 17 Aug 2013 01:54:38 +0200
-Message-ID: <1376697278-18839-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] RFC: interrupt consistency check for OF GPIO IRQs
+Date: Sat, 17 Aug 2013 02:16:11 +0200
+Message-ID: <CACRpkdZqtn80rkpGokpjwoeEWTx+f_ug1zqOHBA1SeSz9Oj7mA@mail.gmail.com>
+References: <1376387195-27469-1-git-send-email-larsi@wh2.tu-dresden.de>
+	<1955836.AOXICuVgjP@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:49877 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754440Ab3HQABL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 20:01:11 -0400
-Received: by mail-lb0-f174.google.com with SMTP id w20so1793539lbh.33
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Aug 2013 17:01:10 -0700 (PDT)
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:60889 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756739Ab3HQAQM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2013 20:16:12 -0400
+Received: by mail-oa0-f49.google.com with SMTP id n10so2970594oag.8
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Aug 2013 17:16:11 -0700 (PDT)
+In-Reply-To: <1955836.AOXICuVgjP@flatron>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Lars Poeschel <larsi@wh2.tu-dresden.de>, Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-Instead of deferring if pinctrl_request_gpio() returns
--EPROBE_DEFER, queue the GPIO number and request it later,
-when the pinctrl part of the driver probes.
+On Thu, Aug 15, 2013 at 11:53 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-This is because we will otherwise have a circular dependency
-between the GPIO and pinctrl parts of the driver: the new
-auto-reservation of IRQ pins from the DT code will attempt
-to request a GPIO line as soon as the gpiochip is added,
-but this calls pinctrl_request_gpio() which count on the
-pinctrl backend being present, and the pinctrl backend will
-not probe until all the GPIO blocks have probed. So we
-get locked up in a circular loop unless we do something
-like this.
+>> +             /* Check if we have an IRQ parent, else continue */
+>> +             irq_parent = of_irq_find_parent(child);
+>> +             if (!irq_parent)
+>> +                     continue;
+>
+> You can probably put the irq_parent node here to not duplicate calls in
+> both code paths below.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/pinctrl-nomadik.c | 48 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+But...
 
-diff --git a/drivers/pinctrl/pinctrl-nomadik.c b/drivers/pinctrl/pinctrl-nomadik.c
-index 4a1cfdc..ee87e73 100644
---- a/drivers/pinctrl/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/pinctrl-nomadik.c
-@@ -1010,6 +1010,31 @@ static int nmk_gpio_init_irq(struct nmk_gpio_chip *nmk_chip)
- 
- /* I/O Functions */
- 
-+struct nmk_gpio_req {
-+        struct list_head node;
-+	int gpio;
-+};
-+
-+static LIST_HEAD(nmk_queued_gpio_requests);
-+
-+static void nmk_pinctrl_process_queued_gpio_requests(void)
-+{
-+	struct list_head *node, *tmp;
-+
-+        list_for_each_safe(node, tmp, &nmk_queued_gpio_requests) {
-+                struct nmk_gpio_req *req =
-+			list_entry(node, struct nmk_gpio_req, node);
-+		int ret;
-+		ret = pinctrl_request_gpio(req->gpio);
-+		if (ret)
-+			pr_err("failed to request queued GPIO %d\n", req->gpio);
-+		else
-+			pr_info("requested queued GPIO %d\n", req->gpio);
-+                list_del(node);
-+                kfree(req);
-+        }
-+}
-+
- static int nmk_gpio_request(struct gpio_chip *chip, unsigned offset)
- {
- 	/*
-@@ -1017,8 +1042,28 @@ static int nmk_gpio_request(struct gpio_chip *chip, unsigned offset)
- 	 * parameter does not matter for this controller.
- 	 */
- 	int gpio = chip->base + offset;
-+	int ret;
-+
-+	ret = pinctrl_request_gpio(gpio);
-+	if (ret == -EPROBE_DEFER) {
-+		/*
-+		 * This may happen during system startup: we request a GPIO
-+		 * for being used for IRQ when registering the GPIO controller
-+		 * for example, but the pin controller is not yet online.
-+		 * Store the request on a list to be done when the
-+		 * pin controller comes online. In our driver the GPIO
-+		 * blocks must always probe before the pin controller.
-+		 */
-+		struct nmk_gpio_req *req = kzalloc(sizeof(struct nmk_gpio_req), GFP_KERNEL);
- 
--	return pinctrl_request_gpio(gpio);
-+		if (!req)
-+			return -ENOMEM;
-+		req->gpio = gpio;
-+		list_add_tail(&req->node, &nmk_queued_gpio_requests);
-+		pr_info("queueing pinctrl_request_gpio(%d)\n", req->gpio);
-+		ret = 0;
-+	}
-+	return ret;
- }
- 
- static void nmk_gpio_free(struct gpio_chip *chip, unsigned offset)
-@@ -2224,6 +2269,7 @@ static int nmk_pinctrl_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, npct);
- 	dev_info(&pdev->dev, "initialized Nomadik pin control driver\n");
-+	nmk_pinctrl_process_queued_gpio_requests();
- 
- 	return 0;
- }
--- 
-1.8.1.4
+>> +             /* Is it so that this very GPIO chip is the parent? */
+>> +             if (irq_parent != gcn) {
 
+I am using it here in this comparison.
+
+>> +                     of_node_put(irq_parent);
+>> +                     continue;
+>> +             }
+>> +             of_node_put(irq_parent);
+
+Then here I put it.
+
+>> +             num_irq = of_irq_count(gcn);
+>> +             for (i = 0; i < num_irq; i++) {
+>> +                     /*
+>> +                      * The first cell is always the local IRQ number,
+> and
+>> +                      * this corresponds to the GPIO line offset for a
+> GPIO
+>> +                      * chip.
+>> +                      *
+>> +                      * FIXME: take interrupt-cells into account here.
+>
+> This is the biggest problem of this patch. It assumes that there is only a
+> single and shared GPIO/interrupt specification scheme, which might not be
+> true.
+>
+> First of all, almost all interrupt bindings have an extra, semi-generic
+> flags field as last cell in the specifier. Now there can be more than one
+> cell used to index GPIOs and interrupts, for example:
+>
+>         interrupts = <1 3 8>
+>
+> which could mean: bank 1, pin 3, low level triggered.
+
+You are right, but:
+Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+Specifies how to handle the one-celled and two-celled versions.
+
+And nothing else is specified. So it's not overly complex.
+
+But we have to read out the #interrupt-cells specifier from the
+controller I guess, but since we the gcn pointer we can do this
+easily. (I'll fix...)
+
+> I think you may need to reuse a lot of the code that normally parses the
+> interrupts property, i.e. the irq_of_parse_and_map() path, which will then
+> give you the hwirq index inside your irq chip, which may (or may not) be
+> the same as the GPIO offset inside your GPIO chip.
+
+We don't need to map it, and that's the hard part of that code.
+We just need to add some code to check the number of
+cells.
+
+> If you're unlucky enough to spot a controller that uses completely
+> different numbering schemes for GPIOs and interrupts, then you're probably
+> screwed, because only the driver for this controller can know the mapping
+> between them.
+
+But the binding documents state how this shall be done, as illustrated.
+Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+Documentation/devicetree/bindings/gpio/gpio.txt
+
+>> +                             if (ret)
+>> +                                     pr_err("gpiolib OF: could not
+> request IRQ GPIO %d (%d)\n",
+>> +                                            gc->base + offset, offset);
+>
+> Would some kind of error handling be a bad idea here? Like, for example,
+> marking this IRQ as invalid or something among these lines.
+
+Sorry I'm not following. The GPIO core has no clue of how the
+driver implements its irqchip and no handle on it so it cannot
+go in and mark any interrupts.
+
+>> +                             ret = gpio_direction_input(gc->base +
+> offset);
+>> +                             if (ret)
+>> +                                     pr_err("gpiolib OF: could not set
+> IRQ GPIO %d (%d) as input\n",
+>> +                                            gc->base + offset, offset);
+>
+> I'm not sure if this is the correct action if someone already requested
+> the GPIO before and probably already set it up with their own set of
+> parameters (not necessarily the same as enforced by calling
+> gpio_direction_input()).
+
+What do you mean with " someone already requested the GPIO
+before" here?
+
+This code is run right after the gpiochip is added, noone has a
+chance of requesting anything before this happens. This is the
+general idea: steal all GPIOs marked to be used as interrupts
+so no other consumer can get at them.
+
+>> +                     } else {
+>> +                             gpio_free(gc->base + offset);
+>
+> What if the request failed? This would mean calling gpio_free() on a GPIO
+> previously requested by someone else.
+
+Noone can request before us, as stated.
+
+
+>> +#define of_gpiochip_request_irq_lines(np, gc) \
+>> +     of_gpiochip_x_irq_lines(np, gc, 1)
+>> +
+>> +#define of_gpiochip_free_irq_lines(np, gc) \
+>> +     of_gpiochip_x_irq_lines(np, gc, 0)
+>
+> Aha, so the x is a wildcard. Fine, although it makes the code slightly
+> less reader-friendly IMHO.
+
+I renamed it a bit.
+
+Yours,
+Linus Walleij
