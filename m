@@ -1,84 +1,91 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] RFC: interrupt consistency check for OF GPIO IRQs
-Date: Mon, 19 Aug 2013 13:35:22 -0600
-Message-ID: <5212737A.1030904@wwwdotorg.org>
-References: <1376387195-27469-1-git-send-email-larsi@wh2.tu-dresden.de> <1955836.AOXICuVgjP@flatron> <CACRpkdZqtn80rkpGokpjwoeEWTx+f_ug1zqOHBA1SeSz9Oj7mA@mail.gmail.com> <9241298.URG9CVQFmF@flatron>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 3/3] gpio: pcf857x: Add OF support
+Date: Tue, 20 Aug 2013 00:52:09 +0200
+Message-ID: <5668808.mMAAfXl8cc@avalon>
+References: <1375123145-31648-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1375123145-31648-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CACRpkdarBoKge2Z5wFW46KAsd0N942TYzpoxCRt0AmcU8ad0Rw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9241298.URG9CVQFmF@flatron>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, mark.rutland@arm.com, ian.campbell@citrix.com, galak@codeaurora.org, pawel.moll@arm.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:41917 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751222Ab3HSWu5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Aug 2013 18:50:57 -0400
+In-Reply-To: <CACRpkdarBoKge2Z5wFW46KAsd0N942TYzpoxCRt0AmcU8ad0Rw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 08/17/2013 03:59 AM, Tomasz Figa wrote:
-> [Ccing DT maintainers, as they may have some ideas as well]
-> 
-> On Saturday 17 of August 2013 02:16:11 Linus Walleij wrote:
->> On Thu, Aug 15, 2013 at 11:53 AM, Tomasz Figa <tomasz.figa@gmail.com>  wrote:
-...
+Hi Linus,
 
->>> This is the biggest problem of this patch. It assumes that there is
->>> only a single and shared GPIO/interrupt specification scheme, which
->>> might not be true.
->>>
->>> First of all, almost all interrupt bindings have an extra,
->>> semi-generic
->>> flags field as last cell in the specifier. Now there can be more than
->>> one> 
->>> cell used to index GPIOs and interrupts, for example:
->>>         interrupts = <1 3 8>
->>>
->>> which could mean: bank 1, pin 3, low level triggered.
->>
->> You are right, but:
->> Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
->> Specifies how to handle the one-celled and two-celled versions.
->>
->> And nothing else is specified. So it's not overly complex.
-> 
-> The documentation states that:
-> 
-> 	It is the responsibility of the interrupt controller's binding to 
-> 	define the length and format of the interrupt specifier.
-> 
-> Then two _example_ formats follow, preceded by following statement:
-> 
-> 	The following two variants are commonly used:
-> 
-> I already know a variant which uses three (Exynos combiner) and four 
-> (S3C24xx interrupt controller) cells. They are not pin controllers, but 
-> you can't stop anyone from adopting similar or even more complex 
-> specifiers formats for their hardware, especially when it matches more 
-> closely the interrupt/pin layout used in their hardware.
+On Friday 16 August 2013 17:00:29 Linus Walleij wrote:
+> On Mon, Jul 29, 2013 at 8:39 PM, Laurent Pinchart wrote:
+> > Add DT bindings for the pcf857x-compatible chips and parse the device
+> > tree node in the driver.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  .../devicetree/bindings/gpio/gpio-pcf857x.txt      | 69 +++++++++++++++++
+>
+> Do you think you can get one of the DT bindings mainatiners to ACK this
+> part?
 
-Yes, the binding doc interrupts.txt mentioned above does not specify
-*the* one-/two-cell format, but *a* common/possible one- and two-cell
-format. There's no strict reason that all interrupt controllers have to
-use those exact formats. The only way to parse interrupt specifiers is
-to ask the driver for the the interrupt controller code to parse the
-property.
+They're already CC'ed. I suppose vacations played a role in the lack of reply. 
+I'd like to avoid having to switch to stalker mode ;-)
 
-The same goes for GPIOs.
-
->> But we have to read out the #interrupt-cells specifier from the
->> controller I guess, but since we the gcn pointer we can do this
->> easily. (I'll fix...)
->>
->>> I think you may need to reuse a lot of the code that normally parses
->>> the interrupts property, i.e. the irq_of_parse_and_map() path, which
->>> will then give you the hwirq index inside your irq chip, which may
->>> (or may not) be the same as the GPIO offset inside your GPIO chip.
->>
->> We don't need to map it, and that's the hard part of that code.
->> We just need to add some code to check the number of
->> cells.
+> I am told we need to get more strict on binding review.
 > 
-> Not really. Only the interrupt controller's driver (or rather its .xlate() 
-> callback) knows how to map all the cells into hwirq index. So we must at 
-> least get the irq domain associated with the node and call its .xlate() 
-> callback with requested count of cells.
+> It will be subject to timeout if it takes to long and you made a reasonable
+> effort to get their consent though.
+> 
+> > +  - interrupt-controller: Identifies the node as an interrupt controller.
+> > +  - #interrupt-cells: Number of cells to encode an interrupt source,
+> > shall be 2.
+> > +  - interrupt-parent: phandle of the parent interrupt controller.
+> > +  - interrupts: Interrupt specifier for the controllers interrupt.
+>
+> So this is another one of of those GPIO controller that are also interrupt
+> controllers.
+> 
+> So it will be subject to the same dilemma as the OMAP expander that has
+> caused so much stir :-(
+> 
+> Can you provide your input in the discussion regarding my patch with the
+> subject:
+> "RFC: interrupt consistency check for OF GPIO IRQs"
 
-Yes.
+Done.
+
+> This patch will affect this driver also, in a very direct way, by just
+> stealing and setting as input any GPIO line used for an IRQ.
+> 
+> > +Please refer to gpio.txt in this directory for details of the common GPIO
+> > +bindings used by client devices.
+> > +
+> > +Example: PCF8575 I/O expander node
+> > +
+> > +       pcf8575: gpio@20 {
+> > +               compatible = "nxp,pcf8575";
+> > +               reg = <0x20>;
+> > +               interrupt-parent = <&irqpin2>;
+> > +               interrupts = <3 0>;
+> > +               interrupt-controller;
+> > +               #interrupt-cells = <2>;
+> > +       };
+> 
+> Not gpio-controller?
+
+I've fixed that in my tree already, it seems I forgot to repost. I will do so 
+now.
+
+> Apart from that it looks good, please help out with the gpio-controller vs
+> interrupt-controller dilemma if you can because it's getting really
+> frustrating...
+
+-- 
+Regards,
+
+Laurent Pinchart
