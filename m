@@ -1,56 +1,122 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] RFC: interrupt consistency check for OF GPIO IRQs
-Date: Thu, 22 Aug 2013 01:00:14 +0200
-Message-ID: <CACRpkdZLZv7LA8rN-MyUaB9jYMyxb1Sw0LyqFHUAec1GnHzE+g@mail.gmail.com>
-References: <1376387195-27469-1-git-send-email-larsi@wh2.tu-dresden.de>
-	<9241298.URG9CVQFmF@flatron>
-	<5212737A.1030904@wwwdotorg.org>
-	<201308211521.21129.poeschel@lemonage.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Wed, 21 Aug 2013 17:10:27 -0600
+Message-ID: <521548E3.6010703@wwwdotorg.org>
+References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <1507189.CRWvzVJqTV@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:64255 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753113Ab3HUXAO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Aug 2013 19:00:14 -0400
-Received: by mail-ob0-f174.google.com with SMTP id wd6so2099557obb.5
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Aug 2013 16:00:14 -0700 (PDT)
-In-Reply-To: <201308211521.21129.poeschel@lemonage.de>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:34015 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752826Ab3HUXKd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Aug 2013 19:10:33 -0400
+In-Reply-To: <1507189.CRWvzVJqTV@flatron>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars Poeschel <poeschel@lemonage.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, galak@codeaurora.org, Pawel Moll <pawel.moll@arm.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Lars Poeschel <larsi@wh2.tu-dresden.de>, poeschel@lemonage.de, grant.likely@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, ian.campbell@citrix.com, galak@codeaurora.org, pawel.moll@arm.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-On Wed, Aug 21, 2013 at 3:21 PM, Lars Poeschel <poeschel@lemonage.de> wrote:
-> On Monday 19 August 2013 at 21:35:22, Stephen Warren wrote:
->> On 08/17/2013 03:59 AM, Tomasz Figa wrote:
-
->> > Then two _example_ formats follow, preceded by following statement:
->> >     The following two variants are commonly used:
->> > I already know a variant which uses three (Exynos combiner) and four
->> > (S3C24xx interrupt controller) cells. They are not pin controllers,
->> > but you can't stop anyone from adopting similar or even more complex
->> > specifiers formats for their hardware, especially when it matches
->> > more closely the interrupt/pin layout used in their hardware.
+On 08/21/2013 03:49 PM, Tomasz Figa wrote:
+> Hi Lars, Linus,
+> 
+> On Wednesday 21 of August 2013 15:38:54 Lars Poeschel wrote:
+>> From: Linus Walleij <linus.walleij@linaro.org>
 >>
->> Yes, the binding doc interrupts.txt mentioned above does not specify
->> *the* one-/two-cell format, but *a* common/possible one- and two-cell
->> format. There's no strict reason that all interrupt controllers have to
->> use those exact formats. The only way to parse interrupt specifiers is
->> to ask the driver for the the interrupt controller code to parse the
->> property.
->
-> I agree with you. I also understand the interrupts.txt binding doc as it
-> lists only a common/possible cell format, but it's purpose is not to
-> restrict it to this.
->
-> I send an updated patch, that uses the drivers xlate function to parse the
-> interrupt property in a few minutes.
+>> Currently the kernel is ambigously treating GPIOs and interrupts
+>> from a GPIO controller: GPIOs and interrupts are treated as
+>> orthogonal. This unfortunately makes it unclear how to actually
+>> retrieve and request a GPIO line or interrupt from a GPIO
+>> controller in the device tree probe path.
+>>
+>> In the non-DT probe path it is clear that the GPIO number has to
+>> be passed to the consuming device, and if it is to be used as
+>> an interrupt, the consumer shall performa a gpio_to_irq() mapping
+>> and request the resulting IRQ number.
+>>
+>> In the DT boot path consumers may have been given one or more
+>> interrupts from the interrupt-controller side of the GPIO chip
+>> in an abstract way, such that the driver is not aware of the
+>> fact that a GPIO chip is backing this interrupt, and the GPIO
+>> side of the same line is never requested with gpio_request().
+>> A typical case for this is ethernet chips which just take some
+>> interrupt line which may be a "hard" interrupt line (such as an
+>> external interrupt line from an SoC) or a cascaded interrupt
+>> connected to a GPIO line.
+>>
+>> This has the following undesired effects:
+>>
+>> - The GPIOlib subsystem is not aware that the line is in use
+>>   and willingly lets some other consumer perform gpio_request()
+>>   on it, leading to a complex resource conflict if it occurs.
+>>
+>> - The GPIO debugfs file claims this GPIO line is "free".
+>>
+>> - The line direction of the interrupt GPIO line is not
+>>   explicitly set as input, even though it is obvious that such
+>>   a line need to be set up in this way, often making the system
+>>   depend on boot-on defaults for this kind of settings.
 
-Thanks that you take this on a spin, I've been busy...
+That last point should simply be taken care of by the IRQ driver in the
+relevant callbacks.
 
-(I also agree with the other comments here, let's see if we can
-figure this out!)
+>> To solve this dilemma, perform an interrupt consistency check
+>> when adding a GPIO chip: if the chip is both gpio-controller and
+>> interrupt-controller, walk all children of the device tree,
 
-Yours,
-Linus Walleij
+It seems a little odd to solve this only for DT. What about the non-DT case?
+
+>> check if these in turn reference the interrupt-controller, and
+>> if they do, loop over the interrupts used by that child and
+>> perform gpio_request() and gpio_direction_input() on these,
+>> making them unreachable from the GPIO side.
+
+What about bindings that require a GPIO to be specified, yet don't allow
+an IRQ to be specified, and the driver internally does perform
+gpio_to_irq() on it? I don't think one can detect that case.
+
+Isn't it better to have the IRQ chip's .request() operation convert the
+IRQ to a GPIO if relevant (which it can do since it has specific
+knowledge of the HW) and take ownership of the GPIO at that level?
+
+That would cover both the exceptions I pointed out above.
+
+I vaguely recall seeing patches along those lines before, but there must
+have been some other problem pointed out...
+
+>> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+
+>> +static void of_gpio_scan_irq_lines(const struct device_node *const
+
+>> +		for (i = 0; i < intlen; i += intsize) {
+>> +			/*
+>> +			 * Find out the local IRQ number. This corresponds to
+>> +			 * the GPIO line offset for a GPIO chip.
+> 
+> I'm still not convinced that this assumption is correct. This code will
+> behave erraticaly in cases where it is not true, requesting innocent GPIO
+> pins.
+> 
+>> +			 */
+>> +			if (irq_domain && irq_domain->ops->xlate)
+>> +				irq_domain->ops->xlate(irq_domain, gcn,
+>> +						       intspec + i, intsize,
+>> +						       &hwirq, &type);
+>> +			else
+>> +				hwirq = intspec[0];
+> 
+> Is it a correct fallback when irq_domain is NULL?
+
+Indeed this fallback is dangerous. The /only/ way to parse an IRQ
+specifier is with binding-specific knowledge, which is obtained by
+calling irq_domain->ops->xlate(). If the IRQ domain can't be found, this
+operation simply has to be deferred; we can't just guess and hope.
+
+> 
+>> +
+>> +			hwirq = be32_to_cpu(hwirq);
+> 
+> Is this conversion correct? I don't think hwirq could be big endian here
+> (unless running on a big endian CPU).
+
+I think that should be inside the else branch above.
