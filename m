@@ -1,122 +1,49 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Wed, 21 Aug 2013 17:10:27 -0600
-Message-ID: <521548E3.6010703@wwwdotorg.org>
-References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <1507189.CRWvzVJqTV@flatron>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v7 1/7] ARM: common: vic: Parse interrupt and resume masks
+ from device tree
+Date: Thu, 22 Aug 2013 01:19:34 +0200
+Message-ID: <CACRpkdboi3MUiUSDuhjwsjzVH3y9bYf9VpyfWK6PCkV-0fUZzw@mail.gmail.com>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
+	<1377120111-25601-2-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:34015 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752826Ab3HUXKd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Aug 2013 19:10:33 -0400
-In-Reply-To: <1507189.CRWvzVJqTV@flatron>
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:36128 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753035Ab3HUXTg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Aug 2013 19:19:36 -0400
+Received: by mail-oa0-f54.google.com with SMTP id o6so2159220oag.41
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Aug 2013 16:19:34 -0700 (PDT)
+In-Reply-To: <1377120111-25601-2-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Lars Poeschel <larsi@wh2.tu-dresden.de>, poeschel@lemonage.de, grant.likely@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, ian.campbell@citrix.com, galak@codeaurora.org, pawel.moll@arm.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
 
-On 08/21/2013 03:49 PM, Tomasz Figa wrote:
-> Hi Lars, Linus,
-> 
-> On Wednesday 21 of August 2013 15:38:54 Lars Poeschel wrote:
->> From: Linus Walleij <linus.walleij@linaro.org>
->>
->> Currently the kernel is ambigously treating GPIOs and interrupts
->> from a GPIO controller: GPIOs and interrupts are treated as
->> orthogonal. This unfortunately makes it unclear how to actually
->> retrieve and request a GPIO line or interrupt from a GPIO
->> controller in the device tree probe path.
->>
->> In the non-DT probe path it is clear that the GPIO number has to
->> be passed to the consuming device, and if it is to be used as
->> an interrupt, the consumer shall performa a gpio_to_irq() mapping
->> and request the resulting IRQ number.
->>
->> In the DT boot path consumers may have been given one or more
->> interrupts from the interrupt-controller side of the GPIO chip
->> in an abstract way, such that the driver is not aware of the
->> fact that a GPIO chip is backing this interrupt, and the GPIO
->> side of the same line is never requested with gpio_request().
->> A typical case for this is ethernet chips which just take some
->> interrupt line which may be a "hard" interrupt line (such as an
->> external interrupt line from an SoC) or a cascaded interrupt
->> connected to a GPIO line.
->>
->> This has the following undesired effects:
->>
->> - The GPIOlib subsystem is not aware that the line is in use
->>   and willingly lets some other consumer perform gpio_request()
->>   on it, leading to a complex resource conflict if it occurs.
->>
->> - The GPIO debugfs file claims this GPIO line is "free".
->>
->> - The line direction of the interrupt GPIO line is not
->>   explicitly set as input, even though it is obvious that such
->>   a line need to be set up in this way, often making the system
->>   depend on boot-on defaults for this kind of settings.
+On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-That last point should simply be taken care of by the IRQ driver in the
-relevant callbacks.
+> +++ b/Documentation/devicetree/bindings/arm/vic.txt
+> @@ -18,6 +18,9 @@ Required properties:
+>  Optional properties:
+>
+>  - interrupts : Interrupt source for parent controllers if the VIC is nested.
+> +- interrupt-mask : Bit mask of valid interrupt sources (defaults to all valid)
+> +- wakeup-mask : Bit mask of interrupt sources that can wake up the system
+> +  (defaults to all allowed)
 
->> To solve this dilemma, perform an interrupt consistency check
->> when adding a GPIO chip: if the chip is both gpio-controller and
->> interrupt-controller, walk all children of the device tree,
+The "interrupt-mask" is called "valid-mask" on the FPGA IRQ controller
+See
+Documentation/devicetree/bindings/arm/versatile-fpga-irq.txt
 
-It seems a little odd to solve this only for DT. What about the non-DT case?
+Example:
 
->> check if these in turn reference the interrupt-controller, and
->> if they do, loop over the interrupts used by that child and
->> perform gpio_request() and gpio_direction_input() on these,
->> making them unreachable from the GPIO side.
+                reg = <0x10000040 0x100>;
+                clear-mask = <0xffffffff>;
+                valid-mask = <0x00000007>;
 
-What about bindings that require a GPIO to be specified, yet don't allow
-an IRQ to be specified, and the driver internally does perform
-gpio_to_irq() on it? I don't think one can detect that case.
+Please use the same name.
 
-Isn't it better to have the IRQ chip's .request() operation convert the
-IRQ to a GPIO if relevant (which it can do since it has specific
-knowledge of the HW) and take ownership of the GPIO at that level?
+(wakeup-mask is fine).
 
-That would cover both the exceptions I pointed out above.
-
-I vaguely recall seeing patches along those lines before, but there must
-have been some other problem pointed out...
-
->> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-
->> +static void of_gpio_scan_irq_lines(const struct device_node *const
-
->> +		for (i = 0; i < intlen; i += intsize) {
->> +			/*
->> +			 * Find out the local IRQ number. This corresponds to
->> +			 * the GPIO line offset for a GPIO chip.
-> 
-> I'm still not convinced that this assumption is correct. This code will
-> behave erraticaly in cases where it is not true, requesting innocent GPIO
-> pins.
-> 
->> +			 */
->> +			if (irq_domain && irq_domain->ops->xlate)
->> +				irq_domain->ops->xlate(irq_domain, gcn,
->> +						       intspec + i, intsize,
->> +						       &hwirq, &type);
->> +			else
->> +				hwirq = intspec[0];
-> 
-> Is it a correct fallback when irq_domain is NULL?
-
-Indeed this fallback is dangerous. The /only/ way to parse an IRQ
-specifier is with binding-specific knowledge, which is obtained by
-calling irq_domain->ops->xlate(). If the IRQ domain can't be found, this
-operation simply has to be deferred; we can't just guess and hope.
-
-> 
->> +
->> +			hwirq = be32_to_cpu(hwirq);
-> 
-> Is this conversion correct? I don't think hwirq could be big endian here
-> (unless running on a big endian CPU).
-
-I think that should be inside the else branch above.
+Yours,
+Linus Walleij
