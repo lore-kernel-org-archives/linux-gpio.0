@@ -1,39 +1,87 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v7 3/7] gpio: samsung: Skip initialization if device tree is present
-Date: Thu, 22 Aug 2013 10:06:46 +0200
-Message-ID: <3452017.UPhKO6xNO5@flatron>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1377120111-25601-4-git-send-email-tomasz.figa@gmail.com> <CACRpkda2ZjPm4nEeDujPWSDCNLk4mr9izPvhqNKx5urVAg_Azg@mail.gmail.com>
+From: Lars Poeschel <poeschel@lemonage.de>
+Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Thu, 22 Aug 2013 11:01:30 +0200
+Message-ID: <201308221101.30316.poeschel@lemonage.de>
+References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <1507189.CRWvzVJqTV@flatron> <521548E3.6010703@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bk0-f50.google.com ([209.85.214.50]:60573 "EHLO
-	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752280Ab3HVIGw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Aug 2013 04:06:52 -0400
-In-Reply-To: <CACRpkda2ZjPm4nEeDujPWSDCNLk4mr9izPvhqNKx5urVAg_Azg@mail.gmail.com>
+Received: from smtp1.goneo.de ([212.90.139.80]:37264 "EHLO smtp1.goneo.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752077Ab3HVJBj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 22 Aug 2013 05:01:39 -0400
+In-Reply-To: <521548E3.6010703@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, grant.likely@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, ian.campbell@citrix.com, galak@codeaurora.org, pawel.moll@arm.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-On Thursday 22 of August 2013 01:21:25 Linus Walleij wrote:
-> On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa <tomasz.figa@gmail.com> 
-wrote:
-> > Since this driver does not handle GPIO on device tree enabled
-> > platforms
-> > any more, it should be bypassed whenever device tree is available, to
-> > not conflict with the new pinctrl-samsung driver.
+On Thursday 22 August 2013 at 01:10:27, Stephen Warren wrote:
+> On 08/21/2013 03:49 PM, Tomasz Figa wrote:
+> >> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> >> 
+> >> +static void of_gpio_scan_irq_lines(const struct device_node *const
+> >> 
+> >> +		for (i = 0; i < intlen; i += intsize) {
+> >> +			/*
+> >> +			 * Find out the local IRQ number. This corresponds to
+> >> +			 * the GPIO line offset for a GPIO chip.
 > > 
-> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > I'm still not convinced that this assumption is correct. This code
+> > will behave erraticaly in cases where it is not true, requesting
+> > innocent GPIO pins.
+
+Do you have an idea how we can destroy your doubts?
+Either irq_chips nor irq_domains provide some sort of translation function 
+for this.
+Is there a driver in the kernel that has different gpio- vs. irq-namespaces 
+where I can have a look at? How does platform code solve this translation? 
+The irq_to_gpio functions in include/linux/gpio.h seem deprecated. They 
+just return -EINVAL.
+For me it seems, that there is no such device inside the kernel yet. 
+Correct me if I'm wrong. If such a device comes to surface, we're in 
+trouble. We will need some device-specific translation function then.
+Is it the time to introduce an additional pointer for such a function now 
+and nobody uses it? Or wait until such a device arises and introduce the 
+pointer then?
+
+> >> +			 */
+> >> +			if (irq_domain && irq_domain->ops->xlate)
+> >> +				irq_domain->ops->xlate(irq_domain, gcn,
+> >> +						       intspec + i, intsize,
+> >> +						       &hwirq, &type);
+> >> +			else
+> >> +				hwirq = intspec[0];
+> > 
+> > Is it a correct fallback when irq_domain is NULL?
 > 
-> This seems like something I should apply to the GPIO tree
-> right now, shall I?
+> Indeed this fallback is dangerous. The /only/ way to parse an IRQ
+> specifier is with binding-specific knowledge, which is obtained by
+> calling irq_domain->ops->xlate(). If the IRQ domain can't be found, this
+> operation simply has to be deferred; we can't just guess and hope.
 
-Would be nice, but since this patch is a dependency for rest of this 
-series and there are no other dependencies on GPIO tree, it might be 
-easier to just let Kukjin take all the patches with required Acks.
+At least the of irq mapping code make this assumption also: 
+kernel/irq/irqdomain.c:483
+It should be valid for us here too.
+The additional assumption that I made is that if irq_domain == NULL (not 
+only xlate), that we can use intspec[0] either.
 
-Best regards,
-Tomasz
+> >> +
+> >> +			hwirq = be32_to_cpu(hwirq);
+> > 
+> > Is this conversion correct? I don't think hwirq could be big endian
+> > here (unless running on a big endian CPU).
+> 
+> I think that should be inside the else branch above.
 
+No it has to be in both branches as it is. Device tree data is big endian. 
+The conversion is converting big endian data (from device tree in both 
+cases) to cpu endianess and not coverting TO big endian.
+My test machine is a arm in little endian mode and it provided wrong values 
+if I did not do the conversion.
+What I am a bit unsure about is if the xlate function is expecting the 
+intspec pointer to point to big endian device tree data or data already 
+converted to cpu endianess. For the standard xlate functions 
+irq_domain_xlate_[one|two|onetwo]cell it does not matter.
