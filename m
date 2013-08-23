@@ -1,50 +1,128 @@
-From: Lars Poeschel <poeschel@lemonage.de>
-Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Fri, 23 Aug 2013 11:51:18 +0200
-Message-ID: <201308231151.18075.poeschel@lemonage.de>
-References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <CACRpkdbVYfBS5L+0ejfbTBwPbD9HFB1kV8qnS7DdSydRccxDmg@mail.gmail.com> <52167A35.2010109@wwwdotorg.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: New driver for LSI ZEVIO SoCs
+Date: Fri, 23 Aug 2013 16:09:16 +0200
+Message-ID: <CACRpkdbUoOP9DH59=MQ71tKGJ+OLFd0E7-iz7ZSM4owsTxcWWw@mail.gmail.com>
+References: <op.w1c50xgmu7prd4@fabians-laptop.fritz.box>
+	<CACRpkdbLSDiSAGiZ_PpJganrSoar+2fFPaEjbu_L1Ezx5V8DMg@mail.gmail.com>
+	<op.w1w4bifku7prd4@fabians-laptop.fritz.box>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp2-1.goneo.de ([212.90.139.83]:47987 "EHLO smtp2-1.goneo.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752943Ab3HWJv0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 23 Aug 2013 05:51:26 -0400
-In-Reply-To: <52167A35.2010109@wwwdotorg.org>
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:45507 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753388Ab3HWOJR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 10:09:17 -0400
+Received: by mail-oa0-f49.google.com with SMTP id n10so787992oag.36
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Aug 2013 07:09:16 -0700 (PDT)
+In-Reply-To: <op.w1w4bifku7prd4@fabians-laptop.fritz.box>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, galak@codeaurora.org, Pawel Moll <pawel.moll@arm.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+To: Fabian Vogt <fabian@ritter-vogt.de>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thursday 22 August 2013 at 22:53:09, Stephen Warren wrote:
-> On 08/21/2013 05:27 PM, Linus Walleij wrote:
-> > On Thu, Aug 22, 2013 at 1:10 AM, Stephen Warren <swarren@wwwdotorg.org> 
-wrote:
-> >>> On Wednesday 21 of August 2013 15:38:54 Lars Poeschel wrote:
-> >>>> To solve this dilemma, perform an interrupt consistency check
-> >>>> when adding a GPIO chip: if the chip is both gpio-controller and
-> >>>> interrupt-controller, walk all children of the device tree,
-> >> 
-> >> It seems a little odd to solve this only for DT. What about the
-> >> non-DT case?
-> > 
-> > DT is the hardware configuration system that lets you request
-> > the same resource in two ways, i.e. it allows one and the same
-> > node to be both gpio-controller and interrupt-controller, and
-> > start handing out the same line as both GPIO and IRQ
-> > independently.
-> 
-> Huh? What stops systems using board files and platform data from having
-> this issue?
+On Fri, Aug 16, 2013 at 6:34 PM, Fabian Vogt <fabian@ritter-vogt.de> wrote:
+> On Fri, Aug 16, 2013 at 4:46 PM, Linus Walleij <linus.walleij@linaro.org>
+> wrote:
 
-I am not 100% sure, Linus knows better.
-I think nothing stops them from having this issue, but board files are 
-gentle and request the GPIO before doing gpio_to_irq, because they know 
-that they are using a gpio based interrupt.
+>> I want an ACK from one of the DT bindings maintainers for this
+>> portion of the driver ideally. (It looks all right to me.)
+>
+> Any ideas which mail addresses I should add to CC:?
 
-You can read the whole story here:
-http://www.mail-archive.com/linux-omap@vger.kernel.org/msg91405.html
-Things get interesting after the first mail from Alexander Holler, who is 
-the first having a problem with the patch in the link.
+No. devicetree@vger.kernel.org is the place.
+
+But if nothing happens you might want to ask Stephen Warren.
+
+>>> +config GPIO_ZEVIO
+>>> +       bool "LSI ZEVIO SoC memory mapped GPIOs"
+>>> +       depends on ARCH_NSPIRE
+>>
+>>
+>> Can't this appear in some other SoC?
+>
+> The problem is, no documents about this SoC are available at all.
+> Everything we know about this chip has been found out by disassembling the
+> nspire software (nucleus PLUS), so I have no idea, but probably not.
+> Also, it can't be tested during bootup, as the only platform we can test it
+> on
+> boots from an internal read-only flash, which loads boot2,
+> which itself is exploitable to start linux.
+> The entire hardware has already been initialized before booting linux.
+
+The thing is that if we don't put in the dependency, we can get
+some nice compile coverage on a few different compilers and
+platforms.
+
+>>> + * 0x00-0x3F: Section 0
+>>> + *     +0x00: Masked interrupt status (read-only)
+>>> + *     +0x04: R: Interrupt status W: Reset interrupt status
+>>> + *     +0x08: R: Interrupt mask W: Mask interrupt
+>>> + *     +0x0C: W: Unmask interrupt (write-only)
+>>> + *     +0x10: Direction: I/O=1/0
+>>> + *     +0x14: Output
+>>> + *     +0x18: Input (read-only)
+>>> + *     +0x20: R: Sticky interrupts W: Set sticky interrupt
+>>
+>>
+>> What is a sticky interrupt? Do you mean it is a level IRQ?
+>> Then it's edge triggered if zero and level triggered if "sticky"
+>> is set to 1, right?
+>
+> It's how the GPIO controller signals the VIC.
+> On sticky it keeps the IRQ high until it has been handled (W to 0x4),
+
+This is what is called a level interrupt.
+
+So please update the terminology to match the common
+one.
+
+> if not sticky, it sets the IRQ line at the same state as the GPIO pin is.
+> If GPIO high => IRQ high, if GPIO gets low again => IRQ low, which is not
+> VERY useful..
+
+Hm doesn't seem like an interrupt at all, rather some
+test operation to test the IRQ line. Well whatever...
+
+>> Use just u16 please. uint16_t is some portable C type.
+>>
+>> Please replace uint16_t with u16 everywhere.
+>
+> It's used VERY often and I couldn't find any coding style document which
+> prefers u16..
+
+There is no consensus around this.
+It is up to the subsystem maintainer to decide this I think.
+
+
+>>> +static int zevio_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
+>>> +{
+>>> +       /* Not implemented due to weird lockups */
+>>> +       return -ENXIO;
+>>
+>>
+>> Hm. I guess this should be marked TODO: or something.
+>>
+>> So when you figure this out you also add an irqchip.
+>>
+>> The way this looks I was thinking it could use the
+>> drivers/gpio/gpio-generic.c driver, but maybe not?
+>
+> Would be great, but it doesn't support multiple registers (4*8 GPIOs),
+> so I would have to register 4 of them. Then, they had to share one
+> interrupt,
+> which would have to be implemented seperately (or not at all) and then it
+> has
+> to be working with device tree without any extra (struct platform_)data.
+> I prefer two bitops (pin&7 and pin>>3), which are present anyways (for IRQs)
+> over an array of four gpio_chips.
+
+OK I buy this, but you know you can reuse only part of the
+generic MMIO driver, and do not have to use all of it?
+
+> I'll resubmit the improved version as V4 after you told me which devicetree
+> mail addresses I should add.
+
+OK thanks.
+
+Yours,
+Linus Walleij
