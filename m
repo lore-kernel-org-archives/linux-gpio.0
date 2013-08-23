@@ -1,43 +1,49 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] gpio: New driver for LSI ZEVIO SoCs
-Date: Fri, 23 Aug 2013 13:40:19 -0600
-Message-ID: <5217BAA3.4080202@wwwdotorg.org>
-References: <op.w1c50xgmu7prd4@fabians-laptop.fritz.box> <CACRpkdbLSDiSAGiZ_PpJganrSoar+2fFPaEjbu_L1Ezx5V8DMg@mail.gmail.com> <op.w1w4bifku7prd4@fabians-laptop.fritz.box> <CACRpkdbUoOP9DH59=MQ71tKGJ+OLFd0E7-iz7ZSM4owsTxcWWw@mail.gmail.com>
+Subject: Re: [PATCH V3] gpio: New driver for LSI ZEVIO SoCs
+Date: Fri, 23 Aug 2013 13:43:47 -0600
+Message-ID: <5217BB73.8050907@wwwdotorg.org>
+References: <1375879989-18606-1-git-send-email-fabian@ritter-vogt.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:54170 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:37605 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756284Ab3HWTkX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 15:40:23 -0400
-In-Reply-To: <CACRpkdbUoOP9DH59=MQ71tKGJ+OLFd0E7-iz7ZSM4owsTxcWWw@mail.gmail.com>
+	with ESMTP id S1754170Ab3HWTnu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 15:43:50 -0400
+In-Reply-To: <1375879989-18606-1-git-send-email-fabian@ritter-vogt.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabian Vogt <fabian@ritter-vogt.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Fabian Vogt <fabian@ritter-vogt.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, grant.likely@linaro.org, pawel.moll@arm.com
 
-On 08/23/2013 08:09 AM, Linus Walleij wrote:
-> On Fri, Aug 16, 2013 at 6:34 PM, Fabian Vogt <fabian@ritter-vogt.de> wrote:
->> On Fri, Aug 16, 2013 at 4:46 PM, Linus Walleij <linus.walleij@linaro.org>
->> wrote:
-> 
->>> I want an ACK from one of the DT bindings maintainers for this
->>> portion of the driver ideally. (It looks all right to me.)
->>
->> Any ideas which mail addresses I should add to CC:?
-> 
-> No. devicetree@vger.kernel.org is the place.
-> 
-> But if nothing happens you might want to ask Stephen Warren.
+On 08/07/2013 06:53 AM, Fabian Vogt wrote:
+> This driver supports the GPIO controller found in LSI ZEVIO SoCs.
+> It has been successfully tested on a TI nspire CX calculator.
 
-The full list of CC's is:
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt b/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
 
-OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-M:      Rob Herring <rob.herring@calxeda.com>
-M:      Pawel Moll <pawel.moll@arm.com>
-M:      Mark Rutland <mark.rutland@arm.com>
-M:      Stephen Warren <swarren@wwwdotorg.org>
-M:      Ian Campbell <ian.campbell@citrix.com>
-L:      devicetree@vger.kernel.org
+> +Zevio GPIO controller
+> +
+> +Required properties:
+> +- compatible = "lsi,zevio-gpio"
+
+Is there only one zevio chip, or a series? Is "zevio" the full name of
+the chip, including any version number?
+
+> +- reg = <BASEADDR SIZE>
+> +- #gpio-cells = <2>
+> +- gpio-controller;
+> +
+> +Optional:
+> +- #ngpios = <32>: Number of GPIOs. Defaults to 32 if absent
+
+Perhaps one can derive that from the compatible value? The fact this
+property exists implies there's more than one zevio chip, so perhaps
+each should have an explicit compatible value described above?
+
+Is the GPIO block not also an interrupt source/controller? I see the
+following in the patch, and references to some IRQ registers...
+
+> +	select GENERIC_IRQ_CHIP
 
