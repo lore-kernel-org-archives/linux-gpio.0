@@ -1,37 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: mcp23s08: rename the device tree property
-Date: Fri, 23 Aug 2013 21:10:00 +0200
-Message-ID: <CACRpkdZMsBynLohhNw=XyzpYns9E8QVksVJYkv3dcRJ2JHWLnA@mail.gmail.com>
-References: <1377165378-9589-1-git-send-email-larsi@wh2.tu-dresden.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] gpio: New driver for LSI ZEVIO SoCs
+Date: Fri, 23 Aug 2013 13:40:19 -0600
+Message-ID: <5217BAA3.4080202@wwwdotorg.org>
+References: <op.w1c50xgmu7prd4@fabians-laptop.fritz.box> <CACRpkdbLSDiSAGiZ_PpJganrSoar+2fFPaEjbu_L1Ezx5V8DMg@mail.gmail.com> <op.w1w4bifku7prd4@fabians-laptop.fritz.box> <CACRpkdbUoOP9DH59=MQ71tKGJ+OLFd0E7-iz7ZSM4owsTxcWWw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:54099 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756092Ab3HWTKB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 15:10:01 -0400
-Received: by mail-ob0-f177.google.com with SMTP id f8so1072288obp.36
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Aug 2013 12:10:01 -0700 (PDT)
-In-Reply-To: <1377165378-9589-1-git-send-email-larsi@wh2.tu-dresden.de>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:54170 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756284Ab3HWTkX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 15:40:23 -0400
+In-Reply-To: <CACRpkdbUoOP9DH59=MQ71tKGJ+OLFd0E7-iz7ZSM4owsTxcWWw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars Poeschel <larsi@wh2.tu-dresden.de>
-Cc: Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Rob Landley <rob@landley.net>, Arnd Bergmann <arnd@arndb.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Fabian Vogt <fabian@ritter-vogt.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, Aug 22, 2013 at 11:56 AM, Lars Poeschel <larsi@wh2.tu-dresden.de> wrote:
+On 08/23/2013 08:09 AM, Linus Walleij wrote:
+> On Fri, Aug 16, 2013 at 6:34 PM, Fabian Vogt <fabian@ritter-vogt.de> wrote:
+>> On Fri, Aug 16, 2013 at 4:46 PM, Linus Walleij <linus.walleij@linaro.org>
+>> wrote:
+> 
+>>> I want an ACK from one of the DT bindings maintainers for this
+>>> portion of the driver ideally. (It looks all right to me.)
+>>
+>> Any ideas which mail addresses I should add to CC:?
+> 
+> No. devicetree@vger.kernel.org is the place.
+> 
+> But if nothing happens you might want to ask Stephen Warren.
 
-> From: Lars Poeschel <poeschel@lemonage.de>
->
-> The device tree property should be more descriptive.
-> microchip seems more reasonable than mcp. As there are no
-> in tree users of this property, so the rename can still be
-> done without pain.
->
-> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+The full list of CC's is:
 
-So do I apply this to the GPIO tree now or what?
+OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+M:      Rob Herring <rob.herring@calxeda.com>
+M:      Pawel Moll <pawel.moll@arm.com>
+M:      Mark Rutland <mark.rutland@arm.com>
+M:      Stephen Warren <swarren@wwwdotorg.org>
+M:      Ian Campbell <ian.campbell@citrix.com>
+L:      devicetree@vger.kernel.org
 
-Are the DT custodians happy?
-
-Yours,
-Linus Walleij
