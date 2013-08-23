@@ -1,34 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] gpio: pcf857x: Add OF support
-Date: Fri, 23 Aug 2013 19:54:03 +0200
-Message-ID: <CACRpkdYvP6yCiQMQFpzaerrcvFug4rNWALPSDvkTidmz8_PovQ@mail.gmail.com>
-References: <1376953494-9684-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<1376953494-9684-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v7 3/7] gpio: samsung: Skip initialization if device tree
+ is present
+Date: Fri, 23 Aug 2013 20:11:02 +0200
+Message-ID: <CACRpkdZX96YUpCn8_vkFsZQK2q5asHtxYtaHR2y1hDK_QQs6iA@mail.gmail.com>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
+	<1377120111-25601-4-git-send-email-tomasz.figa@gmail.com>
+	<CACRpkda2ZjPm4nEeDujPWSDCNLk4mr9izPvhqNKx5urVAg_Azg@mail.gmail.com>
+	<3452017.UPhKO6xNO5@flatron>
+	<1c9a01ce9f1e$473b58b0$d5b20a10$@org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:50398 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755730Ab3HWRyF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 13:54:05 -0400
-Received: by mail-ob0-f171.google.com with SMTP id tb18so986627obb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Aug 2013 10:54:04 -0700 (PDT)
-In-Reply-To: <1376953494-9684-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1c9a01ce9f1e$473b58b0$d5b20a10$@org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Aug 20, 2013 at 1:04 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
+On Thu, Aug 22, 2013 at 11:59 AM, Kukjin Kim <kgene@kernel.org> wrote:
+> Tomasz Figa wrote:
+>> On Thursday 22 of August 2013 01:21:25 Linus Walleij wrote:
+>> > On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa <tomasz.figa@gmail.com>
+>> wrote:
+>> > > Since this driver does not handle GPIO on device tree enabled
+>> > > platforms
+>> > > any more, it should be bypassed whenever device tree is available, to
+>> > > not conflict with the new pinctrl-samsung driver.
+>> > >
+>> > > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> >
+>> > This seems like something I should apply to the GPIO tree
+>> > right now, shall I?
+>>
+>> Would be nice, but since this patch is a dependency for rest of this
+>> series and there are no other dependencies on GPIO tree, it might be
+>> easier to just let Kukjin take all the patches with required Acks.
+>>
+> Oh, I didn't see any dependencies...but if so, Linus do you agree with
+> Tomasz' opinion?
 
-> Add DT bindings for the pcf857x-compatible chips and parse the device
-> tree node in the driver.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-I'm holding this until I get some reaction from the device tree reviewers,
-or until I get unpatient, whichever comes first. It looks good to me.
+Yes please merge it through the Samsung tree.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
