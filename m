@@ -1,80 +1,48 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Fri, 23 Aug 2013 14:55:41 -0600
-Message-ID: <5217CC4D.2080905@wwwdotorg.org>
-References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <CACRpkdZgFMH07_W2eUWsgsUMXAJA1paEimAds=-XeViZaYySLA@mail.gmail.com> <5217BD74.5030801@wwwdotorg.org> <1551491.9oAMd0jnLN@flatron>
+Subject: Re: [PATCH v8 1/7] irqchip: vic: Parse interrupt and resume masks
+ from device tree
+Date: Fri, 23 Aug 2013 16:11:18 -0600
+Message-ID: <5217DE06.3070005@wwwdotorg.org>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1377120111-25601-2-git-send-email-tomasz.figa@gmail.com> <1500724.07LRpFtgcx@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:44964 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:53996 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754586Ab3HWUzu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 16:55:50 -0400
-In-Reply-To: <1551491.9oAMd0jnLN@flatron>
+	with ESMTP id S1756047Ab3HWWLX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 18:11:23 -0400
+In-Reply-To: <1500724.07LRpFtgcx@flatron>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
 
-On 08/23/2013 01:55 PM, Tomasz Figa wrote:
-> On Friday 23 of August 2013 13:52:20 Stephen Warren wrote:
->> On 08/23/2013 12:45 PM, Linus Walleij wrote:
->>> On Thu, Aug 22, 2013 at 11:10 PM, Stephen Warren 
-> <swarren@wwwdotorg.org> wrote:
->>>> On 08/21/2013 05:36 PM, Linus Walleij wrote:
->>>>> On Thu, Aug 22, 2013 at 1:10 AM, Stephen Warren
->>>>> <swarren@wwwdotorg.org> wrote: [Me]
->>>>>
->>>>>>>> check if these in turn reference the interrupt-controller, and
->>>>>>>> if they do, loop over the interrupts used by that child and
->>>>>>>> perform gpio_request() and gpio_direction_input() on these,
->>>>>>>> making them unreachable from the GPIO side.
->>>>>>
->>>>>> What about bindings that require a GPIO to be specified, yet don't
->>>>>> allow an IRQ to be specified, and the driver internally does
->>>>>> perform gpio_to_irq() on it? I don't think one can detect that
->>>>>> case.
->>>>>
->>>>> This is still allowed. Consumers that prefer to have a GPIO
->>>>> passed and convert it to IRQ by that call can still do so,
->>>>> they will know what they're doing and will not cause the
->>>>> double-command situation that we're trying to solve.
->>>>
->>>> Why not? There are certainly drivers in the kernel which request a
->>>> GPIO
->>>> as both a GPIO and as an (dual-edge) interrupt, so that they can read
->>>> the GPIO input whenever the IRQ goes off, in order to determine the
->>>> pin
->>>> state. This is safer against high-latency or lost interrupts.
->>>
->>> Yes? Are we talking past each other here?
->>>
->>> This is a perfectly OK thing to do as long as it is done like
->>> this:
->>>
->>> request_gpio(gpio);
->>> gpio_direction_input(gpio);
->>> request_irq(gpio_to_irq(gpio));
->>
->> But I'm not aware that there's a rule saying it's illegal to:
->>
->> request_irq(gpio_to_irq(gpio));
->> request_gpio(gpio);
->> gpio_direction_input(gpio);
+On 08/22/2013 05:22 PM, Tomasz Figa wrote:
+> This patch extends vic_of_init to parse valid interrupt sources
+> and resume sources masks from device tree.
 > 
-> Well, at least on Samsung platforms it is illegal to do so, because 
-> gpio_direction_input() would override the interrupt+input function set by 
-> setup done in request_irq() with normal input function, thus breaking the 
-> interrupt.
+> If mask values are not specified in device tree, all sources
+> are assumed to be valid, as before this patch.
 
-Assuming that Linux has no general rule that requires a specific order,
-isn't that simply a bug in the Samsung platforms? After all, a
-completely generic cross-platform driver, which could touch both GPIO
-and IRQ, would be written to any Linux-imposed rules, not any
-Samsung-platform-imposed rules.
+Can you explain further why the VIC needs this information up-front?
+Presumably it can accumulate it as devices request interrupts.
 
-> We are still to implement some sanity check to disallow (or ignore) this 
-> if the pin is already configured as an interrupt.
+> diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
 
-OK good, so it sounds like this is a temporary issue.
+> +- valid-mask : Bit mask of valid interrupt sources (defaults to all valid)
+
+Until a device requests an interrupt, it can be left disabled. Once
+something does request it, it gets enabled. If nothing requests it, it
+never gets enabled. Doesn't the result of that logic end up being the
+same thing as valid-mask represents? The only difference would be if
+some device requests an invalid interrupt source, but then why not just
+fix the interrupt client instead of adding this property to reject the
+request?
+
+> +- wakeup-mask : Bit mask of interrupt sources that can wake up the system
+> +  (defaults to all allowed)
+
+Shouldn't drivers for end-devices request interrupts, and then set wake
+enable on those interrupts, which would then trickle up the IRQ chain to
+tell the VIC which interrupts to enable wakeup on?
