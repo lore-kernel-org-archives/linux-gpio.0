@@ -1,38 +1,96 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 3/3] gpio: pcf857x: Add OF support
-Date: Sat, 24 Aug 2013 01:40:13 +0200
-Message-ID: <1519389.gne8KHTcP5@avalon>
-References: <1376953494-9684-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1376953494-9684-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CACRpkdYvP6yCiQMQFpzaerrcvFug4rNWALPSDvkTidmz8_PovQ@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH v9 1/7] irqchip: vic: Parse interrupt and resume masks from device tree
+Date: Sat, 24 Aug 2013 01:54:51 +0200
+Message-ID: <2280792.12A0UohYGl@flatron>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1377120111-25601-2-git-send-email-tomasz.figa@gmail.com> <1500724.07LRpFtgcx@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYvP6yCiQMQFpzaerrcvFug4rNWALPSDvkTidmz8_PovQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:46594 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754678Ab3HWXy7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 19:54:59 -0400
+In-Reply-To: <1500724.07LRpFtgcx@flatron>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
 
-Hi Linus,
+This patch extends vic_of_init to parse valid interrupt sources
+and resume sources masks from device tree.
 
-On Friday 23 August 2013 19:54:03 Linus Walleij wrote:
-> On Tue, Aug 20, 2013 at 1:04 AM, Laurent Pinchart wrote:
-> > Add DT bindings for the pcf857x-compatible chips and parse the device
-> > tree node in the driver.
-> > 
-> > Signed-off-by: Laurent Pinchart
-> > <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> I'm holding this until I get some reaction from the device tree reviewers,
-> or until I get unpatient, whichever comes first.
+If mask values are not specified in device tree, all sources
+are assumed to be valid, as before this patch.
 
-Will you get unpatient before the end of the v3.12 merge window ? ;-)
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
+---
+ Documentation/devicetree/bindings/arm/vic.txt | 12 ++++++++++++
+ drivers/irqchip/irq-vic.c                     |  7 ++++++-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-> It looks good to me.
+Changes since v8:
+ - Renamed wakeup-mask property to valid-wakeup-mask.
+ - Extended description of valid-mask and valid-wakeup-mask properties.
 
-Thanks.
-
+diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
+index 266716b..dd52721 100644
+--- a/Documentation/devicetree/bindings/arm/vic.txt
++++ b/Documentation/devicetree/bindings/arm/vic.txt
+@@ -18,6 +18,15 @@ Required properties:
+ Optional properties:
+ 
+ - interrupts : Interrupt source for parent controllers if the VIC is nested.
++- valid-mask : A one cell big bit mask of valid interrupt sources. Each bit
++  represents single interrupt source, starting from source 0 at LSb and ending
++  at source 31 at MSb. A bit that is set means that the source is wired and
++  clear means otherwise. If unspecified, defaults to all valid.
++- valid-wakeup-mask : A one cell big bit mask of interrupt sources that can be
++  configured as wake up source for the system. Order of bits is the same as for
++  valid-mask property. A set bit means that this interrupt source can be
++  configured as a wake up source for the system. If unspecied, defaults to all
++  interrupt sources configurable as wake up sources.
+ 
+ Example:
+ 
+@@ -26,4 +35,7 @@ Example:
+ 		interrupt-controller;
+ 		#interrupt-cells = <1>;
+ 		reg = <0x60000 0x1000>;
++
++		valid-mask = <0xffffff7f>;
++		valid-wakeup-mask = <0x0000ff7f>;
+ 	};
+diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
+index 2bbb004..8e21ae0 100644
+--- a/drivers/irqchip/irq-vic.c
++++ b/drivers/irqchip/irq-vic.c
+@@ -469,6 +469,8 @@ void __init vic_init(void __iomem *base, unsigned int irq_start,
+ int __init vic_of_init(struct device_node *node, struct device_node *parent)
+ {
+ 	void __iomem *regs;
++	u32 interrupt_mask = ~0;
++	u32 wakeup_mask = ~0;
+ 
+ 	if (WARN(parent, "non-root VICs are not supported"))
+ 		return -EINVAL;
+@@ -477,10 +479,13 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
+ 	if (WARN_ON(!regs))
+ 		return -EIO;
+ 
++	of_property_read_u32(node, "valid-mask", &interrupt_mask);
++	of_property_read_u32(node, "valid-wakeup-mask", &wakeup_mask);
++
+ 	/*
+ 	 * Passing 0 as first IRQ makes the simple domain allocate descriptors
+ 	 */
+-	__vic_init(regs, 0, ~0, ~0, node);
++	__vic_init(regs, 0, interrupt_mask, wakeup_mask, node);
+ 
+ 	return 0;
+ }
 -- 
-Regards,
+1.8.3.2
 
-Laurent Pinchart
+
