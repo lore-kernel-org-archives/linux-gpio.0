@@ -1,59 +1,51 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
 Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Fri, 23 Aug 2013 13:48:43 -0600
-Message-ID: <5217BC9B.4060906@wwwdotorg.org>
-References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <CACRpkdYUeyVZcN1-jOzg0zo4eSJK1S+M5fJ0FcMsgwaPKW4Obw@mail.gmail.com> <52167E5D.6060802@wwwdotorg.org> <201308231140.44923.poeschel@lemonage.de>
+Date: Fri, 23 Aug 2013 13:49:53 -0600
+Message-ID: <5217BCE1.4080101@wwwdotorg.org>
+References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <1507189.CRWvzVJqTV@flatron> <521548E3.6010703@wwwdotorg.org> <CACRpkdbVYfBS5L+0ejfbTBwPbD9HFB1kV8qnS7DdSydRccxDmg@mail.gmail.com> <52167A35.2010109@wwwdotorg.org> <CACRpkdYAjKhKC+Aaa4iQBXsJ46mgOta_SVztVyB=HZCGJD-b2g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:50354 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:60679 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755517Ab3HWTss (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 15:48:48 -0400
-In-Reply-To: <201308231140.44923.poeschel@lemonage.de>
+	with ESMTP id S1754474Ab3HWTt6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 15:49:58 -0400
+In-Reply-To: <CACRpkdYAjKhKC+Aaa4iQBXsJ46mgOta_SVztVyB=HZCGJD-b2g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars Poeschel <poeschel@lemonage.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, galak@codeaurora.org, Pawel Moll <pawel.moll@arm.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-On 08/23/2013 03:40 AM, Lars Poeschel wrote:
-> On Thursday 22 August 2013 at 23:10:53, Stephen Warren wrote:
->> On 08/21/2013 05:36 PM, Linus Walleij wrote:
->>> On Thu, Aug 22, 2013 at 1:10 AM, Stephen Warren
->>> <swarren@wwwdotorg.org> wrote: [Me]
+On 08/23/2013 12:38 PM, Linus Walleij wrote:
+> On Thu, Aug 22, 2013 at 10:53 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 08/21/2013 05:27 PM, Linus Walleij wrote:
+>>> On Thu, Aug 22, 2013 at 1:10 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>>>> On Wednesday 21 of August 2013 15:38:54 Lars Poeschel wrote:
 >>>
->>>>>> check if these in turn reference the interrupt-controller, and
->>>>>> if they do, loop over the interrupts used by that child and
->>>>>> perform gpio_request() and gpio_direction_input() on these,
->>>>>> making them unreachable from the GPIO side.
+>>>>>> To solve this dilemma, perform an interrupt consistency check
+>>>>>> when adding a GPIO chip: if the chip is both gpio-controller and
+>>>>>> interrupt-controller, walk all children of the device tree,
 >>>>
->>>> What about bindings that require a GPIO to be specified, yet don't
->>>> allow an IRQ to be specified, and the driver internally does perform
->>>> gpio_to_irq() on it? I don't think one can detect that case.
+>>>> It seems a little odd to solve this only for DT. What about the non-DT case?
 >>>
->>> This is still allowed. Consumers that prefer to have a GPIO
->>> passed and convert it to IRQ by that call can still do so,
->>> they will know what they're doing and will not cause the
->>> double-command situation that we're trying to solve.
+>>> DT is the hardware configuration system that lets you request
+>>> the same resource in two ways, i.e. it allows one and the same
+>>> node to be both gpio-controller and interrupt-controller, and
+>>> start handing out the same line as both GPIO and IRQ
+>>> independently.
 >>
->> Why not? There are certainly drivers in the kernel which request a GPIO
->> as both a GPIO and as an (dual-edge) interrupt, so that they can read
->> the GPIO input whenever the IRQ goes off, in order to determine the pin
->> state. This is safer against high-latency or lost interrupts.
+>> Huh? What stops systems using board files and platform data from having
+>> this issue?
 > 
-> This is the point! They REQUEST the GPIO. They can then do whatever they 
-> like with this GPIO then, even additionally use it as interrupt.
-> In the devicetree case the interrupts are not requested. This is what we 
-> are trying to address with the patch. The device using this interrupt has 
-> no idea where this interrupt comes from. Is it a gpio-interrupt or not? 
-> Does it have to request a gpio before using this interrupt or not?
+> It can't be stopped but I consider it a bug if they do, as the proper
+> way to handle such GPIO lines is the sequence:
+> 
+> request_gpio(gpio);
+> request_irq(gpio_to_irq(gpio));
 
-If the kernel automatically requests the GPIO because it's referenced as
-an interrupt then surely if the driver also requests it, then it will
-fail, because the GPIO is already requested. Or, is there an explicit
-check for that?
+Back in the old days of ARM board files, there were many boards that
+didn't do this. I guess that doesn't make it any less of a bug, but it
+certainly implies to me that solving this in a way that caters to that
+bug being present will be a lot more useful.
 
-Is the problem you're trying to solve really an actual problem? I'm not
-convinced it's necessary for the GPIO to show up as requested if the pin
-is used as an IRQ input?
