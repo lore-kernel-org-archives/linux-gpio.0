@@ -1,62 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Fri, 23 Aug 2013 20:45:49 +0200
-Message-ID: <CACRpkdZgFMH07_W2eUWsgsUMXAJA1paEimAds=-XeViZaYySLA@mail.gmail.com>
-References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de>
-	<1507189.CRWvzVJqTV@flatron>
-	<521548E3.6010703@wwwdotorg.org>
-	<CACRpkdYUeyVZcN1-jOzg0zo4eSJK1S+M5fJ0FcMsgwaPKW4Obw@mail.gmail.com>
-	<52167E5D.6060802@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] gpio: mcp23s08: rename the device tree property
+Date: Fri, 23 Aug 2013 21:10:00 +0200
+Message-ID: <CACRpkdZMsBynLohhNw=XyzpYns9E8QVksVJYkv3dcRJ2JHWLnA@mail.gmail.com>
+References: <1377165378-9589-1-git-send-email-larsi@wh2.tu-dresden.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:55943 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755539Ab3HWSpu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 14:45:50 -0400
-Received: by mail-oa0-f48.google.com with SMTP id o17so1180050oag.21
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Aug 2013 11:45:49 -0700 (PDT)
-In-Reply-To: <52167E5D.6060802@wwwdotorg.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:54099 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756092Ab3HWTKB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 15:10:01 -0400
+Received: by mail-ob0-f177.google.com with SMTP id f8so1072288obp.36
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Aug 2013 12:10:01 -0700 (PDT)
+In-Reply-To: <1377165378-9589-1-git-send-email-larsi@wh2.tu-dresden.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+To: Lars Poeschel <larsi@wh2.tu-dresden.de>
+Cc: Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Rob Landley <rob@landley.net>, Arnd Bergmann <arnd@arndb.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Aug 22, 2013 at 11:10 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 08/21/2013 05:36 PM, Linus Walleij wrote:
->> On Thu, Aug 22, 2013 at 1:10 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->> [Me]
->>>>> check if these in turn reference the interrupt-controller, and
->>>>> if they do, loop over the interrupts used by that child and
->>>>> perform gpio_request() and gpio_direction_input() on these,
->>>>> making them unreachable from the GPIO side.
->>>
->>> What about bindings that require a GPIO to be specified, yet don't allow
->>> an IRQ to be specified, and the driver internally does perform
->>> gpio_to_irq() on it? I don't think one can detect that case.
->>
->> This is still allowed. Consumers that prefer to have a GPIO
->> passed and convert it to IRQ by that call can still do so,
->> they will know what they're doing and will not cause the
->> double-command situation that we're trying to solve.
+On Thu, Aug 22, 2013 at 11:56 AM, Lars Poeschel <larsi@wh2.tu-dresden.de> wrote:
+
+> From: Lars Poeschel <poeschel@lemonage.de>
 >
-> Why not? There are certainly drivers in the kernel which request a GPIO
-> as both a GPIO and as an (dual-edge) interrupt, so that they can read
-> the GPIO input whenever the IRQ goes off, in order to determine the pin
-> state. This is safer against high-latency or lost interrupts.
+> The device tree property should be more descriptive.
+> microchip seems more reasonable than mcp. As there are no
+> in tree users of this property, so the rename can still be
+> done without pain.
+>
+> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
 
-Yes? Are we talking past each other here?
+So do I apply this to the GPIO tree now or what?
 
-This is a perfectly OK thing to do as long as it is done like
-this:
-
-request_gpio(gpio);
-gpio_direction_input(gpio);
-request_irq(gpio_to_irq(gpio));
-
-Pass only the GPIO in the device tree and this works just fine.
-
-The use case after that we do not interfer with.
+Are the DT custodians happy?
 
 Yours,
 Linus Walleij
