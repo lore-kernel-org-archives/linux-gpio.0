@@ -1,39 +1,55 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v8 1/7] irqchip: vic: Parse interrupt and resume masks
- from device tree
-Date: Fri, 23 Aug 2013 20:12:05 +0200
-Message-ID: <CACRpkdZEJTCx4RwNCdLfYNDQauO32iMJwJP0eZevTfyV0S-TwQ@mail.gmail.com>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-	<1377120111-25601-2-git-send-email-tomasz.figa@gmail.com>
-	<1500724.07LRpFtgcx@flatron>
+Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Fri, 23 Aug 2013 20:38:04 +0200
+Message-ID: <CACRpkdYAjKhKC+Aaa4iQBXsJ46mgOta_SVztVyB=HZCGJD-b2g@mail.gmail.com>
+References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de>
+	<1507189.CRWvzVJqTV@flatron>
+	<521548E3.6010703@wwwdotorg.org>
+	<CACRpkdbVYfBS5L+0ejfbTBwPbD9HFB1kV8qnS7DdSydRccxDmg@mail.gmail.com>
+	<52167A35.2010109@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1500724.07LRpFtgcx@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:44894 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755710Ab3HWSiF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Aug 2013 14:38:05 -0400
+Received: by mail-ob0-f174.google.com with SMTP id wd6so1038134obb.33
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Aug 2013 11:38:04 -0700 (PDT)
+In-Reply-To: <52167A35.2010109@wwwdotorg.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-On Fri, Aug 23, 2013 at 1:22 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On Thu, Aug 22, 2013 at 10:53 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 08/21/2013 05:27 PM, Linus Walleij wrote:
+>> On Thu, Aug 22, 2013 at 1:10 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>>> On Wednesday 21 of August 2013 15:38:54 Lars Poeschel wrote:
+>>
+>>>>> To solve this dilemma, perform an interrupt consistency check
+>>>>> when adding a GPIO chip: if the chip is both gpio-controller and
+>>>>> interrupt-controller, walk all children of the device tree,
+>>>
+>>> It seems a little odd to solve this only for DT. What about the non-DT case?
+>>
+>> DT is the hardware configuration system that lets you request
+>> the same resource in two ways, i.e. it allows one and the same
+>> node to be both gpio-controller and interrupt-controller, and
+>> start handing out the same line as both GPIO and IRQ
+>> independently.
+>
+> Huh? What stops systems using board files and platform data from having
+> this issue?
 
-> This patch extends vic_of_init to parse valid interrupt sources
-> and resume sources masks from device tree.
->
-> If mask values are not specified in device tree, all sources
-> are assumed to be valid, as before this patch.
->
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/vic.txt | 6 ++++++
->  drivers/irqchip/irq-vic.c                     | 7 ++++++-
->  2 files changed, 12 insertions(+), 1 deletion(-)
->
-> Changes since v7:
->  - Renamed interrupt-mask property to valid-mask, for consistency with
->    bindings of other interrupt controllers.
+It can't be stopped but I consider it a bug if they do, as the proper
+way to handle such GPIO lines is the sequence:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+request_gpio(gpio);
+request_irq(gpio_to_irq(gpio));
+
+But I was mainly contrasting against ACPI, where the problem appears
+to not exist.
 
 Yours,
 Linus Walleij
