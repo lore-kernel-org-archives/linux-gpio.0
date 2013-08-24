@@ -1,106 +1,64 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v8 1/7] irqchip: vic: Parse interrupt and resume masks from device tree
-Date: Sat, 24 Aug 2013 18:57:13 +0200
-Message-ID: <2823496.bR7bMWMK3l@flatron>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <11592715.CyyL3y3PT6@flatron> <5218E0B7.4020701@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <5218E0B7.4020701@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-gpio@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: danielfsantos@att.net
+Subject: [PATCH] gpiolib: Fix crash when exporting non-existant gpio
+Date: Sat, 24 Aug 2013 13:48:28 -0500
+Message-ID: <1377370108-2867-1-git-send-email-daniel.santos@pobox.com>
+Reply-To: Daniel Santos <daniel.santos@pobox.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from nm19-vm1.access.bullet.mail.bf1.yahoo.com ([216.109.115.96]:39872
+	"EHLO nm19-vm1.access.bullet.mail.bf1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755367Ab3HXSzV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 24 Aug 2013 14:55:21 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Daniel Santos <daniel.santos@pobox.com>
 
-On Saturday 24 of August 2013 11:35:03 Rob Herring wrote:
-> On 08/24/2013 10:31 AM, Tomasz Figa wrote:
-> > On Saturday 24 of August 2013 10:25:26 Rob Herring wrote:
-> >> On Fri, Aug 23, 2013 at 6:04 PM, Tomasz Figa <tomasz.figa@gmail.com>
-> > 
-> > wrote:
-> >>> On Friday 23 of August 2013 16:11:18 Stephen Warren wrote:
-> >>>> On 08/22/2013 05:22 PM, Tomasz Figa wrote:
-> >>>>> This patch extends vic_of_init to parse valid interrupt sources
-> >>>>> and resume sources masks from device tree.
-> >>>>> 
-> >>>>> If mask values are not specified in device tree, all sources
-> >>>>> are assumed to be valid, as before this patch.
-> >>>> 
-> >>>> Can you explain further why the VIC needs this information
-> >>>> up-front?
-> >>>> Presumably it can accumulate it as devices request interrupts.
-> >>> 
-> >>> It does not need this information just for operation, but this makes
-> >>> the hardware description more detailed and allows better sanity
-> >>> checking of interrupts being requested.
-> >>> 
-> >>> To clarify, this is a mask of valid interrupt sources of the VIC,
-> >>> where
-> >>> set bit indicates that given signal is wired and clear bit that it
-> >>> is
-> >>> not.
-> >> 
-> >> I agree with Stephen here. The valid interrupts are the ones in the
-> >> DT. The reserved ones are the ones not present. If it is not needed
-> >> for the operation of the VIC, then remove it. The argument of sanity
-> >> checking could apply to all interrupt controllers.
-> > 
-> > Sorry, but I don't get what's wrong in having a more detailed
-> > description than required just for operation of the hardware.
-> > 
-> > The feature of sanity checks based on interrupt_mask (here now called
-> > valid-mask) has been present in the VIC driver since a long time
-> > already (if not from the beginning of existence of this driver) and
-> > before we started using DT, the mask was being passed from platform
-> > code as VIC init function argument.
-> 
-> So we should base the binding on the Linux software design?
+I got this on an RPi and I can't find anything specific to that.
+Besides, it's clearly wrong to try to access desc->chip when we have
+just tested that it may be NULL at drivers/gpio/gpiolib.c:1409:
 
-I would put it different way: The binding should provide information 
-detailed enough to allow any features allowed by Linux software design.
+	chip = desc->chip;
+	if (chip == NULL)
+		goto done;
 
-Well, anyway, I don't believe that existing, pre-ARM, bindings wasn't 
-influenced by how things worked on PowerPC platforms and software running 
-on them (including OpenFirmware and OS'es like Linux).
+....
 
-> > I'd prefer this feature to be available when using DT as well, unless
-> > we really want to move things backwards, just because we want to use
-> > DT...
-> As I mentioned all these arguments apply to ALL interrupt controllers
-> except ones which a mask does not work. So IF this makes sense, then
-> this should be a generic property and generic code to support.
+done:
+	if (status)
+		pr_debug("_gpio_request: gpio-%d (%s) status %d\n",
+			 desc_to_gpio(desc), label ? : "?", status);
 
-Isn't a binding of particular device free to define a private property? 
-Anyway, I wouldn't be opposed to making it generic.
+To reproduce, just pick an invalid gpio nubmer and:
 
-> You simply have the same information twice. One is distributed
+echo -n 248 > /sys/class/gpio/export
 
-Assuming you have it specified correctly under client nodes.
+However, I wasn't able to reproduce it on my laptop, maybe because I
+don't have any real gpio chips there, not sure.  More info on RPi bug
+report: https://github.com/raspberrypi/linux/issues/364
 
-> and one
-> is centralized. While it adds a way to validate things it also adds a
-> way to introduce errors. Suppose someone writes a dts such that
-> valid-mask matches the irq lines present in that dts (simply because
-> they were lazy or don't have documentation of all interrupt lines).
+[  222.961384] Unable to handle kernel NULL pointer dereference at
+virtual address 00000044
+[  222.969486] pgd = d97d0000
+[  222.972190] [00000044] *pgd=1aaca831, *pte=00000000, *ppte=00000000
+[  222.978483] Internal error: Oops: 17 [#1] PREEMPT ARM
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That's why this property is optional. If you don't know how this is set up 
-on your hardware then you don't fill it with a random value, but just skip 
-it instead.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d6413b2..e547f75f8b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -136,7 +136,7 @@ static struct gpio_desc *gpio_to_desc(unsigned gpio)
+  */
+ static int desc_to_gpio(const struct gpio_desc *desc)
+ {
+-	return desc->chip->base + gpio_chip_hwgpio(desc);
++	return desc->chip ?  desc->chip->base + gpio_chip_hwgpio(desc) : -1;
+ }
+ 
+ 
+-- 
+1.8.1.5
 
-> Then
-> you go add a node with a new interrupt (because the initial dts was not
-> complete). Updating the valid-mask could very easily be forgotten. Yes,
-> this should all be found by testing, but people don't always have
-> access to all the h/w.
-
-Adding a node with a new interrupt usually means adding support for new 
-hardware. This is something I wouldn't really want to see submitted 
-untested...
-
-Anyway, since I'd like this series to be merged ASAP and this patch is not 
-strictly necessary, especially this optional sanity check, let me just 
-drop this property and move on with other things...
-
-Best regards,
-Tomasz
