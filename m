@@ -1,71 +1,37 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] gpiolib: Fix crash when exporting non-existant gpio
-Date: Sat, 24 Aug 2013 12:57:53 -0700
-Message-ID: <52191041.7040505@roeck-us.net>
-References: <1377370108-2867-1-git-send-email-daniel.santos@pobox.com>
+From: Daniel Santos <danielfsantos@att.net>
+Subject: What is the correct way to map an input gpio to an irq/event/notifier?
+Date: Sat, 24 Aug 2013 15:30:15 -0500
+Message-ID: <521917D7.5060801@att.net>
+Reply-To: Daniel Santos <daniel.santos@pobox.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1377370108-2867-1-git-send-email-daniel.santos@pobox.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Santos <daniel.santos@pobox.com>
-Cc: danielfsantos@att.net, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from nm8-vm8.access.bullet.mail.gq1.yahoo.com ([216.39.63.216]:39715
+	"EHLO nm8-vm8.access.bullet.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755521Ab3HXUgi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 24 Aug 2013 16:36:38 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio <linux-gpio@vger.kernel.org>
 
-On 08/24/2013 11:48 AM, danielfsantos@att.net wrote:
-> I got this on an RPi and I can't find anything specific to that.
-> Besides, it's clearly wrong to try to access desc->chip when we have
-> just tested that it may be NULL at drivers/gpio/gpiolib.c:1409:
->
-> 	chip = desc->chip;
-> 	if (chip == NULL)
-> 		goto done;
->
-> ....
->
-> done:
-> 	if (status)
-> 		pr_debug("_gpio_request: gpio-%d (%s) status %d\n",
-> 			 desc_to_gpio(desc), label ? : "?", status);
->
-> To reproduce, just pick an invalid gpio nubmer and:
->
-> echo -n 248 > /sys/class/gpio/export
->
-> However, I wasn't able to reproduce it on my laptop, maybe because I
-> don't have any real gpio chips there, not sure.  More info on RPi bug
-> report: https://github.com/raspberrypi/linux/issues/364
->
-> [  222.961384] Unable to handle kernel NULL pointer dereference at
-> virtual address 00000044
-> [  222.969486] pgd = d97d0000
-> [  222.972190] [00000044] *pgd=1aaca831, *pte=00000000, *ppte=00000000
-> [  222.978483] Internal error: Oops: 17 [#1] PREEMPT ARM
-> ---
->   drivers/gpio/gpiolib.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index d6413b2..e547f75f8b 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -136,7 +136,7 @@ static struct gpio_desc *gpio_to_desc(unsigned gpio)
->    */
->   static int desc_to_gpio(const struct gpio_desc *desc)
->   {
-> -	return desc->chip->base + gpio_chip_hwgpio(desc);
-> +	return desc->chip ?  desc->chip->base + gpio_chip_hwgpio(desc) : -1;
->   }
->
+Hello guys.  I'm new to this list and have been working on a driver for 
+the MCP2210 "USB-to-SPI bridge w/GPIO" (my first driver).  I haven't 
+implemented the polling of its gpios just yet (I just finished the 
+interface where gpio values are retrieved on-demand), but I have another 
+issue looming.
 
-Looking into calling code, desc_to_gpio() is clearly not supposed to return an error,
-and it will result in odd behavior if it returns -1. For example, the resulting debug
-message of "gpio--1 (...) status ..." is not very useful.
+In addition to the MCP2210 driver, I'm planning on having an spi 
+protocol driver for the ADNS-9800 chip that will be connected to the 
+MCP2210, but which also has an interrupt output pin (to tell its host 
+that it needs servicing).  I've got all of the SPI stuff worked out, but 
+I don't know the proper way to connect that gpio to the ADNS-9800 
+driver.  I suppose my options are:
 
-It would make more sense to fix the calling code. You could for example
-validate in affected functions if the gpio pin exists by not only
-checking for desc but also for desc->chip. Another option might be
-to have gpio_to_desc() return NULL if desc->chip is NULL.
+1. Pass the ADNS-9800 the gpio number and let the ADNS-9800 poll it
+2. Have my MCP2210 driver poll its gpios its self and notify consumers 
+of changes through some interface (soft irqs?)
 
-Guenter
+Thanks in advance!
+Daniel Santos
