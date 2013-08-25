@@ -1,42 +1,31 @@
-From: Lars Poeschel <larsi@wh2.tu-dresden.de>
-Subject: Re: [PATCH 1/2] gpio: mcp23s08: rename the device tree property
-Date: Sun, 25 Aug 2013 12:06:41 +0200
-Message-ID: <201308251206.41764.larsi@wh2.tu-dresden.de>
-References: <1377165378-9589-1-git-send-email-larsi@wh2.tu-dresden.de> <CACRpkdZMsBynLohhNw=XyzpYns9E8QVksVJYkv3dcRJ2JHWLnA@mail.gmail.com>
+From: "reaal@sns.nl" <reaal@sns.nl>
+Subject: =?utf-8?B?W1NQQU1d?= - let's discuss further
+Date: Sun, 25 Aug 2013 05:02:42 -0700
+Message-ID: <SERVER1mnG0XwxDIqyC000141f9@ci.white-salmon.wa.us>
+Reply-To: boucherdavid01@gmail.com
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from atlantis.wh2.tu-dresden.de ([141.30.228.39]:54555 "EHLO
-	atlantis.wh2.tu-dresden.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752984Ab3HYKGt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 25 Aug 2013 06:06:49 -0400
-In-Reply-To: <CACRpkdZMsBynLohhNw=XyzpYns9E8QVksVJYkv3dcRJ2JHWLnA@mail.gmail.com>
+Received: from or-65-40-220-155.sta.embarqhsd.net ([65.40.220.155]:17683 "EHLO
+	ci.white-salmon.wa.us" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755270Ab3HYPBM convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Aug 2013 11:01:12 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Rob Landley <rob@landley.net>, Arnd Bergmann <arnd@arndb.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
 
-Am Freitag 23 August 2013, 21:10:00 schrieb Linus Walleij:
-> On Thu, Aug 22, 2013 at 11:56 AM, Lars Poeschel <larsi@wh2.tu-dresden.de> 
-wrote:
-> > From: Lars Poeschel <poeschel@lemonage.de>
-> > 
-> > The device tree property should be more descriptive.
-> > microchip seems more reasonable than mcp. As there are no
-> > in tree users of this property, so the rename can still be
-> > done without pain.
-> > 
-> > Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
-> 
-> So do I apply this to the GPIO tree now or what?
-> 
-> Are the DT custodians happy?
+Hello,
 
-No Linus, do not take this.
-There will be a new version.
+How are you and i hope your day is going well.
 
-Thanks,
-Lars
+Without taking much of your time, i want to bring you into a business
+venture which i think would be of interest and concern to you, since it has
+to do with a perceived family member of yours. However i need to
+be sure that you must have received this communication so i will not divulge
+much information about it until i get a response from you.
+
+Kindly respond back to me.
+Regards,
+David
+
