@@ -1,41 +1,58 @@
-From: Lars Poeschel <larsi@wh2.tu-dresden.de>
-Subject: [PATCH V2 2/2] of: add vendor prefix for Microchip Technology Inc
-Date: Mon, 26 Aug 2013 11:46:25 +0200
-Message-ID: <1377510385-8149-2-git-send-email-larsi@wh2.tu-dresden.de>
-References: <1377510385-8149-1-git-send-email-larsi@wh2.tu-dresden.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from atlantis.wh2.tu-dresden.de ([141.30.228.39]:39305 "EHLO
-	atlantis.wh2.tu-dresden.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751570Ab3HZJqw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 26 Aug 2013 05:46:52 -0400
-In-Reply-To: <1377510385-8149-1-git-send-email-larsi@wh2.tu-dresden.de>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Chen Gang <gang.chen@asianux.com>
+Subject: [PATCH] include/asm-generic/gpio.h: remove the call for __gpio_get_value()
+ and __gpio_set_value() when GPIOLIB disabled
+Date: Mon, 26 Aug 2013 18:08:23 +0800
+Message-ID: <521B2917.6040908@asianux.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: poeschel@lemonage.de, grant.likely@linaro.org, linus.walleij@linaro.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, arnd@arndb.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
 
-From: Lars Poeschel <poeschel@lemonage.de>
+When GPIOLIB disabled, __gpio_get_value() and __gpio_set_value() will
+not implement, so need remove them, or compiling fails.
 
-Trivial patch to add Microchip Technology Inc. to the list
-of devicetree vendor prefixes.
+e.g. (allmodconfig for h8300)
 
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+    CC      arch/h8300/kernel/h8300_ksyms.o
+  In file included from arch/h8300/include/generated/asm/gpio.h:1:0,
+                   from arch/h8300/kernel/h8300_ksyms.c:17:
+  include/asm-generic/gpio.h: In function 'gpio_get_value_cansleep':
+  include/asm-generic/gpio.h:270:2: error: implicit declaration of function '__gpio_get_value' [-Werror=implicit-function-declaration]
+    return __gpio_get_value(gpio);
+    ^
+
+For __gpio_get_value(), according to its implementation, it is enough
+to use "return 0" instead of, and for __gpio_set_value(), just remove
+directly.
+
+
+Signed-off-by: Chen Gang <gang.chen@asianux.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt |    1 +
- 1 file changed, 1 insertion(+)
+ include/asm-generic/gpio.h |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 366ce9b..4cdfbe8 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -36,6 +36,7 @@ linux	Linux-specific binding
- lsi	LSI Corp. (LSI Logic)
- marvell	Marvell Technology Group Ltd.
- maxim	Maxim Integrated Products
-+microchip	Microchip Technology Inc.
- mosaixtech	Mosaix Technologies, Inc.
- national	National Semiconductor
- nintendo	Nintendo
+diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
+index bde6469..10a2853 100644
+--- a/include/asm-generic/gpio.h
++++ b/include/asm-generic/gpio.h
+@@ -267,13 +267,12 @@ static inline int gpio_cansleep(unsigned gpio)
+ static inline int gpio_get_value_cansleep(unsigned gpio)
+ {
+ 	might_sleep();
+-	return __gpio_get_value(gpio);
++	return 0;
+ }
+ 
+ static inline void gpio_set_value_cansleep(unsigned gpio, int value)
+ {
+ 	might_sleep();
+-	__gpio_set_value(gpio, value);
+ }
+ 
+ #endif /* !CONFIG_GPIOLIB */
 -- 
-1.7.10.4
-
+1.7.7.6
