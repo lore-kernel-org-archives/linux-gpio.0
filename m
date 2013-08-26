@@ -1,26 +1,23 @@
 From: Lars Poeschel <poeschel@lemonage.de>
 Subject: Re: [PATCH v2] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Mon, 26 Aug 2013 12:30:50 +0200
-Message-ID: <201308261230.50243.poeschel@lemonage.de>
-References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <201308231140.44923.poeschel@lemonage.de> <5217BC9B.4060906@wwwdotorg.org>
+Date: Mon, 26 Aug 2013 12:45:19 +0200
+Message-ID: <201308261245.19513.poeschel@lemonage.de>
+References: <1377092334-770-1-git-send-email-larsi@wh2.tu-dresden.de> <CACRpkdZgFMH07_W2eUWsgsUMXAJA1paEimAds=-XeViZaYySLA@mail.gmail.com> <5217BD74.5030801@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp2-1.goneo.de ([212.90.139.83]:43498 "EHLO smtp2-1.goneo.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751447Ab3HZKbA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 26 Aug 2013 06:31:00 -0400
-In-Reply-To: <5217BC9B.4060906@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5217BD74.5030801@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, galak@codeaurora.org, Pawel Moll <pawel.moll@arm.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Friday 23 August 2013 at 21:48:43, Stephen Warren wrote:
-> On 08/23/2013 03:40 AM, Lars Poeschel wrote:
-> > On Thursday 22 August 2013 at 23:10:53, Stephen Warren wrote:
+On Friday 23 August 2013 at 21:52:20, Stephen Warren wrote:
+> On 08/23/2013 12:45 PM, Linus Walleij wrote:
+> > On Thu, Aug 22, 2013 at 11:10 PM, Stephen Warren 
+<swarren@wwwdotorg.org> wrote:
 > >> On 08/21/2013 05:36 PM, Linus Walleij wrote:
 > >>> On Thu, Aug 22, 2013 at 1:10 AM, Stephen Warren
 > >>> <swarren@wwwdotorg.org> wrote: [Me]
@@ -46,31 +43,22 @@ On Friday 23 August 2013 at 21:48:43, Stephen Warren wrote:
 > >> determine the pin state. This is safer against high-latency or lost
 > >> interrupts.
 > > 
-> > This is the point! They REQUEST the GPIO. They can then do whatever
-> > they like with this GPIO then, even additionally use it as interrupt.
-> > In the devicetree case the interrupts are not requested. This is what
-> > we are trying to address with the patch. The device using this
-> > interrupt has no idea where this interrupt comes from. Is it a
-> > gpio-interrupt or not? Does it have to request a gpio before using
-> > this interrupt or not?
+> > Yes? Are we talking past each other here?
+> > 
+> > This is a perfectly OK thing to do as long as it is done like
+> > this:
+> > 
+> > request_gpio(gpio);
+> > gpio_direction_input(gpio);
+> > request_irq(gpio_to_irq(gpio));
 > 
-> If the kernel automatically requests the GPIO because it's referenced as
-> an interrupt then surely if the driver also requests it, then it will
-> fail, because the GPIO is already requested. Or, is there an explicit
-> check for that?
+> But I'm not aware that there's a rule saying it's illegal to:
+> 
+> request_irq(gpio_to_irq(gpio));
+> request_gpio(gpio);
+> gpio_direction_input(gpio);
 
-There is no explicit check, because it is not wanted! Drivers that only 
-want the interrupt do not know that it is gpio-backed and therefore can not 
-request it.
-Drivers wanting to explicit use a gpio for interrupt, request the gpio in 
-the device tree. They can then turn that gpio into an interrupt.
-
-> Is the problem you're trying to solve really an actual problem? I'm not
-> convinced it's necessary for the GPIO to show up as requested if the pin
-> is used as an IRQ input?
-
-It is definitely an actual problem. Please read the thread I already sent!
-Surely it is not necessary for the GPIO to show up as requested but it does 
-not harm it is even neat if it shows up. But it HAS to be requested so that 
-no other entity can request it and change it's configuration i.e. turn it 
-to an output.
+But I'd consider this as a bug. What if the scheduler interrupts you right 
+after you requested (and got assigned) the interrupt and another entity 
+requests your gpio? Then you'd have a resource conflict, because you are 
+not the owner of the gpio you requested an interrupt for.
