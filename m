@@ -1,85 +1,65 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 3/3] gpio: pcf857x: Add OF support
-Date: Tue, 27 Aug 2013 15:44:26 +0100
-Message-ID: <20130827144426.GO19893@e106331-lin.cambridge.arm.com>
-References: <1376953494-9684-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <2417846.CRj8QejgZy@flatron>
- <20130827103949.GF19893@e106331-lin.cambridge.arm.com>
- <2048253.b587MQDRGG@avalon>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v5] gpio: pcf857x: Add OF support
+Date: Tue, 27 Aug 2013 19:18:55 +0200
+Message-ID: <20130827171854.GA2988@katana>
+References: <1377590559-14279-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <521C63A0.10902@ti.com>
+ <1830640.BeoA2uHWDI@amdc1227>
+ <2400176.9Vcd5TUYl9@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:42810 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752881Ab3H0Oof (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 27 Aug 2013 10:44:35 -0400
+Received: from sauhun.de ([89.238.76.85]:44533 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752513Ab3H0RTL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 Aug 2013 13:19:11 -0400
 Content-Disposition: inline
-In-Reply-To: <2048253.b587MQDRGG@avalon>
+In-Reply-To: <2400176.9Vcd5TUYl9@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, Pawel Moll <Pawel.Moll@arm.com>, "galak@codeaurora.org" <galak@codeaurora.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, Archit Taneja <archit@ti.com>, Tomasz Figa <tomasz.figa@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, grant.likely@secretlab.ca
 
-On Tue, Aug 27, 2013 at 11:50:40AM +0100, Laurent Pinchart wrote:
-> Hi Mark,
-> 
-> On Tuesday 27 August 2013 11:39:49 Mark Rutland wrote:
-> > On Sat, Aug 24, 2013 at 03:13:11PM +0100, Tomasz Figa wrote:
-> > > On Saturday 24 of August 2013 02:54:07 Laurent Pinchart wrote:
-> > > > On Saturday 24 August 2013 02:41:59 Tomasz Figa wrote:
-> > > > > On Tuesday 20 of August 2013 01:04:54 Laurent Pinchart wrote:
-> > > > > > Add DT bindings for the pcf857x-compatible chips and parse the
-> > > > > > device tree node in the driver.
-> > > > > > 
-> > > > > > Signed-off-by: Laurent Pinchart
-> > > > > > <laurent.pinchart+renesas@ideasonboard.com>
-> > > > > > ---
-> > > > > > 
-> > > > > >  .../devicetree/bindings/gpio/gpio-pcf857x.txt      | 71 +++++++++++
-> > > > > >  drivers/gpio/gpio-pcf857x.c                        | 57 +++++++++--
-> > > > > >  2 files changed, 119 insertions(+), 9 deletions(-)
-> > > > > >  create mode 100644
-> > > > > > Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-> > > > > > 
-> > > > > > diff --git a/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-> > > > > > b/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt new file
-> > > > > > mode 100644
-> > > > > > index 0000000..df94462
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-> > > > > > @@ -0,0 +1,71 @@
-> > > > 
-> > > > [snip]
-> > > > 
-> > > > > > +  - pins-initial-state: Bitmask that specifies the initial state of
-> > > > > > +    each pin. When a bit is set to zero, the corresponding pin will
-> > > > > > be
-> > > > > > +    initialized to the input (pulled-up) state. When the  bit is
-> > > > > > set to +    one, the pin will be initialized the the low-level
-> > > > > > output state. If +    the property is not specified all pins will
-> > > > > > be initialized to the +    input state.
-> > > > > 
-> > > > > Hmm, do you actually need to know whether those pins are outputs or
-> > > > > inputs before they get used for first time? I believe any driver
-> > > > > using GPIO will call gpio_direction_{in,out}put() before it starts
-> > > > > using the pin, which will initialize the pin to a known state.
-> > > > > 
-> > > > > What I'd suggest is making the driver handle this by having a bit mask
-> > > > > that marks states of pins as defined and flagging all pins as
-> > > > > undefined by default. Then any call to gpio_direction_output() or
-> > > > > _input() would mark it as defined and direction of the pin could be
-> > > > > stored in internal driver structures.
-> > > > 
-> > > > The problem is that all pins are controlled through a single I2C write.
-> > > > Setting the direction of a pin will set the direction of all other pins.
-> > > > I thus need to know what the initial settings are to avoid glitches.
-> > 
-> > I guess it's not possible to read the initial state from the hardware?
-> 
-> I wish. Unfortunately it can only be written.
 
-What a shame :(
+--h31gzZEtNLTqOjlF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Mark.
+
+> The driver should support the same chip models reardless of whether it's =
+used=20
+> with or without DT. If an entry in the OF table has no corresponding entr=
+y in=20
+> the I2C table I would consider that as a driver bug.
+
+Linus Walleij posted a patch to support DT only probing, but too many
+side-effects showed up. Some were fixable (probe regressions) and some
+need more work, if feasible at all. Most prominent is that runtime
+instantiation of i2c slaves currently needs an entry in the i2c table.
+
+
+--h31gzZEtNLTqOjlF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHN9+AAoJEBQN5MwUoCm2K1cP/3zpfYNXdtAE0fr/YCTZbSzO
+VZn3LjZXj1zh7FNsySEPkXwVtX2j5ckfJ9/550BNRA5qvOeoCb+ij7/LN7skkoRg
+82JxWLmVyZFA8+QVW8uWSKHq/iqNT2nNFoAsocDBOvRoTHnekBQfODqJR8SbrSPd
+GaBwKJH3WDz0PUhZxpupjeoFM538/VSS9cRgIO6uX1vEj85PpnKYqCNpHHIJQlo/
+zJPcDODmIQv8vfaDUS8/nlYwbD93smLkrIl0mzau0nj63zyQkNowIjJ0r/9FqSNc
+Kd9SbqRWMkrBWFuG2zpWcMfziucBQerlgMqD9hJs0gTm/a6hzl/YRwSJ8atAFmaG
+52ApjQ4cHU08TiPXP8ljC5xuT4LPEbX9zPrjFZpFkGf9BNd033RFPZCHnSbqwayI
+UdBujDuCabPn8CGxuLPJ1eY8CwUt/6/tOAP1j2OeWFH0j0rE/pZTDoQ5m8HVg91E
+86+rlfdBXd4+0iF8Uw0oyL4gznAPxqFSiyy+d/K7AMfEBDPaA7y9OW5N30NL7NUO
+CjhgzyAyzxYNbvGE1MUfdrJjzkuVXi7OqOYYVuneVaBz63a7PWhWn3PCWiqZWX8h
+rzDHB959I3IFecyj82ylYGcTabjmeKBWbi1XzVsrxEgssNlTKkYz/Q62NbDwMn6C
+o5hTtR9YHwD9Fk+Uytyv
+=FPRk
+-----END PGP SIGNATURE-----
+
+--h31gzZEtNLTqOjlF--
