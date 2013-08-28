@@ -1,108 +1,172 @@
 From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH V6 2/5] of: move of_parse_phandle()
-Date: Wed, 28 Aug 2013 21:43:33 +0100
-Message-ID: <20130828204333.9B7F13E0B6B@localhost>
-References: <1376515632-12594-1-git-send-email-swarren@wwwdotorg.org> <1376515632-12594-2-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V6 3/5] of: introduce of_parse_phandle_with_fixed_args
+Date: Wed, 28 Aug 2013 21:44:42 +0100
+Message-ID: <20130828204442.253513E0B6B@localhost>
+References: <1376515632-12594-1-git-send-email-swarren@wwwdotorg.org> <1376515632-12594-3-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f172.google.com ([74.125.82.172]:50152 "EHLO
-	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755000Ab3H1Unb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Aug 2013 16:43:31 -0400
-Received: by mail-we0-f172.google.com with SMTP id t60so5732937wes.31
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Aug 2013 13:43:30 -0700 (PDT)
-In-Reply-To: <1376515632-12594-2-git-send-email-swarren@wwwdotorg.org>
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:47424 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752906Ab3H1Uok (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Aug 2013 16:44:40 -0400
+Received: by mail-wi0-f173.google.com with SMTP id ey11so4016337wid.6
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Aug 2013 13:44:38 -0700 (PDT)
+In-Reply-To: <1376515632-12594-3-git-send-email-swarren@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>
 Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@kernel.crashing.org>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@nvidia.com>
 
-On Wed, 14 Aug 2013 15:27:09 -0600, Stephen Warren <swarren@wwwdotorg.org> wrote:
+On Wed, 14 Aug 2013 15:27:10 -0600, Stephen Warren <swarren@wwwdotorg.org> wrote:
 > From: Stephen Warren <swarren@nvidia.com>
 > 
-> Move of_parse_phandle() after __of_parse_phandle_with_args(), since a
-> future patch will call __of_parse_phandle_with_args() from
-> of_parse_phandle(). Moving the function avoids adding a prototype. Doing
-> the move separately highlights the code changes separately.
+> This is identical to of_parse_phandle_with_args(), except that the
+> number of argument cells is fixed, rather than being parsed out of the
+> node referenced by each phandle.
 > 
 > Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > Acked-by: Mark Rutland <mark.rutland@arm.com>
+> ---
 
-Applied, thanks.
+Applied, thanks
 
 g.
 
+> v3: s/cells_count/cell_count, add missing braces per coding style
 > ---
-> v5: New patch.
-> ---
->  drivers/of/base.c | 48 ++++++++++++++++++++++++------------------------
->  1 file changed, 24 insertions(+), 24 deletions(-)
+>  drivers/of/base.c  | 66 +++++++++++++++++++++++++++++++++++++++++++++++-------
+>  include/linux/of.h | 10 +++++++++
+>  2 files changed, 68 insertions(+), 8 deletions(-)
 > 
 > diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index e485489..9eaf662 100644
+> index 9eaf662..3a5cd9e 100644
 > --- a/drivers/of/base.c
 > +++ b/drivers/of/base.c
-> @@ -1081,30 +1081,6 @@ int of_property_count_strings(struct device_node *np, const char *propname)
->  }
->  EXPORT_SYMBOL_GPL(of_property_count_strings);
+> @@ -1083,7 +1083,8 @@ EXPORT_SYMBOL_GPL(of_property_count_strings);
 >  
-> -/**
-> - * of_parse_phandle - Resolve a phandle property to a device_node pointer
-> - * @np: Pointer to device node holding phandle property
-> - * @phandle_name: Name of property holding a phandle value
-> - * @index: For properties holding a table of phandles, this is the index into
-> - *         the table
-> - *
-> - * Returns the device_node pointer with refcount incremented.  Use
-> - * of_node_put() on it when done.
-> - */
-> -struct device_node *of_parse_phandle(const struct device_node *np,
-> -				     const char *phandle_name, int index)
-> -{
-> -	const __be32 *phandle;
-> -	int size;
-> -
-> -	phandle = of_get_property(np, phandle_name, &size);
-> -	if ((!phandle) || (size < sizeof(*phandle) * (index + 1)))
-> -		return NULL;
-> -
-> -	return of_find_node_by_phandle(be32_to_cpup(phandle + index));
-> -}
-> -EXPORT_SYMBOL(of_parse_phandle);
-> -
 >  static int __of_parse_phandle_with_args(const struct device_node *np,
 >  					const char *list_name,
->  					const char *cells_name, int index,
-> @@ -1208,6 +1184,30 @@ static int __of_parse_phandle_with_args(const struct device_node *np,
+> -					const char *cells_name, int index,
+> +					const char *cells_name,
+> +					int cell_count, int index,
+>  					struct of_phandle_args *out_args)
+>  {
+>  	const __be32 *list, *list_end;
+> @@ -1119,11 +1120,17 @@ static int __of_parse_phandle_with_args(const struct device_node *np,
+>  					 np->full_name);
+>  				goto err;
+>  			}
+> -			if (of_property_read_u32(node, cells_name, &count)) {
+> -				pr_err("%s: could not get %s for %s\n",
+> -					 np->full_name, cells_name,
+> -					 node->full_name);
+> -				goto err;
+> +
+> +			if (cells_name) {
+> +				if (of_property_read_u32(node, cells_name,
+> +							 &count)) {
+> +					pr_err("%s: could not get %s for %s\n",
+> +						np->full_name, cells_name,
+> +						node->full_name);
+> +					goto err;
+> +				}
+> +			} else {
+> +				count = cell_count;
+>  			}
+>  
+>  			/*
+> @@ -1245,11 +1252,53 @@ int of_parse_phandle_with_args(const struct device_node *np, const char *list_na
+>  {
+>  	if (index < 0)
+>  		return -EINVAL;
+> -	return __of_parse_phandle_with_args(np, list_name, cells_name, index, out_args);
+> +	return __of_parse_phandle_with_args(np, list_name, cells_name, 0,
+> +					    index, out_args);
 >  }
+>  EXPORT_SYMBOL(of_parse_phandle_with_args);
 >  
 >  /**
-> + * of_parse_phandle - Resolve a phandle property to a device_node pointer
-> + * @np: Pointer to device node holding phandle property
-> + * @phandle_name: Name of property holding a phandle value
-> + * @index: For properties holding a table of phandles, this is the index into
-> + *         the table
+> + * of_parse_phandle_with_fixed_args() - Find a node pointed by phandle in a list
+> + * @np:		pointer to a device tree node containing a list
+> + * @list_name:	property name that contains a list
+> + * @cell_count: number of argument cells following the phandle
+> + * @index:	index of a phandle to parse out
+> + * @out_args:	optional pointer to output arguments structure (will be filled)
 > + *
-> + * Returns the device_node pointer with refcount incremented.  Use
-> + * of_node_put() on it when done.
+> + * This function is useful to parse lists of phandles and their arguments.
+> + * Returns 0 on success and fills out_args, on error returns appropriate
+> + * errno value.
+> + *
+> + * Caller is responsible to call of_node_put() on the returned out_args->node
+> + * pointer.
+> + *
+> + * Example:
+> + *
+> + * phandle1: node1 {
+> + * }
+> + *
+> + * phandle2: node2 {
+> + * }
+> + *
+> + * node3 {
+> + * 	list = <&phandle1 0 2 &phandle2 2 3>;
+> + * }
+> + *
+> + * To get a device_node of the `node2' node you may call this:
+> + * of_parse_phandle_with_fixed_args(node3, "list", 2, 1, &args);
 > + */
-> +struct device_node *of_parse_phandle(const struct device_node *np,
-> +				     const char *phandle_name, int index)
+> +int of_parse_phandle_with_fixed_args(const struct device_node *np,
+> +				const char *list_name, int cell_count,
+> +				int index, struct of_phandle_args *out_args)
 > +{
-> +	const __be32 *phandle;
-> +	int size;
-> +
-> +	phandle = of_get_property(np, phandle_name, &size);
-> +	if ((!phandle) || (size < sizeof(*phandle) * (index + 1)))
-> +		return NULL;
-> +
-> +	return of_find_node_by_phandle(be32_to_cpup(phandle + index));
+> +	if (index < 0)
+> +		return -EINVAL;
+> +	return __of_parse_phandle_with_args(np, list_name, NULL, cell_count,
+> +					   index, out_args);
 > +}
-> +EXPORT_SYMBOL(of_parse_phandle);
+> +EXPORT_SYMBOL(of_parse_phandle_with_fixed_args);
 > +
 > +/**
->   * of_parse_phandle_with_args() - Find a node pointed by phandle in a list
+>   * of_count_phandle_with_args() - Find the number of phandles references in a property
 >   * @np:		pointer to a device tree node containing a list
 >   * @list_name:	property name that contains a list
+> @@ -1267,7 +1316,8 @@ EXPORT_SYMBOL(of_parse_phandle_with_args);
+>  int of_count_phandle_with_args(const struct device_node *np, const char *list_name,
+>  				const char *cells_name)
+>  {
+> -	return __of_parse_phandle_with_args(np, list_name, cells_name, -1, NULL);
+> +	return __of_parse_phandle_with_args(np, list_name, cells_name, 0, -1,
+> +					    NULL);
+>  }
+>  EXPORT_SYMBOL(of_count_phandle_with_args);
+>  
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 17ce8a6..252adbc 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -280,6 +280,9 @@ extern struct device_node *of_parse_phandle(const struct device_node *np,
+>  extern int of_parse_phandle_with_args(const struct device_node *np,
+>  	const char *list_name, const char *cells_name, int index,
+>  	struct of_phandle_args *out_args);
+> +extern int of_parse_phandle_with_fixed_args(const struct device_node *np,
+> +	const char *list_name, int cells_count, int index,
+> +	struct of_phandle_args *out_args);
+>  extern int of_count_phandle_with_args(const struct device_node *np,
+>  	const char *list_name, const char *cells_name);
+>  
+> @@ -479,6 +482,13 @@ static inline int of_parse_phandle_with_args(struct device_node *np,
+>  	return -ENOSYS;
+>  }
+>  
+> +static inline int of_parse_phandle_with_fixed_args(const struct device_node *np,
+> +	const char *list_name, int cells_count, int index,
+> +	struct of_phandle_args *out_args)
+> +{
+> +	return -ENOSYS;
+> +}
+> +
+>  static inline int of_count_phandle_with_args(struct device_node *np,
+>  					     const char *list_name,
+>  					     const char *cells_name)
 > -- 
 > 1.8.1.5
 > 
