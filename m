@@ -1,36 +1,32 @@
-From: Lars Poeschel <larsi@wh2.tu-dresden.de>
-Subject: [PATCH V3 2/2] of: add vendor prefix for Microchip Technology Inc
-Date: Wed, 28 Aug 2013 10:38:51 +0200
-Message-ID: <1377679131-32082-2-git-send-email-larsi@wh2.tu-dresden.de>
-References: <1377679131-32082-1-git-send-email-larsi@wh2.tu-dresden.de>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v5] gpio: pcf857x: Add OF support
+Date: Wed, 28 Aug 2013 13:58:13 +0200
+Message-ID: <7583101.2yAsZLOucV@avalon>
+References: <1377590559-14279-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <2400176.9Vcd5TUYl9@avalon> <20130827171854.GA2988@katana>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1377679131-32082-1-git-send-email-larsi@wh2.tu-dresden.de>
+In-Reply-To: <20130827171854.GA2988@katana>
 Sender: linux-kernel-owner@vger.kernel.org
-To: poeschel@lemonage.de, grant.likely@linaro.org, linus.walleij@linaro.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, arnd@arndb.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca, linux-gpio@vger.kernel.org, Archit Taneja <archit@ti.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-omap@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Lars Poeschel <poeschel@lemonage.de>
+On Tuesday 27 August 2013 19:18:55 Wolfram Sang wrote:
+> > The driver should support the same chip models reardless of whether it's
+> > used with or without DT. If an entry in the OF table has no corresponding
+> > entry in the I2C table I would consider that as a driver bug.
+> 
+> Linus Walleij posted a patch to support DT only probing, but too many
+> side-effects showed up. Some were fixable (probe regressions) and some
+> need more work, if feasible at all. Most prominent is that runtime
+> instantiation of i2c slaves currently needs an entry in the i2c table.
 
-Trivial patch to add Microchip Technology Inc. to the list
-of devicetree vendor prefixes.
+Linus, I'd like to get this in v3.12 if it's not too late. Could you please 
+provide your input ?
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
----
- Documentation/devicetree/bindings/vendor-prefixes.txt |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 366ce9b..4cdfbe8 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -36,6 +36,7 @@ linux	Linux-specific binding
- lsi	LSI Corp. (LSI Logic)
- marvell	Marvell Technology Group Ltd.
- maxim	Maxim Integrated Products
-+microchip	Microchip Technology Inc.
- mosaixtech	Mosaix Technologies, Inc.
- national	National Semiconductor
- nintendo	Nintendo
 -- 
-1.7.10.4
+Regards,
+
+Laurent Pinchart
