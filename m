@@ -1,70 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: add GPIO support for F71882FG and F71889F
-Date: Thu, 29 Aug 2013 14:39:33 +0200
-Message-ID: <CACRpkdZcEPM-u19pc+v_cRqUSfJBFZ49rJYiewQ1sWWSU5YxEg@mail.gmail.com>
-References: <1374486633-9737-1-git-send-email-simon.guinot@sequanux.org>
-	<CACRpkda2bH_TkFR6c0cXvjye4SmFWN5xuzQSO=NqBq8mNDgV0g@mail.gmail.com>
-	<20130801134632.GY9916@kw.sim.vm.gnt>
+Subject: Re: [PATCH] gpio: samsung: Drop support for Exynos SoCs
+Date: Thu, 29 Aug 2013 14:42:25 +0200
+Message-ID: <CACRpkdbUo2t1gT8=6UpjiXs4Sd-1xLpEqOqdA220L0wgVC-4uw@mail.gmail.com>
+References: <1377538555-14901-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:43973 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756420Ab3H2Mje (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 08:39:34 -0400
-Received: by mail-oa0-f45.google.com with SMTP id m1so353142oag.18
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2013 05:39:33 -0700 (PDT)
-In-Reply-To: <20130801134632.GY9916@kw.sim.vm.gnt>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:38981 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756094Ab3H2Mm0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 08:42:26 -0400
+Received: by mail-ob0-f174.google.com with SMTP id wd6so391965obb.5
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2013 05:42:26 -0700 (PDT)
+In-Reply-To: <1377538555-14901-1-git-send-email-t.figa@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, "H. Peter Anvin" <hpa@linux.intel.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Thu, Aug 1, 2013 at 3:46 PM, Simon Guinot <simon.guinot@sequanux.org> wrote:
-> On Mon, Jul 29, 2013 at 05:59:08PM +0200, Linus Walleij wrote:
+On Mon, Aug 26, 2013 at 7:35 PM, Tomasz Figa <t.figa@samsung.com> wrote:
 
->> - So we should atleast support ACPI probing with the
->>   port-based detection as a final fallback if all else fails.
->>
->> Why can I not get something like:
->>
->> #include <linux/acpi.h>
->> (...)
->> static const struct acpi_device_id gpio_acpi_match[] = {
->>         { "FOOBAR", 0 },
+> GPIO support on Exynos SoCs is provided by pinctrl-samsung driver,
+> leaving all the support code in gpio-samsung driver unused.
+
+Just double checking: you mean it is unused in v3.11-rc7 OK?
+Not in Linux-next?
+
+In the former case I can merge it into the GPIO tree and in the
+latter case I need to merge it into the pinctrl tree.
+
+> This dead
+> code can be safely removed and so it is done by this patch.
 >
-> After some checks on my boards, it appears that there is no PNP ID
-> available for the Super-I/O GPIO functionality (or any others). Moreover
-> I think this IDs don't have been registered to Microsoft by Fintech
-> (the super-I/O manufacturer).
->
-> How do you envisage the follow-up ?
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-Well shall we just apply this as-is then, with ISA-style port
-IO probing and all?
-
-I think Rafael said something about it being possible for us
-to register our own kernel ACPI PNP IDs (as if: there is no
-road here, but if someone starts to walk here, a road will
-soon become, and we take the first step then).
-
-But overall I am a bit confused: I am hearing from one end
-of the x86 community that ACPI is the way to go for
-configuring platform devices on x86, yet stuff like this is
-popping up from independent vendors, and get integrated
-on boards with no ACPI tables in sight.
-
-Over at ksummit-discuss we have had a thread about
-whether device tree should be used in such cases, but
-that is not clear either.
-
-Basically I'm a bit confused because the x86 community
-is talking with so many voices and I'm not used to it,
-and I don't know if they actually have a common vision.
-
-So I'm cc:ing some of my x86 friends to see if they
-are OK with this port-probing approach before I merge
-the driver.... Rafael, HPA, Matthew?
+Tentatively applied to the gpio tree.
 
 Yours,
 Linus Walleij
