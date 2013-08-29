@@ -1,70 +1,115 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3] gpio: add GPIO support for F71882FG and F71889F
-Date: Thu, 29 Aug 2013 06:41:41 -0700
-Message-ID: <521F4F95.5080103@roeck-us.net>
-References: <1374486633-9737-1-git-send-email-simon.guinot@sequanux.org> <CACRpkda2bH_TkFR6c0cXvjye4SmFWN5xuzQSO=NqBq8mNDgV0g@mail.gmail.com> <20130801134632.GY9916@kw.sim.vm.gnt> <CACRpkdZcEPM-u19pc+v_cRqUSfJBFZ49rJYiewQ1sWWSU5YxEg@mail.gmail.com> <20130829125754.GA8813@srcf.ucam.org>
+From: George Cherian <george.cherian@ti.com>
+Subject: Re: [PATCH] gpio: pcf857x: cleanup irq_demux_work and use threaded
+ irq
+Date: Thu, 29 Aug 2013 19:41:16 +0530
+Message-ID: <521F5684.3090703@ti.com>
+References: <1377599455-9379-1-git-send-email-george.cherian@ti.com> <CACRpkdbME_M8_X=5OttSFKDknqVEKSZc+7u=VLM-T-g3c_uv6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:50179 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753305Ab3H2Nlo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 09:41:44 -0400
-In-Reply-To: <20130829125754.GA8813@srcf.ucam.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:58811 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754018Ab3H2OL0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 10:11:26 -0400
+In-Reply-To: <CACRpkdbME_M8_X=5OttSFKDknqVEKSZc+7u=VLM-T-g3c_uv6Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Guinot <simon.guinot@sequanux.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Grant Likely <grant.likely@secretlab.ca>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "H. Peter Anvin" <hpa@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Nikolay Balandin <n.a.balandin@gmail.com>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-On 08/29/2013 05:57 AM, Matthew Garrett wrote:
-> On Thu, Aug 29, 2013 at 02:39:33PM +0200, Linus Walleij wrote:
->
->> I think Rafael said something about it being possible for us
->> to register our own kernel ACPI PNP IDs (as if: there is no
->> road here, but if someone starts to walk here, a road will
->> soon become, and we take the first step then).
->
-> It'd be straightforward to register the LNX PnP prefix and have someone
-> take responsibility for assigning numbers, but really a generic vendor
-> string should only be used when defining programming models rather than
-> specific devices.
->
->> But overall I am a bit confused: I am hearing from one end
->> of the x86 community that ACPI is the way to go for
->> configuring platform devices on x86, yet stuff like this is
->> popping up from independent vendors, and get integrated
->> on boards with no ACPI tables in sight.
->
-> ACPI is usually used to describe systems, and the normal ACPI way of
-> handling GPIO devices is to expose the device at the other end of the
-> GPIO lines and then provide AML for toggling the lines. Attaching an
-> actual driver to the device would interfere with that, so nobody writes
-> an actual driver.
->
->> Over at ksummit-discuss we have had a thread about
->> whether device tree should be used in such cases, but
->> that is not clear either.
->
-> If a vendor doesn't provide any way to autoprobe a device, there's no
-> way to autoprobe a device. That usually means that you're not expected
-> to use that device.
->
+Hi Linus,
 
-Pretty radical. Following your advice, should we remove all watchdog
-and hwmon drivers for all SuperIO chips out there, plus any existing
-gpio drivers (drivers/char/pc8736x_gpio.c might be a candidate) ?
+Thanks for the review. I will split it and send v2.
 
-Oh, and the parallel port driver also detects super-io chips directly,
-so maybe the respective code should be removed as well. I am sure there
-is more code that can be removed.
+On 8/29/2013 6:27 PM, Linus Walleij wrote:
+> On Tue, Aug 27, 2013 at 12:30 PM, George Cherian <george.cherian@ti.com> wrote:
+>
+>> This patch
+>>          - removes the irq_demux_work
+>>          - Uses devm_request_threaded_irq
+>>          - Call the user handler iff gpio_to_irq is done.
+>>
+>> Signed-off-by: George Cherian <george.cherian@ti.com>
+> Can you please split this up? It seems like three different patches,
+> and now they block each other. The threading patch is fine and
+> I could apply it unless this was mixed up with other stuff.
+>
+> I'd like Kuninoro and/or Nikolay to have a look at this, so please
+> CC them on subsequent iterations.
+okay
+> NB: I really like that you move the irq handling to a thread, good
+> job.
+>
+>>   static const struct i2c_device_id pcf857x_id[] = {
+>> @@ -89,12 +89,12 @@ struct pcf857x {
+>>          struct gpio_chip        chip;
+>>          struct i2c_client       *client;
+>>          struct mutex            lock;           /* protect 'out' */
+>> -       struct work_struct      work;           /* irq demux work */
+>>          struct irq_domain       *irq_domain;    /* for irq demux  */
+>>          spinlock_t              slock;          /* protect irq demux */
+>>          unsigned                out;            /* software latch */
+>>          unsigned                status;         /* current status */
+>>          int                     irq;            /* real irq number */
+>> +       int                     irq_mapped;     /* mapped gpio irqs  */
+> This seems like an u32 or atleast unsigned, and state that its one
+> bit flag per IRQ. How many GPIO lines are there?
+pcf857x driver supports expanders with 8 and 16 gpio lines.
+>> -static void pcf857x_irq_demux_work(struct work_struct *work)
+>> +static irqreturn_t pcf857x_irq(int irq, void *data)
+>>   {
+>> -       struct pcf857x *gpio = container_of(work,
+>> -                                              struct pcf857x,
+>> -                                              work);
+>> +       struct pcf857x  *gpio = data;
+>>          unsigned long change, i, status, flags;
+>>
+>>          status = gpio->read(gpio->client);
+>>
+>>          spin_lock_irqsave(&gpio->slock, flags);
+>> +
+>> +       /*
+>> +        * call the interrupt handler iff gpio is used as
+>> +        * interrupt source, just to avoid bad irqs
+>> +        */
+>>
+>> -       change = gpio->status ^ status;
+>> +       change = ((gpio->status ^ status) & gpio->irq_mapped);
+> I don't know if that is right.
+>
+> If this happens you are getting what we call a "spurious IRQ"
+> and this shall be reported to the IRQ core by returning
+> IRQ_NONE and handled from there.
+While testing I got prints like bad irq and no handler installed.
+Now I notice its mostly when the n_latch is not passed properly.
+>
+>> @@ -226,9 +223,13 @@ static irqreturn_t pcf857x_irq_demux(int irq, void *data)
+>>   static int pcf857x_irq_domain_map(struct irq_domain *domain, unsigned int virq,
+>>                                   irq_hw_number_t hw)
+>>   {
+>> +       struct pcf857x  *gpio = domain->host_data;
+>>          irq_set_chip_and_handler(virq,
+>>                                   &dummy_irq_chip,
+>>                                   handle_level_irq);
+>> +       set_irq_flags(virq, IRQF_VALID);
+>> +       gpio->irq_mapped |= (1 << hw);
+> I'm a bit uneasy about this. It feels like its the irqdomain's
+> responsibility to keep track of whether an IRQ is mapped
+> or not.
+Mainly these expanders dont have an ier sort of registers and if at all 
+the initial value is not set proper
+then it gives bad irq prints only once per changed bit for which there 
+is no handler.
+Should I drop this in v2?
 
-Or is the idea to say "no acpi, no new driver" ? Just wondering -
-I have a GPIO driver for Nuvoton chips on my back-burner; that would be
-necessary to access some fan controls connected to gpio pins on some boards.
-If this is a no-go, I'll happily drop it from my list of things to do,
-and just tell the user community that Linux won't support their hardware
-due to policy reasons.
+>
+> Maybe Grant should have a look at this.
+>
+> Yours,
+> Linus Walleij
 
-Guenter
+
+-- 
+-George
 
