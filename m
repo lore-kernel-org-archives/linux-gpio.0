@@ -1,31 +1,30 @@
-From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Subject: Re: [PATCH] gpio: (gpio-pca953x) move header to
- linux/platform_data/
-Date: Thu, 29 Aug 2013 13:52:58 -0400 (EDT)
-Message-ID: <1859873512.636800.1377798778897.JavaMail.root@mail>
-References: <ADE657CA350FB648AAC2C43247A983F0021DAC7DA184@AUSP01VMBX24.collaborationhost.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V3 1/2] gpio: mcp23s08: rename the device tree property
+Date: Thu, 29 Aug 2013 19:56:33 +0200
+Message-ID: <CACRpkdZ9=Wd=WZ4BEQ9qiKSMTyR8gNOYVcaEB_Y_ftufKeafkQ@mail.gmail.com>
+References: <1377679131-32082-1-git-send-email-larsi@wh2.tu-dresden.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.savoirfairelinux.com ([209.172.62.77]:59800 "EHLO
-	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755797Ab3H2RxE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 13:53:04 -0400
-In-Reply-To: <ADE657CA350FB648AAC2C43247A983F0021DAC7DA184@AUSP01VMBX24.collaborationhost.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1377679131-32082-1-git-send-email-larsi@wh2.tu-dresden.de>
+Sender: linux-doc-owner@vger.kernel.org
+To: Lars Poeschel <larsi@wh2.tu-dresden.de>
+Cc: Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Rob Landley <rob@landley.net>, Arnd Bergmann <arnd@arndb.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: arm@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-gpio@vger.kernel.org, kernel@savoirfairelinux.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, H Hartley Sweeten <hartleys@visionengravers.com>
 
-As this patch mainly touches arch/arm/*, Olof/Kevin, would you mind
-applying it?
+On Wed, Aug 28, 2013 at 10:38 AM, Lars Poeschel <larsi@wh2.tu-dresden.de> wrote:
 
-The first message in thread is here: https://lkml.org/lkml/2013/7/31/552
-Here are the previous ACKs:
+> From: Lars Poeschel <poeschel@lemonage.de>
+>
+> The device tree property should be more descriptive.
+> microchip seems more reasonable than mcp. The old mcp
+> prefix is still supported but marked as deprecated.
+> Users of mcp have to switch to the microchip prefix.
+>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+Patch applied.
 
-Regards,
-Vivien
+Yours,
+Linus Walleij
