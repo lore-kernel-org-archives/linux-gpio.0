@@ -1,40 +1,50 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH v3] gpio: add GPIO support for F71882FG and F71889F
-Date: Thu, 29 Aug 2013 23:22:19 +0100
-Message-ID: <20130829222219.GA24221@srcf.ucam.org>
-References: <1374486633-9737-1-git-send-email-simon.guinot@sequanux.org>
- <CACRpkda2bH_TkFR6c0cXvjye4SmFWN5xuzQSO=NqBq8mNDgV0g@mail.gmail.com>
- <20130801134632.GY9916@kw.sim.vm.gnt>
- <CACRpkdZcEPM-u19pc+v_cRqUSfJBFZ49rJYiewQ1sWWSU5YxEg@mail.gmail.com>
- <20130829125754.GA8813@srcf.ucam.org>
- <521F4F95.5080103@roeck-us.net>
- <20130829153738.GA16306@srcf.ucam.org>
- <20130829160830.GB25021@roeck-us.net>
- <20130829162551.GA17411@srcf.ucam.org>
- <20130829222053.GE13942@kw.sim.vm.gnt>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v5] gpio: pcf857x: Add OF support
+Date: Fri, 30 Aug 2013 01:44:50 +0200
+Message-ID: <35333449.0R3QP6op66@avalon>
+References: <1377590559-14279-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <7583101.2yAsZLOucV@avalon> <CACRpkda=pZ6xQ2XJke=MBLiH_DAS8CXW+JOZ856ohGZi+fOCzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:57688 "EHLO
-	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756292Ab3H2WWZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 18:22:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20130829222053.GE13942@kw.sim.vm.gnt>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:57411 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753279Ab3H2Xn1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 19:43:27 -0400
+In-Reply-To: <CACRpkda=pZ6xQ2XJke=MBLiH_DAS8CXW+JOZ856ohGZi+fOCzA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Grant Likely <grant.likely@secretlab.ca>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "H. Peter Anvin" <hpa@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Archit Taneja <archit@ti.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 
-On Fri, Aug 30, 2013 at 12:20:54AM +0200, Simon Guinot wrote:
+Hi Linus,
 
-> Almost all the LaCie NASes are running a Linux based OS. I can assure
-> you that LaCie really takes care of Linux. Now, the main reason why the
-> Super-I/O ACPI support is missing on this boards is a lack of knowledge.
-> Thanks to this discussion, I am now aware of that. Then, for the next
-> products, I will do my best to get AMLs or at least ACPI IDs.
+On Thursday 29 August 2013 20:24:32 Linus Walleij wrote:
+> On Wed, Aug 28, 2013 at 1:58 PM, Laurent Pinchart wrote:
+> > On Tuesday 27 August 2013 19:18:55 Wolfram Sang wrote:
+> >> > The driver should support the same chip models reardless of whether
+> >> > it's used with or without DT. If an entry in the OF table has no
+> >> > corresponding entry in the I2C table I would consider that as a driver
+> >> > bug.
+> >> 
+> >> Linus Walleij posted a patch to support DT only probing, but too many
+> >> side-effects showed up. Some were fixable (probe regressions) and some
+> >> need more work, if feasible at all. Most prominent is that runtime
+> >> instantiation of i2c slaves currently needs an entry in the i2c table.
+> > 
+> > Linus, I'd like to get this in v3.12 if it's not too late. Could you
+> > please provide your input ?
+> 
+> Provided some input on the v4 version,
 
-Awesome! Let me know if you need any advice on this.
+Do you mean v4 of this patch ? I can't find your reply.
+
+> due to being a bit overloaded my patch queue is overloaded...
+
+No worries. We can delay this one until v3.13.
 
 -- 
-Matthew Garrett | mjg59@srcf.ucam.org
+Regards,
+
+Laurent Pinchart
+
