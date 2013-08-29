@@ -1,56 +1,64 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH v3] gpio: add GPIO support for F71882FG and F71889F
-Date: Thu, 29 Aug 2013 17:25:51 +0100
-Message-ID: <20130829162551.GA17411@srcf.ucam.org>
-References: <1374486633-9737-1-git-send-email-simon.guinot@sequanux.org>
- <CACRpkda2bH_TkFR6c0cXvjye4SmFWN5xuzQSO=NqBq8mNDgV0g@mail.gmail.com>
- <20130801134632.GY9916@kw.sim.vm.gnt>
- <CACRpkdZcEPM-u19pc+v_cRqUSfJBFZ49rJYiewQ1sWWSU5YxEg@mail.gmail.com>
- <20130829125754.GA8813@srcf.ucam.org>
- <521F4F95.5080103@roeck-us.net>
- <20130829153738.GA16306@srcf.ucam.org>
- <20130829160830.GB25021@roeck-us.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pcf857x: cleanup irq_demux_work and use threaded irq
+Date: Thu, 29 Aug 2013 19:24:11 +0200
+Message-ID: <CACRpkdYqHmw13t0Qj19Ko9qvus80eykjt25iXT0GP1aKETP+gQ@mail.gmail.com>
+References: <1377599455-9379-1-git-send-email-george.cherian@ti.com>
+	<CACRpkdbME_M8_X=5OttSFKDknqVEKSZc+7u=VLM-T-g3c_uv6Q@mail.gmail.com>
+	<521F5684.3090703@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:52869 "EHLO
-	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752519Ab3H2QZ4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 12:25:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20130829160830.GB25021@roeck-us.net>
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:38287 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755383Ab3H2RYM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 13:24:12 -0400
+Received: by mail-oa0-f44.google.com with SMTP id l17so976165oag.31
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2013 10:24:11 -0700 (PDT)
+In-Reply-To: <521F5684.3090703@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Guinot <simon.guinot@sequanux.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Grant Likely <grant.likely@secretlab.ca>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "H. Peter Anvin" <hpa@linux.intel.com>
+To: George Cherian <george.cherian@ti.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Nikolay Balandin <n.a.balandin@gmail.com>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-On Thu, Aug 29, 2013 at 09:08:30AM -0700, Guenter Roeck wrote:
-> On Thu, Aug 29, 2013 at 04:37:38PM +0100, Matthew Garrett wrote:
-> > On Thu, Aug 29, 2013 at 06:41:41AM -0700, Guenter Roeck wrote:
-> > The majority of board vendors clearly don't expect the OS to drive the 
-> > hwmon chips - they're there for the benefit of ACPI and SMM code. That 
-> > doesn't mean that there's no benefit in having drivers for them, just 
-> > that the board vendors don't care about that use case and so won't do 
-> > anything to make it easier.
-> > 
-> Actually, not entirely true. Some vendors even provide software running on
-> Windows to access those chips (including access to fans controlled through
-> GPIO pins) and to provide information to the user. It might be more accurate
-> to say that some board vendors don't care about Linux (or about providing
-> access through ACPI, for that matter).
+On Thu, Aug 29, 2013 at 4:11 PM, George Cherian <george.cherian@ti.com> wrote:
+> On 8/29/2013 6:27 PM, Linus Walleij wrote:
 
-Eh. If they're really providing code that just assumes that hardware is 
-present and bangs on it, what choice do we have? You've checked that the 
-machines in question don't have a magic ACPI device that provides 
-resource information?
+>>>          int                     irq;            /* real irq number */
+>>> +       int                     irq_mapped;     /* mapped gpio irqs  */
+>>
+>> This seems like an u32 or atleast unsigned, and state that its one
+>> bit flag per IRQ. How many GPIO lines are there?
+>
+> pcf857x driver supports expanders with 8 and 16 gpio lines.
 
-> Question here is what the Linux kernel community's policy is going to be
-> to handle such cases. Pragmatic or dogmatic ?
+OK should be an u16 then?
 
-I don't see any benefit in changing the status quo. Sometimes hardware 
-is just shit. The majority of x86 vendors certainly don't care about 
-anything we do, so it's not like we're in a position to force them to 
-change.
+>>>   static int pcf857x_irq_domain_map(struct irq_domain *domain, unsigned
+>>> int virq,
+>>>                                   irq_hw_number_t hw)
+>>>   {
+>>> +       struct pcf857x  *gpio = domain->host_data;
+>>>          irq_set_chip_and_handler(virq,
+>>>                                   &dummy_irq_chip,
+>>>                                   handle_level_irq);
+>>> +       set_irq_flags(virq, IRQF_VALID);
+>>> +       gpio->irq_mapped |= (1 << hw);
+>>
+>> I'm a bit uneasy about this. It feels like its the irqdomain's
+>> responsibility to keep track of whether an IRQ is mapped
+>> or not.
+>
+> Mainly these expanders dont have an ier sort of registers and if at all the
+> initial value is not set proper
+> then it gives bad irq prints only once per changed bit for which there is no
+> handler.
+> Should I drop this in v2?
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+I don't know, I mean if it's causing a problem or filling the console
+with error prints it is really annoying, and if there is nothing to do
+about the condition then there is not much more we can do I guess.
+
+But please take a second look.
+
+Yours,
+Linus Walleij
