@@ -1,59 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] emev2: GPIOLIB: Enable support for OF
-Date: Thu, 29 Aug 2013 19:41:42 +0200
-Message-ID: <CACRpkdZB+Dm1jhWRu+rdT0V7Q0iwozsd2gQ6M+=55h2SJHQHWw@mail.gmail.com>
-References: <1377623069-32678-1-git-send-email-ian.molton@codethink.co.uk>
-	<1377623069-32678-2-git-send-email-ian.molton@codethink.co.uk>
+Subject: Re: RFC: Bug in error handling in gpiolib.c
+Date: Thu, 29 Aug 2013 19:45:29 +0200
+Message-ID: <CACRpkday6zMGSKvc4HTVKP3oezTdR5x_MHaK8nvDHWwu260B=A@mail.gmail.com>
+References: <521CFB38.8080705@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:47509 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755149Ab3H2Rlm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 13:41:42 -0400
-Received: by mail-oa0-f44.google.com with SMTP id l17so1004371oag.17
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2013 10:41:42 -0700 (PDT)
-In-Reply-To: <1377623069-32678-2-git-send-email-ian.molton@codethink.co.uk>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:39401 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754525Ab3H2Rp3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 13:45:29 -0400
+Received: by mail-ob0-f175.google.com with SMTP id xn12so824849obc.6
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2013 10:45:29 -0700 (PDT)
+In-Reply-To: <521CFB38.8080705@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ian Molton <ian.molton@codethink.co.uk>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+To: Tim Bird <tbird20d@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Bird, Tim" <tim.bird@sonymobile.com>
 
-On Tue, Aug 27, 2013 at 7:04 PM, Ian Molton <ian.molton@codethink.co.uk> wrote:
+On Tue, Aug 27, 2013 at 9:17 PM, Tim Bird <tbird20d@gmail.com> wrote:
 
-> Signed-off-by: Ian Molton <ian.molton@codethink.co.uk>
-> ---
->  drivers/gpio/gpio-em.c |    1 +
->  1 file changed, 1 insertion(+)
+> Hi all,
 >
-> diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-> index 5cba855..279821e 100644
-> --- a/drivers/gpio/gpio-em.c
-> +++ b/drivers/gpio/gpio-em.c
-> @@ -303,6 +303,7 @@ static int em_gio_probe(struct platform_device *pdev)
->         }
->
->         gpio_chip = &p->gpio_chip;
-> +       gpio_chip->of_node = pdev->dev.of_node;
+> There appears to be a bug in the error handling in
+> drivers/gpi/gpiolib.c  In certain error cases
+> desc_to_gpio() is called to get the gpio number
+> for an error message, but this may happen on code
+> paths where desc->chip is NULL.  This causes a panic
+> on my system in gpiod_request(), as follows:
+(...)
+> Here's my patch:
+> Subject: [PATCH] gpio: avoid panic on NULL desc->chip in gpiod_request
 
-This doesn't work on non-DT compiles.
+Patch applied. Unless we come up with something better,
+there is some parallel discussion on how to handle NULL
+descriptors.
 
-Look at struct gpio_chip:
-
-#if defined(CONFIG_OF_GPIO)
-        /*
-         * If CONFIG_OF is enabled, then all GPIO controllers described in the
-         * device tree automatically may have an OF translation
-         */
-        struct device_node *of_node;
-        int of_gpio_n_cells;
-        int (*of_xlate)(struct gpio_chip *gc,
-                        const struct of_phandle_args *gpiospec, u32 *flags);
-#endif
-
-Either the statement needs to be inside #ifdef CONFIG_OF_GPIO
-or the Emma driver need to select OF_GPIO in its Kconfig
-entry.
+Alexandre: OK to apply this?
 
 Yours,
 Linus Walleij
