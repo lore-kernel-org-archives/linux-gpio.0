@@ -1,41 +1,101 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: samsung: Drop support for Exynos SoCs
-Date: Thu, 29 Aug 2013 14:42:25 +0200
-Message-ID: <CACRpkdbUo2t1gT8=6UpjiXs4Sd-1xLpEqOqdA220L0wgVC-4uw@mail.gmail.com>
-References: <1377538555-14901-1-git-send-email-t.figa@samsung.com>
+Subject: Re: [PATCH] gpio: pcf857x: cleanup irq_demux_work and use threaded irq
+Date: Thu, 29 Aug 2013 14:57:50 +0200
+Message-ID: <CACRpkdbME_M8_X=5OttSFKDknqVEKSZc+7u=VLM-T-g3c_uv6Q@mail.gmail.com>
+References: <1377599455-9379-1-git-send-email-george.cherian@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:38981 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756094Ab3H2Mm0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 08:42:26 -0400
-Received: by mail-ob0-f174.google.com with SMTP id wd6so391965obb.5
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2013 05:42:26 -0700 (PDT)
-In-Reply-To: <1377538555-14901-1-git-send-email-t.figa@samsung.com>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:34913 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753354Ab3H2M5u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 08:57:50 -0400
+Received: by mail-ob0-f175.google.com with SMTP id xn12so402243obc.20
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2013 05:57:50 -0700 (PDT)
+In-Reply-To: <1377599455-9379-1-git-send-email-george.cherian@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: George Cherian <george.cherian@ti.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Nikolay Balandin <n.a.balandin@gmail.com>, Grant Likely <grant.likely@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-On Mon, Aug 26, 2013 at 7:35 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+On Tue, Aug 27, 2013 at 12:30 PM, George Cherian <george.cherian@ti.com> wrote:
 
-> GPIO support on Exynos SoCs is provided by pinctrl-samsung driver,
-> leaving all the support code in gpio-samsung driver unused.
-
-Just double checking: you mean it is unused in v3.11-rc7 OK?
-Not in Linux-next?
-
-In the former case I can merge it into the GPIO tree and in the
-latter case I need to merge it into the pinctrl tree.
-
-> This dead
-> code can be safely removed and so it is done by this patch.
+> This patch
+>         - removes the irq_demux_work
+>         - Uses devm_request_threaded_irq
+>         - Call the user handler iff gpio_to_irq is done.
 >
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: George Cherian <george.cherian@ti.com>
 
-Tentatively applied to the gpio tree.
+Can you please split this up? It seems like three different patches,
+and now they block each other. The threading patch is fine and
+I could apply it unless this was mixed up with other stuff.
+
+I'd like Kuninoro and/or Nikolay to have a look at this, so please
+CC them on subsequent iterations.
+
+NB: I really like that you move the irq handling to a thread, good
+job.
+
+>  static const struct i2c_device_id pcf857x_id[] = {
+> @@ -89,12 +89,12 @@ struct pcf857x {
+>         struct gpio_chip        chip;
+>         struct i2c_client       *client;
+>         struct mutex            lock;           /* protect 'out' */
+> -       struct work_struct      work;           /* irq demux work */
+>         struct irq_domain       *irq_domain;    /* for irq demux  */
+>         spinlock_t              slock;          /* protect irq demux */
+>         unsigned                out;            /* software latch */
+>         unsigned                status;         /* current status */
+>         int                     irq;            /* real irq number */
+> +       int                     irq_mapped;     /* mapped gpio irqs  */
+
+This seems like an u32 or atleast unsigned, and state that its one
+bit flag per IRQ. How many GPIO lines are there?
+
+> -static void pcf857x_irq_demux_work(struct work_struct *work)
+> +static irqreturn_t pcf857x_irq(int irq, void *data)
+>  {
+> -       struct pcf857x *gpio = container_of(work,
+> -                                              struct pcf857x,
+> -                                              work);
+> +       struct pcf857x  *gpio = data;
+>         unsigned long change, i, status, flags;
+>
+>         status = gpio->read(gpio->client);
+>
+>         spin_lock_irqsave(&gpio->slock, flags);
+> +
+> +       /*
+> +        * call the interrupt handler iff gpio is used as
+> +        * interrupt source, just to avoid bad irqs
+> +        */
+>
+> -       change = gpio->status ^ status;
+> +       change = ((gpio->status ^ status) & gpio->irq_mapped);
+
+I don't know if that is right.
+
+If this happens you are getting what we call a "spurious IRQ"
+and this shall be reported to the IRQ core by returning
+IRQ_NONE and handled from there.
+
+> @@ -226,9 +223,13 @@ static irqreturn_t pcf857x_irq_demux(int irq, void *data)
+>  static int pcf857x_irq_domain_map(struct irq_domain *domain, unsigned int virq,
+>                                  irq_hw_number_t hw)
+>  {
+> +       struct pcf857x  *gpio = domain->host_data;
+>         irq_set_chip_and_handler(virq,
+>                                  &dummy_irq_chip,
+>                                  handle_level_irq);
+> +       set_irq_flags(virq, IRQF_VALID);
+> +       gpio->irq_mapped |= (1 << hw);
+
+I'm a bit uneasy about this. It feels like its the irqdomain's
+responsibility to keep track of whether an IRQ is mapped
+or not.
+
+Maybe Grant should have a look at this.
 
 Yours,
 Linus Walleij
