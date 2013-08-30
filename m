@@ -1,33 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] emev2: GPIOLIB: Enable support for OF
-Date: Fri, 30 Aug 2013 09:48:38 +0200
-Message-ID: <CACRpkdbeCU_WG4xXvoh76RZ-9UtbWJvB4PqYhSpTXSF4Hodf2A@mail.gmail.com>
-References: <1377623069-32678-1-git-send-email-ian.molton@codethink.co.uk>
-	<1377623069-32678-2-git-send-email-ian.molton@codethink.co.uk>
-	<CACRpkdZB+Dm1jhWRu+rdT0V7Q0iwozsd2gQ6M+=55h2SJHQHWw@mail.gmail.com>
-	<20130830034746.GB17800@verge.net.au>
+Subject: Re: [PATCH v4] gpio: pcf857x: Add OF support
+Date: Fri, 30 Aug 2013 10:07:23 +0200
+Message-ID: <CACRpkdbohob2cST6Wmn3yJ8cxy162iwR8oZaBk+QJRJTvSN-QA@mail.gmail.com>
+References: <1377524753-4027-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	<CACRpkdZuODowd6V9WcCes6znT15C105y_kfYynhien4ZCCaoOA@mail.gmail.com>
+	<32047086.JjfkHtWF69@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20130830034746.GB17800@verge.net.au>
-Sender: linux-sh-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Ian Molton <ian.molton@codethink.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:52549 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752453Ab3H3IHY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Aug 2013 04:07:24 -0400
+Received: by mail-oa0-f42.google.com with SMTP id j10so1494910oah.1
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Aug 2013 01:07:24 -0700 (PDT)
+In-Reply-To: <32047086.JjfkHtWF69@avalon>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Fri, Aug 30, 2013 at 5:47 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, Aug 29, 2013 at 07:41:42PM +0200, Linus Walleij wrote:
+On Fri, Aug 30, 2013 at 2:05 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thursday 29 August 2013 14:16:59 Linus Walleij wrote:
+>> On Mon, Aug 26, 2013 at 3:45 PM, Laurent Pinchart wrote:
 
->> Either the statement needs to be inside #ifdef CONFIG_OF_GPIO
->> or the Emma driver need to select OF_GPIO in its Kconfig
->> entry.
+>> Don't we want to do this generic if we shall do it?
+>>
+>> Like for *any* GPIO chips we provide lines-initial state in the device
+>> tree and some code in the gpiochip with a callback in struct gpio_chip
+>> that can be called by the gpiolib core to set this up? Then we don't
+>> have to reimplement this for every GPIO controller that needs it.
 >
-> This may be somewhat naieve, but it seems to me that the latter would be a
-> better choice at this stage because AFIK the only in-tree emev2 board is
-> the kzm9d and it uses USE_OF.
+> Most GPIO chips will provide a way to read back the current state. The initial
+> state only needs to be provided for write-only chips. This is (luckily) rather
+> an exception, so I don't think we should implement it in the core, at least
+> not yet. We can always refactor the code later if needed, the proposed DT
+> binding is generic enough.
 
-I think you're right. Ian can you cook a patch that also selects
-OF_GPIO for this controller in Kconfig?
+But I think this can be useful on any GPIO chip.
+
+For someone deploying some system and hacking around in the
+device tree to set the GPIOs up properly at boot it can be a
+real useful tool.
+
+Or is that giving them too much rope? :-D
 
 Yours,
 Linus Walleij
