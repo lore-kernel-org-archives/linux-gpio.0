@@ -1,134 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: improve error path in gpiolib
-Date: Fri, 30 Aug 2013 09:46:35 +0200
-Message-ID: <1377848795-28070-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ea0-f175.google.com ([209.85.215.175]:51963 "EHLO
-	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751995Ab3H3Hqq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Aug 2013 03:46:46 -0400
-Received: by mail-ea0-f175.google.com with SMTP id m14so720697eaj.20
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Aug 2013 00:46:45 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: Re: [PATCH] emev2: GPIOLIB: Enable support for OF
+Date: Fri, 30 Aug 2013 09:48:38 +0200
+Message-ID: <CACRpkdbeCU_WG4xXvoh76RZ-9UtbWJvB4PqYhSpTXSF4Hodf2A@mail.gmail.com>
+References: <1377623069-32678-1-git-send-email-ian.molton@codethink.co.uk>
+	<1377623069-32678-2-git-send-email-ian.molton@codethink.co.uk>
+	<CACRpkdZB+Dm1jhWRu+rdT0V7Q0iwozsd2gQ6M+=55h2SJHQHWw@mail.gmail.com>
+	<20130830034746.GB17800@verge.net.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20130830034746.GB17800@verge.net.au>
+Sender: linux-sh-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>
+Cc: Ian Molton <ian.molton@codethink.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Frank Rowand <frank.rowand@sonymobile.com>, Tim Bird <tim.bird@sonymobile.com>
 
-At several places the gpiolib will proceed to handle a GPIO
-descriptor even if it's ->chip member is NULL and no gpiochip
-is associated.
+On Fri, Aug 30, 2013 at 5:47 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, Aug 29, 2013 at 07:41:42PM +0200, Linus Walleij wrote:
 
-Fix this by checking that both the descriptor cookie *and*
-the chip pointer are valid.
+>> Either the statement needs to be inside #ifdef CONFIG_OF_GPIO
+>> or the Emma driver need to select OF_GPIO in its Kconfig
+>> entry.
+>
+> This may be somewhat naieve, but it seems to me that the latter would be a
+> better choice at this stage because AFIK the only in-tree emev2 board is
+> the kzm9d and it uses USE_OF.
 
-Also bail out earlier with more specific diagnostic messages
-on missing operations for setting as input/output or debounce.
+I think you're right. Ian can you cook a patch that also selects
+OF_GPIO for this controller in Kconfig?
 
-Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Frank Rowand <frank.rowand@sonymobile.com>
-Cc: Tim Bird <tim.bird@sonymobile.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 36 ++++++++++++++++++++++--------------
- 1 file changed, 22 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d6413b2..f041f9e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1398,7 +1398,7 @@ static int gpiod_request(struct gpio_desc *desc, const char *label)
- 	int			status = -EPROBE_DEFER;
- 	unsigned long		flags;
- 
--	if (!desc) {
-+	if (!desc || !desc->chip) {
- 		pr_warn("%s: invalid GPIO\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -1406,8 +1406,6 @@ static int gpiod_request(struct gpio_desc *desc, const char *label)
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	chip = desc->chip;
--	if (chip == NULL)
--		goto done;
- 
- 	if (!try_module_get(chip->owner))
- 		goto done;
-@@ -1630,16 +1628,20 @@ static int gpiod_direction_input(struct gpio_desc *desc)
- 	int			status = -EINVAL;
- 	int			offset;
- 
--	if (!desc) {
-+	if (!desc || !desc->chip) {
- 		pr_warn("%s: invalid GPIO\n", __func__);
- 		return -EINVAL;
- 	}
- 
-+	chip = desc->chip;
-+	if (!chip->get || !chip->direction_input) {
-+	  pr_warn("%s: missing get() or direction_input() operations\n",
-+		  __func__);
-+		return -EIO;
-+	}
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
--	chip = desc->chip;
--	if (!chip || !chip->get || !chip->direction_input)
--		goto fail;
- 	status = gpio_ensure_requested(desc);
- 	if (status < 0)
- 		goto fail;
-@@ -1691,7 +1693,7 @@ static int gpiod_direction_output(struct gpio_desc *desc, int value)
- 	int			status = -EINVAL;
- 	int offset;
- 
--	if (!desc) {
-+	if (!desc || !desc->chip) {
- 		pr_warn("%s: invalid GPIO\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -1704,11 +1706,15 @@ static int gpiod_direction_output(struct gpio_desc *desc, int value)
- 	if (!value && test_bit(FLAG_OPEN_SOURCE,  &desc->flags))
- 		return gpiod_direction_input(desc);
- 
-+	chip = desc->chip;
-+	if (!chip->set || !chip->direction_output) {
-+	  pr_warn("%s: missing set() or direction_output() operations\n",
-+		  __func__);
-+		return -EIO;
-+	}
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
--	chip = desc->chip;
--	if (!chip || !chip->set || !chip->direction_output)
--		goto fail;
- 	status = gpio_ensure_requested(desc);
- 	if (status < 0)
- 		goto fail;
-@@ -1765,7 +1771,7 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 	int			status = -EINVAL;
- 	int			offset;
- 
--	if (!desc) {
-+	if (!desc || !desc->chip) {
- 		pr_warn("%s: invalid GPIO\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -1773,8 +1779,10 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	chip = desc->chip;
--	if (!chip || !chip->set || !chip->set_debounce)
--		goto fail;
-+	if (!chip->set || !chip->set_debounce) {
-+	  pr_warn("%s: missing set() or set_debounce() operations\n",
-+		  __func__);
-+	}
- 
- 	status = gpio_ensure_requested(desc);
- 	if (status < 0)
--- 
-1.8.3.1
-
+Yours,
+Linus Walleij
