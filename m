@@ -1,97 +1,130 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4] gpio: pcf857x: Add OF support
-Date: Fri, 30 Aug 2013 02:05:41 +0200
-Message-ID: <32047086.JjfkHtWF69@avalon>
-References: <1377524753-4027-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CACRpkdZuODowd6V9WcCes6znT15C105y_kfYynhien4ZCCaoOA@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Fri, 30 Aug 2013 02:24:23 +0200
+Message-ID: <521FE637.3010805@collabora.co.uk>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <521D0964.2080209@wwwdotorg.org> <CACRpkdaWPQTPw8u+97iV8MRB1fdeS40kd242pJd3UE9Ler4kRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:57539 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751625Ab3H3AES (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 20:04:18 -0400
-In-Reply-To: <CACRpkdZuODowd6V9WcCes6znT15C105y_kfYynhien4ZCCaoOA@mail.gmail.com>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:54047 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753503Ab3H3AYi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 20:24:38 -0400
+In-Reply-To: <CACRpkdaWPQTPw8u+97iV8MRB1fdeS40kd242pJd3UE9Ler4kRQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-Hi Linus,
-
-On Thursday 29 August 2013 14:16:59 Linus Walleij wrote:
-> On Mon, Aug 26, 2013 at 3:45 PM, Laurent Pinchart wrote:
-> > Add DT bindings for the pcf857x-compatible chips and parse the device
-> > tree node in the driver.
-> > 
-> > Signed-off-by: Laurent Pinchart
-> > <laurent.pinchart+renesas@ideasonboard.com>
+On 08/29/2013 09:26 PM, Linus Walleij wrote:
+> On Tue, Aug 27, 2013 at 10:17 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 08/26/2013 08:07 AM, Lars Poeschel wrote:
+>>>
+>>> Currently the kernel is ambigously treating GPIOs and interrupts
+>>> from a GPIO controller: GPIOs and interrupts are treated as
+>>> orthogonal. This unfortunately makes it unclear how to actually
+>>> retrieve and request a GPIO line or interrupt from a GPIO
+>>> controller in the device tree probe path.
+>>
+>> I still think that this patch is the wrong approach. Instead, the logic
+>> should be hooked into gpio_request() and request_irq(). This patch only
+>> addresses DT, and ignores anything else, hence doesn't seem like the
+>> right level of abstraction to plug in, since the issue is not related to DT.
 > 
-> First: can I get an ACK from some DT-bindings maintainer?
+> We tried to do it that way, and it exploded. See commit
+> b4419e1a15905191661ffe75ba2f9e649f5d565e
+> "gpio/omap: auto request GPIO as input if used as IRQ via DT"
 > 
-> I think you may need to CC them all individually to get some response.
-
-I'll make sure to get an ACK for v6 (or a more recent version). Reviewers are 
-probably busy with the merge window about to open, delaying this patch to 
-v3.13 should help.
-
-I'll post v6 after receiving your answer to the comment below, as well as to 
-the issue raised by Tomasz on v5.
-
-> > +++ b/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-> > @@ -0,0 +1,71 @@
-> > +* PCF857x-compatible I/O expanders
-> > +
-> > +The PCF857x-compatible chips have "quasi-bidirectional" I/O pins that can
-> > be +driven high by a pull-up current source or driven low to ground. This
-> > combines +the direction and output level into a single bit per pin, which
-> > can't be read +back. We can't actually know at initialization time
-> > whether a pin is configured +(a) as output and driving the signal
-> > low/high, or (b) as input and reporting a +low/high value, without
-> > knowing the last value written since the chip came out +of reset (if
-> > any). The only reliable solution for setting up pin direction is +thus to
-> > do it explicitly.
+> Here request_irq() augmented through its irqdomain to
+> issue gpio_request_one().
 > 
-> Nitpick: I prefer that wrt gpio we talk about "lines" rather than "pins"
-> to separate it from the pin control concept. Just
-> s/pin/line/g
+> Why was this patch reverted? It seems this is what has not
+> managed to reach the audience here.
+>
 
-OK.
+The mentioned patch also broke some ancient platforms that have not been (and
+probably never will) migrated to DT like OMAP1.
 
-> (...)
+So, after trying to add this logic by using a custom irq domain .map function
+handler for the OMAP GPIO driver I agree with Linus that is better to provide a
+solution at the Device Tree level to not affect platforms that are still using
+legacy boot.
+
+Legacy boot don't need a fix since it does not have this issue. Platform code
+just request the GPIO and do the setup (gpio_direction_input) before the drivers
+call to request_irq().
+
+> It turns out some drivers were already doing this:
 > 
-> > +Optional Properties:
-> > +
-> > +  - pins-initial-state: Bitmask that specifies the initial state of each
-> > pin. +  When a bit is set to zero, the corresponding pin will be
-> > initialized to the +  input (pulled-up) state. When the  bit is set to
-> > one, the pin will be +  initialized the the low-level output state. If
-> > the property is not specified +  all pins will be initialized to the
-> > input state.
+> request_gpio(gpio);
+> gpio_direction_input(gpio);
+> request_irq(gpio_to_irq(gpio));
+>
+> Looks perfectly valid right?
+>
+> Not so: after the above change, we tried to request the
+> GPIO a *second time* in the GPIO driver's irq map function,
+> and of course it failed, as it was already taken.
+>
+> So saying that it should be done in the request_irq()
+> function is imposing this other semantic on the kernel
+> instead: you must *NOT* request the GPIO with
+> request_gpio() if you're going to use it as an IRQ.
 > 
-> Name this lines-initial-states (pluralis).
-
-OK.
-
-> Don't we want to do this generic if we shall do it?
+> (Also, it force us to implement the same code in each
+> and every driver, but that is a lesser problem.)
 > 
-> Like for *any* GPIO chips we provide lines-initial state in the device
-> tree and some code in the gpiochip with a callback in struct gpio_chip
-> that can be called by the gpiolib core to set this up? Then we don't
-> have to reimplement this for every GPIO controller that needs it.
+> I don't quite understand what is so hard around this.
+> We cannot get away from restricting the semantics in
+> some way, if gpio-controllers shall also be interrupt-controllers,
+> the current patch is the least intrusive I've seen so far.
+> 
 
-Most GPIO chips will provide a way to read back the current state. The initial 
-state only needs to be provided for write-only chips. This is (luckily) rather 
-an exception, so I don't think we should implement it in the core, at least 
-not yet. We can always refactor the code later if needed, the proposed DT 
-binding is generic enough.
+We have been trying to solve this issue for a few months by now and Linus'
+approach seems to be the most sensible solution to me.
 
-> Sorry for not noticing this earlier...
+Drivers that request an IRQ and assume that platform code will request and setup
+the GPIO have been broken since the boards using these drivers were migrated to
+DT (e.g: smsc911x on OMAP2+ boards). I know is really hard to agree on the
+better approach to solve this but it would be great if we can find a solution
+and fix these broken platforms.
 
-No worries.
+> And I don't even think this is a Linux problem, handing
+> out the same resource with two hands is ambigous and is
+> going to cause problems with any operating system.
+> It is better to restrict this and say in the binding doc that
+> the gpio line cannot be <&gpio n> assigned when there
+> is an interrupt on the same line.
+>
 
--- 
-Regards,
+Indeed, if a driver wants to manually request a GPIO to be used as an IRQ, then
+the DT binding for that driver should not use a gpio as "interrupt-parent" and
+should leave the driver to handle this manually.
 
-Laurent Pinchart
+On the other hand, if a driver just calls request_irq() and it does not know if
+the IRQ is a real interrupt line from an interrupt controller or a GPIO line
+acting as an IRQ, then the DT binding should just have a required
+"interrupt-parent" property to define the phandle for the interrupt controller
+used which could or could not be a GPIO controller.
 
+> We can start out by printing warnings when we fail to
+> request the corresponding GPIO for an interrupt line
+> though, it will be annoying enough and a kind of
+> compromise.
+>
+
+If the GPIO pin is first requested because it is described to be an IRQ in a DT
+and then a driver tries to request the same GPIO pin, then there is a bug in
+either the DT or the driver IMHO. The same assumption is made with platform code
+right now when using legacy boot, I don't understand why is different for the DT
+case.
+
+> Or it has to be the GPIO input hogs.
+> 
+> Yours,
+> Linus Walleij
+> 
+
+Thanks a lot and best regards,
+Javier
