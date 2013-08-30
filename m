@@ -1,50 +1,147 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4] gpio: pcf857x: Add OF support
-Date: Fri, 30 Aug 2013 10:07:23 +0200
-Message-ID: <CACRpkdbohob2cST6Wmn3yJ8cxy162iwR8oZaBk+QJRJTvSN-QA@mail.gmail.com>
-References: <1377524753-4027-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<CACRpkdZuODowd6V9WcCes6znT15C105y_kfYynhien4ZCCaoOA@mail.gmail.com>
-	<32047086.JjfkHtWF69@avalon>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH] gpio: improve error path in gpiolib
+Date: Fri, 30 Aug 2013 18:17:16 +0900
+Message-ID: <5220631C.8060107@nvidia.com>
+References: <1377848795-28070-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:52549 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752453Ab3H3IHY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Aug 2013 04:07:24 -0400
-Received: by mail-oa0-f42.google.com with SMTP id j10so1494910oah.1
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Aug 2013 01:07:24 -0700 (PDT)
-In-Reply-To: <32047086.JjfkHtWF69@avalon>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3129 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753696Ab3H3JRU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Aug 2013 05:17:20 -0400
+In-Reply-To: <1377848795-28070-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Frank Rowand <frank.rowand@sonymobile.com>, Tim Bird <tim.bird@sonymobile.com>
 
-On Fri, Aug 30, 2013 at 2:05 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Thursday 29 August 2013 14:16:59 Linus Walleij wrote:
->> On Mon, Aug 26, 2013 at 3:45 PM, Laurent Pinchart wrote:
-
->> Don't we want to do this generic if we shall do it?
->>
->> Like for *any* GPIO chips we provide lines-initial state in the device
->> tree and some code in the gpiochip with a callback in struct gpio_chip
->> that can be called by the gpiolib core to set this up? Then we don't
->> have to reimplement this for every GPIO controller that needs it.
+On 08/30/2013 04:46 PM, Linus Walleij wrote:
+> At several places the gpiolib will proceed to handle a GPIO
+> descriptor even if it's ->chip member is NULL and no gpiochip
+> is associated.
 >
-> Most GPIO chips will provide a way to read back the current state. The initial
-> state only needs to be provided for write-only chips. This is (luckily) rather
-> an exception, so I don't think we should implement it in the core, at least
-> not yet. We can always refactor the code later if needed, the proposed DT
-> binding is generic enough.
+> Fix this by checking that both the descriptor cookie *and*
+> the chip pointer are valid.
+>
+> Also bail out earlier with more specific diagnostic messages
+> on missing operations for setting as input/output or debounce.
 
-But I think this can be useful on any GPIO chip.
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-For someone deploying some system and hacking around in the
-device tree to set the GPIOs up properly at boot it can be a
-real useful tool.
+>
+> Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Frank Rowand <frank.rowand@sonymobile.com>
+> Cc: Tim Bird <tim.bird@sonymobile.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>   drivers/gpio/gpiolib.c | 36 ++++++++++++++++++++++--------------
+>   1 file changed, 22 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index d6413b2..f041f9e 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1398,7 +1398,7 @@ static int gpiod_request(struct gpio_desc *desc, const char *label)
+>   	int			status = -EPROBE_DEFER;
+>   	unsigned long		flags;
+>
+> -	if (!desc) {
+> +	if (!desc || !desc->chip) {
+>   		pr_warn("%s: invalid GPIO\n", __func__);
+>   		return -EINVAL;
+>   	}
+> @@ -1406,8 +1406,6 @@ static int gpiod_request(struct gpio_desc *desc, const char *label)
+>   	spin_lock_irqsave(&gpio_lock, flags);
+>
+>   	chip = desc->chip;
+> -	if (chip == NULL)
+> -		goto done;
+>
+>   	if (!try_module_get(chip->owner))
+>   		goto done;
+> @@ -1630,16 +1628,20 @@ static int gpiod_direction_input(struct gpio_desc *desc)
+>   	int			status = -EINVAL;
+>   	int			offset;
+>
+> -	if (!desc) {
+> +	if (!desc || !desc->chip) {
+>   		pr_warn("%s: invalid GPIO\n", __func__);
+>   		return -EINVAL;
+>   	}
+>
+> +	chip = desc->chip;
+> +	if (!chip->get || !chip->direction_input) {
+> +	  pr_warn("%s: missing get() or direction_input() operations\n",
+> +		  __func__);
+> +		return -EIO;
+> +	}
+> +
+>   	spin_lock_irqsave(&gpio_lock, flags);
+>
+> -	chip = desc->chip;
+> -	if (!chip || !chip->get || !chip->direction_input)
+> -		goto fail;
+>   	status = gpio_ensure_requested(desc);
+>   	if (status < 0)
+>   		goto fail;
+> @@ -1691,7 +1693,7 @@ static int gpiod_direction_output(struct gpio_desc *desc, int value)
+>   	int			status = -EINVAL;
+>   	int offset;
+>
+> -	if (!desc) {
+> +	if (!desc || !desc->chip) {
+>   		pr_warn("%s: invalid GPIO\n", __func__);
+>   		return -EINVAL;
+>   	}
+> @@ -1704,11 +1706,15 @@ static int gpiod_direction_output(struct gpio_desc *desc, int value)
+>   	if (!value && test_bit(FLAG_OPEN_SOURCE,  &desc->flags))
+>   		return gpiod_direction_input(desc);
+>
+> +	chip = desc->chip;
+> +	if (!chip->set || !chip->direction_output) {
+> +	  pr_warn("%s: missing set() or direction_output() operations\n",
+> +		  __func__);
+> +		return -EIO;
+> +	}
+> +
+>   	spin_lock_irqsave(&gpio_lock, flags);
+>
+> -	chip = desc->chip;
+> -	if (!chip || !chip->set || !chip->direction_output)
+> -		goto fail;
+>   	status = gpio_ensure_requested(desc);
+>   	if (status < 0)
+>   		goto fail;
+> @@ -1765,7 +1771,7 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+>   	int			status = -EINVAL;
+>   	int			offset;
+>
+> -	if (!desc) {
+> +	if (!desc || !desc->chip) {
+>   		pr_warn("%s: invalid GPIO\n", __func__);
+>   		return -EINVAL;
+>   	}
+> @@ -1773,8 +1779,10 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+>   	spin_lock_irqsave(&gpio_lock, flags);
+>
+>   	chip = desc->chip;
+> -	if (!chip || !chip->set || !chip->set_debounce)
+> -		goto fail;
+> +	if (!chip->set || !chip->set_debounce) {
+> +	  pr_warn("%s: missing set() or set_debounce() operations\n",
+> +		  __func__);
+> +	}
+>
+>   	status = gpio_ensure_requested(desc);
+>   	if (status < 0)
+>
 
-Or is that giving them too much rope? :-D
 
-Yours,
-Linus Walleij
+-----------------------------------------------------------------------------------
+This email message is for the sole use of the intended recipient(s) and may contain
+confidential information.  Any unauthorized review, use, disclosure or distribution
+is prohibited.  If you are not the intended recipient, please contact the sender by
+reply email and destroy all copies of the original message.
+-----------------------------------------------------------------------------------
