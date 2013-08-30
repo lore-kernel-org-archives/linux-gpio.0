@@ -1,49 +1,95 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v5] gpio: pcf857x: Add OF support
-Date: Fri, 30 Aug 2013 01:52:08 +0200
-Message-ID: <1992930.Xjyakli5Kt@avalon>
-References: <1377590559-14279-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CACRpkda=pZ6xQ2XJke=MBLiH_DAS8CXW+JOZ856ohGZi+fOCzA@mail.gmail.com> <35333449.0R3QP6op66@avalon>
+Subject: Re: [PATCH v4] gpio: pcf857x: Add OF support
+Date: Fri, 30 Aug 2013 02:05:41 +0200
+Message-ID: <32047086.JjfkHtWF69@avalon>
+References: <1377524753-4027-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CACRpkdZuODowd6V9WcCes6znT15C105y_kfYynhien4ZCCaoOA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:57467 "EHLO
+Received: from perceval.ideasonboard.com ([95.142.166.194]:57539 "EHLO
 	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751625Ab3H2Xuo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 19:50:44 -0400
-In-Reply-To: <35333449.0R3QP6op66@avalon>
+	with ESMTP id S1751625Ab3H3AES (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2013 20:04:18 -0400
+In-Reply-To: <CACRpkdZuODowd6V9WcCes6znT15C105y_kfYynhien4ZCCaoOA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Archit Taneja <archit@ti.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On Friday 30 August 2013 01:44:50 Laurent Pinchart wrote:
-> On Thursday 29 August 2013 20:24:32 Linus Walleij wrote:
-> > On Wed, Aug 28, 2013 at 1:58 PM, Laurent Pinchart wrote:
-> > > On Tuesday 27 August 2013 19:18:55 Wolfram Sang wrote:
-> > >> > The driver should support the same chip models reardless of whether
-> > >> > it's used with or without DT. If an entry in the OF table has no
-> > >> > corresponding entry in the I2C table I would consider that as a
-> > >> > driver
-> > >> > bug.
-> > >> 
-> > >> Linus Walleij posted a patch to support DT only probing, but too many
-> > >> side-effects showed up. Some were fixable (probe regressions) and some
-> > >> need more work, if feasible at all. Most prominent is that runtime
-> > >> instantiation of i2c slaves currently needs an entry in the i2c table.
-> > > 
-> > > Linus, I'd like to get this in v3.12 if it's not too late. Could you
-> > > please provide your input ?
+Hi Linus,
+
+On Thursday 29 August 2013 14:16:59 Linus Walleij wrote:
+> On Mon, Aug 26, 2013 at 3:45 PM, Laurent Pinchart wrote:
+> > Add DT bindings for the pcf857x-compatible chips and parse the device
+> > tree node in the driver.
 > > 
-> > Provided some input on the v4 version,
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
 > 
-> Do you mean v4 of this patch ? I can't find your reply.
-
-Scratch that, I've found it. Sorry for the noise.
-
-> > due to being a bit overloaded my patch queue is overloaded...
+> First: can I get an ACK from some DT-bindings maintainer?
 > 
-> No worries. We can delay this one until v3.13.
+> I think you may need to CC them all individually to get some response.
+
+I'll make sure to get an ACK for v6 (or a more recent version). Reviewers are 
+probably busy with the merge window about to open, delaying this patch to 
+v3.13 should help.
+
+I'll post v6 after receiving your answer to the comment below, as well as to 
+the issue raised by Tomasz on v5.
+
+> > +++ b/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+> > @@ -0,0 +1,71 @@
+> > +* PCF857x-compatible I/O expanders
+> > +
+> > +The PCF857x-compatible chips have "quasi-bidirectional" I/O pins that can
+> > be +driven high by a pull-up current source or driven low to ground. This
+> > combines +the direction and output level into a single bit per pin, which
+> > can't be read +back. We can't actually know at initialization time
+> > whether a pin is configured +(a) as output and driving the signal
+> > low/high, or (b) as input and reporting a +low/high value, without
+> > knowing the last value written since the chip came out +of reset (if
+> > any). The only reliable solution for setting up pin direction is +thus to
+> > do it explicitly.
+> 
+> Nitpick: I prefer that wrt gpio we talk about "lines" rather than "pins"
+> to separate it from the pin control concept. Just
+> s/pin/line/g
+
+OK.
+
+> (...)
+> 
+> > +Optional Properties:
+> > +
+> > +  - pins-initial-state: Bitmask that specifies the initial state of each
+> > pin. +  When a bit is set to zero, the corresponding pin will be
+> > initialized to the +  input (pulled-up) state. When the  bit is set to
+> > one, the pin will be +  initialized the the low-level output state. If
+> > the property is not specified +  all pins will be initialized to the
+> > input state.
+> 
+> Name this lines-initial-states (pluralis).
+
+OK.
+
+> Don't we want to do this generic if we shall do it?
+> 
+> Like for *any* GPIO chips we provide lines-initial state in the device
+> tree and some code in the gpiochip with a callback in struct gpio_chip
+> that can be called by the gpiolib core to set this up? Then we don't
+> have to reimplement this for every GPIO controller that needs it.
+
+Most GPIO chips will provide a way to read back the current state. The initial 
+state only needs to be provided for write-only chips. This is (luckily) rather 
+an exception, so I don't think we should implement it in the core, at least 
+not yet. We can always refactor the code later if needed, the proposed DT 
+binding is generic enough.
+
+> Sorry for not noticing this earlier...
+
+No worries.
+
 -- 
 Regards,
 
