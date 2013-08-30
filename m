@@ -1,52 +1,91 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4] gpio: pcf857x: Add OF support
-Date: Fri, 30 Aug 2013 12:17:08 +0200
-Message-ID: <1476237.1F2pAZlCTd@avalon>
-References: <1377524753-4027-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <32047086.JjfkHtWF69@avalon> <CACRpkdbohob2cST6Wmn3yJ8cxy162iwR8oZaBk+QJRJTvSN-QA@mail.gmail.com>
+From: George Cherian <george.cherian@ti.com>
+Subject: [PATCH v2 2/3] gpio: pcf857x: remove the irq_demux_work
+Date: Fri, 30 Aug 2013 16:18:32 +0530
+Message-ID: <1377859713-13460-3-git-send-email-george.cherian@ti.com>
+References: <1377859713-13460-1-git-send-email-george.cherian@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:60534 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753996Ab3H3KPq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Aug 2013 06:15:46 -0400
-In-Reply-To: <CACRpkdbohob2cST6Wmn3yJ8cxy162iwR8oZaBk+QJRJTvSN-QA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1377859713-13460-1-git-send-email-george.cherian@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, kuninori.morimoto.gx@renesas.com, n.a.balandin@gmail.com, George Cherian <george.cherian@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Friday 30 August 2013 10:07:23 Linus Walleij wrote:
-> On Fri, Aug 30, 2013 at 2:05 AM, Laurent Pinchart wrote:
-> > On Thursday 29 August 2013 14:16:59 Linus Walleij wrote:
-> >> On Mon, Aug 26, 2013 at 3:45 PM, Laurent Pinchart wrote:
-> >> 
-> >> Don't we want to do this generic if we shall do it?
-> >> 
-> >> Like for *any* GPIO chips we provide lines-initial state in the device
-> >> tree and some code in the gpiochip with a callback in struct gpio_chip
-> >> that can be called by the gpiolib core to set this up? Then we don't
-> >> have to reimplement this for every GPIO controller that needs it.
-> > 
-> > Most GPIO chips will provide a way to read back the current state. The
-> > initial state only needs to be provided for write-only chips. This is
-> > (luckily) rather an exception, so I don't think we should implement it in
-> > the core, at least not yet. We can always refactor the code later if
-> > needed, the proposed DT binding is generic enough.
-> 
-> But I think this can be useful on any GPIO chip.
-> 
-> For someone deploying some system and hacking around in the
-> device tree to set the GPIOs up properly at boot it can be a
-> real useful tool.
-> 
-> Or is that giving them too much rope? :-D
+Now that we are using devm_request_threaded_irq no need for
+irq_demux_work. Remove all its references.
 
-That's the job of the boot loader, isn't it ? :-)
+Signed-off-by: George Cherian <george.cherian@ti.com>
+---
+ drivers/gpio/gpio-pcf857x.c | 35 -----------------------------------
+ 1 file changed, 35 deletions(-)
 
+diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+index 4d0d28c..4890e97 100644
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -30,7 +30,6 @@
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+-#include <linux/workqueue.h>
+ 
+ 
+ static const struct i2c_device_id pcf857x_id[] = {
+@@ -89,7 +88,6 @@ struct pcf857x {
+ 	struct gpio_chip	chip;
+ 	struct i2c_client	*client;
+ 	struct mutex		lock;		/* protect 'out' */
+-	struct work_struct	work;		/* irq demux work */
+ 	struct irq_domain	*irq_domain;	/* for irq demux  */
+ 	spinlock_t		slock;		/* protect irq demux */
+ 	unsigned		out;		/* software latch */
+@@ -210,38 +208,6 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void pcf857x_irq_demux_work(struct work_struct *work)
+-{
+-	struct pcf857x *gpio = container_of(work,
+-					       struct pcf857x,
+-					       work);
+-	unsigned long change, i, status, flags;
+-
+-	status = gpio->read(gpio->client);
+-
+-	spin_lock_irqsave(&gpio->slock, flags);
+-
+-	change = gpio->status ^ status;
+-	for_each_set_bit(i, &change, gpio->chip.ngpio)
+-		generic_handle_irq(irq_find_mapping(gpio->irq_domain, i));
+-	gpio->status = status;
+-
+-	spin_unlock_irqrestore(&gpio->slock, flags);
+-}
+-
+-static irqreturn_t pcf857x_irq_demux(int irq, void *data)
+-{
+-	struct pcf857x	*gpio = data;
+-
+-	/*
+-	 * pcf857x can't read/write data here,
+-	 * since i2c data access might go to sleep.
+-	 */
+-	schedule_work(&gpio->work);
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static int pcf857x_irq_domain_map(struct irq_domain *domain, unsigned int virq,
+ 				 irq_hw_number_t hw)
+ {
+@@ -284,7 +250,6 @@ static int pcf857x_irq_domain_init(struct pcf857x *gpio,
+ 		goto fail;
+ 
+ 	/* enable gpio_to_irq() */
+-	INIT_WORK(&gpio->work, pcf857x_irq_demux_work);
+ 	gpio->chip.to_irq	= pcf857x_to_irq;
+ 	gpio->irq		= client->irq;
+ 
 -- 
-Regards,
-
-Laurent Pinchart
-
+1.8.1.4
