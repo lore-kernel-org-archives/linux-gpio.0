@@ -1,57 +1,97 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH] emev2: GPIOLIB: Enable support for OF
-Date: Fri, 30 Aug 2013 12:47:46 +0900
-Message-ID: <20130830034746.GB17800@verge.net.au>
-References: <1377623069-32678-1-git-send-email-ian.molton@codethink.co.uk>
- <1377623069-32678-2-git-send-email-ian.molton@codethink.co.uk>
- <CACRpkdZB+Dm1jhWRu+rdT0V7Q0iwozsd2gQ6M+=55h2SJHQHWw@mail.gmail.com>
+From: Frank Rowand <frank.rowand@sonymobile.com>
+Subject: [PATCH] gpio: null pointer dereference in error handling in gpiolib.c
+Date: Thu, 29 Aug 2013 22:10:32 -0700
+Message-ID: <52202948.7010303@sonymobile.com>
+Reply-To: frowand.list@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZB+Dm1jhWRu+rdT0V7Q0iwozsd2gQ6M+=55h2SJHQHWw@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ian Molton <ian.molton@codethink.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pb0-f65.google.com ([209.85.160.65]:37907 "EHLO
+	mail-pb0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752577Ab3H3FKg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Aug 2013 01:10:36 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: grant.likely@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, tim.bird@sonymobile.com
 
-On Thu, Aug 29, 2013 at 07:41:42PM +0200, Linus Walleij wrote:
-> On Tue, Aug 27, 2013 at 7:04 PM, Ian Molton <ian.molton@codethink.co.uk> wrote:
-> 
-> > Signed-off-by: Ian Molton <ian.molton@codethink.co.uk>
-> > ---
-> >  drivers/gpio/gpio-em.c |    1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-> > index 5cba855..279821e 100644
-> > --- a/drivers/gpio/gpio-em.c
-> > +++ b/drivers/gpio/gpio-em.c
-> > @@ -303,6 +303,7 @@ static int em_gio_probe(struct platform_device *pdev)
-> >         }
-> >
-> >         gpio_chip = &p->gpio_chip;
-> > +       gpio_chip->of_node = pdev->dev.of_node;
-> 
-> This doesn't work on non-DT compiles.
-> 
-> Look at struct gpio_chip:
-> 
-> #if defined(CONFIG_OF_GPIO)
->         /*
->          * If CONFIG_OF is enabled, then all GPIO controllers described in the
->          * device tree automatically may have an OF translation
->          */
->         struct device_node *of_node;
->         int of_gpio_n_cells;
->         int (*of_xlate)(struct gpio_chip *gc,
->                         const struct of_phandle_args *gpiospec, u32 *flags);
-> #endif
-> 
-> Either the statement needs to be inside #ifdef CONFIG_OF_GPIO
-> or the Emma driver need to select OF_GPIO in its Kconfig
-> entry.
 
-This may be somewhat naieve, but it seems to me that the latter would be a
-better choice at this stage because AFIK the only in-tree emev2 board is
-the kzm9d and it uses USE_OF.
+Avoid calling desc_to_gpio() if desc->chip is NULL, as this will
+cause a kernel panic.
+
+In the code above the calls, there is a test for !chip, which
+comes to the 'fail' label if true. In this case, the code
+panics, since desc_to_gpio() uses desc->chip to look up the
+gpio number.
+
+An RFC patch that explained the cause of one example of panic when
+desc->chip is NULL and fixed that example
+(http://lkml.indiana.edu/hypermail/linux/kernel/1308.3/01473.html)
+was accepted.  This patch fixes the remaining locations which have
+the same problem.
+
+Signed-off-by: Frank Rowand <frank.rowand@sonymobile.com>
+
+---
+  drivers/gpio/gpiolib.c |   33 	24 +	9 -	0 !
+  1 file changed, 24 insertions(+), 9 deletions(-)
+
+Index: b/drivers/gpio/gpiolib.c
+===================================================================
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1676,9 +1676,14 @@ lose:
+  	return status;
+  fail:
+  	spin_unlock_irqrestore(&gpio_lock, flags);
+-	if (status)
+-		pr_debug("%s: gpio-%d status %d\n", __func__,
+-			 desc_to_gpio(desc), status);
++	if (status) {
++		if (desc->chip) {
++			pr_debug("%s: gpio-%d status %d\n", __func__,
++				 desc_to_gpio(desc), status);
++		} else {
++			pr_debug("%s: gpio-?? status %d\n", __func__, status);
++		}
++	}
+  	return status;
+  }
+
+@@ -1745,9 +1750,14 @@ lose:
+  	return status;
+  fail:
+  	spin_unlock_irqrestore(&gpio_lock, flags);
+-	if (status)
+-		pr_debug("%s: gpio-%d status %d\n", __func__,
+-			 desc_to_gpio(desc), status);
++	if (status) {
++		if (desc->chip) {
++			pr_debug("%s: gpio-%d status %d\n", __func__,
++				 desc_to_gpio(desc), status);
++		} else {
++			pr_debug("%s: gpio-?? status %d\n", __func__, status);
++		}
++	}
+  	return status;
+  }
+
+@@ -1795,9 +1805,14 @@ static int gpiod_set_debounce(struct gpi
+
+  fail:
+  	spin_unlock_irqrestore(&gpio_lock, flags);
+-	if (status)
+-		pr_debug("%s: gpio-%d status %d\n", __func__,
+-			 desc_to_gpio(desc), status);
++	if (status) {
++		if (desc->chip) {
++			pr_debug("%s: gpio-%d status %d\n", __func__,
++				 desc_to_gpio(desc), status);
++		} else {
++			pr_debug("%s: gpio-?? status %d\n", __func__, status);
++		}
++	}
+
+  	return status;
+  }
