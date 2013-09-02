@@ -1,141 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: improve error path in gpiolib
-Date: Mon,  2 Sep 2013 10:39:56 +0200
-Message-ID: <1378111196-4247-1-git-send-email-linus.walleij@linaro.org>
+From: Lars Poeschel <poeschel@lemonage.de>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Mon, 02 Sep 2013 11:25:25 +0200
+Message-ID: <1521079.WSLhhfqBXl@lem-wkst-02>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <521FE637.3010805@collabora.co.uk> <5220F8AE.2080300@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ea0-f182.google.com ([209.85.215.182]:53947 "EHLO
-	mail-ea0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758105Ab3IBIkE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Sep 2013 04:40:04 -0400
-Received: by mail-ea0-f182.google.com with SMTP id o10so2220445eaj.27
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Sep 2013 01:40:03 -0700 (PDT)
+Received: from smtp1.goneo.de ([212.90.139.80]:41797 "EHLO smtp1.goneo.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757747Ab3IBJ1h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 2 Sep 2013 05:27:37 -0400
+In-Reply-To: <5220F8AE.2080300@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Tim Bird <tim.bird@sonymobile.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-At several places the gpiolib will proceed to handle a GPIO
-descriptor even if it's ->chip member is NULL and no gpiochip
-is associated.
+Am Freitag, 30. August 2013, 13:55:26 schrieb Stephen Warren:
+> On 08/29/2013 06:24 PM, Javier Martinez Canillas wrote:
+> ...
+> 
+> > We have been trying to solve this issue for a few months by now and Linus'
+> > approach seems to be the most sensible solution to me.
+> > 
+> > Drivers that request an IRQ and assume that platform code will request and
+> > setup the GPIO have been broken since the boards using these drivers were
+> > migrated to DT (e.g: smsc911x on OMAP2+ boards).
+> 
+> That's only true if the driver for the GPIO controller is buggy.
+> Whatever request_irq() maps down to in the GPIO/IRQ controller driver
+> simply needs to set up the pin as an interrupt input, then it doesn't
+> matter which order the driver does things.
 
-Fix this by checking that both the descriptor cookie *and*
-the chip pointer are valid.
+Is it really that easy?
+request_irq() should request the gpio and set it to input that it needs to 
+fulfill the irq request. That would then be the way to go for new drivers and 
+in the DT case.
+Some leagcy drivers currently do this:
 
-Also bail out earlier with more specific diagnostic messages
-on missing operations for setting as input/output or debounce.
+request_gpio(gpio);
+gpio_direction_input(gpio);
+request_irq(gpio_to_irq(gpio));
 
-ChangeLog v1->v2:
-- Also return -EIO on gpiod_set_debounce() with missing
-  operations in the vtable
-- Fix indentations.
+In that case request_irq should not fail because the driver is already the 
+correct owner of this gpio. But if some other entity owns this gpio it should 
+fail.
 
-Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-Reviewed-by: Frank Rowand <frank.rowand@sonymobile.com>
-Cc: Tim Bird <tim.bird@sonymobile.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 37 +++++++++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
+Also if I understand you correct the other way round should also possible:
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d6413b2..a7587db 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1398,7 +1398,7 @@ static int gpiod_request(struct gpio_desc *desc, const char *label)
- 	int			status = -EPROBE_DEFER;
- 	unsigned long		flags;
- 
--	if (!desc) {
-+	if (!desc || !desc->chip) {
- 		pr_warn("%s: invalid GPIO\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -1406,8 +1406,6 @@ static int gpiod_request(struct gpio_desc *desc, const char *label)
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	chip = desc->chip;
--	if (chip == NULL)
--		goto done;
- 
- 	if (!try_module_get(chip->owner))
- 		goto done;
-@@ -1630,16 +1628,20 @@ static int gpiod_direction_input(struct gpio_desc *desc)
- 	int			status = -EINVAL;
- 	int			offset;
- 
--	if (!desc) {
-+	if (!desc || !desc->chip) {
- 		pr_warn("%s: invalid GPIO\n", __func__);
- 		return -EINVAL;
- 	}
- 
-+	chip = desc->chip;
-+	if (!chip->get || !chip->direction_input) {
-+		pr_warn("%s: missing get() or direction_input() operations\n",
-+			__func__);
-+		return -EIO;
-+	}
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
--	chip = desc->chip;
--	if (!chip || !chip->get || !chip->direction_input)
--		goto fail;
- 	status = gpio_ensure_requested(desc);
- 	if (status < 0)
- 		goto fail;
-@@ -1691,7 +1693,7 @@ static int gpiod_direction_output(struct gpio_desc *desc, int value)
- 	int			status = -EINVAL;
- 	int offset;
- 
--	if (!desc) {
-+	if (!desc || !desc->chip) {
- 		pr_warn("%s: invalid GPIO\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -1704,11 +1706,15 @@ static int gpiod_direction_output(struct gpio_desc *desc, int value)
- 	if (!value && test_bit(FLAG_OPEN_SOURCE,  &desc->flags))
- 		return gpiod_direction_input(desc);
- 
-+	chip = desc->chip;
-+	if (!chip->set || !chip->direction_output) {
-+		pr_warn("%s: missing set() or direction_output() operations\n",
-+			__func__);
-+		return -EIO;
-+	}
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
--	chip = desc->chip;
--	if (!chip || !chip->set || !chip->direction_output)
--		goto fail;
- 	status = gpio_ensure_requested(desc);
- 	if (status < 0)
- 		goto fail;
-@@ -1765,7 +1771,7 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 	int			status = -EINVAL;
- 	int			offset;
- 
--	if (!desc) {
-+	if (!desc || !desc->chip) {
- 		pr_warn("%s: invalid GPIO\n", __func__);
- 		return -EINVAL;
- 	}
-@@ -1773,8 +1779,11 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	chip = desc->chip;
--	if (!chip || !chip->set || !chip->set_debounce)
--		goto fail;
-+	if (!chip->set || !chip->set_debounce) {
-+		pr_warn("%s: missing set() or set_debounce() operations\n",
-+			__func__);
-+		return -EIO;
-+	}
- 
- 	status = gpio_ensure_requested(desc);
- 	if (status < 0)
--- 
-1.8.3.1
+request_irq(gpio_to_irq(gpio));
+request_gpio(gpio);
+gpio_direction_input(gpio);
 
+request_irq() also requests the gpio then but the following request_gpio() 
+should also not fail.
+
+To have it work that way we have to track the owners of all requested gpios 
+somewhere. Or am I wrong here?
+Where and how to record these owners? Can gpio system achieve this? gpios are 
+requested without an owning device.
