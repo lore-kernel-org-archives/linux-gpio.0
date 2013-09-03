@@ -1,37 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] gpiolib: unlock on error in gpiod_set_debounce()
-Date: Tue, 3 Sep 2013 15:15:00 +0300
-Message-ID: <20130903121500.GA16312@elgon.mountain>
-References: <5225c32f.kWadywtP9mkLJ38j%fengguang.wu@intel.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: Use proper indentation
+Date: Tue, 3 Sep 2013 14:23:39 +0200
+Message-ID: <20130903122337.GA3063@ulmo>
+References: <1378204768-18013-1-git-send-email-treding@nvidia.com>
+ <1378204768-18013-2-git-send-email-treding@nvidia.com>
+ <CACRpkdZth+7FZbcSwTUSug9cCfw8xW3XVbaUv3dEA_cTuFX8Jw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:35357 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759989Ab3ICMPL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2013 08:15:11 -0400
+Received: from mail-bk0-f42.google.com ([209.85.214.42]:37734 "EHLO
+	mail-bk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752764Ab3ICMYY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2013 08:24:24 -0400
 Content-Disposition: inline
-In-Reply-To: <5225c32f.kWadywtP9mkLJ38j%fengguang.wu@intel.com>
+In-Reply-To: <CACRpkdZth+7FZbcSwTUSug9cCfw8xW3XVbaUv3dEA_cTuFX8Jw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, kbuild@01.org, Fengguang Wu <fengguang.wu@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-There is a missing unlock on error here.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 0eb9cba..3c01782 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1783,7 +1783,8 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 	if (!chip->set || !chip->set_debounce) {
- 		pr_warn("%s: missing set() or set_debounce() operations\n",
- 			__func__);
--		return -EIO;
-+		status = -EIO;
-+		goto fail;
- 	}
- 
- 	status = gpio_ensure_requested(desc);
+On Tue, Sep 03, 2013 at 02:11:39PM +0200, Linus Walleij wrote:
+> On Tue, Sep 3, 2013 at 12:39 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>=20
+> > Indentation should be done using tabs, not a combination of tabs and
+> > spaces.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> > Linus,
+> >
+> > Feel free to squash this into the commit that introduced these:
+> >
+> >         fc9bbfb: gpio: improve error path in gpiolib
+>=20
+> This part I actually fixed up properly yesterday, but thanks anyway.
+
+Yes you did. I was impatient and couldn't wait for today's linux-next to
+show up. Sorry for the noise.
+
+Thierry
+
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSJdTJAAoJEN0jrNd/PrOhE+sQAL52E4DetJVJBLuO+6w6FhIJ
+9V+SvzavjeKAhmHw0ioJikeSupnKJyezuexbmuPb3YIkCwYU3slP7bJ9/2XNLRNN
+lrykBKqgP8diH6LVmdu4+0E1Wk7HDdoceKKOZqZmjS5KE0fIHyOZQm0d06rcX6Cr
+OGJRw6QJeeAOz1lEClWhGIA70/jtzhoeQnFiDpHbZmaIgOTGq7+uzSShyWqNcGyB
+QjMeFrbqp2zwXL1SNQ8I/9JcRyfV01b43Y7IdPg+huisnhDQxJEXoDZT0PrPXgEY
+44SWZW741gSpB+eUxTG8yG7FYxvCT3ujXqDr/F6TjfPZ2buYnkGya5pBMAfw0n7q
+7vGKGGiOadjR6vChhJ8ctU5sNrSiFYgrasL95EKZ3SyrR+vknpCGaVBSQf6oWNO+
+CPbcK/JV7idAbFFoiuGtc4MEtk1wxXCpS15j2GYyxCNNZFlOA3dp7mZxSkwWZUyJ
+V8b+FifZxkcKwoLfzmiW0Zh8BJCsHL0yj9om/j90vW/kcIsQ4DCAEk+7dJCU/5WY
+AiLTUYI384T5zWBgonvHBoMa1aw4KL7H2fkbTd8i4xjAsawRUR1bJP6ECPkw80SH
+VjVQSYlK3Gjc6nDJ7++9obb9jVdz6h1oxYQlP6EjLjZWuHHdtn1TbzeFyAaGcNu8
+D5v/6vM++VYZt9+hFMlg
+=F6KB
+-----END PGP SIGNATURE-----
+
+--J2SCkAp4GZ/dPZZf--
