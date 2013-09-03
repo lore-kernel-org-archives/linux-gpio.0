@@ -1,21 +1,17 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 1/2] gpio: Fix crash in gpiod_set_debounce()
-Date: Tue,  3 Sep 2013 12:39:27 +0200
-Message-ID: <1378204768-18013-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bk0-f49.google.com ([209.85.214.49]:62852 "EHLO
-	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932731Ab3ICKkM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2013 06:40:12 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 2/2] gpio: Use proper indentation
+Date: Tue,  3 Sep 2013 12:39:28 +0200
+Message-ID: <1378204768-18013-2-git-send-email-treding@nvidia.com>
+References: <1378204768-18013-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1378204768-18013-1-git-send-email-treding@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-Return an error if neither the ->set() nor the ->set_debounce() function
-is implemented by the chip. Furthermore move locking further down so the
-lock doesn't have to be unlocked on error. This is safe to do because at
-this point the lock doesn't protect anything.
+Indentation should be done using tabs, not a combination of tabs and
+spaces.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
@@ -27,31 +23,45 @@ Feel free to squash this into the commit that introduced these:
 
 Thierry
 
- drivers/gpio/gpiolib.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index acd19c9..9f8a134 100644
+index 9f8a134..b762718 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -1777,14 +1777,15 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 		return -EINVAL;
+@@ -1636,8 +1636,8 @@ static int gpiod_direction_input(struct gpio_desc *desc)
+ 
+ 	chip = desc->chip;
+ 	if (!chip->get || !chip->direction_input) {
+-	  pr_warn("%s: missing get() or direction_input() operations\n",
+-		  __func__);
++		pr_warn("%s: missing get() or direction_input() operations\n",
++			__func__);
+ 		return -EIO;
  	}
  
--	spin_lock_irqsave(&gpio_lock, flags);
--
+@@ -1709,8 +1709,8 @@ static int gpiod_direction_output(struct gpio_desc *desc, int value)
+ 
+ 	chip = desc->chip;
+ 	if (!chip->set || !chip->direction_output) {
+-	  pr_warn("%s: missing set() or direction_output() operations\n",
+-		  __func__);
++		pr_warn("%s: missing set() or direction_output() operations\n",
++			__func__);
+ 		return -EIO;
+ 	}
+ 
+@@ -1779,8 +1779,8 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+ 
  	chip = desc->chip;
  	if (!chip->set || !chip->set_debounce) {
- 	  pr_warn("%s: missing set() or set_debounce() operations\n",
- 		  __func__);
-+		return -EIO;
+-	  pr_warn("%s: missing set() or set_debounce() operations\n",
+-		  __func__);
++		pr_warn("%s: missing set() or set_debounce() operations\n",
++			__func__);
+ 		return -EIO;
  	}
  
-+	spin_lock_irqsave(&gpio_lock, flags);
-+
- 	status = gpio_ensure_requested(desc);
- 	if (status < 0)
- 		goto fail;
 -- 
 1.8.4
-
