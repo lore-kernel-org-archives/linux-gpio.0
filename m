@@ -1,64 +1,213 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Tue, 3 Sep 2013 14:43:57 +0200
-Message-ID: <CACRpkdZRkNzt6eGr81tEGJpV5_+vccOPun3HXjQoGNtFWGfvYg@mail.gmail.com>
-References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de>
-	<521D0964.2080209@wwwdotorg.org>
-	<CACRpkdaWPQTPw8u+97iV8MRB1fdeS40kd242pJd3UE9Ler4kRQ@mail.gmail.com>
-	<521FE637.3010805@collabora.co.uk>
-	<5220F8AE.2080300@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH] gpio: palmas: add support for TPS80036
+Date: Tue, 3 Sep 2013 19:58:03 +0530
+Message-ID: <1378218483-19532-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:36851 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760013Ab3ICMn5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2013 08:43:57 -0400
-Received: by mail-oa0-f52.google.com with SMTP id f4so6437079oah.25
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Sep 2013 05:43:57 -0700 (PDT)
-In-Reply-To: <5220F8AE.2080300@wwwdotorg.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:18890 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752558Ab3ICOJk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2013 10:09:40 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Lars Poeschel <poeschel@lemonage.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+To: linus.walleij@linaro.org
+Cc: swarren@nvidia.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Fri, Aug 30, 2013 at 9:55 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 08/29/2013 06:24 PM, Javier Martinez Canillas wrote:
-> ...
->> We have been trying to solve this issue for a few months by now and Linus'
->> approach seems to be the most sensible solution to me.
->>
->> Drivers that request an IRQ and assume that platform code will request and setup
->> the GPIO have been broken since the boards using these drivers were migrated to
->> DT (e.g: smsc911x on OMAP2+ boards).
->
-> That's only true if the driver for the GPIO controller is buggy.
-> Whatever request_irq() maps down to in the GPIO/IRQ controller driver
-> simply needs to set up the pin as an interrupt input, then it doesn't
-> matter which order the driver does things.
+TI Palmas series device TPS80036 supports 16 GPIOs.
+Register its all 16 gpios when this device is selected.
 
-As mentioned it can't do that, because doing that creates a
-restriction on which order the driver does things...
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ drivers/gpio/gpio-palmas.c |  104 +++++++++++++++++++++++++++++---------------
+ 1 files changed, 69 insertions(+), 35 deletions(-)
 
-But you mentioned that you wanted an API that would account
-for the case where the *same driver* requested the same resource
-(a GPIO line) to be used for both IRQ and GPIO, through two
-different calls.
+diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
+index 8588af0..11801e9 100644
+--- a/drivers/gpio/gpio-palmas.c
++++ b/drivers/gpio/gpio-palmas.c
+@@ -31,6 +31,10 @@ struct palmas_gpio {
+ 	struct palmas *palmas;
+ };
+ 
++struct palmas_device_data {
++	int ngpio;
++};
++
+ static inline struct palmas_gpio *to_palmas_gpio(struct gpio_chip *chip)
+ {
+ 	return container_of(chip, struct palmas_gpio, gpio_chip);
+@@ -42,23 +46,26 @@ static int palmas_gpio_get(struct gpio_chip *gc, unsigned offset)
+ 	struct palmas *palmas = pg->palmas;
+ 	unsigned int val;
+ 	int ret;
++	unsigned int reg;
++	int gpio16 = (offset/8);
++
++	offset %= 8;
++	reg = (gpio16) ? PALMAS_GPIO_DATA_DIR2 : PALMAS_GPIO_DATA_DIR;
+ 
+-	ret = palmas_read(palmas, PALMAS_GPIO_BASE, PALMAS_GPIO_DATA_DIR, &val);
++	ret = palmas_read(palmas, PALMAS_GPIO_BASE, reg, &val);
+ 	if (ret < 0) {
+-		dev_err(gc->dev, "GPIO_DATA_DIR read failed, err = %d\n", ret);
++		dev_err(gc->dev, "Reg 0x%02x read failed, %d\n", reg, ret);
+ 		return ret;
+ 	}
+ 
+-	if (val & (1 << offset)) {
+-		ret = palmas_read(palmas, PALMAS_GPIO_BASE,
+-				  PALMAS_GPIO_DATA_OUT, &val);
+-	} else {
+-		ret = palmas_read(palmas, PALMAS_GPIO_BASE,
+-				  PALMAS_GPIO_DATA_IN, &val);
+-	}
++	if (val & BIT(offset))
++		reg = (gpio16) ? PALMAS_GPIO_DATA_OUT2 : PALMAS_GPIO_DATA_OUT;
++	else
++		reg = (gpio16) ? PALMAS_GPIO_DATA_IN2 : PALMAS_GPIO_DATA_IN;
++
++	ret = palmas_read(palmas, PALMAS_GPIO_BASE, reg, &val);
+ 	if (ret < 0) {
+-		dev_err(gc->dev, "GPIO_DATA_IN/OUT read failed, err = %d\n",
+-			ret);
++		dev_err(gc->dev, "Reg 0x%02x read failed, %d\n", reg, ret);
+ 		return ret;
+ 	}
+ 	return !!(val & BIT(offset));
+@@ -70,17 +77,20 @@ static void palmas_gpio_set(struct gpio_chip *gc, unsigned offset,
+ 	struct palmas_gpio *pg = to_palmas_gpio(gc);
+ 	struct palmas *palmas = pg->palmas;
+ 	int ret;
++	unsigned int reg;
++	int gpio16 = (offset/8);
+ 
+-	if (value)
+-		ret = palmas_write(palmas, PALMAS_GPIO_BASE,
+-				PALMAS_GPIO_SET_DATA_OUT, BIT(offset));
++	offset %= 8;
++	if (gpio16)
++		reg = (value) ?
++			PALMAS_GPIO_SET_DATA_OUT2 : PALMAS_GPIO_CLEAR_DATA_OUT2;
+ 	else
+-		ret = palmas_write(palmas, PALMAS_GPIO_BASE,
+-				PALMAS_GPIO_CLEAR_DATA_OUT, BIT(offset));
++		reg = (value) ?
++			PALMAS_GPIO_SET_DATA_OUT : PALMAS_GPIO_CLEAR_DATA_OUT;
++
++	ret = palmas_write(palmas, PALMAS_GPIO_BASE, reg, BIT(offset));
+ 	if (ret < 0)
+-		dev_err(gc->dev, "%s write failed, err = %d\n",
+-			(value) ? "GPIO_SET_DATA_OUT" : "GPIO_CLEAR_DATA_OUT",
+-			ret);
++		dev_err(gc->dev, "Reg 0x%02x write failed, %d\n", reg, ret);
+ }
+ 
+ static int palmas_gpio_output(struct gpio_chip *gc, unsigned offset,
+@@ -89,14 +99,19 @@ static int palmas_gpio_output(struct gpio_chip *gc, unsigned offset,
+ 	struct palmas_gpio *pg = to_palmas_gpio(gc);
+ 	struct palmas *palmas = pg->palmas;
+ 	int ret;
++	unsigned int reg;
++	int gpio16 = (offset/8);
++
++	offset %= 8;
++	reg = (gpio16) ? PALMAS_GPIO_DATA_DIR2 : PALMAS_GPIO_DATA_DIR;
+ 
+ 	/* Set the initial value */
+ 	palmas_gpio_set(gc, offset, value);
+ 
+-	ret = palmas_update_bits(palmas, PALMAS_GPIO_BASE,
+-		PALMAS_GPIO_DATA_DIR, BIT(offset), BIT(offset));
++	ret = palmas_update_bits(palmas, PALMAS_GPIO_BASE, reg,
++				BIT(offset), BIT(offset));
+ 	if (ret < 0)
+-		dev_err(gc->dev, "GPIO_DATA_DIR write failed, err = %d\n", ret);
++		dev_err(gc->dev, "Reg 0x%02x update failed, %d\n", reg, ret);
+ 	return ret;
+ }
+ 
+@@ -105,11 +120,15 @@ static int palmas_gpio_input(struct gpio_chip *gc, unsigned offset)
+ 	struct palmas_gpio *pg = to_palmas_gpio(gc);
+ 	struct palmas *palmas = pg->palmas;
+ 	int ret;
++	unsigned int reg;
++	int gpio16 = (offset/8);
++
++	offset %= 8;
++	reg = (gpio16) ? PALMAS_GPIO_DATA_DIR2 : PALMAS_GPIO_DATA_DIR;
+ 
+-	ret = palmas_update_bits(palmas, PALMAS_GPIO_BASE,
+-		PALMAS_GPIO_DATA_DIR, BIT(offset), 0);
++	ret = palmas_update_bits(palmas, PALMAS_GPIO_BASE, reg, BIT(offset), 0);
+ 	if (ret < 0)
+-		dev_err(gc->dev, "GPIO_DATA_DIR write failed, err = %d\n", ret);
++		dev_err(gc->dev, "Reg 0x%02x update failed, %d\n", reg, ret);
+ 	return ret;
+ }
+ 
+@@ -121,12 +140,36 @@ static int palmas_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+ 	return palmas_irq_get_virq(palmas, PALMAS_GPIO_0_IRQ + offset);
+ }
+ 
++static const struct palmas_device_data palmas_dev_data = {
++	.ngpio = 8,
++};
++
++static const struct palmas_device_data tps80036_dev_data = {
++	.ngpio = 16,
++};
++
++static struct of_device_id of_palmas_gpio_match[] = {
++	{ .compatible = "ti,palmas-gpio", .data = &palmas_dev_data,},
++	{ .compatible = "ti,tps65913-gpio", .data = &palmas_dev_data,},
++	{ .compatible = "ti,tps65914-gpio", .data = &palmas_dev_data,},
++	{ .compatible = "ti,tps80036-gpio", .data = &tps80036_dev_data,},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, of_palmas_gpio_match);
++
+ static int palmas_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct palmas *palmas = dev_get_drvdata(pdev->dev.parent);
+ 	struct palmas_platform_data *palmas_pdata;
+ 	struct palmas_gpio *palmas_gpio;
+ 	int ret;
++	const struct of_device_id *match;
++	const struct palmas_device_data *dev_data;
++
++	match = of_match_device(of_palmas_gpio_match, &pdev->dev);
++	dev_data = match->data;
++	if (!dev_data)
++		dev_data = &palmas_dev_data;
+ 
+ 	palmas_gpio = devm_kzalloc(&pdev->dev,
+ 				sizeof(*palmas_gpio), GFP_KERNEL);
+@@ -138,7 +181,7 @@ static int palmas_gpio_probe(struct platform_device *pdev)
+ 	palmas_gpio->palmas = palmas;
+ 	palmas_gpio->gpio_chip.owner = THIS_MODULE;
+ 	palmas_gpio->gpio_chip.label = dev_name(&pdev->dev);
+-	palmas_gpio->gpio_chip.ngpio = 8;
++	palmas_gpio->gpio_chip.ngpio = dev_data->ngpio;
+ 	palmas_gpio->gpio_chip.can_sleep = 1;
+ 	palmas_gpio->gpio_chip.direction_input = palmas_gpio_input;
+ 	palmas_gpio->gpio_chip.direction_output = palmas_gpio_output;
+@@ -172,15 +215,6 @@ static int palmas_gpio_remove(struct platform_device *pdev)
+ 	return gpiochip_remove(&palmas_gpio->gpio_chip);
+ }
+ 
+-static struct of_device_id of_palmas_gpio_match[] = {
+-	{ .compatible = "ti,palmas-gpio"},
+-	{ .compatible = "ti,tps65913-gpio"},
+-	{ .compatible = "ti,tps65914-gpio"},
+-	{ .compatible = "ti,tps80036-gpio"},
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(of, of_palmas_gpio_match);
+-
+ static struct platform_driver palmas_gpio_driver = {
+ 	.driver.name	= "palmas-gpio",
+ 	.driver.owner	= THIS_MODULE,
+-- 
+1.7.1.1
 
-I would be happy to see how we could do that, preferably in a
-generic way.
-
-Since the gpio_request() does not contain the signature of the
-calling driver I don't see how we could do this without refactoring
-the whole world.
-
-In that case it would probably be easiest to
-*first* proceed to complete Alexandre's suggested refactorings for
-GPIO descriptors, which tie down GPIOs to be requested like
-clocks and regulators and thus tied to a device, so we can from
-there proceed to implement such a conditional request,
-as we will then have the required information in the GPIO
-subsystem.
-
-Yours,
-Linus Walleij
