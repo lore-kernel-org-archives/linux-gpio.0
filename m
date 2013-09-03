@@ -1,60 +1,50 @@
-From: Greg KH <gregkh@linuxfoundation.org>
+From: Daniel Santos <danielfsantos@att.net>
 Subject: Re: RESEND: Generating interrupts from a USB device driver?
-Date: Tue, 3 Sep 2013 10:59:33 -0700
-Message-ID: <20130903175933.GA8463@kroah.com>
-References: <52251562.5000208@att.net>
- <20130902230738.GA22494@kroah.com>
- <52253E1F.6000101@att.net>
+Date: Tue, 03 Sep 2013 14:10:38 -0500
+Message-ID: <5226342E.70804@att.net>
+References: <52251562.5000208@att.net> <20130902230738.GA22494@kroah.com> <52253E1F.6000101@att.net> <20130903175933.GA8463@kroah.com>
+Reply-To: Daniel Santos <daniel.santos@pobox.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58728 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758568Ab3ICR7e (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2013 13:59:34 -0400
-Content-Disposition: inline
-In-Reply-To: <52253E1F.6000101@att.net>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Daniel Santos <daniel.santos@pobox.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130903175933.GA8463@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 02, 2013 at 08:40:47PM -0500, Daniel Santos wrote:
-> On 09/02/2013 06:07 PM, Greg KH wrote:
-> >On Mon, Sep 02, 2013 at 05:46:58PM -0500, Daniel Santos wrote:
-> >>Hello guys.  I didn't get a response the last time so hopefully with
-> >>3.11 out I'll get one this time.
-> >>
-> >>I need to be able to generate interrupts from a USB device driver while
-> >>servicing the complete() function of an interrupt URB.
-> >No you don't :)
-> >
-> >>While I realize that this may seem strange, the purpose is for a USB
-> >>to SPI/GPIO bridge chip (the MCP2210). When something happens on the
-> >>remote device where a chip is expecting it's interrupt out pin to
-> >>trigger an interrupt on some local (to the board) microcontroller, the
-> >>MCP2210 instead receives that signal and communicates it to the host
-> >>the next time it's queried. This is the interrupt that I need to, in
-> >>effect propagate locally. Since my spi_master and gpio_chip are all
-> >>functioning now, this is the last step to get one of my spi protocol
-> >>drivers working correctly.
-> >Just pass the data up the spi stack in your interrupt endpoint handler.
-> >No need to try to create a "real" interrupt.  There are other USB SPI
-> >drivers that should give you the idea of how to do it.
-> Thanks for your response! I haven't been able to find these drivers,
-> can you please point me to one? I guess I don't know the "spi stack"
-> well enough to know how to propagate that notification up to the
-> driver for the spi device (let alone that it was called a "stack" :)
 
-Hm, I thought we used to have some of them, I guess people have been
-saying they would write a driver for this type of hardware for a long
-time now :(
+On 09/03/2013 12:59 PM, Greg KH wrote:
+> Hm, I thought we used to have some of them, I guess people have been
+> saying they would write a driver for this type of hardware for a long
+> time now :(
 
-Anyway, look at the spi core, I think you want to tie into the
-spi_new_device() call in your usb driver, and start sending/receiving
-data through the SPI interfaces the spi core provides.
+Well, on the bright side, we have one now, albeit in a "this is my first 
+driver that nobody has reviewed yet" state. :)  It works (even on RPi -- 
+well, mostly).  As-is, it has a fair TODO & fix list, which I'm sure 
+will grow rapidly with some review. I hope that as I learn the kernel 
+better, I can generalize parts of this into some re-usable lib for other 
+USB-to-SPI/I2C/GPIO drivers.
 
-The Linux SPI mailing list should be able to help you out a lot more
-here than I can.
+https://github.com/daniel-santos/mcp2210-linux/
 
-greg k-h
+> Anyway, look at the spi core, I think you want to tie into the
+> spi_new_device() call in your usb driver, and start sending/receiving
+> data through the SPI interfaces the spi core provides.
+
+I'm actually using the alternative to that call, which is the 
+spi_alloc_device() / spi_add_device() pair as I'm not using struct 
+spi_board_info at all since it doesn't (currently) have even half of the 
+fields I need for each device. However, struct spi_device does have the 
+two void * fields controller_data and controller_state -- I suppose I 
+can use those to pass a pointer to a add_notify() type of function.  I 
+was just trying to seek a more generic, re-usable mechanism, but this 
+should at least work for now.
+
+> The Linux SPI mailing list should be able to help you out a lot more
+> here than I can.
+>
+> greg k-h
+
+Thanks again for your help!
