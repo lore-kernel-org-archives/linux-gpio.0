@@ -1,56 +1,68 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH] gpio: gpiolib: Fix error path in gpiod_set_debounce()
-Date: Tue,  3 Sep 2013 17:45:08 -0300
-Message-ID: <1378241108-3160-1-git-send-email-festevam@gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] emev2: GPIOLIB: Enable support for OF
+Date: Wed, 4 Sep 2013 14:07:27 +0900
+Message-ID: <20130904050727.GA15635@verge.net.au>
+References: <CACRpkdbeCU_WG4xXvoh76RZ-9UtbWJvB4PqYhSpTXSF4Hodf2A@mail.gmail.com>
+ <1378136695-23203-1-git-send-email-ian.molton@codethink.co.uk>
+ <1378136695-23203-2-git-send-email-ian.molton@codethink.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qe0-f50.google.com ([209.85.128.50]:39299 "EHLO
-	mail-qe0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760426Ab3ICUpa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2013 16:45:30 -0400
-Received: by mail-qe0-f50.google.com with SMTP id a11so140989qen.23
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Sep 2013 13:45:29 -0700 (PDT)
+Received: from kirsty.vergenet.net ([202.4.237.240]:43813 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754635Ab3IDFHe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Sep 2013 01:07:34 -0400
+Content-Disposition: inline
+In-Reply-To: <1378136695-23203-2-git-send-email-ian.molton@codethink.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: shawn.guo@linaro.org, kernel@pengutronix.de, rogerio.pimentel@freescale.com, linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
+To: Ian Molton <ian.molton@codethink.co.uk>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
 
-From: Fabio Estevam <fabio.estevam@freescale.com>
+[ CC Magnus ]
 
-Commit 8fea68f49 (gpio: improve error path in gpiolib) causes the following hang
-on a mx6qsabresd board:
+On Mon, Sep 02, 2013 at 04:44:55PM +0100, Ian Molton wrote:
+> EMEV2 is now a DT platform, however the GPIO driver cannot be used
+> from a DT file since it does not fill out the of_node field in its
+> gpio_chip structure.
+> 
+> Signed-off-by: Ian Molton <ian.molton@codethink.co.uk>
 
-ci_hdrc ci_hdrc.1: EHCI Host Controller
-ci_hdrc ci_hdrc.1: new USB bus registered, assigned bus number 2
-ci_hdrc ci_hdrc.1: USB 2.0 started, EHCI 1.00
-hub 2-0:1.0: USB hub found
-hub 2-0:1.0: 1 port detected
-gpiod_set_debounce: missing set() or set_debounce() operations
+I have no objections to this.
 
-We should not return immediately inside the 'if' block to keep the same 
-behaviour prior to 8fea68f49. Also, returning immediately fails to release the 
-spinlock.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Jumping to the 'fail' label makes the boot to succeed again.
 
-Reported-by: Rogerio Pimentel <rogerio.pimentel@freescale.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 0eb9cba..cd1dd12 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1783,7 +1783,7 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 	if (!chip->set || !chip->set_debounce) {
- 		pr_warn("%s: missing set() or set_debounce() operations\n",
- 			__func__);
--		return -EIO;
-+		goto fail;
- 	}
- 
- 	status = gpio_ensure_requested(desc);
--- 
-1.8.1.2
-
+> ---
+>  drivers/gpio/Kconfig   |    2 +-
+>  drivers/gpio/gpio-em.c |    1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index b2450ba..58e043d 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -129,7 +129,7 @@ config GPIO_IT8761E
+>  
+>  config GPIO_EM
+>  	tristate "Emma Mobile GPIO"
+> -	depends on ARM
+> +	depends on ARM && OF_GPIO
+>  	help
+>  	  Say yes here to support GPIO on Renesas Emma Mobile SoCs.
+>  
+> diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+> index 5cba855..279821e 100644
+> --- a/drivers/gpio/gpio-em.c
+> +++ b/drivers/gpio/gpio-em.c
+> @@ -303,6 +303,7 @@ static int em_gio_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	gpio_chip = &p->gpio_chip;
+> +	gpio_chip->of_node = pdev->dev.of_node;
+>  	gpio_chip->direction_input = em_gio_direction_input;
+>  	gpio_chip->get = em_gio_get;
+>  	gpio_chip->direction_output = em_gio_direction_output;
+> -- 
+> 1.7.10.4
+> 
