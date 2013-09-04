@@ -1,41 +1,76 @@
-From: Lars Poeschel <poeschel@lemonage.de>
-Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Wed, 04 Sep 2013 11:21:47 +0200
-Message-ID: <5034887.FlGzi4P5YS@lem-wkst-02>
-References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <4094364.ACYUvMRRNa@lem-wkst-02> <52261C5C.9000102@wwwdotorg.org>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [RFC 0/5] New descriptor-based GPIO interface
+Date: Wed, 4 Sep 2013 20:29:24 +0900
+Message-ID: <1378294169-22661-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp2-1.goneo.de ([212.90.139.83]:35760 "EHLO smtp2-1.goneo.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762117Ab3IDJVv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 4 Sep 2013 05:21:51 -0400
-In-Reply-To: <52261C5C.9000102@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, devicetree@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-On Wednesday 04 September 2013 11:29:00, Stephen Warren wrote:
-> On 09/02/2013 03:38 AM, Lars Poeschel wrote:
-> > Am Freitag, 30. August 2013, 13:53:45 schrieb Stephen Warren:
-> ...
-> 
-> >> Yet the current patch only addresses a limited set of cases, since it
-> >> doesn't hook the APIs but rather parses the DT. It doesn't cover the
-> >> non-DT case. It should if the feature is useful.
-> > 
-> > As pointed out before, only DT has this problem, that,
-> 
-> That's completely false. Both DT and non-DT can represent the exact same
-> HW, and use the exact same drivers. It's equally possible to write a bug
-> in a board file or a DT file (i.e. a typo or incorrect reading of the
-> schematic) that causes the wrong GPIO or IRQ ID to be used, and hence
-> for there to be conflicts. Any solution to this issue needs to address
-> both cases.
+Here is a first RFC for the new GPIO interface. It's terribly overdue, and in
+order to avoid delaying it further I decided to send it as-is instead of being
+even more perfectionist. The main issue I have with it is that it highlights
+some points that could be simplified in gpiolib, some of which require a
+refactoring of gpiolib's clients. I wasn't sure which, of the cleanup or new
+interface, should come first and stayed in this state of confusion for several
+months ; but in the end I believe it's more appropriate to clearly lay the
+interfaces we want to use first, and then refactor the lib accordingly. So
+please be mindful that another round of cleanup, both of gpiolib itself and its
+consumers, should come once a later version of these patches is validated (and
+hopefully merged) and that this series should be considered just another step
+towards gpiolib's sanitization (although I also secretly hope the new interface
+will be deemed useful by itself).
 
-This is again not the point. This is not what this patch is trying to solve. 
-The patch is trying to solve problem A. But you are talking about problem B.
-Sure I can write a bug in board files and I can write a bug in DT files. The 
-patch is not trying to prevent that. This is a completly different thing.
+Another point that definitely needs more attention is the documentation. I am
+not sure whether the new interface should be described as a couple of sections
+in the existing GPIO documentation (the current approach) or as a new
+documentation file of its own.
+
+The new gpiod public interface is just an export of how gpiolib now works
+internally. By representing GPIOs as opaque descriptors intead of integers, it
+aims at making GPIO usage safer and more coherent with respect to other
+subsystems by using a proper get/put mechanism and ensuring all GPIOs in use at
+a given time are valid. It also makes GPIO acquisition easier for consumers, by
+offering a standard way to bind GPIOs to devices. Finally, it tries to fix some
+of the inconsistencies gpiolib acquired over time, like the incoherent handling
+of active low GPIOs which was only valid when using the sysfs interface.
+
+The old GPIO interface is still accessible and works the same way as before ; I
+do not expect any existing code to break as a result of applying this series
+(which is not extensively tested yet BTW).
+
+TODO (preferably once this batch is validated):
+- Change gpio_get()'s behavior to allow it to return specifiers other than the
+first one for DT-declared GPIOs?
+- Update as many users of the legacy interface as possible to use the new
+interface
+- Simplify gpiolib by removing redundant code and corner-cases (gpio_request
+must die)
+- Try to implement the GPIO fast-path method with gpiod, maybe using the LSB of
+GPIO descriptors as a marker to forge fake descriptors?
+- If possible, completely deprecate and remove the old gpio interface
+
+Alexandre Courbot (5):
+  gpiolib: factorize gpiod_get/set functions
+  gpiolib: export descriptor-based GPIO interface
+  gpiolib: port of_ functions to use gpiod
+  gpiolib: add gpiod_get() and gpiod_put() functions
+  gpiolib: update documentation
+
+ Documentation/gpio.txt        | 119 ++++++++++
+ drivers/gpio/gpiolib-of.c     |  28 ++-
+ drivers/gpio/gpiolib.c        | 525 ++++++++++++++++++++++++++----------------
+ include/asm-generic/gpio.h    | 227 ++++++------------
+ include/linux/gpio.h          |  11 +-
+ include/linux/gpio/consumer.h | 201 ++++++++++++++++
+ include/linux/gpio/driver.h   | 163 +++++++++++++
+ include/linux/of_gpio.h       |  29 ++-
+ 8 files changed, 920 insertions(+), 383 deletions(-)
+ create mode 100644 include/linux/gpio/consumer.h
+ create mode 100644 include/linux/gpio/driver.h
+
+-- 
+1.8.4
