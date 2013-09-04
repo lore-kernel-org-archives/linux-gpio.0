@@ -1,60 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: return -ENOTSUPP if debounce cannot be set
-Date: Wed,  4 Sep 2013 14:23:49 +0200
-Message-ID: <1378297429-9299-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:45640 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756543Ab3IDMX7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Sep 2013 08:23:59 -0400
-Received: by mail-ee0-f50.google.com with SMTP id d51so135629eek.23
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Sep 2013 05:23:58 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC 4/5] gpiolib: add gpiod_get() and gpiod_put() functions
+Date: Wed, 04 Sep 2013 13:56:50 -0600
+Message-ID: <52279082.5010105@wwwdotorg.org>
+References: <1378294169-22661-1-git-send-email-acourbot@nvidia.com> <1378294169-22661-5-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1378294169-22661-5-git-send-email-acourbot@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-It appears some drivers are using gpio_set_debounce()
-opportunistically, i.e. without knowing whether it works or
-not. (Example: input/keyboard/gpio_keys.c) to account for
-this use case, return -ENOTSUPP and do not print any
-warnings in this case.
+On 09/04/2013 05:29 AM, Alexandre Courbot wrote:
+> Add gpiod_get() and gpiod_put() functions that provide safer handling of
+> GPIOs.
+> 
+> These functions put the GPIO framework in line with the conventions of
+> other frameworks in the kernel, and help ensure every GPIO is declared
+> properly and valid while it is used.
 
-Took a round over the other gpio_set_debounce() consumers
-to make sure that none of them are relying on the returned
-error code to be something specific.
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> +struct gpio_desc *__must_check gpiod_get(struct device *dev,
+> +					 const char *con_id);
+> +void gpiod_put(struct gpio_desc *desc);
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 0cbddda..86ef346 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1763,6 +1763,9 @@ EXPORT_SYMBOL_GPL(gpio_direction_output);
-  * gpio_set_debounce - sets @debounce time for a @gpio
-  * @gpio: the gpio to set debounce time
-  * @debounce: debounce time is microseconds
-+ *
-+ * returns -ENOTSUPP if the controller does not support setting
-+ * debounce.
-  */
- static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- {
-@@ -1778,9 +1781,9 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 
- 	chip = desc->chip;
- 	if (!chip->set || !chip->set_debounce) {
--		pr_warn("%s: missing set() or set_debounce() operations\n",
-+		pr_debug("%s: missing set() or set_debounce() operations\n",
- 			__func__);
--		return -EIO;
-+		return -ENOTSUPP;
- 	}
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
--- 
-1.8.3.1
+It might be nice to add an "int index" parameter to this function. For
+example, a bit-banged parallel bus protocol driver might have 1
+chip-select GPIO, 1 clock GPIO, and 8 data GPIOs. gpiod_get(dev, "bus",
+0)..gpiod_get(dev, "bus", 7) might be nicer than gpiod_get(dev,
+"bus0")..gpiod_get(dev, "bus7")? Possibly for client-simplicity,
+implement both gpiod_get(dev, con_id) (as an inline wrapper for ...) and
+gpiod_get_index(dev, con_id, index)?
 
+In DT terms, this would map to:
+
+cs-gpios = <&gpio 3 0>;
+clock-gpios = <&gpio 5 0>;
+bus-gpios = <&gpio 10 0 ... &gpio 17 0>;
+
+... and with the mapping table registration mechanism, we could
+presumably add "int index" to struct gpiod_lookup.
