@@ -1,98 +1,37 @@
-From: George Cherian <george.cherian@ti.com>
-Subject: [PATCH v3 2/3] gpio: pcf857x: remove the irq_demux_work and gpio->irq
-Date: Wed, 4 Sep 2013 12:33:02 +0530
-Message-ID: <1378278183-26596-3-git-send-email-george.cherian@ti.com>
-References: <1378278183-26596-1-git-send-email-george.cherian@ti.com>
+From: Lars Poeschel <poeschel@lemonage.de>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Wed, 04 Sep 2013 10:35:44 +0200
+Message-ID: <5584741.67AvVurcHF@lem-wkst-02>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <CACRpkdYeMGkju345g9d_ifZEOiVXftzSqU=1CfGO=qnt6Vj-Bg@mail.gmail.com> <52261C8B.2030906@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1378278183-26596-1-git-send-email-george.cherian@ti.com>
+In-Reply-To: <52261C8B.2030906@wwwdotorg.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, kuninori.morimoto.gx@renesas.com, n.a.balandin@gmail.com, George Cherian <george.cherian@ti.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Now that we are using devm_request_threaded_irq no need for
-irq_demux_work and gpio->irq. Remove all its references.
+On Wednesday 04 September 2013 11:29:47, Stephen Warren wrote:
+> On 09/03/2013 06:35 AM, Linus Walleij wrote:
+> > On Fri, Aug 30, 2013 at 9:53 PM, Stephen Warren <swarren@wwwdotorg.org> 
+wrote:
+> >> I still haven't seen an answer to why we really care about this; how
+> >> many times has code actually allocated the same GPIO/IRQ when it
+> >> shouldn't, in a way that it wasn't detectable by some other mechanism,
+> >> i.e. the feature just not working? Why are we even trying to solve this
+> >> issue? I'm not totally convinced it even makes sense to try and solve it.
+> > 
+> > We care about this because a number of OMAP boards are not
+> > working properly when booted from device tree, and they have a hard
+> > time figuring out a solution to the problem. Last try exploded. Now
+> > they are looking to create a patch that will fix the actual problem.
+> 
+> Is something missing from /proc/interrupts or /sys/kernel/debug/gpios?
+> If so, let's just add it.
 
-Signed-off-by: George Cherian <george.cherian@ti.com>
----
- drivers/gpio/gpio-pcf857x.c | 37 -------------------------------------
- 1 file changed, 37 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 4d0d28c..ef52ee3 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -30,7 +30,6 @@
- #include <linux/of_device.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
--#include <linux/workqueue.h>
- 
- 
- static const struct i2c_device_id pcf857x_id[] = {
-@@ -89,12 +88,10 @@ struct pcf857x {
- 	struct gpio_chip	chip;
- 	struct i2c_client	*client;
- 	struct mutex		lock;		/* protect 'out' */
--	struct work_struct	work;		/* irq demux work */
- 	struct irq_domain	*irq_domain;	/* for irq demux  */
- 	spinlock_t		slock;		/* protect irq demux */
- 	unsigned		out;		/* software latch */
- 	unsigned		status;		/* current status */
--	int			irq;		/* real irq number */
- 
- 	int (*write)(struct i2c_client *client, unsigned data);
- 	int (*read)(struct i2c_client *client);
-@@ -210,38 +207,6 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static void pcf857x_irq_demux_work(struct work_struct *work)
--{
--	struct pcf857x *gpio = container_of(work,
--					       struct pcf857x,
--					       work);
--	unsigned long change, i, status, flags;
--
--	status = gpio->read(gpio->client);
--
--	spin_lock_irqsave(&gpio->slock, flags);
--
--	change = gpio->status ^ status;
--	for_each_set_bit(i, &change, gpio->chip.ngpio)
--		generic_handle_irq(irq_find_mapping(gpio->irq_domain, i));
--	gpio->status = status;
--
--	spin_unlock_irqrestore(&gpio->slock, flags);
--}
--
--static irqreturn_t pcf857x_irq_demux(int irq, void *data)
--{
--	struct pcf857x	*gpio = data;
--
--	/*
--	 * pcf857x can't read/write data here,
--	 * since i2c data access might go to sleep.
--	 */
--	schedule_work(&gpio->work);
--
--	return IRQ_HANDLED;
--}
--
- static int pcf857x_irq_domain_map(struct irq_domain *domain, unsigned int virq,
- 				 irq_hw_number_t hw)
- {
-@@ -284,9 +249,7 @@ static int pcf857x_irq_domain_init(struct pcf857x *gpio,
- 		goto fail;
- 
- 	/* enable gpio_to_irq() */
--	INIT_WORK(&gpio->work, pcf857x_irq_demux_work);
- 	gpio->chip.to_irq	= pcf857x_to_irq;
--	gpio->irq		= client->irq;
- 
- 	return 0;
- 
--- 
-1.8.1.4
+That would require procfs to be mounted to /proc and even CONFIG_PROC_FS to be 
+compiled in. Drivers have to work without that requirement.
+That would require CONFIG_DEBUG_FS to be set, right? Drivers have to work 
+without that.
