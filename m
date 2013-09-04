@@ -1,45 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [patch] gpiolib: unlock on error in gpiod_set_debounce()
-Date: Wed, 4 Sep 2013 07:51:51 +0200
-Message-ID: <CACRpkdbHUo27Fkhp2XNAK3GSSKHMZVo_DMbE0FgDecn26Mao6A@mail.gmail.com>
-References: <5225c32f.kWadywtP9mkLJ38j%fengguang.wu@intel.com>
-	<20130903121500.GA16312@elgon.mountain>
+From: George Cherian <george.cherian@ti.com>
+Subject: [PATCH v4 0/3] cleanup of gpio_pcf857x.c
+Date: Wed, 4 Sep 2013 12:33:00 +0530
+Message-ID: <1378278183-26596-1-git-send-email-george.cherian@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:49354 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755924Ab3IDFvw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Sep 2013 01:51:52 -0400
-Received: by mail-ob0-f178.google.com with SMTP id ef5so6849886obb.23
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Sep 2013 22:51:51 -0700 (PDT)
-In-Reply-To: <20130903121500.GA16312@elgon.mountain>
+Received: from devils.ext.ti.com ([198.47.26.153]:42381 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1762016Ab3IDHDQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Sep 2013 03:03:16 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kbuild@01.org, Fengguang Wu <fengguang.wu@intel.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, kuninori.morimoto.gx@renesas.com, n.a.balandin@gmail.com, George Cherian <george.cherian@ti.com>
 
-On Tue, Sep 3, 2013 at 2:15 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+This patch series
+        - removes the irq_demux_work
+        - Uses devm_request_threaded_irq
+        - Call the user handler iff gpio_to_irq is done.
 
-> There is a missing unlock on error here.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 0eb9cba..3c01782 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1783,7 +1783,8 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
->         if (!chip->set || !chip->set_debounce) {
->                 pr_warn("%s: missing set() or set_debounce() operations\n",
->                         __func__);
-> -               return -EIO;
-> +               status = -EIO;
-> +               goto fail;
->         }
+v1 --> v2
+        Split v1 to 3 patches
+v2 --> v3
+	Remove the unnecessary dts patches.
+v3 --> v4
+	Remove gpio->irq (in patch 2)
 
-Yeah I screwed up. I queued another fix though, moving the locking below
-the check instead.
+Note: these patches were made after applying [1].
+[1] - [PATCH v5] gpio: pcf857x: Add OF support - https://lkml.org/lkml/2013/8/27/70
 
-Yours,
-Linus Walleij
+George Cherian (3):
+  gpio: pcf857x: change to devm_request_threaded_irq
+  gpio: pcf857x: remove the irq_demux_work and gpio->irq
+  gpio: pcf857x: call the gpio user handler iff gpio_to_irq is done
+
+ drivers/gpio/gpio-pcf857x.c | 53 ++++++++++++++++++++++-----------------------
+ 1 file changed, 26 insertions(+), 27 deletions(-)
+
+-- 
+1.8.1.4
+
