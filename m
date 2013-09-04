@@ -1,44 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Commit "gpio: improve error path in gpiolib" causes hang on mx6
-Date: Wed, 4 Sep 2013 07:44:35 +0200
-Message-ID: <CACRpkdYt6KomA5t7fmqQEUwXCR74QaPtpdOPiUjRYowj_cCV4Q@mail.gmail.com>
-References: <CAOMZO5DnS--2Cxw+M8S8QcA_2eN+QKTpvWYyCWiH6KkLsRm8HA@mail.gmail.com>
-	<CAOMZO5DuWM6Mu1vQwr=0p9Vx7RqOmt+WC81gEUsaoRThR1fL_w@mail.gmail.com>
+Subject: Re: [patch] gpiolib: unlock on error in gpiod_set_debounce()
+Date: Wed, 4 Sep 2013 07:51:51 +0200
+Message-ID: <CACRpkdbHUo27Fkhp2XNAK3GSSKHMZVo_DMbE0FgDecn26Mao6A@mail.gmail.com>
+References: <5225c32f.kWadywtP9mkLJ38j%fengguang.wu@intel.com>
+	<20130903121500.GA16312@elgon.mountain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:57632 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755930Ab3IDFof (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Sep 2013 01:44:35 -0400
-Received: by mail-oa0-f51.google.com with SMTP id h1so7930814oag.10
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Sep 2013 22:44:35 -0700 (PDT)
-In-Reply-To: <CAOMZO5DuWM6Mu1vQwr=0p9Vx7RqOmt+WC81gEUsaoRThR1fL_w@mail.gmail.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:49354 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755924Ab3IDFvw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Sep 2013 01:51:52 -0400
+Received: by mail-ob0-f178.google.com with SMTP id ef5so6849886obb.23
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Sep 2013 22:51:51 -0700 (PDT)
+In-Reply-To: <20130903121500.GA16312@elgon.mountain>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kbuild@01.org, Fengguang Wu <fengguang.wu@intel.com>
 
-On Tue, Sep 3, 2013 at 10:34 PM, Fabio Estevam <festevam@gmail.com> wrote:
->>
->> If I revert this commit, then I am able to boot correctly.
+On Tue, Sep 3, 2013 at 2:15 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> There is a missing unlock on error here.
 >
-> I think I found a fix:
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 >
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 0eb9cba..3c01782 100644
 > --- a/drivers/gpio/gpiolib.c
 > +++ b/drivers/gpio/gpiolib.c
-> @@ -1783,7 +1783,7 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsi
+> @@ -1783,7 +1783,8 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
 >         if (!chip->set || !chip->set_debounce) {
 >                 pr_warn("%s: missing set() or set_debounce() operations\n",
 >                         __func__);
 > -               return -EIO;
+> +               status = -EIO;
 > +               goto fail;
 >         }
->
-> will submit it shortly.
 
-A commit like this is already in linux-next, however I screwed up the
-locking so the final fix arrives today.
+Yeah I screwed up. I queued another fix though, moving the locking below
+the check instead.
 
 Yours,
 Linus Walleij
