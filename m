@@ -1,53 +1,52 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC 2/5] gpiolib: export descriptor-based GPIO interface
-Date: Wed, 04 Sep 2013 13:58:14 -0600
-Message-ID: <522790D6.6080803@wwwdotorg.org>
-References: <1378294169-22661-1-git-send-email-acourbot@nvidia.com> <1378294169-22661-3-git-send-email-acourbot@nvidia.com>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Wed, 04 Sep 2013 14:13:13 -0600
+Message-ID: <52279459.1010100@wwwdotorg.org>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <CACRpkdYeMGkju345g9d_ifZEOiVXftzSqU=1CfGO=qnt6Vj-Bg@mail.gmail.com> <52261C8B.2030906@wwwdotorg.org> <5584741.67AvVurcHF@lem-wkst-02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1378294169-22661-3-git-send-email-acourbot@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:58293 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754334Ab3IDUNT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Sep 2013 16:13:19 -0400
+In-Reply-To: <5584741.67AvVurcHF@lem-wkst-02>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lars Poeschel <poeschel@lemonage.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-On 09/04/2013 05:29 AM, Alexandre Courbot wrote:
-> This patch exports the gpiod_* family of API functions, a safer
-> alternative to the legacy gpio interface. Differences between the gpiod
-> and gpio APIs are:
+On 09/04/2013 02:35 AM, Lars Poeschel wrote:
+> On Wednesday 04 September 2013 11:29:47, Stephen Warren wrote:
+>> On 09/03/2013 06:35 AM, Linus Walleij wrote:
+>>> On Fri, Aug 30, 2013 at 9:53 PM, Stephen Warren <swarren@wwwdotorg.org> 
+> wrote:
+>>>> I still haven't seen an answer to why we really care about this; how
+>>>> many times has code actually allocated the same GPIO/IRQ when it
+>>>> shouldn't, in a way that it wasn't detectable by some other mechanism,
+>>>> i.e. the feature just not working? Why are we even trying to solve this
+>>>> issue? I'm not totally convinced it even makes sense to try and solve it.
+>>>
+>>> We care about this because a number of OMAP boards are not
+>>> working properly when booted from device tree, and they have a hard
+>>> time figuring out a solution to the problem. Last try exploded. Now
+>>> they are looking to create a patch that will fix the actual problem.
+>>
+>> Is something missing from /proc/interrupts or /sys/kernel/debug/gpios?
+>> If so, let's just add it.
 > 
-> - gpio works with integers, whereas gpiod operates on opaque handlers
->   which cannot be forged or used before proper acquisition
-> - gpiod get/set functions are aware of the active low state of a GPIO
-> - gpio consumers should now include <linux/gpio/consumer.h> to access
->   the new interface, whereas chips drivers will use
->   <linux/gpio/driver.h>
-> 
-> The legacy gpio API is now built as inline functions on top of gpiod.
-> 
+> That would require procfs to be mounted to /proc and even CONFIG_PROC_FS to be 
+> compiled in. Drivers have to work without that requirement.
+> That would require CONFIG_DEBUG_FS to be set, right? Drivers have to work 
+> without that.
 
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+Drivers will/could work fine without those options enabled and
+filesystems mounted. Nothing in this patch series affects that, nor
+would not applying the patch series.
 
-> +struct gpio_chip {
-
-> +	int			(*get_direction)(struct gpio_chip *chip,
-> +						unsigned offset);
-> +	int			(*direction_input)(struct gpio_chip *chip,
-> +						unsigned offset);
-> +	int			(*get)(struct gpio_chip *chip,
-> +						unsigned offset);
-> +	int			(*direction_output)(struct gpio_chip *chip,
-> +						unsigned offset, int value);
-> +	int			(*set_debounce)(struct gpio_chip *chip,
-> +						unsigned offset,
-> +						unsigned debounce);
-> +
-> +	void			(*set)(struct gpio_chip *chip,
-> +						unsigned offset, int value);
-> +
-
-Minor nit: It might be nice to sort/group these entries more cohesively,
-i.e. get_direction, direction_input, direction_output, get, set,
-set_debounce?
+However, you only need this patch series if there's some kind of
+problematic resource conflict and you want to debug it. If your system
+has a problem and you want to debug it, it seems entirely reasonable to
+make use of (require making use of) the debugging tools that are already
+part of the kernel.
