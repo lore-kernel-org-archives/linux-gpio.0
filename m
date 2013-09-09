@@ -1,78 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/8] ARM: iop32x: request and issue reset using gpio
-Date: Mon,  9 Sep 2013 17:40:23 +0200
-Message-ID: <1378741223-12921-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 3/8] ARM: iop32x: read N2100 power key using gpiolib
+Date: Mon,  9 Sep 2013 17:40:31 +0200
+Message-ID: <1378741231-12958-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:58342 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750971Ab3IIPk2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Sep 2013 11:40:28 -0400
-Received: by mail-lb0-f179.google.com with SMTP id x18so5052571lbi.24
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Sep 2013 08:40:27 -0700 (PDT)
+Received: from mail-la0-f48.google.com ([209.85.215.48]:51881 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750971Ab3IIPkg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Sep 2013 11:40:36 -0400
+Received: by mail-la0-f48.google.com with SMTP id er20so5067422lab.35
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Sep 2013 08:40:35 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>
 Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-As the IOP GPIO driver supports gpiolib we can use the standard
-GPIO calls to issue a reset of the machine instead of using the
-custom gpio_line_set/config calls. Also request the GPIO when
-initializing the machine.
+Refrain from using the custom gpio_line_get() to read the power
+key on the N2100, use the gpiolib function gpio_get() instead.
+Also request the line when initializing the machine.
 
 Cc: Lennert Buytenhek <kernel@wantstofly.org>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Mikael Pettersson <mikpe@it.uu.se>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/mach-iop32x/n2100.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ arch/arm/mach-iop32x/n2100.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
-index 0691443..cd199c1 100644
+index cd199c1..d495b4f 100644
 --- a/arch/arm/mach-iop32x/n2100.c
 +++ b/arch/arm/mach-iop32x/n2100.c
-@@ -30,6 +30,7 @@
- #include <linux/platform_device.h>
- #include <linux/reboot.h>
- #include <linux/io.h>
-+#include <linux/gpio.h>
- #include <mach/hardware.h>
- #include <asm/irq.h>
- #include <asm/mach/arch.h>
-@@ -288,8 +289,14 @@ static void n2100_power_off(void)
+@@ -306,7 +306,7 @@ static struct timer_list power_button_poll_timer;
  
- static void n2100_restart(enum reboot_mode mode, const char *cmd)
+ static void power_button_poll(unsigned long dummy)
  {
--	gpio_line_set(N2100_HARDWARE_RESET, GPIO_LOW);
--	gpio_line_config(N2100_HARDWARE_RESET, GPIO_OUT);
-+	int ret;
-+
-+	ret = gpio_direction_output(N2100_HARDWARE_RESET, 0);
-+	if (ret) {
-+		pr_crit("could not drive reset GPIO low\n");
-+		return;
-+	}
-+	/* Wait for reset to happen */
- 	while (1)
- 		;
- }
-@@ -311,6 +318,8 @@ static void power_button_poll(unsigned long dummy)
- 
- static void __init n2100_init_machine(void)
- {
-+	int ret;
-+
- 	platform_device_register(&iop3xx_i2c0_device);
- 	platform_device_register(&n2100_flash_device);
- 	platform_device_register(&n2100_serial_device);
-@@ -326,6 +335,10 @@ static void __init n2100_init_machine(void)
- 	power_button_poll_timer.function = power_button_poll;
- 	power_button_poll_timer.expires = jiffies + (HZ / 10);
- 	add_timer(&power_button_poll_timer);
-+
-+	ret = gpio_request(N2100_HARDWARE_RESET, "reset");
+-	if (gpio_line_get(N2100_POWER_BUTTON) == 0) {
++	if (gpio_get_value(N2100_POWER_BUTTON) == 0) {
+ 		ctrl_alt_del();
+ 		return;
+ 	}
+@@ -339,6 +339,14 @@ static void __init n2100_init_machine(void)
+ 	ret = gpio_request(N2100_HARDWARE_RESET, "reset");
+ 	if (ret)
+ 		pr_err("could not request reset GPIO\n");
++	ret = gpio_request(N2100_POWER_BUTTON, "power");
 +	if (ret)
-+		pr_err("could not request reset GPIO\n");
++		pr_err("could not request power GPIO\n");
++	else {
++		ret = gpio_direction_input(N2100_POWER_BUTTON);
++		if (ret)
++			pr_err("could not set power GPIO as input\n");
++	}
  }
  
  MACHINE_START(N2100, "Thecus N2100")
