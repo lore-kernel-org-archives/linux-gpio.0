@@ -1,73 +1,36 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: "Virtual" Interrupts -- Need help please
-Date: Sun, 08 Sep 2013 17:35:56 -0700
-Message-ID: <522D17EC.3050908@roeck-us.net>
-References: <522BC27A.5080303@att.net> <522BCA33.6000701@roeck-us.net> <522D0D37.3050500@att.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] gpiolib: Downgrade set_debounce() missing operation warning
+Date: Mon, 9 Sep 2013 09:47:17 +0200
+Message-ID: <CACRpkdYCj-UDhekZ7tZ9kbusrJArvegfaGtJq7ULhNKz5o1Euw@mail.gmail.com>
+References: <1378471128-3330-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:59102 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214Ab3IIAf7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Sep 2013 20:35:59 -0400
-In-Reply-To: <522D0D37.3050500@att.net>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:34477 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750934Ab3IIHrS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Sep 2013 03:47:18 -0400
+Received: by mail-ob0-f180.google.com with SMTP id va7so691086obc.25
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Sep 2013 00:47:17 -0700 (PDT)
+In-Reply-To: <1378471128-3330-1-git-send-email-broonie@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Santos <daniel.santos@pobox.com>
-Cc: Daniel Santos <danielfsantos@att.net>, linux-gpio <linux-gpio@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linaro-kernel <linaro-kernel@lists.linaro.org>, Mark Brown <broonie@linaro.org>
 
-On 09/08/2013 04:50 PM, Daniel Santos wrote:
-> On 09/07/2013 07:52 PM, Guenter Roeck wrote:
->> On 09/07/2013 05:19 PM, Daniel Santos wrote:
->>> I've posted a number of requests for aid on this and have gotten very little responses and none that were helpful. I have spent at least 24 hours of research time on this and just a little direction from somebody who knows this subsystem can help me immensely as the IRQ subsystem is new to me.
->>>
->>> This is for the MCP2210 driver (a USB to SPI/GPIO bridge) and my driver is the first of its class for the Linux kernel, giving me less to look at as an example.  I intend to use standard drivers for whatever I have connected at the other end.  For this to work, I need to supply interrupts for some of these drivers to work correctly. How do I do this? Every thing else on this driver is ready to go and my handler functions for this are empty and waiting for some code.
->>>
->> Not really. Have a look at https://github.com/groeck/diolan even though the SPI part there
->> still isn't working and it is far from being acceptable upstream in its current form.
->> It also doesn't support interrupts.
+On Fri, Sep 6, 2013 at 2:38 PM, Mark Brown <broonie@kernel.org> wrote:
+
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1779,8 +1779,8 @@ static int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
 >
-> Oh, this is wonderful to know!  While I like breaking new ground, I certainly don't enjoy doing it when I'm trying to write my first device driver and having to learn so many new things.
->
->>
->> It is modeled as mfd driver, which I think you might want to consider as well.
->>
->>> So do i create an IRQ domain and then call generic_handle_irq() from my URB complete() function? If so, which type of IRQ Domain is appropriate for this? Unlike typical platform devices, these are dynamically added and removed throughout the life of the kernel, adding to the challenge. So, if I understand correctly, my base IRQ number needs to be dynamically generated.  How should I manage this?
->>>
->>> Finally, if you have any example drivers that are doing something similar, that would be SO very helpful as well!
->>>
->> There are several drivers in drivers/mfd solving the same problem, ie using
->> irq domains to pass interrupts to client drivers. Look for irq_domain_add_simple().
->> drivers/mfd/tc3589x.c seems to be a good example.
->
-> Ahh, wonderful! I was looking at a lot of the code in mfd, but it contains so many things that I don't understand yet, so it's been harder to be clear on what the driver is doing and why w/o extensive examination & study of the subsystems it's using.  This will help!
->
+>         chip = desc->chip;
+>         if (!chip->set || !chip->set_debounce) {
+> -               pr_warn("%s: missing set() or set_debounce() operations\n",
+> -                       __func__);
+> +               pr_debug("%s: missing set() or set_debounce() operations\n",
+> +                        __func__);
 
-Yes, one of the issues with mfd is its lack of documentation. I am sure the maintainer
-will appreciate if you solve that problem by writing it :).
+A patch like this is already upstream, but thanks anyway!
 
->>
->>> I have some secondary (and less important) questions about how to integrate this with device drivers that want a DT / open firmware config (which I know almost nothing about at this time), but that can wait.
->>>
->> If you look into the mfd subsystem, you may notice that it handles at least some of the complexity
->> of interrupt handling as well as devicetree integration. One more reason to use it.
->>
->> Guenter
->
-> Even better, thank you very much!! If this thing had more EEPROM storage I would consider using the OF format for it's settings, but I only have 256 bytes to play with so I'm using a custom compression/encoding.
->
-
-You should really use devicetree anyway. How you get it loaded on demand is another question. Lack of storage is not a reason.
-Custom data will likely not be accepted upstream, if you had that in mind.
-
-On the other side, we'll need PC/x86 support as well (or at least I do), so support for platform data based initialization
-data will be necessary as well.
-
-> I'm hoping to present this for an initial review in a month or so. I'm sure you guys will shred it, but I'm excited about it anyway! :)
->
-
-Let me know when you have something to test. I just ordered an evaluation board for that chip, so I'll need it soon ;).
-
-Guenter
-
+Yours,
+Linus Walleij
