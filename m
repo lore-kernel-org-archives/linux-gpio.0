@@ -1,57 +1,68 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3] gpiolib: Downgrade set_debounce() missing operation
- warning
-Date: Mon, 9 Sep 2013 10:26:32 +0100
-Message-ID: <20130909092632.GS29403@sirena.org.uk>
-References: <1378471128-3330-1-git-send-email-broonie@kernel.org>
- <CACRpkdYCj-UDhekZ7tZ9kbusrJArvegfaGtJq7ULhNKz5o1Euw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3dBJfKlFjfsS/piO"
+Subject: [PATCH 2/2] gpiolib: Include GPIO label in log messages for GPIOs
+Date: Mon,  9 Sep 2013 10:33:50 +0100
+Message-ID: <1378719230-10931-2-git-send-email-broonie@kernel.org>
+References: <1378719230-10931-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:37834 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:37614 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871Ab3IIJ0f (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Sep 2013 05:26:35 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYCj-UDhekZ7tZ9kbusrJArvegfaGtJq7ULhNKz5o1Euw@mail.gmail.com>
+	with ESMTP id S1751128Ab3IIJeG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Sep 2013 05:34:06 -0400
+In-Reply-To: <1378719230-10931-1-git-send-email-broonie@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linaro-kernel <linaro-kernel@lists.linaro.org>
+Cc: linux-gpio@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
+From: Mark Brown <broonie@linaro.org>
 
---3dBJfKlFjfsS/piO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Provide the human readable label for the GPIO as well as the number when
+we are recording it in order to improve the readability of log messages.
 
-On Mon, Sep 09, 2013 at 09:47:17AM +0200, Linus Walleij wrote:
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-> A patch like this is already upstream, but thanks anyway!
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e4937b7..b126403 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -103,6 +103,26 @@ static int gpiod_export_link(struct device *dev, const char *name,
+ static int gpiod_sysfs_set_active_low(struct gpio_desc *desc, int value);
+ static void gpiod_unexport(struct gpio_desc *desc);
+ 
++#ifdef CONFIG_DEBUG_FS
++#define gpiod_emerg(desc, fmt, ...)			                \
++	pr_emerg("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label, \
++                 ##__VA_ARGS__)
++#define gpiod_crit(desc, fmt, ...)			                \
++	pr_crit("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label,  \
++                 ##__VA_ARGS__)
++#define gpiod_err(desc, fmt, ...)				        \
++	pr_err("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label,   \
++                 ##__VA_ARGS__)
++#define gpiod_warn(desc, fmt, ...)				        \
++	pr_warn("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label,  \
++                 ##__VA_ARGS__)
++#define gpiod_info(desc, fmt, ...)				        \
++	pr_info("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label,  \
++                ##__VA_ARGS__)
++#define gpiod_dbg(desc, fmt, ...)				   \
++	pr_debug("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label, \
++                 ##__VA_ARGS__)
++#else
+ #define gpiod_emerg(desc, fmt, ...)			           \
+ 	pr_emerg("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
+ #define gpiod_crit(desc, fmt, ...)			           \
+@@ -115,6 +135,7 @@ static void gpiod_unexport(struct gpio_desc *desc);
+ 	pr_info("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
+ #define gpiod_dbg(desc, fmt, ...)				   \
+ 	pr_debug("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
++#endif
+ 
+ static inline void desc_set_label(struct gpio_desc *d, const char *label)
+ {
+-- 
+1.8.4.rc3
 
-Hrm, it hadn't found its way into -next on Friday but I see it's there
-now.
-
---3dBJfKlFjfsS/piO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSLZRFAAoJELSic+t+oim9k6wP/j4T1mDmjh20Uze1lm2z65kW
-mVh37FSp5y8u98AtOZQZmigDrb+kI3cuNi72MFWamB4/ICHqkj91LIg7Iv/fsRzn
-QcUcBJD7i3bucm4updZQgA3NU43a2g2ZzW1X146wKvsPSbd/4kx1PffpsUj4gESo
-CyvQ4F/pWR/sLAKiErzjFqSNAw8DrzW3lVjsx8H9jw/1nRZUwKa8R42KAqAdtbbx
-gwDF0crDTTqUocgSDqpgZott69uEYT7A40shk9xmcuEGN42mGsVDL9/gjL4XpGwq
-/lS4+e0qFLXKiewPM+GdHFMK5qCRIY51P4oJIZAZ0y+KfBAawmG5L1nXHjwkm30r
-fg5ab5oQo0zkPqd/HtDHqV9fndQUnIcnuKOPrNdEJ93nyE5RXergXhbvbeb+t63i
-VkLnEJWNeZl+TDE4dOWhVrp7aAYTIugfjBmo4ZvGCHTWvlJkfefv5C9hSbFrOwVx
-k+w5tprpGAVMCdDF3Vc9+QZo2U1OERuZlG6gUr1L+vKj8m9Aoo7alyQ/TWq8Zj3Y
-jKf8RO0gB6ICFJxMzgIcVeWANBdU9nYMWBmFKbYTDvbnQAcP82yGF+n0KlRfWsu8
-uhgF6qqA/xxQfu+ydEQ0rRsTjc+lRSkvTYzyCrhHwAmVF7GtW7SsVEcqPnuUTSG+
-2N/HHgtdQDHwD/tpgmhS
-=4rMn
------END PGP SIGNATURE-----
-
---3dBJfKlFjfsS/piO--
