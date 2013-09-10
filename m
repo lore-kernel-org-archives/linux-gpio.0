@@ -1,57 +1,87 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4/7] ptp: switch to use gpiolib
-Date: Tue, 10 Sep 2013 14:31:00 +0200
-Message-ID: <1378816260-8091-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 5/7] staging: media/lirc: switch to use gpiolib
+Date: Tue, 10 Sep 2013 14:31:23 +0200
+Message-ID: <1378816283-8164-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:58470 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751371Ab3IJMbH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2013 08:31:07 -0400
-Received: by mail-la0-f47.google.com with SMTP id eo20so6037679lab.20
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Sep 2013 05:31:06 -0700 (PDT)
+Received: from mail-la0-f53.google.com ([209.85.215.53]:63028 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751225Ab3IJMb3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2013 08:31:29 -0400
+Received: by mail-la0-f53.google.com with SMTP id el20so6034412lab.40
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Sep 2013 05:31:28 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, Richard Cochran <richardcochran@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, netdev@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-This platform supports gpiolib, so remove the custom API use
-and replace with calls to gpiolib. Also request the GPIO before
-starting to use it.
+The lirc serial module has special hooks to work with NSLU2,
+switch these over to use gpiolib, as that is available on the
+ixp4 platform.
+
+Not even compile tested as there is no way to select this
+driver from menuconfig on the ixp4 platform.
 
 Cc: Imre Kaloz <kaloz@openwrt.org>
 Cc: Krzysztof Halasa <khc@pm.waw.pl>
 Cc: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: netdev@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Hi Richard, I'm seeking an ACK on this patch to take it throug
-the GPIO tree as part of a clean-out of custom GPIO implementations.
+Hi Greg: I'm seeking an ACK on this patch to take it through
+the GPIO tree as part of a clean-up attempt to remove custom
+GPIO APIs.
 ---
- drivers/ptp/ptp_ixp46x.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/staging/media/lirc/lirc_serial.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ptp/ptp_ixp46x.c b/drivers/ptp/ptp_ixp46x.c
-index d49b851..4a08727 100644
---- a/drivers/ptp/ptp_ixp46x.c
-+++ b/drivers/ptp/ptp_ixp46x.c
-@@ -259,8 +259,15 @@ static struct ixp_clock ixp_clock;
- static int setup_interrupt(int gpio)
+diff --git a/drivers/staging/media/lirc/lirc_serial.c b/drivers/staging/media/lirc/lirc_serial.c
+index af08e67..f6bc4c9 100644
+--- a/drivers/staging/media/lirc/lirc_serial.c
++++ b/drivers/staging/media/lirc/lirc_serial.c
+@@ -67,7 +67,7 @@
+ #include <linux/delay.h>
+ #include <linux/poll.h>
+ #include <linux/platform_device.h>
+-
++#include <linux/gpio.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
+ #include <linux/fcntl.h>
+@@ -321,7 +321,7 @@ static void on(void)
+ 	 * status LED and ground
+ 	 */
+ 	if (type == LIRC_NSLU2) {
+-		gpio_line_set(NSLU2_LED_GRN, IXP4XX_GPIO_LOW);
++		gpio_set_value(NSLU2_LED_GRN, 0);
+ 		return;
+ 	}
+ #endif
+@@ -335,7 +335,7 @@ static void off(void)
  {
- 	int irq;
-+	int err;
+ #ifdef CONFIG_LIRC_SERIAL_NSLU2
+ 	if (type == LIRC_NSLU2) {
+-		gpio_line_set(NSLU2_LED_GRN, IXP4XX_GPIO_HIGH);
++		gpio_set_value(NSLU2_LED_GRN, 1);
+ 		return;
+ 	}
+ #endif
+@@ -839,6 +839,16 @@ static int lirc_serial_probe(struct platform_device *dev)
+ {
+ 	int i, nlow, nhigh, result;
  
--	gpio_line_config(gpio, IXP4XX_GPIO_IN);
-+	err = gpio_request(gpio, "ixp4-ptp");
-+	if (err)
-+		return err;
++#ifdef CONFIG_LIRC_SERIAL_NSLU2
++	/* This GPIO is used for a LED on the NSLU2 */
++	result = devm_gpio_request(dev, NSLU2_LED_GRN, "lirc-serial");
++	if (result)
++		return result;
++	result = gpio_direction_output(NSLU2_LED_GRN, 0);
++	if (result)
++		return result;
++#endif
 +
-+	err = gpio_direction_input(gpio);
-+	if (err)
-+		return err;
- 
- 	irq = gpio_to_irq(gpio);
- 
+ 	result = request_irq(irq, irq_handler,
+ 			     (share_irq ? IRQF_SHARED : 0),
+ 			     LIRC_DRIVER_NAME, (void *)&hardware);
 -- 
 1.8.3.1
 
