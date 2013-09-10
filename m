@@ -1,57 +1,43 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/7] misc: ixp4-beeper: switch to use gpiolib
-Date: Tue, 10 Sep 2013 23:48:55 +0200
-Message-ID: <201309102348.55478.arnd@arndb.de>
-References: <1378816210-7977-1-git-send-email-linus.walleij@linaro.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Tue, 10 Sep 2013 16:34:20 -0600
+Message-ID: <522F9E6C.2010905@wwwdotorg.org>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <52279524.8090006@wwwdotorg.org> <20130909161924.GT29403@sirena.org.uk> <2052193.CMUEUJFRgS@lem-wkst-02> <522F78CB.2020507@wwwdotorg.org> <20130910213718.GH29403@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1378816210-7977-1-git-send-email-linus.walleij@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Imre Kaloz <kaloz@openwrt.org>, linux-arm-kernel@lists.infradead.org, Krzysztof Halasa <khc@pm.waw.pl>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:35399 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750954Ab3IJWe0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2013 18:34:26 -0400
+In-Reply-To: <20130910213718.GH29403@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
 
-On Tuesday 10 September 2013, Linus Walleij wrote:
-> The platform using this beeper has support for gpiolib, so there
-> is no point to use the custom gpio_line* API. A strange ambiguity
-> where a line was first set as input and then driven high was
-> solved by first driving the line high as output and then switch
-> it to input.
+On 09/10/2013 03:37 PM, Mark Brown wrote:
+> On Tue, Sep 10, 2013 at 01:53:47PM -0600, Stephen Warren wrote:
 > 
-> Cc: Imre Kaloz <kaloz@openwrt.org>
-> Cc: Krzysztof Halasa <khc@pm.waw.pl>
-> Cc: Alexandre Courbot <acourbot@nvidia.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Arnd/Greg: seeking your ACK to take this through the GPIO tree
-> as part of the attempt at cleaning out custom GPIO implementations.
+>> Doesn't this patch call gpio_request() on the GPIO first, and
+>> hence prevent the driver's own gpio_request() from succeeding,
+>> since the GPIO is already requested? If this is not a problem, it
+>> sounds like a bug in gpio_request() not ensuring mutual exclusion
+>> for the GPIO.
+> 
+> Or at the very least something that's likely to break in the
+> future.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Looking at the GPIO code, it already prevents double-requests:
 
->  
-> -	 if (count) {
-> -		gpio_line_config(pin, IXP4XX_GPIO_OUT);
-> -		gpio_line_set(pin, IXP4XX_GPIO_LOW);
-> -
-> +	if (count) {
-> +		gpio_direction_output(pin, 0);
->  		*IXP4XX_OSRT2 = (count & ~IXP4XX_OST_RELOAD_MASK) | IXP4XX_OST_ENABLE;
->  	} else {
+>         if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) == 0) {
+>                 desc_set_label(desc, label ? : "?");
+>                 status = 0;
+>         } else {
+>                 status = -EBUSY;
+>                 module_put(chip->owner);
+>                 goto done;
+>         }
 
-Too bad we can't just clean up all the open-coded mmio accesses as well. It shouldn't
-be hard, but some platforms are full of them, and there is definitely some regression
-potential.
-
-	Arnd
+And I tested it in practice, and it really does fail.
