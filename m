@@ -1,87 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5/7] staging: media/lirc: switch to use gpiolib
-Date: Tue, 10 Sep 2013 14:31:23 +0200
-Message-ID: <1378816283-8164-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 6/7] ARM: ixp4: delete irq_to_gpio
+Date: Tue, 10 Sep 2013 14:31:35 +0200
+Message-ID: <1378816295-8205-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:63028 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225Ab3IJMb3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2013 08:31:29 -0400
-Received: by mail-la0-f53.google.com with SMTP id el20so6034412lab.40
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Sep 2013 05:31:28 -0700 (PDT)
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:41475 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751225Ab3IJMbo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2013 08:31:44 -0400
+Received: by mail-lb0-f178.google.com with SMTP id z5so6161923lbh.37
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Sep 2013 05:31:43 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>
 Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-The lirc serial module has special hooks to work with NSLU2,
-switch these over to use gpiolib, as that is available on the
-ixp4 platform.
-
-Not even compile tested as there is no way to select this
-driver from menuconfig on the ixp4 platform.
+This dangerous function is not used in the kernel, so let's
+just delete it.
 
 Cc: Imre Kaloz <kaloz@openwrt.org>
 Cc: Krzysztof Halasa <khc@pm.waw.pl>
 Cc: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Hi Greg: I'm seeking an ACK on this patch to take it through
-the GPIO tree as part of a clean-up attempt to remove custom
-GPIO APIs.
----
- drivers/staging/media/lirc/lirc_serial.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ arch/arm/mach-ixp4xx/common.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/drivers/staging/media/lirc/lirc_serial.c b/drivers/staging/media/lirc/lirc_serial.c
-index af08e67..f6bc4c9 100644
---- a/drivers/staging/media/lirc/lirc_serial.c
-+++ b/drivers/staging/media/lirc/lirc_serial.c
-@@ -67,7 +67,7 @@
- #include <linux/delay.h>
- #include <linux/poll.h>
- #include <linux/platform_device.h>
--
-+#include <linux/gpio.h>
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/fcntl.h>
-@@ -321,7 +321,7 @@ static void on(void)
- 	 * status LED and ground
- 	 */
- 	if (type == LIRC_NSLU2) {
--		gpio_line_set(NSLU2_LED_GRN, IXP4XX_GPIO_LOW);
-+		gpio_set_value(NSLU2_LED_GRN, 0);
- 		return;
- 	}
- #endif
-@@ -335,7 +335,7 @@ static void off(void)
- {
- #ifdef CONFIG_LIRC_SERIAL_NSLU2
- 	if (type == LIRC_NSLU2) {
--		gpio_line_set(NSLU2_LED_GRN, IXP4XX_GPIO_HIGH);
-+		gpio_set_value(NSLU2_LED_GRN, 1);
- 		return;
- 	}
- #endif
-@@ -839,6 +839,16 @@ static int lirc_serial_probe(struct platform_device *dev)
- {
- 	int i, nlow, nhigh, result;
+diff --git a/arch/arm/mach-ixp4xx/common.c b/arch/arm/mach-ixp4xx/common.c
+index 5327dec..8708ac8 100644
+--- a/arch/arm/mach-ixp4xx/common.c
++++ b/arch/arm/mach-ixp4xx/common.c
+@@ -117,17 +117,6 @@ static int ixp4xx_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
+ 	return -EINVAL;
+ }
  
-+#ifdef CONFIG_LIRC_SERIAL_NSLU2
-+	/* This GPIO is used for a LED on the NSLU2 */
-+	result = devm_gpio_request(dev, NSLU2_LED_GRN, "lirc-serial");
-+	if (result)
-+		return result;
-+	result = gpio_direction_output(NSLU2_LED_GRN, 0);
-+	if (result)
-+		return result;
-+#endif
-+
- 	result = request_irq(irq, irq_handler,
- 			     (share_irq ? IRQF_SHARED : 0),
- 			     LIRC_DRIVER_NAME, (void *)&hardware);
+-int irq_to_gpio(unsigned int irq)
+-{
+-	int gpio = (irq < 32) ? irq2gpio[irq] : -EINVAL;
+-
+-	if (gpio == -1)
+-		return -EINVAL;
+-
+-	return gpio;
+-}
+-EXPORT_SYMBOL(irq_to_gpio);
+-
+ static int ixp4xx_set_irq_type(struct irq_data *d, unsigned int type)
+ {
+ 	int line = irq2gpio[d->irq];
 -- 
 1.8.3.1
 
