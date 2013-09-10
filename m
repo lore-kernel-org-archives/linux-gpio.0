@@ -1,42 +1,49 @@
-From: Lars Poeschel <poeschel@lemonage.de>
-Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Tue, 10 Sep 2013 10:47:55 +0200
-Message-ID: <2052193.CMUEUJFRgS@lem-wkst-02>
-References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <52279524.8090006@wwwdotorg.org> <20130909161924.GT29403@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 0/7] IXP4 GPIO consolidation
+Date: Tue, 10 Sep 2013 14:29:42 +0200
+Message-ID: <1378816182-7903-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp1.goneo.de ([212.90.139.80]:44753 "EHLO smtp1.goneo.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754364Ab3IJIsD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 10 Sep 2013 04:48:03 -0400
-In-Reply-To: <20130909161924.GT29403@sirena.org.uk>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:56167 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751375Ab3IJM35 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2013 08:29:57 -0400
+Received: by mail-lb0-f181.google.com with SMTP id u14so6014863lbd.26
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Sep 2013 05:29:55 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>
+To: linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Tuesday 10 September 2013 17:19:24, Mark Brown wrote:
-> On Wed, Sep 04, 2013 at 02:16:36PM -0600, Stephen Warren wrote:
-> > On 09/04/2013 03:05 AM, Lars Poeschel wrote:
-> > > The driver that tries to use the GPIO requested by this patch before HAS
-> > > to
-> > > fail. This is exactly the intention of this patch. We don't want the
-> > > GPIO to be requested any more, if it is used as an interrupt pin.
-> > 
-> > That will break existing drivers. There are drivers that request the
-> > same GPIO and IRQ. IIRC, the SDHCI CD (Card Detect) GPIO is requested
-> > that way.
-> 
-> Yes, plus input devices and audio jack detection among others.  This
-> pattern is very common if the GPIO is actually being used as a GPIO, an
-> edge triggered interrupt is used to flag when something happens and the
-> state is determined by reading the GPIO state (often with some
-> debounce).
+This is an attempt to remove the custom GPIO API
+with gpio_line* signatures from the IXP4 platform.
+I'm looking for testing and ACKs to take this through
+the GPIO tree eventually as part of the major clean-up
+attempt.
 
-And I say it again for those coming into the discussion late, like it has been 
-said many many times before: This patch does not break any of this drivers. 
-They simply request their GPIO from DT and turn it into an irq using 
-gpio_to_irq, request that irq on their behalf and use it as GPIO and IRQ in 
-parallel. At least this is not a problem.
+Please do not report checkpatch errors on patch 7/7 as it
+is just moving already existing code, not introducing new
+code.
+
+Linus Walleij (7):
+  ARM: ixp4xx: convert remaining users to use gpiolib
+  misc: ixp4-beeper: switch to use gpiolib
+  misc: ixp4-beeper: use gpiolib strictly
+  ptp: switch to use gpiolib
+  staging: media/lirc: switch to use gpiolib
+  ARM: ixp4: delete irq_to_gpio
+  ARM: ixp4xx: stop broadcasting the custom GPIO API
+
+ arch/arm/mach-ixp4xx/common.c                | 49 +++++++++++++++++++++-------
+ arch/arm/mach-ixp4xx/dsmg600-setup.c         | 16 +++++----
+ arch/arm/mach-ixp4xx/include/mach/platform.h | 39 ----------------------
+ arch/arm/mach-ixp4xx/ixdp425-setup.c         |  8 +++--
+ arch/arm/mach-ixp4xx/nas100d-setup.c         | 15 +++++----
+ arch/arm/mach-ixp4xx/nslu2-setup.c           | 10 +++---
+ drivers/input/misc/ixp4xx-beeper.c           | 25 +++++++++-----
+ drivers/ptp/ptp_ixp46x.c                     |  9 ++++-
+ drivers/staging/media/lirc/lirc_serial.c     | 16 +++++++--
+ 9 files changed, 102 insertions(+), 85 deletions(-)
+
+-- 
+1.8.3.1
+
