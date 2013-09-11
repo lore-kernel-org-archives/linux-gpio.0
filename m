@@ -1,101 +1,84 @@
-From: Joel Fernandes <joelf@ti.com>
-Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Wed, 11 Sep 2013 00:24:09 -0500
-Message-ID: <522FFE79.9030602@ti.com>
-References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <52279524.8090006@wwwdotorg.org> <20130909161924.GT29403@sirena.org.uk> <2052193.CMUEUJFRgS@lem-wkst-02> <522F2521.4090806@collabora.co.uk> <522F7878.30800@wwwdotorg.org> <522F8DB7.8070800@collabora.co.uk>
+From: =?UTF-8?q?Jos=C3=A9=20Miguel=20Gon=C3=A7alves?=
+	<jose.goncalves@inov.pt>
+Subject: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
+Date: Wed, 11 Sep 2013 09:46:13 +0100
+Message-ID: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <522F8DB7.8070800@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <poeschel@lemonage.de>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.co>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Jos=C3=A9=20Miguel=20Gon=C3=A7alves?= <jose.goncalves@inov.pt>
 List-Id: linux-gpio@vger.kernel.org
 
-On 09/10/2013 04:23 PM, Javier Martinez Canillas wrote:
-> On 09/10/2013 09:52 PM, Stephen Warren wrote:
->> On 09/10/2013 07:56 AM, Javier Martinez Canillas wrote:
->> ...
->>> The only thing that this patch tries to solve is when a driver expect to request
->>> a IRQ and it doesn't care if is a real IRQ line from an interrupt controller or
->>> a GPIO pin mapped as an IRQ.
->>
->> That can be solved in the interrupt chip driver. The fact the previous
->> attempt didn't work doesn't mean that it's impossible.
->>
-> 
-> Indeed. Unfortunately that patch-set got merged as a fix quite late on the -rc
-> cycle so it was safer to just revert the patches instead of analyzing the
-> regression and providing a fix.
-> 
-> If Linus is fond about taking a local fix for gpio-omap then we can try again
-> as a RFC with a better test coverage than before (although the patches had
-> several tested and acked-by but no one tested on OMAP1 until the patches were
-> merged) getting some TI folks in the loop who have access to those ancient OMAP1
-> devices. That way we can repost as a patch just once we are definitely sure that
-> it won't cause a regression on any OMAP platform.
-> 
->>> With board files we used to explicitly do the GPIO setup
->>> (gpio_{request,direction_input}) but with DT these board files are gone and we
->>> need a way to setup a GPIO implicitly when is mapped as an IRQ.
->>
->> Well, that's just an example of hacking around something in a board file
->> that should have been fixed in the GPIO/IRQ controller.
->>
->>> That's the only use case that this patch covers.
->> ...
->>> Also, it would be great if we can find a temporary solution so we can finally
->>> have ethernet working with DT on most OMAP2+ boards. Since I expect that doing
->>> the mentioned change on gpiolib would take at least a couple of kernel releases.
->>
->> Really? I thought this patch was error-checking to make sure that
->> different drivers didn't request a GPIO and an IRQ that are actually the
->> same signal. This patch shouldn't affect any functionality except in
->> cases where there's a bug in the DT (incorrect GPIO/IRQ passed to some
->> driver).
->>
-> 
-> Yes, it doesn't do any error-checking neither prevent a driver to request a GPIO
-> and an IRQ that are the same signal (as long as this is supported by the
-> GPIO/IRQ controller and its driver). The only thing that Linus patch does is to
-> auto request a GPIO for pins that are mapped as IRQ in DT (i.e: interrupt-parent
-> = <&gpio6>).
-> 
-> The name of the function introduced by Linus is
-> of_gpiochip_interrupt_consistency_check() but probably a better name is
-> of_gpiochip_autorequest_irq() or something like that.
-> 
-> A similar behavior could be obtained by let's say calling gpio_request() in
-> irq_create_of_mapping() if you wanted to add the logic in the IRQ chip DT core
-> instead of doing it in the GPIO chip DT core as Linus does with his patch.
-> 
-> That's why I don't understand why Linus patch could be an issue for drivers that
-> needs to request both the GPIO and the mapped IRQ.
-> 
-> If this is already supported then nothing will break. If the driver tries to
-> request the GPIO twice because this is already made by the DT core then I think
-> is a bug in the driver and has to be fixed to support DT since there won't be
-> any need to do this manually anymore.
+Some GPIO line limits are incorrectly set which, for instance,
+does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
 
-Quick question- Wouldn't this mean that there have to be 2 code paths in the
-driver then.. One for DT-case where gpio_request double request is prevented,
-and one for non-DT case where you would do the gpio_request followed by
-request_irq. I'm not sure if there are drivers today that use DT and need to
-converted to prevent the double request? If there are, and such drivers are also
-used on non-DT platform, then we would have to fork 2 different code paths while
-requesting an IRQ for DT/non-DT in the driver..
+Signed-off-by: Jos=C3=A9 Miguel Gon=C3=A7alves <jose.goncalves@inov.pt>
+---
+ arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
+ drivers/gpio/gpio-samsung.c               |    6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-Also this path kind of enforces that the driver author must be aware whether
-driver is being used on DT or non-DT platform.. Linus mentioned enforcing of
-semantics, this is also enforcing semantics no?
-
-Looks like the correct fix for this as discussed in this thread should be to
-associate the struct device with the GPIO request, remember it and use the info
-during request_irq. This is provided that the old pattern of gpio_request and
-request_irq is continued to be used and working. I know this is some time away
-so I'm not too opinionated about it.
-
-Regards,
-
--Joel
+diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio.h b/arch/arm/mach-=
+s3c24xx/include/mach/gpio.h
+index 1459156..a1435bc 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/gpio.h
++++ b/arch/arm/mach-s3c24xx/include/mach/gpio.h
+@@ -31,17 +31,17 @@
+  *   2410 2412 2440 2443 2416
+  *             2442
+  *   ---- ---- ---- ---- ----
+- * A  23   22   25   16   25
+- * B  11   11   11   11   9
+- * C  16   15   16   16   16
++ * A  23   22   25   16   27
++ * B  11   11   11   11   11
++ * C  16   16   16   16   16
+  * D  16   16   16   16   16
+  * E  16   16   16   16   16
+  * F  8    8    8    8    8
+  * G  16   16   16   16   8
+- * H  11   11   9    15   15
++ * H  11   11   11   15   15
+  * J  --   --   13   16   --
+  * K  --   --   --   --   16
+- * L  --   --   --   15   7
++ * L  --   --   --   15   14
+  * M  --   --   --   2    2
+  */
+=20
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index 358a21c..29c428b 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -1053,7 +1053,7 @@ struct samsung_gpio_chip s3c24xx_gpios[] =3D {
+ 			.base			=3D S3C2410_GPA(0),
+ 			.owner			=3D THIS_MODULE,
+ 			.label			=3D "GPIOA",
+-			.ngpio			=3D 24,
++			.ngpio			=3D 27,
+ 			.direction_input	=3D s3c24xx_gpiolib_banka_input,
+ 			.direction_output	=3D s3c24xx_gpiolib_banka_output,
+ 		},
+@@ -1062,7 +1062,7 @@ struct samsung_gpio_chip s3c24xx_gpios[] =3D {
+ 			.base	=3D S3C2410_GPB(0),
+ 			.owner	=3D THIS_MODULE,
+ 			.label	=3D "GPIOB",
+-			.ngpio	=3D 16,
++			.ngpio	=3D 11,
+ 		},
+ 	}, {
+ 		.chip	=3D {
+@@ -1107,7 +1107,7 @@ struct samsung_gpio_chip s3c24xx_gpios[] =3D {
+ 			.base	=3D S3C2410_GPH(0),
+ 			.owner	=3D THIS_MODULE,
+ 			.label	=3D "GPIOH",
+-			.ngpio	=3D 11,
++			.ngpio	=3D 15,
+ 		},
+ 	},
+ 		/* GPIOS for the S3C2443 and later devices. */
+--=20
+1.7.10.4
