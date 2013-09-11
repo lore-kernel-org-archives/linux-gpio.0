@@ -1,63 +1,46 @@
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH 2/2] ARM: shmobile: Remove #gpio-ranges-cells DT property
-Date: Wed, 11 Sep 2013 15:43:27 +0200
-Message-ID: <1378907007-19152-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1378907007-19152-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH/RESEND 1/2] gpio: rcar: Remove #gpio-range-cells DT property usage
+Date: Wed, 11 Sep 2013 15:51:01 +0200
+Message-ID: <1378907462-19247-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1378907462-19247-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:60786 "EHLO
+Received: from perceval.ideasonboard.com ([95.142.166.194]:60844 "EHLO
 	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754154Ab3IKNnj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Sep 2013 09:43:39 -0400
-In-Reply-To: <1378907007-19152-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	with ESMTP id S1753050Ab3IKNvF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Sep 2013 09:51:05 -0400
+In-Reply-To: <1378907462-19247-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-sh@lists.infradead.org, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+To: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This property is no longer required by the GPIO binding. Remove it.
+Commit a1bc260bb5f5d95da854be7898202d788e94448d ("gpio: clean up
+gpio-ranges documentation") deprecated the #gpio-range-cells property.
+Replace its usage with a hardcoded value in the gpio-rcar driver.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7778.dtsi | 1 -
- arch/arm/boot/dts/r8a7779.dtsi | 1 -
- arch/arm/boot/dts/r8a7790.dtsi | 1 -
- 3 files changed, 3 deletions(-)
+ drivers/gpio/gpio-rcar.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 45ac404..3577aba 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -96,6 +96,5 @@
- 	pfc: pfc@fffc0000 {
- 		compatible = "renesas,pfc-r8a7778";
- 		reg = <0xfffc000 0x118>;
--		#gpio-range-cells = <3>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 23a6244..ebbe507 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -188,7 +188,6 @@
- 	pfc: pfc@fffc0000 {
- 		compatible = "renesas,pfc-r8a7779";
- 		reg = <0xfffc0000 0x23c>;
--		#gpio-range-cells = <3>;
- 	};
- 
- 	thermal@ffc48000 {
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 3b879e7..9851398 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -148,7 +148,6 @@
- 	pfc: pfc@e6060000 {
- 		compatible = "renesas,pfc-r8a7790";
- 		reg = <0 0xe6060000 0 0x250>;
--		#gpio-range-cells = <3>;
- 	};
- 
- 	sdhi0: sdhi@ee100000 {
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index e3745eb..6038966 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -293,10 +293,9 @@ static void gpio_rcar_parse_pdata(struct gpio_rcar_priv *p)
+ 	if (pdata) {
+ 		p->config = *pdata;
+ 	} else if (IS_ENABLED(CONFIG_OF) && np) {
+-		ret = of_parse_phandle_with_args(np, "gpio-ranges",
+-				"#gpio-range-cells", 0, &args);
+-		p->config.number_of_pins = ret == 0 && args.args_count == 3
+-					 ? args.args[2]
++		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0,
++						       &args);
++		p->config.number_of_pins = ret == 0 ? args.args[2]
+ 					 : RCAR_MAX_GPIO_PER_BANK;
+ 		p->config.gpio_base = -1;
+ 	}
 -- 
 1.8.1.5
 
