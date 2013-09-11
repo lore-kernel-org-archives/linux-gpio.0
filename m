@@ -1,107 +1,101 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH 3/7] misc: ixp4-beeper: use gpiolib strictly
-Date: Wed, 11 Sep 2013 10:58:00 +0900
-Message-ID: <522FCE28.8020909@nvidia.com>
-References: <1378816226-8016-1-git-send-email-linus.walleij@linaro.org>
+From: Joel Fernandes <joelf@ti.com>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Wed, 11 Sep 2013 00:24:09 -0500
+Message-ID: <522FFE79.9030602@ti.com>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <52279524.8090006@wwwdotorg.org> <20130909161924.GT29403@sirena.org.uk> <2052193.CMUEUJFRgS@lem-wkst-02> <522F2521.4090806@collabora.co.uk> <522F7878.30800@wwwdotorg.org> <522F8DB7.8070800@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11179 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752631Ab3IKB6F (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2013 21:58:05 -0400
-In-Reply-To: <1378816226-8016-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <522F8DB7.8070800@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <poeschel@lemonage.de>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.co>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On 09/10/2013 09:30 PM, Linus Walleij wrote:
-> Request and free the GPIO line used for the beeper properly.
-> Then use the gpiolib API to flip the output of the GPIO pin
-> instead of relying on hacks to poke the register bits.
->
-> Cc: Imre Kaloz <kaloz@openwrt.org>
-> Cc: Krzysztof Halasa <khc@pm.waw.pl>
-> Cc: Alexandre Courbot <acourbot@nvidia.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Arnd/Greg: seeking your ACK to take this through the GPIO tree
-> as part of the attempt at cleaning out custom GPIO implementations.
-> ---
->   drivers/input/misc/ixp4xx-beeper.c | 13 +++++++++++--
->   1 file changed, 11 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/input/misc/ixp4xx-beeper.c b/drivers/input/misc/ixp4xx-beeper.c
-> index f14afd0..fb3bec5 100644
-> --- a/drivers/input/misc/ixp4xx-beeper.c
-> +++ b/drivers/input/misc/ixp4xx-beeper.c
-> @@ -76,11 +76,13 @@ static int ixp4xx_spkr_event(struct input_dev *dev, unsigned int type, unsigned
->
->   static irqreturn_t ixp4xx_spkr_interrupt(int irq, void *dev_id)
->   {
-> +	unsigned int pin = (unsigned int) dev_id;
-> +
->   	/* clear interrupt */
->   	*IXP4XX_OSST = IXP4XX_OSST_TIMER_2_PEND;
->
->   	/* flip the beeper output */
-> -	*IXP4XX_GPIO_GPOUTR ^= (1 << (unsigned int) dev_id);
-> +	gpio_set_value(pin, ~gpio_get_value(pin));
+On 09/10/2013 04:23 PM, Javier Martinez Canillas wrote:
+> On 09/10/2013 09:52 PM, Stephen Warren wrote:
+>> On 09/10/2013 07:56 AM, Javier Martinez Canillas wrote:
+>> ...
+>>> The only thing that this patch tries to solve is when a driver expect to request
+>>> a IRQ and it doesn't care if is a real IRQ line from an interrupt controller or
+>>> a GPIO pin mapped as an IRQ.
+>>
+>> That can be solved in the interrupt chip driver. The fact the previous
+>> attempt didn't work doesn't mean that it's impossible.
+>>
+> 
+> Indeed. Unfortunately that patch-set got merged as a fix quite late on the -rc
+> cycle so it was safer to just revert the patches instead of analyzing the
+> regression and providing a fix.
+> 
+> If Linus is fond about taking a local fix for gpio-omap then we can try again
+> as a RFC with a better test coverage than before (although the patches had
+> several tested and acked-by but no one tested on OMAP1 until the patches were
+> merged) getting some TI folks in the loop who have access to those ancient OMAP1
+> devices. That way we can repost as a patch just once we are definitely sure that
+> it won't cause a regression on any OMAP platform.
+> 
+>>> With board files we used to explicitly do the GPIO setup
+>>> (gpio_{request,direction_input}) but with DT these board files are gone and we
+>>> need a way to setup a GPIO implicitly when is mapped as an IRQ.
+>>
+>> Well, that's just an example of hacking around something in a board file
+>> that should have been fixed in the GPIO/IRQ controller.
+>>
+>>> That's the only use case that this patch covers.
+>> ...
+>>> Also, it would be great if we can find a temporary solution so we can finally
+>>> have ethernet working with DT on most OMAP2+ boards. Since I expect that doing
+>>> the mentioned change on gpiolib would take at least a couple of kernel releases.
+>>
+>> Really? I thought this patch was error-checking to make sure that
+>> different drivers didn't request a GPIO and an IRQ that are actually the
+>> same signal. This patch shouldn't affect any functionality except in
+>> cases where there's a bug in the DT (incorrect GPIO/IRQ passed to some
+>> driver).
+>>
+> 
+> Yes, it doesn't do any error-checking neither prevent a driver to request a GPIO
+> and an IRQ that are the same signal (as long as this is supported by the
+> GPIO/IRQ controller and its driver). The only thing that Linus patch does is to
+> auto request a GPIO for pins that are mapped as IRQ in DT (i.e: interrupt-parent
+> = <&gpio6>).
+> 
+> The name of the function introduced by Linus is
+> of_gpiochip_interrupt_consistency_check() but probably a better name is
+> of_gpiochip_autorequest_irq() or something like that.
+> 
+> A similar behavior could be obtained by let's say calling gpio_request() in
+> irq_create_of_mapping() if you wanted to add the logic in the IRQ chip DT core
+> instead of doing it in the GPIO chip DT core as Linus does with his patch.
+> 
+> That's why I don't understand why Linus patch could be an issue for drivers that
+> needs to request both the GPIO and the mapped IRQ.
+> 
+> If this is already supported then nothing will break. If the driver tries to
+> request the GPIO twice because this is already made by the DT core then I think
+> is a bug in the driver and has to be fixed to support DT since there won't be
+> any need to do this manually anymore.
 
-Don't you want
+Quick question- Wouldn't this mean that there have to be 2 code paths in the
+driver then.. One for DT-case where gpio_request double request is prevented,
+and one for non-DT case where you would do the gpio_request followed by
+request_irq. I'm not sure if there are drivers today that use DT and need to
+converted to prevent the double request? If there are, and such drivers are also
+used on non-DT platform, then we would have to fork 2 different code paths while
+requesting an IRQ for DT/non-DT in the driver..
 
-	gpio_set_value(pin, !gpio_get_value(pin));
+Also this path kind of enforces that the driver author must be aware whether
+driver is being used on DT or non-DT platform.. Linus mentioned enforcing of
+semantics, this is also enforcing semantics no?
 
-instead? From the deleted line I suppose you guess to invert the GPIO 
-value, but using ~ will invert all the bits of the integer returned by 
-gpio_get_value(), meaning that if it returns 1 you will end up calling 
-gpio_set_value(-2). In practice your gpio is very unlikely to ever be 
-set to 0.
+Looks like the correct fix for this as discussed in this thread should be to
+associate the struct device with the GPIO request, remember it and use the info
+during request_irq. This is provided that the old pattern of gpio_request and
+request_irq is continued to be used and working. I know this is some time away
+so I'm not too opinionated about it.
 
->
->   	return IRQ_HANDLED;
->   }
-> @@ -108,11 +110,15 @@ static int ixp4xx_spkr_probe(struct platform_device *dev)
->   	input_dev->sndbit[0] = BIT_MASK(SND_BELL) | BIT_MASK(SND_TONE);
->   	input_dev->event = ixp4xx_spkr_event;
->
-> +	err = gpio_request(dev->id, "ixp4-beeper");
-> +	if (err)
-> +		goto err_free_device;
-> +
->   	err = request_irq(IRQ_IXP4XX_TIMER2, &ixp4xx_spkr_interrupt,
->   			  IRQF_NO_SUSPEND, "ixp4xx-beeper",
->   			  (void *) dev->id);
->   	if (err)
-> -		goto err_free_device;
-> +		goto err_free_gpio;
->
->   	err = input_register_device(input_dev);
->   	if (err)
-> @@ -124,6 +130,8 @@ static int ixp4xx_spkr_probe(struct platform_device *dev)
->
->    err_free_irq:
->   	free_irq(IRQ_IXP4XX_TIMER2, (void *)dev->id);
-> + err_free_gpio:
-> +	gpio_free(dev->id);
->    err_free_device:
->   	input_free_device(input_dev);
->
-> @@ -142,6 +150,7 @@ static int ixp4xx_spkr_remove(struct platform_device *dev)
->   	ixp4xx_spkr_control(pin, 0);
->
->   	free_irq(IRQ_IXP4XX_TIMER2, (void *)dev->id);
-> +	gpio_free(dev->id);
+Regards,
 
-Just wondering, is there a reason for not using the devm_gpio functions 
-here?
-
->
->   	return 0;
->   }
->
-
+-Joel
