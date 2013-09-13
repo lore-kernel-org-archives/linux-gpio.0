@@ -1,56 +1,47 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Subject: Re: [PATCH 4/7] ptp: switch to use gpiolib
-Date: Fri, 13 Sep 2013 19:36:20 +0200
-Message-ID: <m3r4csr5d7.fsf@intrepid.localdomain>
-References: <1378816260-8091-1-git-send-email-linus.walleij@linaro.org>
-	<20130910141912.GB5088@netboy>
-	<CACRpkdZOCkLmgQHZSiqQfvLp=WzNsaE5AcY3siJ0b=bL0Xv8Pg@mail.gmail.com>
-	<m38uz0vrlz.fsf@intrepid.localdomain>
-	<20130913133659.GA11394@localhost.localdomain>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH RESEND] gpio: ucb1400: Can be built as a module
+Date: Fri, 13 Sep 2013 21:41:48 +0200
+Message-ID: <20130913214148.317c8b20@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20130913133659.GA11394@localhost.localdomain> (Richard Cochran's
-	message of "Fri, 13 Sep 2013 15:36:59 +0200")
-Sender: netdev-owner@vger.kernel.org
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:41513 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751907Ab3IMTl6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 13 Sep 2013 15:41:58 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-Richard Cochran <richardcochran@gmail.com> writes:
+With the recent code cleanup from Marek Vasut, driver gpio-ucb1400 can
+be built as a module, so change symbol GPIO_UCB1400 from bool to
+tristate.
 
-> I was really talking about the IXP465 with its PTP function. The Inte=
-l
-> devel board had a silicon bug making the PTP function useless. But
-> even if the bug got fixed, still the PTP function was very limiting.
->
-> I never got any feedback about the IXP465 PTP stuff, and so I doubt
-> whether anyone is really using the Linux PTP driver on the IXP465, bu=
-t
-> you never know.
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Reviewed-by: Marek Vasut <marex@denx.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+I know the first attempt to merge this caused some trouble but that was
+several months ago, I think it is about time now.
 
-Ah, OK.
-I have just checked, Intel's spec update says IXP46x steppings A1 and A=
-2
-are fixed. PTP on 46x-A0 is broken.
-42x and 43x don't support PTP.
+ drivers/gpio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-OTOH there is interesting stuff there:
-Problem: The A-0 and A-1 stepping of the Intel=C2=AE IXP45X/IXP46X Prod=
-uct Line of Network
-         Processors can enter a condition whereby the system locks up w=
-hen certain
-         combinations of memory accesses occur nearly simultaneously.
+--- linux-3.12-rc0.orig/drivers/gpio/Kconfig	2013-09-13 20:03:47.685333351 +0200
++++ linux-3.12-rc0/drivers/gpio/Kconfig	2013-09-13 20:03:59.085333520 +0200
+@@ -703,7 +703,7 @@ config GPIO_74X164
+ comment "AC97 GPIO expanders:"
+ 
+ config GPIO_UCB1400
+-	bool "Philips UCB1400 GPIO"
++	tristate "Philips UCB1400 GPIO"
+ 	depends on UCB1400_CORE
+ 	help
+ 	  This enables support for the Philips UCB1400 GPIO pins.
 
-         After more extensive investigation, it has been identified tha=
-t the lockup condition can
-         be caused by near-simultaneous accesses to 1 or 2 cache lines.=
- The accesses to the
-         cache lines must be performed by the Intel XScale processor, S=
-outh AHB, and/or North
-         AHB for the lockup to happen.
 
-Hmmm...
---=20
-Krzysztof Halasa
+-- 
+Jean Delvare
+Suse L3
