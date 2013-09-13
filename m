@@ -1,55 +1,84 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/8] IOP GPIO refactoring
-Date: Fri, 13 Sep 2013 09:42:07 +0200
-Message-ID: <CACRpkday=enekKjbf5QTA_JCh6mvX7-_XuaHp884bzCg7HfkzQ@mail.gmail.com>
-References: <1378741198-12847-1-git-send-email-linus.walleij@linaro.org>
-	<20130910141434.GD3379@blackmetal.musicnaut.iki.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH 2/8 v2] ARM: iop32x: request and issue reset using gpio
+Date: Fri, 13 Sep 2013 09:55:41 +0200
+Message-ID: <1379058941-8360-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:48581 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754554Ab3IMHmI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2013 03:42:08 -0400
-Received: by mail-oa0-f44.google.com with SMTP id l17so843113oag.17
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Sep 2013 00:42:08 -0700 (PDT)
-In-Reply-To: <20130910141434.GD3379@blackmetal.musicnaut.iki.fi>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:58840 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755072Ab3IMHz6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2013 03:55:58 -0400
+Received: by mail-lb0-f171.google.com with SMTP id u14so1762502lbd.2
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Sep 2013 00:55:57 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Aaro Koskinen <aaro.koskinen@iki.fi>
 
-On Tue, Sep 10, 2013 at 4:14 PM, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+As the IOP GPIO driver supports gpiolib we can use the standard
+GPIO calls to issue a reset of the machine instead of using the
+custom gpio_line_set/config calls. Also request the GPIO when
+initializing the machine.
 
-> On Mon, Sep 09, 2013 at 05:39:58PM +0200, Linus Walleij wrote:
->> This series refactor the IOP GPIO driver to move down to the
->> GPIO subsystem, instatiate as a platform device, remap its
->> I/O address, and kills off the <mach/gpio.h> dependency.
->
-> Patches 1-5 work on N2100. However, when pressing the power button there
-> is a warning:
->
-> [   31.995575] reboot: Restarting system
-> [   32.023422] ------------[ cut here ]------------
-> [   32.051596] WARNING: CPU: 0 PID: 251 at drivers/gpio/gpiolib.c:160 gpio_ensure_requested+0x64/0xc0()
-> [   32.110436] ---[ end trace 6b2c83f883af871f ]---
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Lennert Buytenhek <kernel@wantstofly.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Mikael Pettersson <mikpe@it.uu.se>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Request GPIOs in a separate device_initcall() instead of
+  doing it from machine_init, as the gpio chip is registered
+  after the machine init, what was I thinking about?
+---
+ arch/arm/mach-iop32x/n2100.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-Hm, this does not appear right after 1/8 or 2/8 right?
-I'd rather expect that after 3/8 "ARM: iop32x: read N2100 power key
-using gpiolib"
-and then you should have error messages like this in dmesg:
+diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
+index 0691443..2dba955 100644
+--- a/arch/arm/mach-iop32x/n2100.c
++++ b/arch/arm/mach-iop32x/n2100.c
+@@ -30,6 +30,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/reboot.h>
+ #include <linux/io.h>
++#include <linux/gpio.h>
+ #include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <asm/mach/arch.h>
+@@ -288,8 +289,14 @@ static void n2100_power_off(void)
+ 
+ static void n2100_restart(enum reboot_mode mode, const char *cmd)
+ {
+-	gpio_line_set(N2100_HARDWARE_RESET, GPIO_LOW);
+-	gpio_line_config(N2100_HARDWARE_RESET, GPIO_OUT);
++	int ret;
++
++	ret = gpio_direction_output(N2100_HARDWARE_RESET, 0);
++	if (ret) {
++		pr_crit("could not drive reset GPIO low\n");
++		return;
++	}
++	/* Wait for reset to happen */
+ 	while (1)
+ 		;
+ }
+@@ -308,6 +315,16 @@ static void power_button_poll(unsigned long dummy)
+ 	add_timer(&power_button_poll_timer);
+ }
+ 
++static int __init n2100_request_gpios(void)
++{
++	int ret;
++
++	ret = gpio_request(N2100_HARDWARE_RESET, "reset");
++	if (ret)
++		pr_err("could not request reset GPIO\n");
++	return 0;
++}
++device_initcall(n2100_request_gpios);
+ 
+ static void __init n2100_init_machine(void)
+ {
+-- 
+1.8.3.1
 
-could not request reset GPIO
-
-Correct?
-
-> With patch 6 it starts to crash on first gpio_get_value(), I guess
-> because gpio-iop platform device is not registered on N2100...?
-
-Probably because something is trying to read a GPIO before this device
-is up, I'll look into this.
-
-THANKS!
-
-Yours,
-Linus Walleij
