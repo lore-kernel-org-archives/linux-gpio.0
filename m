@@ -1,83 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/8 v2] ARM: iop32x: read N2100 power key using gpiolib
-Date: Fri, 13 Sep 2013 10:02:07 +0200
-Message-ID: <1379059327-12613-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/8] IOP GPIO refactoring
+Date: Fri, 13 Sep 2013 10:15:58 +0200
+Message-ID: <CACRpkdYbHTF0XGu-wLAeaw-nnSTEPh-ej9iizMbojmB8gzvb=Q@mail.gmail.com>
+References: <1378741198-12847-1-git-send-email-linus.walleij@linaro.org>
+	<20130910141434.GD3379@blackmetal.musicnaut.iki.fi>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f178.google.com ([209.85.217.178]:45424 "EHLO
-	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754845Ab3IMICW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2013 04:02:22 -0400
-Received: by mail-lb0-f178.google.com with SMTP id z5so1795771lbh.37
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Sep 2013 01:02:21 -0700 (PDT)
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:32853 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754845Ab3IMIP7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2013 04:15:59 -0400
+Received: by mail-oa0-f44.google.com with SMTP id l17so872174oag.3
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Sep 2013 01:15:58 -0700 (PDT)
+In-Reply-To: <20130910141434.GD3379@blackmetal.musicnaut.iki.fi>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Refrain from using the custom gpio_line_get() to read the power
-key on the N2100, use the gpiolib function gpio_get() instead.
-Also request the line in the GPIOs initicall, and move the poll
-timer setup to that inicall so the gpio chip is available before
-we request this GPIO and start to poll it.
+On Tue, Sep 10, 2013 at 4:14 PM, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
 
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Lennert Buytenhek <kernel@wantstofly.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Mikael Pettersson <mikpe@it.uu.se>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Move the setup and poll init into the new GPIO initialization
-  function to avoid probe order problems.
----
- arch/arm/mach-iop32x/n2100.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+> With patch 6 it starts to crash on first gpio_get_value(), I guess
+> because gpio-iop platform device is not registered on N2100...?
 
-diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
-index 2dba955..dc5addf 100644
---- a/arch/arm/mach-iop32x/n2100.c
-+++ b/arch/arm/mach-iop32x/n2100.c
-@@ -306,7 +306,7 @@ static struct timer_list power_button_poll_timer;
- 
- static void power_button_poll(unsigned long dummy)
- {
--	if (gpio_line_get(N2100_POWER_BUTTON) == 0) {
-+	if (gpio_get_value(N2100_POWER_BUTTON) == 0) {
- 		ctrl_alt_del();
- 		return;
- 	}
-@@ -322,6 +322,19 @@ static int __init n2100_request_gpios(void)
- 	ret = gpio_request(N2100_HARDWARE_RESET, "reset");
- 	if (ret)
- 		pr_err("could not request reset GPIO\n");
-+	ret = gpio_request(N2100_POWER_BUTTON, "power");
-+	if (ret)
-+		pr_err("could not request power GPIO\n");
-+	else {
-+		ret = gpio_direction_input(N2100_POWER_BUTTON);
-+		if (ret)
-+			pr_err("could not set power GPIO as input\n");
-+	}
-+	/* Set up power button poll timer */
-+	init_timer(&power_button_poll_timer);
-+	power_button_poll_timer.function = power_button_poll;
-+	power_button_poll_timer.expires = jiffies + (HZ / 10);
-+	add_timer(&power_button_poll_timer);
- 	return 0;
- }
- device_initcall(n2100_request_gpios);
-@@ -338,11 +351,6 @@ static void __init n2100_init_machine(void)
- 		ARRAY_SIZE(n2100_i2c_devices));
- 
- 	pm_power_off = n2100_power_off;
--
--	init_timer(&power_button_poll_timer);
--	power_button_poll_timer.function = power_button_poll;
--	power_button_poll_timer.expires = jiffies + (HZ / 10);
--	add_timer(&power_button_poll_timer);
- }
- 
- MACHINE_START(N2100, "Thecus N2100")
--- 
-1.8.3.1
+I think I've fixed this with the v2 versions of patches 1-3, you can
+pull in and test the entire stack on Torvalds HEAD from here:
 
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git iop-cleanup
+
+Yours,
+Linus Walleij
