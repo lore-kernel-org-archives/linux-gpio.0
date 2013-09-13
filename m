@@ -1,92 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/7 v2] input: misc: ixp4-beeper: use gpiolib strictly
-Date: Fri, 13 Sep 2013 10:32:40 +0200
-Message-ID: <1379061160-22361-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/7] misc: ixp4-beeper: use gpiolib strictly
+Date: Fri, 13 Sep 2013 10:35:26 +0200
+Message-ID: <CACRpkdamJBKPcCCi0U6C7SY8fD9pR9-e+_k9EGHXLyAfcRvcQA@mail.gmail.com>
+References: <1378816226-8016-1-git-send-email-linus.walleij@linaro.org>
+	<522FCE28.8020909@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:52404 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755500Ab3IMIcu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2013 04:32:50 -0400
-Received: by mail-la0-f53.google.com with SMTP id el20so729577lab.26
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Sep 2013 01:32:49 -0700 (PDT)
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:43446 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751779Ab3IMIf1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2013 04:35:27 -0400
+Received: by mail-ob0-f180.google.com with SMTP id wm4so823508obc.39
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Sep 2013 01:35:26 -0700 (PDT)
+In-Reply-To: <522FCE28.8020909@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Dmitry Torokhov <dtor@mail.ru>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Request and free the GPIO line used for the beeper properly.
-Then use the gpiolib API to flip the output of the GPIO pin
-instead of relying on hacks to poke the register bits.
+On Wed, Sep 11, 2013 at 3:58 AM, Alex Courbot <acourbot@nvidia.com> wrote:
+> On 09/10/2013 09:30 PM, Linus Walleij wrote:
+>>         /* flip the beeper output */
+>> -       *IXP4XX_GPIO_GPOUTR ^= (1 << (unsigned int) dev_id);
+>> +       gpio_set_value(pin, ~gpio_get_value(pin));
+>
+>
+> Don't you want
+>
+>         gpio_set_value(pin, !gpio_get_value(pin));
+>
+> instead? From the deleted line I suppose you guess to invert the GPIO value,
+> but using ~ will invert all the bits of the integer returned by
+> gpio_get_value(), meaning that if it returns 1 you will end up calling
+> gpio_set_value(-2). In practice your gpio is very unlikely to ever be set to
+> 0.
 
-Cc: Imre Kaloz <kaloz@openwrt.org>
-Cc: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-Hi Dmitry, requesting an ACK for this to take it through the
-GPIO tree as part of an IXP4 clean-up attempt.
+You're right, fixed this.
 
-ChangeLog v1->v2:
-- Invert using the bang ! instead of XOR ~
----
- drivers/input/misc/ixp4xx-beeper.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+>>         free_irq(IRQ_IXP4XX_TIMER2, (void *)dev->id);
+>> +       gpio_free(dev->id);
+>
+>
+> Just wondering, is there a reason for not using the devm_gpio functions
+> here?
 
-diff --git a/drivers/input/misc/ixp4xx-beeper.c b/drivers/input/misc/ixp4xx-beeper.c
-index f14afd0..17ccba8 100644
---- a/drivers/input/misc/ixp4xx-beeper.c
-+++ b/drivers/input/misc/ixp4xx-beeper.c
-@@ -76,11 +76,13 @@ static int ixp4xx_spkr_event(struct input_dev *dev, unsigned int type, unsigned
- 
- static irqreturn_t ixp4xx_spkr_interrupt(int irq, void *dev_id)
- {
-+	unsigned int pin = (unsigned int) dev_id;
-+
- 	/* clear interrupt */
- 	*IXP4XX_OSST = IXP4XX_OSST_TIMER_2_PEND;
- 
- 	/* flip the beeper output */
--	*IXP4XX_GPIO_GPOUTR ^= (1 << (unsigned int) dev_id);
-+	gpio_set_value(pin, !gpio_get_value(pin));
- 
- 	return IRQ_HANDLED;
- }
-@@ -108,11 +110,15 @@ static int ixp4xx_spkr_probe(struct platform_device *dev)
- 	input_dev->sndbit[0] = BIT_MASK(SND_BELL) | BIT_MASK(SND_TONE);
- 	input_dev->event = ixp4xx_spkr_event;
- 
-+	err = gpio_request(dev->id, "ixp4-beeper");
-+	if (err)
-+		goto err_free_device;
-+
- 	err = request_irq(IRQ_IXP4XX_TIMER2, &ixp4xx_spkr_interrupt,
- 			  IRQF_NO_SUSPEND, "ixp4xx-beeper",
- 			  (void *) dev->id);
- 	if (err)
--		goto err_free_device;
-+		goto err_free_gpio;
- 
- 	err = input_register_device(input_dev);
- 	if (err)
-@@ -124,6 +130,8 @@ static int ixp4xx_spkr_probe(struct platform_device *dev)
- 
-  err_free_irq:
- 	free_irq(IRQ_IXP4XX_TIMER2, (void *)dev->id);
-+ err_free_gpio:
-+	gpio_free(dev->id);
-  err_free_device:
- 	input_free_device(input_dev);
- 
-@@ -142,6 +150,7 @@ static int ixp4xx_spkr_remove(struct platform_device *dev)
- 	ixp4xx_spkr_control(pin, 0);
- 
- 	free_irq(IRQ_IXP4XX_TIMER2, (void *)dev->id);
-+	gpio_free(dev->id);
- 
- 	return 0;
- }
--- 
-1.8.3.1
+I didn't want to change the style of the whole driver, but I can make
+a separate patch switching the whole driver to use managed
+resources at some later point.
 
+Yours,
+Linus Walleij
