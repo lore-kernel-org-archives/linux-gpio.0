@@ -1,47 +1,56 @@
-From: Mikael Pettersson <mikpe@it.uu.se>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 Subject: Re: [PATCH 0/8] IOP GPIO refactoring
-Date: Fri, 13 Sep 2013 18:07:11 +0200
-Message-ID: <21043.14383.656033.487010@pilspetsen.it.uu.se>
+Date: Fri, 13 Sep 2013 19:17:10 +0300
+Message-ID: <20130913161710.GA22033@blackmetal.musicnaut.iki.fi>
 References: <1378741198-12847-1-git-send-email-linus.walleij@linaro.org>
  <20130910141434.GD3379@blackmetal.musicnaut.iki.fi>
  <CACRpkdYbHTF0XGu-wLAeaw-nnSTEPh-ej9iizMbojmB8gzvb=Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from filtteri1.pp.htv.fi ([213.243.153.184]:42903 "EHLO
+	filtteri1.pp.htv.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752305Ab3IMQRX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2013 12:17:23 -0400
+Content-Disposition: inline
 In-Reply-To: <CACRpkdYbHTF0XGu-wLAeaw-nnSTEPh-ej9iizMbojmB8gzvb=Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mikael Pettersson <mikpe@it.uu.se>, Aaro Koskinen <aaro.koskinen@iki.fi>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Lennert Buytenhek <kernel@wantstofly.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Linus Walleij writes:
- > On Tue, Sep 10, 2013 at 4:14 PM, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
- > 
- > > With patch 6 it starts to crash on first gpio_get_value(), I guess
- > > because gpio-iop platform device is not registered on N2100...?
- > 
- > I think I've fixed this with the v2 versions of patches 1-3, you can
- > pull in and test the entire stack on Torvalds HEAD from here:
- > 
- > git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git iop-cleanup
+Hi,
 
-At first I tested the v3 patch kit (1/8 v2, 2/8 v3, 3/8 v2, 4/8-8/8 v1) on top
-of 3.11, but that oopsed with a near-NULL defererence due to what looked like a
-timer rearm before the gpio stuff was initialized.  Then I tried the above git
-as of half an hour ago and it booted fine on my n2100, even pressing the power
-button worked w/o issues.
+On Fri, Sep 13, 2013 at 10:15:58AM +0200, Linus Walleij wrote:
+> On Tue, Sep 10, 2013 at 4:14 PM, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+> > With patch 6 it starts to crash on first gpio_get_value(), I guess
+> > because gpio-iop platform device is not registered on N2100...?
+> 
+> I think I've fixed this with the v2 versions of patches 1-3, you can
+> pull in and test the entire stack on Torvalds HEAD from here:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git iop-cleanup
 
-So I guess you can add
+It's still crashing. This should be done somewhere in the series:
 
-Tested-by: Mikael Pettersson <mikpe@it.uu.se>
+diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
+index bc40a97..6266f0e 100644
+--- a/arch/arm/mach-iop32x/n2100.c
++++ b/arch/arm/mach-iop32x/n2100.c
+@@ -343,8 +343,14 @@ static int __init n2100_request_gpios(void)
+ }
+ device_initcall(n2100_request_gpios);
+ 
++static struct resource n2100_gpio_res[] = {
++	DEFINE_RES_MEM((IOP3XX_PERIPHERAL_PHYS_BASE + 0x07c4), 0x10),
++};
++
+ static void __init n2100_init_machine(void)
+ {
++	platform_device_register_simple("gpio-iop", 0, n2100_gpio_res,
++					ARRAY_SIZE(n2100_gpio_res));
+ 	platform_device_register(&iop3xx_i2c0_device);
+ 	platform_device_register(&n2100_flash_device);
+ 	platform_device_register(&n2100_serial_device);
 
-to what's in that repo above.
+A.
