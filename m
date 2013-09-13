@@ -1,56 +1,56 @@
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [PATCH 0/8] IOP GPIO refactoring
-Date: Fri, 13 Sep 2013 19:17:10 +0300
-Message-ID: <20130913161710.GA22033@blackmetal.musicnaut.iki.fi>
-References: <1378741198-12847-1-git-send-email-linus.walleij@linaro.org>
- <20130910141434.GD3379@blackmetal.musicnaut.iki.fi>
- <CACRpkdYbHTF0XGu-wLAeaw-nnSTEPh-ej9iizMbojmB8gzvb=Q@mail.gmail.com>
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Subject: Re: [PATCH 4/7] ptp: switch to use gpiolib
+Date: Fri, 13 Sep 2013 19:36:20 +0200
+Message-ID: <m3r4csr5d7.fsf@intrepid.localdomain>
+References: <1378816260-8091-1-git-send-email-linus.walleij@linaro.org>
+	<20130910141912.GB5088@netboy>
+	<CACRpkdZOCkLmgQHZSiqQfvLp=WzNsaE5AcY3siJ0b=bL0Xv8Pg@mail.gmail.com>
+	<m38uz0vrlz.fsf@intrepid.localdomain>
+	<20130913133659.GA11394@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from filtteri1.pp.htv.fi ([213.243.153.184]:42903 "EHLO
-	filtteri1.pp.htv.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752305Ab3IMQRX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2013 12:17:23 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYbHTF0XGu-wLAeaw-nnSTEPh-ej9iizMbojmB8gzvb=Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20130913133659.GA11394@localhost.localdomain> (Richard Cochran's
+	message of "Fri, 13 Sep 2013 15:36:59 +0200")
+Sender: netdev-owner@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi,
+Richard Cochran <richardcochran@gmail.com> writes:
 
-On Fri, Sep 13, 2013 at 10:15:58AM +0200, Linus Walleij wrote:
-> On Tue, Sep 10, 2013 at 4:14 PM, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
-> > With patch 6 it starts to crash on first gpio_get_value(), I guess
-> > because gpio-iop platform device is not registered on N2100...?
-> 
-> I think I've fixed this with the v2 versions of patches 1-3, you can
-> pull in and test the entire stack on Torvalds HEAD from here:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git iop-cleanup
+> I was really talking about the IXP465 with its PTP function. The Inte=
+l
+> devel board had a silicon bug making the PTP function useless. But
+> even if the bug got fixed, still the PTP function was very limiting.
+>
+> I never got any feedback about the IXP465 PTP stuff, and so I doubt
+> whether anyone is really using the Linux PTP driver on the IXP465, bu=
+t
+> you never know.
 
-It's still crashing. This should be done somewhere in the series:
+Ah, OK.
+I have just checked, Intel's spec update says IXP46x steppings A1 and A=
+2
+are fixed. PTP on 46x-A0 is broken.
+42x and 43x don't support PTP.
 
-diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
-index bc40a97..6266f0e 100644
---- a/arch/arm/mach-iop32x/n2100.c
-+++ b/arch/arm/mach-iop32x/n2100.c
-@@ -343,8 +343,14 @@ static int __init n2100_request_gpios(void)
- }
- device_initcall(n2100_request_gpios);
- 
-+static struct resource n2100_gpio_res[] = {
-+	DEFINE_RES_MEM((IOP3XX_PERIPHERAL_PHYS_BASE + 0x07c4), 0x10),
-+};
-+
- static void __init n2100_init_machine(void)
- {
-+	platform_device_register_simple("gpio-iop", 0, n2100_gpio_res,
-+					ARRAY_SIZE(n2100_gpio_res));
- 	platform_device_register(&iop3xx_i2c0_device);
- 	platform_device_register(&n2100_flash_device);
- 	platform_device_register(&n2100_serial_device);
+OTOH there is interesting stuff there:
+Problem: The A-0 and A-1 stepping of the Intel=C2=AE IXP45X/IXP46X Prod=
+uct Line of Network
+         Processors can enter a condition whereby the system locks up w=
+hen certain
+         combinations of memory accesses occur nearly simultaneously.
 
-A.
+         After more extensive investigation, it has been identified tha=
+t the lockup condition can
+         be caused by near-simultaneous accesses to 1 or 2 cache lines.=
+ The accesses to the
+         cache lines must be performed by the Intel XScale processor, S=
+outh AHB, and/or North
+         AHB for the lockup to happen.
+
+Hmmm...
+--=20
+Krzysztof Halasa
