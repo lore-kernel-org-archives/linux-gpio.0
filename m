@@ -1,123 +1,128 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Mon, 16 Sep 2013 11:09:08 -0600
-Message-ID: <52373B34.4060709@wwwdotorg.org>
-References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <522FBED9.9000305@collabora.co.uk> <5230C7F6.3080803@wwwdotorg.org> <3653629.tapNZSuWhS@lem-wkst-02>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/9] irqdomain: Introduce __irq_create_of_mapping()
+Date: Mon, 16 Sep 2013 16:17:28 -0500
+Message-ID: <52377568.6010204@gmail.com>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com> <1379320326-13241-4-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:48980 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751491Ab3IPRJO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Sep 2013 13:09:14 -0400
-In-Reply-To: <3653629.tapNZSuWhS@lem-wkst-02>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379320326-13241-4-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars Poeschel <poeschel@lemonage.de>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, joelf@ti.com
 
-On 09/16/2013 10:03 AM, Lars Poeschel wrote:
-> On Monday 16 September 2013 13:43:50, Stephen Warren wrote:
->> On 09/10/2013 06:52 PM, Javier Martinez Canillas wrote:
->>> On 09/11/2013 12:34 AM, Stephen Warren wrote:
->>>> On 09/10/2013 03:37 PM, Mark Brown wrote:
->>>>> On Tue, Sep 10, 2013 at 01:53:47PM -0600, Stephen Warren wrote:
->>>>>> Doesn't this patch call gpio_request() on the GPIO first, and
->>>>>> hence prevent the driver's own gpio_request() from succeeding,
->>>>>> since the GPIO is already requested? If this is not a problem, it
->>>>>> sounds like a bug in gpio_request() not ensuring mutual exclusion
->>>>>> for the GPIO.
->>>>>
->>>>> Or at the very least something that's likely to break in the
->>>>> future.
->>>>
->>>> Looking at the GPIO code, it already prevents double-requests:
->>>>>         if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) == 0) {
->>>>>         
->>>>>                 desc_set_label(desc, label ? : "?");
->>>>>                 status = 0;
->>>>>         
->>>>>         } else {
->>>>>         
->>>>>                 status = -EBUSY;
->>>>>                 module_put(chip->owner);
->>>>>                 goto done;
->>>>>         
->>>>>         }
->>>>
->>>> And I tested it in practice, and it really does fail.
->>>
->>> I'm a bit confused now. Doesn't the fact that gpio_request() prevents
->>> double-requests mean that the use-case that you say that have not been
->>> covered by this patch can't actually happen?
->>>
->>> I mean, if when using board files an explicit call to gpio_request() is
->>> made by platform code then a driver can't call gpio_request() for the
->>> same gpio. So this patch shouldn't cause any regression since is just
->>> auto-requesting a GPIO when is mapped as an IRQ in a DT which basically
->>> will be the same that was made by board files before.
->>
->> I'm not familiar with the board file path; Linus describe this.
+On 09/16/2013 03:32 AM, Thierry Reding wrote:
+> This is a version of irq_create_of_mapping() that propagates the precise
+> error code instead of returning 0 for all errors. It will be used in
+> subsequent patches to allow further propagation of error codes.
 > 
-> It seems Linus is busy, I'll try to help out.
+> To avoid code duplication, implement irq_create_of_mapping() as a
+> wrapper around the new __irq_create_of_mapping().
+
+This function is a manageable number of callers that the callers should
+just be updated and avoid the wrapper.
+
+Rob
+
 > 
->> It sounds like that path is for the case where a driver /only/ cares
->> about using a pin as an IRQ, and hence the driver only calls
->> request_irq(). The board file is (earlier) calling gpio_request() in
->> order to set up that input pin to work correctly as an IRQ. Hence, there
->> is no double-call to gpio_request().
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  include/linux/of_irq.h |  3 +++
+>  kernel/irq/irqdomain.c | 39 +++++++++++++++++++++++++++++----------
+>  2 files changed, 32 insertions(+), 10 deletions(-)
 > 
-> No, a board file is not a path or something. A board file describes the wirings 
-> and specifics of an (embedded) computer in C code. The complete knowledge of 
-> how things are connected on a board and which drivers to use is in this piece 
-> of code. Devicetree replaces legacy board files. These two do pretty much the 
-> same, but board files have more power, because they are executed and can 
-> contain whatever code is needed to setup a board.
-> But you are right, the driver only calls request_irq(), the board file set up 
-> the pin before and told the driver which irq to use.
-
-path == code path, or execution path. I'm well aware of what board files
-are in general.
-
-I'm just not familiar with board files that employ this particular hack.
-
->> The case I said wouldn't work is:
->>
->> * This patch calls gpio_request() in order to make the pin work as an IRQ.
->>
->> * Driver uses the pin as both a GPIO and an IRQ, and hence calls
->> gpio_request() and request_irq().
->>
->> So, there's a double-call to gpio_request(), which fails, and the driver
->> fails to probe.
+> diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
+> index 535cecf..c383dd1 100644
+> --- a/include/linux/of_irq.h
+> +++ b/include/linux/of_irq.h
+> @@ -63,6 +63,9 @@ extern int of_irq_map_raw(struct device_node *parent, const __be32 *intspec,
+>  			  struct of_irq *out_irq);
+>  extern int of_irq_map_one(struct device_node *device, int index,
+>  			  struct of_irq *out_irq);
+> +extern int __irq_create_of_mapping(struct device_node *controller,
+> +				   const u32 *intspec, unsigned int intsize,
+> +				   unsigned int *virqp);
+>  extern unsigned int irq_create_of_mapping(struct device_node *controller,
+>  					  const u32 *intspec,
+>  					  unsigned int intsize);
+> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> index d2a3b01..9867616 100644
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -484,39 +484,58 @@ int irq_create_strict_mappings(struct irq_domain *domain, unsigned int irq_base,
+>  }
+>  EXPORT_SYMBOL_GPL(irq_create_strict_mappings);
+>  
+> -unsigned int irq_create_of_mapping(struct device_node *controller,
+> -				   const u32 *intspec, unsigned int intsize)
+> +int __irq_create_of_mapping(struct device_node *controller, const u32 *intspec,
+> +			    unsigned int intsize, unsigned int *virqp)
+>  {
+> +	unsigned int type = IRQ_TYPE_NONE;
+>  	struct irq_domain *domain;
+>  	irq_hw_number_t hwirq;
+> -	unsigned int type = IRQ_TYPE_NONE;
+>  	unsigned int virq;
+> +	int ret;
+>  
+>  	domain = controller ? irq_find_host(controller) : irq_default_domain;
+>  	if (!domain) {
+>  		pr_warn("no irq domain found for %s !\n",
+>  			of_node_full_name(controller));
+> -		return 0;
+> +		return -EPROBE_DEFER;
+>  	}
+>  
+>  	/* If domain has no translation, then we assume interrupt line */
+>  	if (domain->ops->xlate == NULL)
+>  		hwirq = intspec[0];
+>  	else {
+> -		if (domain->ops->xlate(domain, controller, intspec, intsize,
+> -				     &hwirq, &type))
+> -			return 0;
+> +		ret = domain->ops->xlate(domain, controller, intspec, intsize,
+> +					 &hwirq, &type);
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	/* Create mapping */
+> -	virq = irq_create_mapping(domain, hwirq);
+> -	if (!virq)
+> -		return virq;
+> +	ret = __irq_create_mapping(domain, hwirq, &virq);
+> +	if (ret)
+> +		return ret;
+>  
+>  	/* Set type if specified and different than the current one */
+>  	if (type != IRQ_TYPE_NONE &&
+>  	    type != irq_get_trigger_type(virq))
+>  		irq_set_irq_type(virq, type);
+> +
+> +	if (virqp)
+> +		*virqp = virq;
+> +
+> +	return 0;
+> +}
+> +
+> +unsigned int irq_create_of_mapping(struct device_node *controller,
+> +				   const u32 *intspec, unsigned int intsize)
+> +{
+> +	unsigned int virq;
+> +	int ret;
+> +
+> +	ret = __irq_create_of_mapping(controller, intspec, intsize, &virq);
+> +	if (ret)
+> +		return 0;
+> +
+>  	return virq;
+>  }
+>  EXPORT_SYMBOL_GPL(irq_create_of_mapping);
 > 
-> Again, no. In that case you don't define your pin as irq in the device tree, 
-> but only as gpio. The driver knows how to handle gpios and turn them into irqs 
-> so you have to present it a gpio not an irq. In that case the patch will not 
-> call gpio_request() and there is no double-call to gpio_request().
 
-That is a way to make this patch work, yes. However, there's no
-guarantee that every driver or DT binding works this way. Forcing
-bindings to work that way is forcing Linux-internal details upon
-bindings, which should not be done. Put another way, I don't believe
-there's any rule when writing DT bindings that states that bindings must
-not describe the same pin as both a GPIO and an IRQ, although admittedly
-that may be unusual.
-
-...
-> I agree with you that it would be the best if the only call would be 
-> request_irq and the chip driver programs the HW appropriately. It would be a 
-> dream, but unfortunately this is not possible at the moment. This is something 
-> that Linus pointed out very very early in this whole discussion. The gpio and 
-> irq frameworks don't share any information. The irq framework has no chance to 
-> program the HW, because it will never find the related gpio.
-> For this to work the frameworks have to change (and possibly all drivers/board 
-> files/whatever using request_irq() and/or request_gpio()) have to change.
-> That is something that I do not dare to do alone.
-
-This is a controller-specific issue, and has nothing to do with the GPIO
-or IRQ frameworks. The driver for the combined irq/gpio_chip simply
-needs to program the HW when the IRQ is requested or set up. The Tegra
-driver already works this way, so there's actual proof that it is
-possible to do this in practice.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
