@@ -1,67 +1,44 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] Input: gpio_keys - wakeup_trigger
-Date: Sat, 14 Sep 2013 14:16:47 +0200
-Message-ID: <106090496.3hTZTLSVzK@flatron>
-References: <1379109160-32437-1-git-send-email-bleung@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ea0-f178.google.com ([209.85.215.178]:46539 "EHLO
-	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752416Ab3INMQx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Sep 2013 08:16:53 -0400
-In-Reply-To: <1379109160-32437-1-git-send-email-bleung@chromium.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/9] of/irq: Rework of_irq_count()
+Date: Mon, 16 Sep 2013 10:31:58 +0200
+Message-ID: <1379320326-13241-2-git-send-email-treding@nvidia.com>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379320326-13241-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Benson Leung <bleung@chromium.org>
-Cc: dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, david@protonic.nl, dianders@chromium.org
 
-Hi Benson,
+The of_irq_to_resource() helper that is used to implement of_irq_count()
+tries to resolve interrupts and in fact creates a mapping for resolved
+interrupts. That's pretty heavy lifting for something that claims to
+just return the number of interrupts requested by a given device node.
 
-On Friday 13 of September 2013 14:52:40 Benson Leung wrote:
-> Allow wakeup_trigger to be defined per gpio button. Currently, all
-> gpio buttons are set up as IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING.
-> It may be more appropriate to only wake the system on one edge, for
-> example if the gpio is for a Lid Switch.
-> 
-> Signed-off-by: Benson Leung <bleung@chromium.org>
-> ---
->  .../devicetree/bindings/gpio/gpio_keys.txt         |  7 +++++++
->  drivers/input/keyboard/gpio_keys.c                 | 23
-> ++++++++++++++++++++-- include/linux/gpio_keys.h                       
->   |  3 +++
->  3 files changed, 31 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio_keys.txt
-> b/Documentation/devicetree/bindings/gpio/gpio_keys.txt index
-> 5c2c021..243f569 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio_keys.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio_keys.txt
-> @@ -20,6 +20,13 @@ Optional subnode-properties:
->  	- debounce-interval: Debouncing interval time in milliseconds.
->  	  If not specified defaults to 5.
->  	- gpio-key,wakeup: Boolean, button can wake-up the system.
-> +	- gpio-key,wakeup-trigger : Specifies the type of wakeup behavior.
-> +	  <1> == Rising Edge Trigger
-> +	  <2> == Falling Edge Trigger
-> +	  <3> == Both Rising and Falling Edge Trigger
-> +	  <4> == Level High Trigger
-> +	  <8> == Level Low Trigger
-> +	  If not specified, defaults to <3> == Both Rising and Falling.
+Instead, use the more lightweight of_irq_map_one(), which, despite the
+name, doesn't create an actual mapping. Perhaps a better name would be
+of_irq_translate_one().
 
-I don't like two things in this patch.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/of/irq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-First is that this looks completely like a configuration option, not 
-hardware description, so it's not something that should be put into DT. 
-Especially that users might want to use another wake-up trigger depending 
-on their use cases. I'd rather see this as a sysfs entry.
-
-Another thing is that this driver assumes that key events are indicated by 
-edges on the GPIO line, so I don't think level trigger setting make any 
-sense here. I'd rather allow three settings here (through a sysfs knob) - 
-key down, key up, key down or up.
-
-Best regards,
-Tomasz
-
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index 1752988..5f44388 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -368,9 +368,10 @@ EXPORT_SYMBOL_GPL(of_irq_to_resource);
+  */
+ int of_irq_count(struct device_node *dev)
+ {
++	struct of_irq irq;
+ 	int nr = 0;
+ 
+-	while (of_irq_to_resource(dev, nr, NULL))
++	while (of_irq_map_one(dev, nr, &irq) == 0)
+ 		nr++;
+ 
+ 	return nr;
+-- 
+1.8.4
