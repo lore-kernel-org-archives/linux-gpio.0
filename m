@@ -1,98 +1,149 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/4] mfd: add support for AMS AS3722 PMIC
-Date: Tue, 17 Sep 2013 12:24:44 +0100
-Message-ID: <20130917112444.GU21013@sirena.org.uk>
+Subject: Re: [PATCH 3/4] regulator: as3722: add regulator driver for AMS
+ AS3722
+Date: Tue, 17 Sep 2013 12:41:33 +0100
+Message-ID: <20130917114133.GV21013@sirena.org.uk>
 References: <1379400338-20704-1-git-send-email-ldewangan@nvidia.com>
- <1379400338-20704-2-git-send-email-ldewangan@nvidia.com>
+ <1379400338-20704-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2F7AbV2suvT8PGoH"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="ipiAXJWFVZGVDOzf"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:43167 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752340Ab3IQLlj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2013 07:41:39 -0400
 Content-Disposition: inline
-In-Reply-To: <1379400338-20704-2-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1379400338-20704-4-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Laxman Dewangan <ldewangan@nvidia.com>
 Cc: lee.jones@linaro.org, sameo@linux.intel.com, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, florian.lobmaier@ams.com
-List-Id: linux-gpio@vger.kernel.org
 
 
---2F7AbV2suvT8PGoH
+--ipiAXJWFVZGVDOzf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 17, 2013 at 12:15:35PM +0530, Laxman Dewangan wrote:
+On Tue, Sep 17, 2013 at 12:15:37PM +0530, Laxman Dewangan wrote:
 
-> +MFD driver adds following mfd devices with their compatible values:
-> +as3722-gpio: The compatible value of this as3722 gpio driver is
-> +	     "ams,as3722-gpio";
-> +as3722-regulator: The compatible value of this as3722 regulator driver is
-> +	     "ams,as3722-regulator";
-> +as3722-rtc: The compatible value of this as3722 rtc driver is
-> +	     "ams,as3722-rtc";
-> +as3722-adc: The compatible value of this as3722 adc driver is
-> +	     "ams,as3722-adc";
-> +as3722-power-off: he compatible value of this as3722 power off driver is
-> +	     "ams,as3722-power-off".
+> +               ams,enable-oc-config: Enable overcurrent configuration of the
+> +               ams,oc-trip-threshold-perphase: Overcurrent trip threshold
+> +               ams,oc-alarm-threshold-perphase: Overcurrent alarm threshold
 
-Personally I find this to be exposing implementation details of Linux -
-unless there is something reusable about the binding that'd allow it to
-be used to describe the contents of the chip the subnodes really aren't=20
-adding any information that wasn't present from just knowing the parent
-chip.  If there were relocatable IPs it'd be a bit different.
+These look like you should be implementing the current setting
+operations in the framework, probably mapping to the alarm limit if
+nothing else.
 
-> +#define reg_range(min, max)	{.range_min =3D min, .range_max =3D max,}
-> +static const struct regmap_range as3722_readable_ranges[] =3D {
-> +	reg_range(AS3722_SD0_VOLTAGE_REG, AS3722_SD6_VOLTAGE_REG),
-> +	reg_range(AS3722_GPIO0_CONTROL_REG, AS3722_LDO7_VOLTAGE_REG),
+> +static int as3722_ldo_get_voltage_sel(struct regulator_dev *rdev)
+> +{
+> +	int ret;
+> +
+> +	ret = regulator_get_voltage_sel_regmap(rdev);
+> +	if (ret >= 0x40)
+> +		ret -= 0x1B;
+> +	return ret;
+> +}
 
-If this macro is useful it should be a generic thing in the header, not
-done driver local.
+This looks very strange.  What's going on here?  A gap in the selectors?
+If that's the case you probably want to be using linear ranges.
 
-> +static const struct regmap_access_table as3722_volatile_table =3D {
-> +	.no_ranges =3D as3722_voltaile_ranges,
-> +	.n_no_ranges =3D ARRAY_SIZE(as3722_voltaile_ranges),
+> +static struct regulator_ops as3722_ldo_extcntrl_ops = {
+> +	.get_voltage_sel = as3722_ldo_get_voltage_sel,
+> +	.set_voltage_sel = as3722_ldo_set_voltage_sel,
+> +	.list_voltage = regulator_list_voltage_linear,
 > +};
 
-This looks wrong - the registers listed in _volatile_ranges are in fact
-the ones that are not volatile.  I'd rename _volatile_ranges to
-something like _cacheable_ranges.
+You ought to be providing map_voltage() too, same for some if not all of
+the other regulators.
 
-> +static int __init as3722_i2c_init(void)
+> +static unsigned int as3722_sd_get_mode(struct regulator_dev *dev)
 > +{
-> +	return i2c_add_driver(&as3722_i2c_driver);
-> +}
-> +subsys_initcall(as3722_i2c_init);
+> +	struct as3722_regulators *as3722_regs = rdev_get_drvdata(dev);
+> +	struct as3722 *as3722 = as3722_regs->as3722;
+> +	int id = rdev_get_id(dev);
+> +	u32 val;
+> +	int ret;
 > +
-> +static void __exit as3722_i2c_exit(void)
+> +	if (!as3722_reg_lookup[id].control_reg)
+> +		return -ERANGE;
+
+That seems a bit of a random error code.  -ENOTSUPP?
+
+> +static int as3722_sd_list_voltage(struct regulator_dev *rdev, unsigned selector)
 > +{
-> +	i2c_del_driver(&as3722_i2c_driver);
+> +	if (selector >= AS3722_SD2_VSEL_MAX)
+> +		return -EINVAL;
+> +
+> +	selector++;
+> +	if (selector <= 0x40)
+> +		return 600000 + selector * 12500;
+> +	if (selector <= 0x70)
+> +		return 1400000 + (selector - 0x40) * 25000;
+> +	if (selector <= 0x7F)
+> +		return 2600000 + (selector - 0x70) * 50000;
+> +	return -EINVAL;
 > +}
-> +module_exit(as3722_i2c_exit);
 
-Modern systems should be able to use module_i2c_driver() and deferred
-probing - is this not working well?
+Use linear ranges.
 
---2F7AbV2suvT8PGoH
+> +static struct of_regulator_match as3722_regulator_matches[] = {
+> +	{.name = "sd0", },
+
+	{ .name = "sd0", },
+
+> +		config.of_node = as3722_regulator_matches[id].of_node;
+> +		rdev = regulator_register(&as3722_regs->desc[id], &config);
+> +		if (IS_ERR(rdev)) {
+
+devm_regualtor_register().
+
+> +		if (reg_config->ext_control) {
+> +			ret = regulator_enable_regmap(rdev);
+> +			if (ret < 0) {
+> +				dev_err(&pdev->dev,
+> +					"Regulator %d enable failed: %d\n",
+> +					id, ret);
+> +				goto scrub;
+> +			}
+
+This looks wrong...  why is the regualtor being enabled by something
+other than the core?
+
+> +static int __init as3722_regulator_init(void)
+> +{
+> +	return platform_driver_register(&as3722_regulator_driver);
+> +}
+> +subsys_initcall(as3722_regulator_init);
+> +
+> +static void __exit as3722_regulator_exit(void)
+> +{
+> +	platform_driver_unregister(&as3722_regulator_driver);
+> +}
+> +module_exit(as3722_regulator_exit);
+
+module_platform_driver().
+
+--ipiAXJWFVZGVDOzf
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSODv5AAoJELSic+t+oim9jZ8P/idmFHPapqV0CQm7y9Pxw4Ij
-dUehc9jrgF5bU3w7WE4qxZy4sxKS5ixSIoSuNuAMG9nuN+yEi/2MXJtfOUpen8ky
-dBwmM2J/65sbLl0pd3XE/fuutHp1ieT/Ncf56KBU2N03XE6RV/exe+XZ+D6hbCbH
-W06f9LAyxi+Na4u3oxlyc16T+QsAcXHTku0248/9SqMdDMqYOqm35SqvUoupojMB
-T9CkjSV56JbI2MYmf4FAIek1U4oG2anEy6XjhzZ3o9pV9pPI1PitmebhGVQO9Hqa
-Nbh5srfovfheX4ngZgqE9jlbKnIjMS0Zyw5ds4mNS1tu/Ku/Nmynvq8Y5aGsv1Nf
-UdUqonxtzqHE0ILnefir3eRHnUb6E/VGyeh79dmBUFyx8hHTZWrfqOCll7e+xR5B
-1o2RV8NliIO7UjLOq+LRZd+fnlv8zNA6PH/s19KMY5Mt4VkMpRHktsBiJtnMOBPe
-hbNNtvF3U/aTf2b2Fy/NuAzx+lSWmLgOXui85xdB3efY4DYNCljaOeYlQq7nV5lG
-0stRER29XOAttTjSK5bCCAusMSfELzlx5EkIlG04k6O8bcVdIMUbxxehxr0rl7Qz
-ZmSFfn0XrCVZlTWnsca7kFA5Y5dNJ42DLROxirrWGRCAri6Rr3FkBL0CySeeSu88
-Ie1UTJVrDCNWMzYz0Qg4
-=dTEc
+iQIcBAEBAgAGBQJSOD/qAAoJELSic+t+oim9DqcQAIBbKCBKPeK8AlIDAhHLT89S
+yn6317kv6wFizBhyDwBOFAX2S92Cyniyuhk8859QdXag4fAh0kVTDmz+qZuwxr1e
+7hwUmh25DhnPniwHkSwNRKx+DOWCq1/ZQ5L0suwgqNbGb67/uWjzETtLWDrvbVOf
+Xt/q6ZRtgc0JaWIHI4oMkZh4n/n+NRzzCgVDIiHiHFEsNdsxL6IgAeS0otWOpajN
+YvDbkym7fespZPUij3wRGGExbpRzNgRh489MjbDJI/IJrzMggHvRSPDaOXMyYVOi
+9yQL6RDCjF0tNqTK+vWQ5jPYcv60/TjclDEVLoKWTrcSHbwNVLNKNXVzMUdvZkFo
+ETaqBrb7Inih8sxqJp+r5LsJYye97Mnc92cNFS9+z/hwbNeGOxEtidJee/0pLFFj
+x9LMbXQpmV52KoRsbqlxbWwOzGGr+OeIhvBC7LPqrPqcZ3NXzQ8jbOWZaAtrzzh5
+FJbyGVNOQti/MZ7gMcF2e4bG5pT/SWWzo1G7ilauclDT67ctg9JC3noGzXifh4iy
+1W9e2XNBpXzQ1kCXwCv87uNFvKVv3oILLRxHwSyA0paWU+wxg9AsD6+V1TnBkruJ
+FamdR0Ev6/2qWZQHj3krG6bkycJZxdkX23egp3M5dc58ROCViVmFcIh7NuJ0KMl6
+NiGJD7iXahNKD/86JLRV
+=cozY
 -----END PGP SIGNATURE-----
 
---2F7AbV2suvT8PGoH--
+--ipiAXJWFVZGVDOzf--
