@@ -1,67 +1,119 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/9] irqdomain: Introduce __irq_create_of_mapping()
-Date: Tue, 17 Sep 2013 10:21:15 +0200
-Message-ID: <20130917082114.GA6757@ulmo>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH 0/9] of/irq: Defer interrupt reference resolution
+Date: Tue, 17 Sep 2013 13:20:39 +0200
+Message-ID: <52383B07.5030806@free-electrons.com>
 References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-4-git-send-email-treding@nvidia.com>
- <52377568.6010204@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52377568.6010204-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from top.free-electrons.com ([176.31.233.9]:60229 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752478Ab3IQLUn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2013 07:20:43 -0400
+In-Reply-To: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
+
+Hi Thierry,
+
+On 16/09/2013 10:31, Thierry Reding wrote:
+> Hi,
+>
+> This small series allows interrupt references from the device tree to be
+> resolved at driver probe time, rather than at device creation time. The
+> current implementation resolves such references while devices are added
+> during the call to of_platform_populate(), which happens very early in
+> the boot process. This causes probe ordering issues, because all devices
+> that are an interrupt parent for other devices need to have been probed
+> by that time. This is worked around for primary interrupt controllers by
+> initializing them using a device tree specific way (of_irq_init()), but
+> it doesn't work for something like a GPIO controller that is itself a
+> platform device and an interrupt parent for other devices at the same
+> time.
+>
+> Currently such drivers use explicit initcall ordering to force these
+> chips to be probed earlier than other devices, but that only fixes a
+> subset of the problematic cases. It doesn't work if the interrupt user
+> is itself a platform device on the same bus. There are possibly other
+> cases where it doesn't work either.
+>
+> This patch series attempts to fix this by not resolving the interrupt
+> references at device creation time. Instead, some functionality is added
+> to the driver core to resolve them for each device immediately before it
+> is probed. Often this is a lot later than the point at which the device
+> was created, which gives interrupt parents more time and therefore a
+> better chance of being probed. More importantly, however, it allows the
+> driver core to detect when an interrupt parent isn't there yet and cause
+> the device to be queued for deferred probing. After all, resolving probe
+> ordering issues is one of the primary reason for the introduction of
+> deferred probing.
+>
+> Unfortunately the interrupt core code isn't prepared to handle this very
+> well, so some preparatory work is required.
+>
+> Patch 1 is a bit of a cleanup. It modifies of_irq_count() to not use the
+> heavyweight of_irq_to_resource(), which will actually try to create a
+> mapping. While not usually harmful, it causes a warning during boot if
+> the interrupt parent hasn't registered an IRQ domain yet. Furthermore it
+> is much more than the stated intention of the function, which is to
+> return the number of interrupts that a device node uses.
+>
+> Patches 2 and 3 introduce two new functions: __irq_create_mapping() and
+> __irq_create_of_mapping(), which are both equivalent to the non-__ parts
+> except that they return a negative error code on failure and therefore
+> allow propagation of a precise error code instead of 0 for all errors.
+> This is an important prerequisite for subsequent patches. I think that
+> it would've been nice to not introduced underscore-prefixed variants but
+> but there are about 130 callers and updating them all would've been
+> rather messy.
+>
+> Patch 4 adds an of_irq_get() function, which is irq_of_parse_and_map()
+> but returns a negative error code on failure instead of 0.
+>
+> Similarly, __of_irq_to_resource() as introduced in patch 5 is equivalent
+> to of_irq_to_resource() but returns a negative error code on failure
+> instead of 0.
+>
+> Patch 6 uses __of_irq_to_resource() to propagate error code to callers
+> of the of_irq_to_resource_table() function.
+>
+> Patch 7 adds functionality to the platform driver code to resolve
+> interrupt references at probe time. It uses the negative error code of
+> the of_irq_to_resource_table() function to trigger deferred probing.
+>
+> Patch 8 implements similar functionality for I2C devices.
+>
+> Patch 9 serves as an example of the kind of cleanup that can be done
+> after this series. Obviously this will require quite a bit of retesting
+> of working setups, but I think that in the long run we're better off
+> without the kind of explicit probe ordering employed by the gpio-tegra
+> driver and many others.
+>
+> Note that I've only implemented this for platform and I2C devices, but
+> the same can be done for SPI and possibly other subsystems as well.
+>
+> There is another use-case that I'm aware of for which a similar solution
+> could be implemented. IOMMUs on SoCs generally need to hook themselves
+> up to new platform devices. This causes a similar issues as interrupt
+> resolution and should be fixable by extending the of_platform_probe()
+> function introduced in patch 7 of this series.
+
+I believe this will solve the issue I was hitting back in June where
+of_i2c_register_devices() failed to get the IRQ while doing it at probe
+time was working fine:
+
+http://www.spinics.net/lists/linux-i2c/msg12523.html
+
+I couldn't test your patches yet though. I'll try to test as soon as I
+get some free time.
 
 
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 16, 2013 at 04:17:28PM -0500, Rob Herring wrote:
-> On 09/16/2013 03:32 AM, Thierry Reding wrote:
-> > This is a version of irq_create_of_mapping() that propagates the precise
-> > error code instead of returning 0 for all errors. It will be used in
-> > subsequent patches to allow further propagation of error codes.
-> >=20
-> > To avoid code duplication, implement irq_create_of_mapping() as a
-> > wrapper around the new __irq_create_of_mapping().
->=20
-> This function is a manageable number of callers that the callers should
-> just be updated and avoid the wrapper.
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Okay, I can do that. Can I take this as a sign that you're generally
-okay with the idea behind the series?
-
-Thierry
-
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSOBD6AAoJEN0jrNd/PrOhuOQP/37S/PM7W23HJoJ7QkQeRCJs
-b8M0CB2JbOH3epRGHenbu0X6JgYshmZoNpcw5S4G4z7Qh7LH3kbCpL6GTXyRu1Jl
-zpz2Bo4WcCjyVyT7JRYOtenzbejiuFvirOwsJb12cxDXrgF/1brj2CQXBKYLFHce
-/X/5YHuTmubpTcXAvl5DShcKafQ9s26ldc9jLCEZsbxLpRtNHvE5QORRg/04FWk6
-KzId+yDIM+ob0URvBaq/9OygxjfL7XZoFBK4HGDX8qwRd0ONN03Gd0RnIaLtCP45
-dh3EGklJnlxOw+cvpENV/I+fwzbP71bk072xmq4M/DBnyVO7HZ6gGBr82Y3SbGZ4
-b1iptU4ewmh3MkntLVzuYZvOiXH3seX+BWdiw5TGeASY17NkFJAphfBPrnjY+6vP
-bDlD8APgdvQ0r3iU92CAC/xjJtF76BAQEVPz63DL1f46bZN+oCTzGlKjg5VEPjAK
-7/cJJSlWR+oq2QH8w6mkzzsHbLsF6nEbPdXjZmi/QDw1qV/M6+dwND8LM/2iB9rr
-J8BHX0/B7D6hah7l8wiaqSzpYjbgy5LfMuiKPgN7TYhkTvQ14En8Ml8Vxg8R3h0S
-2convQV5s9OBoh+/MwAF4PT6mp/m5lr/BAFn1t+fgiwLspVrNGPlDwjYpGLZgwGh
-8VqtwbJJDwKuK2pA9xiz
-=5oTC
------END PGP SIGNATURE-----
-
---gKMricLos+KVdGMg--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
