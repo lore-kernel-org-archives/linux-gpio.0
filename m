@@ -1,88 +1,53 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 5/9] of/irq: Introduce __of_irq_to_resource()
-Date: Mon, 16 Sep 2013 16:29:15 -0500
-Message-ID: <5237782B.3030804@gmail.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com> <1379320326-13241-6-git-send-email-treding@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 0/4] Add AMS AS3722 mfd, GPIO, regulator and RTC driver
+Date: Tue, 17 Sep 2013 12:15:34 +0530
+Message-ID: <1379400338-20704-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379320326-13241-6-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14786 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751130Ab3IQGZI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2013 02:25:08 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: lee.jones@linaro.org, sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, florian.lobmaier@ams.com, Laxman Dewangan <ldewangan@nvidia.com>
 
-On 09/16/2013 03:32 AM, Thierry Reding wrote:
-> This is a version of of_irq_to_resource() that propagates the precise
-> error code instead of returning 0 for all errors. It will be used in
-> subsequent patches to allow further propagation of error codes.
-> 
-> To avoid code duplication, implement of_irq_to_resource() as a wrapper
-> around the new __of_irq_to_resource().
+This series add the driver support for AMS AS3722 PMIC. The driver
+includes mfd, gpio, regulator and  rtc.
 
-I think the callers in this case are manageable to update as well.
-Several cases could simply use irq_of_parse_and_map instead as they just
-pass in a NULL resource.
+Laxman Dewangan (4):
+  mfd: add support for AMS AS3722 PMIC
+  gpio: add support for AMS AS3722 gpio driver
+  regulator: as3722: add regulator driver for AMS AS3722
+  drivers/rtc/rtc-as3722: add RTC driver
 
-Rob
+ .../devicetree/bindings/gpio/gpio-as3722.txt       |   63 ++
+ Documentation/devicetree/bindings/mfd/as3722.txt   |   69 ++
+ .../bindings/regulator/as3722-reguator.txt         |  103 +++
+ .../devicetree/bindings/rtc/rtc-as3722.txt         |   21 +
+ drivers/gpio/Kconfig                               |    6 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-as3722.c                         |  444 ++++++++++
+ drivers/mfd/Kconfig                                |   12 +
+ drivers/mfd/Makefile                               |    1 +
+ drivers/mfd/as3722.c                               |  463 ++++++++++
+ drivers/regulator/Kconfig                          |    8 +
+ drivers/regulator/Makefile                         |    1 +
+ drivers/regulator/as3722-regulator.c               |  883 ++++++++++++++++++++
+ drivers/rtc/Kconfig                                |   10 +
+ drivers/rtc/Makefile                               |    1 +
+ drivers/rtc/rtc-as3722.c                           |  315 +++++++
+ include/linux/mfd/as3722.h                         |  425 ++++++++++
+ 17 files changed, 2826 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-as3722.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/as3722.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/as3722-reguator.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-as3722.txt
+ create mode 100644 drivers/gpio/gpio-as3722.c
+ create mode 100644 drivers/mfd/as3722.c
+ create mode 100644 drivers/regulator/as3722-regulator.c
+ create mode 100644 drivers/rtc/rtc-as3722.c
+ create mode 100644 include/linux/mfd/as3722.h
 
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/of/irq.c | 33 +++++++++++++++++++++++++--------
->  1 file changed, 25 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> index 8225289..57396fd 100644
-> --- a/drivers/of/irq.c
-> +++ b/drivers/of/irq.c
-> @@ -343,15 +343,15 @@ int of_irq_map_one(struct device_node *device, int index, struct of_irq *out_irq
->  }
->  EXPORT_SYMBOL_GPL(of_irq_map_one);
->  
-> -/**
-> - * of_irq_to_resource - Decode a node's IRQ and return it as a resource
-> - * @dev: pointer to device tree node
-> - * @index: zero-based index of the irq
-> - * @r: pointer to resource structure to return result into.
-> - */
-> -int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
-> +static int __of_irq_to_resource(struct device_node *dev, unsigned int index,
-> +				struct resource *r)
->  {
-> -	int irq = irq_of_parse_and_map(dev, index);
-> +	unsigned int irq;
-> +	int ret;
-> +
-> +	ret = of_irq_get(dev, index, &irq);
-> +	if (ret)
-> +		return ret;
->  
->  	/* Only dereference the resource if both the
->  	 * resource and the irq are valid. */
-> @@ -373,6 +373,23 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
->  
->  	return irq;
->  }
-> +
-> +/**
-> + * of_irq_to_resource - Decode a node's IRQ and return it as a resource
-> + * @dev: pointer to device tree node
-> + * @index: zero-based index of the irq
-> + * @r: pointer to resource structure to return result into.
-> + */
-> +int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
-> +{
-> +	int ret;
-> +
-> +	ret = __of_irq_to_resource(dev, index, r);
-> +	if (ret < 0)
-> +		return 0;
-> +
-> +	return ret;
-> +}
->  EXPORT_SYMBOL_GPL(of_irq_to_resource);
->  
->  /**
-> 
