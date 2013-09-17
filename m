@@ -1,93 +1,49 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/9] of/irq: Introduce of_irq_get()
-Date: Tue, 17 Sep 2013 15:28:35 +0200
-Message-ID: <20130917132834.GC6757@ulmo>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-5-git-send-email-treding@nvidia.com>
- <5237771F.1060908@gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 2/7] input: misc: ixp4-beeper: switch to use gpiolib
+Date: Tue, 17 Sep 2013 12:01:45 -0700
+Message-ID: <20130917190144.GB6894@core.coreip.homeip.net>
+References: <1379061102-22279-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tqI+Z3u+9OQ7kwn0"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5237771F.1060908-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-gpio@vger.kernel.org
-
-
---tqI+Z3u+9OQ7kwn0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:58518 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753492Ab3IQTBt convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2013 15:01:49 -0400
+Received: by mail-pd0-f174.google.com with SMTP id y13so6023802pdi.33
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Sep 2013 12:01:49 -0700 (PDT)
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1379061102-22279-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org
 
-On Mon, Sep 16, 2013 at 04:24:47PM -0500, Rob Herring wrote:
-> On 09/16/2013 03:32 AM, Thierry Reding wrote:
-> > This is a version of irq_of_parse_and_map() that propagates the precise
-> > error code instead of returning 0 for all errors. It will be used in
-> > subsequent patches to allow further propagation of error codes.
-> >=20
-> > To avoid code duplication, implement irq_of_parse_and_map() as a wrapper
-> > around the new of_irq_get().
->=20
-> *_get typically also implies some reference counting which I don't
-> believe this does. I don't think having 2 functions with completely
-> different names doing the same thing with only a different calling
-> convention is good either. So I would keep the old name and the names
-> aligned.
+On Fri, Sep 13, 2013 at 10:31:42AM +0200, Linus Walleij wrote:
+> The platform using this beeper has support for gpiolib, so there
+> is no point to use the custom gpio_line* API. A strange ambiguity
+> where a line was first set as input and then driven high was
+> solved by first driving the line high as output and then switch
+> it to input.
+> 
+> Cc: Imre Kaloz <kaloz@openwrt.org>
+> Cc: Krzysztof Halasa <khc@pm.waw.pl>
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Okay, I'll make the new function __irq_of_parse_and_map().
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-> >  unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
-> >  {
-> > -	struct of_irq oirq;
-> > +	unsigned int virq;
-> > =20
-> > -	if (of_irq_map_one(dev, index, &oirq))
-> > +	if (of_irq_get(dev, index, &virq))
-> >  		return 0;
-> > =20
-> > -	return irq_create_of_mapping(oirq.controller, oirq.specifier,
-> > -				     oirq.size);
-> > +	return virq;
->=20
-> This can be an inline and written more concisely:
->=20
-> {
-> 	unsigned int virq;
-> 	return (of_irq_get(dev, index, &virq) < 0) ? 0 : virq;
-> }
+> ---
+> Hi Dmitry, requesting an ACK for this to take it through the
+> GPIO tree as part of an IXP4 clean-up attempt.
 
-I find code such as the above very hard to read. But if you insist I can
-move the function into include/of/of_irq.h and make it static inline
-with the implementation above.
+Sorry for the delay, I missed the fact that you wanted an ask and not
+merge and was waiting for rc1 to be cut...
 
-Thierry
+Thanks.
 
---tqI+Z3u+9OQ7kwn0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSOFkCAAoJEN0jrNd/PrOhkIAP/Anrr5d0VlOE+xZmwhAET+e8
-Ctfb3Tm0NJPbKxjX9MvSVNZ3WlhBbbwXVdK7FDaOleDIszL+tefUw2jBb5NVGE7y
-ZpeMaq2HWZuTgAd6Tdfz9PEmTosGqZMKecg1+MxGsAnvLHapWLOajUNcBbQOAAtS
-qgsllbHzmQ0zS8/wH+c9NbGTC4z7AKruWo49CEuyd95t1l2qzPp4CgQ8ZKnWzROo
-I+qP7P3xVSM4nj33IOml+kF60R8vZZYFBQvRGeCbgiLmS3CKqA9e0njuP4dzs2XJ
-D2Ii0tjZSDtozeAdavZTF4VnwzjedAsSimuAW3FHrJVGuKPLYFTRcLHV7X9uz+ob
-YJSicMfgS0+49tAq/lLhnYP58jX5XlEhzqkGIcPihooVd5NAsREOl9Go6RxYStSP
-s4S2IQwcPducd09msXQczPMru0DC+0QczFZ9G79fc+N5FdFEwq9rQkZD/o9J3Xwk
-ufo1izoEofAHU5bq8BkSk94r7js01rrAG7KIQQ+QKlm8sDuvWAs+sdK42z7grrHf
-up1wp+qUnR31dIiuVhnBj6UVpJth9uQaRFXvdC+VGK2Uutf7qMRyiLu+HzK4FZgJ
-23Q5GRiuqLJ9BT13pu6bWANAJmkxXRRv3hAqTmf/HC6KYUsRY+7We0CdzUYCO2F7
-AsHkDeGTJa5EvD7zNrFH
-=qJ1y
------END PGP SIGNATURE-----
-
---tqI+Z3u+9OQ7kwn0--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Dmitry
