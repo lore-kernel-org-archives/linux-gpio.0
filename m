@@ -1,119 +1,98 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH 0/9] of/irq: Defer interrupt reference resolution
-Date: Tue, 17 Sep 2013 13:20:39 +0200
-Message-ID: <52383B07.5030806@free-electrons.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/4] mfd: add support for AMS AS3722 PMIC
+Date: Tue, 17 Sep 2013 12:24:44 +0100
+Message-ID: <20130917112444.GU21013@sirena.org.uk>
+References: <1379400338-20704-1-git-send-email-ldewangan@nvidia.com>
+ <1379400338-20704-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:60229 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752478Ab3IQLUn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2013 07:20:43 -0400
-In-Reply-To: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2F7AbV2suvT8PGoH"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1379400338-20704-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: lee.jones@linaro.org, sameo@linux.intel.com, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, florian.lobmaier@ams.com
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
-
-Hi Thierry,
-
-On 16/09/2013 10:31, Thierry Reding wrote:
-> Hi,
->
-> This small series allows interrupt references from the device tree to be
-> resolved at driver probe time, rather than at device creation time. The
-> current implementation resolves such references while devices are added
-> during the call to of_platform_populate(), which happens very early in
-> the boot process. This causes probe ordering issues, because all devices
-> that are an interrupt parent for other devices need to have been probed
-> by that time. This is worked around for primary interrupt controllers by
-> initializing them using a device tree specific way (of_irq_init()), but
-> it doesn't work for something like a GPIO controller that is itself a
-> platform device and an interrupt parent for other devices at the same
-> time.
->
-> Currently such drivers use explicit initcall ordering to force these
-> chips to be probed earlier than other devices, but that only fixes a
-> subset of the problematic cases. It doesn't work if the interrupt user
-> is itself a platform device on the same bus. There are possibly other
-> cases where it doesn't work either.
->
-> This patch series attempts to fix this by not resolving the interrupt
-> references at device creation time. Instead, some functionality is added
-> to the driver core to resolve them for each device immediately before it
-> is probed. Often this is a lot later than the point at which the device
-> was created, which gives interrupt parents more time and therefore a
-> better chance of being probed. More importantly, however, it allows the
-> driver core to detect when an interrupt parent isn't there yet and cause
-> the device to be queued for deferred probing. After all, resolving probe
-> ordering issues is one of the primary reason for the introduction of
-> deferred probing.
->
-> Unfortunately the interrupt core code isn't prepared to handle this very
-> well, so some preparatory work is required.
->
-> Patch 1 is a bit of a cleanup. It modifies of_irq_count() to not use the
-> heavyweight of_irq_to_resource(), which will actually try to create a
-> mapping. While not usually harmful, it causes a warning during boot if
-> the interrupt parent hasn't registered an IRQ domain yet. Furthermore it
-> is much more than the stated intention of the function, which is to
-> return the number of interrupts that a device node uses.
->
-> Patches 2 and 3 introduce two new functions: __irq_create_mapping() and
-> __irq_create_of_mapping(), which are both equivalent to the non-__ parts
-> except that they return a negative error code on failure and therefore
-> allow propagation of a precise error code instead of 0 for all errors.
-> This is an important prerequisite for subsequent patches. I think that
-> it would've been nice to not introduced underscore-prefixed variants but
-> but there are about 130 callers and updating them all would've been
-> rather messy.
->
-> Patch 4 adds an of_irq_get() function, which is irq_of_parse_and_map()
-> but returns a negative error code on failure instead of 0.
->
-> Similarly, __of_irq_to_resource() as introduced in patch 5 is equivalent
-> to of_irq_to_resource() but returns a negative error code on failure
-> instead of 0.
->
-> Patch 6 uses __of_irq_to_resource() to propagate error code to callers
-> of the of_irq_to_resource_table() function.
->
-> Patch 7 adds functionality to the platform driver code to resolve
-> interrupt references at probe time. It uses the negative error code of
-> the of_irq_to_resource_table() function to trigger deferred probing.
->
-> Patch 8 implements similar functionality for I2C devices.
->
-> Patch 9 serves as an example of the kind of cleanup that can be done
-> after this series. Obviously this will require quite a bit of retesting
-> of working setups, but I think that in the long run we're better off
-> without the kind of explicit probe ordering employed by the gpio-tegra
-> driver and many others.
->
-> Note that I've only implemented this for platform and I2C devices, but
-> the same can be done for SPI and possibly other subsystems as well.
->
-> There is another use-case that I'm aware of for which a similar solution
-> could be implemented. IOMMUs on SoCs generally need to hook themselves
-> up to new platform devices. This causes a similar issues as interrupt
-> resolution and should be fixable by extending the of_platform_probe()
-> function introduced in patch 7 of this series.
-
-I believe this will solve the issue I was hitting back in June where
-of_i2c_register_devices() failed to get the IRQ while doing it at probe
-time was working fine:
-
-http://www.spinics.net/lists/linux-i2c/msg12523.html
-
-I couldn't test your patches yet though. I'll try to test as soon as I
-get some free time.
 
 
+--2F7AbV2suvT8PGoH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+On Tue, Sep 17, 2013 at 12:15:35PM +0530, Laxman Dewangan wrote:
 
+> +MFD driver adds following mfd devices with their compatible values:
+> +as3722-gpio: The compatible value of this as3722 gpio driver is
+> +	     "ams,as3722-gpio";
+> +as3722-regulator: The compatible value of this as3722 regulator driver is
+> +	     "ams,as3722-regulator";
+> +as3722-rtc: The compatible value of this as3722 rtc driver is
+> +	     "ams,as3722-rtc";
+> +as3722-adc: The compatible value of this as3722 adc driver is
+> +	     "ams,as3722-adc";
+> +as3722-power-off: he compatible value of this as3722 power off driver is
+> +	     "ams,as3722-power-off".
+
+Personally I find this to be exposing implementation details of Linux -
+unless there is something reusable about the binding that'd allow it to
+be used to describe the contents of the chip the subnodes really aren't=20
+adding any information that wasn't present from just knowing the parent
+chip.  If there were relocatable IPs it'd be a bit different.
+
+> +#define reg_range(min, max)	{.range_min =3D min, .range_max =3D max,}
+> +static const struct regmap_range as3722_readable_ranges[] =3D {
+> +	reg_range(AS3722_SD0_VOLTAGE_REG, AS3722_SD6_VOLTAGE_REG),
+> +	reg_range(AS3722_GPIO0_CONTROL_REG, AS3722_LDO7_VOLTAGE_REG),
+
+If this macro is useful it should be a generic thing in the header, not
+done driver local.
+
+> +static const struct regmap_access_table as3722_volatile_table =3D {
+> +	.no_ranges =3D as3722_voltaile_ranges,
+> +	.n_no_ranges =3D ARRAY_SIZE(as3722_voltaile_ranges),
+> +};
+
+This looks wrong - the registers listed in _volatile_ranges are in fact
+the ones that are not volatile.  I'd rename _volatile_ranges to
+something like _cacheable_ranges.
+
+> +static int __init as3722_i2c_init(void)
+> +{
+> +	return i2c_add_driver(&as3722_i2c_driver);
+> +}
+> +subsys_initcall(as3722_i2c_init);
+> +
+> +static void __exit as3722_i2c_exit(void)
+> +{
+> +	i2c_del_driver(&as3722_i2c_driver);
+> +}
+> +module_exit(as3722_i2c_exit);
+
+Modern systems should be able to use module_i2c_driver() and deferred
+probing - is this not working well?
+
+--2F7AbV2suvT8PGoH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSODv5AAoJELSic+t+oim9jZ8P/idmFHPapqV0CQm7y9Pxw4Ij
+dUehc9jrgF5bU3w7WE4qxZy4sxKS5ixSIoSuNuAMG9nuN+yEi/2MXJtfOUpen8ky
+dBwmM2J/65sbLl0pd3XE/fuutHp1ieT/Ncf56KBU2N03XE6RV/exe+XZ+D6hbCbH
+W06f9LAyxi+Na4u3oxlyc16T+QsAcXHTku0248/9SqMdDMqYOqm35SqvUoupojMB
+T9CkjSV56JbI2MYmf4FAIek1U4oG2anEy6XjhzZ3o9pV9pPI1PitmebhGVQO9Hqa
+Nbh5srfovfheX4ngZgqE9jlbKnIjMS0Zyw5ds4mNS1tu/Ku/Nmynvq8Y5aGsv1Nf
+UdUqonxtzqHE0ILnefir3eRHnUb6E/VGyeh79dmBUFyx8hHTZWrfqOCll7e+xR5B
+1o2RV8NliIO7UjLOq+LRZd+fnlv8zNA6PH/s19KMY5Mt4VkMpRHktsBiJtnMOBPe
+hbNNtvF3U/aTf2b2Fy/NuAzx+lSWmLgOXui85xdB3efY4DYNCljaOeYlQq7nV5lG
+0stRER29XOAttTjSK5bCCAusMSfELzlx5EkIlG04k6O8bcVdIMUbxxehxr0rl7Qz
+ZmSFfn0XrCVZlTWnsca7kFA5Y5dNJ42DLROxirrWGRCAri6Rr3FkBL0CySeeSu88
+Ie1UTJVrDCNWMzYz0Qg4
+=dTEc
+-----END PGP SIGNATURE-----
+
+--2F7AbV2suvT8PGoH--
