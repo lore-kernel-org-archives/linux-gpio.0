@@ -1,69 +1,34 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] gpio: pcf857x: only use set_irq_flags() on ARM
-Date: Wed, 18 Sep 2013 08:48:52 -0500
-Message-ID: <20130918134852.GB21559@radagast>
-References: <1379503051-27310-1-git-send-email-linus.walleij@linaro.org>
-Reply-To: <balbi@ti.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: PCF857x and 16-bit GPIO expanders
+Date: Wed, 18 Sep 2013 19:18:04 +0200
+Message-ID: <2356541.62QktiIBr5@avalon>
+References: <20130917190732.GD15645@radagast> <CACRpkdYn8yaTyFJMaC3vK4kGrQsaZpAX=pyn5y33ers7QhQ_pg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:50855 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751218Ab3IRNtz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Sep 2013 09:49:55 -0400
-Content-Disposition: inline
-In-Reply-To: <1379503051-27310-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYn8yaTyFJMaC3vK4kGrQsaZpAX=pyn5y33ers7QhQ_pg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, George Cherian <george.cherian@ti.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Felipe Balbi <balbi@ti.com>
+Cc: Felipe Balbi <balbi@ti.com>, George Cherian <george.cherian@ti.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
---IrhDeMKUP4DT/M7F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wednesday 18 September 2013 13:16:27 Linus Walleij wrote:
+> On Tue, Sep 17, 2013 at 9:07 PM, Felipe Balbi <balbi@ti.com> wrote:
+> > has anyone ever successfully using gpio-pcf857x.c driver with 16-bit
+> > gpio expanders ? We're having some issues here where toggling the last
+> > gpio pin (gpio 15) on a PCF8575 device causes platform to hang and I
+> > can't come up with any explanation of why would it hang...
+> 
+> Bouncing the question to George, Laurent and Kuninori...
 
-On Wed, Sep 18, 2013 at 01:17:31PM +0200, Linus Walleij wrote:
-> As per the pattern from other GPIO drivers, use set_irq_flags()
-> on ARM only, use irq_set_noprobe() on other archs.
->=20
-> Also rename the argument "virq" to just "irq", this IRQ isn't
-> any more "virtual" than any other Linux IRQ number, we use
-> "hwirq" for the actual hw-numbers, "virq" is just bogus.
->=20
-> Cc: George Cherian <george.cherian@ti.com>
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Cc: Felipe Balbi <balbi@ti.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+I've got a board with a PCF8575 chip, but it uses I/Os 8 to 14 only as far as 
+I know.
 
-FWIW:
+I can try toggling I/O 15, but that will need to wait until next week as I'm 
+currently travelling without access to the hardware.
 
-Reviewed-by: Felipe Balbi <balbi@ti.com>
+-- 
+Regards,
 
---=20
-balbi
-
---IrhDeMKUP4DT/M7F
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSOa9EAAoJEIaOsuA1yqREhXQQAIRlHCI/dlVWFxFj+7J81NlI
-+Z2cS7StsNKbUWVKjwwxzrC8/MFZAhnb0WufC7IA9tJZjzfvAIoquharGY0BXi67
-wuUNfj3a7sosIEuSOco5VAK24yo4ZcD+IXwVnatBfe5SPh7YafMMDsX0F5K2OFD8
-fe9zgI0uCEnuOvchcCU0MOfxkijsbY89POE3R0WJpAzYXlaMRHcC48ldg4tUcUvc
-XfFaPi/QW0z0O21DBo/Ztt3PBzzh1QFli/FgjztDDIYWta22/Wn6956JH/spSD1T
-iRQ8TliFYM0jXaQU0QqpP4Atp5TG9lMrCGGgC1l31dqkbY4UALsdMnLTV3eFRJVg
-EPP2/fSAm5pjK6g07L0GhjBriYhSyoLsYNx3/QcNOENAhwiktiCX3avxeXA/GhHm
-JzfnhqdCLbuOzUGlqakz2lbtuqMxl6H/iNF1TiFA2ZzYYgVquSHU+yZ9WILHRnaQ
-C5Kjs1zMTyfbWCp4xCbZ5N+YRQK8zOAmiY+I8/UalkamETcy07evX8jnEuIe5j7M
-WC5C7kY/d4ASSOYyTSUjP4PoPtO+WjsnUzCR5jBXH9yheXxWht6Lgds+f14m0uUe
-w8JYXp/Cg0FR7IhiRjH7bbSfzWEc/Ekoo5CY65R925J6pXju7Niu0sk5l7i3eSef
-RZpBOo1NN6mBh6z/aKjT
-=TjOB
------END PGP SIGNATURE-----
-
---IrhDeMKUP4DT/M7F--
+Laurent Pinchart
