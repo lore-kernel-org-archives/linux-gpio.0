@@ -1,60 +1,142 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 0/3] cleanup of gpio_pcf857x.c
-Date: Wed, 18 Sep 2013 00:56:19 +0200
-Message-ID: <1695077.V4sgFrjTJR@avalon>
-References: <1378278183-26596-1-git-send-email-george.cherian@ti.com> <CACRpkdYc4UTbpa5W-KY_D7hRUYi9N3Ny1+CPJ-aixeEk3WGHCw@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 7/9] of/platform: Resolve interrupt references at probe
+ time
+Date: Wed, 18 Sep 2013 12:43:36 +0200
+Message-ID: <20130918104335.GA8256@ulmo>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+ <1379320326-13241-8-git-send-email-treding@nvidia.com>
+ <902E09E6452B0E43903E4F2D568737AB363BD3@DNCE04.ent.ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYc4UTbpa5W-KY_D7hRUYi9N3Ny1+CPJ-aixeEk3WGHCw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: George Cherian <george.cherian@ti.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Nikolay Balandin <n.a.balandin@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:61895 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464Ab3IRKos (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Sep 2013 06:44:48 -0400
+Content-Disposition: inline
+In-Reply-To: <902E09E6452B0E43903E4F2D568737AB363BD3@DNCE04.ent.ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Strashko, Grygorii" <grygorii.strashko@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Linus,
 
-On Tuesday 17 September 2013 14:51:48 Linus Walleij wrote:
-> On Wed, Sep 4, 2013 at 9:03 AM, George Cherian wrote:
-> > This patch series
-> > 
-> >         - removes the irq_demux_work
-> >         - Uses devm_request_threaded_irq
-> >         - Call the user handler iff gpio_to_irq is done.
-> > 
-> > v1 --> v2
-> > 
-> >         Split v1 to 3 patches
-> > 
-> > v2 --> v3
-> > 
-> >         Remove the unnecessary dts patches.
-> > 
-> > v3 --> v4
-> > 
-> >         Remove gpio->irq (in patch 2)
-> 
-> Applied all three patches with Kuninoro's ACK.
-> 
-> However your last iteration was still labeled "v3" in the subject
-> so I was a bit confused, but I took all those sent on sep 4.
-> 
-> Please check the result in my GPIO tree or linux-next and
-> make sure it works.
-> 
-> > Note: these patches were made after applying [1].
-> > [1] - [PATCH v5] gpio: pcf857x: Add OF support -
-> > https://lkml.org/lkml/2013/8/27/70
->
-> Well that patch is not finished, but by rebasing patch 2 with
-> patch -p1 < patch2.patch it applied anyway.
-> 
-> Now Laurent has to finalize his DT bindings on top of your patches instead.
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will do so. At first sight I don't see any conflict issue.
+On Tue, Sep 17, 2013 at 01:04:06PM +0000, Strashko, Grygorii wrote:
+> Hi Thierry,
+>=20
+> On 09/16/2013 11:32 AM, Thierry Reding wrote:> Interrupt references are c=
+urrently resolved very early (when a device is
+> > created). This has the disadvantage that it will fail in cases where the
+> > interrupt parent hasn't been probed and no IRQ domain for it has been
+> > registered yet. To work around that various drivers use explicit
+> > initcall ordering to force interrupt parents to be probed before devices
+> > that need them are created. That's error prone and doesn't always work.
+> > If a platform device uses an interrupt line connected to a different
+> > platform device (such as a GPIO controller), both will be created in the
+> > same batch, and the GPIO controller won't have been probed by its driver
+> > when the depending platform device is created. Interrupt resolution will
+> > fail in that case.
+> >=20
+> > Another common workaround is for drivers to explicitly resolve interrupt
+> > references at probe time. This is suboptimal, however, because it will
+> > require every driver to duplicate the code.
+> >=20
+> > This patch adds support for late interrupt resolution to the platform
+> > driver core, by resolving the references right before a device driver's
+> > .probe() function will be called. This not only delays the resolution
+> > until a much later time (giving interrupt parents a better chance of
+> > being probed in the meantime), but it also allows the platform driver
+> > core to queue the device for deferred probing if the interrupt parent
+> > hasn't registered its IRQ domain yet.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >   drivers/base/platform.c     |  4 ++++
+> >   drivers/of/platform.c       | 43 ++++++++++++++++++++++++++++++++++++=
++------
+> >   include/linux/of_platform.h |  7 +++++++
+> >   3 files changed, 48 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> > index 4f8bef3..8dcf835 100644
+> > --- a/drivers/base/platform.c
+> > +++ b/drivers/base/platform.c
+> > @@ -481,6 +481,10 @@ static int platform_drv_probe(struct device *_dev)
+>=20
+> Should it be the part of really_probe()? Isn't it?
 
--- 
-Regards,
+really_probe() takes a struct device and is in fact called by all types
+of devices. This code, however, is highly platform_device specific, so I
+don't think we can do it in really_probe().
 
-Laurent Pinchart
+Unfortunately every device type has its own way of storing interrupts.
+Platform devices store them as resources, I2C clients store them as a
+separate field in struct i2c_client, etc.
+
+> > +int of_platform_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device_node *np =3D pdev->dev.of_node;
+> > +	int num_irq, ret =3D 0;
+> > +
+> > +	if (!pdev->dev.of_node)
+> > +		return 0;
+> > +
+> > +	num_irq =3D of_irq_count(pdev->dev.of_node);
+> > +	if (num_irq > 0) {
+> > +		struct resource *res =3D pdev->resource;
+> > +		int num_reg =3D pdev->num_resources;
+> > +		int num =3D num_reg + num_irq;
+> > +
+> > +		res =3D krealloc(res, num * sizeof(*res), GFP_KERNEL);
+> > +		if (!res)
+> > +			return -ENOMEM;
+> > +
+> > +		pdev->num_resources =3D num;
+> > +		pdev->resource =3D res;
+> > +		res +=3D num_reg;
+>=20
+> What will happen if Driver probe is failed or deferred?
+> Seems resource table size will grow each time the Driver probe is
+> deferred or failed.
+
+That's a very good point. I think what we can do is check whether the
+total number of resources that the device has (pdev->num_resources)
+corresponds to num_reg + num_irq and skip in that case. That and...
+
+> > +		ret =3D of_irq_to_resource_table(np, res, num_irq);
+> > +		if (ret < 0)
+> > +			return ret;
+
+=2E.. updating pdev->num_resources after this point should cover all
+cases. Do you see any other potential problems?
+
+Thierry
+
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSOYPXAAoJEN0jrNd/PrOhm8sP/1+E0NleY5/Ys4U7+yA5qzXg
+DO7FbP9HEW6PXSif+yezB1lVV/aQ+ot9Ftqy470yi05pe/Spg/7ZKMnWGPAQoNWO
+/P7KkE//ckcPaGKr+DWNa4k8MN4BrmLP2enbLZI5XV5Xjz8CBIFe1q5e0Uz6wwGu
+tEgU0pNZnpcX5yTYwa8a/Pk7MkoeDH8xn6wjUzUgQW41x0Nz3+u4NKncewT4ykBO
+N8etJ98CnzsPv9bS6CZUvq4JTvvKGn7sXnWPc+EfZvWCBuQRjZJEHILAMWBDeLia
+e1vv6oBUz6himHcWFMI5xh9BtshB6240wTPDQgIkcTDNnbQz3b//VYUaT/M0ArBm
+8FX9UadaY/b8altwFq/JcfkM+YSDEcKXSwdeNs1oEVVUo7UeCjFBRPf8mqc42vx7
+Eaqt+gNfvGjPCNuXAT24rNkcz4++YX9Wn4ZqKRM5kdE/Y9Kc3uspHrn3FkVJtecg
+qGePbOpWndysAwXlzMVYHvdqFoLD9Slpwk9T/5ZlWK1knTMjU0T4HknJdXelAp60
+3JUeL73iS5JvCLUklXo9iiBSe1qEdnNit+6JjvY1BX8XLaXMrloMjRDRhb8fK+cb
+bNYKCYojY4UeAEjCFiTT2oDTtLoP28tgJodK01v0gzXR/MQ4hKGiasV9kTOM7cuI
+YoypuRCIojTA8q8ZNJQW
+=Plej
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
