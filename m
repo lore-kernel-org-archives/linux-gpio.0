@@ -1,34 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] emev2: GPIOLIB: Enable support for OF
-Date: Thu, 19 Sep 2013 15:34:34 +0200
-Message-ID: <CACRpkdZ1-ANcQpAsVZcbXJPoVYiK20G0j2MpXs84T7GvQ0uSOw@mail.gmail.com>
-References: <CACRpkdbeCU_WG4xXvoh76RZ-9UtbWJvB4PqYhSpTXSF4Hodf2A@mail.gmail.com>
-	<1378136695-23203-1-git-send-email-ian.molton@codethink.co.uk>
-	<1378136695-23203-2-git-send-email-ian.molton@codethink.co.uk>
+From: Benson Leung <bleung@chromium.org>
+Subject: Re: [PATCH] Input: gpio_keys - wakeup_trigger
+Date: Thu, 19 Sep 2013 13:43:43 -0700
+Message-ID: <CANLzEkufu+MA67tBi9eXDTzPrSqT9jUNpMiCqeqckJog1JdVbA@mail.gmail.com>
+References: <1379109160-32437-1-git-send-email-bleung@chromium.org>
+	<106090496.3hTZTLSVzK@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:40831 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751698Ab3ISNee (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Sep 2013 09:34:34 -0400
-Received: by mail-ob0-f178.google.com with SMTP id uy5so9962981obc.9
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Sep 2013 06:34:34 -0700 (PDT)
-In-Reply-To: <1378136695-23203-2-git-send-email-ian.molton@codethink.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <106090496.3hTZTLSVzK@flatron>
+Sender: linux-input-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, david@protonic.nl, Douglas Anderson <dianders@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Ian Molton <ian.molton@codethink.co.uk>
-Cc: Simon Horman <horms@verge.net.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Sep 2, 2013 at 5:44 PM, Ian Molton <ian.molton@codethink.co.uk> wrote:
+Hi Tomasz,
 
-> EMEV2 is now a DT platform, however the GPIO driver cannot be used
-> from a DT file since it does not fill out the of_node field in its
-> gpio_chip structure.
+On Sat, Sep 14, 2013 at 5:16 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> I don't like two things in this patch.
 >
-> Signed-off-by: Ian Molton <ian.molton@codethink.co.uk>
+> First is that this looks completely like a configuration option, not
+> hardware description, so it's not something that should be put into DT.
+> Especially that users might want to use another wake-up trigger depending
+> on their use cases. I'd rather see this as a sysfs entry.
+>
+> Another thing is that this driver assumes that key events are indicated by
+> edges on the GPIO line, so I don't think level trigger setting make any
+> sense here. I'd rather allow three settings here (through a sysfs knob) -
+> key down, key up, key down or up.
 
-This v2 version applied with Simon's ACK.
+Thanks for your feedback. I agree with your suggestions. I will move
+this from platform data and DT to a sysfs property with three settings
+: rising, falling, both.
 
-Yours,
-Linus Walleij
+
+-- 
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
