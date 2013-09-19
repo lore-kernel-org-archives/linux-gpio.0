@@ -1,49 +1,50 @@
-From: George Cherian <george.cherian@ti.com>
-Subject: Re: PCF857x and 16-bit GPIO expanders
-Date: Thu, 19 Sep 2013 13:43:41 +0530
-Message-ID: <523AB235.1000808@ti.com>
-References: <20130917190732.GD15645@radagast> <CACRpkdYn8yaTyFJMaC3vK4kGrQsaZpAX=pyn5y33ers7QhQ_pg@mail.gmail.com> <2356541.62QktiIBr5@avalon> <20130918173636.GT21559@radagast>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/2] gpio: gpio-74x164: Remove redundant spi_set_drvdata
+Date: Thu, 19 Sep 2013 17:28:07 +0530
+Message-ID: <1379591888-8834-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:46330 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751737Ab3ISINu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Sep 2013 04:13:50 -0400
-In-Reply-To: <20130918173636.GT21559@radagast>
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:40827 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752183Ab3ISL54 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Sep 2013 07:57:56 -0400
+Received: by mail-pb0-f49.google.com with SMTP id xb4so8290318pbc.22
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Sep 2013 04:57:55 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: balbi@ti.com
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, sachin.kamat@linaro.org, Gabor Juhos <juhosg@openwrt.org>
 
-On 9/18/2013 11:06 PM, Felipe Balbi wrote:
-> Hi,
->
-> On Wed, Sep 18, 2013 at 07:18:04PM +0200, Laurent Pinchart wrote:
->> On Wednesday 18 September 2013 13:16:27 Linus Walleij wrote:
->>> On Tue, Sep 17, 2013 at 9:07 PM, Felipe Balbi <balbi@ti.com> wrote:
->>>> has anyone ever successfully using gpio-pcf857x.c driver with 16-bit
->>>> gpio expanders ? We're having some issues here where toggling the last
->>>> gpio pin (gpio 15) on a PCF8575 device causes platform to hang and I
->>>> can't come up with any explanation of why would it hang...
->>> Bouncing the question to George, Laurent and Kuninori...
->> I've got a board with a PCF8575 chip, but it uses I/Os 8 to 14 only as far as
->> I know.
->>
->> I can try toggling I/O 15, but that will need to wait until next week as I'm
->> currently travelling without access to the hardware.
-> alright, that'd help me a lot :-) Just want to make sure if we're having
-> a board issue, or PCF8575 is a bit screwy ;-)
-Is it on dra7x-evm if so which pcf device (i2c address)?
-The pins i were interested were only 1 and 2 I never tried pin 15.
+Driver core sets driver data to NULL upon failure or remove.
 
-Just tried toggling through sysfs and it works for me.
->
-> Thanks
->
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Gabor Juhos <juhosg@openwrt.org>
+---
+Compile tested.
+---
+ drivers/gpio/gpio-74x164.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index 5d518d5..a51e893 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -176,7 +176,6 @@ static int gen_74x164_probe(struct spi_device *spi)
+ 	return ret;
+ 
+ exit_destroy:
+-	spi_set_drvdata(spi, NULL);
+ 	mutex_destroy(&chip->lock);
+ 	return ret;
+ }
+@@ -190,8 +189,6 @@ static int gen_74x164_remove(struct spi_device *spi)
+ 	if (chip == NULL)
+ 		return -ENODEV;
+ 
+-	spi_set_drvdata(spi, NULL);
+-
+ 	ret = gpiochip_remove(&chip->gpio_chip);
+ 	if (!ret)
+ 		mutex_destroy(&chip->lock);
 -- 
--George
+1.7.9.5
 
