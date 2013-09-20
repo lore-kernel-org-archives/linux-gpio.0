@@ -1,43 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/7] staging: media/lirc: switch to use gpiolib
-Date: Fri, 20 Sep 2013 21:28:02 +0200
-Message-ID: <CACRpkda5x78wMVm=vOB4_Bb8hsa6Sumfv0CANPBtOdHq1LxDYw@mail.gmail.com>
-References: <1378816283-8164-1-git-send-email-linus.walleij@linaro.org>
-	<m3d2ocvrx7.fsf@intrepid.localdomain>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC 0/5] New descriptor-based GPIO interface
+Date: Fri, 20 Sep 2013 21:32:56 +0200
+Message-ID: <20130920193254.GA19130@mithrandir>
+References: <1378294169-22661-1-git-send-email-acourbot@nvidia.com>
+ <CACRpkdYjkDf7c9VxfDTHtFx_upWWRAK8vpXTkrkrRsMjErq1dQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:42301 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753160Ab3ITT2E (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 15:28:04 -0400
-Received: by mail-ob0-f181.google.com with SMTP id gq1so1078919obb.40
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 12:28:03 -0700 (PDT)
-In-Reply-To: <m3d2ocvrx7.fsf@intrepid.localdomain>
+Received: from mail-bk0-f45.google.com ([209.85.214.45]:52199 "EHLO
+	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753191Ab3ITTdB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 15:33:01 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYjkDf7c9VxfDTHtFx_upWWRAK8vpXTkrkrRsMjErq1dQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Fri, Sep 13, 2013 at 2:15 PM, Krzysztof Halasa <khc@pm.waw.pl> wrote:
 
-> Linus Walleij <linus.walleij@linaro.org> writes:
->
->> +++ b/drivers/staging/media/lirc/lirc_serial.c
->> @@ -839,6 +839,16 @@ static int lirc_serial_probe(struct platform_device *dev)
->>  {
->>       int i, nlow, nhigh, result;
->>
->> +#ifdef CONFIG_LIRC_SERIAL_NSLU2
->> +     /* This GPIO is used for a LED on the NSLU2 */
->> +     result = devm_gpio_request(dev, NSLU2_LED_GRN, "lirc-serial");
->
-> Will this succeed with the LED driver already loaded? Should the user
-> unload it first?
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hm if this driver should use this as a LED it needs to register
-a trigger for that GPIO LED instead. A GPIO can not be used by
-two consumers at the same time...
+On Fri, Sep 20, 2013 at 08:06:00PM +0200, Linus Walleij wrote:
+> On Wed, Sep 4, 2013 at 1:29 PM, Alexandre Courbot <acourbot@nvidia.com> w=
+rote:
+>=20
+> > Here is a first RFC for the new GPIO interface.
+>=20
+> I'm quite happy with this, and given that all DT-implementations will sta=
+rt
+> to use it from day 1 I'll happily merge it when you think it's tested eno=
+ugh.
+>=20
+> On my wishlist is to also switch over the ACPI GPIO driver:
+> drivers/gpio/gpiolib-acpi.c to use the descriptors directly, so
+> I'd like one of the ACPI folks to have a look at this patch set
+> and see how it looks from their angle.
+>=20
+> Mika, Rafael, Mathias, and either of you guys have a look
+> at this?
 
-Yours,
-Linus Walleij
+Given that it seems like there won't be a linux-next from September 28
+until close to the next merge window, it would be good to get this into
+linux-next before that so that the series can receive broader testing. I
+have some patches that could use this, but I'm hesitant to base them on
+these patches because I want at least part of them to go into 3.13.
+
+Thierry
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSPKLmAAoJEN0jrNd/PrOheNAP/1mGJ+f6aaJ/NbnUfeMRlB97
+PBWv+0o90GDy+2Q4pgIRLvGYfr/FC6AWHPvy/8A3eksu/AxwmidColMqKfS8K/3n
+vigBR9chWPdWQiA3DSqNDAglp2RNm0fGp5yIt06yRRyUYcTug04nET7iWvwJCbZ3
+e71QfNmcFEsVdN590951JMZswS1ELBzPF+/KWMjXLkR2cqzJ6uGhjoijFXSGjhIV
+/HXo3MC4N5mxRp4ZJLj2x2ABl1Fi+BFGkDeN9LLOmI4KzWK8TGcG44AM65hPkPv2
+57gO6+STphUBF7kNSIeiuOOSLbERlPLOAhQAqDWzqhKdoMsWlYmDA4VSegi7LDZL
+yjrvIy41x39Gga/Bh3+rp87eaQCBIRdw68q6i5EfFHgbYreE2pWt8cfQ6FPBheeV
+0cBZJmJIed1yizv425GaVDaNvAiy58yc7Pic3oiU3ZmisPixe4Jl/OqgzdhPBawO
+X7LQVimNyFSf1zWVdb+IwyVJi1doyNQZWQ2KgeAUXzlOitdfDQA8rdRo17P364ZB
+/yfX7AHSzWZNxpQwo3PDiIfPFtZRg9tPSiUMSXju7BZeEtUO8sAKAKRLy+Ku/wIY
+/9Q0jULABqY+A1ZgVKqoW/FDI9Bk6M1+LH/MfWdKImYGjs/zEHlKQy1WML4MIiUR
+58IJpQ7eTHxCfq9J0Q/O
+=HeqZ
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
