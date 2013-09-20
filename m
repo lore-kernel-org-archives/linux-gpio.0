@@ -1,33 +1,33 @@
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [PATCH 0/8] IOP GPIO refactoring take 2
-Date: Fri, 20 Sep 2013 23:58:15 +0300
-Message-ID: <20130920205815.GF30568@blackmetal.musicnaut.iki.fi>
-References: <1379708226-7802-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pca953x: Don't flip bits on PCA957x GPIO expanders
+ when probing them.
+Date: Fri, 20 Sep 2013 23:06:37 +0200
+Message-ID: <CACRpkdaX++2N+jK6W3P6KgaCuyK1mJ9=mF9C=RZBq6vB_fdFmA@mail.gmail.com>
+References: <1379108508-19933-1-git-send-email-gsmecher@threespeedlogic.com>
+	<CACRpkdbwo5J9tx4KcPf5sVngCyqEkauqn0GFzJ844GuuixBFsQ@mail.gmail.com>
+	<523CB21B.207@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from filtteri1.pp.htv.fi ([213.243.153.184]:48048 "EHLO
-	filtteri1.pp.htv.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754018Ab3ITU6W (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:58:22 -0400
-Content-Disposition: inline
-In-Reply-To: <1379708226-7802-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:44841 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753410Ab3ITVGi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 17:06:38 -0400
+Received: by mail-ob0-f171.google.com with SMTP id wm4so1228100obc.16
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 14:06:37 -0700 (PDT)
+In-Reply-To: <523CB21B.207@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Graeme Smecher <gsmecher@threespeedlogic.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi,
+On Fri, Sep 20, 2013 at 10:37 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
 
-On Fri, Sep 20, 2013 at 10:17:06PM +0200, Linus Walleij wrote:
-> Testing and ACKing appreciated.
+> However could you wait for until the end of this week end, to let me test
+> it on a real hardware?
 
-I think it looks good now. I applied the patches 1-8 on top of 3.12-rc1,
-and Thecus N2100 boots fine and pressing the power button restarts the
-system as expected. So for the whole series:
+Sure, no hurry.
 
-Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-
-Thanks,
-
-A.
+Yours,
+Linus Walleij
