@@ -1,53 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 4/5] regulator: as3722: add regulator driver for AMS
- AS3722
-Date: Fri, 20 Sep 2013 18:08:47 +0100
-Message-ID: <20130920170847.GR21013@sirena.org.uk>
-References: <1379680214-9143-1-git-send-email-ldewangan@nvidia.com>
- <1379680214-9143-5-git-send-email-ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC 5/5] gpiolib: update documentation
+Date: Fri, 20 Sep 2013 19:59:00 +0200
+Message-ID: <CACRpkdbB29rL_kTqKQ6ZC=J=p9amRODRDVFMP6ZoF=aa6k9pqA@mail.gmail.com>
+References: <1378294169-22661-1-git-send-email-acourbot@nvidia.com>
+	<1378294169-22661-6-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3nbTfX4V9Gs/5Yhz"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1379680214-9143-5-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: lee.jones@linaro.org, sameo@linux.intel.com, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, Florian Lobmaier <florian.lobmaier@ams.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:61860 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753198Ab3ITR7B (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 13:59:01 -0400
+Received: by mail-ob0-f175.google.com with SMTP id uz6so956945obc.20
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 10:59:00 -0700 (PDT)
+In-Reply-To: <1378294169-22661-6-git-send-email-acourbot@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
+On Wed, Sep 4, 2013 at 1:29 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
---3nbTfX4V9Gs/5Yhz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> +The GPIO framework has quite a bit of history behind it. Currently there exist
+> +two different (although very similar) ways of using GPIOs:
+> +
+> +  - The legacy integer-based interface represents GPIOs as integers. This is
+> +    the "historic" way of accessing GPIOs and it was done so because it makes
+> +    GPIOs easy to represent and also allows for the compiler to statically know
+> +    the GPIO number and use fast-paths on GPIOs for which performance matters.
+> +    However, GPIOs can easily be forged this way, and the maximum number of
+> +    GPIOs in the system must be known in advance. Functions of this interface
+> +    are prefixed with "gpio_".
+> +
+> +  - The new descriptor-based interface represents GPIOs as an opaque pointer.
+> +    This ensures GPIOs are properly acquired before usage, and also does not
+> +    presume anything about their underlying implementation. This interface
+> +    provides get/put functions to acquire GPIOs according to their function for
+> +    a particular device, similarly to e.g. the regulator framework. For these
+> +    reasons, it is the preferred way to access GPIOs. Its functions are prefixed
+> +    with "gpiod_".
 
-On Fri, Sep 20, 2013 at 06:00:13PM +0530, Laxman Dewangan wrote:
-> The AMS AS3722 is a compact system PMU suitable for mobile phones,
-> tablets etc. It has 4 DCDC step down regulators, 3 DCDC step down
-> controller, 11 LDOs.
+I would put all the new style gpiod_* based things on top of the file, and
+all the old stuff under a separate heading below DEPRECATED LEGACY INTERFACE
+so it's crystal clear that this is going away.
 
-Applied, thanks.
-
---3nbTfX4V9Gs/5Yhz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSPIEbAAoJELSic+t+oim9xDEP/0nU7Qp6D1wCr/LbFIGcnfXD
-56PAT7omsjQy0q7y6bOvnqK82HgD8PNCQq9sxoOOuCSYj7sf6sBUq7BPnQwJZRXz
-0M3NwAZ+Ha8ZSN+Csp7qazEU7L3vfAvTAQZ42NXCwr27yJldmFR38mHuAuv0mxQ+
-ASL4OYTrFyC3TbgYkqBZ3UIz5yej2wtLg86CQGojPjpcXtnB4xry1eTnJg6ec8Id
-EpZQblgtzBHZbA3HxkMrnph2P+1pb6sVtpgcK+iPZA83xAJS9tzLsTb/yHPat3qu
-HgSoBKFqfAX56YFT+PiLsgMNoxsnlqHhS89BrHnFKynOH6LorkT9e57IN42NdCTK
-kAjz+qBn8R+LPtL2pgC5qweJ6dc4QWckV5c3w02HMNA/AOMGZzxmXlCiQ1VvWexG
-rVvJQUzXVSUJxbSDB6qhWSFuwOc7Mc/wtlWOmBfygWsM3ntHaimC96pjCJQlEhmX
-ZjHYAlUor1FTDW4SAxyBuiDytolW3Xga5jA1X0W3qYxlaMPhQLl2t5afvOUkhssd
-DTfKIYuikIujJpOME0D4KtlP4y8I1ndUAyfsMlD0Gt2jCHXtkOyfLMQDwugJh2A5
-8gnAZWThMaNdqVfzDekLJyuQ747v/Z3//zLKTOKw0wVrELIMjPRmv/Cm5aFAHE1p
-DVIQ5jiFcXtZFBZsAQE4
-=5t4b
------END PGP SIGNATURE-----
-
---3nbTfX4V9Gs/5Yhz--
+Yours,
+Linus Walleij
