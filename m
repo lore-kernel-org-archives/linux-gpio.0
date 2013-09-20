@@ -1,21 +1,21 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5/8] ARM: plat-iop: remove custom complex GPIO implementation
-Date: Fri, 20 Sep 2013 22:17:55 +0200
-Message-ID: <1379708275-8008-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 7/8] gpio: iop: use readl/writel accessors
+Date: Fri, 20 Sep 2013 22:18:12 +0200
+Message-ID: <1379708292-8087-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ee0-f44.google.com ([74.125.83.44]:42245 "EHLO
-	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753925Ab3ITUSA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:18:00 -0400
-Received: by mail-ee0-f44.google.com with SMTP id b47so495960eek.3
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 13:17:59 -0700 (PDT)
+Received: from mail-ee0-f54.google.com ([74.125.83.54]:54420 "EHLO
+	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752249Ab3ITUSR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:18:17 -0400
+Received: by mail-ee0-f54.google.com with SMTP id e53so497629eek.27
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 13:18:16 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Aaro Koskinen <aaro.koskinen@iki.fi>
 Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-The kernel will now only use gpiolib to access GPIOs, so remove
-the complex GPIO flag and the custom implementation.
+Use the standard 32bit I/O accessors instead of just assigning
+addresses.
 
 Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
 Cc: Lennert Buytenhek <kernel@wantstofly.org>
@@ -23,117 +23,75 @@ Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Mikael Pettersson <mikpe@it.uu.se>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/include/asm/hardware/iop3xx-gpio.h | 43 -----------------------------
- arch/arm/include/asm/hardware/iop3xx.h      |  3 --
- drivers/gpio/gpio-iop.c                     |  9 ++----
- 3 files changed, 3 insertions(+), 52 deletions(-)
+ drivers/gpio/gpio-iop.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/include/asm/hardware/iop3xx-gpio.h b/arch/arm/include/asm/hardware/iop3xx-gpio.h
-index 9eda7dc..e2a0970 100644
---- a/arch/arm/include/asm/hardware/iop3xx-gpio.h
-+++ b/arch/arm/include/asm/hardware/iop3xx-gpio.h
-@@ -28,48 +28,5 @@
- #include <mach/hardware.h>
- #include <asm-generic/gpio.h>
- 
--#define __ARM_GPIOLIB_COMPLEX
--
--#define IOP3XX_N_GPIOS	8
--
--static inline int gpio_get_value(unsigned gpio)
--{
--	if (gpio > IOP3XX_N_GPIOS)
--		return __gpio_get_value(gpio);
--
--	return gpio_line_get(gpio);
--}
--
--static inline void gpio_set_value(unsigned gpio, int value)
--{
--	if (gpio > IOP3XX_N_GPIOS) {
--		__gpio_set_value(gpio, value);
--		return;
--	}
--	gpio_line_set(gpio, value);
--}
--
--static inline int gpio_cansleep(unsigned gpio)
--{
--	if (gpio < IOP3XX_N_GPIOS)
--		return 0;
--	else
--		return __gpio_cansleep(gpio);
--}
--
--/*
-- * The GPIOs are not generating any interrupt
-- * Note : manuals are not clear about this
-- */
--static inline int gpio_to_irq(int gpio)
--{
--	return -EINVAL;
--}
--
--static inline int irq_to_gpio(int gpio)
--{
--	return -EINVAL;
--}
--
- #endif
- 
-diff --git a/arch/arm/include/asm/hardware/iop3xx.h b/arch/arm/include/asm/hardware/iop3xx.h
-index 423744b..6af9c28 100644
---- a/arch/arm/include/asm/hardware/iop3xx.h
-+++ b/arch/arm/include/asm/hardware/iop3xx.h
-@@ -25,9 +25,6 @@
- #define IOP3XX_GPIO_LINE(x)	(x)
- 
- #ifndef __ASSEMBLY__
--extern void gpio_line_config(int line, int direction);
--extern int  gpio_line_get(int line);
--extern void gpio_line_set(int line, int value);
- extern int init_atu;
- extern int iop3xx_get_init_atu(void);
- #endif
 diff --git a/drivers/gpio/gpio-iop.c b/drivers/gpio/gpio-iop.c
-index d4a170d..17cc701 100644
+index 24a86b0..0d991d7 100644
 --- a/drivers/gpio/gpio-iop.c
 +++ b/drivers/gpio/gpio-iop.c
-@@ -19,7 +19,7 @@
+@@ -17,6 +17,8 @@
+ #include <linux/gpio.h>
+ #include <linux/export.h>
+ #include <linux/platform_device.h>
++#include <linux/bitops.h>
++#include <linux/io.h>
  
  #define IOP3XX_N_GPIOS	8
  
--void gpio_line_config(int line, int direction)
-+static void gpio_line_config(int line, int direction)
+@@ -29,38 +31,44 @@
+ static void __iomem *base;
+ 
+ #define IOP3XX_GPIO_REG(reg)	(base + (reg))
+-#define IOP3XX_GPOE		(volatile u32 *)IOP3XX_GPIO_REG(0x0000)
+-#define IOP3XX_GPID		(volatile u32 *)IOP3XX_GPIO_REG(0x0004)
+-#define IOP3XX_GPOD		(volatile u32 *)IOP3XX_GPIO_REG(0x0008)
++#define IOP3XX_GPOE		IOP3XX_GPIO_REG(0x0000)
++#define IOP3XX_GPID		IOP3XX_GPIO_REG(0x0004)
++#define IOP3XX_GPOD		IOP3XX_GPIO_REG(0x0008)
+ 
+ static void gpio_line_config(int line, int direction)
  {
  	unsigned long flags;
++	u32 val;
  
-@@ -31,15 +31,13 @@ void gpio_line_config(int line, int direction)
+ 	local_irq_save(flags);
++	val = readl(IOP3XX_GPOE);
+ 	if (direction == GPIO_IN) {
+-		*IOP3XX_GPOE |= 1 << line;
++		val |= BIT(line);
+ 	} else if (direction == GPIO_OUT) {
+-		*IOP3XX_GPOE &= ~(1 << line);
++		val &= ~BIT(line);
  	}
++	writel(val, IOP3XX_GPOE);
  	local_irq_restore(flags);
  }
--EXPORT_SYMBOL(gpio_line_config);
  
--int gpio_line_get(int line)
-+static int gpio_line_get(int line)
+ static int gpio_line_get(int line)
  {
- 	return !!(*IOP3XX_GPID & (1 << line));
+-	return !!(*IOP3XX_GPID & (1 << line));
++	return !!(readl(IOP3XX_GPID) & BIT(line));
  }
--EXPORT_SYMBOL(gpio_line_get);
  
--void gpio_line_set(int line, int value)
-+static void gpio_line_set(int line, int value)
+ static void gpio_line_set(int line, int value)
  {
  	unsigned long flags;
++	u32 val;
  
-@@ -51,7 +49,6 @@ void gpio_line_set(int line, int value)
+ 	local_irq_save(flags);
++	val = readl(IOP3XX_GPOD);
+ 	if (value == GPIO_LOW) {
+-		*IOP3XX_GPOD &= ~(1 << line);
++		val &= ~BIT(line);
+ 	} else if (value == GPIO_HIGH) {
+-		*IOP3XX_GPOD |= 1 << line;
++		val |= BIT(line);
  	}
++	writel(val, IOP3XX_GPOD);
  	local_irq_restore(flags);
  }
--EXPORT_SYMBOL(gpio_line_set);
  
- static int iop3xx_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
- {
 -- 
 1.8.3.1
 
