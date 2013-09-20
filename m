@@ -1,90 +1,68 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/8] ARM: iop32x: request and issue reset using gpio
-Date: Fri, 20 Sep 2013 22:17:32 +0200
-Message-ID: <1379708252-7887-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 0/8] IOP GPIO refactoring take 2
+Date: Fri, 20 Sep 2013 22:17:06 +0200
+Message-ID: <1379708226-7802-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ea0-f173.google.com ([209.85.215.173]:51723 "EHLO
+Received: from mail-ea0-f173.google.com ([209.85.215.173]:47383 "EHLO
 	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753933Ab3ITURg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:17:36 -0400
-Received: by mail-ea0-f173.google.com with SMTP id g10so491275eak.32
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 13:17:35 -0700 (PDT)
+	with ESMTP id S1755139Ab3ITURX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:17:23 -0400
+Received: by mail-ea0-f173.google.com with SMTP id g10so491210eak.32
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 13:17:21 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Aaro Koskinen <aaro.koskinen@iki.fi>
 Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-As the IOP GPIO driver supports gpiolib we can use the standard
-GPIO calls to issue a reset of the machine instead of using the
-custom gpio_line_set/config calls. Also request the GPIO when
-initializing the machine.
+This is a resend of the IOP GPIO refactoring, this time
+I took some extra care to be sure I moved all the IOP32x boards
+to instantiate their platform devices properly, as noted
+by Aaro.
 
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Lennert Buytenhek <kernel@wantstofly.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Mikael Pettersson <mikpe@it.uu.se>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v2->v3:
-- Also check machine_is_n2100() so we don't request the GPIOs
-  on any other machine at boot.
-ChangeLog v1->v2:
-- Request GPIOs in a separate device_initcall() instead of
-  doing it from machine_init, as the gpio chip is registered
-  after the machine init, what was I thinking about?
----
- arch/arm/mach-iop32x/n2100.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+Also available as a branch:
 
-diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
-index 0691443..6bace5b 100644
---- a/arch/arm/mach-iop32x/n2100.c
-+++ b/arch/arm/mach-iop32x/n2100.c
-@@ -30,6 +30,7 @@
- #include <linux/platform_device.h>
- #include <linux/reboot.h>
- #include <linux/io.h>
-+#include <linux/gpio.h>
- #include <mach/hardware.h>
- #include <asm/irq.h>
- #include <asm/mach/arch.h>
-@@ -288,8 +289,14 @@ static void n2100_power_off(void)
- 
- static void n2100_restart(enum reboot_mode mode, const char *cmd)
- {
--	gpio_line_set(N2100_HARDWARE_RESET, GPIO_LOW);
--	gpio_line_config(N2100_HARDWARE_RESET, GPIO_OUT);
-+	int ret;
-+
-+	ret = gpio_direction_output(N2100_HARDWARE_RESET, 0);
-+	if (ret) {
-+		pr_crit("could not drive reset GPIO low\n");
-+		return;
-+	}
-+	/* Wait for reset to happen */
- 	while (1)
- 		;
- }
-@@ -308,6 +315,19 @@ static void power_button_poll(unsigned long dummy)
- 	add_timer(&power_button_poll_timer);
- }
- 
-+static int __init n2100_request_gpios(void)
-+{
-+	int ret;
-+
-+	if (!machine_is_n2100())
-+		return 0;
-+
-+	ret = gpio_request(N2100_HARDWARE_RESET, "reset");
-+	if (ret)
-+		pr_err("could not request reset GPIO\n");
-+	return 0;
-+}
-+device_initcall(n2100_request_gpios);
- 
- static void __init n2100_init_machine(void)
- {
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git iop-cleanup
+
+Testing and ACKing appreciated.
+
+Linus Walleij (8):
+  ARM: plat-iop: move the GPIO driver to drivers/gpio
+  ARM: iop32x: request and issue reset using gpio
+  ARM: iop32x: read N2100 power key using gpiolib
+  gpio: decouple the IOP GPIO driver from platform
+  ARM: plat-iop: remove custom complex GPIO implementation
+  ARM: plat-iop: instantiate GPIO from platform device
+  gpio: iop: use readl/writel accessors
+  ARM: plat-iop: pass physical base for GPIO
+
+ arch/arm/Kconfig                            |   4 +-
+ arch/arm/include/asm/hardware/iop3xx-gpio.h |  75 ----------------
+ arch/arm/include/asm/hardware/iop3xx.h      |  12 ---
+ arch/arm/mach-iop32x/em7210.c               |   2 +
+ arch/arm/mach-iop32x/glantank.c             |   2 +
+ arch/arm/mach-iop32x/gpio-iop32x.h          |  10 +++
+ arch/arm/mach-iop32x/include/mach/gpio.h    |   6 --
+ arch/arm/mach-iop32x/include/mach/iop32x.h  |   1 -
+ arch/arm/mach-iop32x/iq31244.c              |   2 +
+ arch/arm/mach-iop32x/iq80321.c              |   2 +
+ arch/arm/mach-iop32x/n2100.c                |  47 ++++++++--
+ arch/arm/mach-iop33x/include/mach/gpio.h    |   6 --
+ arch/arm/mach-iop33x/include/mach/iop33x.h  |   1 -
+ arch/arm/mach-iop33x/iq80331.c              |   7 ++
+ arch/arm/mach-iop33x/iq80332.c              |   7 ++
+ arch/arm/plat-iop/Makefile                  |   2 -
+ arch/arm/plat-iop/gpio.c                    |  93 --------------------
+ drivers/gpio/Kconfig                        |   9 ++
+ drivers/gpio/Makefile                       |   1 +
+ drivers/gpio/gpio-iop.c                     | 130 ++++++++++++++++++++++++++++
+ 20 files changed, 213 insertions(+), 206 deletions(-)
+ delete mode 100644 arch/arm/include/asm/hardware/iop3xx-gpio.h
+ create mode 100644 arch/arm/mach-iop32x/gpio-iop32x.h
+ delete mode 100644 arch/arm/mach-iop32x/include/mach/gpio.h
+ delete mode 100644 arch/arm/mach-iop33x/include/mach/gpio.h
+ delete mode 100644 arch/arm/plat-iop/gpio.c
+ create mode 100644 drivers/gpio/gpio-iop.c
+
 -- 
 1.8.3.1
 
