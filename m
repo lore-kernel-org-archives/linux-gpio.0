@@ -1,62 +1,33 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH] gpio: pca953x: Don't flip bits on PCA957x GPIO expanders
- when probing them.
-Date: Fri, 20 Sep 2013 22:37:47 +0200
-Message-ID: <523CB21B.207@free-electrons.com>
-References: <1379108508-19933-1-git-send-email-gsmecher@threespeedlogic.com> <CACRpkdbwo5J9tx4KcPf5sVngCyqEkauqn0GFzJ844GuuixBFsQ@mail.gmail.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+Subject: Re: [PATCH 0/8] IOP GPIO refactoring take 2
+Date: Fri, 20 Sep 2013 23:58:15 +0300
+Message-ID: <20130920205815.GF30568@blackmetal.musicnaut.iki.fi>
+References: <1379708226-7802-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:49214 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752055Ab3ITUh5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:37:57 -0400
-In-Reply-To: <CACRpkdbwo5J9tx4KcPf5sVngCyqEkauqn0GFzJ844GuuixBFsQ@mail.gmail.com>
+Received: from filtteri1.pp.htv.fi ([213.243.153.184]:48048 "EHLO
+	filtteri1.pp.htv.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754018Ab3ITU6W (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:58:22 -0400
+Content-Disposition: inline
+In-Reply-To: <1379708226-7802-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Graeme Smecher <gsmecher@threespeedlogic.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org
 
-Hi Linus,
+Hi,
 
-On 20/09/2013 22:24, Linus Walleij wrote:
-> On Fri, Sep 13, 2013 at 11:41 PM, Graeme Smecher
-> <gsmecher@threespeedlogic.com> wrote:
-> 
->> The pca957x driver supports a handful of I2C GPIO expanders from NXP, Maxim,
->> and TI. For the PCA9574 and PCA9575 devices only, the driver resets the GPIO
->> level and direction in the pca957x_probe function. This seems like the wrong
->> thing to do, since it can cause hardware bit twiddles during warm reboots when
->> the chip state and reset values don't match.
->>
->> This kind of initialization is best left upstream (in a bootloader) or
->> downstream (in userspace). It's also an inconsistency across devices supported
->> by this driver.
->>
->> This patch is NOT boot-tested: the SoC I'm  using is stuck on 2.6.37, and the
->> patch doesn't apply trivially.
->>
->> Signed-off-by: Graeme Smecher <gsmecher@threespeedlogic.com>
->> Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
-> 
-> Looks like you're deleting code from Gregory CLEMENT,
-> Gregory what do you say about this?
+On Fri, Sep 20, 2013 at 10:17:06PM +0200, Linus Walleij wrote:
+> Testing and ACKing appreciated.
 
-Thanks to point me this patch, I didn't have noticed it.
-The code being removed is mine because I change it to take care of the
-multiple bankd. I didn't change the functionality. The original code
-was from Haojian Zhuang so as he gave his acked-by it should be fine.
+I think it looks good now. I applied the patches 1-8 on top of 3.12-rc1,
+and Thecus N2100 boots fine and pressing the power button restarts the
+system as expected. So for the whole series:
 
-However could you wait for until the end of this week end, to let me test
-it on a real hardware?
+Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 
 Thanks,
 
-Gregory
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+A.
