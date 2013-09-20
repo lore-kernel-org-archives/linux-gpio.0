@@ -1,32 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: bt8xx: remove unnecessary pci_set_drvdata()
-Date: Fri, 20 Sep 2013 20:43:40 +0200
-Message-ID: <CACRpkdaPA_3uD_Hg0Xve4tAwVRcRCBoiKGt6-ePMRHFGaHLULA@mail.gmail.com>
-References: <001901ceaf84$1627bd10$42773730$%han@samsung.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH/RESEND 1/2] gpio: rcar: Remove #gpio-range-cells DT
+ property usage
+Date: Fri, 20 Sep 2013 12:06:14 -0700
+Message-ID: <20130920190614.GF22321@verge.net.au>
+References: <1378907462-19247-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1378907462-19247-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <CACRpkdZ4EaUVgYoMP6VMefZgE1T--5hh18RzupQLnbd0KpveAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:46856 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753745Ab3ITSnk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 14:43:40 -0400
-Received: by mail-ob0-f182.google.com with SMTP id wo20so1043637obc.13
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 11:43:40 -0700 (PDT)
-In-Reply-To: <001901ceaf84$1627bd10$42773730$%han@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ4EaUVgYoMP6VMefZgE1T--5hh18RzupQLnbd0KpveAA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Buesch <m@bues.ch>
 
-On Thu, Sep 12, 2013 at 8:48 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+On Fri, Sep 20, 2013 at 08:36:57PM +0200, Linus Walleij wrote:
+> On Wed, Sep 11, 2013 at 3:51 PM, Laurent Pinchart
+> <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> 
+> > Commit a1bc260bb5f5d95da854be7898202d788e94448d ("gpio: clean up
+> > gpio-ranges documentation") deprecated the #gpio-range-cells property.
+> > Replace its usage with a hardcoded value in the gpio-rcar driver.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Simon please take the whole set into the SH tree.
 
-> The driver core clears the driver data to NULL after device_release
-> or on probe failure. Thus, it is not needed to manually clear the
-> device driver data to NULL.
->
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+Thanks, will do.
