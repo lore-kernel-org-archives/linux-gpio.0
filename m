@@ -1,30 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 1/5] gpiolib: factorize gpiod_get/set functions
-Date: Fri, 20 Sep 2013 10:36:34 +0200
-Message-ID: <CACRpkdZrjM0cQm8AXNDnaSh2Tp5BVcevDUObFg87cUTEmJxc1w@mail.gmail.com>
-References: <1378294169-22661-1-git-send-email-acourbot@nvidia.com>
-	<1378294169-22661-2-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <1378294169-22661-2-git-send-email-acourbot@nvidia.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] gpio: bt8xx: Remove redundant pci_set_drvdata
+Date: Fri, 20 Sep 2013 14:52:29 +0530
+Message-ID: <1379668949-2986-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:41782 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754148Ab3ITJWU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 05:22:20 -0400
+Received: by mail-pa0-f47.google.com with SMTP id kl13so486738pab.20
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 02:22:19 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: m@bues.ch, linus.walleij@linaro.org, sachin.kamat@linaro.org
 
-On Wed, Sep 4, 2013 at 1:29 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+Driver core sets driver data to NULL upon failure or remove.
 
-> gpiod_get/set functions share common code between their regular and
-> cansleep variants. The exporting of the gpiod interface will make
-> the situation worse. This patch factorizes the common code to avoid code
-> redundancy.
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/gpio/gpio-bt8xx.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-I don't see why this patch should be RFC?
+diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
+index 8369e71..9dfe36f 100644
+--- a/drivers/gpio/gpio-bt8xx.c
++++ b/drivers/gpio/gpio-bt8xx.c
+@@ -228,7 +228,6 @@ static int bt8xxgpio_probe(struct pci_dev *dev,
+ err_release_mem:
+ 	release_mem_region(pci_resource_start(dev, 0),
+ 			   pci_resource_len(dev, 0));
+-	pci_set_drvdata(dev, NULL);
+ err_disable:
+ 	pci_disable_device(dev);
+ err_freebg:
+@@ -252,7 +251,6 @@ static void bt8xxgpio_remove(struct pci_dev *pdev)
+ 			   pci_resource_len(pdev, 0));
+ 	pci_disable_device(pdev);
+ 
+-	pci_set_drvdata(pdev, NULL);
+ 	kfree(bg);
+ }
+ 
+-- 
+1.7.9.5
 
-I just rebased and applied it, it's a clean and nice refactoring.
-
-Yours,
-Linus Walleij
