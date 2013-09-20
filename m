@@ -1,68 +1,84 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 0/8] IOP GPIO refactoring take 2
-Date: Fri, 20 Sep 2013 22:17:06 +0200
-Message-ID: <1379708226-7802-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 3/8] ARM: iop32x: read N2100 power key using gpiolib
+Date: Fri, 20 Sep 2013 22:17:39 +0200
+Message-ID: <1379708259-7928-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ea0-f173.google.com ([209.85.215.173]:47383 "EHLO
-	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755139Ab3ITURX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:17:23 -0400
-Received: by mail-ea0-f173.google.com with SMTP id g10so491210eak.32
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 13:17:21 -0700 (PDT)
+Received: from mail-ee0-f41.google.com ([74.125.83.41]:59704 "EHLO
+	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753933Ab3ITURo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2013 16:17:44 -0400
+Received: by mail-ee0-f41.google.com with SMTP id d17so497203eek.28
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Sep 2013 13:17:43 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Aaro Koskinen <aaro.koskinen@iki.fi>
 Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-This is a resend of the IOP GPIO refactoring, this time
-I took some extra care to be sure I moved all the IOP32x boards
-to instantiate their platform devices properly, as noted
-by Aaro.
+Refrain from using the custom gpio_line_get() to read the power
+key on the N2100, use the gpiolib function gpio_get() instead.
+Also request the line in the GPIOs initicall, and move the poll
+timer setup to that inicall so the gpio chip is available before
+we request this GPIO and start to poll it.
 
-Also available as a branch:
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Lennert Buytenhek <kernel@wantstofly.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Mikael Pettersson <mikpe@it.uu.se>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Move the setup and poll init into the new GPIO initialization
+  function to avoid probe order problems.
+---
+ arch/arm/mach-iop32x/n2100.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git iop-cleanup
-
-Testing and ACKing appreciated.
-
-Linus Walleij (8):
-  ARM: plat-iop: move the GPIO driver to drivers/gpio
-  ARM: iop32x: request and issue reset using gpio
-  ARM: iop32x: read N2100 power key using gpiolib
-  gpio: decouple the IOP GPIO driver from platform
-  ARM: plat-iop: remove custom complex GPIO implementation
-  ARM: plat-iop: instantiate GPIO from platform device
-  gpio: iop: use readl/writel accessors
-  ARM: plat-iop: pass physical base for GPIO
-
- arch/arm/Kconfig                            |   4 +-
- arch/arm/include/asm/hardware/iop3xx-gpio.h |  75 ----------------
- arch/arm/include/asm/hardware/iop3xx.h      |  12 ---
- arch/arm/mach-iop32x/em7210.c               |   2 +
- arch/arm/mach-iop32x/glantank.c             |   2 +
- arch/arm/mach-iop32x/gpio-iop32x.h          |  10 +++
- arch/arm/mach-iop32x/include/mach/gpio.h    |   6 --
- arch/arm/mach-iop32x/include/mach/iop32x.h  |   1 -
- arch/arm/mach-iop32x/iq31244.c              |   2 +
- arch/arm/mach-iop32x/iq80321.c              |   2 +
- arch/arm/mach-iop32x/n2100.c                |  47 ++++++++--
- arch/arm/mach-iop33x/include/mach/gpio.h    |   6 --
- arch/arm/mach-iop33x/include/mach/iop33x.h  |   1 -
- arch/arm/mach-iop33x/iq80331.c              |   7 ++
- arch/arm/mach-iop33x/iq80332.c              |   7 ++
- arch/arm/plat-iop/Makefile                  |   2 -
- arch/arm/plat-iop/gpio.c                    |  93 --------------------
- drivers/gpio/Kconfig                        |   9 ++
- drivers/gpio/Makefile                       |   1 +
- drivers/gpio/gpio-iop.c                     | 130 ++++++++++++++++++++++++++++
- 20 files changed, 213 insertions(+), 206 deletions(-)
- delete mode 100644 arch/arm/include/asm/hardware/iop3xx-gpio.h
- create mode 100644 arch/arm/mach-iop32x/gpio-iop32x.h
- delete mode 100644 arch/arm/mach-iop32x/include/mach/gpio.h
- delete mode 100644 arch/arm/mach-iop33x/include/mach/gpio.h
- delete mode 100644 arch/arm/plat-iop/gpio.c
- create mode 100644 drivers/gpio/gpio-iop.c
-
+diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
+index 6bace5b..bc40a97 100644
+--- a/arch/arm/mach-iop32x/n2100.c
++++ b/arch/arm/mach-iop32x/n2100.c
+@@ -306,7 +306,7 @@ static struct timer_list power_button_poll_timer;
+ 
+ static void power_button_poll(unsigned long dummy)
+ {
+-	if (gpio_line_get(N2100_POWER_BUTTON) == 0) {
++	if (gpio_get_value(N2100_POWER_BUTTON) == 0) {
+ 		ctrl_alt_del();
+ 		return;
+ 	}
+@@ -325,6 +325,20 @@ static int __init n2100_request_gpios(void)
+ 	ret = gpio_request(N2100_HARDWARE_RESET, "reset");
+ 	if (ret)
+ 		pr_err("could not request reset GPIO\n");
++
++	ret = gpio_request(N2100_POWER_BUTTON, "power");
++	if (ret)
++		pr_err("could not request power GPIO\n");
++	else {
++		ret = gpio_direction_input(N2100_POWER_BUTTON);
++		if (ret)
++			pr_err("could not set power GPIO as input\n");
++	}
++	/* Set up power button poll timer */
++	init_timer(&power_button_poll_timer);
++	power_button_poll_timer.function = power_button_poll;
++	power_button_poll_timer.expires = jiffies + (HZ / 10);
++	add_timer(&power_button_poll_timer);
+ 	return 0;
+ }
+ device_initcall(n2100_request_gpios);
+@@ -341,11 +355,6 @@ static void __init n2100_init_machine(void)
+ 		ARRAY_SIZE(n2100_i2c_devices));
+ 
+ 	pm_power_off = n2100_power_off;
+-
+-	init_timer(&power_button_poll_timer);
+-	power_button_poll_timer.function = power_button_poll;
+-	power_button_poll_timer.expires = jiffies + (HZ / 10);
+-	add_timer(&power_button_poll_timer);
+ }
+ 
+ MACHINE_START(N2100, "Thecus N2100")
 -- 
 1.8.3.1
 
