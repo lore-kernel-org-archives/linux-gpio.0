@@ -1,28 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 00/27] sh-pfc: Support pins with no associated GPIO port
-Date: Sat, 21 Sep 2013 10:59:20 +0200
-Message-ID: <CACRpkdYFWJbHkwffrFes4o4btCGaZdXJxmxgxxMb_Mpc__5eQA@mail.gmail.com>
-References: <1373933479-17727-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<11379562.iEdjek24uT@avalon>
-	<20130719021045.GE4403@verge.net.au>
-	<20130921004335.GA26271@verge.net.au>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 0/5] New descriptor-based GPIO interface
+Date: Sat, 21 Sep 2013 21:32:47 +0900
+Message-ID: <CAAVeFuLyUE_46xKCK23Mr_o2Dp2wZ4vVvcNQrQ6eDK-848RGkg@mail.gmail.com>
+References: <1378294169-22661-1-git-send-email-acourbot@nvidia.com>
+ <CACRpkdYjkDf7c9VxfDTHtFx_upWWRAK8vpXTkrkrRsMjErq1dQ@mail.gmail.com>
+ <20130920193254.GA19130@mithrandir> <CACRpkdbFhORYnAUf+BMXtL1LezL7gPJ6gKQnqwvKZjqqCt3A4Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20130921004335.GA26271@verge.net.au>
-Sender: linux-sh-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdbFhORYnAUf+BMXtL1LezL7gPJ6gKQnqwvKZjqqCt3A4Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Sep 21, 2013 at 2:43 AM, Simon Horman <horms@verge.net.au> wrote:
-> Hi Laurent,
+On Sat, Sep 21, 2013 at 6:23 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Fri, Sep 20, 2013 at 9:32 PM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 >
-> I am currently rebasing the renesas tree on v3.12-rc1 in preparation
-> for preparing pull-requests for v3.13. Should I continue to carry
-> sh-pfc/pins-with-no-gpio-port in devel?
+>> Given that it seems like there won't be a linux-next from September 28
+>> until close to the next merge window, it would be good to get this into
+>> linux-next before that so that the series can receive broader testing.
+>
+> Good point. Alexandre: ready when you are.
 
-Sounds like something I should carry in the pinctrl tree?
+I really need to test this more extensively, but give me a couple of
+days and I will send a real submission of it (not a RFC). Then we can
+discuss the small issues that remain.
 
-Yours,
-Linus Walleij
+Thanks,
+Alex.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
