@@ -1,91 +1,133 @@
-From: "Markus Mayer" <mmayer@broadcom.com>
-Subject: Re: [PATCH v2] gpio: bcm-kona: only use set_irq_flags() on ARM
-Date: Fri, 20 Sep 2013 14:26:32 -0700
-Message-ID: <523CBD88.30805@broadcom.com>
-References: <1379711978-10973-1-git-send-email-linus.walleij@linaro.org>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH v2 00/27] sh-pfc: Support pins with no associated GPIO
+ port
+Date: Fri, 20 Sep 2013 17:43:36 -0700
+Message-ID: <20130921004335.GA26271@verge.net.au>
+References: <1373933479-17727-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <11379562.iEdjek24uT@avalon>
+ <20130719021045.GE4403@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=iso-8859-1;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mms3.broadcom.com ([216.31.210.19]:3447 "EHLO mms3.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752949Ab3ITV00 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 20 Sep 2013 17:26:26 -0400
-In-Reply-To: <1379711978-10973-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130719021045.GE4403@verge.net.au>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On 13-09-20 02:19 PM, Linus Walleij wrote:
-> As per the pattern from other GPIO drivers, use set_irq_flags()
-> on ARM only, use irq_set_noprobe() on other archs.
->
-> Also rename the argument "virq" to just "irq", this IRQ isn't
-> any more "virtual" than any other Linux IRQ number, we use
-> "hwirq" for the actual hw-numbers, "virq" is just bogus.
->
-> Cc: Markus Mayer <mmayer@broadcom.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Forgot a second place the code was using set_irq_flags()...
-> ---
->   drivers/gpio/gpio-bcm-kona.c | 20 ++++++++++++++------
->   1 file changed, 14 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-> index f7d932a..c0751a8 100644
-> --- a/drivers/gpio/gpio-bcm-kona.c
-> +++ b/drivers/gpio/gpio-bcm-kona.c
-> @@ -468,18 +468,22 @@ MODULE_DEVICE_TABLE(of, bcm_kona_gpio_of_match);
->    */
->   static struct lock_class_key gpio_lock_class;
->
-> -static int bcm_kona_gpio_irq_map(struct irq_domain *d, unsigned int virq,
-> +static int bcm_kona_gpio_irq_map(struct irq_domain *d, unsigned int irq,
->   				 irq_hw_number_t hwirq)
->   {
->   	int ret;
->
-> -	ret = irq_set_chip_data(virq, d->host_data);
-> +	ret = irq_set_chip_data(irq, d->host_data);
->   	if (ret < 0)
->   		return ret;
-> -	irq_set_lockdep_class(virq, &gpio_lock_class);
-> -	irq_set_chip_and_handler(virq, &bcm_gpio_irq_chip, handle_simple_irq);
-> -	irq_set_nested_thread(virq, 1);
-> -	set_irq_flags(virq, IRQF_VALID);
-> +	irq_set_lockdep_class(irq, &gpio_lock_class);
-> +	irq_set_chip_and_handler(irq, &bcm_gpio_irq_chip, handle_simple_irq);
-> +	irq_set_nested_thread(irq, 1);
-> +#ifdef CONFIG_ARM
-> +	set_irq_flags(irq, IRQF_VALID);
-> +#else
-> +	irq_set_noprobe(irq);
-> +#endif
->
->   	return 0;
->   }
-> @@ -598,7 +602,11 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
->   		irq_set_lockdep_class(irq, &gpio_lock_class);
->   		irq_set_chip_and_handler(irq, &bcm_gpio_irq_chip,
->   					 handle_simple_irq);
-> +#ifdef CONFIG_ARM
->   		set_irq_flags(irq, IRQF_VALID);
-> +#else
-> +		irq_set_noprobe(irq);
-> +#endif
->   	}
->   	for (i = 0; i < kona_gpio->num_bank; i++) {
->   		bank = &kona_gpio->banks[i];
->
+Hi Laurent,
 
-Thanks for the fix.
+I am currently rebasing the renesas tree on v3.12-rc1 in preparation
+for preparing pull-requests for v3.13. Should I continue to carry
+sh-pfc/pins-with-no-gpio-port in devel?
 
-Reviewed-by: Markus Mayer <mmayer@broadcom.com>
-
-
-
+On Fri, Jul 19, 2013 at 11:10:45AM +0900, Simon Horman wrote:
+> Hi Laurent,
+> 
+> sure, that sounds reasonable.
+> 
+> I will put the patches in a new sh-pfc/pins-with-no-gpio-port branch
+> and include this in devel later today. It should be included
+> in the renesas-devel-20130719 tag.
+> 
+> On Thu, Jul 18, 2013 at 03:24:24AM +0200, Laurent Pinchart wrote:
+> > Hi Simon,
+> > 
+> > I've received a positive test feedback for this patch series. Could you please 
+> > include it in your -devel tags to get wider test coverage ? I'll then wait a 
+> > couple of weeks and, if no problem is found, send a pull request to Linus to 
+> > get the series merged through the pinctrl tree.
+> > 
+> > On Tuesday 16 July 2013 02:10:52 Laurent Pinchart wrote:
+> > > Hello,
+> > > 
+> > > Here's the second version of a patch series that cleans up and refactors the
+> > > sh-pfc driver to add support for pins with no associated GPIO port.
+> > > 
+> > > Most configurable pins in SuperH and SH Mobile devices can be used as a
+> > > GPIO. However, some of them have selectable functions but are not
+> > > associated with a GPIO. Those pins must be defined in the pinmux pins array
+> > > but not registered in the GPIOs ranges.
+> > > 
+> > > The series first cleans up the sh-pfc driver by removing unused features (01
+> > > to 13) and then gradually refactors the code (14 to 21) to add pin numbers
+> > > to the sh_pfc_pin structure (22 to 24). It finally computes pin ranges
+> > > automatically (26) and adds support for pins without a GPIO port (27).
+> > > 
+> > > The patches have been compiled for all supported SoCs and tested on the
+> > > KZM9G board (SH73A0) with a hack to add I2C4 pins that have no GPIO port.
+> > > I'm lacking hardware to test R8A7778 which would be a good test candidate.
+> > > 
+> > > The patches are based on v3.11-rc1.
+> > > 
+> > > Changes since v1:
+> > > 
+> > > - Split patch 01/19 into per-SoC patches smaller than the vger limit
+> > > 
+> > > Laurent Pinchart (27):
+> > >   sh-pfc: sh7720: Remove unused input_pu range
+> > >   sh-pfc: sh7722: Remove unused input_pd and input_pu ranges
+> > >   sh-pfc: sh7723: Remove unused input_pu range
+> > >   sh-pfc: sh7724: Remove unused input_pu range
+> > >   sh-pfc: sh7757: Remove unused input_pu range
+> > >   sh-pfc: sh7785: Remove unused input_pu range
+> > >   sh-pfc: sh7786: Remove unused input_pu range
+> > >   sh-pfc: shx3: Remove unused input_pu range
+> > >   sh-pfc: Remove unused input_pd and input_pu ranges
+> > >   sh-pfc: Remove unused PORT_DATA_* macros
+> > >   sh-pfc: Remove unused macro and enum entries
+> > >   sh-pfc: Remove unneeded const keywords
+> > >   sh-pfc: Remove unused GPIO_PORT_ALL macro
+> > >   sh-pfc: Don't overallocate memory for the GPIO chip pins array
+> > >   sh-pfc: Replace pinmux_enum_id typedef with u16
+> > >   sh-pfc: Rename gpio arguments to be consistent with the rest of the
+> > >     code
+> > >   sh-pfc: Consolidate PFC SoC data macros
+> > >   sh-pfc: Consolidate pin definition macros
+> > >   sh-pfc: sh7734: Use the common GP port style macros
+> > >   sh-pfc: shx3: Remove shx3_ prefix from static symbols
+> > >   sh-pfc: Don't duplicate argument to PINMUX_GPIO macro
+> > >   sh-pfc: Add port numbers to the CPU_ALL_PORT macro
+> > >   sh-pfc: Pass the pin number down to the port function macro
+> > >   sh-pfc: Add pin number to struct sh_pfc_pin
+> > >   sh-pfc: Rename struct sh_pfc nr_pins field to nr_gpio_pins
+> > >   sh-pfc: Compute pin ranges automatically
+> > >   sh-pfc: Support pins not associated with a GPIO port
+> > > 
+> > >  drivers/pinctrl/sh-pfc/core.c        |   99 ++-
+> > >  drivers/pinctrl/sh-pfc/core.h        |   10 +-
+> > >  drivers/pinctrl/sh-pfc/gpio.c        |   45 +-
+> > >  drivers/pinctrl/sh-pfc/pfc-r8a73a4.c |  157 ++---
+> > >  drivers/pinctrl/sh-pfc/pfc-r8a7740.c |   47 +-
+> > >  drivers/pinctrl/sh-pfc/pfc-r8a7778.c |   55 +-
+> > >  drivers/pinctrl/sh-pfc/pfc-r8a7779.c |   63 +-
+> > >  drivers/pinctrl/sh-pfc/pfc-r8a7790.c |   59 +-
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7203.c  |  202 ++++---
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7264.c  |  246 ++++----
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7269.c  |  285 +++++----
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7372.c  |   53 +-
+> > >  drivers/pinctrl/sh-pfc/pfc-sh73a0.c  |  104 ++--
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7720.c  |  701 +++++++++++-----------
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7722.c  |  747 +++++++++++------------
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7723.c  |  381 ++++++------
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7724.c  | 1093 ++++++++++++++-----------------
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7734.c  |   60 +-
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7757.c  |  709 +++++++++++-----------
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7785.c  |  700 +++++++++++-----------
+> > >  drivers/pinctrl/sh-pfc/pfc-sh7786.c  |  383 ++++++------
+> > >  drivers/pinctrl/sh-pfc/pfc-shx3.c    |  423 +++++++------
+> > >  drivers/pinctrl/sh-pfc/pinctrl.c     |   49 +-
+> > >  drivers/pinctrl/sh-pfc/sh_pfc.h      |  277 +++++----
+> > >  24 files changed, 3275 insertions(+), 3673 deletions(-)
+> > 
+> > -- 
+> > Regards,
+> > 
+> > Laurent Pinchart
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > 
