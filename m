@@ -1,38 +1,48 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 00/27] sh-pfc: Support pins with no associated GPIO port
-Date: Sat, 21 Sep 2013 20:56:07 +0200
-Message-ID: <1635782.W0dvDAedis@avalon>
-References: <1373933479-17727-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20130921004335.GA26271@verge.net.au> <CACRpkdYFWJbHkwffrFes4o4btCGaZdXJxmxgxxMb_Mpc__5eQA@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH/RESEND 1/2] gpio: rcar: Remove #gpio-range-cells DT
+ property usage
+Date: Sun, 22 Sep 2013 21:04:48 +0900
+Message-ID: <20130922120446.GB8941@verge.net.au>
+References: <1378907462-19247-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <CACRpkdZ4EaUVgYoMP6VMefZgE1T--5hh18RzupQLnbd0KpveAA@mail.gmail.com>
+ <20130920190614.GF22321@verge.net.au>
+ <1566063.hFmS6D0Ff2@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:47038 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752391Ab3IUS4E (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Sep 2013 14:56:04 -0400
-In-Reply-To: <CACRpkdYFWJbHkwffrFes4o4btCGaZdXJxmxgxxMb_Mpc__5eQA@mail.gmail.com>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56455 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752879Ab3IVMEy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Sep 2013 08:04:54 -0400
+Content-Disposition: inline
+In-Reply-To: <1566063.hFmS6D0Ff2@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Linus and Simon,
-
-On Saturday 21 September 2013 10:59:20 Linus Walleij wrote:
-> On Sat, Sep 21, 2013 at 2:43 AM, Simon Horman <horms@verge.net.au> wrote:
-> > Hi Laurent,
-> > 
-> > I am currently rebasing the renesas tree on v3.12-rc1 in preparation
-> > for preparing pull-requests for v3.13. Should I continue to carry
-> > sh-pfc/pins-with-no-gpio-port in devel?
+On Fri, Sep 20, 2013 at 09:57:44PM +0200, Laurent Pinchart wrote:
+> Hi Simon,
 > 
-> Sounds like something I should carry in the pinctrl tree?
+> On Friday 20 September 2013 12:06:14 Simon Horman wrote:
+> > On Fri, Sep 20, 2013 at 08:36:57PM +0200, Linus Walleij wrote:
+> > > On Wed, Sep 11, 2013 at 3:51 PM, Laurent Pinchart
+> > > 
+> > > <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> > > > Commit a1bc260bb5f5d95da854be7898202d788e94448d ("gpio: clean up
+> > > > gpio-ranges documentation") deprecated the #gpio-range-cells property.
+> > > > Replace its usage with a hardcoded value in the gpio-rcar driver.
+> > > > 
+> > > > Signed-off-by: Laurent Pinchart
+> > > > <laurent.pinchart+renesas@ideasonboard.com>
+> > > 
+> > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > > 
+> > > Simon please take the whole set into the SH tree.
+> > 
+> > Thanks, will do.
+> 
+> Just a quick reminder that the two patches are v3.12 fixes. Would you like me 
+> to send you a pull request ?
 
-The series has been merged in v3.12-rc1, no action is thus needed.
-
--- 
-Regards,
-
-Laurent Pinchart
-
+Thanks, that would be very helpful.
