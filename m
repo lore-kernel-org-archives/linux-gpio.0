@@ -1,142 +1,95 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Sun, 22 Sep 2013 19:01:47 +0200
-Message-ID: <523F227B.8040102@collabora.co.uk>
-References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <522FBED9.9000305@collabora.co.uk> <5230C7F6.3080803@wwwdotorg.org> <3653629.tapNZSuWhS@lem-wkst-02> <52373B34.4060709@wwwdotorg.org>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH 8/9] of/i2c: Resolve interrupt references at probe time
+Date: Mon, 23 Sep 2013 09:34:51 +0200
+Message-ID: <20130923073451.GE3051@katana>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+ <1379320326-13241-9-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lkTb+7nhmha7W+c3"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52373B34.4060709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1379320326-13241-9-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon Hunter <jgchunter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, joelf-l0cyMroinI0@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 09/16/2013 07:09 PM, Stephen Warren wrote:
-> On 09/16/2013 10:03 AM, Lars Poeschel wrote:
->> On Monday 16 September 2013 13:43:50, Stephen Warren wrote:
->>> On 09/10/2013 06:52 PM, Javier Martinez Canillas wrote:
->>>> On 09/11/2013 12:34 AM, Stephen Warren wrote:
->>>>> On 09/10/2013 03:37 PM, Mark Brown wrote:
->>>>>> On Tue, Sep 10, 2013 at 01:53:47PM -0600, Stephen Warren wrote:
->>>>>>> Doesn't this patch call gpio_request() on the GPIO first, and
->>>>>>> hence prevent the driver's own gpio_request() from succeeding,
->>>>>>> since the GPIO is already requested? If this is not a problem, it
->>>>>>> sounds like a bug in gpio_request() not ensuring mutual exclusion
->>>>>>> for the GPIO.
->>>>>>
->>>>>> Or at the very least something that's likely to break in the
->>>>>> future.
->>>>>
->>>>> Looking at the GPIO code, it already prevents double-requests:
->>>>>>         if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) == 0) {
->>>>>>         
->>>>>>                 desc_set_label(desc, label ? : "?");
->>>>>>                 status = 0;
->>>>>>         
->>>>>>         } else {
->>>>>>         
->>>>>>                 status = -EBUSY;
->>>>>>                 module_put(chip->owner);
->>>>>>                 goto done;
->>>>>>         
->>>>>>         }
->>>>>
->>>>> And I tested it in practice, and it really does fail.
->>>>
->>>> I'm a bit confused now. Doesn't the fact that gpio_request() prevents
->>>> double-requests mean that the use-case that you say that have not been
->>>> covered by this patch can't actually happen?
->>>>
->>>> I mean, if when using board files an explicit call to gpio_request() is
->>>> made by platform code then a driver can't call gpio_request() for the
->>>> same gpio. So this patch shouldn't cause any regression since is just
->>>> auto-requesting a GPIO when is mapped as an IRQ in a DT which basically
->>>> will be the same that was made by board files before.
->>>
->>> I'm not familiar with the board file path; Linus describe this.
->> 
->> It seems Linus is busy, I'll try to help out.
->> 
->>> It sounds like that path is for the case where a driver /only/ cares
->>> about using a pin as an IRQ, and hence the driver only calls
->>> request_irq(). The board file is (earlier) calling gpio_request() in
->>> order to set up that input pin to work correctly as an IRQ. Hence, there
->>> is no double-call to gpio_request().
->> 
->> No, a board file is not a path or something. A board file describes the wirings 
->> and specifics of an (embedded) computer in C code. The complete knowledge of 
->> how things are connected on a board and which drivers to use is in this piece 
->> of code. Devicetree replaces legacy board files. These two do pretty much the 
->> same, but board files have more power, because they are executed and can 
->> contain whatever code is needed to setup a board.
->> But you are right, the driver only calls request_irq(), the board file set up 
->> the pin before and told the driver which irq to use.
-> 
-> path == code path, or execution path. I'm well aware of what board files
-> are in general.
-> 
-> I'm just not familiar with board files that employ this particular hack.
-> 
->>> The case I said wouldn't work is:
->>>
->>> * This patch calls gpio_request() in order to make the pin work as an IRQ.
->>>
->>> * Driver uses the pin as both a GPIO and an IRQ, and hence calls
->>> gpio_request() and request_irq().
->>>
->>> So, there's a double-call to gpio_request(), which fails, and the driver
->>> fails to probe.
->> 
->> Again, no. In that case you don't define your pin as irq in the device tree, 
->> but only as gpio. The driver knows how to handle gpios and turn them into irqs 
->> so you have to present it a gpio not an irq. In that case the patch will not 
->> call gpio_request() and there is no double-call to gpio_request().
-> 
-> That is a way to make this patch work, yes. However, there's no
-> guarantee that every driver or DT binding works this way. Forcing
-> bindings to work that way is forcing Linux-internal details upon
-> bindings, which should not be done. Put another way, I don't believe
-> there's any rule when writing DT bindings that states that bindings must
-> not describe the same pin as both a GPIO and an IRQ, although admittedly
-> that may be unusual.
-> 
-> ...
->> I agree with you that it would be the best if the only call would be 
->> request_irq and the chip driver programs the HW appropriately. It would be a 
->> dream, but unfortunately this is not possible at the moment. This is something 
->> that Linus pointed out very very early in this whole discussion. The gpio and 
->> irq frameworks don't share any information. The irq framework has no chance to 
->> program the HW, because it will never find the related gpio.
->> For this to work the frameworks have to change (and possibly all drivers/board 
->> files/whatever using request_irq() and/or request_gpio()) have to change.
->> That is something that I do not dare to do alone.
-> 
-> This is a controller-specific issue, and has nothing to do with the GPIO
-> or IRQ frameworks. The driver for the combined irq/gpio_chip simply
-> needs to program the HW when the IRQ is requested or set up. The Tegra
-> driver already works this way, so there's actual proof that it is
-> possible to do this in practice.
-> 
 
-Hi Stephen,
+--lkTb+7nhmha7W+c3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I finally had some time to look at this and tried what you suggested, that is
-programming the hardware directly to do the setup when a IRQ is requested.
+On Mon, Sep 16, 2013 at 10:32:05AM +0200, Thierry Reding wrote:
+> Instead of resolving interrupt references at device creation time, delay
+> resolution until probe time. At device creation time, there is nothing
+> that can be done if an interrupt parent isn't ready yet, and the device
+> will end up with an invalid interrupt number (0).
+>=20
+> If the interrupt reference is resolved at probe time, the device's probe
+> can be deferred, so that it's interrupt resolution can be retried after
+> more devices (possibly including its interrupt parent) have been probed.
+>=20
+> However, individual drivers shouldn't be required to do that themselves,
+> over and over again, so this commit implements this functionality within
+> the I2C core.
+>=20
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/i2c/i2c-core.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+> index 29d3f04..163a1e8 100644
+> --- a/drivers/i2c/i2c-core.c
+> +++ b/drivers/i2c/i2c-core.c
+> @@ -236,6 +236,21 @@ int i2c_recover_bus(struct i2c_adapter *adap)
+>  	return adap->bus_recovery_info->recover_bus(adap);
+>  }
+> =20
+> +static int of_i2c_probe(struct i2c_client *client)
 
-I tested booting my OMAP3 board with DT and legacy booting and it both cases it
-works as expected.
+This function should be in the CONFIG_OF block.
 
-I sent a RFC patch "[RFC] gpio/omap: auto-setup a GPIO when used as an IRQ" [1].
+> +{
+> +	struct device_node *np =3D client->dev.of_node;
+> +	int ret;
+> +
+> +	/* skip if the device node specifies no interrupts */
+> +	if (of_get_property(np, "interrupts", NULL)) {
+> +		ret =3D of_irq_get(client->dev.of_node, 0, &client->irq);
 
-It would be great if I can get some feedback from you to see if that is what you
-meant.
+of_irq_get really sounds as it does refcounting. +1 to change the name.
 
-Thanks a lot and best regards,
-Javier
+Thanks,
 
-[1]: https://lkml.org/lkml/2013/9/22/78
+   Wolfram
+
+
+--lkTb+7nhmha7W+c3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSP+8bAAoJEBQN5MwUoCm2G9AP/Ay3YBsjFpAv5Ki2PC2bMrlS
+7TV4G1bzGYDvSvDJHT/azoOF+5HofCL9iXtbuqX6CB352AphfHh4XIP+qKc9K4cN
+e8K04mQpXhkrlOmC9HUB2z2QtLRCKBiaahKeH9OHTK9FtvqtIx2Xcn81WNQj742k
+1Vn2EYVdF2YmfLQruAksT+9GxZNuy5Mk675HHK4nTquXPHlbhZMP8t8LpsBX/f7p
+mgdPvcy6GREO6Yn8RJkxpdc3tyBo5IHuHwDyG1UGEDeVpMTlkYnrRszB0TzCwMEr
+LOIQCbb9ZOPaU7ZEqZvz/cXB62jYPk0B9xMmhEjkiOgylzWmU0jxeVAkh7KO9ofu
+hUZ3NNqLKaH1WChUvqGFbvwEWAbF5YisWquV4KSX8GlVaxoAco65WgjH6Oyy8xyJ
+Hr1ZjtFY/w4DFLsS3v/K71ghFik/A/BZq73BPgw5LKM57NjSiQQJiVJpWODt2Gxe
+tC/82zok4aGgeMbXrWt9MQ1pa3pG2gcl06hTjBRNcWU/8aX9Yspt3SNzkYHKQlYB
+Hu27YJ4HyOn4hbB+QkmcyIFnsFSxPdnBW/6qPgAuo1VJ12erParTbXiupe5yejCi
+Q79D0EzOaOtaD2mQ1JPx3m307kW6SqEuMdZVSfa7sX7Wk/BJe0emCWGZFmMehvfT
+Ku3RPeKJrrkh4KVUMG84
+=/7nF
+-----END PGP SIGNATURE-----
+
+--lkTb+7nhmha7W+c3--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
