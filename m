@@ -1,55 +1,45 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [RFC] gpio/omap: auto-setup a GPIO when used as an IRQ
-Date: Mon, 23 Sep 2013 14:35:11 -0400
-Message-ID: <524089DF.600@ti.com>
-References: <1379860848-29020-1-git-send-email-javier.martinez@collabora.co.uk> <20130923164519.GF2684@atomide.com> <524073BC.9080907@collabora.co.uk> <20130923170724.GG2684@atomide.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
+Date: Mon, 23 Sep 2013 21:14:30 +0200
+Message-ID: <CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+	<1379320326-13241-3-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20130923170724.GG2684@atomide.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1379320326-13241-3-git-send-email-treding@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Javier,
+On Mon, Sep 16, 2013 at 10:31 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
 
-On Monday 23 September 2013 01:07 PM, Tony Lindgren wrote:
-> * Javier Martinez Canillas <javier.martinez@collabora.co.uk> [130923 10:09]:
->> On 09/23/2013 06:45 PM, Tony Lindgren wrote:
->>>
->>> Hmm does this still work for legacy platform data based
->>> drivers that are doing gpio_request() first?
->>>
->>
->> Yes it still work when booting using board files. I tested on my OMAP3 board and
->> it worked in both DT and legacy booting mode.
-> 
-> OK great.
->  
->>> And what's the path for clearing things for PM when free_irq()
->>> gets called? It seems that this would leave the GPIO bank
->>> enabled causing a PM regression?
->>>
->>
->> Indeed, I did set bank->mod_usage |= 1 << offset so the bank is enabled if the
->> device goes to suspended and then resumed but I completely forget about the
->> clearing path when the IRQ is freed.
->>
->> Which makes me think that we should probably maintain two usage variables, one
->> for GPIO and another one for IRQ and check both of them on the suspend/resume pm
->> functions.
-> 
-> Yes that it seems that they should be treated separately.
-> 
-As discussed on IRC, the patch as such is fine after the mentioned fixup,
-I would like to hear back if Linus W/Grant is fine with the approach. Not sure
-if I missed the discussion, but the proposed patch is deviation from
-traditional method of doing gpio_request() first up to perform other
-gpio operations.
+> This is a version of irq_create_mapping() that propagates the precise
+> error code instead of returning 0 for all errors. It will be used in
+> subsequent patches to allow further propagation of error codes.
+>
+> To avoid code duplication, implement irq_create_mapping() as a wrapper
+> around the new __irq_create_mapping().
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Regards,
-Santosh
+Surprise! I don't like this.
 
+I think it is better to first go over the call sites and make them
+all handle negative return numbers rather than pushing the
+obscure __interface.
 
+I know from patch 0 that you think it's too much to change these
+127 call sites but I don't think so, and I'm happy to merge one
+big patch changing all the 20 users in drivers/gpio.
+
+Likewise with the 11 consumers in drivers/pinctrl.
+
+It's just a a few archs+subsystems and it's just plain work.
+
+So do that first.
+
+Yours,
+Linus Walleij
