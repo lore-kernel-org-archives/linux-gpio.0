@@ -1,47 +1,40 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [RFC] gpio/omap: auto-setup a GPIO when used as an IRQ
-Date: Mon, 23 Sep 2013 10:07:24 -0700
-Message-ID: <20130923170724.GG2684@atomide.com>
-References: <1379860848-29020-1-git-send-email-javier.martinez@collabora.co.uk>
- <20130923164519.GF2684@atomide.com>
- <524073BC.9080907@collabora.co.uk>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6] gpio: pcf857x: Add OF support
+Date: Mon, 23 Sep 2013 20:01:18 +0200
+Message-ID: <CACRpkdbipy4RwrxbbB5NUO=MkZ0+gJwXHVRZMb+Mc5e6WTYiaQ@mail.gmail.com>
+References: <1379788789-19801-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <524073BC.9080907@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379788789-19801-1-git-send-email-laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laurent Pinchart <laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Archit Taneja <archit-l0cyMroinI0@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-* Javier Martinez Canillas <javier.martinez@collabora.co.uk> [130923 10:09]:
-> On 09/23/2013 06:45 PM, Tony Lindgren wrote:
-> > 
-> > Hmm does this still work for legacy platform data based
-> > drivers that are doing gpio_request() first?
-> > 
-> 
-> Yes it still work when booting using board files. I tested on my OMAP3 board and
-> it worked in both DT and legacy booting mode.
+On Sat, Sep 21, 2013 at 8:39 PM, Laurent Pinchart
+<laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org> wrote:
 
-OK great.
- 
-> > And what's the path for clearing things for PM when free_irq()
-> > gets called? It seems that this would leave the GPIO bank
-> > enabled causing a PM regression?
-> > 
-> 
-> Indeed, I did set bank->mod_usage |= 1 << offset so the bank is enabled if the
-> device goes to suspended and then resumed but I completely forget about the
-> clearing path when the IRQ is freed.
-> 
-> Which makes me think that we should probably maintain two usage variables, one
-> for GPIO and another one for IRQ and check both of them on the suspend/resume pm
-> functions.
+> Add DT bindings for the pcf857x-compatible chips and parse the device
+> tree node in the driver.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+> ---
+>  .../devicetree/bindings/gpio/gpio-pcf857x.txt      | 71 ++++++++++++++++++++++
+>  drivers/gpio/gpio-pcf857x.c                        | 44 +++++++++++---
+>  2 files changed, 107 insertions(+), 8 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+>
+> Changes since v5:
+>
+> - Renamed pin to line in the DT bindings documentation
+> - Renamed pins-initial-states DT property to lines-initial-states
 
-Yes that it seems that they should be treated separately.
+I can't see any problem with this so patch applied.
 
-Regards,
-
-Tony
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
