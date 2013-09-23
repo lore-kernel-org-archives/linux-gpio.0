@@ -1,53 +1,31 @@
-From: Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [RFC 0/5] New descriptor-based GPIO interface
-Date: Mon, 23 Sep 2013 13:21:35 +0300
-Message-ID: <20130923102134.GB28875@intel.com>
-References: <1378294169-22661-1-git-send-email-acourbot@nvidia.com>
- <CACRpkdYjkDf7c9VxfDTHtFx_upWWRAK8vpXTkrkrRsMjErq1dQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: gpio-74x164: Remove redundant spi_set_drvdata
+Date: Mon, 23 Sep 2013 12:52:00 +0200
+Message-ID: <CACRpkdaq_wcXGxyy+ZqZek7X45u=VKJupnc=PfPJkd3SWJYqig@mail.gmail.com>
+References: <1379591888-8834-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYjkDf7c9VxfDTHtFx_upWWRAK8vpXTkrkrRsMjErq1dQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:46480 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753186Ab3IWKwA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Sep 2013 06:52:00 -0400
+Received: by mail-ob0-f175.google.com with SMTP id uz6so3213343obc.6
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Sep 2013 03:52:00 -0700 (PDT)
+In-Reply-To: <1379591888-8834-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Gabor Juhos <juhosg@openwrt.org>
 
-On Fri, Sep 20, 2013 at 08:06:00PM +0200, Linus Walleij wrote:
-> On Wed, Sep 4, 2013 at 1:29 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> 
-> > Here is a first RFC for the new GPIO interface.
-> 
-> I'm quite happy with this, and given that all DT-implementations will start
-> to use it from day 1 I'll happily merge it when you think it's tested enough.
-> 
-> On my wishlist is to also switch over the ACPI GPIO driver:
-> drivers/gpio/gpiolib-acpi.c to use the descriptors directly, so
-> I'd like one of the ACPI folks to have a look at this patch set
-> and see how it looks from their angle.
-> 
-> Mika, Rafael, Mathias, and either of you guys have a look
-> at this?
+On Thu, Sep 19, 2013 at 1:58 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
 
-Apart from the con_id thing I commented, I don't see huge problems
-converting the ACPI GPIO helpers to this new interface.
+> Driver core sets driver data to NULL upon failure or remove.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Gabor Juhos <juhosg@openwrt.org>
 
-One thing that is special to ACPI is that we have two kind of GPIO
-"connections":
+Patch applied.
 
-	GpioIo - a normal GPIO that the driver can toggle or read values
-
-	GpioInt - this is specifically used as a GPIO interrupt
-
-The drivers should be able to distinguish between the two. Currently we
-have an extra parameter in acpi_get_gpio_by_index(..., &info) that can be
-used for this. However, with the new gpiod_get() I'm not sure how we are
-supposed to do this now?
-
-Anyway, that shouldn't prevent merging this patch set. I'm sure that we can
-come up with some working solution :-)
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
