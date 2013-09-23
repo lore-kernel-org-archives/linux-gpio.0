@@ -1,7 +1,7 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Mon, 23 Sep 2013 21:41:43 +0200
-Message-ID: <CACRpkdZxFpw=EYB4A4nZu7LWjQb6QppVctUsBBDiCMsCBbqm5A@mail.gmail.com>
+Date: Mon, 23 Sep 2013 21:53:07 +0200
+Message-ID: <CACRpkdacx-e01i_h4cj1qMX2zNOiiDshbTV__wi_LfQrLkrL6g@mail.gmail.com>
 References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de>
 	<52279524.8090006@wwwdotorg.org>
 	<20130909161924.GT29403@sirena.org.uk>
@@ -13,34 +13,52 @@ References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de>
 	<5230C7F6.3080803@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5230C7F6.3080803-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon Hunter <jgchunter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, joelf-l0cyMroinI0@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5230C7F6.3080803@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Lars Poeschel <poeschel@lemonage.de>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, joelf@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 11, 2013 at 9:43 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 09/10/2013 06:52 PM, Javier Martinez Canillas wrote:
+On Wed, Sep 11, 2013 at 9:43 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
->> I'm a bit confused now. Doesn't the fact that gpio_request() prevents
->> double-requests mean that the use-case that you say that have not been covered
->> by this patch can't actually happen?
->>
->> I mean, if when using board files an explicit call to gpio_request() is made by
->> platform code then a driver can't call gpio_request() for the same gpio. So this
->> patch shouldn't cause any regression since is just auto-requesting a GPIO when
->> is mapped as an IRQ in a DT which basically will be the same that was made by
->> board files before.
->
-> I'm not familiar with the board file path; Linus describe this.
+> I believe this situation is exactly what cause the original patch to the
+> OMAP driver to be reverted; that patch should have touched the HW
+> directly to solve the problem when the IRQ was requested, rather than
+> calling into the GPIO subsystem (which also has the side-effect of
+> touching the HW in the same way as desired).
 
-Oh um? Not following, that stuff is right above, what is unclear
-about this that I need to describe?
+And that has the side-effect that this line, which is now set up
+in the HW as an input line, can be gpio_request()ed by some other
+code path and set up as output, screwing around with the very
+same registers.
+
+I think the kernel should prevent such things.
+
+But I think you're making it sound like the kernel should not prevent
+such things, but instead give the drivers enough rope to shoot itself
+in the foot if it so desires.
+
+But a third solution is possible: the driver keep track of whether
+a line is already requested as IRQ and if that happens, will not
+allow gpio_set_direction_output() and other incompatible uses,
+but still allow gpio_set_direction_input() and gpio_get_value(),
+that would be OK.
+
+In the GPIO descriptor we can flag this, so it would be preferable
+to have that tracking in the gpiolib core rather than the driver
+though.
+
+> As we discussed on IRC (so mainly for the record in the mailing list
+> archive), I believe that if a driver wants to use a pin as an interrupt
+> and only an interrupt, even if the pin has the capability in HW to be a
+> GPIO (or absolutely anything else at all), then the only call in the
+> entire kernel (board code, DT core code, IRQ core, driver, ...) should
+> be a single request_irq(), and the IRQ chip driver needs to program the
+> HW appropriately to make that work.
+
+I agree with this, but also think that the kernel should prevent the
+same resource for being used in an incompatible way.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
