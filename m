@@ -1,99 +1,93 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Mon, 23 Sep 2013 14:21:39 -0600
-Message-ID: <5240A2D3.20105@wwwdotorg.org>
-References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <522FBED9.9000305@collabora.co.uk> <5230C7F6.3080803@wwwdotorg.org> <3653629.tapNZSuWhS@lem-wkst-02> <52373B34.4060709@wwwdotorg.org> <CACRpkdY=cgtf6_eypfAAv-fvmiNgAYyz4StTgDie5THsbrcumg@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
+Date: Mon, 23 Sep 2013 22:29:36 +0200
+Message-ID: <20130923202935.GA5216@ulmo>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+ <1379320326-13241-3-git-send-email-treding@nvidia.com>
+ <CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY=cgtf6_eypfAAv-fvmiNgAYyz4StTgDie5THsbrcumg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, joelf@ti.com, Laur
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:41015 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752749Ab3IWUbA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Sep 2013 16:31:00 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 09/23/2013 02:01 PM, Linus Walleij wrote:
-> On Mon, Sep 16, 2013 at 7:09 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> 
->> Put another way, I don't believe
->> there's any rule when writing DT bindings that states that bindings must
->> not describe the same pin as both a GPIO and an IRQ, although admittedly
->> that may be unusual.
-> 
-> Actually I think you've won me over here.
-> 
-> But I do not think that this shall be done at the expense of letting
-> DT-based drivers do nasty things like setting up the same GPIO
-> line as an IRQ (hammering the hardware to do that) and then
-> request the same line to be an output line and drive it, for
-> example.
-> 
-> So the state of the GPIO line has to be tracked: if it is set as
-> input and tied to an IRQ it should *not* be possible for the
-> other code path to request it and set it as output. But it should
-> be possible to set it as input again and read the value.
-> 
-> Laurent deascribed exactly the latter usecase, which is OK.
-> 
->>> I agree with you that it would be the best if the only call would be
->>> request_irq and the chip driver programs the HW appropriately. It would be a
->>> dream, but unfortunately this is not possible at the moment. This is something
->>> that Linus pointed out very very early in this whole discussion. The gpio and
->>> irq frameworks don't share any information. The irq framework has no chance to
->>> program the HW, because it will never find the related gpio.
->>> For this to work the frameworks have to change (and possibly all drivers/board
->>> files/whatever using request_irq() and/or request_gpio()) have to change.
->>> That is something that I do not dare to do alone.
->>
->> This is a controller-specific issue, and has nothing to do with the GPIO
->> or IRQ frameworks. The driver for the combined irq/gpio_chip simply
->> needs to program the HW when the IRQ is requested or set up. The Tegra
->> driver already works this way, so there's actual proof that it is
->> possible to do this in practice.
-> 
-> And how to you block the same line from being gpio_request()ed
-> and set as output?
 
-To be honest, I really don't think this problem is terribly likely to
-occur, so I'm really not convinced that it's worth putting a lot of
-effort into solving it.
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If the problem does occur, it's trivial to see that this has happened by
-looking at /proc/interrupts and /sys/kernel/debug/gpio, assuming the
-system doesn't hang when this happens due to an interrupt storm, and if
-it does, it should be pretty easy to track down the problematic register
-write.
+On Mon, Sep 23, 2013 at 09:14:30PM +0200, Linus Walleij wrote:
+> On Mon, Sep 16, 2013 at 10:31 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>=20
+> > This is a version of irq_create_mapping() that propagates the precise
+> > error code instead of returning 0 for all errors. It will be used in
+> > subsequent patches to allow further propagation of error codes.
+> >
+> > To avoid code duplication, implement irq_create_mapping() as a wrapper
+> > around the new __irq_create_mapping().
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>=20
+> Surprise! I don't like this.
+>=20
+> I think it is better to first go over the call sites and make them
+> all handle negative return numbers rather than pushing the
+> obscure __interface.
+>=20
+> I know from patch 0 that you think it's too much to change these
+> 127 call sites but I don't think so, and I'm happy to merge one
+> big patch changing all the 20 users in drivers/gpio.
+>=20
+> Likewise with the 11 consumers in drivers/pinctrl.
+>=20
+> It's just a a few archs+subsystems and it's just plain work.
 
-That said, I'm not outright against the kernel checking for this
-situation. I think it'd work as follows:
+Well, the problem is that the current patch changes the signature of the
+function as well, therefore the call sites will have to be updated all
+at once in a single patch to avoid build breakage. And that's excluding
+any potential fallout from new callsites added between the creation of
+the patch and its application.
 
-The only code that knows the correlation between the IRQ and GPIO in
-question is the combined gpio_chip/irq_chip driver. Everything /has/ to
-be driven through that driver. In some cases, an IRQ may not be related
-to any GPIO at all; there are certainly IRQ controllers which take
-inputs directly from outside the chip, but have no GPIO functionality at
-all on those signals.
+Another alternative could be to change the signature in a way that does
+not break compatibility. For instance I think it could work out if we
+change this function to return int instead of unsigned int but keep the
+same semantics to begin with (return 0 on failure). Then update all call
+sites to handle potential negative errors and after that return negative
+error codes. That still wouldn't catch any callers introduced between
+the patch creation and application.
 
-That driver needs to maintain some state that indicates which of its
-IRQs have been requested. Any time a GPIO request (I mean e.g.
-set_output() not request_gpio)) comes in, the request needs to be
-validated against that IRQ usage state. If there's a conflict, deny the
-GPIO request.
+Thierry
 
-Now, it's quite possible that the code to maintain this state and
-perform the checks will be similar/common across multiple drivers. If
-so, by all means implement the code somewhere common, and have the
-various irq_chip/gpio_chip drivers call into it.
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature
 
-The main thing is that all of this has to be driven/controlled/enabled
-by the gpio_chip/irq_chip driver itself, not as some global/blanket
-feature of the GPIO or IRQ subsystems.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-Perhaps rather than having the gpio_chip/irq_chip drivers physically
-implement a function which calls this common code, they could set some
-flags/data/... in the struct gpio_chip/irq_chip indicating that they
-desire the core code that implements the error-checking to be enabled.
-That might save some levels of stack. But the key is still that the
-whole scenario is controlled by the end driver, not always assumed to
-apply by the core code.
+iQIcBAEBAgAGBQJSQKSvAAoJEN0jrNd/PrOh0LsP/iAbSX1dVXCmb8C92d91DSva
+PLyYP5BNn5qIrulewqzl5XMEA9zQVg5NjYJZgqzf5n54EVGe/4s24CqCTEeNKohl
+9oE2dc70UHupJmP8Uo94dMi28U94bzDyyGSxmaVoHtiLo1Z7N1djjZyOc3BiGso3
+VVCALPfAWhiZ14w2EXVKKxh2gCP7cqSJzgMkNo+wsZ/nV0Hbx6RWt3JvSMHhVVvZ
+INVR6dbdnHrLHNRpiFXLUQR1G8xOIku/Os0EhyaRmgY/4fDQpmijpL2VtzLP2GF/
+G3zUflzzV7JgFnXRyoWkEIgPd9uxFaxG6F5xf7U9MMUV8zzDZFT+1ZmPhsSl+l30
+yrm6fUFC0QBvVfn/vEZgUllo3pAFoPdXCGV8yB8xwAtb5UIkhwkxYsf+zt/1P2al
+oyKXCVJ3+9Io6rLOYGDHmsI4+R71ztQtWtz2jbC5+dn4nU5he5Xtw1k2bE6+gSHl
+Qu0MjNRgMZxyJJ5uZFNI2ZlTeqlt5gs3CpdjgUlZd1ntgT8BzpX6wWBiCUMhMwZn
+AEX9rUSLcpIPhHLUDc9+P3d60KTL+cwETf7u5IEQPcHrmie+Wm/Hssmtzl3cK1Oo
+I8ut+HoKFqTPzhrdiSbB+zaxVyedim1lX/1fjrxzOrLKWmDmdNfpuITwr9A88qsH
+V5s8sAiD8V8+CQKHpjig
+=89Ks
+-----END PGP SIGNATURE-----
+
+--BXVAT5kNtrzKuDFl--
