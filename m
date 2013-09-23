@@ -1,41 +1,46 @@
 From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 9/9] gpio: tegra: Use module_platform_driver()
-Date: Mon, 23 Sep 2013 21:25:53 +0200
-Message-ID: <CACRpkdbLGThUTteqmEcfda7Tvc08ZFWwe=WpKMyxALQe=LZLVA@mail.gmail.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-	<1379320326-13241-10-git-send-email-treding@nvidia.com>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Mon, 23 Sep 2013 21:41:43 +0200
+Message-ID: <CACRpkdZxFpw=EYB4A4nZu7LWjQb6QppVctUsBBDiCMsCBbqm5A@mail.gmail.com>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de>
+	<52279524.8090006@wwwdotorg.org>
+	<20130909161924.GT29403@sirena.org.uk>
+	<2052193.CMUEUJFRgS@lem-wkst-02>
+	<522F78CB.2020507@wwwdotorg.org>
+	<20130910213718.GH29403@sirena.org.uk>
+	<522F9E6C.2010905@wwwdotorg.org>
+	<522FBED9.9000305@collabora.co.uk>
+	<5230C7F6.3080803@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379320326-13241-10-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5230C7F6.3080803-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon Hunter <jgchunter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, joelf-l0cyMroinI0@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 16, 2013 at 10:32 AM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> With the driver core now resolving interrupt references at probe time,
-> it is no longer necessary to force explicit probe ordering using
-> initcalls.
+On Wed, Sep 11, 2013 at 9:43 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 09/10/2013 06:52 PM, Javier Martinez Canillas wrote:
+
+>> I'm a bit confused now. Doesn't the fact that gpio_request() prevents
+>> double-requests mean that the use-case that you say that have not been covered
+>> by this patch can't actually happen?
+>>
+>> I mean, if when using board files an explicit call to gpio_request() is made by
+>> platform code then a driver can't call gpio_request() for the same gpio. So this
+>> patch shouldn't cause any regression since is just auto-requesting a GPIO when
+>> is mapped as an IRQ in a DT which basically will be the same that was made by
+>> board files before.
 >
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Note that there are potentially many more drivers that can be switched
-> to the generic module_*_driver() interfaces now that interrupts can be
-> resolved later and deferred probe should be able to handle all the
-> ordering issues.
+> I'm not familiar with the board file path; Linus describe this.
 
-Let me see if I get this right: so this would be all GPIO/pinctrl
-drivers which are probed exclusively from the device tree
-so anything that depends explicitly on CONFIG_OF would
-be a candidate?
-
-I think we have a bit of a problem that some drivers depend
-only on a certain arch or compiles directly for a certain arch
-without any specific Kconfig option so that this may be a
-bit hard to spot, so we should keep an eye out for this
-once this probing scheme is in place.
+Oh um? Not following, that stuff is right above, what is unclear
+about this that I need to describe?
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
