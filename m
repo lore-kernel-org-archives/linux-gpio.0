@@ -1,77 +1,87 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 8/9] of/i2c: Resolve interrupt references at probe time
-Date: Mon, 23 Sep 2013 10:35:09 +0200
-Message-ID: <20130923083509.GF3051@katana>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-9-git-send-email-treding@nvidia.com>
- <20130923073451.GE3051@katana>
- <20130923080230.GA11881@ulmo>
+From: Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [RFC 4/5] gpiolib: add gpiod_get() and gpiod_put() functions
+Date: Mon, 23 Sep 2013 12:31:27 +0300
+Message-ID: <20130923093127.GA28875@intel.com>
+References: <1378294169-22661-1-git-send-email-acourbot@nvidia.com>
+ <1378294169-22661-5-git-send-email-acourbot@nvidia.com>
+ <52279082.5010105@wwwdotorg.org>
+ <CACRpkdY70r8mL8PSDmexr+_0Ddi-Y8x0RaDF-WWucZM9V8n=yw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JcvBIhDvR6w3jUPA"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:55999 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752734Ab3IWIfY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 23 Sep 2013 04:35:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20130923080230.GA11881@ulmo>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
-
-
---JcvBIhDvR6w3jUPA
 Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CACRpkdY70r8mL8PSDmexr+_0Ddi-Y8x0RaDF-WWucZM9V8n=yw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-gpio@vger.kernel.org
 
+On Fri, Sep 20, 2013 at 08:40:48PM +0200, Linus Walleij wrote:
+> On Wed, Sep 4, 2013 at 9:56 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> > On 09/04/2013 05:29 AM, Alexandre Courbot wrote:
+> >> Add gpiod_get() and gpiod_put() functions that provide safer handling of
+> >> GPIOs.
+> >>
+> >> These functions put the GPIO framework in line with the conventions of
+> >> other frameworks in the kernel, and help ensure every GPIO is declared
+> >> properly and valid while it is used.
+> >
+> >> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> >
+> >> +struct gpio_desc *__must_check gpiod_get(struct device *dev,
+> >> +                                      const char *con_id);
+> >> +void gpiod_put(struct gpio_desc *desc);
+> >
+> > It might be nice to add an "int index" parameter to this function. For
+> > example, a bit-banged parallel bus protocol driver might have 1
+> > chip-select GPIO, 1 clock GPIO, and 8 data GPIOs. gpiod_get(dev, "bus",
+> > 0)..gpiod_get(dev, "bus", 7) might be nicer than gpiod_get(dev,
+> > "bus0")..gpiod_get(dev, "bus7")? Possibly for client-simplicity,
+> > implement both gpiod_get(dev, con_id) (as an inline wrapper for ...) and
+> > gpiod_get_index(dev, con_id, index)?
+> >
+> > In DT terms, this would map to:
+> >
+> > cs-gpios = <&gpio 3 0>;
+> > clock-gpios = <&gpio 5 0>;
+> > bus-gpios = <&gpio 10 0 ... &gpio 17 0>;
+> >
+> > ... and with the mapping table registration mechanism, we could
+> > presumably add "int index" to struct gpiod_lookup.
+> 
+> This is an interesting usability aspect of the API, so I'd especially
+> like some input from the ACPI people on this as well.
 
-> > This function should be in the CONFIG_OF block.
->=20
-> I'll argue the other way. I think that the whole CONFIG_OF block should
-> be remove, or at least be confined to public functions. The reason that
-> I've chosen to do it this way is that the i2c_device_probe() uses an
-> IS_ENABLED(CONFIG_OF), which will evaluate to 0 if OF isn't selected
-> which in turn will cause the compiler to throw away of_i2c_probe()
-> because it is static and never used.
->=20
-> The big advantage of this is that we get compile coverage for these
-> functions independent of what configuration is built. The same could
-> probably be done for the whole CONFIG_ACPI block. In fact I volunteer to
-> provide that patch if I've convinced you that this is actually better
-> than sprinking the code with the #ifdef blocks that make it harder than
-> necessary to verify that the code builds in all configurations.
+The index fits well with ACPI as that's the only way we can use to
+distinguish different GPIOs.
 
-Yes, you (easily) did :) Still, I'd like the of_i2c_probe function
-near the other of_* functions.
+However, in ACPI world the con_id doesn't have any correspondence. For
+example given a DT description:
 
-Thanks,
+	power-gpios = <&gpio 28 GPIO_ACTIVE_LOW>;
 
-   Wolfram
+would be something like this in the ACPI ASL code:
 
+	GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionNone,
+        	"\\_SB.PCI0.GPI0", 0x00, ResourceConsumer,,)
+        {   
+                28
+        }
 
---JcvBIhDvR6w3jUPA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I'm thinking that in order to get ACPI implementation work with this we can
+do something like:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+	gpiod_get_index(dev, "bus", 0)
 
-iQIcBAEBAgAGBQJSP/09AAoJEBQN5MwUoCm2GHIP/Rhq+fgMMs0+9m7uXuoeEaO9
-GCTFoirPnLRiofGgNSrMjCIxiGJ7zFNaRMdieA//chsY1342PuSLfuu0PQRB7V2s
-XWjj/XiJSMvPT1JNv+b2GTxq5QQOcRDe72ucCFR2Qziq4qp2lAs5Rn54W84sB7tV
-/DHa7vjfqf87HebvQDbilHWH60rn5Jyxf0uCY/hUKjd0kwYPAff4OlaaCsrT91Zx
-7ydlgVflCzouIoRMWr2uYFQy/jXeptw5YogFnMghc/f0UN1kbaN6bxUVfUxb2Apj
-QW+6TllRVOl+bug8Veuj16nYPrVN2AHEYo/l0HWxBWWxsGS0oPN7qaBXim+UZy65
-5kdy1G50J+bWIpKOuicL96/lWyGR9CqpB1UDbT+X1Nbt3ahRJtUTk67vqBHc0aDF
-MIdjbGdOqvXVOJwwJ4axYTK/sEIimMC9hyXEokRDTrmqmsXztKCtwbjhqmNnd4Rq
-pahY0/vwIrCdZLhPjCEA1Q2J0vosBfMCo+c/Q3F85r7huKTU1Cz8ntJs60LU6jqX
-2yS36m3vv0amhpBbubds7KI+3n+sZ15S+gP+PxMDf3F9e+ucNFHDb+HaTbcrG3jR
-zI1vtkMW+DCgIMy1Gwd2UnVNuHvSHNjsy3VhVwBf79hb0WT3uog4LNz4BBUhLozt
-U52AUCw08/dP31WArXz3
-=PD8g
------END PGP SIGNATURE-----
+	  Here we ignore the con_id and use only the index.
 
---JcvBIhDvR6w3jUPA--
+	gpiod_get(dev, "bus")
+
+	  Since we can't map the "bus" to anything, we default to index 0.
+
+We have pretty much similar in the DMA slave helpers where passing "tx"
+gives us the first DMA channel and "rx" the second.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
