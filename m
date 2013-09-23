@@ -1,89 +1,74 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [rtc-linux] [PATCH V2 3/5] gpio: add support for AMS AS3722 gpio driver
-Date: Mon, 23 Sep 2013 10:06:07 +0200
-Message-ID: <CACRpkdbJ6N-5RET+cmF=14jKVDnuAZtZwjcKym75ySER2gCpBQ@mail.gmail.com>
-References: <1379680214-9143-1-git-send-email-ldewangan@nvidia.com>
-	<1379680214-9143-4-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [rtc-linux] [PATCH V2 3/5] gpio: add support for AMS AS3722 gpio
+ driver
+Date: Mon, 23 Sep 2013 14:25:15 +0530
+Message-ID: <524001F3.3060602@nvidia.com>
+References: <1379680214-9143-1-git-send-email-ldewangan@nvidia.com> <1379680214-9143-4-git-send-email-ldewangan@nvidia.com> <CACRpkdbJ6N-5RET+cmF=14jKVDnuAZtZwjcKym75ySER2gCpBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:53997 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752604Ab3IWIGH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Sep 2013 04:06:07 -0400
-Received: by mail-oa0-f50.google.com with SMTP id j1so289664oag.23
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Sep 2013 01:06:07 -0700 (PDT)
-In-Reply-To: <1379680214-9143-4-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbJ6N-5RET+cmF=14jKVDnuAZtZwjcKym75ySER2gCpBQ@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Florian Lobmaier <florian.lobmaier@ams.com>
 List-Id: linux-gpio@vger.kernel.org
-To: rtc-linux@googlegroups.com
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, ijc+devicetree@hellion.org.uk, Grant Likely <grant.likely@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, Florian Lobmaier <florian.lobmaier@ams.com>
 
-On Fri, Sep 20, 2013 at 2:30 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-
-> The AS3722 is a compact system PMU suitable for mobile phones, tablets etc.
+On Monday 23 September 2013 01:36 PM, Linus Walleij wrote:
+> On Fri, Sep 20, 2013 at 2:30 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 >
-> Add a driver to support accessing the 8 GPIOs found on the AMS AS3722
-> PMIC using gpiolib.
+>> +Required subnode properties:
+>> +---------------------------
+>> +reg: The GPIO number on which the properties need to be applied.
+>> +
+>> +Optional subnode properties:
+>> +---------------------------
+>> +bias-pull-up: The Pull-up for the pin to be enable.
+>> +bias-pull-down: Pull down of the pins to be enable.
+>> +bias-high-impedance: High impedance of the pin to be enable.
+>> +open-drain: Pin is open drain type.
+>> +function: IO functionality of the pins. The valid options are:
+>> +       gpio, intrrupt-output, vsup-vbat-low-undeb, interrupt-input,
+>> +       pwm-input, voltage-stby, oc-powergood-sd0, powergood-output,
+>> +       clk32k-output, watchdog-input, soft-reset-input, pwm-output,
+>> +       vsup-vbat-low-deb, oc-powergood-sd6
+>> +    Missing the function property will set the pin in GPIO mode.
+> This is pin control. Do not try to shoehorn pin control drivers into
+> the GPIO subsystem. Take a good day off, read through
+> Documentation/pinctrl.txt and come back with a thoroughly rewritten
+> driver in drivers/pinctrl/pinctrl-as3722.c.
 >
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Florian Lobmaier <florian.lobmaier@ams.com>
-
-OK...
-
-> +Required subnode properties:
-> +---------------------------
-> +reg: The GPIO number on which the properties need to be applied.
-> +
-> +Optional subnode properties:
-> +---------------------------
-> +bias-pull-up: The Pull-up for the pin to be enable.
-> +bias-pull-down: Pull down of the pins to be enable.
-> +bias-high-impedance: High impedance of the pin to be enable.
-> +open-drain: Pin is open drain type.
-> +function: IO functionality of the pins. The valid options are:
-> +       gpio, intrrupt-output, vsup-vbat-low-undeb, interrupt-input,
-> +       pwm-input, voltage-stby, oc-powergood-sd0, powergood-output,
-> +       clk32k-output, watchdog-input, soft-reset-input, pwm-output,
-> +       vsup-vbat-low-deb, oc-powergood-sd6
-> +    Missing the function property will set the pin in GPIO mode.
-
-This is pin control. Do not try to shoehorn pin control drivers into
-the GPIO subsystem. Take a good day off, read through
-Documentation/pinctrl.txt and come back with a thoroughly rewritten
-driver in drivers/pinctrl/pinctrl-as3722.c.
-
-We already have generic device tree bindings for all of the above
-properties, and a library for generic pin config in the pin control
-subsystem to handle them. Look at recent drivers for
-inspiration.
-
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-
-Move this driver to the pinctrl subsystem.
-
-> index b6ed304..544a612 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -368,6 +368,12 @@ config GPIO_ARIZONA
->         help
->           Support for GPIOs on Wolfson Arizona class devices.
+> We already have generic device tree bindings for all of the above
+> properties, and a library for generic pin config in the pin control
+> subsystem to handle them. Look at recent drivers for
+> inspiration.
 >
-> +config GPIO_AS3722
-> +       bool "AMS AS3722 PMICs GPIO"
-> +       depends on MFD_AS3722
-> +       help
-> +         Select this option to enable GPIO driver for the AMS AS3722 PMIC.
 
-It should
-select PINMUX
-select GENERIC_PINCONF
+Yes, the appropriate location is pin control for pull up/down etc 
+configuration but with this device, the actual issue is with the way it 
+is require to configure the pull up/down and input/output of the pin. 
+There is no separate bits for pull up/down and direction and it is  
+clubbed together. The register's bits are defined as:
 
-> +static char const *as3722_gpio_iosf[] = {
-> +       "gpio",
-> +       "intrrupt-output",
+Selects the GPIO mode (I, I/O, Tri, Pulls) (BIT 2:0)
+   0 : Input
+   1 : Output (push and pull) VSUP_GPIO
+   2 : Output/Input (open drain, only NMOS is active)
+   3 : ADC input (Tristate)
+   4 : Input with pull-up to VDD_GPIO_lv
+   5 : Input with pull-down
+   6 : Output/Input open drain (nmos) with pull-up to VDD_GPIO_lv,
+   7 : Output (push and pull) VDD_GPIO_lv
 
-intrrupt?
+So I can not actually configure the pull up/down, open drain and 
+direction independently until every thing is known.
+Direction come from gpio driver but pull up/down and open drain 
+configuration come from the pin control.
+And this is only the reason to make all configuration in single driver.
 
-Yours,
-Linus Walleij
+
+
+
+
+
+
