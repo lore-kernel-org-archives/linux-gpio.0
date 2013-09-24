@@ -1,145 +1,200 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] ARM: sa1100: remove complex GPIO interface
-Date: Tue, 24 Sep 2013 14:24:38 +0200
-Message-ID: <1380025478-24831-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:41676 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750721Ab3IXMYr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Sep 2013 08:24:47 -0400
-Received: by mail-ee0-f46.google.com with SMTP id c13so2419708eek.19
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Sep 2013 05:24:46 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: Re: [rtc-linux] [PATCH V3 2/3] pincntrl: add support for AMS AS3722
+ pin control driver
+Date: Tue, 24 Sep 2013 14:52:48 +0200
+Message-ID: <CACRpkda3m4ipTsS8FZoU1QDwrvwmKFn4awyfXOy2VOiuV63y6A@mail.gmail.com>
+References: <1380023921-29867-1-git-send-email-ldewangan@nvidia.com>
+	<1380023921-29867-3-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1380023921-29867-3-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, Florian Lobmaier <florian.lobmaier@ams.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Russell King <linux@arm.linux.org.uk>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Kristoffer Ericson <kristoffer.ericson@gmail.com>
 
-The SA1100 was implementing its own variants of gpio_get_value()
-and gpio_set_value() and only selectively falling back to
-gpiolib for extended (EGPIO) handling. However the driver in
-gpio/gpio-sa1100.c already handles the same functionality for
-these lines, yet remain unused.
+On Tue, Sep 24, 2013 at 1:58 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> The AS3722 is a compact system PMU suitable for mobile phones, tablets etc.
+>
+> Add a driver to support accessing the GPIO, pinmux and pin configuration
+> of 8 GPIO pins found on the AMS AS3722 through pin control driver and
+> gpiolib.
+>
+> The driver will register itself as the pincontrol driver and gpio driver.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Signed-off-by: Florian Lobmaier <florian.lobmaier@ams.com>
 
-The only upside would be things like a timing-critical hotpath
-on bit-banged GPIO, but that kind of things does not seem to
-happen on these GPIOs, so it is not worth having the extra
-complexity.
+That was quick! :-)
 
-Tested with some buttons on the Compaq iPAQ H3630.
+This is starting to look a lot better.
 
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Kristoffer Ericson <kristoffer.ericson@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- #include <linux/io.h> instead of <asm/io.h>.
----
- arch/arm/Kconfig                          |  1 -
- arch/arm/mach-sa1100/include/mach/gpio.h  | 55 -------------------------------
- arch/arm/mach-sa1100/include/mach/h3xxx.h |  2 ++
- drivers/gpio/gpio-sa1100.c                |  2 +-
- 4 files changed, 3 insertions(+), 57 deletions(-)
- delete mode 100644 arch/arm/mach-sa1100/include/mach/gpio.h
+> +static int as3722_pinconf_group_get(struct pinctrl_dev *pctldev,
+> +                               unsigned group, unsigned long *config)
+> +{
+> +       dev_err(pctldev->dev, "as3722_pinconf_group_get op not supported\n");
+> +       return -ENOTSUPP;
+> +}
+> +
+> +static int as3722_pinconf_group_set(struct pinctrl_dev *pctldev,
+> +                               unsigned group, unsigned long *configs,
+> +                               unsigned num_configs)
+> +{
+> +       dev_err(pctldev->dev, "as3722_pinconf_group_set op not supported\n");
+> +       return -ENOTSUPP;
+> +}
+> +
+> +static const struct pinconf_ops as3722_pinconf_ops = {
+> +       .pin_config_get = as3722_pinconf_get,
+> +       .pin_config_set = as3722_pinconf_set,
+> +       .pin_config_group_get = as3722_pinconf_group_get,
+> +       .pin_config_group_set = as3722_pinconf_group_set,
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 3f7714d..74bf29f 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -692,7 +692,6 @@ config ARCH_SA1100
- 	select GENERIC_CLOCKEVENTS
- 	select HAVE_IDE
- 	select ISA
--	select NEED_MACH_GPIO_H
- 	select NEED_MACH_MEMORY_H
- 	select SPARSE_IRQ
- 	help
-diff --git a/arch/arm/mach-sa1100/include/mach/gpio.h b/arch/arm/mach-sa1100/include/mach/gpio.h
-deleted file mode 100644
-index 6a9eecf..0000000
---- a/arch/arm/mach-sa1100/include/mach/gpio.h
-+++ /dev/null
-@@ -1,55 +0,0 @@
--/*
-- * arch/arm/mach-sa1100/include/mach/gpio.h
-- *
-- * SA1100 GPIO wrappers for arch-neutral GPIO calls
-- *
-- * Written by Philipp Zabel <philipp.zabel@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-- *
-- */
--
--#ifndef __ASM_ARCH_SA1100_GPIO_H
--#define __ASM_ARCH_SA1100_GPIO_H
--
--#include <linux/io.h>
--#include <mach/hardware.h>
--#include <asm/irq.h>
--#include <asm-generic/gpio.h>
--
--#define __ARM_GPIOLIB_COMPLEX
--
--static inline int gpio_get_value(unsigned gpio)
--{
--	if (__builtin_constant_p(gpio) && (gpio <= GPIO_MAX))
--		return GPLR & GPIO_GPIO(gpio);
--	else
--		return __gpio_get_value(gpio);
--}
--
--static inline void gpio_set_value(unsigned gpio, int value)
--{
--	if (__builtin_constant_p(gpio) && (gpio <= GPIO_MAX))
--		if (value)
--			GPSR = GPIO_GPIO(gpio);
--		else
--			GPCR = GPIO_GPIO(gpio);
--	else
--		__gpio_set_value(gpio, value);
--}
--
--#define gpio_cansleep	__gpio_cansleep
--
--#endif
-diff --git a/arch/arm/mach-sa1100/include/mach/h3xxx.h b/arch/arm/mach-sa1100/include/mach/h3xxx.h
-index 7d9df16..c810620 100644
---- a/arch/arm/mach-sa1100/include/mach/h3xxx.h
-+++ b/arch/arm/mach-sa1100/include/mach/h3xxx.h
-@@ -13,6 +13,8 @@
- #ifndef _INCLUDE_H3XXX_H_
- #define _INCLUDE_H3XXX_H_
- 
-+#include "hardware.h" /* Gives GPIO_MAX */
-+
- /* Physical memory regions corresponding to chip selects */
- #define H3600_EGPIO_PHYS	(SA1100_CS5_PHYS + 0x01000000)
- #define H3600_BANK_2_PHYS	SA1100_CS2_PHYS
-diff --git a/drivers/gpio/gpio-sa1100.c b/drivers/gpio/gpio-sa1100.c
-index 8ea3b33..a90be34 100644
---- a/drivers/gpio/gpio-sa1100.c
-+++ b/drivers/gpio/gpio-sa1100.c
-@@ -10,7 +10,7 @@
- #include <linux/gpio.h>
- #include <linux/init.h>
- #include <linux/module.h>
--
-+#include <linux/io.h>
- #include <mach/hardware.h>
- #include <mach/irqs.h>
- 
--- 
-1.8.3.1
+Can't you just leave .pin_config_group_[get|set] undefined as
+you don't support that?
 
+> +static struct pinctrl_desc as3722_pinctrl_desc = {
+> +       .pctlops = (struct pinctrl_ops *)&as3722_pinctrl_ops,
+> +       .pmxops = (struct pinmux_ops *)&as3722_pinmux_ops,
+> +       .confops = (struct pinconf_ops *)&as3722_pinconf_ops,
+
+Why do you need these casts? Should not be necessary.
+
+> +static int as_pci_direction_input(struct gpio_chip *chip, unsigned offset)
+> +{
+> +       struct as3722_pctrl_info *as_pci = to_as_pci(chip);
+> +       struct as3722 *as3722 = as_pci->as3722;
+> +       int mode;
+> +
+> +       mode = as_pci_get_mode(as_pci->gpio_control[offset].mode_prop,
+> +                       true);
+> +       if (mode < 0) {
+> +               dev_err(as_pci->dev,
+> +                       "Input direction for GPIO %d not supported\n", offset);
+> +               return mode;
+> +       }
+> +
+> +       if (as_pci->gpio_control[offset].enable_gpio_invert)
+> +               mode |= AS3722_GPIO_INV;
+> +
+> +       return as3722_write(as3722, AS3722_GPIOn_CONTROL_REG(offset), mode);
+> +}
+
+Why is this function not calling
+pinctrl_gpio_direction_input(chip->base + offset) instea of setting up
+the mode intself?
+
+The GPIO part of the driver should use the pinctrl part of the
+driver as back-end.
+
+> +static int as_pci_direction_output(struct gpio_chip *chip,
+> +               unsigned offset, int value)
+> +{
+> +       struct as3722_pctrl_info *as_pci = to_as_pci(chip);
+> +       struct as3722 *as3722 = as_pci->as3722;
+> +       int mode;
+> +
+> +       mode = as_pci_get_mode(as_pci->gpio_control[offset].mode_prop,
+> +                       false);
+> +       if (mode < 0) {
+> +               dev_err(as_pci->dev,
+> +                       "Output direction for GPIO %d not supported\n", offset);
+> +               return mode;
+> +       }
+> +
+> +       as_pci_set(chip, offset, value);
+> +       if (as_pci->gpio_control[offset].enable_gpio_invert)
+> +               mode |= AS3722_GPIO_INV;
+> +       return as3722_write(as3722, AS3722_GPIOn_CONTROL_REG(offset), mode);
+> +}
+
+Dito:
+pinctrl_gpio_direction_output()
+
+> +static int as_pci_to_irq(struct gpio_chip *chip, unsigned offset)
+> +{
+> +       struct as3722_pctrl_info *as_pci = to_as_pci(chip);
+> +
+> +       return as3722_irq_get_virq(as_pci->as3722, offset);
+> +}
+> +
+> +static int as_pci_request(struct gpio_chip *chip, unsigned offset)
+> +{
+> +       struct as3722_pctrl_info *as_pci = to_as_pci(chip);
+> +
+> +       if (as_pci->gpio_control[offset].io_function)
+> +               return -EBUSY;
+> +       return 0;
+> +}
+
+Why is this not calling pinctrl_request_gpio(as_pci->chip.base + offset)
+instead of just checking if we happen to be GPIO and failing if
+we are not?
+
+I would implement .free calling pinctrl_free_gpio(gpio) as well.
+
+See e.g. pinctrl-abx500.c
+
+> +static const struct gpio_chip as_pci_chip = {
+> +       .label                  = "as3722-gpio",
+> +       .owner                  = THIS_MODULE,
+> +       .direction_input        = as_pci_direction_input,
+> +       .get                    = as_pci_get,
+> +       .direction_output       = as_pci_direction_output,
+> +       .set                    = as_pci_set,
+> +       .to_irq                 = as_pci_to_irq,
+> +       .request                = as_pci_request,
+> +       .can_sleep              = 1,
+> +       .ngpio                  = AS3722_PIN_NUM,
+> +       .base                   = -1,
+> +};
+> +
+> +static int as3722_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +       struct as3722_pctrl_info *as_pci;
+> +       int ret;
+> +
+> +       as_pci = devm_kzalloc(&pdev->dev, sizeof(*as_pci), GFP_KERNEL);
+> +       if (!as_pci)
+> +               return -ENOMEM;
+> +
+> +       as_pci->dev = &pdev->dev;
+> +       as_pci->dev->of_node = pdev->dev.parent->of_node;
+> +       as_pci->as3722 = dev_get_drvdata(pdev->dev.parent);
+> +       platform_set_drvdata(pdev, as_pci);
+> +
+> +       as_pci->pins = as3722_pins_desc;
+> +       as_pci->num_pins = ARRAY_SIZE(as3722_pins_desc);
+> +       as_pci->functions = as3722_pin_function;
+> +       as_pci->num_functions = ARRAY_SIZE(as3722_pin_function);
+> +       as_pci->pin_groups = as3722_pingroups;
+> +       as_pci->num_pin_groups = ARRAY_SIZE(as3722_pingroups);
+> +       as3722_pinctrl_desc.name = dev_name(&pdev->dev);
+> +       as3722_pinctrl_desc.pins = as3722_pins_desc;
+> +       as3722_pinctrl_desc.npins = ARRAY_SIZE(as3722_pins_desc);
+> +       as_pci->pctl = pinctrl_register(&as3722_pinctrl_desc,
+> +                                       &pdev->dev, as_pci);
+> +       if (!as_pci->pctl) {
+> +               dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       as_pci->gpio_chip = as_pci_chip;
+> +       as_pci->gpio_chip.dev = &pdev->dev;
+> +       as_pci->gpio_chip.of_node = pdev->dev.parent->of_node;
+> +       ret = gpiochip_add(&as_pci->gpio_chip);
+> +       if (ret < 0) {
+> +               dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+> +               goto scrub;
+> +       }
+
+Right here you should register a GPIO range using
+gpiochip_add_pin_range() so that all calls from the gpio_chip
+side can happily fall through to the pinctrl driver and set up
+pins as GPIO.
+
+It's very nice how you contained the driver in one state container.
+
+Yours,
+Linus Walleij
