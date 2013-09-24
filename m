@@ -1,320 +1,101 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [RFC v2] gpio/omap: auto-setup a GPIO when used as an IRQ
-Date: Tue, 24 Sep 2013 09:58:00 +0200
-Message-ID: <1380009480-4975-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Cc: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon Hunter <jgchunter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, r.sricharan-l0cyMroinI0@public.gmane.org, holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Tue, 24 Sep 2013 10:26:10 +0200
+Message-ID: <CACRpkdZKqW9veHzc1Rgj4oKsjGRATk+Sz8vJaP3EfT4de+bjQA@mail.gmail.com>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de>
+	<52279524.8090006@wwwdotorg.org>
+	<20130909161924.GT29403@sirena.org.uk>
+	<2052193.CMUEUJFRgS@lem-wkst-02>
+	<522F78CB.2020507@wwwdotorg.org>
+	<20130910213718.GH29403@sirena.org.uk>
+	<522F9E6C.2010905@wwwdotorg.org>
+	<522FBED9.9000305@collabora.co.uk>
+	<5230C7F6.3080803@wwwdotorg.org>
+	<CACRpkdacx-e01i_h4cj1qMX2zNOiiDshbTV__wi_LfQrLkrL6g@mail.gmail.com>
+	<5240A0C2.4010502@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5240A0C2.4010502@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Lars Poeschel <poeschel@lemonage.de>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, joelf@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
-The OMAP GPIO controller HW requires a pin to be configured in GPIO
-input mode in order to operate as an interrupt input. Since drivers
-should not be aware of whether an interrupt pin is also a GPIO or not,
-the HW should be fully configured/enabled as an IRQ if a driver solely
-uses IRQ APIs such as request_irq(), and never calls any GPIO-related
-APIs. As such, add the missing HW setup to the OMAP GPIO controller's
-irq_chip driver.
+On Mon, Sep 23, 2013 at 10:12 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 09/23/2013 01:53 PM, Linus Walleij wrote:
 
-Since this bypasses the GPIO subsystem we have to ensure that another
-caller won't be able to request the same GPIO pin that is used as an
-IRQ and set its direction as output. Requesting the GPIO and setting
-its direction as input is allowed though.
+>> I think the kernel should prevent such things.
+>
+> It might be nice if it could do that.
+>
+> However, that is 100% unrelated to the problem at hand.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
----
+I don't think it is unrelated when the old OMAP boardfile-based
+code definately prevents such uses by its strict usage
+of gpio_request() for all IRQ-bound GPIOs.
 
-Tested on a OMAP3 DM3730 board with both legacy and DT based booting.
+I think not preventing it for the DT boot path is setting lower
+standards for DT code than for boardfile code which is not
+what we should be doing.
 
-Changes since v1:
- - Simplify patch description as suggested by Stephen Warren.
- - Track IRQ and GPIO module usage separately.
- - Add clearing path for PM when free_irq() is called to not
-   leave the bank unnecessary enabled as suggested by Tony Lindgren.
- - Check if the line is used as IRQ to not allow a second caller
-   to set the GPIO direction as output as suggested by Linus Walleij.
+> A driver which only cares about an IRQ should be able to call just IRQ
+> APIs and have the HW work. Since not all IRQs are GPIOs, the thing that
+> causes the HW to work should not involve the GPIO subsystem in any way
+> at all.
 
- drivers/gpio/gpio-omap.c | 158 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 101 insertions(+), 57 deletions(-)
+Yes I have bought into that concept now.
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 0ff4355..89675f8 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -63,6 +63,7 @@ struct gpio_bank {
- 	struct gpio_chip chip;
- 	struct clk *dbck;
- 	u32 mod_usage;
-+	u32 irq_usage;
- 	u32 dbck_enable_mask;
- 	bool dbck_enabled;
- 	struct device *dev;
-@@ -86,6 +87,9 @@ struct gpio_bank {
- #define GPIO_BIT(bank, gpio) (1 << GPIO_INDEX(bank, gpio))
- #define GPIO_MOD_CTRL_BIT	BIT(0)
- 
-+#define BANK_USED(bank) (bank->mod_usage || bank->irq_usage)
-+#define LINE_USED(line, offset) (line & (1 << offset))
-+
- static int irq_to_gpio(struct gpio_bank *bank, unsigned int gpio_irq)
- {
- 	return bank->chip.base + gpio_irq;
-@@ -420,15 +424,69 @@ static int _set_gpio_triggering(struct gpio_bank *bank, int gpio,
- 	return 0;
- }
- 
-+static void _enable_gpio_module(struct gpio_bank *bank, unsigned offset)
-+{
-+	if (bank->regs->pinctrl) {
-+		void __iomem *reg = bank->base + bank->regs->pinctrl;
-+
-+		/* Claim the pin for MPU */
-+		__raw_writel(__raw_readl(reg) | (1 << offset), reg);
-+	}
-+
-+	if (bank->regs->ctrl && !BANK_USED(bank)) {
-+		void __iomem *reg = bank->base + bank->regs->ctrl;
-+		u32 ctrl;
-+
-+		ctrl = __raw_readl(reg);
-+		/* Module is enabled, clocks are not gated */
-+		ctrl &= ~GPIO_MOD_CTRL_BIT;
-+		__raw_writel(ctrl, reg);
-+		bank->context.ctrl = ctrl;
-+	}
-+}
-+
-+static void _disable_gpio_module(struct gpio_bank *bank, unsigned offset)
-+{
-+	void __iomem *base = bank->base;
-+
-+	if (bank->regs->wkup_en &&
-+	    !LINE_USED(bank->mod_usage, offset) &&
-+	    !LINE_USED(bank->irq_usage, offset)) {
-+		/* Disable wake-up during idle for dynamic tick */
-+		_gpio_rmw(base, bank->regs->wkup_en, 1 << offset, 0);
-+		bank->context.wake_en =
-+			__raw_readl(bank->base + bank->regs->wkup_en);
-+	}
-+
-+	if (bank->regs->ctrl && !BANK_USED(bank)) {
-+		void __iomem *reg = bank->base + bank->regs->ctrl;
-+		u32 ctrl;
-+
-+		ctrl = __raw_readl(reg);
-+		/* Module is disabled, clocks are gated */
-+		ctrl |= GPIO_MOD_CTRL_BIT;
-+		__raw_writel(ctrl, reg);
-+		bank->context.ctrl = ctrl;
-+	}
-+}
-+
-+static int gpio_is_input(struct gpio_bank *bank, int mask)
-+{
-+	void __iomem *reg = bank->base + bank->regs->direction;
-+
-+	return __raw_readl(reg) & mask;
-+}
-+
- static int gpio_irq_type(struct irq_data *d, unsigned type)
- {
- 	struct gpio_bank *bank = irq_data_get_irq_chip_data(d);
- 	unsigned gpio = 0;
- 	int retval;
- 	unsigned long flags;
-+	unsigned offset;
- 
--	if (WARN_ON(!bank->mod_usage))
--		return -EINVAL;
-+	if (!BANK_USED(bank))
-+		pm_runtime_get_sync(bank->dev);
- 
- #ifdef CONFIG_ARCH_OMAP1
- 	if (d->irq > IH_MPUIO_BASE)
-@@ -446,7 +504,17 @@ static int gpio_irq_type(struct irq_data *d, unsigned type)
- 		return -EINVAL;
- 
- 	spin_lock_irqsave(&bank->lock, flags);
--	retval = _set_gpio_triggering(bank, GPIO_INDEX(bank, gpio), type);
-+	offset = GPIO_INDEX(bank, gpio);
-+	retval = _set_gpio_triggering(bank, offset, type);
-+	if (!LINE_USED(bank->mod_usage, offset)) {
-+		_enable_gpio_module(bank, offset);
-+		_set_gpio_direction(bank, offset, 1);
-+	} else if (!gpio_is_input(bank, 1 << offset)) {
-+		spin_unlock_irqrestore(&bank->lock, flags);
-+		return -EINVAL;
-+	}
-+
-+	bank->irq_usage |= 1 << GPIO_INDEX(bank, gpio);
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 
- 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
-@@ -603,35 +671,19 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
- 	 * If this is the first gpio_request for the bank,
- 	 * enable the bank module.
- 	 */
--	if (!bank->mod_usage)
-+	if (!BANK_USED(bank))
- 		pm_runtime_get_sync(bank->dev);
- 
- 	spin_lock_irqsave(&bank->lock, flags);
- 	/* Set trigger to none. You need to enable the desired trigger with
--	 * request_irq() or set_irq_type().
-+	 * request_irq() or set_irq_type(). Only do this if the IRQ line has
-+	 * not already been requested.
- 	 */
--	_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
--
--	if (bank->regs->pinctrl) {
--		void __iomem *reg = bank->base + bank->regs->pinctrl;
--
--		/* Claim the pin for MPU */
--		__raw_writel(__raw_readl(reg) | (1 << offset), reg);
--	}
--
--	if (bank->regs->ctrl && !bank->mod_usage) {
--		void __iomem *reg = bank->base + bank->regs->ctrl;
--		u32 ctrl;
--
--		ctrl = __raw_readl(reg);
--		/* Module is enabled, clocks are not gated */
--		ctrl &= ~GPIO_MOD_CTRL_BIT;
--		__raw_writel(ctrl, reg);
--		bank->context.ctrl = ctrl;
-+	if (!LINE_USED(bank->irq_usage, offset)) {
-+		_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
-+		_enable_gpio_module(bank, offset);
- 	}
--
- 	bank->mod_usage |= 1 << offset;
--
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 
- 	return 0;
-@@ -640,31 +692,11 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
- static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
- {
- 	struct gpio_bank *bank = container_of(chip, struct gpio_bank, chip);
--	void __iomem *base = bank->base;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&bank->lock, flags);
--
--	if (bank->regs->wkup_en) {
--		/* Disable wake-up during idle for dynamic tick */
--		_gpio_rmw(base, bank->regs->wkup_en, 1 << offset, 0);
--		bank->context.wake_en =
--			__raw_readl(bank->base + bank->regs->wkup_en);
--	}
--
- 	bank->mod_usage &= ~(1 << offset);
--
--	if (bank->regs->ctrl && !bank->mod_usage) {
--		void __iomem *reg = bank->base + bank->regs->ctrl;
--		u32 ctrl;
--
--		ctrl = __raw_readl(reg);
--		/* Module is disabled, clocks are gated */
--		ctrl |= GPIO_MOD_CTRL_BIT;
--		__raw_writel(ctrl, reg);
--		bank->context.ctrl = ctrl;
--	}
--
-+	_disable_gpio_module(bank, offset);
- 	_reset_gpio(bank, bank->chip.base + offset);
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 
-@@ -672,7 +704,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
- 	 * If this is the last gpio to be freed in the bank,
- 	 * disable the bank module.
- 	 */
--	if (!bank->mod_usage)
-+	if (!BANK_USED(bank))
- 		pm_runtime_put(bank->dev);
- }
- 
-@@ -762,10 +794,20 @@ static void gpio_irq_shutdown(struct irq_data *d)
- 	struct gpio_bank *bank = irq_data_get_irq_chip_data(d);
- 	unsigned int gpio = irq_to_gpio(bank, d->hwirq);
- 	unsigned long flags;
-+	unsigned offset = GPIO_INDEX(bank, gpio);
- 
- 	spin_lock_irqsave(&bank->lock, flags);
-+	bank->irq_usage &= ~(1 << offset);
-+	_disable_gpio_module(bank, offset);
- 	_reset_gpio(bank, gpio);
- 	spin_unlock_irqrestore(&bank->lock, flags);
-+
-+	/*
-+	 * If this is the last IRQ to be freed in the bank,
-+	 * disable the bank module.
-+	 */
-+	if (!BANK_USED(bank))
-+		pm_runtime_put(bank->dev);
- }
- 
- static void gpio_ack_irq(struct irq_data *d)
-@@ -897,13 +939,6 @@ static int gpio_input(struct gpio_chip *chip, unsigned offset)
- 	return 0;
- }
- 
--static int gpio_is_input(struct gpio_bank *bank, int mask)
--{
--	void __iomem *reg = bank->base + bank->regs->direction;
--
--	return __raw_readl(reg) & mask;
--}
--
- static int gpio_get(struct gpio_chip *chip, unsigned offset)
- {
- 	struct gpio_bank *bank;
-@@ -922,13 +957,22 @@ static int gpio_output(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct gpio_bank *bank;
- 	unsigned long flags;
-+	int retval = 0;
- 
- 	bank = container_of(chip, struct gpio_bank, chip);
- 	spin_lock_irqsave(&bank->lock, flags);
-+
-+	if (LINE_USED(bank->irq_usage, offset)) {
-+			retval = -EINVAL;
-+			goto exit;
-+	}
-+
- 	bank->set_dataout(bank, offset, value);
- 	_set_gpio_direction(bank, offset, 0);
-+
-+exit:
- 	spin_unlock_irqrestore(&bank->lock, flags);
--	return 0;
-+	return retval;
- }
- 
- static int gpio_debounce(struct gpio_chip *chip, unsigned offset,
-@@ -1400,7 +1444,7 @@ void omap2_gpio_prepare_for_idle(int pwr_mode)
- 	struct gpio_bank *bank;
- 
- 	list_for_each_entry(bank, &omap_gpio_list, node) {
--		if (!bank->mod_usage || !bank->loses_context)
-+		if (!BANK_USED(bank) || !bank->loses_context)
- 			continue;
- 
- 		bank->power_mode = pwr_mode;
-@@ -1414,7 +1458,7 @@ void omap2_gpio_resume_after_idle(void)
- 	struct gpio_bank *bank;
- 
- 	list_for_each_entry(bank, &omap_gpio_list, node) {
--		if (!bank->mod_usage || !bank->loses_context)
-+		if (!BANK_USED(bank) || !bank->loses_context)
- 			continue;
- 
- 		pm_runtime_get_sync(bank->dev);
--- 
-1.8.4.rc3
+> Having the kernel detect when two different drivers both request the
+> same resource is entirely another thing. The solution to the first issue
+> must not rely on any solution to this second issue.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I understand this stance from a DT point of view - which is about
+resource passing and its syntax and semantics.
+
+>From a GPIO subsystem point of view, in keeping resources under
+kernel control, I naturally do not agree.
+
+> I'm also not convinced it's possible to solve this second issue given
+> the current kernel APIs, since there's not enough semantic information;
+> requests of GPIOs and IRQs aren't actually tied to a particular driver
+> at present (there's no "struct device *dev" parameter to request_irq or
+> gpio_request) and so the subsystems can't actually tell who is
+> requesting the GPIO/IRQ, and hence can't detect when the same driver, or
+> a different driver, is requesting the same core resource for different
+> purposes.
+
+Solving the issue that e.g. two different drivers competing about the
+same resource (as in one driver requesting an IRQ and another one
+requesting a GPIO) is not what I'm after here.
+
+I'm more after the GPIO subsystem having knowledge of a certain
+GPIO line being requested for IRQ, and denying that line to be set
+as input.
+
+Maybe this can actually be achieved quite easily with
+an additional API? Like gpio_lock_as_irq(gpio) which flags this
+in .flags of struct gpio_desc and prevent such things?
+
+Alexandre what do you think about this idea?
+
+> Equally, I am actually not 100% sure we want the core to prevent this.
+> Why shouldn't two different drivers request the same IRQ? Why shouldn't
+> at least one driver, perhaps more, request the pin as a GPIO (assuming
+> it will only read the GPIO value, not flip the pin to output).
+
+But I have already stated that this is OK?
+
+Are we talking past each other now?
+
+> This
+> exact situation might happen on some Tegra boards where there's a GPIO
+> for VBUS_EN that affects 2 USB ports. It's supposed to be driven
+> open-collector. If an external entity forces it low, it means
+> over-current.
+
+You are describing a very good reason for the core to be
+doing exactly what I described I think?
+
+Yours,
+Linus Walleij
