@@ -1,71 +1,87 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 5/9] of/irq: Introduce __of_irq_to_resource()
-Date: Mon, 23 Sep 2013 22:50:39 +0200
-Message-ID: <20130923205038.GD5216@ulmo>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-6-git-send-email-treding@nvidia.com>
- <5237782B.3030804@gmail.com>
- <CACRpkdadFct8iXSaRRQ3a2YQryfMjJwVaq+8wgWXS1Ymj3M_WA@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [RFC] gpio/omap: auto-setup a GPIO when used as an IRQ
+Date: Tue, 24 Sep 2013 07:41:08 +0200
+Message-ID: <524125F4.4060608@collabora.co.uk>
+References: <1379860848-29020-1-git-send-email-javier.martinez@collabora.co.uk> <CACRpkdb35DouKsZ+9aWfQmER1vmAaK1dR7VXjoFHTLRR+hBezg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u65IjBhB3TIa72Vp"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdadFct8iXSaRRQ3a2YQryfMjJwVaq+8wgWXS1Ymj3M_WA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CACRpkdb35DouKsZ+9aWfQmER1vmAaK1dR7VXjoFHTLRR+hBezg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon Hunter <jgchunter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On 09/23/2013 10:15 PM, Linus Walleij wrote:
+> On Sun, Sep 22, 2013 at 4:40 PM, Javier Martinez Canillas
+> <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
+> 
+>> To use a GPIO pin as an interrupt line, two previous configurations
+>> have to be made:
+>>
+>> a) Map the GPIO pin as an interrupt line into the Linux irq space
+>> b) Enable the GPIO bank and configure the GPIO direction as input
+>>
+>> Most GPIO/IRQ chip drivers just create a mapping for every single
+>> GPIO pin with irq_create_mapping() on .probe so users usually can
+>> assume a) and only have to do b) by using the following sequence:
+>>
+>> gpio_request(gpio, "foo IRQ");
+>> gpio_direction_input(gpio);
+>>
+>> and then request a IRQ with:
+>>
+>> irq = gpio_to_irq(gpio);
+>> request_irq(irq, ...);
+> 
+> I guess I have to live with this approach, but I'd like to - if possible -
+> address my pet issue.
+> 
+> - It is OK that the HW get set up as GPIO input by the IRQ
+>   request function alone. (Through gpio_irq_type I guess).
+> 
 
---u65IjBhB3TIa72Vp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, this is how is made on this patch indeed.
 
-On Mon, Sep 23, 2013 at 09:20:37PM +0200, Linus Walleij wrote:
-> On Mon, Sep 16, 2013 at 11:29 PM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wro=
-te:
-> > On 09/16/2013 03:32 AM, Thierry Reding wrote:
-> >> This is a version of of_irq_to_resource() that propagates the precise
-> >> error code instead of returning 0 for all errors. It will be used in
-> >> subsequent patches to allow further propagation of error codes.
-> >>
-> >> To avoid code duplication, implement of_irq_to_resource() as a wrapper
-> >> around the new __of_irq_to_resource().
-> >
-> > I think the callers in this case are manageable to update as well.
-> > Several cases could simply use irq_of_parse_and_map instead as they just
-> > pass in a NULL resource.
->=20
-> I second this comment.
+> - When a second caller calls omap_gpio_request() it should
+>   be OK as well, but only if the flags corresponds to the
+>   previously enabled input mode. Else it should be
+>   disallowed.
+> 
+> - The same should happen for _set_gpio_direction() if a pin
+>   previously set up for IRQ gets a request to be used as
+>   output.
+> 
+> If this cannot be tracked in the driver, it is certainly a candidate
+> for something that gpiolib should be doing. And then I'm open to
+> solutions to how we can do that.
+> 
 
-That should be fixed in v2 of the series that I posted a few days ago.
+Ok, this can be tracked in the driver, will add it when posting v2 soon.
 
-Thierry
+> If this needs to be applied pronto to fix the regression I'm
+> happy with that too, if we add a big boilerplate stating the above
+> problem and that it needs to be *fixed* at some point.
+> 
+> But in either case I want this to be tested on OMAP1 before
+> I apply it, as in a Tested-by tag.
+>
 
---u65IjBhB3TIa72Vp
-Content-Type: application/pgp-signature
+Agreed. Even though this is a fix for a long standing issue I prefer it to be
+tested extensively than applying the patch in a rush just to learn that causes
+regressions and have to be reverted as it happens last time.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+So as you said let's wait until we have a few Tested-by tags by people using
+different OMAP platforms specially OMAP1.
 
-iQIcBAEBAgAGBQJSQKmeAAoJEN0jrNd/PrOhpsYP/2xzs3k69Qi+gWUntP1If6vS
-9gqRbcx8LT4ESsT94HHYieEF/P821YGLviE3Hi3LRSCZwR8mEYmFXHdf24Y4Z6wC
-zexH3VxggvAe6RtDx5I8+0vyia4UV8N5Hx3xBqPkBRsQYIdMkEf5mCjqfs71RntT
-kQu4jCeaznIiMMn18YkqwpJqHuCeHn3u6HmuKn1xSEbxcf8etXEE5bANehkdPyNO
-7E7NTSDrmCnXhwJRlALlAee1TmEaV8TmF7mYtVM3QmjP+PX7hkSk6rbJ08XuWUCS
-DCOiOMTuGlyRkRVJZJiWQO/ajmZT5bWXMUoOzYuV5RzDsUzbQjw9oFEbzs6ww5zi
-7CtHnlNS3r98BDMb+jk9+CJ55xm0+BIyhuq540Dmn8nGuV50LniQF0ViHTBc9JBQ
-vQA+I5PtruaiJbDokA8KVn+Q7VbPStSMgvrUuPOQudVJICfUvsc3df81BVAgD4zW
-kZzBOVtb+PZwNFyYC5u8Dnx9yJqjQebkOccYYKESI1RzJW9YSPtMGe/XXZmqNsVG
-pHI196XlHrih3fbPKD6J1unERKfmDcXswYtcU2NJNMeMCjlBDq+PJZLsbc2mwL/l
-aGhf2Wx13qqHid+cBo7P75/frWEQU/wpUKugLCGs7UeFYKk/D3Ofr4BeRDYMAr0K
-Geb6Q+K8bx8LJGDUpDKG
-=gApM
------END PGP SIGNATURE-----
+> Yours,
+> Linus Walleij
+> 
 
---u65IjBhB3TIa72Vp--
+Thanks a lot and best regards,
+Javier
+
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
