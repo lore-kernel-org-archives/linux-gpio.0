@@ -1,200 +1,71 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [rtc-linux] [PATCH V3 2/3] pincntrl: add support for AMS AS3722
- pin control driver
-Date: Tue, 24 Sep 2013 14:52:48 +0200
-Message-ID: <CACRpkda3m4ipTsS8FZoU1QDwrvwmKFn4awyfXOy2VOiuV63y6A@mail.gmail.com>
-References: <1380023921-29867-1-git-send-email-ldewangan@nvidia.com>
-	<1380023921-29867-3-git-send-email-ldewangan@nvidia.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [RFC] gpio/omap: auto-setup a GPIO when used as an IRQ
+Date: Tue, 24 Sep 2013 08:27:03 -0700
+Message-ID: <20130924152703.GL2684@atomide.com>
+References: <1379860848-29020-1-git-send-email-javier.martinez@collabora.co.uk>
+ <CACRpkdb35DouKsZ+9aWfQmER1vmAaK1dR7VXjoFHTLRR+hBezg@mail.gmail.com>
+ <524125F4.4060608@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1380023921-29867-3-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, Florian Lobmaier <florian.lobmaier@ams.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:22499 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751301Ab3IXP1T (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Sep 2013 11:27:19 -0400
+Content-Disposition: inline
+In-Reply-To: <524125F4.4060608@collabora.co.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Jon Hunter <jgchunter@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Sep 24, 2013 at 1:58 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> The AS3722 is a compact system PMU suitable for mobile phones, tablets etc.
->
-> Add a driver to support accessing the GPIO, pinmux and pin configuration
-> of 8 GPIO pins found on the AMS AS3722 through pin control driver and
-> gpiolib.
->
-> The driver will register itself as the pincontrol driver and gpio driver.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Florian Lobmaier <florian.lobmaier@ams.com>
+* Javier Martinez Canillas <javier.martinez@collabora.co.uk> [130923 22:49]:
+> On 09/23/2013 10:15 PM, Linus Walleij wrote:
+> > <javier.martinez@collabora.co.uk> wrote:
+> > - When a second caller calls omap_gpio_request() it should
+> >   be OK as well, but only if the flags corresponds to the
+> >   previously enabled input mode. Else it should be
+> >   disallowed.
+> > 
+> > - The same should happen for _set_gpio_direction() if a pin
+> >   previously set up for IRQ gets a request to be used as
+> >   output.
+> > 
+> > If this cannot be tracked in the driver, it is certainly a candidate
+> > for something that gpiolib should be doing. And then I'm open to
+> > solutions to how we can do that.
+> > 
+> 
+> Ok, this can be tracked in the driver, will add it when posting v2 soon.
+> 
+> > If this needs to be applied pronto to fix the regression I'm
+> > happy with that too, if we add a big boilerplate stating the above
+> > problem and that it needs to be *fixed* at some point.
 
-That was quick! :-)
+In the mainline kernel, the regression is happening at least for
+smsc911x using boards, so that's omap3-igep.dtsi and omap3-tobi.dts
+currently. Also MMC card detection for omap4 is failing. Then
+of course there are tons of boards where we don't have the .dts
+files in the mainline kernel yet.
 
-This is starting to look a lot better.
+So maybe let's do a minimal fix for the -rc cycle first?
 
-> +static int as3722_pinconf_group_get(struct pinctrl_dev *pctldev,
-> +                               unsigned group, unsigned long *config)
-> +{
-> +       dev_err(pctldev->dev, "as3722_pinconf_group_get op not supported\n");
-> +       return -ENOTSUPP;
-> +}
-> +
-> +static int as3722_pinconf_group_set(struct pinctrl_dev *pctldev,
-> +                               unsigned group, unsigned long *configs,
-> +                               unsigned num_configs)
-> +{
-> +       dev_err(pctldev->dev, "as3722_pinconf_group_set op not supported\n");
-> +       return -ENOTSUPP;
-> +}
-> +
-> +static const struct pinconf_ops as3722_pinconf_ops = {
-> +       .pin_config_get = as3722_pinconf_get,
-> +       .pin_config_set = as3722_pinconf_set,
-> +       .pin_config_group_get = as3722_pinconf_group_get,
-> +       .pin_config_group_set = as3722_pinconf_group_set,
+Then the extra checks can be queued for the next merge window
+if it gets too intrusive.
 
-Can't you just leave .pin_config_group_[get|set] undefined as
-you don't support that?
+> > But in either case I want this to be tested on OMAP1 before
+> > I apply it, as in a Tested-by tag.
+> >
+> 
+> Agreed. Even though this is a fix for a long standing issue I prefer it to be
+> tested extensively than applying the patch in a rush just to learn that causes
+> regressions and have to be reverted as it happens last time.
+> 
+> So as you said let's wait until we have a few Tested-by tags by people using
+> different OMAP platforms specially OMAP1.
 
-> +static struct pinctrl_desc as3722_pinctrl_desc = {
-> +       .pctlops = (struct pinctrl_ops *)&as3722_pinctrl_ops,
-> +       .pmxops = (struct pinmux_ops *)&as3722_pinmux_ops,
-> +       .confops = (struct pinconf_ops *)&as3722_pinconf_ops,
+Yup.
 
-Why do you need these casts? Should not be necessary.
+Regards,
 
-> +static int as_pci_direction_input(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       struct as3722_pctrl_info *as_pci = to_as_pci(chip);
-> +       struct as3722 *as3722 = as_pci->as3722;
-> +       int mode;
-> +
-> +       mode = as_pci_get_mode(as_pci->gpio_control[offset].mode_prop,
-> +                       true);
-> +       if (mode < 0) {
-> +               dev_err(as_pci->dev,
-> +                       "Input direction for GPIO %d not supported\n", offset);
-> +               return mode;
-> +       }
-> +
-> +       if (as_pci->gpio_control[offset].enable_gpio_invert)
-> +               mode |= AS3722_GPIO_INV;
-> +
-> +       return as3722_write(as3722, AS3722_GPIOn_CONTROL_REG(offset), mode);
-> +}
-
-Why is this function not calling
-pinctrl_gpio_direction_input(chip->base + offset) instea of setting up
-the mode intself?
-
-The GPIO part of the driver should use the pinctrl part of the
-driver as back-end.
-
-> +static int as_pci_direction_output(struct gpio_chip *chip,
-> +               unsigned offset, int value)
-> +{
-> +       struct as3722_pctrl_info *as_pci = to_as_pci(chip);
-> +       struct as3722 *as3722 = as_pci->as3722;
-> +       int mode;
-> +
-> +       mode = as_pci_get_mode(as_pci->gpio_control[offset].mode_prop,
-> +                       false);
-> +       if (mode < 0) {
-> +               dev_err(as_pci->dev,
-> +                       "Output direction for GPIO %d not supported\n", offset);
-> +               return mode;
-> +       }
-> +
-> +       as_pci_set(chip, offset, value);
-> +       if (as_pci->gpio_control[offset].enable_gpio_invert)
-> +               mode |= AS3722_GPIO_INV;
-> +       return as3722_write(as3722, AS3722_GPIOn_CONTROL_REG(offset), mode);
-> +}
-
-Dito:
-pinctrl_gpio_direction_output()
-
-> +static int as_pci_to_irq(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       struct as3722_pctrl_info *as_pci = to_as_pci(chip);
-> +
-> +       return as3722_irq_get_virq(as_pci->as3722, offset);
-> +}
-> +
-> +static int as_pci_request(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       struct as3722_pctrl_info *as_pci = to_as_pci(chip);
-> +
-> +       if (as_pci->gpio_control[offset].io_function)
-> +               return -EBUSY;
-> +       return 0;
-> +}
-
-Why is this not calling pinctrl_request_gpio(as_pci->chip.base + offset)
-instead of just checking if we happen to be GPIO and failing if
-we are not?
-
-I would implement .free calling pinctrl_free_gpio(gpio) as well.
-
-See e.g. pinctrl-abx500.c
-
-> +static const struct gpio_chip as_pci_chip = {
-> +       .label                  = "as3722-gpio",
-> +       .owner                  = THIS_MODULE,
-> +       .direction_input        = as_pci_direction_input,
-> +       .get                    = as_pci_get,
-> +       .direction_output       = as_pci_direction_output,
-> +       .set                    = as_pci_set,
-> +       .to_irq                 = as_pci_to_irq,
-> +       .request                = as_pci_request,
-> +       .can_sleep              = 1,
-> +       .ngpio                  = AS3722_PIN_NUM,
-> +       .base                   = -1,
-> +};
-> +
-> +static int as3722_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +       struct as3722_pctrl_info *as_pci;
-> +       int ret;
-> +
-> +       as_pci = devm_kzalloc(&pdev->dev, sizeof(*as_pci), GFP_KERNEL);
-> +       if (!as_pci)
-> +               return -ENOMEM;
-> +
-> +       as_pci->dev = &pdev->dev;
-> +       as_pci->dev->of_node = pdev->dev.parent->of_node;
-> +       as_pci->as3722 = dev_get_drvdata(pdev->dev.parent);
-> +       platform_set_drvdata(pdev, as_pci);
-> +
-> +       as_pci->pins = as3722_pins_desc;
-> +       as_pci->num_pins = ARRAY_SIZE(as3722_pins_desc);
-> +       as_pci->functions = as3722_pin_function;
-> +       as_pci->num_functions = ARRAY_SIZE(as3722_pin_function);
-> +       as_pci->pin_groups = as3722_pingroups;
-> +       as_pci->num_pin_groups = ARRAY_SIZE(as3722_pingroups);
-> +       as3722_pinctrl_desc.name = dev_name(&pdev->dev);
-> +       as3722_pinctrl_desc.pins = as3722_pins_desc;
-> +       as3722_pinctrl_desc.npins = ARRAY_SIZE(as3722_pins_desc);
-> +       as_pci->pctl = pinctrl_register(&as3722_pinctrl_desc,
-> +                                       &pdev->dev, as_pci);
-> +       if (!as_pci->pctl) {
-> +               dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
-> +               return -ENODEV;
-> +       }
-> +
-> +       as_pci->gpio_chip = as_pci_chip;
-> +       as_pci->gpio_chip.dev = &pdev->dev;
-> +       as_pci->gpio_chip.of_node = pdev->dev.parent->of_node;
-> +       ret = gpiochip_add(&as_pci->gpio_chip);
-> +       if (ret < 0) {
-> +               dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
-> +               goto scrub;
-> +       }
-
-Right here you should register a GPIO range using
-gpiochip_add_pin_range() so that all calls from the gpio_chip
-side can happily fall through to the pinctrl driver and set up
-pins as GPIO.
-
-It's very nice how you contained the driver in one state container.
-
-Yours,
-Linus Walleij
+Tony
