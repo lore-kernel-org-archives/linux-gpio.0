@@ -1,118 +1,158 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
-Date: Tue, 24 Sep 2013 20:28:21 +0200
-Message-ID: <20130924182820.GA9911@mithrandir>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-3-git-send-email-treding@nvidia.com>
- <CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
- <20130923202935.GA5216@ulmo>
- <CACRpkdZMM9RUkRCWG0mYbF9PL-fOdDncpY05xG3F5BF55hn5ug@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZMM9RUkRCWG0mYbF9PL-fOdDncpY05xG3F5BF55hn5ug-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/2] gpio/omap: maintain GPIO and IRQ usage separately
+Date: Wed, 25 Sep 2013 02:36:52 +0200
+Message-ID: <1380069414-2922-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, r.sricharan@ti.com, holler@ahsoftware.de, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-gpio@vger.kernel.org
 
+The GPIO OMAP controller pins can be used as IRQ and GPIO
+independently so is necessary to keep track GPIO pins and
+IRQ lines usage separately to make sure that the bank will
+always be enabled while being used.
 
---x+6KMIRAuhnl3hBn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also move gpio_is_input() definition in preparation for the
+next patch that setups the controller's irq_chip driver when
+a caller requests an interrupt line.
 
-On Tue, Sep 24, 2013 at 02:20:44PM +0200, Linus Walleij wrote:
-> On Mon, Sep 23, 2013 at 10:29 PM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > On Mon, Sep 23, 2013 at 09:14:30PM +0200, Linus Walleij wrote:
->=20
-> >> I think it is better to first go over the call sites and make them
-> >> all handle negative return numbers rather than pushing the
-> >> obscure __interface.
-> (...)
-> >
-> > Well, the problem is that the current patch changes the signature of the
-> > function as well, therefore the call sites will have to be updated all
-> > at once in a single patch to avoid build breakage.
->=20
-> Hm yeah OK I see the problem, but can we atleast avoid the
-> __thing? Like calling the new function irq_create_mapping_strict()
-> or whatever.
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ drivers/gpio/gpio-omap.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
-_strict sort of implies that it does something more than the non-strict
-irq_create_mapping() while it really doesn't. Perhaps the alternative
-proposed below would indeed be a better solution.
-
-> > Another alternative could be to change the signature in a way that does
-> > not break compatibility. For instance I think it could work out if we
-> > change this function to return int instead of unsigned int but keep the
-> > same semantics to begin with (return 0 on failure). Then update all call
-> > sites to handle potential negative errors and after that return negative
-> > error codes.
->=20
-> Hm that sounds like an attractive solution to me actually.
-
-The only thing we'd loose is the additional bit, but given that most (if
-not all) platforms that use DT are 32-bit (do we actually support any
-platforms that don't have 32-bit integers?) that should not matter at
-all. We're not very likely to get anywhere near that number of
-interrupts in the system.
-
-> > That still wouldn't catch any callers introduced between
-> > the patch creation and application.
->=20
-> Such things happen all the time, just have to be attentive in
-> what goes into linux-next...
-
-Given that linux-next might not be with us for much longer before the
-3.12 release, I'm thinking of deferring the series until then. Or at
-least trying to get it merged. Otherwise we'll probably have to deal
-with a lot of fall out during the merge window.
-
-In any case, it'd be nice to get some feedback on the general idea of
-the patch series from other people involved. I'd hate to do all the
-conversions just to have it NAKed at the last minute.
-
-> Another minor thing:
->=20
-> +static int __irq_create_mapping(struct irq_domain *domain,
-> +                               irq_hw_number_t hwirq, unsigned int *virq=
-p)
->=20
-> Unless you can make a very good case for why there should
-> be a "v" in the beginning of virqp, then remove it and call it
-> "irqp" simply.
->=20
-> All Linux IRQs are virtual and we're already clearly separating
-> out those that are not by calling them "hwirq".
-
-Yeah, I was just trying to adapt to what was already there. But with the
-alternative proposal that'll go away anyway.
-
-Thierry
-
---x+6KMIRAuhnl3hBn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSQdnEAAoJEN0jrNd/PrOhJn8P/3TBPXWjbLi5m7KaRXlga4UE
-K3Ny6iA37CXlF+yLzqlpZz6UvKJvvTqXwv0Vt/nwMHvZ+/hnyWefdxDeAnGioz9Q
-Xv35ArYyVpnXDLidl34Cer+KodQyfq9bNfBynn69ioEzSu3pa1iCzMsufoc7qYv2
-iQoOFbSFHDIO7kWiX8IWnrObr7HWg6+64Za4tPQm+9tH2wHs3p5rG5QzY/qPtBUX
-UqqE9WiC6olA8ANasEpO/LeP3+73vFF57q45dI2tTrrPYej5Ea/n87CIPGY4mj4P
-MsqS1XwBXZR8hHP+kL6DruxTC3lXW5xs3xVW7Qp5ErazD7I5DAz7V35FqR70rlE6
-LaCxaiwjGL3dMVVbH/3rExquKzLcp5Qb+9pguqz4hnZ2rDPEswLEZwJxRfhxN4hj
-0l7NFVN2AfSD7RHdujXo5cqv6N/PHq/IbBX/ZGMqfj63E8oyong/d+Ejf34SWjID
-qJmWcaPvxOq6/Wn5RYiPAf1ukqDQXQJPfOeMYhfMZCq5dwufxeI6kqHaUn5ngQ95
-3Mad+lpjP2zvWsDCyevKJvZT6xOmiKDH8hoi9mk0t3YmLtQsPGU0M2wKpKhaxEkE
-5RDuwDO2NnwIohRiNhBV5etxQ8DX+6AfOd6scZ0hJymX0sjgeTla5EWCXXaMKinZ
-2h9exIOdxzKJAO1B8A+O
-=0ZXR
------END PGP SIGNATURE-----
-
---x+6KMIRAuhnl3hBn--
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 0ff4355..a4fe038 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -63,6 +63,7 @@ struct gpio_bank {
+ 	struct gpio_chip chip;
+ 	struct clk *dbck;
+ 	u32 mod_usage;
++	u32 irq_usage;
+ 	u32 dbck_enable_mask;
+ 	bool dbck_enabled;
+ 	struct device *dev;
+@@ -86,6 +87,9 @@ struct gpio_bank {
+ #define GPIO_BIT(bank, gpio) (1 << GPIO_INDEX(bank, gpio))
+ #define GPIO_MOD_CTRL_BIT	BIT(0)
+ 
++#define BANK_USED(bank) (bank->mod_usage || bank->irq_usage)
++#define LINE_USED(line, offset) (line & (1 << offset))
++
+ static int irq_to_gpio(struct gpio_bank *bank, unsigned int gpio_irq)
+ {
+ 	return bank->chip.base + gpio_irq;
+@@ -420,6 +424,13 @@ static int _set_gpio_triggering(struct gpio_bank *bank, int gpio,
+ 	return 0;
+ }
+ 
++static int gpio_is_input(struct gpio_bank *bank, int mask)
++{
++	void __iomem *reg = bank->base + bank->regs->direction;
++
++	return __raw_readl(reg) & mask;
++}
++
+ static int gpio_irq_type(struct irq_data *d, unsigned type)
+ {
+ 	struct gpio_bank *bank = irq_data_get_irq_chip_data(d);
+@@ -427,7 +438,7 @@ static int gpio_irq_type(struct irq_data *d, unsigned type)
+ 	int retval;
+ 	unsigned long flags;
+ 
+-	if (WARN_ON(!bank->mod_usage))
++	if (WARN_ON(!BANK_USED(bank)))
+ 		return -EINVAL;
+ 
+ #ifdef CONFIG_ARCH_OMAP1
+@@ -447,6 +458,7 @@ static int gpio_irq_type(struct irq_data *d, unsigned type)
+ 
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	retval = _set_gpio_triggering(bank, GPIO_INDEX(bank, gpio), type);
++	bank->irq_usage |= 1 << GPIO_INDEX(bank, gpio);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+ 
+ 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+@@ -603,7 +615,7 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 	 * If this is the first gpio_request for the bank,
+ 	 * enable the bank module.
+ 	 */
+-	if (!bank->mod_usage)
++	if (!BANK_USED(bank))
+ 		pm_runtime_get_sync(bank->dev);
+ 
+ 	spin_lock_irqsave(&bank->lock, flags);
+@@ -619,7 +631,7 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 		__raw_writel(__raw_readl(reg) | (1 << offset), reg);
+ 	}
+ 
+-	if (bank->regs->ctrl && !bank->mod_usage) {
++	if (bank->regs->ctrl && !BANK_USED(bank)) {
+ 		void __iomem *reg = bank->base + bank->regs->ctrl;
+ 		u32 ctrl;
+ 
+@@ -654,7 +666,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 
+ 	bank->mod_usage &= ~(1 << offset);
+ 
+-	if (bank->regs->ctrl && !bank->mod_usage) {
++	if (bank->regs->ctrl && !BANK_USED(bank)) {
+ 		void __iomem *reg = bank->base + bank->regs->ctrl;
+ 		u32 ctrl;
+ 
+@@ -672,7 +684,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 	 * If this is the last gpio to be freed in the bank,
+ 	 * disable the bank module.
+ 	 */
+-	if (!bank->mod_usage)
++	if (!BANK_USED(bank))
+ 		pm_runtime_put(bank->dev);
+ }
+ 
+@@ -762,8 +774,10 @@ static void gpio_irq_shutdown(struct irq_data *d)
+ 	struct gpio_bank *bank = irq_data_get_irq_chip_data(d);
+ 	unsigned int gpio = irq_to_gpio(bank, d->hwirq);
+ 	unsigned long flags;
++	unsigned offset = GPIO_INDEX(bank, gpio);
+ 
+ 	spin_lock_irqsave(&bank->lock, flags);
++	bank->irq_usage &= ~(1 << offset);
+ 	_reset_gpio(bank, gpio);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+ }
+@@ -897,13 +911,6 @@ static int gpio_input(struct gpio_chip *chip, unsigned offset)
+ 	return 0;
+ }
+ 
+-static int gpio_is_input(struct gpio_bank *bank, int mask)
+-{
+-	void __iomem *reg = bank->base + bank->regs->direction;
+-
+-	return __raw_readl(reg) & mask;
+-}
+-
+ static int gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank;
+@@ -1400,7 +1407,7 @@ void omap2_gpio_prepare_for_idle(int pwr_mode)
+ 	struct gpio_bank *bank;
+ 
+ 	list_for_each_entry(bank, &omap_gpio_list, node) {
+-		if (!bank->mod_usage || !bank->loses_context)
++		if (!BANK_USED(bank) || !bank->loses_context)
+ 			continue;
+ 
+ 		bank->power_mode = pwr_mode;
+@@ -1414,7 +1421,7 @@ void omap2_gpio_resume_after_idle(void)
+ 	struct gpio_bank *bank;
+ 
+ 	list_for_each_entry(bank, &omap_gpio_list, node) {
+-		if (!bank->mod_usage || !bank->loses_context)
++		if (!BANK_USED(bank) || !bank->loses_context)
+ 			continue;
+ 
+ 		pm_runtime_get_sync(bank->dev);
+-- 
+1.8.4.rc3
