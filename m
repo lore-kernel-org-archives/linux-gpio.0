@@ -1,43 +1,37 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
-Date: Thu, 26 Sep 2013 12:57:25 +0200
-Message-ID: <CACRpkdYzcb1F1-YK5ivxGpskZyVxN3qfUGn8sqq9RnfOU-EzEQ@mail.gmail.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-	<1379320326-13241-3-git-send-email-treding@nvidia.com>
-	<CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
-	<20130923202935.GA5216@ulmo>
-	<CACRpkdZMM9RUkRCWG0mYbF9PL-fOdDncpY05xG3F5BF55hn5ug@mail.gmail.com>
-	<20130924182820.GA9911@mithrandir>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 2/7] misc: ixp4-beeper: switch to use gpiolib
+Date: Thu, 26 Sep 2013 08:50:59 -0700
+Message-ID: <20130926155059.GA18017@kroah.com>
+References: <1378816210-7977-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130924182820.GA9911@mithrandir>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58041 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753314Ab3IZPvA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Sep 2013 11:51:00 -0400
+Content-Disposition: inline
+In-Reply-To: <1378816210-7977-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
 
-On Tue, Sep 24, 2013 at 8:28 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Tue, Sep 10, 2013 at 02:30:10PM +0200, Linus Walleij wrote:
+> The platform using this beeper has support for gpiolib, so there
+> is no point to use the custom gpio_line* API. A strange ambiguity
+> where a line was first set as input and then driven high was
+> solved by first driving the line high as output and then switch
+> it to input.
+> 
+> Cc: Imre Kaloz <kaloz@openwrt.org>
+> Cc: Krzysztof Halasa <khc@pm.waw.pl>
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Arnd/Greg: seeking your ACK to take this through the GPIO tree
+> as part of the attempt at cleaning out custom GPIO implementations.
 
-> Given that linux-next might not be with us for much longer before the
-> 3.12 release, I'm thinking of deferring the series until then. Or at
-> least trying to get it merged. Otherwise we'll probably have to deal
-> with a lot of fall out during the merge window.
-
-Hm, how unfortunate. Typically this is the kind of topic branch
-that should go in separately to linux-next.
-
-> In any case, it'd be nice to get some feedback on the general idea of
-> the patch series from other people involved. I'd hate to do all the
-> conversions just to have it NAKed at the last minute.
-
-With the direction we've discussed here atleast I won't be
-doing any NACKing if it's of any help...
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
