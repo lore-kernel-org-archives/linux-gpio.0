@@ -1,66 +1,38 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC v2] gpio/omap: auto-setup a GPIO when used as an IRQ
-Date: Fri, 27 Sep 2013 09:35:33 +0200
-Message-ID: <52453545.3090504@collabora.co.uk>
-References: <1380009480-4975-1-git-send-email-javier.martinez@collabora.co.uk> <5244C0C4.2030004@wwwdotorg.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/3] New descriptor-based GPIO interface
+Date: Fri, 27 Sep 2013 14:06:54 +0200
+Message-ID: <CACRpkdbhywp7_wAhOSzdMe==YoCo0mAcy1mJrdW3bURKWLxQeQ@mail.gmail.com>
+References: <1380179668-32288-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33958 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751258Ab3I0HgJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Sep 2013 03:36:09 -0400
-In-Reply-To: <5244C0C4.2030004@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380179668-32288-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, r.sricharan@ti.com, holler@ahsoftware.de, aaro.koskinen@iki.fi, Paul Walmsley <paul@pwsan.com>, joelf@ti.com
 
+On Thu, Sep 26, 2013 at 9:14 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-On 09/27/2013 01:18 AM, Stephen Warren wrote:
-> On 09/24/2013 01:58 AM, Javier Martinez Canillas wrote:
->> The OMAP GPIO controller HW requires a pin to be configured in GPIO
->> input mode in order to operate as an interrupt input. Since drivers
->> should not be aware of whether an interrupt pin is also a GPIO or not,
->> the HW should be fully configured/enabled as an IRQ if a driver solely
->> uses IRQ APIs such as request_irq(), and never calls any GPIO-related
->> APIs. As such, add the missing HW setup to the OMAP GPIO controller's
->> irq_chip driver.
->> 
->> Since this bypasses the GPIO subsystem we have to ensure that another
->> caller won't be able to request the same GPIO pin that is used as an
->> IRQ and set its direction as output. Requesting the GPIO and setting
->> its direction as input is allowed though.
-> 
-> FWIW, the concept of this patch,
-> Acked-by: Stephen Warren <swarren@nvidia.com>
-> 
-> I didn't review the code; just skimmed it to see where the new
-> functionality was implemented.
-> 
+> Here is a proper patch series for the descriptor-based GPIO interface to be
+> merged into -next. It is rebased on your for-next branch and only slightly
+> changed with respect to the RFC I posted earlier, only more thoroughly tested.
+> The documentation part is missing because I need some more time to rework it
+> (I'm on holidays this week but wanted to get the code into -next before 28th),
+> and anyway at this point I just want to make sure that the extra refactoring
+> does not break any existing code.
+>
+> My hope is to get this into -next before the 28th so this patchset can be
+> effectively tested, even if the new interfaces are not used yet. Since the old
+> integer-based interface now relies on top of gpiod_, this should provide good
+> coverage for both.
 
-Thanks Stephen,
+I've applied it now, but no idea whether it will hit the last -next tree in
+time, hopefully at the very last second ...
 
-I split the changes as suggested by Tony and posted as a patch-set and not an
-RFC anymore:
-
-[PATCH 1/2] gpio/omap: maintain GPIO and IRQ usage separately [1]
-[PATCH 2/2] gpio/omap: auto-setup a GPIO when used as an IRQ [2]
-
-Linus,
-
-Could you please add Stephen Acked-by when taking the patches and also George
-Cherian Tested-by that sent for this RFC. George it would be great if you can
-also comment on which OMAP platform you had tested.
-
-I cc'ed Aaro Koskinen and Paul Walmsley now which seems to have OMAP1 platforms
-to test. Could you please test [1] and [2] on a OMAP1 board? These patches
-solves a long standing issue we have on OMAP2+ when booting with DT and it would
-be great if you can check that it does not cause regressions on OMAP1 based boards.
-
-Thanks a lot and best regards,
-Javier
-
-[1]: https://patchwork.kernel.org/patch/2937351/
-[2]: https://patchwork.kernel.org/patch/2937371/
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
