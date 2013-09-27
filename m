@@ -1,73 +1,66 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: mmp: delete the custom GPIO header
-Date: Fri, 27 Sep 2013 13:37:32 +0800
-Message-ID: <CAN1soZzNNPckXZVEE_iz8XYUOtmuLd39zebgGN2GTv+iZZWFBw@mail.gmail.com>
-References: <1380183060-27366-1-git-send-email-linus.walleij@linaro.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFC v2] gpio/omap: auto-setup a GPIO when used as an IRQ
+Date: Fri, 27 Sep 2013 09:35:33 +0200
+Message-ID: <52453545.3090504@collabora.co.uk>
+References: <1380009480-4975-1-git-send-email-javier.martinez@collabora.co.uk> <5244C0C4.2030004@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ea0-f171.google.com ([209.85.215.171]:45425 "EHLO
-	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751187Ab3I0Fhe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Sep 2013 01:37:34 -0400
-Received: by mail-ea0-f171.google.com with SMTP id n15so970906ead.16
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Sep 2013 22:37:32 -0700 (PDT)
-In-Reply-To: <1380183060-27366-1-git-send-email-linus.walleij@linaro.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33958 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751258Ab3I0HgJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Sep 2013 03:36:09 -0400
+In-Reply-To: <5244C0C4.2030004@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Eric Miao <eric.y.miao@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, r.sricharan@ti.com, holler@ahsoftware.de, aaro.koskinen@iki.fi, Paul Walmsley <paul@pwsan.com>, joelf@ti.com
 
-On Thu, Sep 26, 2013 at 4:11 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> The MMP sub-architecture appears to have a custom <mach/gpio.h>
-> for no reason whatsoever. The file became completely empty
-> after Haojian removed the remaining content in
-> commit 157d2644cb0c1e71a18baaffca56d2b1d0ebf10f
-> "ARM: pxa: change gpio to platform device".
->
-> Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
-> Cc: Eric Miao <eric.y.miao@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Haojian, I'm seeking an ACK for this patch so I can take it
-> through the GPIO tree.
-> ---
->  arch/arm/Kconfig                      | 1 -
->  arch/arm/mach-mmp/include/mach/gpio.h | 8 --------
->  2 files changed, 9 deletions(-)
->  delete mode 100644 arch/arm/mach-mmp/include/mach/gpio.h
->
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 3f7714d..3950a12 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -559,7 +559,6 @@ config ARCH_MMP
->         select GPIO_PXA
->         select IRQ_DOMAIN
->         select MULTI_IRQ_HANDLER
-> -       select NEED_MACH_GPIO_H
->         select PINCTRL
->         select PLAT_PXA
->         select SPARSE_IRQ
-> diff --git a/arch/arm/mach-mmp/include/mach/gpio.h b/arch/arm/mach-mmp/include/mach/gpio.h
-> deleted file mode 100644
-> index 13219eb..0000000
-> --- a/arch/arm/mach-mmp/include/mach/gpio.h
-> +++ /dev/null
-> @@ -1,8 +0,0 @@
-> -#ifndef __ASM_MACH_GPIO_H
-> -#define __ASM_MACH_GPIO_H
-> -
-> -#include <asm-generic/gpio.h>
-> -
-> -#include <mach/cputype.h>
-> -
-> -#endif /* __ASM_MACH_GPIO_H */
-> --
-> 1.8.3.1
->
 
-Acked on all patches.
+On 09/27/2013 01:18 AM, Stephen Warren wrote:
+> On 09/24/2013 01:58 AM, Javier Martinez Canillas wrote:
+>> The OMAP GPIO controller HW requires a pin to be configured in GPIO
+>> input mode in order to operate as an interrupt input. Since drivers
+>> should not be aware of whether an interrupt pin is also a GPIO or not,
+>> the HW should be fully configured/enabled as an IRQ if a driver solely
+>> uses IRQ APIs such as request_irq(), and never calls any GPIO-related
+>> APIs. As such, add the missing HW setup to the OMAP GPIO controller's
+>> irq_chip driver.
+>> 
+>> Since this bypasses the GPIO subsystem we have to ensure that another
+>> caller won't be able to request the same GPIO pin that is used as an
+>> IRQ and set its direction as output. Requesting the GPIO and setting
+>> its direction as input is allowed though.
+> 
+> FWIW, the concept of this patch,
+> Acked-by: Stephen Warren <swarren@nvidia.com>
+> 
+> I didn't review the code; just skimmed it to see where the new
+> functionality was implemented.
+> 
 
-Regards
-Haojian
+Thanks Stephen,
+
+I split the changes as suggested by Tony and posted as a patch-set and not an
+RFC anymore:
+
+[PATCH 1/2] gpio/omap: maintain GPIO and IRQ usage separately [1]
+[PATCH 2/2] gpio/omap: auto-setup a GPIO when used as an IRQ [2]
+
+Linus,
+
+Could you please add Stephen Acked-by when taking the patches and also George
+Cherian Tested-by that sent for this RFC. George it would be great if you can
+also comment on which OMAP platform you had tested.
+
+I cc'ed Aaro Koskinen and Paul Walmsley now which seems to have OMAP1 platforms
+to test. Could you please test [1] and [2] on a OMAP1 board? These patches
+solves a long standing issue we have on OMAP2+ when booting with DT and it would
+be great if you can check that it does not cause regressions on OMAP1 based boards.
+
+Thanks a lot and best regards,
+Javier
+
+[1]: https://patchwork.kernel.org/patch/2937351/
+[2]: https://patchwork.kernel.org/patch/2937371/
