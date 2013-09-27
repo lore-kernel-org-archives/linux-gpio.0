@@ -1,45 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [rtc-linux] Re: [PATCH V4 2/3] pincntrl: add support for AMS
- AS3722 pin control driver
-Date: Fri, 27 Sep 2013 15:48:15 +0200
-Message-ID: <CACRpkdY5DeXSJ+RTyPtfDJG=x=M7KsybsBT3e=D_YLksi0DSEw@mail.gmail.com>
-References: <1380044845-7734-1-git-send-email-ldewangan@nvidia.com>
-	<CACRpkdZc2SGhUJUjVqen3tX5sqfm=PthK42ustAmoWwBsWzHPQ@mail.gmail.com>
-	<52458631.7030401@nvidia.com>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
+Date: Fri, 27 Sep 2013 16:17:49 +0200
+Message-ID: <CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:38953 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751329Ab3I0NsQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Sep 2013 09:48:16 -0400
-Received: by mail-oa0-f47.google.com with SMTP id i1so2045416oag.20
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Sep 2013 06:48:16 -0700 (PDT)
-In-Reply-To: <52458631.7030401@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 List-Id: linux-gpio@vger.kernel.org
-To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>
 
-On Fri, Sep 27, 2013 at 3:20 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> On Friday 27 September 2013 06:10 PM, Linus Walleij wrote:
->>
->> On Tue, Sep 24, 2013 at 7:47 PM, Laxman Dewangan <ldewangan@nvidia.com>
->> wrote:
->>
->>> function which just return not supported.
->>> - Nit cleanups.
->>
->> This is getting a lot better quickly.
->>
->> I'd like someone from devicetree@vger.kernel.org to say
->> something about the DT bindings, can you convince one of
->> the DT custodians to ACK this?
+On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
+<jose.goncalves@inov.pt> wrote:
+
+> Some GPIO line limits are incorrectly set which, for instance,
+> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
 >
-> I will request Stephen to review this.
+> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
+> ---
+>  arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
 
-OK I buy the rest of your explantions and I'm ready to merge
-this if the device tree people give green light.
+OK but grrrr!
+
+What needs to happen to the s3c24xx is to get rid of this file.
+
+- Define ARCH_NR_GPIOS in arch/arm/Kconfig entry
+  ARCH_NR_GPIO like everyone else
+
+- Get rid of the config symbol NEED_MACH_GPIO_H
+
+-  Move this file down into arch/arm/mach-s3c24xx/s3c24xx-gpio.h
+  or whatever and make it local...
+
+I will try to do this myself if noone else helps out, so I'd like to
+carry this patch in the GPIO tree provided I can get an ACK from
+the S3C24xx maintainer. Tomasz, is that you or Kukjin?
+
+(BTW the above maybe goes for S3c64xx as well .. and S5P
+oh well I will get to it.)
 
 Yours,
 Linus Walleij
