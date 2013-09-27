@@ -1,46 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
-Date: Fri, 27 Sep 2013 16:17:49 +0200
-Message-ID: <CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
-References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+From: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] gpio/omap: maintain GPIO and IRQ usage separately
+Date: Fri, 27 Sep 2013 16:31 +0200
+Message-ID: <1651688.AIWaNrhZnY@lem-wkst-02>
+References: <1380069414-2922-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380069414-2922-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon Hunter <jgchunter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, r.sricharan-l0cyMroinI0@public.gmane.org, holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
-<jose.goncalves@inov.pt> wrote:
+On Friday 27 September 2013 02:36:52, Javier Martinez Canillas wrote:
+> The GPIO OMAP controller pins can be used as IRQ and GPIO
+> independently so is necessary to keep track GPIO pins and
+> IRQ lines usage separately to make sure that the bank will
+> always be enabled while being used.
+> 
+> Also move gpio_is_input() definition in preparation for the
+> next patch that setups the controller's irq_chip driver when
+> a caller requests an interrupt line.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 
-> Some GPIO line limits are incorrectly set which, for instance,
-> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
->
-> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
-> ---
->  arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
+For both patches:
 
-OK but grrrr!
+Tested-by: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>
 
-What needs to happen to the s3c24xx is to get rid of this file.
-
-- Define ARCH_NR_GPIOS in arch/arm/Kconfig entry
-  ARCH_NR_GPIO like everyone else
-
-- Get rid of the config symbol NEED_MACH_GPIO_H
-
--  Move this file down into arch/arm/mach-s3c24xx/s3c24xx-gpio.h
-  or whatever and make it local...
-
-I will try to do this myself if noone else helps out, so I'd like to
-carry this patch in the GPIO tree provided I can get an ACK from
-the S3C24xx maintainer. Tomasz, is that you or Kukjin?
-
-(BTW the above maybe goes for S3c64xx as well .. and S5P
-oh well I will get to it.)
-
-Yours,
-Linus Walleij
+on an am3359 (which is DT booting).
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
