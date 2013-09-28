@@ -1,75 +1,53 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 2/5] gpio: samsung: Use CONFIG_ARCH_S3C64XX to
-	check for S3C64xx support
-Date: Sat, 28 Sep 2013 20:21:34 +0200
-Message-ID: <1380392497-27406-2-git-send-email-tomasz.figa@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 4/5] ASoC: samsung: Use CONFIG_ARCH_S3C64XX to check for
+ S3C64xx support
+Date: Sat, 28 Sep 2013 23:56:14 +0100
+Message-ID: <20130928225614.GR19304@sirena.org.uk>
 References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
+ <1380392497-27406-4-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Ben Dooks <ben-linux@fluff.org>, Olof Johansson <olof@lixom.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0OOz7ZB592LYQf07"
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1380392497-27406-4-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Since CONFIG_PLAT_S3C64XX is going to be removed, this patch modifies
-the gpio-samsung driver to use the proper way of checking for S3C64xx
-support - CONFIG_ARCH_S3C64XX.
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/gpio/gpio-samsung.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--0OOz7ZB592LYQf07
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index 29b5d67..76e02b9 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -1033,7 +1033,7 @@ static int s3c24xx_gpiolib_fbank_to_irq(struct gpio_chip *chip, unsigned offset)
- }
- #endif
- 
--#ifdef CONFIG_PLAT_S3C64XX
-+#ifdef CONFIG_ARCH_S3C64XX
- static int s3c64xx_gpiolib_mbank_to_irq(struct gpio_chip *chip, unsigned pin)
- {
- 	return pin < 5 ? IRQ_EINT(23) + pin : -ENXIO;
-@@ -1174,7 +1174,7 @@ struct samsung_gpio_chip s3c24xx_gpios[] = {
-  */
- 
- static struct samsung_gpio_chip s3c64xx_gpios_4bit[] = {
--#ifdef CONFIG_PLAT_S3C64XX
-+#ifdef CONFIG_ARCH_S3C64XX
- 	{
- 		.chip	= {
- 			.base	= S3C64XX_GPA(0),
-@@ -1227,7 +1227,7 @@ static struct samsung_gpio_chip s3c64xx_gpios_4bit[] = {
- };
- 
- static struct samsung_gpio_chip s3c64xx_gpios_4bit2[] = {
--#ifdef CONFIG_PLAT_S3C64XX
-+#ifdef CONFIG_ARCH_S3C64XX
- 	{
- 		.base	= S3C64XX_GPH_BASE + 0x4,
- 		.chip	= {
-@@ -1257,7 +1257,7 @@ static struct samsung_gpio_chip s3c64xx_gpios_4bit2[] = {
- };
- 
- static struct samsung_gpio_chip s3c64xx_gpios_2bit[] = {
--#ifdef CONFIG_PLAT_S3C64XX
-+#ifdef CONFIG_ARCH_S3C64XX
- 	{
- 		.base	= S3C64XX_GPF_BASE,
- 		.config	= &samsung_gpio_cfgs[6],
--- 
-1.8.3.2
+On Sat, Sep 28, 2013 at 08:21:36PM +0200, Tomasz Figa wrote:
+> Since CONFIG_PLAT_S3C64XX is going to be removed, this patch modifies
+> the s3c-i2s-v2 driver to use the proper way of checking for S3C64xx
+> support - CONFIG_ARCH_S3C64XX.
+
+Acked-by: Mark Brown <broonie@linaro.org>
+
+--0OOz7ZB592LYQf07
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSR16KAAoJELSic+t+oim9+dMP/RJpgnBErQM5bz0RQBrAAzRi
+6nDP5Ppp/GrQIUzrdj8PS7mLjC5ip+AFQ4kmGLi0X7CKEm2a7q/j+b4O+U4gNOum
+XGyYjCwg0UoEQu4oALt72uPVppO3sNrCqMsdOMexyzdIKP9WzFnlLJDzL8X1qcCu
+qaRZzMORrb76GZeGVQcxJIDLX+R9xu1XvPWbTXg9JEhcLqZuYIWGRBrx99t+alEF
+vZm0Qu6ydduHmgVmBWjuaA3qDwrDEbRwZiuVlK7TwLLjYL6+dCp6xWmhBZUWsni/
+WAVyciNE+GNrswdz+I75qlGGcDj75W0OomqWMkZcUDSz2T1jm+yoEBi+Mrharotj
+BhWj4B+vKUlG5cPvZsBnXbhCd/pl3sIUNa8aL8uNda0BsR/3HewGkKwLvizy0qPP
+pfkmf4y1bS2s89hQfbYx5Dm00alVjQxTs4LCKF/WOAC6YxRxHvoaub4ENG/NDomk
+Zkn0sKFAqoVeSD0IeJc79gE18HIf+FjUG4NmzL1JxOSprC4yxnfVxvYzEQjD4plb
+opNs7Riht8qg9LKr0l8Y+sulaHFMVEfgH/wNg7XhyuhIWxwCyzNh2Msm6DmooR25
+4hPNimcXl09SPeM2PN20E6QxBLlYXOWxkUwOu/1VeM8m/gUdy83TOvaVF3cRcdJN
+yuGGJMF/+J3iIe6B23zy
+=mlUA
+-----END PGP SIGNATURE-----
+
+--0OOz7ZB592LYQf07--
