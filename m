@@ -1,40 +1,40 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/3] New descriptor-based GPIO interface
-Date: Sat, 28 Sep 2013 19:33:30 +0900
-Message-ID: <CAAVeFuLfUGsmOssWDtm8kf9av=3A_O9Fk8M8HGYF=xqtX8772Q@mail.gmail.com>
-References: <1380179668-32288-1-git-send-email-acourbot@nvidia.com> <CACRpkdbhywp7_wAhOSzdMe==YoCo0mAcy1mJrdW3bURKWLxQeQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdbhywp7_wAhOSzdMe==YoCo0mAcy1mJrdW3bURKWLxQeQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/3] gpio: adnp: Remove redundant of_match_ptr
+Date: Sat, 28 Sep 2013 17:34:07 +0530
+Message-ID: <1380369849-1894-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:60890 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752148Ab3I1MER (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Sep 2013 08:04:17 -0400
+Received: by mail-pd0-f178.google.com with SMTP id w10so3657687pde.23
+        for <linux-gpio@vger.kernel.org>; Sat, 28 Sep 2013 05:04:17 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, sachin.kamat@linaro.org
 
-On Fri, Sep 27, 2013 at 9:06 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Thu, Sep 26, 2013 at 9:14 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
->> Here is a proper patch series for the descriptor-based GPIO interface to be
->> merged into -next. It is rebased on your for-next branch and only slightly
->> changed with respect to the RFC I posted earlier, only more thoroughly tested.
->> The documentation part is missing because I need some more time to rework it
->> (I'm on holidays this week but wanted to get the code into -next before 28th),
->> and anyway at this point I just want to make sure that the extra refactoring
->> does not break any existing code.
->>
->> My hope is to get this into -next before the 28th so this patchset can be
->> effectively tested, even if the new interfaces are not used yet. Since the old
->> integer-based interface now relies on top of gpiod_, this should provide good
->> coverage for both.
->
-> I've applied it now, but no idea whether it will hit the last -next tree in
-> time, hopefully at the very last second ...
+The data structure of_match_ptr() protects is always compiled in.
+Hence of_match_ptr() is not needed.
 
-Crap, looks like it did not make it. :( I hope we can still merge this for 3.13.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/gpio/gpio-adnp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alex.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index c0f3fc4..6439e0e 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -594,7 +594,7 @@ static struct i2c_driver adnp_i2c_driver = {
+ 	.driver = {
+ 		.name = "gpio-adnp",
+ 		.owner = THIS_MODULE,
+-		.of_match_table = of_match_ptr(adnp_of_match),
++		.of_match_table = adnp_of_match,
+ 	},
+ 	.probe = adnp_i2c_probe,
+ 	.remove = adnp_i2c_remove,
+-- 
+1.7.9.5
+
