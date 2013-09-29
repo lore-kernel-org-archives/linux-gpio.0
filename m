@@ -1,53 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 4/5] ASoC: samsung: Use CONFIG_ARCH_S3C64XX to check for
- S3C64xx support
-Date: Sat, 28 Sep 2013 23:56:14 +0100
-Message-ID: <20130928225614.GR19304@sirena.org.uk>
-References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
- <1380392497-27406-4-git-send-email-tomasz.figa@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0OOz7ZB592LYQf07"
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1380392497-27406-4-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH] gpio: arizona: Use the of_node from the Arizona device
+Date: Sun, 29 Sep 2013 21:00:37 +0100
+Message-ID: <1380484837-27668-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54945 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755342Ab3I2ULs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 29 Sep 2013 16:11:48 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: broonie@kernel.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
+We need to use the of_node from the main Arizona device as that
+holds our configuration.
 
---0OOz7ZB592LYQf07
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
+ drivers/gpio/gpio-arizona.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-On Sat, Sep 28, 2013 at 08:21:36PM +0200, Tomasz Figa wrote:
-> Since CONFIG_PLAT_S3C64XX is going to be removed, this patch modifies
-> the s3c-i2s-v2 driver to use the proper way of checking for S3C64xx
-> support - CONFIG_ARCH_S3C64XX.
+diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
+index a2bec3c..dceb5dc 100644
+--- a/drivers/gpio/gpio-arizona.c
++++ b/drivers/gpio/gpio-arizona.c
+@@ -109,6 +109,9 @@ static int arizona_gpio_probe(struct platform_device *pdev)
+ 	arizona_gpio->arizona = arizona;
+ 	arizona_gpio->gpio_chip = template_chip;
+ 	arizona_gpio->gpio_chip.dev = &pdev->dev;
++#ifdef CONFIG_OF_GPIO
++	arizona_gpio->gpio_chip.of_node = arizona->dev->of_node;
++#endif
+ 
+ 	switch (arizona->type) {
+ 	case WM5102:
+-- 
+1.7.2.5
 
-Acked-by: Mark Brown <broonie@linaro.org>
-
---0OOz7ZB592LYQf07
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSR16KAAoJELSic+t+oim9+dMP/RJpgnBErQM5bz0RQBrAAzRi
-6nDP5Ppp/GrQIUzrdj8PS7mLjC5ip+AFQ4kmGLi0X7CKEm2a7q/j+b4O+U4gNOum
-XGyYjCwg0UoEQu4oALt72uPVppO3sNrCqMsdOMexyzdIKP9WzFnlLJDzL8X1qcCu
-qaRZzMORrb76GZeGVQcxJIDLX+R9xu1XvPWbTXg9JEhcLqZuYIWGRBrx99t+alEF
-vZm0Qu6ydduHmgVmBWjuaA3qDwrDEbRwZiuVlK7TwLLjYL6+dCp6xWmhBZUWsni/
-WAVyciNE+GNrswdz+I75qlGGcDj75W0OomqWMkZcUDSz2T1jm+yoEBi+Mrharotj
-BhWj4B+vKUlG5cPvZsBnXbhCd/pl3sIUNa8aL8uNda0BsR/3HewGkKwLvizy0qPP
-pfkmf4y1bS2s89hQfbYx5Dm00alVjQxTs4LCKF/WOAC6YxRxHvoaub4ENG/NDomk
-Zkn0sKFAqoVeSD0IeJc79gE18HIf+FjUG4NmzL1JxOSprC4yxnfVxvYzEQjD4plb
-opNs7Riht8qg9LKr0l8Y+sulaHFMVEfgH/wNg7XhyuhIWxwCyzNh2Msm6DmooR25
-4hPNimcXl09SPeM2PN20E6QxBLlYXOWxkUwOu/1VeM8m/gUdy83TOvaVF3cRcdJN
-yuGGJMF/+J3iIe6B23zy
-=mlUA
------END PGP SIGNATURE-----
-
---0OOz7ZB592LYQf07--
