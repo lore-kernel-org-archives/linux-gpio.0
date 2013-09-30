@@ -1,31 +1,69 @@
-From: Paul Walmsley <paul@pwsan.com>
-Subject: Re: [RFC v2] gpio/omap: auto-setup a GPIO when used as an IRQ
-Date: Mon, 30 Sep 2013 01:23:58 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1309300122450.17980@utopia.booyaka.com>
-References: <1380009480-4975-1-git-send-email-javier.martinez@collabora.co.uk> <5244C0C4.2030004@wwwdotorg.org> <52453545.3090504@collabora.co.uk>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH 1/5] ARM: Kconfig: Move if ARCH_S3C64XX statement to
+ mach-s3c64xx/Kconfig
+Date: Mon, 30 Sep 2013 16:22:51 +0900
+Message-ID: <069301cebdad$df658f90$9e30aeb0$@org>
+References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from utopia.booyaka.com ([74.50.51.50]:42078 "EHLO
-	utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753872Ab3I3BX7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Sep 2013 21:23:59 -0400
-In-Reply-To: <52453545.3090504@collabora.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-reply-to: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Mauro Carvalho Chehab' <m.chehab@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Liam Girdwood' <lgirdwood@gmail.com>, 'Mark Brown' <broonie@kernel.org>, 'Jaroslav Kysela' <perex@perex.cz>, 'Takashi Iwai' <tiwai@suse.de>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Geert Uytterhoeven' <geert@linux-m68k.org>, 'Martin Schwidefsky' <schwidefsky@de.ibm.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, r.sricharan@ti.com, holler@ahsoftware.de, aaro.koskinen@iki.fi, joelf@ti.com
 
-On Fri, 27 Sep 2013, Javier Martinez Canillas wrote:
+Tomasz Figa wrote:
+> 
+> All other platforms have this condition checked inside their own Kconfig
+> files, so for consistency this patch makes it this way for mach-s3c64xx
+> as well.
+> 
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  arch/arm/Kconfig              | 2 --
+>  arch/arm/mach-s3c64xx/Kconfig | 4 ++++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index b766dad..dc51f8a 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -995,9 +995,7 @@ source "arch/arm/mach-sti/Kconfig"
+> 
+>  source "arch/arm/mach-s3c24xx/Kconfig"
+> 
+> -if ARCH_S3C64XX
+>  source "arch/arm/mach-s3c64xx/Kconfig"
+> -endif
+> 
+>  source "arch/arm/mach-s5p64x0/Kconfig"
+> 
+> diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+> index bd14e3a..0e23910 100644
+> --- a/arch/arm/mach-s3c64xx/Kconfig
+> +++ b/arch/arm/mach-s3c64xx/Kconfig
+> @@ -3,6 +3,8 @@
+>  #
+>  # Licensed under GPLv2
+> 
+> +if ARCH_S3C64XX
+> +
+>  # temporary until we can eliminate all drivers using it.
+>  config PLAT_S3C64XX
+>  	bool
+> @@ -322,3 +324,5 @@ config MACH_S3C64XX_DT
+>  	  board.
+>  	  Note: This is under development and not all peripherals can be
+>  	  supported with this machine file.
+> +
+> +endif
+> --
+> 1.8.3.2
 
-> I cc'ed Aaro Koskinen and Paul Walmsley now which seems to have OMAP1 platforms
-> to test. Could you please test [1] and [2] on a OMAP1 board? These patches
-> solves a long standing issue we have on OMAP2+ when booting with DT and it would
-> be great if you can check that it does not cause regressions on OMAP1 based boards.
+Looks good to me, applied 1 to 5 patches into cleanup.
 
-Unfortunately my OMAP1 test platform is down at the moment, so am not able 
-to test.  But saw that it passed Aaro's tests, so I'd say that's a pretty 
-good endorsement.
-
-
-- Paul
+Thanks,
+Kukjin
