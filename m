@@ -1,40 +1,31 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH] gpio: arizona: Use the of_node from the Arizona device
-Date: Sun, 29 Sep 2013 21:00:37 +0100
-Message-ID: <1380484837-27668-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: Re: [RFC v2] gpio/omap: auto-setup a GPIO when used as an IRQ
+Date: Mon, 30 Sep 2013 01:23:58 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1309300122450.17980@utopia.booyaka.com>
+References: <1380009480-4975-1-git-send-email-javier.martinez@collabora.co.uk> <5244C0C4.2030004@wwwdotorg.org> <52453545.3090504@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54945 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755342Ab3I2ULs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 29 Sep 2013 16:11:48 -0400
+Received: from utopia.booyaka.com ([74.50.51.50]:42078 "EHLO
+	utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753872Ab3I3BX7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Sep 2013 21:23:59 -0400
+In-Reply-To: <52453545.3090504@collabora.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: broonie@kernel.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, r.sricharan@ti.com, holler@ahsoftware.de, aaro.koskinen@iki.fi, joelf@ti.com
 
-We need to use the of_node from the main Arizona device as that
-holds our configuration.
+On Fri, 27 Sep 2013, Javier Martinez Canillas wrote:
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
- drivers/gpio/gpio-arizona.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+> I cc'ed Aaro Koskinen and Paul Walmsley now which seems to have OMAP1 platforms
+> to test. Could you please test [1] and [2] on a OMAP1 board? These patches
+> solves a long standing issue we have on OMAP2+ when booting with DT and it would
+> be great if you can check that it does not cause regressions on OMAP1 based boards.
 
-diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
-index a2bec3c..dceb5dc 100644
---- a/drivers/gpio/gpio-arizona.c
-+++ b/drivers/gpio/gpio-arizona.c
-@@ -109,6 +109,9 @@ static int arizona_gpio_probe(struct platform_device *pdev)
- 	arizona_gpio->arizona = arizona;
- 	arizona_gpio->gpio_chip = template_chip;
- 	arizona_gpio->gpio_chip.dev = &pdev->dev;
-+#ifdef CONFIG_OF_GPIO
-+	arizona_gpio->gpio_chip.of_node = arizona->dev->of_node;
-+#endif
- 
- 	switch (arizona->type) {
- 	case WM5102:
--- 
-1.7.2.5
+Unfortunately my OMAP1 test platform is down at the moment, so am not able 
+to test.  But saw that it passed Aaro's tests, so I'd say that's a pretty 
+good endorsement.
 
+
+- Paul
