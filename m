@@ -1,59 +1,74 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 5/5] gpiolib / ACPI: document the GPIO descriptor based interface
-Date: Tue,  1 Oct 2013 17:58:57 +0300
-Message-ID: <1380639537-23406-6-git-send-email-mika.westerberg@linux.intel.com>
-References: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V4 2/3] pincntrl: add support for AMS AS3722 pin control
+ driver
+Date: Tue, 01 Oct 2013 14:30:26 -0600
+Message-ID: <524B30E2.4000704@wwwdotorg.org>
+References: <1380044845-7734-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:5815 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753323Ab3JAO7G (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 1 Oct 2013 10:59:06 -0400
-In-Reply-To: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:51204 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751319Ab3JAUab (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Oct 2013 16:30:31 -0400
+In-Reply-To: <1380044845-7734-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: rjw@rjwysocki.net, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: lee.jones@linaro.org, sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org
 
-In addition to the existing ACPI specific GPIO interface, document the new
-descriptor based GPIO interface in Documentation/acpi/enumeration.txt, so
-it is clear that this new interface is preferred over the ACPI specific
-version.
+On 09/24/2013 11:47 AM, Laxman Dewangan wrote:
+> The AS3722 is a compact system PMU suitable for mobile phones, tablets etc.
+> 
+> Add a driver to support accessing the GPIO, pinmux and pin configuration
+> of 8 GPIO pins found on the AMS AS3722 through pin control driver and
+> gpiolib.
+> 
+> The driver will register itself as the pincontrol driver and gpio driver.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- Documentation/acpi/enumeration.txt | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-as3722.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-as3722.txt
 
-diff --git a/Documentation/acpi/enumeration.txt b/Documentation/acpi/enumeration.txt
-index aca4e69..48bb9ab 100644
---- a/Documentation/acpi/enumeration.txt
-+++ b/Documentation/acpi/enumeration.txt
-@@ -322,3 +322,25 @@ suitable to the gpiolib before passing them.
- 
- In case of GpioInt resource an additional call to gpio_to_irq() must be
- done before calling request_irq().
-+
-+Note that the above API is ACPI specific and not recommended for drivers
-+that need to support non-ACPI systems. The recommended way is to use
-+the descriptor based GPIO interfaces. The above example looks like this
-+when converted to the GPIO desc:
-+
-+	#include <linux/gpio/consumer.h>
-+	...
-+
-+	struct gpio_desc *irq_desc, *power_desc;
-+
-+	irq_desc = gpiod_get_index(dev, NULL, 1);
-+	if (IS_ERR(irq_desc))
-+		/* handle error */
-+
-+	power_desc = gpiod_get_index(dev, NULL, 0);
-+	if (IS_ERR(power_desc))
-+		/* handle error */
-+
-+	/* Now we can use the GPIO descriptors */
-+
-+See also Documentation/gpio.txt.
--- 
-1.8.4.rc3
+> +AMS AS3722 Pincontrol
 
+This binding document doesn't appear to define any compatible value. I
+think there should be one binding document per compatible value, rather
+than splitting up the documentation of a particular binding into lots of
+different files. As such, shouldn't this documentation all be part of
+Documentation/devicetree/bindings/regulator/as3722-regulator.txt?
+
+> +DT node contains the different subnode for pin control to represent
+
+Which "DT node"? This paragraph doesn't make much sense...
+
+> +different states. Each of these subnodes represents some desired
+> +configuration for a list of pins. This configuration can include the
+> +mux function to select on those pin(s), and various pin configuration
+> +parameters, such as pull-up, open drain.
+
+I think that paragraph is meant to say the following, as part of
+as3722-regulator.txt:
+
+==========
+Optional sub-nodes:
+
+- pinmux: Represents the pinmux configuration of the AS3722 GPIO pins.
+This node contains pin configuration nodes, as defined by
+pinctrl-bindings.txt
+==========
+
+(and then go on to describe the required/optional properties within the
+pin configuration nodes)
+
+> +Valid values for pin names are:
+
+I would say "pin property" rather than "pin names" here, to make it
+obvious where these values are used.
+
+> +	gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7
+> +
+> +Valid value of function names are:
+
+Similarly, "function property" here. (and values for not value of).
+
+Other than that, this binding looks reasonable.
