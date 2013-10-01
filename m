@@ -1,74 +1,80 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V4 2/3] pincntrl: add support for AMS AS3722 pin control
- driver
-Date: Tue, 01 Oct 2013 14:30:26 -0600
-Message-ID: <524B30E2.4000704@wwwdotorg.org>
-References: <1380044845-7734-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH V3 1/3] mfd: add support for AMS AS3722 PMIC
+Date: Tue, 01 Oct 2013 14:39:45 -0600
+Message-ID: <524B3311.7070006@wwwdotorg.org>
+References: <1380023921-29867-1-git-send-email-ldewangan@nvidia.com> <1380023921-29867-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:51204 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:37476 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751319Ab3JAUab (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Oct 2013 16:30:31 -0400
-In-Reply-To: <1380044845-7734-1-git-send-email-ldewangan@nvidia.com>
+	with ESMTP id S1751600Ab3JAUjv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Oct 2013 16:39:51 -0400
+In-Reply-To: <1380023921-29867-2-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: lee.jones@linaro.org, sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org
+Cc: lee.jones@linaro.org, sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, Florian Lobmaier <florian.lobmaier@ams.com>
 
-On 09/24/2013 11:47 AM, Laxman Dewangan wrote:
-> The AS3722 is a compact system PMU suitable for mobile phones, tablets etc.
+On 09/24/2013 05:58 AM, Laxman Dewangan wrote:
+> The AMS AS3722 is a compact system PMU suitable for mobile phones,
+> tablets etc. It has 4 DC/DC step-down regulators, 3 DC/DC step-down
+> controller, 11 LDOs, RTC, automatic battery, temperature and
+> over-current monitoring, 8 GPIOs, ADC and watchdog.
 > 
-> Add a driver to support accessing the GPIO, pinmux and pin configuration
-> of 8 GPIO pins found on the AMS AS3722 through pin control driver and
-> gpiolib.
-> 
-> The driver will register itself as the pincontrol driver and gpio driver.
+> Add MFD core driver for the AS3722 to support core functionality.
 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-as3722.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-as3722.txt
+> diff --git a/Documentation/devicetree/bindings/mfd/as3722.txt b/Documentation/devicetree/bindings/mfd/as3722.txt
 
-> +AMS AS3722 Pincontrol
+> +Required properties:
+> +-------------------
+> +- compatible : Must be "ams,as3722".
+> +- reg:  I2C device address.
+> +- interrupt-controller : AS3722 has its own internal IRQs
 
-This binding document doesn't appear to define any compatible value. I
-think there should be one binding document per compatible value, rather
-than splitting up the documentation of a particular binding into lots of
-different files. As such, shouldn't this documentation all be part of
-Documentation/devicetree/bindings/regulator/as3722-regulator.txt?
+You should at least specify that the property is a Boolean.
 
-> +DT node contains the different subnode for pin control to represent
+That description a justification for why that property should be
+present, not a description of the property.
 
-Which "DT node"? This paragraph doesn't make much sense...
+If the device only has *internal* IRQs, you shouldn't need any of the
+IRQ properties in DT. Rather, I believe you need the IRQ properties
+because the device has *external* IRQ inputs via the "gpio-in-interrupt"
+GPIO mux function.
 
-> +different states. Each of these subnodes represents some desired
-> +configuration for a list of pins. This configuration can include the
-> +mux function to select on those pin(s), and various pin configuration
-> +parameters, such as pull-up, open drain.
+> +- interrupt-parent : The parent interrupt controller.
 
-I think that paragraph is meant to say the following, as part of
-as3722-regulator.txt:
+While that property is allowed, it's not required. It's also unusual to
+mention it in individual bindings, since it's a system-defined property.
+
+> +Optional properties:
+> +-------------------
+
+> +- pinctrl-names: It is define in the
+> +	Documentation/devicetree/bindings/pinctrl/pinctrl-binding.txt
+
+You need to specify which values must be present in this property.
+
+Why is the property optional?
+
+If you're going to mention pinctrl-names, shouldn't you also mention
+pinctrl-$n?
+
+Instead, I would simply say:
 
 ==========
-Optional sub-nodes:
+Optional properties:
 
-- pinmux: Represents the pinmux configuration of the AS3722 GPIO pins.
-This node contains pin configuration nodes, as defined by
-pinctrl-bindings.txt
+A pinctrl state named "default" must be defined, using the bindings in
+../pinctrl/pinctrl-binding.txt.
 ==========
 
-(and then go on to describe the required/optional properties within the
-pin configuration nodes)
+Oh, and don't use an absolute file-name within the Linux kernel source
+tree, since that path name will change after the binding docs are moved
+out of the kernel source tree.
 
-> +Valid values for pin names are:
+As I mentioned when reviewing the pinmux binding, that binding should be
+described here.
 
-I would say "pin property" rather than "pin names" here, to make it
-obvious where these values are used.
-
-> +	gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7
-> +
-> +Valid value of function names are:
-
-Similarly, "function property" here. (and values for not value of).
-
-Other than that, this binding looks reasonable.
+In the example, I see a regulators binding. That should be here too.
