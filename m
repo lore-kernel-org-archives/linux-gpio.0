@@ -1,69 +1,70 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH 1/5] ARM: Kconfig: Move if ARCH_S3C64XX statement to
- mach-s3c64xx/Kconfig
-Date: Mon, 30 Sep 2013 16:22:51 +0900
-Message-ID: <069301cebdad$df658f90$9e30aeb0$@org>
-References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/2] gpio/omap: maintain GPIO and IRQ usage separately
+Date: Tue, 01 Oct 2013 09:34:24 +0200
+Message-ID: <524A7B00.4010001@collabora.co.uk>
+References: <1380069414-2922-1-git-send-email-javier.martinez@collabora.co.uk> <87r4cajfx0.fsf@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Mauro Carvalho Chehab' <m.chehab@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Liam Girdwood' <lgirdwood@gmail.com>, 'Mark Brown' <broonie@kernel.org>, 'Jaroslav Kysela' <perex@perex.cz>, 'Takashi Iwai' <tiwai@suse.de>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Geert Uytterhoeven' <geert@linux-m68k.org>, 'Martin Schwidefsky' <schwidefsky@de.ibm.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <87r4cajfx0.fsf@linaro.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kevin Hilman <khilman@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, r.sricharan@ti.com, holler@ahsoftware.de
 List-Id: linux-gpio@vger.kernel.org
 
-Tomasz Figa wrote:
+On 09/27/2013 08:08 PM, Kevin Hilman wrote:
+> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
 > 
-> All other platforms have this condition checked inside their own Kconfig
-> files, so for consistency this patch makes it this way for mach-s3c64xx
-> as well.
+>> The GPIO OMAP controller pins can be used as IRQ and GPIO
+>> independently so is necessary to keep track GPIO pins and
+>> IRQ lines usage separately to make sure that the bank will
+>> always be enabled while being used.
+>>
+>> Also move gpio_is_input() definition in preparation for the
+>> next patch that setups the controller's irq_chip driver when
+>> a caller requests an interrupt line.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 > 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  arch/arm/Kconfig              | 2 --
->  arch/arm/mach-s3c64xx/Kconfig | 4 ++++
->  2 files changed, 4 insertions(+), 2 deletions(-)
+> I'm fine with this appproach.  For both patches:
 > 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index b766dad..dc51f8a 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -995,9 +995,7 @@ source "arch/arm/mach-sti/Kconfig"
+> Reviewed-by: Kevin Hilman <khilman@linaro.org>
 > 
->  source "arch/arm/mach-s3c24xx/Kconfig"
+> Also, I gave it a spin across a handful of OMAP boards using v3.12-rc2 +
+> these 2 patches.
 > 
-> -if ARCH_S3C64XX
->  source "arch/arm/mach-s3c64xx/Kconfig"
-> -endif
+> Boot tested successfully with DT boot:
 > 
->  source "arch/arm/mach-s5p64x0/Kconfig"
+> omap3530/beagle
+> omap3730/beagle-xm
+> omap3530/overo (Tobi w/GPIO IRQ networking)
+> omap3730/overo STORM (w/GPIO IRQ for networking)
+> am335x/beaglebone
+> am335x/beaglebone black
+> omap4430/panda
+> omap4460/panda-es
+> omap5912/OSK (omap1)
 > 
-> diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-> index bd14e3a..0e23910 100644
-> --- a/arch/arm/mach-s3c64xx/Kconfig
-> +++ b/arch/arm/mach-s3c64xx/Kconfig
-> @@ -3,6 +3,8 @@
->  #
->  # Licensed under GPLv2
+> I also verified non-DT boot on the OMAP3 platforms that still support
+> legacy boot.
 > 
-> +if ARCH_S3C64XX
-> +
->  # temporary until we can eliminate all drivers using it.
->  config PLAT_S3C64XX
->  	bool
-> @@ -322,3 +324,5 @@ config MACH_S3C64XX_DT
->  	  board.
->  	  Note: This is under development and not all peripherals can be
->  	  supported with this machine file.
-> +
-> +endif
-> --
-> 1.8.3.2
+> So feel free to also add
+> 
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> 
+> Thanks for your persistence in getting a fix for this upstream.
+> 
+> Kevin
+> 
 
-Looks good to me, applied 1 to 5 patches into cleanup.
+Thanks a lot Kevin for testing on so many boards.
 
-Thanks,
-Kukjin
+Linus,
+
+Since this patch-set doesn't cause any regression and fix a long standing issue
+on OMAP, do you think that it would be possible to include on the -rc series as
+a bugfix or do you prefer to wait until 3.13?
+
+Thanks a lot and best regards,
+Javier
