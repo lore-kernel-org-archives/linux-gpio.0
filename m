@@ -1,70 +1,38 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/2] gpio/omap: maintain GPIO and IRQ usage separately
-Date: Tue, 01 Oct 2013 09:34:24 +0200
-Message-ID: <524A7B00.4010001@collabora.co.uk>
-References: <1380069414-2922-1-git-send-email-javier.martinez@collabora.co.uk> <87r4cajfx0.fsf@linaro.org>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V3 1/3] mfd: add support for AMS AS3722 PMIC
+Date: Tue, 1 Oct 2013 14:29:17 +0530
+Message-ID: <524A8EE5.70801@nvidia.com>
+References: <1380023921-29867-1-git-send-email-ldewangan@nvidia.com> <1380023921-29867-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <87r4cajfx0.fsf@linaro.org>
-Sender: linux-omap-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kevin Hilman <khilman@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon Hunter <jgchunter@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, r.sricharan@ti.com, holler@ahsoftware.de
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1380023921-29867-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "lee.jones@linaro.org" <lee.jones@linaro.org>, "sameo@linux.intel.com" <sameo@linux.intel.com>, "broonie@kernel.org" <broonie@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "rob@landley.net" <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "grant.likely@linaro.org" <grant.likel>
 List-Id: linux-gpio@vger.kernel.org
 
-On 09/27/2013 08:08 PM, Kevin Hilman wrote:
-> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
-> 
->> The GPIO OMAP controller pins can be used as IRQ and GPIO
->> independently so is necessary to keep track GPIO pins and
->> IRQ lines usage separately to make sure that the bank will
->> always be enabled while being used.
->>
->> Also move gpio_is_input() definition in preparation for the
->> next patch that setups the controller's irq_chip driver when
->> a caller requests an interrupt line.
->>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-> I'm fine with this appproach.  For both patches:
-> 
-> Reviewed-by: Kevin Hilman <khilman@linaro.org>
-> 
-> Also, I gave it a spin across a handful of OMAP boards using v3.12-rc2 +
-> these 2 patches.
-> 
-> Boot tested successfully with DT boot:
-> 
-> omap3530/beagle
-> omap3730/beagle-xm
-> omap3530/overo (Tobi w/GPIO IRQ networking)
-> omap3730/overo STORM (w/GPIO IRQ for networking)
-> am335x/beaglebone
-> am335x/beaglebone black
-> omap4430/panda
-> omap4460/panda-es
-> omap5912/OSK (omap1)
-> 
-> I also verified non-DT boot on the OMAP3 platforms that still support
-> legacy boot.
-> 
-> So feel free to also add
-> 
-> Tested-by: Kevin Hilman <khilman@linaro.org>
-> 
-> Thanks for your persistence in getting a fix for this upstream.
-> 
-> Kevin
-> 
+Hi Lee,
 
-Thanks a lot Kevin for testing on so many boards.
+On Tuesday 24 September 2013 05:28 PM, Laxman Dewangan wrote:
+> The AMS AS3722 is a compact system PMU suitable for mobile phones,
+> tablets etc. It has 4 DC/DC step-down regulators, 3 DC/DC step-down
+> controller, 11 LDOs, RTC, automatic battery, temperature and
+> over-current monitoring, 8 GPIOs, ADC and watchdog.
+>
+> Add MFD core driver for the AS3722 to support core functionality.
 
-Linus,
+Based on discussion on V1/V2, I have only one sub node i.e. for 
+regulator only.  Mark B already applied the regualtor patch.
+Other sub nodes are removed. For pinmux, default is as per pinmux 
+binding and it is not a new sub node.
 
-Since this patch-set doesn't cause any regression and fix a long standing issue
-on OMAP, do you think that it would be possible to include on the -rc series as
-a bugfix or do you prefer to wait until 3.13?
+Can you please review again so that if there is any thing missing, I 
+like to complete this?
 
-Thanks a lot and best regards,
-Javier
+
+Thanks,
+Laxman
+
+
