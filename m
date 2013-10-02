@@ -1,32 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: arizona: Use the of_node from the Arizona device
-Date: Wed, 2 Oct 2013 12:50:58 +0200
-Message-ID: <CACRpkdbF+8rYxSbSQLoRo-pEmZvc1mduT5kMAsXYE2pQHPsPrQ@mail.gmail.com>
-References: <1380484837-27668-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] drivers: misc: add gpio wakeup driver
+Date: Wed, 2 Oct 2013 11:57:23 +0100
+Message-ID: <20131002105723.GA27287@sirena.org.uk>
+References: <1380635719-31171-1-git-send-email-zonque@gmail.com>
+ <CAOMZO5Aq5-bdY3yTD3DqjUVVrTPHZodb7_vfLQcvxfJRXNok4w@mail.gmail.com>
+ <524AD693.6000304@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:45414 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753364Ab3JBKu7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2013 06:50:59 -0400
-Received: by mail-ie0-f173.google.com with SMTP id ar20so1345135iec.32
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Oct 2013 03:50:58 -0700 (PDT)
-In-Reply-To: <1380484837-27668-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:49315 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753212Ab3JBK52 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2013 06:57:28 -0400
+Content-Disposition: inline
+In-Reply-To: <524AD693.6000304@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Mark Brown <broonie@kernel.org>, patches@opensource.wolfsonmicro.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Daniel Mack <zonque@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Sun, Sep 29, 2013 at 10:00 PM, Charles Keepax
-<ckeepax@opensource.wolfsonmicro.com> wrote:
 
-> We need to use the of_node from the main Arizona device as that
-> holds our configuration.
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Patch applied.
+On Tue, Oct 01, 2013 at 04:05:07PM +0200, Daniel Mack wrote:
+> On 01.10.2013 16:01, Fabio Estevam wrote:
 
-Yours,
-Linus Walleij
+> > Isn't it the same as the existing 'gpio-key,wakeup' ?
+
+> Of course, I know the gpio-input driver can provide similar
+> functionality. My intention was just provide a way to wake up the system
+> without registering an input device for signals nobody is interested in
+> eventually.
+
+> Don't know if that's reason enough to add a new driver though.
+
+It does seem somewhat sensible - the signal might not have a sensible
+representation as an input device and the gpio-keys binding needs one.
+
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSS/wQAAoJELSic+t+oim90O4P/i90PuSF3MvjZ7Bp/BMERHIH
+RGMQiwqCXGpjNKNpXb8WuBPJQM1QWYWkOO2CJjOB9u/IkdI9j039TOSbNlucnkrL
+iE/H6ymOksi2jxnrWrSSra04gdBtTgvx8xBnnLfA4seTgiuvwcd4Zw1HwbTeLgHs
+n+14YjMZOE7R6DfvHSww/Cn5aQFX+xN5vq5zmpE4I7S9EnOKavpBstrGONabqjBu
+V8vH3jq/NjGcReAc6xrKGWpVCxlGO3oCJ0psFZQG0P09DthOemOyo90rc06+1YPb
+eLWGAbs3oKlI+qhEqUfVOnQhMdMH/tdNXNLG2LW1q+Wu0L8KEWWG09Ey2Nuqt8bR
+Hs41ic/bBSIqolrmCyzArtTMqQ/r/8yLUDMVmwjpg4wq/qPhzkPe/Jb8IP7x1L8Y
+179JtnfQmRkEDh4N9yCPOEuZ4Krhd6Y4lPrpTLb0mlLD+1LBmU2l1Z1KCuR61S9J
+JO2sGI/F3j2LA/YtJIrBp1oAja34gobz/ToGR6hBijfb6dLd3ghQ1z2MTtQwHjmG
+T1AUcP63nuMZJ4Y3TH66m2QcEtiUTUlKELu0Yz9Cx2mZHnnj8XOwYVT0A8jmvQP7
+m1dDi/8zH1AlL20meu1viJllKk+pT5ZjwcmdvGqbS2L2MgZpB6t6++dYVCZEL+y3
+42iv4o5xJdi2UlE0nQea
+=1poh
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
