@@ -1,44 +1,63 @@
-From: Daniel Mack <zonque@gmail.com>
-Subject: Re: [PATCH] drivers: misc: add gpio wakeup driver
-Date: Wed, 02 Oct 2013 13:02:13 +0200
-Message-ID: <524BFD35.5040100@gmail.com>
-References: <1380635719-31171-1-git-send-email-zonque@gmail.com> <CAOMZO5Aq5-bdY3yTD3DqjUVVrTPHZodb7_vfLQcvxfJRXNok4w@mail.gmail.com> <524AD693.6000304@gmail.com> <20131002105723.GA27287@sirena.org.uk>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V4 0/3] Add AMS AS3722 mfd, pincontrol, regulator and RTC driver.
+Date: Wed, 2 Oct 2013 21:20:27 +0530
+Message-ID: <1380729030-25896-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ea0-f169.google.com ([209.85.215.169]:65228 "EHLO
-	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753380Ab3JBLCT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2013 07:02:19 -0400
-In-Reply-To: <20131002105723.GA27287@sirena.org.uk>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:19249 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752864Ab3JBP0p (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2013 11:26:45 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: lee.jones@linaro.org, sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-On 02.10.2013 12:57, Mark Brown wrote:
-> On Tue, Oct 01, 2013 at 04:05:07PM +0200, Daniel Mack wrote:
->> On 01.10.2013 16:01, Fabio Estevam wrote:
-> 
->>> Isn't it the same as the existing 'gpio-key,wakeup' ?
-> 
->> Of course, I know the gpio-input driver can provide similar
->> functionality. My intention was just provide a way to wake up the system
->> without registering an input device for signals nobody is interested in
->> eventually.
-> 
->> Don't know if that's reason enough to add a new driver though.
-> 
-> It does seem somewhat sensible - the signal might not have a sensible
-> representation as an input device and the gpio-keys binding needs one.
-> 
+This series add the driver support for AMS AS3722 PMIC. The driver includes
+MFD, pincontrol and GPIO, regulator and RTC.
 
-That was my intention as well, yes. Also, a system that does not have
-any input devices could in theory disable CONFIG_INPUT alltogether. Not
-sure how realisitic that scenario really is nowadays, but using the gpio
-input driver for purpose of just waking up on LAN seems somewhat abusive.
+Changes from V1: 
+- Remove compatible string from DT for subnode.
+- Add macro in regmap.h for definign range.
+- Nit cleanups in driver and use module_i2c_driver/module_platform_driver.
+- Use linear_range and added regulator_map_* on regulators.
+- Move OC configuration to regulator_current limit setting.
+- Get rid of clk32k out configuration from RTC. Will add clock driver.
 
+Changes from V2: 
+- Drop the already applied patches on V2 series
+        regmap: add helper macro to set min/max range of register
+        regulator: as3722: add regulator driver for AMS AS3722
+- Move the GPIo driver to pincontrol driver to expose the pin configuration
+  through pincontrol.
+- rewrite the DT binding of the mfd.
 
-Daniel
+Changes from V3:
+- Change AMS to ams
+- combine DT of regulator, pincontrol to the mfd.
+- Taken care of Lee's nits feedback.
+
+Laxman Dewangan (3):
+  mfd: add support for ams AS3722 PMIC
+  pincntrl: add support for ams AS3722 pin control driver
+  drivers/rtc/rtc-as3722: add RTC driver
+
+ Documentation/devicetree/bindings/mfd/as3722.txt |  174 ++++++
+ drivers/mfd/Kconfig                              |   12 +
+ drivers/mfd/Makefile                             |    1 +
+ drivers/mfd/as3722.c                             |  449 +++++++++++++++
+ drivers/pinctrl/Kconfig                          |   11 +
+ drivers/pinctrl/Makefile                         |    1 +
+ drivers/pinctrl/pinctrl-as3722.c                 |  630 ++++++++++++++++++++++
+ drivers/rtc/Kconfig                              |   10 +
+ drivers/rtc/Makefile                             |    1 +
+ drivers/rtc/rtc-as3722.c                         |  296 ++++++++++
+ include/linux/mfd/as3722.h                       |  423 +++++++++++++++
+ 11 files changed, 2008 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/as3722.txt
+ create mode 100644 drivers/mfd/as3722.c
+ create mode 100644 drivers/pinctrl/pinctrl-as3722.c
+ create mode 100644 drivers/rtc/rtc-as3722.c
+ create mode 100644 include/linux/mfd/as3722.h
 
