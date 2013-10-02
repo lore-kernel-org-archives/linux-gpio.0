@@ -1,80 +1,36 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V3 1/3] mfd: add support for AMS AS3722 PMIC
-Date: Tue, 01 Oct 2013 14:39:45 -0600
-Message-ID: <524B3311.7070006@wwwdotorg.org>
-References: <1380023921-29867-1-git-send-email-ldewangan@nvidia.com> <1380023921-29867-2-git-send-email-ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/3] New descriptor-based GPIO interface
+Date: Wed, 2 Oct 2013 12:32:17 +0200
+Message-ID: <CACRpkdZDwKq-3MgY4O5m5_MTfigdcxzHFwXn=KxjvL+AaG+7VQ@mail.gmail.com>
+References: <1380179668-32288-1-git-send-email-acourbot@nvidia.com>
+	<CACRpkdbhywp7_wAhOSzdMe==YoCo0mAcy1mJrdW3bURKWLxQeQ@mail.gmail.com>
+	<CAAVeFuLfUGsmOssWDtm8kf9av=3A_O9Fk8M8HGYF=xqtX8772Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:37476 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751600Ab3JAUjv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Oct 2013 16:39:51 -0400
-In-Reply-To: <1380023921-29867-2-git-send-email-ldewangan@nvidia.com>
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:50988 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753283Ab3JBKcS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2013 06:32:18 -0400
+Received: by mail-ie0-f177.google.com with SMTP id qd12so1276996ieb.22
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Oct 2013 03:32:17 -0700 (PDT)
+In-Reply-To: <CAAVeFuLfUGsmOssWDtm8kf9av=3A_O9Fk8M8HGYF=xqtX8772Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: lee.jones@linaro.org, sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, Florian Lobmaier <florian.lobmaier@ams.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Grant Likely <grant.likely@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
 
-On 09/24/2013 05:58 AM, Laxman Dewangan wrote:
-> The AMS AS3722 is a compact system PMU suitable for mobile phones,
-> tablets etc. It has 4 DC/DC step-down regulators, 3 DC/DC step-down
-> controller, 11 LDOs, RTC, automatic battery, temperature and
-> over-current monitoring, 8 GPIOs, ADC and watchdog.
-> 
-> Add MFD core driver for the AS3722 to support core functionality.
+On Sat, Sep 28, 2013 at 12:33 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Fri, Sep 27, 2013 at 9:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> diff --git a/Documentation/devicetree/bindings/mfd/as3722.txt b/Documentation/devicetree/bindings/mfd/as3722.txt
+>> I've applied it now, but no idea whether it will hit the last -next tree in
+>> time, hopefully at the very last second ...
+>
+> Crap, looks like it did not make it. :( I hope we can still merge this for 3.13.
 
-> +Required properties:
-> +-------------------
-> +- compatible : Must be "ams,as3722".
-> +- reg:  I2C device address.
-> +- interrupt-controller : AS3722 has its own internal IRQs
+As you noticed we have pretty extensive build coverage so as long as we're
+not patching around in the entire kernel we can be pretty sure that patches
+are fine to go if we queue them up in the GPIO tree so don't worry.
 
-You should at least specify that the property is a Boolean.
-
-That description a justification for why that property should be
-present, not a description of the property.
-
-If the device only has *internal* IRQs, you shouldn't need any of the
-IRQ properties in DT. Rather, I believe you need the IRQ properties
-because the device has *external* IRQ inputs via the "gpio-in-interrupt"
-GPIO mux function.
-
-> +- interrupt-parent : The parent interrupt controller.
-
-While that property is allowed, it's not required. It's also unusual to
-mention it in individual bindings, since it's a system-defined property.
-
-> +Optional properties:
-> +-------------------
-
-> +- pinctrl-names: It is define in the
-> +	Documentation/devicetree/bindings/pinctrl/pinctrl-binding.txt
-
-You need to specify which values must be present in this property.
-
-Why is the property optional?
-
-If you're going to mention pinctrl-names, shouldn't you also mention
-pinctrl-$n?
-
-Instead, I would simply say:
-
-==========
-Optional properties:
-
-A pinctrl state named "default" must be defined, using the bindings in
-../pinctrl/pinctrl-binding.txt.
-==========
-
-Oh, and don't use an absolute file-name within the Linux kernel source
-tree, since that path name will change after the binding docs are moved
-out of the kernel source tree.
-
-As I mentioned when reviewing the pinmux binding, that binding should be
-described here.
-
-In the example, I see a regulators binding. That should be here too.
+Yours,
+Linus Walleij
