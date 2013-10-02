@@ -1,18 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gpio: adnp: Remove redundant of_match_ptr
-Date: Wed, 2 Oct 2013 12:43:04 +0200
-Message-ID: <CACRpkdZ25NUjjKe18Nb_YUhNSnHNB5f2fRWEbA-m1DDbFitiAA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpio: clps711x: Remove redundant of_match_ptr
+Date: Wed, 2 Oct 2013 12:43:50 +0200
+Message-ID: <CACRpkdazXBRFAx7VTEWkcR0OxA15_pFXNWDSbGCRRuRHYTZK=A@mail.gmail.com>
 References: <1380369849-1894-1-git-send-email-sachin.kamat@linaro.org>
+	<1380369849-1894-2-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:42129 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753187Ab3JBKnF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2013 06:43:05 -0400
-Received: by mail-ie0-f182.google.com with SMTP id aq17so1317205iec.41
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Oct 2013 03:43:04 -0700 (PDT)
-In-Reply-To: <1380369849-1894-1-git-send-email-sachin.kamat@linaro.org>
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:52507 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753341Ab3JBKnv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2013 06:43:51 -0400
+Received: by mail-ie0-f176.google.com with SMTP id as1so1297553iec.21
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Oct 2013 03:43:51 -0700 (PDT)
+In-Reply-To: <1380369849-1894-2-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Sachin Kamat <sachin.kamat@linaro.org>
