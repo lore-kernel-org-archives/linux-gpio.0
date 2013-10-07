@@ -1,50 +1,46 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 0/5] gpiolib: convert ACPI GPIO helpers to gpiod_ interfaces
-Date: Mon, 07 Oct 2013 14:18:56 +0200
-Message-ID: <1459866.s5LiRGpgct@vostro.rjw.lan>
-References: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
+From: "Markus Mayer" <markus.mayer@linaro.org>
+Subject: [PATCH] gpio: bcm281xx: Fix nested interrupt handler issue
+Date: Mon, 7 Oct 2013 14:51:00 -0700
+Message-ID: <1381182660-32426-1-git-send-email-markus.mayer@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mms3.broadcom.com ([216.31.210.19]:3810 "EHLO mms3.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751508Ab3JGVvA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 7 Oct 2013 17:51:00 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linaro Patches <patches@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Markus Mayer <markus.mayer@linaro.org>
 
-On Tuesday, October 01, 2013 05:58:52 PM Mika Westerberg wrote:
-> Hi all,
-> 
-> This series converts the ACPI GPIO helpers in gpiolib-acpi.c to use the new
-> and preferred GPIO descriptor based interface as suggested by the GPIO
-> subsystem maintainer.
-> 
-> The first patch is just a cosmetic fix to move acpi_gpiochip_free_interrupts()
-> closer to acpi_gpiochip_request_interrupts(). Patches [2-5/5] do the actual
-> conversion.
-> 
-> The series is based on the latest patches from Alexandre Courbot and I've
-> tested them on Intel Haswell based machine.
-> 
-> Please review.
-> 
-> Mika Westerberg (5):
->   gpiolib / ACPI: move acpi_gpiochip_free_interrupts next to the request function
->   gpiolib / ACPI: convert to gpiod interfaces
->   gpiolib / ACPI: add ACPI support for gpiod_get_index()
->   gpiolib / ACPI: allow passing GPIOF_ACTIVE_LOW for GpioInt resources
->   gpiolib / ACPI: document the GPIO descriptor based interface
+The GPIO interrupt handler does not need to be marked as nested.
 
-The patches look good to me so
+Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
+---
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This patch is dependent on the following patches:
 
-for the whole series.
+- http://patches.linaro.org/19933/
+- http://patches.linaro.org/20490/
 
-Thanks!
+ drivers/gpio/gpio-bcm-kona.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index c0751a8..ff5c98e 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -478,7 +478,6 @@ static int bcm_kona_gpio_irq_map(struct irq_domain *d, unsigned int irq,
+ 		return ret;
+ 	irq_set_lockdep_class(irq, &gpio_lock_class);
+ 	irq_set_chip_and_handler(irq, &bcm_gpio_irq_chip, handle_simple_irq);
+-	irq_set_nested_thread(irq, 1);
+ #ifdef CONFIG_ARM
+ 	set_irq_flags(irq, IRQF_VALID);
+ #else
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+1.7.9.5
+
+
