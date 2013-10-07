@@ -1,42 +1,50 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: Bug report - gpio: improve error path in gpiolib
-Date: Sun, 6 Oct 2013 11:55:33 -0700
-Message-ID: <CAAVeFuLgMNAA3x0woJ4UFV9a6wkzM5vYBSKGyuRts_5ykWNTPQ@mail.gmail.com>
-References: <F7C544E1-F25D-4E83-9896-A761ADBEBA93@goldelico.com>
- <524E199C.8030108@nvidia.com> <DD75C018-FCE8-42D1-8836-01990062B1D5@goldelico.com>
- <CAAVeFuKYechF5UPVqau6nRpVDnT5fYDGmypN2pLJaz6wiritfQ@mail.gmail.com> <51948145-0CAD-48E7-B3E2-BDE52BEE2CA4@goldelico.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 0/5] gpiolib: convert ACPI GPIO helpers to gpiod_ interfaces
+Date: Mon, 07 Oct 2013 14:18:56 +0200
+Message-ID: <1459866.s5LiRGpgct@vostro.rjw.lan>
+References: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:44986 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754104Ab3JFSzy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Oct 2013 14:55:54 -0400
-Received: by mail-ie0-f169.google.com with SMTP id tp5so13778314ieb.14
-        for <linux-gpio@vger.kernel.org>; Sun, 06 Oct 2013 11:55:53 -0700 (PDT)
-In-Reply-To: <51948145-0CAD-48E7-B3E2-BDE52BEE2CA4@goldelico.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Dr. H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Alex Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Frank Rowand <frank.rowand@sonymobile.com>, NeilBrown Brown <neilb@suse.de>, Belisko Marek <marek.belisko@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, Oct 5, 2013 at 1:50 PM, Dr. H. Nikolaus Schaller
-<hns@goldelico.com> wrote:
->> I have just sent 2 patches that should fix this issue.
->
-> Great.
->
->> Could you test
->> them and give your Tested-by after confirming they work?
->
-> Yes, these patches work for us as well and have the intended
-> effect (like my quick hack).
->
-> Tested-by: Dr. H. Nikolaus Schaller <hns@goldelico.com>
+On Tuesday, October 01, 2013 05:58:52 PM Mika Westerberg wrote:
+> Hi all,
+> 
+> This series converts the ACPI GPIO helpers in gpiolib-acpi.c to use the new
+> and preferred GPIO descriptor based interface as suggested by the GPIO
+> subsystem maintainer.
+> 
+> The first patch is just a cosmetic fix to move acpi_gpiochip_free_interrupts()
+> closer to acpi_gpiochip_request_interrupts(). Patches [2-5/5] do the actual
+> conversion.
+> 
+> The series is based on the latest patches from Alexandre Courbot and I've
+> tested them on Intel Haswell based machine.
+> 
+> Please review.
+> 
+> Mika Westerberg (5):
+>   gpiolib / ACPI: move acpi_gpiochip_free_interrupts next to the request function
+>   gpiolib / ACPI: convert to gpiod interfaces
+>   gpiolib / ACPI: add ACPI support for gpiod_get_index()
+>   gpiolib / ACPI: allow passing GPIOF_ACTIVE_LOW for GpioInt resources
+>   gpiolib / ACPI: document the GPIO descriptor based interface
 
-Great! Linus, are you ok to take these into your tree? They should
-probably go into 3.12 as the patch that causes the difference in
-behavior is already merged.
+The patches look good to me so
 
-Thanks,
-Alex.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+for the whole series.
+
+Thanks!
+
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
