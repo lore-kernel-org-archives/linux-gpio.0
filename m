@@ -1,34 +1,53 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 2/5] gpiolib / ACPI: convert to gpiod interfaces
-Date: Tue, 8 Oct 2013 13:36:25 +0300
-Message-ID: <20131008103625.GK3521@intel.com>
-References: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
- <1380639537-23406-3-git-send-email-mika.westerberg@linux.intel.com>
- <CAAVeFuJZ3TwozZzpuHcYPDLjEsb2D_qvQADf85s3-eywYYHs8A@mail.gmail.com>
- <20131008084508.GI3521@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [rtc-linux] [PATCH V5 2/3] pincntrl: add support for ams AS3722
+ pin control driver
+Date: Tue, 8 Oct 2013 14:16:29 +0200
+Message-ID: <CACRpkdbmAnRxDpP17tmAAeC7U6Yibd5N7vFA1o1h=4DdhW+H-g@mail.gmail.com>
+References: <1380729030-25896-1-git-send-email-ldewangan@nvidia.com>
+	<1380729030-25896-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:18963 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753573Ab3JHKa7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 8 Oct 2013 06:30:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20131008084508.GI3521@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1380729030-25896-3-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, rjw@rjwysocki.net, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, linux-acpi@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, Oct 08, 2013 at 11:45:08AM +0300, Mika Westerberg wrote:
-> > I also wonder whether you could also avoid exporting acpi_get_gpiod*
-> > (which allow GPIO consumers to shortcut gpiolib) by implementing
-> > acpi_get_gpio* into the C file (maybe even using gpiod_get()). I see a
-> > "char *path" parameter though, so maybe that would not be possible at
-> > the moment.
-> 
-> Good point, I'll check if we can do that.
+On Wed, Oct 2, 2013 at 5:50 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-Looks like we can get rid of acpi_get_gpio() and acpi_get_gpiod() as there
-are no users for those outside gpiolib-acpi. I'm going to do that in the
-next revision.
+> The AS3722 is a compact system PMU suitable for mobile phones, tablets etc.
+>
+> Add a driver to support accessing the GPIO, pinmux and pin configuration
+> of 8 GPIO pins found on the ams AS3722 through pin control driver and
+> gpiolib.
+>
+> The driver will register itself as the pincontrol driver and gpio driver.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+> Changes from V1:
+> - Nit cleanups in driver and use module_platform_driver.
+>
+> Changes from V2:
+> - Move the gpio driver from gpio folder to pinctnrl driver and register
+>   driver as pincontrol driver.
+> - Provide pin configuration through pincntrl framework.
+>
+> Changes from V3:
+> - Added gpio ranges and pinctrl_gpio calls.
+> - Used pinctrl_gpio_* calls on gpio chips callback.
+> - Remove dummy function which just return not supported.
+> - Nit cleanups.
+>
+> Changes from V4:
+> - Drop separate DT binding document as it is moved to mfd/as3722.txt.
+
+As mentioned I am happy with this driver,
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+When you agreed with the DT folks and want me to merge it,
+tell me.
+
+Yours,
+Linus Walleij
