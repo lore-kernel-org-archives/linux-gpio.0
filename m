@@ -1,53 +1,87 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [rtc-linux] [PATCH V5 2/3] pincntrl: add support for ams AS3722
- pin control driver
-Date: Tue, 8 Oct 2013 14:16:29 +0200
-Message-ID: <CACRpkdbmAnRxDpP17tmAAeC7U6Yibd5N7vFA1o1h=4DdhW+H-g@mail.gmail.com>
-References: <1380729030-25896-1-git-send-email-ldewangan@nvidia.com>
-	<1380729030-25896-3-git-send-email-ldewangan@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 2/5] gpiolib / ACPI: convert to gpiod interfaces
+Date: Tue, 8 Oct 2013 09:24:50 -0700
+Message-ID: <CAAVeFu+_EUCs+70+WzCq530JUesrHzULi34mCf7-pRVVP1WV7g@mail.gmail.com>
+References: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1380639537-23406-3-git-send-email-mika.westerberg@linux.intel.com>
+ <CAAVeFuJZ3TwozZzpuHcYPDLjEsb2D_qvQADf85s3-eywYYHs8A@mail.gmail.com> <20131008084508.GI3521@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1380729030-25896-3-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:33201 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754787Ab3JHQZL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Oct 2013 12:25:11 -0400
+In-Reply-To: <20131008084508.GI3521@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, rjw@rjwysocki.net, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, linux-acpi@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 2, 2013 at 5:50 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On Tue, Oct 8, 2013 at 1:45 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Mon, Oct 07, 2013 at 09:54:13PM -0700, Alexandre Courbot wrote:
+>> > +struct gpio_desc *acpi_get_gpiod(char *path, int pin)
+>> >  {
+>> >         struct gpio_chip *chip;
+>> >         acpi_handle handle;
+>> > @@ -48,18 +49,15 @@ int acpi_get_gpio(char *path, int pin)
+>> >
+>> >         status =3D acpi_get_handle(NULL, path, &handle);
+>> >         if (ACPI_FAILURE(status))
+>> > -               return -ENODEV;
+>> > +               return ERR_PTR(-ENODEV);
+>> >
+>> >         chip =3D gpiochip_find(handle, acpi_gpiochip_find);
+>> >         if (!chip)
+>> > -               return -ENODEV;
+>> > +               return ERR_PTR(-ENODEV);
+>> >
+>> > -       if (!gpio_is_valid(chip->base + pin))
+>> > -               return -EINVAL;
+>> > -
+>> > -       return chip->base + pin;
+>> > +       return gpio_to_desc(chip->base + pin);
+>>
+>> I think you want to avoid using gpio_to_desc(). It is just a
+>> convenience function provided to ease the transition for consumers
+>> that still need to rely on GPIO numbers for some reason. The same
+>> applies to desc_to_gpio(), although the usage you are making of it
+>> (implemented fallbacks for the integer space) is the one that is
+>> intended.
+>>
+>> The last line could be changed to "return &chip->desc[pin];" after
+>> checking that 0 <=3D pin <=3D chip->ngpio.
+>
+> I tried that but it doesn't compile anymore :-(
+>
+> drivers/gpio/gpiolib-acpi.c: In function =E2=80=98acpi_get_gpiod=E2=80=
+=99:
+> drivers/gpio/gpiolib-acpi.c:61:2: error: invalid use of undefined typ=
+e =E2=80=98struct gpio_desc=E2=80=99
+> drivers/gpio/gpiolib-acpi.c:61:20: error: dereferencing pointer to in=
+complete type
 
-> The AS3722 is a compact system PMU suitable for mobile phones, tablets etc.
->
-> Add a driver to support accessing the GPIO, pinmux and pin configuration
-> of 8 GPIO pins found on the ams AS3722 through pin control driver and
-> gpiolib.
->
-> The driver will register itself as the pincontrol driver and gpio driver.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
-> Changes from V1:
-> - Nit cleanups in driver and use module_platform_driver.
->
-> Changes from V2:
-> - Move the gpio driver from gpio folder to pinctnrl driver and register
->   driver as pincontrol driver.
-> - Provide pin configuration through pincntrl framework.
->
-> Changes from V3:
-> - Added gpio ranges and pinctrl_gpio calls.
-> - Used pinctrl_gpio_* calls on gpio chips callback.
-> - Remove dummy function which just return not supported.
-> - Nit cleanups.
->
-> Changes from V4:
-> - Drop separate DT binding document as it is moved to mfd/as3722.txt.
+Ah right, there is no way to know the size of a gpio_desc from here...
+Maybe I should make a gpiochip_get_desc(index) function accessible to
+drivers only that takes care of this. Another possibility would be to
+move this function into gpiolib.c but there are probably too many
+dependencies with ACPI for that.
 
-As mentioned I am happy with this driver,
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+In the long term I would like to see gpio_to_desc()/desc_to_gpio()
+disappear from the consumer interface as they allow unsafe use of GPIO
+descriptors.
 
-When you agreed with the DT folks and want me to merge it,
-tell me.
+> The DT version also uses gpio_to_desc().
 
-Yours,
-Linus Walleij
+That seems to speak in favor of that gpiochip_get_desc() function I
+talked about earlier.
+
+Thanks,
+Alex.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
