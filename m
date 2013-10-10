@@ -1,82 +1,61 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH 1/2] i2c-mux-gpio: test if the gpio can sleep
-Date: Thu, 10 Oct 2013 10:46:05 +0200
-Message-ID: <20131010084605.GD2638@katana>
-References: <525667C4.3080309@nsn.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [rtc-linux] [PATCH V5 2/3] pincntrl: add support for ams AS3722
+ pin control driver
+Date: Thu, 10 Oct 2013 14:55:32 +0530
+Message-ID: <5256728C.6060802@nvidia.com>
+References: <1380729030-25896-1-git-send-email-ldewangan@nvidia.com> <1380729030-25896-3-git-send-email-ldewangan@nvidia.com> <CACRpkdbmAnRxDpP17tmAAeC7U6Yibd5N7vFA1o1h=4DdhW+H-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="F8dlzb82+Fcn6AgP"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <525667C4.3080309-OYasijW0DpE@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ionut Nicu <ioan.nicu.ext-OYasijW0DpE@public.gmane.org>
-Cc: Peter Korsgaard <peter.korsgaard-ob4gmnvZ1/cAvxtiuMwx3w@public.gmane.org>, Alexander Sverdlin <alexander.sverdlin-OYasijW0DpE@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:18583 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753311Ab3JJJAX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Oct 2013 05:00:23 -0400
+In-Reply-To: <CACRpkdbmAnRxDpP17tmAAeC7U6Yibd5N7vFA1o1h=4DdhW+H-g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>
 
+On Tuesday 08 October 2013 05:46 PM, Linus Walleij wrote:
+> On Wed, Oct 2, 2013 at 5:50 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+>> The AS3722 is a compact system PMU suitable for mobile phones, tablets etc.
+>>
+>> Add a driver to support accessing the GPIO, pinmux and pin configuration
+>> of 8 GPIO pins found on the ams AS3722 through pin control driver and
+>> gpiolib.
+>>
+>> The driver will register itself as the pincontrol driver and gpio driver.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> ---
+>> Changes from V1:
+>> - Nit cleanups in driver and use module_platform_driver.
+>>
+>> Changes from V2:
+>> - Move the gpio driver from gpio folder to pinctnrl driver and register
+>>    driver as pincontrol driver.
+>> - Provide pin configuration through pincntrl framework.
+>>
+>> Changes from V3:
+>> - Added gpio ranges and pinctrl_gpio calls.
+>> - Used pinctrl_gpio_* calls on gpio chips callback.
+>> - Remove dummy function which just return not supported.
+>> - Nit cleanups.
+>>
+>> Changes from V4:
+>> - Drop separate DT binding document as it is moved to mfd/as3722.txt.
+> As mentioned I am happy with this driver,
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> When you agreed with the DT folks and want me to merge it,
+> tell me.
+>
 
---F8dlzb82+Fcn6AgP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen has given the ACK from DT side, so I think you can merge this patch.
 
-On Thu, Oct 10, 2013 at 10:39:32AM +0200, Ionut Nicu wrote:
-> Some gpio chips may have get/set operations that
-> can sleep. For this type of chips we must use the
-> _cansleep() version of gpio_set_value.
->=20
-> Signed-off-by: Ionut Nicu <ioan.nicu.ext-OYasijW0DpE@public.gmane.org>
-> ---
->  drivers/i2c/muxes/i2c-mux-gpio.c |   11 ++++++++---
->  1 files changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/i2c/muxes/i2c-mux-gpio.c b/drivers/i2c/muxes/i2c-mux=
--gpio.c
-> index a764da7..b5f17ef 100644
-> --- a/drivers/i2c/muxes/i2c-mux-gpio.c
-> +++ b/drivers/i2c/muxes/i2c-mux-gpio.c
-> @@ -27,11 +27,16 @@ struct gpiomux {
-> =20
->  static void i2c_mux_gpio_set(const struct gpiomux *mux, unsigned val)
->  {
-> +	unsigned gpio;
->  	int i;
-> =20
-> -	for (i =3D 0; i < mux->data.n_gpios; i++)
-> -		gpio_set_value(mux->gpio_base + mux->data.gpios[i],
-> -			       val & (1 << i));
-> +	for (i =3D 0; i < mux->data.n_gpios; i++) {
-> +		gpio =3D mux->gpio_base + mux->data.gpios[i];
-> +		if (gpio_cansleep(gpio))
-> +			gpio_set_value_cansleep(gpio, val & (1 << i));
-> +		else
-> +			gpio_set_value(gpio, val & (1 << i));
-> +	}
+Thanks,
+Laxman
 
-There should be a wrapper for that in the gpio-subsystem IMO.
-Adding linux-gpio to cc.
-
-
---F8dlzb82+Fcn6AgP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSVmlNAAoJEBQN5MwUoCm2UGUP/Ah7hOwMTTue0fucsyGKr5th
-BY/+ONOeHaWlcMm4f7WQz0EMjDKJN4Yqcah7lO2c4ZrbKGOas7JgcK9xChIXg5py
-gzK5XHzXnMd/MdtST5x2HoOqPOETdGNseyXl9OxH/D0GjMA1FjUc7OIBSPAxPpHN
-utauhvoalZR0CH9+xZvAd/Vd9Yw08Fob4wS8oduR4wWPwcpix/rcX+8/wzbIg0+3
-uDazQoAa4lHQzkRclviHbG5rzfZfdvUk7HvDol1ILT/Tsb9ykH7r1sIYpkWVCGIu
-Hy3k3w93ww5RAf8a92l96qTXw0+7ndUG4lwb1yRAftFVQX92FMnd7BEZSe4xlhw5
-oI2Ip7Dt+4TRdwRX9fXECCjWJu34qXdQ1Lrv9lPiaRVV7Okoqdf/vMPTUZkEWj89
-vj0YelR3IVZQyNdp5DkVMbbGp9pzD/VoJrlJCnS92aDc9fc2g/U3Hqq28QSU0ZUo
-B9Ldoxc7vJSHiG8j8K/KX7oXILfwdcRog+/PH1SFaM7fnvXBGdJ2lJyjaDGmWMCD
-PjXzDHEM/HnJEjbeKjYKP/I3pKXfwXLFBQeIi4GRshvsGd+YEy8K1CYkQulRmLkt
-dBd3ZMgjb1wSb74Ip7g+gZgbyHi62jSZYwu/EFZii/zNqVz7RfYOZHwZ2QuKcnHy
-2RH+vIpc9gjsNsTWnM5C
-=x1l7
------END PGP SIGNATURE-----
-
---F8dlzb82+Fcn6AgP--
