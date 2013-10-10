@@ -1,44 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [rtc-linux] [PATCH V5 2/3] pincntrl: add support for ams AS3722
- pin control driver
-Date: Thu, 10 Oct 2013 17:39:04 +0200
-Message-ID: <CACRpkdb8kRQLdAU+FKa4zwVpAotZ4+5J59b=yJz6VoGQ6QbwDA@mail.gmail.com>
-References: <1380729030-25896-1-git-send-email-ldewangan@nvidia.com>
-	<1380729030-25896-3-git-send-email-ldewangan@nvidia.com>
-	<CACRpkdbmAnRxDpP17tmAAeC7U6Yibd5N7vFA1o1h=4DdhW+H-g@mail.gmail.com>
-	<5256728C.6060802@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 1/2] i2c-mux-gpio: test if the gpio can sleep
+Date: Thu, 10 Oct 2013 21:43:54 +0200
+Message-ID: <20131010194354.GC23512@katana>
+References: <525667C4.3080309@nsn.com>
+ <52566971.5020700@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nmemrqcdn5VTmUEE"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:50396 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753311Ab3JJPjF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Oct 2013 11:39:05 -0400
-Received: by mail-ie0-f174.google.com with SMTP id qd12so1360411ieb.19
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Oct 2013 08:39:04 -0700 (PDT)
-In-Reply-To: <5256728C.6060802@nvidia.com>
+Received: from sauhun.de ([89.238.76.85]:58030 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755710Ab3JJTn7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 10 Oct 2013 15:43:59 -0400
+Content-Disposition: inline
+In-Reply-To: <52566971.5020700@metafoo.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Ionut Nicu <ioan.nicu.ext@nsn.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Alexander Sverdlin <alexander.sverdlin@nsn.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Thu, Oct 10, 2013 at 11:25 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> On Tuesday 08 October 2013 05:46 PM, Linus Walleij wrote:
->> On Wed, Oct 2, 2013 at 5:50 PM, Laxman Dewangan <ldewangan@nvidia.com>
->> wrote:
 
->>> Changes from V4:
->>> - Drop separate DT binding document as it is moved to mfd/as3722.txt.
->>
->> As mentioned I am happy with this driver,
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> When you agreed with the DT folks and want me to merge it,
->> tell me.
->
-> Stephen has given the ACK from DT side, so I think you can merge this patch.
+--nmemrqcdn5VTmUEE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK patch applied.
+On Thu, Oct 10, 2013 at 10:46:41AM +0200, Lars-Peter Clausen wrote:
 
-Yours,
-Linus Walleij
+> > +		if (gpio_cansleep(gpio))
+> > +			gpio_set_value_cansleep(gpio, val & (1 << i));
+> > +		else
+> > +			gpio_set_value(gpio, val & (1 << i));
+>=20
+> The proper way to do this is just always use the _cansleep() version.
+> gpio_set_value() only works for chips which do not sleep,
+> gpio_set_value_cansleep() works for both those who do sleep and those who=
+ do
+> not.
+
+To the gpio-list: Has it been considered to have sth. like
+gpio_set_value and gpio_set_value_nosleep? I'd think it makes more sense
+to have the specific function have the specific name.
+
+Regards,
+
+   Wolfram
+
+
+--nmemrqcdn5VTmUEE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSVwN6AAoJEBQN5MwUoCm2MuMQAJfpsgqRQ4QYK+J5fzp7Lgot
+kr41uwk7mRrX5hT/GlNBatG9PESrnTb6Baxf1wBAQMbSyBUzeJhrlDeISPuISXgf
+FX8qVLsCVIZj/aK/KzERLsRK9AUxKyFcGMFqW4MDYD/FlsWufyraPBsNrtIG6ict
+zzhGd6zIdWnmgwoUm5D0vPpOziBuEx1ltmQ0AsTf2qR7IvKCWTOqUlErCPnnYL8r
+7kPqM97wJ16sxg1DQcvL41AnEa/Qae8sRIpbwqP4ycRyCVVINmiaHiDY3GkbltEC
+iUUC95qSWscmi1klGoykZ9yrWHGWUlvpLZb2B7xBvz9J4P4Z+NhctkOD3Pn43lpK
+nKCEcGHyNuab5voxxEBwC9/WklnglhnEn87j9IcFXKbj2tcj33xXYIek3a9E0uOf
+ifKySkbv5rWRYYcOXQO4DnZQhYNbTA0akDLxp/Wr53oqUtFfCuRgoRVZMGppDJfB
+rJN4VmIKsDnYrpiLPqbuBWg3D3MNPnTTejfKie03mTyExEuyDAwzaQjXquKMCRJN
+7EQiBR5OoBfzyrwlToE/aISupn5+TncpdjVC27wlbhXVYhI46PFbLzwbQQirDsor
+vqrBMkyPzzz/3DJ36JDdlTgF/j+shznI0rGMzLRDOjm57PirrlOT3YMHJLUcSoGG
+0xydpcb2o6/86Cgt2F8k
+=ybw7
+-----END PGP SIGNATURE-----
+
+--nmemrqcdn5VTmUEE--
