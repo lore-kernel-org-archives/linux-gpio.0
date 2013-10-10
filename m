@@ -1,60 +1,82 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2 3/5] gpiolib / ACPI: add ACPI support for gpiod_get_index()
-Date: Thu, 10 Oct 2013 11:01:09 +0300
-Message-ID: <1381392071-21407-4-git-send-email-mika.westerberg@linux.intel.com>
-References: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH 1/2] i2c-mux-gpio: test if the gpio can sleep
+Date: Thu, 10 Oct 2013 10:46:05 +0200
+Message-ID: <20131010084605.GD2638@katana>
+References: <525667C4.3080309@nsn.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="F8dlzb82+Fcn6AgP"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <525667C4.3080309-OYasijW0DpE@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ionut Nicu <ioan.nicu.ext-OYasijW0DpE@public.gmane.org>
+Cc: Peter Korsgaard <peter.korsgaard-ob4gmnvZ1/cAvxtiuMwx3w@public.gmane.org>, Alexander Sverdlin <alexander.sverdlin-OYasijW0DpE@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-gpiod_get_index() and gpiod_get() are now the new preferred way to request
-GPIOs. Add support for finding the corresponding GPIO descriptor from ACPI
-namespace.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/gpiolib.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+--F8dlzb82+Fcn6AgP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e2a2cdd..1e099de 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -10,6 +10,7 @@
- #include <linux/seq_file.h>
- #include <linux/gpio.h>
- #include <linux/of_gpio.h>
-+#include <linux/acpi_gpio.h>
- #include <linux/idr.h>
- #include <linux/slab.h>
- 
-@@ -2111,6 +2112,12 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *id,
- }
- #endif
- 
-+static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
-+					unsigned int idx, unsigned long *flags)
-+{
-+	return acpi_get_gpiod_by_index(dev, idx, NULL);
-+}
-+
- static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 				    unsigned int idx, unsigned long *flags)
- {
-@@ -2192,6 +2199,9 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node) {
- 		dev_dbg(dev, "using device tree for GPIO lookup\n");
- 		desc = of_find_gpio(dev, con_id, idx, &flags);
-+	} else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev)) {
-+		dev_dbg(dev, "using ACPI for GPIO lookup\n");
-+		desc = acpi_find_gpio(dev, con_id, idx, &flags);
- 	} else {
- 		dev_dbg(dev, "using lookup tables for GPIO lookup");
- 		desc = gpiod_find(dev, con_id, idx, &flags);
--- 
-1.8.4.rc3
+On Thu, Oct 10, 2013 at 10:39:32AM +0200, Ionut Nicu wrote:
+> Some gpio chips may have get/set operations that
+> can sleep. For this type of chips we must use the
+> _cansleep() version of gpio_set_value.
+>=20
+> Signed-off-by: Ionut Nicu <ioan.nicu.ext-OYasijW0DpE@public.gmane.org>
+> ---
+>  drivers/i2c/muxes/i2c-mux-gpio.c |   11 ++++++++---
+>  1 files changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/i2c/muxes/i2c-mux-gpio.c b/drivers/i2c/muxes/i2c-mux=
+-gpio.c
+> index a764da7..b5f17ef 100644
+> --- a/drivers/i2c/muxes/i2c-mux-gpio.c
+> +++ b/drivers/i2c/muxes/i2c-mux-gpio.c
+> @@ -27,11 +27,16 @@ struct gpiomux {
+> =20
+>  static void i2c_mux_gpio_set(const struct gpiomux *mux, unsigned val)
+>  {
+> +	unsigned gpio;
+>  	int i;
+> =20
+> -	for (i =3D 0; i < mux->data.n_gpios; i++)
+> -		gpio_set_value(mux->gpio_base + mux->data.gpios[i],
+> -			       val & (1 << i));
+> +	for (i =3D 0; i < mux->data.n_gpios; i++) {
+> +		gpio =3D mux->gpio_base + mux->data.gpios[i];
+> +		if (gpio_cansleep(gpio))
+> +			gpio_set_value_cansleep(gpio, val & (1 << i));
+> +		else
+> +			gpio_set_value(gpio, val & (1 << i));
+> +	}
+
+There should be a wrapper for that in the gpio-subsystem IMO.
+Adding linux-gpio to cc.
+
+
+--F8dlzb82+Fcn6AgP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSVmlNAAoJEBQN5MwUoCm2UGUP/Ah7hOwMTTue0fucsyGKr5th
+BY/+ONOeHaWlcMm4f7WQz0EMjDKJN4Yqcah7lO2c4ZrbKGOas7JgcK9xChIXg5py
+gzK5XHzXnMd/MdtST5x2HoOqPOETdGNseyXl9OxH/D0GjMA1FjUc7OIBSPAxPpHN
+utauhvoalZR0CH9+xZvAd/Vd9Yw08Fob4wS8oduR4wWPwcpix/rcX+8/wzbIg0+3
+uDazQoAa4lHQzkRclviHbG5rzfZfdvUk7HvDol1ILT/Tsb9ykH7r1sIYpkWVCGIu
+Hy3k3w93ww5RAf8a92l96qTXw0+7ndUG4lwb1yRAftFVQX92FMnd7BEZSe4xlhw5
+oI2Ip7Dt+4TRdwRX9fXECCjWJu34qXdQ1Lrv9lPiaRVV7Okoqdf/vMPTUZkEWj89
+vj0YelR3IVZQyNdp5DkVMbbGp9pzD/VoJrlJCnS92aDc9fc2g/U3Hqq28QSU0ZUo
+B9Ldoxc7vJSHiG8j8K/KX7oXILfwdcRog+/PH1SFaM7fnvXBGdJ2lJyjaDGmWMCD
+PjXzDHEM/HnJEjbeKjYKP/I3pKXfwXLFBQeIi4GRshvsGd+YEy8K1CYkQulRmLkt
+dBd3ZMgjb1wSb74Ip7g+gZgbyHi62jSZYwu/EFZii/zNqVz7RfYOZHwZ2QuKcnHy
+2RH+vIpc9gjsNsTWnM5C
+=x1l7
+-----END PGP SIGNATURE-----
+
+--F8dlzb82+Fcn6AgP--
