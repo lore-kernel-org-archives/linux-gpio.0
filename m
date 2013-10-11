@@ -1,28 +1,74 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 3/5] [media] s3c-camif: Use CONFIG_ARCH_S3C64XX to check
- for S3C64xx support
-Date: Fri, 11 Oct 2013 15:13:39 +0200
-Message-ID: <5257F983.9060904@gmail.com>
-References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com> <1380392497-27406-3-git-send-email-tomasz.figa@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/3] gpio: davinci: add OF support
+Date: Fri, 11 Oct 2013 16:09:00 +0200
+Message-ID: <CACRpkdYxegBSYXR1-98smUNnDXpyRHo_vuYdnr3r7zhawENiUA@mail.gmail.com>
+References: <1380902596-4693-1-git-send-email-sujithkv@ti.com>
+	<1380902596-4693-2-git-send-email-sujithkv@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ea0-f177.google.com ([209.85.215.177]:46602 "EHLO
-	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751890Ab3JKNNo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 09:13:44 -0400
-In-Reply-To: <1380392497-27406-3-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1380902596-4693-2-git-send-email-sujithkv@ti.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LDOC <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, Sekhar Nori <nsekhar@ti.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>
 List-Id: linux-gpio@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On 09/28/2013 08:21 PM, Tomasz Figa wrote:
-> Since CONFIG_PLAT_S3C64XX is going to be removed, this patch modifies
-> the Kconfig entry of s3c-camif driver to use the proper way of checking
-> for S3C64xx support - CONFIG_ARCH_S3C64XX.
+On Fri, Oct 4, 2013 at 6:03 PM, Prabhakar Lad
+<prabhakar.csengg@gmail.com> wrote:
+
+> This patch adds OF parser support for davinci gpio
+> driver and also appropriate documentation in gpio-davinci.txt
+> located at Documentation/devicetree/bindings/gpio/.
 >
-> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
+> Signed-off-by: KV Sujith <sujithkv@ti.com>
+> Signed-off-by: Philip Avinash <avinashphilip@ti.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+^Don't trust this guy.
+
+> [prabhakar.csengg@gmail.com: simplified the OF code and also
+>                  the commit message]
+> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-davinci.txt      |   34 +++++++++++
+>  drivers/gpio/gpio-davinci.c                        |   60 +++++++++++++++++++-
+>  2 files changed, 91 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> new file mode 100644
+> index 0000000..87abd3b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> @@ -0,0 +1,34 @@
+> +Davinci GPIO controller bindings
+> +
+> +Required Properties:
+> +- compatible: should be "ti,dm6441-gpio"
+> +
+> +- reg: Physical base address of the controller and the size of memory mapped
+> +       registers.
+> +
+> +- gpio-controller : Marks the device node as a gpio controller.
+> +
+> +- interrupts: Array of GPIO interrupt number.
+> +
+> +- ngpio: The number of GPIO pins supported.
+> +
+> +- ti,davinci-gpio-irq-base: Base from where GPIO interrupt numbering starts.
+
+What is this?
+
+If I have ever ACKed this I have been drunk. I take it back.
+
+This "base" is a Linux-specific thing and has no place in the
+device tree, and shall not be there. You have to find some way to
+avoid this, what do you think some other OS should do with
+this value...
+
+All IRQs in Linux are assumed to be dynamically assigned numbers
+nowadays, with a property like this you can never switch on
+SPARSE_IRQ for the DaVinci.
+
+Yours,
+Linus Walleij
