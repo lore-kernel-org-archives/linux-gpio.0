@@ -1,92 +1,102 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v3 1/3] gpio: davinci: add OF support
-Date: Fri, 11 Oct 2013 20:29:44 +0530
-Message-ID: <CA+V-a8vyPyL0j0nPOZyjxrecusFzXovFPsNBLKYXns5ASWR-wg@mail.gmail.com>
-References: <1380902596-4693-1-git-send-email-sujithkv@ti.com>
-	<1380902596-4693-2-git-send-email-sujithkv@ti.com>
-	<CACRpkdYxegBSYXR1-98smUNnDXpyRHo_vuYdnr3r7zhawENiUA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5] gpio: Add MOXA ART GPIO driver
+Date: Fri, 11 Oct 2013 17:44:13 +0200
+Message-ID: <CACRpkda23nUF8i03RWePj+dGa9Wj6E1L8vfPMfxvnGkazfKS5w@mail.gmail.com>
+References: <1375103161-12460-1-git-send-email-jonas.jensen@gmail.com>
+	<1381503190-5733-1-git-send-email-jonas.jensen@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:54736 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752114Ab3JKO7q (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 10:59:46 -0400
-In-Reply-To: <CACRpkdYxegBSYXR1-98smUNnDXpyRHo_vuYdnr3r7zhawENiUA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1381503190-5733-1-git-send-email-jonas.jensen@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonas Jensen <jonas.jensen@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LDOC <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, Sekhar Nori <nsekhar@ti.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>
 
-Hi Linus ,
+On Fri, Oct 11, 2013 at 4:53 PM, Jonas Jensen <jonas.jensen@gmail.com> wrote:
 
-On 10/11/13, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Oct 4, 2013 at 6:03 PM, Prabhakar Lad
-> <prabhakar.csengg@gmail.com> wrote:
+>     I agree it is a bit strange GPIO control is divided in two
+>     separate registers. Unfortunately I can't offer an explanation
+>     because the documentation is not publicly available.
 >
->> This patch adds OF parser support for davinci gpio
->> driver and also appropriate documentation in gpio-davinci.txt
->> located at Documentation/devicetree/bindings/gpio/.
->>
->> Signed-off-by: KV Sujith <sujithkv@ti.com>
->> Signed-off-by: Philip Avinash <avinashphilip@ti.com>
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> ^Don't trust this guy.
->
->> [prabhakar.csengg@gmail.com: simplified the OF code and also
->>                  the commit message]
->> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
->> ---
->>  .../devicetree/bindings/gpio/gpio-davinci.txt      |   34 +++++++++++
->>  drivers/gpio/gpio-davinci.c                        |   60
->> +++++++++++++++++++-
->>  2 files changed, 91 insertions(+), 3 deletions(-)
->>  create mode 100644
->> Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> new file mode 100644
->> index 0000000..87abd3b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> @@ -0,0 +1,34 @@
->> +Davinci GPIO controller bindings
->> +
->> +Required Properties:
->> +- compatible: should be "ti,dm6441-gpio"
->> +
->> +- reg: Physical base address of the controller and the size of memory
->> mapped
->> +       registers.
->> +
->> +- gpio-controller : Marks the device node as a gpio controller.
->> +
->> +- interrupts: Array of GPIO interrupt number.
->> +
->> +- ngpio: The number of GPIO pins supported.
->> +
->> +- ti,davinci-gpio-irq-base: Base from where GPIO interrupt numbering
->> starts.
->
-> What is this?
->
-> If I have ever ACKed this I have been drunk. I take it back.
->
-here is the ACK https://patchwork.kernel.org/patch/2721181/
+>     The register responsible for doing enable/disable is located
+>     at <0x98100100 0x4>, the clock register is very close at
+>     <0x98100000 0x34>.
 
-> This "base" is a Linux-specific thing and has no place in the
-> device tree, and shall not be there. You have to find some way to
-> avoid this, what do you think some other OS should do with
-> this value...
->
-> All IRQs in Linux are assumed to be dynamically assigned numbers
-> nowadays, with a property like this you can never switch on
-> SPARSE_IRQ for the DaVinci.
->
-Can you point to any alternative solution if you have any ?
+If we don't know we have to guess.
 
--- 
-Regards,
---Prabhakar Lad
+This layout makes me think that the IO-window at 0x98100000 is
+a power-clock-and-reset controller. It contains some register
+to latch the pins enable/disable them, or if this is even a clock
+gate? Are you sure about this? Is it now a gated clock, simply,
+so that this bit should be handled in the clock driver, i.e.
+this bit gets set by clk_enable() from the GPIO driver?
+
+I am very suspicious about this especially since the GPIO
+driver is lacking clk_get() and friends.
+
+If it's not a clock gate, and you are convinced that you must still
+reach out into this range I think you want something like this:
+
+syscon: syscon@98100000 {
+                compatible = "syscon";
+                reg = <0x98100000 0x1000>;
+};
+
+gpio: gpio@98700000 {
+               gpio-controller;
+               #gpio-cells = <2>;
+               syscon = <&syscon>;
+               compatible = "moxa,moxart-gpio";
+               reg =   <0x98700000 0xC>,
+                       <0x98100100 0x4>;
+};
+
+Then the driver can use something like:
+
+        struct device_node *np = pdev->dev.of_node;
+        struct device_node *syscon_np;
+        struct regmap *regmap;
+        int err;
+
+        syscon_np = of_parse_phandle(np, "syscon", 0);
+        if (!syscon_np) {
+                pr_crit("no syscon node\n");
+                return -ENODEV;
+        }
+        regmap = syscon_node_to_regmap(syscon_np);
+        if (!regmap) {
+                pr_crit("could not locate syscon regmap\n");
+                return -ENODEV;
+        }
+
+Then update the registers using regmap_update_bits() and
+friends.
+
+>     I don't think gpio_poweroff driver is right for this hardware
+>     because the pin is not connected to anything that can do reset.
+>     The old 2.6.9 kernel driver uses timer poll with eventual call
+>     to userspace.
+>
+>     To test that it works, I added gpio_poweroff anyway, modified
+>     with gpio_export() the pin can then be seen switching between
+>     0 and 1 (on "cat /sys/class/gpio/gpio25/value").
+
+Hmmmm not quite following this...
+
+> +Required properties:
+> +
+> +- #gpio-cells : Should be 2, The first cell is the pin number and
+> +               the second cell is used to specify polarity:
+> +                       0 = active high
+> +                       1 = active low
+
+Could reference <dt-bindings/gpio/gpio.h> I guess?
+
+Oh well, no big deal.
+
+The driver as such is looking nice but now I strongly suspect
+it should clk_get/clk_prepare/clk_enable ... etc.
+
+Yours,
+Linus Walleij
