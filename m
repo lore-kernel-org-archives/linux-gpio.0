@@ -1,45 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [rtc-linux] Re: [PATCH V5 3/3] drivers/rtc/rtc-as3722: add RTC driver
-Date: Fri, 11 Oct 2013 10:08:54 +0200
-Message-ID: <CACRpkdb1c4ZaNYa1osusprFib_N1+8n9jpjaiYYvq1WeB7bckA@mail.gmail.com>
-References: <1381321761-8898-1-git-send-email-ldewangan@nvidia.com>
-	<1381321761-8898-4-git-send-email-ldewangan@nvidia.com>
-	<20131010152446.1715e64b70ddd0281a3971e9@linux-foundation.org>
-	<20131010224748.GW21581@sirena.org.uk>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Fri, 11 Oct 2013 10:16:49 +0200
+Message-ID: <CACRpkdb5UTtUsbVOnN_K-qfj8uBwn5tr94XfV5J__zTfxca4Mw@mail.gmail.com>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de>
+	<522FBED9.9000305@collabora.co.uk>
+	<5230C7F6.3080803@wwwdotorg.org>
+	<3653629.tapNZSuWhS@lem-wkst-02>
+	<52373B34.4060709@wwwdotorg.org>
+	<CACRpkdY=cgtf6_eypfAAv-fvmiNgAYyz4StTgDie5THsbrcumg@mail.gmail.com>
+	<5240A2D3.20105@wwwdotorg.org>
+	<CACRpkdZ7E7MGppbkTiObvTDHdmphnbysMKVc1OZjsPXKVuKttQ@mail.gmail.com>
+	<5241C4DB.9090200@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f51.google.com ([74.125.82.51]:39009 "EHLO
-	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752314Ab3JKIIz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 04:08:55 -0400
-Received: by mail-wg0-f51.google.com with SMTP id l18so137364wgh.18
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 01:08:54 -0700 (PDT)
-In-Reply-To: <20131010224748.GW21581@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5241C4DB.9090200-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon Hunter <jgchunter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, joelf-l0cyMroinI0@public.gmane.org, Laur
 List-Id: linux-gpio@vger.kernel.org
-To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Florian Lobmaier <florian.lobmaier@ams.com>
 
-On Fri, Oct 11, 2013 at 12:47 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Thu, Oct 10, 2013 at 03:24:46PM -0700, Andrew Morton wrote:
->> On Wed, 9 Oct 2013 17:59:21 +0530 Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On Tue, Sep 24, 2013 at 6:59 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 09/24/2013 02:31 AM, Linus Walleij wrote:
+>> On Mon, Sep 23, 2013 at 10:21 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> ...
+>>> Perhaps rather than having the gpio_chip/irq_chip drivers physically
+>>> implement a function which calls this common code, they could set some
+>>> flags/data/... in the struct gpio_chip/irq_chip indicating that they
+>>> desire the core code that implements the error-checking to be enabled.
+>>
+>> I think it should more be like a function they can call to flag
+>> a GPIO as used for IRQ.
 >
->> > +config RTC_DRV_AS3722
->> > +   tristate "ams AS3722 RTC driver"
->> > +   depends on MFD_AS3722
->
->> ... the rtc patch depends on an mfd patch, so everyone ends up sitting
->> around looking at everyone else, wondering who will merge it all.
->
-> With the MFD ones providing you trust the interfaces with the core
-> are going to be OK there's no problem to just merge them via individual
-> trees - the dependency on the MFD will prevent bisection problems.
+> For the record, that's pretty much exactly what I meant by implementing
+> it in the drivers. The irq_chip driver knows when the IRQ has been
+> requested, and calls some gpiolib function to mark the GPIO as
+> in-use-as-an-IRQ.
 
-Yes this is why I merged the pinctrl portions into the pinctrl tree.
-We do have some indication that the MFD driver is in good shape
-and will be accepted. In the worst case (if it's not getting in through
-the same merge window or the next) we can just revert it.
+Ah OK we're on the same page, this is progressing :-)
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
