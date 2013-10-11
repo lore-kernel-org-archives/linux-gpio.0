@@ -1,50 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/3] gpio: davinci: add OF support
-Date: Fri, 11 Oct 2013 18:21:44 +0200
-Message-ID: <CACRpkdYSCgs9eiN4crqXYQrbU71H-6-u04C2a5OeHHu4Da3big@mail.gmail.com>
-References: <1380902596-4693-1-git-send-email-sujithkv@ti.com>
-	<1380902596-4693-2-git-send-email-sujithkv@ti.com>
-	<CACRpkdYxegBSYXR1-98smUNnDXpyRHo_vuYdnr3r7zhawENiUA@mail.gmail.com>
-	<CA+V-a8vyPyL0j0nPOZyjxrecusFzXovFPsNBLKYXns5ASWR-wg@mail.gmail.com>
-	<CACRpkdYNexWWXuQ052xuQ4NOdXm2gt-+ByREKeGo-VAnbH4D2w@mail.gmail.com>
-	<CA+V-a8vH7VXqz=2cz-uD=YfRBRYrJ10K1Aptw28vV8gP+PiT2g@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2 1/5] gpiolib / ACPI: move acpi_gpiochip_free_interrupts
+ next to the request function
+Date: Fri, 11 Oct 2013 09:42:29 -0700
+Message-ID: <CAAVeFu+K6HvQTMOQqMbZPUD_C3nQ1MvYju1BGUOWPYJjQEpTjg@mail.gmail.com>
+References: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1381392071-21407-2-git-send-email-mika.westerberg@linux.intel.com> <CACRpkdZgP9VnVSpBN2Wg4ihL4ryZXeP=ASwr6BCP=u79eg6s6g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CA+V-a8vH7VXqz=2cz-uD=YfRBRYrJ10K1Aptw28vV8gP+PiT2g@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LDOC <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, Sekhar Nori <nsekhar@ti.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZgP9VnVSpBN2Wg4ihL4ryZXeP=ASwr6BCP=u79eg6s6g@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 11, 2013 at 6:18 PM, Prabhakar Lad
-<prabhakar.csengg@gmail.com> wrote:
-> On 10/11/13, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Fri, Oct 11, 2013 at 4:59 PM, Prabhakar Lad
->> <prabhakar.csengg@gmail.com> wrote:
->>> On 10/11/13, Linus Walleij <linus.walleij@linaro.org> wrote:
->>>> On Fri, Oct 4, 2013 at 6:03 PM, Prabhakar Lad
->>>> <prabhakar.csengg@gmail.com> wrote:
+On Fri, Oct 11, 2013 at 4:00 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Oct 10, 2013 at 10:01 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+>
+>> It makes more sense to have these functions close to each other. No
+>> functional changes.
 >>
->>>>> +- ti,davinci-gpio-irq-base: Base from where GPIO interrupt numbering
->>>>> starts.
->>>>
->>>> What is this?
->>>>
->>>> If I have ever ACKed this I have been drunk. I take it back.
->>>>
->>> here is the ACK https://patchwork.kernel.org/patch/2721181/
->>
->> And as suspected that version of the patch did not contain
->> this strange node property.
->>
-> The property did exist in the patch 'intc_irq_num', I just renamed
-> it and gave a proper description to it.
+>> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> So I've applied this first patch, and I'm just waiting for Alexandre's
+> ACK on the remaining patches concerning gpiod so we get this
+> 100% right.
 
-Hm yeah you're right ... I didn't understand what it was actually
-doing until I saw the revised documentation, I though it was
-stating the number of (hardware) IRQs, but it was stating the
-Linux-internal offset.
-
-Yours,
-Linus Walleij
+I think I'm ok with Mika's patches, however I need to send you a new
+version of gpiod. I wanted to finish documentation first, but maybe
+that can come slightly after so you can at least go ahead with both
+series?
