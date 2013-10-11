@@ -1,49 +1,57 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH] gpio: add export with name from dts
-Date: Fri, 11 Oct 2013 10:21:43 -0700
-Message-ID: <CAK5ve-L1+DL2no2LpHrVznEGJC8-=Sur8cNNVR0na+T7yM6L=w@mail.gmail.com>
-References: <1381485939-12435-1-git-send-email-jiri.prchal@aksignal.cz>
- <CACRpkda0=wWPP1JD-pzafEsbrOh2KQmOsvei2gc6m9yBa1tDZg@mail.gmail.com>
- <5257E15D.5080602@aksignal.cz> <CACRpkdYkG-0x9_oQijA6hYn+snDsjtVT+RhYhDe_9gjfDdWuoA@mail.gmail.com>
- <5257F8D2.5080700@aksignal.cz> <CACRpkdau1nGVuDji+gxBnkuC2Ri4SM+MUL+FnQKvMpKMLnG1dQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: em: drop references to "virtual" IRQ
+Date: Fri, 11 Oct 2013 19:23:27 +0200
+Message-ID: <1381512207-6651-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:34179 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756496Ab3JKRWE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 13:22:04 -0400
-In-Reply-To: <CACRpkdau1nGVuDji+gxBnkuC2Ri4SM+MUL+FnQKvMpKMLnG1dQ@mail.gmail.com>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:35610 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750971Ab3JKRXe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 13:23:34 -0400
+Received: by mail-wg0-f44.google.com with SMTP id n12so3654718wgh.11
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 10:23:33 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jiri Prchal <jiri.prchal@aksignal.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Crispin <blogic@openwrt.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Grant Likely <grant.likely@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Ian Molton <ian.molton@codethink.co.uk>, Magnus Damm <damm@opensource.se>
 
-On Fri, Oct 11, 2013 at 7:46 AM, Linus Walleij <linus.walleij@linaro.or=
-g> wrote:
-> On Fri, Oct 11, 2013 at 3:10 PM, Ji=C5=99=C3=AD Prchal <jiri.prchal@a=
-ksignal.cz> wrote:
->> Dne 11.10.2013 14:49, Linus Walleij napsal(a):
->
->>> If the GPIOs are actually connected to LEDs you should be
->>> using drivers/leds/leds-gpio.c and not export the GPIOs.
->>
->> I know that, just don't like /sys/class/leds/out15/brightness.
->
+Rename the argument "virq" to just "irq", this IRQ isn't any
+more "virtual" than any other Linux IRQ number, we use "hwirq"
+for the actual hw-numbers, "virq" is just bogus.
 
-Maybe I lost some context here, what's problem about the name?
+Cc: Ian Molton <ian.molton@codethink.co.uk>
+Cc: Magnus Damm <damm@opensource.se>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-em.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks,
--Bryan
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index 160d759..ec19036 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -232,16 +232,16 @@ static void em_gio_free(struct gpio_chip *chip, unsigned offset)
+ 	em_gio_direction_input(chip, offset);
+ }
+ 
+-static int em_gio_irq_domain_map(struct irq_domain *h, unsigned int virq,
+-				 irq_hw_number_t hw)
++static int em_gio_irq_domain_map(struct irq_domain *h, unsigned int irq,
++				 irq_hw_number_t hwirq)
+ {
+ 	struct em_gio_priv *p = h->host_data;
+ 
+-	pr_debug("gio: map hw irq = %d, virq = %d\n", (int)hw, virq);
++	pr_debug("gio: map hw irq = %d, irq = %d\n", (int)hwirq, irq);
+ 
+-	irq_set_chip_data(virq, h->host_data);
+-	irq_set_chip_and_handler(virq, &p->irq_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID); /* kill me now */
++	irq_set_chip_data(irq, h->host_data);
++	irq_set_chip_and_handler(irq, &p->irq_chip, handle_level_irq);
++	set_irq_flags(irq, IRQF_VALID); /* kill me now */
+ 	return 0;
+ }
+ 
+-- 
+1.8.3.1
 
-> Hm, then you might want to modify the way names are set
-> on leds rather ... this is the way we handle LEDs in the kernel
-> so any problems need to be discussed with Bryan Wu,
-> the LED maintainer.
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
