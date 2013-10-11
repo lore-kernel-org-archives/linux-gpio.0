@@ -1,73 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: bcm_kona: rename confusing variables
-Date: Fri, 11 Oct 2013 19:18:15 +0200
-Message-ID: <1381511895-6401-1-git-send-email-linus.walleij@linaro.org>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH] gpio: add export with name from dts
+Date: Fri, 11 Oct 2013 10:21:43 -0700
+Message-ID: <CAK5ve-L1+DL2no2LpHrVznEGJC8-=Sur8cNNVR0na+T7yM6L=w@mail.gmail.com>
+References: <1381485939-12435-1-git-send-email-jiri.prchal@aksignal.cz>
+ <CACRpkda0=wWPP1JD-pzafEsbrOh2KQmOsvei2gc6m9yBa1tDZg@mail.gmail.com>
+ <5257E15D.5080602@aksignal.cz> <CACRpkdYkG-0x9_oQijA6hYn+snDsjtVT+RhYhDe_9gjfDdWuoA@mail.gmail.com>
+ <5257F8D2.5080700@aksignal.cz> <CACRpkdau1nGVuDji+gxBnkuC2Ri4SM+MUL+FnQKvMpKMLnG1dQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:38345 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752163Ab3JKRSW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 13:18:22 -0400
-Received: by mail-wg0-f47.google.com with SMTP id f12so4462673wgh.26
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 10:18:21 -0700 (PDT)
+Received: from mail-la0-f41.google.com ([209.85.215.41]:34179 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756496Ab3JKRWE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 13:22:04 -0400
+In-Reply-To: <CACRpkdau1nGVuDji+gxBnkuC2Ri4SM+MUL+FnQKvMpKMLnG1dQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Markus Mayer <markus.mayer@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jiri Prchal <jiri.prchal@aksignal.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Crispin <blogic@openwrt.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Grant Likely <grant.likely@linaro.org>
 
-Rename the argument "virq" to just "irq", this IRQ isn't any
-more "virtual" than any other Linux IRQ number, we use "hwirq"
-for the actual hw-numbers, "virq" is just bogus. Rename the
-"gpio" variable to "hwirq" to reflect what it is. Rename one
-instance of "virq" to "child_irq" that better describes what
-it is.
+On Fri, Oct 11, 2013 at 7:46 AM, Linus Walleij <linus.walleij@linaro.or=
+g> wrote:
+> On Fri, Oct 11, 2013 at 3:10 PM, Ji=C5=99=C3=AD Prchal <jiri.prchal@a=
+ksignal.cz> wrote:
+>> Dne 11.10.2013 14:49, Linus Walleij napsal(a):
+>
+>>> If the GPIOs are actually connected to LEDs you should be
+>>> using drivers/leds/leds-gpio.c and not export the GPIOs.
+>>
+>> I know that, just don't like /sys/class/leds/out15/brightness.
+>
 
-Cc: Markus Mayer <markus.mayer@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-bcm-kona.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Maybe I lost some context here, what's problem about the name?
 
-diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-index ff5c98e..58188ba 100644
---- a/drivers/gpio/gpio-bcm-kona.c
-+++ b/drivers/gpio/gpio-bcm-kona.c
-@@ -428,9 +428,10 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- 	while ((sta = readl(reg_base + GPIO_INT_STATUS(bank_id)) &
- 		    (~(readl(reg_base + GPIO_INT_MASK(bank_id)))))) {
- 		for_each_set_bit(bit, &sta, 32) {
--			int gpio = GPIO_PER_BANK * bank_id + bit;
--			int virq = irq_find_mapping(bank->kona_gpio->irq_domain,
--						    gpio);
-+			int hwirq = GPIO_PER_BANK * bank_id + bit;
-+			int child_irq =
-+				irq_find_mapping(bank->kona_gpio->irq_domain,
-+						 hwirq);
- 			/*
- 			 * Clear interrupt before handler is called so we don't
- 			 * miss any interrupt occurred during executing them.
-@@ -438,7 +439,7 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- 			writel(readl(reg_base + GPIO_INT_STATUS(bank_id)) |
- 			       BIT(bit), reg_base + GPIO_INT_STATUS(bank_id));
- 			/* Invoke interrupt handler */
--			generic_handle_irq(virq);
-+			generic_handle_irq(child_irq);
- 		}
- 	}
- 
-@@ -487,10 +488,10 @@ static int bcm_kona_gpio_irq_map(struct irq_domain *d, unsigned int irq,
- 	return 0;
- }
- 
--static void bcm_kona_gpio_irq_unmap(struct irq_domain *d, unsigned int virq)
-+static void bcm_kona_gpio_irq_unmap(struct irq_domain *d, unsigned int irq)
- {
--	irq_set_chip_and_handler(virq, NULL, NULL);
--	irq_set_chip_data(virq, NULL);
-+	irq_set_chip_and_handler(irq, NULL, NULL);
-+	irq_set_chip_data(irq, NULL);
- }
- 
- static struct irq_domain_ops bcm_kona_irq_ops = {
--- 
-1.8.3.1
+Thanks,
+-Bryan
 
+> Hm, then you might want to modify the way names are set
+> on leds rather ... this is the way we handle LEDs in the kernel
+> so any problems need to be discussed with Bryan Wu,
+> the LED maintainer.
+>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
