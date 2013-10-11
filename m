@@ -1,31 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/5] gpiolib / ACPI: move acpi_gpiochip_free_interrupts
- next to the request function
-Date: Fri, 11 Oct 2013 13:00:22 +0200
-Message-ID: <CACRpkdZgP9VnVSpBN2Wg4ihL4ryZXeP=ASwr6BCP=u79eg6s6g@mail.gmail.com>
-References: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
-	<1381392071-21407-2-git-send-email-mika.westerberg@linux.intel.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpio/lynxpoint: check if the interrupt is enabled in IRQ
+ handler
+Date: Fri, 11 Oct 2013 14:09:40 +0300
+Message-ID: <20131011110940.GO3521@intel.com>
+References: <1380638143-20040-1-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkda=C3+pkVsVbZAkasxyWGedNsb7oAKTt4ApnJ4Q+k9BCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1381392071-21407-2-git-send-email-mika.westerberg@linux.intel.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkda=C3+pkVsVbZAkasxyWGedNsb7oAKTt4ApnJ4Q+k9BCw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Oct 10, 2013 at 10:01 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Fri, Oct 11, 2013 at 12:57:37PM +0200, Linus Walleij wrote:
+> On Tue, Oct 1, 2013 at 4:35 PM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> 
+> > Checking LP_INT_STAT is not enough in the interrupt handler because its
+> > contents get updated regardless of whether the pin has interrupt enabled or
+> > not. This causes the driver to loop forever for GPIOs that are pulled up.
+> >
+> > Fix this by checking the interrupt enable bit for the pin as well.
+> >
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Patch applied for fixes with Mathias ACK.
 
-> It makes more sense to have these functions close to each other. No
-> functional changes.
->
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Thanks!
 
-So I've applied this first patch, and I'm just waiting for Alexandre's
-ACK on the remaining patches concerning gpiod so we get this
-100% right.
+> Should this be tagged for -stable as well?
 
-Yours,
-Linus Walleij
+Yes, please. I think starting from 3.9 when this driver was merged.
