@@ -1,74 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V5 3/3] drivers/rtc/rtc-as3722: add RTC driver
-Date: Thu, 10 Oct 2013 23:47:48 +0100
-Message-ID: <20131010224748.GW21581@sirena.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [rtc-linux] Re: [PATCH V5 3/3] drivers/rtc/rtc-as3722: add RTC driver
+Date: Fri, 11 Oct 2013 10:08:54 +0200
+Message-ID: <CACRpkdb1c4ZaNYa1osusprFib_N1+8n9jpjaiYYvq1WeB7bckA@mail.gmail.com>
 References: <1381321761-8898-1-git-send-email-ldewangan@nvidia.com>
- <1381321761-8898-4-git-send-email-ldewangan@nvidia.com>
- <20131010152446.1715e64b70ddd0281a3971e9@linux-foundation.org>
+	<1381321761-8898-4-git-send-email-ldewangan@nvidia.com>
+	<20131010152446.1715e64b70ddd0281a3971e9@linux-foundation.org>
+	<20131010224748.GW21581@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Vs6r5beQVWevPlSD"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20131010152446.1715e64b70ddd0281a3971e9@linux-foundation.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, lee.jones@linaro.org, sameo@linux.intel.com, linus.walleij@linaro.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, Florian Lobmaier <florian.lobmaier@ams.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:39009 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752314Ab3JKIIz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 04:08:55 -0400
+Received: by mail-wg0-f51.google.com with SMTP id l18so137364wgh.18
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 01:08:54 -0700 (PDT)
+In-Reply-To: <20131010224748.GW21581@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Florian Lobmaier <florian.lobmaier@ams.com>
 
+On Fri, Oct 11, 2013 at 12:47 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, Oct 10, 2013 at 03:24:46PM -0700, Andrew Morton wrote:
+>> On Wed, 9 Oct 2013 17:59:21 +0530 Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+>> > +config RTC_DRV_AS3722
+>> > +   tristate "ams AS3722 RTC driver"
+>> > +   depends on MFD_AS3722
+>
+>> ... the rtc patch depends on an mfd patch, so everyone ends up sitting
+>> around looking at everyone else, wondering who will merge it all.
+>
+> With the MFD ones providing you trust the interfaces with the core
+> are going to be OK there's no problem to just merge them via individual
+> trees - the dependency on the MFD will prevent bisection problems.
 
---Vs6r5beQVWevPlSD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes this is why I merged the pinctrl portions into the pinctrl tree.
+We do have some indication that the MFD driver is in good shape
+and will be accepted. In the worst case (if it's not getting in through
+the same merge window or the next) we can just revert it.
 
-On Thu, Oct 10, 2013 at 03:24:46PM -0700, Andrew Morton wrote:
-> On Wed, 9 Oct 2013 17:59:21 +0530 Laxman Dewangan <ldewangan@nvidia.com> =
-wrote:
-
-> > +config RTC_DRV_AS3722
-> > +	tristate "ams AS3722 RTC driver"
-> > +	depends on MFD_AS3722
-
-> ... the rtc patch depends on an mfd patch, so everyone ends up sitting
-> around looking at everyone else, wondering who will merge it all.
-
-With the MFD ones providing you trust the interfaces with the core
-are going to be OK there's no problem to just merge them via individual
-trees - the dependency on the MFD will prevent bisection problems.
-
-> > +#ifdef CONFIG_PM
->=20
-> Most (but not all!) rtc drivers use CONFIG_PM_SLEEP.  People have madly
-> mucked with CONFIG_PM* and I don't know the difference and I don't know
-> what's going on and I don't know of a convenient place to go to find
-> out.  If you work it out, please be sure to tell me!  But as soon as I
-> figure it out I'm sure they'll go and madly muck with it again.
-
-The two effective options for this stuff are PM_SLEEP (for system
-suspend) and PM_RUNTIME (for runtime suspend which RTCs are unlikely to
-use I guess).  PM mostly just enables selection of the other two.
-
---Vs6r5beQVWevPlSD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSVy6RAAoJELSic+t+oim9uQoQAI/jGxDlxhiuYUiEW0B1k1vQ
-fYBGYMv6XbuJAqC89fwCKA6uW45yHWTDBsn+AmW76My4d+O2lsYvp/oDrGAigYzf
-5neP8+jsNPbcX4JFDl55aMe7F4l3CfwXgIGSHDmL3ibe+ZXRv93cYTSORSBVGtgP
-ZdvJTJwjNft2hGs6Ibp2cLH8yDNXZXzEWsZcA5rYBmLvOOeBCst13O/EVPOeyMWN
-zwTTqvCkAuDnPh/DATFm/XVApxTR6TiMfLtw8G5Y8VzBVXpM9aTNM+1FA0BSOwly
-w7XUSzSTV1REPc2VY/y57lBx2pl6Xl70sUQE6qtsEhIVnhEKCbPxyWQome9a374O
-9rJ2cptzm3e3OxCMM8XCyd0hWFA1gqJGUKPFSZxo60L+gkLU7TrWNWaHiJpxyMPm
-RbttLH91SISGCBVf3QZ/f4skOt0yuNRzIeTryd/Y8xCWIYTR3aOOnKJog07Is+57
-GSQLlQSahRvsks/13VumbIQlHqo5zIs6Inrd5lVfMFlyNdyz8FDRZXtNS9SuM0MA
-/hafMJIcngykzin6nMgBQDsZ0Z/P/Gbr6SOcQWK+K+HhSQFCEHpmWPNrGo21OA/x
-5njidl90yJn7wRufXbDUCTjCEAXE2BBvAKkWKpU9vbG/7zshy8sUJG+G/Za0aO6h
-18LQtvvJP+FKDKdJEuiM
-=igyP
------END PGP SIGNATURE-----
-
---Vs6r5beQVWevPlSD--
+Yours,
+Linus Walleij
