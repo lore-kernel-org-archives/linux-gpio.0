@@ -1,97 +1,28 @@
-From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
-Subject: Re: [PATCH] gpio: add export with name from dts
-Date: Fri, 11 Oct 2013 15:10:42 +0200
-Message-ID: <5257F8D2.5080700@aksignal.cz>
-References: <1381485939-12435-1-git-send-email-jiri.prchal@aksignal.cz> <CACRpkda0=wWPP1JD-pzafEsbrOh2KQmOsvei2gc6m9yBa1tDZg@mail.gmail.com> <5257E15D.5080602@aksignal.cz> <CACRpkdYkG-0x9_oQijA6hYn+snDsjtVT+RhYhDe_9gjfDdWuoA@mail.gmail.com>
-Reply-To: jiri.prchal@aksignal.cz
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 3/5] [media] s3c-camif: Use CONFIG_ARCH_S3C64XX to check
+ for S3C64xx support
+Date: Fri, 11 Oct 2013 15:13:39 +0200
+Message-ID: <5257F983.9060904@gmail.com>
+References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com> <1380392497-27406-3-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from port.iol.cz ([194.228.1.9]:30151 "EHLO port.iol.cz"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753977Ab3JKNKq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 11 Oct 2013 09:10:46 -0400
-In-Reply-To: <CACRpkdYkG-0x9_oQijA6hYn+snDsjtVT+RhYhDe_9gjfDdWuoA@mail.gmail.com>
+Received: from mail-ea0-f177.google.com ([209.85.215.177]:46602 "EHLO
+	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751890Ab3JKNNo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 09:13:44 -0400
+In-Reply-To: <1380392497-27406-3-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Crispin <blogic@openwrt.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Grant Likely <grant.likely@linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-Dne 11.10.2013 14:49, Linus Walleij napsal(a):
-> On Fri, Oct 11, 2013 at 1:30 PM, skrev Ji=C5=99=C3=AD Prchal <jiri.pr=
-chal@aksignal.cz>:
->> Dne 11.10.2013 12:48, Linus Walleij napsal(a):
+On 09/28/2013 08:21 PM, Tomasz Figa wrote:
+> Since CONFIG_PLAT_S3C64XX is going to be removed, this patch modifies
+> the Kconfig entry of s3c-camif driver to use the proper way of checking
+> for S3C64xx support - CONFIG_ARCH_S3C64XX.
 >
->>> - What do you think of the approach of just not using this for DT
->>>     boots, instead we create a new userspace ABI, using e.g. a
->>>     char device for each GPIO chip like /dev/gpio0, /dev/gpio1 etc
->>>     and access these using ioctl:s?
->>
->> It would be nice, but yesterday was late.
->> Even nicer would be /dev/in13, /dev/out20 etc.
->
-> Hm like one device node per pin?
->
-> /dev/gpio0/in01
-> /dev/gpio0/out01
-> etc
-Yes, because one userspace app is controling out1 and the other out2.
-And maybe /dev/gpio/, not sorted by chip, because out2 and out3 could b=
-e another chip.
-Just picked up unused gpio over soc and some added by SPI expander.
-=46or example:
-SOC -> board name
-pioC18 -> in13
-pioB12 -> in14
-pioA31 -> out15
-etc
+> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
 
->
->>> - I guess you have a specific system in mind for this? What is the
->>>     use case? I have seen *way* too many people trying to reimpleme=
-nt
->>>     drivers/leds/leds-gpio.c
->>>     drivers/input/keyboard/gpio_keys.c
->>>     drivers/input/keyboard/gpio_keys_polled.c
->>>     drivers/power/gpio-charger.c
->>>     drivers/i2c/busses/i2c-gpio.c
->>>     drivers/extcon/extcon-gpio.c
->>>     drivers/spi/spi-gpio.c
->>>     IN USERSPACE! JUST BECAUSE THEY CAN!
->>
->> As I know, no one is good for me. May be I could use gpio-led for ou=
-tputs,
->> but they would be under sysfs/leds and it isn't clear.
->
-> If the GPIOs are actually connected to LEDs you should be
-> using drivers/leds/leds-gpio.c and not export the GPIOs.
-I know that, just don't like /sys/class/leds/out15/brightness.
-
->
->> And what for inputs?
->
-> Depends on what input. For simple buttons:
->
-> drivers/input/keyboard/gpio_keys.c
-> drivers/input/keyboard/gpio_keys_polled.c
->
-> Then you get the input events from /dev/input/eventN
-> just like any other key press.
->
-> extcon-gpio.c is for e.g. headphone insertion on mobile
-> phones etc.
-Hm, my inputs are simple digital inputs from real world, like "door ope=
-n",
-"somewhere is voltage", "some switch is on". And more than one app is r=
-eading them.
-So what to use for it?
-
-Thanks
-Jiri
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
