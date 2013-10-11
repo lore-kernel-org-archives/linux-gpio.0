@@ -1,77 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: add export with name from dts
-Date: Fri, 11 Oct 2013 12:48:54 +0200
-Message-ID: <CACRpkda0=wWPP1JD-pzafEsbrOh2KQmOsvei2gc6m9yBa1tDZg@mail.gmail.com>
-References: <1381485939-12435-1-git-send-email-jiri.prchal@aksignal.cz>
+Subject: Re: [PATCH 1/5] gpiolib / ACPI: move acpi_gpiochip_free_interrupts
+ next to the request function
+Date: Fri, 11 Oct 2013 12:52:30 +0200
+Message-ID: <CACRpkdb8iDpXsTLJr0mXpSHeqs2DkdBw6u+=TaerxwsA37kj2g@mail.gmail.com>
+References: <1380639537-23406-1-git-send-email-mika.westerberg@linux.intel.com>
+	<1380639537-23406-2-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:34857 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753445Ab3JKKsz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 06:48:55 -0400
-Received: by mail-ie0-f175.google.com with SMTP id aq17so6147846iec.34
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 03:48:54 -0700 (PDT)
-In-Reply-To: <1381485939-12435-1-git-send-email-jiri.prchal@aksignal.cz>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1380639537-23406-2-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jiri Prchal <jiri.prchal@aksignal.cz>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Crispin <blogic@openwrt.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Grant Likely <grant.likely@linaro.org>
 
-This patch must be CC to devicetree@vger.kernel.org as it concerns
-device tree bindings. Please also keep Alexandre Courbot in the loop as
-he's working on GPIO refactorings.
+On Tue, Oct 1, 2013 at 4:58 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-On Fri, Oct 11, 2013 at 12:05 PM, Jiri Prchal <jiri.prchal@aksignal.cz> wrote:
-
-> Add export possibility to sysfs with given name in device tree.
-> Rebased from older unapplyed patch: [PATCH] owrt: GPIO: add gpio_export_with_name.
+> It makes more sense to have these functions close to each other. No
+> functional changes.
 >
-> Signed-off-by: Jiri Prchal <jiri.prchal@aksignal.cz>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-This is a very terse commit message for something which will have
-a very drastic impact on the Linux kernel and device tree.
-
-> +3) gpio-export
-> +--------------
-> +
-> +gpio-export will allow you to automatically export gpio
-
-
-What does this mean? You have to define all terms. And also consider the
-audience. If someone is using device tree on Symbian or Windows,
-what does "export" mean to them? Not all readers of this document
-are Linux implementers.
-
-> +required properties:
-> +- compatible: Should be "gpio-export"
-
-If this is a Linux-specific concept it should be named "linux-gpio-export"
-
-But overall I'm not happy with this *at all* as the sysfs ABI is already
-enough of a trouble for us. WIth platforms switching to DT-only
-probing it would be perfect to get rid of this sysfs interface altogether.
-
-Two questions:
-
-- What do you think of the approach of just not using this for DT
-  boots, instead we create a new userspace ABI, using e.g. a
-  char device for each GPIO chip like /dev/gpio0, /dev/gpio1 etc
-  and access these using ioctl:s?
-
-- I guess you have a specific system in mind for this? What is the
-  use case? I have seen *way* too many people trying to reimplement
-  drivers/leds/leds-gpio.c
-  drivers/input/keyboard/gpio_keys.c
-  drivers/input/keyboard/gpio_keys_polled.c
-  drivers/power/gpio-charger.c
-  drivers/i2c/busses/i2c-gpio.c
-  drivers/extcon/extcon-gpio.c
-  drivers/spi/spi-gpio.c
-  IN USERSPACE! JUST BECAUSE THEY CAN!
-
->From a kernel developers point of view the kernel shall handle
-hardware, so that is why I'm quite picky about this.
+Patch applied.
 
 Yours,
 Linus Walleij
