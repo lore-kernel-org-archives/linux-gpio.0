@@ -1,103 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: stmpe: drop references to "virtual" IRQ, fix bug
-Date: Fri, 11 Oct 2013 19:57:03 +0200
-Message-ID: <1381514223-8515-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:36889 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753172Ab3JKR5K (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 13:57:10 -0400
-Received: by mail-wi0-f173.google.com with SMTP id hq15so1510072wib.0
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 10:57:09 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v2 0/3] New descriptor-based GPIO interface
+Date: Fri, 11 Oct 2013 11:14:30 -0700
+Message-ID: <1381515273-25466-1-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, gnurou@gmail.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, devicetree@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Vipul Kumar Samar <vipulkumar.samar@st.com>, Lee Jones <lee.jones@linaro.org>, Gabriel Fernandez <gabriel.fernandez@st.com>, Jean-Nicolas Graux <jean-nicolas.graux@st.com>
 
-Rename the argument "virq" to just "irq", this IRQ isn't any
-more "virtual" than any other Linux IRQ number, we use "hwirq"
-for the actual hw-numbers, "virq" is just bogus.
+Hi Linus,
 
-When doing this I see that the hwirq argument is used
-for mapping rather than the Linux IRQ in the map function.
-This doesn't look right. Use the Linux IRQ instead.
+Hopefully this version should compile nicely in all cases. It also improves
+inline documentation, but more work is needed for the GPIO guide in
+Documentation/. This should follow shortly.
 
-Cc: Vipul Kumar Samar <vipulkumar.samar@st.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
-Cc: Jean-Nicolas Graux <jean-nicolas.graux@st.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-I cannot test this patch so I don't know if the mapping change
-is correct, however since absolutely every other driver does
-it the other way around this doesn't look sound at all. Please
-help out with review.
----
- drivers/gpio/gpio-stmpe.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+I prefer to send it as-is as other patches started depending on this series and
+I guess you don't want them to accumulate too much. :)
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index b33bad1..2647e24 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -254,9 +254,10 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
- 		while (stat) {
- 			int bit = __ffs(stat);
- 			int line = bank * 8 + bit;
--			int virq = irq_find_mapping(stmpe_gpio->domain, line);
-+			int child_irq = irq_find_mapping(stmpe_gpio->domain,
-+							 line);
- 
--			handle_nested_irq(virq);
-+			handle_nested_irq(child_irq);
- 			stat &= ~(1 << bit);
- 		}
- 
-@@ -271,7 +272,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
- 	return IRQ_HANDLED;
- }
- 
--static int stmpe_gpio_irq_map(struct irq_domain *d, unsigned int virq,
-+static int stmpe_gpio_irq_map(struct irq_domain *d, unsigned int irq,
- 			      irq_hw_number_t hwirq)
- {
- 	struct stmpe_gpio *stmpe_gpio = d->host_data;
-@@ -279,26 +280,26 @@ static int stmpe_gpio_irq_map(struct irq_domain *d, unsigned int virq,
- 	if (!stmpe_gpio)
- 		return -EINVAL;
- 
--	irq_set_chip_data(hwirq, stmpe_gpio);
--	irq_set_chip_and_handler(hwirq, &stmpe_gpio_irq_chip,
-+	irq_set_chip_data(irq, stmpe_gpio);
-+	irq_set_chip_and_handler(irq, &stmpe_gpio_irq_chip,
- 				 handle_simple_irq);
--	irq_set_nested_thread(hwirq, 1);
-+	irq_set_nested_thread(irq, 1);
- #ifdef CONFIG_ARM
--	set_irq_flags(hwirq, IRQF_VALID);
-+	set_irq_flags(irq, IRQF_VALID);
- #else
--	irq_set_noprobe(hwirq);
-+	irq_set_noprobe(irq);
- #endif
- 
- 	return 0;
- }
- 
--static void stmpe_gpio_irq_unmap(struct irq_domain *d, unsigned int virq)
-+static void stmpe_gpio_irq_unmap(struct irq_domain *d, unsigned int irq)
- {
- #ifdef CONFIG_ARM
--	set_irq_flags(virq, 0);
-+	set_irq_flags(irq, 0);
- #endif
--	irq_set_chip_and_handler(virq, NULL, NULL);
--	irq_set_chip_data(virq, NULL);
-+	irq_set_chip_and_handler(irq, NULL, NULL);
-+	irq_set_chip_data(irq, NULL);
- }
- 
- static const struct irq_domain_ops stmpe_gpio_irq_simple_ops = {
+Changes since v1:
+- added missing definitions of devm_* functions in devres.c
+- added missing export of gpiod_get_index()
+- added inline documentation for gpiod_* functions
+- reorganized consumer.h and added missing functions declarations
+
+Alexandre Courbot (3):
+  gpiolib: export descriptor-based GPIO interface
+  gpiolib: port of_ functions to use gpiod
+  gpiolib: add gpiod_get() and gpiod_put() functions
+
+ drivers/gpio/devres.c         |  83 ++++++
+ drivers/gpio/gpiolib-of.c     |  28 +-
+ drivers/gpio/gpiolib.c        | 613 +++++++++++++++++++++++++++++-------------
+ include/asm-generic/gpio.h    | 222 +++++----------
+ include/linux/gpio.h          |  11 +-
+ include/linux/gpio/consumer.h | 253 +++++++++++++++++
+ include/linux/gpio/driver.h   | 179 ++++++++++++
+ include/linux/of_gpio.h       |  29 +-
+ 8 files changed, 1046 insertions(+), 372 deletions(-)
+ create mode 100644 include/linux/gpio/consumer.h
+ create mode 100644 include/linux/gpio/driver.h
+
 -- 
-1.8.3.1
-
+1.8.4
