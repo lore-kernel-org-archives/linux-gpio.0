@@ -1,47 +1,105 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
-Date: Fri, 11 Oct 2013 10:16:49 +0200
-Message-ID: <CACRpkdb5UTtUsbVOnN_K-qfj8uBwn5tr94XfV5J__zTfxca4Mw@mail.gmail.com>
-References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de>
-	<522FBED9.9000305@collabora.co.uk>
-	<5230C7F6.3080803@wwwdotorg.org>
-	<3653629.tapNZSuWhS@lem-wkst-02>
-	<52373B34.4060709@wwwdotorg.org>
-	<CACRpkdY=cgtf6_eypfAAv-fvmiNgAYyz4StTgDie5THsbrcumg@mail.gmail.com>
-	<5240A2D3.20105@wwwdotorg.org>
-	<CACRpkdZ7E7MGppbkTiObvTDHdmphnbysMKVc1OZjsPXKVuKttQ@mail.gmail.com>
-	<5241C4DB.9090200@wwwdotorg.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] RFC: gpio: add API to be strict about GPIO IRQ usage
+Date: Fri, 11 Oct 2013 10:39:39 +0200
+Message-ID: <CACRpkdZh_2v=_cudk2Kdq64DRtH1VPTECW0s15iaZAw4+ZW2Dg@mail.gmail.com>
+References: <1380022390-21262-1-git-send-email-linus.walleij@linaro.org>
+	<5241D12E.4050405@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5241C4DB.9090200-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon Hunter <jgchunter-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, joelf-l0cyMroinI0@public.gmane.org, Laur
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:63636 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753771Ab3JKIjj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 04:39:39 -0400
+Received: by mail-ie0-f172.google.com with SMTP id x13so7842558ief.3
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 01:39:39 -0700 (PDT)
+In-Reply-To: <5241D12E.4050405@wwwdotorg.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Grant Likely <grant.likely@linaro.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-On Tue, Sep 24, 2013 at 6:59 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 09/24/2013 02:31 AM, Linus Walleij wrote:
->> On Mon, Sep 23, 2013 at 10:21 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> ...
->>> Perhaps rather than having the gpio_chip/irq_chip drivers physically
->>> implement a function which calls this common code, they could set some
->>> flags/data/... in the struct gpio_chip/irq_chip indicating that they
->>> desire the core code that implements the error-checking to be enabled.
+On Tue, Sep 24, 2013 at 7:51 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 09/24/2013 05:33 AM, Linus Walleij wrote:
+
+>> @@ -466,6 +478,13 @@ static int gpio_setup_irq(struct gpio_desc *desc, struct device *dev,
+>>       if (ret < 0)
+>>               goto free_id;
 >>
->> I think it should more be like a function they can call to flag
->> a GPIO as used for IRQ.
+>> +     ret = gpiod_lock_as_irq(desc);
+>> +     if (ret < 0) {
+>> +             gpiod_warn(desc,
+>> +                        "failed to flag the GPIO for IRQ\n");
+>> +             goto free_id;
+>> +     }
 >
-> For the record, that's pretty much exactly what I meant by implementing
-> it in the drivers. The irq_chip driver knows when the IRQ has been
-> requested, and calls some gpiolib function to mark the GPIO as
-> in-use-as-an-IRQ.
+> I believe gpio_setup_irq() can be called with flags==0 (disable IRQ
+> usage) or flags!=0 (set up IRQ usage). As such, I believe that block of
+> code needs to check flags, and either call gpiod_lock_as_irq() or
+> gpio_unlock_as_irq() as appropriate.
 
-Ah OK we're on the same page, this is progressing :-)
+Yep fixed this. Actually hardening the sysfs interface was just an
+unexpected side effect of this, rather nice.
+
+>> diff --git a/drivers/pinctrl/pinctrl-nomadik.c b/drivers/pinctrl/pinctrl-nomadik.c
+>> @@ -795,6 +795,14 @@ static int nmk_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+>>  {
+>>       struct nmk_gpio_chip *nmk_chip =
+>>               container_of(chip, struct nmk_gpio_chip, chip);
+>> +     int ret;
+>> +
+>> +     ret = gpio_lock_as_irq(chip, offset);
+>
+> I don't think that gpio_to_irq() is the correct place to call the new
+> function, for two reasons:
+>
+> 1)
+>
+> Not all paths that use interrupts call gpio_to_irq(). It's perfectly
+> valid for a driver to receive an IRQ number, request it, and be done.
+> The is commmon when a driver only cares about IRQ functionality and not
+> GPIO functionality, and hence did not receive a GPIO and convert it to
+> the IRQ.
+>
+> To solve this, I think irq_chip drivers should call the new gpiolib
+> functions when the IRQ is actually requested or set up.
+>
+> Related, where does gpio_unlock_as_irq() get called in the Nomadik
+> driver? It should happen when free_irq() is called.
+
+Yeah if we formalize the criterion that interrupts out of any GPIO
+chips should be possible to request without first getting it from the
+<linux/gpio.h> interface, then this holds.
+
+However that is not the whole story, is it? We have a gazillion
+drivers calling irq_create_mapping() in this function, so I would
+say that things are already a mess here.
+
+One alternative is to do what gpio-tegra.c does and call
+irq_create_mapping() on every GPIO line that can do IRQ in
+probe(). However that is a bit sloppy is it not? Or is this what
+we always want drivers to do? This has the side effect of showing
+all these IRQs in /proc/interrupts but maybe that is not such
+a big deal?
+
+> 2)
+>
+> (Nit):
+>
+> The fact that gpio_to_irq() was called doesn't actually guarantee that
+> the IRQ will be requested. Admittedly it's silly to call gpio_to_irq()
+> if you're not going to request the IRQ, adn this can be considered a
+> bug, but it can be done. This might happen (at least temporarily) due to
+> deferred probe.
+
+Yeah well you're right it's just supposed to be a translation function.
+
+Part of me want to add an optional irqdomain to struct gpio_chip
+and have gpio_to_irq() just call irq_find_mapping() by default
+unless the driver specifies its own translation callback, because
+I think this is what (modern) drivers should generally do.
+
+What do you think about this refactoring idea?
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
