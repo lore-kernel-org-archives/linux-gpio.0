@@ -1,190 +1,112 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2 2/3] gpiolib: port of_ functions to use gpiod
-Date: Fri, 11 Oct 2013 11:14:32 -0700
-Message-ID: <1381515273-25466-3-git-send-email-acourbot@nvidia.com>
-References: <1381515273-25466-1-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] RFC: gpio: add API to be strict about GPIO IRQ usage
+Date: Fri, 11 Oct 2013 13:10:54 -0600
+Message-ID: <52584D3E.7030809@wwwdotorg.org>
+References: <1380022390-21262-1-git-send-email-linus.walleij@linaro.org>	<5241D12E.4050405@wwwdotorg.org> <CACRpkdZh_2v=_cudk2Kdq64DRtH1VPTECW0s15iaZAw4+ZW2Dg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1381515273-25466-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, gnurou@gmail.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, devicetree@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:34898 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751846Ab3JKTK6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 15:10:58 -0400
+In-Reply-To: <CACRpkdZh_2v=_cudk2Kdq64DRtH1VPTECW0s15iaZAw4+ZW2Dg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Grant Likely <grant.likely@linaro.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-Refactor the of_ functions of gpiolib to use the now public gpiod
-interface, and export of_get_named_gpiod_flags() and
-of_get_gpiod_flags() functions.
+On 10/11/2013 02:39 AM, Linus Walleij wrote:
+> On Tue, Sep 24, 2013 at 7:51 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 09/24/2013 05:33 AM, Linus Walleij wrote:
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/gpiolib-of.c | 28 +++++++++++++++++-----------
- include/linux/of_gpio.h   | 29 ++++++++++++++++++++++++-----
- 2 files changed, 41 insertions(+), 16 deletions(-)
+>>> diff --git a/drivers/pinctrl/pinctrl-nomadik.c b/drivers/pinctrl/pinctrl-nomadik.c
+>>> @@ -795,6 +795,14 @@ static int nmk_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+>>>  {
+>>>       struct nmk_gpio_chip *nmk_chip =
+>>>               container_of(chip, struct nmk_gpio_chip, chip);
+>>> +     int ret;
+>>> +
+>>> +     ret = gpio_lock_as_irq(chip, offset);
+>>
+>> I don't think that gpio_to_irq() is the correct place to call the new
+>> function, for two reasons:
+>>
+>> 1)
+>>
+>> Not all paths that use interrupts call gpio_to_irq(). It's perfectly
+>> valid for a driver to receive an IRQ number, request it, and be done.
+>> The is commmon when a driver only cares about IRQ functionality and not
+>> GPIO functionality, and hence did not receive a GPIO and convert it to
+>> the IRQ.
+>>
+>> To solve this, I think irq_chip drivers should call the new gpiolib
+>> functions when the IRQ is actually requested or set up.
+>>
+>> Related, where does gpio_unlock_as_irq() get called in the Nomadik
+>> driver? It should happen when free_irq() is called.
+> 
+> Yeah if we formalize the criterion that interrupts out of any GPIO
+> chips should be possible to request without first getting it from the
+> <linux/gpio.h> interface, then this holds.
+> 
+> However that is not the whole story, is it? We have a gazillion
+> drivers calling irq_create_mapping() in this function, so I would
+> say that things are already a mess here.
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 0dfaf20..32a396d 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -15,19 +15,21 @@
- #include <linux/errno.h>
- #include <linux/module.h>
- #include <linux/io.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_gpio.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/slab.h>
- 
-+struct gpio_desc;
-+
- /* Private data structure for of_gpiochip_find_and_xlate */
- struct gg_data {
- 	enum of_gpio_flags *flags;
- 	struct of_phandle_args gpiospec;
- 
--	int out_gpio;
-+	struct gpio_desc *out_gpio;
- };
- 
- /* Private function for resolving node pointer to gpio_chip */
-@@ -45,28 +47,31 @@ static int of_gpiochip_find_and_xlate(struct gpio_chip *gc, void *data)
- 	if (ret < 0)
- 		return false;
- 
--	gg_data->out_gpio = ret + gc->base;
-+	gg_data->out_gpio = gpio_to_desc(ret + gc->base);
- 	return true;
- }
- 
- /**
-- * of_get_named_gpio_flags() - Get a GPIO number and flags to use with GPIO API
-+ * of_get_named_gpiod_flags() - Get a GPIO descriptor and flags for GPIO API
-  * @np:		device node to get GPIO from
-  * @propname:	property name containing gpio specifier(s)
-  * @index:	index of the GPIO
-  * @flags:	a flags pointer to fill in
-  *
-- * Returns GPIO number to use with Linux generic GPIO API, or one of the errno
-+ * Returns GPIO descriptor to use with Linux GPIO API, or one of the errno
-  * value on the error condition. If @flags is not NULL the function also fills
-  * in flags for the GPIO.
-  */
--int of_get_named_gpio_flags(struct device_node *np, const char *propname,
--			   int index, enum of_gpio_flags *flags)
-+struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
-+		     const char *propname, int index, enum of_gpio_flags *flags)
- {
- 	/* Return -EPROBE_DEFER to support probe() functions to be called
- 	 * later when the GPIO actually becomes available
- 	 */
--	struct gg_data gg_data = { .flags = flags, .out_gpio = -EPROBE_DEFER };
-+	struct gg_data gg_data = {
-+		.flags = flags,
-+		.out_gpio = ERR_PTR(-EPROBE_DEFER)
-+	};
- 	int ret;
- 
- 	/* .of_xlate might decide to not fill in the flags, so clear it. */
-@@ -78,16 +83,17 @@ int of_get_named_gpio_flags(struct device_node *np, const char *propname,
- 	if (ret) {
- 		pr_debug("%s: can't parse gpios property of node '%s[%d]'\n",
- 			__func__, np->full_name, index);
--		return ret;
-+		return ERR_PTR(ret);
- 	}
- 
- 	gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
- 
- 	of_node_put(gg_data.gpiospec.np);
--	pr_debug("%s exited with status %d\n", __func__, gg_data.out_gpio);
-+	pr_debug("%s exited with status %d\n", __func__,
-+		 PTR_RET(gg_data.out_gpio));
- 	return gg_data.out_gpio;
- }
--EXPORT_SYMBOL(of_get_named_gpio_flags);
-+EXPORT_SYMBOL(of_get_named_gpiod_flags);
- 
- /**
-  * of_gpio_simple_xlate - translate gpio_spec to the GPIO number and flags
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index a83dc6f..d71f2cc 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -21,6 +21,7 @@
- #include <linux/of.h>
- 
- struct device_node;
-+struct gpio_desc;
- 
- /*
-  * This is Linux-specific flags. By default controllers' and Linux' mapping
-@@ -47,7 +48,7 @@ static inline struct of_mm_gpio_chip *to_of_mm_gpio_chip(struct gpio_chip *gc)
- 	return container_of(gc, struct of_mm_gpio_chip, gc);
- }
- 
--extern int of_get_named_gpio_flags(struct device_node *np,
-+extern struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
- 		const char *list_name, int index, enum of_gpio_flags *flags);
- 
- extern int of_mm_gpiochip_add(struct device_node *np,
-@@ -62,10 +63,10 @@ extern int of_gpio_simple_xlate(struct gpio_chip *gc,
- #else /* CONFIG_OF_GPIO */
- 
- /* Drivers may not strictly depend on the GPIO support, so let them link. */
--static inline int of_get_named_gpio_flags(struct device_node *np,
-+static inline struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
- 		const char *list_name, int index, enum of_gpio_flags *flags)
- {
--	return -ENOSYS;
-+	return ERR_PTR(-ENOSYS);
- }
- 
- static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
-@@ -80,6 +81,18 @@ static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
- 
- #endif /* CONFIG_OF_GPIO */
- 
-+static inline int of_get_named_gpio_flags(struct device_node *np,
-+		const char *list_name, int index, enum of_gpio_flags *flags)
-+{
-+	struct gpio_desc *desc;
-+	desc = of_get_named_gpiod_flags(np, list_name, index, flags);
-+
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+	else
-+		return desc_to_gpio(desc);
-+}
-+
- /**
-  * of_gpio_named_count() - Count GPIOs for a device
-  * @np:		device node to count GPIOs for
-@@ -117,15 +130,21 @@ static inline int of_gpio_count(struct device_node *np)
- }
- 
- /**
-- * of_get_gpio_flags() - Get a GPIO number and flags to use with GPIO API
-+ * of_get_gpiod_flags() - Get a GPIO descriptor and flags to use with GPIO API
-  * @np:		device node to get GPIO from
-  * @index:	index of the GPIO
-  * @flags:	a flags pointer to fill in
-  *
-- * Returns GPIO number to use with Linux generic GPIO API, or one of the errno
-+ * Returns GPIO descriptor to use with Linux generic GPIO API, or a errno
-  * value on the error condition. If @flags is not NULL the function also fills
-  * in flags for the GPIO.
-  */
-+static inline struct gpio_desc *of_get_gpiod_flags(struct device_node *np,
-+					int index, enum of_gpio_flags *flags)
-+{
-+	return of_get_named_gpiod_flags(np, "gpios", index, flags);
-+}
-+
- static inline int of_get_gpio_flags(struct device_node *np, int index,
- 		      enum of_gpio_flags *flags)
- {
--- 
-1.8.4
+I expect things are a mess indeed:-)
+
+I believe that if a driver is only calling irq_create_mapping() inside
+gpio_to_irq(), it's a bug. I think things can operate correctly in one
+of two cases, at least with DT:
+
+1) irq_create_mapping() is called from both gpio_to_irq() and the
+of_xlate callback for IRQs.
+
+(I don't think this method would work in a board-file-based system where
+of_xlate isn't called for IRQs...)
+
+or:
+
+2) irq_create_mapping() is called for all IRQs when registering the IRQ
+controller/domain.
+
+To me, (2) is much simpler, and avoids the issue (1) probably has with
+only supporting direct IRQ usage (without something calling gpio_to_irq()).
+
+> One alternative is to do what gpio-tegra.c does and call
+> irq_create_mapping() on every GPIO line that can do IRQ in
+> probe(). However that is a bit sloppy is it not? Or is this what
+> we always want drivers to do?
+
+I tend to think it's a nice simple approach that should support any
+higher-level usage-model (direct IRQ usage, or "mapped" via gpio_to_irq()).
+
+> This has the side effect of showing
+> all these IRQs in /proc/interrupts but maybe that is not such
+> a big deal?
+
+I think that's actually a benefit; you can see all the possible IRQ
+sources in the system, and whether each is handled, or not.
+
+>> 2)
+>>
+>> (Nit):
+>>
+>> The fact that gpio_to_irq() was called doesn't actually guarantee that
+>> the IRQ will be requested. Admittedly it's silly to call gpio_to_irq()
+>> if you're not going to request the IRQ, adn this can be considered a
+>> bug, but it can be done. This might happen (at least temporarily) due to
+>> deferred probe.
+> 
+> Yeah well you're right it's just supposed to be a translation function.
+> 
+> Part of me want to add an optional irqdomain to struct gpio_chip
+> and have gpio_to_irq() just call irq_find_mapping() by default
+> unless the driver specifies its own translation callback, because
+> I think this is what (modern) drivers should generally do.
+> 
+> What do you think about this refactoring idea?
+
+That sounds reasonable.
