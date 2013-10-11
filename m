@@ -1,79 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: add export with name from dts
-Date: Fri, 11 Oct 2013 14:49:51 +0200
-Message-ID: <CACRpkdYkG-0x9_oQijA6hYn+snDsjtVT+RhYhDe_9gjfDdWuoA@mail.gmail.com>
-References: <1381485939-12435-1-git-send-email-jiri.prchal@aksignal.cz>
-	<CACRpkda0=wWPP1JD-pzafEsbrOh2KQmOsvei2gc6m9yBa1tDZg@mail.gmail.com>
-	<5257E15D.5080602@aksignal.cz>
+Subject: Re: [PATCH] drivers: misc: add gpio wakeup driver
+Date: Fri, 11 Oct 2013 14:54:24 +0200
+Message-ID: <CACRpkdZWPP+8qJJM60rJvLR7xQvfaHcs-XkabD9zvubTEHFWyA@mail.gmail.com>
+References: <1380635719-31171-1-git-send-email-zonque@gmail.com>
+	<CACRpkdYhQ+-d1COcvmg_hEJ==cTFpKLNDnvF8kdK4QgXzHenEA@mail.gmail.com>
+	<5257E3C6.3050507@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f170.google.com ([209.85.223.170]:32967 "EHLO
-	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753646Ab3JKMtv convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 08:49:51 -0400
-Received: by mail-ie0-f170.google.com with SMTP id x13so8391966ief.29
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 05:49:51 -0700 (PDT)
-In-Reply-To: <5257E15D.5080602@aksignal.cz>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:60717 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752905Ab3JKMyZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Oct 2013 08:54:25 -0400
+Received: by mail-ie0-f169.google.com with SMTP id tp5so8253259ieb.14
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2013 05:54:24 -0700 (PDT)
+In-Reply-To: <5257E3C6.3050507@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jiri Prchal <jiri.prchal@aksignal.cz>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Crispin <blogic@openwrt.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Grant Likely <grant.likely@linaro.org>
+To: Daniel Mack <zonque@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg KH <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
 
-On Fri, Oct 11, 2013 at 1:30 PM, skrev Ji=F8=ED Prchal <jiri.prchal@aks=
-ignal.cz>:
-> Dne 11.10.2013 12:48, Linus Walleij napsal(a):
+On Fri, Oct 11, 2013 at 1:40 PM, Daniel Mack <zonque@gmail.com> wrote:
 
->> - What do you think of the approach of just not using this for DT
->>    boots, instead we create a new userspace ABI, using e.g. a
->>    char device for each GPIO chip like /dev/gpio0, /dev/gpio1 etc
->>    and access these using ioctl:s?
+>> Since what the driver will then eventually provide is to
+>> flag an IRQ line as wakeup, I wonder if this should not just
+>> simply go into the interrupt core, or atleast of/irq.c.
 >
-> It would be nice, but yesterday was late.
-> Even nicer would be /dev/in13, /dev/out20 etc.
+> But for that, the IRQ line must be requested exclusively and handled as
+> well, no? If not, how would you handle cases where an interrupt is
+> marked as wakeup source by the core, but used by another driver which
+> calls disable_irq_wake() on it for whatever reason?
 
-Hm like one device node per pin?
+Does this driver handle that?
 
-/dev/gpio0/in01
-/dev/gpio0/out01
-etc
-
->> - I guess you have a specific system in mind for this? What is the
->>    use case? I have seen *way* too many people trying to reimplement
->>    drivers/leds/leds-gpio.c
->>    drivers/input/keyboard/gpio_keys.c
->>    drivers/input/keyboard/gpio_keys_polled.c
->>    drivers/power/gpio-charger.c
->>    drivers/i2c/busses/i2c-gpio.c
->>    drivers/extcon/extcon-gpio.c
->>    drivers/spi/spi-gpio.c
->>    IN USERSPACE! JUST BECAUSE THEY CAN!
->
-> As I know, no one is good for me. May be I could use gpio-led for out=
-puts,
-> but they would be under sysfs/leds and it isn't clear.
-
-If the GPIOs are actually connected to LEDs you should be
-using drivers/leds/leds-gpio.c and not export the GPIOs.
-
-> And what for inputs?
-
-Depends on what input. For simple buttons:
-
-drivers/input/keyboard/gpio_keys.c
-drivers/input/keyboard/gpio_keys_polled.c
-
-Then you get the input events from /dev/input/eventN
-just like any other key press.
-
-extcon-gpio.c is for e.g. headphone insertion on mobile
-phones etc.
+It rather looks like it hogs both the GPIO and IRQ from anyone
+else who want it...
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
