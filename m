@@ -1,127 +1,69 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: [PATCH] RFC: gpio: add API to be strict about GPIO IRQ usage
-Date: Sat, 12 Oct 2013 08:06:37 +0200
-Message-ID: <20131012060637.GJ24616@ns203013.ovh.net>
-References: <1380022390-21262-1-git-send-email-linus.walleij@linaro.org>
- <5241D12E.4050405@wwwdotorg.org>
- <CACRpkdZh_2v=_cudk2Kdq64DRtH1VPTECW0s15iaZAw4+ZW2Dg@mail.gmail.com>
- <52584D3E.7030809@wwwdotorg.org>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH] gpio: pl061: drop references to "virtual" IRQ
+Date: Sat, 12 Oct 2013 21:59:02 +0300
+Message-ID: <20131012185901.GA4276@tarshish>
+References: <1381513327-7787-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 5.mo2.mail-out.ovh.net ([87.98.181.248]:47821 "EHLO
-	mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751742Ab3JLGMU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Oct 2013 02:12:20 -0400
-Received: from mail407.ha.ovh.net (gw6.ovh.net [213.251.189.206])
-	by mo2.mail-out.ovh.net (Postfix) with SMTP id 61DA0FFAEB4
-	for <linux-gpio@vger.kernel.org>; Sat, 12 Oct 2013 08:05:02 +0200 (CEST)
+Received: from guitar.tcltek.co.il ([192.115.133.116]:44996 "EHLO
+	sivan.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752744Ab3JLTJd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Oct 2013 15:09:33 -0400
 Content-Disposition: inline
-In-Reply-To: <52584D3E.7030809@wwwdotorg.org>
+In-Reply-To: <1381513327-7787-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Grant Likely <grant.likely@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Rob Herring <rob.herring@calxeda.com>
 
-On 13:10 Fri 11 Oct     , Stephen Warren wrote:
-> On 10/11/2013 02:39 AM, Linus Walleij wrote:
-> > On Tue, Sep 24, 2013 at 7:51 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> >> On 09/24/2013 05:33 AM, Linus Walleij wrote:
-> 
-> >>> diff --git a/drivers/pinctrl/pinctrl-nomadik.c b/drivers/pinctrl/pinctrl-nomadik.c
-> >>> @@ -795,6 +795,14 @@ static int nmk_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
-> >>>  {
-> >>>       struct nmk_gpio_chip *nmk_chip =
-> >>>               container_of(chip, struct nmk_gpio_chip, chip);
-> >>> +     int ret;
-> >>> +
-> >>> +     ret = gpio_lock_as_irq(chip, offset);
-> >>
-> >> I don't think that gpio_to_irq() is the correct place to call the new
-> >> function, for two reasons:
-> >>
-> >> 1)
-> >>
-> >> Not all paths that use interrupts call gpio_to_irq(). It's perfectly
-> >> valid for a driver to receive an IRQ number, request it, and be done.
-> >> The is commmon when a driver only cares about IRQ functionality and not
-> >> GPIO functionality, and hence did not receive a GPIO and convert it to
-> >> the IRQ.
-> >>
-> >> To solve this, I think irq_chip drivers should call the new gpiolib
-> >> functions when the IRQ is actually requested or set up.
-> >>
-> >> Related, where does gpio_unlock_as_irq() get called in the Nomadik
-> >> driver? It should happen when free_irq() is called.
-> > 
-> > Yeah if we formalize the criterion that interrupts out of any GPIO
-> > chips should be possible to request without first getting it from the
-> > <linux/gpio.h> interface, then this holds.
-> > 
-> > However that is not the whole story, is it? We have a gazillion
-> > drivers calling irq_create_mapping() in this function, so I would
-> > say that things are already a mess here.
-> 
-> I expect things are a mess indeed:-)
-> 
-> I believe that if a driver is only calling irq_create_mapping() inside
-> gpio_to_irq(), it's a bug. I think things can operate correctly in one
-> of two cases, at least with DT:
-> 
-> 1) irq_create_mapping() is called from both gpio_to_irq() and the
-> of_xlate callback for IRQs.
-> 
-> (I don't think this method would work in a board-file-based system where
-> of_xlate isn't called for IRQs...)
+Hi Linus,
 
-this is what do the at91 driver today
+On Fri, Oct 11, 2013 at 07:42:07PM +0200, Linus Walleij wrote:
+> Rename the argument "virq" to just "irq", this IRQ isn't any
+> more "virtual" than any other Linux IRQ number, we use "hwirq"
+> for the actual hw-numbers, "virq" is just bogus.
 > 
-> or:
-> 
-> 2) irq_create_mapping() is called for all IRQs when registering the IRQ
-> controller/domain.
-> 
-> To me, (2) is much simpler, and avoids the issue (1) probably has with
-> only supporting direct IRQ usage (without something calling gpio_to_irq()).
+> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+> Cc: Rob Herring <rob.herring@calxeda.com>
+> Cc: Baruch Siach <baruch@tkos.co.il>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-no as you can not track which gpio is an activer IRQ
-as if an gpio is an active IRQ you need to forbiden gpio_directio & co
+Acked-by: Baruch Siach <baruch@tkos.co.il>
 
-Best Regards,
-J.
+baruch
+
+> ---
+>  drivers/gpio/gpio-pl061.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> > One alternative is to do what gpio-tegra.c does and call
-> > irq_create_mapping() on every GPIO line that can do IRQ in
-> > probe(). However that is a bit sloppy is it not? Or is this what
-> > we always want drivers to do?
-> 
-> I tend to think it's a nice simple approach that should support any
-> higher-level usage-model (direct IRQ usage, or "mapped" via gpio_to_irq()).
-> 
-> > This has the side effect of showing
-> > all these IRQs in /proc/interrupts but maybe that is not such
-> > a big deal?
-> 
-> I think that's actually a benefit; you can see all the possible IRQ
-> sources in the system, and whether each is handled, or not.
-> 
-> >> 2)
-> >>
-> >> (Nit):
-> >>
-> >> The fact that gpio_to_irq() was called doesn't actually guarantee that
-> >> the IRQ will be requested. Admittedly it's silly to call gpio_to_irq()
-> >> if you're not going to request the IRQ, adn this can be considered a
-> >> bug, but it can be done. This might happen (at least temporarily) due to
-> >> deferred probe.
-> > 
-> > Yeah well you're right it's just supposed to be a translation function.
-> > 
-> > Part of me want to add an optional irqdomain to struct gpio_chip
-> > and have gpio_to_irq() just call irq_find_mapping() by default
-> > unless the driver specifies its own translation callback, because
-> > I think this is what (modern) drivers should generally do.
-> > 
-> > What do you think about this refactoring idea?
-> 
-> That sounds reasonable.
+> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+> index 4274e2e..f22f7f3 100644
+> --- a/drivers/gpio/gpio-pl061.c
+> +++ b/drivers/gpio/gpio-pl061.c
+> @@ -238,15 +238,15 @@ static struct irq_chip pl061_irqchip = {
+>  	.irq_set_type	= pl061_irq_type,
+>  };
+>  
+> -static int pl061_irq_map(struct irq_domain *d, unsigned int virq,
+> -			 irq_hw_number_t hw)
+> +static int pl061_irq_map(struct irq_domain *d, unsigned int irq,
+> +			 irq_hw_number_t hwirq)
+>  {
+>  	struct pl061_gpio *chip = d->host_data;
+>  
+> -	irq_set_chip_and_handler_name(virq, &pl061_irqchip, handle_simple_irq,
+> +	irq_set_chip_and_handler_name(irq, &pl061_irqchip, handle_simple_irq,
+>  				      "pl061");
+> -	irq_set_chip_data(virq, chip);
+> -	irq_set_irq_type(virq, IRQ_TYPE_NONE);
+> +	irq_set_chip_data(irq, chip);
+> +	irq_set_irq_type(irq, IRQ_TYPE_NONE);
+>  
+>  	return 0;
+>  }
+
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
