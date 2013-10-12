@@ -1,29 +1,36 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2] gpio: lynxpoint: drop references to "virtual" IRQ
-Date: Sat, 12 Oct 2013 08:22:59 +0300
-Message-ID: <20131012052259.GA3521@intel.com>
-References: <1381512960-7356-1-git-send-email-linus.walleij@linaro.org>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH 2/2] pinctrl: nomadik: mark GPIO lines used for IRQ
+Date: Sat, 12 Oct 2013 08:03:58 +0200
+Message-ID: <20131012060357.GI24616@ns203013.ovh.net>
+References: <1381483949-12208-1-git-send-email-linus.walleij@linaro.org>
+ <52584EB6.7020604@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:39458 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750763Ab3JLFRc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 12 Oct 2013 01:17:32 -0400
+Received: from 5.mo2.mail-out.ovh.net ([87.98.181.248]:55379 "EHLO
+	mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752058Ab3JLGCz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Oct 2013 02:02:55 -0400
+Received: from mail407.ha.ovh.net (gw6.ovh.net [213.251.189.206])
+	by mo2.mail-out.ovh.net (Postfix) with SMTP id 95A3EFF840C
+	for <linux-gpio@vger.kernel.org>; Sat, 12 Oct 2013 08:02:22 +0200 (CEST)
 Content-Disposition: inline
-In-Reply-To: <1381512960-7356-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <52584EB6.7020604@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Grant Likely <grant.likely@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Fri, Oct 11, 2013 at 07:36:00PM +0200, Linus Walleij wrote:
-> Rename the argument "virq" to just "irq", this IRQ isn't any
-> more "virtual" than any other Linux IRQ number, we use "hwirq"
-> for the actual hw-numbers, "virq" is just bogus. Take this
-> opportunity to sink a variable into a loop.
+On 13:17 Fri 11 Oct     , Stephen Warren wrote:
+> On 10/11/2013 03:32 AM, Linus Walleij wrote:
+> > When an IRQ is started on a GPIO line, mark this GPIO as IRQ in
+> > the gpiolib so we can keep track of the usage centrally.
 > 
-> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Are you planning on converting all GPIO+IRQ drivers, or should others
+> port this fix?
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+I plan to do so
+I propose this at ELCE and more cleanup
+
+Best Regards,
+J.
