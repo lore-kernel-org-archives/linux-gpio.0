@@ -1,42 +1,29 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v2 3/3] gpiolib: add gpiod_get() and gpiod_put() functions
-Date: Fri, 11 Oct 2013 15:31:19 -0700
-Message-ID: <52587C37.3070606@nvidia.com>
-References: <1381515273-25466-1-git-send-email-acourbot@nvidia.com> <1381515273-25466-4-git-send-email-acourbot@nvidia.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2] gpio: lynxpoint: drop references to "virtual" IRQ
+Date: Sat, 12 Oct 2013 08:22:59 +0300
+Message-ID: <20131012052259.GA3521@intel.com>
+References: <1381512960-7356-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <1381515273-25466-4-git-send-email-acourbot@nvidia.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([143.182.124.37]:39458 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750763Ab3JLFRc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 12 Oct 2013 01:17:32 -0400
+Content-Disposition: inline
+In-Reply-To: <1381512960-7356-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>
 
-> +#else
-> +static struct device_node *of_find_gpio(struct device *dev, const char *id
-> +					unsigned int idx, unsigned long flags)
-> +{
-> +	return ERR_PTR(-ENODEV);
-> +}
-> +#endif
+On Fri, Oct 11, 2013 at 07:36:00PM +0200, Linus Walleij wrote:
+> Rename the argument "virq" to just "irq", this IRQ isn't any
+> more "virtual" than any other Linux IRQ number, we use "hwirq"
+> for the actual hw-numbers, "virq" is just bogus. Take this
+> opportunity to sink a variable into a loop.
+> 
+> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-... and of course I forgot to fix the main compilation error. Linus, 
-would you mind squashing what follows into this patch? Apologies for
-the inconvenience.
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 05b9981..e1d1a15 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2172,8 +2172,8 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 	return desc;
- }
- #else
--static struct device_node *of_find_gpio(struct device *dev, const char *id
--					unsigned int idx, unsigned long flags)
-+static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
-+				      unsigned int idx, unsigned long *flags)
- {
- 	return ERR_PTR(-ENODEV);
- }
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
