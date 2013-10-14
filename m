@@ -1,123 +1,49 @@
-From: Hartley Sweeten <HartleyS@visionengravers.com>
-Subject: RE: [PATCH] gpio: ep93xx: get rid of bogus __raw* accessors
-Date: Mon, 14 Oct 2013 16:05:12 +0000
-Message-ID: <DC148C5AA1CEBA4E87973D432B1C2D8817DAB0F9@P3PWEX4MB008.ex4.secureserver.net>
-References: <1381738193-11448-1-git-send-email-linus.walleij@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2 1/5] gpiolib / ACPI: move acpi_gpiochip_free_interrupts
+ next to the request function
+Date: Mon, 14 Oct 2013 09:55:26 -0700
+Message-ID: <CAAVeFuK6Jm62VYG5n+T_odBBRSuftS3H0rmQx8+SDxjT28C-NQ@mail.gmail.com>
+References: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1381392071-21407-2-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkdZgP9VnVSpBN2Wg4ihL4ryZXeP=ASwr6BCP=u79eg6s6g@mail.gmail.com>
+ <CAAVeFu+K6HvQTMOQqMbZPUD_C3nQ1MvYju1BGUOWPYJjQEpTjg@mail.gmail.com> <CACRpkdaVyLwOC-b2mKDRAfCQPzFZKEAm8OZxvHtbpc1koeUz-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from p3plex2out02.prod.phx3.secureserver.net ([184.168.131.14]:38695
-	"EHLO p3plex2out02.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755583Ab3JNQMf convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 14 Oct 2013 12:12:35 -0400
-In-Reply-To: <1381738193-11448-1-git-send-email-linus.walleij@linaro.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaVyLwOC-b2mKDRAfCQPzFZKEAm8OZxvHtbpc1koeUz-w@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Ryan Mallon <rmallon@gmail.com>
 
-On Monday, October 14, 2013 1:10 AM, Linus Walleij wrote:
-> I have no idea why this driver is using __raw* accessors for
-> reading and writing registers, I suspect it is just force of
-> habit or copy/paste. Change all to readb()/writeb() except
-> one chain where I used writeb_relaxed() up until the last
-> writeb().
-
-The original ep93xx gpio support was in arch/arm/mach-ep93xx before
-it was moved to drivers/gpio and converted to use GPIO_GENERIC. The
-older driver used __raw* accessors for all the I/O to the statically mapped
-addresses.
-
-The ones below were not converted at that time because the interrupt
-support code did not have access to the ioremap'd mmio address.
-
-I'd feel better about it if there is a way to pass the ioremap'd address
-from ep93xx_gpio_probe() to ep93xx_gpio_init_irq() and store that
-address for the interrupt functions to use.
-
-But, I believe the static mapping is 1:1 so this should work. I'll try to test it
-today and let you know.
-
-Thanks,
-Hartley
-
-> Cc: Ryan Mallon <rmallon@gmail.com>
-> Cc: H Hartley Sweeten <hartleys@visionengravers.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpio-ep93xx.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+On Sun, Oct 13, 2013 at 11:58 PM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Fri, Oct 11, 2013 at 6:42 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+>> On Fri, Oct 11, 2013 at 4:00 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Thu, Oct 10, 2013 at 10:01 AM, Mika Westerberg
+>>> <mika.westerberg@linux.intel.com> wrote:
+>>>
+>>>> It makes more sense to have these functions close to each other. No
+>>>> functional changes.
+>>>>
+>>>> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>>>> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> So I've applied this first patch, and I'm just waiting for Alexandre's
+>>> ACK on the remaining patches concerning gpiod so we get this
+>>> 100% right.
+>>
+>> I think I'm ok with Mika's patches, however I need to send you a new
+>> version of gpiod. I wanted to finish documentation first, but maybe
+>> that can come slightly after so you can at least go ahead with both
+>> series?
 >
-> diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-> index 56b98ee..80829f3 100644
-> --- a/drivers/gpio/gpio-ep93xx.c
-> +++ b/drivers/gpio/gpio-ep93xx.c
-> @@ -51,15 +51,15 @@ static void ep93xx_gpio_update_int_params(unsigned port)
->  {
->  	BUG_ON(port > 2);
->  
-> -	__raw_writeb(0, EP93XX_GPIO_REG(int_en_register_offset[port]));
-> +	writeb_relaxed(0, EP93XX_GPIO_REG(int_en_register_offset[port]));
->  
-> -	__raw_writeb(gpio_int_type2[port],
-> +	writeb_relaxed(gpio_int_type2[port],
->  		EP93XX_GPIO_REG(int_type2_register_offset[port]));
->  
-> -	__raw_writeb(gpio_int_type1[port],
-> +	writeb_relaxed(gpio_int_type1[port],
->  		EP93XX_GPIO_REG(int_type1_register_offset[port]));
->  
-> -	__raw_writeb(gpio_int_unmasked[port] & gpio_int_enabled[port],
-> +	writeb(gpio_int_unmasked[port] & gpio_int_enabled[port],
->  		EP93XX_GPIO_REG(int_en_register_offset[port]));
->  }
->  
-> @@ -74,7 +74,7 @@ static void ep93xx_gpio_int_debounce(unsigned int irq, bool enable)
->  	else
->  		gpio_int_debounce[port] &= ~port_mask;
->  
-> -	__raw_writeb(gpio_int_debounce[port],
-> +	writeb(gpio_int_debounce[port],
->  		EP93XX_GPIO_REG(int_debounce_register_offset[port]));
->  }
->  
-> @@ -83,7 +83,7 @@ static void ep93xx_gpio_ab_irq_handler(unsigned int irq, struct irq_desc *desc)
->  	unsigned char status;
->  	int i;
->  
-> -	status = __raw_readb(EP93XX_GPIO_A_INT_STATUS);
-> +	status = readb(EP93XX_GPIO_A_INT_STATUS);
->  	for (i = 0; i < 8; i++) {
->  		if (status & (1 << i)) {
->  			int gpio_irq = gpio_to_irq(EP93XX_GPIO_LINE_A(0)) + i;
-> @@ -91,7 +91,7 @@ static void ep93xx_gpio_ab_irq_handler(unsigned int irq, struct irq_desc *desc)
->  		}
->  	}
->  
-> -	status = __raw_readb(EP93XX_GPIO_B_INT_STATUS);
-> +	status = readb(EP93XX_GPIO_B_INT_STATUS);
->  	for (i = 0; i < 8; i++) {
->  		if (status & (1 << i)) {
->  			int gpio_irq = gpio_to_irq(EP93XX_GPIO_LINE_B(0)) + i;
-> @@ -124,7 +124,7 @@ static void ep93xx_gpio_irq_ack(struct irq_data *d)
->  		ep93xx_gpio_update_int_params(port);
->  	}
->  
-> -	__raw_writeb(port_mask, EP93XX_GPIO_REG(eoi_register_offset[port]));
-> +	writeb(port_mask, EP93XX_GPIO_REG(eoi_register_offset[port]));
->  }
->  
->  static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
-> @@ -139,7 +139,7 @@ static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
- 	gpio_int_unmasked[port] &= ~port_mask;
->  	ep93xx_gpio_update_int_params(port);
->  
-> -	__raw_writeb(port_mask, EP93XX_GPIO_REG(eoi_register_offset[port]));
-> +	writeb(port_mask, EP93XX_GPIO_REG(eoi_register_offset[port]));
->  }
->  
->  static void ep93xx_gpio_irq_mask(struct irq_data *d)
+> The important thing right now is to get it in a testable form I think?
+> So that I can throw it at the autobuilder and it gets included into
+> linux-next as that comes back online.
+>
+> So give me whatever you have ... BTW is this series dependent on
+> yours to go in first? Sorry for not seeing the details here...
 
+Yes it is. I have sent you the v2 of my series last Friday (+ one fix
+to squash into 3/3).
