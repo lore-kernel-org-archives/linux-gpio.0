@@ -1,139 +1,76 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] gpio: davinci: add OF support
-Date: Mon, 14 Oct 2013 15:25:22 +0300
-Message-ID: <525BE2B2.8020105@ti.com>
-References: <1380902596-4693-1-git-send-email-sujithkv@ti.com>	<1380902596-4693-2-git-send-email-sujithkv@ti.com>	<CACRpkdYxegBSYXR1-98smUNnDXpyRHo_vuYdnr3r7zhawENiUA@mail.gmail.com>	<CA+V-a8vyPyL0j0nPOZyjxrecusFzXovFPsNBLKYXns5ASWR-wg@mail.gmail.com>	<CACRpkdYNexWWXuQ052xuQ4NOdXm2gt-+ByREKeGo-VAnbH4D2w@mail.gmail.com>
-	<CA+V-a8vH7VXqz=2cz-uD=YfRBRYrJ10K1Aptw28vV8gP+PiT2g@mail.gmail.com>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH] RFC: gpio: add API to be strict about GPIO IRQ usage
+Date: Mon, 14 Oct 2013 12:23:32 +0200
+Message-ID: <20131014102332.GA24882@ns203013.ovh.net>
+References: <1380022390-21262-1-git-send-email-linus.walleij@linaro.org>
+ <5241D12E.4050405@wwwdotorg.org>
+ <CACRpkdZh_2v=_cudk2Kdq64DRtH1VPTECW0s15iaZAw4+ZW2Dg@mail.gmail.com>
+ <52584D3E.7030809@wwwdotorg.org>
+ <CACRpkdbxFwK8j+FbsXTJaiEFU+uaNJSDKAmADAbcxGKJDAHSWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <CA+V-a8vH7VXqz=2cz-uD=YfRBRYrJ10K1Aptw28vV8gP+PiT2g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DLOS <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, LDOC <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from 3.mo6.mail-out.ovh.net ([178.33.253.26]:43591 "EHLO
+	mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756663Ab3JNPpn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Oct 2013 11:45:43 -0400
+Received: from mail620.ha.ovh.net (gw6.ovh.net [213.251.189.206])
+	by mo6.mail-out.ovh.net (Postfix) with SMTP id 65A0FFFA481
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Oct 2013 12:22:03 +0200 (CEST)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbxFwK8j+FbsXTJaiEFU+uaNJSDKAmADAbcxGKJDAHSWw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Grant Likely <grant.likely@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-Hi Prabhakar Lad,
-
-On 10/11/2013 07:18 PM, Prabhakar Lad wrote:
-> Hi Linus,
+On 10:03 Mon 14 Oct     , Linus Walleij wrote:
+> On Fri, Oct 11, 2013 at 9:10 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> > On 10/11/2013 02:39 AM, Linus Walleij wrote:
 > 
-> On 10/11/13, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> On Fri, Oct 11, 2013 at 4:59 PM, Prabhakar Lad
->> <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> On 10/11/13, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->>>> On Fri, Oct 4, 2013 at 6:03 PM, Prabhakar Lad
->>>> <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>
->>>>> +- ti,davinci-gpio-irq-base: Base from where GPIO interrupt numbering
->>>>> starts.
->>>>
->>>> What is this?
->>>>
->>>> If I have ever ACKed this I have been drunk. I take it back.
->>>>
->>> here is the ACK https://patchwork.kernel.org/patch/2721181/
->>
->> And as suspected that version of the patch did not contain
->> this strange node property.
->>
-> The property did exist in the patch 'intc_irq_num', I just renamed
-> it and gave a proper description to it.
+> >> However that is not the whole story, is it? We have a gazillion
+> >> drivers calling irq_create_mapping() in this function, so I would
+> >> say that things are already a mess here.
+> >
+> > I expect things are a mess indeed:-)
+> >
+> > I believe that if a driver is only calling irq_create_mapping() inside
+> > gpio_to_irq(), it's a bug. I think things can operate correctly in one
+> > of two cases, at least with DT:
+> >
+> > 1) irq_create_mapping() is called from both gpio_to_irq() and the
+> > of_xlate callback for IRQs.
+> >
+> > (I don't think this method would work in a board-file-based system where
+> > of_xlate isn't called for IRQs...)
+> >
+> > or:
+> >
+> > 2) irq_create_mapping() is called for all IRQs when registering the IRQ
+> > controller/domain.
+> >
+> > To me, (2) is much simpler, and avoids the issue (1) probably has with
+> > only supporting direct IRQ usage (without something calling gpio_to_irq()).
 > 
->> Don't keep my ACK on patches if you change basic stuff like
->> that, they need to be re-acked, this runs the risk of abusing
->> my trust amongst other subsystem maintainers who might
->> go and merge this because "aha the GPIO maintainer
->> thinks that this is OK".
->>
-> Agreed, I carry forwarded the ACK since it had minor changes.
+> Hm. Jean-Christophe says (1) is the way to go ... This is
+> arch/arm/mach-at91/gpio.c I guess.
+
+no this is in the new pinctrl+ gpio driver
+in drivers/pinctrl/pinctrl-at91.c
+
+the arch/arm/mach-at91/gpio.c is the old one for non-dt support that is going
+to be drop
 > 
->>>> This "base" is a Linux-specific thing and has no place in the
->>>> device tree, and shall not be there. You have to find some way to
->>>> avoid this, what do you think some other OS should do with
->>>> this value...
->>>>
->>>> All IRQs in Linux are assumed to be dynamically assigned numbers
->>>> nowadays, with a property like this you can never switch on
->>>> SPARSE_IRQ for the DaVinci.
->>>>
->>> Can you point to any alternative solution if you have any ?
->>
->> First convert this GPIO driver to use an irqdomain to map
->> HW IRQs to Linux IRQs, and grab a few IRQ descriptors
->> dynamically off the irq descriptor heap.
->> Example: commit
->> a6c45b99a658521291cfb66ecf035cc58b38f206
->> "pinctrl/coh901: use irqdomain, allocate irqdescs"
->>
->> Then on a longer term convert DaVinci to use dynamically
->> allocated IRQs for all interrupt controllers, and move it over
->> to SPARSE_IRQ so you know this works.
->>
-> Thanks for the pointers.
+> But this seems to call irq_create_mapping() for all IRQs on
+> all gpiochips in at91_gpio_irq_setup() which is called by the board
+> init code?
 > 
+> Maybe I'm not following this :-/
 
-Could it be possible to use "interrupts" and "interrupt-names" to identify
-assigned banked & unbanked IRQs?
-
-For example DM646x (http://www.ti.com/lit/ug/sprueq8a/sprueq8a.pdf):
-
-interrupts = <48 IRQ_TYPE_EDGE_BOTH>,
-             <49 IRQ_TYPE_EDGE_BOTH>,
-             <50 IRQ_TYPE_EDGE_BOTH>,
-             <51 IRQ_TYPE_EDGE_BOTH>,
-             <52 IRQ_TYPE_EDGE_BOTH>,
-             <53 IRQ_TYPE_EDGE_BOTH>,
-             <54 IRQ_TYPE_EDGE_BOTH>,
-             <55 IRQ_TYPE_EDGE_BOTH>,
-             <56 IRQ_TYPE_EDGE_BOTH>,
-             <57 IRQ_TYPE_EDGE_BOTH>,
-             <58 IRQ_TYPE_EDGE_BOTH>;
-interrupt-names = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7", "bank0", "bank1", "bank2";
-
-For example OMAP-L138 (http://www.ti.com/lit/ug/spruh77a/spruh77a.pdf):
-
-interrupts = <42 IRQ_TYPE_EDGE_BOTH>,
-             <43 IRQ_TYPE_EDGE_BOTH>,
-             <44 IRQ_TYPE_EDGE_BOTH>,
-             <45 IRQ_TYPE_EDGE_BOTH>,
-             <46 IRQ_TYPE_EDGE_BOTH>,
-             <47 IRQ_TYPE_EDGE_BOTH>,
-             <48 IRQ_TYPE_EDGE_BOTH>,
-             <49 IRQ_TYPE_EDGE_BOTH>,
-             <50 IRQ_TYPE_EDGE_BOTH>;
-
-interrupt-names = "bank0", "bank1", "bank2", "bank3", "bank4", "bank5", "bank6", "bank7", "bank8";
-
-For example Keystone 66AK2E05/02
- (http://www.ti.com/lit/ds/sprs865a/sprs865a.pdf and http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf):
-
-interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-             <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-[..]
-             <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
-             <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
-
-
-interrupt-names = "gpio0", "gpio1", [...], "gpio30", "gpio31";
-
-So then, following properties would not be needed at all, because all inf. can be
-taken from interrupt's properties: 
-+- ti,davinci-gpio-irq-base: Base from where GPIO interrupt numbering starts.
-+- ti,davinci-gpio-unbanked: The number of GPIOs that have an individual interrupt line to processor.
-
-It should work good if Davinci-gpio driver will be converted to use
-linear IRQ domains for banked irqs.
-
-
-Regards,
--grygorii
+it's in at91_gpio_irq_domain_xlate
+> 
+> I'll take a look over "my" GPIO drivers and see how I can make
+> those a bit more elegant so as to set a good example.
+> 
+> Yours,
+> Linus Walleij
