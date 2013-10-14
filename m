@@ -1,43 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: rcar: drop references to "virtual" IRQ
-Date: Mon, 14 Oct 2013 09:01:59 +0200
-Message-ID: <CACRpkdZSLMomx9O3Uy=nLb_mkHRjTam_veGz_+28b-0=6JHQFw@mail.gmail.com>
-References: <1381513489-8044-1-git-send-email-linus.walleij@linaro.org>
-	<1882093.YGqDmvRXf2@avalon>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH v2] gpio: lynxpoint: drop references to "virtual" IRQ
+Date: Mon, 14 Oct 2013 10:26:24 +0300
+Message-ID: <525B9CA0.3070505@linux.intel.com>
+References: <1381512960-7356-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:36463 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751133Ab3JNHCA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Oct 2013 03:02:00 -0400
-Received: by mail-ie0-f169.google.com with SMTP id ar20so2678054iec.28
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Oct 2013 00:02:00 -0700 (PDT)
-In-Reply-To: <1882093.YGqDmvRXf2@avalon>
+Received: from mga02.intel.com ([134.134.136.20]:18248 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751334Ab3JNHV2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 14 Oct 2013 03:21:28 -0400
+In-Reply-To: <1381512960-7356-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Magnus Damm <damm@opensource.se>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Fri, Oct 11, 2013 at 9:48 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Friday 11 October 2013 19:44:49 Linus Walleij wrote:
->> Rename the argument "virq" to just "irq", this IRQ isn't any
->> more "virtual" than any other Linux IRQ number, we use "hwirq"
->> for the actual hw-numbers, "virq" is just bogus.
->>
->> Cc: Magnus Damm <damm@opensource.se>
->> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On 10/11/2013 08:36 PM, Linus Walleij wrote:
+> Rename the argument "virq" to just "irq", this IRQ isn't any
+> more "virtual" than any other Linux IRQ number, we use "hwirq"
+> for the actual hw-numbers, "virq" is just bogus. Take this
+> opportunity to sink a variable into a loop.
 >
-> Acked-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks!
-
-> As you maintain the GPIO tree, I don't think there's a need for me to take the
-> patch in my tree and then send you a pull request, is there ? :-)
-
-No, I'm applying all these renaming patches today.
-
-Yours,
-Linus Walleij
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
