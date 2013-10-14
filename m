@@ -1,50 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: coh901: mark GPIO lines used for IRQ
-Date: Mon, 14 Oct 2013 10:27:04 +0200
-Message-ID: <1381739224-5439-1-git-send-email-linus.walleij@linaro.org>
+From: Lars Poeschel <poeschel@lemonage.de>
+Subject: Re: [PATCH] gpio: adnp: rename "virq" to "child_irq"
+Date: Mon, 14 Oct 2013 11:25:12 +0200
+Message-ID: <2498682.Tok0xRnD2G@lem-wkst-02>
+References: <1381511518-5929-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f175.google.com ([74.125.82.175]:43568 "EHLO
-	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751777Ab3JNI1L (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Oct 2013 04:27:11 -0400
-Received: by mail-we0-f175.google.com with SMTP id t61so6534647wes.6
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Oct 2013 01:27:10 -0700 (PDT)
+Received: from smtp1-2.goneo.de ([212.90.139.84]:52585 "EHLO smtp1-2.goneo.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754431Ab3JNJZP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 14 Oct 2013 05:25:15 -0400
+In-Reply-To: <1381511518-5929-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-When an IRQ is started on a GPIO line, mark this GPIO as IRQ in
-the gpiolib so we can keep track of the usage centrally.
+On Monday 14 October 2013 19:11:58, Linus Walleij wrote:
+> This variable is confusingly named, the different Linux IRQs
+> aren't any more virtual than any other Linux IRQ. Give it a
+> non-misleading name.
+> 
+> Cc: Lars Poeschel <poeschel@lemonage.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-adnp.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+> index 6439e0e..b204033 100644
+> --- a/drivers/gpio/gpio-adnp.c
+> +++ b/drivers/gpio/gpio-adnp.c
+> @@ -325,9 +325,9 @@ static irqreturn_t adnp_irq(int irq, void *data)
+>  		pending &= isr & ier;
+> 
+>  		for_each_set_bit(bit, &pending, 8) {
+> -			unsigned int virq;
+> -			virq = irq_find_mapping(adnp->domain, base + bit);
+> -			handle_nested_irq(virq);
+> +			unsigned int child_irq;
+> +			child_irq = irq_find_mapping(adnp->domain, base + bit);
+> +			handle_nested_irq(child_irq);
+>  		}
+>  	}
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/pinctrl-coh901.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-coh901.c b/drivers/pinctrl/pinctrl-coh901.c
-index f22a219..162ac0d 100644
---- a/drivers/pinctrl/pinctrl-coh901.c
-+++ b/drivers/pinctrl/pinctrl-coh901.c
-@@ -529,6 +529,10 @@ static void u300_gpio_irq_enable(struct irq_data *d)
- 
- 	dev_dbg(gpio->dev, "enable IRQ for hwirq %lu on port %s, offset %d\n",
- 		 d->hwirq, port->name, offset);
-+	if (gpio_lock_as_irq(&gpio->chip, d->hwirq))
-+		dev_err(gpio->dev,
-+			"unable to lock HW IRQ %lu for IRQ\n",
-+			d->hwirq);
- 	local_irq_save(flags);
- 	val = readl(U300_PIN_REG(offset, ien));
- 	writel(val | U300_PIN_BIT(offset), U300_PIN_REG(offset, ien));
-@@ -547,6 +551,7 @@ static void u300_gpio_irq_disable(struct irq_data *d)
- 	val = readl(U300_PIN_REG(offset, ien));
- 	writel(val & ~U300_PIN_BIT(offset), U300_PIN_REG(offset, ien));
- 	local_irq_restore(flags);
-+	gpio_unlock_as_irq(&gpio->chip, d->hwirq);
- }
- 
- static struct irq_chip u300_gpio_irqchip = {
--- 
-1.8.3.1
-
+Acked-by: Lars Poeschel <poeschel@lemonage.de>
