@@ -1,30 +1,53 @@
-From: Ian Molton <ian.molton@codethink.co.uk>
-Subject: Re: [PATCH] gpio: em: drop references to "virtual" IRQ
-Date: Mon, 14 Oct 2013 10:59:32 +0100
-Message-ID: <525BC084.2080009@codethink.co.uk>
-References: <1381512207-6651-1-git-send-email-linus.walleij@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 1/5] gpiolib / ACPI: move
+ acpi_gpiochip_free_interrupts next to the request function
+Date: Mon, 14 Oct 2013 13:43:48 +0300
+Message-ID: <20131014104348.GF3521@intel.com>
+References: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1381392071-21407-2-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkdZgP9VnVSpBN2Wg4ihL4ryZXeP=ASwr6BCP=u79eg6s6g@mail.gmail.com>
+ <CAAVeFu+K6HvQTMOQqMbZPUD_C3nQ1MvYju1BGUOWPYJjQEpTjg@mail.gmail.com>
+ <CACRpkdaVyLwOC-b2mKDRAfCQPzFZKEAm8OZxvHtbpc1koeUz-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([37.128.190.40]:45253 "EHLO
-	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754600Ab3JNJ7g (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Oct 2013 05:59:36 -0400
-In-Reply-To: <1381512207-6651-1-git-send-email-linus.walleij@linaro.org>
+Received: from mga02.intel.com ([134.134.136.20]:32486 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755500Ab3JNKiX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 14 Oct 2013 06:38:23 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaVyLwOC-b2mKDRAfCQPzFZKEAm8OZxvHtbpc1koeUz-w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Magnus Damm <damm@opensource.se>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 11/10/13 18:23, Linus Walleij wrote:
-> Rename the argument "virq" to just "irq", this IRQ isn't any
-> more "virtual" than any other Linux IRQ number, we use "hwirq"
-> for the actual hw-numbers, "virq" is just bogus.
->
-> Cc: Ian Molton <ian.molton@codethink.co.uk>
-> Cc: Magnus Damm <damm@opensource.se>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Mon, Oct 14, 2013 at 08:58:05AM +0200, Linus Walleij wrote:
+> On Fri, Oct 11, 2013 at 6:42 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> > On Fri, Oct 11, 2013 at 4:00 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> >> On Thu, Oct 10, 2013 at 10:01 AM, Mika Westerberg
+> >> <mika.westerberg@linux.intel.com> wrote:
+> >>
+> >>> It makes more sense to have these functions close to each other. No
+> >>> functional changes.
+> >>>
+> >>> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> >>> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>
+> >> So I've applied this first patch, and I'm just waiting for Alexandre's
+> >> ACK on the remaining patches concerning gpiod so we get this
+> >> 100% right.
+> >
+> > I think I'm ok with Mika's patches, however I need to send you a new
+> > version of gpiod. I wanted to finish documentation first, but maybe
+> > that can come slightly after so you can at least go ahead with both
+> > series?
+> 
+> The important thing right now is to get it in a testable form I think?
+> So that I can throw it at the autobuilder and it gets included into
+> linux-next as that comes back online.
+> 
+> So give me whatever you have ... BTW is this series dependent on
+> yours to go in first? Sorry for not seeing the details here...
 
-Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
-
+Correct, this series depends on Alexandre's patches.
