@@ -1,76 +1,123 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: [PATCH] RFC: gpio: add API to be strict about GPIO IRQ usage
-Date: Mon, 14 Oct 2013 12:23:32 +0200
-Message-ID: <20131014102332.GA24882@ns203013.ovh.net>
-References: <1380022390-21262-1-git-send-email-linus.walleij@linaro.org>
- <5241D12E.4050405@wwwdotorg.org>
- <CACRpkdZh_2v=_cudk2Kdq64DRtH1VPTECW0s15iaZAw4+ZW2Dg@mail.gmail.com>
- <52584D3E.7030809@wwwdotorg.org>
- <CACRpkdbxFwK8j+FbsXTJaiEFU+uaNJSDKAmADAbcxGKJDAHSWw@mail.gmail.com>
+From: Hartley Sweeten <HartleyS@visionengravers.com>
+Subject: RE: [PATCH] gpio: ep93xx: get rid of bogus __raw* accessors
+Date: Mon, 14 Oct 2013 16:05:12 +0000
+Message-ID: <DC148C5AA1CEBA4E87973D432B1C2D8817DAB0F9@P3PWEX4MB008.ex4.secureserver.net>
+References: <1381738193-11448-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 3.mo6.mail-out.ovh.net ([178.33.253.26]:43591 "EHLO
-	mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756663Ab3JNPpn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Oct 2013 11:45:43 -0400
-Received: from mail620.ha.ovh.net (gw6.ovh.net [213.251.189.206])
-	by mo6.mail-out.ovh.net (Postfix) with SMTP id 65A0FFFA481
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Oct 2013 12:22:03 +0200 (CEST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbxFwK8j+FbsXTJaiEFU+uaNJSDKAmADAbcxGKJDAHSWw@mail.gmail.com>
+Received: from p3plex2out02.prod.phx3.secureserver.net ([184.168.131.14]:38695
+	"EHLO p3plex2out02.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755583Ab3JNQMf convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 14 Oct 2013 12:12:35 -0400
+In-Reply-To: <1381738193-11448-1-git-send-email-linus.walleij@linaro.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Enric Balletbo i Serra <eballetbo@gmail.com>, Grant Likely <grant.likely@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Ryan Mallon <rmallon@gmail.com>
 
-On 10:03 Mon 14 Oct     , Linus Walleij wrote:
-> On Fri, Oct 11, 2013 at 9:10 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> > On 10/11/2013 02:39 AM, Linus Walleij wrote:
-> 
-> >> However that is not the whole story, is it? We have a gazillion
-> >> drivers calling irq_create_mapping() in this function, so I would
-> >> say that things are already a mess here.
-> >
-> > I expect things are a mess indeed:-)
-> >
-> > I believe that if a driver is only calling irq_create_mapping() inside
-> > gpio_to_irq(), it's a bug. I think things can operate correctly in one
-> > of two cases, at least with DT:
-> >
-> > 1) irq_create_mapping() is called from both gpio_to_irq() and the
-> > of_xlate callback for IRQs.
-> >
-> > (I don't think this method would work in a board-file-based system where
-> > of_xlate isn't called for IRQs...)
-> >
-> > or:
-> >
-> > 2) irq_create_mapping() is called for all IRQs when registering the IRQ
-> > controller/domain.
-> >
-> > To me, (2) is much simpler, and avoids the issue (1) probably has with
-> > only supporting direct IRQ usage (without something calling gpio_to_irq()).
-> 
-> Hm. Jean-Christophe says (1) is the way to go ... This is
-> arch/arm/mach-at91/gpio.c I guess.
+On Monday, October 14, 2013 1:10 AM, Linus Walleij wrote:
+> I have no idea why this driver is using __raw* accessors for
+> reading and writing registers, I suspect it is just force of
+> habit or copy/paste. Change all to readb()/writeb() except
+> one chain where I used writeb_relaxed() up until the last
+> writeb().
 
-no this is in the new pinctrl+ gpio driver
-in drivers/pinctrl/pinctrl-at91.c
+The original ep93xx gpio support was in arch/arm/mach-ep93xx before
+it was moved to drivers/gpio and converted to use GPIO_GENERIC. The
+older driver used __raw* accessors for all the I/O to the statically mapped
+addresses.
 
-the arch/arm/mach-at91/gpio.c is the old one for non-dt support that is going
-to be drop
-> 
-> But this seems to call irq_create_mapping() for all IRQs on
-> all gpiochips in at91_gpio_irq_setup() which is called by the board
-> init code?
-> 
-> Maybe I'm not following this :-/
+The ones below were not converted at that time because the interrupt
+support code did not have access to the ioremap'd mmio address.
 
-it's in at91_gpio_irq_domain_xlate
-> 
-> I'll take a look over "my" GPIO drivers and see how I can make
-> those a bit more elegant so as to set a good example.
-> 
-> Yours,
-> Linus Walleij
+I'd feel better about it if there is a way to pass the ioremap'd address
+from ep93xx_gpio_probe() to ep93xx_gpio_init_irq() and store that
+address for the interrupt functions to use.
+
+But, I believe the static mapping is 1:1 so this should work. I'll try to test it
+today and let you know.
+
+Thanks,
+Hartley
+
+> Cc: Ryan Mallon <rmallon@gmail.com>
+> Cc: H Hartley Sweeten <hartleys@visionengravers.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-ep93xx.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+> index 56b98ee..80829f3 100644
+> --- a/drivers/gpio/gpio-ep93xx.c
+> +++ b/drivers/gpio/gpio-ep93xx.c
+> @@ -51,15 +51,15 @@ static void ep93xx_gpio_update_int_params(unsigned port)
+>  {
+>  	BUG_ON(port > 2);
+>  
+> -	__raw_writeb(0, EP93XX_GPIO_REG(int_en_register_offset[port]));
+> +	writeb_relaxed(0, EP93XX_GPIO_REG(int_en_register_offset[port]));
+>  
+> -	__raw_writeb(gpio_int_type2[port],
+> +	writeb_relaxed(gpio_int_type2[port],
+>  		EP93XX_GPIO_REG(int_type2_register_offset[port]));
+>  
+> -	__raw_writeb(gpio_int_type1[port],
+> +	writeb_relaxed(gpio_int_type1[port],
+>  		EP93XX_GPIO_REG(int_type1_register_offset[port]));
+>  
+> -	__raw_writeb(gpio_int_unmasked[port] & gpio_int_enabled[port],
+> +	writeb(gpio_int_unmasked[port] & gpio_int_enabled[port],
+>  		EP93XX_GPIO_REG(int_en_register_offset[port]));
+>  }
+>  
+> @@ -74,7 +74,7 @@ static void ep93xx_gpio_int_debounce(unsigned int irq, bool enable)
+>  	else
+>  		gpio_int_debounce[port] &= ~port_mask;
+>  
+> -	__raw_writeb(gpio_int_debounce[port],
+> +	writeb(gpio_int_debounce[port],
+>  		EP93XX_GPIO_REG(int_debounce_register_offset[port]));
+>  }
+>  
+> @@ -83,7 +83,7 @@ static void ep93xx_gpio_ab_irq_handler(unsigned int irq, struct irq_desc *desc)
+>  	unsigned char status;
+>  	int i;
+>  
+> -	status = __raw_readb(EP93XX_GPIO_A_INT_STATUS);
+> +	status = readb(EP93XX_GPIO_A_INT_STATUS);
+>  	for (i = 0; i < 8; i++) {
+>  		if (status & (1 << i)) {
+>  			int gpio_irq = gpio_to_irq(EP93XX_GPIO_LINE_A(0)) + i;
+> @@ -91,7 +91,7 @@ static void ep93xx_gpio_ab_irq_handler(unsigned int irq, struct irq_desc *desc)
+>  		}
+>  	}
+>  
+> -	status = __raw_readb(EP93XX_GPIO_B_INT_STATUS);
+> +	status = readb(EP93XX_GPIO_B_INT_STATUS);
+>  	for (i = 0; i < 8; i++) {
+>  		if (status & (1 << i)) {
+>  			int gpio_irq = gpio_to_irq(EP93XX_GPIO_LINE_B(0)) + i;
+> @@ -124,7 +124,7 @@ static void ep93xx_gpio_irq_ack(struct irq_data *d)
+>  		ep93xx_gpio_update_int_params(port);
+>  	}
+>  
+> -	__raw_writeb(port_mask, EP93XX_GPIO_REG(eoi_register_offset[port]));
+> +	writeb(port_mask, EP93XX_GPIO_REG(eoi_register_offset[port]));
+>  }
+>  
+>  static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
+> @@ -139,7 +139,7 @@ static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
+ 	gpio_int_unmasked[port] &= ~port_mask;
+>  	ep93xx_gpio_update_int_params(port);
+>  
+> -	__raw_writeb(port_mask, EP93XX_GPIO_REG(eoi_register_offset[port]));
+> +	writeb(port_mask, EP93XX_GPIO_REG(eoi_register_offset[port]));
+>  }
+>  
+>  static void ep93xx_gpio_irq_mask(struct irq_data *d)
+
