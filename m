@@ -1,53 +1,39 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] gpio/omap: use gpiolib API to mark a GPIO used as
- an IRQ
-Date: Wed, 16 Oct 2013 10:25:40 +0200
-Message-ID: <525E4D84.4030504@collabora.co.uk>
-References: <1381884450-2358-1-git-send-email-javier.martinez@collabora.co.uk> <CACRpkdYWtgExaaFZ_nV_yX43FXpMCeskjGtKMyVySd+awuepOQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYWtgExaaFZ_nV_yX43FXpMCeskjGtKMyVySd+awuepOQ@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Enric Balletbo i Serra <eballetbo@gmail.com>, Tony Lindgren <tony@atomide.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/2] gpio: lpc32xx: Include linux/of.h header
+Date: Wed, 16 Oct 2013 15:35:01 +0530
+Message-ID: <1381917902-6829-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:60366 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760236Ab3JPKFu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2013 06:05:50 -0400
+Received: by mail-pa0-f50.google.com with SMTP id fa1so804671pad.37
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Oct 2013 03:05:49 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, sachin.kamat@linaro.org
 
-On 10/16/2013 10:06 AM, Linus Walleij wrote:
-> On Wed, Oct 16, 2013 at 2:47 AM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
-> 
->> The OMAP GPIO driver keeps track about GPIO pins that are
->> used as IRQ lines for two reasons:
->>
->> 1) To prevent GPIO banks to be disabled while one of their
->>    GPIO pins are only used as an interrupt line.
->>
->> 2) To not allow another caller to set the GPIO pin as output.
->>
->> Now gpiolib has an API to mark GPIO pins as used as IRQ lines
->> so the GPIO core only allows to set as output GPIO pins not
->> tied to an IRQ. So there is no need to have custom code for 2).
->>
->> The IRQ usage still has to be maintained locally for 1) though.
->>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-> Patch applied. I had to merge in v3.12-rc4 to get the dependency
-> fixes, so I guess you did something similar when developing
-> this...
->
+'of_match_ptr' is defined in linux/of.h. Include it explicitly to
+avoid build breakage in the future.
 
-Thanks and yes since this is not a critical bug it was meant to be for v3.13 on
-top of fac7fa162 ("gpio/omap: auto-setup a GPIO when used as an IRQ") and after
-you have merged your flag-irqs branch.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/gpio/gpio-lpc32xx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Sorry for not explicitly mentioning this dependency.
+diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
+index 90a80eb..2d5555d 100644
+--- a/drivers/gpio/gpio-lpc32xx.c
++++ b/drivers/gpio/gpio-lpc32xx.c
+@@ -21,6 +21,7 @@
+ #include <linux/io.h>
+ #include <linux/errno.h>
+ #include <linux/gpio.h>
++#include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/module.h>
+-- 
+1.7.9.5
 
-> Yours,
-> Linus Walleij
-> 
-
-Best regards,
-Javier
