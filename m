@@ -1,43 +1,92 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v2 3/3] gpiolib: add gpiod_get() and gpiod_put() functions
-Date: Wed, 16 Oct 2013 09:10:07 -0700
-Message-ID: <525EBA5F.5080608@nvidia.com>
-References: <1381515273-25466-1-git-send-email-acourbot@nvidia.com>	<1381515273-25466-4-git-send-email-acourbot@nvidia.com>	<52587C37.3070606@nvidia.com> <CACRpkdZTqZKyG3Lbs_GmdnqB0yEjRApsaUhJA9-s_uPb_Wrq8A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] gpio: tegra: use new gpio_lock_as_irq() API
+Date: Wed, 16 Oct 2013 13:25:33 -0600
+Message-ID: <1381951533-18179-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6928 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753251Ab3JPQKI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2013 12:10:08 -0400
-In-Reply-To: <CACRpkdZTqZKyG3Lbs_GmdnqB0yEjRApsaUhJA9-s_uPb_Wrq8A@mail.gmail.com>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:47008 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751993Ab3JPTZk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2013 15:25:40 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-On 10/16/2013 04:37 AM, Linus Walleij wrote:
-> On Sat, Oct 12, 2013 at 12:31 AM, Alex Courbot <acourbot@nvidia.com> wrote:
->>> +#else
->>> +static struct device_node *of_find_gpio(struct device *dev, const char *id
->>> +                                     unsigned int idx, unsigned long flags)
->>> +{
->>> +     return ERR_PTR(-ENODEV);
->>> +}
->>> +#endif
->>
->> ... and of course I forgot to fix the main compilation error. Linus,
->> would you mind squashing what follows into this patch? Apologies for
->> the inconvenience.
->
-> I guess you'll fix this if you respin it?
->
-> If it's too much trouble now we can just defer this for early in the v3.14
-> cycle.
+From: Stephen Warren <swarren@nvidia.com>
 
-No problem, I will try to rebase on top of your for-next, and squash 
-this today.
+Whenever an IRQ is claimed or freed, call gpio_lock_as_irq() or
+gpio_unlock_as_irq() on the associated GPIO, to prevent that GPIO from
+being configured in a manner incompatible with an interrupt.
 
-Thanks,
-Alex.
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ drivers/gpio/gpio-tegra.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 9a62672..cfd3b90 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -75,6 +75,7 @@ struct tegra_gpio_bank {
+ #endif
+ };
+ 
++static struct device *dev;
+ static struct irq_domain *irq_domain;
+ static void __iomem *regs;
+ static u32 tegra_gpio_bank_count;
+@@ -205,6 +206,7 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	int lvl_type;
+ 	int val;
+ 	unsigned long flags;
++	int ret;
+ 
+ 	switch (type & IRQ_TYPE_SENSE_MASK) {
+ 	case IRQ_TYPE_EDGE_RISING:
+@@ -231,6 +233,12 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 		return -EINVAL;
+ 	}
+ 
++	ret = gpio_lock_as_irq(&tegra_gpio_chip, gpio);
++	if (ret) {
++		dev_err(dev, "unable to lock Tegra GPIO %d as IRQ\n", gpio);
++		return ret;
++	}
++
+ 	spin_lock_irqsave(&bank->lvl_lock[port], flags);
+ 
+ 	val = tegra_gpio_readl(GPIO_INT_LVL(gpio));
+@@ -251,6 +259,13 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	return 0;
+ }
+ 
++static void tegra_gpio_irq_shutdown(struct irq_data *d)
++{
++	int gpio = d->hwirq;
++
++	gpio_unlock_as_irq(&tegra_gpio_chip, gpio);
++}
++
+ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ {
+ 	struct tegra_gpio_bank *bank;
+@@ -368,6 +383,7 @@ static struct irq_chip tegra_gpio_irq_chip = {
+ 	.irq_mask	= tegra_gpio_irq_mask,
+ 	.irq_unmask	= tegra_gpio_irq_unmask,
+ 	.irq_set_type	= tegra_gpio_irq_set_type,
++	.irq_shutdown	= tegra_gpio_irq_shutdown,
+ #ifdef CONFIG_PM_SLEEP
+ 	.irq_set_wake	= tegra_gpio_irq_set_wake,
+ #endif
+@@ -413,6 +429,8 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	int i;
+ 	int j;
+ 
++	dev = &pdev->dev;
++
+ 	match = of_match_device(tegra_gpio_of_match, &pdev->dev);
+ 	if (!match) {
+ 		dev_err(&pdev->dev, "Error: No device match found\n");
+-- 
+1.8.1.5
+
