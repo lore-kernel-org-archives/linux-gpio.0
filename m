@@ -1,32 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: rcar: Include linux/of.h header
-Date: Wed, 16 Oct 2013 13:10:26 +0200
-Message-ID: <CACRpkdZScC1+Bsk6M0NnW1eop6z+baJs-8L0FgGCs3M5_ddwyQ@mail.gmail.com>
-References: <1381917902-6829-1-git-send-email-sachin.kamat@linaro.org>
-	<1381917902-6829-2-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 3/3] gpiolib: add gpiod_get() and gpiod_put() functions
+Date: Wed, 16 Oct 2013 13:37:45 +0200
+Message-ID: <CACRpkdZTqZKyG3Lbs_GmdnqB0yEjRApsaUhJA9-s_uPb_Wrq8A@mail.gmail.com>
+References: <1381515273-25466-1-git-send-email-acourbot@nvidia.com>
+	<1381515273-25466-4-git-send-email-acourbot@nvidia.com>
+	<52587C37.3070606@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f170.google.com ([209.85.223.170]:50702 "EHLO
-	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760543Ab3JPLK1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2013 07:10:27 -0400
-Received: by mail-ie0-f170.google.com with SMTP id at1so972167iec.15
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Oct 2013 04:10:27 -0700 (PDT)
-In-Reply-To: <1381917902-6829-2-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <52587C37.3070606@nvidia.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Oct 16, 2013 at 12:05 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-
-> 'of_match_ptr' is defined in linux/of.h. Include it explicitly to
-> avoid build breakage in the future.
+On Sat, Oct 12, 2013 at 12:31 AM, Alex Courbot <acourbot@nvidia.com> wrote:
+>> +#else
+>> +static struct device_node *of_find_gpio(struct device *dev, const char *id
+>> +                                     unsigned int idx, unsigned long flags)
+>> +{
+>> +     return ERR_PTR(-ENODEV);
+>> +}
+>> +#endif
 >
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ... and of course I forgot to fix the main compilation error. Linus,
+> would you mind squashing what follows into this patch? Apologies for
+> the inconvenience.
 
-Patch applied.
+I guess you'll fix this if you respin it?
+
+If it's too much trouble now we can just defer this for early in the v3.14
+cycle.
 
 Yours,
 Linus Walleij
