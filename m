@@ -1,87 +1,45 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] gpio/omap: use gpiolib API to mark a GPIO used as an IRQ
-Date: Wed, 16 Oct 2013 02:47:30 +0200
-Message-ID: <1381884450-2358-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1] gpio/omap: use gpiolib API to mark a GPIO used as an IRQ
+Date: Wed, 16 Oct 2013 10:06:52 +0200
+Message-ID: <CACRpkdYWtgExaaFZ_nV_yX43FXpMCeskjGtKMyVySd+awuepOQ@mail.gmail.com>
+References: <1381884450-2358-1-git-send-email-javier.martinez@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:47056 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759828Ab3JPAsY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Oct 2013 20:48:24 -0400
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:42024 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759964Ab3JPIGx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2013 04:06:53 -0400
+Received: by mail-ie0-f172.google.com with SMTP id tp5so673565ieb.31
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Oct 2013 01:06:52 -0700 (PDT)
+In-Reply-To: <1381884450-2358-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Enric Balletbo i Serra <eballetbo@gmail.com>, Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Enric Balletbo i Serra <eballetbo@gmail.com>, Tony Lindgren <tony@atomide.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-The OMAP GPIO driver keeps track about GPIO pins that are
-used as IRQ lines for two reasons:
+On Wed, Oct 16, 2013 at 2:47 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
 
-1) To prevent GPIO banks to be disabled while one of their
-   GPIO pins are only used as an interrupt line.
+> The OMAP GPIO driver keeps track about GPIO pins that are
+> used as IRQ lines for two reasons:
+>
+> 1) To prevent GPIO banks to be disabled while one of their
+>    GPIO pins are only used as an interrupt line.
+>
+> 2) To not allow another caller to set the GPIO pin as output.
+>
+> Now gpiolib has an API to mark GPIO pins as used as IRQ lines
+> so the GPIO core only allows to set as output GPIO pins not
+> tied to an IRQ. So there is no need to have custom code for 2).
+>
+> The IRQ usage still has to be maintained locally for 1) though.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-2) To not allow another caller to set the GPIO pin as output.
+Patch applied. I had to merge in v3.12-rc4 to get the dependency
+fixes, so I guess you did something similar when developing
+this...
 
-Now gpiolib has an API to mark GPIO pins as used as IRQ lines
-so the GPIO core only allows to set as output GPIO pins not
-tied to an IRQ. So there is no need to have custom code for 2).
-
-The IRQ usage still has to be maintained locally for 1) though.
-
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/gpio/gpio-omap.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 89675f8..f319c9f 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -514,6 +514,14 @@ static int gpio_irq_type(struct irq_data *d, unsigned type)
- 		return -EINVAL;
- 	}
- 
-+	retval = gpio_lock_as_irq(&bank->chip, offset);
-+	if (retval) {
-+		dev_err(bank->dev, "unable to lock offset %d for IRQ\n",
-+			offset);
-+		spin_unlock_irqrestore(&bank->lock, flags);
-+		return retval;
-+	}
-+
- 	bank->irq_usage |= 1 << GPIO_INDEX(bank, gpio);
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 
-@@ -797,6 +805,7 @@ static void gpio_irq_shutdown(struct irq_data *d)
- 	unsigned offset = GPIO_INDEX(bank, gpio);
- 
- 	spin_lock_irqsave(&bank->lock, flags);
-+	gpio_unlock_as_irq(&bank->chip, offset);
- 	bank->irq_usage &= ~(1 << offset);
- 	_disable_gpio_module(bank, offset);
- 	_reset_gpio(bank, gpio);
-@@ -957,22 +966,13 @@ static int gpio_output(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct gpio_bank *bank;
- 	unsigned long flags;
--	int retval = 0;
- 
- 	bank = container_of(chip, struct gpio_bank, chip);
- 	spin_lock_irqsave(&bank->lock, flags);
--
--	if (LINE_USED(bank->irq_usage, offset)) {
--			retval = -EINVAL;
--			goto exit;
--	}
--
- 	bank->set_dataout(bank, offset, value);
- 	_set_gpio_direction(bank, offset, 0);
--
--exit:
- 	spin_unlock_irqrestore(&bank->lock, flags);
--	return retval;
-+	return 0;
- }
- 
- static int gpio_debounce(struct gpio_chip *chip, unsigned offset,
--- 
-1.8.4.rc3
-
+Yours,
+Linus Walleij
