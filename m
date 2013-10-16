@@ -1,27 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/3] gpiolib: export descriptor-based GPIO interface
-Date: Wed, 16 Oct 2013 10:25:13 +0200
-Message-ID: <CACRpkdZUPGQq_9o0Qfjh3rC8rGcWOJa8WNqWHwirye9of-TnEw@mail.gmail.com>
-References: <1381515273-25466-1-git-send-email-acourbot@nvidia.com>
-	<1381515273-25466-2-git-send-email-acourbot@nvidia.com>
-	<CACRpkdYTJ_JQvFmf+AuCxmk5kGGw_CLGn0-xnO+PqGav45Se3Q@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] gpio/omap: use gpiolib API to mark a GPIO used as
+ an IRQ
+Date: Wed, 16 Oct 2013 10:25:40 +0200
+Message-ID: <525E4D84.4030504@collabora.co.uk>
+References: <1381884450-2358-1-git-send-email-javier.martinez@collabora.co.uk> <CACRpkdYWtgExaaFZ_nV_yX43FXpMCeskjGtKMyVySd+awuepOQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYTJ_JQvFmf+AuCxmk5kGGw_CLGn0-xnO+PqGav45Se3Q@mail.gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYWtgExaaFZ_nV_yX43FXpMCeskjGtKMyVySd+awuepOQ@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Enric Balletbo i Serra <eballetbo@gmail.com>, Tony Lindgren <tony@atomide.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 16, 2013 at 10:11 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
+On 10/16/2013 10:06 AM, Linus Walleij wrote:
+> On Wed, Oct 16, 2013 at 2:47 AM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+> 
+>> The OMAP GPIO driver keeps track about GPIO pins that are
+>> used as IRQ lines for two reasons:
+>>
+>> 1) To prevent GPIO banks to be disabled while one of their
+>>    GPIO pins are only used as an interrupt line.
+>>
+>> 2) To not allow another caller to set the GPIO pin as output.
+>>
+>> Now gpiolib has an API to mark GPIO pins as used as IRQ lines
+>> so the GPIO core only allows to set as output GPIO pins not
+>> tied to an IRQ. So there is no need to have custom code for 2).
+>>
+>> The IRQ usage still has to be maintained locally for 1) though.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> 
+> Patch applied. I had to merge in v3.12-rc4 to get the dependency
+> fixes, so I guess you did something similar when developing
+> this...
+>
 
-> Would you mind rebasing this on top of my "devel" branch?
+Thanks and yes since this is not a critical bug it was meant to be for v3.13 on
+top of fac7fa162 ("gpio/omap: auto-setup a GPIO when used as an IRQ") and after
+you have merged your flag-irqs branch.
 
-Or wait ... if it depends on the two fixes I just sent off to Torvalds
-as well, you'd better use my for-next branch, so I have it on top of
-everything.
+Sorry for not explicitly mentioning this dependency.
 
-Yours,
-Linus Walleij
+> Yours,
+> Linus Walleij
+> 
+
+Best regards,
+Javier
