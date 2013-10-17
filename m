@@ -1,92 +1,199 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] gpio: tegra: use new gpio_lock_as_irq() API
-Date: Wed, 16 Oct 2013 13:25:33 -0600
-Message-ID: <1381951533-18179-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:47008 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751993Ab3JPTZk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2013 15:25:40 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: [PATCH] gpiolib: append SFI helpers for GPIO API
+Date: Wed, 16 Oct 2013 20:03:35 -0700
+Message-ID: <1381979015-28980-1-git-send-email-david.a.cohen@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, sfi-devel@simplefirmware.org, linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Whenever an IRQ is claimed or freed, call gpio_lock_as_irq() or
-gpio_unlock_as_irq() on the associated GPIO, to prevent that GPIO from
-being configured in a manner incompatible with an interrupt.
+To support some (legacy) firmwares and platforms let's make life easier for
+their customers.
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Len Brown <lenb@kernel.org>
 ---
- drivers/gpio/gpio-tegra.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/gpio/Kconfig       |  4 +++
+ drivers/gpio/Makefile      |  1 +
+ drivers/gpio/gpiolib-sfi.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/sfi/sfi_core.c     |  7 +++++
+ include/linux/sfi_gpio.h   | 27 ++++++++++++++++
+ 5 files changed, 115 insertions(+)
+ create mode 100644 drivers/gpio/gpiolib-sfi.c
+ create mode 100644 include/linux/sfi_gpio.h
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 9a62672..cfd3b90 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -75,6 +75,7 @@ struct tegra_gpio_bank {
- #endif
- };
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 3471962..3fa2a0d 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -51,6 +51,10 @@ config OF_GPIO
+ 	def_bool y
+ 	depends on OF
  
-+static struct device *dev;
- static struct irq_domain *irq_domain;
- static void __iomem *regs;
- static u32 tegra_gpio_bank_count;
-@@ -205,6 +206,7 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	int lvl_type;
- 	int val;
- 	unsigned long flags;
-+	int ret;
++config GPIO_SFI
++	def_bool y
++	depends on SFI
++
+ config GPIO_ACPI
+ 	def_bool y
+ 	depends on ACPI
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index f951866..d548ff3 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -5,6 +5,7 @@ ccflags-$(CONFIG_DEBUG_GPIO)	+= -DDEBUG
+ obj-$(CONFIG_GPIO_DEVRES)	+= devres.o
+ obj-$(CONFIG_GPIOLIB)		+= gpiolib.o
+ obj-$(CONFIG_OF_GPIO)		+= gpiolib-of.o
++obj-$(CONFIG_GPIO_SFI)		+= gpiolib-sfi.o
+ obj-$(CONFIG_GPIO_ACPI)		+= gpiolib-acpi.o
  
- 	switch (type & IRQ_TYPE_SENSE_MASK) {
- 	case IRQ_TYPE_EDGE_RISING:
-@@ -231,6 +233,12 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 		return -EINVAL;
- 	}
- 
-+	ret = gpio_lock_as_irq(&tegra_gpio_chip, gpio);
-+	if (ret) {
-+		dev_err(dev, "unable to lock Tegra GPIO %d as IRQ\n", gpio);
-+		return ret;
+ # Device drivers. Generally keep list sorted alphabetically
+diff --git a/drivers/gpio/gpiolib-sfi.c b/drivers/gpio/gpiolib-sfi.c
+new file mode 100644
+index 0000000..2f15a81
+--- /dev/null
++++ b/drivers/gpio/gpiolib-sfi.c
+@@ -0,0 +1,76 @@
++/*
++ * SFI helpers for GPIO API
++ *
++ * Copyright (C) 2013, Intel Corporation
++ * Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
++ *
++ * Based on work done for Intel MID platforms (mrst.c)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#define pr_fmt(fmt) "SFI: GPIO: " fmt
++
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/string.h>
++#include <linux/slab.h>
++#include <linux/gpio.h>
++#include <linux/export.h>
++#include <linux/sfi_gpio.h>
++#include <linux/sfi.h>
++
++static struct sfi_gpio_table_entry *sfi_gpio_table;
++static int sfi_gpio_num_entry;
++
++int sfi_get_gpio_by_name(const char *name)
++{
++	struct sfi_gpio_table_entry *pentry = sfi_gpio_table;
++	int i;
++
++	if (!pentry)
++		return -1;
++
++	for (i = 0; i < sfi_gpio_num_entry; i++, pentry++) {
++		if (!strncmp(name, pentry->pin_name, SFI_NAME_LEN))
++			return pentry->pin_no;
 +	}
 +
- 	spin_lock_irqsave(&bank->lvl_lock[port], flags);
- 
- 	val = tegra_gpio_readl(GPIO_INT_LVL(gpio));
-@@ -251,6 +259,13 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	return 0;
- }
- 
-+static void tegra_gpio_irq_shutdown(struct irq_data *d)
-+{
-+	int gpio = d->hwirq;
++	return -1;
++}
++EXPORT_SYMBOL_GPL(sfi_get_gpio_by_name);
 +
-+	gpio_unlock_as_irq(&tegra_gpio_chip, gpio);
++static int __init sfi_gpio_parse(struct sfi_table_header *table)
++{
++	struct sfi_table_simple *sb = (struct sfi_table_simple *)table;
++	struct sfi_gpio_table_entry *pentry;
++	int num, i;
++
++	if (sfi_gpio_table)
++		return 0;
++
++	num = SFI_GET_NUM_ENTRIES(sb, struct sfi_gpio_table_entry);
++	pentry = (struct sfi_gpio_table_entry *)sb->pentry;
++
++	sfi_gpio_table = kmalloc(num * sizeof(*pentry), GFP_KERNEL);
++	if (!sfi_gpio_table)
++		return -ENOMEM;
++
++	memcpy(sfi_gpio_table, pentry, num * sizeof(*pentry));
++	sfi_gpio_num_entry = num;
++
++	pr_debug("Pin info:\n");
++	for (i = 0; i < num; i++, pentry++)
++		pr_debug("[%2d] chip = %16.16s, name = %16.16s, pin=%d\n", i,
++			 pentry->controller_name, pentry->pin_name,
++			 pentry->pin_no);
++
++	return 0;
 +}
 +
- static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- {
- 	struct tegra_gpio_bank *bank;
-@@ -368,6 +383,7 @@ static struct irq_chip tegra_gpio_irq_chip = {
- 	.irq_mask	= tegra_gpio_irq_mask,
- 	.irq_unmask	= tegra_gpio_irq_unmask,
- 	.irq_set_type	= tegra_gpio_irq_set_type,
-+	.irq_shutdown	= tegra_gpio_irq_shutdown,
- #ifdef CONFIG_PM_SLEEP
- 	.irq_set_wake	= tegra_gpio_irq_set_wake,
- #endif
-@@ -413,6 +429,8 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	int i;
- 	int j;
++int __init sfi_gpio_init(void)
++{
++	return sfi_table_parse(SFI_SIG_GPIO, NULL, NULL, sfi_gpio_parse);
++}
+diff --git a/drivers/sfi/sfi_core.c b/drivers/sfi/sfi_core.c
+index 296db7a..2828da0 100644
+--- a/drivers/sfi/sfi_core.c
++++ b/drivers/sfi/sfi_core.c
+@@ -67,6 +67,7 @@
+ #include <linux/acpi.h>
+ #include <linux/init.h>
+ #include <linux/sfi.h>
++#include <linux/sfi_gpio.h>
+ #include <linux/slab.h>
  
-+	dev = &pdev->dev;
+ #include "sfi_core.h"
+@@ -512,6 +513,12 @@ void __init sfi_init_late(void)
+ 	syst_va = sfi_map_memory(syst_pa, length);
+ 
+ 	sfi_acpi_init();
 +
- 	match = of_match_device(tegra_gpio_of_match, &pdev->dev);
- 	if (!match) {
- 		dev_err(&pdev->dev, "Error: No device match found\n");
++	/*
++	 * Parsing GPIO table first, since the DEVS table will need this table
++	 * to map the pin name to the actual pin.
++	 */
++	sfi_gpio_init();
+ }
+ 
+ /*
+diff --git a/include/linux/sfi_gpio.h b/include/linux/sfi_gpio.h
+new file mode 100644
+index 0000000..ef7e497
+--- /dev/null
++++ b/include/linux/sfi_gpio.h
+@@ -0,0 +1,27 @@
++#ifndef _LINUX_SFI_GPIO_H_
++#define _LINUX_SFI_GPIO_H_
++
++#include <linux/errno.h>
++#include <linux/gpio.h>
++#include <linux/sfi.h>
++
++#ifdef CONFIG_GPIO_SFI
++
++int sfi_get_gpio_by_name(const char *name);
++int __init sfi_gpio_init(void);
++
++#else /* CONFIG_GPIO_SFI */
++
++static inline int sfi_get_gpio_by_name(const char *name);
++{
++	return -1;
++}
++
++static inline int __init sfi_gpio_init(void)
++{
++	return -ENODEV;
++}
++
++#endif /* CONFIG_GPIO_SFI */
++
++#endif /* _LINUX_SFI_GPIO_H_ */
 -- 
-1.8.1.5
-
+1.8.4.rc3
