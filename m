@@ -1,46 +1,51 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v3 0/3] New descriptor-based GPIO interface
-Date: Fri, 18 Oct 2013 10:37:21 -0700
-Message-ID: <CAAVeFu+rj6AtKgfig6ZrYUzW9HZTg5qLyw4aGozyD31P_pEKAQ@mail.gmail.com>
-References: <1382030498-23465-1-git-send-email-acourbot@nvidia.com> <CACRpkdYx07Kfs6zOQmTg2cTSmEmsGgP=7wMCSG_30NW=dfYRPQ@mail.gmail.com>
+From: "Markus Mayer" <markus.mayer@linaro.org>
+Subject: [PATCH] gpio: bcm281xx: Don't print addresses of GPIO area in
+ probe()
+Date: Fri, 18 Oct 2013 11:50:03 -0700
+Message-ID: <1382122203-16057-1-git-send-email-markus.mayer@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYx07Kfs6zOQmTg2cTSmEmsGgP=7wMCSG_30NW=dfYRPQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mms1.broadcom.com ([216.31.210.17]:3607 "EHLO mms1.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756643Ab3JRSuY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 18 Oct 2013 14:50:24 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linaro Patches <patches@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Markus Mayer <markus.mayer@linaro.org>
 
-On Fri, Oct 18, 2013 at 4:23 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Oct 17, 2013 at 7:21 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
->
->> Hi Linus,
->>
->> This version should merge as-is in your tree (I hope!). A patch for
->> documentation will follow soon.
->>
->> Changes since v2:
->> - rebased on top of Linus' for-next branch
->> - exported new gpiod_(un)lock_as_irq() functions in driver.h
->> - squashed a fix for a compilation error
->
-> Thanks, let's see if I can get this into v3.13, right now it's
-> unclear if I'll dare to do this. These do not apply right off
-> as it requires the late fixes to the gpiod code which currently
-> are in Torvalds' tree and on my fixes branch, so I'll merge in
-> v3.12-rc6 as it arrives, and then attempt to apply this on
-> top, but I don't know if I dare to do this so late.
->
-> The outage of linux-next also contributes to this situation.
->
-> We might have to take this as the first thing after the merge
-> window and targeted for v3.14.
+The physical address of the GPIO memory address is already printed
+implicitly by dev_info() as part of the device name. The virtual
+address doesn't add any value. In addition, printing a resource_size_t
+with %x lead to a compiler warning on some platforms.
 
-No particular pressure from my side to get this in 3.13. Do for the
-best, and don't hesitate to delay them to 3.14 if you feel they are
-not tested enough. I'll already feel better once I know they are under
-your tree. ;)
+Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
+---
 
-Thanks,
-Alex.
+This patch is dependent on:
+
+- http://patches.linaro.org/19933/
+
+ drivers/gpio/gpio-bcm-kona.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 58188ba..b3d0f81 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -587,8 +587,7 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	dev_info(&pdev->dev, "Setting up Kona GPIO at 0x%p (phys %#x)\n",
+-		 kona_gpio->reg_base, res->start);
++	dev_info(&pdev->dev, "Setting up Kona GPIO\n");
+ 
+ 	bcm_kona_gpio_reset(kona_gpio);
+ 
+-- 
+1.7.9.5
+
+
