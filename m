@@ -1,33 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: bcm281xx: Don't print addresses of GPIO area in probe()
-Date: Fri, 18 Oct 2013 21:45:53 +0200
-Message-ID: <CACRpkdYN0L1CYL57W07d0OZYKqs5fMX8JWy1S2cFyRjemsAKWg@mail.gmail.com>
-References: <1382122203-16057-1-git-send-email-markus.mayer@linaro.org>
+Subject: Re: [PATCH v3] gpio: add export with name from dts
+Date: Fri, 18 Oct 2013 21:52:51 +0200
+Message-ID: <CACRpkdbG9emZg-6oOO8MgwUgCkqQB6+QqYuNAOo-QN0e+wYq2g@mail.gmail.com>
+References: <1382011682-18595-1-git-send-email-jiri.prchal@aksignal.cz>
+	<20131017150455.GH24056@e106331-lin.cambridge.arm.com>
+	<CAAVeFuJCamVumTphu-Wv2DSgepwoPgYXnCGdK=L8oem-3-K+gA@mail.gmail.com>
+	<5260DD62.2060706@aksignal.cz>
+	<20131018103601.GC29779@e106331-lin.cambridge.arm.com>
+	<52612E49.7070403@aksignal.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:49945 "EHLO
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:40027 "EHLO
 	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013Ab3JRTpy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Oct 2013 15:45:54 -0400
-Received: by mail-ie0-f180.google.com with SMTP id e14so7061407iej.25
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Oct 2013 12:45:54 -0700 (PDT)
-In-Reply-To: <1382122203-16057-1-git-send-email-markus.mayer@linaro.org>
+	with ESMTP id S932151Ab3JRTww convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Oct 2013 15:52:52 -0400
+Received: by mail-ie0-f180.google.com with SMTP id e14so7152235iej.39
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Oct 2013 12:52:52 -0700 (PDT)
+In-Reply-To: <52612E49.7070403@aksignal.cz>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Mayer <markus.mayer@linaro.org>
-Cc: Linaro Patches <patches@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux GPIO List <linux-gpio@vger.kernel.org>
+To: Jiri Prchal <jiri.prchal@aksignal.cz>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "blogic@openwrt.org" <blogic@openwrt.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "acourbot@nvidia.com" <acourbot@nvidia.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "cooloney@gmail.com" <cooloney@gmail.com>
 
-On Fri, Oct 18, 2013 at 8:50 PM, Markus Mayer <markus.mayer@linaro.org> wrote:
+On Fri, Oct 18, 2013 at 2:49 PM, Ji=C5=99=C3=AD Prchal <jiri.prchal@aks=
+ignal.cz> wrote:
+> Dne 18.10.2013 12:36, Mark Rutland napsal(a):
 
-> The physical address of the GPIO memory address is already printed
-> implicitly by dev_info() as part of the device name. The virtual
-> address doesn't add any value. In addition, printing a resource_size_t
-> with %x lead to a compiler warning on some platforms.
+>> If there is information associated with the GPIO pins themselves, th=
+at
+>> should be described in the GPIO bindings. If we want to export named
+>> pins in sysfs, that is the duty of the GPIO framework and GPIO drive=
+rs.
+>> I do not believe having a binding for a non-device that exists solel=
+y to
+>> express a naming preference makes any sense.
 >
-> Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
+>
+> I realy don't understan it, isn't it done in GPIO framework? Please, =
+coul'd
+> you explain it more.
 
-Patch applied. Thanks for a quick action Markus!
+I think what Mark is saying is that you should not define a new node
+for exports, but instead use the node for the gpiochip and extend those
+existing gpiochip bindings, if you want to do this.
+
+I.e. you should be patching this file in the end:
+Documentation/devicetree/bindings/gpio/gpio.txt
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
