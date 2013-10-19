@@ -1,58 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: add export with name from dts
-Date: Fri, 18 Oct 2013 21:52:51 +0200
-Message-ID: <CACRpkdbG9emZg-6oOO8MgwUgCkqQB6+QqYuNAOo-QN0e+wYq2g@mail.gmail.com>
-References: <1382011682-18595-1-git-send-email-jiri.prchal@aksignal.cz>
-	<20131017150455.GH24056@e106331-lin.cambridge.arm.com>
-	<CAAVeFuJCamVumTphu-Wv2DSgepwoPgYXnCGdK=L8oem-3-K+gA@mail.gmail.com>
-	<5260DD62.2060706@aksignal.cz>
-	<20131018103601.GC29779@e106331-lin.cambridge.arm.com>
-	<52612E49.7070403@aksignal.cz>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Modular gpio-lynxpoint
+Date: Sat, 19 Oct 2013 20:57:02 +0200
+Message-ID: <20131019205702.4bfba569@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:40027 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932151Ab3JRTww convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Oct 2013 15:52:52 -0400
-Received: by mail-ie0-f180.google.com with SMTP id e14so7152235iej.39
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Oct 2013 12:52:52 -0700 (PDT)
-In-Reply-To: <52612E49.7070403@aksignal.cz>
+Received: from cantor2.suse.de ([195.135.220.15]:44382 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750867Ab3JSS5J (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 19 Oct 2013 14:57:09 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jiri Prchal <jiri.prchal@aksignal.cz>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "blogic@openwrt.org" <blogic@openwrt.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "acourbot@nvidia.com" <acourbot@nvidia.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "cooloney@gmail.com" <cooloney@gmail.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Oct 18, 2013 at 2:49 PM, Ji=C5=99=C3=AD Prchal <jiri.prchal@aks=
-ignal.cz> wrote:
-> Dne 18.10.2013 12:36, Mark Rutland napsal(a):
+Hi Mathias,
 
->> If there is information associated with the GPIO pins themselves, th=
-at
->> should be described in the GPIO bindings. If we want to export named
->> pins in sysfs, that is the duty of the GPIO framework and GPIO drive=
-rs.
->> I do not believe having a binding for a non-device that exists solel=
-y to
->> express a naming preference makes any sense.
->
->
-> I realy don't understan it, isn't it done in GPIO framework? Please, =
-coul'd
-> you explain it more.
+What is the rationale for CONFIG_GPIO_LYNXPOINT being a bool? Device
+drivers that can't be built as modules are a pain for distribution
+kernels. And I tried building gpio-lynxpoint as a module and it worked
+(although I can't run-time test it.)
 
-I think what Mark is saying is that you should not define a new node
-for exports, but instead use the node for the gpiochip and extend those
-existing gpiochip bindings, if you want to do this.
+Any problem with the patch below?
 
-I.e. you should be patching this file in the end:
-Documentation/devicetree/bindings/gpio/gpio.txt
+From: Jean Delvare <jdelvare@suse.de>
+Subject: gpio-lynxpoint: Allow building as a module
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Change CONFIG_GPIO_LYNXPOINT from bool to tristate so that the
+gpio-lynxpoint driver can be built as a module.
+
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-3.12-rc5.orig/drivers/gpio/Kconfig	2013-10-19 18:25:13.521488669 +0200
++++ linux-3.12-rc5/drivers/gpio/Kconfig	2013-10-19 19:31:43.527324443 +0200
+@@ -344,7 +344,7 @@ config GPIO_GE_FPGA
+ 	  board computers.
+ 
+ config GPIO_LYNXPOINT
+-	bool "Intel Lynxpoint GPIO support"
++	tristate "Intel Lynxpoint GPIO support"
+ 	depends on ACPI && X86
+ 	select IRQ_DOMAIN
+ 	help
+
+
+-- 
+Jean Delvare
+Suse L3 Support
