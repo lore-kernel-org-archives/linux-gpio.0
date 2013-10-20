@@ -1,39 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 5/5] gpiolib / ACPI: document the GPIO descriptor based interface
-Date: Sat, 19 Oct 2013 23:35:39 +0200
-Message-ID: <CACRpkdaAgsoO=w6=LDqE4-JZaOY7Ooofa_L2tRL2Hnt6SNh70g@mail.gmail.com>
-References: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
-	<1381392071-21407-6-git-send-email-mika.westerberg@linux.intel.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH 0/3] Fixup patches for gpiod interface
+Date: Sun, 20 Oct 2013 15:14:56 -0700
+Message-ID: <1382307299-22587-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:60284 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752954Ab3JSVfk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Oct 2013 17:35:40 -0400
-Received: by mail-ie0-f172.google.com with SMTP id tp5so9230022ieb.17
-        for <linux-gpio@vger.kernel.org>; Sat, 19 Oct 2013 14:35:39 -0700 (PDT)
-In-Reply-To: <1381392071-21407-6-git-send-email-mika.westerberg@linux.intel.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13492 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751861Ab3JTWPI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Oct 2013 18:15:08 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 
-On Thu, Oct 10, 2013 at 10:01 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+These patches fix a few issues of the gpiod series highlighted by the
+autobuild system. They take root in the fact that devres.c was compiled
+even when gpiolib is not to be built, which should obviously not happen.
+But they also reveal missing includes in the same file, and sparse also
+pointed out a suspiscious line that happened to be completely wrong.
 
-> In addition to the existing ACPI specific GPIO interface, document the new
-> descriptor based GPIO interface in Documentation/acpi/enumeration.txt, so
-> it is clear that this new interface is preferred over the ACPI specific
-> version.
->
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Patch 1/3 and 2/3 can be applied on their own, but would probably better
+be squashed into bae48da2 "add gpiod_get() and gpiod_put() functions".
 
-I've applied the last 4 of these patches now as well, on top of
-Alexandre's gpiod interface. If you can, please test the result
-on my "devel" branch and let's see if the autobuilder likes it too...
+Patch 3/3 stands on its own, and should preferably be applied before the
+rest of the gpiod series. It would not hurt to apply it after if 1/3 and
+2/3 are properly squashed.
 
-Yours,
-Linus Walleij
+Apologies for these issues that could have been caught earlier had I been
+less negligent.
+
+Alexandre Courbot (3):
+  gpiolib: devres: fix devm_gpiod_get_index()
+  gpiolib: devres: add missing headers
+  gpiolib: make GPIO_DEVRES depend on GPIOLIB
+
+ drivers/gpio/Kconfig  | 8 ++++----
+ drivers/gpio/devres.c | 4 +++-
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+-- 
+1.8.4.1
+
