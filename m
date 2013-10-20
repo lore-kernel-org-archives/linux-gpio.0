@@ -1,37 +1,39 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 2/3] gpiolib: devres: add missing headers
-Date: Sun, 20 Oct 2013 15:14:58 -0700
-Message-ID: <1382307299-22587-3-git-send-email-acourbot@nvidia.com>
-References: <1382307299-22587-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v3 0/3] New descriptor-based GPIO interface
+Date: Sun, 20 Oct 2013 15:18:03 -0700
+Message-ID: <CAAVeFuJ=Qvj2pT57T88eURrUOFURRFSXrFA+pL4xiA9c5sh9ig@mail.gmail.com>
+References: <1382030498-23465-1-git-send-email-acourbot@nvidia.com>
+ <CACRpkdYx07Kfs6zOQmTg2cTSmEmsGgP=7wMCSG_30NW=dfYRPQ@mail.gmail.com>
+ <CAAVeFu+rj6AtKgfig6ZrYUzW9HZTg5qLyw4aGozyD31P_pEKAQ@mail.gmail.com> <CACRpkdbpRkiANA32ZMEhm-XTB_FKCfmKQuGSmsD_0rLi96kPtQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382307299-22587-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbpRkiANA32ZMEhm-XTB_FKCfmKQuGSmsD_0rLi96kPtQ@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add missing headers for drivers/gpiolib/devres.c.
+On Sat, Oct 19, 2013 at 2:26 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Oct 18, 2013 at 7:37 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+>> On Fri, Oct 18, 2013 at 4:23 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+>>> We might have to take this as the first thing after the merge
+>>> window and targeted for v3.14.
+>>
+>> No particular pressure from my side to get this in 3.13. Do for the
+>> best, and don't hesitate to delay them to 3.14 if you feel they are
+>> not tested enough. I'll already feel better once I know they are under
+>> your tree. ;)
+>
+> I applied it now anyway, I will try to also apply the ACPI stuff
+> making use of this interface and then throw it at the autobuild
+> to see what happens.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/devres.c | 2 ++
- 1 file changed, 2 insertions(+)
+Autobuild was unfortunately not too happy with one of the patches,
+sorry about that. I have sent a small series that addresses the issues
+it highlighted. Not sure if you are ok with squashing the first two
+into bae48da2, but IMHO that would be the preferred way.
 
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index fceebdc..307464f 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -15,7 +15,9 @@
-  */
- 
- #include <linux/module.h>
-+#include <linux/err.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/device.h>
- #include <linux/gfp.h>
- 
--- 
-1.8.4.1
+Thanks,
+Alex.
