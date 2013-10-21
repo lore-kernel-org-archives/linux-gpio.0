@@ -1,39 +1,43 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v3 0/3] New descriptor-based GPIO interface
-Date: Sun, 20 Oct 2013 15:18:03 -0700
-Message-ID: <CAAVeFuJ=Qvj2pT57T88eURrUOFURRFSXrFA+pL4xiA9c5sh9ig@mail.gmail.com>
-References: <1382030498-23465-1-git-send-email-acourbot@nvidia.com>
- <CACRpkdYx07Kfs6zOQmTg2cTSmEmsGgP=7wMCSG_30NW=dfYRPQ@mail.gmail.com>
- <CAAVeFu+rj6AtKgfig6ZrYUzW9HZTg5qLyw4aGozyD31P_pEKAQ@mail.gmail.com> <CACRpkdbpRkiANA32ZMEhm-XTB_FKCfmKQuGSmsD_0rLi96kPtQ@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 5/5] gpiolib / ACPI: document the GPIO descriptor
+ based interface
+Date: Mon, 21 Oct 2013 10:06:32 +0300
+Message-ID: <20131021070632.GY3521@intel.com>
+References: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1381392071-21407-6-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkdaAgsoO=w6=LDqE4-JZaOY7Ooofa_L2tRL2Hnt6SNh70g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbpRkiANA32ZMEhm-XTB_FKCfmKQuGSmsD_0rLi96kPtQ@mail.gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga03.intel.com ([143.182.124.21]:4470 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752006Ab3JUHBH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 21 Oct 2013 03:01:07 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaAgsoO=w6=LDqE4-JZaOY7Ooofa_L2tRL2Hnt6SNh70g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Oct 19, 2013 at 2:26 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Oct 18, 2013 at 7:37 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> On Fri, Oct 18, 2013 at 4:23 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->
->>> We might have to take this as the first thing after the merge
->>> window and targeted for v3.14.
->>
->> No particular pressure from my side to get this in 3.13. Do for the
->> best, and don't hesitate to delay them to 3.14 if you feel they are
->> not tested enough. I'll already feel better once I know they are under
->> your tree. ;)
->
-> I applied it now anyway, I will try to also apply the ACPI stuff
-> making use of this interface and then throw it at the autobuild
-> to see what happens.
+On Sat, Oct 19, 2013 at 11:35:39PM +0200, Linus Walleij wrote:
+> On Thu, Oct 10, 2013 at 10:01 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> 
+> > In addition to the existing ACPI specific GPIO interface, document the new
+> > descriptor based GPIO interface in Documentation/acpi/enumeration.txt, so
+> > it is clear that this new interface is preferred over the ACPI specific
+> > version.
+> >
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> 
+> I've applied the last 4 of these patches now as well, on top of
+> Alexandre's gpiod interface. If you can, please test the result
+> on my "devel" branch and let's see if the autobuilder likes it too...
 
-Autobuild was unfortunately not too happy with one of the patches,
-sorry about that. I have sent a small series that addresses the issues
-it highlighted. Not sure if you are ok with squashing the first two
-into bae48da2, but IMHO that would be the preferred way.
+Just tested using your devel branch and works fine with GPIOs from ACPI
+namespace.
 
-Thanks,
-Alex.
+Thanks!
