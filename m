@@ -1,43 +1,45 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2 5/5] gpiolib / ACPI: document the GPIO descriptor
- based interface
-Date: Mon, 21 Oct 2013 10:06:32 +0300
-Message-ID: <20131021070632.GY3521@intel.com>
-References: <1381392071-21407-1-git-send-email-mika.westerberg@linux.intel.com>
- <1381392071-21407-6-git-send-email-mika.westerberg@linux.intel.com>
- <CACRpkdaAgsoO=w6=LDqE4-JZaOY7Ooofa_L2tRL2Hnt6SNh70g@mail.gmail.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: Modular gpio-lynxpoint
+Date: Mon, 21 Oct 2013 10:50:50 +0300
+Message-ID: <5264DCDA.60508@linux.intel.com>
+References: <20131019205702.4bfba569@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:4470 "EHLO mga03.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:45511 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752006Ab3JUHBH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 21 Oct 2013 03:01:07 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaAgsoO=w6=LDqE4-JZaOY7Ooofa_L2tRL2Hnt6SNh70g@mail.gmail.com>
+	id S1752364Ab3JUHpo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 21 Oct 2013 03:45:44 -0400
+In-Reply-To: <20131019205702.4bfba569@endymion.delvare>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Grant Likely <grant.likely@secretlab.ca>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Sat, Oct 19, 2013 at 11:35:39PM +0200, Linus Walleij wrote:
-> On Thu, Oct 10, 2013 at 10:01 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> 
-> > In addition to the existing ACPI specific GPIO interface, document the new
-> > descriptor based GPIO interface in Documentation/acpi/enumeration.txt, so
-> > it is clear that this new interface is preferred over the ACPI specific
-> > version.
-> >
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> 
-> I've applied the last 4 of these patches now as well, on top of
-> Alexandre's gpiod interface. If you can, please test the result
-> on my "devel" branch and let's see if the autobuilder likes it too...
+On 10/19/2013 09:57 PM, Jean Delvare wrote:
+> Hi Mathias,
+>
+> What is the rationale for CONFIG_GPIO_LYNXPOINT being a bool? Device
+> drivers that can't be built as modules are a pain for distribution
+> kernels. And I tried building gpio-lynxpoint as a module and it worked
+> (although I can't run-time test it.)
+>
 
-Just tested using your devel branch and works fine with GPIOs from ACPI
-namespace.
+For Lynxpoint I think it only was about competition for port respources. 
+IO port ranges used for gpios were specified in ACPI tables both in the 
+gpio device, and as a part of a motherboard device. Pnpacpi code 
+reserved all the IO port ranges in the motherboard device before the 
+gpio driver.
 
-Thanks!
+For Baytrail the gpio driver can handle hw reduced ACPI events,
+(basically ACPI telling operating system it wants an ACPI event run
+when a certain gpio interrupt is triggered, and it wants the OS gpio 
+driver to do it. If this feature is used then I think it's better to 
+build in the driver.
+
+I'm not sure if there is a resource conflict anymore in the Lynxpoint 
+case. Should be checked, and fix it properly on the pnpacpi side. 
+Otherwise I guess Lynxpoint could be built as a module
+
+-Mathias
