@@ -1,37 +1,46 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH V5 REPOST] mfd: add support for ams AS3722 PMIC
-Date: Tue, 22 Oct 2013 09:40:20 +0100
-Message-ID: <20131022084020.GD19112@lee--X1>
-References: <1382427526-2390-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1382427526-2390-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, Florian Lobmaier <florian.lobmaier@ams.com>
+From: Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
+Date: Wed, 23 Oct 2013 14:36:11 +0800
+Message-ID: <1382510171-5937-1-git-send-email-haojian.zhuang@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:63187 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051Ab3JWGgV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Oct 2013 02:36:21 -0400
+Received: by mail-pb0-f45.google.com with SMTP id mc17so473684pbc.18
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2013 23:36:20 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: patches@linaro.org, Haojian Zhuang <haojian.zhuang@linaro.org>
 
-On Tue, 22 Oct 2013, Laxman Dewangan wrote:
+gpio-ranges property could binds gpio to pinctrl. But there may be some
+gpios without pinctrl operation. So check whether gpio-ranges property
+exists in device node first.
 
-> The ams AS3722 is a compact system PMU suitable for mobile phones,
-> tablets etc. It has 4 DC/DC step-down regulators, 3 DC/DC step-down
-> controller, 11 LDOs, RTC, automatic battery, temperature and
-> over-current monitoring, 8 GPIOs, ADC and a watchdog.
->=20
-> Add MFD core driver for the AS3722 to support core functionality.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Florian Lobmaier <florian.lobmaier@ams.com>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> Acked-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+---
+ drivers/gpio/gpio-pl061.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Applied, thanks.
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index cb5510b..44a0ba1 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -306,8 +306,11 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	spin_lock_init(&chip->lock);
+ 
+-	chip->gc.request = pl061_gpio_request;
+-	chip->gc.free = pl061_gpio_free;
++	/* Hook the request()/free() for pinctrl operation */
++	if (of_get_property(dev->of_node, "gpio-ranges", NULL)) {
++		chip->gc.request = pl061_gpio_request;
++		chip->gc.free = pl061_gpio_free;
++	}
+ 	chip->gc.direction_input = pl061_direction_input;
+ 	chip->gc.direction_output = pl061_direction_output;
+ 	chip->gc.get = pl061_get_value;
+-- 
+1.8.1.2
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
