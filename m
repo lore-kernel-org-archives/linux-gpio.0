@@ -1,46 +1,32 @@
-From: Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
-Date: Wed, 23 Oct 2013 14:36:11 +0800
-Message-ID: <1382510171-5937-1-git-send-email-haojian.zhuang@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] gpiolib: devres: fix devm_gpiod_get_index()
+Date: Wed, 23 Oct 2013 10:09:55 +0200
+Message-ID: <CACRpkdbsvoYrXmApmCrEfjS8zN989PQqKJMppJUz8VbFdb_LnA@mail.gmail.com>
+References: <1382307299-22587-1-git-send-email-acourbot@nvidia.com>
+	<1382307299-22587-2-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pb0-f45.google.com ([209.85.160.45]:63187 "EHLO
-	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751051Ab3JWGgV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Oct 2013 02:36:21 -0400
-Received: by mail-pb0-f45.google.com with SMTP id mc17so473684pbc.18
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2013 23:36:20 -0700 (PDT)
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:35538 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751478Ab3JWIJ4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Oct 2013 04:09:56 -0400
+Received: by mail-ob0-f175.google.com with SMTP id wm4so436779obc.34
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Oct 2013 01:09:55 -0700 (PDT)
+In-Reply-To: <1382307299-22587-2-git-send-email-acourbot@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Cc: patches@linaro.org, Haojian Zhuang <haojian.zhuang@linaro.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-gpio-ranges property could binds gpio to pinctrl. But there may be some
-gpios without pinctrl operation. So check whether gpio-ranges property
-exists in device node first.
+On Mon, Oct 21, 2013 at 12:14 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
-Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
----
- drivers/gpio/gpio-pl061.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> Fix the return value if devm_gpiod_get_index(). It was returning 0 while
+> it should return the obtained GPIO descriptor.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index cb5510b..44a0ba1 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -306,8 +306,11 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	spin_lock_init(&chip->lock);
- 
--	chip->gc.request = pl061_gpio_request;
--	chip->gc.free = pl061_gpio_free;
-+	/* Hook the request()/free() for pinctrl operation */
-+	if (of_get_property(dev->of_node, "gpio-ranges", NULL)) {
-+		chip->gc.request = pl061_gpio_request;
-+		chip->gc.free = pl061_gpio_free;
-+	}
- 	chip->gc.direction_input = pl061_direction_input;
- 	chip->gc.direction_output = pl061_direction_output;
- 	chip->gc.get = pl061_get_value;
--- 
-1.8.1.2
+Patch applied.
 
+Yours,
+Linus Walleij
