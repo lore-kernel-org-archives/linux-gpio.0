@@ -1,35 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpiolib: make GPIO_DEVRES depend on GPIOLIB
-Date: Wed, 23 Oct 2013 10:14:33 +0200
-Message-ID: <CACRpkdbm-N89_zdTufyGY8H53jBVQsVASd7eP3NMfh-37Rbx_g@mail.gmail.com>
-References: <1382307299-22587-1-git-send-email-acourbot@nvidia.com>
-	<1382307299-22587-4-git-send-email-acourbot@nvidia.com>
-	<CACRpkdaXtE7TEGd0cV7Frw4MReppowRJPQTTXUM3K4B-62YCnw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] New descriptor-based GPIO interface
+Date: Wed, 23 Oct 2013 10:17:20 +0200
+Message-ID: <CACRpkdZnj1n-Uegu0TwNiTHXXBti0ukZ8hzmm22+Jg6OFnEi5Q@mail.gmail.com>
+References: <1382030498-23465-1-git-send-email-acourbot@nvidia.com>
+	<CACRpkdYx07Kfs6zOQmTg2cTSmEmsGgP=7wMCSG_30NW=dfYRPQ@mail.gmail.com>
+	<CAAVeFu+rj6AtKgfig6ZrYUzW9HZTg5qLyw4aGozyD31P_pEKAQ@mail.gmail.com>
+	<CACRpkdbpRkiANA32ZMEhm-XTB_FKCfmKQuGSmsD_0rLi96kPtQ@mail.gmail.com>
+	<CAAVeFuJ=Qvj2pT57T88eURrUOFURRFSXrFA+pL4xiA9c5sh9ig@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaXtE7TEGd0cV7Frw4MReppowRJPQTTXUM3K4B-62YCnw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuJ=Qvj2pT57T88eURrUOFURRFSXrFA+pL4xiA9c5sh9ig@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 23, 2013 at 10:13 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Mon, Oct 21, 2013 at 12:14 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
->
->> Current Kconfig allows GPIO_DEVRES to be selected and compiled without
->> GPIOLIB. This does not make sense anymore since GPIOLIB has become the
->> exclusive way to deal with GPIOs. This patch makes GPIO_DEVRES available
->> only if GPIOLIB is selected.
->>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->
-> Hm, I wonder about this. Are, or where there ever consumers of generic
-> GPIO using devres without gpiolib?
+On Mon, Oct 21, 2013 at 12:18 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
 
-However I've applied the patch so we can see what happens, what
-other way is there to test it...
+> Autobuild was unfortunately not too happy with one of the patches,
+> sorry about that. I have sent a small series that addresses the issues
+> it highlighted. Not sure if you are ok with squashing the first two
+> into bae48da2, but IMHO that would be the preferred way.
+
+I applied them as-is. I don't think it's going to be a major
+issue.
 
 Yours,
 Linus Walleij
