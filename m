@@ -1,48 +1,26 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v2] ARM: sa1100: remove complex GPIO interface
-Date: Thu, 24 Oct 2013 07:09:57 -0700
-Message-ID: <CAOesGMh01481i5tAotP6hbKHU+sOg7Ld_VhHXq3f1ZX1w8O9ow@mail.gmail.com>
-References: <1380025478-24831-1-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] ARM: sa1100: fix simpad compilation warning
+Date: Thu, 24 Oct 2013 17:04:34 +0200
+Message-ID: <1382627074-23228-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qe0-f48.google.com ([209.85.128.48]:45363 "EHLO
-	mail-qe0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754936Ab3JXOJ6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Oct 2013 10:09:58 -0400
-Received: by mail-qe0-f48.google.com with SMTP id d4so1458638qej.35
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Oct 2013 07:09:57 -0700 (PDT)
-In-Reply-To: <1380025478-24831-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:45577 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754131Ab3JXPEr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Oct 2013 11:04:47 -0400
+Received: by mail-wi0-f178.google.com with SMTP id hn9so2697205wib.11
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Oct 2013 08:04:46 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Kevin Hilman <khilman@linaro.org>
+To: linux-gpio@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Kevin Hilman <khilman@linaro.org>
 
-On Tue, Sep 24, 2013 at 5:24 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> The SA1100 was implementing its own variants of gpio_get_value()
-> and gpio_set_value() and only selectively falling back to
-> gpiolib for extended (EGPIO) handling. However the driver in
-> gpio/gpio-sa1100.c already handles the same functionality for
-> these lines, yet remain unused.
->
-> The only upside would be things like a timing-critical hotpath
-> on bit-banged GPIO, but that kind of things does not seem to
-> happen on these GPIOs, so it is not worth having the extra
-> complexity.
->
-> Tested with some buttons on the Compaq iPAQ H3630.
->
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Kristoffer Ericson <kristoffer.ericson@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - #include <linux/io.h> instead of <asm/io.h>.
+When removing the complex GPIO interface from the SA1100 machines,
+we also removed the implicit #includes for a few header files
+that was included by <linux/gpio.h> thru <mach/gpio.h>, causing
+a compile warning on the simpad boardfile, as <asm/irq.h> was no
+longer #included, as follows:
 
-
-Looks like this hit -next and it produces the following with simpad_defconfig:
-
-../../arch/arm/include/asm/irq.h:9:0: warning: "NR_IRQS" redefined
+./../arch/arm/include/asm/irq.h:9:0: warning: "NR_IRQS" redefined
 [enabled by default]
  #define NR_IRQS NR_IRQS_LEGACY
  ^
@@ -51,8 +29,31 @@ In file included from ../../arch/arm/mach-sa1100/simpad.c:29:0:
 location of the previous definition
  #define NR_IRQS (IRQ_BOARD_START + NR_IRQS_LOCOMO)
 
+This resolves the problem by explicitly including <asm/irq.h>
+into the simpad boardfile.
 
-http://arm-soc.lixom.net/buildlogs/next-thierry/next-20131023/buildall.arm.simpad_defconfig.log.passed
+Reported-by: Olof Johansson <olof@lixom.net>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Kristoffer Ericson <kristoffer.ericson@gmail.com>
+Cc: Kevin Hilman <khilman@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ arch/arm/mach-sa1100/simpad.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm/mach-sa1100/simpad.c b/arch/arm/mach-sa1100/simpad.c
+index bcbc94540e45..41e476e571d7 100644
+--- a/arch/arm/mach-sa1100/simpad.c
++++ b/arch/arm/mach-sa1100/simpad.c
+@@ -19,6 +19,7 @@
+ 
+ #include <mach/hardware.h>
+ #include <asm/setup.h>
++#include <asm/irq.h>
+ 
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+-- 
+1.8.3.1
 
--Olof
