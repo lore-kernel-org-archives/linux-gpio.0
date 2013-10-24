@@ -1,28 +1,58 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: question: pin mux & gpio
-Date: Wed, 23 Oct 2013 18:28:16 -0700
-Message-ID: <526877B0.1090602@linux.intel.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2] ARM: sa1100: remove complex GPIO interface
+Date: Thu, 24 Oct 2013 07:09:57 -0700
+Message-ID: <CAOesGMh01481i5tAotP6hbKHU+sOg7Ld_VhHXq3f1ZX1w8O9ow@mail.gmail.com>
+References: <1380025478-24831-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:25597 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752407Ab3JXB3w (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 23 Oct 2013 21:29:52 -0400
+Received: from mail-qe0-f48.google.com ([209.85.128.48]:45363 "EHLO
+	mail-qe0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754936Ab3JXOJ6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Oct 2013 10:09:58 -0400
+Received: by mail-qe0-f48.google.com with SMTP id d4so1458638qej.35
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Oct 2013 07:09:57 -0700 (PDT)
+In-Reply-To: <1380025478-24831-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Kevin Hilman <khilman@linaro.org>
 
-Hi,
+On Tue, Sep 24, 2013 at 5:24 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> The SA1100 was implementing its own variants of gpio_get_value()
+> and gpio_set_value() and only selectively falling back to
+> gpiolib for extended (EGPIO) handling. However the driver in
+> gpio/gpio-sa1100.c already handles the same functionality for
+> these lines, yet remain unused.
+>
+> The only upside would be things like a timing-critical hotpath
+> on bit-banged GPIO, but that kind of things does not seem to
+> happen on these GPIOs, so it is not worth having the extra
+> complexity.
+>
+> Tested with some buttons on the Compaq iPAQ H3630.
+>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Kristoffer Ericson <kristoffer.ericson@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - #include <linux/io.h> instead of <asm/io.h>.
 
-I've got a question WRT pin muxing.
-gpio-intel-mid registers are responsible to set alternative functions
-to some pins. Despite pin mux is not directly related to gpio in
-general, in this case it is.
 
-Is there any other gpio driver doing this same task? Or maybe
-suggestion about how to handle it?
+Looks like this hit -next and it produces the following with simpad_defconfig:
 
-Br, David Cohen
+../../arch/arm/include/asm/irq.h:9:0: warning: "NR_IRQS" redefined
+[enabled by default]
+ #define NR_IRQS NR_IRQS_LEGACY
+ ^
+In file included from ../../arch/arm/mach-sa1100/simpad.c:29:0:
+../../arch/arm/mach-sa1100/include/mach/irqs.h:87:0: note: this is the
+location of the previous definition
+ #define NR_IRQS (IRQ_BOARD_START + NR_IRQS_LOCOMO)
+
+
+http://arm-soc.lixom.net/buildlogs/next-thierry/next-20131023/buildall.arm.simpad_defconfig.log.passed
+
+
+-Olof
