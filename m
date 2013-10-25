@@ -1,77 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [gpio:for-next 67/67] pch_gbe_main.c:undefined reference to `devm_gpio_request_one'
-Date: Fri, 25 Oct 2013 12:41:57 +0200
-Message-ID: <CACRpkdYvOMiBOXRi61LjemMSoafR6kv3XoY=A5E90hwMumdw9A@mail.gmail.com>
+Date: Fri, 25 Oct 2013 12:49:31 +0200
+Message-ID: <CACRpkdYDUKK-jAeeHECfRcKM+-MDuyarDMGDP0p39U_-WLgd8w@mail.gmail.com>
 References: <52691c0b.BIIOKlR6F81qU+tE%fengguang.wu@intel.com>
 	<20131025044027.GA27083@localhost>
 	<CACRpkdaJVE44UGRAZ0tnQSArrs+DuVFhVssW6riWmdp8-6E6BQ@mail.gmail.com>
 	<1382696677.4970.40.camel@dvhart-mobl4.amr.corp.intel.com>
+	<CACRpkdYvOMiBOXRi61LjemMSoafR6kv3XoY=A5E90hwMumdw9A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:51521 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752807Ab3JYKl6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Oct 2013 06:41:58 -0400
-Received: by mail-oa0-f47.google.com with SMTP id i1so727282oag.20
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Oct 2013 03:41:57 -0700 (PDT)
-In-Reply-To: <1382696677.4970.40.camel@dvhart-mobl4.amr.corp.intel.com>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:45592 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752486Ab3JYKtc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Oct 2013 06:49:32 -0400
+Received: by mail-ob0-f173.google.com with SMTP id gq1so740093obb.4
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Oct 2013 03:49:31 -0700 (PDT)
+In-Reply-To: <CACRpkdYvOMiBOXRi61LjemMSoafR6kv3XoY=A5E90hwMumdw9A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Darren Hart <dvhart@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 Cc: Fengguang Wu <fengguang.wu@intel.com>, David Cohen <david.a.cohen@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 25, 2013 at 12:24 PM, Darren Hart <dvhart@linux.intel.com> wrote:
-> On Fri, 2013-10-25 at 11:34 +0200, Linus Walleij wrote:
+On Fri, Oct 25, 2013 at 12:41 PM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
 
-> Minnow doesn't currently have a CONFIG_ upstream which can be used to
-> force this selection.
-
-Well it wouldn't help with randconfig or allyesconfig anyway.
-
->> Is there some default y we can add so this gets compiled for this
->> entire board, or shall I set:
->>
->> depends on PCH_GBE
->> default y
->>
->> On the GPIO_LYNXPOINT or GPIO_PCH driver?
+>> I wouldn't object to adding a dependency to GPIO_PCH and GPIOLIB
+>> unconditionally for PCH_GBE as GPIO_PCH is the same chip... but I don't
+>> know if David Miller would be amenable to that.
 >
-> Why would GPIO_PCH depend on PCH_GBE? The inverse is certainly true for
-> MinnowBoard.
-
-OK this was the wrong idea.
-
-> I had some MinnowBoard Kconfig bits in my early drivers, but they
-> included things like CONFIG_MINNOWBOARD which is not upstream (rightly
-> so) but it means I don't have a way to conditionally make PCH_GBE
-> dependent on GPIO_PCH and GPIOLIB.
+> Well we should probably just stick a dependency to GPIOLIB in there.
 >
-> I wouldn't object to adding a dependency to GPIO_PCH and GPIOLIB
-> unconditionally for PCH_GBE as GPIO_PCH is the same chip... but I don't
-> know if David Miller would be amenable to that.
+> - It #includes <linux/gpio.h>
+> - It uses gpiolib functions to do something vital
+>
+> It was just happy that dummy versions were slotted in until now.
 
-Well we should probably just stick a dependency to GPIOLIB in there.
+...or maybe I'm just confused now?
 
-- It #includes <linux/gpio.h>
-- It uses gpiolib functions to do something vital
-
-It was just happy that dummy versions were slotted in until now.
-
-I'll post the following:
-diff --git a/drivers/net/ethernet/oki-semi/pch_gbe/Kconfig b/drivers/net/etherne
-index a588ffde9700..f2528262aba7 100644
---- a/drivers/net/ethernet/oki-semi/pch_gbe/Kconfig
-+++ b/drivers/net/ethernet/oki-semi/pch_gbe/Kconfig
-@@ -4,7 +4,7 @@
-
- config PCH_GBE
-        tristate "OKI SEMICONDUCTOR IOH(ML7223/ML7831) GbE"
--       depends on PCI && (X86 || COMPILE_TEST)
-+       depends on PCI && GPIOLIB && (X86 || COMPILE_TEST)
-        select MII
-        select PTP_1588_CLOCK_PCH
-        ---help---
+Should we just add a static inline stub of devm_gpio_request_one()?
 
 Yours,
 Linus Walleij
