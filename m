@@ -1,92 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] gpio: provide stubs for devres gpio functions
-Date: Fri, 25 Oct 2013 17:40:13 +0200
-Message-ID: <1382715613-3435-1-git-send-email-linus.walleij@linaro.org>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [gpio:for-next 67/67] pch_gbe_main.c:undefined reference to `devm_gpio_request_one'
+Date: Fri, 25 Oct 2013 14:21:47 -0700
+Message-ID: <526AE0EB.4020602@linux.intel.com>
+References: <52691c0b.BIIOKlR6F81qU+tE%fengguang.wu@intel.com> <20131025044027.GA27083@localhost> <CACRpkdaJVE44UGRAZ0tnQSArrs+DuVFhVssW6riWmdp8-6E6BQ@mail.gmail.com> <1382696677.4970.40.camel@dvhart-mobl4.amr.corp.intel.com> <CACRpkdYvOMiBOXRi61LjemMSoafR6kv3XoY=A5E90hwMumdw9A@mail.gmail.com> <CACRpkdYDUKK-jAeeHECfRcKM+-MDuyarDMGDP0p39U_-WLgd8w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:34980 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753409Ab3JYPkU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Oct 2013 11:40:20 -0400
-Received: by mail-we0-f182.google.com with SMTP id t61so3970597wes.41
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Oct 2013 08:40:18 -0700 (PDT)
+Received: from mga02.intel.com ([134.134.136.20]:10793 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751265Ab3JYVXZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Oct 2013 17:23:25 -0400
+In-Reply-To: <CACRpkdYDUKK-jAeeHECfRcKM+-MDuyarDMGDP0p39U_-WLgd8w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Darren Hart <dvhart@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-commit 6b3d8145dcfdbbb43f13544e16f44f4574f941dd
-"gpiolib: make GPIO_DEVRES depend on GPIOLIB"
-breaks builds when device drivers are using devm_gpio*
-devres functions without enabling GPIOLIB, relying on
-the devres code to be compiled anyway.
+Hi Linus,
 
-Provide stubs so that we get these if we're using the
-devres functions without GPIOLIB.
+On 10/25/2013 03:49 AM, Linus Walleij wrote:
+> On Fri, Oct 25, 2013 at 12:41 PM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+>
+>>> I wouldn't object to adding a dependency to GPIO_PCH and GPIOLIB
+>>> unconditionally for PCH_GBE as GPIO_PCH is the same chip... but I don't
+>>> know if David Miller would be amenable to that.
+>>
+>> Well we should probably just stick a dependency to GPIOLIB in there.
+>>
+>> - It #includes <linux/gpio.h>
+>> - It uses gpiolib functions to do something vital
+>>
+>> It was just happy that dummy versions were slotted in until now.
+>
+> ...or maybe I'm just confused now?
+>
+> Should we just add a static inline stub of devm_gpio_request_one()?
 
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Actually add the keywords "static inline" in the proper place
-  for all stubs.
----
- include/linux/gpio.h | 34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
+I am not familiar with the HW. But checking the code, platform 
+initialization should fail with a dummy devm_gpio_request_one()
+implementation. IMO it makes more sense to depend on GPIOLIB.
 
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index c691df044458..0c56b9e9c209 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -77,6 +77,15 @@ static inline int irq_to_gpio(unsigned int irq)
- 
- #endif /* ! CONFIG_ARCH_HAVE_CUSTOM_GPIO_H */
- 
-+/* CONFIG_GPIOLIB: bindings for managed devices that want to request gpios */
-+
-+struct device;
-+
-+int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
-+int devm_gpio_request_one(struct device *dev, unsigned gpio,
-+			  unsigned long flags, const char *label);
-+void devm_gpio_free(struct device *dev, unsigned int gpio);
-+
- #else /* ! CONFIG_GPIOLIB */
- 
- #include <linux/kernel.h>
-@@ -241,14 +250,25 @@ gpiochip_remove_pin_ranges(struct gpio_chip *chip)
- 	WARN_ON(1);
- }
- 
--#endif /* ! CONFIG_GPIOLIB */
-+static inline int devm_gpio_request(struct device *dev, unsigned gpio,
-+				    const char *label)
-+{
-+	WARN_ON(1);
-+	return -EINVAL;
-+}
- 
--struct device;
-+static inline int devm_gpio_request_one(struct device *dev, unsigned gpio,
-+					unsigned long flags, const char *label)
-+{
-+	WARN_ON(1);
-+	return -EINVAL;
-+}
- 
--/* bindings for managed devices that want to request gpios */
--int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
--int devm_gpio_request_one(struct device *dev, unsigned gpio,
--			  unsigned long flags, const char *label);
--void devm_gpio_free(struct device *dev, unsigned int gpio);
-+static inline void devm_gpio_free(struct device *dev, unsigned int gpio)
-+{
-+	WARN_ON(1);
-+}
-+
-+#endif /* ! CONFIG_GPIOLIB */
- 
- #endif /* __LINUX_GPIO_H */
--- 
-1.8.3.1
-
+Br, David Cohen
