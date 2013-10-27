@@ -1,55 +1,74 @@
-From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH V5 REPOST] mfd: add support for ams AS3722 PMIC
-Date: Sun, 27 Oct 2013 13:49:28 +0000
-Message-ID: <20131027134928.13BE4C4039D@trevor.secretlab.ca>
-References: <1382427526-2390-1-git-send-email-ldewangan@nvidia.com> <20131025200754.D222AC4058E@trevor.secretlab.ca> <20131026161902.GA7698@lee--X1>
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20131026161902.GA7698@lee--X1>
-Sender: linux-doc-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, Florian Lobmaier <florian.lobmaier@ams.com>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [PATCH v2] gpio: provide stubs for devres gpio functions
+Date: Sun, 27 Oct 2013 14:38:24 -0700
+Message-ID: <526D87D0.3030702@linux.intel.com>
+References: <1382715613-3435-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([143.182.124.37]:28974 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752982Ab3J0VkI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 27 Oct 2013 17:40:08 -0400
+In-Reply-To: <1382715613-3435-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On Sat, 26 Oct 2013 09:19:02 -0700, Lee Jones <lee.jones@linaro.org> wrote:
-> Hi Grant,
+On 10/25/2013 08:40 AM, Linus Walleij wrote:
+> commit 6b3d8145dcfdbbb43f13544e16f44f4574f941dd
+> "gpiolib: make GPIO_DEVRES depend on GPIOLIB"
+> breaks builds when device drivers are using devm_gpio*
+> devres functions without enabling GPIOLIB, relying on
+> the devres code to be compiled anyway.
 > 
-> > > Acked-by: Stephen Warren <swarren@nvidia.com>
-> > > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> > > Signed-off-by: Florian Lobmaier <florian.lobmaier@ams.com>
-> > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Provide stubs so that we get these if we're using the
+> devres functions without GPIOLIB.
 > 
-> <snip>
+> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Actually add the keywords "static inline" in the proper place
+>   for all stubs.
+> ---
+>  include/linux/gpio.h | 34 +++++++++++++++++++++++++++-------
+>  1 file changed, 27 insertions(+), 7 deletions(-)
 > 
-> > > +    Optional properties:
-> > > +    -------------------
-> > > +	The input supply of regulators are the optional properties on the
-> > > +	regulator node. The input supply of these regulators are provided
-> > > +	through following properties:
-> > > +		vsup-sd2-supply: Input supply for SD2.
-> > > +		vsup-sd3-supply: Input supply for SD3.
-> > > +		vsup-sd4-supply: Input supply for SD4.
-> > > +		vsup-sd5-supply: Input supply for SD5.
-> > > +		vin-ldo0-supply: Input supply for LDO0.
-> > > +		vin-ldo1-6-supply: Input supply for LDO1 and LDO6.
-> > > +		vin-ldo2-5-7-supply: Input supply for LDO2, LDO5 and LDO7.
-> > > +		vin-ldo3-4-supply: Input supply for LDO3 and LDO4.
-> > > +		vin-ldo9-10-supply: Input supply for LDO9 and LDO10.
-> > > +		vin-ldo11-supply: Input supply for LDO11.
-> > 
-> > What is the data in these properties? The documentation isn't clear.
-> > 
-> > In principle, the binding looks okay to me.
-> 
-> The properties to which you refer are standard regulator supply
-> bindings specified here [1]. Specifically:
-> 
->   "<name>-supply: phandle to the parent supply/regulator node"
-> 
-> The DT portion has already been Acked by Stephen and applied by me.
-> 
-> [1] Documentation/devicetree/bindings/regulator/regulator.txt
+> diff --git a/include/linux/gpio.h b/include/linux/gpio.h
+> index c691df044458..0c56b9e9c209 100644
+> --- a/include/linux/gpio.h
+> +++ b/include/linux/gpio.h
+> @@ -77,6 +77,15 @@ static inline int irq_to_gpio(unsigned int irq)
+>  
+>  #endif /* ! CONFIG_ARCH_HAVE_CUSTOM_GPIO_H */
+>  
+> +/* CONFIG_GPIOLIB: bindings for managed devices that want to request gpios */
+> +
+> +struct device;
+> +
+> +int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
+> +int devm_gpio_request_one(struct device *dev, unsigned gpio,
+> +			  unsigned long flags, const char *label);
+> +void devm_gpio_free(struct device *dev, unsigned int gpio);
+> +
+>  #else /* ! CONFIG_GPIOLIB */
+>  
+>  #include <linux/kernel.h>
+> @@ -241,14 +250,25 @@ gpiochip_remove_pin_ranges(struct gpio_chip *chip)
+>  	WARN_ON(1);
+>  }
+>  
+> -#endif /* ! CONFIG_GPIOLIB */
+> +static inline int devm_gpio_request(struct device *dev, unsigned gpio,
+> +				    const char *label)
+> +{
+> +	WARN_ON(1);
+> +	return -EINVAL;
 
-Okay, thanks. I was being too lazy to go digging.  :-)
+I wonder if -ENODEV is a better error code.
 
-g.
-
+Br, David Cohen
