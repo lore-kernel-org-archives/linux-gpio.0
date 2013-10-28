@@ -1,74 +1,127 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [PATCH v2] gpio: provide stubs for devres gpio functions
-Date: Sun, 27 Oct 2013 14:38:24 -0700
-Message-ID: <526D87D0.3030702@linux.intel.com>
-References: <1382715613-3435-1-git-send-email-linus.walleij@linaro.org>
+From: Darren Hart <dvhart@linux.intel.com>
+Subject: Re: [gpio:for-next 67/67] pch_gbe_main.c:undefined reference to
+ `devm_gpio_request_one'
+Date: Mon, 28 Oct 2013 00:04:37 +0000
+Message-ID: <1382918677.23829.92.camel@dvhart-mobl4.amr.corp.intel.com>
+References: <52691c0b.BIIOKlR6F81qU+tE%fengguang.wu@intel.com>
+	  <20131025044027.GA27083@localhost>
+	  <CACRpkdaJVE44UGRAZ0tnQSArrs+DuVFhVssW6riWmdp8-6E6BQ@mail.gmail.com>
+	  <1382696677.4970.40.camel@dvhart-mobl4.amr.corp.intel.com>
+	  <CACRpkdYvOMiBOXRi61LjemMSoafR6kv3XoY=A5E90hwMumdw9A@mail.gmail.com>
+	  <CACRpkdYDUKK-jAeeHECfRcKM+-MDuyarDMGDP0p39U_-WLgd8w@mail.gmail.com>
+	  <526AE0EB.4020602@linux.intel.com> <526AE1E2.9080909@linux.intel.com>
+	  <1382819615.23829.16.camel@dvhart-mobl4.amr.corp.intel.com>
+	 <1382822142.23829.46.camel@dvhart-mobl4.amr.corp.intel.com>
+	 <526CA546.7040406@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:28974 "EHLO mga14.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:50685 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752982Ab3J0VkI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 27 Oct 2013 17:40:08 -0400
-In-Reply-To: <1382715613-3435-1-git-send-email-linus.walleij@linaro.org>
+	id S1754807Ab3J1AEk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 27 Oct 2013 20:04:40 -0400
+In-Reply-To: <526CA546.7040406@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 10/25/2013 08:40 AM, Linus Walleij wrote:
-> commit 6b3d8145dcfdbbb43f13544e16f44f4574f941dd
-> "gpiolib: make GPIO_DEVRES depend on GPIOLIB"
-> breaks builds when device drivers are using devm_gpio*
-> devres functions without enabling GPIOLIB, relying on
-> the devres code to be compiled anyway.
+On Sat, 2013-10-26 at 22:31 -0700, David Cohen wrote:
+> On 10/26/2013 02:15 PM, Darren Hart wrote:
+> > On Sat, 2013-10-26 at 21:33 +0100, Darren Hart wrote:
+> >> On Fri, 2013-10-25 at 14:25 -0700, David Cohen wrote:
+> >>> On 10/25/2013 02:21 PM, David Cohen wrote:
+> >>>> Hi Linus,
+> >>>>
+> >>>> On 10/25/2013 03:49 AM, Linus Walleij wrote:
+> >>>>> On Fri, Oct 25, 2013 at 12:41 PM, Linus Walleij
+> >>>>> <linus.walleij@linaro.org> wrote:
+> >>>>>
+> >>>>>>> I wouldn't object to adding a dependency to GPIO_PCH and GPIOLIB
+> >>>>>>> unconditionally for PCH_GBE as GPIO_PCH is the same chip... but I don't
+> >>>>>>> know if David Miller would be amenable to that.
+> >>>>>>
+> >>>>>> Well we should probably just stick a dependency to GPIOLIB in there.
+> >>>>>>
+> >>>>>> - It #includes <linux/gpio.h>
+> >>>>>> - It uses gpiolib functions to do something vital
+> >>>>>>
+> >>>>>> It was just happy that dummy versions were slotted in until now.
+> >>>>>
+> >>>>> ...or maybe I'm just confused now?
+> >>>>>
+> >>>>> Should we just add a static inline stub of devm_gpio_request_one()?
+> >>>>
+> >>>> I am not familiar with the HW. But checking the code, platform
+> >>>> initialization should fail with a dummy devm_gpio_request_one()
+> >>>> implementation. IMO it makes more sense to depend on GPIOLIB.
+> >>>
+> >>> Actually, forget about it. Despite driver_data->platform_init() may
+> >>> return error, probe() never checks for it. I think the driver must be
+> >>> fixed, but in meanwhile a static inline stub seems reasonable.
+> >>>
+> >>
+> >> Ah, that's a problem, and one I created :/ I'm traveling a bit through
+> >> Europe atm for the conferences. I will try and have a look on the planes
+> >> and add a check.
+> > 
+> > Ah, now I remember. The situation is this. If there is a cable plugged
+> > into the jack, the PHY will not go to sleep. If there isn't, there is a
+> > good chance it will go to sleep before the driver initializes. If it is
+> > asleep, the scan for the PHY will fail. If it isn't, the scan will work
+> > correctly and the device will be properly setup. The code currently
+> > displays a dev error:
+> > 
+> > 	ret = devm_gpio_request_one(&pdev->dev, gpio, flags,
+> > 				    "minnow_phy_reset");
+> > 	if (ret) {
+> > 		dev_err(&pdev->dev,
+> > 			"ERR: Can't request PHY reset GPIO line '%d'\n", gpio);
+> > 
+> > But deliberately does not about the probe because there is a chance
+> > things will work just fine. If they do not, the PHY detection code will
+> > print display errors about a failure to communicate over RGMII, and the
+> > device probe will fail from there.
+> > 
+> > This still seems like the correct approach to me. Does anyone disagree?
 > 
-> Provide stubs so that we get these if we're using the
-> devres functions without GPIOLIB.
+> Considering this scenario it seems to be correct. But if
+> devm_gpio_request_one() may fail for "unfriendly" reasons too, then
+> it's incomplete.
 > 
-> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-> Cc: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Actually add the keywords "static inline" in the proper place
->   for all stubs.
-> ---
->  include/linux/gpio.h | 34 +++++++++++++++++++++++++++-------
->  1 file changed, 27 insertions(+), 7 deletions(-)
+> > 
+> > (we still need to sort out the GPIOLIB and GPIO_SCH dependency though of
+> > course)
 > 
-> diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-> index c691df044458..0c56b9e9c209 100644
-> --- a/include/linux/gpio.h
-> +++ b/include/linux/gpio.h
-> @@ -77,6 +77,15 @@ static inline int irq_to_gpio(unsigned int irq)
->  
->  #endif /* ! CONFIG_ARCH_HAVE_CUSTOM_GPIO_H */
->  
-> +/* CONFIG_GPIOLIB: bindings for managed devices that want to request gpios */
-> +
-> +struct device;
-> +
-> +int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
-> +int devm_gpio_request_one(struct device *dev, unsigned gpio,
-> +			  unsigned long flags, const char *label);
-> +void devm_gpio_free(struct device *dev, unsigned int gpio);
-> +
->  #else /* ! CONFIG_GPIOLIB */
->  
->  #include <linux/kernel.h>
-> @@ -241,14 +250,25 @@ gpiochip_remove_pin_ranges(struct gpio_chip *chip)
->  	WARN_ON(1);
->  }
->  
-> -#endif /* ! CONFIG_GPIOLIB */
-> +static inline int devm_gpio_request(struct device *dev, unsigned gpio,
-> +				    const char *label)
-> +{
-> +	WARN_ON(1);
-> +	return -EINVAL;
+> Maybe if GPIOLIB has the static inline stubs returning -ENODEV we could
+> use a patch similar to the one attached here.
+> 
 
-I wonder if -ENODEV is a better error code.
+I think you may have inverted your logic on the return?
 
-Br, David Cohen
++		dev_warn(&pdev->dev,
++			 "ERR: Can't request PHY reset GPIO line '%d'\n", gpio);
++		return ret == -ENODEV ? ret : 0;
+
+Did you mean:
+
++		/* 
+		 * Things may still work if the GPIO driver wasn't
+		 * compiled in
+		 */
++		return ret == -ENODEV ? 0 : ret;
+
+The concern here of course would be someone added another GPIO
+controller over i2c over the expansion connector or something similar
+and did not enable the GPIO_SCH driver, then it could conceivably grab
+the wrong GPIO pin.... or would those never map to GPIO 13?
+
+
+
+-- 
+Darren Hart
+Intel Open Source Technology Center
+Yocto Project - Linux Kernel
+
+
