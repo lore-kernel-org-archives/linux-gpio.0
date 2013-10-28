@@ -1,29 +1,59 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Modular gpio-lynxpoint
-Date: Mon, 28 Oct 2013 23:06:14 +0100
-Message-ID: <CACRpkdYnBxWW7xHAZ_a52N_9nSdojJO9cLZsXCmSB6=nHPfzPw@mail.gmail.com>
-References: <20131019205702.4bfba569@endymion.delvare>
+Subject: Re: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
+Date: Mon, 28 Oct 2013 23:55:25 +0100
+Message-ID: <CACRpkdabBSvPLZHXyGSrLVpjF0tsXOqoJjx=4Fvy0zgNuWXOkA@mail.gmail.com>
+References: <1382510171-5937-1-git-send-email-haojian.zhuang@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:52039 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751992Ab3J1WGO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Oct 2013 18:06:14 -0400
-Received: by mail-oa0-f43.google.com with SMTP id m1so4323590oag.2
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Oct 2013 15:06:14 -0700 (PDT)
-In-Reply-To: <20131019205702.4bfba569@endymion.delvare>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:51242 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752001Ab3J1Wz0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Oct 2013 18:55:26 -0400
+Received: by mail-ob0-f175.google.com with SMTP id wm4so4333991obc.6
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Oct 2013 15:55:25 -0700 (PDT)
+In-Reply-To: <1382510171-5937-1-git-send-email-haojian.zhuang@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Patch Tracking <patches@linaro.org>
 
-On Sat, Oct 19, 2013 at 8:57 PM, Jean Delvare <jdelvare@suse.de> wrote:
+On Wed, Oct 23, 2013 at 8:36 AM, Haojian Zhuang
+<haojian.zhuang@linaro.org> wrote:
 
-> Any problem with the patch below?
+> gpio-ranges property could binds gpio to pinctrl. But there may be some
+> gpios without pinctrl operation. So check whether gpio-ranges property
+> exists in device node first.
+>
+> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
 
-Looks OK to me but I won't apply it until after the merge window, so please
-send the patch after that.
+OK...
+
+> +       /* Hook the request()/free() for pinctrl operation */
+> +       if (of_get_property(dev->of_node, "gpio-ranges", NULL)) {
+> +               chip->gc.request = pl061_gpio_request;
+> +               chip->gc.free = pl061_gpio_free;
+> +       }
+
+This is quite hard for those not using pinctrl to understand, maybe someone
+wants to use the request/free callbacks for something else in the
+future.
+
+Can't you:
+
+- Add a variable bool uses_pinctrl to struct pl061_gpio
+
+- Use the bool check:
+
+if (of_property_read_bool(np, "gpio-ranges"))
+  chip->uses_pinctrl = true;
+
+- Alter the code in pl061_gpio_request() to do like this:
+
+if (chip->uses_pinctrl)
+   pinctrl_request_gpio()
+
+And the same for pl061_gpio_free().
 
 Yours,
 Linus Walleij
