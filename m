@@ -1,59 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
-Date: Mon, 28 Oct 2013 23:55:25 +0100
-Message-ID: <CACRpkdabBSvPLZHXyGSrLVpjF0tsXOqoJjx=4Fvy0zgNuWXOkA@mail.gmail.com>
-References: <1382510171-5937-1-git-send-email-haojian.zhuang@linaro.org>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH -next] gpio: bcm-kona: add missing .owner to struct gpio_chip
+Date: Tue, 29 Oct 2013 11:49:20 +0800
+Message-ID: <CAPgLHd99TN_wZ50T3KwbxsqHK7TmcM7JoD_6GcNu_6dpXGghcQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:51242 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752001Ab3J1Wz0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Oct 2013 18:55:26 -0400
-Received: by mail-ob0-f175.google.com with SMTP id wm4so4333991obc.6
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Oct 2013 15:55:25 -0700 (PDT)
-In-Reply-To: <1382510171-5937-1-git-send-email-haojian.zhuang@linaro.org>
+Received: from mail-bk0-f47.google.com ([209.85.214.47]:40257 "EHLO
+	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758040Ab3J2DtW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Oct 2013 23:49:22 -0400
+Received: by mail-bk0-f47.google.com with SMTP id mx12so2151674bkb.20
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Oct 2013 20:49:20 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Patch Tracking <patches@linaro.org>
+To: linus.walleij@linaro.org, grant.likely@linaro.org, rob.herring@calxeda.com
+Cc: yongjun_wei@trendmicro.com.cn, linux-gpio@vger.kernel.org
 
-On Wed, Oct 23, 2013 at 8:36 AM, Haojian Zhuang
-<haojian.zhuang@linaro.org> wrote:
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-> gpio-ranges property could binds gpio to pinctrl. But there may be some
-> gpios without pinctrl operation. So check whether gpio-ranges property
-> exists in device node first.
->
-> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+Add missing .owner of struct gpio_chip. This prevents the
+module from being removed from underneath its users.
 
-OK...
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+---
+ drivers/gpio/gpio-bcm-kona.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +       /* Hook the request()/free() for pinctrl operation */
-> +       if (of_get_property(dev->of_node, "gpio-ranges", NULL)) {
-> +               chip->gc.request = pl061_gpio_request;
-> +               chip->gc.free = pl061_gpio_free;
-> +       }
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index b3d0f81..72c927d 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -280,6 +280,7 @@ static int bcm_kona_gpio_set_debounce(struct gpio_chip *chip, unsigned gpio,
+ 
+ static struct gpio_chip template_chip = {
+ 	.label = "bcm-kona-gpio",
++	.owner = THIS_MODULE,
+ 	.direction_input = bcm_kona_gpio_direction_input,
+ 	.get = bcm_kona_gpio_get,
+ 	.direction_output = bcm_kona_gpio_direction_output,
 
-This is quite hard for those not using pinctrl to understand, maybe someone
-wants to use the request/free callbacks for something else in the
-future.
-
-Can't you:
-
-- Add a variable bool uses_pinctrl to struct pl061_gpio
-
-- Use the bool check:
-
-if (of_property_read_bool(np, "gpio-ranges"))
-  chip->uses_pinctrl = true;
-
-- Alter the code in pl061_gpio_request() to do like this:
-
-if (chip->uses_pinctrl)
-   pinctrl_request_gpio()
-
-And the same for pl061_gpio_free().
-
-Yours,
-Linus Walleij
