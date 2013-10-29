@@ -1,41 +1,34 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] gpio: bcm-kona: add missing .owner to struct gpio_chip
-Date: Tue, 29 Oct 2013 11:49:20 +0800
-Message-ID: <CAPgLHd99TN_wZ50T3KwbxsqHK7TmcM7JoD_6GcNu_6dpXGghcQ@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V6 3/3] drivers/rtc/rtc-as3722: add RTC driver
+Date: Tue, 29 Oct 2013 17:27:19 +0530
+Message-ID: <526FA29F.2060004@nvidia.com>
+References: <1382356041-30973-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:40257 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758040Ab3J2DtW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Oct 2013 23:49:22 -0400
-Received: by mail-bk0-f47.google.com with SMTP id mx12so2151674bkb.20
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Oct 2013 20:49:20 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1382356041-30973-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "sameo@linux.intel.com" <sameo@linux.intel.com>, "broonie@kernel.org" <broonie@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "rob@landley.net" <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "grant.likely@linaro.org" <grant.likely@linaro.org>, F
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, grant.likely@linaro.org, rob.herring@calxeda.com
-Cc: yongjun_wei@trendmicro.com.cn, linux-gpio@vger.kernel.org
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Hi Andrew,
 
-Add missing .owner of struct gpio_chip. This prevents the
-module from being removed from underneath its users.
+Can you please review this patch?
+If it is lost then I will be happy to repost it.
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- drivers/gpio/gpio-bcm-kona.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks,
+Laxman
 
-diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-index b3d0f81..72c927d 100644
---- a/drivers/gpio/gpio-bcm-kona.c
-+++ b/drivers/gpio/gpio-bcm-kona.c
-@@ -280,6 +280,7 @@ static int bcm_kona_gpio_set_debounce(struct gpio_chip *chip, unsigned gpio,
- 
- static struct gpio_chip template_chip = {
- 	.label = "bcm-kona-gpio",
-+	.owner = THIS_MODULE,
- 	.direction_input = bcm_kona_gpio_direction_input,
- 	.get = bcm_kona_gpio_get,
- 	.direction_output = bcm_kona_gpio_direction_output,
+On Monday 21 October 2013 05:17 PM, Laxman Dewangan wrote:
+> The ams AS3722 is a compact system PMU suitable for mobile phones,
+> tablets etc.
+>
+> Add a driver to support accessing the RTC found on the ams AS3722
+> PMIC using RTC framework.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Signed-off-by: Florian Lobmaier <florian.lobmaier@ams.com>
+>
 
