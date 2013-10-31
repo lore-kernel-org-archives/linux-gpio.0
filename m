@@ -1,35 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] gpio: tb10x: fix return value check in tb10x_gpio_probe()
-Date: Wed, 30 Oct 2013 11:28:43 -0700
-Message-ID: <CACRpkda35LNNvBHYUHMMsA=rURjHkE2Zo639wg+xnM3VEifa=Q@mail.gmail.com>
-References: <CAPgLHd8mw0-WGdqOdBRi=AWrn6OOgQ-DSiDqsPCMxpY9CrQS_A@mail.gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] gpio: tb10x: Fix checking return value of
+ devm_ioremap_resource
+Date: Thu, 31 Oct 2013 10:01:45 +0800
+Message-ID: <1383184905.13635.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:41458 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750865Ab3J3S2o (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Oct 2013 14:28:44 -0400
-Received: by mail-ob0-f176.google.com with SMTP id uy5so1877898obc.35
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Oct 2013 11:28:43 -0700 (PDT)
-In-Reply-To: <CAPgLHd8mw0-WGdqOdBRi=AWrn6OOgQ-DSiDqsPCMxpY9CrQS_A@mail.gmail.com>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:55591 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750730Ab3JaCBw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Oct 2013 22:01:52 -0400
+Received: by mail-pd0-f171.google.com with SMTP id w10so1790501pde.16
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Oct 2013 19:01:51 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Christian Ruppert <christian.ruppert@abilis.com>, Kumar Gala <galak@codeaurora.org>, Sascha Leuenberger <sascha.leuenberger@abilis.com>, linux-gpio@vger.kernel.org
 
-On Tue, Oct 29, 2013 at 8:09 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
+Also move platform_get_resource() call close to devm_ioremap_resource().
+The implementation of devm_ioremap_resource() will also check mem parameter
+and emit proper error.
 
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->
-> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR(). Also remove the dev_err call to avoid redundant
-> error message.
->
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-tb10x.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-Patch applied.
+diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
+index 833d0f4..45bfed1 100644
+--- a/drivers/gpio/gpio-tb10x.c
++++ b/drivers/gpio/gpio-tb10x.c
+@@ -194,23 +194,16 @@ static int tb10x_gpio_probe(struct platform_device *pdev)
+ 	if (of_property_read_u32(dn, "abilis,ngpio", &ngpio))
+ 		return -EINVAL;
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "No memory resource defined.\n");
+-		return -EINVAL;
+-	}
+-
+ 	tb10x_gpio = devm_kzalloc(&pdev->dev, sizeof(*tb10x_gpio), GFP_KERNEL);
+ 	if (tb10x_gpio == NULL)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&tb10x_gpio->spinlock);
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	tb10x_gpio->base = devm_ioremap_resource(&pdev->dev, mem);
+-	if (!tb10x_gpio->base) {
+-		dev_err(&pdev->dev, "Could not remap reg space.\n");
+-		goto fail_ioremap;
+-	}
++	if (IS_ERR(tb10x_gpio->base))
++		return PTR_ERR(tb10x_gpio->base);
+ 
+ 	tb10x_gpio->gc.label		= of_node_full_name(dn);
+ 	tb10x_gpio->gc.dev		= &pdev->dev;
+@@ -285,7 +278,6 @@ fail_request_irq:
+ fail_get_irq:
+ 	gpiochip_remove(&tb10x_gpio->gc);
+ fail_gpiochip_registration:
+-fail_ioremap:
+ 	return ret;
+ }
+ 
+-- 
+1.8.1.2
 
-Yours,
-Linus Walleij
+
+
