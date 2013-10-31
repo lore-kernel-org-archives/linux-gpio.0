@@ -1,67 +1,36 @@
-From: Christian Ruppert <christian.ruppert@abilis.com>
-Subject: Re: [PATCH 2/2] gpio: tb10x: Convert to use module_platform_driver
-Date: Thu, 31 Oct 2013 13:41:37 +0100
-Message-ID: <20131031124136.GB7093@ab42.lan>
-References: <1383184905.13635.1.camel@phoenix>
- <1383184982.13635.3.camel@phoenix>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [gpio:for-next 67/67] pch_gbe_main.c:undefined reference to `devm_gpio_request_one'
+Date: Thu, 31 Oct 2013 12:12:32 -0700
+Message-ID: <5272ABA0.7040503@linux.intel.com>
+References: <52691c0b.BIIOKlR6F81qU+tE%fengguang.wu@intel.com> <20131025044027.GA27083@localhost> <CACRpkdaJVE44UGRAZ0tnQSArrs+DuVFhVssW6riWmdp8-6E6BQ@mail.gmail.com> <1382696677.4970.40.camel@dvhart-mobl4.amr.corp.intel.com> <CACRpkdYvOMiBOXRi61LjemMSoafR6kv3XoY=A5E90hwMumdw9A@mail.gmail.com> <CACRpkdYDUKK-jAeeHECfRcKM+-MDuyarDMGDP0p39U_-WLgd8w@mail.gmail.com> <526AE0EB.4020602@linux.intel.com> <526AE1E2.9080909@linux.intel.com> <1382819615.23829.16.camel@dvhart-mobl4.amr.corp.intel.com> <1382822142.23829.46.camel@dvhart-mobl4.amr.corp.intel.com> <526CA546.7040406@linux.intel.com> <CACRpkdZM8BBR6NAUTuSpEErZe2541-CvuwFSe13FDfxOBnnygA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.abilis.ch ([195.70.19.74]:16630 "EHLO mail.abilis.ch"
+Received: from mga01.intel.com ([192.55.52.88]:53384 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754373Ab3JaNSH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 31 Oct 2013 09:18:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1383184982.13635.3.camel@phoenix>
+	id S1751495Ab3JaTOO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 31 Oct 2013 15:14:14 -0400
+In-Reply-To: <CACRpkdZM8BBR6NAUTuSpEErZe2541-CvuwFSe13FDfxOBnnygA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Sascha Leuenberger <sascha.leuenberger@abilis.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Darren Hart <dvhart@linux.intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Oct 31, 2013 at 10:03:02AM +0800, Axel Lin wrote:
-> Use module_platform_driver to simplify the code.
-> In additional, this is a DT only driver, thus also remove of_match_ptr.
+On 10/30/2013 11:21 AM, Linus Walleij wrote:
+> On Sat, Oct 26, 2013 at 10:31 PM, David Cohen
+> <david.a.cohen@linux.intel.com> wrote:
 > 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+>> Maybe if GPIOLIB has the static inline stubs returning -ENODEV we could
+>> use a patch similar to the one attached here.
+> 
+> I've added stubs returning -EINVAL just like all siblings there, if you
+> like to have this changed, send a patch changing it to -ENODEV
+> and this patch on top as 2/2 please.
 
-Acked-by: Christian Ruppert <christian.ruppert@abilis.com>
+Thanks.
 
-> ---
->  drivers/gpio/gpio-tb10x.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
-> index 45bfed1..a0391bc 100644
-> --- a/drivers/gpio/gpio-tb10x.c
-> +++ b/drivers/gpio/gpio-tb10x.c
-> @@ -311,23 +311,13 @@ static struct platform_driver tb10x_gpio_driver = {
->  	.remove		= tb10x_gpio_remove,
->  	.driver = {
->  		.name	= "tb10x-gpio",
-> -		.of_match_table = of_match_ptr(tb10x_gpio_dt_ids),
-> +		.of_match_table = tb10x_gpio_dt_ids,
->  		.owner	= THIS_MODULE,
->  	}
->  };
->  
-> -static int __init ab_gpio_init(void)
-> -{
-> -	return platform_driver_register(&tb10x_gpio_driver);
-> -}
-> -
-> -static void __exit ab_gpio_exit(void)
-> -{
-> -	platform_driver_unregister(&tb10x_gpio_driver);
-> -}
-> +module_platform_driver(tb10x_gpio_driver);
->  
-> -module_init(ab_gpio_init);
-> -module_exit(ab_gpio_exit);
->  MODULE_LICENSE("GPL");
->  MODULE_DESCRIPTION("tb10x gpio.");
->  MODULE_VERSION("0.0.1");
-> -- 
-> 1.8.1.2
-> 
-> 
-> 
+Darren, do you have any objections WRT failing pch_gbe on Minnowboard
+due to lack of GPIO?
+
+BR, David
