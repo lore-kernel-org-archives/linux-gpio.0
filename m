@@ -1,36 +1,35 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [gpio:for-next 67/67] pch_gbe_main.c:undefined reference to `devm_gpio_request_one'
-Date: Thu, 31 Oct 2013 12:12:32 -0700
-Message-ID: <5272ABA0.7040503@linux.intel.com>
-References: <52691c0b.BIIOKlR6F81qU+tE%fengguang.wu@intel.com> <20131025044027.GA27083@localhost> <CACRpkdaJVE44UGRAZ0tnQSArrs+DuVFhVssW6riWmdp8-6E6BQ@mail.gmail.com> <1382696677.4970.40.camel@dvhart-mobl4.amr.corp.intel.com> <CACRpkdYvOMiBOXRi61LjemMSoafR6kv3XoY=A5E90hwMumdw9A@mail.gmail.com> <CACRpkdYDUKK-jAeeHECfRcKM+-MDuyarDMGDP0p39U_-WLgd8w@mail.gmail.com> <526AE0EB.4020602@linux.intel.com> <526AE1E2.9080909@linux.intel.com> <1382819615.23829.16.camel@dvhart-mobl4.amr.corp.intel.com> <1382822142.23829.46.camel@dvhart-mobl4.amr.corp.intel.com> <526CA546.7040406@linux.intel.com> <CACRpkdZM8BBR6NAUTuSpEErZe2541-CvuwFSe13FDfxOBnnygA@mail.gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: Re: [PATCH 1/2] gpio: tb10x: Fix checking return value of devm_ioremap_resource
+Date: Fri, 1 Nov 2013 21:28:29 +0800
+Message-ID: <CAFRkauD=8_QEheiTezp0uiY9qEw-KCxfvL4UY4rSo6vhoJ=stg@mail.gmail.com>
+References: <1383184905.13635.1.camel@phoenix>
+	<20131031124037.GA7093@ab42.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:53384 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751495Ab3JaTOO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 31 Oct 2013 15:14:14 -0400
-In-Reply-To: <CACRpkdZM8BBR6NAUTuSpEErZe2541-CvuwFSe13FDfxOBnnygA@mail.gmail.com>
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:60119 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976Ab3KAN2a (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Nov 2013 09:28:30 -0400
+Received: by mail-pd0-f182.google.com with SMTP id q10so3859061pdj.13
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Nov 2013 06:28:29 -0700 (PDT)
+In-Reply-To: <20131031124037.GA7093@ab42.lan>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Darren Hart <dvhart@linux.intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Christian Ruppert <christian.ruppert@abilis.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Sascha Leuenberger <sascha.leuenberger@abilis.com>, linux-gpio@vger.kernel.org
 
-On 10/30/2013 11:21 AM, Linus Walleij wrote:
-> On Sat, Oct 26, 2013 at 10:31 PM, David Cohen
-> <david.a.cohen@linux.intel.com> wrote:
-> 
->> Maybe if GPIOLIB has the static inline stubs returning -ENODEV we could
->> use a patch similar to the one attached here.
-> 
-> I've added stubs returning -EINVAL just like all siblings there, if you
-> like to have this changed, send a patch changing it to -ENODEV
-> and this patch on top as 2/2 please.
+2013/10/31 Christian Ruppert <christian.ruppert@abilis.com>:
+> On Thu, Oct 31, 2013 at 10:01:45AM +0800, Axel Lin wrote:
+>> Also move platform_get_resource() call close to devm_ioremap_resource().
+>> The implementation of devm_ioremap_resource() will also check mem parameter
+>> and emit proper error.
+>>
+>> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-Thanks.
+Hi Linus,
+I just found similar patches already merged in today's linux-next tree.
+So you can ignore these 2 patches.
 
-Darren, do you have any objections WRT failing pch_gbe on Minnowboard
-due to lack of GPIO?
-
-BR, David
+Regards,
+Axel
