@@ -1,133 +1,135 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v4 4/6] gpio: davinci: add OF support
-Date: Tue, 5 Nov 2013 14:23:54 +0530
-Message-ID: <CA+V-a8uV0g36LoQtxFjR56SaMxj7KOE2ztC+pfT_Pn1wGcqEmw@mail.gmail.com>
-References: <1383406775-14902-1-git-send-email-prabhakar.csenng@gmail.com>
- <1383406775-14902-5-git-send-email-prabhakar.csenng@gmail.com> <5277E752.8090005@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <5277E752.8090005@ti.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Russell King <linux@arm.linux.org.uk>, Grant Likely <grant.likely@linaro.org>, Alex Elder <alex.elder@linaro.org>, LDOC <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, dlos <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/4] ARM/serial: at91: move machine quirk into machine
+Date: Tue,  5 Nov 2013 10:28:42 +0100
+Message-ID: <1383643722-14189-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-we0-f178.google.com ([74.125.82.178]:37070 "EHLO
+	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751675Ab3KEJ3H (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Nov 2013 04:29:07 -0500
+Received: by mail-we0-f178.google.com with SMTP id q59so3149868wes.37
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Nov 2013 01:29:05 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Grygorii,
+This removes the dependency on <mach/gpio.h> from the AT91 serial
+driver by adding an mctrl callback quirk.
 
-Thanks for the review.
+Long term it is better if the driver calls the generic GPIO
+interface (gpio_set_value()), but this gets a hairy cross-depency
+into the machine-local headers out of the way for now.
 
-On Mon, Nov 4, 2013 at 11:58 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> Hi Prabhakar Lad,
->
->
-> On 11/02/2013 05:39 PM, Lad, Prabhakar wrote:
->>
->> From: KV Sujith <sujithkv@ti.com>
->>
->> This patch adds OF parser support for davinci gpio
->> driver and also appropriate documentation in gpio-davinci.txt
->> located at Documentation/devicetree/bindings/gpio/.
->
->
-> I worry, do we need to have gpio_chip.of_xlate() callback implemented=
-?
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Greg, if you're OK with this approach please give me an ACK
+so I can take this through the ARM SoC or GPIO tree in the end.
+---
+ arch/arm/mach-at91/at91rm9200_devices.c | 14 ++++++++++++++
+ drivers/tty/serial/atmel_serial.c       | 19 ++++---------------
+ include/linux/platform_data/atmel.h     |  1 +
+ 3 files changed, 19 insertions(+), 15 deletions(-)
 
-I looked for the other OF GPIO implementations with same "ngpio"
-property (marvel, msm) but I don=92t see of_xlate() callback implemente=
-d.
+diff --git a/arch/arm/mach-at91/at91rm9200_devices.c b/arch/arm/mach-at91/at91rm9200_devices.c
+index 3ebc9792560c..3ce6ba6341ed 100644
+--- a/arch/arm/mach-at91/at91rm9200_devices.c
++++ b/arch/arm/mach-at91/at91rm9200_devices.c
+@@ -12,6 +12,7 @@
+  */
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
++#include <asm/termios.h>
+ 
+ #include <linux/dma-mapping.h>
+ #include <linux/gpio.h>
+@@ -957,9 +958,22 @@ static struct resource uart0_resources[] = {
+ 	},
+ };
+ 
++static void uart0_set_mctrl(unsigned int mctrl)
++{
++	/*
++	 * AT91RM9200 Errata #39: RTS0 is not internally connected
++	 * to PA21. We need to drive the pin manually.
++	 */
++	if (mctrl & TIOCM_RTS)
++		at91_set_gpio_value(AT91_PIN_PA21, 0);
++	else
++		at91_set_gpio_value(AT91_PIN_PA21, 1);
++}
++
+ static struct atmel_uart_data uart0_data = {
+ 	.use_dma_tx	= 1,
+ 	.use_dma_rx	= 1,
++	.set_mctrl	= uart0_set_mctrl,
+ };
+ 
+ static u64 uart0_dmamask = DMA_BIT_MASK(32);
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index d067285a2d20..5b29e3152d7e 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -47,7 +47,6 @@
+ 
+ #ifdef CONFIG_ARM
+ #include <mach/cpu.h>
+-#include <asm/gpio.h>
+ #endif
+ 
+ #define PDC_BUFFER_SIZE		512
+@@ -176,6 +175,7 @@ struct atmel_uart_port {
+ 	void (*schedule_tx)(struct uart_port *port);
+ 	void (*release_rx)(struct uart_port *port);
+ 	void (*release_tx)(struct uart_port *port);
++	void (*set_mctrl)(unsigned int mctrl);
+ };
+ 
+ static struct atmel_uart_port atmel_ports[ATMEL_MAX_UART];
+@@ -300,20 +300,8 @@ static void atmel_set_mctrl(struct uart_port *port, u_int mctrl)
+ 	unsigned int mode;
+ 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+ 
+-#ifdef CONFIG_ARCH_AT91RM9200
+-	if (cpu_is_at91rm9200()) {
+-		/*
+-		 * AT91RM9200 Errata #39: RTS0 is not internally connected
+-		 * to PA21. We need to drive the pin manually.
+-		 */
+-		if (port->mapbase == AT91RM9200_BASE_US0) {
+-			if (mctrl & TIOCM_RTS)
+-				at91_set_gpio_value(AT91_PIN_PA21, 0);
+-			else
+-				at91_set_gpio_value(AT91_PIN_PA21, 1);
+-		}
+-	}
+-#endif
++	if (atmel_port->set_mctrl)
++		atmel_port->set_mctrl(mctrl);
+ 
+ 	if (mctrl & TIOCM_RTS)
+ 		control |= ATMEL_US_RTSEN;
+@@ -2365,6 +2353,7 @@ static int atmel_serial_probe(struct platform_device *pdev)
+ 	port = &atmel_ports[ret];
+ 	port->backup_imr = 0;
+ 	port->uart.line = ret;
++	port->set_mctrl = pdata->set_mctrl;
+ 
+ 	ret = atmel_init_port(port, pdev);
+ 	if (ret)
+diff --git a/include/linux/platform_data/atmel.h b/include/linux/platform_data/atmel.h
+index cea9f70133c5..59991aae0217 100644
+--- a/include/linux/platform_data/atmel.h
++++ b/include/linux/platform_data/atmel.h
+@@ -84,6 +84,7 @@ struct atmel_uart_data {
+ 	short			use_dma_rx;	/* use receive DMA? */
+ 	void __iomem		*regs;		/* virt. base address, if any */
+ 	struct serial_rs485	rs485;		/* rs485 settings */
++	void (*set_mctrl)(unsigned int mctrl);	/* mctrl callback */
+ };
+ 
+  /* Touchscreen Controller */
+-- 
+1.8.3.1
 
-> - From one side, Davinci GPIO controller in DT described by one entry
-> which defines number of supported GPIOs as "ti,ngpio =3D <144>;"
->
-> - From other side, on Linux level more than one gpio_chip objects are
-> instantiated (one per each 32 GPIO).
->
-> How the standard GPIO biding will work in this case? .. And will they=
-?
->
-> Linus, I'd very appreciate if you will be able to clarify this point.
->
->
->>
->> Signed-off-by: KV Sujith <sujithkv@ti.com>
->> Signed-off-by: Philip Avinash <avinashphilip@ti.com>
->> [prabhakar.csengg@gmail.com: simplified the OF code, removed
->>                 unnecessary DT property and also simplified
->>                 the commit message]
->> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
->> ---
->>   .../devicetree/bindings/gpio/gpio-davinci.txt      |   32 ++++++++=
-++++
->>   drivers/gpio/gpio-davinci.c                        |   54
->> ++++++++++++++++++--
->>   2 files changed, 83 insertions(+), 3 deletions(-)
->>   create mode 100644
->> Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> new file mode 100644
->> index 0000000..55aae1c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> @@ -0,0 +1,32 @@
->> +Davinci GPIO controller bindings
->> +
->> +Required Properties:
->> +- compatible: should be "ti,dm6441-gpio"
->> +
->> +- reg: Physical base address of the controller and the size of memo=
-ry
->> mapped
->> +       registers.
->> +
->> +- gpio-controller : Marks the device node as a gpio controller.
->> +
->> +- interrupts: Array of GPIO interrupt number.
->
->
-> May be meaning of <interrupts> property need to be extended, because,
-> as of now, only banked or unbanked IRQs are supported - and not both.
->
->
-OK
-
->> +
->> +- ti,ngpio: The number of GPIO pins supported.
->> +
->> +- ti,davinci-gpio-unbanked: The number of GPIOs that have an indivi=
-dual
->> interrupt
->> +                            line to processor.
->
->
-> Should interrupt-controller; specifier be added here?
->
-No
-
->
->> +
->> +Example:
->> +
->> +gpio: gpio@1e26000 {
->> +       compatible =3D "ti,dm6441-gpio";
->> +       gpio-controller;
->> +       reg =3D <0x226000 0x1000>;
->> +       interrupts =3D <42 IRQ_TYPE_EDGE_BOTH 43 IRQ_TYPE_EDGE_BOTH
->> +               44 IRQ_TYPE_EDGE_BOTH 45 IRQ_TYPE_EDGE_BOTH
->> +               46 IRQ_TYPE_EDGE_BOTH 47 IRQ_TYPE_EDGE_BOTH
->> +               48 IRQ_TYPE_EDGE_BOTH 49 IRQ_TYPE_EDGE_BOTH
->> +               50 IRQ_TYPE_EDGE_BOTH>;
->> +       ti,ngpio =3D <144>;
->> +       ti,davinci-gpio-irq-base =3D <101>;
->
->
->         ^^ Is it still needed?
->
-OOps missed to remove that.
-
-Regards,
---Prabhakar Lad
