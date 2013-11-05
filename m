@@ -1,85 +1,86 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [PATCH v2] ARM/serial: at91: specify RTS in DT using gpio
-Date: Tue, 5 Nov 2013 18:29:02 +0100
-Message-ID: <1383672542-10050-1-git-send-email-nicolas.ferre@atmel.com>
-References: <1383665383-5606-1-git-send-email-nicolas.ferre@atmel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1383665383-5606-1-git-send-email-nicolas.ferre@atmel.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, plagnioj@jcrosoft.com, gregkh@linuxfoundation.org, linus.walleij@linaro.org
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, acourbot@nvidia.com, linux-arm-kernel@lists.infradead.org
+From: Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] gpio: gpio-mxs: Remove unneeded dt checks
+Date: Tue,  5 Nov 2013 17:21:22 -0200
+Message-ID: <1383679282-4599-1-git-send-email-festevam@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qc0-f170.google.com ([209.85.216.170]:60236 "EHLO
+	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750925Ab3KETVa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Nov 2013 14:21:30 -0500
+Received: by mail-qc0-f170.google.com with SMTP id n9so5138913qcw.1
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Nov 2013 11:21:29 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: shawn.guo@linaro.org, linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+From: Fabio Estevam <fabio.estevam@freescale.com>
+
+mxs is a devicetree only platform, so there is no need to check whether we
+are in dt or platform data case.
+
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 ---
- Documentation/devicetree/bindings/serial/atmel-usart.txt |  3 +++
- drivers/tty/serial/atmel_serial.c                        | 11 ++++++++---
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-mxs.c | 32 +++++++++-----------------------
+ 1 file changed, 9 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/atmel-usart.txt b/Documentation/devicetree/bindings/serial/atmel-usart.txt
-index 2191dcb..3adc61c 100644
---- a/Documentation/devicetree/bindings/serial/atmel-usart.txt
-+++ b/Documentation/devicetree/bindings/serial/atmel-usart.txt
-@@ -10,6 +10,8 @@ Required properties:
- Optional properties:
- - atmel,use-dma-rx: use of PDC or DMA for receiving data
- - atmel,use-dma-tx: use of PDC or DMA for transmitting data
-+- rts-gpios: specify a GPIO for RTS line. It will use specified PIO instead of the peripheral
-+  function pin for the USART RTS feature. If unsure, don't specify this property.
- - add dma bindings for dma transfer:
- 	- dmas: DMA specifier, consisting of a phandle to DMA controller node,
- 		memory peripheral interface and USART DMA channel ID, FIFO configuration.
-@@ -28,6 +30,7 @@ Example:
- 		interrupts = <7>;
- 		atmel,use-dma-rx;
- 		atmel,use-dma-tx;
-+		rts-gpios = <&pioD 15 0>;
- 	};
+diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
+index f8e6af2..532bcb3 100644
+--- a/drivers/gpio/gpio-mxs.c
++++ b/drivers/gpio/gpio-mxs.c
+@@ -254,7 +254,6 @@ static int mxs_gpio_probe(struct platform_device *pdev)
+ 	struct device_node *parent;
+ 	static void __iomem *base;
+ 	struct mxs_gpio_port *port;
+-	struct resource *iores = NULL;
+ 	int irq_base;
+ 	int err;
  
- - use DMA:
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index b4e0794..582166f 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -35,6 +35,7 @@
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/of_gpio.h>
- #include <linux/dma-mapping.h>
- #include <linux/atmel_pdc.h>
- #include <linux/atmel_serial.h>
-@@ -2364,13 +2365,17 @@ static int atmel_serial_probe(struct platform_device *pdev)
- 	 * structs to indicate "no RTS GPIO" instead of open-coding some
- 	 * invalid value everywhere.
+@@ -262,16 +261,10 @@ static int mxs_gpio_probe(struct platform_device *pdev)
+ 	if (!port)
+ 		return -ENOMEM;
+ 
+-	if (np) {
+-		port->id = of_alias_get_id(np, "gpio");
+-		if (port->id < 0)
+-			return port->id;
+-		port->devid = (enum mxs_gpio_id) of_id->data;
+-	} else {
+-		port->id = pdev->id;
+-		port->devid = pdev->id_entry->driver_data;
+-	}
+-
++	port->id = of_alias_get_id(np, "gpio");
++	if (port->id < 0)
++		return port->id;
++	port->devid = (enum mxs_gpio_id) of_id->data;
+ 	port->irq = platform_get_irq(pdev, 0);
+ 	if (port->irq < 0)
+ 		return port->irq;
+@@ -281,18 +274,11 @@ static int mxs_gpio_probe(struct platform_device *pdev)
+ 	 * share the same one
  	 */
--	if (pdata->rts_gpio > 0) {
--		ret = devm_gpio_request(&pdev->dev, pdata->rts_gpio, "RTS");
-+	if (pdata && pdata->rts_gpio > 0)
-+		port->rts_gpio = pdata->rts_gpio;
-+	else if (np)
-+		port->rts_gpio = of_get_named_gpio(np, "rts-gpios", 0);
-+
-+	if (gpio_is_valid(port->rts_gpio)) {
-+		ret = devm_gpio_request(&pdev->dev, port->rts_gpio, "RTS");
- 		if (ret) {
- 			dev_err(&pdev->dev, "error requesting RTS GPIO\n");
- 			goto err;
- 		}
--		port->rts_gpio = pdata->rts_gpio;
- 		ret = gpio_direction_output(port->rts_gpio, 0);
- 		if (ret) {
- 			dev_err(&pdev->dev, "error setting up RTS GPIO\n");
+ 	if (!base) {
+-		if (np) {
+-			parent = of_get_parent(np);
+-			base = of_iomap(parent, 0);
+-			of_node_put(parent);
+-			if (!base)
+-				return -EADDRNOTAVAIL;
+-		} else {
+-			iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-			base = devm_ioremap_resource(&pdev->dev, iores);
+-			if (IS_ERR(base))
+-				return PTR_ERR(base);
+-		}
++		parent = of_get_parent(np);
++		base = of_iomap(parent, 0);
++		of_node_put(parent);
++		if (!base)
++			return -EADDRNOTAVAIL;
+ 	}
+ 	port->base = base;
+ 
 -- 
-1.8.2.2
+1.8.1.2
+
