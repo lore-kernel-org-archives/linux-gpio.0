@@ -1,172 +1,85 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v4 4/6] gpio: davinci: add OF support
-Date: Tue, 5 Nov 2013 18:59:27 +0200
-Message-ID: <527923EF.4070602@ti.com>
-References: <1383406775-14902-1-git-send-email-prabhakar.csenng@gmail.com>
-	<1383406775-14902-5-git-send-email-prabhakar.csenng@gmail.com>
-	<5277E752.8090005@ti.com>
-	<CA+V-a8uV0g36LoQtxFjR56SaMxj7KOE2ztC+pfT_Pn1wGcqEmw@mail.gmail.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: [PATCH v2] ARM/serial: at91: specify RTS in DT using gpio
+Date: Tue, 5 Nov 2013 18:29:02 +0100
+Message-ID: <1383672542-10050-1-git-send-email-nicolas.ferre@atmel.com>
+References: <1383665383-5606-1-git-send-email-nicolas.ferre@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <CA+V-a8uV0g36LoQtxFjR56SaMxj7KOE2ztC+pfT_Pn1wGcqEmw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dlos <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, LDOC <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Alex Elder <alex.elder-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1383665383-5606-1-git-send-email-nicolas.ferre@atmel.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org, plagnioj@jcrosoft.com, gregkh@linuxfoundation.org, linus.walleij@linaro.org
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, acourbot@nvidia.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 11/05/2013 10:53 AM, Prabhakar Lad wrote:> Hi Grygorii,
- >
- > Thanks for the review.
- >
- > On Mon, Nov 4, 2013 at 11:58 PM, Grygorii Strashko
- > <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
- >> Hi Prabhakar Lad,
- >>
- >>
- >> On 11/02/2013 05:39 PM, Lad, Prabhakar wrote:
- >>>
- >>> From: KV Sujith <sujithkv-l0cyMroinI0@public.gmane.org>
- >>>
- >>> This patch adds OF parser support for davinci gpio
- >>> driver and also appropriate documentation in gpio-davinci.txt
- >>> located at Documentation/devicetree/bindings/gpio/.
- >>
- >>
- >> I worry, do we need to have gpio_chip.of_xlate() callback implemented?
- >
- > I looked for the other OF GPIO implementations with same "ngpio"
- > property (marvel, msm) but I don=92t see of_xlate() callback implemented.
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+---
+ Documentation/devicetree/bindings/serial/atmel-usart.txt |  3 +++
+ drivers/tty/serial/atmel_serial.c                        | 11 ++++++++---
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-The question: will below definitions in DT work or not after this series?
-  Will of_get_gpio()/of_get_named_gpio() work?
-
-Example1 - leds:
-	leds {
-		compatible =3D "gpio-leds";
-		debug0 {
-			label =3D "green:debug0";
-			gpios =3D <&gpio 29 GPIO_ACTIVE_HIGH>;
-		};
-	};
-
-Example2 - any dev:
-devA {
-	compatible =3D "devA";
-	gpios =3D <&gpio 120 GPIO_ACTIVE_LOW>;
-}
-
-
- >
- >> - From one side, Davinci GPIO controller in DT described by one entry
- >> which defines number of supported GPIOs as "ti,ngpio =3D <144>;"
- >>
- >> - From other side, on Linux level more than one gpio_chip objects are
- >> instantiated (one per each 32 GPIO).
- >>
- >> How the standard GPIO biding will work in this case? .. And will they?
- >>
- >> Linus, I'd very appreciate if you will be able to clarify this point.
- >>
- >>
- >>>
- >>> Signed-off-by: KV Sujith <sujithkv-l0cyMroinI0@public.gmane.org>
- >>> Signed-off-by: Philip Avinash <avinashphilip-l0cyMroinI0@public.gmane.org>
- >>> [prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org: simplified the OF code, removed
- >>>                  unnecessary DT property and also simplified
- >>>                  the commit message]
- >>> Signed-off-by: Lad, Prabhakar <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
- >>> ---
- >>>    .../devicetree/bindings/gpio/gpio-davinci.txt      |   32 =
-
-++++++++++++
- >>>    drivers/gpio/gpio-davinci.c                        |   54
- >>> ++++++++++++++++++--
- >>>    2 files changed, 83 insertions(+), 3 deletions(-)
- >>>    create mode 100644
- >>> Documentation/devicetree/bindings/gpio/gpio-davinci.txt
- >>>
- >>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
- >>> b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
- >>> new file mode 100644
- >>> index 0000000..55aae1c
- >>> --- /dev/null
- >>> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
- >>> @@ -0,0 +1,32 @@
- >>> +Davinci GPIO controller bindings29
- >>> +
- >>> +Required Properties:
- >>> +- compatible: should be "ti,dm6441-gpio"
- >>> +
- >>> +- reg: Physical base address of the controller and the size of memory
- >>> mapped
- >>> +       registers.
- >>> +
- >>> +- gpio-controller : Marks the device node as a gpio controller.
- >>> +
- >>> +- interrupts: Array of GPIO interrupt number.
- >>
- >>
- >> May be meaning of <interrupts> property need to be extended, because,
- >> as of now, only banked or unbanked IRQs are supported - and not both.
- >>
- >>
- > OK
- >
- >>> +
- >>> +- ti,ngpio: The number of GPIO pins supported.
- >>> +
- >>> +- ti,davinci-gpio-unbanked: The number of GPIOs that have an =
-
-individual
- >>> interrupt
- >>> +                            line to processor.
- >>
- >>
- >> Should interrupt-controller; specifier be added here?
- >>
- > No
-
-So, it would be impossible to map GPIO IRQ to device through DT. Right?
-Like:
-	devX@0 {
-		compatible =3D "devX";
-		interrupt-parent =3D <&gpio>;
-		interrupts =3D <50 IRQ_TYPE_EDGE_FALLING>; /* gpio line 50 */
-
-	};
-
-
- >
- >>
- >>> +
- >>> +Example:
- >>> +
- >>> +gpio: gpio@1e26000 {
- >>> +       compatible =3D "ti,dm6441-gpio";
- >>> +       gpio-controller;
- >>> +       reg =3D <0x226000 0x1000>;
- >>> +       interrupts =3D <42 IRQ_TYPE_EDGE_BOTH 43 IRQ_TYPE_EDGE_BOTH
- >>> +               44 IRQ_TYPE_EDGE_BOTH 45 IRQ_TYPE_EDGE_BOTH
- >>> +               46 IRQ_TYPE_EDGE_BOTH 47 IRQ_TYPE_EDGE_BOTH
- >>> +               48 IRQ_TYPE_EDGE_BOTH 49 IRQ_TYPE_EDGE_BOTH
- >>> +               50 IRQ_TYPE_EDGE_BOTH>;
- >>> +       ti,ngpio =3D <144>;
- >>> +       ti,davinci-gpio-irq-base =3D <101>;
- >>
- >>
- >>          ^^ Is it still needed?
- >>
- > OOps missed to remove that.
- >
-Regards,
--grygorii
+diff --git a/Documentation/devicetree/bindings/serial/atmel-usart.txt b/Documentation/devicetree/bindings/serial/atmel-usart.txt
+index 2191dcb..3adc61c 100644
+--- a/Documentation/devicetree/bindings/serial/atmel-usart.txt
++++ b/Documentation/devicetree/bindings/serial/atmel-usart.txt
+@@ -10,6 +10,8 @@ Required properties:
+ Optional properties:
+ - atmel,use-dma-rx: use of PDC or DMA for receiving data
+ - atmel,use-dma-tx: use of PDC or DMA for transmitting data
++- rts-gpios: specify a GPIO for RTS line. It will use specified PIO instead of the peripheral
++  function pin for the USART RTS feature. If unsure, don't specify this property.
+ - add dma bindings for dma transfer:
+ 	- dmas: DMA specifier, consisting of a phandle to DMA controller node,
+ 		memory peripheral interface and USART DMA channel ID, FIFO configuration.
+@@ -28,6 +30,7 @@ Example:
+ 		interrupts = <7>;
+ 		atmel,use-dma-rx;
+ 		atmel,use-dma-tx;
++		rts-gpios = <&pioD 15 0>;
+ 	};
+ 
+ - use DMA:
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index b4e0794..582166f 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -35,6 +35,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_gpio.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/atmel_pdc.h>
+ #include <linux/atmel_serial.h>
+@@ -2364,13 +2365,17 @@ static int atmel_serial_probe(struct platform_device *pdev)
+ 	 * structs to indicate "no RTS GPIO" instead of open-coding some
+ 	 * invalid value everywhere.
+ 	 */
+-	if (pdata->rts_gpio > 0) {
+-		ret = devm_gpio_request(&pdev->dev, pdata->rts_gpio, "RTS");
++	if (pdata && pdata->rts_gpio > 0)
++		port->rts_gpio = pdata->rts_gpio;
++	else if (np)
++		port->rts_gpio = of_get_named_gpio(np, "rts-gpios", 0);
++
++	if (gpio_is_valid(port->rts_gpio)) {
++		ret = devm_gpio_request(&pdev->dev, port->rts_gpio, "RTS");
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "error requesting RTS GPIO\n");
+ 			goto err;
+ 		}
+-		port->rts_gpio = pdata->rts_gpio;
+ 		ret = gpio_direction_output(port->rts_gpio, 0);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "error setting up RTS GPIO\n");
+-- 
+1.8.2.2
