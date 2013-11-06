@@ -1,42 +1,29 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: [PATCH] gpio: pl061: don't depend on CONFIG_ARM
-Date: Tue,  5 Nov 2013 21:27:02 -0600
-Message-ID: <1383708422-20374-1-git-send-email-robherring2@gmail.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH] gpio: gpio-mxs: Remove unneeded dt checks
+Date: Wed, 6 Nov 2013 16:30:21 +0800
+Message-ID: <20131106083019.GT19770@S2101-09.ap.freescale.net>
+References: <1383679282-4599-1-git-send-email-festevam@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:47488 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753174Ab3KFD2D (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Nov 2013 22:28:03 -0500
+Received: from mail-db9lp0251.outbound.messaging.microsoft.com ([213.199.154.251]:8978
+	"EHLO db9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753440Ab3KFI3k (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Nov 2013 03:29:40 -0500
+Content-Disposition: inline
+In-Reply-To: <1383679282-4599-1-git-send-email-festevam@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Rob Herring <rob.herring@calxeda.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-From: Rob Herring <rob.herring@calxeda.com>
+On Tue, Nov 05, 2013 at 05:21:22PM -0200, Fabio Estevam wrote:
+> From: Fabio Estevam <fabio.estevam@freescale.com>
+> 
+> mxs is a devicetree only platform, so there is no need to check whether we
+> are in dt or platform data case.
+> 
+> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 
-The pl061 driver has no real dependency on ARM, so remove the kconfig
-dependency.
-
-Signed-off-by: Rob Herring <rob.herring@calxeda.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
----
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a0471e6..0f04444 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -213,7 +213,7 @@ config GPIO_OCTEON
- 
- config GPIO_PL061
- 	bool "PrimeCell PL061 GPIO support"
--	depends on ARM && ARM_AMBA
-+	depends on ARM_AMBA
- 	select GENERIC_IRQ_CHIP
- 	help
- 	  Say yes here to support the PrimeCell PL061 GPIO device
--- 
-1.8.1.2
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
 
