@@ -1,88 +1,42 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH V6 3/3] drivers/rtc/rtc-as3722: add RTC driver
-Date: Tue, 5 Nov 2013 15:32:10 -0800
-Message-ID: <20131105153210.e4c93cf589fbbe46fcd831c1@linux-foundation.org>
-References: <1382356041-30973-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1382356041-30973-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: lee.jones@linaro.org, sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, Florian Lobmaier <florian.lobmaier@ams.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: [PATCH] gpio: pl061: don't depend on CONFIG_ARM
+Date: Tue,  5 Nov 2013 21:27:02 -0600
+Message-ID: <1383708422-20374-1-git-send-email-robherring2@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:47488 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753174Ab3KFD2D (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Nov 2013 22:28:03 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <rob.herring@calxeda.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Mon, 21 Oct 2013 17:17:21 +0530 Laxman Dewangan <ldewangan@nvidia.com> wrote:
+From: Rob Herring <rob.herring@calxeda.com>
 
-> The ams AS3722 is a compact system PMU suitable for mobile phones,
-> tablets etc.
-> 
-> Add a driver to support accessing the RTC found on the ams AS3722
-> PMIC using RTC framework.
-> 
-> ...
->
-> +static int as3722_rtc_probe(struct platform_device *pdev)
-> +{
-> +	struct as3722 *as3722 = dev_get_drvdata(pdev->dev.parent);
-> +	struct as3722_rtc *as3722_rtc;
-> +	int ret;
-> +
-> +	as3722_rtc = devm_kzalloc(&pdev->dev, sizeof(*as3722_rtc), GFP_KERNEL);
-> +	if (!as3722_rtc)
-> +		return -ENOMEM;
-> +
-> +	as3722_rtc->as3722 = as3722;
-> +	as3722_rtc->dev = &pdev->dev;
-> +	platform_set_drvdata(pdev, as3722_rtc);
-> +
-> +	/* Enable the RTC to make sure it is running. */
-> +	ret = as3722_update_bits(as3722, AS3722_RTC_CONTROL_REG,
-> +			AS3722_RTC_ON | AS3722_RTC_ALARM_WAKEUP_EN,
-> +			AS3722_RTC_ON | AS3722_RTC_ALARM_WAKEUP_EN);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "RTC_CONTROL reg write failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	device_init_wakeup(&pdev->dev, 1);
-> +
-> +	as3722_rtc->rtc = rtc_device_register("as3722", &pdev->dev,
-> +				&as3722_rtc_ops, THIS_MODULE);
+The pl061 driver has no real dependency on ARM, so remove the kconfig
+dependency.
 
-Could use devm_rtc_device_register() here.
+Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	if (IS_ERR(as3722_rtc->rtc)) {
-> +		ret = PTR_ERR(as3722_rtc->rtc);
-> +		dev_err(&pdev->dev, "RTC register failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	as3722_rtc->alarm_irq = platform_get_irq(pdev, 0);
-> +	dev_info(&pdev->dev, "RTC interrupt %d\n", as3722_rtc->alarm_irq);
-> +
-> +	ret = request_threaded_irq(as3722_rtc->alarm_irq, NULL,
-> +			as3722_alarm_irq, IRQF_ONESHOT | IRQF_EARLY_RESUME,
-> +			"rtc-alarm", as3722_rtc);
-
-devm_request_threaded_irq()?
-
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to request alarm IRQ %d: %d\n",
-> +				as3722_rtc->alarm_irq, ret);
-> +		goto scrub;
-> +	}
-> +	disable_irq(as3722_rtc->alarm_irq);
-
-Why is this necessary?
-
-Would it be safer to do this before the request_threaded_irq()?
-
-> +	return 0;
-> +scrub:
-> +	rtc_device_unregister(as3722_rtc->rtc);
-> +	return ret;
-> +}
-> +
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index a0471e6..0f04444 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -213,7 +213,7 @@ config GPIO_OCTEON
+ 
+ config GPIO_PL061
+ 	bool "PrimeCell PL061 GPIO support"
+-	depends on ARM && ARM_AMBA
++	depends on ARM_AMBA
+ 	select GENERIC_IRQ_CHIP
+ 	help
+ 	  Say yes here to support the PrimeCell PL061 GPIO device
+-- 
+1.8.1.2
 
