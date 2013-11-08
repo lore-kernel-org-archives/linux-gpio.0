@@ -1,88 +1,56 @@
 From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Subject: [PATCH 2/2] ARM: davinci: Fix number of resources passed to davinci_gpio_register() call
-Date: Fri,  8 Nov 2013 12:15:56 +0530
-Message-ID: <1383893156-28010-3-git-send-email-prabhakar.csengg@gmail.com>
-References: <1383893156-28010-1-git-send-email-prabhakar.csengg@gmail.com>
+Subject: [PATCH v5 0/7] gpio: daVinci: cleanup and feature enhancement
+Date: Fri,  8 Nov 2013 15:41:43 +0530
+Message-ID: <1383905510-31760-1-git-send-email-prabhakar.csengg@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:64064 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752830Ab3KHGqX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Nov 2013 01:46:23 -0500
-In-Reply-To: <1383893156-28010-1-git-send-email-prabhakar.csengg@gmail.com>
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:39301 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754852Ab3KHKMI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Nov 2013 05:12:08 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Prabhakar Lad <prabhakar.csengg@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
 
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+From: KV Sujith <sujithkv@ti.com>
 
-The davinci_gpio_register() function expects the number of
-resources as the second parameter, but size of resources
-was passed to it due to which it was causing unexpected
-behaviour. This patch fixes the same by passing the
-ARRAY_SIZE of resources.
+This patch series does the following
+1> Ports the driver to use irqdomain.
+2> Adds dt binding support for gpio-davinci.
+3> Adds DA850 dt support goio.
 
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
----
- arch/arm/mach-davinci/dm355.c  |    2 +-
- arch/arm/mach-davinci/dm365.c  |    2 +-
- arch/arm/mach-davinci/dm644x.c |    2 +-
- arch/arm/mach-davinci/dm646x.c |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Changes for v5:
+1: Fixed review comments pointed by Grygorii.
+2: Dropped the fixup patch
 
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index ef9ff1f..536ce52 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -906,7 +906,7 @@ static struct davinci_gpio_platform_data dm355_gpio_platform_data = {
- int __init dm355_gpio_register(void)
- {
- 	return davinci_gpio_register(dm355_gpio_resources,
--				     sizeof(dm355_gpio_resources),
-+				     ARRAY_SIZE(dm355_gpio_resources),
- 				     &dm355_gpio_platform_data);
- }
- /*----------------------------------------------------------------------*/
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 1511a06..9c96520 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -720,7 +720,7 @@ static struct davinci_gpio_platform_data dm365_gpio_platform_data = {
- int __init dm365_gpio_register(void)
- {
- 	return davinci_gpio_register(dm365_gpio_resources,
--				     sizeof(dm365_gpio_resources),
-+				     ARRAY_SIZE(dm365_gpio_resources),
- 				     &dm365_gpio_platform_data);
- }
- 
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 143a321..72a3aa7 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -792,7 +792,7 @@ static struct davinci_gpio_platform_data dm644_gpio_platform_data = {
- int __init dm644x_gpio_register(void)
- {
- 	return davinci_gpio_register(dm644_gpio_resources,
--				     sizeof(dm644_gpio_resources),
-+				     ARRAY_SIZE(dm644_gpio_resources),
- 				     &dm644_gpio_platform_data);
- }
- /*----------------------------------------------------------------------*/
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 2a73f29..d1b646c 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -769,7 +769,7 @@ static struct davinci_gpio_platform_data dm646x_gpio_platform_data = {
- int __init dm646x_gpio_register(void)
- {
- 	return davinci_gpio_register(dm646x_gpio_resources,
--				     sizeof(dm646x_gpio_resources),
-+				     ARRAY_SIZE(dm646x_gpio_resources),
- 				     &dm646x_gpio_platform_data);
- }
- /*----------------------------------------------------------------------*/
+This patch series is based on following fixup series
+http://us.generation-nt.com/answer/patch-0-2-davinci-gpio-fixes-help-212978272.html
+
+KV Sujith (3):
+  gpio: davinci: add OF support
+  ARM: davinci: da850: add GPIO DT node
+  ARM: davinci: da850 evm: add GPIO pinumux entries DT node
+
+Lad, Prabhakar (4):
+  gpio: davinci: remove unnecessary printk
+  gpio: davinci: use readl/writel instead of __raw_*
+  gpio: davinci: use irqdomain
+  gpio: davinci: remove unused variable intc_irq_num
+
+ .../devicetree/bindings/gpio/gpio-davinci.txt      |   39 +++++
+ arch/arm/boot/dts/da850-evm.dts                    |   20 +++
+ arch/arm/boot/dts/da850.dtsi                       |   14 ++
+ arch/arm/mach-davinci/da830.c                      |    1 -
+ arch/arm/mach-davinci/da850.c                      |    1 -
+ arch/arm/mach-davinci/dm355.c                      |    1 -
+ arch/arm/mach-davinci/dm365.c                      |    1 -
+ arch/arm/mach-davinci/dm644x.c                     |    1 -
+ arch/arm/mach-davinci/dm646x.c                     |    1 -
+ drivers/gpio/gpio-davinci.c                        |  170 +++++++++++++-------
+ include/linux/platform_data/gpio-davinci.h         |    3 +-
+ 11 files changed, 185 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+
 -- 
 1.7.9.5
 
