@@ -1,71 +1,56 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v5 0/7] gpio: daVinci: cleanup and feature enhancement
-Date: Mon, 11 Nov 2013 17:52:02 +0200
-Message-ID: <5280FD22.8060107@ti.com>
-References: <1383905510-31760-1-git-send-email-prabhakar.csengg@gmail.com>
+From: Gerlando Falauto <gerlando.falauto-SkAbAL50j+5BDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Mon, 11 Nov 2013 19:28:37 +0100
+Message-ID: <528121D5.40403@keymile.com>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de> <1521079.WSLhhfqBXl@lem-wkst-02> <52261BF0.4090106@wwwdotorg.org> <3144247.j2q6H0KWZx@lem-wkst-02> <52279524.8090006@wwwdotorg.org> <20130909161924.GT29403@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <1383905510-31760-1-git-send-email-prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DLOS <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130909161924.GT29403-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lars Poeschel <larsi-myOXECIRRCL4ajHJ1XSv27NAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Enric Balletbo i Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Balaji T K <balajitk-l0cyMroinI0@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jon
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Prabhakar Lad,
+Hi everyone,
 
-On 11/08/2013 12:11 PM, Prabhakar Lad wrote:
-> From: KV Sujith <sujithkv-l0cyMroinI0@public.gmane.org>
->
-> This patch series does the following
-> 1> Ports the driver to use irqdomain.
-> 2> Adds dt binding support for gpio-davinci.
-> 3> Adds DA850 dt support goio.
->
-> Changes for v5:
-> 1: Fixed review comments pointed by Grygorii.
-> 2: Dropped the fixup patch
->
-> This patch series is based on following fixup series
-> http://us.generation-nt.com/answer/patch-0-2-davinci-gpio-fixes-help-212978272.html
+[jumping in on an old discussion]
 
-Few comments to this series - the rest looks ok to me.
-  Hope it will pass review of bindings :P
+On 09/09/2013 06:19 PM, Mark Brown wrote:
+> On Wed, Sep 04, 2013 at 02:16:36PM -0600, Stephen Warren wrote:
+>> On 09/04/2013 03:05 AM, Lars Poeschel wrote:
+>
+>>> The driver that tries to use the GPIO requested by this patch before HAS to
+>>> fail. This is exactly the intention of this patch. We don't want the GPIO to
+>>> be requested any more, if it is used as an interrupt pin.
+>
+>> That will break existing drivers. There are drivers that request the
+>> same GPIO and IRQ. IIRC, the SDHCI CD (Card Detect) GPIO is requested
+>> that way.
+>
+> Yes, plus input devices and audio jack detection among others.  This
+> pattern is very common if the GPIO is actually being used as a GPIO, an
+> edge triggered interrupt is used to flag when something happens and the
+> state is determined by reading the GPIO state (often with some
+> debounce).
 
->
-> KV Sujith (3):
->    gpio: davinci: add OF support
->    ARM: davinci: da850: add GPIO DT node
->    ARM: davinci: da850 evm: add GPIO pinumux entries DT node
->
-> Lad, Prabhakar (4):
->    gpio: davinci: remove unnecessary printk
->    gpio: davinci: use readl/writel instead of __raw_*
->    gpio: davinci: use irqdomain
->    gpio: davinci: remove unused variable intc_irq_num
->
->   .../devicetree/bindings/gpio/gpio-davinci.txt      |   39 +++++
->   arch/arm/boot/dts/da850-evm.dts                    |   20 +++
->   arch/arm/boot/dts/da850.dtsi                       |   14 ++
->   arch/arm/mach-davinci/da830.c                      |    1 -
->   arch/arm/mach-davinci/da850.c                      |    1 -
->   arch/arm/mach-davinci/dm355.c                      |    1 -
->   arch/arm/mach-davinci/dm365.c                      |    1 -
->   arch/arm/mach-davinci/dm644x.c                     |    1 -
->   arch/arm/mach-davinci/dm646x.c                     |    1 -
->   drivers/gpio/gpio-davinci.c                        |  170 +++++++++++++-------
->   include/linux/platform_data/gpio-davinci.h         |    3 +-
->   11 files changed, 185 insertions(+), 67 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->
-Regards,
-- grygorii
+I actually came across this thread while looking for an answer to the 
+following (apparently trivial) question:
+
+If you were to write a new driver & binding, what would be, in general, 
+the recommended DT binding for a cascade interrupt controller (or any 
+other peripheral, for that matter), which is connected through a GPIO 
+(to be used as IRQ)?
+
+a) Through gpios = <&gpio0 N>
+b) through interrupt-parent = <&gpio0> & interrupts <N 
+IRQ_TYPE_LEVEL_LOW>, or
+c) both?
+
+Thanks!
+Gerlando
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
