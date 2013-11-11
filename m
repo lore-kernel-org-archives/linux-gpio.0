@@ -1,39 +1,49 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v5 1/7] gpio: davinci: remove unnecessary printk
-Date: Mon, 11 Nov 2013 21:09:34 +0530
-Message-ID: <CA+V-a8tD0NVEij6qXZ6iYe96QwpvTKjcmdBv0S4qzwRkCzDtjw@mail.gmail.com>
-References: <1383905510-31760-1-git-send-email-prabhakar.csengg@gmail.com>
- <1383905510-31760-2-git-send-email-prabhakar.csengg@gmail.com> <527D05BA.3000008@ti.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 0/2] DaVinci: GPIO: fixes
+Date: Mon, 11 Nov 2013 17:43:21 +0200
+Message-ID: <5280FB19.4020204@ti.com>
+References: <1383893156-28010-1-git-send-email-prabhakar.csengg@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:53819 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753515Ab3KKPj4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Nov 2013 10:39:56 -0500
-In-Reply-To: <527D05BA.3000008@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <1383893156-28010-1-git-send-email-prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DLOS <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, LDOC <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
 
-Hi Grygorii,
+Hi Sekhar, Prabhakar Lad
 
-Thanks for the review.
+On 11/08/2013 08:45 AM, Prabhakar Lad wrote:> From: "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> 
+> This patch series fixes gpio driver regestration
+> and offset check for unbanked gpio.
+> 
+> Lad, Prabhakar (2):
+>    gpio: davinci: Fix a check for unbanked gpio
+>    ARM: davinci: Fix number of resources passed to
+>      davinci_gpio_register() call
 
-On Fri, Nov 8, 2013 at 9:09 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 11/08/2013 12:11 PM, Prabhakar Lad wrote:
->>
->> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
->>
->> the devm_*() helper prints error messages in case of
->> errors no need to do the same in the driver.
->
->
-> Pls, drop it - devm_clk_get() doesn't always print error messages
->
-OK will drop in the next version.
+I've verified both patches - looks ok. 
+Patch 1 - restores unbanked GPIO IRQs functionality
+Patch 2 - allows to register GPIO Platform devices and boot without issues.
 
-Regards,
---Prabhakar Lad
+Could we move forward with these patches?
+
+> 
+>   arch/arm/mach-davinci/dm355.c  |    2 +-
+>   arch/arm/mach-davinci/dm365.c  |    2 +-
+>   arch/arm/mach-davinci/dm644x.c |    2 +-
+>   arch/arm/mach-davinci/dm646x.c |    2 +-
+>   drivers/gpio/gpio-davinci.c    |    4 +++-
+>   5 files changed, 7 insertions(+), 5 deletions(-)
+> 
