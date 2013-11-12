@@ -1,55 +1,70 @@
-From: Ben Gamari <bgamari.foss@gmail.com>
-Subject: Re: [PATCH v3] gpio: add export with name from dts
-Date: Mon, 11 Nov 2013 21:36:50 -0500
-Message-ID: <874n7i4a7x.fsf@gmail.com>
-References: <CAAVeFuJCamVumTphu-Wv2DSgepwoPgYXnCGdK=L8oem-3-K+gA@mail.gmail.com>
+From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio
+Date: Tue, 12 Nov 2013 11:48:19 +0530
+Message-ID: <5281C82B.9090402@ti.com>
+References: <1383893156-28010-1-git-send-email-prabhakar.csengg@gmail.com>
+	<1383893156-28010-2-git-send-email-prabhakar.csengg@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:60424 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751385Ab3KLCg4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Nov 2013 21:36:56 -0500
-Received: by mail-qc0-f171.google.com with SMTP id s13so1092163qcv.30
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Nov 2013 18:36:55 -0800 (PST)
-In-Reply-To: <CAAVeFuJCamVumTphu-Wv2DSgepwoPgYXnCGdK=L8oem-3-K+gA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <1383893156-28010-2-git-send-email-prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DLOS <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
---=-=-=
-Content-Type: text/plain
+On Friday 08 November 2013 12:15 PM, Prabhakar Lad wrote:
+> From: "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> 
+> This patch fixes a check for offset in gpio_to_irq_unbanked()
+> and also assigns gpio_irq, gpio_unbanked of chips[0] to
+> appropriate values which is used in gpio_to_irq_unbanked()
+> function.
+> 
+> Reported-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+> Signed-off-by: Lad, Prabhakar <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-On Thu, Oct 17, 2013 at 6:03 PM, Alexandre Courbot wrote:
-> But maybe I'm missing your point - could you describe a concrete
-> use-case for this feature that can *not* be achieved using
-> gpio_export_with_link()?
+You should note explicitly that this patch fixes broken unbanked IRQ
+support. You mostly just described what you are doing.
 
-For what it's worth, it seems that the gpio-of-helper[1] driver found in
-BeagleBoard kernels targets a use-case similar to that intended by this
-patch.
+I will fixup while committing.
 
-Cheers,
+Thanks,
+Sekhar
 
-- Ben
-
-
-[1] https://github.com/beagleboard/meta-beagleboard/blob/master/common-bsp/recipes-kernel/linux/linux-mainline-3.8/not-capebus/0182-gpio-Introduce-GPIO-OF-helper.patch
-
---=-=-=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iQEcBAEBAgAGBQJSgZRCAAoJEErkyLZmeNiDPIAIALWDNEXfWJv+TCGIy0mZDEi+
-/Nd4WtkwnwFI44GMhS2//9ROrsBG1u4mmra2m2cbvVdvtrewl3Ow/ZV/IQ7imv35
-2fFU/Fa2+CvBKqDzi12i7b02O+KZtnEQFOEv/6Tw0tRDIuXeUy9POgljcLPgYSyR
-JUpe2FU9oyRzWzsZeGhtt+I6h9ROXfTsz/S4cLXJFlw56N6RBDkOJLwjj7Umn3Pl
-DlX7kbM7ZgDlSg1LyDV0caznlge97gBzqRyOoPlabbkSUTjW6DxPvOo/DQRYQd7t
-Fg/j0VBa9bMypkotzWU31rMbwM6vhvc22s3nIwgRi3yvBsfT2sTog6MgD5jogA4=
-=7a4f
------END PGP SIGNATURE-----
---=-=-=--
+> ---
+>  drivers/gpio/gpio-davinci.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index 8847adf..84be701 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -327,7 +327,7 @@ static int gpio_to_irq_unbanked(struct gpio_chip *chip, unsigned offset)
+>  	 * NOTE:  we assume for now that only irqs in the first gpio_chip
+>  	 * can provide direct-mapped IRQs to AINTC (up to 32 GPIOs).
+>  	 */
+> -	if (offset < d->irq_base)
+> +	if (offset < d->gpio_unbanked)
+>  		return d->gpio_irq + offset;
+>  	else
+>  		return -ENODEV;
+> @@ -419,6 +419,8 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+>  
+>  		/* pass "bank 0" GPIO IRQs to AINTC */
+>  		chips[0].chip.to_irq = gpio_to_irq_unbanked;
+> +		chips[0].gpio_irq = bank_irq;
+> +		chips[0].gpio_unbanked = pdata->gpio_unbanked;
+>  		binten = BIT(0);
+>  
+>  		/* AINTC handles mask/unmask; GPIO handles triggering */
+> 
