@@ -1,32 +1,46 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH] gpio/lynxpoint: add new ACPI ID
-Date: Tue, 12 Nov 2013 11:52:32 +0200
-Message-ID: <1384249952-10085-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpio: interrupt consistency check for OF GPIO IRQs
+Date: Tue, 12 Nov 2013 11:29:36 +0100
+Message-ID: <CACRpkdZpwwoM3h5_rXOwbN7cC72ruvTio6Z1hzMhLCDzh5VeKQ@mail.gmail.com>
+References: <1377526030-32024-1-git-send-email-larsi@wh2.tu-dresden.de>
+	<1521079.WSLhhfqBXl@lem-wkst-02>
+	<52261BF0.4090106@wwwdotorg.org>
+	<3144247.j2q6H0KWZx@lem-wkst-02>
+	<52279524.8090006@wwwdotorg.org>
+	<20130909161924.GT29403@sirena.org.uk>
+	<528121D5.40403@keymile.com>
+	<528127B2.80109@wwwdotorg.org>
+	<52812D3A.2070107@keymile.com>
+	<52813100.1060500@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:35873 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751807Ab3KLK3i (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Nov 2013 05:29:38 -0500
+Received: by mail-wi0-f182.google.com with SMTP id ez12so3459501wid.9
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2013 02:29:37 -0800 (PST)
+In-Reply-To: <52813100.1060500@wwwdotorg.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Gerlando Falauto <gerlando.falauto@keymile.com>, Mark Brown <broonie@kernel.org>, Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lars Poeschel <larsi@wh2.tu-dresden.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Balaji T K <balajitk@ti.com>, Tony Lindgren <tony@atomide.com>, Jon
 
-Newer Intel PCHs have the same GPIO controller than Haswell but the ACPI ID
-is different. Add this ID to the driver supported IDs list.
+On Mon, Nov 11, 2013 at 8:33 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 11/11/2013 12:17 PM, Gerlando Falauto wrote:
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/gpio/gpio-lynxpoint.c | 1 +
- 1 file changed, 1 insertion(+)
+>> Thanks for your answer. So it should be the parent driver to proactively
+>> configure the GPIO as input, active high etc..., when an IRQ for its
+>> GPIOs is requested, right?
+>
+> That was the conclusion of this thread, or a similar thread, yes.
 
-diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-index 41b5913ddabe..c3d9999bcdb3 100644
---- a/drivers/gpio/gpio-lynxpoint.c
-+++ b/drivers/gpio/gpio-lynxpoint.c
-@@ -437,6 +437,7 @@ static const struct dev_pm_ops lp_gpio_pm_ops = {
- 
- static const struct acpi_device_id lynxpoint_gpio_acpi_match[] = {
- 	{ "INT33C7", 0 },
-+	{ "INT3437", 0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, lynxpoint_gpio_acpi_match);
--- 
-1.8.4.2
+Yepps second that.
+
+And we added an API to that you can flag a GPIO as being
+in use by an IRQ using gpio_lock_as_irq() from your
+irq_chip callbacks.
+
+Yours,
+Linus Walleij
