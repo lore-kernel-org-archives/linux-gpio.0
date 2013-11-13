@@ -1,58 +1,42 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [PATCH] gpiolib: append SFI helpers for GPIO API
-Date: Wed, 13 Nov 2013 09:41:00 -0800
-Message-ID: <5283B9AC.8010705@linux.intel.com>
-References: <1381979015-28980-1-git-send-email-david.a.cohen@linux.intel.com>  <1382013695.29062.141.camel@smile>  <CACRpkdZG=Sa92qGqK4Jt-L1AVRmremK5tgn8O5-5JccUsZDHTA@mail.gmail.com> <1384345006.14845.56.camel@smile>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Michal Nazarewicz <mpn@google.com>
+Subject: [PATCH] gpio: fix memory leak in error path
+Date: Wed, 13 Nov 2013 21:20:39 +0100
+Message-ID: <1384374039-18795-1-git-send-email-mpn@google.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:47836 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755325Ab3KMRga (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 13 Nov 2013 12:36:30 -0500
-In-Reply-To: <1384345006.14845.56.camel@smile>
+Received: from mail-ee0-f51.google.com ([74.125.83.51]:37663 "EHLO
+	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750919Ab3KMUVE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Nov 2013 15:21:04 -0500
+Received: by mail-ee0-f51.google.com with SMTP id t10so449326eei.38
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Nov 2013 12:21:02 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Len Brown <lenb@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/13/2013 04:16 AM, Andy Shevchenko wrote:
-> On Tue, 2013-11-12 at 19:55 +0100, Linus Walleij wrote:
->> On Thu, Oct 17, 2013 at 2:41 PM, Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com> wrote:
->>> On Wed, 2013-10-16 at 20:03 -0700, David Cohen wrote:
->>>> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>>>
->>>> To support some (legacy) firmwares and platforms let's make life easier for
->>>> their customers.
->>>
->>>> +int sfi_get_gpio_by_name(const char *name)
->>>> +{
->>>> +     struct sfi_gpio_table_entry *pentry = sfi_gpio_table;
->>>> +     int i;
->>>> +
->>>> +     if (!pentry)
->>>> +             return -1;
->>>
->>> ^^^^ It seems an old version.
->>>
->>> New version was published while ago and even has an ACK from Linus:
->>>
->>> http://www.spinics.net/lists/kernel/msg1545960.html
->>
->> So what is happening to this thing?
->
-> Actually David now coordinates work done for Medfield & Co.
-> Perhaps he is not absent and could answer fast to this.
->
->> Is there some newer patch I should be merging?
->
-> I'm pretty sure there is no newest version of patch.
+From: Michal Nazarewicz <mina86@mina86.com>
 
-Yeah, there is no newer version.
-Linus, you're free to stick with the version pointed out by Andy on
-this thread:
-http://www.spinics.net/lists/kernel/msg1545960.html
+Signed-off-by: Michal Nazarewicz <mina86@mina86.com>
+---
+ drivers/gpio/gpiolib.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Br, David
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 4e10b10..068011c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1341,8 +1341,10 @@ int gpiochip_add_pingroup_range(struct gpio_chip *chip,
+ 	ret = pinctrl_get_group_pins(pctldev, pin_group,
+ 					&pin_range->range.pins,
+ 					&pin_range->range.npins);
+-	if (ret < 0)
++	if (ret < 0) {
++		kfree(pin_range);
+ 		return ret;
++	}
+ 
+ 	pinctrl_add_gpio_range(pctldev, &pin_range->range);
+ 
+-- 
+1.8.4.1
+
