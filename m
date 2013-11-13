@@ -1,44 +1,57 @@
-From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
-Subject: Re: [PATCH v3] gpio: add export with name from dts
-Date: Wed, 13 Nov 2013 10:15:19 +0100
-Message-ID: <52834327.9060308@aksignal.cz>
-References: <874n7i4a7x.fsf@gmail.com>
-Reply-To: jiri.prchal@aksignal.cz
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpiolib: append SFI helpers for GPIO API
+Date: Wed, 13 Nov 2013 14:16:46 +0200
+Message-ID: <1384345006.14845.56.camel@smile>
+References: <1381979015-28980-1-git-send-email-david.a.cohen@linux.intel.com>
+	 <1382013695.29062.141.camel@smile>
+	 <CACRpkdZG=Sa92qGqK4Jt-L1AVRmremK5tgn8O5-5JccUsZDHTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from port.iol.cz ([194.228.1.9]:62008 "EHLO port.iol.cz"
+Received: from mga02.intel.com ([134.134.136.20]:61273 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758875Ab3KMJPY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 13 Nov 2013 04:15:24 -0500
-In-Reply-To: <874n7i4a7x.fsf@gmail.com>
+	id S1758927Ab3KMMRM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 13 Nov 2013 07:17:12 -0500
+In-Reply-To: <CACRpkdZG=Sa92qGqK4Jt-L1AVRmremK5tgn8O5-5JccUsZDHTA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Gamari <bgamari.foss@gmail.com>, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Cohen <david.a.cohen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Len Brown <lenb@kernel.org>
 
-Hi Ben,
-probably it's what I' trying to do.
-Why it is not in master tree?
-Please, send me some example of DT usage.
-Thanks
-Jiri
+On Tue, 2013-11-12 at 19:55 +0100, Linus Walleij wrote:
+> On Thu, Oct 17, 2013 at 2:41 PM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Wed, 2013-10-16 at 20:03 -0700, David Cohen wrote:
+> >> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >>
+> >> To support some (legacy) firmwares and platforms let's make life easier for
+> >> their customers.
+> >
+> >> +int sfi_get_gpio_by_name(const char *name)
+> >> +{
+> >> +     struct sfi_gpio_table_entry *pentry = sfi_gpio_table;
+> >> +     int i;
+> >> +
+> >> +     if (!pentry)
+> >> +             return -1;
+> >
+> > ^^^^ It seems an old version.
+> >
+> > New version was published while ago and even has an ACK from Linus:
+> >
+> > http://www.spinics.net/lists/kernel/msg1545960.html
+> 
+> So what is happening to this thing?
 
-Dne 12.11.2013 03:36, Ben Gamari napsal(a):
-> On Thu, Oct 17, 2013 at 6:03 PM, Alexandre Courbot wrote:
->> But maybe I'm missing your point - could you describe a concrete
->> use-case for this feature that can *not* be achieved using
->> gpio_export_with_link()?
->
-> For what it's worth, it seems that the gpio-of-helper[1] driver found in
-> BeagleBoard kernels targets a use-case similar to that intended by this
-> patch.
->
-> Cheers,
->
-> - Ben
->
->
-> [1] https://github.com/beagleboard/meta-beagleboard/blob/master/common-bsp/recipes-kernel/linux/linux-mainline-3.8/not-capebus/0182-gpio-Introduce-GPIO-OF-helper.patch
->
+Actually David now coordinates work done for Medfield & Co.
+Perhaps he is not absent and could answer fast to this.
+
+> Is there some newer patch I should be merging?
+
+I'm pretty sure there is no newest version of patch.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
+
