@@ -1,76 +1,138 @@
-From: Ben Gamari <bgamari.foss@gmail.com>
-Subject: Re: [PATCH v3] gpio: add export with name from dts
-Date: Wed, 13 Nov 2013 10:20:18 -0500
-Message-ID: <871u2k49cd.fsf@gmail.com>
-References: <CACRpkdbG9emZg-6oOO8MgwUgCkqQB6+QqYuNAOo-QN0e+wYq2g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH] gpio: rcar: Support both edge trigger with DT
+Date: Wed, 13 Nov 2013 17:26:23 +0100
+Message-ID: <1384359983-29178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qa0-f42.google.com ([209.85.216.42]:36268 "EHLO
-	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754418Ab3KMPUY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Nov 2013 10:20:24 -0500
-Received: by mail-qa0-f42.google.com with SMTP id ii20so3851526qab.15
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Nov 2013 07:20:23 -0800 (PST)
-In-Reply-To: <CACRpkdbG9emZg-6oOO8MgwUgCkqQB6+QqYuNAOo-QN0e+wYq2g@mail.gmail.com>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:35417 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756252Ab3KMQZu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Nov 2013 11:25:50 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, jiri.prchal@aksignal.cz
-Cc: linux-gpio@vger.kernel.org
+To: linux-sh@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>
 
---=-=-=
-Content-Type: text/plain
+Some versions of the R-Car GPIO controller support triggering on both
+edges of the input signal. Whether this capability is supported is
+currently specified in platform data. R-Car GPIO devices instantiated
+from the device tree have the capability turned off even when the
+hardware supports it.
 
+To fix this, add DT match data support to the driver, initialize both
+edge trigger support from match data and enable both edge trigger in
+r8a7790 and r8a7791 match data.
 
-Linus Walleij wrote,
-> I think what Mark is saying is that you should not define a new node
-> for exports, but instead use the node for the gpiochip and extend
-> those existing gpiochip bindings, if you want to do this.
->
-What might this look like? Should each exported pin have a node under
-the gpio-controller? If we want to allow for pins to be exported to
-userspace, a name alone is not sufficient; we also need to provide the
-allowed directions. I think this precludes the use of a plain /aliases
-node.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpio/gpio-rcar.c | 56 +++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 43 insertions(+), 13 deletions(-)
 
-Perhaps something like this (please excuse my ignorance of devicetree
-norms)?
+The patch has been tested on a Lager board. Simon, I've understood that you
+need this to add GPIO keys support to the Lager DT. Would you be able to test
+that ?
 
-	gpio1: gpio-controller@1400 {
-		#gpio-cells = <2>;
-		compatible = "fsl,qe-pario-bank-a", "fsl,qe-pario-bank";
-		reg = <0x1400 0x18>;
-		gpio-controller;
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 6038966..68b0940 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -283,7 +283,34 @@ static struct irq_domain_ops gpio_rcar_irq_domain_ops = {
+ 	.map	= gpio_rcar_irq_domain_map,
+ };
+ 
+-static void gpio_rcar_parse_pdata(struct gpio_rcar_priv *p)
++struct gpio_rcar_info {
++	bool has_both_edge_trigger;
++};
++
++static const struct of_device_id gpio_rcar_of_table[] = {
++	{
++		.compatible = "renesas,gpio-r8a7790",
++		.data = (void *)&(const struct gpio_rcar_info) {
++			.has_both_edge_trigger = true,
++		},
++	}, {
++		.compatible = "renesas,gpio-r8a7791",
++		.data = (void *)&(const struct gpio_rcar_info) {
++			.has_both_edge_trigger = true,
++		},
++	}, {
++		.compatible = "renesas,gpio-rcar",
++		.data = (void *)&(const struct gpio_rcar_info) {
++			.has_both_edge_trigger = false,
++		},
++	}, {
++		/* Terminator */
++	},
++};
++
++MODULE_DEVICE_TABLE(of, gpio_rcar_of_table);
++
++static int gpio_rcar_parse_pdata(struct gpio_rcar_priv *p)
+ {
+ 	struct gpio_rcar_config *pdata = dev_get_platdata(&p->pdev->dev);
+ 	struct device_node *np = p->pdev->dev.of_node;
+@@ -293,11 +320,21 @@ static void gpio_rcar_parse_pdata(struct gpio_rcar_priv *p)
+ 	if (pdata) {
+ 		p->config = *pdata;
+ 	} else if (IS_ENABLED(CONFIG_OF) && np) {
++		const struct of_device_id *match;
++		const struct gpio_rcar_info *info;
++
++		match = of_match_node(gpio_rcar_of_table, np);
++		if (!match)
++			return -EINVAL;
++
++		info = match->data;
++
+ 		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0,
+ 						       &args);
+ 		p->config.number_of_pins = ret == 0 ? args.args[2]
+ 					 : RCAR_MAX_GPIO_PER_BANK;
+ 		p->config.gpio_base = -1;
++		p->config.has_both_edge_trigger = info->has_both_edge_trigger;
+ 	}
+ 
+ 	if (p->config.number_of_pins == 0 ||
+@@ -307,6 +344,8 @@ static void gpio_rcar_parse_pdata(struct gpio_rcar_priv *p)
+ 			 p->config.number_of_pins, RCAR_MAX_GPIO_PER_BANK);
+ 		p->config.number_of_pins = RCAR_MAX_GPIO_PER_BANK;
+ 	}
++
++	return 0;
+ }
+ 
+ static int gpio_rcar_probe(struct platform_device *pdev)
+@@ -329,7 +368,9 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	spin_lock_init(&p->lock);
+ 
+ 	/* Get device configuration from DT node or platform data. */
+-	gpio_rcar_parse_pdata(p);
++	ret = gpio_rcar_parse_pdata(p);
++	if (ret < 0)
++		return ret;
+ 
+ 	platform_set_drvdata(pdev, p);
+ 
+@@ -434,17 +475,6 @@ static int gpio_rcar_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_OF
+-static const struct of_device_id gpio_rcar_of_table[] = {
+-	{
+-		.compatible = "renesas,gpio-rcar",
+-	},
+-	{ },
+-};
+-
+-MODULE_DEVICE_TABLE(of, gpio_rcar_of_table);
+-#endif
+-
+ static struct platform_driver gpio_rcar_device_driver = {
+ 	.probe		= gpio_rcar_probe,
+ 	.remove		= gpio_rcar_remove,
+-- 
+Regards,
 
-                pin_a: gpio {
-                          gpio-name = "pin-a";
-                          gpio = <&gpio1 2 0>;
-                          output;
-                          init-high;
-                };
-	};
+Laurent Pinchart
 
-One issue with this is the redundancy of specifying both the
-gpio-controller in the `gpio` attribute and by virtue of it being a
-child of the controller. Other suggestions?
-
-Cheers,
-
-- Ben
-
---=-=-=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iQEcBAEBAgAGBQJSg5iyAAoJEErkyLZmeNiD184H/2Nl5bWE6NlttdwMShV7eUCg
-xpwBTWe2XBHS6lKQnb7gPn9I3H9twW7oXV3Jf2inroapz4XTUxMPTeFHV7camTH9
-NnHG0OY9iiBwKTGVj52ZojPZyKcWhzddYqkq9UxtDV6sWjSDo54bZJjkqBxwm48d
-Wulrp3mploMIynObTHlGzJ+TIb9NmC1hSXUQit1/fIivhqi1MDoGTYcfcsjc1mTm
-u6qmrlcZ2YHxYfdwBOH9ii4g3R4JVX1X8mScIu+iGXrYLS3eBfIoex32bY2saJVM
-d32YVr6QFlE5345UPIJImy+yT9iQF7KNYWD/8RUi8J6gy5sD2RcG3QqVs4MjDXU=
-=sg7t
------END PGP SIGNATURE-----
---=-=-=--
