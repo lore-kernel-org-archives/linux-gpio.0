@@ -1,34 +1,99 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH] gpio: rcar: Support both edge trigger with DT
-Date: Thu, 14 Nov 2013 15:12:46 +0900
-Message-ID: <CANqRtoRhHhWp0zDcc8jN3eqV=O-=4uBG_a9Xb1-+Lk4eEiZoiw@mail.gmail.com>
-References: <1384359983-29178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 5/8] gpio: twl4030: Fix regression for twl gpio output
+Date: Thu, 14 Nov 2013 11:45:51 +0200
+Message-ID: <52849BCF.6060203@ti.com>
+References: <1384396537-3486-1-git-send-email-tony@atomide.com> <1384396537-3486-6-git-send-email-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1384359983-29178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: SH-Linux <linux-sh@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:37332 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752028Ab3KNJqO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 14 Nov 2013 04:46:14 -0500
+In-Reply-To: <1384396537-3486-6-git-send-email-tony@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Thu, Nov 14, 2013 at 1:26 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Some versions of the R-Car GPIO controller support triggering on both
-> edges of the input signal. Whether this capability is supported is
-> currently specified in platform data. R-Car GPIO devices instantiated
-> from the device tree have the capability turned off even when the
-> hardware supports it.
->
-> To fix this, add DT match data support to the driver, initialize both
-> edge trigger support from match data and enable both edge trigger in
-> r8a7790 and r8a7791 match data.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Hi Tony,
+
+On 11/14/2013 04:35 AM, Tony Lindgren wrote:
+> Commit c111feabe2e2 (gpio: twl4030: Cache the direction and output
+> states in private data) improved things in general, but caused a
+> regression for setting the GPIO output direction.
+>=20
+> The change reorganized twl_direction_out() and twl_set() and swapped
+> the function names around in the process. While doing that, a bug got
+> introduced that's not obvious while reading the patch as it appears
+> as no change to the code.
+>=20
+> The bug is we now call function twl4030_set_gpio_dataout() twice in
+> both twl_direction_out() and twl_set(). Instead, we should first
+> call twl_direction_out() in twl_direction_out() followed by
+> twl4030_set_gpio_dataout() in twl_set().
+>=20
+> This regression probably has gone unnoticed for a long time as the
+> bootloader may have set the GPIO direction properly in many cases.
+> This fixes at least the LCD panel not turning on omap3 LDP for
+> example.
+
+Thanks for catching this. I have a recollection that I have tested the =
+GPIO
+and it appeared to be working fine..
+
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 > ---
->  drivers/gpio/gpio-rcar.c | 56 +++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 43 insertions(+), 13 deletions(-)
+>=20
+> If this looks OK, I'd like to merge this as a fix via arm-soc tree
+> along with the other patches in this series as my later patches
+> depend on patches in this series.
+>=20
+> ---
+>  drivers/gpio/gpio-twl4030.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.=
+c
+> index 0c7e891..5738d5a 100644
+> --- a/drivers/gpio/gpio-twl4030.c
+> +++ b/drivers/gpio/gpio-twl4030.c
+> @@ -354,17 +354,18 @@ static void twl_set(struct gpio_chip *chip, uns=
+igned offset, int value)
+>  static int twl_direction_out(struct gpio_chip *chip, unsigned offset=
+, int value)
+>  {
+>  	struct gpio_twl4030_priv *priv =3D to_gpio_twl4030(chip);
+> +	int ret =3D -EINVAL;
+> =20
+>  	mutex_lock(&priv->mutex);
+>  	if (offset < TWL4030_GPIO_MAX)
+> -		twl4030_set_gpio_dataout(offset, value);
+> +		ret =3D twl4030_set_gpio_direction(offset, 0);
+> =20
+>  	priv->direction |=3D BIT(offset);
+>  	mutex_unlock(&priv->mutex);
+> =20
+>  	twl_set(chip, offset, value);
+> =20
+> -	return 0;
+> +	return ret;
+>  }
+> =20
+>  static int twl_to_irq(struct gpio_chip *chip, unsigned offset)
+>=20
 
-Looks fine to me, thanks!
 
-Acked-by: Magnus Damm <damm@opensource.se>
+--=20
+P=E9ter
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
