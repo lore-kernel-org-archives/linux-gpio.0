@@ -1,58 +1,54 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 5/8] gpio: twl4030: Fix regression for twl gpio output
-Date: Thu, 14 Nov 2013 09:37:01 -0800
-Message-ID: <20131114173701.GG10317@atomide.com>
-References: <1384396537-3486-1-git-send-email-tony@atomide.com>
- <1384396537-3486-6-git-send-email-tony@atomide.com>
- <52849BCF.6060203@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <52849BCF.6060203@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: carpeting95087@gmail.com
+Subject: Re: Guaranteed Top 10 Google Placements mail-archive.com In 100 Days
+Date: Fri, 15 Nov 2013 01:33:41 +0530
+Message-ID: <52852c9b.ea42420a.076a.32e1@mx.google.com>
+Reply-To: DIANA68371@gmail.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:45417 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754761Ab3KNUDl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Nov 2013 15:03:41 -0500
+Received: by mail-pa0-f50.google.com with SMTP id kp14so962694pab.37
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2013 12:03:40 -0800 (PST)
+Received: from localhost.localdomain ([124.253.29.188])
+        by mx.google.com with ESMTPSA id i10sm872431pat.11.2013.11.14.12.03.36
+        for <linux-gpio@vger.kernel.org>
+        (version=TLSv1 cipher=RC4-SHA bits=128/128);
+        Thu, 14 Nov 2013 12:03:39 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-* Peter Ujfalusi <peter.ujfalusi@ti.com> [131114 01:46]:
-> Hi Tony,
-> 
-> On 11/14/2013 04:35 AM, Tony Lindgren wrote:
-> > Commit c111feabe2e2 (gpio: twl4030: Cache the direction and output
-> > states in private data) improved things in general, but caused a
-> > regression for setting the GPIO output direction.
-> > 
-> > The change reorganized twl_direction_out() and twl_set() and swapped
-> > the function names around in the process. While doing that, a bug got
-> > introduced that's not obvious while reading the patch as it appears
-> > as no change to the code.
-> > 
-> > The bug is we now call function twl4030_set_gpio_dataout() twice in
-> > both twl_direction_out() and twl_set(). Instead, we should first
-> > call twl_direction_out() in twl_direction_out() followed by
-> > twl4030_set_gpio_dataout() in twl_set().
-> > 
-> > This regression probably has gone unnoticed for a long time as the
-> > bootloader may have set the GPIO direction properly in many cases.
-> > This fixes at least the LCD panel not turning on omap3 LDP for
-> > example.
-> 
-> Thanks for catching this. I have a recollection that I have tested the GPIO
-> and it appeared to be working fine..
+Hello Sir / Mam,
 
-Yes it probably worked fine if the bootloader set the direction :)
-This is cc stable kind of patch for sure.
+We would like to have a chance to work on your website and get it positioned top 10 on major search engines around the world ( Google & Bing ). We are presently working with 500+ clients world wide and we have made sure all our clients rank top 10 for their best keywords. None of our clients have been caught in any of the recent google updates. We only use ethical white hat methods to deliver rankings. Our search engine packages include both onsite & off optimization, we provide complete SEO solution to our clients and not just link building packages.
 
-Regards,
+We understand there are many SEO Scam companies mailing you each day over and over again and I am also sure you have been robbed off a few times in past with no results at all. To make sure you we show you our WORTH, we have launched 15 DAY FREE SEO TRIAL service. We want to build your faith in our service and make sure you see results before paying for our service.
 
-Tony
+Is 15 days Enough time to deliver results ?
+
+15 days is good enough a time to show you huge movements in rankings for all your keywords. We start with A) choosing the best keywords for your website, B)  Approve a final list of keywords, C) Make onsite changes D) Build links for your website. If in these 15 days you are not happy with our performance, you can cancel or decide to opt-out. You will not be billed a single dime for these 15 days.
+
+Post Trial Pricing & Package
+
+In the 15 days trial, we only work for 10 keywords so that we can show best possible results in the time span. Once the trial is over you pick one of the packages listed below :
+
+Package A ) $99 / month (10 keywords optimized ) Package B ) $149 / month ( 20 keywords optimized ) Package C ) $199 / month ( 30 keywords optimized )
+
+To Sign up for our free trial email us back with the information below so we can send you our sign up link.
+
+1) " Website You Want To Optimize "
+2) Keywords ( Optional )
+3) SEO Done Before ( Yes / No )
+
+Looking forward working with you, let us know if you would like to have more information about our company and procedures.
+Regards
+
+Vince G
+SEO Manager : T.O.B
+7 B Green Avenue, Amritsar Punjab
+
+----------------------------------------------------------------------------------------------------------------
+
+
+Our email above is not intended to waste your time or fill your inbox with spam. If you would not like to hear from us, email us back with NOT INTERESTED. We will never email you again.
