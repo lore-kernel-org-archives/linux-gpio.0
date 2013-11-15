@@ -1,52 +1,136 @@
 From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: [PATCH 2/9] ARM: locomo: don't clobber chip data for chained irq
-Date: Fri, 15 Nov 2013 12:47:53 +0400
-Message-ID: <1384505280-25389-3-git-send-email-dbaryshkov@gmail.com>
+Subject: [PATCH 3/9] ARM: sa1100: switch to MULTI_IRQ_HANDLER
+Date: Fri, 15 Nov 2013 12:47:54 +0400
+Message-ID: <1384505280-25389-4-git-send-email-dbaryshkov@gmail.com>
 References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:41847 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753542Ab3KOIsV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 03:48:21 -0500
-Received: by mail-wg0-f45.google.com with SMTP id a1so3229804wgh.0
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2013 00:48:20 -0800 (PST)
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:44092 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753542Ab3KOIsX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 03:48:23 -0500
+Received: by mail-wi0-f171.google.com with SMTP id hn6so653060wib.16
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2013 00:48:21 -0800 (PST)
 In-Reply-To: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 Cc: Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-Currently locomo uses chip data to pass private data to chained irq
-handler. Thus it clobbers the private data of the corresponding chip
-(sa1100 or pxa). Make locomo use handler data for this purpose.
+Add sa1100_handle_irq implementating handle_irq for sa1100 platform.
+Install this irq handler from sa1100_init_irq(). Also drop now unused
+entry-macro.S
 
 Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 ---
- arch/arm/common/locomo.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/Kconfig                                |  1 +
+ arch/arm/mach-sa1100/include/mach/entry-macro.S | 41 -------------------------
+ arch/arm/mach-sa1100/irq.c                      | 20 ++++++++++++
+ 3 files changed, 21 insertions(+), 41 deletions(-)
+ delete mode 100644 arch/arm/mach-sa1100/include/mach/entry-macro.S
 
-diff --git a/arch/arm/common/locomo.c b/arch/arm/common/locomo.c
-index b55c362..f26bd50 100644
---- a/arch/arm/common/locomo.c
-+++ b/arch/arm/common/locomo.c
-@@ -140,7 +140,7 @@ static struct locomo_dev_info locomo_devices[] = {
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 6a1d2b4..2e6521927 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -719,6 +719,7 @@ config ARCH_SA1100
+ 	select GENERIC_CLOCKEVENTS
+ 	select HAVE_IDE
+ 	select ISA
++	select MULTI_IRQ_HANDLER
+ 	select NEED_MACH_MEMORY_H
+ 	select SPARSE_IRQ
+ 	help
+diff --git a/arch/arm/mach-sa1100/include/mach/entry-macro.S b/arch/arm/mach-sa1100/include/mach/entry-macro.S
+deleted file mode 100644
+index 8cf7630..0000000
+--- a/arch/arm/mach-sa1100/include/mach/entry-macro.S
++++ /dev/null
+@@ -1,41 +0,0 @@
+-/*
+- * arch/arm/mach-sa1100/include/mach/entry-macro.S
+- *
+- * Low-level IRQ helper macros for SA1100-based platforms
+- *
+- * This file is licensed under  the terms of the GNU General Public
+- * License version 2. This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+- */
+-
+-		.macro  get_irqnr_preamble, base, tmp
+-		mov	\base, #0xfa000000		@ ICIP = 0xfa050000
+-		add	\base, \base, #0x00050000
+-		.endm
+-
+-		.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
+-		ldr	\irqstat, [\base]		@ get irqs
+-		ldr	\irqnr, [\base, #4]		@ ICMR = 0xfa050004
+-		ands	\irqstat, \irqstat, \irqnr
+-		mov	\irqnr, #0
+-		beq	1001f
+-		tst	\irqstat, #0xff
+-		moveq	\irqstat, \irqstat, lsr #8
+-		addeq	\irqnr, \irqnr, #8
+-		tsteq	\irqstat, #0xff
+-		moveq	\irqstat, \irqstat, lsr #8
+-		addeq	\irqnr, \irqnr, #8
+-		tsteq	\irqstat, #0xff
+-		moveq	\irqstat, \irqstat, lsr #8
+-		addeq	\irqnr, \irqnr, #8
+-		tst	\irqstat, #0x0f
+-		moveq	\irqstat, \irqstat, lsr #4
+-		addeq	\irqnr, \irqnr, #4
+-		tst	\irqstat, #0x03
+-		moveq	\irqstat, \irqstat, lsr #2
+-		addeq	\irqnr, \irqnr, #2
+-		tst	\irqstat, #0x01
+-		addeqs	\irqnr, \irqnr, #1
+-1001:
+-		.endm
+-
+diff --git a/arch/arm/mach-sa1100/irq.c b/arch/arm/mach-sa1100/irq.c
+index 2124f1fc..68e8f9d 100644
+--- a/arch/arm/mach-sa1100/irq.c
++++ b/arch/arm/mach-sa1100/irq.c
+@@ -20,6 +20,7 @@
+ #include <mach/hardware.h>
+ #include <mach/irqs.h>
+ #include <asm/mach/irq.h>
++#include <asm/exception.h>
  
- static void locomo_handler(unsigned int irq, struct irq_desc *desc)
+ #include "generic.h"
+ 
+@@ -291,6 +292,23 @@ static int __init sa1100irq_init_devicefs(void)
+ 
+ device_initcall(sa1100irq_init_devicefs);
+ 
++static asmlinkage void __exception_irq_entry
++sa1100_handle_irq(struct pt_regs *regs)
++{
++	uint32_t icip, icmr, mask;
++
++	do {
++		icip = (ICIP);
++		icmr = (ICMR);
++		mask = icip & icmr;
++
++		if (mask == 0)
++			break;
++
++		handle_IRQ(fls(mask) - 1, regs);
++	} while (1);
++}
++
+ void __init sa1100_init_irq(void)
  {
--	struct locomo *lchip = irq_get_chip_data(irq);
-+	struct locomo *lchip = irq_get_handler_data(irq);
- 	int req, i;
+ 	unsigned int irq;
+@@ -338,5 +356,7 @@ void __init sa1100_init_irq(void)
+ 	irq_set_chip(IRQ_GPIO11_27, &sa1100_normal_chip);
+ 	irq_set_chained_handler(IRQ_GPIO11_27, sa1100_high_gpio_handler);
  
- 	/* Acknowledge the parent IRQ */
-@@ -198,7 +198,7 @@ static void locomo_setup_irq(struct locomo *lchip)
- 	 * Install handler for IRQ_LOCOMO_HW.
- 	 */
- 	irq_set_irq_type(lchip->irq, IRQ_TYPE_EDGE_FALLING);
--	irq_set_chip_data(lchip->irq, lchip);
-+	irq_set_handler_data(lchip->irq, lchip);
- 	irq_set_chained_handler(lchip->irq, locomo_handler);
- 
- 	/* Install handlers for IRQ_LOCOMO_* */
++	set_handle_irq(sa1100_handle_irq);
++
+ 	sa1100_init_gpio();
+ }
 -- 
 1.8.4.2
 
