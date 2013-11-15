@@ -1,47 +1,50 @@
-From: Liu Gang <Gang.Liu@freescale.com>
-Subject: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on MPC8572/MPC8536
-Date: Fri, 15 Nov 2013 15:16:29 +0800
-Message-ID: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
+Date: Fri, 15 Nov 2013 12:47:51 +0400
+Message-ID: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from tx2ehsobe002.messaging.microsoft.com ([65.55.88.12]:24633 "EHLO
-	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752483Ab3KOIeQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 15 Nov 2013 03:34:16 -0500
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:47746 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752774Ab3KOIsS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 03:48:18 -0500
+Received: by mail-wi0-f173.google.com with SMTP id ey16so656069wid.12
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2013 00:48:17 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org
-Cc: b07421@freescale.com, r61911@freescale.com, Liu Gang <Gang.Liu@freescale.com>
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-For MPC8572/MPC8536, the status of GPIOs defined as output
-cannot be determined by reading GPDAT register, so the code
-use shadow data register instead. But if the input pins are
-asserted high, they will always read high due to the shadow
-data, even if the pins are set to low.
+This is a considerable rework of my previous attempt to update sa1100 irq
+handling. IRQ code is updated to support MULTI_IRQ_HANDLER and is mostly
+prepared to be converted to irqchip driver (if the need arises in future).
+I have integrated idea of Linus Waleij to use irq domains. GPIO irq handling
+is split to gpio driver, which also undergo an update/rewrite.
 
-So the input pins should be read directly from GPDAT, not
-the shadow data.
 
-Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
----
- drivers/gpio/gpio-mpc8xxx.c | 1 +
- 1 file changed, 1 insertion(+)
+Dmitry Eremin-Solenikov (9):
+      ARM: sa1100 collie: use gpio-charger instead of pda-power
+      ARM: locomo: don't clobber chip data for chained irq
+      ARM: sa1100: switch to MULTI_IRQ_HANDLER
+      ARM: sa1100: convert gpio driver to be a proper platform driver
+      ARM: sa1100: add platform functions to handle PWER settings
+      ARM: sa1100: enable IRQ domains
+      ARM: sa1100: move gpio irq handling to GPIO driver
+      ARM: sa1100: move per-IRQ PWER settings to core code
+      ARM: sa1100: refactor irq driver
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 9ae29cc..1d4ac75 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -71,6 +71,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
- 
- 	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
-+	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
- 
- 	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
- }
--- 
-1.8.4.1
+ arch/arm/Kconfig                                |   2 +
+ arch/arm/common/locomo.c                        |   4 +-
+ arch/arm/mach-sa1100/collie.c                   |  55 ++-------------
+ arch/arm/mach-sa1100/generic.c                  |  46 +++++++++++-
+ arch/arm/mach-sa1100/generic.h                  |   3 +-
+ arch/arm/mach-sa1100/include/mach/SA-1100.h     |   2 +
+ arch/arm/mach-sa1100/include/mach/entry-macro.S |  41 -----------
+ arch/arm/mach-sa1100/include/mach/irqs.h        |  73 +++++++++++--------
+ arch/arm/mach-sa1100/irq.c                      | 322 +++++++++++++++++++++--------------------------------------------------------------
+ drivers/gpio/Kconfig                            |   6 ++
+ drivers/gpio/Makefile                           |   2 +-
+ drivers/gpio/gpio-sa1100.c                      | 332 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 12 files changed, 500 insertions(+), 388 deletions(-)
+ delete mode 100644 arch/arm/mach-sa1100/include/mach/entry-macro.S
 
 
