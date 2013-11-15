@@ -1,300 +1,226 @@
 From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: [PATCH 4/9] ARM: sa1100: convert gpio driver to be a proper platform driver
-Date: Fri, 15 Nov 2013 12:47:55 +0400
-Message-ID: <1384505280-25389-5-git-send-email-dbaryshkov@gmail.com>
+Subject: [PATCH 9/9] ARM: sa1100: refactor irq driver
+Date: Fri, 15 Nov 2013 12:48:00 +0400
+Message-ID: <1384505280-25389-10-git-send-email-dbaryshkov@gmail.com>
 References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:65318 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753909Ab3KOIsZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 03:48:25 -0500
-Received: by mail-wi0-f181.google.com with SMTP id f4so663764wiw.2
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2013 00:48:23 -0800 (PST)
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:65198 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754893Ab3KOIsd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 03:48:33 -0500
+Received: by mail-wi0-f182.google.com with SMTP id i19so655653wiw.9
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2013 00:48:32 -0800 (PST)
 In-Reply-To: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 Cc: Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-Start cleaning up/refreshing SA1100 GPIO driver.
-* Changed to bind through device model.
-* Replaced direct register access with readl/writel.
+* Replace direct-mapped access with proper ioremap.
+* Introduce irq domain for system controller irqs
+* Merge "save" state to common newly create private data.
 
 Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 ---
- arch/arm/mach-sa1100/generic.c              |  13 +++-
- arch/arm/mach-sa1100/generic.h              |   1 -
- arch/arm/mach-sa1100/include/mach/SA-1100.h |   2 +
- arch/arm/mach-sa1100/irq.c                  |   2 -
- drivers/gpio/Kconfig                        |   6 ++
- drivers/gpio/Makefile                       |   2 +-
- drivers/gpio/gpio-sa1100.c                  | 110 ++++++++++++++++++++++------
- 7 files changed, 110 insertions(+), 26 deletions(-)
+ arch/arm/mach-sa1100/irq.c | 111 +++++++++++++++++++++++++++++----------------
+ 1 file changed, 71 insertions(+), 40 deletions(-)
 
-diff --git a/arch/arm/mach-sa1100/generic.c b/arch/arm/mach-sa1100/generic.c
-index d4ea142..c2718f0 100644
---- a/arch/arm/mach-sa1100/generic.c
-+++ b/arch/arm/mach-sa1100/generic.c
-@@ -9,7 +9,6 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
--#include <linux/gpio.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -299,6 +298,17 @@ static struct platform_device sa11x0dma_device = {
- 	.resource	= sa11x0dma_resources,
- };
- 
-+static struct resource sa11x0_gpio_resources[] = {
-+	DEFINE_RES_MEM(GPIO_PHYS, GPIO_SIZE),
-+};
-+
-+static struct platform_device sa11x0gpio_device = {
-+	.name		= "sa1100-gpio",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(sa11x0_gpio_resources),
-+	.resource	= sa11x0_gpio_resources,
-+};
-+
- static struct platform_device *sa11x0_devices[] __initdata = {
- 	&sa11x0udc_device,
- 	&sa11x0uart1_device,
-@@ -307,6 +317,7 @@ static struct platform_device *sa11x0_devices[] __initdata = {
- 	&sa11x0pcmcia_device,
- 	&sa11x0rtc_device,
- 	&sa11x0dma_device,
-+	&sa11x0gpio_device,
- };
- 
- static int __init sa1100_init(void)
-diff --git a/arch/arm/mach-sa1100/generic.h b/arch/arm/mach-sa1100/generic.h
-index 0d92e11..0b68b95 100644
---- a/arch/arm/mach-sa1100/generic.h
-+++ b/arch/arm/mach-sa1100/generic.h
-@@ -9,7 +9,6 @@
- extern void sa1100_timer_init(void);
- extern void __init sa1100_map_io(void);
- extern void __init sa1100_init_irq(void);
--extern void __init sa1100_init_gpio(void);
- extern void sa11x0_restart(enum reboot_mode, const char *);
- extern void sa11x0_init_late(void);
- 
-diff --git a/arch/arm/mach-sa1100/include/mach/SA-1100.h b/arch/arm/mach-sa1100/include/mach/SA-1100.h
-index 0ac6cc0..70d01a2 100644
---- a/arch/arm/mach-sa1100/include/mach/SA-1100.h
-+++ b/arch/arm/mach-sa1100/include/mach/SA-1100.h
-@@ -1134,6 +1134,8 @@
-  * Clock
-  *    fcpu, Tcpu	Frequency, period of the CPU core clock (CCLK).
-  */
-+#define GPIO_PHYS	0x90040000
-+#define GPIO_SIZE	0x20
- 
- #define GPLR		__REG(0x90040000)  /* GPIO Pin Level Reg.             */
- #define GPDR		__REG(0x90040004)  /* GPIO Pin Direction Reg.         */
 diff --git a/arch/arm/mach-sa1100/irq.c b/arch/arm/mach-sa1100/irq.c
-index 68e8f9d..f055a6b 100644
+index d96f65f..a26a6a2 100644
 --- a/arch/arm/mach-sa1100/irq.c
 +++ b/arch/arm/mach-sa1100/irq.c
-@@ -357,6 +357,4 @@ void __init sa1100_init_irq(void)
- 	irq_set_chained_handler(IRQ_GPIO11_27, sa1100_high_gpio_handler);
- 
- 	set_handle_irq(sa1100_handle_irq);
--
--	sa1100_init_gpio();
- }
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a0471e6..1abea36 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -224,6 +224,12 @@ config GPIO_PXA
- 	help
- 	  Say yes here to support the PXA GPIO device
- 
-+config GPIO_SA1100
-+	bool "SA1100 GPIO support"
-+	depends on ARCH_SA1100
-+	help
-+	  Say yes here to support the StrongARM 11x0 GPIO device.
-+
- config GPIO_RCAR
- 	tristate "Renesas R-Car GPIO"
- 	depends on ARM
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 7971e36..57755e6 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -65,7 +65,7 @@ obj-$(CONFIG_GPIO_RC5T583)	+= gpio-rc5t583.o
- obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc321x.o
- obj-$(CONFIG_GPIO_RCAR)		+= gpio-rcar.o
- obj-$(CONFIG_GPIO_SAMSUNG)	+= gpio-samsung.o
--obj-$(CONFIG_ARCH_SA1100)	+= gpio-sa1100.o
-+obj-$(CONFIG_GPIO_SA1100)	+= gpio-sa1100.o
- obj-$(CONFIG_GPIO_SCH)		+= gpio-sch.o
- obj-$(CONFIG_GPIO_SODAVILLE)	+= gpio-sodaville.o
- obj-$(CONFIG_GPIO_SPEAR_SPICS)	+= gpio-spear-spics.o
-diff --git a/drivers/gpio/gpio-sa1100.c b/drivers/gpio/gpio-sa1100.c
-index a90be34..f4e881a 100644
---- a/drivers/gpio/gpio-sa1100.c
-+++ b/drivers/gpio/gpio-sa1100.c
-@@ -1,5 +1,5 @@
- /*
-- * linux/arch/arm/mach-sa1100/gpio.c
-+ * drivers/gpio/gpio-sa1100.c
-  *
-  * Generic SA-1100 GPIO handling
-  *
-@@ -11,60 +11,128 @@
- #include <linux/init.h>
- #include <linux/module.h>
+@@ -14,26 +14,50 @@
+ #include <linux/interrupt.h>
  #include <linux/io.h>
--#include <mach/hardware.h>
-+#include <linux/slab.h>
-+#include <linux/platform_device.h>
- #include <mach/irqs.h>
+ #include <linux/irq.h>
++#include <linux/irqdomain.h>
+ #include <linux/ioport.h>
+ #include <linux/syscore_ops.h>
  
-+#define SA1100_NGPIO 28
+-#include <mach/hardware.h>
+ #include <asm/exception.h>
+ 
+ #include "generic.h"
+ 
++#define ICIP	0x00  /* IC IRQ Pending reg.             */
++#define ICMR	0x04  /* IC Mask Reg.                    */
++#define ICLR	0x08  /* IC Level Reg.                   */
++#define ICCR	0x0C  /* IC Control Reg.                 */
++#define ICFP	0x10  /* IC FIQ Pending reg.             */
++#define ICPR	0x20  /* IC Pending Reg.                 */
 +
-+struct sa1100_gpio_chip {
-+	struct gpio_chip gc;
++struct sa1100_sc {
++	struct irq_domain *domain;
 +	void __iomem *regbase;
++
++	unsigned int	saved_icmr;
++	unsigned int	saved_iclr;
++	unsigned int	saved_iccr;
 +};
 +
-+#define to_sgc(chip)	container_of(chip, struct sa1100_gpio_chip, gc)
-+
-+#define GPLR_OFFSET	0x00  /* GPIO Pin Level Reg.             */
-+#define GPDR_OFFSET	0x04  /* GPIO Pin Direction Reg.         */
-+#define GPSR_OFFSET	0x08  /* GPIO Pin output Set Reg.        */
-+#define GPCR_OFFSET	0x0C  /* GPIO Pin output Clear Reg.      */
-+#define GRER_OFFSET	0x10  /* GPIO Rising-Edge detect Reg.    */
-+#define GFER_OFFSET	0x14  /* GPIO Falling-Edge detect Reg.   */
-+#define GEDR_OFFSET	0x18  /* GPIO Edge Detect status Reg.    */
-+#define GAFR_OFFSET	0x1C  /* GPIO Alternate Function Reg.    */
-+
- static int sa1100_gpio_get(struct gpio_chip *chip, unsigned offset)
+ /*
+  * We don't need to ACK IRQs on the SA1100 unless they're GPIOs
+  * this is for internal IRQs i.e. from 11 to 31.
+  */
+ static void sa1100_mask_irq(struct irq_data *d)
  {
--	return GPLR & GPIO_GPIO(offset);
-+	struct sa1100_gpio_chip *sgc = to_sgc(chip);
-+	return readl_relaxed(sgc->regbase + GPLR_OFFSET) & BIT(offset);
+-	ICMR &= ~(1 << d->irq);
++	struct sa1100_sc *sc = irq_data_get_irq_chip_data(d);
++	uint32_t icmr = readl_relaxed(sc->regbase + ICMR);
++
++	icmr &= ~BIT(d->hwirq);
++	writel_relaxed(icmr, sc->regbase + ICMR);
  }
  
- static void sa1100_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ static void sa1100_unmask_irq(struct irq_data *d)
  {
--	if (value)
--		GPSR = GPIO_GPIO(offset);
--	else
--		GPCR = GPIO_GPIO(offset);
-+	struct sa1100_gpio_chip *sgc = to_sgc(chip);
-+	writel_relaxed(BIT(offset), sgc->regbase +
-+				(value ? GPSR_OFFSET : GPCR_OFFSET));
+-	ICMR |= (1 << d->irq);
++	struct sa1100_sc *sc = irq_data_get_irq_chip_data(d);
++	uint32_t icmr = readl_relaxed(sc->regbase + ICMR);
++
++	icmr |= BIT(d->hwirq);
++	writel_relaxed(icmr, sc->regbase + ICMR);
  }
  
- static int sa1100_direction_input(struct gpio_chip *chip, unsigned offset)
+ /*
+@@ -41,7 +65,7 @@ static void sa1100_unmask_irq(struct irq_data *d)
+  */
+ static int sa1100_set_wake(struct irq_data *d, unsigned int on)
  {
-+	struct sa1100_gpio_chip *sgc = to_sgc(chip);
- 	unsigned long flags;
-+	uint32_t tmp;
- 
- 	local_irq_save(flags);
--	GPDR &= ~GPIO_GPIO(offset);
-+
-+	tmp = readl_relaxed(sgc->regbase + GPDR_OFFSET);
-+	tmp &= ~BIT(offset);
-+	writel_relaxed(tmp, sgc->regbase + GPDR_OFFSET);
-+
- 	local_irq_restore(flags);
- 	return 0;
+-	return sa11x0_sc_set_wake(d->irq, on);
++	return sa11x0_sc_set_wake(d->hwirq, on);
  }
  
- static int sa1100_direction_output(struct gpio_chip *chip, unsigned offset, int value)
- {
-+	struct sa1100_gpio_chip *sgc = to_sgc(chip);
- 	unsigned long flags;
-+	uint32_t tmp;
+ static struct irq_chip sa1100_normal_chip = {
+@@ -55,28 +79,37 @@ static struct irq_chip sa1100_normal_chip = {
+ static struct resource irq_resource =
+ 	DEFINE_RES_MEM_NAMED(0x90050000, SZ_64K, "irqs");
  
- 	local_irq_save(flags);
- 	sa1100_gpio_set(chip, offset, value);
--	GPDR |= GPIO_GPIO(offset);
-+
-+	tmp = readl_relaxed(sgc->regbase + GPDR_OFFSET);
-+	tmp |= BIT(offset);
-+	writel_relaxed(tmp, sgc->regbase + GPDR_OFFSET);
-+
- 	local_irq_restore(flags);
- 	return 0;
- }
- 
--static int sa1100_to_irq(struct gpio_chip *chip, unsigned offset)
-+static int sa1100_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- {
- 	return offset < 11 ? (IRQ_GPIO0 + offset) : (IRQ_GPIO11 - 11 + offset);
- }
- 
--static struct gpio_chip sa1100_gpio_chip = {
--	.label			= "gpio",
--	.direction_input	= sa1100_direction_input,
--	.direction_output	= sa1100_direction_output,
--	.set			= sa1100_gpio_set,
--	.get			= sa1100_gpio_get,
--	.to_irq			= sa1100_to_irq,
--	.base			= 0,
--	.ngpio			= GPIO_MAX + 1,
-+static int sa1100_gpio_probe(struct platform_device *pdev)
+-static struct sa1100irq_state {
+-	unsigned int	saved;
+-	unsigned int	icmr;
+-	unsigned int	iclr;
+-	unsigned int	iccr;
+-} sa1100irq_state;
++static int sa1100_irqdomain_map(struct irq_domain *d, unsigned int irq,
++		irq_hw_number_t hwirq)
 +{
-+	struct resource *res;
-+	int ret;
-+	struct sa1100_gpio_chip *sgc;
++	struct sa1100_sc *sc = d->host_data;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -EINVAL;
++	irq_set_chip_data(irq, sc);
++	irq_set_chip_and_handler(irq, &sa1100_normal_chip, handle_level_irq);
++	set_irq_flags(irq, IRQF_VALID);
 +
-+	sgc = kzalloc(sizeof(*sgc), GFP_KERNEL);
-+	if  (!sgc)
-+		return -ENOMEM;
-+
-+	sgc->regbase = ioremap(res->start, resource_size(res));
-+	if (!sgc->regbase) {
-+		kfree(sgc);
-+		return -EINVAL;
-+	}
-+
-+	sgc->gc.label = "gpio";
-+	sgc->gc.direction_input = sa1100_direction_input;
-+	sgc->gc.direction_output = sa1100_direction_output;
-+	sgc->gc.set = sa1100_gpio_set;
-+	sgc->gc.get = sa1100_gpio_get;
-+	sgc->gc.to_irq = sa1100_gpio_to_irq;
-+
-+	sgc->gc.base = 0;
-+	sgc->gc.ngpio = SA1100_NGPIO;
-+
-+	/* Initialize GPIO chips */
-+	ret = gpiochip_add(&sgc->gc);
-+	if (ret) {
-+		iounmap(sgc->regbase);
-+		kfree(sgc);
-+	}
-+
-+	return ret;
++	return 0;
 +}
 +
-+static struct platform_driver sa1100_gpio_driver = {
-+	.probe		= sa1100_gpio_probe,
-+	.driver		= {
-+		.name	= "sa1100-gpio",
-+	},
- };
++static struct irq_domain_ops sa1100_irqdomain_ops = {
++	.map = sa1100_irqdomain_map,
++	.xlate = irq_domain_xlate_onetwocell,
++};
++
++static struct sa1100_sc state;
  
--void __init sa1100_init_gpio(void)
-+static int __init sa1100_gpio_init(void)
+ static int sa1100irq_suspend(void)
  {
--	gpiochip_add(&sa1100_gpio_chip);
-+	return platform_driver_register(&sa1100_gpio_driver);
+-	struct sa1100irq_state *st = &sa1100irq_state;
++	struct sa1100_sc *sc = &state;
+ 
+-	st->saved = 1;
+-	st->icmr = ICMR;
+-	st->iclr = ICLR;
+-	st->iccr = ICCR;
++	sc->saved_icmr = readl_relaxed(sc->regbase + ICMR);
++	sc->saved_iclr = readl_relaxed(sc->regbase + ICLR);
++	sc->saved_iccr = readl_relaxed(sc->regbase + ICCR);
+ 
+ 	/*
+ 	 * Disable all GPIO-based interrupts.
+ 	 */
+-	ICMR &= ~(IC_GPIO11_27|IC_GPIO10|IC_GPIO9|IC_GPIO8|IC_GPIO7|
+-		  IC_GPIO6|IC_GPIO5|IC_GPIO4|IC_GPIO3|IC_GPIO2|
+-		  IC_GPIO1|IC_GPIO0);
++	writel_relaxed(sc->saved_icmr & ~0xFFF, sc->regbase + ICMR);
+ 
+ 
+ 	return 0;
+@@ -84,13 +117,11 @@ static int sa1100irq_suspend(void)
+ 
+ static void sa1100irq_resume(void)
+ {
+-	struct sa1100irq_state *st = &sa1100irq_state;
++	struct sa1100_sc *sc = &state;
+ 
+-	if (st->saved) {
+-		ICCR = st->iccr;
+-		ICLR = st->iclr;
+-		ICMR = st->icmr;
+-	}
++	writel_relaxed(sc->saved_iccr, sc->regbase + ICCR);
++	writel_relaxed(sc->saved_iclr, sc->regbase + ICLR);
++	writel_relaxed(sc->saved_icmr, sc->regbase + ICMR);
  }
-+postcore_initcall(sa1100_gpio_init);
+ 
+ static struct syscore_ops sa1100irq_syscore_ops = {
+@@ -110,42 +141,42 @@ static asmlinkage void __exception_irq_entry
+ sa1100_handle_irq(struct pt_regs *regs)
+ {
+ 	uint32_t icip, icmr, mask;
++	int irq;
+ 
+-	do {
+-		icip = (ICIP);
+-		icmr = (ICMR);
++	while (1) {
++		icip = readl_relaxed(state.regbase + ICIP);
++		icmr = readl_relaxed(state.regbase + ICMR);
+ 		mask = icip & icmr;
+ 
+ 		if (mask == 0)
+ 			break;
+ 
+-		handle_IRQ(fls(mask) - 1, regs);
+-	} while (1);
++		irq = fls(mask) - 1;
++		handle_IRQ(irq_find_mapping(state.domain, irq), regs);
++	}
+ }
+ 
+ void __init sa1100_init_irq(void)
+ {
+-	unsigned int irq;
+-
+ 	request_resource(&iomem_resource, &irq_resource);
+ 
++	state.regbase = ioremap(irq_resource.start,
++			resource_size(&irq_resource));
++
+ 	/* disable all IRQs */
+-	ICMR = 0;
++	writel_relaxed(0, state.regbase + ICMR);
+ 
+ 	/* all IRQs are IRQ, not FIQ */
+-	ICLR = 0;
++	writel_relaxed(0, state.regbase + ICLR);
+ 
+ 	/*
+ 	 * Whatever the doc says, this has to be set for the wait-on-irq
+-	 * instruction to work... on a SA1100 rev 9 at least.
++	 * instruction to work... on a SA1100 rev 9 at leastate.
+ 	 */
+-	ICCR = 1;
++	writel_relaxed(1, state.regbase + ICCR);
+ 
+-	for (irq = 0; irq <= 31; irq++) {
+-		irq_set_chip_and_handler(irq, &sa1100_normal_chip,
+-					 handle_level_irq);
+-		set_irq_flags(irq, IRQF_VALID);
+-	}
++	state.domain = irq_domain_add_legacy(NULL, 32, 0, 0,
++			&sa1100_irqdomain_ops, &state);
+ 
+ 	set_handle_irq(sa1100_handle_irq);
+ }
 -- 
 1.8.4.2
 
