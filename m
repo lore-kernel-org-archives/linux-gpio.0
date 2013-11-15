@@ -1,50 +1,126 @@
 From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
-Date: Fri, 15 Nov 2013 12:47:51 +0400
-Message-ID: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+Subject: [PATCH 1/9] ARM: sa1100 collie: use gpio-charger instead of pda-power
+Date: Fri, 15 Nov 2013 12:47:52 +0400
+Message-ID: <1384505280-25389-2-git-send-email-dbaryshkov@gmail.com>
+References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:47746 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752774Ab3KOIsS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 03:48:18 -0500
-Received: by mail-wi0-f173.google.com with SMTP id ey16so656069wid.12
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2013 00:48:17 -0800 (PST)
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:60776 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752969Ab3KOIsU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 03:48:20 -0500
+Received: by mail-wi0-f180.google.com with SMTP id ey16so654755wid.7
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2013 00:48:19 -0800 (PST)
+In-Reply-To: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 Cc: Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-This is a considerable rework of my previous attempt to update sa1100 irq
-handling. IRQ code is updated to support MULTI_IRQ_HANDLER and is mostly
-prepared to be converted to irqchip driver (if the need arises in future).
-I have integrated idea of Linus Waleij to use irq domains. GPIO irq handling
-is split to gpio driver, which also undergo an update/rewrite.
+Use gpio-charger driver instead of pda-power: it automatically cares
+about used gpio and since collie does not differentiate between usb and
+ac chargers, pda-power is an overkill for it.
 
+As a bonus this allows us to remove gpio_to_irq calls from machine init
+call - it is fragile. These gpio_to_irq calls will fail if gpios are
+registered later, via device driver mechanisms.
 
-Dmitry Eremin-Solenikov (9):
-      ARM: sa1100 collie: use gpio-charger instead of pda-power
-      ARM: locomo: don't clobber chip data for chained irq
-      ARM: sa1100: switch to MULTI_IRQ_HANDLER
-      ARM: sa1100: convert gpio driver to be a proper platform driver
-      ARM: sa1100: add platform functions to handle PWER settings
-      ARM: sa1100: enable IRQ domains
-      ARM: sa1100: move gpio irq handling to GPIO driver
-      ARM: sa1100: move per-IRQ PWER settings to core code
-      ARM: sa1100: refactor irq driver
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ arch/arm/mach-sa1100/collie.c | 55 ++++++-------------------------------------
+ 1 file changed, 7 insertions(+), 48 deletions(-)
 
- arch/arm/Kconfig                                |   2 +
- arch/arm/common/locomo.c                        |   4 +-
- arch/arm/mach-sa1100/collie.c                   |  55 ++-------------
- arch/arm/mach-sa1100/generic.c                  |  46 +++++++++++-
- arch/arm/mach-sa1100/generic.h                  |   3 +-
- arch/arm/mach-sa1100/include/mach/SA-1100.h     |   2 +
- arch/arm/mach-sa1100/include/mach/entry-macro.S |  41 -----------
- arch/arm/mach-sa1100/include/mach/irqs.h        |  73 +++++++++++--------
- arch/arm/mach-sa1100/irq.c                      | 322 +++++++++++++++++++++--------------------------------------------------------------
- drivers/gpio/Kconfig                            |   6 ++
- drivers/gpio/Makefile                           |   2 +-
- drivers/gpio/gpio-sa1100.c                      | 332 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
- 12 files changed, 500 insertions(+), 388 deletions(-)
- delete mode 100644 arch/arm/mach-sa1100/include/mach/entry-macro.S
-
+diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
+index 7fb96eb..f902b8e 100644
+--- a/arch/arm/mach-sa1100/collie.c
++++ b/arch/arm/mach-sa1100/collie.c
+@@ -28,7 +28,7 @@
+ #include <linux/mtd/partitions.h>
+ #include <linux/timer.h>
+ #include <linux/gpio.h>
+-#include <linux/pda_power.h>
++#include <linux/power/gpio-charger.h>
+ 
+ #include <video/sa1100fb.h>
+ 
+@@ -97,62 +97,24 @@ static struct mcp_plat_data collie_mcp_data = {
+ /*
+  * Collie AC IN
+  */
+-static int collie_power_init(struct device *dev)
+-{
+-	int ret = gpio_request(COLLIE_GPIO_AC_IN, "ac in");
+-	if (ret)
+-		goto err_gpio_req;
+-
+-	ret = gpio_direction_input(COLLIE_GPIO_AC_IN);
+-	if (ret)
+-		goto err_gpio_in;
+-
+-	return 0;
+-
+-err_gpio_in:
+-	gpio_free(COLLIE_GPIO_AC_IN);
+-err_gpio_req:
+-	return ret;
+-}
+-
+-static void collie_power_exit(struct device *dev)
+-{
+-	gpio_free(COLLIE_GPIO_AC_IN);
+-}
+-
+-static int collie_power_ac_online(void)
+-{
+-	return gpio_get_value(COLLIE_GPIO_AC_IN) == 2;
+-}
+-
+ static char *collie_ac_supplied_to[] = {
+ 	"main-battery",
+ 	"backup-battery",
+ };
+ 
+-static struct pda_power_pdata collie_power_data = {
+-	.init			= collie_power_init,
+-	.is_ac_online		= collie_power_ac_online,
+-	.exit			= collie_power_exit,
++
++static struct gpio_charger_platform_data collie_power_data = {
++	.name			= "charger",
++	.type			= POWER_SUPPLY_TYPE_MAINS,
++	.gpio			= COLLIE_GPIO_AC_IN,
+ 	.supplied_to		= collie_ac_supplied_to,
+ 	.num_supplicants	= ARRAY_SIZE(collie_ac_supplied_to),
+ };
+ 
+-static struct resource collie_power_resource[] = {
+-	{
+-		.name		= "ac",
+-		.flags		= IORESOURCE_IRQ |
+-				  IORESOURCE_IRQ_HIGHEDGE |
+-				  IORESOURCE_IRQ_LOWEDGE,
+-	},
+-};
+-
+ static struct platform_device collie_power_device = {
+-	.name			= "pda-power",
++	.name			= "gpio-charger",
+ 	.id			= -1,
+ 	.dev.platform_data	= &collie_power_data,
+-	.resource		= collie_power_resource,
+-	.num_resources		= ARRAY_SIZE(collie_power_resource),
+ };
+ 
+ #ifdef CONFIG_SHARP_LOCOMO
+@@ -348,9 +310,6 @@ static void __init collie_init(void)
+ 
+ 	GPSR |= _COLLIE_GPIO_UCB1x00_RESET;
+ 
+-	collie_power_resource[0].start = gpio_to_irq(COLLIE_GPIO_AC_IN);
+-	collie_power_resource[0].end = gpio_to_irq(COLLIE_GPIO_AC_IN);
+-
+ 	sa11x0_ppc_configure_mcp();
+ 
+ 
+-- 
+1.8.4.2
 
