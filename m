@@ -1,59 +1,34 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: [PATCH 8/9] ARM: sa1100: move per-IRQ PWER settings to core code
-Date: Fri, 15 Nov 2013 12:47:59 +0400
-Message-ID: <1384505280-25389-9-git-send-email-dbaryshkov@gmail.com>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 2/2] ARM: pxa: delete the custom GPIO header
+Date: Fri, 15 Nov 2013 12:45:22 +0000
+Message-ID: <20131115124522.GA1913@n2100.arm.linux.org.uk>
+References: <1380183077-27407-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:40448 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754893Ab3KOIsc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 03:48:32 -0500
-Received: by mail-we0-f177.google.com with SMTP id t60so3154320wes.8
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2013 00:48:31 -0800 (PST)
-In-Reply-To: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:42895 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751363Ab3KOMpk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2013 07:45:40 -0500
+Content-Disposition: inline
+In-Reply-To: <1380183077-27407-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Cc: Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Artamonow <mad_soft@inbox.ru>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Eric Miao <eric.y.miao@gmail.com>
 
-In attempt to limit register access from non-core code, move PWER access
-to generic.c, having irqchip code call sa11x0_sc_set_wake() function
-to set wake status.
+On Thu, Sep 26, 2013 at 10:11:17AM +0200, Linus Walleij wrote:
+> The PXA sub-architecture appears to have a custom <mach/gpio.h>
+> for no reason whatsoever. The file became completely empty
+> after Haojian removed the remaining content in
+> commit 157d2644cb0c1e71a18baaffca56d2b1d0ebf10f
+> "ARM: pxa: change gpio to platform device".
+> 
+> That commit added these two lines:
+> 
+> However it seems like deleting the file has no effect
+> whatsoever on the kernel compilation.
 
-Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
----
- arch/arm/mach-sa1100/irq.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/arch/arm/mach-sa1100/irq.c b/arch/arm/mach-sa1100/irq.c
-index 59c1617..d96f65f 100644
---- a/arch/arm/mach-sa1100/irq.c
-+++ b/arch/arm/mach-sa1100/irq.c
-@@ -18,8 +18,6 @@
- #include <linux/syscore_ops.h>
- 
- #include <mach/hardware.h>
--#include <mach/irqs.h>
--#include <asm/mach/irq.h>
- #include <asm/exception.h>
- 
- #include "generic.h"
-@@ -43,14 +41,7 @@ static void sa1100_unmask_irq(struct irq_data *d)
-  */
- static int sa1100_set_wake(struct irq_data *d, unsigned int on)
- {
--	if (d->irq == IRQ_RTCAlrm) {
--		if (on)
--			PWER |= PWER_RTC;
--		else
--			PWER &= ~PWER_RTC;
--		return 0;
--	}
--	return -EINVAL;
-+	return sa11x0_sc_set_wake(d->irq, on);
- }
- 
- static struct irq_chip sa1100_normal_chip = {
--- 
-1.8.4.2
-
+This has broken pxa25x_udc - it seems that it was using this path to get
+hold of mach/hardware.h, and now that it doesn't have that, it gets lots
+of build errors.
