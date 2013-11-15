@@ -1,54 +1,82 @@
-From: carpeting95087@gmail.com
-Subject: Re: Guaranteed Top 10 Google Placements mail-archive.com In 100 Days
-Date: Fri, 15 Nov 2013 01:33:41 +0530
-Message-ID: <52852c9b.ea42420a.076a.32e1@mx.google.com>
-Reply-To: DIANA68371@gmail.com
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [PATCH] gpio: rcar: Support both edge trigger with DT
+Date: Thu, 14 Nov 2013 20:43:50 -0800
+Message-ID: <5285A686.4000405@linux.intel.com>
+References: <1384359983-29178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:45417 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754761Ab3KNUDl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Nov 2013 15:03:41 -0500
-Received: by mail-pa0-f50.google.com with SMTP id kp14so962694pab.37
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2013 12:03:40 -0800 (PST)
-Received: from localhost.localdomain ([124.253.29.188])
-        by mx.google.com with ESMTPSA id i10sm872431pat.11.2013.11.14.12.03.36
-        for <linux-gpio@vger.kernel.org>
-        (version=TLSv1 cipher=RC4-SHA bits=128/128);
-        Thu, 14 Nov 2013 12:03:39 -0800 (PST)
+Received: from mga09.intel.com ([134.134.136.24]:63756 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755912Ab3KOEpk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 14 Nov 2013 23:45:40 -0500
+In-Reply-To: <1384359983-29178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>
 
-Hello Sir / Mam,
+Hi Laurent,
 
-We would like to have a chance to work on your website and get it positioned top 10 on major search engines around the world ( Google & Bing ). We are presently working with 500+ clients world wide and we have made sure all our clients rank top 10 for their best keywords. None of our clients have been caught in any of the recent google updates. We only use ethical white hat methods to deliver rankings. Our search engine packages include both onsite & off optimization, we provide complete SEO solution to our clients and not just link building packages.
+On 11/13/2013 08:26 AM, Laurent Pinchart wrote:
+> Some versions of the R-Car GPIO controller support triggering on both
+> edges of the input signal. Whether this capability is supported is
+> currently specified in platform data. R-Car GPIO devices instantiated
+> from the device tree have the capability turned off even when the
+> hardware supports it.
+> 
+> To fix this, add DT match data support to the driver, initialize both
+> edge trigger support from match data and enable both edge trigger in
+> r8a7790 and r8a7791 match data.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/gpio/gpio-rcar.c | 56 +++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 43 insertions(+), 13 deletions(-)
+> 
+> The patch has been tested on a Lager board. Simon, I've understood that you
+> need this to add GPIO keys support to the Lager DT. Would you be able to test
+> that ?
+> 
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index 6038966..68b0940 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -283,7 +283,34 @@ static struct irq_domain_ops gpio_rcar_irq_domain_ops = {
+>  	.map	= gpio_rcar_irq_domain_map,
+>  };
+>  
+> -static void gpio_rcar_parse_pdata(struct gpio_rcar_priv *p)
+> +struct gpio_rcar_info {
+> +	bool has_both_edge_trigger;
+> +};
+> +
+> +static const struct of_device_id gpio_rcar_of_table[] = {
+> +	{
+> +		.compatible = "renesas,gpio-r8a7790",
+> +		.data = (void *)&(const struct gpio_rcar_info) {
+> +			.has_both_edge_trigger = true,
+> +		},
+> +	}, {
+> +		.compatible = "renesas,gpio-r8a7791",
+> +		.data = (void *)&(const struct gpio_rcar_info) {
+> +			.has_both_edge_trigger = true,
+> +		},
+> +	}, {
+> +		.compatible = "renesas,gpio-rcar",
+> +		.data = (void *)&(const struct gpio_rcar_info) {
+> +			.has_both_edge_trigger = false,
+> +		},
+> +	}, {
+> +		/* Terminator */
+> +	},
 
-We understand there are many SEO Scam companies mailing you each day over and over again and I am also sure you have been robbed off a few times in past with no results at all. To make sure you we show you our WORTH, we have launched 15 DAY FREE SEO TRIAL service. We want to build your faith in our service and make sure you see results before paying for our service.
+According to ANSI C, you can't initialize struct with empty { }. You
+would need at least one 0 inside.
+Despite gcc accepts it, there are some ppl over there trying kernel
+with different compilers :)
 
-Is 15 days Enough time to deliver results ?
+(Hope I'm not being too nitpicky)
 
-15 days is good enough a time to show you huge movements in rankings for all your keywords. We start with A) choosing the best keywords for your website, B)  Approve a final list of keywords, C) Make onsite changes D) Build links for your website. If in these 15 days you are not happy with our performance, you can cancel or decide to opt-out. You will not be billed a single dime for these 15 days.
-
-Post Trial Pricing & Package
-
-In the 15 days trial, we only work for 10 keywords so that we can show best possible results in the time span. Once the trial is over you pick one of the packages listed below :
-
-Package A ) $99 / month (10 keywords optimized ) Package B ) $149 / month ( 20 keywords optimized ) Package C ) $199 / month ( 30 keywords optimized )
-
-To Sign up for our free trial email us back with the information below so we can send you our sign up link.
-
-1) " Website You Want To Optimize "
-2) Keywords ( Optional )
-3) SEO Done Before ( Yes / No )
-
-Looking forward working with you, let us know if you would like to have more information about our company and procedures.
-Regards
-
-Vince G
-SEO Manager : T.O.B
-7 B Green Avenue, Amritsar Punjab
-
-----------------------------------------------------------------------------------------------------------------
-
-
-Our email above is not intended to waste your time or fill your inbox with spam. If you would not like to hear from us, email us back with NOT INTERESTED. We will never email you again.
+Br, David Cohen
