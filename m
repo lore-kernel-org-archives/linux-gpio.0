@@ -1,149 +1,93 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpiolib: use dedicated flags for GPIO properties
-Date: Sat, 16 Nov 2013 21:44:52 +0900
-Message-ID: <1384605892-10072-1-git-send-email-acourbot@nvidia.com>
+From: arno@natisbad.org (Arnaud Ebalard)
+Subject: Warning masked by BUG() when CONFIG_BUG is enabled
+Date: Sat, 16 Nov 2013 23:52:08 +0100
+Message-ID: <87a9h4559j.fsf@natisbad.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gnurou.org ([207.192.72.5]:53219 "EHLO mail.gnurou.org"
+Received: from smtp3-g21.free.fr ([212.27.42.3]:36939 "EHLO smtp3-g21.free.fr"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750942Ab3KPMqM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 16 Nov 2013 07:46:12 -0500
+	id S1753215Ab3KPWwh convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 16 Nov 2013 17:52:37 -0500
+Received: from smtp.natisbad.org (unknown [81.57.185.249])
+	by smtp3-g21.free.fr (Postfix) with ESMTP id 06758A6277
+	for <linux-gpio@vger.kernel.org>; Sat, 16 Nov 2013 23:52:27 +0100 (CET)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, cocci@systeme.lip6.fr, Julia Lawall <Julia.Lawall@lip6.fr>
 
-GPIO mapping properties were defined using the GPIOF_* flags, which are
-declared in linux/gpio.h. This file is not included when using the
-GPIO descriptor interface.
+Hi,
 
-This patch declares the flags that can be used as GPIO mappings
-properties in linux/gpio/driver.h, and uses them in gpiolib, so that no
-deprecated declarations are used by the GPIO descriptor interface.
+While compiling a kernel, I got the following warnings which are due to
+missing returns in the following functions:
 
-This patch also allows GPIO_OPEN_DRAIN and GPIO_OPEN_SOURCE to be
-specified as GPIO mapping properties.
+  CC      fs/xattr.o
+  CC      crypto/cryptd.o
+  CC      lib/irq_regs.o
+  CC      lib/is_single_threaded.o
+  CC      lib/klist.o
+drivers/gpio/gpio-mvebu.c: In function =E2=80=98mvebu_gpioreg_edge_mask=
+=E2=80=99:
+drivers/gpio/gpio-mvebu.c:148:1: warning: control reaches end of non-vo=
+id function [-Wreturn-type]
+drivers/gpio/gpio-mvebu.c: In function =E2=80=98mvebu_gpioreg_edge_caus=
+e=E2=80=99:
+drivers/gpio/gpio-mvebu.c:130:1: warning: control reaches end of non-vo=
+id function [-Wreturn-type]
+drivers/gpio/gpio-mvebu.c: In function =E2=80=98mvebu_gpioreg_level_mas=
+k=E2=80=99:
+drivers/gpio/gpio-mvebu.c:166:1: warning: control reaches end of non-vo=
+id function [-Wreturn-type]
+  CC      lib/kobject.o
+  CC      lib/kobject_uevent.o
+  CC      lib/md5.o
+  CC      lib/percpu-refcount.o
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+I was kind of curious not to have noticed it during kernel builds for
+armada 370/xp targets. The reason is the following: on my Armada 370/XP
+builds, I had CONFIG_BUG=3Dy which makes BUG() call panic() (which neve=
+r
+returns). Otherwise, BUG() is a nop and the 'default' branch below is n=
+o
+more a catch-all barrier in previous functions. For the discussion,
+those have the same structure:
+
+static inline void __iomem *mvebu_gpioreg_edge_cause(...)
+{
+	int cpu;
+
+	switch (mvchip->soc_variant) {
+	case MVEBU_GPIO_SOC_VARIANT_ORION:
+	case MVEBU_GPIO_SOC_VARIANT_MV78200:
+		return sth;
+	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+		return sth;
+	default:
+		BUG();
+	}
+}
+
+*Out of curiosity*, are there no generic solutions to handle such a cas=
+e?
+In the end, if BUG() has been put here on purpose (i.e. this is the onl=
+y
+solution, which it kinds of looks like here) wouldn't it be more logica=
+l
+to call panic() here directly?
+
+As a side note, I noticed quite some instances of that pattern (switch
+statement w/ a 'default' calling BUG()) while more carefully looking at
+compilation output. I may get slapped for this, but just in case this
+is indeed something which deserves to be fixed and can be fixed
+automagically via some semantic patch, I have CC'ed Coccinelle people.
+
+Cheers,
+
+a+
 --
-The new GPIO interface documentation already uses these new declarations.
-It would be nice to have this merged in a 3.13-rc since it is necessary
-to properly declare GPIO mappings as platform data.
----
- drivers/gpio/gpiolib.c      | 22 +++++++++++++++-------
- include/linux/gpio/driver.h | 11 +++++++++--
- 2 files changed, 24 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 63bbf5b..be5dbc2 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -13,6 +13,7 @@
- #include <linux/acpi_gpio.h>
- #include <linux/idr.h>
- #include <linux/slab.h>
-+#include <linux/gpio/driver.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/gpio.h>
-@@ -2226,7 +2227,8 @@ void gpiod_add_table(struct gpiod_lookup *table, size_t size)
- 
- #ifdef CONFIG_OF
- static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
--				      unsigned int idx, unsigned long *flags)
-+				      unsigned int idx,
-+				      enum gpio_lookup_flags *flags)
- {
- 	char prop_name[32]; /* 32 is max size of property name */
- 	enum of_gpio_flags of_flags;
-@@ -2244,7 +2246,7 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 		return desc;
- 
- 	if (of_flags & OF_GPIO_ACTIVE_LOW)
--		*flags |= GPIOF_ACTIVE_LOW;
-+		*flags |= GPIO_ACTIVE_LOW;
- 
- 	return desc;
- }
-@@ -2257,7 +2259,8 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- #endif
- 
- static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
--					unsigned int idx, unsigned long *flags)
-+					unsigned int idx,
-+					enum gpio_lookup_flags *flags)
- {
- 	struct acpi_gpio_info info;
- 	struct gpio_desc *desc;
-@@ -2267,13 +2270,14 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
- 		return desc;
- 
- 	if (info.gpioint && info.active_low)
--		*flags |= GPIOF_ACTIVE_LOW;
-+		*flags |= GPIO_ACTIVE_LOW;
- 
- 	return desc;
- }
- 
- static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
--				    unsigned int idx, unsigned long *flags)
-+				    unsigned int idx,
-+				    enum gpio_lookup_flags *flags)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
- 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
-@@ -2365,7 +2369,7 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- {
- 	struct gpio_desc *desc;
- 	int status;
--	unsigned long flags = 0;
-+	enum gpio_lookup_flags flags = 0;
- 
- 	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
- 
-@@ -2391,8 +2395,12 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	if (status < 0)
- 		return ERR_PTR(status);
- 
--	if (flags & GPIOF_ACTIVE_LOW)
-+	if (flags & GPIO_ACTIVE_LOW)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-+	if (flags & GPIO_OPEN_DRAIN)
-+		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
-+	if (flags & GPIO_OPEN_SOURCE)
-+		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
- 
- 	return desc;
- }
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 656a27e..82eac61 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -125,6 +125,13 @@ extern struct gpio_chip *gpiochip_find(void *data,
- int gpiod_lock_as_irq(struct gpio_desc *desc);
- void gpiod_unlock_as_irq(struct gpio_desc *desc);
- 
-+enum gpio_lookup_flags {
-+	GPIO_ACTIVE_HIGH = (0 << 0),
-+	GPIO_ACTIVE_LOW = (1 << 0),
-+	GPIO_OPEN_DRAIN = (1 << 1),
-+	GPIO_OPEN_SOURCE = (1 << 2),
-+};
-+
- /**
-  * Lookup table for associating GPIOs to specific devices and functions using
-  * platform data.
-@@ -152,9 +159,9 @@ struct gpiod_lookup {
- 	 */
- 	unsigned int idx;
- 	/*
--	 * mask of GPIOF_* values
-+	 * mask of GPIO_* values
- 	 */
--	unsigned long flags;
-+	enum gpio_lookup_flags flags;
- };
- 
- /*
--- 
-1.8.4.2
-
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
