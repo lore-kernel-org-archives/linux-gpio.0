@@ -1,35 +1,61 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [PATCH] gpio: rcar: Support both edge trigger with DT
-Date: Sat, 16 Nov 2013 18:38:49 -0800
-Message-ID: <52882C39.2050505@linux.intel.com>
-References: <1384359983-29178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <5285A686.4000405@linux.intel.com> <1678796.qQvoAN1bBU@avalon>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [Cocci] Warning masked by BUG() when CONFIG_BUG is enabled
+Date: Sun, 17 Nov 2013 15:06:28 +0100
+Message-ID: <20131117140627.GA6744@katana>
+References: <87a9h4559j.fsf@natisbad.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1678796.qQvoAN1bBU@avalon>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:51370 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751030Ab3KQOGj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 17 Nov 2013 09:06:39 -0500
+Content-Disposition: inline
+In-Reply-To: <87a9h4559j.fsf@natisbad.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnaud Ebalard <arno@natisbad.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, cocci@systeme.lip6.fr, linux-arm-kernel@lists.infradead.org
 
-Hi Laurent,
 
->> According to ANSI C, you can't initialize struct with empty { }. You
->> would need at least one 0 inside.
->> Despite gcc accepts it, there are some ppl over there trying kernel
->> with different compilers :)
->>
->> (Hope I'm not being too nitpicky)
-> 
-> You're certainly not worse than me in that regard ;-) However, given that most 
-> (if not all, I've stopped looking after 50) drivers seem to use an empty 
-> initializer at the end of their of_device_id array, I'm not sure whether we 
-> really need to care. I assume LLVM handles the empty initializer fine.
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I looked some examples too. Looks like empty { } are more common in
-kernel than { 0 }. I guess either we add this warning to checkpatch or
-we keep accepting it waiting for ANSI C will to adopt this at some
-point :)
 
-Br, David
+> As a side note, I noticed quite some instances of that pattern (switch
+> statement w/ a 'default' calling BUG()) while more carefully looking at
+> compilation output. I may get slapped for this, but just in case this
+> is indeed something which deserves to be fixed and can be fixed
+> automagically via some semantic patch, I have CC'ed Coccinelle people.
+
+I don't think this can be fixed in a generic way. This driver, for
+example, should IMO return -EINVAL when hitting default in probe and
+simply get rid of the other BUG() calls. No need to halt the kernel
+because of a broken match->data.
+
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSiM1jAAoJEBQN5MwUoCm2HAQP/i9dxWD5kOyyFe3xtroUt0Yt
+6Q0yAenTzy5i3pfFL7ItGyMwyBQyEtvQnJbTrPGDgTMvG7RNMH+5BnL65C1GY9zU
+OjeVapjB2gAApw0aLbR8EovvZQ4WRsWrASFJRYWzfhCA7KdccuNG11VqdxwUrghJ
+pBdK1+eJP2d+jdijYU/XYAKv0pUy2kFbFbucDKDIV2P6EJmyz5poCOtyKCFaLYkr
+VFqA4gPqUXiiVrF8//mUio32ndCGPlQXbrAp/0/Zt5ITRv4/K7xiLySxXNIEUrE8
+if5j+w6NzRgw6BI8secwUcgShreIPh1TTMjz81tnVGgz5WK+s7Eiy/4tBCBlPZXM
+itJmMssCXEMx/hVzzP0eZNBOPfi/+yoYXlF4uuP4o+e03WTsC1cRy67aDHFCrmP9
+K86tKLwlXhmwY6T/vU+MdKRMzKs+pSMXTev2iJJOzXcXz22ojzqmnanTgEHomxU7
+0OGJlYvBFtULvL+l0JpYRigJaBjQElBfyG76F9ipWOZlmtcMEWePlGHAI8vDTKgA
+g/FfCxOchU8MforZsLP9hNoOxtbHjx25ENvCMI3rAZ29MbNDOaPBnI4Awc84OiHy
+VxUVrqky2w0q9S2qpvOZdKJvLTeZ3eHbwaMKSGPRE+eO1K62EvkBzNltqjCdqWdx
+o7RRhTBBeDCll7P9eqQ8
+=KCbp
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
