@@ -1,147 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 3/7] gpio: davinci: use irqdomain
-Date: Tue, 19 Nov 2013 00:06:02 +0100
-Message-ID: <CACRpkda7h4hsMYv_2gdrY+JB80kHu3BkS5OOGyGhEZFc_UkCig@mail.gmail.com>
-References: <1383905510-31760-1-git-send-email-prabhakar.csengg@gmail.com>
-	<1383905510-31760-4-git-send-email-prabhakar.csengg@gmail.com>
-	<CACRpkdaJg4wqtD5xhPVrHJHxFoVwau6jidbOuQ9xFSK_6drxPQ@mail.gmail.com>
-	<528A2565.4000802@ti.com>
+From: Markus Mayer <markus.mayer@linaro.org>
+Subject: Re: [PATCH v2] gpio: bcm281xx: Fix return value of bcm_kona_gpio_get()
+Date: Mon, 18 Nov 2013 15:56:11 -0800
+Message-ID: <CAPdLdq=30GbOGV6MutFNzE8LQkeoSYpVqd=6t4XeQpU89SuwKg@mail.gmail.com>
+References: <1383941945-27569-1-git-send-email-markus.mayer@linaro.org>
+	<CACRpkdaY0pJiy29BeXK3rdEesopLPF6P3MpdKAXybEpWF6=Ewg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:56478 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751569Ab3KRXGE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 18:06:04 -0500
-Received: by mail-ob0-f171.google.com with SMTP id wp18so3062625obc.2
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2013 15:06:03 -0800 (PST)
-In-Reply-To: <528A2565.4000802@ti.com>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:39398 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751606Ab3KRX4M (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 18:56:12 -0500
+Received: by mail-wg0-f49.google.com with SMTP id x13so6814663wgg.4
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2013 15:56:11 -0800 (PST)
+In-Reply-To: <CACRpkdaY0pJiy29BeXK3rdEesopLPF6P3MpdKAXybEpWF6=Ewg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Prabhakar Lad <prabhakar.csengg@gmail.com>, Sekhar Nori <nsekhar@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linaro Patches <patches@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux GPIO List <linux-gpio@vger.kernel.org>
 
-On Mon, Nov 18, 2013 at 3:34 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 11/18/2013 03:11 PM, Linus Walleij wrote:
-
->> I think we recently established that map creating cannot be done
->> in gpio_to_irq* functions as that will not work properly if you request
->> an IRQ from device tree without first obtaining the IRQ from the GPIO
->> number with this function.
+On 18 November 2013 01:55, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Nov 8, 2013 at 9:19 PM, Markus Mayer <markus.mayer@linaro.org> wrote:
 >
-> Why? Could you point on corresponding thread, pls?
-
-All that contain this:
-"gpio: interrupt consistency check for OF GPIO IRQs"
-http://marc.info/?l=linux-kernel&w=2&r=1&s=interrupt+consistency&q=b
-
-> Current call tree is:
-> irq_create_of_mapping()
-> |-hwirq = omain->ops->xlate()
-> |-irq_create_mapping(domain, hwirq)
-
-OK that works for the pure device-tree scenario so mostly
-this is OK.
-
-The problem that appear is if someone is using platform data-provided
-IRQs off the irq_chip without calling gpio_to_irq() on the GPIO line
-first. This has been determined to be legal to do, so preferably
-create the map when registering the lines.
-
->> Also: please write a patch that marks the IRQ lines.
->> Call gpio_lock_as_irq(*gpio_chip, offset); in the
->> irqchip startup/shutdown functions. (Can be a separate
->> patch.)
+>> We need to return the corresponding bit for a particular GPIO. This bit
+>> contains shift not mask.
+>>
+>> Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
+>> Reviewed-by: Tim Kryger <tim.kryger@linaro.org>
+>> Reviewed-by: Matt Porter <matt.porter@linaro.org>
 >
-> It seems, some misunderstanding is here. So I'd like to clarify few points
-> and would be very appreciate for your comments:
-> 1) This patch itself will work unless we switch to DT (as in the following
-> patch)
-
-Sure.... but this does not seem to have much to do
-with my request to use gpio_lock_as_irq().
-
-> 2) After this patch the following object structure will be created during
-> Davinci GPIO driver initialization (DA850 has 144 IRQ lines):
-> - gpio_chip0(0..31)
->   |- irq_domain1
-> - gpio_chip1(32..63)
->   |- irq_domain2
-> - gpio_chip2(64..95)
->   |- irq_domain3
-> - gpio_chip3(96..127)
->   |- irq_domain4
-> - gpio_chip4(128..143)
->   |- irq_domain5
-
-OK that's nice.
-
-> 3) But in case of DT only one GPIO controller node will be created
-> Example:
-> gpio: gpio@1e26000 {
->         compatible = "ti,dm6441-gpio";
->         gpio-controller;
->         reg = <0x226000 0x1000>;
->         interrupt-parent = <&intc>;
->         interrupts = <42 IRQ_TYPE_EDGE_BOTH 43 IRQ_TYPE_EDGE_BOTH
->                 44 IRQ_TYPE_EDGE_BOTH 45 IRQ_TYPE_EDGE_BOTH
->                 46 IRQ_TYPE_EDGE_BOTH 47 IRQ_TYPE_EDGE_BOTH
->                 48 IRQ_TYPE_EDGE_BOTH 49 IRQ_TYPE_EDGE_BOTH
->                 50 IRQ_TYPE_EDGE_BOTH>;
->         interrupt-controller;
->         #interrupt-cells = <2>;
->         ti,ngpio = <144>;
->         ti,davinci-gpio-unbanked = <0>;
-> }
-
-Yep...
-
-> 4) As result, to make GPIO bindings/mappings work - we'll need to implement
-> .of_xlate() callback per GPIO chip, which will provide us with valid valid
-> gpio_chip and offset of gpio inside chip
-> (It was discussed before and supposed to be done as next step).
-
-Yeah.. this is usually a bit tricky.
-
-> For example, gpio_chip3 and offset=15 should be selected:
-> devA {
->    gpios = <&gpio 111 GPIO_ACTIVE_HIGH>;
-> }
+> OK...
 >
-> 5) What should be done to make GPIO IRQ bindings/mappings work?
+>>         /* return the specified bit status */
+>> -       return !!(val & bit);
+>> +       return (val >> bit) & 1;
 >
-> Example:
-> devB {
->    interrupt-parent = <&gpio>;
->    interrupts = <111 IRQ_TYPE_EDGE_BOTH>;
-> }
+> What about doing it like this instead:
 >
-> Should we implement one IRQ domain per all GPIO chips (per GPIO controller)?
+> return !!(val & BIT(bit));
 
-I don't know, I cannot really see where the problem is.
+I'll have to run that change through some tests to ensure everything
+is working as intended.
 
-The IRQ domain is for translationg hardware numbers such as bit offsets
-into Linux IRQ numbers and nothing else, so I'd suggest that as long as
-the thing you are translating/mapping is something simple like a bit
-index you're doing the right thing.
+Regards,
+-Markus
 
-If it becomes something complex where that index is not just a bit
-but an index into an array of registers at various locations it is
-abusing the irqdomain.
-
-So I think you should create one irqdomain per GPIO instance
-or bank or whatever you want to call it: like if there is this one
-register with 32 bits, then it gets its own IRQdomain.
-
-I think you should try to keep the 5 irqdomains, but whatever
-gives the simplest code is usually the right answer, and
-divide-and-conquer (split down the problem) is usually a good
-idea.
-
-How the GPIO block(s) are represented in the device tree is
-another totally separate issue about hardware description,
-do not let the device tree model your driver structure.
-
-Yours,
-Linus Walleij
+-- 
+Markus Mayer
+Broadcom Landing Team
