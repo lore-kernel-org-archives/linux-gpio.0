@@ -1,32 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio/lynxpoint: add new ACPI ID
-Date: Mon, 18 Nov 2013 11:51:04 +0100
-Message-ID: <CACRpkdabUuvZaTYN5r8iacW6Tm5WnQwBX7JUtv7dEuE=3_QO5w@mail.gmail.com>
-References: <1384249952-10085-1-git-send-email-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v5 2/7] gpio: davinci: use readl/writel instead of __raw_*
+Date: Mon, 18 Nov 2013 14:01:43 +0100
+Message-ID: <CACRpkdbUpGdxCn6VZO+dVCsc-3SbFC4N_E49=MAEFHd5VXqRHw@mail.gmail.com>
+References: <1383905510-31760-1-git-send-email-prabhakar.csengg@gmail.com>
+	<1383905510-31760-3-git-send-email-prabhakar.csengg@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:65154 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751288Ab3KRKvG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 05:51:06 -0500
-Received: by mail-ob0-f182.google.com with SMTP id wo20so2089254obc.27
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2013 02:51:04 -0800 (PST)
-In-Reply-To: <1384249952-10085-1-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:47105 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751692Ab3KRNBo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 08:01:44 -0500
+Received: by mail-ob0-f178.google.com with SMTP id va2so6847112obc.23
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2013 05:01:43 -0800 (PST)
+In-Reply-To: <1383905510-31760-3-git-send-email-prabhakar.csengg@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>
+To: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
 
-On Tue, Nov 12, 2013 at 10:52 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-
-> Newer Intel PCHs have the same GPIO controller than Haswell but the ACPI ID
-> is different. Add this ID to the driver supported IDs list.
+On Fri, Nov 8, 2013 at 11:11 AM, Prabhakar Lad
+<prabhakar.csengg@gmail.com> wrote:
+> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 >
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> This patch replaces the __raw_readl/writel with
+> readl and writel, Although the code runs on ARMv5
+> based SOCs, changing this will help copying the code
+> for other uses.
+>
+> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 
-Patch applied (for v3.14).
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
