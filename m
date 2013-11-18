@@ -1,43 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] ARM: pxa: delete the custom GPIO header
-Date: Mon, 18 Nov 2013 11:23:42 +0100
-Message-ID: <CACRpkda72DWkRctD2cBEZWdewpoz3DnXPeA=znNcswJVCcJTpw@mail.gmail.com>
-References: <1380183077-27407-1-git-send-email-linus.walleij@linaro.org>
-	<20131115124522.GA1913@n2100.arm.linux.org.uk>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH v2] Documentation: gpiolib: document new interface
+Date: Mon, 18 Nov 2013 19:33:18 +0900
+Message-ID: <5289ECEE.4070505@nvidia.com>
+References: <1384605261-8682-1-git-send-email-acourbot@nvidia.com> <CACRpkdZc0DWHe6AmawYp=SY=5==SUuJUHDETUTDw-6PbhR3tUg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:53366 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751266Ab3KRKXm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 05:23:42 -0500
-Received: by mail-ob0-f177.google.com with SMTP id wp4so6632088obc.8
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2013 02:23:42 -0800 (PST)
-In-Reply-To: <20131115124522.GA1913@n2100.arm.linux.org.uk>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:5858 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754Ab3KRKdX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 05:33:23 -0500
+In-Reply-To: <CACRpkdZc0DWHe6AmawYp=SY=5==SUuJUHDETUTDw-6PbhR3tUg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@marvell.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Eric Miao <eric.y.miao@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Landley <rob@landley.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Fri, Nov 15, 2013 at 1:45 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Thu, Sep 26, 2013 at 10:11:17AM +0200, Linus Walleij wrote:
->> The PXA sub-architecture appears to have a custom <mach/gpio.h>
->> for no reason whatsoever. The file became completely empty
->> after Haojian removed the remaining content in
->> commit 157d2644cb0c1e71a18baaffca56d2b1d0ebf10f
->> "ARM: pxa: change gpio to platform device".
->>
->> That commit added these two lines:
->>
->> However it seems like deleting the file has no effect
->> whatsoever on the kernel compilation.
+On 11/18/2013 06:34 PM, Linus Walleij wrote:
+> On Sat, Nov 16, 2013 at 1:34 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 >
-> This has broken pxa25x_udc - it seems that it was using this path to get
-> hold of mach/hardware.h, and now that it doesn't have that, it gets lots
-> of build errors.
+>> The first version received zero feedback, hopefully this one will get more
+>> attention. :) Not much changes, just some more proofreading and the fixes
+>> and improvements that came from it. It looks ok as far as I am concerned.
+>
+> Sorry I was swamped with other stuff...
+>
+>> Linus, I hope this can be merged during the -rc cycle of 3.13, since the
+>> gpiod_ interface is going to be introduced there. It would not make much
+>> sense for it to come without its documentation.
+>
+> You're right of course. I'll read through it and apply fixes on top
+> (or squash into your patch.)
 
-OK I'm onto it.
+Great, thanks!
 
-Yours,
-Linus Walleij
+> Formal stuff:
+> Don't we need an 00-INDEX file?
+> (Maybe Rob can tell whether this is desirable.)
+
+Good idea. gpio.txt somehow fulfills that role, but it might be better 
+if we split it. Would you like me to submit a new revision?
+
+> I don't like double spaces after periods. I will just go and remove
+> all of them from the new documentation unless you convince me
+> otherwise. Reference:
+> https://en.wikipedia.org/wiki/Sentence_spacing
+
+Please do - actually I started doing it (they come from the old 
+documentation, not the bits I have written myself) but have obviously 
+missed at least a few of them. :)
+
+Thanks,
+Alex.
+
