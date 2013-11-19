@@ -1,109 +1,81 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
-Date: Tue, 19 Nov 2013 19:17:46 +0400
-Message-ID: <528B811A.1030501@gmail.com>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com> <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com>
+From: Anatolij Gustschin <agust@denx.de>
+Subject: Re: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on
+ MPC8572/MPC8536
+Date: Tue, 19 Nov 2013 16:32:30 +0100
+Message-ID: <20131119163230.70964d1f@crub>
+References: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:42368 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751343Ab3KSPRx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 10:17:53 -0500
-Received: by mail-pd0-f169.google.com with SMTP id v10so2673728pde.28
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 07:17:52 -0800 (PST)
-In-Reply-To: <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com>
+Received: from mail-out.m-online.net ([212.18.0.10]:40889 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752971Ab3KSPcn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 10:32:43 -0500
+In-Reply-To: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Dmitry Artamonow <mad_soft@inbox.ru>
+To: Liu Gang <Gang.Liu@freescale.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, b07421@freescale.com, r61911@freescale.com
 
-On 11/19/2013 05:00 PM, Linus Walleij wrote:
-> On Fri, Nov 15, 2013 at 9:47 AM, Dmitry Eremin-Solenikov
-> <dbaryshkov@gmail.com> wrote:
->
->> This is a considerable rework of my previous attempt to update sa1100 irq
->> handling. IRQ code is updated to support MULTI_IRQ_HANDLER and is mostly
->> prepared to be converted to irqchip driver (if the need arises in future).
->> I have integrated idea of Linus Waleij to use irq domains. GPIO irq handling
->> is split to gpio driver, which also undergo an update/rewrite.
->
-> Overall this is looking very nice. However when I apply this on top
-> of (a working and booting) mainline HEAD, I get this:
+On Fri, 15 Nov 2013 15:16:29 +0800
+Liu Gang <Gang.Liu@freescale.com> wrote:
 
-[skipped]
+> For MPC8572/MPC8536, the status of GPIOs defined as output
+> cannot be determined by reading GPDAT register, so the code
+> use shadow data register instead. But if the input pins are
+> asserted high, they will always read high due to the shadow
+> data, even if the pins are set to low.
 
-> This is caused by the patch:
-> "ARM: sa1100: convert gpio driver to be a proper platform driver"
->
-> The reason: UARTs are initialized *very* early and the UART quirk used on the
-> h3600 is using GPIOs through the .set_mctrl hooks back into
-> arch/arm/mach-sa1100/h3xxx.c functions
-> h3xxx_uart_set_mctrl()
-> h3xxx_uart_get_mctrl()
->
-> And that happens before the GPIO driver gets registered -> crash.
+Could you please add a better description of the problem?
+I'm having some difficulties to understand the last sentence
+above. Does the issue appear if some pins were configured as
+inputs and were asserted high before booting the kernel, and
+therefore the shadow data has been initialized with these pin
+values?
 
-That is not the issue. The real issue is h3xxx using those gpio's 
-without previously calling gpio_request. Unfortunately sa1100 driver 
-doesn't have a good place to request gpios. When faced this problem 
-during locomo refactoring, I ended up with the following piece of code:
+Or does the issue appear if some pin has been configured as output
+first and has been set to the high value, then reconfigured as
+input? Now reading the pin state will always return high even
+if the actual pin state is low?
 
-========== Cut here ============
-static struct gpio collie_uart_gpio[] = {
-         { COLLIE_GPIO_CTS, GPIOF_IN, "CTS" },
-         { COLLIE_GPIO_RTS, GPIOF_OUT_INIT_LOW, "RTS" },
-         { COLLIE_GPIO_DTR, GPIOF_OUT_INIT_LOW, "DTR" },
-         { COLLIE_GPIO_DSR, GPIOF_IN, "DSR" },
-};
+It seems the issue will appear in both cases. If so, please add
+this information to the commit message.
 
-static bool collie_uart_gpio_ok;
+> So the input pins should be read directly from GPDAT, not
+> the shadow data.
+> 
+> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+> ---
+>  drivers/gpio/gpio-mpc8xxx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+> index 9ae29cc..1d4ac75 100644
+> --- a/drivers/gpio/gpio-mpc8xxx.c
+> +++ b/drivers/gpio/gpio-mpc8xxx.c
+> @@ -71,6 +71,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+>  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+>  
+>  	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
+> +	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
 
-static void collie_uart_set_mctrl(struct uart_port *port, u_int mctrl)
-{
-         if (!collie_uart_gpio_ok) {
-                 int rc = gpio_request_array(collie_uart_gpio,
-                                 ARRAY_SIZE(collie_uart_gpio));
-                 if (rc)
-                         printk("collie_uart_set_mctrl: gpio request 
-%d\n", rc);
-                 else
-                         collie_uart_gpio_ok = true;
-         }
+we can reduce one in_be32() call here, i.e.
 
-         if (collie_uart_gpio_ok) {
-                 gpio_set_value(COLLIE_GPIO_RTS, !(mctrl & TIOCM_RTS));
-                 gpio_set_value(COLLIE_GPIO_DTR, !(mctrl & TIOCM_DTR));
-         }
-}
-=========== Cut here ===============
+	u32 out_mask;
+	...
+	out_mask = in_be32(mm->regs + GPIO_DIR);
+	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
+	mpc8xxx_gc->data &= out_mask;
 
-Same goes for get_mctr().
+>  	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
+>  }
 
-Russell, Linus, what do you think about the previous solution?
+Thanks,
 
+Anatolij
 
-Another solution would be to make sa1100 distinguish between console 
-output (where it doesn't have to control rts/dtr) and normal uart work 
-(where 'modem' lines should be used).
-
-I have the feeling that sa11x0-serial driver would need to be somewhat 
-modified at least. I understand the conception behind unified 
-"port_fns", but I think that those should be split to a per-port 
-platform data.
-
-> This is why the device is registered from the machine in the first place
-> I think.
->
-> I don't know what the proper solution is, but I think you can keep most
-> of the platform device conversion if you also keep the special initialization
-> call.
-
-
-That would be possible solution if we can't come up with usefull way to 
-handle h3xxx (and collie) gpios.
-
--- 
-With best wishes
-Dmitry
+--
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-0  Fax: +49-8142-66989-80 Email: office@denx.de
