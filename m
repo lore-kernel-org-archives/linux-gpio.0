@@ -1,46 +1,70 @@
-From: "Vishwanathrao Badarkhe, Manish" <manishv.b-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH] gpio: Remove duplicate include of errno.h
-Date: Tue, 19 Nov 2013 18:02:42 +0530
-Message-ID: <1384864362-21018-1-git-send-email-manishv.b@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: lock adnp IRQs when starting them
+Date: Tue, 19 Nov 2013 13:40:27 +0100
+Message-ID: <1384864827-29694-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-we0-f170.google.com ([74.125.82.170]:38919 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752004Ab3KSMkg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 07:40:36 -0500
+Received: by mail-we0-f170.google.com with SMTP id w61so3956995wes.15
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 04:40:35 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-From: "Vishwanathrao Badarkhe, Manish" <manishv.b-l0cyMroinI0@public.gmane.org>
+This uses the new API for tagging GPIO lines as in use by
+IRQs. This enforces a few semantic checks on how the underlying
+GPIO line is used.
 
-Currently, code include errno.h twice. Remove one inclusion
-of errno.h
+Only compile tested on the lpc32xx.
 
-Signed-off-by: Vishwanathrao Badarkhe, Manish <manishv.b-l0cyMroinI0@public.gmane.org>
+Cc: Lars Poeschel <poeschel@lemonage.de>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-:100644 100644 552e3f4... de13695... M	include/linux/gpio.h
- include/linux/gpio.h |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpio/gpio-adnp.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 552e3f4..de13695 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -78,7 +78,6 @@ static inline int irq_to_gpio(unsigned int irq)
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index b204033acaeb..bf6fb54fa436 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -408,6 +408,24 @@ static void adnp_irq_bus_unlock(struct irq_data *data)
+ 	mutex_unlock(&adnp->irq_lock);
+ }
  
- #include <linux/kernel.h>
- #include <linux/types.h>
--#include <linux/errno.h>
- #include <linux/bug.h>
++static unsigned int adnp_irq_startup(struct irq_data *data)
++{
++	struct adnp *adnp = irq_data_get_irq_chip_data(data);
++
++	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq))
++		dev_err(adnp->gpio.dev,
++			"unable to lock HW IRQ %lu for IRQ\n",
++			data->hwirq);
++	return 0;
++}
++
++static void adnp_irq_shutdown(struct irq_data *data)
++{
++	struct adnp *adnp = irq_data_get_irq_chip_data(data);
++
++	gpio_unlock_as_irq(&adnp->gpio, data->hwirq);
++}
++
+ static struct irq_chip adnp_irq_chip = {
+ 	.name = "gpio-adnp",
+ 	.irq_mask = adnp_irq_mask,
+@@ -415,6 +433,8 @@ static struct irq_chip adnp_irq_chip = {
+ 	.irq_set_type = adnp_irq_set_type,
+ 	.irq_bus_lock = adnp_irq_bus_lock,
+ 	.irq_bus_sync_unlock = adnp_irq_bus_unlock,
++	.irq_startup = adnp_irq_startup,
++	.irq_shutdown = adnp_irq_shutdown,
+ };
  
- struct device;
+ static int adnp_irq_map(struct irq_domain *domain, unsigned int irq,
 -- 
-1.7.9.5
+1.8.3.1
+
