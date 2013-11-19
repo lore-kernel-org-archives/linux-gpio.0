@@ -1,48 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 01/23] gpio/omap: raw read and write endian fix
-Date: Tue, 19 Nov 2013 10:29:02 +0100
-Message-ID: <CACRpkdYD-Yw+RFnX0GshyQn2oHYNnXXRF4RXTzCox=2Z0_gKqg@mail.gmail.com>
-References: <1384560086-11994-1-git-send-email-taras.kondratiuk@linaro.org>
-	<1384560086-11994-2-git-send-email-taras.kondratiuk@linaro.org>
+Subject: Re: [PATCH v2] Documentation: gpiolib: document new interface
+Date: Tue, 19 Nov 2013 10:32:54 +0100
+Message-ID: <CACRpkdb0Gb9AGKqWb01=xe1423kPTXzCB+gbygsaED8Q=c95iA@mail.gmail.com>
+References: <1384605261-8682-1-git-send-email-acourbot@nvidia.com>
+	<CACRpkdZc0DWHe6AmawYp=SY=5==SUuJUHDETUTDw-6PbhR3tUg@mail.gmail.com>
+	<5289ECEE.4070505@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:33997 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751724Ab3KSJ3E (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 04:29:04 -0500
-Received: by mail-ob0-f175.google.com with SMTP id uz6so230196obc.6
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 01:29:02 -0800 (PST)
-In-Reply-To: <1384560086-11994-2-git-send-email-taras.kondratiuk@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <5289ECEE.4070505@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: Rob Landley <rob@landley.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Taras Kondratiuk <taras.kondratiuk@linaro.org>, ext Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Linux-OMAP <linux-omap@vger.kernel.org>, linaro-networking@linaro.org, Victor Kamensky <victor.kamensky@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Nov 16, 2013 at 1:01 AM, Taras Kondratiuk
-<taras.kondratiuk@linaro.org> wrote:
+On Mon, Nov 18, 2013 at 11:33 AM, Alex Courbot <acourbot@nvidia.com> wrote:
+> On 11/18/2013 06:34 PM, Linus Walleij wrote:
 
-> From: Victor Kamensky <victor.kamensky@linaro.org>
+>> Don't we need an 00-INDEX file?
+>> (Maybe Rob can tell whether this is desirable.)
 >
-> All OMAP IP blocks expect LE data, but CPU may operate in BE mode.
-> Need to use endian neutral functions to read/write h/w registers.
-> I.e instead of __raw_read[lw] and __raw_write[lw] functions code
-> need to use read[lw]_relaxed and write[lw]_relaxed functions.
-> If the first simply reads/writes register, the second will byteswap
-> it if host operates in BE mode.
->
-> Changes are trivial sed like replacement of __raw_xxx functions
-> with xxx_relaxed variant.
->
-> Signed-off-by: Victor Kamensky <victor.kamensky@linaro.org>
-> Signed-off-by: Taras Kondratiuk <taras.kondratiuk@linaro.org>
+> Good idea. gpio.txt somehow fulfills that role, but it might be better if we
+> split it. Would you like me to submit a new revision?
 
-Since I generally just dislike __raw accessors I went and applied
-this. If it collides with any of Tony's fixup work I might need to
-take the patch out again, no big deal.
+No please just send some incremental patch on top of
+my "fixes" branch in the GPIO tree.
 
-Some ACKs would be nice, but unless there are major objections
-this stays merged.
+I've read through the docs and couldn't find anything
+really wrong with it BTW.
 
 Yours,
 Linus Walleij
