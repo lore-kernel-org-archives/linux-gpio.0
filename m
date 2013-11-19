@@ -1,43 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RFC] gpio: Driver for SYSCON-based GPIOs
-Date: Tue, 19 Nov 2013 10:53:06 +0100
-Message-ID: <CACRpkdanW0XmPN5s9=gkz3AF9KCo96tw1ie3mim0rj9Dbw9gXA@mail.gmail.com>
-References: <1384497752-19032-1-git-send-email-shc_work@mail.ru>
-	<CACRpkdZfUnzejxRZ5eoiSV8bg-mkmdwQr0Dyf9tE=HJzVBH1UQ@mail.gmail.com>
-	<1384852632.323818774@f377.i.mail.ru>
+Subject: Re: [PATCH 4/9] ARM: sa1100: convert gpio driver to be a proper
+ platform driver
+Date: Tue, 19 Nov 2013 11:08:09 +0100
+Message-ID: <CACRpkdYb6KAG2i-NH2iAmYvtGDnhOgO9CZxmYsNPJXN6qqkOoQ@mail.gmail.com>
+References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+	<1384505280-25389-5-git-send-email-dbaryshkov@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:40148 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751618Ab3KSJxH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 04:53:07 -0500
-Received: by mail-oa0-f50.google.com with SMTP id j17so3801252oag.37
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 01:53:06 -0800 (PST)
-In-Reply-To: <1384852632.323818774@f377.i.mail.ru>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:46224 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751618Ab3KSKIJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 05:08:09 -0500
+Received: by mail-ob0-f171.google.com with SMTP id wp18so3708322obc.30
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 02:08:09 -0800 (PST)
+In-Reply-To: <1384505280-25389-5-git-send-email-dbaryshkov@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-On Tue, Nov 19, 2013 at 10:17 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
->> On Fri, Nov 15, 2013 at 7:42 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
+On Fri, Nov 15, 2013 at 9:47 AM, Dmitry Eremin-Solenikov
+<dbaryshkov@gmail.com> wrote:
 
->> Assuming just like the people causing the y2k problem that
->> "32 bits ought to fit everyone".
->>
->> This is not your fault, but I'd like you to insert a big comment
->> explaining that the syscon driver semantics hammer down the
->> 32 bit register width and there is nothing you can do about it.
+> Start cleaning up/refreshing SA1100 GPIO driver.
+> * Changed to bind through device model.
+> * Replaced direct register access with readl/writel.
 >
-> You mean the comment in the source code or in the DT bindings?
-> Thanks.
+> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
-In the source code right where you hardwire /32 and %32 etc.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Might as well use some
-
-#define SYSCON_REG_WIDTH 32
+I guess you want to merge this one through Russell's tree
+with the rest of the patches.
 
 Yours,
 Linus Walleij
