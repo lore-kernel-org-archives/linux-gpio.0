@@ -1,50 +1,47 @@
-From: Markus Mayer <markus.mayer@linaro.org>
-Subject: Re: [PATCH v2] gpio: bcm281xx: Fix return value of bcm_kona_gpio_get()
-Date: Mon, 18 Nov 2013 15:56:11 -0800
-Message-ID: <CAPdLdq=30GbOGV6MutFNzE8LQkeoSYpVqd=6t4XeQpU89SuwKg@mail.gmail.com>
-References: <1383941945-27569-1-git-send-email-markus.mayer@linaro.org>
-	<CACRpkdaY0pJiy29BeXK3rdEesopLPF6P3MpdKAXybEpWF6=Ewg@mail.gmail.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH] gpiolib: fix of_find_gpio() when OF not defined
+Date: Tue, 19 Nov 2013 10:37:29 +0900
+Message-ID: <1384825049-8214-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:39398 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751606Ab3KRX4M (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 18:56:12 -0500
-Received: by mail-wg0-f49.google.com with SMTP id x13so6814663wgg.4
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2013 15:56:11 -0800 (PST)
-In-Reply-To: <CACRpkdaY0pJiy29BeXK3rdEesopLPF6P3MpdKAXybEpWF6=Ewg@mail.gmail.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7168 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751064Ab3KSBhs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 20:37:48 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linaro Patches <patches@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux GPIO List <linux-gpio@vger.kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On 18 November 2013 01:55, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Nov 8, 2013 at 9:19 PM, Markus Mayer <markus.mayer@linaro.org> wrote:
->
->> We need to return the corresponding bit for a particular GPIO. This bit
->> contains shift not mask.
->>
->> Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
->> Reviewed-by: Tim Kryger <tim.kryger@linaro.org>
->> Reviewed-by: Matt Porter <matt.porter@linaro.org>
->
-> OK...
->
->>         /* return the specified bit status */
->> -       return !!(val & bit);
->> +       return (val >> bit) & 1;
->
-> What about doing it like this instead:
->
-> return !!(val & BIT(bit));
+The prototype for static GPIO lookup functions has been updated to use
+an explicit type for GPIO lookup flags. Unfortunately the definition of
+of_find_gpio() when CONFIG_OF is not defined has been omitted, which
+triggers a warning. This patch fixes this.
 
-I'll have to run that change through some tests to ensure everything
-is working as intended.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+--
+This fixes the kbuild test robot warning about
+"gpiolib: use dedicated flags for GPIO properties". Hopefully this can
+be squashed into this same patch. Apologies for the trouble.
+---
+ drivers/gpio/gpiolib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Regards,
--Markus
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 48d1a67ed488..463496160a94 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2299,7 +2299,8 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ }
+ #else
+ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+-				      unsigned int idx, unsigned long *flags)
++				      unsigned int idx,
++				      enum gpio_lookup_flags *flags)
+ {
+ 	return ERR_PTR(-ENODEV);
+ }
 -- 
-Markus Mayer
-Broadcom Landing Team
+1.8.4.2
+
