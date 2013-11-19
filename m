@@ -1,41 +1,32 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: ucb1400: Add MODULE_ALIAS
-Date: Tue, 19 Nov 2013 15:31:20 +0800
-Message-ID: <1384846280.4900.1.camel@phoenix>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: fix memory leak in error path
+Date: Tue, 19 Nov 2013 09:24:18 +0100
+Message-ID: <CACRpkda=a0=vpjg5_ZL0_jq--sArSG34iPjeb+jHS5WAs4HA8A@mail.gmail.com>
+References: <1384374039-18795-1-git-send-email-mpn@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:57520 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750833Ab3KSHb0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 02:31:26 -0500
-Received: by mail-pb0-f48.google.com with SMTP id md12so1504719pbc.35
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2013 23:31:26 -0800 (PST)
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:38018 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751290Ab3KSIYS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 03:24:18 -0500
+Received: by mail-ob0-f171.google.com with SMTP id wp18so3605849obc.30
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 00:24:18 -0800 (PST)
+In-Reply-To: <1384374039-18795-1-git-send-email-mpn@google.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marek Vasut <marex@denx.de>, Jean Delvare <jdelvare@suse.de>, linux-gpio@vger.kernel.org
+To: Michal Nazarewicz <mpn@google.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christian Ruppert <christian.ruppert@abilis.com>
 
-This driver can be built as a module now.
-Add MODULE_ALIAS to support module auto-loading.
+On Wed, Nov 13, 2013 at 9:20 PM, Michal Nazarewicz <mpn@google.com> wrote:
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-ucb1400.c | 1 +
- 1 file changed, 1 insertion(+)
+> From: Michal Nazarewicz <mina86@mina86.com>
+>
+> Signed-off-by: Michal Nazarewicz <mina86@mina86.com>
 
-diff --git a/drivers/gpio/gpio-ucb1400.c b/drivers/gpio/gpio-ucb1400.c
-index 1a605f2..06fb5cf 100644
---- a/drivers/gpio/gpio-ucb1400.c
-+++ b/drivers/gpio/gpio-ucb1400.c
-@@ -105,3 +105,4 @@ module_platform_driver(ucb1400_gpio_driver);
- 
- MODULE_DESCRIPTION("Philips UCB1400 GPIO driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:ucb1400_gpio");
--- 
-1.8.1.2
+Good catch!
 
+Patch applied.
 
-
+Yours,
+Linus Walleij
