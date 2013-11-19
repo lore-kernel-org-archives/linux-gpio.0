@@ -1,47 +1,41 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpiolib: fix of_find_gpio() when OF not defined
-Date: Tue, 19 Nov 2013 10:37:29 +0900
-Message-ID: <1384825049-8214-1-git-send-email-acourbot@nvidia.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: ucb1400: Add MODULE_ALIAS
+Date: Tue, 19 Nov 2013 15:31:20 +0800
+Message-ID: <1384846280.4900.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7168 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751064Ab3KSBhs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2013 20:37:48 -0500
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:57520 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750833Ab3KSHb0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 02:31:26 -0500
+Received: by mail-pb0-f48.google.com with SMTP id md12so1504719pbc.35
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2013 23:31:26 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Marek Vasut <marex@denx.de>, Jean Delvare <jdelvare@suse.de>, linux-gpio@vger.kernel.org
 
-The prototype for static GPIO lookup functions has been updated to use
-an explicit type for GPIO lookup flags. Unfortunately the definition of
-of_find_gpio() when CONFIG_OF is not defined has been omitted, which
-triggers a warning. This patch fixes this.
+This driver can be built as a module now.
+Add MODULE_ALIAS to support module auto-loading.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
---
-This fixes the kbuild test robot warning about
-"gpiolib: use dedicated flags for GPIO properties". Hopefully this can
-be squashed into this same patch. Apologies for the trouble.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/gpio/gpiolib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-ucb1400.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 48d1a67ed488..463496160a94 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2299,7 +2299,8 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- }
- #else
- static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
--				      unsigned int idx, unsigned long *flags)
-+				      unsigned int idx,
-+				      enum gpio_lookup_flags *flags)
- {
- 	return ERR_PTR(-ENODEV);
- }
+diff --git a/drivers/gpio/gpio-ucb1400.c b/drivers/gpio/gpio-ucb1400.c
+index 1a605f2..06fb5cf 100644
+--- a/drivers/gpio/gpio-ucb1400.c
++++ b/drivers/gpio/gpio-ucb1400.c
+@@ -105,3 +105,4 @@ module_platform_driver(ucb1400_gpio_driver);
+ 
+ MODULE_DESCRIPTION("Philips UCB1400 GPIO driver");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:ucb1400_gpio");
 -- 
-1.8.4.2
+1.8.1.2
+
+
 
