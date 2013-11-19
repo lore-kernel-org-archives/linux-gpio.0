@@ -1,67 +1,109 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: bcm-kona: lock IRQs when starting them
-Date: Tue, 19 Nov 2013 14:17:31 +0100
-Message-ID: <1384867051-31066-1-git-send-email-linus.walleij@linaro.org>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
+Date: Tue, 19 Nov 2013 19:17:46 +0400
+Message-ID: <528B811A.1030501@gmail.com>
+References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com> <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:63932 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752004Ab3KSNRu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 08:17:50 -0500
-Received: by mail-we0-f179.google.com with SMTP id q59so5477319wes.24
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 05:17:49 -0800 (PST)
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:42368 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751343Ab3KSPRx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 10:17:53 -0500
+Received: by mail-pd0-f169.google.com with SMTP id v10so2673728pde.28
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 07:17:52 -0800 (PST)
+In-Reply-To: <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Markus Mayer <markus.mayer@linaro.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Christian Daudt <csd@broadcom.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-This uses the new API for tagging GPIO lines as in use by
-IRQs. This enforces a few semantic checks on how the underlying
-GPIO line is used.
+On 11/19/2013 05:00 PM, Linus Walleij wrote:
+> On Fri, Nov 15, 2013 at 9:47 AM, Dmitry Eremin-Solenikov
+> <dbaryshkov@gmail.com> wrote:
+>
+>> This is a considerable rework of my previous attempt to update sa1100 irq
+>> handling. IRQ code is updated to support MULTI_IRQ_HANDLER and is mostly
+>> prepared to be converted to irqchip driver (if the need arises in future).
+>> I have integrated idea of Linus Waleij to use irq domains. GPIO irq handling
+>> is split to gpio driver, which also undergo an update/rewrite.
+>
+> Overall this is looking very nice. However when I apply this on top
+> of (a working and booting) mainline HEAD, I get this:
 
-Cc: Markus Mayer <markus.mayer@linaro.org>
-Cc: Christian Daudt <csd@broadcom.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-bcm-kona.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+[skipped]
 
-diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-index 72c927dc3be1..dee6d03a7959 100644
---- a/drivers/gpio/gpio-bcm-kona.c
-+++ b/drivers/gpio/gpio-bcm-kona.c
-@@ -449,12 +449,32 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+static unsigned int bcm_kona_gpio_irq_startup(struct irq_data *d)
-+{
-+	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
-+
-+	if (gpio_lock_as_irq(&kona_gpio->gpio_chip, d->hwirq))
-+		dev_err(kona_gpio->gpio_chip.dev,
-+			"unable to lock HW IRQ %lu for IRQ\n",
-+			d->hwirq);
-+	return 0;
-+}
-+
-+static void bcm_kona_gpio_irq_shutdown(struct irq_data *d)
-+{
-+	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
-+
-+	gpio_unlock_as_irq(&kona_gpio->gpio_chip, d->hwirq);
-+}
-+
- static struct irq_chip bcm_gpio_irq_chip = {
- 	.name = "bcm-kona-gpio",
- 	.irq_ack = bcm_kona_gpio_irq_ack,
- 	.irq_mask = bcm_kona_gpio_irq_mask,
- 	.irq_unmask = bcm_kona_gpio_irq_unmask,
- 	.irq_set_type = bcm_kona_gpio_irq_set_type,
-+	.irq_startup = bcm_kona_gpio_irq_startup,
-+	.irq_shutdown = bcm_kona_gpio_irq_shutdown,
- };
- 
- static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
+> This is caused by the patch:
+> "ARM: sa1100: convert gpio driver to be a proper platform driver"
+>
+> The reason: UARTs are initialized *very* early and the UART quirk used on the
+> h3600 is using GPIOs through the .set_mctrl hooks back into
+> arch/arm/mach-sa1100/h3xxx.c functions
+> h3xxx_uart_set_mctrl()
+> h3xxx_uart_get_mctrl()
+>
+> And that happens before the GPIO driver gets registered -> crash.
+
+That is not the issue. The real issue is h3xxx using those gpio's 
+without previously calling gpio_request. Unfortunately sa1100 driver 
+doesn't have a good place to request gpios. When faced this problem 
+during locomo refactoring, I ended up with the following piece of code:
+
+========== Cut here ============
+static struct gpio collie_uart_gpio[] = {
+         { COLLIE_GPIO_CTS, GPIOF_IN, "CTS" },
+         { COLLIE_GPIO_RTS, GPIOF_OUT_INIT_LOW, "RTS" },
+         { COLLIE_GPIO_DTR, GPIOF_OUT_INIT_LOW, "DTR" },
+         { COLLIE_GPIO_DSR, GPIOF_IN, "DSR" },
+};
+
+static bool collie_uart_gpio_ok;
+
+static void collie_uart_set_mctrl(struct uart_port *port, u_int mctrl)
+{
+         if (!collie_uart_gpio_ok) {
+                 int rc = gpio_request_array(collie_uart_gpio,
+                                 ARRAY_SIZE(collie_uart_gpio));
+                 if (rc)
+                         printk("collie_uart_set_mctrl: gpio request 
+%d\n", rc);
+                 else
+                         collie_uart_gpio_ok = true;
+         }
+
+         if (collie_uart_gpio_ok) {
+                 gpio_set_value(COLLIE_GPIO_RTS, !(mctrl & TIOCM_RTS));
+                 gpio_set_value(COLLIE_GPIO_DTR, !(mctrl & TIOCM_DTR));
+         }
+}
+=========== Cut here ===============
+
+Same goes for get_mctr().
+
+Russell, Linus, what do you think about the previous solution?
+
+
+Another solution would be to make sa1100 distinguish between console 
+output (where it doesn't have to control rts/dtr) and normal uart work 
+(where 'modem' lines should be used).
+
+I have the feeling that sa11x0-serial driver would need to be somewhat 
+modified at least. I understand the conception behind unified 
+"port_fns", but I think that those should be split to a per-port 
+platform data.
+
+> This is why the device is registered from the machine in the first place
+> I think.
+>
+> I don't know what the proper solution is, but I think you can keep most
+> of the platform device conversion if you also keep the special initialization
+> call.
+
+
+That would be possible solution if we can't come up with usefull way to 
+handle h3xxx (and collie) gpios.
+
 -- 
-1.8.3.1
-
+With best wishes
+Dmitry
