@@ -1,140 +1,67 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
-Date: Tue, 19 Nov 2013 14:00:53 +0100
-Message-ID: <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH] gpio: bcm-kona: lock IRQs when starting them
+Date: Tue, 19 Nov 2013 14:17:31 +0100
+Message-ID: <1384867051-31066-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:46876 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751870Ab3KSNAx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 08:00:53 -0500
-Received: by mail-ob0-f178.google.com with SMTP id uz6so466143obc.9
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 05:00:53 -0800 (PST)
-In-Reply-To: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:63932 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752004Ab3KSNRu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 08:17:50 -0500
+Received: by mail-we0-f179.google.com with SMTP id q59so5477319wes.24
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 05:17:49 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Dmitry Artamonow <mad_soft@inbox.ru>
+To: linux-gpio@vger.kernel.org, Markus Mayer <markus.mayer@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Christian Daudt <csd@broadcom.com>
 
-On Fri, Nov 15, 2013 at 9:47 AM, Dmitry Eremin-Solenikov
-<dbaryshkov@gmail.com> wrote:
+This uses the new API for tagging GPIO lines as in use by
+IRQs. This enforces a few semantic checks on how the underlying
+GPIO line is used.
 
-> This is a considerable rework of my previous attempt to update sa1100 irq
-> handling. IRQ code is updated to support MULTI_IRQ_HANDLER and is mostly
-> prepared to be converted to irqchip driver (if the need arises in future).
-> I have integrated idea of Linus Waleij to use irq domains. GPIO irq handling
-> is split to gpio driver, which also undergo an update/rewrite.
+Cc: Markus Mayer <markus.mayer@linaro.org>
+Cc: Christian Daudt <csd@broadcom.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-bcm-kona.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Overall this is looking very nice. However when I apply this on top
-of (a working and booting) mainline HEAD, I get this:
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 72c927dc3be1..dee6d03a7959 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -449,12 +449,32 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++static unsigned int bcm_kona_gpio_irq_startup(struct irq_data *d)
++{
++	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
++
++	if (gpio_lock_as_irq(&kona_gpio->gpio_chip, d->hwirq))
++		dev_err(kona_gpio->gpio_chip.dev,
++			"unable to lock HW IRQ %lu for IRQ\n",
++			d->hwirq);
++	return 0;
++}
++
++static void bcm_kona_gpio_irq_shutdown(struct irq_data *d)
++{
++	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
++
++	gpio_unlock_as_irq(&kona_gpio->gpio_chip, d->hwirq);
++}
++
+ static struct irq_chip bcm_gpio_irq_chip = {
+ 	.name = "bcm-kona-gpio",
+ 	.irq_ack = bcm_kona_gpio_irq_ack,
+ 	.irq_mask = bcm_kona_gpio_irq_mask,
+ 	.irq_unmask = bcm_kona_gpio_irq_unmask,
+ 	.irq_set_type = bcm_kona_gpio_irq_set_type,
++	.irq_startup = bcm_kona_gpio_irq_startup,
++	.irq_shutdown = bcm_kona_gpio_irq_shutdown,
+ };
+ 
+ static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
+-- 
+1.8.3.1
 
-sa11x0-uart.3: ttySA0 at MMIO 0x80050000 (irq = 17, base_baud =
-230400) is a SA1100
-Unable to handle kernel NULL pointer dereference at virtual address 0000004c
-pgd = c0004000
-[0000004c] *pgd=00000000
-Internal error: Oops: 40cd7017 [#1] PREEMPT ARM
-Modules linked in:
-task: c1832000 ti: c1834000 task.ti: c1834000
-PC is at gpiod_set_raw_value+0x14/0x4c
-LR is at uart_add_one_port+0x2c4/0x3e8
-pc : [<c017b7ec>]    lr : [<c01ac7d8>]    psr: a0000093
-sp : c1835db8  ip : 00000001  fp : c0359df8
-r10: c1862e20  r9 : a0000013  r8 : c1834008
-r7 : c1926078  r6 : c0659f2c  r5 : 00000001  r4 : c0656438
-r3 : 00000000  r2 : 80050000  r1 : 00000001  r0 : c0656438
-Flags: NzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-Control: c0cd717f  Table: c0cd717f  DAC: 00000017
-Process swapper (pid: 1, stack limit = 0xc18341c0)
-Stack: (0xc1835db8 to 0xc1836000)
-5da0:                                                       80050000
-c1926000
-5dc0: c06415fc c01ac7d8 00000000 c1835df0 00000011 00038400 c0351738
-c0cf35e0
-5de0: 00038400 00000011 00000000 c0352e2c 4f494d4d 38783020 30353030
-00303030
-5e00: c0cf3540 c0c0c400 c0c0c400 c0c0c540 c1863cc0 c00f973c 00000000
-c0c0c540
-5e20: c1863cc0 c00fa14c c0c5dea0 c00f989c ff0a0004 c0659f2c c0635d20
-c0635d54
-5e40: c06415b8 c03af454 c03b5280 00000000 c1834030 c01ae8d8 c01b68b4
-c0635d20
-5e60: c06415b8 c01b68cc c01b68b4 c0635d20 c065a550 c01b4fcc 00000007
-c0635d20
-5e80: c06415b8 c0635d54 00000000 c01b524c 00000000 c01b51b4 c06415b8
-c01b36cc
-5ea0: c1807f4c c1874a50 c06415b8 c0c5dea0 c0641c90 c01b4884 c033c704
-c06415b8
-5ec0: 00000006 c06415b8 00000006 c064a320 c064a320 c01b58bc 00000000
-00000000
-5ee0: 00000006 c03af48c c03ba968 c0008738 c033eb60 c1805f80 c0652094
-c18584e0
-5f00: c02c1000 0000001f 00000000 00000000 00000000 c00efdd8 c1835f40
-c1858480
-5f20: c0002178 c02cd440 00000072 c003420c c0383568 00000006 c0002184
-00000006
-5f40: 00000000 c03ba968 00000006 c064a320 c064a320 c039c47c c03b5280
-00000072
-5f60: c03b5274 c039cbc8 00000006 00000006 c039c47c e64cf708 e9a321ec
-c15a1bcf
-5f80: 63932b15 00000000 c02b759c 00000000 00000000 00000000 00000000
-00000000
-5fa0: 00000000 c02b75a4 00000000 c000e9f0 00000000 00000000 00000000
-00000000
-5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-00000000
-5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 7fc33b8e
-cc8612cc
-[<c017b7ec>] (gpiod_set_raw_value+0x14/0x4c) from [<c01ac7d8>]
-(uart_add_one_port+0x2c4/0x3e8)
-[<c01ac7d8>] (uart_add_one_port+0x2c4/0x3e8) from [<c01ae8d8>]
-(sa1100_serial_probe+0x98/0xc4)
-[<c01ae8d8>] (sa1100_serial_probe+0x98/0xc4) from [<c01b68cc>]
-(platform_drv_probe+0x18/0x4c)
-[<c01b68cc>] (platform_drv_probe+0x18/0x4c) from [<c01b4fcc>]
-(really_probe+0x6c/0x1f8)
-[<c01b4fcc>] (really_probe+0x6c/0x1f8) from [<c01b524c>]
-(__driver_attach+0x98/0x9c)
-[<c01b524c>] (__driver_attach+0x98/0x9c) from [<c01b36cc>]
-(bus_for_each_dev+0x68/0x98)
-[<c01b36cc>] (bus_for_each_dev+0x68/0x98) from [<c01b4884>]
-(bus_add_driver+0x13c/0x1e8)
-[<c01b4884>] (bus_add_driver+0x13c/0x1e8) from [<c01b58bc>]
-(driver_register+0x78/0xf8)
-[<c01b58bc>] (driver_register+0x78/0xf8) from [<c03af48c>]
-(sa1100_serial_init+0x38/0x58)
-[<c03af48c>] (sa1100_serial_init+0x38/0x58) from [<c0008738>]
-(do_one_initcall+0x104/0x16c)
-[<c0008738>] (do_one_initcall+0x104/0x16c) from [<c039cbc8>]
-(kernel_init_freeable+0xf4/0x1b0)
-[<c039cbc8>] (kernel_init_freeable+0xf4/0x1b0) from [<c02b75a4>]
-(kernel_init+0x8/0x118)
-[<c02b75a4>] (kernel_init+0x8/0x118) from [<c000e9f0>]
-(ret_from_fork+0x14/0x24)
-Code: e2504000 0a000008 e5943000 e1a05001 (e5d3304c)
----[ end trace 42b376e5a40c702b ]---
-note: swapper[1] exited with preempt_count 1
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-
-This is caused by the patch:
-"ARM: sa1100: convert gpio driver to be a proper platform driver"
-
-The reason: UARTs are initialized *very* early and the UART quirk used on the
-h3600 is using GPIOs through the .set_mctrl hooks back into
-arch/arm/mach-sa1100/h3xxx.c functions
-h3xxx_uart_set_mctrl()
-h3xxx_uart_get_mctrl()
-
-And that happens before the GPIO driver gets registered -> crash.
-
-This is why the device is registered from the machine in the first place
-I think.
-
-I don't know what the proper solution is, but I think you can keep most
-of the platform device conversion if you also keep the special initialization
-call.
-
-Yours,
-Linus Walleij
