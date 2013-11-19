@@ -1,86 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 3/7] gpio: davinci: use irqdomain
-Date: Tue, 19 Nov 2013 21:34:09 +0100
-Message-ID: <CACRpkdYaWuepKCie82uRx4PMfb7xTLtU43WzsLzW7Bpor7wVgw@mail.gmail.com>
-References: <1383905510-31760-1-git-send-email-prabhakar.csengg@gmail.com>
-	<1383905510-31760-4-git-send-email-prabhakar.csengg@gmail.com>
-	<CACRpkdaJg4wqtD5xhPVrHJHxFoVwau6jidbOuQ9xFSK_6drxPQ@mail.gmail.com>
-	<528A2565.4000802@ti.com>
-	<CACRpkda7h4hsMYv_2gdrY+JB80kHu3BkS5OOGyGhEZFc_UkCig@mail.gmail.com>
-	<528B905E.6000206@ti.com>
+From: Scott Wood <scottwood@freescale.com>
+Subject: Re: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on
+ MPC8572/MPC8536
+Date: Tue, 19 Nov 2013 16:51:34 -0600
+Message-ID: <1384901494.1403.383.camel@snotra.buserror.net>
+References: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <528B905E.6000206@ti.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Prabhakar Lad <prabhakar.csengg@gmail.com>, Sekhar Nori <nsekhar@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-db8lp0184.outbound.messaging.microsoft.com ([213.199.154.184]:12998
+	"EHLO db8outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752707Ab3KSWvk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 19 Nov 2013 17:51:40 -0500
+In-Reply-To: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Liu Gang <Gang.Liu@freescale.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, b07421@freescale.com, r61911@freescale.com
 
-On Tue, Nov 19, 2013 at 5:22 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 11/19/2013 01:06 AM, Linus Walleij wrote:
+On Fri, 2013-11-15 at 15:16 +0800, Liu Gang wrote:
+> For MPC8572/MPC8536, the status of GPIOs defined as output
+> cannot be determined by reading GPDAT register, so the code
+> use shadow data register instead. But if the input pins are
+> asserted high, they will always read high due to the shadow
+> data, even if the pins are set to low.
+> 
+> So the input pins should be read directly from GPDAT, not
+> the shadow data.
+> 
+> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+> ---
+>  drivers/gpio/gpio-mpc8xxx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+> index 9ae29cc..1d4ac75 100644
+> --- a/drivers/gpio/gpio-mpc8xxx.c
+> +++ b/drivers/gpio/gpio-mpc8xxx.c
+> @@ -71,6 +71,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+>  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+>  
+>  	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
+> +	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
+>  
+>  	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
+>  }
 
->> The problem that appear is if someone is using platform data-provided
->> IRQs off the irq_chip without calling gpio_to_irq() on the GPIO line
->> first. This has been determined to be legal to do, so preferably
->> create the map when registering the lines.
->
-> Ok, I understand. It may fail in case if someone will define/calculate
->  IRQ number for device manually in board code, like:
->  dev_irq = (DA850_N_CP_INTC_IRQ + gpioN)
+It seems odd to update ->data in a function that's supposed to be
+reading things...  Perhaps it would be better to keep ->data in a good
+state from the beginning.
 
-Usually people just hardcode the IRQ value or use some
-#define, like they have often also done with GPIO numbers ...
+-Scott
 
-> Also, looks like It is possible to fail if Main/arch IRQ controller
-> code doesn't make call of irq_alloc_descs() during init, so
-> allocated_irqs will be empty.
 
-If you use irq_domain_add_simple() the irqdomain core
-will actually attempt to do this.
 
-But if you use a linear domain, you have to create these
-irqdescs as you go. The simplest way to do this is to call
-irq_create_mapping() on all IRQs, because that call will
-also allocate some descriptor.
-
-> Before recommending that, I've checked Davinci platform code and didn't
-> find any risk places - BUT, Seems my findings need to be confirmed by
-> Sekhar.
-
-It's no big deal, but I just want you to be aware that this
-may cause a problem at some point.
-
->> I think you should try to keep the 5 irqdomains, but whatever
->> gives the simplest code is usually the right answer, and
->> divide-and-conquer (split down the problem) is usually a good
->> idea.
->>
->> How the GPIO block(s) are represented in the device tree is
->> another totally separate issue about hardware description,
->> do not let the device tree model your driver structure.
->
->
-> Thanks for you comments, but looks like I have to be more specific :)
->
-> How irq_find_host() will look for proper IRQ domain in our case?
-> And will it work at all, taking into account that all (5) IRQ domains
-> will have the same value of "of_node" property?
-> of_irq_to_resource()
-> |-irq_of_parse_and_map()
->   |-irq_create_of_mapping()
->     |-irq_find_host(irq_data->np)
->  where np will point on GPIO node.
->
-> As result my question is about what do DT core frameworks allow or not
-> allow to do? And according to that implementation of driver can be
-> changed.
-
-Hm, I'm not like a super-expert on the interrupt core, but maybe
-you need to create subnodes inside the top node to represent this,
-then use of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
-to populate them from the main node.
-
-Yours,
-Linus Walleij
