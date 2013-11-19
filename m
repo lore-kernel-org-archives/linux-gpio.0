@@ -1,37 +1,34 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [RFC 01/23] gpio/omap: raw read and write endian fix
-Date: Tue, 19 Nov 2013 13:21:34 -0500
-Message-ID: <528BAC2E.4020601@ti.com>
-References: <1384560086-11994-1-git-send-email-taras.kondratiuk@linaro.org> <1384560086-11994-2-git-send-email-taras.kondratiuk@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: Remove duplicate include of errno.h
+Date: Tue, 19 Nov 2013 21:15:15 +0100
+Message-ID: <CACRpkdb=NDnYDJe8y1CrkRsVpZCUiMQkf+u58MSp20uzjOa=BQ@mail.gmail.com>
+References: <1384864362-21018-1-git-send-email-manishv.b@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:34739 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752103Ab3KSSVi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 19 Nov 2013 13:21:38 -0500
-In-Reply-To: <1384560086-11994-2-git-send-email-taras.kondratiuk@linaro.org>
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:53827 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752058Ab3KSUPP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 15:15:15 -0500
+Received: by mail-oa0-f44.google.com with SMTP id m1so1325508oag.17
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 12:15:15 -0800 (PST)
+In-Reply-To: <1384864362-21018-1-git-send-email-manishv.b@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Taras Kondratiuk <taras.kondratiuk@linaro.org>
-Cc: linux-omap@vger.kernel.org, linaro-networking@linaro.org, Victor Kamensky <victor.kamensky@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Vishwanathrao Badarkhe, Manish" <manishv.b@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Friday 15 November 2013 07:01 PM, Taras Kondratiuk wrote:
-> From: Victor Kamensky <victor.kamensky@linaro.org>
-> 
-> All OMAP IP blocks expect LE data, but CPU may operate in BE mode.
-> Need to use endian neutral functions to read/write h/w registers.
-> I.e instead of __raw_read[lw] and __raw_write[lw] functions code
-> need to use read[lw]_relaxed and write[lw]_relaxed functions.
-> If the first simply reads/writes register, the second will byteswap
-> it if host operates in BE mode.
-> 
-> Changes are trivial sed like replacement of __raw_xxx functions
-> with xxx_relaxed variant.
-> 
-> Signed-off-by: Victor Kamensky <victor.kamensky@linaro.org>
-> Signed-off-by: Taras Kondratiuk <taras.kondratiuk@linaro.org>
-> ---
-Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+On Tue, Nov 19, 2013 at 1:32 PM, Vishwanathrao Badarkhe, Manish
+<manishv.b@ti.com> wrote:
 
+> From: "Vishwanathrao Badarkhe, Manish" <manishv.b@ti.com>
+>
+> Currently, code include errno.h twice. Remove one inclusion
+> of errno.h
+>
+> Signed-off-by: Vishwanathrao Badarkhe, Manish <manishv.b@ti.com>
+
+Patch applied, thanks!
+
+Yours,
+Linus Walleij
