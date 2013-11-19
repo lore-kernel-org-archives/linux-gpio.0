@@ -1,84 +1,45 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [PATCH v1.2] gpiolib: append SFI helpers for GPIO API
-Date: Tue, 19 Nov 2013 09:32:54 -0800
-Message-ID: <528BA0C6.8010604@linux.intel.com>
-References: <1370440690-21898-1-git-send-email-andriy.shevchenko@linux.intel.com> <CACRpkdaP+tkJn8jcR_RaCz_c6hk66F8qde2KRiCzNyyLWUkgjw@mail.gmail.com> <528B2EF2.5010104@nvidia.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [RFC 01/23] gpio/omap: raw read and write endian fix
+Date: Tue, 19 Nov 2013 10:12:55 -0800
+Message-ID: <87mwl0mfa0.fsf@linaro.org>
+References: <1384560086-11994-1-git-send-email-taras.kondratiuk@linaro.org>
+	<1384560086-11994-2-git-send-email-taras.kondratiuk@linaro.org>
+	<CACRpkdYD-Yw+RFnX0GshyQn2oHYNnXXRF4RXTzCox=2Z0_gKqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:19088 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751624Ab3KSRew (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 19 Nov 2013 12:34:52 -0500
-In-Reply-To: <528B2EF2.5010104@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYD-Yw+RFnX0GshyQn2oHYNnXXRF4RXTzCox=2Z0_gKqg@mail.gmail.com>
+	(Linus Walleij's message of "Tue, 19 Nov 2013 10:29:02 +0100")
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Taras Kondratiuk <taras.kondratiuk@linaro.org>, ext Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linux-OMAP <linux-omap@vger.kernel.org>, linaro-networking@linaro.org, Victor Kamensky <victor.kamensky@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On 11/19/2013 01:27 AM, Alex Courbot wrote:
-> On 11/19/2013 06:24 PM, Linus Walleij wrote:
->> On Wed, Jun 5, 2013 at 3:58 PM, Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com> wrote:
->>
->>> To support some (legacy) firmwares and platforms let's make life
->>> easier for
->>> their customers.
->>>
->>> This patch extracts SFI GPIO API from arch/x86/platform/mrst/mrst.c.
->>>
->>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>
->> So since this patch was ACKed the world has changed a bit and now
->> I want new changes (or maybe I was tired and not paying enough
->> attention at the time).
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Agreed. Even my e-mail was outdated :)
-Updating from david.a.cohen@intel.com to david.a.cohen@linux.intel.com
-to avoid M$ servers.
-
->>
->> (...)
->>> +int sfi_get_gpio_by_name(const char *name)
->>> +{
->>> +       struct sfi_gpio_table_entry *pentry = sfi_gpio_table;
->>> +       int i;
->>> +
->>> +       if (!pentry)
->>> +               return -EINVAL;
->>> +
->>> +       for (i = 0; i < sfi_gpio_num_entry; i++, pentry++) {
->>> +               if (!strncmp(name, pentry->pin_name, SFI_NAME_LEN))
->>> +                       return pentry->pin_no;
->>> +       }
->>> +
->>> +       return -ENODEV;
->>> +}
->>> +EXPORT_SYMBOL_GPL(sfi_get_gpio_by_name);
->>
->> Last merge window we merged the GPIO descriptor API and this
->> is now the recommended way to handle GPIOs and it is also
->> deployed into the ACPI and DT implementations.
->>
->> So I'd like the signature of this function changed to return
->> a GPIO descriptor rather than an int so we don't stockpile more
->> stuff to refactor.
->>
->> i.e.:
->> struct gpio_desc *sfi_get_gpio_by_name(const char *name);
->>
->>   --- /dev/null
->>> +++ b/include/linux/sfi_gpio.h
->>
->> Maybe that header could move to <linux/gpio/sfi.h> instead.
->> Alexandre what do you think?
+> On Sat, Nov 16, 2013 at 1:01 AM, Taras Kondratiuk
+> <taras.kondratiuk@linaro.org> wrote:
 >
-> Agreed - all the GPIO drivers into drivers/gpio, all the headers into
-> include/linux/gpio. Logical. :)
+>> From: Victor Kamensky <victor.kamensky@linaro.org>
+>>
+>> All OMAP IP blocks expect LE data, but CPU may operate in BE mode.
+>> Need to use endian neutral functions to read/write h/w registers.
+>> I.e instead of __raw_read[lw] and __raw_write[lw] functions code
+>> need to use read[lw]_relaxed and write[lw]_relaxed functions.
+>> If the first simply reads/writes register, the second will byteswap
+>> it if host operates in BE mode.
+>>
+>> Changes are trivial sed like replacement of __raw_xxx functions
+>> with xxx_relaxed variant.
+>>
+>> Signed-off-by: Victor Kamensky <victor.kamensky@linaro.org>
+>> Signed-off-by: Taras Kondratiuk <taras.kondratiuk@linaro.org>
+>
+> Since I generally just dislike __raw accessors I went and applied
+> this. If it collides with any of Tony's fixup work I might need to
+> take the patch out again, no big deal.
+>
+> Some ACKs would be nice, but unless there are major objections
+> this stays merged.
 
-Sounds nice.
-Andy, would you like to update the patch or should I go ahead and
-resend it myself?
-
-Br, David Cohen
+Acked-by: Kevin Hilman <khilman@linaro.org>
