@@ -1,81 +1,52 @@
-From: Anatolij Gustschin <agust@denx.de>
-Subject: Re: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on
- MPC8572/MPC8536
-Date: Tue, 19 Nov 2013 16:32:30 +0100
-Message-ID: <20131119163230.70964d1f@crub>
-References: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [RFC 01/23] gpio/omap: raw read and write endian fix
+Date: Tue, 19 Nov 2013 07:43:53 -0800
+Message-ID: <20131119154353.GC10317@atomide.com>
+References: <1384560086-11994-1-git-send-email-taras.kondratiuk@linaro.org>
+ <1384560086-11994-2-git-send-email-taras.kondratiuk@linaro.org>
+ <CACRpkdYD-Yw+RFnX0GshyQn2oHYNnXXRF4RXTzCox=2Z0_gKqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:40889 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752971Ab3KSPcn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 10:32:43 -0500
-In-Reply-To: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
+Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:52316 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751307Ab3KSPn7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 10:43:59 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYD-Yw+RFnX0GshyQn2oHYNnXXRF4RXTzCox=2Z0_gKqg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@freescale.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, b07421@freescale.com, r61911@freescale.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Taras Kondratiuk <taras.kondratiuk@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linux-OMAP <linux-omap@vger.kernel.org>, linaro-networking@linaro.org, Victor Kamensky <victor.kamensky@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, 15 Nov 2013 15:16:29 +0800
-Liu Gang <Gang.Liu@freescale.com> wrote:
-
-> For MPC8572/MPC8536, the status of GPIOs defined as output
-> cannot be determined by reading GPDAT register, so the code
-> use shadow data register instead. But if the input pins are
-> asserted high, they will always read high due to the shadow
-> data, even if the pins are set to low.
-
-Could you please add a better description of the problem?
-I'm having some difficulties to understand the last sentence
-above. Does the issue appear if some pins were configured as
-inputs and were asserted high before booting the kernel, and
-therefore the shadow data has been initialized with these pin
-values?
-
-Or does the issue appear if some pin has been configured as output
-first and has been set to the high value, then reconfigured as
-input? Now reading the pin state will always return high even
-if the actual pin state is low?
-
-It seems the issue will appear in both cases. If so, please add
-this information to the commit message.
-
-> So the input pins should be read directly from GPDAT, not
-> the shadow data.
+* Linus Walleij <linus.walleij@linaro.org> [131119 01:29]:
+> On Sat, Nov 16, 2013 at 1:01 AM, Taras Kondratiuk
+> <taras.kondratiuk@linaro.org> wrote:
 > 
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
-> ---
->  drivers/gpio/gpio-mpc8xxx.c | 1 +
->  1 file changed, 1 insertion(+)
+> > From: Victor Kamensky <victor.kamensky@linaro.org>
+> >
+> > All OMAP IP blocks expect LE data, but CPU may operate in BE mode.
+> > Need to use endian neutral functions to read/write h/w registers.
+> > I.e instead of __raw_read[lw] and __raw_write[lw] functions code
+> > need to use read[lw]_relaxed and write[lw]_relaxed functions.
+> > If the first simply reads/writes register, the second will byteswap
+> > it if host operates in BE mode.
+> >
+> > Changes are trivial sed like replacement of __raw_xxx functions
+> > with xxx_relaxed variant.
+> >
+> > Signed-off-by: Victor Kamensky <victor.kamensky@linaro.org>
+> > Signed-off-by: Taras Kondratiuk <taras.kondratiuk@linaro.org>
 > 
-> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-> index 9ae29cc..1d4ac75 100644
-> --- a/drivers/gpio/gpio-mpc8xxx.c
-> +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -71,6 +71,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
->  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
->  
->  	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
-> +	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
+> Since I generally just dislike __raw accessors I went and applied
+> this. If it collides with any of Tony's fixup work I might need to
+> take the patch out again, no big deal.
 
-we can reduce one in_be32() call here, i.e.
+Thanks, this should not conflict with what I have. I just had few
+fixes for the twl4030-gpio for older omaps and I doubt that I have
+further driver dependencies beyond that for my clean-up work.
+ 
+> Some ACKs would be nice, but unless there are major objections
+> this stays merged.
 
-	u32 out_mask;
-	...
-	out_mask = in_be32(mm->regs + GPIO_DIR);
-	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
-	mpc8xxx_gc->data &= out_mask;
-
->  	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
->  }
-
-Thanks,
-
-Anatolij
-
---
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-0  Fax: +49-8142-66989-80 Email: office@denx.de
+Acked-by: Tony Lindgren <tony@atomide.com>
