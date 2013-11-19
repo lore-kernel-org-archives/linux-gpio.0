@@ -1,38 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/9] ARM: sa1100: convert gpio driver to be a proper
- platform driver
-Date: Tue, 19 Nov 2013 11:08:09 +0100
-Message-ID: <CACRpkdYb6KAG2i-NH2iAmYvtGDnhOgO9CZxmYsNPJXN6qqkOoQ@mail.gmail.com>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
-	<1384505280-25389-5-git-send-email-dbaryshkov@gmail.com>
+From: "Vishwanathrao Badarkhe, Manish" <manishv.b-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH] gpio: Remove duplicate include of errno.h
+Date: Tue, 19 Nov 2013 18:02:42 +0530
+Message-ID: <1384864362-21018-1-git-send-email-manishv.b@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:46224 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751618Ab3KSKIJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 05:08:09 -0500
-Received: by mail-ob0-f171.google.com with SMTP id wp18so3708322obc.30
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 02:08:09 -0800 (PST)
-In-Reply-To: <1384505280-25389-5-git-send-email-dbaryshkov@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-On Fri, Nov 15, 2013 at 9:47 AM, Dmitry Eremin-Solenikov
-<dbaryshkov@gmail.com> wrote:
+From: "Vishwanathrao Badarkhe, Manish" <manishv.b-l0cyMroinI0@public.gmane.org>
 
-> Start cleaning up/refreshing SA1100 GPIO driver.
-> * Changed to bind through device model.
-> * Replaced direct register access with readl/writel.
->
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Currently, code include errno.h twice. Remove one inclusion
+of errno.h
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Vishwanathrao Badarkhe, Manish <manishv.b-l0cyMroinI0@public.gmane.org>
+---
+:100644 100644 552e3f4... de13695... M	include/linux/gpio.h
+ include/linux/gpio.h |    1 -
+ 1 file changed, 1 deletion(-)
 
-I guess you want to merge this one through Russell's tree
-with the rest of the patches.
-
-Yours,
-Linus Walleij
+diff --git a/include/linux/gpio.h b/include/linux/gpio.h
+index 552e3f4..de13695 100644
+--- a/include/linux/gpio.h
++++ b/include/linux/gpio.h
+@@ -78,7 +78,6 @@ static inline int irq_to_gpio(unsigned int irq)
+ 
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+-#include <linux/errno.h>
+ #include <linux/bug.h>
+ 
+ struct device;
+-- 
+1.7.9.5
