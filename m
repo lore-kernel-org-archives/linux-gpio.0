@@ -1,42 +1,77 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
-Date: Wed, 20 Nov 2013 04:45:40 +0400
-Message-ID: <CALT56yP-LsO_8qgpa3R6JQSWW2pGkNWBUtab8L2hQnC5UdoKvQ@mail.gmail.com>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
-	<CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com>
-	<528B811A.1030501@gmail.com>
-	<CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com>
-	<20131120002007.GR16735@n2100.arm.linux.org.uk>
+From: Liu Gang <Gang.Liu@freescale.com>
+Subject: Re: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on
+ MPC8572/MPC8536
+Date: Wed, 20 Nov 2013 10:07:25 +0800
+Message-ID: <1384913245.16677.5.camel@linux>
+References: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
+ <20131119163230.70964d1f@crub>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:43768 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752152Ab3KTApk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 19:45:40 -0500
-Received: by mail-ie0-f181.google.com with SMTP id e14so5870301iej.12
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Nov 2013 16:45:40 -0800 (PST)
-In-Reply-To: <20131120002007.GR16735@n2100.arm.linux.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20131119163230.70964d1f@crub>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Anatolij Gustschin <agust@denx.de>
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, linuxppc-dev@lists.ozlabs.org, r61911@freescale.com, b07421@freescale.com
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-On Wed, Nov 20, 2013 at 4:20 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> Also note that we _do_ have sa11x0 platforms which request their GPIOs
-> in their arch_initcall callback, so the sa11x0 GPIO driver better be
-> around at that point otherwise things *will* fail.
+On Tue, 2013-11-19 at 16:32 +0100, Anatolij Gustschin wrote:
+> On Fri, 15 Nov 2013 15:16:29 +0800
+> Liu Gang <Gang.Liu@freescale.com> wrote:
+> 
+> > For MPC8572/MPC8536, the status of GPIOs defined as output
+> > cannot be determined by reading GPDAT register, so the code
+> > use shadow data register instead. But if the input pins are
+> > asserted high, they will always read high due to the shadow
+> > data, even if the pins are set to low.
+> 
+> Could you please add a better description of the problem?
+> I'm having some difficulties to understand the last sentence
+> above. Does the issue appear if some pins were configured as
+> inputs and were asserted high before booting the kernel, and
+> therefore the shadow data has been initialized with these pin
+> values?
+> 
+> Or does the issue appear if some pin has been configured as output
+> first and has been set to the high value, then reconfigured as
+> input? Now reading the pin state will always return high even
+> if the actual pin state is low?
+> 
+> It seems the issue will appear in both cases. If so, please add
+> this information to the commit message.
+> 
+Yes, you are right.
+I'll updated the description more clear.
 
-Which ones if you have them in your mind?
+> >  	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
+> > +	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
+> 
+> we can reduce one in_be32() call here, i.e.
+> 
+> 	u32 out_mask;
+> 	...
+> 	out_mask = in_be32(mm->regs + GPIO_DIR);
+> 	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
+> 	mpc8xxx_gc->data &= out_mask;
+> 
+> >  	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
+> >  }
+> 
+> Thanks,
+> 
+> Anatolij
+> 
+Granted, it will be better to reduce one in_be32() call.
+I'll improve the method based on your and Scott's comments.
 
-> I suspect that means the SA11x0 GPIO driver must be initialised early.
-
-Anyway in these patches gpio-sa1100 driver is registered at postcore
-initcall, so gpios should
-be available before arch_initcall functions.
-
-
--- 
-With best wishes
-Dmitry
+Thanks
+Liu Gang
