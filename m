@@ -1,77 +1,56 @@
 From: Liu Gang <Gang.Liu@freescale.com>
 Subject: Re: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on
  MPC8572/MPC8536
-Date: Wed, 20 Nov 2013 10:07:25 +0800
-Message-ID: <1384913245.16677.5.camel@linux>
+Date: Wed, 20 Nov 2013 10:54:39 +0800
+Message-ID: <1384916079.16677.26.camel@linux>
 References: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
- <20131119163230.70964d1f@crub>
+	 <1384901494.1403.383.camel@snotra.buserror.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20131119163230.70964d1f@crub>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Anatolij Gustschin <agust@denx.de>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, linuxppc-dev@lists.ozlabs.org, r61911@freescale.com, b07421@freescale.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:54854 "EHLO
+	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752234Ab3KTCyu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 19 Nov 2013 21:54:50 -0500
+In-Reply-To: <1384901494.1403.383.camel@snotra.buserror.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Scott Wood <scottwood@freescale.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, b07421@freescale.com, r61911@freescale.com
 
-On Tue, 2013-11-19 at 16:32 +0100, Anatolij Gustschin wrote:
-> On Fri, 15 Nov 2013 15:16:29 +0800
-> Liu Gang <Gang.Liu@freescale.com> wrote:
-> 
-> > For MPC8572/MPC8536, the status of GPIOs defined as output
-> > cannot be determined by reading GPDAT register, so the code
-> > use shadow data register instead. But if the input pins are
-> > asserted high, they will always read high due to the shadow
-> > data, even if the pins are set to low.
-> 
-> Could you please add a better description of the problem?
-> I'm having some difficulties to understand the last sentence
-> above. Does the issue appear if some pins were configured as
-> inputs and were asserted high before booting the kernel, and
-> therefore the shadow data has been initialized with these pin
-> values?
-> 
-> Or does the issue appear if some pin has been configured as output
-> first and has been set to the high value, then reconfigured as
-> input? Now reading the pin state will always return high even
-> if the actual pin state is low?
-> 
-> It seems the issue will appear in both cases. If so, please add
-> this information to the commit message.
-> 
-Yes, you are right.
-I'll updated the description more clear.
-
+On Tue, 2013-11-19 at 16:51 -0600, Scott Wood wrote:
+> > @@ -71,6 +71,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+> >  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+> >  
 > >  	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
 > > +	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
-> 
-> we can reduce one in_be32() call here, i.e.
-> 
-> 	u32 out_mask;
-> 	...
-> 	out_mask = in_be32(mm->regs + GPIO_DIR);
-> 	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
-> 	mpc8xxx_gc->data &= out_mask;
-> 
+> >  
 > >  	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
 > >  }
 > 
-> Thanks,
+> It seems odd to update ->data in a function that's supposed to be
+> reading things...  Perhaps it would be better to keep ->data in a good
+> state from the beginning.
 > 
-> Anatolij
-> 
-Granted, it will be better to reduce one in_be32() call.
-I'll improve the method based on your and Scott's comments.
+> -Scott
 
-Thanks
+Yes, keeping the ->data in a good state from the beginning will be
+better. But this will need more code in different functions to cover
+all the scenarios.
+First, we should check the direct of the pin in the function
+"mpc8xxx_gpio_set", and clean the input bit in ->data after setting
+operation.
+In addition, we may change a output pin to input and then read the
+input status. So we also should update the ->data in
+"mpc8xxx_gpio_dir_in" function.
+So maybe it's better to eliminate the effects of the ->data to the
+input pins when reading the status, regardless of the possible changes
+of the pins and the data.
+Do you think so?
+
+Best Regards,
 Liu Gang
+
+
