@@ -1,81 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: em: lock IRQs when starting them
-Date: Wed, 20 Nov 2013 10:39:04 +0100
-Message-ID: <1384940344-19708-1-git-send-email-linus.walleij@linaro.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1.2] gpiolib: append SFI helpers for GPIO API
+Date: Wed, 20 Nov 2013 14:55:19 +0200
+Message-ID: <1384952119.6723.0.camel@smile>
+References: <1370440690-21898-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <CACRpkdaP+tkJn8jcR_RaCz_c6hk66F8qde2KRiCzNyyLWUkgjw@mail.gmail.com>
+	 <528B2EF2.5010104@nvidia.com> <528BA0C6.8010604@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:58225 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751962Ab3KTJjL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Nov 2013 04:39:11 -0500
-Received: by mail-wi0-f177.google.com with SMTP id hq4so6765124wib.4
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Nov 2013 01:39:10 -0800 (PST)
+Received: from mga02.intel.com ([134.134.136.20]:5948 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753358Ab3KTMzs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 20 Nov 2013 07:55:48 -0500
+In-Reply-To: <528BA0C6.8010604@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Magnus Damm <damm@opensource.se>, Ian Molton <ian.molton@codethink.co.uk>, Simon Horman <horms+renesas@verge.net.au>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Alex Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-This uses the new API for tagging GPIO lines as in use by
-IRQs. This enforces a few semantic checks on how the underlying
-GPIO line is used.
+On Tue, 2013-11-19 at 09:32 -0800, David Cohen wrote:
 
-Also assign the gpio_chip.dev pointer to be used for error
-messages.
+[]
 
-Cc: Magnus Damm <damm@opensource.se>
-Cc: Ian Molton <ian.molton@codethink.co.uk>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-em.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> >> Maybe that header could move to <linux/gpio/sfi.h> instead.
+> >> Alexandre what do you think?
+> >
+> > Agreed - all the GPIO drivers into drivers/gpio, all the headers into
+> > include/linux/gpio. Logical. :)
+> 
+> Sounds nice.
+> Andy, would you like to update the patch or should I go ahead and
+> resend it myself?
 
-diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-index ec190361bf2e..bbf242312bda 100644
---- a/drivers/gpio/gpio-em.c
-+++ b/drivers/gpio/gpio-em.c
-@@ -99,6 +99,25 @@ static void em_gio_irq_enable(struct irq_data *d)
- 	em_gio_write(p, GIO_IEN, BIT(irqd_to_hwirq(d)));
- }
- 
-+static unsigned int em_gio_irq_startup(struct irq_data *d)
-+{
-+	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
-+
-+	if (gpio_lock_as_irq(&p->gpio_chip, irqd_to_hwirq(d)))
-+		dev_err(p->gpio_chip.dev,
-+			"unable to lock HW IRQ %lu for IRQ\n",
-+			irqd_to_hwirq(d));
-+	return 0;
-+}
-+
-+static void em_gio_irq_shutdown(struct irq_data *d)
-+{
-+	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
-+
-+	gpio_unlock_as_irq(&p->gpio_chip, irqd_to_hwirq(d));
-+}
-+
-+
- #define GIO_ASYNC(x) (x + 8)
- 
- static unsigned char em_gio_sense_table[IRQ_TYPE_SENSE_MASK + 1] = {
-@@ -328,6 +347,7 @@ static int em_gio_probe(struct platform_device *pdev)
- 	gpio_chip->request = em_gio_request;
- 	gpio_chip->free = em_gio_free;
- 	gpio_chip->label = name;
-+	gpio_chip->dev = &pdev->dev;
- 	gpio_chip->owner = THIS_MODULE;
- 	gpio_chip->base = pdata->gpio_base;
- 	gpio_chip->ngpio = pdata->number_of_pins;
-@@ -339,6 +359,8 @@ static int em_gio_probe(struct platform_device *pdev)
- 	irq_chip->irq_enable = em_gio_irq_enable;
- 	irq_chip->irq_disable = em_gio_irq_disable;
- 	irq_chip->irq_set_type = em_gio_irq_set_type;
-+	irq_chip->irq_startup = em_gio_irq_startup;
-+	irq_chip->irq_shutdown = em_gio_irq_shutdown;
- 	irq_chip->flags	= IRQCHIP_SKIP_SET_WAKE;
- 
- 	p->irq_domain = irq_domain_add_simple(pdev->dev.of_node,
+I already had done this, but I can't check since linux-next is broken
+for me. Once I tried it I send it here.
+
 -- 
-1.8.3.1
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
 
