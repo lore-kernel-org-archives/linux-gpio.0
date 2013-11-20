@@ -1,56 +1,42 @@
-From: Liu Gang <Gang.Liu@freescale.com>
-Subject: Re: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on
- MPC8572/MPC8536
-Date: Wed, 20 Nov 2013 10:54:39 +0800
-Message-ID: <1384916079.16677.26.camel@linux>
-References: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
-	 <1384901494.1403.383.camel@snotra.buserror.net>
+From: Dmitry Artamonow <mad_soft@inbox.lv>
+Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
+Date: Wed, 20 Nov 2013 11:43:33 +0400
+Message-ID: <528C6825.3010907@inbox.lv>
+References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+ <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com>
+ <528B811A.1030501@gmail.com>
+ <CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com>
+ <20131120002007.GR16735@n2100.arm.linux.org.uk>
+ <CALT56yP-LsO_8qgpa3R6JQSWW2pGkNWBUtab8L2hQnC5UdoKvQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:54854 "EHLO
-	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752234Ab3KTCyu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 19 Nov 2013 21:54:50 -0500
-In-Reply-To: <1384901494.1403.383.camel@snotra.buserror.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CALT56yP-LsO_8qgpa3R6JQSWW2pGkNWBUtab8L2hQnC5UdoKvQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 List-Id: linux-gpio@vger.kernel.org
-To: Scott Wood <scottwood@freescale.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, b07421@freescale.com, r61911@freescale.com
 
-On Tue, 2013-11-19 at 16:51 -0600, Scott Wood wrote:
-> > @@ -71,6 +71,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
-> >  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
-> >  
-> >  	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
-> > +	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
-> >  
-> >  	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
-> >  }
-> 
-> It seems odd to update ->data in a function that's supposed to be
-> reading things...  Perhaps it would be better to keep ->data in a good
-> state from the beginning.
-> 
-> -Scott
-
-Yes, keeping the ->data in a good state from the beginning will be
-better. But this will need more code in different functions to cover
-all the scenarios.
-First, we should check the direct of the pin in the function
-"mpc8xxx_gpio_set", and clean the input bit in ->data after setting
-operation.
-In addition, we may change a output pin to input and then read the
-input status. So we also should update the ->data in
-"mpc8xxx_gpio_dir_in" function.
-So maybe it's better to eliminate the effects of the ->data to the
-input pins when reading the status, regardless of the possible changes
-of the pins and the data.
-Do you think so?
-
-Best Regards,
-Liu Gang
-
-
+MjAuMTEuMjAxMyAwNDo0NSwgRG1pdHJ5IEVyZW1pbi1Tb2xlbmlrb3Yg0L/QuNGI0LXRgjoKPiBP
+biBXZWQsIE5vdiAyMCwgMjAxMyBhdCA0OjIwIEFNLCBSdXNzZWxsIEtpbmcgLSBBUk0gTGludXgK
+PiA8bGludXhAYXJtLmxpbnV4Lm9yZy51az4gIHdyb3RlOgo+PiBBbHNvIG5vdGUgdGhhdCB3ZSBf
+ZG9fIGhhdmUgc2ExMXgwIHBsYXRmb3JtcyB3aGljaCByZXF1ZXN0IHRoZWlyIEdQSU9zCj4+IGlu
+IHRoZWlyIGFyY2hfaW5pdGNhbGwgY2FsbGJhY2ssIHNvIHRoZSBzYTExeDAgR1BJTyBkcml2ZXIg
+YmV0dGVyIGJlCj4+IGFyb3VuZCBhdCB0aGF0IHBvaW50IG90aGVyd2lzZSB0aGluZ3MgKndpbGwq
+IGZhaWwuCj4gV2hpY2ggb25lcyBpZiB5b3UgaGF2ZSB0aGVtIGluIHlvdXIgbWluZD8KCkZZSSwg
+aDMxMDAgYW5kIGgzNjAwIGRvIGV4YWN0bHkgdGhpcyAtIHRoZXkgcmVxdWVzdCBVQVJUIGdwaW9z
+IGF0CmFyY2hfaW5pdGNhbGwgdGltZSAoc2VlIGgzNjAwX21hY2hfaW5pdCgpIGluIGFyY2gvYXJt
+L21hY2gtc2ExMTAwL2gzNjAwLmMpCgotLS0KQmVzdCByZWdhcmRzLApEbWl0cnkgQXJ0YW1vbm93
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
+cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
+a2VybmVsCg==
