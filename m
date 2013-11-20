@@ -1,49 +1,68 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1.2] gpiolib: append SFI helpers for GPIO API
-Date: Wed, 20 Nov 2013 16:36:41 +0200
-Message-ID: <1384958201.6723.1.camel@smile>
-References: <1370440690-21898-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <CACRpkdaP+tkJn8jcR_RaCz_c6hk66F8qde2KRiCzNyyLWUkgjw@mail.gmail.com>
-	 <528B2EF2.5010104@nvidia.com> <528BA0C6.8010604@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: lynxpoint: lock IRQs when starting them
+Date: Wed, 20 Nov 2013 15:42:29 +0100
+Message-ID: <1384958549-23722-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:4320 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750727Ab3KTOhL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 20 Nov 2013 09:37:11 -0500
-In-Reply-To: <528BA0C6.8010604@linux.intel.com>
+Received: from mail-we0-f175.google.com ([74.125.82.175]:58114 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750860Ab3KTOmg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Nov 2013 09:42:36 -0500
+Received: by mail-we0-f175.google.com with SMTP id p61so4524797wes.20
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Nov 2013 06:42:35 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: Alex Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-gpio@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Tue, 2013-11-19 at 09:32 -0800, David Cohen wrote:
-> On 11/19/2013 01:27 AM, Alex Courbot wrote:
-> > On 11/19/2013 06:24 PM, Linus Walleij wrote:
-> >> On Wed, Jun 5, 2013 at 3:58 PM, Andy Shevchenko
-> >> <andriy.shevchenko@linux.intel.com> wrote:
-> >>
-> >>> To support some (legacy) firmwares and platforms let's make life
-> >>> easier for
-> >>> their customers.
-> >>>
-> >>> This patch extracts SFI GPIO API from arch/x86/platform/mrst/mrst.c.
-> >>>
-> >>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >>
-> >> So since this patch was ACKed the world has changed a bit and now
-> >> I want new changes (or maybe I was tired and not paying enough
-> >> attention at the time).
-> 
-> Agreed. Even my e-mail was outdated :)
-> Updating from david.a.cohen@intel.com to david.a.cohen@linux.intel.com
-> to avoid M$ servers.
+This uses the new API for tagging GPIO lines as in use by
+IRQs. This enforces a few semantic checks on how the underlying
+GPIO line is used.
 
-Just sent a version, though, sorry, I forgot to update your email there.
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-lynxpoint.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
+diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
+index f1ca9d5880b6..8c7634250aff 100644
+--- a/drivers/gpio/gpio-lynxpoint.c
++++ b/drivers/gpio/gpio-lynxpoint.c
+@@ -301,6 +301,24 @@ static void lp_irq_disable(struct irq_data *d)
+ 	spin_unlock_irqrestore(&lg->lock, flags);
+ }
+ 
++static unsigned int lp_irq_startup(struct irq_data *d)
++{
++	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
++
++	if (gpio_lock_as_irq(&lg->chip, irqd_to_hwirq(d)))
++		dev_err(lg->chip.dev,
++			"unable to lock HW IRQ %lu for IRQ\n",
++			irqd_to_hwirq(d));
++	return 0;
++}
++
++static void lp_irq_shutdown(struct irq_data *d)
++{
++	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
++
++	gpio_unlock_as_irq(&lg->chip, irqd_to_hwirq(d));
++}
++
+ static struct irq_chip lp_irqchip = {
+ 	.name = "LP-GPIO",
+ 	.irq_mask = lp_irq_mask,
+@@ -308,6 +326,8 @@ static struct irq_chip lp_irqchip = {
+ 	.irq_enable = lp_irq_enable,
+ 	.irq_disable = lp_irq_disable,
+ 	.irq_set_type = lp_irq_type,
++	.irq_startup = lp_irq_startup,
++	.irq_shutdown = lp_irq_shutdown,
+ 	.flags = IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+1.8.3.1
 
