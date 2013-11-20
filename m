@@ -1,42 +1,81 @@
-From: Dmitry Artamonow <mad_soft@inbox.lv>
-Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
-Date: Wed, 20 Nov 2013 11:43:33 +0400
-Message-ID: <528C6825.3010907@inbox.lv>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
- <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com>
- <528B811A.1030501@gmail.com>
- <CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com>
- <20131120002007.GR16735@n2100.arm.linux.org.uk>
- <CALT56yP-LsO_8qgpa3R6JQSWW2pGkNWBUtab8L2hQnC5UdoKvQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CALT56yP-LsO_8qgpa3R6JQSWW2pGkNWBUtab8L2hQnC5UdoKvQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Artamonow <mad_soft@inbox.ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: em: lock IRQs when starting them
+Date: Wed, 20 Nov 2013 10:39:04 +0100
+Message-ID: <1384940344-19708-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:58225 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751962Ab3KTJjL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Nov 2013 04:39:11 -0500
+Received: by mail-wi0-f177.google.com with SMTP id hq4so6765124wib.4
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Nov 2013 01:39:10 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Magnus Damm <damm@opensource.se>, Ian Molton <ian.molton@codethink.co.uk>, Simon Horman <horms+renesas@verge.net.au>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-MjAuMTEuMjAxMyAwNDo0NSwgRG1pdHJ5IEVyZW1pbi1Tb2xlbmlrb3Yg0L/QuNGI0LXRgjoKPiBP
-biBXZWQsIE5vdiAyMCwgMjAxMyBhdCA0OjIwIEFNLCBSdXNzZWxsIEtpbmcgLSBBUk0gTGludXgK
-PiA8bGludXhAYXJtLmxpbnV4Lm9yZy51az4gIHdyb3RlOgo+PiBBbHNvIG5vdGUgdGhhdCB3ZSBf
-ZG9fIGhhdmUgc2ExMXgwIHBsYXRmb3JtcyB3aGljaCByZXF1ZXN0IHRoZWlyIEdQSU9zCj4+IGlu
-IHRoZWlyIGFyY2hfaW5pdGNhbGwgY2FsbGJhY2ssIHNvIHRoZSBzYTExeDAgR1BJTyBkcml2ZXIg
-YmV0dGVyIGJlCj4+IGFyb3VuZCBhdCB0aGF0IHBvaW50IG90aGVyd2lzZSB0aGluZ3MgKndpbGwq
-IGZhaWwuCj4gV2hpY2ggb25lcyBpZiB5b3UgaGF2ZSB0aGVtIGluIHlvdXIgbWluZD8KCkZZSSwg
-aDMxMDAgYW5kIGgzNjAwIGRvIGV4YWN0bHkgdGhpcyAtIHRoZXkgcmVxdWVzdCBVQVJUIGdwaW9z
-IGF0CmFyY2hfaW5pdGNhbGwgdGltZSAoc2VlIGgzNjAwX21hY2hfaW5pdCgpIGluIGFyY2gvYXJt
-L21hY2gtc2ExMTAwL2gzNjAwLmMpCgotLS0KQmVzdCByZWdhcmRzLApEbWl0cnkgQXJ0YW1vbm93
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
-cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
-cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
-a2VybmVsCg==
+This uses the new API for tagging GPIO lines as in use by
+IRQs. This enforces a few semantic checks on how the underlying
+GPIO line is used.
+
+Also assign the gpio_chip.dev pointer to be used for error
+messages.
+
+Cc: Magnus Damm <damm@opensource.se>
+Cc: Ian Molton <ian.molton@codethink.co.uk>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-em.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index ec190361bf2e..bbf242312bda 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -99,6 +99,25 @@ static void em_gio_irq_enable(struct irq_data *d)
+ 	em_gio_write(p, GIO_IEN, BIT(irqd_to_hwirq(d)));
+ }
+ 
++static unsigned int em_gio_irq_startup(struct irq_data *d)
++{
++	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
++
++	if (gpio_lock_as_irq(&p->gpio_chip, irqd_to_hwirq(d)))
++		dev_err(p->gpio_chip.dev,
++			"unable to lock HW IRQ %lu for IRQ\n",
++			irqd_to_hwirq(d));
++	return 0;
++}
++
++static void em_gio_irq_shutdown(struct irq_data *d)
++{
++	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
++
++	gpio_unlock_as_irq(&p->gpio_chip, irqd_to_hwirq(d));
++}
++
++
+ #define GIO_ASYNC(x) (x + 8)
+ 
+ static unsigned char em_gio_sense_table[IRQ_TYPE_SENSE_MASK + 1] = {
+@@ -328,6 +347,7 @@ static int em_gio_probe(struct platform_device *pdev)
+ 	gpio_chip->request = em_gio_request;
+ 	gpio_chip->free = em_gio_free;
+ 	gpio_chip->label = name;
++	gpio_chip->dev = &pdev->dev;
+ 	gpio_chip->owner = THIS_MODULE;
+ 	gpio_chip->base = pdata->gpio_base;
+ 	gpio_chip->ngpio = pdata->number_of_pins;
+@@ -339,6 +359,8 @@ static int em_gio_probe(struct platform_device *pdev)
+ 	irq_chip->irq_enable = em_gio_irq_enable;
+ 	irq_chip->irq_disable = em_gio_irq_disable;
+ 	irq_chip->irq_set_type = em_gio_irq_set_type;
++	irq_chip->irq_startup = em_gio_irq_startup;
++	irq_chip->irq_shutdown = em_gio_irq_shutdown;
+ 	irq_chip->flags	= IRQCHIP_SKIP_SET_WAKE;
+ 
+ 	p->irq_domain = irq_domain_add_simple(pdev->dev.of_node,
+-- 
+1.8.3.1
+
