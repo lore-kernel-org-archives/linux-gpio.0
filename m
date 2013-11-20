@@ -1,57 +1,43 @@
-From: Scott Wood <scottwood@freescale.com>
-Subject: Re: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on
- MPC8572/MPC8536
-Date: Tue, 19 Nov 2013 16:51:34 -0600
-Message-ID: <1384901494.1403.383.camel@snotra.buserror.net>
-References: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
+Date: Wed, 20 Nov 2013 00:20:08 +0000
+Message-ID: <20131120002007.GR16735@n2100.arm.linux.org.uk>
+References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com> <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com> <528B811A.1030501@gmail.com> <CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db8lp0184.outbound.messaging.microsoft.com ([213.199.154.184]:12998
-	"EHLO db8outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752707Ab3KSWvk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 19 Nov 2013 17:51:40 -0500
-In-Reply-To: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:43204 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752464Ab3KTAUw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Nov 2013 19:20:52 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@freescale.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, b07421@freescale.com, r61911@freescale.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-On Fri, 2013-11-15 at 15:16 +0800, Liu Gang wrote:
-> For MPC8572/MPC8536, the status of GPIOs defined as output
-> cannot be determined by reading GPDAT register, so the code
-> use shadow data register instead. But if the input pins are
-> asserted high, they will always read high due to the shadow
-> data, even if the pins are set to low.
+On Tue, Nov 19, 2013 at 09:24:31PM +0100, Linus Walleij wrote:
+> On Tue, Nov 19, 2013 at 4:17 PM, Dmitry Eremin-Solenikov
+> <dbaryshkov@gmail.com> wrote:
+> > On 11/19/2013 05:00 PM, Linus Walleij wrote:
 > 
-> So the input pins should be read directly from GPDAT, not
-> the shadow data.
+> >> And that happens before the GPIO driver gets registered -> crash.
+> >
+> > That is not the issue. The real issue is h3xxx using those gpio's without
+> > previously calling gpio_request.
 > 
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
-> ---
->  drivers/gpio/gpio-mpc8xxx.c | 1 +
->  1 file changed, 1 insertion(+)
+> Really? But that wasn't done before this patch either.
 > 
-> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-> index 9ae29cc..1d4ac75 100644
-> --- a/drivers/gpio/gpio-mpc8xxx.c
-> +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -71,6 +71,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
->  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
->  
->  	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
-> +	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
->  
->  	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
->  }
+> It is basically OK to use the gpio_* functions before or
+> without requesting the GPIOs, it won't look nice but it
+> works.
 
-It seems odd to update ->data in a function that's supposed to be
-reading things...  Perhaps it would be better to keep ->data in a good
-state from the beginning.
+Using gpio_* functions without first having the GPIO requested causes
+a complaint at boot time... so it's really undesirable to do this.
 
--Scott
+Also note that we _do_ have sa11x0 platforms which request their GPIOs
+in their arch_initcall callback, so the sa11x0 GPIO driver better be
+around at that point otherwise things *will* fail.
 
-
-
+I suspect that means the SA11x0 GPIO driver must be initialised early.
