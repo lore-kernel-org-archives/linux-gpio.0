@@ -1,71 +1,89 @@
-From: Scott Wood <scottwood@freescale.com>
-Subject: Re: [PATCH] powerpc/gpio: Fix the wrong GPIO input data on
- MPC8572/MPC8536
-Date: Wed, 20 Nov 2013 18:32:46 -0600
-Message-ID: <1384993966.1403.466.camel@snotra.buserror.net>
-References: <1384499789-3631-1-git-send-email-Gang.Liu@freescale.com>
-	 <1384901494.1403.383.camel@snotra.buserror.net>
-	 <1384916079.16677.26.camel@linux>
+From: Markus Mayer <markus.mayer@linaro.org>
+Subject: Re: [PATCH] gpio: bcm-kona: lock IRQs when starting them
+Date: Wed, 20 Nov 2013 17:13:53 -0800
+Message-ID: <CAPdLdqmGY=9hDpb8K7VqoXFU_JW2kFD5gKefsx1LSsjoy9eSgg@mail.gmail.com>
+References: <1384867051-31066-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from co9ehsobe003.messaging.microsoft.com ([207.46.163.26]:38115
-	"EHLO co9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752891Ab3KUAdN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 20 Nov 2013 19:33:13 -0500
-In-Reply-To: <1384916079.16677.26.camel@linux>
+Received: from mail-we0-f181.google.com ([74.125.82.181]:36147 "EHLO
+	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754209Ab3KUBNy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Nov 2013 20:13:54 -0500
+Received: by mail-we0-f181.google.com with SMTP id x55so6465205wes.12
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Nov 2013 17:13:53 -0800 (PST)
+In-Reply-To: <1384867051-31066-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@freescale.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, b07421@freescale.com, r61911@freescale.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Christian Daudt <csd@broadcom.com>
 
-On Wed, 2013-11-20 at 10:54 +0800, Liu Gang wrote:
-> On Tue, 2013-11-19 at 16:51 -0600, Scott Wood wrote:
-> > > @@ -71,6 +71,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
-> > >  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
-> > >  
-> > >  	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
-> > > +	mpc8xxx_gc->data &= in_be32(mm->regs + GPIO_DIR);
-> > >  
-> > >  	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
-> > >  }
-> > 
-> > It seems odd to update ->data in a function that's supposed to be
-> > reading things...  Perhaps it would be better to keep ->data in a good
-> > state from the beginning.
-> > 
-> > -Scott
-> 
-> Yes, keeping the ->data in a good state from the beginning will be
-> better. But this will need more code in different functions to cover
-> all the scenarios.
-> First, we should check the direct of the pin in the function
-> "mpc8xxx_gpio_set", and clean the input bit in ->data after setting
-> operation.
+On 19 November 2013 05:17, Linus Walleij <linus.walleij@linaro.org> wrote:
+> This uses the new API for tagging GPIO lines as in use by
+> IRQs. This enforces a few semantic checks on how the underlying
+> GPIO line is used.
+>
+> Cc: Markus Mayer <markus.mayer@linaro.org>
+> Cc: Christian Daudt <csd@broadcom.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-bcm-kona.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+> index 72c927dc3be1..dee6d03a7959 100644
+> --- a/drivers/gpio/gpio-bcm-kona.c
+> +++ b/drivers/gpio/gpio-bcm-kona.c
+> @@ -449,12 +449,32 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+>         chained_irq_exit(chip, desc);
+>  }
+>
+> +static unsigned int bcm_kona_gpio_irq_startup(struct irq_data *d)
+> +{
+> +       struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
+> +
+> +       if (gpio_lock_as_irq(&kona_gpio->gpio_chip, d->hwirq))
+> +               dev_err(kona_gpio->gpio_chip.dev,
+> +                       "unable to lock HW IRQ %lu for IRQ\n",
+> +                       d->hwirq);
+> +       return 0;
+> +}
+> +
+> +static void bcm_kona_gpio_irq_shutdown(struct irq_data *d)
+> +{
+> +       struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
+> +
+> +       gpio_unlock_as_irq(&kona_gpio->gpio_chip, d->hwirq);
+> +}
+> +
+>  static struct irq_chip bcm_gpio_irq_chip = {
+>         .name = "bcm-kona-gpio",
+>         .irq_ack = bcm_kona_gpio_irq_ack,
+>         .irq_mask = bcm_kona_gpio_irq_mask,
+>         .irq_unmask = bcm_kona_gpio_irq_unmask,
+>         .irq_set_type = bcm_kona_gpio_irq_set_type,
+> +       .irq_startup = bcm_kona_gpio_irq_startup,
+> +       .irq_shutdown = bcm_kona_gpio_irq_shutdown,
+>  };
+>
+>  static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
+> --
+> 1.8.3.1
+>
 
-For userspace value setting, it looks like gpiolib blocks the write if
-the pin if FLAG_IS_OUT is set.  This suggests that this is an error
-condition for other uses as well.  Though, I notice that
-mpc8xxx_gpio_dir_out() calls gpio_set() before actually changing the
-direction.  So it may be useful to avoid races where the wrong value is
-output briefly after the direction is changed (especially in open drain
-situations, where the signal could have a meaningful default even before
-we begin outputting).  But that raises the question of how you'd do that
-from userspace, and it also renders the to-be-output value as write-only
-data (until the direction is actually changed), since a readback would
-get the input value instead.
+I don't know yet why, but as soon as I apply that patch, the cd-gpio
+interrupt doesn't seem to get triggered anymore.
 
-> So maybe it's better to eliminate the effects of the ->data to the
-> input pins when reading the status, regardless of the possible changes
-> of the pins and the data.
-> Do you think so?
+$ grep bcm-kona-gpio /proc/interrupts
+270:          0  bcm-kona-gpio  14  3f1b0000.sdio cd
 
-Perhaps, but that doesn't require you to modify ->data in the get()
-function.
+The counter remains at 0. If I comment-out the irq_startup &
+irq_shutdown assignments to temporarily disable the new code, the
+interrupt counter increases again when I insert/remove an SD card.
 
--Scott
+Regards,
+-Markus
 
-
-
+-- 
+Markus Mayer
+Broadcom Landing Team
