@@ -1,45 +1,60 @@
-From: delicious quinoa <delicious.quinoa@gmail.com>
-Subject: Re: [PATCH v7] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Thu, 21 Nov 2013 16:21:15 -0600
-Message-ID: <CANk1AXSFr+qzSLq-06TGyZkD=RBdQp3qwkvSXCbCtDQcqHqzPg@mail.gmail.com>
-References: <1384984090-6772-1-git-send-email-delicious.quinoa@gmail.com>
-	<528DFC81.2070000@gmail.com>
+From: "Markus Mayer" <markus.mayer@linaro.org>
+Subject: [PATCH v3] gpio: bcm281xx: Fix return value of
+ bcm_kona_gpio_get()
+Date: Thu, 21 Nov 2013 15:12:46 -0800
+Message-ID: <1385075566-23989-1-git-send-email-markus.mayer@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <528DFC81.2070000@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@stericsson.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Jamie Iles <jamie@jamieiles.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mms3.broadcom.com ([216.31.210.19]:1911 "EHLO mms3.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754000Ab3KUXM6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 21 Nov 2013 18:12:58 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linaro Patches <patches@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Tim Kryger <tim.kryger@linaro.org>, Markus Mayer <markus.mayer@linaro.org>
 
-On Thu, Nov 21, 2013 at 6:28 AM, Sebastian Hesselbarth
-<sebastian.hesselbarth@gmail.com> wrote:
-> On 11/20/2013 10:48 PM, Alan Tull wrote:
->>
->> From: Jamie Iles <jamie@jamieiles.com>
->>
->> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
->> and can be configured to provide multiple banks of GPIO pins.
->>
->> Signed-off-by: Alan Tull <atull@altera.com>
->
->
-> Alan,
->
-> I haven't looked as close as in the last reviews, but I think it is
-> fine to have this version as a start. We can add platform_data and
-> CONFIG_REG parsing later.
->
-> Thanks for the patience, you can add my
->
-> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
->
+We need to return the corresponding bit for a particular GPIO. This bit
+contains shift not mask.
 
-Thanks Sebastian!
+Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
+Reviewed-by: Tim Kryger <tim.kryger@linaro.org>
+Reviewed-by: Matt Porter <matt.porter@linaro.org>
+---
 
-Now I see one screwup on my part here - I did not mean to include
-socfpga.dtsi changes in this patch.
+Changes since v2:
+-----------------
 
-Alan
+Use 
+	return !!(val & BIT(bit));
+rather than
+	return (val >> bit) & 1;
+
+Changes since v1:
+-----------------
+
+Clarified commit message
+
+
+ drivers/gpio/gpio-bcm-kona.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 72c927d..54c18c2 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -158,7 +158,7 @@ static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ 	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ 
+ 	/* return the specified bit status */
+-	return !!(val & bit);
++	return !!(val & BIT(bit));
+ }
+ 
+ static int bcm_kona_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+-- 
+1.7.9.5
+
+
