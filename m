@@ -1,143 +1,45 @@
-From: Hector Palacios <hector.palacios@digi.com>
-Subject: mxs gpios as wakeup interrupts and irq_set_wake() hook
-Date: Thu, 21 Nov 2013 11:19:28 +0100
-Message-ID: <528DDE30.4090509@digi.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 2/3] gpiolib: append SFI helpers for GPIO API
+Date: Thu, 21 Nov 2013 12:40:06 +0200
+Message-ID: <20131121104006.GB2281@intel.com>
+References: <1384957896-3477-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1384957896-3477-3-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.bemta7.messagelabs.com ([216.82.254.101]:42757 "EHLO
-	mail1.bemta7.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751250Ab3KUK0b (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 21 Nov 2013 05:26:31 -0500
+Received: from mga11.intel.com ([192.55.52.93]:58885 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752079Ab3KUKdw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 21 Nov 2013 05:33:52 -0500
+Content-Disposition: inline
+In-Reply-To: <1384957896-3477-3-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, "fabio.estevam@freescale.com" <fabio.estevam@freescale.com>, zonque@gmail.com, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, David Cohen <david.a.cohen@intel.com>, "linux-gpio @ vger . kernel . org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>, "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Len Brown <len.brown@intel.com>
 
-Hello,
+On Wed, Nov 20, 2013 at 04:31:35PM +0200, Andy Shevchenko wrote:
+> diff --git a/include/linux/gpio/sfi.h b/include/linux/gpio/sfi.h
+> new file mode 100644
+> index 0000000..3e111ad
+> --- /dev/null
+> +++ b/include/linux/gpio/sfi.h
+> @@ -0,0 +1,37 @@
+> +#ifndef _LINUX_SFI_GPIO_H_
+> +#define _LINUX_SFI_GPIO_H_
+> +
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/sfi.h>
+> +
+> +#ifdef CONFIG_GPIO_SFI
+> +
+> +struct gpio_desc *sfi_get_gpiod_by_name(const char *name);
 
-I was trying to have GPIOs be able to wake up my ARM i.MX28 system from suspend but 
-noticed that the existing hook irq_set_wake() in the driver
+I'm wondering should this function be exported at all? What the drivers
+should be using is gpiod_get_xxx() APIs and not DT/ACPI/SFI specific
+interfaces.
 
-	ct->chip.irq_set_wake = mxs_gpio_set_wake_irq;
-
-was never called when I enabled a gpio as wakeup via the sysfs:
-
-	echo enabled > /sys/class/gpio/gpio107/device/power/wakeup
-
-The implementation of the hook itself is:
-
-static int mxs_gpio_set_wake_irq(struct irq_data *d, unsigned int enable)
-{
-	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-	struct mxs_gpio_port *port = gc->private;
-
-	if (enable)
-		enable_irq_wake(port->irq);
-	else
-		disable_irq_wake(port->irq);
-
-	return 0;
-}
-
-which looks to me like a cyclic call because the irq_set_wake() hook is called from 
-set_irq_wake_real() which is called from irq_set_irq_wake() which is called from 
-enable_irq_wake(). And this last function is what the driver's hook implementation is 
-doing.
-I was expecting that enable_irq_wake() was fired somehow from the kernel when I enable 
-the wakeup descriptor in the sysfs, but I guess it works in a different way.
-
-Instead, I implemented suspend/resume calls in the gpio driver that fire the 
-enable_irq_wake/disable_irq_wake if the device can_wakeup flag is set (this is what 
-the sysfs does). I took this model from the serial driver.
-This works but, could anyone tell me if this approach correct for gpio?
-
-@@ -174,6 +174,7 @@ static void mxs_gpio_irq_handler(u32 irq, struct irq_desc *desc)
-  	}
-  }
-
-+#ifdef CONFIG_PM_SLEEP
-  /*
-   * Set interrupt number "irq" in the GPIO as a wake-up source.
-   * While system is running, all registered GPIO interrupts need to have
-@@ -196,6 +197,33 @@ static int mxs_gpio_set_wake_irq(struct irq_data *d, unsigned int 
-enable)
-  	return 0;
-  }
-
-+static int mxs_gpio_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev =
-+			container_of(dev, struct platform_device, dev);
-+	int irq = platform_get_irq(pdev, 0);
-+
-+	/* Enable wakeup irq before suspending, if device can wakeup */
-+	if (device_may_wakeup(dev))
-+		return enable_irq_wake(irq);
-+
-+	return 0;
-+}
-+
-+static int mxs_gpio_resume(struct device *dev)
-+{
-+	struct platform_device *pdev =
-+			container_of(dev, struct platform_device, dev);
-+	int irq = platform_get_irq(pdev, 0);
-+
-+	/* Disable wakeup irq on resume, if device can wakeup */
-+	if (device_may_wakeup(dev))
-+		return disable_irq_wake(irq);
-+
-+	return 0;
-+}
-+#endif
-+
-  static void __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
-  {
-  	struct irq_chip_generic *gc;
-@@ -210,7 +238,9 @@ static void __init mxs_gpio_init_gc(struct mxs_gpio_port *port, 
-int irq_base)
-  	ct->chip.irq_mask = irq_gc_mask_clr_bit;
-  	ct->chip.irq_unmask = irq_gc_mask_set_bit;
-  	ct->chip.irq_set_type = mxs_gpio_set_irq_type;
-+#ifdef CONFIG_PM_SLEEP
-  	ct->chip.irq_set_wake = mxs_gpio_set_wake_irq;
-+#endif
-  	ct->regs.ack = PINCTRL_IRQSTAT(port) + MXS_CLR;
-  	ct->regs.mask = PINCTRL_IRQEN(port);
-
-@@ -320,6 +350,10 @@ static int mxs_gpio_probe(struct platform_device *pdev)
-  	/* gpio-mxs can be a generic irq chip */
-  	mxs_gpio_init_gc(port, irq_base);
-
-+#ifdef CONFIG_PM_SLEEP
-+	device_set_wakeup_capable(&pdev->dev, 1);
-+#endif
-+
-  	/* setup one handler for each entry */
-  	irq_set_chained_handler(port->irq, mxs_gpio_irq_handler);
-  	irq_set_handler_data(port->irq, port);
-@@ -348,11 +382,16 @@ out_irqdesc_free:
-  	return err;
-  }
-
-+static const struct dev_pm_ops mxs_gpio_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(mxs_gpio_suspend, mxs_gpio_resume)
-+};
-+
-  static struct platform_driver mxs_gpio_driver = {
-  	.driver		= {
-  		.name	= "gpio-mxs",
-  		.owner	= THIS_MODULE,
-  		.of_match_table = mxs_gpio_dt_ids,
-+		.pm	= &mxs_gpio_pm_ops,
-  	},
-  	.probe		= mxs_gpio_probe,
-  	.id_table	= mxs_gpio_ids,
-
-
-Best regards,
---
-Hector Palacios
+Yeah, we have the same in ACPI version but I'm planning to get rid of it
+completely.
