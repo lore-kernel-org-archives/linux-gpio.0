@@ -1,63 +1,55 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: mxs gpios as wakeup interrupts and irq_set_wake() hook
-Date: Thu, 21 Nov 2013 15:45:56 -0200
-Message-ID: <CAOMZO5Caua_+ZAJWdiCmQyf7nrQoW+GwBoE2J3w_RxeKKGkxGw@mail.gmail.com>
-References: <528DDE30.4090509@digi.com>
-	<528E364B.2070309@freescale.com>
-	<528E4394.9050807@digi.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vb0-f53.google.com ([209.85.212.53]:40950 "EHLO
-	mail-vb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750858Ab3KURp4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Nov 2013 12:45:56 -0500
-Received: by mail-vb0-f53.google.com with SMTP id g10so51103vbg.26
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Nov 2013 09:45:56 -0800 (PST)
-In-Reply-To: <528E4394.9050807@digi.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Subject: [PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement
+Date: Thu, 21 Nov 2013 23:45:25 +0530
+Message-ID: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Prabhakar Lad <prabhakar.csengg@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Hector Palacios <hector.palacios@digi.com>
-Cc: Fabio Estevam <fabio.estevam@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "zonque@gmail.com" <zonque@gmail.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
 
-On Thu, Nov 21, 2013 at 3:32 PM, Hector Palacios
-<hector.palacios@digi.com> wrote:
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 
-> Do you mean to have an entry like this?
->
->         gpio_keys {
->                 compatible = "gpio-keys";
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 autorepeat;
->                 gpio-key,wakeup;
->                 button@21 {
->                         label = "GPIO Key UP";
->                         linux,code = <103>;
->                         gpios = <&gpio3 11 1>;  /* gpio107 */
->                 };
->         };
+This patch series does the following
+1> Ports the driver to use irqdomain.
+2> Adds dt binding support for gpio-davinci.
+3> Adds DA850 dt support goio.
 
-Yes, this is what I meant.
+Changes for v6:
+1: GPIO driver now migrated to irq domain legacy.
+2: Fixed review comments pointed by Grygorii.
+3: Included Ack's.
 
->
-> No it doesn't.
->
-> In any case what I wanted (maybe it's not standard) was to be able to export
-> a GPIO, configure it as interrupt, and enable it as wakeup, entirely from
-> sysfs, without needing to use a driver or defining an entry for a specific
-> GPIO in the DT.
-> I achieved it with the code I sent but I guess the framework was not devised
-> to use gpios that way.
->
-> Have you tested if that irq_set_wake hook in the gpio-mxs.c driver is ever
-> called?
+This patch series is based on following fixup series
+http://us.generation-nt.com/answer/patch-0-2-davinci-gpio-fixes-help-212978272.html
 
-On mx28evk I don't have any free GPIO I can use to wakeup the system,
-so I have not tried it.
+This patch series has been tested for both banked and Un-banked GPIO.
 
-I have only used the serial port to wakeup the system.
+KV Sujith (3):
+  gpio: davinci: add OF support
+  ARM: davinci: da850: add GPIO DT node
+  ARM: davinci: da850 evm: add GPIO pinumux entries DT node
 
-Regards,
+Lad, Prabhakar (3):
+  gpio: davinci: use readl/writel instead of __raw_*
+  This patch converts the davinci gpio driver to use irqdomain    
+    support.
+  gpio: davinci: remove unused variable intc_irq_num
 
-Fabio Estevam
+ .../devicetree/bindings/gpio/gpio-davinci.txt      |   41 +++++
+ arch/arm/boot/dts/da850-evm.dts                    |   20 +++
+ arch/arm/boot/dts/da850.dtsi                       |   14 ++
+ arch/arm/mach-davinci/da830.c                      |    1 -
+ arch/arm/mach-davinci/da850.c                      |    1 -
+ arch/arm/mach-davinci/dm355.c                      |    1 -
+ arch/arm/mach-davinci/dm365.c                      |    1 -
+ arch/arm/mach-davinci/dm644x.c                     |    1 -
+ arch/arm/mach-davinci/dm646x.c                     |    1 -
+ drivers/gpio/gpio-davinci.c                        |  173 ++++++++++++++------
+ include/linux/platform_data/gpio-davinci.h         |    3 +-
+ 11 files changed, 195 insertions(+), 62 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+
+-- 
+1.7.9.5
+
