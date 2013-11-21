@@ -1,45 +1,32 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2 2/3] gpiolib: append SFI helpers for GPIO API
-Date: Thu, 21 Nov 2013 12:40:06 +0200
-Message-ID: <20131121104006.GB2281@intel.com>
-References: <1384957896-3477-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <1384957896-3477-3-git-send-email-andriy.shevchenko@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:58885 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752079Ab3KUKdw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 21 Nov 2013 05:33:52 -0500
-Content-Disposition: inline
-In-Reply-To: <1384957896-3477-3-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v7] gpio: add a driver for the Synopsys DesignWare APB
+ GPIO block
+Date: Thu, 21 Nov 2013 13:28:49 +0100
+Message-ID: <528DFC81.2070000@gmail.com>
+References: <1384984090-6772-1-git-send-email-delicious.quinoa@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1384984090-6772-1-git-send-email-delicious.quinoa@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Tull <delicious.quinoa@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@stericsson.com>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Jamie Iles <jamie@jamieiles.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, David Cohen <david.a.cohen@intel.com>, "linux-gpio @ vger . kernel . org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>, "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Len Brown <len.brown@intel.com>
 
-On Wed, Nov 20, 2013 at 04:31:35PM +0200, Andy Shevchenko wrote:
-> diff --git a/include/linux/gpio/sfi.h b/include/linux/gpio/sfi.h
-> new file mode 100644
-> index 0000000..3e111ad
-> --- /dev/null
-> +++ b/include/linux/gpio/sfi.h
-> @@ -0,0 +1,37 @@
-> +#ifndef _LINUX_SFI_GPIO_H_
-> +#define _LINUX_SFI_GPIO_H_
-> +
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/sfi.h>
-> +
-> +#ifdef CONFIG_GPIO_SFI
-> +
-> +struct gpio_desc *sfi_get_gpiod_by_name(const char *name);
+On 11/20/2013 10:48 PM, Alan Tull wrote:
+> From: Jamie Iles <jamie@jamieiles.com>
+>
+> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
+> and can be configured to provide multiple banks of GPIO pins.
+>
+> Signed-off-by: Alan Tull <atull@altera.com>
 
-I'm wondering should this function be exported at all? What the drivers
-should be using is gpiod_get_xxx() APIs and not DT/ACPI/SFI specific
-interfaces.
+Alan,
 
-Yeah, we have the same in ACPI version but I'm planning to get rid of it
-completely.
+I haven't looked as close as in the last reviews, but I think it is
+fine to have this version as a start. We can add platform_data and
+CONFIG_REG parsing later.
+
+Thanks for the patience, you can add my
+
+Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
