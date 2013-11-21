@@ -1,58 +1,40 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 2/3] gpiolib: append SFI helpers for GPIO API
-Date: Thu, 21 Nov 2013 18:29:00 +0200
-Message-ID: <1385051340.1871.2.camel@smile>
-References: <1384957896-3477-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <1384957896-3477-3-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <20131121104006.GB2281@intel.com>
+From: Fabio Estevam <fabio.estevam@freescale.com>
+Subject: Re: mxs gpios as wakeup interrupts and irq_set_wake() hook
+Date: Thu, 21 Nov 2013 14:35:23 -0200
+Message-ID: <528E364B.2070309@freescale.com>
+References: <528DDE30.4090509@digi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:5783 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751609Ab3KUQ3r (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 21 Nov 2013 11:29:47 -0500
-In-Reply-To: <20131121104006.GB2281@intel.com>
+Received: from tx2ehsobe003.messaging.microsoft.com ([65.55.88.13]:58086 "EHLO
+	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750827Ab3KUQg2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 21 Nov 2013 11:36:28 -0500
+In-Reply-To: <528DDE30.4090509@digi.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, David Cohen <david.a.cohen@intel.com>, "linux-gpio @ vger . kernel . org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>, "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Len Brown <len.brown@intel.com>
+To: Hector Palacios <hector.palacios@digi.com>, linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, festevam@gmail.com, zonque@gmail.com, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
 
-On Thu, 2013-11-21 at 12:40 +0200, Mika Westerberg wrote:
-> On Wed, Nov 20, 2013 at 04:31:35PM +0200, Andy Shevchenko wrote:
-> > diff --git a/include/linux/gpio/sfi.h b/include/linux/gpio/sfi.h
-> > new file mode 100644
-> > index 0000000..3e111ad
-> > --- /dev/null
-> > +++ b/include/linux/gpio/sfi.h
-> > @@ -0,0 +1,37 @@
-> > +#ifndef _LINUX_SFI_GPIO_H_
-> > +#define _LINUX_SFI_GPIO_H_
-> > +
-> > +#include <linux/err.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/sfi.h>
-> > +
-> > +#ifdef CONFIG_GPIO_SFI
-> > +
-> > +struct gpio_desc *sfi_get_gpiod_by_name(const char *name);
-> 
-> I'm wondering should this function be exported at all? What the drivers
-> should be using is gpiod_get_xxx() APIs and not DT/ACPI/SFI specific
-> interfaces.
+Hi Hector,
 
-I won't mix this with generic stuff since we have really few users of
-SFI and there should be no new users at all.
+On 11/21/2013 08:19 AM, Hector Palacios wrote:
+> Hello,
+>
+> I was trying to have GPIOs be able to wake up my ARM i.MX28 system from
+> suspend but noticed that the existing hook irq_set_wake() in the driver
+>
+>      ct->chip.irq_set_wake = mxs_gpio_set_wake_irq;
+>
+> was never called when I enabled a gpio as wakeup via the sysfs:
+>
+>      echo enabled > /sys/class/gpio/gpio107/device/power/wakeup
 
-> Yeah, we have the same in ACPI version but I'm planning to get rid of it
-> completely.
+Does the existing code work if you pass 'gpio-key,wakeup' in the .dts file?
 
-I'm okay to move to this direction, if Linus and others are okay with
-it.
+Regards,
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Fabio Estevam
 
