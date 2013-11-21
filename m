@@ -1,32 +1,45 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 1/5] net: rfkill: gpio: convert to descriptor-based GPIO interface
-Date: Thu, 21 Nov 2013 22:46:28 +0100
-Message-ID: <1735877.0KPLyChZ35@vostro.rjw.lan>
-References: <1385045153-25160-1-git-send-email-mika.westerberg@linux.intel.com> <528E3D5E.20907@nvidia.com> <20131121172217.GE2281@intel.com>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v7] gpio: add a driver for the Synopsys DesignWare APB
+ GPIO block
+Date: Thu, 21 Nov 2013 16:21:15 -0600
+Message-ID: <CANk1AXSFr+qzSLq-06TGyZkD=RBdQp3qwkvSXCbCtDQcqHqzPg@mail.gmail.com>
+References: <1384984090-6772-1-git-send-email-delicious.quinoa@gmail.com>
+	<528DFC81.2070000@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20131121172217.GE2281@intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Rhyland Klein <rklein@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Adrian Hunter <adrian.hunter@intel.com>, Alex Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <528DFC81.2070000@gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@stericsson.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Jamie Iles <jamie@jamieiles.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday, November 21, 2013 07:22:17 PM Mika Westerberg wrote:
-> On Thu, Nov 21, 2013 at 12:05:34PM -0500, Rhyland Klein wrote:
-> > This seems like a reasonable patch, and likely a good way to go. I don't
-> > have a AC100 to test this with though, so I can't verify this
-> > personally. Also, would the paz00 patch become a dependency of this
-> > patchset? Mika, maybe you can therefore include a patch for paz00 in
-> > your patchset?
-> 
-> Sure I can, if everyone is OK with that.
+On Thu, Nov 21, 2013 at 6:28 AM, Sebastian Hesselbarth
+<sebastian.hesselbarth@gmail.com> wrote:
+> On 11/20/2013 10:48 PM, Alan Tull wrote:
+>>
+>> From: Jamie Iles <jamie@jamieiles.com>
+>>
+>> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
+>> and can be configured to provide multiple banks of GPIO pins.
+>>
+>> Signed-off-by: Alan Tull <atull@altera.com>
+>
+>
+> Alan,
+>
+> I haven't looked as close as in the last reviews, but I think it is
+> fine to have this version as a start. We can add platform_data and
+> CONFIG_REG parsing later.
+>
+> Thanks for the patience, you can add my
+>
+> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>
 
-No objections from me.
+Thanks Sebastian!
 
-Thanks!
+Now I see one screwup on my part here - I did not mean to include
+socfpga.dtsi changes in this patch.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Alan
