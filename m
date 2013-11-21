@@ -1,32 +1,153 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v7] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Thu, 21 Nov 2013 13:28:49 +0100
-Message-ID: <528DFC81.2070000@gmail.com>
-References: <1384984090-6772-1-git-send-email-delicious.quinoa@gmail.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1384984090-6772-1-git-send-email-delicious.quinoa@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Tull <delicious.quinoa@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@stericsson.com>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Jamie Iles <jamie@jamieiles.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 4/5] gpio / ACPI: get rid of acpi_gpio.h
+Date: Thu, 21 Nov 2013 16:45:52 +0200
+Message-ID: <1385045153-25160-5-git-send-email-mika.westerberg@linux.intel.com>
+References: <1385045153-25160-1-git-send-email-mika.westerberg@linux.intel.com>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1385045153-25160-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: linux-acpi@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 11/20/2013 10:48 PM, Alan Tull wrote:
-> From: Jamie Iles <jamie@jamieiles.com>
->
-> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
-> and can be configured to provide multiple banks of GPIO pins.
->
-> Signed-off-by: Alan Tull <atull@altera.com>
+Now that all users of acpi_gpio.h have been moved to user either the GPIO
+descriptor interface or to the internal gpiolib.h we can get rid of
+acpi_gpio.h entirely.
 
-Alan,
+Once this is done the only interface to get GPIOs to drivers enumerated
+from ACPI namespace is the descriptor based interface.
 
-I haven't looked as close as in the last reviews, but I think it is
-fine to have this version as a start. We can add platform_data and
-CONFIG_REG parsing later.
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c |  4 +++-
+ drivers/gpio/gpiolib.c      |  1 -
+ drivers/gpio/gpiolib.h      | 23 +++++++++++++++++++++++
+ include/linux/acpi_gpio.h   | 45 ---------------------------------------------
+ 4 files changed, 26 insertions(+), 47 deletions(-)
+ delete mode 100644 include/linux/acpi_gpio.h
 
-Thanks for the patience, you can add my
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index cb2da66fbbfe..6c158d9a6efa 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -12,11 +12,13 @@
+ 
+ #include <linux/errno.h>
+ #include <linux/gpio/consumer.h>
++#include <linux/gpio/driver.h>
+ #include <linux/export.h>
+-#include <linux/acpi_gpio.h>
+ #include <linux/acpi.h>
+ #include <linux/interrupt.h>
+ 
++#include "gpiolib.h"
++
+ struct acpi_gpio_evt_pin {
+ 	struct list_head node;
+ 	acpi_handle *evt_handle;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 70abccf0d144..a6b82413c290 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -10,7 +10,6 @@
+ #include <linux/seq_file.h>
+ #include <linux/gpio.h>
+ #include <linux/of_gpio.h>
+-#include <linux/acpi_gpio.h>
+ #include <linux/idr.h>
+ #include <linux/slab.h>
+ #include <linux/acpi.h>
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 2ed23ab8298c..82be586c1f90 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -12,12 +12,35 @@
+ #ifndef GPIOLIB_H
+ #define GPIOLIB_H
+ 
++#include <linux/err.h>
++#include <linux/device.h>
++
++/**
++ * struct acpi_gpio_info - ACPI GPIO specific information
++ * @gpioint: if %true this GPIO is of type GpioInt otherwise type is GpioIo
++ * @active_low: in case of @gpioint, the pin is active low
++ */
++struct acpi_gpio_info {
++	bool gpioint;
++	bool active_low;
++};
++
+ #ifdef CONFIG_ACPI
+ void acpi_gpiochip_add(struct gpio_chip *chip);
+ void acpi_gpiochip_remove(struct gpio_chip *chip);
++
++struct gpio_desc *acpi_get_gpiod_by_index(struct device *dev, int index,
++					  struct acpi_gpio_info *info);
+ #else
+ static inline void acpi_gpiochip_add(struct gpio_chip *chip) { }
+ static inline void acpi_gpiochip_remove(struct gpio_chip *chip) { }
++
++static inline struct gpio_desc *
++acpi_get_gpiod_by_index(struct device *dev, int index,
++			struct acpi_gpio_info *info)
++{
++	return ERR_PTR(-ENOSYS);
++}
+ #endif
+ 
+ #endif /* GPIOLIB_H */
+diff --git a/include/linux/acpi_gpio.h b/include/linux/acpi_gpio.h
+deleted file mode 100644
+index af96a0d452f6..000000000000
+--- a/include/linux/acpi_gpio.h
++++ /dev/null
+@@ -1,45 +0,0 @@
+-#ifndef _LINUX_ACPI_GPIO_H_
+-#define _LINUX_ACPI_GPIO_H_
+-
+-#include <linux/device.h>
+-#include <linux/err.h>
+-#include <linux/errno.h>
+-#include <linux/gpio.h>
+-#include <linux/gpio/consumer.h>
+-
+-/**
+- * struct acpi_gpio_info - ACPI GPIO specific information
+- * @gpioint: if %true this GPIO is of type GpioInt otherwise type is GpioIo
+- * @active_low: in case of @gpioint, the pin is active low
+- */
+-struct acpi_gpio_info {
+-	bool gpioint;
+-	bool active_low;
+-};
+-
+-#ifdef CONFIG_GPIO_ACPI
+-
+-struct gpio_desc *acpi_get_gpiod_by_index(struct device *dev, int index,
+-					  struct acpi_gpio_info *info);
+-#else /* CONFIG_GPIO_ACPI */
+-
+-static inline struct gpio_desc *
+-acpi_get_gpiod_by_index(struct device *dev, int index,
+-			struct acpi_gpio_info *info)
+-{
+-	return ERR_PTR(-ENOSYS);
+-}
+-
+-#endif /* CONFIG_GPIO_ACPI */
+-
+-static inline int acpi_get_gpio_by_index(struct device *dev, int index,
+-					 struct acpi_gpio_info *info)
+-{
+-	struct gpio_desc *desc = acpi_get_gpiod_by_index(dev, index, info);
+-
+-	if (IS_ERR(desc))
+-		return PTR_ERR(desc);
+-	return desc_to_gpio(desc);
+-}
+-
+-#endif /* _LINUX_ACPI_GPIO_H_ */
+-- 
+1.8.4.3
 
-Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
