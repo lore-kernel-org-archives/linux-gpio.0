@@ -1,60 +1,58 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH 2/2] gpio: introduce GPIO_DAVINCI kconfig option
-Date: Thu, 21 Nov 2013 17:34:36 +0200
-Message-ID: <1385048076-7875-3-git-send-email-grygorii.strashko@ti.com>
-References: <1385048076-7875-1-git-send-email-grygorii.strashko@ti.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 2/3] gpiolib: append SFI helpers for GPIO API
+Date: Thu, 21 Nov 2013 18:29:00 +0200
+Message-ID: <1385051340.1871.2.camel@smile>
+References: <1384957896-3477-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <1384957896-3477-3-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <20131121104006.GB2281@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1385048076-7875-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: prabhakar.csengg@gmail.com, nsekhar@ti.com, Santosh Shilimkar <santosh.shilimkar@ti.com>, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:5783 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751609Ab3KUQ3r (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 21 Nov 2013 11:29:47 -0500
+In-Reply-To: <20131121104006.GB2281@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, David Cohen <david.a.cohen@intel.com>, "linux-gpio @ vger . kernel . org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>, "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Len Brown <len.brown@intel.com>
 
-The compatible to Davinci GPIO HW block is used by other TI SoCs, like
-Keystone, where GPIO support is declared as optional.
+On Thu, 2013-11-21 at 12:40 +0200, Mika Westerberg wrote:
+> On Wed, Nov 20, 2013 at 04:31:35PM +0200, Andy Shevchenko wrote:
+> > diff --git a/include/linux/gpio/sfi.h b/include/linux/gpio/sfi.h
+> > new file mode 100644
+> > index 0000000..3e111ad
+> > --- /dev/null
+> > +++ b/include/linux/gpio/sfi.h
+> > @@ -0,0 +1,37 @@
+> > +#ifndef _LINUX_SFI_GPIO_H_
+> > +#define _LINUX_SFI_GPIO_H_
+> > +
+> > +#include <linux/err.h>
+> > +#include <linux/errno.h>
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/sfi.h>
+> > +
+> > +#ifdef CONFIG_GPIO_SFI
+> > +
+> > +struct gpio_desc *sfi_get_gpiod_by_name(const char *name);
+> 
+> I'm wondering should this function be exported at all? What the drivers
+> should be using is gpiod_get_xxx() APIs and not DT/ACPI/SFI specific
+> interfaces.
 
-Hence, introduce GPIO_DAVINCI Kconfig option which will allow to enable
-Davinci GPIO driver for Keystone SoCs when needed. At same time, kept
-Davinci GPIO driver enabled for Davinci SoCs by default.
+I won't mix this with generic stuff since we have really few users of
+SFI and there should be no new users at all.
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/gpio/Kconfig  |    7 +++++++
- drivers/gpio/Makefile |    2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+> Yeah, we have the same in ACPI version but I'm planning to get rid of it
+> completely.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0f04444..7c75f5a 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -115,6 +115,13 @@ config GPIO_CLPS711X
- 	help
- 	  Say yes here to support GPIO on CLPS711X SoCs.
- 
-+config GPIO_DAVINCI
-+	bool "TI Davinci/Keystone GPIO support"
-+	default y if ARCH_DAVINCI
-+	depends on ARM && (ARCH_DAVINCI || ARCH_KEYSTONE)
-+	help
-+	  Say yes here to enable GPIO support for TI Davinci/Keystone SoCs.
-+
- config GPIO_GENERIC_PLATFORM
- 	tristate "Generic memory-mapped GPIO controller support (MMIO platform device)"
- 	select GPIO_GENERIC
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 7971e36..28a0ffc 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -22,7 +22,7 @@ obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
- obj-$(CONFIG_GPIO_CS5535)	+= gpio-cs5535.o
- obj-$(CONFIG_GPIO_DA9052)	+= gpio-da9052.o
- obj-$(CONFIG_GPIO_DA9055)	+= gpio-da9055.o
--obj-$(CONFIG_ARCH_DAVINCI)	+= gpio-davinci.o
-+obj-$(CONFIG_GPIO_DAVINCI)	+= gpio-davinci.o
- obj-$(CONFIG_GPIO_EM)		+= gpio-em.o
- obj-$(CONFIG_GPIO_EP93XX)	+= gpio-ep93xx.o
- obj-$(CONFIG_GPIO_F7188X)	+= gpio-f7188x.o
+I'm okay to move to this direction, if Linus and others are okay with
+it.
+
 -- 
-1.7.9.5
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
+
