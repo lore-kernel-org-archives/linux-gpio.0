@@ -1,93 +1,95 @@
-From: Markus Mayer <markus.mayer@linaro.org>
-Subject: Re: [PATCH] gpio: bcm-kona: lock IRQs when starting them
-Date: Wed, 20 Nov 2013 17:21:33 -0800
-Message-ID: <CAPdLdqnsRrAjEw5C5ygpRQoifYeEmK9zeEbt01F8yZ6N9+rw-Q@mail.gmail.com>
-References: <1384867051-31066-1-git-send-email-linus.walleij@linaro.org>
-	<CAPdLdqmGY=9hDpb8K7VqoXFU_JW2kFD5gKefsx1LSsjoy9eSgg@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] gpio: em: lock IRQs when starting them
+Date: Thu, 21 Nov 2013 13:50:06 +0900
+Message-ID: <20131121045006.GS31130@verge.net.au>
+References: <1384940344-19708-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:62672 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754068Ab3KUBVe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Nov 2013 20:21:34 -0500
-Received: by mail-we0-f178.google.com with SMTP id u56so2697388wes.23
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Nov 2013 17:21:33 -0800 (PST)
-In-Reply-To: <CAPdLdqmGY=9hDpb8K7VqoXFU_JW2kFD5gKefsx1LSsjoy9eSgg@mail.gmail.com>
+Received: from kirsty.vergenet.net ([202.4.237.240]:58147 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750827Ab3KUEuJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Nov 2013 23:50:09 -0500
+Content-Disposition: inline
+In-Reply-To: <1384940344-19708-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Christian Daudt <bcm@fixthebug.org>
+Cc: linux-gpio@vger.kernel.org, Magnus Damm <damm@opensource.se>, Ian Molton <ian.molton@codethink.co.uk>, Alexandre Courbot <acourbot@nvidia.com>
 
-Fixing Christian's e-mail address.
+On Wed, Nov 20, 2013 at 10:39:04AM +0100, Linus Walleij wrote:
+> This uses the new API for tagging GPIO lines as in use by
+> IRQs. This enforces a few semantic checks on how the underlying
+> GPIO line is used.
+> 
+> Also assign the gpio_chip.dev pointer to be used for error
+> messages.
 
-On 20 November 2013 17:13, Markus Mayer <markus.mayer@linaro.org> wrote:
-> On 19 November 2013 05:17, Linus Walleij <linus.walleij@linaro.org> wrote:
->> This uses the new API for tagging GPIO lines as in use by
->> IRQs. This enforces a few semantic checks on how the underlying
->> GPIO line is used.
->>
->> Cc: Markus Mayer <markus.mayer@linaro.org>
->> Cc: Christian Daudt <csd@broadcom.com>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->>  drivers/gpio/gpio-bcm-kona.c | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
->> index 72c927dc3be1..dee6d03a7959 100644
->> --- a/drivers/gpio/gpio-bcm-kona.c
->> +++ b/drivers/gpio/gpio-bcm-kona.c
->> @@ -449,12 +449,32 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
->>         chained_irq_exit(chip, desc);
->>  }
->>
->> +static unsigned int bcm_kona_gpio_irq_startup(struct irq_data *d)
->> +{
->> +       struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
->> +
->> +       if (gpio_lock_as_irq(&kona_gpio->gpio_chip, d->hwirq))
->> +               dev_err(kona_gpio->gpio_chip.dev,
->> +                       "unable to lock HW IRQ %lu for IRQ\n",
->> +                       d->hwirq);
->> +       return 0;
->> +}
->> +
->> +static void bcm_kona_gpio_irq_shutdown(struct irq_data *d)
->> +{
->> +       struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
->> +
->> +       gpio_unlock_as_irq(&kona_gpio->gpio_chip, d->hwirq);
->> +}
->> +
->>  static struct irq_chip bcm_gpio_irq_chip = {
->>         .name = "bcm-kona-gpio",
->>         .irq_ack = bcm_kona_gpio_irq_ack,
->>         .irq_mask = bcm_kona_gpio_irq_mask,
->>         .irq_unmask = bcm_kona_gpio_irq_unmask,
->>         .irq_set_type = bcm_kona_gpio_irq_set_type,
->> +       .irq_startup = bcm_kona_gpio_irq_startup,
->> +       .irq_shutdown = bcm_kona_gpio_irq_shutdown,
->>  };
->>
->>  static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
->> --
->> 1.8.3.1
->>
->
-> I don't know yet why, but as soon as I apply that patch, the cd-gpio
-> interrupt doesn't seem to get triggered anymore.
->
-> $ grep bcm-kona-gpio /proc/interrupts
-> 270:          0  bcm-kona-gpio  14  3f1b0000.sdio cd
->
-> The counter remains at 0. If I comment-out the irq_startup &
-> irq_shutdown assignments to temporarily disable the new code, the
-> interrupt counter increases again when I insert/remove an SD card.
->
-> Regards,
-> -Markus
+Hi,
 
--- 
-Markus Mayer
-Broadcom Landing Team
+I have tested this patch on top of next-20131121 using
+the emev2 based kzm9d board using its defconfig.
+Unfortunately it seems to cause the following problem:
+
+smsc911x smsc911x eth0: ISR failed signaling test (IRQ 201)
+
+This seems to render the NIC unusable.
+
+> Cc: Magnus Damm <damm@opensource.se>
+> Cc: Ian Molton <ian.molton@codethink.co.uk>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-em.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+> index ec190361bf2e..bbf242312bda 100644
+> --- a/drivers/gpio/gpio-em.c
+> +++ b/drivers/gpio/gpio-em.c
+> @@ -99,6 +99,25 @@ static void em_gio_irq_enable(struct irq_data *d)
+>  	em_gio_write(p, GIO_IEN, BIT(irqd_to_hwirq(d)));
+>  }
+>  
+> +static unsigned int em_gio_irq_startup(struct irq_data *d)
+> +{
+> +	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
+> +
+> +	if (gpio_lock_as_irq(&p->gpio_chip, irqd_to_hwirq(d)))
+> +		dev_err(p->gpio_chip.dev,
+> +			"unable to lock HW IRQ %lu for IRQ\n",
+> +			irqd_to_hwirq(d));
+> +	return 0;
+> +}
+> +
+> +static void em_gio_irq_shutdown(struct irq_data *d)
+> +{
+> +	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
+> +
+> +	gpio_unlock_as_irq(&p->gpio_chip, irqd_to_hwirq(d));
+> +}
+> +
+> +
+>  #define GIO_ASYNC(x) (x + 8)
+>  
+>  static unsigned char em_gio_sense_table[IRQ_TYPE_SENSE_MASK + 1] = {
+> @@ -328,6 +347,7 @@ static int em_gio_probe(struct platform_device *pdev)
+>  	gpio_chip->request = em_gio_request;
+>  	gpio_chip->free = em_gio_free;
+>  	gpio_chip->label = name;
+> +	gpio_chip->dev = &pdev->dev;
+>  	gpio_chip->owner = THIS_MODULE;
+>  	gpio_chip->base = pdata->gpio_base;
+>  	gpio_chip->ngpio = pdata->number_of_pins;
+> @@ -339,6 +359,8 @@ static int em_gio_probe(struct platform_device *pdev)
+>  	irq_chip->irq_enable = em_gio_irq_enable;
+>  	irq_chip->irq_disable = em_gio_irq_disable;
+>  	irq_chip->irq_set_type = em_gio_irq_set_type;
+> +	irq_chip->irq_startup = em_gio_irq_startup;
+> +	irq_chip->irq_shutdown = em_gio_irq_shutdown;
+>  	irq_chip->flags	= IRQCHIP_SKIP_SET_WAKE;
+>  
+>  	p->irq_domain = irq_domain_add_simple(pdev->dev.of_node,
+> -- 
+> 1.8.3.1
+> 
