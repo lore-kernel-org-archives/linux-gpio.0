@@ -1,41 +1,73 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 3/7] net: rfkill: gpio: remove gpio conversion support
-Date: Fri, 22 Nov 2013 14:00:58 -0700
-Message-ID: <528FC60A.80308@wwwdotorg.org>
-References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com> <1385122474-14926-4-git-send-email-mika.westerberg@linux.intel.com> <528FA520.7080501@wwwdotorg.org> <20131122205640.GA21895@xps8300>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH 7/9] ARM: sa1100: move gpio irq handling to GPIO driver
+Date: Sat, 23 Nov 2013 01:20:29 +0400
+Message-ID: <CALT56yPaXp8Zwnv-oXiA3NT=7myMcMBckbEF4u_LERNC_Q2ykQ@mail.gmail.com>
+References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+	<1384505280-25389-8-git-send-email-dbaryshkov@gmail.com>
+	<20131122174528.GB16735@n2100.arm.linux.org.uk>
+	<CALT56yM1rf7onJNu6L9tG52RrmDXcuWSoa=JfpakZRO+e7vnEQ@mail.gmail.com>
+	<20131122200242.GE16735@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:36418 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753277Ab3KVVBD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 16:01:03 -0500
-In-Reply-To: <20131122205640.GA21895@xps8300>
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:38505 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755248Ab3KVVU3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 16:20:29 -0500
+Received: by mail-ie0-f180.google.com with SMTP id tp5so2965857ieb.25
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Nov 2013 13:20:29 -0800 (PST)
+In-Reply-To: <20131122200242.GE16735@n2100.arm.linux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-On 11/22/2013 01:56 PM, Heikki Krogerus wrote:
-> On Fri, Nov 22, 2013 at 11:40:32AM -0700, Stephen Warren wrote:
->> On 11/22/2013 05:14 AM, Mika Westerberg wrote:
->>> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->>>
->>> All platforms using this driver are now converted to the new
->>> descriptor-based GPIO interface.
+Hello,
+
+On Sat, Nov 23, 2013 at 12:02 AM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Fri, Nov 22, 2013 at 11:46:10PM +0400, Dmitry Eremin-Solenikov wrote:
+>> On Fri, Nov 22, 2013 at 9:45 PM, Russell King - ARM Linux
+>> <linux@arm.linux.org.uk> wrote:
+>> > Therefore, if we want to have certain GPIOs triggering wakeups (iow,
+>> > those GPIOs which have had enable_irq_wake() called on them) but not
+>> > those which haven't, we need to reprogram GRER and GFER with the
+>> > GPIOs which can wake the system up.
 >>
->> Don't you want to remove the fields from the pdata structure too, since
->> it's pointless to set them anymore IIUC?
-> 
-> Agreed. We should have removed them in this patch.
-> 
-> I have prepared a separate patch where I remove those and some other
-> unused fields from the pdata structure (attachment). Would it be OK to
-> add that to this patch set? Or should this patch simply be updated?
+>> I thought so. I was puzzled, because that would mean, that we want to wake
+>> up from a GPIO, which is masked in GPIO_IRQ_mask, but enabled in PWER.
+>> Is that the real scenario/usecase? If we/kernel has disabled IRQ
+>> through _mask_irq,
+>> I thought, we didn't expect events from that pin (including wakeup), did we?
+>
+> So, if a device driver decides that it wants to be woken up by a GPIO
+> and therefore calls enable_irq_wake() on it, but also calls disable_irq()
+> on that same interrupt to avoid _receiving_ the interrupt until it's
+> ready, does that mean that the system should _not_ be woken up?
+>
+> I doubt many systems work this way - later PXA devices certainly don't,
+> where the wakeup is triggered from the silicon on the pad interface
+> rather than the interrupt controller - where the state of the IRQ masks
+> have no bearing what so ever on it.
+>
+> Please, stop thinking about changing the behaviour of any of the SA11x0
+> stuff.  Treat the code as-is as authoritive on the way things should be
+> done, and _carefully_ "adjust it" to how you'd like to see it - so we
+> can have a higher confidence that stuff isn't being broken or behaviour
+> isn't changed.
+>
+> Such behaviour changes would include looping differently while handling
+> interrupts.
+>
+> And more importantly, treat SA11x0 as a reference implementation for
+> IRQ stuff; that's the platform I developed the IRQ handling stuff on
+> which became the basis for tglx's IRQ layer in the kernel.
 
-I would suggest killing off the two GPIO fields in this patch, since
-it's logically part of this change. I think the balance of the patch is
-unrelated to gpiod conversion, so should probably be sent separately,
-although watch out for dependencies.
+OK, I got your message. I agree that I don't have enough level of knowledge
+to rework SA11x0 it in such big steps.
 
+Thank you for your explanations.
+
+-- 
+With best wishes
+Dmitry
