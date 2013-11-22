@@ -1,29 +1,71 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl-baytrail: show pin label with the reset of the
- gpio debug data
-Date: Fri, 22 Nov 2013 14:33:31 +0200
-Message-ID: <20131122123331.GL2281@intel.com>
-References: <1385121683-29223-1-git-send-email-mathias.nyman@linux.intel.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 0/7] gpio / ACPI: convert users to gpiod_* and drop acpi_gpio.h
+Date: Fri, 22 Nov 2013 13:41:35 +0100
+Message-ID: <9252491.gfcLFPm9bi@vostro.rjw.lan>
+References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:51152 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755532Ab3KVM1I (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 22 Nov 2013 07:27:08 -0500
-Content-Disposition: inline
-In-Reply-To: <1385121683-29223-1-git-send-email-mathias.nyman@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Linus <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Fri, Nov 22, 2013 at 02:01:23PM +0200, Mathias Nyman wrote:
-> The default gpiolib debug output shows pin labels.
-> We want baytrail custom debug output to have the same functionality.
+On Friday, November 22, 2013 02:14:27 PM Mika Westerberg wrote:
+> Hi all,
 > 
-> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> Now that the mainline kernel has full ACPI support for the GPIO descriptor
+> interface we can get rid of ACPI specific GPIO functions in favor of GPIO
+> descriptor (gpiod_*) interfaces.
+> 
+> This series first converts the existing two users to this interface and
+> then modifies gpiolib and gpiolib-acpi so that the ACPI functions are only
+> called internally in drivers/gpio. We then remove the acpi_gpio.h and
+> require all users to user gpiod_* interfaces.
+> 
+> This is second version of the series. Changes to the previous [1]:
+>  * paz00 is passing the lookup table so that we don't need to have gpio
+>    conversion function in rfkill-gpio.c anymore.
+>  * Corrected sdhci-acpi.c to pass con_id and added call to
+>    gpiod_direction_input().
+> 
+> I suppose it would make sense to merge the whole series via GPIO or ACPI
+> trees because there's a dependency that the first two patches need to be
+> applied before last three. Otherwise the drivers in question fail to
+> compile.
+> 
+> [1] https://lkml.org/lkml/2013/11/21/317
+> 
+> Heikki Krogerus (3):
+>   net: rfkill: gpio: convert to descriptor-based GPIO interface
+>   ARM: tegra: add gpiod_lookup table for paz00
+>   net: rfkill: gpio: remove gpio conversion support
+> 
+> Mika Westerberg (4):
+>   mmc: sdhci-acpi: covert to use GPIO descriptor API
+>   gpio / ACPI: register to ACPI events automatically
+>   gpio / ACPI: get rid of acpi_gpio.h
+>   Documentation / ACPI: update to GPIO descriptor API
+> 
+>  Documentation/acpi/enumeration.txt | 36 ++++--------------
+>  arch/arm/mach-tegra/board-paz00.c  |  9 ++++-
+>  drivers/gpio/gpiolib-acpi.c        | 20 +++++++---
+>  drivers/gpio/gpiolib.c             |  5 ++-
+>  drivers/gpio/gpiolib.h             | 46 +++++++++++++++++++++++
+>  drivers/mmc/host/sdhci-acpi.c      | 26 ++++++-------
+>  drivers/pinctrl/pinctrl-baytrail.c |  4 --
+>  include/linux/acpi_gpio.h          | 51 -------------------------
+>  net/rfkill/rfkill-gpio.c           | 77 +++++++++++++++++---------------------
+>  9 files changed, 125 insertions(+), 149 deletions(-)
+>  create mode 100644 drivers/gpio/gpiolib.h
+>  delete mode 100644 include/linux/acpi_gpio.h
 
-Looks good to me,
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+for the ACPI-related material in this series.
+
+Thanks,
+Rafael
+
