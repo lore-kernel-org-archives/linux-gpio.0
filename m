@@ -1,79 +1,86 @@
-From: Scott Wood <scottwood@freescale.com>
-Subject: Re: [PATCH v2] powerpc/gpio: Fix the wrong GPIO input data on
- MPC8572/MPC8536
-Date: Fri, 22 Nov 2013 12:39:08 -0600
-Message-ID: <1385145548.1403.524.camel@snotra.buserror.net>
-References: <1385107960-373-1-git-send-email-Gang.Liu@freescale.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 2/7] ARM: tegra: add gpiod_lookup table for paz00
+Date: Fri, 22 Nov 2013 11:40:09 -0700
+Message-ID: <528FA509.6080907@wwwdotorg.org>
+References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com> <1385122474-14926-3-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from co1ehsobe001.messaging.microsoft.com ([216.32.180.184]:39956
-	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755431Ab3KVSjW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 22 Nov 2013 13:39:22 -0500
-In-Reply-To: <1385107960-373-1-git-send-email-Gang.Liu@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1385122474-14926-3-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-acpi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@freescale.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, agust@denx.de, b07421@freescale.com, linus.walleij@linaro.org, r61911@freescale.com
 
-On Fri, 2013-11-22 at 16:12 +0800, Liu Gang wrote:
-> For MPC8572/MPC8536, the status of GPIOs defined as output
-> cannot be determined by reading GPDAT register, so the code
-> use shadow data register instead. But the code may give the
-> wrong status of GPIOs defined as input under some scenarios:
-> 
-> 1. If some pins were configured as inputs and were asserted
-> high before booting the kernel, the shadow data has been
-> initialized with those pin values.
-> 2. Some pins have been configured as output first and have
-> been set to the high value, then reconfigured as input.
-> 
-> The above cases will make the shadow data for those input
-> pins to be set to high. Then reading the pin status will
-> always return high even if the actual pin status is low.
-> 
-> The code should eliminate the effects of the shadow data to
-> the input pins, and the status of those pins should be
-> read directly from GPDAT.
-> 
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
-> ---
-> changes in v2:
->  - Added more description of the problem.
->  - Reduced one in_be32() call.
->  - Do not modify the shadow data.
-> 
->  drivers/gpio/gpio-mpc8xxx.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-> index 914e859..d7d6d72 100644
-> --- a/drivers/gpio/gpio-mpc8xxx.c
-> +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -70,10 +70,14 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
->  	u32 val;
->  	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
->  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
-> +	u32 out_mask, out_shadow;
->  
-> -	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
-> +	out_mask = in_be32(mm->regs + GPIO_DIR);
->  
-> -	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
-> +	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
-> +	out_shadow = mpc8xxx_gc->data & out_mask;
-> +
-> +	return (val | out_shadow) & mpc8xxx_gpio2mask(gpio);
->  }
->  
->  static int mpc8xxx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+On 11/22/2013 05:14 AM, Mika Westerberg wrote:
+> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>=20
+> This makes it possible to request the gpio descriptors in
+> rfkill-gpio driver regardless of the platform.
 
-Acked-by: Scott Wood <scottwood@freescale.com>
+Patches 1-3,
+Tested-by: Stephen Warren <swarren@nvidia.com>
 
--Scott
+All the testing I did was to "cat /sys/kernel/debug/gpios" to make sure
+those two GPIOs had been correctly acquired by the driver, and that the=
+y
+changed state as expected via the command-line "rfkill {un,}block" comm=
+ands.
+
+However, please note that I had to apply a couple fixes to the gpiolib
+core to get this working:
+
+1)
+
+To solve the following build warning:
+
+> In file included from arch/arm/mach-tegra/board-paz00.c:21:0:
+> include/linux/gpio/driver.h:102:17: warning: =91struct of_phandle_arg=
+s=92 declared inside parameter list [enabled by default]
+> include/linux/gpio/driver.h:102:17: warning: its scope is only this d=
+efinition or declaration, which is probably not what you want [enabled =
+by default]
+
+I applied:
 
 
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.=
+h
+> index 82eac610ce1a..5133cf29803a 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -5,6 +5,7 @@
+>
+>  struct device;
+>  struct gpio_desc;
+> +struct of_phandle_args;
+>  struct seq_file;
+>
+>  /**
 
+2)
+
+In order to get the GPIO lookups from the rfkill driver working, I appl=
+ied:
+
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index ac53a9593662..b73c39f99858 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2368,7 +2368,7 @@ static struct gpio_desc *gpiod_find(struct devi=
+ce *dev, const char *con_id,
+>  				continue;
+>  			}
+> =20
+> -			if (chip->ngpio >=3D p->chip_hwnum) {
+> +			if (chip->ngpio <=3D p->chip_hwnum) {
+>  				dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
+>  					 chip->label, chip->ngpio);
+>  				continue;
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
