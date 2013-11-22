@@ -1,131 +1,105 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 2/5] mmc: sdhci-acpi: covert to use GPIO descriptor API
-Date: Fri, 22 Nov 2013 10:53:18 +0200
-Message-ID: <528F1B7E.7010601@intel.com>
-References: <1385045153-25160-1-git-send-email-mika.westerberg@linux.intel.com> <1385045153-25160-3-git-send-email-mika.westerberg@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: pl061: proper error messages
+Date: Fri, 22 Nov 2013 10:11:49 +0100
+Message-ID: <1385111509-1376-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:37481 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751155Ab3KVIqA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 22 Nov 2013 03:46:00 -0500
-In-Reply-To: <1385045153-25160-3-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:49443 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750808Ab3KVJL4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 04:11:56 -0500
+Received: by mail-wg0-f45.google.com with SMTP id a1so857369wgh.0
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Nov 2013 01:11:55 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On 21/11/13 16:45, Mika Westerberg wrote:
-> The new descriptor based GPIO interface is now the recommend and more safer
+This makes the PL061 driver print proper error messages
+when probe fails, and also tell us when the chip is finally
+registered.
 
-"recommend and more safer" -> "recommended and safer"
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ arch/arm/mach-integrator/Kconfig |  1 +
+ drivers/gpio/gpio-pl061.c        | 22 +++++++++++++++++-----
+ 2 files changed, 18 insertions(+), 5 deletions(-)
 
-> way of using GPIOs from device drivers. Convert the ACPI SDHCI driver to
-> use that interface.
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  drivers/mmc/host/sdhci-acpi.c | 26 ++++++++++----------------
->  1 file changed, 10 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
-> index ef19874fcd1f..379ddfe14bc7 100644
-> --- a/drivers/mmc/host/sdhci-acpi.c
-> +++ b/drivers/mmc/host/sdhci-acpi.c
-> @@ -31,10 +31,9 @@
->  #include <linux/bitops.h>
->  #include <linux/types.h>
->  #include <linux/err.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/acpi.h>
-> -#include <linux/acpi_gpio.h>
->  #include <linux/pm.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/delay.h>
-> @@ -199,22 +198,19 @@ static irqreturn_t sdhci_acpi_sd_cd(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> -static int sdhci_acpi_add_own_cd(struct device *dev, int gpio,
-> -				 struct mmc_host *mmc)
-> +static int sdhci_acpi_add_own_cd(struct device *dev, struct mmc_host *mmc)
->  {
-> +	struct gpio_desc *desc;
->  	unsigned long flags;
->  	int err, irq;
->  
-> -	if (gpio < 0) {
-> -		err = gpio;
-> +	desc = devm_gpiod_get_index(dev, NULL, 0);
-
-I notice that:
-
-	devm_gpio_request_one(.., label)
-		-> gpio_request_one(..., label)
-			-> gpiod_request(..., label)
-
-but:
-
-	devm_gpiod_get_index(..., con_id, ...)
-		-> gpiod_get_index(..., con_id, ...)
-			-> gpiod_request(..., con_id)
-
-which suggests that 'con_id' is equivalent to 'label'.
-i.e. "sd_cd".  Is it?
-
-> +	if (IS_ERR(desc)) {
-> +		err = PTR_ERR(desc);
->  		goto out;
->  	}
->  
-> -	err = devm_gpio_request_one(dev, gpio, GPIOF_DIR_IN, "sd_cd");
-> -	if (err)
-> -		goto out;
-> -
-> -	irq = gpio_to_irq(gpio);
-> +	irq = gpiod_to_irq(desc);
->  	if (irq < 0) {
->  		err = irq;
->  		goto out_free;
-> @@ -228,7 +224,7 @@ static int sdhci_acpi_add_own_cd(struct device *dev, int gpio,
->  	return 0;
->  
->  out_free:
-> -	devm_gpio_free(dev, gpio);
-> +	devm_gpiod_put(dev, desc);
->  out:
->  	dev_warn(dev, "failed to setup card detect wake up\n");
->  	return err;
-> @@ -254,7 +250,7 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
->  	struct resource *iomem;
->  	resource_size_t len;
->  	const char *hid;
-> -	int err, gpio;
-> +	int err;
->  
->  	if (acpi_bus_get_device(handle, &device))
->  		return -ENODEV;
-> @@ -279,8 +275,6 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
->  	if (IS_ERR(host))
->  		return PTR_ERR(host);
->  
-> -	gpio = acpi_get_gpio_by_index(dev, 0, NULL);
-> -
->  	c = sdhci_priv(host);
->  	c->host = host;
->  	c->slot = sdhci_acpi_get_slot(handle, hid);
-> @@ -338,7 +332,7 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
->  		goto err_free;
->  
->  	if (sdhci_acpi_flag(c, SDHCI_ACPI_SD_CD)) {
-> -		if (sdhci_acpi_add_own_cd(dev, gpio, host->mmc))
-> +		if (sdhci_acpi_add_own_cd(dev, host->mmc))
->  			c->use_runtime_pm = false;
->  	}
->  
-> 
+diff --git a/arch/arm/mach-integrator/Kconfig b/arch/arm/mach-integrator/Kconfig
+index 46be99007529..71089d4df8da 100644
+--- a/arch/arm/mach-integrator/Kconfig
++++ b/arch/arm/mach-integrator/Kconfig
+@@ -31,6 +31,7 @@ config INTEGRATOR_IMPD1
+ 	tristate "Include support for Integrator/IM-PD1"
+ 	depends on ARCH_INTEGRATOR_AP
+ 	select ARM_VIC
++	select ARM_AMBA
+ 	help
+ 	  The IM-PD1 is an add-on logic module for the Integrator which
+ 	  allows ARM(R) Ltd PrimeCells to be developed and evaluated.
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index f22f7f3e2e53..f08e5e2cbe50 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -270,26 +270,34 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	if (pdata) {
+ 		chip->gc.base = pdata->gpio_base;
+ 		irq_base = pdata->irq_base;
+-		if (irq_base <= 0)
++		if (irq_base <= 0) {
++			dev_err(&adev->dev, "invalid IRQ base in pdata\n");
+ 			return -ENODEV;
++		}
+ 	} else {
+ 		chip->gc.base = -1;
+ 		irq_base = 0;
+ 	}
+ 
+ 	if (!devm_request_mem_region(dev, adev->res.start,
+-				     resource_size(&adev->res), "pl061"))
++				     resource_size(&adev->res), "pl061")) {
++		dev_err(&adev->dev, "no memory region\n");
+ 		return -EBUSY;
++	}
+ 
+ 	chip->base = devm_ioremap(dev, adev->res.start,
+ 				  resource_size(&adev->res));
+-	if (!chip->base)
++	if (!chip->base) {
++		dev_err(&adev->dev, "could not remap memory\n");
+ 		return -ENOMEM;
++	}
+ 
+ 	chip->domain = irq_domain_add_simple(adev->dev.of_node, PL061_GPIO_NR,
+ 					     irq_base, &pl061_domain_ops, chip);
+-	if (!chip->domain)
++	if (!chip->domain) {
++		dev_err(&adev->dev, "no irq domain\n");
+ 		return -ENODEV;
++	}
+ 
+ 	spin_lock_init(&chip->lock);
+ 
+@@ -314,8 +322,10 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	 */
+ 	writeb(0, chip->base + GPIOIE); /* disable irqs */
+ 	irq = adev->irq[0];
+-	if (irq < 0)
++	if (irq < 0) {
++		dev_err(&adev->dev, "invalid IRQ\n");
+ 		return -ENODEV;
++	}
+ 
+ 	irq_set_chained_handler(irq, pl061_irq_handler);
+ 	irq_set_handler_data(irq, chip);
+@@ -331,6 +341,8 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
+ 
+ 	amba_set_drvdata(adev, chip);
++	dev_err(&adev->dev, "PL061 GPIO chip @%08x registered\n",
++		adev->res.start);
+ 
+ 	return 0;
+ }
+-- 
+1.8.3.1
 
