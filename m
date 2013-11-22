@@ -1,110 +1,78 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH 7/9] ARM: sa1100: move gpio irq handling to GPIO driver
-Date: Fri, 22 Nov 2013 23:46:10 +0400
-Message-ID: <CALT56yM1rf7onJNu6L9tG52RrmDXcuWSoa=JfpakZRO+e7vnEQ@mail.gmail.com>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
-	<1384505280-25389-8-git-send-email-dbaryshkov@gmail.com>
-	<20131122174528.GB16735@n2100.arm.linux.org.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
+Date: Fri, 22 Nov 2013 19:51:55 +0000
+Message-ID: <20131122195154.GD16735@n2100.arm.linux.org.uk>
+References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com> <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com> <528B811A.1030501@gmail.com> <CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com> <20131120002007.GR16735@n2100.arm.linux.org.uk> <CALT56yP-LsO_8qgpa3R6JQSWW2pGkNWBUtab8L2hQnC5UdoKvQ@mail.gmail.com> <20131122175814.GC16735@n2100.arm.linux.org.uk> <CALT56yNPmjje=8w2-3xo-80nVum2bhedMio8kp+gvizeGxQ5Kw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:64048 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755630Ab3KVTqL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 14:46:11 -0500
-Received: by mail-ie0-f174.google.com with SMTP id at1so2877514iec.33
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Nov 2013 11:46:10 -0800 (PST)
-In-Reply-To: <20131122174528.GB16735@n2100.arm.linux.org.uk>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:43304 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755605Ab3KVTwl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 14:52:41 -0500
+Content-Disposition: inline
+In-Reply-To: <CALT56yNPmjje=8w2-3xo-80nVum2bhedMio8kp+gvizeGxQ5Kw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Artamonow <mad_soft@inbox.ru>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-Hello,
+On Fri, Nov 22, 2013 at 11:12:05PM +0400, Dmitry Eremin-Solenikov wrote:
+> On Fri, Nov 22, 2013 at 9:58 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > On Wed, Nov 20, 2013 at 04:45:40AM +0400, Dmitry Eremin-Solenikov wrote:
+> >> On Wed, Nov 20, 2013 at 4:20 AM, Russell King - ARM Linux
+> >> <linux@arm.linux.org.uk> wrote:
+> >> > Also note that we _do_ have sa11x0 platforms which request their GPIOs
+> >> > in their arch_initcall callback, so the sa11x0 GPIO driver better be
+> >> > around at that point otherwise things *will* fail.
+> >>
+> >> Which ones if you have them in your mind?
+> >>
+> >> > I suspect that means the SA11x0 GPIO driver must be initialised early.
+> >>
+> >> Anyway in these patches gpio-sa1100 driver is registered at postcore
+> >> initcall, so gpios should
+> >> be available before arch_initcall functions.
+> >
+> > No it won't - quite simply because the platforms get called before
+> > sa1100_init() is run - they have to be because the platforms get to
+> > customise the platform data passed to the SA11x0 devices, which has
+> > to happen before sa1100_init() registers the devices.
+> 
+> They both belong to arch_initicall level, aren't they? So ordering is
+> guarded only by having customize_machine(which calls init_machine)
+> from arch/arm/kernel/ before sa1100_init from arch/arm/mach-sa1100/?
 
-On Fri, Nov 22, 2013 at 9:45 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Fri, Nov 15, 2013 at 12:47:58PM +0400, Dmitry Eremin-Solenikov wrote:
->> mach-sa1100's irq.c contains a mixture of system and GPIO irqs handling.
->> Split out GPIO irqchip to gpio-sa1100.c. To decouple first 11 GPIO IRQs
->> handling, make IRQ0-IRQ10 use chained irq handler that just passes the
->> IRQ to GPIO IRQs.
->>
->> Also during this refactoring introduce irq domain support for sa1100
->> gpio irqs.
->
-> I'm not sure I quite like this change... How much testing has this had?
-> I'd much prefer that this code just isn't touched because of all the
-> problems we've had here in years back with IRQs from CF cards being
-> dropped and the like.  This was very hard to get right, especially when
-> interacting with the SA1111.
+Here:
 
-How can we just check that? And what was the problem with CF IRQs?
-Sorry, if I'm asking dumb questions, I really missed that part of the history.
+c05b5194 T __initcall3_start
+c05b5194 t __initcall_gate_vma_init3
+c05b5198 t __initcall_customize_machine3
+c05b519c t __initcall_exceptions_init3
+c05b51a0 t __initcall_sa1100_init3
+c05b51a4 t __initcall_dma_bus_init3
+c05b51a8 t __initcall_dma_channel_table_init3
+c05b51ac t __initcall_sa1110_clk_init3
 
-I can go the way Linus Walleij originally did:
-1) switch to irq domain / hwirq
-2) integrate static variables to containers
+* There we can see customize_machine() is called before sa1100_init().
 
-And only after that in a separate patch(set)
+* customize_machine() calls the machine specific .init_machine function.
 
-3) Move GPIO IRQ handling to gpio-sa1100.
+* Several platforms call gpio_request() from their .init_machine function
+  for SA11x0 GPIOs.
 
-What do you think?
+* You're adding the SA11x0 GPIO device in sa1100_init().
 
->
->> @@ -136,3 +301,58 @@ static int __init sa1100_gpio_init(void)
->>       return platform_driver_register(&sa1100_gpio_driver);
->>  }
->>  postcore_initcall(sa1100_gpio_init);
->> +
->> +#ifdef CONFIG_PM
->> +static unsigned long saved_gplr;
->> +static unsigned long saved_gpdr;
->> +static unsigned long saved_grer;
->> +static unsigned long saved_gfer;
->> +
->> +static int sa1100_gpio_suspend(void)
->> +{
->> +     struct sa1100_gpio_chip *sgc = chip;
->> +     saved_gplr = readl_relaxed(sgc->regbase + GPLR_OFFSET);
->> +     saved_gpdr = readl_relaxed(sgc->regbase + GPDR_OFFSET);
->> +     saved_grer = readl_relaxed(sgc->regbase + GRER_OFFSET);
->> +     saved_gfer = readl_relaxed(sgc->regbase + GFER_OFFSET);
->> +
->> +     /* Clear GPIO transition detect bits */
->> +     writel_relaxed(0xffffffff, sgc->regbase + GEDR_OFFSET);
->> +
->> +     /* FIXME: Original code also reprogramed GRER/GFER here,
->> +      * I don't see the purpose though.
->> +     GRER = PWER & sgc->gpio_rising;
->> +     GFER = PWER & sgc->gpio_falling;
->> +      */
->
-> So you thought you'd just comment it out because you don't understand...
-> Not really the way things are done.  If you don't understand something,
-> you shouldn't be touching the code.
+Therefore, those platforms which call gpio_request() will fail.
 
-Thus I have the big FIXME.
+What is soo difficult to understand about this?
 
-> In this case, it's quite simple.  GRER and GFER need to be programmed
-> with the interrupts which we want to be active for _each_ mode of the
-> system.
+> For sa1100 there are only 2.5 platforms which use gpiolib - collie and h3xxx.
+> (The half is for simpad, which registers gpio chip from platform code, but
+> doesn't use it otherwise -- in platform code, of course).
 
-I see. I will put this back in the next iteration, but see below please.
+Oh well, I guess it doesn't matter then, if we're only breaking 2.5
+platforms.
 
-> Therefore, if we want to have certain GPIOs triggering wakeups (iow,
-> those GPIOs which have had enable_irq_wake() called on them) but not
-> those which haven't, we need to reprogram GRER and GFER with the
-> GPIOs which can wake the system up.
-
-I thought so. I was puzzled, because that would mean, that we want to wake
-up from a GPIO, which is masked in GPIO_IRQ_mask, but enabled in PWER.
-Is that the real scenario/usecase? If we/kernel has disabled IRQ
-through _mask_irq,
-I thought, we didn't expect events from that pin (including wakeup), did we?
-
-
--- 
-With best wishes
-Dmitry
+No.  It does matter.  This needs fixing.
