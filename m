@@ -1,118 +1,53 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH v2 4/7] mmc: sdhci-acpi: covert to use GPIO descriptor
- API
-Date: Fri, 22 Nov 2013 15:39:59 +0200
-Message-ID: <528F5EAF.8070109@intel.com>
-References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com> <1385122474-14926-5-git-send-email-mika.westerberg@linux.intel.com>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
+Date: Fri, 22 Nov 2013 21:33:32 +0400
+Message-ID: <528F956C.5040107@gmail.com>
+References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com> <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com> <528B811A.1030501@gmail.com> <CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:45644 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755713Ab3KVNcj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 22 Nov 2013 08:32:39 -0500
-In-Reply-To: <1385122474-14926-5-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-wg0-f53.google.com ([74.125.82.53]:58594 "EHLO
+	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753339Ab3KVRdj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 12:33:39 -0500
+Received: by mail-wg0-f53.google.com with SMTP id b13so1468565wgh.20
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Nov 2013 09:33:38 -0800 (PST)
+In-Reply-To: <CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Dmitry Artamonow <mad_soft@inbox.ru>
 
-On 22/11/13 14:14, Mika Westerberg wrote:
-> The new descriptor based GPIO interface is now the recommended and safer
-> way of using GPIOs from device drivers. Convert the ACPI SDHCI driver to
-> use that interface.
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On 11/20/2013 12:24 AM, Linus Walleij wrote:
+> On Tue, Nov 19, 2013 at 4:17 PM, Dmitry Eremin-Solenikov
+> <dbaryshkov@gmail.com> wrote:
+>> On 11/19/2013 05:00 PM, Linus Walleij wrote:
+>
+>>> And that happens before the GPIO driver gets registered -> crash.
+>>
+>> That is not the issue. The real issue is h3xxx using those gpio's without
+>> previously calling gpio_request.
+>
+> Really? But that wasn't done before this patch either.
+>
+> It is basically OK to use the gpio_* functions before or
+> without requesting the GPIOs, it won't look nice but it
+> works.
+>
+>> Unfortunately sa1100 driver doesn't have a
+>> good place to request gpios. When faced this problem during locomo
+>> refactoring, I ended up with the following piece of code:
+> (...)
+>> Russell, Linus, what do you think about the previous solution?
+>
+> That looks OK but is that really the problem?
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+I have reworked h3xxx GPIO handling to (hopefully) not to cause the 
+problem. I have sent the patches yesterday.
 
-> ---
->  drivers/mmc/host/sdhci-acpi.c | 26 ++++++++++++--------------
->  1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
-> index ef19874fcd1f..5c86550f83ad 100644
-> --- a/drivers/mmc/host/sdhci-acpi.c
-> +++ b/drivers/mmc/host/sdhci-acpi.c
-> @@ -31,10 +31,9 @@
->  #include <linux/bitops.h>
->  #include <linux/types.h>
->  #include <linux/err.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/acpi.h>
-> -#include <linux/acpi_gpio.h>
->  #include <linux/pm.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/delay.h>
-> @@ -199,22 +198,23 @@ static irqreturn_t sdhci_acpi_sd_cd(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> -static int sdhci_acpi_add_own_cd(struct device *dev, int gpio,
-> -				 struct mmc_host *mmc)
-> +static int sdhci_acpi_add_own_cd(struct device *dev, struct mmc_host *mmc)
->  {
-> +	struct gpio_desc *desc;
->  	unsigned long flags;
->  	int err, irq;
->  
-> -	if (gpio < 0) {
-> -		err = gpio;
-> +	desc = devm_gpiod_get_index(dev, "sd_cd", 0);
-> +	if (IS_ERR(desc)) {
-> +		err = PTR_ERR(desc);
->  		goto out;
->  	}
->  
-> -	err = devm_gpio_request_one(dev, gpio, GPIOF_DIR_IN, "sd_cd");
-> +	err = gpiod_direction_input(desc);
->  	if (err)
-> -		goto out;
-> +		goto out_free;
->  
-> -	irq = gpio_to_irq(gpio);
-> +	irq = gpiod_to_irq(desc);
->  	if (irq < 0) {
->  		err = irq;
->  		goto out_free;
-> @@ -228,7 +228,7 @@ static int sdhci_acpi_add_own_cd(struct device *dev, int gpio,
->  	return 0;
->  
->  out_free:
-> -	devm_gpio_free(dev, gpio);
-> +	devm_gpiod_put(dev, desc);
->  out:
->  	dev_warn(dev, "failed to setup card detect wake up\n");
->  	return err;
-> @@ -254,7 +254,7 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
->  	struct resource *iomem;
->  	resource_size_t len;
->  	const char *hid;
-> -	int err, gpio;
-> +	int err;
->  
->  	if (acpi_bus_get_device(handle, &device))
->  		return -ENODEV;
-> @@ -279,8 +279,6 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
->  	if (IS_ERR(host))
->  		return PTR_ERR(host);
->  
-> -	gpio = acpi_get_gpio_by_index(dev, 0, NULL);
-> -
->  	c = sdhci_priv(host);
->  	c->host = host;
->  	c->slot = sdhci_acpi_get_slot(handle, hid);
-> @@ -338,7 +336,7 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
->  		goto err_free;
->  
->  	if (sdhci_acpi_flag(c, SDHCI_ACPI_SD_CD)) {
-> -		if (sdhci_acpi_add_own_cd(dev, gpio, host->mmc))
-> +		if (sdhci_acpi_add_own_cd(dev, host->mmc))
->  			c->use_runtime_pm = false;
->  	}
->  
-> 
+Linus, Could you please check if both series work (and make sense to you)?
 
+-- 
+With best wishes
+Dmitry
