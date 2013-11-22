@@ -1,43 +1,79 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
-Date: Fri, 22 Nov 2013 17:58:14 +0000
-Message-ID: <20131122175814.GC16735@n2100.arm.linux.org.uk>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com> <CACRpkdZU3_EqhBjV68+okJwh7QONuxWVjKkrUO4PkwJhKrP+mQ@mail.gmail.com> <528B811A.1030501@gmail.com> <CACRpkdbgn22xDX4nJZSDSE9-h+u1j5DQt=8arO7oS-UCBdBMUQ@mail.gmail.com> <20131120002007.GR16735@n2100.arm.linux.org.uk> <CALT56yP-LsO_8qgpa3R6JQSWW2pGkNWBUtab8L2hQnC5UdoKvQ@mail.gmail.com>
+From: Scott Wood <scottwood@freescale.com>
+Subject: Re: [PATCH v2] powerpc/gpio: Fix the wrong GPIO input data on
+ MPC8572/MPC8536
+Date: Fri, 22 Nov 2013 12:39:08 -0600
+Message-ID: <1385145548.1403.524.camel@snotra.buserror.net>
+References: <1385107960-373-1-git-send-email-Gang.Liu@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:43296 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754786Ab3KVR64 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 12:58:56 -0500
-Content-Disposition: inline
-In-Reply-To: <CALT56yP-LsO_8qgpa3R6JQSWW2pGkNWBUtab8L2hQnC5UdoKvQ@mail.gmail.com>
+Received: from co1ehsobe001.messaging.microsoft.com ([216.32.180.184]:39956
+	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755431Ab3KVSjW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 22 Nov 2013 13:39:22 -0500
+In-Reply-To: <1385107960-373-1-git-send-email-Gang.Liu@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Artamonow <mad_soft@inbox.ru>
+To: Liu Gang <Gang.Liu@freescale.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, agust@denx.de, b07421@freescale.com, linus.walleij@linaro.org, r61911@freescale.com
 
-On Wed, Nov 20, 2013 at 04:45:40AM +0400, Dmitry Eremin-Solenikov wrote:
-> On Wed, Nov 20, 2013 at 4:20 AM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > Also note that we _do_ have sa11x0 platforms which request their GPIOs
-> > in their arch_initcall callback, so the sa11x0 GPIO driver better be
-> > around at that point otherwise things *will* fail.
+On Fri, 2013-11-22 at 16:12 +0800, Liu Gang wrote:
+> For MPC8572/MPC8536, the status of GPIOs defined as output
+> cannot be determined by reading GPDAT register, so the code
+> use shadow data register instead. But the code may give the
+> wrong status of GPIOs defined as input under some scenarios:
 > 
-> Which ones if you have them in your mind?
+> 1. If some pins were configured as inputs and were asserted
+> high before booting the kernel, the shadow data has been
+> initialized with those pin values.
+> 2. Some pins have been configured as output first and have
+> been set to the high value, then reconfigured as input.
 > 
-> > I suspect that means the SA11x0 GPIO driver must be initialised early.
+> The above cases will make the shadow data for those input
+> pins to be set to high. Then reading the pin status will
+> always return high even if the actual pin status is low.
 > 
-> Anyway in these patches gpio-sa1100 driver is registered at postcore
-> initcall, so gpios should
-> be available before arch_initcall functions.
+> The code should eliminate the effects of the shadow data to
+> the input pins, and the status of those pins should be
+> read directly from GPDAT.
+> 
+> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+> ---
+> changes in v2:
+>  - Added more description of the problem.
+>  - Reduced one in_be32() call.
+>  - Do not modify the shadow data.
+> 
+>  drivers/gpio/gpio-mpc8xxx.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+> index 914e859..d7d6d72 100644
+> --- a/drivers/gpio/gpio-mpc8xxx.c
+> +++ b/drivers/gpio/gpio-mpc8xxx.c
+> @@ -70,10 +70,14 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+>  	u32 val;
+>  	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
+>  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+> +	u32 out_mask, out_shadow;
+>  
+> -	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
+> +	out_mask = in_be32(mm->regs + GPIO_DIR);
+>  
+> -	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
+> +	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
+> +	out_shadow = mpc8xxx_gc->data & out_mask;
+> +
+> +	return (val | out_shadow) & mpc8xxx_gpio2mask(gpio);
+>  }
+>  
+>  static int mpc8xxx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
 
-No it won't - quite simply because the platforms get called before
-sa1100_init() is run - they have to be because the platforms get to
-customise the platform data passed to the SA11x0 devices, which has
-to happen before sa1100_init() registers the devices.
+Acked-by: Scott Wood <scottwood@freescale.com>
 
-By adding the GPIO device to the sa11x0_devices list, you're registering
-it afterwards which means that the GPIO driver isn't up and running
-at this time.  That means that various platforms (such as the h3xxx
-ones which call gpio_request on built-in GPIOs at this time) will fail.
+-Scott
+
+
+
