@@ -1,36 +1,89 @@
-From: Taras Kondratiuk <taras.kondratiuk@linaro.org>
-Subject: Re: [PATCH v6 1/6] gpio: davinci: use readl/writel instead of __raw_*
-Date: Fri, 22 Nov 2013 12:08:51 +0200
-Message-ID: <CAArO44vmfkroE9w4KviOhjkPvg9bTX9pAtr3oxYjD9u_wVZXeg@mail.gmail.com>
-References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
-	<1385057731-4348-2-git-send-email-prabhakar.csengg@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 2/5] mmc: sdhci-acpi: covert to use GPIO descriptor API
+Date: Fri, 22 Nov 2013 12:18:03 +0200
+Message-ID: <20131122101803.GG2281@intel.com>
+References: <1385045153-25160-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1385045153-25160-3-git-send-email-mika.westerberg@linux.intel.com>
+ <528F1B7E.7010601@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:39849 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751956Ab3KVKIx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 05:08:53 -0500
-Received: by mail-la0-f45.google.com with SMTP id eh20so749504lab.4
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Nov 2013 02:08:52 -0800 (PST)
-In-Reply-To: <1385057731-4348-2-git-send-email-prabhakar.csengg@gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:3339 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752567Ab3KVKL3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 22 Nov 2013 05:11:29 -0500
+Content-Disposition: inline
+In-Reply-To: <528F1B7E.7010601@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 21 November 2013 20:15, Prabhakar Lad <prabhakar.csengg@gmail.com> wrote:
-> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
->
-> This patch replaces the __raw_readl/writel with
-> readl and writel, Altough the code runs on ARMv5
-> based SOCs, changing this will help copying the code
-> for other uses.
+On Fri, Nov 22, 2013 at 10:53:18AM +0200, Adrian Hunter wrote:
+> On 21/11/13 16:45, Mika Westerberg wrote:
+> > The new descriptor based GPIO interface is now the recommend and more safer
+> 
+> "recommend and more safer" -> "recommended and safer"
 
-This replacement has a functional impact: it adds memory barriers.
-Please note this in the description.
-Also please add a bit of explanation on why do you need to add barriers.
+OK.
 
--- 
-Regards,
-Taras Kondratiuk
+> 
+> > way of using GPIOs from device drivers. Convert the ACPI SDHCI driver to
+> > use that interface.
+> > 
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > ---
+> >  drivers/mmc/host/sdhci-acpi.c | 26 ++++++++++----------------
+> >  1 file changed, 10 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
+> > index ef19874fcd1f..379ddfe14bc7 100644
+> > --- a/drivers/mmc/host/sdhci-acpi.c
+> > +++ b/drivers/mmc/host/sdhci-acpi.c
+> > @@ -31,10 +31,9 @@
+> >  #include <linux/bitops.h>
+> >  #include <linux/types.h>
+> >  #include <linux/err.h>
+> > -#include <linux/gpio.h>
+> > +#include <linux/gpio/consumer.h>
+> >  #include <linux/interrupt.h>
+> >  #include <linux/acpi.h>
+> > -#include <linux/acpi_gpio.h>
+> >  #include <linux/pm.h>
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/delay.h>
+> > @@ -199,22 +198,19 @@ static irqreturn_t sdhci_acpi_sd_cd(int irq, void *dev_id)
+> >  	return IRQ_HANDLED;
+> >  }
+> >  
+> > -static int sdhci_acpi_add_own_cd(struct device *dev, int gpio,
+> > -				 struct mmc_host *mmc)
+> > +static int sdhci_acpi_add_own_cd(struct device *dev, struct mmc_host *mmc)
+> >  {
+> > +	struct gpio_desc *desc;
+> >  	unsigned long flags;
+> >  	int err, irq;
+> >  
+> > -	if (gpio < 0) {
+> > -		err = gpio;
+> > +	desc = devm_gpiod_get_index(dev, NULL, 0);
+> 
+> I notice that:
+> 
+> 	devm_gpio_request_one(.., label)
+> 		-> gpio_request_one(..., label)
+> 			-> gpiod_request(..., label)
+> 
+> but:
+> 
+> 	devm_gpiod_get_index(..., con_id, ...)
+> 		-> gpiod_get_index(..., con_id, ...)
+> 			-> gpiod_request(..., con_id)
+> 
+> which suggests that 'con_id' is equivalent to 'label'.
+> i.e. "sd_cd".  Is it?
+
+Indeed, it is. Even though ACPI doesn't use con_id for lookup gpiolib uses
+it as a label once the GPIO descriptor is found.
+
+I'll change that from NULL to "sd_cd".
