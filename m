@@ -1,111 +1,29 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2 4/7] mmc: sdhci-acpi: covert to use GPIO descriptor API
-Date: Fri, 22 Nov 2013 14:14:31 +0200
-Message-ID: <1385122474-14926-5-git-send-email-mika.westerberg@linux.intel.com>
-References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl-baytrail: show pin label with the reset of the
+ gpio debug data
+Date: Fri, 22 Nov 2013 14:33:31 +0200
+Message-ID: <20131122123331.GL2281@intel.com>
+References: <1385121683-29223-1-git-send-email-mathias.nyman@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:59658 "EHLO mga09.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:51152 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755522Ab3KVMOk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 22 Nov 2013 07:14:40 -0500
-In-Reply-To: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com>
+	id S1755532Ab3KVM1I (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 22 Nov 2013 07:27:08 -0500
+Content-Disposition: inline
+In-Reply-To: <1385121683-29223-1-git-send-email-mathias.nyman@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-acpi@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Linus <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-The new descriptor based GPIO interface is now the recommended and safer
-way of using GPIOs from device drivers. Convert the ACPI SDHCI driver to
-use that interface.
+On Fri, Nov 22, 2013 at 02:01:23PM +0200, Mathias Nyman wrote:
+> The default gpiolib debug output shows pin labels.
+> We want baytrail custom debug output to have the same functionality.
+> 
+> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/mmc/host/sdhci-acpi.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+Looks good to me,
 
-diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
-index ef19874fcd1f..5c86550f83ad 100644
---- a/drivers/mmc/host/sdhci-acpi.c
-+++ b/drivers/mmc/host/sdhci-acpi.c
-@@ -31,10 +31,9 @@
- #include <linux/bitops.h>
- #include <linux/types.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/acpi.h>
--#include <linux/acpi_gpio.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/delay.h>
-@@ -199,22 +198,23 @@ static irqreturn_t sdhci_acpi_sd_cd(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--static int sdhci_acpi_add_own_cd(struct device *dev, int gpio,
--				 struct mmc_host *mmc)
-+static int sdhci_acpi_add_own_cd(struct device *dev, struct mmc_host *mmc)
- {
-+	struct gpio_desc *desc;
- 	unsigned long flags;
- 	int err, irq;
- 
--	if (gpio < 0) {
--		err = gpio;
-+	desc = devm_gpiod_get_index(dev, "sd_cd", 0);
-+	if (IS_ERR(desc)) {
-+		err = PTR_ERR(desc);
- 		goto out;
- 	}
- 
--	err = devm_gpio_request_one(dev, gpio, GPIOF_DIR_IN, "sd_cd");
-+	err = gpiod_direction_input(desc);
- 	if (err)
--		goto out;
-+		goto out_free;
- 
--	irq = gpio_to_irq(gpio);
-+	irq = gpiod_to_irq(desc);
- 	if (irq < 0) {
- 		err = irq;
- 		goto out_free;
-@@ -228,7 +228,7 @@ static int sdhci_acpi_add_own_cd(struct device *dev, int gpio,
- 	return 0;
- 
- out_free:
--	devm_gpio_free(dev, gpio);
-+	devm_gpiod_put(dev, desc);
- out:
- 	dev_warn(dev, "failed to setup card detect wake up\n");
- 	return err;
-@@ -254,7 +254,7 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
- 	struct resource *iomem;
- 	resource_size_t len;
- 	const char *hid;
--	int err, gpio;
-+	int err;
- 
- 	if (acpi_bus_get_device(handle, &device))
- 		return -ENODEV;
-@@ -279,8 +279,6 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
- 	if (IS_ERR(host))
- 		return PTR_ERR(host);
- 
--	gpio = acpi_get_gpio_by_index(dev, 0, NULL);
--
- 	c = sdhci_priv(host);
- 	c->host = host;
- 	c->slot = sdhci_acpi_get_slot(handle, hid);
-@@ -338,7 +336,7 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
- 		goto err_free;
- 
- 	if (sdhci_acpi_flag(c, SDHCI_ACPI_SD_CD)) {
--		if (sdhci_acpi_add_own_cd(dev, gpio, host->mmc))
-+		if (sdhci_acpi_add_own_cd(dev, host->mmc))
- 			c->use_runtime_pm = false;
- 	}
- 
--- 
-1.8.4.3
-
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
