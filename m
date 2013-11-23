@@ -1,60 +1,102 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH 0/9] ARM: sa1100: Rework IRQ handling
-Date: Sat, 23 Nov 2013 01:35:46 +0400
-Message-ID: <CALT56yPz=71SEWhXZLKp67Qxq2GD9vhWsc5rFr7VU53uxuwXDA@mail.gmail.com>
-References: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2 2/7] ARM: tegra: add gpiod_lookup table for paz00
+Date: Sat, 23 Nov 2013 14:36:36 +0900
+Message-ID: <CAAVeFuKBAJS8LyDJ=99ZTWH6j=Z+H-KPAjA0SEWJ9oC5BSbe7w@mail.gmail.com>
+References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1385122474-14926-3-git-send-email-mika.westerberg@linux.intel.com> <528FA509.6080907@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:45159 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753277Ab3KVVfq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2013 16:35:46 -0500
-Received: by mail-ie0-f179.google.com with SMTP id x13so3102037ief.38
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Nov 2013 13:35:46 -0800 (PST)
-In-Reply-To: <1384505280-25389-1-git-send-email-dbaryshkov@gmail.com>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:33939 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750744Ab3KWFg5 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Nov 2013 00:36:57 -0500
+In-Reply-To: <528FA509.6080907@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Artamonow <mad_soft@inbox.ru>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, Nov 15, 2013 at 12:47 PM, Dmitry Eremin-Solenikov
-<dbaryshkov@gmail.com> wrote:
-> Dmitry Eremin-Solenikov (9):
->       ARM: sa1100 collie: use gpio-charger instead of pda-power
->       ARM: locomo: don't clobber chip data for chained irq
-
-Russell, could you please reivew and ack these first two patches.
-I would like to get them independently of the fate of the rest of this
-patch serie.
-
->       ARM: sa1100: switch to MULTI_IRQ_HANDLER
->       ARM: sa1100: convert gpio driver to be a proper platform driver
->       ARM: sa1100: add platform functions to handle PWER settings
->       ARM: sa1100: enable IRQ domains
->       ARM: sa1100: move gpio irq handling to GPIO driver
->       ARM: sa1100: move per-IRQ PWER settings to core code
->       ARM: sa1100: refactor irq driver
+On Sat, Nov 23, 2013 at 3:40 AM, Stephen Warren <swarren@wwwdotorg.org>=
+ wrote:
+> On 11/22/2013 05:14 AM, Mika Westerberg wrote:
+>> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>>
+>> This makes it possible to request the gpio descriptors in
+>> rfkill-gpio driver regardless of the platform.
 >
->  arch/arm/Kconfig                                |   2 +
->  arch/arm/common/locomo.c                        |   4 +-
->  arch/arm/mach-sa1100/collie.c                   |  55 ++-------------
->  arch/arm/mach-sa1100/generic.c                  |  46 +++++++++++-
->  arch/arm/mach-sa1100/generic.h                  |   3 +-
->  arch/arm/mach-sa1100/include/mach/SA-1100.h     |   2 +
->  arch/arm/mach-sa1100/include/mach/entry-macro.S |  41 -----------
->  arch/arm/mach-sa1100/include/mach/irqs.h        |  73 +++++++++++--------
->  arch/arm/mach-sa1100/irq.c                      | 322 +++++++++++++++++++++--------------------------------------------------------------
->  drivers/gpio/Kconfig                            |   6 ++
->  drivers/gpio/Makefile                           |   2 +-
->  drivers/gpio/gpio-sa1100.c                      | 332 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
->  12 files changed, 500 insertions(+), 388 deletions(-)
->  delete mode 100644 arch/arm/mach-sa1100/include/mach/entry-macro.S
+> Patches 1-3,
+> Tested-by: Stephen Warren <swarren@nvidia.com>
+>
+> All the testing I did was to "cat /sys/kernel/debug/gpios" to make su=
+re
+> those two GPIOs had been correctly acquired by the driver, and that t=
+hey
+> changed state as expected via the command-line "rfkill {un,}block" co=
+mmands.
+>
+> However, please note that I had to apply a couple fixes to the gpioli=
+b
+> core to get this working:
+>
+> 1)
+>
+> To solve the following build warning:
+>
+>> In file included from arch/arm/mach-tegra/board-paz00.c:21:0:
+>> include/linux/gpio/driver.h:102:17: warning: =E2=80=98struct of_phan=
+dle_args=E2=80=99 declared inside parameter list [enabled by default]
+>> include/linux/gpio/driver.h:102:17: warning: its scope is only this =
+definition or declaration, which is probably not what you want [enabled=
+ by default]
+>
+> I applied:
 >
 >
+>> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver=
+=2Eh
+>> index 82eac610ce1a..5133cf29803a 100644
+>> --- a/include/linux/gpio/driver.h
+>> +++ b/include/linux/gpio/driver.h
+>> @@ -5,6 +5,7 @@
+>>
+>>  struct device;
+>>  struct gpio_desc;
+>> +struct of_phandle_args;
+>>  struct seq_file;
+>>
+>>  /**
+>
+> 2)
+>
+> In order to get the GPIO lookups from the rfkill driver working, I ap=
+plied:
+>
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> index ac53a9593662..b73c39f99858 100644
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>> @@ -2368,7 +2368,7 @@ static struct gpio_desc *gpiod_find(struct dev=
+ice *dev, const char *con_id,
+>>                               continue;
+>>                       }
+>>
+>> -                     if (chip->ngpio >=3D p->chip_hwnum) {
+>> +                     if (chip->ngpio <=3D p->chip_hwnum) {
+>>                               dev_warn(dev, "GPIO chip %s has %d GPI=
+Os\n",
+>>                                        chip->label, chip->ngpio);
+>>                               continue;
 
+Mmm. I guess should be blamed for this one. I haven't tested GPIO
+platform lookup in a while and this seems to have slipped in at some
+point. :( I will send fixup patches to Linus for both issues, thanks
+for pointing them out.
 
-
--- 
-With best wishes
-Dmitry
+Alex.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
