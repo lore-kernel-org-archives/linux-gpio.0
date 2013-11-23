@@ -1,38 +1,128 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpiolib: fix lookup of platform-mapped GPIOs
-Date: Sat, 23 Nov 2013 14:55:52 +0900
-Message-ID: <1385186152-29188-1-git-send-email-acourbot@nvidia.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gnurou.org ([207.192.72.5]:40446 "EHLO mail.gnurou.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751304Ab3KWF5K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 23 Nov 2013 00:57:10 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2 3/7] net: rfkill: gpio: remove gpio conversion support
+Date: Sat, 23 Nov 2013 17:59:30 +0900
+Message-ID: <CAAVeFuKm=AHf4Az+ZZXwWLtft2_zmCqy2Wscw25cWNCbn2T+dQ@mail.gmail.com>
+References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1385122474-14926-4-git-send-email-mika.westerberg@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1385122474-14926-4-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-A typo resulted in GPIO lookup failing unconditionally.
+On Fri, Nov 22, 2013 at 9:14 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>
+> All platforms using this driver are now converted to the new
+> descriptor-based GPIO interface.
+>
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+>  net/rfkill/rfkill-gpio.c | 61 ++++++++++--------------------------------------
+>  1 file changed, 12 insertions(+), 49 deletions(-)
+>
+> diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
+> index 503432154616..bd2a5b90400c 100644
+> --- a/net/rfkill/rfkill-gpio.c
+> +++ b/net/rfkill/rfkill-gpio.c
+> @@ -68,35 +68,6 @@ static const struct rfkill_ops rfkill_gpio_ops = {
+>         .set_block = rfkill_gpio_set_power,
+>  };
+>
+> -static int rfkill_gpio_convert_to_desc(struct platform_device *pdev,
+> -                                      struct rfkill_gpio_data *rfkill)
+> -{
+> -       struct rfkill_gpio_platform_data *pdata = pdev->dev.platform_data;
+> -       int ret;
+> -
+> -       if (gpio_is_valid(pdata->reset_gpio)) {
+> -               ret = devm_gpio_request_one(&pdev->dev, pdata->reset_gpio,
+> -                                           0, rfkill->reset_name);
+> -               if (ret) {
+> -                       dev_err(&pdev->dev, "failed to get reset gpio.\n");
+> -                       return ret;
+> -               }
+> -               rfkill->reset_gpio = gpio_to_desc(pdata->reset_gpio);
+> -       }
+> -
+> -       if (gpio_is_valid(pdata->shutdown_gpio)) {
+> -               ret = devm_gpio_request_one(&pdev->dev, pdata->shutdown_gpio,
+> -                                           0, rfkill->shutdown_name);
+> -               if (ret) {
+> -                       dev_err(&pdev->dev, "failed to get shutdown gpio.\n");
+> -                       return ret;
+> -               }
+> -               rfkill->shutdown_gpio = gpio_to_desc(pdata->shutdown_gpio);
+> -       }
+> -
+> -       return 0;
+> -}
+> -
+>  static int rfkill_gpio_acpi_probe(struct device *dev,
+>                                   struct rfkill_gpio_data *rfkill)
+>  {
+> @@ -117,6 +88,7 @@ static int rfkill_gpio_probe(struct platform_device *pdev)
+>         struct rfkill_gpio_platform_data *pdata = pdev->dev.platform_data;
+>         struct rfkill_gpio_data *rfkill;
+>         const char *clk_name = NULL;
+> +       struct gpio_desc *gpio;
+>         int ret;
+>         int len;
+>
+> @@ -150,29 +122,20 @@ static int rfkill_gpio_probe(struct platform_device *pdev)
+>
+>         rfkill->clk = devm_clk_get(&pdev->dev, clk_name);
+>
+> -       if (pdata && (pdata->reset_gpio || pdata->shutdown_gpio)) {
+> -               ret = rfkill_gpio_convert_to_desc(pdev, rfkill);
+> +       gpio = devm_gpiod_get_index(&pdev->dev, rfkill->reset_name, 0);
+> +       if (!IS_ERR(gpio)) {
+> +               ret = gpiod_direction_output(gpio, 0);
+>                 if (ret)
+>                         return ret;
+> -       } else {
+> -               struct gpio_desc *gpio;
+> -
+> -               gpio = devm_gpiod_get_index(&pdev->dev, rfkill->reset_name, 0);
+> -               if (!IS_ERR(gpio)) {
+> -                       ret = gpiod_direction_output(gpio, 0);
+> -                       if (ret)
+> -                               return ret;
+> -                       rfkill->reset_gpio = gpio;
+> -               }
+> +               rfkill->reset_gpio = gpio;
+> +       }
+>
+> -               gpio = devm_gpiod_get_index(&pdev->dev,
+> -                                           rfkill->shutdown_name, 1);
+> -               if (!IS_ERR(gpio)) {
+> -                       ret = gpiod_direction_output(gpio, 0);
+> -                       if (ret)
+> -                               return ret;
+> -                       rfkill->shutdown_gpio = gpio;
+> -               }
+> +       gpio = devm_gpiod_get_index(&pdev->dev, rfkill->shutdown_name, 1);
+> +       if (!IS_ERR(gpio)) {
+> +               ret = gpiod_direction_output(gpio, 0);
+> +               if (ret)
+> +                       return ret;
+> +               rfkill->shutdown_gpio = gpio;
+>         }
+>
+>         /* Make sure at-least one of the GPIO is defined and that
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-Reported-by: Stephen Warren <swarren@wwwdotorg.org>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Wouldn't it be possible (and simpler) to move patch 2 of your series
+to first position, and then to merge patch 1 and 3 together in second
+position? It seems to me that you are basically undoing much of the
+work of your first patch here (notably by removing
+rfkill_gpio_convert_to_desc() which ends up having a very short life)
+and that this could be avoided if you defined the platform lookup
+tables first.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 980b08d..86caf17 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2367,7 +2367,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 				continue;
- 			}
- 
--			if (chip->ngpio >= p->chip_hwnum) {
-+			if (chip->ngpio <= p->chip_hwnum) {
- 				dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
- 					 chip->label, chip->ngpio);
- 				continue;
--- 
-1.8.4.2
-
+Doing so would avoid prevent you from using gpio_to_desc() which you
+should never ever use anyway. :P
