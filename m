@@ -1,26 +1,40 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2 4/7] mmc: sdhci-acpi: covert to use GPIO descriptor API
-Date: Sat, 23 Nov 2013 18:23:34 +0900
-Message-ID: <CAAVeFuJHFHfdt1n4j7+iAn7hJGcOaZNvKWmTv4r8E3n4gVTPUg@mail.gmail.com>
-References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com>
- <1385122474-14926-5-git-send-email-mika.westerberg@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:40365 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754215Ab3KWJXy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Nov 2013 04:23:54 -0500
-In-Reply-To: <1385122474-14926-5-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH] Documentation: gpiolib: add 00-INDEX file
+Date: Sat, 23 Nov 2013 19:32:20 +0900
+Message-ID: <1385202740-8733-1-git-send-email-acourbot@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Landley <rob@landley.net>
+Cc: linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, Nov 22, 2013 at 9:14 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> The new descriptor based GPIO interface is now the recommended and safer
-> way of using GPIOs from device drivers. Convert the ACPI SDHCI driver to
-> use that interface.
+Give a short overview of the various GPIO documentation files.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ Documentation/gpio/00-INDEX | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/gpio/00-INDEX
+
+diff --git a/Documentation/gpio/00-INDEX b/Documentation/gpio/00-INDEX
+new file mode 100644
+index 0000000..1de43ae
+--- /dev/null
++++ b/Documentation/gpio/00-INDEX
+@@ -0,0 +1,14 @@
++00-INDEX
++	- This file
++gpio.txt
++	- Introduction to GPIOs and their kernel interfaces
++consumer.txt
++	- How to obtain and use GPIOs in a driver
++driver.txt
++	- How to write a GPIO driver
++board.txt
++	- How to assign GPIOs to a consumer device and a function
++sysfs.txt
++	- Information about the GPIO sysfs interface
++gpio-legacy.txt
++	- Historical documentation of the deprecated GPIO integer interface
+-- 
+1.8.4.2
