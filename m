@@ -1,46 +1,23 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v2 3/7] net: rfkill: gpio: remove gpio conversion support
-Date: Mon, 25 Nov 2013 18:05:31 +0900
-Message-ID: <529312DB.6070301@nvidia.com>
-References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com> <1385122474-14926-4-git-send-email-mika.westerberg@linux.intel.com> <CAAVeFuKm=AHf4Az+ZZXwWLtft2_zmCqy2Wscw25cWNCbn2T+dQ@mail.gmail.com> <20131125084127.GB21001@xps8300> <52930EAA.7030208@nvidia.com> <20131125090218.GC21001@xps8300>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpiolib: add missing declarations
+Date: Mon, 25 Nov 2013 18:07:10 +0900
+Message-ID: <CAAVeFu+wFAqroiyzwRQLkRAmhVQV-efOYA51DTHUwMMA1nTYxA@mail.gmail.com>
+References: <1385186069-28986-1-git-send-email-acourbot@nvidia.com> <20131125085831.GO2281@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12573 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729Ab3KYJFh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Nov 2013 04:05:37 -0500
-In-Reply-To: <20131125090218.GC21001@xps8300>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131125085831.GO2281@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 11/25/2013 06:02 PM, Heikki Krogerus wrote:
-> On Mon, Nov 25, 2013 at 05:47:38PM +0900, Alex Courbot wrote:
->> On 11/25/2013 05:41 PM, Heikki Krogerus wrote:
->>> Adding the lookup table in first patch and then changing the driver in
->>> the second creates a point to the history where this driver stops
->>> working on this platform, which is something I'm not willing to do.
->>
->> Does it? If you just add a lookup table and keep using the
->> integer-based GPIO interface, then your lookup table will not be
->> used by anyone and will basically be a no-op. Then you can switch to
->> the GPIO descriptor interface and take advantage of the lookup
->> table. Unless I missed something there should not be any point that
->> breaks in the git history.
->>
->> (to be clear: the first patch should *only* contain the lookup
->> table, and the second be a merge of the current patches 1 and 3 of
->> this series.)
+On Mon, Nov 25, 2013 at 5:58 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Sat, Nov 23, 2013 at 02:54:29PM +0900, Alexandre Courbot wrote:
+>> Add missing declarations and include files to avoid warnings during
+>> compilation of include/gpio/driver.h.
 >
-> OK, I agree. If I don't remove the old gpio numbers in in the first
-> patch, there is no problem. We can do this with the two patches.
+> It would be good to have those warnings included in the changelog as well.
 
-Yep, that's what I meant. :) It would make the series considerably 
-easier to understand by removing its temporary code.
-
-Thanks,
-Alex.
-
+As in, copy-pasting the compiler's output? Isn't the change explicit enough?
