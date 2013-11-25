@@ -1,31 +1,55 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2 6/7] gpio / ACPI: get rid of acpi_gpio.h
-Date: Mon, 25 Nov 2013 12:18:25 +0200
-Message-ID: <20131125101825.GT2281@intel.com>
-References: <1385122474-14926-1-git-send-email-mika.westerberg@linux.intel.com>
- <1385122474-14926-7-git-send-email-mika.westerberg@linux.intel.com>
- <CAAVeFuK_76Rnqa8E0DpME8Eyc3vh63HmyHx=zbeyaKz7aXm=rA@mail.gmail.com>
- <20131125085454.GN2281@intel.com>
- <52930F74.7060808@nvidia.com>
+From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v6 1/6] gpio: davinci: use readl/writel instead of __raw_*
+Date: Mon, 25 Nov 2013 16:04:16 +0530
+Message-ID: <529327A8.8080909@ti.com>
+References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
+	<1385057731-4348-2-git-send-email-prabhakar.csengg@gmail.com>
+	<CAArO44vmfkroE9w4KviOhjkPvg9bTX9pAtr3oxYjD9u_wVZXeg@mail.gmail.com>
+	<CA+V-a8sjmo2K16m9_6Zf1qwcez+qKm-9JW1Cb=Aj4prtXd=-fA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <52930F74.7060808@nvidia.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <CA+V-a8sjmo2K16m9_6Zf1qwcez+qKm-9JW1Cb=Aj4prtXd=-fA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Taras Kondratiuk <taras.kondratiuk-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DLOS <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, LDOC <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 25, 2013 at 05:51:00PM +0900, Alex Courbot wrote:
-> I just wondered if these headers should not be split by GPIO
-> providers, but if you prefer it that way I'm fine with it too. We
-> can move stuff later if needed.
+Prabhakar,
+
+On Monday 25 November 2013 09:42 AM, Prabhakar Lad wrote:
+> Hi Taras,
 > 
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> On Fri, Nov 22, 2013 at 3:38 PM, Taras Kondratiuk
+> <taras.kondratiuk-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> On 21 November 2013 20:15, Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> From: "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>
+>>> This patch replaces the __raw_readl/writel with
+>>> readl and writel, Altough the code runs on ARMv5
+>>> based SOCs, changing this will help copying the code
+>>> for other uses.
+>>
+>> This replacement has a functional impact: it adds memory barriers.
+>> Please note this in the description.
+>> Also please add a bit of explanation on why do you need to add barriers.
+>>
+> Agreed this adds memory barriers, I'll add a note about it.
 
-Thanks!
+Well the barriers certainly make it easier to debug by having both
+device and memory accesses happen in program order. That said, if there
+is no pressing reason to add barriers, you can use
+{readl|writel}_relaxed() instead. That will make the code protable
+across endianess.
 
-BTW, I noticed that I missed removing EXPORT_SYMBOL_GPL() from
-acpi_get_gpiod_by_index(). I'm folding that change to this patch for the
-next version if nobody objects.
+Thanks,
+Sekhar
