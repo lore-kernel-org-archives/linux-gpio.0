@@ -1,66 +1,45 @@
-From: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
-Subject: [PATCH] gpiolib: Replace WARN_ON with WARN_ON_ONCE
-Date: Sun, 24 Nov 2013 09:37:45 -0300
-Message-ID: <1385296665-23713-1-git-send-email-ezequiel.garcia@free-electrons.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:41359 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751795Ab3KXMhf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Nov 2013 07:37:35 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 1/6] gpio: davinci: use readl/writel instead of __raw_*
+Date: Mon, 25 Nov 2013 09:42:30 +0530
+Message-ID: <CA+V-a8sjmo2K16m9_6Zf1qwcez+qKm-9JW1Cb=Aj4prtXd=-fA@mail.gmail.com>
+References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
+	<1385057731-4348-2-git-send-email-prabhakar.csengg@gmail.com>
+	<CAArO44vmfkroE9w4KviOhjkPvg9bTX9pAtr3oxYjD9u_wVZXeg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <CAArO44vmfkroE9w4KviOhjkPvg9bTX9pAtr3oxYjD9u_wVZXeg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Taras Kondratiuk <taras.kondratiuk-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DLOS <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, LDOC <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
 
-These warnings can be very spammy, since they could be called from
-kernel threads. Use WARN_ON_ONCE, which is enough to warn developers
-about the 'can_sleep' usage.
+Hi Taras,
 
-Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
----
- drivers/gpio/gpiolib.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Fri, Nov 22, 2013 at 3:38 PM, Taras Kondratiuk
+<taras.kondratiuk-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On 21 November 2013 20:15, Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> From: "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>
+>> This patch replaces the __raw_readl/writel with
+>> readl and writel, Altough the code runs on ARMv5
+>> based SOCs, changing this will help copying the code
+>> for other uses.
+>
+> This replacement has a functional impact: it adds memory barriers.
+> Please note this in the description.
+> Also please add a bit of explanation on why do you need to add barriers.
+>
+Agreed this adds memory barriers, I'll add a note about it.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7dd4461..9568998 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1927,7 +1927,7 @@ int gpiod_get_raw_value(const struct gpio_desc *desc)
- 	if (!desc)
- 		return 0;
- 	/* Should be using gpio_get_value_cansleep() */
--	WARN_ON(desc->chip->can_sleep);
-+	WARN_ON_ONCE(desc->chip->can_sleep);
- 	return _gpiod_get_raw_value(desc);
- }
- EXPORT_SYMBOL_GPL(gpiod_get_raw_value);
-@@ -1948,7 +1948,7 @@ int gpiod_get_value(const struct gpio_desc *desc)
- 	if (!desc)
- 		return 0;
- 	/* Should be using gpio_get_value_cansleep() */
--	WARN_ON(desc->chip->can_sleep);
-+	WARN_ON_ONCE(desc->chip->can_sleep);
- 
- 	value = _gpiod_get_raw_value(desc);
- 	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-@@ -2042,7 +2042,7 @@ void gpiod_set_raw_value(struct gpio_desc *desc, int value)
- 	if (!desc)
- 		return;
- 	/* Should be using gpio_set_value_cansleep() */
--	WARN_ON(desc->chip->can_sleep);
-+	WARN_ON_ONCE(desc->chip->can_sleep);
- 	_gpiod_set_raw_value(desc, value);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_raw_value);
-@@ -2063,7 +2063,7 @@ void gpiod_set_value(struct gpio_desc *desc, int value)
- 	if (!desc)
- 		return;
- 	/* Should be using gpio_set_value_cansleep() */
--	WARN_ON(desc->chip->can_sleep);
-+	WARN_ON_ONCE(desc->chip->can_sleep);
- 	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
- 		value = !value;
- 	_gpiod_set_raw_value(desc, value);
--- 
-1.8.1.5
-
+Thanks,
+--Prabhakar Lad
