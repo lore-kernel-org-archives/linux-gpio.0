@@ -1,59 +1,65 @@
 From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [RFC v1 0/9] gpio: davinci: reuse for keystone arch
-Date: Tue, 26 Nov 2013 21:40:06 +0200
-Message-ID: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
+Subject: [RFC v1 2/9] gpio: introduce GPIO_DAVINCI kconfig option
+Date: Tue, 26 Nov 2013 21:40:08 +0200
+Message-ID: <1385494815-15740-3-git-send-email-grygorii.strashko@ti.com>
+References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:60731 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757744Ab3KZToF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 26 Nov 2013 14:44:05 -0500
+In-Reply-To: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, linux-gpio@vger.kernel.org, nsekhar@ti.com
 Cc: prabhakar.csengg@gmail.com, linux-kernel@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, Grygorii Strashko <grygorii.strashko@ti.com>
-List-Id: linux-gpio@vger.kernel.org
 
-This series is intended to update Davinci GPIO driver and reuse
-it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
-Keystone GPIO IP: supports:
-- up to 32 GPIO lines;
-- only unbanked irqs;
+The compatible to Davinci GPIO HW block is used by other TI SoCs, like
+Keystone, where GPIO support is declared as optional.
 
-See Documentation:
-Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+Hence, introduce GPIO_DAVINCI Kconfig option which will allow to enable
+Davinci GPIO driver for Keystone SoCs when needed. At same time, kept
+Davinci GPIO driver enabled for Davinci SoCs by default.
 
-[1] Depends on patch:
-"[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
-https://lkml.org/lkml/2013/11/8/22
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/Kconfig  |    7 +++++++
+ drivers/gpio/Makefile |    2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-[2] and depends on series from Prabhakar Lad:
-"[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
-https://www.mail-archive.com/devicetree@vger.kernel.org/msg05970.html
-
-Based on:
-git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git
-branch: keystone/master
-
-This series has been marked as RFC because it's based on an unfinished
-series of patches [2], but with hope that it will help to reach final decisions 
-and satisfy all interested parties.
-
-Grygorii Strashko (9):
-  gpio: davinci: get rid of DAVINCI_N_GPIO
-  gpio: introduce GPIO_DAVINCI kconfig option
-  gpio: davinci: use chained_irq_enter/chained_irq_exit API
-  gpio: davinci: make IRQ initialization soc specific
-  gpio: davinci: reuse for Keystone SoC
-  arm: dts: keystone: add GPIO device entry
-  ARM: keystone_defconfig: enable gpio support
-  arm: dts: keystone-evm: add LEDs supports
-  ARM: keystone_defconfig: enable LED support
-
- .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
- arch/arm/boot/dts/k2hk-evm.dts                     |   23 ++
- arch/arm/boot/dts/keystone.dtsi                    |   45 +++
- arch/arm/configs/keystone_defconfig                |   11 +
- drivers/gpio/Kconfig                               |    7 +
- drivers/gpio/Makefile                              |    2 +-
- drivers/gpio/gpio-davinci.c                        |  306 ++++++++++++++------
- 7 files changed, 305 insertions(+), 93 deletions(-)
-
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 0f04444..7c75f5a 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -115,6 +115,13 @@ config GPIO_CLPS711X
+ 	help
+ 	  Say yes here to support GPIO on CLPS711X SoCs.
+ 
++config GPIO_DAVINCI
++	bool "TI Davinci/Keystone GPIO support"
++	default y if ARCH_DAVINCI
++	depends on ARM && (ARCH_DAVINCI || ARCH_KEYSTONE)
++	help
++	  Say yes here to enable GPIO support for TI Davinci/Keystone SoCs.
++
+ config GPIO_GENERIC_PLATFORM
+ 	tristate "Generic memory-mapped GPIO controller support (MMIO platform device)"
+ 	select GPIO_GENERIC
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 7971e36..28a0ffc 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -22,7 +22,7 @@ obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
+ obj-$(CONFIG_GPIO_CS5535)	+= gpio-cs5535.o
+ obj-$(CONFIG_GPIO_DA9052)	+= gpio-da9052.o
+ obj-$(CONFIG_GPIO_DA9055)	+= gpio-da9055.o
+-obj-$(CONFIG_ARCH_DAVINCI)	+= gpio-davinci.o
++obj-$(CONFIG_GPIO_DAVINCI)	+= gpio-davinci.o
+ obj-$(CONFIG_GPIO_EM)		+= gpio-em.o
+ obj-$(CONFIG_GPIO_EP93XX)	+= gpio-ep93xx.o
+ obj-$(CONFIG_GPIO_F7188X)	+= gpio-f7188x.o
 -- 
 1.7.9.5
+
