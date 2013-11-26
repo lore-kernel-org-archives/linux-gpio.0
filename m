@@ -1,75 +1,168 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] gpio: lock adnp IRQs when enabling them
-Date: Tue, 26 Nov 2013 11:05:24 +0100
-Message-ID: <1385460324-30777-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:49599 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751828Ab3KZKFf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 05:05:35 -0500
-Received: by mail-la0-f48.google.com with SMTP id n7so4045326lam.35
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 02:05:31 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v3 2/6] net: rfkill: gpio: convert to descriptor-based GPIO interface
+Date: Tue, 26 Nov 2013 12:05:46 +0200
+Message-ID: <1385460350-17543-3-git-send-email-mika.westerberg@linux.intel.com>
+References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: linux-acpi@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-This uses the new API for tagging GPIO lines as in use by
-IRQs. This enforces a few semantic checks on how the underlying
-GPIO line is used.
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Only compile tested on the lpc32xx.
+Convert to the safer gpiod_* family of API functions.
 
-Cc: Lars Poeschel <poeschel@lemonage.de>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Tested-by: Stephen Warren <swarren@nvidia.com>
 ---
-ChangeLog v1->v2:
-- Use the .enable() callback from the irq_chip
-- Call .unmask() from the .enable() callback to satisfy semantics.
----
- drivers/gpio/gpio-adnp.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ net/rfkill/rfkill-gpio.c | 77 +++++++++++++++++++++---------------------------
+ 1 file changed, 34 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
-index b204033acaeb..3988ebc5a40e 100644
---- a/drivers/gpio/gpio-adnp.c
-+++ b/drivers/gpio/gpio-adnp.c
-@@ -408,6 +408,25 @@ static void adnp_irq_bus_unlock(struct irq_data *data)
- 	mutex_unlock(&adnp->irq_lock);
+diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
+index 5620d3c07479..bd2a5b90400c 100644
+--- a/net/rfkill/rfkill-gpio.c
++++ b/net/rfkill/rfkill-gpio.c
+@@ -25,15 +25,15 @@
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+ #include <linux/acpi.h>
+-#include <linux/acpi_gpio.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include <linux/rfkill-gpio.h>
+ 
+ struct rfkill_gpio_data {
+ 	const char		*name;
+ 	enum rfkill_type	type;
+-	int			reset_gpio;
+-	int			shutdown_gpio;
++	struct gpio_desc	*reset_gpio;
++	struct gpio_desc	*shutdown_gpio;
+ 
+ 	struct rfkill		*rfkill_dev;
+ 	char			*reset_name;
+@@ -48,19 +48,15 @@ static int rfkill_gpio_set_power(void *data, bool blocked)
+ 	struct rfkill_gpio_data *rfkill = data;
+ 
+ 	if (blocked) {
+-		if (gpio_is_valid(rfkill->shutdown_gpio))
+-			gpio_set_value(rfkill->shutdown_gpio, 0);
+-		if (gpio_is_valid(rfkill->reset_gpio))
+-			gpio_set_value(rfkill->reset_gpio, 0);
++		gpiod_set_value(rfkill->shutdown_gpio, 0);
++		gpiod_set_value(rfkill->reset_gpio, 0);
+ 		if (!IS_ERR(rfkill->clk) && rfkill->clk_enabled)
+ 			clk_disable(rfkill->clk);
+ 	} else {
+ 		if (!IS_ERR(rfkill->clk) && !rfkill->clk_enabled)
+ 			clk_enable(rfkill->clk);
+-		if (gpio_is_valid(rfkill->reset_gpio))
+-			gpio_set_value(rfkill->reset_gpio, 1);
+-		if (gpio_is_valid(rfkill->shutdown_gpio))
+-			gpio_set_value(rfkill->shutdown_gpio, 1);
++		gpiod_set_value(rfkill->reset_gpio, 1);
++		gpiod_set_value(rfkill->shutdown_gpio, 1);
+ 	}
+ 
+ 	rfkill->clk_enabled = blocked;
+@@ -83,8 +79,6 @@ static int rfkill_gpio_acpi_probe(struct device *dev,
+ 
+ 	rfkill->name = dev_name(dev);
+ 	rfkill->type = (unsigned)id->driver_data;
+-	rfkill->reset_gpio = acpi_get_gpio_by_index(dev, 0, NULL);
+-	rfkill->shutdown_gpio = acpi_get_gpio_by_index(dev, 1, NULL);
+ 
+ 	return 0;
  }
+@@ -94,8 +88,9 @@ static int rfkill_gpio_probe(struct platform_device *pdev)
+ 	struct rfkill_gpio_platform_data *pdata = pdev->dev.platform_data;
+ 	struct rfkill_gpio_data *rfkill;
+ 	const char *clk_name = NULL;
+-	int ret = 0;
+-	int len = 0;
++	struct gpio_desc *gpio;
++	int ret;
++	int len;
  
-+static void adnp_irq_enable(struct irq_data *data)
-+{
-+	struct adnp *adnp = irq_data_get_irq_chip_data(data);
-+
-+	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq))
-+		dev_err(adnp->gpio.dev,
-+			"unable to lock HW IRQ %lu for IRQ\n",
-+			data->hwirq);
-+	/* Satisfy the .enable semantics by unmasking the line */
-+	adnp_irq_unmask(data);
-+}
-+
-+static void adnp_irq_disable(struct irq_data *data)
-+{
-+	struct adnp *adnp = irq_data_get_irq_chip_data(data);
-+
-+	gpio_unlock_as_irq(&adnp->gpio, data->hwirq);
-+}
-+
- static struct irq_chip adnp_irq_chip = {
- 	.name = "gpio-adnp",
- 	.irq_mask = adnp_irq_mask,
-@@ -415,6 +434,8 @@ static struct irq_chip adnp_irq_chip = {
- 	.irq_set_type = adnp_irq_set_type,
- 	.irq_bus_lock = adnp_irq_bus_lock,
- 	.irq_bus_sync_unlock = adnp_irq_bus_unlock,
-+	.irq_enable = adnp_irq_enable,
-+	.irq_disable = adnp_irq_disable,
- };
+ 	rfkill = devm_kzalloc(&pdev->dev, sizeof(*rfkill), GFP_KERNEL);
+ 	if (!rfkill)
+@@ -109,28 +104,10 @@ static int rfkill_gpio_probe(struct platform_device *pdev)
+ 		clk_name = pdata->power_clk_name;
+ 		rfkill->name = pdata->name;
+ 		rfkill->type = pdata->type;
+-		rfkill->reset_gpio = pdata->reset_gpio;
+-		rfkill->shutdown_gpio = pdata->shutdown_gpio;
+ 	} else {
+ 		return -ENODEV;
+ 	}
  
- static int adnp_irq_map(struct irq_domain *domain, unsigned int irq,
+-	/* make sure at-least one of the GPIO is defined and that
+-	 * a name is specified for this instance */
+-	if ((!gpio_is_valid(rfkill->reset_gpio) &&
+-	     !gpio_is_valid(rfkill->shutdown_gpio)) || !rfkill->name) {
+-		pr_warn("%s: invalid platform data\n", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (pdata && pdata->gpio_runtime_setup) {
+-		ret = pdata->gpio_runtime_setup(pdev);
+-		if (ret) {
+-			pr_warn("%s: can't set up gpio\n", __func__);
+-			return ret;
+-		}
+-	}
+-
+ 	len = strlen(rfkill->name);
+ 	rfkill->reset_name = devm_kzalloc(&pdev->dev, len + 7, GFP_KERNEL);
+ 	if (!rfkill->reset_name)
+@@ -145,20 +122,34 @@ static int rfkill_gpio_probe(struct platform_device *pdev)
+ 
+ 	rfkill->clk = devm_clk_get(&pdev->dev, clk_name);
+ 
+-	if (gpio_is_valid(rfkill->reset_gpio)) {
+-		ret = devm_gpio_request_one(&pdev->dev, rfkill->reset_gpio,
+-					    0, rfkill->reset_name);
+-		if (ret) {
+-			pr_warn("%s: failed to get reset gpio.\n", __func__);
++	gpio = devm_gpiod_get_index(&pdev->dev, rfkill->reset_name, 0);
++	if (!IS_ERR(gpio)) {
++		ret = gpiod_direction_output(gpio, 0);
++		if (ret)
+ 			return ret;
+-		}
++		rfkill->reset_gpio = gpio;
++	}
++
++	gpio = devm_gpiod_get_index(&pdev->dev, rfkill->shutdown_name, 1);
++	if (!IS_ERR(gpio)) {
++		ret = gpiod_direction_output(gpio, 0);
++		if (ret)
++			return ret;
++		rfkill->shutdown_gpio = gpio;
+ 	}
+ 
+-	if (gpio_is_valid(rfkill->shutdown_gpio)) {
+-		ret = devm_gpio_request_one(&pdev->dev, rfkill->shutdown_gpio,
+-					    0, rfkill->shutdown_name);
++	/* Make sure at-least one of the GPIO is defined and that
++	 * a name is specified for this instance
++	 */
++	if ((!rfkill->reset_gpio && !rfkill->shutdown_gpio) || !rfkill->name) {
++		dev_err(&pdev->dev, "invalid platform data\n");
++		return -EINVAL;
++	}
++
++	if (pdata && pdata->gpio_runtime_setup) {
++		ret = pdata->gpio_runtime_setup(pdev);
+ 		if (ret) {
+-			pr_warn("%s: failed to get shutdown gpio.\n", __func__);
++			dev_err(&pdev->dev, "can't set up gpio\n");
+ 			return ret;
+ 		}
+ 	}
 -- 
-1.8.3.1
+1.8.4.3
 
