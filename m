@@ -1,94 +1,420 @@
-From: Markus Mayer <markus.mayer@linaro.org>
-Subject: Re: [PATCH v2] gpio: bcm-kona: lock IRQs when starting them
-Date: Tue, 26 Nov 2013 13:04:37 -0800
-Message-ID: <CAPdLdqmw7P1rS1Ziih0HkLnggX8xsM+aztVYO+c_3gP0eb_UGQ@mail.gmail.com>
-References: <1385460703-31889-1-git-send-email-linus.walleij@linaro.org>
+From: Chao Xu <caesarxuchao@gmail.com>
+Subject: =?UTF-8?q?=5BPATCH=20V2=5D=20gpio=3A=20omap=3A=20refresh=20patch=20=22be=20more=20aggressive=20with=20pm=5Fruntime=22=20against=20v3=2E12-rc5?=
+Date: Tue, 26 Nov 2013 16:46:44 -0600
+Message-ID: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:47275 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932312Ab3KZVEi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 16:04:38 -0500
-Received: by mail-wg0-f43.google.com with SMTP id k14so3361785wgh.10
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 13:04:37 -0800 (PST)
-In-Reply-To: <1385460703-31889-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34162 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754634Ab3KZWqz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 17:46:55 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Christian Daudt <bcm@fixthebug.org>
+To: linux-omap@vger.kernel.org
+Cc: santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, tony@atomide.com, balbi@ti.com, Chao Xu <caesarxuchao@gmail.com>
 
-On 26 November 2013 02:11, Linus Walleij <linus.walleij@linaro.org> wrote:
-> This uses the new API for tagging GPIO lines as in use by
-> IRQs. This enforces a few semantic checks on how the underlying
-> GPIO line is used.
->
-> Cc: Markus Mayer <markus.mayer@linaro.org>
-> Cc: Christian Daudt <csd@broadcom.com>
+=46rom: Felipe Balbi <balbi@ti.com>
 
-Please use Christian Daudt <bcm@fixthebug.org>. I fixed the e-mail
-address in this thread.
+try to keep gpio block suspended as much as possible.
 
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Make sure we call .unmask() and .mask() functions from the
->   .startup() and .shutdown() callbacks so the implicit semantics
->   are satisfied.
-> ---
->  drivers/gpio/gpio-bcm-kona.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-> index 72c927dc3be1..3437414eaef2 100644
-> --- a/drivers/gpio/gpio-bcm-kona.c
-> +++ b/drivers/gpio/gpio-bcm-kona.c
-> @@ -449,12 +449,34 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
->         chained_irq_exit(chip, desc);
->  }
->
-> +static unsigned int bcm_kona_gpio_irq_startup(struct irq_data *d)
-> +{
-> +       struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
-> +
-> +       if (gpio_lock_as_irq(&kona_gpio->gpio_chip, d->hwirq))
-> +               dev_err(kona_gpio->gpio_chip.dev,
-> +                       "unable to lock HW IRQ %lu for IRQ\n",
-> +                       d->hwirq);
-> +       bcm_kona_gpio_irq_unmask(d);
-> +       return 0;
-> +}
-> +
-> +static void bcm_kona_gpio_irq_shutdown(struct irq_data *d)
-> +{
-> +       struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
-> +
-> +       bcm_kona_gpio_irq_mask(d);
-> +       gpio_unlock_as_irq(&kona_gpio->gpio_chip, d->hwirq);
-> +}
-> +
->  static struct irq_chip bcm_gpio_irq_chip = {
->         .name = "bcm-kona-gpio",
->         .irq_ack = bcm_kona_gpio_irq_ack,
->         .irq_mask = bcm_kona_gpio_irq_mask,
->         .irq_unmask = bcm_kona_gpio_irq_unmask,
->         .irq_set_type = bcm_kona_gpio_irq_set_type,
-> +       .irq_startup = bcm_kona_gpio_irq_startup,
-> +       .irq_shutdown = bcm_kona_gpio_irq_shutdown,
->  };
->
->  static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
-> --
-> 1.8.3.1
->
+Tested with pandaboard and a sysfs exported gpio.
 
-I verified that cd-gpio is still working with this change, therefore:
+Signed-off-by: Felipe Balbi <balbi at ti.com>
 
-Reviewed-by: Markus Mayer <markus.mayer@linaro.org>
-Tested-by: Markus Mayer <markus.mayer@linaro.org>
+[caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added revisi=
+on check to enable aggressive pm_runtime on OMAP4-only. Because am33xx_=
+gpio_sysc.idlemodes seems to be wrongly marked as SIDLE_SMART_WKUP, whi=
+ch might cause missed interrupts with this patch. Tested on Pandaboard =
+rev A2.]
 
--- 
-Markus Mayer
-Broadcom Landing Team
+Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
+---
+According to Mr. Felipe Balbi, the original patch was not accepted beca=
+use interrupts would be missed when GPIO was used as IRQ source. But in=
+ my tests with pandaboard, interrupts were not missed. This is because =
+_idle_sysc() sets the idlemode of gpio module to smart-idle-wakeup, and=
+ according to OMAP4430 TRM, under this idlemode, the gpio can generate =
+an asynchronous wakeup request to the PRCM. And after GPIO is awake, th=
+e wake-up request is reflected into the interrupt status registers.=20
+
+A change made on the original patch is only applying the aggressive run=
+time pm scheme on OMAP4, because I don=E2=80=99t have HW to test OMAP3 =
+or am33xx devices. According to the respective TRMs, their GPIO modules=
+ also can generate wake-up request if the idlemode is set to smart-idle=
+ or smart-idle-wakeup. So the patch should work for them, too. But I su=
+spect a potential SW bug may cause missed interrupts: the am33xx_gpio_s=
+ysc.idlemodes is marked as capable of SIDLE_SMART_WKUP in omap_hwmod_33=
+xx.c. But according to AM335x TRM, _only_ gpio0 is capable of this mode=
+=2E This may make GPIO stuck in force-idle mode and unable to generate =
+wakeup request. And thus interrupt will be missed. Again, I don=E2=80=99=
+t have the HW to verify whether this is a bug or not :(
+
+ drivers/gpio/gpio-omap.c                |  103 +++++++++++++++++++++++=
++++-----
+ include/linux/platform_data/gpio-omap.h |    1 +
+ 2 files changed, 87 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 89675f8..90661f2 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -76,6 +76,7 @@ struct gpio_bank {
+ 	int context_loss_count;
+ 	int power_mode;
+ 	bool workaround_enabled;
++	bool is_aggressive_pm;
+=20
+ 	void (*set_dataout)(struct gpio_bank *bank, int gpio, int enable);
+ 	int (*get_context_loss_count)(struct device *dev);
+@@ -473,8 +474,15 @@ static void _disable_gpio_module(struct gpio_bank =
+*bank, unsigned offset)
+ static int gpio_is_input(struct gpio_bank *bank, int mask)
+ {
+ 	void __iomem *reg =3D bank->base + bank->regs->direction;
++	u32 val;
+=20
+-	return __raw_readl(reg) & mask;
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
++	val =3D __raw_readl(reg) & mask;
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
++
++	return val;
+ }
+=20
+ static int gpio_irq_type(struct irq_data *d, unsigned type)
+@@ -485,7 +493,7 @@ static int gpio_irq_type(struct irq_data *d, unsign=
+ed type)
+ 	unsigned long flags;
+ 	unsigned offset;
+=20
+-	if (!BANK_USED(bank))
++	if (!BANK_USED(bank) && !bank->is_aggressive_pm)
+ 		pm_runtime_get_sync(bank->dev);
+=20
+ #ifdef CONFIG_ARCH_OMAP1
+@@ -503,6 +511,8 @@ static int gpio_irq_type(struct irq_data *d, unsign=
+ed type)
+ 		(type & (IRQ_TYPE_LEVEL_LOW|IRQ_TYPE_LEVEL_HIGH)))
+ 		return -EINVAL;
+=20
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	offset =3D GPIO_INDEX(bank, gpio);
+ 	retval =3D _set_gpio_triggering(bank, offset, type);
+@@ -511,11 +521,16 @@ static int gpio_irq_type(struct irq_data *d, unsi=
+gned type)
+ 		_set_gpio_direction(bank, offset, 1);
+ 	} else if (!gpio_is_input(bank, 1 << offset)) {
+ 		spin_unlock_irqrestore(&bank->lock, flags);
++		if (bank->is_aggressive_pm)
++			pm_runtime_put(bank->dev);
++
+ 		return -EINVAL;
+ 	}
+=20
+ 	bank->irq_usage |=3D 1 << GPIO_INDEX(bank, gpio);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
+=20
+ 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+ 		__irq_set_handler_locked(d->irq, handle_level_irq);
+@@ -668,10 +683,11 @@ static int omap_gpio_request(struct gpio_chip *ch=
+ip, unsigned offset)
+ 	unsigned long flags;
+=20
+ 	/*
+-	 * If this is the first gpio_request for the bank,
+-	 * enable the bank module.
++	 * if aggressive runtime pm is supported, enable the bank module
++	 * for each gpio_request. Otherwise enable the bank module if this
++	 * is the first gpio_request for the bank.
+ 	 */
+-	if (!BANK_USED(bank))
++	if (bank->is_aggressive_pm || !BANK_USED(bank))
+ 		pm_runtime_get_sync(bank->dev);
+=20
+ 	spin_lock_irqsave(&bank->lock, flags);
+@@ -685,7 +701,8 @@ static int omap_gpio_request(struct gpio_chip *chip=
+, unsigned offset)
+ 	}
+ 	bank->mod_usage |=3D 1 << offset;
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+-
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
+ 	return 0;
+ }
+=20
+@@ -694,6 +711,9 @@ static void omap_gpio_free(struct gpio_chip *chip, =
+unsigned offset)
+ 	struct gpio_bank *bank =3D container_of(chip, struct gpio_bank, chip)=
+;
+ 	unsigned long flags;
+=20
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
++
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	bank->mod_usage &=3D ~(1 << offset);
+ 	_disable_gpio_module(bank, offset);
+@@ -701,10 +721,11 @@ static void omap_gpio_free(struct gpio_chip *chip=
+, unsigned offset)
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+=20
+ 	/*
+-	 * If this is the last gpio to be freed in the bank,
+-	 * disable the bank module.
++	 * if aggressive runtime pm is supported, disable the bank module
++	 * for each gpio_free. Otherwise disable the bank module if this
++	 * is the last gpio to be freed in the bank.
+ 	 */
+-	if (!BANK_USED(bank))
++	if (bank->is_aggressive_pm || !BANK_USED(bank))
+ 		pm_runtime_put(bank->dev);
+ }
+=20
+@@ -796,17 +817,19 @@ static void gpio_irq_shutdown(struct irq_data *d)
+ 	unsigned long flags;
+ 	unsigned offset =3D GPIO_INDEX(bank, gpio);
+=20
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	bank->irq_usage &=3D ~(1 << offset);
+ 	_disable_gpio_module(bank, offset);
+ 	_reset_gpio(bank, gpio);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+-
+ 	/*
+-	 * If this is the last IRQ to be freed in the bank,
+-	 * disable the bank module.
++	 * if aggressive runtime pm is supported, disable the bank module
++	 * for each irq_shutdown. Otherwise disable the bank module if this
++	 * is the last IRQ to be freed in the bank.
+ 	 */
+-	if (!BANK_USED(bank))
++	if (bank->is_aggressive_pm || !BANK_USED(bank))
+ 		pm_runtime_put(bank->dev);
+ }
+=20
+@@ -815,7 +838,11 @@ static void gpio_ack_irq(struct irq_data *d)
+ 	struct gpio_bank *bank =3D irq_data_get_irq_chip_data(d);
+ 	unsigned int gpio =3D irq_to_gpio(bank, d->hwirq);
+=20
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	_clear_gpio_irqstatus(bank, gpio);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
+ }
+=20
+ static void gpio_mask_irq(struct irq_data *d)
+@@ -824,10 +851,14 @@ static void gpio_mask_irq(struct irq_data *d)
+ 	unsigned int gpio =3D irq_to_gpio(bank, d->hwirq);
+ 	unsigned long flags;
+=20
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	_set_gpio_irqenable(bank, gpio, 0);
+ 	_set_gpio_triggering(bank, GPIO_INDEX(bank, gpio), IRQ_TYPE_NONE);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
+ }
+=20
+ static void gpio_unmask_irq(struct irq_data *d)
+@@ -838,6 +869,8 @@ static void gpio_unmask_irq(struct irq_data *d)
+ 	u32 trigger =3D irqd_get_trigger_type(d);
+ 	unsigned long flags;
+=20
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	if (trigger)
+ 		_set_gpio_triggering(bank, GPIO_INDEX(bank, gpio), trigger);
+@@ -851,6 +884,8 @@ static void gpio_unmask_irq(struct irq_data *d)
+=20
+ 	_set_gpio_irqenable(bank, gpio, 1);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
+ }
+=20
+ static struct irq_chip gpio_irq_chip =3D {
+@@ -933,9 +968,15 @@ static int gpio_input(struct gpio_chip *chip, unsi=
+gned offset)
+ 	unsigned long flags;
+=20
+ 	bank =3D container_of(chip, struct gpio_bank, chip);
++
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	_set_gpio_direction(bank, offset, 1);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
++
+ 	return 0;
+ }
+=20
+@@ -944,13 +985,20 @@ static int gpio_get(struct gpio_chip *chip, unsig=
+ned offset)
+ 	struct gpio_bank *bank;
+ 	u32 mask;
+=20
++	int val;
+ 	bank =3D container_of(chip, struct gpio_bank, chip);
+ 	mask =3D (1 << offset);
+=20
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	if (gpio_is_input(bank, mask))
+-		return _get_gpio_datain(bank, offset);
++		val =3D _get_gpio_datain(bank, offset);
+ 	else
+-		return _get_gpio_dataout(bank, offset);
++		val =3D _get_gpio_dataout(bank, offset);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
++
++	return val;
+ }
+=20
+ static int gpio_output(struct gpio_chip *chip, unsigned offset, int va=
+lue)
+@@ -960,6 +1008,9 @@ static int gpio_output(struct gpio_chip *chip, uns=
+igned offset, int value)
+ 	int retval =3D 0;
+=20
+ 	bank =3D container_of(chip, struct gpio_bank, chip);
++
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	spin_lock_irqsave(&bank->lock, flags);
+=20
+ 	if (LINE_USED(bank->irq_usage, offset)) {
+@@ -972,6 +1023,9 @@ static int gpio_output(struct gpio_chip *chip, uns=
+igned offset, int value)
+=20
+ exit:
+ 	spin_unlock_irqrestore(&bank->lock, flags);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
++
+ 	return retval;
+ }
+=20
+@@ -983,9 +1037,13 @@ static int gpio_debounce(struct gpio_chip *chip, =
+unsigned offset,
+=20
+ 	bank =3D container_of(chip, struct gpio_bank, chip);
+=20
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	_set_gpio_debounce(bank, offset, debounce);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
+=20
+ 	return 0;
+ }
+@@ -996,9 +1054,14 @@ static void gpio_set(struct gpio_chip *chip, unsi=
+gned offset, int value)
+ 	unsigned long flags;
+=20
+ 	bank =3D container_of(chip, struct gpio_bank, chip);
++
++	if (bank->is_aggressive_pm)
++		pm_runtime_get_sync(bank->dev);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	bank->set_dataout(bank, offset, value);
+ 	spin_unlock_irqrestore(&bank->lock, flags);
++	if (bank->is_aggressive_pm)
++		pm_runtime_put(bank->dev);
+ }
+=20
+ /*--------------------------------------------------------------------=
+-*/
+@@ -1168,6 +1231,7 @@ static int omap_gpio_probe(struct platform_device=
+ *pdev)
+ 	bank->is_mpuio =3D pdata->is_mpuio;
+ 	bank->non_wakeup_gpios =3D pdata->non_wakeup_gpios;
+ 	bank->regs =3D pdata->regs;
++	bank->is_aggressive_pm =3D pdata->is_aggressive_pm;
+ #ifdef CONFIG_OF_GPIO
+ 	bank->chip.of_node =3D of_node_get(node);
+ #endif
+@@ -1449,7 +1513,8 @@ void omap2_gpio_prepare_for_idle(int pwr_mode)
+=20
+ 		bank->power_mode =3D pwr_mode;
+=20
+-		pm_runtime_put_sync_suspend(bank->dev);
++		if (!pm_runtime_suspended(bank->dev))
++			pm_runtime_suspend(bank->dev);
+ 	}
+ }
+=20
+@@ -1461,7 +1526,8 @@ void omap2_gpio_resume_after_idle(void)
+ 		if (!BANK_USED(bank) || !bank->loses_context)
+ 			continue;
+=20
+-		pm_runtime_get_sync(bank->dev);
++		if (pm_runtime_suspended(bank->dev))
++			pm_runtime_resume(bank->dev);
+ 	}
+ }
+=20
+@@ -1585,18 +1651,21 @@ static const struct omap_gpio_platform_data oma=
+p2_pdata =3D {
+ 	.regs =3D &omap2_gpio_regs,
+ 	.bank_width =3D 32,
+ 	.dbck_flag =3D false,
++	.is_aggressive_pm =3D false,
+ };
+=20
+ static const struct omap_gpio_platform_data omap3_pdata =3D {
+ 	.regs =3D &omap2_gpio_regs,
+ 	.bank_width =3D 32,
+ 	.dbck_flag =3D true,
++	.is_aggressive_pm =3D false,
+ };
+=20
+ static const struct omap_gpio_platform_data omap4_pdata =3D {
+ 	.regs =3D &omap4_gpio_regs,
+ 	.bank_width =3D 32,
+ 	.dbck_flag =3D true,
++	.is_aggressive_pm =3D true,
+ };
+=20
+ static const struct of_device_id omap_gpio_match[] =3D {
+diff --git a/include/linux/platform_data/gpio-omap.h b/include/linux/pl=
+atform_data/gpio-omap.h
+index 5d50b25..bb033b1 100644
+--- a/include/linux/platform_data/gpio-omap.h
++++ b/include/linux/platform_data/gpio-omap.h
+@@ -200,6 +200,7 @@ struct omap_gpio_platform_data {
+ 	bool dbck_flag;		/* dbck required or not - True for OMAP3&4 */
+ 	bool loses_context;	/* whether the bank would ever lose context */
+ 	bool is_mpuio;		/* whether the bank is of type MPUIO */
++	bool is_aggressive_pm; /* whether aggressive runtime pm is supported*=
+/
+ 	u32 non_wakeup_gpios;
+=20
+ 	struct omap_gpio_reg_offs *regs;
+--=20
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
