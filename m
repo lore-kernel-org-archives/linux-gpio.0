@@ -1,133 +1,142 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH RFC] gpio: omap: =?utf-8?Q?refr?=
- =?utf-8?Q?esh_the_patch_=E2=80=9Cgpio=3A_omap=3A_be_more_aggressive_with_?=
- =?utf-8?B?cG1fcnVudGltZeKAnQ==?= against v3.12-rc5
-Date: Tue, 26 Nov 2013 09:34:15 -0600
-Message-ID: <20131126153415.GB24310@saruman.home>
-References: <CAKZq+rdGooV0SV1RH6Hrms_Z-p6_FqcNmpGTAcn3dPU0u478vQ@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v6 4/6] gpio: davinci: add OF support
+Date: Tue, 26 Nov 2013 22:42:50 +0530
+Message-ID: <5294D692.3080100@ti.com>
+References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
+	<1385057731-4348-5-git-send-email-prabhakar.csengg@gmail.com>
+	<52932DB9.4090805@ti.com> <5294950A.9070007@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKZq+rdGooV0SV1RH6Hrms_Z-p6_FqcNmpGTAcn3dPU0u478vQ@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Chao Xu <Chao.Xu@rice.edu>
-Cc: linux-omap@vger.kernel.org, santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, balbi@ti.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <5294950A.9070007-l0cyMroinI0@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DLOS <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
---KFztAG8eRSV9hGtP
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tuesday 26 November 2013 06:03 PM, Grygorii Strashko wrote:
+> On 11/25/2013 01:00 PM, Sekhar Nori wrote:
+>> On Thursday 21 November 2013 11:45 PM, Prabhakar Lad wrote:
+>>> From: KV Sujith <sujithkv-l0cyMroinI0@public.gmane.org>
+>>>
+>>> This patch adds OF parser support for davinci gpio
+>>> driver and also appropriate documentation in gpio-davinci.txt
+>>> located at Documentation/devicetree/bindings/gpio/.
+>>>
+>>> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>> Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+>>> Signed-off-by: KV Sujith <sujithkv-l0cyMroinI0@public.gmane.org>
+>>> Signed-off-by: Philip Avinash <avinashphilip-l0cyMroinI0@public.gmane.org>
+>>> [prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org: simplified the OF code, removed
+>>> 		unnecessary DT property and also simplified
+>>> 		the commit message]
+>>> Signed-off-by: Lad, Prabhakar <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> ---
+>>>   .../devicetree/bindings/gpio/gpio-davinci.txt      |   41 ++++++++++++++
+>>>   drivers/gpio/gpio-davinci.c                        |   57 ++++++++++++++++++--
+>>>   2 files changed, 95 insertions(+), 3 deletions(-)
+>>>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+>>> new file mode 100644
+>>> index 0000000..a2e839d
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+>>> @@ -0,0 +1,41 @@
+>>> +Davinci GPIO controller bindings
+>>> +
+>>> +Required Properties:
+>>> +- compatible: should be "ti,dm6441-gpio"
+>>> +
+>>> +- reg: Physical base address of the controller and the size of memory mapped
+>>> +       registers.
+>>> +
+>>> +- gpio-controller : Marks the device node as a gpio controller.
+>>> +
+>>> +- interrupt-parent: phandle of the parent interrupt controller.
+>>> +
+>>> +- interrupts: Array of GPIO interrupt number. Only banked or unbanked IRQs are
+>>> +	      supported at a time.
+>>
+>> If this is true..
+>>
+>>> +
+>>> +- ti,ngpio: The number of GPIO pins supported.
+>>> +
+>>> +- ti,davinci-gpio-unbanked: The number of GPIOs that have an individual interrupt
+>>> +		             line to processor.
+>>
+>> .. then why do you need to maintain this separately? Number of elements
+>> in interrupts property should give you this answer, no?
+>>
+>> There can certainly be devices (past and future) which use a mixture of
+>> banked and unbanked IRQs. So a binding which does not take care of this
+>> is likely to change in future and that is a problem since it brings in
+>> backward compatibility of the binding into picture.
+>>
+>> The right thing would be to define the DT node per-bank similar to what
+>> is done on OMAP rather than for all banks together. That way there can
+>> be a separate property which determines whether that bank supports
+>> direct-mapped or banked IRQs (or that could be inferred if the number of
+>> tuples in the interrupts property is more than one).
+> 
+> Number of IRQ can't be simply used to determine type of IRQ - need to handle IRQ names,
+> because each bank(32 gpios) may have up to 2 banked IRQs (one per 16 GPIO).
 
-Hi Chao,
+Okay. That's why I inserted that comment in parenthesis :)
 
-On Mon, Nov 25, 2013 at 09:30:46PM -0600, Chao Xu wrote:
-> Refresh the patch =E2=80=9Cgpio: omap: be more aggressive with pm_runtime=
-=E2=80=9D by
-> Felipe Balbi against v3.12-rc5. Add version checking so that the
-> aggressive pm_runtime only applies to omap4 devices. Tested with
-> pandaboard rev a2 through sysfs.
-> Signed-off-by: Chao Xu <chao.xu@rice.edu>
+> 
+> Few things here:
+> - The mixed banked/unbanked functionality has never been supported before. 
 
-Here, you need to keep authorship and mention that you refreshed the
-patch, it should look something like:
+True. I actually misread the driver before.
 
-=46rom: Felipe Balbi <balbi@ti.com>
+> - The Davinci GPIO IP is different from OMAP and has common
+>   control registers for all banks.
 
-try to keep gpio block suspended as much as possible.
+Well the only common register I can see is BINTEN - bank interrupt
+enable. This register can simply be initialized to enable interrupts
+from all banks possible as until the rising and falling edge triggers
+are programmed, there wont be any actual interrupts generated.
 
-Tested with pandaboard and a sysfs exported gpio.
+> - The proposed approach is more less easy to implement for DT case, but for not-DT
+>   case - the platform data will need to be changed significantly (.
+>   So, from this point of view, that would be a big change (actually the total driver rewriting).
 
-Signed-off-by: Felipe Balbi <balbi at ti.com>
+Well, I certainly don't think its a complete driver re-write. It will
+take a bit of effort agreed, but I think the driver will also come out a
+lot cleaner.
 
-[ chao.xu@rice.edu : refreshed against v3.12-rc5, and added revision
-	check to enable aggressive pm_runtime on OMAP4-only ]
+Honestly, I am not so much worried about the kernel code here. Its the
+bindings I am worried about. Once the bindings go in assuming there will
+never be banked and unbanked GPIO IRQs on the same SoC, changing them to
+do something else will be very painful with the need to keep backward
+compatibility and support for both semantics.
 
-Signed-off-by: Chao Xu <chao.xu@rice.edu>
+That said, because there is no present hardware which needs both banked
+and unbanked at the same time, I wont press for this to be done endlessly.
 
-> ---
-> According to Mr. Felipe Balbi, the original patch was not accepted
-> because interrupts would be missed when GPIO was used as IRQ source.
-> But in my tests with pandaboard, interrupts were not missed. This is
-> because _idle_sysc() sets the idlemode of gpio module to
-> smart-idle-wakeup, and according to OMAP4430 TRM, under this idlemode,
-> the gpio can generate an asynchronous wakeup request to the PRCM. And
-> after GPIO is awake, the wake-up request is reflected into the
-> interrupt status registers.
->=20
-> A change I made against the original patch is only using the
-> aggressive runtime pm scheme on OMAP4 by adding a flag in pdata,
-> because I don=E2=80=99t have HW to test OMAP3 or am33xx devices. Accordin=
-g to
-> the respective TRMs, their GPIO modules also can generate wake-up
-> request if the idlemode is set to smart-idle or smart-idle-wakeup. So
-> the patch should work for them, too. But I suspect a potential SW bug
-> may cause missed interrupts: the am33xx_gpio_sysc.idlemodes is marked
-> as capable of SIDLE_SMART_WKUP in omap_hwmod_33xx.c. But according to
-> AM335x TRM, _only_ gpio0 is capable of this mode. This may make GPIO
-> stuck in force-idle mode and unable to generate wakeup request. And
-> thus interrupt will be missed. Again, I don=E2=80=99t have the HW to veri=
-fy
-> whether this is a bug or not :(
+> Do you have any thoughts about how it can be done in a simpler way?
 
-Some of this information would be very nice to have in the commit log.
+I don't know if there is a "simpler" way, but I don't think there is too
+much effort too. I leave it to those implementing it though.
 
->  drivers/gpio/gpio-omap.c                |  103 +++++++++++++++++++++++++=
-+-----
->  include/linux/platform_data/gpio-omap.h |    1 +
->  2 files changed, 87 insertions(+), 17 deletions(-)
->=20
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 89675f8..90661f2 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -76,6 +76,7 @@ struct gpio_bank {
->   int context_loss_count;
->   int power_mode;
->   bool workaround_enabled;
-> + bool is_aggressive_pm;
->=20
->   void (*set_dataout)(struct gpio_bank *bank, int gpio, int enable);
->   int (*get_context_loss_count)(struct device *dev);
-> @@ -473,8 +474,15 @@ static void _disable_gpio_module(struct gpio_bank
-> *bank, unsigned offset)
->  static int gpio_is_input(struct gpio_bank *bank, int mask)
->  {
->   void __iomem *reg =3D bank->base + bank->regs->direction;
-> + u32 val;
+> 
+> Actually, the same was proposed by Linus, but we've tried avoid such huge rework -
+> by switching to one irq_domain per all banks for example.
 
-you see, your email it converting tabs into spaces and loosing all
-formatting from the patch. There are lots of tips on how to configure
-different emails clients under Documentation/email-clients.txt. You
-might also want to use git send-email, which will make patch submission
-a lot easier :-)
+I didn't really read that proposal from Linus so if two people
+independently suggested the same thing, there must be something worth
+considering there :)
 
---=20
-balbi
-
---KFztAG8eRSV9hGtP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSlL93AAoJEIaOsuA1yqRE9PYP/312VcQovJ1uHclVPi3J6IkD
-p4d3dj7bNdqm8Eq+KxBzEsCBpb2mtLxXXYWNYf1AxUdUJduRpIw4eO8ShhfImi+T
-TtOOT/QCSomS+fnA4vswahkeViYDB/N+zSuXm8ZTx0gvZShEZb9CTSYAfggVwB5+
-7n+RYQESxZDy+C7K+2UiKrYqPO8fOinsAiG084/F0TOeGUTbtptzutHGcfS1lHir
-gb/6SenP2ocfi2cvokK/aWtSUWU9s0Oz0SyInJq6zH4HNghS2LUSK1iUpIqRuhve
-YvIXORGsCQNu4nlBKIU2Vzj9wcdrObGlDFncALOmcKGrDKxzV0DpQhFvFMXLb84r
-W5Xf2Pg/IkkRvGQLLZZlw//MJJ5BI+lYUFHzbUkkSouT0tQYM+B/FBrVcudt6wf5
-/bRZOmoTuRnkoKLkxUM7ILhF+qx8mxTgv3ziac0luVA5un+Tynj4mS8oxpWFIJCq
-O4fLg4Xnl/ti8rnsl7bGdICNcMwnxXfjq8XL1TtbVSKIwO1Izf0CcgDuZ7kSY13w
-1vhBbWnlqIzBr3G/VtEv0ucutYu4hmZHPfqyp3Od41lgQ18/aRsJ4FGNxKVYzjB4
-k3nPtpbzm6wWooOkOGRp/OeNnWmgZjF+SrXYIZplfGe9YNoL20AlMbgETFBbgrMw
-8ORossz/SV4SpeICmgQK
-=052l
------END PGP SIGNATURE-----
-
---KFztAG8eRSV9hGtP--
+Thanks,
+Sekhar
