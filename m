@@ -1,59 +1,59 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] gpio: pl061: print resource_size_t as %pa
-Date: Tue, 26 Nov 2013 11:17:38 -0800
-Message-ID: <CAOesGMgSnW9e4M63RVWyAtqTbhj4_+Kmw_Rm71aCUUhiav25Vw@mail.gmail.com>
-References: <1385492161-27624-1-git-send-email-olof@lixom.net>
-	<1385493242.20100.71.camel@joe-AO722>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [RFC v1 0/9] gpio: davinci: reuse for keystone arch
+Date: Tue, 26 Nov 2013 21:40:06 +0200
+Message-ID: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qe0-f49.google.com ([209.85.128.49]:61840 "EHLO
-	mail-qe0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752654Ab3KZTRj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 14:17:39 -0500
-Received: by mail-qe0-f49.google.com with SMTP id w7so6121535qeb.22
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 11:17:38 -0800 (PST)
-In-Reply-To: <1385493242.20100.71.camel@joe-AO722>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, linux-gpio@vger.kernel.org, nsekhar@ti.com
+Cc: prabhakar.csengg@gmail.com, linux-kernel@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: LinusW <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Nov 26, 2013 at 11:14 AM, Joe Perches <joe@perches.com> wrote:
-> On Tue, 2013-11-26 at 10:56 -0800, Olof Johansson wrote:
->> commit 73675c8aa07 ('gpio: pl061: proper error messages') added a printout
->> of a resource_size_t using %x, which produces an error for builds with
->> 64-bit resources:
->
-> What tree is this?
+This series is intended to update Davinci GPIO driver and reuse
+it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+Keystone GPIO IP: supports:
+- up to 32 GPIO lines;
+- only unbanked irqs;
 
-linux-next
+See Documentation:
+Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
 
->> drivers/gpio/gpio-pl061.c:345:3: warning: format '%x' expects argument of
->>     type 'unsigned int', but argument 3 has type 'resource_size_t'
->>
->> Switch to %pa (and pass in a pointer to the resource instead).
->>
->> Fixes: 73675c8aa07 ('gpio: pl061: proper error messages')
-> []
->> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-> []
->> @@ -341,8 +341,8 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
->>       }
->>
->>       amba_set_drvdata(adev, chip);
->> -     dev_err(&adev->dev, "PL061 GPIO chip @%08x registered\n",
->> -             adev->res.start);
->> +     dev_err(&adev->dev, "PL061 GPIO chip @%pa registered\n",
->> +             &adev->res.start);
->
-> This looks as if this should not use dev_err, but maybe dev_info
-> and maybe it should use %pR, &adev->res
+[1] Depends on patch:
+"[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
+https://lkml.org/lkml/2013/11/8/22
 
-Yep, I have as a somewhat long-standing todo to scrub for needlessly
-elevated printk levels (err and warn) on various drivers during boot,
-thanks for shortcutting that. :)
+[2] and depends on series from Prabhakar Lad:
+"[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
+https://www.mail-archive.com/devicetree@vger.kernel.org/msg05970.html
 
-I'll let Linus decide on pR vs pa.
+Based on:
+git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git
+branch: keystone/master
 
--Olof
+This series has been marked as RFC because it's based on an unfinished
+series of patches [2], but with hope that it will help to reach final decisions 
+and satisfy all interested parties.
+
+Grygorii Strashko (9):
+  gpio: davinci: get rid of DAVINCI_N_GPIO
+  gpio: introduce GPIO_DAVINCI kconfig option
+  gpio: davinci: use chained_irq_enter/chained_irq_exit API
+  gpio: davinci: make IRQ initialization soc specific
+  gpio: davinci: reuse for Keystone SoC
+  arm: dts: keystone: add GPIO device entry
+  ARM: keystone_defconfig: enable gpio support
+  arm: dts: keystone-evm: add LEDs supports
+  ARM: keystone_defconfig: enable LED support
+
+ .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
+ arch/arm/boot/dts/k2hk-evm.dts                     |   23 ++
+ arch/arm/boot/dts/keystone.dtsi                    |   45 +++
+ arch/arm/configs/keystone_defconfig                |   11 +
+ drivers/gpio/Kconfig                               |    7 +
+ drivers/gpio/Makefile                              |    2 +-
+ drivers/gpio/gpio-davinci.c                        |  306 ++++++++++++++------
+ 7 files changed, 305 insertions(+), 93 deletions(-)
+
+-- 
+1.7.9.5
