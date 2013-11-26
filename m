@@ -1,65 +1,56 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [RFC v1 2/9] gpio: introduce GPIO_DAVINCI kconfig option
-Date: Tue, 26 Nov 2013 21:40:08 +0200
-Message-ID: <1385494815-15740-3-git-send-email-grygorii.strashko@ti.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: [RFC v1 1/9] gpio: davinci: get rid of DAVINCI_N_GPIO
+Date: Tue, 26 Nov 2013 21:40:07 +0200
+Message-ID: <1385494815-15740-2-git-send-email-grygorii.strashko@ti.com>
 References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:60731 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757744Ab3KZToF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 26 Nov 2013 14:44:05 -0500
-In-Reply-To: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <1385494815-15740-1-git-send-email-grygorii.strashko-l0cyMroinI0@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org
+Cc: davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, linux-gpio@vger.kernel.org, nsekhar@ti.com
-Cc: prabhakar.csengg@gmail.com, linux-kernel@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, Grygorii Strashko <grygorii.strashko@ti.com>
 
-The compatible to Davinci GPIO HW block is used by other TI SoCs, like
-Keystone, where GPIO support is declared as optional.
+Since Davinci GPIO driver is moved to support gpiolib it has to use
+ARCH_NR_GPIOS (can be configured using CONFIG_ARCH_NR_GPIO Kconfig
+option) configuration instead of any mach/platform specific options.
 
-Hence, introduce GPIO_DAVINCI Kconfig option which will allow to enable
-Davinci GPIO driver for Keystone SoCs when needed. At same time, kept
-Davinci GPIO driver enabled for Davinci SoCs by default.
+Hence, replace private DAVINCI_N_GPIO with common ARCH_NR_GPIOS. This is
+safe because default value for ARCH_NR_GPIOS=256 and maximum number of
+supported GPIOs for Davinci is DAVINCI_N_GPIO=144.
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+More over, this is one of steps to re-use Davinci GPIO driver by other
+mach/platform.
+
+Signed-off-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
 ---
- drivers/gpio/Kconfig  |    7 +++++++
- drivers/gpio/Makefile |    2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-davinci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0f04444..7c75f5a 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -115,6 +115,13 @@ config GPIO_CLPS711X
- 	help
- 	  Say yes here to support GPIO on CLPS711X SoCs.
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 5bdd9f8..70b5f2f 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -200,8 +200,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
-+config GPIO_DAVINCI
-+	bool "TI Davinci/Keystone GPIO support"
-+	default y if ARCH_DAVINCI
-+	depends on ARM && (ARCH_DAVINCI || ARCH_KEYSTONE)
-+	help
-+	  Say yes here to enable GPIO support for TI Davinci/Keystone SoCs.
-+
- config GPIO_GENERIC_PLATFORM
- 	tristate "Generic memory-mapped GPIO controller support (MMIO platform device)"
- 	select GPIO_GENERIC
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 7971e36..28a0ffc 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -22,7 +22,7 @@ obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
- obj-$(CONFIG_GPIO_CS5535)	+= gpio-cs5535.o
- obj-$(CONFIG_GPIO_DA9052)	+= gpio-da9052.o
- obj-$(CONFIG_GPIO_DA9055)	+= gpio-da9055.o
--obj-$(CONFIG_ARCH_DAVINCI)	+= gpio-davinci.o
-+obj-$(CONFIG_GPIO_DAVINCI)	+= gpio-davinci.o
- obj-$(CONFIG_GPIO_EM)		+= gpio-em.o
- obj-$(CONFIG_GPIO_EP93XX)	+= gpio-ep93xx.o
- obj-$(CONFIG_GPIO_F7188X)	+= gpio-f7188x.o
+-	if (WARN_ON(DAVINCI_N_GPIO < ngpio))
+-		ngpio = DAVINCI_N_GPIO;
++	if (WARN_ON(ARCH_NR_GPIOS < ngpio))
++		ngpio = ARCH_NR_GPIOS;
+ 
+ 	chips = devm_kzalloc(dev,
+ 			     ngpio * sizeof(struct davinci_gpio_controller),
 -- 
 1.7.9.5
-
