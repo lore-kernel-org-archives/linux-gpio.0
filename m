@@ -1,142 +1,49 @@
-From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v6 4/6] gpio: davinci: add OF support
-Date: Tue, 26 Nov 2013 22:42:50 +0530
-Message-ID: <5294D692.3080100@ti.com>
-References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
-	<1385057731-4348-5-git-send-email-prabhakar.csengg@gmail.com>
-	<52932DB9.4090805@ti.com> <5294950A.9070007@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <5294950A.9070007-l0cyMroinI0@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DLOS <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: [PATCH] gpio: pl061: print resource_size_t as %pa
+Date: Tue, 26 Nov 2013 10:56:01 -0800
+Message-ID: <1385492161-27624-1-git-send-email-olof@lixom.net>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:48650 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757631Ab3KZS6Z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 13:58:25 -0500
+Received: by mail-pd0-f175.google.com with SMTP id w10so8270196pde.34
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 10:58:24 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-On Tuesday 26 November 2013 06:03 PM, Grygorii Strashko wrote:
-> On 11/25/2013 01:00 PM, Sekhar Nori wrote:
->> On Thursday 21 November 2013 11:45 PM, Prabhakar Lad wrote:
->>> From: KV Sujith <sujithkv-l0cyMroinI0@public.gmane.org>
->>>
->>> This patch adds OF parser support for davinci gpio
->>> driver and also appropriate documentation in gpio-davinci.txt
->>> located at Documentation/devicetree/bindings/gpio/.
->>>
->>> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>> Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
->>> Signed-off-by: KV Sujith <sujithkv-l0cyMroinI0@public.gmane.org>
->>> Signed-off-by: Philip Avinash <avinashphilip-l0cyMroinI0@public.gmane.org>
->>> [prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org: simplified the OF code, removed
->>> 		unnecessary DT property and also simplified
->>> 		the commit message]
->>> Signed-off-by: Lad, Prabhakar <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>   .../devicetree/bindings/gpio/gpio-davinci.txt      |   41 ++++++++++++++
->>>   drivers/gpio/gpio-davinci.c                        |   57 ++++++++++++++++++--
->>>   2 files changed, 95 insertions(+), 3 deletions(-)
->>>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->>> new file mode 100644
->>> index 0000000..a2e839d
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->>> @@ -0,0 +1,41 @@
->>> +Davinci GPIO controller bindings
->>> +
->>> +Required Properties:
->>> +- compatible: should be "ti,dm6441-gpio"
->>> +
->>> +- reg: Physical base address of the controller and the size of memory mapped
->>> +       registers.
->>> +
->>> +- gpio-controller : Marks the device node as a gpio controller.
->>> +
->>> +- interrupt-parent: phandle of the parent interrupt controller.
->>> +
->>> +- interrupts: Array of GPIO interrupt number. Only banked or unbanked IRQs are
->>> +	      supported at a time.
->>
->> If this is true..
->>
->>> +
->>> +- ti,ngpio: The number of GPIO pins supported.
->>> +
->>> +- ti,davinci-gpio-unbanked: The number of GPIOs that have an individual interrupt
->>> +		             line to processor.
->>
->> .. then why do you need to maintain this separately? Number of elements
->> in interrupts property should give you this answer, no?
->>
->> There can certainly be devices (past and future) which use a mixture of
->> banked and unbanked IRQs. So a binding which does not take care of this
->> is likely to change in future and that is a problem since it brings in
->> backward compatibility of the binding into picture.
->>
->> The right thing would be to define the DT node per-bank similar to what
->> is done on OMAP rather than for all banks together. That way there can
->> be a separate property which determines whether that bank supports
->> direct-mapped or banked IRQs (or that could be inferred if the number of
->> tuples in the interrupts property is more than one).
-> 
-> Number of IRQ can't be simply used to determine type of IRQ - need to handle IRQ names,
-> because each bank(32 gpios) may have up to 2 banked IRQs (one per 16 GPIO).
+commit 73675c8aa07 ('gpio: pl061: proper error messages') added a printout
+of a resource_size_t using %x, which produces an error for builds with
+64-bit resources:
 
-Okay. That's why I inserted that comment in parenthesis :)
+drivers/gpio/gpio-pl061.c:345:3: warning: format '%x' expects argument of
+    type 'unsigned int', but argument 3 has type 'resource_size_t'
 
-> 
-> Few things here:
-> - The mixed banked/unbanked functionality has never been supported before. 
+Switch to %pa (and pass in a pointer to the resource instead).
 
-True. I actually misread the driver before.
+Fixes: 73675c8aa07 ('gpio: pl061: proper error messages')
+Signed-off-by: Olof Johansson <olof@lixom.net>
+---
+ drivers/gpio/gpio-pl061.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> - The Davinci GPIO IP is different from OMAP and has common
->   control registers for all banks.
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index f08e5e2cbe50..4ed16d7bd13d 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -341,8 +341,8 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
+ 
+ 	amba_set_drvdata(adev, chip);
+-	dev_err(&adev->dev, "PL061 GPIO chip @%08x registered\n",
+-		adev->res.start);
++	dev_err(&adev->dev, "PL061 GPIO chip @%pa registered\n",
++		&adev->res.start);
+ 
+ 	return 0;
+ }
+-- 
+1.8.4.1.601.g02b3b1d
 
-Well the only common register I can see is BINTEN - bank interrupt
-enable. This register can simply be initialized to enable interrupts
-from all banks possible as until the rising and falling edge triggers
-are programmed, there wont be any actual interrupts generated.
-
-> - The proposed approach is more less easy to implement for DT case, but for not-DT
->   case - the platform data will need to be changed significantly (.
->   So, from this point of view, that would be a big change (actually the total driver rewriting).
-
-Well, I certainly don't think its a complete driver re-write. It will
-take a bit of effort agreed, but I think the driver will also come out a
-lot cleaner.
-
-Honestly, I am not so much worried about the kernel code here. Its the
-bindings I am worried about. Once the bindings go in assuming there will
-never be banked and unbanked GPIO IRQs on the same SoC, changing them to
-do something else will be very painful with the need to keep backward
-compatibility and support for both semantics.
-
-That said, because there is no present hardware which needs both banked
-and unbanked at the same time, I wont press for this to be done endlessly.
-
-> Do you have any thoughts about how it can be done in a simpler way?
-
-I don't know if there is a "simpler" way, but I don't think there is too
-much effort too. I leave it to those implementing it though.
-
-> 
-> Actually, the same was proposed by Linus, but we've tried avoid such huge rework -
-> by switching to one irq_domain per all banks for example.
-
-I didn't really read that proposal from Linus so if two people
-independently suggested the same thing, there must be something worth
-considering there :)
-
-Thanks,
-Sekhar
