@@ -1,74 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] gpio: lynxpoint: lock IRQs when starting them
-Date: Tue, 26 Nov 2013 11:23:39 +0100
-Message-ID: <1385461419-5979-1-git-send-email-linus.walleij@linaro.org>
+From: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 1/2] gpio: davinci: get rid of DAVINCI_N_GPIO
+Date: Tue, 26 Nov 2013 15:57:44 +0530
+Message-ID: <CA+V-a8udLPx6y74yNdYxZkDu0vOPHj-nLELBANkVUM7=LX3VcQ@mail.gmail.com>
+References: <1385048076-7875-1-git-send-email-grygorii.strashko@ti.com> <1385048076-7875-2-git-send-email-grygorii.strashko@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:60688 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755045Ab3KZKXp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 05:23:45 -0500
-Received: by mail-la0-f43.google.com with SMTP id n7so4028080lam.16
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 02:23:44 -0800 (PST)
+Received: from mail-we0-f169.google.com ([74.125.82.169]:47391 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753634Ab3KZK2H (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 05:28:07 -0500
+In-Reply-To: <1385048076-7875-2-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, LKML <linux-kernel@vger.kernel.org>
 
-This uses the new API for tagging GPIO lines as in use by
-IRQs. This enforces a few semantic checks on how the underlying
-GPIO line is used.
+On Thu, Nov 21, 2013 at 9:04 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> Since Davinci GPIO driver is moved to support gpiolib it has to use
+> ARCH_NR_GPIOS (can be configured using CONFIG_ARCH_NR_GPIO Kconfig
+> option) configuration instead of any mach/platform specific options.
+>
+> Hence, replace private DAVINCI_N_GPIO with common ARCH_NR_GPIOS. This is
+> safe because default value for ARCH_NR_GPIOS=256 and maximum number of
+> supported GPIOs for Davinci is DAVINCI_N_GPIO=144.
+>
+> More over, this is one of steps to re-use Davinci GPIO driver by other
+> mach/platform.
+>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Explicitly call .enable()/.disable() callbacks from the
-  startup()/shutdown() callbacks to satisfy implicit semantics.
----
- drivers/gpio/gpio-lynxpoint.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 
-diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-index a0804740a0b7..70831e4b2c8b 100644
---- a/drivers/gpio/gpio-lynxpoint.c
-+++ b/drivers/gpio/gpio-lynxpoint.c
-@@ -301,6 +301,26 @@ static void lp_irq_disable(struct irq_data *d)
- 	spin_unlock_irqrestore(&lg->lock, flags);
- }
- 
-+static unsigned int lp_irq_startup(struct irq_data *d)
-+{
-+	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
-+
-+	if (gpio_lock_as_irq(&lg->chip, irqd_to_hwirq(d)))
-+		dev_err(lg->chip.dev,
-+			"unable to lock HW IRQ %lu for IRQ\n",
-+			irqd_to_hwirq(d));
-+	lp_irq_enable(d);
-+	return 0;
-+}
-+
-+static void lp_irq_shutdown(struct irq_data *d)
-+{
-+	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
-+
-+	lp_irq_disable(d);
-+	gpio_unlock_as_irq(&lg->chip, irqd_to_hwirq(d));
-+}
-+
- static struct irq_chip lp_irqchip = {
- 	.name = "LP-GPIO",
- 	.irq_mask = lp_irq_mask,
-@@ -308,6 +328,8 @@ static struct irq_chip lp_irqchip = {
- 	.irq_enable = lp_irq_enable,
- 	.irq_disable = lp_irq_disable,
- 	.irq_set_type = lp_irq_type,
-+	.irq_startup = lp_irq_startup,
-+	.irq_shutdown = lp_irq_shutdown,
- 	.flags = IRQCHIP_SKIP_SET_WAKE,
- };
- 
--- 
-1.8.3.1
-
+Regards,
+--Prabhakar Lad
