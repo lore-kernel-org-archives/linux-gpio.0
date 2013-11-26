@@ -1,81 +1,77 @@
 From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v2] gpio: lock adnp IRQs when enabling them
-Date: Tue, 26 Nov 2013 15:15:38 +0200
-Message-ID: <52949EFA.3060903@ti.com>
-References: <1385460324-30777-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: lynxpoint: lock IRQs when starting them
+Date: Tue, 26 Nov 2013 15:18:58 +0200
+Message-ID: <52949FC2.6010702@ti.com>
+References: <1384958549-23722-1-git-send-email-linus.walleij@linaro.org>	<528CFF78.9080703@ti.com> <CACRpkdYLNWgfOFsRYiy5VBpmiJRGZ-3zo2AMBqAdufqRNFpUwA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:57891 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752114Ab3KZNT0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 08:19:26 -0500
-In-Reply-To: <1385460324-30777-1-git-send-email-linus.walleij@linaro.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:37519 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751088Ab3KZNWi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 26 Nov 2013 08:22:38 -0500
+In-Reply-To: <CACRpkdYLNWgfOFsRYiy5VBpmiJRGZ-3zo2AMBqAdufqRNFpUwA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>
-Cc: Alexandre Courbot <acourbot@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>
 
-On 11/26/2013 12:05 PM, Linus Walleij wrote:
-> This uses the new API for tagging GPIO lines as in use by
-> IRQs. This enforces a few semantic checks on how the underlying
-> GPIO line is used.
+On 11/26/2013 11:52 AM, Linus Walleij wrote:
+> On Wed, Nov 20, 2013 at 7:29 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+>> On 11/20/2013 04:42 PM, Linus Walleij wrote:
+>>>
+>>> This uses the new API for tagging GPIO lines as in use by
+>>> IRQs. This enforces a few semantic checks on how the underlying
+>>> GPIO line is used.
+> (...)
+>>> +static unsigned int lp_irq_startup(struct irq_data *d)
+>>> +{
+>>> +     struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
+>>> +
+>>> +     if (gpio_lock_as_irq(&lg->chip, irqd_to_hwirq(d)))
+>>> +             dev_err(lg->chip.dev,
+>>> +                     "unable to lock HW IRQ %lu for IRQ\n",
+>>> +                     irqd_to_hwirq(d));
+>>> +     return 0;
+>>> +}
+>>> +
+>>> +static void lp_irq_shutdown(struct irq_data *d)
+>>> +{
+>>> +     struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
+>>> +
+>>> +     gpio_unlock_as_irq(&lg->chip, irqd_to_hwirq(d));
+>>> +}
+>>
+>> Seems, such changes may be risky, because .irq_startup()
+>> and irq_enable()/irq_umask() are mutually exclusive, at least at IRQ request time.
+>> request_threaded_irq()->__setup_irq()->irq_startup()
+>>
+>> More over, IRQ core assumes that IRQ is enabled, unmasked and ready for use after
+>> .irq_startup() call. You can check functions irq/chip.c->irq_startup() for more info.
+>>
+>> So, .irq_enable() functionality need to be duplicated in .irq_startup() at least.
+>>
+>> if you agree - above comment is valid for most of similar recent patches ;)
 >
-> Only compile tested on the lpc32xx.
->
-> Cc: Lars Poeschel <poeschel@lemonage.de>
-> Cc: Thierry Reding <thierry.reding@avionic-design.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Use the .enable() callback from the irq_chip
-> - Call .unmask() from the .enable() callback to satisfy semantics.
-> ---
->   drivers/gpio/gpio-adnp.c | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
-> index b204033acaeb..3988ebc5a40e 100644
-> --- a/drivers/gpio/gpio-adnp.c
-> +++ b/drivers/gpio/gpio-adnp.c
-> @@ -408,6 +408,25 @@ static void adnp_irq_bus_unlock(struct irq_data *data)
->   	mutex_unlock(&adnp->irq_lock);
->   }
->
-> +static void adnp_irq_enable(struct irq_data *data)
-> +{
-> +	struct adnp *adnp = irq_data_get_irq_chip_data(data);
-> +
-> +	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq))
-> +		dev_err(adnp->gpio.dev,
-> +			"unable to lock HW IRQ %lu for IRQ\n",
-> +			data->hwirq);
-> +	/* Satisfy the .enable semantics by unmasking the line */
-> +	adnp_irq_unmask(data);
-> +}
-> +
-> +static void adnp_irq_disable(struct irq_data *data)
-> +{
-> +	struct adnp *adnp = irq_data_get_irq_chip_data(data);
-> +
-> +	gpio_unlock_as_irq(&adnp->gpio, data->hwirq);
-> +}
-> +
->   static struct irq_chip adnp_irq_chip = {
->   	.name = "gpio-adnp",
->   	.irq_mask = adnp_irq_mask,
-> @@ -415,6 +434,8 @@ static struct irq_chip adnp_irq_chip = {
->   	.irq_set_type = adnp_irq_set_type,
->   	.irq_bus_lock = adnp_irq_bus_lock,
->   	.irq_bus_sync_unlock = adnp_irq_bus_unlock,
-> +	.irq_enable = adnp_irq_enable,
-> +	.irq_disable = adnp_irq_disable,
+> Yep. I just showcase what a worthless IRQ core user I am...
 
-.irq_startup/irq_shutdown ?
+Yeah. That's the Gray hole in Linux's universe :)
 
->   };
 >
->   static int adnp_irq_map(struct irq_domain *domain, unsigned int irq,
+> Now what would be the best way to call this?
 >
+> Should I just move this into the .enable callback, and if there is no
+> such callback, create it and call the .unmask explicitly
+> at the end of it? It would seem a bit counter-intuitive to do this
+> in the .mask/.unmask callback, as that should only do exactly
+> that - mask/unmask.
+>
+> I'll try this approach...
 
+I'm glad to help. Seems you've made it work.
+
+
+Regards,
+-grygorii
