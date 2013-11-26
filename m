@@ -1,77 +1,50 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH V2] gpio: omap: refresh patch "be more aggressive with
- pm_runtime" against v3.12-rc5
-Date: Tue, 26 Nov 2013 17:07:38 -0600
-Message-ID: <20131126230738.GA17630@saruman.home>
-References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
-Reply-To: <balbi@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pl061: print resource_size_t as %pa
+Date: Wed, 27 Nov 2013 00:49:17 +0100
+Message-ID: <CACRpkdaK3Lvw+DjWTjkU-AUyHY98YWQD58Lw10COG44WvOJSgQ@mail.gmail.com>
+References: <1385492161-27624-1-git-send-email-olof@lixom.net>
+	<1385493242.20100.71.camel@joe-AO722>
+	<CAOesGMgSnW9e4M63RVWyAtqTbhj4_+Kmw_Rm71aCUUhiav25Vw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:60982 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757048Ab3KZXIK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 26 Nov 2013 18:08:10 -0500
-Content-Disposition: inline
-In-Reply-To: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:60300 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757506Ab3KZXtS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 18:49:18 -0500
+Received: by mail-oa0-f47.google.com with SMTP id k1so6888618oag.34
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 15:49:17 -0800 (PST)
+In-Reply-To: <CAOesGMgSnW9e4M63RVWyAtqTbhj4_+Kmw_Rm71aCUUhiav25Vw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chao Xu <caesarxuchao@gmail.com>
-Cc: linux-omap@vger.kernel.org, santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, tony@atomide.com, balbi@ti.com
+To: Olof Johansson <olof@lixom.net>
+Cc: Joe Perches <joe@perches.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 26, 2013 at 8:17 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Tue, Nov 26, 2013 at 11:14 AM, Joe Perches <joe@perches.com> wrote:
+>> On Tue, 2013-11-26 at 10:56 -0800, Olof Johansson wrote:
 
-Hi,
+>>>       amba_set_drvdata(adev, chip);
+>>> -     dev_err(&adev->dev, "PL061 GPIO chip @%08x registered\n",
+>>> -             adev->res.start);
+>>> +     dev_err(&adev->dev, "PL061 GPIO chip @%pa registered\n",
+>>> +             &adev->res.start);
+>>
+>> This looks as if this should not use dev_err, but maybe dev_info
+>> and maybe it should use %pR, &adev->res
+>
+> Yep, I have as a somewhat long-standing todo to scrub for needlessly
+> elevated printk levels (err and warn) on various drivers during boot,
+> thanks for shortcutting that. :)
 
-On Tue, Nov 26, 2013 at 04:46:44PM -0600, Chao Xu wrote:
-> From: Felipe Balbi <balbi@ti.com>
->=20
-> try to keep gpio block suspended as much as possible.
->=20
-> Tested with pandaboard and a sysfs exported gpio.
->=20
-> Signed-off-by: Felipe Balbi <balbi at ti.com>
->=20
-> [caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added
-> revision check to enable aggressive pm_runtime on OMAP4-only. Because
-> am33xx_gpio_sysc.idlemodes seems to be wrongly marked as
-> SIDLE_SMART_WKUP, which might cause missed interrupts with this patch.
-> Tested on Pandaboard rev A2.]
+Bah copy/paste bug from my side ...
 
-Based on a quick look, it looks good to my eyes. Didn't test on any HW
-though.
+> I'll let Linus decide on pR vs pa.
 
-Signed-of-by: Felipe Balbi <balbi@ti.com>
+I go with the thing you tested, fixed up the commit and also
+switched to dev_info().
 
-> Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
+But now I have worse PL061 problems than this.
 
---=20
-balbi
-
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSlSm6AAoJEIaOsuA1yqREFT0P/R6DiXKM67aDgakCXG+BAE/h
-ZHBhGPy7ZaV18CpLxmyHmU9rtnH5vt9+8Qf23pEaICxcoK2DCBz4NmmR5wMpicZo
-WrTcFoZd6SMxQU36IjQqQkjXiBxg3RkJK4lNWxTqzq40VI/NrbfdRWDDd4KoJg4M
-09yvqbe310vZAMdff6SbPabE7Rsxsak8eAawQRw+Q6LcclZi6hCYeB7S2gFgug3q
-cmIAHKUbMDoKKrSc0tDPONh8WS/8ZdNymS9mKO7+Sm5OASF68jhuQo7fSampMDYv
-0GgZ96ZjBWyLaiuB5e3Pa0dYU1ZANLqfAFXwMNN1BNOBJUXecdgYf4XeC4Qft6Q5
-zB34hbAgAztb2pWzi2rELSxWLVjR+apHL7U2I3Q20ohQD/BPUn+GoscgRnb/Xxoq
-J6QUYsd58XlxKM4/X9N0Z0RKz6qr87T1mhrysWWzaP96mcqkxsTIk/R0VXBjLkBO
-5WfdIEcc8r7U+r6IlX+kDA4AndJvhnfavKsVqNNtu2HppTFDd4kqMLWRLuTRptPv
-/ORSWTki04JC2uAw6jpImHgHzZVnWjis1P/Fc+Mj2iTJODGTVyG3JKyUS3dHbffy
-PhrlH8FBIrHt8p5yb0mS5Y3SAAcsFP4/cvdfEms8rBn6VCRa+a24UC5py1/rKl96
-WBoqDAW6XnyRigTYttS5
-=/KHo
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+Yours,
+Linus Walleij
