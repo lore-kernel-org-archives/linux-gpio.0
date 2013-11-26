@@ -1,57 +1,76 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v3 1/6] ARM: tegra: add gpiod_lookup table for paz00
-Date: Tue, 26 Nov 2013 12:05:45 +0200
-Message-ID: <1385460350-17543-2-git-send-email-mika.westerberg@linux.intel.com>
-References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2] gpio: bcm-kona: lock IRQs when starting them
+Date: Tue, 26 Nov 2013 11:11:43 +0100
+Message-ID: <1385460703-31889-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:21243 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755168Ab3KZKGA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 26 Nov 2013 05:06:00 -0500
-In-Reply-To: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:54029 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751828Ab3KZKLw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 05:11:52 -0500
+Received: by mail-lb0-f174.google.com with SMTP id c11so4229400lbj.33
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 02:11:51 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-acpi@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Markus Mayer <markus.mayer@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Christian Daudt <csd@broadcom.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+This uses the new API for tagging GPIO lines as in use by
+IRQs. This enforces a few semantic checks on how the underlying
+GPIO line is used.
 
-This makes it possible to request the gpio descriptors in
-rfkill_gpio driver regardless of the platform.
-
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Tested-by: Stephen Warren <swarren@nvidia.com>
+Cc: Markus Mayer <markus.mayer@linaro.org>
+Cc: Christian Daudt <csd@broadcom.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/mach-tegra/board-paz00.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ChangeLog v1->v2:
+- Make sure we call .unmask() and .mask() functions from the
+  .startup() and .shutdown() callbacks so the implicit semantics
+  are satisfied.
+---
+ drivers/gpio/gpio-bcm-kona.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index 06f024070dab..a309795da665 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -18,6 +18,7 @@
-  */
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 72c927dc3be1..3437414eaef2 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -449,12 +449,34 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
  
- #include <linux/platform_device.h>
-+#include <linux/gpio/driver.h>
- #include <linux/rfkill-gpio.h>
- #include "board.h"
- 
-@@ -36,7 +37,13 @@ static struct platform_device wifi_rfkill_device = {
- 	},
++static unsigned int bcm_kona_gpio_irq_startup(struct irq_data *d)
++{
++	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
++
++	if (gpio_lock_as_irq(&kona_gpio->gpio_chip, d->hwirq))
++		dev_err(kona_gpio->gpio_chip.dev,
++			"unable to lock HW IRQ %lu for IRQ\n",
++			d->hwirq);
++	bcm_kona_gpio_irq_unmask(d);
++	return 0;
++}
++
++static void bcm_kona_gpio_irq_shutdown(struct irq_data *d)
++{
++	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
++
++	bcm_kona_gpio_irq_mask(d);
++	gpio_unlock_as_irq(&kona_gpio->gpio_chip, d->hwirq);
++}
++
+ static struct irq_chip bcm_gpio_irq_chip = {
+ 	.name = "bcm-kona-gpio",
+ 	.irq_ack = bcm_kona_gpio_irq_ack,
+ 	.irq_mask = bcm_kona_gpio_irq_mask,
+ 	.irq_unmask = bcm_kona_gpio_irq_unmask,
+ 	.irq_set_type = bcm_kona_gpio_irq_set_type,
++	.irq_startup = bcm_kona_gpio_irq_startup,
++	.irq_shutdown = bcm_kona_gpio_irq_shutdown,
  };
  
-+static struct gpiod_lookup wifi_gpio_lookup[] = {
-+	GPIO_LOOKUP_IDX("tegra-gpio", 25, "rfkill_gpio", NULL, 0, 0),
-+	GPIO_LOOKUP_IDX("tegra-gpio", 85, "rfkill_gpio", NULL, 1, 0),
-+};
-+
- void __init tegra_paz00_wifikill_init(void)
- {
-+	gpiod_add_table(wifi_gpio_lookup, ARRAY_SIZE(wifi_gpio_lookup));
- 	platform_device_register(&wifi_rfkill_device);
- }
+ static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
 -- 
-1.8.4.3
+1.8.3.1
 
