@@ -1,102 +1,133 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: drop users of irq_set_chip_and_handler_name()
-Date: Tue, 26 Nov 2013 14:32:51 +0100
-Message-ID: <1385472771-26681-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:53255 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751115Ab3KZNc6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 08:32:58 -0500
-Received: by mail-la0-f51.google.com with SMTP id ec20so4217458lab.38
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 05:32:56 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH RFC] gpio: omap: =?utf-8?Q?refr?=
+ =?utf-8?Q?esh_the_patch_=E2=80=9Cgpio=3A_omap=3A_be_more_aggressive_with_?=
+ =?utf-8?B?cG1fcnVudGltZeKAnQ==?= against v3.12-rc5
+Date: Tue, 26 Nov 2013 09:34:15 -0600
+Message-ID: <20131126153415.GB24310@saruman.home>
+References: <CAKZq+rdGooV0SV1RH6Hrms_Z-p6_FqcNmpGTAcn3dPU0u478vQ@mail.gmail.com>
+Reply-To: <balbi@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAKZq+rdGooV0SV1RH6Hrms_Z-p6_FqcNmpGTAcn3dPU0u478vQ@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Chao Xu <Chao.Xu@rice.edu>
+Cc: linux-omap@vger.kernel.org, santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, balbi@ti.com
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, David Cohen <david.a.cohen@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-Switch all users of irq_set_chip_and_handler_name() to simply
-use irq_set_chip_and_handler(), all just provide a boilerplate
-name like "demux" or "mux" - a fact which is anyway obvious
-from the hwirq number from the irqdomain now present in e.g.
-/proc/interrupts.
+--KFztAG8eRSV9hGtP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: David Cohen <david.a.cohen@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-I'm challenging all users of this function to make an argument
-for it to stay in, and suspecting that this is mostly a copy
-and paste artifact...
----
- drivers/gpio/gpio-intel-mid.c  | 3 +--
- drivers/gpio/gpio-lynxpoint.c  | 3 +--
- drivers/gpio/gpio-msic.c       | 7 +++----
- drivers/gpio/gpio-timberdale.c | 4 ++--
- 4 files changed, 7 insertions(+), 10 deletions(-)
+Hi Chao,
 
-diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
-index be803af658ac..17f135046c7f 100644
---- a/drivers/gpio/gpio-intel-mid.c
-+++ b/drivers/gpio/gpio-intel-mid.c
-@@ -358,8 +358,7 @@ static int intel_gpio_irq_map(struct irq_domain *d, unsigned int irq,
- {
- 	struct intel_mid_gpio *priv = d->host_data;
- 
--	irq_set_chip_and_handler_name(irq, &intel_mid_irqchip,
--				      handle_simple_irq, "demux");
-+	irq_set_chip_and_handler(irq, &intel_mid_irqchip, handle_simple_irq);
- 	irq_set_chip_data(irq, priv);
- 	irq_set_irq_type(irq, IRQ_TYPE_NONE);
- 
-diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-index f1ca9d5880b6..89867ed7bd50 100644
---- a/drivers/gpio/gpio-lynxpoint.c
-+++ b/drivers/gpio/gpio-lynxpoint.c
-@@ -331,8 +331,7 @@ static int lp_gpio_irq_map(struct irq_domain *d, unsigned int irq,
- {
- 	struct lp_gpio *lg = d->host_data;
- 
--	irq_set_chip_and_handler_name(irq, &lp_irqchip, handle_simple_irq,
--				      "demux");
-+	irq_set_chip_and_handler(irq, &lp_irqchip, handle_simple_irq);
- 	irq_set_chip_data(irq, lg);
- 	irq_set_irq_type(irq, IRQ_TYPE_NONE);
- 
-diff --git a/drivers/gpio/gpio-msic.c b/drivers/gpio/gpio-msic.c
-index d75eaa3a1dcc..69d60ab1d698 100644
---- a/drivers/gpio/gpio-msic.c
-+++ b/drivers/gpio/gpio-msic.c
-@@ -305,10 +305,9 @@ static int platform_msic_gpio_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < mg->chip.ngpio; i++) {
- 		irq_set_chip_data(i + mg->irq_base, mg);
--		irq_set_chip_and_handler_name(i + mg->irq_base,
--					      &msic_irqchip,
--					      handle_simple_irq,
--					      "demux");
-+		irq_set_chip_and_handler(i + mg->irq_base,
-+					 &msic_irqchip,
-+					 handle_simple_irq);
- 	}
- 	irq_set_chained_handler(mg->irq, msic_gpio_irq_handler);
- 	irq_set_handler_data(mg->irq, mg);
-diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index 7a0e956ef1ed..521971e6a9f5 100644
---- a/drivers/gpio/gpio-timberdale.c
-+++ b/drivers/gpio/gpio-timberdale.c
-@@ -290,8 +290,8 @@ static int timbgpio_probe(struct platform_device *pdev)
- 		return 0;
- 
- 	for (i = 0; i < pdata->nr_pins; i++) {
--		irq_set_chip_and_handler_name(tgpio->irq_base + i,
--			&timbgpio_irqchip, handle_simple_irq, "mux");
-+		irq_set_chip_and_handler(tgpio->irq_base + i,
-+			&timbgpio_irqchip, handle_simple_irq);
- 		irq_set_chip_data(tgpio->irq_base + i, tgpio);
- #ifdef CONFIG_ARM
- 		set_irq_flags(tgpio->irq_base + i, IRQF_VALID | IRQF_PROBE);
--- 
-1.8.3.1
+On Mon, Nov 25, 2013 at 09:30:46PM -0600, Chao Xu wrote:
+> Refresh the patch =E2=80=9Cgpio: omap: be more aggressive with pm_runtime=
+=E2=80=9D by
+> Felipe Balbi against v3.12-rc5. Add version checking so that the
+> aggressive pm_runtime only applies to omap4 devices. Tested with
+> pandaboard rev a2 through sysfs.
+> Signed-off-by: Chao Xu <chao.xu@rice.edu>
 
+Here, you need to keep authorship and mention that you refreshed the
+patch, it should look something like:
+
+=46rom: Felipe Balbi <balbi@ti.com>
+
+try to keep gpio block suspended as much as possible.
+
+Tested with pandaboard and a sysfs exported gpio.
+
+Signed-off-by: Felipe Balbi <balbi at ti.com>
+
+[ chao.xu@rice.edu : refreshed against v3.12-rc5, and added revision
+	check to enable aggressive pm_runtime on OMAP4-only ]
+
+Signed-off-by: Chao Xu <chao.xu@rice.edu>
+
+> ---
+> According to Mr. Felipe Balbi, the original patch was not accepted
+> because interrupts would be missed when GPIO was used as IRQ source.
+> But in my tests with pandaboard, interrupts were not missed. This is
+> because _idle_sysc() sets the idlemode of gpio module to
+> smart-idle-wakeup, and according to OMAP4430 TRM, under this idlemode,
+> the gpio can generate an asynchronous wakeup request to the PRCM. And
+> after GPIO is awake, the wake-up request is reflected into the
+> interrupt status registers.
+>=20
+> A change I made against the original patch is only using the
+> aggressive runtime pm scheme on OMAP4 by adding a flag in pdata,
+> because I don=E2=80=99t have HW to test OMAP3 or am33xx devices. Accordin=
+g to
+> the respective TRMs, their GPIO modules also can generate wake-up
+> request if the idlemode is set to smart-idle or smart-idle-wakeup. So
+> the patch should work for them, too. But I suspect a potential SW bug
+> may cause missed interrupts: the am33xx_gpio_sysc.idlemodes is marked
+> as capable of SIDLE_SMART_WKUP in omap_hwmod_33xx.c. But according to
+> AM335x TRM, _only_ gpio0 is capable of this mode. This may make GPIO
+> stuck in force-idle mode and unable to generate wakeup request. And
+> thus interrupt will be missed. Again, I don=E2=80=99t have the HW to veri=
+fy
+> whether this is a bug or not :(
+
+Some of this information would be very nice to have in the commit log.
+
+>  drivers/gpio/gpio-omap.c                |  103 +++++++++++++++++++++++++=
++-----
+>  include/linux/platform_data/gpio-omap.h |    1 +
+>  2 files changed, 87 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index 89675f8..90661f2 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -76,6 +76,7 @@ struct gpio_bank {
+>   int context_loss_count;
+>   int power_mode;
+>   bool workaround_enabled;
+> + bool is_aggressive_pm;
+>=20
+>   void (*set_dataout)(struct gpio_bank *bank, int gpio, int enable);
+>   int (*get_context_loss_count)(struct device *dev);
+> @@ -473,8 +474,15 @@ static void _disable_gpio_module(struct gpio_bank
+> *bank, unsigned offset)
+>  static int gpio_is_input(struct gpio_bank *bank, int mask)
+>  {
+>   void __iomem *reg =3D bank->base + bank->regs->direction;
+> + u32 val;
+
+you see, your email it converting tabs into spaces and loosing all
+formatting from the patch. There are lots of tips on how to configure
+different emails clients under Documentation/email-clients.txt. You
+might also want to use git send-email, which will make patch submission
+a lot easier :-)
+
+--=20
+balbi
+
+--KFztAG8eRSV9hGtP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSlL93AAoJEIaOsuA1yqRE9PYP/312VcQovJ1uHclVPi3J6IkD
+p4d3dj7bNdqm8Eq+KxBzEsCBpb2mtLxXXYWNYf1AxUdUJduRpIw4eO8ShhfImi+T
+TtOOT/QCSomS+fnA4vswahkeViYDB/N+zSuXm8ZTx0gvZShEZb9CTSYAfggVwB5+
+7n+RYQESxZDy+C7K+2UiKrYqPO8fOinsAiG084/F0TOeGUTbtptzutHGcfS1lHir
+gb/6SenP2ocfi2cvokK/aWtSUWU9s0Oz0SyInJq6zH4HNghS2LUSK1iUpIqRuhve
+YvIXORGsCQNu4nlBKIU2Vzj9wcdrObGlDFncALOmcKGrDKxzV0DpQhFvFMXLb84r
+W5Xf2Pg/IkkRvGQLLZZlw//MJJ5BI+lYUFHzbUkkSouT0tQYM+B/FBrVcudt6wf5
+/bRZOmoTuRnkoKLkxUM7ILhF+qx8mxTgv3ziac0luVA5un+Tynj4mS8oxpWFIJCq
+O4fLg4Xnl/ti8rnsl7bGdICNcMwnxXfjq8XL1TtbVSKIwO1Izf0CcgDuZ7kSY13w
+1vhBbWnlqIzBr3G/VtEv0ucutYu4hmZHPfqyp3Od41lgQ18/aRsJ4FGNxKVYzjB4
+k3nPtpbzm6wWooOkOGRp/OeNnWmgZjF+SrXYIZplfGe9YNoL20AlMbgETFBbgrMw
+8ORossz/SV4SpeICmgQK
+=052l
+-----END PGP SIGNATURE-----
+
+--KFztAG8eRSV9hGtP--
