@@ -1,7 +1,7 @@
 From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: [RFC v1 1/9] gpio: davinci: get rid of DAVINCI_N_GPIO
-Date: Tue, 26 Nov 2013 21:40:07 +0200
-Message-ID: <1385494815-15740-2-git-send-email-grygorii.strashko@ti.com>
+Subject: [RFC v1 3/9] gpio: davinci: use chained_irq_enter/chained_irq_exit API
+Date: Tue, 26 Nov 2013 21:40:09 +0200
+Message-ID: <1385494815-15740-4-git-send-email-grygorii.strashko@ti.com>
 References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,36 +21,52 @@ To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santo
 Cc: davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Since Davinci GPIO driver is moved to support gpiolib it has to use
-ARCH_NR_GPIOS (can be configured using CONFIG_ARCH_NR_GPIO Kconfig
-option) configuration instead of any mach/platform specific options.
+It's unsafe to call IRQ chip callbacks (.irq_mask/irq_unmask/irq_ack)
+from chained IRQ handler directly. Because, Davinci GPIO block is used
+by different SoCs, which, in turn, have different Main IRQ controllers
+(Davinci - aintc, cp-intc; Keystone - arm-gic) which may introduce
+diffrent set of IRQ chip callbacks. As result, call of
+gpio_irq_handler() on Keysone will simply cause crash the system,
+because ARM-GIC implements .irq_eoi() instead of .irq_ack().
 
-Hence, replace private DAVINCI_N_GPIO with common ARCH_NR_GPIOS. This is
-safe because default value for ARCH_NR_GPIOS=256 and maximum number of
-supported GPIOs for Davinci is DAVINCI_N_GPIO=144.
-
-More over, this is one of steps to re-use Davinci GPIO driver by other
-mach/platform.
+Hence, fix it by using Kernel chained_irq_enter/chained_irq_exit APIs as
+they are intended to handle exact such cases.
 
 Signed-off-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
 ---
- drivers/gpio/gpio-davinci.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-davinci.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 5bdd9f8..70b5f2f 100644
+index 70b5f2f..ee7a2df 100644
 --- a/drivers/gpio/gpio-davinci.c
 +++ b/drivers/gpio/gpio-davinci.c
-@@ -200,8 +200,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 		return -EINVAL;
+@@ -22,6 +22,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/platform_data/gpio-davinci.h>
++#include <linux/irqchip/chained_irq.h>
+ 
+ struct davinci_gpio_regs {
+ 	u32	dir;
+@@ -321,8 +322,7 @@ gpio_irq_handler(unsigned irq, struct irq_desc *desc)
+ 		mask <<= 16;
+ 
+ 	/* temporarily mask (level sensitive) parent IRQ */
+-	desc->irq_data.chip->irq_mask(&desc->irq_data);
+-	desc->irq_data.chip->irq_ack(&desc->irq_data);
++	chained_irq_enter(irq_desc_get_chip(desc), desc);
+ 	while (1) {
+ 		u32		status;
+ 		int		bit;
+@@ -343,7 +343,7 @@ gpio_irq_handler(unsigned irq, struct irq_desc *desc)
+ 						 d->chip.base + bit));
+ 		}
  	}
+-	desc->irq_data.chip->irq_unmask(&desc->irq_data);
++	chained_irq_exit(irq_desc_get_chip(desc), desc);
+ 	/* now it may re-trigger */
+ }
  
--	if (WARN_ON(DAVINCI_N_GPIO < ngpio))
--		ngpio = DAVINCI_N_GPIO;
-+	if (WARN_ON(ARCH_NR_GPIOS < ngpio))
-+		ngpio = ARCH_NR_GPIOS;
- 
- 	chips = devm_kzalloc(dev,
- 			     ngpio * sizeof(struct davinci_gpio_controller),
 -- 
 1.7.9.5
