@@ -1,50 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pl061: print resource_size_t as %pa
-Date: Wed, 27 Nov 2013 00:49:17 +0100
-Message-ID: <CACRpkdaK3Lvw+DjWTjkU-AUyHY98YWQD58Lw10COG44WvOJSgQ@mail.gmail.com>
-References: <1385492161-27624-1-git-send-email-olof@lixom.net>
-	<1385493242.20100.71.camel@joe-AO722>
-	<CAOesGMgSnW9e4M63RVWyAtqTbhj4_+Kmw_Rm71aCUUhiav25Vw@mail.gmail.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH v3 1/6] ARM: tegra: add gpiod_lookup table for paz00
+Date: Wed, 27 Nov 2013 11:28:58 +0900
+Message-ID: <529558EA.9090206@nvidia.com>
+References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com> <1385460350-17543-2-git-send-email-mika.westerberg@linux.intel.com> <52950585.2080802@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:60300 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757506Ab3KZXtS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 18:49:18 -0500
-Received: by mail-oa0-f47.google.com with SMTP id k1so6888618oag.34
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2013 15:49:17 -0800 (PST)
-In-Reply-To: <CAOesGMgSnW9e4M63RVWyAtqTbhj4_+Kmw_Rm71aCUUhiav25Vw@mail.gmail.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8455 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757951Ab3K0C3E (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Nov 2013 21:29:04 -0500
+In-Reply-To: <52950585.2080802@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Joe Perches <joe@perches.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Warren <swarren@wwwdotorg.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Nov 26, 2013 at 8:17 PM, Olof Johansson <olof@lixom.net> wrote:
-> On Tue, Nov 26, 2013 at 11:14 AM, Joe Perches <joe@perches.com> wrote:
->> On Tue, 2013-11-26 at 10:56 -0800, Olof Johansson wrote:
-
->>>       amba_set_drvdata(adev, chip);
->>> -     dev_err(&adev->dev, "PL061 GPIO chip @%08x registered\n",
->>> -             adev->res.start);
->>> +     dev_err(&adev->dev, "PL061 GPIO chip @%pa registered\n",
->>> +             &adev->res.start);
+On 11/27/2013 05:33 AM, Stephen Warren wrote:
+> On 11/26/2013 03:05 AM, Mika Westerberg wrote:
+>> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 >>
->> This looks as if this should not use dev_err, but maybe dev_info
->> and maybe it should use %pR, &adev->res
+>> This makes it possible to request the gpio descriptors in
+>> rfkill_gpio driver regardless of the platform.
 >
-> Yep, I have as a somewhat long-standing todo to scrub for needlessly
-> elevated printk levels (err and warn) on various drivers during boot,
-> thanks for shortcutting that. :)
+> V2 of the series did the following:
+>
+>   static struct rfkill_gpio_platform_data wifi_rfkill_platform_data = {
+>   	.name		= "wifi_rfkill",
+> -	.reset_gpio	= 25, /* PD1 */
+> -	.shutdown_gpio	= 85, /* PK5 */
+>   	.type	= RFKILL_TYPE_WLAN,
+>   };
+>
+> I assume that will happen sometime, along with removing those two fields
+> from the struct definition.
 
-Bah copy/paste bug from my side ...
+This needs to happen after patch 2 of this series, but would be nice to 
+have indeed. Would suggest to do it in a separate patch if this series 
+needs no more revision.
 
-> I'll let Linus decide on pR vs pa.
-
-I go with the thing you tested, fixed up the commit and also
-switched to dev_info().
-
-But now I have worse PL061 problems than this.
-
-Yours,
-Linus Walleij
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
