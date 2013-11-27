@@ -1,65 +1,79 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH v2] gpio-lynxpoint: Allow building as a module
-Date: Wed, 27 Nov 2013 15:46:06 +0100
-Message-ID: <20131127154606.5b6d6742@endymion.delvare>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH v3 1/6] ARM: tegra: add gpiod_lookup table for paz00
+Date: Wed, 27 Nov 2013 11:47:16 -0500
+Message-ID: <52962214.9030203@nvidia.com>
+References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com> <1385460350-17543-2-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:53235 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752274Ab3K0OqL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 27 Nov 2013 09:46:11 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1385460350-17543-2-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Adrian Hunter <adrian.hunter@intel.com>, Alex Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, linux-gpio@vger.kernel.org
 
-Change CONFIG_GPIO_LYNXPOINT from bool to tristate so that the
-gpio-lynxpoint driver can be built as a module.
+On 11/26/2013 5:05 AM, Mika Westerberg wrote:
+> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> 
+> This makes it possible to request the gpio descriptors in
+> rfkill_gpio driver regardless of the platform.
+> 
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Tested-by: Stephen Warren <swarren@nvidia.com>
+> ---
+>  arch/arm/mach-tegra/board-paz00.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+> index 06f024070dab..a309795da665 100644
+> --- a/arch/arm/mach-tegra/board-paz00.c
+> +++ b/arch/arm/mach-tegra/board-paz00.c
+> @@ -18,6 +18,7 @@
+>   */
+>  
+>  #include <linux/platform_device.h>
+> +#include <linux/gpio/driver.h>
+>  #include <linux/rfkill-gpio.h>
+>  #include "board.h"
+>  
+> @@ -36,7 +37,13 @@ static struct platform_device wifi_rfkill_device = {
+>  	},
+>  };
+>  
+> +static struct gpiod_lookup wifi_gpio_lookup[] = {
+> +	GPIO_LOOKUP_IDX("tegra-gpio", 25, "rfkill_gpio", NULL, 0, 0),
+> +	GPIO_LOOKUP_IDX("tegra-gpio", 85, "rfkill_gpio", NULL, 1, 0),
+> +};
 
-Add the required glue: an exit function to unregister the driver, and
-module information.
+I wouldn't think this table would match for the gpios as the driver
+currently is. From what I see, the driver calls into gpiod_get_index,
+which will try 1 of 3 ways of getting the gpios:
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/Kconfig          |    2 +-
- drivers/gpio/gpio-lynxpoint.c |   11 +++++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
+of-enabled: of_find_gpio
+	- which I believe wouldn't work for paz00, since rfkill
+	  doesn't support dt?
+acpi: acpi_find_gpio
+	- I assume this does work, but I didn't dive into it
+gpiod lookup table: gpiod_find
+	- I think this is the path we expect to be taken, given the addition of
+the lookup table here, but I don't think it would actually match.
+Looking at the code for gpiod_find, it seems like it would try to match
+the con_id, but would fail. Patch 2/6 is passing the reset_name and
+shutdown_name for the con_ids, which isn't what is registered in this
+table.
 
---- linux-3.13-rc1.orig/drivers/gpio/Kconfig	2013-11-27 14:27:39.776405958 +0100
-+++ linux-3.13-rc1/drivers/gpio/Kconfig	2013-11-27 14:47:01.604049477 +0100
-@@ -353,7 +353,7 @@ config GPIO_GE_FPGA
- 	  board computers.
- 
- config GPIO_LYNXPOINT
--	bool "Intel Lynxpoint GPIO support"
-+	tristate "Intel Lynxpoint GPIO support"
- 	depends on ACPI && X86
- 	select IRQ_DOMAIN
- 	help
---- linux-3.13-rc1.orig/drivers/gpio/gpio-lynxpoint.c	2013-11-26 15:44:46.827657836 +0100
-+++ linux-3.13-rc1/drivers/gpio/gpio-lynxpoint.c	2013-11-27 15:42:16.563778124 +0100
-@@ -469,4 +469,15 @@ static int __init lp_gpio_init(void)
- 	return platform_driver_register(&lp_gpio_driver);
- }
- 
-+static void __exit lp_gpio_exit(void)
-+{
-+	platform_driver_unregister(&lp_gpio_driver);
-+}
-+
- subsys_initcall(lp_gpio_init);
-+module_exit(lp_gpio_exit);
-+
-+MODULE_AUTHOR("Mathias Nyman (Intel)");
-+MODULE_DESCRIPTION("GPIO interface for Intel Lynxpoint");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:lp_gpio");
+Shouldn't it look more like this?
 
++static struct gpiod_lookup wifi_gpio_lookup[] = {
++	GPIO_LOOKUP_IDX("tegra-gpio", 25, "rfkill_gpio_reset", NULL, 0, 0),
++	GPIO_LOOKUP_IDX("tegra-gpio", 85, "rfkill_gpio_shutdown", NULL, 1, 0),
++};
+
+Sorry if I am missing something...
+
+-rhyland
 
 -- 
-Jean Delvare
-Suse L3 Support
+nvpublic
