@@ -1,33 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: bcm281xx: Fix return value of bcm_kona_gpio_get()
-Date: Wed, 27 Nov 2013 15:01:58 +0100
-Message-ID: <CACRpkdb86fd63=ytO6VKXJ+CVM0qyHYXL6C1BL0nZo+JAbnCsg@mail.gmail.com>
-References: <1385075566-23989-1-git-send-email-markus.mayer@linaro.org>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH] gpio-lynxpoint: Allow building as a module
+Date: Wed, 27 Nov 2013 15:19:20 +0100
+Message-ID: <20131127151920.3f6c3b89@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34755 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751131Ab3K0OB6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2013 09:01:58 -0500
-Received: by mail-ob0-f177.google.com with SMTP id va2so7358957obc.36
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2013 06:01:58 -0800 (PST)
-In-Reply-To: <1385075566-23989-1-git-send-email-markus.mayer@linaro.org>
+Received: from cantor2.suse.de ([195.135.220.15]:51789 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751871Ab3K0OTZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 27 Nov 2013 09:19:25 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Mayer <markus.mayer@linaro.org>
-Cc: Linaro Patches <patches@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Tim Kryger <tim.kryger@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, linux-gpio@vger.kernel.org
 
-On Fri, Nov 22, 2013 at 12:12 AM, Markus Mayer <markus.mayer@linaro.org> wrote:
+Change CONFIG_GPIO_LYNXPOINT from bool to tristate so that the
+gpio-lynxpoint driver can be built as a module.
 
-> We need to return the corresponding bit for a particular GPIO. This bit
-> contains shift not mask.
->
-> Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
-> Reviewed-by: Tim Kryger <tim.kryger@linaro.org>
-> Reviewed-by: Matt Porter <matt.porter@linaro.org>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied for fixes, thanks!
+--- linux-3.13-rc1.orig/drivers/gpio/Kconfig	2013-11-26 15:44:46.824657767 +0100
++++ linux-3.13-rc1/drivers/gpio/Kconfig	2013-11-27 14:27:34.911295631 +0100
+@@ -353,7 +353,7 @@ config GPIO_GE_FPGA
+ 	  board computers.
+ 
+ config GPIO_LYNXPOINT
+-	bool "Intel Lynxpoint GPIO support"
++	tristate "Intel Lynxpoint GPIO support"
+ 	depends on ACPI && X86
+ 	select IRQ_DOMAIN
+ 	help
 
-Yours,
-Linus Walleij
+
+-- 
+Jean Delvare
+Suse L3 Support
