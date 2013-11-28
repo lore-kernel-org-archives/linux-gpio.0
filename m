@@ -1,47 +1,35 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] gpio: rcar: Support both edge trigger with DT
-Date: Thu, 28 Nov 2013 16:31:59 +0100
-Message-ID: <2124422.xP76KsfKRo@avalon>
-References: <1384359983-29178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CANqRtoRhHhWp0zDcc8jN3eqV=O-=4uBG_a9Xb1-+Lk4eEiZoiw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] gpio: better lookup method for platform GPIOs
+Date: Thu, 28 Nov 2013 17:42:35 +0200
+Message-ID: <CAHp75Vc_NZiukvRaBUkexQXTsAij1ZcPGHDBMBeN-a5m77k=jA@mail.gmail.com>
+References: <1385628388-23827-1-git-send-email-acourbot@nvidia.com>
+	<CACRpkda-TtKQr6hDx4corjxYv7r7f6_9sNp_2ocbvg9MHyOk7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CANqRtoRhHhWp0zDcc8jN3eqV=O-=4uBG_a9Xb1-+Lk4eEiZoiw@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, SH-Linux <linux-sh@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:52875 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756190Ab3K1Pmf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Nov 2013 10:42:35 -0500
+In-Reply-To: <CACRpkda-TtKQr6hDx4corjxYv7r7f6_9sNp_2ocbvg9MHyOk7Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Rhyland Klein <rklein@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+On Thu, Nov 28, 2013 at 4:45 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Nov 28, 2013 at 9:46 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
-On Thursday 14 November 2013 15:12:46 Magnus Damm wrote:
-> On Thu, Nov 14, 2013 at 1:26 AM, Laurent Pinchart wrote:
-> > Some versions of the R-Car GPIO controller support triggering on both
-> > edges of the input signal. Whether this capability is supported is
-> > currently specified in platform data. R-Car GPIO devices instantiated
-> > from the device tree have the capability turned off even when the
-> > hardware supports it.
-> > 
-> > To fix this, add DT match data support to the driver, initialize both
-> > edge trigger support from match data and enable both edge trigger in
-> > r8a7790 and r8a7791 match data.
-> > 
-> > Signed-off-by: Laurent Pinchart
-> > <laurent.pinchart+renesas@ideasonboard.com>
-> > ---
-> > 
-> >  drivers/gpio/gpio-rcar.c | 56 +++++++++++++++++++++++++++++++++----------
-> >  1 file changed, 43 insertions(+), 13 deletions(-)
-> 
-> Looks fine to me, thanks!
-> 
-> Acked-by: Magnus Damm <damm@opensource.se>
+[]
 
-Could you please pick this patch up for v3.14 ?
+>> Let's change this bad design before more users start using it. ;)
+>
+> OK given that Mika has based his patches on this
+
+Not only him, since I\have started to look for SFI GPIO solution :-)
+
+P.S. Whenever Mika ACKs I will agree with that.
 
 -- 
-Regards,
-
-Laurent Pinchart
-
+With Best Regards,
+Andy Shevchenko
