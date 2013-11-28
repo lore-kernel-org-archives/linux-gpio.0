@@ -1,38 +1,55 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6] gpio: Add MOXA ART GPIO driver
-Date: Thu, 28 Nov 2013 17:37:32 +0100
-Message-ID: <201311281737.32696.arnd@arndb.de>
-References: <1381503190-5733-1-git-send-email-jonas.jensen@gmail.com> <1385651945-22355-1-git-send-email-jonas.jensen@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpio: better lookup method for platform GPIOs
+Date: Thu, 28 Nov 2013 18:59:22 +0200
+Message-ID: <20131128165922.GC2281@intel.com>
+References: <1385628388-23827-1-git-send-email-acourbot@nvidia.com>
+ <CACRpkda-TtKQr6hDx4corjxYv7r7f6_9sNp_2ocbvg9MHyOk7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1385651945-22355-1-git-send-email-jonas.jensen@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonas Jensen <jonas.jensen@gmail.com>
-Cc: linux-gpio@vger.kernel.org, grant.likely@linaro.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, arm@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:38542 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751551Ab3K1Qwo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Nov 2013 11:52:44 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkda-TtKQr6hDx4corjxYv7r7f6_9sNp_2ocbvg9MHyOk7Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Rhyland Klein <rklein@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thursday 28 November 2013, Jonas Jensen wrote:
-> +static void __iomem *moxart_gpio_base;
+On Thu, Nov 28, 2013 at 03:45:37PM +0100, Linus Walleij wrote:
+> On Thu, Nov 28, 2013 at 9:46 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> 
+> > Change the format of the platform GPIO lookup tables to make them less
+> > confusing and improve lookup efficiency.
+> >
+> > The previous format was a single linked-list that required to compare
+> > the device name and function ID of every single GPIO defined for each
+> > lookup. Switch that to a list of per-device tables, so that the lookup
+> > can be done in two steps, omitting the GPIOs that are not relevant for a
+> > particular device.
+> >
+> > The matching rules are now defined as follows:
+> > - The device name must match *exactly*, and can be NULL for GPIOs not
+> >   assigned to a particular device,
+> > - If the function ID in the lookup table is NULL, the con_id argument of
+> >   gpiod_get() will not be used for lookup. However, if it is defined, it
+> >   must match exactly.
+> > - The index must always match.
+> >
+> > Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> > ---
+> > Let's change this bad design before more users start using it. ;)
+> 
+> OK given that Mika has based his patches on this I'll request
+> that he ACK this and then I'll merge this so that he can put
+> this patch at the bottom of his patch stack.
+> 
+> Mika: requesting ACK.
 
-Just one comment: the usual way to do such a driver is to have
-a derived data structure like
+Alexandre, please check Andy's comments.
 
-struct moxart_gpio_chip {
-	struct gpio_chip chip;
-	void __iomem *moxart_gpio_base;
-};
+Apart from that this looks good to me.
 
-and dynamically allocate that from probe(), using container_of() to
-get from the gpio_chip pointer to your own structure.
-
-You obviously rely on the fact that there is only one gpio_chip
-in a moxart soc, which is a safe assumption, the only real disadvantage
-of your approach is that it makes your driver less suitable as an
-example for others to look at when they are not dealing with
-just a single instance, so decide for yourself whether you want
-to change it or not.
-
-	Arnd
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
