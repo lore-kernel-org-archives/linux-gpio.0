@@ -1,31 +1,20 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pl061: move irqdomain initialization
-Date: Thu, 28 Nov 2013 15:23:09 +0100
-Message-ID: <CACRpkdaHRuFqKDzxGVf+PHpW7Yo6uUo5MreiCybgxBC27OOupg@mail.gmail.com>
-References: <1385557881-3667-1-git-send-email-linus.walleij@linaro.org>
-	<20131127134159.GF32436@tarshish>
+From: <loanalertm@loanalertm.onmicrosoft.com>
+Subject: YOUR OPPORTUNITY
+Date: Thu, 28 Nov 2013 19:56:29 +0530
+Message-ID: <52b01758-3090-4300-9211-ad734fde2926@SINPR02MB250.apcprd02.prod.outlook.com>
+Reply-To: <concordfinance01@hotmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:60457 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751148Ab3K1OXK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Nov 2013 09:23:10 -0500
-Received: by mail-ob0-f180.google.com with SMTP id wo20so8694707obc.25
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Nov 2013 06:23:09 -0800 (PST)
-In-Reply-To: <20131127134159.GF32436@tarshish>
+Received: from emea01-db3-ndr.ptr.protection.outlook.com ([157.56.120.104]:54390
+	"EHLO emea01-db3-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751271Ab3K1O0k convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Nov 2013 09:26:40 -0500
+Content-Description: Mail message body
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <acourbot@nvidia.com>, Rob Herring <robherring2@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>
+To: Recipients <loanalertm@loanalertm.onmicrosoft.com>
 
-On Wed, Nov 27, 2013 at 2:41 PM, Baruch Siach <baruch@tkos.co.il> wrote:
-
-> Isn't this a matter for -stable (v3.10+)?
-
-Sure I just missed to add that tag. I'll send a separate ping to Greg
-on stable@vger once this is upstream, I've put a reminder into my
-calendar...
-
-Yours,
-Linus Walleij
+Hello, We are individual business sponsors. We sponsor business oriented individuals by providing them with financial sponsorship to setup new business, carry out their business projects or strengthen the old business that is facing financial difficulties. We can sponsor you with any amount ranging from $100,000.00usd to $80,000,000.00usd for a start provided we can rely on your ability to pay back our money within the stipulated period of 10years. For more details and to apply for our sponsorship click your reply button now to reply us.
