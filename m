@@ -1,20 +1,41 @@
-From: <loanalertm@loanalertm.onmicrosoft.com>
-Subject: YOUR OPPORTUNITY
-Date: Thu, 28 Nov 2013 19:56:29 +0530
-Message-ID: <52b01758-3090-4300-9211-ad734fde2926@SINPR02MB250.apcprd02.prod.outlook.com>
-Reply-To: <concordfinance01@hotmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpiolib: add missing declarations
+Date: Thu, 28 Nov 2013 15:32:37 +0100
+Message-ID: <CACRpkdZMjmmUN0LkAZiBU8Dvy74zFZ2fQhRxeUMWbTfXupVzoA@mail.gmail.com>
+References: <529317AB.1050600@nvidia.com>
+	<1385372064-16221-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from emea01-db3-ndr.ptr.protection.outlook.com ([157.56.120.104]:54390
-	"EHLO emea01-db3-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751271Ab3K1O0k convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Nov 2013 09:26:40 -0500
-Content-Description: Mail message body
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:41025 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758720Ab3K1Oci (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Nov 2013 09:32:38 -0500
+Received: by mail-ob0-f174.google.com with SMTP id wn1so8849885obc.19
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Nov 2013 06:32:37 -0800 (PST)
+In-Reply-To: <1385372064-16221-1-git-send-email-acourbot@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <loanalertm@loanalertm.onmicrosoft.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello, We are individual business sponsors. We sponsor business oriented individuals by providing them with financial sponsorship to setup new business, carry out their business projects or strengthen the old business that is facing financial difficulties. We can sponsor you with any amount ranging from $100,000.00usd to $80,000,000.00usd for a start provided we can rely on your ability to pay back our money within the stipulated period of 10years. For more details and to apply for our sponsorship click your reply button now to reply us.
+On Mon, Nov 25, 2013 at 10:34 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+
+> Add declaration of 'struct of_phandle_args' to avoid the following
+> warning:
+>
+>   In file included from arch/arm/mach-tegra/board-paz00.c:21:0:
+>   include/linux/gpio/driver.h:102:17: warning: 'struct of_phandle_args' declared inside parameter list
+>   include/linux/gpio/driver.h:102:17: warning: its scope is only this definition or declaration, which is probably not what you want
+>
+> Also proactively add other definitions/includes that could be missing
+> in other contexts.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Reported-by: Stephen Warren <swarren@wwwdotorg.org>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+Patch applied for fixes.
+
+Yours,
+Linus Walleij
