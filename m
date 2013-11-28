@@ -1,301 +1,133 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpio: better lookup method for platform GPIOs
-Date: Thu, 28 Nov 2013 17:46:28 +0900
-Message-ID: <1385628388-23827-1-git-send-email-acourbot@nvidia.com>
+From: Marc Dietrich <Marc.Dietrich@ap.physik.uni-giessen.de>
+Subject: Re: [PATCH v3 1/6] ARM: tegra: add gpiod_lookup table for paz00
+Date: Thu, 28 Nov 2013 10:09:14 +0100
+Message-ID: <4501377.Eymj5teNBr@fb07-iapwap2>
+References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com> <52962214.9030203@nvidia.com> <CAAVeFuJiTg1j9ox6=rF00xSBiSmRSyvkGYWHSfmPAoo6JUQVfw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8095 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750935Ab3K1Ir0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Nov 2013 03:47:26 -0500
+Received: from merkurneu.hrz.uni-giessen.de ([134.176.2.3]:43697 "EHLO
+	merkurneu.hrz.uni-giessen.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750741Ab3K1JYg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Nov 2013 04:24:36 -0500
+In-Reply-To: <CAAVeFuJiTg1j9ox6=rF00xSBiSmRSyvkGYWHSfmPAoo6JUQVfw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rhyland Klein <rklein@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Rhyland Klein <rklein@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Adrian Hunter <adrian.hunter@intel.com>, Alex Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Change the format of the platform GPIO lookup tables to make them less
-confusing and improve lookup efficiency.
+Hi,
 
-The previous format was a single linked-list that required to compare
-the device name and function ID of every single GPIO defined for each
-lookup. Switch that to a list of per-device tables, so that the lookup
-can be done in two steps, omitting the GPIOs that are not relevant for a
-particular device.
+Am Donnerstag, 28. November 2013, 11:47:34 schrieb Alexandre Courbot:
+> On Thu, Nov 28, 2013 at 1:47 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> > On 11/26/2013 5:05 AM, Mika Westerberg wrote:
+> >> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> >> 
+> >> This makes it possible to request the gpio descriptors in
+> >> rfkill_gpio driver regardless of the platform.
+> >> 
+> >> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> >> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> >> Tested-by: Stephen Warren <swarren@nvidia.com>
+> >> ---
+> >> 
+> >>  arch/arm/mach-tegra/board-paz00.c | 7 +++++++
+> >>  1 file changed, 7 insertions(+)
+> >> 
+> >> diff --git a/arch/arm/mach-tegra/board-paz00.c
+> >> b/arch/arm/mach-tegra/board-paz00.c index 06f024070dab..a309795da665
+> >> 100644
+> >> --- a/arch/arm/mach-tegra/board-paz00.c
+> >> +++ b/arch/arm/mach-tegra/board-paz00.c
+> >> @@ -18,6 +18,7 @@
+> >> 
+> >>   */
+> >>  
+> >>  #include <linux/platform_device.h>
+> >> 
+> >> +#include <linux/gpio/driver.h>
+> >> 
+> >>  #include <linux/rfkill-gpio.h>
+> >>  #include "board.h"
+> >> 
+> >> @@ -36,7 +37,13 @@ static struct platform_device wifi_rfkill_device = {
+> >> 
+> >>       },
+> >>  
+> >>  };
+> >> 
+> >> +static struct gpiod_lookup wifi_gpio_lookup[] = {
+> >> +     GPIO_LOOKUP_IDX("tegra-gpio", 25, "rfkill_gpio", NULL, 0, 0),
+> >> +     GPIO_LOOKUP_IDX("tegra-gpio", 85, "rfkill_gpio", NULL, 1, 0),
+> >> +};
+> > 
+> > I wouldn't think this table would match for the gpios as the driver
+> > currently is. From what I see, the driver calls into gpiod_get_index,
+> > which will try 1 of 3 ways of getting the gpios:
+> > 
+> > of-enabled: of_find_gpio
+> > 
+> >         - which I believe wouldn't work for paz00, since rfkill
+> >         
+> >           doesn't support dt?
+> > 
+> > acpi: acpi_find_gpio
+> > 
+> >         - I assume this does work, but I didn't dive into it
+> > 
+> > gpiod lookup table: gpiod_find
+> > 
+> >         - I think this is the path we expect to be taken, given the
+> >         addition of
+> > 
+> > the lookup table here, but I don't think it would actually match.
+> > Looking at the code for gpiod_find, it seems like it would try to match
+> > the con_id, but would fail. Patch 2/6 is passing the reset_name and
+> > shutdown_name for the con_ids, which isn't what is registered in this
+> > table.
+> > 
+> > Shouldn't it look more like this?
+> > 
+> > +static struct gpiod_lookup wifi_gpio_lookup[] = {
+> > +       GPIO_LOOKUP_IDX("tegra-gpio", 25, "rfkill_gpio_reset", NULL, 0,
+> > 0),
+> > +       GPIO_LOOKUP_IDX("tegra-gpio", 85, "rfkill_gpio_shutdown", NULL, 1,
+> > 0), +};
+> 
+> The original GPIO lookup table specifies the device name
+> ("rfkill_gpio"), no con_id, and an index. gpiod_find() will ensure
+> that the device names match, skip the con_id (as it is null in the
+> table), and again require that the indexes are the same. So provided
+> the instanciated device's dev_name() is "rfkill_gpio" (which it seems
+> to be according to the driver - not sure if it could become
+> "rfkill_gpio.0"), then I'd say the GPIOs will match. The con_id passed
+> to gpiod_get() will only be used as a label for debugfs. I am not sure
+> where the "rfkill_gpio_reset" you mention comes from?
+> 
+> One could wonder why the names of the GPIO are not hardcoded in the
+> driver instead of being defined as platform data, but that point could
+> be improved in a future patch.
+> 
+> It is true however that the platform GPIO lookup mechanism is
+> confusing at best, on top of being inefficient (one big linked list).
+> I have a patch in the pipe that should improve both points by making
+> GPIO lookup tables defined per-device - don't hesitate to merge this
+> series first if it works though.
 
-The matching rules are now defined as follows:
-- The device name must match *exactly*, and can be NULL for GPIOs not
-  assigned to a particular device,
-- If the function ID in the lookup table is NULL, the con_id argument of
-  gpiod_get() will not be used for lookup. However, if it is defined, it
-  must match exactly.
-- The index must always match.
+I'll try to apply the patches and check on the actual hw. rfkill userspace 
+command should be able to enable/disable the gpio. No idea how it finds the 
+required gpio names.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-Let's change this bad design before more users start using it. ;)
+The real problem with the rfkill driver is that it does not support DT. A 
+naive attempt to convert it was made some year ago, but got rejected because 
+rfkill wasn't seen as isolated device which can be represented in the device-
+tree. Also it can not be added under some existing device node (e.g. the wifi 
+driver) because those devices sit normally on an "enumeratable" bus (e.g. usb, 
+pci), which is not listed in the device tree at all. This is why it still 
+requires a board file and platform_data. I wish we could find a solution for 
+this.
 
- Documentation/gpio/board.txt | 25 ++++++-----
- drivers/gpio/gpiolib.c       | 99 ++++++++++++++++++++++----------------------
- include/linux/gpio/driver.h  | 22 +++++-----
- 3 files changed, 76 insertions(+), 70 deletions(-)
-
-diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
-index 0d03506f2cc5..630d37b21934 100644
---- a/Documentation/gpio/board.txt
-+++ b/Documentation/gpio/board.txt
-@@ -72,10 +72,11 @@ where
- 
-   - chip_label is the label of the gpiod_chip instance providing the GPIO
-   - chip_hwnum is the hardware number of the GPIO within the chip
--  - dev_id is the identifier of the device that will make use of this GPIO. If
--	NULL, the GPIO will be available to all devices.
-+  - dev_id is the identifier of the device that will make use of this GPIO. It
-+	can be NULL, in which case it will be matched for calls to gpiod_get()
-+	with a NULL device.
-   - con_id is the name of the GPIO function from the device point of view. It
--	can be NULL.
-+	can be NULL, in which case it will match any function.
-   - idx is the index of the GPIO within the function.
-   - flags is defined to specify the following properties:
- 	* GPIOF_ACTIVE_LOW	- to configure the GPIO as active-low
-@@ -88,16 +89,20 @@ Note that GPIO_LOOKUP() is just a shortcut to GPIO_LOOKUP_IDX() where idx = 0.
- 
- A lookup table can then be defined as follows:
- 
--	struct gpiod_lookup gpios_table[] = {
--	GPIO_LOOKUP_IDX("gpio.0", 15, "foo.0", "led", 0, GPIO_ACTIVE_HIGH),
--	GPIO_LOOKUP_IDX("gpio.0", 16, "foo.0", "led", 1, GPIO_ACTIVE_HIGH),
--	GPIO_LOOKUP_IDX("gpio.0", 17, "foo.0", "led", 2, GPIO_ACTIVE_HIGH),
--	GPIO_LOOKUP("gpio.0", 1, "foo.0", "power", GPIO_ACTIVE_LOW),
--	};
-+struct gpiod_lookup_table gpios_table = {
-+	.dev_id = "foo.0",
-+	.size = 4,
-+	.table = {
-+	GPIO_LOOKUP_IDX("gpio.0", 15, "led", 0, GPIO_ACTIVE_HIGH),
-+	GPIO_LOOKUP_IDX("gpio.0", 16, "led", 1, GPIO_ACTIVE_HIGH),
-+	GPIO_LOOKUP_IDX("gpio.0", 17, "led", 2, GPIO_ACTIVE_HIGH),
-+	GPIO_LOOKUP("gpio.0", 1, "power", GPIO_ACTIVE_LOW),
-+	},
-+};
- 
- And the table can be added by the board code as follows:
- 
--	gpiod_add_table(gpios_table, ARRAY_SIZE(gpios_table));
-+	gpiod_add_lookup_table(&gpios_table);
- 
- The driver controlling "foo.0" will then be able to obtain its GPIOs as follows:
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f72618ba716a..568db6ab7d04 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2259,18 +2259,14 @@ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
- EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
- 
- /**
-- * gpiod_add_table() - register GPIO device consumers
-- * @table: array of consumers to register
-- * @num: number of consumers in table
-+ * gpiod_add_lookup_table() - register GPIO device consumers
-+ * @table: table of consumers to register
-  */
--void gpiod_add_table(struct gpiod_lookup *table, size_t size)
-+void gpiod_add_lookup_table(struct gpiod_lookup_table *table)
- {
- 	mutex_lock(&gpio_lookup_lock);
- 
--	while (size--) {
--		list_add_tail(&table->list, &gpio_lookup_list);
--		table++;
--	}
-+	list_add_tail(&table->list, &gpio_lookup_list);
- 
- 	mutex_unlock(&gpio_lookup_lock);
- }
-@@ -2326,72 +2322,77 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
- 	return desc;
- }
- 
--static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
--				    unsigned int idx,
--				    enum gpio_lookup_flags *flags)
-+static struct gpiod_lookup_table *gpiod_find_lookup_table(struct device *dev)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
--	struct gpio_desc *desc = ERR_PTR(-ENODEV);
--	unsigned int match, best = 0;
--	struct gpiod_lookup *p;
-+	struct gpiod_lookup_table *table;
- 
- 	mutex_lock(&gpio_lookup_lock);
- 
--	list_for_each_entry(p, &gpio_lookup_list, list) {
--		match = 0;
-+	list_for_each_entry(table, &gpio_lookup_list, list) {
-+		if (table->dev_id && dev_id && strcmp(table->dev_id, dev_id))
-+			continue;
- 
--		if (p->dev_id) {
--			if (!dev_id || strcmp(p->dev_id, dev_id))
--				continue;
-+		if (dev_id != table->dev_id)
-+			continue;
- 
--			match += 2;
--		}
-+		return table;
-+	}
- 
--		if (p->con_id) {
--			if (!con_id || strcmp(p->con_id, con_id))
--				continue;
-+	mutex_unlock(&gpio_lookup_lock);
- 
--			match += 1;
--		}
-+	return NULL;
-+}
- 
--		if (p->idx != idx)
--			continue;
-+static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
-+				    unsigned int idx,
-+				    enum gpio_lookup_flags *flags)
-+{
-+	struct gpio_desc *desc = ERR_PTR(-ENODEV);
-+	struct gpiod_lookup_table *table;
-+	int i;
- 
--		if (match > best) {
--			struct gpio_chip *chip;
- 
--			chip = find_chip_by_name(p->chip_label);
-+	table = gpiod_find_lookup_table(dev);
-+	if (!table)
-+		return desc;
- 
--			if (!chip) {
--				dev_warn(dev, "cannot find GPIO chip %s\n",
--					 p->chip_label);
--				continue;
--			}
-+	for (i = 0; i < table->size; i++) {
-+		struct gpio_chip *chip;
-+		struct gpiod_lookup *p = &table->table[i];
- 
--			if (chip->ngpio <= p->chip_hwnum) {
--				dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
--					 chip->label, chip->ngpio);
-+		if (p->idx != idx)
-+			continue;
-+
-+		if (p->con_id) {
-+			if (!con_id || strcmp(p->con_id, con_id))
- 				continue;
--			}
-+		}
- 
--			desc = gpio_to_desc(chip->base + p->chip_hwnum);
--			*flags = p->flags;
-+		chip = find_chip_by_name(p->chip_label);
- 
--			if (match != 3)
--				best = match;
--			else
--				break;
-+		if (!chip) {
-+			dev_warn(dev, "cannot find GPIO chip %s\n",
-+				 p->chip_label);
-+			continue;
- 		}
--	}
- 
--	mutex_unlock(&gpio_lookup_lock);
-+		if (chip->ngpio <= p->chip_hwnum) {
-+			dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
-+				 chip->label, chip->ngpio);
-+			continue;
-+		}
-+
-+		desc = gpiochip_offset_to_desc(chip, p->chip_hwnum);
-+		*flags = p->flags;
-+	}
- 
- 	return desc;
- }
- 
- /**
-  * gpio_get - obtain a GPIO for a given GPIO function
-- * @dev:	GPIO consumer
-+ * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-  * @con_id:	function within the GPIO consumer
-  *
-  * Return the GPIO descriptor corresponding to the function con_id of device
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 3ea2cf6b0e6c..44893ef40817 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -140,7 +140,6 @@ enum gpio_lookup_flags {
-  * platform data.
-  */
- struct gpiod_lookup {
--	struct list_head list;
- 	/*
- 	 * name of the chip the GPIO belongs to
- 	 */
-@@ -150,10 +149,6 @@ struct gpiod_lookup {
- 	 */
- 	u16 chip_hwnum;
- 	/*
--	 * name of device that can claim this GPIO
--	 */
--	const char *dev_id;
--	/*
- 	 * name of the GPIO from the device's point of view
- 	 */
- 	const char *con_id;
-@@ -167,28 +162,33 @@ struct gpiod_lookup {
- 	enum gpio_lookup_flags flags;
- };
- 
-+struct gpiod_lookup_table {
-+	struct list_head list;
-+	const char *dev_id;
-+	unsigned int size;
-+	struct gpiod_lookup table[];
-+};
-+
- /*
-  * Simple definition of a single GPIO under a con_id
-  */
--#define GPIO_LOOKUP(_chip_label, _chip_hwnum, _dev_id, _con_id, _flags) \
--	GPIO_LOOKUP_IDX(_chip_label, _chip_hwnum, _dev_id, _con_id, 0, _flags)
-+#define GPIO_LOOKUP(_chip_label, _chip_hwnum, _con_id, _flags) \
-+	GPIO_LOOKUP_IDX(_chip_label, _chip_hwnum, _con_id, 0, _flags)
- 
- /*
-  * Use this macro if you need to have several GPIOs under the same con_id.
-  * Each GPIO needs to use a different index and can be accessed using
-  * gpiod_get_index()
-  */
--#define GPIO_LOOKUP_IDX(_chip_label, _chip_hwnum, _dev_id, _con_id, _idx, \
--			_flags)                                           \
-+#define GPIO_LOOKUP_IDX(_chip_label, _chip_hwnum, _con_id, _idx, _flags)  \
- {                                                                         \
- 	.chip_label = _chip_label,                                        \
- 	.chip_hwnum = _chip_hwnum,                                        \
--	.dev_id = _dev_id,                                                \
- 	.con_id = _con_id,                                                \
- 	.idx = _idx,                                                      \
- 	.flags = _flags,                                                  \
- }
- 
--void gpiod_add_table(struct gpiod_lookup *table, size_t size);
-+void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
- 
- #endif
--- 
-1.8.4.2
+Marc
 
