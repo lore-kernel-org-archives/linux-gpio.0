@@ -1,55 +1,40 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] gpio: better lookup method for platform GPIOs
-Date: Thu, 28 Nov 2013 18:59:22 +0200
-Message-ID: <20131128165922.GC2281@intel.com>
-References: <1385628388-23827-1-git-send-email-acourbot@nvidia.com>
- <CACRpkda-TtKQr6hDx4corjxYv7r7f6_9sNp_2ocbvg9MHyOk7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] gpio / ACPI: convert users to gpiod_* and drop
+ acpi_gpio.h
+Date: Thu, 28 Nov 2013 19:04:57 +0200
+Message-ID: <20131128170457.GD2281@intel.com>
+References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkdbJsQOjJ5QLVL9WutN9c04-AfRKe-hCYZ0fxDKsfCZS6Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:38542 "EHLO mga02.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:17338 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751551Ab3K1Qwo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 Nov 2013 11:52:44 -0500
+	id S1758720Ab3K1Q6V (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Nov 2013 11:58:21 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkda-TtKQr6hDx4corjxYv7r7f6_9sNp_2ocbvg9MHyOk7Q@mail.gmail.com>
+In-Reply-To: <CACRpkdbJsQOjJ5QLVL9WutN9c04-AfRKe-hCYZ0fxDKsfCZS6Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Rhyland Klein <rklein@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Nov 28, 2013 at 03:45:37PM +0100, Linus Walleij wrote:
-> On Thu, Nov 28, 2013 at 9:46 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Thu, Nov 28, 2013 at 03:36:40PM +0100, Linus Walleij wrote:
+> On Tue, Nov 26, 2013 at 11:05 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
 > 
-> > Change the format of the platform GPIO lookup tables to make them less
-> > confusing and improve lookup efficiency.
-> >
-> > The previous format was a single linked-list that required to compare
-> > the device name and function ID of every single GPIO defined for each
-> > lookup. Switch that to a list of per-device tables, so that the lookup
-> > can be done in two steps, omitting the GPIOs that are not relevant for a
-> > particular device.
-> >
-> > The matching rules are now defined as follows:
-> > - The device name must match *exactly*, and can be NULL for GPIOs not
-> >   assigned to a particular device,
-> > - If the function ID in the lookup table is NULL, the con_id argument of
-> >   gpiod_get() will not be used for lookup. However, if it is defined, it
-> >   must match exactly.
-> > - The index must always match.
-> >
-> > Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> > ---
-> > Let's change this bad design before more users start using it. ;)
+> > Since the patches in the series depend on each other I would propose this
+> > to be merged via GPIO tree.
 > 
-> OK given that Mika has based his patches on this I'll request
-> that he ACK this and then I'll merge this so that he can put
-> this patch at the bottom of his patch stack.
-> 
-> Mika: requesting ACK.
+> Sure! Can you hunt the net/mmc/Tegra subsystem maintainers
+> for ACKs please?
 
-Alexandre, please check Andy's comments.
+I think Stephen already tested the tegra parts and his Tested-by is added
+to the patches.
 
-Apart from that this looks good to me.
+Chris,
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Do you have any comments on the series? Could you give your ACK for the mmc
+part if you are OK with that?
+
+Thanks.
