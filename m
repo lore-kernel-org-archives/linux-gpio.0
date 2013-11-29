@@ -1,38 +1,53 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH] gpiolib: use platform GPIO mappings as fallback
-Date: Fri, 29 Nov 2013 18:35:04 +0900
-Message-ID: <52985FC8.70008@nvidia.com>
-References: <1385202890-9511-1-git-send-email-acourbot@nvidia.com> <CACRpkdbun289Y1fu-=sB77ESg6E15hRCcd+NYmwk57MoxkoTMQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpiolib: don't bother warning when failing to get gpios
+Date: Fri, 29 Nov 2013 18:37:35 +0900
+Message-ID: <CAAVeFuJUWcOKos3ds-ekRv6T0=sU6dtx5M3rQNTGKMDCVj68Eg@mail.gmail.com>
+References: <1385716566-9810-1-git-send-email-heikki.krogerus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:8078 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753203Ab3K2JfH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:35:07 -0500
-In-Reply-To: <CACRpkdbun289Y1fu-=sB77ESg6E15hRCcd+NYmwk57MoxkoTMQ@mail.gmail.com>
+Received: from mail-ie0-f178.google.com ([209.85.223.178]:64460 "EHLO
+	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753814Ab3K2Jh4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:37:56 -0500
+Received: by mail-ie0-f178.google.com with SMTP id lx4so15591439iec.23
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:37:55 -0800 (PST)
+In-Reply-To: <1385716566-9810-1-git-send-email-heikki.krogerus@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 11/29/2013 06:29 PM, Linus Walleij wrote:
-> On Sat, Nov 23, 2013 at 11:34 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Fri, Nov 29, 2013 at 6:16 PM, Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+> It's the drivers responsibility to react on failure to get
+> the gpio descriptors and not the frameworks. Since there are
+> some common peripherals that may or may not have certain
+> pins connected to gpio lines, depending on the platform,
+> printing the warning there may end up generating useless bug
+> reports.
 >
->> For platforms that use device tree or ACPI as the standard way to look
->> GPIOs up, allow the platform-defined GPIO mappings to be used as a
->> fallback. This may be useful for platforms that need extra GPIOs mappings
->> not defined by the firmware.
->>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> ---
+>  drivers/gpio/gpiolib.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
-> Applied for fixes. I was considering applying it for the next
-> kernel but it depends on the former patches and we should
-> expect a bit of extra fuzz now with the new API.
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 4e10b10..2f0305e 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2434,10 +2434,8 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>                 desc = gpiod_find(dev, con_id, idx, &flags);
+>         }
+>
+> -       if (IS_ERR(desc)) {
+> -               dev_warn(dev, "lookup for GPIO %s failed\n", con_id);
+> +       if (IS_ERR(desc))
+>                 return desc;
+> -       }
+>
+>         status = gpiod_request(desc, con_id);
 
-Thanks - I'd rather have all the problems coming in a row than 
-incrementally as we introduce potentially incompatible changes.
-
-Alex.
-
+I kind of agree with the logic that motivates this patch, but how
+about turning this warning into dev_dbg() instead so that people who
+wish so can still continue using it?
