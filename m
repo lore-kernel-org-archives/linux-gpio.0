@@ -1,42 +1,39 @@
 From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [PATCH 0/2] gpio: davinci: preparation fixes and updates to reuse
- it for Keystone
-Date: Fri, 29 Nov 2013 10:41:30 -0500
-Message-ID: <5298B5AA.8030301@ti.com>
-References: <1385048076-7875-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [RFC v1 1/9] gpio: davinci: get rid of DAVINCI_N_GPIO
+Date: Fri, 29 Nov 2013 10:48:11 -0500
+Message-ID: <5298B73B.8060605@ti.com>
+References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com> <1385494815-15740-2-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:41515 "EHLO bear.ext.ti.com"
+Received: from bear.ext.ti.com ([192.94.94.41]:41742 "EHLO bear.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752498Ab3K2Plc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 29 Nov 2013 10:41:32 -0500
-In-Reply-To: <1385048076-7875-1-git-send-email-grygorii.strashko@ti.com>
+	id S1751899Ab3K2PsO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 29 Nov 2013 10:48:14 -0500
+In-Reply-To: <1385494815-15740-2-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, prabhakar.csengg@gmail.com, nsekhar@ti.com, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, nsekhar@ti.com, prabhakar.csengg@gmail.com, linux-kernel@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com
 
-On Thursday 21 November 2013 10:34 AM, Grygorii Strashko wrote:
-> This series is a preparation step for reusing Davinci GPIO driver
-> for Keystone SoCs.
-> And it's been created in order to break the strict dependency of
-> Davinci GPIO driver from Davinci platform code.
+On Tuesday 26 November 2013 02:40 PM, Grygorii Strashko wrote:
+> Since Davinci GPIO driver is moved to support gpiolib it has to use
+> ARCH_NR_GPIOS (can be configured using CONFIG_ARCH_NR_GPIO Kconfig
+> option) configuration instead of any mach/platform specific options.
 > 
-> Based on patch:
-> http://www.spinics.net/lists/kernel/msg1632405.html
+> Hence, replace private DAVINCI_N_GPIO with common ARCH_NR_GPIOS. This is
+> safe because default value for ARCH_NR_GPIOS=256 and maximum number of
+> supported GPIOs for Davinci is DAVINCI_N_GPIO=144.
 > 
-> Grygorii Strashko (2):
->   gpio: davinci: get rid of DAVINCI_N_GPIO
->   gpio: introduce GPIO_DAVINCI kconfig option
+> More over, this is one of steps to re-use Davinci GPIO driver by other
+> mach/platform.
 > 
->  drivers/gpio/Kconfig        |    7 +++++++
->  drivers/gpio/Makefile       |    2 +-
->  drivers/gpio/gpio-davinci.c |    4 ++--
->  3 files changed, 10 insertions(+), 3 deletions(-)
-> 
-Thanks Grygorii and clean-up is inline as discussed off-list.
-FWIW,
-Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+Looks like you just combined the two earlier patches you have posted.
+Ack applies here as well.
+
+regards,
+Santosh
 
