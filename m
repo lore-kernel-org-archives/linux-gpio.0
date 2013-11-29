@@ -1,36 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC v1 3/9] gpio: davinci: use chained_irq_enter/chained_irq_exit
- API
-Date: Fri, 29 Nov 2013 09:39:58 +0100
-Message-ID: <CACRpkdZ_hd3eVm6Z6ZtvynxX_OXc5Fn-REjmGwgmGasoQRr=jw@mail.gmail.com>
-References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
-	<1385494815-15740-4-git-send-email-grygorii.strashko@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1385494815-15740-4-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Nori, Sekhar" <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCH] gpiolib: don't bother warning when failing to get gpios
+Date: Fri, 29 Nov 2013 11:16:06 +0200
+Message-ID: <1385716566-9810-1-git-send-email-heikki.krogerus@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:8723 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751128Ab3K2JQR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 29 Nov 2013 04:16:17 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-On Tue, Nov 26, 2013 at 8:40 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+It's the drivers responsibility to react on failure to get
+the gpio descriptors and not the frameworks. Since there are
+some common peripherals that may or may not have certain
+pins connected to gpio lines, depending on the platform,
+printing the warning there may end up generating useless bug
+reports.
 
-> It's unsafe to call IRQ chip callbacks (.irq_mask/irq_unmask/irq_ack)
-> from chained IRQ handler directly. Because, Davinci GPIO block is used
-> by different SoCs, which, in turn, have different Main IRQ controllers
-> (Davinci - aintc, cp-intc; Keystone - arm-gic) which may introduce
-> diffrent set of IRQ chip callbacks. As result, call of
-> gpio_irq_handler() on Keysone will simply cause crash the system,
-> because ARM-GIC implements .irq_eoi() instead of .irq_ack().
->
-> Hence, fix it by using Kernel chained_irq_enter/chained_irq_exit APIs as
-> they are intended to handle exact such cases.
->
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+ drivers/gpio/gpiolib.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 4e10b10..2f0305e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2434,10 +2434,8 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+ 		desc = gpiod_find(dev, con_id, idx, &flags);
+ 	}
+ 
+-	if (IS_ERR(desc)) {
+-		dev_warn(dev, "lookup for GPIO %s failed\n", con_id);
++	if (IS_ERR(desc))
+ 		return desc;
+-	}
+ 
+ 	status = gpiod_request(desc, con_id);
+ 
+-- 
+1.8.4.4
 
-Yours,
-Linus Walleij
