@@ -1,76 +1,83 @@
-From: Anatolij Gustschin <agust@denx.de>
-Subject: Re: [PATCH v2] powerpc/gpio: Fix the wrong GPIO input data on
- MPC8572/MPC8536
-Date: Fri, 29 Nov 2013 11:54:43 +0100
-Message-ID: <20131129115443.2fb15bf8@crub>
-References: <1385107960-373-1-git-send-email-Gang.Liu@freescale.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 1/6] ARM: tegra: add gpiod_lookup table for paz00
+Date: Fri, 29 Nov 2013 12:03:40 +0100
+Message-ID: <20131129110339.GK22771@ulmo.nvidia.com>
+References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1752117.77jQLaML2y@fb07-iapwap2>
+ <20131128110636.GA22818@ulmo.nvidia.com>
+ <1441981.OvF23sGttd@fb07-iapwap2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Qo8f1a4rgWw9S/zY"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:40278 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754575Ab3K2Kyv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 05:54:51 -0500
-In-Reply-To: <1385107960-373-1-git-send-email-Gang.Liu@freescale.com>
+Received: from mail-bk0-f44.google.com ([209.85.214.44]:56394 "EHLO
+	mail-bk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751235Ab3K2LE3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 06:04:29 -0500
+Content-Disposition: inline
+In-Reply-To: <1441981.OvF23sGttd@fb07-iapwap2>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@freescale.com>, linus.walleij@linaro.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, b07421@freescale.com, r61911@freescale.com
+To: Marc Dietrich <marvin24@gmx.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rhyland Klein <rklein@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Adrian Hunter <adrian.hunter@intel.com>, Alex Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Devicetree List <devicetree@vger.kernel.org>
 
-On Fri, 22 Nov 2013 16:12:40 +0800
-Liu Gang <Gang.Liu@freescale.com> wrote:
 
-> For MPC8572/MPC8536, the status of GPIOs defined as output
-> cannot be determined by reading GPDAT register, so the code
-> use shadow data register instead. But the code may give the
-> wrong status of GPIOs defined as input under some scenarios:
-> 
-> 1. If some pins were configured as inputs and were asserted
-> high before booting the kernel, the shadow data has been
-> initialized with those pin values.
-> 2. Some pins have been configured as output first and have
-> been set to the high value, then reconfigured as input.
-> 
-> The above cases will make the shadow data for those input
-> pins to be set to high. Then reading the pin status will
-> always return high even if the actual pin status is low.
-> 
-> The code should eliminate the effects of the shadow data to
-> the input pins, and the status of those pins should be
-> read directly from GPDAT.
-> 
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
-> ---
-> changes in v2:
->  - Added more description of the problem.
->  - Reduced one in_be32() call.
->  - Do not modify the shadow data.
-> 
->  drivers/gpio/gpio-mpc8xxx.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-> index 914e859..d7d6d72 100644
-> --- a/drivers/gpio/gpio-mpc8xxx.c
-> +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -70,10 +70,14 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
->  	u32 val;
->  	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
->  	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
-> +	u32 out_mask, out_shadow;
->  
-> -	val = in_be32(mm->regs + GPIO_DAT) & ~in_be32(mm->regs + GPIO_DIR);
-> +	out_mask = in_be32(mm->regs + GPIO_DIR);
->  
-> -	return (val | mpc8xxx_gc->data) & mpc8xxx_gpio2mask(gpio);
-> +	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
-> +	out_shadow = mpc8xxx_gc->data & out_mask;
-> +
-> +	return (val | out_shadow) & mpc8xxx_gpio2mask(gpio);
->  }
->  
->  static int mpc8xxx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+--Qo8f1a4rgWw9S/zY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Anatolij Gustschin <agust@denx.de>
+On Thu, Nov 28, 2013 at 01:54:10PM +0100, Marc Dietrich wrote:
+[...]
+> Yes, rfkill is just an interface for userspace to able to control the gpi=
+o.=20
+> E.g. backlight of medcom-wide seems to be related to the pwm controller, =
+but=20
+> is not a subnode of it. Instead it is a device of its own without parent.=
+=20
+> Hence, we may include rfkill in a similar, "free-standing" node. But this=
+=20
+> approch was rejected in the past. Maybe this changed now.
 
+Indeed. I think we really do need ways to represent this kind of device.
+If we can't then how are we supposed to get rid of board files?
+
+> Thinking a bit more about it, rfkill is neither a hw block nor a function=
+ of=20
+> the wifi driver, so I guess it cannot be added to the usb controller (or =
+a usb=20
+> device).
+
+I guess it depends a bit. Some rfkill-type devices may control more than
+just WiFi (bluetooth, NFC, ...). If it really only controls WiFi, I
+think it would still be reasonable to represent it as a child of the
+WiFi device. It is, after all, a mechanism to control the WiFi hardware.
+
+Alternatively I suppose we wouldn't really need to have an explicit
+node. The WiFi driver could simply instantiate an rfkill device based on
+its own properties.
+
+Thierry
+
+--Qo8f1a4rgWw9S/zY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSmHSLAAoJEN0jrNd/PrOhLYkP/iKC6LI2LuPV2l8HKpb66GZX
+6Z1jL3BdUR+cDxHLIzUEEbdEtpYxj3bkL8pyYxBKI8UCs2xnIowjjU/YAf+I/pt2
+ZgdrG5z9gDM1TRTVSfIgYAa57KZG31TIVdZSZbrJ/r38UbohkdIrxAYkBbqmAkIZ
+W4FDvgkaUm6+SMfZVlIiRDmMx5lM9VqOTfJMs34cqRUZm9QN3yk77mIFqDc1F2Yb
+u7ac634AmvxmUabZsZ91FyOQB+ne5NLwV1hjIwHUr0qwBd/ZIqy9fLgOYMNtCUN6
+p0uVddGuVJf8ViBZgY5M796rOaxHTRJRZFACvS5kU+wvW1dglB6baCfa+4dPclkX
+N1/qEJM7LA9RHTkMOF07vYVSiC0BBYWhzRl1jXhlmDv0pmzxMv+we6iPBbGUNv1M
+kUFbrVK6ubsiaaA3nfQB//N/2DW8QO2cj3ZzRZ+B0hQtHdQZY6RmiioZX/hy5zF5
+apRjLFnfw+jUglD2qrzgAqdRadk/xYFRQW/J/ZVZ89nbau5FkrRtEJZ//ELOlhDX
+XfRBqMBXy0JEFHFTlKmw+SfNnK4EuAYwnBIlkUG1jjNAbTIj74KJz59fq21QvA14
+JVD1Bnp43cF+zqxfw9c0dkyPZYMT7WCKEfl+butSo16LUz3wlRtTgNVrO1Ey4cGG
+RbxiybMrNI3YFCNjli2n
+=cEez
+-----END PGP SIGNATURE-----
+
+--Qo8f1a4rgWw9S/zY--
