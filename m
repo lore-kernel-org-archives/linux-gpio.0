@@ -1,41 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
-Date: Fri, 29 Nov 2013 20:55:29 +0100
-Message-ID: <CACRpkdb3xEKyV14OrmOg2STAZo87RPE=9noEXy_5PstJkB-uOg@mail.gmail.com>
+Date: Fri, 29 Nov 2013 21:00:06 +0100
+Message-ID: <CACRpkdYoA3JfDMXfE6VVsyYVAETR=zqru5FGeRkvBOanTDEA7g@mail.gmail.com>
 References: <1385597895-26418-1-git-send-email-br1@einfach.org>
 	<CACRpkdaXO+tYRq=uyQiAopRDPwKv1_F4yZwCWr4-JL1xnio4Wg@mail.gmail.com>
-	<20131129150238.GJ2281@intel.com>
+	<5298CD1C.9010704@einfach.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:33619 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750994Ab3K2Tza (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 14:55:30 -0500
-Received: by mail-ob0-f181.google.com with SMTP id uy5so10331544obc.40
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 11:55:30 -0800 (PST)
-In-Reply-To: <20131129150238.GJ2281@intel.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:40873 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752597Ab3K2UAH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 15:00:07 -0500
+Received: by mail-ob0-f176.google.com with SMTP id va2so10433119obc.35
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 12:00:06 -0800 (PST)
+In-Reply-To: <5298CD1C.9010704@einfach.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Bruno Randolf <br1@einfach.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>, Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Bruno Randolf <br1@einfach.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>, Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Nov 29, 2013 at 4:02 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Fri, Nov 29, 2013 at 03:40:01PM +0100, Linus Walleij wrote:
->> At the very least I want the driver split up in two files: one that
->> adds the GPIO driver for an arbitrary number of pins, and one
->> that adds this boards' configuration. You can put the latter in
->> drivers/platform/x86 or wherever, just not in drivers/gpio.
->>
->> Maybe this leads to another interesting discussion on why
->> ACPI is not used for configuring the board...
+On Fri, Nov 29, 2013 at 6:21 PM, Bruno Randolf <br1@einfach.org> wrote:
+> [Me]
+
+>> ISA-style probing, yeah I had to accept this last time ...
+>> So no discovery on this system, no ACPI?
 >
-> AFAIK there are not that many systems shipping today that have ACPI 5.0
-> supported and you need ACPI 5.0 in order to pass GpioIo/GpioInt resources
-> from a device to the driver.
+> The system has ACPI, but GPIOs were not working... I don't know enough
+> about ACPI, but if someone tells me what to look for I can try to debug it.
 
-Yeah, hm, hehe, maybe they should use Device Tree?
+Yeah :-/
+
+I don't know how you do the driver/board split in x86 so
+please enlighten me.
+
+>> Please devm_kzalloc() a state container
+>> instead, look in other GPIO drivers for examples of this.
+>
+> Do you have a good example?
+
+Most new drivers ..
+gpio-intel-mid.c
+gpio-tb10x.c
+gpio-em.c
+
+>> So if you really only support push/pull, open drain and maybe even
+>> open source, then it's OK to use the GPIO subsystem. If you start
+>> doing more things, this becomes a matter of pin control.
+>
+> It can just be configured as just push/pull or open drain. Is there any
+> way this can be configured within the GPIO subsystem?
+
+Yeah that's OK. grep for GPIOF_OPEN_DRAIN,
+GPIOF_OPEN_SOURCE.
 
 Yours,
 Linus Walleij
