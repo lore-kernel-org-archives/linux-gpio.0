@@ -1,53 +1,80 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpiolib: don't bother warning when failing to get gpios
-Date: Fri, 29 Nov 2013 18:37:35 +0900
-Message-ID: <CAAVeFuJUWcOKos3ds-ekRv6T0=sU6dtx5M3rQNTGKMDCVj68Eg@mail.gmail.com>
-References: <1385716566-9810-1-git-send-email-heikki.krogerus@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v3] gpio: lock adnp IRQs when starting them
+Date: Fri, 29 Nov 2013 10:48:18 +0100
+Message-ID: <1385718498-28525-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:64460 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753814Ab3K2Jh4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:37:56 -0500
-Received: by mail-ie0-f178.google.com with SMTP id lx4so15591439iec.23
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:37:55 -0800 (PST)
-In-Reply-To: <1385716566-9810-1-git-send-email-heikki.krogerus@linux.intel.com>
+Received: from mail-la0-f46.google.com ([209.85.215.46]:65378 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754006Ab3K2Js3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:48:29 -0500
+Received: by mail-la0-f46.google.com with SMTP id eh20so6588811lab.19
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:48:27 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Nov 29, 2013 at 6:16 PM, Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
-> It's the drivers responsibility to react on failure to get
-> the gpio descriptors and not the frameworks. Since there are
-> some common peripherals that may or may not have certain
-> pins connected to gpio lines, depending on the platform,
-> printing the warning there may end up generating useless bug
-> reports.
->
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->  drivers/gpio/gpiolib.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 4e10b10..2f0305e 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2434,10 +2434,8 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
->                 desc = gpiod_find(dev, con_id, idx, &flags);
->         }
->
-> -       if (IS_ERR(desc)) {
-> -               dev_warn(dev, "lookup for GPIO %s failed\n", con_id);
-> +       if (IS_ERR(desc))
->                 return desc;
-> -       }
->
->         status = gpiod_request(desc, con_id);
+This uses the new API for tagging GPIO lines as in use by
+IRQs. This enforces a few semantic checks on how the underlying
+GPIO line is used.
 
-I kind of agree with the logic that motivates this patch, but how
-about turning this warning into dev_dbg() instead so that people who
-wish so can still continue using it?
+Only compile tested on the lpc32xx.
+
+Cc: Lars Poeschel <poeschel@lemonage.de>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v2->v3:
+- Switch to using the startup()/shutdown() callbacks again.
+  Still satisfy the mask/unmask semantics.
+ChangeLog v1->v2:
+- Use the .enable() callback from the irq_chip
+- Call .unmask() from the .enable() callback to satisfy semantics.
+---
+ drivers/gpio/gpio-adnp.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index b204033acaeb..a7b471977dc5 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -408,6 +408,27 @@ static void adnp_irq_bus_unlock(struct irq_data *data)
+ 	mutex_unlock(&adnp->irq_lock);
+ }
+ 
++static unsigned int adnp_irq_startup(struct irq_data *data)
++{
++	struct adnp *adnp = irq_data_get_irq_chip_data(data);
++
++	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq))
++		dev_err(adnp->gpio.dev,
++			"unable to lock HW IRQ %lu for IRQ\n",
++			data->hwirq);
++	/* Satisfy the .enable semantics by unmasking the line */
++	adnp_irq_unmask(data);
++	return 0;
++}
++
++static void adnp_irq_shutdown(struct irq_data *data)
++{
++	struct adnp *adnp = irq_data_get_irq_chip_data(data);
++
++	adnp_irq_mask(data);
++	gpio_unlock_as_irq(&adnp->gpio, data->hwirq);
++}
++
+ static struct irq_chip adnp_irq_chip = {
+ 	.name = "gpio-adnp",
+ 	.irq_mask = adnp_irq_mask,
+@@ -415,6 +436,8 @@ static struct irq_chip adnp_irq_chip = {
+ 	.irq_set_type = adnp_irq_set_type,
+ 	.irq_bus_lock = adnp_irq_bus_lock,
+ 	.irq_bus_sync_unlock = adnp_irq_bus_unlock,
++	.irq_startup = adnp_irq_startup,
++	.irq_shutdown = adnp_irq_shutdown,
+ };
+ 
+ static int adnp_irq_map(struct irq_domain *domain, unsigned int irq,
+-- 
+1.8.3.1
+
