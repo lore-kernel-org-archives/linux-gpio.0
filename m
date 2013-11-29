@@ -1,42 +1,47 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement
-Date: Fri, 29 Nov 2013 14:00:27 +0530
-Message-ID: <CA+V-a8vZ22_OpfyEDcQoMWZJbUm3utBSJSrOZUw3ux2whZYXiQ@mail.gmail.com>
-References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com> <CACRpkdYvNwF+dxfiLCHpCL+Ze17PMAMkJo4s-4T4ku1KxDPXxw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: davinci: get rid of DAVINCI_N_GPIO
+Date: Fri, 29 Nov 2013 09:33:56 +0100
+Message-ID: <CACRpkdYpza8A27Ypz7absfhtauB7KXvKNvHVP3UjUJ1_hEpApg@mail.gmail.com>
+References: <1385048076-7875-1-git-send-email-grygorii.strashko@ti.com>
+	<1385048076-7875-2-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYvNwF+dxfiLCHpCL+Ze17PMAMkJo4s-4T4ku1KxDPXxw@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sekhar Nori <nsekhar@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:57313 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751015Ab3K2Id5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 03:33:57 -0500
+Received: by mail-ob0-f182.google.com with SMTP id wp4so9690014obc.41
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 00:33:57 -0800 (PST)
+In-Reply-To: <1385048076-7875-2-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+On Thu, Nov 21, 2013 at 4:34 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-On Fri, Nov 29, 2013 at 1:17 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Nov 21, 2013 at 7:15 PM, Prabhakar Lad
-> <prabhakar.csengg@gmail.com> wrote:
+> Since Davinci GPIO driver is moved to support gpiolib it has to use
+> ARCH_NR_GPIOS (can be configured using CONFIG_ARCH_NR_GPIO Kconfig
+> option) configuration instead of any mach/platform specific options.
 >
->> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
->>
->> This patch series does the following
->> 1> Ports the driver to use irqdomain.
->> 2> Adds dt binding support for gpio-davinci.
->> 3> Adds DA850 dt support goio.
->>
->> Changes for v6:
->> 1: GPIO driver now migrated to irq domain legacy.
->> 2: Fixed review comments pointed by Grygorii.
->> 3: Included Ack's.
+> Hence, replace private DAVINCI_N_GPIO with common ARCH_NR_GPIOS. This is
+> safe because default value for ARCH_NR_GPIOS=256 and maximum number of
+> supported GPIOs for Davinci is DAVINCI_N_GPIO=144.
 >
-> This series is looking nice, I assume that Sekhar will take this through
-> the DaVinci tree once he's happy with it. I think I've ACKed all relevant
-> patches, else tell me.
+> More over, this is one of steps to re-use Davinci GPIO driver by other
+> mach/platform.
 >
-While you are at it, you missed to ACK v6 2/6 patch [1]
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[1] https://lkml.org/lkml/2013/11/21/425
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Regards,
---Prabhakar
+Now we have a handful of people patching DaVinci GPIOs...
+
+Sekhar: can you coordinate the different DaVinci patches? If you want me
+to take a complete set of stuff at the end of the day you can give me a
+pull request for inclusion into the GPIO tree.
+
+Yours,
+Linus Walleij
