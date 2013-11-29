@@ -1,39 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 2/6] This patch converts the davinci gpio driver to use
- irqdomain support.
-Date: Fri, 29 Nov 2013 10:23:09 +0100
-Message-ID: <CACRpkdYSQ-+hXRC0qvDAZU09QtzEUamR61myT9itoRe1W=BgvA@mail.gmail.com>
-References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
-	<1385057731-4348-3-git-send-email-prabhakar.csengg@gmail.com>
+Subject: Re: [RFC v1 5/9] gpio: davinci: reuse for Keystone SoC
+Date: Fri, 29 Nov 2013 10:25:14 +0100
+Message-ID: <CACRpkda=5KyvRpN=O5UHhX8S-jYB-0g3272Xg61_jvpCEb7Nzg@mail.gmail.com>
+References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
+	<1385494815-15740-6-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:54252 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752224Ab3K2JXK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:23:10 -0500
-Received: by mail-ob0-f174.google.com with SMTP id wn1so9754051obc.19
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:23:09 -0800 (PST)
-In-Reply-To: <1385057731-4348-3-git-send-email-prabhakar.csengg@gmail.com>
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:55154 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751235Ab3K2JZO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:25:14 -0500
+Received: by mail-oa0-f53.google.com with SMTP id m1so9982980oag.26
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:25:14 -0800 (PST)
+In-Reply-To: <1385494815-15740-6-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Nori, Sekhar" <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
 
-On Thu, Nov 21, 2013 at 7:15 PM, Prabhakar Lad
-<prabhakar.csengg@gmail.com> wrote:
+On Tue, Nov 26, 2013 at 8:40 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+> The similar GPIO HW block is used by keystone SoCs as
+> in Davinci SoCs.
+> Hence, reuse Davinci GPIO driver for Keystone.
 >
-> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-> [grygorii.strashko@ti.com:
->  - switch to use one irq-domain per  all GPIO banks
->  - keep irq_create_mapping() call in gpio_to_irq_banked() as it
->    simply transformed to irq_find_mapping() if IRQ mapping exist
->    already]
+> Documentation:
+>  http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+>
 > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+This is really nice, and we want to reuse stuff.
+
+Just waiting for some comments on the previous patch...
 
 Yours,
 Linus Walleij
