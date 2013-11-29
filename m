@@ -1,35 +1,55 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: use platform GPIO mappings as fallback
-Date: Fri, 29 Nov 2013 10:29:54 +0100
-Message-ID: <CACRpkdbun289Y1fu-=sB77ESg6E15hRCcd+NYmwk57MoxkoTMQ@mail.gmail.com>
-References: <1385202890-9511-1-git-send-email-acourbot@nvidia.com>
+Subject: Re: [PATCH v2] powerpc/gpio: Fix the wrong GPIO input data on MPC8572/MPC8536
+Date: Fri, 29 Nov 2013 10:32:47 +0100
+Message-ID: <CACRpkdaHtWze_L-WQ1JadN7isN6HLtv=p3ich8DvT+gjWbGdfg@mail.gmail.com>
+References: <1385107960-373-1-git-send-email-Gang.Liu@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:43823 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752042Ab3K2J3y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:29:54 -0500
-Received: by mail-oa0-f48.google.com with SMTP id l6so10033040oag.21
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:29:54 -0800 (PST)
-In-Reply-To: <1385202890-9511-1-git-send-email-acourbot@nvidia.com>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:60173 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753763Ab3K2Jcs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:32:48 -0500
+Received: by mail-ob0-f169.google.com with SMTP id wm4so9824327obc.14
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:32:47 -0800 (PST)
+In-Reply-To: <1385107960-373-1-git-send-email-Gang.Liu@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Liu Gang <Gang.Liu@freescale.com>, Anatolij Gustschin <agust@denx.de>
+Cc: "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, b07421@freescale.com, r61911@freescale.com
 
-On Sat, Nov 23, 2013 at 11:34 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Fri, Nov 22, 2013 at 9:12 AM, Liu Gang <Gang.Liu@freescale.com> wrote:
 
-> For platforms that use device tree or ACPI as the standard way to look
-> GPIOs up, allow the platform-defined GPIO mappings to be used as a
-> fallback. This may be useful for platforms that need extra GPIOs mappings
-> not defined by the firmware.
+> For MPC8572/MPC8536, the status of GPIOs defined as output
+> cannot be determined by reading GPDAT register, so the code
+> use shadow data register instead. But the code may give the
+> wrong status of GPIOs defined as input under some scenarios:
 >
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> 1. If some pins were configured as inputs and were asserted
+> high before booting the kernel, the shadow data has been
+> initialized with those pin values.
+> 2. Some pins have been configured as output first and have
+> been set to the high value, then reconfigured as input.
+>
+> The above cases will make the shadow data for those input
+> pins to be set to high. Then reading the pin status will
+> always return high even if the actual pin status is low.
+>
+> The code should eliminate the effects of the shadow data to
+> the input pins, and the status of those pins should be
+> read directly from GPDAT.
+>
+> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+> ---
+> changes in v2:
+>  - Added more description of the problem.
+>  - Reduced one in_be32() call.
+>  - Do not modify the shadow data.
 
-Applied for fixes. I was considering applying it for the next
-kernel but it depends on the former patches and we should
-expect a bit of extra fuzz now with the new API.
+I'm waiting for the maintainers to ACK this before
+applying.
+
+Anatolij?
 
 Yours,
 Linus Walleij
