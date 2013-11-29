@@ -1,66 +1,53 @@
-From: Valentine Barshak <valentine.barshak@cogentembedded.com>
-Subject: [PATCH] gpio: rcar: Fix level interrupt handling
-Date: Fri, 29 Nov 2013 17:32:20 +0400
-Message-ID: <1385731940-25359-1-git-send-email-valentine.barshak@cogentembedded.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: don't bother warning when failing to get gpios
+Date: Fri, 29 Nov 2013 14:33:15 +0100
+Message-ID: <CACRpkdYa3yhECCNbY_=ey+-1-SMqaCMpyc9B_pn_EJSFO2jd+A@mail.gmail.com>
+References: <1385716566-9810-1-git-send-email-heikki.krogerus@linux.intel.com>
+	<CAAVeFuJUWcOKos3ds-ekRv6T0=sU6dtx5M3rQNTGKMDCVj68Eg@mail.gmail.com>
+	<20131129110845.GA3942@xps8300>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:54026 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753156Ab3K2Nc0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 08:32:26 -0500
-Received: by mail-lb0-f179.google.com with SMTP id l4so6893214lbv.24
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 05:32:24 -0800 (PST)
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:37837 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752543Ab3K2NdQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 08:33:16 -0500
+Received: by mail-ob0-f169.google.com with SMTP id wm4so10065915obc.14
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 05:33:15 -0800 (PST)
+In-Reply-To: <20131129110845.GA3942@xps8300>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-According to the manual, if a port is set for level detection using
-the corresponding bit in the edge/level select register and an external
-level interrupt signal is asserted, the corresponding bit in INTDT
-does not use the FF to hold the input.
-Thus, writing 1 to the corresponding bits in INTCLR cannot clear the
-corresponding bits in the INTDT register. Instead, when an external
-input signal is stopped, the corresponding bit in INTDT is cleared
-automatically.
+On Fri, Nov 29, 2013 at 12:08 PM, Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+> On Fri, Nov 29, 2013 at 06:37:35PM +0900, Alexandre Courbot wrote:
+>> On Fri, Nov 29, 2013 at 6:16 PM, Heikki Krogerus
+>> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> > index 4e10b10..2f0305e 100644
+>> > --- a/drivers/gpio/gpiolib.c
+>> > +++ b/drivers/gpio/gpiolib.c
+>> > @@ -2434,10 +2434,8 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>> >                 desc = gpiod_find(dev, con_id, idx, &flags);
+>> >         }
+>> >
+>> > -       if (IS_ERR(desc)) {
+>> > -               dev_warn(dev, "lookup for GPIO %s failed\n", con_id);
+>> > +       if (IS_ERR(desc))
+>> >                 return desc;
+>> > -       }
+>> >
+>> >         status = gpiod_request(desc, con_id);
+>>
+>> I kind of agree with the logic that motivates this patch, but how
+>> about turning this warning into dev_dbg() instead so that people who
+>> wish so can still continue using it?
+>
+> Sure, I'll send v2 of this and do just that.
 
-Since the INTDT bit cannot be cleared for the level interrupts until
-the interrupt signal is stopped, we end up with the infinite loop
-when using deferred (threaded) IRQ handling.
+Please do, this has been a bit noisy and should probably go in
+as a fix.
 
-Workaround the issue by dropping level interrupts from the pending
-mask once the interrupt is handled. If the IRQ is not cleared by the
-handler, it will be invoked again when the interrupt is re-enabled.
-
-Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
----
- drivers/gpio/gpio-rcar.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index d3f15ae..918a1de 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -166,12 +166,18 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
- static irqreturn_t gpio_rcar_irq_handler(int irq, void *dev_id)
- {
- 	struct gpio_rcar_priv *p = dev_id;
--	u32 pending;
-+	u32 pending, mask = 0;
- 	unsigned int offset, irqs_handled = 0;
- 
--	while ((pending = gpio_rcar_read(p, INTDT))) {
-+	/*
-+	 * Level interrupts cannot be cleared in the INTDT,
-+	 * so we just drop them from the pending mask when
-+	 * the interrupt is handled.
-+	 */
-+	while ((pending = gpio_rcar_read(p, INTDT) & ~mask)) {
- 		offset = __ffs(pending);
- 		gpio_rcar_write(p, INTCLR, BIT(offset));
-+		mask |= BIT(offset) & ~gpio_rcar_read(p, EDGLEVEL);
- 		generic_handle_irq(irq_find_mapping(p->irq_domain, offset));
- 		irqs_handled++;
- 	}
--- 
-1.8.3.1
-
+Yours,
+Linus Walleij
