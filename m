@@ -1,50 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC v1 4/9] gpio: davinci: make IRQ initialization soc specific
-Date: Fri, 29 Nov 2013 10:21:55 +0100
-Message-ID: <CACRpkda+Gdp75Kw=n4y=yeZAdWxjpsdP8egtLNaQV0vDCXOkWQ@mail.gmail.com>
-References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
-	<1385494815-15740-5-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH v6 2/6] This patch converts the davinci gpio driver to use
+ irqdomain support.
+Date: Fri, 29 Nov 2013 10:23:09 +0100
+Message-ID: <CACRpkdYSQ-+hXRC0qvDAZU09QtzEUamR61myT9itoRe1W=BgvA@mail.gmail.com>
+References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
+	<1385057731-4348-3-git-send-email-prabhakar.csengg@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:50188 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752047Ab3K2JV4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:21:56 -0500
-Received: by mail-ob0-f180.google.com with SMTP id wo20so9714778obc.39
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:21:55 -0800 (PST)
-In-Reply-To: <1385494815-15740-5-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:54252 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752224Ab3K2JXK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:23:10 -0500
+Received: by mail-ob0-f174.google.com with SMTP id wn1so9754051obc.19
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:23:09 -0800 (PST)
+In-Reply-To: <1385057731-4348-3-git-send-email-prabhakar.csengg@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Nori, Sekhar" <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
+To: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
 
-On Tue, Nov 26, 2013 at 8:40 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Thu, Nov 21, 2013 at 7:15 PM, Prabhakar Lad
+<prabhakar.csengg@gmail.com> wrote:
 
-> The Davinci GPIO IRQs initialization may need to be performed in a
-> different way depending on SoC which use it. For example:
-> - Davinci dm365 has AINTC irq controller, implemented using Generic IRQ
-> chip, SPARSE_IRQ off;
-> - Davinci da850 has cp-intc controller, implemented using IRQ chip;
-> SPARSE_IRQ off;
-> - Kestone has arm-gic controller, implemented using IRQ chip;
-> SPARSE_IRQ on;
+> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+>
+> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+> [grygorii.strashko@ti.com:
+>  - switch to use one irq-domain per  all GPIO banks
+>  - keep irq_create_mapping() call in gpio_to_irq_banked() as it
+>    simply transformed to irq_find_mapping() if IRQ mapping exist
+>    already]
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Now this is a pretty big patch ...
-
-The big question that enters my mind is *why* is the da850 and
-dm365 not using SPARSE_IRQ?
-
-As it happens I'm on an ARM32 crusade to get everyone and its
-dog to use, among other things, SPARSE_IRQ.
-
-I would feel *much* *much* better if there was first a patch
-to the DaVinci tree to turn on SPARSE_IRQ for this subarch,
-and then this patch may look a bit different, maybe smaller
-I take it?
-
-Is this totally unattainable?
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
