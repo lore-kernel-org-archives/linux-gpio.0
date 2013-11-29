@@ -1,45 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RESEND] gpio: rcar: Support both edge trigger with DT
-Date: Fri, 29 Nov 2013 21:06:17 +0100
-Message-ID: <CACRpkdbkKR=ZpYe9K21daLGZr7+mM5suAWKpoSPjUOZqQc272w@mail.gmail.com>
-References: <1811469.aLo43mdTt2@avalon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH] gpio: rcar: Add r8a7791 support to the DT bindings
+Date: Fri, 29 Nov 2013 21:14:57 +0100
+Message-ID: <1385756097-6627-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:54458 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752498Ab3K2UGS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 15:06:18 -0500
-Received: by mail-oa0-f44.google.com with SMTP id m1so10842187oag.17
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 12:06:18 -0800 (PST)
-In-Reply-To: <1811469.aLo43mdTt2@avalon>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:42254 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752192Ab3K2UPC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 15:15:02 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>
+To: linux-sh@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Nov 29, 2013 at 2:48 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
+The r8a7791 (R-Car M2) has a GPIO controller with additional features
+compared to the generic renesas,gpio-rcar compatible devices. Add a
+model-specific string to let the driver enable these features.
 
-> Some versions of the R-Car GPIO controller support triggering on both
-> edges of the input signal. Whether this capability is supported is
-> currently specified in platform data. R-Car GPIO devices instantiated
-> from the device tree have the capability turned off even when the
-> hardware supports it.
->
-> To fix this, add DT match data support to the driver, initialize both
-> edge trigger support from match data and enable both edge trigger in
-> r8a7790 and r8a7791 match data.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Acked-by: Magnus Damm <damm@opensource.se>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Patch applied, but shouldn't there be some change to add these
-new compatible strings to Documentation/devicetree/bindings/*
-somewhere?
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 8655df9..f61cef7 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -2,10 +2,11 @@
+ 
+ Required Properties:
+ 
+-  - compatible: should be one of the following.
++  - compatible: should contain one of the following.
+     - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
+     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
+     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
++    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2) compatible GPIO controller.
+     - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+ 
+   - reg: Base address and length of each memory resource used by the GPIO
+-- 
+1.8.3.2
 
-Accepted as follow-on patch or something to be squashed into
-this later if I'm right.
-
-Thanks!
-Linus Walleij
