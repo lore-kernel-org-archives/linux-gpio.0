@@ -1,39 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: introduce GPIO_DAVINCI kconfig option
-Date: Fri, 29 Nov 2013 09:35:19 +0100
-Message-ID: <CACRpkdbrtyBgMiQ-+J9O5JdfBo8vZLL1rY9F7p1X_rWbr54Qzg@mail.gmail.com>
-References: <1385048076-7875-1-git-send-email-grygorii.strashko@ti.com>
-	<1385048076-7875-3-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [RFC v1 0/9] gpio: davinci: reuse for keystone arch
+Date: Fri, 29 Nov 2013 09:37:18 +0100
+Message-ID: <CACRpkdYKRWZJm8nRGSHV8DUehd9d0rh6y8R4HMvkimKhWezD2g@mail.gmail.com>
+References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:34472 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752201Ab3K2IfU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 03:35:20 -0500
-Received: by mail-ob0-f181.google.com with SMTP id uy5so9598930obc.26
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 00:35:19 -0800 (PST)
-In-Reply-To: <1385048076-7875-3-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:36569 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751135Ab3K2IhT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 03:37:19 -0500
+Received: by mail-oa0-f47.google.com with SMTP id k1so10147261oag.34
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 00:37:18 -0800 (PST)
+In-Reply-To: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Nori, Sekhar" <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
 
-On Thu, Nov 21, 2013 at 4:34 PM, Grygorii Strashko
+On Tue, Nov 26, 2013 at 8:40 PM, Grygorii Strashko
 <grygorii.strashko@ti.com> wrote:
 
-> The compatible to Davinci GPIO HW block is used by other TI SoCs, like
-> Keystone, where GPIO support is declared as optional.
+> [1] Depends on patch:
+> "[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
+> https://lkml.org/lkml/2013/11/8/22
 >
-> Hence, introduce GPIO_DAVINCI Kconfig option which will allow to enable
-> Davinci GPIO driver for Keystone SoCs when needed. At same time, kept
-> Davinci GPIO driver enabled for Davinci SoCs by default.
->
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> [2] and depends on series from Prabhakar Lad:
+> "[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
+> https://www.mail-archive.com/devicetree@vger.kernel.org/msg05970.html
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+So this needs to go through the same tree as these patches.
 
-Sekhar, same comment here.
+And I suggested that Sekhar queue them and either take them
+directly up to ARM SoC or send me a pull request to take it through
+the GPIO tree.
+
+I'm going to go in and review these now...
 
 Yours,
 Linus Walleij
