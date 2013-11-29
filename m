@@ -1,119 +1,145 @@
-From: Bruno Randolf <br1@einfach.org>
-Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
-Date: Fri, 29 Nov 2013 17:21:32 +0000
-Message-ID: <5298CD1C.9010704@einfach.org>
-References: <1385597895-26418-1-git-send-email-br1@einfach.org> <CACRpkdaXO+tYRq=uyQiAopRDPwKv1_F4yZwCWr4-JL1xnio4Wg@mail.gmail.com>
+From: Valentine <valentine.barshak@cogentembedded.com>
+Subject: Re: [PATCH] gpio: rcar: Fix level interrupt handling
+Date: Fri, 29 Nov 2013 21:36:56 +0400
+Message-ID: <5298D0B8.1000206@cogentembedded.com>
+References: <1385731940-25359-1-git-send-email-valentine.barshak@cogentembedded.com> <2847875.sxPRWEJTjc@avalon> <5298AFAE.2050802@cogentembedded.com> <1719568.8ouSvhq4g8@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from postler.einfach.org ([91.250.116.113]:58115 "EHLO
-	postler.einfach.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755820Ab3K2RVn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 12:21:43 -0500
-In-Reply-To: <CACRpkdaXO+tYRq=uyQiAopRDPwKv1_F4yZwCWr4-JL1xnio4Wg@mail.gmail.com>
+Received: from mail-la0-f42.google.com ([209.85.215.42]:49612 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751240Ab3K2RhA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 12:37:00 -0500
+Received: by mail-la0-f42.google.com with SMTP id ec20so7136628lab.1
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 09:36:58 -0800 (PST)
+In-Reply-To: <1719568.8ouSvhq4g8@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>
-Cc: Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Hello Linus!
+On 11/29/2013 07:39 PM, Laurent Pinchart wrote:
+> Hi Valentine,
+>
+> On Friday 29 November 2013 19:15:58 Valentine wrote:
+>> On 11/29/2013 07:00 PM, Laurent Pinchart wrote:
+>>> On Friday 29 November 2013 17:32:20 Valentine Barshak wrote:
+>>>> According to the manual, if a port is set for level detection using
+>>>> the corresponding bit in the edge/level select register and an external
+>>>> level interrupt signal is asserted, the corresponding bit in INTDT
+>>>> does not use the FF to hold the input.
+>>>> Thus, writing 1 to the corresponding bits in INTCLR cannot clear the
+>>>> corresponding bits in the INTDT register. Instead, when an external
+>>>> input signal is stopped, the corresponding bit in INTDT is cleared
+>>>> automatically.
+>>>>
+>>>> Since the INTDT bit cannot be cleared for the level interrupts until
+>>>> the interrupt signal is stopped, we end up with the infinite loop
+>>>> when using deferred (threaded) IRQ handling.
+>>>>
+>>>> Workaround the issue by dropping level interrupts from the pending
+>>>> mask once the interrupt is handled. If the IRQ is not cleared by the
+>>>> handler, it will be invoked again when the interrupt is re-enabled.
+>>>
+>>> Isn't it an issue common to all IRQ chip drivers that should be handled by
+>>> the IRQ core ?
+>>
+>> No, it isn't.
+>>
+>>> When using level-triggered interrupts with threaded IRQ handlers,
+>>> the core should disable the interrupt and re-enable it after executing the
+>>> threaded handler.
+>>
+>> The problem is not in disabling/re-enabling interrupts.
+>> Even when the interrupt is disabled, the corresponding INTDT bit is not
+>> cleared. Thus, the "while" loop never ends if a level interrupt happens
+>> since its bit is always set in the "pending" mask.
+>> In this case we never start deferred interrupt service routine, and never
+>> de-assert it.
+>>
+>> The patch fixes this issue by dropping the IRQ bit from the "pending" mask
+>> once the IRQ is handled at low-level.
+>
+> Right, I had misunderstood the purpose of your patch. I would rephrase the
+> commit message to replace "Workaround the issue" by "Fix the issue", as this
+> is a proper fix, not a workaround.
 
-Thank you for your review. I will try to address your concerns, as my
-time and knowledge permits ;)
+OK
 
-On 11/29/2013 02:40 PM, Linus Walleij wrote:
->> +       depends on X86
-> 
-> Really? What stops me from soldering this onto one of my ARM or
-> MIPS boards?
+>
+> There's also another issue that, if I'm not mistaken, isn't fixed by this
+> patch. Let's assume that a low-level level-triggered IRQ is enabled on GPIO 0
+> with a threaded IRQ handler and an edge-triggered IRQ is enabled on GPIO 1.
+>
+> When GPIO 0 becomes low the gpio_rcar_irq_handler() is called and loops over
+> the INTDT register. Only bit 0 is set, the mask is updated to mask the GPIO 0
+> IRQ and the corresponding IRQ handler is executed. As the IRQ is threaded the
+> IRQ source won't be acknowledged right away, bit 0 in the INTDT register is
+> thus not cleared. With this patch applied the loop finishes and the
+> gpio_rcar_irq_handler() function returns.
+>
+> If GPIO 1 is then toggled before the thread IRQ handler for GPIO 0 is
+> executed, the gpio_rcar_irq_handler() will be called again, and the loop will
+> handle the GPIO 0 IRQ again as bit 0 in INTDT is still set.
+>
+> I'm not familiar enough with the IRQ core to know whether this problem is
+> already handled in the core, that should be at least checked.
 
-I suppose nothing, but I don't know. Will remove it.
+The IRQ core (handle_level_irq in this case) should not start the actual IRQ handler
+if the IRQ is disabled.
 
-> ISA-style probing, yeah I had to accept this last time ...
-> So no discovery on this system, no ACPI?
+>
+>>>> Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+>>>> ---
+>>>>
+>>>>    drivers/gpio/gpio-rcar.c | 10 ++++++++--
+>>>>    1 file changed, 8 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+>>>> index d3f15ae..918a1de 100644
+>>>> --- a/drivers/gpio/gpio-rcar.c
+>>>> +++ b/drivers/gpio/gpio-rcar.c
+>>>> @@ -166,12 +166,18 @@ static int gpio_rcar_irq_set_type(struct irq_data
+>>>> *d, unsigned int type)
+>>>>   static irqreturn_t gpio_rcar_irq_handler(int irq, void *dev_id)
+>>>>   {
+>>>>    	struct gpio_rcar_priv *p = dev_id;
+>>>> -	u32 pending;
+>>>> +	u32 pending, mask = 0;
+>>>>    	unsigned int offset, irqs_handled = 0;
+>>>>
+>>>> -	while ((pending = gpio_rcar_read(p, INTDT))) {
+>>>> +	/*
+>>>> +	 * Level interrupts cannot be cleared in the INTDT,
+>>>> +	 * so we just drop them from the pending mask when
+>>>> +	 * the interrupt is handled.
+>>>> +	 */
+>>>> +	while ((pending = gpio_rcar_read(p, INTDT) & ~mask)) {
+>>>>    		offset = __ffs(pending);
+>>>>    		gpio_rcar_write(p, INTCLR, BIT(offset));
+>>>> +		mask |= BIT(offset) & ~gpio_rcar_read(p, EDGLEVEL);
+>>>>    		generic_handle_irq(irq_find_mapping(p->irq_domain, offset));
+>>>>    		irqs_handled++;
+>>>>    	}
+>
+> What about something like this
+>
+> 	pending = gpio_rcar_read(p, INTDT)
+> 		& gpio_rcar_read(p, INTMSK);
 
-The system has ACPI, but GPIOs were not working... I don't know enough
-about ACPI, but if someone tells me what to look for I can try to debug it.
+Looks good to me.
+I'd probably keep it inside the loop instead of caching though.
 
->> +/* internal variables */
->> +static struct platform_device *sch311x_gpio_pdev;
->> +static struct platform_device *i2c_gpio_pdev;
->> +
->> +static struct {
->> +       unsigned short runtime_reg;     /* Runtime Register base address */
->> +       spinlock_t lock;                /* lock for io operations */
->> +} sch311x_gpio_data;
-> 
-> This is a singleton. What happens the day someone mounts two
-> of these chips on a board?
+>
+> 	while (pending) {
+> 		offset = __ffs(pending);
+> 		gpio_rcar_write(p, INTCLR, BIT(offset));
+> 		pending &= ~BIT(offset);
+> 		generic_handle_irq(irq_find_mapping(p->irq_domain, offset));
+> 		irqs_handled++;
+> 	}
+>
 
-Right, this part comes from the watchdog driver for the same chip
-(watchdog/sch311x_wdt.c), so I thought I can do the same. That's not a
-good excuse, I know...
-
-> Please devm_kzalloc() a state container
-> instead, look in other GPIO drivers for examples of this.
-
-Do you have a good example?
-
->> +static inline void sch311x_sio_enter(int sio_config_port)
->> +{
->> +       outb(0x55, sio_config_port);
->> +}
-> 
-> 0x55?
-> 
->> +static inline void sch311x_sio_exit(int sio_config_port)
->> +{
->> +       outb(0xaa, sio_config_port);
->> +}
-> 
-> 0xaa?
-
-> Please #define thise magic values.
-
-Again, comes from watchdog/sch311x_wdt.c... will #define.
-
->> +static int sch311x_gpio_get(struct gpio_chip *chip, unsigned offset)
->> +{
->> +       unsigned char data = inb(sch311x_gpio_data.runtime_reg + GP1);
->> +       return ((data >> offset) & 1);
-> 
-> Use this:
-> 
-> #include <linux/bitops.h>
-> 
-> return !!(data & BIT(offset));
-
-Ah, thanks!!!
-
->> +#if 0
->> +       /* configure as "push/pull": output voltage is 3.3V */
->> +       outb(SCH311X_GPIO_CONF_OUT, sch311x_gpio_data.runtime_reg + sch311x_gpio_conf[offset]);
-> 
-> No #if 0 code! Delete this.
-
-OK, sorry.
-
->> +#else
->> +       /* configure as "open drain": output voltage is 5V on an unconnected PIN */
->> +       outb(SCH311X_GPIO_CONF_OUT | SCH311X_GPIO_CONF_OPEN_DRAIN,
->> +            sch311x_gpio_data.runtime_reg + sch311x_gpio_conf[offset]);
-> 
-> So if you really only support push/pull, open drain and maybe even
-> open source, then it's OK to use the GPIO subsystem. If you start
-> doing more things, this becomes a matter of pin control.
-
-It can just be configured as just push/pull or open drain. Is there any
-way this can be configured within the GPIO subsystem?
-
-> At the very least I want the driver split up in two files: one that
-> adds the GPIO driver for an arbitrary number of pins, and one
-> that adds this boards' configuration. You can put the latter in
-> drivers/platform/x86 or wherever, just not in drivers/gpio.
-
-OK, that makes sense.
-
-bruno
-
+Thanks,
+Val.
