@@ -1,67 +1,39 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] gpio: better lookup method for platform GPIOs
-Date: Fri, 29 Nov 2013 08:17:15 +0200
-Message-ID: <CAHp75VcsYjj0_QKSeHFiFjrA92uZWdJPs5pLrzFK_HGM1ehUDw@mail.gmail.com>
-References: <1385628388-23827-1-git-send-email-acourbot@nvidia.com>
-	<CAHp75VcHa7cxAt_utwMVp7j+YeKcqa0_N5B=7-ZmTMD_6AV1Lw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v6 3/6] gpio: davinci: remove unused variable intc_irq_num
+Date: Fri, 29 Nov 2013 08:43:00 +0100
+Message-ID: <CACRpkdZaSgEMTPPSYJyENc+zhTTLhzchi2F=CzdZs=DskMvVwg@mail.gmail.com>
+References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
+	<1385057731-4348-4-git-send-email-prabhakar.csengg@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VcHa7cxAt_utwMVp7j+YeKcqa0_N5B=7-ZmTMD_6AV1Lw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rhyland Klein <rklein@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:35720 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751536Ab3K2HnB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 02:43:01 -0500
+Received: by mail-oa0-f45.google.com with SMTP id o6so9993202oag.4
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Nov 2013 23:43:00 -0800 (PST)
+In-Reply-To: <1385057731-4348-4-git-send-email-prabhakar.csengg@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
 
-> On Thu, Nov 28, 2013 at 10:46 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Thu, Nov 21, 2013 at 7:15 PM, Prabhakar Lad
+<prabhakar.csengg@gmail.com> wrote:
 
-One missed, but not least, thing.
-
->> +static struct gpiod_lookup_table *gpiod_find_lookup_table(struct device *dev)
->>  {
->>         const char *dev_id = dev ? dev_name(dev) : NULL;
->> -       struct gpio_desc *desc = ERR_PTR(-ENODEV);
->> -       unsigned int match, best = 0;
->> -       struct gpiod_lookup *p;
->> +       struct gpiod_lookup_table *table;
->>
->>         mutex_lock(&gpio_lookup_lock);
->>
->> -       list_for_each_entry(p, &gpio_lookup_list, list) {
->> -               match = 0;
->> +       list_for_each_entry(table, &gpio_lookup_list, list) {
-
-[]
-
->> +               if (dev_id != table->dev_id)
->> +                       continue;
->>
->> -                       match += 2;
->> -               }
->> +               return table;
+> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 >
-> What  about
+> As the davinci-gpio driver is migrated to use irqdomain
+> there is no need to pass the irq base for the gpio driver.
+> This patch removes this variable from davinci_gpio_platform_data
+> and also the refrences from the machine file.
 >
-> if (dev_id == table->dev_id)
->  return table;
->
-> ?
+> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 
-And unlock mutex, of course! It seems you missed this in the first place.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
->
->> +       }
->>
->> -               if (p->con_id) {
->> -                       if (!con_id || strcmp(p->con_id, con_id))
->> -                               continue;
->> +       mutex_unlock(&gpio_lookup_lock);
->>
->> -                       match += 1;
->> -               }
->> +       return NULL;
->> +}
+*Very* nice patch!
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
