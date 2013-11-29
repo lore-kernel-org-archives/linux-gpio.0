@@ -1,42 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: lock adnp IRQs when enabling them
-Date: Fri, 29 Nov 2013 10:49:46 +0100
-Message-ID: <CACRpkdYjfUAy2jZMZfgH+N+NNpnfZ8eUE3UJ78AJZXWXVHrhfw@mail.gmail.com>
-References: <1385460324-30777-1-git-send-email-linus.walleij@linaro.org>
-	<52949EFA.3060903@ti.com>
+Subject: Re: [PATCH V2] gpio: omap: refresh patch "be more aggressive with
+ pm_runtime" against v3.12-rc5
+Date: Fri, 29 Nov 2013 11:05:20 +0100
+Message-ID: <CACRpkdZBobnSZMLcW6YWc08ew1sb+UY3np+iS4=nqx5wpSNixw@mail.gmail.com>
+References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:47759 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752859Ab3K2Jts (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 04:49:48 -0500
-Received: by mail-oa0-f43.google.com with SMTP id i7so10141853oag.2
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2013 01:49:47 -0800 (PST)
-In-Reply-To: <52949EFA.3060903@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Xu <caesarxuchao@gmail.com>, ext Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@linaro.org>
+Cc: Linux-OMAP <linux-omap@vger.kernel.org>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Paul Walmsley <paul@pwsan.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Tue, Nov 26, 2013 at 2:15 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 11/26/2013 12:05 PM, Linus Walleij wrote:
->>
->> This uses the new API for tagging GPIO lines as in use by
->> IRQs. This enforces a few semantic checks on how the underlying
->> GPIO line is used.
->>
-(...)
->> +       .irq_enable = adnp_irq_enable,
->> +       .irq_disable = adnp_irq_disable,
->
->
-> .irq_startup/irq_shutdown ?
+On Tue, Nov 26, 2013 at 11:46 PM, Chao Xu <caesarxuchao@gmail.com> wrote:
 
-Sorry I was in a confused middle-ground when doing this,
-not having figured out whether to use enable/disable or
-startup/shutdown. Sent a v3 using startup/shutdown.
+> From: Felipe Balbi <balbi@ti.com>
+>
+> try to keep gpio block suspended as much as possible.
+>
+> Tested with pandaboard and a sysfs exported gpio.
+>
+> Signed-off-by: Felipe Balbi <balbi at ti.com>
+>
+> [caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added revision check to enable aggressive pm_runtime on OMAP4-only. Because am33xx_gpio_sysc.idlemodes seems to be wrongly marked as SIDLE_SMART_WKUP, which might cause missed interrupts with this patch. Tested on Pandaboard rev A2.]
+>
+> Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
+
+I'd like Tony and/or Kevin to have a look at this from a PM point
+of view so I get some confirmation from the core maintainers
+that this is the way forward.
 
 Yours,
 Linus Walleij
