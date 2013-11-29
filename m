@@ -1,146 +1,119 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [PATCH V2] gpio: omap: refresh patch "be more aggressive with
- pm_runtime" against v3.12-rc5
-Date: Fri, 29 Nov 2013 12:04:50 -0500
-Message-ID: <5298C932.60709@ti.com>
-References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
+From: Bruno Randolf <br1@einfach.org>
+Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
+Date: Fri, 29 Nov 2013 17:21:32 +0000
+Message-ID: <5298CD1C.9010704@einfach.org>
+References: <1385597895-26418-1-git-send-email-br1@einfach.org> <CACRpkdaXO+tYRq=uyQiAopRDPwKv1_F4yZwCWr4-JL1xnio4Wg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:51921 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757069Ab3K2REy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 29 Nov 2013 12:04:54 -0500
-In-Reply-To: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
+Received: from postler.einfach.org ([91.250.116.113]:58115 "EHLO
+	postler.einfach.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755820Ab3K2RVn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2013 12:21:43 -0500
+In-Reply-To: <CACRpkdaXO+tYRq=uyQiAopRDPwKv1_F4yZwCWr4-JL1xnio4Wg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chao Xu <caesarxuchao@gmail.com>
-Cc: linux-omap@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, tony@atomide.com, balbi@ti.com, Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>
+Cc: Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Adding Kevin's Linaro id, + Nishant,
+Hello Linus!
 
-On Tuesday 26 November 2013 05:46 PM, Chao Xu wrote:
-> From: Felipe Balbi <balbi@ti.com>
->=20
-> try to keep gpio block suspended as much as possible.
->=20
-> Tested with pandaboard and a sysfs exported gpio.
->=20
-> Signed-off-by: Felipe Balbi <balbi at ti.com>
->=20
-> [caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added revi=
-sion check to enable aggressive pm_runtime on OMAP4-only. Because am33x=
-x_gpio_sysc.idlemodes seems to be wrongly marked as SIDLE_SMART_WKUP, w=
-hich might cause missed interrupts with this patch. Tested on Pandaboar=
-d rev A2.]
->=20
-Please format the text and limit it to 80 char rule.
+Thank you for your review. I will try to address your concerns, as my
+time and knowledge permits ;)
 
-> Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
-> ---
-> According to Mr. Felipe Balbi, the original patch was not accepted be=
-cause interrupts would be missed when GPIO was used as IRQ source. But =
-in my tests with pandaboard, interrupts were not missed. This is becaus=
-e _idle_sysc() sets the idlemode of gpio module to smart-idle-wakeup, a=
-nd according to OMAP4430 TRM, under this idlemode, the gpio can generat=
-e an asynchronous wakeup request to the PRCM. And after GPIO is awake, =
-the wake-up request is reflected into the interrupt status registers.=20
->=20
-> A change made on the original patch is only applying the aggressive r=
-untime pm scheme on OMAP4, because I don=E2=80=99t have HW to test OMAP=
-3 or am33xx devices. According to the respective TRMs, their GPIO modul=
-es also can generate wake-up request if the idlemode is set to smart-id=
-le or smart-idle-wakeup. So the patch should work for them, too. But I =
-suspect a potential SW bug may cause missed interrupts: the am33xx_gpio=
-_sysc.idlemodes is marked as capable of SIDLE_SMART_WKUP in omap_hwmod_=
-33xx.c. But according to AM335x TRM, _only_ gpio0 is capable of this mo=
-de. This may make GPIO stuck in force-idle mode and unable to generate =
-wakeup request. And thus interrupt will be missed. Again, I don=E2=80=99=
-t have the HW to verify whether this is a bug or not :(
->=20
-In general I am not against this idea but patch has many assumptions wh=
-ich
-are not entirely correct.
+On 11/29/2013 02:40 PM, Linus Walleij wrote:
+>> +       depends on X86
+> 
+> Really? What stops me from soldering this onto one of my ARM or
+> MIPS boards?
 
-- SMART_WAKEUP will take care of waking IP etc not always true to power
-domain getting into idle.
+I suppose nothing, but I don't know. Will remove it.
 
-- If we want to go on this path then I would like to see we address
-omap2_gpio_[prepare/resumne]_for_idle()
+> ISA-style probing, yeah I had to accept this last time ...
+> So no discovery on this system, no ACPI?
 
-- GPIO though sound simple is one of the most notorious IP block
-on PM front so this needs lot of testing. This patch not seems be
-tested at all so I would have much liked it to be in RFC/RFT
-state.
+The system has ACPI, but GPIOs were not working... I don't know enough
+about ACPI, but if someone tells me what to look for I can try to debug it.
 
->  drivers/gpio/gpio-omap.c                |  103 +++++++++++++++++++++=
-+++++-----
->  include/linux/platform_data/gpio-omap.h |    1 +
->  2 files changed, 87 insertions(+), 17 deletions(-)
->=20
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 89675f8..90661f2 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -76,6 +76,7 @@ struct gpio_bank {
->  	int context_loss_count;
->  	int power_mode;
->  	bool workaround_enabled;
-> +	bool is_aggressive_pm;
-> =20
->  	void (*set_dataout)(struct gpio_bank *bank, int gpio, int enable);
->  	int (*get_context_loss_count)(struct device *dev);
-> @@ -473,8 +474,15 @@ static void _disable_gpio_module(struct gpio_ban=
-k *bank, unsigned offset)
->  static int gpio_is_input(struct gpio_bank *bank, int mask)
->  {
->  	void __iomem *reg =3D bank->base + bank->regs->direction;
-> +	u32 val;
-> =20
-> -	return __raw_readl(reg) & mask;
-> +	if (bank->is_aggressive_pm)
-> +		pm_runtime_get_sync(bank->dev);
-> +	val =3D __raw_readl(reg) & mask;
-> +	if (bank->is_aggressive_pm)
-> +		pm_runtime_put(bank->dev);
-> +
-Move above in some wrapper instead of sprinkling the
-'is_aggressive_pm' check everywhere.
- =20
-> @@ -1585,18 +1651,21 @@ static const struct omap_gpio_platform_data o=
-map2_pdata =3D {
->  	.regs =3D &omap2_gpio_regs,
->  	.bank_width =3D 32,
->  	.dbck_flag =3D false,
-> +	.is_aggressive_pm =3D false,
->  };
-> =20
->  static const struct omap_gpio_platform_data omap3_pdata =3D {
->  	.regs =3D &omap2_gpio_regs,
->  	.bank_width =3D 32,
->  	.dbck_flag =3D true,
-> +	.is_aggressive_pm =3D false,
->  };
-> =20
->  static const struct omap_gpio_platform_data omap4_pdata =3D {
->  	.regs =3D &omap4_gpio_regs,
->  	.bank_width =3D 32,
->  	.dbck_flag =3D true,
-> +	.is_aggressive_pm =3D true,
->  };
-> =20
-Well OMAP IP shouldn't have different behavior on OMAP3 and
-OMAP4 at least so something you can enable for OMAP4, you
-should be able to do it for OMAP3 as well.
+>> +/* internal variables */
+>> +static struct platform_device *sch311x_gpio_pdev;
+>> +static struct platform_device *i2c_gpio_pdev;
+>> +
+>> +static struct {
+>> +       unsigned short runtime_reg;     /* Runtime Register base address */
+>> +       spinlock_t lock;                /* lock for io operations */
+>> +} sch311x_gpio_data;
+> 
+> This is a singleton. What happens the day someone mounts two
+> of these chips on a board?
 
-Kevin might have some more concerns to add.
+Right, this part comes from the watchdog driver for the same chip
+(watchdog/sch311x_wdt.c), so I thought I can do the same. That's not a
+good excuse, I know...
 
-Regards,
-Santosh
+> Please devm_kzalloc() a state container
+> instead, look in other GPIO drivers for examples of this.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Do you have a good example?
+
+>> +static inline void sch311x_sio_enter(int sio_config_port)
+>> +{
+>> +       outb(0x55, sio_config_port);
+>> +}
+> 
+> 0x55?
+> 
+>> +static inline void sch311x_sio_exit(int sio_config_port)
+>> +{
+>> +       outb(0xaa, sio_config_port);
+>> +}
+> 
+> 0xaa?
+
+> Please #define thise magic values.
+
+Again, comes from watchdog/sch311x_wdt.c... will #define.
+
+>> +static int sch311x_gpio_get(struct gpio_chip *chip, unsigned offset)
+>> +{
+>> +       unsigned char data = inb(sch311x_gpio_data.runtime_reg + GP1);
+>> +       return ((data >> offset) & 1);
+> 
+> Use this:
+> 
+> #include <linux/bitops.h>
+> 
+> return !!(data & BIT(offset));
+
+Ah, thanks!!!
+
+>> +#if 0
+>> +       /* configure as "push/pull": output voltage is 3.3V */
+>> +       outb(SCH311X_GPIO_CONF_OUT, sch311x_gpio_data.runtime_reg + sch311x_gpio_conf[offset]);
+> 
+> No #if 0 code! Delete this.
+
+OK, sorry.
+
+>> +#else
+>> +       /* configure as "open drain": output voltage is 5V on an unconnected PIN */
+>> +       outb(SCH311X_GPIO_CONF_OUT | SCH311X_GPIO_CONF_OPEN_DRAIN,
+>> +            sch311x_gpio_data.runtime_reg + sch311x_gpio_conf[offset]);
+> 
+> So if you really only support push/pull, open drain and maybe even
+> open source, then it's OK to use the GPIO subsystem. If you start
+> doing more things, this becomes a matter of pin control.
+
+It can just be configured as just push/pull or open drain. Is there any
+way this can be configured within the GPIO subsystem?
+
+> At the very least I want the driver split up in two files: one that
+> adds the GPIO driver for an arbitrary number of pins, and one
+> that adds this boards' configuration. You can put the latter in
+> drivers/platform/x86 or wherever, just not in drivers/gpio.
+
+OK, that makes sense.
+
+bruno
+
