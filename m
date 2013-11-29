@@ -1,40 +1,50 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2] gpio-lynxpoint: Allow building as a module
-Date: Fri, 29 Nov 2013 13:13:53 +0200
-Message-ID: <20131129111353.GG2281@intel.com>
-References: <20131127154606.5b6d6742@endymion.delvare>
- <CACRpkdZYxsEn=YHG9jLnggEXKoskfvijHYe2-=i2fxf23Q2N3w@mail.gmail.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH] gpiolib: don't bother warning when failing to get gpios
+Date: Fri, 29 Nov 2013 13:08:45 +0200
+Message-ID: <20131129110845.GA3942@xps8300>
+References: <1385716566-9810-1-git-send-email-heikki.krogerus@linux.intel.com>
+ <CAAVeFuJUWcOKos3ds-ekRv6T0=sU6dtx5M3rQNTGKMDCVj68Eg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:4013 "EHLO mga11.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:56156 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751235Ab3K2LHO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 29 Nov 2013 06:07:14 -0500
+	id S1753813Ab3K2LJM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 29 Nov 2013 06:09:12 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZYxsEn=YHG9jLnggEXKoskfvijHYe2-=i2fxf23Q2N3w@mail.gmail.com>
+In-Reply-To: <CAAVeFuJUWcOKos3ds-ekRv6T0=sU6dtx5M3rQNTGKMDCVj68Eg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jean Delvare <jdelvare@suse.de>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Nov 29, 2013 at 11:27:23AM +0100, Linus Walleij wrote:
-> On Wed, Nov 27, 2013 at 3:46 PM, Jean Delvare <jdelvare@suse.de> wrote:
-> 
-> > Change CONFIG_GPIO_LYNXPOINT from bool to tristate so that the
-> > gpio-lynxpoint driver can be built as a module.
+Hi,
+
+On Fri, Nov 29, 2013 at 06:37:35PM +0900, Alexandre Courbot wrote:
+> On Fri, Nov 29, 2013 at 6:16 PM, Heikki Krogerus
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index 4e10b10..2f0305e 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -2434,10 +2434,8 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+> >                 desc = gpiod_find(dev, con_id, idx, &flags);
+> >         }
 > >
-> > Add the required glue: an exit function to unregister the driver, and
-> > module information.
+> > -       if (IS_ERR(desc)) {
+> > -               dev_warn(dev, "lookup for GPIO %s failed\n", con_id);
+> > +       if (IS_ERR(desc))
+> >                 return desc;
+> > -       }
 > >
-> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> > Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> >         status = gpiod_request(desc, con_id);
 > 
-> Hm I think Mika is working on this driver now, Mika can you have
-> a look at this patch?
+> I kind of agree with the logic that motivates this patch, but how
+> about turning this warning into dev_dbg() instead so that people who
+> wish so can still continue using it?
 
-I don't have any objections in merging this patch. It looks good and I
-can't remember any reasons why it can't be compiled as a module :)
+Sure, I'll send v2 of this and do just that.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Thanks,
+
+-- 
+heikki
