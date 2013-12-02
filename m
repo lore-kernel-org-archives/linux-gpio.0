@@ -1,20 +1,16 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 3.12 041/212] gpio: twl4030: Fix regression for twl gpio output
-Date: Mon,  2 Dec 2013 11:13:52 -0800
-Message-ID: <20131202191252.976838459@linuxfoundation.org>
-References: <20131202191248.517975703@linuxfoundation.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39216 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754565Ab3LBTR2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Dec 2013 14:17:28 -0500
-In-Reply-To: <20131202191248.517975703@linuxfoundation.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 3.10 031/173] gpio: twl4030: Fix regression for twl gpio output
+Date: Mon,  2 Dec 2013 11:10:14 -0800
+Message-ID: <20131202191146.327705812@linuxfoundation.org>
+References: <20131202191142.873808297@linuxfoundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131202191142.873808297@linuxfoundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-3.12-stable review patch.  If anyone has any objections, please let me know.
+3.10-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -74,5 +70,3 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  }
  
  static int twl_to_irq(struct gpio_chip *chip, unsigned offset)
-
-
