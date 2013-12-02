@@ -1,266 +1,118 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2] gpio: better lookup method for platform GPIOs
-Date: Mon, 2 Dec 2013 21:37:18 +0900
-Message-ID: <CAAVeFuKAG-zw2Q61NWfQF3t5ftmg8XVrnsYwhqpKReMHnJctzA@mail.gmail.com>
-References: <1385628388-23827-1-git-send-email-acourbot@nvidia.com>
- <1385982101-24706-1-git-send-email-acourbot@nvidia.com> <CAHp75Vdr8hVBU9x1U2s7K_fp773YqeRpM4bPFaYWKeTSp9qV7w@mail.gmail.com>
+From: Bruno Randolf <br1@einfach.org>
+Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
+Date: Mon, 02 Dec 2013 12:43:27 +0000
+Message-ID: <529C806F.4000204@einfach.org>
+References: <1385597895-26418-1-git-send-email-br1@einfach.org> <20131129185606.GK16823@kw.sim.vm.gnt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:54825 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753560Ab3LBMhi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Dec 2013 07:37:38 -0500
-In-Reply-To: <CAHp75Vdr8hVBU9x1U2s7K_fp773YqeRpM4bPFaYWKeTSp9qV7w@mail.gmail.com>
+Received: from postler.einfach.org ([91.250.116.113]:43170 "EHLO
+	postler.einfach.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752494Ab3LBMnh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Dec 2013 07:43:37 -0500
+In-Reply-To: <20131129185606.GK16823@kw.sim.vm.gnt>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Rhyland Klein <rklein@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: linus.walleij@linaro.org, wim@iguana.be, linux-gpio@vger.kernel.org
 
-On Mon, Dec 2, 2013 at 8:49 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Mon, Dec 2, 2013 at 1:01 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
->> Change the format of the platform GPIO lookup tables to make them less
->> confusing and improve lookup efficiency.
->>
->> The previous format was a single linked-list that required to compare
->> the device name and function ID of every single GPIO defined for each
->> lookup. Switch that to a list of per-device tables, so that the lookup
->> can be done in two steps, omitting the GPIOs that are not relevant for a
->> particular device.
->>
->> The matching rules are now defined as follows:
->> - The device name must match *exactly*, and can be NULL for GPIOs not
->>   assigned to a particular device,
->> - If the function ID in the lookup table is NULL, the con_id argument of
->>   gpiod_get() will not be used for lookup. However, if it is defined, it
->>   must match exactly.
->> - The index must always match.
->
-> Thanks for an updated version.
-> Few minor comments below.
-> Comments about loops are here as well.
->
-> I any case:
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Thanks!
+Hi Simon and all!
 
->
->>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->> ---
->> Changes since v1:
->> - Applied most fixes suggested by Andy
->> - Hopefully safer and less confusing table lookup algorithm
->> - Added Mika's ack
->>
->>  Documentation/gpio/board.txt |  25 ++++++----
->>  drivers/gpio/gpiolib.c       | 109 +++++++++++++++++++++++--------------------
->>  include/linux/gpio/driver.h  |  22 ++++-----
->>  3 files changed, 85 insertions(+), 71 deletions(-)
->>
->> diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
->> index 0d03506f2cc5..a4fdd96cef93 100644
->> --- a/Documentation/gpio/board.txt
->> +++ b/Documentation/gpio/board.txt
->> @@ -72,10 +72,11 @@ where
->>
->>    - chip_label is the label of the gpiod_chip instance providing the GPIO
->>    - chip_hwnum is the hardware number of the GPIO within the chip
->> -  - dev_id is the identifier of the device that will make use of this GPIO. If
->> -       NULL, the GPIO will be available to all devices.
->> +  - dev_id is the identifier of the device that will make use of this GPIO. It
->> +       can be NULL, in which case it will be matched for calls to gpiod_get()
->> +       with a NULL device.
->>    - con_id is the name of the GPIO function from the device point of view. It
->> -       can be NULL.
->> +       can be NULL, in which case it will match any function.
->>    - idx is the index of the GPIO within the function.
->>    - flags is defined to specify the following properties:
->>         * GPIOF_ACTIVE_LOW      - to configure the GPIO as active-low
->> @@ -88,16 +89,20 @@ Note that GPIO_LOOKUP() is just a shortcut to GPIO_LOOKUP_IDX() where idx = 0.
->>
->>  A lookup table can then be defined as follows:
->>
->> -       struct gpiod_lookup gpios_table[] = {
->> -       GPIO_LOOKUP_IDX("gpio.0", 15, "foo.0", "led", 0, GPIO_ACTIVE_HIGH),
->> -       GPIO_LOOKUP_IDX("gpio.0", 16, "foo.0", "led", 1, GPIO_ACTIVE_HIGH),
->> -       GPIO_LOOKUP_IDX("gpio.0", 17, "foo.0", "led", 2, GPIO_ACTIVE_HIGH),
->> -       GPIO_LOOKUP("gpio.0", 1, "foo.0", "power", GPIO_ACTIVE_LOW),
->> -       };
->> +struct gpiod_lookup_table gpios_table = {
->> +       .dev_id = "foo.0",
->> +       .size = 4,
->> +       .table = {
->> +               GPIO_LOOKUP_IDX("gpio.0", 15, "led", 0, GPIO_ACTIVE_HIGH),
->> +               GPIO_LOOKUP_IDX("gpio.0", 16, "led", 1, GPIO_ACTIVE_HIGH),
->> +               GPIO_LOOKUP_IDX("gpio.0", 17, "led", 2, GPIO_ACTIVE_HIGH),
->> +               GPIO_LOOKUP("gpio.0", 1, "power", GPIO_ACTIVE_LOW),
->> +       },
->> +};
->>
->>  And the table can be added by the board code as follows:
->>
->> -       gpiod_add_table(gpios_table, ARRAY_SIZE(gpios_table));
->> +       gpiod_add_lookup_table(&gpios_table);
->>
->>  The driver controlling "foo.0" will then be able to obtain its GPIOs as follows:
->>
->> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->> index f72618ba716a..d17d6eabed6a 100644
->> --- a/drivers/gpio/gpiolib.c
->> +++ b/drivers/gpio/gpiolib.c
->> @@ -2259,18 +2259,14 @@ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
->>  EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
->>
->>  /**
->> - * gpiod_add_table() - register GPIO device consumers
->> - * @table: array of consumers to register
->> - * @num: number of consumers in table
->> + * gpiod_add_lookup_table() - register GPIO device consumers
->> + * @table: table of consumers to register
->>   */
->> -void gpiod_add_table(struct gpiod_lookup *table, size_t size)
->> +void gpiod_add_lookup_table(struct gpiod_lookup_table *table)
->>  {
->>         mutex_lock(&gpio_lookup_lock);
->>
->> -       while (size--) {
->> -               list_add_tail(&table->list, &gpio_lookup_list);
->> -               table++;
->> -       }
->> +       list_add_tail(&table->list, &gpio_lookup_list);
->>
->>         mutex_unlock(&gpio_lookup_lock);
->>  }
->> @@ -2326,72 +2322,85 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
->>         return desc;
->>  }
->>
->> -static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
->> -                                   unsigned int idx,
->> -                                   enum gpio_lookup_flags *flags)
->> +static struct gpiod_lookup_table *gpiod_find_lookup_table(struct device *dev)
->>  {
->>         const char *dev_id = dev ? dev_name(dev) : NULL;
->> -       struct gpio_desc *desc = ERR_PTR(-ENODEV);
->> -       unsigned int match, best = 0;
->> -       struct gpiod_lookup *p;
->> +       struct gpiod_lookup_table *table;
->>
->>         mutex_lock(&gpio_lookup_lock);
->>
->> -       list_for_each_entry(p, &gpio_lookup_list, list) {
->> -               match = 0;
->> +       list_for_each_entry(table, &gpio_lookup_list, list) {
->> +               if (table->dev_id && dev_id) {
->> +                       /*
->> +                        * Valid strings on both ends, must be identical to have
->> +                        * a match
->> +                        */
->> +                       if (!strcmp(table->dev_id, dev_id))
->> +                               goto end;
->> +               } else {
->> +                       /*
->> +                        * One of the pointers is NULL, so both must be to have
->> +                        * a match
->> +                        */
->> +                       if (dev_id == table->dev_id)
->> +                               goto end;
->> +               }
->
-> Yes, in this case it looks clearer. Though, you might join last else
-> and if in one line.
+Thanks for your feedback, but please keep in mind that I am not
+working for any chip manufacturer or board vendor. I'm just a user who
+wants to share his work, and I believe in 99% of the cases only one
+single "super i/o" chip will be in a given system, and 99% of the
+users will not use more than the first 8 GPIOs. However I'm going to
+try to support all available GPIOs on this chip, but I have the
+following problem:
 
-I don't think that would conform to the coding conventions. Will try
-and see if checkpatch complains, but I'm rather confident it will...
+The chip has the following GPIOs:
 
->
->> +       }
->> +       table = NULL;
->
-> Up to you, though I think it's clearer to return NULL explicitly (and
-> unlock mutex before).
+10-17			8 continous GPIOs, OK
+21, 22, 27		20 and 23-26 not available
+30-34, 36, 37		35 not available
+40, 42, 44-47		41, 43 not available
+GP50-57			8 continous GPIOs, OK
+GP60-67			8 continous GPIOs, OK
 
-As v1 of this patch can attest, the less return statements in a
-lock-holding function, the better. :)
+The datasheet is available at:
 
->
->>
->> -               if (p->dev_id) {
->> -                       if (!dev_id || strcmp(p->dev_id, dev_id))
->> -                               continue;
->> +end:
->
-> Maybe 'found' suits better?
+http://www.smsc.com/Products/PC_System_and_I-O_Controllers/Embedded_I-O_Products/LPC-Based_Embedded_I-O/SCH3112_SCH3114_SCH3116
 
-But we end up here even if we haven't "found" anything...
+So I'd register 6 gpio_chip structures with a different base, but how
+should I handle these "holes"? Via gpio_chip.request? Or return error
+in direction_input and direction_output?
 
->
->> +       mutex_unlock(&gpio_lookup_lock);
->> +       return table;
->> +}
->>
->> -                       match += 2;
->> -               }
->> +static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
->> +                                   unsigned int idx,
->> +                                   enum gpio_lookup_flags *flags)
->> +{
->> +       struct gpio_desc *desc = ERR_PTR(-ENODEV);
->> +       struct gpiod_lookup_table *table;
->> +       int i;
->>
->> -               if (p->con_id) {
->> -                       if (!con_id || strcmp(p->con_id, con_id))
->> -                               continue;
->> +       table = gpiod_find_lookup_table(dev);
->> +       if (!table)
->> +               return desc;
->>
->> -                       match += 1;
->> -               }
->> +       for (i = 0; i < table->size; i++) {
->> +               struct gpio_chip *chip;
->> +               struct gpiod_lookup *p = &table->table[i];
->>
->> +               /* idx must always match exactly */
->>                 if (p->idx != idx)
->>                         continue;
->>
->> -               if (match > best) {
->> -                       struct gpio_chip *chip;
->> -
->> -                       chip = find_chip_by_name(p->chip_label);
->> -
->> -                       if (!chip) {
->> -                               dev_warn(dev, "cannot find GPIO chip %s\n",
->> -                                        p->chip_label);
->> -                               continue;
->> -                       }
->> +               /* If the lookup entry has a con_id, require exact match */
->> +               if (p->con_id && (!con_id || strcmp(p->con_id, con_id)))
->> +                       continue;
->>
->> -                       if (chip->ngpio <= p->chip_hwnum) {
->> -                               dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
->> -                                        chip->label, chip->ngpio);
->> -                               continue;
->> -                       }
->> +               chip = find_chip_by_name(p->chip_label);
->>
->> -                       desc = gpio_to_desc(chip->base + p->chip_hwnum);
->> -                       *flags = p->flags;
->> +               if (!chip) {
->
->> +                       dev_warn(dev, "cannot find GPIO chip %s\n",
->> +                                p->chip_label);
->
-> Could it be one line?
+On 11/29/2013 06:56 PM, Simon Guinot wrote:
+>> +static unsigned int sch311x_gpio_conf[] = { +	{ 0x23,		/* GP10
+>> config register */
+> ^ Does this even compile ?
 
-The line would be 84 characters if we do that, unfortunately.
+Sorry, a mistake crept in.
 
-Thanks for the review!
-Alex.
+>> +static inline void sch311x_sio_enter(int sio_config_port) +{
+> 
+> As a Super-I/O is a multifunction device, I think you should
+> request the Super-I/O port here, using request_muxed_region() for
+> example.
+> 
+> This is a collaborative way to prevent against concurrent
+> accesses.
+
+Ok, thanks for this info.
+
+> It seems to me that all the sch311x_gpio_conf registers are
+> contiguous, except for address 0x27. Then, maybe you can transform
+> this loop into a single request_region() call ?
+
+It's except 0x27, and then when I add more GPIO lines the registers
+get even more non-contiguous... I could manually check which areas can
+be combined, but I think it's not worth it...
+
+>> +	sch311x_sio_enter(sio_config_port);
+> 
+> Don't you need to check the vendor ID here ?
+
+How?
+
+>> +	dev_id = reg == 0x7c ? 2 : reg == 0x7d ? 4 : 6;
+> 
+> Outch :)
+
+Well, again, I have copied this part from watchdog/sch311x_wdt.c
+
+>> + +	/* Select logical device A (runtime registers) */ +
+>> sch311x_sio_outb(sio_config_port, 0x07, 0x0a);
+> 
+> How behaves the Super-I/O if an another driver selects a different 
+> logical device later ? Is that OK ?
+
+I'm not sure but I believe so because we just got the base address of
+the logical device in the next lines.
+
+>> + +	/* Check if Logical Device Register is currently active */ +
+>> if ((sch311x_sio_inb(sio_config_port, 0x30) & 0x01) == 0) +
+>> pr_info("Seems that LDN 0x0a is not active...\n");
+> 
+> Maybe you can enable it ?
+
+Again, not sure, but I assume the BIOS should enable/disable logical
+devices it based on what is connected and in use?
+
+brin
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iQEcBAEBAgAGBQJSnIBvAAoJEE06nu8QSdWB9kAIAIgf1Js2aLHYyaZ+R0LdvQjw
+Jcjbi1Ci3Q5eO69xwkl18sxCdqK4xhQOEPzSWD/DLwu0+oHL+5kXpnnNLrPXKJ9y
+F/MIrtEz0RUD5siWvq97VL1OmfIaHUdhh4rz1Of93HkDMIyOPlV0fDyGYypyCk/c
+0N2CVdgvt+O7KwmR+/fAAuNoi6dWtdX1Ilh3gOiF2b87SSpBgZxB/2Hi9e7GRXUD
+g2A1f7mhHbhecqvu1FAxt12xEVUa7Yq5Lzt84IlL722Hk2cYJI011WRaBbaLtN5R
+kVDKnLTfvtL9B4tdiDbV7LTCJ38JZMk4tWl4xKzjRcQsgbBTjP0dTZcoZrwBarE=
+=9KaL
+-----END PGP SIGNATURE-----
