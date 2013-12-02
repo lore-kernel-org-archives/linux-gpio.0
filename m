@@ -1,49 +1,167 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [RFC v1 0/9] gpio: davinci: reuse for keystone arch
-Date: Mon, 2 Dec 2013 12:41:29 +0200
-Message-ID: <529C63D9.6090207@ti.com>
-References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdYKRWZJm8nRGSHV8DUehd9d0rh6y8R4HMvkimKhWezD2g@mail.gmail.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH] gpio: better lookup method for platform GPIOs
+Date: Mon, 2 Dec 2013 19:50:41 +0900
+Message-ID: <529C6601.8050105@nvidia.com>
+References: <1385628388-23827-1-git-send-email-acourbot@nvidia.com> <CAHp75VcHa7cxAt_utwMVp7j+YeKcqa0_N5B=7-ZmTMD_6AV1Lw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:39297 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753254Ab3LBKp3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Dec 2013 05:45:29 -0500
-In-Reply-To: <CACRpkdYKRWZJm8nRGSHV8DUehd9d0rh6y8R4HMvkimKhWezD2g@mail.gmail.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:3365 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753198Ab3LBKup (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Dec 2013 05:50:45 -0500
+In-Reply-To: <CAHp75VcHa7cxAt_utwMVp7j+YeKcqa0_N5B=7-ZmTMD_6AV1Lw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Nori, Sekhar" <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rhyland Klein <rklein@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi All,
-
-On 11/29/2013 10:37 AM, Linus Walleij wrote:
-> On Tue, Nov 26, 2013 at 8:40 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
->
->> [1] Depends on patch:
->> "[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
->> https://lkml.org/lkml/2013/11/8/22
+On 11/29/2013 12:54 AM, Andy Shevchenko wrote:
+> On Thu, Nov 28, 2013 at 10:46 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>> Change the format of the platform GPIO lookup tables to make them less
+>> confusing and improve lookup efficiency.
 >>
->> [2] and depends on series from Prabhakar Lad:
->> "[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
->> https://www.mail-archive.com/devicetree@vger.kernel.org/msg05970.html
+>> The previous format was a single linked-list that required to compare
+>> the device name and function ID of every single GPIO defined for each
+>> lookup. Switch that to a list of per-device tables, so that the lookup
+>> can be done in two steps, omitting the GPIOs that are not relevant for a
+>> particular device.
+>>
+>> The matching rules are now defined as follows:
+>> - The device name must match *exactly*, and can be NULL for GPIOs not
+>>    assigned to a particular device,
+>> - If the function ID in the lookup table is NULL, the con_id argument of
+>>    gpiod_get() will not be used for lookup. However, if it is defined, it
+>>    must match exactly.
+>> - The index must always match.
 >
-> So this needs to go through the same tree as these patches.
+> Thanks for that, since I'm also was a bit confused of those dev_id/con_id stuff.
+> Few comments below (mostly about style).
 >
-> And I suggested that Sekhar queue them and either take them
-> directly up to ARM SoC or send me a pull request to take it through
-> the GPIO tree.
 >
-> I'm going to go in and review these now...
+>> --- a/Documentation/gpio/board.txt
+>> +++ b/Documentation/gpio/board.txt
+>
+>> @@ -88,16 +89,20 @@ Note that GPIO_LOOKUP() is just a shortcut to GPIO_LOOKUP_IDX() where idx = 0.
+>>
+>>   A lookup table can then be defined as follows:
+>>
+>> -       struct gpiod_lookup gpios_table[] = {
+>> -       GPIO_LOOKUP_IDX("gpio.0", 15, "foo.0", "led", 0, GPIO_ACTIVE_HIGH),
+>> -       GPIO_LOOKUP_IDX("gpio.0", 16, "foo.0", "led", 1, GPIO_ACTIVE_HIGH),
+>> -       GPIO_LOOKUP_IDX("gpio.0", 17, "foo.0", "led", 2, GPIO_ACTIVE_HIGH),
+>> -       GPIO_LOOKUP("gpio.0", 1, "foo.0", "power", GPIO_ACTIVE_LOW),
+>> -       };
+>> +struct gpiod_lookup_table gpios_table = {
+>> +       .dev_id = "foo.0",
+>> +       .size = 4,
+>> +       .table = {
+>> +       GPIO_LOOKUP_IDX("gpio.0", 15, "led", 0, GPIO_ACTIVE_HIGH),
+>> +       GPIO_LOOKUP_IDX("gpio.0", 16, "led", 1, GPIO_ACTIVE_HIGH),
+>> +       GPIO_LOOKUP_IDX("gpio.0", 17, "led", 2, GPIO_ACTIVE_HIGH),
+>> +       GPIO_LOOKUP("gpio.0", 1, "power", GPIO_ACTIVE_LOW),
+>
+> Can you use deeper indentation for GPIO_* lines here?
+
+Fixed.
+
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>
+>> @@ -2326,72 +2322,77 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
+>>          return desc;
+>>   }
+>>
+>> -static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>> -                                   unsigned int idx,
+>> -                                   enum gpio_lookup_flags *flags)
+>> +static struct gpiod_lookup_table *gpiod_find_lookup_table(struct device *dev)
+>>   {
+>>          const char *dev_id = dev ? dev_name(dev) : NULL;
+>> -       struct gpio_desc *desc = ERR_PTR(-ENODEV);
+>> -       unsigned int match, best = 0;
+>> -       struct gpiod_lookup *p;
+>> +       struct gpiod_lookup_table *table;
+>>
+>>          mutex_lock(&gpio_lookup_lock);
+>>
+>> -       list_for_each_entry(p, &gpio_lookup_list, list) {
+>> -               match = 0;
+>> +       list_for_each_entry(table, &gpio_lookup_list, list) {
+>> +               if (table->dev_id && dev_id && strcmp(table->dev_id, dev_id))
+>
+> Maybe check !dev_id outside of loop?
+
+And create two loops, one for each case? Might complicate the code for 
+little benefit IMHO, but please elaborate if I missed your point.
+
+>
+>> +                       continue;
+>>
+>> -               if (p->dev_id) {
+>> -                       if (!dev_id || strcmp(p->dev_id, dev_id))
+>> -                               continue;
+>> +               if (dev_id != table->dev_id)
+>> +                       continue;
+>>
+>> -                       match += 2;
+>> -               }
+>> +               return table;
+>
+> What  about
+>
+> if (dev_id == table->dev_id)
+>   return table;
+>
+> ?
+
+Actually my algorithm is broken to start with - and dangerous, as the 
+missed mutex_unlock() you spotted later testifies. I will rewrite it in 
+a (hopefully) sounder way.
+
+>> +static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>> +                                   unsigned int idx,
+>> +                                   enum gpio_lookup_flags *flags)
+>> +{
+>> +       struct gpio_desc *desc = ERR_PTR(-ENODEV);
+>> +       struct gpiod_lookup_table *table;
+>> +       int i;
+>>
+>> -               if (match > best) {
+>> -                       struct gpio_chip *chip;
+>>
+>
+> Looks like redundant empty line.
+
+Fixed.
+
+>
+>> -                       chip = find_chip_by_name(p->chip_label);
+>> +       table = gpiod_find_lookup_table(dev);
+>> +       if (!table)
+>> +               return desc;
+>>
+>> -                       if (!chip) {
+>> -                               dev_warn(dev, "cannot find GPIO chip %s\n",
+>> -                                        p->chip_label);
+>> -                               continue;
+>> -                       }
+>> +       for (i = 0; i < table->size; i++) {
+>> +               struct gpio_chip *chip;
+>> +               struct gpiod_lookup *p = &table->table[i];
+>>
+>> -                       if (chip->ngpio <= p->chip_hwnum) {
+>> -                               dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
+>> -                                        chip->label, chip->ngpio);
+>> +               if (p->idx != idx)
+>> +                       continue;
+>> +
+>> +               if (p->con_id) {
+>> +                       if (!con_id || strcmp(p->con_id, con_id))
+>
+> Could be one 'if' and moreover !con_id check might be outside a loop.
+
+Again, wouldn't that require two separate loops?
 
 
-Thanks for you review.
-
-I'll update, rebase and repost patches once the "Depends On" series
-will be accepted.
-
-Regards,
-- grygorii
