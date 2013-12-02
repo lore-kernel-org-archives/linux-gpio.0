@@ -1,33 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl-baytrail: show pin label with the reset of the
- gpio debug data
-Date: Mon, 2 Dec 2013 15:36:15 +0100
-Message-ID: <CACRpkdah3kG1MdzquL05BT6uzR+XCt8qqop9-b+huUgj_+OMoA@mail.gmail.com>
-References: <1385121683-29223-1-git-send-email-mathias.nyman@linux.intel.com>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [PATCH] gpio: drop users of irq_set_chip_and_handler_name()
+Date: Mon, 02 Dec 2013 10:27:52 -0800
+Message-ID: <529CD128.9000904@linux.intel.com>
+References: <1385472771-26681-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:61079 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751748Ab3LBOgR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Dec 2013 09:36:17 -0500
-Received: by mail-ob0-f173.google.com with SMTP id gq1so12903477obb.32
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Dec 2013 06:36:17 -0800 (PST)
-In-Reply-To: <1385121683-29223-1-git-send-email-mathias.nyman@linux.intel.com>
+Received: from mga14.intel.com ([143.182.124.37]:42628 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751965Ab3LBSXO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 2 Dec 2013 13:23:14 -0500
+In-Reply-To: <1385472771-26681-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, Nov 22, 2013 at 1:01 PM, Mathias Nyman
-<mathias.nyman@linux.intel.com> wrote:
+Hi Linus,
 
-> The default gpiolib debug output shows pin labels.
-> We want baytrail custom debug output to have the same functionality.
->
-> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+On 11/26/2013 05:32 AM, Linus Walleij wrote:
+> Switch all users of irq_set_chip_and_handler_name() to simply
+> use irq_set_chip_and_handler(), all just provide a boilerplate
+> name like "demux" or "mux" - a fact which is anyway obvious
+> from the hwirq number from the irqdomain now present in e.g.
+> /proc/interrupts.
+> 
+> Cc: David Cohen <david.a.cohen@linux.intel.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> I'm challenging all users of this function to make an argument
+> for it to stay in, and suspecting that this is mostly a copy
+> and paste artifact...
+> ---
+>  drivers/gpio/gpio-intel-mid.c  | 3 +--
+>  drivers/gpio/gpio-lynxpoint.c  | 3 +--
+>  drivers/gpio/gpio-msic.c       | 7 +++----
+>  drivers/gpio/gpio-timberdale.c | 4 ++--
+>  4 files changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
+> index be803af658ac..17f135046c7f 100644
+> --- a/drivers/gpio/gpio-intel-mid.c
+> +++ b/drivers/gpio/gpio-intel-mid.c
+> @@ -358,8 +358,7 @@ static int intel_gpio_irq_map(struct irq_domain *d, unsigned int irq,
+>  {
+>  	struct intel_mid_gpio *priv = d->host_data;
+>  
+> -	irq_set_chip_and_handler_name(irq, &intel_mid_irqchip,
+> -				      handle_simple_irq, "demux");
+> +	irq_set_chip_and_handler(irq, &intel_mid_irqchip, handle_simple_irq);
+>  	irq_set_chip_data(irq, priv);
+>  	irq_set_irq_type(irq, IRQ_TYPE_NONE);
+>  
 
-Patch applied with Mika's tag.
-
-Thanks!
-Linus Walleij
+For intel-mid case:
+Acked-by: David Cohen <david.a.cohen@linux.intel.com>
