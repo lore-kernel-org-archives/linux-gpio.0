@@ -1,190 +1,189 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH] gpio: driver for Xtensa GPIO32
-Date: Tue,  3 Dec 2013 10:04:34 +0200
-Message-ID: <9b46369ab60c23a6bd9f1930c4ff6c2fec57e798.1386057874.git.baruch@tkos.co.il>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: pinctrl - detailed gpio-mode pinconf design
+Date: Tue, 3 Dec 2013 11:04:48 +0100
+Message-ID: <CACRpkdbpv3Vjt-=3_1XbrGaiEYqCgtJCGppvoL48gad+7Licdg@mail.gmail.com>
+References: <EB2BCA6A838C7B4FB238C534ED5D770422395F79@renexmb02.roe2.renesasmobile.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:38264 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751636Ab3LCIFX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 3 Dec 2013 03:05:23 -0500
+Received: from mail-oa0-f50.google.com ([209.85.219.50]:36128 "EHLO
+	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752798Ab3LCKEt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Dec 2013 05:04:49 -0500
+Received: by mail-oa0-f50.google.com with SMTP id n16so14618434oag.37
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Dec 2013 02:04:49 -0800 (PST)
+In-Reply-To: <EB2BCA6A838C7B4FB238C534ED5D770422395F79@renexmb02.roe2.renesasmobile.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-xtensa@linux-xtensa.org, Baruch Siach <baruch@tkos.co.il>
+To: kevin.bracey@broadcom.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <damm@opensource.se>
 
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
- drivers/gpio/Kconfig       |   7 +++
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-xtensa.c | 132 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 140 insertions(+)
- create mode 100644 drivers/gpio/gpio-xtensa.c
+On Thu, Nov 28, 2013 at 11:07 AM,  <kevin.bracey@broadcom.com> wrote:
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 8c827eb..488e07b 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -290,6 +290,13 @@ config GPIO_XILINX
- 	help
- 	  Say yes here to support the Xilinx FPGA GPIO device
- 
-+config GPIO_XTENSA
-+	bool "Xtensa GPIO32 support"
-+	depends on XTENSA
-+	help
-+	  Say yes here to support the Xtensa internal GPIO32 IMPWIRE (input)
-+	  and EXPSTATE (output) ports
-+
- config GPIO_VR41XX
- 	tristate "NEC VR4100 series General-purpose I/O Uint support"
- 	depends on CPU_VR41XX
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index b4f852e..d8ed654 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -96,3 +96,4 @@ obj-$(CONFIG_GPIO_WM831X)	+= gpio-wm831x.o
- obj-$(CONFIG_GPIO_WM8350)	+= gpio-wm8350.o
- obj-$(CONFIG_GPIO_WM8994)	+= gpio-wm8994.o
- obj-$(CONFIG_GPIO_XILINX)	+= gpio-xilinx.o
-+obj-$(CONFIG_GPIO_XTENSA)	+= gpio-xtensa.o
-diff --git a/drivers/gpio/gpio-xtensa.c b/drivers/gpio/gpio-xtensa.c
-new file mode 100644
-index 0000000..f5f74b2
---- /dev/null
-+++ b/drivers/gpio/gpio-xtensa.c
-@@ -0,0 +1,132 @@
-+/*
-+ * Copyright (C) 2013 TangoTec Ltd.
-+ * Author: Baruch Siach <baruch@tkos.co.il>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Driver for the Xtensa LX4 GPIO32 Option
-+ *
-+ * Documentation: Xtensa LX4 Microprocessor Data Book, Section 2.22
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <asm/coprocessor.h>
-+
-+#define ENABLE_CP()					\
-+{							\
-+	unsigned long flags, cpenable;			\
-+	local_irq_save(flags);				\
-+	RSR_CPENABLE(cpenable);				\
-+	WSR_CPENABLE(cpenable | XCHAL_CP_PORT_MASK);
-+
-+#define DISABLE_CP()					\
-+	WSR_CPENABLE(cpenable);				\
-+	local_irq_restore(flags);			\
-+}
-+
-+static int xtensa_impwire_get_direction(struct gpio_chip *gc, unsigned offset)
-+{
-+	return 1;
-+}
-+
-+static int xtensa_impwire_get_value(struct gpio_chip *gc, unsigned offset)
-+{
-+	u32 impwire;
-+
-+	ENABLE_CP();
-+	__asm__ __volatile__("read_impwire %0" : "=a" (impwire));
-+	DISABLE_CP();
-+
-+	return !!(impwire & (1 << offset));
-+}
-+
-+static void xtensa_impwire_set_value(struct gpio_chip *gc, unsigned offset,
-+				    int value)
-+{
-+}
-+
-+static int xtensa_expstate_get_direction(struct gpio_chip *gc, unsigned offset)
-+{
-+	return 0;
-+}
-+
-+static int xtensa_expstate_get_value(struct gpio_chip *gc, unsigned offset)
-+{
-+	u32 expstate;
-+
-+	ENABLE_CP();
-+	__asm__ __volatile__("rur.expstate %0" : "=a" (expstate));
-+	DISABLE_CP();
-+
-+	return !!(expstate & (1 << offset));
-+}
-+
-+static void xtensa_expstate_set_value(struct gpio_chip *gc, unsigned offset,
-+				     int value)
-+{
-+	u32 mask = (1 << offset);
-+	u32 val = value ? (1 << offset) : 0;
-+
-+	ENABLE_CP();
-+	__asm__ __volatile__("wrmsk_expstate %0, %1"
-+			     :: "a" (val), "a" (mask));
-+	DISABLE_CP();
-+}
-+
-+static struct gpio_chip impwire_chip = {
-+	.label		= "impwire",
-+	.base		= -1,
-+	.ngpio		= 32,
-+	.get_direction	= xtensa_impwire_get_direction,
-+	.get		= xtensa_impwire_get_value,
-+	.set		= xtensa_impwire_set_value,
-+};
-+
-+static struct gpio_chip expstate_chip = {
-+	.label		= "expstate",
-+	.base		= -1,
-+	.ngpio		= 32,
-+	.get_direction	= xtensa_expstate_get_direction,
-+	.get		= xtensa_expstate_get_value,
-+	.set		= xtensa_expstate_set_value,
-+};
-+
-+static int xtensa_gpio_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	ret = gpiochip_add(&impwire_chip);
-+	if (ret)
-+		return ret;
-+	return gpiochip_add(&expstate_chip);
-+}
-+
-+static struct platform_driver xtensa_gpio_driver = {
-+	.driver		= {
-+		.name		= "xtensa-gpio",
-+		.owner		= THIS_MODULE,
-+	},
-+	.probe		= xtensa_gpio_probe,
-+};
-+
-+static int __init xtensa_gpio_init(void)
-+{
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_register_simple("xtensa-gpio", 0, NULL, 0);
-+	if (IS_ERR(pdev))
-+		return PTR_ERR(pdev);
-+
-+	return platform_driver_register(&xtensa_gpio_driver);
-+}
-+subsys_initcall(xtensa_gpio_init);
-+
-+MODULE_AUTHOR("Baruch Siach <baruch@tkos.co.il>");
-+MODULE_DESCRIPTION("Xtensa LX4 GPIO32 driver");
-+MODULE_LICENSE("GPL");
--- 
-1.8.4.3
+> I'm working on converting an shmobile-based system that has a lot of custom GPIO/pin manipulation to use
+> pure pinctrl.  I'm a bit stuck on some of the design details.
 
+OK I have forwarded this post to Laurent Pinchart who wrote the
+shmobile pin control implementation
+so we can reach some clarity on how this is supposed to work.
+
+> I'm going to have to extend the sh-pfc pinctrl driver a fair bit to support all the necessary
+> functionality, but I'm not quite sure how some of it should look. I have a first-pass prototype,
+> but I'm worried that the consumer API just isn't right.
+
+Let's figure this out.
+
+> Basically, our system has an existing mechanism to get pins into "safe" state for sleep.
+> It uses the legacy SH "gpio_request(FN)" mechanism to switch pinmux between function
+> and GPIO, and then sets GPIO direction through normal GPIO APIs, and pin pulls
+> through a custom API.
+
+I cannot really say very much about the legacy stuff as I have no clue how that
+works. Paul Mundt and Magnus Damm may know.
+
+> Clearly, this can now be replaced with default+sleep pinctrl states. But I'm not seeing
+> a clear model to follow in the upstream code at the level of detail I need.
+
+So this is what we need to discuss with Laurent.
+
+> The pins that we're dealing with basically look like this diagram from pinctrl.txt:
+>
+>                        pin config
+>                        logic regs
+>                        |               +- SPI
+>      Physical pins --- pad --- pinmux -+- I2C
+>                                |       +- mmc
+>                                |       +- GPIO
+>                                pin
+>                                multiplex
+>                                logic regs
+>
+> The control bits we have in the GPIO function are "input enable", "output enable"
+> and "output data". Those manual controls are only effective when the GPIO mux
+> is selected. The pad config bits are "pull up enable" and "pull down enable",
+> and they're always manually controllable.
+
+"Manually" is a very strange word that we use from time to time with a
+very fuzzy semantic meaning.
+
+I start to think about Charlie Chaplin in the factory in "modern times"
+when I hear this word.
+
+I guess what you mean is that pulls can always be controlled, no matter
+if the GPIO block is in use or not, so it corresponds to the diagram above.
+
+> So adding a "gpio-mode" function to each pin group as per pinctrl.txt
+> seems the obvious thing to do.
+
+This is *one* way to do it that some implementers have opted for.
+The other way is to implement the .gpio_request_enable(),
+.gpio_disable_free() functions in struct pinmux_ops so as to
+shortcut and simplify matters.
+
+Either way works.
+
+> And we need to extend the sh-pfc driver to let us control the GPIO
+> through pinconf once the "gpio-mode" function is selected. But how
+> exactly should this work?
+
+Controlling GPIO through pinconf seems to be very twisted.
+Usually it is the other way around.
+
+When  a GPIO driver is using pin control as back-end it calls
+specific helpers from <linux/pinctrl/consumer.h>:
+
+pinctrl_request_gpio()
+pinctrl_free_gpio()
+pinctrl_gpio_direction_input()
+pinctrl_gpio_direction_output()
+
+> The questions are really about the intent of generic pinconf, rather
+> than anything platform-specific.
+>
+> At present, the sh-pfc driver only supports BIAS_PULL_UP,
+> BIAS_PULL_DOWN, and BIAS_DISABLE, which control only the
+> pad pulls, and don't touch the GPIO bits.
+>
+> Now, if specifying hi-Z/output for a "gpio-mode" pin, it seems that
+> we should use generic pinconf BIAS_HIGH_IMPEDANCE and
+> OUTPUT(0,1). Yes?
+>
+> But then how do we describe a pull? It seems most natural for
+> pinctrl consumers to express this as simply MUX("gpio-mode"),
+> CONF(BIAS_PULL_UP).
+>
+> So, should BIAS_PULL_UP automatically select "input" in
+> gpio-mode? Or does the DT/board have to explicitly say
+> MUX("gpio-mode"), CONF(BIAS_PULL_UP, BIAS_HIGH_IMPEDANCE)
+> to select pull up and input? Or does that just make no sense - it
+> certainly looks odd. What's the intent here in the generic pinconf design?
+
+Nominally the pin config and GPIO portions are treated ortogonally,
+and the four calls above take care of the interaction between the
+two systems.
+
+Note that it is perfectly legal for a pin to be used by
+the pin control and GPIO subsystems simultaneously:
+e.g. a pin control hog can set up a bias and then the
+GPIO subsystem can drive that pin without any
+cross-talk.
+
+> Looking at it another way - do we model the pinconf as these
+> 2 sets of independent settings - you can always set 1 of the
+> first 3, and you can also set 1 of the second 3 in gpio-mode:
+>
+>   (BIAS_PULL_UP | BIAS_PULL_DOWN | BIAS_DISABLE)  = (pull=UP | pull=DOWN | pull=OFF)
+>   (BIAS_HIGH_IMPEDANCE | OUTPUT 0 | OUTPUT 1)     = (IEN=OEN=0 | IEN=0,OEN=1,DATA=0 | IEN=0,OEN=1,DATA=1 )
+
+Yes this makes perfect sense. I would sat the first (bias)
+parameter should be handled by the pin control subsystem.
+
+The latter setting should be controlled by the GPIO subsystem
+only, right? Because BIAS_HIGH_IMPEDANCE is usually
+the same as input. Maybe you want this to happen inside
+of the pin control driver as a result of the GPIO driver
+calling pinctrl_gpio_direction_input() or
+pinctrl_gpio_direction_output(), that is up to the
+implementation but it is one way to do it, Laurent can
+comment on this I guess.
+
+> Or we treat it as one set where you can only ever enable 1:
+>
+>    BIAS_PULL_UP                         pull=UP, IEN=OEN=0
+>    BIAS_PULL_DOWN                       pull=DOWN, IEN=OEN=0
+>    BIAS_HIGH_IMPEDANCE                  pull=OFF, IEN=OEN=0
+>    OUTPUT 0                             pull=OFF, IEN=0, OEN=1, DATA=0
+>    OUTPUT 1                             pull=OFF, IEN=0, OEN=1, DATA=1
+>
+> (and I guess BIAS_DISABLE is equivalent then to BIAS_HIGH_IMPEDANCE
+> in gpio-mode; with other functions selected, or a real GPIO request, you
+> would only be able to modify the pulls with pinconf, as with the current driver).
+
+This looks messy. The intention with the pin config subsystem
+is to break things apart and make them understandable that
+way, and to handle electronic stuff in pin config whereas driving
+a line high/low happens in the GPIO subsystem.
+
+It's the divide-and-conquer design pattern if you like.
+
+> And once you have the answer to that, what about glitch-free handover?
+
+Usually this is a matter for the device driver, for example you can
+find interesting glitch workarounds in drivers/pinctrl-nomadik.c.
+
+If you need help from the subsystem to do this let's see what is
+needed.
+
+> What is the canonical ordering for MUX+CONF in state tables/DT?
+> If MUX comes first, should the driver defer the actual GPIO mux
+> switch until the CONF specification, to avoid glitches?
+
+This must be some misunderstanding. DT does not specify
+application/ordering semantics. It does not define sequences at
+all. The device driver parsing out whatever is in the device tree
+has to take care of ordering stuff and driving the hardware.
+
+On all of these problems we need Laurent's input I think.
+
+Yours,
+Linus Walleij
