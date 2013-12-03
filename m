@@ -1,54 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: better lookup method for platform GPIOs
-Date: Tue, 3 Dec 2013 13:12:09 +0100
-Message-ID: <CACRpkdbJSCWFeF=Q_pfmbDTeQwxCMazgu88r=X_onysKT8JWpg@mail.gmail.com>
-References: <CAAVeFu+LLR-EwiRskE_VBQwPrnXAdt-ahfcH08mOXsFuStFMJg@mail.gmail.com>
-	<1386040811-27946-1-git-send-email-acourbot@nvidia.com>
+Subject: Re: [PATCH 08/39] gpio: remove DEFINE_PCI_DEVICE_TABLE macro
+Date: Tue, 3 Dec 2013 13:16:43 +0100
+Message-ID: <CACRpkdYBiSSgpSvJAARK5uUwNqqVTNc_iqVs3=SXg4FWfoa1xw@mail.gmail.com>
+References: <001501ceefb1$69c96820$3d5c3860$%han@samsung.com>
+	<001d01ceefb3$733b8cb0$59b2a610$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:48800 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752098Ab3LCMMO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Dec 2013 07:12:14 -0500
-Received: by mail-oa0-f51.google.com with SMTP id i7so14624506oag.24
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Dec 2013 04:12:13 -0800 (PST)
-In-Reply-To: <1386040811-27946-1-git-send-email-acourbot@nvidia.com>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:64683 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751965Ab3LCMQo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Dec 2013 07:16:44 -0500
+Received: by mail-ob0-f172.google.com with SMTP id gq1so14387343obb.31
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Dec 2013 04:16:43 -0800 (PST)
+In-Reply-To: <001d01ceefb3$733b8cb0$59b2a610$%han@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rhyland Klein <rklein@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Dec 3, 2013 at 4:20 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Tue, Dec 3, 2013 at 12:08 AM, Jingoo Han <jg1.han@samsung.com> wrote:
 
-> Change the format of the platform GPIO lookup tables to make them less
-> confusing and improve lookup efficiency.
+> Don't use DEFINE_PCI_DEVICE_TABLE macro, because this macro
+> is not preferred.
 >
-> The previous format was a single linked-list that required to compare
-> the device name and function ID of every single GPIO defined for each
-> lookup. Switch that to a list of per-device tables, so that the lookup
-> can be done in two steps, omitting the GPIOs that are not relevant for a
-> particular device.
->
-> The matching rules are now defined as follows:
-> - The device name must match *exactly*, and can be NULL for GPIOs not
->   assigned to a particular device,
-> - If the function ID in the lookup table is NULL, the con_id argument of
->   gpiod_get() will not be used for lookup. However, if it is defined, it
->   must match exactly.
-> - The index must always match.
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> Changes since v2:
-> - Removed size member of the gpiod_lookup_table struct (thanks Heikki!)
-> - Added Andy's reviewed-by
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 
-OK looks good, however I must get my fixes stack to Torvalds
-and pull -rc3 back in before I can apply this, it seems, as
-it builds upon pending fixes.
+Patch applied to the GPIO tree.
 
 Yours,
 Linus Walleij
