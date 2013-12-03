@@ -1,32 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 08/39] gpio: remove DEFINE_PCI_DEVICE_TABLE macro
-Date: Tue, 3 Dec 2013 13:16:43 +0100
-Message-ID: <CACRpkdYBiSSgpSvJAARK5uUwNqqVTNc_iqVs3=SXg4FWfoa1xw@mail.gmail.com>
-References: <001501ceefb1$69c96820$3d5c3860$%han@samsung.com>
-	<001d01ceefb3$733b8cb0$59b2a610$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCHv4] ARM: tegra: add gpiod_lookup table for paz00
+Date: Tue,  3 Dec 2013 14:49:58 +0200
+Message-ID: <1386074998-17833-1-git-send-email-heikki.krogerus@linux.intel.com>
+References: <1385460350-17543-2-git-send-email-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:64683 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751965Ab3LCMQo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Dec 2013 07:16:44 -0500
-Received: by mail-ob0-f172.google.com with SMTP id gq1so14387343obb.31
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Dec 2013 04:16:43 -0800 (PST)
-In-Reply-To: <001d01ceefb3$733b8cb0$59b2a610$%han@samsung.com>
+Received: from mga11.intel.com ([192.55.52.93]:10686 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752098Ab3LCMuE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 3 Dec 2013 07:50:04 -0500
+In-Reply-To: <1385460350-17543-2-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, Dec 3, 2013 at 12:08 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+This makes it possible to request the gpio descriptors in
+rfkill_gpio driver regardless of the platform.
 
-> Don't use DEFINE_PCI_DEVICE_TABLE macro, because this macro
-> is not preferred.
->
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+ arch/arm/mach-tegra/board-paz00.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Patch applied to the GPIO tree.
+Changes since v3:
+-----------------
+Rebased on top of Alexandre's patch "gpio: better lookup method for
+platform GPIOs".
 
-Yours,
-Linus Walleij
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+index 06f0240..e4dec9f 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include <linux/platform_device.h>
++#include <linux/gpio/driver.h>
+ #include <linux/rfkill-gpio.h>
+ #include "board.h"
+ 
+@@ -36,7 +37,17 @@ static struct platform_device wifi_rfkill_device = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table wifi_gpio_lookup = {
++	.dev_id = "rfkill_gpio",
++	.table = {
++		GPIO_LOOKUP_IDX("tegra-gpio", 25, NULL, 0, 0),
++		GPIO_LOOKUP_IDX("tegra-gpio", 85, NULL, 1, 0),
++		{ },
++	},
++};
++
+ void __init tegra_paz00_wifikill_init(void)
+ {
++	gpiod_add_lookup_table(&wifi_gpio_lookup);
+ 	platform_device_register(&wifi_rfkill_device);
+ }
+-- 
+1.8.4.4
+
