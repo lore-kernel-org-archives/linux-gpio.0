@@ -1,206 +1,506 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: pinctrl - detailed gpio-mode pinconf design
-Date: Wed, 04 Dec 2013 23:44:04 +0100
-Message-ID: <10664958.tMCNRkOk1E@avalon>
-References: <EB2BCA6A838C7B4FB238C534ED5D770422395F79@renexmb02.roe2.renesasmobile.com> <CACRpkdbpv3Vjt-=3_1XbrGaiEYqCgtJCGppvoL48gad+7Licdg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Bruno Randolf <br1@einfach.org>
+Subject: [PATCH v3] gpio: add GPIO support for SMSC SCH311x
+Date: Wed,  4 Dec 2013 23:56:43 +0000
+Message-ID: <1386201403-25664-1-git-send-email-br1@einfach.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:51080 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755982Ab3LDWn6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 17:43:58 -0500
-In-Reply-To: <CACRpkdbpv3Vjt-=3_1XbrGaiEYqCgtJCGppvoL48gad+7Licdg@mail.gmail.com>
+Received: from postler.einfach.org ([91.250.116.113]:34099 "EHLO
+	postler.einfach.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756287Ab3LDX5H (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 18:57:07 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, kevin.bracey@broadcom.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Magnus Damm <damm@opensource.se>, Paul Mundt <lethal@linux-sh.org>
+To: linus.walleij@linaro.org
+Cc: wim@iguana.be, linux-gpio@vger.kernel.org, mika.westerberg@linux.intel.com, mathias.nyman@linux.intel.com, david.a.cohen@intel.com, simon.guinot@sequanux.org, Bruno Randolf <br1@einfach.org>
 
-Hi Linus and Kevin,
+This patch adds support for the GPIOs found on the SMSC "Super I/
+SCH311x.
 
-On Tuesday 03 December 2013 11:04:48 Linus Walleij wrote:
-> On Thu, Nov 28, 2013 at 11:07 AM,  <kevin.bracey@broadcom.com> wrote:
-> > I'm working on converting an shmobile-based system that has a lot of
-> > custom GPIO/pin manipulation to use pure pinctrl.  I'm a bit stuck on
-> > some of the design details.
+The chip detection and I/O functions are copied from sch311x_wdt.
 
-Kevin, what SoC do you use ? The GPIO+pinmux hardware architecture varies 
-between models (with a single driver handling both GPIO and pinmux versus two 
-separate drivers), I'd like to know the exact target before replying to your 
-questions below.
+Signed-off-by: Bruno Randolf <br1@einfach.org>
+---
+Notes (v3):
+- All GPIOs are now supported, driver data is runtime allocated
+  and I tried to address all comments as far as possible.
+- Still a platform device is registered, similar to gpio-f7188x.c
+- found variable removed
+- fixed devm_zalloc
+---
+ drivers/gpio/Kconfig        |   9 +
+ drivers/gpio/Makefile       |   1 +
+ drivers/gpio/gpio-sch311x.c | 431 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 441 insertions(+)
+ create mode 100644 drivers/gpio/gpio-sch311x.c
 
-> OK I have forwarded this post to Laurent Pinchart who wrote the shmobile pin
-> control implementation so we can reach some clarity on how this is supposed
-> to work.
-
-By the way, Kevin, feel free to CC linux-sh@vger.kernel.org on Renesas-related 
-topics.
-
-> > I'm going to have to extend the sh-pfc pinctrl driver a fair bit to
-> > support all the necessary functionality, but I'm not quite sure how some
-> > of it should look. I have a first-pass prototype, but I'm worried that
-> > the consumer API just isn't right.
-> 
-> Let's figure this out.
-> 
-> > Basically, our system has an existing mechanism to get pins into "safe"
-> > state for sleep. It uses the legacy SH "gpio_request(FN)" mechanism to
-> > switch pinmux between function and GPIO, and then sets GPIO direction
-> > through normal GPIO APIs, and pin pulls through a custom API.
-> 
-> I cannot really say very much about the legacy stuff as I have no clue how
-> that works. Paul Mundt and Magnus Damm may know.
-
-The legacy API used fake GPIOs for pinmux and pinconf. We don't really need to 
-care about it, but we need to ensure that that pinctrl API covers all the use 
-cases.
-
-> > Clearly, this can now be replaced with default+sleep pinctrl states. But
-> > I'm not seeing a clear model to follow in the upstream code at the level
-> > of detail I need.
->
-> So this is what we need to discuss with Laurent.
-
-I'll reply to the rest of the e-mail as soon as Kevin gives me the SoC model 
-he's using.
-
-> > The pins that we're dealing with basically look like this diagram from
-> > pinctrl.txt:
-> >                        pin config
-> >                        logic regs
-> >                        |               +- SPI
-> >      Physical pins --- pad --- pinmux -+- I2C
-> >                                |       +- mmc
-> >                                |       +- GPIO
-> >                                pin
-> >                                multiplex
-> >                                logic regs
-> > 
-> > The control bits we have in the GPIO function are "input enable", "output
-> > enable" and "output data". Those manual controls are only effective when
-> > the GPIO mux is selected. The pad config bits are "pull up enable" and
-> > "pull down enable", and they're always manually controllable.
-> 
-> "Manually" is a very strange word that we use from time to time with a
-> very fuzzy semantic meaning.
-> 
-> I start to think about Charlie Chaplin in the factory in "modern times"
-> when I hear this word.
-> 
-> I guess what you mean is that pulls can always be controlled, no matter
-> if the GPIO block is in use or not, so it corresponds to the diagram above.
-> 
-> > So adding a "gpio-mode" function to each pin group as per pinctrl.txt
-> > seems the obvious thing to do.
-> 
-> This is *one* way to do it that some implementers have opted for. The other
-> way is to implement the .gpio_request_enable(), .gpio_disable_free()
-> functions in struct pinmux_ops so as to shortcut and simplify matters.
-> 
-> Either way works.
-> 
-> > And we need to extend the sh-pfc driver to let us control the GPIO
-> > through pinconf once the "gpio-mode" function is selected. But how
-> > exactly should this work?
-> 
-> Controlling GPIO through pinconf seems to be very twisted.
-> Usually it is the other way around.
-> 
-> When  a GPIO driver is using pin control as back-end it calls specific
-> helpers from <linux/pinctrl/consumer.h>:
-> 
-> pinctrl_request_gpio()
-> pinctrl_free_gpio()
-> pinctrl_gpio_direction_input()
-> pinctrl_gpio_direction_output()
-> 
-> > The questions are really about the intent of generic pinconf, rather
-> > than anything platform-specific.
-> > 
-> > At present, the sh-pfc driver only supports BIAS_PULL_UP,
-> > BIAS_PULL_DOWN, and BIAS_DISABLE, which control only the
-> > pad pulls, and don't touch the GPIO bits.
-> > 
-> > Now, if specifying hi-Z/output for a "gpio-mode" pin, it seems that
-> > we should use generic pinconf BIAS_HIGH_IMPEDANCE and
-> > OUTPUT(0,1). Yes?
-> > 
-> > But then how do we describe a pull? It seems most natural for
-> > pinctrl consumers to express this as simply MUX("gpio-mode"),
-> > CONF(BIAS_PULL_UP).
-> > 
-> > So, should BIAS_PULL_UP automatically select "input" in
-> > gpio-mode? Or does the DT/board have to explicitly say
-> > MUX("gpio-mode"), CONF(BIAS_PULL_UP, BIAS_HIGH_IMPEDANCE)
-> > to select pull up and input? Or does that just make no sense - it
-> > certainly looks odd. What's the intent here in the generic pinconf design?
-> 
-> Nominally the pin config and GPIO portions are treated ortogonally, and the
-> four calls above take care of the interaction between the two systems.
-> 
-> Note that it is perfectly legal for a pin to be used by the pin control and
-> GPIO subsystems simultaneously: e.g. a pin control hog can set up a bias and
-> then the GPIO subsystem can drive that pin without any cross-talk.
-> 
-> > Looking at it another way - do we model the pinconf as these
-> > 2 sets of independent settings - you can always set 1 of the
-> > 
-> > first 3, and you can also set 1 of the second 3 in gpio-mode:
-> >   (BIAS_PULL_UP | BIAS_PULL_DOWN | BIAS_DISABLE)  = (pull=UP | pull=DOWN |
-> >   pull=OFF)
-> >   (BIAS_HIGH_IMPEDANCE | OUTPUT 0 | OUTPUT 1)     = (IEN=OEN=0 |
-> >   IEN=0,OEN=1,DATA=0 | IEN=0,OEN=1,DATA=1 )
->
-> Yes this makes perfect sense. I would sat the first (bias) parameter should
-> be handled by the pin control subsystem.
-> 
-> The latter setting should be controlled by the GPIO subsystem only, right?
-> Because BIAS_HIGH_IMPEDANCE is usually the same as input. Maybe you want
-> this to happen inside of the pin control driver as a result of the GPIO
-> driver calling pinctrl_gpio_direction_input() or
-> pinctrl_gpio_direction_output(), that is up to the implementation but it is
-> one way to do it, Laurent can comment on this I guess.
-> 
-> > Or we treat it as one set where you can only ever enable 1:
-> >    BIAS_PULL_UP                         pull=UP, IEN=OEN=0
-> >    BIAS_PULL_DOWN                       pull=DOWN, IEN=OEN=0
-> >    BIAS_HIGH_IMPEDANCE                  pull=OFF, IEN=OEN=0
-> >    OUTPUT 0                             pull=OFF, IEN=0, OEN=1, DATA=0
-> >    OUTPUT 1                             pull=OFF, IEN=0, OEN=1, DATA=1
-> > 
-> > (and I guess BIAS_DISABLE is equivalent then to BIAS_HIGH_IMPEDANCE
-> > in gpio-mode; with other functions selected, or a real GPIO request, you
-> > would only be able to modify the pulls with pinconf, as with the current
-> > driver).
->
-> This looks messy. The intention with the pin config subsystem is to break
-> things apart and make them understandable that way, and to handle electronic
-> stuff in pin config whereas driving a line high/low happens in the GPIO
-> subsystem.
-> 
-> It's the divide-and-conquer design pattern if you like.
-> 
-> > And once you have the answer to that, what about glitch-free handover?
-> 
-> Usually this is a matter for the device driver, for example you can find
-> interesting glitch workarounds in drivers/pinctrl-nomadik.c.
-> 
-> If you need help from the subsystem to do this let's see what is needed.
-> 
-> > What is the canonical ordering for MUX+CONF in state tables/DT?
-> > If MUX comes first, should the driver defer the actual GPIO mux
-> > switch until the CONF specification, to avoid glitches?
-> 
-> This must be some misunderstanding. DT does not specify application/ordering
-> semantics. It does not define sequences at all. The device driver parsing
-> out whatever is in the device tree has to take care of ordering stuff and
-> driving the hardware.
-> 
-> On all of these problems we need Laurent's input I think.
-
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 0f04444..a083314 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -237,6 +237,15 @@ config GPIO_SAMSUNG
+ 	  Legacy GPIO support. Use only for platforms without support for
+ 	  pinctrl.
+ 
++config GPIO_SCH311X
++	tristate "SMSC SCH311x SuperI/O GPIO"
++	help
++	  Driver to enable the GPIOs found on SMSC SMSC SCH3112, SCH3114 and
++	  SCH3116 "Super I/O" chipsets.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-sch311x.
++
+ config GPIO_SPEAR_SPICS
+ 	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
+ 	depends on PLAT_SPEAR
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 7971e36..6c53998 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -67,6 +67,7 @@ obj-$(CONFIG_GPIO_RCAR)		+= gpio-rcar.o
+ obj-$(CONFIG_GPIO_SAMSUNG)	+= gpio-samsung.o
+ obj-$(CONFIG_ARCH_SA1100)	+= gpio-sa1100.o
+ obj-$(CONFIG_GPIO_SCH)		+= gpio-sch.o
++obj-$(CONFIG_GPIO_SCH311X)	+= gpio-sch311x.o
+ obj-$(CONFIG_GPIO_SODAVILLE)	+= gpio-sodaville.o
+ obj-$(CONFIG_GPIO_SPEAR_SPICS)	+= gpio-spear-spics.o
+ obj-$(CONFIG_GPIO_STA2X11)	+= gpio-sta2x11.o
+diff --git a/drivers/gpio/gpio-sch311x.c b/drivers/gpio/gpio-sch311x.c
+new file mode 100644
+index 0000000..483a6f8
+--- /dev/null
++++ b/drivers/gpio/gpio-sch311x.c
+@@ -0,0 +1,431 @@
++/*
++ * GPIO driver for the SMSC SCH311x Super-I/O chips
++ *
++ * Copyright (C) 2013 Bruno Randolf <br1@einfach.org>
++ *
++ * SuperIO functions and chip detection:
++ * (c) Copyright 2008 Wim Van Sebroeck <wim@iguana.be>.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/gpio.h>
++#include <linux/bitops.h>
++
++#define DRV_NAME			"gpio-sch311x"
++
++#define SCH311X_GPIO_CONF_OUT		0x00
++#define SCH311X_GPIO_CONF_IN		0x01
++#define SCH311X_GPIO_CONF_INVERT	0x02
++#define SCH311X_GPIO_CONF_OPEN_DRAIN	0x80
++
++#define SIO_CONFIG_KEY_ENTER		0x55
++#define SIO_CONFIG_KEY_EXIT		0xaa
++
++#define GP1				0x4b
++
++static int sch311x_ioports[] = { 0x2e, 0x4e, 0x162e, 0x164e };
++
++static struct platform_device *sch311x_gpio_pdev;
++
++struct sch311x_pdev_data {		/* platform device data */
++	unsigned short runtime_reg;	/* runtime register base address */
++};
++
++struct sch311x_gpio_block {		/* one GPIO block runtime data */
++	struct gpio_chip chip;
++	unsigned short data_reg;	/* from definition below */
++	unsigned short *config_regs;	/* pointer to definition below */
++	unsigned short runtime_reg;	/* runtime register */
++	spinlock_t lock;		/* lock for this GPIO block */
++};
++
++struct sch311x_gpio_priv {		/* driver private data */
++	struct sch311x_gpio_block blocks[6];
++};
++
++struct sch311x_gpio_block_def {		/* register address definitions */
++	unsigned short data_reg;
++	unsigned short config_regs[8];
++	unsigned short base;
++};
++
++/* Note: some GPIOs are not available, these are marked with 0x00 */
++
++static struct sch311x_gpio_block_def sch311x_gpio_blocks[] = {
++	{
++		.data_reg = 0x4b,	/* GP1 */
++		.config_regs = {0x23, 0x24, 0x25, 0x26, 0x27, 0x29, 0x2a, 0x2b},
++		.base = 10,
++	},
++	{
++		.data_reg = 0x4c,	/* GP2 */
++		.config_regs = {0x00, 0x2c, 0x2d, 0x00, 0x00, 0x00, 0x00, 0x32},
++		.base = 20,
++	},
++	{
++		.data_reg = 0x4d,	/* GP3 */
++		.config_regs = {0x33, 0x34, 0x35, 0x36, 0x37, 0x00, 0x39, 0x3a},
++		.base = 30,
++	},
++	{
++		.data_reg = 0x4e,	/* GP4 */
++		.config_regs = {0x3b, 0x00, 0x3d, 0x00, 0x6e, 0x6f, 0x72, 0x73},
++		.base = 40,
++	},
++	{
++		.data_reg = 0x4f,	/* GP5 */
++		.config_regs = {0x3f, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46},
++		.base = 50,
++	},
++	{
++		.data_reg = 0x50,	/* GP6 */
++		.config_regs = {0x47, 0x48, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59},
++		.base = 60,
++	},
++};
++
++static inline struct sch311x_gpio_block *
++to_sch311x_gpio_block(struct gpio_chip *chip)
++{
++	return container_of(chip, struct sch311x_gpio_block, chip);
++}
++
++
++/*
++ *	Super-IO functions
++ */
++
++static inline int sch311x_sio_enter(int sio_config_port)
++{
++	/* Don't step on other drivers' I/O space by accident. */
++	if (!request_muxed_region(sio_config_port, 2, DRV_NAME)) {
++		pr_err(DRV_NAME "I/O address 0x%04x already in use\n",
++		       sio_config_port);
++		return -EBUSY;
++	}
++
++	outb(SIO_CONFIG_KEY_ENTER, sio_config_port);
++	return 0;
++}
++
++static inline void sch311x_sio_exit(int sio_config_port)
++{
++	outb(SIO_CONFIG_KEY_EXIT, sio_config_port);
++	release_region(sio_config_port, 2);
++}
++
++static inline int sch311x_sio_inb(int sio_config_port, int reg)
++{
++	outb(reg, sio_config_port);
++	return inb(sio_config_port + 1);
++}
++
++static inline void sch311x_sio_outb(int sio_config_port, int reg, int val)
++{
++	outb(reg, sio_config_port);
++	outb(val, sio_config_port + 1);
++}
++
++
++/*
++ *	GPIO functions
++ */
++
++static int sch311x_gpio_request(struct gpio_chip *chip, unsigned offset)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	if (block->config_regs[offset] == 0) /* GPIO is not available */
++		return -ENODEV;
++
++	if (!request_region(block->runtime_reg + block->config_regs[offset],
++			    1, DRV_NAME)) {
++		dev_err(chip->dev, "Failed to request region 0x%04x.\n",
++			block->runtime_reg + block->config_regs[offset]);
++		return -EBUSY;
++	}
++	return 0;
++}
++
++static void sch311x_gpio_free(struct gpio_chip *chip, unsigned offset)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	if (block->config_regs[offset] == 0) /* GPIO is not available */
++		return;
++
++	release_region(block->runtime_reg + block->config_regs[offset], 1);
++}
++
++static int sch311x_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++	unsigned char data;
++
++	spin_lock(&block->lock);
++	data = inb(block->runtime_reg + block->data_reg);
++	spin_unlock(&block->lock);
++
++	return !!(data & BIT(offset));
++}
++
++static void __sch311x_gpio_set(struct sch311x_gpio_block *block,
++			       unsigned offset, int value)
++{
++	unsigned char data = inb(block->runtime_reg + block->data_reg);
++	if (value)
++		data |= BIT(offset);
++	else
++		data &= ~BIT(offset);
++	outb(data, block->runtime_reg + block->data_reg);
++}
++
++static void sch311x_gpio_set(struct gpio_chip *chip, unsigned offset,
++			     int value)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	spin_lock(&block->lock);
++	 __sch311x_gpio_set(block, offset, value);
++	spin_unlock(&block->lock);
++}
++
++static int sch311x_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	spin_lock(&block->lock);
++	outb(SCH311X_GPIO_CONF_IN, block->runtime_reg +
++	     block->config_regs[offset]);
++	spin_unlock(&block->lock);
++
++	return 0;
++}
++
++static int sch311x_gpio_direction_out(struct gpio_chip *chip, unsigned offset,
++				      int value)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	spin_lock(&block->lock);
++
++	outb(SCH311X_GPIO_CONF_OUT, block->runtime_reg +
++	     block->config_regs[offset]);
++
++	__sch311x_gpio_set(block, offset, value);
++
++	spin_unlock(&block->lock);
++	return 0;
++}
++
++static int sch311x_gpio_probe(struct platform_device *pdev)
++{
++	struct sch311x_pdev_data *pdata = pdev->dev.platform_data;
++	struct sch311x_gpio_priv *priv;
++	struct sch311x_gpio_block *block;
++	int err, i;
++
++	/* we can register all GPIO data registers at once */
++	if (!request_region(pdata->runtime_reg + GP1, 6, DRV_NAME)) {
++		dev_err(&pdev->dev, "Failed to request region 0x%04x-0x%04x.\n",
++			pdata->runtime_reg + GP1, pdata->runtime_reg + GP1 + 5);
++		return -EBUSY;
++	}
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++
++	for (i = 0; i < ARRAY_SIZE(priv->blocks); i++) {
++		block = &priv->blocks[i];
++
++		spin_lock_init(&block->lock);
++
++		block->chip.label = DRV_NAME;
++		block->chip.owner = THIS_MODULE;
++		block->chip.request = sch311x_gpio_request;
++		block->chip.free = sch311x_gpio_free;
++		block->chip.direction_input = sch311x_gpio_direction_in;
++		block->chip.direction_output = sch311x_gpio_direction_out;
++		block->chip.get = sch311x_gpio_get;
++		block->chip.set = sch311x_gpio_set;
++		block->chip.ngpio = 8;
++		block->chip.dev = &pdev->dev;
++		block->chip.base = sch311x_gpio_blocks[i].base;
++		block->config_regs = sch311x_gpio_blocks[i].config_regs;
++		block->data_reg = sch311x_gpio_blocks[i].data_reg;
++		block->runtime_reg = pdata->runtime_reg;
++
++		err = gpiochip_add(&block->chip);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"Could not register gpiochip, %d\n", err);
++			goto exit_err;
++		}
++		dev_info(&pdev->dev,
++			 "SMSC SCH311x GPIO block %d registered.\n", i);
++	}
++
++	return 0;
++
++exit_err:
++	release_region(pdata->runtime_reg + GP1, 6);
++	/* release already registered chips */
++	for (--i; i >= 0; i--)
++		gpiochip_remove(&priv->blocks[i].chip);
++	return err;
++}
++
++static int sch311x_gpio_remove(struct platform_device *pdev)
++{
++	struct sch311x_pdev_data *pdata = pdev->dev.platform_data;
++	struct sch311x_gpio_priv *priv = platform_get_drvdata(pdev);
++	int err, i;
++
++	release_region(pdata->runtime_reg + GP1, 6);
++
++	for (i = 0; i < ARRAY_SIZE(priv->blocks); i++) {
++		err = gpiochip_remove(&priv->blocks[i].chip);
++		if (err)
++			return err;
++		dev_info(&pdev->dev,
++			 "SMSC SCH311x GPIO block %d unregistered.\n", i);
++	}
++	return 0;
++}
++
++static struct platform_driver sch311x_gpio_driver = {
++	.driver.name	= DRV_NAME,
++	.driver.owner	= THIS_MODULE,
++	.probe		= sch311x_gpio_probe,
++	.remove		= sch311x_gpio_remove,
++};
++
++
++/*
++ *	Init & exit routines
++ */
++
++static int __init sch311x_detect(int sio_config_port, unsigned short *addr)
++{
++	int err = 0, reg;
++	unsigned short base_addr;
++	unsigned char dev_id;
++
++	err = sch311x_sio_enter(sio_config_port);
++	if (err)
++		return err;
++
++	/* Check device ID. We currently know about:
++	 * SCH3112 (0x7c), SCH3114 (0x7d), and SCH3116 (0x7f). */
++	reg = sch311x_sio_inb(sio_config_port, 0x20);
++	if (!(reg == 0x7c || reg == 0x7d || reg == 0x7f)) {
++		err = -ENODEV;
++		goto exit;
++	}
++	dev_id = reg == 0x7c ? 2 : reg == 0x7d ? 4 : 6;
++
++	/* Select logical device A (runtime registers) */
++	sch311x_sio_outb(sio_config_port, 0x07, 0x0a);
++
++	/* Check if Logical Device Register is currently active */
++	if ((sch311x_sio_inb(sio_config_port, 0x30) & 0x01) == 0)
++		pr_info("Seems that LDN 0x0a is not active...\n");
++
++	/* Get the base address of the runtime registers */
++	base_addr = (sch311x_sio_inb(sio_config_port, 0x60) << 8) |
++			   sch311x_sio_inb(sio_config_port, 0x61);
++	if (!base_addr) {
++		pr_err("Base address not set\n");
++		err = -ENODEV;
++		goto exit;
++	}
++	*addr = base_addr;
++
++	pr_info("Found an SMSC SCH311%d chip at 0x%04x\n", dev_id, base_addr);
++
++exit:
++	sch311x_sio_exit(sio_config_port);
++	return err;
++}
++
++static int __init sch311x_gpio_pdev_add(const unsigned short addr)
++{
++	struct sch311x_pdev_data pdata;
++	int err;
++
++	pdata.runtime_reg = addr;
++
++	sch311x_gpio_pdev = platform_device_alloc(DRV_NAME, -1);
++	if (!sch311x_gpio_pdev)
++		return -ENOMEM;
++
++	err = platform_device_add_data(sch311x_gpio_pdev,
++				       &pdata, sizeof(pdata));
++	if (err) {
++		pr_err(DRV_NAME "Platform data allocation failed\n");
++		goto err;
++	}
++
++	err = platform_device_add(sch311x_gpio_pdev);
++	if (err) {
++		pr_err(DRV_NAME "Device addition failed\n");
++		goto err;
++	}
++	return 0;
++
++err:
++	platform_device_put(sch311x_gpio_pdev);
++	return err;
++}
++
++static int __init sch311x_gpio_init(void)
++{
++	int err, i;
++	unsigned short addr = 0;
++
++	for (i = 0; i < ARRAY_SIZE(sch311x_ioports); i++)
++		if (sch311x_detect(sch311x_ioports[i], &addr) == 0)
++			break;
++
++	if (!addr)
++		return -ENODEV;
++
++	err = platform_driver_register(&sch311x_gpio_driver);
++	if (err)
++		return err;
++
++	err = sch311x_gpio_pdev_add(addr);
++	if (err)
++		goto unreg_platform_driver;
++
++	return 0;
++
++unreg_platform_driver:
++	platform_driver_unregister(&sch311x_gpio_driver);
++	return err;
++}
++
++static void __exit sch311x_gpio_exit(void)
++{
++	platform_device_unregister(sch311x_gpio_pdev);
++	platform_driver_unregister(&sch311x_gpio_driver);
++}
++
++module_init(sch311x_gpio_init);
++module_exit(sch311x_gpio_exit);
++
++MODULE_AUTHOR("Bruno Randolf <br1@einfach.org>");
++MODULE_DESCRIPTION("SMSC SCH311x GPIO Driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:gpio-sch311x");
 -- 
-Regards,
-
-Laurent Pinchart
+1.8.3.2
 
