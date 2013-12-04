@@ -1,43 +1,39 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2 0/5] gpiolib: clean up and potential bug fix
-Date: Wed, 4 Dec 2013 17:18:07 +0200
-Message-ID: <20131204151807.GX2281@intel.com>
-References: <1386164580-32288-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
+Date: Wed, 4 Dec 2013 09:08:49 -0800
+Message-ID: <20131204170849.GB14859@kroah.com>
+References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:9209 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932178Ab3LDPLe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 4 Dec 2013 10:11:34 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33865 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932690Ab3LDRIu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 12:08:50 -0500
 Content-Disposition: inline
-In-Reply-To: <1386164580-32288-1-git-send-email-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-serial@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Dec 04, 2013 at 03:42:55PM +0200, Andy Shevchenko wrote:
-> The patch series mostly addressing messaging format and fix for one potential
-> bug. It depends on recent Alex's patch [1] and Mika's patchset [2].
+On Thu, Nov 07, 2013 at 10:25:55AM +0100, Linus Walleij wrote:
+> This passes the errata fix using a GPIO to control the RTS pin
+> on one of the AT91 chips to use gpiolib instead of the
+> AT91-specific interfaces. Also remove the reliance on
+> compile-time #defines and the cpu_* check and rely on the
+> platform passing down the proper GPIO pin through platform
+> data.
 > 
-> Compile tested and tested on Medfield with SFI.
+> This is a prerequisite for getting rid of the local GPIO
+> implementation in the AT91 platform and move toward
+> multiplatform.
 > 
-> Changes since v1:
->  - applied Acked and Reviewed tags
->  - instead of patch 4/4 create patch 4/5 and 5/5 that don't change
->    functionality, and indentation things moved to patch 1/5
+> The patch also adds device tree support for getting the
+> RTS GPIO pin from the device tree on DT boot paths.
 > 
-> [1] http://www.spinics.net/lists/kernel/msg1645907.html
-> [2] http://www.spinics.net/lists/linux-acpi/msg47572.html
-> 
-> Andy Shevchenko (5):
->   gpiolib: unify pr_* messages format
->   gpiolib: introduce chip_* to print with chip->label prefix
->   gpiolib: convert gpiod_lookup description to kernel-doc
->   gpiolib: update commentary at gpiod_get_index()
->   gpiolib: uniform messages in gpiod_find()
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-For the series,
-
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
