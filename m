@@ -1,57 +1,54 @@
 From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCHv4] ARM: tegra: add gpiod_lookup table for paz00
-Date: Wed, 4 Dec 2013 14:18:33 +0900
-Message-ID: <529EBB29.2030008@nvidia.com>
-References: <1385460350-17543-2-git-send-email-mika.westerberg@linux.intel.com> <1386074998-17833-1-git-send-email-heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH 1/4] gpiolib: unify pr_* messages format
+Date: Wed, 4 Dec 2013 15:15:53 +0900
+Message-ID: <529EC899.8030603@nvidia.com>
+References: <1386097406-24585-1-git-send-email-andriy.shevchenko@linux.intel.com> <1386097406-24585-2-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12116 "EHLO
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:13936 "EHLO
 	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750809Ab3LDFSu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 00:18:50 -0500
-In-Reply-To: <1386074998-17833-1-git-send-email-heikki.krogerus@linux.intel.com>
+	with ESMTP id S1750897Ab3LDGP4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 01:15:56 -0500
+In-Reply-To: <1386097406-24585-2-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On 12/03/2013 09:49 PM, Heikki Krogerus wrote:
-> This makes it possible to request the gpio descriptors in
-> rfkill_gpio driver regardless of the platform.
->
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->   arch/arm/mach-tegra/board-paz00.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> Changes since v3:
-> -----------------
-> Rebased on top of Alexandre's patch "gpio: better lookup method for
-> platform GPIOs".
->
-> diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-> index 06f0240..e4dec9f 100644
-> --- a/arch/arm/mach-tegra/board-paz00.c
-> +++ b/arch/arm/mach-tegra/board-paz00.c
-> @@ -18,6 +18,7 @@
->    */
->
->   #include <linux/platform_device.h>
-> +#include <linux/gpio/driver.h>
->   #include <linux/rfkill-gpio.h>
->   #include "board.h"
->
-> @@ -36,7 +37,17 @@ static struct platform_device wifi_rfkill_device = {
->   	},
->   };
->
-> +static struct gpiod_lookup_table wifi_gpio_lookup = {
-> +	.dev_id = "rfkill_gpio",
-> +	.table = {
-> +		GPIO_LOOKUP_IDX("tegra-gpio", 25, NULL, 0, 0),
-> +		GPIO_LOOKUP_IDX("tegra-gpio", 85, NULL, 1, 0),
+On 12/04/2013 04:03 AM, Andy Shevchenko wrote:
+> This patch includes following amendments:
+>   1) use "?" as a label when last is not defined in gpiod_*;
 
-nit: the flags could be changed to GPIO_ACTIVE_HIGH (which evaluates to 
-0) to be more explicit.
+"when last is not defined" -> "when none is defined" ?
+
+>   2) whenever it's possilbe gpiod_* are used;
+
+s/possilbe/possible
+
+>   3) print a function name, if it's already used in other messages.
+>
+> Additionally it fixes an indentation in few places.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+
+Nice cleanup. I wonder if we should not make the GPIO label mandatory in 
+some future patch and always use it in error messages (and also build it 
+from dev_name(dev) and con_id in gpiod_get()).
+
+One thing I wonder though: are you *absolutely* sure that none of the 
+gpiod_*() log functions you are using can be called with a NULL desc? If 
+you are not, it might be worth to make them more robust to this case 
+that would otherwise make the kernel crash.
+
+Might be even better if we could get rid of these desc_to_gpio() calls 
+and display something like "desc->chip->label[gpio_chip_hwgpio(desc)]" 
+in the log instead of "gpio-desc_to_gpio(desc)".
+
+(last suggestion is just a suggestion though, I'm ok with this patch as 
+long as you can guarantee none of the desc_to_gpio(desc) calls will crash)
+
+Alex.
+
