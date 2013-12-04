@@ -1,129 +1,79 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v8] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Wed, 4 Dec 2013 11:56:28 +0000
-Message-ID: <20131204115628.GL16025@e106331-lin.cambridge.arm.com>
-References: <1386088876-29205-1-git-send-email-delicious.quinoa@gmail.com>
- <1386088876-29205-2-git-send-email-delicious.quinoa@gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 1/4] gpiolib: unify pr_* messages format
+Date: Wed, 04 Dec 2013 14:24:22 +0200
+Message-ID: <1386159862.1871.54.camel@smile>
+References: <1386097406-24585-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <1386097406-24585-2-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <529EC899.8030603@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:44381 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932099Ab3LDL4a (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 06:56:30 -0500
-Content-Disposition: inline
-In-Reply-To: <1386088876-29205-2-git-send-email-delicious.quinoa@gmail.com>
+Received: from mga02.intel.com ([134.134.136.20]:2714 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753994Ab3LDMYv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 4 Dec 2013 07:24:51 -0500
+In-Reply-To: <529EC899.8030603@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alan Tull <delicious.quinoa@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@stericsson.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Tue, Dec 03, 2013 at 04:41:16PM +0000, Alan Tull wrote:
-> From: Jamie Iles <jamie@jamieiles.com>
+On Wed, 2013-12-04 at 15:15 +0900, Alex Courbot wrote:
+
+Thanks for the comments, my answers below.
+
+> On 12/04/2013 04:03 AM, Andy Shevchenko wrote:
+> > This patch includes following amendments:
+> >   1) use "?" as a label when last is not defined in gpiod_*;
 > 
-> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
-> and can be configured to provide multiple banks of GPIO pins.
+> "when last is not defined" -> "when none is defined" ?
+
+I was implying "when the last one is not defined". I will amend it.
+
+> >   2) whenever it's possilbe gpiod_* are used;
 > 
-> Signed-off-by: Alan Tull <atull@altera.com>
-> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> s/possilbe/possible
+
+Got it.
+
 > 
-> v8:     - remove socfpga.dtsi changes
->         - minor cleanup in devicetree documentation
-> v7:     - use irq_generic_chip
->         - support one irq per gpio line or one irq for many
->         - s/bank/port/ and other cleanup
-> v6:     - (atull) squash the set of patches
->         - use linear irq domain
->         - build fixes. Original driver was reviewed on v3.2.
->         - Fix setting irq edge type for 'rising' and 'both'.
->         - Support as a loadable module.
->         - Use bgpio_chip's spinlock during register access.
->         - Clean up register names to match spec
->         - s/bank/port/ because register names use the word 'port'
->         - s/nr-gpio/nr-gpios/
->         - don't get/put the of_node
->         - remove signoffs/acked-by's because of changes
->         - other cleanup
-> v5:     - handle sparse bank population correctly
-> v3:     - depend on rather than select IRQ_DOMAIN
->         - split IRQ support into a separate patch
-> v2:     - use Rob Herring's irqdomain in generic irq chip patches
->         - use reg property to indicate bank index
->         - support irqs on both edges based on LinusW's u300 driver
-> ---
->  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |   57 +++
->  drivers/gpio/Kconfig                               |    9 +
->  drivers/gpio/Makefile                              |    1 +
->  drivers/gpio/gpio-dwapb.c                          |  426 ++++++++++++++++++++
->  4 files changed, 493 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
->  create mode 100644 drivers/gpio/gpio-dwapb.c
+> >   3) print a function name, if it's already used in other messages.
+> >
+> > Additionally it fixes an indentation in few places.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> new file mode 100644
-> index 0000000..e7f144f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> @@ -0,0 +1,57 @@
-> +* Synopsys DesignWare APB GPIO controller
-> +
-> +Required properties:
-> +- compatible : Should be "snps,dw-apb-gpio"
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-s/be/contain/
+Thanks!
 
-> +- reg : Address and length of the register set for the device
+> 
+> Nice cleanup. I wonder if we should not make the GPIO label mandatory in 
+> some future patch and always use it in error messages (and also build it 
+> from dev_name(dev) and con_id in gpiod_get()).
 
-As this has children with reg entries, it should have #address-cells and
-#size-cells (as the example does).
+If maintainers want this we could do it later.
 
-> +
-> +The GPIO controller has a configurable number of ports, each of which are
-> +represented as child nodes with the following properties:
-> +
-> +Required properties:
-> +- compatible : "snps,dw-apb-gpio-port"
-> +- gpio-controller : Marks the device node as a gpio controller.
-> +- #gpio-cells : Should be two.  The first cell is the pin number and
-> +  the second cell is used to specify optional parameters (currently
-> +  unused).
-> +- reg : The integer port index of the port, a single cell.
-> +
-> +Optional properties:
-> +- interrupt-controller : The first port may be configured to be an interrupt
-> +controller.
-> +- #interrupt-cells : Specifies the number of cells needed to encode an
-> +interrupt.  Shall be set to 2.  The first cell defines the interrupt number,
-> +the second encodes the triger flags encoded as described in
-> +Documentation/devicetree/bindings/interrupts.txt
-> +- interrupt-parent : The parent interrupt controller.
-> +- interrupts : The interrupts to the parent controller raised when GPIOs
-> +generate the interrupts.
-> +- snps,nr-gpios : The number of pins in the port, a single cell.
-> +
-> +Example:
-> +
-> +gpio: gpio@20000 {
-> +       compatible = "snps,dw-apb-gpio";
-> +       reg = <0x20000 0x1000>;
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +
-> +       porta: gpio-controller@0 {
-> +               compatible = "snps,dw-apb-gpio-port";
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +               snps,nr-gpio = <8>;
-> +               reg = <0>;
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&vic1>;
-> +               interrupts = <0 1 2 3 4 5 6 7>;
+> One thing I wonder though: are you *absolutely* sure that none of the 
+> gpiod_*() log functions you are using can be called with a NULL desc? If 
+> you are not, it might be worth to make them more robust to this case 
+> that would otherwise make the kernel crash.
 
-Nit: please bracket list entries individually.
+Like you already noticed I did changes only in places where we have desc
+is not NULL.
 
-Otherwise this looks fine to me.
+> Might be even better if we could get rid of these desc_to_gpio() calls 
+> and display something like "desc->chip->label[gpio_chip_hwgpio(desc)]" 
+> in the log instead of "gpio-desc_to_gpio(desc)".
+> 
+> (last suggestion is just a suggestion though, I'm ok with this patch as 
+> long as you can guarantee none of the desc_to_gpio(desc) calls will crash)
 
-Thanks,
-Mark.
+I propose to do this later as well. At least by this patch we're
+decreasing amount of those calls.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
+
