@@ -1,33 +1,53 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] gpio: MOXA ART: rename moxart_gpio_base to base
-Date: Wed, 4 Dec 2013 13:28:41 +0100
-Message-ID: <CACRpkdaT2fmfAwuyPTuF2Pim-_g5Avd_ViwQ069qRLFM9YBvWQ@mail.gmail.com>
-References: <1385723494-8033-1-git-send-email-jonas.jensen@gmail.com>
-	<1385980079-20175-1-git-send-email-jonas.jensen@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
+Date: Wed, 4 Dec 2013 13:33:58 +0100
+Message-ID: <CACRpkdYvLj0WquLAFCp6dzVOFCgNZmY1V7Ti93XP1Sc8oAJArQ@mail.gmail.com>
+References: <1385597895-26418-1-git-send-email-br1@einfach.org>
+	<CACRpkdaXO+tYRq=uyQiAopRDPwKv1_F4yZwCWr4-JL1xnio4Wg@mail.gmail.com>
+	<20131129203747.GL16823@kw.sim.vm.gnt>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1385980079-20175-1-git-send-email-jonas.jensen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonas Jensen <jonas.jensen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:53136 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754170Ab3LDMd6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 07:33:58 -0500
+Received: by mail-oa0-f42.google.com with SMTP id i4so16681967oah.1
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Dec 2013 04:33:58 -0800 (PST)
+In-Reply-To: <20131129203747.GL16823@kw.sim.vm.gnt>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Simon Guinot <simon.guinot@sequanux.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "H. Peter Anvin" <hpa@linux.intel.com>, Grant Likely <grant.likely@linaro.org>
+Cc: Bruno Randolf <br1@einfach.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Dec 2, 2013 at 11:27 AM, Jonas Jensen <jonas.jensen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-
-> Renaming "moxart_gpio_base" to "base" allows better fit,
-> remove line breaks in moxart_gpio_get().
+On Fri, Nov 29, 2013 at 9:37 PM, Simon Guinot <simon.guinot@sequanux.org> wrote:
+> On Fri, Nov 29, 2013 at 03:40:01PM +0100, Linus Walleij wrote:
+>> Maybe this leads to another interesting discussion on why
+>> ACPI is not used for configuring the board...
 >
-> While doing trivial cleanup, also remove fields initialized
-> with zero in moxart_template_chip.
+> Hi Linus,
 >
-> Signed-off-by: Jonas Jensen <jonas.jensen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> I am currently working on the next Seagate NAS boards (x86-based) and
+> again a Super-I/O will be used to provide some GPIO lines :) The device
+> should be an IT8732, which may be supported by the driver gpio-it8761e.
+>
+> Based on our previous experience, I am currently pushing the board
+> manufacturer (which also provides the BIOS) to get an get entry for
+> the Super-I/O device in the ACPI tables.
+>
+> Let me say it is not a easy task and I am still not sure to succeed...
+> Clearly the guys don't understand why they have to do that because the
+> other OS are used to identify the device via the I/O registers.
 
-Patch applied!
+OK so I report this to linux-acpi, HPA and Grant and hope that they
+will get them for this "we like port I/O-probing" attitude... there is
+only so much we can do.
 
-Thanks!
+Basically the (embedded?) x86 vendors need to get
+their act together around ACPI just like the ARM vendors did with
+device tree.
+
+Only handwaving from my side, sorry... best I can do.
+
+Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
