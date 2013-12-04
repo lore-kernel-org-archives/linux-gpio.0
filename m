@@ -1,79 +1,129 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 1/1] gpio: twl4030: Fix regression for twl gpio LED output
-Date: Wed, 4 Dec 2013 13:34:31 +0200
-Message-ID: <1386156871-7639-2-git-send-email-rogerq@ti.com>
-References: <1386156871-7639-1-git-send-email-rogerq@ti.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v8] gpio: add a driver for the Synopsys DesignWare APB
+ GPIO block
+Date: Wed, 4 Dec 2013 11:56:28 +0000
+Message-ID: <20131204115628.GL16025@e106331-lin.cambridge.arm.com>
+References: <1386088876-29205-1-git-send-email-delicious.quinoa@gmail.com>
+ <1386088876-29205-2-git-send-email-delicious.quinoa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1386156871-7639-1-git-send-email-rogerq@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: tony@atomide.com, peter.ujfalusi@ti.com, nm@ti.com, tomi.valkeinen@ti.com, balbi@ti.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Roger Quadros <rogerq@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:44381 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932099Ab3LDL4a (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 06:56:30 -0500
+Content-Disposition: inline
+In-Reply-To: <1386088876-29205-2-git-send-email-delicious.quinoa@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alan Tull <delicious.quinoa@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@stericsson.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 
-Commit 0b2aa8be introduced a regression that causes failure
-in setting LED GPO direction to OUT.
+On Tue, Dec 03, 2013 at 04:41:16PM +0000, Alan Tull wrote:
+> From: Jamie Iles <jamie@jamieiles.com>
+> 
+> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
+> and can be configured to provide multiple banks of GPIO pins.
+> 
+> Signed-off-by: Alan Tull <atull@altera.com>
+> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> 
+> v8:     - remove socfpga.dtsi changes
+>         - minor cleanup in devicetree documentation
+> v7:     - use irq_generic_chip
+>         - support one irq per gpio line or one irq for many
+>         - s/bank/port/ and other cleanup
+> v6:     - (atull) squash the set of patches
+>         - use linear irq domain
+>         - build fixes. Original driver was reviewed on v3.2.
+>         - Fix setting irq edge type for 'rising' and 'both'.
+>         - Support as a loadable module.
+>         - Use bgpio_chip's spinlock during register access.
+>         - Clean up register names to match spec
+>         - s/bank/port/ because register names use the word 'port'
+>         - s/nr-gpio/nr-gpios/
+>         - don't get/put the of_node
+>         - remove signoffs/acked-by's because of changes
+>         - other cleanup
+> v5:     - handle sparse bank population correctly
+> v3:     - depend on rather than select IRQ_DOMAIN
+>         - split IRQ support into a separate patch
+> v2:     - use Rob Herring's irqdomain in generic irq chip patches
+>         - use reg property to indicate bank index
+>         - support irqs on both edges based on LinusW's u300 driver
+> ---
+>  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |   57 +++
+>  drivers/gpio/Kconfig                               |    9 +
+>  drivers/gpio/Makefile                              |    1 +
+>  drivers/gpio/gpio-dwapb.c                          |  426 ++++++++++++++++++++
+>  4 files changed, 493 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+>  create mode 100644 drivers/gpio/gpio-dwapb.c
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> new file mode 100644
+> index 0000000..e7f144f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> @@ -0,0 +1,57 @@
+> +* Synopsys DesignWare APB GPIO controller
+> +
+> +Required properties:
+> +- compatible : Should be "snps,dw-apb-gpio"
 
-This causes USB host probe failures for Beagleboard C4.
+s/be/contain/
 
-[    2.075469] platform usb_phy_gen_xceiv.2: Driver usb_phy_gen_xceiv requests probe deferral
-[    2.090454] hsusb2_vcc: Failed to request enable GPIO510: -22
-[    2.100982] reg-fixed-voltage reg-fixed-voltage.0.auto: Failed to register regulator: -22
-[    2.109954] reg-fixed-voltage: probe of reg-fixed-voltage.0.auto failed with error -22
+> +- reg : Address and length of the register set for the device
 
-direction_out/direction_in must return 0 if the operation succeeded.
+As this has children with reg entries, it should have #address-cells and
+#size-cells (as the example does).
 
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
- drivers/gpio/gpio-twl4030.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+> +
+> +The GPIO controller has a configurable number of ports, each of which are
+> +represented as child nodes with the following properties:
+> +
+> +Required properties:
+> +- compatible : "snps,dw-apb-gpio-port"
+> +- gpio-controller : Marks the device node as a gpio controller.
+> +- #gpio-cells : Should be two.  The first cell is the pin number and
+> +  the second cell is used to specify optional parameters (currently
+> +  unused).
+> +- reg : The integer port index of the port, a single cell.
+> +
+> +Optional properties:
+> +- interrupt-controller : The first port may be configured to be an interrupt
+> +controller.
+> +- #interrupt-cells : Specifies the number of cells needed to encode an
+> +interrupt.  Shall be set to 2.  The first cell defines the interrupt number,
+> +the second encodes the triger flags encoded as described in
+> +Documentation/devicetree/bindings/interrupts.txt
+> +- interrupt-parent : The parent interrupt controller.
+> +- interrupts : The interrupts to the parent controller raised when GPIOs
+> +generate the interrupts.
+> +- snps,nr-gpios : The number of pins in the port, a single cell.
+> +
+> +Example:
+> +
+> +gpio: gpio@20000 {
+> +       compatible = "snps,dw-apb-gpio";
+> +       reg = <0x20000 0x1000>;
+> +       #address-cells = <1>;
+> +       #size-cells = <0>;
+> +
+> +       porta: gpio-controller@0 {
+> +               compatible = "snps,dw-apb-gpio-port";
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+> +               snps,nr-gpio = <8>;
+> +               reg = <0>;
+> +               interrupt-controller;
+> +               #interrupt-cells = <2>;
+> +               interrupt-parent = <&vic1>;
+> +               interrupts = <0 1 2 3 4 5 6 7>;
 
-diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
-index b97d6a6..0999ed1 100644
---- a/drivers/gpio/gpio-twl4030.c
-+++ b/drivers/gpio/gpio-twl4030.c
-@@ -294,13 +294,13 @@ out:
- static int twl_direction_in(struct gpio_chip *chip, unsigned offset)
- {
- 	struct gpio_twl4030_priv *priv = to_gpio_twl4030(chip);
--	int ret;
-+	int ret = 0;
- 
- 	mutex_lock(&priv->mutex);
- 	if (offset < TWL4030_GPIO_MAX)
--		ret = twl4030_set_gpio_direction(offset, 1);
-+		twl4030_set_gpio_direction(offset, 1);
- 	else
--		ret = -EINVAL;
-+		ret = -EINVAL;	/* LED outputs can't be set as input */
- 
- 	if (!ret)
- 		priv->direction &= ~BIT(offset);
-@@ -354,18 +354,21 @@ static void twl_set(struct gpio_chip *chip, unsigned offset, int value)
- static int twl_direction_out(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct gpio_twl4030_priv *priv = to_gpio_twl4030(chip);
--	int ret = -EINVAL;
- 
- 	mutex_lock(&priv->mutex);
- 	if (offset < TWL4030_GPIO_MAX)
--		ret = twl4030_set_gpio_direction(offset, 0);
-+		twl4030_set_gpio_direction(offset, 0);
-+
-+	/*
-+	 *  LED gpio's i.e. offset >= TWL4030_GPIO_MAX are always output
-+	 */
- 
- 	priv->direction |= BIT(offset);
- 	mutex_unlock(&priv->mutex);
- 
- 	twl_set(chip, offset, value);
- 
--	return ret;
-+	return 0;
- }
- 
- static int twl_to_irq(struct gpio_chip *chip, unsigned offset)
--- 
-1.8.3.2
+Nit: please bracket list entries individually.
+
+Otherwise this looks fine to me.
+
+Thanks,
+Mark.
