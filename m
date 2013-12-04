@@ -1,98 +1,27 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
-Date: Tue, 03 Dec 2013 17:06:15 -0800
-Message-ID: <529E8007.6060407@linux.intel.com>
-References: <1386116613-5241-1-git-send-email-br1@einfach.org>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH 3/4] gpiolib: convert gpiod_lookup description to kernel-doc
+Date: Wed, 4 Dec 2013 11:28:36 +0900
+Message-ID: <529E9354.6010107@nvidia.com>
+References: <1386097406-24585-1-git-send-email-andriy.shevchenko@linux.intel.com> <1386097406-24585-4-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:45708 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754721Ab3LDBBi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 3 Dec 2013 20:01:38 -0500
-In-Reply-To: <1386116613-5241-1-git-send-email-br1@einfach.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:6719 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752764Ab3LDC2k (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Dec 2013 21:28:40 -0500
+In-Reply-To: <1386097406-24585-4-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bruno Randolf <br1@einfach.org>
-Cc: linus.walleij@linaro.org, wim@iguana.be, linux-gpio@vger.kernel.org, mika.westerberg@linux.intel.com, mathias.nyman@linux.intel.com, simon.guinot@sequanux.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Hi Bruno,
-
-I've got a small suggestion below.
-But regardless that, your patch looks fine.
-
-On 12/03/2013 04:23 PM, Bruno Randolf wrote:
-> This patch adds support for the GPIOs found on the SMSC "Super I/O" chips
-> SCH311x.
+On 12/04/2013 04:03 AM, Andy Shevchenko wrote:
+> The patch moves description of the fields to the top of struct definition and
+> converts them to the kernel-doc format.
 >
-> The chip detection and I/O functions are copied from sch311x_wdt.c
+> There is no functional change.
 >
-> Signed-off-by: Bruno Randolf <br1@einfach.org>
->
-> ---
-> Notes:
-> - All GPIOs are now supported, driver data is runtime allocated
->   and I tried to address all comments as far as possible.
-> - Still a platform device is registered, similar to gpio-f7188x.c
-> ---
->  drivers/gpio/Kconfig        |   9 +
->  drivers/gpio/Makefile       |   1 +
->  drivers/gpio/gpio-sch311x.c | 430 ++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 440 insertions(+)
->  create mode 100644 drivers/gpio/gpio-sch311x.c
->
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[snip]
-
-> +static int __init sch311x_gpio_init(void)
-> +{
-> +	int err, i, found = 0;
-> +	unsigned short addr = 0;
-> +
-> +	for (i = 0; !found && i < ARRAY_SIZE(sch311x_ioports); i++)
-> +		if (sch311x_detect(sch311x_ioports[i], &addr) == 0)
-> +			found++;
-
-'found' variable isn't necessary here. Just turn it into a label placed
-below
-'return -ENODEV' then 'goto found' directly.
-
-> +	if (!found)
-
-This 'if' wouldn't be necessary anymore.
-You'd call return unconditionally at this point.
-
-Br, David Cohen
-
-> +		return -ENODEV;
-> +
-> +	err = platform_driver_register(&sch311x_gpio_driver);
-> +	if (err)
-> +		return err;
-> +
-> +	err = sch311x_gpio_pdev_add(addr);
-> +	if (err)
-> +		goto unreg_platform_driver;
-> +
-> +	return 0;
-> +
-> +unreg_platform_driver:
-> +	platform_driver_unregister(&sch311x_gpio_driver);
-> +	return err;
-> +}
-> +
-> +static void __exit sch311x_gpio_exit(void)
-> +{
-> +	platform_device_unregister(sch311x_gpio_pdev);
-> +	platform_driver_unregister(&sch311x_gpio_driver);
-> +}
-> +
-> +module_init(sch311x_gpio_init);
-> +module_exit(sch311x_gpio_exit);
-> +
-> +MODULE_AUTHOR("Bruno Randolf <br1@einfach.org>");
-> +MODULE_DESCRIPTION("SMSC SCH311x GPIO Driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:gpio-sch311x");
-
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
