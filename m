@@ -1,83 +1,44 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
-Date: Wed, 4 Dec 2013 11:23:53 +0100
-Message-ID: <20131204102353.GI29721@pengutronix.de>
-References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
- <5283A8C7.30904@atmel.com>
- <529C4936.5060304@atmel.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 0/1] gpio: twl4030: gpio LED regression fix for 3.13 rc
+Date: Wed, 4 Dec 2013 13:34:30 +0200
+Message-ID: <1386156871-7639-1-git-send-email-rogerq@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:56961 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755037Ab3LDKYD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 05:24:03 -0500
-Content-Disposition: inline
-In-Reply-To: <529C4936.5060304@atmel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linus.walleij@linaro.org
+Cc: nm@ti.com, tony@atomide.com, linux-kernel@vger.kernel.org, balbi@ti.com, peter.ujfalusi@ti.com, linux-gpio@vger.kernel.org, tomi.valkeinen@ti.com, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Roger Quadros <rogerq@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-serial@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, linux-arm-kernel@lists.infradead.org
 
-Hello Greg, hi Nicolas,
+Hi,
 
-On Mon, Dec 02, 2013 at 09:47:50AM +0100, Nicolas Ferre wrote:
-> On 13/11/2013 17:28, Nicolas Ferre :
-> >On 07/11/2013 10:25, Linus Walleij :
-> >>This passes the errata fix using a GPIO to control the RTS pin
-> >>on one of the AT91 chips to use gpiolib instead of the
-> >>AT91-specific interfaces. Also remove the reliance on
-> >>compile-time #defines and the cpu_* check and rely on the
-> >>platform passing down the proper GPIO pin through platform
-> >>data.
-> >>
-> >>This is a prerequisite for getting rid of the local GPIO
-> >>implementation in the AT91 platform and move toward
-> >>multiplatform.
-> >>
-> >>The patch also adds device tree support for getting the
-> >>RTS GPIO pin from the device tree on DT boot paths.
-> >>
-> >>Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-> >>Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-> >>Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> >Hi Greg,
-> >
-> >You acknowledged a previous version of this patch which was taking a
-> >different approach with the subject:
-> >"[PATCH 1/4] ARM/serial: at91: move machine quirk into machine"
-> >
-> >In order to integrate the series build by Linus in our AT91/arm-soc
-> >flow, would you mind reviewing this v4 patch and eventually giving y=
-our
-> >blessing ;-)
-> >If it is okay on your side, I'll integrate it in a pull-request to
-> >arm-soc for 3.14.
->=20
-> Greg, ping?
-I'm depending on that patch for a series that gets rid of ARM's
-<mach/timex.h>. So I'm interested to either get a stable commit to
-base on or alternatively to get the blessing from both of you to take i=
-t
-(also via arm-soc) as part of my series.
+Commit 0b2aa8be that went into 3.13-rc2 introduced a regression
+that causes failure in setting LED GPO direction to OUT.
 
-A preview of my series is available at
+This causes USB Host to fail probe on Beagleboard.
 
-	git://git.pengutronix.de/git/ukl/linux.git deprecatemachtimexh
+The following patch fixes this issue.
 
-Best regards
-Uwe
+I've tried to higlight the issue in the original patch here
+http://www.spinics.net/lists/linux-omap/msg100858.html
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+cheers,
+-roger
+
+Roger Quadros (1):
+  gpio: twl4030: Fix regression for twl gpio LED output
+
+ drivers/gpio/gpio-twl4030.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+-- 
+1.8.3.2
