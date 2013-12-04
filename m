@@ -1,123 +1,83 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH 4/4] gpiolib: fix potential crash in gpiod_get() et alia
-Date: Wed, 4 Dec 2013 15:27:07 +0900
-Message-ID: <529ECB3B.6040803@nvidia.com>
-References: <1386097406-24585-1-git-send-email-andriy.shevchenko@linux.intel.com> <1386097406-24585-5-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
+Date: Wed, 4 Dec 2013 11:23:53 +0100
+Message-ID: <20131204102353.GI29721@pengutronix.de>
+References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
+ <5283A8C7.30904@atmel.com>
+ <529C4936.5060304@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13883 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753110Ab3LDG1L (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 01:27:11 -0500
-In-Reply-To: <1386097406-24585-5-git-send-email-andriy.shevchenko@linux.intel.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:56961 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755037Ab3LDKYD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 05:24:03 -0500
+Content-Disposition: inline
+In-Reply-To: <529C4936.5060304@atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-serial@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, linux-arm-kernel@lists.infradead.org
 
-It seems like your subject line is wrong/truncated.
+Hello Greg, hi Nicolas,
 
-On 12/04/2013 04:03 AM, Andy Shevchenko wrote:
-> Since we may have dev parameter equial to NULL we can't use dev_* macros to
+On Mon, Dec 02, 2013 at 09:47:50AM +0100, Nicolas Ferre wrote:
+> On 13/11/2013 17:28, Nicolas Ferre :
+> >On 07/11/2013 10:25, Linus Walleij :
+> >>This passes the errata fix using a GPIO to control the RTS pin
+> >>on one of the AT91 chips to use gpiolib instead of the
+> >>AT91-specific interfaces. Also remove the reliance on
+> >>compile-time #defines and the cpu_* check and rely on the
+> >>platform passing down the proper GPIO pin through platform
+> >>data.
+> >>
+> >>This is a prerequisite for getting rid of the local GPIO
+> >>implementation in the AT91 platform and move toward
+> >>multiplatform.
+> >>
+> >>The patch also adds device tree support for getting the
+> >>RTS GPIO pin from the device tree on DT boot paths.
+> >>
+> >>Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> >>Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+> >>Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> >
+> >Hi Greg,
+> >
+> >You acknowledged a previous version of this patch which was taking a
+> >different approach with the subject:
+> >"[PATCH 1/4] ARM/serial: at91: move machine quirk into machine"
+> >
+> >In order to integrate the series build by Linus in our AT91/arm-soc
+> >flow, would you mind reviewing this v4 patch and eventually giving y=
+our
+> >blessing ;-)
+> >If it is okay on your side, I'll integrate it in a pull-request to
+> >arm-soc for 3.14.
+>=20
+> Greg, ping?
+I'm depending on that patch for a series that gets rid of ARM's
+<mach/timex.h>. So I'm interested to either get a stable commit to
+base on or alternatively to get the blessing from both of you to take i=
+t
+(also via arm-soc) as part of my series.
 
-s/equial/equal.
+A preview of my series is available at
 
-> print messages. Instead we must switch to plain pr_*.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   drivers/gpio/gpiolib.c | 35 +++++++++++++++++++----------------
->   1 file changed, 19 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 222f544..1517093 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2389,16 +2389,14 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
->   			continue;
->
->   		chip = find_chip_by_name(p->chip_label);
-> -
->   		if (!chip) {
-> -			dev_warn(dev, "cannot find GPIO chip %s\n",
-> -				 p->chip_label);
-> +			pr_warn("%s: GPIO chip: cannot find\n", p->chip_label);
->   			continue;
->   		}
->
->   		if (chip->ngpio <= p->chip_hwnum) {
-> -			dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
-> -				 chip->label, chip->ngpio);
-> +			pr_warn("%s: GPIO chip: has %d GPIOs\n", chip->label,
-> +				chip->ngpio);
->   			continue;
->   		}
+	git://git.pengutronix.de/git/ukl/linux.git deprecatemachtimexh
 
-I don't think this is needed, the dev_* macros are safe to use with a 
-NULL device (see the definition of __dev_printk in drivers/base/core.c).
+Best regards
+Uwe
 
->
-> @@ -2425,7 +2423,7 @@ EXPORT_SYMBOL_GPL(gpiod_get);
->
->   /**
->    * gpiod_get_index - obtain a GPIO from a multi-index GPIO function
-> - * @dev:	GPIO consumer
-> + * @dev:	GPIO consumer, can be NULL for system-global GPIOs
->    * @con_id:	function within the GPIO consumer
->    * @idx:	index of the GPIO to obtain in the consumer
->    *
-> @@ -2442,15 +2440,17 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
->   	int status;
->   	enum gpio_lookup_flags flags = 0;
->
-> -	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
-> +	pr_debug("%s: GPIO lookup for consumer %s\n", __func__, con_id);
->
-> -	/* Using device tree? */
-> -	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node) {
-> -		dev_dbg(dev, "using device tree for GPIO lookup\n");
-> -		desc = of_find_gpio(dev, con_id, idx, &flags);
-> -	} else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev)) {
-> -		dev_dbg(dev, "using ACPI for GPIO lookup\n");
-> -		desc = acpi_find_gpio(dev, con_id, idx, &flags);
-> +	if (dev) {
-> +		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
-> +			pr_debug("%s: using device tree for GPIO lookup\n",
-> +				 __func__);
-> +			desc = of_find_gpio(dev, con_id, idx, &flags);
-> +		} else if (IS_ENABLED(CONFIG_ACPI) && ACPI_HANDLE(dev)) {
-> +			pr_debug("%s: using ACPI for GPIO lookup\n", __func__);
-> +			desc = acpi_find_gpio(dev, con_id, idx, &flags);
-> +		}
-
-Here I'd argue it is useful to know which device is making the request.
-
->   	}
->
->   	/*
-> @@ -2459,15 +2459,18 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
->   	 */
->   	if (!desc || IS_ERR(desc)) {
->   		struct gpio_desc *pdesc;
-> -		dev_dbg(dev, "using lookup tables for GPIO lookup");
-> +
-> +		pr_debug("%s: using lookup tables for GPIO lookup\n", __func__);
-> +
->   		pdesc = gpiod_find(dev, con_id, idx, &flags);
-> +
->   		/* If used as fallback, do not replace the previous error */
->   		if (!IS_ERR(pdesc) || !desc)
->   			desc = pdesc;
->   	}
->
->   	if (IS_ERR(desc)) {
-> -		dev_dbg(dev, "lookup for GPIO %s failed\n", con_id);
-> +		pr_debug("%s: lookup for GPIO %s failed\n", __func__, con_id);
->   		return desc;
->   	}
-
-Unless I missed something, I'd suggest to drop this patch.
-
-Alex.
-
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
