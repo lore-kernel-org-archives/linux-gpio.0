@@ -1,44 +1,54 @@
-From: David Cohen <david.a.cohen@intel.com>
-Subject: Re: [PATCH v1 1/3] SFI: fix compiler warnings
-Date: Thu, 05 Dec 2013 14:48:41 -0800
-Message-ID: <52A102C9.2060400@intel.com>
-References: <1386261409-13850-1-git-send-email-andriy.shevchenko@linux.intel.com> <1386261409-13850-2-git-send-email-andriy.shevchenko@linux.intel.com>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v8] gpio: add a driver for the Synopsys DesignWare APB
+ GPIO block
+Date: Thu, 5 Dec 2013 16:53:01 -0600
+Message-ID: <CANk1AXRJK+Zy2FYEn5jBevUr5Dr_tNeFf9=GbOnzxgiSOw7j8w@mail.gmail.com>
+References: <1386088876-29205-1-git-send-email-delicious.quinoa@gmail.com>
+	<1386088876-29205-2-git-send-email-delicious.quinoa@gmail.com>
+	<20131205165439.GB5924@maple>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:6694 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753156Ab3LEWn6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 5 Dec 2013 17:43:58 -0500
-In-Reply-To: <1386261409-13850-2-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20131205165439.GB5924@maple>
+Sender: linux-doc-owner@vger.kernel.org
+To: Jamie Iles <jamie@jamieiles.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@stericsson.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
 
-On 12/05/2013 08:36 AM, Andy Shevchenko wrote:
-> This fixes the following compiler warnings when build is done by make=
- W=3D1.
+On Thu, Dec 5, 2013 at 10:54 AM, Jamie Iles <jamie@jamieiles.com> wrote:
+> Hi Alan,
 >
-> drivers/sfi/sfi_acpi.c:154:5: warning: no previous prototype for =E2=80=
-=98sfi_acpi_table_parse=E2=80=99 [-Wmissing-prototypes]
+> One minor comment below, otherwise looks great!
 >
-> drivers/sfi/sfi_core.c:164:26: warning: no previous prototype for =E2=
-=80=98sfi_map_table=E2=80=99 [-Wmissing-prototypes]
-> drivers/sfi/sfi_core.c:192:6: warning: no previous prototype for =E2=80=
-=98sfi_unmap_table=E2=80=99 [-Wmissing-prototypes]
+> Signed-off-by: Jamie Iles <jamie@jamieiles.com>
 >
-> Indentation fixes are also included.
+> Thanks,
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Jamie
+>
+> On Tue, Dec 03, 2013 at 10:41:16AM -0600, Alan Tull wrote:
+>> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+>> new file mode 100644
+>> index 0000000..e6dc61f
+>> --- /dev/null
+>> +++ b/drivers/gpio/gpio-dwapb.c
+> ...
+>> +static unsigned int dwapb_gpio_nr_ports(struct device_node *of_node)
+>> +{
+>> +     unsigned int nr_ports = 0;
+>> +     struct device_node *np;
+>> +
+>> +     for_each_child_of_node(of_node, np)
+>> +             ++nr_ports;
+>> +
+>> +     return nr_ports;
+>> +}
+>
+> I notice that we now have of_get_child_count() which didn't exist when I
+> first wrote the driver, we could use that now.
 
-IMO this patch could be accepted regardless of this series feedback.
-It's a simple fix without much dependence with the other patches.
+Thanks Jamie.
 
-Br, David
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I'll include that in v8.  I'll post that within a few days.
+
+Alan
