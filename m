@@ -1,101 +1,193 @@
-From: Rob Landley <rob@landley.net>
-Subject: Re: [PATCH v2] Documentation: gpiolib: document new interface
-Date: Wed, 04 Dec 2013 19:35:19 -0600
-Message-ID: <1386207319.1974.312@driftwood>
-References: <CAAVeFuLqRBrHShK-gvmRHyDJ5c3gdKJJwX1UKNNTLCCUbVczKg@mail.gmail.com>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH] gpio: driver for Xtensa GPIO32
+Date: Thu, 5 Dec 2013 07:43:27 +0200
+Message-ID: <20131205054327.GH32492@tarshish>
+References: <9b46369ab60c23a6bd9f1930c4ff6c2fec57e798.1386057874.git.baruch@tkos.co.il>
+ <CACRpkdb7nLg6op+_oi=PB2FnVcErQGDhHk82PHk7Os9rG1XVKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; DelSp=Yes; Format=Flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:44310 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752773Ab3LEC0i convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 21:26:38 -0500
-Received: by mail-ob0-f179.google.com with SMTP id wm4so16912163obc.24
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Dec 2013 18:26:37 -0800 (PST)
-In-Reply-To: <CAAVeFuLqRBrHShK-gvmRHyDJ5c3gdKJJwX1UKNNTLCCUbVczKg@mail.gmail.com>
-	(from gnurou@gmail.com on Sun Nov 24 00:02:30 2013)
+Received: from guitar.tcltek.co.il ([192.115.133.116]:52721 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750734Ab3LEFna (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 5 Dec 2013 00:43:30 -0500
 Content-Disposition: inline
+In-Reply-To: <CACRpkdb7nLg6op+_oi=PB2FnVcErQGDhHk82PHk7Os9rG1XVKg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-xtensa@linux-xtensa.org
 
-On 11/24/2013 12:02:30 AM, Alexandre Courbot wrote:
-> Hi Rob,
+Hi Linus,
+
+Thanks for taking the time to review the code.
+
+On Wed, Dec 04, 2013 at 02:18:01PM +0100, Linus Walleij wrote:
+> On Tue, Dec 3, 2013 at 9:04 AM, Baruch Siach <baruch@tkos.co.il> wrote:
 > 
-> On Sun, Nov 24, 2013 at 8:31 AM, Rob Landley <rob@landley.net> wrote:
-> >> > Linus, I hope this can be merged during the -rc cycle of 3.13,  
-> since the
-> >> > gpiod_ interface is going to be introduced there. It would not  
-> make much
-> >> > sense for it to come without its documentation.
-> >>
-> >> You're right of course. I'll read through it and apply fixes on top
-> >> (or squash into your patch.)
-> >>
-> >> Formal stuff:
-> >> Don't we need an 00-INDEX file?
-> >> (Maybe Rob can tell whether this is desirable.)
-> >
-> >
-> > A 00-INDEX file wouldn't hurt, but it can always be added later. No  
-> reason
-> > to hold up the series for that. (I was using them to generate html  
-> indexes
-> > for kernel.org/doc but after the breakin they eliminated all non-git
-> > functionality so I haven't been able to update it since. They  
-> replaced
-> > kernel.org/doc/Documentation with a raw git checkout, and I expect  
-> them to
-> > replace kernel.org/doc/menuconfig with a raw git checkout any day  
-> now.)
-> >
-> > That said, a 00-INDEX file would let you know where to start  
-> reading to find
-> > the file with the intro paragraph at the start of the old file, the  
-> bit
-> > explaining what GPIO is. Here the first file alphabetically is  
-> "board.txt",
-> > and I have no idea why it's named that, given how it starts. (I was  
-> sort of
-> > hoping that somebody who already knows the subsystem would comment  
-> before I
-> > do. I have no way of knowing if this documentation is _right_.)
+> > Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 > 
-> I actually submitted a patch that introduces a 00-INDEX file
-> yesterday. It's probably a few other gazillions mails under in your
-> inbox. ;)
+> This is a pretty terse commit message for an entirely new driver.
+> For example I have no clue which architecture this is and what
+> machine/platforms in that arch that may use this, or if it's some
+> softcore or ... you know, such basic things a simple GPIO maintainer
+> can't be expected to know.
 
-I'm a couple weeks behind on my email. I'll get to it eventually. (My  
-time's spread between a few too many projects these days...)
+I'll add a more verbose commit log.
 
-Most documentation goes in through the trees of the people whose  
-subsystems it documents. I mostly catch the stuff that falls through  
-the cracks. I'm somewhere between a librarian shelving abandoned books  
-and a janitor.
-
-...
-> > But I really don't have time to go through every paragraph like  
-> that, and
-> > was hoping the gpio guys would (or just sign off on it so I don't  
-> have
-> > to)...
+> > +config GPIO_XTENSA
+> > +       bool "Xtensa GPIO32 support"
+> > +       depends on XTENSA
+> > +       help
+> > +         Say yes here to support the Xtensa internal GPIO32 IMPWIRE (input)
+> > +         and EXPSTATE (output) ports
 > 
-> I will make another pass and send an update (or a new version of the
-> patch maybe, since we are still in -rc1 - whatever is more convenient
-> to Linus). Hopefully early users of the new (oops) interface will send
-> fixes to the documentation as well, if only to improve my approximate
-> English.
+> If there is also going to be 16 or 64 bit versions of this thing
+> you better call the Kconfig symbol GPIO_XTENSA32 or
+> something.
 
-It's not so much the english, it's that Documentation should be aimed  
-at people who _don't_ already know this stuff. Since it tends to be  
-written by people who _do_ already know the stuff (kinda hard to do the  
-other way, although I've done it), this can be tricky to pull off. You  
-have to maintain a "But what if this _wasn't_ a rhetorical question?"  
-mindset and emulate a Virtual Newbie. (I suggest qemu for this.)
+Not likely. This is a standard optional extension to the xtensa core 
+architecture that is referred to in the documentation as GPIO32. This 
+extension adds a few instructions to read into and write out from the core 
+32bit general purpose registers. I believe that future 16 or 64 bit versions 
+are very unlikely.
 
-Still, thanks for taking a stab at it. Imperfect's better than  
-obsolete...
+Anyway, given that xtensa is the name of the architecture, naming the driver 
+gpio-xtensa32 would just confuse users.
 
-Rob
+> > +obj-$(CONFIG_GPIO_XTENSA)      += gpio-xtensa.o
+> 
+> And this gpio-xtensa32.o
+> 
+> > +++ b/drivers/gpio/gpio-xtensa.c
+> 
+> > +#include <asm/coprocessor.h>
+> 
+> Hm so it seems we are using some coprocessor instructions
+> to get at the GPIO, don't be shy, write a few comments on it :-)
+
+Will do.
+
+> > +#define ENABLE_CP()                                    \
+> > +{                                                      \
+> > +       unsigned long flags, cpenable;                  \
+> > +       local_irq_save(flags);                          \
+> > +       RSR_CPENABLE(cpenable);                         \
+> > +       WSR_CPENABLE(cpenable | XCHAL_CP_PORT_MASK);
+> > +
+> > +#define DISABLE_CP()                                   \
+> > +       WSR_CPENABLE(cpenable);                         \
+> > +       local_irq_restore(flags);                       \
+> > +}
+> 
+> Rewrite these to static inlines.
+
+We need to preserve the irq flags. Let me know if the following is OK:
+
+static inline unsigned long enable_cp(void)
+{
+	unsigned long flags, cpenable;
+
+	local_irq_save(flags);
+	RSR_CPENABLE(cpenable);
+	WSR_CPENABLE(cpenable | XCHAL_CP_PORT_MASK);
+
+	return flags;
+}
+
+static inline void disable_cp(unsigned long flags)
+{
+	WSR_CPENABLE(cpenable);
+	local_irq_restore(flags);
+}
+
+	...
+
+	unsigned long flags;
+
+	flags = enable_cp()
+	...
+	disable_cp(flags);
+
+> 
+> > +static int xtensa_impwire_get_direction(struct gpio_chip *gc, unsigned offset)
+> > +{
+> > +       return 1;
+> > +}
+> 
+> Ummm.... explain this. Alll lines are always inputs?
+
+Exactly. I'll add a comment.
+
+> > +static int xtensa_impwire_get_value(struct gpio_chip *gc, unsigned offset)
+> > +{
+> > +       u32 impwire;
+> > +
+> > +       ENABLE_CP();
+> > +       __asm__ __volatile__("read_impwire %0" : "=a" (impwire));
+> > +       DISABLE_CP();
+> > +
+> > +       return !!(impwire & (1 << offset));
+> 
+> Use this pattern everywhere you do (1 << offset):
+> 
+> #include <linux/bitops.h>
+> 
+> s/(1 << offset)/BIT(offset)/g
+
+Will do.
+
+> > +static void xtensa_impwire_set_value(struct gpio_chip *gc, unsigned offset,
+> > +                                   int value)
+> > +{
+> > +}
+> 
+> This is a rather nasty implementation for something that will always
+> fail. What about putting an dev_err(gc->dev, "..."); in that set_value?
+
+This is an input only device, so this callback should never run. Ideally it 
+would be nice to just have it NULL, but the core gpiolib doesn't support that. 
+Are you sure bloating the kernel with an error message that never displays is 
+worth it?
+
+> > +static int xtensa_expstate_get_direction(struct gpio_chip *gc, unsigned offset)
+> 
+> What is an expstate?
+
+This is how this extension specific register is called. I'll add a comment.
+
+> 
+> > +{
+> > +       return 0;
+> > +}
+> 
+> So all lines are always outputs? (Comment in the code thx.)
+
+Yes. Will do.
+
+> > +static int __init xtensa_gpio_init(void)
+> > +{
+> > +       struct platform_device *pdev;
+> > +
+> > +       pdev = platform_device_register_simple("xtensa-gpio", 0, NULL, 0);
+> > +       if (IS_ERR(pdev))
+> > +               return PTR_ERR(pdev);
+> > +
+> > +       return platform_driver_register(&xtensa_gpio_driver);
+> > +}
+> > +subsys_initcall(xtensa_gpio_init);
+> 
+> Why not device_initcall()? (i.e. same as module_init())
+> Do you need it very early?
+
+The main use case for this driver is for intra-core signaling, so it might be 
+needed quite early I guess. I don't need any specific need for it to be 
+available early at the moment, so I can change it device_initcall() if you 
+prefer that.
+
+baruch
+
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
