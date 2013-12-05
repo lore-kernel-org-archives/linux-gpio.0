@@ -1,97 +1,52 @@
-From: Luis Henriques <luis.henriques@canonical.com>
-Subject: [3.11.y.z extended stable] Patch "gpio: twl4030: Fix regression for twl gpio output" has been added to staging queue
-Date: Thu,  5 Dec 2013 11:20:38 +0000
-Message-ID: <1386242438-28509-1-git-send-email-luis.henriques@canonical.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 0/3]
+Date: Thu,  5 Dec 2013 18:36:46 +0200
+Message-ID: <1386261409-13850-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:34949 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752228Ab3LELUl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Dec 2013 06:20:41 -0500
+Received: from mga09.intel.com ([134.134.136.24]:32115 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756771Ab3LEQh3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 5 Dec 2013 11:37:29 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: linux-gpio@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Luis Henriques <luis.henriques@canonical.com>, kernel-team@lists.ubuntu.com
+To: Alexandre Courbot <acourbot@nvidia.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-This is a note to let you know that I have just added a patch titled
+Here is a third [1] version of the SFI GPIO helpers. This series contains SFI
+GPIO helpers along with the update of GPIO library to lookup for SFI resources.
 
-    gpio: twl4030: Fix regression for twl gpio output
+It has been tested on Medfield device on top of v3.13-rc2 + Alexandre's GPIO
+descriptor API update [2], Mika's ACPI gpio patches [3] and my GPIO library
+clean up [4].
 
-to the linux-3.11.y-queue branch of the 3.11.y.z extended stable tree 
-which can be found at:
+[1] https://lkml.org/lkml/2013/6/5/316
+[2] http://www.spinics.net/lists/kernel/msg1645907.html
+[3] http://www.spinics.net/lists/linux-acpi/msg47572.html
+[4] https://www.mail-archive.com/linux-gpio@vger.kernel.org/msg01515.html
 
- http://kernel.ubuntu.com/git?p=ubuntu/linux.git;a=shortlog;h=refs/heads/linux-3.11.y-queue
+Andy Shevchenko (3):
+  SFI: fix compiler warnings
+  SFI: store GPIO table and export lookup function
+  gpiolib: append SFI helpers for GPIO API
 
-If you, or anyone else, feels it should not be added to this tree, please 
-reply to this email.
+ drivers/gpio/Kconfig       |   4 ++
+ drivers/gpio/Makefile      |   1 +
+ drivers/gpio/gpiolib-sfi.c |  28 +++++++++++
+ drivers/gpio/gpiolib.c     |   3 ++
+ drivers/gpio/gpiolib.h     |  13 +++++
+ drivers/sfi/Makefile       |   2 +-
+ drivers/sfi/sfi_acpi.c     |   9 ++--
+ drivers/sfi/sfi_core.c     |  10 +++-
+ drivers/sfi/sfi_core.h     |   3 ++
+ drivers/sfi/sfi_gpio.c     | 123 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sfi.h        |   8 +++
+ 11 files changed, 197 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/gpio/gpiolib-sfi.c
+ create mode 100644 drivers/sfi/sfi_gpio.c
 
-For more information about the 3.11.y.z tree, see
-https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
-
-Thanks.
--Luis
-
-------
-
->From b71699df238e61274d47b43161320fe67e50568e Mon Sep 17 00:00:00 2001
-From: Tony Lindgren <tony@atomide.com>
-Date: Mon, 18 Nov 2013 15:22:49 -0800
-Subject: gpio: twl4030: Fix regression for twl gpio output
-
-commit 0b2aa8bed3e13892fcac77e4f50ec6e80125469d upstream.
-
-Commit c111feabe2e2 (gpio: twl4030: Cache the direction and output
-states in private data) improved things in general, but caused a
-regression for setting the GPIO output direction.
-
-The change reorganized twl_direction_out() and twl_set() and swapped
-the function names around in the process. While doing that, a bug got
-introduced that's not obvious while reading the patch as it appears
-as no change to the code.
-
-The bug is we now call function twl4030_set_gpio_dataout() twice in
-both twl_direction_out() and twl_set(). Instead, we should first
-call twl_direction_out() in twl_direction_out() followed by
-twl4030_set_gpio_dataout() in twl_set().
-
-This regression probably has gone unnoticed for a long time as the
-bootloader may have set the GPIO direction properly in many cases.
-This fixes at least the LCD panel not turning on omap3 LDP for
-example.
-
-Cc: linux-gpio@vger.kernel.org
-Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Luis Henriques <luis.henriques@canonical.com>
----
- drivers/gpio/gpio-twl4030.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
-index 4d330e3..ed1d10a 100644
---- a/drivers/gpio/gpio-twl4030.c
-+++ b/drivers/gpio/gpio-twl4030.c
-@@ -354,17 +354,18 @@ static void twl_set(struct gpio_chip *chip, unsigned offset, int value)
- static int twl_direction_out(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct gpio_twl4030_priv *priv = to_gpio_twl4030(chip);
-+	int ret = -EINVAL;
-
- 	mutex_lock(&priv->mutex);
- 	if (offset < TWL4030_GPIO_MAX)
--		twl4030_set_gpio_dataout(offset, value);
-+		ret = twl4030_set_gpio_direction(offset, 0);
-
- 	priv->direction |= BIT(offset);
- 	mutex_unlock(&priv->mutex);
-
- 	twl_set(chip, offset, value);
-
--	return 0;
-+	return ret;
- }
-
- static int twl_to_irq(struct gpio_chip *chip, unsigned offset)
---
-1.8.3.2
+-- 
+1.8.4.4
 
