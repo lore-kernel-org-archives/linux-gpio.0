@@ -1,30 +1,32 @@
 From: Bruno Randolf <br1@einfach.org>
-Subject: [PATCH v3] gpio: add GPIO support for SMSC SCH311x
-Date: Wed,  4 Dec 2013 23:56:43 +0000
-Message-ID: <1386201403-25664-1-git-send-email-br1@einfach.org>
+Subject: [PATCH v4] gpio: add GPIO support for SMSC SCH311x
+Date: Thu,  5 Dec 2013 00:01:57 +0000
+Message-ID: <1386201717-25815-1-git-send-email-br1@einfach.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from postler.einfach.org ([91.250.116.113]:34099 "EHLO
+Received: from postler.einfach.org ([91.250.116.113]:34977 "EHLO
 	postler.einfach.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756287Ab3LDX5H (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 18:57:07 -0500
+	with ESMTP id S1756115Ab3LEACH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2013 19:02:07 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org
 Cc: wim@iguana.be, linux-gpio@vger.kernel.org, mika.westerberg@linux.intel.com, mathias.nyman@linux.intel.com, david.a.cohen@intel.com, simon.guinot@sequanux.org, Bruno Randolf <br1@einfach.org>
 
-This patch adds support for the GPIOs found on the SMSC "Super I/
-SCH311x.
+This patch adds support for the GPIOs found on the SMSC "Super I/O" chips
+SCH3112, SCH3114 and SCH3116.
 
 The chip detection and I/O functions are copied from sch311x_wdt.
 
 Signed-off-by: Bruno Randolf <br1@einfach.org>
+
 ---
-Notes (v3):
+Notes (v4):
 - All GPIOs are now supported, driver data is runtime allocated
   and I tried to address all comments as far as possible.
 - Still a platform device is registered, similar to gpio-f7188x.c
 - found variable removed
 - fixed devm_zalloc
+- fixed commit message
 ---
  drivers/gpio/Kconfig        |   9 +
  drivers/gpio/Makefile       |   1 +
