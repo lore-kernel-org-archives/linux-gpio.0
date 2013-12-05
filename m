@@ -1,231 +1,132 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 1/4] gpiolib: unify pr_* messages format
-Date: Thu,  5 Dec 2013 11:26:23 +0200
-Message-ID: <1386235586-16713-2-git-send-email-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 2/4] gpiolib: introduce chip_* to print with chip->label prefix
+Date: Thu,  5 Dec 2013 11:26:24 +0200
+Message-ID: <1386235586-16713-3-git-send-email-andriy.shevchenko@linux.intel.com>
 References: <1386235586-16713-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:42181 "EHLO mga02.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:55896 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752402Ab3LEJ1B (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 5 Dec 2013 04:27:01 -0500
+	id S1752854Ab3LEJ1C (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 5 Dec 2013 04:27:02 -0500
 In-Reply-To: <1386235586-16713-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Alexandre Courbot <acourbot@nvidia.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-This patch includes the following amendments:
- 1) use "?" as a label when the last one is not defined in gpiod_*;
- 2) whenever it's possible gpiod_* are used;
- 3) print a function name, if it's already used in other messages.
-
-Additionally it fixes an indentation in few places.
+In several places we are printing messages with prefix based on chip->label.
+Introduced macros help us to do this easier and in uniform way.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpiolib.c | 74 +++++++++++++++++++++++++-------------------------
- 1 file changed, 37 insertions(+), 37 deletions(-)
+ drivers/gpio/gpiolib.c | 41 ++++++++++++++++++++++++++---------------
+ 1 file changed, 26 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f7af309..7cf3f84 100644
+index 7cf3f84..917a5d4 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -86,36 +86,36 @@ static int gpiod_request(struct gpio_desc *desc, const char *label);
+@@ -85,6 +85,8 @@ static DEFINE_IDR(dirent_idr);
+ static int gpiod_request(struct gpio_desc *desc, const char *label);
  static void gpiod_free(struct gpio_desc *desc);
  
++/* With descriptor prefix */
++
  #ifdef CONFIG_DEBUG_FS
--#define gpiod_emerg(desc, fmt, ...)			                \
--	pr_emerg("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label, \
-+#define gpiod_emerg(desc, fmt, ...)					       \
-+	pr_emerg("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?",\
-                  ##__VA_ARGS__)
--#define gpiod_crit(desc, fmt, ...)			                \
--	pr_crit("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label,  \
-+#define gpiod_crit(desc, fmt, ...)					       \
-+	pr_crit("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?", \
-                  ##__VA_ARGS__)
--#define gpiod_err(desc, fmt, ...)				        \
--	pr_err("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label,   \
-+#define gpiod_err(desc, fmt, ...)					       \
-+	pr_err("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?",  \
-                  ##__VA_ARGS__)
--#define gpiod_warn(desc, fmt, ...)				        \
--	pr_warn("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label,  \
-+#define gpiod_warn(desc, fmt, ...)					       \
-+	pr_warn("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?", \
-                  ##__VA_ARGS__)
--#define gpiod_info(desc, fmt, ...)				        \
--	pr_info("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label,  \
-+#define gpiod_info(desc, fmt, ...)					       \
-+	pr_info("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?", \
-                 ##__VA_ARGS__)
--#define gpiod_dbg(desc, fmt, ...)				   \
--	pr_debug("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label, \
-+#define gpiod_dbg(desc, fmt, ...)					       \
-+	pr_debug("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?",\
-                  ##__VA_ARGS__)
- #else
--#define gpiod_emerg(desc, fmt, ...)			           \
-+#define gpiod_emerg(desc, fmt, ...)					\
- 	pr_emerg("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_crit(desc, fmt, ...)			           \
-+#define gpiod_crit(desc, fmt, ...)					\
- 	pr_crit("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_err(desc, fmt, ...)				   \
-+#define gpiod_err(desc, fmt, ...)					\
- 	pr_err("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_warn(desc, fmt, ...)				   \
-+#define gpiod_warn(desc, fmt, ...)					\
- 	pr_warn("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_info(desc, fmt, ...)				   \
-+#define gpiod_info(desc, fmt, ...)					\
- 	pr_info("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_dbg(desc, fmt, ...)				   \
-+#define gpiod_dbg(desc, fmt, ...)					\
+ #define gpiod_emerg(desc, fmt, ...)					       \
+ 	pr_emerg("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?",\
+@@ -119,6 +121,21 @@ static void gpiod_free(struct gpio_desc *desc);
  	pr_debug("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
  #endif
  
-@@ -188,7 +188,8 @@ static int gpio_ensure_requested(struct gpio_desc *desc)
- 	if (WARN(test_and_set_bit(FLAG_REQUESTED, &desc->flags) == 0,
- 			"autorequest GPIO-%d\n", gpio)) {
- 		if (!try_module_get(chip->owner)) {
--			pr_err("GPIO-%d: module can't be gotten \n", gpio);
-+			gpiod_err(desc, "%s: module can't be gotten\n",
-+					__func__);
- 			clear_bit(FLAG_REQUESTED, &desc->flags);
- 			/* lose */
- 			return -EIO;
-@@ -809,8 +810,8 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 	if (!test_bit(FLAG_REQUESTED, &desc->flags) ||
- 	     test_bit(FLAG_EXPORT, &desc->flags)) {
++/* With chip prefix */
++
++#define chip_emerg(chip, fmt, ...)					\
++	pr_emerg("GPIO chip %s: " fmt, chip->label, ##__VA_ARGS__)
++#define chip_crit(chip, fmt, ...)					\
++	pr_crit("GPIO chip %s: " fmt, chip->label, ##__VA_ARGS__)
++#define chip_err(chip, fmt, ...)					\
++	pr_err("GPIO chip %s: " fmt, chip->label, ##__VA_ARGS__)
++#define chip_warn(chip, fmt, ...)					\
++	pr_warn("GPIO chip %s: " fmt, chip->label, ##__VA_ARGS__)
++#define chip_info(chip, fmt, ...)					\
++	pr_info("GPIO chip %s: " fmt, chip->label, ##__VA_ARGS__)
++#define chip_dbg(chip, fmt, ...)					\
++	pr_debug("GPIO chip %s: " fmt, chip->label, ##__VA_ARGS__)
++
+ static inline void desc_set_label(struct gpio_desc *d, const char *label)
+ {
+ #ifdef CONFIG_DEBUG_FS
+@@ -1032,8 +1049,7 @@ static int gpiochip_export(struct gpio_chip *chip)
+ 			chip->desc[gpio++].chip = NULL;
  		spin_unlock_irqrestore(&gpio_lock, flags);
--		pr_debug("%s: gpio %d unavailable (requested=%d, exported=%d)\n",
--				__func__, desc_to_gpio(desc),
-+		gpiod_dbg(desc, "%s: unavailable (requested=%d, exported=%d)\n",
-+				__func__,
- 				test_bit(FLAG_REQUESTED, &desc->flags),
- 				test_bit(FLAG_EXPORT, &desc->flags));
- 		status = -EPERM;
-@@ -858,8 +859,7 @@ fail_unregister_device:
- 	device_unregister(dev);
- fail_unlock:
- 	mutex_unlock(&sysfs_lock);
--	pr_debug("%s: gpio%d status %d\n", __func__, desc_to_gpio(desc),
--		 status);
-+	gpiod_dbg(desc, "%s: status %d\n", __func__, status);
+ 
+-		pr_debug("%s: chip %s status %d\n", __func__,
+-				chip->label, status);
++		chip_dbg(chip, "%s: status %d\n", __func__, status);
+ 	}
+ 
  	return status;
- }
- EXPORT_SYMBOL_GPL(gpiod_export);
-@@ -907,8 +907,7 @@ int gpiod_export_link(struct device *dev, const char *name,
+@@ -1056,8 +1072,7 @@ static void gpiochip_unexport(struct gpio_chip *chip)
  	mutex_unlock(&sysfs_lock);
  
  	if (status)
--		pr_debug("%s: gpio%d status %d\n", __func__, desc_to_gpio(desc),
--			 status);
-+		gpiod_dbg(desc, "%s: status %d\n", __func__, status);
- 
- 	return status;
+-		pr_debug("%s: chip %s status %d\n", __func__,
+-				chip->label, status);
++		chip_dbg(chip, "%s: status %d\n", __func__, status);
  }
-@@ -952,8 +951,7 @@ unlock:
- 	mutex_unlock(&sysfs_lock);
  
- 	if (status)
--		pr_debug("%s: gpio%d status %d\n", __func__, desc_to_gpio(desc),
--			 status);
-+		gpiod_dbg(desc, "%s: status %d\n", __func__, status);
+ static int __init gpiolib_sysfs_init(void)
+@@ -1339,8 +1354,7 @@ int gpiochip_add_pingroup_range(struct gpio_chip *chip,
  
- 	return status;
- }
-@@ -995,8 +993,7 @@ void gpiod_unexport(struct gpio_desc *desc)
+ 	pin_range = kzalloc(sizeof(*pin_range), GFP_KERNEL);
+ 	if (!pin_range) {
+-		pr_err("%s: GPIO chip: failed to allocate pin ranges\n",
+-				chip->label);
++		chip_err(chip, "failed to allocate pin ranges\n");
+ 		return -ENOMEM;
  	}
  
- 	if (status)
--		pr_debug("%s: gpio%d status %d\n", __func__, desc_to_gpio(desc),
--			 status);
-+		gpiod_dbg(desc, "%s: status %d\n", __func__, status);
- }
- EXPORT_SYMBOL_GPL(gpiod_unexport);
+@@ -1361,9 +1375,8 @@ int gpiochip_add_pingroup_range(struct gpio_chip *chip,
  
-@@ -1223,7 +1220,7 @@ int gpiochip_add(struct gpio_chip *chip)
- 	if (status)
- 		goto fail;
+ 	pinctrl_add_gpio_range(pctldev, &pin_range->range);
  
--	pr_debug("gpiochip_add: registered GPIOs %d to %d on device: %s\n",
-+	pr_debug("%s: registered GPIOs %d to %d on device: %s\n", __func__,
- 		chip->base, chip->base + chip->ngpio - 1,
- 		chip->label ? : "generic");
+-	pr_debug("GPIO chip %s: created GPIO range %d->%d ==> %s PINGRP %s\n",
+-		 chip->label, gpio_offset,
+-		 gpio_offset + pin_range->range.npins - 1,
++	chip_dbg(chip, "created GPIO range %d->%d ==> %s PINGRP %s\n",
++		 gpio_offset, gpio_offset + pin_range->range.npins - 1,
+ 		 pinctrl_dev_get_devname(pctldev), pin_group);
  
-@@ -1233,7 +1230,7 @@ unlock:
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- fail:
- 	/* failures here can mean systems won't boot... */
--	pr_err("gpiochip_add: gpios %d..%d (%s) failed to register\n",
-+	pr_err("%s: GPIOs %d..%d (%s) failed to register\n", __func__,
- 		chip->base, chip->base + chip->ngpio - 1,
- 		chip->label ? : "generic");
- 	return status;
-@@ -1502,8 +1499,7 @@ static int gpiod_request(struct gpio_desc *desc, const char *label)
- 	}
- done:
- 	if (status)
--		pr_debug("_gpio_request: gpio-%d (%s) status %d\n",
--			 desc_to_gpio(desc), label ? : "?", status);
-+		gpiod_dbg(desc, "%s: status %d\n", __func__, status);
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 	return status;
- }
-@@ -1704,7 +1700,7 @@ int gpiod_direction_input(struct gpio_desc *desc)
- 	if (!chip->get || !chip->direction_input) {
- 		gpiod_warn(desc,
- 			"%s: missing get() or direction_input() operations\n",
--			 __func__);
-+			__func__);
- 		return -EIO;
+ 	list_add_tail(&pin_range->node, &chip->pin_ranges);
+@@ -1390,8 +1403,7 @@ int gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+ 
+ 	pin_range = kzalloc(sizeof(*pin_range), GFP_KERNEL);
+ 	if (!pin_range) {
+-		pr_err("%s: GPIO chip: failed to allocate pin ranges\n",
+-				chip->label);
++		chip_err(chip, "failed to allocate pin ranges\n");
+ 		return -ENOMEM;
  	}
  
-@@ -1724,7 +1720,8 @@ int gpiod_direction_input(struct gpio_desc *desc)
- 	if (status) {
- 		status = chip->request(chip, offset);
- 		if (status < 0) {
--			gpiod_dbg(desc, "chip request fail, %d\n", status);
-+			gpiod_dbg(desc, "%s: chip request fail, %d\n",
-+					__func__, status);
- 			/* and it's not available to anyone else ...
- 			 * gpio_request() is the fully clean solution.
- 			 */
-@@ -1742,7 +1739,7 @@ lose:
- fail:
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 	if (status)
--		gpiod_dbg(desc, "%s status %d\n", __func__, status);
-+		gpiod_dbg(desc, "%s: status %d\n", __func__, status);
- 	return status;
- }
- EXPORT_SYMBOL_GPL(gpiod_direction_input);
-@@ -1809,7 +1806,8 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- 	if (status) {
- 		status = chip->request(chip, offset);
- 		if (status < 0) {
--			gpiod_dbg(desc, "chip request fail, %d\n", status);
-+			gpiod_dbg(desc, "%s: chip request fail, %d\n",
-+					__func__, status);
- 			/* and it's not available to anyone else ...
- 			 * gpio_request() is the fully clean solution.
- 			 */
-@@ -2450,8 +2448,10 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	 */
- 	if (!desc || IS_ERR(desc)) {
- 		struct gpio_desc *pdesc;
-+
- 		dev_dbg(dev, "using lookup tables for GPIO lookup");
- 		pdesc = gpiod_find(dev, con_id, idx, &flags);
-+
- 		/* If used as fallback, do not replace the previous error */
- 		if (!IS_ERR(pdesc) || !desc)
- 			desc = pdesc;
+@@ -1406,13 +1418,12 @@ int gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+ 			&pin_range->range);
+ 	if (IS_ERR(pin_range->pctldev)) {
+ 		ret = PTR_ERR(pin_range->pctldev);
+-		pr_err("%s: GPIO chip: could not create pin range\n",
+-		       chip->label);
++		chip_err(chip, "could not create pin range\n");
+ 		kfree(pin_range);
+ 		return ret;
+ 	}
+-	pr_debug("GPIO chip %s: created GPIO range %d->%d ==> %s PIN %d->%d\n",
+-		 chip->label, gpio_offset, gpio_offset + npins - 1,
++	chip_dbg(chip, "created GPIO range %d->%d ==> %s PIN %d->%d\n",
++		 gpio_offset, gpio_offset + npins - 1,
+ 		 pinctl_name,
+ 		 pin_offset, pin_offset + npins - 1);
+ 
 -- 
 1.8.4.4
 
