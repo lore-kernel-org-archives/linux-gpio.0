@@ -1,77 +1,74 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH v2 1/1] gpio: twl4030: Fix regression for twl gpio LED output
-Date: Thu, 5 Dec 2013 11:23:35 +0200
-Message-ID: <1386235415-27670-1-git-send-email-rogerq@ti.com>
-References: <1386156871-7639-2-git-send-email-rogerq@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 3/4] gpiolib: convert gpiod_lookup description to kernel-doc
+Date: Thu,  5 Dec 2013 11:26:25 +0200
+Message-ID: <1386235586-16713-4-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1386235586-16713-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:40491 "EHLO comal.ext.ti.com"
+Received: from mga02.intel.com ([134.134.136.20]:42181 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754734Ab3LEJYF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 5 Dec 2013 04:24:05 -0500
-In-Reply-To: <1386156871-7639-2-git-send-email-rogerq@ti.com>
+	id S1752680Ab3LEJ06 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 5 Dec 2013 04:26:58 -0500
+In-Reply-To: <1386235586-16713-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: tony@atomide.com, peter.ujfalusi@ti.com, nm@ti.com, tomi.valkeinen@ti.com, balbi@ti.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Roger Quadros <rogerq@ti.com>
+To: Alexandre Courbot <acourbot@nvidia.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Commit 0b2aa8be introduced a regression that causes failure
-in setting LED GPO direction to OUT.
+The patch moves description of the fields to the top of struct definition and
+converts them to the kernel-doc format.
 
-This causes USB host probe failures for Beagleboard C4.
+There is no functional change.
 
-[    2.075469] platform usb_phy_gen_xceiv.2: Driver usb_phy_gen_xceiv requests probe deferral
-[    2.090454] hsusb2_vcc: Failed to request enable GPIO510: -22
-[    2.100982] reg-fixed-voltage reg-fixed-voltage.0.auto: Failed to register regulator: -22
-[    2.109954] reg-fixed-voltage: probe of reg-fixed-voltage.0.auto failed with error -22
-
-direction_out/direction_in must return 0 if the operation succeeded.
-
-Also, don't update direction flag and output data if twl4030_set_gpio_direction()
-failed inside twl_direction_out();
-
-Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpio-twl4030.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ include/linux/gpio/driver.h | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
-index b97d6a6..f999689 100644
---- a/drivers/gpio/gpio-twl4030.c
-+++ b/drivers/gpio/gpio-twl4030.c
-@@ -300,7 +300,7 @@ static int twl_direction_in(struct gpio_chip *chip, unsigned offset)
- 	if (offset < TWL4030_GPIO_MAX)
- 		ret = twl4030_set_gpio_direction(offset, 1);
- 	else
--		ret = -EINVAL;
-+		ret = -EINVAL;	/* LED outputs can't be set as input */
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 7193f43..64f2c38 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -136,29 +136,21 @@ enum gpio_lookup_flags {
+ };
  
- 	if (!ret)
- 		priv->direction &= ~BIT(offset);
-@@ -354,11 +354,20 @@ static void twl_set(struct gpio_chip *chip, unsigned offset, int value)
- static int twl_direction_out(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct gpio_twl4030_priv *priv = to_gpio_twl4030(chip);
--	int ret = -EINVAL;
-+	int ret = 0;
+ /**
+- * Lookup table for associating GPIOs to specific devices and functions using
+- * platform data.
++ * struct gpiod_lookup - lookup table
++ * @chip_label: name of the chip the GPIO belongs to
++ * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO
++ * @con_id: name of the GPIO from the device's point of view
++ * @idx: index of the GPIO in case several GPIOs share the same name
++ * @flags: mask of GPIO_* values
++ *
++ * gpiod_lookup is a lookup table for associating GPIOs to specific devices and
++ * functions using platform data.
+  */
+ struct gpiod_lookup {
+-	/*
+-	 * name of the chip the GPIO belongs to
+-	 */
+ 	const char *chip_label;
+-	/*
+-	 * hardware number (i.e. relative to the chip) of the GPIO
+-	 */
+ 	u16 chip_hwnum;
+-	/*
+-	 * name of the GPIO from the device's point of view
+-	 */
+ 	const char *con_id;
+-	/*
+-	 * index of the GPIO in case several GPIOs share the same name
+-	 */
+ 	unsigned int idx;
+-	/*
+-	 * mask of GPIO_* values
+-	 */
+ 	enum gpio_lookup_flags flags;
+ };
  
- 	mutex_lock(&priv->mutex);
--	if (offset < TWL4030_GPIO_MAX)
-+	if (offset < TWL4030_GPIO_MAX) {
- 		ret = twl4030_set_gpio_direction(offset, 0);
-+		if (ret) {
-+			mutex_unlock(&priv->mutex);
-+			return ret;
-+		}
-+	}
-+
-+	/*
-+	 *  LED gpios i.e. offset >= TWL4030_GPIO_MAX are always output
-+	 */
- 
- 	priv->direction |= BIT(offset);
- 	mutex_unlock(&priv->mutex);
 -- 
-1.8.3.2
+1.8.4.4
 
