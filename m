@@ -1,51 +1,92 @@
-From: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>
-Subject: Re: [PATCH v8] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Thu, 5 Dec 2013 16:54:39 +0000
-Message-ID: <20131205165439.GB5924@maple>
-References: <1386088876-29205-1-git-send-email-delicious.quinoa@gmail.com>
- <1386088876-29205-2-git-send-email-delicious.quinoa@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2 1/1] gpio: twl4030: Fix regression for twl gpio LED
+ output
+Date: Thu, 5 Dec 2013 08:55:49 -0800
+Message-ID: <20131205165548.GX26766@atomide.com>
+References: <1386156871-7639-2-git-send-email-rogerq@ti.com>
+ <1386235415-27670-1-git-send-email-rogerq@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:35795 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756930Ab3LEQzw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Dec 2013 11:55:52 -0500
 Content-Disposition: inline
-In-Reply-To: <1386088876-29205-2-git-send-email-delicious.quinoa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Tull <delicious.quinoa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Steffen Trumtrar <s.trumtrar-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Yves Vandervennet <rocket.yvanderv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1386235415-27670-1-git-send-email-rogerq@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Roger Quadros <rogerq@ti.com>
+Cc: linus.walleij@linaro.org, peter.ujfalusi@ti.com, nm@ti.com, tomi.valkeinen@ti.com, balbi@ti.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Alan,
+* Roger Quadros <rogerq@ti.com> [131205 01:24]:
+> Commit 0b2aa8be introduced a regression that causes failure
+> in setting LED GPO direction to OUT.
+> 
+> This causes USB host probe failures for Beagleboard C4.
+> 
+> [    2.075469] platform usb_phy_gen_xceiv.2: Driver usb_phy_gen_xceiv requests probe deferral
+> [    2.090454] hsusb2_vcc: Failed to request enable GPIO510: -22
+> [    2.100982] reg-fixed-voltage reg-fixed-voltage.0.auto: Failed to register regulator: -22
+> [    2.109954] reg-fixed-voltage: probe of reg-fixed-voltage.0.auto failed with error -22
+> 
+> direction_out/direction_in must return 0 if the operation succeeded.
+> 
+> Also, don't update direction flag and output data if twl4030_set_gpio_direction()
+> failed inside twl_direction_out();
+> 
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
 
-One minor comment below, otherwise looks great!
+Acked-by: Tony Lindgren <tony@atomide.com>
 
-Signed-off-by: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>
+Linus, commit 0b2aa8be is in mainline now, so feel free to pick this one
+up if it looks OK to you. This should be also Cc stable as 0b2aa8be has
+that.
 
-Thanks,
+Regards,
 
-Jamie
+Tony
 
-On Tue, Dec 03, 2013 at 10:41:16AM -0600, Alan Tull wrote:
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> new file mode 100644
-> index 0000000..e6dc61f
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-dwapb.c
-...
-> +static unsigned int dwapb_gpio_nr_ports(struct device_node *of_node)
-> +{
-> +	unsigned int nr_ports = 0;
-> +	struct device_node *np;
+> ---
+>  drivers/gpio/gpio-twl4030.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
+> index b97d6a6..f999689 100644
+> --- a/drivers/gpio/gpio-twl4030.c
+> +++ b/drivers/gpio/gpio-twl4030.c
+> @@ -300,7 +300,7 @@ static int twl_direction_in(struct gpio_chip *chip, unsigned offset)
+>  	if (offset < TWL4030_GPIO_MAX)
+>  		ret = twl4030_set_gpio_direction(offset, 1);
+>  	else
+> -		ret = -EINVAL;
+> +		ret = -EINVAL;	/* LED outputs can't be set as input */
+>  
+>  	if (!ret)
+>  		priv->direction &= ~BIT(offset);
+> @@ -354,11 +354,20 @@ static void twl_set(struct gpio_chip *chip, unsigned offset, int value)
+>  static int twl_direction_out(struct gpio_chip *chip, unsigned offset, int value)
+>  {
+>  	struct gpio_twl4030_priv *priv = to_gpio_twl4030(chip);
+> -	int ret = -EINVAL;
+> +	int ret = 0;
+>  
+>  	mutex_lock(&priv->mutex);
+> -	if (offset < TWL4030_GPIO_MAX)
+> +	if (offset < TWL4030_GPIO_MAX) {
+>  		ret = twl4030_set_gpio_direction(offset, 0);
+> +		if (ret) {
+> +			mutex_unlock(&priv->mutex);
+> +			return ret;
+> +		}
+> +	}
 > +
-> +	for_each_child_of_node(of_node, np)
-> +		++nr_ports;
-> +
-> +	return nr_ports;
-> +}
-
-I notice that we now have of_get_child_count() which didn't exist when I 
-first wrote the driver, we could use that now.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +	/*
+> +	 *  LED gpios i.e. offset >= TWL4030_GPIO_MAX are always output
+> +	 */
+>  
+>  	priv->direction |= BIT(offset);
+>  	mutex_unlock(&priv->mutex);
+> -- 
+> 1.8.3.2
+> 
