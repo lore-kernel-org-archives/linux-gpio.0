@@ -1,55 +1,64 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] gpio: tegra: add missing error handling to probe
-Date: Fri,  6 Dec 2013 13:36:11 -0700
-Message-ID: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] gpio: tegra: add missing error handling to probe
+Date: Fri, 6 Dec 2013 22:08:28 +0100
+Message-ID: <20131206210828.GB1685@mithrandir>
+References: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:32864 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751294Ab3LFUgR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Dec 2013 15:36:17 -0500
+Received: from mail-bk0-f45.google.com ([209.85.214.45]:60231 "EHLO
+	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758717Ab3LFVIb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Dec 2013 16:08:31 -0500
+Content-Disposition: inline
+In-Reply-To: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-From: Stephen Warren <swarren@nvidia.com>
 
-The call to gpiochip_add() is not currently error-checked. Add the
-missing checking.
+--ZoaI/ZTpAVc4A5k6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
-Perhaps this should be Cc: stable since Greg wants more stable patches,
-but it's not a bug that's likely to be hit...
----
- drivers/gpio/gpio-tegra.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+On Fri, Dec 06, 2013 at 01:36:11PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>=20
+> The call to gpiochip_add() is not currently error-checked. Add the
+> missing checking.
+>=20
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> Perhaps this should be Cc: stable since Greg wants more stable patches,
+> but it's not a bug that's likely to be hit...
+> ---
+>  drivers/gpio/gpio-tegra.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index cfd3b9037bc7..2b49f878b56c 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -425,6 +425,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	struct tegra_gpio_soc_config *config;
- 	struct resource *res;
- 	struct tegra_gpio_bank *bank;
-+	int ret;
- 	int gpio;
- 	int i;
- 	int j;
-@@ -494,7 +495,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 
- 	tegra_gpio_chip.of_node = pdev->dev.of_node;
- 
--	gpiochip_add(&tegra_gpio_chip);
-+	ret = gpiochip_add(&tegra_gpio_chip);
-+	if (ret < 0) {
-+		irq_domain_remove(irq_domain);
-+		return ret;
-+	}
- 
- 	for (gpio = 0; gpio < tegra_gpio_chip.ngpio; gpio++) {
- 		int irq = irq_create_mapping(irq_domain, gpio);
--- 
-1.8.1.5
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
+--ZoaI/ZTpAVc4A5k6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSojzLAAoJEN0jrNd/PrOhzBUP/0OdiiGt77GvXcI3rAUxu9sI
+i6C60zBWDM+SAj3MfHO0jpk6ZLrAbBARXp+eV72TcH8TzXQ77fLF/zET6rHMYj88
+h6nvTLzNAZ5eIXj54se2mqLWOHGras43gS3wld4PbLwkFjEfqgqo9h66FnE7ZAul
+1ufjxB6ElLY8QnYUeglHR1PheCyWoNVNUZIpeM9nAqFnKVYruUYJICXu/GdxhHVZ
+FHR2N0WGBbc7zjpHplba9pahDomq2RtFG9cNeX0GCPuuI1Vuf2Pgi3uBdDS7iVSf
+/nmAzXQ9fK/vuO1FKzynPNvNwrWsNIjkpXg9zwt2nJKPfbkMLkv9PVIFu3PkDT6Z
+C8fjhF9OZsforICcCk7L5qljSKO7VbCLe4bcPF3XegQ92Bb8+5Wvu2Xu9Tf5zhYo
+Uoqlx2DB4WpgTDf1Vsiyz6yIqjGkpqxLkSjywhdAxGm6p/nYX3KsY6Vvj52ZkFbb
+KV+v2z0iAz1YkGZAHtexKYYzTAQDzFPi15gXnX752+l8kC0Z1Lxcu/2jx1FTsXs3
+HADBOnk7vNPzk6c9WE9PVVaODb6uexIvQAYV46hsv2RZDOJqxynQTjuZLJpdNz+t
+sffu/WR6nnkXzGdtsNKJbhHMhfUajceYCYDPm8/UD9/6b7SvmdCO5hVtL8epuA+4
+bCgXIfk2/wdgHtLF77vb
+=euee
+-----END PGP SIGNATURE-----
+
+--ZoaI/ZTpAVc4A5k6--
