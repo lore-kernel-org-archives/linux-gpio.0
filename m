@@ -1,86 +1,68 @@
-From: Luis Henriques <luis.henriques@canonical.com>
-Subject: [PATCH 3.11 022/272] gpio: twl4030: Fix regression for twl gpio output
-Date: Fri,  6 Dec 2013 12:55:11 +0000
-Message-ID: <1386334761-25517-23-git-send-email-luis.henriques@canonical.com>
-References: <1386334761-25517-1-git-send-email-luis.henriques@canonical.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-team-bounces@lists.ubuntu.com>
-In-Reply-To: <1386334761-25517-1-git-send-email-luis.henriques@canonical.com>
-List-Unsubscribe: <https://lists.ubuntu.com/mailman/options/kernel-team>,
- <mailto:kernel-team-request@lists.ubuntu.com?subject=unsubscribe>
-List-Archive: <https://lists.ubuntu.com/archives/kernel-team>
-List-Post: <mailto:kernel-team@lists.ubuntu.com>
-List-Help: <mailto:kernel-team-request@lists.ubuntu.com?subject=help>
-List-Subscribe: <https://lists.ubuntu.com/mailman/listinfo/kernel-team>,
- <mailto:kernel-team-request@lists.ubuntu.com?subject=subscribe>
-Errors-To: kernel-team-bounces@lists.ubuntu.com
-Sender: kernel-team-bounces@lists.ubuntu.com
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org, kernel-team@lists.ubuntu.com
-Cc: Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v3] pinctrl: baytrail: lock IRQs when starting them
+Date: Fri,  6 Dec 2013 15:03:12 +0100
+Message-ID: <1386338592-1088-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-3.11.10.1 -stable review patch.  If anyone has any objections, please let me know.
+This uses the new API for tagging GPIO lines as in use by
+IRQs. This enforces a few semantic checks on how the underlying
+GPIO line is used.
 
-------------------
-
-From: Tony Lindgren <tony@atomide.com>
-
-commit 0b2aa8bed3e13892fcac77e4f50ec6e80125469d upstream.
-
-Commit c111feabe2e2 (gpio: twl4030: Cache the direction and output
-states in private data) improved things in general, but caused a
-regression for setting the GPIO output direction.
-
-The change reorganized twl_direction_out() and twl_set() and swapped
-the function names around in the process. While doing that, a bug got
-introduced that's not obvious while reading the patch as it appears
-as no change to the code.
-
-The bug is we now call function twl4030_set_gpio_dataout() twice in
-both twl_direction_out() and twl_set(). Instead, we should first
-call twl_direction_out() in twl_direction_out() followed by
-twl4030_set_gpio_dataout() in twl_set().
-
-This regression probably has gone unnoticed for a long time as the
-bootloader may have set the GPIO direction properly in many cases.
-This fixes at least the LCD panel not turning on omap3 LDP for
-example.
-
-Cc: linux-gpio@vger.kernel.org
-Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Luis Henriques <luis.henriques@canonical.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-twl4030.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ChangeLog v2->v3:
+- Use irq_data_get_irq_chip_data() to get the right data
+  pointer.
+ChangeLog v1->v2:
+- Actually make the change compile, doh.
+---
+ drivers/pinctrl/pinctrl-baytrail.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
-index 4d330e3..ed1d10a 100644
---- a/drivers/gpio/gpio-twl4030.c
-+++ b/drivers/gpio/gpio-twl4030.c
-@@ -354,17 +354,18 @@ static void twl_set(struct gpio_chip *chip, unsigned offset, int value)
- static int twl_direction_out(struct gpio_chip *chip, unsigned offset, int value)
+diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
+index 1174ea86b6e9..5888066d80c2 100644
+--- a/drivers/pinctrl/pinctrl-baytrail.c
++++ b/drivers/pinctrl/pinctrl-baytrail.c
+@@ -372,11 +372,33 @@ static void byt_irq_mask(struct irq_data *d)
  {
- 	struct gpio_twl4030_priv *priv = to_gpio_twl4030(chip);
-+	int ret = -EINVAL;
- 
- 	mutex_lock(&priv->mutex);
- 	if (offset < TWL4030_GPIO_MAX)
--		twl4030_set_gpio_dataout(offset, value);
-+		ret = twl4030_set_gpio_direction(offset, 0);
- 
- 	priv->direction |= BIT(offset);
- 	mutex_unlock(&priv->mutex);
- 
- 	twl_set(chip, offset, value);
- 
--	return 0;
-+	return ret;
  }
  
- static int twl_to_irq(struct gpio_chip *chip, unsigned offset)
++static unsigned int byt_irq_startup(struct irq_data *d)
++{
++	struct byt_gpio *vg = irq_data_get_irq_chip_data(d);
++
++	if (gpio_lock_as_irq(&vg->chip, irqd_to_hwirq(d)))
++		dev_err(vg->chip.dev,
++			"unable to lock HW IRQ %lu for IRQ\n",
++			irqd_to_hwirq(d));
++	byt_irq_unmask(d);
++	return 0;
++}
++
++static void byt_irq_shutdown(struct irq_data *d)
++{
++	struct byt_gpio *vg = irq_data_get_irq_chip_data(d);
++
++	byt_irq_mask(d);
++	gpio_unlock_as_irq(&vg->chip, irqd_to_hwirq(d));
++}
++
+ static struct irq_chip byt_irqchip = {
+ 	.name = "BYT-GPIO",
+ 	.irq_mask = byt_irq_mask,
+ 	.irq_unmask = byt_irq_unmask,
+ 	.irq_set_type = byt_irq_type,
++	.irq_startup = byt_irq_startup,
++	.irq_shutdown = byt_irq_shutdown,
+ };
+ 
+ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
 -- 
-1.8.3.2
+1.8.3.1
