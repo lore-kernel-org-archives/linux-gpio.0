@@ -1,64 +1,33 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] gpio: tegra: add missing error handling to probe
-Date: Fri, 6 Dec 2013 22:08:28 +0100
-Message-ID: <20131206210828.GB1685@mithrandir>
-References: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
+From: Alan Tull <delicious.quinoa@gmail.com>
+Subject: [PATCH v9] gpio: add a driver for Synopsys DesignWare APB GPIO
+Date: Fri, 6 Dec 2013 15:09:38 -0600
+Message-ID: <1386364179-28650-1-git-send-email-delicious.quinoa@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bk0-f45.google.com ([209.85.214.45]:60231 "EHLO
-	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758717Ab3LFVIb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Dec 2013 16:08:31 -0500
-Content-Disposition: inline
-In-Reply-To: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@stericsson.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, delicious quinoa <delicious.quinoa@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
+From: Alan Tull <atull@altera.com>
 
---ZoaI/ZTpAVc4A5k6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-On Fri, Dec 06, 2013 at 01:36:11PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->=20
-> The call to gpiochip_add() is not currently error-checked. Add the
-> missing checking.
->=20
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> Perhaps this should be Cc: stable since Greg wants more stable patches,
-> but it's not a bug that's likely to be hit...
-> ---
->  drivers/gpio/gpio-tegra.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+If you don't have any further comments, can you take this patch?
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Alan
 
---ZoaI/ZTpAVc4A5k6
-Content-Type: application/pgp-signature
+Jamie Iles (1):
+  gpio: add a driver for the Synopsys DesignWare APB GPIO block
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+ .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |   59 +++
+ drivers/gpio/Kconfig                               |    9 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-dwapb.c                          |  415 ++++++++++++++++++++
+ 4 files changed, 484 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+ create mode 100644 drivers/gpio/gpio-dwapb.c
 
-iQIcBAEBAgAGBQJSojzLAAoJEN0jrNd/PrOhzBUP/0OdiiGt77GvXcI3rAUxu9sI
-i6C60zBWDM+SAj3MfHO0jpk6ZLrAbBARXp+eV72TcH8TzXQ77fLF/zET6rHMYj88
-h6nvTLzNAZ5eIXj54se2mqLWOHGras43gS3wld4PbLwkFjEfqgqo9h66FnE7ZAul
-1ufjxB6ElLY8QnYUeglHR1PheCyWoNVNUZIpeM9nAqFnKVYruUYJICXu/GdxhHVZ
-FHR2N0WGBbc7zjpHplba9pahDomq2RtFG9cNeX0GCPuuI1Vuf2Pgi3uBdDS7iVSf
-/nmAzXQ9fK/vuO1FKzynPNvNwrWsNIjkpXg9zwt2nJKPfbkMLkv9PVIFu3PkDT6Z
-C8fjhF9OZsforICcCk7L5qljSKO7VbCLe4bcPF3XegQ92Bb8+5Wvu2Xu9Tf5zhYo
-Uoqlx2DB4WpgTDf1Vsiyz6yIqjGkpqxLkSjywhdAxGm6p/nYX3KsY6Vvj52ZkFbb
-KV+v2z0iAz1YkGZAHtexKYYzTAQDzFPi15gXnX752+l8kC0Z1Lxcu/2jx1FTsXs3
-HADBOnk7vNPzk6c9WE9PVVaODb6uexIvQAYV46hsv2RZDOJqxynQTjuZLJpdNz+t
-sffu/WR6nnkXzGdtsNKJbhHMhfUajceYCYDPm8/UD9/6b7SvmdCO5hVtL8epuA+4
-bCgXIfk2/wdgHtLF77vb
-=euee
------END PGP SIGNATURE-----
-
---ZoaI/ZTpAVc4A5k6--
+-- 
+1.7.9.5
