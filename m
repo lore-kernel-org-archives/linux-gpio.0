@@ -1,31 +1,60 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v3] pinctrl: baytrail: lock IRQs when starting them
-Date: Mon, 9 Dec 2013 15:29:15 +0200
-Message-ID: <20131209132915.GF2281@intel.com>
-References: <1386338592-1088-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/2] gpiolib: append SFI helpers for GPIO API
+Date: Mon, 9 Dec 2013 14:27:09 +0100
+Message-ID: <CACRpkdZRE4zrpKBQE+V9_P+y+YfA1wtu7bRDq+NJt1kohCSH1w@mail.gmail.com>
+References: <1386589829-2877-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	<1386589829-2877-3-git-send-email-andriy.shevchenko@linux.intel.com>
+	<20131209130439.GE2281@intel.com>
+	<1386594127.1871.129.camel@smile>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:63962 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932698Ab3LINXF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 Dec 2013 08:23:05 -0500
-Content-Disposition: inline
-In-Reply-To: <1386338592-1088-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:34867 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933351Ab3LIN1L (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 08:27:11 -0500
+Received: by mail-ob0-f179.google.com with SMTP id wm4so3681521obc.24
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Dec 2013 05:27:11 -0800 (PST)
+In-Reply-To: <1386594127.1871.129.camel@smile>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Cohen <david.a.cohen@intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
 
-On Fri, Dec 06, 2013 at 03:03:12PM +0100, Linus Walleij wrote:
-> This uses the new API for tagging GPIO lines as in use by
-> IRQs. This enforces a few semantic checks on how the underlying
-> GPIO line is used.
-> 
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+On Mon, Dec 9, 2013 at 2:02 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Mon, 2013-12-09 at 15:04 +0200, Mika Westerberg wrote:
+>> On Mon, Dec 09, 2013 at 01:50:29PM +0200, Andy Shevchenko wrote:
 
-Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> > +struct gpio_desc *sfi_get_gpiod_by_name(const char *name)
+>> > +{
+>> > +   struct sfi_gpio_table_entry *pentry;
+>> > +
+>> > +   pentry = sfi_gpio_get_entry_by_name(name);
+>> > +   if (IS_ERR(pentry))
+>> > +           return pentry;
+>> > +
+>> > +   return gpio_to_desc(pentry->pin_no);
+>> > +}
+>>
+>> Do you really need add a new file just to have the above supported? I mean
+>> that if you place that function to drivers/gpio/gpiolib.c with the
+>> appropriate:
+(...)
+>
+> I won't have linux/sfi.h in the gpiolib.c. If Linus has no objections, I
+> can do that of course.
 
-> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+#ifdef:s are ugly according to Linus (Documentation/CodingStyle)
+and according to this instance of Linus as well. So I actually prefer
+so have a separate file.
+
+But what is happening with this series? Should it be merged
+through the GPIO tree? I need the SFI maintainers (Len Brown)
+ACK for that.
+
+I really like the way this patch set developed to abstract away
+the SFI internals into this gpiolib sidecar, thanks!
+
+Yours,
+Linus Walleij
