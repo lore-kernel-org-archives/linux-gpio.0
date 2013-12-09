@@ -1,44 +1,161 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC/RFT/PATCH V3] gpio: omap: refresh patch "be more aggressive
- with pm_runtime" against v3.12-rc5
-Date: Mon, 9 Dec 2013 11:15:36 +0100
-Message-ID: <CACRpkdbpME+TErz=ZE0Sk9=R5comaU7A7Xo3YxVjqergp=n9MA@mail.gmail.com>
-References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
-	<1386477638-6331-1-git-send-email-caesarxuchao@gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpiolib: return -ENOENT when no GPIO mapping exists
+Date: Mon, 09 Dec 2013 12:28:47 +0200
+Message-ID: <1386584927.1871.127.camel@smile>
+References: <1386295616-14192-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:36066 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751876Ab3LIKPg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 05:15:36 -0500
-Received: by mail-ob0-f175.google.com with SMTP id uz6so3460162obc.6
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Dec 2013 02:15:36 -0800 (PST)
-In-Reply-To: <1386477638-6331-1-git-send-email-caesarxuchao@gmail.com>
+Received: from mga09.intel.com ([134.134.136.24]:37598 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751568Ab3LIK3i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 9 Dec 2013 05:29:38 -0500
+In-Reply-To: <1386295616-14192-1-git-send-email-acourbot@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chao Xu <caesarxuchao@gmail.com>, Kevin Hilman <khilman@linaro.org>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>
-Cc: Linux-OMAP <linux-omap@vger.kernel.org>, ext Kevin Hilman <khilman@deeprootsystems.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>, Felipe Balbi <balbi@ti.com>, Nishanth Menon <nm@ti.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Dec 8, 2013 at 5:40 AM, Chao Xu <caesarxuchao@gmail.com> wrote:
+On Fri, 2013-12-06 at 11:06 +0900, Alexandre Courbot wrote:
+> Some devices drivers make use of optional GPIO parameters. For such
+> drivers, it is important to discriminate between the case where no
+> GPIO mapping has been defined for the function they are requesting, and
+> the case where a mapping exists but an error occured while resolving it
+> or when acquiring the GPIO.
+> 
+> This patch changes the family of gpiod_get() functions such that they
+> will return -ENOENT if and only if no GPIO mapping is defined for the
+> requested function. Other error codes are used when an actual error
+> occured during the GPIO resolution.
+> 
 
-> From: Felipe Balbi <balbi@ti.com>
->
-> try to keep gpio block suspended as much as possible.
->
-> Tested with pandaboard and a sysfs exported gpio.
->
-> Signed-off-by: Felipe Balbi <balbi at ti.com>
->
-> [caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added
-> revision check to enable aggressive pm_runtime on OMAP4-only. Because
-> am33xx_gpio_sysc.idlemodes seems to be wrongly marked as
-> SIDLE_SMART_WKUP, which might cause missed interrupts with this patch.
-> Tested on Pandaboard rev A2.]
-> Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
+I like the idea.
+One minor comment below (in code).
 
-Kevin/Santosh: you're maintainers for this driver, can you ACK/NACK
-this patch?
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> I think this change should be merged early as not having it may prevent
+> some users to switch to gpiod. I stumbled upon this issue while
+> considering porting a simple driver (pwm_bl) that has an optional GPIO
+> parameter.
+> 
+> Mika, Andy: if Linus agrees with this change, could you take care of
+> having -ENOENT returned as well for the ACPI and SFI GPIOs lookup?
 
-Yours,
-Linus Walleij
+I have already switched to -ENOENT, so, consider done.
+
+> My understanding of ACPI was not sufficient to allow me to do it myself.
+> SFI OTOH should be trivial as it is a simple table.
+> 
+>  Documentation/gpio/consumer.txt |  6 +++++-
+>  drivers/gpio/gpiolib.c          | 31 ++++++++++++++++---------------
+>  2 files changed, 21 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+> index 07c74a3765a0..e42f77d8d4ca 100644
+> --- a/Documentation/gpio/consumer.txt
+> +++ b/Documentation/gpio/consumer.txt
+> @@ -38,7 +38,11 @@ device that displays digits), an additional index argument can be specified:
+>  					  const char *con_id, unsigned int idx)
+>  
+>  Both functions return either a valid GPIO descriptor, or an error code checkable
+> -with IS_ERR(). They will never return a NULL pointer.
+> +with IS_ERR() (they will never return a NULL pointer). -ENOENT will be returned
+> +if and only if no GPIO has been assigned to the device/function/index triplet,
+> +other error codes are used for cases where a GPIO has been assigned but an error
+> +occured while trying to acquire it. This is useful to discriminate between mere
+> +errors and an absence of GPIO for optional GPIO parameters.
+>  
+>  Device-managed variants of these functions are also defined:
+>  
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 5fad38fcd701..e96d4a90c0c3 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2358,7 +2358,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>  				    unsigned int idx,
+>  				    enum gpio_lookup_flags *flags)
+>  {
+> -	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+> +	struct gpio_desc *desc = ERR_PTR(-ENOENT);
+>  	struct gpiod_lookup_table *table;
+>  	struct gpiod_lookup *p;
+>  
+> @@ -2380,19 +2380,21 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>  		chip = find_chip_by_name(p->chip_label);
+>  
+>  		if (!chip) {
+> -			dev_warn(dev, "cannot find GPIO chip %s\n",
+> -				 p->chip_label);
+> -			continue;
+> +			dev_err(dev, "cannot find GPIO chip %s\n",
+> +				p->chip_label);
+> +			return ERR_PTR(-ENODEV);
+>  		}
+>  
+>  		if (chip->ngpio <= p->chip_hwnum) {
+> -			dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
+> -				 chip->label, chip->ngpio);
+> -			continue;
+> +			dev_err(dev, "requested GPIO %d but chip %s has %d\n",
+
+The proposed message may confuse user. This lead to question in my head:
+"what gpio chip has that referred by %d at the end of line".
+
+Maybe something like "requested GPIO %d is out of range [0..%d] for chip
+%s\n" ?
+
+> +				idx, chip->label, chip->ngpio);
+> +			return ERR_PTR(-EINVAL);
+>  		}
+>  
+>  		desc = gpiochip_offset_to_desc(chip, p->chip_hwnum);
+>  		*flags = p->flags;
+> +
+> +		return desc;
+>  	}
+>  
+>  	return desc;
+> @@ -2404,7 +2406,8 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>   * @con_id:	function within the GPIO consumer
+>   *
+>   * Return the GPIO descriptor corresponding to the function con_id of device
+> - * dev, or an IS_ERR() condition if an error occured.
+> + * dev, -ENOENT if no GPIO has been assigned to the requested function, or
+> + * another IS_ERR() code if an error occured while trying to acquire the GPIO.
+>   */
+>  struct gpio_desc *__must_check gpiod_get(struct device *dev, const char *con_id)
+>  {
+> @@ -2421,7 +2424,9 @@ EXPORT_SYMBOL_GPL(gpiod_get);
+>   * This variant of gpiod_get() allows to access GPIOs other than the first
+>   * defined one for functions that define several GPIOs.
+>   *
+> - * Return a valid GPIO descriptor, or an IS_ERR() condition in case of error.
+> + * Return a valid GPIO descriptor, -ENOENT if no GPIO has been assigned to the
+> + * requested function and/or index, or another IS_ERR() code if an error
+> + * occured while trying to acquire the GPIO.
+>   */
+>  struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>  					       const char *con_id,
+> @@ -2446,13 +2451,9 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>  	 * Either we are not using DT or ACPI, or their lookup did not return
+>  	 * a result. In that case, use platform lookup as a fallback.
+>  	 */
+> -	if (!desc || IS_ERR(desc)) {
+> -		struct gpio_desc *pdesc;
+> +	if (!desc || desc == ERR_PTR(-ENOENT)) {
+>  		dev_dbg(dev, "using lookup tables for GPIO lookup");
+> -		pdesc = gpiod_find(dev, con_id, idx, &flags);
+> -		/* If used as fallback, do not replace the previous error */
+> -		if (!IS_ERR(pdesc) || !desc)
+> -			desc = pdesc;
+> +		desc = gpiod_find(dev, con_id, idx, &flags);
+>  	}
+>  
+>  	if (IS_ERR(desc)) {
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
+
