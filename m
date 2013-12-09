@@ -1,77 +1,51 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 2/2] gpiolib: append SFI helpers for GPIO API
-Date: Mon, 09 Dec 2013 15:32:46 +0200
-Message-ID: <1386595966.1871.134.camel@smile>
-References: <1386589829-2877-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <1386589829-2877-3-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <20131209130439.GE2281@intel.com> <1386594127.1871.129.camel@smile>
-	 <CACRpkdZRE4zrpKBQE+V9_P+y+YfA1wtu7bRDq+NJt1kohCSH1w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: return -ENOENT when no GPIO mapping exists
+Date: Mon, 9 Dec 2013 15:12:20 +0100
+Message-ID: <CACRpkdb_XXV=oriu5t+maRmpVM0A+xJTQG3kTh1Vv4SdiQmLTQ@mail.gmail.com>
+References: <1386295616-14192-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:65031 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932631Ab3LINdU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 Dec 2013 08:33:20 -0500
-In-Reply-To: <CACRpkdZRE4zrpKBQE+V9_P+y+YfA1wtu7bRDq+NJt1kohCSH1w@mail.gmail.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:64397 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752958Ab3LIOMV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 09:12:21 -0500
+Received: by mail-ob0-f178.google.com with SMTP id uz6so3720455obc.23
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Dec 2013 06:12:20 -0800 (PST)
+In-Reply-To: <1386295616-14192-1-git-send-email-acourbot@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Cohen <david.a.cohen@intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, 2013-12-09 at 14:27 +0100, Linus Walleij wrote:
-> On Mon, Dec 9, 2013 at 2:02 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, 2013-12-09 at 15:04 +0200, Mika Westerberg wrote:
-> >> On Mon, Dec 09, 2013 at 01:50:29PM +0200, Andy Shevchenko wrote:
-> 
-> >> > +struct gpio_desc *sfi_get_gpiod_by_name(const char *name)
-> >> > +{
-> >> > +   struct sfi_gpio_table_entry *pentry;
-> >> > +
-> >> > +   pentry = sfi_gpio_get_entry_by_name(name);
-> >> > +   if (IS_ERR(pentry))
-> >> > +           return pentry;
+On Fri, Dec 6, 2013 at 3:06 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
-Here should be return ERR_CAST(pentry);
+> Some devices drivers make use of optional GPIO parameters. For such
+> drivers, it is important to discriminate between the case where no
+> GPIO mapping has been defined for the function they are requesting, and
+> the case where a mapping exists but an error occured while resolving it
+> or when acquiring the GPIO.
+>
+> This patch changes the family of gpiod_get() functions such that they
+> will return -ENOENT if and only if no GPIO mapping is defined for the
+> requested function. Other error codes are used when an actual error
+> occured during the GPIO resolution.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> I think this change should be merged early as not having it may prevent
+> some users to switch to gpiod. I stumbled upon this issue while
+> considering porting a simple driver (pwm_bl) that has an optional GPIO
+> parameter.
+>
+> Mika, Andy: if Linus agrees with this change, could you take care of
+> having -ENOENT returned as well for the ACPI and SFI GPIOs lookup?
+> My understanding of ACPI was not sufficient to allow me to do it myself.
+> SFI OTOH should be trivial as it is a simple table.
 
-> >> > +
-> >> > +   return gpio_to_desc(pentry->pin_no);
-> >> > +}
-> >>
-> >> Do you really need add a new file just to have the above supported? I mean
-> >> that if you place that function to drivers/gpio/gpiolib.c with the
-> >> appropriate:
-> (...)
-> >
-> > I won't have linux/sfi.h in the gpiolib.c. If Linus has no objections, I
-> > can do that of course.
-> 
-> #ifdef:s are ugly according to Linus (Documentation/CodingStyle)
-> and according to this instance of Linus as well. So I actually prefer
-> so have a separate file.
-> 
-> But what is happening with this series? Should it be merged
-> through the GPIO tree? I need the SFI maintainers (Len Brown)
-> ACK for that.
+I'm aligned with this change, just waiting for a v2 with the fix
+requested by Andy to appear (maybe it's further up in the mail log
+I don't know...)
 
-I think Len is to busy for that old stuff. Anyway, he is in Cc list
-here.
-
-Len, would you mind to give your Ack for the first patch in the series?
-
-Linus, by the way, there is a minor issue in code (see above comment). I
-could fix by myself if you want me to do.
-
-> 
-> I really like the way this patch set developed to abstract away
-> the SFI internals into this gpiolib sidecar, thanks!
-> 
-> Yours,
-> Linus Walleij
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
-
+Yours,
+Linus Walleij
