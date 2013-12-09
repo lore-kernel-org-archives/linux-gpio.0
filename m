@@ -1,77 +1,53 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 2/2] gpiolib: append SFI helpers for GPIO API
-Date: Mon, 09 Dec 2013 15:02:07 +0200
-Message-ID: <1386594127.1871.129.camel@smile>
-References: <1386589829-2877-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <1386589829-2877-3-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <20131209130439.GE2281@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpio: better lookup method for platform GPIOs
+Date: Mon, 9 Dec 2013 14:07:29 +0100
+Message-ID: <CACRpkdYvN6ONNWWvxtHJC0WiuoZ8VzitsQR4bJrCoajnT0aX=A@mail.gmail.com>
+References: <CAAVeFu+LLR-EwiRskE_VBQwPrnXAdt-ahfcH08mOXsFuStFMJg@mail.gmail.com>
+	<1386040811-27946-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:59415 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932548Ab3LINCi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 Dec 2013 08:02:38 -0500
-In-Reply-To: <20131209130439.GE2281@intel.com>
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:63374 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932548Ab3LINHa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 08:07:30 -0500
+Received: by mail-oa0-f49.google.com with SMTP id i4so3768194oah.22
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Dec 2013 05:07:29 -0800 (PST)
+In-Reply-To: <1386040811-27946-1-git-send-email-acourbot@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Cohen <david.a.cohen@intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rhyland Klein <rklein@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, 2013-12-09 at 15:04 +0200, Mika Westerberg wrote:
-> On Mon, Dec 09, 2013 at 01:50:29PM +0200, Andy Shevchenko wrote:
-> > diff --git a/drivers/gpio/gpiolib-sfi.c b/drivers/gpio/gpiolib-sfi.c
-> > new file mode 100644
-> > index 0000000..43db749
-> > --- /dev/null
-> > +++ b/drivers/gpio/gpiolib-sfi.c
-> > @@ -0,0 +1,28 @@
-> > +/*
-> > + * Simple Firmware Interface (SFI) helpers for GPIO API
-> > + *
-> > + * Copyright (C) 2013, Intel Corporation
-> > + * Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + */
-> > +
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/sfi.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/err.h>
-> > +
-> > +#include "gpiolib.h"
-> > +
-> > +struct gpio_desc *sfi_get_gpiod_by_name(const char *name)
-> > +{
-> > +	struct sfi_gpio_table_entry *pentry;
-> > +
-> > +	pentry = sfi_gpio_get_entry_by_name(name);
-> > +	if (IS_ERR(pentry))
-> > +		return pentry;
-> > +
-> > +	return gpio_to_desc(pentry->pin_no);
-> > +}
-> 
-> Do you really need add a new file just to have the above supported? I mean
-> that if you place that function to drivers/gpio/gpiolib.c with the
-> appropriate:
-> 
-> #ifdef CONFIG_SFI
-> #else
-> #endif
-> 
-> you can get rid of that file (and Kconfig + Makefile changes) completely,
-> no?
+On Tue, Dec 3, 2013 at 4:20 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
-I won't have linux/sfi.h in the gpiolib.c. If Linus has no objections, I
-can do that of course.
+> Change the format of the platform GPIO lookup tables to make them less
+> confusing and improve lookup efficiency.
+>
+> The previous format was a single linked-list that required to compare
+> the device name and function ID of every single GPIO defined for each
+> lookup. Switch that to a list of per-device tables, so that the lookup
+> can be done in two steps, omitting the GPIOs that are not relevant for a
+> particular device.
+>
+> The matching rules are now defined as follows:
+> - The device name must match *exactly*, and can be NULL for GPIOs not
+>   assigned to a particular device,
+> - If the function ID in the lookup table is NULL, the con_id argument of
+>   gpiod_get() will not be used for lookup. However, if it is defined, it
+>   must match exactly.
+> - The index must always match.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> Changes since v2:
+> - Removed size member of the gpiod_lookup_table struct (thanks Heikki!)
+> - Added Andy's reviewed-by
 
+Merged in v3.13-rc3 into my devel branch and applied this on top
+today.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
-
+Thanks!
+Linus Walleij
