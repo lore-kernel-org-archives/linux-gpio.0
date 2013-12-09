@@ -1,52 +1,49 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [RFC/RFT/PATCH V3] gpio: omap: refresh patch "be more aggressive with pm_runtime" against v3.12-rc5
-Date: Mon, 09 Dec 2013 08:03:21 -0800
-Message-ID: <87r49m8112.fsf@linaro.org>
-References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
-	<1386477638-6331-1-git-send-email-caesarxuchao@gmail.com>
+From: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Subject: Re: [RFC v1 0/9] gpio: davinci: reuse for keystone arch
+Date: Mon, 9 Dec 2013 11:20:36 -0500
+Message-ID: <52A5EDD4.20506@ti.com>
+References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdYKRWZJm8nRGSHV8DUehd9d0rh6y8R4HMvkimKhWezD2g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:47013 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932720Ab3LIQDY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 11:03:24 -0500
-Received: by mail-pd0-f172.google.com with SMTP id g10so5502658pdj.3
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Dec 2013 08:03:23 -0800 (PST)
-In-Reply-To: <1386477638-6331-1-git-send-email-caesarxuchao@gmail.com> (Chao
-	Xu's message of "Sat, 7 Dec 2013 22:40:38 -0600")
+Received: from devils.ext.ti.com ([198.47.26.153]:59596 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932796Ab3LIQUj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 11:20:39 -0500
+In-Reply-To: <CACRpkdYKRWZJm8nRGSHV8DUehd9d0rh6y8R4HMvkimKhWezD2g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chao Xu <caesarxuchao@gmail.com>
-Cc: linux-omap@vger.kernel.org, santosh.shilimkar@ti.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, tony@atomide.com, balbi@ti.com, nm@ti.com
+To: "Nori, Sekhar" <nsekhar@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
 
-Chao Xu <caesarxuchao@gmail.com> writes:
+Sekhar,
 
-> From: Felipe Balbi <balbi@ti.com>
->
-> try to keep gpio block suspended as much as possible.
+On Friday 29 November 2013 03:37 AM, Linus Walleij wrote:
+> On Tue, Nov 26, 2013 at 8:40 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+> 
+>> [1] Depends on patch:
+>> "[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
+>> https://lkml.org/lkml/2013/11/8/22
+>>
+>> [2] and depends on series from Prabhakar Lad:
+>> "[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
+>> https://www.mail-archive.com/devicetree@vger.kernel.org/msg05970.html
+> 
+> So this needs to go through the same tree as these patches.
+> 
+> And I suggested that Sekhar queue them and either take them
+> directly up to ARM SoC or send me a pull request to take it through
+> the GPIO tree.
+> 
+Are you going to collect all the Davinci gpio patches create a pull
+request for Linus Walleij ?
 
-> Tested with pandaboard and a sysfs exported gpio.
->
-> Signed-off-by: Felipe Balbi <balbi at ti.com>
->
-> [caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added
-> revision check to enable aggressive pm_runtime on OMAP4-only. Because
-> am33xx_gpio_sysc.idlemodes seems to be wrongly marked as
-> SIDLE_SMART_WKUP, which might cause missed interrupts with this patch.
-> Tested on Pandaboard rev A2.]
-> Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
+Let us know so that if needed, we can put these patches together
+on a tree for Linus W to pull from.
 
-I have several problems with this patch.
+I would like to get these patches in 3.14 queue. Thanks
 
-First, the changelog is missing a lot of information.  In particular, nowhere
-is it described what problem is this patch addressing  and how this
-patch addresses that problem.
-
-Second, I don't see any mention of off-mode, and I suspect there are
-issues with off-mode here that are not being addressed.
-
-Also, I *really* don't like any approach that is targetted at a single
-SoC.
-
-Kevin
+Regards,
+Ssantosh
