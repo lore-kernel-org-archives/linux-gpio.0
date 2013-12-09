@@ -1,40 +1,52 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v5 0/2] gpiolib, sfi: introduce SFI GPIO helpers
-Date: Mon, 9 Dec 2013 17:01:50 +0200
-Message-ID: <20131209150150.GG2281@intel.com>
-References: <1386600421-16463-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [RFC/RFT/PATCH V3] gpio: omap: refresh patch "be more aggressive with pm_runtime" against v3.12-rc5
+Date: Mon, 09 Dec 2013 08:03:21 -0800
+Message-ID: <87r49m8112.fsf@linaro.org>
+References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
+	<1386477638-6331-1-git-send-email-caesarxuchao@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:13952 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932371Ab3LIOzU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 Dec 2013 09:55:20 -0500
-Content-Disposition: inline
-In-Reply-To: <1386600421-16463-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:47013 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932720Ab3LIQDY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 11:03:24 -0500
+Received: by mail-pd0-f172.google.com with SMTP id g10so5502658pdj.3
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Dec 2013 08:03:23 -0800 (PST)
+In-Reply-To: <1386477638-6331-1-git-send-email-caesarxuchao@gmail.com> (Chao
+	Xu's message of "Sat, 7 Dec 2013 22:40:38 -0600")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Cohen <david.a.cohen@intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
+To: Chao Xu <caesarxuchao@gmail.com>
+Cc: linux-omap@vger.kernel.org, santosh.shilimkar@ti.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, tony@atomide.com, balbi@ti.com, nm@ti.com
 
-On Mon, Dec 09, 2013 at 04:46:59PM +0200, Andy Shevchenko wrote:
-> Here is a fifth [1] version of the SFI GPIO helpers. This series contains SFI
-> GPIO helpers along with the update of GPIO library to lookup for SFI resources.
-> 
-> It has been tested on Medfield device on top of recent linux-gpio/for-next +
-> Mika's ACPI gpio patches [2].
-> 
-> Changes since v4:
->  - fix one compilation warning
-> 
-> [1] https://lkml.org/lkml/2013/6/5/316
-> [2] http://www.spinics.net/lists/linux-acpi/msg47572.html
-> 
-> Andy Shevchenko (2):
->   SFI: store GPIO table and export lookup function
->   gpiolib: append SFI helpers for GPIO API
-> 
+Chao Xu <caesarxuchao@gmail.com> writes:
 
-Both patches,
+> From: Felipe Balbi <balbi@ti.com>
+>
+> try to keep gpio block suspended as much as possible.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Tested with pandaboard and a sysfs exported gpio.
+>
+> Signed-off-by: Felipe Balbi <balbi at ti.com>
+>
+> [caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added
+> revision check to enable aggressive pm_runtime on OMAP4-only. Because
+> am33xx_gpio_sysc.idlemodes seems to be wrongly marked as
+> SIDLE_SMART_WKUP, which might cause missed interrupts with this patch.
+> Tested on Pandaboard rev A2.]
+> Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
+
+I have several problems with this patch.
+
+First, the changelog is missing a lot of information.  In particular, nowhere
+is it described what problem is this patch addressing  and how this
+patch addresses that problem.
+
+Second, I don't see any mention of off-mode, and I suspect there are
+issues with off-mode here that are not being addressed.
+
+Also, I *really* don't like any approach that is targetted at a single
+SoC.
+
+Kevin
