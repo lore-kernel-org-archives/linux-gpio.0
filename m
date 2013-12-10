@@ -1,45 +1,44 @@
 From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH 1/2] gpio: msm: Fix irq mask/unmask by writing bits instead of numbers
-Date: Tue, 10 Dec 2013 15:19:03 -0800
-Message-ID: <1386717544-478-1-git-send-email-sboyd@codeaurora.org>
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
+Subject: [PATCH 2/2] gpio: msm: Add module device table and mark table const
+Date: Tue, 10 Dec 2013 15:19:04 -0800
+Message-ID: <1386717544-478-2-git-send-email-sboyd@codeaurora.org>
+References: <1386717544-478-1-git-send-email-sboyd@codeaurora.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.11.231]:37091 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902Ab3LJXTG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 18:19:06 -0500
+In-Reply-To: <1386717544-478-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
 
-We should be writing bits here but instead we're writing the
-numbers that correspond to the bits we want to write. Fix it by
-wrapping the numbers in the BIT() macro. This fixes gpios acting
-as interrupts.
+This allows the module to be loaded automatically.
 
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/gpio/gpio-msm-v2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-msm-v2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-msm-v2.c b/drivers/gpio/gpio-msm-v2.c
-index f7a0cc4..00a0978 100644
+index 00a0978..a4dcbe4 100644
 --- a/drivers/gpio/gpio-msm-v2.c
 +++ b/drivers/gpio/gpio-msm-v2.c
-@@ -252,7 +252,7 @@ static void msm_gpio_irq_mask(struct irq_data *d)
- 
- 	spin_lock_irqsave(&tlmm_lock, irq_flags);
- 	writel(TARGET_PROC_NONE, GPIO_INTR_CFG_SU(gpio));
--	clear_gpio_bits(INTR_RAW_STATUS_EN | INTR_ENABLE, GPIO_INTR_CFG(gpio));
-+	clear_gpio_bits(BIT(INTR_RAW_STATUS_EN) | BIT(INTR_ENABLE), GPIO_INTR_CFG(gpio));
- 	__clear_bit(gpio, msm_gpio.enabled_irqs);
- 	spin_unlock_irqrestore(&tlmm_lock, irq_flags);
+@@ -430,10 +430,11 @@ static int msm_gpio_probe(struct platform_device *pdev)
+ 	return 0;
  }
-@@ -264,7 +264,7 @@ static void msm_gpio_irq_unmask(struct irq_data *d)
  
- 	spin_lock_irqsave(&tlmm_lock, irq_flags);
- 	__set_bit(gpio, msm_gpio.enabled_irqs);
--	set_gpio_bits(INTR_RAW_STATUS_EN | INTR_ENABLE, GPIO_INTR_CFG(gpio));
-+	set_gpio_bits(BIT(INTR_RAW_STATUS_EN) | BIT(INTR_ENABLE), GPIO_INTR_CFG(gpio));
- 	writel(TARGET_PROC_SCORPION, GPIO_INTR_CFG_SU(gpio));
- 	spin_unlock_irqrestore(&tlmm_lock, irq_flags);
- }
+-static struct of_device_id msm_gpio_of_match[] = {
++static const struct of_device_id msm_gpio_of_match[] = {
+ 	{ .compatible = "qcom,msm-gpio", },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, msm_gpio_of_match);
+ 
+ static int msm_gpio_remove(struct platform_device *dev)
+ {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 hosted by The Linux Foundation
+
