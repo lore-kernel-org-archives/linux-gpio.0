@@ -1,105 +1,118 @@
 From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v5 1/2] SFI: store GPIO table and export lookup function
-Date: Tue, 10 Dec 2013 12:08:12 +0900
-Message-ID: <52A6859C.4080900@nvidia.com>
-References: <1386600421-16463-1-git-send-email-andriy.shevchenko@linux.intel.com> <1386600421-16463-2-git-send-email-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpiolib: return -ENOENT when no GPIO mapping exists
+Date: Tue, 10 Dec 2013 12:10:56 +0900
+Message-ID: <52A68640.5010806@nvidia.com>
+References: <1386295616-14192-1-git-send-email-acourbot@nvidia.com> <1386584927.1871.127.camel@smile>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1132 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750858Ab3LJDIR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 22:08:17 -0500
-In-Reply-To: <1386600421-16463-2-git-send-email-andriy.shevchenko@linux.intel.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11360 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751910Ab3LJDLA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 22:11:00 -0500
+In-Reply-To: <1386584927.1871.127.camel@smile>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 12/09/2013 11:47 PM, Andy Shevchenko wrote:
-> We have to provide a mechanism to retrive GPIO information from SFI. For this
-> we store SFI GPIO table and provide the lookup function
-> sfi_gpio_get_entry_by_name() that will be used later in GPIO framework.
+On 12/09/2013 07:28 PM, Andy Shevchenko wrote:
+> On Fri, 2013-12-06 at 11:06 +0900, Alexandre Courbot wrote:
+>> Some devices drivers make use of optional GPIO parameters. For such
+>> drivers, it is important to discriminate between the case where no
+>> GPIO mapping has been defined for the function they are requesting, and
+>> the case where a mapping exists but an error occured while resolving it
+>> or when acquiring the GPIO.
+>>
+>> This patch changes the family of gpiod_get() functions such that they
+>> will return -ENOENT if and only if no GPIO mapping is defined for the
+>> requested function. Other error codes are used when an actual error
+>> occured during the GPIO resolution.
+>>
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   drivers/sfi/Makefile   |   2 +-
->   drivers/sfi/sfi_core.c |   6 +++
->   drivers/sfi/sfi_core.h |   3 ++
->   drivers/sfi/sfi_gpio.c | 121 +++++++++++++++++++++++++++++++++++++++++++++++++
->   include/linux/sfi.h    |  10 ++++
->   5 files changed, 141 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/sfi/sfi_gpio.c
+> I like the idea.
+> One minor comment below (in code).
 >
-> diff --git a/drivers/sfi/Makefile b/drivers/sfi/Makefile
-> index 2343732..dc011db 100644
-> --- a/drivers/sfi/Makefile
-> +++ b/drivers/sfi/Makefile
-> @@ -1,3 +1,3 @@
->   obj-y	+= sfi_acpi.o
->   obj-y	+= sfi_core.o
-> -
-> +obj-y	+= sfi_gpio.o
-> diff --git a/drivers/sfi/sfi_core.c b/drivers/sfi/sfi_core.c
-> index 296db7a..e9ff6f0 100644
-> --- a/drivers/sfi/sfi_core.c
-> +++ b/drivers/sfi/sfi_core.c
-> @@ -512,6 +512,12 @@ void __init sfi_init_late(void)
->   	syst_va = sfi_map_memory(syst_pa, length);
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
+>> I think this change should be merged early as not having it may prevent
+>> some users to switch to gpiod. I stumbled upon this issue while
+>> considering porting a simple driver (pwm_bl) that has an optional GPIO
+>> parameter.
+>>
+>> Mika, Andy: if Linus agrees with this change, could you take care of
+>> having -ENOENT returned as well for the ACPI and SFI GPIOs lookup?
 >
->   	sfi_acpi_init();
-> +
-> +	/*
-> +	 * Parsing GPIO table first, since the DEVS table will need this table
-> +	 * to map the pin name to the actual pin.
-> +	 */
-> +	sfi_gpio_init();
->   }
->
->   /*
-> diff --git a/drivers/sfi/sfi_core.h b/drivers/sfi/sfi_core.h
-> index 1d5cfe8..18c663d 100644
-> --- a/drivers/sfi/sfi_core.h
-> +++ b/drivers/sfi/sfi_core.h
-> @@ -79,3 +79,6 @@ struct sfi_table_header *sfi_get_table(struct sfi_table_key *key);
->   extern void sfi_put_table(struct sfi_table_header *table);
->   extern struct sfi_table_attr __init *sfi_sysfs_install_table(u64 pa);
->   extern void __init sfi_acpi_sysfs_init(void);
-> +
-> +/* sfi_gpio.c */
-> +int sfi_gpio_init(void);
-> diff --git a/drivers/sfi/sfi_gpio.c b/drivers/sfi/sfi_gpio.c
-> new file mode 100644
-> index 0000000..22627a1
-> --- /dev/null
-> +++ b/drivers/sfi/sfi_gpio.c
-> @@ -0,0 +1,121 @@
-> +/* sfi_gpio.c Simple Firmware Interface - GPIO extensions */
-> +
-> +/*
-> +
-> +  This file is provided under a dual BSD/GPLv2 license.  When using or
-> +  redistributing this file, you may do so under either license.
-> +
-> +  GPL LICENSE SUMMARY
-> +
-> +  Copyright(c) 2013 Intel Corporation. All rights reserved.
-> +
-> +  This program is free software; you can redistribute it and/or modify
-> +  it under the terms of version 2 of the GNU General Public License as
-> +  published by the Free Software Foundation.
-> +
-> +  This program is distributed in the hope that it will be useful, but
-> +  WITHOUT ANY WARRANTY; without even the implied warranty of
-> +  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> +  General Public License for more details.
-> +
-> +  You should have received a copy of the GNU General Public License
-> +  along with this program; if not, write to the Free Software
-> +  Foundation, Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-> +  The full GNU General Public License is included in this distribution
-> +  in the file called LICENSE.GPL.
+> I have already switched to -ENOENT, so, consider done.
 
-FSF address is still here - please remove the last paragraph in the next 
-version.
+Great, thanks!
 
+>> My understanding of ACPI was not sufficient to allow me to do it myself.
+>> SFI OTOH should be trivial as it is a simple table.
+>>
+>>   Documentation/gpio/consumer.txt |  6 +++++-
+>>   drivers/gpio/gpiolib.c          | 31 ++++++++++++++++---------------
+>>   2 files changed, 21 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+>> index 07c74a3765a0..e42f77d8d4ca 100644
+>> --- a/Documentation/gpio/consumer.txt
+>> +++ b/Documentation/gpio/consumer.txt
+>> @@ -38,7 +38,11 @@ device that displays digits), an additional index argument can be specified:
+>>   					  const char *con_id, unsigned int idx)
+>>
+>>   Both functions return either a valid GPIO descriptor, or an error code checkable
+>> -with IS_ERR(). They will never return a NULL pointer.
+>> +with IS_ERR() (they will never return a NULL pointer). -ENOENT will be returned
+>> +if and only if no GPIO has been assigned to the device/function/index triplet,
+>> +other error codes are used for cases where a GPIO has been assigned but an error
+>> +occured while trying to acquire it. This is useful to discriminate between mere
+>> +errors and an absence of GPIO for optional GPIO parameters.
+>>
+>>   Device-managed variants of these functions are also defined:
+>>
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> index 5fad38fcd701..e96d4a90c0c3 100644
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>> @@ -2358,7 +2358,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>>   				    unsigned int idx,
+>>   				    enum gpio_lookup_flags *flags)
+>>   {
+>> -	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+>> +	struct gpio_desc *desc = ERR_PTR(-ENOENT);
+>>   	struct gpiod_lookup_table *table;
+>>   	struct gpiod_lookup *p;
+>>
+>> @@ -2380,19 +2380,21 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>>   		chip = find_chip_by_name(p->chip_label);
+>>
+>>   		if (!chip) {
+>> -			dev_warn(dev, "cannot find GPIO chip %s\n",
+>> -				 p->chip_label);
+>> -			continue;
+>> +			dev_err(dev, "cannot find GPIO chip %s\n",
+>> +				p->chip_label);
+>> +			return ERR_PTR(-ENODEV);
+>>   		}
+>>
+>>   		if (chip->ngpio <= p->chip_hwnum) {
+>> -			dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
+>> -				 chip->label, chip->ngpio);
+>> -			continue;
+>> +			dev_err(dev, "requested GPIO %d but chip %s has %d\n",
+>
+> The proposed message may confuse user. This lead to question in my head:
+> "what gpio chip has that referred by %d at the end of line".
+>
+> Maybe something like "requested GPIO %d is out of range [0..%d] for chip
+> %s\n" ?
+
+I agree it would be better. My concern here is to have the line fit 
+within 80 characters. :P
+
+But you're right, I will improve this in v2.
+
+Thanks,
+Alex.
