@@ -1,40 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/4] ARM: at91: localize GPIO header
-Date: Tue, 10 Dec 2013 10:39:34 +0100
-Message-ID: <CACRpkdZcOTJqn1hEjDjgF_0cp4-Ab7Kq+3bC0nFfHFqmsLKoqA@mail.gmail.com>
-References: <1383643826-14352-1-git-send-email-linus.walleij@linaro.org>
-	<52A0AF7D.8020906@atmel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] gpio / ACPI: return -ENOENT when no mapping exists
+Date: Tue, 10 Dec 2013 12:00:27 +0200
+Message-ID: <1386669627-31365-1-git-send-email-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:37932 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752519Ab3LJJjf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 04:39:35 -0500
-Received: by mail-ob0-f172.google.com with SMTP id gq1so5085315obb.31
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2013 01:39:34 -0800 (PST)
-In-Reply-To: <52A0AF7D.8020906@atmel.com>
+Received: from mga02.intel.com ([134.134.136.20]:64562 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751582Ab3LJKAf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 10 Dec 2013 05:00:35 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Victor <linux@maxim.org.za>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alex Courbot <acourbot@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-gpio@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Thu, Dec 5, 2013 at 5:53 PM, Nicolas Ferre <nicolas.ferre@atmel.com> wrote:
+Doing this allows drivers to distinguish between a real error case (if
+there was an error when we tried to resolve the GPIO) and when the optional
+GPIO line was not available.
 
-> 3.14 is a big release for us and I am sure that I will have to synchronize
-> this patch with:
-> - the other patches of this series: the one about serial driver
->   will probably be taken by Uwe.
-> - the big cleanup modifications brought by the move to CCF
-> - the initiative by Jean-Christophe to remove some of the
->   non-DT board files...
->
-> Give me some time to see how I can integrate this into this 3.14 development
-> phase...
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-OK I will keep my fingers away from AT91 for 3.14 so I don't
-cause any mess through the GPIO or pinctrl tree. Let's revisit
-this after the merge window and see what remains.
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 8506e4ce41f7..716ee9843110 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -307,7 +307,7 @@ struct gpio_desc *acpi_get_gpiod_by_index(struct device *dev, int index,
+ 	if (lookup.desc && info)
+ 		*info = lookup.info;
+ 
+-	return lookup.desc ? lookup.desc : ERR_PTR(-ENODEV);
++	return lookup.desc ? lookup.desc : ERR_PTR(-ENOENT);
+ }
+ 
+ void acpi_gpiochip_add(struct gpio_chip *chip)
+-- 
+1.8.5.1
 
-Yours,
-Linus Walleij
