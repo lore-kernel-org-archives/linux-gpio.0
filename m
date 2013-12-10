@@ -1,30 +1,37 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH] gpio / ACPI: return -ENOENT when no mapping exists
-Date: Tue, 10 Dec 2013 20:11:59 +0900
-Message-ID: <52A6F6FF.7020103@nvidia.com>
-References: <1386669627-31365-1-git-send-email-mika.westerberg@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH -next] gpio: moxart: remove redundant dev_err call in moxart_gpio_probe()
+Date: Tue, 10 Dec 2013 12:33:46 +0100
+Message-ID: <CACRpkdYZOUhHoHQVArzf-pruoL7V9yVxNTnTpL28TVTWL6eoGw@mail.gmail.com>
+References: <CAPgLHd8tig4hJuxUe=iWs4xJPuvATK9YWfETQudfbEz71Ta=fg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8988 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752086Ab3LJLMD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 06:12:03 -0500
-In-Reply-To: <1386669627-31365-1-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:64029 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752141Ab3LJLdr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 06:33:47 -0500
+Received: by mail-oa0-f45.google.com with SMTP id o6so5399055oag.32
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2013 03:33:46 -0800 (PST)
+In-Reply-To: <CAPgLHd8tig4hJuxUe=iWs4xJPuvATK9YWfETQudfbEz71Ta=fg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+To: Wei Yongjun <weiyj.lk@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 12/10/2013 07:00 PM, Mika Westerberg wrote:
-> Doing this allows drivers to distinguish between a real error case (if
-> there was an error when we tried to resolve the GPIO) and when the optional
-> GPIO line was not available.
+On Wed, Dec 4, 2013 at 1:38 AM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
+
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 >
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> There is a error message within devm_ioremap_resource
+> already, so remove the dev_err call to avoid redundant
+> error message.
+>
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-Thanks!
+This does not apply after Jonas Jensen's patch
+"gpio: MOXA ART: rename moxart_gpio_base to base"
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Please rebase and include Jonas on Cc for this driver.
 
+Yours,
+Linus Walleij
