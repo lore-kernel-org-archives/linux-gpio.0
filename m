@@ -1,69 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
-Date: Tue, 10 Dec 2013 12:51:30 +0100
-Message-ID: <CACRpkdZxjKamJvOMqdgN5zG5DrZvDNTCaVSiyaHSawkLxvUrFA@mail.gmail.com>
-References: <1386116613-5241-1-git-send-email-br1@einfach.org>
+Subject: Re: [PATCH v2 1/1] gpio: twl4030: Fix regression for twl gpio LED output
+Date: Tue, 10 Dec 2013 13:16:38 +0100
+Message-ID: <CACRpkdb3viraX6yQhUHokSVfN2qXxcc5cd1YpjPGfeDMy64p+A@mail.gmail.com>
+References: <1386156871-7639-2-git-send-email-rogerq@ti.com>
+	<1386235415-27670-1-git-send-email-rogerq@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <1386116613-5241-1-git-send-email-br1@einfach.org>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Bruno Randolf <br1@einfach.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Seth Heasley <seth.heasley@intel.com>, Darren Hart <dvhart@linux.intel.com>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1386235415-27670-1-git-send-email-rogerq@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roger Quadros <rogerq@ti.com>
+Cc: ext Tony Lindgren <tony@atomide.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Nishanth Menon <nm@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Felipe Balbi <balbi@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Dec 4, 2013 at 1:23 AM, Bruno Randolf <br1@einfach.org> wrote:
+On Thu, Dec 5, 2013 at 10:23 AM, Roger Quadros <rogerq@ti.com> wrote:
 
-> This patch adds support for the GPIOs found on the SMSC "Super I/O" chips
-> SCH311x.
+> Commit 0b2aa8be introduced a regression that causes failure
+> in setting LED GPO direction to OUT.
 >
-> The chip detection and I/O functions are copied from sch311x_wdt.c
+> This causes USB host probe failures for Beagleboard C4.
 >
-> Signed-off-by: Bruno Randolf <br1@einfach.org>
+> [    2.075469] platform usb_phy_gen_xceiv.2: Driver usb_phy_gen_xceiv requests probe deferral
+> [    2.090454] hsusb2_vcc: Failed to request enable GPIO510: -22
+> [    2.100982] reg-fixed-voltage reg-fixed-voltage.0.auto: Failed to register regulator: -22
+> [    2.109954] reg-fixed-voltage: probe of reg-fixed-voltage.0.auto failed with error -22
 >
-> ---
-> Notes:
-> - All GPIOs are now supported, driver data is runtime allocated
->   and I tried to address all comments as far as possible.
-> - Still a platform device is registered, similar to gpio-f7188x.c
+> direction_out/direction_in must return 0 if the operation succeeded.
+>
+> Also, don't update direction flag and output data if twl4030_set_gpio_direction()
+> failed inside twl_direction_out();
+>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
 
-So I have a problem with this design pattern so I need to ask
-Matthew Garret about this:
+Patch applied for fixes with Tony's ACK.
 
-- Driver *always* performs some port-mapped I/O probe on
-  some random ports as a compulsory initcall.
-
-- No other hardware discovery.
-
-- If detecting magic, registers a platform device.
-
-- Then handles this device by also providing a device
-  driver for it.
-
-- All of this is placed in one file.
-
-Matthew is this how discovery and registration of x86 platform
-drivers for port-mapped devices should work or are we doing
-something weird here?
-
-Since earlier we have:
-
-drivers/gpio/gpio-f7188x.c - exactly the same pattern
-
-drivers/gpio/gpio-it8761e.c - doesn't even bother to create a platform
-  device, goes on and creates a gpio_chip without any device
-
-drivers/gpio/gpio-sch.c - port-mapped but platform device is
-  created by an MFD which is probed from PCI (seems fine).
-
-drivers/gpio/gpio-ts5500.c - aha, created from
-  arch/x86/platform/ts5500/ts5500.c, a "board file".
-
-This is a bit heterogeneous, but I can't claim to understand how
-x86 want to register its devices so need some input here.
-
-Maybe this is all the right way to do things, but I want to
-be hammered down by some convincing arguments first.
-
-Yours,
+Thanks!
 Linus Walleij
