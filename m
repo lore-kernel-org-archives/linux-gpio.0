@@ -1,48 +1,47 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH] gpiolib: return -ENOENT when no GPIO mapping exists
-Date: Tue, 10 Dec 2013 12:11:56 +0900
-Message-ID: <52A6867C.7030902@nvidia.com>
-References: <1386295616-14192-1-git-send-email-acourbot@nvidia.com> <20131209124018.GD2281@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] MAINTAINERS: update GPIO maintainers entry
+Date: Tue, 10 Dec 2013 09:45:25 +0100
+Message-ID: <1386665125-402-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1213 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751920Ab3LJDMA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2013 22:12:00 -0500
-In-Reply-To: <20131209124018.GD2281@intel.com>
+Received: from mail-la0-f50.google.com ([209.85.215.50]:52069 "EHLO
+	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752369Ab3LJIpi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 03:45:38 -0500
+Received: by mail-la0-f50.google.com with SMTP id el20so2430605lab.9
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2013 00:45:36 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On 12/09/2013 09:40 PM, Mika Westerberg wrote:
-> On Fri, Dec 06, 2013 at 11:06:56AM +0900, Alexandre Courbot wrote:
->> Some devices drivers make use of optional GPIO parameters. For such
->> drivers, it is important to discriminate between the case where no
->> GPIO mapping has been defined for the function they are requesting, and
->> the case where a mapping exists but an error occured while resolving it
->> or when acquiring the GPIO.
->>
->> This patch changes the family of gpiod_get() functions such that they
->> will return -ENOENT if and only if no GPIO mapping is defined for the
->> requested function. Other error codes are used when an actual error
->> occured during the GPIO resolution.
->>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->> I think this change should be merged early as not having it may prevent
->> some users to switch to gpiod. I stumbled upon this issue while
->> considering porting a simple driver (pwm_bl) that has an optional GPIO
->> parameter.
->>
->> Mika, Andy: if Linus agrees with this change, could you take care of
->> having -ENOENT returned as well for the ACPI and SFI GPIOs lookup?
->
-> Sure. I have a patch for this already so once this gets merged, I'll send
-> out the ACPI version.
+Add Alexandre Courbot as co-maintainer of the GPIO subsystem.
+Provide a pointer to the GPIO GIT tree. Update the documentation
+file path. Move around to put people and git tree on top.
 
-Please feel free to send it now, as it should not break anything if your 
-patch is merged before mine anyway.
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ MAINTAINERS | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f216db847022..18a5a77c3924 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3764,9 +3764,11 @@ F:	include/uapi/linux/gigaset_dev.h
+ 
+ GPIO SUBSYSTEM
+ M:	Linus Walleij <linus.walleij@linaro.org>
+-S:	Maintained
++M:	Alexandre Courbot <gnurou@gmail.com>
+ L:	linux-gpio@vger.kernel.org
+-F:	Documentation/gpio.txt
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
++S:	Maintained
++F:	Documentation/gpio/
+ F:	drivers/gpio/
+ F:	include/linux/gpio*
+ F:	include/asm-generic/gpio.h
+-- 
+1.8.3.1
 
