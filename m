@@ -1,135 +1,54 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2] gpiolib: return -ENOENT if no GPIO mapping exists
-Date: Tue, 10 Dec 2013 23:37:27 +0900
-Message-ID: <1386686247-24592-1-git-send-email-acourbot@nvidia.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 5/8] gpio: twl4030: Fix regression for twl gpio output
+Date: Tue, 10 Dec 2013 07:20:22 -0800
+Message-ID: <20131210152022.GF13171@atomide.com>
+References: <1384396537-3486-1-git-send-email-tony@atomide.com>
+ <1384396537-3486-6-git-send-email-tony@atomide.com>
+ <529DDCE3.5020902@ti.com>
+ <CACRpkdb1XEJjykRD3MGmjHvTX40JtTZU7uDRAvpGLBdoREChmw@mail.gmail.com>
+ <20131209171020.GB11433@atomide.com>
+ <CACRpkdZ5-66BMTvRcMZYm-49=z5L_71DCoDm1u6jUpvTNpLFWQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gnurou.org ([207.192.72.5]:52222 "EHLO mail.gnurou.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753890Ab3LJOjh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 10 Dec 2013 09:39:37 -0500
+Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:31670 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754119Ab3LJPU1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 10:20:27 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ5-66BMTvRcMZYm-49=z5L_71DCoDm1u6jUpvTNpLFWQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Roger Quadros <rogerq@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Some devices drivers make use of optional GPIO parameters. For such
-drivers, it is important to discriminate between the case where no
-GPIO mapping has been defined for the function they are requesting, and
-the case where a mapping exists but an error occured while resolving it
-or when acquiring the GPIO.
+* Linus Walleij <linus.walleij@linaro.org> [131210 04:18]:
+> On Mon, Dec 9, 2013 at 6:10 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > * Linus Walleij <linus.walleij@linaro.org> [131209 05:10]:
+> >> On Tue, Dec 3, 2013 at 2:30 PM, Roger Quadros <rogerq@ti.com> wrote:
+> >>
+> >> (...)
+> >> > This patch causes a regression with LED outputs (GPO) on twl4030 on 3.13-rc2.
+> >> > As one of the LED GPO is used for USB host on beagleboard, it will cause failure
+> >> > of USB host probe.
+> >> (...)
+> >> > Below is a proposed fix for this.
+> >>
+> >> Roger, Tony: what happened with this? Have you hashed this out?
+> >> I ACK Roger's fixup too if that needs to be merged into the OMAP
+> >> tree.
+> >
+> > There's an updated version from Roger posted that I acked:
+> >
+> > [PATCH v2 1/1] gpio: twl4030: Fix regression for twl gpio LED output
+> >
+> > http://lkml.org/lkml/2013/12/5/65
+> >
+> > I also commented on the dependencies there, but basically you can
+> > pick it up unless you want me to. Should be cc stable as well.
+> 
+> OK I have picked this now, I'll add a CC to stable.
 
-This patch changes the family of gpiod_get() functions such that they
-will return -ENOENT if and only if no GPIO mapping is defined for the
-requested function. Other error codes are used when an actual error
-occured during the GPIO resolution.
+Thanks!
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-Changes since v1:
-- Rebase on top of Linus' devel tree
-- Fixed error reporting as suggested by Andy
----
- Documentation/gpio/consumer.txt |  6 +++++-
- drivers/gpio/gpiolib.c          | 33 ++++++++++++++++-----------------
- 2 files changed, 21 insertions(+), 18 deletions(-)
-
-diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index 07c74a3..e42f77d 100644
---- a/Documentation/gpio/consumer.txt
-+++ b/Documentation/gpio/consumer.txt
-@@ -38,7 +38,11 @@ device that displays digits), an additional index argument can be specified:
- 					  const char *con_id, unsigned int idx)
- 
- Both functions return either a valid GPIO descriptor, or an error code checkable
--with IS_ERR(). They will never return a NULL pointer.
-+with IS_ERR() (they will never return a NULL pointer). -ENOENT will be returned
-+if and only if no GPIO has been assigned to the device/function/index triplet,
-+other error codes are used for cases where a GPIO has been assigned but an error
-+occured while trying to acquire it. This is useful to discriminate between mere
-+errors and an absence of GPIO for optional GPIO parameters.
- 
- Device-managed variants of these functions are also defined:
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 12e47df..32a6e3a 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2367,7 +2367,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 				    unsigned int idx,
- 				    enum gpio_lookup_flags *flags)
- {
--	struct gpio_desc *desc = ERR_PTR(-ENODEV);
-+	struct gpio_desc *desc = ERR_PTR(-ENOENT);
- 	struct gpiod_lookup_table *table;
- 	struct gpiod_lookup *p;
- 
-@@ -2389,19 +2389,21 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 		chip = find_chip_by_name(p->chip_label);
- 
- 		if (!chip) {
--			dev_warn(dev, "cannot find GPIO chip %s\n",
--				 p->chip_label);
--			continue;
-+			dev_err(dev, "cannot find GPIO chip %s\n",
-+				p->chip_label);
-+			return ERR_PTR(-ENODEV);
- 		}
- 
- 		if (chip->ngpio <= p->chip_hwnum) {
--			dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
--				 chip->label, chip->ngpio);
--			continue;
-+			dev_err(dev, "requested GPIO %d is out of range [0..%d]"
-+			       " for chip %s\n", idx, chip->ngpio, chip->label);
-+			return ERR_PTR(-EINVAL);
- 		}
- 
- 		desc = gpiochip_offset_to_desc(chip, p->chip_hwnum);
- 		*flags = p->flags;
-+
-+		return desc;
- 	}
- 
- 	return desc;
-@@ -2413,7 +2415,8 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
-  * @con_id:	function within the GPIO consumer
-  *
-  * Return the GPIO descriptor corresponding to the function con_id of device
-- * dev, or an IS_ERR() condition if an error occured.
-+ * dev, -ENOENT if no GPIO has been assigned to the requested function, or
-+ * another IS_ERR() code if an error occured while trying to acquire the GPIO.
-  */
- struct gpio_desc *__must_check gpiod_get(struct device *dev, const char *con_id)
- {
-@@ -2430,7 +2433,9 @@ EXPORT_SYMBOL_GPL(gpiod_get);
-  * This variant of gpiod_get() allows to access GPIOs other than the first
-  * defined one for functions that define several GPIOs.
-  *
-- * Return a valid GPIO descriptor, or an IS_ERR() condition in case of error.
-+ * Return a valid GPIO descriptor, -ENOENT if no GPIO has been assigned to the
-+ * requested function and/or index, or another IS_ERR() code if an error
-+ * occured while trying to acquire the GPIO.
-  */
- struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 					       const char *con_id,
-@@ -2455,15 +2460,9 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	 * Either we are not using DT or ACPI, or their lookup did not return
- 	 * a result. In that case, use platform lookup as a fallback.
- 	 */
--	if (!desc || IS_ERR(desc)) {
--		struct gpio_desc *pdesc;
--
-+	if (!desc || desc == ERR_PTR(-ENOENT)) {
- 		dev_dbg(dev, "using lookup tables for GPIO lookup");
--		pdesc = gpiod_find(dev, con_id, idx, &flags);
--
--		/* If used as fallback, do not replace the previous error */
--		if (!IS_ERR(pdesc) || !desc)
--			desc = pdesc;
-+		desc = gpiod_find(dev, con_id, idx, &flags);
- 	}
- 
- 	if (IS_ERR(desc)) {
--- 
-1.8.5.1
-
+Tony
