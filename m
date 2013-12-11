@@ -1,52 +1,30 @@
-From: delicious quinoa <delicious.quinoa@gmail.com>
-Subject: Re: [PATCH v9] gpio: add a driver for Synopsys DesignWare APB GPIO
-Date: Wed, 11 Dec 2013 14:15:25 -0600
-Message-ID: <CANk1AXS=CADN53aO5KVN3UorddJ0wZ2PTqwo2XmeRuxYe_DoLg@mail.gmail.com>
-References: <1386364179-28650-1-git-send-email-delicious.quinoa@gmail.com>
+From: Bruno Randolf <br1@einfach.org>
+Subject: Re: [PATCH v4] gpio: add GPIO support for SMSC SCH311x
+Date: Wed, 11 Dec 2013 21:14:11 +0000
+Message-ID: <52A8D5A3.8020401@einfach.org>
+References: <1386201717-25815-1-git-send-email-br1@einfach.org> <CACRpkdb0z9GgLVhYESJ8NyEZXTXctpyHjrA6dC3A0wn+X7fnGw@mail.gmail.com> <20131211191639.GA26416@srcf.ucam.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bk0-f51.google.com ([209.85.214.51]:42337 "EHLO
-	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751203Ab3LKUP1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Dec 2013 15:15:27 -0500
-In-Reply-To: <1386364179-28650-1-git-send-email-delicious.quinoa@gmail.com>
+Received: from postler.einfach.org ([91.250.116.113]:41714 "EHLO
+	postler.einfach.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750917Ab3LKVOU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Dec 2013 16:14:20 -0500
+In-Reply-To: <20131211191639.GA26416@srcf.ucam.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@stericsson.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, delicious quinoa <delicious.quinoa@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+To: Matthew Garrett <mjg59@srcf.ucam.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>
 
-On Fri, Dec 6, 2013 at 3:09 PM, Alan Tull <delicious.quinoa@gmail.com> wrote:
-> From: Alan Tull <atull@altera.com>
->
-> Hi Linus,
->
-> If you don't have any further comments, can you take this patch?
->
-> Alan
+On 12/11/2013 07:16 PM, Matthew Garrett wrote:
+> Bruno, do you have an acpidump for a machine with one of these chips?
 
-Basically, this is a driver that Jamie wrote and was upstreaming a few
-years ago.  For some reason it never quite made it into the kernel.  I
-picked it up, updated the interrupt support, posted it to the list and
-went through some reviews with it.
+I'll try to get one in the next couple of days, but unfortunately I
+don't have direct access to the machine anymore.
 
-This driver has been reviewed, I hope it can make it into the kernel.
+What exatly do you need? Will "cat /sys/firmware/acpi/tables/DSDT >
+dsdt.dat" suffice? Anything else?
 
-Alan
+bruno
 
->
-> Jamie Iles (1):
->   gpio: add a driver for the Synopsys DesignWare APB GPIO block
->
->  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |   59 +++
->  drivers/gpio/Kconfig                               |    9 +
->  drivers/gpio/Makefile                              |    1 +
->  drivers/gpio/gpio-dwapb.c                          |  415 ++++++++++++++++++++
->  4 files changed, 484 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
->  create mode 100644 drivers/gpio/gpio-dwapb.c
->
-> --
-> 1.7.9.5
->
->
