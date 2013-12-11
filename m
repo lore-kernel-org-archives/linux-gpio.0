@@ -1,139 +1,173 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v3] gpiolib: return -ENOENT if no GPIO mapping exists
-Date: Wed, 11 Dec 2013 11:32:28 +0900
-Message-ID: <1386729148-16262-1-git-send-email-acourbot@nvidia.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH v1 3/3] gpiolib: append SFI helpers for GPIO API
+Date: Wed, 11 Dec 2013 11:47:20 +0900
+Message-ID: <52A7D238.10603@nvidia.com>
+References: <1386261409-13850-1-git-send-email-andriy.shevchenko@linux.intel.com>	 <1386261409-13850-4-git-send-email-andriy.shevchenko@linux.intel.com>	 <52A12DCB.10306@nvidia.com> <1386583880.1871.119.camel@smile>	 <52A683BA.9090400@nvidia.com> <1386681309.1871.164.camel@smile>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15698 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750921Ab3LKCce (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 21:32:34 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:10354 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751830Ab3LKCrY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 21:47:24 -0500
+In-Reply-To: <1386681309.1871.164.camel@smile>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
 
-Some devices drivers make use of optional GPIO parameters. For such
-drivers, it is important to discriminate between the case where no
-GPIO mapping has been defined for the function they are requesting, and
-the case where a mapping exists but an error occured while resolving it
-or when acquiring the GPIO.
+On 12/10/2013 10:15 PM, Andy Shevchenko wrote:
+> On Tue, 2013-12-10 at 12:00 +0900, Alex Courbot wrote:
+>> On 12/09/2013 07:11 PM, Andy Shevchenko wrote:
+>>> On Fri, 2013-12-06 at 10:52 +0900, Alex Courbot wrote:
+>>>> On 12/06/2013 01:36 AM, Andy Shevchenko wrote:
+>>>>> To support some (legacy) firmwares and platforms let's make life easier for
+>>>>> their customers.
+>>>>>
+>>>>> This patch provides a function which converts sfi_gpio_table_entry to
+>>>>> gpio_desc. The use of it is integrated into GPIO library to enable generic
+>>>>> access to the SFI GPIO resources.
+>>>>>
+>>>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>>>> ---
+>>>>>     drivers/gpio/Kconfig       |  4 ++++
+>>>>>     drivers/gpio/Makefile      |  1 +
+>>>>>     drivers/gpio/gpiolib-sfi.c | 28 ++++++++++++++++++++++++++++
+>>>>>     drivers/gpio/gpiolib.c     |  3 +++
+>>>>>     drivers/gpio/gpiolib.h     | 13 +++++++++++++
+>>>>>     5 files changed, 49 insertions(+)
+>>>>>     create mode 100644 drivers/gpio/gpiolib-sfi.c
+>>>>>
+>>>>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>>>>> index ae3682d..a12752a 100644
+>>>>> --- a/drivers/gpio/Kconfig
+>>>>> +++ b/drivers/gpio/Kconfig
+>>>>> @@ -51,6 +51,10 @@ config OF_GPIO
+>>>>>     	def_bool y
+>>>>>     	depends on OF
+>>>>>
+>>>>> +config GPIO_SFI
+>>>>> +	def_bool y
+>>>>> +	depends on SFI
+>>>>> +
+>>>>>     config GPIO_ACPI
+>>>>>     	def_bool y
+>>>>>     	depends on ACPI
+>>>>> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+>>>>> index ee95154..5373e3a 100644
+>>>>> --- a/drivers/gpio/Makefile
+>>>>> +++ b/drivers/gpio/Makefile
+>>>>> @@ -5,6 +5,7 @@ ccflags-$(CONFIG_DEBUG_GPIO)	+= -DDEBUG
+>>>>>     obj-$(CONFIG_GPIO_DEVRES)	+= devres.o
+>>>>>     obj-$(CONFIG_GPIOLIB)		+= gpiolib.o
+>>>>>     obj-$(CONFIG_OF_GPIO)		+= gpiolib-of.o
+>>>>> +obj-$(CONFIG_GPIO_SFI)		+= gpiolib-sfi.o
+>>>>>     obj-$(CONFIG_GPIO_ACPI)		+= gpiolib-acpi.o
+>>>>>
+>>>>>     # Device drivers. Generally keep list sorted alphabetically
+>>>>> diff --git a/drivers/gpio/gpiolib-sfi.c b/drivers/gpio/gpiolib-sfi.c
+>>>>> new file mode 100644
+>>>>> index 0000000..c804314
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/gpio/gpiolib-sfi.c
+>>>>> @@ -0,0 +1,28 @@
+>>>>> +/*
+>>>>> + * Simple Firmware Interface (SFI) helpers for GPIO API
+>>>>> + *
+>>>>> + * Copyright (C) 2013, Intel Corporation
+>>>>> + * Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>>>> + *
+>>>>> + * This program is free software; you can redistribute it and/or modify
+>>>>> + * it under the terms of the GNU General Public License version 2 as
+>>>>> + * published by the Free Software Foundation.
+>>>>> + */
+>>>>> +
+>>>>> +#include <linux/gpio/consumer.h>
+>>>>> +#include <linux/sfi.h>
+>>>>> +#include <linux/errno.h>
+>>>>> +#include <linux/err.h>
+>>>>> +
+>>>>> +#include "gpiolib.h"
+>>>>> +
+>>>>> +struct gpio_desc *sfi_get_gpiod_by_name(const char *name)
+>>>>> +{
+>>>>> +	struct sfi_gpio_table_entry *pentry;
+>>>>> +
+>>>>> +	pentry = sfi_gpio_get_entry_by_name(name);
+>>>>> +	if (!pentry)
+>>>>> +		return ERR_PTR(-ENODEV);
+>>>>> +
+>>>>> +	return gpio_to_desc(pentry->pin_no);
+>>>>> +}
+>>>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>>>>> index bad400c..789ae1c 100644
+>>>>> --- a/drivers/gpio/gpiolib.c
+>>>>> +++ b/drivers/gpio/gpiolib.c
+>>>>> @@ -2451,6 +2451,9 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>>>>>     	} else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev)) {
+>>>>>     		dev_dbg(dev, "using ACPI for GPIO lookup\n");
+>>>>>     		desc = acpi_find_gpio(dev, con_id, idx, &flags);
+>>>>> +	} else if (IS_ENABLED(CONFIG_SFI)) {
+>>>>> +		dev_dbg(dev, "using SFI for GPIO lookup\n");
+>>>>> +		desc = sfi_get_gpiod_by_name(con_id);
+>>>>
+>>>> Your lookup function is ignoring the dev argument. Are SFI GPIOs always
+>>>> supposed to be system-global?
+>>>
+>>> It's not clear. It could be device related, though SFI itself has
+>>> probably wrong design. I rather prefer to avoid a dev parameter check at
+>>> all.
+>>>
+>>>>    In this case, your if condition should
+>>>> likely be
+>>>>
+>>>> 	} else if (IS_ENABLED(CONFIG_SFI) && !dev) {
+>>>>
+>>>> So that a global SFI GPIO does not get mistakenly assigned to a device
+>>>> that has, say, a more suited platform mapping on the same con_id.
+>>>
+>>> So, for example in the driver that could be enumerated from SFI, DT, and
+>>> via platform data you suggest to have something like
+>>>
+>>>
+>>> desc = gpiod_get(dev, "con_id_device_tree");
+>>> ...
+>>>
+>>> if (IS_ERR(desc))
+>>>    desc = gpiod_get(NULL, "con_id_sfi");
+>>>
+>>> if (IS_ERR(desc))
+>>>    desc = gpiod_get(???, "con_id_from_platdata");
+>>>
+>>> Correct?
+>>
+>> No, this is not what I'm suggesting. Device drivers should not care who
+>> provides the GPIO, they should just ask for it, and obtain it (or not).
+>>
+>> The scope of the problem actually depends on what SFI GPIOs are used
+>> for. For instance, let's say you have two devices each using an enabling
+>> GPIO which happens to be provided by SFI. Both drivers for these devices
+>> obtain the enable GPIO as follows:
+>>
+>> 	enable_gpio = gpiod_get(dev, "enable");
+>
+> You rather can't do that in sfi case. Yes, the structure has (stringy)
+> reference to gpio chip that provides a line, but in practice the gpio
+> line name should be unique. Consider this is misdesign of SFI as I
+> mentioned earlier.
 
-This patch changes the family of gpiod_get() functions such that they
-will return -ENOENT if and only if no GPIO mapping is defined for the
-requested function. Other error codes are used when an actual error
-occured during the GPIO resolution.
+Ok. Note that this is not necessarily a bad thing, it just means that 
+SFI GPIOs should only be used by platform-specific code that is aware of 
+their existence (and particular naming).
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-Changes since v2:
-- Put string on a single line (thanks Andy!)
-- Added Andy's reviewed-by
----
- Documentation/gpio/consumer.txt |  6 +++++-
- drivers/gpio/gpiolib.c          | 34 +++++++++++++++++-----------------
- 2 files changed, 22 insertions(+), 18 deletions(-)
+Device drivers on the other hand cannot make any assumption on who will 
+provide the GPIO, so if you want them to be able to use SFI GPIOs, you 
+will need an actual way to map then to (device, function) pairs. If this 
+use-case is out of the equation, then I'm glad with the v6 of your patch.
 
-diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index 07c74a3765a0..e42f77d8d4ca 100644
---- a/Documentation/gpio/consumer.txt
-+++ b/Documentation/gpio/consumer.txt
-@@ -38,7 +38,11 @@ device that displays digits), an additional index argument can be specified:
- 					  const char *con_id, unsigned int idx)
- 
- Both functions return either a valid GPIO descriptor, or an error code checkable
--with IS_ERR(). They will never return a NULL pointer.
-+with IS_ERR() (they will never return a NULL pointer). -ENOENT will be returned
-+if and only if no GPIO has been assigned to the device/function/index triplet,
-+other error codes are used for cases where a GPIO has been assigned but an error
-+occured while trying to acquire it. This is useful to discriminate between mere
-+errors and an absence of GPIO for optional GPIO parameters.
- 
- Device-managed variants of these functions are also defined:
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 12e47dfabd8d..c0b06a9adad9 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2367,7 +2367,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 				    unsigned int idx,
- 				    enum gpio_lookup_flags *flags)
- {
--	struct gpio_desc *desc = ERR_PTR(-ENODEV);
-+	struct gpio_desc *desc = ERR_PTR(-ENOENT);
- 	struct gpiod_lookup_table *table;
- 	struct gpiod_lookup *p;
- 
-@@ -2389,19 +2389,22 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 		chip = find_chip_by_name(p->chip_label);
- 
- 		if (!chip) {
--			dev_warn(dev, "cannot find GPIO chip %s\n",
--				 p->chip_label);
--			continue;
-+			dev_err(dev, "cannot find GPIO chip %s\n",
-+				p->chip_label);
-+			return ERR_PTR(-ENODEV);
- 		}
- 
- 		if (chip->ngpio <= p->chip_hwnum) {
--			dev_warn(dev, "GPIO chip %s has %d GPIOs\n",
--				 chip->label, chip->ngpio);
--			continue;
-+			dev_err(dev,
-+				"requested GPIO %d is out of range [0..%d] for chip %s\n",
-+				idx, chip->ngpio, chip->label);
-+			return ERR_PTR(-EINVAL);
- 		}
- 
- 		desc = gpiochip_offset_to_desc(chip, p->chip_hwnum);
- 		*flags = p->flags;
-+
-+		return desc;
- 	}
- 
- 	return desc;
-@@ -2413,7 +2416,8 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
-  * @con_id:	function within the GPIO consumer
-  *
-  * Return the GPIO descriptor corresponding to the function con_id of device
-- * dev, or an IS_ERR() condition if an error occured.
-+ * dev, -ENOENT if no GPIO has been assigned to the requested function, or
-+ * another IS_ERR() code if an error occured while trying to acquire the GPIO.
-  */
- struct gpio_desc *__must_check gpiod_get(struct device *dev, const char *con_id)
- {
-@@ -2430,7 +2434,9 @@ EXPORT_SYMBOL_GPL(gpiod_get);
-  * This variant of gpiod_get() allows to access GPIOs other than the first
-  * defined one for functions that define several GPIOs.
-  *
-- * Return a valid GPIO descriptor, or an IS_ERR() condition in case of error.
-+ * Return a valid GPIO descriptor, -ENOENT if no GPIO has been assigned to the
-+ * requested function and/or index, or another IS_ERR() code if an error
-+ * occured while trying to acquire the GPIO.
-  */
- struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 					       const char *con_id,
-@@ -2455,15 +2461,9 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	 * Either we are not using DT or ACPI, or their lookup did not return
- 	 * a result. In that case, use platform lookup as a fallback.
- 	 */
--	if (!desc || IS_ERR(desc)) {
--		struct gpio_desc *pdesc;
--
-+	if (!desc || desc == ERR_PTR(-ENOENT)) {
- 		dev_dbg(dev, "using lookup tables for GPIO lookup");
--		pdesc = gpiod_find(dev, con_id, idx, &flags);
--
--		/* If used as fallback, do not replace the previous error */
--		if (!IS_ERR(pdesc) || !desc)
--			desc = pdesc;
-+		desc = gpiod_find(dev, con_id, idx, &flags);
- 	}
- 
- 	if (IS_ERR(desc)) {
--- 
-1.8.5.1
+But David raised a point that kind of sounds like he might want to use 
+them that way, so I'm holding off my ack until this is solved.
+
+Alex.
 
