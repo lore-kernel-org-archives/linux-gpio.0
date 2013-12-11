@@ -1,70 +1,34 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH V2] gpio: rcar: Fix level interrupt handling
-Date: Wed, 11 Dec 2013 18:44:03 +0900
-Message-ID: <CANqRtoQc1XKo8APVTBT4a-O0DBY2VZ=H=+z39YVTZBS+Ewzg-g@mail.gmail.com>
-References: <1385748249-27170-1-git-send-email-valentine.barshak@cogentembedded.com>
-	<52A6190C.200@cogentembedded.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCHv4] ARM: tegra: add gpiod_lookup table for paz00
+Date: Wed, 11 Dec 2013 12:51:03 +0100
+Message-ID: <CACRpkdb0f_8Mu-iN1OEe=uiNxTbY1VJqY7nWuEY3AJMtjXHFnw@mail.gmail.com>
+References: <1385460350-17543-2-git-send-email-mika.westerberg@linux.intel.com>
+	<1386074998-17833-1-git-send-email-heikki.krogerus@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <52A6190C.200@cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Valentine <valentine.barshak@cogentembedded.com>
-Cc: SH-Linux <linux-sh@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:61967 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751379Ab3LKLvF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Dec 2013 06:51:05 -0500
+Received: by mail-ob0-f175.google.com with SMTP id uz6so6788307obc.34
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Dec 2013 03:51:03 -0800 (PST)
+In-Reply-To: <1386074998-17833-1-git-send-email-heikki.krogerus@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Dec 10, 2013 at 4:25 AM, Valentine
-<valentine.barshak@cogentembedded.com> wrote:
-> On 11/29/2013 10:04 PM, Valentine Barshak wrote:
->>
->> According to the manual, if a port is set for level detection using
->> the corresponding bit in the edge/level select register and an external
->> level interrupt signal is asserted, the corresponding bit in INTDT
->> does not use the FF to hold the input.
->> Thus, writing 1 to the corresponding bits in INTCLR cannot clear the
->> corresponding bits in the INTDT register. Instead, when an external
->> input signal is stopped, the corresponding bit in INTDT is cleared
->> automatically.
->>
->> Since the INTDT bit cannot be cleared for the level interrupts until
->> the interrupt signal is stopped, we end up with the infinite loop
->> when using deferred (threaded) IRQ handling.
->>
->> Since a deferred interrupt is disabled by the low-level handler and
->> re-enabled only when the deferred handler is completed, Fix the issue
->> by dropping disabled interrupts from the pending mask as suggested by
->> Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>
->> Changes in V2:
->> * Drop disabled interrupts from pending mask altogether instead of
->>    dropping level interrupts one by one once they get handled.
->>
->> Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
->> ---
->>   drivers/gpio/gpio-rcar.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
->> index d3f15ae..fd2d827 100644
->> --- a/drivers/gpio/gpio-rcar.c
->> +++ b/drivers/gpio/gpio-rcar.c
->> @@ -169,7 +169,8 @@ static irqreturn_t gpio_rcar_irq_handler(int irq, void
->> *dev_id)
->>         u32 pending;
->>         unsigned int offset, irqs_handled = 0;
->>
->> -       while ((pending = gpio_rcar_read(p, INTDT))) {
->> +       while ((pending = gpio_rcar_read(p, INTDT) &
->> +                         gpio_rcar_read(p, INTMSK))) {
->>                 offset = __ffs(pending);
->>                 gpio_rcar_write(p, INTCLR, BIT(offset));
->>                 generic_handle_irq(irq_find_mapping(p->irq_domain,
->> offset));
->>
+On Tue, Dec 3, 2013 at 1:49 PM, Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+
+> This makes it possible to request the gpio descriptors in
+> rfkill_gpio driver regardless of the platform.
 >
-> Laurent, Magnus,
-> do you have any concerns about fixing the level IRQ's as proposed here?
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-No concerns here, thanks for your help!
+Applied this v4 version to the devel branch in the GPIO tree with
+Stephen's ACK, thanks!
 
-Acked-by: Magnus Damm <damm@opensource.se>
+Yours,
+Linus Walleij
