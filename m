@@ -1,83 +1,70 @@
-From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
-Date: Tue, 10 Dec 2013 23:05:49 -0500 (EST)
-Message-ID: <1395016599.620093.1386734749325.JavaMail.root@mail>
-References: <CACRpkdZxjKamJvOMqdgN5zG5DrZvDNTCaVSiyaHSawkLxvUrFA@mail.gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH V2] gpio: rcar: Fix level interrupt handling
+Date: Wed, 11 Dec 2013 18:44:03 +0900
+Message-ID: <CANqRtoQc1XKo8APVTBT4a-O0DBY2VZ=H=+z39YVTZBS+Ewzg-g@mail.gmail.com>
+References: <1385748249-27170-1-git-send-email-valentine.barshak@cogentembedded.com>
+	<52A6190C.200@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.savoirfairelinux.com ([209.172.62.77]:52391 "EHLO
-	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751646Ab3LKEMP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2013 23:12:15 -0500
-In-Reply-To: <CACRpkdZxjKamJvOMqdgN5zG5DrZvDNTCaVSiyaHSawkLxvUrFA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <52A6190C.200@cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Valentine <valentine.barshak@cogentembedded.com>
+Cc: SH-Linux <linux-sh@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>, Bruno Randolf <br1@einfach.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Seth Heasley <seth.heasley@intel.com>, Darren Hart <dvhart@linux.intel.com>, kernel <kernel@savoirfairelinux.com>
 
-Hi Linus,
+On Tue, Dec 10, 2013 at 4:25 AM, Valentine
+<valentine.barshak@cogentembedded.com> wrote:
+> On 11/29/2013 10:04 PM, Valentine Barshak wrote:
+>>
+>> According to the manual, if a port is set for level detection using
+>> the corresponding bit in the edge/level select register and an external
+>> level interrupt signal is asserted, the corresponding bit in INTDT
+>> does not use the FF to hold the input.
+>> Thus, writing 1 to the corresponding bits in INTCLR cannot clear the
+>> corresponding bits in the INTDT register. Instead, when an external
+>> input signal is stopped, the corresponding bit in INTDT is cleared
+>> automatically.
+>>
+>> Since the INTDT bit cannot be cleared for the level interrupts until
+>> the interrupt signal is stopped, we end up with the infinite loop
+>> when using deferred (threaded) IRQ handling.
+>>
+>> Since a deferred interrupt is disabled by the low-level handler and
+>> re-enabled only when the deferred handler is completed, Fix the issue
+>> by dropping disabled interrupts from the pending mask as suggested by
+>> Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>
+>> Changes in V2:
+>> * Drop disabled interrupts from pending mask altogether instead of
+>>    dropping level interrupts one by one once they get handled.
+>>
+>> Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+>> ---
+>>   drivers/gpio/gpio-rcar.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+>> index d3f15ae..fd2d827 100644
+>> --- a/drivers/gpio/gpio-rcar.c
+>> +++ b/drivers/gpio/gpio-rcar.c
+>> @@ -169,7 +169,8 @@ static irqreturn_t gpio_rcar_irq_handler(int irq, void
+>> *dev_id)
+>>         u32 pending;
+>>         unsigned int offset, irqs_handled = 0;
+>>
+>> -       while ((pending = gpio_rcar_read(p, INTDT))) {
+>> +       while ((pending = gpio_rcar_read(p, INTDT) &
+>> +                         gpio_rcar_read(p, INTMSK))) {
+>>                 offset = __ffs(pending);
+>>                 gpio_rcar_write(p, INTCLR, BIT(offset));
+>>                 generic_handle_irq(irq_find_mapping(p->irq_domain,
+>> offset));
+>>
+>
+> Laurent, Magnus,
+> do you have any concerns about fixing the level IRQ's as proposed here?
 
-You wrote:
-> > This patch adds support for the GPIOs found on the SMSC "Super I/O"
-> > chips
-> > SCH311x.
-> >
-> > The chip detection and I/O functions are copied from sch311x_wdt.c
-> >
-> > Signed-off-by: Bruno Randolf <br1@einfach.org>
-> >
-> > ---
-> > Notes:
-> > - All GPIOs are now supported, driver data is runtime allocated
-> >   and I tried to address all comments as far as possible.
-> > - Still a platform device is registered, similar to gpio-f7188x.c
-> 
-> So I have a problem with this design pattern so I need to ask
-> Matthew Garret about this:
-> 
-> - Driver *always* performs some port-mapped I/O probe on
->   some random ports as a compulsory initcall.
-> 
-> - No other hardware discovery.
-> 
-> - If detecting magic, registers a platform device.
-> 
-> - Then handles this device by also providing a device
->   driver for it.
-> 
-> - All of this is placed in one file.
-> 
-> Matthew is this how discovery and registration of x86 platform
-> drivers for port-mapped devices should work or are we doing
-> something weird here?
-> 
-> Since earlier we have:
-> 
-> drivers/gpio/gpio-f7188x.c - exactly the same pattern
-> 
-> drivers/gpio/gpio-it8761e.c - doesn't even bother to create a
-> platform
->   device, goes on and creates a gpio_chip without any device
-> 
-> drivers/gpio/gpio-sch.c - port-mapped but platform device is
->   created by an MFD which is probed from PCI (seems fine).
-> 
-> drivers/gpio/gpio-ts5500.c - aha, created from
->   arch/x86/platform/ts5500/ts5500.c, a "board file".
+No concerns here, thanks for your help!
 
-Because of the lack of mechanism such as DMI, there's no safe way to verify the
-machine at the GPIO driver level. However, the board code (which registers the
-platform device) does a safe check by looking for some magic in the RAM.
-
-Would it be safer if we make GPIO_TS5500 depends on TS5500?
-
-> This is a bit heterogeneous, but I can't claim to understand how
-> x86 want to register its devices so need some input here.
-> 
-> Maybe this is all the right way to do things, but I want to
-> be hammered down by some convincing arguments first.
-
-Best,
-Vivien
+Acked-by: Magnus Damm <damm@opensource.se>
