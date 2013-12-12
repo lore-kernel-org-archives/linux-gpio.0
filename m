@@ -1,131 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: pinctrl - detailed gpio-mode pinconf design
-Date: Thu, 12 Dec 2013 14:56:38 +0100
-Message-ID: <CACRpkdbzGokHHhR3GhLvF7KCFdAV=b0VHwUE4eHVfNFEGhx_Jg@mail.gmail.com>
-References: <EB2BCA6A838C7B4FB238C534ED5D770422395F79@renexmb02.roe2.renesasmobile.com>
-	<CACRpkdbpv3Vjt-=3_1XbrGaiEYqCgtJCGppvoL48gad+7Licdg@mail.gmail.com>
-	<10664958.tMCNRkOk1E@avalon>
-	<EB2BCA6A838C7B4FB238C534ED5D77042239D2A9@renexmb02.roe2.renesasmobile.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH 0/2] gpio: davinci: reuse for keystone arch
+Date: Thu, 12 Dec 2013 20:12:51 +0200
+Message-ID: <1386871973-26762-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:40775 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751654Ab3LLN4i convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2013 08:56:38 -0500
-Received: by mail-oa0-f45.google.com with SMTP id o6so443709oag.18
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Dec 2013 05:56:38 -0800 (PST)
-In-Reply-To: <EB2BCA6A838C7B4FB238C534ED5D77042239D2A9@renexmb02.roe2.renesasmobile.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:45747 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751611Ab3LLRRK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2013 12:17:10 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: kevin.bracey@broadcom.com
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Magnus Damm <damm@opensource.se>, Paul Mundt <lethal@linux-sh.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: Rob Herring <rob.herring@calxeda.com>, prabhakar.csengg@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-arm-kernel@lists.infradead.org, Grygorii Strashko <grygorii.strashko@ti.com>
 
-On Thu, Dec 5, 2013 at 11:15 AM,  <kevin.bracey@broadcom.com> wrote:
-> Laurent Pinchart wrote:
->> On Tuesday 03 December 2013 11:04:48 Linus Walleij wrote:
+This series is intended to update Davinci GPIO driver and reuse
+it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+Keystone GPIO IP: supports:
+- up to 32 GPIO lines;
+- only unbanked irqs;
 
->> Controlling GPIO through pinconf seems to be very twisted.
->> Usually it is the other way around.
->
-> I refer you to pinctrl.txt. What I'm trying to avoid here is the "GPIO mode pitfall", where we can /only/ usefully manipulate the lines through the Linux gpio API.
->
-> I want to be able to drive a function line low in sleep mode, without having to write code that uses the gpio_ API. I want to be able to express that as PIN_CONFIG_OUTPUT 0.
->
-> Where we currently stand locally is that we have a load of code that use the legacy function GPIOs thus:
->
-> resume:
->     gpio_request(GPIO_FN_XXX)  // Set function mux on GPIO36 pin
-> suspend:
->     gpio_request(GPIO_PORT36)  // Set GPIO mux on pin
->     gpio_direction_output(GPIO_PORT36, 0);
->
-> which is exactly the scenario described in "GPIO mode pitfalls". Some drivers do this manually, and some use a local pinctrl-ish framework; they're passed big platform data tables with lists of suspend+active GPIO numbers, directions, values and pulls, and then pass those tables back to a library mux-change routine in their suspend/resume handlers.
->
-> By my understanding of the general pinctrl concept, we should be converting that to the lovely:
->
-> resume:
->     pinctrl_pm_select_default_state(dev);
-> suspend:
->     pinctrl_pm_select_sleep_state(dev);
+See Documentation:
+Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
 
-This observation is correct, and I agree with this reasoning. The PM
-states are quite new and may
-take some time before they "sink in" in the kernel though, but ideally
-people should be using
-them like that (atleast IMO).
+This series depends on:
+[1] "[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
+https://lkml.org/lkml/2013/11/8/22
+[2] "[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
+https://www.mail-archive.com/devicetree@vger.kernel.org/msg05970.html
+[3] "gpio: davinci: get rid of DAVINCI_N_GPIO"
+https://lkml.org/lkml/2013/11/26/405
+[4] "gpio: introduce GPIO_DAVINCI kconfig option"
+https://lkml.org/lkml/2013/11/26/435
+[5] "gpio: davinci: use chained_irq_enter/chained_irq_exit API"
+https://lkml.org/lkml/2013/11/26/428
 
->> > This looks messy. The intention with the pin config subsystem is to
->> > break things apart and make them understandable that way, and to
->> > handle electronic stuff in pin config whereas driving a line high/low
->> > happens in the GPIO subsystem.
->
-> Which is basically an argument against ever using PIN_CONFIG_OUTPUT 0, and the
-> whole of "GPIO mode pitfalls" in pinctrl.txt, isn't it? It means we can't specify idle pinctrl
-> states that drive lines. We have to do the GPIO/function shuffle.
+To handle all dependencies, I've created a branch where I collected all 
+"ready to merge" patches (all acks added in patches) and this series:
+- https://github.com/grygoriyS/linux.git
+- branch: keystone-master-gpio-for-next
 
-Well maybe. My point was that it is OK to drive GPIO lines as part of a state
-which is only relevant for a device driver, and where using the GPIO API
-in top would only bloat and make things hard to follow.
+The "keystone-master-gpio-for-next" based on:
+ https://git.kernel.org/cgit/linux/kernel/git/ssantosh/linux-keystone.git
+ branch: keystone/master
 
-> And you're right, it is a little messy in the pin driver implementation, which is
-> what I'm finding, and what leads me here to question the detail. Nevertheless,
-> I've found implementing PIN_CONFIG_OUTPUT on this hardware design is
-> possible, and produces elegant driver+board code.
++ where I've merged in:
+ https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git
+ branch: fixes
 
-I believe you.
+List of commits:
+ 6fb66de gpio: davinci: reuse for Keystone SoC
+ c0c5422 gpio: davinci: don't create irq_domain in case of unbanked irqs
+ df9f7bc gpio: davinci: use chained_irq_enter/chained_irq_exit API
+ 6230c92 gpio: davinci: introduce GPIO_DAVINCI kconfig option
+ 8b0c1a8 gpio: davinci: get rid of DAVINCI_N_GPIO
+ 5eb07f7 gpio: davinci: add OF support
+ df3e59d gpio: davinci: remove unused variable intc_irq_num
+ 38804b6 gpio: davinci: converts to use irqdomain
+ 94eac24 gpio: davinci: use {readl|writel}_relaxed() instead of __raw_*
 
-> In my initial prototype, PIN_CONFIG_OUTPUT is only available if the gpio-mode
-> function has been selected.
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Sekhar Nori <nsekhar@ti.com>
+CC: Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-That is even more careful code than most drivers write, so sounds
-very nice.
+Grygorii Strashko (2):
+  gpio: davinci: don't create irq_domain in case of unbanked irqs
+  gpio: davinci: reuse for Keystone SoC
 
-> But maybe this could be made hidden and implicit,
-> as per the GPIO API. Eg PIN_CONFIG_OUTPUT/PIN_CONFIG_LOW_POWER_MODE
-> implicitly selects the GPIO mux (for output/input), and
-> PIN_CONFIG_DRIVE_PUSH_PULL/PIN_CONFIG_BIAS_HIGH_IMPEDANCE
-> restores the previously requested?
+ .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
+ drivers/gpio/gpio-davinci.c                        |   83 ++++++++++++++------
+ 2 files changed, 59 insertions(+), 28 deletions(-)
 
-I'd recommend trying to keep as close to the semantics descrived
-in <linux/pinctrl/pinconf-generic.h> and not add any implicit semantics.
+-- 
+1.7.9.5
 
->> > This must be some misunderstanding. DT does not specify
->> > application/ordering semantics. It does not define sequences at all.
->> > The device driver parsing out whatever is in the device tree has to
->> > take care of ordering stuff and driving the hardware.
->
-> Well, the pinctrl core does process its tables in order. So in the case where a
-> pinconf setting may interact with a pinmux setting, the ordering that the
-> pinconf+pinmux entries get processed could be significant. Eg if
-> PIN_CONFIG_OUTPUT requires the "gpio-mode" function selected first.
-
-OK so we solved the similar situation where configs had to be
-applied in some certain order for the pin config API by passing
-the array of configs down to the driver and let is handle this.
-
-So can we think of an API that gives the drivers the freedom to
-express or behave differently here?
-
-We *could* add something like void (* pin_state_commence) ()
-to the pinctrl_ops so the driver could cache mux and config ops
-and wait for the commence signal before writing anything to the
-hardware, and that would be pretty complex.
-
-If it is always the same for every state setting then maybe we
-can move this to the core so that we'd add some semantic
-flag like
-
-enum state_application_order {
-  PINCTRL_ORDER_UNDEFINED,
-  PINCTRL_MUX_THEN_CONFIG,
-  PINCTRL_CONFIG_THEN_MUX,
-};
-
-Then the core needs to alter behaviour on this flag. Any
-suggestions welcome, but I won't apply any patches like that
-unless there is a driver making use of it.
-
-Yours,
-Linus Walleij
