@@ -1,100 +1,44 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [RFC/RFT/PATCH V3] gpio: omap: refresh patch "be more aggressive
- with pm_runtime" against v3.12-rc5
-Date: Thu, 12 Dec 2013 12:28:31 -0600
-Message-ID: <20131212182831.GM1939@saruman.home>
-References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
- <1386477638-6331-1-git-send-email-caesarxuchao@gmail.com>
- <CACRpkdaD13JnGetD-GLpxSoaf_LkRKYFjis7Tftc6U38E1ES5A@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpiolib: return -ENOENT if no GPIO mapping exists
+Date: Thu, 12 Dec 2013 19:34:55 +0100
+Message-ID: <CACRpkdYNL9gAqugPmRzDUEZGzUCtNCDX4Ro=vQXWkNtvJVw6bA@mail.gmail.com>
+References: <1386729148-16262-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1rguoi8KZGYj2k4L"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:52416 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751585Ab3LLS3F (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 12 Dec 2013 13:29:05 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaD13JnGetD-GLpxSoaf_LkRKYFjis7Tftc6U38E1ES5A@mail.gmail.com>
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:40028 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751611Ab3LLSe4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2013 13:34:56 -0500
+Received: by mail-oa0-f46.google.com with SMTP id o6so888333oag.19
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Dec 2013 10:34:56 -0800 (PST)
+In-Reply-To: <1386729148-16262-1-git-send-email-acourbot@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chao Xu <caesarxuchao@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, ext Kevin Hilman <khilman@deeprootsystems.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>, Felipe Balbi <balbi@ti.com>, Kevin Hilman <khilman@linaro.org>, Nishanth Menon <nm@ti.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---1rguoi8KZGYj2k4L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 11, 2013 at 3:32 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
-On Thu, Dec 12, 2013 at 07:19:35PM +0100, Linus Walleij wrote:
-> On Sun, Dec 8, 2013 at 5:40 AM, Chao Xu <caesarxuchao@gmail.com> wrote:
->=20
-> > From: Felipe Balbi <balbi@ti.com>
-> >
-> > try to keep gpio block suspended as much as possible.
-> >
-> > Tested with pandaboard and a sysfs exported gpio.
-> >
-> > Signed-off-by: Felipe Balbi <balbi at ti.com>
-> >
-> > [caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added
-> > revision check to enable aggressive pm_runtime on OMAP4-only. Because
-> > am33xx_gpio_sysc.idlemodes seems to be wrongly marked as
-> > SIDLE_SMART_WKUP, which might cause missed interrupts with this patch.
-> > Tested on Pandaboard rev A2.]
-> > Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
-> > ---
-> > changes since v2:
-> > *add wrapper function to avoid 'is_aggressive_pm' check everywhere, as
-> > suggested by Santosh Shilimkar
-> > *fix format issue in commit log
->=20
-> I'm dropping this until you convince Kevin/Tony that this is
-> the way to go.
->=20
-> One thing caught my eye, you add:
->=20
-> > +static void _aggressive_pm_runtime_get_sync(struct gpio_bank *bank)
-> > +static void _aggressive_pm_runtime_put(struct gpio_bank *bank)
-> (..)
->=20
-> Then everywhere:
->=20
-> > +       _aggressive_pm_runtime_get_sync(bank);
-> (...)
-> > +       _aggressive_pm_runtime_put(bank);
->=20
-> Aggressive, argh, runtime PM is agressive by definition. If you
-> want to switch this on and off use the compile option
-> to enable/disable runtime PM altogether and do not wrap it
-> like this.
+> Some devices drivers make use of optional GPIO parameters. For such
+> drivers, it is important to discriminate between the case where no
+> GPIO mapping has been defined for the function they are requesting, and
+> the case where a mapping exists but an error occured while resolving it
+> or when acquiring the GPIO.
+>
+> This patch changes the family of gpiod_get() functions such that they
+> will return -ENOENT if and only if no GPIO mapping is defined for the
+> requested function. Other error codes are used when an actual error
+> occured during the GPIO resolution.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> Changes since v2:
+> - Put string on a single line (thanks Andy!)
+> - Added Andy's reviewed-by
 
-heh, OMAP doesn't work without pm_runtime.
+Applied this v2 version with Mika's review tag.
 
---=20
-balbi
-
---1rguoi8KZGYj2k4L
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSqgBPAAoJEIaOsuA1yqREPjoQAJ9fLpRv/7J3DVy3v+ztVu0U
-d/Lwg3bd9T06hO01qW8AIpK/pRAIfy+oyGocX+NmsyOzDlVLOd3MbhDrwHWKHkQB
-JKPdlKp8BElJBuf2XmnqNW0q4oWnY6AiCWRlwLubT5vwALuEV+CP4DrNZdXx5iwQ
-KEKEFQg+OrrBvO6q5oPLeTX1aEppaTp7I4BVIbpaagAzkjFMre7qyGQRTOPGsheK
-SavHbSa4h68HkI3bcjzE5gct9w2LKn8xnvzwdxx5EExHw6w1EUCRJXVchPyXbQCO
-naEyj0bSqNZjZMe+cS+QufUHG/pQedg5/PLzHWljRsRslYhDL+STfzx9UWfSrLKJ
-jhqTZ1QKelVu6yfcn6TCx4KqMCjYF74UHVPBVUCLh7WQtVVGubkgQJ9Mf9Bq62ZC
-1yPPZBR/p3dcG/3EbjoBG89BCWSn5K0OkREq1bQNWnP3ldEcv6hHqBQTt0zqywhq
-7mLDZaiimi1BnXs/poz6OGuPDbUhNHOM2MlCm6GmMBJUqP1o9i0mCfN8fA5UPr5m
-SqbiCsR1ZUCywhNqMUKiccIDcA/Kz1po84iPNugJKafWLzL5hYimQvTm7ToeGAH1
-siR2xOmnIDYpIpkfkeCXuLOtSaFtRzTpWaZ6NvMzH2qAqEd8clUcDr7Hg35vgkBo
-DscTfLOgtbJYI+z8Udro
-=6KpK
------END PGP SIGNATURE-----
-
---1rguoi8KZGYj2k4L--
+Yours,
+Linus Walleij
