@@ -1,244 +1,58 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH v3] gpio: driver for Xtensa GPIO32
-Date: Thu, 12 Dec 2013 11:18:41 +0200
-Message-ID: <36330381d07aed97fa587a6600ddee5f0be16da5.1386839921.git.baruch@tkos.co.il>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2] gpio: 74x164: Remove non-DT support
+Date: Thu, 12 Dec 2013 10:11:56 +0000
+Message-ID: <20131212101156.GD11044@sirena.org.uk>
+References: <1386410903-29788-1-git-send-email-shc_work@mail.ru>
+ <CACRpkdb_EVaOnkqkhmRJB12N_W4ghQyYVD+iriD26bjpvh9-Xg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AbQceqfdZEv+FvjW"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:51354 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751393Ab3LLJTw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 12 Dec 2013 04:19:52 -0500
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:47820 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751311Ab3LLKMV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2013 05:12:21 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb_EVaOnkqkhmRJB12N_W4ghQyYVD+iriD26bjpvh9-Xg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-xtensa@linux-xtensa.org, Baruch Siach <baruch@tkos.co.il>
+Cc: Alexander Shiyan <shc_work@mail.ru>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-GPIO32 is a standard optional extension to the Xtensa architecture core that
-provides preconfigured output and input ports for intra SoC signaling. The
-GPIO32 option is implemented as 32bit Tensilica Instruction Extension (TIE)
-output state called EXPSTATE, and 32bit input wire called IMPWIRE. This
-driver treats input and output states as two distinct devices.
 
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
-v3:
-   * Use BUG() in xtensa_impwire_set_value() to indicate that it should never
-     be called (Linus Walleij)
+--AbQceqfdZEv+FvjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-v2:
-   * Address the comments of Linus Walleij:
-      - Add a few comments
-      - Expand commit log message
-      - Use the BIT() macro for bit offsets
-      - Rewrite CPENABLE handling as static inlines
-      - Use device_initcall()
+On Thu, Dec 12, 2013 at 09:17:02AM +0100, Linus Walleij wrote:
 
-   * Depend on !SMP for reason explained in the comments (Marc Gauthier)
+> Broonie: is it OK that I apply this patch deleting <linux/spi/74x164.h>
+> to the GPIO tree? Apparently it's only platform data for the GPIO.
 
-   * Use XCHAL_CP_ID_XTIOP to enable/disable GPIO32 only
----
- drivers/gpio/Kconfig       |   8 +++
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-xtensa.c | 163 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 172 insertions(+)
- create mode 100644 drivers/gpio/gpio-xtensa.c
+> (Tentatively applied, waiting for Marks ACK.)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0f04444..67f5ce6 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -281,6 +281,14 @@ config GPIO_XILINX
- 	help
- 	  Say yes here to support the Xilinx FPGA GPIO device
- 
-+config GPIO_XTENSA
-+	bool "Xtensa GPIO32 support"
-+	depends on XTENSA
-+	depends on !SMP
-+	help
-+	  Say yes here to support the Xtensa internal GPIO32 IMPWIRE (input)
-+	  and EXPSTATE (output) ports
-+
- config GPIO_VR41XX
- 	tristate "NEC VR4100 series General-purpose I/O Uint support"
- 	depends on CPU_VR41XX
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 7971e36..23b9c72 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -95,3 +95,4 @@ obj-$(CONFIG_GPIO_WM831X)	+= gpio-wm831x.o
- obj-$(CONFIG_GPIO_WM8350)	+= gpio-wm8350.o
- obj-$(CONFIG_GPIO_WM8994)	+= gpio-wm8994.o
- obj-$(CONFIG_GPIO_XILINX)	+= gpio-xilinx.o
-+obj-$(CONFIG_GPIO_XTENSA)	+= gpio-xtensa.o
-diff --git a/drivers/gpio/gpio-xtensa.c b/drivers/gpio/gpio-xtensa.c
-new file mode 100644
-index 0000000..1d136ec
---- /dev/null
-+++ b/drivers/gpio/gpio-xtensa.c
-@@ -0,0 +1,163 @@
-+/*
-+ * Copyright (C) 2013 TangoTec Ltd.
-+ * Author: Baruch Siach <baruch@tkos.co.il>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Driver for the Xtensa LX4 GPIO32 Option
-+ *
-+ * Documentation: Xtensa LX4 Microprocessor Data Book, Section 2.22
-+ *
-+ * GPIO32 is a standard optional extension to the Xtensa architecture core that
-+ * provides preconfigured output and input ports for intra SoC signaling. The
-+ * GPIO32 option is implemented as 32bit Tensilica Instruction Extension (TIE)
-+ * output state called EXPSTATE, and 32bit input wire called IMPWIRE. This
-+ * driver treats input and output states as two distinct devices.
-+ *
-+ * Access to GPIO32 specific instructions is controlled by the CPENABLE
-+ * (Coprocessor Enable Bits) register. By default Xtensa Linux startup code
-+ * disables access to all coprocessors. This driver sets the CPENABLE bit
-+ * corresponding to GPIO32 before any GPIO32 specific instruction, and restores
-+ * CPENABLE state after that.
-+ *
-+ * This driver is currently incompatible with SMP. The GPIO32 extension is not
-+ * guaranteed to be available in all cores. Moreover, each core controls a
-+ * different set of IO wires. A theoretical SMP aware version of this driver
-+ * would need to have a per core workqueue to do the actual GPIO manipulation.
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/gpio.h>
-+#include <linux/bitops.h>
-+#include <linux/platform_device.h>
-+
-+#include <asm/coprocessor.h> /* CPENABLE read/write macros */
-+
-+#ifndef XCHAL_CP_ID_XTIOP
-+#error GPIO32 option is not enabled for your xtensa core variant
-+#endif
-+
-+static inline unsigned long enable_cp(unsigned long *cpenable)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	RSR_CPENABLE(*cpenable);
-+	WSR_CPENABLE(*cpenable | BIT(XCHAL_CP_ID_XTIOP));
-+
-+	return flags;
-+}
-+
-+static inline void disable_cp(unsigned long flags, unsigned long cpenable)
-+{
-+	WSR_CPENABLE(cpenable);
-+	local_irq_restore(flags);
-+}
-+
-+static int xtensa_impwire_get_direction(struct gpio_chip *gc, unsigned offset)
-+{
-+	return 1; /* input only */
-+}
-+
-+static int xtensa_impwire_get_value(struct gpio_chip *gc, unsigned offset)
-+{
-+	unsigned long flags, saved_cpenable;
-+	u32 impwire;
-+
-+	flags = enable_cp(&saved_cpenable);
-+	__asm__ __volatile__("read_impwire %0" : "=a" (impwire));
-+	disable_cp(flags, saved_cpenable);
-+
-+	return !!(impwire & BIT(offset));
-+}
-+
-+static void xtensa_impwire_set_value(struct gpio_chip *gc, unsigned offset,
-+				    int value)
-+{
-+	BUG(); /* output only; should never be called */
-+}
-+
-+static int xtensa_expstate_get_direction(struct gpio_chip *gc, unsigned offset)
-+{
-+	return 0; /* output only */
-+}
-+
-+static int xtensa_expstate_get_value(struct gpio_chip *gc, unsigned offset)
-+{
-+	unsigned long flags, saved_cpenable;
-+	u32 expstate;
-+
-+	flags = enable_cp(&saved_cpenable);
-+	__asm__ __volatile__("rur.expstate %0" : "=a" (expstate));
-+	disable_cp(flags, saved_cpenable);
-+
-+	return !!(expstate & BIT(offset));
-+}
-+
-+static void xtensa_expstate_set_value(struct gpio_chip *gc, unsigned offset,
-+				     int value)
-+{
-+	unsigned long flags, saved_cpenable;
-+	u32 mask = BIT(offset);
-+	u32 val = value ? BIT(offset) : 0;
-+
-+	flags = enable_cp(&saved_cpenable);
-+	__asm__ __volatile__("wrmsk_expstate %0, %1"
-+			     :: "a" (val), "a" (mask));
-+	disable_cp(flags, saved_cpenable);
-+}
-+
-+static struct gpio_chip impwire_chip = {
-+	.label		= "impwire",
-+	.base		= -1,
-+	.ngpio		= 32,
-+	.get_direction	= xtensa_impwire_get_direction,
-+	.get		= xtensa_impwire_get_value,
-+	.set		= xtensa_impwire_set_value,
-+};
-+
-+static struct gpio_chip expstate_chip = {
-+	.label		= "expstate",
-+	.base		= -1,
-+	.ngpio		= 32,
-+	.get_direction	= xtensa_expstate_get_direction,
-+	.get		= xtensa_expstate_get_value,
-+	.set		= xtensa_expstate_set_value,
-+};
-+
-+static int xtensa_gpio_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	ret = gpiochip_add(&impwire_chip);
-+	if (ret)
-+		return ret;
-+	return gpiochip_add(&expstate_chip);
-+}
-+
-+static struct platform_driver xtensa_gpio_driver = {
-+	.driver		= {
-+		.name		= "xtensa-gpio",
-+		.owner		= THIS_MODULE,
-+	},
-+	.probe		= xtensa_gpio_probe,
-+};
-+
-+static int __init xtensa_gpio_init(void)
-+{
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_register_simple("xtensa-gpio", 0, NULL, 0);
-+	if (IS_ERR(pdev))
-+		return PTR_ERR(pdev);
-+
-+	return platform_driver_register(&xtensa_gpio_driver);
-+}
-+device_initcall(xtensa_gpio_init);
-+
-+MODULE_AUTHOR("Baruch Siach <baruch@tkos.co.il>");
-+MODULE_DESCRIPTION("Xtensa LX4 GPIO32 driver");
-+MODULE_LICENSE("GPL");
--- 
-1.8.5.1
+Acked-by: Mark Brown <broonie@linaro.org>
 
+--AbQceqfdZEv+FvjW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSqYvpAAoJELSic+t+oim9uQUP/3CFFMBgcFg8TtXHxRSI9EqH
+7Qf2rsfovFL1s/kpMvkkbWg49KwEBUkmmJ5E4pbHKL3Xm4BF8KwHiD2P29bKN+zO
+ng1iHmCWJKqpEnV9qY0//wArJAf/bHqyaHGTeSdajkezt4vVyHmwC63pXjc898yO
+dKqC4o4hW9VGktCzIWMRGXXa2ojjoYP3WXj0zBUSk+hORufgXksSijVVldXE7wdE
+lkfjUPRMXhhCy1FGnhJVwKtBEaUoH87UdtcIES7gZmzQnn6hDoWDblfN7FSma0It
+j8ol3vcsWxdRP+jMaeXqNYjZXaiYRE/+XNcdguSt4yWKxWnDGmUDYyKci2ho9N/a
+0G3FH2RUuh5WGNUGpci0+5y+lwHEvRnwcMIDqYVQHpQDfeh8KSmpCLOl6OxzoWkZ
+gqPH7tB+DT97p4WRjljXZfXN/8+F2/U4nzTCwQBQmwGl2qOksCLRdt2hulTdJI2D
+VJ/eXcE7c8RZrHliYffXo+tT4eyQTuNlq6GLxWOsUFChPctm6MS3lF0vMlxdepA4
+n2as0rYnrHTeqaNQp7HkFrYzq7PLTIK3hDeHM3HCFGoUXiXyl7UrOqdbPJ5Lk3jf
+0zcCYX05BDOO5sKGIW45hWEtCdZlqe1LOGai73pI40B3jcSqJH5nB8ee079IVeVl
+m7JoejZx8D+QeNswkli8
+=2ecm
+-----END PGP SIGNATURE-----
+
+--AbQceqfdZEv+FvjW--
