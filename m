@@ -1,32 +1,43 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v6 0/2] gpiolib, sfi: introduce SFI GPIO helpers
-Date: Thu, 12 Dec 2013 10:53:58 +0900
-Message-ID: <52A91736.5010505@nvidia.com>
-References: <1386681680-18324-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: 74x164: Remove non-DT support
+Date: Thu, 12 Dec 2013 09:17:02 +0100
+Message-ID: <CACRpkdb_EVaOnkqkhmRJB12N_W4ghQyYVD+iriD26bjpvh9-Xg@mail.gmail.com>
+References: <1386410903-29788-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10320 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751130Ab3LLByC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Dec 2013 20:54:02 -0500
-In-Reply-To: <1386681680-18324-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:41708 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751399Ab3LLIRD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2013 03:17:03 -0500
+Received: by mail-oa0-f46.google.com with SMTP id o6so62773oag.5
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Dec 2013 00:17:02 -0800 (PST)
+In-Reply-To: <1386410903-29788-1-git-send-email-shc_work@mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>, Len Brown <lenb@kernel.org>
+To: Alexander Shiyan <shc_work@mail.ru>, Mark Brown <broonie@kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On 12/10/2013 10:21 PM, Andy Shevchenko wrote:
-> Here is a sixth [1] version of the SFI GPIO helpers. This series contains SFI
-> GPIO helpers along with the update of GPIO library to lookup for SFI resources.
+On Sat, Dec 7, 2013 at 11:08 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
+
+> Commit 20bc4d5d565159eb2b942bf4b7fae86fba94e32c
+> (gpio: 74x164: Add support for the daisy-chaining) introduce check
+> for DT for the driver, so driver cannot be used without DT.
+> There are no in-tree users of this driver, so remove non-DT support
+> completely.
 >
-> It has been tested on Medfield device on top of recent linux-next-20131210 +
-> Mika's ACPI gpio patches [2].
->
-> Changes since v6:
->   - remove FSF address
->   - require dev to be NULL when looking up for GPIO line
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+> ---
+>  drivers/gpio/Kconfig       |  6 +++---
+>  drivers/gpio/gpio-74x164.c | 14 +-------------
+>  include/linux/spi/74x164.h |  9 ---------
+>  3 files changed, 4 insertions(+), 25 deletions(-)
+>  delete mode 100644 include/linux/spi/74x164.h
 
-Since my concerns about lookup by non-platform code have been lifted:
+Broonie: is it OK that I apply this patch deleting <linux/spi/74x164.h>
+to the GPIO tree? Apparently it's only platform data for the GPIO.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+(Tentatively applied, waiting for Marks ACK.)
+
+Yours,
+Linus Walleij
