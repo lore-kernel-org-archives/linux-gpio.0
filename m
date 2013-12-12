@@ -1,44 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpiolib: return -ENOENT if no GPIO mapping exists
-Date: Thu, 12 Dec 2013 19:34:55 +0100
-Message-ID: <CACRpkdYNL9gAqugPmRzDUEZGzUCtNCDX4Ro=vQXWkNtvJVw6bA@mail.gmail.com>
-References: <1386729148-16262-1-git-send-email-acourbot@nvidia.com>
+Subject: Re: [RFC/RFT/PATCH V3] gpio: omap: refresh patch "be more aggressive
+ with pm_runtime" against v3.12-rc5
+Date: Thu, 12 Dec 2013 19:38:22 +0100
+Message-ID: <CACRpkdb4pF9-rB_zzXgzOnuAc_z=ZN+XHRq6i_Dd76FK08wdkg@mail.gmail.com>
+References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
+	<1386477638-6331-1-git-send-email-caesarxuchao@gmail.com>
+	<CACRpkdaD13JnGetD-GLpxSoaf_LkRKYFjis7Tftc6U38E1ES5A@mail.gmail.com>
+	<20131212182831.GM1939@saruman.home>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:40028 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751611Ab3LLSe4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2013 13:34:56 -0500
-Received: by mail-oa0-f46.google.com with SMTP id o6so888333oag.19
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Dec 2013 10:34:56 -0800 (PST)
-In-Reply-To: <1386729148-16262-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131212182831.GM1939@saruman.home>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Chao Xu <caesarxuchao@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, ext Kevin Hilman <khilman@deeprootsystems.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@linaro.org>, Nishanth Menon <nm@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 11, 2013 at 3:32 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Thu, Dec 12, 2013 at 7:28 PM, Felipe Balbi <balbi@ti.com> wrote:
+> On Thu, Dec 12, 2013 at 07:19:35PM +0100, Linus Walleij wrote:
 
-> Some devices drivers make use of optional GPIO parameters. For such
-> drivers, it is important to discriminate between the case where no
-> GPIO mapping has been defined for the function they are requesting, and
-> the case where a mapping exists but an error occured while resolving it
-> or when acquiring the GPIO.
+>> One thing caught my eye, you add:
+>>
+>> > +static void _aggressive_pm_runtime_get_sync(struct gpio_bank *bank)
+>> > +static void _aggressive_pm_runtime_put(struct gpio_bank *bank)
+>> (..)
+>>
+>> Then everywhere:
+>>
+>> > +       _aggressive_pm_runtime_get_sync(bank);
+>> (...)
+>> > +       _aggressive_pm_runtime_put(bank);
+>>
+>> Aggressive, argh, runtime PM is agressive by definition. If you
+>> want to switch this on and off use the compile option
+>> to enable/disable runtime PM altogether and do not wrap it
+>> like this.
 >
-> This patch changes the family of gpiod_get() functions such that they
-> will return -ENOENT if and only if no GPIO mapping is defined for the
-> requested function. Other error codes are used when an actual error
-> occured during the GPIO resolution.
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> Changes since v2:
-> - Put string on a single line (thanks Andy!)
-> - Added Andy's reviewed-by
+> heh, OMAP doesn't work without pm_runtime.
 
-Applied this v2 version with Mika's review tag.
+Hm then maybe that needs to be fixed ... or the runtime PM
+people need to be convinced to support different levels of
+aggressiveness in the core?
 
 Yours,
 Linus Walleij
