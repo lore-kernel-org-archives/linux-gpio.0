@@ -1,60 +1,119 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC/RFT/PATCH V3] gpio: omap: refresh patch "be more aggressive
- with pm_runtime" against v3.12-rc5
-Date: Thu, 12 Dec 2013 19:19:35 +0100
-Message-ID: <CACRpkdaD13JnGetD-GLpxSoaf_LkRKYFjis7Tftc6U38E1ES5A@mail.gmail.com>
-References: <1385506004-14943-1-git-send-email-caesarxuchao@gmail.com>
-	<1386477638-6331-1-git-send-email-caesarxuchao@gmail.com>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH v3] gpio: driver for Xtensa GPIO32
+Date: Thu, 12 Dec 2013 20:24:42 +0200
+Message-ID: <20131212182442.GN1217@tarshish>
+References: <36330381d07aed97fa587a6600ddee5f0be16da5.1386839921.git.baruch@tkos.co.il>
+ <20131212181558.GA12555@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1386477638-6331-1-git-send-email-caesarxuchao@gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Chao Xu <caesarxuchao@gmail.com>
-Cc: Linux-OMAP <linux-omap@vger.kernel.org>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, ext Kevin Hilman <khilman@deeprootsystems.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>, Felipe Balbi <balbi@ti.com>, Kevin Hilman <khilman@linaro.org>, Nishanth Menon <nm@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:51761 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751894Ab3LLSYv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 12 Dec 2013 13:24:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20131212181558.GA12555@psi-dev26.jf.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-xtensa@linux-xtensa.org
 
-On Sun, Dec 8, 2013 at 5:40 AM, Chao Xu <caesarxuchao@gmail.com> wrote:
+Hi David,
 
-> From: Felipe Balbi <balbi@ti.com>
->
-> try to keep gpio block suspended as much as possible.
->
-> Tested with pandaboard and a sysfs exported gpio.
->
-> Signed-off-by: Felipe Balbi <balbi at ti.com>
->
-> [caesarxuchao@gmail.com : Refreshed against v3.12-rc5, and added
-> revision check to enable aggressive pm_runtime on OMAP4-only. Because
-> am33xx_gpio_sysc.idlemodes seems to be wrongly marked as
-> SIDLE_SMART_WKUP, which might cause missed interrupts with this patch.
-> Tested on Pandaboard rev A2.]
-> Signed-off-by: Chao Xu <caesarxuchao@gmail.com>
-> ---
-> changes since v2:
-> *add wrapper function to avoid 'is_aggressive_pm' check everywhere, as
-> suggested by Santosh Shilimkar
-> *fix format issue in commit log
+On Thu, Dec 12, 2013 at 10:15:58AM -0800, David Cohen wrote:
+> On Thu, Dec 12, 2013 at 11:18:41AM +0200, Baruch Siach wrote:
+> > GPIO32 is a standard optional extension to the Xtensa architecture core that
+> > provides preconfigured output and input ports for intra SoC signaling. The
+> > GPIO32 option is implemented as 32bit Tensilica Instruction Extension (TIE)
+> > output state called EXPSTATE, and 32bit input wire called IMPWIRE. This
+> > driver treats input and output states as two distinct devices.
+> > 
+> > Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> > ---
+> > v3:
+> >    * Use BUG() in xtensa_impwire_set_value() to indicate that it should never
+> >      be called (Linus Walleij)
+> > 
+> > v2:
+> >    * Address the comments of Linus Walleij:
+> >       - Add a few comments
+> >       - Expand commit log message
+> >       - Use the BIT() macro for bit offsets
+> >       - Rewrite CPENABLE handling as static inlines
+> >       - Use device_initcall()
+> > 
+> >    * Depend on !SMP for reason explained in the comments (Marc Gauthier)
+> > 
+> >    * Use XCHAL_CP_ID_XTIOP to enable/disable GPIO32 only
+> > ---
+> >  drivers/gpio/Kconfig       |   8 +++
+> >  drivers/gpio/Makefile      |   1 +
+> >  drivers/gpio/gpio-xtensa.c | 163 +++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 172 insertions(+)
+> >  create mode 100644 drivers/gpio/gpio-xtensa.c
+> > 
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > index 0f04444..67f5ce6 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -281,6 +281,14 @@ config GPIO_XILINX
+> >  	help
+> >  	  Say yes here to support the Xilinx FPGA GPIO device
+> >  
+> > +config GPIO_XTENSA
+> > +	bool "Xtensa GPIO32 support"
+> > +	depends on XTENSA
+> > +	depends on !SMP
+> > +	help
+> > +	  Say yes here to support the Xtensa internal GPIO32 IMPWIRE (input)
+> > +	  and EXPSTATE (output) ports
+> > +
+> >  config GPIO_VR41XX
+> >  	tristate "NEC VR4100 series General-purpose I/O Uint support"
+> >  	depends on CPU_VR41XX
+> > diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> > index 7971e36..23b9c72 100644
+> > --- a/drivers/gpio/Makefile
+> > +++ b/drivers/gpio/Makefile
+> > @@ -95,3 +95,4 @@ obj-$(CONFIG_GPIO_WM831X)	+= gpio-wm831x.o
+> >  obj-$(CONFIG_GPIO_WM8350)	+= gpio-wm8350.o
+> >  obj-$(CONFIG_GPIO_WM8994)	+= gpio-wm8994.o
+> >  obj-$(CONFIG_GPIO_XILINX)	+= gpio-xilinx.o
+> > +obj-$(CONFIG_GPIO_XTENSA)	+= gpio-xtensa.o
+> > diff --git a/drivers/gpio/gpio-xtensa.c b/drivers/gpio/gpio-xtensa.c
+> 
+> [snip]
+> 
+> > +static int __init xtensa_gpio_init(void)
+> > +{
+> > +	struct platform_device *pdev;
+> > +
+> > +	pdev = platform_device_register_simple("xtensa-gpio", 0, NULL, 0);
+> 
+> Is it what you really want to do? It means this driver will probe
+> regardless it really should or not.
 
-I'm dropping this until you convince Kevin/Tony that this is
-the way to go.
+If you have XCHAL_CP_ID_XTIOP defined in your xtensa variant tie.h header, 
+then this device is available. Otherwise, this driver doesn't even build. If 
+you don't want the kernel to manage the GPIO32 IO port, then just disable the 
+driver in the kernel configuration.
 
-One thing caught my eye, you add:
+Does this sound reasonable enough?
 
-> +static void _aggressive_pm_runtime_get_sync(struct gpio_bank *bank)
-> +static void _aggressive_pm_runtime_put(struct gpio_bank *bank)
-(..)
+baruch
 
-Then everywhere:
+> > +	if (IS_ERR(pdev))
+> > +		return PTR_ERR(pdev);
+> > +
+> > +	return platform_driver_register(&xtensa_gpio_driver);
+> > +}
+> > +device_initcall(xtensa_gpio_init);
+> > +
+> > +MODULE_AUTHOR("Baruch Siach <baruch@tkos.co.il>");
+> > +MODULE_DESCRIPTION("Xtensa LX4 GPIO32 driver");
+> > +MODULE_LICENSE("GPL");
 
-> +       _aggressive_pm_runtime_get_sync(bank);
-(...)
-> +       _aggressive_pm_runtime_put(bank);
-
-Aggressive, argh, runtime PM is agressive by definition. If you
-want to switch this on and off use the compile option
-to enable/disable runtime PM altogether and do not wrap it
-like this.
-
-Yours,
-Linus Walleij
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
