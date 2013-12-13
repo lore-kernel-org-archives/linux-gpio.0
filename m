@@ -1,50 +1,52 @@
-From: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
-Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on
- S3C24XX.
-Date: Fri, 13 Dec 2013 01:55:21 +0000
-Message-ID: <52AA6909.8050200@inov.pt>
-References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt> <CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
+From: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH v7] gpio: davinci: use {readl|writel}_relaxed() instead of __raw_*
+Date: Fri, 13 Dec 2013 09:34:12 +0530
+Message-ID: <CA+V-a8sFpMJce19o9USBFzG2qnxtUrfdLVKPi8em6RnYA5Tfuw@mail.gmail.com>
+References: <1386784327-22164-1-git-send-email-prabhakar.csengg@gmail.com> <CACRpkdZSyiA1zF3VcGrT+2yu3X5=eoon=0rqr7UejY4kjf7jNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:41350 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751715Ab3LMEEd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2013 23:04:33 -0500
+In-Reply-To: <CACRpkdZSyiA1zF3VcGrT+2yu3X5=eoon=0rqr7UejY4kjf7jNw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Taras Kondratiuk <taras.kondratiuk@linaro.org>
 
-On 27-09-2013 15:17, Linus Walleij wrote:
-> On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
-> <jose.goncalves@inov.pt> wrote:
+Hi Linus,
+
+On Fri, Dec 13, 2013 at 2:01 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Dec 11, 2013 at 6:52 PM, Prabhakar Lad
+> <prabhakar.csengg@gmail.com> wrote:
 >
->> Some GPIO line limits are incorrectly set which, for instance,
->> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
+>> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 >>
->> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
+>> This patch replaces the __raw_readl/writel with
+>> {readl|writel}_relaxed(), Altough the code runs on ARMv5
+>> based SOCs, changing this will help copying the code
+>> for other uses.
+>>
+>> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 >> ---
->>   arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
-> OK but grrrr!
+>>  This patch is part of series [1] rest of the patches
+>>  are Acked/reviewed so posting this patch independently
+>>  and marking it as v7.
+>>
+>>  [1] http://www.spinics.net/lists/devicetree/msg13037.html
+>>
+>>  drivers/gpio/gpio-davinci.c |   36 ++++++++++++++++++------------------
 >
-> What needs to happen to the s3c24xx is to get rid of this file.
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 >
-> - Define ARCH_NR_GPIOS in arch/arm/Kconfig entry
->    ARCH_NR_GPIO like everyone else
->
-> - Get rid of the config symbol NEED_MACH_GPIO_H
->
-> -  Move this file down into arch/arm/mach-s3c24xx/s3c24xx-gpio.h
->    or whatever and make it local...
->
-> I will try to do this myself if noone else helps out, so I'd like to
-> carry this patch in the GPIO tree provided I can get an ACK from
-> the S3C24xx maintainer. Tomasz, is that you or Kukjin?
->
-> (BTW the above maybe goes for S3c64xx as well .. and S5P
-> oh well I will get to it.)
->
+Thanks for the Ack.
 
-Was this patch forgotten?
+> Should I take this into the GPIO tree, or should it go
+> in through the DaVinci tree?
+>
+To avoid dependencies its better it goes via DaVinci tree.
 
-Jos=E9 Gon=E7alves
+Thanks,
+--Prabhakar Lad
