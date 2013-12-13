@@ -1,46 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2] gpio: rcar: Fix level interrupt handling
-Date: Thu, 12 Dec 2013 20:54:25 +0100
-Message-ID: <CACRpkdbeT8fp4i-ahpzZN2MnC7uYAcuLH7SOgJnpL54XBaoTqw@mail.gmail.com>
-References: <1385748249-27170-1-git-send-email-valentine.barshak@cogentembedded.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH 1/2] gpio: msm: Fix irq mask/unmask by writing bits
+ instead of numbers
+Date: Thu, 12 Dec 2013 19:58:46 -0800
+Message-ID: <20131213035845.GK11990@sonymobile.com>
+References: <1386717544-478-1-git-send-email-sboyd@codeaurora.org>
+ <CACRpkdY8W8tGVH-Os5neeFfHWjojdB5fBbjgWcsWkiMyJj=YAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1385748249-27170-1-git-send-email-valentine.barshak@cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Valentine Barshak <valentine.barshak@cogentembedded.com>
-Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdY8W8tGVH-Os5neeFfHWjojdB5fBbjgWcsWkiMyJj=YAA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Rohit Vaswani <rvaswani@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 29, 2013 at 7:04 PM, Valentine Barshak
-<valentine.barshak@cogentembedded.com> wrote:
+On Thu 12 Dec 11:02 PST 2013, Linus Walleij wrote:
 
-> According to the manual, if a port is set for level detection using
-> the corresponding bit in the edge/level select register and an external
-> level interrupt signal is asserted, the corresponding bit in INTDT
-> does not use the FF to hold the input.
-> Thus, writing 1 to the corresponding bits in INTCLR cannot clear the
-> corresponding bits in the INTDT register. Instead, when an external
-> input signal is stopped, the corresponding bit in INTDT is cleared
-> automatically.
->
-> Since the INTDT bit cannot be cleared for the level interrupts until
-> the interrupt signal is stopped, we end up with the infinite loop
-> when using deferred (threaded) IRQ handling.
->
-> Since a deferred interrupt is disabled by the low-level handler and
-> re-enabled only when the deferred handler is completed, Fix the issue
-> by dropping disabled interrupts from the pending mask as suggested by
-> Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> Changes in V2:
-> * Drop disabled interrupts from pending mask altogether instead of
->   dropping level interrupts one by one once they get handled.
->
-> Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+> On Wed, Dec 11, 2013 at 12:19 AM, Stephen Boyd <sboyd@codeaurora.org>=
+ wrote:
+>=20
+> > We should be writing bits here but instead we're writing the
+> > numbers that correspond to the bits we want to write. Fix it by
+> > wrapping the numbers in the BIT() macro. This fixes gpios acting
+> > as interrupts.
+> >
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>=20
+> I've applied this for fixes and tagged for stable.
+> Bj=F6rn, Rohit: OK?
 
-This v2 version applied to fixes with Laurent's and Magnus' ACKs,
-tell me if it also need to go into -stable.
+This looks good.
 
-Yours,
-Linus Walleij
+JFYI; the pinctrl-msm is written with gpio-msm-v2 in mind as well, so r=
+eplacing
+it with pinctrl is on my todo list...
+
+Regards,
+Bjorn
