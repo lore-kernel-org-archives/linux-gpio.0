@@ -1,134 +1,320 @@
-From: <kevin.bracey@broadcom.com>
-Subject: RE: pinctrl - detailed gpio-mode pinconf design
-Date: Fri, 13 Dec 2013 08:48:33 +0000
-Message-ID: <EB2BCA6A838C7B4FB238C534ED5D7704223A3799@renexmb02.roe2.renesasmobile.com>
-References: <EB2BCA6A838C7B4FB238C534ED5D770422395F79@renexmb02.roe2.renesasmobile.com>
- <CACRpkdbpv3Vjt-=3_1XbrGaiEYqCgtJCGppvoL48gad+7Licdg@mail.gmail.com>
- <10664958.tMCNRkOk1E@avalon>
- <EB2BCA6A838C7B4FB238C534ED5D77042239D2A9@renexmb02.roe2.renesasmobile.com>
- <CACRpkdbzGokHHhR3GhLvF7KCFdAV=b0VHwUE4eHVfNFEGhx_Jg@mail.gmail.com>
+From: Bruno Randolf <br1@einfach.org>
+Subject: Re: [PATCH v4] gpio: add GPIO support for SMSC SCH311x
+Date: Fri, 13 Dec 2013 08:53:39 +0000
+Message-ID: <52AACB13.9020908@einfach.org>
+References: <1386201717-25815-1-git-send-email-br1@einfach.org> <CACRpkdb0z9GgLVhYESJ8NyEZXTXctpyHjrA6dC3A0wn+X7fnGw@mail.gmail.com> <20131211191639.GA26416@srcf.ucam.org> <52A8D5A3.8020401@einfach.org> <20131211221055.GA30589@srcf.ucam.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdbzGokHHhR3GhLvF7KCFdAV=b0VHwUE4eHVfNFEGhx_Jg@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linus.walleij@linaro.org
-Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, damm@opensource.se, lethal@linux-sh.org, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed;
+ boundary="------------070706010902050405020108"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from postler.einfach.org ([91.250.116.113]:52469 "EHLO
+	postler.einfach.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752214Ab3LMIxr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Dec 2013 03:53:47 -0500
+In-Reply-To: <20131211221055.GA30589@srcf.ucam.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>
 
-Linus Walleij wrote:
-> On Thu, Dec 5, 2013 at 11:15 AM,  <kevin.bracey@broadcom.com> wrote:
->> Laurent Pinchart wrote:
->>> On Tuesday 03 December 2013 11:04:48 Linus Walleij wrote:
->
->>> Controlling GPIO through pinconf seems to be very twisted.
->>> Usually it is the other way around.
+This is a multi-part message in MIME format.
+--------------070706010902050405020108
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+On 12/11/2013 10:10 PM, Matthew Garrett wrote:
+> On Wed, Dec 11, 2013 at 09:14:11PM +0000, Bruno Randolf wrote:
+>> On 12/11/2013 07:16 PM, Matthew Garrett wrote:
+>>> Bruno, do you have an acpidump for a machine with one of these chips?
 >>
->> By my understanding of the general pinctrl concept, we should be converting that to the lovely:
+>> I'll try to get one in the next couple of days, but unfortunately I
+>> don't have direct access to the machine anymore.
 >>
->> resume:
->>     pinctrl_pm_select_default_state(dev);
->> suspend:
->>     pinctrl_pm_select_sleep_state(dev);
+>> What exatly do you need? Will "cat /sys/firmware/acpi/tables/DSDT >
+>> dsdt.dat" suffice? Anything else?
+> 
+> That plus any SSDT files in /sys/firmware/acpi/tables or tables/dynamic.
 
-> This observation is correct, and I agree with this reasoning. The PM states
-> are quite new and may take some time before they "sink in" in the kernel though,
-> but ideally people should be using them like that (atleast IMO).
+Attached you find a .zip file which contains the DSDT and the SSDT tables.
 
-I strongly approve of the PM state concept, having seen the alternative. It slots in very nicely. I'm working on 3.10-based systems, but the pinctrl_pm_select is being cherry-picked in because it makes life so much easier.
-
->>> > This looks messy. The intention with the pin config subsystem is to 
->>> > break things apart and make them understandable that way, and to 
->>> > handle electronic stuff in pin config whereas driving a line 
->>> > high/low happens in the GPIO subsystem.
->>
->> Which is basically an argument against ever using PIN_CONFIG_OUTPUT 0, 
->> and the whole of "GPIO mode pitfalls" in pinctrl.txt, isn't it? It 
->> means we can't specify idle pinctrl states that drive lines. We have to do the GPIO/function shuffle.
->
-> Well maybe. My point was that it is OK to drive GPIO lines as part of
-> a state which is only relevant for a device driver, and where using the
-> GPIO API in top would only bloat and make things hard to follow.
-
-In practice, this is the case for the majority of the code I'm looking at. We have a large number of function drivers which have to be told their pins' GPIO numbers in platform data, solely for their suspend setting. Otherwise the pins would be entirely driven as a function, and no need for the GPIO API.
-
-> > In my initial prototype, PIN_CONFIG_OUTPUT is only available if the 
-> > gpio-mode function has been selected.
-
-> That is even more careful code than most drivers write, so sounds very nice.
-
-> > But maybe this could be made hidden and implicit, as per the GPIO API. 
-> > Eg PIN_CONFIG_OUTPUT/PIN_CONFIG_LOW_POWER_MODE
-> > implicitly selects the GPIO mux (for output/input), and 
-> > PIN_CONFIG_DRIVE_PUSH_PULL/PIN_CONFIG_BIAS_HIGH_IMPEDANCE
-> > restores the previously requested?
->
-> I'd recommend trying to keep as close to the semantics descrived in <linux/pinctrl/pinconf-generic.h> and not add any implicit semantics.
-
-Yeah, but the catch is that the semantics described are on the assumption that pinconf is totally orthogonal to pinmux. That's not true on this platform, and on many others. I think we need some sort of general policy on how to handle conflicting requests.
-
-Personally, I can see the merits of both approaches -
-
- a) pinconf settings forcing mux to achieve the requested pin state - working to emulate orthogonality on non-orthogonal hardware;
-
- b) pinconf settings requiring an appropriate mux to be explicitly set for them to be available - machines/DT need to know about the mux/conf interactions.
-
-Main problem with (a) - how do you get back to "normal" mux, and is emulation just obfuscation?
-Main problem with (b) - can you guarantee mux/conf ordering?
-
-It sounds like you prefer (b), and that is what my prototype does. It's what I originally decided, but I wasn't totally certain about how much pinconf-generic.h was intended to be a framework/language whose usage is always going to be very pin-driver-dependent, versus trying to make it an API trying to produce consistent behaviour.
-
->>> > This must be some misunderstanding. DT does not specify 
->>> > application/ordering semantics. It does not define sequences at all.
->>> > The device driver parsing out whatever is in the device tree has to 
->>> > take care of ordering stuff and driving the hardware.
->
->> Well, the pinctrl core does process its tables in order. So in the 
->> case where a pinconf setting may interact with a pinmux setting, the 
->> ordering that the
->> pinconf+pinmux entries get processed could be significant. Eg if
->> PIN_CONFIG_OUTPUT requires the "gpio-mode" function selected first.
-
-> OK so we solved the similar situation where configs had to be applied in some certain order for the pin config API by passing the array of configs down to the driver and let is handle this.
-
-Well, ordering is already preserved by the pinctrl core. As far as I can see, when you're given a table of settings through pinctrl_register_map, you keep the ordering, and when that state is selected, the settings are passed down to the driver one-by-one in original order.
-
-If that can be guaranteed, then we may not need to be do anything else.
-
-> So can we think of an API that gives the drivers the freedom to express or behave differently here?
-
-I don't think it's necessary.
-
-For DT, the driver can control ordering in its parse routines. The sh-pfc driver does already put a node's function request first in its dt_node_to_map(), which is what gpio-mode needs. If the core preserves that order, we're sorted.
-
-For non-DT, I think it's acceptable to require that the tables should be ordered correctly by the board to meet the documented requirements of the driver - so sh-pfc board files would be required to put gpio-mode mux selections before PIN_CONFIG_OUTPUT/PIN_BIAS_CONFIG_HIGH_IMPEDANCE selections.
-
-And either way, for glitch-free-handover, I'm also requiring that the configs always be specified - the mux won't be switched by the driver unless/until a config has been parsed and set. So in the driver - first pinmux "gpio-mode" primes it, and makes the output/high-impedance pinconfs legal. Then the pinconfs set the IE/OE/DATA bits in the GPIO registers and flip to GPIO mux.
+Thanks,
+bruno
 
 
-Now, going back to the pinconfs. The naming of the configs still throws me a little. Particularly all the "bias" settings. "BIAS_HIGH_IMPEDANCE" doesn't feel like a "bias" to me. What does it mean to "BIAS_DISABLE" a "BIAS_HIGH_IMPEDANCE"? Should "BIAS_HIGH_IMPEDANCE" turn off "BIAS_PULL_UP"?
+--------------070706010902050405020108
+Content-Type: application/zip;
+ name="dsdt_ssdt_mio.zip"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="dsdt_ssdt_mio.zip"
 
-My feeling is that it would be better named just "CONFIG_HIGH_IMPEDANCE", making it a separate thing from all the other biases, akin to CONFIG_DRIVE_* and CONFIG_OUTPUT.
-
-In summary, I think the two independent exclusive Boolean sets in the configs seem to be:
-
-(BIAS_DISABLE | BIAS_BUS_HOLD | BIAS_PULL_DOWN | BIAS_PULL_UP | BIAS_PULL_PIN_DEFAULT)
-([BIAS_]HIGH_IMPEDANCE | DRIVE_PUSH_PULL | DRIVE_OPEN_DRAIN | DRIVE_OPEN_SOURCE | LOW_POWER_MODE | OUTPUT)
-
-And that's effectively how I'm treating them, for the 5 I'm handling for our hardware (BIAS_DISABLE|BIAS_PULL_DOWN|BIAS_PULL_UP)+(BIAS_HIGH_IMPEDANCE|OUTPUT).
-
-Does that make sense? Maybe it's hardware specific, but at least for our case, where the pulls are non-muxed and the drives are muxed, that separation seems logical.
-
-Regards,
-
-Kevin
+UEsDBBQACAAIAAM4jUMAAAAAAAAAAAAAAAAIABAAZHNkdC5kYXRVWAwARaWqUmaiqlL1ARQA
+7X1rjCTXdd6tfkzX3O6Z6ekp7g61r9byIYoiV13VPQ8KkjVdVf3idPeUumpnR2qa3UtTcQ8N
+OBWakr0cbDQ7Ula0RCOrHSqAfwSpITqG4RiBIPiHENgxEQSIEeQHJRC2gziBfuQHkQdC5wET
+RryT892q6tf07K5jy0oAkphzzz333HO+e+vWvedWV901bdP58i8yFvlfxXrR3iwWs41sjTH2
+BP3Vmk797GI8K9uWusWvyLUtTU+yGaR1vk9SbYs35Zqt6sn9GaSQ1mwoJZDWeVa2SrqdIls/
+Jq7eBJeWmw01J8l2Q7eTTEYqFEU2JlcspHFK602+QaU1i39fLlqGTpXfuQeuniQjdsNoJXMx
+uWo5KHn3HjgjFfufP7wnl+v2l0iWZbLdQr13SNYy6s0k25CLhlXl/0Eu2rbO5OKWA1rcIWqV
+qhZVqFoGeKsBWmqBGjaTa85mickNvWQkj49l07ZJt1y1QAm/JJdNx+IRuXzVsnlU1u1qh8l6
+qd6RZKflWIKaVE5JjcorhmlKZMUpck5JfYuKKDGoyKo5Nqfm6YbNM7JdrNt8Sa7bts2fli0k
+n5LtrS2Hr8glm1Sqsm1Wtvl5dJRDHbVVtlHmtCghd1ajzGTHELRRVgXVBM1TW22V8Nm21gGf
+F3yBaG3LdpJRU3a2rAauGJNbWw1cxR8fy9uVYllq71ea2zZLLf/T1NeSXal9a+tTEKS37C/a
+aQJSlq1WIweiyrbhZzWQvFw3NkW2ALIiW+s5M1uvmbZsXWvZsqlXbNmpbpXpMjkqiEON3nao
+Ceo2EY2IbW3LRosKTMcugaggGkhZ1ptXG7Kesw1ZV0E0kJxtI2sja8tsuWjVDLlhlZqyZVg5
+EFW2LKNBpFGmQdMsOpZsNIoguiXXLcqWTQNZkFrLkq/l11W5aRklmYZGheA7dduRjaJZly0Q
+w3ZK6SaILTizZsr0p2aJaCB5kALISnbT3s6BqDJb1+sG4Ww5dZmufIlIsSzX61vX5Hq1ViVn
+pUaxBGKlidTTNCRL5RJGEjUsTZfbIp3GVosunlGxqEEtK0vkC9QIqyVXnHJunYi2XjNLDWTV
+db1mdmRWjelO3dqIFe26nq3p1Ls1q0jE2S6DNChLPVkjdERqRbq7kS3knpNrKyCrIGsgZqMB
+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
+AMQCAAC5NQAAAAA=
+--------------070706010902050405020108--
