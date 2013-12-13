@@ -1,40 +1,41 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gZ3BpbzogRHJpdmVyIGZvciBTWVNDT04tYmFzZWQgR1BJ?=
- =?UTF-8?B?T3M=?=
-Date: Fri, 13 Dec 2013 08:15:35 +0400
-Message-ID: <1386908135.950679595@f358.i.mail.ru>
-References: <1386689216-5139-1-git-send-email-shc_work@mail.ru>
- <1386876057.320972508@f419.i.mail.ru>
- <CACRpkdY9umneaukyEr4W=7AxA8XuPY=ueBCiJNjQ+AihOu3Fog@mail.gmail.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
+Date: Fri, 13 Dec 2013 09:12:52 +0100
+Message-ID: <CACRpkdbBqqbkp3ap3Y=C5zC3Cq9jd+dL4iPZ9-2-Fd81GLAPBA@mail.gmail.com>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+	<CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
+	<52AA6909.8050200@inov.pt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fallback1.mail.ru ([94.100.176.18]:53846 "EHLO
-	fallback1.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751859Ab3LMEQE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2013 23:16:04 -0500
-In-Reply-To: <CACRpkdY9umneaukyEr4W=7AxA8XuPY=ueBCiJNjQ+AihOu3Fog@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <52AA6909.8050200@inov.pt>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
-Cc: =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc=?= <devicetree@vger.kernel.org>, =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>, =?UTF-8?B?UGF3ZWwgTW9sbA==?= <pawel.moll@arm.com>, =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland@arm.com>, =?UTF-8?B?SWFuIENhbXBiZWxs?= <ijc+devicetree@hellion.org.uk>, =?UTF-8?B?S3VtYXIgR2FsYQ==?= <galak@codeaurora.org>, =?UTF-8?B?R3JhbnQgTGlrZWx5?= <grant.likely@linaro.org>
 
-PiA+PiBPbiBUdWUsIERlYyAxMCwgMjAxMyBhdCA0OjI2IFBNLCBBbGV4YW5kZXIgU2hpeWFuIDxz
-aGNfd29ya0BtYWlsLnJ1PiB3cm90ZToKPiAKPiA+PiBJIHRha2UgaXQgdGhhdCBiaXQtb2Zmc2V0
-IGNhbiBiZSBzYXkgMTAyNCBhbmQgYml0IGNvdW50Cj4gPj4gMzIgZm9yIGEgMzItYml0IHJlZ2lz
-dGVyIGF0IHN5c2Nvbl9iYXNlICsgMHg4MD8KPiA+Cj4gPiBUaGlzIGNhbiBiZSByZXByZXNlbnRl
-ZCBpbiBEVCBhcyAoMHg4MCA8PCA0KS4KPiAKPiBUaGF0J3MgYmV0dGVyIG9mIGNvdXJzZSBidXQg
-eW91IHN0aWxsIGhhdmUgdG8gcmVhZCBib3RoIHRoZQo+IGRldmljZSB0cmVlIGFuZCB0aGUgZHJp
-dmVyIGFuZCBjb3JyZWxhdGUgdG8gZmlndXJlIG91dAo+IHdoYXQncyBnb2luZyBvbi4KPiAKPiA+
-PiBJIHNvcnQgb2YgbGlrZSB0aGUgc3lzY29uIGRyaXZlciBidXQgSSBkb24ndCBsaWtlIHRoZSBp
-ZGVhCj4gPj4gb2YgZW5jb2RpbmcgcmVnaXN0ZXIgb2Zmc2V0cyBpbnRvIHRoZSBkZXZpY2UgdHJl
-ZSwgZXZlbgo+ID4+IGxlc3MgZG8gSSBsaWtlIHRoZSBpZGVhIG9mIGVuY29kaW5nIGl0IGluIGJp
-dCBub3RhdGlvbi4KPiA+Cj4gPiBJIGFsc28gaGF2ZSBubyBpZGVhIGhvdyB0byBwcmVzZW50IGl0
-IGRpZmZlcmVudGx5Lgo+ID4gQ2FuIHRyeSB0byBzcGVjaWZ5IHRoZSBieXRlIG9mZnNldCB0aHJv
-dWdoIHRoZSAicmVnIiBwcm9wZXJ0eT8KPiA+IFRoZSAiYml0LW9mZnNldCIgd2lsbCByZW1haW4s
-IGJ1dCB3aWxsIHBvaW50IG9mZnNldCBmcm9tIHRoZSAicmVnIiBieXRlLgo+IAo+IFRoaXMgZG9l
-cyBub3QgaGVscC4gSSBkb24ndCB3YW50IHRoZSBvZmZzZXQgaW5zaWRlIHRoZQo+IGRldmljZSB0
-cmVlIGF0IGFsbC4KCk9LLCBsZXQgbWUgc2hvdyBuZXh0IHZlcnNpb24gaW4gYSB3ZWVrIG9yIHNv
-LgoKLS0tCg==
+On Fri, Dec 13, 2013 at 2:55 AM, Jos=E9 Miguel Gon=E7alves
+<jose.goncalves@inov.pt> wrote:
+> On 27-09-2013 15:17, Linus Walleij wrote:
+>> On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
+>> <jose.goncalves@inov.pt> wrote:
+>>
+>>> Some GPIO line limits are incorrectly set which, for instance,
+>>> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
+>>>
+>>> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
+>>> ---
+>>>   arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
+(...)
+>
+> Was this patch forgotten?
+
+Not by me, I just never got an ACK from the Samsung maintainers,
+so I can't apply it to the GPIO tree.
+
+Ben, Kukjin: can one of you ACK this so I can take it through the
+GPIO tree?
+
+Yours,
+Linus Walleij
