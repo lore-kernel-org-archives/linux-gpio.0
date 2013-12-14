@@ -1,47 +1,58 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH] gpio: twl4030: fix regression for twl gpio outputs for
- led pins
-Date: Fri, 13 Dec 2013 11:36:47 -0600
-Message-ID: <52AB45AF.8040902@ti.com>
-References: <1386953222-26396-1-git-send-email-nm@ti.com> <20131213172810.GE28184@atomide.com>
+From: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Subject: Re: [PATCH 0/2] gpio: davinci: reuse for keystone arch
+Date: Sat, 14 Dec 2013 14:11:12 -0500
+Message-ID: <52ACAD50.6060003@ti.com>
+References: <1386871973-26762-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20131213172810.GE28184@atomide.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Roger Quadros <rogerq@ti.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:48270 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753612Ab3LNTL4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 14 Dec 2013 14:11:56 -0500
+In-Reply-To: <1386871973-26762-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Rob Herring <rob.herring@calxeda.com>, prabhakar.csengg@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-arm-kernel@lists.infradead.org
 
-On 12/13/2013 11:28 AM, Tony Lindgren wrote:
-> * Nishanth Menon <nm@ti.com> [131213 08:48]:
->> Commit 0b2aa8b (gpio: twl4030: Fix regression for twl gpio output)
->> introduces yet another regression by ignoring the fact that we use twl
->> gpio even for LED. For example, leda (offset 18) is used for USB port2
->> power on beagleboard-xm.
->>
->> The original logic was supposed to setup the TWL4030 GPIO direction
->> if the offset was < TWL4030_GPIO_MAX, and anything greater used
->> twl4030_led_set_value as part of twl_set to setup the LED pin. However,
->> with the commit mentioned above, LEDa pin request will result in fail
->> as the GPIO number for LEDa is equal to TWL4030_GPIO_MAX and USB fails
->> to function on beagleboard-xm. This is reported in the log as:
->> hsusb2_vbus: Failed to request enable GPIO510: -22
->>
->> To fix this, we should handle the fail case of
->> twl4030_set_gpio_direction independent of the offset < TWL4030_GPIO_MAX
->> check.
+Linus, Sekhar,
+
+On Thursday 12 December 2013 01:12 PM, Grygorii Strashko wrote:
+> This series is intended to update Davinci GPIO driver and reuse
+> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+> Keystone GPIO IP: supports:
+> - up to 32 GPIO lines;
+> - only unbanked irqs;
 > 
-> Heh again :) Linus has already queued a similar fix, see
-> "[PATCH v2 1/1] gpio: twl4030: Fix regression for twl gpio LED output".
+> See Documentation:
+> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
 > 
+> This series depends on:
+> [1] "[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
+> https://lkml.org/lkml/2013/11/8/22
+> [2] "[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
+> https://www.mail-archive.com/devicetree@vger.kernel.org/msg05970.html
+> [3] "gpio: davinci: get rid of DAVINCI_N_GPIO"
+> https://lkml.org/lkml/2013/11/26/405
+> [4] "gpio: introduce GPIO_DAVINCI kconfig option"
+> https://lkml.org/lkml/2013/11/26/435
+> [5] "gpio: davinci: use chained_irq_enter/chained_irq_exit API"
+> https://lkml.org/lkml/2013/11/26/428
+> 
+> To handle all dependencies, I've created a branch where I collected all 
+> "ready to merge" patches (all acks added in patches) and this series:
+> - https://github.com/grygoriyS/linux.git
+> - branch: keystone-master-gpio-for-next
+> 
+Can one of you pull all these patches ?
 
-Alrite, I admit it, I need a vacation ;).. Sigh..
-http://marc.info/?l=linux-gpio&w=2&r=1&s=twl4030&q=t is not good
-enough :(..
+If needed I can take these patches to arm-soc with Linus's ack
+or can prepare a pull request which Linus W can pull from from.
 
-
--- 
 Regards,
-Nishanth Menon
+Santosh
+
+
+
