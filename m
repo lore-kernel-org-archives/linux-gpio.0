@@ -1,58 +1,71 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [PATCH 0/2] gpio: davinci: reuse for keystone arch
-Date: Sat, 14 Dec 2013 14:11:12 -0500
-Message-ID: <52ACAD50.6060003@ti.com>
-References: <1386871973-26762-1-git-send-email-grygorii.strashko@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH v7] gpio: davinci: use {readl|writel}_relaxed() instead
+ of __raw_*
+Date: Sun, 15 Dec 2013 17:05:46 +0530
+Message-ID: <52AD9412.1010508@ti.com>
+References: <1386784327-22164-1-git-send-email-prabhakar.csengg@gmail.com> <CACRpkdZSyiA1zF3VcGrT+2yu3X5=eoon=0rqr7UejY4kjf7jNw@mail.gmail.com> <CA+V-a8sFpMJce19o9USBFzG2qnxtUrfdLVKPi8em6RnYA5Tfuw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:48270 "EHLO arroyo.ext.ti.com"
+Received: from bear.ext.ti.com ([192.94.94.41]:34588 "EHLO bear.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753612Ab3LNTL4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 14 Dec 2013 14:11:56 -0500
-In-Reply-To: <1386871973-26762-1-git-send-email-grygorii.strashko@ti.com>
+	id S1753943Ab3LOLg4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 15 Dec 2013 06:36:56 -0500
+In-Reply-To: <CA+V-a8sFpMJce19o9USBFzG2qnxtUrfdLVKPi8em6RnYA5Tfuw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Rob Herring <rob.herring@calxeda.com>, prabhakar.csengg@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-arm-kernel@lists.infradead.org
+To: Prabhakar Lad <prabhakar.csengg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Taras Kondratiuk <taras.kondratiuk@linaro.org>
 
-Linus, Sekhar,
-
-On Thursday 12 December 2013 01:12 PM, Grygorii Strashko wrote:
-> This series is intended to update Davinci GPIO driver and reuse
-> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
-> Keystone GPIO IP: supports:
-> - up to 32 GPIO lines;
-> - only unbanked irqs;
+On Friday 13 December 2013 09:34 AM, Prabhakar Lad wrote:
+> Hi Linus,
 > 
-> See Documentation:
-> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+> On Fri, Dec 13, 2013 at 2:01 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Wed, Dec 11, 2013 at 6:52 PM, Prabhakar Lad
+>> <prabhakar.csengg@gmail.com> wrote:
+>>
+>>> From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+>>>
+>>> This patch replaces the __raw_readl/writel with
+>>> {readl|writel}_relaxed(), Altough the code runs on ARMv5
+>>> based SOCs, changing this will help copying the code
+
+s/copying/using
+
+>>> for other uses.
+
+Call out usability on big-endian machines specifically here.
+
+>>>
+>>> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+>>> ---
+>>>  This patch is part of series [1] rest of the patches
+>>>  are Acked/reviewed so posting this patch independently
+>>>  and marking it as v7.
+>>>
+>>>  [1] http://www.spinics.net/lists/devicetree/msg13037.html
+>>>
+>>>  drivers/gpio/gpio-davinci.c |   36 ++++++++++++++++++------------------
+>>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+> Thanks for the Ack.
 > 
-> This series depends on:
-> [1] "[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
-> https://lkml.org/lkml/2013/11/8/22
-> [2] "[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
-> https://www.mail-archive.com/devicetree@vger.kernel.org/msg05970.html
-> [3] "gpio: davinci: get rid of DAVINCI_N_GPIO"
-> https://lkml.org/lkml/2013/11/26/405
-> [4] "gpio: introduce GPIO_DAVINCI kconfig option"
-> https://lkml.org/lkml/2013/11/26/435
-> [5] "gpio: davinci: use chained_irq_enter/chained_irq_exit API"
-> https://lkml.org/lkml/2013/11/26/428
-> 
-> To handle all dependencies, I've created a branch where I collected all 
-> "ready to merge" patches (all acks added in patches) and this series:
-> - https://github.com/grygoriyS/linux.git
-> - branch: keystone-master-gpio-for-next
-> 
-Can one of you pull all these patches ?
+>> Should I take this into the GPIO tree, or should it go
+>> in through the DaVinci tree?
+>>
+> To avoid dependencies its better it goes via DaVinci tree.
 
-If needed I can take these patches to arm-soc with Linus's ack
-or can prepare a pull request which Linus W can pull from from.
+I added this to v3.14/gpio branch of my tree (with modifications I
+mentioned above).
 
-Regards,
-Santosh
+I dont think there are dependencies for this particular patch though
+(applies and builds nicely on latest Linus  T's tree). Even then, there
+are too many GPIO patches floating around and I think it is better for
+me to collect them for a while and if there really are no platform code
+dependencies overall, I can probably hand that branch off to Linus W. We
+will see.
 
-
-
+Thanks,
+Sekhar
