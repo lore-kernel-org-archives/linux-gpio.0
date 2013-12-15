@@ -1,38 +1,63 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [RFC v1 3/9] gpio: davinci: use chained_irq_enter/chained_irq_exit
- API
-Date: Sun, 15 Dec 2013 18:55:20 +0530
-Message-ID: <52ADADC0.9060906@ti.com>
-References: <1385494815-15740-1-git-send-email-grygorii.strashko@ti.com> <1385494815-15740-4-git-send-email-grygorii.strashko@ti.com>
+From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 0/2] gpio: davinci: reuse for keystone arch
+Date: Sun, 15 Dec 2013 19:20:52 +0530
+Message-ID: <52ADB3BC.3080605@ti.com>
+References: <1386871973-26762-1-git-send-email-grygorii.strashko@ti.com>
+	<52ACAD50.6060003@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:50112 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754402Ab3LON02 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Dec 2013 08:26:28 -0500
-In-Reply-To: <1385494815-15740-4-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <52ACAD50.6060003-l0cyMroinI0@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, linux-gpio@vger.kernel.org
-Cc: prabhakar.csengg@gmail.com, linux-kernel@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com
 
-On Wednesday 27 November 2013 01:10 AM, Grygorii Strashko wrote:
-> It's unsafe to call IRQ chip callbacks (.irq_mask/irq_unmask/irq_ack)
-> from chained IRQ handler directly. Because, Davinci GPIO block is used
-> by different SoCs, which, in turn, have different Main IRQ controllers
-> (Davinci - aintc, cp-intc; Keystone - arm-gic) which may introduce
-> diffrent set of IRQ chip callbacks. As result, call of
-> gpio_irq_handler() on Keysone will simply cause crash the system,
-> because ARM-GIC implements .irq_eoi() instead of .irq_ack().
+On Sunday 15 December 2013 12:41 AM, Santosh Shilimkar wrote:
+> Linus, Sekhar,
 > 
-> Hence, fix it by using Kernel chained_irq_enter/chained_irq_exit APIs as
-> they are intended to handle exact such cases.
-> 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> On Thursday 12 December 2013 01:12 PM, Grygorii Strashko wrote:
+>> This series is intended to update Davinci GPIO driver and reuse
+>> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+>> Keystone GPIO IP: supports:
+>> - up to 32 GPIO lines;
+>> - only unbanked irqs;
+>>
+>> See Documentation:
+>> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+>>
+>> This series depends on:
+>> [1] "[PATCH 1/2] gpio: davinci: Fix a check for unbanked gpio"
+>> https://lkml.org/lkml/2013/11/8/22
+>> [2] "[PATCH v6 0/6] gpio: daVinci: cleanup and feature enhancement"
+>> https://www.mail-archive.com/devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg05970.html
+>> [3] "gpio: davinci: get rid of DAVINCI_N_GPIO"
+>> https://lkml.org/lkml/2013/11/26/405
+>> [4] "gpio: introduce GPIO_DAVINCI kconfig option"
+>> https://lkml.org/lkml/2013/11/26/435
+>> [5] "gpio: davinci: use chained_irq_enter/chained_irq_exit API"
+>> https://lkml.org/lkml/2013/11/26/428
+>>
+>> To handle all dependencies, I've created a branch where I collected all 
+>> "ready to merge" patches (all acks added in patches) and this series:
+>> - https://github.com/grygoriyS/linux.git
+>> - branch: keystone-master-gpio-for-next
+>>
+> Can one of you pull all these patches ?
 
-Queued with Linus's and Santosh's acks.
+So I went through my backlog and queued all that I think is ready. Here
+is the branch. Let me know if there is anything else missing.
+
+https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
 
 Thanks,
 Sekhar
