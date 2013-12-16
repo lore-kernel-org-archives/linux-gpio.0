@@ -1,62 +1,67 @@
-From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Subject: Re: [PATCH] gpio: add GPIO support for SMSC SCH311x
-Date: Sun, 15 Dec 2013 21:46:04 -0500 (EST)
-Message-ID: <1962407133.2003.1387161964453.JavaMail.root@mail>
-References: <CACRpkdYU_AV=E67cGcqqwiq4byOeJx+J+XDST3Mo_s5xmfDTnQ@mail.gmail.com>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH v3] gpio: driver for Xtensa GPIO32
+Date: Mon, 16 Dec 2013 07:50:32 +0200
+Message-ID: <20131216055032.GB3807@tarshish>
+References: <36330381d07aed97fa587a6600ddee5f0be16da5.1386839921.git.baruch@tkos.co.il>
+ <20131212181558.GA12555@psi-dev26.jf.intel.com>
+ <20131212182442.GN1217@tarshish>
+ <20131212192300.GB14726@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.savoirfairelinux.com ([209.172.62.77]:64340 "EHLO
-	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751180Ab3LPCqG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Dec 2013 21:46:06 -0500
-In-Reply-To: <CACRpkdYU_AV=E67cGcqqwiq4byOeJx+J+XDST3Mo_s5xmfDTnQ@mail.gmail.com>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:32845 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750802Ab3LPFuh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 16 Dec 2013 00:50:37 -0500
+Content-Disposition: inline
+In-Reply-To: <20131212192300.GB14726@psi-dev26.jf.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>, Bruno Randolf <br1@einfach.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Matthew Garrett <mjg59@srcf.ucam.org>, Seth Heasley <seth.heasley@intel.com>, Darren Hart <dvhart@linux.intel.com>, kernel <kernel@savoirfairelinux.com>
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-xtensa@linux-xtensa.org
 
-Hi Linus,
+Hi David,
 
-You wrote:
-> >> drivers/gpio/gpio-ts5500.c - aha, created from
-> >>   arch/x86/platform/ts5500/ts5500.c, a "board file".
-> >
-> > Because of the lack of mechanism such as DMI, there's no safe way
-> > to verify the
-> > machine at the GPIO driver level. However, the board code (which
-> > registers the
-> > platform device) does a safe check by looking for some magic in the
-> > RAM.
-> >
-> > Would it be safer if we make GPIO_TS5500 depends on TS5500?
+On Thu, Dec 12, 2013 at 11:23:00AM -0800, David Cohen wrote:
+> On Thu, Dec 12, 2013 at 08:24:42PM +0200, Baruch Siach wrote:
+> > On Thu, Dec 12, 2013 at 10:15:58AM -0800, David Cohen wrote:
+> > > On Thu, Dec 12, 2013 at 11:18:41AM +0200, Baruch Siach wrote:
+> > > > +static int __init xtensa_gpio_init(void)
+> > > > +{
+> > > > +	struct platform_device *pdev;
+> > > > +
+> > > > +	pdev = platform_device_register_simple("xtensa-gpio", 0, NULL, 0);
+> > > 
+> > > Is it what you really want to do? It means this driver will probe
+> > > regardless it really should or not.
+> > 
+> > If you have XCHAL_CP_ID_XTIOP defined in your xtensa variant tie.h header, 
+> > then this device is available. Otherwise, this driver doesn't even build. If 
+> > you don't want the kernel to manage the GPIO32 IO port, then just disable the 
+> > driver in the kernel configuration.
+> > 
+> > Does this sound reasonable enough?
 > 
-> I don't know actually. How does it work with these x86 things?
-> Is it so that the system comes up and then you modprobe this driver?
+> Then I think it's a bit worse :)
+> You can't make kernel compilation to fail when this GPIO driver is not
+> meant to be probed.
+> I'm not familiar with xtensa, so can't be strongly against platform
+> device registration inside the driver's init function. But you need to
+> fix your Kconfig to not make this driver available when it's not
+> compilable.
 
-With TS5500 selected, the board comes up, get probed reading the RAM
-(from the board code), then registers this GPIO platform device.
+I understand your concern, as currently randconfig enabling this driver will 
+break the build. I'm not sure what is the right solution though. We could 
+depend on, say HAVE_XTENSA_GPIO32, and select it from arch/xtensa/Kconfig for 
+the appropriate xtensa variants. The problem is that no current mainline 
+xtensa variant supports GPIO32. So, at some future point one of those who are 
+looking for unreferenced Kconfig symbols will just remove the whole driver.
 
-> In that case, do you bring up a fully generic kernel or do you have
-> to have it compiled with CONFIG_TS5500 set to 'y' and is that
-> done of a say, typical distro kernel?
+Suggestions for a better solution are welcome.
 
-GPIO_TS5500 cannot probe the DIO blocks by itself. It needs a board
-code to fill and register the corresponding platform device structures.
+baruch
 
-So a generic x86 kernel will work on the board, but we need TS5500 set
-to 'y' in order to have the GPIOs.
-
-> If we don't know if it will be modprobed or not on a certain system
-> we should keep it as is, but of the distro kernels all set
-> CONFIG_TS5500 to 'n' then we should add a dependency
-> like that.
-
-As it is an embedded platform, I don't think CONFIG_TS5500 is enabled
-on distro kernels.
-
-I hope it's a bit clearer. Let me know what is your advice on this.
-
-Best,
-Vivien
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
