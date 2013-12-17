@@ -1,534 +1,362 @@
-From: Laszlo Papp <lpapp@kde.org>
-Subject: [PATCH] gpio: gpio-max665x: add support for the MAX6650-66510 ICs
-Date: Tue, 17 Dec 2013 15:29:31 +0000
-Message-ID: <1387294171-7280-1-git-send-email-lpapp@kde.org>
+From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: Re: [PATCH] Tracing events with GPIOs
+Date: Tue, 17 Dec 2013 18:22:53 +0100
+Message-ID: <CACh+v5NgwyAD5xy-feykUDXpzVUuF2yFxP35TsnGk3r+LFtRPA@mail.gmail.com>
+References: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
+	<52AFA5E0.7040707@hitachi.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:58160 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753408Ab3LQPeK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Dec 2013 10:34:10 -0500
-Received: by mail-wi0-f182.google.com with SMTP id en1so3828117wid.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2013 07:34:09 -0800 (PST)
+Received: from 8.mo4.mail-out.ovh.net ([188.165.33.112]:52077 "EHLO
+	mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753694Ab3LQRaA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Dec 2013 12:30:00 -0500
+Received: from mail98.ha.ovh.net (gw6.ovh.net [213.251.189.206])
+	by mo4.mail-out.ovh.net (Postfix) with SMTP id D8FE8FFA904
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2013 18:26:06 +0100 (CET)
+In-Reply-To: <52AFA5E0.7040707@hitachi.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laszlo Papp <lpapp@kde.org>
+To: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, tom.zanussi@linux.intel.com
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, rostedt@goodmis.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These ICs already have hwmon driver support, but they also have some gpio
-functionality which this addition tries to address. Later on, there would be an
-MFD driver added as well.
+2013/12/17 Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>:
+> (2013/12/17 9:22), Jean-Jacques Hiblot wrote:
+>> This patch implements a new tracing mechanism based on kprobes and using GPIO.
+>> Debugging with GPIO is very common in the embedded world. At least for those of us
+>> fortunate enough to have an oscilloscope or a logic analyzer on their bench...
+>> This is especially true if the issue results of a hardware/sofware interaction.
+>>
+>> Typical use cases are :
+>> * mixed software/hardware debugging. For example when the software detects a
+>>   situation of interest (typically an error) it toggles a GPIO to trigger the
+>>   oscilloscope acquisition.
+>> * direct latency/duration measurements.
+>
+> Ah, it's interesting to me :)
+>
+> And I think this feature should be built on the event triggers which
+> Tom is working on, instead of kprobes directly, because it allows
+> you to take gpio actions on normal tracepoints, and uprobes too :)
+>
 
-Signed-off-by: Laszlo Papp <lpapp@kde.org>
----
- drivers/gpio/Kconfig        |  14 +++
- drivers/gpio/Makefile       |   2 +
- drivers/gpio/gpio-max6651.c |  97 ++++++++++++++
- drivers/gpio/gpio-max665x.c | 299 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/i2c/max6651.h |  40 ++++++
- 5 files changed, 452 insertions(+)
- create mode 100644 drivers/gpio/gpio-max6651.c
- create mode 100644 drivers/gpio/gpio-max665x.c
- create mode 100644 include/linux/i2c/max6651.h
+I'll make a version that uses this framework then. When it's ready
+I'll make some measurements to check the overhead of both solutions.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0f04444..aaa23f4 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -103,6 +103,9 @@ config GPIO_DA9055
- 
- 	  If driver is built as a module it will be called gpio-da9055.
- 
-+config GPIO_MAX665X
-+	tristate
-+
- config GPIO_MAX730X
- 	tristate
- 
-@@ -381,6 +384,17 @@ config GPIO_ARIZONA
- 	help
- 	  Support for GPIOs on Wolfson Arizona class devices.
- 
-+config GPIO_MAX6651
-+	tristate "Maxim MAX6651 GPIO pins"
-+	depends on I2C
-+	select GPIO_MAX665X
-+	help
-+      Say yes here to support the GPIO functionality for the MAX6651 Fan Speed
-+      Regulators and Monitors with SMBus/I2C Compatible Interface IC. It has
-+      five GPIO pins that can be set to various functionality, including the
-+      regular input and output operations. It has an internal pull-up resistor
-+      though within the IC.
-+
- config GPIO_MAX7300
- 	tristate "Maxim MAX7300 GPIO expander"
- 	depends on I2C
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 7971e36..a4d34d6 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -37,6 +37,8 @@ obj-$(CONFIG_ARCH_KS8695)	+= gpio-ks8695.o
- obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
- obj-$(CONFIG_ARCH_LPC32XX)	+= gpio-lpc32xx.o
- obj-$(CONFIG_GPIO_LYNXPOINT)	+= gpio-lynxpoint.o
-+obj-$(CONFIG_GPIO_MAX665X)	+= gpio-max665x.o
-+obj-$(CONFIG_GPIO_MAX6651)	+= gpio-max6651.o
- obj-$(CONFIG_GPIO_MAX730X)	+= gpio-max730x.o
- obj-$(CONFIG_GPIO_MAX7300)	+= gpio-max7300.o
- obj-$(CONFIG_GPIO_MAX7301)	+= gpio-max7301.o
-diff --git a/drivers/gpio/gpio-max6651.c b/drivers/gpio/gpio-max6651.c
-new file mode 100644
-index 0000000..6d3d45c
---- /dev/null
-+++ b/drivers/gpio/gpio-max6651.c
-@@ -0,0 +1,97 @@
-+/*
-+ * Copyright (C) 2013 Laszlo Papp <laszlo.papp@polatis.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Check max665x.c for further details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/mutex.h>
-+#include <linux/i2c.h>
-+#include <linux/i2c/max6651.h>
-+#include <linux/slab.h>
-+
-+#define PIN_NUMBER 5
-+
-+static int max6651_i2c_write(struct device *dev, unsigned int reg,
-+			     unsigned int value)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+
-+	return i2c_smbus_write_byte_data(client, reg, value);
-+}
-+
-+static int max6651_i2c_read(struct device *dev, unsigned int reg)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+
-+	return i2c_smbus_read_byte_data(client, reg);
-+}
-+
-+static int max6651_probe(struct i2c_client *client,
-+			 const struct i2c_device_id *id)
-+{
-+	struct max665x *ts;
-+	int ret;
-+
-+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-+		return -EIO;
-+
-+	ts = devm_kzalloc(&client->dev, sizeof(struct max665x), GFP_KERNEL);
-+	if (!ts)
-+		return -ENOMEM;
-+
-+	ts->read = max6651_i2c_read;
-+	ts->write = max6651_i2c_write;
-+	ts->dev = &client->dev;
-+
-+	ts->chip.ngpio = PIN_NUMBER;
-+
-+	ret = __max665x_probe(ts);
-+	return ret;
-+}
-+
-+static int max6651_remove(struct i2c_client *client)
-+{
-+	return __max665x_remove(&client->dev);
-+}
-+
-+static const struct i2c_device_id max6651_id[] = {
-+	{"max6651", 0},
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(i2c, max6651_id);
-+
-+static struct i2c_driver max6651_driver = {
-+	.driver = {
-+		   .name = "gpio-max6651",
-+		   .owner = THIS_MODULE,
-+		   },
-+	.probe = max6651_probe,
-+	.remove = max6651_remove,
-+	.id_table = max6651_id,
-+};
-+
-+static int __init max6651_init(void)
-+{
-+	return i2c_add_driver(&max6651_driver);
-+}
-+
-+subsys_initcall(max6651_init);
-+
-+static void __exit max6651_exit(void)
-+{
-+	i2c_del_driver(&max6651_driver);
-+}
-+
-+module_exit(max6651_exit);
-+
-+MODULE_AUTHOR("Laszlo Papp");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MAX6651 fan controller");
-diff --git a/drivers/gpio/gpio-max665x.c b/drivers/gpio/gpio-max665x.c
-new file mode 100644
-index 0000000..6f9986e
---- /dev/null
-+++ b/drivers/gpio/gpio-max665x.c
-@@ -0,0 +1,299 @@
-+/**
-+ * Copyright (C) 2013 Laszlo Papp <laszlo.papp@polatis.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/mutex.h>
-+#include <linux/i2c/max6651.h>
-+#include <linux/gpio.h>
-+#include <linux/slab.h>
-+
-+#define MAX665X_REG_GPIO_DEF    0x04
-+#define MAX665X_REG_GPIO_STAT   0x14
-+
-+/*
-+ * Gpio Def register bits
-+ */
-+
-+#define PIN0_CONFIG_MASK    0x03
-+#define PIN1_CONFIG_MASK    0x0C
-+#define PIN2_CONFIG_MASK    0x30
-+#define PIN3_CONFIG_MASK    0x40
-+#define PIN4_CONFIG_MASK    0x80
-+
-+#define PIN0_CONFIG_OUT_LOW  0x02
-+#define PIN1_CONFIG_OUT_LOW  0x08
-+#define PIN2_CONFIG_OUT_LOW  0x20
-+
-+static int max665x_direction_input_or_output_high(struct gpio_chip *chip,
-+						  unsigned offset)
-+{
-+	struct max665x *ts = container_of(chip, struct max665x, chip);
-+	u8 config;
-+	int ret;
-+
-+	mutex_lock(&ts->lock);
-+
-+	config = ts->read(ts->dev, MAX665X_REG_GPIO_DEF);
-+
-+	switch (offset) {
-+	case 0:
-+		config |= PIN0_CONFIG_MASK;
-+		break;
-+	case 1:
-+		config |= PIN1_CONFIG_MASK;
-+		break;
-+	case 2:
-+		config |= PIN2_CONFIG_MASK;
-+		break;
-+	case 3:
-+		config |= PIN3_CONFIG_MASK;
-+		break;
-+	case 4:
-+		config |= PIN4_CONFIG_MASK;
-+		break;
-+	default:
-+		mutex_unlock(&ts->lock);
-+		return -EINVAL;
-+	}
-+
-+	ret = ts->write(ts->dev, MAX665X_REG_GPIO_DEF, config);
-+
-+	mutex_unlock(&ts->lock);
-+
-+	return ret;
-+}
-+
-+static int max665x_direction_output_low(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct max665x *ts = container_of(chip, struct max665x, chip);
-+	u8 config;
-+	int ret;
-+
-+	mutex_lock(&ts->lock);
-+
-+	config = ts->read(ts->dev, MAX665X_REG_GPIO_DEF);
-+
-+	switch (offset) {
-+	case 0:
-+		config &= ~PIN0_CONFIG_MASK;
-+		config |= PIN0_CONFIG_OUT_LOW;
-+		break;
-+	case 1:
-+		config &= ~PIN1_CONFIG_MASK;
-+		config |= PIN1_CONFIG_OUT_LOW;
-+		break;
-+	case 2:
-+		config &= ~PIN2_CONFIG_MASK;
-+		config |= PIN2_CONFIG_OUT_LOW;
-+		break;
-+	case 3:
-+		config &= ~PIN3_CONFIG_MASK;
-+		break;
-+	case 4:
-+		config &= ~PIN4_CONFIG_MASK;
-+		break;
-+	default:
-+		mutex_unlock(&ts->lock);
-+		return -EINVAL;
-+	}
-+
-+	ret = ts->write(ts->dev, MAX665X_REG_GPIO_DEF, config);
-+
-+	mutex_unlock(&ts->lock);
-+
-+	return ret;
-+}
-+
-+static int max665x_direction_input(struct gpio_chip *chip, unsigned offset)
-+{
-+	return max665x_direction_input_or_output_high(chip, offset);
-+}
-+
-+static int max665x_direction_output(struct gpio_chip *chip, unsigned offset,
-+				    int value)
-+{
-+	if (value != 0)
-+		return max665x_direction_input_or_output_high(chip, offset);
-+
-+	return max665x_direction_output_low(chip, offset);
-+}
-+
-+static int max665x_get_level(struct max665x *ts, unsigned offset, unsigned
-+			     gpio_value)
-+{
-+	int ret;
-+
-+	if (offset < 3) {
-+		switch (gpio_value) {
-+		case 0:
-+		case 3:
-+			if (ts->input_pullup_active & (1 << offset))
-+				ret =
-+				    ts->read(ts->dev,
-+					     MAX665X_REG_GPIO_STAT) & (offset +
-+								       1);
-+			else
-+				ret = 1;
-+			break;
-+		case 2:
-+			ret = 0;
-+			break;
-+		default:
-+			ret = 0;
-+			dev_err(ts->dev, "Failed to obtain the gpio %d value\n",
-+				offset);
-+			break;
-+		}
-+	} else {
-+		if (gpio_value) {
-+			if (ts->input_pullup_active & (1 << offset))
-+				ret =
-+				    ts->read(ts->dev,
-+					     MAX665X_REG_GPIO_STAT) & (offset +
-+								       1);
-+			else
-+				ret = 1;
-+		} else {
-+			ret = 0;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int max665x_get(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct max665x *ts = container_of(chip, struct max665x, chip);
-+	int config, level = -EINVAL;
-+
-+	mutex_lock(&ts->lock);
-+
-+	config = ts->read(ts->dev, MAX665X_REG_GPIO_DEF);
-+
-+	switch (offset) {
-+	case 0:
-+		level =
-+		    max665x_get_level(ts, offset, config & PIN0_CONFIG_MASK);
-+		break;
-+	case 1:
-+		level =
-+		    max665x_get_level(ts, offset,
-+				      (config & PIN1_CONFIG_MASK) >> 2);
-+		break;
-+	case 2:
-+		level =
-+		    max665x_get_level(ts, offset,
-+				      (config & PIN2_CONFIG_MASK) >> 4);
-+		break;
-+	case 3:
-+		level =
-+		    max665x_get_level(ts, offset,
-+				      (config & PIN3_CONFIG_MASK) >> 5);
-+		break;
-+	case 4:
-+		level =
-+		    max665x_get_level(ts, offset,
-+				      (config & PIN3_CONFIG_MASK) >> 6);
-+		break;
-+	default:
-+		mutex_unlock(&ts->lock);
-+		return -EINVAL;
-+	}
-+
-+	mutex_unlock(&ts->lock);
-+
-+	return level;
-+}
-+
-+static void max665x_set(struct gpio_chip *chip, unsigned offset, int value)
-+{
-+	if (value != 0)
-+		max665x_direction_input_or_output_high(chip, offset);
-+	else
-+		max665x_direction_output_low(chip, offset);
-+}
-+
-+int __max665x_probe(struct max665x *ts)
-+{
-+	struct device *dev = ts->dev;
-+	struct max665x_platform_data *pdata;
-+	int offset, ret;
-+
-+	pdata = dev_get_platdata(dev);
-+
-+	mutex_init(&ts->lock);
-+	dev_set_drvdata(dev, ts);
-+
-+	if (pdata) {
-+		ts->input_pullup_active = pdata->input_pullup_active;
-+		ts->chip.base = pdata->base;
-+	} else {
-+		ts->chip.base = -1;
-+	}
-+	ts->chip.label = dev->driver->name;
-+
-+	ts->chip.direction_input = max665x_direction_input;
-+	ts->chip.get = max665x_get;
-+	ts->chip.direction_output = max665x_direction_output;
-+	ts->chip.set = max665x_set;
-+
-+	ts->chip.can_sleep = 1;
-+	ts->chip.dev = dev;
-+	ts->chip.owner = THIS_MODULE;
-+
-+	/*
-+	 * initialize input pullups according to platform data.
-+	 */
-+
-+	for (offset = 0; offset < 5; ++offset) {
-+		ret = max665x_direction_input(&ts->chip, offset);
-+
-+		if (ret)
-+			goto exit_destroy;
-+	}
-+
-+	ret = gpiochip_add(&ts->chip);
-+	if (ret)
-+		goto exit_destroy;
-+
-+	return ret;
-+
-+exit_destroy:
-+	dev_set_drvdata(dev, NULL);
-+	mutex_destroy(&ts->lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(__max665x_probe);
-+
-+int __max665x_remove(struct device *dev)
-+{
-+	struct max665x *ts = dev_get_drvdata(dev);
-+	int ret;
-+
-+	if (ts == NULL)
-+		return -ENODEV;
-+
-+	dev_set_drvdata(dev, NULL);
-+
-+	ret = gpiochip_remove(&ts->chip);
-+	if (!ret) {
-+		mutex_destroy(&ts->lock);
-+		kfree(ts);
-+	} else
-+		dev_err(dev, "Failed to remove GPIO controller: %d\n", ret);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(__max665x_remove);
-+
-+MODULE_AUTHOR("Laszlo Papp");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MAX665x GPIO-Expanders, generic parts");
-diff --git a/include/linux/i2c/max6651.h b/include/linux/i2c/max6651.h
-new file mode 100644
-index 0000000..a0e4c0e
---- /dev/null
-+++ b/include/linux/i2c/max6651.h
-@@ -0,0 +1,40 @@
-+/*
-+ * Copyright (C) 2013 Laszlo Papp <laszlo.papp@polatis.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Check max665x.c for further details.
-+ */
-+
-+#ifndef LINUX_I2C_MAX6651_H
-+#define LINUX_I2C_MAX6651_H
-+
-+#include <linux/gpio.h>
-+
-+struct max665x {
-+	struct mutex lock;
-+	u8 input_pullup_active;
-+	struct gpio_chip chip;
-+	struct device *dev;
-+	int (*write) (struct device *dev, unsigned int reg,
-+		      unsigned int value);
-+	int (*read) (struct device *dev, unsigned int reg);
-+};
-+
-+struct max665x_platform_data {
-+	/* number assigned to the first GPIO */
-+	unsigned base;
-+	/*
-+	 * bitmask controlling the pullup configuration,
-+	 *
-+     * _note_ the 3 highest bits are unused, because there can be maximum up
-+	 * to five gpio pins on the MAX6651 chip (three on MAX6650).
-+	 */
-+	u8 input_pullup_active;
-+};
-+
-+extern int __max665x_remove(struct device *dev);
-+extern int __max665x_probe(struct max665x *ts);
-+#endif
--- 
-1.8.5.1
+Tom,
+is git://git.yoctoproject.org/linux-yocto-contrib
+tzanussi/event-triggers-v11 the right starting point ?
 
+Thanks,
+
+Jean-Jacques
+
+> Thank you!
+>
+>>
+>> examples:
+>> To trig the oscilloscope whenever a mmc command error:
+>>   echo "p:my_mmc_blk_error mmc_blk_cmd_error gpiopulse@13" > /sys/kernel/debug/tracing/kprobe_events
+>>   echo 1 > /sys/kernel/debug/tracing/events/kprobes/my_mmc_blk_error/enable
+>>
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+>> ---
+>>  kernel/trace/Kconfig        |  12 ++++
+>>  kernel/trace/trace_kprobe.c | 167 +++++++++++++++++++++++++++++++++++++++++++-
+>>  2 files changed, 177 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+>> index 015f85a..4228768 100644
+>> --- a/kernel/trace/Kconfig
+>> +++ b/kernel/trace/Kconfig
+>> @@ -420,6 +420,18 @@ config KPROBE_EVENT
+>>         This option is also required by perf-probe subcommand of perf tools.
+>>         If you want to use perf tools, this option is strongly recommended.
+>>
+>> +config KPROBE_EVENT_GPIO
+>> +     depends on KPROBE_EVENT
+>> +     depends on GPIOLIB
+>> +     bool "Enable kprobes-based tracing of events via GPIO"
+>> +     default n
+>> +     help
+>> +             This allows the user to use GPIOs as a tracing tool.The primary
+>> +             purpose of this option is to allow the user to trigger an
+>> +             oscilloscope on software events.
+>> +             The GPIO can be set, cleared, toggled, or pulsed when the event
+>> +             is hit.
+>> +
+>>  config UPROBE_EVENT
+>>       bool "Enable uprobes-based dynamic events"
+>>       depends on ARCH_SUPPORTS_UPROBES
+>> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+>> index dae9541..5d297f5 100644
+>> --- a/kernel/trace/trace_kprobe.c
+>> +++ b/kernel/trace/trace_kprobe.c
+>> @@ -19,6 +19,7 @@
+>>
+>>  #include <linux/module.h>
+>>  #include <linux/uaccess.h>
+>> +#include <linux/gpio.h>
+>>
+>>  #include "trace_probe.h"
+>>
+>> @@ -27,6 +28,33 @@
+>>  /**
+>>   * Kprobe event core functions
+>>   */
+>> +#ifdef CONFIG_KPROBE_EVENT_GPIO
+>> +#define TP_GPIO_UNDEFINED      0
+>> +#define TP_GPIO_CMD_SET                1
+>> +#define TP_GPIO_CMD_CLEAR      2
+>> +#define TP_GPIO_CMD_TOGGLE     3
+>> +#define TP_GPIO_CMD_PULSE      4
+>> +#define TP_GPIO_CMD_PULSE_HIGH 5
+>> +#define TP_GPIO_CMD_PULSE_LOW  6
+>> +
+>> +static const struct {
+>> +     const char *name;
+>> +     int action;
+>> +} gpio_actions[] = {
+>> +     {"gpioset", TP_GPIO_CMD_SET},
+>> +     {"gpioclear", TP_GPIO_CMD_CLEAR},
+>> +     {"gpiotoggle", TP_GPIO_CMD_TOGGLE},
+>> +     {"gpiopulse", TP_GPIO_CMD_PULSE},
+>> +     {"gpiopulsehigh", TP_GPIO_CMD_PULSE_HIGH},
+>> +     {"gpiopulselow", TP_GPIO_CMD_PULSE_LOW},
+>> +};
+>> +
+>> +struct gpio_trace {
+>> +     int gpio;
+>> +     int action;
+>> +};
+>> +#endif
+>> +
+>>  struct trace_probe {
+>>       struct list_head        list;
+>>       struct kretprobe        rp;     /* Use rp.kp for kprobe use */
+>> @@ -38,6 +66,9 @@ struct trace_probe {
+>>       struct list_head        files;
+>>       ssize_t                 size;           /* trace entry size */
+>>       unsigned int            nr_args;
+>> +#ifdef CONFIG_KPROBE_EVENT_GPIO
+>> +     struct gpio_trace               gpio_trace;
+>> +#endif
+>>       struct probe_arg        args[];
+>>  };
+>>
+>> @@ -164,10 +195,24 @@ error:
+>>       return ERR_PTR(ret);
+>>  }
+>>
+>> +static struct trace_probe *find_gpio_probe(int gpio)
+>> +{
+>> +     struct trace_probe *tp;
+>> +
+>> +     list_for_each_entry(tp, &probe_list, list)
+>> +     if ((tp->gpio_trace.action) && (tp->gpio_trace.gpio == gpio))
+>> +             return tp;
+>> +     return NULL;
+>> +}
+>> +
+>>  static void free_trace_probe(struct trace_probe *tp)
+>>  {
+>>       int i;
+>>
+>> +#ifdef CONFIG_KPROBE_EVENT_GPIO
+>> +     if (tp->gpio_trace.action && !find_gpio_probe(tp->gpio_trace.gpio))
+>> +             gpio_free(tp->gpio_trace.gpio);
+>> +#endif
+>>       for (i = 0; i < tp->nr_args; i++)
+>>               traceprobe_free_probe_arg(&tp->args[i]);
+>>
+>> @@ -435,8 +480,14 @@ static int create_trace_probe(int argc, char **argv)
+>>  {
+>>       /*
+>>        * Argument syntax:
+>> -      *  - Add kprobe: p[:[GRP/]EVENT] [MOD:]KSYM[+OFFS]|KADDR [FETCHARGS]
+>> -      *  - Add kretprobe: r[:[GRP/]EVENT] [MOD:]KSYM[+0] [FETCHARGS]
+>> +      *  - Add kprobe: p[:[GRP/]EVENT] [MOD:]KSYM[+OFFS]|KADDR
+>> +      *                [GPIOACTION@GPIONUM] [FETCHARGS]
+>> +      *  - Add kretprobe: r[:[GRP/]EVENT] [MOD:]KSYM[+0]
+>> +      *                   [GPIOACTION@GPIONUM] [FETCHARGS]
+>> +      * Gpio tracing:
+>> +      *   gpio action can be : gpioset, gpioclear, gpiotoggle, gpiopulse,
+>> +      *                        gpiopulsehigh and gpiopulselow
+>> +      *   gpionum is the id of the gpio
+>>        * Fetch args:
+>>        *  $retval     : fetch return value
+>>        *  $stack      : fetch stack address
+>> @@ -459,6 +510,9 @@ static int create_trace_probe(int argc, char **argv)
+>>       unsigned long offset = 0;
+>>       void *addr = NULL;
+>>       char buf[MAX_EVENT_NAME_LEN];
+>> +#ifdef CONFIG_KPROBE_EVENT_GPIO
+>> +     int len;
+>> +#endif
+>>
+>>       /* argc must be >= 1 */
+>>       if (argv[0][0] == 'p')
+>> @@ -541,6 +595,7 @@ static int create_trace_probe(int argc, char **argv)
+>>                       return -EINVAL;
+>>               }
+>>       }
+>> +
+>>       argc -= 2; argv += 2;
+>>
+>>       /* setup a probe */
+>> @@ -562,6 +617,66 @@ static int create_trace_probe(int argc, char **argv)
+>>               return PTR_ERR(tp);
+>>       }
+>>
+>> +#ifdef CONFIG_KPROBE_EVENT_GPIO
+>> +     /* parse the optionnal gpio action argument */
+>> +     for (i = 0; argc && (i < ARRAY_SIZE(gpio_actions)); i++) {
+>> +             len = strlen(gpio_actions[i].name);
+>> +             if (strncmp(argv[0], gpio_actions[i].name, len) == 0)
+>> +                     break;
+>> +     }
+>> +
+>> +     if (argc && (i < ARRAY_SIZE(gpio_actions))) {
+>> +             int gpio;
+>> +             unsigned long ul;
+>> +             int gpio_requested = 0;
+>> +             ret = -EINVAL;
+>> +             if (argv[0][len] != '@') {
+>> +                     pr_info("Syntax error. wrong gpio syntax\n");
+>> +                     goto error;
+>> +             }
+>> +
+>> +             if (kstrtoul(&argv[0][len+1], 0, &ul)) {
+>> +                     pr_info("Failed to parse gpio number.\n");
+>> +                     goto error;
+>> +             }
+>> +             gpio = ul;
+>> +
+>> +             if (!gpio_is_valid(gpio)) {
+>> +                     pr_info("gpio %d is not valid.\n", gpio);
+>> +                     goto error;
+>> +             }
+>> +
+>> +             if (gpio_cansleep(gpio))
+>> +                     pr_info("gpio %d can sleep. This may break your"
+>> +                             "kernel!!!!!!\n", gpio);
+>> +
+>> +             if (!find_gpio_probe(gpio)) {
+>> +                     ret = gpio_request(gpio, event);
+>> +                     if (ret) {
+>> +                             pr_info("can't request gpio %d.\n", gpio);
+>> +                             goto error;
+>> +                     }
+>> +                     gpio_requested = 1;
+>> +             }
+>> +
+>> +             if ((gpio_actions[i].action == TP_GPIO_CMD_CLEAR) ||
+>> +                     (gpio_actions[i].action == TP_GPIO_CMD_PULSE_LOW))
+>> +                     ret = gpio_direction_output(gpio, 1);
+>> +             else
+>> +                     ret = gpio_direction_output(gpio, 0);
+>> +             if (ret) {
+>> +                     pr_info("can't make gpio %d an output.\n", gpio);
+>> +                     if (gpio_requested)
+>> +                             gpio_free(gpio);
+>> +                     goto error;
+>> +             }
+>> +
+>> +             tp->gpio_trace.gpio = gpio;
+>> +             tp->gpio_trace.action = gpio_actions[i].action;
+>> +             argc -= 1; argv += 1;
+>> +     }
+>> +#endif
+>> +
+>>       /* parse arguments */
+>>       ret = 0;
+>>       for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
+>> @@ -1145,12 +1260,54 @@ kretprobe_perf_func(struct trace_probe *tp, struct kretprobe_instance *ri,
+>>  }
+>>  #endif       /* CONFIG_PERF_EVENTS */
+>>
+>> +#ifdef CONFIG_KPROBE_EVENT_GPIO
+>> +static __kprobes void kprobe_gpio_take_action(int gpio, int action)
+>> +{
+>> +     int val;
+>> +     switch (action) {
+>> +     case TP_GPIO_CMD_PULSE_HIGH:
+>> +             gpio_set_value(gpio, 1);
+>> +             /* intentionnaly don't break here */
+>> +     case TP_GPIO_CMD_CLEAR:
+>> +             gpio_set_value(gpio, 0);
+>> +     break;
+>> +
+>> +     case TP_GPIO_CMD_PULSE_LOW:
+>> +             gpio_set_value(gpio, 0);
+>> +             /* intentionnaly don't break here */
+>> +     case TP_GPIO_CMD_SET:
+>> +             gpio_set_value(gpio, 1);
+>> +     break;
+>> +
+>> +     case TP_GPIO_CMD_TOGGLE:
+>> +             val = gpio_get_value(gpio);
+>> +             gpio_set_value(gpio, val ? 0 : 1);
+>> +     break;
+>> +
+>> +     case TP_GPIO_CMD_PULSE:
+>> +             val = gpio_get_value(gpio);
+>> +             gpio_set_value(gpio, val ? 0 : 1);
+>> +             gpio_set_value(gpio, val);
+>> +     break;
+>> +     }
+>> +}
+>> +
+>>  /*
+>>   * called by perf_trace_init() or __ftrace_set_clr_event() under event_mutex.
+>>   *
+>>   * kprobe_trace_self_tests_init() does enable_trace_probe/disable_trace_probe
+>>   * lockless, but we can't race with this __init function.
+>>   */
+>> +/* Kprobe gpio handler */
+>> +static inline __kprobes void kprobe_gpio_func(struct trace_probe *tp,
+>> +                                           struct pt_regs *regs)
+>> +{
+>> +     if (tp->gpio_trace.action)
+>> +             kprobe_gpio_take_action(tp->gpio_trace.gpio,
+>> +                                     tp->gpio_trace.action);
+>> +}
+>> +#endif /* CONFIG_KPROBE_EVENT_GPIO */
+>> +
+>>  static __kprobes
+>>  int kprobe_register(struct ftrace_event_call *event,
+>>                   enum trace_reg type, void *data)
+>> @@ -1186,6 +1343,9 @@ int kprobe_dispatcher(struct kprobe *kp, struct pt_regs *regs)
+>>
+>>       tp->nhit++;
+>>
+>> +#ifdef CONFIG_KPROBE_EVENT_GPIO
+>> +     kprobe_gpio_func(tp, regs);
+>> +#endif
+>>       if (tp->flags & TP_FLAG_TRACE)
+>>               kprobe_trace_func(tp, regs);
+>>  #ifdef CONFIG_PERF_EVENTS
+>> @@ -1202,6 +1362,9 @@ int kretprobe_dispatcher(struct kretprobe_instance *ri, struct pt_regs *regs)
+>>
+>>       tp->nhit++;
+>>
+>> +#ifdef CONFIG_KPROBE_EVENT_GPIO
+>> +     kprobe_gpio_func(tp, regs);
+>> +#endif
+>>       if (tp->flags & TP_FLAG_TRACE)
+>>               kretprobe_trace_func(tp, ri, regs);
+>>  #ifdef CONFIG_PERF_EVENTS
+>>
+>
+>
+> --
+> Masami HIRAMATSU
+> IT Management Research Dept. Linux Technology Center
+> Hitachi, Ltd., Yokohama Research Laboratory
+> E-mail: masami.hiramatsu.pt@hitachi.com
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
