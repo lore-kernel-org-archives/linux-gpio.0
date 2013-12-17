@@ -1,52 +1,92 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 6/6] ARM: davinci: da850 evm: add GPIO pinumux entries
- DT node
-Date: Tue, 17 Dec 2013 11:20:07 +0100
-Message-ID: <CACRpkdZQ9Q1SxXZ4FPpTN_swUBCyZd8CzNzVzEm87vjYZsQ2+Q@mail.gmail.com>
-References: <1385057731-4348-1-git-send-email-prabhakar.csengg@gmail.com>
-	<1385057731-4348-7-git-send-email-prabhakar.csengg@gmail.com>
-	<52ADAB0E.4020800@ti.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: [PATCH] gpio: xtensa: depend on HAVE_XTENSA_GPIO32
+Date: Tue, 17 Dec 2013 18:24:18 +0400
+Message-ID: <CAMo8BfJ1ZWdHzt1TfoT_bqrw30QhL-D-HEt+9TZuaQ2=r6adUA@mail.gmail.com>
+References: <70c25715a89328b38e636f5f1f84ca34e4590d58.1387177140.git.baruch@tkos.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:36942 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750929Ab3LQKUH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Dec 2013 05:20:07 -0500
-Received: by mail-oa0-f42.google.com with SMTP id i4so6397850oah.29
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2013 02:20:07 -0800 (PST)
-In-Reply-To: <52ADAB0E.4020800@ti.com>
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:45994 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751274Ab3LQOYT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Dec 2013 09:24:19 -0500
+Received: by mail-oa0-f46.google.com with SMTP id o6so6595201oag.19
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2013 06:24:18 -0800 (PST)
+In-Reply-To: <70c25715a89328b38e636f5f1f84ca34e4590d58.1387177140.git.baruch@tkos.co.il>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Prabhakar Lad <prabhakar.csengg@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, LKML <linux-kernel@vger.kernel.org>, DLOS <davinci-linux-open-source@linux.davincidsp.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Grant Likely <grant.likely@linaro.org>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chris Zankel <chris@zankel.net>, linux-gpio@vger.kernel.org, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
 
-On Sun, Dec 15, 2013 at 2:13 PM, Sekhar Nori <nsekhar@ti.com> wrote:
-> On Thursday 21 November 2013 11:45 PM, Prabhakar Lad wrote:
->> From: KV Sujith <sujithkv@ti.com>
+Hi Baruch,
 
->> +
->> +                     gpio_pins: pinmux_gpio_pins {
->> +                             pinctrl-single,bits = <
->> +                                     /* GPIO2_4 GPIO2_6 */
->> +                                     0x18 0x00008080 0x0000f0f0
->> +                                     /* GPIO2_8 GPIO2_15 */
->> +                                     0x14 0x80000008 0xf000000f
->> +                                     /* GPIO3_12 GPIO3_13 */
->> +                                     0x1C 0x00008800 0x0000ff00
->> +                                     /* GPIO4_0 GPIO4_1 */
->> +                                     0x28 0x88000000 0xff000000
->> +                                     /* GPIO6_9 GPIO6_10 GPIO6_13 */
->> +                                     0x34 0x08800800 0x0ff00f00
->> +                             >;
->> +                     };
->>               };
+On Mon, Dec 16, 2013 at 11:05 AM, Baruch Siach <baruch@tkos.co.il> wrote:
+> Prevent build failure when the selected variant does not support GPIO32.
 >
-> Shouldn't these pinmux entries be part of actual device
-> node which needs them to be muxed this way?
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+> Chris, Max,
+>
+> I assume that the gpio tree is the natural path for this patch as it carries
+> the driver already. Please ack the arch/xtensa part.
+> ---
+>  arch/xtensa/Kconfig  | 3 +++
+>  drivers/gpio/Kconfig | 4 ++++
+>  2 files changed, 7 insertions(+)
+>
+> diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+> index 65ffc09..6bd4ee3 100644
+> --- a/arch/xtensa/Kconfig
+> +++ b/arch/xtensa/Kconfig
+> @@ -74,16 +74,19 @@ choice
+>  config XTENSA_VARIANT_FSF
+>         bool "fsf - default (not generic) configuration"
+>         select MMU
+> +       select HAVE_XTENSA_GPIO32
+>
+>  config XTENSA_VARIANT_DC232B
+>         bool "dc232b - Diamond 232L Standard Core Rev.B (LE)"
+>         select MMU
+> +       select HAVE_XTENSA_GPIO32
+>         help
+>           This variant refers to Tensilica's Diamond 232L Standard core Rev.B (LE).
+>
+>  config XTENSA_VARIANT_DC233C
+>         bool "dc233c - Diamond 233L Standard Core Rev.C (LE)"
+>         select MMU
+> +       select HAVE_XTENSA_GPIO32
+>         help
+>           This variant refers to Tensilica's Diamond 233L Standard core Rev.C (LE).
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 43c45ea..766accb 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -290,9 +290,13 @@ config GPIO_XILINX
+>         help
+>           Say yes here to support the Xilinx FPGA GPIO device
+>
+> +config HAVE_XTENSA_GPIO32
+> +       bool
+> +
 
-The usual way to do it is to set up as states for the device,
-or as a hog (on the pin controller itself).
+I'm not sure why this symbol should be defined in the drivers/gpio/Kconfig
+and not in the arch/xtensa/Kconfig, after all it's a CPU property.
+So if you agree please move it there. With that change
 
-Yours,
-Linus Walleij
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+
+>  config GPIO_XTENSA
+>         bool "Xtensa GPIO32 support"
+>         depends on XTENSA
+> +       depends on HAVE_XTENSA_GPIO32
+>         depends on !SMP
+>         help
+>           Say yes here to support the Xtensa internal GPIO32 IMPWIRE (input)
+> --
+> 1.8.5.1
+>
+
+-- 
+Thanks.
+-- Max
