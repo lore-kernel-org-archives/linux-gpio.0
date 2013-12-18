@@ -1,56 +1,76 @@
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH] Tracing events with GPIOs
-Date: Tue, 17 Dec 2013 14:45:51 -0600
-Message-ID: <1387313151.3051.39.camel@empanada>
-References: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
-	 <52AFA5E0.7040707@hitachi.com>
-	 <CACh+v5NgwyAD5xy-feykUDXpzVUuF2yFxP35TsnGk3r+LFtRPA@mail.gmail.com>
-	 <1387304970.3051.35.camel@empanada>
-	 <20131217140502.2aed31aa@gandalf.local.home>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH v2] gpio: xtensa: depend on HAVE_XTENSA_GPIO32
+Date: Wed, 18 Dec 2013 09:10:29 +0200
+Message-ID: <bfc8635f56992aa8865dc58810a4f9872b3a0c86.1387350629.git.baruch@tkos.co.il>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:3442 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754007Ab3LQUpx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 17 Dec 2013 15:45:53 -0500
-In-Reply-To: <20131217140502.2aed31aa@gandalf.local.home>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:43548 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750855Ab3LRHLm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 18 Dec 2013 02:11:42 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-xtensa@linux-xtensa.org, Baruch Siach <baruch@tkos.co.il>
 
-On Tue, 2013-12-17 at 14:05 -0500, Steven Rostedt wrote:
-> On Tue, 17 Dec 2013 12:29:30 -0600
-> Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
-> 
-> > > Tom,
-> > > is git://git.yoctoproject.org/linux-yocto-contrib
-> > > tzanussi/event-triggers-v11 the right starting point ?
-> > > 
-> > 
-> > Yep, that's the last iteration - I haven't changed anything since then.
-> > 
-> 
-> Is this the same as the last patch series you sent out? I started
-> testing them again last week, but they failed some of my tests.
+Prevent build failure when the selected variant does not support GPIO32.
 
-Yeah, that's the same patchset.  I tested it here and didn't see any
-problems but I guess your tests must be different/more rigorous - it
-would be good to know what failed.  I could also run your test suite
-here if that would help.
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+v2:
+   Move the HAVE_XTENSA_GPIO32 definition to arch/xtensa/Kconfig (Max)
+   Add Max's ack
+---
+ arch/xtensa/Kconfig  | 6 ++++++
+ drivers/gpio/Kconfig | 1 +
+ 2 files changed, 7 insertions(+)
 
-> Unfortunately, I didn't get a chance to look into why. I'm hoping to
-> get that series out to my for-next branch by end of the week, as I'll
-> be taking two weeks off starting next week.
-> 
-> Year end crap is piling up, preventing me from getting real work
-> done ;-)
-
-I know what you mean, same here.  ;-)
-
-> 
-> -- Steve
-
+diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+index 65ffc09..8462f32 100644
+--- a/arch/xtensa/Kconfig
++++ b/arch/xtensa/Kconfig
+@@ -65,6 +65,9 @@ config MMU
+ config VARIANT_IRQ_SWITCH
+ 	def_bool n
+ 
++config HAVE_XTENSA_GPIO32
++	def_bool n
++
+ menu "Processor type and features"
+ 
+ choice
+@@ -74,16 +77,19 @@ choice
+ config XTENSA_VARIANT_FSF
+ 	bool "fsf - default (not generic) configuration"
+ 	select MMU
++	select HAVE_XTENSA_GPIO32
+ 
+ config XTENSA_VARIANT_DC232B
+ 	bool "dc232b - Diamond 232L Standard Core Rev.B (LE)"
+ 	select MMU
++	select HAVE_XTENSA_GPIO32
+ 	help
+ 	  This variant refers to Tensilica's Diamond 232L Standard core Rev.B (LE).
+ 
+ config XTENSA_VARIANT_DC233C
+ 	bool "dc233c - Diamond 233L Standard Core Rev.C (LE)"
+ 	select MMU
++	select HAVE_XTENSA_GPIO32
+ 	help
+ 	  This variant refers to Tensilica's Diamond 233L Standard core Rev.C (LE).
+ 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 43c45ea..ae94e96 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -293,6 +293,7 @@ config GPIO_XILINX
+ config GPIO_XTENSA
+ 	bool "Xtensa GPIO32 support"
+ 	depends on XTENSA
++	depends on HAVE_XTENSA_GPIO32
+ 	depends on !SMP
+ 	help
+ 	  Say yes here to support the Xtensa internal GPIO32 IMPWIRE (input)
+-- 
+1.8.5.1
 
