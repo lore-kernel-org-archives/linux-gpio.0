@@ -1,76 +1,53 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH v2] gpio: xtensa: depend on HAVE_XTENSA_GPIO32
-Date: Wed, 18 Dec 2013 09:10:29 +0200
-Message-ID: <bfc8635f56992aa8865dc58810a4f9872b3a0c86.1387350629.git.baruch@tkos.co.il>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:43548 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750855Ab3LRHLm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 18 Dec 2013 02:11:42 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH v2 0/2] gpio: davinci: reuse for keystone arch
+Date: Wed, 18 Dec 2013 12:07:50 +0200
+Message-ID: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-xtensa@linux-xtensa.org, Baruch Siach <baruch@tkos.co.il>
 
-Prevent build failure when the selected variant does not support GPIO32.
+This series is intended to update Davinci GPIO driver and reuse
+it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+Keystone GPIO IP: supports:
+- up to 32 GPIO lines;
+- only unbanked irqs;
 
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
-v2:
-   Move the HAVE_XTENSA_GPIO32 definition to arch/xtensa/Kconfig (Max)
-   Add Max's ack
----
- arch/xtensa/Kconfig  | 6 ++++++
- drivers/gpio/Kconfig | 1 +
- 2 files changed, 7 insertions(+)
+See Documentation:
+Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
 
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index 65ffc09..8462f32 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -65,6 +65,9 @@ config MMU
- config VARIANT_IRQ_SWITCH
- 	def_bool n
- 
-+config HAVE_XTENSA_GPIO32
-+	def_bool n
-+
- menu "Processor type and features"
- 
- choice
-@@ -74,16 +77,19 @@ choice
- config XTENSA_VARIANT_FSF
- 	bool "fsf - default (not generic) configuration"
- 	select MMU
-+	select HAVE_XTENSA_GPIO32
- 
- config XTENSA_VARIANT_DC232B
- 	bool "dc232b - Diamond 232L Standard Core Rev.B (LE)"
- 	select MMU
-+	select HAVE_XTENSA_GPIO32
- 	help
- 	  This variant refers to Tensilica's Diamond 232L Standard core Rev.B (LE).
- 
- config XTENSA_VARIANT_DC233C
- 	bool "dc233c - Diamond 233L Standard Core Rev.C (LE)"
- 	select MMU
-+	select HAVE_XTENSA_GPIO32
- 	help
- 	  This variant refers to Tensilica's Diamond 233L Standard core Rev.C (LE).
- 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 43c45ea..ae94e96 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -293,6 +293,7 @@ config GPIO_XILINX
- config GPIO_XTENSA
- 	bool "Xtensa GPIO32 support"
- 	depends on XTENSA
-+	depends on HAVE_XTENSA_GPIO32
- 	depends on !SMP
- 	help
- 	  Say yes here to support the Xtensa internal GPIO32 IMPWIRE (input)
+This series based on:
+https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
+
+Changes in v2:
+- minor comments applied, no functional changes
+
+v1: https://lkml.org/lkml/2013/12/12/366
+
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+
+Grygorii Strashko (2):
+  gpio: davinci: don't create irq_domain in case of unbanked irqs
+  gpio: davinci: reuse for Keystone SoC
+
+ .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
+ drivers/gpio/gpio-davinci.c                        |   80 ++++++++++++++------
+ 2 files changed, 59 insertions(+), 25 deletions(-)
+
 -- 
-1.8.5.1
-
+1.7.9.5
