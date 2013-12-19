@@ -1,40 +1,72 @@
-From: Rohit Vaswani <rvaswani@codeaurora.org>
-Subject: Re: [PATCH 1/2] gpio: msm: Fix irq mask/unmask by writing bits instead
- of numbers
-Date: Wed, 18 Dec 2013 17:27:49 -0800
-Message-ID: <52B24B95.8010004@codeaurora.org>
-References: <1386717544-478-1-git-send-email-sboyd@codeaurora.org> <CACRpkdY8W8tGVH-Os5neeFfHWjojdB5fBbjgWcsWkiMyJj=YAA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] Tracing events with GPIOs
+Date: Thu, 19 Dec 2013 15:52:47 +0900
+Message-ID: <CAAVeFuKAGfnnsbtBg=zfmciyMdZHgrX_EpecqPjG=oO6rZdWag@mail.gmail.com>
+References: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY8W8tGVH-Os5neeFfHWjojdB5fBbjgWcsWkiMyJj=YAA@mail.gmail.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <Bjorn.Andersson@sonymobile.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, masami.hiramatsu.pt@hitachi.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 12/12/2013 11:02 AM, Linus Walleij wrote:
-> On Wed, Dec 11, 2013 at 12:19 AM, Stephen Boyd <sboyd@codeaurora.org>=
- wrote:
+On Tue, Dec 17, 2013 at 9:22 AM, Jean-Jacques Hiblot
+<jjhiblot@traphandler.com> wrote:
 >
->> We should be writing bits here but instead we're writing the
->> numbers that correspond to the bits we want to write. Fix it by
->> wrapping the numbers in the BIT() macro. This fixes gpios acting
->> as interrupts.
->>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> I've applied this for fixes and tagged for stable.
-> Bj=F6rn, Rohit: OK?
+> This patch implements a new tracing mechanism based on kprobes and using GPIO.
+> Debugging with GPIO is very common in the embedded world. At least for those of us
+> fortunate enough to have an oscilloscope or a logic analyzer on their bench...
+> This is especially true if the issue results of a hardware/sofware interaction.
 >
-> Yours,
-> Linus Walleij
-Acked-by: Rohit Vaswani <rvaswani@codeaurora.org>
+> Typical use cases are :
+> * mixed software/hardware debugging. For example when the software detects a
+>   situation of interest (typically an error) it toggles a GPIO to trigger the
+>   oscilloscope acquisition.
+> * direct latency/duration measurements.
+>
+> examples:
+> To trig the oscilloscope whenever a mmc command error:
+>   echo "p:my_mmc_blk_error mmc_blk_cmd_error gpiopulse@13" > /sys/kernel/debug/tracing/kprobe_events
+>   echo 1 > /sys/kernel/debug/tracing/events/kprobes/my_mmc_blk_error/enable
+
+I do like this idea, however I wonder if you could try and make it use
+the new gpio descriptor API (see Documentation/gpio/) instead of the
+GPIO integers we are trying to deprecate (well ok, we just *started*
+claiming they are deprecated).
+
+This would probably make things a little bit more complicated on your
+side, due to the fact the gpiod API is new and probably does not cover
+all your needs. But it would also make your approach safer and more
+future proof, on top of helping us refine gpiod for various use cases.
+
+The problems I can see so far:
+
+- Using gpiod, GPIOs are not specified as integers, but are typically
+mapped to a given (device, function) pair (device can be NULL) using
+device tree/platform data/ACPI and obtained by the corresponding
+device driver through gpiod_get(). You would need to find a different
+way to specify GPIOs, maybe using the gpio_chip's label and the GPIO
+hardware number.
+
+- Even if you do so, there is currently no way to arbitrarily obtain a
+GPIO that has not been explicitly mapped to a (device, function), and
+IIUC you need to specify the tracing GPIO freely from user-space. This
+hints that we will need to add a function that is sensibly the same as
+gpio_request_one() to the gpiod API, but I wonder if that does not
+defeats the purpose somehow.
+
+So using gpiod we would have the dual problem of how to represent the
+GPIO you need from user-space, and how you can safely obtain it. It
+would be interesting to hear what Linus thinks about it, and if he has
+better ideas about how we could solve these issues (as he usually has
+;) ).
+
+(note that it is *not* a hard requirement to use gpiod over the legacy
+integer API, but considering this is the direction we are taking, it
+would be nice to consider it and see how we could solve the issues
+mentioned above)
 
 Thanks,
-Rohit Vaswani
-
---=20
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora For=
-um, hosted by The Linux Foundation
+Alex.
