@@ -1,34 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] gpio: davinci: reuse for keystone arch
-Date: Fri, 20 Dec 2013 10:39:01 +0100
-Message-ID: <CACRpkdZPsw7oEd8vUs9qX0pGc8hq1eNh+SVb2nWsQ=9tVrpqjQ@mail.gmail.com>
-References: <1386871973-26762-1-git-send-email-grygorii.strashko@ti.com>
-	<52ACAD50.6060003@ti.com>
-	<52ADB3BC.3080605@ti.com>
-	<52AF17A6.3060007@ti.com>
-	<52AF2CDB.3080406@ti.com>
+Subject: Re: [PATCH v2 0/2] gpio: davinci: reuse for keystone arch
+Date: Fri, 20 Dec 2013 10:40:29 +0100
+Message-ID: <CACRpkdYcvtWNgJ=JCgpZFdZmypLu7UmtpyTQusRshSGT=EqsVg@mail.gmail.com>
+References: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52AF2CDB.3080406@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Rob Herring <rob.herring@calxeda.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:43779 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754803Ab3LTJk3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Dec 2013 04:40:29 -0500
+Received: by mail-oa0-f51.google.com with SMTP id i7so2582122oag.10
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Dec 2013 01:40:29 -0800 (PST)
+In-Reply-To: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Sekhar Nori <nsekhar@ti.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Dec 16, 2013 at 5:39 PM, Santosh Shilimkar
-<santosh.shilimkar@ti.com> wrote:
-> On Monday 16 December 2013 10:09 AM, Santosh Shilimkar wrote:
+On Wed, Dec 18, 2013 at 11:07 AM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
->> The $subject series (2 patches) don't seems to be on your branch.
->>
-> Ofcourse Linus needs to ack them before they can be considered.
-> I have couple of comments as well so refresh of the series
-> would be needed.
+> This series is intended to update Davinci GPIO driver and reuse
+> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+> Keystone GPIO IP: supports:
+> - up to 32 GPIO lines;
+> - only unbanked irqs;
 >
-> Linus, Can you also please look at them.
+> See Documentation:
+> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+>
+> This series based on:
+> https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
+>
+> Changes in v2:
+> - minor comments applied, no functional changes
+>
+> v1: https://lkml.org/lkml/2013/12/12/366
 
-I'm looking, sorry for the delay. Busy before christmas.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+For this v2 series.
+
+Expecting this to go in through the DaVinci tree!
 
 Yours,
 Linus Walleij
