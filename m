@@ -1,33 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: sodaville: fix some error return code on error path
-Date: Fri, 20 Dec 2013 10:23:41 +0100
-Message-ID: <CACRpkdaZtxWBbvWhGCo-vOwH9Yuuo0x2+Wc7r+wv8A2h4+afXA@mail.gmail.com>
-References: <CAPgLHd8H6_-RwiQDwSVYo-wmyBOEQnJP7TFXdJa3JuW-nAvNDw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] gpio: davinci: reuse for keystone arch
+Date: Fri, 20 Dec 2013 10:39:01 +0100
+Message-ID: <CACRpkdZPsw7oEd8vUs9qX0pGc8hq1eNh+SVb2nWsQ=9tVrpqjQ@mail.gmail.com>
+References: <1386871973-26762-1-git-send-email-grygorii.strashko@ti.com>
+	<52ACAD50.6060003@ti.com>
+	<52ADB3BC.3080605@ti.com>
+	<52AF17A6.3060007@ti.com>
+	<52AF2CDB.3080406@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:46340 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755651Ab3LTJXm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Dec 2013 04:23:42 -0500
-Received: by mail-oa0-f48.google.com with SMTP id l6so2530335oag.21
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Dec 2013 01:23:41 -0800 (PST)
-In-Reply-To: <CAPgLHd8H6_-RwiQDwSVYo-wmyBOEQnJP7TFXdJa3JuW-nAvNDw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <52AF2CDB.3080406@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Rob Herring <rob.herring@calxeda.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Dec 16, 2013 at 6:52 AM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
+On Mon, Dec 16, 2013 at 5:39 PM, Santosh Shilimkar
+<santosh.shilimkar@ti.com> wrote:
+> On Monday 16 December 2013 10:09 AM, Santosh Shilimkar wrote:
 
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>> The $subject series (2 patches) don't seems to be on your branch.
+>>
+> Ofcourse Linus needs to ack them before they can be considered.
+> I have couple of comments as well so refresh of the series
+> would be needed.
 >
-> Fix to return a negative error code from the error handling
-> case instead of 0.
->
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> Linus, Can you also please look at them.
 
-Patch applied.
+I'm looking, sorry for the delay. Busy before christmas.
 
 Yours,
 Linus Walleij
