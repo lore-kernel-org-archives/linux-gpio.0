@@ -1,70 +1,57 @@
-From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: Re: [PATCH] Tracing events with GPIOs
-Date: Fri, 20 Dec 2013 09:40:04 +0100
-Message-ID: <CACh+v5NhUzoRc4YuPJdSia21XTDh8tLo=oBZyo7Re7deOTjUdA@mail.gmail.com>
-References: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
-	<CAAVeFuKAGfnnsbtBg=zfmciyMdZHgrX_EpecqPjG=oO6rZdWag@mail.gmail.com>
-	<CACh+v5MUsYW-=qaVubzt8CWRGxibKDB3PjMZ6AaeDYgeTNzONA@mail.gmail.com>
-	<CAAVeFuJ=s8e8g5LG2CVAkS3guj-HRUYrwKxywFxq36sNpAjQGQ@mail.gmail.com>
+From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 0/2] gpio: davinci: reuse for keystone arch
+Date: Fri, 20 Dec 2013 09:36:41 -0500
+Message-ID: <52B455F9.8070707@ti.com>
+References: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com>
+	<CACRpkdYcvtWNgJ=JCgpZFdZmypLu7UmtpyTQusRshSGT=EqsVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 11.mo4.mail-out.ovh.net ([46.105.34.195]:51137 "EHLO
-	mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756053Ab3LTLpA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Dec 2013 06:45:00 -0500
-Received: from mail414.ha.ovh.net (b6.ovh.net [213.186.33.56])
-	by mo4.mail-out.ovh.net (Postfix) with SMTP id B8155FF9313
-	for <linux-gpio@vger.kernel.org>; Fri, 20 Dec 2013 09:43:22 +0100 (CET)
-In-Reply-To: <CAAVeFuJ=s8e8g5LG2CVAkS3guj-HRUYrwKxywFxq36sNpAjQGQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <CACRpkdYcvtWNgJ=JCgpZFdZmypLu7UmtpyTQusRshSGT=EqsVg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org" <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-2013/12/20 Alexandre Courbot <gnurou@gmail.com>:
-> On Thu, Dec 19, 2013 at 8:38 PM, Jean-Jacques Hiblot
-> <jjhiblot@traphandler.com> wrote:
->> 2013/12/19 Alexandre Courbot <gnurou@gmail.com>:
->>> The problems I can see so far:
->>>
->>> - Using gpiod, GPIOs are not specified as integers, but are typically
->>> mapped to a given (device, function) pair (device can be NULL) using
->>> device tree/platform data/ACPI and obtained by the corresponding
->>> device driver through gpiod_get(). You would need to find a different
->>> way to specify GPIOs, maybe using the gpio_chip's label and the GPIO
->>> hardware number.
->>>
->>> - Even if you do so, there is currently no way to arbitrarily obtain a
->>> GPIO that has not been explicitly mapped to a (device, function), and
->>> IIUC you need to specify the tracing GPIO freely from user-space. This
->>> hints that we will need to add a function that is sensibly the same as
->>> gpio_request_one() to the gpiod API, but I wonder if that does not
->>> defeats the purpose somehow.
+On Friday 20 December 2013 04:40 AM, Linus Walleij wrote:
+> On Wed, Dec 18, 2013 at 11:07 AM, Grygorii Strashko
+> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
+> 
+>> This series is intended to update Davinci GPIO driver and reuse
+>> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+>> Keystone GPIO IP: supports:
+>> - up to 32 GPIO lines;
+>> - only unbanked irqs;
 >>
->> This is something I was wondering about for another reason. In many
->> cases the GPIOs that are physically available for probing will be
->> limited to the GPIOs already assigned a function (backlight control
->> for example), others are usually not routed except in eval boards or
->> early prototypes. And consequently those GPIOs will be requested by a
->> driver long before a probe is set.
->> It would be nice not to have to remove the driver to be able to use
->> this GPIO  as a probe. Maybe a gpiod_steal() interface and a flag
->> indicating that the GPIO can be safely stolen?
->
-> Mmm an explicit way to hijack a GPIO does not sound very safe. Do you
-> have concrete cases where you need to do so? I guess most boards you
-> may want to use this patch with would have at least some spare GPIOs
-> with pins somewhere on the board for this kind of purpose.
-It's not always true. There are quite a few platforms where GPIOs is a
-scarce resource (ppc for example). For example, the board I'm working
-on at the moment is built around a APM powerpc which has only 16
-GPIOs. Of those 16 GPIOS, some are not routed and most of the others
-are hidden by the shielding so that I can probe only those that go to
-external connectors.
-IMHO it's probably the case for most of the boards that go into a
-final product where EMI and space constraints are tight.
-But I agree that's not safe. I thought that maybe a flag indicating
-when it is safe would help (on my board that would be : ok to use the
-GPIO that turns on or off the backlight, not ok to use the GPIO that
-controls the power supply)
+>> See Documentation:
+>> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+>>
+>> This series based on:
+>> https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
+>>
+>> Changes in v2:
+>> - minor comments applied, no functional changes
+>>
+>> v1: https://lkml.org/lkml/2013/12/12/366
+> 
+> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> 
+Great !!
+
+> For this v2 series.
+> 
+> Expecting this to go in through the DaVinci tree!
+> 
+Sekhar, Can you please include these to your DaVinci gpio branch ?
+
+Regards,
+Santosh
