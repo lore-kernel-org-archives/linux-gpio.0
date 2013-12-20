@@ -1,57 +1,53 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 0/2] gpio: davinci: reuse for keystone arch
-Date: Fri, 20 Dec 2013 09:36:41 -0500
-Message-ID: <52B455F9.8070707@ti.com>
-References: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com>
-	<CACRpkdYcvtWNgJ=JCgpZFdZmypLu7UmtpyTQusRshSGT=EqsVg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on
+ S3C24XX.
+Date: Sat, 21 Dec 2013 05:57:39 +0900
+Message-ID: <52B4AF43.8070608@samsung.com>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>	<CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>	<52AA6909.8050200@inov.pt>	<0bc301cef7e5$319ac0c0$94d04240$@kernel.org>	<CACRpkdbQNEj83fnDX0ppPNJYgu1cMGxbk6n6M05wVNK9LEvDKw@mail.gmail.com> <CACRpkda5e-1ndyZzdZX+KZB=mCV6RM5nJ-nv_-yt1UEv_GhLLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <CACRpkdYcvtWNgJ=JCgpZFdZmypLu7UmtpyTQusRshSGT=EqsVg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org" <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:50759 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750938Ab3LTU5q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Dec 2013 15:57:46 -0500
+In-Reply-To: <CACRpkda5e-1ndyZzdZX+KZB=mCV6RM5nJ-nv_-yt1UEv_GhLLw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7?= =?ISO-8859-1?Q?alves?= <jose.goncalves@inov.pt>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 
-On Friday 20 December 2013 04:40 AM, Linus Walleij wrote:
-> On Wed, Dec 18, 2013 at 11:07 AM, Grygorii Strashko
-> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
-> 
->> This series is intended to update Davinci GPIO driver and reuse
->> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
->> Keystone GPIO IP: supports:
->> - up to 32 GPIO lines;
->> - only unbanked irqs;
+On 12/20/13 18:12, Linus Walleij wrote:
+> On Fri, Dec 13, 2013 at 10:37 AM, Linus Walleij
+> <linus.walleij@linaro.org>  wrote:
+>> On Fri, Dec 13, 2013 at 10:24 AM,<kgene@kernel.org>  wrote:
+>>> Jos=E9 Miguel Gon=E7alves wrote:
+>> (..)
+>>>> Was this patch forgotten?
+>>>>
+>>> Hi Jose,
+>>>
+>>> Sorry about missing your patch. It's my fault :( and as you know, a=
+t this
+>>> moment the file will be removed by Linus' patch...
 >>
->> See Documentation:
->> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
->>
->> This series based on:
->> https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
->>
->> Changes in v2:
->> - minor comments applied, no functional changes
->>
->> v1: https://lkml.org/lkml/2013/12/12/366
-> 
-> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> 
-Great !!
+>> Oh I can certainly rebase the patch onto my tree if I just
+>> get an ACK for it...
+>
+> Kukjin, can I have your ACK for this patch?
+>
 
-> For this v2 series.
-> 
-> Expecting this to go in through the DaVinci tree!
-> 
-Sekhar, Can you please include these to your DaVinci gpio branch ?
+Sure, please go ahead with my ack.
 
-Regards,
-Santosh
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Thanks and Merry Christmas :-)
+
+- Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
