@@ -1,41 +1,40 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: davinci: reuse for Keystone SoC
-Date: Sat, 21 Dec 2013 13:51:45 +0530
-Message-ID: <CA+V-a8vChjoYhtmGVkARxtX=dTrDAsbS5L1o69jN2pSg0v13xg@mail.gmail.com>
-References: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com> <1387361272-20861-3-git-send-email-grygorii.strashko@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/2] gpio: lp3943: Remove redundant of_match_ptr helper
+Date: Sat, 21 Dec 2013 15:57:40 +0530
+Message-ID: <1387621661-22128-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:53634 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751651Ab3LUIWH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Dec 2013 03:22:07 -0500
-In-Reply-To: <1387361272-20861-3-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:58951 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752860Ab3LUKa7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Dec 2013 05:30:59 -0500
+Received: by mail-pd0-f169.google.com with SMTP id v10so3527931pde.28
+        for <linux-gpio@vger.kernel.org>; Sat, 21 Dec 2013 02:30:58 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <rob.herring@calxeda.com>, dlos <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, sachin.kamat@linaro.org
 
-On Wed, Dec 18, 2013 at 3:37 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> The similar GPIO HW block is used by keystone SoCs as
-> in Davinci SoCs.
-> Hence, reuse Davinci GPIO driver for Keystone taking into
-> account that Keystone contains ARM GIC IRQ controller which
-> is implemented using IRQ Chip.
->
-> Documentation:
->         http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: devicetree@vger.kernel.org
->
-> Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+'lp3943_gpio_of_match' is always compiled in. Hence the
+helper macro is not needed.
 
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/gpio/gpio-lp3943.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
---Prabhakar Lad
+diff --git a/drivers/gpio/gpio-lp3943.c b/drivers/gpio/gpio-lp3943.c
+index 7b8db88ebb7b..a0341c92bcb4 100644
+--- a/drivers/gpio/gpio-lp3943.c
++++ b/drivers/gpio/gpio-lp3943.c
+@@ -231,7 +231,7 @@ static struct platform_driver lp3943_gpio_driver = {
+ 	.driver = {
+ 		.name = "lp3943-gpio",
+ 		.owner = THIS_MODULE,
+-		.of_match_table = of_match_ptr(lp3943_gpio_of_match),
++		.of_match_table = lp3943_gpio_of_match,
+ 	},
+ };
+ module_platform_driver(lp3943_gpio_driver);
+-- 
+1.7.9.5
+
