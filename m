@@ -1,40 +1,40 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/2] gpio: mxc: Do not hard code return value
-Date: Sat, 21 Dec 2013 13:05:57 +0530
-Message-ID: <1387611358-28946-1-git-send-email-sachin.kamat@linaro.org>
+From: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH v2 1/2] gpio: davinci: don't create irq_domain in case of
+ unbanked irqs
+Date: Sat, 21 Dec 2013 13:50:56 +0530
+Message-ID: <CA+V-a8tBQPAHjHibLa=n1mu31ZJyLU3vGwLutHqe=Fg4eXq6zA@mail.gmail.com>
+References: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com> <1387361272-20861-2-git-send-email-grygorii.strashko@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:56706 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751067Ab3LUHjR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Dec 2013 02:39:17 -0500
-Received: by mail-pd0-f182.google.com with SMTP id v10so3394202pde.41
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Dec 2013 23:39:16 -0800 (PST)
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:32861 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751166Ab3LUIVR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Dec 2013 03:21:17 -0500
+In-Reply-To: <1387361272-20861-2-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, sachin.kamat@linaro.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <rob.herring@calxeda.com>, dlos <davinci-linux-open-source@linux.davincidsp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
 
-Silences the following warning:
-why not propagate 'port->irq' from platform_get_irq() instead of (-22)?
+On Wed, Dec 18, 2013 at 3:37 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> The system may crash if:
+> - there are more then 1 bank
+> - unbanked irqs are enabled
+> - someone will call gpio_to_irq() for GPIO from bank2 or above
+>
+> Hence, fix it by not creating irq_domain if unbanked irqs are enabled
+> and correct gpio_to_irq_banked() to handle this properly.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+>
+> Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- drivers/gpio/gpio-mxc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 3307f6db3a92..db83b3c0a449 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -422,7 +422,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	port->irq_high = platform_get_irq(pdev, 1);
- 	port->irq = platform_get_irq(pdev, 0);
- 	if (port->irq < 0)
--		return -EINVAL;
-+		return port->irq;
- 
- 	/* disable the interrupt and clear the status */
- 	writel(0, port->base + GPIO_IMR);
--- 
-1.7.9.5
-
+Regards,
+--Prabhakar Lad
