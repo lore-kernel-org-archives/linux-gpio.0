@@ -1,109 +1,38 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v2 2/2] gpio: davinci: reuse for Keystone SoC
-Date: Mon, 23 Dec 2013 15:35:56 +0200
-Message-ID: <52B83C3C.6090906@ti.com>
-References: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com> <1387361272-20861-3-git-send-email-grygorii.strashko@ti.com> <52B7080F.7000900@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52B7080F.7000900@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sekhar Nori <nsekhar@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Rob Herring <rob.herring@calxeda.com>, prabhakar.csengg@gmail.com, davinci-linux-open-source@linux.davincidsp.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH] gpio: f7188x: set can_sleep attribute
+Date: Mon, 23 Dec 2013 14:34:18 +0100
+Message-ID: <1387805658-13540-1-git-send-email-simon.guinot@sequanux.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from vm1.sequanux.org ([188.165.36.56]:53197 "EHLO vm1.sequanux.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757193Ab3LWNe1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 23 Dec 2013 08:34:27 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Simon Guinot <simon.guinot@sequanux.org>
 
-On 12/22/2013 05:41 PM, Sekhar Nori wrote:
-> On Wednesday 18 December 2013 03:37 PM, Grygorii Strashko wrote:
->> The similar GPIO HW block is used by keystone SoCs as
->> in Davinci SoCs.
->> Hence, reuse Davinci GPIO driver for Keystone taking into
->> account that Keystone contains ARM GIC IRQ controller which
->> is implemented using IRQ Chip.
->>
->> Documentation:
->> 	http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Cc: Sekhar Nori <nsekhar@ti.com>
->> Cc: devicetree@vger.kernel.org
->>
->> Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->> ---
->>   .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
->>   drivers/gpio/gpio-davinci.c                        |   46 ++++++++++++++++----
->>   2 files changed, 40 insertions(+), 10 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> index a2e839d..4ce9862 100644
->> --- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> @@ -1,7 +1,7 @@
->> -Davinci GPIO controller bindings
->> +Davinci/Keystone GPIO controller bindings
->>
->>   Required Properties:
->> -- compatible: should be "ti,dm6441-gpio"
->> +- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
->>
->>   - reg: Physical base address of the controller and the size of memory mapped
->>          registers.
->> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
->> index 1b33806..38741cc 100644
->> --- a/drivers/gpio/gpio-davinci.c
->> +++ b/drivers/gpio/gpio-davinci.c
->> @@ -413,6 +413,26 @@ static const struct irq_domain_ops davinci_gpio_irq_ops = {
->>   	.xlate = irq_domain_xlate_onetwocell,
->>   };
->>
->> +static struct irq_chip *davinci_gpio_get_irq_chip(unsigned int irq)
->> +{
->> +	static struct irq_chip_type gpio_unbanked;
->> +
->> +	gpio_unbanked = *container_of(irq_get_chip(irq),
->> +				      struct irq_chip_type, chip);
->> +
->> +	return &gpio_unbanked.chip;
->> +};
->> +
->> +static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
->> +{
->> +	static struct irq_chip gpio_unbanked;
->> +
->> +	gpio_unbanked = *irq_get_chip(irq);
->> +	return &gpio_unbanked;
->> +};
->> +
->> +static const struct of_device_id davinci_gpio_ids[];
->> +
->>   /*
->>    * NOTE:  for suspend/resume, probably best to make a platform_device with
->>    * suspend_late/resume_resume calls hooking into results of the set_wake()
->> @@ -433,6 +453,18 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->>   	struct davinci_gpio_platform_data *pdata = dev->platform_data;
->>   	struct davinci_gpio_regs __iomem *g;
->>   	struct irq_domain	*irq_domain = NULL;
->> +	const struct of_device_id *match;
->> +	struct irq_chip *irq_chip;
->> +	struct irq_chip *(*gpio_get_irq_chip)(unsigned int irq);
->> +
->> +	/*
->> +	 * Use davinci_gpio_get_irq_chip by default to handle non DT cases
->> +	 */
->> +	gpio_get_irq_chip = davinci_gpio_get_irq_chip;
->> +	match = of_match_device(of_match_ptr(davinci_gpio_ids),
->> +				dev);
->> +	if (match)
->> +		gpio_get_irq_chip = match->data;
->
-> This produces a sparse warning:
->
->    CHECK   drivers/gpio/gpio-davinci.c
-> drivers/gpio/gpio-davinci.c:467:35: warning: incorrect type in assignment (different modifiers)
-> drivers/gpio/gpio-davinci.c:467:35:    expected struct irq_chip *( *[assigned] gpio_get_irq_chip )( ... )
-> drivers/gpio/gpio-davinci.c:467:35:    got void const *const data
->
+Since request_muxed_region() is used to synchronize access on the
+Super-I/O controller, then the can_sleep attribute must be set for
+the f7188x GPIO chips.
 
-I'll fix it, thanks.
+Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+---
+ drivers/gpio/gpio-f7188x.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index 9cb8320..fc3e98a 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -135,6 +135,7 @@ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value);
+ 			.set              = f7188x_gpio_set,		\
+ 			.base             = _base,			\
+ 			.ngpio            = _ngpio,			\
++			.can_sleep        = 1,				\
+ 		},							\
+ 		.regbase = _regbase,					\
+ 	}
+-- 
+1.8.5.1
+
