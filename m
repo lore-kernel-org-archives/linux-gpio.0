@@ -1,39 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: sch311x: fix compilation error
-Date: Mon, 23 Dec 2013 18:13:54 +0100
-Message-ID: <1387818834-3985-1-git-send-email-linus.walleij@linaro.org>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH v3 2/6] net: rfkill: gpio: convert to descriptor-based
+ GPIO interface
+Date: Mon, 23 Dec 2013 22:14:47 +0100
+Message-ID: <1387833287.4412.6.camel@jlt4.sipsolutions.net>
+References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
+	 <1385460350-17543-3-git-send-email-mika.westerberg@linux.intel.com>
+	 <CACRpkdb03X_Z7amX-vAVX8KboeCo3ia6oqv8KW79WY=nZXV7wQ@mail.gmail.com>
+	 <20131223105420.GP8621@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f169.google.com ([209.85.217.169]:52817 "EHLO
-	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754146Ab3LWROC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Dec 2013 12:14:02 -0500
-Received: by mail-lb0-f169.google.com with SMTP id u14so2459990lbd.0
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Dec 2013 09:14:00 -0800 (PST)
+Received: from s3.sipsolutions.net ([144.76.43.152]:43248 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757654Ab3LWVPN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Dec 2013 16:15:13 -0500
+In-Reply-To: <20131223105420.GP8621@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "David S. Miller" <davem@davemloft.net>, linux-netdev@vger.kernel.org"netdev@vger.kernel.org" <netdev@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Compilation failed on some platforms due to implicit inclusion of
-<linux/io.h>, make this dependency explicit.
+On Mon, 2013-12-23 at 12:54 +0200, Mika Westerberg wrote:
+> On Wed, Dec 11, 2013 at 01:00:18PM +0100, Linus Walleij wrote:
+> > On Tue, Nov 26, 2013 at 11:05 AM, Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
+> > 
+> > > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > >
+> > > Convert to the safer gpiod_* family of API functions.
+> > >
+> > > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > Tested-by: Stephen Warren <swarren@nvidia.com>
+> 
+> Johannes B, David M,
+> 
+> Are you fine with this patch? If yes, could you ack it so that we could get
+> it merged for 3.14.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-sch311x.c | 1 +
- 1 file changed, 1 insertion(+)
+I have no objection to this particular patch. I can't really comment on
+it, but I never really delved too deeply into the rfkill-gpio thing - I
+guess it works for whoever needed it :)
 
-diff --git a/drivers/gpio/gpio-sch311x.c b/drivers/gpio/gpio-sch311x.c
-index 483a6f8bd958..0357387b3645 100644
---- a/drivers/gpio/gpio-sch311x.c
-+++ b/drivers/gpio/gpio-sch311x.c
-@@ -18,6 +18,7 @@
- #include <linux/platform_device.h>
- #include <linux/gpio.h>
- #include <linux/bitops.h>
-+#include <linux/io.h>
- 
- #define DRV_NAME			"gpio-sch311x"
- 
--- 
-1.8.3.1
+johannes
 
