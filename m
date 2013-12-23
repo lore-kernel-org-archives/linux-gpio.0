@@ -1,44 +1,96 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v3 2/6] net: rfkill: gpio: convert to descriptor-based
- GPIO interface
-Date: Mon, 23 Dec 2013 12:54:20 +0200
-Message-ID: <20131223105420.GP8621@intel.com>
-References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
- <1385460350-17543-3-git-send-email-mika.westerberg@linux.intel.com>
- <CACRpkdb03X_Z7amX-vAVX8KboeCo3ia6oqv8KW79WY=nZXV7wQ@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2 1/2] gpio: davinci: don't create irq_domain in case
+ of unbanked irqs
+Date: Mon, 23 Dec 2013 15:35:43 +0200
+Message-ID: <52B83C2F.7090105@ti.com>
+References: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com> <1387361272-20861-2-git-send-email-grygorii.strashko@ti.com> <52B70AB8.6030503@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:18735 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753213Ab3LWKrq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 23 Dec 2013 05:47:46 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb03X_Z7amX-vAVX8KboeCo3ia6oqv8KW79WY=nZXV7wQ@mail.gmail.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:43509 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751187Ab3LWMit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Dec 2013 07:38:49 -0500
+In-Reply-To: <52B70AB8.6030503@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-netdev@vger.kernel.org"netdev@vger.kernel.org" <netdev@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sekhar Nori <nsekhar@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Rob Herring <rob.herring@calxeda.com>, prabhakar.csengg@gmail.com, davinci-linux-open-source@linux.davincidsp.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2013 at 01:00:18PM +0100, Linus Walleij wrote:
-> On Tue, Nov 26, 2013 at 11:05 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> 
-> > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> >
-> > Convert to the safer gpiod_* family of API functions.
-> >
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Tested-by: Stephen Warren <swarren@nvidia.com>
+On 12/22/2013 05:52 PM, Sekhar Nori wrote:
+> On Wednesday 18 December 2013 03:37 PM, Grygorii Strashko wrote:
+>> The system may crash if:
+>> - there are more then 1 bank
+>
+> s/then/than
+>
+>> - unbanked irqs are enabled
+>> - someone will call gpio_to_irq() for GPIO from bank2 or above
+>>
+>> Hence, fix it by not creating irq_domain if unbanked irqs are enabled
+>> and correct gpio_to_irq_banked() to handle this properly.
+>>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>> Cc: Sekhar Nori <nsekhar@ti.com>
+>>
+>> Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> ---
+>>   drivers/gpio/gpio-davinci.c |   34 +++++++++++++++++++---------------
+>>   1 file changed, 19 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+>> index 5d163c0..1b33806 100644
+>> --- a/drivers/gpio/gpio-davinci.c
+>> +++ b/drivers/gpio/gpio-davinci.c
+>> @@ -351,7 +351,10 @@ static int gpio_to_irq_banked(struct gpio_chip *chip, unsigned offset)
+>>   {
+>>   	struct davinci_gpio_controller *d = chip2controller(chip);
+>>
+>> -	return irq_create_mapping(d->irq_domain, d->chip.base + offset);
+>> +	if (d->irq_domain)
+>> +		return irq_create_mapping(d->irq_domain, d->chip.base + offset);
+>> +	else
+>> +		return -ENXIO;
+>>   }
+>>
+>>   static int gpio_to_irq_unbanked(struct gpio_chip *chip, unsigned offset)
+>> @@ -429,7 +432,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+>>   	struct davinci_gpio_controller *chips = platform_get_drvdata(pdev);
+>>   	struct davinci_gpio_platform_data *pdata = dev->platform_data;
+>>   	struct davinci_gpio_regs __iomem *g;
+>> -	struct irq_domain	*irq_domain;
+>> +	struct irq_domain	*irq_domain = NULL;
+>>
+>>   	ngpio = pdata->ngpio;
+>>   	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+>> @@ -453,18 +456,20 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+>>   	}
+>>   	clk_prepare_enable(clk);
+>>
+>> -	irq = irq_alloc_descs(-1, 0, ngpio, 0);
+>> -	if (irq < 0) {
+>> -		dev_err(dev, "Couldn't allocate IRQ numbers\n");
+>> -		return irq;
+>> -	}
+>> +	if (!pdata->gpio_unbanked) {
+>> +		irq = irq_alloc_descs(-1, 0, ngpio, 0);
+>> +		if (irq < 0) {
+>> +			dev_err(dev, "Couldn't allocate IRQ numbers\n");
+>> +			return -ENODEV;
+>
+> The code was correct before moving. Any objections to doing
+>
+> 			return irq;
+>
+> instead?
 
-Johannes B, David M,
+This is mistake. I'll update. Thanks
 
-Are you fine with this patch? If yes, could you ack it so that we could get
-it merged for 3.14.
+>
+> Thanks,
+> Sekhar
+>
 
-Thanks!
-
-Here's a link to this series:
-
-https://lkml.org/lkml/2013/11/26/104
