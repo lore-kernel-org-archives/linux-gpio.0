@@ -1,95 +1,505 @@
-From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] gpio: davinci: don't create irq_domain in case
-	of unbanked irqs
-Date: Sun, 22 Dec 2013 21:22:24 +0530
-Message-ID: <52B70AB8.6030503@ti.com>
-References: <1387361272-20861-1-git-send-email-grygorii.strashko@ti.com>
-	<1387361272-20861-2-git-send-email-grygorii.strashko@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <1387361272-20861-2-git-send-email-grygorii.strashko-l0cyMroinI0@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Bruno Randolf <br1@einfach.org>
+Subject: [PATCH v5] gpio: add GPIO support for SMSC SCH311x
+Date: Mon, 23 Dec 2013 10:01:43 +0000
+Message-ID: <1387792903-4286-1-git-send-email-br1@einfach.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from postler.einfach.org ([91.250.116.113]:32986 "EHLO
+	postler.einfach.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752032Ab3LWKB5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Dec 2013 05:01:57 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au
+Cc: wim@iguana.be, linux-gpio@vger.kernel.org, mika.westerberg@linux.intel.com, mathias.nyman@linux.intel.com, david.a.cohen@intel.com, simon.guinot@sequanux.org, Bruno Randolf <br1@einfach.org>
 
-On Wednesday 18 December 2013 03:37 PM, Grygorii Strashko wrote:
-> The system may crash if:
-> - there are more then 1 bank
+This patch adds support for the GPIOs found on the SMSC "Super I/O" chips
+SCH3112, SCH3114 and SCH3116.
 
-s/then/than
+The chip detection and I/O functions are copied from sch311x_wdt.
 
-> - unbanked irqs are enabled
-> - someone will call gpio_to_irq() for GPIO from bank2 or above
-> 
-> Hence, fix it by not creating irq_domain if unbanked irqs are enabled
-> and correct gpio_to_irq_banked() to handle this properly.
-> 
-> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-> 
-> Acked-by: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-> ---
->  drivers/gpio/gpio-davinci.c |   34 +++++++++++++++++++---------------
->  1 file changed, 19 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 5d163c0..1b33806 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -351,7 +351,10 @@ static int gpio_to_irq_banked(struct gpio_chip *chip, unsigned offset)
->  {
->  	struct davinci_gpio_controller *d = chip2controller(chip);
->  
-> -	return irq_create_mapping(d->irq_domain, d->chip.base + offset);
-> +	if (d->irq_domain)
-> +		return irq_create_mapping(d->irq_domain, d->chip.base + offset);
-> +	else
-> +		return -ENXIO;
->  }
->  
->  static int gpio_to_irq_unbanked(struct gpio_chip *chip, unsigned offset)
-> @@ -429,7 +432,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->  	struct davinci_gpio_controller *chips = platform_get_drvdata(pdev);
->  	struct davinci_gpio_platform_data *pdata = dev->platform_data;
->  	struct davinci_gpio_regs __iomem *g;
-> -	struct irq_domain	*irq_domain;
-> +	struct irq_domain	*irq_domain = NULL;
->  
->  	ngpio = pdata->ngpio;
->  	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> @@ -453,18 +456,20 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->  	}
->  	clk_prepare_enable(clk);
->  
-> -	irq = irq_alloc_descs(-1, 0, ngpio, 0);
-> -	if (irq < 0) {
-> -		dev_err(dev, "Couldn't allocate IRQ numbers\n");
-> -		return irq;
-> -	}
-> +	if (!pdata->gpio_unbanked) {
-> +		irq = irq_alloc_descs(-1, 0, ngpio, 0);
-> +		if (irq < 0) {
-> +			dev_err(dev, "Couldn't allocate IRQ numbers\n");
-> +			return -ENODEV;
+Signed-off-by: Bruno Randolf <br1@einfach.org>
 
-The code was correct before moving. Any objections to doing
+---
+Notes (v5):
+- #include <linux/io.h> to avoid error "implicit declaration of function 'outb'
+  [-Werror=implicit-function-declaration]"
+---
+ drivers/gpio/Kconfig        |   9 +
+ drivers/gpio/Makefile       |   1 +
+ drivers/gpio/gpio-sch311x.c | 432 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 442 insertions(+)
+ create mode 100644 drivers/gpio/gpio-sch311x.c
 
-			return irq;
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 0f04444..a083314 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -237,6 +237,15 @@ config GPIO_SAMSUNG
+ 	  Legacy GPIO support. Use only for platforms without support for
+ 	  pinctrl.
+ 
++config GPIO_SCH311X
++	tristate "SMSC SCH311x SuperI/O GPIO"
++	help
++	  Driver to enable the GPIOs found on SMSC SMSC SCH3112, SCH3114 and
++	  SCH3116 "Super I/O" chipsets.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-sch311x.
++
+ config GPIO_SPEAR_SPICS
+ 	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
+ 	depends on PLAT_SPEAR
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 7971e36..6c53998 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -67,6 +67,7 @@ obj-$(CONFIG_GPIO_RCAR)		+= gpio-rcar.o
+ obj-$(CONFIG_GPIO_SAMSUNG)	+= gpio-samsung.o
+ obj-$(CONFIG_ARCH_SA1100)	+= gpio-sa1100.o
+ obj-$(CONFIG_GPIO_SCH)		+= gpio-sch.o
++obj-$(CONFIG_GPIO_SCH311X)	+= gpio-sch311x.o
+ obj-$(CONFIG_GPIO_SODAVILLE)	+= gpio-sodaville.o
+ obj-$(CONFIG_GPIO_SPEAR_SPICS)	+= gpio-spear-spics.o
+ obj-$(CONFIG_GPIO_STA2X11)	+= gpio-sta2x11.o
+diff --git a/drivers/gpio/gpio-sch311x.c b/drivers/gpio/gpio-sch311x.c
+new file mode 100644
+index 0000000..0357387
+--- /dev/null
++++ b/drivers/gpio/gpio-sch311x.c
+@@ -0,0 +1,432 @@
++/*
++ * GPIO driver for the SMSC SCH311x Super-I/O chips
++ *
++ * Copyright (C) 2013 Bruno Randolf <br1@einfach.org>
++ *
++ * SuperIO functions and chip detection:
++ * (c) Copyright 2008 Wim Van Sebroeck <wim@iguana.be>.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/gpio.h>
++#include <linux/bitops.h>
++#include <linux/io.h>
++
++#define DRV_NAME			"gpio-sch311x"
++
++#define SCH311X_GPIO_CONF_OUT		0x00
++#define SCH311X_GPIO_CONF_IN		0x01
++#define SCH311X_GPIO_CONF_INVERT	0x02
++#define SCH311X_GPIO_CONF_OPEN_DRAIN	0x80
++
++#define SIO_CONFIG_KEY_ENTER		0x55
++#define SIO_CONFIG_KEY_EXIT		0xaa
++
++#define GP1				0x4b
++
++static int sch311x_ioports[] = { 0x2e, 0x4e, 0x162e, 0x164e };
++
++static struct platform_device *sch311x_gpio_pdev;
++
++struct sch311x_pdev_data {		/* platform device data */
++	unsigned short runtime_reg;	/* runtime register base address */
++};
++
++struct sch311x_gpio_block {		/* one GPIO block runtime data */
++	struct gpio_chip chip;
++	unsigned short data_reg;	/* from definition below */
++	unsigned short *config_regs;	/* pointer to definition below */
++	unsigned short runtime_reg;	/* runtime register */
++	spinlock_t lock;		/* lock for this GPIO block */
++};
++
++struct sch311x_gpio_priv {		/* driver private data */
++	struct sch311x_gpio_block blocks[6];
++};
++
++struct sch311x_gpio_block_def {		/* register address definitions */
++	unsigned short data_reg;
++	unsigned short config_regs[8];
++	unsigned short base;
++};
++
++/* Note: some GPIOs are not available, these are marked with 0x00 */
++
++static struct sch311x_gpio_block_def sch311x_gpio_blocks[] = {
++	{
++		.data_reg = 0x4b,	/* GP1 */
++		.config_regs = {0x23, 0x24, 0x25, 0x26, 0x27, 0x29, 0x2a, 0x2b},
++		.base = 10,
++	},
++	{
++		.data_reg = 0x4c,	/* GP2 */
++		.config_regs = {0x00, 0x2c, 0x2d, 0x00, 0x00, 0x00, 0x00, 0x32},
++		.base = 20,
++	},
++	{
++		.data_reg = 0x4d,	/* GP3 */
++		.config_regs = {0x33, 0x34, 0x35, 0x36, 0x37, 0x00, 0x39, 0x3a},
++		.base = 30,
++	},
++	{
++		.data_reg = 0x4e,	/* GP4 */
++		.config_regs = {0x3b, 0x00, 0x3d, 0x00, 0x6e, 0x6f, 0x72, 0x73},
++		.base = 40,
++	},
++	{
++		.data_reg = 0x4f,	/* GP5 */
++		.config_regs = {0x3f, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46},
++		.base = 50,
++	},
++	{
++		.data_reg = 0x50,	/* GP6 */
++		.config_regs = {0x47, 0x48, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59},
++		.base = 60,
++	},
++};
++
++static inline struct sch311x_gpio_block *
++to_sch311x_gpio_block(struct gpio_chip *chip)
++{
++	return container_of(chip, struct sch311x_gpio_block, chip);
++}
++
++
++/*
++ *	Super-IO functions
++ */
++
++static inline int sch311x_sio_enter(int sio_config_port)
++{
++	/* Don't step on other drivers' I/O space by accident. */
++	if (!request_muxed_region(sio_config_port, 2, DRV_NAME)) {
++		pr_err(DRV_NAME "I/O address 0x%04x already in use\n",
++		       sio_config_port);
++		return -EBUSY;
++	}
++
++	outb(SIO_CONFIG_KEY_ENTER, sio_config_port);
++	return 0;
++}
++
++static inline void sch311x_sio_exit(int sio_config_port)
++{
++	outb(SIO_CONFIG_KEY_EXIT, sio_config_port);
++	release_region(sio_config_port, 2);
++}
++
++static inline int sch311x_sio_inb(int sio_config_port, int reg)
++{
++	outb(reg, sio_config_port);
++	return inb(sio_config_port + 1);
++}
++
++static inline void sch311x_sio_outb(int sio_config_port, int reg, int val)
++{
++	outb(reg, sio_config_port);
++	outb(val, sio_config_port + 1);
++}
++
++
++/*
++ *	GPIO functions
++ */
++
++static int sch311x_gpio_request(struct gpio_chip *chip, unsigned offset)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	if (block->config_regs[offset] == 0) /* GPIO is not available */
++		return -ENODEV;
++
++	if (!request_region(block->runtime_reg + block->config_regs[offset],
++			    1, DRV_NAME)) {
++		dev_err(chip->dev, "Failed to request region 0x%04x.\n",
++			block->runtime_reg + block->config_regs[offset]);
++		return -EBUSY;
++	}
++	return 0;
++}
++
++static void sch311x_gpio_free(struct gpio_chip *chip, unsigned offset)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	if (block->config_regs[offset] == 0) /* GPIO is not available */
++		return;
++
++	release_region(block->runtime_reg + block->config_regs[offset], 1);
++}
++
++static int sch311x_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++	unsigned char data;
++
++	spin_lock(&block->lock);
++	data = inb(block->runtime_reg + block->data_reg);
++	spin_unlock(&block->lock);
++
++	return !!(data & BIT(offset));
++}
++
++static void __sch311x_gpio_set(struct sch311x_gpio_block *block,
++			       unsigned offset, int value)
++{
++	unsigned char data = inb(block->runtime_reg + block->data_reg);
++	if (value)
++		data |= BIT(offset);
++	else
++		data &= ~BIT(offset);
++	outb(data, block->runtime_reg + block->data_reg);
++}
++
++static void sch311x_gpio_set(struct gpio_chip *chip, unsigned offset,
++			     int value)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	spin_lock(&block->lock);
++	 __sch311x_gpio_set(block, offset, value);
++	spin_unlock(&block->lock);
++}
++
++static int sch311x_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	spin_lock(&block->lock);
++	outb(SCH311X_GPIO_CONF_IN, block->runtime_reg +
++	     block->config_regs[offset]);
++	spin_unlock(&block->lock);
++
++	return 0;
++}
++
++static int sch311x_gpio_direction_out(struct gpio_chip *chip, unsigned offset,
++				      int value)
++{
++	struct sch311x_gpio_block *block = to_sch311x_gpio_block(chip);
++
++	spin_lock(&block->lock);
++
++	outb(SCH311X_GPIO_CONF_OUT, block->runtime_reg +
++	     block->config_regs[offset]);
++
++	__sch311x_gpio_set(block, offset, value);
++
++	spin_unlock(&block->lock);
++	return 0;
++}
++
++static int sch311x_gpio_probe(struct platform_device *pdev)
++{
++	struct sch311x_pdev_data *pdata = pdev->dev.platform_data;
++	struct sch311x_gpio_priv *priv;
++	struct sch311x_gpio_block *block;
++	int err, i;
++
++	/* we can register all GPIO data registers at once */
++	if (!request_region(pdata->runtime_reg + GP1, 6, DRV_NAME)) {
++		dev_err(&pdev->dev, "Failed to request region 0x%04x-0x%04x.\n",
++			pdata->runtime_reg + GP1, pdata->runtime_reg + GP1 + 5);
++		return -EBUSY;
++	}
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++
++	for (i = 0; i < ARRAY_SIZE(priv->blocks); i++) {
++		block = &priv->blocks[i];
++
++		spin_lock_init(&block->lock);
++
++		block->chip.label = DRV_NAME;
++		block->chip.owner = THIS_MODULE;
++		block->chip.request = sch311x_gpio_request;
++		block->chip.free = sch311x_gpio_free;
++		block->chip.direction_input = sch311x_gpio_direction_in;
++		block->chip.direction_output = sch311x_gpio_direction_out;
++		block->chip.get = sch311x_gpio_get;
++		block->chip.set = sch311x_gpio_set;
++		block->chip.ngpio = 8;
++		block->chip.dev = &pdev->dev;
++		block->chip.base = sch311x_gpio_blocks[i].base;
++		block->config_regs = sch311x_gpio_blocks[i].config_regs;
++		block->data_reg = sch311x_gpio_blocks[i].data_reg;
++		block->runtime_reg = pdata->runtime_reg;
++
++		err = gpiochip_add(&block->chip);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"Could not register gpiochip, %d\n", err);
++			goto exit_err;
++		}
++		dev_info(&pdev->dev,
++			 "SMSC SCH311x GPIO block %d registered.\n", i);
++	}
++
++	return 0;
++
++exit_err:
++	release_region(pdata->runtime_reg + GP1, 6);
++	/* release already registered chips */
++	for (--i; i >= 0; i--)
++		gpiochip_remove(&priv->blocks[i].chip);
++	return err;
++}
++
++static int sch311x_gpio_remove(struct platform_device *pdev)
++{
++	struct sch311x_pdev_data *pdata = pdev->dev.platform_data;
++	struct sch311x_gpio_priv *priv = platform_get_drvdata(pdev);
++	int err, i;
++
++	release_region(pdata->runtime_reg + GP1, 6);
++
++	for (i = 0; i < ARRAY_SIZE(priv->blocks); i++) {
++		err = gpiochip_remove(&priv->blocks[i].chip);
++		if (err)
++			return err;
++		dev_info(&pdev->dev,
++			 "SMSC SCH311x GPIO block %d unregistered.\n", i);
++	}
++	return 0;
++}
++
++static struct platform_driver sch311x_gpio_driver = {
++	.driver.name	= DRV_NAME,
++	.driver.owner	= THIS_MODULE,
++	.probe		= sch311x_gpio_probe,
++	.remove		= sch311x_gpio_remove,
++};
++
++
++/*
++ *	Init & exit routines
++ */
++
++static int __init sch311x_detect(int sio_config_port, unsigned short *addr)
++{
++	int err = 0, reg;
++	unsigned short base_addr;
++	unsigned char dev_id;
++
++	err = sch311x_sio_enter(sio_config_port);
++	if (err)
++		return err;
++
++	/* Check device ID. We currently know about:
++	 * SCH3112 (0x7c), SCH3114 (0x7d), and SCH3116 (0x7f). */
++	reg = sch311x_sio_inb(sio_config_port, 0x20);
++	if (!(reg == 0x7c || reg == 0x7d || reg == 0x7f)) {
++		err = -ENODEV;
++		goto exit;
++	}
++	dev_id = reg == 0x7c ? 2 : reg == 0x7d ? 4 : 6;
++
++	/* Select logical device A (runtime registers) */
++	sch311x_sio_outb(sio_config_port, 0x07, 0x0a);
++
++	/* Check if Logical Device Register is currently active */
++	if ((sch311x_sio_inb(sio_config_port, 0x30) & 0x01) == 0)
++		pr_info("Seems that LDN 0x0a is not active...\n");
++
++	/* Get the base address of the runtime registers */
++	base_addr = (sch311x_sio_inb(sio_config_port, 0x60) << 8) |
++			   sch311x_sio_inb(sio_config_port, 0x61);
++	if (!base_addr) {
++		pr_err("Base address not set\n");
++		err = -ENODEV;
++		goto exit;
++	}
++	*addr = base_addr;
++
++	pr_info("Found an SMSC SCH311%d chip at 0x%04x\n", dev_id, base_addr);
++
++exit:
++	sch311x_sio_exit(sio_config_port);
++	return err;
++}
++
++static int __init sch311x_gpio_pdev_add(const unsigned short addr)
++{
++	struct sch311x_pdev_data pdata;
++	int err;
++
++	pdata.runtime_reg = addr;
++
++	sch311x_gpio_pdev = platform_device_alloc(DRV_NAME, -1);
++	if (!sch311x_gpio_pdev)
++		return -ENOMEM;
++
++	err = platform_device_add_data(sch311x_gpio_pdev,
++				       &pdata, sizeof(pdata));
++	if (err) {
++		pr_err(DRV_NAME "Platform data allocation failed\n");
++		goto err;
++	}
++
++	err = platform_device_add(sch311x_gpio_pdev);
++	if (err) {
++		pr_err(DRV_NAME "Device addition failed\n");
++		goto err;
++	}
++	return 0;
++
++err:
++	platform_device_put(sch311x_gpio_pdev);
++	return err;
++}
++
++static int __init sch311x_gpio_init(void)
++{
++	int err, i;
++	unsigned short addr = 0;
++
++	for (i = 0; i < ARRAY_SIZE(sch311x_ioports); i++)
++		if (sch311x_detect(sch311x_ioports[i], &addr) == 0)
++			break;
++
++	if (!addr)
++		return -ENODEV;
++
++	err = platform_driver_register(&sch311x_gpio_driver);
++	if (err)
++		return err;
++
++	err = sch311x_gpio_pdev_add(addr);
++	if (err)
++		goto unreg_platform_driver;
++
++	return 0;
++
++unreg_platform_driver:
++	platform_driver_unregister(&sch311x_gpio_driver);
++	return err;
++}
++
++static void __exit sch311x_gpio_exit(void)
++{
++	platform_device_unregister(sch311x_gpio_pdev);
++	platform_driver_unregister(&sch311x_gpio_driver);
++}
++
++module_init(sch311x_gpio_init);
++module_exit(sch311x_gpio_exit);
++
++MODULE_AUTHOR("Bruno Randolf <br1@einfach.org>");
++MODULE_DESCRIPTION("SMSC SCH311x GPIO Driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:gpio-sch311x");
+-- 
+1.8.3.2
 
-instead?
-
-Thanks,
-Sekhar
