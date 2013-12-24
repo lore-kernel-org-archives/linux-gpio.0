@@ -1,47 +1,56 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH v3 2/6] net: rfkill: gpio: convert to descriptor-based
- GPIO interface
-Date: Mon, 23 Dec 2013 22:14:47 +0100
-Message-ID: <1387833287.4412.6.camel@jlt4.sipsolutions.net>
-References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
-	 <1385460350-17543-3-git-send-email-mika.westerberg@linux.intel.com>
-	 <CACRpkdb03X_Z7amX-vAVX8KboeCo3ia6oqv8KW79WY=nZXV7wQ@mail.gmail.com>
-	 <20131223105420.GP8621@intel.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH v3 0/2] gpio: davinci: reuse for keystone arch
+Date: Tue, 24 Dec 2013 13:41:22 +0200
+Message-ID: <1387885284-8119-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([144.76.43.152]:43248 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757654Ab3LWVPN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Dec 2013 16:15:13 -0500
-In-Reply-To: <20131223105420.GP8621@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "David S. Miller" <davem@davemloft.net>, linux-netdev@vger.kernel.org"netdev@vger.kernel.org" <netdev@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, 2013-12-23 at 12:54 +0200, Mika Westerberg wrote:
-> On Wed, Dec 11, 2013 at 01:00:18PM +0100, Linus Walleij wrote:
-> > On Tue, Nov 26, 2013 at 11:05 AM, Mika Westerberg
-> > <mika.westerberg@linux.intel.com> wrote:
-> > 
-> > > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > >
-> > > Convert to the safer gpiod_* family of API functions.
-> > >
-> > > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > > Tested-by: Stephen Warren <swarren@nvidia.com>
-> 
-> Johannes B, David M,
-> 
-> Are you fine with this patch? If yes, could you ack it so that we could get
-> it merged for 3.14.
+This series is intended to update Davinci GPIO driver and reuse
+it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+Keystone GPIO IP: supports:
+- up to 32 GPIO lines;
+- only unbanked irqs;
 
-I have no objection to this particular patch. I can't really comment on
-it, but I never really delved too deeply into the rfkill-gpio thing - I
-guess it works for whoever needed it :)
+See Documentation:
+Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
 
-johannes
+This series based on:
+https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
 
+Changes in v3:
+- fixed code, changed by mistake; fixed sparse warning 
+Changes in v2:
+- minor comments applied, no functional changes
+
+v2: https://lkml.org/lkml/2013/12/18/135
+v1: https://lkml.org/lkml/2013/12/12/366
+
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+
+Grygorii Strashko (2):
+  gpio: davinci: don't create irq_domain in case of unbanked irqs
+  gpio: davinci: reuse for Keystone SoC
+
+ .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
+ drivers/gpio/gpio-davinci.c                        |   82 ++++++++++++++------
+ 2 files changed, 61 insertions(+), 25 deletions(-)
+
+-- 
+1.7.9.5
