@@ -1,26 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: max730x: Remove redundant dev_set_drvdata
-Date: Thu, 2 Jan 2014 13:55:05 +0100
-Message-ID: <CACRpkdYPhxSY1aZ9AuSPkibUCeeDgoro_8Zcb4aE_qNmpN+QnQ@mail.gmail.com>
-References: <1387610738-14881-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: mxc: Do not hard code return value
+Date: Thu, 2 Jan 2014 13:56:22 +0100
+Message-ID: <CACRpkdZtMz2ZMGiyrQ6kSVX+toKfrb1uiNEn-H3==KovuS3NzQ@mail.gmail.com>
+References: <1387611358-28946-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:58245 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750797AbaABMzF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jan 2014 07:55:05 -0500
-Received: by mail-ob0-f182.google.com with SMTP id wp4so14322381obc.41
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Jan 2014 04:55:05 -0800 (PST)
-In-Reply-To: <1387610738-14881-1-git-send-email-sachin.kamat@linaro.org>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:58534 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750740AbaABM4W (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jan 2014 07:56:22 -0500
+Received: by mail-ob0-f175.google.com with SMTP id uz6so14318361obc.34
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Jan 2014 04:56:22 -0800 (PST)
+In-Reply-To: <1387611358-28946-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Sachin Kamat <sachin.kamat@linaro.org>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, Dec 21, 2013 at 8:25 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+On Sat, Dec 21, 2013 at 8:35 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
 
-> Driver core sets it to NULL upon probe failure or release.
+> Silences the following warning:
+> why not propagate 'port->irq' from platform_get_irq() instead of (-22)?
 >
 > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 
