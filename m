@@ -1,35 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: xtensa: depend on HAVE_XTENSA_GPIO32
-Date: Thu, 2 Jan 2014 13:33:38 +0100
-Message-ID: <CACRpkdYvnxy6sXN78PfDwnm1J6dQB5GPPr6q-Pz2LZqgKVStbw@mail.gmail.com>
-References: <bfc8635f56992aa8865dc58810a4f9872b3a0c86.1387350629.git.baruch@tkos.co.il>
+Subject: Re: [PATCH] Tracing events with GPIOs
+Date: Thu, 2 Jan 2014 13:43:40 +0100
+Message-ID: <CACRpkdYMBq267qW59QtEY6b+-jmqafnWRsuZOG=9FWF=aUpRpA@mail.gmail.com>
+References: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
+	<CAAVeFuKAGfnnsbtBg=zfmciyMdZHgrX_EpecqPjG=oO6rZdWag@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:47531 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751365AbaABMdi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jan 2014 07:33:38 -0500
-Received: by mail-oa0-f46.google.com with SMTP id o6so14691786oag.19
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Jan 2014 04:33:38 -0800 (PST)
-In-Reply-To: <bfc8635f56992aa8865dc58810a4f9872b3a0c86.1387350629.git.baruch@tkos.co.il>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuKAGfnnsbtBg=zfmciyMdZHgrX_EpecqPjG=oO6rZdWag@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Steven Rostedt <rostedt@goodmis.org>, masami.hiramatsu.pt@hitachi.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-xtensa@linux-xtensa.org
 
-On Wed, Dec 18, 2013 at 8:10 AM, Baruch Siach <baruch@tkos.co.il> wrote:
+On Thu, Dec 19, 2013 at 7:52 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Tue, Dec 17, 2013 at 9:22 AM, Jean-Jacques Hiblot
+> <jjhiblot@traphandler.com> wrote:
+>>
+>> This patch implements a new tracing mechanism based on kprobes and using GPIO.
+>> Debugging with GPIO is very common in the embedded world. At least for those of us
+>> fortunate enough to have an oscilloscope or a logic analyzer on their bench...
+>> This is especially true if the issue results of a hardware/sofware interaction.
+>>
+>> Typical use cases are :
+>> * mixed software/hardware debugging. For example when the software detects a
+>>   situation of interest (typically an error) it toggles a GPIO to trigger the
+>>   oscilloscope acquisition.
+>> * direct latency/duration measurements.
+>>
+>> examples:
+>> To trig the oscilloscope whenever a mmc command error:
+>>   echo "p:my_mmc_blk_error mmc_blk_cmd_error gpiopulse@13" > /sys/kernel/debug/tracing/kprobe_events
+>>   echo 1 > /sys/kernel/debug/tracing/events/kprobes/my_mmc_blk_error/enable
 
-> Prevent build failure when the selected variant does not support GPIO32.
->
-> Acked-by: Max Filippov <jcmvbkbc@gmail.com>
-> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-> ---
-> v2:
->    Move the HAVE_XTENSA_GPIO32 definition to arch/xtensa/Kconfig (Max)
->    Add Max's ack
+I've never seen the whole patch.
 
-See my comments on v1 and fix them.
+Can you please repost this and include linux-gpio@vger.kernel.org and also
+me on the To: line?
 
 Yours,
 Linus Walleij
