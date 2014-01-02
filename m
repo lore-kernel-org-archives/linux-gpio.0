@@ -1,42 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Tracing events with GPIOs
-Date: Thu, 2 Jan 2014 13:43:40 +0100
-Message-ID: <CACRpkdYMBq267qW59QtEY6b+-jmqafnWRsuZOG=9FWF=aUpRpA@mail.gmail.com>
-References: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
-	<CAAVeFuKAGfnnsbtBg=zfmciyMdZHgrX_EpecqPjG=oO6rZdWag@mail.gmail.com>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
+Date: Thu, 2 Jan 2014 13:53:02 +0100
+Message-ID: <CACRpkdY+aLA6OG3jjgwtLoH=O-SS-W_A5Ps9WZY70ogQN2RySg@mail.gmail.com>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuKAGfnnsbtBg=zfmciyMdZHgrX_EpecqPjG=oO6rZdWag@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Steven Rostedt <rostedt@goodmis.org>, masami.hiramatsu.pt@hitachi.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:33897 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751764AbaABMxD convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jan 2014 07:53:03 -0500
+Received: by mail-ob0-f182.google.com with SMTP id wp4so14320699obc.41
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Jan 2014 04:53:03 -0800 (PST)
+In-Reply-To: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Dec 19, 2013 at 7:52 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Tue, Dec 17, 2013 at 9:22 AM, Jean-Jacques Hiblot
-> <jjhiblot@traphandler.com> wrote:
->>
->> This patch implements a new tracing mechanism based on kprobes and using GPIO.
->> Debugging with GPIO is very common in the embedded world. At least for those of us
->> fortunate enough to have an oscilloscope or a logic analyzer on their bench...
->> This is especially true if the issue results of a hardware/sofware interaction.
->>
->> Typical use cases are :
->> * mixed software/hardware debugging. For example when the software detects a
->>   situation of interest (typically an error) it toggles a GPIO to trigger the
->>   oscilloscope acquisition.
->> * direct latency/duration measurements.
->>
->> examples:
->> To trig the oscilloscope whenever a mmc command error:
->>   echo "p:my_mmc_blk_error mmc_blk_cmd_error gpiopulse@13" > /sys/kernel/debug/tracing/kprobe_events
->>   echo 1 > /sys/kernel/debug/tracing/events/kprobes/my_mmc_blk_error/enable
+On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
+<jose.goncalves@inov.pt> wrote:
 
-I've never seen the whole patch.
+> Some GPIO line limits are incorrectly set which, for instance,
+> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
+>
+> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
 
-Can you please repost this and include linux-gpio@vger.kernel.org and also
-me on the To: line?
+Patch applied with Kukjin's ACK and Heiko's review tag.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
