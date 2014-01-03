@@ -1,40 +1,32 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/2] gpio: samsung: Remove hardware.h inclusion
-Date: Fri,  3 Jan 2014 15:06:24 +0530
-Message-ID: <1388741785-24240-1-git-send-email-sachin.kamat@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2] gpio: Driver for SYSCON-based GPIOs
+Date: Fri, 3 Jan 2014 19:42:59 +0900
+Message-ID: <CAAVeFuKNhtyX1wKFKhjFg5yniewag3XYRFPCNiZ9Q7iLzZ+Jpg@mail.gmail.com>
+References: <1387307984-7693-1-git-send-email-shc_work@mail.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:48295 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750841AbaACJkL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jan 2014 04:40:11 -0500
-Received: by mail-pa0-f50.google.com with SMTP id kp14so13762755pab.9
-        for <linux-gpio@vger.kernel.org>; Fri, 03 Jan 2014 01:40:11 -0800 (PST)
+Received: from mail-vb0-f41.google.com ([209.85.212.41]:46555 "EHLO
+	mail-vb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750837AbaACKnU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jan 2014 05:43:20 -0500
+In-Reply-To: <1387307984-7693-1-git-send-email-shc_work@mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, linus.walleij@linaro.org, rob@landley.net, sachin.kamat@linaro.org, patches@linaro.org, Heiko Stuebner <heiko@sntech.de>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
 
-The contents of this header file are not referenced in the driver.
-Remove its inclusion.
+On Wed, Dec 18, 2013 at 4:19 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
+> SYSCON driver was designed for using memory areas (registers)
+> that are used in several subsystems. There are systems (CPUs)
+> which use bits in one register for various purposes and thus
+> should be handled by various kernel subsystems. This driver
+> allows you to use the individual SYSCON bits as GPIOs.
+> ARM CLPS711X SYSFLG1 input lines has been added as first user
+> of this driver.
+>
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
----
- drivers/gpio/gpio-samsung.c |    1 -
- 1 file changed, 1 deletion(-)
+Looks good to me.
 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index be7b0bd4eed4..2376e6278388 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -36,7 +36,6 @@
- 
- #include <asm/irq.h>
- 
--#include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- 
--- 
-1.7.9.5
-
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
