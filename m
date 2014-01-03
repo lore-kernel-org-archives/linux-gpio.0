@@ -1,62 +1,80 @@
-From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: Re: [PATCH] Tracing events with GPIOs
-Date: Fri, 3 Jan 2014 17:32:59 +0100
-Message-ID: <CACh+v5Mfq5uC90tH2Q1BTr-f9Sa98Y0HkeYb=F3XChrEehupRQ@mail.gmail.com>
-References: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
-	<CAAVeFuKAGfnnsbtBg=zfmciyMdZHgrX_EpecqPjG=oO6rZdWag@mail.gmail.com>
-	<CACRpkdYMBq267qW59QtEY6b+-jmqafnWRsuZOG=9FWF=aUpRpA@mail.gmail.com>
+From: Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH] drivers: Remove unused devm_*_put functions
+Date: Fri, 3 Jan 2014 12:22:15 -0800
+Message-ID: <20140103202215.GA12111@leaf>
+References: <20131221104920.GA3626@rashika>
+ <CACRpkdYyFXt1g-fL9dUTwQLnT4senUjvRpehc6yuQ9rV4ztwSA@mail.gmail.com>
+ <CAAVeFuJug5wNZrSr5UcP8w8E0a3iYF=bcNEzJgQaZ=u4CX8Daw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 5.mo2.mail-out.ovh.net ([87.98.181.248]:60728 "EHLO
-	mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751139AbaACRv3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jan 2014 12:51:29 -0500
-Received: from mail417.ha.ovh.net (b6.ovh.net [213.186.33.56])
-	by mo2.mail-out.ovh.net (Postfix) with SMTP id E7EF2FFAA55
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jan 2014 17:33:05 +0100 (CET)
-In-Reply-To: <CACRpkdYMBq267qW59QtEY6b+-jmqafnWRsuZOG=9FWF=aUpRpA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuJug5wNZrSr5UcP8w8E0a3iYF=bcNEzJgQaZ=u4CX8Daw@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rashika Kheria <rashika.kheria@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-2014/1/2 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Dec 19, 2013 at 7:52 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> On Tue, Dec 17, 2013 at 9:22 AM, Jean-Jacques Hiblot
->> <jjhiblot@traphandler.com> wrote:
->>>
->>> This patch implements a new tracing mechanism based on kprobes and using GPIO.
->>> Debugging with GPIO is very common in the embedded world. At least for those of us
->>> fortunate enough to have an oscilloscope or a logic analyzer on their bench...
->>> This is especially true if the issue results of a hardware/sofware interaction.
->>>
->>> Typical use cases are :
->>> * mixed software/hardware debugging. For example when the software detects a
->>>   situation of interest (typically an error) it toggles a GPIO to trigger the
->>>   oscilloscope acquisition.
->>> * direct latency/duration measurements.
->>>
->>> examples:
->>> To trig the oscilloscope whenever a mmc command error:
->>>   echo "p:my_mmc_blk_error mmc_blk_cmd_error gpiopulse@13" > /sys/kernel/debug/tracing/kprobe_events
->>>   echo 1 > /sys/kernel/debug/tracing/events/kprobes/my_mmc_blk_error/enable
->
-> I've never seen the whole patch.
->
-> Can you please repost this and include linux-gpio@vger.kernel.org and also
-> me on the To: line?
+On Fri, Jan 03, 2014 at 08:07:22PM +0900, Alexandre Courbot wrote:
+> On Thu, Jan 2, 2014 at 10:07 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Sat, Dec 21, 2013 at 11:49 AM, Rashika Kheria
+> > <rashika.kheria@gmail.com> wrote:
+> >> -/**
+> >> - * devm_gpiod_put - Resource-managed gpiod_put()
+> >> - * @desc:      GPIO descriptor to dispose of
+> >> - *
+> >> - * Dispose of a GPIO descriptor obtained with devm_gpiod_get() or
+> >> - * devm_gpiod_get_index(). Normally this function will not be called as the GPIO
+> >> - * will be disposed of by the resource management code.
+> >> - */
+> >> -void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
+> >> -{
+> >> -       WARN_ON(devres_release(dev, devm_gpiod_release, devm_gpiod_match,
+> >> -               &desc));
+> >> -}
+> >> -EXPORT_SYMBOL(devm_gpiod_put);
+> >
+> > Alexandre what do you think about this? Can we think of a scenario
+> > where explicit garbage collection is going to be needed or should we
+> > remove this for now?
+> 
+> Sorry for the delayed reply, I quickly saw the patch and then the
+> holidays got in the way. :)
+> 
+> I think all these functions should be kept. It is true that they are
+> seldomly used, and that the purpose of devm is to garbage-collect
+> resources upon driver removal, but they might (actually, probably
+> will) become needed by someone at some point in the future. One
+> example I can think of is two drivers that collaborate to share the
+> same GPIO line. If they acquire the GPIO through devm_gpiod_get() they
+> will need devm_gpiod_put() to release it so the other driver can
+> acquire it.
+> 
+> On a more general note, devm_clk_put(), devm_regulator_put(),
+> devm_pinctrl_put() and probably others devm_*_put() functions are
+> actively used in the kernel, to  support the idea that a devm removal
+> function makes sense. That not all the subsystem-provided functions
+> are used by mainline drivers does not necessary mean they should be
+> removed, especially if they serve a purpose. We should keep our APIs
+> consistent and future-proof, not to mention out-of-tree drivers that
+> may use them.
+> 
+> So this patch is a nack as far as I'm concerned, not only the GPIO
+> part, but the whole of it.
 
-Hello Linus,
+As far as I can tell, the few calls to the devm_*_put functions I can
+see look like unnecessary calls as part of driver/device
+uninitialization, and could be removed either directly or with minor
+reworking.  That there are only 1-2 calls to each in the entire kernel
+is also quite telling.
 
-I'll repost the patch.
-It has evolved a bit since you've been included in the cc list. It's
-now based upon the 'event trigger' and more important for you, it
-doesn't request nor configure the GPIO before using it. The reason is
-that how to do this is still being discussed with Alexandre.
+In any case, it's disappointing to have a pile of unused functions in
+the kernel on the theory that they *might* be needed; it's not like it'd
+be hard to retrieve them from git if they're ever needed.
 
-Jean-Jacques
+However, if you're insistent on keeping them, it'd be easy enough to
+provide patches to include an appropriate header with prototypes for
+them instead, which would also eliminate the warning this patch series
+set out to eliminate.
 
->
-> Yours,
-> Linus Walleij
+- Josh Triplett
