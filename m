@@ -1,98 +1,376 @@
-From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: Re: [PATCH] Tracing events with GPIOs
-Date: Fri, 3 Jan 2014 17:39:34 +0100
-Message-ID: <CACh+v5Mu0CciYZwDpZBJV+R8CYtnQymffDGJp94k8jQ54EKPDw@mail.gmail.com>
-References: <1387239745-2890-1-git-send-email-jjhiblot@traphandler.com>
-	<CAAVeFuKAGfnnsbtBg=zfmciyMdZHgrX_EpecqPjG=oO6rZdWag@mail.gmail.com>
-	<CACh+v5MUsYW-=qaVubzt8CWRGxibKDB3PjMZ6AaeDYgeTNzONA@mail.gmail.com>
-	<CAAVeFuJ=s8e8g5LG2CVAkS3guj-HRUYrwKxywFxq36sNpAjQGQ@mail.gmail.com>
-	<CACh+v5NhUzoRc4YuPJdSia21XTDh8tLo=oBZyo7Re7deOTjUdA@mail.gmail.com>
-	<CAAVeFuL+rbccJTj+Zr=nXwOq1x8p1FQ1R=-_mZ8pPxHQ_g03wA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: jjhiblot@traphandler.com
+Subject: [PATCH v2 repost] Tracing events with GPIOs
+Date: Fri,  3 Jan 2014 17:42:03 +0100
+Message-ID: <1388767323-16749-1-git-send-email-jjhiblot@traphandler.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 8.mo4.mail-out.ovh.net ([188.165.33.112]:56631 "EHLO
-	mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751067AbaACQjk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jan 2014 11:39:40 -0500
-Received: from mail434.ha.ovh.net (gw6.ovh.net [213.251.189.206])
-	by mo4.mail-out.ovh.net (Postfix) with SMTP id DDE0F10086E3
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jan 2014 17:43:20 +0100 (CET)
-In-Reply-To: <CAAVeFuL+rbccJTj+Zr=nXwOq1x8p1FQ1R=-_mZ8pPxHQ_g03wA@mail.gmail.com>
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:56735 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750935AbaACQp1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jan 2014 11:45:27 -0500
+Received: by mail-wg0-f47.google.com with SMTP id n12so13773633wgh.14
+        for <linux-gpio@vger.kernel.org>; Fri, 03 Jan 2014 08:45:26 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, gnurou@gmail.com
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-2014/1/3 Alexandre Courbot <gnurou@gmail.com>:
-> On Fri, Dec 20, 2013 at 5:40 PM, Jean-Jacques Hiblot
-> <jjhiblot@traphandler.com> wrote:
->> 2013/12/20 Alexandre Courbot <gnurou@gmail.com>:
->>> On Thu, Dec 19, 2013 at 8:38 PM, Jean-Jacques Hiblot
->>> <jjhiblot@traphandler.com> wrote:
->>>> 2013/12/19 Alexandre Courbot <gnurou@gmail.com>:
->>>>> The problems I can see so far:
->>>>>
->>>>> - Using gpiod, GPIOs are not specified as integers, but are typically
->>>>> mapped to a given (device, function) pair (device can be NULL) using
->>>>> device tree/platform data/ACPI and obtained by the corresponding
->>>>> device driver through gpiod_get(). You would need to find a different
->>>>> way to specify GPIOs, maybe using the gpio_chip's label and the GPIO
->>>>> hardware number.
->>>>>
->>>>> - Even if you do so, there is currently no way to arbitrarily obtain a
->>>>> GPIO that has not been explicitly mapped to a (device, function), and
->>>>> IIUC you need to specify the tracing GPIO freely from user-space. This
->>>>> hints that we will need to add a function that is sensibly the same as
->>>>> gpio_request_one() to the gpiod API, but I wonder if that does not
->>>>> defeats the purpose somehow.
->>>>
->>>> This is something I was wondering about for another reason. In many
->>>> cases the GPIOs that are physically available for probing will be
->>>> limited to the GPIOs already assigned a function (backlight control
->>>> for example), others are usually not routed except in eval boards or
->>>> early prototypes. And consequently those GPIOs will be requested by a
->>>> driver long before a probe is set.
->>>> It would be nice not to have to remove the driver to be able to use
->>>> this GPIO  as a probe. Maybe a gpiod_steal() interface and a flag
->>>> indicating that the GPIO can be safely stolen?
->>>
->>> Mmm an explicit way to hijack a GPIO does not sound very safe. Do you
->>> have concrete cases where you need to do so? I guess most boards you
->>> may want to use this patch with would have at least some spare GPIOs
->>> with pins somewhere on the board for this kind of purpose.
->> It's not always true. There are quite a few platforms where GPIOs is a
->> scarce resource (ppc for example). For example, the board I'm working
->> on at the moment is built around a APM powerpc which has only 16
->> GPIOs. Of those 16 GPIOS, some are not routed and most of the others
->> are hidden by the shielding so that I can probe only those that go to
->> external connectors.
->> IMHO it's probably the case for most of the boards that go into a
->> final product where EMI and space constraints are tight.
->> But I agree that's not safe. I thought that maybe a flag indicating
->> when it is safe would help (on my board that would be : ok to use the
->> GPIO that turns on or off the backlight, not ok to use the GPIO that
->> controls the power supply)
->
-> Rather than a flag per GPIO or board (my definition of "safe" is
-> rather strict ; I'd consider being able to mess with the backlight as
-> unsafe), I think I'd be more comfortable with having this as a kernel
-> config option, defaulting to 'n', and clearly stating that this can
-> potentially allow any GPIO to be hijacked (which is, apart for the
-> last point, what you already did). That way people can make an
-> informed decision about whether to enable it or not (disabled for
-> distro kernels, enabled for the occasional hacker who wants to use
-> this feature).
->
-> But before doing this, I'd like to make sure we explore every
-> possibility to make this safer by design.
-I agree and to be honest I'm not comfortable with the hijacker's way.
-Maybe I should just stick to the proper way of requesting a GPIO. When
-this feature is used,  it'll not be in the field after production but
-during the development when building a new kernel is not really an
-issue.
+From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This patch implements a new tracing mechanism based on event triggers and using GPIO.
+Debugging with GPIO is very common in the embedded world. At least for those of us
+fortunate enough to have an oscilloscope or a logic analyzer on their bench...
+This is especially true if the issue results of a hardware/sofware interaction.
+
+Typical use cases are :
+* mixed software/hardware debugging. For example when the software detects a
+  situation of interest (typically an error) it toggles a GPIO to trigger the
+  oscilloscope acquisition.
+* direct latency/duration measurements.
+
+usage :
+
+echo "gpio:<action>:<gpioid>[:<count>] [filter]" > /sys/kernel/debug/tracing/events/myevent/trigger
+
+possible actions are :
+* set
+* clear
+* toggle
+* pulse
+* pulsehigh
+* pulselow
+
+changes since v1:
+* use event trigger instead of kprobes
+* don't request the gpio anymore.
+
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+---
+ include/linux/ftrace_event.h        |   1 +
+ kernel/trace/trace_events_trigger.c | 285 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 286 insertions(+)
+
+diff --git a/include/linux/ftrace_event.h b/include/linux/ftrace_event.h
+index 03d2db2..ce7b2c6 100644
+--- a/include/linux/ftrace_event.h
++++ b/include/linux/ftrace_event.h
+@@ -353,6 +353,7 @@ enum event_trigger_type {
+ 	ETT_SNAPSHOT		= (1 << 1),
+ 	ETT_STACKTRACE		= (1 << 2),
+ 	ETT_EVENT_ENABLE	= (1 << 3),
++	ETT_GPIO		= (1 << 4),
+ };
+ 
+ extern void destroy_preds(struct ftrace_event_file *file);
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index f6dd115..6bb9545 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -22,6 +22,7 @@
+ #include <linux/ctype.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
++#include <linux/gpio.h>
+ 
+ #include "trace.h"
+ 
+@@ -852,6 +853,289 @@ static struct event_command trigger_traceoff_cmd = {
+ 	.set_filter		= set_trigger_filter,
+ };
+ 
++#ifdef CONFIG_GPIOLIB
++
++static void gpio_clear(int gpio)
++{
++	gpio_set_value(gpio, 0);
++}
++static void gpio_set(int gpio)
++{
++	gpio_set_value(gpio, 1);
++}
++static void gpio_toggle(int gpio)
++{
++	gpio_set_value(gpio, gpio_get_value(gpio) ? 0 : 1);
++}
++static void gpio_pulse(int gpio)
++{
++	int val = gpio_get_value(gpio) ? 1 : 0;
++	gpio_set_value(gpio, 1 - val);
++	gpio_set_value(gpio, val);
++}
++static void gpio_pulse_high(int gpio)
++{
++	gpio_set_value(gpio, 1);
++	gpio_set_value(gpio, 0);
++}
++static void gpio_pulse_low(int gpio)
++{
++	gpio_set_value(gpio, 0);
++	gpio_set_value(gpio, 1);
++}
++
++struct gpio_action {
++	const char *name;
++	void (*func) (int);
++	int initial_state;
++};
++
++static const struct gpio_action gpio_actions[] = {
++	{"set", gpio_set, 0},
++	{"clear", gpio_clear, 1},
++	{"toggle", gpio_toggle, -1},
++	{"pulse", gpio_pulse, -1},
++	{"pulsehigh", gpio_pulse_high, 0},
++	{"pulselow", gpio_pulse_low, 1}
++};
++struct gpio_data {
++	int gpio;
++	const struct gpio_action *action;
++};
++
++static void
++gpio_trigger(struct event_trigger_data *data)
++{
++	struct gpio_data *gpio_data = data->private_data;
++	gpio_data->action->func(gpio_data->gpio);
++}
++
++static void
++gpio_count_trigger(struct event_trigger_data *data)
++{
++	if (!data->count)
++		return;
++
++	if (data->count != -1)
++		(data->count)--;
++
++	gpio_trigger(data);
++}
++
++static int
++gpio_trigger_print(struct seq_file *m, struct event_trigger_ops *ops,
++		       struct event_trigger_data *data)
++{
++	struct gpio_data *gpio_data = data->private_data;
++	char tmp[40];
++	snprintf(tmp, sizeof(tmp), "gpio:%s:%d", gpio_data->action->name,
++		 gpio_data->gpio);
++	return event_trigger_print(tmp, m, (void *)data->count,
++				   data->filter_str);
++}
++
++static void
++gpio_trigger_free(struct event_trigger_ops *ops,
++			  struct event_trigger_data *data)
++{
++	struct gpio_data *gpio_data = data->private_data;
++
++	if (WARN_ON_ONCE(data->ref <= 0))
++		return;
++
++	data->ref--;
++	if (!data->ref) {
++		trigger_data_free(data);
++		kfree(gpio_data);
++	}
++}
++
++
++static struct event_trigger_ops gpio_trigger_ops = {
++	.func			= gpio_trigger,
++	.print			= gpio_trigger_print,
++	.init			= event_trigger_init,
++	.free			= gpio_trigger_free,
++};
++
++static struct event_trigger_ops gpio_count_trigger_ops = {
++	.func			= gpio_count_trigger,
++	.print			= gpio_trigger_print,
++	.init			= event_trigger_init,
++	.free			= gpio_trigger_free,
++};
++
++static struct event_trigger_ops *
++gpio_get_trigger_ops(char *cmd, char *param)
++{
++	return param ? &gpio_count_trigger_ops : &gpio_trigger_ops;
++}
++
++
++/**
++ * gpio_event_trigger_callback - GPIO event_command @func implementation
++ * @cmd_ops: The command ops, used for trigger registration
++ * @file: The ftrace_event_file associated with the event
++ * @glob: The raw string used to register the trigger
++ * @cmd: The cmd portion of the string used to register the trigger
++ * @param: The params portion of the string used to register the trigger
++ *
++ * implementation for GPIO event command parsing and trigger
++ * instantiation.
++ *
++ * Return: 0 on success, errno otherwise
++ */
++static int
++gpio_event_trigger_callback(struct event_command *cmd_ops,
++		       struct ftrace_event_file *file,
++		       char *glob, char *cmd, char *param)
++{
++	struct gpio_data *gpio_data = NULL;
++	struct event_trigger_data *trigger_data = NULL;
++	struct event_trigger_ops *trigger_ops;
++	char *action_str = NULL;
++	char *gpio_str = NULL;
++	char *count_str = NULL;
++	long count = -1;
++	unsigned long gpio;
++	const struct gpio_action *action = NULL;
++	int ret;
++	int i;
++
++	if (!param)
++		return -EINVAL;
++
++	action_str = strsep(&param, ":");
++	if (!action_str) {
++		pr_debug("missing gpio action\n");
++		return -EINVAL;
++	}
++
++	gpio_str = strsep(&param, ":");
++	if (!gpio_str) {
++		pr_debug("no gpio id provided\n");
++		return -EINVAL;
++	}
++
++	count_str = strsep(&param, " \t");
++
++	for (i = 0; i < ARRAY_SIZE(gpio_actions); i++) {
++		if (strcmp(action_str, gpio_actions[i].name) == 0) {
++			action = &gpio_actions[i];
++			break;
++		}
++	}
++	if (!action) {
++		pr_debug("gpio action '%s' not recognized\n", action_str);
++		return -EINVAL;
++	}
++
++	ret = kstrtoul(gpio_str, 0, &gpio);
++	if (ret) {
++		pr_debug("gpio [%s] is not a valid gpio id\n", gpio_str);
++		return -EINVAL;
++	}
++
++	if (count_str) {
++		ret = kstrtoul(count_str, 0, &count);
++		if (ret) {
++			pr_debug("count [%s] is not a valid count value\n",
++				 count_str);
++			return -EINVAL;
++		}
++	}
++
++	trigger_ops = cmd_ops->get_trigger_ops(cmd, count_str);
++
++	ret = -ENOMEM;
++	trigger_data = kzalloc(sizeof(*trigger_data), GFP_KERNEL);
++	if (!trigger_data)
++		goto out;
++
++	gpio_data = kzalloc(sizeof(*gpio_data), GFP_KERNEL);
++	if (!gpio_data)
++		goto out_free;
++
++	gpio_data->gpio = gpio;
++	gpio_data->action = action;
++
++	trigger_data->count = count;
++	trigger_data->ops = trigger_ops;
++	trigger_data->cmd_ops = cmd_ops;
++	trigger_data->private_data = gpio_data;
++	INIT_LIST_HEAD(&trigger_data->list);
++
++	if (glob[0] == '!') {
++		cmd_ops->unreg(glob+1, trigger_ops, trigger_data, file);
++		ret = 0;
++		goto out_free;
++	}
++
++	if (!param) /* if param is non-empty, it's supposed to be a filter */
++		goto out_reg;
++
++	if (!cmd_ops->set_filter)
++		goto out_reg;
++
++	ret = cmd_ops->set_filter(param, trigger_data, file);
++	if (ret < 0)
++		goto out_free;
++
++ out_reg:
++	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
++	/*
++	 * The above returns on success the # of functions enabled,
++	 * but if it didn't find any functions it returns zero.
++	 * Consider no functions a failure too.
++	 */
++	if (!ret) {
++		ret = -ENOENT;
++		goto out_free;
++	} else if (ret < 0)
++		goto out_free;
++
++	if (gpio_cansleep(gpio))
++		pr_warn("Using gpio %s as a tracer may break your kernel!\n",
++			gpio_str);
++
++	gpio_direction_output(gpio, (action->initial_state == 0) ? 0 : 1);
++
++	ret = 0;
++ out:
++	return ret;
++
++ out_free:
++	if (cmd_ops->set_filter)
++		cmd_ops->set_filter(NULL, trigger_data, NULL);
++	kfree(trigger_data);
++	kfree(gpio_data);
++	goto out;
++}
++
++
++static struct event_command trigger_gpio_cmd = {
++	.name			= "gpio",
++	.trigger_type		= ETT_GPIO,
++	.func			= gpio_event_trigger_callback,
++	.reg			= register_trigger,
++	.unreg			= unregister_trigger,
++	.get_trigger_ops	= gpio_get_trigger_ops,
++	.set_filter		= set_trigger_filter,
++};
++
++static __init int register_trigger_gpio_cmd(void)
++{
++	int ret;
++
++	ret = register_event_command(&trigger_gpio_cmd);
++	WARN_ON(ret < 0);
++
++	return ret;
++}
++#else
++static __init int register_trigger_gpio_cmd(void) { return 0; }
++#endif /* CONFIG_GPIOLIB */
++
+ #ifdef CONFIG_TRACER_SNAPSHOT
+ static void
+ snapshot_trigger(struct event_trigger_data *data)
+@@ -1406,6 +1690,7 @@ __init int register_trigger_cmds(void)
+ 	register_trigger_snapshot_cmd();
+ 	register_trigger_stacktrace_cmd();
+ 	register_trigger_enable_disable_cmds();
++	register_trigger_gpio_cmd();
+ 
+ 	return 0;
+ }
+-- 
+1.8.4.2
+
