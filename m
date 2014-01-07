@@ -1,31 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: clps711x: Enable driver compilation with COMPILE_TEST
-Date: Tue, 7 Jan 2014 18:54:58 +0100
-Message-ID: <CACRpkdZ2OCkoWoWx9S7am1pYGtiAHNmn-mK8wgN4YD-c1bCKXQ@mail.gmail.com>
-References: <1387894134-11007-1-git-send-email-shc_work@mail.ru>
-	<1387894134-11007-2-git-send-email-shc_work@mail.ru>
+Subject: Re: [PATCH v2] gpio: xtensa: depend on HAVE_XTENSA_GPIO32
+Date: Tue, 7 Jan 2014 18:59:00 +0100
+Message-ID: <CACRpkdZkYwDFk9gOhz+g+tmL8goA-PVEucps7qd6k54UTRFC1g@mail.gmail.com>
+References: <bfc8635f56992aa8865dc58810a4f9872b3a0c86.1387350629.git.baruch@tkos.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:57408 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752814AbaAGRy6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2014 12:54:58 -0500
-Received: by mail-oa0-f48.google.com with SMTP id k1so548561oag.35
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Jan 2014 09:54:58 -0800 (PST)
-In-Reply-To: <1387894134-11007-2-git-send-email-shc_work@mail.ru>
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:60744 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753007AbaAGR7B (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2014 12:59:01 -0500
+Received: by mail-oa0-f52.google.com with SMTP id o6so563889oag.11
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Jan 2014 09:59:01 -0800 (PST)
+In-Reply-To: <bfc8635f56992aa8865dc58810a4f9872b3a0c86.1387350629.git.baruch@tkos.co.il>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-xtensa@linux-xtensa.org
 
-On Tue, Dec 24, 2013 at 3:08 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
+On Wed, Dec 18, 2013 at 8:10 AM, Baruch Siach <baruch@tkos.co.il> wrote:
 
-> This helps increasing build testing coverage.
+> Prevent build failure when the selected variant does not support GPIO32.
 >
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+> Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+> v2:
+>    Move the HAVE_XTENSA_GPIO32 definition to arch/xtensa/Kconfig (Max)
+>    Add Max's ack
 
-Patch applied.
+OK applied this v2 version then, as this is how the xtensa maintainer
+want it.
 
 Yours,
 Linus Walleij
