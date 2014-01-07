@@ -1,117 +1,228 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] gpio: mcp23s08: Add irq functionality for i2c chips
-Date: Tue, 7 Jan 2014 16:00:44 +0000
-Message-ID: <20140107160044.GE4180@e106331-lin.cambridge.arm.com>
-References: <1389103548-23458-1-git-send-email-larsi@wh2.tu-dresden.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: pinctrl - detailed gpio-mode pinconf design
+Date: Tue, 7 Jan 2014 17:40:30 +0100
+Message-ID: <CACRpkdYGjz50fxr2KAG7gQ88F_dWCi+NGFTLDP0BHvdYbxohkQ@mail.gmail.com>
+References: <EB2BCA6A838C7B4FB238C534ED5D770422395F79@renexmb02.roe2.renesasmobile.com>
+	<CACRpkdbpv3Vjt-=3_1XbrGaiEYqCgtJCGppvoL48gad+7Licdg@mail.gmail.com>
+	<10664958.tMCNRkOk1E@avalon>
+	<EB2BCA6A838C7B4FB238C534ED5D77042239D2A9@renexmb02.roe2.renesasmobile.com>
+	<CACRpkdbzGokHHhR3GhLvF7KCFdAV=b0VHwUE4eHVfNFEGhx_Jg@mail.gmail.com>
+	<EB2BCA6A838C7B4FB238C534ED5D7704223A3799@renexmb02.roe2.renesasmobile.com>
+	<CACRpkdYQyxsCWAhp9rFa3ZyfWuBqtoiMysRUEhi81XmevZjBGA@mail.gmail.com>
+	<EB2BCA6A838C7B4FB238C534ED5D77045E001472@renexmb02.roe2.renesasmobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:57486 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751264AbaAGQBH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2014 11:01:07 -0500
-Content-Disposition: inline
-In-Reply-To: <1389103548-23458-1-git-send-email-larsi@wh2.tu-dresden.de>
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:63745 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751913AbaAGQkb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2014 11:40:31 -0500
+Received: by mail-oa0-f46.google.com with SMTP id l6so431228oag.19
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Jan 2014 08:40:30 -0800 (PST)
+In-Reply-To: <EB2BCA6A838C7B4FB238C534ED5D77045E001472@renexmb02.roe2.renesasmobile.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars Poeschel <larsi@wh2.tu-dresden.de>
-Cc: "poeschel@lemonage.de" <poeschel@lemonage.de>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "rob@landley.net" <rob@landley.net>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: kevin.bracey@broadcom.com
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Magnus Damm <damm@opensource.se>, Paul Mundt <lethal@linux-sh.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-On Tue, Jan 07, 2014 at 02:05:48PM +0000, Lars Poeschel wrote:
-> From: Lars Poeschel <poeschel@lemonage.de>
-> 
-> This adds interrupt functionality for i2c chips to the driver.
-> They can act as a interrupt-controller and generate interrupts, if
-> the inputs change.
-> This is tested on a mcp23017 chip.
-> 
-> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
-> ---
->  .../devicetree/bindings/gpio/gpio-mcp23s08.txt     |  21 +-
->  drivers/gpio/Kconfig                               |   1 +
->  drivers/gpio/gpio-mcp23s08.c                       | 220 ++++++++++++++++++++-
->  3 files changed, 236 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-> index daa3017..b8376f3 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-> @@ -38,12 +38,31 @@ Required device specific properties (only for SPI chips):
->      removed.
->  - spi-max-frequency = The maximum frequency this chip is able to handle
->  
-> -Example I2C:
-> +Optional properties:
-> +- #interrupt-cells : Should be two.
-> +  - first cell is the pin number
-> +  - second cell is used to specify flags.
-> +- interrupt-controller: Marks the device node as a interrupt controller.
-> +NOTE: The interrupt functionality is only supported for i2c versions of the
-> +chips yet.
-> +
-> +Optional device specific properties:
-> +- microchip,irq-mirror: Sets the mirror flag in the IOCON register. This causes
-> +        devices with two interrupt outputs to always trigger both interrupt
-> +        outputs regardless where the interrupt happened.
-> +
+On Thu, Dec 19, 2013 at 11:49 AM,  <kevin.bracey@broadcom.com> wrote:
+>> Linus Walleij wrote:
 
-When is this useful?
+>> > Main problem with (a) - how do you get back to "normal" mux, and is
+>> > emulation just obfuscation?
+>> > Main problem with (b) - can you guarantee mux/conf ordering?
+>>
+>> I'm not very fond of either solution really. Can we think of a third alternative
+>> where the pin control core is aware of the constraints and tries to verify and/or
+>> solve the situation?
+>
+> I've realised there's one existing design issue that complicates this - I'd managed to miss it up until just now, when I tried to add some fixed ties to some pins in my DT.
+>
+> Pinmux is per-group only, while pinconf is per-pin. So there's no way for consumers to request "gpio-mode" for a loose pin, and the core currently couldn't do it either.
 
-When should it be set and when shouldin't it be?
+I don't know what you mean by this. It is possible to use the same pin for
+GPIO and a certain device at the same time even, since this may be possible
+in hardware (e.g. to use a GPIO to "spy" on a device line).
 
-[...]
+Also define what you mean by "gpio-mode", as can be seen from
+Documentation/pinctrl.txt section "GPIO mode pitfalls" this is a
+dangerously ambigous term.
 
-> @@ -432,13 +618,21 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->  	/* verify MCP_IOCON.SEQOP = 0, so sequential reads work,
->  	 * and MCP_IOCON.HAEN = 1, so we work with all chips.
->  	 */
-> +
->  	status = mcp->ops->read(mcp, MCP_IOCON);
->  	if (status < 0)
->  		goto fail;
-> -	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN)) {
-> +
-> +	mirror = of_find_property(mcp->chip.of_node,
-> +				  "microchip,irq-mirror", NULL);
+> So far this has been not been an issue for all my "sleep" states which manually
 
-Use of_property_read_bool.
+What do you mean by "manually" here? That is a very unclear term that
+I prefer that we do not use at all in the kernel. There is no man inside
+the system.
 
-> +	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror) {
->  		/* mcp23s17 has IOCON twice, make sure they are in sync */
->  		status &= ~(IOCON_SEQOP | (IOCON_SEQOP << 8));
->  		status |= IOCON_HAEN | (IOCON_HAEN << 8);
-> +		status &= ~(IOCON_INTPOL | (IOCON_INTPOL << 8));
-> +		if (mirror)
-> +			status |= IOCON_MIRROR | (IOCON_MIRROR << 8);
-> +
->  		status = mcp->ops->write(mcp, MCP_IOCON, status);
->  		if (status < 0)
->  			goto fail;
-> @@ -469,7 +663,17 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->  			goto fail;
->  	}
->  
-> +	if (mcp->irq &&
-> +	    of_find_property(mcp->chip.of_node, "interrupt-controller", NULL)) {
+> flip the entirety of a function group to gpio-mode, but it can't handle an odd
+> pin hog. (And the "default no-driver states" that have also been discussed
+> recently in another thread would also need to be applied per-pin to mop
+> up driverless gaps in pins).
 
-You could do so here too.
+Hm I might understand what a "default no-driver state" is but ... sorry
+I have a hard time following this paragraph :-/
 
-In fact, doesn't the irq-mirror proeprty only make sense if this is an
-interrupt controller?
+What is an "odd pin hog"?
 
-[...]
+> Maybe we just have to make do with:
+>
+> c) pinconf settings that would require the driver to internally select GPIO mux can only be selected if no pinmux function (or GPIO API?) is enabled on the pin.
 
-> @@ -583,6 +789,10 @@ static int mcp230xx_remove(struct i2c_client *client)
->  	if (status == 0)
->  		kfree(mcp);
->  
-> +	if (client->irq &&
-> +	    of_find_property(mcp->chip.of_node, "interrupt-controller", NULL))
-> +		mcp23s08_irq_teardown(mcp);
+I don't understand what you mean by this, but I guess you're after
+som driver intrinsic detail so let's see the patch so we can see
+clearly what you mean here.
 
-Can you not cache the fact it's an interrupt controller?
+>> > Should "BIAS_HIGH_IMPEDANCE" turn off "BIAS_PULL_UP"?
+>>
+>> It is *currently* up to the driver not to allow things that make no electrical sense, or take evasive action.
+>
+> But does that make electrical sense or not?
 
-Parsing the DT in a teardown path is very odd.
+It makes sense if the HW has two knobs: one for setting pull up
+and one for setting the pin into High-Z.
 
-Thanks,
-Mark.
+If it has only one or the other, there is not much it can do anyway.
+
+> Is this a meaningfuly request to internally combine a pull with an
+> otherwise-high-impedance (ie non-output) pin, or nonsense because
+> overall, an external pin can't both be pulling up and high-impedance?
+> Are they orthogonal settings, or exclusive?
+
+They may be orthogonal in the hardware register sense, i.e. you
+can turn on both at the same time by setting two bits, but still they are
+not orthogonal in the electrical sense, because the outcome is
+ambigous. What happens if you enable both at the same time
+must be understood by reading the HW documentation or talking
+to the HW engineer who implemented it.
+
+> Because all these settings are booleans, (mostly) without "disables",
+> they can't be used to toggle between states without a definition of
+> the exclusive sets (at least as of 3.10; 3.12 has changed things -
+> see below). I think that's what needs to be pinned down here. There
+> will some settings that will be mutually exclusive because of hardware
+> limitations. But some of the exclusion has to be by definition. At least
+> before 3.12, where we have to rely on exclusion to turn off the previous
+> state.
+
+OK I'm following. How do you plan to implement this?
+
+> I'm still not fully understanding the definitions here. I just don't
+> have a feel for what pinconf state descriptions for the "ideal"
+> maximally-flexible hardware with the "ideal" driver should look like.
+
+As no such hardware exist this is a question relating to the
+ideal world.
+
+Bringing such mental figures into the resoning invokes Plato's
+metaphor of the Cave and the debate between philosophical idealism
+and philisophical realism.
+http://en.wikipedia.org/wiki/Idealism
+http://en.wikipedia.org/wiki/Philosophical_realism
+This relates to mathematical formalism vs. Platonism and whether
+our mental models are inventions or discoveries.
+
+I don't know such stuff! All I want to do is manage this subsystem
+for the set of pin controllers out there and close the necessary
+gaps to make it useful in practice. This is called pragmatism.
+http://en.wikipedia.org/wiki/Pragmatism
+
+So let's keep a pragmatic stance - rough consensus and running
+code.
+
+> Here's the possible implementation of the pinconfs on our hardware:
+>
+> bias-disable:        PU:=0 PD:=0                                   (PU/D=Pull Up/Down)
+> bias-pull-up:        PU:=1 PD:=0 (MUX:=GPIO OE:=0 if no func?)     (OE=Output Enable)
+> bias-pull-down:      PU:=0 PD:=1 (MUX:=GPIO OE:=0 if no func?)
+> bias-high-impedance: MUX:=GPIO OE:=0         (PU:=0 PD:=0?)
+> output-low:          MUX:=GPIO OE:=1 DATA:=0 (PU:=0 PD:=0?)
+> output-high:         MUX:=GPIO OE:=1 DATA:=1 (PU:=0 PD:=0?)
+>
+> but I still can't figure out whether setting the controls in parentheses is desirable.
+
+The documentation should say, else I think you should ask a renesas
+HW engineer about that. I don't know how that hardware will react
+to some of these settings...
+
+> Either with or without all the bits in brackets we would get a logically
+> consistent and useable system, but they're two different possible
+> "APIs" for our hardware, and I don't know which API is intended.
+
+What are the two APIs you're referring to here? Pinctrl and
+GPIO?
+
+Since both aspects are joined in the subsystem and even in the
+same driver file (I think) it is perfectly possible to handle this
+in the PFC driver.
+
+> They lead to two different DT descriptions.
+>
+> Say I wanted two pinconf-only states that switched between driving low, and weakly pulling up. Should that be expressed in the DT/pinctrl tables like:
+>
+>         state_a {
+>                 output-low;      // OE:=1
+>         };
+>         state_b {
+>                 bias-pull-up; // OE:=0 implied by bias-pull-up? Pulling implies not driving?
+>                 // Or is OE:=0 implied by lack of output-xxx in this state (possible from 3.12)?
+>         };
+>
+> Or should it look like
+>
+>         state_a {
+>                 bias-disable;  // output-low won't touch the pulls
+>                 output-low;    // OE:=1
+>         };
+>         state_b {
+>                 bias-pull-up;        // only sets PU/PD - pulls are orthogonal to OE
+>                 bias-high-impedance; // necessary to set OE:=0
+>         };
+
+>From a DT code parsing point of view I think both are OK?
+
+I think the best approach is that the driver check both current
+and requested state in the .pin_config_set() callback.
+
+> I genuinely have no idea whether combining those two bias settings in state_b is
+> necessary or nonsense.
+
+You need to know this first before developing code for
+driving the hardware.
+
+> The former feels neater as a consumer, but the latter's orthogonality is also
+> compelling, despite the odd-looking "bias" combo.
+
+The framework does not constrain which version you use, and
+any hard constraints should probably be in the driver.
+
+Maybe the generic pinconf core could print warnings about
+strange configurations though, maybe as a debug option?
+
+> Up to now I've been viewing configs as being applied one-at-a-time,
+
+They are *not* applied one-at-a-time. The driver is given an
+array of configs and can inspect this array and take decisions
+on whether it is possible to satisfy this config and in case it
+cannot it may return an error code.
+
+> with no indication to the driver as to when the core has actually
+> started selecting a new state. (Which is the way it is in 3.10, which
+> is where I'm currently working).
+
+So don't use such ancient codebase, I'm developing v3.14 now.
+
+> It also means the need for exclusions to be part of the defined
+> API is important, as we have to know how to make sure the
+> configs in state B override all the configs in state A.
+
+As mentioned this is for the driver to handle.
+
+> Corollary - given that view, it would seem logical for the core to
+> automatically set an empty config array if the old state had a
+> config array for a pin/group and the new one doesn't, akin to
+> what it does for functions.
+
+Please elaborate with an example what you mean by this.
+
+Yours,
+Linus Walleij
