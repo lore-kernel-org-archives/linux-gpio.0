@@ -1,39 +1,48 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v4 2/4] mmc: sdhci-acpi: convert to use GPIO descriptor
- API
-Date: Wed, 8 Jan 2014 14:34:24 +0200
-Message-ID: <20140108123424.GR2494@intel.com>
-References: <1389177657-29266-1-git-send-email-mika.westerberg@linux.intel.com>
- <1389177657-29266-3-git-send-email-mika.westerberg@linux.intel.com>
- <CACRpkdYhynQ4ooHcZyc-nrgVK9gbvtsYR6ZVv1u0sfBVEaK93A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
+Date: Wed, 8 Jan 2014 13:42:09 +0100
+Message-ID: <CACRpkdb2GvHAa9kF5KXWMiTDnyepziGmjqrCcgB1B7e0iHVKXA@mail.gmail.com>
+References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:16911 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755441AbaAHM1Y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 8 Jan 2014 07:27:24 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYhynQ4ooHcZyc-nrgVK9gbvtsYR6ZVv1u0sfBVEaK93A@mail.gmail.com>
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:45962 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756086AbaAHMmK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2014 07:42:10 -0500
+Received: by mail-oa0-f46.google.com with SMTP id l6so1696642oag.33
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jan 2014 04:42:10 -0800 (PST)
+In-Reply-To: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Jakub Pavelek <jakub.pavelek@linaro.org>
 
-On Wed, Jan 08, 2014 at 12:54:13PM +0100, Linus Walleij wrote:
-> On Wed, Jan 8, 2014 at 11:40 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> 
-> > The new descriptor based GPIO interface is now the recommended and safer
-> > way of using GPIOs from device drivers. Convert the ACPI SDHCI driver to
-> > use that interface.
-> >
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> 
-> I've tentatively applied this to the GPIO tree now, as it was acked by
-> Adrian who is a long time MMC subsystem contributor and we need
-> it to proceed with the rest of the refactorings.
+On Thu, Nov 7, 2013 at 10:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Thanks!
+> This passes the errata fix using a GPIO to control the RTS pin
+> on one of the AT91 chips to use gpiolib instead of the
+> AT91-specific interfaces. Also remove the reliance on
+> compile-time #defines and the cpu_* check and rely on the
+> platform passing down the proper GPIO pin through platform
+> data.
+>
+> This is a prerequisite for getting rid of the local GPIO
+> implementation in the AT91 platform and move toward
+> multiplatform.
+>
+> The patch also adds device tree support for getting the
+> RTS GPIO pin from the device tree on DT boot paths.
+>
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v3->v4:
+
+Hi Nicolas, I don't see this patch in linux-next, where did it
+get stuck? Something I can help with? Greg has ACKed it
+and all I think ...
+
+Yours,
+Linus Walleij
