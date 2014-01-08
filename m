@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/4] mmc: sdhci-acpi: convert to use GPIO descriptor API
-Date: Wed, 8 Jan 2014 12:54:13 +0100
-Message-ID: <CACRpkdYhynQ4ooHcZyc-nrgVK9gbvtsYR6ZVv1u0sfBVEaK93A@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] gpio / ACPI: register to ACPI events automatically
+Date: Wed, 8 Jan 2014 12:55:46 +0100
+Message-ID: <CACRpkdZPh70Q_dX-MRmp=a3b8wvUpc66+ZAfnf4+Ox_tDKvx9w@mail.gmail.com>
 References: <1389177657-29266-1-git-send-email-mika.westerberg@linux.intel.com>
-	<1389177657-29266-3-git-send-email-mika.westerberg@linux.intel.com>
+	<1389177657-29266-2-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:53617 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756281AbaAHLyO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2014 06:54:14 -0500
-Received: by mail-oa0-f53.google.com with SMTP id h16so1648260oag.12
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jan 2014 03:54:14 -0800 (PST)
-In-Reply-To: <1389177657-29266-3-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-oa0-f50.google.com ([209.85.219.50]:42061 "EHLO
+	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755200AbaAHLzq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2014 06:55:46 -0500
+Received: by mail-oa0-f50.google.com with SMTP id l6so1640722oag.37
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jan 2014 03:55:46 -0800 (PST)
+In-Reply-To: <1389177657-29266-2-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
@@ -22,21 +22,22 @@ Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rj
 On Wed, Jan 8, 2014 at 11:40 AM, Mika Westerberg
 <mika.westerberg@linux.intel.com> wrote:
 
-> The new descriptor based GPIO interface is now the recommended and safer
-> way of using GPIOs from device drivers. Convert the ACPI SDHCI driver to
-> use that interface.
+> Instead of asking each driver to register to ACPI events we can just call
+> acpi_gpiochip_register_interrupts() for each chip that has an ACPI handle.
+> The function checks chip->to_irq and if it is set to NULL (a GPIO driver
+> that doesn't do interrupts) the function does nothing.
+>
+> We also add the a new header drivers/gpio/gpiolib.h that is used for
+> functions internal to gpiolib and add ACPI GPIO chip registering functions
+> to that header.
+>
+> Once that is done we can remove call to acpi_gpiochip_register_interrupts()
+> from its only user, pinctrl-baytrail.c
 >
 > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I've tentatively applied this to the GPIO tree now, as it was acked by
-Adrian who is a long time MMC subsystem contributor and we need
-it to proceed with the rest of the refactorings.
-
-Chris, beat me up if you're unhappy with this.
-
-(If it explodes in linux-next I'll just back it all out.)
+Patch applied.
 
 Yours,
 Linus Walleij
