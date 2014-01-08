@@ -1,50 +1,260 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v3 4/6] gpio / ACPI: register to ACPI events automatically
-Date: Wed, 8 Jan 2014 12:22:24 +0200
-Message-ID: <20140108102224.GO2494@intel.com>
-References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
- <1385460350-17543-5-git-send-email-mika.westerberg@linux.intel.com>
- <CACRpkdZhw5At_X-mNkb3TmQ2n1hXc0FGWYAbkAVgxvzCw=xgtw@mail.gmail.com>
+From: boris brezillon <b.brezillon@overkiz.com>
+Subject: Re: [RFC PATCH] gpio: add GPIO hogging mechanism
+Date: Wed, 08 Jan 2014 11:18:38 +0100
+Message-ID: <52CD25FE.8010701@overkiz.com>
+References: <1387463671-1164-1-git-send-email-b.brezillon@overkiz.com>	<1387463671-1164-2-git-send-email-b.brezillon@overkiz.com> <CACRpkdb=atfrW+Wqbi17a1KhstS7XHkutuXsM24gL2VPEri_cw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:39686 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755224AbaAHKPZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 8 Jan 2014 05:15:25 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZhw5At_X-mNkb3TmQ2n1hXc0FGWYAbkAVgxvzCw=xgtw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb=atfrW+Wqbi17a1KhstS7XHkutuXsM24gL2VPEri_cw@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Rob Landley <rob@landley.net>, Alexandre Courbot <gnurou@gmail.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Ben Gamari <bgamari.foss@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 07, 2014 at 06:50:00PM +0100, Linus Walleij wrote:
-> On Tue, Nov 26, 2013 at 11:05 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> 
-> > Instead of asking each driver to register to ACPI events we can just call
-> > acpi_gpiochip_register_interrupts() for each chip that has an ACPI handle.
-> > The function checks chip->to_irq and if it is set to NULL (a GPIO driver
-> > that doesn't do interrupts) the function does nothing.
-> >
-> > We also add the a new header drivers/gpio/gpiolib.h that is used for
-> > functions internal to gpiolib and add ACPI GPIO chip registering functions
-> > to that header.
-> >
-> > Once that is done we can remove call to acpi_gpiochip_register_interrupts()
-> > from its only user, pinctrl-baytrail.c
-> >
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Two questions:
-> 
-> - Can you please rebase patches 3-6 on my GPIO tree "devel" branch?
+On 08/01/2014 10:37, Linus Walleij wrote:
+> On Thu, Dec 19, 2013 at 3:34 PM, Boris BREZILLON
+> <b.brezillon@overkiz.com> wrote:
+>
+>> GPIO hogging is a way to request and configure specific GPIO without
+>> explicitly requesting it in the device driver.
+>>
+>> The request and configuration procedure is handled in the core device
+>> driver code before the driver probe function is called.
+> Why?
 
-Yes.
+Because I obviously misunderstood your suggestion in our previous
+discussion regarding the at91rm9200-ek board case :-)
+( https://www.mail-archive.com/devicetree@vger.kernel.org/msg06838.html).
 
-> - Can this patch be placed first? It does not seem to depend on the
->   others, to to push dependent patches to the end of the series.
+I thought you were suggesting to request GPIOs as PINCTRL configs are
+requested, but apparently, you were just suggesting to directly request
+the pins within the gpio controller.
 
-Sure - I'll post a rebased version in a moment.
+Regarding the specific at91rm920-ek case, your solution should work
+(as long as the gpio is configured before the SPI or MMC device is probed,
+which should be the case), but the dependency between the SPI or MMC
+device and the SPI/MMC switch pin is not represented in DT, and I'm not
+happy with this.
+
+
+Anyway, do you want me to rework the gpio hog as described below ?
+
+Best Regards,
+
+Boris
+>
+> Why can't these hogs be handled right after the gpio chip has been
+> added in the end of the gpiochio_add() function?
+>
+>> +It might contain GPIO hog definitions. GPIO hogging is a mechanism providing
+>> +automatic GPIO request and configuration before the device is passed to its
+>> +driver probe function (the same mechanism is used for pinctrl pin config).
+>> +
+>> +Each GPIO hog definition is represented as a child node of the GPIO controller.
+>> +Required properties:
+>> +- gpio: store the gpio informations (id, flags, ...). Shall contain the
+>> +  number of cells specified in its parent node (GPIO controller node).
+> This property is alway plural "gpios".
+>
+>> +- hog-as-input or hog-as-output: a boolean property specifying the GPIO
+>> +  direction.
+>> +- hog-init-high or hog-init-low: a boolean property specifying the GPIO
+>> +  value in case the GPIO is hogged as output.
+> What about just having these three:
+>
+> hog-as-input
+> hog-as-output-high
+> hog-as-output-low
+>
+>> +Optional properties:
+>> +- open-drain-line: GPIO is configured as an open drain pin.
+>> +- open-source-line: GPIO is configured as an open source pin.
+> Can you not simply us the flags in the second cell for the gpios
+> property for this, normally?
+>
+>> +- export-line or export-line-fixed: the GPIO is exported to userspace via
+>> +  sysfs.
+> Move this feature to a separate patch. It is much more controversial
+> than the hog concept as such.
+>
+>> +- line-name: the GPIO label name.
+> OK.
+>
+>> @@ -66,6 +95,19 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
+>>                  compatible = "fsl,qe-pario-bank-a", "fsl,qe-pario-bank";
+>>                  reg = <0x1400 0x18>;
+>>                  gpio-controller;
+>> +               gpio-hogs = <&exported_gpio>;
+>> +
+>> +               line_a: line-a {
+>> +                       gpio = <5 0>;
+>> +                       hog-as-input;
+>> +                       line-name = "line-a";
+>> +               };
+>> +
+>> +               exported_gpio: exported-gpio {
+>> +                       gpio = <6 0>;
+>> +                       hog-as-output;
+>> +                       line-name = "exported-gpio";
+>> +               };
+> This looks pretty straight-forward to use, but need the DT maintainers
+> to provide input on this.
+>
+>>          };
+>>
+>>          qe_pio_e: gpio-controller@1460 {
+>> @@ -75,6 +117,11 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
+>>                  gpio-controller;
+>>          };
+>>
+>> +       pio_consumer {
+>> +               gpio-hogs = <&line_a>;
+>> +               gpio-hog-names = "my-line-a";
+>> +       };
+> No. No way. That is not what hogs is about. It is not to make consumers
+> get their GPIOs grabbed automatically when probing. It is *only* about
+> making it possible for the core to set up a few GPIO lines *not* belonging
+> to any particular in-kernel device when probing the GPIO chip.
+>
+> For providing GPIOs to consumers, use the existing OF bindings and
+> add code to the drivers to handle them. A device needs to keep track
+> of its resources.
+>
+> In any case, such concepts would be a totally separate patch.
+>
+>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> NAK on this, hogs shall be a GPIO-intrinsic.
+>
+>> @@ -142,6 +175,9 @@ int devm_gpio_request(struct device *dev, unsigned gpio, const char *label)
+>>          if (!dr)
+>>                  return -ENOMEM;
+>>
+>> +       if (gpio_is_hogged(dev, gpio))
+>> +               return 0;
+>> +
+>>          rc = gpio_request(gpio, label);
+>>          if (rc) {
+>>                  devres_free(dr);
+>> @@ -172,6 +208,9 @@ int devm_gpio_request_one(struct device *dev, unsigned gpio,
+>>          if (!dr)
+>>                  return -ENOMEM;
+>>
+>> +       if (gpio_is_hogged(dev, gpio))
+>> +               return 0;
+>> +
+> This just makes it impossible to release these resources. Don't do this.
+>
+> Hogs should be tied to a certain GPIO chip, get hogged when the
+> chip is added and get removed when the chip is removed.
+>
+>> + * of_gpio_hog_count() - Count a GPIO hogs on a specific device node
+>> + * @np:                device node to get GPIO from
+>> + *
+>> + * Returns the number of GPIO hogs requested by this device node.
+>> + */
+>> +int of_gpio_hog_count(struct device_node *np)
+>> +{
+>> +       int size;
+>> +
+>> +       if (!of_get_property(np, "gpio-hogs", &size))
+>> +               return 0;
+>> +
+>> +       return size / sizeof(phandle);
+>> +}
+>> +EXPORT_SYMBOL(of_gpio_hog_count);
+> There is no reason to export this, it should be static, gpiolib-internal.
+>
+>> +EXPORT_SYMBOL(of_get_gpio_hog);
+> Dito.
+>
+>> @@ -1214,6 +1216,17 @@ int gpiochip_add(struct gpio_chip *chip)
+>>
+>>          of_gpiochip_add(chip);
+>>
+>> +       /* Instantiate missing GPIO hogs */
+>> +       if (chip->dev->gpios) {
+>> +               for (i = 0; i < chip->dev->gpios->ngpios; i++) {
+>> +                       if (chip->dev->gpios->gpios[i])
+>> +                               continue;
+>> +                       desc = devm_gpiod_get_hog_index(chip->dev, i);
+>> +                       if (!IS_ERR(desc))
+>> +                               chip->dev->gpios->gpios[i] = desc;
+>> +               }
+>> +       }
+> This is the only thing you should be doing.
+>
+>> @@ -2421,6 +2434,7 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>>          struct gpio_desc *desc = NULL;
+>>          int status;
+>>          enum gpio_lookup_flags flags = 0;
+>> +       int i;
+>>
+>>          dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
+>>
+>> @@ -2451,6 +2465,13 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>>                  return desc;
+>>          }
+>>
+>> +       if (dev->gpios) {
+>> +               for (i = 0; i < dev->gpios->ngpios; i++) {
+>> +                       if (dev->gpios->gpios[i] == desc)
+>> +                               return desc;
+>> +               }
+>> +       }
+> Don't do this. We already have explicit gpio resource management.
+> Don't attempt to make it implicit.
+>
+>> +EXPORT_SYMBOL_GPL(gpiod_get_hog_index);
+> I don't understand this function at all.
+>
+>> +bool gpio_is_hogged(struct device *dev, unsigned gpio)
+>> +{
+>> +       return gpiod_is_hogged(dev, gpio_to_desc(gpio));
+>> +}
+>> +EXPORT_SYMBOL_GPL(gpio_is_hogged);
+> This should not be exported.
+>
+>> +/**
+>> + * gpio_hog_count - count number of GPIO hogs requested by a specific device
+>> + * @dev:       GPIO consumer
+>> + *
+>> + * Return the number of GPIO hogs.
+>> + */
+>> +int gpio_hog_count(struct device *dev)
+>> +{
+>> +       /* Using device tree? */
+>> +       if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
+>> +               return of_gpio_hog_count(dev->of_node);
+>> +       return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(gpio_hog_count);
+> Get rid of this.
+>
+>> +++ b/include/linux/device.h
+>> @@ -22,6 +22,7 @@
+>>   #include <linux/types.h>
+>>   #include <linux/mutex.h>
+>>   #include <linux/pinctrl/devinfo.h>
+>> +#include <linux/gpio/devinfo.h>
+>>   #include <linux/pm.h>
+>>   #include <linux/atomic.h>
+>>   #include <linux/ratelimit.h>
+>> @@ -744,6 +745,10 @@ struct device {
+>>          struct dev_pin_info     *pins;
+>>   #endif
+>>
+>> +#ifdef CONFIG_GPIOLIB
+>> +       struct dev_gpio_info    *gpios;
+>> +#endif
+> Don't do this.
+>
+> Overall it appears you try to make the device core grab all GPIOs automatically
+> when devices are probed, this is not what GPIO hogs are about, and we already
+> have a resource management model for GPIOs using the descriptors explicitly
+> in the drivers, I see no reason to try to push that over to the device core.
+>
+> Yours,
+> Linus Walleij
+
