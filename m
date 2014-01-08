@@ -1,51 +1,112 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpio: add GPIO hogging mechanism
-Date: Wed, 8 Jan 2014 10:45:18 +0100
-Message-ID: <CACRpkdYq11_fSWMzb+CCgWzjeUq2TeSja7h0UrbxB2_-yPYG9w@mail.gmail.com>
-References: <1387463671-1164-1-git-send-email-b.brezillon@overkiz.com>
-	<1387463671-1164-2-git-send-email-b.brezillon@overkiz.com>
-	<20131219164109.GB27409@kroah.com>
-	<20131219164737.GA4536@saruman.home>
-	<52B32A70.1080700@overkiz.com>
-	<20131219182227.GB4536@saruman.home>
-	<52C14180.4080801@overkiz.com>
+Subject: Re: [PATCH v2] gpio: Driver for SYSCON-based GPIOs
+Date: Wed, 8 Jan 2014 11:04:51 +0100
+Message-ID: <CACRpkdaUKWOE+ore26i073_kLQ5z=a+==ykm6iiAgbmJKShUjw@mail.gmail.com>
+References: <1387307984-7693-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <52C14180.4080801@overkiz.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: boris brezillon <b.brezillon@overkiz.com>
-Cc: Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Landley <rob@landley.net>, Alexandre Courbot <gnurou@gmail.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Ben Gamari <bgamari.foss@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pekon Gupta <pekon@ti.com>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:57958 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752932AbaAHKEw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2014 05:04:52 -0500
+Received: by mail-oa0-f54.google.com with SMTP id o6so1531127oag.41
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jan 2014 02:04:52 -0800 (PST)
+In-Reply-To: <1387307984-7693-1-git-send-email-shc_work@mail.ru>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
 
-On Mon, Dec 30, 2013 at 10:48 AM, boris brezillon
-<b.brezillon@overkiz.com> wrote:
-> On 19/12/2013 19:22, Felipe Balbi wrote:
+On Tue, Dec 17, 2013 at 8:19 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
 
->> that's quite a weird argument from Linus W, considering you _do_ have a
->> discrete mux on the board.
+> SYSCON driver was designed for using memory areas (registers)
+> that are used in several subsystems. There are systems (CPUs)
+> which use bits in one register for various purposes and thus
+> should be handled by various kernel subsystems. This driver
+> allows you to use the individual SYSCON bits as GPIOs.
+> ARM CLPS711X SYSFLG1 input lines has been added as first user
+> of this driver.
 >
->> We have quite a few of such "crazy" scenarios here at TI and we were
->> going to send a pinctrl-gpio driver.
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 
-Hm I'm all in the blue as to what a "pinctrl-gpio driver" is ... I'm
-confused :-)
+Hm, this is nice in some ways but I'm reluctant still.
+I really need input from the device tree maintainers on the bindings.
 
->> If that's not acceptable, then I
->> suppose there is no way to boot from NAND on a board where NAND signals
->> go through a discrete mux where the select signal is a GPIO pin.
+Won't be for v3.14 in any case. Let's get some more input on this
+thing.
 
-One problem I have is that I still don't really understand if this is a pin
-mux, i.e. changing the connection to a certain device onto some actual
-*PIN* or just some other mux muxing some certain line from one silicon
-block to another.
+> +++ b/drivers/gpio/gpio-syscon.c
+(...)
+> +#define GPIO_SYSCON_INPUT      (1 << 0)
+> +#define GPIO_SYSCON_OUTPUT     (1 << 1)
+> +
+> +/* SYSCON driver is designed to use 32-bit wide registers */
+> +#define SYSCON_REG_SIZE                (4)
+> +#define SYSCON_REG_BITS                (SYSCON_REG_SIZE * 8)
 
-> Linus, tell me if I'm wrong, but I think, the pinctrl-gpio is the right way
-> to solve
-> the at91rm9200ek board use case.
+This is nice.
 
-I don't know, because I don't know exactly what you mean by
-"pinctrl-gpio".
+Add kerneldoc to the following structs as this will be a very generic
+driver.
+
+> +struct syscon_gpio_data {
+> +       unsigned int    flags;
+> +       unsigned int    bit_offset;
+
+Call it line_bit_offset
+
+And I would add (per comment below) an optional dir_bit_offset
+as well.
+
+> +       unsigned int    bit_count;
+> +};
+> +
+> +struct syscon_gpio_priv {
+> +       struct gpio_chip                chip;
+> +       struct regmap                   *syscon;
+> +       const struct syscon_gpio_data   *data;
+> +};
+
+> +static int syscon_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+> +{
+> +       return 0;
+> +}
+> +
+> +static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
+> +{
+> +       syscon_gpio_set(chip, offset, val);
+> +
+> +       return 0;
+> +}
+
+Should this not be supported by such a generic driver?
+
+Atleast add a big fat TODO comment stating that the next user need to
+implement this.
+
+Also struct syscon_gpio_data then should contain an dir_bit_offset
+for the direction bits.
+
+> +static const struct syscon_gpio_data clps711x_mctrl_gpio = {
+> +       /* ARM CLPS711X SYSFLG1 Bits 8-10 */
+> +       .flags          = GPIO_SYSCON_INPUT,
+> +       .bit_offset     = 0x40 * 8 + 8,
+> +       .bit_count      = 3,
+> +};
+> +
+> +static const struct of_device_id syscon_gpio_ids[] = {
+> +       {
+> +               .compatible     = "clps711x,syscon-gpio-mctrl",
+> +               .data           = &clps711x_mctrl_gpio,
+> +       },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
+
+Oh you're doing it like that :-)
+
+That is actually helpful. Hm.
 
 Yours,
 Linus Walleij
