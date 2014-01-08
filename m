@@ -1,56 +1,79 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
-Date: Wed, 8 Jan 2014 13:54:50 +0100
-Message-ID: <52CD4A9A.4010205@atmel.com>
-References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org> <CACRpkdb2GvHAa9kF5KXWMiTDnyepziGmjqrCcgB1B7e0iHVKXA@mail.gmail.com>
+From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v3 0/2] gpio: davinci: reuse for keystone arch
+Date: Wed, 8 Jan 2014 09:08:24 -0500
+Message-ID: <52CD5BD8.8090903@ti.com>
+References: <1387885284-8119-1-git-send-email-grygorii.strashko@ti.com>
+	<52CC3EDC.7070404@ti.com> <52CCCEB6.9050006@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:22203 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751764AbaAHMyx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2014 07:54:53 -0500
-In-Reply-To: <CACRpkdb2GvHAa9kF5KXWMiTDnyepziGmjqrCcgB1B7e0iHVKXA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <52CCCEB6.9050006-l0cyMroinI0@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Victor <linux@maxim.org.za>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?ISO-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jakub Pavelek <jakub.pavelek@linaro.org>
 
-On 08/01/2014 13:42, Linus Walleij :
-> On Thu, Nov 7, 2013 at 10:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Tuesday 07 January 2014 11:06 PM, Sekhar Nori wrote:
+> On Tuesday 07 January 2014 11:22 PM, Santosh Shilimkar wrote:
+>> Sekhar,
+>>
+>> On Tuesday 24 December 2013 06:41 AM, Grygorii Strashko wrote:
+>>> This series is intended to update Davinci GPIO driver and reuse
+>>> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+>>> Keystone GPIO IP: supports:
+>>> - up to 32 GPIO lines;
+>>> - only unbanked irqs;
+>>>
+>>> See Documentation:
+>>> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+>>>
+>>> This series based on:
+>>> https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
+>>>
+>>> Changes in v3:
+>>> - fixed code, changed by mistake; fixed sparse warning 
+>>> Changes in v2:
+>>> - minor comments applied, no functional changes
+>>>
+>>> v2: https://lkml.org/lkml/2013/12/18/135
+>>> v1: https://lkml.org/lkml/2013/12/12/366
+>>>
+>>> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> Cc: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+>>> Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+>>>
+>>> Grygorii Strashko (2):
+>>>   gpio: davinci: don't create irq_domain in case of unbanked irqs
+>>>   gpio: davinci: reuse for Keystone SoC
+>>>
+>>>  .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
+>>>  drivers/gpio/gpio-davinci.c                        |   82 ++++++++++++++------
+>>>  2 files changed, 61 insertions(+), 25 deletions(-)
+>>>
+>> Have you picked up the $subject series in your queue ?
 > 
->> This passes the errata fix using a GPIO to control the RTS pin
->> on one of the AT91 chips to use gpiolib instead of the
->> AT91-specific interfaces. Also remove the reliance on
->> compile-time #defines and the cpu_* check and rely on the
->> platform passing down the proper GPIO pin through platform
->> data.
->>
->> This is a prerequisite for getting rid of the local GPIO
->> implementation in the AT91 platform and move toward
->> multiplatform.
->>
->> The patch also adds device tree support for getting the
->> RTS GPIO pin from the device tree on DT boot paths.
->>
->> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
->> Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> ChangeLog v3->v4:
+> Not yet, at least on the new compatible introduction, I need an ack from
+> DT folks.
 > 
-> Hi Nicolas, I don't see this patch in linux-next, where did it
-> get stuck? Something I can help with? Greg has ACKed it
-> and all I think ...
+I noticed that but the usual 2 weeks period to get ack is over I guess ;-)
+The DT part is really trivial as well but I let you decide.
 
-Yes, everything seemed ready. It is actually stuck in Uwe's pull-request
-which I asked for an update yesterday...
-(Re: [GIT PULL] get rid of <mach/timex.h>). Maybe we should synchronize
-each other on IRC?
+> I am happy with the patches though and have tested them as well, In case
+> I do not get an ack from 2/2 in time, I can at least send 1/2 for
+> inclusion after my first gpio pull request to ARM-SoC gets pulled.
+>
+Would be great to get both of them but if not both at least 1/2.
 
-I would have liked to see it merged in linux-next soon.
-
-Bye,
--- 
-Nicolas Ferre
+Regards,
+Santosh
+ 
