@@ -1,112 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: Driver for SYSCON-based GPIOs
-Date: Wed, 8 Jan 2014 11:04:51 +0100
-Message-ID: <CACRpkdaUKWOE+ore26i073_kLQ5z=a+==ykm6iiAgbmJKShUjw@mail.gmail.com>
-References: <1387307984-7693-1-git-send-email-shc_work@mail.ru>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3 4/6] gpio / ACPI: register to ACPI events automatically
+Date: Wed, 8 Jan 2014 12:22:24 +0200
+Message-ID: <20140108102224.GO2494@intel.com>
+References: <1385460350-17543-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1385460350-17543-5-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkdZhw5At_X-mNkb3TmQ2n1hXc0FGWYAbkAVgxvzCw=xgtw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:57958 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752932AbaAHKEw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2014 05:04:52 -0500
-Received: by mail-oa0-f54.google.com with SMTP id o6so1531127oag.41
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jan 2014 02:04:52 -0800 (PST)
-In-Reply-To: <1387307984-7693-1-git-send-email-shc_work@mail.ru>
+Received: from mga02.intel.com ([134.134.136.20]:39686 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755224AbaAHKPZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 8 Jan 2014 05:15:25 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZhw5At_X-mNkb3TmQ2n1hXc0FGWYAbkAVgxvzCw=xgtw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Chris Ball <cjb@laptop.org>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Rob Landley <rob@landley.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 17, 2013 at 8:19 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
+On Tue, Jan 07, 2014 at 06:50:00PM +0100, Linus Walleij wrote:
+> On Tue, Nov 26, 2013 at 11:05 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> 
+> > Instead of asking each driver to register to ACPI events we can just call
+> > acpi_gpiochip_register_interrupts() for each chip that has an ACPI handle.
+> > The function checks chip->to_irq and if it is set to NULL (a GPIO driver
+> > that doesn't do interrupts) the function does nothing.
+> >
+> > We also add the a new header drivers/gpio/gpiolib.h that is used for
+> > functions internal to gpiolib and add ACPI GPIO chip registering functions
+> > to that header.
+> >
+> > Once that is done we can remove call to acpi_gpiochip_register_interrupts()
+> > from its only user, pinctrl-baytrail.c
+> >
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Two questions:
+> 
+> - Can you please rebase patches 3-6 on my GPIO tree "devel" branch?
 
-> SYSCON driver was designed for using memory areas (registers)
-> that are used in several subsystems. There are systems (CPUs)
-> which use bits in one register for various purposes and thus
-> should be handled by various kernel subsystems. This driver
-> allows you to use the individual SYSCON bits as GPIOs.
-> ARM CLPS711X SYSFLG1 input lines has been added as first user
-> of this driver.
->
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+Yes.
 
-Hm, this is nice in some ways but I'm reluctant still.
-I really need input from the device tree maintainers on the bindings.
+> - Can this patch be placed first? It does not seem to depend on the
+>   others, to to push dependent patches to the end of the series.
 
-Won't be for v3.14 in any case. Let's get some more input on this
-thing.
-
-> +++ b/drivers/gpio/gpio-syscon.c
-(...)
-> +#define GPIO_SYSCON_INPUT      (1 << 0)
-> +#define GPIO_SYSCON_OUTPUT     (1 << 1)
-> +
-> +/* SYSCON driver is designed to use 32-bit wide registers */
-> +#define SYSCON_REG_SIZE                (4)
-> +#define SYSCON_REG_BITS                (SYSCON_REG_SIZE * 8)
-
-This is nice.
-
-Add kerneldoc to the following structs as this will be a very generic
-driver.
-
-> +struct syscon_gpio_data {
-> +       unsigned int    flags;
-> +       unsigned int    bit_offset;
-
-Call it line_bit_offset
-
-And I would add (per comment below) an optional dir_bit_offset
-as well.
-
-> +       unsigned int    bit_count;
-> +};
-> +
-> +struct syscon_gpio_priv {
-> +       struct gpio_chip                chip;
-> +       struct regmap                   *syscon;
-> +       const struct syscon_gpio_data   *data;
-> +};
-
-> +static int syscon_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
-> +{
-> +       syscon_gpio_set(chip, offset, val);
-> +
-> +       return 0;
-> +}
-
-Should this not be supported by such a generic driver?
-
-Atleast add a big fat TODO comment stating that the next user need to
-implement this.
-
-Also struct syscon_gpio_data then should contain an dir_bit_offset
-for the direction bits.
-
-> +static const struct syscon_gpio_data clps711x_mctrl_gpio = {
-> +       /* ARM CLPS711X SYSFLG1 Bits 8-10 */
-> +       .flags          = GPIO_SYSCON_INPUT,
-> +       .bit_offset     = 0x40 * 8 + 8,
-> +       .bit_count      = 3,
-> +};
-> +
-> +static const struct of_device_id syscon_gpio_ids[] = {
-> +       {
-> +               .compatible     = "clps711x,syscon-gpio-mctrl",
-> +               .data           = &clps711x_mctrl_gpio,
-> +       },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
-
-Oh you're doing it like that :-)
-
-That is actually helpful. Hm.
-
-Yours,
-Linus Walleij
+Sure - I'll post a rebased version in a moment.
