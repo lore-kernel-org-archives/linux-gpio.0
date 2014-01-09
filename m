@@ -1,72 +1,92 @@
-From: Gerhard Sittig <gsi@denx.de>
-Subject: Re: [PATCH] gpio: pxa: fix bug when get gpio value
-Date: Thu, 9 Jan 2014 11:46:04 +0100
-Message-ID: <20140109104604.GT20094@book.gsilab.sittig.org>
-References: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
+From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v3 0/2] gpio: davinci: reuse for keystone arch
+Date: Thu, 9 Jan 2014 09:10:32 -0500
+Message-ID: <52CEADD8.4070203@ti.com>
+References: <1387885284-8119-1-git-send-email-grygorii.strashko@ti.com>
+	<52CC3EDC.7070404@ti.com> <52CCCEB6.9050006@ti.com>
+	<52CD5BD8.8090903@ti.com> <52CE7A9B.9000300@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:53702 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752643AbaAIKqL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jan 2014 05:46:11 -0500
-Content-Disposition: inline
-In-Reply-To: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <52CE7A9B.9000300-l0cyMroinI0@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Zhang <zhangwm@marvell.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2014 at 17:25 +0800, Neil Zhang wrote:
+On Thursday 09 January 2014 05:31 AM, Sekhar Nori wrote:
+> On Wednesday 08 January 2014 07:38 PM, Santosh Shilimkar wrote:
+>> On Tuesday 07 January 2014 11:06 PM, Sekhar Nori wrote:
+>>> On Tuesday 07 January 2014 11:22 PM, Santosh Shilimkar wrote:
+>>>> Sekhar,
+>>>>
+>>>> On Tuesday 24 December 2013 06:41 AM, Grygorii Strashko wrote:
+>>>>> This series is intended to update Davinci GPIO driver and reuse
+>>>>> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+>>>>> Keystone GPIO IP: supports:
+>>>>> - up to 32 GPIO lines;
+>>>>> - only unbanked irqs;
+>>>>>
+>>>>> See Documentation:
+>>>>> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+>>>>>
+>>>>> This series based on:
+>>>>> https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
+>>>>>
+>>>>> Changes in v3:
+>>>>> - fixed code, changed by mistake; fixed sparse warning 
+>>>>> Changes in v2:
+>>>>> - minor comments applied, no functional changes
+>>>>>
+>>>>> v2: https://lkml.org/lkml/2013/12/18/135
+>>>>> v1: https://lkml.org/lkml/2013/12/12/366
+>>>>>
+>>>>> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>>>> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>> Cc: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+>>>>> Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+>>>>>
+>>>>> Grygorii Strashko (2):
+>>>>>   gpio: davinci: don't create irq_domain in case of unbanked irqs
+>>>>>   gpio: davinci: reuse for Keystone SoC
+>>>>>
+>>>>>  .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
+>>>>>  drivers/gpio/gpio-davinci.c                        |   82 ++++++++++++++------
+>>>>>  2 files changed, 61 insertions(+), 25 deletions(-)
+>>>>>
+>>>> Have you picked up the $subject series in your queue ?
+>>>
+>>> Not yet, at least on the new compatible introduction, I need an ack from
+>>> DT folks.
+>>>
+>> I noticed that but the usual 2 weeks period to get ack is over I guess ;-)
+>> The DT part is really trivial as well but I let you decide.
 > 
-> gpio_get_value should return 0 or 1.
+> I just realize that Rob's e-mail address bounces. I have added his
+> updated address now and hopefully he will see this to provide his ack.
 > 
-> I have checked mach-mmp / mach-pxa / plat-pxa / plat-orion / mach-orion5x.
-> It's OK for all of them to change this function to return 0 and 1.
+> Rob,
 > 
-> [ ... ]
->  
->  static int pxa_gpio_get(struct gpio_chip *chip, unsigned offset)
->  {
-> -	return readl_relaxed(gpio_chip_base(chip) + GPLR_OFFSET) & (1 << offset);
-> +	u32 gplr = readl_relaxed(gpio_chip_base(chip) + GPLR_OFFSET);
-> +	return !!(gplr & (1 << offset));
->  }
-
-This may be a stupid question, but isn't the "!!value" syntax
-just replacing one kind of "zero or non-zero" with another kind
-of "zero or non-zero"?  This phrase is used to normalize
-booleans, but ISTR there is no guarantee that true needs to equal
-the value of 1.
-
-Here is why I'm asking:  Is there a need from GPIO get_value()
-routines to return normalized values, and if so should not more
-drivers receive an update?  Or need get_value() routines just
-return the usual integer zero/non-zero values (as is the
-convention in the C programming language) and GPIO using callers
-should know that they are not exactly 0 and 1?
-
-The latter would make this change for PXA unneeded (nice to have
-but not essential), and both the commit message as well as the
-subject line at least need to get re-phrased, as the "bug" is in
-the caller's expectation and not in the GPIO chip driver.
-
-Please note that I'm not questioning the patches' being
-applicable, but am trying to find out what else needs to be done
-which previously may have gone unnoticed.  A doc update maybe, to
-make GPIO users aware that the return value may not be exactly 1,
-and to clear up where such an assumption is wrongly made.
-
-If the GPIO subsystem's API wants to guarantee values of 0 and 1
-(which I think it doesn't), then I feel the adjustment should be
-done in the gpio_get_value() routines (in all its public
-variants, or a common routine which all of them pass through),
-and certainly not in individual chip drivers.
-
-
-virtually yours
-Gerhard Sittig
--- 
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office@denx.de
+> We need your ack on 2/2 of this series. If you do not have the patch, I
+> can forward it to you.
+> 
+>>
+>>> I am happy with the patches though and have tested them as well, In case
+>>> I do not get an ack from 2/2 in time, I can at least send 1/2 for
+>>> inclusion after my first gpio pull request to ARM-SoC gets pulled.
+>>>
+>> Would be great to get both of them but if not both at least 1/2.
+> 
+> I had already sent it with my first pull request. Hmph. Everything
+> except 2/2 of tis series should be in linux-next now.
+> 
+Thanks !!
