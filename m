@@ -1,43 +1,86 @@
-From: Neil Zhang <zhangwm@marvell.com>
-Subject: RE: [PATCH] gpio: pxa: fix bug when get gpio value
-Date: Thu, 9 Jan 2014 01:32:07 -0800
-Message-ID: <175CCF5F49938B4D99B2E3EF7F558EBE540BD53872@SC-VEXCH4.marvell.com>
-References: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH v3 0/2] gpio: davinci: reuse for keystone arch
+Date: Thu, 9 Jan 2014 16:01:55 +0530
+Message-ID: <52CE7A9B.9000300@ti.com>
+References: <1387885284-8119-1-git-send-email-grygorii.strashko@ti.com> <52CC3EDC.7070404@ti.com> <52CCCEB6.9050006@ti.com> <52CD5BD8.8090903@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:7338 "EHLO
-	mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754170AbaAIJcL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jan 2014 04:32:11 -0500
-In-Reply-To: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
-Content-Language: en-US
+Received: from comal.ext.ti.com ([198.47.26.152]:59231 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751273AbaAIKdy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 9 Jan 2014 05:33:54 -0500
+In-Reply-To: <52CD5BD8.8090903@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Zhang <zhangwm@marvell.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Rob Herring <robh+dt@kernel.org>, prabhakar.csengg@gmail.com, davinci-linux-open-source@linux.davincidsp.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE5laWwgWmhhbmcgW21haWx0
-bzp6aGFuZ3dtQG1hcnZlbGwuY29tXQ0KPiBTZW50OiAyMDE0xOox1MI5yNUgMTc6MjYNCj4gVG86
-IGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZzsgZ251cm91QGdtYWlsLmNvbTsgbGludXgtZ3Bpb0B2
-Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcg0KPiBDYzogTmVp
-bCBaaGFuZw0KPiBTdWJqZWN0OiBbUEFUQ0hdIGdwaW86IHB4YTogZml4IGJ1ZyB3aGVuIGdldCBn
-cGlvIHZhbHVlDQo+IA0KPiBncGlvX2dldF92YWx1ZSBzaG91bGQgcmV0dXJuIDAgb3IgMS4NCj4g
-DQo+IEkgaGF2ZSBjaGVja2VkIG1hY2gtbW1wIC8gbWFjaC1weGEgLyBwbGF0LXB4YSAvIHBsYXQt
-b3Jpb24gLyBtYWNoLW9yaW9uNXguDQo+IEl0J3MgT0sgZm9yIGFsbCBvZiB0aGVtIHRvIGNoYW5n
-ZSB0aGlzIGZ1bmN0aW9uIHRvIHJldHVybiAwIGFuZCAxLg0KPiANCj4gU2lnbmVkLW9mZi1ieTog
-TmVpbCBaaGFuZyA8emhhbmd3bUBtYXJ2ZWxsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwaW8v
-Z3Bpby1weGEuYyB8ICAgIDMgKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
-LCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tcHhh
-LmMgYi9kcml2ZXJzL2dwaW8vZ3Bpby1weGEuYyBpbmRleA0KPiBjYzEzZDFiLi40MmU2ZTY0IDEw
-MDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1weGEuYw0KPiArKysgYi9kcml2ZXJzL2dw
-aW8vZ3Bpby1weGEuYw0KPiBAQCAtMjYzLDcgKzI2Myw4IEBAIHN0YXRpYyBpbnQgcHhhX2dwaW9f
-ZGlyZWN0aW9uX291dHB1dChzdHJ1Y3QgZ3Bpb19jaGlwDQo+ICpjaGlwLA0KPiANCj4gIHN0YXRp
-YyBpbnQgcHhhX2dwaW9fZ2V0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIG9mZnNl
-dCkgIHsNCj4gLQlyZXR1cm4gcmVhZGxfcmVsYXhlZChncGlvX2NoaXBfYmFzZShjaGlwKSArIEdQ
-TFJfT0ZGU0VUKSAmICgxIDw8DQo+IG9mZnNldCk7DQo+ICsJdTMyIGdwbHIgPSByZWFkbF9yZWxh
-eGVkKGdwaW9fY2hpcF9iYXNlKGNoaXApICsgR1BMUl9PRkZTRVQpOw0KPiArCXJldHVybiAhIShn
-cGxyICYgKDEgPDwgb2Zmc2V0KSk7DQo+ICB9DQo+IA0KPiAgc3RhdGljIHZvaWQgcHhhX2dwaW9f
-c2V0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIG9mZnNldCwgaW50IHZhbHVlKQ0K
-PiAtLQ0KPiAxLjcuOS41DQoNCkFkZCByaWdodCBMS01MLg0KDQpCZXN0IFJlZ2FyZHMsDQpOZWls
-IFpoYW5nDQo=
+On Wednesday 08 January 2014 07:38 PM, Santosh Shilimkar wrote:
+> On Tuesday 07 January 2014 11:06 PM, Sekhar Nori wrote:
+>> On Tuesday 07 January 2014 11:22 PM, Santosh Shilimkar wrote:
+>>> Sekhar,
+>>>
+>>> On Tuesday 24 December 2013 06:41 AM, Grygorii Strashko wrote:
+>>>> This series is intended to update Davinci GPIO driver and reuse
+>>>> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
+>>>> Keystone GPIO IP: supports:
+>>>> - up to 32 GPIO lines;
+>>>> - only unbanked irqs;
+>>>>
+>>>> See Documentation:
+>>>> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
+>>>>
+>>>> This series based on:
+>>>> https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
+>>>>
+>>>> Changes in v3:
+>>>> - fixed code, changed by mistake; fixed sparse warning 
+>>>> Changes in v2:
+>>>> - minor comments applied, no functional changes
+>>>>
+>>>> v2: https://lkml.org/lkml/2013/12/18/135
+>>>> v1: https://lkml.org/lkml/2013/12/12/366
+>>>>
+>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>>>> Cc: Sekhar Nori <nsekhar@ti.com>
+>>>> Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>
+>>>>
+>>>> Grygorii Strashko (2):
+>>>>   gpio: davinci: don't create irq_domain in case of unbanked irqs
+>>>>   gpio: davinci: reuse for Keystone SoC
+>>>>
+>>>>  .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
+>>>>  drivers/gpio/gpio-davinci.c                        |   82 ++++++++++++++------
+>>>>  2 files changed, 61 insertions(+), 25 deletions(-)
+>>>>
+>>> Have you picked up the $subject series in your queue ?
+>>
+>> Not yet, at least on the new compatible introduction, I need an ack from
+>> DT folks.
+>>
+> I noticed that but the usual 2 weeks period to get ack is over I guess ;-)
+> The DT part is really trivial as well but I let you decide.
+
+I just realize that Rob's e-mail address bounces. I have added his
+updated address now and hopefully he will see this to provide his ack.
+
+Rob,
+
+We need your ack on 2/2 of this series. If you do not have the patch, I
+can forward it to you.
+
+> 
+>> I am happy with the patches though and have tested them as well, In case
+>> I do not get an ack from 2/2 in time, I can at least send 1/2 for
+>> inclusion after my first gpio pull request to ARM-SoC gets pulled.
+>>
+> Would be great to get both of them but if not both at least 1/2.
+
+I had already sent it with my first pull request. Hmph. Everything
+except 2/2 of tis series should be in linux-next now.
+
+Thanks,
+Sekhar
