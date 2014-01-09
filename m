@@ -1,79 +1,39 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v3 0/2] gpio: davinci: reuse for keystone arch
-Date: Wed, 8 Jan 2014 09:08:24 -0500
-Message-ID: <52CD5BD8.8090903@ti.com>
-References: <1387885284-8119-1-git-send-email-grygorii.strashko@ti.com>
-	<52CC3EDC.7070404@ti.com> <52CCCEB6.9050006@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] gpio: davinci: signedness bug in davinci_gpio_irq_setup()
+Date: Thu, 9 Jan 2014 08:28:03 +0300
+Message-ID: <20140109052803.GA1265@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <52CCCEB6.9050006-l0cyMroinI0@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tuesday 07 January 2014 11:06 PM, Sekhar Nori wrote:
-> On Tuesday 07 January 2014 11:22 PM, Santosh Shilimkar wrote:
->> Sekhar,
->>
->> On Tuesday 24 December 2013 06:41 AM, Grygorii Strashko wrote:
->>> This series is intended to update Davinci GPIO driver and reuse
->>> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
->>> Keystone GPIO IP: supports:
->>> - up to 32 GPIO lines;
->>> - only unbanked irqs;
->>>
->>> See Documentation:
->>> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
->>>
->>> This series based on:
->>> https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
->>>
->>> Changes in v3:
->>> - fixed code, changed by mistake; fixed sparse warning 
->>> Changes in v2:
->>> - minor comments applied, no functional changes
->>>
->>> v2: https://lkml.org/lkml/2013/12/18/135
->>> v1: https://lkml.org/lkml/2013/12/12/366
->>>
->>> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> Cc: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
->>> Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
->>>
->>> Grygorii Strashko (2):
->>>   gpio: davinci: don't create irq_domain in case of unbanked irqs
->>>   gpio: davinci: reuse for Keystone SoC
->>>
->>>  .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
->>>  drivers/gpio/gpio-davinci.c                        |   82 ++++++++++++++------
->>>  2 files changed, 61 insertions(+), 25 deletions(-)
->>>
->> Have you picked up the $subject series in your queue ?
-> 
-> Not yet, at least on the new compatible introduction, I need an ack from
-> DT folks.
-> 
-I noticed that but the usual 2 weeks period to get ack is over I guess ;-)
-The DT part is really trivial as well but I let you decide.
+"irq" needs to be signed for the error handling to work.
 
-> I am happy with the patches though and have tested them as well, In case
-> I do not get an ack from 2/2 in time, I can at least send 1/2 for
-> inclusion after my first gpio pull request to ARM-SoC gets pulled.
->
-Would be great to get both of them but if not both at least 1/2.
+Fixes: 6075a8b2b6c3 ('gpio: davinci: don't create irq_domain in case of unbanked irqs')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Santosh
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 7629b4f12b7f..b0e98d379217 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -423,7 +423,7 @@ static const struct irq_domain_ops davinci_gpio_irq_ops = {
  
+ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ {
+-	unsigned	gpio, irq, bank;
++	unsigned	gpio, bank;
+ 	struct clk	*clk;
+ 	u32		binten = 0;
+ 	unsigned	ngpio, bank_irq;
+@@ -433,6 +433,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	struct davinci_gpio_platform_data *pdata = dev->platform_data;
+ 	struct davinci_gpio_regs __iomem *g;
+ 	struct irq_domain	*irq_domain = NULL;
++	int		irq;
+ 
+ 	ngpio = pdata->ngpio;
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
