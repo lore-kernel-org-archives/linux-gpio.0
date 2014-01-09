@@ -1,39 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] gpio: davinci: signedness bug in davinci_gpio_irq_setup()
-Date: Thu, 9 Jan 2014 08:28:03 +0300
-Message-ID: <20140109052803.GA1265@elgon.mountain>
+From: Neil Zhang <zhangwm@marvell.com>
+Subject: [PATCH] gpio: pxa: fix bug when get gpio value
+Date: Thu, 9 Jan 2014 17:25:57 +0800
+Message-ID: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:59574 "EHLO
+	mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757381AbaAIJ0b (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jan 2014 04:26:31 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.or
+Cc: Neil Zhang <zhangwm@marvell.com>
 
-"irq" needs to be signed for the error handling to work.
+gpio_get_value should return 0 or 1.
 
-Fixes: 6075a8b2b6c3 ('gpio: davinci: don't create irq_domain in case of unbanked irqs')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I have checked mach-mmp / mach-pxa / plat-pxa / plat-orion / mach-orion5x.
+It's OK for all of them to change this function to return 0 and 1.
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 7629b4f12b7f..b0e98d379217 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -423,7 +423,7 @@ static const struct irq_domain_ops davinci_gpio_irq_ops = {
+Signed-off-by: Neil Zhang <zhangwm@marvell.com>
+---
+ drivers/gpio/gpio-pxa.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index cc13d1b..42e6e64 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -263,7 +263,8 @@ static int pxa_gpio_direction_output(struct gpio_chip *chip,
  
- static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ static int pxa_gpio_get(struct gpio_chip *chip, unsigned offset)
  {
--	unsigned	gpio, irq, bank;
-+	unsigned	gpio, bank;
- 	struct clk	*clk;
- 	u32		binten = 0;
- 	unsigned	ngpio, bank_irq;
-@@ -433,6 +433,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 	struct davinci_gpio_platform_data *pdata = dev->platform_data;
- 	struct davinci_gpio_regs __iomem *g;
- 	struct irq_domain	*irq_domain = NULL;
-+	int		irq;
+-	return readl_relaxed(gpio_chip_base(chip) + GPLR_OFFSET) & (1 << offset);
++	u32 gplr = readl_relaxed(gpio_chip_base(chip) + GPLR_OFFSET);
++	return !!(gplr & (1 << offset));
+ }
  
- 	ngpio = pdata->ngpio;
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ static void pxa_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+-- 
+1.7.9.5
+
