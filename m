@@ -1,92 +1,72 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v3 0/2] gpio: davinci: reuse for keystone arch
-Date: Thu, 9 Jan 2014 09:10:32 -0500
-Message-ID: <52CEADD8.4070203@ti.com>
-References: <1387885284-8119-1-git-send-email-grygorii.strashko@ti.com>
-	<52CC3EDC.7070404@ti.com> <52CCCEB6.9050006@ti.com>
-	<52CD5BD8.8090903@ti.com> <52CE7A9B.9000300@ti.com>
+From: Neil Zhang <zhangwm@marvell.com>
+Subject: RE: [PATCH] gpio: pxa: fix bug when get gpio value
+Date: Thu, 9 Jan 2014 18:04:18 -0800
+Message-ID: <175CCF5F49938B4D99B2E3EF7F558EBE540BD53A96@SC-VEXCH4.marvell.com>
+References: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
+ <20140109104604.GT20094@book.gsilab.sittig.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <52CE7A9B.9000300-l0cyMroinI0@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140109104604.GT20094@book.gsilab.sittig.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gerhard Sittig <gsi@denx.de>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday 09 January 2014 05:31 AM, Sekhar Nori wrote:
-> On Wednesday 08 January 2014 07:38 PM, Santosh Shilimkar wrote:
->> On Tuesday 07 January 2014 11:06 PM, Sekhar Nori wrote:
->>> On Tuesday 07 January 2014 11:22 PM, Santosh Shilimkar wrote:
->>>> Sekhar,
->>>>
->>>> On Tuesday 24 December 2013 06:41 AM, Grygorii Strashko wrote:
->>>>> This series is intended to update Davinci GPIO driver and reuse
->>>>> it for Keystone SoCs, because Keystone uses the similar GPIO IP like Davinci.
->>>>> Keystone GPIO IP: supports:
->>>>> - up to 32 GPIO lines;
->>>>> - only unbanked irqs;
->>>>>
->>>>> See Documentation:
->>>>> Keystone - http://www.ti.com/lit/ug/sprugv1/sprugv1.pdf
->>>>>
->>>>> This series based on:
->>>>> https://git.kernel.org/cgit/linux/kernel/git/nsekhar/linux-davinci.git/log/?h=v3.14/gpio
->>>>>
->>>>> Changes in v3:
->>>>> - fixed code, changed by mistake; fixed sparse warning 
->>>>> Changes in v2:
->>>>> - minor comments applied, no functional changes
->>>>>
->>>>> v2: https://lkml.org/lkml/2013/12/18/135
->>>>> v1: https://lkml.org/lkml/2013/12/12/366
->>>>>
->>>>> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>>>> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>> Cc: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
->>>>> Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
->>>>>
->>>>> Grygorii Strashko (2):
->>>>>   gpio: davinci: don't create irq_domain in case of unbanked irqs
->>>>>   gpio: davinci: reuse for Keystone SoC
->>>>>
->>>>>  .../devicetree/bindings/gpio/gpio-davinci.txt      |    4 +-
->>>>>  drivers/gpio/gpio-davinci.c                        |   82 ++++++++++++++------
->>>>>  2 files changed, 61 insertions(+), 25 deletions(-)
->>>>>
->>>> Have you picked up the $subject series in your queue ?
->>>
->>> Not yet, at least on the new compatible introduction, I need an ack from
->>> DT folks.
->>>
->> I noticed that but the usual 2 weeks period to get ack is over I guess ;-)
->> The DT part is really trivial as well but I let you decide.
-> 
-> I just realize that Rob's e-mail address bounces. I have added his
-> updated address now and hopefully he will see this to provide his ack.
-> 
-> Rob,
-> 
-> We need your ack on 2/2 of this series. If you do not have the patch, I
-> can forward it to you.
-> 
->>
->>> I am happy with the patches though and have tested them as well, In case
->>> I do not get an ack from 2/2 in time, I can at least send 1/2 for
->>> inclusion after my first gpio pull request to ARM-SoC gets pulled.
->>>
->> Would be great to get both of them but if not both at least 1/2.
-> 
-> I had already sent it with my first pull request. Hmph. Everything
-> except 2/2 of tis series should be in linux-next now.
-> 
-Thanks !!
+R2VyaGFyZA0KDQpGaXJzdGx5IHRoYW5rcyBmb3IgeW91ciBjb21tZW50cy4NCg0KPiAtLS0tLU9y
+aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBHZXJoYXJkIFNpdHRpZyBbbWFpbHRvOmdzaUBk
+ZW54LmRlXQ0KPiBTZW50OiAyMDE0xOox1MI5yNUgMTg6NDYNCj4gVG86IE5laWwgWmhhbmcNCj4g
+Q2M6IGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZzsgZ251cm91QGdtYWlsLmNvbTsgbGludXgtZ3Bp
+b0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3Vi
+amVjdDogUmU6IFtQQVRDSF0gZ3BpbzogcHhhOiBmaXggYnVnIHdoZW4gZ2V0IGdwaW8gdmFsdWUN
+Cj4gDQo+IE9uIFRodSwgSmFuIDA5LCAyMDE0IGF0IDE3OjI1ICswODAwLCBOZWlsIFpoYW5nIHdy
+b3RlOg0KPiA+DQo+ID4gZ3Bpb19nZXRfdmFsdWUgc2hvdWxkIHJldHVybiAwIG9yIDEuDQo+ID4N
+Cj4gPiBJIGhhdmUgY2hlY2tlZCBtYWNoLW1tcCAvIG1hY2gtcHhhIC8gcGxhdC1weGEgLyBwbGF0
+LW9yaW9uIC8gbWFjaC1vcmlvbjV4Lg0KPiA+IEl0J3MgT0sgZm9yIGFsbCBvZiB0aGVtIHRvIGNo
+YW5nZSB0aGlzIGZ1bmN0aW9uIHRvIHJldHVybiAwIGFuZCAxLg0KPiA+DQo+ID4gWyAuLi4gXQ0K
+PiA+DQo+ID4gIHN0YXRpYyBpbnQgcHhhX2dwaW9fZ2V0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAs
+IHVuc2lnbmVkIG9mZnNldCkgIHsNCj4gPiAtCXJldHVybiByZWFkbF9yZWxheGVkKGdwaW9fY2hp
+cF9iYXNlKGNoaXApICsgR1BMUl9PRkZTRVQpICYgKDEgPDwNCj4gb2Zmc2V0KTsNCj4gPiArCXUz
+MiBncGxyID0gcmVhZGxfcmVsYXhlZChncGlvX2NoaXBfYmFzZShjaGlwKSArIEdQTFJfT0ZGU0VU
+KTsNCj4gPiArCXJldHVybiAhIShncGxyICYgKDEgPDwgb2Zmc2V0KSk7DQo+ID4gIH0NCj4gDQo+
+IFRoaXMgbWF5IGJlIGEgc3R1cGlkIHF1ZXN0aW9uLCBidXQgaXNuJ3QgdGhlICIhIXZhbHVlIiBz
+eW50YXgganVzdCByZXBsYWNpbmcgb25lDQo+IGtpbmQgb2YgInplcm8gb3Igbm9uLXplcm8iIHdp
+dGggYW5vdGhlciBraW5kIG9mICJ6ZXJvIG9yIG5vbi16ZXJvIj8gIFRoaXMNCj4gcGhyYXNlIGlz
+IHVzZWQgdG8gbm9ybWFsaXplIGJvb2xlYW5zLCBidXQgSVNUUiB0aGVyZSBpcyBubyBndWFyYW50
+ZWUgdGhhdCB0cnVlDQo+IG5lZWRzIHRvIGVxdWFsIHRoZSB2YWx1ZSBvZiAxLg0KPiANCj4gSGVy
+ZSBpcyB3aHkgSSdtIGFza2luZzogIElzIHRoZXJlIGEgbmVlZCBmcm9tIEdQSU8gZ2V0X3ZhbHVl
+KCkgcm91dGluZXMgdG8NCj4gcmV0dXJuIG5vcm1hbGl6ZWQgdmFsdWVzLCBhbmQgaWYgc28gc2hv
+dWxkIG5vdCBtb3JlIGRyaXZlcnMgcmVjZWl2ZSBhbiB1cGRhdGU/DQo+IE9yIG5lZWQgZ2V0X3Zh
+bHVlKCkgcm91dGluZXMganVzdCByZXR1cm4gdGhlIHVzdWFsIGludGVnZXIgemVyby9ub24temVy
+byB2YWx1ZXMNCj4gKGFzIGlzIHRoZSBjb252ZW50aW9uIGluIHRoZSBDIHByb2dyYW1taW5nIGxh
+bmd1YWdlKSBhbmQgR1BJTyB1c2luZyBjYWxsZXJzDQo+IHNob3VsZCBrbm93IHRoYXQgdGhleSBh
+cmUgbm90IGV4YWN0bHkgMCBhbmQgMT8NCj4NCj4gVGhlIGxhdHRlciB3b3VsZCBtYWtlIHRoaXMg
+Y2hhbmdlIGZvciBQWEEgdW5uZWVkZWQgKG5pY2UgdG8gaGF2ZSBidXQgbm90DQo+IGVzc2VudGlh
+bCksIGFuZCBib3RoIHRoZSBjb21taXQgbWVzc2FnZSBhcyB3ZWxsIGFzIHRoZSBzdWJqZWN0IGxp
+bmUgYXQgbGVhc3QgbmVlZA0KPiB0byBnZXQgcmUtcGhyYXNlZCwgYXMgdGhlICJidWciIGlzIGlu
+IHRoZSBjYWxsZXIncyBleHBlY3RhdGlvbiBhbmQgbm90IGluIHRoZSBHUElPDQo+IGNoaXAgZHJp
+dmVyLg0KPg0KDQpZZXMsIHRoZSBBUEkgZG9lc24ndCBtYW5kYXRvcnkgZXhwZWN0IDAgYW5kIDEg
+YXMgSSBjYW4gc2VlLg0KQnV0IGFjdHVhbGx5IG1hbnkgZHJpdmVyIHdpbGwgcmV0dXJuIGEgbm9y
+bWFsaXplZCB2YWx1ZS4NClNvIHBlb3BsZSBtYXkgdGhpbmsgaXQncyByZXR1cm4gdmFsdWUgaXMg
+MCBvciAxLg0KSXQgd291bGQgYmUgY29udmVuaWVudCB0byBub3JtYWxpemVkIHRoZSByZXR1cm4g
+dmFsdWUgZm9yIGdwaW8tcHhhIHRvby4NCg0KWW91IGFyZSByaWdodCwgaXQncyBub3QgYXBwcm9w
+cmlhdGUgdG8gdXNlICJidWciIGluIHRoZSBwYXRjaCB0aXRsZSwgdGhhbmtzLg0KDQo+IFBsZWFz
+ZSBub3RlIHRoYXQgSSdtIG5vdCBxdWVzdGlvbmluZyB0aGUgcGF0Y2hlcycgYmVpbmcgYXBwbGlj
+YWJsZSwgYnV0IGFtIHRyeWluZw0KPiB0byBmaW5kIG91dCB3aGF0IGVsc2UgbmVlZHMgdG8gYmUg
+ZG9uZSB3aGljaCBwcmV2aW91c2x5IG1heSBoYXZlIGdvbmUNCj4gdW5ub3RpY2VkLiAgQSBkb2Mg
+dXBkYXRlIG1heWJlLCB0byBtYWtlIEdQSU8gdXNlcnMgYXdhcmUgdGhhdCB0aGUgcmV0dXJuDQo+
+IHZhbHVlIG1heSBub3QgYmUgZXhhY3RseSAxLCBhbmQgdG8gY2xlYXIgdXAgd2hlcmUgc3VjaCBh
+biBhc3N1bXB0aW9uIGlzIHdyb25nbHkNCj4gbWFkZS4NCj4gDQo+IElmIHRoZSBHUElPIHN1YnN5
+c3RlbSdzIEFQSSB3YW50cyB0byBndWFyYW50ZWUgdmFsdWVzIG9mIDAgYW5kIDEgKHdoaWNoIEkg
+dGhpbmsgaXQNCj4gZG9lc24ndCksIHRoZW4gSSBmZWVsIHRoZSBhZGp1c3RtZW50IHNob3VsZCBi
+ZSBkb25lIGluIHRoZSBncGlvX2dldF92YWx1ZSgpDQo+IHJvdXRpbmVzIChpbiBhbGwgaXRzIHB1
+YmxpYyB2YXJpYW50cywgb3IgYSBjb21tb24gcm91dGluZSB3aGljaCBhbGwgb2YgdGhlbSBwYXNz
+DQo+IHRocm91Z2gpLCBhbmQgY2VydGFpbmx5IG5vdCBpbiBpbmRpdmlkdWFsIGNoaXAgZHJpdmVy
+cy4NCj4gDQo+IA0KPiB2aXJ0dWFsbHkgeW91cnMNCj4gR2VyaGFyZCBTaXR0aWcNCj4gLS0NCj4g
+REVOWCBTb2Z0d2FyZSBFbmdpbmVlcmluZyBHbWJILCAgICAgTUQ6IFdvbGZnYW5nIERlbmsgJiBE
+ZXRsZXYgWnVuZGVsDQo+IEhSQiAxNjUyMzUgTXVuaWNoLCBPZmZpY2U6IEtpcmNoZW5zdHIuIDUs
+IEQtODIxOTQgR3JvZWJlbnplbGwsIEdlcm1hbnkNCj4gUGhvbmU6ICs0OS04MTQyLTY2OTg5LTAg
+RmF4OiArNDktODE0Mi02Njk4OS04MCAgRW1haWw6IG9mZmljZUBkZW54LmRlDQoNCkJlc3QgUmVn
+YXJkcywNCk5laWwgWmhhbmcNCg==
