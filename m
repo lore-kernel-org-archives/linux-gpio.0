@@ -1,437 +1,244 @@
-From: Lars Poeschel <larsi@wh2.tu-dresden.de>
-Subject: [PATCH v2] gpio: mcp23s08: Add irq functionality for i2c chips
-Date: Fri, 10 Jan 2014 15:22:30 +0100
-Message-ID: <1389363750-25989-1-git-send-email-larsi@wh2.tu-dresden.de>
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: poeschel@lemonage.de, robh+dt@kernel.org, linus.walleij@linaro.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, rob@landley.net, galak@codeaurora.org, gnurou@gmail.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Denis Carikli <denis-fO0SIAKYzcbQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv9 1/2] video: backlight: gpio-backlight: Add DT support.
+Date: Fri, 10 Jan 2014 16:07:23 +0100
+Message-ID: <1389366444-29449-1-git-send-email-denis@eukrea.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Denis Carikli <denis-fO0SIAKYzcbQT0dZR+AlfA@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW-bxm8fMRDkQLDiMYJYoSAnRvVK+yQ3ZXh@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Eric=20B=C3=A9nard?= <eric-fO0SIAKYzcbQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Lars Poeschel <poeschel@lemonage.de>
-
-This adds interrupt functionality for i2c chips to the driver.
-They can act as a interrupt-controller and generate interrupts, if
-the inputs change.
-This is tested with a mcp23017 chip on an arm based platform.
-
-v2:
-- some more word about irq-mirror property in binding doc
-- use of_read_bool instead of of_find_property for
-  "interrupt-contrller" and "irq-mirror"
-- cache the "interrupt-controller" for remove function
-- do set the irq-mirror bit only if device is marked as
-  interrupt-controller
-- do create the irq mapping and setup of irq_desc of all possible
-  interrupts in probe path instead of in gpio_to_irq
-- mark gpios as in use as interrupts in irq in irq_startup and
-  unlock it in irq_shutdown
-- rename virq to child_irq
-- remove dev argument from mcp23s08_irq_setup function
-- move gpiochip_add before mcp23s08_irq_setup in probe path
-
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+Cc: Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
+Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Lothar Wa=C3=9Fmann <LW-bxm8fMRDkQLDiMYJYoSAnRvVK+yQ3ZXh@public.gmane.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Eric B=C3=A9nard <eric-fO0SIAKYzcbQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Denis Carikli <denis-fO0SIAKYzcbQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/gpio/gpio-mcp23s08.txt     |  27 ++-
- drivers/gpio/Kconfig                               |   1 +
- drivers/gpio/gpio-mcp23s08.c                       | 245 ++++++++++++++++++++-
- 3 files changed, 267 insertions(+), 6 deletions(-)
+ChangeLog v8->v9:
+- Added Shawn Guo in the Cc list.
+- The default-brightness-level is now a boolean default-on property,
+  the gpio is only touched if the gpio-backlight driver instance probes=
+=2E
+- The code and documentation was updated accordingly.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-index daa3017..7680f7f 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-@@ -38,12 +38,37 @@ Required device specific properties (only for SPI chips):
-     removed.
- - spi-max-frequency = The maximum frequency this chip is able to handle
- 
--Example I2C:
+ChangeLog v7->v8:
+- The default-state was renamed to default-brightness-level.
+- default-brightness-level is now mandatory, like for backlight-pwm,
+  That way we avoid having to handle the case where it's not set,
+  which means that we would need not to set the gpio, but still
+  report a brightness value for sysfs, when not all gpio controllers ar=
+e
+  able to read the gpio value.
+- switched the default-brightness-level to boolean values (0 or 1) inst=
+ead
+  of using strings ("on", "off", "keep").
+- The documentation was updated accordingly.
+- The example in the documentation now uses the dts gpio defines.
+- The "backlight: gpio_backlight: Use a default state enum." patch was =
+then
+  dropped, becuase it is not necessary anymore.
+
+ChangeLog v6->v7:
+- removed a compilation warning with the removal of the useless ret dec=
+laration.
+
+ChangeLog v5->v6:
+- The default state handling was reworked:
+  - it's now called default-state, and looks like the gpio-leds default=
+-state.
+  - it now has a "keep" option, like for the gpio-leds.
+  - that "keep" option is the default when the default-state property i=
+s not set.
+- The documentation was updated accordingly.
+
+ChangeLog v4->v5:
+- The default-brightness property now defaults to 0 in the driver.
+- def_value int becomes a bool.
+- The check for the gpio validity has been reworked.
+---
+ .../bindings/video/backlight/gpio-backlight.txt    |   19 +++++++
+ drivers/video/backlight/gpio_backlight.c           |   60 ++++++++++++=
++++++---
+ 2 files changed, 72 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/video/backlight/g=
+pio-backlight.txt
+
+diff --git a/Documentation/devicetree/bindings/video/backlight/gpio-bac=
+klight.txt b/Documentation/devicetree/bindings/video/backlight/gpio-bac=
+klight.txt
+new file mode 100644
+index 0000000..a923193
+--- /dev/null
++++ b/Documentation/devicetree/bindings/video/backlight/gpio-backlight.=
+txt
+@@ -0,0 +1,19 @@
++gpio-backlight bindings
++
++Required properties:
++  - compatible: "gpio-backlight"
++  - gpios: describes the gpio that is used for enabling/disabling the =
+backlight
++    (see GPIO binding[0] for more details).
++
 +Optional properties:
-+- #interrupt-cells : Should be two.
-+  - first cell is the pin number
-+  - second cell is used to specify flags.
-+- interrupt-controller: Marks the device node as a interrupt controller.
-+NOTE: The interrupt functionality is only supported for i2c versions of the
-+chips yet.
++  - default-on: enable the backlight at boot.
 +
-+Optional device specific properties:
-+- microchip,irq-mirror: Sets the mirror flag in the IOCON register. Devices
-+        with two interrupt outputs (these are the devices ending with 17 and
-+        those that have 16 IOs) have two IO banks: IO 0-7 form bank 1 and
-+        IO 8-15 are bank 2. These chips have two different interrupt outputs:
-+        One for bank 1 and another for bank 2. If irq-mirror is set, both
-+        interrupts are generated regardless of the bank that an input change
-+        occured on. If it is not set, the interrupt are only generated for the
-+        bank they belong to.
-+        On devices with only one interrupt output this property is useless.
++[0]: Documentation/devicetree/bindings/gpio/gpio.txt
 +
-+Example I2C (with interrupt):
- gpiom1: gpio@20 {
-         compatible = "microchip,mcp23017";
-         gpio-controller;
-         #gpio-cells = <2>;
-         reg = <0x20>;
++Example:
 +
-+        interrupt-parent = <&gpio1>;
-+        interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
-+        interrupt-controller;
-+        #interrupt-cells=<2>;
-+        microchip,irq-mirror;
- };
- 
- Example SPI:
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0f04444..9fe782a 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -697,6 +697,7 @@ config GPIO_MCP23S08
- 	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
- 	  I/O expanders.
- 	  This provides a GPIO interface supporting inputs and outputs.
-+	  The I2C versions of the chips can be used as interrupt-controller.
- 
- config GPIO_MC33880
- 	tristate "Freescale MC33880 high-side/low-side switch"
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 2deb0c5..1346ea6 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -1,5 +1,10 @@
- /*
-- * MCP23S08 SPI/GPIO gpio expander driver
-+ * MCP23S08 SPI/I2C GPIO gpio expander driver
-+ *
-+ * The inputs and outputs of the mcp23s08, mcp23s17, mcp23008 and mcp23017 are
-+ * supported.
-+ * For the I2C versions of the chips (mcp23008 and mcp23017) generation of
-+ * interrupts is also supported.
-  */
- 
++	backlight {
++		compatible =3D "gpio-backlight";
++		gpios =3D <&gpio3 4 GPIO_ACTIVE_HIGH>;
++		default-on;
++	};
+diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/b=
+acklight/gpio_backlight.c
+index 81fb127..05f84f1 100644
+--- a/drivers/video/backlight/gpio_backlight.c
++++ b/drivers/video/backlight/gpio_backlight.c
+@@ -13,6 +13,8 @@
+ #include <linux/init.h>
  #include <linux/kernel.h>
-@@ -12,7 +17,8 @@
- #include <linux/spi/mcp23s08.h>
+ #include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_gpio.h>
+ #include <linux/platform_data/gpio_backlight.h>
+ #include <linux/platform_device.h>
  #include <linux/slab.h>
- #include <asm/byteorder.h>
--#include <linux/of.h>
-+#include <linux/interrupt.h>
-+#include <linux/of_irq.h>
- #include <linux/of_device.h>
- 
- /**
-@@ -34,6 +40,7 @@
- #define MCP_DEFVAL	0x03
- #define MCP_INTCON	0x04
- #define MCP_IOCON	0x05
-+#	define IOCON_MIRROR	(1 << 6)
- #	define IOCON_SEQOP	(1 << 5)
- #	define IOCON_HAEN	(1 << 3)
- #	define IOCON_ODR	(1 << 2)
-@@ -57,8 +64,14 @@ struct mcp23s08 {
- 	u8			addr;
- 
- 	u16			cache[11];
-+	u16			irq_rise;
-+	u16			irq_fall;
-+	int			irq;
-+	bool			irq_controller;
- 	/* lock protects the cached values */
- 	struct mutex		lock;
-+	struct mutex		irq_lock;
-+	struct irq_domain	*irq_domain;
- 
- 	struct gpio_chip	chip;
- 
-@@ -77,6 +90,11 @@ struct mcp23s08_driver_data {
- 	struct mcp23s08		chip[];
+@@ -23,6 +25,7 @@ struct gpio_backlight {
+=20
+ 	int gpio;
+ 	int active;
++	int def_value;
  };
- 
-+/* This lock class tells lockdep that GPIO irqs are in a different
-+ * category than their parents, so it won't report false recursion.
-+ */
-+static struct lock_class_key gpio_lock_class;
-+
- /*----------------------------------------------------------------------*/
- 
- #if IS_ENABLED(CONFIG_I2C)
-@@ -316,6 +334,195 @@ mcp23s08_direction_output(struct gpio_chip *chip, unsigned offset, int value)
- }
- 
- /*----------------------------------------------------------------------*/
-+static irqreturn_t mcp23s08_irq(int irq, void *data)
+=20
+ static int gpio_backlight_update_status(struct backlight_device *bl)
+@@ -60,6 +63,33 @@ static const struct backlight_ops gpio_backlight_ops=
+ =3D {
+ 	.check_fb	=3D gpio_backlight_check_fb,
+ };
+=20
++static int gpio_backlight_probe_dt(struct platform_device *pdev,
++				   struct gpio_backlight *gbl)
 +{
-+	struct mcp23s08 *mcp = data;
-+	int intcap, intf, i;
-+	unsigned int child_irq;
++	struct device_node *np =3D pdev->dev.of_node;
++	enum of_gpio_flags gpio_flags;
++	bool default_on =3D false;
 +
-+	mutex_lock(&mcp->lock);
-+	intf = mcp->ops->read(mcp, MCP_INTF);
-+	if (intf < 0) {
-+		mutex_unlock(&mcp->lock);
-+		return IRQ_HANDLED;
-+	}
++	gbl->fbdev =3D NULL;
++	gbl->gpio =3D of_get_gpio_flags(np, 0, &gpio_flags);
 +
-+	mcp->cache[MCP_INTF] = intf;
-+
-+	intcap = mcp->ops->read(mcp, MCP_INTCAP);
-+	if (intcap < 0) {
-+		mutex_unlock(&mcp->lock);
-+		return IRQ_HANDLED;
-+	}
-+
-+	mcp->cache[MCP_INTCAP] = intcap;
-+	mutex_unlock(&mcp->lock);
-+
-+
-+	for (i = 0; i < mcp->chip.ngpio; i++) {
-+		if ((BIT(i) & mcp->cache[MCP_INTF]) &&
-+		    ((BIT(i) & intcap & mcp->irq_rise) ||
-+		     (mcp->irq_fall & ~intcap & BIT(i)))) {
-+			child_irq = irq_find_mapping(mcp->irq_domain, i);
-+			handle_nested_irq(child_irq);
++	if (!gpio_is_valid(gbl->gpio)) {
++		if (gbl->gpio !=3D -EPROBE_DEFER) {
++			dev_err(&pdev->dev,
++				"Error: The gpios parameter is missing or invalid.\n");
 +		}
++		return gbl->gpio;
 +	}
 +
-+	return IRQ_HANDLED;
-+}
++	gbl->active =3D (gpio_flags & OF_GPIO_ACTIVE_LOW) ? 0 : 1;
 +
-+static int mcp23s08_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct mcp23s08 *mcp = container_of(chip, struct mcp23s08, chip);
++	default_on =3D of_property_read_bool(np, "default-on");
 +
-+	return irq_find_mapping(mcp->irq_domain, offset);
-+}
++	gbl->def_value =3D default_on;
 +
-+static void mcp23s08_irq_mask(struct irq_data *data)
-+{
-+	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
-+	unsigned int pos = data->hwirq;
-+
-+	mcp->cache[MCP_GPINTEN] &= ~BIT(pos);
-+}
-+
-+static void mcp23s08_irq_unmask(struct irq_data *data)
-+{
-+	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
-+	unsigned int pos = data->hwirq;
-+
-+	mcp->cache[MCP_GPINTEN] |= BIT(pos);
-+}
-+
-+static int mcp23s08_irq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
-+	unsigned int pos = data->hwirq;
-+	int status = 0;
-+
-+	if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
-+		mcp->cache[MCP_INTCON] &= ~BIT(pos);
-+		mcp->irq_rise |= BIT(pos);
-+		mcp->irq_fall |= BIT(pos);
-+	} else if (type & IRQ_TYPE_EDGE_RISING) {
-+		mcp->cache[MCP_INTCON] &= ~BIT(pos);
-+		mcp->irq_rise |= BIT(pos);
-+		mcp->irq_fall &= ~BIT(pos);
-+	} else if (type & IRQ_TYPE_EDGE_FALLING) {
-+		mcp->cache[MCP_INTCON] &= ~BIT(pos);
-+		mcp->irq_rise &= ~BIT(pos);
-+		mcp->irq_fall |= BIT(pos);
-+	} else
-+		return -EINVAL;
-+
-+	return status;
-+}
-+
-+static void mcp23s08_irq_bus_lock(struct irq_data *data)
-+{
-+	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
-+
-+	mutex_lock(&mcp->irq_lock);
-+}
-+
-+static void mcp23s08_irq_bus_unlock(struct irq_data *data)
-+{
-+	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
-+
-+	mutex_lock(&mcp->lock);
-+	mcp->ops->write(mcp, MCP_GPINTEN, mcp->cache[MCP_GPINTEN]);
-+	mcp->ops->write(mcp, MCP_DEFVAL, mcp->cache[MCP_DEFVAL]);
-+	mcp->ops->write(mcp, MCP_INTCON, mcp->cache[MCP_INTCON]);
-+	mutex_unlock(&mcp->lock);
-+	mutex_unlock(&mcp->irq_lock);
-+}
-+
-+static unsigned int mcp23s08_irq_startup(struct irq_data *data)
-+{
-+	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
-+
-+	if (gpio_lock_as_irq(&mcp->chip, data->hwirq))
-+		dev_err(mcp->chip.dev,
-+			"unable to lock HW IRQ %lu for IRQ usage\n",
-+			data->hwirq);
-+
-+	mcp23s08_irq_unmask(data);
 +	return 0;
 +}
 +
-+static void mcp23s08_irq_shutdown(struct irq_data *data)
-+{
-+	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
+ static int gpio_backlight_probe(struct platform_device *pdev)
+ {
+ 	struct gpio_backlight_platform_data *pdata =3D
+@@ -67,10 +97,12 @@ static int gpio_backlight_probe(struct platform_dev=
+ice *pdev)
+ 	struct backlight_properties props;
+ 	struct backlight_device *bl;
+ 	struct gpio_backlight *gbl;
++	struct device_node *np =3D pdev->dev.of_node;
+ 	int ret;
+=20
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "failed to find platform data\n");
++	if (!pdata && !np) {
++		dev_err(&pdev->dev,
++			"failed to find platform data or device tree node.\n");
+ 		return -ENODEV;
+ 	}
+=20
+@@ -79,14 +111,22 @@ static int gpio_backlight_probe(struct platform_de=
+vice *pdev)
+ 		return -ENOMEM;
+=20
+ 	gbl->dev =3D &pdev->dev;
+-	gbl->fbdev =3D pdata->fbdev;
+-	gbl->gpio =3D pdata->gpio;
+-	gbl->active =3D pdata->active_low ? 0 : 1;
 +
-+	mcp23s08_irq_mask(data);
-+	gpio_unlock_as_irq(&mcp->chip, data->hwirq);
-+}
-+
-+static struct irq_chip mcp23s08_irq_chip = {
-+	.name = "gpio-mcp23xxx",
-+	.irq_mask = mcp23s08_irq_mask,
-+	.irq_unmask = mcp23s08_irq_unmask,
-+	.irq_set_type = mcp23s08_irq_set_type,
-+	.irq_bus_lock = mcp23s08_irq_bus_lock,
-+	.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock,
-+	.irq_startup = mcp23s08_irq_startup,
-+	.irq_shutdown = mcp23s08_irq_shutdown,
++	if (np) {
++		ret =3D gpio_backlight_probe_dt(pdev, gbl);
++		if (ret)
++			return ret;
++	} else {
++		gbl->fbdev =3D pdata->fbdev;
++		gbl->gpio =3D pdata->gpio;
++		gbl->active =3D pdata->active_low ? 0 : 1;
++		gbl->def_value =3D pdata->def_value;
++	}
+=20
+ 	ret =3D devm_gpio_request_one(gbl->dev, gbl->gpio, GPIOF_DIR_OUT |
+ 				    (gbl->active ? GPIOF_INIT_LOW
+ 						 : GPIOF_INIT_HIGH),
+-				    pdata->name);
++				    pdata ? pdata->name : "backlight");
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "unable to request GPIO\n");
+ 		return ret;
+@@ -103,17 +143,23 @@ static int gpio_backlight_probe(struct platform_d=
+evice *pdev)
+ 		return PTR_ERR(bl);
+ 	}
+=20
+-	bl->props.brightness =3D pdata->def_value;
++	bl->props.brightness =3D gbl->def_value;
+ 	backlight_update_status(bl);
+=20
+ 	platform_set_drvdata(pdev, bl);
+ 	return 0;
+ }
+=20
++static struct of_device_id gpio_backlight_of_match[] =3D {
++	{ .compatible =3D "gpio-backlight" },
++	{ /* sentinel */ }
 +};
 +
-+static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
-+{
-+	struct gpio_chip *chip = &mcp->chip;
-+	int err, irq, j;
-+
-+	mutex_init(&mcp->irq_lock);
-+
-+	mcp->irq_domain = irq_domain_add_linear(chip->of_node, chip->ngpio,
-+						&irq_domain_simple_ops, mcp);
-+	if (!mcp->irq_domain)
-+		return -ENODEV;
-+
-+	err = devm_request_threaded_irq(chip->dev, mcp->irq, NULL, mcp23s08_irq,
-+					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+					dev_name(chip->dev), mcp);
-+	if (err != 0) {
-+		dev_err(chip->dev, "unable to request IRQ#%d: %d\n",
-+			mcp->irq, err);
-+		return err;
-+	}
-+
-+	chip->to_irq = mcp23s08_gpio_to_irq;
-+
-+	for (j = 0; j < mcp->chip.ngpio; j++) {
-+		irq = irq_create_mapping(mcp->irq_domain, j);
-+		irq_set_lockdep_class(irq, &gpio_lock_class);
-+		irq_set_chip_data(irq, mcp);
-+		irq_set_chip(irq, &mcp23s08_irq_chip);
-+		irq_set_nested_thread(irq, true);
-+#ifdef CONFIG_ARM
-+		set_irq_flags(irq, IRQF_VALID);
-+#else
-+		irq_set_noprobe(irq);
-+#endif
-+	}
-+	return 0;
-+}
-+
-+static void mcp23s08_irq_teardown(struct mcp23s08 *mcp)
-+{
-+	unsigned int irq, i;
-+
-+	free_irq(mcp->irq, mcp);
-+
-+	for (i = 0; i < mcp->chip.ngpio; i++) {
-+		irq = irq_find_mapping(mcp->irq_domain, i);
-+		if (irq > 0)
-+			irq_dispose_mapping(irq);
-+	}
-+
-+	irq_domain_remove(mcp->irq_domain);
-+}
-+
-+/*----------------------------------------------------------------------*/
- 
- #ifdef CONFIG_DEBUG_FS
- 
-@@ -370,10 +577,11 @@ done:
- /*----------------------------------------------------------------------*/
- 
- static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
--			      void *data, unsigned addr,
--			      unsigned type, unsigned base, unsigned pullups)
-+			      void *data, unsigned addr, unsigned type,
-+			      unsigned base, unsigned pullups)
- {
- 	int status;
-+	bool mirror = false;
- 
- 	mutex_init(&mcp->lock);
- 
-@@ -432,13 +640,25 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 	/* verify MCP_IOCON.SEQOP = 0, so sequential reads work,
- 	 * and MCP_IOCON.HAEN = 1, so we work with all chips.
- 	 */
-+
- 	status = mcp->ops->read(mcp, MCP_IOCON);
- 	if (status < 0)
- 		goto fail;
--	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN)) {
-+
-+	mcp->irq_controller = of_property_read_bool(mcp->chip.of_node,
-+						"interrupt-controller");
-+	if (mcp->irq && mcp->irq_controller && (type == MCP_TYPE_017))
-+		mirror = of_property_read_bool(mcp->chip.of_node,
-+						"microchip,irq-mirror");
-+
-+	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror) {
- 		/* mcp23s17 has IOCON twice, make sure they are in sync */
- 		status &= ~(IOCON_SEQOP | (IOCON_SEQOP << 8));
- 		status |= IOCON_HAEN | (IOCON_HAEN << 8);
-+		status &= ~(IOCON_INTPOL | (IOCON_INTPOL << 8));
-+		if (mirror)
-+			status |= IOCON_MIRROR | (IOCON_MIRROR << 8);
-+
- 		status = mcp->ops->write(mcp, MCP_IOCON, status);
- 		if (status < 0)
- 			goto fail;
-@@ -470,6 +690,16 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 	}
- 
- 	status = gpiochip_add(&mcp->chip);
-+	if (status < 0)
-+		goto fail;
-+
-+	if (mcp->irq && mcp->irq_controller) {
-+		status = mcp23s08_irq_setup(mcp);
-+		if (status) {
-+			mcp23s08_irq_teardown(mcp);
-+			goto fail;
-+		}
-+	}
- fail:
- 	if (status < 0)
- 		dev_dbg(dev, "can't setup chip %d, --> %d\n",
-@@ -546,6 +776,7 @@ static int mcp230xx_probe(struct i2c_client *client,
- 	if (match || !pdata) {
- 		base = -1;
- 		pullups = 0;
-+		client->irq = irq_of_parse_and_map(client->dev.of_node, 0);
- 	} else {
- 		if (!gpio_is_valid(pdata->base)) {
- 			dev_dbg(&client->dev, "invalid platform data\n");
-@@ -559,6 +790,7 @@ static int mcp230xx_probe(struct i2c_client *client,
- 	if (!mcp)
- 		return -ENOMEM;
- 
-+	mcp->irq = client->irq;
- 	status = mcp23s08_probe_one(mcp, &client->dev, client, client->addr,
- 				    id->driver_data, base, pullups);
- 	if (status)
-@@ -579,6 +811,9 @@ static int mcp230xx_remove(struct i2c_client *client)
- 	struct mcp23s08 *mcp = i2c_get_clientdata(client);
- 	int status;
- 
-+	if (client->irq && mcp->irq_controller)
-+		mcp23s08_irq_teardown(mcp);
-+
- 	status = gpiochip_remove(&mcp->chip);
- 	if (status == 0)
- 		kfree(mcp);
--- 
-1.8.5.2
+ static struct platform_driver gpio_backlight_driver =3D {
+ 	.driver		=3D {
+ 		.name		=3D "gpio-backlight",
+ 		.owner		=3D THIS_MODULE,
++		.of_match_table =3D of_match_ptr(gpio_backlight_of_match),
+ 	},
+ 	.probe		=3D gpio_backlight_probe,
+ };
+--=20
+1.7.9.5
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
