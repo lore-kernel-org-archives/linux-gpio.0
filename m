@@ -1,72 +1,44 @@
 From: Neil Zhang <zhangwm@marvell.com>
-Subject: RE: [PATCH] gpio: pxa: fix bug when get gpio value
-Date: Thu, 9 Jan 2014 18:04:18 -0800
-Message-ID: <175CCF5F49938B4D99B2E3EF7F558EBE540BD53A96@SC-VEXCH4.marvell.com>
-References: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
- <20140109104604.GT20094@book.gsilab.sittig.org>
+Subject: [PATCH] gpio: pxa: normalize the return value for gpio_get
+Date: Fri, 10 Jan 2014 14:03:03 +0800
+Message-ID: <1389333783-3372-1-git-send-email-zhangwm@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140109104604.GT20094@book.gsilab.sittig.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gerhard Sittig <gsi@denx.de>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:37969 "EHLO
+	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750800AbaAJGDH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 10 Jan 2014 01:03:07 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Neil Zhang <zhangwm@marvell.com>
 
-R2VyaGFyZA0KDQpGaXJzdGx5IHRoYW5rcyBmb3IgeW91ciBjb21tZW50cy4NCg0KPiAtLS0tLU9y
-aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBHZXJoYXJkIFNpdHRpZyBbbWFpbHRvOmdzaUBk
-ZW54LmRlXQ0KPiBTZW50OiAyMDE0xOox1MI5yNUgMTg6NDYNCj4gVG86IE5laWwgWmhhbmcNCj4g
-Q2M6IGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZzsgZ251cm91QGdtYWlsLmNvbTsgbGludXgtZ3Bp
-b0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3Vi
-amVjdDogUmU6IFtQQVRDSF0gZ3BpbzogcHhhOiBmaXggYnVnIHdoZW4gZ2V0IGdwaW8gdmFsdWUN
-Cj4gDQo+IE9uIFRodSwgSmFuIDA5LCAyMDE0IGF0IDE3OjI1ICswODAwLCBOZWlsIFpoYW5nIHdy
-b3RlOg0KPiA+DQo+ID4gZ3Bpb19nZXRfdmFsdWUgc2hvdWxkIHJldHVybiAwIG9yIDEuDQo+ID4N
-Cj4gPiBJIGhhdmUgY2hlY2tlZCBtYWNoLW1tcCAvIG1hY2gtcHhhIC8gcGxhdC1weGEgLyBwbGF0
-LW9yaW9uIC8gbWFjaC1vcmlvbjV4Lg0KPiA+IEl0J3MgT0sgZm9yIGFsbCBvZiB0aGVtIHRvIGNo
-YW5nZSB0aGlzIGZ1bmN0aW9uIHRvIHJldHVybiAwIGFuZCAxLg0KPiA+DQo+ID4gWyAuLi4gXQ0K
-PiA+DQo+ID4gIHN0YXRpYyBpbnQgcHhhX2dwaW9fZ2V0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAs
-IHVuc2lnbmVkIG9mZnNldCkgIHsNCj4gPiAtCXJldHVybiByZWFkbF9yZWxheGVkKGdwaW9fY2hp
-cF9iYXNlKGNoaXApICsgR1BMUl9PRkZTRVQpICYgKDEgPDwNCj4gb2Zmc2V0KTsNCj4gPiArCXUz
-MiBncGxyID0gcmVhZGxfcmVsYXhlZChncGlvX2NoaXBfYmFzZShjaGlwKSArIEdQTFJfT0ZGU0VU
-KTsNCj4gPiArCXJldHVybiAhIShncGxyICYgKDEgPDwgb2Zmc2V0KSk7DQo+ID4gIH0NCj4gDQo+
-IFRoaXMgbWF5IGJlIGEgc3R1cGlkIHF1ZXN0aW9uLCBidXQgaXNuJ3QgdGhlICIhIXZhbHVlIiBz
-eW50YXgganVzdCByZXBsYWNpbmcgb25lDQo+IGtpbmQgb2YgInplcm8gb3Igbm9uLXplcm8iIHdp
-dGggYW5vdGhlciBraW5kIG9mICJ6ZXJvIG9yIG5vbi16ZXJvIj8gIFRoaXMNCj4gcGhyYXNlIGlz
-IHVzZWQgdG8gbm9ybWFsaXplIGJvb2xlYW5zLCBidXQgSVNUUiB0aGVyZSBpcyBubyBndWFyYW50
-ZWUgdGhhdCB0cnVlDQo+IG5lZWRzIHRvIGVxdWFsIHRoZSB2YWx1ZSBvZiAxLg0KPiANCj4gSGVy
-ZSBpcyB3aHkgSSdtIGFza2luZzogIElzIHRoZXJlIGEgbmVlZCBmcm9tIEdQSU8gZ2V0X3ZhbHVl
-KCkgcm91dGluZXMgdG8NCj4gcmV0dXJuIG5vcm1hbGl6ZWQgdmFsdWVzLCBhbmQgaWYgc28gc2hv
-dWxkIG5vdCBtb3JlIGRyaXZlcnMgcmVjZWl2ZSBhbiB1cGRhdGU/DQo+IE9yIG5lZWQgZ2V0X3Zh
-bHVlKCkgcm91dGluZXMganVzdCByZXR1cm4gdGhlIHVzdWFsIGludGVnZXIgemVyby9ub24temVy
-byB2YWx1ZXMNCj4gKGFzIGlzIHRoZSBjb252ZW50aW9uIGluIHRoZSBDIHByb2dyYW1taW5nIGxh
-bmd1YWdlKSBhbmQgR1BJTyB1c2luZyBjYWxsZXJzDQo+IHNob3VsZCBrbm93IHRoYXQgdGhleSBh
-cmUgbm90IGV4YWN0bHkgMCBhbmQgMT8NCj4NCj4gVGhlIGxhdHRlciB3b3VsZCBtYWtlIHRoaXMg
-Y2hhbmdlIGZvciBQWEEgdW5uZWVkZWQgKG5pY2UgdG8gaGF2ZSBidXQgbm90DQo+IGVzc2VudGlh
-bCksIGFuZCBib3RoIHRoZSBjb21taXQgbWVzc2FnZSBhcyB3ZWxsIGFzIHRoZSBzdWJqZWN0IGxp
-bmUgYXQgbGVhc3QgbmVlZA0KPiB0byBnZXQgcmUtcGhyYXNlZCwgYXMgdGhlICJidWciIGlzIGlu
-IHRoZSBjYWxsZXIncyBleHBlY3RhdGlvbiBhbmQgbm90IGluIHRoZSBHUElPDQo+IGNoaXAgZHJp
-dmVyLg0KPg0KDQpZZXMsIHRoZSBBUEkgZG9lc24ndCBtYW5kYXRvcnkgZXhwZWN0IDAgYW5kIDEg
-YXMgSSBjYW4gc2VlLg0KQnV0IGFjdHVhbGx5IG1hbnkgZHJpdmVyIHdpbGwgcmV0dXJuIGEgbm9y
-bWFsaXplZCB2YWx1ZS4NClNvIHBlb3BsZSBtYXkgdGhpbmsgaXQncyByZXR1cm4gdmFsdWUgaXMg
-MCBvciAxLg0KSXQgd291bGQgYmUgY29udmVuaWVudCB0byBub3JtYWxpemVkIHRoZSByZXR1cm4g
-dmFsdWUgZm9yIGdwaW8tcHhhIHRvby4NCg0KWW91IGFyZSByaWdodCwgaXQncyBub3QgYXBwcm9w
-cmlhdGUgdG8gdXNlICJidWciIGluIHRoZSBwYXRjaCB0aXRsZSwgdGhhbmtzLg0KDQo+IFBsZWFz
-ZSBub3RlIHRoYXQgSSdtIG5vdCBxdWVzdGlvbmluZyB0aGUgcGF0Y2hlcycgYmVpbmcgYXBwbGlj
-YWJsZSwgYnV0IGFtIHRyeWluZw0KPiB0byBmaW5kIG91dCB3aGF0IGVsc2UgbmVlZHMgdG8gYmUg
-ZG9uZSB3aGljaCBwcmV2aW91c2x5IG1heSBoYXZlIGdvbmUNCj4gdW5ub3RpY2VkLiAgQSBkb2Mg
-dXBkYXRlIG1heWJlLCB0byBtYWtlIEdQSU8gdXNlcnMgYXdhcmUgdGhhdCB0aGUgcmV0dXJuDQo+
-IHZhbHVlIG1heSBub3QgYmUgZXhhY3RseSAxLCBhbmQgdG8gY2xlYXIgdXAgd2hlcmUgc3VjaCBh
-biBhc3N1bXB0aW9uIGlzIHdyb25nbHkNCj4gbWFkZS4NCj4gDQo+IElmIHRoZSBHUElPIHN1YnN5
-c3RlbSdzIEFQSSB3YW50cyB0byBndWFyYW50ZWUgdmFsdWVzIG9mIDAgYW5kIDEgKHdoaWNoIEkg
-dGhpbmsgaXQNCj4gZG9lc24ndCksIHRoZW4gSSBmZWVsIHRoZSBhZGp1c3RtZW50IHNob3VsZCBi
-ZSBkb25lIGluIHRoZSBncGlvX2dldF92YWx1ZSgpDQo+IHJvdXRpbmVzIChpbiBhbGwgaXRzIHB1
-YmxpYyB2YXJpYW50cywgb3IgYSBjb21tb24gcm91dGluZSB3aGljaCBhbGwgb2YgdGhlbSBwYXNz
-DQo+IHRocm91Z2gpLCBhbmQgY2VydGFpbmx5IG5vdCBpbiBpbmRpdmlkdWFsIGNoaXAgZHJpdmVy
-cy4NCj4gDQo+IA0KPiB2aXJ0dWFsbHkgeW91cnMNCj4gR2VyaGFyZCBTaXR0aWcNCj4gLS0NCj4g
-REVOWCBTb2Z0d2FyZSBFbmdpbmVlcmluZyBHbWJILCAgICAgTUQ6IFdvbGZnYW5nIERlbmsgJiBE
-ZXRsZXYgWnVuZGVsDQo+IEhSQiAxNjUyMzUgTXVuaWNoLCBPZmZpY2U6IEtpcmNoZW5zdHIuIDUs
-IEQtODIxOTQgR3JvZWJlbnplbGwsIEdlcm1hbnkNCj4gUGhvbmU6ICs0OS04MTQyLTY2OTg5LTAg
-RmF4OiArNDktODE0Mi02Njk4OS04MCAgRW1haWw6IG9mZmljZUBkZW54LmRlDQoNCkJlc3QgUmVn
-YXJkcywNCk5laWwgWmhhbmcNCg==
+It would be convenient to normalize the return value for gpio_get.
+
+I have checked mach-mmp / mach-pxa / plat-pxa / plat-orion / mach-orion5x.
+It's OK for all of them to change this function to return 0 and 1.
+
+Signed-off-by: Neil Zhang <zhangwm@marvell.com>
+---
+ drivers/gpio/gpio-pxa.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index cc13d1b..42e6e64 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -263,7 +263,8 @@ static int pxa_gpio_direction_output(struct gpio_chip *chip,
+ 
+ static int pxa_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+-	return readl_relaxed(gpio_chip_base(chip) + GPLR_OFFSET) & (1 << offset);
++	u32 gplr = readl_relaxed(gpio_chip_base(chip) + GPLR_OFFSET);
++	return !!(gplr & (1 << offset));
+ }
+ 
+ static void pxa_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+-- 
+1.7.9.5
+
