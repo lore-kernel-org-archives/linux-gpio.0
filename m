@@ -1,281 +1,204 @@
-From: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
-Subject: [PATCH v3] gpio: Driver for SYSCON-based GPIOs
-Date: Sat, 11 Jan 2014 10:23:35 +0400
-Message-ID: <1389421415-22859-1-git-send-email-shc_work@mail.ru>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [RFC PATCH] gpiolib: make gpiod_direction_output take a logical
+ value, add gpiod_direction_output_raw
+Date: Sun, 12 Jan 2014 16:44:10 +0900
+Message-ID: <CAAVeFuJwmUc3vZa2zVc8FTmStLknXpeZ3Wbc8LE7jday6BFdeQ@mail.gmail.com>
+References: <1389094451-16628-1-git-send-email-p.zabel@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ve0-f175.google.com ([209.85.128.175]:55768 "EHLO
+	mail-ve0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751057AbaALHod (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Jan 2014 02:44:33 -0500
+In-Reply-To: <1389094451-16628-1-git-send-email-p.zabel@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Landley <rob@landley.net>, Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, kernel@pengutronix.de
 
-SYSCON driver was designed for using memory areas (registers)
-that are used in several subsystems. There are systems (CPUs)
-which use bits in one register for various purposes and thus
-should be handled by various kernel subsystems. This driver
-allows you to use the individual SYSCON bits as GPIOs.
-ARM CLPS711X SYSFLG1 input lines has been added as first user
-of this driver.
+Hi Philipp,
 
-Signed-off-by: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
----
- .../devicetree/bindings/gpio/gpio-syscon.txt       |  19 +++
- drivers/gpio/Kconfig                               |   6 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-syscon.c                         | 186 +++++++++++++++++++++
- 4 files changed, 212 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-syscon.txt
- create mode 100644 drivers/gpio/gpio-syscon.c
+On Tue, Jan 7, 2014 at 8:34 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> The documentation was not clear about whether gpio_direction_output should take
+> a logical value or the physical level on the output line, i.e. whether the
+> ACTIVE_LOW status would be taken into account.
+> This converts gpiod_direction_output to use the logical level and adds a new
+> gpiod_direction_output_raw for the raw value.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-syscon.txt b/Documentation/devicetree/bindings/gpio/gpio-syscon.txt
-new file mode 100644
-index 0000000..47c4fda
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-syscon.txt
-@@ -0,0 +1,19 @@
-+* SYSCON-based GPIO driver
-+
-+Required properties:
-+- compatible: Should contain one of the following:
-+  - "clps711x,syscon-gpio-mctrl": For ARM CLPS711X SYSFLG1 MCTRL GPIOs.
-+- syscon: phandle to syscon device node.
-+- gpio-controller: Marks the device node as a gpio controller.
-+- #gpio-cells: Should be two. The first cell is the pin number and
-+  the second cell is used to specify the gpio polarity:
-+    0 = Active high,
-+    1 = Active low.
-+
-+Example:
-+	sysgpio: sysgpio {
-+		compatible = "clps711x,syscon-gpio-mctrl";
-+		syscon = <&syscon1>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 8c0df49..1f34bdc 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -275,6 +275,12 @@ config GPIO_STA2X11
- 	  Say yes here to support the STA2x11/ConneXt GPIO device.
- 	  The GPIO module has 128 GPIO pins with alternate functions.
- 
-+config GPIO_SYSCON
-+	tristate "GPIO based on SYSCON"
-+	depends on MFD_SYSCON && OF
-+	help
-+	  Say yes here to support GPIO functionality though SYSCON driver.
-+
- config GPIO_TS5500
- 	tristate "TS-5500 DIO blocks and compatibles"
- 	help
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 5d50179..8ae6d47 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_GPIO_STA2X11)	+= gpio-sta2x11.o
- obj-$(CONFIG_GPIO_STMPE)	+= gpio-stmpe.o
- obj-$(CONFIG_GPIO_STP_XWAY)	+= gpio-stp-xway.o
- obj-$(CONFIG_GPIO_SX150X)	+= gpio-sx150x.o
-+obj-$(CONFIG_GPIO_SYSCON)	+= gpio-syscon.o
- obj-$(CONFIG_GPIO_TB10X)	+= gpio-tb10x.o
- obj-$(CONFIG_GPIO_TC3589X)	+= gpio-tc3589x.o
- obj-$(CONFIG_ARCH_TEGRA)	+= gpio-tegra.o
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-new file mode 100644
-index 0000000..66813c7
---- /dev/null
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -0,0 +1,186 @@
-+/*
-+ *  SYSCON GPIO driver
-+ *
-+ *  Copyright (C) 2014 Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/gpio.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
-+
-+#define GPIO_SYSCON_FEAT_IN	BIT(0)
-+#define GPIO_SYSCON_FEAT_OUT	BIT(1)
-+#define GPIO_SYSCON_FEAT_DIR	BIT(2)
-+
-+/* SYSCON driver is designed to use 32-bit wide registers */
-+#define SYSCON_REG_SIZE		(4)
-+#define SYSCON_REG_BITS		(SYSCON_REG_SIZE * 8)
-+
-+/**
-+ * struct syscon_gpio_data - Configuration for the device.
-+ * flags:		Set of GPIO_SYSCON_FEAT_ flags:
-+ *			GPIO_SYSCON_FEAT_IN:	GPIOs supports input,
-+ *			GPIO_SYSCON_FEAT_OUT:	GPIOs supports output,
-+ *			GPIO_SYSCON_FEAT_DIR:	GPIOs supports switch direction.
-+ * bit_count:		Number of bits used as GPIOs.
-+ * dat_bit_offset:	Offset (in bits) to the first GPIO bit.
-+ * dir_bit_offset:	Optional offset (in bits) to the first bit to switch
-+ *			GPIO direction (Used with GPIO_SYSCON_FEAT_DIR flag).
-+ */
-+
-+struct syscon_gpio_data {
-+	unsigned int	flags;
-+	unsigned int	bit_count;
-+	unsigned int	dat_bit_offset;
-+	unsigned int	dir_bit_offset;
-+};
-+
-+struct syscon_gpio_priv {
-+	struct gpio_chip		chip;
-+	struct regmap			*syscon;
-+	const struct syscon_gpio_data	*data;
-+};
-+
-+static inline struct syscon_gpio_priv *to_syscon_gpio(struct gpio_chip *chip)
-+{
-+	return container_of(chip, struct syscon_gpio_priv, chip);
-+}
-+
-+static int syscon_gpio_get(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+	unsigned int val, offs = priv->data->dat_bit_offset + offset;
-+	int ret;
-+
-+	ret = regmap_read(priv->syscon,
-+			  (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !!(val & (offs % SYSCON_REG_BITS));
-+}
-+
-+static void syscon_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
-+{
-+	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+	unsigned int offs = priv->data->dat_bit_offset + offset;
-+
-+	regmap_update_bits(priv->syscon,
-+			   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
-+			   offs % SYSCON_REG_BITS,
-+			   val ? (offs % SYSCON_REG_BITS) : 0);
-+}
-+
-+static int syscon_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+
-+	if (priv->data->flags & GPIO_SYSCON_FEAT_DIR) {
-+		unsigned int offs = priv->data->dir_bit_offset + offset;
-+
-+		regmap_update_bits(priv->syscon,
-+				   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
-+				   offs % SYSCON_REG_BITS, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
-+{
-+	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+
-+	if (priv->data->flags & GPIO_SYSCON_FEAT_DIR) {
-+		unsigned int offs = priv->data->dir_bit_offset + offset;
-+
-+		regmap_update_bits(priv->syscon,
-+				   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
-+				   offs % SYSCON_REG_BITS,
-+				   offs % SYSCON_REG_BITS);
-+	}
-+
-+	syscon_gpio_set(chip, offset, val);
-+
-+	return 0;
-+}
-+
-+static const struct syscon_gpio_data clps711x_mctrl_gpio = {
-+	/* ARM CLPS711X SYSFLG1 Bits 8-10 */
-+	.flags		= GPIO_SYSCON_FEAT_IN,
-+	.bit_count	= 3,
-+	.dat_bit_offset	= 0x40 * 8 + 8,
-+};
-+
-+static const struct of_device_id syscon_gpio_ids[] = {
-+	{
-+		.compatible	= "clps711x,syscon-gpio-mctrl",
-+		.data		= &clps711x_mctrl_gpio,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
-+
-+static int syscon_gpio_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct of_device_id *of_id = of_match_device(syscon_gpio_ids, dev);
-+	struct syscon_gpio_priv *priv;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->syscon = syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
-+	if (IS_ERR(priv->syscon))
-+		return PTR_ERR(priv->syscon);
-+
-+	priv->data = of_id->data;
-+
-+	priv->chip.owner = THIS_MODULE;
-+	priv->chip.label = dev_name(dev);
-+	priv->chip.base = -1;
-+	priv->chip.ngpio = priv->data->bit_count;
-+	priv->chip.get = syscon_gpio_get;
-+	if (priv->data->flags & GPIO_SYSCON_FEAT_IN)
-+		priv->chip.direction_input = syscon_gpio_dir_in;
-+	if (priv->data->flags & GPIO_SYSCON_FEAT_OUT) {
-+		priv->chip.set = syscon_gpio_set;
-+		priv->chip.direction_output = syscon_gpio_dir_out;
-+	}
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	return gpiochip_add(&priv->chip);
-+}
-+
-+static int syscon_gpio_remove(struct platform_device *pdev)
-+{
-+	struct syscon_gpio_priv *priv = platform_get_drvdata(pdev);
-+
-+	return gpiochip_remove(&priv->chip);
-+}
-+
-+static struct platform_driver syscon_gpio_driver = {
-+	.driver	= {
-+		.name		= "gpio-syscon",
-+		.owner		= THIS_MODULE,
-+		.of_match_table	= syscon_gpio_ids,
-+	},
-+	.probe	= syscon_gpio_probe,
-+	.remove	= syscon_gpio_remove,
-+};
-+module_platform_driver(syscon_gpio_driver);
-+
-+MODULE_AUTHOR("Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>");
-+MODULE_DESCRIPTION("SYSCON GPIO driver");
-+MODULE_LICENSE("GPL");
--- 
-1.8.3.2
+Thanks for taking the time to craft this! The patch seems to do
+exactly what we discussed and looks good to me. Maybe Linus can let us
+know what he thinks about it? Unless there are reasons against it, I
+think this should be merged ASAP as we want to gpiod API to converge
+to something stable ASAP.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+
+>
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+>  Documentation/gpio/consumer.txt |  1 +
+>  drivers/gpio/gpiolib.c          | 67 +++++++++++++++++++++++++++++------------
+>  include/asm-generic/gpio.h      |  2 +-
+>  include/linux/gpio/consumer.h   |  7 +++++
+>  4 files changed, 57 insertions(+), 20 deletions(-)
+>
+> diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+> index 07c74a3..4dc4809 100644
+> --- a/Documentation/gpio/consumer.txt
+> +++ b/Documentation/gpio/consumer.txt
+> @@ -150,6 +150,7 @@ raw line value:
+>         void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+>         int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
+>         void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value)
+> +       int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+>
+>  The active-low state of a GPIO can also be queried using the following call:
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 85f772c..f04f1e6 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -330,9 +330,9 @@ static ssize_t gpio_direction_store(struct device *dev,
+>         if (!test_bit(FLAG_EXPORT, &desc->flags))
+>                 status = -EIO;
+>         else if (sysfs_streq(buf, "high"))
+> -               status = gpiod_direction_output(desc, 1);
+> +               status = gpiod_direction_output_raw(desc, 1);
+>         else if (sysfs_streq(buf, "out") || sysfs_streq(buf, "low"))
+> -               status = gpiod_direction_output(desc, 0);
+> +               status = gpiod_direction_output_raw(desc, 0);
+>         else if (sysfs_streq(buf, "in"))
+>                 status = gpiod_direction_input(desc);
+>         else
+> @@ -1579,7 +1579,7 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
+>         if (flags & GPIOF_DIR_IN)
+>                 err = gpiod_direction_input(desc);
+>         else
+> -               err = gpiod_direction_output(desc,
+> +               err = gpiod_direction_output_raw(desc,
+>                                 (flags & GPIOF_INIT_HIGH) ? 1 : 0);
+>
+>         if (err)
+> @@ -1744,28 +1744,13 @@ fail:
+>  }
+>  EXPORT_SYMBOL_GPL(gpiod_direction_input);
+>
+> -/**
+> - * gpiod_direction_output - set the GPIO direction to input
+> - * @desc:      GPIO to set to output
+> - * @value:     initial output value of the GPIO
+> - *
+> - * Set the direction of the passed GPIO to output, such as gpiod_set_value() can
+> - * be called safely on it. The initial value of the output must be specified.
+> - *
+> - * Return 0 in case of success, else an error code.
+> - */
+> -int gpiod_direction_output(struct gpio_desc *desc, int value)
+> +static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+>  {
+>         unsigned long           flags;
+>         struct gpio_chip        *chip;
+>         int                     status = -EINVAL;
+>         int offset;
+>
+> -       if (!desc || !desc->chip) {
+> -               pr_warn("%s: invalid GPIO\n", __func__);
+> -               return -EINVAL;
+> -       }
+> -
+>         /* GPIOs used for IRQs shall not be set as output */
+>         if (test_bit(FLAG_USED_AS_IRQ, &desc->flags)) {
+>                 gpiod_err(desc,
+> @@ -1827,6 +1812,50 @@ fail:
+>                 gpiod_dbg(desc, "%s: gpio status %d\n", __func__, status);
+>         return status;
+>  }
+> +
+> +/**
+> + * gpiod_direction_output_raw - set the GPIO direction to output
+> + * @desc:      GPIO to set to output
+> + * @value:     initial output value of the GPIO
+> + *
+> + * Set the direction of the passed GPIO to output, such as gpiod_set_value() can
+> + * be called safely on it. The initial value of the output must be specified
+> + * as raw value on the physical line without regard for the ACTIVE_LOW status.
+> + *
+> + * Return 0 in case of success, else an error code.
+> + */
+> +int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+> +{
+> +       if (!desc || !desc->chip) {
+> +               pr_warn("%s: invalid GPIO\n", __func__);
+> +               return -EINVAL;
+> +       }
+> +       return _gpiod_direction_output_raw(desc, value);
+> +}
+> +EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
+> +
+> +/**
+> + * gpiod_direction_output - set the GPIO direction to input
+> + * @desc:      GPIO to set to output
+> + * @value:     initial output value of the GPIO
+> + *
+> + * Set the direction of the passed GPIO to output, such as gpiod_set_value() can
+> + * be called safely on it. The initial value of the output must be specified
+> + * as the logical value of the GPIO, i.e. taking its ACTIVE_LOW status into
+> + * account.
+> + *
+> + * Return 0 in case of success, else an error code.
+> + */
+> +int gpiod_direction_output(struct gpio_desc *desc, int value)
+> +{
+> +       if (!desc || !desc->chip) {
+> +               pr_warn("%s: invalid GPIO\n", __func__);
+> +               return -EINVAL;
+> +       }
+> +       if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+> +               value = !value;
+> +       return _gpiod_direction_output_raw(desc, value);
+> +}
+>  EXPORT_SYMBOL_GPL(gpiod_direction_output);
+>
+>  /**
+> diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
+> index a5f56a0..23e3645 100644
+> --- a/include/asm-generic/gpio.h
+> +++ b/include/asm-generic/gpio.h
+> @@ -69,7 +69,7 @@ static inline int gpio_direction_input(unsigned gpio)
+>  }
+>  static inline int gpio_direction_output(unsigned gpio, int value)
+>  {
+> -       return gpiod_direction_output(gpio_to_desc(gpio), value);
+> +       return gpiod_direction_output_raw(gpio_to_desc(gpio), value);
+>  }
+>
+>  static inline int gpio_set_debounce(unsigned gpio, unsigned debounce)
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> index 4d34dbb..3879943 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -36,6 +36,7 @@ void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
+>  int gpiod_get_direction(const struct gpio_desc *desc);
+>  int gpiod_direction_input(struct gpio_desc *desc);
+>  int gpiod_direction_output(struct gpio_desc *desc, int value);
+> +int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
+>
+>  /* Value get/set from non-sleeping context */
+>  int gpiod_get_value(const struct gpio_desc *desc);
+> @@ -121,6 +122,12 @@ static inline int gpiod_direction_output(struct gpio_desc *desc, int value)
+>         WARN_ON(1);
+>         return -ENOSYS;
+>  }
+> +static inline int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+> +{
+> +       /* GPIO can never have been requested */
+> +       WARN_ON(1);
+> +       return -ENOSYS;
+> +}
+>
+>
+>  static inline int gpiod_get_value(const struct gpio_desc *desc)
+> --
+> 1.8.5.2
+>
