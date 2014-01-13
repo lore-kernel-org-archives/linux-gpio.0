@@ -1,32 +1,49 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2M10gZ3BpbzogRHJpdmVyIGZvciBTWVNDT04tYmFzZWQg?=
- =?UTF-8?B?R1BJT3M=?=
-Date: Mon, 13 Jan 2014 14:23:59 +0400
-Message-ID: <1389608639.913101510@f384.i.mail.ru>
-References: <1389421415-22859-1-git-send-email-shc_work@mail.ru>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
+Date: Mon, 13 Jan 2014 14:39:07 +0100
+Message-ID: <CACRpkdZNe0L+yZnqrY51Oeg+k5NHXebJAiqxi+p5Scy-BQ2+1w@mail.gmail.com>
+References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1389421415-22859-1-git-send-email-shc_work-JGs/UdohzUI@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?UGF3ZWwgTW9sbA==?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?B?SWFuIENhbXBiZWxs?= <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, =?UTF-8?B?S3VtYXIgR2FsYQ==?= <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:47975 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751038AbaAMNjH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jan 2014 08:39:07 -0500
+Received: by mail-oa0-f41.google.com with SMTP id i4so7008623oah.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2014 05:39:07 -0800 (PST)
+In-Reply-To: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "arm@kernel.org" <arm@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Victor <linux@maxim.org.za>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
 
-0KHRg9Cx0LHQvtGC0LAsIDExINGP0L3QstCw0YDRjyAyMDE0LCAxMDoyMyArMDQ6MDAg0L7RgiBB
-bGV4YW5kZXIgU2hpeWFuIDxzaGNfd29ya0BtYWlsLnJ1PjoKPiBTWVNDT04gZHJpdmVyIHdhcyBk
-ZXNpZ25lZCBmb3IgdXNpbmcgbWVtb3J5IGFyZWFzIChyZWdpc3RlcnMpCj4gdGhhdCBhcmUgdXNl
-ZCBpbiBzZXZlcmFsIHN1YnN5c3RlbXMuIFRoZXJlIGFyZSBzeXN0ZW1zIChDUFVzKQo+IHdoaWNo
-IHVzZSBiaXRzIGluIG9uZSByZWdpc3RlciBmb3IgdmFyaW91cyBwdXJwb3NlcyBhbmQgdGh1cwo+
-IHNob3VsZCBiZSBoYW5kbGVkIGJ5IHZhcmlvdXMga2VybmVsIHN1YnN5c3RlbXMuIFRoaXMgZHJp
-dmVyCj4gYWxsb3dzIHlvdSB0byB1c2UgdGhlIGluZGl2aWR1YWwgU1lTQ09OIGJpdHMgYXMgR1BJ
-T3MuCj4gQVJNIENMUFM3MTFYIFNZU0ZMRzEgaW5wdXQgbGluZXMgaGFzIGJlZW4gYWRkZWQgYXMg
-Zmlyc3QgdXNlcgo+IG9mIHRoaXMgZHJpdmVyLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRl
-ciBTaGl5YW4gPHNoY193b3JrQG1haWwucnU+CgpJIGZvdW5kIHNvbWUgaW5jb3JyZWN0IHRoaW5n
-cyBpbiB0aGlzIHZlcnNpb24sIHNvIHBsZWFzZSBub3QgcmV2aWV3IHRoaXMKcGF0Y2ggdW50aWwg
-SSdsbCBzZW5kIHY0LgpUaGFua3MuCgotLS0K
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Thu, Nov 7, 2013 at 10:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> This passes the errata fix using a GPIO to control the RTS pin
+> on one of the AT91 chips to use gpiolib instead of the
+> AT91-specific interfaces. Also remove the reliance on
+> compile-time #defines and the cpu_* check and rely on the
+> platform passing down the proper GPIO pin through platform
+> data.
+>
+> This is a prerequisite for getting rid of the local GPIO
+> implementation in the AT91 platform and move toward
+> multiplatform.
+>
+> The patch also adds device tree support for getting the
+> RTS GPIO pin from the device tree on DT boot paths.
+>
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v3->v4:
+
+ARM SoC folks, if you're not taking this in through the <timex.h> removal
+series then please ACK this patch so I can take it through the GPIO
+tree instead (unless you want to apply this single patch, which would
+be even better, you have Greg's ACK in this thread).
+
+Yours,
+Linus Walleij
