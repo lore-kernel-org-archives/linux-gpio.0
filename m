@@ -1,48 +1,97 @@
-From: Chris Ball <chris@printf.net>
-Subject: Re: [PATCH v4 2/4] mmc: sdhci-acpi: convert to use GPIO descriptor API
-Date: Mon, 13 Jan 2014 18:32:56 +0000
-Message-ID: <86ppnvbulj.fsf@void.printf.net>
-References: <1389177657-29266-1-git-send-email-mika.westerberg@linux.intel.com>
-	<1389177657-29266-3-git-send-email-mika.westerberg@linux.intel.com>
-	<CACRpkdYhynQ4ooHcZyc-nrgVK9gbvtsYR6ZVv1u0sfBVEaK93A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Confusion about Pinctrl and GPIO
+Date: Tue, 14 Jan 2014 10:26:13 +0100
+Message-ID: <CACRpkdbZcJXGAzbwJrKYYVzo+8nw9145LMsA=jsdbRjkN3f0_w@mail.gmail.com>
+References: <CAGHPBZogJzOUTM=WooJmNd92=QCivWa9W+c9Co1NJd-sgRTB1A@mail.gmail.com>
+	<CAGHPBZpaObWyif7nzitZSQYfvLegFiH0O9S9PCWaWNNQTUqi+Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYhynQ4ooHcZyc-nrgVK9gbvtsYR6ZVv1u0sfBVEaK93A@mail.gmail.com>
-	(Linus Walleij's message of "Wed, 8 Jan 2014 12:54:13 +0100")
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Johannes Berg <johannes@sipsolutions.net>, Rhyland Klein <rklein@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:38403 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777AbaANJ0O (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jan 2014 04:26:14 -0500
+Received: by mail-oa0-f41.google.com with SMTP id i4so8421417oah.28
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Jan 2014 01:26:13 -0800 (PST)
+In-Reply-To: <CAGHPBZpaObWyif7nzitZSQYfvLegFiH0O9S9PCWaWNNQTUqi+Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rongrong Cao <caorr1980@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+Hi Rongrong,
 
-On Wed, Jan 08 2014, Linus Walleij wrote:
-> On Wed, Jan 8, 2014 at 11:40 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
+> I noticed that Stephen<swarren@nvidia.com> submitted a patch for pinctrl:
+> http://www.gossamer-threads.com/lists/linux/kernel/1500890?do=post_view_threaded
 >
->> The new descriptor based GPIO interface is now the recommended and safer
->> way of using GPIOs from device drivers. Convert the ACPI SDHCI driver to
->> use that interface.
->>
->> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
->> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
->
-> I've tentatively applied this to the GPIO tree now, as it was acked by
-> Adrian who is a long time MMC subsystem contributor and we need
-> it to proceed with the rest of the refactorings.
->
-> Chris, beat me up if you're unhappy with this.
->
-> (If it explodes in linux-next I'll just back it all out.)
+> In this patch, Stephen said, "When an SoC muxes pins in a group, it's
+> quite possible for the group to contain e.g. 6 pins, but only 4 of
+> them actually be needed by the HW module that's mux'd to them. In this
+> case, the other 2 pins could be used as GPIOs. However, pinctrl marks
+> all the pins within the group as in-use by the selected mux function.
+> To allow the expected gpiolib interaction, separate the concepts of
+> pin ownership into two parts: One for the mux function and one for
+> GPIO usage. Finally, allow those two ownerships to exist in parallel.
 
-That's fine.  Feel free to add:
+Yes that is how it works.
 
-Acked-by: Chris Ball <chris@printf.net>
+> I agree that gpiolib should be able to use the two idle pins as GPIO,
+> but after apply this patch, gpiolib can also request the 4 pins used
+> by HW module succesfully, and this will override the settings of the 4
+> pins for HW module.
 
-Thanks,
+If your hardware cannot use the same pins for function X and
+GPIO at the same time, it is the responsibility of the individual
+driver to disallow this by returning an error code from e.g.
+.gpio_request_enable() and .enable() in struct pinmux_ops.
 
-- Chris.
--- 
-Chris Ball   <chris@printf.net>   <http://printf.net/>
+> Assuming that the pin has been configured as SPI mode, undoubtedly we
+> can't use it as GPIO any longer. However, if we call gpio_request()
+> (gpiolib API) to requet this pin for GPIO purpose, gpio_request()
+> still can return successfully. I think this is unreasonable,
+
+It is only unreasonable that a certain driver allows this when
+it should be disallowed. Just like a display driver shall disallow
+setting update frequencies that can harm a display.
+
+> However, no drivers in drivers/pinctrl/ implements such
+> codes in pinmux_ops->gpio_request_enable().
+
+So, if you know a driver is doing something wrong, why not
+send a (tested) patch to fix the issue?
+
+> Or, pinctrl subsystem is just resposible to set the pin in GPIO mode,
+> and gpio subsystem (gpiolib) is responsible for other things like set
+> direction, get value if input, or set high/low if output.
+
+This is true but unrelated to the issue you're bringing up.
+
+A separate GPIO driver should call pinctrl_request_gpio() etc from
+the consumer interface to ensure proper muxing of the
+GPIO line from the pinctrl backend.
+
+> Let me talk again about the example described by Stephen. If actually
+> only 4 pins of the group which contains 6 pins are needed by HW
+> module, then why does the group be defined to contain 6 pins? I think
+> the group should be defined only containing 4 pins rather than 6 pins,
+> then the other 2 idle pins can be used for any other purpose.
+
+It is possible to define two groups of 4+2 pins and only activate
+the group containing the first four pins in a certain state in the
+pin table. Then there will be no conflict about the two remaining
+pins.
+
+Another option is to implement .gpio_request_enable() as
+outlined above and not deny the simultaneous usage of the
+last two pins, but deny any attempt to use the first 4 pins
+for GPIO.
+
+I think many drivers certainly have logical holes here, but
+they survive anyway because people do not subject them to
+silly configurations and impossible usecases, but indeed if
+you want to hammer down any possible mistake from a user
+you can proceed to implement proper checking logic into
+the driver(s).
+
+Yours,
+Linus Walleij
