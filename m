@@ -1,34 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpio: add GPIO hogging mechanism
-Date: Tue, 14 Jan 2014 11:27:36 +0100
-Message-ID: <CACRpkdaEOyj-WcmR9e366O+qjLRZufo9732KUUB_OCXbER-YEQ@mail.gmail.com>
-References: <1387463671-1164-1-git-send-email-b.brezillon@overkiz.com>
-	<1387463671-1164-2-git-send-email-b.brezillon@overkiz.com>
-	<CACRpkdb=atfrW+Wqbi17a1KhstS7XHkutuXsM24gL2VPEri_cw@mail.gmail.com>
-	<52CD25FE.8010701@overkiz.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:47890 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751299AbaANK1h (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jan 2014 05:27:37 -0500
-Received: by mail-ob0-f170.google.com with SMTP id uy5so7008946obc.15
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jan 2014 02:27:36 -0800 (PST)
-In-Reply-To: <52CD25FE.8010701@overkiz.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 7/7] drivers/gpio: don't check resource with devm_ioremap_resource
+Date: Tue, 14 Jan 2014 12:58:58 +0100
+Message-ID: <1389700739-3696-7-git-send-email-wsa@the-dreams.de>
+References: <1389700739-3696-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1389700739-3696-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: boris brezillon <b.brezillon@overkiz.com>
-Cc: Rob Landley <rob@landley.net>, Alexandre Courbot <gnurou@gmail.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Ben Gamari <bgamari.foss@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, Jan 8, 2014 at 11:18 AM, boris brezillon
-<b.brezillon@overkiz.com> wrote:
+devm_ioremap_resource does sanity checks on the given resource. No need to
+duplicate this in the driver.
 
-> Anyway, do you want me to rework the gpio hog as described below ?
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+---
 
-If you feel you have time, drive and a proper usecase for testing it,
-sure. I just want it to be driven my someone who *really* needs
-that feature.
+Should go via subsystem tree
 
-Yours,
-Linus Walleij
+ drivers/gpio/gpio-davinci.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 84be701..a5e1a56 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -172,11 +172,6 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "Invalid memory resource\n");
+-		return -EBUSY;
+-	}
+-
+ 	gpio_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(gpio_base))
+ 		return PTR_ERR(gpio_base);
+-- 
+1.8.5.1
