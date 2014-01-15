@@ -1,75 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: sirf: lock IRQs when starting them
-Date: Wed, 15 Jan 2014 10:10:42 +0100
-Message-ID: <1389777042-2363-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Barry Song <Baohua.Song@csr.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 7/7] drivers/gpio: don't check resource with devm_ioremap_resource
+Date: Wed, 15 Jan 2014 10:28:13 +0100
+Message-ID: <CACRpkdYymB4i7Ju5MMNXWVe5nB6_NbWHwrPbOK2KeT0Ji-RzQg@mail.gmail.com>
+References: <1389700739-3696-1-git-send-email-wsa@the-dreams.de>
+	<1389700739-3696-7-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:57957 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751350AbaAOJ2O (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jan 2014 04:28:14 -0500
+Received: by mail-ob0-f177.google.com with SMTP id va2so865708obc.22
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Jan 2014 01:28:13 -0800 (PST)
+In-Reply-To: <1389700739-3696-7-git-send-email-wsa@the-dreams.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-This uses the new API for tagging GPIO lines as in use by
-IRQs. This enforces a few semantic checks on how the underlying
-GPIO line is used.
+On Tue, Jan 14, 2014 at 12:58 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-Also assign the gpio_chip.dev pointer to be used for error
-messages.
+> devm_ioremap_resource does sanity checks on the given resource. No need to
+> duplicate this in the driver.
+>
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+>
+> Should go via subsystem tree
+>
+>  drivers/gpio/gpio-davinci.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index 84be701..a5e1a56 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -172,11 +172,6 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>         }
+>
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       if (!res) {
+> -               dev_err(dev, "Invalid memory resource\n");
+> -               return -EBUSY;
+> -       }
+> -
+>         gpio_base = devm_ioremap_resource(dev, res);
+>         if (IS_ERR(gpio_base))
+>                 return PTR_ERR(gpio_base);
 
-Cc: Barry Song <Baohua.Song@csr.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-Hi Barry, it's be great if you could test this so I can just
-add it to the v3.14 series.
----
- drivers/pinctrl/sirf/pinctrl-sirf.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
-index b637f5ab022c..a0d6152701cd 100644
---- a/drivers/pinctrl/sirf/pinctrl-sirf.c
-+++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
-@@ -594,12 +594,34 @@ static int sirfsoc_gpio_irq_type(struct irq_data *d, unsigned type)
- 	return 0;
- }
- 
-+static unsigned int sirfsoc_gpio_irq_startup(struct irq_data *d)
-+{
-+	struct sirfsoc_gpio_bank *bank = irq_data_get_irq_chip_data(d);
-+
-+	if (gpio_lock_as_irq(&bank->chip.gc, d->hwirq))
-+		dev_err(bank->chip.gc.dev,
-+			"unable to lock HW IRQ %lu for IRQ\n",
-+			d->hwirq);
-+	sirfsoc_gpio_irq_unmask(d);
-+	return 0;
-+}
-+
-+static void sirfsoc_gpio_irq_shutdown(struct irq_data *d)
-+{
-+	struct sirfsoc_gpio_bank *bank = irq_data_get_irq_chip_data(d);
-+
-+	sirfsoc_gpio_irq_mask(d);
-+	gpio_unlock_as_irq(&bank->chip.gc, d->hwirq);
-+}
-+
- static struct irq_chip sirfsoc_irq_chip = {
- 	.name = "sirf-gpio-irq",
- 	.irq_ack = sirfsoc_gpio_irq_ack,
- 	.irq_mask = sirfsoc_gpio_irq_mask,
- 	.irq_unmask = sirfsoc_gpio_irq_unmask,
- 	.irq_set_type = sirfsoc_gpio_irq_type,
-+	.irq_startup = sirfsoc_gpio_irq_startup,
-+	.irq_shutdown = sirfsoc_gpio_irq_shutdown,
- };
- 
- static void sirfsoc_gpio_handle_irq(unsigned int irq, struct irq_desc *desc)
-@@ -877,6 +899,7 @@ static int sirfsoc_gpio_probe(struct device_node *np)
- 		bank->chip.gc.of_node = np;
- 		bank->chip.gc.of_xlate = sirfsoc_gpio_of_xlate;
- 		bank->chip.gc.of_gpio_n_cells = 2;
-+		bank->chip.gc.dev = &pdev->dev;
- 		bank->chip.regs = regs;
- 		bank->id = i;
- 		bank->is_marco = is_marco;
--- 
-1.8.4.2
+The DaVinci maintainers are queuing GPIO patches for their driver
+for this merge window, so requesting them to apply this patch.
+
+Yours,
+Linus Walleij
