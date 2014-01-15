@@ -1,51 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [patch] gpio: davinci: signedness bug in davinci_gpio_irq_setup()
-Date: Wed, 15 Jan 2014 08:21:19 +0100
-Message-ID: <CACRpkdbSKE=d=_oxk+Nh8g3hAjr++ukvrh4nVujupqHk_xH-uw@mail.gmail.com>
-References: <20140109052803.GA1265@elgon.mountain>
+Subject: Re: [PATCH] gpio: pxa: fix bug when get gpio value
+Date: Wed, 15 Jan 2014 08:48:47 +0100
+Message-ID: <CACRpkdY=1xT6QNCO_N2SJoGX5HMqNKqvwtiH0QEPNK42reSbAw@mail.gmail.com>
+References: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <20140109052803.GA1265@elgon.mountain>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@linaro.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:36123 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750799AbaAOHst (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jan 2014 02:48:49 -0500
+Received: by mail-oa0-f44.google.com with SMTP id g12so815316oah.3
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Jan 2014 23:48:48 -0800 (PST)
+In-Reply-To: <1389259557-1731-1-git-send-email-zhangwm@marvell.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Neil Zhang <zhangwm@marvell.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.or>
 
-On Thu, Jan 9, 2014 at 6:28 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Thu, Jan 9, 2014 at 10:25 AM, Neil Zhang <zhangwm@marvell.com> wrote:
 
-> "irq" needs to be signed for the error handling to work.
+> gpio_get_value should return 0 or 1.
 >
-> Fixes: 6075a8b2b6c3 ('gpio: davinci: don't create irq_domain in case of unbanked irqs')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> I have checked mach-mmp / mach-pxa / plat-pxa / plat-orion / mach-orion5x.
+> It's OK for all of them to change this function to return 0 and 1.
 >
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 7629b4f12b7f..b0e98d379217 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -423,7 +423,7 @@ static const struct irq_domain_ops davinci_gpio_irq_ops = {
->
->  static int davinci_gpio_irq_setup(struct platform_device *pdev)
->  {
-> -       unsigned        gpio, irq, bank;
-> +       unsigned        gpio, bank;
->         struct clk      *clk;
->         u32             binten = 0;
->         unsigned        ngpio, bank_irq;
-> @@ -433,6 +433,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->         struct davinci_gpio_platform_data *pdata = dev->platform_data;
->         struct davinci_gpio_regs __iomem *g;
->         struct irq_domain       *irq_domain = NULL;
-> +       int             irq;
->
->         ngpio = pdata->ngpio;
->         res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> Signed-off-by: Neil Zhang <zhangwm@marvell.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-This merge window the DaVinci GPIO changes are queued by the DaVinci
-maintainers (this patch does not even apply to my tree) so DaVinci guys:
-please pick up this patch.
+Patch applied.
 
 Yours,
 Linus Walleij
