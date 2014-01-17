@@ -1,71 +1,128 @@
-From: Waibel Georg <Georg.Waibel@sensor-technik.de>
-Subject: AW: [PATCH 1/1] iMX gpio: Allow reading back of pin status if
- configured as gpio output
-Date: Fri, 17 Jan 2014 22:27:10 +0000
-Message-ID: <E1C9442006A9AE48A7A4B85E0D01C4D474F13C@stwexdb.stww2k.local>
-References: <E1C9442006A9AE48A7A4B85E0D01C4D474F059@stwexdb.stww2k.local>,<20140117161513.GC20094@book.gsilab.sittig.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: More GPIO madness on iMX6 - and the crappy ARM port of Linux
+Date: Fri, 17 Jan 2014 23:43:27 +0100
+Message-ID: <CACRpkdaRQRD85-0wUmip=j1SHzti6Nb69JEUXznYTkrxGvky=A@mail.gmail.com>
+References: <20140117184731.GE15937@n2100.arm.linux.org.uk>
+	<52D98712.3070103@wwwdotorg.org>
+	<20140117202405.GF15937@n2100.arm.linux.org.uk>
+	<52D995C4.80104@wwwdotorg.org>
+	<20140117205346.GH15937@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140117161513.GC20094@book.gsilab.sittig.org>
-Content-Language: de-DE
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gerhard Sittig <gsi@denx.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:64692 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753227AbaAQWn3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jan 2014 17:43:29 -0500
+Received: by mail-oa0-f44.google.com with SMTP id g12so5356907oah.31
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Jan 2014 14:43:28 -0800 (PST)
+In-Reply-To: <20140117205346.GH15937@n2100.arm.linux.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-> On Fri, Jan 17, 2014 at 14:11 +0000, Waibel Georg wrote:
-> >
-> > From cb384950a1153e856ec03109a5156e660a89bf6d Mon Sep 17 00:00:00 2001
-> > From: Georg Waibel <georg.waibel@sensor-technik.de>
-> > Date: Fri, 17 Jan 2014 14:51:38 +0100
-> > Subject: [PATCH 1/1] iMX gpio: Allow reading back of pin status if configured
-> >  as gpio output
-> >
-> > Register PSR was used to read the pin status in the mxc_gpio driver. This
-> > register reflects the pin status if a pin is configured as gpio input.
-> > If a pin is configured as an gpio output register PSR is not updated and
-> > returns 0 instead of the actual pin status. Thus attempting to read back the
-> > status of an gpio output pin via PSR returns a wrong value.
-> >
-> > Reading register DR instead of PSR fixes this issue:
-> > - If pin is gpio output: DR returns the value written to DR by software
-> > - If pin is gpio input: DR returns the value of register PSR und thus the
-> >   pin status
-> 
-> Got curious because of your specific wording.  In the output
-> case, does the DR value reflect what you drive to the pin, or
-> what the pin's status is?  Because this need not be identical in
-> the open collector case (or other "weak" scenarios like bus
-> keeper, and what else HW development came up with).
-> 
-> If DR always reflects the pin's status, then the patch would be
-> OK but the commit message would need an update.  If DR does not
-> appropriately reflect the pin's status, then the patch would be
-> an improvement (would fix the totem-pole case), but still would
-> be wrong or incomplete in the open-collector case.
+On Fri, Jan 17, 2014 at 9:53 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Fri, Jan 17, 2014 at 01:42:44PM -0700, Stephen Warren wrote:
 
+>> I believe you want gpio_get_value() to return either the driven or
+>> actual pin value where it can on the current HW, but just e.g. hard-code
+>> 0 on other HW. That would introduce a core feature that works some
+>> places but not others, and hence make drivers that relied on the feature
+>> less portable between HW with different actual features.
+>
+> I can buy that argument, but there's an issue which stands squarely in
+> its way, and that is open-drain GPIOs.
+>
+> These are modelled just as any other GPIO, mainly so that both
+> gpio_set_value(gpio, 1) and gpio_direction_input(gpio) both result in
+> the signal being high.  The only combination which results in the
+> signal being driven low is outputting zero - and the state of the signal
+> can aways be read back.
+>
+> The problem here is that such gpios are implemented in things like the
+> I2C driver such that they're _always_ outputs, and gpio_set_value() is
+> used to pull the signal down.  gpio_get_value() is used to read its
+> current state.
+>
+> So, if we say that gpio_get_value() is undefined, we force such
+> subsystems to always jump through the non-open-drain paths (using
+> gpio_direction_input() to set the line high and
+> gpio_direction_output(gpio, 0) to drive it low.)
 
-Hi Gerhard,
+Incidentally that is what gpiolib is doing internally in
+gpiod_direction_output().
 
-actually I did not take the open-collector case into account. 
-I checked the iMX6q reference manual and came to this conclusion:
+You're absolutely right that it makes no sense to have open
+drain (or open source) unless the signal can be read back from
+the hardware.
 
-In the output case, reading register DR returns the value I have written 
-to DR, not the actual pad state. Thus may patch only works for the 
-push-pull (totem-pole) output case, not for open-drain.
+I'm thinking something like if the driver manages to obtain a
+GPIO with
 
-However, there is a solution to read back the pin status regardless of 
-its input or output configuration. Its the SION (Software Input On Bit)
-in the IOMUXC MUX control register. If SION is set, the pad status can be 
-read back through register PSR. Thats exactly what I intended to do. 
-Bit SION can be set in the device tree (IOMUXC: CONFIG filed in the 
-fsl,pins binding, bit 30).
-I will verify this on my iMX6 hardware next week.
+gpio_request_one(gpio, GPIOF_OPEN_DRAIN |
+                     GPIOF_OUT_INIT_HIGH);
 
-Seems there is no need for my patch at all.
+As the I2C core does, and then when that call succeeds, it can
+expect that whatever comes back from gpio_get_value() is
+always what is actually on the line. If the driver cannot determine
+this it should not have allowed that flag to succeed in the first
+place, so this might be something we want to enforce.
 
-Thanks for your hint.
-Regards
-Georg
+There are two white spots on the map here:
+
+1. Today this OPEN_DRAIN flag is not even passed down to
+the driver so how could it say anything about it :-( it's a pure gpiolib
+internal flag. We don't know if the hardware can actually even
+do open drain, we just assume it can.
+
+What it should really do - in the best of worlds - is to check if
+it can cross-reference the GPIO line to a pin in the pin control
+subsystem, and if that is possible, then ask the pin if it
+is supporting open drain and set it. It currently has no such
+cross-calls, it is just assumed that the configuration is consistent,
+and the actual pin is set up as open drain. But it would make
+sense to add more cross-calls here, since GPIO is accepting
+these flags (OPEN_DRAIN/OPEN_SOURCE).
+
+Like:
+int pinctrl_gpio_set_flags(unsigned gpio, unsigned long flags);
+
+Where the pinctrl subsystem would attempt to cross reference
+and set the flag, and the pin controller backend will then have
+the option to return an error code.
+
+We could atleast support that for the select pin controllers
+that use generic pin config. i.MX is another story, but I'm open
+to compromises.
+
+2. In the new descriptor API this open drain setting would
+be set from the lookup table and be a property on the line,
+meaning this flag is not requested explicitly by the consumer,
+and the consumer needs to inspect the obtained descriptor
+to figure out if it is set to open drain.
+
+Alexandre: do you have plans for how to handle a dynamic
+consumer passing flags to its gpio request in the gpiod API?
+I noticed that API missing now, there is exactly one user in the
+entire kernel, in drivers/i2c/i2c-core.c but a very important one.
+
+I guess to switch the I2C core over to descriptors I could
+think of an API like this:
+
+int gpiod_get_flags(const struct gpio_desc *desc);
+
+If the OPEN_DRAIN flag is set on that descriptor we should
+always be able to read the input. But as this is not really what the
+I2C core wants to know (it really would prefer not to bother with
+such GPIO flag details) so is it better if we add a special call to
+figure out if the input can be read? Like:
+
+bool gpiod_input_always_valid(const struct gpio_desc *desc);
+
+And leave it up to the core to look at flags, driver characteristics
+etc and determine whether the input can be trusted?
+
+Yours,
+Linus Walleij
