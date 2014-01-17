@@ -1,46 +1,54 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: [PATCH v2] gpio: intel-mid: comments cleanup
-Date: Fri, 17 Jan 2014 07:30:01 -0800
-Message-ID: <1389972601-27164-1-git-send-email-david.a.cohen@linux.intel.com>
-References: <1389917951-13100-1-git-send-email-david.a.cohen@linux.intel.com>
+From: Gerhard Sittig <gsi@denx.de>
+Subject: Re: [PATCH 1/1] iMX gpio: Allow reading back of pin status if
+ configured as gpio output
+Date: Fri, 17 Jan 2014 17:15:13 +0100
+Message-ID: <20140117161513.GC20094@book.gsilab.sittig.org>
+References: <E1C9442006A9AE48A7A4B85E0D01C4D474F059@stwexdb.stww2k.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1389917951-13100-1-git-send-email-david.a.cohen@linux.intel.com>
+Content-Disposition: inline
+In-Reply-To: <E1C9442006A9AE48A7A4B85E0D01C4D474F059@stwexdb.stww2k.local>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, David Cohen <david.a.cohen@linux.intel.com>
+To: Waibel Georg <Georg.Waibel@sensor-technik.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This is a simple cleanup on gpio-intel-mid.c's header comments.
+On Fri, Jan 17, 2014 at 14:11 +0000, Waibel Georg wrote:
+> 
+> From cb384950a1153e856ec03109a5156e660a89bf6d Mon Sep 17 00:00:00 2001
+> From: Georg Waibel <georg.waibel@sensor-technik.de>
+> Date: Fri, 17 Jan 2014 14:51:38 +0100
+> Subject: [PATCH 1/1] iMX gpio: Allow reading back of pin status if configured
+>  as gpio output
+> 
+> Register PSR was used to read the pin status in the mxc_gpio driver. This
+> register reflects the pin status if a pin is configured as gpio input.
+> If a pin is configured as an gpio output register PSR is not updated and
+> returns 0 instead of the actual pin status. Thus attempting to read back the
+> status of an gpio output pin via PSR returns a wrong value.
+> 
+> Reading register DR instead of PSR fixes this issue:
+> - If pin is gpio output: DR returns the value written to DR by software
+> - If pin is gpio input: DR returns the value of register PSR und thus the
+>   pin status
 
-Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
----
- drivers/gpio/gpio-intel-mid.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Got curious because of your specific wording.  In the output
+case, does the DR value reflect what you drive to the pin, or
+what the pin's status is?  Because this need not be identical in
+the open collector case (or other "weak" scenarios like bus
+keeper, and what else HW development came up with).
 
-diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
-index be803af658ac..41218e93b9fe 100644
---- a/drivers/gpio/gpio-intel-mid.c
-+++ b/drivers/gpio/gpio-intel-mid.c
-@@ -1,7 +1,7 @@
- /*
-- * Moorestown platform Langwell chip GPIO driver
-+ * Intel MID GPIO driver
-  *
-- * Copyright (c) 2008, 2009, 2013, Intel Corporation.
-+ * Copyright (c) 2014 Intel Corporation.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -11,10 +11,6 @@
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
- /* Supports:
+If DR always reflects the pin's status, then the patch would be
+OK but the commit message would need an update.  If DR does not
+appropriately reflect the pin's status, then the patch would be
+an improvement (would fix the totem-pole case), but still would
+be wrong or incomplete in the open-collector case.
+
+
+virtually yours
+Gerhard Sittig
 -- 
-1.8.4.2
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office@denx.de
