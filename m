@@ -1,123 +1,71 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: More GPIO madness on iMX6 - and the crappy ARM port of Linux
-Date: Fri, 17 Jan 2014 22:53:31 +0100
-Message-ID: <CACRpkdYvZaXL6OWUXB2a3=rstsWRe4btvuXx9hzgnXZttaYezw@mail.gmail.com>
-References: <20140117184731.GE15937@n2100.arm.linux.org.uk>
-	<52D98712.3070103@wwwdotorg.org>
-	<20140117202015.GE25911@pengutronix.de>
-	<20140117204342.GG15937@n2100.arm.linux.org.uk>
+From: Waibel Georg <Georg.Waibel@sensor-technik.de>
+Subject: AW: [PATCH 1/1] iMX gpio: Allow reading back of pin status if
+ configured as gpio output
+Date: Fri, 17 Jan 2014 22:27:10 +0000
+Message-ID: <E1C9442006A9AE48A7A4B85E0D01C4D474F13C@stwexdb.stww2k.local>
+References: <E1C9442006A9AE48A7A4B85E0D01C4D474F059@stwexdb.stww2k.local>,<20140117161513.GC20094@book.gsilab.sittig.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:55787 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751491AbaAQVxe convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jan 2014 16:53:34 -0500
-Received: by mail-oa0-f46.google.com with SMTP id n16so2212799oag.5
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jan 2014 13:53:33 -0800 (PST)
-In-Reply-To: <20140117204342.GG15937@n2100.arm.linux.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140117161513.GC20094@book.gsilab.sittig.org>
+Content-Language: de-DE
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gerhard Sittig <gsi@denx.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
 
-[CC:ing the comaintainer and linux-gpio for generic questions...]
+> On Fri, Jan 17, 2014 at 14:11 +0000, Waibel Georg wrote:
+> >
+> > From cb384950a1153e856ec03109a5156e660a89bf6d Mon Sep 17 00:00:00 2001
+> > From: Georg Waibel <georg.waibel@sensor-technik.de>
+> > Date: Fri, 17 Jan 2014 14:51:38 +0100
+> > Subject: [PATCH 1/1] iMX gpio: Allow reading back of pin status if configured
+> >  as gpio output
+> >
+> > Register PSR was used to read the pin status in the mxc_gpio driver. This
+> > register reflects the pin status if a pin is configured as gpio input.
+> > If a pin is configured as an gpio output register PSR is not updated and
+> > returns 0 instead of the actual pin status. Thus attempting to read back the
+> > status of an gpio output pin via PSR returns a wrong value.
+> >
+> > Reading register DR instead of PSR fixes this issue:
+> > - If pin is gpio output: DR returns the value written to DR by software
+> > - If pin is gpio input: DR returns the value of register PSR und thus the
+> >   pin status
+> 
+> Got curious because of your specific wording.  In the output
+> case, does the DR value reflect what you drive to the pin, or
+> what the pin's status is?  Because this need not be identical in
+> the open collector case (or other "weak" scenarios like bus
+> keeper, and what else HW development came up with).
+> 
+> If DR always reflects the pin's status, then the patch would be
+> OK but the commit message would need an update.  If DR does not
+> appropriately reflect the pin's status, then the patch would be
+> an improvement (would fix the totem-pole case), but still would
+> be wrong or incomplete in the open-collector case.
 
-On Fri, Jan 17, 2014 at 9:43 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Fri, Jan 17, 2014 at 09:20:15PM +0100, Uwe Kleine-K=F6nig wrote:
 
->>  e) add a flag to all gpio-chips signalling which case gpio_get_valu=
-e
->>     implements (i.e: return
->>       - the actual value on the pad; or
->>       - zero.
->>     ). This is not orthogonal to b) - d)
->>
->> > > 2. What should be reported in /sys/kernel/debug/gpio for an outp=
-ut?
->> It should report the same thing as gpio_get_value in 1.
->
-> There's another solution here.  /sys/kernel/debug/gpio is there to al=
-low
-> us to see the state of the GPIOs, right?  Well, if the asked-for outp=
-ut
-> value can be different from the read-back output value, how about fix=
-ing
-> this so that the _debug_ can report back what the desired output stat=
-e
-> as well as the current input state.
->
-> This would mean that this file becomes something like:
->
->  gpio-86  (usb_otg_vbus        ) dir:out out:hi in:lo
->
-> which makes it clear that either the pad is being asked to output a h=
-igh
-> level, but for some reason reading the input side is returning low st=
-ate.
-> It also lets you see what was asked of the output, and what was (in
-> theory) written to the output.
+Hi Gerhard,
 
-I really like the looks of this. That kind of helpful stuff is exactly
-what the debugfs files shall be used for.
+actually I did not take the open-collector case into account. 
+I checked the iMX6q reference manual and came to this conclusion:
 
-> It may _also_ be a good idea to do (e) - have a per-gpiochip flag whi=
-ch
-> indicates the behaviour here, and omit the "out:" or "in:" as appropr=
-iate.
+In the output case, reading register DR returns the value I have written 
+to DR, not the actual pad state. Thus may patch only works for the 
+push-pull (totem-pole) output case, not for open-drain.
 
-That also seems like a good idea.
+However, there is a solution to read back the pin status regardless of 
+its input or output configuration. Its the SION (Software Input On Bit)
+in the IOMUXC MUX control register. If SION is set, the pad status can be 
+read back through register PSR. Thats exactly what I intended to do. 
+Bit SION can be set in the device tree (IOMUXC: CONFIG filed in the 
+fsl,pins binding, bit 30).
+I will verify this on my iMX6 hardware next week.
 
-> Finally, consider that some drivers should be provided this informati=
-on.
-> For example, the bitbanging I2C driver needs this for:
->
->         scllo(adap);
->         sda =3D getsda(adap);
->         scl =3D (adap->getscl =3D=3D NULL) ? 0 : getscl(adap);
->         if (scl) {
->                 printk(KERN_WARNING "%s: SCL stuck high!\n", name);
->                 goto bailout;
->         }
->         if (!sda) {
->                 printk(KERN_WARNING "%s: SDA unexpected low "
->                        "while pulling SCL low!\n", name);
->                 goto bailout;
->         }
->
->         sclhi(adap);
->         sda =3D getsda(adap);
->         scl =3D (adap->getscl =3D=3D NULL) ? 1 : getscl(adap);
->         if (!scl) {
->                 printk(KERN_WARNING "%s: SCL stuck low!\n", name);
->                 goto bailout;
->         }
->         if (!sda) {
->                 printk(KERN_WARNING "%s: SDA unexpected low "
->                        "while pulling SCL high!\n", name);
->                 goto bailout;
->         }
->
-> Now, if getscl() always returns zero when scllo() is called (because =
-the
-> pin is set as an output) the test is pretty useless - it turns into a
-> verification that yes, the hardware does return zero from the pad reg=
-ister
-> when the pin is set as an output.
+Seems there is no need for my patch at all.
 
-If we can come up with a good API for it this seems useful as
-well. The bit-banged I2C is a perfectly valid usecase.
-
-I guess we could discuss adding that to the new gpiod API so
-we get some traction around that and start to clean things up properly.
-I'd really prefer not to see it in the legacy API.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks for your hint.
+Regards
+Georg
