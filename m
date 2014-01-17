@@ -1,81 +1,123 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH RFC 4/6] net: rfkill: gpio: add device tree support
-Date: Fri, 17 Jan 2014 21:13:13 +0100
-Message-ID: <201401172113.14322.arnd@arndb.de>
-References: <1389941251-32692-1-git-send-email-wens@csie.org> <201401171747.46332.arnd@arndb.de> <CAGb2v67UKiyfJbKZ_Frk3OwZupMPoA2Ck3Hj2zsRFXBQPztavg@mail.gmail.com>
-Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: More GPIO madness on iMX6 - and the crappy ARM port of Linux
+Date: Fri, 17 Jan 2014 22:53:31 +0100
+Message-ID: <CACRpkdYvZaXL6OWUXB2a3=rstsWRe4btvuXx9hzgnXZttaYezw@mail.gmail.com>
+References: <20140117184731.GE15937@n2100.arm.linux.org.uk>
+	<52D98712.3070103@wwwdotorg.org>
+	<20140117202015.GE25911@pengutronix.de>
+	<20140117204342.GG15937@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=ISO-8859-1
-Return-path: <linux-sunxi+bncBDEKVJM7XAHRBYU542LAKGQEEMDUROY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <CAGb2v67UKiyfJbKZ_Frk3OwZupMPoA2Ck3Hj2zsRFXBQPztavg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:55787 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751491AbaAQVxe convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jan 2014 16:53:34 -0500
+Received: by mail-oa0-f46.google.com with SMTP id n16so2212799oag.5
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Jan 2014 13:53:33 -0800 (PST)
+In-Reply-To: <20140117204342.GG15937@n2100.arm.linux.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Friday 17 January 2014, Chen-Yu Tsai wrote:
-> On Sat, Jan 18, 2014 at 12:47 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> > On Friday 17 January 2014, Chen-Yu Tsai wrote:
-> >> diff --git a/Documentation/devicetree/bindings/rfkill/rfkill-gpio.txt b/Documentation/devicetree/bindings/rfkill/rfkill-gpio.txt
-> >> new file mode 100644
-> >> index 0000000..8a07ea4
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/rfkill/rfkill-gpio.txt
-> >> @@ -0,0 +1,26 @@
-> >> +GPIO controlled RFKILL devices
-> >> +
-> >> +Required properties:
-> >> +- compatible   : Must be "rfkill-gpio".
-> >> +- rfkill-name  : Name of RFKILL device
-> >> +- rfkill-type  : Type of RFKILL device: 1 for WiFi, 2 for BlueTooth
-> >> +- NAME_shutdown-gpios  : GPIO phandle to shutdown control
-> >> +                         (phandle must be the second)
-> >> +- NAME_reset-gpios     : GPIO phandle to reset control
-> >> +
-> >> +NAME must match the rfkill-name property. NAME_shutdown-gpios or
-> >> +NAME_reset-gpios, or both, must be defined.
-> >> +
-> >
-> > I don't understand this part. Why do you include the name in the
-> > gpios property, rather than just hardcoding the property strings
-> > to "shutdown-gpios" and "reset-gpios"?
-> 
-> This quirk is a result of how gpiod_get_index implements device tree
-> lookup. You'll also notice that the shutdown GPIO must be the second
-> phandle, as the driver uses indexed lookup to support ACPI cases.
-> If con_id is given, it is prepended to "gpios" as the property string.
-> con_id is also used as the label passed to gpiod_request, which is
-> then shown in /sys/kernel/debug/gpio.
+[CC:ing the comaintainer and linux-gpio for generic questions...]
 
-The Linux implementation should not enforce an inferior DT binding.
-I think it would be better to change the code instead and make this
-work with a more sensible representation.
+On Fri, Jan 17, 2014 at 9:43 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Fri, Jan 17, 2014 at 09:20:15PM +0100, Uwe Kleine-K=F6nig wrote:
 
-> I can do a seperate lookup for the device tree case, with or without
-> fallback to platform lookup tables. Then the names can be "reset-gpio"
-> and "shutdown-gpio". Need to promote gpiod_request to non-static so
-> we can register usage of the gpio, to match non-dt code path.
-> 
-> Personally I prefer adding a "label" parameter to gpiod_get_index, so
-> we can use a different name than con_id. con_id isn't used in the ACPI
-> case, and is optional in platform lookup case. However device tree
-> lookup is dependent on this. What I see is non-uniform behavior
-> between the three. In my opinion this is undesirable, but I haven't
-> come up with a good solution yet.
+>>  e) add a flag to all gpio-chips signalling which case gpio_get_valu=
+e
+>>     implements (i.e: return
+>>       - the actual value on the pad; or
+>>       - zero.
+>>     ). This is not orthogonal to b) - d)
+>>
+>> > > 2. What should be reported in /sys/kernel/debug/gpio for an outp=
+ut?
+>> It should report the same thing as gpio_get_value in 1.
+>
+> There's another solution here.  /sys/kernel/debug/gpio is there to al=
+low
+> us to see the state of the GPIOs, right?  Well, if the asked-for outp=
+ut
+> value can be different from the read-back output value, how about fix=
+ing
+> this so that the _debug_ can report back what the desired output stat=
+e
+> as well as the current input state.
+>
+> This would mean that this file becomes something like:
+>
+>  gpio-86  (usb_otg_vbus        ) dir:out out:hi in:lo
+>
+> which makes it clear that either the pad is being asked to output a h=
+igh
+> level, but for some reason reading the input side is returning low st=
+ate.
+> It also lets you see what was asked of the output, and what was (in
+> theory) written to the output.
 
-(adding the gpio people here). I don't understand enough of the
-current API to make a good call here, but I agree that we should try
-to make it more uniform and do it in a way that allows simpler DT
-bindings for devices using it.
+I really like the looks of this. That kind of helpful stuff is exactly
+what the debugfs files shall be used for.
 
-> About the property string, is the plural form required, even though we
-> only want one?
+> It may _also_ be a good idea to do (e) - have a per-gpiochip flag whi=
+ch
+> indicates the behaviour here, and omit the "out:" or "in:" as appropr=
+iate.
 
-I would keep the plural form for consistency.
+That also seems like a good idea.
 
-	Arnd
+> Finally, consider that some drivers should be provided this informati=
+on.
+> For example, the bitbanging I2C driver needs this for:
+>
+>         scllo(adap);
+>         sda =3D getsda(adap);
+>         scl =3D (adap->getscl =3D=3D NULL) ? 0 : getscl(adap);
+>         if (scl) {
+>                 printk(KERN_WARNING "%s: SCL stuck high!\n", name);
+>                 goto bailout;
+>         }
+>         if (!sda) {
+>                 printk(KERN_WARNING "%s: SDA unexpected low "
+>                        "while pulling SCL low!\n", name);
+>                 goto bailout;
+>         }
+>
+>         sclhi(adap);
+>         sda =3D getsda(adap);
+>         scl =3D (adap->getscl =3D=3D NULL) ? 1 : getscl(adap);
+>         if (!scl) {
+>                 printk(KERN_WARNING "%s: SCL stuck low!\n", name);
+>                 goto bailout;
+>         }
+>         if (!sda) {
+>                 printk(KERN_WARNING "%s: SDA unexpected low "
+>                        "while pulling SCL high!\n", name);
+>                 goto bailout;
+>         }
+>
+> Now, if getscl() always returns zero when scllo() is called (because =
+the
+> pin is set as an output) the test is pretty useless - it turns into a
+> verification that yes, the hardware does return zero from the pad reg=
+ister
+> when the pin is set as an output.
+
+If we can come up with a good API for it this seems useful as
+well. The bit-banged I2C is a perfectly valid usecase.
+
+I guess we could discuss adding that to the new gpiod API so
+we get some traction around that and start to clean things up properly.
+I'd really prefer not to see it in the legacy API.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
