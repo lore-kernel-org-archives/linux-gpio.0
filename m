@@ -1,37 +1,35 @@
-From: SeongJae Park <sj38.park@gmail.com>
-Subject: [PATCH] gpio: mcp23s08: fix casting caused build warning
-Date: Sat, 18 Jan 2014 13:57:15 +0900
-Message-ID: <1390021035-21374-1-git-send-email-sj38.park@gmail.com>
+From: john walker <jw.24hrs1@yandex.com>
+Subject: Let's have a great deal.
+Date: Sun, 19 Jan 2014 03:23:37 +0100
+Message-ID: <343801390098217@web13j.yandex.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:33760 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752066AbaARE5T (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jan 2014 23:57:19 -0500
-Received: by mail-pb0-f48.google.com with SMTP id rr13so4899563pbb.7
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jan 2014 20:57:19 -0800 (PST)
+Received: from forward11.mail.yandex.net ([95.108.130.93]:60689 "EHLO
+	forward11.mail.yandex.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751700AbaASCaB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jan 2014 21:30:01 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: SeongJae Park <sj38.park@gmail.com>
+To: jw.24hrs1@yandex.com
 
-Signed-off-by: SeongJae Park <sj38.park@gmail.com>
----
- drivers/gpio/gpio-mcp23s08.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index b16401e..97198ef 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -640,7 +640,7 @@ static int mcp23s08_probe(struct spi_device *spi)
- 
- 	match = of_match_device(of_match_ptr(mcp23s08_spi_of_match), &spi->dev);
- 	if (match) {
--		type = (int)match->data;
-+		type = (int)(uintptr_t)match->data;
- 		status = of_property_read_u32(spi->dev.of_node,
- 			    "microchip,spi-present-mask", &spi_present_mask);
- 		if (status) {
--- 
-1.8.3.2
 
+--=20
+Let's have a great deal.
+
+My name is John Walker, I discovered an unclaimed Inheritance Fund in O=
+ur Bank, I know What Will be Required to Release The Fund to you.=9A
+
+Get back to Me with your information Via E-mail for More details: jw24h=
+rs1@ovi.com
+
+Regards,=9A
+
+John Walker
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
