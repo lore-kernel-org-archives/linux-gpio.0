@@ -1,24 +1,76 @@
-From: Mark Reyes Guus <Tamaryn_nelson@hks14.harvard.edu>
-Subject: Re:
-Date: Mon, 20 Jan 2014 01:35:18 -0800
-Message-ID: <31dbb52d-eea3-4c34-9ea8-e03410980df5__4910.32502982325$1390212429$gmane$org@P-EXHU1A-DC1.hks.internal>
-Reply-To: <guusmarkreyes212@yahoo.com.tw>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+From: brandie31089@googlemail.com
+Subject: RE: LOCAL MAP OPTIMIZATION FOR : mail-archive.com (Less Than
+ $99/Month)
+Date: Mon, 20 Jan 2014 23:14:34 +0530
+Message-ID: <52dd6081.a7dd420a.7a18.ffffd0e1@mx.google.com>
+Reply-To: LORI76557@gmail.com
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ackroyd.harvard.edu ([128.103.208.29]:59449 "EHLO
-	ackroyd.harvard.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752082AbaATKGt convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jan 2014 05:06:49 -0500
-Content-Description: Mail message body
+Received: from mail-pb0-f65.google.com ([209.85.160.65]:37622 "EHLO
+	mail-pb0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752443AbaATRof (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jan 2014 12:44:35 -0500
+Received: by mail-pb0-f65.google.com with SMTP id rq2so2529362pbb.8
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Jan 2014 09:44:34 -0800 (PST)
+Received: from localhost.localdomain ([124.253.33.120])
+        by mx.google.com with ESMTPSA id qf7sm7619738pac.14.2014.01.20.09.44.31
+        for <linux-gpio@vger.kernel.org>
+        (version=TLSv1 cipher=RC4-SHA bits=128/128);
+        Mon, 20 Jan 2014 09:44:33 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <Tamaryn_nelson@hks14.harvard.edu>
+To: linux-gpio@vger.kernel.org
 
-Good day. I am Mark Reyes Guus, I work with Abn Amro Bank as an auditor. I have a proposition to discuss with you. Should you be interested, please e-mail back to me.
+Good Morning Sir / Mam
 
-Private Email: markreyesguus@abnmrob.co.uk OR markguus.reyes01@yahoo.nl
+Is your business ranking in local maps shown on PAGE 1 of google ? With new
+google policies they have specifically asked local business owners to
+optimize their website for local maps rather than JUST organics. Do you know
+the reason why you are not ranked well on google MAPs or why there is drop
+in your website rankings? Prime reason for bad rankings for a busniess is
+lack of local presence and local citations ie getting your business listed
+on directories like YELP, MANTA & Many more. These websites not just give
+your business a push but also help you Maintain a good Online Reputation.
 
-Yours Sincerely,
-Mark Reyes Guus.
+Why you need to optimize your website for local MAP Listings ?
+
+- MAP listings get 10 times more clicks than organic listings
+- Increased conversions because of real reviews posted on your Google Plus
+Page
+- Every year there is 30% increase in searches for local keywords
+- Increases legitimacy of a Business
+
+We will help you get your website ranked well on google for the related
+keywords in your niche. We specialize in LOCAL SEARCH ENGINE OPTIMIZATION
+increasing visibility for small businesses by ranking them for
+geographically-related keywords. Say for eg-: you want to search a plumber
+in your city, You will be typing in keywords like Plumbers + City Or
+Plumbers + IN + City. We make sure your website comes in google MAP listings
+shown on page 1 for each such keyword.
+
+Now Google believes in - BE ORIGINAL, HAVE ORIGINAL AND GIVE ORIGINAL which
+means that google wants to end up that frustrating experience of users who
+are searching for Service Or Product and seeing the results that are not
+even close to what they are looking for. Google only wants to give their
+user original and relevant results. This makes it even more important that
+we showcase our business in the best possible way and make sure our website
+in valued high by google.
+
+We at TheLOCALIST will make google feel the importance of your business by
+following their guidelines thus ranking your website higher in serach
+results. We are presently offering LOCAL OPTIMIZATION to more than 400
+websites and they all rank page 1 for all possible keywords !!! Each month
+your website is submitted to more than 50 citations and social presence is
+controlled by posting videos and blogs all over the web.
+
+Email us back with your website & phone number so we can discuss this
+further with you. Our Packages start from as low as 99$/month.
+
+
+Thanks For Taking Time To Read Our Email
+
+Polly Martin
+Local SEO Manager ( THE Localist )
+Address : 24 ST Suite 32 Downtown Provo Utah
+
+-------------------
+NOT INTERESTED ? REPLY WITH NOT INTERESTED IN THE SUBJECT LINE 
