@@ -1,41 +1,24 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: mcp23s08: depend on OF_GPIO
-Date: Mon, 20 Jan 2014 09:09:04 +0100
-Message-ID: <1390205344-15194-1-git-send-email-linus.walleij@linaro.org>
+From: Mark Reyes Guus <Tamaryn_nelson@hks14.harvard.edu>
+Subject: Re:
+Date: Mon, 20 Jan 2014 01:35:18 -0800
+Message-ID: <31dbb52d-eea3-4c34-9ea8-e03410980df5__4910.32502982325$1390212429$gmane$org@P-EXHU1A-DC1.hks.internal>
+Reply-To: <guusmarkreyes212@yahoo.com.tw>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:34668 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750726AbaATIJN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jan 2014 03:09:13 -0500
-Received: by mail-wg0-f49.google.com with SMTP id a1so6464233wgh.28
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Jan 2014 00:09:11 -0800 (PST)
+Received: from ackroyd.harvard.edu ([128.103.208.29]:59449 "EHLO
+	ackroyd.harvard.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752082AbaATKGt convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jan 2014 05:06:49 -0500
+Content-Description: Mail message body
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <poeschel@lemonage.de>
+To: Recipients <Tamaryn_nelson@hks14.harvard.edu>
 
-The MCP drivers fails to compile on trial builds due to missing
-Kconfig dependency on OF_GPIO. Fix it.
+Good day. I am Mark Reyes Guus, I work with Abn Amro Bank as an auditor. I have a proposition to discuss with you. Should you be interested, please e-mail back to me.
 
-Cc: Lars Poeschel <poeschel@lemonage.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Private Email: markreyesguus@abnmrob.co.uk OR markguus.reyes01@yahoo.nl
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 2d49784109b5..d5bd9eece408 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -717,7 +717,7 @@ config GPIO_MAX7301
- 
- config GPIO_MCP23S08
- 	tristate "Microchip MCP23xxx I/O expander"
--	depends on (SPI_MASTER && !I2C) || I2C
-+	depends on (SPI_MASTER && !I2C) || I2C && OF_GPIO
- 	help
- 	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
- 	  I/O expanders.
--- 
-1.8.4.2
-
+Yours Sincerely,
+Mark Reyes Guus.
