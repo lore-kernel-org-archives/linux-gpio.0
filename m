@@ -1,35 +1,41 @@
-From: john walker <jw.24hrs1@yandex.com>
-Subject: Let's have a great deal.
-Date: Sun, 19 Jan 2014 03:23:37 +0100
-Message-ID: <343801390098217@web13j.yandex.ru>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: mcp23s08: depend on OF_GPIO
+Date: Mon, 20 Jan 2014 09:09:04 +0100
+Message-ID: <1390205344-15194-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from forward11.mail.yandex.net ([95.108.130.93]:60689 "EHLO
-	forward11.mail.yandex.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751700AbaASCaB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jan 2014 21:30:01 -0500
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:34668 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750726AbaATIJN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jan 2014 03:09:13 -0500
+Received: by mail-wg0-f49.google.com with SMTP id a1so6464233wgh.28
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Jan 2014 00:09:11 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: jw.24hrs1@yandex.com
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <poeschel@lemonage.de>
 
+The MCP drivers fails to compile on trial builds due to missing
+Kconfig dependency on OF_GPIO. Fix it.
 
+Cc: Lars Poeschel <poeschel@lemonage.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Let's have a great deal.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 2d49784109b5..d5bd9eece408 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -717,7 +717,7 @@ config GPIO_MAX7301
+ 
+ config GPIO_MCP23S08
+ 	tristate "Microchip MCP23xxx I/O expander"
+-	depends on (SPI_MASTER && !I2C) || I2C
++	depends on (SPI_MASTER && !I2C) || I2C && OF_GPIO
+ 	help
+ 	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
+ 	  I/O expanders.
+-- 
+1.8.4.2
 
-My name is John Walker, I discovered an unclaimed Inheritance Fund in O=
-ur Bank, I know What Will be Required to Release The Fund to you.=9A
-
-Get back to Me with your information Via E-mail for More details: jw24h=
-rs1@ovi.com
-
-Regards,=9A
-
-John Walker
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
