@@ -1,268 +1,126 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] bulk pin control changes for v3.14
-Date: Tue, 21 Jan 2014 13:55:00 +0100
-Message-ID: <CACRpkda0fbiU_QRMqJ_KjwWyLqCG-RhrQT=ytEwmrb_gfaF5LQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH RFC 4/6] net: rfkill: gpio: add device tree support
+Date: Tue, 21 Jan 2014 23:53:13 +0900
+Message-ID: <CAAVeFuKFfAvSPYLmvWV5jjT-peZFJ8sJ2bbh4F=JAYoWLhjZpA@mail.gmail.com>
+References: <1389941251-32692-1-git-send-email-wens@csie.org>
+ <CAAVeFuLP4MkfXGG1FMauvUw_J63zRXdhGwxqYy5W98L1wCQNbw@mail.gmail.com>
+ <CACRpkdYiy+sya6NqRfAmsrFOXvaa3qX=qjRuTDW1vZVSaG1+Gg@mail.gmail.com> <201401211335.16885.arnd@arndb.de>
+Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBDE4FPUCVULRB3MT7KLAKGQEJ5SSW4I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <201401211335.16885.arnd-r2nGTMty4D4@public.gmane.org>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Tue, Jan 21, 2014 at 9:35 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Tuesday 21 January 2014, Linus Walleij wrote:
+>> On Tue, Jan 21, 2014 at 4:11 AM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> > On Sat, Jan 18, 2014 at 8:11 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> >
+>> > I agree that's how it should be be done with the current API if your
+>> > driver can obtain GPIOs from both ACPI and DT. This is a potential
+>> > issue, as drivers are not supposed to make assumptions about who is
+>> > going to be their GPIO provider. Let's say you started a driver with
+>> > only DT in mind, and used gpio_get(dev, con_id) to get your GPIOs. DT
+>> > bindings are thus of the form "con_id-gpio = <phandle>", and set in
+>> > stone. Then later, someone wants to use your driver with ACPI. How do
+>> > you handle that gracefully?
+>>
+>> Short answer is you can't. You have to pour backward-compatibility
+>> code into the driver first checking for that property and then falling
+>> back to the new binding if it doesn't exist.
+>
+> With the ACPI named properties extension, it should be possible to have
+> something akin to a "gpio-names" list that can be attached to an indexed
+> array of gpio descriptors. I assume that Intel is going to need this
+> for named irqs, clocks, regulators, dmas as well, so I think it will
+> eventually get there. It's not something that can be done today though,
+> or that is standardized in APCI-5.0.
 
-here is the bulk of pin control changes for v3.14. This has been queued
-and tested for a while. Lots of action here, like in the GPIO tree,
-embedded stuff like this is really hot now it seems. Details in the
-signed tag. I'm especially happy about the Qualcomm driver as it is
-used in such a huge subset of mobile handsets out there, and these
-platforms in general need better upstream support.
+Good to know. I'm not sure this would help with the named GPIO
+resolution issue however. I assume that contrary to DT we will have no
+control over the naming of ACPI-defined GPIOs, and thus there is
+little chance that a GPIO serving a function will end up having the
+same name as the one we chose for the DT binding...
 
-Please pull it in!
+>
+> My guess is that named GPIOs are going to make more sense on x86 embedded
+> than on arm64 server.
+>
+>> > I'm starting to wonder, now that ACPI is a first-class GPIO provider,
+>> > whether we should not start to encourage the deprecation of the
+>> > "con_id-gpio = <phandle>" binding form in DT and only use a single
+>> > indexed GPIO property per device.
+>>
+>> You have a valid point.
+>
+> Independent of ACPI, I prefer indexed "gpios" properties over "con_id-gpio"
+> properties anyway, because it's more consistent with some of the other
+> subsystems. I don't have an opinion though on whether we should also
+> allow a "gpios"/"gpio-names" pair, or whether we should keep the indexed
+> "gpios" list for the anonymous case.
+>
+>> > The con_id parameter would then only
+>> > be used as a label, which would also have the nice side-effect that
+>> > all GPIOs used for a given function will be reported under the same
+>> > name no matter what the GPIO provider is.
+>>
+>> As discussed earlier in this thread I'm not sure the con_id is
+>> suitable for labelling GPIOs. It'd be better to have a proper name
+>> specified in DT/ACPI instead.
+>
+> +1
 
-Yours,
-Linus Walleij
+I wonder why you guys prefer to have the name defined in the GPIO
+mapping. Having the driver decide the label makes it easier to look up
+which GPIO does what in debugfs, whereas nothing prevents people to
+name GPIOs whatever inadequate name they want in the device DT node.
+What am I overlooking here?
 
+>
+>> > From an aesthetic point of view, I definitely prefer using con_id to
+>> > identify GPIOs instead of indexes, but I don't see how we can make it
+>> > play nice with ACPI. Thoughts?
+>>
+>> Let's ask the DT maintainers...
+>>
+>> I'm a bit sceptic to the whole ACPI-DT-API-should-be-unified
+>> just-one-function-call business, as this was just a very simple example
+>> of what can happen to something as simple as
+>> devm_gpiod_get[_index]().
+>
+> I think a unified kernel API makes more sense for some subsystems than
+> others, and it depends a bit on the rate of adoption of APCI for drivers
+> that already have a DT binding (or vice versa, if that happens).
+>
+> GPIO might actually be in the first category since it's commonly used
+> for off-chip components that will get shared across ARM and x86 (as
+> well as everything else), while a common kernel API would be less
+> important for things that are internal to an SoC where Intel is the
+> only company needing ACPI support.
 
-The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+I am afraid I don't have a good enough view of the ACPI landscape to
+understand how often drivers might be reused on both ACPI and DT. But
+I suppose nothing speaks against that, technically speaking. Maybe
+Mika would have comments to make here?
 
-  Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+The good (or bad, rather) thing about DT is that we can do whatever we
+please with the new bindings: decide which name or which index
+(doesn't matter here) a GPIO should have. However we don't have this
+control over ACPI, where nothing guarantees that the same index will
+be used for the same GPIO function. And there goes our unified GPIO
+mapping. Workarounds would imply additional layers of mapping, or
+using different probe functions depending on whether we rely on DT or
+ACPI (I don't want to imagine there will be systems that use *both*).
+Considering that we already have drivers using that trick (e.g. to
+choose between SPI or I2C), the latter might be acceptable.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v3.14-1
-
-for you to fetch changes up to fa8cf57c923e86a693a85aff1df579245a27cbb3:
-
-  pinctrl: sunxi: Honor GPIO output initial vaules (2014-01-20 09:19:17 +0100)
-
-----------------------------------------------------------------
-Bulk pin control changes for the v3.14 cycle:
-
-- New driver for the Qualcomm TLMM pin controller and its
-  msm8x74 subdriver.
-
-- New driver for the Broadcom Capri BCM281xx SoC.
-
-- New subdriver for the imx25 pin controller.
-
-- New subdriver for the Tegra124 pin controller.
-
-- Lock GPIO lines as IRQs for select combined pin control and
-  GPIO drivers for baytrail and sirf.
-
-- Some semi-big refactorings and extenstions to the sirf
-  driver.
-
-- Lots of patching, cleanup and fixing in the Renesas "PFC"
-  driver and associated subdrivers as usual. It is settling
-  down a little bit now it seems.
-
-- Minor fixes and incremental updates here and there as usual.
-
-----------------------------------------------------------------
-Alexandre Belloni (5):
-      pinctrl: at91: correct a few typos
-      pinctrl: at91: initialize config parameter to 0
-      pinctrl: pinconf: remove checks on ops->pin_config_get
-      pinctrl: at91: implement at91_pinconf_dbg_show
-      pinctrl: pinconf: remove warning: unused variable 'ops'
-
-Antonios Vamporakis (1):
-      pinctrl/lantiq: fix typo
-
-Ashwini Ghuge (1):
-      pinctrl: tegra: add pinmux controller driver for Tegra124
-
-Axel Lin (1):
-      pinctrl: msm: Fix set gpio setting
-
-Barry Song (2):
-      pinctrl: sirf: use only one irq_domain for the whole device node
-      pinctrl: sirf: put gpio interrupt pin into input status automatically
-
-Bin Shi (1):
-      pinctrl: sirf: fix the pins of sdmmc5 connected with TriG
-
-Bjorn Andersson (8):
-      pinctrl: Add Qualcomm TLMM driver
-      pinctrl: Add msm8x74 configuration
-      pinctrl: Add documentation for pinctrl-msm8x74
-      pinctrl: msm: Update Kconfig for PINCTRL_MSM8X74
-      pinctrl-msm: Fix spelling misstakes and missing consts
-      pinctrl-msm: Tidy up error handling
-      pinctrl-msm: Remove separate allocation of bitmaps
-      pinctrl-msm: Rename compatible to be more specific
-
-Boris BREZILLON (2):
-      pinctrl: at91: fix clk_unprepare and clk_disable order
-      pinctrl: at91: replace clk_prepare + clk_enable by clk_prepare_enable
-
-Chen-Yu Tsai (2):
-      pinctrl: sunxi: Add Allwinner A20 clock output pin functions
-      pinctrl: sunxi: Honor GPIO output initial vaules
-
-Denis Carikli (1):
-      pinctrl: pinctrl-imx: add imx25 pinctrl driver
-
-Kuninori Morimoto (2):
-      sh-pfc: r8a7790: Add SSI pin support
-      sh-pfc: r8a7790: Add Audio pin support
-
-Laszlo Papp (1):
-      pinctrl: Fix some typos and grammar issues in the documentation
-
-Laurent Pinchart (12):
-      sh-pfc: r8a7791: Fix DU pin groups organisation
-      sh-pfc: Share common PORTCR macro definition
-      sh-pfc: Turn unsigned indices into unsigned int
-      sh-pfc: Terminate gpios array by -1
-      sh-pfc: sh73a0: Add missing IRQ15
-      sh-pfc: sh73a0: Sort IRQ entries by IRQ number
-      sh-pfc: Rename sh_pfc window field to windows
-      sh-pfc: Support GPIO to IRQ mapping specified IRQ resources
-      pinctrl: sh-pfc: Constify enum_ids and var_field_width compound literals
-      pinctrl: sh-pfc: Constify IRQ GPIOs arrays
-      pinctrl: sh-pfc: sh: Constify pins and cfg_regs arrays
-      pinctrl: sh-pfc: ARM: Constify pins and cfg_regs arrays
-
-Laxman Dewangan (1):
-      pinctrl: tegra: Add devicetree binding document for Tegra124
-
-Linus Walleij (8):
-      pinctrl: nomadik: always display IRQ in debugfs
-      pinctrl: provide documentation pointer
-      pinctrl: baytrail: lock IRQs when starting them
-      pinctrl: make the MSM SoC driver depend on OF
-      pinctrl: make the MSM SoC driver depend on OF
-      Merge branch 'pinmux/next/pfc' of
-git://linuxtv.org/pinchartl/fbdev into devel
-      pinctrl: sirf: lock IRQs when starting them
-      pinctrl: capri: add dependency on OF
-
-Mallikarjun Kasoju (1):
-      pinctrl: as3722: Set pin to output mode for some function
-
-Markus Pargmann (1):
-      pinctrl: imx1-core populate subdevices
-
-Mathias Nyman (1):
-      pinctrl-baytrail: show pin label with the reset of the gpio debug data
-
-Qipan Li (1):
-      pinctrl: sirf: add lost usp1_uart_nostreamctrl group for atlas6
-
-Rongjun Ying (1):
-      pinctrl: sirf: add pin group for USP0 with only RX or TX frame sync
-
-Shawn Guo (1):
-      pinctrl: imx: drop redundant OF dependency
-
-Sherman Yin (5):
-      pinctrl: Adds slew-rate, input-enable/disable
-      pinctrl: Add void * to pinctrl_pin_desc
-      pinctrl: Add pinctrl binding for Broadcom Capri SoCs
-      ARM: pinctrl: Add Broadcom Capri pinctrl driver
-      ARM: bcm11351: Enable pinctrl for Broadcom Capri SoCs
-
-Srinivas Kandagatla (1):
-      pinctrl: st: Fix a typo in probe
-
-Takashi Yoshii (1):
-      sh-pfc: r8a7791: Fix msiof groups to follow GROUP
-
-Tomi Valkeinen (3):
-      pinctrl: single: fix DT bindings documentation
-      pinctrl: single: fix pcs_disable with bits_per_mux
-      pinctrl: single: fix infinite loop caused by bad mask
-
-Valentine Barshak (9):
-      pinctrl: sh-pfc: pfc-r8a7790: Rename VIN pin groups
-      pinctrl: sh-pfc: pfc-r8a7790: Group VIN0 HSYNC and VSYNC together
-      pinctrl: sh-pfc: pfc-r8a7790: Reorganize VIN0 data pins
-      pinctrl: sh-pfc: pfc-r8a7790: Add missing VIN1 pins
-      pinctrl: sh-pfc: pfc-r8a7790: Add VIN2 and VIN3 pins
-      pinctrl: sh-pfc: r8a7790: Fix vsync value in the vin3_sync_mux array
-      pinctrl: sh-pfc: r8a7791: Group USB PWEN and OVC pins together
-      pinctrl: sh-pfc: r8a7791: Add VIN pins
-      pinctrl: sh-pfc: r8a7791: Add I2C pins
-
- .../bindings/pinctrl/brcm,capri-pinctrl.txt        |  461 +++
- .../bindings/pinctrl/fsl,imx25-pinctrl.txt         |   23 +
- .../bindings/pinctrl/fsl,imx27-pinctrl.txt         |   22 +
- .../bindings/pinctrl/nvidia,tegra124-pinmux.txt    |  144 +
- .../bindings/pinctrl/pinctrl-bindings.txt          |    3 +
- .../devicetree/bindings/pinctrl/pinctrl-single.txt |    2 +-
- .../bindings/pinctrl/qcom,msm8974-pinctrl.txt      |   92 +
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   14 +
- Documentation/pinctrl.txt                          |   43 +-
- arch/arm/boot/dts/bcm11351.dtsi                    |    4 +
- arch/arm/configs/bcm_defconfig                     |    1 +
- arch/arm/mach-bcm/Kconfig                          |    1 +
- drivers/pinctrl/Kconfig                            |   48 +-
- drivers/pinctrl/Makefile                           |    5 +
- drivers/pinctrl/pinconf-generic.c                  |    4 +
- drivers/pinctrl/pinconf.c                          |   22 +-
- drivers/pinctrl/pinctrl-as3722.c                   |   20 +
- drivers/pinctrl/pinctrl-at91.c                     |   48 +-
- drivers/pinctrl/pinctrl-baytrail.c                 |   30 +-
- drivers/pinctrl/pinctrl-capri.c                    | 1454 +++++++++
- drivers/pinctrl/pinctrl-imx1-core.c                |    7 +
- drivers/pinctrl/pinctrl-imx25.c                    |  351 +++
- drivers/pinctrl/pinctrl-msm.c                      |  990 ++++++
- drivers/pinctrl/pinctrl-msm.h                      |  122 +
- drivers/pinctrl/pinctrl-msm8x74.c                  |  636 ++++
- drivers/pinctrl/pinctrl-nomadik.c                  |    6 +-
- drivers/pinctrl/pinctrl-single.c                   |   18 +-
- drivers/pinctrl/pinctrl-st.c                       |    8 +-
- drivers/pinctrl/pinctrl-sunxi-pins.h               |    2 +
- drivers/pinctrl/pinctrl-sunxi.c                    |   13 +-
- drivers/pinctrl/pinctrl-tegra124.c                 | 3137 ++++++++++++++++++++
- drivers/pinctrl/pinctrl-xway.c                     |    4 +-
- drivers/pinctrl/sh-pfc/core.c                      |   76 +-
- drivers/pinctrl/sh-pfc/core.h                      |    4 +-
- drivers/pinctrl/sh-pfc/gpio.c                      |   24 +-
- drivers/pinctrl/sh-pfc/pfc-r8a73a4.c               |   17 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c               |   15 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c               |    4 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c               |    2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c               |  752 ++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |  655 +++-
- drivers/pinctrl/sh-pfc/pfc-sh7203.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7264.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7269.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7372.c                |   15 +-
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c                |   66 +-
- drivers/pinctrl/sh-pfc/pfc-sh7720.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7722.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7723.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7724.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7734.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7757.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7785.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7786.c                |    2 +-
- drivers/pinctrl/sh-pfc/pfc-shx3.c                  |    2 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   16 +-
- drivers/pinctrl/sirf/pinctrl-atlas6.c              |   24 +
- drivers/pinctrl/sirf/pinctrl-prima2.c              |   48 +-
- drivers/pinctrl/sirf/pinctrl-sirf.c                |   51 +-
- include/linux/mfd/as3722.h                         |    1 +
- include/linux/pinctrl/pinconf-generic.h            |   10 +-
- include/linux/pinctrl/pinctrl.h                    |    2 +
- 62 files changed, 9208 insertions(+), 333 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/brcm,capri-pinctrl.txt
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/fsl,imx25-pinctrl.txt
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-capri.c
- create mode 100644 drivers/pinctrl/pinctrl-imx25.c
- create mode 100644 drivers/pinctrl/pinctrl-msm.c
- create mode 100644 drivers/pinctrl/pinctrl-msm.h
- create mode 100644 drivers/pinctrl/pinctrl-msm8x74.c
- create mode 100644 drivers/pinctrl/pinctrl-tegra124.c
+Alex.
