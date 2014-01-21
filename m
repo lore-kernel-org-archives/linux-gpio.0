@@ -1,44 +1,90 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH RFC 4/6] net: rfkill: gpio: add device tree support
-Date: Tue, 21 Jan 2014 19:50:06 +0100
-Message-ID: <201401211950.07011.arnd@arndb.de>
-References: <1389941251-32692-1-git-send-email-wens@csie.org> <201401211335.16885.arnd@arndb.de> <CAAVeFuKFfAvSPYLmvWV5jjT-peZFJ8sJ2bbh4F=JAYoWLhjZpA@mail.gmail.com>
-Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [GIT PULL] GPIO bulk changes for v3.14
+Date: Wed, 22 Jan 2014 08:01:04 +1100
+Message-ID: <20140122080104.3228a7ded7e8174a635d5a94@canb.auug.org.au>
+References: <CACRpkdY8Dk=i1-=rKU6gTM+3YHQ286r1u4z2WhLDQtcqLpyM2Q@mail.gmail.com>
+	<CA+55aFzpF87hNgpFDsqLXYyiuTADe1xB2KUhOVd=atYASOLNFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDEKVJM7XAHRB2EC7OLAKGQEZA6F2OQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <CAAVeFuKFfAvSPYLmvWV5jjT-peZFJ8sJ2bbh4F=JAYoWLhjZpA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__22_Jan_2014_08_01_04_+1100_thB0z6QIZu4BNMfv"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:48798 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751929AbaAUVBR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 21 Jan 2014 16:01:17 -0500
+In-Reply-To: <CA+55aFzpF87hNgpFDsqLXYyiuTADe1xB2KUhOVd=atYASOLNFw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <poeschel@lemonage.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tuesday 21 January 2014, Alexandre Courbot wrote:
-> >> As discussed earlier in this thread I'm not sure the con_id is
-> >> suitable for labelling GPIOs. It'd be better to have a proper name
-> >> specified in DT/ACPI instead.
+--Signature=_Wed__22_Jan_2014_08_01_04_+1100_thB0z6QIZu4BNMfv
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Tue, 21 Jan 2014 10:11:39 -0800 Linus Torvalds <torvalds@linux-foundatio=
+n.org> wrote:
+>
+> On Tue, Jan 21, 2014 at 12:36 AM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
 > >
-> > +1
-> 
-> I wonder why you guys prefer to have the name defined in the GPIO
-> mapping. Having the driver decide the label makes it easier to look up
-> which GPIO does what in debugfs, whereas nothing prevents people to
-> name GPIOs whatever inadequate name they want in the device DT node.
-> What am I overlooking here?
+> > here is the big GPIO pull request for the v3.14 series.
+>=20
+> Ugh. It does not compile for me. The problem seems to be that the
+> gpio-mcp23s08.c driver only compiles in OF environments, but isn't
+> properly restricted to them:
+>=20
+>   drivers/gpio/gpio-mcp23s08.c: In function =E2=80=98mcp23s08_irq_setup=
+=E2=80=99:
+>   drivers/gpio/gpio-mcp23s08.c:482:46: error: =E2=80=98struct gpio_chip=
+=E2=80=99 has
+> no member named =E2=80=98of_node=E2=80=99
+>     mcp->irq_domain =3D irq_domain_add_linear(chip->of_node, chip->ngpio,
+>=20
+> and similar other errors.
 
-I should have another look at the debugfs representation, but isn't
-there a global namespace that gets used for all gpios?  Neither the
-con_id nor the name that the driver picks would be globally unique
-and stable across kernel versions, so they don't make a good user
-interface.
+Yep, reported when it entered linux-next.
 
-I think what we want here is a system-wide unique identifier for
-each gpio line that may get represented in debugfs, and use a new
-DT mechanism to communicate that.
+> Introduced by commit 4e47f91bf741 ("gpio: mcp23s08: Add irq
+> functionality for i2c chips") as far as I can tell.
+>
+> >  It's big this time but has been brewing in linux-next for
+> > some time and it's all good stuff IMO
+>=20
+> The fact that it doesn't even compile makes me doubt your statement
+> that it has been in linux-next. It doesn't even pass a basic
+> allmodconfig build.
 
-	Arnd
+That particular commit was reverted in linux-next when it first turned up
+on Monday and again yesterday.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__22_Jan_2014_08_01_04_+1100_thB0z6QIZu4BNMfv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS3uAbAAoJEMDTa8Ir7ZwVPqIP+gIyAzqE6jadUYDoYi8/mpj1
+2JTNkpWs56OTvcDEz2fGiQ29E4ePMm0Q1y/G16C5vjfkp7+jMvgzAalj2R1EXo8I
+iUOGgKm7/hO7zfk3PCZwfbmu8Mj9waVrnD8KVwOVJ9+j1vepExC+g8ESSPkF4YQ/
+Oimx+f+mMPhCJs38yDGGR9zw49uA4Jkr1N36C5gPdpLA0J9K8RDEXK6ilKbHyDJG
+11KKO8vHfn8HHz7Cv/wX1SRyRFwBHm6c9bflmthTQFAbxI5/iRIWLlQxRLoi0vcZ
+99j3Vvp2O/YMr7b7uKTC0LYqWS6tBhC2SK0NDhwrkRGaSf713CX9duIvKR/2Qr5P
+flq/AX6Rh34mwR+xJWSg8JJrOY1ZXMDO4vS5wFGTYg0jlSJ0OAq4m0NhppbA9KNZ
+mY7V73jANO/Buz+QSsMWPI7eUiDQ8mzMRIMOjBmSk3VHg5hJ3kbtU2XYVH7cz1wR
+gycdXX8GPxjjbEh9dY6j5vhPgZzp9z3u/l6dpy4tX26oQv0d1UMTnmV+ChyK44w6
+ARXqtTvlsK1Cavd0qT3hw+7DIff91b77pg36+lGa/0RzidDHNxLmZF/Tp/B5qW+R
+XVmplhTEWXRZTDMCFB0rocs8ZxLlPKM1bizGyo2T6FCZ8jzgY/YPyuyDiS4LR1vU
+LTn9HEZUVsITDSvtvPgF
+=Bw4+
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Jan_2014_08_01_04_+1100_thB0z6QIZu4BNMfv--
