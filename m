@@ -1,90 +1,249 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [GIT PULL] GPIO bulk changes for v3.14
-Date: Wed, 22 Jan 2014 08:01:04 +1100
-Message-ID: <20140122080104.3228a7ded7e8174a635d5a94@canb.auug.org.au>
-References: <CACRpkdY8Dk=i1-=rKU6gTM+3YHQ286r1u4z2WhLDQtcqLpyM2Q@mail.gmail.com>
-	<CA+55aFzpF87hNgpFDsqLXYyiuTADe1xB2KUhOVd=atYASOLNFw@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 59/73] drivers/gpio: delete non-required instances of include <linux/init.h>
+Date: Tue, 21 Jan 2014 16:23:02 -0500
+Message-ID: <1390339396-3479-60-git-send-email-paul.gortmaker@windriver.com>
+References: <1390339396-3479-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__22_Jan_2014_08_01_04_+1100_thB0z6QIZu4BNMfv"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:48798 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751929AbaAUVBR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 21 Jan 2014 16:01:17 -0500
-In-Reply-To: <CA+55aFzpF87hNgpFDsqLXYyiuTADe1xB2KUhOVd=atYASOLNFw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1390339396-3479-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <poeschel@lemonage.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
---Signature=_Wed__22_Jan_2014_08_01_04_+1100_thB0z6QIZu4BNMfv
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+None of these files are actually using any __init type directives
+and hence don't need to include <linux/init.h>.  Most are just a
+left over from __devinit and __cpuinit removal, or simply due to
+code getting copied from one driver to the next.
 
-Hi all,
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/gpio/gpio-74x164.c    | 1 -
+ drivers/gpio/gpio-adp5520.c   | 1 -
+ drivers/gpio/gpio-adp5588.c   | 1 -
+ drivers/gpio/gpio-generic.c   | 1 -
+ drivers/gpio/gpio-grgpio.c    | 1 -
+ drivers/gpio/gpio-janz-ttl.c  | 1 -
+ drivers/gpio/gpio-kempld.c    | 1 -
+ drivers/gpio/gpio-lpc32xx.c   | 1 -
+ drivers/gpio/gpio-max730x.c   | 1 -
+ drivers/gpio/gpio-moxart.c    | 1 -
+ drivers/gpio/gpio-msm-v2.c    | 1 -
+ drivers/gpio/gpio-rcar.c      | 1 -
+ drivers/gpio/gpio-rdc321x.c   | 1 -
+ drivers/gpio/gpio-sch.c       | 1 -
+ drivers/gpio/gpio-sodaville.c | 1 -
+ drivers/gpio/gpio-twl6040.c   | 1 -
+ drivers/gpio/gpio-vr41xx.c    | 1 -
+ 17 files changed, 17 deletions(-)
 
-On Tue, 21 Jan 2014 10:11:39 -0800 Linus Torvalds <torvalds@linux-foundatio=
-n.org> wrote:
->
-> On Tue, Jan 21, 2014 at 12:36 AM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
-> >
-> > here is the big GPIO pull request for the v3.14 series.
->=20
-> Ugh. It does not compile for me. The problem seems to be that the
-> gpio-mcp23s08.c driver only compiles in OF environments, but isn't
-> properly restricted to them:
->=20
->   drivers/gpio/gpio-mcp23s08.c: In function =E2=80=98mcp23s08_irq_setup=
-=E2=80=99:
->   drivers/gpio/gpio-mcp23s08.c:482:46: error: =E2=80=98struct gpio_chip=
-=E2=80=99 has
-> no member named =E2=80=98of_node=E2=80=99
->     mcp->irq_domain =3D irq_domain_add_linear(chip->of_node, chip->ngpio,
->=20
-> and similar other errors.
-
-Yep, reported when it entered linux-next.
-
-> Introduced by commit 4e47f91bf741 ("gpio: mcp23s08: Add irq
-> functionality for i2c chips") as far as I can tell.
->
-> >  It's big this time but has been brewing in linux-next for
-> > some time and it's all good stuff IMO
->=20
-> The fact that it doesn't even compile makes me doubt your statement
-> that it has been in linux-next. It doesn't even pass a basic
-> allmodconfig build.
-
-That particular commit was reverted in linux-next when it first turned up
-on Monday and again yesterday.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__22_Jan_2014_08_01_04_+1100_thB0z6QIZu4BNMfv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJS3uAbAAoJEMDTa8Ir7ZwVPqIP+gIyAzqE6jadUYDoYi8/mpj1
-2JTNkpWs56OTvcDEz2fGiQ29E4ePMm0Q1y/G16C5vjfkp7+jMvgzAalj2R1EXo8I
-iUOGgKm7/hO7zfk3PCZwfbmu8Mj9waVrnD8KVwOVJ9+j1vepExC+g8ESSPkF4YQ/
-Oimx+f+mMPhCJs38yDGGR9zw49uA4Jkr1N36C5gPdpLA0J9K8RDEXK6ilKbHyDJG
-11KKO8vHfn8HHz7Cv/wX1SRyRFwBHm6c9bflmthTQFAbxI5/iRIWLlQxRLoi0vcZ
-99j3Vvp2O/YMr7b7uKTC0LYqWS6tBhC2SK0NDhwrkRGaSf713CX9duIvKR/2Qr5P
-flq/AX6Rh34mwR+xJWSg8JJrOY1ZXMDO4vS5wFGTYg0jlSJ0OAq4m0NhppbA9KNZ
-mY7V73jANO/Buz+QSsMWPI7eUiDQ8mzMRIMOjBmSk3VHg5hJ3kbtU2XYVH7cz1wR
-gycdXX8GPxjjbEh9dY6j5vhPgZzp9z3u/l6dpy4tX26oQv0d1UMTnmV+ChyK44w6
-ARXqtTvlsK1Cavd0qT3hw+7DIff91b77pg36+lGa/0RzidDHNxLmZF/Tp/B5qW+R
-XVmplhTEWXRZTDMCFB0rocs8ZxLlPKM1bizGyo2T6FCZ8jzgY/YPyuyDiS4LR1vU
-LTn9HEZUVsITDSvtvPgF
-=Bw4+
------END PGP SIGNATURE-----
-
---Signature=_Wed__22_Jan_2014_08_01_04_+1100_thB0z6QIZu4BNMfv--
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index e4ae298..8aa8a97 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -9,7 +9,6 @@
+  *  published by the Free Software Foundation.
+  */
+ 
+-#include <linux/init.h>
+ #include <linux/mutex.h>
+ #include <linux/spi/spi.h>
+ #include <linux/gpio.h>
+diff --git a/drivers/gpio/gpio-adp5520.c b/drivers/gpio/gpio-adp5520.c
+index 6132659..00f54fa 100644
+--- a/drivers/gpio/gpio-adp5520.c
++++ b/drivers/gpio/gpio-adp5520.c
+@@ -9,7 +9,6 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/kernel.h>
+-#include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/mfd/adp5520.h>
+ 
+diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
+index 3f190e6..a5b7a20 100644
+--- a/drivers/gpio/gpio-adp5588.c
++++ b/drivers/gpio/gpio-adp5588.c
+@@ -10,7 +10,6 @@
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+-#include <linux/init.h>
+ #include <linux/i2c.h>
+ #include <linux/gpio.h>
+ #include <linux/interrupt.h>
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index d2196bf..cdc8437 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -44,7 +44,6 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+  *               `.......````.```
+  */
+ 
+-#include <linux/init.h>
+ #include <linux/err.h>
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
+diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
+index 84d2478..d137fd3 100644
+--- a/drivers/gpio/gpio-grgpio.c
++++ b/drivers/gpio/gpio-grgpio.c
+@@ -22,7 +22,6 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/init.h>
+ #include <linux/spinlock.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+diff --git a/drivers/gpio/gpio-janz-ttl.c b/drivers/gpio/gpio-janz-ttl.c
+index 2ecd3a0..ab0bfb9 100644
+--- a/drivers/gpio/gpio-janz-ttl.c
++++ b/drivers/gpio/gpio-janz-ttl.c
+@@ -11,7 +11,6 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/gpio/gpio-kempld.c b/drivers/gpio/gpio-kempld.c
+index c6d8817..8a2ff81 100644
+--- a/drivers/gpio/gpio-kempld.c
++++ b/drivers/gpio/gpio-kempld.c
+@@ -14,7 +14,6 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/bitops.h>
+diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
+index 225344d..f2f9353 100644
+--- a/drivers/gpio/gpio-lpc32xx.c
++++ b/drivers/gpio/gpio-lpc32xx.c
+@@ -17,7 +17,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/errno.h>
+ #include <linux/gpio.h>
+diff --git a/drivers/gpio/gpio-max730x.c b/drivers/gpio/gpio-max730x.c
+index 8672755..f8c01a4 100644
+--- a/drivers/gpio/gpio-max730x.c
++++ b/drivers/gpio/gpio-max730x.c
+@@ -31,7 +31,6 @@
+  */
+ 
+ #include <linux/module.h>
+-#include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/mutex.h>
+ #include <linux/spi/max7301.h>
+diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
+index 2af9900..799da97 100644
+--- a/drivers/gpio/gpio-moxart.c
++++ b/drivers/gpio/gpio-moxart.c
+@@ -11,7 +11,6 @@
+  */
+ 
+ #include <linux/err.h>
+-#include <linux/init.h>
+ #include <linux/irq.h>
+ #include <linux/io.h>
+ #include <linux/gpio.h>
+diff --git a/drivers/gpio/gpio-msm-v2.c b/drivers/gpio/gpio-msm-v2.c
+index a3351ac..f817e59 100644
+--- a/drivers/gpio/gpio-msm-v2.c
++++ b/drivers/gpio/gpio-msm-v2.c
+@@ -21,7 +21,6 @@
+ #include <linux/bitops.h>
+ #include <linux/err.h>
+ #include <linux/gpio.h>
+-#include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/irqchip/chained_irq.h>
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index ca76ce7..32963f2 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -15,7 +15,6 @@
+ 
+ #include <linux/err.h>
+ #include <linux/gpio.h>
+-#include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
+diff --git a/drivers/gpio/gpio-rdc321x.c b/drivers/gpio/gpio-rdc321x.c
+index 88577c3..45e1fc7 100644
+--- a/drivers/gpio/gpio-rdc321x.c
++++ b/drivers/gpio/gpio-rdc321x.c
+@@ -21,7 +21,6 @@
+  */
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-#include <linux/init.h>
+ #include <linux/spinlock.h>
+ #include <linux/platform_device.h>
+ #include <linux/pci.h>
+diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+index 5af6571..4dd3ded 100644
+--- a/drivers/gpio/gpio-sch.c
++++ b/drivers/gpio/gpio-sch.c
+@@ -18,7 +18,6 @@
+  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ 
+-#include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/io.h>
+diff --git a/drivers/gpio/gpio-sodaville.c b/drivers/gpio/gpio-sodaville.c
+index 7c6c518..8bd814f 100644
+--- a/drivers/gpio/gpio-sodaville.c
++++ b/drivers/gpio/gpio-sodaville.c
+@@ -11,7 +11,6 @@
+ 
+ #include <linux/errno.h>
+ #include <linux/gpio.h>
+-#include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
+ #include <linux/interrupt.h>
+diff --git a/drivers/gpio/gpio-twl6040.c b/drivers/gpio/gpio-twl6040.c
+index 0caf5cd..9377fc0 100644
+--- a/drivers/gpio/gpio-twl6040.c
++++ b/drivers/gpio/gpio-twl6040.c
+@@ -23,7 +23,6 @@
+  */
+ 
+ #include <linux/module.h>
+-#include <linux/init.h>
+ #include <linux/kthread.h>
+ #include <linux/irq.h>
+ #include <linux/gpio.h>
+diff --git a/drivers/gpio/gpio-vr41xx.c b/drivers/gpio/gpio-vr41xx.c
+index 9902732..b983bc0 100644
+--- a/drivers/gpio/gpio-vr41xx.c
++++ b/drivers/gpio/gpio-vr41xx.c
+@@ -22,7 +22,6 @@
+ #include <linux/errno.h>
+ #include <linux/fs.h>
+ #include <linux/gpio.h>
+-#include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
+-- 
+1.8.4.1
