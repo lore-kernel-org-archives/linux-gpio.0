@@ -1,91 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RFC 4/6] net: rfkill: gpio: add device tree support
-Date: Wed, 22 Jan 2014 12:38:19 +0000
-Message-ID: <20140122123819.GH17314@sirena.org.uk>
-References: <1389941251-32692-1-git-send-email-wens@csie.org>
- <201401211335.16885.arnd@arndb.de>
- <CAAVeFuKFfAvSPYLmvWV5jjT-peZFJ8sJ2bbh4F=JAYoWLhjZpA@mail.gmail.com>
- <201401211950.07011.arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2644417091909250083=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <201401211950.07011.arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-wireless <linux-wireless@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Johannes Berg <johannes@sipsolutions.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: document how to make combined GPIO+irqchip drivers
+Date: Wed, 22 Jan 2014 15:03:10 +0100
+Message-ID: <1390399390-9414-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:58725 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752549AbaAVODT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jan 2014 09:03:19 -0500
+Received: by mail-wg0-f44.google.com with SMTP id l18so339658wgh.11
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Jan 2014 06:03:18 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
+Write a few words on how GPIO drivers supplying an irqchip should
+be written.
 
---===============2644417091909250083==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qGF5p/tMraZs2sto"
-Content-Disposition: inline
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ Documentation/gpio/driver.txt | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
+diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+index 9da0bfa74781..9818b2055197 100644
+--- a/Documentation/gpio/driver.txt
++++ b/Documentation/gpio/driver.txt
+@@ -62,6 +62,36 @@ Any debugfs dump method should normally ignore signals which haven't been
+ requested as GPIOs. They can use gpiochip_is_requested(), which returns either
+ NULL or the label associated with that GPIO when it was requested.
+ 
++GPIO drivers providing IRQs
++---------------------------
++It is custom that GPIO drivers (GPIO chips) are also providing interrupts,
++most often cascaded off a parent interrupt controller, and in some special
++cases the GPIO logic is melded with a SoC:s primary interrupt controller.
++
++The IRQ portions of the GPIO block are implemented using an irqchip, using
++the header <linux/irq.h>. So basically such a driver is utilizing two sub-
++systems simultaneously: gpio and irq.
++
++It is legal for any IRQ consumer to request an IRQ from any irqchip no matter
++if that is a combined GPIO+IRQ driver. The basic premise is that gpio_chip and
++irq_chip are orthogonal, and offering their services independent of each
++other.
++
++gpiod_to_irq() is just a convenience function to figure out the IRQ for a
++certain GPIO line and should not be relied upon to have been called before
++the IRQ is used.
++
++So always prepare the hardware and make it ready for action in respective
++callbacks from the GPIO and irqchip APIs. Do not rely on gpio_to_irq() having
++been called first.
++
++This orthogonality leads to ambiguities that we need to solve: if there is
++competition inside the subsystem which side is using the resource (a certain
++GPIO line and register for example) it needs to deny certain operations and
++keep track of usage inside of the gpiolib subsystem. This is why the API
++below exists.
++
++
+ Locking IRQ usage
+ -----------------
+ Input GPIOs can be used as IRQ signals. When this happens, a driver is requested
+@@ -73,3 +103,7 @@ This will prevent the use of non-irq related GPIO APIs until the GPIO IRQ lock
+ is released:
+ 
+ 	void gpiod_unlock_as_irq(struct gpio_desc *desc)
++
++When implementing an irqchip inside a GPIO driver, these two functions should
++typically be called in the .startup() and .shutdown() callbacks from the
++irqchip.
+-- 
+1.8.4.2
 
---qGF5p/tMraZs2sto
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 21, 2014 at 07:50:06PM +0100, Arnd Bergmann wrote:
-
-> I should have another look at the debugfs representation, but isn't
-> there a global namespace that gets used for all gpios?  Neither the
-> con_id nor the name that the driver picks would be globally unique
-> and stable across kernel versions, so they don't make a good user
-> interface.
-
-Currently the globally unique name is the GPIO number but that's not
-stable since it gets dynamically assigned. =20
-
-> I think what we want here is a system-wide unique identifier for
-> each gpio line that may get represented in debugfs, and use a new
-> DT mechanism to communicate that.
-
-We've mostly been using things based off dev_name() for stability.
-
---qGF5p/tMraZs2sto
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS37u4AAoJELSic+t+oim9G+MQAJErIQGqQz6x1HTjAObSjhOE
-CuL1qSxTNyzHD4QvUc9PJ15IEvqe2TK+1AUgYDEGIkZ2kwwGBZAhYPpA0eIzecrO
-9u0ZMNvoq+Nw85NjA6/CZCBTJ+fo3vX9E2STkddxez6SE4O21cyRxLJ03QKIuR/5
-CsAP2Y7Z4el7aaSeQc/6Aoc1/0Hc93rMYOCNyCou7tWX5HjC+uA+zXaYLh8XetM+
-2AlnhqMTl03q6F32t7YxeGcnMxWkV2CaPVEuh1F8oMsSCXTzwOFtOE49N395C8ES
-5swiFcL1Z/X6BrfJ7GvMPOrkGFSeEetVzUSUoaHSW1KXtsZfGXxEM2eIX2YnYkbw
-olt+eAuQ0HsjKg6iC9SzKa6ykZtdza8owmXVJAyjW+i5l3y+3KNWIO0K1X64lMZA
-SJdyoJ77nNtZET6UWF65WvRx8oXK80vdrltWDJ8sHfc0FZ7cPCTeZrZ4QjXcpBMp
-lmXCXgKdXhmSQin24V+bdZFj1bwYEOjhrtqgIqVsqJLIHNpqyob+7ik2vv1h4Dzw
-U/yQnVdpbns7WELoAzlslQW3t+FVwbeRyhrIRc8cZY4LTKTjfQHfN5bq4z/qgCuN
-kA/9NUZpmgpsxAJnEo0iv0b9zE7JEbX/Z38I40E7VurzH65sn9w/kCtGf7G0ffCY
-44oDEnRbgyAscMd4tDlQ
-=Hgls
------END PGP SIGNATURE-----
-
---qGF5p/tMraZs2sto--
-
-
---===============2644417091909250083==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============2644417091909250083==--
