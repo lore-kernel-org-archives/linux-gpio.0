@@ -1,27 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] iMX gpio: Allow reading back of pin status if
- configured as gpio output
-Date: Thu, 23 Jan 2014 08:38:28 +0100
-Message-ID: <CACRpkdZsd7rwRrYKVZEP7VOG56k80fbetORqF9Zu+Tz_q15f2A@mail.gmail.com>
-References: <E1C9442006A9AE48A7A4B85E0D01C4D474F059@stwexdb.stww2k.local>
-	<20140117161513.GC20094@book.gsilab.sittig.org>
-	<E1C9442006A9AE48A7A4B85E0D01C4D474F13C@stwexdb.stww2k.local>
+Subject: Re: [PATCH 59/73] drivers/gpio: delete non-required instances of
+ include <linux/init.h>
+Date: Thu, 23 Jan 2014 09:12:43 +0100
+Message-ID: <CACRpkdYk6cOO-JZbe887ihJaWE5JMjuXm3EVcZmE1jCeL2BODQ@mail.gmail.com>
+References: <1390339396-3479-1-git-send-email-paul.gortmaker@windriver.com>
+	<1390339396-3479-60-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <E1C9442006A9AE48A7A4B85E0D01C4D474F13C@stwexdb.stww2k.local>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Waibel Georg <Georg.Waibel@sensor-technik.de>
-Cc: Gerhard Sittig <gsi@denx.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:35409 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751721AbaAWIMn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jan 2014 03:12:43 -0500
+Received: by mail-ob0-f170.google.com with SMTP id va2so1698800obc.29
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jan 2014 00:12:43 -0800 (PST)
+In-Reply-To: <1390339396-3479-60-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jan 17, 2014 at 11:27 PM, Waibel Georg
-<Georg.Waibel@sensor-technik.de> wrote:
+On Tue, Jan 21, 2014 at 10:23 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-> Seems there is no need for my patch at all.
+> None of these files are actually using any __init type directives
+> and hence don't need to include <linux/init.h>.  Most are just a
+> left over from __devinit and __cpuinit removal, or simply due to
+> code getting copied from one driver to the next.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-I'm holding this off until you've made up your mind about
-whether it's needed or not...
+Patch applied for v3.15.
 
 Yours,
 Linus Walleij
