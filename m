@@ -1,77 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: vr41xx: mark GPIO lines used for IRQ
-Date: Fri, 24 Jan 2014 00:07:57 +0100
-Message-ID: <1390518477-10020-1-git-send-email-linus.walleij@linaro.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 59/73] drivers/gpio: delete non-required instances of
+ include <linux/init.h>
+Date: Thu, 23 Jan 2014 21:21:55 -0500
+Message-ID: <20140124022154.GA13428@windriver.com>
+References: <1390339396-3479-1-git-send-email-paul.gortmaker@windriver.com>
+ <1390339396-3479-60-git-send-email-paul.gortmaker@windriver.com>
+ <CACRpkdYk6cOO-JZbe887ihJaWE5JMjuXm3EVcZmE1jCeL2BODQ@mail.gmail.com>
+ <20140124095827.1ee8ddcfed8d1c8e0a6d3dbd@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:63209 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751616AbaAWXIK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jan 2014 18:08:10 -0500
-Received: by mail-wg0-f47.google.com with SMTP id m15so2295199wgh.14
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jan 2014 15:08:09 -0800 (PST)
+Received: from mail.windriver.com ([147.11.1.11]:53162 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750969AbaAXCVk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jan 2014 21:21:40 -0500
+Content-Disposition: inline
+In-Reply-To: <20140124095827.1ee8ddcfed8d1c8e0a6d3dbd@canb.auug.org.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-When an IRQ is started on a GPIO line, mark this GPIO as IRQ in
-the gpiolib so we can keep track of the usage centrally.
+[Re: [PATCH 59/73] drivers/gpio: delete non-required instances of include <linux/init.h>] On 24/01/2014 (Fri 09:58) Stephen Rothwell wrote:
 
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-It would be much appreciated if one of the MIPS people could
-test this patch, thanks in advance. (I did compile-test it
-with a MIPS cross compiler.)
----
- drivers/gpio/gpio-vr41xx.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+> Hi Linus,
+> 
+> On Thu, 23 Jan 2014 09:12:43 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > On Tue, Jan 21, 2014 at 10:23 PM, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+> > 
+> > > None of these files are actually using any __init type directives
+> > > and hence don't need to include <linux/init.h>.  Most are just a
+> > > left over from __devinit and __cpuinit removal, or simply due to
+> > > code getting copied from one driver to the next.
+> > >
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: Alexandre Courbot <gnurou@gmail.com>
+> > > Cc: linux-gpio@vger.kernel.org
+> > > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> > 
+> > Patch applied for v3.15.
+> 
+> Yet that patch is in linux-next today.  And just 2 days ago I mailed out this request (as I do during each merge window):
+> 
+> "Please do not add any code intended for v3.15 to your linux-next included
+> trees until after v3.14-rc1 has been released."
+> 
+> I have no problem with that particular patch being sent to Linus during
+> this merge window (in fact Paul intends to send whatever is left of the
+> series at the end of the merge window), but it makes me wonder about the
+> other commits that you have added to the gpio tree (and the pinctrl tree)
+> today.  Are they intended for this merge window or v3.15?
 
-diff --git a/drivers/gpio/gpio-vr41xx.c b/drivers/gpio/gpio-vr41xx.c
-index b983bc079102..c6728cee0cfd 100644
---- a/drivers/gpio/gpio-vr41xx.c
-+++ b/drivers/gpio/gpio-vr41xx.c
-@@ -80,6 +80,7 @@ static DEFINE_SPINLOCK(giu_lock);
- static unsigned long giu_flags;
- 
- static void __iomem *giu_base;
-+static struct gpio_chip vr41xx_gpio_chip;
- 
- #define giu_read(offset)		readw(giu_base + (offset))
- #define giu_write(offset, value)	writew((value), giu_base + (offset))
-@@ -134,12 +135,31 @@ static void unmask_giuint_low(struct irq_data *d)
- 	giu_set(GIUINTENL, 1 << GPIO_PIN_OF_IRQ(d->irq));
- }
- 
-+static unsigned int startup_giuint(struct irq_data *data)
-+{
-+	if (gpio_lock_as_irq(&vr41xx_gpio_chip, data->hwirq))
-+		dev_err(vr41xx_gpio_chip.dev,
-+			"unable to lock HW IRQ %lu for IRQ\n",
-+			data->hwirq);
-+	/* Satisfy the .enable semantics by unmasking the line */
-+	unmask_giuint_low(data);
-+	return 0;
-+}
-+
-+static void shutdown_giuint(struct irq_data *data)
-+{
-+	mask_giuint_low(data);
-+	gpio_unlock_as_irq(&vr41xx_gpio_chip, data->hwirq);
-+}
-+
- static struct irq_chip giuint_low_irq_chip = {
- 	.name		= "GIUINTL",
- 	.irq_ack	= ack_giuint_low,
- 	.irq_mask	= mask_giuint_low,
- 	.irq_mask_ack	= mask_ack_giuint_low,
- 	.irq_unmask	= unmask_giuint_low,
-+	.irq_startup	= startup_giuint,
-+	.irq_shutdown	= shutdown_giuint,
- };
- 
- static void ack_giuint_high(struct irq_data *d)
--- 
-1.8.4.2
+For what it is worth, I'm not removing any patches from my series file
+until they explicitly conflict and/or become redundant.  If a maintainer
+says they are adding the patch, I add a comment in the series file, but
+I don't remove them until I see them come into next via another branch,
+and/or sfr reports a conflict/redundancy.
+
+Thanks,
+Paul.
+--
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
 
