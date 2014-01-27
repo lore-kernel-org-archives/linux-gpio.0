@@ -1,26 +1,48 @@
-From: Abdul Nasser <abdulnas500@justin.ddo.jp>
-Subject: Kind Regards
-Date: Sun, 26 Jan 2014 21:57:16 +0000
-Message-ID: <SECEXCHANGEr1UXt6kz00004790@mail.standardelectronics.com>
-Reply-To: s.abdulnasser@yahoo.com.hk
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] gpio: gpiolib-of: Use PTR_ERR_OR_ZERO
+Date: Mon, 27 Jan 2014 12:15:08 +0530
+Message-ID: <1390805108-20766-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.standardelectronics.com ([74.92.67.124]:55350 "EHLO
-	mail.standardelectronics.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753438AbaAZXjE convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 26 Jan 2014 18:39:04 -0500
-Content-Description: Mail message body
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:35863 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753329AbaA0Gtq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jan 2014 01:49:46 -0500
+Received: by mail-pd0-f175.google.com with SMTP id w10so5323972pde.6
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Jan 2014 22:49:46 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <abdulnas500@justin.ddo.jp>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Greetings,
-My name is Abdul Nasser Sokariah and I am writing you from Syria, I choose to contact you directly as I need a reliable person to trust who can help me handle my huge deposit  with a vault company in EUROPE, and based on my present situation in Syria, I need you urgently to take possession of everything and further modalities/directives will follow.Please reply to my private  Email: nasserabdul190@yahoo.com
+PTR_RET is deprecated. Use PTR_ERR_OR_ZERO instead. While at it
+also include missing err.h header.
 
-I wait for your response.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/gpio/gpiolib-of.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Yours truly,
-Abdul Nasser Sokariah
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index e0a98f581f58..2024d45e5503 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -12,6 +12,7 @@
+  */
+ 
+ #include <linux/device.h>
++#include <linux/err.h>
+ #include <linux/errno.h>
+ #include <linux/module.h>
+ #include <linux/io.h>
+@@ -90,7 +91,7 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ 
+ 	of_node_put(gg_data.gpiospec.np);
+ 	pr_debug("%s exited with status %d\n", __func__,
+-		 PTR_RET(gg_data.out_gpio));
++		 PTR_ERR_OR_ZERO(gg_data.out_gpio));
+ 	return gg_data.out_gpio;
+ }
+ EXPORT_SYMBOL(of_get_named_gpiod_flags);
+-- 
+1.7.9.5
+
