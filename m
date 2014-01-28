@@ -1,88 +1,69 @@
-From: Felipe Balbi <balbi@ti.com>
+From: David Cohen <david.a.cohen@linux.intel.com>
 Subject: Re: [PATCH] gpio-intel-mid: fix the incorrect return of idle callback
-Date: Tue, 28 Jan 2014 10:49:37 -0600
-Message-ID: <20140128164937.GA30226@saruman.home>
+Date: Tue, 28 Jan 2014 09:24:13 -0800
+Message-ID: <20140128172413.GA31821@psi-dev26.jf.intel.com>
 References: <52E76F71.4080304@intel.com>
-Reply-To: <balbi@ti.com>
+ <20140128164937.GA30226@saruman.home>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:55986 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754645AbaA1Qu6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 28 Jan 2014 11:50:58 -0500
-Content-Disposition: inline
-In-Reply-To: <52E76F71.4080304@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: "xinhui.pan" <xinhuix.pan@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, david.a.cohen@linux.intel.com, linus.walleij@linaro.org, gnurou@gmail.com, yanmin_zhang@linux.intel.com
-
---ikeVEW9yuYc//A+q
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20140128164937.GA30226@saruman.home>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: "xinhui.pan" <xinhuix.pan@intel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, yanmin_zhang@linux.intel.com
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 28, 2014 at 04:50:57PM +0800, xinhui.pan wrote:
-> From: "xinhui.pan" <xinhuiX.pan@intel.com>
->=20
-> intel_gpio_runtime_idle should return correct error code if it do fail.
-> make it more correct even though -EBUSY is the most possible return value.
->=20
-> Signed-off-by: bo.he <bo.he@intel.com>
-> Signed-off-by: xinhui.pan <xinhuiX.pan@intel.com>
-> ---
->  drivers/gpio/gpio-intel-mid.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
-> index d1b50ef..05749a3 100644
-> --- a/drivers/gpio/gpio-intel-mid.c
-> +++ b/drivers/gpio/gpio-intel-mid.c
-> @@ -394,7 +394,9 @@ static const struct irq_domain_ops intel_gpio_irq_ops=
- =3D {
-> =20
->  static int intel_gpio_runtime_idle(struct device *dev)
->  {
-> -	pm_schedule_suspend(dev, 500);
-> +	int err =3D pm_schedule_suspend(dev, 500);
-> +	if (err)
-> +		return err;
->  	return -EBUSY;
+On Tue, Jan 28, 2014 at 10:49:37AM -0600, Felipe Balbi wrote:
+> On Tue, Jan 28, 2014 at 04:50:57PM +0800, xinhui.pan wrote:
+> > From: "xinhui.pan" <xinhuiX.pan@intel.com>
+> > 
+> > intel_gpio_runtime_idle should return correct error code if it do fail.
+> > make it more correct even though -EBUSY is the most possible return value.
+> > 
+> > Signed-off-by: bo.he <bo.he@intel.com>
+> > Signed-off-by: xinhui.pan <xinhuiX.pan@intel.com>
+> > ---
+> >  drivers/gpio/gpio-intel-mid.c |    4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
+> > index d1b50ef..05749a3 100644
+> > --- a/drivers/gpio/gpio-intel-mid.c
+> > +++ b/drivers/gpio/gpio-intel-mid.c
+> > @@ -394,7 +394,9 @@ static const struct irq_domain_ops intel_gpio_irq_ops = {
+> >  
+> >  static int intel_gpio_runtime_idle(struct device *dev)
+> >  {
+> > -	pm_schedule_suspend(dev, 500);
+> > +	int err = pm_schedule_suspend(dev, 500);
+> > +	if (err)
+> > +		return err;
+> >  	return -EBUSY;
+> 
+> wait, is it only me or this would look a lot better as:
+> 
+> static int intel_gpio_runtime_idle(struct device *dev)
+> {
+> 	return pm_schedule_suspend(dev, 500);
+> }
 
-wait, is it only me or this would look a lot better as:
+The reply to your suggestion is probably in this commit :)
 
-static int intel_gpio_runtime_idle(struct device *dev)
-{
-	return pm_schedule_suspend(dev, 500);
-}
+---
+commit 45f0a85c8258741d11bda25c0a5669c06267204a
+Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Date:   Mon Jun 3 21:49:52 2013 +0200
 
-cheers
+    PM / Runtime: Rework the "runtime idle" helper routine
+---
 
---=20
-balbi
+We won't return 0 from here.
 
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Br, David
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJS59+hAAoJEIaOsuA1yqREGd0P/0Db9lH3ObkPedJCWHGMIwLy
-DRgJi321M2MpJhvjfyw5HELcaXH3NUEmOrhJCnJbBuR8rMD8saOWMKYXo3sd6pxg
-zjIYOD4xJ5M6MEFcMWyNbTdiPsh2B6hxOiA260E4hIYqBF4V8xXjzbGdJ7vr7WhL
-gsWSqkXbOWTaNeZTDmDl7rTMZ7OBQFHClOgquniNZUZH7JSgCjx8h4xo2rc+Kl8p
-vBTlYEnRgce/SAjUx3d6wdqcCaFRM2F9kjhhb8tlGKNVElWmSxzLGVGSm5ceF3zv
-F3grfjBvA0gPMqgYtKvLsBoKu81V6P0+11/A4mRPzuPYg4FLgh5vP6a8foxJkYpD
-9225SyYjhmuWz81JtlEyn8hCZO6DGhZbhscCNjQHJvxrcu5LlXOdH+hDjMvlk/bG
-8AcQ5QEP1IDsHqiAUG9jMT+DIxelxtMgqJAOwqZ2vTNJdn0uXj3NVgHWCKLycRof
-pREIhaozMLLMnKfIQKrgf83WVttm+PSnU1wqdJ5bZtAFZqqEEM1Prr2REroVX+GO
-+XeJw8MF3qTa33hbmR/SGJhWB5FR8MrcaXhIUyMCcbWSMeymSd80zKnpkq/ByG0C
-nL2Ym5qOhONXR4+LEaxY4LtmQrG4xJ6HcNQ2OugpcDY5bkBgUWrXl8/LHWZjwcPe
-sysEm6zPw+z+o+SQagQ4
-=Z/07
------END PGP SIGNATURE-----
-
---ikeVEW9yuYc//A+q--
+> 
+> cheers
+> 
+> -- 
+> balbi
