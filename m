@@ -1,69 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sirf: lock IRQs when starting them
-Date: Mon, 27 Jan 2014 11:02:15 +0100
-Message-ID: <CACRpkdbNRYbooTkf+coiPL8Au_JV3z9QmGAWqgrdyxnN9VMNrA@mail.gmail.com>
-References: <1389777042-2363-1-git-send-email-linus.walleij@linaro.org>
-	<5EB3BFCD089AD643B9BB63439F5FD5E9012BC121C1@SHAASIEXM01.ASIA.ROOT.PRI>
-	<CAGsJ_4zr-mcTcymK8CcUTYvzLLNDDVqM5bN5dF5vmdCmmTNx_g@mail.gmail.com>
-	<CAGsJ_4wtD0Uy=Zai7v2CjEr2Di6SM30k_Zv5rM24tbJRETgUyQ@mail.gmail.com>
+From: Markus Mayer <markus.mayer@linaro.org>
+Subject: [PATCH] gpio: bcm281xx: Use "unsigned gpio" consistently throughout the code
+Date: Mon, 27 Jan 2014 17:32:18 -0800
+Message-ID: <1390872738-822-1-git-send-email-markus.mayer@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:44188 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751431AbaA0KCP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jan 2014 05:02:15 -0500
-Received: by mail-ob0-f180.google.com with SMTP id wp4so6242685obc.11
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jan 2014 02:02:15 -0800 (PST)
-In-Reply-To: <CAGsJ_4wtD0Uy=Zai7v2CjEr2Di6SM30k_Zv5rM24tbJRETgUyQ@mail.gmail.com>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:22902 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751121AbaA1BcZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jan 2014 20:32:25 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Barry Song <21cnbao@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Binghua Duan <Binghua.Duan@csr.com>, Rongjun Ying <rongjun.ying@csr.com>, guoying.zhang@csr.com, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Linaro Patches <patches@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tim Kryger <tim.kryger@linaro.org>, Markus Mayer <markus.mayer@linaro.org>
 
-On Mon, Jan 27, 2014 at 8:01 AM, Barry Song <21cnbao@gmail.com> wrote:
+This patch removes some inconsistencies caused by the use of "int gpio"
+in some parts of the code and "unsigned gpio" in others.
 
-> i read the patch "gpio: add API to be strict about GPIO IRQ usage"
-> again, it seems by checking if (test_bit(FLAG_USED_AS_IRQ,
-> &desc->flags)), we do be able to stop users setting irqline to output.
+Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
+Reviewed-by: Tim Kryger <tim.kryger@linaro.org>
+---
+ drivers/gpio/gpio-bcm-kona.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Yes that is the specific use of that flag right now.
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index e5aa4d0..b4f20f7 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -323,7 +323,7 @@ static void bcm_kona_gpio_irq_ack(struct irq_data *d)
+ {
+ 	struct bcm_kona_gpio *kona_gpio;
+ 	void __iomem *reg_base;
+-	int gpio = d->hwirq;
++	unsigned gpio = d->hwirq;
+ 	int bank_id = GPIO_BANK(gpio);
+ 	int bit = GPIO_BIT(gpio);
+ 	u32 val;
+@@ -344,7 +344,7 @@ static void bcm_kona_gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct bcm_kona_gpio *kona_gpio;
+ 	void __iomem *reg_base;
+-	int gpio = d->hwirq;
++	unsigned gpio = d->hwirq;
+ 	int bank_id = GPIO_BANK(gpio);
+ 	int bit = GPIO_BIT(gpio);
+ 	u32 val;
+@@ -365,7 +365,7 @@ static void bcm_kona_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct bcm_kona_gpio *kona_gpio;
+ 	void __iomem *reg_base;
+-	int gpio = d->hwirq;
++	unsigned gpio = d->hwirq;
+ 	int bank_id = GPIO_BANK(gpio);
+ 	int bit = GPIO_BIT(gpio);
+ 	u32 val;
+@@ -386,7 +386,7 @@ static int bcm_kona_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct bcm_kona_gpio *kona_gpio;
+ 	void __iomem *reg_base;
+-	int gpio = d->hwirq;
++	unsigned gpio = d->hwirq;
+ 	u32 lvl_type;
+ 	u32 val;
+ 	unsigned long flags;
+-- 
+1.7.9.5
 
-> but my concern is actually that: when users use request_irq to get the
-> irq line from gpio, in that case, gpio_request() probably will not be
-> called at all,
-
-This question has come up a lot recently as we recently established
-that irqchip and gpiolib APIs are orthogonal, just like you say.
-
-> who will fix the availability of this pin if it is
-> muxed with other functionality except gpio?
-
-So the problem is with the established semantic that
-irqchips and gpiochips are orthogonal, not with this
-particular patch, right?
-
-Muxing is the responsibility of the pin control pin mux
-subsystem and not GPIO.
-
-If you require pinctrl_request_gpio() to be called from the
-gpiolib driver for the pin to be muxed in, then this function must
-be called from the irqchip side as well, e.g. from .irq_startup().
-
-> but if gpio_request() is called, in it, pinctrl_request_gpio() is
-> called as well, which will mark the pin as not-free. so do you think
-> we need to call pinctrl_request_gpio() in startup() of irqline as
-> well?
-
-I think so.
-
-> but this might be buggy again since people might call
-> gpio_request() before calling request_irq().
-
-Hm, you should study this problem and suggest the best
-solution. In general I do not think it hurts to call
-pinctrl_request_gpio() multiple times, and if it does maybe
-that is something we want to fix?
-
-Yours,
-Linus Walleij
