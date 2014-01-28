@@ -1,31 +1,33 @@
-From: E-Mail Support <falcivar@utm.edu.ec>
-Subject: Achtung! E-Mail-Suspension
-Date: Tue, 28 Jan 2014 10:55:42 -0500 (ECT)
-Message-ID: <e38b5169-cab6-40cf-a3db-5e69bdffb61f__21811.1127069735$1390925923$gmane$org@mail>
-Reply-To: E-Mail Support <gram.stain1@gmail.com>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [PATCH] gpio-intel-mid: fix the incorrect return of idle callback
+Date: Tue, 28 Jan 2014 08:48:00 -0800
+Message-ID: <20140128164800.GA28816@psi-dev26.jf.intel.com>
+References: <52E76F71.4080304@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.utm.edu.ec ([186.46.160.198]:45075 "EHLO mail.utm.edu.ec"
+Received: from mga11.intel.com ([192.55.52.93]:11505 "EHLO mga11.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753572AbaA1QSP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 28 Jan 2014 11:18:15 -0500
+	id S1754685AbaA1Qmz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 28 Jan 2014 11:42:55 -0500
+Content-Disposition: inline
+In-Reply-To: <52E76F71.4080304@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "xinhui.pan" <xinhuix.pan@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, yanmin_zhang@linux.intel.com
 
+Hi,
 
+Thanks for the patch :)
 
-Sehr geehrter Nutzer
+On Tue, Jan 28, 2014 at 04:50:57PM +0800, xinhui.pan wrote:
+> From: "xinhui.pan" <xinhuiX.pan@intel.com>
+> 
+> intel_gpio_runtime_idle should return correct error code if it do fail.
+> make it more correct even though -EBUSY is the most possible return value.
+> 
+> Signed-off-by: bo.he <bo.he@intel.com>
+> Signed-off-by: xinhui.pan <xinhuiX.pan@intel.com>
 
-Ihre beiden eingehenden E-Mails wurden am ungeklarten Status aufgrund der jungsten Upgrade auf unserer Datenbank gespeichert, Um erhalten die Nachrichten bestatigen Konto.
-
-Um neu bestatigen Ihre Mailbox, auf diese E-Mail antworten sofort.
-Durch das Ausfullen der unten Daten;
-E-Mail:
-E-Mail-Benutzername:
-E-Mail Passwort:
-Passwort bestatigen:
-
-Warnung! Kontoinhaber, die zu seinem / ihrem Konto nach 48 Stunden nach Erhalt dieser Warnung Update verweigert wird seinem Konto dauerhaft verlieren.
-Help Desk
+Acked-by: David Cohen <david.a.cohen@linux.intel.com>
