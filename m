@@ -1,68 +1,45 @@
-From: Markus Mayer <markus.mayer@linaro.org>
-Subject: [PATCH] gpio: bcm281xx: Use "unsigned gpio" consistently throughout the code
-Date: Mon, 27 Jan 2014 17:32:18 -0800
-Message-ID: <1390872738-822-1-git-send-email-markus.mayer@linaro.org>
+From: "xinhui.pan" <xinhuix.pan@intel.com>
+Subject: [PATCH] gpio-intel-mid: fix the incorrect return of idle callback
+Date: Tue, 28 Jan 2014 16:50:57 +0800
+Message-ID: <52E76F71.4080304@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:22902 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751121AbaA1BcZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jan 2014 20:32:25 -0500
+Received: from mga11.intel.com ([192.55.52.93]:29797 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754773AbaA1IvC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 28 Jan 2014 03:51:02 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Linaro Patches <patches@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tim Kryger <tim.kryger@linaro.org>, Markus Mayer <markus.mayer@linaro.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, david.a.cohen@linux.intel.com, linus.walleij@linaro.org, gnurou@gmail.com, yanmin_zhang@linux.intel.com
 
-This patch removes some inconsistencies caused by the use of "int gpio"
-in some parts of the code and "unsigned gpio" in others.
+From: "xinhui.pan" <xinhuiX.pan@intel.com>
 
-Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
-Reviewed-by: Tim Kryger <tim.kryger@linaro.org>
+intel_gpio_runtime_idle should return correct error code if it do fail.
+make it more correct even though -EBUSY is the most possible return value.
+
+Signed-off-by: bo.he <bo.he@intel.com>
+Signed-off-by: xinhui.pan <xinhuiX.pan@intel.com>
 ---
- drivers/gpio/gpio-bcm-kona.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-intel-mid.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-index e5aa4d0..b4f20f7 100644
---- a/drivers/gpio/gpio-bcm-kona.c
-+++ b/drivers/gpio/gpio-bcm-kona.c
-@@ -323,7 +323,7 @@ static void bcm_kona_gpio_irq_ack(struct irq_data *d)
+diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
+index d1b50ef..05749a3 100644
+--- a/drivers/gpio/gpio-intel-mid.c
++++ b/drivers/gpio/gpio-intel-mid.c
+@@ -394,7 +394,9 @@ static const struct irq_domain_ops intel_gpio_irq_ops = {
+ 
+ static int intel_gpio_runtime_idle(struct device *dev)
  {
- 	struct bcm_kona_gpio *kona_gpio;
- 	void __iomem *reg_base;
--	int gpio = d->hwirq;
-+	unsigned gpio = d->hwirq;
- 	int bank_id = GPIO_BANK(gpio);
- 	int bit = GPIO_BIT(gpio);
- 	u32 val;
-@@ -344,7 +344,7 @@ static void bcm_kona_gpio_irq_mask(struct irq_data *d)
- {
- 	struct bcm_kona_gpio *kona_gpio;
- 	void __iomem *reg_base;
--	int gpio = d->hwirq;
-+	unsigned gpio = d->hwirq;
- 	int bank_id = GPIO_BANK(gpio);
- 	int bit = GPIO_BIT(gpio);
- 	u32 val;
-@@ -365,7 +365,7 @@ static void bcm_kona_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct bcm_kona_gpio *kona_gpio;
- 	void __iomem *reg_base;
--	int gpio = d->hwirq;
-+	unsigned gpio = d->hwirq;
- 	int bank_id = GPIO_BANK(gpio);
- 	int bit = GPIO_BIT(gpio);
- 	u32 val;
-@@ -386,7 +386,7 @@ static int bcm_kona_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	struct bcm_kona_gpio *kona_gpio;
- 	void __iomem *reg_base;
--	int gpio = d->hwirq;
-+	unsigned gpio = d->hwirq;
- 	u32 lvl_type;
- 	u32 val;
- 	unsigned long flags;
+-	pm_schedule_suspend(dev, 500);
++	int err = pm_schedule_suspend(dev, 500);
++	if (err)
++		return err;
+ 	return -EBUSY;
+ }
+ 
 -- 
 1.7.9.5
-
