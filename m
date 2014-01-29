@@ -1,179 +1,129 @@
-From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: [RFC 2/2] gpio_keys: updated the gpio_key driver to use the gpio descriptors instead ot the integer namespace.
-Date: Wed, 29 Jan 2014 17:11:16 +0100
-Message-ID: <1391011876-7207-3-git-send-email-jjhiblot@traphandler.com>
-References: <1391011876-7207-1-git-send-email-jjhiblot@traphandler.com>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [PATCH] gpio-intel-mid: fix the incorrect return of idle callback
+Date: Wed, 29 Jan 2014 11:12:32 -0800
+Message-ID: <20140129191232.GC13185@psi-dev26.jf.intel.com>
+References: <52E76F71.4080304@intel.com>
+ <20140128164937.GA30226@saruman.home>
+ <20140128172413.GA31821@psi-dev26.jf.intel.com>
+ <20140128181206.GB31977@saruman.home>
+ <20140129001357.GA13185@psi-dev26.jf.intel.com>
+ <52E8AC7C.5070903@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:52924 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753033AbaA2QO6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jan 2014 11:14:58 -0500
-Received: by mail-wg0-f46.google.com with SMTP id x12so3903747wgg.13
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jan 2014 08:14:57 -0800 (PST)
-In-Reply-To: <1391011876-7207-1-git-send-email-jjhiblot@traphandler.com>
+Received: from mga01.intel.com ([192.55.52.88]:9024 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752360AbaA2THp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 29 Jan 2014 14:07:45 -0500
+Content-Disposition: inline
+In-Reply-To: <52E8AC7C.5070903@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org
-Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+To: "xinhui.pan" <xinhuix.pan@intel.com>
+Cc: Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, yanmin_zhang@linux.intel.com
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
----
- drivers/input/keyboard/gpio_keys.c | 44 +++++++++++++++++++-------------------
- include/linux/gpio_keys.h          |  3 ++-
- 2 files changed, 24 insertions(+), 23 deletions(-)
+On Wed, Jan 29, 2014 at 03:23:40PM +0800, xinhui.pan wrote:
+>=20
+> =E4=BA=8E 2014=E5=B9=B401=E6=9C=8829=E6=97=A5 08:13, David Cohen =E5=86=
+=99=E9=81=93:
+> > On Tue, Jan 28, 2014 at 12:12:06PM -0600, Felipe Balbi wrote:
+> >> On Tue, Jan 28, 2014 at 09:24:13AM -0800, David Cohen wrote:
+> >>> On Tue, Jan 28, 2014 at 10:49:37AM -0600, Felipe Balbi wrote:
+> >>>> On Tue, Jan 28, 2014 at 04:50:57PM +0800, xinhui.pan wrote:
+> >>>>> From: "xinhui.pan" <xinhuiX.pan@intel.com>
+> >>>>>
+> >>>>> intel_gpio_runtime_idle should return correct error code if it =
+do fail.
+> >>>>> make it more correct even though -EBUSY is the most possible re=
+turn value.
+> >>>>>
+> >>>>> Signed-off-by: bo.he <bo.he@intel.com>
+> >>>>> Signed-off-by: xinhui.pan <xinhuiX.pan@intel.com>
+> >>>>> ---
+> >>>>>  drivers/gpio/gpio-intel-mid.c |    4 +++-
+> >>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-=
+intel-mid.c
+> >>>>> index d1b50ef..05749a3 100644
+> >>>>> --- a/drivers/gpio/gpio-intel-mid.c
+> >>>>> +++ b/drivers/gpio/gpio-intel-mid.c
+> >>>>> @@ -394,7 +394,9 @@ static const struct irq_domain_ops intel_gp=
+io_irq_ops =3D {
+> >>>>> =20
+> >>>>>  static int intel_gpio_runtime_idle(struct device *dev)
+> >>>>>  {
+> >>>>> -	pm_schedule_suspend(dev, 500);
+> >>>>> +	int err =3D pm_schedule_suspend(dev, 500);
+> >>>>> +	if (err)
+> >>>>> +		return err;
+> >>>>>  	return -EBUSY;
+> >>>>
+> >>>> wait, is it only me or this would look a lot better as:
+> >>>>
+> >>>> static int intel_gpio_runtime_idle(struct device *dev)
+> >>>> {
+> >>>> 	return pm_schedule_suspend(dev, 500);
+> >>>> }
+> >>>
+> >>> The reply to your suggestion is probably in this commit :)
+> >>>
+> >>> ---
+> >>> commit 45f0a85c8258741d11bda25c0a5669c06267204a
+> >>> Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>> Date:   Mon Jun 3 21:49:52 2013 +0200
+> >>>
+> >>>     PM / Runtime: Rework the "runtime idle" helper routine
+> >>> ---
+> >>>
+> >>> We won't return 0 from here.
+> >>
+> >> so you never want to return 0, why don't you, then:
+> >>
+> >> static int intel_gpio_runtime_idle(struct device *dev)
+> >> {
+> >> 	pm_schedule_suspend(dev, 500);
+> >> 	return -EBUSY;
+> >> }
+> >=20
+> > That's how it is currently :)
+> >=20
+> > But this patch is making the function to return a different code in=
+ case
+> > of error. IMHO there is not much fuctional gain with it, but I see
+> > perhaps one extra info for tracing during development.
+> >=20
+> > Anyway, I'll let Xinhui to do further comment since he's the author=
+=2E
+> >=20
+> > Br, David
+> >=20
+> hi ,David & Balbi
+>   I checked several drivers yesterday to see how they use pm_schedule=
+_suspend=20
+> then found one bug in i2c. Also I noticed  gpio.=20
+> I think returning a correct error code is important.So I change -EBUS=
+Y=20
+> to *err*. To be honest,current code works well.
 
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index 2db1324..306cb77 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -328,7 +328,7 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
- 	const struct gpio_keys_button *button = bdata->button;
- 	struct input_dev *input = bdata->input;
- 	unsigned int type = button->type ?: EV_KEY;
--	int state = (gpio_get_value_cansleep(button->gpio) ? 1 : 0) ^ button->active_low;
-+	int state = (gpiod_get_value_cansleep(button->gpio) ? 1 : 0) ^ button->active_low;
- 
- 	if (type == EV_ABS) {
- 		if (state)
-@@ -427,7 +427,7 @@ out:
- static int gpio_keys_setup_key(struct platform_device *pdev,
- 				struct input_dev *input,
- 				struct gpio_button_data *bdata,
--				const struct gpio_keys_button *button)
-+				struct gpio_keys_button *button)
- {
- 	const char *desc = button->desc ? button->desc : "gpio_keys";
- 	struct device *dev = &pdev->dev;
-@@ -439,17 +439,17 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
- 	bdata->button = button;
- 	spin_lock_init(&bdata->lock);
- 
--	if (gpio_is_valid(button->gpio)) {
--
--		error = gpio_request_one(button->gpio, GPIOF_IN, desc);
--		if (error < 0) {
-+	if (button->hw_gpio) {
-+		button->gpio = gpiod_request(button->hw_gpio, desc, 0);
-+		if (IS_ERR(button->gpio)) {
-+			error = PTR_ERR(button->gpio);
- 			dev_err(dev, "Failed to request GPIO %d, error %d\n",
--				button->gpio, error);
-+				hw_desc_to_gpio(button->hw_gpio), error);
- 			return error;
- 		}
- 
- 		if (button->debounce_interval) {
--			error = gpio_set_debounce(button->gpio,
-+			error = gpiod_set_debounce(button->gpio,
- 					button->debounce_interval * 1000);
- 			/* use timer if gpiolib doesn't provide debounce */
- 			if (error < 0)
-@@ -457,12 +457,12 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
- 						button->debounce_interval;
- 		}
- 
--		irq = gpio_to_irq(button->gpio);
-+		irq = hw_gpiod_to_irq(button->hw_gpio);
- 		if (irq < 0) {
- 			error = irq;
- 			dev_err(dev,
- 				"Unable to get irq number for GPIO %d, error %d\n",
--				button->gpio, error);
-+				hw_desc_to_gpio(button->hw_gpio), error);
- 			goto fail;
- 		}
- 		bdata->irq = irq;
-@@ -513,8 +513,8 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
- 	return 0;
- 
- fail:
--	if (gpio_is_valid(button->gpio))
--		gpio_free(button->gpio);
-+	if (button->gpio)
-+		gpiod_put(button->gpio);
- 
- 	return error;
- }
-@@ -526,7 +526,7 @@ static void gpio_keys_report_state(struct gpio_keys_drvdata *ddata)
- 
- 	for (i = 0; i < ddata->pdata->nbuttons; i++) {
- 		struct gpio_button_data *bdata = &ddata->data[i];
--		if (gpio_is_valid(bdata->button->gpio))
-+		if (bdata->button->gpio)
- 			gpio_keys_gpio_report_event(bdata);
- 	}
- 	input_sync(input);
-@@ -603,7 +603,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
- 
- 	i = 0;
- 	for_each_child_of_node(node, pp) {
--		int gpio;
-+		struct gpio_hw_desc *gpio;
- 		enum of_gpio_flags flags;
- 
- 		if (!of_find_property(pp, "gpios", NULL)) {
-@@ -612,9 +612,9 @@ gpio_keys_get_devtree_pdata(struct device *dev)
- 			continue;
- 		}
- 
--		gpio = of_get_gpio_flags(pp, 0, &flags);
--		if (gpio < 0) {
--			error = gpio;
-+		gpio = of_get_gpiod_flags(pp, 0, &flags);
-+		if (IS_ERR(gpio)) {
-+			error = PTR_ERR(gpio);
- 			if (error != -EPROBE_DEFER)
- 				dev_err(dev,
- 					"Failed to get gpio flags, error: %d\n",
-@@ -624,12 +624,12 @@ gpio_keys_get_devtree_pdata(struct device *dev)
- 
- 		button = &pdata->buttons[i++];
- 
--		button->gpio = gpio;
-+		button->hw_gpio = gpio;
- 		button->active_low = flags & OF_GPIO_ACTIVE_LOW;
- 
- 		if (of_property_read_u32(pp, "linux,code", &button->code)) {
- 			dev_err(dev, "Button without keycode: 0x%x\n",
--				button->gpio);
-+				hw_desc_to_gpio(button->hw_gpio));
- 			error = -EINVAL;
- 			goto err_free_pdata;
- 		}
-@@ -681,8 +681,8 @@ static void gpio_remove_key(struct gpio_button_data *bdata)
- 	if (bdata->timer_debounce)
- 		del_timer_sync(&bdata->timer);
- 	cancel_work_sync(&bdata->work);
--	if (gpio_is_valid(bdata->button->gpio))
--		gpio_free(bdata->button->gpio);
-+	if (bdata->button->gpio)
-+		gpiod_put(bdata->button->gpio);
- }
- 
- static int gpio_keys_probe(struct platform_device *pdev)
-@@ -733,7 +733,7 @@ static int gpio_keys_probe(struct platform_device *pdev)
- 		__set_bit(EV_REP, input->evbit);
- 
- 	for (i = 0; i < pdata->nbuttons; i++) {
--		const struct gpio_keys_button *button = &pdata->buttons[i];
-+		struct gpio_keys_button *button = &pdata->buttons[i];
- 		struct gpio_button_data *bdata = &ddata->data[i];
- 
- 		error = gpio_keys_setup_key(pdev, input, bdata, button);
-diff --git a/include/linux/gpio_keys.h b/include/linux/gpio_keys.h
-index a7e977f..b42cd4e 100644
---- a/include/linux/gpio_keys.h
-+++ b/include/linux/gpio_keys.h
-@@ -6,7 +6,8 @@ struct device;
- struct gpio_keys_button {
- 	/* Configuration parameters */
- 	unsigned int code;	/* input event code (KEY_*, SW_*) */
--	int gpio;		/* -1 if this key does not support gpio */
-+	struct gpio_desc *gpio;
-+	struct gpio_hw_desc *hw_gpio;
- 	int active_low;
- 	const char *desc;
- 	unsigned int type;	/* input event type (EV_KEY, EV_SW, EV_ABS) */
--- 
-1.8.5.2
+In my experience, when I'm using fancy things like lauterbach a proper
+error code may save couple of minutes in my life :)
 
+I keep my ack here.
+
+Br, David
+
+> >>
+> >> just like drivers/tty/serial/mfd.c::serial_hsu_runtime_idle() is d=
+oing ?
+> >>
+> >> --=20
+> >> balbi
+> >=20
+> >=20
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
