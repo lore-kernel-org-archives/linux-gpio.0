@@ -1,112 +1,51 @@
-From: "xinhui.pan" <xinhuix.pan@intel.com>
-Subject: Re: [PATCH] gpio-intel-mid: fix the incorrect return of idle callback
-Date: Wed, 29 Jan 2014 15:23:40 +0800
-Message-ID: <52E8AC7C.5070903@intel.com>
-References: <52E76F71.4080304@intel.com> <20140128164937.GA30226@saruman.home> <20140128172413.GA31821@psi-dev26.jf.intel.com> <20140128181206.GB31977@saruman.home> <20140129001357.GA13185@psi-dev26.jf.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: [RFC 0/2] Changing gpio_request() scheme
+Date: Wed, 29 Jan 2014 17:11:14 +0100
+Message-ID: <1391011876-7207-1-git-send-email-jjhiblot@traphandler.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:13956 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750834AbaA2HXq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 29 Jan 2014 02:23:46 -0500
-In-Reply-To: <20140129001357.GA13185@psi-dev26.jf.intel.com>
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:57639 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752781AbaA2QOv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jan 2014 11:14:51 -0500
+Received: by mail-wg0-f51.google.com with SMTP id z12so3898193wgg.18
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jan 2014 08:14:48 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>, Felipe Balbi <balbi@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, yanmin_zhang@linux.intel.com
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
+Hi Linus, Alexandre,
 
-=E4=BA=8E 2014=E5=B9=B401=E6=9C=8829=E6=97=A5 08:13, David Cohen =E5=86=
-=99=E9=81=93:
-> On Tue, Jan 28, 2014 at 12:12:06PM -0600, Felipe Balbi wrote:
->> On Tue, Jan 28, 2014 at 09:24:13AM -0800, David Cohen wrote:
->>> On Tue, Jan 28, 2014 at 10:49:37AM -0600, Felipe Balbi wrote:
->>>> On Tue, Jan 28, 2014 at 04:50:57PM +0800, xinhui.pan wrote:
->>>>> From: "xinhui.pan" <xinhuiX.pan@intel.com>
->>>>>
->>>>> intel_gpio_runtime_idle should return correct error code if it do=
- fail.
->>>>> make it more correct even though -EBUSY is the most possible retu=
-rn value.
->>>>>
->>>>> Signed-off-by: bo.he <bo.he@intel.com>
->>>>> Signed-off-by: xinhui.pan <xinhuiX.pan@intel.com>
->>>>> ---
->>>>>  drivers/gpio/gpio-intel-mid.c |    4 +++-
->>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-in=
-tel-mid.c
->>>>> index d1b50ef..05749a3 100644
->>>>> --- a/drivers/gpio/gpio-intel-mid.c
->>>>> +++ b/drivers/gpio/gpio-intel-mid.c
->>>>> @@ -394,7 +394,9 @@ static const struct irq_domain_ops intel_gpio=
-_irq_ops =3D {
->>>>> =20
->>>>>  static int intel_gpio_runtime_idle(struct device *dev)
->>>>>  {
->>>>> -	pm_schedule_suspend(dev, 500);
->>>>> +	int err =3D pm_schedule_suspend(dev, 500);
->>>>> +	if (err)
->>>>> +		return err;
->>>>>  	return -EBUSY;
->>>>
->>>> wait, is it only me or this would look a lot better as:
->>>>
->>>> static int intel_gpio_runtime_idle(struct device *dev)
->>>> {
->>>> 	return pm_schedule_suspend(dev, 500);
->>>> }
->>>
->>> The reply to your suggestion is probably in this commit :)
->>>
->>> ---
->>> commit 45f0a85c8258741d11bda25c0a5669c06267204a
->>> Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> Date:   Mon Jun 3 21:49:52 2013 +0200
->>>
->>>     PM / Runtime: Rework the "runtime idle" helper routine
->>> ---
->>>
->>> We won't return 0 from here.
->>
->> so you never want to return 0, why don't you, then:
->>
->> static int intel_gpio_runtime_idle(struct device *dev)
->> {
->> 	pm_schedule_suspend(dev, 500);
->> 	return -EBUSY;
->> }
->=20
-> That's how it is currently :)
->=20
-> But this patch is making the function to return a different code in c=
-ase
-> of error. IMHO there is not much fuctional gain with it, but I see
-> perhaps one extra info for tracing during development.
->=20
-> Anyway, I'll let Xinhui to do further comment since he's the author.
->=20
-> Br, David
->=20
-hi ,David & Balbi
-  I checked several drivers yesterday to see how they use pm_schedule_s=
-uspend=20
-then found one bug in i2c. Also I noticed  gpio.=20
-I think returning a correct error code is important.So I change -EBUSY=20
-to *err*. To be honest,current code works well.=20
->>
->> just like drivers/tty/serial/mfd.c::serial_hsu_runtime_idle() is doi=
-ng ?
->>
->> --=20
->> balbi
->=20
->=20
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Here is an attempt at solving some of the issues appearing when a gpio is used
+in different parts of the kernel. This was triggered by the recent discussion we
+had on the need to request a gpio used as an interrupt and the fact that it
+would make its value unavailable for other use.
+The main idea behind the new scheme is that an input can safely be shared among
+multiple users (one writer, multiple reader). 
+
+The first patch is a draft implementation of the new request scheme. The 2nd
+patch is an adaptation of the gpio_keys driver to test it.
+
+Jean-Jacques
+
+Jean-Jacques Hiblot (2):
+  gpio: make the GPIOs shareable
+  gpio_keys: updated the gpio_key driver to use the gpio descriptors
+    instead ot the integer namespace.
+
+ drivers/gpio/gpiolib-acpi.c        |   8 +-
+ drivers/gpio/gpiolib-of.c          |   8 +-
+ drivers/gpio/gpiolib.c             | 844 ++++++++++++++++++++++---------------
+ drivers/input/keyboard/gpio_keys.c |  44 +-
+ include/asm-generic/gpio.h         |  30 +-
+ include/linux/acpi_gpio.h          |   8 +-
+ include/linux/gpio.h               |   6 +
+ include/linux/gpio/consumer.h      |  40 +-
+ include/linux/gpio/driver.h        |   8 +-
+ include/linux/gpio_keys.h          |   3 +-
+ include/linux/of_gpio.h            |  13 +-
+ 11 files changed, 608 insertions(+), 404 deletions(-)
+
+-- 
+1.8.5.2
+
