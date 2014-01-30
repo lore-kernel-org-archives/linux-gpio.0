@@ -1,52 +1,42 @@
-From: Pawel Moll <pawel.moll@arm.com>
-Subject: [PATCH] GPIO: gpio-generic: Add label to platform data
-Date: Thu, 30 Jan 2014 13:18:57 +0000
-Message-ID: <1391087937-6025-1-git-send-email-pawel.moll@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4] gpio: Driver for SYSCON-based GPIOs
+Date: Thu, 30 Jan 2014 14:54:36 +0100
+Message-ID: <CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
+References: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:27726 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752398AbaA3NTH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 30 Jan 2014 08:19:07 -0500
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:43382 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752666AbaA3Nyg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Jan 2014 08:54:36 -0500
+Received: by mail-oa0-f47.google.com with SMTP id m1so3611823oag.20
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Jan 2014 05:54:36 -0800 (PST)
+In-Reply-To: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Anton Vorontsov <anton@enomsg.org>, Andreas Larsson <andreas@gaisler.com>, linux-gpio@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>
+To: Alexander Shiyan <shc_work@mail.ru>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-When registering more than one platform device, it is
-useful to set the gpio chip label in the platform data.
+On Mon, Jan 13, 2014 at 5:56 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
 
-Signed-off-by: Pawel Moll <pawel.moll@arm.com>
----
- drivers/gpio/gpio-generic.c     | 2 ++
- include/linux/basic_mmio_gpio.h | 1 +
- 2 files changed, 3 insertions(+)
+> SYSCON driver was designed for using memory areas (registers)
+> that are used in several subsystems. There are systems (CPUs)
+> which use bits in one register for various purposes and thus
+> should be handled by various kernel subsystems. This driver
+> allows you to use the individual SYSCON bits as GPIOs.
+> ARM CLPS711X SYSFLG1 input lines has been added as first user
+> of this driver.
+>
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 
-diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
-index d2196bf..8c778af 100644
---- a/drivers/gpio/gpio-generic.c
-+++ b/drivers/gpio/gpio-generic.c
-@@ -531,6 +531,8 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
- 		return err;
- 
- 	if (pdata) {
-+		if (pdata->label)
-+			bgc->gc.label = pdata->label;
- 		bgc->gc.base = pdata->base;
- 		if (pdata->ngpio > 0)
- 			bgc->gc.ngpio = pdata->ngpio;
-diff --git a/include/linux/basic_mmio_gpio.h b/include/linux/basic_mmio_gpio.h
-index d8a97ec..0e97856 100644
---- a/include/linux/basic_mmio_gpio.h
-+++ b/include/linux/basic_mmio_gpio.h
-@@ -19,6 +19,7 @@
- #include <linux/spinlock_types.h>
- 
- struct bgpio_pdata {
-+	const char *label;
- 	int base;
- 	int ngpio;
- };
--- 
-1.8.3.2
+Oh the pain. I am so ambivalent of this patch as it obfuscates
+some stuff about the hardware that the driver should know,
+while at the same time being elegant in a way.
 
+What does the ARM SoC maintainers think about this approach?
+
+Arnd, Olof, Kevin: is this something you'd like to see deployed?
+
+Yours,
+Linus Walleij
