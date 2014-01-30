@@ -1,42 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4] gpio: Driver for SYSCON-based GPIOs
-Date: Thu, 30 Jan 2014 14:54:36 +0100
-Message-ID: <CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
-References: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v9] gpio: add a driver for Synopsys DesignWare APB GPIO
+Date: Thu, 30 Jan 2014 13:40:04 -0600
+Message-ID: <CANk1AXRxTGRMJMvXe4jgG2GfuELsDTNJnRLXK-MGe3gGxinmLA@mail.gmail.com>
+References: <1386364179-28650-1-git-send-email-delicious.quinoa@gmail.com>
+	<CANk1AXS=CADN53aO5KVN3UorddJ0wZ2PTqwo2XmeRuxYe_DoLg@mail.gmail.com>
+	<20131212090838.GD25478@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:43382 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752666AbaA3Nyg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Jan 2014 08:54:36 -0500
-Received: by mail-oa0-f47.google.com with SMTP id m1so3611823oag.20
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Jan 2014 05:54:36 -0800 (PST)
-In-Reply-To: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131212090838.GD25478@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@stericsson.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Mon, Jan 13, 2014 at 5:56 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
+On Thu, Dec 12, 2013 at 3:08 AM, Steffen Trumtrar
+<s.trumtrar@pengutronix.de> wrote:
 
-> SYSCON driver was designed for using memory areas (registers)
-> that are used in several subsystems. There are systems (CPUs)
-> which use bits in one register for various purposes and thus
-> should be handled by various kernel subsystems. This driver
-> allows you to use the individual SYSCON bits as GPIOs.
-> ARM CLPS711X SYSFLG1 input lines has been added as first user
-> of this driver.
->
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+> Second: The interrupt is registered as "GIC 37", which is a real interrupt on
+> the Socfpga. I would expect it to be marked as "GPIO 2xx" (or something in that
+> range). The interrupt from the gpiochip itself isn't registered at all ?!
 
-Oh the pain. I am so ambivalent of this patch as it obfuscates
-some stuff about the hardware that the driver should know,
-while at the same time being elegant in a way.
+Hi Stephen,
 
-What does the ARM SoC maintainers think about this approach?
+Did you export the gpio lines and set the edge in sysfs?  Because the
+interrupts aren't allocated otherwise.
 
-Arnd, Olof, Kevin: is this something you'd like to see deployed?
+For instance:
 
-Yours,
-Linus Walleij
+root@socfpga_cyclone5:~# echo 195 > /sys/class/gpio/export
+root@socfpga_cyclone5:~# echo rising > /sys/class/gpio/gpio195/edge
+
+Now I can see a pretty nicely named interrupt in /proc/interrupts:
+
+256:          0          0  gpio-dwapb  24  gpiolib
+
+Alan Tull
+Altera Corp
