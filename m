@@ -1,39 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: bcm281xx: Use "unsigned gpio" consistently
- throughout the code
-Date: Fri, 31 Jan 2014 12:40:56 +0100
-Message-ID: <CACRpkdYjErY-A-1U=QRas5jXH7SS8mteX2uxe_3HdcrVBCJisg@mail.gmail.com>
-References: <1390872738-822-1-git-send-email-markus.mayer@linaro.org>
+From: Richard Genoud <richard.genoud@gmail.com>
+Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
+Date: Fri, 31 Jan 2014 16:04:36 +0100
+Message-ID: <52EBBB84.9050705@gmail.com>
+References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org> <CACRpkdZNe0L+yZnqrY51Oeg+k5NHXebJAiqxi+p5Scy-BQ2+1w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:64196 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753951AbaAaLk4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jan 2014 06:40:56 -0500
-Received: by mail-ob0-f173.google.com with SMTP id vb8so4838303obc.4
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Jan 2014 03:40:56 -0800 (PST)
-In-Reply-To: <1390872738-822-1-git-send-email-markus.mayer@linaro.org>
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:49825 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754385AbaAaPEq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jan 2014 10:04:46 -0500
+In-Reply-To: <CACRpkdZNe0L+yZnqrY51Oeg+k5NHXebJAiqxi+p5Scy-BQ2+1w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Mayer <markus.mayer@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linaro Patches <patches@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tim Kryger <tim.kryger@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Jan 28, 2014 at 2:32 AM, Markus Mayer <markus.mayer@linaro.org> wrote:
+On 13/01/2014 14:39, Linus Walleij wrote:
+> On Thu, Nov 7, 2013 at 10:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+>> This passes the errata fix using a GPIO to control the RTS pin
+>> on one of the AT91 chips to use gpiolib instead of the
+>> AT91-specific interfaces. Also remove the reliance on
+>> compile-time #defines and the cpu_* check and rely on the
+>> platform passing down the proper GPIO pin through platform
+>> data.
+>>
+>> This is a prerequisite for getting rid of the local GPIO
+>> implementation in the AT91 platform and move toward
+>> multiplatform.
+>>
+>> The patch also adds device tree support for getting the
+>> RTS GPIO pin from the device tree on DT boot paths.
+>>
+>> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+>> Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> ChangeLog v3->v4:
+> 
+> ARM SoC folks, if you're not taking this in through the <timex.h> removal
+> series then please ACK this patch so I can take it through the GPIO
+> tree instead (unless you want to apply this single patch, which would
+> be even better, you have Greg's ACK in this thread).
+> 
+I can't find this patch in linux-next, did I missed something ?
 
-> This patch removes some inconsistencies caused by the use of "int gpio"
-> in some parts of the code and "unsigned gpio" in others.
->
-> Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
-> Reviewed-by: Tim Kryger <tim.kryger@linaro.org>
 
-Patch applied, nice for static syntax checkers.
-
-But the variable should probably be renamed from
-"gpio" to "offset" since it's a local offset number on this
-very GPIO block, not the global GPIO numberspace.
-
-No big deal though.
-
-Yours,
-Linus Walleij
