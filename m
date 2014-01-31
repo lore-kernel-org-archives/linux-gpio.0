@@ -1,91 +1,59 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2] gpio-intel-mid: fix the incorrect return of idle
- callback
-Date: Fri, 31 Jan 2014 15:26:23 -0600
-Message-ID: <20140131212623.GA2502@saruman.home>
-References: <20140131205007.GB26770@psi-dev26.jf.intel.com>
- <1391202481-19533-1-git-send-email-david.a.cohen@linux.intel.com>
-Reply-To: <balbi@ti.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
+Date: Fri, 31 Jan 2014 15:16:18 -0800
+Message-ID: <20140131231618.GC11138@quad.lixom.net>
+References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
+ <CACRpkdZNe0L+yZnqrY51Oeg+k5NHXebJAiqxi+p5Scy-BQ2+1w@mail.gmail.com>
+ <52EBBB84.9050705@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:38292 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754151AbaAaV1t (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 31 Jan 2014 16:27:49 -0500
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:38896 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933110AbaAaXSK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jan 2014 18:18:10 -0500
+Received: by mail-pa0-f54.google.com with SMTP id fa1so5037913pad.27
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Jan 2014 15:18:10 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1391202481-19533-1-git-send-email-david.a.cohen@linux.intel.com>
+In-Reply-To: <52EBBB84.9050705@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "xinhui.pan" <xinhuiX.pan@intel.com>, "bo.he" <bo.he@intel.com>, Felibe Balbi <balbi@ti.com>
+To: Richard Genoud <richard.genoud@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
---pWyiEgJYm5f9v55/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 31, 2014 at 04:04:36PM +0100, Richard Genoud wrote:
+> On 13/01/2014 14:39, Linus Walleij wrote:
+> > On Thu, Nov 7, 2013 at 10:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > 
+> >> This passes the errata fix using a GPIO to control the RTS pin
+> >> on one of the AT91 chips to use gpiolib instead of the
+> >> AT91-specific interfaces. Also remove the reliance on
+> >> compile-time #defines and the cpu_* check and rely on the
+> >> platform passing down the proper GPIO pin through platform
+> >> data.
+> >>
+> >> This is a prerequisite for getting rid of the local GPIO
+> >> implementation in the AT91 platform and move toward
+> >> multiplatform.
+> >>
+> >> The patch also adds device tree support for getting the
+> >> RTS GPIO pin from the device tree on DT boot paths.
+> >>
+> >> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> >> Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> >> ---
+> >> ChangeLog v3->v4:
+> > 
+> > ARM SoC folks, if you're not taking this in through the <timex.h> removal
+> > series then please ACK this patch so I can take it through the GPIO
+> > tree instead (unless you want to apply this single patch, which would
+> > be even better, you have Greg's ACK in this thread).
+> > 
+> I can't find this patch in linux-next, did I missed something ?
 
-On Fri, Jan 31, 2014 at 01:08:01PM -0800, David Cohen wrote:
-> From: "xinhui.pan" <xinhuiX.pan@intel.com>
->=20
-> intel_gpio_runtime_idle should return correct error code if it do fail.
-> make it more correct even though -EBUSY is the most possible return value.
->=20
-> Signed-off-by: bo.he <bo.he@intel.com>
-> Signed-off-by: xinhui.pan <xinhuiX.pan@intel.com>
-> Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
-> Cc: Felibe Balbi <balbi@ti.com>
+Yeah, looks like we dropped the ball on it. We'll queue it up for 3.15 as soon
+as -rc1 is out.
 
-Reviewed-by: Felipe Balbi <balbi@ti.com>
 
-> ---
->  drivers/gpio/gpio-intel-mid.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
-> index 41218e93b9fe..55688d0548e9 100644
-> --- a/drivers/gpio/gpio-intel-mid.c
-> +++ b/drivers/gpio/gpio-intel-mid.c
-> @@ -369,8 +369,8 @@ static const struct irq_domain_ops intel_gpio_irq_ops=
- =3D {
-> =20
->  static int intel_gpio_runtime_idle(struct device *dev)
->  {
-> -	pm_schedule_suspend(dev, 500);
-> -	return -EBUSY;
-> +	int err =3D pm_schedule_suspend(dev, 500);
-> +	return err ?: -EBUSY;
->  }
-> =20
->  static const struct dev_pm_ops intel_gpio_pm_ops =3D {
-> --=20
-> 1.8.4.2
->=20
-
---=20
-balbi
-
---pWyiEgJYm5f9v55/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJS7BT+AAoJEIaOsuA1yqREvwgP/j4N0kYDn8cbcPNewczgZ+/x
-P95VrwlKLUpHDed3W/bqt75nOeTa7wAfN+GfZe3N06WinNFCqFzm0FIO+LGqrsM8
-xpsajbFXD60bHb+2w5splsGepR1rxjZcGFhB6FXDHlUlveZcI3YM17QCqXv+aSCa
-xQKS8eECBLXoSr6iVSapyGdRMiGQoyRNWSJmoxLO8Yme7YX5apmaOFmeGm3p9N2j
-z6DjEXhNMimPXq7aK2OREBo24aZU4Mu0PrHSOKmkorDyR0BhUvdmheO2AX0SkHhi
-oJgcBy5bapWvsbg85HfWoVUXGiGkDw/3s7NM0r97BmyUgulTqnXGl+PpnRzP7Cym
-qCZO6JlHJtK6apXZVStapqa67HdRNu2/R+Wbd+zAMlrWoWZD+sCBSaKqL9pd83i4
-Umia2r84eFXmXyWcuelazv9XHXxiTgOGPF+4WclGRNzbMXlm9EU+Di0Vvt0kIAaU
-WsE4Kr9Dxv94S1dypKtNEXCtl7iOyQVma10wbB9tSaATSqbL3yWHLHmYiG9QJQey
-N4lH6of3JywVnNlTji4AM7V2Jc7M8UzB/SuNuU3O/uOq1saCVIytofwF+NHG3dXS
-5hr41SlLkAzxkS+uo2FKGAb5JnVWAS3RNbBlLaYbayPmJx6QjL1FBXNYjPXf7hEz
-v70QjzIT8hTngqnpyS2J
-=I6W4
------END PGP SIGNATURE-----
-
---pWyiEgJYm5f9v55/--
+-Olof
