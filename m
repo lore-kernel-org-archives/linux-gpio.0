@@ -1,59 +1,59 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
-Date: Fri, 31 Jan 2014 15:16:18 -0800
-Message-ID: <20140131231618.GC11138@quad.lixom.net>
-References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
- <CACRpkdZNe0L+yZnqrY51Oeg+k5NHXebJAiqxi+p5Scy-BQ2+1w@mail.gmail.com>
- <52EBBB84.9050705@gmail.com>
+From: Evgeny Boger <boger@contactless.ru>
+Subject: Question about non-boolean gpio sysfs values
+Date: Sun, 02 Feb 2014 03:35:01 +0400
+Message-ID: <52ED84A5.3050102@contactless.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:38896 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933110AbaAaXSK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jan 2014 18:18:10 -0500
-Received: by mail-pa0-f54.google.com with SMTP id fa1so5037913pad.27
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Jan 2014 15:18:10 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <52EBBB84.9050705@gmail.com>
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:39969 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750897AbaBAXfF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Feb 2014 18:35:05 -0500
+Received: by mail-lb0-f170.google.com with SMTP id u14so4501213lbd.29
+        for <linux-gpio@vger.kernel.org>; Sat, 01 Feb 2014 15:35:02 -0800 (PST)
+Received: from [192.168.0.164] ([81.5.110.82])
+        by mx.google.com with ESMTPSA id 10sm8608781lan.5.2014.02.01.15.35.01
+        for <linux-gpio@vger.kernel.org>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+        Sat, 01 Feb 2014 15:35:02 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Genoud <richard.genoud@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-gpio@vger.kernel.org
 
-On Fri, Jan 31, 2014 at 04:04:36PM +0100, Richard Genoud wrote:
-> On 13/01/2014 14:39, Linus Walleij wrote:
-> > On Thu, Nov 7, 2013 at 10:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > 
-> >> This passes the errata fix using a GPIO to control the RTS pin
-> >> on one of the AT91 chips to use gpiolib instead of the
-> >> AT91-specific interfaces. Also remove the reliance on
-> >> compile-time #defines and the cpu_* check and rely on the
-> >> platform passing down the proper GPIO pin through platform
-> >> data.
-> >>
-> >> This is a prerequisite for getting rid of the local GPIO
-> >> implementation in the AT91 platform and move toward
-> >> multiplatform.
-> >>
-> >> The patch also adds device tree support for getting the
-> >> RTS GPIO pin from the device tree on DT boot paths.
-> >>
-> >> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-> >> Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> >> ---
-> >> ChangeLog v3->v4:
-> > 
-> > ARM SoC folks, if you're not taking this in through the <timex.h> removal
-> > series then please ACK this patch so I can take it through the GPIO
-> > tree instead (unless you want to apply this single patch, which would
-> > be even better, you have Greg's ACK in this thread).
-> > 
-> I can't find this patch in linux-next, did I missed something ?
+Hello,
 
-Yeah, looks like we dropped the ball on it. We'll queue it up for 3.15 as soon
-as -rc1 is out.
+I'm now getting non-boolean values from gpio sysfs interface on 3.13, 
+like this
+
+root@wirenboard:~# cat /sys/class/gpio/gpio16/value
+65536
+
+(I'm working with imx23 soc which is handled by gpio-generic.c driver)
+
+Looks like these weird non-boolean values appeared after this commit: 
+https://github.com/torvalds/linux/commit/79a9becda8940deb2274b5aa4577c86d52ee7ecb 
+.
 
 
--Olof
+1) Is it an expected behavior or not?
+
+2) If it's not the case, which one of these should be fixed?
+   a) bgpio_get in gpio-generic.c to return only boolean values
+or
+   b) gpio_value_show so only the sysfs interface will be affected
+or
+  c) gpiod_get_value and gpiod_get_value_cansleep functions
+
+
+--
+  Thanks,
+    Evgeny Boger
+
+
+
+
+
+
+
+
