@@ -1,59 +1,35 @@
-From: Evgeny Boger <boger@contactless.ru>
-Subject: Question about non-boolean gpio sysfs values
-Date: Sun, 02 Feb 2014 03:35:01 +0400
-Message-ID: <52ED84A5.3050102@contactless.ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4] ARM/serial: at91: switch atmel serial to use gpiolib
+Date: Mon, 3 Feb 2014 09:34:31 +0100
+Message-ID: <CACRpkdbHNo1bLxKaCCuOBiRq+JEpEPXdmQpr4BKAiORcb2snfw@mail.gmail.com>
+References: <1383816355-2956-1-git-send-email-linus.walleij@linaro.org>
+	<CACRpkdZNe0L+yZnqrY51Oeg+k5NHXebJAiqxi+p5Scy-BQ2+1w@mail.gmail.com>
+	<52EBBB84.9050705@gmail.com>
+	<20140131231618.GC11138@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:39969 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750897AbaBAXfF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Feb 2014 18:35:05 -0500
-Received: by mail-lb0-f170.google.com with SMTP id u14so4501213lbd.29
-        for <linux-gpio@vger.kernel.org>; Sat, 01 Feb 2014 15:35:02 -0800 (PST)
-Received: from [192.168.0.164] ([81.5.110.82])
-        by mx.google.com with ESMTPSA id 10sm8608781lan.5.2014.02.01.15.35.01
-        for <linux-gpio@vger.kernel.org>
-        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
-        Sat, 01 Feb 2014 15:35:02 -0800 (PST)
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:54406 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750716AbaBCIeb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Feb 2014 03:34:31 -0500
+Received: by mail-ob0-f173.google.com with SMTP id vb8so7572228obc.18
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Feb 2014 00:34:31 -0800 (PST)
+In-Reply-To: <20140131231618.GC11138@quad.lixom.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Richard Genoud <richard.genoud@gmail.com>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello,
+On Sat, Feb 1, 2014 at 12:16 AM, Olof Johansson <olof@lixom.net> wrote:
+> On Fri, Jan 31, 2014 at 04:04:36PM +0100, Richard Genoud wrote:
 
-I'm now getting non-boolean values from gpio sysfs interface on 3.13, 
-like this
+>> I can't find this patch in linux-next, did I missed something ?
+>
+> Yeah, looks like we dropped the ball on it. We'll queue it up for 3.15 as soon
+> as -rc1 is out.
 
-root@wirenboard:~# cat /sys/class/gpio/gpio16/value
-65536
+OK it's out now ;-)
 
-(I'm working with imx23 soc which is handled by gpio-generic.c driver)
-
-Looks like these weird non-boolean values appeared after this commit: 
-https://github.com/torvalds/linux/commit/79a9becda8940deb2274b5aa4577c86d52ee7ecb 
-.
-
-
-1) Is it an expected behavior or not?
-
-2) If it's not the case, which one of these should be fixed?
-   a) bgpio_get in gpio-generic.c to return only boolean values
-or
-   b) gpio_value_show so only the sysfs interface will be affected
-or
-  c) gpiod_get_value and gpiod_get_value_cansleep functions
-
-
---
-  Thanks,
-    Evgeny Boger
-
-
-
-
-
-
-
-
+Yours,
+Linus Walleij
