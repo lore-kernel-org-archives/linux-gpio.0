@@ -1,53 +1,44 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH] gpiolib: consumer.h: Move forward declarations outside #ifdef
-Date: Tue,  4 Feb 2014 13:42:10 +0100
-Message-ID: <1391517730-13627-1-git-send-email-lars@metafoo.de>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: clps711x: Add missing .owner to struct gpio_chip
+Date: Tue, 04 Feb 2014 22:25:27 +0800
+Message-ID: <1391523927.21522.1.camel@phoenix>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp-out-089.synserver.de ([212.40.185.89]:1062 "EHLO
-	smtp-out-089.synserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752714AbaBDMyD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Feb 2014 07:54:03 -0500
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:62780 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751214AbaBDOZd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Feb 2014 09:25:33 -0500
+Received: by mail-pd0-f175.google.com with SMTP id w10so8239992pde.34
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Feb 2014 06:25:33 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
-Cc: linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexander Shiyan <shc_work@mail.ru>, linux-gpio@vger.kernel.org
 
-Make sure that the forward declared structs in gpio/consumer.h are also visible
-on the else branch of the CONFIG_GPIOLIB #ifdef.
+Add missing .owner of struct gpio_chip. This prevents the
+module from being removed from underneath its users.
 
-Fixes the following warnings and their associated errors when CONFIG_GPIOLIB is
-not selected:
-	include/linux/gpio/consumer.h:67:14: warning: 'struct device' declared inside parameter list
-	include/linux/gpio/consumer.h:67:14: warning: its scope is only this definition or declaration, which is probably not what you want
-	[...]
-
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- include/linux/gpio/consumer.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-clps711x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 4d34dbb..7a8144f 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -4,8 +4,6 @@
- #include <linux/err.h>
- #include <linux/kernel.h>
+diff --git a/drivers/gpio/gpio-clps711x.c b/drivers/gpio/gpio-clps711x.c
+index 3c2ba2ad..e1e8612 100644
+--- a/drivers/gpio/gpio-clps711x.c
++++ b/drivers/gpio/gpio-clps711x.c
+@@ -65,6 +65,7 @@ static int clps711x_gpio_probe(struct platform_device *pdev)
+ 	}
  
--#ifdef CONFIG_GPIOLIB
--
- struct device;
- struct gpio_chip;
+ 	bgc->gc.base = id * 8;
++	bgc->gc.owner = THIS_MODULE;
+ 	platform_set_drvdata(pdev, bgc);
  
-@@ -18,6 +16,8 @@ struct gpio_chip;
-  */
- struct gpio_desc;
- 
-+#ifdef CONFIG_GPIOLIB
-+
- /* Acquire and dispose GPIOs */
- struct gpio_desc *__must_check gpiod_get(struct device *dev,
- 					 const char *con_id);
+ 	return gpiochip_add(&bgc->gc);
 -- 
-1.8.0
+1.8.1.2
+
+
 
