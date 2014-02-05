@@ -1,38 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio-intel-mid: fix the incorrect return of idle callback
-Date: Wed, 5 Feb 2014 10:37:49 +0100
-Message-ID: <CACRpkdbmhWkq8BRTgSGQsSwGbz1t3dzEww6ibAT2nWZuTTyncg@mail.gmail.com>
-References: <20140131205007.GB26770@psi-dev26.jf.intel.com>
-	<1391202481-19533-1-git-send-email-david.a.cohen@linux.intel.com>
+Subject: Re: [PATCH] gpio: bcm281xx: Update MODULE_AUTHOR
+Date: Wed, 5 Feb 2014 11:03:32 +0100
+Message-ID: <CACRpkda=h=0bpMfHeq-zJs5nZ+740rz9jZChCk0OAHm=Jmw5AQ@mail.gmail.com>
+References: <1391463780-19840-1-git-send-email-markus.mayer@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:33403 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751701AbaBEJhu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Feb 2014 04:37:50 -0500
-Received: by mail-ob0-f179.google.com with SMTP id wo20so134241obc.24
-        for <linux-gpio@vger.kernel.org>; Wed, 05 Feb 2014 01:37:49 -0800 (PST)
-In-Reply-To: <1391202481-19533-1-git-send-email-david.a.cohen@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1391463780-19840-1-git-send-email-markus.mayer@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Markus Mayer <markus.mayer@linaro.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "xinhui.pan" <xinhuiX.pan@intel.com>, "bo.he" <bo.he@intel.com>, Felibe Balbi <balbi@ti.com>
 
-On Fri, Jan 31, 2014 at 10:08 PM, David Cohen
-<david.a.cohen@linux.intel.com> wrote:
+On Mon, Feb 3, 2014 at 10:43 PM, Markus Mayer <markus.mayer@linaro.org> wrote:
 
-> From: "xinhui.pan" <xinhuiX.pan@intel.com>
+> Add Broadcom's upstreaming mailing list address to MODULE_AUTHOR.
 >
-> intel_gpio_runtime_idle should return correct error code if it do fail.
-> make it more correct even though -EBUSY is the most possible return value.
->
-> Signed-off-by: bo.he <bo.he@intel.com>
-> Signed-off-by: xinhui.pan <xinhuiX.pan@intel.com>
-> Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
-> Cc: Felibe Balbi <balbi@ti.com>
+> Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
 
-Patch applied with Felipe's Reviewed-by tag.
+Hm OK not that this is used very much, and nothing to argue about
+so patch applied.
+
+However we do not really recognize corporate bodies as maintainers,
+only physical people whose GPG keys we can sign ... but I
+guess you wanted to convey that the driver is the work of several
+individuals inside BRCM and thus authors, while you take care
+of the maintenance.
+
+A patch to MAINTAINERS adding this to Christians entry for
+the SoCs or as a standalone entry with Markus as maintainer
+would be more important and usefule than this though, so I'm
+throwing out that challenge!
 
 Yours,
 Linus Walleij
