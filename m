@@ -1,43 +1,47 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 59/73] drivers/gpio: delete non-required instances of
- include <linux/init.h>
-Date: Wed, 5 Feb 2014 10:00:25 -0500
-Message-ID: <52F25209.2010506@windriver.com>
-References: <1390339396-3479-1-git-send-email-paul.gortmaker@windriver.com>	<1390339396-3479-60-git-send-email-paul.gortmaker@windriver.com>	<CACRpkdYk6cOO-JZbe887ihJaWE5JMjuXm3EVcZmE1jCeL2BODQ@mail.gmail.com>	<20140124095827.1ee8ddcfed8d1c8e0a6d3dbd@canb.auug.org.au>	<20140124022154.GA13428@windriver.com> <CACRpkdYF2f1Ekp6JYwntj+UhbceWtMN==yKC7emsXHfktcZZsg@mail.gmail.com>
+From: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+Subject: Re: [PATCH v4] gpio: Driver for SYSCON-based GPIOs
+Date: Wed, 5 Feb 2014 20:08:42 +0400
+Message-ID: <20140205200842.0df1896311293a31bae3633c@mail.ru>
+References: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
+	<CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYF2f1Ekp6JYwntj+UhbceWtMN==yKC7emsXHfktcZZsg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 14-02-05 08:02 AM, Linus Walleij wrote:
-> On Fri, Jan 24, 2014 at 3:21 AM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
+On Thu, 30 Jan 2014 14:54:36 +0100
+Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+
+> On Mon, Jan 13, 2014 at 5:56 PM, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org> wrote:
 > 
->> For what it is worth, I'm not removing any patches from my series file
->> until they explicitly conflict and/or become redundant.  If a maintainer
->> says they are adding the patch, I add a comment in the series file, but
->> I don't remove them until I see them come into next via another branch,
->> and/or sfr reports a conflict/redundancy.
+> > SYSCON driver was designed for using memory areas (registers)
+> > that are used in several subsystems. There are systems (CPUs)
+> > which use bits in one register for various purposes and thus
+> > should be handled by various kernel subsystems. This driver
+> > allows you to use the individual SYSCON bits as GPIOs.
+> > ARM CLPS711X SYSFLG1 input lines has been added as first user
+> > of this driver.
+> >
+> > Signed-off-by: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
 > 
-> So I can add these patches to my devel branches now I think?
+> Oh the pain. I am so ambivalent of this patch as it obfuscates
+> some stuff about the hardware that the driver should know,
+> while at the same time being elegant in a way.
+> 
+> What does the ARM SoC maintainers think about this approach?
+> 
+> Arnd, Olof, Kevin: is this something you'd like to see deployed?
 
-The patches that weren't taken by maintainers before 3.14-rc1 were
-encompassed in the cleanup pull request to Linus sent yesterday.
+Ping.
 
-http://www.spinics.net/lists/arm-kernel/msg304864.html
-
-So, assuming he does pull it, you'll not have to do anything.
-
-Thanks,
-Paul.
+-- 
+Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
 --
-
-> 
-> Yours,
-> Linus Walleij
-> 
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
