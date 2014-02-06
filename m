@@ -1,228 +1,216 @@
-From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: Re: [RFC 1/2] gpio: make the GPIOs shareable
-Date: Thu, 6 Feb 2014 16:32:31 +0100
-Message-ID: <CACh+v5OxX5BwrzmfWm+GzeVUqzA48nMGm8qunm7KNRTsQv0ovQ@mail.gmail.com>
-References: <1391011876-7207-1-git-send-email-jjhiblot@traphandler.com>
-	<1391011876-7207-2-git-send-email-jjhiblot@traphandler.com>
-	<CAAVeFuL9ru0vL7S_caUGRLxPmag+enyCboYXMg+TVd3weZqrKw@mail.gmail.com>
-	<CACh+v5N51NztnBqPnyYc3PzjkxBv12cB3AEL0m8G3sAObRib2w@mail.gmail.com>
-	<CAAVeFuJQv9kJB9xN3L5NitoJ5s3YWNC_x6jOF4e-tZbv3+i=AA@mail.gmail.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [RFC PATCH] gpiolib: make gpiod_direction_output take a logical
+ value, add gpiod_direction_output_raw
+Date: Thu, 06 Feb 2014 16:54:48 +0100
+Message-ID: <1391702088.5008.19.camel@pizza.hi.pengutronix.de>
+References: <1389094451-16628-1-git-send-email-p.zabel@pengutronix.de>
+	 <CAAVeFuJwmUc3vZa2zVc8FTmStLknXpeZ3Wbc8LE7jday6BFdeQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 4.mo3.mail-out.ovh.net ([178.33.46.10]:56843 "EHLO
-	mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752065AbaBFPth (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Feb 2014 10:49:37 -0500
-Received: from mail177.ha.ovh.net (b6.ovh.net [213.186.33.56])
-	by mo3.mail-out.ovh.net (Postfix) with SMTP id 360EF107826B
-	for <linux-gpio@vger.kernel.org>; Thu,  6 Feb 2014 16:32:36 +0100 (CET)
-Received: by mail-pb0-f42.google.com with SMTP id jt11so1887495pbb.29
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Feb 2014 07:32:31 -0800 (PST)
-In-Reply-To: <CAAVeFuJQv9kJB9xN3L5NitoJ5s3YWNC_x6jOF4e-tZbv3+i=AA@mail.gmail.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:49169 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751234AbaBFPy6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Feb 2014 10:54:58 -0500
+In-Reply-To: <CAAVeFuJwmUc3vZa2zVc8FTmStLknXpeZ3Wbc8LE7jday6BFdeQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Landley <rob@landley.net>, Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, kernel@pengutronix.de
 
-Hi Alexandre,
+Hi Linus,
 
-2014-02-06 Alexandre Courbot <gnurou@gmail.com>:
-> On Mon, Feb 3, 2014 at 7:26 PM, Jean-Jacques Hiblot
-> <jjhiblot@traphandler.com> wrote:
->> Hi Alexandre,
->>
->>
->> 2014-02-03 Alexandre Courbot <gnurou@gmail.com>:
->>
->>> Hi Jean-Jacques,
->>>
->>> Sorry for taking so much time to reply, I had to go through the AT91
->>> thread several times to (hopefully) get a clear idea of what you need.
->>>
->>>
->>> On Thu, Jan 30, 2014 at 1:11 AM, Jean-Jacques Hiblot
->>> <jjhiblot@traphandler.com> wrote:
->>> > The patch implements a new requesting scheme for GPIOs that allow a gpio
->>> > to be
->>> > requested more than once.
->>> >
->>> > This new request scheme is:
->>> > * only 1 user can request a GPIO with a full control over the direction
->>> > of the
->>> >   GPIO. Full control means being able to configure the gpio as an input
->>> > or as
->>> >   an ouput.
->>> > * several users can request a GPIO with a limited control over the
->>> > direction.
->>> >   Limited control means: the gpio can be configured as an input if
->>> > someone
->>> >   doesn't have a full control of the direction. It can't be never be
->>> > configured
->>> >   as an output.
->>> > * a GPIO used as an interrupt source can't be configured as an output.
->>>
->>> So if I understand correctly (correct me if I don't), the problem is
->>> that you need to be able to read the value of a GPIO that is currently
->>> being used as an interrupt source. One example of this happening is
->>> the touchscreen node of arch/arm/boot/dts/imx28-tx28.dts:
->>>
->>>         touchscreen: tsc2007@48 {
->>>                 ...
->>>                 interrupt-parent = <&gpio3>;
->>>                 interrupts = <20 0>;
->>>                 pendown-gpio = <&gpio3 20 1>;
->>>         };
->>>
->>> While you are at it, you also want to allow a GPIO to be requested
->>> several times as long as these requests are not conflicting (which is
->>> a generalization of your initial need).
->>
->> exactly. Whle we're at it, we could try to make it work for other use cases.
->>>
->>> This should probably be
->>> considered dangerous for the integer-based interface, but with gpiod
->>> GPIOs are now assigned by platform files or firmware, so this sounds
->>> much more legitimate in this context.
->>
->> agreed. The integer-based interface must not be impacted by this.
->>>
->>>
->>> > To achieve this, a unique gpio_desc is returned by gpiod_request. The
->>> > old
->>> > gpio_desc is replaced by a gpio_hw_desc. Integer name space is still
->>> > supported
->>> > and a gpio requested by its number is requested with full direction
->>> > control.
->>> >
->>> > This patch is for RFC only. I feel that the API change need to be
->>> > discussed
->>> > before going further. Also there are probably some race conditions that
->>> > are
->>> > more important to fix now than when a gpio was an exclusive property.
->>>
->>> If I understand your goals correctly, I believe they can be reached by
->>> a simpler solution. For your initial problem the
->>> at91_gpio_irq_domain_xlate() should obtain a GPIO descriptor and call
->>> gpiod_lock_as_irq() on it. This will allow the GPIO from being
->>> requested as input later. Currently it is not possible to obtain a
->>> GPIO descriptor outside of gpiod_get() (which will request the GPIO at
->>> the same time), but it should be acceptable to consider that the
->>> holder of a gpio_chip * (either the GPIO driver itself, or in your
->>> case the AT91 pinctrl driver) is priviledged and can get access to any
->>> of the chip's descriptor through a new driver function (we already
->>> discussed doing so in https://lkml.org/lkml/2013/10/8/823 ).
->>>
->> For the touchscreen case, this is indeed a simple solution that would work.
->
-> Great - in this case I would suggest to go for it, as you can
-> implement it immediately (you will need to implement that driver
-> function that allows a driver to access any of its descriptor, this
-> should be easy if you follow the mail linked above) and it really is
-> the best-fit solution to this particular problem.
->
->>
->>>
->>> As for the multiple-consumer case, couldn't we avoid the complexity
->>> introduced by the different kinds of descriptors by simply using read
->>> and write reference counters in each GPIO descriptor? Basically a call
->>> to gpiod_get() would always return the corresponding descriptor as
->>> this means the GPIO is mapped. But when attempting to set the
->>> direction, the reference counters are checked to confirm that this
->>> would not put the GPIO into one of the forbidden cases (e.g. no write
->>> if FLAG_USED_AS_IRQ is set, only one writer, but as many readers as we
->>> want). This sounds like it could be implemented much more succintly,
->>> and should (IIUC) do what you wanted.
->>>
->> Actually it was the first approach I tried.  It takes care of most of the
->> problem. But there are some drawbacks:
->> * no control of permissions for gpiod_set_value. A consumer requesting for
->> read would be able to set the gpio's value.
->> * need to modify the gpiod_free API to pass the same permissions flags as to
->> gpiod_request(). The consequence is that the flags need to be stored along
->> the gpio_desc* in the consumers' private data.
->> * same problem with the gpio's label.
->
-> All valid points indeed. I am still a little bit turned off by the
-> added complexity this brings to a subsystem that is supposed to remain
-> simple to use (obtain a GPIO descriptor, drive the GPIO).
-It could be kept simple: the gpio_hw_desc (the name is probably not
-the best but I lacked inspiration) is used only for the request, for
-the rest the gpio_desc is used.
+Am Sonntag, den 12.01.2014, 16:44 +0900 schrieb Alexandre Courbot:
+> Hi Philipp,
+> 
+> On Tue, Jan 7, 2014 at 8:34 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> > The documentation was not clear about whether gpio_direction_output should take
+> > a logical value or the physical level on the output line, i.e. whether the
+> > ACTIVE_LOW status would be taken into account.
+> > This converts gpiod_direction_output to use the logical level and adds a new
+> > gpiod_direction_output_raw for the raw value.
+> 
+> Thanks for taking the time to craft this! The patch seems to do
+> exactly what we discussed and looks good to me. Maybe Linus can let us
+> know what he thinks about it? Unless there are reasons against it, I
+> think this should be merged ASAP as we want to gpiod API to converge
+> to something stable ASAP.
+> 
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
->We also need
-> to consider all special cases (active-low, open-drain, etc) and make
-> sure we handle all conflicts (what if a consumer requires open-source
-> and the other open-drain?). I'm afraid this could quickly turn into a
-> nightmare.
-open-drain & open-source are for outputs only, so it shouldn't be a
-problem as an output can't shared.
-The active-low flag should probably be moved in the gpio_desc
-descriptor (not the gpio_hw_desc) as it's a reflection of how a
-consumer interprets an electrical value.
-I believe the only structural problem would be with the debounce
-setting as it's a hardware configuration used for inputs. But debounce
-is seldom used.
+could you have a look at this patch?
 
->
-> Not that I am rejecting your idea. It's just that we are entering a
-> new unknown zone with this and we really need to think it through.
-The RFC was just an invitation to such thinking. As the
-gpio_desc-based API is not yet widely used by drivers, it may be the
-right time to think about this.
+thanks
+Philipp
 
->
->> There's another feature that I didn't post because its use case is probably
->> not very common. I wanted to be able to share output gpios. My use case is
->> the gpio tracing mechanism I posted a few weeks ago.
->
-> Yes, I remember that patch.
->
->> To reduce the complexity of tracking the gpio used by the probes, I thought
->> that maybe this task could be delegated to the gpiolib. Implementation could
->> be very straightforward there:
->> * in gpiod_request (or equivalent) pass an ownership tag (NULL would be a
->> special default value)
->> * in the case were the ouput is already owned, check if the ownership tag
->> are the same and not NULL. If so the request succeeds otherwise it fails.
->
-> So the two drivers would need to communicate that ownership tag so the
-> second can "hijack" the GPIO with permission from the first? You could
-> also pass a handle directly, like PRIME does for buffers (then we
-> could plug kdbus in and have user processes exchange GPIO handles
-> securely. Now I'm scared).
-:o) you're thinking to far ahead, kdbus is not mainlined yet. And what
-about a cgroup for sharing GPIOs ?
+> > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > ---
+> >  Documentation/gpio/consumer.txt |  1 +
+> >  drivers/gpio/gpiolib.c          | 67 +++++++++++++++++++++++++++++------------
+> >  include/asm-generic/gpio.h      |  2 +-
+> >  include/linux/gpio/consumer.h   |  7 +++++
+> >  4 files changed, 57 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+> > index 07c74a3..4dc4809 100644
+> > --- a/Documentation/gpio/consumer.txt
+> > +++ b/Documentation/gpio/consumer.txt
+> > @@ -150,6 +150,7 @@ raw line value:
+> >         void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+> >         int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
+> >         void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value)
+> > +       int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+> >
+> >  The active-low state of a GPIO can also be queried using the following call:
+> >
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index 85f772c..f04f1e6 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -330,9 +330,9 @@ static ssize_t gpio_direction_store(struct device *dev,
+> >         if (!test_bit(FLAG_EXPORT, &desc->flags))
+> >                 status = -EIO;
+> >         else if (sysfs_streq(buf, "high"))
+> > -               status = gpiod_direction_output(desc, 1);
+> > +               status = gpiod_direction_output_raw(desc, 1);
+> >         else if (sysfs_streq(buf, "out") || sysfs_streq(buf, "low"))
+> > -               status = gpiod_direction_output(desc, 0);
+> > +               status = gpiod_direction_output_raw(desc, 0);
+> >         else if (sysfs_streq(buf, "in"))
+> >                 status = gpiod_direction_input(desc);
+> >         else
+> > @@ -1579,7 +1579,7 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
+> >         if (flags & GPIOF_DIR_IN)
+> >                 err = gpiod_direction_input(desc);
+> >         else
+> > -               err = gpiod_direction_output(desc,
+> > +               err = gpiod_direction_output_raw(desc,
+> >                                 (flags & GPIOF_INIT_HIGH) ? 1 : 0);
+> >
+> >         if (err)
+> > @@ -1744,28 +1744,13 @@ fail:
+> >  }
+> >  EXPORT_SYMBOL_GPL(gpiod_direction_input);
+> >
+> > -/**
+> > - * gpiod_direction_output - set the GPIO direction to input
+> > - * @desc:      GPIO to set to output
+> > - * @value:     initial output value of the GPIO
+> > - *
+> > - * Set the direction of the passed GPIO to output, such as gpiod_set_value() can
+> > - * be called safely on it. The initial value of the output must be specified.
+> > - *
+> > - * Return 0 in case of success, else an error code.
+> > - */
+> > -int gpiod_direction_output(struct gpio_desc *desc, int value)
+> > +static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+> >  {
+> >         unsigned long           flags;
+> >         struct gpio_chip        *chip;
+> >         int                     status = -EINVAL;
+> >         int offset;
+> >
+> > -       if (!desc || !desc->chip) {
+> > -               pr_warn("%s: invalid GPIO\n", __func__);
+> > -               return -EINVAL;
+> > -       }
+> > -
+> >         /* GPIOs used for IRQs shall not be set as output */
+> >         if (test_bit(FLAG_USED_AS_IRQ, &desc->flags)) {
+> >                 gpiod_err(desc,
+> > @@ -1827,6 +1812,50 @@ fail:
+> >                 gpiod_dbg(desc, "%s: gpio status %d\n", __func__, status);
+> >         return status;
+> >  }
+> > +
+> > +/**
+> > + * gpiod_direction_output_raw - set the GPIO direction to output
+> > + * @desc:      GPIO to set to output
+> > + * @value:     initial output value of the GPIO
+> > + *
+> > + * Set the direction of the passed GPIO to output, such as gpiod_set_value() can
+> > + * be called safely on it. The initial value of the output must be specified
+> > + * as raw value on the physical line without regard for the ACTIVE_LOW status.
+> > + *
+> > + * Return 0 in case of success, else an error code.
+> > + */
+> > +int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+> > +{
+> > +       if (!desc || !desc->chip) {
+> > +               pr_warn("%s: invalid GPIO\n", __func__);
+> > +               return -EINVAL;
+> > +       }
+> > +       return _gpiod_direction_output_raw(desc, value);
+> > +}
+> > +EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
+> > +
+> > +/**
+> > + * gpiod_direction_output - set the GPIO direction to input
+> > + * @desc:      GPIO to set to output
+> > + * @value:     initial output value of the GPIO
+> > + *
+> > + * Set the direction of the passed GPIO to output, such as gpiod_set_value() can
+> > + * be called safely on it. The initial value of the output must be specified
+> > + * as the logical value of the GPIO, i.e. taking its ACTIVE_LOW status into
+> > + * account.
+> > + *
+> > + * Return 0 in case of success, else an error code.
+> > + */
+> > +int gpiod_direction_output(struct gpio_desc *desc, int value)
+> > +{
+> > +       if (!desc || !desc->chip) {
+> > +               pr_warn("%s: invalid GPIO\n", __func__);
+> > +               return -EINVAL;
+> > +       }
+> > +       if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+> > +               value = !value;
+> > +       return _gpiod_direction_output_raw(desc, value);
+> > +}
+> >  EXPORT_SYMBOL_GPL(gpiod_direction_output);
+> >
+> >  /**
+> > diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
+> > index a5f56a0..23e3645 100644
+> > --- a/include/asm-generic/gpio.h
+> > +++ b/include/asm-generic/gpio.h
+> > @@ -69,7 +69,7 @@ static inline int gpio_direction_input(unsigned gpio)
+> >  }
+> >  static inline int gpio_direction_output(unsigned gpio, int value)
+> >  {
+> > -       return gpiod_direction_output(gpio_to_desc(gpio), value);
+> > +       return gpiod_direction_output_raw(gpio_to_desc(gpio), value);
+> >  }
+> >
+> >  static inline int gpio_set_debounce(unsigned gpio, unsigned debounce)
+> > diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> > index 4d34dbb..3879943 100644
+> > --- a/include/linux/gpio/consumer.h
+> > +++ b/include/linux/gpio/consumer.h
+> > @@ -36,6 +36,7 @@ void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
+> >  int gpiod_get_direction(const struct gpio_desc *desc);
+> >  int gpiod_direction_input(struct gpio_desc *desc);
+> >  int gpiod_direction_output(struct gpio_desc *desc, int value);
+> > +int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
+> >
+> >  /* Value get/set from non-sleeping context */
+> >  int gpiod_get_value(const struct gpio_desc *desc);
+> > @@ -121,6 +122,12 @@ static inline int gpiod_direction_output(struct gpio_desc *desc, int value)
+> >         WARN_ON(1);
+> >         return -ENOSYS;
+> >  }
+> > +static inline int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+> > +{
+> > +       /* GPIO can never have been requested */
+> > +       WARN_ON(1);
+> > +       return -ENOSYS;
+> > +}
+> >
+> >
+> >  static inline int gpiod_get_value(const struct gpio_desc *desc)
+> > --
+> > 1.8.5.2
+> >
+> 
 
->
-> I would be even more cautious about sharing output GPIOs. If possible
-> at all, I'd really prefer to see a scheme where the two consuming
-> drivers yield the GPIO when they don't need it. After all, if you
-> enter a situation where both drivers want to drive the GPIO output,
-> you are obviously going to have a problem.
 
-The goal wasn't to be able to share a gpio with a foreign sub-system.
-The goal was for single sub-system to have an easy way to manage its
-gpios without having to have its own gpio list and ref counts to
-manages.
-I wanted to be able to do something like this:
-desc1 = gpiod_request_shared(pio0_hw_desc, "probe1", OUTPUT,
-"gpio_event_trigger');
-desc2 =gpiod_request_shared(pio0_hw_desc, "probe2", OUTPUT,
-"gpio_event_trigger');     //ok
-desc3 =gpiod_request_shared(pio0_hw_desc, "backlight_control", OUTPUT,
-something_else);   //ko
-
-the string "gpio_event_trigger" is the owner tag, it's supposed to
-identify the consumer. If the tags don't match the request fails
-I admit that it doesn't make sense for driving real hardware. It just
-would be convenient for the gpio tracing feature.
-
-Jean-Jacques
-
->
-> Alex.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
