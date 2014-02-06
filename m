@@ -1,63 +1,144 @@
-From: Vincent Donnefort <vdonnefort@gmail.com>
-Subject: Re: Intel ICH GPIOs compatibility IDs
-Date: Thu, 6 Feb 2014 22:16:25 +0100
-Message-ID: <20140206211625.GA28846@ks3318809.kimsufi.com>
-References: <20140206095744.GA21598@ks3318809.kimsufi.com>
- <1703348638.20869.1391702154515.JavaMail.zimbra@xes-inc.com>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v10] gpio: add a driver for the Synopsys DesignWare APB
+ GPIO block
+Date: Thu, 6 Feb 2014 16:09:28 -0600
+Message-ID: <CANk1AXRx1aYSNHJ41ru_4EU61YoGOyno_qGfApjZe2iiq00RPQ@mail.gmail.com>
+References: <1391702147-6617-1-git-send-email-delicious.quinoa@gmail.com>
+	<20140206170325.GF16551@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:57459 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751297AbaBFVQ3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Feb 2014 16:16:29 -0500
-Received: by mail-wg0-f52.google.com with SMTP id b13so1710778wgh.7
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Feb 2014 13:16:28 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1703348638.20869.1391702154515.JavaMail.zimbra@xes-inc.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140206170325.GF16551@e106331-lin.cambridge.arm.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Aaron Sierra <asierra@xes-inc.com>
-Cc: linux-gpio@vger.kernel.org
 
-Thank you Aaron,
+On Thu, Feb 6, 2014 at 11:03 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Thu, Feb 06, 2014 at 03:55:47PM +0000, Alan Tull wrote:
+>> From: Jamie Iles <jamie@jamieiles.com>
+>>
+>> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
+>> and can be configured to provide multiple banks of GPIO pins.
+>>
+>> Signed-off-by: Jamie Iles <jamie@jamieiles.com>
+>> Signed-off-by: Alan Tull <atull@altera.com>
+>> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>>
+>> v10:    - in documentation nr-gpio -> nr-gpios
+>> v9:     - cleanup in dt bindings doc
+>>         - use of_get_child_count()
+>> v8:     - remove socfpga.dtsi changes
+>>         - minor cleanup in devicetree documentation
+>> v7:     - use irq_generic_chip
+>>         - support one irq per gpio line or one irq for many
+>>         - s/bank/port/ and other cleanup
+>> v6:     - (atull) squash the set of patches
+>>         - use linear irq domain
+>>         - build fixes. Original driver was reviewed on v3.2.
+>>         - Fix setting irq edge type for 'rising' and 'both'.
+>>         - Support as a loadable module.
+>>         - Use bgpio_chip's spinlock during register access.
+>>         - Clean up register names to match spec
+>>         - s/bank/port/ because register names use the word 'port'
+>>         - s/nr-gpio/nr-gpios/
+>>         - don't get/put the of_node
+>>         - remove signoffs/acked-by's because of changes
+>>         - other cleanup
+>> v5:     - handle sparse bank population correctly
+>> v3:     - depend on rather than select IRQ_DOMAIN
+>>         - split IRQ support into a separate patch
+>> v2:     - use Rob Herring's irqdomain in generic irq chip patches
+>>         - use reg property to indicate bank index
+>>         - support irqs on both edges based on LinusW's u300 driver
+>> ---
+>>  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |   59 +++
+>>  drivers/gpio/Kconfig                               |    9 +
+>>  drivers/gpio/Makefile                              |    1 +
+>>  drivers/gpio/gpio-dwapb.c                          |  415 ++++++++++++++++++++
+>>  4 files changed, 484 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+>>  create mode 100644 drivers/gpio/gpio-dwapb.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+>> new file mode 100644
+>> index 0000000..cb01f9f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+>> @@ -0,0 +1,59 @@
+>> +* Synopsys DesignWare APB GPIO controller
+>> +
+>> +Required properties:
+>> +- compatible : Should contain "snps,dw-apb-gpio"
+>> +- reg : Address and length of the register set for the device
+>
+> Presumably #address-cells and #size-cells should be described here?
+>
+>> +
+>> +The GPIO controller has a configurable number of ports, each of which are
+>> +represented as child nodes with the following properties:
+>> +
+>> +Required properties:
+>> +- compatible : "snps,dw-apb-gpio-port"
+>> +- gpio-controller : Marks the device node as a gpio controller.
+>> +- #gpio-cells : Should be two.  The first cell is the pin number and
+>> +  the second cell is used to specify optional parameters (currently
+>> +  unused).
+>
+> Why not just have this as one cell for now if the second cell is unused?
+>
+> If it needs to be expanded the driver can read #gpio-cells to figure out
+> what to do at runtime, and it prevents crap DTSs in the mean time that
+> could get in the way if you need to use additional cells in future.
+>
+>> +- reg : The integer port index of the port, a single cell.
+>> +- #address-cells : should be 1.
+>> +- #size-cells : should be 0.
+>
+> As mentioned above, presumably #address-cells and #size-cells should be
+> in the parent node, as is the case in the example?
+>
+>> +
+>> +Optional properties:
+>> +- interrupt-controller : The first port may be configured to be an interrupt
+>> +controller.
+>> +- #interrupt-cells : Specifies the number of cells needed to encode an
+>> +interrupt.  Shall be set to 2.  The first cell defines the interrupt number,
+>> +the second encodes the triger flags encoded as described in
+>> +Documentation/devicetree/bindings/interrupts.txt
+>> +- interrupt-parent : The parent interrupt controller.
+>> +- interrupts : The interrupts to the parent controller raised when GPIOs
+>> +generate the interrupts.
+>
+> How many are expected?
+>
+> Otherwise, the binding looks ok to me.
+>
+> [...]
+>
+>> +static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>> +                                struct dwapb_gpio_port *port)
+>> +{
+>> +       struct gpio_chip *gc = &port->bgc.gc;
+>> +       struct device_node *node =  gc->of_node;
+>> +       struct irq_chip_generic *irq_gc;
+>> +       unsigned int hwirq, ngpio = gc->ngpio;
+>> +       struct irq_chip_type *ct;
+>> +       int reg, err, irq;
+>> +
+>> +       if (of_get_property(node, "interrupts", &reg) == NULL)
+>> +               return;
+>
+> of_get_property can take a NULL lenp (core OF code depends on this
+> fact), so you don't need the somewhat confusing &reg here.
+>
+> Cheers,
+> Mark.
 
-So I will continue using this encoding way for next supported
-chipsets.
+Hi Mark,
 
--- 
-Vincent.
+Thanks for the feedback.  I have made the changes in v11, which I just sent out.
 
-
-On Thu, Feb 06, 2014 at 09:55:54AM -0600, Aaron Sierra wrote:
-> ----- Original Message -----
-> > From: "Vincent Donnefort" <vdonnefort@gmail.com>
-> > Sent: Thursday, February 6, 2014 3:57:44 AM
-> > 
-> > Hi,
-> > 
-> > I'm working on adding Avoton support for ich_gpio. I noticed that
-> > GPIOs compatibility IDs defined into linux/drivers/mfd/lpc_ich.h
-> > aren't arbitrary but I can't find any trace of it into ICH10 and
-> > Avoton datasheet. How can I defined the right one?
-> 
-> Vincent,
-> As far as I can tell, I am responsible for introducing the values
-> assigned to the .gpio_version member of the lpc_ich_info structure.
-> 
-> I have to guess that my original intention was to encode the ICH
-> version, a version quirk identifier (see V10CONS and V10CORP, and
-> whether or not GPIO was supported into those values.
-> 
-> There is no reason for these values to be encoded the way that they
-> are based on the current form of the driver. They are effectively
-> arbitrary. It would almost certainly be better if these were
-> defined as an enum instead of individual #defines.
-> 
-> > 
-> > Thanks,
-> > --
-> > Vincent Donnefort
-> > 
-> 
-> -Aaron
+Alan Tull
+aka
+delicious quinoa
