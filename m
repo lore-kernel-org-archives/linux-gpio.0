@@ -1,139 +1,186 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v10] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Thu, 6 Feb 2014 17:03:25 +0000
-Message-ID: <20140206170325.GF16551@e106331-lin.cambridge.arm.com>
-References: <1391702147-6617-1-git-send-email-delicious.quinoa@gmail.com>
+From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: Re: [RFC 1/2] gpio: make the GPIOs shareable
+Date: Thu, 6 Feb 2014 15:27:26 +0100
+Message-ID: <CACh+v5MqOaTFEi2ct0HysiLkXS9hA_eqEpDZSJffvqdjXFsYLg@mail.gmail.com>
+References: <1391011876-7207-1-git-send-email-jjhiblot@traphandler.com>
+	<1391011876-7207-2-git-send-email-jjhiblot@traphandler.com>
+	<CAAVeFuL9ru0vL7S_caUGRLxPmag+enyCboYXMg+TVd3weZqrKw@mail.gmail.com>
+	<CACh+v5N51NztnBqPnyYc3PzjkxBv12cB3AEL0m8G3sAObRib2w@mail.gmail.com>
+	<CAAVeFuJQv9kJB9xN3L5NitoJ5s3YWNC_x6jOF4e-tZbv3+i=AA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:37902 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751234AbaBFRD1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Feb 2014 12:03:27 -0500
-Content-Disposition: inline
-In-Reply-To: <1391702147-6617-1-git-send-email-delicious.quinoa@gmail.com>
+Received: from 10.mo3.mail-out.ovh.net ([87.98.165.232]:47513 "EHLO
+	mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752091AbaBFROf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Feb 2014 12:14:35 -0500
+Received: from mail638.ha.ovh.net (gw6.ovh.net [213.251.189.206])
+	by mo3.mail-out.ovh.net (Postfix) with SMTP id 1132C10682E8
+	for <linux-gpio@vger.kernel.org>; Thu,  6 Feb 2014 15:27:30 +0100 (CET)
+Received: by mail-pa0-f51.google.com with SMTP id ld10so1750674pab.10
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Feb 2014 06:27:26 -0800 (PST)
+In-Reply-To: <CAAVeFuJQv9kJB9xN3L5NitoJ5s3YWNC_x6jOF4e-tZbv3+i=AA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alan Tull <delicious.quinoa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 06, 2014 at 03:55:47PM +0000, Alan Tull wrote:
-> From: Jamie Iles <jamie@jamieiles.com>
-> 
-> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
-> and can be configured to provide multiple banks of GPIO pins.
-> 
-> Signed-off-by: Jamie Iles <jamie@jamieiles.com>
-> Signed-off-by: Alan Tull <atull@altera.com>
-> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> 
-> v10:    - in documentation nr-gpio -> nr-gpios
-> v9:     - cleanup in dt bindings doc
->         - use of_get_child_count()
-> v8:     - remove socfpga.dtsi changes
->         - minor cleanup in devicetree documentation
-> v7:     - use irq_generic_chip
->         - support one irq per gpio line or one irq for many
->         - s/bank/port/ and other cleanup
-> v6:     - (atull) squash the set of patches
->         - use linear irq domain
->         - build fixes. Original driver was reviewed on v3.2.
->         - Fix setting irq edge type for 'rising' and 'both'.
->         - Support as a loadable module.
->         - Use bgpio_chip's spinlock during register access.
->         - Clean up register names to match spec
->         - s/bank/port/ because register names use the word 'port'
->         - s/nr-gpio/nr-gpios/
->         - don't get/put the of_node
->         - remove signoffs/acked-by's because of changes
->         - other cleanup
-> v5:     - handle sparse bank population correctly
-> v3:     - depend on rather than select IRQ_DOMAIN
->         - split IRQ support into a separate patch
-> v2:     - use Rob Herring's irqdomain in generic irq chip patches
->         - use reg property to indicate bank index
->         - support irqs on both edges based on LinusW's u300 driver
-> ---
->  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |   59 +++
->  drivers/gpio/Kconfig                               |    9 +
->  drivers/gpio/Makefile                              |    1 +
->  drivers/gpio/gpio-dwapb.c                          |  415 ++++++++++++++++++++
->  4 files changed, 484 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
->  create mode 100644 drivers/gpio/gpio-dwapb.c
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> new file mode 100644
-> index 0000000..cb01f9f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> @@ -0,0 +1,59 @@
-> +* Synopsys DesignWare APB GPIO controller
-> +
-> +Required properties:
-> +- compatible : Should contain "snps,dw-apb-gpio"
-> +- reg : Address and length of the register set for the device
-
-Presumably #address-cells and #size-cells should be described here?
-
-> +
-> +The GPIO controller has a configurable number of ports, each of which are
-> +represented as child nodes with the following properties:
-> +
-> +Required properties:
-> +- compatible : "snps,dw-apb-gpio-port"
-> +- gpio-controller : Marks the device node as a gpio controller.
-> +- #gpio-cells : Should be two.  The first cell is the pin number and
-> +  the second cell is used to specify optional parameters (currently
-> +  unused).
-
-Why not just have this as one cell for now if the second cell is unused?
-
-If it needs to be expanded the driver can read #gpio-cells to figure out
-what to do at runtime, and it prevents crap DTSs in the mean time that
-could get in the way if you need to use additional cells in future.
-
-> +- reg : The integer port index of the port, a single cell.
-> +- #address-cells : should be 1.
-> +- #size-cells : should be 0.
-
-As mentioned above, presumably #address-cells and #size-cells should be
-in the parent node, as is the case in the example?
-
-> +
-> +Optional properties:
-> +- interrupt-controller : The first port may be configured to be an interrupt
-> +controller.
-> +- #interrupt-cells : Specifies the number of cells needed to encode an
-> +interrupt.  Shall be set to 2.  The first cell defines the interrupt number,
-> +the second encodes the triger flags encoded as described in
-> +Documentation/devicetree/bindings/interrupts.txt
-> +- interrupt-parent : The parent interrupt controller.
-> +- interrupts : The interrupts to the parent controller raised when GPIOs
-> +generate the interrupts.
-
-How many are expected?
-
-Otherwise, the binding looks ok to me.
-
-[...]
-
-> +static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
-> +                                struct dwapb_gpio_port *port)
-> +{
-> +       struct gpio_chip *gc = &port->bgc.gc;
-> +       struct device_node *node =  gc->of_node;
-> +       struct irq_chip_generic *irq_gc;
-> +       unsigned int hwirq, ngpio = gc->ngpio;
-> +       struct irq_chip_type *ct;
-> +       int reg, err, irq;
-> +
-> +       if (of_get_property(node, "interrupts", &reg) == NULL)
-> +               return;
-
-of_get_property can take a NULL lenp (core OF code depends on this
-fact), so you don't need the somewhat confusing &reg here.
-
-Cheers,
-Mark.
+2014-02-06 Alexandre Courbot <gnurou@gmail.com>:
+> On Mon, Feb 3, 2014 at 7:26 PM, Jean-Jacques Hiblot
+> <jjhiblot@traphandler.com> wrote:
+>> Hi Alexandre,
+>>
+>>
+>> 2014-02-03 Alexandre Courbot <gnurou@gmail.com>:
+>>
+>>> Hi Jean-Jacques,
+>>>
+>>> Sorry for taking so much time to reply, I had to go through the AT91
+>>> thread several times to (hopefully) get a clear idea of what you need.
+>>>
+>>>
+>>> On Thu, Jan 30, 2014 at 1:11 AM, Jean-Jacques Hiblot
+>>> <jjhiblot@traphandler.com> wrote:
+>>> > The patch implements a new requesting scheme for GPIOs that allow a gpio
+>>> > to be
+>>> > requested more than once.
+>>> >
+>>> > This new request scheme is:
+>>> > * only 1 user can request a GPIO with a full control over the direction
+>>> > of the
+>>> >   GPIO. Full control means being able to configure the gpio as an input
+>>> > or as
+>>> >   an ouput.
+>>> > * several users can request a GPIO with a limited control over the
+>>> > direction.
+>>> >   Limited control means: the gpio can be configured as an input if
+>>> > someone
+>>> >   doesn't have a full control of the direction. It can't be never be
+>>> > configured
+>>> >   as an output.
+>>> > * a GPIO used as an interrupt source can't be configured as an output.
+>>>
+>>> So if I understand correctly (correct me if I don't), the problem is
+>>> that you need to be able to read the value of a GPIO that is currently
+>>> being used as an interrupt source. One example of this happening is
+>>> the touchscreen node of arch/arm/boot/dts/imx28-tx28.dts:
+>>>
+>>>         touchscreen: tsc2007@48 {
+>>>                 ...
+>>>                 interrupt-parent = <&gpio3>;
+>>>                 interrupts = <20 0>;
+>>>                 pendown-gpio = <&gpio3 20 1>;
+>>>         };
+>>>
+>>> While you are at it, you also want to allow a GPIO to be requested
+>>> several times as long as these requests are not conflicting (which is
+>>> a generalization of your initial need).
+>>
+>> exactly. Whle we're at it, we could try to make it work for other use cases.
+>>>
+>>> This should probably be
+>>> considered dangerous for the integer-based interface, but with gpiod
+>>> GPIOs are now assigned by platform files or firmware, so this sounds
+>>> much more legitimate in this context.
+>>
+>> agreed. The integer-based interface must not be impacted by this.
+>>>
+>>>
+>>> > To achieve this, a unique gpio_desc is returned by gpiod_request. The
+>>> > old
+>>> > gpio_desc is replaced by a gpio_hw_desc. Integer name space is still
+>>> > supported
+>>> > and a gpio requested by its number is requested with full direction
+>>> > control.
+>>> >
+>>> > This patch is for RFC only. I feel that the API change need to be
+>>> > discussed
+>>> > before going further. Also there are probably some race conditions that
+>>> > are
+>>> > more important to fix now than when a gpio was an exclusive property.
+>>>
+>>> If I understand your goals correctly, I believe they can be reached by
+>>> a simpler solution. For your initial problem the
+>>> at91_gpio_irq_domain_xlate() should obtain a GPIO descriptor and call
+>>> gpiod_lock_as_irq() on it. This will allow the GPIO from being
+>>> requested as input later. Currently it is not possible to obtain a
+>>> GPIO descriptor outside of gpiod_get() (which will request the GPIO at
+>>> the same time), but it should be acceptable to consider that the
+>>> holder of a gpio_chip * (either the GPIO driver itself, or in your
+>>> case the AT91 pinctrl driver) is priviledged and can get access to any
+>>> of the chip's descriptor through a new driver function (we already
+>>> discussed doing so in https://lkml.org/lkml/2013/10/8/823 ).
+>>>
+>> For the touchscreen case, this is indeed a simple solution that would work.
+>
+> Great - in this case I would suggest to go for it, as you can
+> implement it immediately (you will need to implement that driver
+> function that allows a driver to access any of its descriptor, this
+> should be easy if you follow the mail linked above) and it really is
+> the best-fit solution to this particular problem.
+I'll give it
+>
+>>
+>>>
+>>> As for the multiple-consumer case, couldn't we avoid the complexity
+>>> introduced by the different kinds of descriptors by simply using read
+>>> and write reference counters in each GPIO descriptor? Basically a call
+>>> to gpiod_get() would always return the corresponding descriptor as
+>>> this means the GPIO is mapped. But when attempting to set the
+>>> direction, the reference counters are checked to confirm that this
+>>> would not put the GPIO into one of the forbidden cases (e.g. no write
+>>> if FLAG_USED_AS_IRQ is set, only one writer, but as many readers as we
+>>> want). This sounds like it could be implemented much more succintly,
+>>> and should (IIUC) do what you wanted.
+>>>
+>> Actually it was the first approach I tried.  It takes care of most of the
+>> problem. But there are some drawbacks:
+>> * no control of permissions for gpiod_set_value. A consumer requesting for
+>> read would be able to set the gpio's value.
+>> * need to modify the gpiod_free API to pass the same permissions flags as to
+>> gpiod_request(). The consequence is that the flags need to be stored along
+>> the gpio_desc* in the consumers' private data.
+>> * same problem with the gpio's label.
+>
+> All valid points indeed. I am still a little bit turned off by the
+> added complexity this brings to a subsystem that is supposed to remain
+> simple to use (obtain a GPIO descriptor, drive the GPIO). We also need
+> to consider all special cases (active-low, open-drain, etc) and make
+> sure we handle all conflicts (what if a consumer requires open-source
+> and the other open-drain?). I'm afraid this could quickly turn into a
+> nightmare.
+>
+> Not that I am rejecting your idea. It's just that we are entering a
+> new unknown zone with this and we really need to think it through.
+>
+>> There's another feature that I didn't post because its use case is probably
+>> not very common. I wanted to be able to share output gpios. My use case is
+>> the gpio tracing mechanism I posted a few weeks ago.
+>
+> Yes, I remember that patch.
+>
+>> To reduce the complexity of tracking the gpio used by the probes, I thought
+>> that maybe this task could be delegated to the gpiolib. Implementation could
+>> be very straightforward there:
+>> * in gpiod_request (or equivalent) pass an ownership tag (NULL would be a
+>> special default value)
+>> * in the case were the ouput is already owned, check if the ownership tag
+>> are the same and not NULL. If so the request succeeds otherwise it fails.
+>
+> So the two drivers would need to communicate that ownership tag so the
+> second can "hijack" the GPIO with permission from the first? You could
+> also pass a handle directly, like PRIME does for buffers (then we
+> could plug kdbus in and have user processes exchange GPIO handles
+> securely. Now I'm scared).
+>
+> I would be even more cautious about sharing output GPIOs. If possible
+> at all, I'd really prefer to see a scheme where the two consuming
+> drivers yield the GPIO when they don't need it. After all, if you
+> enter a situation where both drivers want to drive the GPIO output,
+> you are obviously going to have a problem.
+>
+> Alex.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
