@@ -1,153 +1,57 @@
-From: Vincent Donnefort <vdonnefort@gmail.com>
-Subject: [PATCH 4/6] gpio: ich: Add support for multiple register addresses
-Date: Fri,  7 Feb 2014 14:21:05 +0100
-Message-ID: <1391779267-27084-4-git-send-email-vdonnefort@lacie.com>
-References: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
+From: Aaron Sierra <asierra@xes-inc.com>
+Subject: [PATCH 1/3] gpio: pca953x: Add devices to Kconfig help
+Date: Fri, 7 Feb 2014 16:35:48 -0600 (CST)
+Message-ID: <1550736903.119527.1391812548072.JavaMail.zimbra@xes-inc.com>
+References: <972232456.119003.1391812066467.JavaMail.zimbra@xes-inc.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:32905 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932142AbaBGNVm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 08:21:42 -0500
-Received: by mail-wg0-f47.google.com with SMTP id m15so2225794wgh.2
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 05:21:40 -0800 (PST)
-In-Reply-To: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
+Received: from xes-mad.com ([216.165.139.218]:14942 "EHLO xes-mad.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751872AbaBGWfv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 7 Feb 2014 17:35:51 -0500
+In-Reply-To: <972232456.119003.1391812066467.JavaMail.zimbra@xes-inc.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, sameo@linux.intel.com, Vincent Donnefort <vdonnefort@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-From: Vincent Donnefort <vdonnefort@gmail.com>
+The pca953x driver supports tca6424 (24-bit) and pca9505 (40-bit)
+devices. They were the only supported devices not mentioned in the
+Kconfig help.
 
-This patch introduces regs and reglen pointers which allow a chipset to have
-register addresses differing from ICH ones.
+Signed-off-by: Aaron Sierra <asierra@xes-inc.com>
+---
+ drivers/gpio/Kconfig        |    4 ++++
+ drivers/gpio/gpio-pca953x.c |    2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
-
-diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
-index 82887c5..f3eb1c5 100644
---- a/drivers/gpio/gpio-ich.c
-+++ b/drivers/gpio/gpio-ich.c
-@@ -62,6 +62,10 @@ struct ichx_desc {
- 	/* Max GPIO pins the chipset can have */
- 	uint ngpio;
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 6973387..fd7ad66 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -476,6 +476,10 @@ config GPIO_PCA953X
+ 	  16 bits:	max7312, max7313, pca9535, pca9539, pca9555, pca9575,
+ 			tca6416
  
-+	/* chipset registers */
-+	const u8 (*regs)[3];
-+	const u8 *reglen;
++	  24 bits:	tca6424
 +
- 	/* GPO_BLINK is available on this chipset */
- 	bool have_blink;
- 
-@@ -102,13 +106,16 @@ static int ichx_write_bit(int reg, unsigned nr, int val, int verify)
- 
- 	spin_lock_irqsave(&ichx_priv.lock, flags);
- 
--	data = ICHX_READ(ichx_regs[reg][reg_nr], ichx_priv.gpio_base);
-+	data = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
-+			 ichx_priv.gpio_base);
- 	if (val)
- 		data |= 1 << bit;
- 	else
- 		data &= ~(1 << bit);
--	ICHX_WRITE(data, ichx_regs[reg][reg_nr], ichx_priv.gpio_base);
--	tmp = ICHX_READ(ichx_regs[reg][reg_nr], ichx_priv.gpio_base);
-+	ICHX_WRITE(data, ichx_priv.desc->regs[reg][reg_nr],
-+			 ichx_priv.gpio_base);
-+	tmp = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
-+			ichx_priv.gpio_base);
- 	if (verify && data != tmp)
- 		ret = -EPERM;
- 
-@@ -126,7 +133,8 @@ static int ichx_read_bit(int reg, unsigned nr)
- 
- 	spin_lock_irqsave(&ichx_priv.lock, flags);
- 
--	data = ICHX_READ(ichx_regs[reg][reg_nr], ichx_priv.gpio_base);
-+	data = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
-+			 ichx_priv.gpio_base);
- 
- 	spin_unlock_irqrestore(&ichx_priv.lock, flags);
- 
-@@ -295,27 +303,37 @@ static struct ichx_desc i3100_desc = {
- static struct ichx_desc ich7_desc = {
- 	.ngpio = 50,
- 	.have_blink = true,
-+	.regs = ichx_regs,
-+	.reglen = ichx_reglen,
- };
- 
- /* ICH9-based */
- static struct ichx_desc ich9_desc = {
- 	.ngpio = 61,
- 	.have_blink = true,
-+	.regs = ichx_regs,
-+	.reglen = ichx_reglen,
- };
- 
- /* ICH10-based - Consumer/corporate versions have different amount of GPIO */
- static struct ichx_desc ich10_cons_desc = {
- 	.ngpio = 61,
- 	.have_blink = true,
-+	.regs = ichx_regs,
-+	.reglen = ichx_reglen,
- };
- static struct ichx_desc ich10_corp_desc = {
- 	.ngpio = 72,
- 	.have_blink = true,
-+	.regs = ichx_regs,
-+	.reglen = ichx_reglen,
- };
- 
- /* Intel 5 series, 6 series, 3400 series, and C200 series */
- static struct ichx_desc intel5_desc = {
- 	.ngpio = 76,
-+	.regs = ichx_regs,
-+	.reglen = ichx_reglen,
- };
- 
- static int ichx_gpio_request_regions(struct resource *res_base,
-@@ -326,11 +344,12 @@ static int ichx_gpio_request_regions(struct resource *res_base,
- 	if (!res_base || !res_base->start || !res_base->end)
- 		return -ENODEV;
- 
--	for (i = 0; i < ARRAY_SIZE(ichx_regs[0]); i++) {
-+	for (i = 0; i < ARRAY_SIZE(ichx_priv.desc->regs[0]); i++) {
- 		if (!(use_gpio & (1 << i)))
- 			continue;
--		if (!request_region(res_base->start + ichx_regs[0][i],
--				    ichx_reglen[i], name))
-+		if (!request_region(
-+				res_base->start + ichx_priv.desc->regs[0][i],
-+				ichx_priv.desc->reglen[i], name))
- 			goto request_err;
- 	}
- 	return 0;
-@@ -340,8 +359,8 @@ request_err:
- 	for (i--; i >= 0; i--) {
- 		if (!(use_gpio & (1 << i)))
- 			continue;
--		release_region(res_base->start + ichx_regs[0][i],
--			       ichx_reglen[i]);
-+		release_region(res_base->start + ichx_priv.desc->regs[0][i],
-+			       ichx_priv.desc->reglen[i]);
- 	}
- 	return -EBUSY;
- }
-@@ -350,11 +369,11 @@ static void ichx_gpio_release_regions(struct resource *res_base, u8 use_gpio)
- {
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(ichx_regs[0]); i++) {
-+	for (i = 0; i < ARRAY_SIZE(ichx_priv.desc->regs[0]); i++) {
- 		if (!(use_gpio & (1 << i)))
- 			continue;
--		release_region(res_base->start + ichx_regs[0][i],
--			       ichx_reglen[i]);
-+		release_region(res_base->start + ichx_priv.desc->regs[0][i],
-+			       ichx_priv.desc->reglen[i]);
- 	}
- }
- 
++	  40 bits:	pca9505
++
+ config GPIO_PCA953X_IRQ
+ 	bool "Interrupt controller support for PCA953x"
+ 	depends on GPIO_PCA953X=y
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 019b23b..cede6f6 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -1,5 +1,5 @@
+ /*
+- *  PCA953x 4/8/16 bit I/O ports
++ *  PCA953x 4/8/16/24/40 bit I/O ports
+  *
+  *  Copyright (C) 2005 Ben Gardner <bgardner@wabtec.com>
+  *  Copyright (C) 2007 Marvell International Ltd.
 -- 
-1.8.3.2
-
+1.7.9.5
