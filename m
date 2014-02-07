@@ -1,79 +1,52 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH] gpio: mvebu: use chained_irq_{enter,exit} for GIC compatibility
-Date: Fri,  7 Feb 2014 12:29:19 +0100
-Message-ID: <1391772559-28357-1-git-send-email-thomas.petazzoni@free-electrons.com>
+From: Vincent Donnefort <vdonnefort@gmail.com>
+Subject: [PATCH 1/6] mfd: lpc_ich: Convert ICH GPIOs IDs to enum
+Date: Fri,  7 Feb 2014 14:21:02 +0100
+Message-ID: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:46477 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753685AbaBGL30 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 06:29:26 -0500
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:38228 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932137AbaBGNVY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 08:21:24 -0500
+Received: by mail-wg0-f42.google.com with SMTP id l18so745599wgh.1
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 05:21:23 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Lior Amsalem <alior@marvell.com>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, sameo@linux.intel.com, Vincent Donnefort <vdonnefort@gmail.com>
 
-On currently supported SoCs, the GPIO block used on Marvell EBU SoCs
-is always connected to the Marvell MPIC. However, we are going to
-introduce the support for newer Marvell EBU SoCs that use the
-Cortex-A9 core, and therefore use the GIC as their main interrupt
-controller, to which the GPIO block controlled by the gpio-mvebu
-driver is connected.
+From: Vincent Donnefort <vdonnefort@gmail.com>
 
-The GIC interrupt controller driver uses the fasteoi flow handler. In
-order to ensure that the eoi hook of the GIC driver gets called, the
-GPIO driver should call chained_irq_enter() and chained_irq_exit() in
-its handler. Without this, the first GPIO interrupt locks up the
-system because it doesn't get acked at the GIC level.
+All those IDs are arbitrary and so can be encapsulated into an enumeration.
 
-This change is similar to for example commit
-0d978eb7349941139241a99acf05de6dd49b78d1 ("gpio: davinci: use
-chained_irq_enter/chained_irq_exit API").
+Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/gpio/gpio-mvebu.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 3b1fd1c..d425094 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -44,6 +44,7 @@
- #include <linux/of_device.h>
- #include <linux/clk.h>
- #include <linux/pinctrl/consumer.h>
-+#include <linux/irqchip/chained_irq.h>
+diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
+index 3e1df64..293b062 100644
+--- a/include/linux/mfd/lpc_ich.h
++++ b/include/linux/mfd/lpc_ich.h
+@@ -31,13 +31,15 @@
+ #define ICH_RES_GPE0	1
  
- /*
-  * GPIO unit register offsets.
-@@ -438,12 +439,15 @@ static int mvebu_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- static void mvebu_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- {
- 	struct mvebu_gpio_chip *mvchip = irq_get_handler_data(irq);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	u32 cause, type;
- 	int i;
+ /* GPIO compatibility */
+-#define ICH_I3100_GPIO		0x401
+-#define ICH_V5_GPIO		0x501
+-#define ICH_V6_GPIO		0x601
+-#define ICH_V7_GPIO		0x701
+-#define ICH_V9_GPIO		0x801
+-#define ICH_V10CORP_GPIO	0xa01
+-#define ICH_V10CONS_GPIO	0xa11
++enum {
++	ICH_I3100_GPIO,
++	ICH_V5_GPIO,
++	ICH_V6_GPIO,
++	ICH_V7_GPIO,
++	ICH_V9_GPIO,
++	ICH_V10CORP_GPIO,
++	ICH_V10CONS_GPIO,
++};
  
- 	if (mvchip == NULL)
- 		return;
- 
-+	chained_irq_enter(chip, desc);
-+
- 	cause = readl_relaxed(mvebu_gpioreg_data_in(mvchip)) &
- 		readl_relaxed(mvebu_gpioreg_level_mask(mvchip));
- 	cause |= readl_relaxed(mvebu_gpioreg_edge_cause(mvchip)) &
-@@ -466,8 +470,11 @@ static void mvebu_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- 			polarity ^= 1 << i;
- 			writel_relaxed(polarity, mvebu_gpioreg_in_pol(mvchip));
- 		}
-+
- 		generic_handle_irq(irq);
- 	}
-+
-+	chained_irq_exit(chip, desc);
- }
- 
- #ifdef CONFIG_DEBUG_FS
+ struct lpc_ich_info {
+ 	char name[32];
 -- 
 1.8.3.2
 
