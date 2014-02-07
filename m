@@ -1,15 +1,15 @@
 From: Vincent Donnefort <vdonnefort@gmail.com>
-Subject: [PATCH 2/6] mfd: lpc_ich: Add support for Intel Avoton GPIOs
-Date: Fri,  7 Feb 2014 14:21:03 +0100
-Message-ID: <1391779267-27084-2-git-send-email-vdonnefort@lacie.com>
+Subject: [PATCH 6/6] gpio: ich: Add support for Intel Avoton
+Date: Fri,  7 Feb 2014 14:21:07 +0100
+Message-ID: <1391779267-27084-6-git-send-email-vdonnefort@lacie.com>
 References: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:46043 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752799AbaBGNVc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 08:21:32 -0500
-Received: by mail-wi0-f178.google.com with SMTP id cc10so827609wib.17
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 05:21:30 -0800 (PST)
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:49492 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932324AbaBGNVv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 08:21:51 -0500
+Received: by mail-wg0-f49.google.com with SMTP id a1so2307596wgh.16
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 05:21:49 -0800 (PST)
 In-Reply-To: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -18,32 +18,70 @@ Cc: linus.walleij@linaro.org, sameo@linux.intel.com, Vincent Donnefort <vdonnefo
 
 From: Vincent Donnefort <vdonnefort@gmail.com>
 
+This patch adds support for Atom C2000 series (Avoton and Rangeley). And has
+the following options:
+  - New addresses register.
+  - Caching output levels (see Intel external design spec, table 48-29)
+  - No hardware blink.
+
 Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
 
-diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
-index be93fa2..f0e1b75 100644
---- a/drivers/mfd/lpc_ich.c
-+++ b/drivers/mfd/lpc_ich.c
-@@ -500,6 +500,7 @@ static struct lpc_ich_info lpc_chipset_info[] = {
- 	[LPC_AVN] = {
- 		.name = "Avoton SoC",
- 		.iTCO_version = 1,
-+		.gpio_version = AVOTON_GPIO,
- 	},
- 	[LPC_COLETO] = {
- 		.name = "Coleto Creek",
-diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
-index 293b062..b2364dd 100644
---- a/include/linux/mfd/lpc_ich.h
-+++ b/include/linux/mfd/lpc_ich.h
-@@ -39,6 +39,7 @@ enum {
- 	ICH_V9_GPIO,
- 	ICH_V10CORP_GPIO,
- 	ICH_V10CONS_GPIO,
-+	AVOTON_GPIO,
+diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
+index bfef20f..e73c675 100644
+--- a/drivers/gpio/gpio-ich.c
++++ b/drivers/gpio/gpio-ich.c
+@@ -1,5 +1,5 @@
+ /*
+- * Intel ICH6-10, Series 5 and 6 GPIO driver
++ * Intel ICH6-10, Series 5 and 6, Atom C2000 (Avoton/Rangeley) GPIO driver
+  *
+  * Copyright (C) 2010 Extreme Engineering Solutions.
+  *
+@@ -55,6 +55,16 @@ static const u8 ichx_reglen[3] = {
+ 	0x30, 0x10, 0x10,
  };
  
- struct lpc_ich_info {
++static const u8 avoton_regs[4][3] = {
++	{0x00, 0x80, 0x00},
++	{0x04, 0x84, 0x00},
++	{0x08, 0x88, 0x00},
++};
++
++static const u8 avoton_reglen[3] = {
++	0x10, 0x10, 0x00,
++};
++
+ #define ICHX_WRITE(val, reg, base_res)	outl(val, (reg) + (base_res)->start)
+ #define ICHX_READ(reg, base_res)	inl((reg) + (base_res)->start)
+ 
+@@ -353,6 +363,17 @@ static struct ichx_desc intel5_desc = {
+ 	.reglen = ichx_reglen,
+ };
+ 
++/* Avoton */
++static struct ichx_desc avoton_desc = {
++	/* Avoton has only 59 GPIOs, but we assume the first set of register
++	 * (Core) has 32 instead of 31 to keep gpio-ich compliance
++	 */
++	.ngpio = 60,
++	.regs = avoton_regs,
++	.reglen = avoton_reglen,
++	.use_outlvl_cache = true,
++};
++
+ static int ichx_gpio_request_regions(struct resource *res_base,
+ 						const char *name, u8 use_gpio)
+ {
+@@ -427,6 +448,9 @@ static int ichx_gpio_probe(struct platform_device *pdev)
+ 	case ICH_V10CONS_GPIO:
+ 		ichx_priv.desc = &ich10_cons_desc;
+ 		break;
++	case AVOTON_GPIO:
++		ichx_priv.desc = &avoton_desc;
++		break;
+ 	default:
+ 		return -ENODEV;
+ 	}
 -- 
 1.8.3.2
 
