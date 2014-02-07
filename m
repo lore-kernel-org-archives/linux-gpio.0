@@ -1,14 +1,16 @@
 From: Vincent Donnefort <vdonnefort@gmail.com>
-Subject: [PATCH 1/6] mfd: lpc_ich: Convert ICH GPIOs IDs to enum
-Date: Fri,  7 Feb 2014 14:21:02 +0100
-Message-ID: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
+Subject: [PATCH 3/6] gpio: ich: Add blink capability option
+Date: Fri,  7 Feb 2014 14:21:04 +0100
+Message-ID: <1391779267-27084-3-git-send-email-vdonnefort@lacie.com>
+References: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:38228 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932137AbaBGNVY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 08:21:24 -0500
-Received: by mail-wg0-f42.google.com with SMTP id l18so745599wgh.1
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 05:21:23 -0800 (PST)
+Received: from mail-we0-f172.google.com ([74.125.82.172]:49653 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932142AbaBGNVg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 08:21:36 -0500
+Received: by mail-we0-f172.google.com with SMTP id p61so2328191wes.17
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 05:21:35 -0800 (PST)
+In-Reply-To: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
@@ -16,37 +18,65 @@ Cc: linus.walleij@linaro.org, sameo@linux.intel.com, Vincent Donnefort <vdonnefo
 
 From: Vincent Donnefort <vdonnefort@gmail.com>
 
-All those IDs are arbitrary and so can be encapsulated into an enumeration.
+This patch allows gpio_ich driver to be aware of non blink capable chipsets.
 
 Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
 
-diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
-index 3e1df64..293b062 100644
---- a/include/linux/mfd/lpc_ich.h
-+++ b/include/linux/mfd/lpc_ich.h
-@@ -31,13 +31,15 @@
- #define ICH_RES_GPE0	1
+diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
+index f5bf3c3..82887c5 100644
+--- a/drivers/gpio/gpio-ich.c
++++ b/drivers/gpio/gpio-ich.c
+@@ -62,6 +62,9 @@ struct ichx_desc {
+ 	/* Max GPIO pins the chipset can have */
+ 	uint ngpio;
  
- /* GPIO compatibility */
--#define ICH_I3100_GPIO		0x401
--#define ICH_V5_GPIO		0x501
--#define ICH_V6_GPIO		0x601
--#define ICH_V7_GPIO		0x701
--#define ICH_V9_GPIO		0x801
--#define ICH_V10CORP_GPIO	0xa01
--#define ICH_V10CONS_GPIO	0xa11
-+enum {
-+	ICH_I3100_GPIO,
-+	ICH_V5_GPIO,
-+	ICH_V6_GPIO,
-+	ICH_V7_GPIO,
-+	ICH_V9_GPIO,
-+	ICH_V10CORP_GPIO,
-+	ICH_V10CONS_GPIO,
-+};
++	/* GPO_BLINK is available on this chipset */
++	bool have_blink;
++
+ 	/* Whether the chipset has GPIO in GPE0_STS in the PM IO region */
+ 	bool uses_gpe0;
  
- struct lpc_ich_info {
- 	char name[32];
+@@ -151,7 +154,7 @@ static int ichx_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
+ 					int val)
+ {
+ 	/* Disable blink hardware which is available for GPIOs from 0 to 31. */
+-	if (nr < 32)
++	if (nr < 32 && ichx_priv.desc->have_blink)
+ 		ichx_write_bit(GPO_BLINK, nr, 0, 0);
+ 
+ 	/* Set GPIO output value. */
+@@ -266,6 +269,7 @@ static struct ichx_desc ich6_desc = {
+ 	.uses_gpe0 = true,
+ 
+ 	.ngpio = 50,
++	.have_blink = true,
+ };
+ 
+ /* Intel 3100 */
+@@ -290,19 +294,23 @@ static struct ichx_desc i3100_desc = {
+ /* ICH7 and ICH8-based */
+ static struct ichx_desc ich7_desc = {
+ 	.ngpio = 50,
++	.have_blink = true,
+ };
+ 
+ /* ICH9-based */
+ static struct ichx_desc ich9_desc = {
+ 	.ngpio = 61,
++	.have_blink = true,
+ };
+ 
+ /* ICH10-based - Consumer/corporate versions have different amount of GPIO */
+ static struct ichx_desc ich10_cons_desc = {
+ 	.ngpio = 61,
++	.have_blink = true,
+ };
+ static struct ichx_desc ich10_corp_desc = {
+ 	.ngpio = 72,
++	.have_blink = true,
+ };
+ 
+ /* Intel 5 series, 6 series, 3400 series, and C200 series */
 -- 
 1.8.3.2
 
