@@ -1,36 +1,79 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpiolib: make gpiod_direction_output take a logical
- value, add gpiod_direction_output_raw
-Date: Fri, 7 Feb 2014 09:48:16 +0100
-Message-ID: <CACRpkdbHmUeh30Q_0VZ9UAbHXCMJxDu6rFSggQ9KJk8rjQsesg@mail.gmail.com>
-References: <1389094451-16628-1-git-send-email-p.zabel@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH] gpio: mvebu: use chained_irq_{enter,exit} for GIC compatibility
+Date: Fri,  7 Feb 2014 12:29:19 +0100
+Message-ID: <1391772559-28357-1-git-send-email-thomas.petazzoni@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:53564 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751198AbaBGIsQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 03:48:16 -0500
-Received: by mail-ob0-f177.google.com with SMTP id wp18so3601420obc.8
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 00:48:16 -0800 (PST)
-In-Reply-To: <1389094451-16628-1-git-send-email-p.zabel@pengutronix.de>
+Received: from top.free-electrons.com ([176.31.233.9]:46477 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753685AbaBGL30 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 06:29:26 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Landley <rob@landley.net>, Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Sascha Hauer <kernel@pengutronix.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Lior Amsalem <alior@marvell.com>
 
-On Tue, Jan 7, 2014 at 12:34 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+On currently supported SoCs, the GPIO block used on Marvell EBU SoCs
+is always connected to the Marvell MPIC. However, we are going to
+introduce the support for newer Marvell EBU SoCs that use the
+Cortex-A9 core, and therefore use the GIC as their main interrupt
+controller, to which the GPIO block controlled by the gpio-mvebu
+driver is connected.
 
-> The documentation was not clear about whether gpio_direction_output should take
-> a logical value or the physical level on the output line, i.e. whether the
-> ACTIVE_LOW status would be taken into account.
-> This converts gpiod_direction_output to use the logical level and adds a new
-> gpiod_direction_output_raw for the raw value.
->
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+The GIC interrupt controller driver uses the fasteoi flow handler. In
+order to ensure that the eoi hook of the GIC driver gets called, the
+GPIO driver should call chained_irq_enter() and chained_irq_exit() in
+its handler. Without this, the first GPIO interrupt locks up the
+system because it doesn't get acked at the GIC level.
 
-OK we have consensus on this, patch applied for v3.15 with Alexandre's Review
-tag.
+This change is similar to for example commit
+0d978eb7349941139241a99acf05de6dd49b78d1 ("gpio: davinci: use
+chained_irq_enter/chained_irq_exit API").
 
-Yours,
-Linus Walleij
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/gpio/gpio-mvebu.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 3b1fd1c..d425094 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -44,6 +44,7 @@
+ #include <linux/of_device.h>
+ #include <linux/clk.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/irqchip/chained_irq.h>
+ 
+ /*
+  * GPIO unit register offsets.
+@@ -438,12 +439,15 @@ static int mvebu_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ static void mvebu_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ {
+ 	struct mvebu_gpio_chip *mvchip = irq_get_handler_data(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	u32 cause, type;
+ 	int i;
+ 
+ 	if (mvchip == NULL)
+ 		return;
+ 
++	chained_irq_enter(chip, desc);
++
+ 	cause = readl_relaxed(mvebu_gpioreg_data_in(mvchip)) &
+ 		readl_relaxed(mvebu_gpioreg_level_mask(mvchip));
+ 	cause |= readl_relaxed(mvebu_gpioreg_edge_cause(mvchip)) &
+@@ -466,8 +470,11 @@ static void mvebu_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 			polarity ^= 1 << i;
+ 			writel_relaxed(polarity, mvebu_gpioreg_in_pol(mvchip));
+ 		}
++
+ 		generic_handle_irq(irq);
+ 	}
++
++	chained_irq_exit(chip, desc);
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-- 
+1.8.3.2
+
