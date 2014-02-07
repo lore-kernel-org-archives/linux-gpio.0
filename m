@@ -1,15 +1,15 @@
 From: Vincent Donnefort <vdonnefort@gmail.com>
-Subject: [PATCH 5/6] gpio: ich: Add output levels cache support
-Date: Fri,  7 Feb 2014 14:21:06 +0100
-Message-ID: <1391779267-27084-5-git-send-email-vdonnefort@lacie.com>
+Subject: [PATCH 4/6] gpio: ich: Add support for multiple register addresses
+Date: Fri,  7 Feb 2014 14:21:05 +0100
+Message-ID: <1391779267-27084-4-git-send-email-vdonnefort@lacie.com>
 References: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:49391 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932324AbaBGNVq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 08:21:46 -0500
-Received: by mail-we0-f179.google.com with SMTP id q58so2249147wes.24
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 05:21:45 -0800 (PST)
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:32905 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932142AbaBGNVm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Feb 2014 08:21:42 -0500
+Received: by mail-wg0-f47.google.com with SMTP id m15so2225794wgh.2
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 05:21:40 -0800 (PST)
 In-Reply-To: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -18,73 +18,136 @@ Cc: linus.walleij@linaro.org, sameo@linux.intel.com, Vincent Donnefort <vdonnefo
 
 From: Vincent Donnefort <vdonnefort@gmail.com>
 
-This patch allows GPIO driver to cache GPIO_LVL output registers. The aim is to
-support chipsets on which GPIO_LVL value can't be read for output pins.
-
-Caching output levels implies the first output values reading as 0. The driver
-so can't be aware of set values GPIOs by bootloader or BIOS.
+This patch introduces regs and reglen pointers which allow a chipset to have
+register addresses differing from ICH ones.
 
 Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
 
 diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
-index f3eb1c5..bfef20f 100644
+index 82887c5..f3eb1c5 100644
 --- a/drivers/gpio/gpio-ich.c
 +++ b/drivers/gpio/gpio-ich.c
-@@ -78,6 +78,12 @@ struct ichx_desc {
- 	/* Some chipsets have quirks, let these use their own request/get */
- 	int (*request)(struct gpio_chip *chip, unsigned offset);
- 	int (*get)(struct gpio_chip *chip, unsigned offset);
+@@ -62,6 +62,10 @@ struct ichx_desc {
+ 	/* Max GPIO pins the chipset can have */
+ 	uint ngpio;
+ 
++	/* chipset registers */
++	const u8 (*regs)[3];
++	const u8 *reglen;
 +
-+	/*
-+	 * Some chipsets don't let reading output values on GPIO_LVL register
-+	 * this option allows driver caching written output values
-+	 */
-+	bool use_outlvl_cache;
- };
+ 	/* GPO_BLINK is available on this chipset */
+ 	bool have_blink;
  
- static struct {
-@@ -89,6 +95,7 @@ static struct {
- 	struct ichx_desc *desc;	/* Pointer to chipset-specific description */
- 	u32 orig_gpio_ctrl;	/* Orig CTRL value, used to restore on exit */
- 	u8 use_gpio;		/* Which GPIO groups are usable */
-+	int outlvl_cache[3];	/* cached output values */
- } ichx_priv;
- 
- static int modparam_gpiobase = -1;	/* dynamic */
-@@ -106,14 +113,21 @@ static int ichx_write_bit(int reg, unsigned nr, int val, int verify)
+@@ -102,13 +106,16 @@ static int ichx_write_bit(int reg, unsigned nr, int val, int verify)
  
  	spin_lock_irqsave(&ichx_priv.lock, flags);
  
--	data = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
--			 ichx_priv.gpio_base);
-+	if (reg == GPIO_LVL && ichx_priv.desc->use_outlvl_cache)
-+		data = ichx_priv.outlvl_cache[reg_nr];
-+	else
-+		data = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
-+				 ichx_priv.gpio_base);
-+
+-	data = ICHX_READ(ichx_regs[reg][reg_nr], ichx_priv.gpio_base);
++	data = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
++			 ichx_priv.gpio_base);
  	if (val)
  		data |= 1 << bit;
  	else
  		data &= ~(1 << bit);
- 	ICHX_WRITE(data, ichx_priv.desc->regs[reg][reg_nr],
- 			 ichx_priv.gpio_base);
-+	if (reg == GPIO_LVL && ichx_priv.desc->use_outlvl_cache)
-+		ichx_priv.outlvl_cache[reg_nr] = data;
-+
- 	tmp = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
- 			ichx_priv.gpio_base);
+-	ICHX_WRITE(data, ichx_regs[reg][reg_nr], ichx_priv.gpio_base);
+-	tmp = ICHX_READ(ichx_regs[reg][reg_nr], ichx_priv.gpio_base);
++	ICHX_WRITE(data, ichx_priv.desc->regs[reg][reg_nr],
++			 ichx_priv.gpio_base);
++	tmp = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
++			ichx_priv.gpio_base);
  	if (verify && data != tmp)
-@@ -136,6 +150,9 @@ static int ichx_read_bit(int reg, unsigned nr)
- 	data = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
- 			 ichx_priv.gpio_base);
+ 		ret = -EPERM;
  
-+	if (reg == GPIO_LVL && ichx_priv.desc->use_outlvl_cache)
-+		data = ichx_priv.outlvl_cache[reg_nr] | data;
-+
+@@ -126,7 +133,8 @@ static int ichx_read_bit(int reg, unsigned nr)
+ 
+ 	spin_lock_irqsave(&ichx_priv.lock, flags);
+ 
+-	data = ICHX_READ(ichx_regs[reg][reg_nr], ichx_priv.gpio_base);
++	data = ICHX_READ(ichx_priv.desc->regs[reg][reg_nr],
++			 ichx_priv.gpio_base);
+ 
  	spin_unlock_irqrestore(&ichx_priv.lock, flags);
  
- 	return data & (1 << bit) ? 1 : 0;
+@@ -295,27 +303,37 @@ static struct ichx_desc i3100_desc = {
+ static struct ichx_desc ich7_desc = {
+ 	.ngpio = 50,
+ 	.have_blink = true,
++	.regs = ichx_regs,
++	.reglen = ichx_reglen,
+ };
+ 
+ /* ICH9-based */
+ static struct ichx_desc ich9_desc = {
+ 	.ngpio = 61,
+ 	.have_blink = true,
++	.regs = ichx_regs,
++	.reglen = ichx_reglen,
+ };
+ 
+ /* ICH10-based - Consumer/corporate versions have different amount of GPIO */
+ static struct ichx_desc ich10_cons_desc = {
+ 	.ngpio = 61,
+ 	.have_blink = true,
++	.regs = ichx_regs,
++	.reglen = ichx_reglen,
+ };
+ static struct ichx_desc ich10_corp_desc = {
+ 	.ngpio = 72,
+ 	.have_blink = true,
++	.regs = ichx_regs,
++	.reglen = ichx_reglen,
+ };
+ 
+ /* Intel 5 series, 6 series, 3400 series, and C200 series */
+ static struct ichx_desc intel5_desc = {
+ 	.ngpio = 76,
++	.regs = ichx_regs,
++	.reglen = ichx_reglen,
+ };
+ 
+ static int ichx_gpio_request_regions(struct resource *res_base,
+@@ -326,11 +344,12 @@ static int ichx_gpio_request_regions(struct resource *res_base,
+ 	if (!res_base || !res_base->start || !res_base->end)
+ 		return -ENODEV;
+ 
+-	for (i = 0; i < ARRAY_SIZE(ichx_regs[0]); i++) {
++	for (i = 0; i < ARRAY_SIZE(ichx_priv.desc->regs[0]); i++) {
+ 		if (!(use_gpio & (1 << i)))
+ 			continue;
+-		if (!request_region(res_base->start + ichx_regs[0][i],
+-				    ichx_reglen[i], name))
++		if (!request_region(
++				res_base->start + ichx_priv.desc->regs[0][i],
++				ichx_priv.desc->reglen[i], name))
+ 			goto request_err;
+ 	}
+ 	return 0;
+@@ -340,8 +359,8 @@ request_err:
+ 	for (i--; i >= 0; i--) {
+ 		if (!(use_gpio & (1 << i)))
+ 			continue;
+-		release_region(res_base->start + ichx_regs[0][i],
+-			       ichx_reglen[i]);
++		release_region(res_base->start + ichx_priv.desc->regs[0][i],
++			       ichx_priv.desc->reglen[i]);
+ 	}
+ 	return -EBUSY;
+ }
+@@ -350,11 +369,11 @@ static void ichx_gpio_release_regions(struct resource *res_base, u8 use_gpio)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(ichx_regs[0]); i++) {
++	for (i = 0; i < ARRAY_SIZE(ichx_priv.desc->regs[0]); i++) {
+ 		if (!(use_gpio & (1 << i)))
+ 			continue;
+-		release_region(res_base->start + ichx_regs[0][i],
+-			       ichx_reglen[i]);
++		release_region(res_base->start + ichx_priv.desc->regs[0][i],
++			       ichx_priv.desc->reglen[i]);
+ 	}
+ }
+ 
 -- 
 1.8.3.2
 
