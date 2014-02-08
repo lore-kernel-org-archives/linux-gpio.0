@@ -1,48 +1,41 @@
-From: Aaron Sierra <asierra@xes-inc.com>
-Subject: [PATCH] gpio: pca953x: Fix gpio_base may not default to -1
-Date: Fri, 7 Feb 2014 19:23:04 -0600 (CST)
-Message-ID: <284331514.125966.1391822584020.JavaMail.zimbra@xes-inc.com>
-References: <430364938.125965.1391822577770.JavaMail.zimbra@xes-inc.com>
+From: Rahul Bedarkar <rahulbedarkar89@gmail.com>
+Subject: [PATCH] GPIO: gpiolib: correct description of gpiod_direction_output
+Date: Sat, 8 Feb 2014 11:55:25 +0530
+Message-ID: <20140208062525.GA3984@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xes-mad.com ([216.165.139.218]:11434 "EHLO xes-mad.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750756AbaBHBXH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 7 Feb 2014 20:23:07 -0500
-In-Reply-To: <430364938.125965.1391822577770.JavaMail.zimbra@xes-inc.com>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:32945 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750748AbaBHGZf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 8 Feb 2014 01:25:35 -0500
+Received: by mail-pb0-f46.google.com with SMTP id um1so4120299pbc.5
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2014 22:25:34 -0800 (PST)
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
 
-If no device tree node existed for a device when CONFIG_OF_GPIO was
-defined, then gpio_base would not default to -1.
 
-Signed-off-by: Aaron Sierra <asierra@xes-inc.com>
+Signed-off-by: Rahul Bedarkar <rahulbedarkar89@gmail.com>
 ---
- drivers/gpio/gpio-pca953x.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 948a074..d550d8e 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -627,11 +627,12 @@ pca953x_get_alt_pdata(struct i2c_client *client, int *gpio_base, u32 *invert)
- 	const __be32 *val;
- 	int size;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 50c4922..5d6bbbf 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1757,7 +1757,7 @@ fail:
+ EXPORT_SYMBOL_GPL(gpiod_direction_input);
  
-+	*gpio_base = -1;
-+
- 	node = client->dev.of_node;
- 	if (node == NULL)
- 		return;
- 
--	*gpio_base = -1;
- 	val = of_get_property(node, "linux,gpio-base", &size);
- 	WARN(val, "%s: device-tree property 'linux,gpio-base' is deprecated!", __func__);
- 	if (val) {
+ /**
+- * gpiod_direction_output - set the GPIO direction to input
++ * gpiod_direction_output - set the GPIO direction to output
+  * @desc:	GPIO to set to output
+  * @value:	initial output value of the GPIO
+  *
 -- 
-1.7.9.5
+1.8.1.2
 
