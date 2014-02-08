@@ -1,48 +1,80 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH] gpio: mvebu: use chained_irq_{enter, exit} for GIC
- compatibility
-Date: Sat, 8 Feb 2014 12:06:35 -0500
-Message-ID: <20140208170635.GJ8533@titan.lakedaemon.net>
-References: <1391772559-28357-1-git-send-email-thomas.petazzoni@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v3.14 take one
+Date: Sat, 8 Feb 2014 21:36:58 +0100
+Message-ID: <CACRpkda=n3h5mtwvrbTBjaWC7hD3_YBNZM+GHA+w-3JDQ0ncVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:32241 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751453AbaBHRGr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 8 Feb 2014 12:06:47 -0500
-Content-Disposition: inline
-In-Reply-To: <1391772559-28357-1-git-send-email-thomas.petazzoni@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, linux-gpio@vger.kernel.org, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Fri, Feb 07, 2014 at 12:29:19PM +0100, Thomas Petazzoni wrote:
-> On currently supported SoCs, the GPIO block used on Marvell EBU SoCs
-> is always connected to the Marvell MPIC. However, we are going to
-> introduce the support for newer Marvell EBU SoCs that use the
-> Cortex-A9 core, and therefore use the GIC as their main interrupt
-> controller, to which the GPIO block controlled by the gpio-mvebu
-> driver is connected.
-> 
-> The GIC interrupt controller driver uses the fasteoi flow handler. In
-> order to ensure that the eoi hook of the GIC driver gets called, the
-> GPIO driver should call chained_irq_enter() and chained_irq_exit() in
-> its handler. Without this, the first GPIO interrupt locks up the
-> system because it doesn't get acked at the GIC level.
-> 
-> This change is similar to for example commit
-> 0d978eb7349941139241a99acf05de6dd49b78d1 ("gpio: davinci: use
-> chained_irq_enter/chained_irq_exit API").
-> 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->  drivers/gpio/gpio-mvebu.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+Hi Linus,
 
-Acked-by: Jason Cooper <jason@lakedaemon.net>
+here are some queued fixes for the v3.14 series, six of
+these are even targeted for stable. More details in the
+signed tag.
 
-thx,
+Please pull them in!
 
-Jason.
+Yours,
+Linus Walleij
+
+
+The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
+
+  Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v3.14-2
+
+for you to fetch changes up to 5b232c5addc02980cfce451575f1d1f975bdb04e:
+
+  pinctrl: tegra: return correct error type (2014-02-06 14:21:19 +0100)
+
+----------------------------------------------------------------
+First round of pin control fixes for v3.14:
+
+- Protect pinctrl_list_add() with the proper mutex. This
+  was identified by RedHat. Caused nasty locking warnings
+  was rootcased by Stanislaw Gruszka.
+
+- Avoid adding dangerous debugfs files when either half of
+  the subsystem is unused: pinmux or pinconf.
+
+- Various fixes to various drivers: locking, hardware
+  particulars, DT parsing, error codes.
+
+----------------------------------------------------------------
+Chris Ruehl (2):
+      pinctrl: imx27: fix wrong offset to ICONFB
+      pinctrl: imx27: fix offset calculation in imx_read_2bit
+
+Florian Vaussard (1):
+      pinctrl: do not init debugfs entries for unimplemented functionalities
+
+Laxman Dewangan (1):
+      pinctrl: tegra: return correct error type
+
+Nicolas Ferre (1):
+      pinctrl: at91: use locked variant of irq_set_handler
+
+Qipan Li (1):
+      pinctrl: sirf: correct the pin index of ac97_pins group
+
+Stanislaw Gruszka (1):
+      pinctrl: protect pinctrl_list add
+
+Tony Prisk (1):
+      pinctrl: vt8500: Change devicetree data parsing
+
+ drivers/pinctrl/core.c                |  8 ++++++--
+ drivers/pinctrl/pinctrl-at91.c        | 10 +++++-----
+ drivers/pinctrl/pinctrl-imx1-core.c   | 10 +++++-----
+ drivers/pinctrl/pinctrl-tegra.c       |  2 +-
+ drivers/pinctrl/sirf/pinctrl-prima2.c |  2 +-
+ drivers/pinctrl/vt8500/pinctrl-wmt.c  | 15 ++++++++++++++-
+ 6 files changed, 32 insertions(+), 15 deletions(-)
