@@ -1,80 +1,163 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v3.14 take one
-Date: Sat, 8 Feb 2014 21:36:58 +0100
-Message-ID: <CACRpkda=n3h5mtwvrbTBjaWC7hD3_YBNZM+GHA+w-3JDQ0ncVQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH 1/2] gpiolib: add gpiochip_get_desc() driver function
+Date: Sun,  9 Feb 2014 17:43:54 +0900
+Message-ID: <1391935435-29002-1-git-send-email-acourbot@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Some drivers dealing with a gpio_chip might need to act on its
+descriptors directly; one example is pinctrl drivers that need to lock a
+GPIO for being used as IRQ using gpiod_lock_as_irq().
 
-here are some queued fixes for the v3.14 series, six of
-these are even targeted for stable. More details in the
-signed tag.
+This patch exports a gpiochip_get_desc() function that returns the
+GPIO descriptor at the requested index. It also sweeps the
+gpio_to_chip() function out of the consumer interface since any holder
+of a gpio_chip reference can manipulate its GPIOs way beyond what a
+consumer should be allowed to do.
 
-Please pull them in!
+As a result, gpio_chip is not visible anymore to simple GPIO consumers.
 
-Yours,
-Linus Walleij
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+Jean-Jacques, I think you will want to use this function for locking GPIOs
+in the AT91 pinctrl driver. Mika, we talked about this a while ago already,
+but here it is finally. Next patch uses it in the GPIO ACPI driver.
 
+ drivers/gpio/gpiolib.c        | 17 +++++++++--------
+ include/linux/gpio/consumer.h |  8 --------
+ include/linux/gpio/driver.h   | 18 ++++++++++++++++++
+ 3 files changed, 27 insertions(+), 16 deletions(-)
 
-The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
-
-  Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v3.14-2
-
-for you to fetch changes up to 5b232c5addc02980cfce451575f1d1f975bdb04e:
-
-  pinctrl: tegra: return correct error type (2014-02-06 14:21:19 +0100)
-
-----------------------------------------------------------------
-First round of pin control fixes for v3.14:
-
-- Protect pinctrl_list_add() with the proper mutex. This
-  was identified by RedHat. Caused nasty locking warnings
-  was rootcased by Stanislaw Gruszka.
-
-- Avoid adding dangerous debugfs files when either half of
-  the subsystem is unused: pinmux or pinconf.
-
-- Various fixes to various drivers: locking, hardware
-  particulars, DT parsing, error codes.
-
-----------------------------------------------------------------
-Chris Ruehl (2):
-      pinctrl: imx27: fix wrong offset to ICONFB
-      pinctrl: imx27: fix offset calculation in imx_read_2bit
-
-Florian Vaussard (1):
-      pinctrl: do not init debugfs entries for unimplemented functionalities
-
-Laxman Dewangan (1):
-      pinctrl: tegra: return correct error type
-
-Nicolas Ferre (1):
-      pinctrl: at91: use locked variant of irq_set_handler
-
-Qipan Li (1):
-      pinctrl: sirf: correct the pin index of ac97_pins group
-
-Stanislaw Gruszka (1):
-      pinctrl: protect pinctrl_list add
-
-Tony Prisk (1):
-      pinctrl: vt8500: Change devicetree data parsing
-
- drivers/pinctrl/core.c                |  8 ++++++--
- drivers/pinctrl/pinctrl-at91.c        | 10 +++++-----
- drivers/pinctrl/pinctrl-imx1-core.c   | 10 +++++-----
- drivers/pinctrl/pinctrl-tegra.c       |  2 +-
- drivers/pinctrl/sirf/pinctrl-prima2.c |  2 +-
- drivers/pinctrl/vt8500/pinctrl-wmt.c  | 15 ++++++++++++++-
- 6 files changed, 32 insertions(+), 15 deletions(-)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 50c4922..f60d74b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -164,16 +164,17 @@ struct gpio_desc *gpio_to_desc(unsigned gpio)
+ EXPORT_SYMBOL_GPL(gpio_to_desc);
+ 
+ /**
+- * Convert an offset on a certain chip to a corresponding descriptor
++ * Get the GPIO descriptor corresponding to the given hw number for this chip.
+  */
+-static struct gpio_desc *gpiochip_offset_to_desc(struct gpio_chip *chip,
+-						 unsigned int offset)
++struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
++				    u16 hwnum)
+ {
+-	if (offset >= chip->ngpio)
++	if (hwnum >= chip->ngpio)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	return &chip->desc[offset];
++	return &chip->desc[hwnum];
+ }
++EXPORT_SYMBOL_GPL(gpiochip_get_desc);
+ 
+ /**
+  * Convert a GPIO descriptor to the integer namespace.
+@@ -2161,7 +2162,7 @@ EXPORT_SYMBOL_GPL(gpiod_lock_as_irq);
+ 
+ int gpio_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+-	return gpiod_lock_as_irq(gpiochip_offset_to_desc(chip, offset));
++	return gpiod_lock_as_irq(gpiochip_get_desc(chip, offset));
+ }
+ EXPORT_SYMBOL_GPL(gpio_lock_as_irq);
+ 
+@@ -2183,7 +2184,7 @@ EXPORT_SYMBOL_GPL(gpiod_unlock_as_irq);
+ 
+ void gpio_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+-	return gpiod_unlock_as_irq(gpiochip_offset_to_desc(chip, offset));
++	return gpiod_unlock_as_irq(gpiochip_get_desc(chip, offset));
+ }
+ EXPORT_SYMBOL_GPL(gpio_unlock_as_irq);
+ 
+@@ -2404,7 +2405,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
+-		desc = gpiochip_offset_to_desc(chip, p->chip_hwnum);
++		desc = gpiochip_get_desc(chip, p->chip_hwnum);
+ 		*flags = p->flags;
+ 
+ 		return desc;
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 7a8144f..f6a9cc3 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -5,7 +5,6 @@
+ #include <linux/kernel.h>
+ 
+ struct device;
+-struct gpio_chip;
+ 
+ /**
+  * Opaque descriptor for a GPIO. These are obtained using gpiod_get() and are
+@@ -59,7 +58,6 @@ int gpiod_to_irq(const struct gpio_desc *desc);
+ /* Convert between the old gpio_ and new gpiod_ interfaces */
+ struct gpio_desc *gpio_to_desc(unsigned gpio);
+ int desc_to_gpio(const struct gpio_desc *desc);
+-struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
+ 
+ #else /* CONFIG_GPIOLIB */
+ 
+@@ -207,12 +205,6 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
+ 	WARN_ON(1);
+ 	return -EINVAL;
+ }
+-static inline struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc)
+-{
+-	/* GPIO can never have been requested */
+-	WARN_ON(1);
+-	return ERR_PTR(-ENODEV);
+-}
+ 
+ 
+ #endif /* CONFIG_GPIOLIB */
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index a3e181e..9fe2836 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -10,6 +10,8 @@ struct of_phandle_args;
+ struct device_node;
+ struct seq_file;
+ 
++#ifdef CONFIG_GPIOLIB
++
+ /**
+  * struct gpio_chip - abstract a GPIO controller
+  * @label: for diagnostics
+@@ -129,6 +131,11 @@ extern struct gpio_chip *gpiochip_find(void *data,
+ int gpiod_lock_as_irq(struct gpio_desc *desc);
+ void gpiod_unlock_as_irq(struct gpio_desc *desc);
+ 
++struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
++
++struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
++				    u16 hwnum);
++
+ enum gpio_lookup_flags {
+ 	GPIO_ACTIVE_HIGH = (0 << 0),
+ 	GPIO_ACTIVE_LOW = (1 << 0),
+@@ -183,4 +190,15 @@ struct gpiod_lookup_table {
+ 
+ void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
+ 
++#else /* CONFIG_GPIOLIB */
++
++static inline struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++	return ERR_PTR(-ENODEV);
++}
++
++#endif /* CONFIG_GPIOLIB */
++
+ #endif
+-- 
+1.8.5.4
