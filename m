@@ -1,37 +1,26 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 2/2] gpiolib: ACPI: remove gpio_to_desc() usage
-Date: Sun,  9 Feb 2014 17:43:55 +0900
-Message-ID: <1391935435-29002-2-git-send-email-acourbot@nvidia.com>
-References: <1391935435-29002-1-git-send-email-acourbot@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1391935435-29002-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] GPIO: gpiolib: correct description of gpiod_direction_output
+Date: Sun, 9 Feb 2014 17:47:42 +0900
+Message-ID: <CAAVeFuJsB9Up0K5Q2Psx0Y5Bq6AVbT-ZqHVc12ExiQtfNYu2EA@mail.gmail.com>
+References: <20140208062525.GA3984@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-vc0-f181.google.com ([209.85.220.181]:53494 "EHLO
+	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751435AbaBIIsE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 9 Feb 2014 03:48:04 -0500
+Received: by mail-vc0-f181.google.com with SMTP id ie18so3848298vcb.26
+        for <linux-gpio@vger.kernel.org>; Sun, 09 Feb 2014 00:48:03 -0800 (PST)
+In-Reply-To: <20140208062525.GA3984@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rahul Bedarkar <rahulbedarkar89@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-gpio_to_desc() must die. Replace one of its usage by the
-newly-introduced gpiochip_get_desc() function.
+On Sat, Feb 8, 2014 at 3:25 PM, Rahul Bedarkar
+<rahulbedarkar89@gmail.com> wrote:
+>
+> Signed-off-by: Rahul Bedarkar <rahulbedarkar89@gmail.com>
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-Mika, can we have your review on this?
-
- drivers/gpio/gpiolib-acpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 716ee98..b7db098 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -60,7 +60,7 @@ static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
- 	if (pin < 0 || pin > chip->ngpio)
- 		return ERR_PTR(-EINVAL);
- 
--	return gpio_to_desc(chip->base + pin);
-+	return gpiochip_get_desc(chip, pin);
- }
- 
- static irqreturn_t acpi_gpio_irq_handler(int irq, void *data)
--- 
-1.8.5.4
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
