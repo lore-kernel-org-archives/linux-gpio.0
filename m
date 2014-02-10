@@ -1,54 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v11] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Mon, 10 Feb 2014 12:06:44 +0100
-Message-ID: <CACRpkdYiC=nzVG4_nQuRVSNP9TB4W=3VL9QhBQjmqvLvmP6McA@mail.gmail.com>
-References: <1391724370-30589-1-git-send-email-delicious.quinoa@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Correct meaning of the GPIO active low flag
+Date: Mon, 10 Feb 2014 15:33:11 +0100
+Message-ID: <4298328.sSSAEV5F8t@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1391724370-30589-1-git-send-email-delicious.quinoa@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Alan Tull <delicious.quinoa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:39759 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751791AbaBJOcJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Feb 2014 09:32:09 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 
-Hi Alan, this is starting to look good. I's like an ACK from a DT
-maintainer on the bindings but can't see anything really controversial
-about them.
+Hello everybody,
 
-On Thu, Feb 6, 2014 at 11:06 PM, Alan Tull <delicious.quinoa@gmail.com> wrote:
+While working on Dt support for a driver that uses GPIO I came to ponder about 
+the correct meaning of the GPIO active low flag. I'm bringing the question to 
+the mailing list to get feedback.
 
-> +static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
-> +{
-> +       struct bgpio_chip *bgc = to_bgpio_chip(gc);
-> +       struct dwapb_gpio_port *port = container_of(bgc, struct
-> +                                                   dwapb_gpio_port, bgc);
-> +       struct dwapb_gpio *gpio = port->gpio;
-> +
-> +       return irq_create_mapping(gpio->domain, offset);
-> +}
+When a device has an active low input, the fact that the input is active low 
+is a property of the device, and thus known to the driver. On the other hand, 
+if an inverter is present on the board, that information isn't known to device 
+drivers and need to be expressed in DT.
 
-I think you want to call irq_find_mapping() here. irq_create_mapping()
-should be called for all valid IRQs on probe() instead.
+Does the active low flag express the latter only, or both of them ? To ask the 
+question differently, should the low flag model the inverter inside the 
+device, known to the device driver, effectively moving handling of that 
+inverter out of the device driver to the core code, or should it stop at the 
+device boundary and only model the board ?
 
-> +               ct = irq_gc->chip_types;
-> +               ct->chip.irq_ack = irq_gc_ack_set_bit;
-> +               ct->chip.irq_mask = irq_gc_mask_set_bit;
-> +               ct->chip.irq_unmask = irq_gc_mask_clr_bit;
-> +               ct->chip.irq_set_type = dwapb_irq_set_type;
-> +               ct->chip.irq_enable = dwapb_irq_enable;
-> +               ct->chip.irq_disable = dwapb_irq_disable;
-> +               ct->regs.ack = GPIO_PORTA_EOI;
-> +               ct->regs.mask = GPIO_INTMASK;
+As an example, if my device datasheet states that the reset input is active 
+low, an no inverter is present on the GPIO line, should I set the GPIO active 
+low flag in DT and set the GPIO value to 1 in software (assuming I use the 
+gpiod_* API) to make the reset signal active, or should I set the GPIO active 
+high flag in DT and the the GPIO value to 0 in software ?
 
-Please add .startup() and .shutdown() callbacks marking the
-respective lines as IRQs, compare to recent patches in the
-GPIO subsystem such as this:
-http://marc.info/?l=linux-gpio&m=138546100215235&w=2
+Let's also keep in mind that devices can have programmable polarities for 
+inputs connected to GPIO-driven signals, in which case the internal polarity 
+inversion is dynamic and can't be expressed in the GPIO propery in DT.
 
-You probably want to call irq_create_mapping() for each
-valid IRQ after registering the chip in this function.
+-- 
+Regards,
 
-Yours,
-Linus Walleij
+Laurent Pinchart
+
