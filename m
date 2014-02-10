@@ -1,55 +1,64 @@
-From: "Hennerich, Michael" <Michael.Hennerich@analog.com>
-Subject: RE: [PATCH 2/2] gpio: adp5588 - add support for gpio names
-Date: Mon, 10 Feb 2014 20:17:03 +0000
-Message-ID: <78F369B105E123488216BDB7B6C397DA339E3D85@NWD2MBX6.ad.analog.com>
-References: <1392053045-12121-1-git-send-email-jeff.dagenais@gmail.com>
- <1392053045-12121-2-git-send-email-jeff.dagenais@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: David Daney <ddaney.cavm@gmail.com>
+Subject: [PATCH] of/gpio: Define OF_GPIO_OPEN_DRAIN flag for Open Drain outputs.
+Date: Mon, 10 Feb 2014 14:05:08 -0800
+Message-ID: <1392069908-22017-1-git-send-email-ddaney.cavm@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from am1ehsobe002.messaging.microsoft.com ([213.199.154.205]:11350
-	"EHLO am1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752559AbaBJUSa convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 10 Feb 2014 15:18:30 -0500
-In-Reply-To: <1392053045-12121-2-git-send-email-jeff.dagenais@gmail.com>
-Content-Language: en-US
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:38120 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752608AbaBJWFP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Feb 2014 17:05:15 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Francois Dagenais <jeff.dagenais@gmail.com>, "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>, "dtor@mail.ru" <dtor@mail.ru>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "gnurou@gmail.com" <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+To: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
 
+From: David Daney <david.daney@cavium.com>
 
+When we have a GPIO pin connected to an open-drain network, we want a
+standard way of specifying this in the device tree.  So we choose bit
+1 of the flag field to indicate open drain.
 
------Original Message-----
-From: Jean-Francois Dagenais [mailto:jeff.dagenais@gmail.com] 
-Sent: Montag, 10. Februar 2014 18:24
-To: Hennerich, Michael; dmitry.torokhov@gmail.com; dtor@mail.ru; linus.walleij@linaro.org; gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org; linux-input@vger.kernel.org; Jean-Francois Dagenais
-Subject: [PATCH 2/2] gpio: adp5588 - add support for gpio names
+A typical use case would be something like:
 
-which is already found in the common header for adp5588
+	enum of_gpio_flags f;
+	.
+	.
+	.
+	reset_gpio = of_get_named_gpio_flags(node, "reset", 0, &f);
+	.
+	.
+	.
+	ret = gpio_request_one(reset_gpio,
+		(f & OF_GPIO_OPEN_DRAIN) ? GPIOF_OPEN_DRAIN : 0,
+		 "reset");
+	.
+	.
+	.
+	gpio_direction_output(reset_gpio, 1);
+	gpio_set_value(reset_gpio, 0);
+	msleep(20);
+	gpio_set_value(reset_gpio, 1);
+	.
+	.
+	.
 
-Signed-off-by: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+Signed-off-by: David Daney <david.daney@cavium.com>
 ---
- drivers/gpio/gpio-adp5588.c | 1 +
+ include/linux/of_gpio.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c index 7d3c8d9..d974020 100644
---- a/drivers/gpio/gpio-adp5588.c
-+++ b/drivers/gpio/gpio-adp5588.c
-@@ -397,6 +397,7 @@ static int adp5588_gpio_probe(struct i2c_client *client,
- 	gc->ngpio = ADP5588_MAXGPIO;
- 	gc->label = client->name;
- 	gc->owner = THIS_MODULE;
-+	gc->names = pdata->names;
+diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
+index f14123a..0e374774 100644
+--- a/include/linux/of_gpio.h
++++ b/include/linux/of_gpio.h
+@@ -30,6 +30,7 @@ struct device_node;
+  */
+ enum of_gpio_flags {
+ 	OF_GPIO_ACTIVE_LOW = 0x1,
++	OF_GPIO_OPEN_DRAIN = 0x2,
+ };
  
- 	mutex_init(&dev->lock);
- 
---
-1.8.5.3
-
-
+ #ifdef CONFIG_OF_GPIO
+-- 
+1.7.11.7
 
