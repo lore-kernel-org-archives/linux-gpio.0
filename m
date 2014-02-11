@@ -1,58 +1,65 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] of/gpio: Define OF_GPIO_OPEN_DRAIN flag for Open Drain outputs.
-Date: Tue, 11 Feb 2014 13:31:44 +0900
-Message-ID: <CAAVeFu+_WKzLdhWcB_km3iDj419OhtMXEKzz_yWoL3WUm+7kQQ@mail.gmail.com>
-References: <1392069908-22017-1-git-send-email-ddaney.cavm@gmail.com>
+From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: Re: [PATCH] gpio: take in account the active low flag when
+ configuring the gpio as an ouput
+Date: Tue, 11 Feb 2014 09:06:09 +0100
+Message-ID: <CACh+v5Nj+qAD4LHXfX5=Ww_v5N9vvm=O_r29X3H1dKseeafauQ@mail.gmail.com>
+References: <1392044614-6837-1-git-send-email-jjhiblot@traphandler.com>
+	<CAAVeFuJ6BP4JnVb6qD1DYXqPQ3zBKw8hb+xLqcmUjktOxAjdGA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vb0-f49.google.com ([209.85.212.49]:33706 "EHLO
-	mail-vb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752199AbaBKEcF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Feb 2014 23:32:05 -0500
-In-Reply-To: <1392069908-22017-1-git-send-email-ddaney.cavm@gmail.com>
+Received: from 11.mo1.mail-out.ovh.net ([188.165.48.29]:46917 "EHLO
+	mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750903AbaBKJYI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2014 04:24:08 -0500
+Received: from mail170.ha.ovh.net (gw6.ovh.net [213.251.189.206])
+	by mo1.mail-out.ovh.net (Postfix) with SMTP id 7CC7DFFCF4D
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Feb 2014 09:13:10 +0100 (CET)
+In-Reply-To: <CAAVeFuJ6BP4JnVb6qD1DYXqPQ3zBKw8hb+xLqcmUjktOxAjdGA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Daney <ddaney.cavm@gmail.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Daney <david.daney@cavium.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Richard Genoud <richard.genoud@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, Feb 11, 2014 at 7:05 AM, David Daney <ddaney.cavm@gmail.com> wrote:
-> From: David Daney <david.daney@cavium.com>
+Hi Alexandre,
+
+I somehow missed this one. Forget about my patch then.
+
+Jean-Jacques
+
+2014-02-11 5:22 GMT+01:00 Alexandre Courbot <gnurou@gmail.com>:
+> On Tue, Feb 11, 2014 at 12:03 AM, Jean-Jacques Hiblot
+> <jjhiblot@traphandler.com> wrote:
+>> The initial value of the gpio is passed to gpiod_direction_output. Currently
+>> this value is the raw value of the GPIO line, but it should be the logical
+>> value.
 >
-> When we have a GPIO pin connected to an open-drain network, we want a
-> standard way of specifying this in the device tree.  So we choose bit
-> 1 of the flag field to indicate open drain.
+> I think we have a patch that already does this:
 >
-> A typical use case would be something like:
+> http://www.kernelhub.org/?msg=390263&p=2
 >
->         enum of_gpio_flags f;
->         .
->         .
->         .
->         reset_gpio = of_get_named_gpio_flags(node, "reset", 0, &f);
->         .
->         .
->         .
->         ret = gpio_request_one(reset_gpio,
->                 (f & OF_GPIO_OPEN_DRAIN) ? GPIOF_OPEN_DRAIN : 0,
->                  "reset");
->         .
->         .
->         .
->         gpio_direction_output(reset_gpio, 1);
->         gpio_set_value(reset_gpio, 0);
->         msleep(20);
->         gpio_set_value(reset_gpio, 1);
-
-This is also useful for gpiod_get(). However, while you are at it,
-could you also add a flag for the OF_GPIO_OPEN_SOURCE property? My joy
-would be complete if you could also take the time to update
-of_find_gpio() to pass these new flags back to the caller as it
-already does for OF_GPIO_ACTIVE_LOW.
-
-Then you could even switch your use-case to the gpiod interface and
-not bother with passing these flags by yourself anymore. Just sayin'.
-;)
-
-Thanks,
-Alex.
+> Linus said it would be merged for 3.15, but I am not seeing it in -next. Linus?
+>
+>>
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+>> ---
+>>  drivers/gpio/gpiolib.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> index 4e10b10..111a1f1 100644
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>> @@ -1751,6 +1751,9 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+>>                 return -EINVAL;
+>>         }
+>>
+>> +       if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+>> +               value = !value;
+>> +
+>>         /* GPIOs used for IRQs shall not be set as output */
+>>         if (test_bit(FLAG_USED_AS_IRQ, &desc->flags)) {
+>>                 gpiod_err(desc,
+>> --
+>> 1.8.5.3
+>>
