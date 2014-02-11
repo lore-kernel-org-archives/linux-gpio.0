@@ -1,74 +1,54 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: Correct meaning of the GPIO active low flag
-Date: Tue, 11 Feb 2014 00:21:46 +0100
-Message-ID: <1848152.lIn8ApGfEn@avalon>
-References: <4298328.sSSAEV5F8t@avalon> <3858007.V4FxlF8qeO@avalon> <52F95AFE.4070904@wwwdotorg.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: take in account the active low flag when
+ configuring the gpio as an ouput
+Date: Tue, 11 Feb 2014 13:22:44 +0900
+Message-ID: <CAAVeFuJ6BP4JnVb6qD1DYXqPQ3zBKw8hb+xLqcmUjktOxAjdGA@mail.gmail.com>
+References: <1392044614-6837-1-git-send-email-jjhiblot@traphandler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:42639 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752672AbaBJXUo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Feb 2014 18:20:44 -0500
-In-Reply-To: <52F95AFE.4070904@wwwdotorg.org>
+Received: from mail-vb0-f43.google.com ([209.85.212.43]:41161 "EHLO
+	mail-vb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752180AbaBKEXG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Feb 2014 23:23:06 -0500
+In-Reply-To: <1392044614-6837-1-git-send-email-jjhiblot@traphandler.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, richard.genoud@gmail.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
+On Tue, Feb 11, 2014 at 12:03 AM, Jean-Jacques Hiblot
+<jjhiblot@traphandler.com> wrote:
+> The initial value of the gpio is passed to gpiod_direction_output. Currently
+> this value is the raw value of the GPIO line, but it should be the logical
+> value.
 
-On Monday 10 February 2014 16:04:30 Stephen Warren wrote:
-> On 02/10/2014 10:52 AM, Laurent Pinchart wrote:
-> > On Monday 10 February 2014 09:57:43 Stephen Warren wrote:
-> >> On 02/10/2014 09:56 AM, Stephen Warren wrote:
-> ...
-> 
-> >>> I think the flag should represent the physical level of the signal on
-> >>> the board at the device pin. I'm pretty sure that's what's most
-> >>> consistent with existing DT properties.
-> >> 
-> >> (That would have to be the GPIO source device, in order to account for
-> >> any board-induced inversion)
-> > 
-> > Would that be the physical level at the GPIO source device output to
-> > achieve a high level at the target device input pin, or the physical
-> > level at the GPIO source device output to assert the signal at the target
-> > device input pin ? The first case wouldn't take the receiver device
-> > internal inverter into account while the second case would. In the second
-> > case, how should we handle receiver devices that have configurable signal
-> > polarities (essentially enabling/disabling the internal inverter from a
-> > software-controller configuration) ?
-> 
-> I would expect the flag to represent the physical level that achieves (or
-> represents, for inputs) a logically asserted value at the device.
+I think we have a patch that already does this:
 
-I assume you mean "the physical level at the GPIO controller output".
+http://www.kernelhub.org/?msg=390263&p=2
 
-> I don't think we should make the level flag influence any kind of
-> configurable level within the device; that's a separate orthogonal, but
-> related, concept. It'd be best if the DT binding for the device either
-> (a) provided a separate property to configure that, or (b) picked a
-> single one of the configurable values, and documented that all DTs
-> should assume that value.
+Linus said it would be merged for 3.15, but I am not seeing it in -next. Linus?
 
-Agreed. I've phrased my question incorrectly though.
-
-My concern with devices that have configurable input polarities is that the 
-"physical level [at the GPIO controller output] that achieves (or represents, 
-for inputs) a logically asserted value at the device" depends on runtime 
-configuration of the device, and is thus ill-defined.
-
-We could consider that the flag represents the physical level at the GPIO 
-controller output that achieves (or represents, for inputs) a logically 
-asserted value at the device, for the default configuration of the device. The 
-default configuration of the device would then need to be defined. I'm unsure 
-whether the default configuration should be constant, or could depend on other 
-DT properties.
-
--- 
-Regards,
-
-Laurent Pinchart
-
+>
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+> ---
+>  drivers/gpio/gpiolib.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 4e10b10..111a1f1 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1751,6 +1751,9 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+>                 return -EINVAL;
+>         }
+>
+> +       if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+> +               value = !value;
+> +
+>         /* GPIOs used for IRQs shall not be set as output */
+>         if (test_bit(FLAG_USED_AS_IRQ, &desc->flags)) {
+>                 gpiod_err(desc,
+> --
+> 1.8.5.3
+>
