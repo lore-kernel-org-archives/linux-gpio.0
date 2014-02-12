@@ -1,44 +1,56 @@
-From: Kumar Gala <galak@codeaurora.org>
-Subject: [PATCH] gpio: msm: switch Kconfig to ARCH_QCOM depends
-Date: Tue, 11 Feb 2014 14:22:12 -0600
-Message-ID: <1392150132-21877-1-git-send-email-galak@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Kumar Gala <galak@codeaurora.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2 1/2] of/gpio: Define OF_GPIO_OPEN_DRAIN and
+ OF_GPIO_OPEN_SOURCE flags.
+Date: Wed, 12 Feb 2014 11:20:47 +0900
+Message-ID: <CAAVeFuKxoT-fvhNAqJYdXgwXiw6LbE1ks_upkWjCYee_YtQPnw@mail.gmail.com>
+References: <1392148200-5393-1-git-send-email-ddaney.cavm@gmail.com> <1392148200-5393-2-git-send-email-ddaney.cavm@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:53767 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752175AbaBLCVH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2014 21:21:07 -0500
+In-Reply-To: <1392148200-5393-2-git-send-email-ddaney.cavm@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: David Daney <ddaney.cavm@gmail.com>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Daney <david.daney@cavium.com>
 
-We've split Qualcomm MSM support into legacy and multiplatform.  The gpio
-msm-v2 driver is only relevant on the multiplatform supported SoCs so
-switch the Kconfig depends to ARCH_QCOM.
+On Wed, Feb 12, 2014 at 4:49 AM, David Daney <ddaney.cavm@gmail.com> wrote:
+> From: David Daney <david.daney@cavium.com>
+>
+> When we have a GPIO pin connected to an open-drain network, we want a
+> standard way of specifying this in the device tree.  So we choose bit
+> 1 of the flag field to indicate open drain.
+>
+> A typical use case would be something like:
+>
+>         enum of_gpio_flags f;
+>         .
+>         .
+>         .
+>         reset_gpio = of_get_named_gpio_flags(node, "reset", 0, &f);
+>         .
+>         .
+>         .
+>         ret = gpio_request_one(reset_gpio,
+>                 (f & OF_GPIO_OPEN_DRAIN) ? GPIOF_OPEN_DRAIN : 0,
+>                  "reset");
+>         .
+>         .
+>         .
+>         gpio_direction_output(reset_gpio, 1);
+>         gpio_set_value(reset_gpio, 0);
+>         msleep(20);
+>         gpio_set_value(reset_gpio, 1);
+>         .
+>         .
+>         .
+>
+> Since the same arguments hold for open-source configurations, add a
+> definition for OF_GPIO_OPEN_SOURCE as well.
+>
+> Signed-off-by: David Daney <david.daney@cavium.com>
 
-CC: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Kumar Gala <galak@codeaurora.org>
----
-Linus,
-
-If you can ack this I'll send it via linux-qcom/arm-soc tree's
-
-thanks
-
-- k
-
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 6973387..aa74949 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -192,7 +192,7 @@ config GPIO_MSM_V1
- 
- config GPIO_MSM_V2
- 	tristate "Qualcomm MSM GPIO v2"
--	depends on GPIOLIB && OF && ARCH_MSM
-+	depends on GPIOLIB && OF && ARCH_QCOM
- 	help
- 	  Say yes here to support the GPIO interface on ARM v7 based
- 	  Qualcomm MSM chips.  Most of the pins on the MSM can be
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
