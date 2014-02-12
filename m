@@ -1,73 +1,40 @@
-From: delicious quinoa <delicious.quinoa@gmail.com>
-Subject: Re: [PATCH v11] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Wed, 12 Feb 2014 10:17:02 -0600
-Message-ID: <CANk1AXTnnhSnt_ayJYwDHRth44CWAwmxVA5kkbvnjqW39ssLQg@mail.gmail.com>
-References: <1391724370-30589-1-git-send-email-delicious.quinoa@gmail.com>
-	<CACRpkdYiC=nzVG4_nQuRVSNP9TB4W=3VL9QhBQjmqvLvmP6McA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: take in account the active low flag when
+ configuring the gpio as an ouput
+Date: Wed, 12 Feb 2014 17:20:51 +0100
+Message-ID: <CACRpkdbZ0LJorKN_ydk=8KBkyHToYZVAj7xUCYkU=Agtb4sVrA@mail.gmail.com>
+References: <1392044614-6837-1-git-send-email-jjhiblot@traphandler.com>
+	<CAAVeFuJ6BP4JnVb6qD1DYXqPQ3zBKw8hb+xLqcmUjktOxAjdGA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYiC=nzVG4_nQuRVSNP9TB4W=3VL9QhBQjmqvLvmP6McA@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:37633 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752896AbaBLQUv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Feb 2014 11:20:51 -0500
+Received: by mail-oa0-f53.google.com with SMTP id m1so11166104oag.40
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Feb 2014 08:20:51 -0800 (PST)
+In-Reply-To: <CAAVeFuJ6BP4JnVb6qD1DYXqPQ3zBKw8hb+xLqcmUjktOxAjdGA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Richard Genoud <richard.genoud@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Mon, Feb 10, 2014 at 5:06 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> Hi Alan, this is starting to look good. I's like an ACK from a DT
-> maintainer on the bindings but can't see anything really controversial
-> about them.
+On Tue, Feb 11, 2014 at 5:22 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Tue, Feb 11, 2014 at 12:03 AM, Jean-Jacques Hiblot
+> <jjhiblot@traphandler.com> wrote:
+>> The initial value of the gpio is passed to gpiod_direction_output. Currently
+>> this value is the raw value of the GPIO line, but it should be the logical
+>> value.
 >
-> On Thu, Feb 6, 2014 at 11:06 PM, Alan Tull <delicious.quinoa@gmail.com> wrote:
+> I think we have a patch that already does this:
 >
->> +static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
->> +{
->> +       struct bgpio_chip *bgc = to_bgpio_chip(gc);
->> +       struct dwapb_gpio_port *port = container_of(bgc, struct
->> +                                                   dwapb_gpio_port, bgc);
->> +       struct dwapb_gpio *gpio = port->gpio;
->> +
->> +       return irq_create_mapping(gpio->domain, offset);
->> +}
+> http://www.kernelhub.org/?msg=390263&p=2
 >
-> I think you want to call irq_find_mapping() here. irq_create_mapping()
-> should be called for all valid IRQs on probe() instead.
->
->> +               ct = irq_gc->chip_types;
->> +               ct->chip.irq_ack = irq_gc_ack_set_bit;
->> +               ct->chip.irq_mask = irq_gc_mask_set_bit;
->> +               ct->chip.irq_unmask = irq_gc_mask_clr_bit;
->> +               ct->chip.irq_set_type = dwapb_irq_set_type;
->> +               ct->chip.irq_enable = dwapb_irq_enable;
->> +               ct->chip.irq_disable = dwapb_irq_disable;
->> +               ct->regs.ack = GPIO_PORTA_EOI;
->> +               ct->regs.mask = GPIO_INTMASK;
->
-> Please add .startup() and .shutdown() callbacks marking the
-> respective lines as IRQs, compare to recent patches in the
-> GPIO subsystem such as this:
-> http://marc.info/?l=linux-gpio&m=138546100215235&w=2
->
-> You probably want to call irq_create_mapping() for each
-> valid IRQ after registering the chip in this function.
+> Linus said it would be merged for 3.15, but I am not seeing it in -next. Linus?
 
-Hi Linus,
+I just haven't queued my devel branch for next yet. Will do
+today now that I sent a batch of fixes to Torvalds.
 
-Thanks for the feedback.  I am working on making these changes.  The
-startup/shutdown were easy to add.
-
-I am wondering about the change in usage of
-irq_find_mapping/irq_create_mapping.  It seems like all the GPIO
-drivers that use irq domains do it the way I was doing it (that's
-where I got the idea in the first place): irq_create_mapping is used
-in the to_irq() function.  I guess this is a general direction all the
-other drivers will be encouraged to go in also?
-
-Regards,
-Alan
-
-
->
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
