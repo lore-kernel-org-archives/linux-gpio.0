@@ -1,20 +1,176 @@
-From: 2014 Heritage Foundation Board <sifi.bouaziz@iresa.agrinet.tn>
-Subject: Cash Awaiting Pick Up..
-Date: Wed, 12 Feb 2014 10:13:00 +0100 (CET)
-Message-ID: <a0e7879a-4cf2-4fcf-966b-5fe677b6fbde__25895.4997560524$1392198955$gmane$org@mbox12>
-Reply-To: Mrs Hillary Florence <heritdept@xtra.co.nz>
+From: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: Re: [PATCH 1/2] gpiolib: add gpiochip_get_desc() driver function
+Date: Wed, 12 Feb 2014 10:41:43 +0100
+Message-ID: <CACh+v5PC+uAPTOPRO2Nf0v-cCwb-e3K731vaL+8xZdMC5zF_Bg@mail.gmail.com>
+References: <1391935435-29002-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from agrinetmail21.outgw.tn ([196.203.250.101]:50495 "EHLO
-	agrinetmail21.outgw.tn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932AbaBLJyl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Feb 2014 04:54:41 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1391935435-29002-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Alexandre,
 
+2014-02-09 9:43 GMT+01:00 Alexandre Courbot <acourbot@nvidia.com>:
+> Some drivers dealing with a gpio_chip might need to act on its
+> descriptors directly; one example is pinctrl drivers that need to lock a
+> GPIO for being used as IRQ using gpiod_lock_as_irq().
+>
+> This patch exports a gpiochip_get_desc() function that returns the
+> GPIO descriptor at the requested index. It also sweeps the
+> gpio_to_chip() function out of the consumer interface since any holder
+> of a gpio_chip reference can manipulate its GPIOs way beyond what a
+> consumer should be allowed to do.
+>
+> As a result, gpio_chip is not visible anymore to simple GPIO consumers.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> Jean-Jacques, I think you will want to use this function for locking GPIOs
+> in the AT91 pinctrl driver. Mika, we talked about this a while ago already,
+> but here it is finally. Next patch uses it in the GPIO ACPI driver.
+Thanks for the feature. At the moment though I'm still using the
+wrapper gpio_lock_as_irq().
 
-This is to re-notify you that you have $500,000.00 waiting for pick-up at Money Gram, Contact 
-Mrs Hillary Florence via email : heritdept@xtra.co.nz for claims.
+Reviewed-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+
+>
+>  drivers/gpio/gpiolib.c        | 17 +++++++++--------
+>  include/linux/gpio/consumer.h |  8 --------
+>  include/linux/gpio/driver.h   | 18 ++++++++++++++++++
+>  3 files changed, 27 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 50c4922..f60d74b 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -164,16 +164,17 @@ struct gpio_desc *gpio_to_desc(unsigned gpio)
+>  EXPORT_SYMBOL_GPL(gpio_to_desc);
+>
+>  /**
+> - * Convert an offset on a certain chip to a corresponding descriptor
+> + * Get the GPIO descriptor corresponding to the given hw number for this chip.
+>   */
+> -static struct gpio_desc *gpiochip_offset_to_desc(struct gpio_chip *chip,
+> -                                                unsigned int offset)
+> +struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
+> +                                   u16 hwnum)
+>  {
+> -       if (offset >= chip->ngpio)
+> +       if (hwnum >= chip->ngpio)
+>                 return ERR_PTR(-EINVAL);
+>
+> -       return &chip->desc[offset];
+> +       return &chip->desc[hwnum];
+>  }
+> +EXPORT_SYMBOL_GPL(gpiochip_get_desc);
+>
+>  /**
+>   * Convert a GPIO descriptor to the integer namespace.
+> @@ -2161,7 +2162,7 @@ EXPORT_SYMBOL_GPL(gpiod_lock_as_irq);
+>
+>  int gpio_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
+>  {
+> -       return gpiod_lock_as_irq(gpiochip_offset_to_desc(chip, offset));
+> +       return gpiod_lock_as_irq(gpiochip_get_desc(chip, offset));
+>  }
+>  EXPORT_SYMBOL_GPL(gpio_lock_as_irq);
+>
+> @@ -2183,7 +2184,7 @@ EXPORT_SYMBOL_GPL(gpiod_unlock_as_irq);
+>
+>  void gpio_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
+>  {
+> -       return gpiod_unlock_as_irq(gpiochip_offset_to_desc(chip, offset));
+> +       return gpiod_unlock_as_irq(gpiochip_get_desc(chip, offset));
+>  }
+>  EXPORT_SYMBOL_GPL(gpio_unlock_as_irq);
+>
+> @@ -2404,7 +2405,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>                         return ERR_PTR(-EINVAL);
+>                 }
+>
+> -               desc = gpiochip_offset_to_desc(chip, p->chip_hwnum);
+> +               desc = gpiochip_get_desc(chip, p->chip_hwnum);
+>                 *flags = p->flags;
+>
+>                 return desc;
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> index 7a8144f..f6a9cc3 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -5,7 +5,6 @@
+>  #include <linux/kernel.h>
+>
+>  struct device;
+> -struct gpio_chip;
+>
+>  /**
+>   * Opaque descriptor for a GPIO. These are obtained using gpiod_get() and are
+> @@ -59,7 +58,6 @@ int gpiod_to_irq(const struct gpio_desc *desc);
+>  /* Convert between the old gpio_ and new gpiod_ interfaces */
+>  struct gpio_desc *gpio_to_desc(unsigned gpio);
+>  int desc_to_gpio(const struct gpio_desc *desc);
+> -struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
+>
+>  #else /* CONFIG_GPIOLIB */
+>
+> @@ -207,12 +205,6 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
+>         WARN_ON(1);
+>         return -EINVAL;
+>  }
+> -static inline struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc)
+> -{
+> -       /* GPIO can never have been requested */
+> -       WARN_ON(1);
+> -       return ERR_PTR(-ENODEV);
+> -}
+>
+>
+>  #endif /* CONFIG_GPIOLIB */
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index a3e181e..9fe2836 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -10,6 +10,8 @@ struct of_phandle_args;
+>  struct device_node;
+>  struct seq_file;
+>
+> +#ifdef CONFIG_GPIOLIB
+> +
+>  /**
+>   * struct gpio_chip - abstract a GPIO controller
+>   * @label: for diagnostics
+> @@ -129,6 +131,11 @@ extern struct gpio_chip *gpiochip_find(void *data,
+>  int gpiod_lock_as_irq(struct gpio_desc *desc);
+>  void gpiod_unlock_as_irq(struct gpio_desc *desc);
+>
+> +struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
+> +
+> +struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
+> +                                   u16 hwnum);
+> +
+>  enum gpio_lookup_flags {
+>         GPIO_ACTIVE_HIGH = (0 << 0),
+>         GPIO_ACTIVE_LOW = (1 << 0),
+> @@ -183,4 +190,15 @@ struct gpiod_lookup_table {
+>
+>  void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
+>
+> +#else /* CONFIG_GPIOLIB */
+> +
+> +static inline struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc)
+> +{
+> +       /* GPIO can never have been requested */
+> +       WARN_ON(1);
+> +       return ERR_PTR(-ENODEV);
+> +}
+> +
+> +#endif /* CONFIG_GPIOLIB */
+> +
+>  #endif
+> --
+> 1.8.5.4
+>
