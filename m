@@ -1,80 +1,42 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: Correct meaning of the GPIO active low flag
-Date: Wed, 12 Feb 2014 09:50:37 -0700
-Message-ID: <52FBA65D.8060405@wwwdotorg.org>
-References: <4298328.sSSAEV5F8t@avalon> <3858007.V4FxlF8qeO@avalon> <52F95AFE.4070904@wwwdotorg.org> <1848152.lIn8ApGfEn@avalon>
+From: Graeme Smecher <gsmecher@threespeedlogic.com>
+Subject: Re: [PATCH 1/3] gpio: pca953x: Add devices to Kconfig help
+Date: Wed, 12 Feb 2014 09:06:29 -0800
+Message-ID: <52FBAA15.80709@threespeedlogic.com>
+References: <972232456.119003.1391812066467.JavaMail.zimbra@xes-inc.com> <1550736903.119527.1391812548072.JavaMail.zimbra@xes-inc.com> <CACRpkdYbeeDi_xRudyyCmi2WLie_jpvhHLKGz5Jbr0a8T1rYLg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:46431 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752589AbaBLQuk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Feb 2014 11:50:40 -0500
-In-Reply-To: <1848152.lIn8ApGfEn@avalon>
+Received: from threespeedlogic.com ([75.98.167.93]:50503 "EHLO
+	threespeedlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751492AbaBLRaJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Feb 2014 12:30:09 -0500
+In-Reply-To: <CACRpkdYbeeDi_xRudyyCmi2WLie_jpvhHLKGz5Jbr0a8T1rYLg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Aaron Sierra <asierra@xes-inc.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 02/10/2014 04:21 PM, Laurent Pinchart wrote:
-> Hi Stephen,
-> 
-> On Monday 10 February 2014 16:04:30 Stephen Warren wrote:
->> On 02/10/2014 10:52 AM, Laurent Pinchart wrote:
->>> On Monday 10 February 2014 09:57:43 Stephen Warren wrote:
->>>> On 02/10/2014 09:56 AM, Stephen Warren wrote:
->> ...
+Hi all,
+
+On 12/02/14 07:21 AM, Linus Walleij wrote:
+> On Fri, Feb 7, 2014 at 11:35 PM, Aaron Sierra <asierra@xes-inc.com> wrote:
+>
+>> The pca953x driver supports tca6424 (24-bit) and pca9505 (40-bit)
+>> devices. They were the only supported devices not mentioned in the
+>> Kconfig help.
 >>
->>>>> I think the flag should represent the physical level of the signal on
->>>>> the board at the device pin. I'm pretty sure that's what's most
->>>>> consistent with existing DT properties.
->>>>
->>>> (That would have to be the GPIO source device, in order to account for
->>>> any board-induced inversion)
->>>
->>> Would that be the physical level at the GPIO source device output to
->>> achieve a high level at the target device input pin, or the physical
->>> level at the GPIO source device output to assert the signal at the target
->>> device input pin ? The first case wouldn't take the receiver device
->>> internal inverter into account while the second case would. In the second
->>> case, how should we handle receiver devices that have configurable signal
->>> polarities (essentially enabling/disabling the internal inverter from a
->>> software-controller configuration) ?
->>
->> I would expect the flag to represent the physical level that achieves (or
->> represents, for inputs) a logically asserted value at the device.
-> 
-> I assume you mean "the physical level at the GPIO controller output".
+>> Signed-off-by: Aaron Sierra <asierra@xes-inc.com>
+> Can I get some help from the previous pca953x contributors
+> to have a look at these new patches? An ACK or similar
+> would be nice.
 
-Yes.
+I've had a quick glance at the relevant datasheets and don't see any 
+problems. The XRA1202 (added by patch) is explicitly compatible with the 
+PCA9538 (already supported), and the datasheets for the PCA9698 (added 
+by patch) and the PCA9505 (already supported) can be read side-by-side.
 
->> I don't think we should make the level flag influence any kind of
->> configurable level within the device; that's a separate orthogonal, but
->> related, concept. It'd be best if the DT binding for the device either
->> (a) provided a separate property to configure that, or (b) picked a
->> single one of the configurable values, and documented that all DTs
->> should assume that value.
-> 
-> Agreed. I've phrased my question incorrectly though.
-> 
-> My concern with devices that have configurable input polarities is that the 
+Acked-by: Graeme Smecher <gsmecher@threespeedlogic.com>
 
-s/input/output/ I assume?
-
-> "physical level [at the GPIO controller output] that achieves (or represents, 
-> for inputs) a logically asserted value at the device" depends on runtime 
-> configuration of the device, and is thus ill-defined.
-
-I think for DT, we can define what the runtime state must be, as I
-mentioned above.
-
-> We could consider that the flag represents the physical level at the GPIO 
-> controller output that achieves (or represents, for inputs) a logically 
-> asserted value at the device, for the default configuration of the device. The 
-> default configuration of the device would then need to be defined. I'm unsure 
-> whether the default configuration should be constant, or could depend on other 
-> DT properties.
-
-Either would work, so long as the exact meaning of the DT content was
-well-defined, and statically defined.
+cheers,
+Graeme
