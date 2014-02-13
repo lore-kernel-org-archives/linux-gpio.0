@@ -1,44 +1,59 @@
-From: Markus Mayer <markus.mayer@linaro.org>
-Subject: =?UTF-8?q?=5BPATCH=5D=20MAINTAINERS=3A=20Add=20Broadcom=20GPIO=20maintainer?=
-Date: Wed, 12 Feb 2014 15:42:27 -0800
-Message-ID: <1392248547-11627-1-git-send-email-markus.mayer@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 6/6] gpio: ich: Add support for Intel Avoton
+Date: Thu, 13 Feb 2014 11:12:34 +0000
+Message-ID: <20140213111234.GJ32508@lee--X1>
+References: <1391779267-27084-1-git-send-email-vdonnefort@lacie.com>
+ <1391779267-27084-6-git-send-email-vdonnefort@lacie.com>
+ <CACRpkdYBEC=C+KjZAn30wU92rRnVCFyO_5CYr_3=7GdAV2AE6w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Daudt <bcm@fixthebug.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-we0-f182.google.com ([74.125.82.182]:56607 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751854AbaBMLMl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Feb 2014 06:12:41 -0500
+Received: by mail-we0-f182.google.com with SMTP id u57so7179550wes.41
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Feb 2014 03:12:40 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYBEC=C+KjZAn30wU92rRnVCFyO_5CYr_3=7GdAV2AE6w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Vincent Donnefort <vdonnefort@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-List myself as maintainer for Broadcom's Kona GPIO driver.
+> > From: Vincent Donnefort <vdonnefort@gmail.com>
+> >
+> > This patch adds support for Atom C2000 series (Avoton and Rangeley)=
+=2E And has
+> > the following options:
+> >   - New addresses register.
+> >   - Caching output levels (see Intel external design spec, table 48=
+-29)
+> >   - No hardware blink.
+> >
+> > Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
+>=20
+> I need patches 1+2 to be merged first for this to work (apart from
+> that it's OK).
+>=20
+> Can you try to obtain ACKs from Lee or Sam on the MFD portions?
 
-Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
----
+I have no idea where these are.
 
-Does that look like a reasonable way to make this change? I added the
-entry alphabetically in the BROADCOM section.
+Vincent, when you send patch-sets it makes the patches much easier to
+track if they are shallow-threaded.
 
- MAINTAINERS |    7 +++++++
- 1 file changed, 7 insertions(+)
+Please see git send-email options:
+  `--[no-]thread`
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b2cf5cf..896cf2b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1909,6 +1909,13 @@ L:	linux-scsi@vger.kernel.org
- S:	Supported
- F:	drivers/scsi/bnx2i/
-=20
-+BROADCOM KONA GPIO DRIVER
-+M:	Markus Mayer <markus.mayer@linaro.org>
-+L:	bcm-kernel-feedback-list@broadcom.com
-+S:	Supported
-+F:	drivers/gpio/gpio-bcm-kona.c
-+F:	Documentation/devicetree/bindings/gpio/gpio-bcm-kona.txt
-+
- BROADCOM SPECIFIC AMBA DRIVER (BCMA)
- M:	Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
- L:	linux-wireless@vger.kernel.org
 --=20
-1.7.9.5
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
