@@ -1,33 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gpio: pca953x: Add devices to Kconfig help
-Date: Thu, 13 Feb 2014 13:58:25 +0100
-Message-ID: <CACRpkdYKNJHD4Y8YwZWe5RXeyDEpZtP6+gOyY0LvL2ijnWDehQ@mail.gmail.com>
-References: <972232456.119003.1391812066467.JavaMail.zimbra@xes-inc.com>
-	<1550736903.119527.1391812548072.JavaMail.zimbra@xes-inc.com>
+Subject: Re: [PATCH 2/3] gpio: pca953x: Add NXP PCA9698
+Date: Thu, 13 Feb 2014 14:01:28 +0100
+Message-ID: <CACRpkdaC5YZ6uZdYdMY2dyYfU=CEF3m=_XsgxmHwOJqpyZW0HQ@mail.gmail.com>
+References: <1523732022.119053.1391812099611.JavaMail.zimbra@xes-inc.com>
+	<1709957220.119585.1391812563657.JavaMail.zimbra@xes-inc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:50856 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753257AbaBMM6Z (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Feb 2014 07:58:25 -0500
-Received: by mail-ob0-f176.google.com with SMTP id gq1so12114316obb.35
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Feb 2014 04:58:25 -0800 (PST)
-In-Reply-To: <1550736903.119527.1391812548072.JavaMail.zimbra@xes-inc.com>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:41471 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752760AbaBMNB2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Feb 2014 08:01:28 -0500
+Received: by mail-ob0-f175.google.com with SMTP id wn1so12021272obc.6
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Feb 2014 05:01:28 -0800 (PST)
+In-Reply-To: <1709957220.119585.1391812563657.JavaMail.zimbra@xes-inc.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Aaron Sierra <asierra@xes-inc.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Balaji Venkatachalam <balaji.v@thotakaa.com>
 
-On Fri, Feb 7, 2014 at 11:35 PM, Aaron Sierra <asierra@xes-inc.com> wrote:
+On Fri, Feb 7, 2014 at 11:36 PM, Aaron Sierra <asierra@xes-inc.com> wrote:
 
-> The pca953x driver supports tca6424 (24-bit) and pca9505 (40-bit)
-> devices. They were the only supported devices not mentioned in the
-> Kconfig help.
+> Add the NXP PCA9698 40-bit GPIO expander to the supported list.
+> Note: This only enables GPIO functionality.
 >
+> Tested-by: Bob Schmitz <bschmitz@xes-inc.com>
 > Signed-off-by: Aaron Sierra <asierra@xes-inc.com>
 
 Patch applied with Graeme's ACK.
+
+> @@ -812,6 +813,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
+>         { .compatible = "nxp,pca9557", },
+>         { .compatible = "nxp,pca9574", },
+>         { .compatible = "nxp,pca9575", },
+> +       { .compatible = "nxp,pca9698", },
+
+Hm noone has written any devicetree binding doc for the pca
+GPIO block, feel free to do that in a separate patch when you
+have time or get bored...
 
 Yours,
 Linus Walleij
