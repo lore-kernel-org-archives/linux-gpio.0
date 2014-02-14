@@ -1,55 +1,60 @@
-From: Vincent Donnefort <vdonnefort@gmail.com>
-Subject: [RESEND 1/6] mfd: lpc_ich: Convert ICH GPIOs IDs to enum
-Date: Fri, 14 Feb 2014 15:01:53 +0100
-Message-ID: <1392386518-11025-2-git-send-email-vdonnefort@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND 0/6] Intel Atom C2000 series GPIO support
+Date: Fri, 14 Feb 2014 14:27:34 +0000
+Message-ID: <20140214142734.GE13293@lee--X1>
 References: <1392386518-11025-1-git-send-email-vdonnefort@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:35507 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752673AbaBNOCC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Feb 2014 09:02:02 -0500
-Received: by mail-wg0-f47.google.com with SMTP id k14so412665wgh.26
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Feb 2014 06:02:01 -0800 (PST)
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:34077 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751199AbaBNO1k (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Feb 2014 09:27:40 -0500
+Received: by mail-wg0-f45.google.com with SMTP id l18so434604wgh.0
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Feb 2014 06:27:39 -0800 (PST)
+Content-Disposition: inline
 In-Reply-To: <1392386518-11025-1-git-send-email-vdonnefort@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, sameo@linux.intel.com, asierra@xes-inc.com, lee.jones@linaro.org, Vincent Donnefort <vdonnefort@gmail.com>
+To: Vincent Donnefort <vdonnefort@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, sameo@linux.intel.com, asierra@xes-inc.com
 
-All those IDs are arbitrary and so can be encapsulated into an enumeration.
+> This patch set is a resend which adds Lee Jones, MFD maintainer into =
+the
+> thread and Aaron Sierra lpc_ich author, forgotten during the first se=
+nd.
+>=20
+> The purpose of this patch-set is to add support for GPIOs found on th=
+e Intel
+> Atom C2000 series (Avoton/Rangeley)
+>=20
+> Vincent Donnefort (6):
+>   mfd: lpc_ich: Convert ICH GPIOs IDs to enum
+>   mfd: lpc_ich: Add support for Intel Avoton GPIOs
+>   gpio: ich: Add blink capability option
+>   gpio: ich: Add support for multiple register addresses
+>   gpio: ich: Add output levels cache support
+>   gpio: ich: Add support for Intel Avoton
+>=20
+>  drivers/gpio/gpio-ich.c     | 96 +++++++++++++++++++++++++++++++++++=
++++-------
+>  drivers/mfd/lpc_ich.c       |  1 +
+>  include/linux/mfd/lpc_ich.h | 17 ++++----
+>  3 files changed, 93 insertions(+), 21 deletions(-)
 
-Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
----
- include/linux/mfd/lpc_ich.h | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+I'm fine with the MFD patches in this set.
 
-diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
-index 3e1df64..293b062 100644
---- a/include/linux/mfd/lpc_ich.h
-+++ b/include/linux/mfd/lpc_ich.h
-@@ -31,13 +31,15 @@
- #define ICH_RES_GPE0	1
- 
- /* GPIO compatibility */
--#define ICH_I3100_GPIO		0x401
--#define ICH_V5_GPIO		0x501
--#define ICH_V6_GPIO		0x601
--#define ICH_V7_GPIO		0x701
--#define ICH_V9_GPIO		0x801
--#define ICH_V10CORP_GPIO	0xa01
--#define ICH_V10CONS_GPIO	0xa11
-+enum {
-+	ICH_I3100_GPIO,
-+	ICH_V5_GPIO,
-+	ICH_V6_GPIO,
-+	ICH_V7_GPIO,
-+	ICH_V9_GPIO,
-+	ICH_V10CORP_GPIO,
-+	ICH_V10CONS_GPIO,
-+};
- 
- struct lpc_ich_info {
- 	char name[32];
--- 
-1.8.3.2
+Linus,
+  Do you want me to create an immutable branch for you to pull from?
 
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
