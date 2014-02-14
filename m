@@ -1,60 +1,52 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND 0/6] Intel Atom C2000 series GPIO support
-Date: Fri, 14 Feb 2014 14:27:34 +0000
-Message-ID: <20140214142734.GE13293@lee--X1>
-References: <1392386518-11025-1-git-send-email-vdonnefort@gmail.com>
+From: "Dr.William Davies" <purchase@veltechuniv.edu.in>
+Subject: Re: Instructions to release your payment.
+Date: Fri, 14 Feb 2014 18:06:49 +0530
+Message-ID: <05850bfa675129882bc42edd957194c7__14193.0848978975$1392389488$gmane$org@127.0.0.1>
+Reply-To: williamdavies54@yahoo.co.uk
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:34077 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751199AbaBNO1k (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Feb 2014 09:27:40 -0500
-Received: by mail-wg0-f45.google.com with SMTP id l18so434604wgh.0
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Feb 2014 06:27:39 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1392386518-11025-1-git-send-email-vdonnefort@gmail.com>
+Received: from webmail.veltechuniv.edu.in ([202.71.145.3]:57988 "EHLO
+	server.veltechuniv.edu.in" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751065AbaBNOul (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 14 Feb 2014 09:50:41 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vincent Donnefort <vdonnefort@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, sameo@linux.intel.com, asierra@xes-inc.com
 
-> This patch set is a resend which adds Lee Jones, MFD maintainer into =
-the
-> thread and Aaron Sierra lpc_ich author, forgotten during the first se=
-nd.
->=20
-> The purpose of this patch-set is to add support for GPIOs found on th=
-e Intel
-> Atom C2000 series (Avoton/Rangeley)
->=20
-> Vincent Donnefort (6):
->   mfd: lpc_ich: Convert ICH GPIOs IDs to enum
->   mfd: lpc_ich: Add support for Intel Avoton GPIOs
->   gpio: ich: Add blink capability option
->   gpio: ich: Add support for multiple register addresses
->   gpio: ich: Add output levels cache support
->   gpio: ich: Add support for Intel Avoton
->=20
->  drivers/gpio/gpio-ich.c     | 96 +++++++++++++++++++++++++++++++++++=
-+++-------
->  drivers/mfd/lpc_ich.c       |  1 +
->  include/linux/mfd/lpc_ich.h | 17 ++++----
->  3 files changed, 93 insertions(+), 21 deletions(-)
+Attention
 
-I'm fine with the MFD patches in this set.
+Sir,
 
-Linus,
-  Do you want me to create an immutable branch for you to pull from?
+Following an application brought, seeking the release of your due payment
+through British bank, I am directed to inform you that the application has
+been approved and Natwest bank of London has been mandated to make transfer
+of your payment to the bank account you will nominate. Please kindly reply
+for immediate release of your US$6.2 Million to you nominates account.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sir, for the avoidance of doubts, reconfirm the following information to
+me to enable us forward same to Natwest bank to contact you for your
+payment.
+
+Name:
+
+Address:
+
+Tel/Fax No.:
+
+Nationality:
+
+Occupation:
+
+Date of birth: 
+
+As soon as I received the above information, I will forward them to
+Natwest bank to contact you for your approved payment. Please see in the
+attachment, letter I wrote to Natwest bank informing them of the
+transaction
+
+Yours faithfully
+
+Dr.William Davies
+Chairman,British Banking Regulatory Board.
