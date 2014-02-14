@@ -1,93 +1,46 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: Correct meaning of the GPIO active low flag
-Date: Thu, 13 Feb 2014 09:49:57 -0700
-Message-ID: <52FCF7B5.3090308@wwwdotorg.org>
-References: <4298328.sSSAEV5F8t@avalon> <1848152.lIn8ApGfEn@avalon> <52FBA65D.8060405@wwwdotorg.org> <7178755.iaUGSV8r4q@avalon>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH 2/2] gpio-ts5500: Add dependency
+Date: Fri, 14 Feb 2014 11:32:14 +0100
+Message-ID: <20140214113214.70ed0b65@endymion.delvare>
+References: <20140214112824.27b98f1d@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:45813 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751820AbaBMQuA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Feb 2014 11:50:00 -0500
-In-Reply-To: <7178755.iaUGSV8r4q@avalon>
+Received: from cantor2.suse.de ([195.135.220.15]:52422 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751517AbaBNKcT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 14 Feb 2014 05:32:19 -0500
+In-Reply-To: <20140214112824.27b98f1d@endymion.delvare>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
 
-On 02/13/2014 07:43 AM, Laurent Pinchart wrote:
-> Hi Stephen,
-> 
-> On Wednesday 12 February 2014 09:50:37 Stephen Warren wrote:
->> On 02/10/2014 04:21 PM, Laurent Pinchart wrote:
->>> On Monday 10 February 2014 16:04:30 Stephen Warren wrote:
->>>> On 02/10/2014 10:52 AM, Laurent Pinchart wrote:
->>>>> On Monday 10 February 2014 09:57:43 Stephen Warren wrote:
->>>>>> On 02/10/2014 09:56 AM, Stephen Warren wrote:
->>>> ...
->>>>
->>>>>>> I think the flag should represent the physical level of the signal on
->>>>>>> the board at the device pin. I'm pretty sure that's what's most
->>>>>>> consistent with existing DT properties.
->>>>>>
->>>>>> (That would have to be the GPIO source device, in order to account for
->>>>>> any board-induced inversion)
->>>>>
->>>>> Would that be the physical level at the GPIO source device output to
->>>>> achieve a high level at the target device input pin, or the physical
->>>>> level at the GPIO source device output to assert the signal at the
->>>>> target device input pin ? The first case wouldn't take the receiver
->>>>> device internal inverter into account while the second case would. In
->>>>> the second case, how should we handle receiver devices that have
->>>>> configurable signal polarities (essentially enabling/disabling the
->>>>> internal inverter from a software-controller configuration) ?
->>>>
->>>> I would expect the flag to represent the physical level that achieves (or
->>>> represents, for inputs) a logically asserted value at the device.
->>>
->>> I assume you mean "the physical level at the GPIO controller output".
->>
->> Yes.
->>
->>>> I don't think we should make the level flag influence any kind of
->>>> configurable level within the device; that's a separate orthogonal, but
->>>> related, concept. It'd be best if the DT binding for the device either
->>>> (a) provided a separate property to configure that, or (b) picked a
->>>> single one of the configurable values, and documented that all DTs
->>>> should assume that value.
->>>
->>> Agreed. I've phrased my question incorrectly though.
->>>
->>> My concern with devices that have configurable input polarities is that
->>> the
->>
->> s/input/output/ I assume?
-> 
-> No, I mean input.
+There is no point in displaying the TS5500-specific driver entries if
+TS5500 board support itself isn't enabled.
 
-OK, I guess I was thinking about GPIO inputs then; the same discussion
-applies in reverse.
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+---
+Note: a similar patch was sent for the TS5500-specific MTD driver.
 
-> Think about video vertical/horizontal sync inputs, they 
-> usually have configurable polarities on the receiver side. In that case the 
-> physical level at the GPIO controller output that achieves a logically 
-> asserted value at the device depends on how the device is configured at 
-> runtime.
+ drivers/gpio/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-Sure.
+--- linux-3.14-rc2.orig/drivers/gpio/Kconfig	2014-02-14 11:21:15.116363700 +0100
++++ linux-3.14-rc2/drivers/gpio/Kconfig	2014-02-14 11:21:51.126174491 +0100
+@@ -277,6 +277,7 @@ config GPIO_STA2X11
+ 
+ config GPIO_TS5500
+ 	tristate "TS-5500 DIO blocks and compatibles"
++	depends on TS5500 || COMPILE_TEST
+ 	help
+ 	  This driver supports Digital I/O exposed by pin blocks found on some
+ 	  Technologic Systems platforms. It includes, but is not limited to, 3
 
-I think the GPIO specifier should specify the signal polarity required
-to get a logically asserted signal to the device. If the device can be
-configured to accept different signal polarities as logically asserted,
-then that must indeed be a separate DT property to the GPIO specifier,
-since the GPIO specifier's format and semantics are only meaningful (and
-parsable/interpretable) to the GPIO controller, and not the GPIO consumer.
-
-Similarly, for inputs to the GPIO controller, the GPIO specifier should
-specify the value at the GPIO controller too, and any configuration of
-the output polarity of the device should be a separate property of that
-device.
-
-The same argument applies to IRQs.
+-- 
+Jean Delvare
+Suse L3 Support
