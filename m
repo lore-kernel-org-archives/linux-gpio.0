@@ -1,46 +1,38 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH 2/2] gpio-ts5500: Add dependency
-Date: Fri, 14 Feb 2014 11:32:14 +0100
-Message-ID: <20140214113214.70ed0b65@endymion.delvare>
-References: <20140214112824.27b98f1d@endymion.delvare>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Vincent Donnefort <vdonnefort@gmail.com>
+Subject: [RESEND 0/6] Intel Atom C2000 series GPIO support
+Date: Fri, 14 Feb 2014 15:01:52 +0100
+Message-ID: <1392386518-11025-1-git-send-email-vdonnefort@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:52422 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751517AbaBNKcT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 14 Feb 2014 05:32:19 -0500
-In-Reply-To: <20140214112824.27b98f1d@endymion.delvare>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:55320 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752529AbaBNOCB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Feb 2014 09:02:01 -0500
+Received: by mail-we0-f179.google.com with SMTP id q58so8889442wes.10
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Feb 2014 06:02:00 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Cc: linus.walleij@linaro.org, sameo@linux.intel.com, asierra@xes-inc.com, lee.jones@linaro.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-There is no point in displaying the TS5500-specific driver entries if
-TS5500 board support itself isn't enabled.
+This patch set is a resend which adds Lee Jones, MFD maintainer into the
+thread and Aaron Sierra lpc_ich author, forgotten during the first send.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
----
-Note: a similar patch was sent for the TS5500-specific MTD driver.
+The purpose of this patch-set is to add support for GPIOs found on the Intel
+Atom C2000 series (Avoton/Rangeley)
 
- drivers/gpio/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Vincent Donnefort (6):
+  mfd: lpc_ich: Convert ICH GPIOs IDs to enum
+  mfd: lpc_ich: Add support for Intel Avoton GPIOs
+  gpio: ich: Add blink capability option
+  gpio: ich: Add support for multiple register addresses
+  gpio: ich: Add output levels cache support
+  gpio: ich: Add support for Intel Avoton
 
---- linux-3.14-rc2.orig/drivers/gpio/Kconfig	2014-02-14 11:21:15.116363700 +0100
-+++ linux-3.14-rc2/drivers/gpio/Kconfig	2014-02-14 11:21:51.126174491 +0100
-@@ -277,6 +277,7 @@ config GPIO_STA2X11
- 
- config GPIO_TS5500
- 	tristate "TS-5500 DIO blocks and compatibles"
-+	depends on TS5500 || COMPILE_TEST
- 	help
- 	  This driver supports Digital I/O exposed by pin blocks found on some
- 	  Technologic Systems platforms. It includes, but is not limited to, 3
+ drivers/gpio/gpio-ich.c     | 96 ++++++++++++++++++++++++++++++++++++++-------
+ drivers/mfd/lpc_ich.c       |  1 +
+ include/linux/mfd/lpc_ich.h | 17 ++++----
+ 3 files changed, 93 insertions(+), 21 deletions(-)
 
 -- 
-Jean Delvare
-Suse L3 Support
+1.8.3.2
+
