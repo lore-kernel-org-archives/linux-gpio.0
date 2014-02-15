@@ -1,48 +1,71 @@
-From: Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH] gpio: twl4030: Remove redundant assignment
-Date: Sat, 15 Feb 2014 17:34:37 +0400
-Message-ID: <1392471277-16981-1-git-send-email-shc_work@mail.ru>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 2/2] input: adp5588-keys: get value from data out when
+ dir is out
+Date: Sat, 15 Feb 2014 13:14:04 -0800
+Message-ID: <20140215211404.GA5373@core.coreip.homeip.net>
+References: <1392051929-32290-1-git-send-email-jeff.dagenais@gmail.com>
+ <1392051929-32290-2-git-send-email-jeff.dagenais@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp50.i.mail.ru ([94.100.177.110]:53544 "EHLO smtp50.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752468AbaBONem (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 15 Feb 2014 08:34:42 -0500
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:35709 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751660AbaBOVOI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 15 Feb 2014 16:14:08 -0500
+Content-Disposition: inline
+In-Reply-To: <1392051929-32290-2-git-send-email-jeff.dagenais@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Alexander Shiyan <shc_work@mail.ru>
+To: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
+Cc: michael.hennerich@analog.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org
 
-Variable "status" is never used, so remove it.
+On Mon, Feb 10, 2014 at 12:05:29PM -0500, Jean-Francois Dagenais wrote:
+> As discussed here: http://ez.analog.com/message/35852,
+> the 5587 revC and 5588 revB spec sheets contain a mistake
+> in the GPIO_DAT_STATx register description.
+> 
+> According to R.Shnell at ADI, as well as my own
+> observations, it should read:
+> "GPIO data status (shows GPIO state when read for inputs)".
+> 
+> This commit changes the get value function accordingly.
+> 
+> Signed-off-by: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
 
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
----
- drivers/gpio/gpio-twl4030.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
-index 8b88ca2..fa15beb 100644
---- a/drivers/gpio/gpio-twl4030.c
-+++ b/drivers/gpio/gpio-twl4030.c
-@@ -139,7 +139,6 @@ static u8 cached_leden;
- static void twl4030_led_set_value(int led, int value)
- {
- 	u8 mask = LEDEN_LEDAON | LEDEN_LEDAPWM;
--	int status;
- 
- 	if (led)
- 		mask <<= 1;
-@@ -148,8 +147,9 @@ static void twl4030_led_set_value(int led, int value)
- 		cached_leden &= ~mask;
- 	else
- 		cached_leden |= mask;
--	status = twl_i2c_write_u8(TWL4030_MODULE_LED, cached_leden,
--				  TWL4030_LED_LEDEN_REG);
-+
-+	twl_i2c_write_u8(TWL4030_MODULE_LED, cached_leden,
-+			 TWL4030_LED_LEDEN_REG);
- }
- 
- static int twl4030_set_gpio_direction(int gpio, int is_input)
+Applied, thank you.
+
+> ---
+>  drivers/input/keyboard/adp5588-keys.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
+> index bb3b57b..5ef7fcf 100644
+> --- a/drivers/input/keyboard/adp5588-keys.c
+> +++ b/drivers/input/keyboard/adp5588-keys.c
+> @@ -76,8 +76,18 @@ static int adp5588_gpio_get_value(struct gpio_chip *chip, unsigned off)
+>  	struct adp5588_kpad *kpad = container_of(chip, struct adp5588_kpad, gc);
+>  	unsigned int bank = ADP5588_BANK(kpad->gpiomap[off]);
+>  	unsigned int bit = ADP5588_BIT(kpad->gpiomap[off]);
+> +	int val;
+>  
+> -	return !!(adp5588_read(kpad->client, GPIO_DAT_STAT1 + bank) & bit);
+> +	mutex_lock(&kpad->gpio_lock);
+> +
+> +	if (kpad->dir[bank] & bit)
+> +		val = kpad->dat_out[bank];
+> +	else
+> +		val = adp5588_read(kpad->client, GPIO_DAT_STAT1 + bank);
+> +
+> +	mutex_unlock(&kpad->gpio_lock);
+> +
+> +	return !!(val & bit);
+>  }
+>  
+>  static void adp5588_gpio_set_value(struct gpio_chip *chip,
+> -- 
+> 1.8.5.3
+> 
+
 -- 
-1.8.3.2
-
+Dmitry
