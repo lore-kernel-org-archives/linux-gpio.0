@@ -1,71 +1,50 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 2/2] input: adp5588-keys: get value from data out when
- dir is out
-Date: Sat, 15 Feb 2014 13:14:04 -0800
-Message-ID: <20140215211404.GA5373@core.coreip.homeip.net>
-References: <1392051929-32290-1-git-send-email-jeff.dagenais@gmail.com>
- <1392051929-32290-2-git-send-email-jeff.dagenais@gmail.com>
+From: Alexander Shiyan <shc_work@mail.ru>
+Subject: Re: [PATCH v4] gpio: Driver for SYSCON-based GPIOs
+Date: Tue, 18 Feb 2014 18:46:34 +0400
+Message-ID: <20140218184634.ae9f28c42c4b9b8a8b9dfa60@mail.ru>
+References: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
+	<CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:35709 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660AbaBOVOI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 15 Feb 2014 16:14:08 -0500
-Content-Disposition: inline
-In-Reply-To: <1392051929-32290-2-git-send-email-jeff.dagenais@gmail.com>
+Received: from smtp21.mail.ru ([94.100.176.174]:35649 "EHLO smtp21.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755636AbaBROqo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 18 Feb 2014 09:46:44 -0500
+In-Reply-To: <CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
-Cc: michael.hennerich@analog.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Mon, Feb 10, 2014 at 12:05:29PM -0500, Jean-Francois Dagenais wrote:
-> As discussed here: http://ez.analog.com/message/35852,
-> the 5587 revC and 5588 revB spec sheets contain a mistake
-> in the GPIO_DAT_STATx register description.
-> 
-> According to R.Shnell at ADI, as well as my own
-> observations, it should read:
-> "GPIO data status (shows GPIO state when read for inputs)".
-> 
-> This commit changes the get value function accordingly.
-> 
-> Signed-off-by: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
+On Thu, 30 Jan 2014 14:54:36 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-
-Applied, thank you.
-
-> ---
->  drivers/input/keyboard/adp5588-keys.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+> On Mon, Jan 13, 2014 at 5:56 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
 > 
-> diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
-> index bb3b57b..5ef7fcf 100644
-> --- a/drivers/input/keyboard/adp5588-keys.c
-> +++ b/drivers/input/keyboard/adp5588-keys.c
-> @@ -76,8 +76,18 @@ static int adp5588_gpio_get_value(struct gpio_chip *chip, unsigned off)
->  	struct adp5588_kpad *kpad = container_of(chip, struct adp5588_kpad, gc);
->  	unsigned int bank = ADP5588_BANK(kpad->gpiomap[off]);
->  	unsigned int bit = ADP5588_BIT(kpad->gpiomap[off]);
-> +	int val;
->  
-> -	return !!(adp5588_read(kpad->client, GPIO_DAT_STAT1 + bank) & bit);
-> +	mutex_lock(&kpad->gpio_lock);
-> +
-> +	if (kpad->dir[bank] & bit)
-> +		val = kpad->dat_out[bank];
-> +	else
-> +		val = adp5588_read(kpad->client, GPIO_DAT_STAT1 + bank);
-> +
-> +	mutex_unlock(&kpad->gpio_lock);
-> +
-> +	return !!(val & bit);
->  }
->  
->  static void adp5588_gpio_set_value(struct gpio_chip *chip,
-> -- 
-> 1.8.5.3
+> > SYSCON driver was designed for using memory areas (registers)
+> > that are used in several subsystems. There are systems (CPUs)
+> > which use bits in one register for various purposes and thus
+> > should be handled by various kernel subsystems. This driver
+> > allows you to use the individual SYSCON bits as GPIOs.
+> > ARM CLPS711X SYSFLG1 input lines has been added as first user
+> > of this driver.
+> >
+> > Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 > 
+> Oh the pain. I am so ambivalent of this patch as it obfuscates
+> some stuff about the hardware that the driver should know,
+> while at the same time being elegant in a way.
+> 
+> What does the ARM SoC maintainers think about this approach?
+> 
+> Arnd, Olof, Kevin: is this something you'd like to see deployed?
+> 
+> Yours,
+> Linus Walleij
+
+Ping.
 
 -- 
-Dmitry
+Alexander Shiyan <shc_work@mail.ru>
