@@ -1,50 +1,66 @@
-From: Alexander Shiyan <shc_work@mail.ru>
-Subject: Re: [PATCH v4] gpio: Driver for SYSCON-based GPIOs
-Date: Tue, 18 Feb 2014 18:46:34 +0400
-Message-ID: <20140218184634.ae9f28c42c4b9b8a8b9dfa60@mail.ru>
-References: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
-	<CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp21.mail.ru ([94.100.176.174]:35649 "EHLO smtp21.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755636AbaBROqo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 18 Feb 2014 09:46:44 -0500
-In-Reply-To: <CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH] gpio: msm: switch Kconfig to ARCH_QCOM depends
+Date: Tue, 18 Feb 2014 10:40:39 -0600
+Message-ID: <E7F3569D-CA91-4419-A7C2-B62E2830995E@codeaurora.org>
+References: <1392150132-21877-1-git-send-email-galak@codeaurora.org>
+Mime-Version: 1.0 (Mac OS X Mail 7.1 \(1827\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1392150132-21877-1-git-send-email-galak@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, 30 Jan 2014 14:54:36 +0100
-Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> On Mon, Jan 13, 2014 at 5:56 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
-> 
-> > SYSCON driver was designed for using memory areas (registers)
-> > that are used in several subsystems. There are systems (CPUs)
-> > which use bits in one register for various purposes and thus
-> > should be handled by various kernel subsystems. This driver
-> > allows you to use the individual SYSCON bits as GPIOs.
-> > ARM CLPS711X SYSFLG1 input lines has been added as first user
-> > of this driver.
-> >
-> > Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
-> 
-> Oh the pain. I am so ambivalent of this patch as it obfuscates
-> some stuff about the hardware that the driver should know,
-> while at the same time being elegant in a way.
-> 
-> What does the ARM SoC maintainers think about this approach?
-> 
-> Arnd, Olof, Kevin: is this something you'd like to see deployed?
-> 
-> Yours,
-> Linus Walleij
+On Feb 11, 2014, at 2:22 PM, Kumar Gala <galak@codeaurora.org> wrote:
 
-Ping.
+> We've split Qualcomm MSM support into legacy and multiplatform.  The gpio
+> msm-v2 driver is only relevant on the multiplatform supported SoCs so
+> switch the Kconfig depends to ARCH_QCOM.
+> 
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Kumar Gala <galak@codeaurora.org>
+> ---
+> Linus,
+> 
+> If you can ack this I'll send it via linux-qcom/arm-soc tree's
+> 
+> thanks
+> 
+> - k
+
+ping
+
+- k
+
+> 
+> drivers/gpio/Kconfig | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 6973387..aa74949 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -192,7 +192,7 @@ config GPIO_MSM_V1
+> 
+> config GPIO_MSM_V2
+> 	tristate "Qualcomm MSM GPIO v2"
+> -	depends on GPIOLIB && OF && ARCH_MSM
+> +	depends on GPIOLIB && OF && ARCH_QCOM
+> 	help
+> 	  Say yes here to support the GPIO interface on ARM v7 based
+> 	  Qualcomm MSM chips.  Most of the pins on the MSM can be
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> hosted by The Linux Foundation
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 -- 
-Alexander Shiyan <shc_work@mail.ru>
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
