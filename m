@@ -1,58 +1,67 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] gpio: only enable kona driver on BCM_MOBILE or for compile testing
-Date: Fri, 21 Feb 2014 14:42:26 +0100
-Message-ID: <1392990146-18916-1-git-send-email-u.kleine-koenig@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH] gpio: msm: switch Kconfig to ARCH_QCOM depends
+Date: Fri, 21 Feb 2014 09:33:53 -0600
+Message-ID: <E44A8A90-550C-438C-9EA0-61E033BB988E@codeaurora.org>
+References: <1392150132-21877-1-git-send-email-galak@codeaurora.org>
+Mime-Version: 1.0 (Mac OS X Mail 7.1 \(1827\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:59339 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932435AbaBUNmf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Feb 2014 08:42:35 -0500
+Received: from smtp.codeaurora.org ([198.145.11.231]:48862 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755976AbaBUPd5 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Feb 2014 10:33:57 -0500
+In-Reply-To: <1392150132-21877-1-git-send-email-galak@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Markus Mayer <mmayer@broadcom.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 
-This change makes it easier to configure a kernel for a real machine by
-not showing the option to enable it at all if COMPILE_TEST is off.
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
-Hello,
+On Feb 11, 2014, at 2:22 PM, Kumar Gala <galak@codeaurora.org> wrote:
 
-I'm not sure if and how "Kona" fits into the bcm281xx namespace, but
-reading through the commit logs of the changes touching
-drivers/gpio/gpio-bcm-kona.c so far suggests it does. In this case I'd
-consider it a good idea to mention "bcm281xx" in the help text of
-GPIO_BCM_KONA.
+> We've split Qualcomm MSM support into legacy and multiplatform.  The gpio
+> msm-v2 driver is only relevant on the multiplatform supported SoCs so
+> switch the Kconfig depends to ARCH_QCOM.
+> 
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Kumar Gala <galak@codeaurora.org>
+> ---
+> Linus,
+> 
+> If you can ack this I'll send it via linux-qcom/arm-soc tree's
+> 
+> thanks
+> 
+> - k
 
-Best regards
-Uwe
+ping.
 
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- k
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 903f24d28ba0..7cc68d26320c 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -817,7 +817,7 @@ config GPIO_MSIC
-=20
- config GPIO_BCM_KONA
- 	bool "Broadcom Kona GPIO"
--	depends on OF_GPIO
-+	depends on OF_GPIO && (ARCH_BCM_MOBILE || COMPILE_TEST)
- 	help
- 	  Turn on GPIO support for Broadcom "Kona" chips.
-=20
---=20
-1.8.5.3
+> 
+> drivers/gpio/Kconfig | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 6973387..aa74949 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -192,7 +192,7 @@ config GPIO_MSM_V1
+> 
+> config GPIO_MSM_V2
+> 	tristate "Qualcomm MSM GPIO v2"
+> -	depends on GPIOLIB && OF && ARCH_MSM
+> +	depends on GPIOLIB && OF && ARCH_QCOM
+> 	help
+> 	  Say yes here to support the GPIO interface on ARM v7 based
+> 	  Qualcomm MSM chips.  Most of the pins on the MSM can be
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> hosted by The Linux Foundation
+> 
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
