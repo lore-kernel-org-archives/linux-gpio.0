@@ -1,45 +1,25 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: msm: switch Kconfig to ARCH_QCOM depends
-Date: Sat, 22 Feb 2014 10:57:01 +0900
-Message-ID: <CAAVeFuLDAhrS+ntNhOoszRXSrBLFaEhVTKkYbRtiAfogbjbexQ@mail.gmail.com>
-References: <1392150132-21877-1-git-send-email-galak@codeaurora.org> <E44A8A90-550C-438C-9EA0-61E033BB988E@codeaurora.org>
+Subject: Re: [PATCH 2/2] gpio-ts5500: Add dependency
+Date: Sat, 22 Feb 2014 11:00:08 +0900
+Message-ID: <CAAVeFuLkgK_td3aZQp3rAdbXkxe+3bDFBMD4FjFWk6cukTjWGQ@mail.gmail.com>
+References: <20140214112824.27b98f1d@endymion.delvare> <20140214113214.70ed0b65@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f172.google.com ([209.85.128.172]:34685 "EHLO
-	mail-ve0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753865AbaBVB5W (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Feb 2014 20:57:22 -0500
-In-Reply-To: <E44A8A90-550C-438C-9EA0-61E033BB988E@codeaurora.org>
+Received: from mail-ve0-f174.google.com ([209.85.128.174]:56110 "EHLO
+	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754962AbaBVCA3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Feb 2014 21:00:29 -0500
+Received: by mail-ve0-f174.google.com with SMTP id pa12so4060235veb.19
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Feb 2014 18:00:28 -0800 (PST)
+In-Reply-To: <20140214113214.70ed0b65@endymion.delvare>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kumar Gala <galak@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
 
-On Sat, Feb 22, 2014 at 12:33 AM, Kumar Gala <galak@codeaurora.org> wrote:
->
-> On Feb 11, 2014, at 2:22 PM, Kumar Gala <galak@codeaurora.org> wrote:
->
->> We've split Qualcomm MSM support into legacy and multiplatform.  The gpio
->> msm-v2 driver is only relevant on the multiplatform supported SoCs so
->> switch the Kconfig depends to ARCH_QCOM.
->>
->> CC: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Kumar Gala <galak@codeaurora.org>
->> ---
->> Linus,
->>
->> If you can ack this I'll send it via linux-qcom/arm-soc tree's
->>
->> thanks
->>
->> - k
->
-> ping.
-
-Linus is slow to answer for some reason, but I guess that as the
-co-maintainer my Ack would do for such a simple patch?
+On Fri, Feb 14, 2014 at 7:32 PM, Jean Delvare <jdelvare@suse.de> wrote:
+> There is no point in displaying the TS5500-specific driver entries if
+> TS5500 board support itself isn't enabled.
 
 Acked-by: Alexandre Courbot <gnurou@gmail.com>
-
-Linus, please rap on my knuckles if you feel I overstepped.
