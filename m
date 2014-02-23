@@ -1,25 +1,55 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/2] gpio-ts5500: Add dependency
-Date: Sat, 22 Feb 2014 11:00:08 +0900
-Message-ID: <CAAVeFuLkgK_td3aZQp3rAdbXkxe+3bDFBMD4FjFWk6cukTjWGQ@mail.gmail.com>
-References: <20140214112824.27b98f1d@endymion.delvare> <20140214113214.70ed0b65@endymion.delvare>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH] gpio: gpio-rcar: init at postcore level
+Date: Sun, 23 Feb 2014 20:37:47 +0400
+Message-ID: <1393173467-12240-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f174.google.com ([209.85.128.174]:56110 "EHLO
-	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754962AbaBVCA3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Feb 2014 21:00:29 -0500
-Received: by mail-ve0-f174.google.com with SMTP id pa12so4060235veb.19
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Feb 2014 18:00:28 -0800 (PST)
-In-Reply-To: <20140214113214.70ed0b65@endymion.delvare>
+Received: from mail-la0-f52.google.com ([209.85.215.52]:41923 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751286AbaBWQhw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Feb 2014 11:37:52 -0500
+Received: by mail-la0-f52.google.com with SMTP id c6so4456728lan.39
+        for <linux-gpio@vger.kernel.org>; Sun, 23 Feb 2014 08:37:50 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+To: linux-sh@vger.kernel.org
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, magnus.damm@gmail.com, horms@verge.net.au, gnurou@gmail.com, linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com
 
-On Fri, Feb 14, 2014 at 7:32 PM, Jean Delvare <jdelvare@suse.de> wrote:
-> There is no point in displaying the TS5500-specific driver entries if
-> TS5500 board support itself isn't enabled.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Acked-by: Alexandre Courbot <gnurou@gmail.com>
+This adds ability to use gpio API at board init_machine level.
+
+F.e. it can be used in the following situation.
+Many reference hardware has onboard switches that selects which periferals
+to connect to the system. The gpio input state from switches can be used
+in choosing platform devices runtime in board code instead of ifdefs/defconfig
+changes.
+
+Signed-off-by: <vladimir.barinov@cogentembedded.com>
+
+---
+ drivers/gpio/gpio-rcar.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+Index: build/drivers/gpio/gpio-rcar.c
+===================================================================
+--- build.orig/drivers/gpio/gpio-rcar.c	2014-02-22 23:21:51.456229152 +0400
++++ build/drivers/gpio/gpio-rcar.c	2014-02-22 23:21:52.320229133 +0400
+@@ -485,7 +485,17 @@
+ 	}
+ };
+ 
+-module_platform_driver(gpio_rcar_device_driver);
++static int __init gpio_rcar_init(void)
++{
++	return platform_driver_register(&gpio_rcar_device_driver);
++}
++postcore_initcall(gpio_rcar_init);
++
++static void __exit gpio_rcar_exit(void)
++{
++	platform_driver_unregister(&gpio_rcar_device_driver);
++}
++module_exit(gpio_rcar_exit);
+ 
+ MODULE_AUTHOR("Magnus Damm");
+ MODULE_DESCRIPTION("Renesas R-Car GPIO Driver");
