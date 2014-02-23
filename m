@@ -1,15 +1,15 @@
 From: <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH V4 2/4] ARM: shmobile: r8a7791: Add PCI USB host clock support
-Date: Sun, 23 Feb 2014 22:00:57 +0400
-Message-ID: <1393178459-14637-3-git-send-email-vladimir.barinov@cogentembedded.com>
+Subject: [PATCH V4 4/4] ARM: shmobile: koelsch: Add USB and PCI to defconfig
+Date: Sun, 23 Feb 2014 22:00:59 +0400
+Message-ID: <1393178459-14637-5-git-send-email-vladimir.barinov@cogentembedded.com>
 References: <1393178459-14637-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:51054 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751534AbaBWSBG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Feb 2014 13:01:06 -0500
-Received: by mail-la0-f51.google.com with SMTP id c6so4476585lan.38
-        for <linux-gpio@vger.kernel.org>; Sun, 23 Feb 2014 10:01:05 -0800 (PST)
+Received: from mail-la0-f43.google.com ([209.85.215.43]:44220 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751534AbaBWSBJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Feb 2014 13:01:09 -0500
+Received: by mail-la0-f43.google.com with SMTP id pv20so4482082lab.2
+        for <linux-gpio@vger.kernel.org>; Sun, 23 Feb 2014 10:01:07 -0800 (PST)
 In-Reply-To: <1393178459-14637-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -18,50 +18,48 @@ Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, magnus.damm@gmail.com,
 
 From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-This adds internal PCI USB host clock support to R-Car M2 SoC.
+Add USB and PCI to koelsch_defconfig
 
-Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: <vladimir.barinov@cogentembedded.com>
 
 Changes in V4:
-Changes in V3:
-* none.
-
-Changes in V2:
-* capitalized ARM in the subject;
-* rebased on top the latest devel tag.
+* Added this patch to series
 
 ---
- arch/arm/mach-shmobile/clock-r8a7791.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/configs/koelsch_defconfig |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-Index: build/arch/arm/mach-shmobile/clock-r8a7791.c
+Index: build/arch/arm/configs/koelsch_defconfig
 ===================================================================
---- build.orig/arch/arm/mach-shmobile/clock-r8a7791.c	2014-02-23 21:47:52.582571801 +0400
-+++ build/arch/arm/mach-shmobile/clock-r8a7791.c	2014-02-23 21:47:57.446571701 +0400
-@@ -177,7 +177,7 @@
- 	MSTP811, MSTP810, MSTP809,
- 	MSTP726, MSTP724, MSTP723, MSTP721, MSTP720,
- 	MSTP719, MSTP718, MSTP715, MSTP714,
--	MSTP704,
-+	MSTP704, MSTP703,
- 	MSTP522,
- 	MSTP314, MSTP312, MSTP311,
- 	MSTP216, MSTP207, MSTP206,
-@@ -210,6 +210,7 @@
- 	[MSTP715] = SH_CLK_MSTP32_STS(&p_clk, SMSTPCR7, 15, MSTPSR7, 0), /* SCIF4 */
- 	[MSTP714] = SH_CLK_MSTP32_STS(&p_clk, SMSTPCR7, 14, MSTPSR7, 0), /* SCIF5 */
- 	[MSTP704] = SH_CLK_MSTP32_STS(&mp_clk, SMSTPCR7, 4, MSTPSR7, 0), /* HSUSB */
-+	[MSTP703] = SH_CLK_MSTP32_STS(&mp_clk, SMSTPCR7, 3, MSTPSR7, 0), /* EHCI */
- 	[MSTP522] = SH_CLK_MSTP32_STS(&extal_clk, SMSTPCR5, 22, MSTPSR5, 0), /* Thermal */
- 	[MSTP314] = SH_CLK_MSTP32_STS(&div4_clks[DIV4_SD0], SMSTPCR3, 14, MSTPSR3, 0), /* SDHI0 */
- 	[MSTP312] = SH_CLK_MSTP32_STS(&div6_clks[DIV6_SD1], SMSTPCR3, 12, MSTPSR3, 0), /* SDHI1 */
-@@ -285,6 +286,8 @@
- 	CLKDEV_DEV_ID("sata-r8a7791.1", &mstp_clks[MSTP814]),
- 	CLKDEV_DEV_ID("renesas_usbhs", &mstp_clks[MSTP704]),
- 	CLKDEV_ICK_ID("usbhs", "usb_phy_rcar_gen2", &mstp_clks[MSTP704]),
-+	CLKDEV_DEV_ID("pci-rcar-gen2.0", &mstp_clks[MSTP703]),
-+	CLKDEV_DEV_ID("pci-rcar-gen2.1", &mstp_clks[MSTP703]),
- };
- 
- #define R8A7791_CLOCK_ROOT(e, m, p0, p1, p30, p31)		\
+--- build.orig/arch/arm/configs/koelsch_defconfig	2014-02-23 21:47:44.542571966 +0400
++++ build/arch/arm/configs/koelsch_defconfig	2014-02-23 21:48:03.718571572 +0400
+@@ -18,6 +18,8 @@
+ CONFIG_CPU_BPREDICT_DISABLE=y
+ CONFIG_PL310_ERRATA_588369=y
+ CONFIG_ARM_ERRATA_754322=y
++CONFIG_PCI=y
++CONFIG_PCI_RCAR_GEN2=y
+ CONFIG_SMP=y
+ CONFIG_SCHED_MC=y
+ CONFIG_NR_CPUS=8
+@@ -81,7 +83,19 @@
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_REGULATOR_GPIO=y
+ # CONFIG_HID is not set
+-# CONFIG_USB_SUPPORT is not set
++CONFIG_USB_SUPPORT=y
++CONFIG_USB=y
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_OHCI_HCD_PCI=y
++CONFIG_USB_RENESAS_USBHS_HCD=y
++CONFIG_USB_RENESAS_USBHS=y
++CONFIG_USB_STORAGE=y
++CONFIG_USB_PHY=y
++CONFIG_USB_RCAR_GEN2_PHY=y
++CONFIG_USB_GADGET=y
++CONFIG_USB_RENESAS_USBHS_UDC=y
++CONFIG_USB_ETH=y
+ CONFIG_MMC=y
+ CONFIG_MMC_SDHI=y
+ CONFIG_NEW_LEDS=y
