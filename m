@@ -1,55 +1,65 @@
 From: <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH] gpio: gpio-rcar: init at postcore level
-Date: Sun, 23 Feb 2014 20:37:47 +0400
-Message-ID: <1393173467-12240-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Subject: [PATCH V4 0/4] ARM: shmobile: koelsch: Add USB support
+Date: Sun, 23 Feb 2014 22:00:55 +0400
+Message-ID: <1393178459-14637-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:41923 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751286AbaBWQhw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Feb 2014 11:37:52 -0500
-Received: by mail-la0-f52.google.com with SMTP id c6so4456728lan.39
-        for <linux-gpio@vger.kernel.org>; Sun, 23 Feb 2014 08:37:50 -0800 (PST)
+Received: from mail-la0-f46.google.com ([209.85.215.46]:51600 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751132AbaBWSBD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Feb 2014 13:01:03 -0500
+Received: by mail-la0-f46.google.com with SMTP id b8so4554438lan.33
+        for <linux-gpio@vger.kernel.org>; Sun, 23 Feb 2014 10:01:02 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-sh@vger.kernel.org
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, magnus.damm@gmail.com, horms@verge.net.au, gnurou@gmail.com, linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, magnus.damm@gmail.com, horms@verge.net.au, gnurou@gmail.com, linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com, valentine.barshak@cogentembedded.com
 
 From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-This adds ability to use gpio API at board init_machine level.
+These patch series add the USBHS and PCI USB support to Koelsch board
 
-F.e. it can be used in the following situation.
-Many reference hardware has onboard switches that selects which periferals
-to connect to the system. The gpio input state from switches can be used
-in choosing platform devices runtime in board code instead of ifdefs/defconfig
-changes.
+The patches depend on the following commits:
 
-Signed-off-by: <vladimir.barinov@cogentembedded.com>
+USBHS and PCI USB host:
+* http://git.linuxtv.org/pinchartl/fbdev.git/commit/9770d221130e18c2d0ffe13cd07365d473 \
+                114549
+* http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=c8ba8115a2 \
+                1226fba3211085f570b128fa271e31
+* http://git.kernel.org/cgit/linux/kernel/git/balbi/usb.git/commit/?id=c3e5d2985ef720c \
+bbdc63546a5c545ac4450d96e PCI USB host:
+* http://git.kernel.org/cgit/linux/kernel/git/gregkh/usb.git/commit/?h=usb-next&id=103 \
+                e127d1f8f985e8a662da6537ebc5e08902ee3
+* http://git.kernel.org/cgit/linux/kernel/git/gregkh/usb.git/commit/?h=usb-next&id=1ae \
+                5799ef63176cc75ec10e545cb65f620a82747
+* http://git.kernel.org/cgit/linux/kernel/git/helgaas/pci.git/commit/?h=pci/host-rcar& \
+id=fb178d8b2fab3f2a9f203c13ffe80cfd6e01bdf1
+
+GPIO R-Car:
+* https://lkml.org/lkml/2014/2/23/60
+
+Changes in V4:
+* folded USBHS and internal PCI USB related patches together
+* added handling of ID pin from MAX3355E chip
+* removed ifdefs
+* added USB and PCI to koelsch_defconfig
+
+Changes in V3:
+* fixed the USB1 device name in the pinmux table;
+* fixed a typo in the "Add internal PCI support" log message.
+
+Changes in V2:
+* capitalized ARM in the subject;
+* rebased on top the latest devel tag;
+* added pipe_type array to the usbhs platform info since it differs from the default.
+
+Valentine Barshak, Vladimir Barinov (4):
+  ARM: shmobile: r8a7791: Add USBHS clock support
+  ARM: shmobile: r8a7791: Add PCI USB host clock support
+  ARM: shmobile: koelsch: Add USBHS and internal PCI USB support
+  ARM: shmobile: koelsch: Add USB and PCI to defconfig
 
 ---
- drivers/gpio/gpio-rcar.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-Index: build/drivers/gpio/gpio-rcar.c
-===================================================================
---- build.orig/drivers/gpio/gpio-rcar.c	2014-02-22 23:21:51.456229152 +0400
-+++ build/drivers/gpio/gpio-rcar.c	2014-02-22 23:21:52.320229133 +0400
-@@ -485,7 +485,17 @@
- 	}
- };
- 
--module_platform_driver(gpio_rcar_device_driver);
-+static int __init gpio_rcar_init(void)
-+{
-+	return platform_driver_register(&gpio_rcar_device_driver);
-+}
-+postcore_initcall(gpio_rcar_init);
-+
-+static void __exit gpio_rcar_exit(void)
-+{
-+	platform_driver_unregister(&gpio_rcar_device_driver);
-+}
-+module_exit(gpio_rcar_exit);
- 
- MODULE_AUTHOR("Magnus Damm");
- MODULE_DESCRIPTION("Renesas R-Car GPIO Driver");
+ arch/arm/configs/koelsch_defconfig     |   16 ++
+ arch/arm/mach-shmobile/board-koelsch.c |  183 +++++++++++++++++++++++++++++++++
+ arch/arm/mach-shmobile/clock-r8a7791.c |    7 +
+ 3 files changed, 205 insertions(+), 1 deletion(-)
