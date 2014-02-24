@@ -1,100 +1,86 @@
 From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: Re: [PATCH V4 3/4] ARM: shmobile: koelsch: Add USBHS and internal
- PCI USB support
-Date: Mon, 24 Feb 2014 11:34:09 +0400
-Message-ID: <530AF5F1.5030209@cogentembedded.com>
-References: <1393178459-14637-1-git-send-email-vladimir.barinov@cogentembedded.com> <1393178459-14637-4-git-send-email-vladimir.barinov@cogentembedded.com> <CANqRtoSKckgZBSaHDYYjfbTECJfB1Nn57suYspT0FR97P8SZFg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: gpio-rcar: init at postcore level
+Date: Mon, 24 Feb 2014 11:42:23 +0400
+Message-ID: <530AF7DF.1000004@cogentembedded.com>
+References: <1393173467-12240-1-git-send-email-vladimir.barinov@cogentembedded.com> <CANqRtoSu7HMCkqeefBFdMgEPvVZNDEK8k7=1OHp1wf5GRizBvA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:49415 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751622AbaBXHeN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Feb 2014 02:34:13 -0500
-Received: by mail-la0-f45.google.com with SMTP id b8so5181845lan.32
-        for <linux-gpio@vger.kernel.org>; Sun, 23 Feb 2014 23:34:12 -0800 (PST)
-In-Reply-To: <CANqRtoSKckgZBSaHDYYjfbTECJfB1Nn57suYspT0FR97P8SZFg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CANqRtoSu7HMCkqeefBFdMgEPvVZNDEK8k7=1OHp1wf5GRizBvA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
 To: Magnus Damm <magnus.damm@gmail.com>
-Cc: SH-Linux <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, "Simon Horman [Horms]" <horms@verge.net.au>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>
+Cc: SH-Linux <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, "Simon Horman [Horms]" <horms@verge.net.au>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Hello Magnus,
+Hi Magnus,
 
-Thank you for the quick response.
-
-On 02/24/2014 07:52 AM, Magnus Damm wrote:
-> +static int usbhs_hardware_init(struct platform_device *pdev)
-> +{
-> +       struct usbhs_private *priv = usbhs_get_priv(pdev);
-> +       struct usb_phy *phy;
-> +
-> +       phy = usb_get_phy_dev(&pdev->dev, 0);
-> +       if (IS_ERR(phy))
-> +               return PTR_ERR(phy);
-> +
-> +       priv->phy = phy;
-> +       return 0;
-> +}
-> +
-> +static int usbhs_hardware_exit(struct platform_device *pdev)
-> +{
-> +       struct usbhs_private *priv = usbhs_get_priv(pdev);
-> +
-> +       if (!priv->phy)
-> +               return 0;
-> +
-> +       usb_put_phy(priv->phy);
-> +       priv->phy = NULL;
-> +       return 0;
-> +}
-> +
-> +static int usbhs_get_id(struct platform_device *pdev)
-> +{
-> +       return USBHS_GADGET;
-> +}
-> Uhm, I sort of expected this place to be where you read out the ID pin
-> state from the MAX device.
-Yes, I've seen your work for lager board.
-I did differently then you beacause of problem in USBHS Host driver, 
-hence the need of setup PHY at initial stage to PCI USB and not to USBHS.
+On 02/24/2014 06:57 AM, Magnus Damm wrote:
+> Hi Vladimir,
 >
->> +static u32 koelsch_usbhs_pipe_type[] = {
->> +
->> +/* Add all available USB devices */
->> +static void __init koelsch_add_usb_devices(void)
+> On Mon, Feb 24, 2014 at 1:37 AM,<vladimir.barinov@cogentembedded.com>  wrote:
+>> From: Vladimir Barinov<vladimir.barinov@cogentembedded.com>
+>>
+>> This adds ability to use gpio API at board init_machine level.
+>>
+>> F.e. it can be used in the following situation.
+>> Many reference hardware has onboard switches that selects which periferals
+>> to connect to the system. The gpio input state from switches can be used
+>> in choosing platform devices runtime in board code instead of ifdefs/defconfig
+>> changes.
+>>
+>> Signed-off-by:<vladimir.barinov@cogentembedded.com>
+>>
+>> ---
+>>   drivers/gpio/gpio-rcar.c |   12 +++++++++++-
+>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> Index: build/drivers/gpio/gpio-rcar.c
+>> ===================================================================
+>> --- build.orig/drivers/gpio/gpio-rcar.c 2014-02-22 23:21:51.456229152 +0400
+>> +++ build/drivers/gpio/gpio-rcar.c      2014-02-22 23:21:52.320229133 +0400
+>> @@ -485,7 +485,17 @@
+>>          }
+>>   };
+>>
+>> -module_platform_driver(gpio_rcar_device_driver);
+>> +static int __init gpio_rcar_init(void)
 >> +{
->> +       /* MAX3355E ID pin */
->> +       gpio_request_one(RCAR_GP_PIN(5, 31), GPIOF_IN, NULL);
->> +       if (!gpio_get_value(RCAR_GP_PIN(5, 31))) {
->> +               usbhs_phy_pdata.chan0_pci = 1; /* Channel 0 is PCI USB host */
->> +               koelsch_add_usb0_host();
->> +       } else {
->> +               usbhs_phy_pdata.chan0_pci = 0; /* Channel 0 is USBHS */
->> +               koelsch_add_usb0_gadget();
->> +       }
-> I don't think we should perform this kind of check at boot-up. This
-> goes without saying, but normal USB supports hot-plug so we should
-> check the cable type when the cable insertion event happens. Please
-> see my comment above for USBHS-specific location.
+>> +       return platform_driver_register(&gpio_rcar_device_driver);
+>> +}
+>> +postcore_initcall(gpio_rcar_init);
+>> +
+>> +static void __exit gpio_rcar_exit(void)
+>> +{
+>> +       platform_driver_unregister(&gpio_rcar_device_driver);
+>> +}
+>> +module_exit(gpio_rcar_exit);
+>>
+>>   MODULE_AUTHOR("Magnus Damm");
+>>   MODULE_DESCRIPTION("Renesas R-Car GPIO Driver");
+> Hi Vladimir,
 >
-> I do however understand that according to your investigation you
-> cannot use USBHS in host mode. I believe further investigation is
-> needed in that area to determine what is the best way forward.
-> Regarding VBUS control, I believe it should be possible to drive the
-> USB0_VBUS as GPIO and manually control the power.
-I see.
+> Thanks for your help. Good to see that you are working on enabling the
+> dual role USB port on Koelsch.
 >
-> Would it be possible for you to break out USB PCI support for USB1 and
-> resend that so we can begin by merging that?
-Wouldn't you like me also add USBHS in gadget mode for USB0 with the 
-similar check like you did on lager (with ID pin),
-since it does not need the gpio-rcar changes too.
-
-Also if you'd like I can add the USBHS in Host mode with the ID pin 
-check like you suggested, but the usb0 host will not be stable.
-Probably this could speed up the USBHS Host development/fixing.
+> Your current board code is checking some DIP switch value during boot,
+> and that kind of early use of GPIO would require a change in the probe
+> order like this patch implements. I do however believe that we should
+> not implement checking during boot like this.
+>
+> If you for instance check the legacy Lager USBHS DIP switch code that
+> runs during driver probe() then that can run can use GPIO without the
+> need for a change like this. So your GPIO user code needs to be
+> adjusted.
+Yes, this is true for USBHS that has platform callbacks like 
+hardware_init/exit.
+But this is not acceptable for other devices like EHCI PCI/PHY and others.
+So we wouldn't be able to do such fixup for other cases.
+>
+> So this patch will receive a NAK from me I'm afraid.
+>
+>
+Thank you for review.
 
 Regards,
 Vladimir
