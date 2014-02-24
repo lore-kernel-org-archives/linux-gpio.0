@@ -1,51 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RESEND 0/6] Intel Atom C2000 series GPIO support
-Date: Mon, 24 Feb 2014 14:39:01 +0100
-Message-ID: <CACRpkdbJYErKbj3hQjSx=nY3=s7T-aTzn2+6RgogOB0sqGpSLQ@mail.gmail.com>
-References: <1392386518-11025-1-git-send-email-vdonnefort@gmail.com>
-	<20140214142734.GE13293@lee--X1>
+Subject: Re: [PATCH 1/2] gpio/omap: Use devm_ioremap_resource()
+Date: Mon, 24 Feb 2014 14:45:42 +0100
+Message-ID: <CACRpkdaqf7K4yO-GSGiFRZ13XvmKsdAqMhqwM7S92_qUE6SGjg@mail.gmail.com>
+References: <000001cf279d$599a8000$0ccf8000$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:55348 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752513AbaBXNjC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Feb 2014 08:39:02 -0500
-Received: by mail-oa0-f41.google.com with SMTP id o6so7016249oag.0
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2014 05:39:01 -0800 (PST)
-In-Reply-To: <20140214142734.GE13293@lee--X1>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:50059 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752399AbaBXNpo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Feb 2014 08:45:44 -0500
+Received: by mail-ob0-f169.google.com with SMTP id wn1so1972067obc.14
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2014 05:45:42 -0800 (PST)
+In-Reply-To: <000001cf279d$599a8000$0ccf8000$%han@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Vincent Donnefort <vdonnefort@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Aaron Sierra <asierra@xes-inc.com>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>
 
-On Fri, Feb 14, 2014 at 3:27 PM, Lee Jones <lee.jones@linaro.org> wrote:
->> This patch set is a resend which adds Lee Jones, MFD maintainer into the
->> thread and Aaron Sierra lpc_ich author, forgotten during the first send.
->>
->> The purpose of this patch-set is to add support for GPIOs found on the Intel
->> Atom C2000 series (Avoton/Rangeley)
->>
->> Vincent Donnefort (6):
->>   mfd: lpc_ich: Convert ICH GPIOs IDs to enum
->>   mfd: lpc_ich: Add support for Intel Avoton GPIOs
->>   gpio: ich: Add blink capability option
->>   gpio: ich: Add support for multiple register addresses
->>   gpio: ich: Add output levels cache support
->>   gpio: ich: Add support for Intel Avoton
->>
->>  drivers/gpio/gpio-ich.c     | 96 ++++++++++++++++++++++++++++++++++++++-------
->>  drivers/mfd/lpc_ich.c       |  1 +
->>  include/linux/mfd/lpc_ich.h | 17 ++++----
->>  3 files changed, 93 insertions(+), 21 deletions(-)
->
-> I'm fine with the MFD patches in this set.
->
-> Linus,
->   Do you want me to create an immutable branch for you to pull from?
+On Wed, Feb 12, 2014 at 3:51 AM, Jingoo Han <jg1.han@samsung.com> wrote:
 
-Argh too little code for that. It won't collide anyway, either of us
-gets to apply all of them.
+> Use devm_ioremap_resource() in order to make the code simpler,
+> and remove redundant return value check of platform_get_resource()
+> because the value is checked by devm_ioremap_resource().
+>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+
+Patch applied with all ACKs.
 
 Yours,
 Linus Walleij
