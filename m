@@ -1,61 +1,41 @@
-From: <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH V5 1/4] ARM: shmobile: r8a7791: Add USBHS clock support
-Date: Mon, 24 Feb 2014 13:30:01 +0400
-Message-ID: <1393234204-24096-2-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1393234204-24096-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1393234204-24096-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: linux-sh@vger.kernel.org
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, magnus.damm@gmail.com, horms@verge.net.au, gnurou@gmail.com, linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com, valentine.barshak@cogentembedded.com
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] of/gpio: Define OF_GPIO_OPEN_DRAIN flag for Open Drain outputs.
+Date: Mon, 24 Feb 2014 13:08:46 +0100
+Message-ID: <CACRpkdaobDYg6KAEetu5dpp+6ksu7ptvQ+D9rn7jRH0H+bFFQA@mail.gmail.com>
+References: <1392069908-22017-1-git-send-email-ddaney.cavm@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1392069908-22017-1-git-send-email-ddaney.cavm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Daney <ddaney.cavm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Valentine Barshak <valentine.barshak@cogentembedded.com>
+On Mon, Feb 10, 2014 at 11:05 PM, David Daney <ddaney.cavm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-This adds USBHS clocks to the R8A7791 SoC.
+> From: David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+>
+> When we have a GPIO pin connected to an open-drain network, we want a
+> standard way of specifying this in the device tree.  So we choose bit
+> 1 of the flag field to indicate open drain.
 
-Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+This is a good idea.
 
-Changes in V5:
-Changes in V4:
-Changes in V3:
-* none.
+But the patch is missing two things:
 
-Changes in V2:
-* capitalized ARM in the subject;
-* rebased on top the latest devel tag.
+- Add open source as well, as indicated.
 
----
- arch/arm/mach-shmobile/clock-r8a7791.c |    4 ++++
- 1 file changed, 4 insertions(+)
+- Add this definition to include/dt-bindings/gpio/gpio.h
 
-Index: build/arch/arm/mach-shmobile/clock-r8a7791.c
-===================================================================
---- build.orig/arch/arm/mach-shmobile/clock-r8a7791.c	2014-02-23 21:47:44.486571967 +0400
-+++ build/arch/arm/mach-shmobile/clock-r8a7791.c	2014-02-23 21:47:52.582571801 +0400
-@@ -177,6 +177,7 @@
- 	MSTP811, MSTP810, MSTP809,
- 	MSTP726, MSTP724, MSTP723, MSTP721, MSTP720,
- 	MSTP719, MSTP718, MSTP715, MSTP714,
-+	MSTP704,
- 	MSTP522,
- 	MSTP314, MSTP312, MSTP311,
- 	MSTP216, MSTP207, MSTP206,
-@@ -208,6 +209,7 @@
- 	[MSTP718] = SH_CLK_MSTP32_STS(&p_clk, SMSTPCR7, 18, MSTPSR7, 0), /* SCIF3 */
- 	[MSTP715] = SH_CLK_MSTP32_STS(&p_clk, SMSTPCR7, 15, MSTPSR7, 0), /* SCIF4 */
- 	[MSTP714] = SH_CLK_MSTP32_STS(&p_clk, SMSTPCR7, 14, MSTPSR7, 0), /* SCIF5 */
-+	[MSTP704] = SH_CLK_MSTP32_STS(&mp_clk, SMSTPCR7, 4, MSTPSR7, 0), /* HSUSB */
- 	[MSTP522] = SH_CLK_MSTP32_STS(&extal_clk, SMSTPCR5, 22, MSTPSR5, 0), /* Thermal */
- 	[MSTP314] = SH_CLK_MSTP32_STS(&div4_clks[DIV4_SD0], SMSTPCR3, 14, MSTPSR3, 0), /* SDHI0 */
- 	[MSTP312] = SH_CLK_MSTP32_STS(&div6_clks[DIV6_SD1], SMSTPCR3, 12, MSTPSR3, 0), /* SDHI1 */
-@@ -281,6 +283,8 @@
- 	CLKDEV_DEV_ID("r8a7791-vin.2", &mstp_clks[MSTP809]),
- 	CLKDEV_DEV_ID("sata-r8a7791.0", &mstp_clks[MSTP815]),
- 	CLKDEV_DEV_ID("sata-r8a7791.1", &mstp_clks[MSTP814]),
-+	CLKDEV_DEV_ID("renesas_usbhs", &mstp_clks[MSTP704]),
-+	CLKDEV_ICK_ID("usbhs", "usb_phy_rcar_gen2", &mstp_clks[MSTP704]),
- };
- 
- #define R8A7791_CLOCK_ROOT(e, m, p0, p1, p30, p31)		\
+- Add this *and* the missing active low property to the binding
+  documentation in:
+  Documentation/devicetree/bindings/gpio/gpio.txt
+  (pls help with this!)
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
