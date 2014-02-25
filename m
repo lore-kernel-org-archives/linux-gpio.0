@@ -1,33 +1,47 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH V5 0/4] ARM: shmobile: koelsch: Add USB support
-Date: Tue, 25 Feb 2014 17:09:55 +0900
-Message-ID: <CANqRtoSPpwzHjcVS0_fgT9_gf-dSFWfmf=yXs3roVVAoV6J4vw@mail.gmail.com>
-References: <1393234204-24096-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RESEND 1/6] mfd: lpc_ich: Convert ICH GPIOs IDs to enum
+Date: Tue, 25 Feb 2014 10:35:27 +0100
+Message-ID: <CACRpkdYgFA4FvGtvYQDzdkU6LY0qN=kNc4B7yX-2CcrWBSJdBg@mail.gmail.com>
+References: <1392386518-11025-1-git-send-email-vdonnefort@gmail.com>
+	<1392386518-11025-2-git-send-email-vdonnefort@gmail.com>
+	<CACRpkdbBJzV312o8Bk3Bf05zW2RB6N3fxr3uE7SuC7DQnaP7oA@mail.gmail.com>
+	<20140224154018.GB15847@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1393234204-24096-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: SH-Linux <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, "Simon Horman [Horms]" <horms@verge.net.au>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:47072 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751066AbaBYJf2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Feb 2014 04:35:28 -0500
+Received: by mail-ob0-f176.google.com with SMTP id wo20so2556837obc.35
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Feb 2014 01:35:28 -0800 (PST)
+In-Reply-To: <20140224154018.GB15847@lee--X1>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Vincent Donnefort <vdonnefort@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Aaron Sierra <asierra@xes-inc.com>
 
-On Mon, Feb 24, 2014 at 6:30 PM,  <vladimir.barinov@cogentembedded.com> wrote:
-> From: Valentine Barshak <valentine.barshak@cogentembedded.com>
+On Mon, Feb 24, 2014 at 4:40 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Mon, 24 Feb 2014, Linus Walleij wrote:
 >
-> These patch series add the USBHS and PCI USB support to Koelsch board
+>> On Fri, Feb 14, 2014 at 3:01 PM, Vincent Donnefort <vdonnefort@gmail.com> wrote:
+>>
+>> > All those IDs are arbitrary and so can be encapsulated into an enumeration.
+>> >
+>> > Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
+>>
+>> OK Lee, how did we want to proceed with this? I think it's
+>> easiest to put all patches into one tree, this is just too little
+>> patches for cross-immutable branches & stuff.
+>>
+>> You can either take the whole lot with my ACK (hereby
+>> provided) or you can ACK patch 1+2 and I will put the whole
+>> thing into the GPIO tree.
 >
-> Changes in V5:
-> * changed "From" filed to original author
-> * removed commits dependency, since verified them are in
-> * get rid from PCI USB on usb0
-> * moved MAX3355E ID pin check in usbhs probe
-> * removed CONFIG_USB_RENESAS_USBHS_HCD as not used yet
+> I'll save you the trouble.
+>
+> Applied, thanks.
 
-This version of the series looks good to me.
+Thanks Lee!
 
-Acked-by: Magnus Damm <damm@opensource.se>
-
-Thanks.
-
-/ magnus
+Linus Walleij
