@@ -1,47 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RESEND 1/6] mfd: lpc_ich: Convert ICH GPIOs IDs to enum
-Date: Tue, 25 Feb 2014 10:35:27 +0100
-Message-ID: <CACRpkdYgFA4FvGtvYQDzdkU6LY0qN=kNc4B7yX-2CcrWBSJdBg@mail.gmail.com>
-References: <1392386518-11025-1-git-send-email-vdonnefort@gmail.com>
-	<1392386518-11025-2-git-send-email-vdonnefort@gmail.com>
-	<CACRpkdbBJzV312o8Bk3Bf05zW2RB6N3fxr3uE7SuC7DQnaP7oA@mail.gmail.com>
-	<20140224154018.GB15847@lee--X1>
+From: Alexander Shiyan <shc_work@mail.ru>
+Subject: Re: [PATCH v4] gpio: Driver for SYSCON-based GPIOs
+Date: Tue, 25 Feb 2014 19:09:23 +0400
+Message-ID: <20140225190923.fdd969463717061aea582551@mail.ru>
+References: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
+	<CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
+	<20140218232520.GA22492@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:47072 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751066AbaBYJf2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Feb 2014 04:35:28 -0500
-Received: by mail-ob0-f176.google.com with SMTP id wo20so2556837obc.35
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Feb 2014 01:35:28 -0800 (PST)
-In-Reply-To: <20140224154018.GB15847@lee--X1>
+Received: from smtp38.i.mail.ru ([94.100.177.98]:56049 "EHLO smtp38.i.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752521AbaBYPJ3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 25 Feb 2014 10:09:29 -0500
+In-Reply-To: <20140218232520.GA22492@quad.lixom.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Vincent Donnefort <vdonnefort@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Aaron Sierra <asierra@xes-inc.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Mon, Feb 24, 2014 at 4:40 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Mon, 24 Feb 2014, Linus Walleij wrote:
->
->> On Fri, Feb 14, 2014 at 3:01 PM, Vincent Donnefort <vdonnefort@gmail.com> wrote:
->>
->> > All those IDs are arbitrary and so can be encapsulated into an enumeration.
->> >
->> > Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
->>
->> OK Lee, how did we want to proceed with this? I think it's
->> easiest to put all patches into one tree, this is just too little
->> patches for cross-immutable branches & stuff.
->>
->> You can either take the whole lot with my ACK (hereby
->> provided) or you can ACK patch 1+2 and I will put the whole
->> thing into the GPIO tree.
->
-> I'll save you the trouble.
->
-> Applied, thanks.
+On Tue, 18 Feb 2014 15:25:20 -0800
+Olof Johansson <olof@lixom.net> wrote:
 
-Thanks Lee!
+> On Thu, Jan 30, 2014 at 02:54:36PM +0100, Linus Walleij wrote:
+> > On Mon, Jan 13, 2014 at 5:56 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
+> > 
+> > > SYSCON driver was designed for using memory areas (registers)
+> > > that are used in several subsystems. There are systems (CPUs)
+> > > which use bits in one register for various purposes and thus
+> > > should be handled by various kernel subsystems. This driver
+> > > allows you to use the individual SYSCON bits as GPIOs.
+> > > ARM CLPS711X SYSFLG1 input lines has been added as first user
+> > > of this driver.
+> > >
+> > > Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+> > 
+> > Oh the pain. I am so ambivalent of this patch as it obfuscates
+> > some stuff about the hardware that the driver should know,
+> > while at the same time being elegant in a way.
+> > 
+> > What does the ARM SoC maintainers think about this approach?
+> > 
+> > Arnd, Olof, Kevin: is this something you'd like to see deployed?
+> 
+> I think the binding needs to be adjusted -- syscon has nothing to do with
+> the binding, that's a Linux construct.
+> 
+> Really, if this is rephrased it becomes much more clear that this is a useful
+> driver:
+> 
+> CLPS711X implements a few GPIO lines in a register area that is shared with
+> other system registers. This is a driver for those GPIO lines, implemented
+> using the shared syscon infrastructure in the kernel.
+> 
+> And then take out syscon from the name of the driver (and the binding).
+> 
+> If we have more drivers like these down the road we can make a common shared
+> binding, but until then I don't think there's much point in it.
 
-Linus Walleij
+Is this proposed to remove the generic implementation?
+Linus, what is your opinion on this?
+
+-- 
+Alexander Shiyan <shc_work@mail.ru>
