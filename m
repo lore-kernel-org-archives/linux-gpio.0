@@ -1,68 +1,49 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpio: clamp returned values to the boolean range
-Date: Wed, 26 Feb 2014 10:40:00 +0900
-Message-ID: <1393378800-7220-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] gpio: gpio-pl061: Use %pa to print 'resource_size_t'
+Date: Wed, 26 Feb 2014 08:12:37 -0300
+Message-ID: <1393413157-29667-1-git-send-email-festevam@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6436 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750800AbaBZBlT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Feb 2014 20:41:19 -0500
+Received: from mail-yh0-f42.google.com ([209.85.213.42]:60050 "EHLO
+	mail-yh0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750913AbaBZLMs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Feb 2014 06:12:48 -0500
+Received: by mail-yh0-f42.google.com with SMTP id a41so711878yho.29
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Feb 2014 03:12:47 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-Nothing prevents GPIO drivers from returning values outside the
-boolean range, and as it turns out a few drivers are actually doing so.
-These values were passed as-is to unsuspecting consumers and created
-confusion.
+From: Fabio Estevam <fabio.estevam@freescale.com>
 
-This patch makes the internal _gpiod_get_raw_value() function return a
-bool, effectively clamping the GPIO value to the boolean range no
-matter what the driver does.
+The following build warning is generated when building multi_v7_defconfig with
+LPAE option selected:
 
-While we are at it, we also change the value parameter of
-_gpiod_set_raw_value() to bool type before drivers start doing funny
-things with non-boolean values.
+drivers/gpio/gpio-pl061.c:358:2: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
 
-Another way to fix this would be to change the prototypes of the driver
-interface to use bool directly, but this would require a huge
-cross-systems patch so this simpler solution is preferred.
+Fix it by using %pa to print 'resource_size_t'.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Reported-by: Olof's autobuilder <build@lixom.net>
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 ---
-This issue was discussed some time ago already
-(https://www.mail-archive.com/linux-gpio@vger.kernel.org/msg02019.html),
-here is finally the fix for it. Not exactly what we planned but who would
-take a hundreds-lines change when a two-liner does the same?
-
- drivers/gpio/gpiolib.c | 4 ++--
+ drivers/gpio/gpio-pl061.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 50c4922fe53a..45cefccbf4bf 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1928,7 +1928,7 @@ EXPORT_SYMBOL_GPL(gpiod_is_active_low);
-  * that the GPIO was actually requested.
-  */
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index e528cb2..391766e 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -355,8 +355,8 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
  
--static int _gpiod_get_raw_value(const struct gpio_desc *desc)
-+static bool _gpiod_get_raw_value(const struct gpio_desc *desc)
- {
- 	struct gpio_chip	*chip;
- 	int value;
-@@ -2041,7 +2041,7 @@ static void _gpio_set_open_source_value(struct gpio_desc *desc, int value)
- 			  __func__, err);
+ 	amba_set_drvdata(adev, chip);
+-	dev_info(&adev->dev, "PL061 GPIO chip @%08x registered\n",
+-		adev->res.start);
++	dev_info(&adev->dev, "PL061 GPIO chip @%pa registered\n",
++		 &adev->res.start);
+ 
+ 	return 0;
  }
- 
--static void _gpiod_set_raw_value(struct gpio_desc *desc, int value)
-+static void _gpiod_set_raw_value(struct gpio_desc *desc, bool value)
- {
- 	struct gpio_chip	*chip;
- 
 -- 
-1.9.0
+1.8.1.2
 
