@@ -1,46 +1,46 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gZ3BpbzogdHdsNDAzMDogUmVtb3ZlIHJlZHVuZGFudCBh?=
- =?UTF-8?B?c3NpZ25tZW50?=
-Date: Thu, 27 Feb 2014 14:59:21 +0400
-Message-ID: <1393498761.327289797@f299.i.mail.ru>
-References: <1392471277-16981-1-git-send-email-shc_work@mail.ru>
- <530B6669.9080602@ti.com>
- <CACRpkdbgr5_i2XCCeTDUw3SVsEJ4Q3BjHh++0BSSYSzkxPa8iA@mail.gmail.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 0/5] ARM: davinci: tnetv107x removal
+Date: Thu, 27 Feb 2014 19:07:15 +0530
+Message-ID: <530F3F8B.4090509@ti.com>
+References: <1393418614-3968549-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fallback1.mail.ru ([94.100.176.18]:51390 "EHLO
-	fallback1.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752464AbaB0K7j (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Feb 2014 05:59:39 -0500
-Received: from f299.i.mail.ru (f299.i.mail.ru [217.69.129.81])
-	by fallback1.mail.ru (mPOP.Fallback_MX) with ESMTP id 493CA34714CD
-	for <linux-gpio@vger.kernel.org>; Thu, 27 Feb 2014 14:59:35 +0400 (MSK)
-In-Reply-To: <CACRpkdbgr5_i2XCCeTDUw3SVsEJ4Q3BjHh++0BSSYSzkxPa8iA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <1393418614-3968549-1-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Kevin Hilman <khilman-1D3HCaltpLuhEniVeURVKkEOCMrvLtNR@public.gmane.org>, Cyril Chemparathy <cyril.chemparathy-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
-Cc: =?UTF-8?B?Um9nZXIgUXVhZHJvcw==?= <rogerq@ti.com>, =?UTF-8?B?VG9ueSBMaW5kZ3Jlbg==?= <tony@atomide.com>, =?UTF-8?B?UGV0ZXIgVWpmYWx1c2k=?= <peter.ujfalusi@ti.com>, =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>
 
-0KfQtdGC0LLQtdGA0LMsIDI3INGE0LXQstGA0LDQu9GPIDIwMTQsIDEwOjI0ICswMTowMCDQvtGC
-IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz46Cj4gT24gTW9uLCBGZWIg
-MjQsIDIwMTQgYXQgNDozNCBQTSwgUm9nZXIgUXVhZHJvcyA8cm9nZXJxQHRpLmNvbT4gd3JvdGU6
-Cj4gPiBPbiAwMi8yNC8yMDE0IDA0OjI1IFBNLCBMaW51cyBXYWxsZWlqIHdyb3RlOgo+ID4+IE9u
-IFNhdCwgRmViIDE1LCAyMDE0IGF0IDI6MzQgUE0sIEFsZXhhbmRlciBTaGl5YW4gPHNoY193b3Jr
-QG1haWwucnU+IHdyb3RlOgo+ID4+Cj4gPj4+IC0gICAgICAgc3RhdHVzID0gdHdsX2kyY193cml0
-ZV91OChUV0w0MDMwX01PRFVMRV9MRUQsIGNhY2hlZF9sZWRlbiwKPiA+Pj4gLSAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIFRXTDQwMzBfTEVEX0xFREVOX1JFRyk7Cj4gPj4+ICsKPiA+
-Pj4gKyAgICAgICB0d2xfaTJjX3dyaXRlX3U4KFRXTDQwMzBfTU9EVUxFX0xFRCwgY2FjaGVkX2xl
-ZGVuLAo+ID4+PiArICAgICAgICAgICAgICAgICAgICAgICAgVFdMNDAzMF9MRURfTEVERU5fUkVH
-KTsKPiA+Pgo+ID4+IElzbid0IHRoZSByaWdodCBmaXggdG8gYWN0dWFsbHkgKmNoZWNrKiB0aGlz
-IHN0YXR1cyBpbnN0ZWFkPwo+ID4+Cj4gPj4gVEkgZHVkZXM/Cj4gPgo+ID4gWWVzIHdlIHNob3Vs
-ZCBjaGVjayBmb3IgZXJyb3IuIEJ1dCB0aGUgb25seSBhY3Rpb24gd2UgY2FuIHRha2UgaXMgbWF5
-YmUgcHJpbnQgYW4gZXJyb3IgbWVzc2FnZQo+ID4gYXMgYWxsIHRoZSB1c2VycyBvZiB0aGlzIGZ1
-bmN0aW9uIHJldHVybiB2b2lkLiBlLmcuIHR3bF9zZXQoKS4KPiA+Cj4gPiBJdCBzZWVtcyB0aGUg
-c2V0KCkgaG9vayBvZiBzdHJ1Y3QgZ3Bpb19jaGlwIGFsc28gZG9lc24ndCBleHBlY3QgYW55IHJl
-dHVybiB2YWx1ZS4gV29uZGVyaW5nIGlmIHRoYXQgc2hvdWxkIGNoYW5nZS4KPiAKPiBJIHRoaW5r
-IGluIHRoaXMgY2FzZSBzaW1wbHkgcHJpbnRpbmcgYW4gZXJyb3IgYW5kIGJhaWxpbmcgb3V0IGlz
-Cj4ganVzdCBmaW5lLCBwZW9wbGUgd2lsbCBiZSBhYmxlIHRvIGRlYnVnIGZyb20gdGhlcmUuCgpX
-QVJOX09OX09OQ0UoKSBpcyBlbm91Z2g/CnYyPwoKLS0tCg==
+(fixed Cyril's e-mail address)
+
+On Wednesday 26 February 2014 06:13 PM, Arnd Bergmann wrote:
+> This series removes the TI davinci/tnetv107x platform that
+> has evidently bitrotted to the point where it's completely
+> useless. While we could probably fix it and add a defconfig,
+> it appears that there are actually no users of this platform,
+> and it complicates the davinci code base because it's
+> incompatible with all the other SoCs in there that are
+> based on ARM926T.
+> 
+> The five patches are completely independent of one another,
+> and applying them out of order is fine since we just want
+> to remove the code. However, I'm looking for an Ack from
+> Cyril Chemparathy and Sekhar Nori first, to be sure we
+> won't need this code in the future. Kevin Hilman has
+> already mentioned that he sees no reason to keep this
+> code.
+
+Acked-by: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+
+Regards,
+Sekhar
