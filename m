@@ -1,45 +1,40 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 1/2] ARM: SAMSUNG: remove gpio flags in dev-backlight
-Date: Thu, 27 Feb 2014 14:53:33 +0900
-Message-ID: <1393480414-19473-2-git-send-email-acourbot@nvidia.com>
-References: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: only enable kona driver on BCM_MOBILE or for
+ compile testing
+Date: Thu, 27 Feb 2014 10:16:43 +0100
+Message-ID: <CACRpkdZg5uoP5LurL5vOPCaKQu2B=neybuo=gwM_JT7UAhRkjg@mail.gmail.com>
+References: <1392990146-18916-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Bryan Wu <cooloney@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-vc0-f180.google.com ([209.85.220.180]:36594 "EHLO
+	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750965AbaB0JQo convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Feb 2014 04:16:44 -0500
+Received: by mail-vc0-f180.google.com with SMTP id ks9so2157629vcb.39
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Feb 2014 01:16:44 -0800 (PST)
+In-Reply-To: <1392990146-18916-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Markus Mayer <mmayer@broadcom.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-The pwm-backlight driver is moving to use the gpiod interface,
-which has its own mapping mechanism for platform data GPIOs.
-These mappings carry GPIO properties like active low so they don't have
-to be explicitly handled by GPIO consumers.
+On Fri, Feb 21, 2014 at 2:42 PM, Uwe Kleine-K=F6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
-Because of this change, the enable_gpio_flags member of
-platform_pwm_backlight_data is going away. dev-backlight was passing
-this member, but had no user making use of it, so it can safely be
-removed. Further GPIOs used by pwm-backlight are expected to be
-defined using the mechanisms provided by the gpiod API.
+> This change makes it easier to configure a kernel for a real machine =
+by
+> not showing the option to enable it at all if COMPILE_TEST is off.
+>
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- arch/arm/plat-samsung/dev-backlight.c | 2 --
- 1 file changed, 2 deletions(-)
+Markus: can you ACK this patch?
 
-diff --git a/arch/arm/plat-samsung/dev-backlight.c b/arch/arm/plat-samsung/dev-backlight.c
-index be4ad0b21c08..2157c5b539e6 100644
---- a/arch/arm/plat-samsung/dev-backlight.c
-+++ b/arch/arm/plat-samsung/dev-backlight.c
-@@ -124,8 +124,6 @@ void __init samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
- 		samsung_bl_data->pwm_period_ns = bl_data->pwm_period_ns;
- 	if (bl_data->enable_gpio >= 0)
- 		samsung_bl_data->enable_gpio = bl_data->enable_gpio;
--	if (bl_data->enable_gpio_flags)
--		samsung_bl_data->enable_gpio_flags = bl_data->enable_gpio_flags;
- 	if (bl_data->init)
- 		samsung_bl_data->init = bl_data->init;
- 	if (bl_data->notify)
--- 
-1.9.0
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
