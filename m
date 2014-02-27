@@ -1,46 +1,48 @@
-From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 0/5] ARM: davinci: tnetv107x removal
-Date: Thu, 27 Feb 2014 19:07:15 +0530
-Message-ID: <530F3F8B.4090509@ti.com>
-References: <1393418614-3968549-1-git-send-email-arnd@arndb.de>
+From: Fabian Vogt <fabian-O+IgeCt+IhXFOn1fZuaZsg@public.gmane.org>
+Subject: Re: [PATCH V6] gpio: New driver for LSI ZEVIO SoCs
+Date: Thu, 27 Feb 2014 15:43:21 +0100
+Message-ID: <1584880.3T2YsxZdKp@fabians-laptop.fritz.box>
+References: <1393271698-15829-1-git-send-email-fabian@ritter-vogt.de> <CACRpkdZqAMMvHiGwVDNnZ7Lg9RUVtjFGdfnZF3+QrX0KRPVJGA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <1393418614-3968549-1-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Kevin Hilman <khilman-1D3HCaltpLuhEniVeURVKkEOCMrvLtNR@public.gmane.org>, Cyril Chemparathy <cyril.chemparathy-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdZqAMMvHiGwVDNnZ7Lg9RUVtjFGdfnZF3+QrX0KRPVJGA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-(fixed Cyril's e-mail address)
-
-On Wednesday 26 February 2014 06:13 PM, Arnd Bergmann wrote:
-> This series removes the TI davinci/tnetv107x platform that
-> has evidently bitrotted to the point where it's completely
-> useless. While we could probably fix it and add a defconfig,
-> it appears that there are actually no users of this platform,
-> and it complicates the davinci code base because it's
-> incompatible with all the other SoCs in there that are
-> based on ARM926T.
+On Thu, Feb 24, 2014 at 10:31:59, Linux Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Mon, Feb 24, 2014 at 8:54 PM, Fabian Vogt <fabian-O+IgeCt+IhXFOn1fZuaZsg@public.gmane.org> wrote:
 > 
-> The five patches are completely independent of one another,
-> and applying them out of order is fine since we just want
-> to remove the code. However, I'm looking for an Ack from
-> Cyril Chemparathy and Sekhar Nori first, to be sure we
-> won't need this code in the future. Kevin Hilman has
-> already mentioned that he sees no reason to keep this
-> code.
+> > This driver supports the GPIO controller found in LSI ZEVIO SoCs.
+> > It has been successfully tested on a TI nspire CX calculator.
+> >
+> > Signed-off-by: Fabian Vogt <fabian-O+IgeCt+IhXFOn1fZuaZsg@public.gmane.org>
+> 
+> I like this version. Patch applied.
+> 
+> Q:
+> 
+> > +config GPIO_ZEVIO
+> > +       bool "LSI ZEVIO SoC memory mapped GPIOs"
+> > +       depends on OF
+> 
+> So OF_GPIO is not needed for the systems using this driver?
+> DT just used for probing the driver?
+> 
+I'm using of_mm_gpiochip_add to register the gpiochip.
+In the platform's Kconfig only ARCH_WANT_OPTIONAL_GPIOLIB is needed, OF_GPIO seems to be selected automatically.
+If I disable it in the .config and start "make menuconfig", it's selected again.
+OF_GPIO seems to have the same state as GPIOLIB in menuconfig.
 
-Acked-by: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+Bye,
+Fabian
 
-Regards,
-Sekhar
+> Yours,
+> Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
