@@ -1,40 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: only enable kona driver on BCM_MOBILE or for
- compile testing
-Date: Thu, 27 Feb 2014 10:16:43 +0100
-Message-ID: <CACRpkdZg5uoP5LurL5vOPCaKQu2B=neybuo=gwM_JT7UAhRkjg@mail.gmail.com>
-References: <1392990146-18916-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] gpio: msm: switch Kconfig to ARCH_QCOM depends
+Date: Thu, 27 Feb 2014 10:18:12 +0100
+Message-ID: <CACRpkdZhsezPJd5q3ec7qh_6c+hQjQpi8iRiZHB2yT1T9bjPew@mail.gmail.com>
+References: <1392150132-21877-1-git-send-email-galak@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f180.google.com ([209.85.220.180]:36594 "EHLO
-	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750965AbaB0JQo convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Feb 2014 04:16:44 -0500
-Received: by mail-vc0-f180.google.com with SMTP id ks9so2157629vcb.39
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Feb 2014 01:16:44 -0800 (PST)
-In-Reply-To: <1392990146-18916-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Received: from mail-ve0-f181.google.com ([209.85.128.181]:45550 "EHLO
+	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750813AbaB0JSN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Feb 2014 04:18:13 -0500
+Received: by mail-ve0-f181.google.com with SMTP id jw12so3471091veb.40
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Feb 2014 01:18:13 -0800 (PST)
+In-Reply-To: <1392150132-21877-1-git-send-email-galak@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Markus Mayer <mmayer@broadcom.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Kumar Gala <galak@codeaurora.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Feb 21, 2014 at 2:42 PM, Uwe Kleine-K=F6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+On Tue, Feb 11, 2014 at 9:22 PM, Kumar Gala <galak@codeaurora.org> wrote:
 
-> This change makes it easier to configure a kernel for a real machine =
-by
-> not showing the option to enable it at all if COMPILE_TEST is off.
+> We've split Qualcomm MSM support into legacy and multiplatform.  The gpio
+> msm-v2 driver is only relevant on the multiplatform supported SoCs so
+> switch the Kconfig depends to ARCH_QCOM.
 >
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Kumar Gala <galak@codeaurora.org>
+> ---
+> Linus,
+>
+> If you can ack this I'll send it via linux-qcom/arm-soc tree's
 
-Markus: can you ACK this patch?
+Yeah:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+It took some time because your repeated pings bring the message
+to the top of my mailbox and I process it from the bottom...
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
