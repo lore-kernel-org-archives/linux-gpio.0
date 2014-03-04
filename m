@@ -1,81 +1,100 @@
-From: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] gpio-tz1090: Replace commas with semi-colons
-Date: Tue, 4 Mar 2014 11:28:48 +0000
-Message-ID: <1393932528-25207-1-git-send-email-james.hogan@imgtec.com>
+From: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+Subject: [PATCH] gpio: davinci: fix gpio selection for OF
+Date: Tue, 4 Mar 2014 23:06:02 +0100
+Message-ID: <1393970762-5346-1-git-send-email-holler@ahsoftware.de>
+References: <5315ED51.1000006@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <5315ED51.1000006-l0cyMroinI0@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Replace commas with semicolons between irqchip callback initialisation
-statements in tz1090_gpio_bank_probe. The commas appear to be a subtle
-remnant of when the irqchips were statically initialised.
+The driver missed an of_xlate function to translate gpio numbers
+as found in the DT to the correct chip and number.
 
-Thanks to Thomas Gleixner for spotting it while whipping up a coccinelle
-script.
+While there I've set #gpio_cells to a fixed value of 2.
 
-Reported-by: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Signed-off-by: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+I've used gpio-pxa.c as template for those changes and tested my changes
+successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
+reinvent the wheel but just copied and tested stuff.
+
+Thanks to Grygorii Strashko for the hint of the existing code in gpio-pxa.
+
+Signed-off-by: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
 ---
- drivers/gpio/gpio-tz1090.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/gpio/gpio-davinci.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/gpio/gpio-tz1090.c b/drivers/gpio/gpio-tz1090.c
-index 23e061392411..5246a60eff6d 100644
---- a/drivers/gpio/gpio-tz1090.c
-+++ b/drivers/gpio/gpio-tz1090.c
-@@ -488,26 +488,26 @@ static int tz1090_gpio_bank_probe(struct tz1090_gpio_bank_info *info)
- 	gc->chip_types[0].handler		= handle_level_irq;
- 	gc->chip_types[0].regs.ack		= REG_GPIO_IRQ_STS;
- 	gc->chip_types[0].regs.mask		= REG_GPIO_IRQ_EN;
--	gc->chip_types[0].chip.irq_startup	= gpio_startup_irq,
--	gc->chip_types[0].chip.irq_ack		= irq_gc_ack_clr_bit,
--	gc->chip_types[0].chip.irq_mask		= irq_gc_mask_clr_bit,
--	gc->chip_types[0].chip.irq_unmask	= irq_gc_mask_set_bit,
--	gc->chip_types[0].chip.irq_set_type	= gpio_set_irq_type,
--	gc->chip_types[0].chip.irq_set_wake	= gpio_set_irq_wake,
--	gc->chip_types[0].chip.flags		= IRQCHIP_MASK_ON_SUSPEND,
-+	gc->chip_types[0].chip.irq_startup	= gpio_startup_irq;
-+	gc->chip_types[0].chip.irq_ack		= irq_gc_ack_clr_bit;
-+	gc->chip_types[0].chip.irq_mask		= irq_gc_mask_clr_bit;
-+	gc->chip_types[0].chip.irq_unmask	= irq_gc_mask_set_bit;
-+	gc->chip_types[0].chip.irq_set_type	= gpio_set_irq_type;
-+	gc->chip_types[0].chip.irq_set_wake	= gpio_set_irq_wake;
-+	gc->chip_types[0].chip.flags		= IRQCHIP_MASK_ON_SUSPEND;
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 7629b4f..79f45c4 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -44,6 +44,9 @@ struct davinci_gpio_regs {
  
- 	/* edge chip type */
- 	gc->chip_types[1].type			= IRQ_TYPE_EDGE_BOTH;
- 	gc->chip_types[1].handler		= handle_edge_irq;
- 	gc->chip_types[1].regs.ack		= REG_GPIO_IRQ_STS;
- 	gc->chip_types[1].regs.mask		= REG_GPIO_IRQ_EN;
--	gc->chip_types[1].chip.irq_startup	= gpio_startup_irq,
--	gc->chip_types[1].chip.irq_ack		= irq_gc_ack_clr_bit,
--	gc->chip_types[1].chip.irq_mask		= irq_gc_mask_clr_bit,
--	gc->chip_types[1].chip.irq_unmask	= irq_gc_mask_set_bit,
--	gc->chip_types[1].chip.irq_set_type	= gpio_set_irq_type,
--	gc->chip_types[1].chip.irq_set_wake	= gpio_set_irq_wake,
--	gc->chip_types[1].chip.flags		= IRQCHIP_MASK_ON_SUSPEND,
-+	gc->chip_types[1].chip.irq_startup	= gpio_startup_irq;
-+	gc->chip_types[1].chip.irq_ack		= irq_gc_ack_clr_bit;
-+	gc->chip_types[1].chip.irq_mask		= irq_gc_mask_clr_bit;
-+	gc->chip_types[1].chip.irq_unmask	= irq_gc_mask_set_bit;
-+	gc->chip_types[1].chip.irq_set_type	= gpio_set_irq_type;
-+	gc->chip_types[1].chip.irq_set_wake	= gpio_set_irq_wake;
-+	gc->chip_types[1].chip.flags		= IRQCHIP_MASK_ON_SUSPEND;
+ static void __iomem *gpio_base;
  
- 	/* Setup chained handler for this GPIO bank */
- 	irq_set_handler_data(bank->irq, bank);
++static struct davinci_gpio_controller *davinci_gpio_chips;
++static int davinci_last_gpio;
++
+ static struct davinci_gpio_regs __iomem *gpio2regs(unsigned gpio)
+ {
+ 	void __iomem *ptr;
+@@ -172,6 +175,24 @@ of_err:
+ 	return NULL;
+ }
+ 
++#ifdef CONFIG_OF_GPIO
++static int davinci_gpio_of_xlate(struct gpio_chip *gc,
++			     const struct of_phandle_args *gpiospec,
++			     u32 *flags)
++{
++	if (gpiospec->args[0] > davinci_last_gpio)
++		return -EINVAL;
++
++	if (gc != &davinci_gpio_chips[gpiospec->args[0] / 32].chip)
++		return -EINVAL;
++
++	if (flags)
++		*flags = gpiospec->args[1];
++
++	return gpiospec->args[0] % 32;
++}
++#endif
++
+ static int davinci_gpio_probe(struct platform_device *pdev)
+ {
+ 	int i, base;
+@@ -236,6 +257,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 			chips[i].chip.ngpio = 32;
+ 
+ #ifdef CONFIG_OF_GPIO
++		chips[i].chip.of_gpio_n_cells = 2;
++		chips[i].chip.of_xlate = davinci_gpio_of_xlate;
+ 		chips[i].chip.of_node = dev->of_node;
+ #endif
+ 		spin_lock_init(&chips[i].lock);
+@@ -251,6 +274,10 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, chips);
+ 	davinci_gpio_irq_setup(pdev);
++
++	davinci_gpio_chips = chips;
++	davinci_last_gpio = ngpio;
++
+ 	return 0;
+ }
+ 
 -- 
-1.8.1.2
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-metag" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.8.3.1
