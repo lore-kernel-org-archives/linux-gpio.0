@@ -1,38 +1,75 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] gpio: davinci: fix gpio selection for OF
-Date: Wed, 5 Mar 2014 10:27:59 +0800
-Message-ID: <CACRpkdb2ECPyTcGkt7XcBt9HP1335xXHjxKZpYR4Dd3K+YmDYQ@mail.gmail.com>
-References: <5315ED51.1000006@ti.com>
-	<1393970762-5346-1-git-send-email-holler@ahsoftware.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: clamp returned values to the boolean range
+Date: Wed, 5 Mar 2014 10:33:48 +0800
+Message-ID: <CACRpkdbaLy+uY_fsht=Fk0qPdtAnttpOK3xrpirPbwB0mA+TPQ@mail.gmail.com>
+References: <1393378800-7220-1-git-send-email-acourbot@nvidia.com>
+	<CACRpkdY-oBdxxWhsGraEU31qyu+RWJAiRA+KEip6QNW3jRwGUA@mail.gmail.com>
+	<1393985087.3271.21.camel@joe-AO722>
+	<CAAVeFuJdg-p4K1wdLpdv3byiEBUezGGUVjyScoOaZcLZxhPk7A@mail.gmail.com>
+	<1393985959.3271.25.camel@joe-AO722>
+	<CAAVeFuKwLJ5-Q1_u4e_o6tp1F-AKaVQG0ph1GdqjBqFiMCQvPQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1393970762-5346-1-git-send-email-holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, KV Sujith <sujithkv-l0cyMroinI0@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org" <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:49660 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755151AbaCECdu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Mar 2014 21:33:50 -0500
+Received: by mail-oa0-f42.google.com with SMTP id i4so424654oah.15
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Mar 2014 18:33:49 -0800 (PST)
+In-Reply-To: <CAAVeFuKwLJ5-Q1_u4e_o6tp1F-AKaVQG0ph1GdqjBqFiMCQvPQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Joe Perches <joe@perches.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Mar 5, 2014 at 6:06 AM, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org> wrote:
+On Wed, Mar 5, 2014 at 10:22 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Wed, Mar 5, 2014 at 11:19 AM, Joe Perches <joe@perches.com> wrote:
+>> On Wed, 2014-03-05 at 11:14 +0900, Alexandre Courbot wrote:
+>>> On Wed, Mar 5, 2014 at 11:04 AM, Joe Perches <joe@perches.com> wrote:
+>>> > On Wed, 2014-03-05 at 09:49 +0800, Linus Walleij wrote:
+>>> >> On Wed, Feb 26, 2014 at 9:40 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>>> >>
+>>> >> > Nothing prevents GPIO drivers from returning values outside the
+>>> >> > boolean range, and as it turns out a few drivers are actually doing so.
+>>> >> > These values were passed as-is to unsuspecting consumers and created
+>>> >> > confusion.
+>>> >> >
+>>> >> > This patch makes the internal _gpiod_get_raw_value() function return a
+>>> >> > bool, effectively clamping the GPIO value to the boolean range no
+>>> >> > matter what the driver does.
+>>> >>
+>>> >> No, that will not be the semantic effect of this patch, bool is just
+>>> >> another name for an int, maybe some static checkers will be able
+>>> >> to use it however.
+>>> >
+>>> > No, a bool is not an int.
+>>> >
+>>> > It's really different.
+>>> > include/linux/types.h:typedef _Bool                     bool;
+>>>
+>>> It indeed seems that _Bool is an actual boolean type in C99. However I
+>>> could not find in the C99 standard how ints are supposed to be
+>>> converted to it.
+>>
+>> 6.3.1.2 Boolean type
+>>
+>> When any scalar value is converted to _Bool, the result is 0 if the
+>> value compares equal to 0; otherwise, the result is 1.
+>>
+>>> So in the end it is probably safer to perform this
+>>> change the way Linus suggested.
+>>
+>> Not really.
+>
+> Ok, you are obviously correct here. Linus, what do you think?
 
-> The driver missed an of_xlate function to translate gpio numbers
-> as found in the DT to the correct chip and number.
->
-> While there I've set #gpio_cells to a fixed value of 2.
->
-> I've used gpio-pxa.c as template for those changes and tested my changes
-> successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
-> reinvent the wheel but just copied and tested stuff.
->
-> Thanks to Grygorii Strashko for the hint of the existing code in gpio-pxa.
->
-> Signed-off-by: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+Yeah I was wrong ... too old and not keeping up with standards
+development :-)
 
-Grygorii, can I have your review tag on this patch so I can apply it?
+Anyway, the local "value" variable in the function should still be
+converted to a bool as well right? And the assignment should still
+be "false" not 0. So I would still add my hunk of code...
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
