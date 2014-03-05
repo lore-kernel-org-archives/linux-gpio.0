@@ -1,100 +1,39 @@
-From: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Subject: [PATCH] gpio: davinci: fix gpio selection for OF
-Date: Tue, 4 Mar 2014 23:06:02 +0100
-Message-ID: <1393970762-5346-1-git-send-email-holler@ahsoftware.de>
-References: <5315ED51.1000006@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v12] gpio: add a driver for the Synopsys DesignWare APB
+ GPIO block
+Date: Wed, 5 Mar 2014 09:01:56 +0800
+Message-ID: <CACRpkdbSk3Vv+-U=jQTH=8E=yx4tkHApGq-ARfwXs-cBf4=ddA@mail.gmail.com>
+References: <1393369261-17469-1-git-send-email-delicious.quinoa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <5315ED51.1000006-l0cyMroinI0@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1393369261-17469-1-git-send-email-delicious.quinoa@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Tull <delicious.quinoa@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Mark Rutland <mark.rutland@arm.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The driver missed an of_xlate function to translate gpio numbers
-as found in the DT to the correct chip and number.
+On Wed, Feb 26, 2014 at 7:01 AM, Alan Tull <delicious.quinoa@gmail.com> wrote:
 
-While there I've set #gpio_cells to a fixed value of 2.
+> From: Jamie Iles <jamie@jamieiles.com>
+>
+> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
+> and can be configured to provide multiple banks of GPIO pins.
+>
+> Signed-off-by: Jamie Iles <jamie@jamieiles.com>
+> Signed-off-by: Alan Tull <atull@altera.com>
+> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>
+> v12: - Add irq_startup/shutdown
+>      - do irq_create_mapping() in probe, irq_find_mapping() in to_irq()
+>      - Adjust mappings to show support for 1 gpio per port.
+>      - gpio-cells = <1>
 
-I've used gpio-pxa.c as template for those changes and tested my changes
-successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
-reinvent the wheel but just copied and tested stuff.
+Patch applied!
 
-Thanks to Grygorii Strashko for the hint of the existing code in gpio-pxa.
+You've done a tremendous work on this driver and there is
+absolutely nothing controversial about the bindings, so it is
+my pleasure to include this driver.
 
-Signed-off-by: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
----
- drivers/gpio/gpio-davinci.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 7629b4f..79f45c4 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -44,6 +44,9 @@ struct davinci_gpio_regs {
- 
- static void __iomem *gpio_base;
- 
-+static struct davinci_gpio_controller *davinci_gpio_chips;
-+static int davinci_last_gpio;
-+
- static struct davinci_gpio_regs __iomem *gpio2regs(unsigned gpio)
- {
- 	void __iomem *ptr;
-@@ -172,6 +175,24 @@ of_err:
- 	return NULL;
- }
- 
-+#ifdef CONFIG_OF_GPIO
-+static int davinci_gpio_of_xlate(struct gpio_chip *gc,
-+			     const struct of_phandle_args *gpiospec,
-+			     u32 *flags)
-+{
-+	if (gpiospec->args[0] > davinci_last_gpio)
-+		return -EINVAL;
-+
-+	if (gc != &davinci_gpio_chips[gpiospec->args[0] / 32].chip)
-+		return -EINVAL;
-+
-+	if (flags)
-+		*flags = gpiospec->args[1];
-+
-+	return gpiospec->args[0] % 32;
-+}
-+#endif
-+
- static int davinci_gpio_probe(struct platform_device *pdev)
- {
- 	int i, base;
-@@ -236,6 +257,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 			chips[i].chip.ngpio = 32;
- 
- #ifdef CONFIG_OF_GPIO
-+		chips[i].chip.of_gpio_n_cells = 2;
-+		chips[i].chip.of_xlate = davinci_gpio_of_xlate;
- 		chips[i].chip.of_node = dev->of_node;
- #endif
- 		spin_lock_init(&chips[i].lock);
-@@ -251,6 +274,10 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, chips);
- 	davinci_gpio_irq_setup(pdev);
-+
-+	davinci_gpio_chips = chips;
-+	davinci_last_gpio = ngpio;
-+
- 	return 0;
- }
- 
--- 
-1.8.3.1
+Yours,
+Linus Walleij
