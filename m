@@ -1,92 +1,53 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Wed, 5 Mar 2014 15:12:57 +0200
-Message-ID: <531722D9.9020904@ti.com>
-References: <5316FFCE.1060603@ti.com>
-	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v12] gpio: add a driver for the Synopsys DesignWare APB
+ GPIO block
+Date: Wed, 5 Mar 2014 09:30:23 -0600
+Message-ID: <CANk1AXRWdxgY4T6CHAacePupuyKRn_byGCGdtdvbBHvJuZkZzw@mail.gmail.com>
+References: <1393369261-17469-1-git-send-email-delicious.quinoa@gmail.com>
+	<CACRpkdbSk3Vv+-U=jQTH=8E=yx4tkHApGq-ARfwXs-cBf4=ddA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <1394018461-757-1-git-send-email-holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qc0-f182.google.com ([209.85.216.182]:40984 "EHLO
+	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757857AbaCEPaZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Mar 2014 10:30:25 -0500
+In-Reply-To: <CACRpkdbSk3Vv+-U=jQTH=8E=yx4tkHApGq-ARfwXs-cBf4=ddA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Mark Rutland <mark.rutland@arm.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 
-Hi Alexander,
+On Tue, Mar 4, 2014 at 7:01 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Feb 26, 2014 at 7:01 AM, Alan Tull <delicious.quinoa@gmail.com> wrote:
+>
+>> From: Jamie Iles <jamie@jamieiles.com>
+>>
+>> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
+>> and can be configured to provide multiple banks of GPIO pins.
+>>
+>> Signed-off-by: Jamie Iles <jamie@jamieiles.com>
+>> Signed-off-by: Alan Tull <atull@altera.com>
+>> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>>
+>> v12: - Add irq_startup/shutdown
+>>      - do irq_create_mapping() in probe, irq_find_mapping() in to_irq()
+>>      - Adjust mappings to show support for 1 gpio per port.
+>>      - gpio-cells = <1>
+>
+> Patch applied!
+>
+> You've done a tremendous work on this driver and there is
+> absolutely nothing controversial about the bindings, so it is
+> my pleasure to include this driver.
+>
+> Yours,
+> Linus Walleij
 
-On 03/05/2014 01:21 PM, Alexander Holler wrote:
-> The driver missed an of_xlate function to translate gpio numbers
-> as found in the DT to the correct chip and number.
->
-> While there I've set #gpio_cells to a fixed value of 2.
->
-> I've used gpio-pxa.c as template for those changes and tested my changes
-> successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
-> reinvent the wheel but just copied and tested stuff.
->
-> Thanks to Grygorii Strashko for the hint to the existing code in gpio-pxa.
->
-> Signed-off-by: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Excellent!  Thanks Linus!
 
-Looks good to me now. Thanks.
+And thanks Jamie for originating this driver!
 
-> ---
->   drivers/gpio/gpio-davinci.c | 24 ++++++++++++++++++++++++
->   1 file changed, 24 insertions(+)
->
->   Changes in v2: replaced static variables by indirections.
->
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 7629b4f..92574a0 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -172,6 +172,27 @@ of_err:
->   	return NULL;
->   }
->
-> +#ifdef CONFIG_OF_GPIO
-> +static int davinci_gpio_of_xlate(struct gpio_chip *gc,
-> +			     const struct of_phandle_args *gpiospec,
-> +			     u32 *flags)
-> +{
-> +	struct davinci_gpio_controller *chips = dev_get_drvdata(gc->dev);
-> +	struct davinci_gpio_platform_data *pdata = dev_get_platdata(gc->dev);
-> +
-> +	if (gpiospec->args[0] > pdata->ngpio)
-> +		return -EINVAL;
-> +
-> +	if (gc != &chips[gpiospec->args[0] / 32].chip)
-> +		return -EINVAL;
-> +
-> +	if (flags)
-> +		*flags = gpiospec->args[1];
-> +
-> +	return gpiospec->args[0] % 32;
-> +}
-> +#endif
-> +
->   static int davinci_gpio_probe(struct platform_device *pdev)
->   {
->   	int i, base;
-> @@ -236,6 +257,9 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->   			chips[i].chip.ngpio = 32;
->
->   #ifdef CONFIG_OF_GPIO
-> +		chips[i].chip.of_gpio_n_cells = 2;
-> +		chips[i].chip.of_xlate = davinci_gpio_of_xlate;
-> +		chips[i].chip.dev = dev;
->   		chips[i].chip.of_node = dev->of_node;
->   #endif
->   		spin_lock_init(&chips[i].lock);
->
+Alan Tull
+aka
+delicious quinoa
