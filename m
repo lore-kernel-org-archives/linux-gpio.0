@@ -1,48 +1,116 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2NF0gZ3BpbzogRHJpdmVyIGZvciBTWVNDT04tYmFzZWQg?=
- =?UTF-8?B?R1BJT3M=?=
-Date: Wed, 05 Mar 2014 11:03:03 +0400
-Message-ID: <1394002983.39681225@f309.i.mail.ru>
-References: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
- <20140225190923.fdd969463717061aea582551@mail.ru>
- <CACRpkdbc5SZYC-1eC=er+HmBxp6a77Nwzr46Vv7BFk882TRLDg@mail.gmail.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH] gpio: davinci: fix gpio selection for OF
+Date: Wed, 5 Mar 2014 12:43:26 +0200
+Message-ID: <5316FFCE.1060603@ti.com>
+References: <5315ED51.1000006@ti.com>
+	<1393970762-5346-1-git-send-email-holler@ahsoftware.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fallback8.mail.ru ([94.100.176.136]:58538 "EHLO
-	fallback8.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753623AbaCEHFc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Mar 2014 02:05:32 -0500
-Received: from f309.i.mail.ru (f309.i.mail.ru [128.140.169.173])
-	by fallback8.mail.ru (mPOP.Fallback_MX) with ESMTP id 7309252BDD1D
-	for <linux-gpio@vger.kernel.org>; Wed,  5 Mar 2014 11:03:26 +0400 (MSK)
-In-Reply-To: <CACRpkdbc5SZYC-1eC=er+HmBxp6a77Nwzr46Vv7BFk882TRLDg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <1393970762-5346-1-git-send-email-holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
-Cc: =?UTF-8?B?T2xvZiBKb2hhbnNzb24=?= <olof@lixom.net>, =?UTF-8?B?QXJuZCBCZXJnbWFubg==?= <arnd@arndb.de>, =?UTF-8?B?S2V2aW4gSGlsbWFu?= <khilman@linaro.org>, =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>
 
-0KHRgNC10LTQsCwgIDUg0LzQsNGA0YLQsCAyMDE0LCA5OjExICswODowMCDQvtGCIExpbnVzIFdh
-bGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz46Cj4gT24gVHVlLCBGZWIgMjUsIDIwMTQg
-YXQgMTE6MDkgUE0sIEFsZXhhbmRlciBTaGl5YW4gPHNoY193b3JrQG1haWwucnU+IHdyb3RlOgo+
-ID4gT24gVHVlLCAxOCBGZWIgMjAxNCAxNToyNToyMCAtMDgwMAo+ID4gT2xvZiBKb2hhbnNzb24g
-PG9sb2ZAbGl4b20ubmV0PiB3cm90ZToKPiAKPiA+PiBJZiB3ZSBoYXZlIG1vcmUgZHJpdmVycyBs
-aWtlIHRoZXNlIGRvd24gdGhlIHJvYWQgd2UgY2FuIG1ha2UgYSBjb21tb24gc2hhcmVkCj4gPj4g
-YmluZGluZywgYnV0IHVudGlsIHRoZW4gSSBkb24ndCB0aGluayB0aGVyZSdzIG11Y2ggcG9pbnQg
-aW4gaXQuCj4gPgo+ID4gSXMgdGhpcyBwcm9wb3NlZCB0byByZW1vdmUgdGhlIGdlbmVyaWMgaW1w
-bGVtZW50YXRpb24/Cj4gPiBMaW51cywgd2hhdCBpcyB5b3VyIG9waW5pb24gb24gdGhpcz8KPiAK
-PiBUaGF0IGlzIGJldHRlciwgYmVjYXVzZSBpdCByZWxpZXZlcyBtZSBmcm9tIHRoZSBwYWluIGFi
-b3V0IHRoaXMKPiBkcml2ZXIuIChTb3JyeSBmb3Igc2xvdyBhbnN3ZXJzLikKPiAKPiBTbyBpbnN0
-ZWFkIG9mIHRoaXM6Cj4gCj4gKy0gY29tcGF0aWJsZTogU2hvdWxkIGNvbnRhaW4gb25lIG9mIHRo
-ZSBmb2xsb3dpbmc6Cj4gKyAgLSAiY2xwczcxMXgsc3lzY29uLWdwaW8tbWN0cmwiOiBGb3IgQVJN
-IENMUFM3MTFYIFNZU0ZMRzEgTUNUUkwgR1BJT3MuCj4gCj4gU29tZXRoaW5nIG1vcmUgbGlrZQo+
-IAo+ICJjaXJydXMsY2xwczcxMXgtc3lzY29uLWdwaW8iCj4gCj4gSSBndWVzcz8KCkkgdGhpbmsg
-dGhhdCBPbG9mIG1lYW50IHRvIGNvbXBsZXRlbHkgcmVtb3ZlIHRoZSBjb25jZXB0IG9mICJzeXNj
-b24iIGZyb20gdGhlCkRUIGRlc2NyaXB0aW9uLgpUaGlzIGNhbiBiZSBkb25lIGJ5IGNoYW5naW5n
-IHRoZSBjb21wYXRpYmlsaXR5IHN0cmluZyB3aXRoICJjaXJydXMsY2xwczcxMXgtbWN0cmwtZ3Bp
-byIKZm9yIG15IGNhc2UgYW5kIGhpZGUgInN5c2NvbiIgaW4gdGhlIGludGVybmFsIHN0cnVjdHVy
-ZSBvZiB0aGUgZHJpdmVyIHRvIHVzZSB0aGUKc3lzY29uX3JlZ21hcF9sb29rdXBfYnlfY29tcGF0
-aWJsZSgpIGZ1bmN0aW9uLgpJZiBzbywgdGhlbiBJJ2xsIG1ha2UgdGhlIG5leHQgdmVyc2lvbi4K
-Ci0tLQo=
+On 03/05/2014 12:06 AM, Alexander Holler wrote:
+> The driver missed an of_xlate function to translate gpio numbers
+> as found in the DT to the correct chip and number.
+>
+> While there I've set #gpio_cells to a fixed value of 2.
+>
+> I've used gpio-pxa.c as template for those changes and tested my changes
+> successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
+> reinvent the wheel but just copied and tested stuff.
+>
+> Thanks to Grygorii Strashko for the hint of the existing code in gpio-pxa.
+>
+> Signed-off-by: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+> ---
+>   drivers/gpio/gpio-davinci.c | 27 +++++++++++++++++++++++++++
+>   1 file changed, 27 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index 7629b4f..79f45c4 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -44,6 +44,9 @@ struct davinci_gpio_regs {
+>
+>   static void __iomem *gpio_base;
+>
+> +static struct davinci_gpio_controller *davinci_gpio_chips;
+> +static int davinci_last_gpio;
+> +
+>   static struct davinci_gpio_regs __iomem *gpio2regs(unsigned gpio)
+>   {
+>   	void __iomem *ptr;
+> @@ -172,6 +175,24 @@ of_err:
+>   	return NULL;
+>   }
+>
+> +#ifdef CONFIG_OF_GPIO
+> +static int davinci_gpio_of_xlate(struct gpio_chip *gc,
+> +			     const struct of_phandle_args *gpiospec,
+> +			     u32 *flags)
+> +{
+> +	if (gpiospec->args[0] > davinci_last_gpio)
+> +		return -EINVAL;
+> +
+> +	if (gc != &davinci_gpio_chips[gpiospec->args[0] / 32].chip)
+> +		return -EINVAL;
+> +
+> +	if (flags)
+> +		*flags = gpiospec->args[1];
+
+Just one question here - Could we use gpio_chip-dev and hence, drop
+static variables (davinci_gpio_chips, davinci_last_gpio)?
+
+The Davinci device holds davinci_gpio_platform_data
+in dev->platform_data and pointer on davinci_gpio_controller array
+in dev->p->driver_data.
+
+And looks like, dev_get_platdata(gc->dev) and
+dev_get_drvdata(gc->dev) can be used here.
+
+> +
+> +	return gpiospec->args[0] % 32;
+> +}
+> +#endif
+> +
+>   static int davinci_gpio_probe(struct platform_device *pdev)
+>   {
+>   	int i, base;
+> @@ -236,6 +257,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>   			chips[i].chip.ngpio = 32;
+>
+
+add here	chips[i].chip.dev = dev;
+
+>   #ifdef CONFIG_OF_GPIO
+> +		chips[i].chip.of_gpio_n_cells = 2;
+> +		chips[i].chip.of_xlate = davinci_gpio_of_xlate;
+>   		chips[i].chip.of_node = dev->of_node;
+>   #endif
+>   		spin_lock_init(&chips[i].lock);
+> @@ -251,6 +274,10 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>
+>   	platform_set_drvdata(pdev, chips);
+>   	davinci_gpio_irq_setup(pdev);
+> +
+> +	davinci_gpio_chips = chips;
+> +	davinci_last_gpio = ngpio;
+> +
+>   	return 0;
+>   }
+
+regards,
+-grygorii
