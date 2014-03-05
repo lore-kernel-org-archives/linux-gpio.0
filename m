@@ -1,75 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: clamp returned values to the boolean range
-Date: Wed, 5 Mar 2014 10:33:48 +0800
-Message-ID: <CACRpkdbaLy+uY_fsht=Fk0qPdtAnttpOK3xrpirPbwB0mA+TPQ@mail.gmail.com>
-References: <1393378800-7220-1-git-send-email-acourbot@nvidia.com>
-	<CACRpkdY-oBdxxWhsGraEU31qyu+RWJAiRA+KEip6QNW3jRwGUA@mail.gmail.com>
-	<1393985087.3271.21.camel@joe-AO722>
-	<CAAVeFuJdg-p4K1wdLpdv3byiEBUezGGUVjyScoOaZcLZxhPk7A@mail.gmail.com>
-	<1393985959.3271.25.camel@joe-AO722>
-	<CAAVeFuKwLJ5-Q1_u4e_o6tp1F-AKaVQG0ph1GdqjBqFiMCQvPQ@mail.gmail.com>
+Subject: Re: [PATCH 2/5] gpio: remove obsolete tnetv107x driver
+Date: Wed, 5 Mar 2014 10:45:30 +0800
+Message-ID: <CACRpkdZOpym2bit=kRE3F3rhuFQd=U2A=RynxwDfXNbsditS7A@mail.gmail.com>
+References: <1393418614-3968549-1-git-send-email-arnd@arndb.de>
+	<1393418614-3968549-3-git-send-email-arnd@arndb.de>
+	<CACRpkdaBMozNayXXyn8Ag+GUU_+C2j4X7aVuaZjgV_krCvSy0A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:49660 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755151AbaCECdu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Mar 2014 21:33:50 -0500
-Received: by mail-oa0-f42.google.com with SMTP id i4so424654oah.15
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Mar 2014 18:33:49 -0800 (PST)
-In-Reply-To: <CAAVeFuKwLJ5-Q1_u4e_o6tp1F-AKaVQG0ph1GdqjBqFiMCQvPQ@mail.gmail.com>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:52388 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751805AbaCECpa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Mar 2014 21:45:30 -0500
+Received: by mail-oa0-f41.google.com with SMTP id j17so444947oag.14
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Mar 2014 18:45:30 -0800 (PST)
+In-Reply-To: <CACRpkdaBMozNayXXyn8Ag+GUU_+C2j4X7aVuaZjgV_krCvSy0A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Joe Perches <joe@perches.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>, Sekhar Nori <nsekhar@ti.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, Cyril Chemparathy <cyril@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 5, 2014 at 10:22 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Wed, Mar 5, 2014 at 11:19 AM, Joe Perches <joe@perches.com> wrote:
->> On Wed, 2014-03-05 at 11:14 +0900, Alexandre Courbot wrote:
->>> On Wed, Mar 5, 2014 at 11:04 AM, Joe Perches <joe@perches.com> wrote:
->>> > On Wed, 2014-03-05 at 09:49 +0800, Linus Walleij wrote:
->>> >> On Wed, Feb 26, 2014 at 9:40 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
->>> >>
->>> >> > Nothing prevents GPIO drivers from returning values outside the
->>> >> > boolean range, and as it turns out a few drivers are actually doing so.
->>> >> > These values were passed as-is to unsuspecting consumers and created
->>> >> > confusion.
->>> >> >
->>> >> > This patch makes the internal _gpiod_get_raw_value() function return a
->>> >> > bool, effectively clamping the GPIO value to the boolean range no
->>> >> > matter what the driver does.
->>> >>
->>> >> No, that will not be the semantic effect of this patch, bool is just
->>> >> another name for an int, maybe some static checkers will be able
->>> >> to use it however.
->>> >
->>> > No, a bool is not an int.
->>> >
->>> > It's really different.
->>> > include/linux/types.h:typedef _Bool                     bool;
->>>
->>> It indeed seems that _Bool is an actual boolean type in C99. However I
->>> could not find in the C99 standard how ints are supposed to be
->>> converted to it.
->>
->> 6.3.1.2 Boolean type
->>
->> When any scalar value is converted to _Bool, the result is 0 if the
->> value compares equal to 0; otherwise, the result is 1.
->>
->>> So in the end it is probably safer to perform this
->>> change the way Linus suggested.
->>
->> Not really.
+On Wed, Mar 5, 2014 at 9:52 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Feb 26, 2014 at 8:43 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> Ok, you are obviously correct here. Linus, what do you think?
+>> The tnetv107x platform is getting removed, so this driver won't
+>> be needed any more.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>> Cc: linux-gpio@vger.kernel.org
+>
+> Can I have an ACK from some Sekhar to apply this
+> to the GPIO tree, so we are all aligned?
 
-Yeah I was wrong ... too old and not keeping up with standards
-development :-)
-
-Anyway, the local "value" variable in the function should still be
-converted to a bool as well right? And the assignment should still
-be "false" not 0. So I would still add my hunk of code...
+Bah I found the ACK on patch 0, sorry about the fuzz.
+Patch applied.
 
 Yours,
 Linus Walleij
