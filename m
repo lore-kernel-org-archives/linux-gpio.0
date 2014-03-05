@@ -1,41 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/5] gpio: remove obsolete tnetv107x driver
-Date: Wed, 5 Mar 2014 10:45:30 +0800
-Message-ID: <CACRpkdZOpym2bit=kRE3F3rhuFQd=U2A=RynxwDfXNbsditS7A@mail.gmail.com>
-References: <1393418614-3968549-1-git-send-email-arnd@arndb.de>
-	<1393418614-3968549-3-git-send-email-arnd@arndb.de>
-	<CACRpkdaBMozNayXXyn8Ag+GUU_+C2j4X7aVuaZjgV_krCvSy0A@mail.gmail.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH] gpio: clamp returned values to the boolean range
+Date: Tue, 04 Mar 2014 19:09:19 -0800
+Message-ID: <1393988959.3271.37.camel@joe-AO722>
+References: <1393378800-7220-1-git-send-email-acourbot@nvidia.com>
+	 <CACRpkdY-oBdxxWhsGraEU31qyu+RWJAiRA+KEip6QNW3jRwGUA@mail.gmail.com>
+	 <1393985087.3271.21.camel@joe-AO722>
+	 <CAAVeFuJdg-p4K1wdLpdv3byiEBUezGGUVjyScoOaZcLZxhPk7A@mail.gmail.com>
+	 <1393985959.3271.25.camel@joe-AO722>
+	 <CAAVeFuKwLJ5-Q1_u4e_o6tp1F-AKaVQG0ph1GdqjBqFiMCQvPQ@mail.gmail.com>
+	 <CACRpkdbaLy+uY_fsht=Fk0qPdtAnttpOK3xrpirPbwB0mA+TPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:52388 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751805AbaCECpa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Mar 2014 21:45:30 -0500
-Received: by mail-oa0-f41.google.com with SMTP id j17so444947oag.14
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Mar 2014 18:45:30 -0800 (PST)
-In-Reply-To: <CACRpkdaBMozNayXXyn8Ag+GUU_+C2j4X7aVuaZjgV_krCvSy0A@mail.gmail.com>
+Received: from smtprelay0169.hostedemail.com ([216.40.44.169]:42417 "EHLO
+	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754396AbaCEDJX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Mar 2014 22:09:23 -0500
+In-Reply-To: <CACRpkdbaLy+uY_fsht=Fk0qPdtAnttpOK3xrpirPbwB0mA+TPQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Sekhar Nori <nsekhar@ti.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, Cyril Chemparathy <cyril@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Mar 5, 2014 at 9:52 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Feb 26, 2014 at 8:43 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->
->> The tnetv107x platform is getting removed, so this driver won't
->> be needed any more.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Cc: linux-gpio@vger.kernel.org
->
-> Can I have an ACK from some Sekhar to apply this
-> to the GPIO tree, so we are all aligned?
+On Wed, 2014-03-05 at 10:33 +0800, Linus Walleij wrote:
+> the local "value" variable in the function should still be
+> converted to a bool as well right? And the assignment should still
+> be "false" not 0. So I would still add my hunk of code...
 
-Bah I found the ACK on patch 0, sorry about the fuzz.
-Patch applied.
+No idea.  I don't know the code, just wanted to point
+out that a bool is not an int.
 
-Yours,
-Linus Walleij
+Generically, I think converting an int to a bool in
+any "raw" function probably isn't the right thing to do.
+
+Especially if any of these GPIOs are ever used as ports
+(aggregates) in any access.
+
