@@ -1,39 +1,49 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v12] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Wed, 5 Mar 2014 09:01:56 +0800
-Message-ID: <CACRpkdbSk3Vv+-U=jQTH=8E=yx4tkHApGq-ARfwXs-cBf4=ddA@mail.gmail.com>
-References: <1393369261-17469-1-git-send-email-delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v4] gpio: Driver for SYSCON-based GPIOs
+Date: Wed, 5 Mar 2014 09:11:54 +0800
+Message-ID: <CACRpkdbc5SZYC-1eC=er+HmBxp6a77Nwzr46Vv7BFk882TRLDg@mail.gmail.com>
+References: <1389632203-22806-1-git-send-email-shc_work@mail.ru>
+	<CACRpkdaVn0iNFYKE3HXWxnb4iCJorF0HSVG4Uvz8Q18SiF5PUQ@mail.gmail.com>
+	<20140218232520.GA22492@quad.lixom.net>
+	<20140225190923.fdd969463717061aea582551@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1393369261-17469-1-git-send-email-delicious.quinoa@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Tull <delicious.quinoa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Mark Rutland <mark.rutland@arm.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:58965 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754936AbaCEBLz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Mar 2014 20:11:55 -0500
+Received: by mail-oa0-f42.google.com with SMTP id i4so359358oah.1
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Mar 2014 17:11:55 -0800 (PST)
+In-Reply-To: <20140225190923.fdd969463717061aea582551@mail.ru>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Wed, Feb 26, 2014 at 7:01 AM, Alan Tull <delicious.quinoa@gmail.com> wrote:
+On Tue, Feb 25, 2014 at 11:09 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
+> On Tue, 18 Feb 2014 15:25:20 -0800
+> Olof Johansson <olof@lixom.net> wrote:
 
-> From: Jamie Iles <jamie@jamieiles.com>
+>> If we have more drivers like these down the road we can make a common shared
+>> binding, but until then I don't think there's much point in it.
 >
-> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
-> and can be configured to provide multiple banks of GPIO pins.
->
-> Signed-off-by: Jamie Iles <jamie@jamieiles.com>
-> Signed-off-by: Alan Tull <atull@altera.com>
-> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
->
-> v12: - Add irq_startup/shutdown
->      - do irq_create_mapping() in probe, irq_find_mapping() in to_irq()
->      - Adjust mappings to show support for 1 gpio per port.
->      - gpio-cells = <1>
+> Is this proposed to remove the generic implementation?
+> Linus, what is your opinion on this?
 
-Patch applied!
+That is better, because it relieves me from the pain about this
+driver. (Sorry for slow answers.)
 
-You've done a tremendous work on this driver and there is
-absolutely nothing controversial about the bindings, so it is
-my pleasure to include this driver.
+So instead of this:
+
++- compatible: Should contain one of the following:
++  - "clps711x,syscon-gpio-mctrl": For ARM CLPS711X SYSFLG1 MCTRL GPIOs.
+
+Something more like
+
+"cirrus,clps711x-syscon-gpio"
+
+I guess?
 
 Yours,
 Linus Walleij
