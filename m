@@ -1,45 +1,122 @@
-From: Alan Tull <delicious.quinoa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] fix build error in gpio-dwapb patch
-Date: Thu, 6 Mar 2014 13:29:40 -0600
-Message-ID: <1394134180-23208-1-git-send-email-delicious.quinoa@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-68IGFXMjmZ7QT0dZR+AlfA@public.gmane.org>
-Cc: Josh Cartwright <joshc-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Steffen Trumtrar <s.trumtrar-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, delicious quinoa <delicious.quinoa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Yves Vandervennet <rocket.yvanderv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Gary Servin <garyservin@gmail.com>
+Subject: [PATCH] gpio: mcp23s08: Trivial: Fixed coding style issues
+Date: Thu,  6 Mar 2014 20:25:26 -0300
+Message-ID: <1394148326-21556-1-git-send-email-garyservin@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yk0-f170.google.com ([209.85.160.170]:35301 "EHLO
+	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750829AbaCFXZw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 18:25:52 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: trivial@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Gary Servin <garyservin@gmail.com>
 
-From: Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+This coding style issue was detected using the checkpatch.pl script
 
-fix build error with this message:
-kernel/irq/Kconfig:41:error: recursive dependency detected!
-kernel/irq/Kconfig:41:  symbol GENERIC_IRQ_CHIP is selected by GPIO_DWAPB
-drivers/gpio/Kconfig:131:       symbol GPIO_DWAPB depends on IRQ_DOMAIN
-kernel/irq/Kconfig:46:  symbol IRQ_DOMAIN is selected by GENERIC_IRQ_CHIP
-
-Signed-off-by: Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Gary Servin <garyservin@gmail.com>
 ---
- drivers/gpio/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-mcp23s08.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 9979017..0e524d7 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -132,7 +132,7 @@ config GPIO_DWAPB
- 	tristate "Synopsys DesignWare APB GPIO driver"
- 	select GPIO_GENERIC
- 	select GENERIC_IRQ_CHIP
--	depends on OF_GPIO && IRQ_DOMAIN
-+	depends on OF_GPIO
- 	help
- 	  Say Y or M here to build support for the Synopsys DesignWare APB
- 	  GPIO block.
+diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+index 1ac288e..e1734c1 100644
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@ -173,7 +173,7 @@ static int mcp23s08_read(struct mcp23s08 *mcp, unsigned reg)
+ 
+ 	tx[0] = mcp->addr | 0x01;
+ 	tx[1] = reg;
+-	status = spi_write_then_read(mcp->data, tx, sizeof tx, rx, sizeof rx);
++	status = spi_write_then_read(mcp->data, tx, sizeof(tx), rx, sizeof(rx));
+ 	return (status < 0) ? status : rx[0];
+ }
+ 
+@@ -184,7 +184,7 @@ static int mcp23s08_write(struct mcp23s08 *mcp, unsigned reg, unsigned val)
+ 	tx[0] = mcp->addr;
+ 	tx[1] = reg;
+ 	tx[2] = val;
+-	return spi_write_then_read(mcp->data, tx, sizeof tx, NULL, 0);
++	return spi_write_then_read(mcp->data, tx, sizeof(tx), NULL, 0);
+ }
+ 
+ static int
+@@ -193,13 +193,13 @@ mcp23s08_read_regs(struct mcp23s08 *mcp, unsigned reg, u16 *vals, unsigned n)
+ 	u8	tx[2], *tmp;
+ 	int	status;
+ 
+-	if ((n + reg) > sizeof mcp->cache)
++	if ((n + reg) > sizeof(mcp->cache))
+ 		return -EINVAL;
+ 	tx[0] = mcp->addr | 0x01;
+ 	tx[1] = reg;
+ 
+ 	tmp = (u8 *)vals;
+-	status = spi_write_then_read(mcp->data, tx, sizeof tx, tmp, n);
++	status = spi_write_then_read(mcp->data, tx, sizeof(tx), tmp, n);
+ 	if (status >= 0) {
+ 		while (n--)
+ 			vals[n] = tmp[n]; /* expand to 16bit */
+@@ -214,7 +214,7 @@ static int mcp23s17_read(struct mcp23s08 *mcp, unsigned reg)
+ 
+ 	tx[0] = mcp->addr | 0x01;
+ 	tx[1] = reg << 1;
+-	status = spi_write_then_read(mcp->data, tx, sizeof tx, rx, sizeof rx);
++	status = spi_write_then_read(mcp->data, tx, sizeof(tx), rx, sizeof(rx));
+ 	return (status < 0) ? status : (rx[0] | (rx[1] << 8));
+ }
+ 
+@@ -226,7 +226,7 @@ static int mcp23s17_write(struct mcp23s08 *mcp, unsigned reg, unsigned val)
+ 	tx[1] = reg << 1;
+ 	tx[2] = val;
+ 	tx[3] = val >> 8;
+-	return spi_write_then_read(mcp->data, tx, sizeof tx, NULL, 0);
++	return spi_write_then_read(mcp->data, tx, sizeof(tx), NULL, 0);
+ }
+ 
+ static int
+@@ -235,12 +235,12 @@ mcp23s17_read_regs(struct mcp23s08 *mcp, unsigned reg, u16 *vals, unsigned n)
+ 	u8	tx[2];
+ 	int	status;
+ 
+-	if ((n + reg) > sizeof mcp->cache)
++	if ((n + reg) > sizeof(mcp->cache))
+ 		return -EINVAL;
+ 	tx[0] = mcp->addr | 0x01;
+ 	tx[1] = reg << 1;
+ 
+-	status = spi_write_then_read(mcp->data, tx, sizeof tx,
++	status = spi_write_then_read(mcp->data, tx, sizeof(tx),
+ 				     (u8 *)vals, n * 2);
+ 	if (status >= 0) {
+ 		while (n--)
+@@ -567,7 +567,7 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 			(mcp->cache[MCP_GPIO] & mask) ? "hi" : "lo",
+ 			(mcp->cache[MCP_GPPU] & mask) ? "up" : "  ");
+ 		/* NOTE:  ignoring the irq-related registers */
+-		seq_printf(s, "\n");
++		seq_puts(s, "\n");
+ 	}
+ done:
+ 	mutex_unlock(&mcp->lock);
+@@ -789,7 +789,7 @@ static int mcp230xx_probe(struct i2c_client *client,
+ 		pullups = pdata->chip[0].pullups;
+ 	}
+ 
+-	mcp = kzalloc(sizeof *mcp, GFP_KERNEL);
++	mcp = kzalloc(sizeof(*mcp), GFP_KERNEL);
+ 	if (!mcp)
+ 		return -ENOMEM;
+ 
+@@ -925,7 +925,7 @@ static int mcp23s08_probe(struct spi_device *spi)
+ 		base = pdata->base;
+ 	}
+ 
+-	data = kzalloc(sizeof *data + chips * sizeof(struct mcp23s08),
++	data = kzalloc(sizeof(*data) + chips * sizeof(struct mcp23s08),
+ 			GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
 -- 
-1.7.9.5
+1.9.0
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
