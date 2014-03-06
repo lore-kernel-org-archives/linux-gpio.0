@@ -1,53 +1,46 @@
-From: delicious quinoa <delicious.quinoa@gmail.com>
-Subject: Re: [PATCH v12] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Wed, 5 Mar 2014 09:30:23 -0600
-Message-ID: <CANk1AXRWdxgY4T6CHAacePupuyKRn_byGCGdtdvbBHvJuZkZzw@mail.gmail.com>
-References: <1393369261-17469-1-git-send-email-delicious.quinoa@gmail.com>
-	<CACRpkdbSk3Vv+-U=jQTH=8E=yx4tkHApGq-ARfwXs-cBf4=ddA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: zevio: depend on ARM and OF_GPIO
+Date: Thu,  6 Mar 2014 10:28:05 +0800
+Message-ID: <1394072885-27267-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qc0-f182.google.com ([209.85.216.182]:40984 "EHLO
-	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757857AbaCEPaZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Mar 2014 10:30:25 -0500
-In-Reply-To: <CACRpkdbSk3Vv+-U=jQTH=8E=yx4tkHApGq-ARfwXs-cBf4=ddA@mail.gmail.com>
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:34238 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755704AbaCFC20 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Mar 2014 21:28:26 -0500
+Received: by mail-pd0-f180.google.com with SMTP id v10so1873447pde.25
+        for <linux-gpio@vger.kernel.org>; Wed, 05 Mar 2014 18:28:25 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Mark Rutland <mark.rutland@arm.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Fabian Vogt <fabian@ritter-vogt.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
 
-On Tue, Mar 4, 2014 at 7:01 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Feb 26, 2014 at 7:01 AM, Alan Tull <delicious.quinoa@gmail.com> wrote:
->
->> From: Jamie Iles <jamie@jamieiles.com>
->>
->> The Synopsys DesignWare block is used in some ARM devices (picoxcell)
->> and can be configured to provide multiple banks of GPIO pins.
->>
->> Signed-off-by: Jamie Iles <jamie@jamieiles.com>
->> Signed-off-by: Alan Tull <atull@altera.com>
->> Reviewed-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
->>
->> v12: - Add irq_startup/shutdown
->>      - do irq_create_mapping() in probe, irq_find_mapping() in to_irq()
->>      - Adjust mappings to show support for 1 gpio per port.
->>      - gpio-cells = <1>
->
-> Patch applied!
->
-> You've done a tremendous work on this driver and there is
-> absolutely nothing controversial about the bindings, so it is
-> my pleasure to include this driver.
->
-> Yours,
-> Linus Walleij
+Instead of just depending on OF and getting build failures,
+depend on ARM && OF_GPIO.
 
-Excellent!  Thanks Linus!
+Cc: Fabian Vogt <fabian@ritter-vogt.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+This has been APPLIED to the GPIO tree to stop build
+issues from happening.
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And thanks Jamie for originating this driver!
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index e9dda8658a9e..b56bd0c13ec3 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -156,7 +156,7 @@ config GPIO_EP93XX
+ 
+ config GPIO_ZEVIO
+ 	bool "LSI ZEVIO SoC memory mapped GPIOs"
+-	depends on OF
++	depends on ARM && OF_GPIO
+ 	help
+ 	  Say yes here to support the GPIO controller in LSI ZEVIO SoCs.
+ 
+-- 
+1.8.5.3
 
-Alan Tull
-aka
-delicious quinoa
