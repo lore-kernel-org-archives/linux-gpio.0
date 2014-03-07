@@ -1,26 +1,30 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: remove misleading documentation
-Date: Fri, 7 Mar 2014 11:38:29 +0900
-Message-ID: <CAAVeFuKxkmi7OhYgSOoNrjCg8MpnfXE4vGdF4eTaPU7ky6Yi_Q@mail.gmail.com>
-References: <1394158555-22114-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V7 1/1] drivers/gpio: Altera soft IP GPIO driver and
+ devicetree binding
+Date: Fri, 7 Mar 2014 11:31:15 +0800
+Message-ID: <CACRpkdbwKuaTucbHbuXsKpRAg+kN27K6uN212TT1-h8wxY9YzA@mail.gmail.com>
+References: <1393842463-5206-1-git-send-email-thloh@altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f175.google.com ([209.85.220.175]:33072 "EHLO
-	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752096AbaCGCiu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 21:38:50 -0500
-Received: by mail-vc0-f175.google.com with SMTP id lh14so1553318vcb.6
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Mar 2014 18:38:50 -0800 (PST)
-In-Reply-To: <1394158555-22114-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1393842463-5206-1-git-send-email-thloh@altera.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tien Hock Loh <thloh@altera.com>, Gerhard Sittig <gsi@denx.de>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, "lftan@altera.com" <lftan@altera.com>, Tien Hock Loh <thloh.linux@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-On Fri, Mar 7, 2014 at 11:15 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> It is currently debated where the functions to lock a certain
-> GPIO line as used for IRQs should be called. Delete all
-> misleading documentation.
+On Mon, Mar 3, 2014 at 6:27 PM,  <thloh@altera.com> wrote:
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> From: Tien Hock Loh <thloh@altera.com>
+>
+> Add driver support for Altera GPIO soft IP, including interrupts and I/O.
+> Tested on Altera CV SoC board using dipsw and LED using LED framework.
+>
+> Signed-off-by: Tien Hock Loh <thloh@altera.com>
+
+Can I get some ACKs on this? Like from Gerhard, DT folks?
+
+Or is there still more things to do?
+
+Yours,
+Linus Walleij
