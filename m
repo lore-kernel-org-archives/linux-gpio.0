@@ -1,30 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V7 1/1] drivers/gpio: Altera soft IP GPIO driver and
- devicetree binding
-Date: Fri, 7 Mar 2014 11:31:15 +0800
-Message-ID: <CACRpkdbwKuaTucbHbuXsKpRAg+kN27K6uN212TT1-h8wxY9YzA@mail.gmail.com>
-References: <1393842463-5206-1-git-send-email-thloh@altera.com>
+Subject: Re: [PATCH] gpio-tz1090: Replace commas with semi-colons
+Date: Fri, 7 Mar 2014 11:39:44 +0800
+Message-ID: <CACRpkdapHW6OiF5x6Ufp+n2NqM_C0UMoWhBwHsTEvO26M=R4Vw@mail.gmail.com>
+References: <1393932528-25207-1-git-send-email-james.hogan@imgtec.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1393842463-5206-1-git-send-email-thloh@altera.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tien Hock Loh <thloh@altera.com>, Gerhard Sittig <gsi@denx.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, "lftan@altera.com" <lftan@altera.com>, Tien Hock Loh <thloh.linux@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:60608 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751130AbaCGDjo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 22:39:44 -0500
+Received: by mail-oa0-f45.google.com with SMTP id o6so3602627oag.32
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Mar 2014 19:39:44 -0800 (PST)
+In-Reply-To: <1393932528-25207-1-git-send-email-james.hogan@imgtec.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: James Hogan <james.hogan@imgtec.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-metag@vger.kernel.org
 
-On Mon, Mar 3, 2014 at 6:27 PM,  <thloh@altera.com> wrote:
+On Tue, Mar 4, 2014 at 7:28 PM, James Hogan <james.hogan@imgtec.com> wrote:
 
-> From: Tien Hock Loh <thloh@altera.com>
+> Replace commas with semicolons between irqchip callback initialisation
+> statements in tz1090_gpio_bank_probe. The commas appear to be a subtle
+> remnant of when the irqchips were statically initialised.
 >
-> Add driver support for Altera GPIO soft IP, including interrupts and I/O.
-> Tested on Altera CV SoC board using dipsw and LED using LED framework.
+> Thanks to Thomas Gleixner for spotting it while whipping up a coccinelle
+> script.
 >
-> Signed-off-by: Tien Hock Loh <thloh@altera.com>
+> Reported-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: James Hogan <james.hogan@imgtec.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-metag@vger.kernel.org
 
-Can I get some ACKs on this? Like from Gerhard, DT folks?
-
-Or is there still more things to do?
+Patch applied!
 
 Yours,
 Linus Walleij
