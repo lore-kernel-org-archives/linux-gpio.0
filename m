@@ -1,122 +1,36 @@
-From: Gary Servin <garyservin@gmail.com>
-Subject: [PATCH] gpio: mcp23s08: Trivial: Fixed coding style issues
-Date: Thu,  6 Mar 2014 20:25:26 -0300
-Message-ID: <1394148326-21556-1-git-send-email-garyservin@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] fix build error in gpio-dwapb patch
+Date: Fri, 7 Mar 2014 09:16:54 +0800
+Message-ID: <CACRpkdY8tXpah5DNUKMEqHTRKY-y8U=stH6wJOEcR8hK7dpniw@mail.gmail.com>
+References: <1394134180-23208-1-git-send-email-delicious.quinoa@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f170.google.com ([209.85.160.170]:35301 "EHLO
-	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750829AbaCFXZw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 18:25:52 -0500
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:45573 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751531AbaCGBQz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 20:16:55 -0500
+Received: by mail-ob0-f182.google.com with SMTP id uz6so3510291obc.27
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Mar 2014 17:16:55 -0800 (PST)
+In-Reply-To: <1394134180-23208-1-git-send-email-delicious.quinoa@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: trivial@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Gary Servin <garyservin@gmail.com>
+To: Alan Tull <delicious.quinoa@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.com>, Josh Cartwright <joshc@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Mark Rutland <mark.rutland@arm.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
 
-This coding style issue was detected using the checkpatch.pl script
+On Fri, Mar 7, 2014 at 3:29 AM, Alan Tull <delicious.quinoa@gmail.com> wrote:
 
-Signed-off-by: Gary Servin <garyservin@gmail.com>
----
- drivers/gpio/gpio-mcp23s08.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+> From: Alan Tull <atull@altera.com>
+>
+> fix build error with this message:
+> kernel/irq/Kconfig:41:error: recursive dependency detected!
+> kernel/irq/Kconfig:41:  symbol GENERIC_IRQ_CHIP is selected by GPIO_DWAPB
+> drivers/gpio/Kconfig:131:       symbol GPIO_DWAPB depends on IRQ_DOMAIN
+> kernel/irq/Kconfig:46:  symbol IRQ_DOMAIN is selected by GENERIC_IRQ_CHIP
+>
+> Signed-off-by: Alan Tull <atull@altera.com>
 
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 1ac288e..e1734c1 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -173,7 +173,7 @@ static int mcp23s08_read(struct mcp23s08 *mcp, unsigned reg)
- 
- 	tx[0] = mcp->addr | 0x01;
- 	tx[1] = reg;
--	status = spi_write_then_read(mcp->data, tx, sizeof tx, rx, sizeof rx);
-+	status = spi_write_then_read(mcp->data, tx, sizeof(tx), rx, sizeof(rx));
- 	return (status < 0) ? status : rx[0];
- }
- 
-@@ -184,7 +184,7 @@ static int mcp23s08_write(struct mcp23s08 *mcp, unsigned reg, unsigned val)
- 	tx[0] = mcp->addr;
- 	tx[1] = reg;
- 	tx[2] = val;
--	return spi_write_then_read(mcp->data, tx, sizeof tx, NULL, 0);
-+	return spi_write_then_read(mcp->data, tx, sizeof(tx), NULL, 0);
- }
- 
- static int
-@@ -193,13 +193,13 @@ mcp23s08_read_regs(struct mcp23s08 *mcp, unsigned reg, u16 *vals, unsigned n)
- 	u8	tx[2], *tmp;
- 	int	status;
- 
--	if ((n + reg) > sizeof mcp->cache)
-+	if ((n + reg) > sizeof(mcp->cache))
- 		return -EINVAL;
- 	tx[0] = mcp->addr | 0x01;
- 	tx[1] = reg;
- 
- 	tmp = (u8 *)vals;
--	status = spi_write_then_read(mcp->data, tx, sizeof tx, tmp, n);
-+	status = spi_write_then_read(mcp->data, tx, sizeof(tx), tmp, n);
- 	if (status >= 0) {
- 		while (n--)
- 			vals[n] = tmp[n]; /* expand to 16bit */
-@@ -214,7 +214,7 @@ static int mcp23s17_read(struct mcp23s08 *mcp, unsigned reg)
- 
- 	tx[0] = mcp->addr | 0x01;
- 	tx[1] = reg << 1;
--	status = spi_write_then_read(mcp->data, tx, sizeof tx, rx, sizeof rx);
-+	status = spi_write_then_read(mcp->data, tx, sizeof(tx), rx, sizeof(rx));
- 	return (status < 0) ? status : (rx[0] | (rx[1] << 8));
- }
- 
-@@ -226,7 +226,7 @@ static int mcp23s17_write(struct mcp23s08 *mcp, unsigned reg, unsigned val)
- 	tx[1] = reg << 1;
- 	tx[2] = val;
- 	tx[3] = val >> 8;
--	return spi_write_then_read(mcp->data, tx, sizeof tx, NULL, 0);
-+	return spi_write_then_read(mcp->data, tx, sizeof(tx), NULL, 0);
- }
- 
- static int
-@@ -235,12 +235,12 @@ mcp23s17_read_regs(struct mcp23s08 *mcp, unsigned reg, u16 *vals, unsigned n)
- 	u8	tx[2];
- 	int	status;
- 
--	if ((n + reg) > sizeof mcp->cache)
-+	if ((n + reg) > sizeof(mcp->cache))
- 		return -EINVAL;
- 	tx[0] = mcp->addr | 0x01;
- 	tx[1] = reg << 1;
- 
--	status = spi_write_then_read(mcp->data, tx, sizeof tx,
-+	status = spi_write_then_read(mcp->data, tx, sizeof(tx),
- 				     (u8 *)vals, n * 2);
- 	if (status >= 0) {
- 		while (n--)
-@@ -567,7 +567,7 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 			(mcp->cache[MCP_GPIO] & mask) ? "hi" : "lo",
- 			(mcp->cache[MCP_GPPU] & mask) ? "up" : "  ");
- 		/* NOTE:  ignoring the irq-related registers */
--		seq_printf(s, "\n");
-+		seq_puts(s, "\n");
- 	}
- done:
- 	mutex_unlock(&mcp->lock);
-@@ -789,7 +789,7 @@ static int mcp230xx_probe(struct i2c_client *client,
- 		pullups = pdata->chip[0].pullups;
- 	}
- 
--	mcp = kzalloc(sizeof *mcp, GFP_KERNEL);
-+	mcp = kzalloc(sizeof(*mcp), GFP_KERNEL);
- 	if (!mcp)
- 		return -ENOMEM;
- 
-@@ -925,7 +925,7 @@ static int mcp23s08_probe(struct spi_device *spi)
- 		base = pdata->base;
- 	}
- 
--	data = kzalloc(sizeof *data + chips * sizeof(struct mcp23s08),
-+	data = kzalloc(sizeof(*data) + chips * sizeof(struct mcp23s08),
- 			GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
--- 
-1.9.0
+Patch applied, thanks a lot Alan!
 
+Yours,
+Linus Walleij
