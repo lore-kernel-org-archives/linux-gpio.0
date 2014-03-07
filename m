@@ -1,41 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: gpio-pl061: Use %pa to print 'resource_size_t'
-Date: Fri, 7 Mar 2014 09:21:14 +0800
-Message-ID: <CACRpkdameG4w7HdCxNAT1JFbZ+kukZEi46P1+uG27m6J4e8yig@mail.gmail.com>
-References: <1393413157-29667-1-git-send-email-festevam@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH] gpio: remove misleading documentation
+Date: Fri,  7 Mar 2014 10:15:55 +0800
+Message-ID: <1394158555-22114-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:48785 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750924AbaCGBVO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 20:21:14 -0500
-Received: by mail-ob0-f179.google.com with SMTP id va2so3507664obc.10
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Mar 2014 17:21:14 -0800 (PST)
-In-Reply-To: <1393413157-29667-1-git-send-email-festevam@gmail.com>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:38087 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751003AbaCGCQF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 21:16:05 -0500
+Received: by mail-pd0-f174.google.com with SMTP id y13so3342336pdi.5
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Mar 2014 18:16:04 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-On Wed, Feb 26, 2014 at 7:12 PM, Fabio Estevam <festevam@gmail.com> wrote:
+It is currently debated where the functions to lock a certain
+GPIO line as used for IRQs should be called. Delete all
+misleading documentation.
 
-> From: Fabio Estevam <fabio.estevam@freescale.com>
->
-> The following build warning is generated when building multi_v7_defconfig with
-> LPAE option selected:
->
-> drivers/gpio/gpio-pl061.c:358:2: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
->
-> Fix it by using %pa to print 'resource_size_t'.
->
-> Reported-by: Olof's autobuilder <build@lixom.net>
+Reported-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-I love this guy.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 9cd7082cca08..aa6a11b452e2 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2167,10 +2167,7 @@ EXPORT_SYMBOL_GPL(gpiod_to_irq);
+  * @gpio: the GPIO line to lock as used for IRQ
+  *
+  * This is used directly by GPIO drivers that want to lock down
+- * a certain GPIO line to be used as IRQs, for example in the
+- * .to_irq() callback of their gpio_chip, or in the .irq_enable()
+- * of its irq_chip implementation if the GPIO is known from that
+- * code.
++ * a certain GPIO line to be used for IRQs.
+  */
+ int gpiod_lock_as_irq(struct gpio_desc *desc)
+ {
+-- 
+1.8.5.3
 
-> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
-
-Patch applied.
-
-Yours,
-Linus Walleij
