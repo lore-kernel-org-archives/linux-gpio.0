@@ -1,46 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v12] gpio: add a driver for the Synopsys DesignWare APB
- GPIO block
-Date: Fri, 7 Mar 2014 09:18:10 +0800
-Message-ID: <CACRpkdZNLtdRjQ1bgQR7MULtovY0awOC+CuFF26NHcFtMc71xw@mail.gmail.com>
-References: <1393369261-17469-1-git-send-email-delicious.quinoa@gmail.com>
-	<20140306135019.GF18529@joshc.qualcomm.com>
-	<CANk1AXTZFKH45qmGip8sc5KYxHNwfZqogrPfXOzz+sz-xyuosw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: gpio-pl061: Use %pa to print 'resource_size_t'
+Date: Fri, 7 Mar 2014 09:21:14 +0800
+Message-ID: <CACRpkdameG4w7HdCxNAT1JFbZ+kukZEi46P1+uG27m6J4e8yig@mail.gmail.com>
+References: <1393413157-29667-1-git-send-email-festevam@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:64833 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751130AbaCGBSL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 20:18:11 -0500
-Received: by mail-ob0-f178.google.com with SMTP id wp18so3507910obc.9
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Mar 2014 17:18:10 -0800 (PST)
-In-Reply-To: <CANk1AXTZFKH45qmGip8sc5KYxHNwfZqogrPfXOzz+sz-xyuosw@mail.gmail.com>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:48785 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750924AbaCGBVO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Mar 2014 20:21:14 -0500
+Received: by mail-ob0-f179.google.com with SMTP id va2so3507664obc.10
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Mar 2014 17:21:14 -0800 (PST)
+In-Reply-To: <1393413157-29667-1-git-send-email-festevam@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: delicious quinoa <delicious.quinoa@gmail.com>
-Cc: Josh Cartwright <joshc@codeaurora.org>, Linus Walleij <linus.walleij@linaro.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Mark Rutland <mark.rutland@arm.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Thu, Mar 6, 2014 at 11:58 PM, delicious quinoa
-<delicious.quinoa@gmail.com> wrote:
+On Wed, Feb 26, 2014 at 7:12 PM, Fabio Estevam <festevam@gmail.com> wrote:
 
-> The fix is:
+> From: Fabio Estevam <fabio.estevam@freescale.com>
 >
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 9979017..0e524d7 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -132,7 +132,7 @@ config GPIO_DWAPB
->         tristate "Synopsys DesignWare APB GPIO driver"
->         select GPIO_GENERIC
->         select GENERIC_IRQ_CHIP
-> -       depends on OF_GPIO && IRQ_DOMAIN
-> +       depends on OF_GPIO
->         help
->           Say Y or M here to build support for the Synopsys DesignWare APB
->           GPIO block.
+> The following build warning is generated when building multi_v7_defconfig with
+> LPAE option selected:
+>
+> drivers/gpio/gpio-pl061.c:358:2: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
+>
+> Fix it by using %pa to print 'resource_size_t'.
+>
+> Reported-by: Olof's autobuilder <build@lixom.net>
 
-OK I got this as a patch from Alan so it's fixed now.
+I love this guy.
+
+> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+
+Patch applied.
 
 Yours,
 Linus Walleij
