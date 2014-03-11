@@ -1,35 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Tue, 11 Mar 2014 11:15:04 +0100
-Message-ID: <CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
-References: <5316FFCE.1060603@ti.com>
-	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH trivial 10/16] gpio: Spelling s/than/that/
+Date: Tue, 11 Mar 2014 11:23:44 +0100
+Message-ID: <1394533430-4746-10-git-send-email-geert@linux-m68k.org>
+References: <1394533430-4746-1-git-send-email-geert@linux-m68k.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1394018461-757-1-git-send-email-holler@ahsoftware.de>
+In-Reply-To: <1394533430-4746-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Holler <holler@ahsoftware.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Sekhar Nori <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>
+To: Jiri Kosina <trivial@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 5, 2014 at 12:21 PM, Alexander Holler <holler@ahsoftware.de> wrote:
+From: Geert Uytterhoeven <geert+renesas@linux-m68k.org>
 
-> The driver missed an of_xlate function to translate gpio numbers
-> as found in the DT to the correct chip and number.
->
-> While there I've set #gpio_cells to a fixed value of 2.
->
-> I've used gpio-pxa.c as template for those changes and tested my changes
-> successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
-> reinvent the wheel but just copied and tested stuff.
->
-> Thanks to Grygorii Strashko for the hint to the existing code in gpio-pxa.
->
-> Signed-off-by: Alexander Holler <holler@ahsoftware.de>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/gpio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This v2 version applied, thanks!
-
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 858681ba0f5b..a994ba9608cd 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -648,7 +648,7 @@ config GPIO_BT8XX
+ 	tristate "BT8XX GPIO abuser"
+ 	depends on PCI && VIDEO_BT848=n
+ 	help
+-	  The BT8xx frame grabber chip has 24 GPIO pins than can be abused
++	  The BT8xx frame grabber chip has 24 GPIO pins that can be abused
+ 	  as a cheap PCI GPIO card.
+ 
+ 	  This chip can be found on Miro, Hauppauge and STB TV-cards.
+-- 
+1.7.9.5
