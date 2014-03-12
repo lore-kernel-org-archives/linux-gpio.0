@@ -1,33 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: max732x: Fix possible NULL pointer dereference
- on i2c_new_dummy error
-Date: Wed, 12 Mar 2014 14:51:21 +0100
-Message-ID: <CACRpkdZEYWmhy6+027xp+6FdRO0RM+eVkf218Q+3HjjCWOSVOg@mail.gmail.com>
-References: <1394098276-11113-1-git-send-email-k.kozlowski@samsung.com>
-	<1394098276-11113-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH] gpio: mcp23s08: Trivial: Fixed coding style issues
+Date: Wed, 12 Mar 2014 14:53:23 +0100
+Message-ID: <CACRpkdbjbjeePQipX7nbLXJKnYWFUXhbDLEXPGX5z+EE8R-q3Q@mail.gmail.com>
+References: <1394148326-21556-1-git-send-email-garyservin@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1394098276-11113-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:53595 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754218AbaCLNxY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Mar 2014 09:53:24 -0400
+Received: by mail-oa0-f52.google.com with SMTP id l6so10108830oag.11
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Mar 2014 06:53:24 -0700 (PDT)
+In-Reply-To: <1394148326-21556-1-git-send-email-garyservin@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gary Servin <garyservin@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Jiri Kosina <trivial@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Mar 6, 2014 at 10:31 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
+On Fri, Mar 7, 2014 at 12:25 AM, Gary Servin <garyservin@gmail.com> wrote:
 
-> In max732x_probe() driver allocates dummy I2C device (if number of ports
-> is greater than 8) with i2c_new_dummy() but it does not check the return
-> value of this call.
+> This coding style issue was detected using the checkpatch.pl script
 >
-> In case of error (i2c_new_device(): memory allocation failure or I2C
-> address cannot be used) this function returns NULL which is later
-> dereferenced by i2c_smbus_read_byte() (called from max732x_readb()).
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Gary Servin <garyservin@gmail.com>
 
-Patch applied.
+Sometimes the compiler is just too forgiving :-/
+Thanks a lot for fixing this, patch applied.
 
 Yours,
 Linus Walleij
