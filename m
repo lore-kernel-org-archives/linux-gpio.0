@@ -1,35 +1,59 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mcp23s08: Trivial: Fixed coding style issues
-Date: Fri, 14 Mar 2014 11:19:53 +0100
-Message-ID: <CACRpkdbmXvnwO-da85TreVWC2PEdXUG9M0b_cBgr_CyZtTjs3g@mail.gmail.com>
-References: <1394148326-21556-1-git-send-email-garyservin@gmail.com>
-	<CACRpkdbjbjeePQipX7nbLXJKnYWFUXhbDLEXPGX5z+EE8R-q3Q@mail.gmail.com>
-	<20140312201606.GN3327@book.gsilab.sittig.org>
+Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
+Date: Fri, 14 Mar 2014 12:02:01 +0100
+Message-ID: <CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
+References: <5316FFCE.1060603@ti.com>
+	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
+	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
+	<5322D529.4070904@ahsoftware.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:50545 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752850AbaCNKTx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Mar 2014 06:19:53 -0400
-Received: by mail-oa0-f49.google.com with SMTP id g12so2368503oah.36
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2014 03:19:53 -0700 (PDT)
-In-Reply-To: <20140312201606.GN3327@book.gsilab.sittig.org>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:33608 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751618AbaCNLCC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Mar 2014 07:02:02 -0400
+Received: by mail-oa0-f41.google.com with SMTP id j17so2441299oag.28
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2014 04:02:02 -0700 (PDT)
+In-Reply-To: <5322D529.4070904@ahsoftware.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gerhard Sittig <gsi@denx.de>
-Cc: Gary Servin <garyservin@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Jiri Kosina <trivial@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alexander Holler <holler@ahsoftware.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Sekhar Nori <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>
 
-On Wed, Mar 12, 2014 at 9:16 PM, Gerhard Sittig <gsi@denx.de> wrote:
+On Fri, Mar 14, 2014 at 11:08 AM, Alexander Holler <holler@ahsoftware.de> wrote:
+> Am 11.03.2014 11:15, schrieb Linus Walleij:
+>> On Wed, Mar 5, 2014 at 12:21 PM, Alexander Holler <holler@ahsoftware.de> wrote:
+>>
+>>> The driver missed an of_xlate function to translate gpio numbers
+>>> as found in the DT to the correct chip and number.
+>>>
+>>> While there I've set #gpio_cells to a fixed value of 2.
+>>>
+>>> I've used gpio-pxa.c as template for those changes and tested my changes
+>>> successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
+>>> reinvent the wheel but just copied and tested stuff.
+>>>
+>>> Thanks to Grygorii Strashko for the hint to the existing code in gpio-pxa.
+>>>
+>>> Signed-off-by: Alexander Holler <holler@ahsoftware.de>
+>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>
+>> This v2 version applied, thanks!
+>
+> Thanks, but actually that should have been a fix for 3.14 with which the
+> OF functionality for davinci gpio gets introduced. I assum with the
+> patch in for-next, 3.14 will appear with that functionality broken and
+> it will become a candidate for -stable.
 
->  'sizeof' is an operator, very much like a unary minus or
-> unary ampersand which neither require parentheses.  So either of
-> "sizeof(x)" as well as "sizeof x" are legal with regard to the C
-> language.  It's just that the community prefers "sizeof(x)" for
-> the improved readability.
+I just get the impression that DT support for DaVinci in v3.14 is so risky
+and unstable that noone except those implementing it (i.e. you) is really
+using it, is that correct?
 
-You're right, amazingly. Thanks for teaching me something new
-today!
+In that case it is hardly a fix that we need to rush out to the entire world.
+
+But if you have bug reports from DaVinci developers doing advanced DT
+stuff and scratching their heads, then we can push this to fixes.
 
 Yours,
 Linus Walleij
