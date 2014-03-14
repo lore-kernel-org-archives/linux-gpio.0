@@ -1,47 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Fri, 14 Mar 2014 14:54:00 +0100
-Message-ID: <CACRpkdZscprsy7kyqHPUMEMYJ_TKgG2bYR7mdrG4hTDp1w1nDg@mail.gmail.com>
-References: <5316FFCE.1060603@ti.com>
-	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
-	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
-	<5322D529.4070904@ahsoftware.de>
-	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
-	<5322F82A.9000507@ahsoftware.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Georgi Djakov <gdjakov@mm-sol.com>
+Subject: [PATCH] pinctrl: msm: Fix compile error in msm_config_reg()
+Date: Fri, 14 Mar 2014 17:06:16 +0200
+Message-ID: <1394809576-21255-1-git-send-email-gdjakov@mm-sol.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:44405 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754171AbaCNNyC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Mar 2014 09:54:02 -0400
-Received: by mail-ob0-f180.google.com with SMTP id wn1so2585805obc.11
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2014 06:54:00 -0700 (PDT)
-In-Reply-To: <5322F82A.9000507@ahsoftware.de>
+Received: from ns.mm-sol.com ([37.157.136.199]:49749 "EHLO extserv.mm-sol.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752551AbaCNPHI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 14 Mar 2014 11:07:08 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Holler <holler@ahsoftware.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Sekhar Nori <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>
+To: linus.walleij@linaro.org, sboyd@codeaurora.org, bjorn.andersson@sonymobile.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Georgi Djakov <gdjakov@mm-sol.com>
 
-On Fri, Mar 14, 2014 at 1:38 PM, Alexander Holler <holler@ahsoftware.de> wrote:
+Fix the following compilation error in msm_config_reg():
 
->> In that case it is hardly a fix that we need to rush out to the entire
->> world.
->
-> And I thought the reason for -rc is actually to fix bugs. But I never
-> understood the magical ways and timings patches make their way into
-> mainline. ;)
+drivers/pinctrl/pinctrl-msm.c: In function 'msm_config_reg':
+drivers/pinctrl/pinctrl-msm.c:218:4: error: 'reg' undeclared (first use in this
+function)
 
-OK so it works like this: early in the -rc cycle we fix any bugs, documentation
-or whatever. At this point it's *regressions* so the fix need to fix something
-that broke in the merge window (or an earlier merge window).
+Error is caused by the mix of these two commits:
+ed118a5fd951bd2def8249ee251842c4f81fe4bd
+051a58b4622f0e1b732acb750097c64bc00ddb93
 
-If it is a new feature that never worked in the first place I would
-not call that
-a regression. There are no existing users out there that can experience
-regressions from a previously working system.
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Signed-off-by: Georgi Djakov <gdjakov@mm-sol.com>
+---
+ drivers/pinctrl/pinctrl-msm.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-So this is why I'm a bit conservative.
+diff --git a/drivers/pinctrl/pinctrl-msm.c b/drivers/pinctrl/pinctrl-msm.c
+index 19d2feb..343f421 100644
+--- a/drivers/pinctrl/pinctrl-msm.c
++++ b/drivers/pinctrl/pinctrl-msm.c
+@@ -215,7 +215,6 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
+ 		*mask = 7;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+-		*reg = g->ctl_reg;
+ 		*bit = g->oe_bit;
+ 		*mask = 1;
+ 		break;
+-- 
+1.7.9.5
 
-Yours,
-Linus Walleij
