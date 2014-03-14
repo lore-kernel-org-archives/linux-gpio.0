@@ -1,30 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: clamp returned values to the boolean range
-Date: Fri, 14 Mar 2014 10:17:52 +0100
-Message-ID: <CACRpkdYD78v1k3=1J87EdbefirsywFhgQP=hgjiffhLzgJ+N2Q@mail.gmail.com>
-References: <1394520729-1587-1-git-send-email-acourbot@nvidia.com>
+From: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
+Date: Fri, 14 Mar 2014 11:08:41 +0100
+Message-ID: <5322D529.4070904@ahsoftware.de>
+References: <5316FFCE.1060603@ti.com>	<1394018461-757-1-git-send-email-holler@ahsoftware.de> <CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:54683 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755541AbaCNJRx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Mar 2014 05:17:53 -0400
-Received: by mail-oa0-f54.google.com with SMTP id n16so2331292oag.13
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2014 02:17:52 -0700 (PDT)
-In-Reply-To: <1394520729-1587-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org" <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Mar 11, 2014 at 7:52 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+Am 11.03.2014 11:15, schrieb Linus Walleij:
+> On Wed, Mar 5, 2014 at 12:21 PM, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org> wrote:
+> 
+>> The driver missed an of_xlate function to translate gpio numbers
+>> as found in the DT to the correct chip and number.
+>>
+>> While there I've set #gpio_cells to a fixed value of 2.
+>>
+>> I've used gpio-pxa.c as template for those changes and tested my changes
+>> successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
+>> reinvent the wheel but just copied and tested stuff.
+>>
+>> Thanks to Grygorii Strashko for the hint to the existing code in gpio-pxa.
+>>
+>> Signed-off-by: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+> 
+> This v2 version applied, thanks!
 
-> This patch makes the internal _gpiod_get_raw_value() function return a
-> bool, effectively clamping the GPIO value to the boolean range no
-> matter what the driver does.
+Thanks, but actually that should have been a fix for 3.14 with which the
+OF functionality for davinci gpio gets introduced. I assum with the
+patch in for-next, 3.14 will appear with that functionality broken and
+it will become a candidate for -stable.
 
-This looks good, patch applied!
+Regards,
 
-Yours,
-Linus Walleij
+Alexander Holler
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
