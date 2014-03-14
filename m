@@ -1,26 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: gpio-dwapb size-cells should be two
-Date: Fri, 14 Mar 2014 17:27:37 +0100
-Message-ID: <CACRpkdbeDbr+tH4xb_MUNSLCcTYpdHNjkBN5uPjHcSm9sWAQBA@mail.gmail.com>
-References: <1394813334-22549-1-git-send-email-delicious.quinoa@gmail.com>
+From: Alexander Holler <holler@ahsoftware.de>
+Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
+Date: Fri, 14 Mar 2014 19:33:12 +0100
+Message-ID: <53234B68.5090300@ahsoftware.de>
+References: <5316FFCE.1060603@ti.com>	<1394018461-757-1-git-send-email-holler@ahsoftware.de>	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>	<5322D529.4070904@ahsoftware.de>	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>	<5322F82A.9000507@ahsoftware.de> <CACRpkdZscprsy7kyqHPUMEMYJ_TKgG2bYR7mdrG4hTDp1w1nDg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1394813334-22549-1-git-send-email-delicious.quinoa@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Alan Tull <delicious.quinoa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.com>, Rob Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@secretlab.ca>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Josh Cartwright <joshc@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jamie Iles <jamie@jamieiles.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Yves Vandervennet <rocket.yvanderv@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from h1446028.stratoserver.net ([85.214.92.142]:59573 "EHLO
+	mail.ahsoftware.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755111AbaCNSdc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Mar 2014 14:33:32 -0400
+In-Reply-To: <CACRpkdZscprsy7kyqHPUMEMYJ_TKgG2bYR7mdrG4hTDp1w1nDg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Sekhar Nori <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>
 
-On Fri, Mar 14, 2014 at 5:08 PM, Alan Tull <delicious.quinoa@gmail.com> wrote:
-
-> From: Alan Tull <atull@altera.com>
+Am 14.03.2014 14:54, schrieb Linus Walleij:
+> On Fri, Mar 14, 2014 at 1:38 PM, Alexander Holler <holler@ahsoftware.de> wrote:
 >
-> Fix size-cells to show use of OF_GPIO_ACTIVE_LOW flag.
+>>> In that case it is hardly a fix that we need to rush out to the entire
+>>> world.
+>>
+>> And I thought the reason for -rc is actually to fix bugs. But I never
+>> understood the magical ways and timings patches make their way into
+>> mainline. ;)
 >
-> Signed-off-by: Alan Tull <atull@altera.com>
+> OK so it works like this: early in the -rc cycle we fix any bugs, documentation
+> or whatever. At this point it's *regressions* so the fix need to fix something
+> that broke in the merge window (or an earlier merge window).
 
-OK patch applied.
+Sorry, but I don't believe that. It's always time to fix regressions and 
+bugs.
 
-Yours,
-Linus Walleij
+> If it is a new feature that never worked in the first place I would
+> not call that
+> a regression. There are no existing users out there that can experience
+> regressions from a previously working system.
+
+I believe that no (stable) kernel should introduce new known bugs (if 
+fixes are available) and I wouldn't make a difference if it's a new 
+feature or not. Usually people don't care if something is new or not if 
+it has bugs
+
+Anyway, I'm just curious and try to understand, I have a fix. ;)
+
+Regards,
+
+Alexander Holler
