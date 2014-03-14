@@ -1,42 +1,30 @@
-From: Gerhard Sittig <gsi@denx.de>
-Subject: Re: [PATCH] gpio: mcp23s08: Trivial: Fixed coding style issues
-Date: Wed, 12 Mar 2014 21:16:06 +0100
-Message-ID: <20140312201606.GN3327@book.gsilab.sittig.org>
-References: <1394148326-21556-1-git-send-email-garyservin@gmail.com>
- <CACRpkdbjbjeePQipX7nbLXJKnYWFUXhbDLEXPGX5z+EE8R-q3Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpio: clamp returned values to the boolean range
+Date: Fri, 14 Mar 2014 10:17:52 +0100
+Message-ID: <CACRpkdYD78v1k3=1J87EdbefirsywFhgQP=hgjiffhLzgJ+N2Q@mail.gmail.com>
+References: <1394520729-1587-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbjbjeePQipX7nbLXJKnYWFUXhbDLEXPGX5z+EE8R-q3Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Gary Servin <garyservin@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Jiri Kosina <trivial@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:54683 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755541AbaCNJRx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Mar 2014 05:17:53 -0400
+Received: by mail-oa0-f54.google.com with SMTP id n16so2331292oag.13
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2014 02:17:52 -0700 (PDT)
+In-Reply-To: <1394520729-1587-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Mar 12, 2014 at 14:53 +0100, Linus Walleij wrote:
-> 
-> On Fri, Mar 7, 2014 at 12:25 AM, Gary Servin <garyservin@gmail.com> wrote:
-> 
-> > This coding style issue was detected using the checkpatch.pl script
-> >
-> > Signed-off-by: Gary Servin <garyservin@gmail.com>
-> 
-> Sometimes the compiler is just too forgiving :-/
-> Thanks a lot for fixing this, patch applied.
+On Tue, Mar 11, 2014 at 7:52 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
-I think the code had no syntax or language issue before.  The
-cleanup really was about style exclusively (which still is a good
-thing).  'sizeof' is an operator, very much like a unary minus or
-unary ampersand which neither require parentheses.  So either of
-"sizeof(x)" as well as "sizeof x" are legal with regard to the C
-language.  It's just that the community prefers "sizeof(x)" for
-the improved readability.
+> This patch makes the internal _gpiod_get_raw_value() function return a
+> bool, effectively clamping the GPIO value to the boolean range no
+> matter what the driver does.
 
+This looks good, patch applied!
 
-virtually yours
-Gerhard Sittig
--- 
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office@denx.de
+Yours,
+Linus Walleij
