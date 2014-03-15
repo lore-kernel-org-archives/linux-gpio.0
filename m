@@ -1,66 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Alexander Holler <holler@ahsoftware.de>
 Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Fri, 14 Mar 2014 20:52:13 +0100
-Message-ID: <CACRpkdZ2+kfOim1OEWbYR_Tj36i+8HmYXh+nqO9h1Em8gqy=3Q@mail.gmail.com>
-References: <5316FFCE.1060603@ti.com>
-	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
-	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
-	<5322D529.4070904@ahsoftware.de>
-	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
-	<5322F82A.9000507@ahsoftware.de>
-	<CACRpkdZscprsy7kyqHPUMEMYJ_TKgG2bYR7mdrG4hTDp1w1nDg@mail.gmail.com>
-	<53234B68.5090300@ahsoftware.de>
+Date: Sat, 15 Mar 2014 08:37:11 +0100
+Message-ID: <53240327.8070507@ahsoftware.de>
+References: <5316FFCE.1060603@ti.com>	<1394018461-757-1-git-send-email-holler@ahsoftware.de>	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>	<5322D529.4070904@ahsoftware.de>	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>	<5322F82A.9000507@ahsoftware.de>	<CACRpkdZscprsy7kyqHPUMEMYJ_TKgG2bYR7mdrG4hTDp1w1nDg@mail.gmail.com>	<53234B68.5090300@ahsoftware.de> <CACRpkdZ2+kfOim1OEWbYR_Tj36i+8HmYXh+nqO9h1Em8gqy=3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:52528 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755874AbaCNTwO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Mar 2014 15:52:14 -0400
-Received: by mail-oa0-f44.google.com with SMTP id n16so3141093oag.3
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2014 12:52:14 -0700 (PDT)
-In-Reply-To: <53234B68.5090300@ahsoftware.de>
+Received: from h1446028.stratoserver.net ([85.214.92.142]:49246 "EHLO
+	mail.ahsoftware.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752773AbaCOHiG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 15 Mar 2014 03:38:06 -0400
+In-Reply-To: <CACRpkdZ2+kfOim1OEWbYR_Tj36i+8HmYXh+nqO9h1Em8gqy=3Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Holler <holler@ahsoftware.de>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Sekhar Nori <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>
 
-On Fri, Mar 14, 2014 at 7:33 PM, Alexander Holler <holler@ahsoftware.de> wrote:
-> Am 14.03.2014 14:54, schrieb Linus Walleij:
->
->> On Fri, Mar 14, 2014 at 1:38 PM, Alexander Holler <holler@ahsoftware.de>
->> wrote:
->>
->>>> In that case it is hardly a fix that we need to rush out to the entire
->>>> world.
->>>
->>>
->>> And I thought the reason for -rc is actually to fix bugs. But I never
->>> understood the magical ways and timings patches make their way into
->>> mainline. ;)
->>
->>
->> OK so it works like this: early in the -rc cycle we fix any bugs,
->> documentation
->> or whatever. At this point it's *regressions* so the fix need to fix
->> something
->> that broke in the merge window (or an earlier merge window).
->
->
-> Sorry, but I don't believe that. It's always time to fix regressions and
-> bugs.
+Am 14.03.2014 20:52, schrieb Linus Walleij:
 
-This thing is not binary. Please consult
-Documentation/development-process/2.Process
+> So a few Tested-by's from the people using this driver would for
+> example convince me that it is solving a real problem for them
+> and it needs to go into fixes.
 
-In this case we are very late in the release cycle, the patch is not
-a simple oneliner and I need some more backing proof to know it
-is a reasonable fix to push at this time and will not cause new
-problems.
+2001: a space odyssey is fast action movie compared with the movie 
+kernel bug fixing. And 2001 is a masterpiece of slowness.
 
-So a few Tested-by's from the people using this driver would for
-example convince me that it is solving a real problem for them
-and it needs to go into fixes.
+Regards,
 
-Yours,
-Linus Walleij
+Alexander Holler
+
