@@ -1,32 +1,63 @@
-From: Alexander Holler <holler@ahsoftware.de>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Sat, 15 Mar 2014 08:37:11 +0100
-Message-ID: <53240327.8070507@ahsoftware.de>
-References: <5316FFCE.1060603@ti.com>	<1394018461-757-1-git-send-email-holler@ahsoftware.de>	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>	<5322D529.4070904@ahsoftware.de>	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>	<5322F82A.9000507@ahsoftware.de>	<CACRpkdZscprsy7kyqHPUMEMYJ_TKgG2bYR7mdrG4hTDp1w1nDg@mail.gmail.com>	<53234B68.5090300@ahsoftware.de> <CACRpkdZ2+kfOim1OEWbYR_Tj36i+8HmYXh+nqO9h1Em8gqy=3Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Alexander Shiyan <shc_work@mail.ru>
+Subject: [PATCH RESEND] gpio: generic: Use platform_device_id->driver_data field for driver flags
+Date: Sun, 16 Mar 2014 09:10:34 +0400
+Message-ID: <1394946634-25753-1-git-send-email-shc_work@mail.ru>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from h1446028.stratoserver.net ([85.214.92.142]:49246 "EHLO
-	mail.ahsoftware.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752773AbaCOHiG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 15 Mar 2014 03:38:06 -0400
-In-Reply-To: <CACRpkdZ2+kfOim1OEWbYR_Tj36i+8HmYXh+nqO9h1Em8gqy=3Q@mail.gmail.com>
+Received: from smtp53.i.mail.ru ([94.100.177.113]:42979 "EHLO smtp53.i.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750732AbaCPFKx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 16 Mar 2014 01:10:53 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Sekhar Nori <nsekhar@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Alexander Shiyan <shc_work@mail.ru>
 
-Am 14.03.2014 20:52, schrieb Linus Walleij:
+Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+---
+ drivers/gpio/gpio-generic.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-> So a few Tested-by's from the people using this driver would for
-> example convince me that it is solving a real problem for them
-> and it needs to go into fixes.
-
-2001: a space odyssey is fast action movie compared with the movie 
-kernel bug fixing. And 2001 is a masterpiece of slowness.
-
-Regards,
-
-Alexander Holler
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index d815dd2..b5dff9e 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -488,7 +488,7 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
+ 	void __iomem *dirout;
+ 	void __iomem *dirin;
+ 	unsigned long sz;
+-	unsigned long flags = 0;
++	unsigned long flags = pdev->id_entry->driver_data;
+ 	int err;
+ 	struct bgpio_chip *bgc;
+ 	struct bgpio_pdata *pdata = dev_get_platdata(dev);
+@@ -519,9 +519,6 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
+-	if (!strcmp(platform_get_device_id(pdev)->name, "basic-mmio-gpio-be"))
+-		flags |= BGPIOF_BIG_ENDIAN;
+-
+ 	bgc = devm_kzalloc(&pdev->dev, sizeof(*bgc), GFP_KERNEL);
+ 	if (!bgc)
+ 		return -ENOMEM;
+@@ -551,9 +548,14 @@ static int bgpio_pdev_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id bgpio_id_table[] = {
+-	{ "basic-mmio-gpio", },
+-	{ "basic-mmio-gpio-be", },
+-	{},
++	{
++		.name		= "basic-mmio-gpio",
++		.driver_data	= 0,
++	}, {
++		.name		= "basic-mmio-gpio-be",
++		.driver_data	= BGPIOF_BIG_ENDIAN,
++	},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, bgpio_id_table);
+ 
+-- 
+1.8.3.2
 
