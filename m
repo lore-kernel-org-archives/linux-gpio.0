@@ -1,30 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RESEND] gpio: generic: Use platform_device_id->driver_data
- field for driver flags
-Date: Mon, 17 Mar 2014 14:58:13 +0100
-Message-ID: <CACRpkdYJSWH4ZWoBU6XDgK5RxgG3KOc-cuMfLESuD9aWhRFuRw@mail.gmail.com>
-References: <1394946634-25753-1-git-send-email-shc_work@mail.ru>
+Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
+Date: Mon, 17 Mar 2014 15:05:05 +0100
+Message-ID: <CACRpkdYZMzw31NkA4uSq+ZowzOnZgZthXhZri-eJY2Ozb8aNRQ@mail.gmail.com>
+References: <5316FFCE.1060603@ti.com>
+	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
+	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
+	<5322D529.4070904@ahsoftware.de>
+	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
+	<5326F8C5.5090406@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:46185 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932640AbaCQN6N (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Mar 2014 09:58:13 -0400
-Received: by mail-oa0-f50.google.com with SMTP id i7so5577810oag.23
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Mar 2014 06:58:13 -0700 (PDT)
-In-Reply-To: <1394946634-25753-1-git-send-email-shc_work@mail.ru>
+Received: from mail-oa0-f43.google.com ([209.85.219.43]:59204 "EHLO
+	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756595AbaCQOFG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Mar 2014 10:05:06 -0400
+Received: by mail-oa0-f43.google.com with SMTP id eb12so342481oac.2
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Mar 2014 07:05:05 -0700 (PDT)
+In-Reply-To: <5326F8C5.5090406@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Anton Vorontsov <cbouatmailru@gmail.com>
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Alexander Holler <holler@ahsoftware.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Prabhakar Lad <prabhakar.csengg@gmail.com>
 
-On Sun, Mar 16, 2014 at 6:10 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
+On Mon, Mar 17, 2014 at 2:29 PM, Sekhar Nori <nsekhar@ti.com> wrote:
 
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+> One thing to note is that this driver is used by keystone too and all
+> its users are DT-only. Although I do not see any in-kernel DT GPIO users
+> even there.
+>
+> I can confirm the patch does not break my gpiolib based test module
+> (test with and without DT), but then it did not have an issue even before.
 
-Thanks! Patch applied with Alexandre's ACK, sorry for missing
-this patch in the past then dunno what has happened :-/
+Is that a Tested-by tag? :-)
+
+If you're also convinced that fix is safe I'll push it as a fix to v3.14-rcN
+if for nothing else so for getting Mr. Holler to stop poking me in the
+chest.
 
 Yours,
 Linus Walleij
