@@ -1,71 +1,65 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH RESEND] gpio: generic: Use platform_device_id->driver_data
- field for driver flags
-Date: Mon, 17 Mar 2014 15:52:47 +0900
-Message-ID: <CAAVeFuLEXWJE0Ad_5778k5hV_Xx4Vk0gFWxxRjKOu2AVyx19ew@mail.gmail.com>
-References: <1394946634-25753-1-git-send-email-shc_work@mail.ru>
+From: Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
+Date: Mon, 17 Mar 2014 18:59:41 +0530
+Message-ID: <5326F8C5.5090406@ti.com>
+References: <5316FFCE.1060603@ti.com>	<1394018461-757-1-git-send-email-holler@ahsoftware.de>	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>	<5322D529.4070904@ahsoftware.de>
+ <CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f169.google.com ([209.85.128.169]:55294 "EHLO
-	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751799AbaCQGxI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Mar 2014 02:53:08 -0400
-Received: by mail-ve0-f169.google.com with SMTP id pa12so5416602veb.0
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Mar 2014 23:53:07 -0700 (PDT)
-In-Reply-To: <1394946634-25753-1-git-send-email-shc_work@mail.ru>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexander Holler <holler@ahsoftware.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, Grygorii Strashko <grygorii.strashko@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>
 
-On Sun, Mar 16, 2014 at 2:10 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
-> ---
->  drivers/gpio/gpio-generic.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
-> index d815dd2..b5dff9e 100644
-> --- a/drivers/gpio/gpio-generic.c
-> +++ b/drivers/gpio/gpio-generic.c
-> @@ -488,7 +488,7 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
->         void __iomem *dirout;
->         void __iomem *dirin;
->         unsigned long sz;
-> -       unsigned long flags = 0;
-> +       unsigned long flags = pdev->id_entry->driver_data;
->         int err;
->         struct bgpio_chip *bgc;
->         struct bgpio_pdata *pdata = dev_get_platdata(dev);
-> @@ -519,9 +519,6 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
->         if (err)
->                 return err;
->
-> -       if (!strcmp(platform_get_device_id(pdev)->name, "basic-mmio-gpio-be"))
-> -               flags |= BGPIOF_BIG_ENDIAN;
-> -
->         bgc = devm_kzalloc(&pdev->dev, sizeof(*bgc), GFP_KERNEL);
->         if (!bgc)
->                 return -ENOMEM;
-> @@ -551,9 +548,14 @@ static int bgpio_pdev_remove(struct platform_device *pdev)
->  }
->
->  static const struct platform_device_id bgpio_id_table[] = {
-> -       { "basic-mmio-gpio", },
-> -       { "basic-mmio-gpio-be", },
-> -       {},
-> +       {
-> +               .name           = "basic-mmio-gpio",
-> +               .driver_data    = 0,
-> +       }, {
-> +               .name           = "basic-mmio-gpio-be",
-> +               .driver_data    = BGPIOF_BIG_ENDIAN,
-> +       },
-> +       { }
->  };
->  MODULE_DEVICE_TABLE(platform, bgpio_id_table);
+On Friday 14 March 2014 04:32 PM, Linus Walleij wrote:
+> On Fri, Mar 14, 2014 at 11:08 AM, Alexander Holler <holler@ahsoftware.de> wrote:
+>> Am 11.03.2014 11:15, schrieb Linus Walleij:
+>>> On Wed, Mar 5, 2014 at 12:21 PM, Alexander Holler <holler@ahsoftware.de> wrote:
+>>>
+>>>> The driver missed an of_xlate function to translate gpio numbers
+>>>> as found in the DT to the correct chip and number.
+>>>>
+>>>> While there I've set #gpio_cells to a fixed value of 2.
+>>>>
+>>>> I've used gpio-pxa.c as template for those changes and tested my changes
+>>>> successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
+>>>> reinvent the wheel but just copied and tested stuff.
+>>>>
+>>>> Thanks to Grygorii Strashko for the hint to the existing code in gpio-pxa.
+>>>>
+>>>> Signed-off-by: Alexander Holler <holler@ahsoftware.de>
+>>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>>
+>>> This v2 version applied, thanks!
+>>
+>> Thanks, but actually that should have been a fix for 3.14 with which the
+>> OF functionality for davinci gpio gets introduced. I assum with the
+>> patch in for-next, 3.14 will appear with that functionality broken and
+>> it will become a candidate for -stable.
+> 
+> I just get the impression that DT support for DaVinci in v3.14 is so risky
+> and unstable that noone except those implementing it (i.e. you) is really
+> using it, is that correct?
+> 
+> In that case it is hardly a fix that we need to rush out to the entire world.
 
-Agreed that this kind of setup ought to be data-oriented.
+One thing to note is that this driver is used by keystone too and all
+its users are DT-only. Although I do not see any in-kernel DT GPIO users
+even there.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+I can confirm the patch does not break my gpiolib based test module
+(test with and without DT), but then it did not have an issue even before.
+
+Thanks,
+Sekhar
