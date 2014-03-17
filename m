@@ -1,65 +1,594 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Mon, 17 Mar 2014 18:59:41 +0530
-Message-ID: <5326F8C5.5090406@ti.com>
-References: <5316FFCE.1060603@ti.com>	<1394018461-757-1-git-send-email-holler@ahsoftware.de>	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>	<5322D529.4070904@ahsoftware.de>
- <CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexander Holler <holler@ahsoftware.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, Grygorii Strashko <grygorii.strashko@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] gpio: switch drivers to use new callback
+Date: Mon, 17 Mar 2014 14:56:00 +0100
+Message-ID: <1395064560-21179-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:61653 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756531AbaCQN4O (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Mar 2014 09:56:14 -0400
+Received: by mail-wi0-f171.google.com with SMTP id hn9so2175002wib.16
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Mar 2014 06:56:12 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-On Friday 14 March 2014 04:32 PM, Linus Walleij wrote:
-> On Fri, Mar 14, 2014 at 11:08 AM, Alexander Holler <holler@ahsoftware.de> wrote:
->> Am 11.03.2014 11:15, schrieb Linus Walleij:
->>> On Wed, Mar 5, 2014 at 12:21 PM, Alexander Holler <holler@ahsoftware.de> wrote:
->>>
->>>> The driver missed an of_xlate function to translate gpio numbers
->>>> as found in the DT to the correct chip and number.
->>>>
->>>> While there I've set #gpio_cells to a fixed value of 2.
->>>>
->>>> I've used gpio-pxa.c as template for those changes and tested my changes
->>>> successfully on a da850 board using entries for gpio-leds in a DT. So I didn't
->>>> reinvent the wheel but just copied and tested stuff.
->>>>
->>>> Thanks to Grygorii Strashko for the hint to the existing code in gpio-pxa.
->>>>
->>>> Signed-off-by: Alexander Holler <holler@ahsoftware.de>
->>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->>>
->>> This v2 version applied, thanks!
->>
->> Thanks, but actually that should have been a fix for 3.14 with which the
->> OF functionality for davinci gpio gets introduced. I assum with the
->> patch in for-next, 3.14 will appear with that functionality broken and
->> it will become a candidate for -stable.
-> 
-> I just get the impression that DT support for DaVinci in v3.14 is so risky
-> and unstable that noone except those implementing it (i.e. you) is really
-> using it, is that correct?
-> 
-> In that case it is hardly a fix that we need to rush out to the entire world.
+This switches all GPIO and pin control drivers with irqchips
+that were using .startup() and .shutdown() callbacks to lock
+GPIO lines for IRQ usage over to using the .request_resources()
+and .release_resources() callbacks just introduced into the
+irqchip vtable.
 
-One thing to note is that this driver is used by keystone too and all
-its users are DT-only. Although I do not see any in-kernel DT GPIO users
-even there.
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-adnp.c            | 15 +++++++--------
+ drivers/gpio/gpio-bcm-kona.c        | 14 +++++++-------
+ drivers/gpio/gpio-dwapb.c           | 14 +++++++-------
+ drivers/gpio/gpio-em.c              | 14 +++++++-------
+ drivers/gpio/gpio-intel-mid.c       | 14 +++++++-------
+ drivers/gpio/gpio-lynxpoint.c       | 14 +++++++-------
+ drivers/gpio/gpio-mcp23s08.c        | 14 +++++++-------
+ drivers/gpio/gpio-pl061.c           | 14 +++++++-------
+ drivers/pinctrl/pinctrl-adi2.c      |  2 +-
+ drivers/pinctrl/pinctrl-baytrail.c  | 14 +++++++-------
+ drivers/pinctrl/pinctrl-msm.c       | 11 +++++------
+ drivers/pinctrl/pinctrl-nomadik.c   | 25 +++++++++++++++++++++----
+ drivers/pinctrl/sirf/pinctrl-sirf.c | 14 +++++++-------
+ 13 files changed, 97 insertions(+), 82 deletions(-)
 
-I can confirm the patch does not break my gpiolib based test module
-(test with and without DT), but then it did not have an issue even before.
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index 6fc6206b38bd..b2239d678d01 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -408,24 +408,23 @@ static void adnp_irq_bus_unlock(struct irq_data *data)
+ 	mutex_unlock(&adnp->irq_lock);
+ }
+ 
+-static unsigned int adnp_irq_startup(struct irq_data *data)
++static int adnp_irq_reqres(struct irq_data *data)
+ {
+ 	struct adnp *adnp = irq_data_get_irq_chip_data(data);
+ 
+-	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq))
++	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq)) {
+ 		dev_err(adnp->gpio.dev,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			data->hwirq);
+-	/* Satisfy the .enable semantics by unmasking the line */
+-	adnp_irq_unmask(data);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void adnp_irq_shutdown(struct irq_data *data)
++static void adnp_irq_relres(struct irq_data *data)
+ {
+ 	struct adnp *adnp = irq_data_get_irq_chip_data(data);
+ 
+-	adnp_irq_mask(data);
+ 	gpio_unlock_as_irq(&adnp->gpio, data->hwirq);
+ }
+ 
+@@ -436,8 +435,8 @@ static struct irq_chip adnp_irq_chip = {
+ 	.irq_set_type = adnp_irq_set_type,
+ 	.irq_bus_lock = adnp_irq_bus_lock,
+ 	.irq_bus_sync_unlock = adnp_irq_bus_unlock,
+-	.irq_startup = adnp_irq_startup,
+-	.irq_shutdown = adnp_irq_shutdown,
++	.irq_request_resources = adnp_irq_reqres,
++	.irq_release_resources = adnp_irq_relres,
+ };
+ 
+ static int adnp_irq_map(struct irq_domain *domain, unsigned int irq,
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 5622cfb8325a..3f6b33ce9bd4 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -466,23 +466,23 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-static unsigned int bcm_kona_gpio_irq_startup(struct irq_data *d)
++static int bcm_kona_gpio_irq_reqres(struct irq_data *d)
+ {
+ 	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
+ 
+-	if (gpio_lock_as_irq(&kona_gpio->gpio_chip, d->hwirq))
++	if (gpio_lock_as_irq(&kona_gpio->gpio_chip, d->hwirq)) {
+ 		dev_err(kona_gpio->gpio_chip.dev,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			d->hwirq);
+-	bcm_kona_gpio_irq_unmask(d);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void bcm_kona_gpio_irq_shutdown(struct irq_data *d)
++static void bcm_kona_gpio_irq_relres(struct irq_data *d)
+ {
+ 	struct bcm_kona_gpio *kona_gpio = irq_data_get_irq_chip_data(d);
+ 
+-	bcm_kona_gpio_irq_mask(d);
+ 	gpio_unlock_as_irq(&kona_gpio->gpio_chip, d->hwirq);
+ }
+ 
+@@ -492,8 +492,8 @@ static struct irq_chip bcm_gpio_irq_chip = {
+ 	.irq_mask = bcm_kona_gpio_irq_mask,
+ 	.irq_unmask = bcm_kona_gpio_irq_unmask,
+ 	.irq_set_type = bcm_kona_gpio_irq_set_type,
+-	.irq_startup = bcm_kona_gpio_irq_startup,
+-	.irq_shutdown = bcm_kona_gpio_irq_shutdown,
++	.irq_request_resources = bcm_kona_gpio_irq_reqres,
++	.irq_release_resources = bcm_kona_gpio_irq_relres,
+ };
+ 
+ static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 2797fbb535d0..2cacb9edabec 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -136,26 +136,26 @@ static void dwapb_irq_disable(struct irq_data *d)
+ 	spin_unlock_irqrestore(&bgc->lock, flags);
+ }
+ 
+-static unsigned int dwapb_irq_startup(struct irq_data *d)
++static unsigned int dwapb_irq_reqres(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = igc->private;
+ 	struct bgpio_chip *bgc = &gpio->ports[0].bgc;
+ 
+-	if (gpio_lock_as_irq(&bgc->gc, irqd_to_hwirq(d)))
++	if (gpio_lock_as_irq(&bgc->gc, irqd_to_hwirq(d))) {
+ 		dev_err(gpio->dev, "unable to lock HW IRQ %lu for IRQ\n",
+ 			irqd_to_hwirq(d));
+-	dwapb_irq_enable(d);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void dwapb_irq_shutdown(struct irq_data *d)
++static void dwapb_irq_relres(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = igc->private;
+ 	struct bgpio_chip *bgc = &gpio->ports[0].bgc;
+ 
+-	dwapb_irq_disable(d);
+ 	gpio_unlock_as_irq(&bgc->gc, irqd_to_hwirq(d));
+ }
+ 
+@@ -255,8 +255,8 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 	ct->chip.irq_set_type = dwapb_irq_set_type;
+ 	ct->chip.irq_enable = dwapb_irq_enable;
+ 	ct->chip.irq_disable = dwapb_irq_disable;
+-	ct->chip.irq_startup = dwapb_irq_startup;
+-	ct->chip.irq_shutdown = dwapb_irq_shutdown;
++	ct->chip.irq_request_resources = dwapb_irq_reqres;
++	ct->chip.irq_release_resources = dwapb_irq_relres;
+ 	ct->regs.ack = GPIO_PORTA_EOI;
+ 	ct->regs.mask = GPIO_INTMASK;
+ 
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index 1e98a9873967..8765bd6f48e1 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -99,23 +99,23 @@ static void em_gio_irq_enable(struct irq_data *d)
+ 	em_gio_write(p, GIO_IEN, BIT(irqd_to_hwirq(d)));
+ }
+ 
+-static unsigned int em_gio_irq_startup(struct irq_data *d)
++static int em_gio_irq_reqres(struct irq_data *d)
+ {
+ 	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
+ 
+-	if (gpio_lock_as_irq(&p->gpio_chip, irqd_to_hwirq(d)))
++	if (gpio_lock_as_irq(&p->gpio_chip, irqd_to_hwirq(d))) {
+ 		dev_err(p->gpio_chip.dev,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			irqd_to_hwirq(d));
+-	em_gio_irq_enable(d);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void em_gio_irq_shutdown(struct irq_data *d)
++static void em_gio_irq_relres(struct irq_data *d)
+ {
+ 	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
+ 
+-	em_gio_irq_disable(d);
+ 	gpio_unlock_as_irq(&p->gpio_chip, irqd_to_hwirq(d));
+ }
+ 
+@@ -359,8 +359,8 @@ static int em_gio_probe(struct platform_device *pdev)
+ 	irq_chip->irq_mask = em_gio_irq_disable;
+ 	irq_chip->irq_unmask = em_gio_irq_enable;
+ 	irq_chip->irq_set_type = em_gio_irq_set_type;
+-	irq_chip->irq_startup = em_gio_irq_startup;
+-	irq_chip->irq_shutdown = em_gio_irq_shutdown;
++	irq_chip->irq_request_resources = em_gio_irq_reqres;
++	irq_chip->irq_release_resources = em_gio_irq_relres;
+ 	irq_chip->flags	= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND;
+ 
+ 	p->irq_domain = irq_domain_add_simple(pdev->dev.of_node,
+diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
+index 3a34bb151fd4..118a6bf455d9 100644
+--- a/drivers/gpio/gpio-intel-mid.c
++++ b/drivers/gpio/gpio-intel-mid.c
+@@ -231,23 +231,23 @@ static void intel_mid_irq_mask(struct irq_data *d)
+ {
+ }
+ 
+-static unsigned int intel_mid_irq_startup(struct irq_data *d)
++static int intel_mid_irq_reqres(struct irq_data *d)
+ {
+ 	struct intel_mid_gpio *priv = irq_data_get_irq_chip_data(d);
+ 
+-	if (gpio_lock_as_irq(&priv->chip, irqd_to_hwirq(d)))
++	if (gpio_lock_as_irq(&priv->chip, irqd_to_hwirq(d))) {
+ 		dev_err(priv->chip.dev,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			irqd_to_hwirq(d));
+-	intel_mid_irq_unmask(d);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void intel_mid_irq_shutdown(struct irq_data *d)
++static void intel_mid_irq_relres(struct irq_data *d)
+ {
+ 	struct intel_mid_gpio *priv = irq_data_get_irq_chip_data(d);
+ 
+-	intel_mid_irq_mask(d);
+ 	gpio_unlock_as_irq(&priv->chip, irqd_to_hwirq(d));
+ }
+ 
+@@ -256,8 +256,8 @@ static struct irq_chip intel_mid_irqchip = {
+ 	.irq_mask	= intel_mid_irq_mask,
+ 	.irq_unmask	= intel_mid_irq_unmask,
+ 	.irq_set_type	= intel_mid_irq_type,
+-	.irq_startup	= intel_mid_irq_startup,
+-	.irq_shutdown	= intel_mid_irq_shutdown,
++	.irq_request_resources = intel_mid_irq_reqres,
++	.irq_release_resources = intel_mid_irq_relres,
+ };
+ 
+ static const struct intel_mid_gpio_ddata gpio_lincroft = {
+diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
+index 66b18535b5ae..41f79cb24a9e 100644
+--- a/drivers/gpio/gpio-lynxpoint.c
++++ b/drivers/gpio/gpio-lynxpoint.c
+@@ -301,23 +301,23 @@ static void lp_irq_disable(struct irq_data *d)
+ 	spin_unlock_irqrestore(&lg->lock, flags);
+ }
+ 
+-static unsigned int lp_irq_startup(struct irq_data *d)
++static int lp_irq_reqres(struct irq_data *d)
+ {
+ 	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
+ 
+-	if (gpio_lock_as_irq(&lg->chip, irqd_to_hwirq(d)))
++	if (gpio_lock_as_irq(&lg->chip, irqd_to_hwirq(d))) {
+ 		dev_err(lg->chip.dev,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			irqd_to_hwirq(d));
+-	lp_irq_enable(d);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void lp_irq_shutdown(struct irq_data *d)
++static void lp_irq_relres(struct irq_data *d)
+ {
+ 	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
+ 
+-	lp_irq_disable(d);
+ 	gpio_unlock_as_irq(&lg->chip, irqd_to_hwirq(d));
+ }
+ 
+@@ -328,8 +328,8 @@ static struct irq_chip lp_irqchip = {
+ 	.irq_enable = lp_irq_enable,
+ 	.irq_disable = lp_irq_disable,
+ 	.irq_set_type = lp_irq_type,
+-	.irq_startup = lp_irq_startup,
+-	.irq_shutdown = lp_irq_shutdown,
++	.irq_request_resources = lp_irq_reqres,
++	.irq_release_resources = lp_irq_relres,
+ 	.flags = IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
+diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+index e1734c114916..99a68310e7c0 100644
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@ -440,24 +440,24 @@ static void mcp23s08_irq_bus_unlock(struct irq_data *data)
+ 	mutex_unlock(&mcp->irq_lock);
+ }
+ 
+-static unsigned int mcp23s08_irq_startup(struct irq_data *data)
++static int mcp23s08_irq_reqres(struct irq_data *data)
+ {
+ 	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
+ 
+-	if (gpio_lock_as_irq(&mcp->chip, data->hwirq))
++	if (gpio_lock_as_irq(&mcp->chip, data->hwirq)) {
+ 		dev_err(mcp->chip.dev,
+ 			"unable to lock HW IRQ %lu for IRQ usage\n",
+ 			data->hwirq);
++		return -EINVAL;
++	}
+ 
+-	mcp23s08_irq_unmask(data);
+ 	return 0;
+ }
+ 
+-static void mcp23s08_irq_shutdown(struct irq_data *data)
++static void mcp23s08_irq_relres(struct irq_data *data)
+ {
+ 	struct mcp23s08 *mcp = irq_data_get_irq_chip_data(data);
+ 
+-	mcp23s08_irq_mask(data);
+ 	gpio_unlock_as_irq(&mcp->chip, data->hwirq);
+ }
+ 
+@@ -468,8 +468,8 @@ static struct irq_chip mcp23s08_irq_chip = {
+ 	.irq_set_type = mcp23s08_irq_set_type,
+ 	.irq_bus_lock = mcp23s08_irq_bus_lock,
+ 	.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock,
+-	.irq_startup = mcp23s08_irq_startup,
+-	.irq_shutdown = mcp23s08_irq_shutdown,
++	.irq_request_resources = mcp23s08_irq_reqres,
++	.irq_release_resources = mcp23s08_irq_relres,
+ };
+ 
+ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 391766e5aeed..21891831d653 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -233,23 +233,23 @@ static void pl061_irq_unmask(struct irq_data *d)
+ 	spin_unlock(&chip->lock);
+ }
+ 
+-static unsigned int pl061_irq_startup(struct irq_data *d)
++static unsigned int pl061_irq_reqres(struct irq_data *d)
+ {
+ 	struct pl061_gpio *chip = irq_data_get_irq_chip_data(d);
+ 
+-	if (gpio_lock_as_irq(&chip->gc, irqd_to_hwirq(d)))
++	if (gpio_lock_as_irq(&chip->gc, irqd_to_hwirq(d))) {
+ 		dev_err(chip->gc.dev,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			irqd_to_hwirq(d));
+-	pl061_irq_unmask(d);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void pl061_irq_shutdown(struct irq_data *d)
++static void pl061_irq_relres(struct irq_data *d)
+ {
+ 	struct pl061_gpio *chip = irq_data_get_irq_chip_data(d);
+ 
+-	pl061_irq_mask(d);
+ 	gpio_unlock_as_irq(&chip->gc, irqd_to_hwirq(d));
+ }
+ 
+@@ -258,8 +258,8 @@ static struct irq_chip pl061_irqchip = {
+ 	.irq_mask	= pl061_irq_mask,
+ 	.irq_unmask	= pl061_irq_unmask,
+ 	.irq_set_type	= pl061_irq_type,
+-	.irq_startup	= pl061_irq_startup,
+-	.irq_shutdown	= pl061_irq_shutdown,
++	.irq_request_resources = pl061_irq_reqres,
++	.irq_release_resources = pl061_irq_relres,
+ };
+ 
+ static int pl061_irq_map(struct irq_domain *d, unsigned int irq,
+diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
+index 7a39562c3e42..cdcf722cb8a9 100644
+--- a/drivers/pinctrl/pinctrl-adi2.c
++++ b/drivers/pinctrl/pinctrl-adi2.c
+@@ -316,7 +316,7 @@ static void adi_gpio_unmask_irq(struct irq_data *d)
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ }
+ 
+-static unsigned int adi_gpio_irq_startup(struct irq_data *d)
++static int adi_gpio_irq_startup(struct irq_data *d)
+ {
+ 	unsigned long flags;
+ 	struct gpio_port *port = irq_data_get_irq_chip_data(d);
+diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
+index 665b96bc0c3a..9a4abd9cc878 100644
+--- a/drivers/pinctrl/pinctrl-baytrail.c
++++ b/drivers/pinctrl/pinctrl-baytrail.c
+@@ -371,23 +371,23 @@ static void byt_irq_mask(struct irq_data *d)
+ {
+ }
+ 
+-static unsigned int byt_irq_startup(struct irq_data *d)
++static int byt_irq_reqres(struct irq_data *d)
+ {
+ 	struct byt_gpio *vg = irq_data_get_irq_chip_data(d);
+ 
+-	if (gpio_lock_as_irq(&vg->chip, irqd_to_hwirq(d)))
++	if (gpio_lock_as_irq(&vg->chip, irqd_to_hwirq(d))) {
+ 		dev_err(vg->chip.dev,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			irqd_to_hwirq(d));
+-	byt_irq_unmask(d);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void byt_irq_shutdown(struct irq_data *d)
++static void byt_irq_relres(struct irq_data *d)
+ {
+ 	struct byt_gpio *vg = irq_data_get_irq_chip_data(d);
+ 
+-	byt_irq_mask(d);
+ 	gpio_unlock_as_irq(&vg->chip, irqd_to_hwirq(d));
+ }
+ 
+@@ -396,8 +396,8 @@ static struct irq_chip byt_irqchip = {
+ 	.irq_mask = byt_irq_mask,
+ 	.irq_unmask = byt_irq_unmask,
+ 	.irq_set_type = byt_irq_type,
+-	.irq_startup = byt_irq_startup,
+-	.irq_shutdown = byt_irq_shutdown,
++	.irq_request_resources = byt_irq_reqres,
++	.irq_release_resources = byt_irq_relres,
+ };
+ 
+ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+diff --git a/drivers/pinctrl/pinctrl-msm.c b/drivers/pinctrl/pinctrl-msm.c
+index ef2bf3126da6..81ecd6ba4169 100644
+--- a/drivers/pinctrl/pinctrl-msm.c
++++ b/drivers/pinctrl/pinctrl-msm.c
+@@ -805,23 +805,22 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	return 0;
+ }
+ 
+-static unsigned int msm_gpio_irq_startup(struct irq_data *d)
++static int msm_gpio_irq_reqres(struct irq_data *d)
+ {
+ 	struct msm_pinctrl *pctrl = irq_data_get_irq_chip_data(d);
+ 
+ 	if (gpio_lock_as_irq(&pctrl->chip, d->hwirq)) {
+ 		dev_err(pctrl->dev, "unable to lock HW IRQ %lu for IRQ\n",
+ 			d->hwirq);
++		return -EINVAL;
+ 	}
+-	msm_gpio_irq_unmask(d);
+ 	return 0;
+ }
+ 
+-static void msm_gpio_irq_shutdown(struct irq_data *d)
++static void msm_gpio_irq_relres(struct irq_data *d)
+ {
+ 	struct msm_pinctrl *pctrl = irq_data_get_irq_chip_data(d);
+ 
+-	msm_gpio_irq_mask(d);
+ 	gpio_unlock_as_irq(&pctrl->chip, d->hwirq);
+ }
+ 
+@@ -832,8 +831,8 @@ static struct irq_chip msm_gpio_irq_chip = {
+ 	.irq_ack        = msm_gpio_irq_ack,
+ 	.irq_set_type   = msm_gpio_irq_set_type,
+ 	.irq_set_wake   = msm_gpio_irq_set_wake,
+-	.irq_startup	= msm_gpio_irq_startup,
+-	.irq_shutdown	= msm_gpio_irq_shutdown,
++	.irq_request_resources = msm_gpio_irq_reqres,
++	.irq_release_resources = msm_gpio_irq_relres,
+ };
+ 
+ static void msm_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+diff --git a/drivers/pinctrl/pinctrl-nomadik.c b/drivers/pinctrl/pinctrl-nomadik.c
+index 53a11114927f..2ea3f3738eab 100644
+--- a/drivers/pinctrl/pinctrl-nomadik.c
++++ b/drivers/pinctrl/pinctrl-nomadik.c
+@@ -848,10 +848,6 @@ static unsigned int nmk_gpio_irq_startup(struct irq_data *d)
+ {
+ 	struct nmk_gpio_chip *nmk_chip = irq_data_get_irq_chip_data(d);
+ 
+-	if (gpio_lock_as_irq(&nmk_chip->chip, d->hwirq))
+-		dev_err(nmk_chip->chip.dev,
+-			"unable to lock HW IRQ %lu for IRQ\n",
+-			d->hwirq);
+ 	clk_enable(nmk_chip->clk);
+ 	nmk_gpio_irq_unmask(d);
+ 	return 0;
+@@ -863,6 +859,25 @@ static void nmk_gpio_irq_shutdown(struct irq_data *d)
+ 
+ 	nmk_gpio_irq_mask(d);
+ 	clk_disable(nmk_chip->clk);
++}
++
++static int nmk_gpio_irq_reqres(struct irq_data *d)
++{
++	struct nmk_gpio_chip *nmk_chip = irq_data_get_irq_chip_data(d);
++
++	if (gpio_lock_as_irq(&nmk_chip->chip, d->hwirq)) {
++		dev_err(nmk_chip->chip.dev,
++			"unable to lock HW IRQ %lu for IRQ\n",
++			d->hwirq);
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static void nmk_gpio_irq_relres(struct irq_data *d)
++{
++	struct nmk_gpio_chip *nmk_chip = irq_data_get_irq_chip_data(d);
++
+ 	gpio_unlock_as_irq(&nmk_chip->chip, d->hwirq);
+ }
+ 
+@@ -875,6 +890,8 @@ static struct irq_chip nmk_gpio_irq_chip = {
+ 	.irq_set_wake	= nmk_gpio_irq_set_wake,
+ 	.irq_startup	= nmk_gpio_irq_startup,
+ 	.irq_shutdown	= nmk_gpio_irq_shutdown,
++	.irq_request_resources = nmk_gpio_irq_reqres,
++	.irq_release_resources = nmk_gpio_irq_relres,
+ 	.flags		= IRQCHIP_MASK_ON_SUSPEND,
+ };
+ 
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index 617a4916b50f..3ce6e258bc80 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -594,23 +594,23 @@ static int sirfsoc_gpio_irq_type(struct irq_data *d, unsigned type)
+ 	return 0;
+ }
+ 
+-static unsigned int sirfsoc_gpio_irq_startup(struct irq_data *d)
++static int sirfsoc_gpio_irq_reqres(struct irq_data *d)
+ {
+ 	struct sirfsoc_gpio_bank *bank = irq_data_get_irq_chip_data(d);
+ 
+-	if (gpio_lock_as_irq(&bank->chip.gc, d->hwirq % SIRFSOC_GPIO_BANK_SIZE))
++	if (gpio_lock_as_irq(&bank->chip.gc, d->hwirq % SIRFSOC_GPIO_BANK_SIZE)) {
+ 		dev_err(bank->chip.gc.dev,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			d->hwirq);
+-	sirfsoc_gpio_irq_unmask(d);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ 
+-static void sirfsoc_gpio_irq_shutdown(struct irq_data *d)
++static void sirfsoc_gpio_irq_relres(struct irq_data *d)
+ {
+ 	struct sirfsoc_gpio_bank *bank = irq_data_get_irq_chip_data(d);
+ 
+-	sirfsoc_gpio_irq_mask(d);
+ 	gpio_unlock_as_irq(&bank->chip.gc, d->hwirq % SIRFSOC_GPIO_BANK_SIZE);
+ }
+ 
+@@ -620,8 +620,8 @@ static struct irq_chip sirfsoc_irq_chip = {
+ 	.irq_mask = sirfsoc_gpio_irq_mask,
+ 	.irq_unmask = sirfsoc_gpio_irq_unmask,
+ 	.irq_set_type = sirfsoc_gpio_irq_type,
+-	.irq_startup = sirfsoc_gpio_irq_startup,
+-	.irq_shutdown = sirfsoc_gpio_irq_shutdown,
++	.irq_request_resources = sirfsoc_gpio_irq_reqres,
++	.irq_release_resources = sirfsoc_gpio_irq_relres,
+ };
+ 
+ static void sirfsoc_gpio_handle_irq(unsigned int irq, struct irq_desc *desc)
+-- 
+1.8.5.3
 
-Thanks,
-Sekhar
