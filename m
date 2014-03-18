@@ -1,56 +1,84 @@
-From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Tue, 18 Mar 2014 14:07:02 +0530
-Message-ID: <532805AE.9000806@ti.com>
-References: <5316FFCE.1060603@ti.com>
-	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
-	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
-	<5322D529.4070904@ahsoftware.de>
-	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
-	<5326F8C5.5090406@ti.com>
-	<CACRpkdYZMzw31NkA4uSq+ZowzOnZgZthXhZri-eJY2Ozb8aNRQ@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] gpio: switch drivers to use new callback
+Date: Tue, 18 Mar 2014 10:34:59 +0100 (CET)
+Message-ID: <alpine.DEB.2.02.1403181023090.18573@ionos.tec.linutronix.de>
+References: <1395128912-3370-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <CACRpkdYZMzw31NkA4uSq+ZowzOnZgZthXhZri-eJY2Ozb8aNRQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org" <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:52099 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753543AbaCRJev (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Mar 2014 05:34:51 -0400
+In-Reply-To: <1395128912-3370-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-On Monday 17 March 2014 07:35 PM, Linus Walleij wrote:
-> On Mon, Mar 17, 2014 at 2:29 PM, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org> wrote:
+On Tue, 18 Mar 2014, Linus Walleij wrote:
+> This switches all GPIO and pin control drivers with irqchips
+> that were using .startup() and .shutdown() callbacks to lock
+> GPIO lines for IRQ usage over to using the .request_resources()
+> and .release_resources() callbacks just introduced into the
+> irqchip vtable.
 > 
->> One thing to note is that this driver is used by keystone too and all
->> its users are DT-only. Although I do not see any in-kernel DT GPIO users
->> even there.
->>
->> I can confirm the patch does not break my gpiolib based test module
->> (test with and without DT), but then it did not have an issue even before.
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Fix signedness of some callbacks.
+> ---
+>  drivers/gpio/gpio-adnp.c            | 15 +++++++--------
+>  drivers/gpio/gpio-bcm-kona.c        | 14 +++++++-------
+>  drivers/gpio/gpio-dwapb.c           | 16 ++++++++--------
+>  drivers/gpio/gpio-em.c              | 14 +++++++-------
+>  drivers/gpio/gpio-intel-mid.c       | 14 +++++++-------
+>  drivers/gpio/gpio-lynxpoint.c       | 14 +++++++-------
+>  drivers/gpio/gpio-mcp23s08.c        | 14 +++++++-------
+>  drivers/gpio/gpio-pl061.c           | 14 +++++++-------
+>  drivers/pinctrl/pinctrl-adi2.c      |  1 +
+>  drivers/pinctrl/pinctrl-baytrail.c  | 14 +++++++-------
+>  drivers/pinctrl/pinctrl-msm.c       | 11 +++++------
+>  drivers/pinctrl/pinctrl-nomadik.c   | 25 +++++++++++++++++++++----
+>  drivers/pinctrl/sirf/pinctrl-sirf.c | 14 +++++++-------
+>  13 files changed, 98 insertions(+), 82 deletions(-)
 > 
-> Is that a Tested-by tag? :-)
+> diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+> index 6fc6206b38bd..b2239d678d01 100644
+> --- a/drivers/gpio/gpio-adnp.c
+> +++ b/drivers/gpio/gpio-adnp.c
+> @@ -408,24 +408,23 @@ static void adnp_irq_bus_unlock(struct irq_data *data)
+>  	mutex_unlock(&adnp->irq_lock);
+>  }
+>  
+> -static unsigned int adnp_irq_startup(struct irq_data *data)
+> +static int adnp_irq_reqres(struct irq_data *data)
+>  {
+>  	struct adnp *adnp = irq_data_get_irq_chip_data(data);
+>  
+> -	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq))
+> +	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq)) {
 
-Yes.
+So you need a per chip function because all chips have their own
+private data struct in irq_chip_data. Sigh. 
 
-Tested-by: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
+It'd be nice if we'd have gpio in the data, so you could have a
+generic function which does the right thing.
 
-> 
-> If you're also convinced that fix is safe I'll push it as a fix to v3.14-rcN
-> if for nothing else so for getting Mr. Holler to stop poking me in the
-> chest.
+In principle it'd be simple.
 
-It is safe - at the least it does not break anything that is already
-working. I guess the decision to put it into -rc depends on whether you
-consider out of tree dtbs to be a valid usecase for the kernel.
+   struct gpio *gpio = irq_data_get_irq_chip_data(data);
+   struct adnp *adnp = container_of(gpio, struct adnp, gpio);
+
+Ditto for all other drivers. But that requires a major overhaul.
+
+I wonder if it'd be worth to add another pointer to irq_data for such
+purposes.
+
+Thoughts?
 
 Thanks,
-Sekhar
+
+	tglx
