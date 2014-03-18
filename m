@@ -1,55 +1,55 @@
-From: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Tue, 18 Mar 2014 16:24:17 +0530
-Message-ID: <532825D9.4050708@ti.com>
-References: <5316FFCE.1060603@ti.com>
-	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
-	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
-	<5322D529.4070904@ahsoftware.de>
-	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
-	<5326F8C5.5090406@ti.com>
-	<CACRpkdYZMzw31NkA4uSq+ZowzOnZgZthXhZri-eJY2Ozb8aNRQ@mail.gmail.com>
-	<532805AE.9000806@ti.com> <532815A8.9090807@ahsoftware.de>
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Subject: tca-6416: interrupt device tree configuration
+Date: Tue, 18 Mar 2014 16:02:09 +0100
+Message-ID: <CAGm1_ksGDCfgTNpue_zEUTho88G3juSJ6qLttHb7ACFawdgKzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <532815A8.9090807-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org" <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:64949 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932218AbaCRPCb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Mar 2014 11:02:31 -0400
+Received: by mail-pb0-f44.google.com with SMTP id rp16so7395438pbb.17
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Mar 2014 08:02:31 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-Hi Alexander,
+I've an am335x-based board with tca6416. The interrupt output of the
+tca is connected to GPIO0_20 on my SoC. How should I configure this
+wiring in device tree file?
 
-On Tuesday 18 March 2014 03:15 PM, Alexander Holler wrote:
-> Am 18.03.2014 09:37, schrieb Sekhar Nori:
-> 
->> It is safe - at the least it does not break anything that is already
->> working. I guess the decision to put it into -rc depends on whether you
->> consider out of tree dtbs to be a valid usecase for the kernel.
-> 
-> That's all DT is about, getting rid of the necessity for in-tree
-> hw-descriptions. ;)
-> 
-> But I don't need any rush here, I'm just unable to understand why the
-> -rc phase isn't used for bug fixing as I believe that's what this phase
-> is for.
+I've already managed to hook it on I2C and it is working so far:
 
-The push back you are seeing is because this is pretty late in -rc
-cycle. If this push back was not there the bug fix cycle would probably
-never close.
+ tca6416: gpio@20 {
+                compatible = "ti,tca6416";
+                reg = <0x20>;
+                gpio-controller;
+                #gpio-cells = <2>;
+  };
 
-In all probability, if this was -rc2 or even -rc3 there would not be so
-much discussion.
+Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt describes
+following properties:
 
-Thanks,
-Sekhar
+  - interrupt-controller: Identifies the node as an interrupt controller.
+  - #interrupt-cells: Number of cells to encode an interrupt source, shall be 2.
+  - interrupt-parent: phandle of the parent interrupt controller.
+  - interrupts: Interrupt specifier for the controllers interrupt.
+
+and following example:
+
+        pcf8575: gpio@20 {
+                compatible = "nxp,pcf8575";
+                reg = <0x20>;
+                interrupt-parent = <&irqpin2>;
+                interrupts = <3 0>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                interrupt-controller;
+                #interrupt-cells = <2>;
+        };
+
+Where does irqpin2 come from? How to specify GPIO0_20 in "interrupts" context?
+
+Regards,
+Yegor
