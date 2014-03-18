@@ -1,57 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: switch drivers to use new callback
-Date: Tue, 18 Mar 2014 10:53:03 +0100
-Message-ID: <CACRpkdY3sYvCsJ=L9MqRTsUQKvyBX=RBHUwcqUc_-UjiDCx49A@mail.gmail.com>
-References: <1395128912-3370-1-git-send-email-linus.walleij@linaro.org>
-	<alpine.DEB.2.02.1403181023090.18573@ionos.tec.linutronix.de>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] gpio: iop: fix devm_ioremap_resource() return value checking
+Date: Tue, 18 Mar 2014 10:58:33 +0100
+Message-ID: <1625450.oZua1OVhNs@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:37612 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754359AbaCRJxE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Mar 2014 05:53:04 -0400
-Received: by mail-vc0-f174.google.com with SMTP id ld13so6786893vcb.19
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Mar 2014 02:53:03 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.02.1403181023090.18573@ionos.tec.linutronix.de>
+Received: from mailout4.samsung.com ([203.254.224.34]:16069 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753462AbaCRJ6v (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Mar 2014 05:58:51 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 18, 2014 at 10:34 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+devm_ioremap_resource() returns a pointer to the remapped memory or
+an ERR_PTR() encoded error code on failure.  Fix the check inside
+iop3xx_gpio_probe() accordingly.
 
-> So you need a per chip function because all chips have their own
-> private data struct in irq_chip_data. Sigh.
+Cc: Lennert Buytenhek <kernel@wantstofly.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Mikael Pettersson <mikpe@it.uu.se>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+Compile tested only.
 
-Yeah that's it basically.
+ drivers/gpio/gpio-iop.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-I was trying to think of a way to proceed to push the irqchip
-handling into some generic functions in the gpiolib core
-as you suggested but haven't come up with a good way yet.
+Index: b/drivers/gpio/gpio-iop.c
+===================================================================
+--- a/drivers/gpio/gpio-iop.c	2014-03-14 16:45:08.152724313 +0100
++++ b/drivers/gpio/gpio-iop.c	2014-03-18 10:50:01.903194680 +0100
+@@ -111,6 +111,8 @@ static int iop3xx_gpio_probe(struct plat
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
+ 
+ 	return gpiochip_add(&iop3xx_chip);
+ }
 
-> It'd be nice if we'd have gpio in the data, so you could have a
-> generic function which does the right thing.
->
-> In principle it'd be simple.
->
->    struct gpio *gpio = irq_data_get_irq_chip_data(data);
->    struct adnp *adnp = container_of(gpio, struct adnp, gpio);
->
-> Ditto for all other drivers. But that requires a major overhaul.
-
-But hm, it could save a lot of code in single lines all over
-the place still. Let me try this on one driver and see how
-this looks. As it seems it can be done in a one-at-a-time
-manner it should be doable, just some work.
-
-> I wonder if it'd be worth to add another pointer to irq_data for such
-> purposes.
-
-The worrying thing would be that .chip_data can
-easily be confused for this pointer so it needs a catchy
-name so it's intuitive to see what it is for. But the above solution
-is probably more elegant so let's try that first.
-
-Yours,
-Linus Walleij
