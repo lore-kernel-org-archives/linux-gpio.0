@@ -1,44 +1,57 @@
-From: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Tue, 18 Mar 2014 10:45:12 +0100
-Message-ID: <532815A8.9090807@ahsoftware.de>
-References: <5316FFCE.1060603@ti.com> <1394018461-757-1-git-send-email-holler@ahsoftware.de> <CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com> <5322D529.4070904@ahsoftware.de> <CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com> <5326F8C5.5090406@ti.com> <CACRpkdYZMzw31NkA4uSq+ZowzOnZgZthXhZri-eJY2Ozb8aNRQ@mail.gmail.com> <532805AE.9000806@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpio: switch drivers to use new callback
+Date: Tue, 18 Mar 2014 10:53:03 +0100
+Message-ID: <CACRpkdY3sYvCsJ=L9MqRTsUQKvyBX=RBHUwcqUc_-UjiDCx49A@mail.gmail.com>
+References: <1395128912-3370-1-git-send-email-linus.walleij@linaro.org>
+	<alpine.DEB.2.02.1403181023090.18573@ionos.tec.linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <532805AE.9000806-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org" <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prabhakar Lad <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:37612 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754359AbaCRJxE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Mar 2014 05:53:04 -0400
+Received: by mail-vc0-f174.google.com with SMTP id ld13so6786893vcb.19
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Mar 2014 02:53:03 -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.02.1403181023090.18573@ionos.tec.linutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-Am 18.03.2014 09:37, schrieb Sekhar Nori:
+On Tue, Mar 18, 2014 at 10:34 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> It is safe - at the least it does not break anything that is already
-> working. I guess the decision to put it into -rc depends on whether you
-> consider out of tree dtbs to be a valid usecase for the kernel.
+> So you need a per chip function because all chips have their own
+> private data struct in irq_chip_data. Sigh.
 
-That's all DT is about, getting rid of the necessity for in-tree 
-hw-descriptions. ;)
+Yeah that's it basically.
 
-But I don't need any rush here, I'm just unable to understand why the 
--rc phase isn't used for bug fixing as I believe that's what this phase 
-is for.
+I was trying to think of a way to proceed to push the irqchip
+handling into some generic functions in the gpiolib core
+as you suggested but haven't come up with a good way yet.
 
-Most people are unable to track the various -next trees, therefor many 
-failures only come up when stuff reaches mainline where it might be 
-tested by some more people. And if all bugs found in the -rc phase are 
-fixed in -next only, the -rc phase would be useless.
+> It'd be nice if we'd have gpio in the data, so you could have a
+> generic function which does the right thing.
+>
+> In principle it'd be simple.
+>
+>    struct gpio *gpio = irq_data_get_irq_chip_data(data);
+>    struct adnp *adnp = container_of(gpio, struct adnp, gpio);
+>
+> Ditto for all other drivers. But that requires a major overhaul.
 
-And it just happened to me too often, that even silly bugfixes (like 
-oneliners) needed between 5 and 9 months to reach a stable kernel and 
-thus users.
+But hm, it could save a lot of code in single lines all over
+the place still. Let me try this on one driver and see how
+this looks. As it seems it can be done in a one-at-a-time
+manner it should be doable, just some work.
 
-Regards,
+> I wonder if it'd be worth to add another pointer to irq_data for such
+> purposes.
 
-Alexander Holler
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The worrying thing would be that .chip_data can
+easily be confused for this pointer so it needs a catchy
+name so it's intuitive to see what it is for. But the above solution
+is probably more elegant so let's try that first.
+
+Yours,
+Linus Walleij
