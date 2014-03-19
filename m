@@ -1,55 +1,45 @@
-From: Yegor Yefremov <yegorslists@googlemail.com>
-Subject: tca-6416: interrupt device tree configuration
-Date: Tue, 18 Mar 2014 16:02:09 +0100
-Message-ID: <CAGm1_ksGDCfgTNpue_zEUTho88G3juSJ6qLttHb7ACFawdgKzw@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpiolib: check if gpio_desc pointer is error or NULL
+Date: Wed, 19 Mar 2014 10:48:45 +0900
+Message-ID: <CAAVeFuLJOSikb3pXffbC7Y4LDKXd-PQ_cadtT1q=TLCyWVh=MA@mail.gmail.com>
+References: <1395139290-4207-1-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:64949 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932218AbaCRPCb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Mar 2014 11:02:31 -0400
-Received: by mail-pb0-f44.google.com with SMTP id rp16so7395438pbb.17
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Mar 2014 08:02:31 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1395139290-4207-1-git-send-email-ben.dooks@codethink.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
 
-I've an am335x-based board with tca6416. The interrupt output of the
-tca is connected to GPIO0_20 on my SoC. How should I configure this
-wiring in device tree file?
+On Tue, Mar 18, 2014 at 7:41 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> Some of the gpiod_ calls take a pointer to a gpio_desc as their
+> argument but only check to see if it is NULL to validate the
+> input.
+>
+> Calls such as devm_gpiod_get() return an error-pointer if they
+> fail, so doing the following will not work:
+>
+>         gpio = devm_gpiod_get(...);
+>         gpiod_direction_output(gpio, 0);
+>
+> The sequence produces an OOPS like:
+>
+>         Unable to handle kernel paging request at virtual address fffffffe
+>
+> Change all calls that check for !desc to use IS_ERR_OR_NULL() to
+> avoid these issues.
 
-I've already managed to hook it on I2C and it is working so far:
+This change is certainly correct from a semantics point of view. Maybe
+I'd argue that the burden is on the caller to check that gpiod_get()
+returns a valid GPIO descriptor, but having extra security doesn't
+hurt. However my problem with this change in its current form is that
+it will hide such forgetfulnesses by making functions like
+gpiod_get_value() fail silently instead of triggering a oops.
 
- tca6416: gpio@20 {
-                compatible = "ti,tca6416";
-                reg = <0x20>;
-                gpio-controller;
-                #gpio-cells = <2>;
-  };
-
-Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt describes
-following properties:
-
-  - interrupt-controller: Identifies the node as an interrupt controller.
-  - #interrupt-cells: Number of cells to encode an interrupt source, shall be 2.
-  - interrupt-parent: phandle of the parent interrupt controller.
-  - interrupts: Interrupt specifier for the controllers interrupt.
-
-and following example:
-
-        pcf8575: gpio@20 {
-                compatible = "nxp,pcf8575";
-                reg = <0x20>;
-                interrupt-parent = <&irqpin2>;
-                interrupts = <3 0>;
-                gpio-controller;
-                #gpio-cells = <2>;
-                interrupt-controller;
-                #interrupt-cells = <2>;
-        };
-
-Where does irqpin2 come from? How to specify GPIO0_20 in "interrupts" context?
-
-Regards,
-Yegor
+Could you make sure that any call of a gpiolib function on a non-valid
+descriptor raises at least a message in the console, and while you are
+at it harmonize the way these messages are output? Right now we are
+using pr_debug(), pr_warn() or WARN_ON() depending on the location. I
+would say that using an invalid GPIO descriptor is offending enough
+that it should trigger a stack dump at every attempt.
