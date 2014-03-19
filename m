@@ -1,33 +1,92 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH] gpio: iop: fix devm_ioremap_resource() return value checking
-Date: Wed, 19 Mar 2014 09:58:52 -0700
-Message-ID: <CAPcyv4hYFBY2GwXcF_wfigtsqT+s7Sgq9UHdH0nWGYZD7DaxcQ@mail.gmail.com>
-References: <1625450.oZua1OVhNs@amdc1032>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH] gpio: vr41xx: mark GPIO lines used for IRQ
+Date: Wed, 19 Mar 2014 18:00:30 +0100
+Message-ID: <20140319170030.GH17197@linux-mips.org>
+References: <1390518477-10020-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f169.google.com ([209.85.128.169]:52133 "EHLO
-	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933960AbaCSQ6x (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Mar 2014 12:58:53 -0400
-Received: by mail-ve0-f169.google.com with SMTP id pa12so9207366veb.14
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Mar 2014 09:58:52 -0700 (PDT)
-In-Reply-To: <1625450.oZua1OVhNs@amdc1032>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mips-bounce@linux-mips.org>
+Content-Disposition: inline
+In-Reply-To: <1390518477-10020-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-mips@linux-mips.org, Yoichi Yuasa <yuasa@linux-mips.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lennert Buytenhek <kernel@wantstofly.org>, Mikael Pettersson <mikpe@it.uu.se>, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Mar 18, 2014 at 2:58 AM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> devm_ioremap_resource() returns a pointer to the remapped memory or
-> an ERR_PTR() encoded error code on failure.  Fix the check inside
-> iop3xx_gpio_probe() accordingly.
->
-> Cc: Lennert Buytenhek <kernel@wantstofly.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Mikael Pettersson <mikpe@it.uu.se>
-> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+On Fri, Jan 24, 2014 at 12:07:57AM +0100, Linus Walleij wrote:
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+Added Yoichi to cc.
+
+> When an IRQ is started on a GPIO line, mark this GPIO as IRQ in
+> the gpiolib so we can keep track of the usage centrally.
+> 
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: linux-mips@linux-mips.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> It would be much appreciated if one of the MIPS people could
+> test this patch, thanks in advance. (I did compile-test it
+> with a MIPS cross compiler.)
+> ---
+>  drivers/gpio/gpio-vr41xx.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-vr41xx.c b/drivers/gpio/gpio-vr41xx.c
+> index b983bc079102..c6728cee0cfd 100644
+> --- a/drivers/gpio/gpio-vr41xx.c
+> +++ b/drivers/gpio/gpio-vr41xx.c
+> @@ -80,6 +80,7 @@ static DEFINE_SPINLOCK(giu_lock);
+>  static unsigned long giu_flags;
+>  
+>  static void __iomem *giu_base;
+> +static struct gpio_chip vr41xx_gpio_chip;
+>  
+>  #define giu_read(offset)		readw(giu_base + (offset))
+>  #define giu_write(offset, value)	writew((value), giu_base + (offset))
+> @@ -134,12 +135,31 @@ static void unmask_giuint_low(struct irq_data *d)
+>  	giu_set(GIUINTENL, 1 << GPIO_PIN_OF_IRQ(d->irq));
+>  }
+>  
+> +static unsigned int startup_giuint(struct irq_data *data)
+> +{
+> +	if (gpio_lock_as_irq(&vr41xx_gpio_chip, data->hwirq))
+> +		dev_err(vr41xx_gpio_chip.dev,
+> +			"unable to lock HW IRQ %lu for IRQ\n",
+> +			data->hwirq);
+> +	/* Satisfy the .enable semantics by unmasking the line */
+> +	unmask_giuint_low(data);
+> +	return 0;
+> +}
+> +
+> +static void shutdown_giuint(struct irq_data *data)
+> +{
+> +	mask_giuint_low(data);
+> +	gpio_unlock_as_irq(&vr41xx_gpio_chip, data->hwirq);
+> +}
+> +
+>  static struct irq_chip giuint_low_irq_chip = {
+>  	.name		= "GIUINTL",
+>  	.irq_ack	= ack_giuint_low,
+>  	.irq_mask	= mask_giuint_low,
+>  	.irq_mask_ack	= mask_ack_giuint_low,
+>  	.irq_unmask	= unmask_giuint_low,
+> +	.irq_startup	= startup_giuint,
+> +	.irq_shutdown	= shutdown_giuint,
+>  };
+>  
+>  static void ack_giuint_high(struct irq_data *d)
+
+I haven't received any test results but as it's looking good I'm queueing
+this for 3.15.
+
+Thanks,
+
+  Ralf
