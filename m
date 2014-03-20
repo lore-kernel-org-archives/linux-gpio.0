@@ -1,41 +1,67 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 1/3] gpio: dwapb: drop irq_setup_generic_chip()
-Date: Thu, 20 Mar 2014 20:55:22 +0100
-Message-ID: <1395345324-18299-2-git-send-email-bigeasy@linutronix.de>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH 2/3] gpio: dwapb: do not create the irq mapping upfront.
+Date: Thu, 20 Mar 2014 15:20:41 -0500
+Message-ID: <CANk1AXTjuBWa_DdKaV2dCPjhbKRHE9bR2uHyuoCYtt_-zk7EoQ@mail.gmail.com>
 References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Tull <atull@altera.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Dinh Nguyen <dinguyen@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+	<1395345324-18299-3-git-send-email-bigeasy@linutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:33453 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759504AbaCTUUl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Mar 2014 16:20:41 -0400
+In-Reply-To: <1395345324-18299-3-git-send-email-bigeasy@linutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-This looks kinda wrong I didn't manage to fully test it.
-The driver calls irq_alloc_domain_generic_chips() which creates a gc and
-adds it to gc_list. The driver later then calls irq_setup_generic_chip()
-which also initializes the gc and adds it to the gc_list() and this
-corrupts the list.
-I can't find a single chip in tree which uses both functions so I think
-that irq_setup_generic_chip() can be dropped.
+On Thu, Mar 20, 2014 at 2:55 PM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> After the irq chip got registered the driver creates a mapping for every
+> gpio line. This mapping be useless if the gpio in question never is
+> beeing used a irq line. The mapping should be created by the core on
+> request.
+>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  drivers/gpio/gpio-dwapb.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 4d25a06b..0db0b94 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -211,7 +211,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>         struct gpio_chip *gc = &port->bgc.gc;
+>         struct device_node *node =  gc->of_node;
+>         struct irq_chip_generic *irq_gc;
+> -       unsigned int hwirq, ngpio = gc->ngpio;
+> +       unsigned int ngpio = gc->ngpio;
+>         struct irq_chip_type *ct;
+>         int err, irq;
+>
+> @@ -263,9 +263,6 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>         irq_set_chained_handler(irq, dwapb_irq_handler);
+>         irq_set_handler_data(irq, gpio);
+>
+> -       for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
+> -               irq_create_mapping(gpio->domain, hwirq);
+> -
+>         port->bgc.gc.to_irq = dwapb_gpio_to_irq;
+>  }
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/gpio/gpio-dwapb.c | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index ed5711f..4d25a06b 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -260,9 +260,6 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 	ct->regs.ack = GPIO_PORTA_EOI;
- 	ct->regs.mask = GPIO_INTMASK;
- 
--	irq_setup_generic_chip(irq_gc, IRQ_MSK(port->bgc.gc.ngpio),
--			IRQ_GC_INIT_NESTED_LOCK, IRQ_NOREQUEST, 0);
--
- 	irq_set_chained_handler(irq, dwapb_irq_handler);
- 	irq_set_handler_data(irq, gpio);
- 
--- 
-1.9.1
+Hi Sebastian,
+
+I think this functionality has changed at some point or maybe
+everybody copied the same bad code over and over.  I see a lot of
+legacy gpio drivers calling irq_create_mapping in their to_irq()
+functions.  Linus Walleij asked me to create the mappings at probe
+time.  Please see https://lkml.org/lkml/2014/2/10/154 and the
+subsequent discussion in https://lkml.org/lkml/2014/2/24/232
+
+Alan Tull
+aka
+delicious quinoa
