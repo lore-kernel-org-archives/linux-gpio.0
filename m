@@ -1,92 +1,33 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH] gpio: vr41xx: mark GPIO lines used for IRQ
-Date: Wed, 19 Mar 2014 18:00:30 +0100
-Message-ID: <20140319170030.GH17197@linux-mips.org>
-References: <1390518477-10020-1-git-send-email-linus.walleij@linaro.org>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: two patches for the synposys gpio controller
+Date: Thu, 20 Mar 2014 20:55:21 +0100
+Message-ID: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <1390518477-10020-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-mips@linux-mips.org, Yoichi Yuasa <yuasa@linux-mips.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:45252 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754341AbaCTTzc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Mar 2014 15:55:32 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alan Tull <atull@altera.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Dinh Nguyen <dinguyen@altera.com>
 
-On Fri, Jan 24, 2014 at 12:07:57AM +0100, Linus Walleij wrote:
+Hi,
 
-Added Yoichi to cc.
+I didn't manage to fully test this yet therefore they go out as RFC. Th=
+e
+list corruption I refer to in irq_setup_generic_chip() real, this is go=
+ne.
+What I am not sure yet is if the interrupt functionally is still there=E2=
+=80=A6
 
-> When an IRQ is started on a GPIO line, mark this GPIO as IRQ in
-> the gpiolib so we can keep track of the usage centrally.
-> 
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: linux-mips@linux-mips.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> It would be much appreciated if one of the MIPS people could
-> test this patch, thanks in advance. (I did compile-test it
-> with a MIPS cross compiler.)
-> ---
->  drivers/gpio/gpio-vr41xx.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-vr41xx.c b/drivers/gpio/gpio-vr41xx.c
-> index b983bc079102..c6728cee0cfd 100644
-> --- a/drivers/gpio/gpio-vr41xx.c
-> +++ b/drivers/gpio/gpio-vr41xx.c
-> @@ -80,6 +80,7 @@ static DEFINE_SPINLOCK(giu_lock);
->  static unsigned long giu_flags;
->  
->  static void __iomem *giu_base;
-> +static struct gpio_chip vr41xx_gpio_chip;
->  
->  #define giu_read(offset)		readw(giu_base + (offset))
->  #define giu_write(offset, value)	writew((value), giu_base + (offset))
-> @@ -134,12 +135,31 @@ static void unmask_giuint_low(struct irq_data *d)
->  	giu_set(GIUINTENL, 1 << GPIO_PIN_OF_IRQ(d->irq));
->  }
->  
-> +static unsigned int startup_giuint(struct irq_data *data)
-> +{
-> +	if (gpio_lock_as_irq(&vr41xx_gpio_chip, data->hwirq))
-> +		dev_err(vr41xx_gpio_chip.dev,
-> +			"unable to lock HW IRQ %lu for IRQ\n",
-> +			data->hwirq);
-> +	/* Satisfy the .enable semantics by unmasking the line */
-> +	unmask_giuint_low(data);
-> +	return 0;
-> +}
-> +
-> +static void shutdown_giuint(struct irq_data *data)
-> +{
-> +	mask_giuint_low(data);
-> +	gpio_unlock_as_irq(&vr41xx_gpio_chip, data->hwirq);
-> +}
-> +
->  static struct irq_chip giuint_low_irq_chip = {
->  	.name		= "GIUINTL",
->  	.irq_ack	= ack_giuint_low,
->  	.irq_mask	= mask_giuint_low,
->  	.irq_mask_ack	= mask_ack_giuint_low,
->  	.irq_unmask	= unmask_giuint_low,
-> +	.irq_startup	= startup_giuint,
-> +	.irq_shutdown	= shutdown_giuint,
->  };
->  
->  static void ack_giuint_high(struct irq_data *d)
+Sebastian
 
-I haven't received any test results but as it's looking good I'm queueing
-this for 3.15.
-
-Thanks,
-
-  Ralf
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
