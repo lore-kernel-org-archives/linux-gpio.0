@@ -1,67 +1,49 @@
-From: delicious quinoa <delicious.quinoa@gmail.com>
-Subject: Re: [PATCH 2/3] gpio: dwapb: do not create the irq mapping upfront.
-Date: Thu, 20 Mar 2014 15:20:41 -0500
-Message-ID: <CANk1AXTjuBWa_DdKaV2dCPjhbKRHE9bR2uHyuoCYtt_-zk7EoQ@mail.gmail.com>
-References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
-	<1395345324-18299-3-git-send-email-bigeasy@linutronix.de>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
+Date: Fri, 21 Mar 2014 09:28:16 +0100
+Message-ID: <CACRpkdZwhP-wMDeNTEq6ELPsYC48xmppzGYTRLSzUewbqhrMvg@mail.gmail.com>
+References: <5316FFCE.1060603@ti.com>
+	<1394018461-757-1-git-send-email-holler@ahsoftware.de>
+	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>
+	<5322D529.4070904@ahsoftware.de>
+	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>
+	<5326F8C5.5090406@ti.com>
+	<CACRpkdYZMzw31NkA4uSq+ZowzOnZgZthXhZri-eJY2Ozb8aNRQ@mail.gmail.com>
+	<532805AE.9000806@ti.com> <532815A8.9090807@ahsoftware.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qc0-f169.google.com ([209.85.216.169]:33453 "EHLO
-	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759504AbaCTUUl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Mar 2014 16:20:41 -0400
-In-Reply-To: <1395345324-18299-3-git-send-email-bigeasy@linutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <532815A8.9090807-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org" <davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-On Thu, Mar 20, 2014 at 2:55 PM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> After the irq chip got registered the driver creates a mapping for every
-> gpio line. This mapping be useless if the gpio in question never is
-> beeing used a irq line. The mapping should be created by the core on
-> request.
->
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  drivers/gpio/gpio-dwapb.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 4d25a06b..0db0b94 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -211,7 +211,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->         struct gpio_chip *gc = &port->bgc.gc;
->         struct device_node *node =  gc->of_node;
->         struct irq_chip_generic *irq_gc;
-> -       unsigned int hwirq, ngpio = gc->ngpio;
-> +       unsigned int ngpio = gc->ngpio;
->         struct irq_chip_type *ct;
->         int err, irq;
->
-> @@ -263,9 +263,6 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->         irq_set_chained_handler(irq, dwapb_irq_handler);
->         irq_set_handler_data(irq, gpio);
->
-> -       for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
-> -               irq_create_mapping(gpio->domain, hwirq);
-> -
->         port->bgc.gc.to_irq = dwapb_gpio_to_irq;
->  }
+On Tue, Mar 18, 2014 at 10:45 AM, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org> wrote:
 
+> But I don't need any rush here, I'm just unable to understand why the -rc
+> phase isn't used for bug fixing as I believe that's what this phase is for.
 
-Hi Sebastian,
+Right now it is mostly a practical issue to me, as I applied the patch to
+the devel (for-next) branch, then committed new development on top of
+it.
 
-I think this functionality has changed at some point or maybe
-everybody copied the same bad code over and over.  I see a lot of
-legacy gpio drivers calling irq_create_mapping in their to_irq()
-functions.  Linus Walleij asked me to create the mappings at probe
-time.  Please see https://lkml.org/lkml/2014/2/10/154 and the
-subsequent discussion in https://lkml.org/lkml/2014/2/24/232
+If I send it for fixes now the same patch will come in two ways as I
+really do not like to rebase my tree at this point.
 
-Alan Tull
-aka
-delicious quinoa
+So I'd prefer to keep this for next and then have it tagged for stable as
+v3.14 is released, if that is OK?
+
+It's as simple as sending a mail to Greg once it's upstream.
+
+Yours,
+Linus Walleij
