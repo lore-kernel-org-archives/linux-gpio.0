@@ -1,48 +1,118 @@
-From: Alexander Holler <holler@ahsoftware.de>
-Subject: Re: [PATCH v2] gpio: davinci: fix gpio selection for OF
-Date: Fri, 21 Mar 2014 09:59:37 +0100
-Message-ID: <532BFF79.6070906@ahsoftware.de>
-References: <5316FFCE.1060603@ti.com>	<1394018461-757-1-git-send-email-holler@ahsoftware.de>	<CACRpkdaF=jc9Z1XZCtH8VPuih01t--qyV-sgH1R_ix0VM4RzVA@mail.gmail.com>	<5322D529.4070904@ahsoftware.de>	<CACRpkdaghneo1MvNCfxjTED+sJepHgeZCgmKsRteG9qrBNWAfQ@mail.gmail.com>	<5326F8C5.5090406@ti.com>	<CACRpkdYZMzw31NkA4uSq+ZowzOnZgZthXhZri-eJY2Ozb8aNRQ@mail.gmail.com>	<532805AE.9000806@ti.com>	<532815A8.9090807@ahsoftware.de> <CACRpkdZwhP-wMDeNTEq6ELPsYC48xmppzGYTRLSzUewbqhrMvg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] pinctrl: nomadik: rename secondary to latent
+Date: Fri, 21 Mar 2014 10:42:17 +0100
+Message-ID: <1395394937-31503-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from h1446028.stratoserver.net ([85.214.92.142]:58481 "EHLO
-	mail.ahsoftware.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758082AbaCUJA1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Mar 2014 05:00:27 -0400
-In-Reply-To: <CACRpkdZwhP-wMDeNTEq6ELPsYC48xmppzGYTRLSzUewbqhrMvg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sekhar Nori <nsekhar@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Prabhakar Lad <prabhakar.csengg@gmail.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Am 21.03.2014 09:28, schrieb Linus Walleij:
-> On Tue, Mar 18, 2014 at 10:45 AM, Alexander Holler <holler@ahsoftware.de> wrote:
->
->> But I don't need any rush here, I'm just unable to understand why the -rc
->> phase isn't used for bug fixing as I believe that's what this phase is for.
->
-> Right now it is mostly a practical issue to me, as I applied the patch to
-> the devel (for-next) branch, then committed new development on top of
-> it.
->
-> If I send it for fixes now the same patch will come in two ways as I
-> really do not like to rebase my tree at this point.
->
-> So I'd prefer to keep this for next and then have it tagged for stable as
-> v3.14 is released, if that is OK?
+The "secondary irq" in the nomadik pin control driver is actually
+not secondary (as in: can occur any time alongside the ordinary
+irq), it is a latent IRQ. It is an IRQ that has occurred when
+the system was in sleep state and has been cached in a special
+register flagged from the low power management unit (PRCM).
 
-Sure.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-nomadik.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-> It's as simple as sending a mail to Greg once it's upstream.
-
-I already though about how to tag every patch I send as Cc: stable, 
-because almost any fix I send either goes through some -next or even 
--next-next or already is for some stable kernel.
-(I usually don't even look at -rc kernels, just for some special things 
-I'm waiting for, like this of-gpio for davinci.)
-
-Regards,
-
-Alexander Holler
+diff --git a/drivers/pinctrl/pinctrl-nomadik.c b/drivers/pinctrl/pinctrl-nomadik.c
+index cec7762cf335..ee6a8ca264fc 100644
+--- a/drivers/pinctrl/pinctrl-nomadik.c
++++ b/drivers/pinctrl/pinctrl-nomadik.c
+@@ -254,7 +254,7 @@ struct nmk_gpio_platform_data {
+ 	int first_gpio;
+ 	int first_irq;
+ 	int num_gpio;
+-	u32 (*get_secondary_status)(unsigned int bank);
++	u32 (*get_latent_status)(unsigned int bank);
+ 	void (*set_ioforce)(bool enable);
+ 	bool supports_sleepmode;
+ };
+@@ -266,8 +266,8 @@ struct nmk_gpio_chip {
+ 	struct clk *clk;
+ 	unsigned int bank;
+ 	unsigned int parent_irq;
+-	int secondary_parent_irq;
+-	u32 (*get_secondary_status)(unsigned int bank);
++	int latent_parent_irq;
++	u32 (*get_latent_status)(unsigned int bank);
+ 	void (*set_ioforce)(bool enable);
+ 	spinlock_t lock;
+ 	bool sleepmode;
+@@ -909,11 +909,11 @@ static void nmk_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 	__nmk_gpio_irq_handler(irq, desc, status);
+ }
+ 
+-static void nmk_gpio_secondary_irq_handler(unsigned int irq,
++static void nmk_gpio_latent_irq_handler(unsigned int irq,
+ 					   struct irq_desc *desc)
+ {
+ 	struct nmk_gpio_chip *nmk_chip = irq_get_handler_data(irq);
+-	u32 status = nmk_chip->get_secondary_status(nmk_chip->bank);
++	u32 status = nmk_chip->get_latent_status(nmk_chip->bank);
+ 
+ 	__nmk_gpio_irq_handler(irq, desc, status);
+ }
+@@ -923,10 +923,10 @@ static int nmk_gpio_init_irq(struct nmk_gpio_chip *nmk_chip)
+ 	irq_set_chained_handler(nmk_chip->parent_irq, nmk_gpio_irq_handler);
+ 	irq_set_handler_data(nmk_chip->parent_irq, nmk_chip);
+ 
+-	if (nmk_chip->secondary_parent_irq >= 0) {
+-		irq_set_chained_handler(nmk_chip->secondary_parent_irq,
+-					nmk_gpio_secondary_irq_handler);
+-		irq_set_handler_data(nmk_chip->secondary_parent_irq, nmk_chip);
++	if (nmk_chip->latent_parent_irq >= 0) {
++		irq_set_chained_handler(nmk_chip->latent_parent_irq,
++					nmk_gpio_latent_irq_handler);
++		irq_set_handler_data(nmk_chip->latent_parent_irq, nmk_chip);
+ 	}
+ 
+ 	return 0;
+@@ -1246,7 +1246,7 @@ static int nmk_gpio_probe(struct platform_device *dev)
+ 	struct gpio_chip *chip;
+ 	struct resource *res;
+ 	struct clk *clk;
+-	int secondary_irq;
++	int latent_irq;
+ 	void __iomem *base;
+ 	int irq;
+ 	int ret;
+@@ -1270,8 +1270,8 @@ static int nmk_gpio_probe(struct platform_device *dev)
+ 	if (irq < 0)
+ 		return irq;
+ 
+-	secondary_irq = platform_get_irq(dev, 1);
+-	if (secondary_irq >= 0 && !pdata->get_secondary_status)
++	latent_irq = platform_get_irq(dev, 1);
++	if (latent_irq >= 0 && !pdata->get_latent_status)
+ 		return -EINVAL;
+ 
+ 	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+@@ -1297,8 +1297,8 @@ static int nmk_gpio_probe(struct platform_device *dev)
+ 	nmk_chip->addr = base;
+ 	nmk_chip->chip = nmk_gpio_template;
+ 	nmk_chip->parent_irq = irq;
+-	nmk_chip->secondary_parent_irq = secondary_irq;
+-	nmk_chip->get_secondary_status = pdata->get_secondary_status;
++	nmk_chip->latent_parent_irq = latent_irq;
++	nmk_chip->get_latent_status = pdata->get_latent_status;
+ 	nmk_chip->set_ioforce = pdata->set_ioforce;
+ 	nmk_chip->sleepmode = pdata->supports_sleepmode;
+ 	spin_lock_init(&nmk_chip->lock);
+-- 
+1.8.5.3
