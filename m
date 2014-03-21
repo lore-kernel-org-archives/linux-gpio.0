@@ -1,52 +1,42 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: delicious quinoa <delicious.quinoa@gmail.com>
 Subject: Re: [PATCH 3/3] ARM: dts: socfpga: add gpio pieces
-Date: Fri, 21 Mar 2014 20:10:03 +0100
-Message-ID: <532C8E8B.9080406@linutronix.de>
-References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de> <1395345324-18299-4-git-send-email-bigeasy@linutronix.de> <20140321172434.GB3998@book.gsilab.sittig.org>
+Date: Fri, 21 Mar 2014 17:06:19 -0500
+Message-ID: <CANk1AXRTaCvFn8yemFEq8c2g=zHzz-Kz_B4XgJsSvSjKsu9RrA@mail.gmail.com>
+References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
+	<1395345324-18299-4-git-send-email-bigeasy@linutronix.de>
+	<20140321172434.GB3998@book.gsilab.sittig.org>
+	<532C8E8B.9080406@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:52660 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750846AbaCUTKH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Mar 2014 15:10:07 -0400
-In-Reply-To: <20140321172434.GB3998@book.gsilab.sittig.org>
+Received: from mail-qa0-f46.google.com ([209.85.216.46]:63079 "EHLO
+	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751118AbaCUWGU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Mar 2014 18:06:20 -0400
+In-Reply-To: <532C8E8B.9080406@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gerhard Sittig <gsi@denx.de>
-Cc: Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Dinh Nguyen <dinguyen@altera.com>, devicetree@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Gerhard Sittig <gsi@denx.de>, Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 03/21/2014 06:24 PM, Gerhard Sittig wrote:
-> On Thu, Mar 20, 2014 at 20:55 +0100, Sebastian Andrzej Siewior wrote:
+On Fri, Mar 21, 2014 at 2:10 PM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> On 03/21/2014 06:24 PM, Gerhard Sittig wrote:
+>> On Thu, Mar 20, 2014 at 20:55 +0100, Sebastian Andrzej Siewior wrote:
+>>>
+>>> The cycloneV has three gpio controllers, each one with 29 gpios. This patch
+>>> adds the three controller with the gpio driver which is now sitting the
+>>> gpio tree.
 >>
->> The cycloneV has three gpio controllers, each one with 29 gpios. Thi=
-s patch
->> adds the three controller with the gpio driver which is now sitting =
-the
->> gpio tree.
->=20
-> The third bank should have 27 pins, only the first two have 29.
+>> The third bank should have 27 pins, only the first two have 29.
+>
+> It is not a bank it is a complete controller. Why 27 pins? The
+> reference manual says that there register 0...28.
 
-It is not a bank it is a complete controller. Why 27 pins? The
-reference manual says that there register 0=8528.
+Hi Sebastian,
 
-> The commit message probably should not discuss which git tree a
-> driver currently resides in.  This is just a temporary detail
-> which no longer applies to the mainline source base where your
-> patch will end up in.
+The ref manual is wrong.  It is 27.  The last two aren't pinned out.
 
-This patch adds a binding which is not in kernel. It is worth to
-mention.
-
->=20
->=20
-> virtually yours
-> Gerhard Sittig
->=20
-Sebastian
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Alan Tull
+aka
+delicious quinoa
