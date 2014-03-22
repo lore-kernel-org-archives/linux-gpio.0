@@ -1,34 +1,41 @@
-From: Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH] gpio: samsung: Add missing "break" statement
-Date: Sat, 22 Mar 2014 12:35:22 +0400
-Message-ID: <1395477322-19951-1-git-send-email-shc_work@mail.ru>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 3/3] ARM: dts: socfpga: add gpio pieces
+Date: Sat, 22 Mar 2014 12:28:17 +0100
+Message-ID: <532D73D1.7020408@linutronix.de>
+References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>	<1395345324-18299-4-git-send-email-bigeasy@linutronix.de>	<CANk1AXRa4V1ADNaT+T3pYF4zyxni9Y8rmU9UYRoA_7NxW8KWEg@mail.gmail.com> <CANk1AXSQVFZvRmvYt+JF+TDVpfX-_RLiUcQXotGzpHoTMUVymQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp11.mail.ru ([94.100.176.85]:49093 "EHLO smtp11.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750738AbaCVIfZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 22 Mar 2014 04:35:25 -0400
+Received: from www.linutronix.de ([62.245.132.108]:54912 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750878AbaCVL2U (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 22 Mar 2014 07:28:20 -0400
+In-Reply-To: <CANk1AXSQVFZvRmvYt+JF+TDVpfX-_RLiUcQXotGzpHoTMUVymQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Alexander Shiyan <shc_work@mail.ru>
+To: delicious quinoa <delicious.quinoa@gmail.com>
+Cc: Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
----
- drivers/gpio/gpio-samsung.c | 1 +
- 1 file changed, 1 insertion(+)
+On 03/21/2014 11:15 PM, delicious quinoa wrote:
+> snps,nr-gpios = <27>;
+> 
+> As noted on other thread, gpio2 is 27 wide, despite what the
+> documentation says.  When I made that change and remove your other two
+> patches the gpios worked for me on a cyclone5 devkit board.
+> 
+> So if you fix the "#gpio-cells = <2>;" for all 3 gpios and fix
+> "snps,nr-gpios = <27>;" for gpio2, then this one patch looks good to
+> me.  With these changes,
 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index a85e00b..07105ee 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -379,6 +379,7 @@ static int s5p64x0_gpio_setcfg_rbank(struct samsung_gpio_chip *chip,
- 	case 6:
- 		shift = ((off + 1) & 7) * 4;
- 		reg -= 4;
-+		break;
- 	default:
- 		shift = ((off + 1) & 7) * 4;
- 		break;
--- 
-1.8.3.2
+Okay will do. And I also add a note that  the reference manual is wrong
+here.
 
+> 
+> Acked-by: Alan Tull <atull@altera.com>
+> 
+> Alan Tull
+> aka
+> delicous quinoa
+
+Sebastian
