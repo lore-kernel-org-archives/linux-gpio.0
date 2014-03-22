@@ -1,77 +1,26 @@
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 2/3] gpio: dwapb: do not create the irq mapping upfront.
-Date: Sat, 22 Mar 2014 13:37:05 +0100
-Message-ID: <532D83F1.5070001@linutronix.de>
-References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>	<1395345324-18299-3-git-send-email-bigeasy@linutronix.de> <CANk1AXTjuBWa_DdKaV2dCPjhbKRHE9bR2uHyuoCYtt_-zk7EoQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:55044 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750738AbaCVMhI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 22 Mar 2014 08:37:08 -0400
-In-Reply-To: <CANk1AXTjuBWa_DdKaV2dCPjhbKRHE9bR2uHyuoCYtt_-zk7EoQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: dwapb: a bug fix a few cleanups, v2
+Date: Sat, 22 Mar 2014 17:16:37 +0100
+Message-ID: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: atull@altera.com
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dinguyen@altera.com, delicious.quinoa@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: delicious quinoa <delicious.quinoa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-On 03/20/2014 09:20 PM, delicious quinoa wrote:
->> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
->> index 4d25a06b..0db0b94 100644
->> --- a/drivers/gpio/gpio-dwapb.c
->> +++ b/drivers/gpio/gpio-dwapb.c
->> @@ -263,9 +263,6 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->>         irq_set_chained_handler(irq, dwapb_irq_handler);
->>         irq_set_handler_data(irq, gpio);
->>
->> -       for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
->> -               irq_create_mapping(gpio->domain, hwirq);
->> -
->>         port->bgc.gc.to_irq = dwapb_gpio_to_irq;
->>  }
-> 
-> 
-> Hi Sebastian,
-> 
-> I think this functionality has changed at some point or maybe
-> everybody copied the same bad code over and over.  I see a lot of
-> legacy gpio drivers calling irq_create_mapping in their to_irq()
-> functions.  Linus Walleij asked me to create the mappings at probe
-> time.  Please see https://lkml.org/lkml/2014/2/10/154 and the
-> subsequent discussion in https://lkml.org/lkml/2014/2/24/232
+Since Alan said that he had drop two patches from earlier series to make
+it work I decided to spent some extra time to check if this is really the
+case.
+I dropped "gpio: dwapb: do not create the irq mapping upfront." until the
+discussion there is over.
 
-Linus, I don't understand why you need the mapping upfront. I looked at
-those two links and you quote gpio_to_irq() which is not required.
-The mapping is created once irq_of_parse_and_map() is invoked or a
-platform_device is created from the DT entry. The latter creates the
-warning on my 3.13 tree:
+This series has been tested back ported and tested on a v3.13 kernel with
+the dummy test [0] here. It was tested on the Arrow board and the dev kit. I
+tested edge and level interrupts. On the Arrow board releasing the button
+causes a lot of interrupts so I assume debouncing is no working well
+there. On the dev kit I see only one interrupt. If I realse it really
+slowly, then the extra interrupts are visible there as well but way less.
 
-WARNING: CPU: 0 PID: 1 at drivers/of/platform.c:171
-of_device_alloc+0x164/0x168()
-(of_device_alloc+0x164/0x168) from [<8029fc9c>]
-(of_platform_device_create_pdata+0x30/0x9c)
-(of_platform_device_create_pdata+0x30/0x9c) from [<8029fde0>]
-(of_platform_bus_create+0xd8/0x294)
-(of_platform_bus_create+0xd8/0x294) from [<8029fe2c>]
-(of_platform_bus_create+0x124/0x294)
-(of_platform_bus_create+0x124/0x294) from [<8029fff8>]
-(of_platform_populate+0x5c/0x9c)
-(of_platform_populate+0x5c/0x9c) from [<8048d048>]
-(socfpga_cyclone5_init+0x30/0x158)
-(socfpga_cyclone5_init+0x30/0x158) from [<80488820>]
-(customize_machine+0x20/0x40)
+[0] http://breakpoint.cc/gpio-dwapb-test.c
 
-because at the time the device is created (struct resources is
-populated) the gpio controller isn't probed yet.
-
-With or without the upfront mapping, the struct irq is not present in
-struct resource.
-
-> 
-> Alan Tull
-> aka
-> delicious quinoa
-> 
 Sebastian
