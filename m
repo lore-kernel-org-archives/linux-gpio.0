@@ -1,18 +1,18 @@
 From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH RFT] gpio: Actually set output state in
+Subject: [PATCH RFT] gpio: moxart: Actually set output state in
  moxart_gpio_direction_output()
-Date: Mon, 24 Mar 2014 21:24:41 +0800
-Message-ID: <1395667481.4779.3.camel@phoenix>
+Date: Mon, 24 Mar 2014 21:25:06 +0800
+Message-ID: <1395667506.4779.4.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:63523 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752902AbaCXNYr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Mar 2014 09:24:47 -0400
-Received: by mail-pa0-f48.google.com with SMTP id hz1so5428821pad.7
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Mar 2014 06:24:47 -0700 (PDT)
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:54991 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752902AbaCXNZR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Mar 2014 09:25:17 -0400
+Received: by mail-pa0-f44.google.com with SMTP id bj1so5451552pad.17
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Mar 2014 06:25:16 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
