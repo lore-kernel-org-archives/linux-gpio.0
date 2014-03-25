@@ -1,30 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/7] gpio: dwapb: correct gpio-cells in binding document
-Date: Tue, 25 Mar 2014 22:00:49 +0100
-Message-ID: <CACRpkdb-ZojPr+u5gYQZ=dWOO07QR2YzCxnmhu80_qvDXC5sPQ@mail.gmail.com>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
-	<1395505004-22650-3-git-send-email-bigeasy@linutronix.de>
-	<CACRpkdaD=hZGJA0r5DcJs-hFnnkKCFeQ9JwJZ4kcLq5Sb+=ZqQ@mail.gmail.com>
-	<5331EDC4.1040104@linutronix.de>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 2/3] gpio: dwapb: do not create the irq mapping upfront.
+Date: Tue, 25 Mar 2014 22:17:08 +0100
+Message-ID: <20140325211708.GA31203@linutronix.de>
+References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
+ <1395345324-18299-3-git-send-email-bigeasy@linutronix.de>
+ <CANk1AXTjuBWa_DdKaV2dCPjhbKRHE9bR2uHyuoCYtt_-zk7EoQ@mail.gmail.com>
+ <532D83F1.5070001@linutronix.de>
+ <CACRpkdYxeieES5Y5tbCRfSe=Cnj2QsoU5KvSPZ99XsJ9AUrEmw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5331EDC4.1040104@linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, Alan Tull <delicious.quinoa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:55461 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751213AbaCYVRK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 17:17:10 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYxeieES5Y5tbCRfSe=Cnj2QsoU5KvSPZ99XsJ9AUrEmw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: delicious quinoa <delicious.quinoa@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-On Tue, Mar 25, 2014 at 9:57 PM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> On 03/25/2014 09:49 PM, Linus Walleij wrote:
+* Linus Walleij | 2014-03-25 21:43:49 [+0100]:
 
-> Maybe but you can still blame google for loosing your emails.
-> It make it to lkml:
->         https://lkml.org/lkml/2014/3/22/112
+>> I looked at
+>> those two links and you quote gpio_to_irq() which is not required.
+>
+>In a *lot* of drivers it is implicitly required that gpio_to_irq()
+>is called first because they only call irq_create_mapping()
+>there. (And not in subsequent interrupt handlers etc.)
 
-OK that one should be applied to the ARM SoC tree anyway,
-so I need not worry so much...
+so
 
-Yours,
-Linus Walleij
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -68,7 +68,7 @@ static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+ 						    dwapb_gpio_port, bgc);
+ 	struct dwapb_gpio *gpio = port->gpio;
+ 
+-	return irq_find_mapping(gpio->domain, offset);
++	return irq_create_mapping(gpio->domain, offset);
+ }
+ 
+ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
+
+would fix the problem then. That means you get the gpio number passed as
+a value and you plan to use it as an irq via gpio_to_irq() and the
+latter will create the interrupt mapping then.
+
+>No matter what, I would worry less about that and spend
+>some time on using my new gpiolib helpers for
+>gpiochip_irqchip_add() and
+>gpiochip_set_chained_irqchip().
+>
+>Yours,
+>Linus Walleij
+
+Sebastian
