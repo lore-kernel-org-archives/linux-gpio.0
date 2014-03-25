@@ -1,48 +1,41 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 6/7] gpio: dwapb: use a second irq chip
-Date: Tue, 25 Mar 2014 20:40:12 +0100
-Message-ID: <5331DB9C.4020208@linutronix.de>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>	<1395505004-22650-7-git-send-email-bigeasy@linutronix.de> <CANk1AXTUr2MevsXphxicgZEPC2tQBUh6pEXa78Fa6Jt4bPiRdQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] gpio: dwapb: drop irq_setup_generic_chip()
+Date: Tue, 25 Mar 2014 21:37:24 +0100
+Message-ID: <CACRpkdY3ctcLNhpSWtuqj=d48_fqDyNzG9nGAorpAbwjAnOJUw@mail.gmail.com>
+References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
+	<1395345324-18299-2-git-send-email-bigeasy@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:54999 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752699AbaCYTkQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 15:40:16 -0400
-In-Reply-To: <CANk1AXTUr2MevsXphxicgZEPC2tQBUh6pEXa78Fa6Jt4bPiRdQ@mail.gmail.com>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:61144 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754745AbaCYUhY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 16:37:24 -0400
+Received: by mail-ob0-f175.google.com with SMTP id uy5so1260910obc.20
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2014 13:37:24 -0700 (PDT)
+In-Reply-To: <1395345324-18299-2-git-send-email-bigeasy@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: delicious quinoa <delicious.quinoa@gmail.com>
-Cc: Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-On 03/25/2014 07:48 PM, delicious quinoa wrote:
-> I'm trying to test against recent tag next-20140312.  Got a build error.
-> 
-> /home/atull/repos/linux-socfpga/drivers/gpio/gpio-dwapb.c:254:11:
-> error: 'struct irq_chip' has no member named 'irq_request_resources'
-> /home/atull/repos/linux-socfpga/drivers/gpio/gpio-dwapb.c:254:36:
-> error: 'dwapb_irq_reqres' undeclared (first use in this function)
-> /home/atull/repos/linux-socfpga/drivers/gpio/gpio-dwapb.c:255:11:
-> error: 'struct irq_chip' has no member named 'irq_release_resources'
-> /home/atull/repos/linux-socfpga/drivers/gpio/gpio-dwapb.c:255:36:
-> error: 'dwapb_irq_relres' undeclared (first use in this function)
-> Build failed...
+On Thu, Mar 20, 2014 at 8:55 PM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
 
-The change in the driver got first introduced in commit 57ef0428
-("gpio: switch drivers to use new callback") and it builds for me. You
-probably miss the change in the core code c1bacba ("genirq: Provide
-irq_request/release_resources chip callbacks").
+> This looks kinda wrong I didn't manage to fully test it.
+> The driver calls irq_alloc_domain_generic_chips() which creates a gc and
+> adds it to gc_list. The driver later then calls irq_setup_generic_chip()
+> which also initializes the gc and adds it to the gc_list() and this
+> corrupts the list.
+> I can't find a single chip in tree which uses both functions so I think
+> that irq_setup_generic_chip() can be dropped.
+>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-I pushed to
-	git://git.breakpoint.cc/bigeasy/linux.git gpio_dw_v3
+Jamie: comments?
 
-my gpio-next + my patches + linux-next which is currently at -next-
-20140325 btw. With those you should not get the build anymore.
+Can you instead of this try to use my new generic gpiolib
+irqchip helpers that I just merged to the GPIO tree?
 
-> Alan Tull
-> aka
-> delicious quinoa
-
-Sebastian
+Yours,
+Linus Walleij
