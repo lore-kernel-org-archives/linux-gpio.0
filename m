@@ -1,38 +1,27 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Subject: Re: [PATCH 1/3] IXP4xx: Fix Goramo Multilink GPIO conversion.
-Date: Mon, 24 Mar 2014 21:36:25 +0100
-Message-ID: <m3mwgf72ra.fsf@intrepid.localdomain>
-References: <m3siq9iyt2.fsf@intrepid.localdomain>
- <m3bnwxiwhj.fsf@intrepid.localdomain>
- <CACRpkdaNdQjgAJv=mxn6MXS+kGKFoE4wmNHxYt_5WdM9sa6vxA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH RFT] gpio: moxart: Actually set output state in moxart_gpio_direction_output()
+Date: Tue, 25 Mar 2014 11:15:17 +0900
+Message-ID: <CAAVeFuJ+iePakuB0NLRveDCV7+QKNGiV0qodSQDGTxctgB_RmQ@mail.gmail.com>
+References: <1395667506.4779.4.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdaNdQjgAJv=mxn6MXS+kGKFoE4wmNHxYt_5WdM9sa6vxA@mail.gmail.com>
- (Linus Walleij's message of "Mon, 24 Mar 2014 16:27:47 +0100")
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Simon =?utf-8?B?S8OlZ3N0csO2bQ==?= <simon.kagstrom@netinsight.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ve0-f173.google.com ([209.85.128.173]:54177 "EHLO
+	mail-ve0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751141AbaCYCPi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Mar 2014 22:15:38 -0400
+Received: by mail-ve0-f173.google.com with SMTP id oy12so6614174veb.18
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Mar 2014 19:15:37 -0700 (PDT)
+In-Reply-To: <1395667506.4779.4.camel@phoenix>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-TGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPiB3cml0ZXM6Cgo+PiBhcmNo
-L2FybS9tYWNoLWl4cDR4eC9nb3JhbW9fbWxyLmM6NDE2OiBlcnJvcjogJ0lYUDRYWF9HUElPX09V
-VCcgdW5kZWNsYXJlZAo+PiBhcmNoL2FybS9tYWNoLWl4cDR4eC9nb3JhbW9fbWxyLmM6NDIxOiBl
-cnJvcjogJ0lYUDRYWF9HUElPX0lOJyB1bmRlY2xhcmVkCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEty
-enlzenRvZiBIYcWCYXNhIDxraGNAcG0ud2F3LnBsPgo+Cj4gQWx0ZXJuYXRpdmVseSBjYW4geW91
-IHNlbmQgdGhpcyBmb3IgZml4ZXMgdG8gYXJtQGtlcm5lbC5vcmcgd2l0aCBDYzoKPiBzdGFibGUg
-YWRkZWQgS3J6eXN6dG9mPwoKR2l2ZW4gdGhlIHBsYXRmb3JtJ3Mgc3BlY2lmaWNzLCBJIGd1ZXNz
-IGl0J3MgZW5vdWdoIHRvIGp1c3QgZml4IGl0IGluCm1haW5saW5lLgotLSAKS3J6eXN6dG9mIEhh
-bGFzYQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGlu
-dXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
-YXJtLWtlcm5lbAo=
+On Mon, Mar 24, 2014 at 10:25 PM, Axel Lin <axel.lin@ingics.com> wrote:
+> moxart_gpio_direction_output() ignored the state passed into it. Fix it.
+> Also slightly adjust the code to avoid forward declaration.
+
+Considering that the code adjustment actually takes most of the volume
+of this patch, could you maybe separate these two changes into their
+own patches so the actual fix gets easier to spot?
