@@ -1,59 +1,108 @@
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 2/3] gpio: dwapb: do not create the irq mapping upfront.
-Date: Tue, 25 Mar 2014 22:17:08 +0100
-Message-ID: <20140325211708.GA31203@linutronix.de>
-References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
- <1395345324-18299-3-git-send-email-bigeasy@linutronix.de>
- <CANk1AXTjuBWa_DdKaV2dCPjhbKRHE9bR2uHyuoCYtt_-zk7EoQ@mail.gmail.com>
- <532D83F1.5070001@linutronix.de>
- <CACRpkdYxeieES5Y5tbCRfSe=Cnj2QsoU5KvSPZ99XsJ9AUrEmw@mail.gmail.com>
+Subject: [PATCH 7/7 v2] gpio: dwapb: use d->mask instead od BIT(bit)
+Date: Tue, 25 Mar 2014 22:18:41 +0100
+Message-ID: <20140325211841.GA31253@linutronix.de>
+References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
+ <1395505004-22650-8-git-send-email-bigeasy@linutronix.de>
+ <CAAVeFu+WQCpo=LEZqdAhpMcO1PLqUzfcVKTafnwe=BiLGLjFZQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:55461 "EHLO
+Received: from www.linutronix.de ([62.245.132.108]:55467 "EHLO
 	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751213AbaCYVRK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 17:17:10 -0400
+	with ESMTP id S1751281AbaCYVSm convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 17:18:42 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYxeieES5Y5tbCRfSe=Cnj2QsoU5KvSPZ99XsJ9AUrEmw@mail.gmail.com>
+In-Reply-To: <CAAVeFu+WQCpo=LEZqdAhpMcO1PLqUzfcVKTafnwe=BiLGLjFZQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: delicious quinoa <delicious.quinoa@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: atull@altera.com, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dinguyen@altera.com, delicious.quinoa@gmail.com
 
-* Linus Walleij | 2014-03-25 21:43:49 [+0100]:
+d->mask contains exact the same information as BIT(bit) so we could sav=
+e
+a few cycles here.
 
->> I looked at
->> those two links and you quote gpio_to_irq() which is not required.
->
->In a *lot* of drivers it is implicitly required that gpio_to_irq()
->is called first because they only call irq_create_mapping()
->there. (And not in subsequent interrupt handlers etc.)
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v1=E2=80=A6v2: proper bit delete in dwapb_irq_disable()
 
-so
+ drivers/gpio/gpio-dwapb.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index f4276fa..aedbb53 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -68,7 +68,7 @@ static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
- 						    dwapb_gpio_port, bgc);
- 	struct dwapb_gpio *gpio = port->gpio;
- 
--	return irq_find_mapping(gpio->domain, offset);
-+	return irq_create_mapping(gpio->domain, offset);
+@@ -113,7 +113,7 @@ static void dwapb_irq_enable(struct irq_data *d)
+=20
+ 	irq_gc_lock(igc);
+ 	val =3D readl(gpio->regs + GPIO_INTEN);
+-	val |=3D BIT(d->hwirq);
++	val |=3D d->mask;
+ 	writel(val, gpio->regs + GPIO_INTEN);
+ 	irq_gc_unlock(igc);
  }
- 
- static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
+@@ -126,7 +126,7 @@ static void dwapb_irq_disable(struct irq_data *d)
+=20
+ 	irq_gc_lock(igc);
+ 	val =3D readl(gpio->regs + GPIO_INTEN);
+-	val &=3D ~BIT(d->hwirq);
++	val &=3D ~d->mask;
+ 	writel(val, gpio->regs + GPIO_INTEN);
+ 	irq_gc_unlock(igc);
+ }
+@@ -158,7 +158,6 @@ static int dwapb_irq_set_type(struct irq_data *d, u=
+32 type)
+ {
+ 	struct irq_chip_generic *igc =3D irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio =3D igc->private;
+-	int bit =3D d->hwirq;
+ 	unsigned long level, polarity;
+=20
+ 	if (type & ~(IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING |
+@@ -171,24 +170,24 @@ static int dwapb_irq_set_type(struct irq_data *d,=
+ u32 type)
+=20
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_BOTH:
+-		level |=3D BIT(bit);
+-		dwapb_toggle_trigger(gpio, bit);
++		level |=3D d->mask;
++		dwapb_toggle_trigger(gpio, d->hwirq);
+ 		break;
+ 	case IRQ_TYPE_EDGE_RISING:
+-		level |=3D BIT(bit);
+-		polarity |=3D BIT(bit);
++		level |=3D d->mask;
++		polarity |=3D d->mask;
+ 		break;
+ 	case IRQ_TYPE_EDGE_FALLING:
+-		level |=3D BIT(bit);
+-		polarity &=3D ~BIT(bit);
++		level |=3D d->mask;
++		polarity &=3D ~d->mask;
+ 		break;
+ 	case IRQ_TYPE_LEVEL_HIGH:
+-		level &=3D ~BIT(bit);
+-		polarity |=3D BIT(bit);
++		level &=3D ~d->mask;
++		polarity |=3D d->mask;
+ 		break;
+ 	case IRQ_TYPE_LEVEL_LOW:
+-		level &=3D ~BIT(bit);
+-		polarity &=3D ~BIT(bit);
++		level &=3D ~d->mask;
++		polarity &=3D ~d->mask;
+ 		break;
+ 	}
+=20
+--=20
+1.9.1
 
-would fix the problem then. That means you get the gpio number passed as
-a value and you plan to use it as an irq via gpio_to_irq() and the
-latter will create the interrupt mapping then.
-
->No matter what, I would worry less about that and spend
->some time on using my new gpiolib helpers for
->gpiochip_irqchip_add() and
->gpiochip_set_chained_irqchip().
->
->Yours,
->Linus Walleij
-
-Sebastian
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
