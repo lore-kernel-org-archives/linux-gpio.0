@@ -1,37 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: dwapb: a bug fix a few cleanups, v2
-Date: Tue, 25 Mar 2014 21:45:26 +0100
-Message-ID: <CACRpkdbFj+Msq5HjcV8N5A6TN9sic1+Y2v9aWAMa2g+0zO=D1Q@mail.gmail.com>
+Subject: Re: [PATCH 2/7] gpio: dwapb: correct gpio-cells in binding document
+Date: Tue, 25 Mar 2014 21:49:40 +0100
+Message-ID: <CACRpkdaD=hZGJA0r5DcJs-hFnnkKCFeQ9JwJZ4kcLq5Sb+=ZqQ@mail.gmail.com>
 References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
+	<1395505004-22650-3-git-send-email-bigeasy@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jamie Iles <jamie@jamieiles.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, Alan Tull <delicious.quinoa@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f43.google.com ([209.85.219.43]:64841 "EHLO
+	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751240AbaCYUtl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 16:49:41 -0400
+Received: by mail-oa0-f43.google.com with SMTP id eb12so1318439oac.30
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2014 13:49:40 -0700 (PDT)
+In-Reply-To: <1395505004-22650-3-git-send-email-bigeasy@linutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, Alan Tull <delicious.quinoa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
 On Sat, Mar 22, 2014 at 5:16 PM, Sebastian Andrzej Siewior
 <bigeasy@linutronix.de> wrote:
 
-> Since Alan said that he had drop two patches from earlier series to make
-> it work I decided to spent some extra time to check if this is really the
-> case.
-> I dropped "gpio: dwapb: do not create the irq mapping upfront." until the
-> discussion there is over.
+> The example uses gpio-cells = 1 while it should be two (it is even
+> mentioned in the text above).
 >
-> This series has been tested back ported and tested on a v3.13 kernel with
-> the dummy test [0] here. It was tested on the Arrow board and the dev kit. I
-> tested edge and level interrupts. On the Arrow board releasing the button
-> causes a lot of interrupts so I assume debouncing is no working well
-> there. On the dev kit I see only one interrupt. If I realse it really
-> slowly, then the extra interrupts are visible there as well but way less.
->
-> [0] http://breakpoint.cc/gpio-dwapb-test.c
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Okay so can we have Jamie and Sebastian H. have a look at this
-series?
+This is obviously correct so patch applied.
+
+How come I cannot see patch 1/7 in my mailbox :-(
+
+I see patches 2-7/7...
+
+Something on my end?
 
 Yours,
 Linus Walleij
