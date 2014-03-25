@@ -1,69 +1,54 @@
-From: Sabrina Dubroca <sd@queasysnail.net>
-Subject: Re: [bisected] NULL pointer dereference in acpi_gpiochip_add (on
- modprobe ssb)
-Date: Tue, 25 Mar 2014 09:05:23 +0100
-Message-ID: <20140325080523.GD25669@kria>
-References: <20140324154944.GB25669@kria>
- <20140324180033.GM19349@intel.com>
- <20140324181112.GN19349@intel.com>
- <20140324183111.GC25669@kria>
- <20140325072530.GP19349@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH] pch_gpio: set value before enabling output direction
+Date: Tue, 25 Mar 2014 10:32:47 +0100
+Message-ID: <1395739967-8465-1-git-send-email-alexander.stein@systec-electronic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp1-g21.free.fr ([212.27.42.1]:59717 "EHLO smtp1-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751818AbaCYIFg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 25 Mar 2014 04:05:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20140325072530.GP19349@intel.com>
+Received: from webbox1416.server-home.net ([77.236.96.61]:56601 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751067AbaCYJkS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 25 Mar 2014 05:40:18 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Daniel Krueger <daniel.krueger@systec-electronic.com>, Alexander Stein <alexander.stein@systec-electronic.com>
 
-2014-03-25, 09:25:30 +0200, Mika Westerberg wrote:
-> On Mon, Mar 24, 2014 at 07:31:11PM +0100, Sabrina Dubroca wrote:
-> > > Actually gpiolib seems to handle ->dev as optional. Can you try this patch
-> > > instead? Thanks.
-> > > 
-> > > diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> > > index bf0f8b476696..642b2bf3360e 100644
-> > > --- a/drivers/gpio/gpiolib-acpi.c
-> > > +++ b/drivers/gpio/gpiolib-acpi.c
-> > > @@ -501,6 +501,9 @@ void acpi_gpiochip_add(struct gpio_chip *chip)
-> > >  	acpi_handle handle;
-> > >  	acpi_status status;
-> > >  
-> > > +	if (!chip || !chip->dev)
-> > > +		return;
-> > > +
-> > >  	handle = ACPI_HANDLE(chip->dev);
-> > >  	if (!handle)
-> > >  		return;
-> > > @@ -531,6 +534,9 @@ void acpi_gpiochip_remove(struct gpio_chip *chip)
-> > >  	acpi_handle handle;
-> > >  	acpi_status status;
-> > >  
-> > > +	if (!chip || !chip->dev)
-> > > +		return;
-> > > +
-> > >  	handle = ACPI_HANDLE(chip->dev);
-> > >  	if (!handle)
-> > >  		return;
-> > 
-> > Thanks, this patch solves the problem.
-> 
-> Great thanks for testing. Can I add your tested-by to the patch?
-> 
-> I'll submit a formal patch for this next week as I'm currently on vacation.
+From: Daniel Krueger <daniel.krueger@systec-electronic.com>
 
-Sure:
+This ensures that the output signal does not toggle if set to high.
 
-Tested-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: Daniel Krueger <daniel.krueger@systec-electronic.com>
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+ drivers/gpio/gpio-pch.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-
-Thanks again,
-
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index 9656c19..83a1563 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -138,9 +138,6 @@ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&chip->spinlock, flags);
+-	pm = ioread32(&chip->reg->pm) & ((1 << gpio_pins[chip->ioh]) - 1);
+-	pm |= (1 << nr);
+-	iowrite32(pm, &chip->reg->pm);
+ 
+ 	reg_val = ioread32(&chip->reg->po);
+ 	if (val)
+@@ -148,6 +145,11 @@ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
+ 	else
+ 		reg_val &= ~(1 << nr);
+ 	iowrite32(reg_val, &chip->reg->po);
++
++	pm = ioread32(&chip->reg->pm) & ((1 << gpio_pins[chip->ioh]) - 1);
++	pm |= (1 << nr);
++	iowrite32(pm, &chip->reg->pm);
++
+ 	spin_unlock_irqrestore(&chip->spinlock, flags);
+ 
+ 	return 0;
 -- 
-Sabrina
+1.8.3.2
+
