@@ -1,106 +1,51 @@
 From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 6/7] gpio: dwapb: use a second irq chip
-Date: Tue, 25 Mar 2014 22:36:21 +0100
-Message-ID: <5331F6D5.7070809@gmail.com>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de> <1395505004-22650-7-git-send-email-bigeasy@linutronix.de>
+Subject: Re: dwapb: a bug fix a few cleanups, v2
+Date: Tue, 25 Mar 2014 22:39:00 +0100
+Message-ID: <5331F774.909@gmail.com>
+References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de> <CACRpkdbFj+Msq5HjcV8N5A6TN9sic1+Y2v9aWAMa2g+0zO=D1Q@mail.gmail.com> <5331F49C.8080106@gmail.com>
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1395505004-22650-7-git-send-email-bigeasy@linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, atull@altera.com
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dinguyen@altera.com, delicious.quinoa@gmail.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:46906 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751549AbaCYVjF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 17:39:05 -0400
+In-Reply-To: <5331F49C.8080106@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jamie Iles <jamie@jamieiles.com>
+Cc: Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, Alan Tull <delicious.quinoa@gmail.com>
 
-On 03/22/2014 05:16 PM, Sebastian Andrzej Siewior wrote:
-> Right new have one irq chip running always in level mode. It would nicer
-> to have two irq chips where one is handling level type interrupts and
-> the other one is doing edge interrupts. So we can have at runtime two users
-> where one is using edge and the other level.
+On 03/25/2014 10:26 PM, Sebastian Hesselbarth wrote:
+> On 03/25/2014 09:45 PM, Linus Walleij wrote:
+>> On Sat, Mar 22, 2014 at 5:16 PM, Sebastian Andrzej Siewior
+>> <bigeasy@linutronix.de> wrote:
+>>
+>>> Since Alan said that he had drop two patches from earlier series to make
+>>> it work I decided to spent some extra time to check if this is really the
+>>> case.
+>>> I dropped "gpio: dwapb: do not create the irq mapping upfront." until the
+>>> discussion there is over.
+>>>
+>>> This series has been tested back ported and tested on a v3.13 kernel with
+>>> the dummy test [0] here. It was tested on the Arrow board and the dev kit. I
+>>> tested edge and level interrupts. On the Arrow board releasing the button
+>>> causes a lot of interrupts so I assume debouncing is no working well
+>>> there. On the dev kit I see only one interrupt. If I realse it really
+>>> slowly, then the extra interrupts are visible there as well but way less.
+>>>
+>>> [0] http://breakpoint.cc/gpio-dwapb-test.c
+>>
+>> Okay so can we have Jamie and Sebastian H. have a look at this
+>> series?
 > 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  drivers/gpio/gpio-dwapb.c | 41 ++++++++++++++++++++++++++++-------------
->  1 file changed, 28 insertions(+), 13 deletions(-)
+> I'd love to test it and have a closer look, but we are way behind on
+> gpio and especially gpio irqs on mach-berlin.
 > 
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 752ccb1..3c9cdda 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -192,6 +192,8 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
->  		break;
->  	}
->  
-> +	irq_setup_alt_chip(d, type);
-> +
->  	writel(level, gpio->regs + GPIO_INTTYPE_LEVEL);
->  	writel(polarity, gpio->regs + GPIO_INT_POLARITY);
->  	irq_gc_unlock(igc);
-> @@ -207,7 +209,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->  	struct irq_chip_generic	*irq_gc;
->  	unsigned int hwirq, ngpio = gc->ngpio;
->  	struct irq_chip_type *ct;
-> -	int err, irq;
-> +	int err, irq, i;
->  
->  	irq = irq_of_parse_and_map(node, 0);
->  	if (!irq) {
-> @@ -221,7 +223,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->  	if (!gpio->domain)
->  		return;
->  
-> -	err = irq_alloc_domain_generic_chips(gpio->domain, ngpio, 1,
-> +	err = irq_alloc_domain_generic_chips(gpio->domain, ngpio, 2,
->  					     "gpio-dwapb", handle_level_irq,
->  					     IRQ_NOREQUEST, 0,
->  					     IRQ_GC_INIT_NESTED_LOCK);
-> @@ -242,17 +244,28 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->  	irq_gc->reg_base = gpio->regs;
->  	irq_gc->private = gpio;
->  
-> -	ct = irq_gc->chip_types;
-> -	ct->chip.irq_ack = irq_gc_ack_set_bit;
-> -	ct->chip.irq_mask = irq_gc_mask_set_bit;
-> -	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
-> -	ct->chip.irq_set_type = dwapb_irq_set_type;
-> -	ct->chip.irq_enable = dwapb_irq_enable;
-> -	ct->chip.irq_disable = dwapb_irq_disable;
-> -	ct->chip.irq_request_resources = dwapb_irq_reqres;
-> -	ct->chip.irq_release_resources = dwapb_irq_relres;
-> -	ct->regs.ack = GPIO_PORTA_EOI;
-> -	ct->regs.mask = GPIO_INTMASK;
-> +	for (i = 0; i < 2; i++) {
-> +
-> +		ct = &irq_gc->chip_types[i];
-> +		ct->chip.irq_ack = irq_gc_ack_set_bit;
-> +		ct->chip.irq_mask = irq_gc_mask_set_bit;
-> +		ct->chip.irq_unmask = irq_gc_mask_clr_bit;
-> +		ct->chip.irq_set_type = dwapb_irq_set_type;
-> +		ct->chip.irq_enable = dwapb_irq_enable;
-> +		ct->chip.irq_disable = dwapb_irq_disable;
-> +		ct->chip.irq_request_resources = dwapb_irq_reqres;
-> +		ct->chip.irq_release_resources = dwapb_irq_relres;
-> +		ct->regs.ack = GPIO_PORTA_EOI;
-> +		ct->regs.mask = GPIO_INTMASK;
-> +
-> +		if (i == 0) {
-> +			ct->type = IRQ_TYPE_LEVEL_MASK;
-> +			ct->handler = handle_level_irq;
-> +		} else {
-> +			ct->type = IRQ_TYPE_EDGE_BOTH;
-> +			ct->handler = handle_edge_irq;
-> +		}
+> I will look at the patches, but I guess if it doesn't break socfpga
+> or any other user of it, it is fine.
 
-Sebastian,
-
-IMHO the loop looks strange, especially with the (i == 0) check.
-
-How about unrolling it again and assign both chip_types independently?
+Except a small comment about for loop in 6/7 the dwapb related patches
+look good to me.
 
 Sebastian
-
-> +	}
->  
->  	irq_set_chained_handler(irq, dwapb_irq_handler);
->  	irq_set_handler_data(irq, gpio);
-> 
