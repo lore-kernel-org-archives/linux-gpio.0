@@ -1,37 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: iop: fix devm_ioremap_resource() return value checking
-Date: Tue, 25 Mar 2014 15:04:26 +0100
-Message-ID: <CACRpkdYTSBEOxJ9h95JdDWhkGjL4QgZT5KmhmmGm1oraSKRhdw@mail.gmail.com>
-References: <1625450.oZua1OVhNs@amdc1032>
+Subject: Re: [PATCH] gpio: vr41xx: mark GPIO lines used for IRQ
+Date: Tue, 25 Mar 2014 15:06:53 +0100
+Message-ID: <CACRpkdYownU1JcCi=iuWEDokdD22j6qH2kARHZiKTOBmpg0xUw@mail.gmail.com>
+References: <1390518477-10020-1-git-send-email-linus.walleij@linaro.org>
+	<20140319170030.GH17197@linux-mips.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:60429 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753336AbaCYOE1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 10:04:27 -0400
-Received: by mail-ob0-f170.google.com with SMTP id uz6so596126obc.1
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2014 07:04:26 -0700 (PDT)
-In-Reply-To: <1625450.oZua1OVhNs@amdc1032>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:34535 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752779AbaCYOGy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 10:06:54 -0400
+Received: by mail-ob0-f172.google.com with SMTP id wm4so604198obc.31
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2014 07:06:54 -0700 (PDT)
+In-Reply-To: <20140319170030.GH17197@linux-mips.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>, Aaro Koskinen <aaro.koskinen@iki.fi>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-mips@linux-mips.org, Yoichi Yuasa <yuasa@linux-mips.org>
 
-On Tue, Mar 18, 2014 at 10:58 AM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-
-> devm_ioremap_resource() returns a pointer to the remapped memory or
-> an ERR_PTR() encoded error code on failure.  Fix the check inside
-> iop3xx_gpio_probe() accordingly.
+On Wed, Mar 19, 2014 at 6:00 PM, Ralf Baechle <ralf@linux-mips.org> wrote:
+> On Fri, Jan 24, 2014 at 12:07:57AM +0100, Linus Walleij wrote:
 >
-> Cc: Lennert Buytenhek <kernel@wantstofly.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Mikael Pettersson <mikpe@it.uu.se>
-> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Added Yoichi to cc.
+>
+>> When an IRQ is started on a GPIO line, mark this GPIO as IRQ in
+>> the gpiolib so we can keep track of the usage centrally.
+>>
+>> Cc: Ralf Baechle <ralf@linux-mips.org>
+>> Cc: linux-mips@linux-mips.org
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> It would be much appreciated if one of the MIPS people could
+>> test this patch, thanks in advance. (I did compile-test it
+>> with a MIPS cross compiler.)
+>> ---
+>
+> I haven't received any test results but as it's looking good I'm queueing
+> this for 3.15.
 
-Patch applied with ACKs.
+If it works I'd like to queue it through the GPIO tree actually,
+as I need to tweak it a bit to use the new resource callbacks
+from the IRQ tree.
+
+(But no big deal if you've already prepped your queue,
+I can fix this up later.)
 
 Yours,
 Linus Walleij
