@@ -1,24 +1,57 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v3 2/2] gpio: moxart: Actually set output state in moxart_gpio_direction_output()
-Date: Tue, 25 Mar 2014 13:01:40 +0900
-Message-ID: <CAAVeFuKYs71G+sAcCn7yw-TpBxPAQKqTAxAJEUes3JJTu_G01A@mail.gmail.com>
-References: <1395715413.12999.0.camel@phoenix> <1395715459.12999.1.camel@phoenix>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [bisected] NULL pointer dereference in acpi_gpiochip_add (on
+ modprobe ssb)
+Date: Tue, 25 Mar 2014 09:25:30 +0200
+Message-ID: <20140325072530.GP19349@intel.com>
+References: <20140324154944.GB25669@kria>
+ <20140324180033.GM19349@intel.com>
+ <20140324181112.GN19349@intel.com>
+ <20140324183111.GC25669@kria>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:49658 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750833AbaCYECB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 00:02:01 -0400
-Received: by mail-vc0-f176.google.com with SMTP id lc6so6730807vcb.21
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Mar 2014 21:02:00 -0700 (PDT)
-In-Reply-To: <1395715459.12999.1.camel@phoenix>
+Received: from mga11.intel.com ([192.55.52.93]:33705 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750845AbaCYHRz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 25 Mar 2014 03:17:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20140324183111.GC25669@kria>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 25, 2014 at 11:44 AM, Axel Lin <axel.lin@ingics.com> wrote:
-> moxart_gpio_direction_output() ignored the state passed into it. Fix it.
+On Mon, Mar 24, 2014 at 07:31:11PM +0100, Sabrina Dubroca wrote:
+> > Actually gpiolib seems to handle ->dev as optional. Can you try this patch
+> > instead? Thanks.
+> > 
+> > diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> > index bf0f8b476696..642b2bf3360e 100644
+> > --- a/drivers/gpio/gpiolib-acpi.c
+> > +++ b/drivers/gpio/gpiolib-acpi.c
+> > @@ -501,6 +501,9 @@ void acpi_gpiochip_add(struct gpio_chip *chip)
+> >  	acpi_handle handle;
+> >  	acpi_status status;
+> >  
+> > +	if (!chip || !chip->dev)
+> > +		return;
+> > +
+> >  	handle = ACPI_HANDLE(chip->dev);
+> >  	if (!handle)
+> >  		return;
+> > @@ -531,6 +534,9 @@ void acpi_gpiochip_remove(struct gpio_chip *chip)
+> >  	acpi_handle handle;
+> >  	acpi_status status;
+> >  
+> > +	if (!chip || !chip->dev)
+> > +		return;
+> > +
+> >  	handle = ACPI_HANDLE(chip->dev);
+> >  	if (!handle)
+> >  		return;
+> 
+> Thanks, this patch solves the problem.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Great thanks for testing. Can I add your tested-by to the patch?
+
+I'll submit a formal patch for this next week as I'm currently on vacation.
