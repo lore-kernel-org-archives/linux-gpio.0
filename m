@@ -1,11 +1,11 @@
 From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: [PATCH] pch_gpio: set value before enabling output direction
-Date: Tue, 25 Mar 2014 10:32:47 +0100
-Message-ID: <1395739967-8465-1-git-send-email-alexander.stein@systec-electronic.com>
+Subject: [PATCH] gpio-sch: set output level after configuration of direction
+Date: Tue, 25 Mar 2014 10:33:26 +0100
+Message-ID: <1395740006-8554-1-git-send-email-alexander.stein@systec-electronic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:56601 "EHLO
+Received: from webbox1416.server-home.net ([77.236.96.61]:56602 "EHLO
 	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751067AbaCYJkS (ORCPT
+	by vger.kernel.org with ESMTP id S1751074AbaCYJkS (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>);
 	Tue, 25 Mar 2014 05:40:18 -0400
 Sender: linux-gpio-owner@vger.kernel.org
@@ -15,40 +15,71 @@ Cc: linux-gpio@vger.kernel.org, Daniel Krueger <daniel.krueger@systec-electronic
 
 From: Daniel Krueger <daniel.krueger@systec-electronic.com>
 
-This ensures that the output signal does not toggle if set to high.
+According to the datasheet, writing to the level register has no effect
+when GPIO is programmed as input. Hence we set the level after configuring
+the GPIO as output. But we cannot prevent a short low pulse if direction is
+set to high and an external pull-up is connected.
 
 Signed-off-by: Daniel Krueger <daniel.krueger@systec-electronic.com>
 Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 ---
- drivers/gpio/gpio-pch.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-sch.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-index 9656c19..83a1563 100644
---- a/drivers/gpio/gpio-pch.c
-+++ b/drivers/gpio/gpio-pch.c
-@@ -138,9 +138,6 @@ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
- 	unsigned long flags;
+diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+index 5af6571..e5f3e2e 100644
+--- a/drivers/gpio/gpio-sch.c
++++ b/drivers/gpio/gpio-sch.c
+@@ -97,8 +97,6 @@ static int sch_gpio_core_direction_out(struct gpio_chip *gc,
+ 	u8 curr_dirs;
+ 	unsigned short offset, bit;
  
- 	spin_lock_irqsave(&chip->spinlock, flags);
--	pm = ioread32(&chip->reg->pm) & ((1 << gpio_pins[chip->ioh]) - 1);
--	pm |= (1 << nr);
--	iowrite32(pm, &chip->reg->pm);
+-	sch_gpio_core_set(gc, gpio_num, val);
+-
+ 	spin_lock(&gpio_lock);
  
- 	reg_val = ioread32(&chip->reg->po);
- 	if (val)
-@@ -148,6 +145,11 @@ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
- 	else
- 		reg_val &= ~(1 << nr);
- 	iowrite32(reg_val, &chip->reg->po);
+ 	offset = CGIO + gpio_num / 8;
+@@ -109,6 +107,15 @@ static int sch_gpio_core_direction_out(struct gpio_chip *gc,
+ 		outb(curr_dirs & ~(1 << bit), gpio_ba + offset);
+ 
+ 	spin_unlock(&gpio_lock);
 +
-+	pm = ioread32(&chip->reg->pm) & ((1 << gpio_pins[chip->ioh]) - 1);
-+	pm |= (1 << nr);
-+	iowrite32(pm, &chip->reg->pm);
-+
- 	spin_unlock_irqrestore(&chip->spinlock, flags);
- 
++	/*
++	 * according to the datasheet, writing to the level register has no
++	 * effect when GPIO is programmed as input.
++	 * Hence we set the level after configuring the GPIO as output.
++	 * But we cannot prevent a short low pulse if direction is set to high
++	 * and an external pull-up is connected.
++	 */
++	sch_gpio_core_set(gc, gpio_num, val);
  	return 0;
+ }
+ 
+@@ -178,8 +185,6 @@ static int sch_gpio_resume_direction_out(struct gpio_chip *gc,
+ 	u8 curr_dirs;
+ 	unsigned short offset, bit;
+ 
+-	sch_gpio_resume_set(gc, gpio_num, val);
+-
+ 	offset = RGIO + gpio_num / 8;
+ 	bit = gpio_num % 8;
+ 
+@@ -190,6 +195,15 @@ static int sch_gpio_resume_direction_out(struct gpio_chip *gc,
+ 		outb(curr_dirs & ~(1 << bit), gpio_ba + offset);
+ 
+ 	spin_unlock(&gpio_lock);
++
++	/*
++	 * according to the datasheet, writing to the level register has no
++	 * effect when GPIO is programmed as input.
++	 * Hence we set the level after configuring the GPIO as output.
++	 * But we cannot prevent a short low pulse if direction is set to high
++	 * and an external pull-up is connected.
++	 */
++	sch_gpio_resume_set(gc, gpio_num, val);
+ 	return 0;
+ }
+ 
 -- 
 1.8.3.2
 
