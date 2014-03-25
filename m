@@ -1,57 +1,32 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [bisected] NULL pointer dereference in acpi_gpiochip_add (on
- modprobe ssb)
-Date: Tue, 25 Mar 2014 09:25:30 +0200
-Message-ID: <20140325072530.GP19349@intel.com>
-References: <20140324154944.GB25669@kria>
- <20140324180033.GM19349@intel.com>
- <20140324181112.GN19349@intel.com>
- <20140324183111.GC25669@kria>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 7/7] gpio: dwapb: use d->mask instead od BIT(bit)
+Date: Tue, 25 Mar 2014 08:54:58 +0100
+Message-ID: <53313652.5010306@linutronix.de>
+References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de> <1395505004-22650-8-git-send-email-bigeasy@linutronix.de> <CAAVeFu+WQCpo=LEZqdAhpMcO1PLqUzfcVKTafnwe=BiLGLjFZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:33705 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750845AbaCYHRz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 25 Mar 2014 03:17:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20140324183111.GC25669@kria>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFu+WQCpo=LEZqdAhpMcO1PLqUzfcVKTafnwe=BiLGLjFZQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: atull@altera.com, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dinguyen@altera.com, delicious.quinoa@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 24, 2014 at 07:31:11PM +0100, Sabrina Dubroca wrote:
-> > Actually gpiolib seems to handle ->dev as optional. Can you try this patch
-> > instead? Thanks.
-> > 
-> > diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> > index bf0f8b476696..642b2bf3360e 100644
-> > --- a/drivers/gpio/gpiolib-acpi.c
-> > +++ b/drivers/gpio/gpiolib-acpi.c
-> > @@ -501,6 +501,9 @@ void acpi_gpiochip_add(struct gpio_chip *chip)
-> >  	acpi_handle handle;
-> >  	acpi_status status;
-> >  
-> > +	if (!chip || !chip->dev)
-> > +		return;
-> > +
-> >  	handle = ACPI_HANDLE(chip->dev);
-> >  	if (!handle)
-> >  		return;
-> > @@ -531,6 +534,9 @@ void acpi_gpiochip_remove(struct gpio_chip *chip)
-> >  	acpi_handle handle;
-> >  	acpi_status status;
-> >  
-> > +	if (!chip || !chip->dev)
-> > +		return;
-> > +
-> >  	handle = ACPI_HANDLE(chip->dev);
-> >  	if (!handle)
-> >  		return;
+On 03/25/2014 03:17 AM, Alexandre Courbot wrote:
+>> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+>> index 3c9cdda..ebfcf5c 100644
+>> --- a/drivers/gpio/gpio-dwapb.c
+>> +++ b/drivers/gpio/gpio-dwapb.c
+>> @@ -126,7 +126,7 @@ static void dwapb_irq_disable(struct irq_data *d)
+>>
+>>         irq_gc_lock(igc);
+>>         val = readl(gpio->regs + GPIO_INTEN);
+>> -       val &= ~BIT(d->hwirq);
+>> +       val &= d->mask;
 > 
-> Thanks, this patch solves the problem.
+> Shouldn't that be ~d->mask here?
 
-Great thanks for testing. Can I add your tested-by to the patch?
+Yes, indeed. Thanks for catching this.
 
-I'll submit a formal patch for this next week as I'm currently on vacation.
+Sebastian
