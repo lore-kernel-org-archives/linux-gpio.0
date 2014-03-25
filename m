@@ -1,49 +1,123 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 0/4] provide irqchip in gpiolib
-Date: Tue, 25 Mar 2014 17:14:31 +0100 (CET)
-Message-ID: <alpine.DEB.2.02.1403251714020.4203@ionos.tec.linutronix.de>
-References: <1395751894-7110-1-git-send-email-linus.walleij@linaro.org>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH 6/7] gpio: dwapb: use a second irq chip
+Date: Tue, 25 Mar 2014 13:48:44 -0500
+Message-ID: <CANk1AXTUr2MevsXphxicgZEPC2tQBUh6pEXa78Fa6Jt4bPiRdQ@mail.gmail.com>
+References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
+	<1395505004-22650-7-git-send-email-bigeasy@linutronix.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:53775 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752700AbaCYQO0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 12:14:26 -0400
-In-Reply-To: <1395751894-7110-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-qc0-f172.google.com ([209.85.216.172]:34073 "EHLO
+	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751458AbaCYSsp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 14:48:45 -0400
+In-Reply-To: <1395505004-22650-7-git-send-email-bigeasy@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-On Tue, 25 Mar 2014, Linus Walleij wrote:
+On Sat, Mar 22, 2014 at 11:16 AM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> Right new have one irq chip running always in level mode. It would nicer
+> to have two irq chips where one is handling level type interrupts and
+> the other one is doing edge interrupts. So we can have at runtime two users
+> where one is using edge and the other level.
+>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  drivers/gpio/gpio-dwapb.c | 41 ++++++++++++++++++++++++++++-------------
+>  1 file changed, 28 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 752ccb1..3c9cdda 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -192,6 +192,8 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+>                 break;
+>         }
+>
+> +       irq_setup_alt_chip(d, type);
+> +
+>         writel(level, gpio->regs + GPIO_INTTYPE_LEVEL);
+>         writel(polarity, gpio->regs + GPIO_INT_POLARITY);
+>         irq_gc_unlock(igc);
+> @@ -207,7 +209,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>         struct irq_chip_generic *irq_gc;
+>         unsigned int hwirq, ngpio = gc->ngpio;
+>         struct irq_chip_type *ct;
+> -       int err, irq;
+> +       int err, irq, i;
+>
+>         irq = irq_of_parse_and_map(node, 0);
+>         if (!irq) {
+> @@ -221,7 +223,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>         if (!gpio->domain)
+>                 return;
+>
+> -       err = irq_alloc_domain_generic_chips(gpio->domain, ngpio, 1,
+> +       err = irq_alloc_domain_generic_chips(gpio->domain, ngpio, 2,
+>                                              "gpio-dwapb", handle_level_irq,
+>                                              IRQ_NOREQUEST, 0,
+>                                              IRQ_GC_INIT_NESTED_LOCK);
+> @@ -242,17 +244,28 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>         irq_gc->reg_base = gpio->regs;
+>         irq_gc->private = gpio;
+>
+> -       ct = irq_gc->chip_types;
+> -       ct->chip.irq_ack = irq_gc_ack_set_bit;
+> -       ct->chip.irq_mask = irq_gc_mask_set_bit;
+> -       ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+> -       ct->chip.irq_set_type = dwapb_irq_set_type;
+> -       ct->chip.irq_enable = dwapb_irq_enable;
+> -       ct->chip.irq_disable = dwapb_irq_disable;
+> -       ct->chip.irq_request_resources = dwapb_irq_reqres;
+> -       ct->chip.irq_release_resources = dwapb_irq_relres;
+> -       ct->regs.ack = GPIO_PORTA_EOI;
+> -       ct->regs.mask = GPIO_INTMASK;
+> +       for (i = 0; i < 2; i++) {
+> +
+> +               ct = &irq_gc->chip_types[i];
+> +               ct->chip.irq_ack = irq_gc_ack_set_bit;
+> +               ct->chip.irq_mask = irq_gc_mask_set_bit;
+> +               ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+> +               ct->chip.irq_set_type = dwapb_irq_set_type;
+> +               ct->chip.irq_enable = dwapb_irq_enable;
+> +               ct->chip.irq_disable = dwapb_irq_disable;
+> +               ct->chip.irq_request_resources = dwapb_irq_reqres;
+> +               ct->chip.irq_release_resources = dwapb_irq_relres;
 
-> This series provides a central facility for registering a chained
-> (cascaded) irqchip as a sibling to a certain gpiochip. Patch one
-> adds the API, patch 2, 3, 4 convert three drivers that I can test
-> to use this facility.
+I'm trying to test against recent tag next-20140312.  Got a build error.
 
-Very nice consolidation work!
+/home/atull/repos/linux-socfpga/drivers/gpio/gpio-dwapb.c:254:11:
+error: 'struct irq_chip' has no member named 'irq_request_resources'
+/home/atull/repos/linux-socfpga/drivers/gpio/gpio-dwapb.c:254:36:
+error: 'dwapb_irq_reqres' undeclared (first use in this function)
+/home/atull/repos/linux-socfpga/drivers/gpio/gpio-dwapb.c:255:11:
+error: 'struct irq_chip' has no member named 'irq_release_resources'
+/home/atull/repos/linux-socfpga/drivers/gpio/gpio-dwapb.c:255:36:
+error: 'dwapb_irq_relres' undeclared (first use in this function)
+Build failed...
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
- 
+Alan Tull
+aka
+delicious quinoa
 
-> Linus Walleij (4):
->   gpio: add IRQ chip helpers in gpiolib
->   gpio: pl061: convert driver to use gpiolib irqchip
->   pinctrl: nomadik: convert driver to use gpiolib irqchip
->   pinctrl: coh901: convert driver to use gpiolib irqchip
-> 
->  drivers/gpio/Kconfig              |   4 +
->  drivers/gpio/gpio-pl061.c         |  80 ++++-----------
->  drivers/gpio/gpiolib.c            | 188 +++++++++++++++++++++++++++++++++++
->  drivers/pinctrl/Kconfig           |   4 +
->  drivers/pinctrl/pinctrl-coh901.c  | 204 ++++++++++----------------------------
->  drivers/pinctrl/pinctrl-nomadik.c | 123 ++++++-----------------
->  include/linux/gpio/driver.h       |  29 ++++++
->  7 files changed, 329 insertions(+), 303 deletions(-)
-> 
-> -- 
-> 1.8.5.3
-> 
-> 
+
+> +               ct->regs.ack = GPIO_PORTA_EOI;
+> +               ct->regs.mask = GPIO_INTMASK;
+> +
+> +               if (i == 0) {
+> +                       ct->type = IRQ_TYPE_LEVEL_MASK;
+> +                       ct->handler = handle_level_irq;
+> +               } else {
+> +                       ct->type = IRQ_TYPE_EDGE_BOTH;
+> +                       ct->handler = handle_edge_irq;
+> +               }
+> +       }
+>
+>         irq_set_chained_handler(irq, dwapb_irq_handler);
+>         irq_set_handler_data(irq, gpio);
+> --
+> 1.9.1
+>
