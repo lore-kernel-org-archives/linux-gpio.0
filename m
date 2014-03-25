@@ -1,45 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gpio: dwapb: drop irq_setup_generic_chip()
-Date: Tue, 25 Mar 2014 21:37:50 +0100
-Message-ID: <CACRpkdbu6LKLntP2J=ypLTrAYscvzf5WjPYb-E+RKH_vAPEYHg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpio: dwapb: do not create the irq mapping upfront.
+Date: Tue, 25 Mar 2014 21:43:49 +0100
+Message-ID: <CACRpkdYxeieES5Y5tbCRfSe=Cnj2QsoU5KvSPZ99XsJ9AUrEmw@mail.gmail.com>
 References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
-	<1395345324-18299-2-git-send-email-bigeasy@linutronix.de>
-	<CACRpkdY3ctcLNhpSWtuqj=d48_fqDyNzG9nGAorpAbwjAnOJUw@mail.gmail.com>
+	<1395345324-18299-3-git-send-email-bigeasy@linutronix.de>
+	<CANk1AXTjuBWa_DdKaV2dCPjhbKRHE9bR2uHyuoCYtt_-zk7EoQ@mail.gmail.com>
+	<532D83F1.5070001@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:42530 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755031AbaCYUhv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Mar 2014 16:37:51 -0400
-Received: by mail-ob0-f169.google.com with SMTP id va2so1275932obc.28
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2014 13:37:50 -0700 (PDT)
-In-Reply-To: <CACRpkdY3ctcLNhpSWtuqj=d48_fqDyNzG9nGAorpAbwjAnOJUw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <532D83F1.5070001@linutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: delicious quinoa <delicious.quinoa@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jamie Iles <jamie@jamieiles.com>
-Cc: Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-Aha Jamie not even on the original thread. Here.
+On Sat, Mar 22, 2014 at 1:37 PM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
 
-On Tue, Mar 25, 2014 at 9:37 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Mar 20, 2014 at 8:55 PM, Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
->
->> This looks kinda wrong I didn't manage to fully test it.
->> The driver calls irq_alloc_domain_generic_chips() which creates a gc and
->> adds it to gc_list. The driver later then calls irq_setup_generic_chip()
->> which also initializes the gc and adds it to the gc_list() and this
->> corrupts the list.
->> I can't find a single chip in tree which uses both functions so I think
->> that irq_setup_generic_chip() can be dropped.
->>
->> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->
-> Jamie: comments?
->
-> Can you instead of this try to use my new generic gpiolib
-> irqchip helpers that I just merged to the GPIO tree?
->
-> Yours,
-> Linus Walleij
+> Linus, I don't understand why you need the mapping upfront.
+
+This is because irqchips and gpiochips need to be orthogonal
+APIs.
+
+> I looked at
+> those two links and you quote gpio_to_irq() which is not required.
+
+In a *lot* of drivers it is implicitly required that gpio_to_irq()
+is called first because they only call irq_create_mapping()
+there. (And not in subsequent interrupt handlers etc.)
+
+No matter what, I would worry less about that and spend
+some time on using my new gpiolib helpers for
+gpiochip_irqchip_add() and
+gpiochip_set_chained_irqchip().
+
+Yours,
+Linus Walleij
