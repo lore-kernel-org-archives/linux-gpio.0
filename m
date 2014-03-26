@@ -1,54 +1,42 @@
-From: Dinh Nguyen <dinh.linux@gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: socfpga: add gpio pieces
-Date: Wed, 26 Mar 2014 10:29:34 -0500
-Message-ID: <5332F25E.10104@gmail.com>
-References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>	<1395345324-18299-4-git-send-email-bigeasy@linutronix.de>	<CANk1AXRa4V1ADNaT+T3pYF4zyxni9Y8rmU9UYRoA_7NxW8KWEg@mail.gmail.com> <CANk1AXSQVFZvRmvYt+JF+TDVpfX-_RLiUcQXotGzpHoTMUVymQ@mail.gmail.com> <532D73D1.7020408@linutronix.de>
+From: Gerhard Sittig <gsi@denx.de>
+Subject: Re: [PATCH] gpio-sch: set output level after configuration of
+ direction
+Date: Wed, 26 Mar 2014 20:05:43 +0100
+Message-ID: <20140326190543.GN3998@book.gsilab.sittig.org>
+References: <1395740006-8554-1-git-send-email-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f177.google.com ([209.85.220.177]:47970 "EHLO
-	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754894AbaCZP3j (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Mar 2014 11:29:39 -0400
-In-Reply-To: <532D73D1.7020408@linutronix.de>
+Received: from mail-out.m-online.net ([212.18.0.10]:41575 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755218AbaCZTFq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Mar 2014 15:05:46 -0400
+Content-Disposition: inline
+In-Reply-To: <1395740006-8554-1-git-send-email-alexander.stein@systec-electronic.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, delicious quinoa <delicious.quinoa@gmail.com>
-Cc: Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Daniel Krueger <daniel.krueger@systec-electronic.com>
+
+On Tue, 2014-03-25 at 10:33 +0100, Alexander Stein wrote:
+> 
+> According to the datasheet, writing to the level register has no effect
+> when GPIO is programmed as input. Hence we set the level after configuring
+> the GPIO as output. But we cannot prevent a short low pulse if direction is
+> set to high and an external pull-up is connected.
+
+Does "will have no effect" actually translate into "should not be
+done" or even "must not be done"?  Doesn't sound like it.
+
+I understood that setting the data register for input pins does
+nothing in that very moment, yet when switching to output the
+value immediately gets used.  So this is the most appropriate
+thing to do.
 
 
-
-On 03/22/2014 06:28 AM, Sebastian Andrzej Siewior wrote:
-> On 03/21/2014 11:15 PM, delicious quinoa wrote:
->> snps,nr-gpios = <27>;
->>
->> As noted on other thread, gpio2 is 27 wide, despite what the
->> documentation says.  When I made that change and remove your other two
->> patches the gpios worked for me on a cyclone5 devkit board.
->>
->> So if you fix the "#gpio-cells = <2>;" for all 3 gpios and fix
->> "snps,nr-gpios = <27>;" for gpio2, then this one patch looks good to
->> me.  With these changes,
->
-> Okay will do. And I also add a note that  the reference manual is wrong
-> here.
->
-
-I've applied this patch to rocketboards/linux-socfpga-next/next-dt. I 
-will take through the arm-soc tree for 3.16.
-
-Dinh
->>
->> Acked-by: Alan Tull <atull@altera.com>
->>
->> Alan Tull
->> aka
->> delicous quinoa
->
-> Sebastian
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+virtually yours
+Gerhard Sittig
+-- 
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office@denx.de
