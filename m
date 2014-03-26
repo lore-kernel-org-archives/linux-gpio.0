@@ -1,42 +1,53 @@
-From: Gerhard Sittig <gsi@denx.de>
-Subject: Re: [PATCH] gpio-sch: set output level after configuration of
- direction
-Date: Wed, 26 Mar 2014 20:05:43 +0100
-Message-ID: <20140326190543.GN3998@book.gsilab.sittig.org>
-References: <1395740006-8554-1-git-send-email-alexander.stein@systec-electronic.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/3] IXP4xx: Fix Goramo Multilink GPIO conversion.
+Date: Wed, 26 Mar 2014 23:06:43 +0100
+Message-ID: <201403262306.43920.arnd@arndb.de>
+References: <m3siq9iyt2.fsf@intrepid.localdomain>
+ <m3bnwxiwhj.fsf@intrepid.localdomain>
+ <CACRpkdaNdQjgAJv=mxn6MXS+kGKFoE4wmNHxYt_5WdM9sa6vxA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:41575 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755218AbaCZTFq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Mar 2014 15:05:46 -0400
-Content-Disposition: inline
-In-Reply-To: <1395740006-8554-1-git-send-email-alexander.stein@systec-electronic.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdaNdQjgAJv=mxn6MXS+kGKFoE4wmNHxYt_5WdM9sa6vxA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Simon =?utf-8?q?K=C3=A5gstr=C3=B6m?= <simon.kagstrom@netinsight.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Krzysztof Halasa <khc@pm.waw.pl>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Daniel Krueger <daniel.krueger@systec-electronic.com>
 
-On Tue, 2014-03-25 at 10:33 +0100, Alexander Stein wrote:
-> 
-> According to the datasheet, writing to the level register has no effect
-> when GPIO is programmed as input. Hence we set the level after configuring
-> the GPIO as output. But we cannot prevent a short low pulse if direction is
-> set to high and an external pull-up is connected.
-
-Does "will have no effect" actually translate into "should not be
-done" or even "must not be done"?  Doesn't sound like it.
-
-I understood that setting the data register for input pins does
-nothing in that very moment, yet when switching to output the
-value immediately gets used.  So this is the most appropriate
-thing to do.
-
-
-virtually yours
-Gerhard Sittig
--- 
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office@denx.de
+T24gTW9uZGF5IDI0IE1hcmNoIDIwMTQsIExpbnVzIFdhbGxlaWogd3JvdGU6Cj4gT24gU3VuLCBN
+YXIgMjMsIDIwMTQgYXQgMTozNCBBTSwgS3J6eXN6dG9mIEhhbGFzYSA8a2hjQHBtLndhdy5wbD4g
+d3JvdGU6Cj4gCj4gPiBhcmNoL2FybS9tYWNoLWl4cDR4eC9nb3JhbW9fbWxyLmM6IEluIGZ1bmN0
+aW9uICdzZXRfc2NsJzoKPiA+IGFyY2gvYXJtL21hY2gtaXhwNHh4L2dvcmFtb19tbHIuYzo4Mjog
+ZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdncGlvX2xpbmVfc2V0Jwo+
+ID4KPiA+IGFyY2gvYXJtL21hY2gtaXhwNHh4L2dvcmFtb19tbHIuYzogSW4gZnVuY3Rpb24gJ291
+dHB1dF9jb250cm9sJzoKPiA+IGFyY2gvYXJtL21hY2gtaXhwNHh4L2dvcmFtb19tbHIuYzoxMTE6
+IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAnZ3Bpb19saW5lX2NvbmZp
+ZycKPiA+IGFyY2gvYXJtL21hY2gtaXhwNHh4L2dvcmFtb19tbHIuYzoxMTE6IGVycm9yOiAnSVhQ
+NFhYX0dQSU9fT1VUJyB1bmRlY2xhcmVkCj4gPgo+ID4gYXJjaC9hcm0vbWFjaC1peHA0eHgvZ29y
+YW1vX21sci5jOiBJbiBmdW5jdGlvbiAnaHNzX2RjZF9pcnEnOgo+ID4gYXJjaC9hcm0vbWFjaC1p
+eHA0eHgvZ29yYW1vX21sci5jOjE1NTogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1
+bmN0aW9uICdncGlvX2xpbmVfZ2V0Jwo+ID4KPiA+IGFyY2gvYXJtL21hY2gtaXhwNHh4L2dvcmFt
+b19tbHIuYzogSW4gZnVuY3Rpb24gJ2dtbHJfaW5pdCc6Cj4gPiBhcmNoL2FybS9tYWNoLWl4cDR4
+eC9nb3JhbW9fbWxyLmM6NDE2OiBlcnJvcjogJ0lYUDRYWF9HUElPX09VVCcgdW5kZWNsYXJlZAo+
+ID4gYXJjaC9hcm0vbWFjaC1peHA0eHgvZ29yYW1vX21sci5jOjQyMTogZXJyb3I6ICdJWFA0WFhf
+R1BJT19JTicgdW5kZWNsYXJlZAo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBIYcWC
+YXNhIDxraGNAcG0ud2F3LnBsPgo+IAo+IFJldmlld2VkLWJ5OiBMaW51cyBXYWxsZWlqIDxsaW51
+cy53YWxsZWlqQGxpbmFyby5vcmc+Cj4gCj4gTWVhIGN1bHBhLgo+IAo+IEFybmQ6IGNhbiB5b3Ug
+YXBwbHkgdGhpcyBvbmUgcGF0Y2ggZGlyZWN0bHkgZm9yIEFSTSBTb0MgZml4ZXMgYW5kCj4gQ2M6
+IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcgb24gdGhpcyBvbmU/Cj4gCj4gQWx0ZXJuYXRpdmVseSBj
+YW4geW91IHNlbmQgdGhpcyBmb3IgZml4ZXMgdG8gYXJtQGtlcm5lbC5vcmcgd2l0aCBDYzoKPiBz
+dGFibGUgYWRkZWQgS3J6eXN6dG9mPwoKSSByZXZlcnRlZCBteSBlYXJsaWVyIHBhdGNoIGFuZCBh
+cHBsaWVkIHRoaXMgaW5zdGVhZC4gVGhhbmtzIGEgbG90IQoKRGlkIG5vdCBhZGQgYSBzdGFibGUg
+dGFnLCBhcyBzdWdnZXN0ZWQgYnkgS3J6eXN6dG9mLgoKCUFybmQKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBs
+aXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5m
+cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
