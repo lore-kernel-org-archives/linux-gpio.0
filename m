@@ -1,59 +1,50 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 0/2] pwm-backlight: switch to gpiod interface (part 1)
-Date: Thu, 27 Mar 2014 10:04:37 +0900
-Message-ID: <000801cf4958$8678ff20$936afd60$%han@samsung.com>
-References: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
- <CAAVeFuKE163O3Kcdy-WCCEesJMCQ-fcLe8Op5f=VE7ZovFptqA@mail.gmail.com>
- <CAK5ve-K7-Qk-VX33ZMWh3WEYOQND_o_TG6Hk28Y7r8dVgVtg9A@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpiolib: trim userspace representation of "value" to 0/1
+Date: Thu, 27 Mar 2014 12:52:29 +0900
+Message-ID: <CAAVeFu+g-m8HFxEdXddRDu8uZAHAu=Ega4vCEcO=JLCrQuCuxw@mail.gmail.com>
+References: <1395875378-28592-1-git-send-email-mhei@heimpold.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAK5ve-K7-Qk-VX33ZMWh3WEYOQND_o_TG6Hk28Y7r8dVgVtg9A@mail.gmail.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Bryan Wu' <cooloney@gmail.com>, 'Alexandre Courbot' <gnurou@gmail.com>
-Cc: 'Alexandre Courbot' <acourbot@nvidia.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, 'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ve0-f172.google.com ([209.85.128.172]:49789 "EHLO
+	mail-ve0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751658AbaC0Dwu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Mar 2014 23:52:50 -0400
+Received: by mail-ve0-f172.google.com with SMTP id jx11so3446748veb.31
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Mar 2014 20:52:49 -0700 (PDT)
+In-Reply-To: <1395875378-28592-1-git-send-email-mhei@heimpold.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Michael Heimpold <mhei@heimpold.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thursday, March 27, 2014 9:09 AM, Bryan Wu wrote:
-> On Tue, Mar 25, 2014 at 10:01 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> > Ping Thierry, can you have a look at this series? It is quite similar
-> > to the same change you merged for panel-simple (although I cannot see
-> > it in -next neither).
-> >
-> 
-> I think Jingoo can help to review this as well. Jingoo, can you help
-> to review. Actually it looks good to me.
+On Thu, Mar 27, 2014 at 8:09 AM, Michael Heimpold <mhei@heimpold.de> wrote:
+> According to Documentation/gpio/sysfs.txt:
+>   ...
+>   "value" ... reads as either 0 (low) or 1 (high).
+>
+> Since some gpio implementations return non-zero if GPIO is set
+> but not 1, filter the return value to fit the documentation.
+>
+> Signed-off-by: Michael Heimpold <mhei@heimpold.de>
+> ---
+>  drivers/gpio/gpiolib.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 50c4922..45aa695 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -376,7 +376,7 @@ static ssize_t gpio_value_show(struct device *dev,
+>         if (!test_bit(FLAG_EXPORT, &desc->flags))
+>                 status = -EIO;
+>         else
+> -               status = sprintf(buf, "%d\n", gpiod_get_value_cansleep(desc));
+> +               status = sprintf(buf, "%d\n", !!gpiod_get_value_cansleep(desc));
 
-Sorry, I cannot review this pwm-backlight code, I don't have
-knowledge about pwm-backlight and gpiod. I think that Thierry
-will review this correctly.
+Patch 23600969ff137cf4c3bc9098f77e381de334e3f7 ("gpio: clamp returned
+values to the boolean range") in -next already takes care of this at a
+lower level, so I don't expect this to be needed?
 
-Best regards,
-Jingoo Han
-
-> 
-> -Bryan
-> 
-> > On Thu, Feb 27, 2014 at 2:53 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> >> These two patches initiate the switch of the pwm-backlight driver to
-> >> the gpiod GPIO interface, as it considerably simplifies the code.
-> >>
-> >> For compatibility with current users of the driver, it is still possible
-> >> to pass the enable GPIO number as platform data. Two platforms are still
-> >> relying on this feature (pxa/palmtc and shmobile/armadillo800eva) which
-> >> will be removed as soon as its last users are switched to GPIO mapping
-> >> tables.
-> >>
-> >> Alexandre Courbot (2):
-> >>   ARM: SAMSUNG: remove gpio flags in dev-backlight
-> >>   pwm-backlight: switch to gpiod interface
-> >>
-> >>  arch/arm/plat-samsung/dev-backlight.c |  2 -
-> >>  drivers/video/backlight/pwm_bl.c      | 72 +++++++++++++++--------------------
-> >>  include/linux/pwm_backlight.h         |  5 +--
-> >>  3 files changed, 32 insertions(+), 47 deletions(-)
-> >>
-> >> --
-> >> 1.9.0
+Cheers,
+Alex.
