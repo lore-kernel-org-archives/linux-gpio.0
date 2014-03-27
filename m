@@ -1,37 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pch_gpio: set value before enabling output direction
-Date: Thu, 27 Mar 2014 10:22:40 +0100
-Message-ID: <CACRpkdZVwKtXVhrT2f-t8Y4VwoOkVCfuJJCVbbE0A4f0Nv3frA@mail.gmail.com>
-References: <1395739967-8465-1-git-send-email-alexander.stein@systec-electronic.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH] gpio-lynxpoint: force gpio_get() to return "1" and "0" only
+Date: Thu, 27 Mar 2014 15:02:08 +0200
+Message-ID: <1395925328-6056-1-git-send-email-mathias.nyman@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:38992 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752049AbaC0JWl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Mar 2014 05:22:41 -0400
-Received: by mail-ob0-f177.google.com with SMTP id wo20so3830631obc.22
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Mar 2014 02:22:40 -0700 (PDT)
-In-Reply-To: <1395739967-8465-1-git-send-email-alexander.stein@systec-electronic.com>
+Received: from mga11.intel.com ([192.55.52.93]:15414 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752124AbaC0MwB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 27 Mar 2014 08:52:01 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Daniel Krueger <daniel.krueger@systec-electronic.com>
+To: Linus <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>
 
-On Tue, Mar 25, 2014 at 10:32 AM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
+Don't return the IN_LVL_BIT directly, a high gpio line returned
+value "1073741824" intestead of "1" because IN_LVL_BIT is BIT(30)
 
-> From: Daniel Krueger <daniel.krueger@systec-electronic.com>
->
-> This ensures that the output signal does not toggle if set to high.
->
-> Signed-off-by: Daniel Krueger <daniel.krueger@systec-electronic.com>
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+Tested-by: Jerome Blin <jerome.blin@intel.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+---
+ drivers/gpio/gpio-lynxpoint.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied,
+diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
+index 66b1853..803ea3c 100644
+--- a/drivers/gpio/gpio-lynxpoint.c
++++ b/drivers/gpio/gpio-lynxpoint.c
+@@ -188,7 +188,7 @@ static int lp_irq_type(struct irq_data *d, unsigned type)
+ static int lp_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	unsigned long reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
+-	return inl(reg) & IN_LVL_BIT;
++	return !!(inl(reg) & IN_LVL_BIT);
+ }
+ 
+ static void lp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+-- 
+1.8.3.2
 
-Alexander, would you consider doing a patch adding yourself
-as maintainer of this driver in the MAINTAINERS file?
-
-Yours,
-Linus Walleij
