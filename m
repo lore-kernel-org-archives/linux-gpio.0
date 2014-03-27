@@ -1,18 +1,14 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 2/7] gpio: rcar: Add optional functional clock to bindings
-Date: Thu, 27 Mar 2014 21:47:37 +0100
-Message-ID: <1395953262-4290-3-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 1/7] gpio: rcar: Add helper variable dev = &pdev->dev
+Date: Thu, 27 Mar 2014 21:47:36 +0100
+Message-ID: <1395953262-4290-2-git-send-email-geert@linux-m68k.org>
 References: <1395953262-4290-1-git-send-email-geert@linux-m68k.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:38447 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757334AbaC0Urz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Mar 2014 16:47:55 -0400
+Return-path: <linux-sh-owner@vger.kernel.org>
 In-Reply-To: <1395953262-4290-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-sh-owner@vger.kernel.org
 To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
@@ -20,26 +16,106 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 Cc: linux-gpio@vger.kernel.org
-Cc: devicetree@vger.kernel.org
 ---
- .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpio/gpio-rcar.c |   32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index f61cef74a212..9ccbe50dcec2 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -21,6 +21,10 @@ Required Properties:
-     GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags are supported.
-   - gpio-ranges: Range of pins managed by the GPIO controller.
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index ca76ce751540..03c91482432c 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -356,12 +356,13 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	struct resource *io, *irq;
+ 	struct gpio_chip *gpio_chip;
+ 	struct irq_chip *irq_chip;
+-	const char *name = dev_name(&pdev->dev);
++	struct device *dev = &pdev->dev;
++	const char *name = dev_name(dev);
+ 	int ret;
  
-+Optional properties:
-+
-+  - clocks: Must contain a reference to the functional clock.
-+
- Please refer to gpio.txt in this directory for details of gpio-ranges property
- and the common GPIO bindings used by client devices.
+-	p = devm_kzalloc(&pdev->dev, sizeof(*p), GFP_KERNEL);
++	p = devm_kzalloc(dev, sizeof(*p), GFP_KERNEL);
+ 	if (!p) {
+-		dev_err(&pdev->dev, "failed to allocate driver data\n");
++		dev_err(dev, "failed to allocate driver data\n");
+ 		ret = -ENOMEM;
+ 		goto err0;
+ 	}
+@@ -380,15 +381,14 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
  
+ 	if (!io || !irq) {
+-		dev_err(&pdev->dev, "missing IRQ or IOMEM\n");
++		dev_err(dev, "missing IRQ or IOMEM\n");
+ 		ret = -EINVAL;
+ 		goto err0;
+ 	}
+ 
+-	p->base = devm_ioremap_nocache(&pdev->dev, io->start,
+-				       resource_size(io));
++	p->base = devm_ioremap_nocache(dev, io->start, resource_size(io));
+ 	if (!p->base) {
+-		dev_err(&pdev->dev, "failed to remap I/O memory\n");
++		dev_err(dev, "failed to remap I/O memory\n");
+ 		ret = -ENXIO;
+ 		goto err0;
+ 	}
+@@ -402,7 +402,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	gpio_chip->set = gpio_rcar_set;
+ 	gpio_chip->to_irq = gpio_rcar_to_irq;
+ 	gpio_chip->label = name;
+-	gpio_chip->dev = &pdev->dev;
++	gpio_chip->dev = dev;
+ 	gpio_chip->owner = THIS_MODULE;
+ 	gpio_chip->base = p->config.gpio_base;
+ 	gpio_chip->ngpio = p->config.number_of_pins;
+@@ -421,30 +421,30 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 					      &gpio_rcar_irq_domain_ops, p);
+ 	if (!p->irq_domain) {
+ 		ret = -ENXIO;
+-		dev_err(&pdev->dev, "cannot initialize irq domain\n");
++		dev_err(dev, "cannot initialize irq domain\n");
+ 		goto err0;
+ 	}
+ 
+-	if (devm_request_irq(&pdev->dev, irq->start,
+-			     gpio_rcar_irq_handler, IRQF_SHARED, name, p)) {
+-		dev_err(&pdev->dev, "failed to request IRQ\n");
++	if (devm_request_irq(dev, irq->start, gpio_rcar_irq_handler,
++			     IRQF_SHARED, name, p)) {
++		dev_err(dev, "failed to request IRQ\n");
+ 		ret = -ENOENT;
+ 		goto err1;
+ 	}
+ 
+ 	ret = gpiochip_add(gpio_chip);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to add GPIO controller\n");
++		dev_err(dev, "failed to add GPIO controller\n");
+ 		goto err1;
+ 	}
+ 
+-	dev_info(&pdev->dev, "driving %d GPIOs\n", p->config.number_of_pins);
++	dev_info(dev, "driving %d GPIOs\n", p->config.number_of_pins);
+ 
+ 	/* warn in case of mismatch if irq base is specified */
+ 	if (p->config.irq_base) {
+ 		ret = irq_find_mapping(p->irq_domain, 0);
+ 		if (p->config.irq_base != ret)
+-			dev_warn(&pdev->dev, "irq base mismatch (%u/%u)\n",
++			dev_warn(dev, "irq base mismatch (%u/%u)\n",
+ 				 p->config.irq_base, ret);
+ 	}
+ 
+@@ -452,7 +452,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 		ret = gpiochip_add_pin_range(gpio_chip, p->config.pctl_name, 0,
+ 					     gpio_chip->base, gpio_chip->ngpio);
+ 		if (ret < 0)
+-			dev_warn(&pdev->dev, "failed to add pin range\n");
++			dev_warn(dev, "failed to add pin range\n");
+ 	}
+ 
+ 	return 0;
 -- 
 1.7.9.5
 
