@@ -1,55 +1,85 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/7] gpio: rcar: Add optional functional clock to bindings
-Date: Fri, 28 Mar 2014 17:53:47 +0100
-Message-ID: <1522709.FsOoKumPXz@avalon>
-References: <1395953262-4290-1-git-send-email-geert@linux-m68k.org> <1395953262-4290-3-git-send-email-geert@linux-m68k.org>
+Subject: Re: [PATCH 3/7] gpio: rcar: Add minimal runtime PM support
+Date: Fri, 28 Mar 2014 17:54:37 +0100
+Message-ID: <17238523.dCO4noXFe4@avalon>
+References: <1395953262-4290-1-git-send-email-geert@linux-m68k.org> <1395953262-4290-4-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1395953262-4290-3-git-send-email-geert@linux-m68k.org>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:36437 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751699AbaC1Qwi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Mar 2014 12:52:38 -0400
+In-Reply-To: <1395953262-4290-4-git-send-email-geert@linux-m68k.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
 Hi Geert,
 
 Thank you for the patch.
 
-On Thursday 27 March 2014 21:47:37 Geert Uytterhoeven wrote:
+On Thursday 27 March 2014 21:47:38 Geert Uytterhoeven wrote:
 > From: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> This is just enough to automatically enable the functional clock, if
+> present. Clock management during suspend/resume is still to be added.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Cc: Linus Walleij <linus.walleij@linaro.org>
 > Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 > Cc: linux-gpio@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
 > ---
->  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |    4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/gpio/gpio-rcar.c |    8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt index
-> f61cef74a212..9ccbe50dcec2 100644
-> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> @@ -21,6 +21,10 @@ Required Properties:
->      GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags are supported.
->    - gpio-ranges: Range of pins managed by the GPIO controller.
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index 03c91482432c..c6995f6c3c40 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_data/gpio-rcar.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/slab.h>
 > 
-> +Optional properties:
+> @@ -377,6 +378,9 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+> 
+>  	platform_set_drvdata(pdev, p);
+> 
+> +	pm_runtime_enable(dev);
+> +	pm_runtime_get_sync(dev);
 > +
-> +  - clocks: Must contain a reference to the functional clock.
-> +
+>  	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> 
+> @@ -460,6 +464,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+> err1:
+>  	irq_domain_remove(p->irq_domain);
+>  err0:
+> +	pm_runtime_put_sync(dev);
 
-I would make the property mandatory. Obviously the driver needs to consider it 
-as optional in order not to break the DT ABI, but the specification should 
-make it mandatory in order to ensure that all future implementations will 
-specify the clock.
+Do we really need the sync version, isn't pm_runtime_put() enough ?
 
->  Please refer to gpio.txt in this directory for details of gpio-ranges
-> property and the common GPIO bindings used by client devices.
+> +	pm_runtime_disable(dev);
+>  	return ret;
+>  }
+> 
+> @@ -473,6 +479,8 @@ static int gpio_rcar_remove(struct platform_device
+> *pdev) return ret;
+> 
+>  	irq_domain_remove(p->irq_domain);
+> +	pm_runtime_put_sync(&pdev->dev);
+
+Same comment here.
+
+> +	pm_runtime_disable(&pdev->dev);
+>  	return 0;
+>  }
 
 -- 
 Regards,
