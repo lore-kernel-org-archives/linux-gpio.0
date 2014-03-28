@@ -1,38 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: re: gpio / ACPI: Add support for ACPI GPIO operation regions
-Date: Fri, 28 Mar 2014 11:37:32 +0300
-Message-ID: <20140328083732.GP25192@mwanda>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 2/7] gpio: rcar: Add optional functional clock to bindings
+Date: Fri, 28 Mar 2014 17:53:47 +0100
+Message-ID: <1522709.FsOoKumPXz@avalon>
+References: <1395953262-4290-1-git-send-email-geert@linux-m68k.org> <1395953262-4290-3-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:36131 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752595AbaC1Ihw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Mar 2014 04:37:52 -0400
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1395953262-4290-3-git-send-email-geert@linux-m68k.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: mika.westerberg@linux.intel.com
-Cc: linux-gpio@vger.kernel.org
 
-Hello Mika Westerberg,
+Hi Geert,
 
-The patch 473ed7be0da0: "gpio / ACPI: Add support for ACPI GPIO
-operation regions" from Mar 14, 2014, leads to the following static
-checker warning:
+Thank you for the patch.
 
-	drivers/gpio/gpiolib-acpi.c:454 acpi_gpio_adr_space_handler()
-	warn: should 'gpiod_get_raw_value(desc) << i' be a 64 bit type?
+On Thursday 27 March 2014 21:47:37 Geert Uytterhoeven wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> ---
+>  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |    4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt index
+> f61cef74a212..9ccbe50dcec2 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> @@ -21,6 +21,10 @@ Required Properties:
+>      GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags are supported.
+>    - gpio-ranges: Range of pins managed by the GPIO controller.
+> 
+> +Optional properties:
+> +
+> +  - clocks: Must contain a reference to the functional clock.
+> +
 
-drivers/gpio/gpiolib-acpi.c
-   451                  if (function == ACPI_WRITE)
-   452                          gpiod_set_raw_value(desc, !!((1 << i) & *value));
-   453                  else
-   454                          *value |= gpiod_get_raw_value(desc) << i;
-   455          }
+I would make the property mandatory. Obviously the driver needs to consider it 
+as optional in order not to break the DT ABI, but the specification should 
+make it mandatory in order to ensure that all future implementations will 
+specify the clock.
 
-"value" is u64 pointer but gpiod_get_raw_value() is an int so this could
-lead to wrapping bugs.
+>  Please refer to gpio.txt in this directory for details of gpio-ranges
+> property and the common GPIO bindings used by client devices.
 
-regards,
-dan carpenter
+-- 
+Regards,
+
+Laurent Pinchart
+
