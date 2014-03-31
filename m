@@ -1,29 +1,29 @@
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Alexandre Courbot <gnurou@gmail.com>
 Subject: Re: [PATCH] gpio / ACPI: Don't crash on NULL chip->dev
-Date: Mon, 31 Mar 2014 18:25:47 +0200
-Message-ID: <20140331162547.GA25802@kria>
+Date: Tue, 1 Apr 2014 04:33:06 +0900
+Message-ID: <CAAVeFuKpFjWCNcZq4RUQmUbBACGgUj=G5BrpdRq2UQ2i-s-aHw@mail.gmail.com>
 References: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp4-g21.free.fr ([212.27.42.4]:59282 "EHLO smtp4-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752640AbaCaQ0C (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 31 Mar 2014 12:26:02 -0400
-Content-Disposition: inline
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:55968 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750925AbaCaTd1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Mar 2014 15:33:27 -0400
 In-Reply-To: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Sabrina Dubroca <sd@queasysnail.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-2014-03-31, 15:16:49 +0300, Mika Westerberg wrote:
+On Mon, Mar 31, 2014 at 9:16 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 > Commit aa92b6f689ac (gpio / ACPI: Allocate ACPI specific data directly in
 > acpi_gpiochip_add()) moved ACPI handle checking to acpi_gpiochip_add() but
 > forgot to check whether chip->dev is NULL before dereferencing it.
-> 
+>
 > Since chip->dev pointer is optional we can end up with crash like following:
-> 
+>
 >  BUG: unable to handle kernel NULL pointer dereference at 00000138
 >  IP: [<c126c2b3>] acpi_gpiochip_add+0x13/0x190
 >  *pde = 00000000
@@ -64,26 +64,8 @@ Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 >   [<c131d007>] bus_add_driver+0x157/0x230
 >   [<c131e219>] driver_register+0x59/0xe0
 >   ...
-> 
+>
 > Fix this by checking chip->dev pointer against NULL first. Also we can now
 > remove redundant check in acpi_gpiochip_request/free_interrupts().
-> 
-> Reported-by: Sabrina Dubroca <sd@queasysnail.net>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
-> Sabrina,
-> 
-> Can you please re-test this and provide your tested-by? I changed the patch
-> a bit to remove redundant checks. Just to be sure that I don't accidentally
-> break something.
-> 
-> Thanks.
 
-Everything looks good.
-
-Tested-by: Sabrina Dubroca <sd@queasysnail.net>
-
-
-Thanks,
--- 
-Sabrina
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
