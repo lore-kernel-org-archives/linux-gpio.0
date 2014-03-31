@@ -1,44 +1,89 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCH 1/3] gpio: dwapb: drop irq_setup_generic_chip()
-Date: Mon, 31 Mar 2014 17:22:00 +0100
-Message-ID: <20140331162200.GB2579@page.Home>
-References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
- <1395345324-18299-2-git-send-email-bigeasy@linutronix.de>
- <CACRpkdY3ctcLNhpSWtuqj=d48_fqDyNzG9nGAorpAbwjAnOJUw@mail.gmail.com>
- <CACRpkdbu6LKLntP2J=ypLTrAYscvzf5WjPYb-E+RKH_vAPEYHg@mail.gmail.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
+Subject: Re: [PATCH] gpio / ACPI: Don't crash on NULL chip->dev
+Date: Mon, 31 Mar 2014 18:25:47 +0200
+Message-ID: <20140331162547.GA25802@kria>
+References: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp4-g21.free.fr ([212.27.42.4]:59282 "EHLO smtp4-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752640AbaCaQ0C (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 31 Mar 2014 12:26:02 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbu6LKLntP2J=ypLTrAYscvzf5WjPYb-E+RKH_vAPEYHg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jamie Iles <jamie@jamieiles.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+In-Reply-To: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 25, 2014 at 09:37:50PM +0100, Linus Walleij wrote:
-> Aha Jamie not even on the original thread. Here.
+2014-03-31, 15:16:49 +0300, Mika Westerberg wrote:
+> Commit aa92b6f689ac (gpio / ACPI: Allocate ACPI specific data directly in
+> acpi_gpiochip_add()) moved ACPI handle checking to acpi_gpiochip_add() but
+> forgot to check whether chip->dev is NULL before dereferencing it.
 > 
-> On Tue, Mar 25, 2014 at 9:37 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Thu, Mar 20, 2014 at 8:55 PM, Sebastian Andrzej Siewior
-> > <bigeasy@linutronix.de> wrote:
-> >
-> >> This looks kinda wrong I didn't manage to fully test it.
-> >> The driver calls irq_alloc_domain_generic_chips() which creates a gc and
-> >> adds it to gc_list. The driver later then calls irq_setup_generic_chip()
-> >> which also initializes the gc and adds it to the gc_list() and this
-> >> corrupts the list.
-> >> I can't find a single chip in tree which uses both functions so I think
-> >> that irq_setup_generic_chip() can be dropped.
-> >>
-> >> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> >
-> > Jamie: comments?
+> Since chip->dev pointer is optional we can end up with crash like following:
+> 
+>  BUG: unable to handle kernel NULL pointer dereference at 00000138
+>  IP: [<c126c2b3>] acpi_gpiochip_add+0x13/0x190
+>  *pde = 00000000
+>  Oops: 0000 [#1] PREEMPT SMP
+>  Modules linked in: ssb(+) ...
+>  CPU: 0 PID: 512 Comm: modprobe Tainted: G        W     3.14.0-rc7-next-20140324-t1 #24
+>  Hardware name: Dell Inc. Latitude D830                   /0UY141, BIOS A02 06/07/2007
+>  task: f5799900 ti: f543e000 task.ti: f543e000
+>  EIP: 0060:[<c126c2b3>] EFLAGS: 00010282 CPU: 0
+>  EIP is at acpi_gpiochip_add+0x13/0x190
+>  EAX: 00000000 EBX: f57824c4 ECX: 00000000 EDX: 00000000
+>  ESI: f57824c4 EDI: 00000010 EBP: f543fc54 ESP: f543fc40
+>   DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
+>  CR0: 8005003b CR2: 00000138 CR3: 355f8000 CR4: 000007d0
+>  Stack:
+>   f543fc5c fd1f7790 f57824c4 000000be 00000010 f543fc84 c1269f4e f543fc74
+>   fd1f78bd 00008002 f57822b0 f5782090 fd1f8400 00000286 fd1f9994 00000000
+>   f5782000 f543fc8c fd1f7e39 f543fcc8 fd1f0bd8 000000c0 00000000 00000000
+>  Call Trace:
+>   [<fd1f7790>] ? ssb_pcie_mdio_write+0xa0/0xd0 [ssb]
+>   [<c1269f4e>] gpiochip_add+0xee/0x300
+>   [<fd1f78bd>] ? ssb_pcicore_serdes_workaround+0xfd/0x140 [ssb]
+>   [<fd1f7e39>] ssb_gpio_init+0x89/0xa0 [ssb]
+>   [<fd1f0bd8>] ssb_attach_queued_buses+0xc8/0x2d0 [ssb]
+>   [<fd1f0f65>] ssb_bus_register+0x185/0x1f0 [ssb]
+>   [<fd1f3120>] ? ssb_pci_xtal+0x220/0x220 [ssb]
+>   [<fd1f106c>] ssb_bus_pcibus_register+0x2c/0x80 [ssb]
+>   [<fd1f40dc>] ssb_pcihost_probe+0x9c/0x110 [ssb]
+>   [<c1276c8f>] pci_device_probe+0x6f/0xc0
+>   [<c11bdb55>] ? sysfs_create_link+0x25/0x40
+>   [<c131d8b9>] driver_probe_device+0x79/0x360
+>   [<c1276512>] ? pci_match_device+0xb2/0xc0
+>   [<c131dc51>] __driver_attach+0x71/0x80
+>   [<c131dbe0>] ? __device_attach+0x40/0x40
+>   [<c131bd87>] bus_for_each_dev+0x47/0x80
+>   [<c131d3ae>] driver_attach+0x1e/0x20
+>   [<c131dbe0>] ? __device_attach+0x40/0x40
+>   [<c131d007>] bus_add_driver+0x157/0x230
+>   [<c131e219>] driver_register+0x59/0xe0
+>   ...
+> 
+> Fix this by checking chip->dev pointer against NULL first. Also we can now
+> remove redundant check in acpi_gpiochip_request/free_interrupts().
+> 
+> Reported-by: Sabrina Dubroca <sd@queasysnail.net>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> Sabrina,
+> 
+> Can you please re-test this and provide your tested-by? I changed the patch
+> a bit to remove redundant checks. Just to be sure that I don't accidentally
+> break something.
+> 
+> Thanks.
 
-I don't have anything to add to either yours or Alan's comments.  I'll 
-be more than happy to review the versions with the generic helpers if 
-I'm copied onto the review.
+Everything looks good.
+
+Tested-by: Sabrina Dubroca <sd@queasysnail.net>
+
 
 Thanks,
-
-Jamie
+-- 
+Sabrina
