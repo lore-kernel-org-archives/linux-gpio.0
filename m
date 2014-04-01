@@ -1,71 +1,52 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio / ACPI: Don't crash on NULL chip->dev
-Date: Tue, 1 Apr 2014 04:33:06 +0900
-Message-ID: <CAAVeFuKpFjWCNcZq4RUQmUbBACGgUj=G5BrpdRq2UQ2i-s-aHw@mail.gmail.com>
-References: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] gpio / ACPI: Prevent potential wrap of GPIO value on OpRegion read
+Date: Tue,  1 Apr 2014 13:03:00 +0300
+Message-ID: <1396346580-4857-1-git-send-email-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f177.google.com ([209.85.213.177]:55968 "EHLO
-	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750925AbaCaTd1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Mar 2014 15:33:27 -0400
-In-Reply-To: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mga09.intel.com ([134.134.136.24]:52784 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751089AbaDAKDP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 1 Apr 2014 06:03:15 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Sabrina Dubroca <sd@queasysnail.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Mon, Mar 31, 2014 at 9:16 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> Commit aa92b6f689ac (gpio / ACPI: Allocate ACPI specific data directly in
-> acpi_gpiochip_add()) moved ACPI handle checking to acpi_gpiochip_add() but
-> forgot to check whether chip->dev is NULL before dereferencing it.
->
-> Since chip->dev pointer is optional we can end up with crash like following:
->
->  BUG: unable to handle kernel NULL pointer dereference at 00000138
->  IP: [<c126c2b3>] acpi_gpiochip_add+0x13/0x190
->  *pde = 00000000
->  Oops: 0000 [#1] PREEMPT SMP
->  Modules linked in: ssb(+) ...
->  CPU: 0 PID: 512 Comm: modprobe Tainted: G        W     3.14.0-rc7-next-20140324-t1 #24
->  Hardware name: Dell Inc. Latitude D830                   /0UY141, BIOS A02 06/07/2007
->  task: f5799900 ti: f543e000 task.ti: f543e000
->  EIP: 0060:[<c126c2b3>] EFLAGS: 00010282 CPU: 0
->  EIP is at acpi_gpiochip_add+0x13/0x190
->  EAX: 00000000 EBX: f57824c4 ECX: 00000000 EDX: 00000000
->  ESI: f57824c4 EDI: 00000010 EBP: f543fc54 ESP: f543fc40
->   DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
->  CR0: 8005003b CR2: 00000138 CR3: 355f8000 CR4: 000007d0
->  Stack:
->   f543fc5c fd1f7790 f57824c4 000000be 00000010 f543fc84 c1269f4e f543fc74
->   fd1f78bd 00008002 f57822b0 f5782090 fd1f8400 00000286 fd1f9994 00000000
->   f5782000 f543fc8c fd1f7e39 f543fcc8 fd1f0bd8 000000c0 00000000 00000000
->  Call Trace:
->   [<fd1f7790>] ? ssb_pcie_mdio_write+0xa0/0xd0 [ssb]
->   [<c1269f4e>] gpiochip_add+0xee/0x300
->   [<fd1f78bd>] ? ssb_pcicore_serdes_workaround+0xfd/0x140 [ssb]
->   [<fd1f7e39>] ssb_gpio_init+0x89/0xa0 [ssb]
->   [<fd1f0bd8>] ssb_attach_queued_buses+0xc8/0x2d0 [ssb]
->   [<fd1f0f65>] ssb_bus_register+0x185/0x1f0 [ssb]
->   [<fd1f3120>] ? ssb_pci_xtal+0x220/0x220 [ssb]
->   [<fd1f106c>] ssb_bus_pcibus_register+0x2c/0x80 [ssb]
->   [<fd1f40dc>] ssb_pcihost_probe+0x9c/0x110 [ssb]
->   [<c1276c8f>] pci_device_probe+0x6f/0xc0
->   [<c11bdb55>] ? sysfs_create_link+0x25/0x40
->   [<c131d8b9>] driver_probe_device+0x79/0x360
->   [<c1276512>] ? pci_match_device+0xb2/0xc0
->   [<c131dc51>] __driver_attach+0x71/0x80
->   [<c131dbe0>] ? __device_attach+0x40/0x40
->   [<c131bd87>] bus_for_each_dev+0x47/0x80
->   [<c131d3ae>] driver_attach+0x1e/0x20
->   [<c131dbe0>] ? __device_attach+0x40/0x40
->   [<c131d007>] bus_add_driver+0x157/0x230
->   [<c131e219>] driver_register+0x59/0xe0
->   ...
->
-> Fix this by checking chip->dev pointer against NULL first. Also we can now
-> remove redundant check in acpi_gpiochip_request/free_interrupts().
+Dan Carpenter's static code checker reports:
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+ The patch 473ed7be0da0: "gpio / ACPI: Add support for ACPI GPIO
+ operation regions" from Mar 14, 2014, leads to the following static
+ checker warning:
+
+  drivers/gpio/gpiolib-acpi.c:454 acpi_gpio_adr_space_handler()
+  warn: should 'gpiod_get_raw_value(desc) << i' be a 64 bit type?
+
+This is due the fact that *value is of type u64 and gpiod_get_raw_value()
+returns int. Since i can be larger than 31, it is possible that the value
+returned gets wrapped.
+
+Fix this by casting the return of gpiod_get_raw_value() to u64 first before
+shift.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index d5be56fe689e..401add28933f 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -451,7 +451,7 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 		if (function == ACPI_WRITE)
+ 			gpiod_set_raw_value(desc, !!((1 << i) & *value));
+ 		else
+-			*value |= gpiod_get_raw_value(desc) << i;
++			*value |= (u64)gpiod_get_raw_value(desc) << i;
+ 	}
+ 
+ out:
+-- 
+1.9.1
+
