@@ -1,113 +1,64 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: [PATCH 1/2] GPIO: Add driver for Zynq GPIO controller
-Date: Wed, 02 Apr 2014 07:56:11 +0200
-Message-ID: <533BA67B.6070905@monstr.eu>
-References: <1395933906-2268-1-git-send-email-harinik@xilinx.com> <CACRpkdbU35xG1QtagB+9e9vxvehf1UQFaF4PikJhsPNAMw=D1Q@mail.gmail.com> <CAFcVECJsEp_s2V5=oK_UJahGRUpWYWMCxTMxqdpX+O0qebP41A@mail.gmail.com> <CACRpkdZEFsJubRVwCp6nTie7s7+DZOym6SWsA2ZynN_devi-2Q@mail.gmail.com>
-Reply-To: monstr@monstr.eu
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Subject: Re: tca-6416: interrupt device tree configuration
+Date: Wed, 2 Apr 2014 12:06:03 +0200
+Message-ID: <CAGm1_kvwU2S0qqo4idDZpKMKmPEn67jaYYgrBHTjnjmBDNvG7g@mail.gmail.com>
+References: <CAGm1_ksGDCfgTNpue_zEUTho88G3juSJ6qLttHb7ACFawdgKzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="r2KnN0hcoO0hcQAeq1QDjdmSoPJFmgSJH"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZEFsJubRVwCp6nTie7s7+DZOym6SWsA2ZynN_devi-2Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Harini Katakam <harinikatakamlinux@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, michals@xilinx.com, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:42478 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758104AbaDBKGZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Apr 2014 06:06:25 -0400
+Received: by mail-pa0-f44.google.com with SMTP id bj1so11274335pad.31
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Apr 2014 03:06:24 -0700 (PDT)
+In-Reply-To: <CAGm1_ksGDCfgTNpue_zEUTho88G3juSJ6qLttHb7ACFawdgKzw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---r2KnN0hcoO0hcQAeq1QDjdmSoPJFmgSJH
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Tue, Mar 18, 2014 at 4:02 PM, Yegor Yefremov
+<yegorslists@googlemail.com> wrote:
+> I've an am335x-based board with tca6416. The interrupt output of the
+> tca is connected to GPIO0_20 on my SoC. How should I configure this
+> wiring in device tree file?
+>
+> I've already managed to hook it on I2C and it is working so far:
+>
+>  tca6416: gpio@20 {
+>                 compatible = "ti,tca6416";
+>                 reg = <0x20>;
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>   };
+>
+> Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt describes
+> following properties:
+>
+>   - interrupt-controller: Identifies the node as an interrupt controller.
+>   - #interrupt-cells: Number of cells to encode an interrupt source, shall be 2.
+>   - interrupt-parent: phandle of the parent interrupt controller.
+>   - interrupts: Interrupt specifier for the controllers interrupt.
+>
+> and following example:
+>
+>         pcf8575: gpio@20 {
+>                 compatible = "nxp,pcf8575";
+>                 reg = <0x20>;
+>                 interrupt-parent = <&irqpin2>;
+>                 interrupts = <3 0>;
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>                 interrupt-controller;
+>                 #interrupt-cells = <2>;
+>         };
+>
+> Where does irqpin2 come from? How to specify GPIO0_20 in "interrupts" context?
 
-Hi Linus,
+Maxime, I've seen your irq domain related patch. Could you please
+provide an example/hint for my question?
 
-On 03/31/2014 10:22 AM, Linus Walleij wrote:
-> On Sat, Mar 29, 2014 at 5:44 AM, Harini Katakam
-> <harinikatakamlinux@gmail.com> wrote:
->> On Sat, Mar 29, 2014 at 3:20 AM, Linus Walleij <linus.walleij@linaro.o=
-rg> wrote:
->>> On Thu, Mar 27, 2014 at 4:25 PM, Harini Katakam <harinik@xilinx.com> =
-wrote:
->=20
->>>> +/* Read/Write access to the GPIO PS registers */
->>>> +static inline u32 zynq_gpio_readreg(void __iomem *offset)
->>>> +{
->>>> +       return readl_relaxed(offset);
->>>> +}
->>>> +
->>>> +static inline void zynq_gpio_writereg(void __iomem *offset, u32 val=
-)
->>>> +{
->>>> +       writel_relaxed(val, offset);
->>>> +}
->>>
->>> I think this is unnecessary and confusing indirection.
->>> Just use the readl_relaxed/writel_relaxed functions directly in
->>> the code.
->>>
->>
->> This is just to be flexible.
->=20
-> Define exactly what you mean with "flexible" in this context. I
-> only see unnecessary overhead and hard-to-read code.
+Thanks.
 
-We have just passed this discussion for watchdog driver
-here: https://lkml.org/lkml/2014/4/1/843
-
-Are you ok with doing it in this way?
-
-static inline u32 zynq_gpio_readreg(struct zynq_gpio *gpio, u32 offset)
-{
-       return readl_relaxed(gpio->base_addr + offset);
-}
-
-static inline void zynq_gpio_writereg(struct zynq_gpio *gpio, u32 offset,=
- u32 val)
-{
-      writel_relaxed(val, gpio->base_addr + offset);
-}
-
-Or even like this to be able to handle error cases.
-
-static inline int zynq_gpio_readreg(struct zynq_gpio *gpio, u32 offset, u=
-32 *val)
-{
-	*val =3D readl_relaxed(gpio->base_addr + offset);
-	return 0;
-}
-
-static inline int zynq_gpio_writereg(struct zynq_gpio *gpio, u32 offset, =
-u32 val)
-{
-	writel_relaxed(val, gpio->base_addr + offset);
-	return 0;
-}
-
-Thanks,
-Michal
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
-
-
-
---r2KnN0hcoO0hcQAeq1QDjdmSoPJFmgSJH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iEYEARECAAYFAlM7pnsACgkQykllyylKDCEp3gCfQ7mVJJXVhKELQsvo1vn7O1Hc
-u0MAoIXoytmGzpDKyLSLfMrxWooULvxR
-=ixQs
------END PGP SIGNATURE-----
-
---r2KnN0hcoO0hcQAeq1QDjdmSoPJFmgSJH--
+Yegor
