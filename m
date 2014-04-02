@@ -1,64 +1,34 @@
-From: Yegor Yefremov <yegorslists@googlemail.com>
-Subject: Re: tca-6416: interrupt device tree configuration
-Date: Wed, 2 Apr 2014 12:06:03 +0200
-Message-ID: <CAGm1_kvwU2S0qqo4idDZpKMKmPEn67jaYYgrBHTjnjmBDNvG7g@mail.gmail.com>
-References: <CAGm1_ksGDCfgTNpue_zEUTho88G3juSJ6qLttHb7ACFawdgKzw@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: ge: Convert to platform driver
+Date: Wed, 2 Apr 2014 18:41:55 +0900
+Message-ID: <CAAVeFu+8sjgtGGUv8O+FLy_3vbtQV+2m5rsJ9FccPoq6AiOFsg@mail.gmail.com>
+References: <1396156455-4225-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:42478 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758104AbaDBKGZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Apr 2014 06:06:25 -0400
-Received: by mail-pa0-f44.google.com with SMTP id bj1so11274335pad.31
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Apr 2014 03:06:24 -0700 (PDT)
-In-Reply-To: <CAGm1_ksGDCfgTNpue_zEUTho88G3juSJ6qLttHb7ACFawdgKzw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <1396156455-4225-1-git-send-email-shc_work@mail.ru>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Tue, Mar 18, 2014 at 4:02 PM, Yegor Yefremov
-<yegorslists@googlemail.com> wrote:
-> I've an am335x-based board with tca6416. The interrupt output of the
-> tca is connected to GPIO0_20 on my SoC. How should I configure this
-> wiring in device tree file?
->
-> I've already managed to hook it on I2C and it is working so far:
->
->  tca6416: gpio@20 {
->                 compatible = "ti,tca6416";
->                 reg = <0x20>;
->                 gpio-controller;
->                 #gpio-cells = <2>;
->   };
->
-> Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt describes
-> following properties:
->
->   - interrupt-controller: Identifies the node as an interrupt controller.
->   - #interrupt-cells: Number of cells to encode an interrupt source, shall be 2.
->   - interrupt-parent: phandle of the parent interrupt controller.
->   - interrupts: Interrupt specifier for the controllers interrupt.
->
-> and following example:
->
->         pcf8575: gpio@20 {
->                 compatible = "nxp,pcf8575";
->                 reg = <0x20>;
->                 interrupt-parent = <&irqpin2>;
->                 interrupts = <3 0>;
->                 gpio-controller;
->                 #gpio-cells = <2>;
->                 interrupt-controller;
->                 #interrupt-cells = <2>;
->         };
->
-> Where does irqpin2 come from? How to specify GPIO0_20 in "interrupts" context?
-
-Maxime, I've seen your irq domain related patch. Could you please
-provide an example/hint for my question?
-
-Thanks.
-
-Yegor
+T24gU3VuLCBNYXIgMzAsIDIwMTQgYXQgMjoxNCBQTSwgQWxleGFuZGVyIFNoaXlhbiA8c2hjX3dv
+cmtAbWFpbC5ydT4gd3JvdGU6Cj4gVGhpcyBwYXRjaCBjb252ZXJ0cyBHRSBJL08gRlBHQSBHUElP
+IGRyaXZlciB0byBwbGF0Zm9ybSBkcml2ZXIuCj4KPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kZXIg
+U2hpeWFuIDxzaGNfd29ya0BtYWlsLnJ1Pgo+IC0tLQo+IE9ubHkgY29tcGlsZSB0ZXN0ZWQuCgpD
+b3VsZCB3ZSBnZXQgYSBjb3VwbGUgb2YgVGVzdGVkLWJ5IGJ5IHBlb3BsZSB3aG8gY2FuIHRyeSB0
+aGlzIHBhdGNoPwpJdCBncmVhdGx5IHNpbXBsaWZpZXMgdGhlIGRyaXZlciwgYnV0IHdlIG5lZWQg
+dG8gbWFrZSBzdXJlIGl0IGRvZXNuJ3QKYnJlYWsgYW55dGhpbmcgYmVmb3JlIGdvaW5nIGZ1cnRo
+ZXIuLi4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
+dXhwcGMtZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpodHRw
+czovL2xpc3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
