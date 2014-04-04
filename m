@@ -1,44 +1,46 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH] gpio: timberdale: simplify dependencies
-Date: Thu, 3 Apr 2014 11:33:31 +0200
-Message-ID: <20140403113331.60ec9d4b@endymion.delvare>
+From: Jonas Jensen <jonas.jensen@gmail.com>
+Subject: Re: [PATCH v3 2/2] gpio: moxart: Actually set output state in moxart_gpio_direction_output()
+Date: Fri, 4 Apr 2014 11:32:44 +0200
+Message-ID: <CACmBeS1y7y9C7BGG8vrkB7FdXRiBuA2Ar6KNZFM2RC0enMxZ0w@mail.gmail.com>
+References: <1395715413.12999.0.camel@phoenix>
+	<1395715459.12999.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:59468 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751834AbaDCJdd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 3 Apr 2014 05:33:33 -0400
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:61111 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751724AbaDDJco (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Apr 2014 05:32:44 -0400
+Received: by mail-ie0-f177.google.com with SMTP id rl12so3121321iec.36
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Apr 2014 02:32:44 -0700 (PDT)
+In-Reply-To: <1395715459.12999.1.camel@phoenix>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-GPIO_TIMBERDALE doesn't need an explicit dependency on HAS_IOMEM,
-because it depends on MFD_TIMBERDALE which itself depends on
-HAS_IOMEM already.
+Thanks !
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
----
- drivers/gpio/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Verified by buzzing the buzzer and writing RTC (next-20140403):
 
---- linux-3.14.orig/drivers/gpio/Kconfig	2014-04-03 09:20:58.831297480 +0200
-+++ linux-3.14/drivers/gpio/Kconfig	2014-04-03 09:36:37.245359318 +0200
-@@ -710,7 +710,7 @@ config GPIO_SODAVILLE
- 
- config GPIO_TIMBERDALE
- 	bool "Support for timberdale GPIO IP"
--	depends on MFD_TIMBERDALE && HAS_IOMEM
-+	depends on MFD_TIMBERDALE
- 	---help---
- 	Add support for the GPIO IP in the timberdale FPGA.
- 
+echo 24 > /sys/class/gpio/export
+echo out > /sys/class/gpio/gpio24/direction
+echo 1 > /sys/class/gpio/gpio24/value
+echo 0 > /sys/class/gpio/gpio24/value
+
+date +%Y%m%d%h%m -s "201001202323"
+hwclock -w
+reboot
+..
+[    2.420000] moxart-rtc rtc.0: setting system clock to 2010-01-20
+22:23:31 UTC (1264026211)
+..
+date +%Y%m%d%h%m -s "201212181553"
+hwclock -w
+reboot
+..
+[    2.410000] moxart-rtc rtc.0: setting system clock to 2012-12-18
+14:53:29 UTC (1355842409)
 
 
--- 
-Jean Delvare
-SUSE L3 Support
+Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
