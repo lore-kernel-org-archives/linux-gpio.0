@@ -1,42 +1,62 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Adding interrupt support to gpio-ich driver (possibly via SCI)
-Date: Fri, 04 Apr 2014 09:25:50 -0700
-Message-ID: <533EDD0E.8010304@roeck-us.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 0/5] GPIO OMAP driver changes for v3.16
+Date: Sun,  6 Apr 2014 16:58:12 +0200
+Message-ID: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:57293 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752946AbaDDQZx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Apr 2014 12:25:53 -0400
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:40461 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753352AbaDFO6w (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Apr 2014 10:58:52 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peter Tyser <ptyser@xes-inc.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hi all,
+Hi Linus,
 
-I have an application where I would need interrupt support for the gpio-ich driver.
-More specifically, in my application some of the GPIO pins are used to report
-interrupt status from a couple of connected chips. This is with a Panther Point
-PCH (QM77).
+Now that you have sent your changes for v3.15 to Torvalds, here are some
+changes for the OMAP GPIO driver targeted to v3.16. Mostly improvements
+so nothing here is -rc material.
 
-I see that the gpio pins in question (in the 0..15 range) do support interrupts,
-but it looks like the only configuration options are to generate SMI, SCI, or NMI.
+The biggest change is Patch 4 that converts the driver to use the newly
+introduced generic irqchip helpers in the gpiolib core which allows to
+remove some driver specific logic that should really be generic.
 
-Is there a clean way to use any of those to implement interrupt support
-for this driver ? I thought about hijacking the SCI interrupt by registering
-an interrupt handler with acpi_install_sci_handler(), but that would restrict
-the driver to kernel only (or the acpi function would have to be exported),
-and I have no idea if it would work or, more importantly, if it would be
-the best approach to solve the problem, or if the result would be acceptable.
-I can figure out the "working" part, but that would not help much if I would
-have to carry the patch locally because it is not acceptable for upstream
-integration.
+Aaro and Paul,
 
-Side note: gpio-ich is not currently enabled for Panther Point; that will be
-a one-line separate patch for the mfd/lpc_ich driver.
+I've just build tested using omap1_defconfig since I don't have any OMAP1
+board to test. It would be nice if you could test using any of your boards
+to see if this patch-set does not introduce a regression. Specially on those
+using MPUIO interrupt generation since I'm not familiar with it and I could
+get something wrong while studying the code.
 
-Thanks,
-Guenter
+I prefer this set to not be merged until we have some testing on OMAP1 SoCs.
+
+Santosh and Kevin,
+
+If you agree I would like to be added to the list of maintainers for this
+driver since that is what I've been doing lately anyways and that way tools
+like get_maintainer.pl will hint people posting patches that I'm interested
+in being cc'ed for this driver.
+
+The patch-set is composed of the following patches: 
+
+Javier Martinez Canillas (5):
+  gpio: omap: convert to use irq_domain_add_simple()
+  gpio: omap: check gpiochip_add() return value
+  gpio: omap: add a GPIO_OMAP option instead of using ARCH_OMAP
+  gpio: omap: convert driver to use gpiolib irqchip
+  MAINTAINERS: update GPIO OMAP driver entry
+
+ MAINTAINERS              |   1 +
+ drivers/gpio/Kconfig     |   8 +++
+ drivers/gpio/Makefile    |   2 +-
+ drivers/gpio/gpio-omap.c | 128 +++++++++++++++++++++++------------------------
+ 4 files changed, 73 insertions(+), 66 deletions(-)
+
+Thanks a lot and best regards,
+Javier
+
+-- 
+1.9.0
+
