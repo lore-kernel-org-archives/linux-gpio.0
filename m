@@ -1,53 +1,81 @@
-From: Josh Cartwright <joshc@codeaurora.org>
-Subject: Re: [PATCH V7 1/1] drivers/gpio: Altera soft IP GPIO driver and
- devicetree binding
-Date: Mon, 7 Apr 2014 12:11:15 -0500
-Message-ID: <20140407171115.GA3956@joshc.qualcomm.com>
-References: <1393842463-5206-1-git-send-email-thloh@altera.com>
- <20140307151455.GI18529@joshc.qualcomm.com>
- <CAOLUe6aspffO1PUjKWW7ejpbxnYtb+RKRQrK=y30kuF7KXUUhA@mail.gmail.com>
- <CAOLUe6aPWmkJJSiBLL8tmw2MNfpaeLpSp3CSwP1u7q+qXxCh9Q@mail.gmail.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 5/5] gpio: dwapb: use d->mask instead od BIT(bit)
+Date: Mon, 07 Apr 2014 20:26:30 +0200
+Message-ID: <5342EDD6.3050706@linutronix.de>
+References: <1396865589-9972-1-git-send-email-bigeasy@linutronix.de> <1396865589-9972-6-git-send-email-bigeasy@linutronix.de> <20140407122620.GX11339@book.gsilab.sittig.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:51708 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753777AbaDGROM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 13:14:12 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOLUe6aPWmkJJSiBLL8tmw2MNfpaeLpSp3CSwP1u7q+qXxCh9Q@mail.gmail.com>
+Received: from www.linutronix.de ([62.245.132.108]:53141 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753281AbaDGS0e (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 14:26:34 -0400
+In-Reply-To: <20140407122620.GX11339@book.gsilab.sittig.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tien Hock Loh <thloh@altera.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, dinguyen@altera.com, "lftan@altera.com" <lftan@altera.com>
+To: Gerhard Sittig <gsi@denx.de>
+Cc: jamie@jamieiles.com, atull@altera.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dinguyen@altera.com, linus.walleij@linaro.org, sebastian.hesselbarth@gmail.com
 
-On Mon, Apr 07, 2014 at 04:00:43PM +0800, Tien Hock Loh wrote:
-> On Wed, Mar 19, 2014 at 6:09 PM, Tien Hock Loh <thloh@altera.com> wrote:
-> > On Fri, Mar 7, 2014 at 11:14 PM, Josh Cartwright <joshc@codeaurora.org> wrote:
-> >> On Mon, Mar 03, 2014 at 06:27:43PM +0800, thloh@altera.com wrote:
-> >>> From: Tien Hock Loh <thloh@altera.com>
-[..]
-> >>> +     altera_gc->mapped_irq = irq_of_parse_and_map(node, 0);
-> >>>
-> >>
-> >> platform_get_irq(pdev, 0);
-> >>
-> > OK.
-> >
->
-> platform_get_irq doesn't create the irq mapping which is needed by the
-> driver. Since this driver is targeted at using of, should I be using
-> irq_of_parse_and_map or should I still redo the codes with
-> platform_get_irq and irq_create_mapping? I think the latter would be
-> introducing code redundancy. Please advice.
+On 04/07/2014 02:26 PM, Gerhard Sittig wrote:
+> On Mon, 2014-04-07 at 12:13 +0200, Sebastian Andrzej Siewior wrote:
+>>
+>> d->mask contains exact the same information as BIT(bit) so we could save
+>> a few cycles here.
+> 
+> ISTR that the benefit of saving cycles was questioned in previous
+> review comments.  On ARM, the shift "comes for free".
 
-Yes, it is technically true that platform_get_irq() doesn't do the
-mapping directly, but that's because the mapping is setup earlier, when
-of_device_alloc() (drivers/of/platform.c) allocates resources for your
-platform device.
+I can't recall that some pointed this out. However:
+- you load one variable in both cases. Not performing the shift means
+  there is at least one instruction less to be performed.
+- that gpio controller is generic IP core from Synopsys. Every can buy
+  it and but into their IP core so it is not limited to ARM.
 
-Calling irq_of_parse_and_map() should be unnecessary.
+>> --- a/drivers/gpio/gpio-dwapb.c
+>> +++ b/drivers/gpio/gpio-dwapb.c
+>> @@ -113,7 +113,7 @@ static void dwapb_irq_enable(struct irq_data *d)
+>>  
+>>  	irq_gc_lock(igc);
+>>  	val = readl(gpio->regs + GPIO_INTEN);
+>> -	val |= BIT(d->hwirq);
+>> +	val |= d->mask;
+> 
+> these are equally costly or cheap, nothing saved here
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+I still thing not performing an instruction is more efficient than
+performing one.
+
+>>  	struct dwapb_gpio *gpio = igc->private;
+>> -	int bit = d->hwirq;
+>> +	u32 mask = d->mask;
+>>  	unsigned long level, polarity;
+>>  
+>>  	if (type & ~(IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING |
+>> @@ -171,24 +171,24 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+>>  
+>>  	switch (type) {
+>>  	case IRQ_TYPE_EDGE_BOTH:
+>> -		level |= BIT(bit);
+>> -		dwapb_toggle_trigger(gpio, bit);
+>> +		level |= mask;
+>> +		dwapb_toggle_trigger(gpio, d->hwirq);
+> 
+> these introduce another pointer dereference, unless 'bit' was
+> assigned from a pointer dereference (as is shown above), so
+> nothing was gained
+
+dwapb_toggle_trigger() is a bit special and it needs both. However,
+size on ARM says
+
+   text    data     bss     dec     hex filename
+   3264      96       0    3360     d20 drivers/gpio/gpio-dwapb.o.before
+   3224      96       0    3320     cf8 drivers/gpio/gpio-dwapb.o.after
+
+that with the patch the code is smaller by 40 bytes. Does 40 bytes
+smaller code quality for "safe a few cycles" statement?
+
+> virtually yours
+> Gerhard Sittig
+
+Sebastian
