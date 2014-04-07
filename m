@@ -1,66 +1,46 @@
-From: Michael Heimpold <mhei@heimpold.de>
-Subject: Re: Question about gpio sysfs interface
-Date: Mon, 07 Apr 2014 21:55:49 +0200
-Message-ID: <5800442.2kVGacMVbM@kerker>
-References: <1420047.Pa7NFNg2Xt@kerker> <CAAVeFuKyixV8CPp3i+ftuqgtF-sWc5TVRy1gRg6Xg+pQBsF6-w@mail.gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: Re: [PATCH RFT] gpio: zevio: Get correct gpio output value
+Date: Tue, 8 Apr 2014 07:57:45 +0800
+Message-ID: <CAFRkauAq=6va_iH9OnUL8nq0Mf+0+HcDVk0gDurMAEx7BFx=pA@mail.gmail.com>
+References: <1396852492.26619.1.camel@phoenix>
+	<1456321.rfNnq0vY8Z@fabians-laptop.fritz.box>
+	<20140407191035.GH11339@book.gsilab.sittig.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.219]:51867 "EHLO
-	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755141AbaDGTzv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 15:55:51 -0400
-In-Reply-To: <CAAVeFuKyixV8CPp3i+ftuqgtF-sWc5TVRy1gRg6Xg+pQBsF6-w@mail.gmail.com>
+Received: from mail-qa0-f46.google.com ([209.85.216.46]:34097 "EHLO
+	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754309AbaDGX5q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 19:57:46 -0400
+Received: by mail-qa0-f46.google.com with SMTP id i13so163611qae.33
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Apr 2014 16:57:45 -0700 (PDT)
+In-Reply-To: <20140407191035.GH11339@book.gsilab.sittig.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Gerhard Sittig <gsi@denx.de>
+Cc: Fabian Vogt <fabian@ritter-vogt.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Hi,
+>> > @@ -81,9 +81,15 @@ static inline void zevio_gpio_port_set(struct zevio_gpio *c, unsigned pin,
+>> >  static int zevio_gpio_get(struct gpio_chip *chip, unsigned pin)
+>> >  {
+>> >     struct zevio_gpio *controller = to_zevio_gpio(chip);
+>> > +   u32 val, dir;
+>> >
+>> > -   /* Only reading allowed, so no spinlock needed */
+>> > -   u32 val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_INPUT);
+>> > +   spin_lock(&controller->lock);
+>> > +   dir = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_DIRECTION);
+>> > +   if (dir | BIT(ZEVIO_GPIO_BIT(pin)))
+>> > +           val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_INPUT);
+>> > +   else
+>> > +           val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_OUTPUT);
+>> > +   spin_unlock(&controller->lock);
+>
+> As a side effect of your making me look at the code:
+>
+> Is the if() not an "always true" condition?  Should this be
+> s/|/\&/ instead?
+You are right, I'm sending a v2 now.
 
-Am Montag, 7. April 2014, 16:58:22 schrieb Alexandre Courbot:
-> On Mon, Apr 7, 2014 at 3:56 AM, Michael Heimpold <mhei@heimpold.de> wrote:
-> > Hi,
-> >
-> > I have a question regarding user-space gpio support with sysfs.
-> >
-> > Documentation/gpio/sysfs.txt states
-> >> GPIO signals have paths like /sys/class/gpio/gpio42/ (for GPIO #42)
-> >> and have the following read/write attributes:
-> >>
-> >>    /sys/class/gpio/gpioN/
-> >>
-> >>       "direction" ... reads as either "in" or "out". This value may
-> >>               normally be written. ...
-> >>
-> >>               Note that this attribute *will not exist* if the kernel
-> >>               doesn't support changing the direction of a GPIO, or
-> >>               it was exported by kernel code that didn't explicitly
-> >>               allow userspace to reconfigure this GPIO's direction.
-> >
-> > Imagine for example a generic user-space tool which enumerates
-> > all available GPIOs to the user and sorts by input and output GPIOs.
-> > How would such a tool classify an exported GPIO when kernel
-> > doesn't export the 'direction' file via sysfs? Or in other words: how
-> > can userspace detect the state (in vs. out) of a GPIO when 'direction'
-> > is not exported?
-> 
-> Wouldn't the "value" field be read-only for a "in" GPIO and read-write
-> for an "out" one?
-
-The file itself will still have 0644 permissions, but writing to the file
-results with EPERM error. So an algorithm would be to first read the
-value and then try to write the same value (to not change the pin state).
-If writing succeeds then the GPIO is configured as output, but if it fails
-then you know that this GPIO is an "in" one.
-
-> 
-> Other than that, I also don't see any drawback to having "direction"
-> always exported and made read-only if direction cannot be changed.
-
-Ok, will  try to code and send a patch for further discussion.
-
-Regards,
-Michael
-
+Thanks for the review,
+Axel
