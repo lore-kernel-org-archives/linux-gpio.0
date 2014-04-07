@@ -1,53 +1,78 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: Question about gpio sysfs interface
-Date: Mon, 7 Apr 2014 16:58:22 +0900
-Message-ID: <CAAVeFuKyixV8CPp3i+ftuqgtF-sWc5TVRy1gRg6Xg+pQBsF6-w@mail.gmail.com>
-References: <1420047.Pa7NFNg2Xt@kerker>
+From: Tien Hock Loh <thloh@altera.com>
+Subject: Re: [PATCH V7 1/1] drivers/gpio: Altera soft IP GPIO driver and
+ devicetree binding
+Date: Mon, 7 Apr 2014 16:00:43 +0800
+Message-ID: <CAOLUe6aPWmkJJSiBLL8tmw2MNfpaeLpSp3CSwP1u7q+qXxCh9Q@mail.gmail.com>
+References: <1393842463-5206-1-git-send-email-thloh@altera.com>
+	<20140307151455.GI18529@joshc.qualcomm.com>
+	<CAOLUe6aspffO1PUjKWW7ejpbxnYtb+RKRQrK=y30kuF7KXUUhA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:47177 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750740AbaDGH6n (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 03:58:43 -0400
-Received: by mail-ie0-f175.google.com with SMTP id to1so5642989ieb.6
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Apr 2014 00:58:42 -0700 (PDT)
-In-Reply-To: <1420047.Pa7NFNg2Xt@kerker>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAOLUe6aspffO1PUjKWW7ejpbxnYtb+RKRQrK=y30kuF7KXUUhA@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tien Hock Loh <thloh@altera.com>
+Cc: Josh Cartwright <joshc@codeaurora.org>, robh+dt@kernel.org, pawel.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, dinguyen@altera.com, "lftan@altera.com" <lftan@altera.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Heimpold <mhei@heimpold.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Apr 7, 2014 at 3:56 AM, Michael Heimpold <mhei@heimpold.de> wrote:
-> Hi,
->
-> I have a question regarding user-space gpio support with sysfs.
->
-> Documentation/gpio/sysfs.txt states
->> GPIO signals have paths like /sys/class/gpio/gpio42/ (for GPIO #42)
->> and have the following read/write attributes:
+On Wed, Mar 19, 2014 at 6:09 PM, Tien Hock Loh <thloh@altera.com> wrote:
+> On Fri, Mar 7, 2014 at 11:14 PM, Josh Cartwright <joshc@codeaurora.org> wrote:
+>> On Mon, Mar 03, 2014 at 06:27:43PM +0800, thloh@altera.com wrote:
+>>> From: Tien Hock Loh <thloh@altera.com>
+>>>
+>>> Add driver support for Altera GPIO soft IP, including interrupts and I/O.
+>>> Tested on Altera CV SoC board using dipsw and LED using LED framework.
+>>>
+>>> Signed-off-by: Tien Hock Loh <thloh@altera.com>
+>>> ---
 >>
->>    /sys/class/gpio/gpioN/
+>>> +             return -ENOMEM;
+>>> +     }
+>>> +     altera_gc->domain = 0;
+>>> +
+>>> +     spin_lock_init(&altera_gc->gpio_lock);
+>>> +
+>>> +     id = pdev->id;
+>>> +
+>>> +     if (of_property_read_u32(node, "altr,gpio-bank-width", &reg))
+>>> +             /*By default assume full GPIO controller*/
+>>> +             altera_gc->mmchip.gc.ngpio = 32;
+>>> +     else
+>>> +             altera_gc->mmchip.gc.ngpio = reg;
+>>> +
+>>> +     if (altera_gc->mmchip.gc.ngpio > 32) {
+>>> +             dev_warn(&pdev->dev,
+>>> +                     "ngpio is greater than 32, defaulting to 32\n");
+>>> +             altera_gc->mmchip.gc.ngpio = 32;
+>>> +     }
+>>> +
+>>> +     altera_gc->mmchip.gc.direction_input    = altera_gpio_direction_input;
+>>> +     altera_gc->mmchip.gc.direction_output   = altera_gpio_direction_output;
+>>> +     altera_gc->mmchip.gc.get                = altera_gpio_get;
+>>> +     altera_gc->mmchip.gc.set                = altera_gpio_set;
+>>> +     altera_gc->mmchip.gc.to_irq             = altera_gpio_to_irq;
+>>> +     altera_gc->mmchip.gc.owner              = THIS_MODULE;
+>>> +
+>>> +     ret = of_mm_gpiochip_add(node, &altera_gc->mmchip);
+>>> +     if (ret) {
+>>> +             dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     platform_set_drvdata(pdev, altera_gc);
+>>> +
+>>> +     altera_gc->mapped_irq = irq_of_parse_and_map(node, 0);
+>>>
 >>
->>       "direction" ... reads as either "in" or "out". This value may
->>               normally be written. ...
+>> platform_get_irq(pdev, 0);
 >>
->>               Note that this attribute *will not exist* if the kernel
->>               doesn't support changing the direction of a GPIO, or
->>               it was exported by kernel code that didn't explicitly
->>               allow userspace to reconfigure this GPIO's direction.
+> OK.
 >
-> Imagine for example a generic user-space tool which enumerates
-> all available GPIOs to the user and sorts by input and output GPIOs.
-> How would such a tool classify an exported GPIO when kernel
-> doesn't export the 'direction' file via sysfs? Or in other words: how
-> can userspace detect the state (in vs. out) of a GPIO when 'direction'
-> is not exported?
 
-Wouldn't the "value" field be read-only for a "in" GPIO and read-write
-for an "out" one?
+platform_get_irq doesn't create the irq mapping which is needed by the
+driver. Since this driver is targeted at using of, should I be using
+irq_of_parse_and_map or should I still redo the codes with
+platform_get_irq and irq_create_mapping? I think the latter would be
+introducing code redundancy. Please advice.
 
-Other than that, I also don't see any drawback to having "direction"
-always exported and made read-only if direction cannot be changed.
-
-Alex.
+Thanks.
