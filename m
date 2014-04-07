@@ -1,88 +1,56 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 5/5] gpio: dwapb: use d->mask instead od BIT(bit)
-Date: Mon,  7 Apr 2014 12:13:09 +0200
-Message-ID: <1396865589-9972-6-git-send-email-bigeasy@linutronix.de>
-References: <1396865589-9972-1-git-send-email-bigeasy@linutronix.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1396865589-9972-1-git-send-email-bigeasy@linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jamie@jamieiles.com
-Cc: atull@altera.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dinguyen@altera.com, linus.walleij@linaro.org, sebastian.hesselbarth@gmail.com, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH] pch_gpio: set value before enabling output direction
+Date: Mon, 07 Apr 2014 12:16:06 +0200
+Message-ID: <199580560.4VsyQBobOE@ws-stein>
+References: <1395739967-8465-1-git-send-email-alexander.stein@systec-electronic.com> <CACRpkdZVwKtXVhrT2f-t8Y4VwoOkVCfuJJCVbbE0A4f0Nv3frA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from webbox1416.server-home.net ([77.236.96.61]:42166 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753510AbaDGKRS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 06:17:18 -0400
+In-Reply-To: <CACRpkdZVwKtXVhrT2f-t8Y4VwoOkVCfuJJCVbbE0A4f0Nv3frA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Daniel Krueger <daniel.krueger@systec-electronic.com>
 
-d->mask contains exact the same information as BIT(bit) so we could save
-a few cycles here.
+Hello Linus,
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/gpio/gpio-dwapb.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+On Thursday 27 March 2014 10:22:40, Linus Walleij wrote:
+> On Tue, Mar 25, 2014 at 10:32 AM, Alexander Stein
+> <alexander.stein@systec-electronic.com> wrote:
+> 
+> > From: Daniel Krueger <daniel.krueger@systec-electronic.com>
+> >
+> > This ensures that the output signal does not toggle if set to high.
+> >
+> > Signed-off-by: Daniel Krueger <daniel.krueger@systec-electronic.com>
+> > Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> 
+> Patch applied,
+> 
+> Alexander, would you consider doing a patch adding yourself
+> as maintainer of this driver in the MAINTAINERS file?
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 13f1ad0..d85fc2e 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -113,7 +113,7 @@ static void dwapb_irq_enable(struct irq_data *d)
- 
- 	irq_gc_lock(igc);
- 	val = readl(gpio->regs + GPIO_INTEN);
--	val |= BIT(d->hwirq);
-+	val |= d->mask;
- 	writel(val, gpio->regs + GPIO_INTEN);
- 	irq_gc_unlock(igc);
- }
-@@ -126,7 +126,7 @@ static void dwapb_irq_disable(struct irq_data *d)
- 
- 	irq_gc_lock(igc);
- 	val = readl(gpio->regs + GPIO_INTEN);
--	val &= ~BIT(d->hwirq);
-+	val &= ~d->mask;
- 	writel(val, gpio->regs + GPIO_INTEN);
- 	irq_gc_unlock(igc);
- }
-@@ -158,7 +158,7 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
- {
- 	struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
- 	struct dwapb_gpio *gpio = igc->private;
--	int bit = d->hwirq;
-+	u32 mask = d->mask;
- 	unsigned long level, polarity;
- 
- 	if (type & ~(IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING |
-@@ -171,24 +171,24 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
- 
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_BOTH:
--		level |= BIT(bit);
--		dwapb_toggle_trigger(gpio, bit);
-+		level |= mask;
-+		dwapb_toggle_trigger(gpio, d->hwirq);
- 		break;
- 	case IRQ_TYPE_EDGE_RISING:
--		level |= BIT(bit);
--		polarity |= BIT(bit);
-+		level |= mask;
-+		polarity |= mask;
- 		break;
- 	case IRQ_TYPE_EDGE_FALLING:
--		level |= BIT(bit);
--		polarity &= ~BIT(bit);
-+		level |= mask;
-+		polarity &= ~mask;
- 		break;
- 	case IRQ_TYPE_LEVEL_HIGH:
--		level &= ~BIT(bit);
--		polarity |= BIT(bit);
-+		level &= ~mask;
-+		polarity |= mask;
- 		break;
- 	case IRQ_TYPE_LEVEL_LOW:
--		level &= ~BIT(bit);
--		polarity &= ~BIT(bit);
-+		level &= ~mask;
-+		polarity &= ~mask;
- 		break;
- 	}
- 
+Thanks for offering this. I'm inclined to this, but the problem ist I won't have
+good or even permanent access to this hardware :( So I have to decline.
+
+Best regards,
+Alexander
 -- 
-1.9.1
+Dipl.-Inf. Alexander Stein
+
+SYS TEC electronic GmbH
+Am Windrad 2
+08468 Heinsdorfergrund
+Tel.: 03765 38600-1156
+Fax: 03765 38600-4100
+Email: alexander.stein@systec-electronic.com
+Website: www.systec-electronic.com
+ 
+Managing Director: Dipl.-Phys. Siegmar Schmidt
+Commercial registry: Amtsgericht Chemnitz, HRB 28082
+
