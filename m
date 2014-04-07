@@ -1,97 +1,72 @@
-From: Yegor Yefremov <yegorslists@googlemail.com>
-Subject: Re: tca-6416: interrupt device tree configuration
-Date: Mon, 7 Apr 2014 17:00:13 +0200
-Message-ID: <CAGm1_ksqtkLRgqy=-TY4CNV4MV6AE1sL-iQE49rB3G1Xo5QbmQ@mail.gmail.com>
-References: <CAGm1_ksGDCfgTNpue_zEUTho88G3juSJ6qLttHb7ACFawdgKzw@mail.gmail.com>
- <CAGm1_kvwU2S0qqo4idDZpKMKmPEn67jaYYgrBHTjnjmBDNvG7g@mail.gmail.com> <20140402160153.GS26751@lukather>
+From: Fabian Vogt <fabian@ritter-vogt.de>
+Subject: Re: [PATCH RFT] gpio: zevio: Get correct gpio output value
+Date: Mon, 07 Apr 2014 17:17:51 +0200
+Message-ID: <1456321.rfNnq0vY8Z@fabians-laptop.fritz.box>
+References: <1396852492.26619.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:47295 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753143AbaDGPAd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 11:00:33 -0400
-Received: by mail-pa0-f48.google.com with SMTP id hz1so6881965pad.35
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Apr 2014 08:00:33 -0700 (PDT)
-In-Reply-To: <20140402160153.GS26751@lukather>
+Received: from moutng.kundenserver.de ([212.227.126.187]:50840 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752663AbaDGPRz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 11:17:55 -0400
+In-Reply-To: <1396852492.26619.1.camel@phoenix>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Wed, Apr 2, 2014 at 6:01 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Wed, Apr 02, 2014 at 12:06:03PM +0200, Yegor Yefremov wrote:
->> On Tue, Mar 18, 2014 at 4:02 PM, Yegor Yefremov
->> <yegorslists@googlemail.com> wrote:
->> > I've an am335x-based board with tca6416. The interrupt output of the
->> > tca is connected to GPIO0_20 on my SoC. How should I configure this
->> > wiring in device tree file?
->> >
->> > I've already managed to hook it on I2C and it is working so far:
->> >
->> >  tca6416: gpio@20 {
->> >                 compatible = "ti,tca6416";
->> >                 reg = <0x20>;
->> >                 gpio-controller;
->> >                 #gpio-cells = <2>;
->> >   };
->> >
->> > Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt describes
->> > following properties:
->> >
->> >   - interrupt-controller: Identifies the node as an interrupt controller.
->> >   - #interrupt-cells: Number of cells to encode an interrupt source, shall be 2.
->> >   - interrupt-parent: phandle of the parent interrupt controller.
->> >   - interrupts: Interrupt specifier for the controllers interrupt.
->> >
->> > and following example:
->> >
->> >         pcf8575: gpio@20 {
->> >                 compatible = "nxp,pcf8575";
->> >                 reg = <0x20>;
->> >                 interrupt-parent = <&irqpin2>;
->> >                 interrupts = <3 0>;
->> >                 gpio-controller;
->> >                 #gpio-cells = <2>;
->> >                 interrupt-controller;
->> >                 #interrupt-cells = <2>;
->> >         };
->> >
->> > Where does irqpin2 come from? How to specify GPIO0_20 in "interrupts" context?
->>
->> Maxime, I've seen your irq domain related patch. Could you please
->> provide an example/hint for my question?
->
-> <&irqpin2> is called a phandle, and it's actually a reference to
-> another device tree node. So the answer to your question is from
-> somewhere else in the device tree.
->
-> It will be the parent interrupt controller, so in your case, I guess
-> you will have to do two things:
->   - Say that your interrupt comes from
->
-> interrupt-parent = <&something>;
->
->   - Say the actual interrupt it is using inside that parent
->
-> interrupts = <42>;
->
-> In your case, I guess something like:
-> interrupt-parent = <&gpio0>;
-> interrupts = <20 GPIO_ACTIVE_HIGH>;
->
-> Will work, but I'm not familiar enough with the am335x platform to
-> know for sure.
->
-> In any case, you should probably go through this talk:
-> http://elinux.org/images/a/a3/Elce2013-petazzoni-devicetree-for-dummies.pdf
+Hi,
 
-Thanks. My setup is working now. At least I can see interrupt counting
-in /proc/interrupts.
+IIRC I tested that and input and output are independant of each other.
+If you set a pin as output and write a 1 into the output register, but you connect the pin to ground physically output is "1" and input "0".
+Which behaviour is the correct one for gpio_get?
 
-Now I'm trying to find out, how to assign base GPIO number right after
-the last CPU's GPIO. By default I get 496, though am335x has only 4x32
-GPIO blocks.
+Bye,
+Fabian
 
-Yegor
+Am Montag, 7. April 2014, 14:34:52 schrieb Axel Lin:
+> Read gpio output value from ZEVIO_GPIO_OUTPUT.
+> The spin_lock is required to ensure the direction is not changed before reading
+> input/output value.
+> 
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+> Hi Fabian,
+> The document only mentions:
+>   +10 (R/W): Direction (set bit to 0 for output, 1 for input)
+>   +14 (R/W): GPIO output bit
+>   +18 (R): Reads GPIO input bit.
+> So I'm not sure if reading ZEVIO_GPIO_INPUT returns correct status when the
+> direction is output. So I think this needs test.
+> 
+> Regards,
+> Axel
+>  drivers/gpio/gpio-zevio.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
+> index 9bf5034..29b0150 100644
+> --- a/drivers/gpio/gpio-zevio.c
+> +++ b/drivers/gpio/gpio-zevio.c
+> @@ -81,9 +81,15 @@ static inline void zevio_gpio_port_set(struct zevio_gpio *c, unsigned pin,
+>  static int zevio_gpio_get(struct gpio_chip *chip, unsigned pin)
+>  {
+>  	struct zevio_gpio *controller = to_zevio_gpio(chip);
+> +	u32 val, dir;
+>  
+> -	/* Only reading allowed, so no spinlock needed */
+> -	u32 val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_INPUT);
+> +	spin_lock(&controller->lock);
+> +	dir = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_DIRECTION);
+> +	if (dir | BIT(ZEVIO_GPIO_BIT(pin)))
+> +		val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_INPUT);
+> +	else
+> +		val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_OUTPUT);
+> +	spin_unlock(&controller->lock);
+>  
+>  	return (val >> ZEVIO_GPIO_BIT(pin)) & 0x1;
+>  }
+> 
+
