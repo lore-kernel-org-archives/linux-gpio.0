@@ -1,74 +1,97 @@
-From: Gerhard Sittig <gsi@denx.de>
-Subject: Re: [PATCH 5/5] gpio: dwapb: use d->mask instead od BIT(bit)
-Date: Mon, 7 Apr 2014 14:26:20 +0200
-Message-ID: <20140407122620.GX11339@book.gsilab.sittig.org>
-References: <1396865589-9972-1-git-send-email-bigeasy@linutronix.de>
- <1396865589-9972-6-git-send-email-bigeasy@linutronix.de>
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Subject: Re: tca-6416: interrupt device tree configuration
+Date: Mon, 7 Apr 2014 17:00:13 +0200
+Message-ID: <CAGm1_ksqtkLRgqy=-TY4CNV4MV6AE1sL-iQE49rB3G1Xo5QbmQ@mail.gmail.com>
+References: <CAGm1_ksGDCfgTNpue_zEUTho88G3juSJ6qLttHb7ACFawdgKzw@mail.gmail.com>
+ <CAGm1_kvwU2S0qqo4idDZpKMKmPEn67jaYYgrBHTjnjmBDNvG7g@mail.gmail.com> <20140402160153.GS26751@lukather>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:40703 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755257AbaDGM0Y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 08:26:24 -0400
-Content-Disposition: inline
-In-Reply-To: <1396865589-9972-6-git-send-email-bigeasy@linutronix.de>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:47295 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753143AbaDGPAd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 11:00:33 -0400
+Received: by mail-pa0-f48.google.com with SMTP id hz1so6881965pad.35
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Apr 2014 08:00:33 -0700 (PDT)
+In-Reply-To: <20140402160153.GS26751@lukather>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: jamie@jamieiles.com, atull@altera.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dinguyen@altera.com, linus.walleij@linaro.org, sebastian.hesselbarth@gmail.com
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-gpio@vger.kernel.org
 
-On Mon, 2014-04-07 at 12:13 +0200, Sebastian Andrzej Siewior wrote:
-> 
-> d->mask contains exact the same information as BIT(bit) so we could save
-> a few cycles here.
+On Wed, Apr 2, 2014 at 6:01 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Wed, Apr 02, 2014 at 12:06:03PM +0200, Yegor Yefremov wrote:
+>> On Tue, Mar 18, 2014 at 4:02 PM, Yegor Yefremov
+>> <yegorslists@googlemail.com> wrote:
+>> > I've an am335x-based board with tca6416. The interrupt output of the
+>> > tca is connected to GPIO0_20 on my SoC. How should I configure this
+>> > wiring in device tree file?
+>> >
+>> > I've already managed to hook it on I2C and it is working so far:
+>> >
+>> >  tca6416: gpio@20 {
+>> >                 compatible = "ti,tca6416";
+>> >                 reg = <0x20>;
+>> >                 gpio-controller;
+>> >                 #gpio-cells = <2>;
+>> >   };
+>> >
+>> > Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt describes
+>> > following properties:
+>> >
+>> >   - interrupt-controller: Identifies the node as an interrupt controller.
+>> >   - #interrupt-cells: Number of cells to encode an interrupt source, shall be 2.
+>> >   - interrupt-parent: phandle of the parent interrupt controller.
+>> >   - interrupts: Interrupt specifier for the controllers interrupt.
+>> >
+>> > and following example:
+>> >
+>> >         pcf8575: gpio@20 {
+>> >                 compatible = "nxp,pcf8575";
+>> >                 reg = <0x20>;
+>> >                 interrupt-parent = <&irqpin2>;
+>> >                 interrupts = <3 0>;
+>> >                 gpio-controller;
+>> >                 #gpio-cells = <2>;
+>> >                 interrupt-controller;
+>> >                 #interrupt-cells = <2>;
+>> >         };
+>> >
+>> > Where does irqpin2 come from? How to specify GPIO0_20 in "interrupts" context?
+>>
+>> Maxime, I've seen your irq domain related patch. Could you please
+>> provide an example/hint for my question?
+>
+> <&irqpin2> is called a phandle, and it's actually a reference to
+> another device tree node. So the answer to your question is from
+> somewhere else in the device tree.
+>
+> It will be the parent interrupt controller, so in your case, I guess
+> you will have to do two things:
+>   - Say that your interrupt comes from
+>
+> interrupt-parent = <&something>;
+>
+>   - Say the actual interrupt it is using inside that parent
+>
+> interrupts = <42>;
+>
+> In your case, I guess something like:
+> interrupt-parent = <&gpio0>;
+> interrupts = <20 GPIO_ACTIVE_HIGH>;
+>
+> Will work, but I'm not familiar enough with the am335x platform to
+> know for sure.
+>
+> In any case, you should probably go through this talk:
+> http://elinux.org/images/a/a3/Elce2013-petazzoni-devicetree-for-dummies.pdf
 
-ISTR that the benefit of saving cycles was questioned in previous
-review comments.  On ARM, the shift "comes for free".
+Thanks. My setup is working now. At least I can see interrupt counting
+in /proc/interrupts.
 
-I'm not saying that the patch is doing something wrong.  But I
-suggest to rephrase the commit message (and put the version
-number into the subject prefix, should you have to resend).
+Now I'm trying to find out, how to assign base GPIO number right after
+the last CPU's GPIO. By default I get 496, though am335x has only 4x32
+GPIO blocks.
 
-Reducing the number of variables involved, or hiding details
-behind common abstractions, or eliminating redundancy, all of
-those benefits are as valuable.  It's just that this patch does
-not save any computation time.
-
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -113,7 +113,7 @@ static void dwapb_irq_enable(struct irq_data *d)
->  
->  	irq_gc_lock(igc);
->  	val = readl(gpio->regs + GPIO_INTEN);
-> -	val |= BIT(d->hwirq);
-> +	val |= d->mask;
-
-these are equally costly or cheap, nothing saved here
-
->  	struct dwapb_gpio *gpio = igc->private;
-> -	int bit = d->hwirq;
-> +	u32 mask = d->mask;
->  	unsigned long level, polarity;
->  
->  	if (type & ~(IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING |
-> @@ -171,24 +171,24 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
->  
->  	switch (type) {
->  	case IRQ_TYPE_EDGE_BOTH:
-> -		level |= BIT(bit);
-> -		dwapb_toggle_trigger(gpio, bit);
-> +		level |= mask;
-> +		dwapb_toggle_trigger(gpio, d->hwirq);
-
-these introduce another pointer dereference, unless 'bit' was
-assigned from a pointer dereference (as is shown above), so
-nothing was gained
-
-
-virtually yours
-Gerhard Sittig
--- 
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office@denx.de
+Yegor
