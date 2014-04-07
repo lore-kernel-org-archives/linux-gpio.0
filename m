@@ -1,78 +1,71 @@
-From: Tien Hock Loh <thloh@altera.com>
-Subject: Re: [PATCH V7 1/1] drivers/gpio: Altera soft IP GPIO driver and
- devicetree binding
-Date: Mon, 7 Apr 2014 16:00:43 +0800
-Message-ID: <CAOLUe6aPWmkJJSiBLL8tmw2MNfpaeLpSp3CSwP1u7q+qXxCh9Q@mail.gmail.com>
-References: <1393842463-5206-1-git-send-email-thloh@altera.com>
-	<20140307151455.GI18529@joshc.qualcomm.com>
-	<CAOLUe6aspffO1PUjKWW7ejpbxnYtb+RKRQrK=y30kuF7KXUUhA@mail.gmail.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 6/7] gpio: dwapb: use a second irq chip
+Date: Mon, 07 Apr 2014 11:59:52 +0200
+Message-ID: <53427718.30406@linutronix.de>
+References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de> <1395505004-22650-7-git-send-email-bigeasy@linutronix.de> <5331F6D5.7070809@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAOLUe6aspffO1PUjKWW7ejpbxnYtb+RKRQrK=y30kuF7KXUUhA@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tien Hock Loh <thloh@altera.com>
-Cc: Josh Cartwright <joshc@codeaurora.org>, robh+dt@kernel.org, pawel.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, dinguyen@altera.com, "lftan@altera.com" <lftan@altera.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:49963 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753510AbaDGJ7z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 05:59:55 -0400
+In-Reply-To: <5331F6D5.7070809@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, atull@altera.com
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dinguyen@altera.com, delicious.quinoa@gmail.com
 
-On Wed, Mar 19, 2014 at 6:09 PM, Tien Hock Loh <thloh@altera.com> wrote:
-> On Fri, Mar 7, 2014 at 11:14 PM, Josh Cartwright <joshc@codeaurora.org> wrote:
->> On Mon, Mar 03, 2014 at 06:27:43PM +0800, thloh@altera.com wrote:
->>> From: Tien Hock Loh <thloh@altera.com>
->>>
->>> Add driver support for Altera GPIO soft IP, including interrupts and I/O.
->>> Tested on Altera CV SoC board using dipsw and LED using LED framework.
->>>
->>> Signed-off-by: Tien Hock Loh <thloh@altera.com>
->>> ---
->>
->>> +             return -ENOMEM;
->>> +     }
->>> +     altera_gc->domain = 0;
->>> +
->>> +     spin_lock_init(&altera_gc->gpio_lock);
->>> +
->>> +     id = pdev->id;
->>> +
->>> +     if (of_property_read_u32(node, "altr,gpio-bank-width", &reg))
->>> +             /*By default assume full GPIO controller*/
->>> +             altera_gc->mmchip.gc.ngpio = 32;
->>> +     else
->>> +             altera_gc->mmchip.gc.ngpio = reg;
->>> +
->>> +     if (altera_gc->mmchip.gc.ngpio > 32) {
->>> +             dev_warn(&pdev->dev,
->>> +                     "ngpio is greater than 32, defaulting to 32\n");
->>> +             altera_gc->mmchip.gc.ngpio = 32;
->>> +     }
->>> +
->>> +     altera_gc->mmchip.gc.direction_input    = altera_gpio_direction_input;
->>> +     altera_gc->mmchip.gc.direction_output   = altera_gpio_direction_output;
->>> +     altera_gc->mmchip.gc.get                = altera_gpio_get;
->>> +     altera_gc->mmchip.gc.set                = altera_gpio_set;
->>> +     altera_gc->mmchip.gc.to_irq             = altera_gpio_to_irq;
->>> +     altera_gc->mmchip.gc.owner              = THIS_MODULE;
->>> +
->>> +     ret = of_mm_gpiochip_add(node, &altera_gc->mmchip);
->>> +     if (ret) {
->>> +             dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
->>> +             return ret;
->>> +     }
->>> +
->>> +     platform_set_drvdata(pdev, altera_gc);
->>> +
->>> +     altera_gc->mapped_irq = irq_of_parse_and_map(node, 0);
->>>
->>
->> platform_get_irq(pdev, 0);
->>
-> OK.
->
+On 03/25/2014 10:36 PM, Sebastian Hesselbarth wrote:
+>> @@ -242,17 +244,28 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>>  	irq_gc->reg_base = gpio->regs;
+>>  	irq_gc->private = gpio;
+>>  
+>> -	ct = irq_gc->chip_types;
+>> -	ct->chip.irq_ack = irq_gc_ack_set_bit;
+>> -	ct->chip.irq_mask = irq_gc_mask_set_bit;
+>> -	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+>> -	ct->chip.irq_set_type = dwapb_irq_set_type;
+>> -	ct->chip.irq_enable = dwapb_irq_enable;
+>> -	ct->chip.irq_disable = dwapb_irq_disable;
+>> -	ct->chip.irq_request_resources = dwapb_irq_reqres;
+>> -	ct->chip.irq_release_resources = dwapb_irq_relres;
+>> -	ct->regs.ack = GPIO_PORTA_EOI;
+>> -	ct->regs.mask = GPIO_INTMASK;
+>> +	for (i = 0; i < 2; i++) {
+>> +
+>> +		ct = &irq_gc->chip_types[i];
+>> +		ct->chip.irq_ack = irq_gc_ack_set_bit;
+>> +		ct->chip.irq_mask = irq_gc_mask_set_bit;
+>> +		ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+>> +		ct->chip.irq_set_type = dwapb_irq_set_type;
+>> +		ct->chip.irq_enable = dwapb_irq_enable;
+>> +		ct->chip.irq_disable = dwapb_irq_disable;
+>> +		ct->chip.irq_request_resources = dwapb_irq_reqres;
+>> +		ct->chip.irq_release_resources = dwapb_irq_relres;
+>> +		ct->regs.ack = GPIO_PORTA_EOI;
+>> +		ct->regs.mask = GPIO_INTMASK;
+>> +
+>> +		if (i == 0) {
+>> +			ct->type = IRQ_TYPE_LEVEL_MASK;
+>> +			ct->handler = handle_level_irq;
+>> +		} else {
+>> +			ct->type = IRQ_TYPE_EDGE_BOTH;
+>> +			ct->handler = handle_edge_irq;
+>> +		}
+> 
+> Sebastian,
+> 
+> IMHO the loop looks strange, especially with the (i == 0) check.
 
-platform_get_irq doesn't create the irq mapping which is needed by the
-driver. Since this driver is targeted at using of, should I be using
-irq_of_parse_and_map or should I still redo the codes with
-platform_get_irq and irq_create_mapping? I think the latter would be
-introducing code redundancy. Please advice.
+how so?
 
-Thanks.
+> How about unrolling it again and assign both chip_types independently?
+
+If more code makes you happy so be it. I will post the series soon with
+the loop unrolled.
+
+> Sebastian
+
+Sebastian
