@@ -1,55 +1,73 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH 1/2] GPIO: Add driver for Zynq GPIO controller
-Date: Mon, 7 Apr 2014 12:00:05 -0700
-Message-ID: <7da0486b-bbdd-445b-8a6d-b5bcb311d908@TX2EHSMHS036.ehs.local>
-References: <1395933906-2268-1-git-send-email-harinik@xilinx.com>
- <CAPDyKFo4R9izP=jcoU+jqd74Nbeh+-5A1T8c_=EL4cmzja_29A@mail.gmail.com>
+From: Gerhard Sittig <gsi@denx.de>
+Subject: Re: [PATCH RFT] gpio: zevio: Get correct gpio output value
+Date: Mon, 7 Apr 2014 21:10:35 +0200
+Message-ID: <20140407191035.GH11339@book.gsilab.sittig.org>
+References: <1396852492.26619.1.camel@phoenix>
+ <1456321.rfNnq0vY8Z@fabians-laptop.fritz.box>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:34345 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752718AbaDGTKh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 15:10:37 -0400
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFo4R9izP=jcoU+jqd74Nbeh+-5A1T8c_=EL4cmzja_29A@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Harini Katakam <harinik@xilinx.com>, Mark Rutland <mark.rutland@arm.com>, gnurou@gmail.com, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-doc@vger.kernel.org, michal.simek@xilinx.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, michals@xilinx.com, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1456321.rfNnq0vY8Z@fabians-laptop.fritz.box>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Fabian Vogt <fabian@ritter-vogt.de>
+Cc: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Mon, 2014-03-31 at 11:23AM +0200, Ulf Hansson wrote:
-> On 27 March 2014 16:25, Harini Katakam <harinik@xilinx.com> wrote:
-[...]
-> > +static int __maybe_unused zynq_gpio_runtime_suspend(struct device =
-*dev)
-> > +{
-> > +       struct platform_device *pdev =3D to_platform_device(dev);
-> > +       struct zynq_gpio *gpio =3D platform_get_drvdata(pdev);
-> > +
-> > +       clk_disable(gpio->clk);
->=20
-> You should be able can use clk_disable_unprepare() here.
->=20
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int __maybe_unused zynq_gpio_runtime_resume(struct device *=
-dev)
-> > +{
-> > +       struct platform_device *pdev =3D to_platform_device(dev);
-> > +       struct zynq_gpio *gpio =3D platform_get_drvdata(pdev);
-> > +
-> > +       return clk_enable(gpio->clk);
->=20
-> You should be able can use clk_prepare_enable() here.
+On Mon, 2014-04-07 at 17:17 +0200, Fabian Vogt wrote:
+> 
+> Hi,
+> 
+> IIRC I tested that and input and output are independant of each other.
+> If you set a pin as output and write a 1 into the output register, but you connect the pin to ground physically output is "1" and input "0".
+> Which behaviour is the correct one for gpio_get?
 
-Is there some common practice regarding this? As I understand it, we
-want to ensure the clock to be gated during suspend, which should happe=
-n
-with clk_disable(). Why would we also unprepare the clock? We are highl=
-y
-likely to use it again once we resume.
+Please don't top-post, and wrap overly long lines!  Thanks.
 
-	Thanks,
-	S=C3=B6ren
+I'd assume that gpio_get() should return the information about
+the pin level ("is"), regardless of internal "want" state.  But
+that's a guess (gut feeling), can't tell whether there is a
+specified semantics, or whether this is supposed to be
+"implementation defined".  Different hardware may have different
+capabilites (like lack of support to read back what's on the
+line, thus having to rely on internal registers which may differ
+from the pin level).
+
+> Am Montag, 7. April 2014, 14:34:52 schrieb Axel Lin:
+> > Read gpio output value from ZEVIO_GPIO_OUTPUT.
+> > The spin_lock is required to ensure the direction is not changed before reading
+> > input/output value.
+> > 
+> > [ ... ]
+> > @@ -81,9 +81,15 @@ static inline void zevio_gpio_port_set(struct zevio_gpio *c, unsigned pin,
+> >  static int zevio_gpio_get(struct gpio_chip *chip, unsigned pin)
+> >  {
+> >  	struct zevio_gpio *controller = to_zevio_gpio(chip);
+> > +	u32 val, dir;
+> >  
+> > -	/* Only reading allowed, so no spinlock needed */
+> > -	u32 val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_INPUT);
+> > +	spin_lock(&controller->lock);
+> > +	dir = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_DIRECTION);
+> > +	if (dir | BIT(ZEVIO_GPIO_BIT(pin)))
+> > +		val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_INPUT);
+> > +	else
+> > +		val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_OUTPUT);
+> > +	spin_unlock(&controller->lock);
+
+As a side effect of your making me look at the code:
+
+Is the if() not an "always true" condition?  Should this be
+s/|/\&/ instead?
 
 
+virtually yours
+Gerhard Sittig
+-- 
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office@denx.de
