@@ -1,7 +1,7 @@
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 2/5] gpio: dwapb: use irq_linear_revmap() for the faster lookup
-Date: Mon,  7 Apr 2014 12:13:06 +0200
-Message-ID: <1396865589-9972-3-git-send-email-bigeasy@linutronix.de>
+Subject: [PATCH 3/5] gpio: dwapb: use irq_gc_lock() for locking instead bc's lock
+Date: Mon,  7 Apr 2014 12:13:07 +0200
+Message-ID: <1396865589-9972-4-git-send-email-bigeasy@linutronix.de>
 References: <1396865589-9972-1-git-send-email-bigeasy@linutronix.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1396865589-9972-1-git-send-email-bigeasy@linutronix.de>
@@ -10,27 +10,88 @@ To: jamie@jamieiles.com
 Cc: atull@altera.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dinguyen@altera.com, linus.walleij@linaro.org, sebastian.hesselbarth@gmail.com, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-According to irq_linear_revmap() comment, it is slightly faster compared
-to irq_find_mapping() since we don't use a radix tree but a linear
-mapping.
+The generic irq chip uses irq_gc_lock() for locking so the
+enable/startup and type callbacks should use the same lock. None of
+those registers (polarity, mask, enable) are used by the gpio part.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/gpio/gpio-dwapb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-dwapb.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 4d25a06b..541b893 100644
+index 541b893..752ccb1 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -92,7 +92,7 @@ static void dwapb_irq_handler(u32 irq, struct irq_desc *desc)
+@@ -20,7 +20,6 @@
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+-#include <linux/spinlock.h>
  
- 	while (irq_status) {
- 		int hwirq = fls(irq_status) - 1;
--		int gpio_irq = irq_find_mapping(gpio->domain, hwirq);
-+		int gpio_irq = irq_linear_revmap(gpio->domain, hwirq);
+ #define GPIO_SWPORTA_DR		0x00
+ #define GPIO_SWPORTA_DDR	0x04
+@@ -110,30 +109,26 @@ static void dwapb_irq_enable(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = igc->private;
+-	struct bgpio_chip *bgc = &gpio->ports[0].bgc;
+-	unsigned long flags;
+ 	u32 val;
  
- 		generic_handle_irq(gpio_irq);
- 		irq_status &= ~BIT(hwirq);
+-	spin_lock_irqsave(&bgc->lock, flags);
++	irq_gc_lock(igc);
+ 	val = readl(gpio->regs + GPIO_INTEN);
+ 	val |= BIT(d->hwirq);
+ 	writel(val, gpio->regs + GPIO_INTEN);
+-	spin_unlock_irqrestore(&bgc->lock, flags);
++	irq_gc_unlock(igc);
+ }
+ 
+ static void dwapb_irq_disable(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = igc->private;
+-	struct bgpio_chip *bgc = &gpio->ports[0].bgc;
+-	unsigned long flags;
+ 	u32 val;
+ 
+-	spin_lock_irqsave(&bgc->lock, flags);
++	irq_gc_lock(igc);
+ 	val = readl(gpio->regs + GPIO_INTEN);
+ 	val &= ~BIT(d->hwirq);
+ 	writel(val, gpio->regs + GPIO_INTEN);
+-	spin_unlock_irqrestore(&bgc->lock, flags);
++	irq_gc_unlock(igc);
+ }
+ 
+ static int dwapb_irq_reqres(struct irq_data *d)
+@@ -163,15 +158,14 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+ {
+ 	struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = igc->private;
+-	struct bgpio_chip *bgc = &gpio->ports[0].bgc;
+ 	int bit = d->hwirq;
+-	unsigned long level, polarity, flags;
++	unsigned long level, polarity;
+ 
+ 	if (type & ~(IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING |
+ 		     IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
+ 		return -EINVAL;
+ 
+-	spin_lock_irqsave(&bgc->lock, flags);
++	irq_gc_lock(igc);
+ 	level = readl(gpio->regs + GPIO_INTTYPE_LEVEL);
+ 	polarity = readl(gpio->regs + GPIO_INT_POLARITY);
+ 
+@@ -200,7 +194,7 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+ 
+ 	writel(level, gpio->regs + GPIO_INTTYPE_LEVEL);
+ 	writel(polarity, gpio->regs + GPIO_INT_POLARITY);
+-	spin_unlock_irqrestore(&bgc->lock, flags);
++	irq_gc_unlock(igc);
+ 
+ 	return 0;
+ }
 -- 
 1.9.1
