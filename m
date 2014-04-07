@@ -1,72 +1,53 @@
-From: Fabian Vogt <fabian@ritter-vogt.de>
-Subject: Re: [PATCH RFT] gpio: zevio: Get correct gpio output value
-Date: Mon, 07 Apr 2014 17:17:51 +0200
-Message-ID: <1456321.rfNnq0vY8Z@fabians-laptop.fritz.box>
-References: <1396852492.26619.1.camel@phoenix>
+From: Josh Cartwright <joshc@codeaurora.org>
+Subject: Re: [PATCH V7 1/1] drivers/gpio: Altera soft IP GPIO driver and
+ devicetree binding
+Date: Mon, 7 Apr 2014 12:11:15 -0500
+Message-ID: <20140407171115.GA3956@joshc.qualcomm.com>
+References: <1393842463-5206-1-git-send-email-thloh@altera.com>
+ <20140307151455.GI18529@joshc.qualcomm.com>
+ <CAOLUe6aspffO1PUjKWW7ejpbxnYtb+RKRQrK=y30kuF7KXUUhA@mail.gmail.com>
+ <CAOLUe6aPWmkJJSiBLL8tmw2MNfpaeLpSp3CSwP1u7q+qXxCh9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:50840 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752663AbaDGPRz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 11:17:55 -0400
-In-Reply-To: <1396852492.26619.1.camel@phoenix>
+Received: from smtp.codeaurora.org ([198.145.11.231]:51708 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753777AbaDGROM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 13:14:12 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOLUe6aPWmkJJSiBLL8tmw2MNfpaeLpSp3CSwP1u7q+qXxCh9Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Tien Hock Loh <thloh@altera.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, dinguyen@altera.com, "lftan@altera.com" <lftan@altera.com>
 
-Hi,
+On Mon, Apr 07, 2014 at 04:00:43PM +0800, Tien Hock Loh wrote:
+> On Wed, Mar 19, 2014 at 6:09 PM, Tien Hock Loh <thloh@altera.com> wrote:
+> > On Fri, Mar 7, 2014 at 11:14 PM, Josh Cartwright <joshc@codeaurora.org> wrote:
+> >> On Mon, Mar 03, 2014 at 06:27:43PM +0800, thloh@altera.com wrote:
+> >>> From: Tien Hock Loh <thloh@altera.com>
+[..]
+> >>> +     altera_gc->mapped_irq = irq_of_parse_and_map(node, 0);
+> >>>
+> >>
+> >> platform_get_irq(pdev, 0);
+> >>
+> > OK.
+> >
+>
+> platform_get_irq doesn't create the irq mapping which is needed by the
+> driver. Since this driver is targeted at using of, should I be using
+> irq_of_parse_and_map or should I still redo the codes with
+> platform_get_irq and irq_create_mapping? I think the latter would be
+> introducing code redundancy. Please advice.
 
-IIRC I tested that and input and output are independant of each other.
-If you set a pin as output and write a 1 into the output register, but you connect the pin to ground physically output is "1" and input "0".
-Which behaviour is the correct one for gpio_get?
+Yes, it is technically true that platform_get_irq() doesn't do the
+mapping directly, but that's because the mapping is setup earlier, when
+of_device_alloc() (drivers/of/platform.c) allocates resources for your
+platform device.
 
-Bye,
-Fabian
+Calling irq_of_parse_and_map() should be unnecessary.
 
-Am Montag, 7. April 2014, 14:34:52 schrieb Axel Lin:
-> Read gpio output value from ZEVIO_GPIO_OUTPUT.
-> The spin_lock is required to ensure the direction is not changed before reading
-> input/output value.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
-> Hi Fabian,
-> The document only mentions:
->   +10 (R/W): Direction (set bit to 0 for output, 1 for input)
->   +14 (R/W): GPIO output bit
->   +18 (R): Reads GPIO input bit.
-> So I'm not sure if reading ZEVIO_GPIO_INPUT returns correct status when the
-> direction is output. So I think this needs test.
-> 
-> Regards,
-> Axel
->  drivers/gpio/gpio-zevio.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
-> index 9bf5034..29b0150 100644
-> --- a/drivers/gpio/gpio-zevio.c
-> +++ b/drivers/gpio/gpio-zevio.c
-> @@ -81,9 +81,15 @@ static inline void zevio_gpio_port_set(struct zevio_gpio *c, unsigned pin,
->  static int zevio_gpio_get(struct gpio_chip *chip, unsigned pin)
->  {
->  	struct zevio_gpio *controller = to_zevio_gpio(chip);
-> +	u32 val, dir;
->  
-> -	/* Only reading allowed, so no spinlock needed */
-> -	u32 val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_INPUT);
-> +	spin_lock(&controller->lock);
-> +	dir = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_DIRECTION);
-> +	if (dir | BIT(ZEVIO_GPIO_BIT(pin)))
-> +		val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_INPUT);
-> +	else
-> +		val = zevio_gpio_port_get(controller, pin, ZEVIO_GPIO_OUTPUT);
-> +	spin_unlock(&controller->lock);
->  
->  	return (val >> ZEVIO_GPIO_BIT(pin)) & 0x1;
->  }
-> 
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
