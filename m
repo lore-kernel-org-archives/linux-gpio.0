@@ -1,64 +1,95 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: Adding interrupt support to gpio-ich driver (possibly via SCI)
-Date: Mon, 07 Apr 2014 21:02:29 -0700
-Message-ID: <534374D5.3020601@roeck-us.net>
-References: <533EDD0E.8010304@roeck-us.net> <20140408024851.GA3594@srcf.ucam.org> <53436B1C.8010102@roeck-us.net> <20140408033114.GA28159@srcf.ucam.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] pinctrl: sirf: rename inlined accessor
+Date: Tue,  8 Apr 2014 14:27:43 +0200
+Message-ID: <1396960063-30552-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:51412 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750710AbaDHECh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Apr 2014 00:02:37 -0400
-In-Reply-To: <20140408033114.GA28159@srcf.ucam.org>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:41284 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756036AbaDHM1v (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Apr 2014 08:27:51 -0400
+Received: by mail-wi0-f176.google.com with SMTP id r20so6902967wiv.15
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Apr 2014 05:27:50 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peter Tyser <ptyser@xes-inc.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, Barry Song <Baohua.Song@csr.com>, Barry Song <baohua@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On 04/07/2014 08:31 PM, Matthew Garrett wrote:
-> On Mon, Apr 07, 2014 at 08:21:00PM -0700, Guenter Roeck wrote:
->> On 04/07/2014 07:48 PM, Matthew Garrett wrote:
->>> You shouldn't need to install an SCI handler - the way the hardware will
->>> generate an SCI is to raise a GPE. If you know which GPE the device
->>> raises (my recollection is that for most Intel chipsets it's GPIO number
->>> + 0x10) then you can just call acpi_install_gpe_handler(). The problem
->>
->> Sounds good. Do you by any chance have a pointer to some documentation
->> explaining this in some more detail ?
->
-> The SCI is just IRQ 9 - it tells the OS that there's a firmware event,
-> but in itself doesn't say what that event was. This is handled by the
-> platform setting bits in the GPE*_STS registers. The ACPI code reads
-> that and then dispatches the event to the appropriate handler. This will
-> typically be some ACPI code (declared by _Lxx and _Exx methods in the
-> ACPI tables - xx corresponds to the GPE number, L and E whether it's
-> level or edge triggered), but in some cases you want to install a
-> hardcoded event handler.
->
-> I've only got the 5-series docs to hand, and I can't remember whether
-> that's Panther Point, but you want to look at the definition of GPE0_STS
-> to figure out which hardware events cause which GPEs. GPEs 16 to 31
-> appear to correspond to GPIO 0 to 15, which is easy enough to handle.
->
-Panther Point is Series 7 if I understand correctly, but the GPE0_STS
-definition is the same.
+The sirfsoc_irqchip_to_bank() is obviously misnamed, as it is
+not converting an irqchip to a bank but converts a gpiochip
+to a bank so rename it sirfsoc_gpiochip_to_bank().
 
-That should get me started - thanks again!
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/sirf/pinctrl-sirf.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Guenter
-
->>> is that the firmware may well already be using some of those GPIOs, and
->>> there's no easy way to tell. Checking the interrupt configuration isn't
->>> sufficient, since some of them may just be used as outputs.
->>>
->> The gpio-ich driver already has some magic to detect that condition - I
->> noticed that I can not request all GPIO pins on all hardware. Either case,
->> the gpio pins I am interested in are well defined on the hardware I am
->> dealing with, so I can be sure I won't step on some unexpected use.
->
-> Ok. As long as you don't reprogram anything by default, I think this
-> should be fine.
->
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index 76502aab2cb1..2c3eb207ff87 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -483,7 +483,7 @@ static inline struct sirfsoc_gpio_bank *sirfsoc_gpio_to_bank(unsigned int gpio)
+ 	return &sgpio_bank[gpio / SIRFSOC_GPIO_BANK_SIZE];
+ }
+ 
+-static inline struct sirfsoc_gpio_bank *sirfsoc_irqchip_to_bank(struct gpio_chip *chip)
++static inline struct sirfsoc_gpio_bank *sirfsoc_gpiochip_to_bank(struct gpio_chip *chip)
+ {
+ 	return container_of(to_of_mm_gpio_chip(chip), struct sirfsoc_gpio_bank, chip);
+ }
+@@ -675,7 +675,7 @@ static inline void sirfsoc_gpio_set_input(struct sirfsoc_gpio_bank *bank, unsign
+ 
+ static int sirfsoc_gpio_request(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct sirfsoc_gpio_bank *bank = sirfsoc_irqchip_to_bank(chip);
++	struct sirfsoc_gpio_bank *bank = sirfsoc_gpiochip_to_bank(chip);
+ 	unsigned long flags;
+ 
+ 	if (pinctrl_request_gpio(chip->base + offset))
+@@ -697,7 +697,7 @@ static int sirfsoc_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 
+ static void sirfsoc_gpio_free(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct sirfsoc_gpio_bank *bank = sirfsoc_irqchip_to_bank(chip);
++	struct sirfsoc_gpio_bank *bank = sirfsoc_gpiochip_to_bank(chip);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&bank->lock, flags);
+@@ -712,7 +712,7 @@ static void sirfsoc_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 
+ static int sirfsoc_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+ {
+-	struct sirfsoc_gpio_bank *bank = sirfsoc_irqchip_to_bank(chip);
++	struct sirfsoc_gpio_bank *bank = sirfsoc_gpiochip_to_bank(chip);
+ 	int idx = sirfsoc_gpio_to_offset(gpio);
+ 	unsigned long flags;
+ 	unsigned offset;
+@@ -751,7 +751,7 @@ static inline void sirfsoc_gpio_set_output(struct sirfsoc_gpio_bank *bank, unsig
+ 
+ static int sirfsoc_gpio_direction_output(struct gpio_chip *chip, unsigned gpio, int value)
+ {
+-	struct sirfsoc_gpio_bank *bank = sirfsoc_irqchip_to_bank(chip);
++	struct sirfsoc_gpio_bank *bank = sirfsoc_gpiochip_to_bank(chip);
+ 	int idx = sirfsoc_gpio_to_offset(gpio);
+ 	u32 offset;
+ 	unsigned long flags;
+@@ -769,7 +769,7 @@ static int sirfsoc_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
+ 
+ static int sirfsoc_gpio_get_value(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct sirfsoc_gpio_bank *bank = sirfsoc_irqchip_to_bank(chip);
++	struct sirfsoc_gpio_bank *bank = sirfsoc_gpiochip_to_bank(chip);
+ 	u32 val;
+ 	unsigned long flags;
+ 
+@@ -785,7 +785,7 @@ static int sirfsoc_gpio_get_value(struct gpio_chip *chip, unsigned offset)
+ static void sirfsoc_gpio_set_value(struct gpio_chip *chip, unsigned offset,
+ 	int value)
+ {
+-	struct sirfsoc_gpio_bank *bank = sirfsoc_irqchip_to_bank(chip);
++	struct sirfsoc_gpio_bank *bank = sirfsoc_gpiochip_to_bank(chip);
+ 	u32 ctrl;
+ 	unsigned long flags;
+ 
+-- 
+1.9.0
 
