@@ -1,69 +1,83 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] gpio: dwapb: do not create the irq mapping upfront.
-Date: Tue, 8 Apr 2014 15:20:05 +0200
-Message-ID: <CACRpkdbdQHpv8gcgd+_5yp-3axeBiDFcoZS15DcJJTxey66g8w@mail.gmail.com>
-References: <1395345324-18299-1-git-send-email-bigeasy@linutronix.de>
-	<1395345324-18299-3-git-send-email-bigeasy@linutronix.de>
-	<CANk1AXTjuBWa_DdKaV2dCPjhbKRHE9bR2uHyuoCYtt_-zk7EoQ@mail.gmail.com>
-	<532D83F1.5070001@linutronix.de>
-	<CACRpkdYxeieES5Y5tbCRfSe=Cnj2QsoU5KvSPZ99XsJ9AUrEmw@mail.gmail.com>
-	<20140325211708.GA31203@linutronix.de>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH 6/7] gpio: dwapb: use a second irq chip
+Date: Tue, 8 Apr 2014 10:11:15 -0500
+Message-ID: <CANk1AXSuBGj3vZ7knKmHTwDZLTkvVFT42Lt9ZTdk-E+sp=xQ+g@mail.gmail.com>
+References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
+	<1395505004-22650-7-git-send-email-bigeasy@linutronix.de>
+	<5331F6D5.7070809@gmail.com>
+	<53427718.30406@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:61833 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756372AbaDHNUH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Apr 2014 09:20:07 -0400
-Received: by mail-ob0-f179.google.com with SMTP id va2so960818obc.38
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Apr 2014 06:20:05 -0700 (PDT)
-In-Reply-To: <20140325211708.GA31203@linutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53427718.30406@linutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: delicious quinoa <delicious.quinoa@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 25, 2014 at 10:17 PM, Sebastian Andrzej Siewior
+On Mon, Apr 7, 2014 at 4:59 AM, Sebastian Andrzej Siewior
 <bigeasy@linutronix.de> wrote:
-> * Linus Walleij | 2014-03-25 21:43:49 [+0100]:
->
->>> I looked at
->>> those two links and you quote gpio_to_irq() which is not required.
+> On 03/25/2014 10:36 PM, Sebastian Hesselbarth wrote:
+>>> @@ -242,17 +244,28 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>>>      irq_gc->reg_base = gpio->regs;
+>>>      irq_gc->private = gpio;
+>>>
+>>> -    ct = irq_gc->chip_types;
+>>> -    ct->chip.irq_ack = irq_gc_ack_set_bit;
+>>> -    ct->chip.irq_mask = irq_gc_mask_set_bit;
+>>> -    ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+>>> -    ct->chip.irq_set_type = dwapb_irq_set_type;
+>>> -    ct->chip.irq_enable = dwapb_irq_enable;
+>>> -    ct->chip.irq_disable = dwapb_irq_disable;
+>>> -    ct->chip.irq_request_resources = dwapb_irq_reqres;
+>>> -    ct->chip.irq_release_resources = dwapb_irq_relres;
+>>> -    ct->regs.ack = GPIO_PORTA_EOI;
+>>> -    ct->regs.mask = GPIO_INTMASK;
+>>> +    for (i = 0; i < 2; i++) {
+>>> +
+>>> +            ct = &irq_gc->chip_types[i];
+>>> +            ct->chip.irq_ack = irq_gc_ack_set_bit;
+>>> +            ct->chip.irq_mask = irq_gc_mask_set_bit;
+>>> +            ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+>>> +            ct->chip.irq_set_type = dwapb_irq_set_type;
+>>> +            ct->chip.irq_enable = dwapb_irq_enable;
+>>> +            ct->chip.irq_disable = dwapb_irq_disable;
+>>> +            ct->chip.irq_request_resources = dwapb_irq_reqres;
+>>> +            ct->chip.irq_release_resources = dwapb_irq_relres;
+>>> +            ct->regs.ack = GPIO_PORTA_EOI;
+>>> +            ct->regs.mask = GPIO_INTMASK;
+>>> +
+>>> +            if (i == 0) {
+>>> +                    ct->type = IRQ_TYPE_LEVEL_MASK;
+>>> +                    ct->handler = handle_level_irq;
+>>> +            } else {
+>>> +                    ct->type = IRQ_TYPE_EDGE_BOTH;
+>>> +                    ct->handler = handle_edge_irq;
+>>> +            }
 >>
->>In a *lot* of drivers it is implicitly required that gpio_to_irq()
->>is called first because they only call irq_create_mapping()
->>there. (And not in subsequent interrupt handlers etc.)
+>> Sebastian,
+>>
+>> IMHO the loop looks strange, especially with the (i == 0) check.
 >
-> so
+> how so?
 >
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -68,7 +68,7 @@ static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
->                                                     dwapb_gpio_port, bgc);
->         struct dwapb_gpio *gpio = port->gpio;
+>> How about unrolling it again and assign both chip_types independently?
 >
-> -       return irq_find_mapping(gpio->domain, offset);
-> +       return irq_create_mapping(gpio->domain, offset);
->  }
+> If more code makes you happy so be it. I will post the series soon with
+> the loop unrolled.
 >
->  static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
+>> Sebastian
 >
-> would fix the problem then.
+> Sebastian
 
-No.
+You could keep the loop but take out the if (i==0).   Set the type and
+handler after the loop:
 
-This only gets called if some GPIO consumer decides to call
-gpio_to_irq() to find out the interrupt number before using the
-interrupt.
+irq_gc->chip_types[0]->type = IRQ_TYPE_LEVEL_MASK;
+irq_gc->chip_types[0]->handler = handle_level_irq;
+irq_gc->chip_types[1]->type = IRQ_TYPE_EDGE_BOTH;
+irq_gc->chip_types[1]->handler = handle_edge_irq;
 
-There is no requirement that consumers do that!
-
-It is perfectly legal for a GPIO irq comsumer to just use
-some hard-coded IRQ number from a board file or similar,
-or to just use an IRQ from a DT or ACPI entity without any
-such translation.
-
-So the mappings must be created in probe().
-
-Yours,
-Linus Walleij
+Alan Tull
+aka
+delicious quinoa
