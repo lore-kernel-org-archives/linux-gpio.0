@@ -1,83 +1,64 @@
-From: delicious quinoa <delicious.quinoa@gmail.com>
-Subject: Re: [PATCH 6/7] gpio: dwapb: use a second irq chip
-Date: Tue, 8 Apr 2014 10:11:15 -0500
-Message-ID: <CANk1AXSuBGj3vZ7knKmHTwDZLTkvVFT42Lt9ZTdk-E+sp=xQ+g@mail.gmail.com>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
-	<1395505004-22650-7-git-send-email-bigeasy@linutronix.de>
-	<5331F6D5.7070809@gmail.com>
-	<53427718.30406@linutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [RFC PATCH 0/5] add gpio_chip_ops to hold GPIO operations
+Date: Tue,  8 Apr 2014 20:20:10 +0200
+Message-ID: <1396981215-24888-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53427718.30406@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 7, 2014 at 4:59 AM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> On 03/25/2014 10:36 PM, Sebastian Hesselbarth wrote:
->>> @@ -242,17 +244,28 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->>>      irq_gc->reg_base = gpio->regs;
->>>      irq_gc->private = gpio;
->>>
->>> -    ct = irq_gc->chip_types;
->>> -    ct->chip.irq_ack = irq_gc_ack_set_bit;
->>> -    ct->chip.irq_mask = irq_gc_mask_set_bit;
->>> -    ct->chip.irq_unmask = irq_gc_mask_clr_bit;
->>> -    ct->chip.irq_set_type = dwapb_irq_set_type;
->>> -    ct->chip.irq_enable = dwapb_irq_enable;
->>> -    ct->chip.irq_disable = dwapb_irq_disable;
->>> -    ct->chip.irq_request_resources = dwapb_irq_reqres;
->>> -    ct->chip.irq_release_resources = dwapb_irq_relres;
->>> -    ct->regs.ack = GPIO_PORTA_EOI;
->>> -    ct->regs.mask = GPIO_INTMASK;
->>> +    for (i = 0; i < 2; i++) {
->>> +
->>> +            ct = &irq_gc->chip_types[i];
->>> +            ct->chip.irq_ack = irq_gc_ack_set_bit;
->>> +            ct->chip.irq_mask = irq_gc_mask_set_bit;
->>> +            ct->chip.irq_unmask = irq_gc_mask_clr_bit;
->>> +            ct->chip.irq_set_type = dwapb_irq_set_type;
->>> +            ct->chip.irq_enable = dwapb_irq_enable;
->>> +            ct->chip.irq_disable = dwapb_irq_disable;
->>> +            ct->chip.irq_request_resources = dwapb_irq_reqres;
->>> +            ct->chip.irq_release_resources = dwapb_irq_relres;
->>> +            ct->regs.ack = GPIO_PORTA_EOI;
->>> +            ct->regs.mask = GPIO_INTMASK;
->>> +
->>> +            if (i == 0) {
->>> +                    ct->type = IRQ_TYPE_LEVEL_MASK;
->>> +                    ct->handler = handle_level_irq;
->>> +            } else {
->>> +                    ct->type = IRQ_TYPE_EDGE_BOTH;
->>> +                    ct->handler = handle_edge_irq;
->>> +            }
->>
->> Sebastian,
->>
->> IMHO the loop looks strange, especially with the (i == 0) check.
->
-> how so?
->
->> How about unrolling it again and assign both chip_types independently?
->
-> If more code makes you happy so be it. I will post the series soon with
-> the loop unrolled.
->
->> Sebastian
->
-> Sebastian
+In the kernel there are basically two patterns to implement object
+oriented code in C. You can either embedded a set of function pointers
+in a struct along with other members or have a separate virtual function
+table (vtable) structure that hold all the functions and only store a
+pointer to that vtable on our particular object.
 
-You could keep the loop but take out the if (i==0).   Set the type and
-handler after the loop:
+The struct gpio_chip uses the former approach, but I don't know if that
+is a design decision or is just that this code predates the fact that
+the separate structure pattern is now so popular. Since the having a
+the operations on a different structure has a number of benefits:
 
-irq_gc->chip_types[0]->type = IRQ_TYPE_LEVEL_MASK;
-irq_gc->chip_types[0]->handler = handle_level_irq;
-irq_gc->chip_types[1]->type = IRQ_TYPE_EDGE_BOTH;
-irq_gc->chip_types[1]->handler = handle_edge_irq;
+- A clean separation between state (fields) and operations (functions).
+- Size reduction of struct gpio_chip since will only hold one pointer.
+- These functions are not supposed to change at runtime so the const
+  qualifier can be used to prevent pointers modification during execution.
+- Similar drivers for a chip family can reuse their function vtable.
 
-Alan Tull
-aka
-delicious quinoa
+There is a drawback though which is that now two memory accesses are
+needed to execute a GPIO operation since an additional level of
+indirection is introduced but that should be minimized due temporal and
+spatial memory locality.
+
+So this is an RFC patch-set to add a virtual table to be used by
+GPIO chip controllers and consist of the following patches:
+
+Javier Martinez Canillas (5):
+  gpio: add a vtable to abstract GPIO controller operations
+  gpiolib: set gpio_chip operations on add using a gpio_chip_ops
+  gpio: omap: convert driver to use gpio_chip_ops
+  gpio: twl4030: convert driver to use gpio_chip_ops
+  gpio: switch to use struct struct gpio_chip_ops
+
+ drivers/gpio/gpio-omap.c    | 19 ++++++++-----
+ drivers/gpio/gpio-twl4030.c | 10 +++++--
+ drivers/gpio/gpiolib.c      | 64 ++++++++++++++++++++---------------------
+ include/linux/gpio/driver.h | 69 +++++++++++++++++++++++++++------------------
+ 4 files changed, 93 insertions(+), 69 deletions(-)
+
+The patch-set is not a complete one though since only the GPIO OMAP
+and GPIO TWL4030 drivers have been converted so I could test it on
+my platform (DM3730 OMAP IGEPv2 board).
+
+But I preferred to send an early RFC than changing every single driver
+before discussing if doing the split is worth it or not.
+
+To not break git bisect-ability, I added some patches that are
+transitional changes. If you have a better suggestion on how to
+handle that please let me know.
+
+Thanks a lot and best regards,
+Javier
+
+-- 
+1.9.0
