@@ -1,59 +1,54 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC PATCH 3/5] gpio: omap: convert driver to use gpio_chip_ops
-Date: Tue,  8 Apr 2014 20:20:13 +0200
-Message-ID: <1396981215-24888-4-git-send-email-javier.martinez@collabora.co.uk>
-References: <1396981215-24888-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1396981215-24888-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: delicious quinoa <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH 1/5] gpio: dwapb: drop irq_setup_generic_chip()
+Date: Tue, 8 Apr 2014 14:57:57 -0500
+Message-ID: <CANk1AXTcZU-xbdw0RTFxtLv38Wb33xkTWa8CPu0vce4ZpUcxEQ@mail.gmail.com>
+References: <1396865589-9972-1-git-send-email-bigeasy@linutronix.de>
+	<1396865589-9972-2-git-send-email-bigeasy@linutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qg0-f48.google.com ([209.85.192.48]:54946 "EHLO
+	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757756AbaDHT56 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Apr 2014 15:57:58 -0400
+In-Reply-To: <1396865589-9972-2-git-send-email-bigeasy@linutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Jamie Iles <jamie@jamieiles.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-The GPIO controller operations has been split to be stored
-on a separate struct gpio_chip_ops virtual function table.
+On Mon, Apr 7, 2014 at 5:13 AM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> The driver calls irq_alloc_domain_generic_chips() which creates a gc and
+> adds it to gc_list. The driver later then calls irq_setup_generic_chip()
+> which also initializes the gc and adds it to the gc_list() and this
+> corrupts the list. Enable LIST_DEBUG and you see the kernel complain.
+> This isn't required, irq_alloc_domain_generic_chips() did the init.
+>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  drivers/gpio/gpio-dwapb.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index ed5711f..4d25a06b 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -260,9 +260,6 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>         ct->regs.ack = GPIO_PORTA_EOI;
+>         ct->regs.mask = GPIO_INTMASK;
+>
+> -       irq_setup_generic_chip(irq_gc, IRQ_MSK(port->bgc.gc.ngpio),
+> -                       IRQ_GC_INIT_NESTED_LOCK, IRQ_NOREQUEST, 0);
+> -
+>         irq_set_chained_handler(irq, dwapb_irq_handler);
+>         irq_set_handler_data(irq, gpio);
+>
+> --
+> 1.9.1
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/gpio/gpio-omap.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 8cc9e91..50f0938 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1072,6 +1072,16 @@ omap_mpuio_alloc_gc(struct gpio_bank *bank, unsigned int irq_start,
- 			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
- }
- 
-+const struct gpio_chip_ops omap_gpio_ops = {
-+	.request = omap_gpio_request,
-+	.free = omap_gpio_free,
-+	.direction_input = gpio_input,
-+	.get = gpio_get,
-+	.direction_output = gpio_output,
-+	.set_debounce = gpio_debounce,
-+	.set = gpio_set
-+};
-+
- static int omap_gpio_chip_init(struct gpio_bank *bank)
- {
- 	int j;
-@@ -1083,13 +1093,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank)
- 	 * REVISIT eventually switch from OMAP-specific gpio structs
- 	 * over to the generic ones
- 	 */
--	bank->chip.request = omap_gpio_request;
--	bank->chip.free = omap_gpio_free;
--	bank->chip.direction_input = gpio_input;
--	bank->chip.get = gpio_get;
--	bank->chip.direction_output = gpio_output;
--	bank->chip.set_debounce = gpio_debounce;
--	bank->chip.set = gpio_set;
-+	bank->chip.ops = &omap_gpio_ops;
-+
- 	if (bank->is_mpuio) {
- 		bank->chip.label = "mpuio";
- 		if (bank->regs->wkup_en)
--- 
-1.9.0
+I've tested this patch.  It does fix a problem that was making the
+kernel hang while going down for a reboot.
+
+Alan
