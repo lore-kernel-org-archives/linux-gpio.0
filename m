@@ -1,45 +1,64 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: zevio: Remove of_match_ptr around zevio_gpio_of_match
-Date: Tue, 08 Apr 2014 11:44:49 +0800
-Message-ID: <1396928689.25334.0.camel@phoenix>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: Adding interrupt support to gpio-ich driver (possibly via SCI)
+Date: Mon, 07 Apr 2014 21:02:29 -0700
+Message-ID: <534374D5.3020601@roeck-us.net>
+References: <533EDD0E.8010304@roeck-us.net> <20140408024851.GA3594@srcf.ucam.org> <53436B1C.8010102@roeck-us.net> <20140408033114.GA28159@srcf.ucam.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:55641 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753162AbaDHDoz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Apr 2014 23:44:55 -0400
-Received: by mail-pa0-f50.google.com with SMTP id kq14so408356pab.23
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Apr 2014 20:44:55 -0700 (PDT)
+Received: from mail.active-venture.com ([67.228.131.205]:51412 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750710AbaDHECh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Apr 2014 00:02:37 -0400
+In-Reply-To: <20140408033114.GA28159@srcf.ucam.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Gerhard Sittig <gsi@denx.de>, Fabian Vogt <fabian@ritter-vogt.de>, linux-gpio@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peter Tyser <ptyser@xes-inc.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 
-This is a DT-only driver and it will be built only when CONFIG_OF is set.
-So it's pointless to use of_match_ptr.
+On 04/07/2014 08:31 PM, Matthew Garrett wrote:
+> On Mon, Apr 07, 2014 at 08:21:00PM -0700, Guenter Roeck wrote:
+>> On 04/07/2014 07:48 PM, Matthew Garrett wrote:
+>>> You shouldn't need to install an SCI handler - the way the hardware will
+>>> generate an SCI is to raise a GPE. If you know which GPE the device
+>>> raises (my recollection is that for most Intel chipsets it's GPIO number
+>>> + 0x10) then you can just call acpi_install_gpe_handler(). The problem
+>>
+>> Sounds good. Do you by any chance have a pointer to some documentation
+>> explaining this in some more detail ?
+>
+> The SCI is just IRQ 9 - it tells the OS that there's a firmware event,
+> but in itself doesn't say what that event was. This is handled by the
+> platform setting bits in the GPE*_STS registers. The ACPI code reads
+> that and then dispatches the event to the appropriate handler. This will
+> typically be some ACPI code (declared by _Lxx and _Exx methods in the
+> ACPI tables - xx corresponds to the GPE number, L and E whether it's
+> level or edge triggered), but in some cases you want to install a
+> hardcoded event handler.
+>
+> I've only got the 5-series docs to hand, and I can't remember whether
+> that's Panther Point, but you want to look at the definition of GPE0_STS
+> to figure out which hardware events cause which GPEs. GPEs 16 to 31
+> appear to correspond to GPIO 0 to 15, which is easy enough to handle.
+>
+Panther Point is Series 7 if I understand correctly, but the GPE0_STS
+definition is the same.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-zevio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That should get me started - thanks again!
 
-diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
-index 29b0150..97721a1 100644
---- a/drivers/gpio/gpio-zevio.c
-+++ b/drivers/gpio/gpio-zevio.c
-@@ -215,7 +215,7 @@ static struct platform_driver zevio_gpio_driver = {
- 	.driver		= {
- 		.name	= "gpio-zevio",
- 		.owner	= THIS_MODULE,
--		.of_match_table = of_match_ptr(zevio_gpio_of_match),
-+		.of_match_table = zevio_gpio_of_match,
- 	},
- 	.probe		= zevio_gpio_probe,
- };
--- 
-1.8.3.2
+Guenter
 
-
+>>> is that the firmware may well already be using some of those GPIOs, and
+>>> there's no easy way to tell. Checking the interrupt configuration isn't
+>>> sufficient, since some of them may just be used as outputs.
+>>>
+>> The gpio-ich driver already has some magic to detect that condition - I
+>> noticed that I can not request all GPIO pins on all hardware. Either case,
+>> the gpio pins I am interested in are well defined on the hardware I am
+>> dealing with, so I can be sure I won't step on some unexpected use.
+>
+> Ok. As long as you don't reprogram anything by default, I think this
+> should be fine.
+>
 
