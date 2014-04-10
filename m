@@ -1,27 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio / ACPI: Don't crash on NULL chip->dev
-Date: Thu, 10 Apr 2014 18:06:01 +0200
-Message-ID: <CACRpkdZ4zndoCPSvdhMru6hofeCb0ivSVfy1dPckdnfeWUrL4g@mail.gmail.com>
-References: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpio / ACPI: Prevent potential wrap of GPIO value on
+ OpRegion read
+Date: Thu, 10 Apr 2014 18:24:18 +0200
+Message-ID: <CACRpkdYfWsBqZenG8y7jYo1QzKpBdaFRe=ne4-1Lr2RgoDpNGg@mail.gmail.com>
+References: <1396346580-4857-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
+In-Reply-To: <1396346580-4857-1-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Sabrina Dubroca <sd@queasysnail.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 31, 2014 at 2:16 PM, Mika Westerberg
+On Tue, Apr 1, 2014 at 12:03 PM, Mika Westerberg
 <mika.westerberg@linux.intel.com> wrote:
 
-> Commit aa92b6f689ac (gpio / ACPI: Allocate ACPI specific data directly in
-> acpi_gpiochip_add()) moved ACPI handle checking to acpi_gpiochip_add() but
-> forgot to check whether chip->dev is NULL before dereferencing it.
+> Dan Carpenter's static code checker reports:
 >
-> Since chip->dev pointer is optional we can end up with crash like following:
+>  The patch 473ed7be0da0: "gpio / ACPI: Add support for ACPI GPIO
+>  operation regions" from Mar 14, 2014, leads to the following static
+>  checker warning:
+>
+>   drivers/gpio/gpiolib-acpi.c:454 acpi_gpio_adr_space_handler()
+>   warn: should 'gpiod_get_raw_value(desc) << i' be a 64 bit type?
+>
+> This is due the fact that *value is of type u64 and gpiod_get_raw_value()
+> returns int. Since i can be larger than 31, it is possible that the value
+> returned gets wrapped.
+>
+> Fix this by casting the return of gpiod_get_raw_value() to u64 first before
+> shift.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Sorry for taking so long before getting to it, patch applied for fixes.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
