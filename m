@@ -1,31 +1,62 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: zevio: Remove of_match_ptr around zevio_gpio_of_match
-Date: Thu, 10 Apr 2014 19:59:06 +0200
-Message-ID: <CACRpkdY36mz85o8BMr2bxF1JKw3kWaTc2BRZtM2o0x1iY2xdgA@mail.gmail.com>
-References: <1396928689.25334.0.camel@phoenix>
+Subject: Re: [PATCH 2/2] pinctrl: sirf: switch driver to use gpiolib irqchip helpers
+Date: Thu, 10 Apr 2014 20:32:04 +0200
+Message-ID: <CACRpkdbz5uP+MNJn22z-GVuonZ_ungNwqfsNT6aB7r0pd0vHxQ@mail.gmail.com>
+References: <1396960077-30599-1-git-send-email-linus.walleij@linaro.org>
+	<CAGsJ_4yfCcQoMmUD08HBJDkXSPUOuUP-Sj9EZAJZ8grpodReiw@mail.gmail.com>
+	<CAGsJ_4wEbDhcYa5sK0e6eVKOyHRJA4HSZWsd_83WGbAsviEToQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:54107 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753244AbaDJR7G (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 13:59:06 -0400
-Received: by mail-ob0-f169.google.com with SMTP id va2so4854030obc.0
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 10:59:06 -0700 (PDT)
-In-Reply-To: <1396928689.25334.0.camel@phoenix>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:54468 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758814AbaDJScG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 14:32:06 -0400
+Received: by mail-ob0-f181.google.com with SMTP id wp4so4903884obc.12
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 11:32:05 -0700 (PDT)
+In-Reply-To: <CAGsJ_4wEbDhcYa5sK0e6eVKOyHRJA4HSZWsd_83WGbAsviEToQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>, Fabian Vogt <fabian@ritter-vogt.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Barry Song <baohua@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
 
-On Tue, Apr 8, 2014 at 5:44 AM, Axel Lin <axel.lin@ingics.com> wrote:
+On Thu, Apr 10, 2014 at 11:30 AM, Barry Song <baohua@kernel.org> wrote:
 
-> This is a DT-only driver and it will be built only when CONFIG_OF is set.
-> So it's pointless to use of_match_ptr.
+>> with this:
+>> # cat /proc/interrupts
+>>            CPU0
+>>  16:        944  irq_sirfsoc   0  sirfsoc_timer0
+>> ...
+>> 105:          0  sirf-gpio-irq  13  extcon-gpio
+>> ...
+>>
+>> i will do a debug to find why. any idea from you?
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> hi linus, after reading the source codes of GPIOLIB_IRQCHIP, i think
+> the new irq number after applying your patch should not be a problem.
+> the reason is that you create irq mapping earlier in
+> gpiochip_irqchip_add(), but the old codes did it later on demand in
+> sirfsoc_gpio_to_irq().
 
-Patch applied.
+Yeah it's just some number, it's dynamically allocated to you should
+not need to worry about that. It could even change with probe order
+due to unpredictable things.
+
+> the real problem here is that we have several gpio banks, but there is
+> only one device node, so i think this should be not good and will make
+> the gpiochip_irq_reqres(), gpiochip_irq_relres() fail since
+> sub-devices can only point its interrupt parent to the only gpio node,
+> this makes hwirq bigger than the size of the gpio bank.
+>
+> so will you wait for me to send a patch to merge all banks into one
+> gpio_chip just as i have done by commit
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=8daeffb058f78deb0b0ef2cb67ef741c38788bf9
+> to merge irq_domain?
+
+Sure I'm standing by.
+
+Bonus points if you rebase my patch on top of it and send it
+as patch 2/2 :-D
 
 Yours,
 Linus Walleij
