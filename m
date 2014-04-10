@@ -1,26 +1,34 @@
 From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [PATCH 2/5] gpio: omap: check gpiochip_add() return value
-Date: Thu, 10 Apr 2014 13:36:10 -0400
-Message-ID: <5346D68A.2090502@ti.com>
-References: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk> <1396796297-13002-3-git-send-email-javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 3/5] gpio: omap: add a GPIO_OMAP option instead of using
+ ARCH_OMAP
+Date: Thu, 10 Apr 2014 13:37:15 -0400
+Message-ID: <5346D6CB.6070003@ti.com>
+References: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk> <1396796297-13002-4-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:45792 "EHLO
+Received: from devils.ext.ti.com ([198.47.26.153]:45830 "EHLO
 	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753221AbaDJRgs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 13:36:48 -0400
-In-Reply-To: <1396796297-13002-3-git-send-email-javier.martinez@collabora.co.uk>
+	with ESMTP id S1753103AbaDJRhx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 13:37:53 -0400
+In-Reply-To: <1396796297-13002-4-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linus Walleij <linus.walleij@linaro.org>
 Cc: Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 On Sunday 06 April 2014 10:58 AM, Javier Martinez Canillas wrote:
-> The gpiochip_add() function can fail if the chip cannot
-> be registered so the return value has to be checked and
-> the error propagated in case it happens.
+> The ARCH_OMAP config option was used to built the GPIO OMAP
+> driver but this is not consistent with the rest of the GPIO
+> drivers that have their own Kconfig option.
+> 
+> Also, this make it harder to add dependencies or reverse
+> dependencies (i.e: select) since that would mean touching the
+> sub-arch config option.
+> 
+> So is better to add a boolean Kconfig option for this driver
+> that defaults to true if ARCH_OMAP is enabled.
 > 
 > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 > ---
