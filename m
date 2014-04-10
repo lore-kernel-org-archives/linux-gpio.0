@@ -1,32 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 2/2] gpio: moxart: Actually set output state in moxart_gpio_direction_output()
-Date: Thu, 10 Apr 2014 19:22:52 +0200
-Message-ID: <CACRpkdakFkiaXfHpWWkwMxGPbv01UNwgkrtPitp+vgnEYU3aEQ@mail.gmail.com>
-References: <1395715413.12999.0.camel@phoenix>
-	<1395715459.12999.1.camel@phoenix>
-	<CACmBeS1y7y9C7BGG8vrkB7FdXRiBuA2Ar6KNZFM2RC0enMxZ0w@mail.gmail.com>
+Subject: Re: [PATCH 0/5] GPIO OMAP driver changes for v3.16
+Date: Thu, 10 Apr 2014 19:29:26 +0200
+Message-ID: <CACRpkdarYt4tAD9WMDu6Me+dhipVyDHMpgF-AQ8SDNKMmhSjsA@mail.gmail.com>
+References: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:33682 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753322AbaDJRWw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 13:22:52 -0400
-Received: by mail-ob0-f181.google.com with SMTP id wp4so4739300obc.40
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 10:22:52 -0700 (PDT)
-In-Reply-To: <CACmBeS1y7y9C7BGG8vrkB7FdXRiBuA2Ar6KNZFM2RC0enMxZ0w@mail.gmail.com>
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:42116 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753103AbaDJR30 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 13:29:26 -0400
+Received: by mail-oa0-f51.google.com with SMTP id i4so4799345oah.24
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 10:29:26 -0700 (PDT)
+In-Reply-To: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Jensen <jonas.jensen@gmail.com>
-Cc: Axel Lin <axel.lin@ingics.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Apr 4, 2014 at 11:32 AM, Jonas Jensen <jonas.jensen@gmail.com> wrote:
+On Sun, Apr 6, 2014 at 4:58 PM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
 
-> Verified by buzzing the buzzer and writing RTC (next-20140403):
-(...)
-> Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
+> Now that you have sent your changes for v3.15 to Torvalds, here are some
+> changes for the OMAP GPIO driver targeted to v3.16. Mostly improvements
+> so nothing here is -rc material.
 
-This patch is already upstream in Torvalds' tree, but thanks anyway!
+I like this series so I have applied them for v3.16, pending some ACK
+from Kevin &| Santosh.
+
+> The biggest change is Patch 4 that converts the driver to use the newly
+> introduced generic irqchip helpers in the gpiolib core which allows to
+> remove some driver specific logic that should really be generic.
+
+Excellent, I will take a closer look at this, it seems there is some
+cruft still in but let me look.
 
 Yours,
 Linus Walleij
