@@ -1,35 +1,30 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Subject: Re: Oops in acpi_gpiochip_add on MacBookPro with Linux v3.14-12042-g69cd9eba3886
-Date: Thu, 10 Apr 2014 08:50:05 +0200
-Message-ID: <CACna6ry+FOYykZpzycEjDA+ncGNLk6eXkwadXy548h9dgU1Bgw@mail.gmail.com>
-References: <CA+5PVA5VBns=hkOSViucrpT340uG0=hgrWqf=LYHTBFAe74tBg@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: document gpio irqchips a bit more, describe helpers
+Date: Thu, 10 Apr 2014 16:23:18 +0900
+Message-ID: <CAAVeFu+QUUo3g5esQxsfgdaOAwVbC2esfCeN-yqgLRAYg1Uj5Q@mail.gmail.com>
+References: <1397047047-20870-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:44703 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933287AbaDJGuG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 02:50:06 -0400
-In-Reply-To: <CA+5PVA5VBns=hkOSViucrpT340uG0=hgrWqf=LYHTBFAe74tBg@mail.gmail.com>
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:62003 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933287AbaDJHXi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 03:23:38 -0400
+Received: by mail-ig0-f177.google.com with SMTP id ur14so3435250igb.4
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 00:23:38 -0700 (PDT)
+In-Reply-To: <1397047047-20870-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Josh Boyer <jwboyer@fedoraproject.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-2014-04-09 23:09 GMT+02:00 Josh Boyer <jwboyer@fedoraproject.org>:
-> With Linux v3.14-12042-g69cd9eba3886 I get an oops from the bcma
-> module on the MacBookPro 10,2 I have here.  This works fine with Linux
-> v3.14-7333-g59ecc26004e7.  There have been no changes between those
-> two versions to bcma itself, but the GPIO merge did go in that window.
->  I can attempt to do a bisect tomorrow, but looking over some of the
-> GPIO commits it seems pretty relevant to the ACPI GPIO changes.  I'm
-> hoping someone here has an idea on what the issue might be and has
-> some possible things for me to test for fixes.
+On Wed, Apr 9, 2014 at 9:37 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> This adds some documentation about the GPIO irqchips, what types
+> exist etc.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Bug report: https://lkml.org/lkml/2014/3/24/262
-Patch: https://lkml.org/lkml/2014/3/24/293
-Tested by Sabrina: https://lkml.org/lkml/2014/3/24/304
-(all links are for the same thread).
+Great, that sheds some light to your recent IRQ work (which I still
+have to understand in more detail).
 
-Now you simply have to find above patch in some git tree :) Not sure
-if it's already in Linus's one.
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
