@@ -1,41 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio / ACPI: Prevent potential wrap of GPIO value on
- OpRegion read
-Date: Thu, 10 Apr 2014 18:24:18 +0200
-Message-ID: <CACRpkdYfWsBqZenG8y7jYo1QzKpBdaFRe=ne4-1Lr2RgoDpNGg@mail.gmail.com>
-References: <1396346580-4857-1-git-send-email-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpio: ge: Convert to platform driver
+Date: Thu, 10 Apr 2014 18:30:16 +0200
+Message-ID: <CACRpkdZMabAQuribdmt=bK_1RF1_oSOeiEquXAuxyq3adtE8-g@mail.gmail.com>
+References: <1396156455-4225-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1396346580-4857-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:62473 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752484AbaDJQaR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 12:30:17 -0400
+Received: by mail-oa0-f49.google.com with SMTP id o6so4710853oag.22
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 09:30:17 -0700 (PDT)
+In-Reply-To: <1396156455-4225-1-git-send-email-shc_work@mail.ru>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, Apr 1, 2014 at 12:03 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Sun, Mar 30, 2014 at 7:14 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
 
-> Dan Carpenter's static code checker reports:
+> This patch converts GE I/O FPGA GPIO driver to platform driver.
 >
->  The patch 473ed7be0da0: "gpio / ACPI: Add support for ACPI GPIO
->  operation regions" from Mar 14, 2014, leads to the following static
->  checker warning:
->
->   drivers/gpio/gpiolib-acpi.c:454 acpi_gpio_adr_space_handler()
->   warn: should 'gpiod_get_raw_value(desc) << i' be a 64 bit type?
->
-> This is due the fact that *value is of type u64 and gpiod_get_raw_value()
-> returns int. Since i can be larger than 31, it is possible that the value
-> returned gets wrapped.
->
-> Fix this by casting the return of gpiod_get_raw_value() to u64 first before
-> shift.
->
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+> ---
+> Only compile tested.
 
-Patch applied for fixes.
+Isn't it necessary to also patch affected platforms to add this
+device either as platform device or in their device trees?
 
 Yours,
 Linus Walleij
