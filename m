@@ -1,80 +1,92 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Oops in acpi_gpiochip_add on MacBookPro with Linux v3.14-12042-g69cd9eba3886
-Date: Thu, 10 Apr 2014 20:47:23 +0200
-Message-ID: <CACRpkdaBg5KjvksHRB3z2R6KehYcFC=4MEHedfcE6tP4GTh+Qw@mail.gmail.com>
-References: <CA+5PVA5VBns=hkOSViucrpT340uG0=hgrWqf=LYHTBFAe74tBg@mail.gmail.com>
-	<CACna6ry+FOYykZpzycEjDA+ncGNLk6eXkwadXy548h9dgU1Bgw@mail.gmail.com>
-	<CA+5PVA4ijLmwRKHD4RYE6qSqkN7p8v1GB9w9GAGAJKG45bBTnw@mail.gmail.com>
-	<20140410124045.GX19349@intel.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 4/5] gpio: omap: convert driver to use gpiolib irqchip
+Date: Thu, 10 Apr 2014 20:58:31 +0200
+Message-ID: <CABxcv=ktiH346PBueYKtitKWVXznjdYOJe=qvOfxfT37MTL_Kw@mail.gmail.com>
+References: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1396796297-13002-5-git-send-email-javier.martinez@collabora.co.uk>
+	<5346D758.5020103@ti.com>
+	<CACRpkdazRZvNwZcdkn1EQpv7PEGv83pL+yaFRHA8z0SSXw2gkg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:63659 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759007AbaDJSrX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 14:47:23 -0400
-Received: by mail-oa0-f52.google.com with SMTP id l6so4985233oag.11
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 11:47:23 -0700 (PDT)
-In-Reply-To: <20140410124045.GX19349@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdazRZvNwZcdkn1EQpv7PEGv83pL+yaFRHA8z0SSXw2gkg@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Josh Boyer <jwboyer@fedoraproject.org>, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Thu, Apr 10, 2014 at 2:40 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Thu, Apr 10, 2014 at 08:22:12AM -0400, Josh Boyer wrote:
->> On Thu, Apr 10, 2014 at 2:50 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gma=
-il.com> wrote:
->> > 2014-04-09 23:09 GMT+02:00 Josh Boyer <jwboyer@fedoraproject.org>:
->> >> With Linux v3.14-12042-g69cd9eba3886 I get an oops from the bcma
->> >> module on the MacBookPro 10,2 I have here.  This works fine with =
-Linux
->> >> v3.14-7333-g59ecc26004e7.  There have been no changes between tho=
-se
->> >> two versions to bcma itself, but the GPIO merge did go in that wi=
-ndow.
->> >>  I can attempt to do a bisect tomorrow, but looking over some of =
-the
->> >> GPIO commits it seems pretty relevant to the ACPI GPIO changes.  =
-I'm
->> >> hoping someone here has an idea on what the issue might be and ha=
-s
->> >> some possible things for me to test for fixes.
->> >
->> > Bug report: https://lkml.org/lkml/2014/3/24/262
->> > Patch: https://lkml.org/lkml/2014/3/24/293
->> > Tested by Sabrina: https://lkml.org/lkml/2014/3/24/304
->> > (all links are for the same thread).
->> >
->> > Now you simply have to find above patch in some git tree :) Not su=
-re
->> > if it's already in Linus's one.
->>
->> Ah, wonderful.  I now wish I would have found those in my searching
->> before doing the bisect.  Oh well.  For what it's worth, my bisect
->> landed on the same commit.
->>
->> The fix isn't in Linus' tree or linux-next.  I'm guessing Mika is
->> either still on vacation, or hasn't sent out the formal fix yet.
+Hello Linus and Santosh,
+
+On Thu, Apr 10, 2014 at 7:45 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Apr 10, 2014 at 7:39 PM, Santosh Shilimkar
+> <santosh.shilimkar@ti.com> wrote:
+>> On Sunday 06 April 2014 10:58 AM, Javier Martinez Canillas wrote:
 >
-> No, not on vacation anymore (unfortunately). I did send the formal pa=
-tch
-> already:
+>>> +#ifdef CONFIG_ARCH_OMAP1
+>>> +     /*
+>>> +      * REVISIT: Once we have OMAP1 supporting SPARSE_IRQ, we can drop
+>>> +      * irq_alloc_descs() since a base IRQ offset will no longer be needed.
+>>> +      */
+>>> +     irq_base = irq_alloc_descs(-1, 0, bank->width, 0);
+>>> +     if (irq_base < 0) {
+>>> +             dev_err(bank->dev, "Couldn't allocate IRQ numbers\n");
+>>> +             return -ENODEV;
+>>> +     }
+>>> +#endif
+>>> +
+>> Do we still need above after first patch ? Would be good
+>> to get rid of above ugly #ifdef on the middle of the code.
+
+When working on this series I tried to remove the #ifdef but as far as
+I understood is not currently possible until OMAP1 supports sparse irq
+numbering.
+
+Not so long ago the GPIO OMAP driver used the legacy domain mapping
+for all OMAP SoCs and Jon Hunter converted to use linear domain
+mapping on commit ede4d7a ("gpio/omap: convert gpio irq domain to
+linear mapping").
+
+Unfortunately that change caused a regression on OMAP1 platforms as
+reported by Aaro [0] so I had to partially revert the linear domain
+mapping for OMAP1 platforms on commit 397ead ("gpio/omap: don't use
+linear domain mapping for OMAP1") introducing this ugly ifdefery in
+the middle of the code.
+
 >
-> https://lkml.org/lkml/2014/3/31/135
+> I don't think so actually, simple irqdomain adds descriptors
+> for irqbase != 0, and the gpiochip irqchip helpers call
+> irq_create_mapping() on all offsets.
 >
-> but it isn't merged to Linus' GPIO tree yet.
 
-I've queued this for fixes!
+Looking at irq_domain_add_simple() [1] I see that it only calls
+irq_alloc_descs() and irq_domain_associate_many() if first_irq > 0 and
+CONFIG_SPARSE_IRQ is enabled (which is not the case for
+omap1_defconfig).
 
-Will send upstream ASAP.
+So, if I got this correctly removing the #ifdef for OMAP1 and calling
+irq_domain_add_simple() is functionally equivalent to what Jon's patch
+did that broke omap1. That is would have the same effect that just
+calling irq_domain_add_linear() [2] for OMAP1.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Preferably a separate patch on top of this removing that code
+> though so it's bisectable.
+>
+
+If I remember correctly we did that partial revert because we were in
+a -rc cycle and I didn't have time to investigate why
+irq_domain_add_linear() does not work on omap1. I could try to do this
+as a follow up patch but unfortunately I don't have access to any
+omap1 platform to do further debug.
+
+Please let me know if I got something wrong while looking at the code.
+
+> Yours,
+> Linus Walleij
+> --
+
+Thanks a lot and best regards,
+Javier
+
+[0]: http://www.mail-archive.com/linux-omap@vger.kernel.org/msg89005.html
+[1]: http://lxr.free-electrons.com/source/kernel/irq/irqdomain.c#L123
+[2]: http://lxr.free-electrons.com/source/include/linux/irqdomain.h#L139
