@@ -1,40 +1,27 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: SAMSUNG: remove gpio flags in dev-backlight
-Date: Thu, 10 Apr 2014 23:14:16 +0900
-Message-ID: <CAAVeFuKJnSk2XSsMZZKMfyabzJ5CYdqWdE91H5uHiYFC1r6HxA@mail.gmail.com>
-References: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
- <1393480414-19473-2-git-send-email-acourbot@nvidia.com> <CAAVeFu+XUzZ7ozMOcp6A-gZJ9o8DZFrdh1j4LvCQtoTcu=PP1g@mail.gmail.com>
- <000701cf54a2$7c1379c0$743a6d40$%han@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio / ACPI: Don't crash on NULL chip->dev
+Date: Thu, 10 Apr 2014 18:06:01 +0200
+Message-ID: <CACRpkdZ4zndoCPSvdhMru6hofeCb0ivSVfy1dPckdnfeWUrL4g@mail.gmail.com>
+References: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000701cf54a2$7c1379c0$743a6d40$%han@samsung.com>
+In-Reply-To: <1396268209-19108-1-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Bryan Wu <cooloney@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Sabrina Dubroca <sd@queasysnail.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 10, 2014 at 6:51 PM, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Thursday, April 10, 2014 1:17 PM, Alexandre Courbot wrote:
->>
->> Ping, can I have the Samsung folks review and ,aybe even merge this
->> patch? enable_gpio_flags is never used in any code, is replaced by
->> gpiod, and we would like to remove it altogether from pwm_bl. Thanks!
->
-> OK, I see. It looks good.
->
-> As far as I know, 'enable_gpio_flags' has not been being used
-> for Samsung platform. So, there will be no side effect,
-> if 'enable_gpio_flags' is removed from 'arch/arm/plat-samsung'
-> directory.
->
-> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+On Mon, Mar 31, 2014 at 2:16 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-Great, thanks. Ben, Kukjin, could we have your Acked-by?
+> Commit aa92b6f689ac (gpio / ACPI: Allocate ACPI specific data directly in
+> acpi_gpiochip_add()) moved ACPI handle checking to acpi_gpiochip_add() but
+> forgot to check whether chip->dev is NULL before dereferencing it.
+>
+> Since chip->dev pointer is optional we can end up with crash like following:
 
-Thierry, if the Samsung maintainers are ok with it, and 2/2 of this
-series is also ok for you (you merged the same for simple-panel
-already), can you take both into your tree?
+Sorry for taking so long before getting to it, patch applied for fixes.
 
-Thanks,
-Alex.
+Yours,
+Linus Walleij
