@@ -1,83 +1,40 @@
-From: Josh Boyer <jwboyer@fedoraproject.org>
-Subject: Re: Oops in acpi_gpiochip_add on MacBookPro with Linux v3.14-12042-g69cd9eba3886
-Date: Thu, 10 Apr 2014 09:40:21 -0400
-Message-ID: <CA+5PVA49F9nRawW11eP=8CRRHJYmtV78EqxFzBLTD8RvzM5ULQ@mail.gmail.com>
-References: <CA+5PVA5VBns=hkOSViucrpT340uG0=hgrWqf=LYHTBFAe74tBg@mail.gmail.com>
-	<CACna6ry+FOYykZpzycEjDA+ncGNLk6eXkwadXy548h9dgU1Bgw@mail.gmail.com>
-	<CA+5PVA4ijLmwRKHD4RYE6qSqkN7p8v1GB9w9GAGAJKG45bBTnw@mail.gmail.com>
-	<20140410124045.GX19349@intel.com>
-	<CA+5PVA52wqaRezzhn2Oqb1FM-yuVsbD4eQq422sXRrpLbfzRbA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: SAMSUNG: remove gpio flags in dev-backlight
+Date: Thu, 10 Apr 2014 23:14:16 +0900
+Message-ID: <CAAVeFuKJnSk2XSsMZZKMfyabzJ5CYdqWdE91H5uHiYFC1r6HxA@mail.gmail.com>
+References: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
+ <1393480414-19473-2-git-send-email-acourbot@nvidia.com> <CAAVeFu+XUzZ7ozMOcp6A-gZJ9o8DZFrdh1j4LvCQtoTcu=PP1g@mail.gmail.com>
+ <000701cf54a2$7c1379c0$743a6d40$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:37381 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030546AbaDJNkW convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 09:40:22 -0400
-In-Reply-To: <CA+5PVA52wqaRezzhn2Oqb1FM-yuVsbD4eQq422sXRrpLbfzRbA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000701cf54a2$7c1379c0$743a6d40$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Bryan Wu <cooloney@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Thu, Apr 10, 2014 at 8:52 AM, Josh Boyer <jwboyer@fedoraproject.org>=
- wrote:
-> On Thu, Apr 10, 2014 at 8:40 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
->> On Thu, Apr 10, 2014 at 08:22:12AM -0400, Josh Boyer wrote:
->>> On Thu, Apr 10, 2014 at 2:50 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gm=
-ail.com> wrote:
->>> > 2014-04-09 23:09 GMT+02:00 Josh Boyer <jwboyer@fedoraproject.org>=
-:
->>> >> With Linux v3.14-12042-g69cd9eba3886 I get an oops from the bcma
->>> >> module on the MacBookPro 10,2 I have here.  This works fine with=
- Linux
->>> >> v3.14-7333-g59ecc26004e7.  There have been no changes between th=
-ose
->>> >> two versions to bcma itself, but the GPIO merge did go in that w=
-indow.
->>> >>  I can attempt to do a bisect tomorrow, but looking over some of=
- the
->>> >> GPIO commits it seems pretty relevant to the ACPI GPIO changes. =
- I'm
->>> >> hoping someone here has an idea on what the issue might be and h=
-as
->>> >> some possible things for me to test for fixes.
->>> >
->>> > Bug report: https://lkml.org/lkml/2014/3/24/262
->>> > Patch: https://lkml.org/lkml/2014/3/24/293
->>> > Tested by Sabrina: https://lkml.org/lkml/2014/3/24/304
->>> > (all links are for the same thread).
->>> >
->>> > Now you simply have to find above patch in some git tree :) Not s=
-ure
->>> > if it's already in Linus's one.
->>>
->>> Ah, wonderful.  I now wish I would have found those in my searching
->>> before doing the bisect.  Oh well.  For what it's worth, my bisect
->>> landed on the same commit.
->>>
->>> The fix isn't in Linus' tree or linux-next.  I'm guessing Mika is
->>> either still on vacation, or hasn't sent out the formal fix yet.
+On Thu, Apr 10, 2014 at 6:51 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Thursday, April 10, 2014 1:17 PM, Alexandre Courbot wrote:
 >>
->> No, not on vacation anymore (unfortunately). I did send the formal p=
-atch
->> already:
->>
->> https://lkml.org/lkml/2014/3/31/135
->>
->> but it isn't merged to Linus' GPIO tree yet.
+>> Ping, can I have the Samsung folks review and ,aybe even merge this
+>> patch? enable_gpio_flags is never used in any code, is replaced by
+>> gpiod, and we would like to remove it altogether from pwm_bl. Thanks!
 >
-> Ah, ok great.  I'll test that today.  Thanks.
+> OK, I see. It looks good.
+>
+> As far as I know, 'enable_gpio_flags' has not been being used
+> for Samsung platform. So, there will be no side effect,
+> if 'enable_gpio_flags' is removed from 'arch/arm/plat-samsung'
+> directory.
+>
+> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
-Yep, that works for my bcma issue as well.  Thanks!
+Great, thanks. Ben, Kukjin, could we have your Acked-by?
 
-Tested-by: Josh Boyer <jwboyer@fedoraproject.org>
+Thierry, if the Samsung maintainers are ok with it, and 2/2 of this
+series is also ok for you (you merged the same for simple-panel
+already), can you take both into your tree?
 
-josh
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Alex.
