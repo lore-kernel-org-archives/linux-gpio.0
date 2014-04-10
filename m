@@ -1,49 +1,55 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [RFC PATCH 0/5] add gpio_chip_ops to hold GPIO operations
-Date: Thu, 10 Apr 2014 13:46:02 +0200
-Message-ID: <CABxcv=kAk1Gwm6LHq2X5CFxM6Qo97WUZdmSwszuUiesz699Hdg@mail.gmail.com>
-References: <1396981215-24888-1-git-send-email-javier.martinez@collabora.co.uk>
-	<CAAVeFu+XV_wy9JzewGs0bcSA-ivQg-kzygMh_kt434rsYRQwHQ@mail.gmail.com>
-	<534665B1.9090207@collabora.co.uk>
-	<1397127659.11914.94.camel@smile.fi.intel.com>
+From: Josh Boyer <jwboyer@fedoraproject.org>
+Subject: Re: Oops in acpi_gpiochip_add on MacBookPro with Linux v3.14-12042-g69cd9eba3886
+Date: Thu, 10 Apr 2014 08:22:12 -0400
+Message-ID: <CA+5PVA4ijLmwRKHD4RYE6qSqkN7p8v1GB9w9GAGAJKG45bBTnw@mail.gmail.com>
+References: <CA+5PVA5VBns=hkOSViucrpT340uG0=hgrWqf=LYHTBFAe74tBg@mail.gmail.com>
+	<CACna6ry+FOYykZpzycEjDA+ncGNLk6eXkwadXy548h9dgU1Bgw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1397127659.11914.94.camel@smile.fi.intel.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:50273 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030419AbaDJMWN convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 08:22:13 -0400
+In-Reply-To: <CACna6ry+FOYykZpzycEjDA+ncGNLk6eXkwadXy548h9dgU1Bgw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-Hello Andy,
-
-On Thu, Apr 10, 2014 at 1:00 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Thu, 2014-04-10 at 11:34 +0200, Javier Martinez Canillas wrote:
->> On 04/10/2014 09:36 AM, Alexandre Courbot wrote:
->> >
->> > "Since having the operations" maybe?
->> >
->>
->> Yes, since I'm not a native english speaker I sometimes miss some obvious
->> grammatical errors. I'll fix those when posting the final version with all the
->> drivers converted.
+On Thu, Apr 10, 2014 at 2:50 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.=
+com> wrote:
+> 2014-04-09 23:09 GMT+02:00 Josh Boyer <jwboyer@fedoraproject.org>:
+>> With Linux v3.14-12042-g69cd9eba3886 I get an oops from the bcma
+>> module on the MacBookPro 10,2 I have here.  This works fine with Lin=
+ux
+>> v3.14-7333-g59ecc26004e7.  There have been no changes between those
+>> two versions to bcma itself, but the GPIO merge did go in that windo=
+w.
+>>  I can attempt to do a bisect tomorrow, but looking over some of the
+>> GPIO commits it seems pretty relevant to the ACPI GPIO changes.  I'm
+>> hoping someone here has an idea on what the issue might be and has
+>> some possible things for me to test for fixes.
 >
-> JFYI: there is nice project called codespell [1].
+> Bug report: https://lkml.org/lkml/2014/3/24/262
+> Patch: https://lkml.org/lkml/2014/3/24/293
+> Tested by Sabrina: https://lkml.org/lkml/2014/3/24/304
+> (all links are for the same thread).
 >
-> [1] git://github.com/lucasdemarchi/codespell.git
+> Now you simply have to find above patch in some git tree :) Not sure
+> if it's already in Linus's one.
 
-Interesting project, thanks a lot for the pointer.
+Ah, wonderful.  I now wish I would have found those in my searching
+before doing the bisect.  Oh well.  For what it's worth, my bisect
+landed on the same commit.
 
-Best regards,
-Javier
+The fix isn't in Linus' tree or linux-next.  I'm guessing Mika is
+either still on vacation, or hasn't sent out the formal fix yet.
 
->
-> --
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Intel Finland Oy
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+josh
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
