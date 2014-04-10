@@ -1,62 +1,80 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: sirf: switch driver to use gpiolib irqchip helpers
-Date: Thu, 10 Apr 2014 20:32:04 +0200
-Message-ID: <CACRpkdbz5uP+MNJn22z-GVuonZ_ungNwqfsNT6aB7r0pd0vHxQ@mail.gmail.com>
-References: <1396960077-30599-1-git-send-email-linus.walleij@linaro.org>
-	<CAGsJ_4yfCcQoMmUD08HBJDkXSPUOuUP-Sj9EZAJZ8grpodReiw@mail.gmail.com>
-	<CAGsJ_4wEbDhcYa5sK0e6eVKOyHRJA4HSZWsd_83WGbAsviEToQ@mail.gmail.com>
+Subject: Re: Oops in acpi_gpiochip_add on MacBookPro with Linux v3.14-12042-g69cd9eba3886
+Date: Thu, 10 Apr 2014 20:47:23 +0200
+Message-ID: <CACRpkdaBg5KjvksHRB3z2R6KehYcFC=4MEHedfcE6tP4GTh+Qw@mail.gmail.com>
+References: <CA+5PVA5VBns=hkOSViucrpT340uG0=hgrWqf=LYHTBFAe74tBg@mail.gmail.com>
+	<CACna6ry+FOYykZpzycEjDA+ncGNLk6eXkwadXy548h9dgU1Bgw@mail.gmail.com>
+	<CA+5PVA4ijLmwRKHD4RYE6qSqkN7p8v1GB9w9GAGAJKG45bBTnw@mail.gmail.com>
+	<20140410124045.GX19349@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:54468 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758814AbaDJScG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 14:32:06 -0400
-Received: by mail-ob0-f181.google.com with SMTP id wp4so4903884obc.12
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 11:32:05 -0700 (PDT)
-In-Reply-To: <CAGsJ_4wEbDhcYa5sK0e6eVKOyHRJA4HSZWsd_83WGbAsviEToQ@mail.gmail.com>
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:63659 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759007AbaDJSrX convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 14:47:23 -0400
+Received: by mail-oa0-f52.google.com with SMTP id l6so4985233oag.11
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 11:47:23 -0700 (PDT)
+In-Reply-To: <20140410124045.GX19349@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Barry Song <baohua@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Josh Boyer <jwboyer@fedoraproject.org>, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Thu, Apr 10, 2014 at 11:30 AM, Barry Song <baohua@kernel.org> wrote:
-
->> with this:
->> # cat /proc/interrupts
->>            CPU0
->>  16:        944  irq_sirfsoc   0  sirfsoc_timer0
->> ...
->> 105:          0  sirf-gpio-irq  13  extcon-gpio
->> ...
+On Thu, Apr 10, 2014 at 2:40 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Thu, Apr 10, 2014 at 08:22:12AM -0400, Josh Boyer wrote:
+>> On Thu, Apr 10, 2014 at 2:50 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gma=
+il.com> wrote:
+>> > 2014-04-09 23:09 GMT+02:00 Josh Boyer <jwboyer@fedoraproject.org>:
+>> >> With Linux v3.14-12042-g69cd9eba3886 I get an oops from the bcma
+>> >> module on the MacBookPro 10,2 I have here.  This works fine with =
+Linux
+>> >> v3.14-7333-g59ecc26004e7.  There have been no changes between tho=
+se
+>> >> two versions to bcma itself, but the GPIO merge did go in that wi=
+ndow.
+>> >>  I can attempt to do a bisect tomorrow, but looking over some of =
+the
+>> >> GPIO commits it seems pretty relevant to the ACPI GPIO changes.  =
+I'm
+>> >> hoping someone here has an idea on what the issue might be and ha=
+s
+>> >> some possible things for me to test for fixes.
+>> >
+>> > Bug report: https://lkml.org/lkml/2014/3/24/262
+>> > Patch: https://lkml.org/lkml/2014/3/24/293
+>> > Tested by Sabrina: https://lkml.org/lkml/2014/3/24/304
+>> > (all links are for the same thread).
+>> >
+>> > Now you simply have to find above patch in some git tree :) Not su=
+re
+>> > if it's already in Linus's one.
 >>
->> i will do a debug to find why. any idea from you?
+>> Ah, wonderful.  I now wish I would have found those in my searching
+>> before doing the bisect.  Oh well.  For what it's worth, my bisect
+>> landed on the same commit.
+>>
+>> The fix isn't in Linus' tree or linux-next.  I'm guessing Mika is
+>> either still on vacation, or hasn't sent out the formal fix yet.
 >
-> hi linus, after reading the source codes of GPIOLIB_IRQCHIP, i think
-> the new irq number after applying your patch should not be a problem.
-> the reason is that you create irq mapping earlier in
-> gpiochip_irqchip_add(), but the old codes did it later on demand in
-> sirfsoc_gpio_to_irq().
-
-Yeah it's just some number, it's dynamically allocated to you should
-not need to worry about that. It could even change with probe order
-due to unpredictable things.
-
-> the real problem here is that we have several gpio banks, but there is
-> only one device node, so i think this should be not good and will make
-> the gpiochip_irq_reqres(), gpiochip_irq_relres() fail since
-> sub-devices can only point its interrupt parent to the only gpio node,
-> this makes hwirq bigger than the size of the gpio bank.
+> No, not on vacation anymore (unfortunately). I did send the formal pa=
+tch
+> already:
 >
-> so will you wait for me to send a patch to merge all banks into one
-> gpio_chip just as i have done by commit
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=8daeffb058f78deb0b0ef2cb67ef741c38788bf9
-> to merge irq_domain?
+> https://lkml.org/lkml/2014/3/31/135
+>
+> but it isn't merged to Linus' GPIO tree yet.
 
-Sure I'm standing by.
+I've queued this for fixes!
 
-Bonus points if you rebase my patch on top of it and send it
-as patch 2/2 :-D
+Will send upstream ASAP.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
