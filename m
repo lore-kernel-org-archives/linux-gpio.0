@@ -1,34 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: zevio: Get correct gpio output value
-Date: Thu, 10 Apr 2014 19:56:26 +0200
-Message-ID: <CACRpkdaxvE_TuHAUH1HHcNFkbHRaN=adPSHhU-SFRv90UhsLUg@mail.gmail.com>
-References: <1396915179.4729.1.camel@phoenix>
+Subject: Re: [PATCH] gpio: zevio: Remove of_match_ptr around zevio_gpio_of_match
+Date: Thu, 10 Apr 2014 19:59:06 +0200
+Message-ID: <CACRpkdY36mz85o8BMr2bxF1JKw3kWaTc2BRZtM2o0x1iY2xdgA@mail.gmail.com>
+References: <1396928689.25334.0.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:52207 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932804AbaDJR41 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 13:56:27 -0400
-Received: by mail-oa0-f49.google.com with SMTP id o6so4805169oag.8
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 10:56:27 -0700 (PDT)
-In-Reply-To: <1396915179.4729.1.camel@phoenix>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:54107 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753244AbaDJR7G (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 13:59:06 -0400
+Received: by mail-ob0-f169.google.com with SMTP id va2so4854030obc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 10:59:06 -0700 (PDT)
+In-Reply-To: <1396928689.25334.0.camel@phoenix>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Axel Lin <axel.lin@ingics.com>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>, Fabian Vogt <fabian@ritter-vogt.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Apr 8, 2014 at 1:59 AM, Axel Lin <axel.lin@ingics.com> wrote:
+On Tue, Apr 8, 2014 at 5:44 AM, Axel Lin <axel.lin@ingics.com> wrote:
 
-> Read gpio output value from ZEVIO_GPIO_OUTPUT.
-> The spin_lock is required to ensure the direction is not changed before reading
-> input/ouput value.
+> This is a DT-only driver and it will be built only when CONFIG_OF is set.
+> So it's pointless to use of_match_ptr.
 >
 > Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-Waiting for an ACK in this v2 version.
-
-Should it be tagged for stable even?
+Patch applied.
 
 Yours,
 Linus Walleij
