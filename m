@@ -1,39 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/5] GPIO OMAP driver changes for v3.16
-Date: Thu, 10 Apr 2014 19:29:26 +0200
-Message-ID: <CACRpkdarYt4tAD9WMDu6Me+dhipVyDHMpgF-AQ8SDNKMmhSjsA@mail.gmail.com>
-References: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/5] gpio: dwapb: drop irq_setup_generic_chip()
+Date: Thu, 10 Apr 2014 19:35:14 +0200
+Message-ID: <CACRpkdZOJMQV8YLyJ7za08MnyyuSX3RwJ77P+J0bC7qFQPar3w@mail.gmail.com>
+References: <1396865589-9972-1-git-send-email-bigeasy@linutronix.de>
+	<1396865589-9972-2-git-send-email-bigeasy@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:42116 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753103AbaDJR30 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 13:29:26 -0400
-Received: by mail-oa0-f51.google.com with SMTP id i4so4799345oah.24
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 10:29:26 -0700 (PDT)
-In-Reply-To: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1396865589-9972-2-git-send-email-bigeasy@linutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Jamie Iles <jamie@jamieiles.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Sun, Apr 6, 2014 at 4:58 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
+On Mon, Apr 7, 2014 at 12:13 PM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
 
-> Now that you have sent your changes for v3.15 to Torvalds, here are some
-> changes for the OMAP GPIO driver targeted to v3.16. Mostly improvements
-> so nothing here is -rc material.
+> The driver calls irq_alloc_domain_generic_chips() which creates a gc and
+> adds it to gc_list. The driver later then calls irq_setup_generic_chip()
+> which also initializes the gc and adds it to the gc_list() and this
+> corrupts the list. Enable LIST_DEBUG and you see the kernel complain.
+> This isn't required, irq_alloc_domain_generic_chips() did the init.
+>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-I like this series so I have applied them for v3.16, pending some ACK
-from Kevin &| Santosh.
-
-> The biggest change is Patch 4 that converts the driver to use the newly
-> introduced generic irqchip helpers in the gpiolib core which allows to
-> remove some driver specific logic that should really be generic.
-
-Excellent, I will take a closer look at this, it seems there is some
-cruft still in but let me look.
+Patch applied, adding Alan Tull's Tested-by.
 
 Yours,
 Linus Walleij
