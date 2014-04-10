@@ -1,87 +1,65 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [RFC PATCH 0/5] add gpio_chip_ops to hold GPIO operations
-Date: Thu, 10 Apr 2014 16:36:31 +0900
-Message-ID: <CAAVeFu+XV_wy9JzewGs0bcSA-ivQg-kzygMh_kt434rsYRQwHQ@mail.gmail.com>
-References: <1396981215-24888-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Barry Song <baohua@kernel.org>
+Subject: Re: [PATCH 2/2] pinctrl: sirf: switch driver to use gpiolib irqchip helpers
+Date: Thu, 10 Apr 2014 17:30:29 +0800
+Message-ID: <CAGsJ_4wEbDhcYa5sK0e6eVKOyHRJA4HSZWsd_83WGbAsviEToQ@mail.gmail.com>
+References: <1396960077-30599-1-git-send-email-linus.walleij@linaro.org> <CAGsJ_4yfCcQoMmUD08HBJDkXSPUOuUP-Sj9EZAJZ8grpodReiw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1396981215-24888-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-omap@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGsJ_4yfCcQoMmUD08HBJDkXSPUOuUP-Sj9EZAJZ8grpodReiw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, linux-gpio@vger.kernel.org, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 9, 2014 at 3:20 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> In the kernel there are basically two patterns to implement object
-> oriented code in C. You can either embedded a set of function pointers
-
-s/embedded/embed
-
-> in a struct along with other members or have a separate virtual function
-> table (vtable) structure that hold all the functions and only store a
-> pointer to that vtable on our particular object.
+2014-04-10 11:48 GMT+08:00 Barry Song <baohua@kernel.org>:
+> 2014-04-08 20:27 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+>> This switches the Sirf pinctrl driver over to using the gpiolib
+>> irqchip helpers simplifying some of the code.
+>>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> This really needs testing on real hardware before I dare to
+>> merge it, but the driver seems simple and straight-forward to
+>> convert.
 >
-> The struct gpio_chip uses the former approach, but I don't know if that
-> is a design decision or is just that this code predates the fact that
-> the separate structure pattern is now so popular. Since the having a
-> the operations on a different structure has a number of benefits:
+> Linus, this  broke the irq/gpio mapping. for example:
+>
+> without this:
+> # cat /proc/interrupts
+>            CPU0
+>  16:        181  irq_sirfsoc   0  sirfsoc_timer0
+> ...
+>  62:          0  sirf-gpio-irq  45  extcon-gpio
+> ...
+>
+> with this:
+> # cat /proc/interrupts
+>            CPU0
+>  16:        944  irq_sirfsoc   0  sirfsoc_timer0
+> ...
+> 105:          0  sirf-gpio-irq  13  extcon-gpio
+> ...
+>
+> i will do a debug to find why. any idea from you?
 
-"Since having the operations" maybe?
+hi linus, after reading the source codes of GPIOLIB_IRQCHIP, i think
+the new irq number after applying your patch should not be a problem.
+the reason is that you create irq mapping earlier in
+gpiochip_irqchip_add(), but the old codes did it later on demand in
+sirfsoc_gpio_to_irq().
 
->
-> - A clean separation between state (fields) and operations (functions).
-> - Size reduction of struct gpio_chip since will only hold one pointer.
-> - These functions are not supposed to change at runtime so the const
->   qualifier can be used to prevent pointers modification during execution.
-> - Similar drivers for a chip family can reuse their function vtable.
->
-> There is a drawback though which is that now two memory accesses are
-> needed to execute a GPIO operation since an additional level of
-> indirection is introduced but that should be minimized due temporal and
-> spatial memory locality.
+the real problem here is that we have several gpio banks, but there is
+only one device node, so i think this should be not good and will make
+the gpiochip_irq_reqres(), gpiochip_irq_relres() fail since
+sub-devices can only point its interrupt parent to the only gpio node,
+this makes hwirq bigger than the size of the gpio bank.
 
-I think I really do like this. Having ops in a separate structure is a
-very common pattern in the kernel and makes things a lot cleaner. On
-top of the advantages you listed, it also only requires a single
-assignment in the driver's init function vs. a lot more today.
+so will you wait for me to send a patch to merge all banks into one
+gpio_chip just as i have done by commit
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=8daeffb058f78deb0b0ef2cb67ef741c38788bf9
+to merge irq_domain?
 
-If no one complains about the additional memory access, I'd like to go
-forward with this. I did much worse performance-hurting changes when
-introducing gpiod, so I suppose it will be fine.
+then i think your patch will work. thank you!
 
->
-> So this is an RFC patch-set to add a virtual table to be used by
-> GPIO chip controllers and consist of the following patches:
->
-> Javier Martinez Canillas (5):
->   gpio: add a vtable to abstract GPIO controller operations
->   gpiolib: set gpio_chip operations on add using a gpio_chip_ops
->   gpio: omap: convert driver to use gpio_chip_ops
->   gpio: twl4030: convert driver to use gpio_chip_ops
->   gpio: switch to use struct struct gpio_chip_ops
->
->  drivers/gpio/gpio-omap.c    | 19 ++++++++-----
->  drivers/gpio/gpio-twl4030.c | 10 +++++--
->  drivers/gpio/gpiolib.c      | 64 ++++++++++++++++++++---------------------
->  include/linux/gpio/driver.h | 69 +++++++++++++++++++++++++++------------------
->  4 files changed, 93 insertions(+), 69 deletions(-)
->
-> The patch-set is not a complete one though since only the GPIO OMAP
-> and GPIO TWL4030 drivers have been converted so I could test it on
-> my platform (DM3730 OMAP IGEPv2 board).
->
-> But I preferred to send an early RFC than changing every single driver
-> before discussing if doing the split is worth it or not.
->
-> To not break git bisect-ability, I added some patches that are
-> transitional changes. If you have a better suggestion on how to
-> handle that please let me know.
-
-We will probably need that transition phase. We will also need to
-switch every single driver to your new scheme, so please wait until we
-hear from Linus before proceeding. :)
-
-Thanks,
-Alex.
+-barry
