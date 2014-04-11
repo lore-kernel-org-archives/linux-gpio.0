@@ -1,37 +1,67 @@
 From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [PATCH v2] gpio: zevio: Get correct gpio output value
-Date: Fri, 11 Apr 2014 08:16:43 +0800
-Message-ID: <CAFRkauBQyGnP4hs-fd0Y+fBzD3qk9AAkvvRiP+v+rQQoyWPAjg@mail.gmail.com>
-References: <1396915179.4729.1.camel@phoenix>
-	<CACRpkdaxvE_TuHAUH1HHcNFkbHRaN=adPSHhU-SFRv90UhsLUg@mail.gmail.com>
+Subject: gpio: rdc321x: Question about rdc_gpio_direction_input
+ implementation
+Date: Fri, 11 Apr 2014 11:28:44 +0800
+Message-ID: <1397186924.30538.2.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qa0-f47.google.com ([209.85.216.47]:55893 "EHLO
-	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753811AbaDKAQo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 20:16:44 -0400
-Received: by mail-qa0-f47.google.com with SMTP id m5so2660293qaj.34
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 17:16:44 -0700 (PDT)
-In-Reply-To: <CACRpkdaxvE_TuHAUH1HHcNFkbHRaN=adPSHhU-SFRv90UhsLUg@mail.gmail.com>
+Received: from mail-ve0-f181.google.com ([209.85.128.181]:33244 "EHLO
+	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754697AbaDKD2u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 23:28:50 -0400
+Received: by mail-ve0-f181.google.com with SMTP id oy12so4364267veb.12
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 20:28:49 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>, Fabian Vogt <fabian@ritter-vogt.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Florian Fainelli <florian@openwrt.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-2014-04-11 1:56 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Apr 8, 2014 at 1:59 AM, Axel Lin <axel.lin@ingics.com> wrote:
->
->> Read gpio output value from ZEVIO_GPIO_OUTPUT.
->> The spin_lock is required to ensure the direction is not changed before reading
->> input/ouput value.
->>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->
-> Waiting for an ACK in this v2 version.
->
-> Should it be tagged for stable even?
-This is a new driver, so no need for stable.
+Hi Florian,
+Current implementation in rdc_gpio_direction_input() looks wrong to me
+because calling rdc_gpio_config(chip, gpio, 1) actually set the gpio to
+OUTPUT HIGH rather than set the direction to INPUT.
 
-Regards,
-Axel
+I cannot find the datasheet, I'm wondering if below diff works.
+Any chance to test it? I can send a formal patch if it works.
+
+diff --git a/drivers/gpio/gpio-rdc321x.c b/drivers/gpio/gpio-rdc321x.c
+index 88577c3..ccef383 100644
+--- a/drivers/gpio/gpio-rdc321x.c
++++ b/drivers/gpio/gpio-rdc321x.c
+@@ -119,10 +119,29 @@ unlock:
+ 	return err;
+ }
+ 
+-/* configure GPIO pin as input */
+ static int rdc_gpio_direction_input(struct gpio_chip *chip, unsigned
+gpio)
+ {
+-	return rdc_gpio_config(chip, gpio, 1);
++	struct rdc321x_gpio *gpch;
++	int reg, err;
++	u32 val;
++
++	gpch = container_of(chip, struct rdc321x_gpio, chip);
++	reg = gpio < 32 ? gpch->reg1_ctrl_base : gpch->reg2_ctrl_base;
++
++	spin_lock(&gpch->lock);
++
++	err = pci_read_config_dword(gpch->sb_pdev, reg, &val);
++	if (err)
++		goto unlock;
++
++	val &= ~(1 << (gpio & 0x1f));
++
++	err = pci_write_config_dword(gpch->sb_pdev, reg, val);
++
++unlock:
++	spin_unlock(&gpch->lock);
++
++	return err;
+ }
+ 
+ /*
+
+
