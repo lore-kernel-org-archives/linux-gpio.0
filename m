@@ -1,75 +1,107 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: Oops in acpi_gpiochip_add on MacBookPro with Linux
- v3.14-12042-g69cd9eba3886
-Date: Fri, 11 Apr 2014 09:56:24 +0300
-Message-ID: <20140411065624.GB19349@intel.com>
-References: <CA+5PVA5VBns=hkOSViucrpT340uG0=hgrWqf=LYHTBFAe74tBg@mail.gmail.com>
- <CACna6ry+FOYykZpzycEjDA+ncGNLk6eXkwadXy548h9dgU1Bgw@mail.gmail.com>
- <CA+5PVA4ijLmwRKHD4RYE6qSqkN7p8v1GB9w9GAGAJKG45bBTnw@mail.gmail.com>
- <20140410124045.GX19349@intel.com>
- <CACRpkdaBg5KjvksHRB3z2R6KehYcFC=4MEHedfcE6tP4GTh+Qw@mail.gmail.com>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: [PATCH 1/2] GPIO: Add driver for Zynq GPIO controller
+Date: Fri, 11 Apr 2014 08:57:25 +0200
+Message-ID: <53479255.4070206@monstr.eu>
+References: <1395933906-2268-1-git-send-email-harinik@xilinx.com> <CACRpkdbU35xG1QtagB+9e9vxvehf1UQFaF4PikJhsPNAMw=D1Q@mail.gmail.com> <CAFcVECJsEp_s2V5=oK_UJahGRUpWYWMCxTMxqdpX+O0qebP41A@mail.gmail.com> <CACRpkdZEFsJubRVwCp6nTie7s7+DZOym6SWsA2ZynN_devi-2Q@mail.gmail.com> <533BA67B.6070905@monstr.eu> <CACRpkdbk0Ru=txcF3DGBDD=CitqHYFR8w-1fUDR9wSinQBQyvw@mail.gmail.com>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaBg5KjvksHRB3z2R6KehYcFC=4MEHedfcE6tP4GTh+Qw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="P6DCUkoior2W0lEE0jAVK3rn1Cqf0Oa3E"
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbk0Ru=txcF3DGBDD=CitqHYFR8w-1fUDR9wSinQBQyvw@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Josh Boyer <jwboyer@fedoraproject.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Cc: Harini Katakam <harinikatakamlinux@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, michals@xilinx.com, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 10, 2014 at 08:47:23PM +0200, Linus Walleij wrote:
-> On Thu, Apr 10, 2014 at 2:40 PM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > On Thu, Apr 10, 2014 at 08:22:12AM -0400, Josh Boyer wrote:
-> >> On Thu, Apr 10, 2014 at 2:50 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@g=
-mail.com> wrote:
-> >> > 2014-04-09 23:09 GMT+02:00 Josh Boyer <jwboyer@fedoraproject.org=
->:
-> >> >> With Linux v3.14-12042-g69cd9eba3886 I get an oops from the bcm=
-a
-> >> >> module on the MacBookPro 10,2 I have here.  This works fine wit=
-h Linux
-> >> >> v3.14-7333-g59ecc26004e7.  There have been no changes between t=
-hose
-> >> >> two versions to bcma itself, but the GPIO merge did go in that =
-window.
-> >> >>  I can attempt to do a bisect tomorrow, but looking over some o=
-f the
-> >> >> GPIO commits it seems pretty relevant to the ACPI GPIO changes.=
-  I'm
-> >> >> hoping someone here has an idea on what the issue might be and =
-has
-> >> >> some possible things for me to test for fixes.
-> >> >
-> >> > Bug report: https://lkml.org/lkml/2014/3/24/262
-> >> > Patch: https://lkml.org/lkml/2014/3/24/293
-> >> > Tested by Sabrina: https://lkml.org/lkml/2014/3/24/304
-> >> > (all links are for the same thread).
-> >> >
-> >> > Now you simply have to find above patch in some git tree :) Not =
-sure
-> >> > if it's already in Linus's one.
-> >>
-> >> Ah, wonderful.  I now wish I would have found those in my searchin=
-g
-> >> before doing the bisect.  Oh well.  For what it's worth, my bisect
-> >> landed on the same commit.
-> >>
-> >> The fix isn't in Linus' tree or linux-next.  I'm guessing Mika is
-> >> either still on vacation, or hasn't sent out the formal fix yet.
-> >
-> > No, not on vacation anymore (unfortunately). I did send the formal =
-patch
-> > already:
-> >
-> > https://lkml.org/lkml/2014/3/31/135
-> >
-> > but it isn't merged to Linus' GPIO tree yet.
->=20
-> I've queued this for fixes!
->=20
-> Will send upstream ASAP.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--P6DCUkoior2W0lEE0jAVK3rn1Cqf0Oa3E
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On 04/10/2014 07:52 PM, Linus Walleij wrote:
+> On Wed, Apr 2, 2014 at 7:56 AM, Michal Simek <monstr@monstr.eu> wrote:
+>> On 03/31/2014 10:22 AM, Linus Walleij wrote:
+>>> On Sat, Mar 29, 2014 at 5:44 AM, Harini Katakam
+>>> <harinikatakamlinux@gmail.com> wrote:
+>>>> On Sat, Mar 29, 2014 at 3:20 AM, Linus Walleij <linus.walleij@linaro=
+=2Eorg> wrote:
+>>>>> On Thu, Mar 27, 2014 at 4:25 PM, Harini Katakam <harinik@xilinx.com=
+> wrote:
+>>>
+>>>>>> +/* Read/Write access to the GPIO PS registers */
+>>>>>> +static inline u32 zynq_gpio_readreg(void __iomem *offset)
+>>>>>> +{
+>>>>>> +       return readl_relaxed(offset);
+>>>>>> +}
+>>>>>> +
+>>>>>> +static inline void zynq_gpio_writereg(void __iomem *offset, u32 v=
+al)
+>>>>>> +{
+>>>>>> +       writel_relaxed(val, offset);
+>>>>>> +}
+>>>>>
+>>>>> I think this is unnecessary and confusing indirection.
+>>>>> Just use the readl_relaxed/writel_relaxed functions directly in
+>>>>> the code.
+>>>>>
+>>>>
+>>>> This is just to be flexible.
+>>>
+>>> Define exactly what you mean with "flexible" in this context. I
+>>> only see unnecessary overhead and hard-to-read code.
+>>
+>> We have just passed this discussion for watchdog driver
+>> here: https://lkml.org/lkml/2014/4/1/843
+>>
+>> Are you ok with doing it in this way?
+>=20
+> No :-)
+>=20
+> Subsystem maintainers do not necessarily agree on such issues.
+
+I think your sentence is right.  :-)
+But what to do to convince you to agree with it?
+We can use readl/writel directly (or relaxed versions) but it will
+just end up that we will have a patch in our xilinx git tree
+which won't be in the mainline.
+
+Having central point for IO access functions it not an unused technique.
+I was able to find out some cases in drivers/gpio/
+gpio-bt8xx.c, gpio-msm-v1.c, gpio-tegra.c, gpio-xilinx.c (almost similar =
+reason
+here :-))
+and just one in pinctrl-spear.h.
+But I have to admit most of gpio/pinmux drivers are using them directly
+but on the other hand they are not FPGA based. :-)
+
+BTW: Shouldn't be __raw_ versions replaced by _relaxed?
+
+Thanks,
+Michal
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
+Maintainer of Linux kernel - Xilinx Zynq ARM architecture
+Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
+
+
+
+--P6DCUkoior2W0lEE0jAVK3rn1Cqf0Oa3E
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iEYEARECAAYFAlNHklUACgkQykllyylKDCEDhwCglIYKdLtFmXcQ4eAlY3w3X/0c
+GE4An2RhE9/c3bE7sEETihNiKemwoS7z
+=RRjI
+-----END PGP SIGNATURE-----
+
+--P6DCUkoior2W0lEE0jAVK3rn1Cqf0Oa3E--
