@@ -1,107 +1,70 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: [PATCH 1/2] GPIO: Add driver for Zynq GPIO controller
-Date: Fri, 11 Apr 2014 08:57:25 +0200
-Message-ID: <53479255.4070206@monstr.eu>
-References: <1395933906-2268-1-git-send-email-harinik@xilinx.com> <CACRpkdbU35xG1QtagB+9e9vxvehf1UQFaF4PikJhsPNAMw=D1Q@mail.gmail.com> <CAFcVECJsEp_s2V5=oK_UJahGRUpWYWMCxTMxqdpX+O0qebP41A@mail.gmail.com> <CACRpkdZEFsJubRVwCp6nTie7s7+DZOym6SWsA2ZynN_devi-2Q@mail.gmail.com> <533BA67B.6070905@monstr.eu> <CACRpkdbk0Ru=txcF3DGBDD=CitqHYFR8w-1fUDR9wSinQBQyvw@mail.gmail.com>
-Reply-To: monstr@monstr.eu
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 0/5] GPIO OMAP driver changes for v3.16
+Date: Fri, 11 Apr 2014 17:03:07 +0200
+Message-ID: <CABxcv=k9fNauvoF6No_GGhfVVgOvyd-Dgw2YLkGGfPoXfMd=FQ@mail.gmail.com>
+References: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
+	<CACRpkdarYt4tAD9WMDu6Me+dhipVyDHMpgF-AQ8SDNKMmhSjsA@mail.gmail.com>
+	<20140410193048.GE15736@drone.musicnaut.iki.fi>
+	<CABxcv=miFY3gE6HOU5ovWwCzgC6Un3ANh_Weh_bPCb7OoYQ+pA@mail.gmail.com>
+	<20140410212202.GF15736@drone.musicnaut.iki.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="P6DCUkoior2W0lEE0jAVK3rn1Cqf0Oa3E"
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbk0Ru=txcF3DGBDD=CitqHYFR8w-1fUDR9wSinQBQyvw@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Harini Katakam <harinikatakamlinux@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, michals@xilinx.com, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20140410212202.GF15736@drone.musicnaut.iki.fi>
+Sender: linux-omap-owner@vger.kernel.org
+To: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---P6DCUkoior2W0lEE0jAVK3rn1Cqf0Oa3E
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Hello Aaro,
 
-On 04/10/2014 07:52 PM, Linus Walleij wrote:
-> On Wed, Apr 2, 2014 at 7:56 AM, Michal Simek <monstr@monstr.eu> wrote:
->> On 03/31/2014 10:22 AM, Linus Walleij wrote:
->>> On Sat, Mar 29, 2014 at 5:44 AM, Harini Katakam
->>> <harinikatakamlinux@gmail.com> wrote:
->>>> On Sat, Mar 29, 2014 at 3:20 AM, Linus Walleij <linus.walleij@linaro=
-=2Eorg> wrote:
->>>>> On Thu, Mar 27, 2014 at 4:25 PM, Harini Katakam <harinik@xilinx.com=
-> wrote:
->>>
->>>>>> +/* Read/Write access to the GPIO PS registers */
->>>>>> +static inline u32 zynq_gpio_readreg(void __iomem *offset)
->>>>>> +{
->>>>>> +       return readl_relaxed(offset);
->>>>>> +}
->>>>>> +
->>>>>> +static inline void zynq_gpio_writereg(void __iomem *offset, u32 v=
-al)
->>>>>> +{
->>>>>> +       writel_relaxed(val, offset);
->>>>>> +}
->>>>>
->>>>> I think this is unnecessary and confusing indirection.
->>>>> Just use the readl_relaxed/writel_relaxed functions directly in
->>>>> the code.
->>>>>
->>>>
->>>> This is just to be flexible.
->>>
->>> Define exactly what you mean with "flexible" in this context. I
->>> only see unnecessary overhead and hard-to-read code.
+On Thu, Apr 10, 2014 at 11:22 PM, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+> Hi,
+>
+> On Thu, Apr 10, 2014 at 10:17:44PM +0200, Javier Martinez Canillas wrote:
+>> > The same happens also on Nokia 770:
+>> >
+>> > [    0.118896] genirq: Setting trigger mode 0 for irq 128 failed (gpio_irq_type+0x0/0x220)
 >>
->> We have just passed this discussion for watchdog driver
->> here: https://lkml.org/lkml/2014/4/1/843
+>> I don't have those errors when booting on my DM3730 IGEPv2 board but
+>> it seems that for some reason on omap1  __irq_set_trigger() complains
+>> when IRQ_TYPE_NONE is used as a default flag when calling
+>> gpiochip_irqchip_add()
 >>
->> Are you ok with doing it in this way?
->=20
-> No :-)
->=20
-> Subsystem maintainers do not necessarily agree on such issues.
+>> Could you please test the following patch and tell me if your board
+>> still works and makes the errors go away?
+>
+> Now it complains about mode 8...
+>
+> [    0.118835] genirq: Setting trigger mode 8 for irq 128 failed (gpio_irq_type
+> +0x0/0x220)
+>
+> A.
+>
+>> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+>> index 8cc9e91..5bc8aec 100644
+>> --- a/drivers/gpio/gpio-omap.c
+>> +++ b/drivers/gpio/gpio-omap.c
+>> @@ -1122,7 +1122,7 @@ static int omap_gpio_chip_init(struct gpio_bank *bank)
+>>
+>>         ret = gpiochip_irqchip_add(&bank->chip, &gpio_irq_chip,
+>>                                    irq_base, gpio_irq_handler,
+>> -                                  IRQ_TYPE_NONE);
+>> +                                  IRQ_TYPE_LEVEL_LOW);
+>>
+>>         if (ret) {
+>>                 dev_err(bank->dev, "Couldn't add irqchip to gpiochip
+>> %d\n", ret);
+>>
+>> Best regards,
+>> Javier
 
-I think your sentence is right.  :-)
-But what to do to convince you to agree with it?
-We can use readl/writel directly (or relaxed versions) but it will
-just end up that we will have a patch in our xilinx git tree
-which won't be in the mainline.
+Thanks for testing. Unfortunately I'm out of ideas on why that error
+could be shown and I don't have a way to further debug it without an
+omap1 board. I wonder why that pr_err() message is shown or why it is
+still working when an error happens.
 
-Having central point for IO access functions it not an unused technique.
-I was able to find out some cases in drivers/gpio/
-gpio-bt8xx.c, gpio-msm-v1.c, gpio-tegra.c, gpio-xilinx.c (almost similar =
-reason
-here :-))
-and just one in pinctrl-spear.h.
-But I have to admit most of gpio/pinmux drivers are using them directly
-but on the other hand they are not FPGA based. :-)
+Maybe Linus or Santosh could give us a hint on what is happening here.
 
-BTW: Shouldn't be __raw_ versions replaced by _relaxed?
-
-Thanks,
-Michal
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
-
-
-
---P6DCUkoior2W0lEE0jAVK3rn1Cqf0Oa3E
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iEYEARECAAYFAlNHklUACgkQykllyylKDCEDhwCglIYKdLtFmXcQ4eAlY3w3X/0c
-GE4An2RhE9/c3bE7sEETihNiKemwoS7z
-=RRjI
------END PGP SIGNATURE-----
-
---P6DCUkoior2W0lEE0jAVK3rn1Cqf0Oa3E--
+Best regards,
+Javier
