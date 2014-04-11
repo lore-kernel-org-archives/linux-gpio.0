@@ -1,100 +1,75 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 2/2] gpio: rdc321x: Convert to use devm_kzalloc
-Date: Fri, 11 Apr 2014 14:16:01 +0800
-Message-ID: <1397196961.12922.4.camel@phoenix>
-References: <1397196885.12922.2.camel@phoenix>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: Oops in acpi_gpiochip_add on MacBookPro with Linux
+ v3.14-12042-g69cd9eba3886
+Date: Fri, 11 Apr 2014 09:56:24 +0300
+Message-ID: <20140411065624.GB19349@intel.com>
+References: <CA+5PVA5VBns=hkOSViucrpT340uG0=hgrWqf=LYHTBFAe74tBg@mail.gmail.com>
+ <CACna6ry+FOYykZpzycEjDA+ncGNLk6eXkwadXy548h9dgU1Bgw@mail.gmail.com>
+ <CA+5PVA4ijLmwRKHD4RYE6qSqkN7p8v1GB9w9GAGAJKG45bBTnw@mail.gmail.com>
+ <20140410124045.GX19349@intel.com>
+ <CACRpkdaBg5KjvksHRB3z2R6KehYcFC=4MEHedfcE6tP4GTh+Qw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:36321 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754936AbaDKGQH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Apr 2014 02:16:07 -0400
-Received: by mail-vc0-f172.google.com with SMTP id la4so4451442vcb.31
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2014 23:16:06 -0700 (PDT)
-In-Reply-To: <1397196885.12922.2.camel@phoenix>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaBg5KjvksHRB3z2R6KehYcFC=4MEHedfcE6tP4GTh+Qw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <florian@openwrt.org>, linux-gpio@vger.kernel.org
+Cc: Josh Boyer <jwboyer@fedoraproject.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-This saves a few unwind code.
+On Thu, Apr 10, 2014 at 08:47:23PM +0200, Linus Walleij wrote:
+> On Thu, Apr 10, 2014 at 2:40 PM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > On Thu, Apr 10, 2014 at 08:22:12AM -0400, Josh Boyer wrote:
+> >> On Thu, Apr 10, 2014 at 2:50 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@g=
+mail.com> wrote:
+> >> > 2014-04-09 23:09 GMT+02:00 Josh Boyer <jwboyer@fedoraproject.org=
+>:
+> >> >> With Linux v3.14-12042-g69cd9eba3886 I get an oops from the bcm=
+a
+> >> >> module on the MacBookPro 10,2 I have here.  This works fine wit=
+h Linux
+> >> >> v3.14-7333-g59ecc26004e7.  There have been no changes between t=
+hose
+> >> >> two versions to bcma itself, but the GPIO merge did go in that =
+window.
+> >> >>  I can attempt to do a bisect tomorrow, but looking over some o=
+f the
+> >> >> GPIO commits it seems pretty relevant to the ACPI GPIO changes.=
+  I'm
+> >> >> hoping someone here has an idea on what the issue might be and =
+has
+> >> >> some possible things for me to test for fixes.
+> >> >
+> >> > Bug report: https://lkml.org/lkml/2014/3/24/262
+> >> > Patch: https://lkml.org/lkml/2014/3/24/293
+> >> > Tested by Sabrina: https://lkml.org/lkml/2014/3/24/304
+> >> > (all links are for the same thread).
+> >> >
+> >> > Now you simply have to find above patch in some git tree :) Not =
+sure
+> >> > if it's already in Linus's one.
+> >>
+> >> Ah, wonderful.  I now wish I would have found those in my searchin=
+g
+> >> before doing the bisect.  Oh well.  For what it's worth, my bisect
+> >> landed on the same commit.
+> >>
+> >> The fix isn't in Linus' tree or linux-next.  I'm guessing Mika is
+> >> either still on vacation, or hasn't sent out the formal fix yet.
+> >
+> > No, not on vacation anymore (unfortunately). I did send the formal =
+patch
+> > already:
+> >
+> > https://lkml.org/lkml/2014/3/31/135
+> >
+> > but it isn't merged to Linus' GPIO tree yet.
+>=20
+> I've queued this for fixes!
+>=20
+> Will send upstream ASAP.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-rdc321x.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpio/gpio-rdc321x.c b/drivers/gpio/gpio-rdc321x.c
-index 9e7da2d..3027591 100644
---- a/drivers/gpio/gpio-rdc321x.c
-+++ b/drivers/gpio/gpio-rdc321x.c
-@@ -141,7 +141,8 @@ static int rdc321x_gpio_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	rdc321x_gpio_dev = kzalloc(sizeof(struct rdc321x_gpio), GFP_KERNEL);
-+	rdc321x_gpio_dev = devm_kzalloc(&pdev->dev, sizeof(struct rdc321x_gpio),
-+					GFP_KERNEL);
- 	if (!rdc321x_gpio_dev) {
- 		dev_err(&pdev->dev, "failed to allocate private data\n");
- 		return -ENOMEM;
-@@ -150,8 +151,7 @@ static int rdc321x_gpio_probe(struct platform_device *pdev)
- 	r = platform_get_resource_byname(pdev, IORESOURCE_IO, "gpio-reg1");
- 	if (!r) {
- 		dev_err(&pdev->dev, "failed to get gpio-reg1 resource\n");
--		err = -ENODEV;
--		goto out_free;
-+		return -ENODEV;
- 	}
- 
- 	spin_lock_init(&rdc321x_gpio_dev->lock);
-@@ -162,8 +162,7 @@ static int rdc321x_gpio_probe(struct platform_device *pdev)
- 	r = platform_get_resource_byname(pdev, IORESOURCE_IO, "gpio-reg2");
- 	if (!r) {
- 		dev_err(&pdev->dev, "failed to get gpio-reg2 resource\n");
--		err = -ENODEV;
--		goto out_free;
-+		return -ENODEV;
- 	}
- 
- 	rdc321x_gpio_dev->reg2_ctrl_base = r->start;
-@@ -187,21 +186,17 @@ static int rdc321x_gpio_probe(struct platform_device *pdev)
- 					rdc321x_gpio_dev->reg1_data_base,
- 					&rdc321x_gpio_dev->data_reg[0]);
- 	if (err)
--		goto out_free;
-+		return err;
- 
- 	err = pci_read_config_dword(rdc321x_gpio_dev->sb_pdev,
- 					rdc321x_gpio_dev->reg2_data_base,
- 					&rdc321x_gpio_dev->data_reg[1]);
- 	if (err)
--		goto out_free;
-+		return err;
- 
- 	dev_info(&pdev->dev, "registering %d GPIOs\n",
- 					rdc321x_gpio_dev->chip.ngpio);
- 	return gpiochip_add(&rdc321x_gpio_dev->chip);
--
--out_free:
--	kfree(rdc321x_gpio_dev);
--	return err;
- }
- 
- static int rdc321x_gpio_remove(struct platform_device *pdev)
-@@ -213,8 +208,6 @@ static int rdc321x_gpio_remove(struct platform_device *pdev)
- 	if (ret)
- 		dev_err(&pdev->dev, "failed to unregister chip\n");
- 
--	kfree(rdc321x_gpio_dev);
--
- 	return ret;
- }
- 
--- 
-1.8.3.2
-
-
-
+Thanks!
