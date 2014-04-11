@@ -1,57 +1,72 @@
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [PATCH 0/5] GPIO OMAP driver changes for v3.16
-Date: Fri, 11 Apr 2014 00:22:02 +0300
-Message-ID: <20140410212202.GF15736@drone.musicnaut.iki.fi>
-References: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
- <CACRpkdarYt4tAD9WMDu6Me+dhipVyDHMpgF-AQ8SDNKMmhSjsA@mail.gmail.com>
- <20140410193048.GE15736@drone.musicnaut.iki.fi>
- <CABxcv=miFY3gE6HOU5ovWwCzgC6Un3ANh_Weh_bPCb7OoYQ+pA@mail.gmail.com>
+From: Tim Kryger <tim.kryger@linaro.org>
+Subject: [PATCH] gpio: bcm-kona: Add irq_set_wake method
+Date: Thu, 10 Apr 2014 17:00:24 -0700
+Message-ID: <1397174424-30855-1-git-send-email-tim.kryger@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CABxcv=miFY3gE6HOU5ovWwCzgC6Un3ANh_Weh_bPCb7OoYQ+pA@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:15467 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753823AbaDKAAb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Apr 2014 20:00:31 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Markus Mayer <markus.mayer@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Tim Kryger <tim.kryger@linaro.org>, Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>, Linux GPIO Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi,
+If a consumer of a GPIO-based IRQ identifies itself as wanting to
+have the capability to wake up the system through that interrupt,
+update the flags to keep that interrupt enabled in suspend.
 
-On Thu, Apr 10, 2014 at 10:17:44PM +0200, Javier Martinez Canillas wrote:
-> > The same happens also on Nokia 770:
-> >
-> > [    0.118896] genirq: Setting trigger mode 0 for irq 128 failed (gpio_irq_type+0x0/0x220)
-> 
-> I don't have those errors when booting on my DM3730 IGEPv2 board but
-> it seems that for some reason on omap1  __irq_set_trigger() complains
-> when IRQ_TYPE_NONE is used as a default flag when calling
-> gpiochip_irqchip_add()
-> 
-> Could you please test the following patch and tell me if your board
-> still works and makes the errors go away?
+Signed-off-by: Tim Kryger <tim.kryger@linaro.org>
+---
+ drivers/gpio/gpio-bcm-kona.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-Now it complains about mode 8...
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 3f6b33c..b0e0971 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -20,6 +20,7 @@
+ #include <linux/module.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
++#include <linux/interrupt.h>
+ 
+ #define BCM_GPIO_PASSWD				0x00a5a501
+ #define GPIO_PER_BANK				32
+@@ -340,6 +341,23 @@ static void bcm_kona_gpio_irq_ack(struct irq_data *d)
+ 	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ }
+ 
++#ifdef CONFIG_SUSPEND
++static int bcm_kona_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
++{
++
++	struct irq_desc *desc = container_of(d, struct irq_desc, irq_data);
++
++	if (on)
++		desc->action->flags |= IRQF_NO_SUSPEND;
++	else
++		desc->action->flags &= ~IRQF_NO_SUSPEND;
++
++	return 0;
++}
++#else
++#define bcm_kona_gpio_irq_set_wake NULL
++#endif
++
+ static void bcm_kona_gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct bcm_kona_gpio *kona_gpio;
+@@ -494,6 +512,7 @@ static struct irq_chip bcm_gpio_irq_chip = {
+ 	.irq_set_type = bcm_kona_gpio_irq_set_type,
+ 	.irq_request_resources = bcm_kona_gpio_irq_reqres,
+ 	.irq_release_resources = bcm_kona_gpio_irq_relres,
++	.irq_set_wake = bcm_kona_gpio_irq_set_wake,
+ };
+ 
+ static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
+-- 
+1.7.9.5
 
-[    0.118835] genirq: Setting trigger mode 8 for irq 128 failed (gpio_irq_type
-+0x0/0x220)
-
-A.
-
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 8cc9e91..5bc8aec 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1122,7 +1122,7 @@ static int omap_gpio_chip_init(struct gpio_bank *bank)
-> 
->         ret = gpiochip_irqchip_add(&bank->chip, &gpio_irq_chip,
->                                    irq_base, gpio_irq_handler,
-> -                                  IRQ_TYPE_NONE);
-> +                                  IRQ_TYPE_LEVEL_LOW);
-> 
->         if (ret) {
->                 dev_err(bank->dev, "Couldn't add irqchip to gpiochip
-> %d\n", ret);
-> 
-> Best regards,
-> Javier
