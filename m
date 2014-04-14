@@ -1,47 +1,58 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] gpio: kempld: Fix autoloading of module
-Date: Sat, 12 Apr 2014 09:58:03 -0700
-Message-ID: <5349709B.6030004@roeck-us.net>
-References: <1397277918.29335.1.camel@phoenix>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: max730x: Remove kfree(ts) in __max730x_remove()
+Date: Mon, 14 Apr 2014 15:30:41 +0800
+Message-ID: <1397460641.23515.3.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:49501 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754889AbaDLQ6H (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Apr 2014 12:58:07 -0400
-In-Reply-To: <1397277918.29335.1.camel@phoenix>
+Received: from mail-ve0-f169.google.com ([209.85.128.169]:41605 "EHLO
+	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750866AbaDNHas (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Apr 2014 03:30:48 -0400
+Received: by mail-ve0-f169.google.com with SMTP id pa12so7130377veb.14
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Apr 2014 00:30:47 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Brunner <michael.brunner@kontron.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Juergen Beisert <jbe@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-On 04/11/2014 09:45 PM, Axel Lin wrote:
-> Make the module alias match the platform device name, so gpio-kempld module
-> should now autoload correctly.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
->   drivers/gpio/gpio-kempld.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-kempld.c b/drivers/gpio/gpio-kempld.c
-> index c6d8817..ebe1023 100644
-> --- a/drivers/gpio/gpio-kempld.c
-> +++ b/drivers/gpio/gpio-kempld.c
-> @@ -216,4 +216,4 @@ module_platform_driver(kempld_gpio_driver);
->   MODULE_DESCRIPTION("KEM PLD GPIO Driver");
->   MODULE_AUTHOR("Michael Brunner <michael.brunner@kontron.com>");
->   MODULE_LICENSE("GPL");
-> -MODULE_ALIAS("platform:gpio-kempld");
-> +MODULE_ALIAS("platform:kempld-gpio");
->
+>From f52622585aeb4cf785c78548e440993a1e9625b1 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Mon, 14 Apr 2014 15:20:15 +0800
+Subject: [PATCH] gpio: max730x: Remove kfree(ts) in __max730x_remove()
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+The memory for ts is allocated by devm_kzalloc now, so the kfree is not
+required.
 
-Wonder though if the module alias is necessary in the first place,
-as the driver is instantiated from the mfd driver.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+I think this change is missed in:
+commit c3fe2bf4916 gpio: max7300: use devm_kzalloc()
+commit 4cb06cd58c2 gpio: max7301: use devm_kzalloc()
 
-Guenter
+ drivers/gpio/gpio-max730x.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-max730x.c b/drivers/gpio/gpio-max730x.c
+index 8672755..0814584 100644
+--- a/drivers/gpio/gpio-max730x.c
++++ b/drivers/gpio/gpio-max730x.c
+@@ -237,10 +237,9 @@ int __max730x_remove(struct device *dev)
+ 	ts->write(dev, 0x04, 0x00);
+ 
+ 	ret = gpiochip_remove(&ts->chip);
+-	if (!ret) {
++	if (!ret)
+ 		mutex_destroy(&ts->lock);
+-		kfree(ts);
+-	} else
++	else
+ 		dev_err(dev, "Failed to remove GPIO controller: %d\n", ret);
+ 
+ 	return ret;
+-- 
+1.8.3.2
+
+
 
