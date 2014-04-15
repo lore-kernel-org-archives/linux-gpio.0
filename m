@@ -1,51 +1,55 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [linux-sunxi] Re: [PATCH 7/7] ARM: sun7i: cubietruck: enable
- bluetooth module
-Date: Tue, 15 Apr 2014 17:18:08 +0100
-Message-ID: <20140415171808.6d60d134@alan.etchedpixels.co.uk>
-References: <1397544101-18135-1-git-send-email-wens@csie.org>
-	<1397544101-18135-8-git-send-email-wens@csie.org>
-	<20140415144215.GG3207@lukather>
-	<CAGb2v643HyvFdhQ0znreB8ENXHWpcx6tFwdeU7VuU8KYWcT4ZA@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 5/7] net: rfkill: gpio: add device tree support
+Date: Tue, 15 Apr 2014 15:00:01 -0600
+Message-ID: <534D9DD1.2070004@wwwdotorg.org>
+References: <1397544101-18135-1-git-send-email-wens@csie.org> <1397544101-18135-6-git-send-email-wens@csie.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <CAGb2v643HyvFdhQ0znreB8ENXHWpcx6tFwdeU7VuU8KYWcT4ZA@mail.gmail.com>
+In-Reply-To: <1397544101-18135-6-git-send-email-wens@csie.org>
 Sender: netdev-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>, Linus Walleij <linus.walleij@linaro.org>, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, Arnd Bergmann <arnd@arndb.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-sunxi@googlegroups.com, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-> For our use case here, which is a bluetooth chip connected on the UART,
-> there is no in kernel representation or driver to tie them to. Same goes
-> for UART based GPS chips. They just so happen to require toggling a GPIO,
-> and maybe enabling a specific clock, to get it running. Afterwards,
-> accessing it is done solely from userspace. For our Broadcom chips, the
-> user has to upload its firmware first, then designate the tty as a Bluetooth
-> HCI using hciattach.
+On 04/15/2014 12:41 AM, Chen-Yu Tsai wrote:
 
-Somewhat similar on some ordinary PC systems. ACPI describes the
-properties there but the same things apply - its a device mostly
-controlled by a blob of userspace and having a bunch of GPIO lines that
-do stuff like turn it on and off.
+Patch description?
 
-Is there any reason for not describing it properly and letting the
-userspace code fish it out of the devicetree ?
+> diff --git a/Documentation/devicetree/bindings/rfkill/rfkill-gpio.txt b/Documentation/devicetree/bindings/rfkill/rfkill-gpio.txt
 
-There's no fundamental reason that it's magically different because of
-the location of the driver. Given in a few cases we have a choice of
-kernel or user space devices for the same hardware thats even more true ?
+> +Required properties:
 
-Failing that we have a long standing proposal never implemented for
-adding GPIO awareness to the tty layer. There are a few other use
-cases for it including gpio widgets with serial and either some of the
-modem lines hacked in via GPIO or with additional control lines for
-stuff like smartcard reading interfaces.
+> +- gpios		: At most two GPIO phandles
+> +- gpio-names	: Shall be "reset" or "shutdown", matching gpios.
+> +		  If both are provided, the "reset" GPIO is toggled first.
 
-https://lkml.org/lkml/2012/5/16/288
+As Maxime mentioned, this is an unusual way of defining GPIOs. If this
+new way is acceptable, then I'd suggest more precise wording, e.g.:
 
-In hindsight I'd do it slightly differently and make each "gpio" a pair
-of values (purpose,number).
+- gpios: Must contain an entry for each entry in gpio-names.
+  See ../gpio/gpio.txt for details.
+- gpio-names: May contain any or all of the following entries:
+  - reset
+  - shutdown
 
-Alan
+> +- rfkill-type	: Type of RFKILL device: 1 for WiFi, 2 for BlueTooth, etc.
+> +		  See include/uapi/linux/rfkill.h for all valid values
+
+It would be nice if include/dt-bindings/rfkill-gpio.h existed and
+contained e.g.:
+
+#define RFKILL_TYPE_BLUETOOTH 2
+
+So that:
+
+> +Example:
+> +
+> +	rfkill_bt {
+...
+> +		rfkill-type = <2>;
+
+Could be written as:
+
+		rfkill-type = <RFKILL_TYPE_BLUETOOTH>;
