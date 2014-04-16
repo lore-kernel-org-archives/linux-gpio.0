@@ -1,136 +1,84 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: Re: [PATCH 7/7] ARM: sun7i: cubietruck: enable
- bluetooth module
-Date: Wed, 16 Apr 2014 18:39:28 +0800
-Message-ID: <CAGb2v67HzB22a3huRRZyufXkdTFE410MhXqAHyC-MmVo0-GCFA@mail.gmail.com>
-References: <1397544101-18135-1-git-send-email-wens@csie.org>
- <1397544101-18135-8-git-send-email-wens@csie.org> <20140415144215.GG3207@lukather>
- <CAGb2v643HyvFdhQ0znreB8ENXHWpcx6tFwdeU7VuU8KYWcT4ZA@mail.gmail.com> <20140416094428.GK3207@lukather>
-Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 2/6] gpio: rcar: Add minimal runtime PM support
+Date: Wed, 16 Apr 2014 13:26:39 +0200
+Message-ID: <2328618.T0cMmOFThh@avalon>
+References: <1397500397-12607-1-git-send-email-geert@linux-m68k.org> <1397500397-12607-3-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBB5N3XGNAKGQEQN6STNA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20140416094428.GK3207@lukather>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi>
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-To: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "maxime.ripard" <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1397500397-12607-3-git-send-email-geert@linux-m68k.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+Hi Geert,
 
-On Wed, Apr 16, 2014 at 5:44 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> Hi,
->
-> Please try to keep me in CC, even though the ML doesn't make it easy..
+Thank you for the patch.
 
-Sorry about that.
+On Monday 14 April 2014 20:33:13 Geert Uytterhoeven wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> This is just enough to automatically enable the functional clock, if
+> present. Clock management during suspend/resume is still to be added.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: linux-gpio@vger.kernel.org
 
-> On Wed, Apr 16, 2014 at 12:06:59AM +0800, Chen-Yu Tsai wrote:
->> >> @@ -139,4 +152,16 @@
->> >>       reg_usb2_vbus: usb2-vbus {
->> >>               status = "okay";
->> >>       };
->> >> +
->> >> +     rfkill_bt {
->> >> +             compatible = "rfkill-gpio";
->> >> +             pinctrl-names = "default";
->> >> +             pinctrl-0 = <&bt_pwr_pin_cubietruck>, <&clk_out_a_pins_a>;
->> >> +             clocks = <&clk_out_a>;
->> >> +             clock-frequency = <32768>;
->> >> +             gpios = <&pio 7 18 0>; /* PH18 */
->> >> +             gpio-names = "reset";
->> >> +             rfkill-name = "bt";
->> >> +             rfkill-type = <2>;
->> >> +     };
->> >
->> > Hmmm, I don't think that's actually right.
->> >
->> > If you have such a device, then I'd expect it to be represented as a
->> > full device in the DT, probably with one part for the WiFi, one part
->> > for the Bluetooth, and here the definition of the rfkill device that
->> > controls it.
->>
->> The AP6210 is not one device, but 2 separate chips in one module. Each
->> chip has its own controls and interface. They just so happen to share
->> the same enclosure. Even 2-in-1 chips by Broadcom have separate controls
->> and interfaces. The WiFi side is most likely connected via SDIO, while
->> the Bluetooth side is connected to a UART, and optionally I2S for sound.
->
-> It's even easier to represent then.
->
->> > But tying parts of the device to the rfkill that controls it, such as
->> > the clocks, or the frequency it runs at seems just wrong.
->>
->> I understand where you're coming from. For devices on buses that require
->> drivers (such as USB, SDIO) these properties probably should be tied to
->> the device node.
->>
->> For our use case here, which is a bluetooth chip connected on the UART,
->> there is no in kernel representation or driver to tie them to. Same goes
->> for UART based GPS chips. They just so happen to require toggling a GPIO,
->> and maybe enabling a specific clock, to get it running. Afterwards,
->> accessing it is done solely from userspace. For our Broadcom chips, the
->> user has to upload its firmware first, then designate the tty as a Bluetooth
->> HCI using hciattach.
->>
->> We are using the rfkill device as a on-off switch.
->
-> I understand your point, but the fact that it's implemented in
-> user-space, or that UART is not a bus (which probably should be), is
-> only a Linux specific story, and how it's implemented in Linux (even
-> if the whole rfkill node is another one, but let's stay on topic).
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-I gave it some thought last night. You are right. My whole approach
-is wrong. But let's try to make it right.
+> ---
+> v2:
+>   - Use pm_runtime_put() instead of pm_runtime_put_sync()
+> ---
+>  drivers/gpio/gpio-rcar.c |    8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index 03c91482432c..bfcfeeefcf78 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_data/gpio-rcar.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/slab.h>
+> 
+> @@ -377,6 +378,9 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+> 
+>  	platform_set_drvdata(pdev, p);
+> 
+> +	pm_runtime_enable(dev);
+> +	pm_runtime_get_sync(dev);
+> +
+>  	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> 
+> @@ -460,6 +464,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+> err1:
+>  	irq_domain_remove(p->irq_domain);
+>  err0:
+> +	pm_runtime_put(dev);
+> +	pm_runtime_disable(dev);
+>  	return ret;
+>  }
+> 
+> @@ -473,6 +479,8 @@ static int gpio_rcar_remove(struct platform_device
+> *pdev) return ret;
+> 
+>  	irq_domain_remove(p->irq_domain);
+> +	pm_runtime_put(&pdev->dev);
+> +	pm_runtime_disable(&pdev->dev);
+>  	return 0;
+>  }
 
-So considering the fact that it's primarily connected to a UART,
-maybe I should make it a sub-node to the UART node it's actually
-connected to? Something like:
+-- 
+Regards,
 
-        uart2: serial@01c28800 {
-                pinctrl-names = "default";
-                pinctrl-0 = <&uart2_pins_a>;
-                status = "okay";
+Laurent Pinchart
 
-                bt: bt_hci {
-                        compatible = "brcm,bcm20710";
-                        /* maybe add some generic compatible */
-                        pinctrl-names = "default";
-                        pinctrl-0 = <&clk_out_a_pins_a>,
-<&bt_pwr_pin_cubietruck>;
-                        clocks = <&clk_out_a>;
-                        clock-frequency = <32768>;
-                        gpios = <&pio 7 18 0>; /* PH18 */
-                };
-        };
-
-And let the uart core handle power sequencing for sub-nodes.
-
-The rfkill node would still have the gpios and clocks, but not the
-clock-frequency property. It's sole purpose would be to toggle the
-controls. But I think the placement is still odd. Perhaps these
-virtual devices shouldn't live in the DT at all.
-
-> This is a huge abstraction leak.
->
-> Let's say you need the I2S stream you mentionned for some
-> reason. Would you tie the audio stream to the rfkill node as well?
-> I'm sorry, but from an hardware description perspective, it makes no
-> sense.
-
-The above revision should be better, from a hardware perspective. I'm
-not sure how to tie in the I2S stream, and there I haven't found any
-examples in the DT tree.
-
-> What's the feeling of the DT maintainers?
-
-
-Cheers
-
-ChenYu
