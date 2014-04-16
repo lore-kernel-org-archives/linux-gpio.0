@@ -1,57 +1,44 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [PATCH] gpio: kempld: Fix autoloading of module
-Date: Wed, 16 Apr 2014 07:46:04 +0800
-Message-ID: <CAFRkauBCtx2VvwX0R+HKLa9fiER6FbNzC0RaTkJvqosKRdRy5g@mail.gmail.com>
-References: <1397277918.29335.1.camel@phoenix>
-	<5349709B.6030004@roeck-us.net>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/7] gpiolib: gpiolib-of: Implement device
+ tree gpio-names based lookup
+Date: Wed, 16 Apr 2014 15:12:26 +0900
+Message-ID: <CAAVeFuLDhTVGDnmYtnxEY8hhn6HE6tU9OB24WDPtmxEHjiRiuQ@mail.gmail.com>
+References: <1397544101-18135-1-git-send-email-wens@csie.org>
+ <1397544101-18135-2-git-send-email-wens@csie.org> <20140415142024.GD3207@lukather>
+Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:36428 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750885AbaDOXqF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Apr 2014 19:46:05 -0400
-Received: by mail-qc0-f179.google.com with SMTP id m20so11146801qcx.38
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Apr 2014 16:46:04 -0700 (PDT)
-In-Reply-To: <5349709B.6030004@roeck-us.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBDE4FPUCVULRBX56XCNAKGQECBPJPPY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20140415142024.GD3207@lukather>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michael Brunner <michael.brunner@kontron.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-2014-04-13 0:58 GMT+08:00 Guenter Roeck <linux@roeck-us.net>:
-> On 04/11/2014 09:45 PM, Axel Lin wrote:
->>
->> Make the module alias match the platform device name, so gpio-kempld
->> module
->> should now autoload correctly.
->>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->> ---
->>   drivers/gpio/gpio-kempld.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpio/gpio-kempld.c b/drivers/gpio/gpio-kempld.c
->> index c6d8817..ebe1023 100644
->> --- a/drivers/gpio/gpio-kempld.c
->> +++ b/drivers/gpio/gpio-kempld.c
->> @@ -216,4 +216,4 @@ module_platform_driver(kempld_gpio_driver);
->>   MODULE_DESCRIPTION("KEM PLD GPIO Driver");
->>   MODULE_AUTHOR("Michael Brunner <michael.brunner@kontron.com>");
->>   MODULE_LICENSE("GPL");
->> -MODULE_ALIAS("platform:gpio-kempld");
->> +MODULE_ALIAS("platform:kempld-gpio");
->>
+On Tue, Apr 15, 2014 at 11:20 PM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> Hi Chen-Yu,
 >
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> On Tue, Apr 15, 2014 at 02:41:35PM +0800, Chen-Yu Tsai wrote:
+>> This patch provides of_get_gpiod_flags_by_name(), which looks up GPIO
+>> phandles by name only, through gpios/gpio-names, and not by index.
 >
-> Wonder though if the module alias is necessary in the first place,
-> as the driver is instantiated from the mfd driver.
+> IIRC, gpios only uses the *-gpios properties, and not gpios/gpio-names
+> pattern seen on various other things.
+>
+> Is it some new property you introduce? If so, please add it to the
+> documentation.
+>
+> Now, I'm not sure that having two distinct representations of GPIOs in
+> the DT is a good thing. Yes, it's looking odd compared to other
+> similar bindings, but it's what we have to deal with.
 
-The mfd driver calls mfd_add_devices() to add kempld-gpio device.
-In the case if kempld-gpio driver is built as a module and not yet
-be loaded to the system, the module alias is required to make module
-autoloading work.
-
-Regards,
-Axel
+Mmmm I *think* I somehow remember a discussion about this topic
+recently, but I cannot find it. Maybe Chen-yu could point us to the
+conclusion of this discussion and the rationale for (re)implementing
+named GPIOs this way?
