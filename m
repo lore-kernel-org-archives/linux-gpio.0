@@ -1,135 +1,111 @@
-From: Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Subject: Re: Re: [PATCH 7/7] ARM: sun7i: cubietruck: enable
- bluetooth module
-Date: Thu, 17 Apr 2014 09:43:40 +0200
-Message-ID: <534F862C.8010604@broadcom.com>
-References: <1397544101-18135-1-git-send-email-wens@csie.org> <1397544101-18135-8-git-send-email-wens@csie.org> <20140415144215.GG3207@lukather> <CAGb2v643HyvFdhQ0znreB8ENXHWpcx6tFwdeU7VuU8KYWcT4ZA@mail.gmail.com> <20140416094428.GK3207@lukather> <CAGb2v67HzB22a3huRRZyufXkdTFE410MhXqAHyC-MmVo0-GCFA@mail.gmail.com> <534E8102.4070404@redhat.com>
-Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 3/4] gpio: tc3589x: get rid of static IRQ base
+Date: Thu, 17 Apr 2014 08:47:42 +0100
+Message-ID: <20140417074742.GD28725@lee--X1>
+References: <1397044139-19306-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Return-path: <linux-sunxi+bncBCKLZOXH5AIBBMUMX2NAKGQEVRN7WDQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <534E8102.4070404-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-To: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus
- Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Mika
- Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "maxime.ripard" <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-serial@vger.k
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:63008 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751052AbaDQHrr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Apr 2014 03:47:47 -0400
+Received: by mail-wi0-f171.google.com with SMTP id q5so2512448wiv.4
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Apr 2014 00:47:46 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1397044139-19306-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-+ linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> The static IRQ base is not used on any platforms with this chip
+> (only Ux500). Get rid of it forever, and rely on dynamic IRQ
+> descriptor allocation.
+>=20
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-tc3589x.c | 10 +---------
+>  include/linux/mfd/tc3589x.h |  1 -
+>  2 files changed, 1 insertion(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.=
+c
+> index 113e50cb1f59..4b0d8ccbe561 100644
+> --- a/drivers/gpio/gpio-tc3589x.c
+> +++ b/drivers/gpio/gpio-tc3589x.c
+> @@ -32,9 +32,6 @@ struct tc3589x_gpio {
+>  	struct device *dev;
+>  	struct mutex irq_lock;
+>  	struct irq_domain *domain;
+> -
+> -	int irq_base;
+> -
+>  	/* Caches of interrupt control registers for bus_lock */
+>  	u8 regs[CACHE_NR_REGS][CACHE_NR_BANKS];
+>  	u8 oldregs[CACHE_NR_REGS][CACHE_NR_BANKS];
+> @@ -290,8 +287,6 @@ static struct irq_domain_ops tc3589x_irq_ops =3D =
+{
+>  static int tc3589x_gpio_irq_init(struct tc3589x_gpio *tc3589x_gpio,
+>  				struct device_node *np)
+>  {
+> -	int base =3D tc3589x_gpio->irq_base;
+> -
+>  	/*
+>  	 * If this results in a linear domain, irq_create_mapping() will
+>  	 * take care of allocating IRQ descriptors at runtime. When a base
+> @@ -299,7 +294,7 @@ static int tc3589x_gpio_irq_init(struct tc3589x_g=
+pio *tc3589x_gpio,
+>  	 * domain is instantiated.
+>  	 */
+>  	tc3589x_gpio->domain =3D irq_domain_add_simple(np,
+> -			tc3589x_gpio->chip.ngpio, base, &tc3589x_irq_ops,
+> +			tc3589x_gpio->chip.ngpio, 0, &tc3589x_irq_ops,
+>  			tc3589x_gpio);
+>  	if (!tc3589x_gpio->domain) {
+>  		dev_err(tc3589x_gpio->dev, "Failed to create irqdomain\n");
+> @@ -348,9 +343,6 @@ static int tc3589x_gpio_probe(struct platform_dev=
+ice *pdev)
+>  	tc3589x_gpio->chip.of_node =3D np;
+>  #endif
+> =20
+> -	tc3589x_gpio->irq_base =3D tc3589x->irq_base ?
+> -		tc3589x->irq_base + TC3589x_INT_GPIO(0) : 0;
+> -
+>  	/* Bring the GPIO module out of reset */
+>  	ret =3D tc3589x_set_bits(tc3589x, TC3589x_RSTCTRL,
+>  			       TC3589x_RSTCTRL_GPIRST, 0);
+> diff --git a/include/linux/mfd/tc3589x.h b/include/linux/mfd/tc3589x.=
+h
+> index 6b8e1ff4672b..e6088c2e2092 100644
+> --- a/include/linux/mfd/tc3589x.h
+> +++ b/include/linux/mfd/tc3589x.h
+> @@ -111,7 +111,6 @@ enum tx3589x_block {
+>  #define TC3589x_INT_PORIRQ	7
+> =20
+>  #define TC3589x_NR_INTERNAL_IRQS	8
+> -#define TC3589x_INT_GPIO(x)	(TC3589x_NR_INTERNAL_IRQS + (x))
+> =20
+>  struct tc3589x {
+>  	struct mutex lock;
 
-On 16/04/14 15:09, Hans de Goede wrote:
-> Hi,
->
-> On 04/16/2014 12:39 PM, Chen-Yu Tsai wrote:
->> Hi,
->>
->> On Wed, Apr 16, 2014 at 5:44 PM, Maxime Ripard
->> <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->>> Hi,
->>>
->>> Please try to keep me in CC, even though the ML doesn't make it easy..
->>
->> Sorry about that.
->>
->>> On Wed, Apr 16, 2014 at 12:06:59AM +0800, Chen-Yu Tsai wrote:
->>>>>> @@ -139,4 +152,16 @@
->>>>>>        reg_usb2_vbus: usb2-vbus {
->>>>>>                status = "okay";
->>>>>>        };
->>>>>> +
->>>>>> +     rfkill_bt {
->>>>>> +             compatible = "rfkill-gpio";
->>>>>> +             pinctrl-names = "default";
->>>>>> +             pinctrl-0 = <&bt_pwr_pin_cubietruck>, <&clk_out_a_pins_a>;
->>>>>> +             clocks = <&clk_out_a>;
->>>>>> +             clock-frequency = <32768>;
->>>>>> +             gpios = <&pio 7 18 0>; /* PH18 */
->>>>>> +             gpio-names = "reset";
->>>>>> +             rfkill-name = "bt";
->>>>>> +             rfkill-type = <2>;
->>>>>> +     };
->>>>>
->>>>> Hmmm, I don't think that's actually right.
->>>>>
->>>>> If you have such a device, then I'd expect it to be represented as a
->>>>> full device in the DT, probably with one part for the WiFi, one part
->>>>> for the Bluetooth, and here the definition of the rfkill device that
->>>>> controls it.
->>>>
->>>> The AP6210 is not one device, but 2 separate chips in one module. Each
->>>> chip has its own controls and interface. They just so happen to share
->>>> the same enclosure. Even 2-in-1 chips by Broadcom have separate controls
->>>> and interfaces. The WiFi side is most likely connected via SDIO, while
->>>> the Bluetooth side is connected to a UART, and optionally I2S for sound.
->>>
->>> It's even easier to represent then.
->>>
->>>>> But tying parts of the device to the rfkill that controls it, such as
->>>>> the clocks, or the frequency it runs at seems just wrong.
->>>>
->>>> I understand where you're coming from. For devices on buses that require
->>>> drivers (such as USB, SDIO) these properties probably should be tied to
->>>> the device node.
->>>>
->>>> For our use case here, which is a bluetooth chip connected on the UART,
->>>> there is no in kernel representation or driver to tie them to. Same goes
->>>> for UART based GPS chips. They just so happen to require toggling a GPIO,
->>>> and maybe enabling a specific clock, to get it running. Afterwards,
->>>> accessing it is done solely from userspace. For our Broadcom chips, the
->>>> user has to upload its firmware first, then designate the tty as a Bluetooth
->>>> HCI using hciattach.
->>>>
->>>> We are using the rfkill device as a on-off switch.
->>>
->>> I understand your point, but the fact that it's implemented in
->>> user-space, or that UART is not a bus (which probably should be), is
->>> only a Linux specific story, and how it's implemented in Linux (even
->>> if the whole rfkill node is another one, but let's stay on topic).
->>
->> I gave it some thought last night. You are right. My whole approach
->> is wrong. But let's try to make it right.
->>
->> So considering the fact that it's primarily connected to a UART,
->> maybe I should make it a sub-node to the UART node it's actually
->> connected to? Something like:
->>
->>          uart2: serial@01c28800 {
->>                  pinctrl-names = "default";
->>                  pinctrl-0 = <&uart2_pins_a>;
->>                  status = "okay";
->>
->>                  bt: bt_hci {
->>                          compatible = "brcm,bcm20710";
->>                          /* maybe add some generic compatible */
->>                          pinctrl-names = "default";
->>                          pinctrl-0 = <&clk_out_a_pins_a>,
->> <&bt_pwr_pin_cubietruck>;
->>                          clocks = <&clk_out_a>;
->>                          clock-frequency = <32768>;
->>                          gpios = <&pio 7 18 0>; /* PH18 */
->>                  };
->>          };
->>
->> And let the uart core handle power sequencing for sub-nodes.
->
-> Great, I missed this reply when I typed my mail I send a few minutes
-> ago. I agree that this approach is how thing should be.
+Does this actually compile? Does this patch have a dependency?
 
-Regarding the device tree hierarchy this seems right, but powering the 
-sub-nodes seems outside the realm of uart core.
+I see TC3589x_INT_GPIO(x) being used still:
 
-> Regards,
->
-> Hans
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+  include/linux/mfd/tc3589x.h:
+    #define TC3589x_NR_IRQS                TC3589x_INT_GPIO(TC3589x_NR_=
+GPIOS)
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
