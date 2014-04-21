@@ -1,116 +1,42 @@
-From: Florian Fainelli <florian@openwrt.org>
-Subject: Re: [PATCH 2/2] gpio: rdc321x: Convert to use devm_kzalloc
-Date: Sun, 20 Apr 2014 11:32:09 -0700
-Message-ID: <535412A9.5090304@openwrt.org>
-References: <1397196885.12922.2.camel@phoenix> <1397196961.12922.4.camel@phoenix>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: SAMSUNG: remove gpio flags in dev-backlight
+Date: Mon, 21 Apr 2014 15:07:50 +0900
+Message-ID: <CAAVeFuKeT9+m_yFc8ihfc_p5W--dCm0-eO+ccjv99WOwurAirQ@mail.gmail.com>
+References: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
+ <1393480414-19473-2-git-send-email-acourbot@nvidia.com> <CAAVeFu+XUzZ7ozMOcp6A-gZJ9o8DZFrdh1j4LvCQtoTcu=PP1g@mail.gmail.com>
+ <000701cf54a2$7c1379c0$743a6d40$%han@samsung.com> <CAAVeFuKJnSk2XSsMZZKMfyabzJ5CYdqWdE91H5uHiYFC1r6HxA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:34205 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751380AbaDTScK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Apr 2014 14:32:10 -0400
-Received: by mail-oa0-f48.google.com with SMTP id m1so3434704oag.7
-        for <linux-gpio@vger.kernel.org>; Sun, 20 Apr 2014 11:32:09 -0700 (PDT)
-In-Reply-To: <1397196961.12922.4.camel@phoenix>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuKJnSk2XSsMZZKMfyabzJ5CYdqWdE91H5uHiYFC1r6HxA@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Bryan Wu <cooloney@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Le 10/04/2014 23:16, Axel Lin a =C3=A9crit :
-> This saves a few unwind code.
+On Thu, Apr 10, 2014 at 11:14 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Thu, Apr 10, 2014 at 6:51 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+>> On Thursday, April 10, 2014 1:17 PM, Alexandre Courbot wrote:
+>>>
+>>> Ping, can I have the Samsung folks review and ,aybe even merge this
+>>> patch? enable_gpio_flags is never used in any code, is replaced by
+>>> gpiod, and we would like to remove it altogether from pwm_bl. Thanks!
+>>
+>> OK, I see. It looks good.
+>>
+>> As far as I know, 'enable_gpio_flags' has not been being used
+>> for Samsung platform. So, there will be no side effect,
+>> if 'enable_gpio_flags' is removed from 'arch/arm/plat-samsung'
+>> directory.
+>>
+>> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Great, thanks. Ben, Kukjin, could we have your Acked-by?
+>
+> Thierry, if the Samsung maintainers are ok with it, and 2/2 of this
+> series is also ok for you (you merged the same for simple-panel
+> already), can you take both into your tree?
 
-Acked-by: Florian Fainelli <florian@openwrt.org>
-
-> ---
->   drivers/gpio/gpio-rdc321x.c | 19 ++++++-------------
->   1 file changed, 6 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-rdc321x.c b/drivers/gpio/gpio-rdc321x.=
-c
-> index 9e7da2d..3027591 100644
-> --- a/drivers/gpio/gpio-rdc321x.c
-> +++ b/drivers/gpio/gpio-rdc321x.c
-> @@ -141,7 +141,8 @@ static int rdc321x_gpio_probe(struct platform_dev=
-ice *pdev)
->   		return -ENODEV;
->   	}
->
-> -	rdc321x_gpio_dev =3D kzalloc(sizeof(struct rdc321x_gpio), GFP_KERNE=
-L);
-> +	rdc321x_gpio_dev =3D devm_kzalloc(&pdev->dev, sizeof(struct rdc321x=
-_gpio),
-> +					GFP_KERNEL);
->   	if (!rdc321x_gpio_dev) {
->   		dev_err(&pdev->dev, "failed to allocate private data\n");
->   		return -ENOMEM;
-> @@ -150,8 +151,7 @@ static int rdc321x_gpio_probe(struct platform_dev=
-ice *pdev)
->   	r =3D platform_get_resource_byname(pdev, IORESOURCE_IO, "gpio-reg1=
-");
->   	if (!r) {
->   		dev_err(&pdev->dev, "failed to get gpio-reg1 resource\n");
-> -		err =3D -ENODEV;
-> -		goto out_free;
-> +		return -ENODEV;
->   	}
->
->   	spin_lock_init(&rdc321x_gpio_dev->lock);
-> @@ -162,8 +162,7 @@ static int rdc321x_gpio_probe(struct platform_dev=
-ice *pdev)
->   	r =3D platform_get_resource_byname(pdev, IORESOURCE_IO, "gpio-reg2=
-");
->   	if (!r) {
->   		dev_err(&pdev->dev, "failed to get gpio-reg2 resource\n");
-> -		err =3D -ENODEV;
-> -		goto out_free;
-> +		return -ENODEV;
->   	}
->
->   	rdc321x_gpio_dev->reg2_ctrl_base =3D r->start;
-> @@ -187,21 +186,17 @@ static int rdc321x_gpio_probe(struct platform_d=
-evice *pdev)
->   					rdc321x_gpio_dev->reg1_data_base,
->   					&rdc321x_gpio_dev->data_reg[0]);
->   	if (err)
-> -		goto out_free;
-> +		return err;
->
->   	err =3D pci_read_config_dword(rdc321x_gpio_dev->sb_pdev,
->   					rdc321x_gpio_dev->reg2_data_base,
->   					&rdc321x_gpio_dev->data_reg[1]);
->   	if (err)
-> -		goto out_free;
-> +		return err;
->
->   	dev_info(&pdev->dev, "registering %d GPIOs\n",
->   					rdc321x_gpio_dev->chip.ngpio);
->   	return gpiochip_add(&rdc321x_gpio_dev->chip);
-> -
-> -out_free:
-> -	kfree(rdc321x_gpio_dev);
-> -	return err;
->   }
->
->   static int rdc321x_gpio_remove(struct platform_device *pdev)
-> @@ -213,8 +208,6 @@ static int rdc321x_gpio_remove(struct platform_de=
-vice *pdev)
->   	if (ret)
->   		dev_err(&pdev->dev, "failed to unregister chip\n");
->
-> -	kfree(rdc321x_gpio_dev);
-> -
->   	return ret;
->   }
->
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Last call - could we have a Acked-by from Ben or Kukjin and merge this
+through Thierry's tree? Otherwise I will just have to drop this
+series, which would be sad.
