@@ -1,42 +1,62 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: SAMSUNG: remove gpio flags in dev-backlight
-Date: Mon, 21 Apr 2014 15:07:50 +0900
-Message-ID: <CAAVeFuKeT9+m_yFc8ihfc_p5W--dCm0-eO+ccjv99WOwurAirQ@mail.gmail.com>
-References: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
- <1393480414-19473-2-git-send-email-acourbot@nvidia.com> <CAAVeFu+XUzZ7ozMOcp6A-gZJ9o8DZFrdh1j4LvCQtoTcu=PP1g@mail.gmail.com>
- <000701cf54a2$7c1379c0$743a6d40$%han@samsung.com> <CAAVeFuKJnSk2XSsMZZKMfyabzJ5CYdqWdE91H5uHiYFC1r6HxA@mail.gmail.com>
+From: Tien Hock Loh <thloh@altera.com>
+Subject: Re: [PATCH V7 1/1] drivers/gpio: Altera soft IP GPIO driver and
+ devicetree binding
+Date: Mon, 21 Apr 2014 02:21:11 +0000
+Message-ID: <1CCADEFFEC58A54CACEDCA3F6E1E1A4C01573F@PG-ITEXCH02.altera.priv.altera.com>
+References: <1393842463-5206-1-git-send-email-thloh@altera.com>
+ <20140307151455.GI18529@joshc.qualcomm.com>
+ <CAOLUe6aspffO1PUjKWW7ejpbxnYtb+RKRQrK=y30kuF7KXUUhA@mail.gmail.com>
+ <CAOLUe6aPWmkJJSiBLL8tmw2MNfpaeLpSp3CSwP1u7q+qXxCh9Q@mail.gmail.com>
+ <20140407171115.GA3956@joshc.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuKJnSk2XSsMZZKMfyabzJ5CYdqWdE91H5uHiYFC1r6HxA@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Bryan Wu <cooloney@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from [207.46.100.109] ([207.46.100.109]:49179 "EHLO
+	na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750902AbaDUG73 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 21 Apr 2014 02:59:29 -0400
+In-Reply-To: <20140407171115.GA3956@joshc.qualcomm.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Josh Cartwright <joshc@codeaurora.org>
+Cc: Dinh Nguyen <dinguyen@altera.com>, Ley Foon Tan <lftan@altera.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "pawel.moll@arm.com" <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "thloh.linux@gmail.com" <thloh.linux@gmail.com>
 
-On Thu, Apr 10, 2014 at 11:14 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Thu, Apr 10, 2014 at 6:51 PM, Jingoo Han <jg1.han@samsung.com> wrote:
->> On Thursday, April 10, 2014 1:17 PM, Alexandre Courbot wrote:
->>>
->>> Ping, can I have the Samsung folks review and ,aybe even merge this
->>> patch? enable_gpio_flags is never used in any code, is replaced by
->>> gpiod, and we would like to remove it altogether from pwm_bl. Thanks!
->>
->> OK, I see. It looks good.
->>
->> As far as I know, 'enable_gpio_flags' has not been being used
->> for Samsung platform. So, there will be no side effect,
->> if 'enable_gpio_flags' is removed from 'arch/arm/plat-samsung'
->> directory.
->>
->> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
->
-> Great, thanks. Ben, Kukjin, could we have your Acked-by?
->
-> Thierry, if the Samsung maintainers are ok with it, and 2/2 of this
-> series is also ok for you (you merged the same for simple-panel
-> already), can you take both into your tree?
-
-Last call - could we have a Acked-by from Ben or Kukjin and merge this
-through Thierry's tree? Otherwise I will just have to drop this
-series, which would be sad.
+T24gSXNuLCAyMDE0LTA0LTA3IGF0IDEyOjExIC0wNTAwLCBKb3NoIENhcnR3cmlnaHQgd3JvdGU6
+DQo+IE9uIE1vbiwgQXByIDA3LCAyMDE0IGF0IDA0OjAwOjQzUE0gKzA4MDAsIFRpZW4gSG9jayBM
+b2ggd3JvdGU6DQo+ID4gT24gV2VkLCBNYXIgMTksIDIwMTQgYXQgNjowOSBQTSwgVGllbiBIb2Nr
+IExvaCA8dGhsb2hAYWx0ZXJhLmNvbT4gd3JvdGU6DQo+ID4gPiBPbiBGcmksIE1hciA3LCAyMDE0
+IGF0IDExOjE0IFBNLCBKb3NoIENhcnR3cmlnaHQgPGpvc2hjQGNvZGVhdXJvcmEub3JnPiB3cm90
+ZToNCj4gPiA+PiBPbiBNb24sIE1hciAwMywgMjAxNCBhdCAwNjoyNzo0M1BNICswODAwLCB0aGxv
+aEBhbHRlcmEuY29tIHdyb3RlOg0KPiA+ID4+PiBGcm9tOiBUaWVuIEhvY2sgTG9oIDx0aGxvaEBh
+bHRlcmEuY29tPg0KPiBbLi5dDQo+ID4gPj4+ICsgICAgIGFsdGVyYV9nYy0+bWFwcGVkX2lycSA9
+IGlycV9vZl9wYXJzZV9hbmRfbWFwKG5vZGUsIDApOw0KPiA+ID4+Pg0KPiA+ID4+DQo+ID4gPj4g
+cGxhdGZvcm1fZ2V0X2lycShwZGV2LCAwKTsNCj4gPiA+Pg0KPiA+ID4gT0suDQo+ID4gPg0KPiA+
+DQo+ID4gcGxhdGZvcm1fZ2V0X2lycSBkb2Vzbid0IGNyZWF0ZSB0aGUgaXJxIG1hcHBpbmcgd2hp
+Y2ggaXMgbmVlZGVkIGJ5IHRoZQ0KPiA+IGRyaXZlci4gU2luY2UgdGhpcyBkcml2ZXIgaXMgdGFy
+Z2V0ZWQgYXQgdXNpbmcgb2YsIHNob3VsZCBJIGJlIHVzaW5nDQo+ID4gaXJxX29mX3BhcnNlX2Fu
+ZF9tYXAgb3Igc2hvdWxkIEkgc3RpbGwgcmVkbyB0aGUgY29kZXMgd2l0aA0KPiA+IHBsYXRmb3Jt
+X2dldF9pcnEgYW5kIGlycV9jcmVhdGVfbWFwcGluZz8gSSB0aGluayB0aGUgbGF0dGVyIHdvdWxk
+IGJlDQo+ID4gaW50cm9kdWNpbmcgY29kZSByZWR1bmRhbmN5LiBQbGVhc2UgYWR2aWNlLg0KPg0K
+PiBZZXMsIGl0IGlzIHRlY2huaWNhbGx5IHRydWUgdGhhdCBwbGF0Zm9ybV9nZXRfaXJxKCkgZG9l
+c24ndCBkbyB0aGUNCj4gbWFwcGluZyBkaXJlY3RseSwgYnV0IHRoYXQncyBiZWNhdXNlIHRoZSBt
+YXBwaW5nIGlzIHNldHVwIGVhcmxpZXIsIHdoZW4NCj4gb2ZfZGV2aWNlX2FsbG9jKCkgKGRyaXZl
+cnMvb2YvcGxhdGZvcm0uYykgYWxsb2NhdGVzIHJlc291cmNlcyBmb3IgeW91cg0KPiBwbGF0Zm9y
+bSBkZXZpY2UuDQo+DQo+IENhbGxpbmcgaXJxX29mX3BhcnNlX2FuZF9tYXAoKSBzaG91bGQgYmUg
+dW5uZWNlc3NhcnkuDQoNCkkgY2hlY2tlZCBhbmQgdHJpZWQgcnVubmluZyB0aGUgd2l0aG91dCBp
+cnFfY3JlYXRlX21hcHBpbmcgYnV0IGl0IHNlZW1zDQp0aGUgbWFwcGluZyBpcyBub3QgZG9uZS4g
+V2hhdCBJJ3ZlIHNlZW4gb3RoZXIgR1BJTyBkcml2ZXIgaXMgZG9pbmcgaXMgdG8NCmNyZWF0ZSB0
+aGUgbWFwcGluZyBkdXJpbmcgdGhlIGdwaW9fdG9faXJxIGNhbGwuIEhvd2V2ZXIgTGludXMgc3Vn
+Z2VzdGVkDQp3ZSBhcmUgYXZvaWRpbmcgdGhhdCByb3V0ZSwgdGh1cyB0aGUgdXNlIG9mIGlycV9v
+Zl9wYXJzZV9hbmRfbWFwLg0KDQpEbyB5b3UgYWdyZWUgd2l0aCBteSBmaW5kaW5ncz8NCg0KPg0K
+DQoNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQoNCkNvbmZpZGVudGlhbGl0eSBO
+b3RpY2UuDQpUaGlzIG1lc3NhZ2UgbWF5IGNvbnRhaW4gaW5mb3JtYXRpb24gdGhhdCBpcyBjb25m
+aWRlbnRpYWwgb3Igb3RoZXJ3aXNlIHByb3RlY3RlZCBmcm9tIGRpc2Nsb3N1cmUuIElmIHlvdSBh
+cmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsIHlvdSBhcmUgaGVyZWJ5IG5vdGlmaWVkIHRo
+YXQgYW55IHVzZSwgZGlzY2xvc3VyZSwgZGlzc2VtaW5hdGlvbiwgZGlzdHJpYnV0aW9uLCBvciBj
+b3B5aW5nIG9mIHRoaXMgbWVzc2FnZSwgb3IgYW55IGF0dGFjaG1lbnRzLCBpcyBzdHJpY3RseSBw
+cm9oaWJpdGVkLiBJZiB5b3UgaGF2ZSByZWNlaXZlZCB0aGlzIG1lc3NhZ2UgaW4gZXJyb3IsIHBs
+ZWFzZSBhZHZpc2UgdGhlIHNlbmRlciBieSByZXBseSBlLW1haWwsIGFuZCBkZWxldGUgdGhlIG1l
+c3NhZ2UgYW5kIGFueSBhdHRhY2htZW50cy4gVGhhbmsgeW91Lg0K
