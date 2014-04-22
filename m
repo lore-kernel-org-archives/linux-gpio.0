@@ -1,36 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] pinctrl: sirf: wrap all gpio banks into one gpio_chip
-Date: Tue, 22 Apr 2014 20:27:55 +0200
-Message-ID: <CACRpkdZ5e=3SzQxvhzEJ=jyOPzqjZ1LfU0CtYscREsNXyFf+bw@mail.gmail.com>
-References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com>
-	<1397544229-20545-2-git-send-email-21cnbao@gmail.com>
+Subject: Re: [PATCH] gpio: ich: set regs and reglen for i3100 and ich6 chipset
+Date: Tue, 22 Apr 2014 23:15:15 +0200
+Message-ID: <CACRpkdYUtiW78=3tiyGBb31THHNYHjm55wLPFfUqnX1nyJnnqA@mail.gmail.com>
+References: <20140415084056.GA26578@ks3318809.kimsufi.com>
+	<1397564503-5175-1-git-send-email-vincent.donnefort@seagate.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:49064 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751577AbaDVS14 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 14:27:56 -0400
-Received: by mail-oa0-f48.google.com with SMTP id m1so6081229oag.35
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 11:27:55 -0700 (PDT)
-In-Reply-To: <1397544229-20545-2-git-send-email-21cnbao@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1397564503-5175-1-git-send-email-vincent.donnefort@seagate.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vincent Donnefort <vdonnefort@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, eparis@redhat.com, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Barry Song <21cnbao@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-On Tue, Apr 15, 2014 at 8:43 AM, Barry Song <21cnbao@gmail.com> wrote:
+On Tue, Apr 15, 2014 at 2:21 PM, Vincent Donnefort <vdonnefort@gmail.com> wrote:
 
-> From: Barry Song <Baohua.Song@csr.com>
+> From: Vincent Donnefort <vdonnefort@gmail.com>
 >
-> all gpio banks are in one chip, that makes software clean in mapping
-> irq and gpio.
+> This patch fixes kernel NULL pointer BUG introduced by the following commit:
+> b667cf488aa9476b0ab64acd91f2a96f188cfd21
+> gpio: ich: Add support for multiple register addresses.
 >
-> Signed-off-by: Barry Song <Baohua.Song@csr.com>
+> Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
 
-These all look good, but for some reason does not apply on top of
-the pinctrl "devel" branch based on v3.15-rc2. Can you please rebase
-this set onto my branch or atleast v3.15-rc2 and resend?
+Patch applied for fixes with Eric's tested-by tag.
 
-Yours,
+Thanks!
 Linus Walleij
