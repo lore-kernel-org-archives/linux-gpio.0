@@ -1,83 +1,63 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH 1/2] gpio: pl061: get gpio base from alias id
-Date: Tue, 22 Apr 2014 06:44:17 +0300
-Message-ID: <20140422034417.GA4652@tarshish>
-References: <1398130543-19454-1-git-send-email-haojian.zhuang@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for the v3.15 rc series
+Date: Tue, 22 Apr 2014 08:37:50 +0200
+Message-ID: <CACRpkdbWwMBgJ0v1bwo78scaKeGYJataWqy2yiKK8AY7Q9Ms+w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:51854 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751361AbaDVDo0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 21 Apr 2014 23:44:26 -0400
-Content-Disposition: inline
-In-Reply-To: <1398130543-19454-1-git-send-email-haojian.zhuang@linaro.org>
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:40963 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398AbaDVGhv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 02:37:51 -0400
+Received: by mail-oa0-f46.google.com with SMTP id m1so3308733oag.33
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Apr 2014 23:37:51 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: xuwei5@hisilicon.com, linus.walleij@linaro.org, grant.likely@linaro.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Hi Haojian Zhuang,
+Hi Linus,
 
-On Tue, Apr 22, 2014 at 09:35:42AM +0800, Haojian Zhuang wrote:
-> If gpio base number isn't specified, the gpio base will be find from
-> the end of gpio number. In order to keep with schematics, use alias
-> to get the ID of gpio chip.
-> 
-> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
-> ---
->  .../devicetree/bindings/gpio/gpio-pl061.txt        | 31 ++++++++++++++++++++++
+here is a small batch of GPIO fixes for the v3.15 series. I expect more
+to come in but I'm a bit behind on mail, might as well get these to you
+right now.
 
-Binding documentation should be done in a separate patch.
+Please pull them in!
 
->  drivers/gpio/gpio-pl061.c                          | 14 +++++++++-
->  2 files changed, 44 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pl061.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pl061.txt b/Documentation/devicetree/bindings/gpio/gpio-pl061.txt
-> new file mode 100644
-> index 0000000..164b5ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pl061.txt
-> @@ -0,0 +1,31 @@
-> +PL061 GPIO controller bindings
-> +
-> +Required properties:
-> +- compatible:
-> +  - "arm,pl061", "arm,primecell".
-> +- #gpio-cells : Should be two.
-> +  - first cell is the gpio pin number
-> +  - second cell is used to specify the gpio polarity:
-> +      0 = active high
-> +      1 = active low
-> +- gpio-controller : Marks the device node as a GPIO controller.
-> +- interrupt-controller : Marks the device node as an interrupt controller.
-> +- #interrupt-cells : Should be two.
-> +  - first cell is the hw irq number
-> +  - second cell is used to specify the interrupt type:
-> +      0 = default, unspecified type
-> +      1 = rising edge triggered
-> +      2 = falling edge triggered
-> +      4 = high level triggered
-> +      8 = low level triggered
-> +
-> +Example:
-> +	gpio0: gpio@fc806000 {
-> +		compatible = "arm,pl061", "arm,primecell";
-> +		reg = <0xfc806000 0x1000>;
-> +		interrupts = <0 64 0x4>;
+Yours,
+Linus Walleij
 
-The "interrupts" property should be mentioned above.
 
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
+The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
 
-baruch
+  Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.15-2
+
+for you to fetch changes up to b5539fa2d59d697b7b8e28b4d08da844ff60f7cf:
+
+  gpio / ACPI: Prevent potential wrap of GPIO value on OpRegion read
+(2014-04-14 10:22:36 +0200)
+
+----------------------------------------------------------------
+A few fixes for the GPIO tree:
+
+- Change a crucial semantic ordering in the GPIO irqchip
+  helpers.
+
+- Fix two nasty regressions in the ACPI gpiolib extensions.
+
+----------------------------------------------------------------
+Linus Walleij (1):
+      gpio: set data first, then chip and handler
+
+Mika Westerberg (2):
+      gpio / ACPI: Don't crash on NULL chip->dev
+      gpio / ACPI: Prevent potential wrap of GPIO value on OpRegion read
+
+ drivers/gpio/gpiolib-acpi.c | 12 +++++++++---
+ drivers/gpio/gpiolib.c      |  2 +-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
