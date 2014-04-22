@@ -1,63 +1,87 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v3.15 rc series
-Date: Tue, 22 Apr 2014 08:37:50 +0200
-Message-ID: <CACRpkdbWwMBgJ0v1bwo78scaKeGYJataWqy2yiKK8AY7Q9Ms+w@mail.gmail.com>
+From: yegorslists@googlemail.com
+Subject: [PATCH] gpio: omap: implement get_direction
+Date: Tue, 22 Apr 2014 11:23:55 +0200
+Message-ID: <1398158635-18415-1-git-send-email-yegorslists@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:40963 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751398AbaDVGhv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 02:37:51 -0400
-Received: by mail-oa0-f46.google.com with SMTP id m1so3308733oag.33
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Apr 2014 23:37:51 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: tony@atomide.com, linus.walleij@linaro.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Yegor Yefremov <yegorslists@googlemail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Hi Linus,
+From: Yegor Yefremov <yegorslists@googlemail.com>
 
-here is a small batch of GPIO fixes for the v3.15 series. I expect more
-to come in but I'm a bit behind on mail, might as well get these to you
-right now.
+This patch implements gpio_chip's get_direction() routine, that
+lets other drivers get particular GPIOs direction using
+struct gpio_desc.
 
-Please pull them in!
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ drivers/gpio/gpio-omap.c |   28 ++++++++++++++++++++++++++++
+ 1 files changed, 28 insertions(+), 0 deletions(-)
 
-Yours,
-Linus Walleij
-
-
-The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
-
-  Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v3.15-2
-
-for you to fetch changes up to b5539fa2d59d697b7b8e28b4d08da844ff60f7cf:
-
-  gpio / ACPI: Prevent potential wrap of GPIO value on OpRegion read
-(2014-04-14 10:22:36 +0200)
-
-----------------------------------------------------------------
-A few fixes for the GPIO tree:
-
-- Change a crucial semantic ordering in the GPIO irqchip
-  helpers.
-
-- Fix two nasty regressions in the ACPI gpiolib extensions.
-
-----------------------------------------------------------------
-Linus Walleij (1):
-      gpio: set data first, then chip and handler
-
-Mika Westerberg (2):
-      gpio / ACPI: Don't crash on NULL chip->dev
-      gpio / ACPI: Prevent potential wrap of GPIO value on OpRegion read
-
- drivers/gpio/gpiolib-acpi.c | 12 +++++++++---
- drivers/gpio/gpiolib.c      |  2 +-
- 2 files changed, 10 insertions(+), 4 deletions(-)
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 19b886c..b55bf7b 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -102,6 +102,20 @@ static int omap_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ 	return irq_find_mapping(bank->domain, offset);
+ }
+ 
++static int _get_gpio_direction(struct gpio_bank *bank, int gpio)
++{
++	void __iomem *reg = bank->base;
++	u32 l;
++	u32 mask = 1 << gpio;
++
++	reg += bank->regs->direction;
++	l = readl_relaxed(reg);
++	if (l & mask)
++		return 1;
++
++	return 0;
++}
++
+ static void _set_gpio_direction(struct gpio_bank *bank, int gpio, int is_input)
+ {
+ 	void __iomem *reg = bank->base;
+@@ -936,6 +950,19 @@ static inline void mpuio_init(struct gpio_bank *bank)
+ 
+ /*---------------------------------------------------------------------*/
+ 
++static int gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++{
++	struct gpio_bank *bank;
++	unsigned long flags;
++	int dir;
++
++	bank = container_of(chip, struct gpio_bank, chip);
++	spin_lock_irqsave(&bank->lock, flags);
++	dir = _get_gpio_direction(bank, offset);
++	spin_unlock_irqrestore(&bank->lock, flags);
++	return dir;
++}
++
+ static int gpio_input(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank;
+@@ -1092,6 +1119,7 @@ static void omap_gpio_chip_init(struct gpio_bank *bank)
+ 	 */
+ 	bank->chip.request = omap_gpio_request;
+ 	bank->chip.free = omap_gpio_free;
++	bank->chip.get_direction = gpio_get_direction;
+ 	bank->chip.direction_input = gpio_input;
+ 	bank->chip.get = gpio_get;
+ 	bank->chip.direction_output = gpio_output;
+-- 
+1.7.7
