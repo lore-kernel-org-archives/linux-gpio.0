@@ -1,36 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: max730x: Remove kfree(ts) in __max730x_remove()
-Date: Tue, 22 Apr 2014 15:42:50 +0200
-Message-ID: <CACRpkdYcdbJ24Kc9RM1H=fZzxTW8GcM+S=1VoTYNjs++q4awQA@mail.gmail.com>
-References: <1397460641.23515.3.camel@phoenix>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH 0/5] add gpio_chip_ops to hold GPIO operations
+Date: Tue, 22 Apr 2014 16:17:42 +0200
+Message-ID: <201404221617.43272.arnd@arndb.de>
+References: <1396981215-24888-1-git-send-email-javier.martinez@collabora.co.uk> <CACRpkdYLaGXJ+O0rsL5+rjUsOvxCxK2b9QtH2j4FD0g21vx8_Q@mail.gmail.com> <CABxcv=mb+CXQbrS==hBayMQGsaJCPuLR=xyW_BJpZm2oSNBu-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:36341 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756290AbaDVNmv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 09:42:51 -0400
-Received: by mail-ob0-f169.google.com with SMTP id uz6so3309804obc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 06:42:50 -0700 (PDT)
-In-Reply-To: <1397460641.23515.3.camel@phoenix>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <CABxcv=mb+CXQbrS==hBayMQGsaJCPuLR=xyW_BJpZm2oSNBu-w@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Juergen Beisert <jbe@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>
 
-On Mon, Apr 14, 2014 at 9:30 AM, Axel Lin <axel.lin@ingics.com> wrote:
+On Tuesday 22 April 2014, Javier Martinez Canillas wrote:
+> Hello Linus,
+> 
+> On Tue, Apr 22, 2014 at 1:36 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Tue, Apr 8, 2014 at 8:20 PM, Javier Martinez Canillas
+> > <javier.martinez@collabora.co.uk> wrote:
+> >
+> >> So this is an RFC patch-set to add a virtual table to be used by
+> >> GPIO chip controllers and consist of the following patches:
+> >
+> > Overall I like this.
 
-> From f52622585aeb4cf785c78548e440993a1e9625b1 Mon Sep 17 00:00:00 2001
-> From: Axel Lin <axel.lin@ingics.com>
-> Date: Mon, 14 Apr 2014 15:20:15 +0800
-> Subject: [PATCH] gpio: max730x: Remove kfree(ts) in __max730x_remove()
->
-> The memory for ts is allocated by devm_kzalloc now, so the kfree is not
-> required.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Agreed, it's a very good cleanup.
 
-Patch applied with all ACKs, also fixed up this weird commit message.
+> > However I don't want to see any transitional phase. I prefer a BIG
+> > fat patch converting everyone and its dog to the new vtable and
+> > removing the old function pointers. This can be based on the HEAD
+> > of my GPIO devel branch.
+> >
+> 
+> Ok, I was adding a commit per GPIO driver but the patch-set would have
+> been very big (~200 patches).
+> 
+> > It may be a good idea to use coccinelle for this refactoring in order
+> > not to miss any users.
+> >
+> 
+> Agreed, I was manually searching for users by using grep but I agree
+> that is much safer to use coccinelle for this. I don't have previous
+> experience writing coccinelle semantics patches though so it may take
+> more time than I thought but it is the perfect excuse to finally learn
+> how to do it :-)
 
-Yours,
-Linus Walleij
+I'm not a big fan of doing this all at once, but it's not my call here.
+Just one recommendation: if you can't do an obvious coccinelle patch
+to do everything at once, use extra patches in the beginning to clean
+up the code enough to make it work, then have the large patch fully
+automated.
+
+	Arnd
