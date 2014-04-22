@@ -1,63 +1,36 @@
-From: Yegor Yefremov <yegorslists@googlemail.com>
-Subject: Re: [PATCH] gpio: omap: implement get_direction
-Date: Tue, 22 Apr 2014 15:33:42 +0200
-Message-ID: <CAGm1_ksUZ4G-3VNgW=tktEs1t9Gu=exvqVybSvYXhFVp4EU2BQ@mail.gmail.com>
-References: <1398158635-18415-1-git-send-email-yegorslists@googlemail.com> <CABxcv=nieJq1NS1s=jtHOH_hK-C=O0Rh2OiZ36+2RK=8uLWh-A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: max730x: Remove kfree(ts) in __max730x_remove()
+Date: Tue, 22 Apr 2014 15:42:50 +0200
+Message-ID: <CACRpkdYcdbJ24Kc9RM1H=fZzxTW8GcM+S=1VoTYNjs++q4awQA@mail.gmail.com>
+References: <1397460641.23515.3.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:40012 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753542AbaDVNeD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 09:34:03 -0400
-In-Reply-To: <CABxcv=nieJq1NS1s=jtHOH_hK-C=O0Rh2OiZ36+2RK=8uLWh-A@mail.gmail.com>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:36341 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756290AbaDVNmv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 09:42:51 -0400
+Received: by mail-ob0-f169.google.com with SMTP id uz6so3309804obc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 06:42:50 -0700 (PDT)
+In-Reply-To: <1397460641.23515.3.camel@phoenix>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Juergen Beisert <jbe@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>
 
-On Tue, Apr 22, 2014 at 12:24 PM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
-> Hello Yegor,
+On Mon, Apr 14, 2014 at 9:30 AM, Axel Lin <axel.lin@ingics.com> wrote:
+
+> From f52622585aeb4cf785c78548e440993a1e9625b1 Mon Sep 17 00:00:00 2001
+> From: Axel Lin <axel.lin@ingics.com>
+> Date: Mon, 14 Apr 2014 15:20:15 +0800
+> Subject: [PATCH] gpio: max730x: Remove kfree(ts) in __max730x_remove()
 >
-> On Tue, Apr 22, 2014 at 11:23 AM,  <yegorslists@googlemail.com> wrote:
->> From: Yegor Yefremov <yegorslists@googlemail.com>
->>
->> This patch implements gpio_chip's get_direction() routine, that
->> lets other drivers get particular GPIOs direction using
->> struct gpio_desc.
->>
->> Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
->> ---
->>  drivers/gpio/gpio-omap.c |   28 ++++++++++++++++++++++++++++
->>  1 files changed, 28 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
->> index 19b886c..b55bf7b 100644
->> --- a/drivers/gpio/gpio-omap.c
->> +++ b/drivers/gpio/gpio-omap.c
->> @@ -102,6 +102,20 @@ static int omap_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
->>         return irq_find_mapping(bank->domain, offset);
->>  }
->>
->> +static int _get_gpio_direction(struct gpio_bank *bank, int gpio)
->> +{
->> +       void __iomem *reg = bank->base;
->> +       u32 l;
->> +       u32 mask = 1 << gpio;
->> +
->> +       reg += bank->regs->direction;
->> +       l = readl_relaxed(reg);
->> +       if (l & mask)
->> +               return 1;
->> +
->> +       return 0;
->> +}
->> +
+> The memory for ts is allocated by devm_kzalloc now, so the kfree is not
+> required.
 >
-> You can avoid the if condition here by using return !!(l & mask) but
-> the above code is more clear indeed so is up to you.
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-Hm, nice trick. I've reworked the calculation in v2.
+Patch applied with all ACKs, also fixed up this weird commit message.
 
-Yegor
+Yours,
+Linus Walleij
