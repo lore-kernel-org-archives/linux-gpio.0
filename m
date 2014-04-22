@@ -1,60 +1,32 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [RFC PATCH 0/5] add gpio_chip_ops to hold GPIO operations
-Date: Tue, 22 Apr 2014 14:28:25 +0200
-Message-ID: <CABxcv=mb+CXQbrS==hBayMQGsaJCPuLR=xyW_BJpZm2oSNBu-w@mail.gmail.com>
-References: <1396981215-24888-1-git-send-email-javier.martinez@collabora.co.uk>
-	<CACRpkdYLaGXJ+O0rsL5+rjUsOvxCxK2b9QtH2j4FD0g21vx8_Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpio: zevio: Get correct gpio output value
+Date: Tue, 22 Apr 2014 14:29:19 +0200
+Message-ID: <CACRpkdbFMPLbTfbUHMOX-GDZFAN3xGooy58evn+KEowUoHDn3Q@mail.gmail.com>
+References: <1396915179.4729.1.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:45509 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932172AbaDVM21 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 08:28:27 -0400
-Received: by mail-wi0-f174.google.com with SMTP id d1so3163199wiv.7
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 05:28:26 -0700 (PDT)
-In-Reply-To: <CACRpkdYLaGXJ+O0rsL5+rjUsOvxCxK2b9QtH2j4FD0g21vx8_Q@mail.gmail.com>
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:47876 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932415AbaDVM3U (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 08:29:20 -0400
+Received: by mail-oa0-f46.google.com with SMTP id m1so3636858oag.33
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 05:29:19 -0700 (PDT)
+In-Reply-To: <1396915179.4729.1.camel@phoenix>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>, Fabian Vogt <fabian@ritter-vogt.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello Linus,
+On Tue, Apr 8, 2014 at 1:59 AM, Axel Lin <axel.lin@ingics.com> wrote:
 
-On Tue, Apr 22, 2014 at 1:36 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Apr 8, 2014 at 8:20 PM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
+> Read gpio output value from ZEVIO_GPIO_OUTPUT.
+> The spin_lock is required to ensure the direction is not changed before reading
+> input/ouput value.
 >
->> So this is an RFC patch-set to add a virtual table to be used by
->> GPIO chip controllers and consist of the following patches:
->
-> Overall I like this.
->
-> However I don't want to see any transitional phase. I prefer a BIG
-> fat patch converting everyone and its dog to the new vtable and
-> removing the old function pointers. This can be based on the HEAD
-> of my GPIO devel branch.
->
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-Ok, I was adding a commit per GPIO driver but the patch-set would have
-been very big (~200 patches).
+OK out of patience waiting for ACKs, v2 patch applied.
 
-> It may be a good idea to use coccinelle for this refactoring in order
-> not to miss any users.
->
-
-Agreed, I was manually searching for users by using grep but I agree
-that is much safer to use coccinelle for this. I don't have previous
-experience writing coccinelle semantics patches though so it may take
-more time than I thought but it is the perfect excuse to finally learn
-how to do it :-)
-
-Thanks a lot and best regards,
-Javier
-
-> Yours,
-> Linus Walleij
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
