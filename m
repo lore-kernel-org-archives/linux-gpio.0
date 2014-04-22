@@ -1,29 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: ich: set regs and reglen for i3100 and ich6 chipset
-Date: Tue, 22 Apr 2014 23:15:15 +0200
-Message-ID: <CACRpkdYUtiW78=3tiyGBb31THHNYHjm55wLPFfUqnX1nyJnnqA@mail.gmail.com>
-References: <20140415084056.GA26578@ks3318809.kimsufi.com>
-	<1397564503-5175-1-git-send-email-vincent.donnefort@seagate.com>
+Subject: Re: [PATCH v2 1/6] gpio: rcar: Add optional functional clock to bindings
+Date: Tue, 22 Apr 2014 23:34:18 +0200
+Message-ID: <CACRpkda=-nViAw7WYjYHVHGwiYgHYKzmk6-nYvm46E5366GMiA@mail.gmail.com>
+References: <1397500397-12607-1-git-send-email-geert@linux-m68k.org>
+	<1397500397-12607-2-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1397564503-5175-1-git-send-email-vincent.donnefort@seagate.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vincent Donnefort <vdonnefort@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, eparis@redhat.com, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:33866 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758878AbaDVVeT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 17:34:19 -0400
+Received: by mail-ob0-f179.google.com with SMTP id vb8so78917obc.38
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 14:34:18 -0700 (PDT)
+In-Reply-To: <1397500397-12607-2-git-send-email-geert@linux-m68k.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Apr 15, 2014 at 2:21 PM, Vincent Donnefort <vdonnefort@gmail.com> wrote:
+On Mon, Apr 14, 2014 at 8:33 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-> From: Vincent Donnefort <vdonnefort@gmail.com>
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> This patch fixes kernel NULL pointer BUG introduced by the following commit:
-> b667cf488aa9476b0ab64acd91f2a96f188cfd21
-> gpio: ich: Add support for multiple register addresses.
->
-> Signed-off-by: Vincent Donnefort <vdonnefort@gmail.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> ---
+> v2:
+>   - Functional clock is mandatory depending on hardware (thanks, Laurent)
 
-Patch applied for fixes with Eric's tested-by tag.
+This v2 version applied with Laurent's ACK.
 
-Thanks!
+Yours,
 Linus Walleij
