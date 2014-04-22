@@ -1,32 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: zevio: Get correct gpio output value
-Date: Tue, 22 Apr 2014 14:29:19 +0200
-Message-ID: <CACRpkdbFMPLbTfbUHMOX-GDZFAN3xGooy58evn+KEowUoHDn3Q@mail.gmail.com>
-References: <1396915179.4729.1.camel@phoenix>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] gpio: put GPIO IRQs into their own lock class
+Date: Tue, 22 Apr 2014 14:43:21 +0200
+Message-ID: <1398170601-2621-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:47876 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932415AbaDVM3U (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 08:29:20 -0400
-Received: by mail-oa0-f46.google.com with SMTP id m1so3636858oag.33
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 05:29:19 -0700 (PDT)
-In-Reply-To: <1396915179.4729.1.camel@phoenix>
+Received: from mail-we0-f177.google.com ([74.125.82.177]:52189 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932152AbaDVMn2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 08:43:28 -0400
+Received: by mail-we0-f177.google.com with SMTP id u57so4828227wes.22
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 05:43:27 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>, Fabian Vogt <fabian@ritter-vogt.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Apr 8, 2014 at 1:59 AM, Axel Lin <axel.lin@ingics.com> wrote:
+Another feature that is duplicated in a number of GPIO irqchips
+is that these cascades IRQs are assigned their own lock class
+so as to avoid warnings about lockdep recursions. Do this also
+in the generic GPIO irqchip helpers for smooth transition to
+this core infrastructure.
 
-> Read gpio output value from ZEVIO_GPIO_OUTPUT.
-> The spin_lock is required to ensure the direction is not changed before reading
-> input/ouput value.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-OK out of patience waiting for ACKs, v2 patch applied.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index c12fe9dfd2db..ee1819fdcf35 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1377,6 +1377,12 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_set_chained_irqchip);
+ 
++/*
++ * This lock class tells lockdep that GPIO irqs are in a different
++ * category than their parents, so it won't report false recursion.
++ */
++static struct lock_class_key gpiochip_irq_lock_class;
++
+ /**
+  * gpiochip_irq_map() - maps an IRQ into a GPIO irqchip
+  * @d: the irqdomain used by this irqchip
+@@ -1393,6 +1399,7 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+ 	struct gpio_chip *chip = d->host_data;
+ 
+ 	irq_set_chip_data(irq, chip);
++	irq_set_lockdep_class(irq, &gpiochip_irq_lock_class);
+ 	irq_set_chip_and_handler(irq, chip->irqchip, chip->irq_handler);
+ 	/* Chips that can sleep need nested thread handlers */
+ 	if (chip->can_sleep)
+-- 
+1.9.0
 
-Yours,
-Linus Walleij
