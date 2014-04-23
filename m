@@ -1,33 +1,34 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 1/2] gpio: pl061: get gpio base from alias id
-Date: Wed, 23 Apr 2014 13:52:20 -0500
-Message-ID: <CAL_JsqKo0uV9_SX5aAfgPyRSa0Cv5O=tdp4s1oSQs=76vZC+ww@mail.gmail.com>
-References: <1398130543-19454-1-git-send-email-haojian.zhuang@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/4] pinctrl: sirf: switch to one gpiolib and
+ gpiolib_irqchip helpers
+Date: Wed, 23 Apr 2014 22:02:09 +0200
+Message-ID: <CACRpkdbfRfb09edkugZ44azEzSu08Tz_v1fTghDUhpRcG8+EYg@mail.gmail.com>
+References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com>
+	<CACRpkdY6N3vh2-a5NwU0ZkXKsf8ArmxLBCL3dMrPTFwvN+x5JQ@mail.gmail.com>
+	<CAGsJ_4zowXarh0xy2y4oTsTZbnKFDgMfA6JPTK+sSx6ew_Qw4g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f175.google.com ([209.85.220.175]:45728 "EHLO
-	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753665AbaDWSwV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 14:52:21 -0400
-In-Reply-To: <1398130543-19454-1-git-send-email-haojian.zhuang@linaro.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:41867 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756671AbaDWUCK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 16:02:10 -0400
+Received: by mail-ob0-f176.google.com with SMTP id wp4so1592690obc.35
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 13:02:09 -0700 (PDT)
+In-Reply-To: <CAGsJ_4zowXarh0xy2y4oTsTZbnKFDgMfA6JPTK+sSx6ew_Qw4g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: xuwei5@hisilicon.com, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, baruch@tkos.co.il
+To: Barry Song <21cnbao@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-On Mon, Apr 21, 2014 at 8:35 PM, Haojian Zhuang
-<haojian.zhuang@linaro.org> wrote:
-> If gpio base number isn't specified, the gpio base will be find from
-> the end of gpio number. In order to keep with schematics, use alias
-> to get the ID of gpio chip.
+On Wed, Apr 23, 2014 at 2:09 PM, Barry Song <21cnbao@gmail.com> wrote:
 
-NAK. This is an abuse aliases.
+> linus, this patchset depends on your "pinctrl: sirf: rename inlined
+> accessor" you sent to me. it seems it is in neither your devel nor
+> 3.5-rc2.
 
-> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
-> ---
->  .../devicetree/bindings/gpio/gpio-pl061.txt        | 31 ++++++++++++++++++++++
+Ah, sorry I had that on a separate branch.
+Retrying...
 
-Is something wrong with the binding doc already in pl061-gpio.txt?
-
-Rob
+Yours,
+Linus Walleij
