@@ -1,64 +1,38 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 0/5] GPIO OMAP driver changes for v3.16
-Date: Wed, 23 Apr 2014 23:48:44 +0200
-Message-ID: <CABxcv=nVpkt8HC0b6qnw=p6bdqKCPBKMk-QGRaHZnM+BJ1R3hg@mail.gmail.com>
-References: <1396796297-13002-1-git-send-email-javier.martinez@collabora.co.uk>
-	<CACRpkdarYt4tAD9WMDu6Me+dhipVyDHMpgF-AQ8SDNKMmhSjsA@mail.gmail.com>
-	<20140410193048.GE15736@drone.musicnaut.iki.fi>
-	<CABxcv=miFY3gE6HOU5ovWwCzgC6Un3ANh_Weh_bPCb7OoYQ+pA@mail.gmail.com>
-	<20140410212202.GF15736@drone.musicnaut.iki.fi>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: rdc321x: Fix off-by-one for ngpio setting
+Date: Wed, 23 Apr 2014 23:53:00 +0200
+Message-ID: <CACRpkdaf6_7hR+vW5qN7Vb2hMEs3vL-OVDtf3TU1Xvn5E5Ku6A@mail.gmail.com>
+References: <1397196885.12922.2.camel@phoenix>
+	<CACRpkdYU7QjQz76c7N07LSowEcXak6dT0G0VpuCTWPzGdAgPqA@mail.gmail.com>
+	<CAFRkauAB9qDrMBsg4aP=bHbAfufuesc2=K7D2XBvDAQUJ=oF+Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20140410212202.GF15736@drone.musicnaut.iki.fi>
-Sender: linux-omap-owner@vger.kernel.org
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:63587 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751241AbaDWVxB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 17:53:01 -0400
+Received: by mail-oa0-f44.google.com with SMTP id n16so1729544oag.31
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 14:53:00 -0700 (PDT)
+In-Reply-To: <CAFRkauAB9qDrMBsg4aP=bHbAfufuesc2=K7D2XBvDAQUJ=oF+Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <florian@openwrt.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello Aaro,
+On Wed, Apr 23, 2014 at 4:00 PM, Axel Lin <axel.lin@ingics.com> wrote:
+> 2014-04-23 21:25 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
 
-On Thu, Apr 10, 2014 at 11:22 PM, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
-> Hi,
+>> -#define RDC321X_MAX_GPIO    58
+>> +#define RDC321X_MAX_GPIO    59
+> Hi Linus,
 >
-> On Thu, Apr 10, 2014 at 10:17:44PM +0200, Javier Martinez Canillas wrote:
->> > The same happens also on Nokia 770:
->> >
->> > [    0.118896] genirq: Setting trigger mode 0 for irq 128 failed (gpio_irq_type+0x0/0x220)
->>
->> I don't have those errors when booting on my DM3730 IGEPv2 board but
->> it seems that for some reason on omap1  __irq_set_trigger() complains
->> when IRQ_TYPE_NONE is used as a default flag when calling
->> gpiochip_irqchip_add()
->>
->> Could you please test the following patch and tell me if your board
->> still works and makes the errors go away?
->
-> Now it complains about mode 8...
->
-> [    0.118835] genirq: Setting trigger mode 8 for irq 128 failed (gpio_irq_type
-> +0x0/0x220)
->
-> A.
->
+> I'm wondering if it is better to define RDC321X_NUM_GPIO  (59) rather
+> than RDC321X_MAX_GPIO.
+> How do you think?
 
-On thread [1] was reported a regression on a Sitara AM335x board
-because the irq .map function handler used on the gpiolib called
-irq_set_type() for each pin on the bank.
+I think yes. It's not a maximum really is it? It's the number available,
+they just mean the max enumerator you can use :-P
 
-In the case of that board, a GPIO pin is used to control the SDRAM
-termination regulator and calling irq_set_type() sets the GPIO as
-input thus making the board to fail on boot. But this may also explain
-why you had those error logs on your OMAP1 board when applying these
-patches since that changes GPIO OMAP semantics when the driver
-expected irq_set_type() to only be called when a IRQ is requested.
-
-After some discussion Linus proposed a patch [2] which I think should
-also fix your issue. Can you please give it a try and provide your
-Tested-by for that patch?
-
-Thanks a lot and best regards,
-Javier
-
-[1]: http://marc.info/?t=139817273800014&r=1&w=2
-[2] https://patchwork.kernel.org/patch/4041881/
+Yours,
+Linus Walleij
