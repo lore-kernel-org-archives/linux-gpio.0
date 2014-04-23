@@ -1,51 +1,48 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH 0/4] pinctrl: sirf: switch to one gpiolib and
- gpiolib_irqchip helpers
-Date: Wed, 23 Apr 2014 20:09:30 +0800
-Message-ID: <CAGsJ_4zowXarh0xy2y4oTsTZbnKFDgMfA6JPTK+sSx6ew_Qw4g@mail.gmail.com>
-References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com> <CACRpkdY6N3vh2-a5NwU0ZkXKsf8ArmxLBCL3dMrPTFwvN+x5JQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/4] gpio: tc3589x: get rid of static IRQ base
+Date: Wed, 23 Apr 2014 14:16:26 +0200
+Message-ID: <CACRpkda0RdeVcEks8RGk0r3u3m95dtZw4qT0YM2s=tkYkCi89Q@mail.gmail.com>
+References: <1397044139-19306-1-git-send-email-linus.walleij@linaro.org>
+	<20140417074742.GD28725@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:33935 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751210AbaDWMJv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 08:09:51 -0400
-Received: by mail-pb0-f51.google.com with SMTP id uo5so726550pbc.10
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 05:09:50 -0700 (PDT)
-In-Reply-To: <CACRpkdY6N3vh2-a5NwU0ZkXKsf8ArmxLBCL3dMrPTFwvN+x5JQ@mail.gmail.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:57048 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751496AbaDWMQ0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 08:16:26 -0400
+Received: by mail-ob0-f178.google.com with SMTP id wn1so920133obc.9
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 05:16:26 -0700 (PDT)
+In-Reply-To: <20140417074742.GD28725@lee--X1>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-2014-04-23 5:47 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Apr 15, 2014 at 8:43 AM, Barry Song <21cnbao@gmail.com> wrote:
->
->> From: Barry Song <Baohua.Song@csr.com>
+On Thu, Apr 17, 2014 at 9:47 AM, Lee Jones <lee.jones@linaro.org> wrote:
+
+>> The static IRQ base is not used on any platforms with this chip
+>> (only Ux500). Get rid of it forever, and rely on dynamic IRQ
+>> descriptor allocation.
 >>
->> This patchset depends on Linus Walleij's "pinctrl: sirf: rename inlined accessor".
->> and "pinctrl: sirf: switch driver to use gpiolib irqchip helpers" is rebased
->> from Linus Walleij's patch too.
->>
->> Barry Song (3):
->>   pinctrl: sirf: wrap all gpio banks into one gpio_chip
->>   gpio: make handler_data configurable while using gpiolib_irqchip
->>   pinctrl: sirf: move to use irq_get_handler_data
->> Linus Walleij (1):
->>   pinctrl: sirf: switch driver to use gpiolib irqchip helpers
+>> Cc: Samuel Ortiz <sameo@linux.intel.com>
+>> Cc: Lee Jones <lee.jones@linaro.org>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+(...)
+> Does this actually compile? Does this patch have a dependency?
+
+It actually does compile and has no direct dependencies.
+
+> I see TC3589x_INT_GPIO(x) being used still:
 >
-> As mentioned I can't get this series to apply so please rebase,
-> resend and take this opportunity to also add relevant ACKs.
+>   include/linux/mfd/tc3589x.h:
+>     #define TC3589x_NR_IRQS                TC3589x_INT_GPIO(TC3589x_NR_GPIOS)
 
-linus, this patchset depends on your "pinctrl: sirf: rename inlined
-accessor" you sent to me. it seems it is in neither your devel nor
-3.5-rc2.
+It compiles because TC3589x_NR_IRQS is not uses anywhere,
+so this macro is never put to the test.
 
-https://lkml.org/lkml/2014/4/8/156
+I'll respin with a much bigger deletion rooting out not only the
+static IRQ but also the static GPIO numbering.
 
->
-> Yours,
-> Linus Walleij
-
--barry
+Yours,
+Linus Walleij
