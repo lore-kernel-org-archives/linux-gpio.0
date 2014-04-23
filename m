@@ -1,31 +1,85 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpiolib: of: remove gpio_to_desc() usage
-Date: Wed, 23 Apr 2014 10:54:32 +0900
-Message-ID: <CAAVeFuL9quAgYfzc=0Rvvxtmu0wNJvR8J-ePbFUSiZtg8cyiMg@mail.gmail.com>
-References: <1398170621-2685-1-git-send-email-linus.walleij@linaro.org>
+From: Rajendra Nayak <rnayak@ti.com>
+Subject: [PATCH 1/2] gpio: omap: prepare and unprepare the debounce clock
+Date: Wed, 23 Apr 2014 11:41:03 +0530
+Message-ID: <1398233465-8845-2-git-send-email-rnayak@ti.com>
+References: <1398233465-8845-1-git-send-email-rnayak@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:44046 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751859AbaDWByx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Apr 2014 21:54:53 -0400
-Received: by mail-vc0-f171.google.com with SMTP id lg15so347666vcb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Apr 2014 18:54:52 -0700 (PDT)
-In-Reply-To: <1398170621-2685-1-git-send-email-linus.walleij@linaro.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:34587 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753866AbaDWGM4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 23 Apr 2014 02:12:56 -0400
+In-Reply-To: <1398233465-8845-1-git-send-email-rnayak@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: tony@atomide.com, paul@pwsan.com, Rajendra Nayak <rnayak@ti.com>, linux-gpio@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>
 
-On Tue, Apr 22, 2014 at 9:43 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> As demonstrated by commit
-> 390d82e312c56b75407a3606cbcde8c4bc7f10ae
-> "gpiolib: ACPI: remove gpio_to_desc() usage"
->
-> gpio_to_desc() must die. Replace one of its usage by the
-> newly-introduced gpiochip_get_desc() function.
+Replace the clk_enable()s with a clk_prepare_enable() and
+the clk_disables()s with a clk_disable_unprepare()
 
-Yay, let that thing die.
+This never showed issues due to the OMAP platform code (hwmod)
+leaving these clocks in clk_prepare()ed state by default.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Reported-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Rajendra Nayak <rnayak@ti.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: Kevin Hilman <khilman@deeprootsystems.com>
+---
+ drivers/gpio/gpio-omap.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 19b886c..78bc5a4 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -180,7 +180,7 @@ static inline void _gpio_rmw(void __iomem *base, u32 reg, u32 mask, bool set)
+ static inline void _gpio_dbck_enable(struct gpio_bank *bank)
+ {
+ 	if (bank->dbck_enable_mask && !bank->dbck_enabled) {
+-		clk_enable(bank->dbck);
++		clk_prepare_enable(bank->dbck);
+ 		bank->dbck_enabled = true;
+ 
+ 		writel_relaxed(bank->dbck_enable_mask,
+@@ -198,7 +198,7 @@ static inline void _gpio_dbck_disable(struct gpio_bank *bank)
+ 		 */
+ 		writel_relaxed(0, bank->base + bank->regs->debounce_en);
+ 
+-		clk_disable(bank->dbck);
++		clk_disable_unprepare(bank->dbck);
+ 		bank->dbck_enabled = false;
+ 	}
+ }
+@@ -231,7 +231,7 @@ static void _set_gpio_debounce(struct gpio_bank *bank, unsigned gpio,
+ 
+ 	l = GPIO_BIT(bank, gpio);
+ 
+-	clk_enable(bank->dbck);
++	clk_prepare_enable(bank->dbck);
+ 	reg = bank->base + bank->regs->debounce;
+ 	writel_relaxed(debounce, reg);
+ 
+@@ -245,7 +245,7 @@ static void _set_gpio_debounce(struct gpio_bank *bank, unsigned gpio,
+ 	bank->dbck_enable_mask = val;
+ 
+ 	writel_relaxed(val, reg);
+-	clk_disable(bank->dbck);
++	clk_disable_unprepare(bank->dbck);
+ 	/*
+ 	 * Enable debounce clock per module.
+ 	 * This call is mandatory because in omap_gpio_request() when
+@@ -290,7 +290,7 @@ static void _clear_gpio_debounce(struct gpio_bank *bank, unsigned gpio)
+ 		bank->context.debounce = 0;
+ 		writel_relaxed(bank->context.debounce, bank->base +
+ 			     bank->regs->debounce);
+-		clk_disable(bank->dbck);
++		clk_disable_unprepare(bank->dbck);
+ 		bank->dbck_enabled = false;
+ 	}
+ }
+-- 
+1.7.9.5
+
