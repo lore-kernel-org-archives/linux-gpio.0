@@ -1,47 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: pl061: get gpio base from alias id
-Date: Wed, 23 Apr 2014 15:21:54 +0200
-Message-ID: <CACRpkdbzoPNEEJ6UbisqHOiRwuxEb6XSrDL=MiUmDPgyY=rVuw@mail.gmail.com>
-References: <1398130543-19454-1-git-send-email-haojian.zhuang@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: rdc321x: Fix off-by-one for ngpio setting
+Date: Wed, 23 Apr 2014 15:25:50 +0200
+Message-ID: <CACRpkdYU7QjQz76c7N07LSowEcXak6dT0G0VpuCTWPzGdAgPqA@mail.gmail.com>
+References: <1397196885.12922.2.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398130543-19454-1-git-send-email-haojian.zhuang@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>, Grant Likely <grant.likely@linaro.org>
-Cc: xuwei5@hisilicon.com, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Baruch Siach <baruch@tkos.co.il>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:56737 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753600AbaDWNZv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 09:25:51 -0400
+Received: by mail-ob0-f177.google.com with SMTP id wp18so973268obc.22
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 06:25:50 -0700 (PDT)
+In-Reply-To: <1397196885.12922.2.camel@phoenix>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <florian@openwrt.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Apr 22, 2014 at 3:35 AM, Haojian Zhuang
-<haojian.zhuang@linaro.org> wrote:
+On Fri, Apr 11, 2014 at 8:14 AM, Axel Lin <axel.lin@ingics.com> wrote:
 
-> If gpio base number isn't specified, the gpio base will be find from
-> the end of gpio number. In order to keep with schematics, use alias
-> to get the ID of gpio chip.
+> The valid gpio is GPIO0 ~ GPIO58, so ngpio should be RDC321X_MAX_GPIO + 1.
 >
-> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+(...)
+> -       rdc321x_gpio_dev->chip.ngpio = pdata->max_gpios;
+> +       rdc321x_gpio_dev->chip.ngpio = pdata->max_gpios + 1;
 
-The idea with GPIO numbers is not that these shall correspond
-to schematics or data sheets or anything like that. It's a completely
-Linux-internal number and has nothing to do with anything else.
+This is counter-intuitive. "max_gpios" should be a name for the
+maximum number of gpios right? Not the maximum number of
+GPIOs minus one!
 
-The same is true for IRQ numbers.
+It is better to patch include/linux/mfd/rdc321x.h:
 
-The long term goal is to get rid of both GPIO and IRQ numbers
-and deal only with descriptors in the kernel.
+-#define RDC321X_MAX_GPIO    58
++#define RDC321X_MAX_GPIO    59
 
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pl061.txt
-
-A patch to add the device tree bindings is *very* welcome.
-
->         } else {
-> -               chip->gc.base = -1;
-> +               chip->gc.base = pl061_parse_gpio_base(dev);
->                 irq_base = 0;
->         }
-
-I do not like a patch that changes the dynamic numbering to a
-static one, that make things worse for our goals, not better :-(
+Which establishes the true character of this device.
 
 Yours,
 Linus Walleij
