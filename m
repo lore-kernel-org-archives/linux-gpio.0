@@ -1,53 +1,74 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 2/6] gpio: rcar: Add minimal runtime PM support
-Date: Wed, 23 Apr 2014 09:13:30 +0200
-Message-ID: <CAMuHMdX9oQwjtJi2KYYj8D7KjHh_y5OVOYmgN8K1mOnYQLon-A@mail.gmail.com>
-References: <1397500397-12607-1-git-send-email-geert@linux-m68k.org>
-	<1397500397-12607-3-git-send-email-geert@linux-m68k.org>
-	<CACRpkdbfKmpykqZGj64QzZ-FAq+vXC5DbhOiL=iDvbt6U8U8yw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: mcp23s08: Bug fix of SPI device tree registration.
+Date: Wed, 23 Apr 2014 14:01:40 +0200
+Message-ID: <CACRpkdYCjjJ8U6JT+1mFXagG5fSKKoqDo043rB-Vw6mNhWwm+g@mail.gmail.com>
+References: <1397696424-3394-1-git-send-email-mwelling@ieee.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:40193 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932258AbaDWHNc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 03:13:32 -0400
-In-Reply-To: <CACRpkdbfKmpykqZGj64QzZ-FAq+vXC5DbhOiL=iDvbt6U8U8yw@mail.gmail.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:57979 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751721AbaDWMBl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 08:01:41 -0400
+Received: by mail-ob0-f174.google.com with SMTP id gq1so892121obb.33
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 05:01:40 -0700 (PDT)
+In-Reply-To: <1397696424-3394-1-git-send-email-mwelling@ieee.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Michael Welling <mwelling@ieee.org>, "Daniel M. Weeks" <dan@danweeks.net>, Lars Poeschel <poeschel@lemonage.de>, Peter Korsgaard <jacmet@sunsite.dk>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+Daniel, Lars, Peter: can either of you have a look at this patch
+and ACK/NACK it?
 
-On Wed, Apr 23, 2014 at 9:03 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Apr 14, 2014 at 8:33 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> From: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> This is just enough to automatically enable the functional clock, if
->> present. Clock management during suspend/resume is still to be added.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
->> Cc: linux-gpio@vger.kernel.org
->> ---
->> v2:
->>   - Use pm_runtime_put() instead of pm_runtime_put_sync()
+Yours,
+Linus Walleij
+
+
+On Thu, Apr 17, 2014 at 3:00 AM, Michael Welling <mwelling@ieee.org> wrote:
+> The chips variable needs to be incremented for each chip that is found in the
+> spi_present_mask when register via device tree. Without this and the checking
+> a negative index is passed to the data->chip array in a subsequent loop.
 >
-> This v2 version applied with Laurent's ACK. I guess you wanted it
-> applied to the GPIO tree, I don't see the other patches.
-
-Thanks, yes that was the idea.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Signed-off-by: Michael Welling <mwelling@ieee.org>
+> ---
+>  drivers/gpio/gpio-mcp23s08.c |   12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+> index 99a6831..3d53fd6 100644
+> --- a/drivers/gpio/gpio-mcp23s08.c
+> +++ b/drivers/gpio/gpio-mcp23s08.c
+> @@ -894,9 +894,11 @@ static int mcp23s08_probe(struct spi_device *spi)
+>                         dev_err(&spi->dev, "invalid spi-present-mask\n");
+>                         return -ENODEV;
+>                 }
+> -
+> -               for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++)
+> +               for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
+> +                       if ((spi_present_mask & (1 << addr)))
+> +                               chips++;
+>                         pullups[addr] = 0;
+> +               }
+>         } else {
+>                 type = spi_get_device_id(spi)->driver_data;
+>                 pdata = dev_get_platdata(&spi->dev);
+> @@ -919,12 +921,12 @@ static int mcp23s08_probe(struct spi_device *spi)
+>                         pullups[addr] = pdata->chip[addr].pullups;
+>                 }
+>
+> -               if (!chips)
+> -                       return -ENODEV;
+> -
+>                 base = pdata->base;
+>         }
+>
+> +       if (!chips)
+> +               return -ENODEV;
+> +
+>         data = kzalloc(sizeof(*data) + chips * sizeof(struct mcp23s08),
+>                         GFP_KERNEL);
+>         if (!data)
+> --
+> 1.7.9.5
+>
