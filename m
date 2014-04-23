@@ -1,47 +1,73 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH 4/4] pinctrl: sirf: move to use irq_get_handler_data
-Date: Thu, 24 Apr 2014 06:59:29 +0800
-Message-ID: <CAGsJ_4y=zNNWAvVOK6zGaY-bufUCbOcZtwE=SuWJ=QpF9rBNHg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/4] gpio: make handler_data configurable while using gpiolib_irqchip
+Date: Thu, 24 Apr 2014 01:09:01 +0200
+Message-ID: <CACRpkdYcbngMDPRnuQjPHwo-USHdtK26T_6VM=PFnkT71Dg8Ng@mail.gmail.com>
 References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com>
- <1397544229-20545-5-git-send-email-21cnbao@gmail.com> <CACRpkdbDeF5gBVv=hQSdX1i9fw=7Or+=qN=g4OXHvHkZKr7vcQ@mail.gmail.com>
+	<1397544229-20545-4-git-send-email-21cnbao@gmail.com>
+	<CACRpkdb8rmMDXS1kfcq7wgOnG2XsPm_bxb15z9_9d3E+trBfQA@mail.gmail.com>
+	<CAGsJ_4wmd-ejfHF+MXbO3JSppUDYcEVKeO1WxRM16FtSFEBxpA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:65124 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751600AbaDWW7t (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 18:59:49 -0400
-Received: by mail-pa0-f50.google.com with SMTP id rd3so1239062pab.9
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 15:59:49 -0700 (PDT)
-In-Reply-To: <CACRpkdbDeF5gBVv=hQSdX1i9fw=7Or+=qN=g4OXHvHkZKr7vcQ@mail.gmail.com>
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:35070 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751126AbaDWXJC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 19:09:02 -0400
+Received: by mail-oa0-f44.google.com with SMTP id n16so1809997oag.31
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 16:09:01 -0700 (PDT)
+In-Reply-To: <CAGsJ_4wmd-ejfHF+MXbO3JSppUDYcEVKeO1WxRM16FtSFEBxpA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
+To: Barry Song <21cnbao@gmail.com>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-2014-04-24 4:17 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Apr 15, 2014 at 8:43 AM, Barry Song <21cnbao@gmail.com> wrote:
->
->> From: Barry Song <Baohua.Song@csr.com>
->>
->> we set bank as handler_data, now we can get bank in ISR directly
->> instead of looking-up.
->>
->> Signed-off-by: Barry Song <Baohua.Song@csr.com>
->
-> If you want to use some other handler data than the gpiochip,
-> you should just use irq_set_chained_handler() and
-> irq_set_handler_data() directly.
+On Thu, Apr 24, 2014 at 12:55 AM, Barry Song <21cnbao@gmail.com> wrote:
 
-i think this should be fixed in the general API but not use one more
-function call to over-write the handler_data which has been filled in
-the API.
-since we have the chance for drivers to set either the whole chip for
-a simple chip,  or bank-specific data for a chip which has multiple
-parent IRQs.
-
+>> NAK, the whole idea with the function gpiochip_set_chained_irqchip()
+>> is that its sets things up so that the gpiochip is passed as handler
+>> data on the parent IRQ, akin to how the gpiochip is passed as
+>> chip data on the cascaded IRQs.
 >
-> Yours,
-> Linus Walleij
+> i think it is a really bad idea as the parent handler might not want
+> the whole chip if the chip has several parents and each parent want a
+> separate handler_data.
+> this patch doesn't break your way as the parameter is void *, drivers
+> which use your way don't need any change. but for drivers which want
+> more special handler_data, it supports better.
 
--barry
+This is perfectly possible, just don't use
+gpiochip_set_chained_irqchip() which has this semantic
+effect.
+
+Use irq_set_chained_handler() and irq_set_handler_data()
+directly instead.
+
+I do see that this is maybe easier for the handler to get the bank
+passed in.
+
+However when I in the RFT patches change the driver to allocate
+and pass a struct for the gpio chip, it all looks a bit different.
+You would have to get the sgpio from the bank instead, which
+may require to introduce a special pointer for that.
+
+What we want to get rid of is this:
+
+for (i = 0; i < SIRFSOC_GPIO_BANK_SIZE; i++) {
+                bank = &sgpio->sgpio_bank[i];
+                if (bank->parent_irq == irq)
+                        break;
+}
+BUG_ON (i == SIRFSOC_GPIO_BANK_SIZE);
+
+So what about passing something like that to the handler:
+
+struct sirf_irq_handler_data {
+    struct sirfsoc_gpio_chip *sgpio;
+    struct sirfsoc_gpio_bank *bank;
+};
+
+Then the irq handler instantly have pointers to all it needs.
+But maybe it's better to just pass the bank, whatdoIknow.
+
+Yours,
+Linus Walleij
