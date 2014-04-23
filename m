@@ -1,94 +1,83 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: [PATCH] gpio: mcp23s08: Bug fix of SPI device tree registration.
-Date: Wed, 23 Apr 2014 18:12:58 -0500
-Message-ID: <20140423231258.GA2442@deathray>
-References: <1397696424-3394-1-git-send-email-mwelling@ieee.org>
- <CACRpkdYCjjJ8U6JT+1mFXagG5fSKKoqDo043rB-Vw6mNhWwm+g@mail.gmail.com>
- <87fvl42npf.fsf@dell.be.48ers.dk>
+From: Barry Song <21cnbao@gmail.com>
+Subject: Re: [PATCH 3/4] gpio: make handler_data configurable while using gpiolib_irqchip
+Date: Thu, 24 Apr 2014 07:23:15 +0800
+Message-ID: <CAGsJ_4y4H63KxJLF1hKaBwHVYb2b_2wTzjO_kGhKUOzScYpKqA@mail.gmail.com>
+References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com>
+ <1397544229-20545-4-git-send-email-21cnbao@gmail.com> <CACRpkdb8rmMDXS1kfcq7wgOnG2XsPm_bxb15z9_9d3E+trBfQA@mail.gmail.com>
+ <CAGsJ_4wmd-ejfHF+MXbO3JSppUDYcEVKeO1WxRM16FtSFEBxpA@mail.gmail.com> <CACRpkdYcbngMDPRnuQjPHwo-USHdtK26T_6VM=PFnkT71Dg8Ng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:49182 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751126AbaDWXNC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 19:13:02 -0400
-Received: by mail-ig0-f171.google.com with SMTP id c1so202226igq.16
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 16:13:01 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <87fvl42npf.fsf@dell.be.48ers.dk>
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:42561 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751996AbaDWXXg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 19:23:36 -0400
+Received: by mail-pb0-f52.google.com with SMTP id rq2so1271650pbb.25
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 16:23:36 -0700 (PDT)
+In-Reply-To: <CACRpkdYcbngMDPRnuQjPHwo-USHdtK26T_6VM=PFnkT71Dg8Ng@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Korsgaard <peter@korsgaard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Daniel M. Weeks" <dan@danweeks.net>, Lars Poeschel <poeschel@lemonage.de>, Peter Korsgaard <jacmet@sunsite.dk>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-On Wed, Apr 23, 2014 at 03:13:32PM +0200, Peter Korsgaard wrote:
-> >>>>> "Linus" == Linus Walleij <linus.walleij@linaro.org> writes:
-> 
->  > Daniel, Lars, Peter: can either of you have a look at this patch
->  > and ACK/NACK it?
-> 
-> Sorry, it seems like I wasn't CC'ed on this patch (or the one adding the
-> DT bindings). The patch looks good to me:
-> 
-> Acked-by: Peter Korsgaard <peter@korsgaard.com>
-> 
-The patched driver was tested and working on actual hardware.
-> 
->  > On Thu, Apr 17, 2014 at 3:00 AM, Michael Welling <mwelling@ieee.org> wrote:
->  >> The chips variable needs to be incremented for each chip that is found in the
->  >> spi_present_mask when register via device tree. Without this and the checking
-> 
-> s/register/registrering/
-s/registrering/registering/
+2014-04-24 7:09 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Apr 24, 2014 at 12:55 AM, Barry Song <21cnbao@gmail.com> wrote:
+>
+>>> NAK, the whole idea with the function gpiochip_set_chained_irqchip()
+>>> is that its sets things up so that the gpiochip is passed as handler
+>>> data on the parent IRQ, akin to how the gpiochip is passed as
+>>> chip data on the cascaded IRQs.
+>>
+>> i think it is a really bad idea as the parent handler might not want
+>> the whole chip if the chip has several parents and each parent want a
+>> separate handler_data.
+>> this patch doesn't break your way as the parameter is void *, drivers
+>> which use your way don't need any change. but for drivers which want
+>> more special handler_data, it supports better.
+>
+> This is perfectly possible, just don't use
+> gpiochip_set_chained_irqchip() which has this semantic
+> effect.
+>
+> Use irq_set_chained_handler() and irq_set_handler_data()
+> directly instead.
+>
+> I do see that this is maybe easier for the handler to get the bank
+> passed in.
+>
+> However when I in the RFT patches change the driver to allocate
+> and pass a struct for the gpio chip, it all looks a bit different.
+> You would have to get the sgpio from the bank instead, which
+> may require to introduce a special pointer for that.
+>
+> What we want to get rid of is this:
+>
+> for (i = 0; i < SIRFSOC_GPIO_BANK_SIZE; i++) {
+>                 bank = &sgpio->sgpio_bank[i];
+>                 if (bank->parent_irq == irq)
+>                         break;
+> }
+> BUG_ON (i == SIRFSOC_GPIO_BANK_SIZE);
+>
+> So what about passing something like that to the handler:
+>
+> struct sirf_irq_handler_data {
+>     struct sirfsoc_gpio_chip *sgpio;
+>     struct sirfsoc_gpio_bank *bank;
+> };
+>
+> Then the irq handler instantly have pointers to all it needs.
+> But maybe it's better to just pass the bank, whatdoIknow.
 
-I should really proof read my commit logs.
-> 
-> 
->  >> a negative index is passed to the data->chip array in a subsequent loop.
->  >> 
->  >> Signed-off-by: Michael Welling <mwelling@ieee.org>
->  >> ---
->  >> drivers/gpio/gpio-mcp23s08.c |   12 +++++++-----
->  >> 1 file changed, 7 insertions(+), 5 deletions(-)
->  >> 
->  >> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
->  >> index 99a6831..3d53fd6 100644
->  >> --- a/drivers/gpio/gpio-mcp23s08.c
->  >> +++ b/drivers/gpio/gpio-mcp23s08.c
->  >> @@ -894,9 +894,11 @@ static int mcp23s08_probe(struct spi_device *spi)
->  >> dev_err(&spi->dev, "invalid spi-present-mask\n");
->  >> return -ENODEV;
->  >> }
->  >> -
->  >> -               for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++)
->  >> +               for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
->  >> +                       if ((spi_present_mask & (1 << addr)))
->  >> +                               chips++;
->  >> pullups[addr] = 0;
->  >> +               }
->  >> } else {
->  >> type = spi_get_device_id(spi)->driver_data;
->  >> pdata = dev_get_platdata(&spi->dev);
->  >> @@ -919,12 +921,12 @@ static int mcp23s08_probe(struct spi_device *spi)
->  >> pullups[addr] = pdata->chip[addr].pullups;
->  >> }
->  >> 
->  >> -               if (!chips)
->  >> -                       return -ENODEV;
->  >> -
->  >> base = pdata->base;
->  >> }
->  >> 
->  >> +       if (!chips)
->  >> +               return -ENODEV;
->  >> +
->  >> data = kzalloc(sizeof(*data) + chips * sizeof(struct mcp23s08),
->  >> GFP_KERNEL);
->  >> if (!data)
->  >> --
->  >> 1.7.9.5
->  >> 
-> 
-> 
-> -- 
-> Bye, Peter Korsgaard
+only if we move to irq_set_chained_handler() and
+irq_set_handler_data() directly and set bank-specific handler_data
+manually, it works.
+my point is that will we make the gpiochip_set_chained_irqchip() more
+general for this kind of cases too since you have had a good API to
+wrap things?
+
+>
+> Yours,
+> Linus Walleij
+
+-barry
