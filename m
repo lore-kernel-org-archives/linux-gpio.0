@@ -1,74 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mcp23s08: Bug fix of SPI device tree registration.
-Date: Wed, 23 Apr 2014 14:01:40 +0200
-Message-ID: <CACRpkdYCjjJ8U6JT+1mFXagG5fSKKoqDo043rB-Vw6mNhWwm+g@mail.gmail.com>
-References: <1397696424-3394-1-git-send-email-mwelling@ieee.org>
+From: Barry Song <21cnbao@gmail.com>
+Subject: Re: [PATCH 0/4] pinctrl: sirf: switch to one gpiolib and
+ gpiolib_irqchip helpers
+Date: Wed, 23 Apr 2014 20:09:30 +0800
+Message-ID: <CAGsJ_4zowXarh0xy2y4oTsTZbnKFDgMfA6JPTK+sSx6ew_Qw4g@mail.gmail.com>
+References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com> <CACRpkdY6N3vh2-a5NwU0ZkXKsf8ArmxLBCL3dMrPTFwvN+x5JQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:57979 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751721AbaDWMBl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 08:01:41 -0400
-Received: by mail-ob0-f174.google.com with SMTP id gq1so892121obb.33
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 05:01:40 -0700 (PDT)
-In-Reply-To: <1397696424-3394-1-git-send-email-mwelling@ieee.org>
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:33935 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751210AbaDWMJv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 08:09:51 -0400
+Received: by mail-pb0-f51.google.com with SMTP id uo5so726550pbc.10
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 05:09:50 -0700 (PDT)
+In-Reply-To: <CACRpkdY6N3vh2-a5NwU0ZkXKsf8ArmxLBCL3dMrPTFwvN+x5JQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>, "Daniel M. Weeks" <dan@danweeks.net>, Lars Poeschel <poeschel@lemonage.de>, Peter Korsgaard <jacmet@sunsite.dk>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-Daniel, Lars, Peter: can either of you have a look at this patch
-and ACK/NACK it?
+2014-04-23 5:47 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Tue, Apr 15, 2014 at 8:43 AM, Barry Song <21cnbao@gmail.com> wrote:
+>
+>> From: Barry Song <Baohua.Song@csr.com>
+>>
+>> This patchset depends on Linus Walleij's "pinctrl: sirf: rename inlined accessor".
+>> and "pinctrl: sirf: switch driver to use gpiolib irqchip helpers" is rebased
+>> from Linus Walleij's patch too.
+>>
+>> Barry Song (3):
+>>   pinctrl: sirf: wrap all gpio banks into one gpio_chip
+>>   gpio: make handler_data configurable while using gpiolib_irqchip
+>>   pinctrl: sirf: move to use irq_get_handler_data
+>> Linus Walleij (1):
+>>   pinctrl: sirf: switch driver to use gpiolib irqchip helpers
+>
+> As mentioned I can't get this series to apply so please rebase,
+> resend and take this opportunity to also add relevant ACKs.
 
-Yours,
-Linus Walleij
+linus, this patchset depends on your "pinctrl: sirf: rename inlined
+accessor" you sent to me. it seems it is in neither your devel nor
+3.5-rc2.
 
+https://lkml.org/lkml/2014/4/8/156
 
-On Thu, Apr 17, 2014 at 3:00 AM, Michael Welling <mwelling@ieee.org> wrote:
-> The chips variable needs to be incremented for each chip that is found in the
-> spi_present_mask when register via device tree. Without this and the checking
-> a negative index is passed to the data->chip array in a subsequent loop.
 >
-> Signed-off-by: Michael Welling <mwelling@ieee.org>
-> ---
->  drivers/gpio/gpio-mcp23s08.c |   12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-> index 99a6831..3d53fd6 100644
-> --- a/drivers/gpio/gpio-mcp23s08.c
-> +++ b/drivers/gpio/gpio-mcp23s08.c
-> @@ -894,9 +894,11 @@ static int mcp23s08_probe(struct spi_device *spi)
->                         dev_err(&spi->dev, "invalid spi-present-mask\n");
->                         return -ENODEV;
->                 }
-> -
-> -               for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++)
-> +               for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
-> +                       if ((spi_present_mask & (1 << addr)))
-> +                               chips++;
->                         pullups[addr] = 0;
-> +               }
->         } else {
->                 type = spi_get_device_id(spi)->driver_data;
->                 pdata = dev_get_platdata(&spi->dev);
-> @@ -919,12 +921,12 @@ static int mcp23s08_probe(struct spi_device *spi)
->                         pullups[addr] = pdata->chip[addr].pullups;
->                 }
->
-> -               if (!chips)
-> -                       return -ENODEV;
-> -
->                 base = pdata->base;
->         }
->
-> +       if (!chips)
-> +               return -ENODEV;
-> +
->         data = kzalloc(sizeof(*data) + chips * sizeof(struct mcp23s08),
->                         GFP_KERNEL);
->         if (!data)
-> --
-> 1.7.9.5
->
+> Yours,
+> Linus Walleij
+
+-barry
