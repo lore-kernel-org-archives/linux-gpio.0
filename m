@@ -1,83 +1,46 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH 3/4] gpio: make handler_data configurable while using gpiolib_irqchip
-Date: Thu, 24 Apr 2014 07:23:15 +0800
-Message-ID: <CAGsJ_4y4H63KxJLF1hKaBwHVYb2b_2wTzjO_kGhKUOzScYpKqA@mail.gmail.com>
-References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com>
- <1397544229-20545-4-git-send-email-21cnbao@gmail.com> <CACRpkdb8rmMDXS1kfcq7wgOnG2XsPm_bxb15z9_9d3E+trBfQA@mail.gmail.com>
- <CAGsJ_4wmd-ejfHF+MXbO3JSppUDYcEVKeO1WxRM16FtSFEBxpA@mail.gmail.com> <CACRpkdYcbngMDPRnuQjPHwo-USHdtK26T_6VM=PFnkT71Dg8Ng@mail.gmail.com>
+From: Tien Hock Loh <thloh@altera.com>
+Subject: Re: [PATCH V7 1/1] drivers/gpio: Altera soft IP GPIO driver and
+ devicetree binding
+Date: Thu, 24 Apr 2014 08:55:31 +0800
+Message-ID: <CAOLUe6bP-kBx9U3Kmfgu5iAUDkryCDubyJybDTpSCFkBd8RvMA@mail.gmail.com>
+References: <1393842463-5206-1-git-send-email-thloh@altera.com>
+	<CACRpkdaJM4RcMaNOoNnACfkRiQP9xxNSfNjV8nygA1GXYdJrfw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:42561 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751996AbaDWXXg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 19:23:36 -0400
-Received: by mail-pb0-f52.google.com with SMTP id rq2so1271650pbb.25
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 16:23:36 -0700 (PDT)
-In-Reply-To: <CACRpkdYcbngMDPRnuQjPHwo-USHdtK26T_6VM=PFnkT71Dg8Ng@mail.gmail.com>
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:48629 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751581AbaDXBC1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 21:02:27 -0400
+In-Reply-To: <CACRpkdaJM4RcMaNOoNnACfkRiQP9xxNSfNjV8nygA1GXYdJrfw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
+Cc: Tien Hock Loh <thloh@altera.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, "lftan@altera.com" <lftan@altera.com>
 
-2014-04-24 7:09 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Apr 24, 2014 at 12:55 AM, Barry Song <21cnbao@gmail.com> wrote:
+On Wed, Apr 23, 2014 at 9:32 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Mar 3, 2014 at 11:27 AM,  <thloh@altera.com> wrote:
 >
->>> NAK, the whole idea with the function gpiochip_set_chained_irqchip()
->>> is that its sets things up so that the gpiochip is passed as handler
->>> data on the parent IRQ, akin to how the gpiochip is passed as
->>> chip data on the cascaded IRQs.
+>> From: Tien Hock Loh <thloh@altera.com>
 >>
->> i think it is a really bad idea as the parent handler might not want
->> the whole chip if the chip has several parents and each parent want a
->> separate handler_data.
->> this patch doesn't break your way as the parameter is void *, drivers
->> which use your way don't need any change. but for drivers which want
->> more special handler_data, it supports better.
+>> Add driver support for Altera GPIO soft IP, including interrupts and I/O.
+>> Tested on Altera CV SoC board using dipsw and LED using LED framework.
+>>
+>> Signed-off-by: Tien Hock Loh <thloh@altera.com>
 >
-> This is perfectly possible, just don't use
-> gpiochip_set_chained_irqchip() which has this semantic
-> effect.
+> Some time has passed since this was posted and we now have
+> GPIO irqchip helpers in the gpiolib core.
 >
-> Use irq_set_chained_handler() and irq_set_handler_data()
-> directly instead.
+> If you repost this, please reform this driver to use the gpiochip
+> irqchip helpers in the manner of e.g. drivers/gpio/gpio-pl061.c.
 >
-> I do see that this is maybe easier for the handler to get the bank
-> passed in.
->
-> However when I in the RFT patches change the driver to allocate
-> and pass a struct for the gpio chip, it all looks a bit different.
-> You would have to get the sgpio from the bank instead, which
-> may require to introduce a special pointer for that.
->
-> What we want to get rid of is this:
->
-> for (i = 0; i < SIRFSOC_GPIO_BANK_SIZE; i++) {
->                 bank = &sgpio->sgpio_bank[i];
->                 if (bank->parent_irq == irq)
->                         break;
-> }
-> BUG_ON (i == SIRFSOC_GPIO_BANK_SIZE);
->
-> So what about passing something like that to the handler:
->
-> struct sirf_irq_handler_data {
->     struct sirfsoc_gpio_chip *sgpio;
->     struct sirfsoc_gpio_bank *bank;
-> };
->
-> Then the irq handler instantly have pointers to all it needs.
-> But maybe it's better to just pass the bank, whatdoIknow.
+> More examples and documentation is available on the "devel"
+> branch in the gpio git tree (also in linux-next).
 
-only if we move to irq_set_chained_handler() and
-irq_set_handler_data() directly and set bank-specific handler_data
-manually, it works.
-my point is that will we make the gpiochip_set_chained_irqchip() more
-general for this kind of cases too since you have had a good API to
-wrap things?
+OK noted. I'll do that.
+
+Thanks for the info.
 
 >
 > Yours,
 > Linus Walleij
-
--barry
