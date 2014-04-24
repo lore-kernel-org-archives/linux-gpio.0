@@ -1,40 +1,42 @@
-From: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
-Subject: [PATCH] gpio: mvebu: Remove initcall-based driver initialization
-Date: Thu, 24 Apr 2014 17:54:50 -0300
-Message-ID: <1398372890-7568-1-git-send-email-ezequiel.garcia@free-electrons.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:41041 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751316AbaDXUzd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 16:55:33 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH v3] gpio: omap: implement get_direction
+Date: Thu, 24 Apr 2014 15:25:16 -0700
+Message-ID: <7hppk6nz5f.fsf@paris.lan>
+References: <1398322659-20008-1-git-send-email-yegorslists@googlemail.com>
+	<CACRpkdZPNGHNQhqovDoaKTXZT3mJfN4pjKSBxW7m6wT5u-XEYQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZPNGHNQhqovDoaKTXZT3mJfN4pjKSBxW7m6wT5u-XEYQ@mail.gmail.com>
+	(Linus Walleij's message of "Thu, 24 Apr 2014 15:13:04 +0200")
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: yegorslists@googlemail.com, Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Lior Amsalem <alior@marvell.com>, Tawfik Bayouk <tawfik@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
 
-There's no reason to use an initcall to initialize this driver,
-and regular module_platform_driver() can be used instead.
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
----
- drivers/gpio/gpio-mvebu.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+> On Thu, Apr 24, 2014 at 8:57 AM,  <yegorslists@googlemail.com> wrote:
+>
+>> From: Yegor Yefremov <yegorslists@googlemail.com>
+>>
+>> This patch implements gpio_chip's get_direction() routine, that
+>> lets other drivers get particular GPIOs direction using
+>> struct gpio_desc.
+>>
+>> Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+>> Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+>> ---
+>> Changes:
+>>         v3: get rid of _get_gpio_direction() (Linus Walleij)
+>>         v2: rework return value calculation
+>
+> Looks good to me, Kevin, Santosh?
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index d425094..7d64cde 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -738,9 +738,4 @@ static struct platform_driver mvebu_gpio_driver = {
- 	},
- 	.probe		= mvebu_gpio_probe,
- };
--
--static int __init mvebu_gpio_init(void)
--{
--	return platform_driver_register(&mvebu_gpio_driver);
--}
--postcore_initcall(mvebu_gpio_init);
-+module_platform_driver(mvebu_gpio_driver);
--- 
-1.9.1
+Reviewed-by: Kevin Hilman <khilman@linaro.org>
 
+> Part of me wants to list Javier as maintainer for this driver.
+
+That's fine with me. 
+
+Kevin
