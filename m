@@ -1,64 +1,74 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH v2] gpio: rdc321x: Fix off-by-one for ngpio setting
-Date: Thu, 24 Apr 2014 10:13:49 +0800
-Message-ID: <1398305629.14665.1.camel@phoenix>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: yegorslists@googlemail.com
+Subject: [PATCH v3] gpio: omap: implement get_direction
+Date: Thu, 24 Apr 2014 08:57:39 +0200
+Message-ID: <1398322659-20008-1-git-send-email-yegorslists@googlemail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:50575 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751047AbaDXCNz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Apr 2014 22:13:55 -0400
-Received: by mail-vc0-f178.google.com with SMTP id hu19so2151666vcb.23
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Apr 2014 19:13:54 -0700 (PDT)
+Received: from ns.visionsystems.de ([62.145.30.242]:42096 "EHLO
+	mail.visionsystems.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751787AbaDXG6G (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 02:58:06 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <florian@openwrt.org>, linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, tony@atomide.com, linus.walleij@linaro.org, Yegor Yefremov <yegorslists@googlemail.com>
 
-The valid gpio is GPIO0 ~ GPIO58, so ngpio should be 59.
-This patch also renames RDC321X_MAX_GPIO to RDC321X_NUM_GPIO because it
-actually means the number of available GPIOs.
+From: Yegor Yefremov <yegorslists@googlemail.com>
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+This patch implements gpio_chip's get_direction() routine, that
+lets other drivers get particular GPIOs direction using
+struct gpio_desc.
+
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
 ---
-Hi Lee,
-This actually fixes the ngpio setting in gpio-rdc321x driver.
-So I think it makes sense to go via gpio tree.
-Axel
- drivers/mfd/rdc321x-southbridge.c | 2 +-
- include/linux/mfd/rdc321x.h       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Changes:
+	v3: get rid of _get_gpio_direction() (Linus Walleij)
+	v2: rework return value calculation
+ drivers/gpio/gpio-omap.c |   17 +++++++++++++++++
+ 1 files changed, 17 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/mfd/rdc321x-southbridge.c b/drivers/mfd/rdc321x-southbridge.c
-index c795697..6575585 100644
---- a/drivers/mfd/rdc321x-southbridge.c
-+++ b/drivers/mfd/rdc321x-southbridge.c
-@@ -38,7 +38,7 @@ static struct resource rdc321x_wdt_resource[] = {
- };
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 19b886c..62c12e4 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -27,6 +27,7 @@
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/gpio.h>
++#include <linux/bitops.h>
+ #include <linux/platform_data/gpio-omap.h>
  
- static struct rdc321x_gpio_pdata rdc321x_gpio_pdata = {
--	.max_gpios	= RDC321X_MAX_GPIO,
-+	.max_gpios	= RDC321X_NUM_GPIO,
- };
+ #define OFF_MODE	1
+@@ -936,6 +937,21 @@ static inline void mpuio_init(struct gpio_bank *bank)
  
- static struct resource rdc321x_gpio_resources[] = {
-diff --git a/include/linux/mfd/rdc321x.h b/include/linux/mfd/rdc321x.h
-index 4bdf19c..442743a 100644
---- a/include/linux/mfd/rdc321x.h
-+++ b/include/linux/mfd/rdc321x.h
-@@ -12,7 +12,7 @@
- #define RDC321X_GPIO_CTRL_REG2	0x84
- #define RDC321X_GPIO_DATA_REG2	0x88
+ /*---------------------------------------------------------------------*/
  
--#define RDC321X_MAX_GPIO	58
-+#define RDC321X_NUM_GPIO	59
- 
- struct rdc321x_gpio_pdata {
- 	struct pci_dev *sb_pdev;
++static int gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++{
++	struct gpio_bank *bank;
++	unsigned long flags;
++	void __iomem *reg;
++	int dir;
++
++	bank = container_of(chip, struct gpio_bank, chip);
++	reg = bank->base + bank->regs->direction;
++	spin_lock_irqsave(&bank->lock, flags);
++	dir = !!(readl_relaxed(reg) & BIT(offset));
++	spin_unlock_irqrestore(&bank->lock, flags);
++	return dir;
++}
++
+ static int gpio_input(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank;
+@@ -1092,6 +1108,7 @@ static void omap_gpio_chip_init(struct gpio_bank *bank)
+ 	 */
+ 	bank->chip.request = omap_gpio_request;
+ 	bank->chip.free = omap_gpio_free;
++	bank->chip.get_direction = gpio_get_direction;
+ 	bank->chip.direction_input = gpio_input;
+ 	bank->chip.get = gpio_get;
+ 	bank->chip.direction_output = gpio_output;
 -- 
-1.8.3.2
-
-
+1.7.7
 
