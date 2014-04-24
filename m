@@ -1,39 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: rdc321x: Fix off-by-one for ngpio setting
-Date: Thu, 24 Apr 2014 15:08:03 +0200
-Message-ID: <CACRpkdaL7Zv0SwekpUW_rz1A+ttPjfU6=A=BwoayyRiFGyGwcA@mail.gmail.com>
-References: <1398305629.14665.1.camel@phoenix>
+Subject: Re: [PATCH v3] gpio: omap: implement get_direction
+Date: Thu, 24 Apr 2014 15:13:04 +0200
+Message-ID: <CACRpkdZPNGHNQhqovDoaKTXZT3mJfN4pjKSBxW7m6wT5u-XEYQ@mail.gmail.com>
+References: <1398322659-20008-1-git-send-email-yegorslists@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:33444 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753239AbaDXNIF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 09:08:05 -0400
-Received: by mail-oa0-f52.google.com with SMTP id l6so2602223oag.11
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Apr 2014 06:08:04 -0700 (PDT)
-In-Reply-To: <1398305629.14665.1.camel@phoenix>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1398322659-20008-1-git-send-email-yegorslists@googlemail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: yegorslists@googlemail.com, Kevin Hilman <khilman@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <florian@openwrt.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>
 
-On Thu, Apr 24, 2014 at 4:13 AM, Axel Lin <axel.lin@ingics.com> wrote:
+On Thu, Apr 24, 2014 at 8:57 AM,  <yegorslists@googlemail.com> wrote:
 
-> The valid gpio is GPIO0 ~ GPIO58, so ngpio should be 59.
-> This patch also renames RDC321X_MAX_GPIO to RDC321X_NUM_GPIO because it
-> actually means the number of available GPIOs.
+> From: Yegor Yefremov <yegorslists@googlemail.com>
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> This patch implements gpio_chip's get_direction() routine, that
+> lets other drivers get particular GPIOs direction using
+> struct gpio_desc.
+>
+> Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+> Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
 > ---
-> Hi Lee,
-> This actually fixes the ngpio setting in gpio-rdc321x driver.
-> So I think it makes sense to go via gpio tree.
+> Changes:
+>         v3: get rid of _get_gpio_direction() (Linus Walleij)
+>         v2: rework return value calculation
 
-Nah, better to take this in MFD, and change $SUBJECT
-to "mfd:".
+Looks good to me, Kevin, Santosh?
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Part of me wants to list Javier as maintainer for this driver.
+
+> +static int gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+> +{
+> +       struct gpio_bank *bank;
+> +       unsigned long flags;
+> +       void __iomem *reg;
+> +       int dir;
+
+That is a bool, actually. But no big deal.
+
+> +
+> +       bank = container_of(chip, struct gpio_bank, chip);
+> +       reg = bank->base + bank->regs->direction;
+> +       spin_lock_irqsave(&bank->lock, flags);
+> +       dir = !!(readl_relaxed(reg) & BIT(offset));
+> +       spin_unlock_irqrestore(&bank->lock, flags);
+> +       return dir;
+> +}
 
 Yours,
 Linus Walleij
