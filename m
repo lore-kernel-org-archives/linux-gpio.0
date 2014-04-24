@@ -1,70 +1,151 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v3] gpio: omap: implement get_direction
-Date: Thu, 24 Apr 2014 09:42:04 -0700
-Message-ID: <20140424164204.GE22987@atomide.com>
-References: <1398322659-20008-1-git-send-email-yegorslists@googlemail.com>
- <CACRpkdZPNGHNQhqovDoaKTXZT3mJfN4pjKSBxW7m6wT5u-XEYQ@mail.gmail.com>
- <535911D0.3020907@ti.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: of: Allow -gpio suffix for property names
+Date: Thu, 24 Apr 2014 20:22:44 +0200
+Message-ID: <20140424182243.GA27443@ulmo>
+References: <1398266889-17489-1-git-send-email-thierry.reding@gmail.com>
+ <1398266889-17489-2-git-send-email-thierry.reding@gmail.com>
+ <CACRpkdadAUXgC-K6be6SFFn2ZTvCqkTK7VRJEzpFdUbybKc3YA@mail.gmail.com>
+ <CAL_Jsq+DwCBLoNYsgHnoLQgSMnSBDM5XH_xoWS-RWdmx-JBeXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ee0-f42.google.com ([74.125.83.42]:55305 "EHLO
+	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758455AbaDXSYI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 14:24:08 -0400
 Content-Disposition: inline
-In-Reply-To: <535911D0.3020907@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, yegorslists@googlemail.com, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+In-Reply-To: <CAL_Jsq+DwCBLoNYsgHnoLQgSMnSBDM5XH_xoWS-RWdmx-JBeXg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-* Santosh Shilimkar <santosh.shilimkar@ti.com> [140424 06:30]:
-> On Thursday 24 April 2014 09:13 AM, Linus Walleij wrote:
-> > On Thu, Apr 24, 2014 at 8:57 AM,  <yegorslists@googlemail.com> wrote:
-> > 
-> >> From: Yegor Yefremov <yegorslists@googlemail.com>
+
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Apr 24, 2014 at 09:06:24AM -0500, Rob Herring wrote:
+> On Thu, Apr 24, 2014 at 7:47 AM, Linus Walleij <linus.walleij@linaro.org>=
+ wrote:
+> > On Wed, Apr 23, 2014 at 5:28 PM, Thierry Reding
+> > <thierry.reding@gmail.com> wrote:
+> >
+> >> From: Thierry Reding <treding@nvidia.com>
 > >>
-> >> This patch implements gpio_chip's get_direction() routine, that
-> >> lets other drivers get particular GPIOs direction using
-> >> struct gpio_desc.
+> >> Many bindings use the -gpio suffix in property names. Support this in
+> >> addition to the -gpios suffix when requesting GPIOs using the new
+> >> descriptor-based API.
 > >>
-> >> Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
-> >> Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
-> >> ---
-> >> Changes:
-> >>         v3: get rid of _get_gpio_direction() (Linus Walleij)
-> >>         v2: rework return value calculation
-> > 
-> > Looks good to me, Kevin, Santosh?
-> > 
-> Looks fine to me as well.
-> Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+> >> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >
+> > Are the DT bindings really full of such ambiguity between
+> > singular and plural? Examples?
+> >
+> > What happens in affected drivers today? It just doesn't work?
+>=20
+> They mostly seem to use of_get_named_gpio.
 
-OK finally got around testing gpio/for-next here. Could not use
-todays linux next as it's broken again for whatever reasons and
-does not even compile for me.
+Indeed. That has the downside of requiring manual parsing and handling
+of the GPIO polarity, though.
 
-Boot tested gpio/next on few omap1 boards: h2, osk and 770 and
-things behave the same way as earlier for me on these boards.
-Also made sure the PM does not break as tested on n900 with the
-GPIO changes. So for the following patches, feel free to add:
+> > Does that mean these bindings are not actively used by any
+> > drivers yet so we could augment the bindings instead, or are
+> > they already deployed so we must implement this?
+> >
+> > Would like a word from the DT people here...
+>=20
+> Interestingly, there is not a single occurrence of '-gpio ' in
+> powerpc, but a bunch in ARM. In hindsight, we should have perhaps
+> enforced using -gpios only, but that doesn't really matter now. We
+> have -gpio in use, so we need to support it.
 
-cb2a5fb059b5 gpio: do not set up hardware for IRQ_TYPE_NONE
-da09ceae78f7 gpio: omap: implement get_direction
-d04b76626e94 gpio: omap: convert driver to use gpiolib irqchip
-d4094cd7577c gpio: omap: check gpiochip_add() return value
-820eade1b7f3 gpio: omap: convert to use irq_domain_add_simple()
-717f70e39a98 gpio: omap: Use devm_ioremap_resource()
+I think I also saw a proposal only recently to add support for a
+gpios/gpio-names type of binding
 
-Tested-by: Tony Lindgren <tony@atomide.com>
+> That doesn't necessarily mean this function has to support it. For
+> example, this function could a legacy method and some other function
+> should be used instead (of_get_named_gpio perhaps).
 
-Naturally no need to go back to edit the commits for my acks
-unless there are other reasons to redo the branches.
+The reason why I posted this is precisely because I wanted to convert
+over some drivers to use the new helpers (because they make things like
+polarity handling much easier). My first attempt was to fix the binding
+because I was under the impression that -gpio usage was discouraged, but
+people didn't like that because, you know, DT bindings being a stable
+ABI and all that.
 
-> > Part of me wants to list Javier as maintainer for this driver.
-> > 
-> Am ok with it as well.
+The downside of not allowing the gpiod API to support the -gpio suffix
+is that we'll never be able to convert drivers that use such a binding
+and will forever have a hodgepodge of GPIO APIs that we need to support.
 
-That sounds good to me too, looks like Javier is doing a good job
-on that already :)
+> >>  drivers/gpio/gpiolib.c | 18 ++++++++++++------
+> >>  1 file changed, 12 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> >> index 7a0b97076374..b991462c22fb 100644
+> >> --- a/drivers/gpio/gpiolib.c
+> >> +++ b/drivers/gpio/gpiolib.c
+> >> @@ -2594,17 +2594,23 @@ static struct gpio_desc *of_find_gpio(struct d=
+evice *dev, const char *con_id,
+> >>                                       unsigned int idx,
+> >>                                       enum gpio_lookup_flags *flags)
+> >>  {
+> >> +       static const char *suffixes[] =3D { "gpios", "gpio" };
+> >>         char prop_name[32]; /* 32 is max size of property name */
+> >>         enum of_gpio_flags of_flags;
+> >>         struct gpio_desc *desc;
+> >> +       unsigned int i;
+> >>
+> >> -       if (con_id)
+> >> -               snprintf(prop_name, 32, "%s-gpios", con_id);
+> >> -       else
+> >> -               snprintf(prop_name, 32, "gpios");
+> >> +       for (i =3D 0; i < ARRAY_SIZE(suffixes); i++) {
+> >> +               if (con_id)
+> >> +                       snprintf(prop_name, 32, "%s-%s", con_id, suffi=
+xes[i]);
+> >> +               else
+> >> +                       snprintf(prop_name, 32, "%s", suffixes[i]);
+>=20
+> This has the side effect of searching for "gpio" as property name
+> which I don't think we want to allow.
 
-Regards,
+Why don't we want to allow a "gpio" property when we already allow
+"gpios"?
 
-Tony 
+> It also allows a DT with either suffix to work. While I don't
+> necessarily think the kernel's job should be DT validation, we don't
+> have any other validation today and I don't see how this change
+> simplifies the code. Between stricter DT checking (in the kernel) and
+> simpler code, I'd pick the latter.
+
+I had briefly considered adding more validation here as well, such as
+refusing to hand out any GPIO with idx > 0 for the -gpio suffix, but
+then opted not to do that in favour of code simplicity.
+
+Thierry
+
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTWVZzAAoJEN0jrNd/PrOhhCQQAJzLZ33kQR5hcdQQkxUfC9vT
+YyiUuTU97tLYpZg3/Z3cXFwJvE4dso34T7jQMqFczexxi201iURCgRjtoOI9/WGe
+vfpPVErY86A3wi/E5o9k2bc1reZgYHHFQPYZZhZmloTqOOtqvy5WCPinoFLUhECB
+zf4ofB6wz3EdcRV4AZNBP0339Z7wFEjKKG2TtLhwJVp9mbqv6FfC1udyT1JcNkBl
+uq6x8j7btDBvKaH55rzg/ePLsHoYEvRZQDm3vN849wlGks+rgbM/Wq6BhAxL3+L7
+vP5sNwLBqyMgki4jlkHuH4IqnlqBAxhb27fe6TFslGE8lLBgrxMaVdA9V9VawafV
+kPhMWitdfuv+1G8rHU32aaCkF48lBMr2khle6VXAA+RwnS7MJ1+899VTlsCWOmt4
+FrGXJqDIBexJgDZtIRFtbWezysMT3JkkTTfb6wwqr1fyN9iKZWlxnZt4AW/3wdCx
+eM7hbNXOXlejicGJyw5gFEVbLuh5P/vCPi7UTFF+dcFRM/8p1CiEGc4NezCpk1hi
+ZCL7+LyuqO8w8YYbrVYTyn7Z/Z/xRhvWfC7ETN/QJBOPtEzMJ6sdnzdCEp58ATft
+Q85imJfF31F6k+0BTcya1nnQSuDj0a4AOZvE+uyDsFTW3EeoA/HNUCt61chI+87w
+6BacZ7/meZMeGEih4zGI
+=rPf8
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
