@@ -1,39 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] gpio: make handler_data configurable while using gpiolib_irqchip
-Date: Thu, 24 Apr 2014 15:06:21 +0200
-Message-ID: <CACRpkdYgzrVHgkc6xJKUebSDxnf1FbdzWXj-f2w-u+A2QY58Cg@mail.gmail.com>
-References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com>
-	<1397544229-20545-4-git-send-email-21cnbao@gmail.com>
-	<CACRpkdb8rmMDXS1kfcq7wgOnG2XsPm_bxb15z9_9d3E+trBfQA@mail.gmail.com>
-	<CAGsJ_4wmd-ejfHF+MXbO3JSppUDYcEVKeO1WxRM16FtSFEBxpA@mail.gmail.com>
-	<CACRpkdYcbngMDPRnuQjPHwo-USHdtK26T_6VM=PFnkT71Dg8Ng@mail.gmail.com>
-	<CAGsJ_4y4H63KxJLF1hKaBwHVYb2b_2wTzjO_kGhKUOzScYpKqA@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: rdc321x: Fix off-by-one for ngpio setting
+Date: Thu, 24 Apr 2014 15:08:03 +0200
+Message-ID: <CACRpkdaL7Zv0SwekpUW_rz1A+ttPjfU6=A=BwoayyRiFGyGwcA@mail.gmail.com>
+References: <1398305629.14665.1.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:62508 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753805AbaDXNGW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 09:06:22 -0400
-Received: by mail-oa0-f43.google.com with SMTP id eb12so2592779oac.16
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Apr 2014 06:06:21 -0700 (PDT)
-In-Reply-To: <CAGsJ_4y4H63KxJLF1hKaBwHVYb2b_2wTzjO_kGhKUOzScYpKqA@mail.gmail.com>
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:33444 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753239AbaDXNIF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 09:08:05 -0400
+Received: by mail-oa0-f52.google.com with SMTP id l6so2602223oag.11
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Apr 2014 06:08:04 -0700 (PDT)
+In-Reply-To: <1398305629.14665.1.camel@phoenix>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Barry Song <21cnbao@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <florian@openwrt.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>
 
-On Thu, Apr 24, 2014 at 1:23 AM, Barry Song <21cnbao@gmail.com> wrote:
+On Thu, Apr 24, 2014 at 4:13 AM, Axel Lin <axel.lin@ingics.com> wrote:
 
-> my point is that will we make the gpiochip_set_chained_irqchip() more
-> general for this kind of cases too since you have had a good API to
-> wrap things?
+> The valid gpio is GPIO0 ~ GPIO58, so ngpio should be 59.
+> This patch also renames RDC321X_MAX_GPIO to RDC321X_NUM_GPIO because it
+> actually means the number of available GPIOs.
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+> Hi Lee,
+> This actually fixes the ngpio setting in gpio-rdc321x driver.
+> So I think it makes sense to go via gpio tree.
 
-As it only wraps two function calls I'm leaning toward deleting it as it
-might create more complexity than it removes. Not sure.
+Nah, better to take this in MFD, and change $SUBJECT
+to "mfd:".
 
-We don't have a similar handler for registering nested threaded
-irq handlers so it's not really helpful.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
