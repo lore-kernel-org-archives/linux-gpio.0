@@ -1,89 +1,52 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 2/2] gpio: of: Allow -gpio suffix for property names
-Date: Thu, 24 Apr 2014 09:06:24 -0500
-Message-ID: <CAL_Jsq+DwCBLoNYsgHnoLQgSMnSBDM5XH_xoWS-RWdmx-JBeXg@mail.gmail.com>
-References: <1398266889-17489-1-git-send-email-thierry.reding@gmail.com>
-	<1398266889-17489-2-git-send-email-thierry.reding@gmail.com>
-	<CACRpkdadAUXgC-K6be6SFFn2ZTvCqkTK7VRJEzpFdUbybKc3YA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Subject: Re: [PATCH 3/4] gpio: make handler_data configurable while using gpiolib_irqchip
+Date: Thu, 24 Apr 2014 23:43:04 +0800
+Message-ID: <CAGsJ_4xXLvzRV0k7LK2HCHRqkreRMUsnT3qtUbg0s+y8feD-QA@mail.gmail.com>
+References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com>
+	<1397544229-20545-4-git-send-email-21cnbao@gmail.com>
+	<CACRpkdb8rmMDXS1kfcq7wgOnG2XsPm_bxb15z9_9d3E+trBfQA@mail.gmail.com>
+	<CAGsJ_4wmd-ejfHF+MXbO3JSppUDYcEVKeO1WxRM16FtSFEBxpA@mail.gmail.com>
+	<CACRpkdYcbngMDPRnuQjPHwo-USHdtK26T_6VM=PFnkT71Dg8Ng@mail.gmail.com>
+	<CAGsJ_4y4H63KxJLF1hKaBwHVYb2b_2wTzjO_kGhKUOzScYpKqA@mail.gmail.com>
+	<CACRpkdYgzrVHgkc6xJKUebSDxnf1FbdzWXj-f2w-u+A2QY58Cg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f180.google.com ([209.85.128.180]:42202 "EHLO
-	mail-ve0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753344AbaDXOG0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 10:06:26 -0400
-In-Reply-To: <CACRpkdadAUXgC-K6be6SFFn2ZTvCqkTK7VRJEzpFdUbybKc3YA@mail.gmail.com>
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:59877 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753890AbaDXPnF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 11:43:05 -0400
+Received: by mail-pd0-f180.google.com with SMTP id v10so2067743pde.11
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Apr 2014 08:43:04 -0700 (PDT)
+In-Reply-To: <CACRpkdYgzrVHgkc6xJKUebSDxnf1FbdzWXj-f2w-u+A2QY58Cg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-On Thu, Apr 24, 2014 at 7:47 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Apr 23, 2014 at 5:28 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
+2014-04-24 21:06 GMT+08:00, Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Apr 24, 2014 at 1:23 AM, Barry Song <21cnbao@gmail.com> wrote:
 >
->> From: Thierry Reding <treding@nvidia.com>
->>
->> Many bindings use the -gpio suffix in property names. Support this in
->> addition to the -gpios suffix when requesting GPIOs using the new
->> descriptor-based API.
->>
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>> my point is that will we make the gpiochip_set_chained_irqchip() more
+>> general for this kind of cases too since you have had a good API to
+>> wrap things?
 >
-> Are the DT bindings really full of such ambiguity between
-> singular and plural? Examples?
->
-> What happens in affected drivers today? It just doesn't work?
+> As it only wraps two function calls I'm leaning toward deleting it as it
+> might create more complexity than it removes. Not sure.
 
-They mostly seem to use of_get_named_gpio.
+i do agree that we can remove it if it doesn't really support general
+gpiochip. i think it is popular that some gpiochip has several irq
+parents. so people might get confused by this API as it actually
+doesn't really help many.
 
 >
-> Does that mean these bindings are not actively used by any
-> drivers yet so we could augment the bindings instead, or are
-> they already deployed so we must implement this?
+> We don't have a similar handler for registering nested threaded
+> irq handlers so it's not really helpful.
 >
-> Would like a word from the DT people here...
+> Yours,
+> Linus Walleij
+>
 
-Interestingly, there is not a single occurrence of '-gpio ' in
-powerpc, but a bunch in ARM. In hindsight, we should have perhaps
-enforced using -gpios only, but that doesn't really matter now. We
-have -gpio in use, so we need to support it. That doesn't necessarily
-mean this function has to support it. For example, this function could
-a legacy method and some other function should be used instead
-(of_get_named_gpio perhaps).
+-barry
 
->>  drivers/gpio/gpiolib.c | 18 ++++++++++++------
->>  1 file changed, 12 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->> index 7a0b97076374..b991462c22fb 100644
->> --- a/drivers/gpio/gpiolib.c
->> +++ b/drivers/gpio/gpiolib.c
->> @@ -2594,17 +2594,23 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
->>                                       unsigned int idx,
->>                                       enum gpio_lookup_flags *flags)
->>  {
->> +       static const char *suffixes[] = { "gpios", "gpio" };
->>         char prop_name[32]; /* 32 is max size of property name */
->>         enum of_gpio_flags of_flags;
->>         struct gpio_desc *desc;
->> +       unsigned int i;
->>
->> -       if (con_id)
->> -               snprintf(prop_name, 32, "%s-gpios", con_id);
->> -       else
->> -               snprintf(prop_name, 32, "gpios");
->> +       for (i = 0; i < ARRAY_SIZE(suffixes); i++) {
->> +               if (con_id)
->> +                       snprintf(prop_name, 32, "%s-%s", con_id, suffixes[i]);
->> +               else
->> +                       snprintf(prop_name, 32, "%s", suffixes[i]);
-
-This has the side effect of searching for "gpio" as property name
-which I don't think we want to allow. It also allows a DT with either
-suffix to work. While I don't necessarily think the kernel's job
-should be DT validation, we don't have any other validation today and
-I don't see how this change simplifies the code. Between stricter DT
-checking (in the kernel) and simpler code, I'd pick the latter.
-
-Rob
+-barry
