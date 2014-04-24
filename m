@@ -1,54 +1,70 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH 4/4] pinctrl: sirf: move to use irq_get_handler_data
-Date: Thu, 24 Apr 2014 23:45:44 +0800
-Message-ID: <CAGsJ_4zBC6wkRVwLWs4i3Vav-+CXJmVNp4cRbeLm-5KtzqohDA@mail.gmail.com>
-References: <1397544229-20545-1-git-send-email-21cnbao@gmail.com>
-	<1397544229-20545-5-git-send-email-21cnbao@gmail.com>
-	<CACRpkdbDeF5gBVv=hQSdX1i9fw=7Or+=qN=g4OXHvHkZKr7vcQ@mail.gmail.com>
-	<CAGsJ_4y=zNNWAvVOK6zGaY-bufUCbOcZtwE=SuWJ=QpF9rBNHg@mail.gmail.com>
-	<CACRpkdYz+JdAbhdR_s9h4m_3JNcpLo-2VzoXYoEd21myB4yZtg@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v3] gpio: omap: implement get_direction
+Date: Thu, 24 Apr 2014 09:42:04 -0700
+Message-ID: <20140424164204.GE22987@atomide.com>
+References: <1398322659-20008-1-git-send-email-yegorslists@googlemail.com>
+ <CACRpkdZPNGHNQhqovDoaKTXZT3mJfN4pjKSBxW7m6wT5u-XEYQ@mail.gmail.com>
+ <535911D0.3020907@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:43575 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756693AbaDXPpo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Apr 2014 11:45:44 -0400
-Received: by mail-pd0-f181.google.com with SMTP id w10so2056946pde.40
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Apr 2014 08:45:44 -0700 (PDT)
-In-Reply-To: <CACRpkdYz+JdAbhdR_s9h4m_3JNcpLo-2VzoXYoEd21myB4yZtg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <535911D0.3020907@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, yegorslists@googlemail.com, Kevin Hilman <khilman@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-2014-04-24 20:59 GMT+08:00, Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Apr 24, 2014 at 12:59 AM, Barry Song <21cnbao@gmail.com> wrote:
->
->>> If you want to use some other handler data than the gpiochip,
->>> you should just use irq_set_chained_handler() and
->>> irq_set_handler_data() directly.
->>
->> i think this should be fixed in the general API but not use one more
->> function call to over-write the handler_data which has been filled in
->> the API.
->> since we have the chance for drivers to set either the whole chip for
->> a simple chip,  or bank-specific data for a chip which has multiple
->> parent IRQs.
->
-> I don't think it's worth it for saving one line. The helper is intended
-> for the simple case, i.e. where it's enough to just get the gpio_chip
-> as handler data. Other alternatives need to be open coded.
->
+* Santosh Shilimkar <santosh.shilimkar@ti.com> [140424 06:30]:
+> On Thursday 24 April 2014 09:13 AM, Linus Walleij wrote:
+> > On Thu, Apr 24, 2014 at 8:57 AM,  <yegorslists@googlemail.com> wrote:
+> > 
+> >> From: Yegor Yefremov <yegorslists@googlemail.com>
+> >>
+> >> This patch implements gpio_chip's get_direction() routine, that
+> >> lets other drivers get particular GPIOs direction using
+> >> struct gpio_desc.
+> >>
+> >> Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+> >> Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+> >> ---
+> >> Changes:
+> >>         v3: get rid of _get_gpio_direction() (Linus Walleij)
+> >>         v2: rework return value calculation
+> > 
+> > Looks good to me, Kevin, Santosh?
+> > 
+> Looks fine to me as well.
+> Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-gpiochip_set_chained_irqchip() only save one line for simple gpiochip too.
-it is not worth as well. people can realize what he should set as irq_handler.
+OK finally got around testing gpio/for-next here. Could not use
+todays linux next as it's broken again for whatever reasons and
+does not even compile for me.
 
-> I'm even considering removing this helper if it's confusing, it doesn't
-> really add much, gpiochip_irqchip_add() is the important function
-> to use, not gpiochip_set_chained_irqchip().
->
-> Yours,
-> Linus Walleij
+Boot tested gpio/next on few omap1 boards: h2, osk and 770 and
+things behave the same way as earlier for me on these boards.
+Also made sure the PM does not break as tested on n900 with the
+GPIO changes. So for the following patches, feel free to add:
 
--barry
+cb2a5fb059b5 gpio: do not set up hardware for IRQ_TYPE_NONE
+da09ceae78f7 gpio: omap: implement get_direction
+d04b76626e94 gpio: omap: convert driver to use gpiolib irqchip
+d4094cd7577c gpio: omap: check gpiochip_add() return value
+820eade1b7f3 gpio: omap: convert to use irq_domain_add_simple()
+717f70e39a98 gpio: omap: Use devm_ioremap_resource()
+
+Tested-by: Tony Lindgren <tony@atomide.com>
+
+Naturally no need to go back to edit the commits for my acks
+unless there are other reasons to redo the branches.
+
+> > Part of me wants to list Javier as maintainer for this driver.
+> > 
+> Am ok with it as well.
+
+That sounds good to me too, looks like Javier is doing a good job
+on that already :)
+
+Regards,
+
+Tony 
