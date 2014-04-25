@@ -1,35 +1,32 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 1/2] gpio: Add missing device-managed documentation
-Date: Fri, 25 Apr 2014 17:10:05 +0200
-Message-ID: <1398438606-19718-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/2] gpio: of: Allow -gpio suffix for property names
+Date: Fri, 25 Apr 2014 09:24:57 -0600
+Message-ID: <535A7E49.8000809@wwwdotorg.org>
+References: <1398266889-17489-1-git-send-email-thierry.reding@gmail.com> <1398266889-17489-2-git-send-email-thierry.reding@gmail.com> <CACRpkdadAUXgC-K6be6SFFn2ZTvCqkTK7VRJEzpFdUbybKc3YA@mail.gmail.com> <CAL_Jsq+DwCBLoNYsgHnoLQgSMnSBDM5XH_xoWS-RWdmx-JBeXg@mail.gmail.com> <20140424182243.GA27443@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:54570 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751015AbaDYPaS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Apr 2014 11:30:18 -0400
+In-Reply-To: <20140424182243.GA27443@ulmo>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robherring2@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+On 04/24/2014 12:22 PM, Thierry Reding wrote:
+...
+> The downside of not allowing the gpiod API to support the -gpio suffix
+> is that we'll never be able to convert drivers that use such a binding
+> and will forever have a hodgepodge of GPIO APIs that we need to support.
 
-Add the GPIO-related device-managed functions to the list of functions
-in Documentation/driver-model/devres.txt.
+Perhaps rather than making the existing gpiod API automatically search
+for both -gpios and -gpio, we could make a new API for the other suffix,
+so that driver indicate explicitly which property name they want. That
+way, someone can't accidentally write -gpio in the DT and have it still
+work. Or, add a parameter to the existing API, but that's probably a lot
+more churn.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- Documentation/driver-model/devres.txt | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index a3477c3d69a2..7b7d1c4d06bf 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -310,3 +310,8 @@ SLAVE DMA ENGINE
- 
- SPI
-   devm_spi_register_master()
-+
-+GPIO
-+  devm_gpiod_get()
-+  devm_gpiod_get_index()
-+  devm_gpiod_put()
--- 
-1.9.2
