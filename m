@@ -1,60 +1,66 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: Re: [PATCH 1/7] gpiolib: gpiolib-of: Implement
- device tree gpio-names based lookup
-Date: Tue, 29 Apr 2014 00:19:34 +0800
-Message-ID: <CAGb2v64rs4UYMbQ--i=pcuuORVneozDpucCeHQKE4Qn7+qSCdA@mail.gmail.com>
-References: <1397544101-18135-1-git-send-email-wens@csie.org>
- <1397544101-18135-2-git-send-email-wens@csie.org> <CACRpkdZDjC1KxM2yJqsgpg2MxBamX1EObsuahB-2c+ShuBXm8A@mail.gmail.com>
- <CAAVeFuL7B7kVw7ME=Vo_snhG27aBphKO8Uzvzen1gyD=R2ETNA@mail.gmail.com>
-Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH 00/17] gpio: remove unnecessary OOM messages
+Date: Tue, 29 Apr 2014 17:29:35 +0900
+Message-ID: <003101cf6385$2751dbb0$75f59310$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBK777GNAKGQE3WNOVKQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <CAAVeFuL7B7kVw7ME=Vo_snhG27aBphKO8Uzvzen1gyD=R2ETNA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi>
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-To: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:46646 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755268AbaD2I3h (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Apr 2014 04:29:37 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N4S00B5YA9CWS90@mailout4.samsung.com> for
+ linux-gpio@vger.kernel.org; Tue, 29 Apr 2014 17:29:36 +0900 (KST)
+Content-language: ko
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: 'Linus Walleij' <linus.walleij@linaro.org>
+Cc: 'Alexandre Courbot' <gnurou@gmail.com>, linux-gpio@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Wed, Apr 23, 2014 at 9:49 AM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Wed, Apr 23, 2014 at 12:02 AM, Linus Walleij
-> <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> On Tue, Apr 15, 2014 at 8:41 AM, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org> wrote:
->>
->>> This patch provides of_get_gpiod_flags_by_name(), which looks up GPIO
->>> phandles by name only, through gpios/gpio-names, and not by index.
->>>
->>> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
->>
->> Like Alexandre I have no strong opinion on this alternative scheme.
->
-> Yeah this new lookup scheme probably does no harm, but I think it
-> should be a little bit more motivated as it is, after all, introducing
-> more potential confusion for DT users.
->
-> It does not look like this new lookup scheme is necessary to Chen-Yu's
-> patchset and that he could as well have used the current one. Right
-> now there is only one way to define GPIOs - if we introduce a second
-> one, then which one should new DT users choose? Which one looks
-> better? I can already endless fights taking place over this.
+The site-specific OOM messages are unnecessary, because they
+duplicate the MM subsystem generic OOM message. For example,
+k.alloc and v.alloc failures use dump_stack().
 
-I will pull out the two patches.
+Jingoo Han (17):
+      gpio: adp5520: remove unnecessary OOM messages
+      gpio: adp5588: remove unnecessary OOM messages
+      gpio: davinci: remove unnecessary OOM messages
+      gpio: em: remove unnecessary OOM messages
+      gpio: janz-ttl: remove unnecessary OOM messages
+      gpio: lynxpoint: remove unnecessary OOM messages
+      gpio: moxart: remove unnecessary OOM messages
+      gpio: mvebu: remove unnecessary OOM messages
+      gpio: palmas: remove unnecessary OOM messages
+      gpio: rc5t583: remove unnecessary OOM messages
+      gpio: rcar: remove unnecessary OOM messages
+      gpio: rdc321x: remove unnecessary OOM messages
+      gpio: SPEAr: remove unnecessary OOM messages
+      gpio: tegra: remove unnecessary OOM messages
+      gpio: tps6586x: remove unnecessary OOM messages
+      gpio: tps65910: remove unnecessary OOM messages
+      gpio: zevio: remove unnecessary OOM messages
+---
+ drivers/gpio/gpio-adp5520.c     |    4 +---
+ drivers/gpio/gpio-adp5588.c     |    4 +---
+ drivers/gpio/gpio-davinci.c     |    4 +---
+ drivers/gpio/gpio-em.c          |    1 -
+ drivers/gpio/gpio-janz-ttl.c    |    1 -
+ drivers/gpio/gpio-lynxpoint.c   |    4 +---
+ drivers/gpio/gpio-moxart.c      |    4 +---
+ drivers/gpio/gpio-mvebu.c       |    4 +---
+ drivers/gpio/gpio-palmas.c      |    4 +---
+ drivers/gpio/gpio-rc5t583.c     |    4 +---
+ drivers/gpio/gpio-rcar.c        |    1 -
+ drivers/gpio/gpio-rdc321x.c     |    4 +---
+ drivers/gpio/gpio-spear-spics.c |    4 +---
+ drivers/gpio/gpio-tegra.c       |    4 +---
+ drivers/gpio/gpio-tps6586x.c    |    4 +---
+ drivers/gpio/gpio-tps65910.c    |    4 +---
+ drivers/gpio/gpio-zevio.c       |    4 +---
+ 17 files changed, 14 insertions(+), 45 deletions(-)
 
-> Does this new lookup help with some of the existing problems we have
-> like ACPI/DT lookup compatibility?
-
-I hope they will be compatible with ACPI named gpios, whenever support
-for ACPI named properties extension lands. But that really depends on
-the ACPI implementation. For now I think it's best that I just hold on
-to these. We can revisit the discussion later if needed.
-
-> I just need to be given one practical reason to give my ack.
-
-
-Thanks
-ChenYu
