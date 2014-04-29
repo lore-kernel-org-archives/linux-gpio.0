@@ -1,34 +1,41 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH 08/17] gpio: mvebu: remove unnecessary OOM messages
-Date: Tue, 29 Apr 2014 07:25:19 -0400
-Message-ID: <20140429112519.GE28159@titan.lakedaemon.net>
-References: <003101cf6385$2751dbb0$75f59310$%han@samsung.com>
- <003901cf6386$607ce8c0$2176ba40$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Robert ABEL <rabel@cit-ec.uni-bielefeld.de>
+Subject: [PATCH] GPIOD: fix gpiod_direction_output initial value
+Date: Tue, 29 Apr 2014 14:27:22 +0200
+Message-ID: <1398774442-2407-1-git-send-email-rabel@cit-ec.uni-bielefeld.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:15787 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933719AbaD2LZX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Apr 2014 07:25:23 -0400
-Content-Disposition: inline
-In-Reply-To: <003901cf6386$607ce8c0$2176ba40$%han@samsung.com>
+Received: from smarthost.TechFak.Uni-Bielefeld.DE ([129.70.137.17]:37954 "EHLO
+	smarthost.TechFak.Uni-Bielefeld.DE" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S933248AbaD2Mgq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 29 Apr 2014 08:36:46 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Linus Walleij' <linus.walleij@linaro.org>, 'Alexandre Courbot' <gnurou@gmail.com>, linux-gpio@vger.kernel.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, Robert ABEL <rabel@cit-ec.uni-bielefeld.de>
 
-On Tue, Apr 29, 2014 at 05:38:21PM +0900, Jingoo Han wrote:
-> The site-specific OOM messages are unnecessary, because they
-> duplicate the MM subsystem generic OOM message.
-> 
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  drivers/gpio/gpio-mvebu.c |    4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+gpiod_direction_output initial value was used as raw value instead of
+logical value. Convert value from logical to raw.
 
-Acked-by: Jason Cooper <jason@lakedaemon.net>
+Signed-off-by: Robert ABEL <rabel@cit-ec.uni-bielefeld.de>
+---
+ drivers/gpio/gpiolib.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-thx,
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index f48817d..2309322 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2032,6 +2032,10 @@ static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ 		return -EIO;
+ 	}
+ 
++	/* convert logical value to raw value */
++	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
++		value = !value;
++
+ 	/* Open drain pin should not be driven to 1 */
+ 	if (value && test_bit(FLAG_OPEN_DRAIN,  &desc->flags))
+ 		return gpiod_direction_input(desc);
+-- 
+1.9.2
 
-Jason.
