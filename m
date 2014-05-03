@@ -1,46 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: of: Allow -gpio suffix for property names
-Date: Fri, 2 May 2014 15:22:58 -0700
-Message-ID: <CACRpkdYtuQDFZxf5FhY4Dc9CQka=wMZwEETBks450zVK0rEL3w@mail.gmail.com>
-References: <1398266889-17489-1-git-send-email-thierry.reding@gmail.com>
-	<1398266889-17489-2-git-send-email-thierry.reding@gmail.com>
-	<CACRpkdadAUXgC-K6be6SFFn2ZTvCqkTK7VRJEzpFdUbybKc3YA@mail.gmail.com>
-	<CAL_Jsq+DwCBLoNYsgHnoLQgSMnSBDM5XH_xoWS-RWdmx-JBeXg@mail.gmail.com>
-	<20140424182243.GA27443@ulmo>
-	<535A7E49.8000809@wwwdotorg.org>
+Subject: Re: [PATCH 0/4] use BIT() macro instead manually shifting bits
+Date: Sat, 3 May 2014 12:15:10 -0700
+Message-ID: <CACRpkdYdE3YfVguC+GV6JaTSNd9mnik7D4N+TspDGsD5XpZOMA@mail.gmail.com>
+References: <1398556850-27751-1-git-send-email-javier@dowhile0.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:50575 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751846AbaEBWW6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 May 2014 18:22:58 -0400
-Received: by mail-oa0-f48.google.com with SMTP id i4so5095599oah.7
-        for <linux-gpio@vger.kernel.org>; Fri, 02 May 2014 15:22:58 -0700 (PDT)
-In-Reply-To: <535A7E49.8000809@wwwdotorg.org>
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:60597 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753216AbaECTPL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 3 May 2014 15:15:11 -0400
+Received: by mail-oa0-f45.google.com with SMTP id eb12so6762377oac.18
+        for <linux-gpio@vger.kernel.org>; Sat, 03 May 2014 12:15:10 -0700 (PDT)
+In-Reply-To: <1398556850-27751-1-git-send-email-javier@dowhile0.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robherring2@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, inux-omap@vger.kernel.org
 
-On Fri, Apr 25, 2014 at 8:24 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 04/24/2014 12:22 PM, Thierry Reding wrote:
-> ...
->> The downside of not allowing the gpiod API to support the -gpio suffix
->> is that we'll never be able to convert drivers that use such a binding
->> and will forever have a hodgepodge of GPIO APIs that we need to support.
+On Sat, Apr 26, 2014 at 5:00 PM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+
+> Hello Linus and Alexandre,
 >
-> Perhaps rather than making the existing gpiod API automatically search
-> for both -gpios and -gpio, we could make a new API for the other suffix,
-> so that driver indicate explicitly which property name they want. That
-> way, someone can't accidentally write -gpio in the DT and have it still
-> work. Or, add a parameter to the existing API, but that's probably a lot
-> more churn.
+> While learning coccinelle towards doing the big gpio_chip/gpio_chip_ops
+> split refactoring I wrote this trivial semantic patch that replaces a
+> manual bit shift by using the BIT macro from <linux/bitops.h>
 
-Hm, that is possible, I just worry that this will lead the DT and ACPI
-semantics to diverge even more, and the present patch make things
-more coherent from the framework side of things instead of even more
-elaborate per-HW-info-method :-/
+Nice semantic patch!
+
+And all patches applied with Alex's ACK.
+
+However I will edit the commit messages to remove the word
+"manual". This just breaks my heart everytime I see that word
+used in code, manual means a person is typing the keys or something
+I bet it's still a computer doing the heavy lifting here.
 
 Yours,
 Linus Walleij
