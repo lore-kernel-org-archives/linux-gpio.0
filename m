@@ -1,155 +1,261 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpio: make of_get_named_gpiod_flags() private
-Date: Sun,  4 May 2014 12:45:25 +0900
-Message-ID: <1399175125-6430-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] GPIOD, OF: parse flags into gpiod
+Date: Mon, 5 May 2014 22:10:39 +0900
+Message-ID: <CAAVeFuJB21n04qKbwxyPCVi=s882sTfgvftG8GgaBLqH-cjFCQ@mail.gmail.com>
+References: <1398775115-6842-1-git-send-email-rabel@cit-ec.uni-bielefeld.de>
+ <CAAVeFuK-ZSr__nLq9ZU7ASD_CsXOUBYqtZv4F4MTd5+XSxTGdg@mail.gmail.com> <536767A1.5090701@cit-ec.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gnurou.org ([207.192.72.5]:50651 "EHLO mail.gnurou.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753270AbaEDDxm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 3 May 2014 23:53:42 -0400
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:61388 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932215AbaEENLB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 May 2014 09:11:01 -0400
+Received: by mail-vc0-f178.google.com with SMTP id hu19so8780930vcb.9
+        for <linux-gpio@vger.kernel.org>; Mon, 05 May 2014 06:11:01 -0700 (PDT)
+In-Reply-To: <536767A1.5090701@cit-ec.uni-bielefeld.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: Robert ABEL <rabel@cit-ec.uni-bielefeld.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-of_get_named_gpiod_flags() is visible and directly usable by GPIO
-consumers, but it really should not as the gpiod interface relies
-on the simpler gpiod_get() to provide properly-configured GPIOs.
+On Mon, May 5, 2014 at 7:27 PM, Robert Abel
+<rabel@cit-ec.uni-bielefeld.de> wrote:
+> On 01.05.2014 08:24, Alexandre Courbot wrote:
+>>
+>> This considerably changes the behavior of of_get_named_gpiod_flags(), and
+>> makes it apply DT flags to the GPIO descriptor no matter what.
+>
+> Which should be done anyway, IMHO. I think this is correct and expected
+> behavior.
 
-of_get_named_gpiod_flags() is just used internally by gpiolib to
-implement gpiod_get(), and by the old of_get_named_gpio_flags()
-function, therefore it makes sense to make it gpiolib-private.
+If you do that you will have to update the hundreds of direct and
+indirect users of of_get_named_gpio(), or face their wrath because
+their code will stop working all of a sudden. More detailed
+explanation later in this mail.
 
-As a side-effect, the unused (and unneeded) of_get_gpiod_flags()
-inline function is also removed, and of_get_named_gpio_flags() is moved
-from a static inline function to a regular one in gpiolib-of.c
+> Users (drivers, gpiolib, ...) expect to call of_get_named_gpiod_flags and
+> get a usable and _correct_ gpio_desc back. However, right now, users _have_
+> to use of_get_named_gpiod_flags with the flags argument as there is no way
+> to recover the lost flags when calling of_get_named_gpiod_flags(..., NULL).
+> I think correctness should start at the function level.
+> of_get_named_gpiod_flags should be correct in and of itself. Even if
+> private. Other functions should not have to be aware of the need to actively
+> parse the flags to correct the gpio_desc->flags.
 
-This results in all references to gpiod_* functions in of_gpio.h being
-gone, which is the way it should be since this file is part of the old
-integer GPIO interface.
+As explainer earlier, of_get_named_gpiod_flags() should never have
+been public in the first place. This is being addressed by
+https://lkml.org/lkml/2014/5/3/155 .
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/gpiolib-of.c | 14 ++++++++++++++
- drivers/gpio/gpiolib.h    |  3 +++
- include/linux/of_gpio.h   | 39 ++-------------------------------------
- 3 files changed, 19 insertions(+), 37 deletions(-)
+Now that it is private, if you take a look at how it is used, you will
+see that its current design actually makes sense.
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index db98d3a..af7e25c 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -96,6 +96,20 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
- }
- EXPORT_SYMBOL(of_get_named_gpiod_flags);
- 
-+int of_get_named_gpio_flags(struct device_node *np, const char *list_name,
-+			    int index, enum of_gpio_flags *flags)
-+{
-+	struct gpio_desc *desc;
-+
-+	desc = of_get_named_gpiod_flags(np, list_name, index, flags);
-+
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+	else
-+		return desc_to_gpio(desc);
-+}
-+EXPORT_SYMBOL(of_get_named_gpio_flags);
-+
- /**
-  * of_gpio_simple_xlate - translate gpio_spec to the GPIO number and flags
-  * @gc:		pointer to the gpio_chip structure
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index cf09294..f75c82e 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -46,4 +46,7 @@ acpi_get_gpiod_by_index(struct device *dev, int index,
- int gpiochip_request_own_desc(struct gpio_desc *desc, const char *label);
- void gpiochip_free_own_desc(struct gpio_desc *desc);
- 
-+struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
-+		   const char *list_name, int index, enum of_gpio_flags *flags);
-+
- #endif /* GPIOLIB_H */
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index f14123a..123883c 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -19,7 +19,6 @@
- #include <linux/errno.h>
- #include <linux/gpio.h>
- #include <linux/of.h>
--#include <linux/gpio/consumer.h>
- 
- struct device_node;
- 
-@@ -48,9 +47,6 @@ static inline struct of_mm_gpio_chip *to_of_mm_gpio_chip(struct gpio_chip *gc)
- 	return container_of(gc, struct of_mm_gpio_chip, gc);
- }
- 
--extern struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
--		const char *list_name, int index, enum of_gpio_flags *flags);
--
- extern int of_mm_gpiochip_add(struct device_node *np,
- 			      struct of_mm_gpio_chip *mm_gc);
- 
-@@ -63,12 +59,6 @@ extern int of_gpio_simple_xlate(struct gpio_chip *gc,
- #else /* CONFIG_OF_GPIO */
- 
- /* Drivers may not strictly depend on the GPIO support, so let them link. */
--static inline struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
--		const char *list_name, int index, enum of_gpio_flags *flags)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
- static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
- 				       const struct of_phandle_args *gpiospec,
- 				       u32 *flags)
-@@ -81,17 +71,8 @@ static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
- 
- #endif /* CONFIG_OF_GPIO */
- 
--static inline int of_get_named_gpio_flags(struct device_node *np,
--		const char *list_name, int index, enum of_gpio_flags *flags)
--{
--	struct gpio_desc *desc;
--	desc = of_get_named_gpiod_flags(np, list_name, index, flags);
--
--	if (IS_ERR(desc))
--		return PTR_ERR(desc);
--	else
--		return desc_to_gpio(desc);
--}
-+extern int of_get_named_gpio_flags(struct device_node *np,
-+		const char *list_name, int index, enum of_gpio_flags *flags);
- 
- /**
-  * of_gpio_named_count() - Count GPIOs for a device
-@@ -129,22 +110,6 @@ static inline int of_gpio_count(struct device_node *np)
- 	return of_gpio_named_count(np, "gpios");
- }
- 
--/**
-- * of_get_gpiod_flags() - Get a GPIO descriptor and flags to use with GPIO API
-- * @np:		device node to get GPIO from
-- * @index:	index of the GPIO
-- * @flags:	a flags pointer to fill in
-- *
-- * Returns GPIO descriptor to use with Linux generic GPIO API, or a errno
-- * value on the error condition. If @flags is not NULL the function also fills
-- * in flags for the GPIO.
-- */
--static inline struct gpio_desc *of_get_gpiod_flags(struct device_node *np,
--					int index, enum of_gpio_flags *flags)
--{
--	return of_get_named_gpiod_flags(np, "gpios", index, flags);
--}
--
- static inline int of_get_gpio_flags(struct device_node *np, int index,
- 		      enum of_gpio_flags *flags)
- {
--- 
-1.9.2
+The first user of this function is of_get_named_gpio_flags() and its
+siblings, which all implement the legacy (but still dominant in
+user-code) integer-based GPIO interface. For this interface, handling
+of GPIO properties is up to the consumer and done through the flags
+parameter. I fully agree that this is not optimal ; however that's how
+the code is used and changing this cannot be done without a lot of
+refactoring and/or angry users.
 
+gpiod has been introduced as a saner, easier-to-use interface for
+GPIOs. For this interface, we *do* want GPIO properties to be handled
+transparently. That's why the only way of requesting a GPIO is through
+gpiod_get(), which takes care of this.
+
+>> In effect, it makes the flags argument completely unneeded.
+>
+> Except for drivers who use the old integer interface and call desc_to_gpio
+> themselves. Which is why I kept it.
+
+Exactly. But if you also set the flag in their back in
+of_get_named_gpiod_flags(), they are not going to be happy about it...
+
+>> of_get_named_gpiod_flags() ought to be gpiolib-private actually (I still
+>> need to send a patch fixing that)
+>
+> Well, a few lines above you complained how my patch considerably changed
+> this function. Yet you want to take away the ability to have a DT node with
+> gpio references in fields not named "gpios" or "%s-gpio(s|)"...
+> Surely this is a much bigger breakage -- not just of the API?
+
+No API is broken by this. GPIOs in the DT are to be defined using the
+-gpios suffix (Documentation/gpio/board.txt ). Just like regulators
+are defined with the -supply suffix. This is enforced by the gpiod API
+and therefore direct access to of_get_named_gpiod_flags() is unneeded,
+and actually dangerous.
+
+There might be some DT users that did not follow that rule and got
+away with it because the old GPIO API is more permissive. These will
+not be able to update to gpiod easily (examples welcome if this is
+what motivated your patch), but this patch is not the correct way of
+addressing this issue.
+
+>> since its only user is of_find_gpio(), which correctly applies the flags.
+>
+> of_find_gpio does _not_ apply the flags correctly. I'm looking at
+> dd34c37aa3e81715a1ed8da61fa438072428e188 here (head of for-next branch):
+
+That's correct - because the flags are actually applied one level
+higher by the only caller of of_find_gpio(), namely gpiod_get(). The
+reason why this is done there and not earlier is because there are
+other GPIO providers (ACPI, platform data) and we want the flags code
+to be handled in a single place.
+
+>
+>> static struct gpio_desc *of_find_gpio(struct device *dev, const char
+>> *con_id,
+>>                       unsigned int idx,
+>>                       enum gpio_lookup_flags *flags)
+>> {
+>>     ...
+>>     enum of_gpio_flags of_flags;
+>>     struct gpio_desc *desc;
+>>
+>>     ...
+>>
+>>         desc = of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
+>>                         &of_flags);
+>>     ...
+>>
+>>     if (of_flags & OF_GPIO_ACTIVE_LOW)
+>>         *flags |= GPIO_ACTIVE_LOW;
+>>
+>>     return desc;
+>> }
+>
+>
+> It just translates the parsed of_gpio_flags to gpio_lookup_flags for the
+> passed flags argument --which btw must not be NULL, which it can be for many
+> other exported functions.
+> So the descriptor is strill _wrong_, i.e. desc->flags not set, and any
+> subsequent call to set the gpio will behave incorrectly when flags were
+> applied in the DT. Which is why I fixed it in of_get_named_gpiod_flags to
+> begin with.
+> gpio_desc should be a welcomed change to get away from drivers having to
+> manage their I/O polarity themselves. But right now it's royally broken.
+
+Considering that gpiod_get() is now the entry point to all the
+functions named above in the gpiod API, and that it *does* handle the
+flags correctly, it doesn't seem broken to me.
+
+>
+>> We have users of of_get_named_gpio_flags() that could at first sight
+>> benefit from your change. However, your change will return them a GPIO which
+>> will behave differently from what they expect since the active_low property
+>> will be set on its GPIO descriptor.
+>
+> They shouldn't expect anything. gpio_desc is an opaque type for exactly that
+> reason. Drivers should neither know nor care about the gpio_desc flags. It's
+> an API inconsistency to actually let them see the flags in the first place
+> -- but that's for historical reasons, apparently.
+
+For the integer-based GPIO interface, there is nothing we can do about it.
+
+For the gpiod interface, you are right in that the flags should be
+completely hidden to user-code. That's why GPIOs can now only be
+acquired through gpiod_get() which takes care of this.
+
+>
+>> Callers of of_get_named_gpio_flags(), working on integer GPIOs, typically
+>> manage that property themselves. This will result in the active_low property
+>> being applied twice, effectively canceling its effect.
+>
+> The integer GPIO use-case is to convert gpio_desc to integers and call the
+> appropriate integer functions gpio_* depending on the flags. All integer
+> functions gpio_* call their gpiod_*_raw_* counterpart. The flags are _not_
+> applied twice. They're applied once if the driver is aware of them or not at
+> all if the driver ignores them.
+
+Consider the following code in pwm_bl.c:
+
+    data->enable_gpio = of_get_named_gpio_flags(node, "enable-gpios", 0,
+                            &flags);
+
+    if (gpio_is_valid(data->enable_gpio) && (flags & OF_GPIO_ACTIVE_LOW))
+        data->enable_gpio_flags |= PWM_BACKLIGHT_GPIO_ACTIVE_LOW;
+
+    ....
+
+        if (pb->enable_gpio_flags & PWM_BACKLIGHT_GPIO_ACTIVE_LOW)
+            gpio_set_value(pb->enable_gpio, 0);
+        else
+            gpio_set_value(pb->enable_gpio, 1);
+
+User code of the legacy GPIO API handles the active_low property by
+itself because of_get_named_gpio_flags() did not apply that property
+on the descriptor. If you change this, the signal on an active-low
+GPIO will become the inverse of what it used to be. That's the reason
+why this patch cannot be accepted.
+
+> Any driver that mixes gpio_* and gpiod_* API at a whim might not remain
+> stable, granted.
+> The flags might be applied twice if the driver parses them, is aware of
+> them, but calls gpiod_* functions depending on the parsed flags. However,
+> this is incorrect driver behavior and drivers that rely on this API duality
+> should be fixed.
+> Though, to be fair, this distinction might be less than ideally
+> documented...
+>
+>
+>> Also, for future contributions could you use "gpiod:of: " in your patch
+>> subject to keep the style consistent with existing practices in
+>> drivers/gpio?
+>
+> I didn't see any such usage, but OK.
+
+git log -- drivers/gpio
+
+Should be "gpio: of:" actually.
+
+This is a common convention everywhere in the kernel.
+
+Cheers,
+Alex.
+
+>>>
+>>> ---
+>>>
+>>> +#if defined(CONFIG_OF)
+>>> +void gpiod_translate_flags(struct gpio_desc *desc, enum of_gpio_flags
+>>> *flags)
+>>
+>> This function translates device tree flags - not just any tag. Its
+>> name should reflect that.
+>
+> I had gpiod_translate_of_flags at first, but that sounded awkward, as
+> anything using the of abbreviation. <-- See what I did there?
+>
+>>> +{
+>>> +
+>>> +       desc->flags = 0;
+>>> +
+>>> +       if (*flags & OF_GPIO_ACTIVE_LOW)
+>>> +               set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+>>> +
+>>> +}
+>>
+>> You could also use this function to set the flags in of_find_gpio(),
+>> since the code is the same.
+>
+> That would be ideal if it turns out this will be necessary in the future.
+>
+>>> +EXPORT_SYMBOL_GPL(gpiod_translate_flags);
+>>
+>> I don't think this function should have been exported. It is only to
+>> be used in gpiolib-of.o, which will always be linked to gpiolib.o
+>> anyway.
+>
+> I had trouble compiling without the export. I'll try again.
+>
+>>> +#if defined(CONFIG_OF)
+>>> +enum of_gpio_flags;
+>>> +void gpiod_translate_flags(struct gpio_desc *desc, enum of_gpio_flags
+>>> *flags);
+>>> +#endif /* CONFIG_OF */
+>>
+>> Again, this should not be part of the public API. These declarations
+>> should have be moved into the gpiolib.h header.
+>
+> OK.
+>
