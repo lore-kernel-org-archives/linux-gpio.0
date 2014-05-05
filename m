@@ -1,99 +1,54 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 1/7] ARM: dts: socfpga: add gpio pieces
-Date: Mon, 5 May 2014 15:02:18 -0700
-Message-ID: <CAOesGMi_0fT4UbfGUp9jkrwYMXgfxC5gmXOBviU9PjAutPdHiw@mail.gmail.com>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
-	<1395505004-22650-2-git-send-email-bigeasy@linutronix.de>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 0/4] use BIT() macro instead manually shifting bits
+Date: Mon, 5 May 2014 13:02:11 +0200
+Message-ID: <CABxcv=m1=RMQqXo5k3Huu4meU3tCiCGg7VUBS6ta_xhrESzUAA@mail.gmail.com>
+References: <1398556850-27751-1-git-send-email-javier@dowhile0.org>
+	<CACRpkdYdE3YfVguC+GV6JaTSNd9mnik7D4N+TspDGsD5XpZOMA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1395505004-22650-2-git-send-email-bigeasy@linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: atull@altera.com, LinusW <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, delicious.quinoa@gmail.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:58506 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752570AbaEELCM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 May 2014 07:02:12 -0400
+Received: by mail-wg0-f48.google.com with SMTP id b13so1971426wgh.31
+        for <linux-gpio@vger.kernel.org>; Mon, 05 May 2014 04:02:11 -0700 (PDT)
+In-Reply-To: <CACRpkdYdE3YfVguC+GV6JaTSNd9mnik7D4N+TspDGsD5XpZOMA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, inux-omap@vger.kernel.org
 
-Hi,
+Hello Linus,
 
-I saw this patch as it came in through Dinh's pull request, see below:
-
-
-On Sat, Mar 22, 2014 at 9:16 AM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> The cycloneV has three gpio controllers, the first two with 29 gpios,=
- the last
-> one with 27. This patch adds the three controller with the gpio drive=
-r which is
-> now sitting the gpio tree.
+On Sat, May 3, 2014 at 9:15 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Sat, Apr 26, 2014 at 5:00 PM, Javier Martinez Canillas
+> <javier@dowhile0.org> wrote:
 >
-> Cc: devicetree@vger.kernel.org
-> Acked-by: Alan Tull <atull@altera.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> v1=E2=80=A6v2:
->         - #gpio-cells =3D <2>
->         - third gpio block has now only 27 gpios
+>> Hello Linus and Alexandre,
+>>
+>> While learning coccinelle towards doing the big gpio_chip/gpio_chip_ops
+>> split refactoring I wrote this trivial semantic patch that replaces a
+>> manual bit shift by using the BIT macro from <linux/bitops.h>
 >
->  arch/arm/boot/dts/socfpga.dtsi | 64 ++++++++++++++++++++++++++++++++=
-++++++++++
->  1 file changed, 64 insertions(+)
+> Nice semantic patch!
 >
-> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfp=
-ga.dtsi
-> index 537f1a5..2a84e67 100644
-> --- a/arch/arm/boot/dts/socfpga.dtsi
-> +++ b/arch/arm/boot/dts/socfpga.dtsi
-> @@ -463,6 +463,70 @@
->                         status =3D "disabled";
->                 };
+
+Thanks
+
+> And all patches applied with Alex's ACK.
 >
-> +               gpio@ff708000 {
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <0>;
-> +                       compatible =3D "snps,dw-apb-gpio";
-> +                       reg =3D <0xff708000 0x1000>;
-> +                       clocks =3D <&per_base_clk>;
-> +                       status =3D "disabled";
-> +
-> +                       gpio0: gpio-controller@0 {
-> +                               compatible =3D "snps,dw-apb-gpio-port=
-";
-> +                               gpio-controller;
-> +                               #gpio-cells =3D <2>;
-> +                               snps,nr-gpios =3D <29>;
-> +                               reg =3D <0>;
-> +                               interrupt-controller;
-> +                               #interrupt-cells =3D <2>;
-> +                               interrupts =3D <0 164 4>;
-> +                       };
-> +               };
+> However I will edit the commit messages to remove the word
+> "manual". This just breaks my heart everytime I see that word
+> used in code, manual means a person is typing the keys or something
+> I bet it's still a computer doing the heavy lifting here.
+>
 
-This is an odd setup. We usually would have it all in one node, since
-the @ff708000 is the GPIO controller, instead of adding a subnode with
-the actual GPIO info.
+Yes, I agree that the wording was not the best. Thanks a lot for
+fixing the commit messages.
 
-So I would have expected something more like:
+> Yours,
+> Linus Walleij
 
-
-gpio0: gpio-controller@ff708000 {
-                       #address-cells =3D <1>;
-                       #size-cells =3D <0>;
-                       compatible =3D "snps,dw-apb-gpio";
-                       reg =3D <0xff708000 0x1000>;
-                       interrupts =3D <0 164 4>;
-                      clocks =3D <&per_base_clk>;
-                       status =3D "disabled";
-                       gpio-controller;
-                       #gpio-cells =3D <2>;
-                       snps,nr-gpios =3D <29>;
-                       interrupt-controller;
-                       #interrupt-cells =3D <2>;
-               };
-
-
-=2E.. or is there some underlying reason for having the two-layer
-approach that isn't obvious from this device tree?
-
-
--Olof
+Best regards,
+Javier
