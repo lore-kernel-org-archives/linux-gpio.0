@@ -1,55 +1,115 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] GPIOD, OF: parse flags into gpiod
-Date: Tue, 6 May 2014 01:46:23 +0900
-Message-ID: <CAAVeFuLgm6seqG_rGkdRdkTwrRQHiQdOa_HK_5_8PBNbgPLv1A@mail.gmail.com>
-References: <1398775115-6842-1-git-send-email-rabel@cit-ec.uni-bielefeld.de>
- <CAAVeFuK-ZSr__nLq9ZU7ASD_CsXOUBYqtZv4F4MTd5+XSxTGdg@mail.gmail.com>
- <536767A1.5090701@cit-ec.uni-bielefeld.de> <CAAVeFuJB21n04qKbwxyPCVi=s882sTfgvftG8GgaBLqH-cjFCQ@mail.gmail.com>
- <53679B6D.2030603@cit-ec.uni-bielefeld.de> <CAAVeFuL22kTEy+QZgPE8ZTVGkD9N1dMx1m+7AxjkPPD=s+oriw@mail.gmail.com>
+From: Alan Tull <delicious.quinoa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/7] ARM: dts: socfpga: add gpio pieces
+Date: Tue, 6 May 2014 10:01:11 -0500
+Message-ID: <CANk1AXQXWrsgbypTFENFf+X9yhE2t967icK0=3WAvxCPwsXFYA@mail.gmail.com>
+References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
+	<1395505004-22650-2-git-send-email-bigeasy@linutronix.de>
+	<CAOesGMi_0fT4UbfGUp9jkrwYMXgfxC5gmXOBviU9PjAutPdHiw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f175.google.com ([209.85.128.175]:41003 "EHLO
-	mail-ve0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753938AbaEEQqo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 May 2014 12:46:44 -0400
-Received: by mail-ve0-f175.google.com with SMTP id jw12so2199517veb.6
-        for <linux-gpio@vger.kernel.org>; Mon, 05 May 2014 09:46:43 -0700 (PDT)
-In-Reply-To: <CAAVeFuL22kTEy+QZgPE8ZTVGkD9N1dMx1m+7AxjkPPD=s+oriw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMi_0fT4UbfGUp9jkrwYMXgfxC5gmXOBviU9PjAutPdHiw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, LinusW <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Robert ABEL <rabel@cit-ec.uni-bielefeld.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Tue, May 6, 2014 at 12:14 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> Let's consider my use case for a minute here. I use a table to get gpios
->> from a dt node:
->>
->>     /* parse GPIOs */
->>     for (; *pin_desc; pin_desc++, gpios++) {
->>
->>         index = of_property_match_string(np, "gpio-names",
->> (*pin_desc)->name);
->>         if (index >= 0)
->>             *gpios = of_get_gpiod_flags(np, index, NULL);
->>
->>         [...]
->>
->>     }
->>
->> Now I had no way of knowing that I'm not supposed to use of_get_gpiod_flags.
->> Because every other driver uses of_get_gpio(_flags), I used the similarly
->> named *public* gpiolib functions, because I like the concept of opaque gpio
->> descriptors.
+On Mon, May 5, 2014 at 5:02 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> Hi,
 >
-> I am not seeing this "gpio-names" property being used anywhere in
-> mainline to lookup GPIOs, nor do I see usages of of_get_gpiod_flags()
-> outside of gpiolib, so I had no way of knowing you decided to use it.
+> I saw this patch as it came in through Dinh's pull request, see below=
+:
 >
-> Besides I don't have a high-level view on your code, but (at first
-> sight) couldn't your call to of_get_gpiod_flags() simply be replaced
-> by gpiod_get()?
+>
+> On Sat, Mar 22, 2014 at 9:16 AM, Sebastian Andrzej Siewior
+> <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org> wrote:
+>> The cycloneV has three gpio controllers, the first two with 29 gpios=
+, the last
+>> one with 27. This patch adds the three controller with the gpio driv=
+er which is
+>> now sitting the gpio tree.
+>>
+>> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> Acked-by: Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+>> Signed-off-by: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+>> ---
+>> v1=E2=80=A6v2:
+>>         - #gpio-cells =3D <2>
+>>         - third gpio block has now only 27 gpios
+>>
+>>  arch/arm/boot/dts/socfpga.dtsi | 64 +++++++++++++++++++++++++++++++=
++++++++++++
+>>  1 file changed, 64 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socf=
+pga.dtsi
+>> index 537f1a5..2a84e67 100644
+>> --- a/arch/arm/boot/dts/socfpga.dtsi
+>> +++ b/arch/arm/boot/dts/socfpga.dtsi
+>> @@ -463,6 +463,70 @@
+>>                         status =3D "disabled";
+>>                 };
+>>
+>> +               gpio@ff708000 {
+>> +                       #address-cells =3D <1>;
+>> +                       #size-cells =3D <0>;
+>> +                       compatible =3D "snps,dw-apb-gpio";
+>> +                       reg =3D <0xff708000 0x1000>;
+>> +                       clocks =3D <&per_base_clk>;
+>> +                       status =3D "disabled";
+>> +
+>> +                       gpio0: gpio-controller@0 {
+>> +                               compatible =3D "snps,dw-apb-gpio-por=
+t";
+>> +                               gpio-controller;
+>> +                               #gpio-cells =3D <2>;
+>> +                               snps,nr-gpios =3D <29>;
+>> +                               reg =3D <0>;
+>> +                               interrupt-controller;
+>> +                               #interrupt-cells =3D <2>;
+>> +                               interrupts =3D <0 164 4>;
+>> +                       };
+>> +               };
+>
+> This is an odd setup. We usually would have it all in one node, since
+> the @ff708000 is the GPIO controller, instead of adding a subnode wit=
+h
+> the actual GPIO info.
+>
+> So I would have expected something more like:
+>
+>
+> gpio0: gpio-controller@ff708000 {
+>                        #address-cells =3D <1>;
+>                        #size-cells =3D <0>;
+>                        compatible =3D "snps,dw-apb-gpio";
+>                        reg =3D <0xff708000 0x1000>;
+>                        interrupts =3D <0 164 4>;
+>                       clocks =3D <&per_base_clk>;
+>                        status =3D "disabled";
+>                        gpio-controller;
+>                        #gpio-cells =3D <2>;
+>                        snps,nr-gpios =3D <29>;
+>                        interrupt-controller;
+>                        #interrupt-cells =3D <2>;
+>                };
+>
+>
+> ... or is there some underlying reason for having the two-layer
+> approach that isn't obvious from this device tree?
+>
+>
+> -Olof
 
-That was meant to read gpiod_get_index(), sorry for the confusion.
+The synopsys gpio ip can have 1, 2, or 3 gpio ports of varying widths
+per IP block.  The simpler bindings assume one gpio port per IP block.
 
-Alex.
+Alan Tull
+aka
+delicious quinoa
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
