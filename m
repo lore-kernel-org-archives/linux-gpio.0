@@ -1,115 +1,103 @@
-From: Alan Tull <delicious.quinoa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/7] ARM: dts: socfpga: add gpio pieces
-Date: Tue, 6 May 2014 10:01:11 -0500
-Message-ID: <CANk1AXQXWrsgbypTFENFf+X9yhE2t967icK0=3WAvxCPwsXFYA@mail.gmail.com>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
-	<1395505004-22650-2-git-send-email-bigeasy@linutronix.de>
-	<CAOesGMi_0fT4UbfGUp9jkrwYMXgfxC5gmXOBviU9PjAutPdHiw@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: SAMSUNG: remove gpio flags in dev-backlight
+Date: Tue, 6 May 2014 17:17:39 +0200
+Message-ID: <20140506151736.GA7176@ulmo>
+References: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
+ <1393480414-19473-2-git-send-email-acourbot@nvidia.com>
+ <CAAVeFu+XUzZ7ozMOcp6A-gZJ9o8DZFrdh1j4LvCQtoTcu=PP1g@mail.gmail.com>
+ <000701cf54a2$7c1379c0$743a6d40$%han@samsung.com>
+ <CAAVeFuKJnSk2XSsMZZKMfyabzJ5CYdqWdE91H5uHiYFC1r6HxA@mail.gmail.com>
+ <CAAVeFuKeT9+m_yFc8ihfc_p5W--dCm0-eO+ccjv99WOwurAirQ@mail.gmail.com>
+ <0fa001cf68e7$e7c4c440$b74e4cc0$@samsung.com>
+ <CAAVeFuJYrez9Ugqerys9Un0jRHnwMcwZ9BxnswbF=2m_LpMLSw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMi_0fT4UbfGUp9jkrwYMXgfxC5gmXOBviU9PjAutPdHiw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, LinusW <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ee0-f52.google.com ([74.125.83.52]:64430 "EHLO
+	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751962AbaEFPT2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 6 May 2014 11:19:28 -0400
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuJYrez9Ugqerys9Un0jRHnwMcwZ9BxnswbF=2m_LpMLSw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Alexandre Courbot <acourbot@nvidia.com>, Bryan Wu <cooloney@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Mon, May 5, 2014 at 5:02 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
-> Hi,
->
-> I saw this patch as it came in through Dinh's pull request, see below=
-:
->
->
-> On Sat, Mar 22, 2014 at 9:16 AM, Sebastian Andrzej Siewior
-> <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org> wrote:
->> The cycloneV has three gpio controllers, the first two with 29 gpios=
-, the last
->> one with 27. This patch adds the three controller with the gpio driv=
-er which is
->> now sitting the gpio tree.
->>
->> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Acked-by: Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
->> Signed-off-by: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
->> ---
->> v1=E2=80=A6v2:
->>         - #gpio-cells =3D <2>
->>         - third gpio block has now only 27 gpios
->>
->>  arch/arm/boot/dts/socfpga.dtsi | 64 +++++++++++++++++++++++++++++++=
-+++++++++++
->>  1 file changed, 64 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socf=
-pga.dtsi
->> index 537f1a5..2a84e67 100644
->> --- a/arch/arm/boot/dts/socfpga.dtsi
->> +++ b/arch/arm/boot/dts/socfpga.dtsi
->> @@ -463,6 +463,70 @@
->>                         status =3D "disabled";
->>                 };
->>
->> +               gpio@ff708000 {
->> +                       #address-cells =3D <1>;
->> +                       #size-cells =3D <0>;
->> +                       compatible =3D "snps,dw-apb-gpio";
->> +                       reg =3D <0xff708000 0x1000>;
->> +                       clocks =3D <&per_base_clk>;
->> +                       status =3D "disabled";
->> +
->> +                       gpio0: gpio-controller@0 {
->> +                               compatible =3D "snps,dw-apb-gpio-por=
-t";
->> +                               gpio-controller;
->> +                               #gpio-cells =3D <2>;
->> +                               snps,nr-gpios =3D <29>;
->> +                               reg =3D <0>;
->> +                               interrupt-controller;
->> +                               #interrupt-cells =3D <2>;
->> +                               interrupts =3D <0 164 4>;
->> +                       };
->> +               };
->
-> This is an odd setup. We usually would have it all in one node, since
-> the @ff708000 is the GPIO controller, instead of adding a subnode wit=
-h
-> the actual GPIO info.
->
-> So I would have expected something more like:
->
->
-> gpio0: gpio-controller@ff708000 {
->                        #address-cells =3D <1>;
->                        #size-cells =3D <0>;
->                        compatible =3D "snps,dw-apb-gpio";
->                        reg =3D <0xff708000 0x1000>;
->                        interrupts =3D <0 164 4>;
->                       clocks =3D <&per_base_clk>;
->                        status =3D "disabled";
->                        gpio-controller;
->                        #gpio-cells =3D <2>;
->                        snps,nr-gpios =3D <29>;
->                        interrupt-controller;
->                        #interrupt-cells =3D <2>;
->                };
->
->
-> ... or is there some underlying reason for having the two-layer
-> approach that isn't obvious from this device tree?
->
->
-> -Olof
 
-The synopsys gpio ip can have 1, 2, or 3 gpio ports of varying widths
-per IP block.  The simpler bindings assume one gpio port per IP block.
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Alan Tull
-aka
-delicious quinoa
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Tue, May 06, 2014 at 11:33:00PM +0900, Alexandre Courbot wrote:
+> On Tue, May 6, 2014 at 1:59 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Alexandre Courbot wrote:
+> >>
+> >> On Thu, Apr 10, 2014 at 11:14 PM, Alexandre Courbot <gnurou@gmail.com>
+> >> wrote:
+> >> > On Thu, Apr 10, 2014 at 6:51 PM, Jingoo Han <jg1.han@samsung.com> wr=
+ote:
+> >> >> On Thursday, April 10, 2014 1:17 PM, Alexandre Courbot wrote:
+> >> >>>
+> >> >>> Ping, can I have the Samsung folks review and ,aybe even merge this
+> >> >>> patch? enable_gpio_flags is never used in any code, is replaced by
+> >> >>> gpiod, and we would like to remove it altogether from pwm_bl. Than=
+ks!
+> >> >>
+> >> >> OK, I see. It looks good.
+> >> >>
+> >> >> As far as I know, 'enable_gpio_flags' has not been being used
+> >> >> for Samsung platform. So, there will be no side effect,
+> >> >> if 'enable_gpio_flags' is removed from 'arch/arm/plat-samsung'
+> >> >> directory.
+> >> >>
+> >> >> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+> >> >
+> >> > Great, thanks. Ben, Kukjin, could we have your Acked-by?
+> >> >
+> >> > Thierry, if the Samsung maintainers are ok with it, and 2/2 of this
+> >> > series is also ok for you (you merged the same for simple-panel
+> >> > already), can you take both into your tree?
+> >>
+> >> Last call - could we have a Acked-by from Ben or Kukjin and merge this
+> >> through Thierry's tree? Otherwise I will just have to drop this
+> >> series, which would be sad.
+> >
+> > Very sorry for late response. I missed... :(
+> >
+> > Looks good to me, so please go ahead with my ack.
+>=20
+> Thanks Kukjin!
+>=20
+> Thierry, do you want me to rebase and resend these (now old) patches?
+> I haven't heard anything from you about them yet.
+
+No, that's fine. I can handle them.
+
+Thanks,
+Thierry
+
+--qDbXVdCdHGoSgWSk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTaP0QAAoJEN0jrNd/PrOhsKUP/jCCjiohxWsy4f0AFmMJMkXf
+GlQ9G/ry54mNbJXbuEx+EqwZBcjyxUAF2+7Ytzu59tujJsxrd7fuZRRaf+3xm2wR
+VulZnX3Uvy+TtBs0Zgwl25L1uTWqnz5TnIvd9/tPWWJ7qQJ1X7zdmYmxWw2D8pPD
+K24yA6+niZv9Re7c6FrbgE15qu93TzzI5iHudJi4/2ixAvqagPzYlplaW2lZ8cr3
+eEpGDeInel3nXer75Yc2Rz0yBasctIzveFBuO6NLyWcrxnPBM5g6rOFuMLdq5UpS
++xfRnozfraIwiKQBoAuovsW0m7s9a7VbZJm7zPQg1rWGT0HhnkVqzWXtaMdWHEyc
+ZdnbS4g+VxXMpWjgMMDk7xdQ96vPrj5Ss0bWQj4dWgD/89kp/GZ7rrGUSR4jkXmt
+aDiU4cFyKvKBr0HTmkf8CFCnx5ymJuYyFNmJsH+zA0xyEMUGyDZlZrvb93eqHetT
+vj4+G1TBSmTQsVJDqXgDsBTuB08UxpxnGjbwOBEADSk0sCXodetHjIFhysatze5E
+U13xv3kbGJZB/uIrD4gnGcOMJQ2zO3Vvi7IxtMps5kJqu0ti9S+4St0ME9Ii6n/D
+SpUuCiYhiN5TxgQ5z8rJxOKtFW0pvs+4U+KtoZo5rVOVESOTAnxbjGtk0eD8l5EF
+xpD1HFZ5hzlPmJjKsvEO
+=Aaq5
+-----END PGP SIGNATURE-----
+
+--qDbXVdCdHGoSgWSk--
