@@ -1,51 +1,62 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH 7/7] gpio: zevio: Make of_device_id array const
-Date: Wed, 07 May 2014 18:09:01 +0900
-Message-ID: <022d01cf69d3$fcbf5fd0$f63e1f70$%han@samsung.com>
-References: <022701cf69d3$37a74a00$a6f5de00$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Loic Poulain <loic.poulain@intel.com>
+Subject: [PATCHv2] rfkill-gpio: Use gpio cansleep version
+Date: Wed,  7 May 2014 11:38:11 +0200
+Message-ID: <1399455491-4491-1-git-send-email-loic.poulain@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46510 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754846AbaEGJJC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 May 2014 05:09:02 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N57000JH5F1CUA0@mailout1.samsung.com> for
- linux-gpio@vger.kernel.org; Wed, 07 May 2014 18:09:01 +0900 (KST)
-In-reply-to: <022701cf69d3$37a74a00$a6f5de00$%han@samsung.com>
-Content-language: ko
+Received: from mga11.intel.com ([192.55.52.93]:55311 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755104AbaEGJiQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 7 May 2014 05:38:16 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: 'Alexandre Courbot' <gnurou@gmail.com>, linux-gpio@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>, 'Fabian Vogt' <fabian@ritter-vogt.de>
+To: johannes@sipsolutions.net
+Cc: linux-wireless@vger.kernel.org, linux-gpio@vger.kernel.org, Loic Poulain <loic.poulain@intel.com>
 
-Make of_device_id array const, because all OF functions
-handle it as const.
+If gpio controller requires waiting for read and write
+GPIO values, then we have to use the gpio cansleep api.
+Fix the rfkill_gpio_set_power which calls only the
+nonsleep version (causing kernel warning).
+There is no problem to use the cansleep version here
+because we are not in IRQ handler or similar context
+(cf rfkill_set_block).
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Loic Poulain <loic.poulain@intel.com>
 ---
- drivers/gpio/gpio-zevio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ v2: use cansleep unconditionnaly
 
-diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
-index f20941c..23a7669 100644
---- a/drivers/gpio/gpio-zevio.c
-+++ b/drivers/gpio/gpio-zevio.c
-@@ -208,7 +208,7 @@ static int zevio_gpio_probe(struct platform_device *pdev)
- 	return 0;
- }
+ net/rfkill/rfkill-gpio.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
+index bd2a5b9..1cb42d0 100644
+--- a/net/rfkill/rfkill-gpio.c
++++ b/net/rfkill/rfkill-gpio.c
+@@ -47,17 +47,14 @@ static int rfkill_gpio_set_power(void *data, bool blocked)
+ {
+ 	struct rfkill_gpio_data *rfkill = data;
  
--static struct of_device_id zevio_gpio_of_match[] = {
-+static const struct of_device_id zevio_gpio_of_match[] = {
- 	{ .compatible = "lsi,zevio-gpio", },
- 	{ },
- };
+-	if (blocked) {
+-		gpiod_set_value(rfkill->shutdown_gpio, 0);
+-		gpiod_set_value(rfkill->reset_gpio, 0);
+-		if (!IS_ERR(rfkill->clk) && rfkill->clk_enabled)
+-			clk_disable(rfkill->clk);
+-	} else {
+-		if (!IS_ERR(rfkill->clk) && !rfkill->clk_enabled)
+-			clk_enable(rfkill->clk);
+-		gpiod_set_value(rfkill->reset_gpio, 1);
+-		gpiod_set_value(rfkill->shutdown_gpio, 1);
+-	}
++	if (!blocked && !IS_ERR(rfkill->clk) && !rfkill->clk_enabled)
++		clk_enable(rfkill->clk);
++
++	gpiod_set_value_cansleep(rfkill->shutdown_gpio, !blocked);
++	gpiod_set_value_cansleep(rfkill->reset_gpio, !blocked);
++
++	if (blocked && !IS_ERR(rfkill->clk) && rfkill->clk_enabled)
++		clk_disable(rfkill->clk);
+ 
+ 	rfkill->clk_enabled = blocked;
+ 
 -- 
-1.7.10.4
-
+1.8.3.2
 
