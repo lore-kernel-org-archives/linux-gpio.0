@@ -1,62 +1,32 @@
-From: Loic Poulain <loic.poulain@intel.com>
-Subject: [PATCHv2] rfkill-gpio: Use gpio cansleep version
-Date: Wed,  7 May 2014 11:38:11 +0200
-Message-ID: <1399455491-4491-1-git-send-email-loic.poulain@intel.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCHv2] rfkill-gpio: Use gpio cansleep version
+Date: Wed, 07 May 2014 13:21:08 +0200
+Message-ID: <1399461668.10517.19.camel@jlt4.sipsolutions.net>
+References: <1399455491-4491-1-git-send-email-loic.poulain@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:55311 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755104AbaEGJiQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 7 May 2014 05:38:16 -0400
+Received: from s3.sipsolutions.net ([144.76.43.152]:49515 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751414AbaEGLVL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 May 2014 07:21:11 -0400
+In-Reply-To: <1399455491-4491-1-git-send-email-loic.poulain@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: johannes@sipsolutions.net
-Cc: linux-wireless@vger.kernel.org, linux-gpio@vger.kernel.org, Loic Poulain <loic.poulain@intel.com>
+To: Loic Poulain <loic.poulain@intel.com>
+Cc: linux-wireless@vger.kernel.org, linux-gpio@vger.kernel.org
 
-If gpio controller requires waiting for read and write
-GPIO values, then we have to use the gpio cansleep api.
-Fix the rfkill_gpio_set_power which calls only the
-nonsleep version (causing kernel warning).
-There is no problem to use the cansleep version here
-because we are not in IRQ handler or similar context
-(cf rfkill_set_block).
+On Wed, 2014-05-07 at 11:38 +0200, Loic Poulain wrote:
+> If gpio controller requires waiting for read and write
+> GPIO values, then we have to use the gpio cansleep api.
+> Fix the rfkill_gpio_set_power which calls only the
+> nonsleep version (causing kernel warning).
+> There is no problem to use the cansleep version here
+> because we are not in IRQ handler or similar context
+> (cf rfkill_set_block).
 
-Signed-off-by: Loic Poulain <loic.poulain@intel.com>
----
- v2: use cansleep unconditionnaly
+Applied.
 
- net/rfkill/rfkill-gpio.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
-
-diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
-index bd2a5b9..1cb42d0 100644
---- a/net/rfkill/rfkill-gpio.c
-+++ b/net/rfkill/rfkill-gpio.c
-@@ -47,17 +47,14 @@ static int rfkill_gpio_set_power(void *data, bool blocked)
- {
- 	struct rfkill_gpio_data *rfkill = data;
- 
--	if (blocked) {
--		gpiod_set_value(rfkill->shutdown_gpio, 0);
--		gpiod_set_value(rfkill->reset_gpio, 0);
--		if (!IS_ERR(rfkill->clk) && rfkill->clk_enabled)
--			clk_disable(rfkill->clk);
--	} else {
--		if (!IS_ERR(rfkill->clk) && !rfkill->clk_enabled)
--			clk_enable(rfkill->clk);
--		gpiod_set_value(rfkill->reset_gpio, 1);
--		gpiod_set_value(rfkill->shutdown_gpio, 1);
--	}
-+	if (!blocked && !IS_ERR(rfkill->clk) && !rfkill->clk_enabled)
-+		clk_enable(rfkill->clk);
-+
-+	gpiod_set_value_cansleep(rfkill->shutdown_gpio, !blocked);
-+	gpiod_set_value_cansleep(rfkill->reset_gpio, !blocked);
-+
-+	if (blocked && !IS_ERR(rfkill->clk) && rfkill->clk_enabled)
-+		clk_disable(rfkill->clk);
- 
- 	rfkill->clk_enabled = blocked;
- 
--- 
-1.8.3.2
+johannes
 
