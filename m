@@ -1,58 +1,66 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: SAMSUNG: remove gpio flags in dev-backlight
-Date: Tue, 06 May 2014 13:59:05 +0900
-Message-ID: <0fa001cf68e7$e7c4c440$b74e4cc0$@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: SAMSUNG: remove gpio flags in dev-backlight
+Date: Wed, 7 May 2014 10:14:56 +0200
+Message-ID: <20140507081455.GA6362@ulmo>
 References: <1393480414-19473-1-git-send-email-acourbot@nvidia.com>
  <1393480414-19473-2-git-send-email-acourbot@nvidia.com>
- <CAAVeFu+XUzZ7ozMOcp6A-gZJ9o8DZFrdh1j4LvCQtoTcu=PP1g@mail.gmail.com>
- <000701cf54a2$7c1379c0$743a6d40$%han@samsung.com>
- <CAAVeFuKJnSk2XSsMZZKMfyabzJ5CYdqWdE91H5uHiYFC1r6HxA@mail.gmail.com>
- <CAAVeFuKeT9+m_yFc8ihfc_p5W--dCm0-eO+ccjv99WOwurAirQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-reply-to: <CAAVeFuKeT9+m_yFc8ihfc_p5W--dCm0-eO+ccjv99WOwurAirQ@mail.gmail.com>
-Content-language: ko
-Sender: linux-pwm-owner@vger.kernel.org
-To: 'Alexandre Courbot' <gnurou@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Thierry Reding' <thierry.reding@gmail.com>
-Cc: 'Alexandre Courbot' <acourbot@nvidia.com>, 'Bryan Wu' <cooloney@gmail.com>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, 'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1393480414-19473-2-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Bryan Wu <cooloney@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Alexandre Courbot wrote:
-> 
-> On Thu, Apr 10, 2014 at 11:14 PM, Alexandre Courbot <gnurou@gmail.com>
-> wrote:
-> > On Thu, Apr 10, 2014 at 6:51 PM, Jingoo Han <jg1.han@samsung.com> wrote:
-> >> On Thursday, April 10, 2014 1:17 PM, Alexandre Courbot wrote:
-> >>>
-> >>> Ping, can I have the Samsung folks review and ,aybe even merge this
-> >>> patch? enable_gpio_flags is never used in any code, is replaced by
-> >>> gpiod, and we would like to remove it altogether from pwm_bl. Thanks!
-> >>
-> >> OK, I see. It looks good.
-> >>
-> >> As far as I know, 'enable_gpio_flags' has not been being used
-> >> for Samsung platform. So, there will be no side effect,
-> >> if 'enable_gpio_flags' is removed from 'arch/arm/plat-samsung'
-> >> directory.
-> >>
-> >> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
-> >
-> > Great, thanks. Ben, Kukjin, could we have your Acked-by?
-> >
-> > Thierry, if the Samsung maintainers are ok with it, and 2/2 of this
-> > series is also ok for you (you merged the same for simple-panel
-> > already), can you take both into your tree?
-> 
-> Last call - could we have a Acked-by from Ben or Kukjin and merge this
-> through Thierry's tree? Otherwise I will just have to drop this
-> series, which would be sad.
 
-Very sorry for late response. I missed... :(
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me, so please go ahead with my ack.
+On Thu, Feb 27, 2014 at 02:53:33PM +0900, Alexandre Courbot wrote:
+> The pwm-backlight driver is moving to use the gpiod interface,
+> which has its own mapping mechanism for platform data GPIOs.
+> These mappings carry GPIO properties like active low so they don't have
+> to be explicitly handled by GPIO consumers.
+>=20
+> Because of this change, the enable_gpio_flags member of
+> platform_pwm_backlight_data is going away. dev-backlight was passing
+> this member, but had no user making use of it, so it can safely be
+> removed. Further GPIOs used by pwm-backlight are expected to be
+> defined using the mechanisms provided by the gpiod API.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  arch/arm/plat-samsung/dev-backlight.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Thanks,
-Kukjin
+Applied with Kukjin's Acked-by, thanks.
 
+Thierry
+
+--C7zPtVaVf+AK4Oqc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTaet/AAoJEN0jrNd/PrOhTTgP/2FPIvOFcimTec4M/F0/whf6
+5JaGpsAqvwadgSoDGv3zBxr1N9S2uL11LalPs7g6pNpMBxP0TzEzZ03NLZSOJAfR
+sEDAFdlwr1rLU/sdgGoZHq9c7pEeY06T/vBMI9/Od+3Yc6HMZ5jQykZauiWA21S3
+tmm+elMbsP1+hH6OAI7hEaCf476l26jc43p7gvixOENXmUbrH9UCY6u1qGuwLWYe
+Xz5xHhSF4VcmSbvU9Lm+4VqZGgdQL2oiJqY3jEfId1JyilzDYY9PBRr9BskTtfjD
+G0o502Rtbz0MttnhXGweiPGNgVbxQlPa3SmDb1FDqXVlF9NKmRx9bxkiU7AZcHcL
+G00ZMK16c5BILFS7Qb1t5qS9OQLKm9Okr12QpDZG82zmQAWsCHNEjAGaXhi/+Y2b
+LRPqjlEA/n43NH1qz+G9sLbikPVbXPoa3YJlyUCABmWP0GxEVkWhMfnTbuv0MTg3
+j8MFn7cjqDIhuKAYVuTu6EWqKVcCh7pnosH9T0aT6cIPY734bvsoqfYDT/AmR9HE
+4Q0TNobuR0g0HtG7HgSL5N73aBLpBhOlBLQQwALTW5TfxYI7yNHskamoplwMIdXl
+UJbbgKhd9248ErxbRcl3Vt23SXRzSgsW1fOu8k2Sz6pOzhbYEMA+IgErG1wp9kNp
+kmdD7qFNCfC4CJJidhke
+=2TFU
+-----END PGP SIGNATURE-----
+
+--C7zPtVaVf+AK4Oqc--
