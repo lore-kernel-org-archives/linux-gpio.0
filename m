@@ -1,37 +1,49 @@
-From: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
-Subject: Re: [PATCH] rfkill-gpio: Use gpio cansleep version
-Date: Wed, 07 May 2014 11:02:20 +0200
-Message-ID: <1399453340.10517.7.camel@jlt4.sipsolutions.net>
-References: <1399392849-6021-1-git-send-email-loic.poulain@intel.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH 1/7] gpio: grgpio: Make of_device_id array const
+Date: Wed, 07 May 2014 18:03:30 +0900
+Message-ID: <022701cf69d3$37a74a00$a6f5de00$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399392849-6021-1-git-send-email-loic.poulain-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Loic Poulain <loic.poulain-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:62568 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932211AbaEGJDc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 May 2014 05:03:32 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N57002BM55VQ290@mailout2.samsung.com> for
+ linux-gpio@vger.kernel.org; Wed, 07 May 2014 18:03:31 +0900 (KST)
+Content-language: ko
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: 'Linus Walleij' <linus.walleij@linaro.org>
+Cc: 'Alexandre Courbot' <gnurou@gmail.com>, linux-gpio@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>, 'Andreas Larsson' <andreas@gaisler.com>
 
-On Tue, 2014-05-06 at 18:14 +0200, Loic Poulain wrote:
+Make of_device_id array const, because all OF functions
+handle it as const.
 
-> +	if (gpiod_cansleep(rfkill->shutdown_gpio))
-> +		gpiod_set_value_cansleep(rfkill->shutdown_gpio, !blocked);
-> +	else
-> +		gpiod_set_value(rfkill->shutdown_gpio, !blocked);
-> +
-> +	if (gpiod_cansleep(rfkill->reset_gpio))
-> +		gpiod_set_value_cansleep(rfkill->reset_gpio, !blocked);
-> +	else
-> +		gpiod_set_value(rfkill->reset_gpio, !blocked);
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ drivers/gpio/gpio-grgpio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Really? I mean, there's not even a fallback where the cansleep() API
-calls the non-sleeping one if the cansleep isn't support? This is really
-ugly.
+diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
+index 84d2478..3c3f515 100644
+--- a/drivers/gpio/gpio-grgpio.c
++++ b/drivers/gpio/gpio-grgpio.c
+@@ -481,7 +481,7 @@ out:
+ 	return ret;
+ }
+ 
+-static struct of_device_id grgpio_match[] = {
++static const struct of_device_id grgpio_match[] = {
+ 	{.name = "GAISLER_GPIO"},
+ 	{.name = "01_01a"},
+ 	{},
+-- 
+1.7.10.4
 
-johannes
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
