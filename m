@@ -1,76 +1,102 @@
 From: Rajendra Nayak <rnayak@ti.com>
-Subject: Re: [PATCH 0/2] OMAP2+: optional clock handling fixes
-Date: Thu, 8 May 2014 12:29:51 +0530
-Message-ID: <536B2B67.9070808@ti.com>
-References: <1398233465-8845-1-git-send-email-rnayak@ti.com> <alpine.DEB.2.02.1405080000400.23579@utopia.booyaka.com>
+Subject: Re: [PATCH 1/2] gpio: omap: prepare and unprepare the debounce clock
+Date: Thu, 8 May 2014 12:36:22 +0530
+Message-ID: <536B2CEE.4010809@ti.com>
+References: <1398233465-8845-1-git-send-email-rnayak@ti.com> <1398233465-8845-2-git-send-email-rnayak@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:47332 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751103AbaEHHBx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 8 May 2014 03:01:53 -0400
-In-Reply-To: <alpine.DEB.2.02.1405080000400.23579@utopia.booyaka.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:39887 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751513AbaEHHI2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 May 2014 03:08:28 -0400
+In-Reply-To: <1398233465-8845-2-git-send-email-rnayak@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Walmsley <paul@pwsan.com>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony@atomide.com, linux-gpio@vger.kernel.org
+To: Rajendra Nayak <rnayak@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony@atomide.com, paul@pwsan.com, linux-gpio@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Linus Walleij <linus.walleij@linaro.org>, gnurou@gmail.com
 
-On Thursday 08 May 2014 05:38 AM, Paul Walmsley wrote:
-> Hi Rajendra,
+On Wednesday 23 April 2014 11:41 AM, Rajendra Nayak wrote:
+> Replace the clk_enable()s with a clk_prepare_enable() and
+> the clk_disables()s with a clk_disable_unprepare()
 > 
-> On Wed, 23 Apr 2014, Rajendra Nayak wrote:
+> This never showed issues due to the OMAP platform code (hwmod)
+> leaving these clocks in clk_prepare()ed state by default.
 > 
->> The patches fix some opt clock handling in gpio and in
->> hwmod.
->>
->> Rajendra Nayak (2):
->>   gpio: omap: prepare and unprepare the debounce clock
->>   ARM: OMAP2+: hwmod: Don't leave the optional clocks in
->>     clk_prepare()ed state
->>
->>  arch/arm/mach-omap2/omap_hwmod.c |   13 ++-----------
->>  drivers/gpio/gpio-omap.c         |   10 +++++-----
->>  2 files changed, 7 insertions(+), 16 deletions(-)
-> 
-> Can these patches be merged separately?  Looks to me that the two options 
-> are either to:
-> 
-> A. to merge them together, or 
-> 
-> B. to merge patch 1 first, then patch 2
+> Reported-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Signed-off-by: Rajendra Nayak <rnayak@ti.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>
+> Cc: Kevin Hilman <khilman@deeprootsystems.com>
 
-Thats right.
+Linus,
 
-> 
-> Or will things break if only patch 1 is merged?
+Do you mind picking this fix up via the GPIO tree? Alternatively you could
+Ack this if you are fine and we can take both Patch 1/2 and Patch 2/2 from this
+series via the OMAP tree.
 
-Things will break if only patch 2 is merged as gpios clk_enable()
-request would fail. Merging only patch 1 has no issues.
-
-> 
-> 
-> If we merge them together, I'd say the best situation would be to take 
-> them through the OMAP tree, since the changes are all OMAP-specific.  In 
-> that case we'll want an ack for the first patch from the GPIO maintainers, 
-> Linus Walleij <linus.walleij@linaro.org> and Alexandre Courbot 
-> <gnurou@gmail.com>.
-> 
-> Otherwise the path of least resistance would be (B) - you can get patch 1 
-> merged via the GPIO tree.  The GPIO maintainers can then provide a 
-> stable branch for us to base our changes on, or we can wait until the 
-> change reaches Linus.  Then we can subsequently merge patch 2 via the  
-> OMAP side.
-> 
-> Thoughts?
-
-I am fine either way. I will check with Linus W. what he prefers. Thanks.
+Patch 2/2 has a dependency on Patch 1/2 and they need to go in in that order else
+gpio would break. More discussions are here [1].
+Let us know what you think. Thanks.
 
 regards,
 Rajendra
+
+[1] http://www.mail-archive.com/linux-gpio@vger.kernel.org/msg02801.html
+
+> ---
+>  drivers/gpio/gpio-omap.c |   10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> 
-> - Paul
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index 19b886c..78bc5a4 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -180,7 +180,7 @@ static inline void _gpio_rmw(void __iomem *base, u32 reg, u32 mask, bool set)
+>  static inline void _gpio_dbck_enable(struct gpio_bank *bank)
+>  {
+>  	if (bank->dbck_enable_mask && !bank->dbck_enabled) {
+> -		clk_enable(bank->dbck);
+> +		clk_prepare_enable(bank->dbck);
+>  		bank->dbck_enabled = true;
+>  
+>  		writel_relaxed(bank->dbck_enable_mask,
+> @@ -198,7 +198,7 @@ static inline void _gpio_dbck_disable(struct gpio_bank *bank)
+>  		 */
+>  		writel_relaxed(0, bank->base + bank->regs->debounce_en);
+>  
+> -		clk_disable(bank->dbck);
+> +		clk_disable_unprepare(bank->dbck);
+>  		bank->dbck_enabled = false;
+>  	}
+>  }
+> @@ -231,7 +231,7 @@ static void _set_gpio_debounce(struct gpio_bank *bank, unsigned gpio,
+>  
+>  	l = GPIO_BIT(bank, gpio);
+>  
+> -	clk_enable(bank->dbck);
+> +	clk_prepare_enable(bank->dbck);
+>  	reg = bank->base + bank->regs->debounce;
+>  	writel_relaxed(debounce, reg);
+>  
+> @@ -245,7 +245,7 @@ static void _set_gpio_debounce(struct gpio_bank *bank, unsigned gpio,
+>  	bank->dbck_enable_mask = val;
+>  
+>  	writel_relaxed(val, reg);
+> -	clk_disable(bank->dbck);
+> +	clk_disable_unprepare(bank->dbck);
+>  	/*
+>  	 * Enable debounce clock per module.
+>  	 * This call is mandatory because in omap_gpio_request() when
+> @@ -290,7 +290,7 @@ static void _clear_gpio_debounce(struct gpio_bank *bank, unsigned gpio)
+>  		bank->context.debounce = 0;
+>  		writel_relaxed(bank->context.debounce, bank->base +
+>  			     bank->regs->debounce);
+> -		clk_disable(bank->dbck);
+> +		clk_disable_unprepare(bank->dbck);
+>  		bank->dbck_enabled = false;
+>  	}
+>  }
 > 
 
