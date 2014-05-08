@@ -1,45 +1,56 @@
-From: Andreas Larsson <andreas@gaisler.com>
-Subject: Re: [PATCH 1/7] gpio: grgpio: Make of_device_id array const
-Date: Wed, 07 May 2014 14:01:56 +0200
-Message-ID: <536A20B4.6090707@gaisler.com>
-References: <022701cf69d3$37a74a00$a6f5de00$%han@samsung.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCH 0/2] OMAP2+: optional clock handling fixes
+Date: Thu, 8 May 2014 00:08:19 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1405080000400.23579@utopia.booyaka.com>
+References: <1398233465-8845-1-git-send-email-rnayak@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vsp-authed02.binero.net ([195.74.38.226]:36880 "EHLO
-	vsp-authed-03-02.binero.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755610AbaEGMCM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 May 2014 08:02:12 -0400
-In-Reply-To: <022701cf69d3$37a74a00$a6f5de00$%han@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1398233465-8845-1-git-send-email-rnayak@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Rajendra Nayak <rnayak@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony@atomide.com, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: 'Alexandre Courbot' <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On 2014-05-07 11:03, Jingoo Han wrote:
-> Make of_device_id array const, because all OF functions
-> handle it as const.
->
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Hi Rajendra,
 
-Acked-by: Andreas Larsson <andreas@gaisler.com>
+On Wed, 23 Apr 2014, Rajendra Nayak wrote:
 
-> ---
->   drivers/gpio/gpio-grgpio.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
-> index 84d2478..3c3f515 100644
-> --- a/drivers/gpio/gpio-grgpio.c
-> +++ b/drivers/gpio/gpio-grgpio.c
-> @@ -481,7 +481,7 @@ out:
->   	return ret;
->   }
->
-> -static struct of_device_id grgpio_match[] = {
-> +static const struct of_device_id grgpio_match[] = {
->   	{.name = "GAISLER_GPIO"},
->   	{.name = "01_01a"},
->   	{},
->
+> The patches fix some opt clock handling in gpio and in
+> hwmod.
+> 
+> Rajendra Nayak (2):
+>   gpio: omap: prepare and unprepare the debounce clock
+>   ARM: OMAP2+: hwmod: Don't leave the optional clocks in
+>     clk_prepare()ed state
+> 
+>  arch/arm/mach-omap2/omap_hwmod.c |   13 ++-----------
+>  drivers/gpio/gpio-omap.c         |   10 +++++-----
+>  2 files changed, 7 insertions(+), 16 deletions(-)
+
+Can these patches be merged separately?  Looks to me that the two options 
+are either to:
+
+A. to merge them together, or 
+
+B. to merge patch 1 first, then patch 2
+
+Or will things break if only patch 1 is merged?
+
+
+If we merge them together, I'd say the best situation would be to take 
+them through the OMAP tree, since the changes are all OMAP-specific.  In 
+that case we'll want an ack for the first patch from the GPIO maintainers, 
+Linus Walleij <linus.walleij@linaro.org> and Alexandre Courbot 
+<gnurou@gmail.com>.
+
+Otherwise the path of least resistance would be (B) - you can get patch 1 
+merged via the GPIO tree.  The GPIO maintainers can then provide a 
+stable branch for us to base our changes on, or we can wait until the 
+change reaches Linus.  Then we can subsequently merge patch 2 via the  
+OMAP side.
+
+Thoughts?
+
+
+- Paul
