@@ -1,16 +1,16 @@
 From: Santosh Shilimkar <santosh.shilimkar@ti.com>
 Subject: Re: [PATCH 1/2] gpio: omap: prepare and unprepare the debounce clock
-Date: Thu, 8 May 2014 10:40:39 -0400
-Message-ID: <536B9767.80804@ti.com>
+Date: Thu, 8 May 2014 10:45:24 -0400
+Message-ID: <536B9884.6030809@ti.com>
 References: <1398233465-8845-1-git-send-email-rnayak@ti.com> <1398233465-8845-2-git-send-email-rnayak@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:55926 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752101AbaEHOlH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 8 May 2014 10:41:07 -0400
+Received: from devils.ext.ti.com ([198.47.26.153]:58174 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751641AbaEHOpt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 May 2014 10:45:49 -0400
 In-Reply-To: <1398233465-8845-2-git-send-email-rnayak@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -30,8 +30,9 @@ On Wednesday 23 April 2014 02:11 AM, Rajendra Nayak wrote:
 > Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>
 > Cc: Kevin Hilman <khilman@deeprootsystems.com>
 > ---
->  drivers/gpio/gpio-omap.c |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
+$subject patch looks fine but I don't see patch 2/2 assuming this
+is series of two patches.
+
 Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+
 
