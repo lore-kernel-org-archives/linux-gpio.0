@@ -1,42 +1,51 @@
-From: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
-Subject: Re: [PATCH] gpio: mvebu: Remove initcall-based driver initialization
-Date: Fri, 9 May 2014 10:08:48 -0300
-Message-ID: <20140509130848.GB764@arch.cereza>
-References: <1398372890-7568-1-git-send-email-ezequiel.garcia@free-electrons.com>
- <CACRpkdbXq_0C-d+uJ8yz8esHDvmY4A+MM8XE4G2TKFpbdKTBNw@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH] RFT: pinctrl: msm: switch to using generic GPIO irqchip
+ helpers
+Date: Fri, 9 May 2014 14:04:25 -0700
+Message-ID: <20140509210424.GA25733@sonymobile.com>
+References: <1398794794-28920-1-git-send-email-linus.walleij@linaro.org>
+ <CACRpkdb7ctDocntcPG_E4b_an2G8VNd+ei0N+Uk_7XtsFssiEA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:45600 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751136AbaEINJV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 May 2014 09:09:21 -0400
+Received: from seldrel01.sonyericsson.com ([212.209.106.2]:2350 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757131AbaEIVFL convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 9 May 2014 17:05:11 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbXq_0C-d+uJ8yz8esHDvmY4A+MM8XE4G2TKFpbdKTBNw@mail.gmail.com>
+In-Reply-To: <CACRpkdb7ctDocntcPG_E4b_an2G8VNd+ei0N+Uk_7XtsFssiEA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Lior Amsalem <alior@marvell.com>, Tawfik Bayouk <tawfik@marvell.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Andy Gross <agross@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Josh Cartwright <joshc@codeaurora.org>
 
-On 09 May 11:09 AM, Linus Walleij wrote:
-> On Thu, Apr 24, 2014 at 10:54 PM, Ezequiel Garcia
-> <ezequiel.garcia@free-electrons.com> wrote:
+On Fri 09 May 01:33 PDT 2014, Linus Walleij wrote:
+
+> On Tue, Apr 29, 2014 at 8:06 PM, Linus Walleij <linus.walleij@linaro.=
+org> wrote:
 >=20
-> > There's no reason to use an initcall to initialize this driver,
-> > and regular module_platform_driver() can be used instead.
+> > This switches the Qualcomm MSM pin control driver over to using
+> > the generic GPIO irqchip helpers.
 > >
-> > Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+> > Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: Josh Cartwright <joshc@codeaurora.org>
+> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 >=20
-> Has anyone tested this on real hardware? That is the only test that
-> counts on initcalls as it happens.
+> Anyone up for testing this patch?
 >=20
+> Bj=F6rn? Andy?
 
-Yup, tested on my mvebu boards, don't remember which one.
---=20
-Ezequiel Garc=EDa, Free Electrons
-Embedded Linux, Kernel and Android Engineering
-http://free-electrons.com
+Sorry for the delay.
+
+This looks good and seems to work fine on my 8974 board.
+
+Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+
+Regards,
+Bjorn
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
