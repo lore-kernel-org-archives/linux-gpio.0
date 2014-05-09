@@ -1,37 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: Add helpers for optional GPIOs
-Date: Fri, 9 May 2014 13:50:18 +0200
-Message-ID: <CACRpkdaGHviAXxLYcsMu2Jc+3zE_Wmm275YGYEo=U7CNk8dzUg@mail.gmail.com>
-References: <1398438606-19718-1-git-send-email-thierry.reding@gmail.com>
-	<1398438606-19718-2-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state container
+Date: Fri, 9 May 2014 13:53:08 +0200
+Message-ID: <CACRpkdbieXh8iHSCqai03vNbBZ2_2zV1SscXLY+4T9ZprWJEvQ@mail.gmail.com>
+References: <1398287792-19831-1-git-send-email-linus.walleij@linaro.org>
+	<1398287792-19831-2-git-send-email-linus.walleij@linaro.org>
+	<CAGsJ_4wOdD53Fkf+_CtDqSg5Yvz-1kwaWzMJb357uq5BL9_-7Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:48248 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752858AbaEILuS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 May 2014 07:50:18 -0400
-Received: by mail-oa0-f54.google.com with SMTP id j17so4724842oag.13
-        for <linux-gpio@vger.kernel.org>; Fri, 09 May 2014 04:50:18 -0700 (PDT)
-In-Reply-To: <1398438606-19718-2-git-send-email-thierry.reding@gmail.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:37273 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754915AbaEILxJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 May 2014 07:53:09 -0400
+Received: by mail-ob0-f177.google.com with SMTP id gq1so4518082obb.36
+        for <linux-gpio@vger.kernel.org>; Fri, 09 May 2014 04:53:08 -0700 (PDT)
+In-Reply-To: <CAGsJ_4wOdD53Fkf+_CtDqSg5Yvz-1kwaWzMJb357uq5BL9_-7Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Barry Song <baohua@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
 
-On Fri, Apr 25, 2014 at 5:10 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
+On Thu, May 1, 2014 at 2:29 PM, Barry Song <baohua@kernel.org> wrote:
+> 2014-04-24 5:16 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
 
-> From: Thierry Reding <treding@nvidia.com>
+>> This rewrites the SIRF pinctrl driver to allocate a state container
+>> for the GPIO chip, just as is done for the pin controller, and
+>> use the gpiochip_add_pin_range() to add the range from the gpiochip
+>> side rather than adding the range from the pinctrl side.
+>>
+>> All resulting changes are done in order to pass around a state
+>> container rather than refer to a static global object.
+>>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 >
-> Introduce gpiod_get_optional() and gpiod_get_index_optional() helpers
-> that make it easier for drivers to handle optional GPIOs.
+> Linus, thanks! but this breaks prima2 pinctrl subsystem, do you have an idea?
+> otherwise i will do a debug to find the reason.
 
-Excellent Thierry, patch applied with Alexandre's review tag.
+Unfortunately no :-(
 
-Can you *please* also produce a patch to
-Documentation/gpio/consumer.txt
-explaining the new interface to potential users?
+This is the downside of dry-coding ... I rely on others to help out.
+
+See it as a suggestion to what I think should be refactored and how,
+I'll keep it on a branch as some "TODO" item for the moment.
 
 Yours,
 Linus Walleij
