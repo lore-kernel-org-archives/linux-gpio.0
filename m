@@ -1,90 +1,63 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH] RFT: pinctrl: sunxi: convert to GPIO irqchip helpers
-Date: Mon, 12 May 2014 21:42:41 +0200
-Message-ID: <20140512194241.GF17154@lukather>
-References: <1399621082-10712-1-git-send-email-linus.walleij@linaro.org>
- <20140511212514.GV7047@lukather>
- <CACRpkdZip4S7ySAVA4xtXxU-Y5DeXfVjK67aJOe_RiXG7iT15g@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: sysfs: wait for GPIO interrupt
+Date: Tue, 13 May 2014 01:45:06 +0200
+Message-ID: <CABxcv=k7QTiNWNbHTLFKkjHdgk9o9xB4E4uq75wuKyvXYhqWMQ@mail.gmail.com>
+References: <CAGm1_kuKvjAguez85MKWk+gw5T4-oa8thHEao6Rz0nES-woYiA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Ls2Gy6y7jbHLe9Od"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:33162 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751937AbaELTpD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 May 2014 15:45:03 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZip4S7ySAVA4xtXxU-Y5DeXfVjK67aJOe_RiXG7iT15g@mail.gmail.com>
+Received: from mail-we0-f175.google.com ([74.125.82.175]:60476 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272AbaELXpH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 May 2014 19:45:07 -0400
+Received: by mail-we0-f175.google.com with SMTP id t61so7486534wes.20
+        for <linux-gpio@vger.kernel.org>; Mon, 12 May 2014 16:45:06 -0700 (PDT)
+In-Reply-To: <CAGm1_kuKvjAguez85MKWk+gw5T4-oa8thHEao6Rz0nES-woYiA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: Yegor Yefremov <yegorslists@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, jack@embed.me.uk
 
+Hello Yegor,
 
---Ls2Gy6y7jbHLe9Od
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 8, 2014 at 10:19 AM, Yegor Yefremov
+<yegorslists@googlemail.com> wrote:
+> I've stumbled upon following issue. When waiting for interrupt with
+> poll() like described in this example [1], the program returns from
+> poll() immediately. This thread [2] describes a workaround for this
+> issue via making read() before invoking poll().
+>
+> My system is am335x, kernel 3.15-rc4
+>
+> I experience this behavior by both SoC's own GPIO and i2c expander tca6416.
+>
 
-On Mon, May 12, 2014 at 11:29:11AM +0200, Linus Walleij wrote:
-> On Sun, May 11, 2014 at 11:25 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->=20
-> > What I did so far is having a single domain, with the same handler
-> > registered for all the interrupts, and the various interrupts from the
-> > various banks just being at a different offsets in the domain.
-> >
-> > Basically, something like that:
-> > http://code.bulix.org/ym3zuv-86191
-> >
-> > Do you know if it would be possible to use the generic gpiolib
-> > behaviour in such a case?
->=20
-> Basically the helpers are for the simple case where every pin
-> can fire an independent interrupt.
->=20
-> Since there is just one single irqdomain for the entire chip, the
-> helpers require that all mappings go through the same domain.
->=20
-> If having several domains or other split-up results in more
-> elegant code, then code another solution locally, because we
-> just want to cover the generic cases, the special cases will still
-> be special.
->=20
-> Unless you see some really elegant way forward of course...
-> always choose the most elegand refactoring if you can.
+I tested with an OMAP3 board which uses the same GPIO driver than the
+am335x and I was able to reproduce your issue.
 
-Ok, I'll see what I can come up with then, and give your patch some
-testing.
+> Is this the proper way (invoke read() before poll()) to work with
+> GPIOs from user space, so that this approach should be incorporated
+> into such libraries as libsoc [3]
+>
 
-Thanks!
-Maxime
+I don't think that this should be an expected behavior, it seems that
+this is either a bug on gpiolib sysfs interface or gpio-omap.c and
+gpio-pca953x.c drivers (most probably the later than the former).
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+The question is what side effect has to do a read(2) syscall before a
+poll(2) to make it succeed. I looked at
+drivers/gpio/gpiolib.c:gpio_value_show() but didn't find anything
+relevant.
 
---Ls2Gy6y7jbHLe9Od
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I didn't have time to dig futher on this but I'll try to take a look
+this weekend when I've more time. But for now I've added to Linus and
+Alexandre in cc in case they have an idea of what's going on.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
+> Yegor
+>
+> [1] https://developer.ridgerun.com/wiki/index.php/Gpio-int-test.c
+> [2] http://comments.gmane.org/gmane.linux.distributions.gumstix.general/61286
+> [3] https://github.com/jackmitch/libsoc
 
-iQIcBAEBAgAGBQJTcSQxAAoJEBx+YmzsjxAgNscP/3rDGpAlNkgNw+nwq7f6/Ohs
-V2jdFPviXU5R0J3ylIZHX1Zv5aqvoOQSdFbW1HKNie9s8mudIHe9GDest2Dg5LVg
-OxNUt8DG9zrnIL6z4Q6Zt+xFJO/9qi5hDxCF7qZNeRNj7mh38OK1oneX9eM+LRiG
-+P3EZS3jbSdcBMh7Z8oPN+P+12vHFkq1sz9f0QgxJPPc6LQn+vppfftHH1Z80fXw
-3vXe4j4IltrqkbVZsxHI6wGZz0KazdVgDS6w0tpAzNUQKEGaUkVcXI6LB4AM+yMm
-V8EiagqgWBSU/ZwibF4gIlyx/IsTuC4jEr0ccKLDQT4CrnkAIdoj8ytKg0btoiig
-oIdbREx9WRGc+ChrNzGKc/on6T06uhtNht7tlkULGJRgqUtzEalAOBgh1huvLF1D
-jvHmWSdX7y3gzUuF7MSrHj3xWRfOlrqhFMqlyFi2jBoWvtYxMrm6+lxNatIsuMEX
-smPz0gQBmX6iVZiGeF/QeA+SAShe8J6VTEFmMv687rBoR/QcG29oXpEVfUhnYvhm
-n/fhEXnqZLuhIV79wdSGV04ApggHAIajlohLP4yAa9r/bJekBnEBYLJjheesQ5oq
-7YKsiJdzTYTR+9p+xle8k7E0IzVMoUU97cJ/3LgHgqQM6iV/Fh/aGkCzm/aEOwNh
-MhkxV/uOja5u868UOSm4
-=8y6i
------END PGP SIGNATURE-----
-
---Ls2Gy6y7jbHLe9Od--
+Best regards,
+Javier
