@@ -1,63 +1,129 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: sysfs: wait for GPIO interrupt
-Date: Tue, 13 May 2014 01:45:06 +0200
-Message-ID: <CABxcv=k7QTiNWNbHTLFKkjHdgk9o9xB4E4uq75wuKyvXYhqWMQ@mail.gmail.com>
-References: <CAGm1_kuKvjAguez85MKWk+gw5T4-oa8thHEao6Rz0nES-woYiA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: abdoulaye berthe <berthe.ab@gmail.com>
+Subject: [PATCH] gpio: using devm functions for timberdale gpio memory allocation This eases memory allocation and provides appropriate logging
+Date: Tue, 13 May 2014 03:21:42 +0200
+Message-ID: <1399944102-9089-1-git-send-email-berthe.ab@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f175.google.com ([74.125.82.175]:60476 "EHLO
-	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751272AbaELXpH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 May 2014 19:45:07 -0400
-Received: by mail-we0-f175.google.com with SMTP id t61so7486534wes.20
-        for <linux-gpio@vger.kernel.org>; Mon, 12 May 2014 16:45:06 -0700 (PDT)
-In-Reply-To: <CAGm1_kuKvjAguez85MKWk+gw5T4-oa8thHEao6Rz0nES-woYiA@mail.gmail.com>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:35083 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751559AbaEMBVv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 May 2014 21:21:51 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yegor Yefremov <yegorslists@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, jack@embed.me.uk
+To: berthe.ab@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Yegor,
+Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
+---
+ drivers/gpio/gpio-timberdale.c | 47 ++++++++++++++----------------------------
+ 1 file changed, 16 insertions(+), 31 deletions(-)
 
-On Thu, May 8, 2014 at 10:19 AM, Yegor Yefremov
-<yegorslists@googlemail.com> wrote:
-> I've stumbled upon following issue. When waiting for interrupt with
-> poll() like described in this example [1], the program returns from
-> poll() immediately. This thread [2] describes a workaround for this
-> issue via making read() before invoking poll().
->
-> My system is am335x, kernel 3.15-rc4
->
-> I experience this behavior by both SoC's own GPIO and i2c expander tca6416.
->
+diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
+index f9a8fbd..efc7c12 100644
+--- a/drivers/gpio/gpio-timberdale.c
++++ b/drivers/gpio/gpio-timberdale.c
+@@ -224,6 +224,7 @@ static struct irq_chip timbgpio_irqchip = {
+ static int timbgpio_probe(struct platform_device *pdev)
+ {
+ 	int err, i;
++	struct device *dev = &pdev->dev;
+ 	struct gpio_chip *gc;
+ 	struct timbgpio *tgpio;
+ 	struct resource *iomem;
+@@ -231,35 +232,35 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 	int irq = platform_get_irq(pdev, 0);
+ 
+ 	if (!pdata || pdata->nr_pins > 32) {
+-		err = -EINVAL;
+-		goto err_mem;
++		dev_err(dev, "Invalid platform data\n");
++		return -EINVAL;
+ 	}
+ 
+ 	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!iomem) {
+-		err = -EINVAL;
+-		goto err_mem;
++		dev_err(dev, "Unable to get resource\n");
++		return -EINVAL;
+ 	}
+ 
+-	tgpio = kzalloc(sizeof(*tgpio), GFP_KERNEL);
++	tgpio = devm_kzalloc(dev, sizeof(struct timbgpio), GFP_KERNEL);
+ 	if (!tgpio) {
+-		err = -EINVAL;
+-		goto err_mem;
++		dev_err(dev, "Memory alloc failed\n");
++		return -EINVAL;
+ 	}
+ 	tgpio->irq_base = pdata->irq_base;
+ 
+ 	spin_lock_init(&tgpio->lock);
+ 
+-	if (!request_mem_region(iomem->start, resource_size(iomem),
+-		DRIVER_NAME)) {
+-		err = -EBUSY;
+-		goto err_request;
++	if (!devm_request_mem_region(dev, iomem->start, resource_size(iomem),
++				     DRIVER_NAME)) {
++		dev_err(dev, "Region already claimed\n");
++		return -EBUSY;
+ 	}
+ 
+-	tgpio->membase = ioremap(iomem->start, resource_size(iomem));
++	tgpio->membase = devm_ioremap(dev, iomem->start, resource_size(iomem));
+ 	if (!tgpio->membase) {
+-		err = -ENOMEM;
+-		goto err_ioremap;
++		dev_err(dev, "Cannot ioremap\n");
++		return -ENOMEM;
+ 	}
+ 
+ 	gc = &tgpio->gpio;
+@@ -279,7 +280,7 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 
+ 	err = gpiochip_add(gc);
+ 	if (err)
+-		goto err_chipadd;
++		return err;
+ 
+ 	platform_set_drvdata(pdev, tgpio);
+ 
+@@ -302,17 +303,6 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 	irq_set_chained_handler(irq, timbgpio_irq);
+ 
+ 	return 0;
+-
+-err_chipadd:
+-	iounmap(tgpio->membase);
+-err_ioremap:
+-	release_mem_region(iomem->start, resource_size(iomem));
+-err_request:
+-	kfree(tgpio);
+-err_mem:
+-	printk(KERN_ERR DRIVER_NAME": Failed to register GPIOs: %d\n", err);
+-
+-	return err;
+ }
+ 
+ static int timbgpio_remove(struct platform_device *pdev)
+@@ -320,7 +310,6 @@ static int timbgpio_remove(struct platform_device *pdev)
+ 	int err;
+ 	struct timbgpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct timbgpio *tgpio = platform_get_drvdata(pdev);
+-	struct resource *iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	int irq = platform_get_irq(pdev, 0);
+ 
+ 	if (irq >= 0 && tgpio->irq_base > 0) {
+@@ -338,10 +327,6 @@ static int timbgpio_remove(struct platform_device *pdev)
+ 	if (err)
+ 		printk(KERN_ERR DRIVER_NAME": failed to remove gpio_chip\n");
+ 
+-	iounmap(tgpio->membase);
+-	release_mem_region(iomem->start, resource_size(iomem));
+-	kfree(tgpio);
+-
+ 	return 0;
+ }
+ 
+-- 
+1.8.3.2
 
-I tested with an OMAP3 board which uses the same GPIO driver than the
-am335x and I was able to reproduce your issue.
-
-> Is this the proper way (invoke read() before poll()) to work with
-> GPIOs from user space, so that this approach should be incorporated
-> into such libraries as libsoc [3]
->
-
-I don't think that this should be an expected behavior, it seems that
-this is either a bug on gpiolib sysfs interface or gpio-omap.c and
-gpio-pca953x.c drivers (most probably the later than the former).
-
-The question is what side effect has to do a read(2) syscall before a
-poll(2) to make it succeed. I looked at
-drivers/gpio/gpiolib.c:gpio_value_show() but didn't find anything
-relevant.
-
-I didn't have time to dig futher on this but I'll try to take a look
-this weekend when I've more time. But for now I've added to Linus and
-Alexandre in cc in case they have an idea of what's going on.
-
-> Yegor
->
-> [1] https://developer.ridgerun.com/wiki/index.php/Gpio-int-test.c
-> [2] http://comments.gmane.org/gmane.linux.distributions.gumstix.general/61286
-> [3] https://github.com/jackmitch/libsoc
-
-Best regards,
-Javier
