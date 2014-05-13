@@ -1,96 +1,86 @@
 From: abdoulaye berthe <berthe.ab@gmail.com>
-Subject: [PATCH] gpio: janzttl: use devm function
-Date: Tue, 13 May 2014 18:42:12 +0200
-Message-ID: <1399999332-23279-1-git-send-email-berthe.ab@gmail.com>
+Subject: [PATCH] gpio: gpioep93xx: use devm functions
+Date: Wed, 14 May 2014 00:36:54 +0200
+Message-ID: <1400020614-18907-1-git-send-email-berthe.ab@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:62566 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750916AbaEMQmV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 May 2014 12:42:21 -0400
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:46209 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753672AbaEMWhE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 May 2014 18:37:04 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: berthe.ab@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, berthe.ab@gmail.com
 
-This uses dem function for mem allocation
+This uses devm functions for mem allocation
 
 Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
 ---
- drivers/gpio/gpio-janz-ttl.c | 34 +++++++---------------------------
+ drivers/gpio/gpio-ep93xx.c | 34 +++++++---------------------------
  1 file changed, 7 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpio/gpio-janz-ttl.c b/drivers/gpio/gpio-janz-ttl.c
-index 2ecd3a0..daa79e1 100644
---- a/drivers/gpio/gpio-janz-ttl.c
-+++ b/drivers/gpio/gpio-janz-ttl.c
-@@ -152,15 +152,13 @@ static int ttl_probe(struct platform_device *pdev)
- 	pdata = dev_get_platdata(&pdev->dev);
- 	if (!pdata) {
- 		dev_err(dev, "no platform data\n");
--		ret = -ENXIO;
--		goto out_return;
-+		return -ENXIO;
- 	}
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index 80829f3..dd39f27 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -344,37 +344,24 @@ static int ep93xx_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct ep93xx_gpio *ep93xx_gpio;
+ 	struct resource *res;
+-	void __iomem *mmio;
+ 	int i;
+-	int ret;
++	struct device *dev = &pdev->dev;
  
--	mod = kzalloc(sizeof(*mod), GFP_KERNEL);
-+	mod = devm_kzalloc(dev, sizeof(struct ttl_module), GFP_KERNEL);
- 	if (!mod) {
- 		dev_err(dev, "unable to allocate private data\n");
--		ret = -ENOMEM;
--		goto out_return;
-+		return -ENOMEM;
- 	}
+-	ep93xx_gpio = kzalloc(sizeof(*ep93xx_gpio), GFP_KERNEL);
++	ep93xx_gpio = devm_kzalloc(dev, sizeof(struct ep93xx_gpio), GFP_KERNEL);
+ 	if (!ep93xx_gpio)
+ 		return -ENOMEM;
  
- 	platform_set_drvdata(pdev, mod);
-@@ -168,18 +166,9 @@ static int ttl_probe(struct platform_device *pdev)
- 
- 	/* get access to the MODULbus registers for this module */
  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	if (!res) {
--		dev_err(dev, "MODULbus registers not found\n");
--		ret = -ENODEV;
--		goto out_free_mod;
+-		ret = -ENXIO;
+-		goto exit_free;
 -	}
 -
--	mod->regs = ioremap(res->start, resource_size(res));
--	if (!mod->regs) {
--		dev_err(dev, "MODULbus registers not ioremap\n");
--		ret = -ENOMEM;
--		goto out_free_mod;
+-	if (!request_mem_region(res->start, resource_size(res), pdev->name)) {
+-		ret = -EBUSY;
+-		goto exit_free;
 -	}
-+	mod->regs = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(mod->regs))
-+		return PTR_ERR(mod->regs);
+-
+-	mmio = ioremap(res->start, resource_size(res));
+-	if (!mmio) {
+-		ret = -ENXIO;
+-		goto exit_release;
+-	}
+-	ep93xx_gpio->mmio_base = mmio;
++	ep93xx_gpio->mmio_base = devm_request_and_ioremap(dev, res);
++	if (IS_ERR(ep93xx_gpio->mmio_base))
++		return PTR_ERR(ep93xx_gpio->mmio_base);
  
- 	ttl_setup_device(mod);
+ 	for (i = 0; i < ARRAY_SIZE(ep93xx_gpio_banks); i++) {
+ 		struct bgpio_chip *bgc = &ep93xx_gpio->bgc[i];
+ 		struct ep93xx_gpio_bank *bank = &ep93xx_gpio_banks[i];
  
-@@ -198,17 +187,10 @@ static int ttl_probe(struct platform_device *pdev)
- 	ret = gpiochip_add(gpio);
- 	if (ret) {
- 		dev_err(dev, "unable to add GPIO chip\n");
--		goto out_iounmap_regs;
-+		return ret;
+-		if (ep93xx_gpio_add_bank(bgc, &pdev->dev, mmio, bank))
++		if (ep93xx_gpio_add_bank(bgc, &pdev->dev,
++					 ep93xx_gpio->mmio_base, bank))
+ 			dev_warn(&pdev->dev, "Unable to add gpio bank %s\n",
+ 				bank->label);
  	}
+@@ -382,13 +369,6 @@ static int ep93xx_gpio_probe(struct platform_device *pdev)
+ 	ep93xx_gpio_init_irq();
  
  	return 0;
 -
--out_iounmap_regs:
--	iounmap(mod->regs);
--out_free_mod:
--	kfree(mod);
--out_return:
+-exit_release:
+-	release_mem_region(res->start, resource_size(res));
+-exit_free:
+-	kfree(ep93xx_gpio);
+-	dev_info(&pdev->dev, "%s failed with errno %d\n", __func__, ret);
 -	return ret;
  }
  
- static int ttl_remove(struct platform_device *pdev)
-@@ -223,8 +205,6 @@ static int ttl_remove(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	iounmap(mod->regs);
--	kfree(mod);
- 	return 0;
- }
- 
+ static struct platform_driver ep93xx_gpio_driver = {
 -- 
 1.8.3.2
 
