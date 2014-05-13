@@ -1,52 +1,90 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: sysfs: wait for GPIO interrupt
-Date: Tue, 13 May 2014 11:48:20 +0200
-Message-ID: <CACRpkdZU+P_8NK_YX6aqcp5WtbAzgv7V73Uzj0_RxAQaQgaDzg@mail.gmail.com>
-References: <CAGm1_kuKvjAguez85MKWk+gw5T4-oa8thHEao6Rz0nES-woYiA@mail.gmail.com>
-	<CABxcv=k7QTiNWNbHTLFKkjHdgk9o9xB4E4uq75wuKyvXYhqWMQ@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] gpio: using devm functions for timberdale gpio memory
+ allocation This eases memory allocation and provides appropriate logging
+Date: Tue, 13 May 2014 12:03:35 +0200
+Message-ID: <20140513100334.GA27345@ulmo>
+References: <1399944102-9089-1-git-send-email-berthe.ab@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:47344 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760563AbaEMJsV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 May 2014 05:48:21 -0400
-Received: by mail-ob0-f175.google.com with SMTP id wo20so92366obc.6
-        for <linux-gpio@vger.kernel.org>; Tue, 13 May 2014 02:48:20 -0700 (PDT)
-In-Reply-To: <CABxcv=k7QTiNWNbHTLFKkjHdgk9o9xB4E4uq75wuKyvXYhqWMQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1399944102-9089-1-git-send-email-berthe.ab@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: abdoulaye berthe <berthe.ab@gmail.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Yegor Yefremov <yegorslists@googlemail.com>, Alexandre Courbot <gnurou@gmail.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, jack@embed.me.uk
 
-On Tue, May 13, 2014 at 1:45 AM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
-> Hello Yegor,
-> On Thu, May 8, 2014 at 10:19 AM, Yegor Yefremov
-> <yegorslists@googlemail.com> wrote:
->> I've stumbled upon following issue. When waiting for interrupt with
->> poll() like described in this example [1], the program returns from
->> poll() immediately. This thread [2] describes a workaround for this
->> issue via making read() before invoking poll().
->>
->> My system is am335x, kernel 3.15-rc4
->>
->> I experience this behavior by both SoC's own GPIO and i2c expander tca6416.
->>
->
-> I tested with an OMAP3 board which uses the same GPIO driver than the
-> am335x and I was able to reproduce your issue.
 
-At times like this I always want to warn you for using the GPIO sysfs
-interface which is a scary piece of code.
+--W/nzBZO5zC0uMSeA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And also to know what you are doing in userspace. Just hammering
-GPIOs is already a bad idea, reading *interrupts* from GPIOs in
-userspace is an even worse idea.
+On Tue, May 13, 2014 at 03:21:42AM +0200, abdoulaye berthe wrote:
+[...]
+> diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdal=
+e.c
+[...]
+>  	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (!iomem) {
+> -		err =3D -EINVAL;
+> -		goto err_mem;
+> +		dev_err(dev, "Unable to get resource\n");
+> +		return -EINVAL;
+>  	}
+[...]
+> -	if (!request_mem_region(iomem->start, resource_size(iomem),
+> -		DRIVER_NAME)) {
+> -		err =3D -EBUSY;
+> -		goto err_request;
+> +	if (!devm_request_mem_region(dev, iomem->start, resource_size(iomem),
+> +				     DRIVER_NAME)) {
+> +		dev_err(dev, "Region already claimed\n");
+> +		return -EBUSY;
+>  	}
+> =20
+> -	tgpio->membase =3D ioremap(iomem->start, resource_size(iomem));
+> +	tgpio->membase =3D devm_ioremap(dev, iomem->start, resource_size(iomem)=
+);
+>  	if (!tgpio->membase) {
+> -		err =3D -ENOMEM;
+> -		goto err_ioremap;
+> +		dev_err(dev, "Cannot ioremap\n");
+> +		return -ENOMEM;
+>  	}
 
-The basic rule is that the kernel shall handle hardware, and I just
-get the feeling you are doing some userspace driver that should be
-in the kernel instead.
+The above could be further simplified to:
 
-Yours,
-Linus Walleij
+	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	tgpio->membase =3D devm_ioremap_resource(&pdev->dev, iomem);
+	if (IS_ERR(tgpio->membase))
+		return PTR_ERR(tgpio->membase);
+
+Where devm_ioremap_resource() already provides error messages as
+appropriate.
+
+Thierry
+
+--W/nzBZO5zC0uMSeA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTce32AAoJEN0jrNd/PrOhHcYQALXRFve6mBvV2XxhqjRlXW+t
+v75uejBBzLH/uo9O/g1WpVd0NBOo3Ll+3BLZ2rH7e2eLDgbBaW3vKrvQFCenAVY+
+UjO3mvXQUOvDhNPRBiCNrjCoYyI48aTQoPvwLlutaUNtx2JcA5jd96/V80OhSqPh
+C5he93sZP5+oMLb/aMLrGb4zGwxIRl7lpiYZESNw2AwyiQQhcAFApvWoJ0t2sJVF
+avz21DBfXd1ohfYP7HzS3lvLV7Ep+hZUBw6Z7E9f7R14d7ijI53d7KTvVUCISZHT
+7877AwMQaZ6K0YV86bnScJVlQh2rT/oQXgjFyV6F1FqJc35IEaNVUDi4FE5MKq4e
+GB7jNvucPNrfPPpMbGSYBCcJibcZh61ABYo5Jqu2PjxTA++w/GsY7nehywIRluAi
+hSxRySQcffmTBbh/U614wIgdOdJLZlGRdrAD3s0eHduCm7QnsbPfeVyAZfe68guI
+epPnyxC6sheXHKWBsNyKUT2eDYw42VgkOZ7Oj3X6SDB1KBDG+kHvVzFXZvNq6PCw
+54F60Vqjir6K8mr9QBlQD0xIPq5KUBetY0pt4BDiBty8DwZFErYf0VPyMe8HsmWB
+M1mJoTG4c3dk/e8XE6vRjswRMYdqLmViRl9xXoLEJhGXsJj7JuXZpR6qM4zj1CB0
+vPKjKizVe+uC6j+zFrnn
+=RGuE
+-----END PGP SIGNATURE-----
+
+--W/nzBZO5zC0uMSeA--
