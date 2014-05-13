@@ -1,90 +1,42 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] gpio: using devm functions for timberdale gpio memory
- allocation This eases memory allocation and provides appropriate logging
-Date: Tue, 13 May 2014 12:03:35 +0200
-Message-ID: <20140513100334.GA27345@ulmo>
-References: <1399944102-9089-1-git-send-email-berthe.ab@gmail.com>
+From: Robert ABEL <rabel@cit-ec.uni-bielefeld.de>
+Subject: Re: [PATCH] GPIOD, OF: parse flags into gpiod
+Date: Tue, 13 May 2014 13:33:09 +0200
+Message-ID: <537202F5.6070609@cit-ec.uni-bielefeld.de>
+References: <1398775115-6842-1-git-send-email-rabel@cit-ec.uni-bielefeld.de> <CACRpkdZu0BAfR5b=-AbURxQ1VtGJbBmBwrTmLkO3Te--EHYWyQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1399944102-9089-1-git-send-email-berthe.ab@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: abdoulaye berthe <berthe.ab@gmail.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:63492 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753281AbaEMLcx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 May 2014 07:32:53 -0400
+Received: by mail-ee0-f47.google.com with SMTP id c13so313815eek.20
+        for <linux-gpio@vger.kernel.org>; Tue, 13 May 2014 04:32:52 -0700 (PDT)
+In-Reply-To: <CACRpkdZu0BAfR5b=-AbURxQ1VtGJbBmBwrTmLkO3Te--EHYWyQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+Hi Linus,
 
---W/nzBZO5zC0uMSeA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 13 May 2014 10:42, Linus Walleij wrote:
+> Since I've merged Alexandre's other patch making the function private 
+> I'm dropping this assuming you have sorted things out...
+No, I just stopped responding, because I grew tired of his stupid argument.
+You want broken functions, you get broken functions.
 
-On Tue, May 13, 2014 at 03:21:42AM +0200, abdoulaye berthe wrote:
-[...]
-> diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdal=
-e.c
-[...]
->  	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (!iomem) {
-> -		err =3D -EINVAL;
-> -		goto err_mem;
-> +		dev_err(dev, "Unable to get resource\n");
-> +		return -EINVAL;
->  	}
-[...]
-> -	if (!request_mem_region(iomem->start, resource_size(iomem),
-> -		DRIVER_NAME)) {
-> -		err =3D -EBUSY;
-> -		goto err_request;
-> +	if (!devm_request_mem_region(dev, iomem->start, resource_size(iomem),
-> +				     DRIVER_NAME)) {
-> +		dev_err(dev, "Region already claimed\n");
-> +		return -EBUSY;
->  	}
-> =20
-> -	tgpio->membase =3D ioremap(iomem->start, resource_size(iomem));
-> +	tgpio->membase =3D devm_ioremap(dev, iomem->start, resource_size(iomem)=
-);
->  	if (!tgpio->membase) {
-> -		err =3D -ENOMEM;
-> -		goto err_ioremap;
-> +		dev_err(dev, "Cannot ioremap\n");
-> +		return -ENOMEM;
->  	}
+Alexandre's claim that
 
-The above could be further simplified to:
+On 05 May 2014 17:14, Alexandre Courbot wrote:
+> Good news, once of_get_gpiod_flags() becomes private all public gpiod_
+> functions should return a correct gpio_desc.
+is wrong, of course. And ridiculous, I might add.
+None of the gpiod_* functions return valid gpio_desc with the singular 
+exception of gpiod_get, which happens to be aware of the shortcomings of 
+all other public functions and corrects their mistakes after the fact.
 
-	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-	tgpio->membase =3D devm_ioremap_resource(&pdev->dev, iomem);
-	if (IS_ERR(tgpio->membase))
-		return PTR_ERR(tgpio->membase);
+Regards,
 
-Where devm_ioremap_resource() already provides error messages as
-appropriate.
-
-Thierry
-
---W/nzBZO5zC0uMSeA
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTce32AAoJEN0jrNd/PrOhHcYQALXRFve6mBvV2XxhqjRlXW+t
-v75uejBBzLH/uo9O/g1WpVd0NBOo3Ll+3BLZ2rH7e2eLDgbBaW3vKrvQFCenAVY+
-UjO3mvXQUOvDhNPRBiCNrjCoYyI48aTQoPvwLlutaUNtx2JcA5jd96/V80OhSqPh
-C5he93sZP5+oMLb/aMLrGb4zGwxIRl7lpiYZESNw2AwyiQQhcAFApvWoJ0t2sJVF
-avz21DBfXd1ohfYP7HzS3lvLV7Ep+hZUBw6Z7E9f7R14d7ijI53d7KTvVUCISZHT
-7877AwMQaZ6K0YV86bnScJVlQh2rT/oQXgjFyV6F1FqJc35IEaNVUDi4FE5MKq4e
-GB7jNvucPNrfPPpMbGSYBCcJibcZh61ABYo5Jqu2PjxTA++w/GsY7nehywIRluAi
-hSxRySQcffmTBbh/U614wIgdOdJLZlGRdrAD3s0eHduCm7QnsbPfeVyAZfe68guI
-epPnyxC6sheXHKWBsNyKUT2eDYw42VgkOZ7Oj3X6SDB1KBDG+kHvVzFXZvNq6PCw
-54F60Vqjir6K8mr9QBlQD0xIPq5KUBetY0pt4BDiBty8DwZFErYf0VPyMe8HsmWB
-M1mJoTG4c3dk/e8XE6vRjswRMYdqLmViRl9xXoLEJhGXsJj7JuXZpR6qM4zj1CB0
-vPKjKizVe+uC6j+zFrnn
-=RGuE
------END PGP SIGNATURE-----
-
---W/nzBZO5zC0uMSeA--
+Robert
