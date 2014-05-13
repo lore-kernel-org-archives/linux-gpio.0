@@ -1,33 +1,29 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
+From: Alexandre Courbot <gnurou@gmail.com>
 Subject: Re: [PATCH] GPIOD, OF: parse flags into gpiod
-Date: Tue, 13 May 2014 15:38:47 +0200
-Message-ID: <CABxcv=kH61o0+uo0CHv1pE5j4VSPNdpcZVbtMUGKuEygMQ+DZg@mail.gmail.com>
+Date: Tue, 13 May 2014 23:24:26 +0900
+Message-ID: <CAAVeFuJi6eAnie+Ku_w4LQsFq8pY-45L4URDAB7pHtV_q9+Yzg@mail.gmail.com>
 References: <1398775115-6842-1-git-send-email-rabel@cit-ec.uni-bielefeld.de>
-	<CAAVeFuK-ZSr__nLq9ZU7ASD_CsXOUBYqtZv4F4MTd5+XSxTGdg@mail.gmail.com>
-	<536767A1.5090701@cit-ec.uni-bielefeld.de>
-	<CAAVeFuJB21n04qKbwxyPCVi=s882sTfgvftG8GgaBLqH-cjFCQ@mail.gmail.com>
-	<53679B6D.2030603@cit-ec.uni-bielefeld.de>
-	<CAAVeFuL22kTEy+QZgPE8ZTVGkD9N1dMx1m+7AxjkPPD=s+oriw@mail.gmail.com>
-	<53720DE0.4010005@cit-ec.uni-bielefeld.de>
+ <CAAVeFuK-ZSr__nLq9ZU7ASD_CsXOUBYqtZv4F4MTd5+XSxTGdg@mail.gmail.com>
+ <536767A1.5090701@cit-ec.uni-bielefeld.de> <CAAVeFuJB21n04qKbwxyPCVi=s882sTfgvftG8GgaBLqH-cjFCQ@mail.gmail.com>
+ <53679B6D.2030603@cit-ec.uni-bielefeld.de> <CAAVeFuL22kTEy+QZgPE8ZTVGkD9N1dMx1m+7AxjkPPD=s+oriw@mail.gmail.com>
+ <53720DE0.4010005@cit-ec.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:43881 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753943AbaEMNis convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 May 2014 09:38:48 -0400
-Received: by mail-wg0-f48.google.com with SMTP id b13so397255wgh.7
-        for <linux-gpio@vger.kernel.org>; Tue, 13 May 2014 06:38:47 -0700 (PDT)
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:54209 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932891AbaEMOYr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 May 2014 10:24:47 -0400
+Received: by mail-vc0-f177.google.com with SMTP id if17so528068vcb.36
+        for <linux-gpio@vger.kernel.org>; Tue, 13 May 2014 07:24:47 -0700 (PDT)
 In-Reply-To: <53720DE0.4010005@cit-ec.uni-bielefeld.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Robert ABEL <rabel@cit-ec.uni-bielefeld.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Hello Robert,
-
-On Tue, May 13, 2014 at 2:19 PM, Robert ABEL
+On Tue, May 13, 2014 at 9:19 PM, Robert ABEL
 <rabel@cit-ec.uni-bielefeld.de> wrote:
 > On 05 May 2014 17:14, Alexandre Courbot wrote:
 >>
@@ -36,6 +32,14 @@ On Tue, May 13, 2014 at 2:19 PM, Robert ABEL
 > But you won't accept my patch, because you don't want to. Not because=
  I'm
 > correct, right? Good, thought so.
+
+This example has nothing to do with the validity of having this or
+that function public.
+
+Besides I have no authority to accept your patch - that's Linus' job.
+If he likes your patch nothing that I say will prevent him from
+merging it.
+
 >
 >> of_get_gpiod_flags() works the same way as of_get_gpio_flags() which
 >> it mirrors and is correct in that respect. Returning a flags paramet=
@@ -57,6 +61,9 @@ t
 > But of course, that's just my taste that I like non-broken functions.=
  If you
 > like broken functions, you're free to like them.
+
+Blah blah, sticks and stones...
+
 >
 >> If you really need a function that will return GPIO descriptor from =
 an
@@ -70,6 +77,16 @@ a
 > Bad news :( You just made that function private because you wouldn't =
 accept
 > my patch to root out this flag application problem.
+
+I don't want this function to be public because it leaks a flags
+parameter that the outside does not need to see. I explained to you
+that we could consider another function that does not return that
+flag, but you decided to ignore it.
+
+Not that we should even feel obliged to consider this solution if
+mainline does not need it - your private tree is, well, your tree.
+"Deal with it".
+
 >
 >
 >> Also, clearly and calmly explaining your needs will serve you much
@@ -96,11 +113,25 @@ d_
 n the
 > future will probably need two revisions, because the authors might no=
 t be
-> aware that of_find_gpio returns an invalid gpio_desc. gpiod_find rema=
-ins
+> aware that of_find_gpio returns an invalid gpio_desc.
+
+Why would authors of gpiod_ functions use functions of the old integer =
+API?
+
+> gpiod_find remains
 > broken as well, as it implicitly relies on gpio_desc stored per chip =
 to have
 > valid gpio_desc.flags.
+
+gpiod_find()'s sole purpose is to be called by gpiod_get_index() to
+lookup for platform-defined GPIOs. The flags are set in the platform
+lookup table and returned to gpiod_find_index() which treats the flags
+in one place for descriptors returned by DT, ACPI and platform lookup.
+
+That's the sole use of gpiod_find(). It is not exported. It is static
+to gpiolib.c. Where in its name or prototype is it hinted that it
+should set the flags itself?
+
 >
 >
 >> As for where to set the descriptor's properties, having it done in
@@ -123,23 +154,6 @@ ng all
 > other branches to fend on their own is poor, dare I say *broken*, des=
 ign.
 >
-
-Well is not an arbitrary place but in the function that GPIO consumers
-are supposed to use to get a properly configured GPIO.
-
-On the other hand it seems that making of_get_named_gpiod_flags()
-private broke a lot of drivers according to Linus although I wonder
-why since I see no user of of_get_gpiod_flags() in mainline.
-
-So it may be possible that gpiod_get_index() is not the only function
-called by consumers. But if we return a proper filled gpio_desc with
-flags then what's the point of the flags parameter passed to
-of_get_named_gpiod_flags()?
-
-In that case we should just remove that parameter and fill the flags
-passed to of_get_named_gpio_flags() from the returned gpio_desc by
-right of_get_named_gpiod_flags().
-
 > The single place where things need to be handled at is the lowest com=
 mon
 > denominator, which all other functions can rely on. If higher level
@@ -147,6 +161,12 @@ mon
 es not
 > return a valid gpio_desc, then they will in turn return an invalid
 > gpio_desc. And so on.
+
+Do you understand that your solution would require to handle the flags
+in gpiod_find(), of_find_gpio() and acpi_find_gpio(), while the
+solution that handles things in a single place (gpiod_get_index()) is
+the one that is currently implemented?
+
 >
 >
 >> To make things clear, here is my stance on the question:
@@ -165,10 +185,6 @@ g this
 and one
 > to re-export that function.
 >
-
-That's a disadvantage of having code out of the mainline kernel and
-one of the reasons why is much better to work upstream.
-
 >> 2) There are no user of of_get_gpiod_flags() in mainline, therefore
 >> removing it from the public API is perfectly ok. We cannot keep trac=
 k
@@ -182,18 +198,10 @@ hen
 met.
 > One would be that functions don't just vanish from revision to revisi=
 on.
+
+http://www.mjmwired.net/kernel/Documentation/stable_api_nonsense.txt
+
 >
-
-That's certainly not true in the kernel, in fact we don't have an
-stable internal API, only the external ABI with user-space i stable.
-This allows to keep improving the kernel and to correct previous
-mistakes (like the one you are pointing out on of_get_gpiod_flags).
-Please read Documentation/stable_api_nonsense.txt in the kernel source
-directory.
-
-In fact if there are no mainline users of an API this will almost
-certainly be removed.
-
 >> 3) If the accepted way of looking up GPIOs does not cover your needs=
 ,
 >> please explain clearly how the current gpiod_get() function is
@@ -208,6 +216,10 @@ l
 > that gpio_desc were an opaque type whose flags are set in low-level c=
 ode and
 > who can be relied upon to /just work/.
+
+Exactly. Which is why we don't leak a descriptor's flags to users of
+the gpiod API.
+
 > Which comes back to this statement, which seems to be the fundamental
 > problem here:
 >
@@ -253,18 +265,21 @@ proach,
 > that's why the flags *have* to be applied by gpiolib, else the whole =
 design
 > is *broken*. Deal with it.
->
 
-Please try to keep you tone polite, we all try to make things better
-but using an aggressive language does not help in any way.
+Like I said Linus is the one who accepts or rejects patches
+ultimately. I am trying to help said patches getting in shape but
+apparently you are not very appreciative of the initiative nor are you
+willing to consider my attempts to reach a common ground through
+another, less leaking function. I feel quite strongly that this whole
+issue could easily be fixed on your private tree, but you are not very
+verbose about your use case and it doesn't seem like this is a
+solution you are looking for here anyway.
 
-> Regards,
->
-> Robert
->
+=46inally, since the tone and vocabulary of your messages make it clear
+that to your eyes I am not in a position to help you with this, I will
+let you settle this issue with Linus.
 
-Thanks a lot and best regards,
-Javier
+Alex.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
