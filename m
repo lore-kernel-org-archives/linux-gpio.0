@@ -1,41 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] GPIOD, OF: parse flags into gpiod
-Date: Tue, 13 May 2014 15:20:14 +0200
-Message-ID: <CACRpkdYgJZp5W7+eaSfxdqhH=P6Q4Uv-crphxjHfsi4eOe3VtQ@mail.gmail.com>
-References: <1398775115-6842-1-git-send-email-rabel@cit-ec.uni-bielefeld.de>
-	<CACRpkdZu0BAfR5b=-AbURxQ1VtGJbBmBwrTmLkO3Te--EHYWyQ@mail.gmail.com>
-	<537202F5.6070609@cit-ec.uni-bielefeld.de>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: make of_get_named_gpiod_flags() private
+Date: Tue, 13 May 2014 22:23:43 +0900
+Message-ID: <CAAVeFuLqF6d+-BHhFzL+w9bFNxbxWV97dsx1Kbd2GD1PNf3UFg@mail.gmail.com>
+References: <1399175125-6430-1-git-send-email-acourbot@nvidia.com> <CACRpkdYM5W2oVT0y25u+BhWHpVma5fRP8MgmEH46dAyu8L8-2g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:44114 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753464AbaEMNUP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 May 2014 09:20:15 -0400
-Received: by mail-ob0-f170.google.com with SMTP id uy5so350534obc.29
-        for <linux-gpio@vger.kernel.org>; Tue, 13 May 2014 06:20:15 -0700 (PDT)
-In-Reply-To: <537202F5.6070609@cit-ec.uni-bielefeld.de>
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:49271 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932401AbaEMNYF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 May 2014 09:24:05 -0400
+In-Reply-To: <CACRpkdYM5W2oVT0y25u+BhWHpVma5fRP8MgmEH46dAyu8L8-2g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert ABEL <rabel@cit-ec.uni-bielefeld.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, May 13, 2014 at 1:33 PM, Robert ABEL
-<rabel@cit-ec.uni-bielefeld.de> wrote:
-> On 13 May 2014 10:42, Linus Walleij wrote:
->>
->> Since I've merged Alexandre's other patch making the function private I'm
->> dropping this assuming you have sorted things out...
+On Tue, May 13, 2014 at 10:17 PM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Sun, May 4, 2014 at 5:45 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 >
-> No, I just stopped responding, because I grew tired of his stupid argument.
-> You want broken functions, you get broken functions.
+>> of_get_named_gpiod_flags() is visible and directly usable by GPIO
+>> consumers, but it really should not as the gpiod interface relies
+>> on the simpler gpiod_get() to provide properly-configured GPIOs.
+>>
+>> of_get_named_gpiod_flags() is just used internally by gpiolib to
+>> implement gpiod_get(), and by the old of_get_named_gpio_flags()
+>> function, therefore it makes sense to make it gpiolib-private.
+>>
+>> As a side-effect, the unused (and unneeded) of_get_gpiod_flags()
+>> inline function is also removed, and of_get_named_gpio_flags() is moved
+>> from a static inline function to a regular one in gpiolib-of.c
+>>
+>> This results in all references to gpiod_* functions in of_gpio.h being
+>> gone, which is the way it should be since this file is part of the old
+>> integer GPIO interface.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>
+> This patch broke a lot of drivers so I had to take it out again...
 
-Yeah well applying that patch removing the call broke a lot of drivers
-so I had to take it out again and you can sort this out.
-
-Please keep a civil tone even if I see you're both passionately
-discussing this now, let's all be friends and figure out what to do
-now OK?
-
-Yours,
-Linus Walleij
+That's unexpected - what happens with it?
