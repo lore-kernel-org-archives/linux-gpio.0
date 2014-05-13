@@ -1,26 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/7] ARM: dts: socfpga: add gpio pieces
-Date: Tue, 13 May 2014 10:45:24 +0200
-Message-ID: <CACRpkdZ+OG0FXkgnkdiyhRobSvo+9=ouXc6qes_UCGhitFhTXQ@mail.gmail.com>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
-	<1395505004-22650-2-git-send-email-bigeasy@linutronix.de>
-	<CAOesGMi_0fT4UbfGUp9jkrwYMXgfxC5gmXOBviU9PjAutPdHiw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: omap: prepare and unprepare the debounce clock
+Date: Tue, 13 May 2014 11:24:24 +0200
+Message-ID: <CACRpkdZ2EhKyjg6_txGByN501QiOOQ+N5rvDZDm_jqNRWZxN5g@mail.gmail.com>
+References: <1398233465-8845-1-git-send-email-rnayak@ti.com>
+	<1398233465-8845-2-git-send-email-rnayak@ti.com>
+	<536B2CEE.4010809@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMi_0fT4UbfGUp9jkrwYMXgfxC5gmXOBviU9PjAutPdHiw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, Alan Tull <delicious.quinoa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <536B2CEE.4010809@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Rajendra Nayak <rnayak@ti.com>
+Cc: Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, ext Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 6, 2014 at 12:02 AM, Olof Johansson <olof@lixom.net> wrote:
+On Thu, May 8, 2014 at 9:06 AM, Rajendra Nayak <rnayak@ti.com> wrote:
 
-> ... or is there some underlying reason for having the two-layer
-> approach that isn't obvious from this device tree?
+> Do you mind picking this fix up via the GPIO tree?
 
-There is, as explained by Alan. One coherent memory range with
-several individual ports.
+Yes, it's merged to my devel branch now with the ACKs.
+
+> Alternatively you could
+> Ack this if you are fine and we can take both Patch 1/2 and Patch 2/2 from this
+> series via the OMAP tree.
+
+This probably will not work as I have a set of other changes to this
+driver in my tree.
+
+> Patch 2/2 has a dependency on Patch 1/2 and they need to go in in that order else
+> gpio would break. More discussions are here [1].
+
+Tell me if I should prepare an immutable tag on my branch that you
+can pull in. I want an explicit handshake with the platform
+maintainer for this kind of stuff.
 
 Yours,
 Linus Walleij
