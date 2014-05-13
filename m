@@ -1,23 +1,23 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: using devm functions for timberdale gpio memory
- allocation This eases memory allocation and provides appropriate logging
-Date: Tue, 13 May 2014 11:42:32 +0200
-Message-ID: <CACRpkdZi=8ziAh4G2uG4Whw4tyzCtLqM=Dm469-Ltp67N8Eaxw@mail.gmail.com>
-References: <1399944102-9089-1-git-send-email-berthe.ab@gmail.com>
+Subject: Re: [PATCH] gpio: generic: add request function pointer
+Date: Tue, 13 May 2014 11:44:16 +0200
+Message-ID: <CACRpkdYhEdjd7P8Wz2yC-hDvQ015Aq9EzUEKE+dqf8JXDYFpRA@mail.gmail.com>
+References: <e7a900f5996edb3588e0b2caf6b96ec3@statler.emutex.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1399944102-9089-1-git-send-email-berthe.ab@gmail.com>
+In-Reply-To: <e7a900f5996edb3588e0b2caf6b96ec3@statler.emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: abdoulaye berthe <berthe.ab@gmail.com>
+To: Anthony Fee <anthony.fee@emutex.com>
 Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 13, 2014 at 3:21 AM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
+On Mon, May 12, 2014 at 7:35 PM, Anthony Fee <anthony.fee@emutex.com> wrote:
 
-> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
+> gpiolib will require all gpio drivers to expicitly set the request function
+> pointer
 
-Good patch, so I fixed up the commit message and applied it.
+Yeah send a plaintext version so I can apply it ;-)
 
 Yours,
 Linus Walleij
