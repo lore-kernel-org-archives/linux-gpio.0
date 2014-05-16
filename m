@@ -1,89 +1,363 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: sysfs: wait for GPIO interrupt
-Date: Fri, 16 May 2014 19:28:20 +0200
-Message-ID: <CABxcv=nev4vuD9VAwZvcZJX9VXJa5czeF=8Zr1yaVV=oa5GZ8w@mail.gmail.com>
-References: <CAGm1_kuKvjAguez85MKWk+gw5T4-oa8thHEao6Rz0nES-woYiA@mail.gmail.com>
-	<CABxcv=k7QTiNWNbHTLFKkjHdgk9o9xB4E4uq75wuKyvXYhqWMQ@mail.gmail.com>
-	<CACRpkdZU+P_8NK_YX6aqcp5WtbAzgv7V73Uzj0_RxAQaQgaDzg@mail.gmail.com>
-	<CAGm1_kuZGs0=hzPwUs7aC34PQVn7pL2r7V_rdbwXAtwCHxXBkA@mail.gmail.com>
-	<CABxcv=m8go203DcdAy6kdQm0=vOo9TxFSKKdt1bwDMbW_72W-g@mail.gmail.com>
-	<CACRpkdZcDQPKxehZkPjeJ5yGsHPs_xvDu0Mn5UgE-azCi4m=-Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Fri, 16 May 2014 19:33:44 +0200
+Message-ID: <CACRpkdZ67KoaMWUzpPm5g7yvQ-_q9zxuS+4wcXP0u18MW=XovA@mail.gmail.com>
+References: <1400082247-24168-1-git-send-email-lejun.zhu@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f170.google.com ([74.125.82.170]:56166 "EHLO
-	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752716AbaEPR2V (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 May 2014 13:28:21 -0400
-Received: by mail-we0-f170.google.com with SMTP id u57so2928562wes.1
-        for <linux-gpio@vger.kernel.org>; Fri, 16 May 2014 10:28:20 -0700 (PDT)
-In-Reply-To: <CACRpkdZcDQPKxehZkPjeJ5yGsHPs_xvDu0Mn5UgE-azCi4m=-Q@mail.gmail.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:52000 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757619AbaEPRdp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 May 2014 13:33:45 -0400
+Received: by mail-ob0-f170.google.com with SMTP id uy5so3326320obc.1
+        for <linux-gpio@vger.kernel.org>; Fri, 16 May 2014 10:33:44 -0700 (PDT)
+In-Reply-To: <1400082247-24168-1-git-send-email-lejun.zhu@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@linaro.org>, Yegor Yefremov <yegorslists@googlemail.com>, Alexandre Courbot <gnurou@gmail.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, jack@embed.me.uk
+To: "Zhu, Lejun" <lejun.zhu@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bin.yang@intel.com, Darren Hart <dvhart@linux.intel.com>, "Holmberg, Hans" <hans.holmberg@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>
 
-Hello Linus,
+On Wed, May 14, 2014 at 5:44 PM, Zhu, Lejun <lejun.zhu@linux.intel.com> wrote:
 
-Thanks a lot for your explanations.
-
-On Fri, May 16, 2014 at 6:43 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, May 14, 2014 at 11:32 AM, Javier Martinez Canillas
-> <javier@dowhile0.org> wrote:
+> Devices based on Intel SoC products such as Baytrail have a Power
+> Management IC. In the PMIC there are subsystems for voltage regulation,
+> A/D conversion, GPIO and PWMs. The PMIC in Baytrail-T platform is called
+> Crystal Cove.
 >
->> If Linus agrees that a better GPIO interface that model the GPIO
->> operations can be developed using a set of ioctl commands or netlink
->> sockets I'll be very glad to help with the implementation.
+> This patch adds support for the GPIO function in Crystal Cove.
 >
-> That needs to be discussed with the wider kernel community and will
-> be a quite daunting task. But if you have the geist, do go ahead. Involved
-> people would include Grant Likely and Greg Kroah-Hartmann.
->
+> Signed-off-by: Yang, Bin <bin.yang@intel.com>
+> Signed-off-by: Zhu, Lejun <lejun.zhu@linux.intel.com>
 
-If the correct approach is to drive the hardware using the GPIO from
-the kernel then I think that is better to not add another interface
-that can be (ab)used from user-space.
+(...)
 
-It would be nice if Yegor can give more details about the device that
-are using those GPIO and what he wants to achieve from user-space to
-see if an existing device driver can be used or in any case if a
-generic driver can be written like is done for GPIO leds, keys, etc.
+> +config GPIO_INTEL_SOC_PMIC
+> +       bool "GPIO on Intel SoC PMIC"
+> +       depends on INTEL_SOC_PMIC
 
->> On a related note I see that people are asking how they can mux a SoC
->> pin in GPIO mode in order to use the GPIO sysfs interface. For example
->> take a look to this thread [0].
->
-> Pin control shall be handled in the kernel.
->
->> When OMAP was not using pinctrl-single but a custom driver for pin
->> configuration there was a debugfs interface
->> (/sys/kernel/debug/omap_mux) that allowed to change the pin mux setup.
->
-> If people want to do crazy stuff from userspace and they use
-> debugfs for that, they should be aware what the rules of debugfs
-> is: it is *NOT* an ABI! We may break that just because we feel
-> like it.
->
+select GPIOLIB_IRQCHIP
 
-Yeah, that interface was not secure either since iirc you could change
-any padconf setup hence making devices that relied on a certain pin
-mux mode to not work anymore.
+and use the infrastructure from commit
+1425052097b53de841e064dc190a9009480c208c
+"gpio: add IRQ chip helpers in gpiolib"
 
-> There are no plans for a proper userspace interface for pin control,
-> if that is desired an even bigger undertaking than moving GPIOs to
-> ioctl():s etc will be needed.
->
-> But here, too, I think the real answer is: edit device tree files.
->
+Some fixes for sleeping chips have been merged and are available
+on the "devel" branch in the GPIO tree, so you may need to base
+your development on that.
 
-Perfect, as I said on a previous email it can be done by editing the
-device tree file, I just wanted to double check with you if that was
-the suggested approach for doing this.
+Adding some kerneldoc to the below struct will maybe make you
+realize whether you actually need it or not.
 
-Yegor, it seems you got your answer :-)
+> +struct crystalcove_gpio {
+> +       struct mutex            buslock; /* irq_bus_lock */
+> +       struct gpio_chip        chip;
+> +       int                     irq;
+> +       int                     irq_base;
 
-> Yours,
-> Linus Walleij
+You should not have hardcoded IRQ bases around. Use an irqdomain
+to map IRQs, and even better: use the one provided in
+chip->irqdomain by GPIOLIB_IRQCHIP. (It's a requirement.)
 
-Best regards,
-Javier
+> +       int                     update;
+> +       int                     trigger_type;
+> +       int                     irq_mask;
+
+Should this be a bool since you just set it to 0 or 1?
+
+> +};
+> +static struct crystalcove_gpio gpio_info;
+> +
+> +static void __crystalcove_irq_mask(int gpio, int mask)
+
+I don't really like __doubleunderscore specifiers, can you use a
+unique name or something instead.
+
+> +{
+> +       u8 mirqs0 = gpio < 8 ? MGPIO0IRQS0 : MGPIO1IRQS0;
+> +       int offset = gpio < 8 ? gpio : gpio - 8;
+
+Meh.
+unsigned int offset = gpio%8;
+
+> +
+> +       if (mask)
+> +               intel_soc_pmic_setb(mirqs0, 1 << offset);
+
+Use
+#include <linux/bitops.h>
+
+intel_soc_pmic_setb(mirqs0, BIT(offset));
+
+I really like the BIT() macros.
+
+> +       else
+> +               intel_soc_pmic_clearb(mirqs0, 1 << offset);
+
+Dito.
+
+> +static void __crystalcove_irq_type(int gpio, int type)
+> +{
+> +       u8 ctli = gpio < 8 ? GPIO0P0CTLI + gpio : GPIO1P0CTLI + (gpio - 8);
+
+Do it like the first time instead, this is hard to read.
+
+> +       type &= IRQ_TYPE_EDGE_BOTH;
+> +       intel_soc_pmic_clearb(ctli, CTLI_INTCNT_BE);
+> +
+> +       if (type == IRQ_TYPE_EDGE_BOTH)
+> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_BE);
+> +       else if (type == IRQ_TYPE_EDGE_RISING)
+> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_PE);
+> +       else if (type & IRQ_TYPE_EDGE_FALLING)
+> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_NE);
+> +}
+> +
+> +static int crystalcove_gpio_direction_input(struct gpio_chip *chip,
+> +                                           unsigned gpio)
+> +{
+> +       u8 ctlo = gpio < 8 ? GPIO0P0CTLO + gpio : GPIO1P0CTLO + (gpio - 8);
+
+Dito.
+
+> +
+> +       intel_soc_pmic_writeb(ctlo, CTLO_INPUT_DEF);
+> +       return 0;
+> +}
+> +
+> +static int crystalcove_gpio_direction_output(struct gpio_chip *chip,
+> +                                            unsigned gpio, int value)
+> +{
+> +       u8 ctlo = gpio < 8 ? GPIO0P0CTLO + gpio : GPIO1P0CTLO + (gpio - 8);
+
+Dito. (etc for all)
+
+> +
+> +       intel_soc_pmic_writeb(ctlo, CTLO_OUTPUT_DEF | value);
+> +       return 0;
+> +}
+> +
+> +static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
+> +{
+> +       u8 ctli = gpio < 8 ? GPIO0P0CTLI + gpio : GPIO1P0CTLI + (gpio - 8);
+> +
+> +       return intel_soc_pmic_readb(ctli) & 0x1;
+> +}
+> +
+> +static void crystalcove_gpio_set(struct gpio_chip *chip,
+> +                                unsigned gpio, int value)
+> +{
+> +       u8 ctlo = gpio < 8 ? GPIO0P0CTLO + gpio : GPIO1P0CTLO + (gpio - 8);
+> +
+> +       if (value)
+> +               intel_soc_pmic_setb(ctlo, 1);
+> +       else
+> +               intel_soc_pmic_clearb(ctlo, 1);
+> +}
+> +
+> +static int crystalcove_irq_type(struct irq_data *data, unsigned type)
+> +{
+> +       struct crystalcove_gpio *cg = irq_data_get_irq_chip_data(data);
+> +
+> +       cg->trigger_type = type;
+> +       cg->update |= UPDATE_TYPE;
+> +
+> +       return 0;
+> +}
+> +
+> +static int crystalcove_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
+> +{
+> +       struct crystalcove_gpio *cg =
+> +               container_of(chip, struct crystalcove_gpio, chip);
+> +
+> +       return cg->irq_base + gpio;
+> +}
+
+Nope. Use the irqdomain in chip->irqdomain.
+
+> +static void crystalcove_bus_lock(struct irq_data *data)
+> +{
+> +       struct crystalcove_gpio *cg = irq_data_get_irq_chip_data(data);
+
+This and all IRQ function callbacks needs to use a construct like
+this:
+
+struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+struct crystalcove_gpio *cg = container_of(gc, struct crystalcove_gpio, chip);
+
+> +
+> +       mutex_lock(&cg->buslock);
+> +}
+> +
+> +static void crystalcove_bus_sync_unlock(struct irq_data *data)
+> +{
+
+The same here and for each irq function, as the irqchip helpers pass
+struct gpio_chip* as irq_chip_data.
+
+> +       struct crystalcove_gpio *cg = irq_data_get_irq_chip_data(data);
+> +       int gpio = data->irq - cg->irq_base;
+> +
+> +       if (cg->update & UPDATE_TYPE)
+> +               __crystalcove_irq_type(gpio, cg->trigger_type);
+> +       if (cg->update & UPDATE_MASK)
+> +               __crystalcove_irq_mask(gpio, cg->irq_mask);
+> +       cg->update = 0;
+> +
+> +       mutex_unlock(&cg->buslock);
+> +}
+> +
+> +static void crystalcove_irq_unmask(struct irq_data *data)
+> +{
+> +       struct crystalcove_gpio *cg = irq_data_get_irq_chip_data(data);
+> +
+> +       cg->irq_mask = 0;
+> +       cg->update |= UPDATE_MASK;
+> +}
+> +
+> +static void crystalcove_irq_mask(struct irq_data *data)
+> +{
+> +       struct crystalcove_gpio *cg = irq_data_get_irq_chip_data(data);
+> +
+> +       cg->irq_mask = 1;
+> +       cg->update |= UPDATE_MASK;
+> +}
+> +
+> +static struct irq_chip crystalcove_irqchip = {
+> +       .name                   = "PMIC-GPIO",
+> +       .irq_mask               = crystalcove_irq_mask,
+> +       .irq_unmask             = crystalcove_irq_unmask,
+> +       .irq_set_type           = crystalcove_irq_type,
+> +       .irq_bus_lock           = crystalcove_bus_lock,
+> +       .irq_bus_sync_unlock    = crystalcove_bus_sync_unlock,
+> +};
+> +
+> +static irqreturn_t crystalcove_gpio_irq_handler(int irq, void *data)
+> +{
+> +       struct crystalcove_gpio *cg = data;
+
+If you also use gpiochip_set_chained_irqchip() you need something like
+this here:
+
+struct gpio_chip *gc = data;
+then  the container_of() construction.
+
+> +       int pending;
+> +       int gpio;
+> +
+> +       pending = intel_soc_pmic_readb(GPIO0IRQ) & 0xff;
+> +       pending |= (intel_soc_pmic_readb(GPIO1IRQ) & 0xff) << 8;
+> +       intel_soc_pmic_writeb(GPIO0IRQ, pending & 0xff);
+> +       intel_soc_pmic_writeb(GPIO1IRQ, (pending >> 8) & 0xff);
+> +
+> +       local_irq_disable();
+> +       for (gpio = 0; gpio < cg->chip.ngpio; gpio++)
+> +               if (pending & (1 << gpio))
+> +                       generic_handle_irq(cg->irq_base + gpio);
+> +       local_irq_enable();
+> +
+> +       return IRQ_HANDLED;
+> +}
+> +
+> +static void crystalcove_gpio_dbg_show(struct seq_file *s,
+> +                                     struct gpio_chip *chip)
+> +{
+> +       struct crystalcove_gpio *cg =
+> +               container_of(chip, struct crystalcove_gpio, chip);
+> +       int gpio, offset;
+> +       u8 ctlo, ctli, mirqs0, mirqsx, irq;
+> +
+> +       for (gpio = 0; gpio < cg->chip.ngpio; gpio++) {
+> +               offset = gpio < 8 ? gpio : gpio - 8;
+> +               ctlo = intel_soc_pmic_readb(
+> +                       (gpio < 8 ? GPIO0P0CTLO : GPIO1P0CTLO) + offset);
+> +               ctli = intel_soc_pmic_readb(
+> +                       (gpio < 8 ? GPIO0P0CTLI : GPIO1P0CTLI) + offset);
+> +               mirqs0 = intel_soc_pmic_readb(
+> +                       gpio < 8 ? MGPIO0IRQS0 : MGPIO1IRQS0);
+> +               mirqsx = intel_soc_pmic_readb(
+> +                       gpio < 8 ? MGPIO0IRQSX : MGPIO1IRQSX);
+> +               irq = intel_soc_pmic_readb(
+> +                       gpio < 8 ? GPIO0IRQ : GPIO1IRQ);
+> +               seq_printf(s, " gpio-%-2d %s %s %s %s ctlo=%2x,%s %s %s\n",
+> +                          gpio, ctlo & CTLO_DIR_OUT ? "out" : "in ",
+> +                          ctli & 0x1 ? "hi" : "lo",
+> +                          ctli & CTLI_INTCNT_NE ? "fall" : "    ",
+> +                          ctli & CTLI_INTCNT_PE ? "rise" : "    ",
+> +                          ctlo,
+> +                          mirqs0 & (1 << offset) ? "s0 mask  " : "s0 unmask",
+> +                          mirqsx & (1 << offset) ? "sx mask  " : "sx unmask",
+> +                          irq & (1 << offset) ? "pending" : "       ");
+> +       }
+> +}
+
+Looks helpful!
+
+> +static int crystalcove_gpio_probe(struct platform_device *pdev)
+> +{
+> +       int irq = platform_get_irq(pdev, 0);
+> +       struct crystalcove_gpio *cg = &gpio_info;
+> +       int retval;
+> +       int i;
+> +       struct device *dev = intel_soc_pmic_dev();
+> +
+> +       mutex_init(&cg->buslock);
+> +       cg->chip.label = "intel_crystalcove";
+> +       cg->chip.direction_input = crystalcove_gpio_direction_input;
+> +       cg->chip.direction_output = crystalcove_gpio_direction_output;
+> +       cg->chip.get = crystalcove_gpio_get;
+> +       cg->chip.set = crystalcove_gpio_set;
+> +       cg->chip.to_irq = crystalcove_gpio_to_irq;
+
+You don't define to_irq when using GPIOLIB_IRQCHIP.
+
+> +       cg->chip.base = -1;
+> +       cg->chip.ngpio = NUM_GPIO;
+> +       cg->chip.can_sleep = 1;
+
+true. Set it to true. This is a bool.
+
+> +       cg->chip.dev = dev;
+> +       cg->chip.dbg_show = crystalcove_gpio_dbg_show;
+> +
+> +       retval = gpiochip_add(&cg->chip);
+> +       if (retval) {
+> +               dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
+> +               goto out;
+> +       }
+
+Skip from here:
+
+> +       cg->irq_base = irq_alloc_descs(-1, 0, NUM_GPIO, 0);
+> +       if (cg->irq_base < 0) {
+> +               retval = cg->irq_base;
+> +               cg->irq_base = 0;
+> +               dev_warn(&pdev->dev, "irq_alloc_descs error: %d\n", retval);
+> +               goto out_remove_gpio;
+> +       }
+> +
+> +       for (i = 0; i < NUM_GPIO; i++) {
+> +               irq_set_chip_data(i + cg->irq_base, cg);
+> +               irq_set_chip_and_handler_name(i + cg->irq_base,
+> +                                             &crystalcove_irqchip,
+> +                                             handle_simple_irq, "demux");
+> +       }
+
+To here, replace with:
+
+gpiochip_irqchip_add(&cg->chip, &crystalcove_irqchip, cg->irq_base,
+handle_simple_irq, IRQ_TYPE_NONE);
+
+> +       retval = request_threaded_irq(irq, NULL, crystalcove_gpio_irq_handler,
+> +                                     IRQF_ONESHOT, "crystalcove_gpio", cg);
+> +
+> +       if (retval) {
+> +               dev_warn(&pdev->dev, "request irq failed: %d\n", retval);
+> +               goto out_free_desc;
+> +       }
+
+Maybe use
+gpiochip_set_chained_irqchip() here.
+
+Yours,
+Linus Walleij
