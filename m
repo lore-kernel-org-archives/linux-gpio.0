@@ -1,44 +1,45 @@
-From: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
-Subject: Re: [PATCH] input: gpio-keys: Move the gpio-keys bindings
- documentation
-Date: Thu, 15 May 2014 11:22:37 -0300
-Message-ID: <20140515142237.GA3147@arch.cereza>
-References: <1399905224-1273-1-git-send-email-ezequiel.garcia@free-electrons.com>
- <20140512175806.GB16764@core.coreip.homeip.net>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH] gpio-pch: Fix Kconfig dependencies
+Date: Fri, 16 May 2014 11:59:14 +0200
+Message-ID: <20140516115914.2e250976@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:56626 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751541AbaEOOXN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 May 2014 10:23:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20140512175806.GB16764@core.coreip.homeip.net>
+Received: from cantor2.suse.de ([195.135.220.15]:36157 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756419AbaEPJ7T (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 16 May 2014 05:59:19 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On 12 May 10:58 AM, Dmitry Torokhov wrote:
-> On Mon, May 12, 2014 at 11:33:44AM -0300, Ezequiel Garcia wrote:
-> > This is an input driver and belongs to input not gpio.
-> >=20
-> > Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
->=20
-> Fine by me, will DT guys pick the patch or shoudl I do it?
->=20
+The gpio-pch driver is for a companion chip to the Intel Atom E600
+series processors. These are 32-bit x86 processors so the driver is
+only needed on X86_32. Add COMPILE_TEST as an alternative, so that the
+driver can still be build-tested elsewhere.
 
-I'd say it's just a small file movement, so go for it!
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+---
+ drivers/gpio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BTW, forgot to prepare the patch with rename detection, want me to rese=
-nd it?
---=20
-Ezequiel Garc=EDa, Free Electrons
-Embedded Linux, Kernel and Android Engineering
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--- linux-3.15-rc5.orig/drivers/gpio/Kconfig	2014-05-12 10:44:35.223342067 +0200
++++ linux-3.15-rc5/drivers/gpio/Kconfig	2014-05-16 11:41:19.838319948 +0200
+@@ -705,7 +705,7 @@ config GPIO_INTEL_MID
+ 
+ config GPIO_PCH
+ 	tristate "Intel EG20T PCH/LAPIS Semiconductor IOH(ML7223/ML7831) GPIO"
+-	depends on PCI && X86
++	depends on PCI && (X86_32 || COMPILE_TEST)
+ 	select GENERIC_IRQ_CHIP
+ 	help
+ 	  This driver is for PCH(Platform controller Hub) GPIO of Intel Topcliff
+
+
+-- 
+Jean Delvare
+SUSE L3 Support
