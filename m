@@ -1,46 +1,167 @@
-From: Daniel =?iso-8859-1?Q?Gl=F6ckner?= <dg@emlix.com>
-Subject: Re: gpio: Add support for Intel SoC PMIC (Crystal Cove)
-Date: Fri, 16 May 2014 19:46:20 +0200
-Message-ID: <20140516174619.GA1471@emlix.com>
-References: <1400082247-24168-1-git-send-email-lejun.zhu@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v2] gpio: make of_get_named_gpiod_flags() private
+Date: Sat, 17 May 2014 14:54:50 +0900
+Message-ID: <1400306090-4092-1-git-send-email-acourbot@nvidia.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.emlix.com ([88.198.240.195]:50000 "EHLO mx1.emlix.com"
+Received: from gnurou.org ([207.192.72.5]:38220 "EHLO mail.gnurou.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756948AbaEPRwt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 16 May 2014 13:52:49 -0400
-Content-Disposition: inline
-In-Reply-To: <1400082247-24168-1-git-send-email-lejun.zhu@linux.intel.com>
+	id S1751424AbaEQF5m (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 17 May 2014 01:57:42 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Zhu, Lejun" <lejun.zhu@linux.intel.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bin.yang@intel.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-Hi Lejun,
+of_get_named_gpiod_flags() is visible and directly usable by GPIO
+consumers, but it really should not as the gpiod interface relies
+on the simpler gpiod_get() to provide properly-configured GPIOs.
 
-On Wed, May 14, 2014 at 11:44:07PM +0800, Zhu, Lejun wrote:
-> This patch adds support for the GPIO function in Crystal Cove.
+of_get_named_gpiod_flags() is just used internally by gpiolib to
+implement gpiod_get(), and by the old of_get_named_gpio_flags()
+function, therefore it makes sense to make it gpiolib-private.
 
-in our device ACPI makes use of "virtual" GPIOs that have numbers from
-0x20 to 0x5E to change various bits in the PMIC. Do you know if this
-is officially supported by the INT33FD ACPI device or if it is a
-vendor hack?
+As a side-effect, the unused (and unneeded) of_get_gpiod_flags()
+inline function is also removed, and of_get_named_gpio_flags() is moved
+from a static inline function to a regular one in gpiolib-of.c
 
-  Daniel
+This results in all references to gpiod_* functions in of_gpio.h being
+gone, which is the way it should be since this file is part of the old
+integer GPIO interface.
 
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+Changes since v1:
+- Fixed compilation error when CONFIG_OF_GPIO is not defined
+- Fixed warning due to of_gpio_flags enum not being declared
+  in private gpiolib.h header
 
---=20
-Dipl.-Math. Daniel Gl=F6ckner, emlix GmbH, http://www.emlix.com
-=46on +49 551 30664-0, Fax +49 551 30664-11,
-Bertha-von-Suttner-Stra=DFe 9, 37085 G=F6ttingen, Germany
-Sitz der Gesellschaft: G=F6ttingen, Amtsgericht G=F6ttingen HR B 3160
-Gesch=E4ftsf=FChrung: Dr. Uwe Kracke, Ust-IdNr.: DE 205 198 055
+ drivers/gpio/gpiolib-of.c | 14 ++++++++++++++
+ drivers/gpio/gpiolib.h    |  5 +++++
+ include/linux/of_gpio.h   | 35 +++--------------------------------
+ 3 files changed, 22 insertions(+), 32 deletions(-)
 
-emlix - your embedded linux partner
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index db98d3a..af7e25c 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -96,6 +96,20 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ }
+ EXPORT_SYMBOL(of_get_named_gpiod_flags);
+ 
++int of_get_named_gpio_flags(struct device_node *np, const char *list_name,
++			    int index, enum of_gpio_flags *flags)
++{
++	struct gpio_desc *desc;
++
++	desc = of_get_named_gpiod_flags(np, list_name, index, flags);
++
++	if (IS_ERR(desc))
++		return PTR_ERR(desc);
++	else
++		return desc_to_gpio(desc);
++}
++EXPORT_SYMBOL(of_get_named_gpio_flags);
++
+ /**
+  * of_gpio_simple_xlate - translate gpio_spec to the GPIO number and flags
+  * @gc:		pointer to the gpio_chip structure
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index cf09294..1a4103d 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -15,6 +15,8 @@
+ #include <linux/err.h>
+ #include <linux/device.h>
+ 
++enum of_gpio_flags;
++
+ /**
+  * struct acpi_gpio_info - ACPI GPIO specific information
+  * @gpioint: if %true this GPIO is of type GpioInt otherwise type is GpioIo
+@@ -46,4 +48,7 @@ acpi_get_gpiod_by_index(struct device *dev, int index,
+ int gpiochip_request_own_desc(struct gpio_desc *desc, const char *label);
+ void gpiochip_free_own_desc(struct gpio_desc *desc);
+ 
++struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
++		   const char *list_name, int index, enum of_gpio_flags *flags);
++
+ #endif /* GPIOLIB_H */
+diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
+index f14123a..38fc050 100644
+--- a/include/linux/of_gpio.h
++++ b/include/linux/of_gpio.h
+@@ -19,7 +19,6 @@
+ #include <linux/errno.h>
+ #include <linux/gpio.h>
+ #include <linux/of.h>
+-#include <linux/gpio/consumer.h>
+ 
+ struct device_node;
+ 
+@@ -48,7 +47,7 @@ static inline struct of_mm_gpio_chip *to_of_mm_gpio_chip(struct gpio_chip *gc)
+ 	return container_of(gc, struct of_mm_gpio_chip, gc);
+ }
+ 
+-extern struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
++extern int of_get_named_gpio_flags(struct device_node *np,
+ 		const char *list_name, int index, enum of_gpio_flags *flags);
+ 
+ extern int of_mm_gpiochip_add(struct device_node *np,
+@@ -63,10 +62,10 @@ extern int of_gpio_simple_xlate(struct gpio_chip *gc,
+ #else /* CONFIG_OF_GPIO */
+ 
+ /* Drivers may not strictly depend on the GPIO support, so let them link. */
+-static inline struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
++static inline int of_get_named_gpio_flags(struct device_node *np,
+ 		const char *list_name, int index, enum of_gpio_flags *flags)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return -ENOSYS;
+ }
+ 
+ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
+@@ -81,18 +80,6 @@ static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
+ 
+ #endif /* CONFIG_OF_GPIO */
+ 
+-static inline int of_get_named_gpio_flags(struct device_node *np,
+-		const char *list_name, int index, enum of_gpio_flags *flags)
+-{
+-	struct gpio_desc *desc;
+-	desc = of_get_named_gpiod_flags(np, list_name, index, flags);
+-
+-	if (IS_ERR(desc))
+-		return PTR_ERR(desc);
+-	else
+-		return desc_to_gpio(desc);
+-}
+-
+ /**
+  * of_gpio_named_count() - Count GPIOs for a device
+  * @np:		device node to count GPIOs for
+@@ -129,22 +116,6 @@ static inline int of_gpio_count(struct device_node *np)
+ 	return of_gpio_named_count(np, "gpios");
+ }
+ 
+-/**
+- * of_get_gpiod_flags() - Get a GPIO descriptor and flags to use with GPIO API
+- * @np:		device node to get GPIO from
+- * @index:	index of the GPIO
+- * @flags:	a flags pointer to fill in
+- *
+- * Returns GPIO descriptor to use with Linux generic GPIO API, or a errno
+- * value on the error condition. If @flags is not NULL the function also fills
+- * in flags for the GPIO.
+- */
+-static inline struct gpio_desc *of_get_gpiod_flags(struct device_node *np,
+-					int index, enum of_gpio_flags *flags)
+-{
+-	return of_get_named_gpiod_flags(np, "gpios", index, flags);
+-}
+-
+ static inline int of_get_gpio_flags(struct device_node *np, int index,
+ 		      enum of_gpio_flags *flags)
+ {
+-- 
+1.9.2
+
