@@ -1,87 +1,58 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] gpio: make of_get_named_gpiod_flags() private
-Date: Mon, 19 May 2014 15:28:23 +0200
-Message-ID: <20140519132822.GA9728@ulmo>
-References: <1400306090-4092-1-git-send-email-acourbot@nvidia.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Mon, 19 May 2014 17:13:14 +0300
+Message-ID: <537A117A.7050802@linux.intel.com>
+References: <1400082247-24168-1-git-send-email-lejun.zhu@linux.intel.com> <CACRpkdZ67KoaMWUzpPm5g7yvQ-_q9zxuS+4wcXP0u18MW=XovA@mail.gmail.com> <53794FDC.6080908@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:62017 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752775AbaESNah (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 May 2014 09:30:37 -0400
-Content-Disposition: inline
-In-Reply-To: <1400306090-4092-1-git-send-email-acourbot@nvidia.com>
+Received: from mga01.intel.com ([192.55.52.88]:37823 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753291AbaESOBw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 19 May 2014 10:01:52 -0400
+In-Reply-To: <53794FDC.6080908@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bin.yang@intel.com, Darren Hart <dvhart@linux.intel.com>, "Holmberg, Hans" <hans.holmberg@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+
+On 05/19/2014 03:27 AM, Zhu, Lejun wrote:
+> 
+> 
+> On 5/17/2014 1:33 AM, Linus Walleij wrote:
+>> On Wed, May 14, 2014 at 5:44 PM, Zhu, Lejun <lejun.zhu@linux.intel.com> wrote:
+>>
+>>> Devices based on Intel SoC products such as Baytrail have a Power
+>>> Management IC. In the PMIC there are subsystems for voltage regulation,
+>>> A/D conversion, GPIO and PWMs. The PMIC in Baytrail-T platform is called
+>>> Crystal Cove.
+>>>
+>>> This patch adds support for the GPIO function in Crystal Cove.
+>>>
+>>> Signed-off-by: Yang, Bin <bin.yang@intel.com>
+>>> Signed-off-by: Zhu, Lejun <lejun.zhu@linux.intel.com>
+>>
+>> (...)
+>>
+>>> +config GPIO_INTEL_SOC_PMIC
+>>> +       bool "GPIO on Intel SoC PMIC"
+>>> +       depends on INTEL_SOC_PMIC
+> 
+> Thank you. That's a long list and all of them indeed need to be fixed.
+> I'll work on them and submit v2 when ready.
+> 
+
+Shouldn't there be a .remove function undoing everything probe did?
+Freeing interrupts, removing irq domains, calling gpiochip_remove etc.
+
+Or is there something I'm missing?
+I see there's no option to compile this as module, but It might be added later so
+proper remove function would still be nice.
+
+-Mathias
 
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 17, 2014 at 02:54:50PM +0900, Alexandre Courbot wrote:
-> of_get_named_gpiod_flags() is visible and directly usable by GPIO
-> consumers, but it really should not as the gpiod interface relies
-> on the simpler gpiod_get() to provide properly-configured GPIOs.
->=20
-> of_get_named_gpiod_flags() is just used internally by gpiolib to
-> implement gpiod_get(), and by the old of_get_named_gpio_flags()
-> function, therefore it makes sense to make it gpiolib-private.
->=20
-> As a side-effect, the unused (and unneeded) of_get_gpiod_flags()
-> inline function is also removed, and of_get_named_gpio_flags() is moved
-> from a static inline function to a regular one in gpiolib-of.c
->=20
-> This results in all references to gpiod_* functions in of_gpio.h being
-> gone, which is the way it should be since this file is part of the old
-> integer GPIO interface.
->=20
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> Changes since v1:
-> - Fixed compilation error when CONFIG_OF_GPIO is not defined
-> - Fixed warning due to of_gpio_flags enum not being declared
->   in private gpiolib.h header
->=20
->  drivers/gpio/gpiolib-of.c | 14 ++++++++++++++
->  drivers/gpio/gpiolib.h    |  5 +++++
->  include/linux/of_gpio.h   | 35 +++--------------------------------
->  3 files changed, 22 insertions(+), 32 deletions(-)
 
-There are cases where GPIOs need to be obtained from device tree nodes
-without a corresponding struct device. Do you have any ideas on how to
-support such use-cases?
 
-There's currently no API to do that except of_get_named_gpio_flags().
-But that doesn't handled flags automatically in a way that gpiod_get()
-does.
-
-Thierry
-
---CE+1k2dSO48ffgeK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTegb2AAoJEN0jrNd/PrOhcKMQAJYpv2p10U92963/jN3m8Ub3
-zF9y1NZAc7SUg0NrJhc1oN+kIm1fR/bofMcAXBvdwStOaVQkZxSMIa8bq06Rq/hg
-Zdd23OcQ7lmjN4isj1GfWYdsPY2nUPY8FMdyqCl411aiA5Bus3FPfNqrAgE0fOLH
-+oMFQ5Yw+1pxgHJgUblfDYNNiU0DEiSTh0hKrT+dS0vzSKDrm3FJn1K7U18n/4jR
-HtaR1AnGHLiGWi0MOopL6HtukHLFiGJKbv5hTH/KsRUO9qxlDZMQiiXiHaM/Ic/A
-RgQzV6ztEoAhNUIIODey3JygJt6CJJymbzVexb0clCTS92xDYzPkJg5vsuUm2SZc
-dgyAFBCKlB+nhQ64Up0O5RS29cPg2PWOxz0zQbGpZV4aNSYLsViiDlEV5KtvTkbf
-L2b+hnGUdo9wVKQk0tg9TlGzzRJxy5NJFcTErsl+i7chS/8u51RREBBZ9iK9OYnr
-5JOJ8JALvgfGOXeXe2gRq0W73BvdCte6TzGj6iSWahWKpBFxsEQznWHe471DqSpe
-tzaqjX4nni/L1dF9kTDXAJmdpbVd1KvJvJERU76//TEucrgWA5qnVdhQWFe64kIA
-kFtiCkL+G9QYWEbcoHFsdaFplLF6lC6ILRslKyABT4eGEe75HspmJt2/mz6sz43G
-qRxwjtUr2yAS8tml6h1j
-=lQ1z
------END PGP SIGNATURE-----
-
---CE+1k2dSO48ffgeK--
