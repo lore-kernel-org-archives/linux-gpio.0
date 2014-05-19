@@ -1,58 +1,64 @@
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: [PATCH] gpio: Add support for Intel SoC PMIC (Crystal Cove)
-Date: Mon, 19 May 2014 17:13:14 +0300
-Message-ID: <537A117A.7050802@linux.intel.com>
-References: <1400082247-24168-1-git-send-email-lejun.zhu@linux.intel.com> <CACRpkdZ67KoaMWUzpPm5g7yvQ-_q9zxuS+4wcXP0u18MW=XovA@mail.gmail.com> <53794FDC.6080908@linux.intel.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2] gpio: make of_get_named_gpiod_flags() private
+Date: Tue, 20 May 2014 00:07:40 +0900
+Message-ID: <CAAVeFu+c1t=QJzL9-pZVaTzvTD2Ydrv__yKHnn+-SA11zsxu_A@mail.gmail.com>
+References: <1400306090-4092-1-git-send-email-acourbot@nvidia.com> <20140519132822.GA9728@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:37823 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753291AbaESOBw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 19 May 2014 10:01:52 -0400
-In-Reply-To: <53794FDC.6080908@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140519132822.GA9728@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bin.yang@intel.com, Darren Hart <dvhart@linux.intel.com>, "Holmberg, Hans" <hans.holmberg@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On 05/19/2014 03:27 AM, Zhu, Lejun wrote:
-> 
-> 
-> On 5/17/2014 1:33 AM, Linus Walleij wrote:
->> On Wed, May 14, 2014 at 5:44 PM, Zhu, Lejun <lejun.zhu@linux.intel.com> wrote:
+On Mon, May 19, 2014 at 10:28 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Sat, May 17, 2014 at 02:54:50PM +0900, Alexandre Courbot wrote:
+>> of_get_named_gpiod_flags() is visible and directly usable by GPIO
+>> consumers, but it really should not as the gpiod interface relies
+>> on the simpler gpiod_get() to provide properly-configured GPIOs.
 >>
->>> Devices based on Intel SoC products such as Baytrail have a Power
->>> Management IC. In the PMIC there are subsystems for voltage regulation,
->>> A/D conversion, GPIO and PWMs. The PMIC in Baytrail-T platform is called
->>> Crystal Cove.
->>>
->>> This patch adds support for the GPIO function in Crystal Cove.
->>>
->>> Signed-off-by: Yang, Bin <bin.yang@intel.com>
->>> Signed-off-by: Zhu, Lejun <lejun.zhu@linux.intel.com>
+>> of_get_named_gpiod_flags() is just used internally by gpiolib to
+>> implement gpiod_get(), and by the old of_get_named_gpio_flags()
+>> function, therefore it makes sense to make it gpiolib-private.
 >>
->> (...)
+>> As a side-effect, the unused (and unneeded) of_get_gpiod_flags()
+>> inline function is also removed, and of_get_named_gpio_flags() is moved
+>> from a static inline function to a regular one in gpiolib-of.c
 >>
->>> +config GPIO_INTEL_SOC_PMIC
->>> +       bool "GPIO on Intel SoC PMIC"
->>> +       depends on INTEL_SOC_PMIC
-> 
-> Thank you. That's a long list and all of them indeed need to be fixed.
-> I'll work on them and submit v2 when ready.
-> 
+>> This results in all references to gpiod_* functions in of_gpio.h being
+>> gone, which is the way it should be since this file is part of the old
+>> integer GPIO interface.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
+>> Changes since v1:
+>> - Fixed compilation error when CONFIG_OF_GPIO is not defined
+>> - Fixed warning due to of_gpio_flags enum not being declared
+>>   in private gpiolib.h header
+>>
+>>  drivers/gpio/gpiolib-of.c | 14 ++++++++++++++
+>>  drivers/gpio/gpiolib.h    |  5 +++++
+>>  include/linux/of_gpio.h   | 35 +++--------------------------------
+>>  3 files changed, 22 insertions(+), 32 deletions(-)
+>
+> There are cases where GPIOs need to be obtained from device tree nodes
+> without a corresponding struct device. Do you have any ideas on how to
+> support such use-cases?
+>
+> There's currently no API to do that except of_get_named_gpio_flags().
+> But that doesn't handled flags automatically in a way that gpiod_get()
+> does.
 
-Shouldn't there be a .remove function undoing everything probe did?
-Freeing interrupts, removing irq domains, calling gpiochip_remove etc.
+Yeah, there is probably some legacy stuff that will need a few more
+functions to be handled using gpiod.
 
-Or is there something I'm missing?
-I see there's no option to compile this as module, but It might be added later so
-proper remove function would still be nice.
+As much as possible I'd like to avoid provider-specific functions, but
+in the worst case we can imagine making another function available for
+that:
 
--Mathias
+struct gpio_desc *of_gpiod_get_index(struct device_node *np, const
+char *con_id, unsigned int idx);
 
-
-
-
-
+that will handle flags properly and everything. Would that do the trick?
