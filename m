@@ -1,109 +1,110 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] gpio: make of_get_named_gpiod_flags() private
-Date: Mon, 19 May 2014 17:15:45 +0200
-Message-ID: <20140519151543.GA30194@ulmo>
-References: <1400306090-4092-1-git-send-email-acourbot@nvidia.com>
- <20140519132822.GA9728@ulmo>
- <CAAVeFu+c1t=QJzL9-pZVaTzvTD2Ydrv__yKHnn+-SA11zsxu_A@mail.gmail.com>
+From: Anthony Fee <anthony.fee@emutex.com>
+Subject: Re: [PATCH] gpio: generic: add request function pointer
+Date: Mon, 19 May 2014 18:47:18 +0100
+Message-ID: <8160553a1c8747171d90296c6d7c264b@statler.emutex.com>
+References: <loom.20140512T195210-63@post.gmane.org>
+ <CAAVeFuLUkP_4UW3EhStrPJ4caA5DdKqgJ-Do_qxWuzi5qHaotQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:48492 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753303AbaESPSA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 May 2014 11:18:00 -0400
-Content-Disposition: inline
-In-Reply-To: <CAAVeFu+c1t=QJzL9-pZVaTzvTD2Ydrv__yKHnn+-SA11zsxu_A@mail.gmail.com>
+Received: from smtp2.digiweb.ie ([83.147.160.14]:44562 "EHLO smtp.digiweb.ie"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754901AbaESRr0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 19 May 2014 13:47:26 -0400
+In-Reply-To: <CAAVeFuLUkP_4UW3EhStrPJ4caA5DdKqgJ-Do_qxWuzi5qHaotQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
+Hi Guys,
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm going to resubmit this to the mailing list as a v2 patch due to 
+formatting issues. Sorry for the confusion, I'm sending the patch with 
+git send-email so there shouldn't be any issues.
 
-On Tue, May 20, 2014 at 12:07:40AM +0900, Alexandre Courbot wrote:
-> On Mon, May 19, 2014 at 10:28 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Sat, May 17, 2014 at 02:54:50PM +0900, Alexandre Courbot wrote:
-> >> of_get_named_gpiod_flags() is visible and directly usable by GPIO
-> >> consumers, but it really should not as the gpiod interface relies
-> >> on the simpler gpiod_get() to provide properly-configured GPIOs.
-> >>
-> >> of_get_named_gpiod_flags() is just used internally by gpiolib to
-> >> implement gpiod_get(), and by the old of_get_named_gpio_flags()
-> >> function, therefore it makes sense to make it gpiolib-private.
-> >>
-> >> As a side-effect, the unused (and unneeded) of_get_gpiod_flags()
-> >> inline function is also removed, and of_get_named_gpio_flags() is moved
-> >> from a static inline function to a regular one in gpiolib-of.c
-> >>
-> >> This results in all references to gpiod_* functions in of_gpio.h being
-> >> gone, which is the way it should be since this file is part of the old
-> >> integer GPIO interface.
-> >>
-> >> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> >> ---
-> >> Changes since v1:
-> >> - Fixed compilation error when CONFIG_OF_GPIO is not defined
-> >> - Fixed warning due to of_gpio_flags enum not being declared
-> >>   in private gpiolib.h header
-> >>
-> >>  drivers/gpio/gpiolib-of.c | 14 ++++++++++++++
-> >>  drivers/gpio/gpiolib.h    |  5 +++++
-> >>  include/linux/of_gpio.h   | 35 +++--------------------------------
-> >>  3 files changed, 22 insertions(+), 32 deletions(-)
-> >
-> > There are cases where GPIOs need to be obtained from device tree nodes
-> > without a corresponding struct device. Do you have any ideas on how to
-> > support such use-cases?
-> >
-> > There's currently no API to do that except of_get_named_gpio_flags().
-> > But that doesn't handled flags automatically in a way that gpiod_get()
-> > does.
->=20
-> Yeah, there is probably some legacy stuff that will need a few more
-> functions to be handled using gpiod.
->=20
-> As much as possible I'd like to avoid provider-specific functions, but
-> in the worst case we can imagine making another function available for
-> that:
->=20
-> struct gpio_desc *of_gpiod_get_index(struct device_node *np, const
-> char *con_id, unsigned int idx);
->=20
-> that will handle flags properly and everything. Would that do the trick?
+Thanks,
+Anthony
 
-Yes, I think it would. Perhaps with a of_gpiod_get() wrapper that sets
-idx =3D 0. I'm aware of patches in the works that will require this, but
-until they're posted I don't think we'll need this. We can revisit at
-that time. Just wanted to mention this as a heads-up.
+On 13/05/2014 08:59, Alexandre Courbot wrote:
+> On Tue, May 13, 2014 at 2:54 AM, Anthony Fee <anthony.fee@emutex.com> 
+> wrote:
+>> gpiolib will require all gpio drivers to expicitly set the request 
+>> function
+>> pointer in future. To encourage gpio driver developers to adhere to 
+>> this
+>> standard gpio-generic.c now sets this function pointer.
+> 
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> 
+> for the non-HTML version. :)
+> 
+> On top of being future-proof, having the GPIO range check is also a 
+> good thing.
+> 
+>> 
+>> Signed-off-by: Anthony Fee <anthony.fee@emutex.com>
+>> ---
+>>  drivers/gpio/gpio-generic.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>> 
+>> diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+>> index b5dff9e..fea8c82 100644
+>> --- a/drivers/gpio/gpio-generic.c
+>> +++ b/drivers/gpio/gpio-generic.c
+>> @@ -388,6 +388,14 @@ static int bgpio_setup_direction(struct 
+>> bgpio_chip
+>> *bgc,
+>>         return 0;
+>>  }
+>> 
+>> +static int bgpio_request(struct gpio_chip *chip, unsigned gpio_pin)
+>> +{
+>> +       if (gpio_pin < chip->ngpio)
+>> +               return 0;
+>> +
+>> +       return -EINVAL;
+>> +}
+>> +
+>>  int bgpio_remove(struct bgpio_chip *bgc)
+>>  {
+>>         return gpiochip_remove(&bgc->gc);
+>> @@ -413,6 +421,7 @@ int bgpio_init(struct bgpio_chip *bgc, struct 
+>> device
+>> *dev,
+>>         bgc->gc.label = dev_name(dev);
+>>         bgc->gc.base = -1;
+>>         bgc->gc.ngpio = bgc->bits;
+>> +       bgc->gc.request = bgpio_request;
+>> 
+>>         ret = bgpio_setup_io(bgc, dat, set, clr);
+>>         if (ret)
+>> --
+>> 1.9.0
+>> 
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-gpio" 
+>> in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Thierry
+-- 
+Anthony Fee
+Software Engineer
+EMUTEX LTD.
+Callan Centre, National Technology Park, Limerick, Ireland
+Phone: +353 (0)61 514496, Mobile: +353 (0)86 3197614
+Web: www.emutex.com, Email: anthony.fee@emutex.com
 
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTeiAfAAoJEN0jrNd/PrOh0F4QAINiAnZFFGcDwYtJN2akUgPJ
-6eCsyZiEICk1n9a4ZDLuNRKTBa6oPhYXaTM4ZiJ1pvR+kp3YR4Xg/13UnM6hZnme
-MoIjSuq6r7LpAf672CaVI+mSJuZtfCec9onWrSBLy7fh/NnxeJg+E32KKvU/a1cz
-o3cxxFZwKBwHoaz+iTEIOmQOOrWoxruodEQTP8J27Uaz1CLMSUlKwV1/oMrZaIzF
-IXLKWw9vPNURST00Z5Y3FmCI+NQwS+3WoPu1R5eiqSfLlkRoPsjB4ZaqnYU4woaY
-59qTF0ZHcpCG3zRqwF3p/t/6KknV2NPYBV3Sa6k8npX0z5j94SpkxeR0wuYWNn+q
-w0KxsqrtKvDzJhpYQE9oZM25s2hjoget62hBMb6KmRHLa6EPOvkALsGWRkStIxIa
-0uYL9BYKO6YdcTxbsMJDHnievQb5fJ0dqiBb5lnydzRCPnVAt4w0R9S2khxY3krz
-uNr8ED4k2me18RWufRfRm6ckirMrDmpDCWBWEz3Uq3nK6b7xgteX7rI0Zj9DUU0q
-xObhLyeUXMdI1fqddLXFi7P7FMd5W0hL6UL+G7dGCpgoYcxm9N+LdNjOCNV7ZY43
-B4/vK0qK3jYlR7WT2twhojE54/7jxV1Qwbvfj8n6XBlsgzQTZ17zsf09cnjzYREK
-UhZURKcIET3a9GSCEXAh
-=wcZK
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
+This email may contain information, which is confidential and/or
+privileged. The information is intended solely for the use of the
+individual or entity named above. If you are not the intended recipient, 
+be
+aware that any disclosure, copying, distribution or use of the contents 
+is
+prohibited. If you have received this electronic transmission in error,
+please notify the sender by telephone or return email and delete the
+material from your computer. Emutex Ltd is registered in Ireland, No
+256238, at Callan Centre, National Technology Park, Limerick, Ireland.
