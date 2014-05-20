@@ -1,63 +1,195 @@
-From: "Zhu, Lejun" <lejun.zhu@linux.intel.com>
-Subject: Re: [PATCH] gpio: Add support for Intel SoC PMIC (Crystal Cove)
-Date: Tue, 20 May 2014 17:16:32 +0800
-Message-ID: <537B1D70.3050606@linux.intel.com>
-References: <1400082247-24168-1-git-send-email-lejun.zhu@linux.intel.com> <CACRpkdZ67KoaMWUzpPm5g7yvQ-_q9zxuS+4wcXP0u18MW=XovA@mail.gmail.com> <53794FDC.6080908@linux.intel.com> <537A117A.7050802@linux.intel.com>
+From: Feng Kan <fkan@apm.com>
+Subject: Re: [PATCH 1/3] gpio: Add APM X-Gene SoC GPIO controller support
+Date: Tue, 20 May 2014 16:54:29 -0700
+Message-ID: <CAL85gmDjVszNd3TB51BGa+78wEEZmJfBOLNKOpTEvMTGU2VdBA@mail.gmail.com>
+References: <1400263432-922-1-git-send-email-fkan@apm.com>
+ <1400263432-922-2-git-send-email-fkan@apm.com>
+ <CAAVeFu+TOfjfvisinv3oJ9PobdV9HcNJhr+3VYneSJ54uGwiAg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:59819 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752477AbaETJRE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 20 May 2014 05:17:04 -0400
-In-Reply-To: <537A117A.7050802@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAAVeFu+TOfjfvisinv3oJ9PobdV9HcNJhr+3VYneSJ54uGwiAg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, patches <patches@apm.com>, Will Deacon <will.deacon@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bin.yang@intel.com, Darren Hart <dvhart@linux.intel.com>, "Holmberg, Hans" <hans.holmberg@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+
+> +static void xgene_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+> +{
+> +       struct xgene_gpio_bank *bank =
+> +                       container_of(gc, struct xgene_gpio_bank, chip);
+> +       unsigned long flags;
+> +       u32 data;
+> +
+> +       spin_lock_irqsave(&bank->lock, flags);
+> +
+> +       data = ioread32(bank->set_dr);
+> +       data = val ? data | GPIO_SET_MASK(gpio) : data & ~GPIO_SET_MASK(gpio);
+
+>Couldn't you use set_bit() / clear_bit() instead here?
+Set_bit/clear_bit seems a bit heavy, I can use the non atomic methods
+of _set_bit/clear_bit
+if you agree? In which case I will rewrite all the other method in
+likewise fashion.
 
 
+>> +       bank = &gpio->banks[offs];
+>> +       bank->gpio = gpio;
+>> +       spin_lock_init(&bank->lock);
+>> +
+>> +       if (of_property_read_u32(bank_np, "ngpios", &ngpio))
+>> +               ngpio = 16;
+>
+> Here I think you want to distinguish between "property not defined"
+> (-EINVAL) and "property has no value" (-ENODATA) and other possible
+> errors. In the later cases you will want to signal the error and
+> return from here.
 
-On 5/19/2014 10:13 PM, Mathias Nyman wrote:
-> On 05/19/2014 03:27 AM, Zhu, Lejun wrote:
+I kinda messed up here a bit, I am trying to support ACPI booting but other
+properties are also affected. I will rewrite this part so minimum of_ access
+methods are required.
+
+
+>
+>> +
+>> +       if ((ngpio > 16) || (ngpio < 1)) {
+>> +               dev_info(gpio->dev, "Incorrect number of gpio specified: %s\n",
+>> +                        bank_np->full_name);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       bank->data = gpio->regs + GPIO_DATA + (bank_idx * GPIO_DATA_OFFSET);
+>> +       bank->od = gpio->regs + GPIO_OD + (bank_idx * GPIO_OD_OFFSET);
+>> +       bank->mux = gpio->regs + GPIO_MUX + (bank_idx * GPIO_MUX_OFFSET);
+>> +       bank->set_dr = gpio->regs + GPIO_SET_DR
+>> +                               + (bank_idx * GPIO_SET_DR_OFFSET);
+>> +
+>> +       bank->chip.direction_input = xgene_gpio_dir_in;
+>> +       bank->chip.direction_output = xgene_gpio_dir_out;
+>> +       bank->chip.get = xgene_gpio_get;
+>> +       bank->chip.set = xgene_gpio_set;
+>> +
+>> +       if (!of_property_read_u32(bank_np, "odcfg", &odcfg))
+>> +               iowrite32(odcfg, bank->od);
+>> +
+>> +       bank->chip.ngpio = ngpio;
+>> +       bank->chip.of_node = bank_np;
+>> +       bank->chip.base = bank_idx * ngpio;
+>> +
+>> +       err = gpiochip_add(&bank->chip);
+>> +       if (err)
+>> +               dev_err(gpio->dev, "failed to register gpiochip for %s\n",
+>> +                       bank_np->full_name);
+>> +
+>> +       return err;
+>> +}
+>> +
+>> +static int xgene_gpio_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device_node *np = pdev->dev.of_node;
+>> +       struct resource *res;
+>> +       struct xgene_gpio *gpio;
+>> +       int err;
+>> +       unsigned int offs = 0;
+>> +
+>> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+>> +       if (!gpio)
+>> +               return -ENOMEM;
+>> +       gpio->dev = &pdev->dev;
+>> +
+>> +       gpio->nr_banks = of_get_child_count(pdev->dev.of_node);
+>> +       if (!gpio->nr_banks) {
+>> +               err = -EINVAL;
+>> +               goto err;
+>> +       }
+>
+> Might be worth checking whether nr_banks >= XGENE_GPIO_MAX_PORTS and
+> return an error here.
+>
+>> +
+>> +       gpio->banks = devm_kzalloc(&pdev->dev, gpio->nr_banks *
+>> +                                  sizeof(*gpio->banks), GFP_KERNEL);
+>> +       if (!gpio->banks) {
+>> +               err = -ENOMEM;
+>> +               goto err;
+>> +       }
+>
+> I'm fine with printing the error status the way you do, but could you
+> also do the same for the first kzalloc too?
+>
+> Or maybe you could put your banks member at the end of the xgene_gpio
+> struct as a flexible array member and perform only one kzalloc of size
+> (sizeof(*gpio) + (sizeof(*gpio->banks) * gpio->nr_banks))?
+>
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +       gpio->regs = devm_ioremap_resource(&pdev->dev, res);
+>> +       if (IS_ERR(gpio->regs)) {
+>> +               err = PTR_ERR(gpio->regs);
+>> +               goto err;
+>> +       }
+>> +
+>> +       for_each_child_of_node(pdev->dev.of_node, np) {
+>> +               err = xgene_gpio_add_bank(gpio, np, offs++);
+>> +               if (err)
+>> +                       goto err;
+>> +       }
+>> +
+>> +       platform_set_drvdata(pdev, gpio);
+>> +
+>> +       dev_info(&pdev->dev, "X-Gene GPIO driver registered\n");
+>> +       return 0;
+>> +err:
+>> +       dev_err(&pdev->dev, "X-Gene GPIO driver registration failed\n");
+>> +       return err;
+>> +}
+>> +
+>> +static const struct of_device_id xgene_gpio_of_match[] = {
+>> +       { .compatible = "apm,xgene-gpio", },
+>> +       {},
+>> +};
+>> +MODULE_DEVICE_TABLE(of, xgene_gpio_of_match);
+>> +
+>> +static struct platform_driver xgene_gpio_driver = {
+>> +       .driver = {
+>> +               .name = "xgene-gpio",
+>> +               .owner = THIS_MODULE,
+>> +               .of_match_table = xgene_gpio_of_match,
+>> +       },
+>> +       .probe = xgene_gpio_probe,
+>> +};
+>> +
+>> +static int __init xgene_gpio_init(void)
+>> +{
+>> +       return platform_driver_register(&xgene_gpio_driver);
+>> +}
+>> +postcore_initcall(xgene_gpio_init);
+>> +
+>> +MODULE_AUTHOR("AppliedMicro");
+>> +MODULE_DESCRIPTION("APM X-Gene GPIO driver");
+>> +MODULE_LICENSE("GPL");
+>> --
+>> 1.9.1
 >>
->>
->> On 5/17/2014 1:33 AM, Linus Walleij wrote:
->>> On Wed, May 14, 2014 at 5:44 PM, Zhu, Lejun <lejun.zhu@linux.intel.com> wrote:
->>>
->>>> Devices based on Intel SoC products such as Baytrail have a Power
->>>> Management IC. In the PMIC there are subsystems for voltage regulation,
->>>> A/D conversion, GPIO and PWMs. The PMIC in Baytrail-T platform is called
->>>> Crystal Cove.
->>>>
->>>> This patch adds support for the GPIO function in Crystal Cove.
->>>>
->>>> Signed-off-by: Yang, Bin <bin.yang@intel.com>
->>>> Signed-off-by: Zhu, Lejun <lejun.zhu@linux.intel.com>
->>>
->>> (...)
->>>
->>>> +config GPIO_INTEL_SOC_PMIC
->>>> +       bool "GPIO on Intel SoC PMIC"
->>>> +       depends on INTEL_SOC_PMIC
->>
->> Thank you. That's a long list and all of them indeed need to be fixed.
->> I'll work on them and submit v2 when ready.
->>
-> 
-> Shouldn't there be a .remove function undoing everything probe did?
-> Freeing interrupts, removing irq domains, calling gpiochip_remove etc.
-> 
-> Or is there something I'm missing?
-> I see there's no option to compile this as module, but It might be added later so
-> proper remove function would still be nice.
-> 
-> -Mathias
-> 
+>
+> Globally the driver looks well-written, but I don't understand the
+> need to have one gpio_chip per bank. Could you elaborate on the
+> reasons for this design?
+I see each bank as separate gpio chip. It is a simple way to
+abstract the banks since they can operate independently. It also
+provided me a way to fix the sysfs gpio base number, regardless if
+a particular bank node is pulled out. This is also done in similar way
+in some other gpio drivers such as the dwapb gpio driver.
 
-Good suggestion. I'll fix it. Thanks.
 
-Best Regards
-Lejun
-
+>
+> Alex.
