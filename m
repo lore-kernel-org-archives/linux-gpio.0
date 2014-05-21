@@ -1,41 +1,29 @@
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: [PATCH] Documentation / ACPI: Fix location of GPIO documentation
-Date: Wed, 21 May 2014 16:58:25 +0300
-Message-ID: <1400680705-11078-1-git-send-email-jarkko.nikula@linux.intel.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] Documentation / ACPI: Fix location of GPIO documentation
+Date: Wed, 21 May 2014 17:15:23 +0300
+Message-ID: <20140521141523.GY1651@lahna.fi.intel.com>
+References: <1400680705-11078-1-git-send-email-jarkko.nikula@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:1843 "EHLO mga02.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:8095 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751033AbaEUN6d (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 21 May 2014 09:58:33 -0400
+	id S1751481AbaEUOPl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 21 May 2014 10:15:41 -0400
+Content-Disposition: inline
+In-Reply-To: <1400680705-11078-1-git-send-email-jarkko.nikula@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-acpi@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>
 
-Commit fd8e198cfcaa ("Documentation: gpiolib: document new interface")
-moved Documentation/gpio.txt to Documentation/gpio/gpio-legacy.txt and added
-new documents for descriptor-based interface so fix the the location here to
-point Documentation/gpio/ since that what commit ccb6fbb99020
-("Documentation / ACPI: update to GPIO descriptor API") was looking for.
+On Wed, May 21, 2014 at 04:58:25PM +0300, Jarkko Nikula wrote:
+> Commit fd8e198cfcaa ("Documentation: gpiolib: document new interface")
+> moved Documentation/gpio.txt to Documentation/gpio/gpio-legacy.txt and added
+> new documents for descriptor-based interface so fix the the location here to
+> point Documentation/gpio/ since that what commit ccb6fbb99020
+> ("Documentation / ACPI: update to GPIO descriptor API") was looking for.
+> 
+> Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
----
- Documentation/acpi/enumeration.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/acpi/enumeration.txt b/Documentation/acpi/enumeration.txt
-index 2a1519b87177..fd786ea13a1f 100644
---- a/Documentation/acpi/enumeration.txt
-+++ b/Documentation/acpi/enumeration.txt
-@@ -296,7 +296,7 @@ specifies the path to the controller. In order to use these GPIOs in Linux
- we need to translate them to the corresponding Linux GPIO descriptors.
- 
- There is a standard GPIO API for that and is documented in
--Documentation/gpio.txt.
-+Documentation/gpio/.
- 
- In the above example we can get the corresponding two GPIO descriptors with
- a code like this:
--- 
-2.0.0.rc2
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
