@@ -1,79 +1,41 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [RFC PATCH 2/2] gpio-mpc8xxx: add mpc8xxx_gpio_set_multiple function
-Date: Wed, 21 May 2014 15:00:14 +0200
-Message-ID: <3728352.HA8JhAoUDB@pcimr>
-References: <1883250.Le7v5oGnod@pcimr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Subject: [PATCH] Documentation / ACPI: Fix location of GPIO documentation
+Date: Wed, 21 May 2014 16:58:25 +0300
+Message-ID: <1400680705-11078-1-git-send-email-jarkko.nikula@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:47034 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750877AbaEUNAR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 May 2014 09:00:17 -0400
-In-Reply-To: <1883250.Le7v5oGnod@pcimr>
+Received: from mga02.intel.com ([134.134.136.20]:1843 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751033AbaEUN6d (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 21 May 2014 09:58:33 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>
+To: linux-acpi@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-This patch adds a set_multiple function to the MPC8xxx GPIO chip driver.
-It depends on my previous patch "gpiolib: allow simultaneous setting of
-multiple GPIO outputs" and allows for actual performance improvements when
-setting multiple outputs simultaneously. In my case the time needed to
-configure an FPGA goes down from 48 s to 19 s.
+Commit fd8e198cfcaa ("Documentation: gpiolib: document new interface")
+moved Documentation/gpio.txt to Documentation/gpio/gpio-legacy.txt and added
+new documents for descriptor-based interface so fix the the location here to
+point Documentation/gpio/ since that what commit ccb6fbb99020
+("Documentation / ACPI: update to GPIO descriptor API") was looking for.
 
-Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 ---
- drivers/gpio/gpio-mpc8xxx.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ Documentation/acpi/enumeration.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index d7d6d72..d226f5c 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -105,6 +105,33 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
-        spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
- }
+diff --git a/Documentation/acpi/enumeration.txt b/Documentation/acpi/enumeration.txt
+index 2a1519b87177..fd786ea13a1f 100644
+--- a/Documentation/acpi/enumeration.txt
++++ b/Documentation/acpi/enumeration.txt
+@@ -296,7 +296,7 @@ specifies the path to the controller. In order to use these GPIOs in Linux
+ we need to translate them to the corresponding Linux GPIO descriptors.
  
-+static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
-+                                     u32 *mask, u32 *bits)
-+{
-+       struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
-+       struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
-+       unsigned long flags;
-+       int i;
-+
-+       spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
-+
-+       for (i = 0; i < gc->ngpio; i++) {
-+               if (*mask == 0)
-+                       break;
-+               if (*mask & (1 << i)) {
-+                       if ((*bits >> i) & 1)
-+                               mpc8xxx_gc->data |= mpc8xxx_gpio2mask(i);
-+                       else
-+                               mpc8xxx_gc->data &= ~mpc8xxx_gpio2mask(i);
-+                       *mask &= ~(1 << i);
-+               }
-+       }
-+
-+       out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
-+
-+       spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
-+}
-+
- static int mpc8xxx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
-        struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
-@@ -344,6 +371,7 @@ static void __init mpc8xxx_add_controller(struct device_node *np)
-        gc->get = of_device_is_compatible(np, "fsl,mpc8572-gpio") ?
-                mpc8572_gpio_get : mpc8xxx_gpio_get;
-        gc->set = mpc8xxx_gpio_set;
-+       gc->set_multiple = mpc8xxx_gpio_set_multiple;
-        gc->to_irq = mpc8xxx_gpio_to_irq;
+ There is a standard GPIO API for that and is documented in
+-Documentation/gpio.txt.
++Documentation/gpio/.
  
-        ret = of_mm_gpiochip_add(np, mm_gc);
+ In the above example we can get the corresponding two GPIO descriptors with
+ a code like this:
+-- 
+2.0.0.rc2
 
---
-1.8.5.5
