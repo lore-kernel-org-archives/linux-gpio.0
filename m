@@ -1,44 +1,63 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v3] gpio: Add support for Intel SoC PMIC (Crystal Cove)
-Date: Thu, 22 May 2014 14:15:54 +0300
-Message-ID: <20140522111554.GG1651@lahna.fi.intel.com>
-References: <1400734743-3154-1-git-send-email-lejun.zhu@linux.intel.com>
+From: Alan Tull <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH 6/7 v2] gpio: dwapb: use a second irq chip
+Date: Thu, 22 May 2014 09:08:20 -0500
+Message-ID: <CANk1AXSAKhOYuBeNgVJRXnYV_9cEmAhy+DSR3WXmWwFGGe4y7w@mail.gmail.com>
+References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
+	<1395505004-22650-7-git-send-email-bigeasy@linutronix.de>
+	<5331F6D5.7070809@gmail.com>
+	<53427718.30406@linutronix.de>
+	<CANk1AXSuBGj3vZ7knKmHTwDZLTkvVFT42Lt9ZTdk-E+sp=xQ+g@mail.gmail.com>
+	<20140430111308.GA11829@linutronix.de>
+	<CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>
+	<537DC6A1.3090206@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:2290 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752011AbaEVLQD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 22 May 2014 07:16:03 -0400
-Content-Disposition: inline
-In-Reply-To: <1400734743-3154-1-git-send-email-lejun.zhu@linux.intel.com>
+Received: from mail-qg0-f49.google.com ([209.85.192.49]:51746 "EHLO
+	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751374AbaEVOIV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 May 2014 10:08:21 -0400
+In-Reply-To: <537DC6A1.3090206@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Zhu, Lejun" <lejun.zhu@linux.intel.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, mathias.nyman@linux.intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-On Thu, May 22, 2014 at 12:59:03PM +0800, Zhu, Lejun wrote:
-> +static int crystalcove_gpio_probe(struct platform_device *pdev)
-> +{
-> +	int irq = platform_get_irq(pdev, 0);
-> +	struct crystalcove_gpio *cg;
-> +	int retval;
-> +	struct device *dev = pdev->dev.parent;
-> +
-> +	cg = devm_kzalloc(&pdev->dev, sizeof(*cg), GFP_KERNEL);
-> +	if (!cg) {
+On Thu, May 22, 2014 at 4:42 AM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> On 05/16/2014 05:01 PM, Linus Walleij wrote:
+>> OK this patch is ACKed by Alan so I would like to apply it but:
+>>
+>> Content-Type: text/plain; charset=utf-8
+>> Content-Disposition: inline
+>> Content-Transfer-Encoding: quoted-printable
+>>
+>> This is not good. Quoted-printable makes the raw patch look like
+>> that:
+>>
+>> - int err, irq;
+>> + int err, irq, i;
+>> =20
+>>   irq =3D irq_of_parse_and_map(node, 0);
+>>
+>> Notice spurious =20 and =3D encoding.
+>>
+>> Please resend in ISO8859-1 and take this opportunity to add
+>
+> doesn't "git am" handle this on its own?
 
-A minor comment here:
+Neither 'git am' nor 'patch -p1' can apply this patch.  When I was
+testing it, I assumed those '=3D' were  a product of my webmail, so I
+manually edited the patch to get it to apply.
 
-return -ENOMEM;
+Alan
 
-> +		retval = -ENOMEM;
-> +		goto out;
-> +	}
-
-Other than that this looks good to me,
-
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
-I suppose this is dependent on the MFD driver right? If so, this should
-probably be merged along with that patch.
+>
+>> Alan's ACK.
+>
+> I will try to add his ack and tell git resent the patch.
+>
+>> Yours,
+>> Linus Walleij
+>
+> Sebastian
