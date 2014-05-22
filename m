@@ -1,48 +1,44 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 6/7 v2] gpio: dwapb: use a second irq chip
-Date: Thu, 22 May 2014 11:42:57 +0200
-Message-ID: <537DC6A1.3090206@linutronix.de>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>	<1395505004-22650-7-git-send-email-bigeasy@linutronix.de>	<5331F6D5.7070809@gmail.com>	<53427718.30406@linutronix.de>	<CANk1AXSuBGj3vZ7knKmHTwDZLTkvVFT42Lt9ZTdk-E+sp=xQ+g@mail.gmail.com>	<20140430111308.GA11829@linutronix.de> <CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Thu, 22 May 2014 14:15:54 +0300
+Message-ID: <20140522111554.GG1651@lahna.fi.intel.com>
+References: <1400734743-3154-1-git-send-email-lejun.zhu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:47927 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751621AbaEVJnC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 May 2014 05:43:02 -0400
-In-Reply-To: <CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>
+Received: from mga03.intel.com ([143.182.124.21]:2290 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752011AbaEVLQD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 22 May 2014 07:16:03 -0400
+Content-Disposition: inline
+In-Reply-To: <1400734743-3154-1-git-send-email-lejun.zhu@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: delicious quinoa <delicious.quinoa@gmail.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+To: "Zhu, Lejun" <lejun.zhu@linux.intel.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, mathias.nyman@linux.intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
 
-On 05/16/2014 05:01 PM, Linus Walleij wrote:
-> OK this patch is ACKed by Alan so I would like to apply it but:
-> 
-> Content-Type: text/plain; charset=utf-8
-> Content-Disposition: inline
-> Content-Transfer-Encoding: quoted-printable
-> 
-> This is not good. Quoted-printable makes the raw patch look like
-> that:
-> 
-> - int err, irq;
-> + int err, irq, i;
-> =20
->   irq =3D irq_of_parse_and_map(node, 0);
-> 
-> Notice spurious =20 and =3D encoding.
-> 
-> Please resend in ISO8859-1 and take this opportunity to add
+On Thu, May 22, 2014 at 12:59:03PM +0800, Zhu, Lejun wrote:
+> +static int crystalcove_gpio_probe(struct platform_device *pdev)
+> +{
+> +	int irq = platform_get_irq(pdev, 0);
+> +	struct crystalcove_gpio *cg;
+> +	int retval;
+> +	struct device *dev = pdev->dev.parent;
+> +
+> +	cg = devm_kzalloc(&pdev->dev, sizeof(*cg), GFP_KERNEL);
+> +	if (!cg) {
 
-doesn't "git am" handle this on its own?
+A minor comment here:
 
-> Alan's ACK.
+return -ENOMEM;
 
-I will try to add his ack and tell git resent the patch.
+> +		retval = -ENOMEM;
+> +		goto out;
+> +	}
 
-> Yours,
-> Linus Walleij
+Other than that this looks good to me,
 
-Sebastian
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+I suppose this is dependent on the MFD driver right? If so, this should
+probably be merged along with that patch.
