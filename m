@@ -1,63 +1,48 @@
-From: Alan Tull <delicious.quinoa@gmail.com>
-Subject: Re: [PATCH 6/7 v2] gpio: dwapb: use a second irq chip
-Date: Thu, 22 May 2014 09:08:20 -0500
-Message-ID: <CANk1AXSAKhOYuBeNgVJRXnYV_9cEmAhy+DSR3WXmWwFGGe4y7w@mail.gmail.com>
-References: <1395505004-22650-1-git-send-email-bigeasy@linutronix.de>
-	<1395505004-22650-7-git-send-email-bigeasy@linutronix.de>
-	<5331F6D5.7070809@gmail.com>
-	<53427718.30406@linutronix.de>
-	<CANk1AXSuBGj3vZ7knKmHTwDZLTkvVFT42Lt9ZTdk-E+sp=xQ+g@mail.gmail.com>
-	<20140430111308.GA11829@linutronix.de>
-	<CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>
-	<537DC6A1.3090206@linutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Rob Jones <rob.jones@codethink.co.uk>
+Subject: [PATCH] regulator: gpio-regulator: use devm_*
+Date: Thu, 22 May 2014 15:51:06 +0100
+Message-ID: <1400770266-7276-1-git-send-email-rob.jones@codethink.co.uk>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f49.google.com ([209.85.192.49]:51746 "EHLO
-	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751374AbaEVOIV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 May 2014 10:08:21 -0400
-In-Reply-To: <537DC6A1.3090206@linutronix.de>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:36071 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-FAIL-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752848AbaEVOvW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 22 May 2014 10:51:22 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+To: linux-gpio@vger.kernel.org
+Cc: heiko@sntech.de, broonie@opensource.wolfsonmicro.com, ext-roger.quadros@nokia.com, rob.jones@codethink.co.uk
 
-On Thu, May 22, 2014 at 4:42 AM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> On 05/16/2014 05:01 PM, Linus Walleij wrote:
->> OK this patch is ACKed by Alan so I would like to apply it but:
->>
->> Content-Type: text/plain; charset=utf-8
->> Content-Disposition: inline
->> Content-Transfer-Encoding: quoted-printable
->>
->> This is not good. Quoted-printable makes the raw patch look like
->> that:
->>
->> - int err, irq;
->> + int err, irq, i;
->> =20
->>   irq =3D irq_of_parse_and_map(node, 0);
->>
->> Notice spurious =20 and =3D encoding.
->>
->> Please resend in ISO8859-1 and take this opportunity to add
->
-> doesn't "git am" handle this on its own?
+Use devm_regulator_register in probe/remove.
 
-Neither 'git am' nor 'patch -p1' can apply this patch.  When I was
-testing it, I assumed those '=3D' were  a product of my webmail, so I
-manually edited the patch to get it to apply.
+Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
+Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
+---
+ drivers/regulator/gpio-regulator.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Alan
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index 989b23b..994a050 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -337,7 +337,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
+ 	}
+ 
+-	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
++	drvdata->dev = devm_regulator_register(&pdev->dev, &drvdata->desc, &cfg);
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+ 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+@@ -364,8 +364,6 @@ static int gpio_regulator_remove(struct platform_device *pdev)
+ {
+ 	struct gpio_regulator_data *drvdata = platform_get_drvdata(pdev);
+ 
+-	regulator_unregister(drvdata->dev);
+-
+ 	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+ 
+ 	kfree(drvdata->states);
+-- 
+1.7.10.4
 
->
->> Alan's ACK.
->
-> I will try to add his ack and tell git resent the patch.
->
->> Yours,
->> Linus Walleij
->
-> Sebastian
