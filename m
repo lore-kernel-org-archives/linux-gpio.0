@@ -1,80 +1,92 @@
 From: abdoulaye berthe <berthe.ab@gmail.com>
-Subject: [PATCH] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Fri, 23 May 2014 19:12:24 +0200
-Message-ID: <1400865144-27970-1-git-send-email-berthe.ab@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com, sfr@canb.auug.org.au, berthe.ab@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: gpiolib: set gpiochip_remove retval to void
+Date: Fri, 23 May 2014 19:39:57 +0200
+Message-ID: <CABprByZYXuNA2kODdhLVBAr7TA0VT+XzxksURQQwJntYtg9+iA@mail.gmail.com>
+References: <1400865144-27970-1-git-send-email-berthe.ab@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qc0-f170.google.com ([209.85.216.170]:65361 "EHLO
+	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751387AbaEWRj6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 May 2014 13:39:58 -0400
+In-Reply-To: <1400865144-27970-1-git-send-email-berthe.ab@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com, Stephen Rothwell <sfr@canb.auug.org.au>, abdoulaye berthe <berthe.ab@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This avoids handling gpiochip remove error in device
-remove handler.
+If this step is ok I will continue by updating the codes that use it.
 
-Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
----
- drivers/gpio/gpiolib.c      | 24 +++++++-----------------
- include/linux/gpio/driver.h |  2 +-
- 2 files changed, 8 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f48817d..4878980 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
-  *
-  * A gpio_chip with any GPIOs still requested may not be removed.
-  */
--int gpiochip_remove(struct gpio_chip *chip)
-+void gpiochip_remove(struct gpio_chip *chip)
- {
- 	unsigned long	flags;
--	int		status = 0;
- 	unsigned	id;
- 
- 	acpi_gpiochip_remove(chip);
-@@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
- 	of_gpiochip_remove(chip);
- 
- 	for (id = 0; id < chip->ngpio; id++) {
--		if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
--			status = -EBUSY;
--			break;
--		}
--	}
--	if (status == 0) {
--		for (id = 0; id < chip->ngpio; id++)
--			chip->desc[id].chip = NULL;
--
--		list_del(&chip->list);
-+		if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
-+			panic("gpiolib.c: gpiochip is still requested\n");
- 	}
-+	for (id = 0; id < chip->ngpio; id++)
-+		chip->desc[id].chip = NULL;
- 
-+	list_del(&chip->list);
- 	spin_unlock_irqrestore(&gpio_lock, flags);
--
--	if (status == 0)
--		gpiochip_unexport(chip);
--
--	return status;
-+	gpiochip_unexport(chip);
- }
- EXPORT_SYMBOL_GPL(gpiochip_remove);
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 1827b43..72ed256 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -138,7 +138,7 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
- 
- /* add/remove chips */
- extern int gpiochip_add(struct gpio_chip *chip);
--extern int __must_check gpiochip_remove(struct gpio_chip *chip);
-+void gpiochip_remove(struct gpio_chip *chip);
- extern struct gpio_chip *gpiochip_find(void *data,
- 			      int (*match)(struct gpio_chip *chip, void *data));
- 
--- 
-1.8.3.2
+On Fri, May 23, 2014 at 7:12 PM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
+> This avoids handling gpiochip remove error in device
+> remove handler.
+>
+> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
+> ---
+>  drivers/gpio/gpiolib.c      | 24 +++++++-----------------
+>  include/linux/gpio/driver.h |  2 +-
+>  2 files changed, 8 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index f48817d..4878980 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
+>   *
+>   * A gpio_chip with any GPIOs still requested may not be removed.
+>   */
+> -int gpiochip_remove(struct gpio_chip *chip)
+> +void gpiochip_remove(struct gpio_chip *chip)
+>  {
+>         unsigned long   flags;
+> -       int             status = 0;
+>         unsigned        id;
+>
+>         acpi_gpiochip_remove(chip);
+> @@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
+>         of_gpiochip_remove(chip);
+>
+>         for (id = 0; id < chip->ngpio; id++) {
+> -               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
+> -                       status = -EBUSY;
+> -                       break;
+> -               }
+> -       }
+> -       if (status == 0) {
+> -               for (id = 0; id < chip->ngpio; id++)
+> -                       chip->desc[id].chip = NULL;
+> -
+> -               list_del(&chip->list);
+> +               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
+> +                       panic("gpiolib.c: gpiochip is still requested\n");
+>         }
+> +       for (id = 0; id < chip->ngpio; id++)
+> +               chip->desc[id].chip = NULL;
+>
+> +       list_del(&chip->list);
+>         spin_unlock_irqrestore(&gpio_lock, flags);
+> -
+> -       if (status == 0)
+> -               gpiochip_unexport(chip);
+> -
+> -       return status;
+> +       gpiochip_unexport(chip);
+>  }
+>  EXPORT_SYMBOL_GPL(gpiochip_remove);
+>
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index 1827b43..72ed256 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -138,7 +138,7 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
+>
+>  /* add/remove chips */
+>  extern int gpiochip_add(struct gpio_chip *chip);
+> -extern int __must_check gpiochip_remove(struct gpio_chip *chip);
+> +void gpiochip_remove(struct gpio_chip *chip);
+>  extern struct gpio_chip *gpiochip_find(void *data,
+>                               int (*match)(struct gpio_chip *chip, void *data));
+>
+> --
+> 1.8.3.2
+>
