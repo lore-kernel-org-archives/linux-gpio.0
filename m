@@ -1,116 +1,115 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/2] gpio: pcf857x: Avoid calling irq_domain_cleanup twice
-Date: Fri, 23 May 2014 15:10:19 +0900
-Message-ID: <CAAVeFuLqkp3WvQn+Y=NnTC1vjddA1MZPsjdC6aJ1rCE-cwRWOw@mail.gmail.com>
-References: <1400824647-2525-1-git-send-email-george.cherian@ti.com>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: Re: [RFC PATCH 1/2] gpiolib: allow simultaneous setting of multiple GPIO outputs
+Date: Fri, 23 May 2014 09:22:32 +0200
+Message-ID: <6937947.paWzKfz0kq@pcimr>
+References: <1883250.Le7v5oGnod@pcimr> <20140522165012.GO22644@book.gsilab.sittig.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f171.google.com ([209.85.128.171]:62650 "EHLO
-	mail-ve0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751546AbaEWGKk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 May 2014 02:10:40 -0400
-In-Reply-To: <1400824647-2525-1-git-send-email-george.cherian@ti.com>
+Received: from mail-out.m-online.net ([212.18.0.9]:50158 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750913AbaEWHWh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 May 2014 03:22:37 -0400
+In-Reply-To: <20140522165012.GO22644@book.gsilab.sittig.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: George Cherian <george.cherian@ti.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, kuninori.morimoto.gx@renesas.com
+To: Gerhard Sittig <gsi@denx.de>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 
-On Fri, May 23, 2014 at 2:57 PM, George Cherian <george.cherian@ti.com> wrote:
-> Currently irq_domain_cleanup is called twice if irq_domain_init fails.
-> This causes the following crash.
->
-> Unable to handle kernel paging request at virtual address 00100104
-> pgd = c0004000
-> [00100104] *pgd=00000000
-> Internal error: Oops: 805 [#1] SMP ARM
-> Modules linked in:
-> CPU: 0 PID: 6 Comm: kworker/u4:0 Not tainted 3.12.15-01889-gedd10a8-dirty #4
-> Workqueue: deferwq deferred_probe_work_func
-> task: ed0ee800 ti: ed116000 task.ti: ed116000
-> PC is at irq_domain_remove+0x3c/0x8c
-> LR is at 0x0
-> pc : [<c0089734>]    lr : [<00000000>]    psr: a0000013
-> sp : ed117b50  ip : 00100100  fp : ed117b64
-> r10: ed5d1a04  r9 : 00000008  r8 : 00000000
-> r7 : ffffffea  r6 : ed5d1a20  r5 : ed5d1a00  r4 : ed5e7540
-> r3 : 00200200  r2 : 00100100  r1 : c08aa180  r0 : 00200200
-> Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-> Control: 10c53c7d  Table: 8000406a  DAC: 00000017
-> Process kworker/u4:0 (pid: 6, stack limit = 0xed116248)
-> Stack: (0xed117b50 to 0xed118000)
-> 7b40:                                     0000016b ed5d5f10 ed117b74 ed117b68
-> 7b60: c02c8910 c0089704 ed117bb4 ed117b78 c02c8e14 c02c8900 ed5d1a04 ed5d4e80
-> ...
-> <snip>
-> ...
-> fe0: 00000000 00000000 00000000 00000000 00000013 00000000 384a13ea 1590210a
-> Backtrace:
-> [<c00896f8>] (irq_domain_remove+0x0/0x8c) from [<c02c8910>] (pcf857x_irq_domain_cleanup+0x1c/0x20)
->  r4:ed5d5f10 r3:0000016b
-> [<c02c88f4>] (pcf857x_irq_domain_cleanup+0x0/0x20) from [<c02c8e14>] (pcf857x_probe+0x2a8/0x364)
-> [<c02c8b6c>] (pcf857x_probe+0x0/0x364) from [<c04787ac>] (i2c_device_probe+0x80/0xc0)
-> [<c047872c>] (i2c_device_probe+0x0/0xc0) from [<c036c33c>] (driver_probe_device+0x104/0x240)
->  r6:00000000 r5:ed5d1a20 r4:c08c709c r3:c047872c
-> [<c036c238>] (driver_probe_device+0x0/0x240) from [<c036c558>] (__device_attach+0x48/0x4c)
->  r7:ed4fc480 r6:c036c510 r5:ed5d1a20 r4:c0866bb8
-> [<c036c510>] (__device_attach+0x0/0x4c) from [<c036a6d8>] (bus_for_each_drv+0x4c/0x94)
->  r5:ed5d1a20 r4:00000000
-> [<c036a68c>] (bus_for_each_drv+0x0/0x94) from [<c036c1f4>] (device_attach+0x78/0x90)
->  r6:c087fe50 r5:ed5d1a54 r4:ed5d1a20
-> [<c036c17c>] (device_attach+0x0/0x90) from [<c036b76c>] (bus_probe_device+0x8c/0xb4)
->  r6:c087fe50 r5:ed5d1a20 r4:ed5d1a20 r3:ed17e1c0
-> [<c036b6e0>] (bus_probe_device+0x0/0xb4) from [<c0369888>] (device_add+0x34c/0x624)
->  r6:ed5d1a28 r5:00000000 r4:ed5d1a20 r3:fffffffe
-> [<c036953c>] (device_add+0x0/0x624) from [<c0369b7c>] (device_register+0x1c/0x20)
-> ...
-> <snip>
-> ...
-> [<c0060844>] (process_one_work+0x0/0x37c) from [<c0061040>] (worker_thread+0x13c/0x3c4)
-> [<c0060f04>] (worker_thread+0x0/0x3c4) from [<c00670ec>] (kthread+0xac/0xb8)
-> [<c0067040>] (kthread+0x0/0xb8) from [<c00148b8>] (ret_from_fork+0x14/0x3c)
->  r7:00000000 r6:00000000 r5:c0067040 r4:ed105d20
-> Code: e59fc04c e591e000 e59f0048 e154000e (e5823004)
-> ---[ end trace 59dd1e90032c4217 ]---
+On Thursday 22 May 2014 18:50:12 Gerhard Sittig wrote:
+> Regarding the subject:  Should you not flag this as "another
+> iteration" (v2 or something) since there already was a submission
+> for this very feature (2014-01-23)?  Reviewers may want to look
+> up the previous version, and see whether you addressed feedback
+> that was provided so far.
+> 
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Ok. Will do next time.
 
->
-> Signed-off-by: George Cherian <george.cherian@ti.com>
-> ---
->  drivers/gpio/gpio-pcf857x.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-> index 8273582..5acffed 100644
-> --- a/drivers/gpio/gpio-pcf857x.c
-> +++ b/drivers/gpio/gpio-pcf857x.c
-> @@ -319,7 +319,7 @@ static int pcf857x_probe(struct i2c_client *client,
->                 status = pcf857x_irq_domain_init(gpio, client);
->                 if (status < 0) {
->                         dev_err(&client->dev, "irq_domain init failed\n");
-> -                       goto fail;
-> +                       goto fail_irq_domain;
->                 }
->         }
->
-> @@ -414,12 +414,13 @@ static int pcf857x_probe(struct i2c_client *client,
->         return 0;
->
->  fail:
-> -       dev_dbg(&client->dev, "probe error %d for '%s'\n",
-> -                       status, client->name);
-> -
->         if (client->irq)
->                 pcf857x_irq_domain_cleanup(gpio);
->
-> +fail_irq_domain:
-> +       dev_dbg(&client->dev, "probe error %d for '%s'\n",
-> +               status, client->name);
-> +
->         return status;
->  }
->
-> --
-> 1.8.3.1
->
+> On Wed, 2014-05-21 at 14:58 +0200, Rojhalat Ibrahim wrote:
+> > 
+> > This patch introduces a new function gpiod_set_raw_array to the consumer
+> > interface which allows setting multiple outputs with just one function call.
+> > It also adds an optional set_multiple function to the driver interface.
+> > 
+> > Multiple GPIOs are represented by an array of descriptors. The values to be
+> > set are stored in an integer array. Example:
+> > 
+> > 	struct gpio_desc *desc_array[10];
+> > 	int value_array[10];
+> > 
+> > 	... acquire descriptors ...
+> > 	... set values in value_array ...
+> > 
+> > 	gpiod_set_raw_array(10, desc_array, value_array);
+> 
+> It's nice that you provide this information, but could this not
+> better be done in a text file which is kept in the Documentation
+> part of the source tree?  This would live longer and be more
+> apparent to fellow developers than the commit message, and would
+> cut down on the commit message.  After all you do introduce a new
+> and non-trivial feature.
+> 
+
+Ok. I can do that in the next version of the patch.
+
+> > Benefits:
+> > 	- Uses descriptor interface. GPIOs have to be acquired before use.
+> > 	- Allows arbitrary groups of GPIOs spanning multiple chips.
+> > 	- Works without adjustments in GPIO chip drivers.
+> > 	- Implementing the new set_multiple function in a chip driver results in
+> > 	  additional benefits:
+> > 		* Improved performance for certain use cases. The original motivation for
+> > 		  this was the task of configuring an FPGA. In that specific case, where
+> > 		  9 GPIO lines have to be set many times, configuration time goes down from
+> > 		  48 s to 19 s when using the new function.
+> > 		* Simultaneous glitch-free setting of multiple pins on any kind of parallel
+> > 		  bus attached to GPIOs.
+> 
+> Note that the glitch-free setting of multiple pins is only
+> available if all the pins reside in the same bank of one specific
+> chip that implements the set_multiple feature.  Given how generic
+> the GPIO API is (users need not care which banks the pins are on,
+> whether they are different types of chips, how the chips are
+> connected to the CPU (think expanders), or what their respective
+> drivers' feature sets are), there may be more involved than just
+> implementing the set_multiple function.
+> 
+
+Right. That limitation should be explicitely noted. Will do next time.
+But what does that imply? Do you think we should add a function
+that lets the user check if a given group of pins all belong to the same chip
+and / or if the driver for that chip has the set_multiple function implemented?
+That would give the user a way to find out what he can expect but not without
+having to think about such details.
+
+> Style nit:  Please check your commit messages for appropriate
+> line lengths.
+> 
+
+I did. None of the lines exceed 80 characters.
+
+> > Limitations:
+> > 	- Performance is only improved for normal high-low outputs. Open drain and
+> > 	  open source outputs are always set separately from each other. Those kinds
+> > 	  of outputs could probably be accelerated in a similar way if we could forgo
+> > 	  the error checking when setting GPIO directions.
+> > 	- There is no gpiod_set_array function that regards the ACTIVE_LOW bits.
+> > 	  The _raw_ function should be sufficient for many use cases. So I avoided
+> > 	  the code duplication the other functions would require.
+> 
+> Have you considered the implications of running this new feature
+> on a board which has multiple GPIO chips of different types,
+> where the use case involves arbitrary pins of these chips to "run
+> the bus protocol"?
+> 
+
+I have. All I can do is set all the pins on a chip by chip basis and use
+the functions the chip drivers provide. I don't know how I could guarantee
+glitch-free operation in such a case.
+
+Thanks
+   Rojhalat
+
+
