@@ -1,15 +1,11 @@
 From: abdoulaye berthe <berthe.ab@gmail.com>
 Subject: [PATCH] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Fri, 23 May 2014 19:03:37 +0200
-Message-ID: <1400864617-27909-1-git-send-email-berthe.ab@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:34013 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752735AbaEWRDy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 May 2014 13:03:54 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Date: Fri, 23 May 2014 19:12:24 +0200
+Message-ID: <1400865144-27970-1-git-send-email-berthe.ab@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com, mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com, sfr@canb.auug.org.au, berthe.ab@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 This avoids handling gpiochip remove error in device
 remove handler.
@@ -82,4 +78,3 @@ index 1827b43..72ed256 100644
  
 -- 
 1.8.3.2
-
