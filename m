@@ -1,55 +1,110 @@
-From: Barry Song <baohua@kernel.org>
-Subject: Re: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state container
-Date: Sun, 25 May 2014 16:26:53 +0800
-Message-ID: <CAGsJ_4ygjo_cUFR8bUoWsGrZYHSubam4WWcb-TjQJNjgy9rvKQ@mail.gmail.com>
-References: <1398287792-19831-1-git-send-email-linus.walleij@linaro.org>
- <1398287792-19831-2-git-send-email-linus.walleij@linaro.org>
- <CAGsJ_4wOdD53Fkf+_CtDqSg5Yvz-1kwaWzMJb357uq5BL9_-7Q@mail.gmail.com> <CACRpkdbieXh8iHSCqai03vNbBZ2_2zV1SscXLY+4T9ZprWJEvQ@mail.gmail.com>
+From: abdoulaye berthe <berthe.ab@gmail.com>
+Subject: Re: [PATCH] gpio: gpiolib: set gpiochip_remove retval to void
+Date: Sun, 25 May 2014 18:40:45 +0200
+Message-ID: <CABprBybqJvXU0dbXiq15GtUTjeLsxDyvyKmCEbZPJwq4sgcyZA@mail.gmail.com>
+References: <1400865144-27970-1-git-send-email-berthe.ab@gmail.com>
+	<CAAVeFu+A7=51KqJNxc2LirZVc5zfBv_tny4_vCFaLaUsQqEnGA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:42043 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751031AbaEYI1O (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 25 May 2014 04:27:14 -0400
-In-Reply-To: <CACRpkdbieXh8iHSCqai03vNbBZ2_2zV1SscXLY+4T9ZprWJEvQ@mail.gmail.com>
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:59326 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750764AbaEYQkq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 25 May 2014 12:40:46 -0400
+In-Reply-To: <CAAVeFu+A7=51KqJNxc2LirZVc5zfBv_tny4_vCFaLaUsQqEnGA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-2014-05-09 19:53 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, May 1, 2014 at 2:29 PM, Barry Song <baohua@kernel.org> wrote:
->> 2014-04-24 5:16 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+Well, ignoring the return value as it is done in gpio-bt8xx makes the
+compiler complain and display a warning message. The problem with
+false warning is that it might distract you. I think that the patch
+will makes things consistent once completed
+Thanks a lot for the review.
+
+On Sun, May 25, 2014 at 9:46 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Sat, May 24, 2014 at 2:12 AM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
+>> This avoids handling gpiochip remove error in device
+>> remove handler.
 >
->>> This rewrites the SIRF pinctrl driver to allocate a state container
->>> for the GPIO chip, just as is done for the pin controller, and
->>> use the gpiochip_add_pin_range() to add the range from the gpiochip
->>> side rather than adding the range from the pinctrl side.
->>>
->>> All resulting changes are done in order to pass around a state
->>> container rather than refer to a static global object.
->>>
->>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Be aware that at the moment many callers of gpiochip_remove() read its
+> return value. So applying your patch as-is would break compilation.
+>
+> This patch should therefore be the last of a series that first
+> modifies all callers of gpiochip_remove() to ignore its return value,
+> then neutralizes the function itself.
+>
+> I am not sure whether the world would really be a better place after
+> this though. Callers that don't need the return value of
+> gpiochip_remove() can simply ignore it...
+>
 >>
->> Linus, thanks! but this breaks prima2 pinctrl subsystem, do you have an idea?
->> otherwise i will do a debug to find the reason.
+>> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
+>> ---
+>>  drivers/gpio/gpiolib.c      | 24 +++++++-----------------
+>>  include/linux/gpio/driver.h |  2 +-
+>>  2 files changed, 8 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> index f48817d..4878980 100644
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>> @@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
+>>   *
+>>   * A gpio_chip with any GPIOs still requested may not be removed.
+>>   */
+>> -int gpiochip_remove(struct gpio_chip *chip)
+>> +void gpiochip_remove(struct gpio_chip *chip)
+>>  {
+>>         unsigned long   flags;
+>> -       int             status = 0;
+>>         unsigned        id;
+>>
+>>         acpi_gpiochip_remove(chip);
+>> @@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
+>>         of_gpiochip_remove(chip);
+>>
+>>         for (id = 0; id < chip->ngpio; id++) {
+>> -               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
+>> -                       status = -EBUSY;
+>> -                       break;
+>> -               }
+>> -       }
+>> -       if (status == 0) {
+>> -               for (id = 0; id < chip->ngpio; id++)
+>> -                       chip->desc[id].chip = NULL;
+>> -
+>> -               list_del(&chip->list);
+>> +               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
+>> +                       panic("gpiolib.c: gpiochip is still requested\n");
 >
-> Unfortunately no :-(
+> panic() sounds a little harsh here. Maybe a dev_err() would be enough?
 >
-> This is the downside of dry-coding ... I rely on others to help out.
+>>         }
+>> +       for (id = 0; id < chip->ngpio; id++)
+>> +               chip->desc[id].chip = NULL;
+>>
+>> +       list_del(&chip->list);
+>>         spin_unlock_irqrestore(&gpio_lock, flags);
+>> -
+>> -       if (status == 0)
+>> -               gpiochip_unexport(chip);
+>> -
+>> -       return status;
+>> +       gpiochip_unexport(chip);
+>>  }
+>>  EXPORT_SYMBOL_GPL(gpiochip_remove);
+>>
+>> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+>> index 1827b43..72ed256 100644
+>> --- a/include/linux/gpio/driver.h
+>> +++ b/include/linux/gpio/driver.h
+>> @@ -138,7 +138,7 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
+>>
+>>  /* add/remove chips */
+>>  extern int gpiochip_add(struct gpio_chip *chip);
+>> -extern int __must_check gpiochip_remove(struct gpio_chip *chip);
+>> +void gpiochip_remove(struct gpio_chip *chip);
 >
-> See it as a suggestion to what I think should be refactored and how,
-> I'll keep it on a branch as some "TODO" item for the moment.
->
-
-after moving pinctrl name from sirfsoc-gpio* to dev_name(&pdev->dev) as below:
-- err = gpiochip_add_pin_range(&sgpio->chip.gc, "sirfsoc-gpio*",
-+ err = gpiochip_add_pin_range(&sgpio->chip.gc, dev_name(&pdev->dev),
-
-Acked-by: Barry Song <Baohua.Song@csr.com>
-
-> Yours,
-> Linus Walleij
-
--barry
+> "extern" should be preserved here for style consistency.
