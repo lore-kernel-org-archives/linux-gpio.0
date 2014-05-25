@@ -1,198 +1,98 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/3] gpio: Add APM X-Gene SoC GPIO controller support
-Date: Sun, 25 May 2014 16:35:47 +0900
-Message-ID: <CAAVeFuKw+6OfkrjJ3Xx7zbspptTirYGnF2a-rEHw=y9RBnkjDQ@mail.gmail.com>
-References: <1400263432-922-1-git-send-email-fkan@apm.com> <1400263432-922-2-git-send-email-fkan@apm.com>
- <CAAVeFu+TOfjfvisinv3oJ9PobdV9HcNJhr+3VYneSJ54uGwiAg@mail.gmail.com> <CAL85gmDjVszNd3TB51BGa+78wEEZmJfBOLNKOpTEvMTGU2VdBA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: gpiolib: set gpiochip_remove retval to void
+Date: Sun, 25 May 2014 16:46:26 +0900
+Message-ID: <CAAVeFu+A7=51KqJNxc2LirZVc5zfBv_tny4_vCFaLaUsQqEnGA@mail.gmail.com>
+References: <1400865144-27970-1-git-send-email-berthe.ab@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f181.google.com ([209.85.128.181]:57482 "EHLO
-	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859AbaEYHgJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 25 May 2014 03:36:09 -0400
-In-Reply-To: <CAL85gmDjVszNd3TB51BGa+78wEEZmJfBOLNKOpTEvMTGU2VdBA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1400865144-27970-1-git-send-email-berthe.ab@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: abdoulaye berthe <berthe.ab@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Feng Kan <fkan@apm.com>
-Cc: patches <patches@apm.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, May 21, 2014 at 8:54 AM, Feng Kan <fkan@apm.com> wrote:
->> +static void xgene_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->> +{
->> +       struct xgene_gpio_bank *bank =
->> +                       container_of(gc, struct xgene_gpio_bank, chip);
->> +       unsigned long flags;
->> +       u32 data;
->> +
->> +       spin_lock_irqsave(&bank->lock, flags);
->> +
->> +       data = ioread32(bank->set_dr);
->> +       data = val ? data | GPIO_SET_MASK(gpio) : data & ~GPIO_SET_MASK(gpio);
->
->>Couldn't you use set_bit() / clear_bit() instead here?
-> Set_bit/clear_bit seems a bit heavy, I can use the non atomic methods
-> of _set_bit/clear_bit
-> if you agree? In which case I will rewrite all the other method in
-> likewise fashion.
+On Sat, May 24, 2014 at 2:12 AM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
+> This avoids handling gpiochip remove error in device
+> remove handler.
 
-Sounds good.
+Be aware that at the moment many callers of gpiochip_remove() read its
+return value. So applying your patch as-is would break compilation.
+
+This patch should therefore be the last of a series that first
+modifies all callers of gpiochip_remove() to ignore its return value,
+then neutralizes the function itself.
+
+I am not sure whether the world would really be a better place after
+this though. Callers that don't need the return value of
+gpiochip_remove() can simply ignore it...
 
 >
+> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
+> ---
+>  drivers/gpio/gpiolib.c      | 24 +++++++-----------------
+>  include/linux/gpio/driver.h |  2 +-
+>  2 files changed, 8 insertions(+), 18 deletions(-)
 >
->>> +       bank = &gpio->banks[offs];
->>> +       bank->gpio = gpio;
->>> +       spin_lock_init(&bank->lock);
->>> +
->>> +       if (of_property_read_u32(bank_np, "ngpios", &ngpio))
->>> +               ngpio = 16;
->>
->> Here I think you want to distinguish between "property not defined"
->> (-EINVAL) and "property has no value" (-ENODATA) and other possible
->> errors. In the later cases you will want to signal the error and
->> return from here.
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index f48817d..4878980 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
+>   *
+>   * A gpio_chip with any GPIOs still requested may not be removed.
+>   */
+> -int gpiochip_remove(struct gpio_chip *chip)
+> +void gpiochip_remove(struct gpio_chip *chip)
+>  {
+>         unsigned long   flags;
+> -       int             status = 0;
+>         unsigned        id;
 >
-> I kinda messed up here a bit, I am trying to support ACPI booting but other
-> properties are also affected. I will rewrite this part so minimum of_ access
-> methods are required.
+>         acpi_gpiochip_remove(chip);
+> @@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
+>         of_gpiochip_remove(chip);
 >
->
->>
->>> +
->>> +       if ((ngpio > 16) || (ngpio < 1)) {
->>> +               dev_info(gpio->dev, "Incorrect number of gpio specified: %s\n",
->>> +                        bank_np->full_name);
->>> +               return -EINVAL;
->>> +       }
->>> +
->>> +       bank->data = gpio->regs + GPIO_DATA + (bank_idx * GPIO_DATA_OFFSET);
->>> +       bank->od = gpio->regs + GPIO_OD + (bank_idx * GPIO_OD_OFFSET);
->>> +       bank->mux = gpio->regs + GPIO_MUX + (bank_idx * GPIO_MUX_OFFSET);
->>> +       bank->set_dr = gpio->regs + GPIO_SET_DR
->>> +                               + (bank_idx * GPIO_SET_DR_OFFSET);
->>> +
->>> +       bank->chip.direction_input = xgene_gpio_dir_in;
->>> +       bank->chip.direction_output = xgene_gpio_dir_out;
->>> +       bank->chip.get = xgene_gpio_get;
->>> +       bank->chip.set = xgene_gpio_set;
->>> +
->>> +       if (!of_property_read_u32(bank_np, "odcfg", &odcfg))
->>> +               iowrite32(odcfg, bank->od);
->>> +
->>> +       bank->chip.ngpio = ngpio;
->>> +       bank->chip.of_node = bank_np;
->>> +       bank->chip.base = bank_idx * ngpio;
->>> +
->>> +       err = gpiochip_add(&bank->chip);
->>> +       if (err)
->>> +               dev_err(gpio->dev, "failed to register gpiochip for %s\n",
->>> +                       bank_np->full_name);
->>> +
->>> +       return err;
->>> +}
->>> +
->>> +static int xgene_gpio_probe(struct platform_device *pdev)
->>> +{
->>> +       struct device_node *np = pdev->dev.of_node;
->>> +       struct resource *res;
->>> +       struct xgene_gpio *gpio;
->>> +       int err;
->>> +       unsigned int offs = 0;
->>> +
->>> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
->>> +       if (!gpio)
->>> +               return -ENOMEM;
->>> +       gpio->dev = &pdev->dev;
->>> +
->>> +       gpio->nr_banks = of_get_child_count(pdev->dev.of_node);
->>> +       if (!gpio->nr_banks) {
->>> +               err = -EINVAL;
->>> +               goto err;
->>> +       }
->>
->> Might be worth checking whether nr_banks >= XGENE_GPIO_MAX_PORTS and
->> return an error here.
->>
->>> +
->>> +       gpio->banks = devm_kzalloc(&pdev->dev, gpio->nr_banks *
->>> +                                  sizeof(*gpio->banks), GFP_KERNEL);
->>> +       if (!gpio->banks) {
->>> +               err = -ENOMEM;
->>> +               goto err;
->>> +       }
->>
->> I'm fine with printing the error status the way you do, but could you
->> also do the same for the first kzalloc too?
->>
->> Or maybe you could put your banks member at the end of the xgene_gpio
->> struct as a flexible array member and perform only one kzalloc of size
->> (sizeof(*gpio) + (sizeof(*gpio->banks) * gpio->nr_banks))?
->>
->>> +
->>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +       gpio->regs = devm_ioremap_resource(&pdev->dev, res);
->>> +       if (IS_ERR(gpio->regs)) {
->>> +               err = PTR_ERR(gpio->regs);
->>> +               goto err;
->>> +       }
->>> +
->>> +       for_each_child_of_node(pdev->dev.of_node, np) {
->>> +               err = xgene_gpio_add_bank(gpio, np, offs++);
->>> +               if (err)
->>> +                       goto err;
->>> +       }
->>> +
->>> +       platform_set_drvdata(pdev, gpio);
->>> +
->>> +       dev_info(&pdev->dev, "X-Gene GPIO driver registered\n");
->>> +       return 0;
->>> +err:
->>> +       dev_err(&pdev->dev, "X-Gene GPIO driver registration failed\n");
->>> +       return err;
->>> +}
->>> +
->>> +static const struct of_device_id xgene_gpio_of_match[] = {
->>> +       { .compatible = "apm,xgene-gpio", },
->>> +       {},
->>> +};
->>> +MODULE_DEVICE_TABLE(of, xgene_gpio_of_match);
->>> +
->>> +static struct platform_driver xgene_gpio_driver = {
->>> +       .driver = {
->>> +               .name = "xgene-gpio",
->>> +               .owner = THIS_MODULE,
->>> +               .of_match_table = xgene_gpio_of_match,
->>> +       },
->>> +       .probe = xgene_gpio_probe,
->>> +};
->>> +
->>> +static int __init xgene_gpio_init(void)
->>> +{
->>> +       return platform_driver_register(&xgene_gpio_driver);
->>> +}
->>> +postcore_initcall(xgene_gpio_init);
->>> +
->>> +MODULE_AUTHOR("AppliedMicro");
->>> +MODULE_DESCRIPTION("APM X-Gene GPIO driver");
->>> +MODULE_LICENSE("GPL");
->>> --
->>> 1.9.1
->>>
->>
->> Globally the driver looks well-written, but I don't understand the
->> need to have one gpio_chip per bank. Could you elaborate on the
->> reasons for this design?
-> I see each bank as separate gpio chip. It is a simple way to
-> abstract the banks since they can operate independently. It also
-> provided me a way to fix the sysfs gpio base number, regardless if
-> a particular bank node is pulled out. This is also done in similar way
-> in some other gpio drivers such as the dwapb gpio driver.
+>         for (id = 0; id < chip->ngpio; id++) {
+> -               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
+> -                       status = -EBUSY;
+> -                       break;
+> -               }
+> -       }
+> -       if (status == 0) {
+> -               for (id = 0; id < chip->ngpio; id++)
+> -                       chip->desc[id].chip = NULL;
+> -
+> -               list_del(&chip->list);
+> +               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
+> +                       panic("gpiolib.c: gpiochip is still requested\n");
 
-I'd like to see what Linus thinks about this, but if there is
-precedence, and the banks can work independently, then I agree it may
-make sense to have it that way. In that case you should probably have
-each bank appearing as its own, independent node in the device tree,
-and be probed directly by this driver instead of going through a
-higher-level device which only practical use is to provide the number
-of banks in your GPIO chip. I.e. if your bank are independent GPIO
-devices, let the driver also reflect that fact.
+panic() sounds a little harsh here. Maybe a dev_err() would be enough?
+
+>         }
+> +       for (id = 0; id < chip->ngpio; id++)
+> +               chip->desc[id].chip = NULL;
+>
+> +       list_del(&chip->list);
+>         spin_unlock_irqrestore(&gpio_lock, flags);
+> -
+> -       if (status == 0)
+> -               gpiochip_unexport(chip);
+> -
+> -       return status;
+> +       gpiochip_unexport(chip);
+>  }
+>  EXPORT_SYMBOL_GPL(gpiochip_remove);
+>
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index 1827b43..72ed256 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -138,7 +138,7 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
+>
+>  /* add/remove chips */
+>  extern int gpiochip_add(struct gpio_chip *chip);
+> -extern int __must_check gpiochip_remove(struct gpio_chip *chip);
+> +void gpiochip_remove(struct gpio_chip *chip);
+
+"extern" should be preserved here for style consistency.
