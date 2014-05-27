@@ -1,42 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: dwapb: use a second irq chip
-Date: Tue, 27 May 2014 16:21:16 +0200
-Message-ID: <CACRpkdYx9Zwoig5QZmpF1w_Gcyoga8erPZd0RwvHsiC3prjNTA@mail.gmail.com>
-References: <CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>
-	<1401137894-6096-1-git-send-email-bigeasy@linutronix.de>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v4] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Tue, 27 May 2014 18:14:53 +0300
+Message-ID: <20140527151453.GB2067@lahna.fi.intel.com>
+References: <1400810423-14067-1-git-send-email-lejun.zhu@linux.intel.com>
+ <CAAVeFu+F=nHDCpL6Vfmq26QNr74mfRD5p9at_osB3R97v7xBSA@mail.gmail.com>
+ <538459E8.6010701@ti.com>
+ <20140527084615.GC1801@lahna.fi.intel.com>
+ <53847F39.2010503@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:58352 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752671AbaE0OVR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 10:21:17 -0400
-Received: by mail-ob0-f182.google.com with SMTP id wn1so9447176obc.27
-        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 07:21:17 -0700 (PDT)
-In-Reply-To: <1401137894-6096-1-git-send-email-bigeasy@linutronix.de>
+Received: from mga14.intel.com ([192.55.52.115]:17451 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752671AbaE0PO7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 May 2014 11:14:59 -0400
+Content-Disposition: inline
+In-Reply-To: <53847F39.2010503@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Jamie Iles <jamie@jamieiles.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
 
-On Mon, May 26, 2014 at 10:58 PM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
+On Tue, May 27, 2014 at 03:04:09PM +0300, Grygorii Strashko wrote:
+> Hi Mika,
+> 
+> On 05/27/2014 11:46 AM, Mika Westerberg wrote:
+> > On Tue, May 27, 2014 at 12:24:56PM +0300, Grygorii Strashko wrote:
+> >>>> +
+> >>>> +       if (retval) {
+> >>>> +               dev_warn(&pdev->dev, "request irq failed: %d\n", retval);
+> >>>> +               goto out;
+> >>>> +       }
+> >>>> +
+> >>>> +       retval = gpiochip_add(&cg->chip);
+> >>>> +       if (retval) {
+> >>>> +               dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
+> >>>> +               goto out_free_irq;
+> >>>> +       }
+> >>
+> >> As to my mind, It'll be better to setup IRQ as last probing step and
+> >> free it as the first step of driver removing.
+> > 
+> > When gpiochip_add() is called the chip is exported to outside world. At
+> > that point anyone can start requesting GPIOs and setup GPIO based
+> > interrupts. How does that work if you setup the IRQ after you call
+> > gpiochip_add()?
+> > 
+> 
+> It's difficult for me to imagine case when GPIO will be accessed
+> until GPIO driver's probe is finished.
 
-> Right new have one irq chip running always in level mode. It would nicer
-> to have two irq chips where one is handling level type interrupts and
-> the other one is doing edge interrupts. So we can have at runtime two users
-> where one is using edge and the other level.
->
-> Acked-by: Alan Tull <delicious.quinoa@gmail.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> v2..v3: added acked-by
-> v1..v2 - using the lopp again but breaking the assignment of type and
->         handler out of the loop as suggested by delicious quinoa.
+Once you call gpiochip_add() your driver gets registered to the GPIO
+subsystem and advertised outside. It doesn't matter whether your probe
+function is finished or not.
 
-OK this version applied worked fine.
+> Regarding remove()/suspend() routines, It's like an axiom for me:
+> - always disable irq
+> - always stop all works/threads created by driver
+> - do everything else
+> (It's proved by dozens hours of debugging).
 
-Please check the result because I had to rebase it a little.
+That's true for remove and suspend, yes but I'm not talking about them.
 
-Yours,
-Linus Walleij
+> Anyway, above is just my opinion :)
+> So, It's up to you, because it's your code :)
+
+No it's not, it's Lejun's driver :)
