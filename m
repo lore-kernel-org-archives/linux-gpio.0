@@ -1,50 +1,93 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Add support for Intel SoC PMIC (Crystal Cove)
-Date: Tue, 27 May 2014 11:01:40 +0200
-Message-ID: <CACRpkdbVFT23h-BCpshE9w-eK5+sdXHB_utzxAffO+iUs9cPBA@mail.gmail.com>
-References: <1400082247-24168-1-git-send-email-lejun.zhu@linux.intel.com>
-	<CAAVeFuLK6TcGBtiVWFui9NunantvqNUqCmJErsFLN8DeC3C3nw@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Tue, 27 May 2014 11:11:34 +0200
+Message-ID: <CACRpkdYNFpj0VR-N9=9haCT2bAvHoQs-qAhSWOdqhxizsFUbQA@mail.gmail.com>
+References: <1400649756-31353-1-git-send-email-lejun.zhu@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuLK6TcGBtiVWFui9NunantvqNUqCmJErsFLN8DeC3C3nw@mail.gmail.com>
+In-Reply-To: <1400649756-31353-1-git-send-email-lejun.zhu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bin.yang@intel.com
+To: "Zhu, Lejun" <lejun.zhu@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bin.yang@intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, May 17, 2014 at 4:37 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Thu, May 15, 2014 at 12:44 AM, Zhu, Lejun <lejun.zhu@linux.intel.com> wrote:
+On Wed, May 21, 2014 at 7:22 AM, Zhu, Lejun <lejun.zhu@linux.intel.com> wrote:
 
->> +static void __crystalcove_irq_type(int gpio, int type)
->> +{
->> +       u8 ctli = gpio < 8 ? GPIO0P0CTLI + gpio : GPIO1P0CTLI + (gpio - 8);
+> Devices based on Intel SoC products such as Baytrail have a Power
+> Management IC. In the PMIC there are subsystems for voltage regulation,
+> A/D conversion, GPIO and PWMs. The PMIC in Baytrail-T platform is called
+> Crystal Cove.
 >
-> Not a big comment, but wouldn't it be safer to factorize this logic
-> (which is repeated in many places) into some macro? e.g. something
-> like:
+> This patch adds support for the GPIO function in Crystal Cove.
 >
-> #define GPIOP0CTL(gpio, dir) ((gpio < 8 ? GPIO0P0CTL ## dir :
-> GPIO1P0CTL ## dir) + (gpio & ~0x8))
+> v2:
+> - Use IRQ chip helper to provide irqdomain.
+> - Implement .remove and can now build as a module.
+> - Various fix for unreadable or ugly code pieces.
 
-static functions are preferred over macros, please :-)
+This is much improved! I still have comments though.
 
-If you want to be sure they are inlined, just mark them inline (but the
-compiler will do it's job for sure).
+> +#define GPIO_TO_CTL(gpio, dir)         \
+> +       ((gpio < 8 ? GPIO0P0CTL ## dir : GPIO1P0CTL ## dir) + (gpio % 8))
 
-Just split the function instead so it is more readable:
+This is unreadble. Use an explicit static inline function instead.
 
-static void __crystalcove_irq_type(int gpio, int type)
+> +static void crystalcove_update_irq_type(int gpio, int type)
+> +{
+> +       u8 ctli = GPIO_TO_CTL(gpio, I);
+> +
+> +       type &= IRQ_TYPE_EDGE_BOTH;
+
+You silently ignore all other type configurations?
+
+> +       intel_soc_pmic_clearb(ctli, CTLI_INTCNT_BE);
+> +
+> +       if (type == IRQ_TYPE_EDGE_BOTH)
+> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_BE);
+> +       else if (type == IRQ_TYPE_EDGE_RISING)
+> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_PE);
+> +       else if (type & IRQ_TYPE_EDGE_FALLING)
+> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_NE);
+> +}
+
+I would prefer a switch(type) {} construction with a default:
+that warns.
+
+(...)
+> +static int crystalcove_irq_type(struct irq_data *data, unsigned type)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+> +       struct crystalcove_gpio *cg =
+> +               container_of(gc, struct crystalcove_gpio, chip);
+
+I would create a static inline at the top of the file instead of
+using container_of() explicitly everywhere:
+
+static inline struct crystalcove_gpio *to_cg(struct gpio_chip *gc)
 {
-      u8 ctli;
+    return container_of(gc, struct crystalcove_gpio, chip);
+}
 
-      if (gpio < 8)
-                ctli = GPIO0P0CTLI + gpio;
-      else
-                ctli = GPIO1P0CTLI + (gpio - 8);
+Then just use:
 
-But I think this can be simplified with the % operator as stated
-elsewhere.
+struct crystalcove_gpio *cg = to_cg(gc);
+
+Everywhere. Or if you only want the cg in some case (like this?)
+
+struct crystalcove_gpio *cg = to_cg(irq_data_get_irq_chip_data(data));
+
+> +       cg->trigger_type = type;
+> +       cg->update |= UPDATE_TYPE;
+> +
+> +       return 0;
+> +}
+(...)
+
+> +       gpiochip_irqchip_add(&cg->chip, &crystalcove_irqchip, 0,
+> +                            handle_simple_irq, IRQ_TYPE_NONE);
+
+Really nice. Thanks for doing this!
 
 Yours,
 Linus Walleij
