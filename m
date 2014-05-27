@@ -1,69 +1,44 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH] gpio: pch: add slab include
-Date: Tue, 27 May 2014 15:45:49 +0200
-Message-ID: <1401198349.4491.12.camel@chaos.site>
-References: <1401196664-14223-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: Add run-time dependencies to R-Car driver
+Date: Tue, 27 May 2014 15:45:57 +0200
+Message-ID: <CACRpkdYoh0o7X1_T6fdQjbvdw9w-TdXCLachEvFcW4SGAFQd-A@mail.gmail.com>
+References: <20140523134214.0f29c9e0@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34549 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752087AbaE0Npy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 27 May 2014 09:45:54 -0400
-In-Reply-To: <1401196664-14223-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:59521 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752141AbaE0Np7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 09:45:59 -0400
+Received: by mail-ob0-f170.google.com with SMTP id uy5so9220141obc.15
+        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 06:45:58 -0700 (PDT)
+In-Reply-To: <20140523134214.0f29c9e0@endymion.delvare>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Magnus Damm <damm@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi Linus,
+On Fri, May 23, 2014 at 1:42 PM, Jean Delvare <jdelvare@suse.de> wrote:
 
-Le Tuesday 27 May 2014 =C3=A0 15:17 +0200, Linus Walleij a =C3=A9crit :
-> After change 3ff35cbcfa4bc7d7dbdd0279e32ea677567ded02
-> "gpio-pch: Fix Kconfig dependencies"
-> which enabled COMPILE_TEST as an alternative for the PCH
-> driver, we get build failures like this:
->=20
-> drivers/gpio/gpio-pch.c: In function 'pch_gpio_probe':
-> drivers/gpio/gpio-pch.c:359:2: error: implicit declaration
-> of function 'kzalloc' [-Werror=3Dimplicit-function-declaration]
-> drivers/gpio/gpio-pch.c:359:7: warning: assignment makes
-> pointer from integer without a cast [enabled by default]
-> drivers/gpio/gpio-pch.c:442:2: error: implicit declaration
-> of function 'kfree' [-Werror=3Dimplicit-function-declaration]
->=20
-> Fix this by including <linux/slab.h> explicitly.
->=20
-> Cc: Jean Delvare <jdelvare@suse.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpio-pch.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-> index 83a156397474..d6eac9b17db9 100644
-> --- a/drivers/gpio/gpio-pch.c
-> +++ b/drivers/gpio/gpio-pch.c
-> @@ -20,6 +20,7 @@
->  #include <linux/gpio.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
-> +#include <linux/slab.h>
-> =20
->  #define PCH_EDGE_FALLING	0
->  #define PCH_EDGE_RISING		BIT(0)
+> The Renesas R-Car GPIO driver is only useful on shmobile unless build
+> testing.
+>
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Magnus Damm <damm@opensource.se>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
 
-Same patch already sent by Arnd Bergmann yesterday and acked by me.
+Patch applied with Simon's ACK.
 
-But thanks anyway :-)
+> Simon, is it correct? I couldn't remove the dependency on ARM because
+> the driver uses set_irq_flags which is arm-specific.
 
---=20
-Jean Delvare
-SUSE L3 Support
+We usually #ifdef CONFIG_ARM around that function call actually.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+But now, we also do that in the core gpiolib irqchip helpers, so just
+switch this driver to use the irqchip helpers and you can drop the ARM
+dependency.
+
+Yours,
+Linus Walleij
