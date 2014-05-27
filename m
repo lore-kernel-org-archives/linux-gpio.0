@@ -1,38 +1,66 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v3] gpio: dwapb: use a second irq chip
-Date: Tue, 27 May 2014 18:30:11 +0200
-Message-ID: <5384BD93.6030502@linutronix.de>
-References: <CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>	<1401137894-6096-1-git-send-email-bigeasy@linutronix.de> <CACRpkdYx9Zwoig5QZmpF1w_Gcyoga8erPZd0RwvHsiC3prjNTA@mail.gmail.com>
+From: Feng Kan <fkan@apm.com>
+Subject: Re: [PATCH 1/3] gpio: Add APM X-Gene SoC GPIO controller support
+Date: Tue, 27 May 2014 09:59:02 -0700
+Message-ID: <CAL85gmCZD90UUZgC0-X4hui2L1V5TuH++o3fA20pRF_ZQEpDQw@mail.gmail.com>
+References: <1400263432-922-1-git-send-email-fkan@apm.com>
+	<1400263432-922-2-git-send-email-fkan@apm.com>
+	<CAAVeFu+TOfjfvisinv3oJ9PobdV9HcNJhr+3VYneSJ54uGwiAg@mail.gmail.com>
+	<CAL85gmDjVszNd3TB51BGa+78wEEZmJfBOLNKOpTEvMTGU2VdBA@mail.gmail.com>
+	<CACRpkdaVYXU9GN5OymuP3JRsQO3unkRGb5vZN3Jb2nWSnkh1SQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:56246 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752688AbaE0QaT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 12:30:19 -0400
-In-Reply-To: <CACRpkdYx9Zwoig5QZmpF1w_Gcyoga8erPZd0RwvHsiC3prjNTA@mail.gmail.com>
+Received: from exprod5og108.obsmtp.com ([64.18.0.186]:46831 "HELO
+	exprod5og108.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752646AbaE0Q7D (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 12:59:03 -0400
+Received: by mail-oa0-f42.google.com with SMTP id j17so9967062oag.1
+        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 09:59:02 -0700 (PDT)
+In-Reply-To: <CACRpkdaVYXU9GN5OymuP3JRsQO3unkRGb5vZN3Jb2nWSnkh1SQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jamie Iles <jamie@jamieiles.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, patches <patches@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 05/27/2014 04:21 PM, Linus Walleij wrote:
-> OK this version applied worked fine.
+On Tue, May 27, 2014 at 1:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, May 21, 2014 at 1:54 AM, Feng Kan <fkan@apm.com> wrote:
+>
+>> I see each bank as separate gpio chip. It is a simple way to
+>> abstract the banks since they can operate independently.
+>
+> I think they should also be separate devices, and separate nodes
+> in the device tree.
+>
+>> It also
+>> provided me a way to fix the sysfs gpio base number, regardless if
+>> a particular bank node is pulled out.
+>
+> The GPIO sysfs is unpredictable for this and many other
+> reasons and should not be relied upon.
+>
+>> This is also done in similar way
+>> in some other gpio drivers such as the dwapb gpio driver.
+>
+> I think the dwapb has it's registers mingled while your banks
+> seem to be separate chunks.
 
-Thank you.
+Thanks for the comments, I will fix these problems. Just some details
+in terms of the register layout. I will break out the gpio to separate
+device nodes as instructed, I will have to use the reg attribute to offset
+bank registers. Please let me know if it is acceptable.
 
-> Please check the result because I had to rebase it a little.
+gfc_gpio_fl0              GFC42'h1701c00c
+gfc_gpio_fl0_mux      GFC42'h1701c010
+gfc_gpio_fl1              GFC42'h1701c018
+gfc_gpio_fl1_mux      GFC42'h1701c01c
+gfc_gpio_fl2              GFC42'h1701c024
+gfc_gpio_fl2_mux      GFC42'h1701c028
+gfc_gpio_fl0_od        GFC42'h1701c030
+gfc_gpio_fl1_od        GFC42'h1701c034
+gfc_gpio_fl2_od        GFC42'h1701c038
 
-Looks good. What remains in my queue is:
 
-* gpio: dwapb: use irq_linear_revmap() for the faster lookup
-* gpio: dwapb: use irq_gc_lock() for locking instead bc's lock
-* gpio: dwapb: use d->mask instead of BIT(bit)
 
-what do we do about those?
-
+>
 > Yours,
 > Linus Walleij
-> 
-Sebastian
