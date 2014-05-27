@@ -1,55 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Tue, 27 May 2014 15:33:45 +0200
-Message-ID: <CACRpkdZg559ogf5koyxA_urM949ee-+upauYWQmo-sPUQn-g2w@mail.gmail.com>
-References: <1400864617-27909-1-git-send-email-berthe.ab@gmail.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: [PATCH] gpio: pch: add slab include
+Date: Tue, 27 May 2014 15:45:49 +0200
+Message-ID: <1401198349.4491.12.camel@chaos.site>
+References: <1401196664-14223-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:63920 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752078AbaE0Ndq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 09:33:46 -0400
-Received: by mail-ob0-f177.google.com with SMTP id wp4so9025070obc.36
-        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 06:33:46 -0700 (PDT)
-In-Reply-To: <1400864617-27909-1-git-send-email-berthe.ab@gmail.com>
+Received: from cantor2.suse.de ([195.135.220.15]:34549 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752087AbaE0Npy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 May 2014 09:45:54 -0400
+In-Reply-To: <1401196664-14223-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: abdoulaye berthe <berthe.ab@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>
 
-On Fri, May 23, 2014 at 7:03 PM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
+Hi Linus,
 
-> This avoids handling gpiochip remove error in device
-> remove handler.
->
-> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
+Le Tuesday 27 May 2014 =C3=A0 15:17 +0200, Linus Walleij a =C3=A9crit :
+> After change 3ff35cbcfa4bc7d7dbdd0279e32ea677567ded02
+> "gpio-pch: Fix Kconfig dependencies"
+> which enabled COMPILE_TEST as an alternative for the PCH
+> driver, we get build failures like this:
+>=20
+> drivers/gpio/gpio-pch.c: In function 'pch_gpio_probe':
+> drivers/gpio/gpio-pch.c:359:2: error: implicit declaration
+> of function 'kzalloc' [-Werror=3Dimplicit-function-declaration]
+> drivers/gpio/gpio-pch.c:359:7: warning: assignment makes
+> pointer from integer without a cast [enabled by default]
+> drivers/gpio/gpio-pch.c:442:2: error: implicit declaration
+> of function 'kfree' [-Werror=3Dimplicit-function-declaration]
+>=20
+> Fix this by including <linux/slab.h> explicitly.
+>=20
+> Cc: Jean Delvare <jdelvare@suse.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-pch.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+> index 83a156397474..d6eac9b17db9 100644
+> --- a/drivers/gpio/gpio-pch.c
+> +++ b/drivers/gpio/gpio-pch.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/gpio.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+> +#include <linux/slab.h>
+> =20
+>  #define PCH_EDGE_FALLING	0
+>  #define PCH_EDGE_RISING		BIT(0)
 
-In general this is the right thing to do.
+Same patch already sent by Arnd Bergmann yesterday and acked by me.
 
->         for (id = 0; id < chip->ngpio; id++) {
-> -               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
-> -                       status = -EBUSY;
-> -                       break;
-> -               }
-> -       }
-> -       if (status == 0) {
-> -               for (id = 0; id < chip->ngpio; id++)
-> -                       chip->desc[id].chip = NULL;
-> -
-> -               list_del(&chip->list);
-> +               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
-> +                       panic("gpiolib.c: gpiochip is still requested\n");
+But thanks anyway :-)
 
-panic("gpio: removing gpiochip with gpios still requested\");
-is more helpful.
+--=20
+Jean Delvare
+SUSE L3 Support
 
-But I want a patch that also removes *ALL* users of the return value
-from this function in the *same* patch to avoid bisectability issues.
-
-$ git grep gpiochip_remove
-
-Then fix all of them or use coccinelle.
-
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
