@@ -1,77 +1,38 @@
-From: Barry Song <Barry.Song@csr.com>
-Subject: RE: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state
- container
-Date: Tue, 27 May 2014 15:10:38 +0000
-Message-ID: <5EB3BFCD089AD643B9BB63439F5FD5E9012BF02A09@SHAASIEXM01.ASIA.ROOT.PRI>
-References: <1398287792-19831-1-git-send-email-linus.walleij@linaro.org>
-	<1398287792-19831-2-git-send-email-linus.walleij@linaro.org>
-	<CAGsJ_4wOdD53Fkf+_CtDqSg5Yvz-1kwaWzMJb357uq5BL9_-7Q@mail.gmail.com>
-	<CACRpkdbieXh8iHSCqai03vNbBZ2_2zV1SscXLY+4T9ZprWJEvQ@mail.gmail.com>
-	<CAGsJ_4ygjo_cUFR8bUoWsGrZYHSubam4WWcb-TjQJNjgy9rvKQ@mail.gmail.com>,<CACRpkdbQeJwoP7oOzbuhJeuFWxbB5RjFvzqqp8E_1x3=6p-hnQ@mail.gmail.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v3] gpio: dwapb: use a second irq chip
+Date: Tue, 27 May 2014 18:30:11 +0200
+Message-ID: <5384BD93.6030502@linutronix.de>
+References: <CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>	<1401137894-6096-1-git-send-email-bigeasy@linutronix.de> <CACRpkdYx9Zwoig5QZmpF1w_Gcyoga8erPZd0RwvHsiC3prjNTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cluster-g.mailcontrol.com ([208.87.233.190]:60178 "EHLO
-	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750904AbaE0QZY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 12:25:24 -0400
-In-Reply-To: <CACRpkdbQeJwoP7oOzbuhJeuFWxbB5RjFvzqqp8E_1x3=6p-hnQ@mail.gmail.com>
-Content-Language: en-US
+Received: from www.linutronix.de ([62.245.132.108]:56246 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752688AbaE0QaT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 12:30:19 -0400
+In-Reply-To: <CACRpkdYx9Zwoig5QZmpF1w_Gcyoga8erPZd0RwvHsiC3prjNTA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <DL-SHA-WorkGroupLinux@internal.csr.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jamie Iles <jamie@jamieiles.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-From: Linus Walleij [linus.walleij@linaro.org]
-Sent: Tuesday, May 27, 2014 21:27
-To: Barry Song
-Cc: LKML; Barry Song; Linux GPIO List; DL-SHA-WorkGroupLinux
-Subject: Re: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state container
+On 05/27/2014 04:21 PM, Linus Walleij wrote:
+> OK this version applied worked fine.
 
-On Sun, May 25, 2014 at 10:26 AM, Barry Song <baohua@kernel.org> wrote:
-> 2014-05-09 19:53 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Thu, May 1, 2014 at 2:29 PM, Barry Song <baohua@kernel.org> wrote:
->>> 2014-04-24 5:16 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
->>
->>>> This rewrites the SIRF pinctrl driver to allocate a state container
->>>> for the GPIO chip, just as is done for the pin controller, and
->>>> use the gpiochip_add_pin_range() to add the range from the gpiochip
->>>> side rather than adding the range from the pinctrl side.
->>>>
->>>> All resulting changes are done in order to pass around a state
->>>> container rather than refer to a static global object.
->>>>
->>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->>>
->>> Linus, thanks! but this breaks prima2 pinctrl subsystem, do you have an idea?
->>> otherwise i will do a debug to find the reason.
->>
->> Unfortunately no :-(
->>
->> This is the downside of dry-coding ... I rely on others to help out.
->>
->> See it as a suggestion to what I think should be refactored and how,
->> I'll keep it on a branch as some "TODO" item for the moment.
->>
->
->> after moving pinctrl name from sirfsoc-gpio* to dev_name(&pdev->dev) as below:
->> - err = gpiochip_add_pin_range(&sgpio->chip.gc, "sirfsoc-gpio*",
->> + err = gpiochip_add_pin_range(&sgpio->chip.gc, dev_name(&pdev->dev),
->>
->> Acked-by: Barry Song <Baohua.Song@csr.com>
+Thank you.
 
->Does this mean it works with that change so it's a Tested-by?
+> Please check the result because I had to rebase it a little.
 
-yes. with the above change.
+Looks good. What remains in my queue is:
 
->I don't want to apply it if something breaks...
+* gpio: dwapb: use irq_linear_revmap() for the faster lookup
+* gpio: dwapb: use irq_gc_lock() for locking instead bc's lock
+* gpio: dwapb: use d->mask instead of BIT(bit)
 
->Yours,
->Linus Walleij
+what do we do about those?
 
--barry
-
-Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
-More information can be found at www.csr.com. Keep up to date with CSR on our technical blog, www.csr.com/blog, CSR people blog, www.csr.com/people, YouTube, www.youtube.com/user/CSRplc, Facebook, www.facebook.com/pages/CSR/191038434253534, or follow us on Twitter at www.twitter.com/CSR_plc.
-New for 2014, you can now access the wide range of products powered by aptX at www.aptx.com.
+> Yours,
+> Linus Walleij
+> 
+Sebastian
