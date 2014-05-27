@@ -1,113 +1,77 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH] RFT: pinctrl: sunxi: convert to GPIO irqchip helpers
-Date: Tue, 27 May 2014 17:34:56 +0200
-Message-ID: <20140527153456.GL4730@lukather>
-References: <1399621082-10712-1-git-send-email-linus.walleij@linaro.org>
+From: Barry Song <Barry.Song@csr.com>
+Subject: RE: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state
+ container
+Date: Tue, 27 May 2014 15:10:38 +0000
+Message-ID: <5EB3BFCD089AD643B9BB63439F5FD5E9012BF02A09@SHAASIEXM01.ASIA.ROOT.PRI>
+References: <1398287792-19831-1-git-send-email-linus.walleij@linaro.org>
+	<1398287792-19831-2-git-send-email-linus.walleij@linaro.org>
+	<CAGsJ_4wOdD53Fkf+_CtDqSg5Yvz-1kwaWzMJb357uq5BL9_-7Q@mail.gmail.com>
+	<CACRpkdbieXh8iHSCqai03vNbBZ2_2zV1SscXLY+4T9ZprWJEvQ@mail.gmail.com>
+	<CAGsJ_4ygjo_cUFR8bUoWsGrZYHSubam4WWcb-TjQJNjgy9rvKQ@mail.gmail.com>,<CACRpkdbQeJwoP7oOzbuhJeuFWxbB5RjFvzqqp8E_1x3=6p-hnQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="aqWxf8ydqYKP8htK"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:39233 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751711AbaE0PfF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 11:35:05 -0400
-Content-Disposition: inline
-In-Reply-To: <1399621082-10712-1-git-send-email-linus.walleij@linaro.org>
+Received: from cluster-g.mailcontrol.com ([208.87.233.190]:60178 "EHLO
+	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750904AbaE0QZY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 12:25:24 -0400
+In-Reply-To: <CACRpkdbQeJwoP7oOzbuhJeuFWxbB5RjFvzqqp8E_1x3=6p-hnQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <DL-SHA-WorkGroupLinux@internal.csr.com>
 
+From: Linus Walleij [linus.walleij@linaro.org]
+Sent: Tuesday, May 27, 2014 21:27
+To: Barry Song
+Cc: LKML; Barry Song; Linux GPIO List; DL-SHA-WorkGroupLinux
+Subject: Re: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state container
 
---aqWxf8ydqYKP8htK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, May 25, 2014 at 10:26 AM, Barry Song <baohua@kernel.org> wrote:
+> 2014-05-09 19:53 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+>> On Thu, May 1, 2014 at 2:29 PM, Barry Song <baohua@kernel.org> wrote:
+>>> 2014-04-24 5:16 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+>>
+>>>> This rewrites the SIRF pinctrl driver to allocate a state container
+>>>> for the GPIO chip, just as is done for the pin controller, and
+>>>> use the gpiochip_add_pin_range() to add the range from the gpiochip
+>>>> side rather than adding the range from the pinctrl side.
+>>>>
+>>>> All resulting changes are done in order to pass around a state
+>>>> container rather than refer to a static global object.
+>>>>
+>>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>>
+>>> Linus, thanks! but this breaks prima2 pinctrl subsystem, do you have an idea?
+>>> otherwise i will do a debug to find the reason.
+>>
+>> Unfortunately no :-(
+>>
+>> This is the downside of dry-coding ... I rely on others to help out.
+>>
+>> See it as a suggestion to what I think should be refactored and how,
+>> I'll keep it on a branch as some "TODO" item for the moment.
+>>
+>
+>> after moving pinctrl name from sirfsoc-gpio* to dev_name(&pdev->dev) as below:
+>> - err = gpiochip_add_pin_range(&sgpio->chip.gc, "sirfsoc-gpio*",
+>> + err = gpiochip_add_pin_range(&sgpio->chip.gc, dev_name(&pdev->dev),
+>>
+>> Acked-by: Barry Song <Baohua.Song@csr.com>
 
-Hi Linus,
+>Does this mean it works with that change so it's a Tested-by?
 
-On Fri, May 09, 2014 at 09:38:02AM +0200, Linus Walleij wrote:
-> This switches the sunxi pinctrl driver over to using the generic
-> gpiolib irqchip helpers for its chained irqs.
->=20
-> As the .to_irq() callback on the gpiochip was doing some function
-> indexing this was moved over to the .irq_startup callback on the
-> irqchip (where it belongs, since it is perfectly legal to request
-> an irq from an irqchip without calling gpio_to_irq() first).
->=20
-> The gpio_chip was converted into a true member of the pinctrl
-> struct instead of being a pointer to a separately allocated
-> object, avoiding an unnecessary allocation and making it possible
-> to use container_of() to get from the struct gpio_chip * back to
-> the sunxi pinctrl state container.
->=20
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Maxime, can you test this thing? And if it doesn't work, can you
-> figure out what it is that I want you to do and do it ;-)
-> This is done on top of your recently pulled sunxi series.
+yes. with the above change.
 
+>I don't want to apply it if something breaks...
 
-I've been quite late at testing this, I'm sorry, but I finally gave it
-a try.
+>Yours,
+>Linus Walleij
 
-Besides the minor glitches here and there that were expected, I think
-that it can't really work now given the state of gpiolib_irqchip.
+-barry
 
-The way this controller works depends on two cases:
-
-  - On the older (the one on which we support interrupts) SoC:
-    + we have 8 pin banks, almost all of them being at least able to
-      be muxed to gpio in and out functions.
-    + 32 of these 256 pins are actually muxable to another function
-      that is the one to generate interrupts
-    + The interrupt controller is a single 32 bits register, each bit
-      being about one of these 32 pins, that are pretty much spread
-      across the banks.
-    + There's a single parent interrupt.
-
-  - On the newer code (that is not supported yet) would be a bit
-    easier to support, since the interrupt sources are grouped by
-    banks. That means that we still have our 8 banks, but this time, 4
-    banks are interrupt controllers. These banks support as much
-    interrupts as there is pins in the banks, with a 1:1 mapping
-    between the pin number and the interrupt number.
-
-This is not something that looks to be well supported at the moment in
-gpiolib_irqchip wrapper, especially since it seems to be making the
-assumption that there's as much gpio than there is interrupts.
-
-But I guess some of these changes are still useful, especially the
-ones on the callbacks.
-
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---aqWxf8ydqYKP8htK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJThLCgAAoJEBx+YmzsjxAgnHYP/0Zmsvy/HYhcEhwVFcgxVZM0
-toLzqlX4yD6yDuf3nbFZ1Er/wr+Dgb9ln4TldAeSwhrtc70CCONFW54tDRyS4bht
-zR6e8wu0ZJNa5jByUaZBJGuc0//6ZztCscID1mxWzA36v0lwsfUOZwc4+lyNBPJm
-a3Qq8JQJtcfmsZTyxGG5mzgU/iFOlvfGeimAZ3AxJZzcjDTMpHec49Jcz0b09o4o
-dub2EtrusgDTEQiPcNThjO/70hSn0fDpTesW7nFGlXg0/o/HEnYEvsO4FBh/PQz0
-TtfhdQ8THTjjXW2GMG1IPoBtYu2PMqfQRtT+V6W8wBceRu2hZzg/SYCgF/NFsc5o
-rXchhr/4aHcXOMdQtDupdhX5tIjTYrkJUu1gdE/4VVBZPzZdSodp0pCJrXjFgZjn
-W0Pr5ZDka0F0Cv+43aeYwwTOXg/9+tyWeiI/fwoMWJWX0jGKJlKXBbbjxDBrc5Bv
-ZoGI/ifaa6hm+IfbpQD9iaZ/hB8xtE9ixZtuS/bFegWPOuOqNGtHnH/64DLCby8X
-yiFL91gBc4JHlEB9e5je2kG3ZtA1LtHg4+OuMIOkGh/jcycCTWLF9XOuYg1379ol
-ma3iGFPI+MkPQDR1YMAte7D+gA5IWq0My1pTKBiG3q0KkEwrqAbxIHKTgHMuSBcb
-8xkk6LoFBG+6/nFc6toC
-=lChM
------END PGP SIGNATURE-----
-
---aqWxf8ydqYKP8htK--
+Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
+More information can be found at www.csr.com. Keep up to date with CSR on our technical blog, www.csr.com/blog, CSR people blog, www.csr.com/people, YouTube, www.youtube.com/user/CSRplc, Facebook, www.facebook.com/pages/CSR/191038434253534, or follow us on Twitter at www.twitter.com/CSR_plc.
+New for 2014, you can now access the wide range of products powered by aptX at www.aptx.com.
