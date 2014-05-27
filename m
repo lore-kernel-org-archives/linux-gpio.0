@@ -1,52 +1,62 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: pch: add slab include
-Date: Tue, 27 May 2014 15:17:44 +0200
-Message-ID: <1401196664-14223-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state container
+Date: Tue, 27 May 2014 15:27:36 +0200
+Message-ID: <CACRpkdbQeJwoP7oOzbuhJeuFWxbB5RjFvzqqp8E_1x3=6p-hnQ@mail.gmail.com>
+References: <1398287792-19831-1-git-send-email-linus.walleij@linaro.org>
+	<1398287792-19831-2-git-send-email-linus.walleij@linaro.org>
+	<CAGsJ_4wOdD53Fkf+_CtDqSg5Yvz-1kwaWzMJb357uq5BL9_-7Q@mail.gmail.com>
+	<CACRpkdbieXh8iHSCqai03vNbBZ2_2zV1SscXLY+4T9ZprWJEvQ@mail.gmail.com>
+	<CAGsJ_4ygjo_cUFR8bUoWsGrZYHSubam4WWcb-TjQJNjgy9rvKQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:44472 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752289AbaE0NRx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 09:17:53 -0400
-Received: by mail-wg0-f45.google.com with SMTP id m15so9278606wgh.4
-        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 06:17:52 -0700 (PDT)
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:56455 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752191AbaE0N1h (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 09:27:37 -0400
+Received: by mail-oa0-f54.google.com with SMTP id j17so9656519oag.27
+        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 06:27:36 -0700 (PDT)
+In-Reply-To: <CAGsJ_4ygjo_cUFR8bUoWsGrZYHSubam4WWcb-TjQJNjgy9rvKQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Jean Delvare <jdelvare@suse.de>
+To: Barry Song <baohua@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
 
-After change 3ff35cbcfa4bc7d7dbdd0279e32ea677567ded02
-"gpio-pch: Fix Kconfig dependencies"
-which enabled COMPILE_TEST as an alternative for the PCH
-driver, we get build failures like this:
+On Sun, May 25, 2014 at 10:26 AM, Barry Song <baohua@kernel.org> wrote:
+> 2014-05-09 19:53 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+>> On Thu, May 1, 2014 at 2:29 PM, Barry Song <baohua@kernel.org> wrote:
+>>> 2014-04-24 5:16 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+>>
+>>>> This rewrites the SIRF pinctrl driver to allocate a state container
+>>>> for the GPIO chip, just as is done for the pin controller, and
+>>>> use the gpiochip_add_pin_range() to add the range from the gpiochip
+>>>> side rather than adding the range from the pinctrl side.
+>>>>
+>>>> All resulting changes are done in order to pass around a state
+>>>> container rather than refer to a static global object.
+>>>>
+>>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>>
+>>> Linus, thanks! but this breaks prima2 pinctrl subsystem, do you have an idea?
+>>> otherwise i will do a debug to find the reason.
+>>
+>> Unfortunately no :-(
+>>
+>> This is the downside of dry-coding ... I rely on others to help out.
+>>
+>> See it as a suggestion to what I think should be refactored and how,
+>> I'll keep it on a branch as some "TODO" item for the moment.
+>>
+>
+> after moving pinctrl name from sirfsoc-gpio* to dev_name(&pdev->dev) as below:
+> - err = gpiochip_add_pin_range(&sgpio->chip.gc, "sirfsoc-gpio*",
+> + err = gpiochip_add_pin_range(&sgpio->chip.gc, dev_name(&pdev->dev),
+>
+> Acked-by: Barry Song <Baohua.Song@csr.com>
 
-drivers/gpio/gpio-pch.c: In function 'pch_gpio_probe':
-drivers/gpio/gpio-pch.c:359:2: error: implicit declaration
-of function 'kzalloc' [-Werror=implicit-function-declaration]
-drivers/gpio/gpio-pch.c:359:7: warning: assignment makes
-pointer from integer without a cast [enabled by default]
-drivers/gpio/gpio-pch.c:442:2: error: implicit declaration
-of function 'kfree' [-Werror=implicit-function-declaration]
+Does this mean it works with that change so it's a Tested-by?
 
-Fix this by including <linux/slab.h> explicitly.
+I don't want to apply it if something breaks...
 
-Cc: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-pch.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-index 83a156397474..d6eac9b17db9 100644
---- a/drivers/gpio/gpio-pch.c
-+++ b/drivers/gpio/gpio-pch.c
-@@ -20,6 +20,7 @@
- #include <linux/gpio.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-+#include <linux/slab.h>
- 
- #define PCH_EDGE_FALLING	0
- #define PCH_EDGE_RISING		BIT(0)
--- 
-1.9.0
-
+Yours,
+Linus Walleij
