@@ -1,31 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: ep93xx: Use devm_ioremap_resource()
-Date: Tue, 27 May 2014 16:01:30 +0200
-Message-ID: <CACRpkdYoE7W3n-yXhteOmgTe-rCdbbWKKt2oHgCMntaim10mOg@mail.gmail.com>
-References: <000801cf7974$81763a50$8462aef0$%han@samsung.com>
+Subject: Re: [PATCH v3] gpio: dwapb: use a second irq chip
+Date: Tue, 27 May 2014 16:21:16 +0200
+Message-ID: <CACRpkdYx9Zwoig5QZmpF1w_Gcyoga8erPZd0RwvHsiC3prjNTA@mail.gmail.com>
+References: <CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>
+	<1401137894-6096-1-git-send-email-bigeasy@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:55706 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752337AbaE0OBb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 10:01:31 -0400
-Received: by mail-ob0-f172.google.com with SMTP id wp18so9232905obc.17
-        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 07:01:30 -0700 (PDT)
-In-Reply-To: <000801cf7974$81763a50$8462aef0$%han@samsung.com>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:58352 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752671AbaE0OVR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 10:21:17 -0400
+Received: by mail-ob0-f182.google.com with SMTP id wn1so9447176obc.27
+        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 07:21:17 -0700 (PDT)
+In-Reply-To: <1401137894-6096-1-git-send-email-bigeasy@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Abdoulaye Berthe <berthe.ab@gmail.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Jamie Iles <jamie@jamieiles.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
 
-On Tue, May 27, 2014 at 8:25 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+On Mon, May 26, 2014 at 10:58 PM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
 
-> Use devm_ioremap_resource() because devm_request_and_ioremap() is
-> obsoleted by devm_ioremap_resource().
+> Right new have one irq chip running always in level mode. It would nicer
+> to have two irq chips where one is handling level type interrupts and
+> the other one is doing edge interrupts. So we can have at runtime two users
+> where one is using edge and the other level.
 >
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Alan Tull <delicious.quinoa@gmail.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+> v2..v3: added acked-by
+> v1..v2 - using the lopp again but breaking the assignment of type and
+>         handler out of the loop as suggested by delicious quinoa.
 
-Patch applied.
+OK this version applied worked fine.
+
+Please check the result because I had to rebase it a little.
 
 Yours,
 Linus Walleij
