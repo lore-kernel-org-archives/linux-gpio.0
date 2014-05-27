@@ -1,68 +1,113 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v4] gpio: Add support for Intel SoC PMIC (Crystal Cove)
-Date: Tue, 27 May 2014 18:14:53 +0300
-Message-ID: <20140527151453.GB2067@lahna.fi.intel.com>
-References: <1400810423-14067-1-git-send-email-lejun.zhu@linux.intel.com>
- <CAAVeFu+F=nHDCpL6Vfmq26QNr74mfRD5p9at_osB3R97v7xBSA@mail.gmail.com>
- <538459E8.6010701@ti.com>
- <20140527084615.GC1801@lahna.fi.intel.com>
- <53847F39.2010503@ti.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH] RFT: pinctrl: sunxi: convert to GPIO irqchip helpers
+Date: Tue, 27 May 2014 17:34:56 +0200
+Message-ID: <20140527153456.GL4730@lukather>
+References: <1399621082-10712-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="aqWxf8ydqYKP8htK"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:17451 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752671AbaE0PO7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 27 May 2014 11:14:59 -0400
+Received: from top.free-electrons.com ([176.31.233.9]:39233 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751711AbaE0PfF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 11:35:05 -0400
 Content-Disposition: inline
-In-Reply-To: <53847F39.2010503@ti.com>
+In-Reply-To: <1399621082-10712-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On Tue, May 27, 2014 at 03:04:09PM +0300, Grygorii Strashko wrote:
-> Hi Mika,
-> 
-> On 05/27/2014 11:46 AM, Mika Westerberg wrote:
-> > On Tue, May 27, 2014 at 12:24:56PM +0300, Grygorii Strashko wrote:
-> >>>> +
-> >>>> +       if (retval) {
-> >>>> +               dev_warn(&pdev->dev, "request irq failed: %d\n", retval);
-> >>>> +               goto out;
-> >>>> +       }
-> >>>> +
-> >>>> +       retval = gpiochip_add(&cg->chip);
-> >>>> +       if (retval) {
-> >>>> +               dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
-> >>>> +               goto out_free_irq;
-> >>>> +       }
-> >>
-> >> As to my mind, It'll be better to setup IRQ as last probing step and
-> >> free it as the first step of driver removing.
-> > 
-> > When gpiochip_add() is called the chip is exported to outside world. At
-> > that point anyone can start requesting GPIOs and setup GPIO based
-> > interrupts. How does that work if you setup the IRQ after you call
-> > gpiochip_add()?
-> > 
-> 
-> It's difficult for me to imagine case when GPIO will be accessed
-> until GPIO driver's probe is finished.
 
-Once you call gpiochip_add() your driver gets registered to the GPIO
-subsystem and advertised outside. It doesn't matter whether your probe
-function is finished or not.
+--aqWxf8ydqYKP8htK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Regarding remove()/suspend() routines, It's like an axiom for me:
-> - always disable irq
-> - always stop all works/threads created by driver
-> - do everything else
-> (It's proved by dozens hours of debugging).
+Hi Linus,
 
-That's true for remove and suspend, yes but I'm not talking about them.
+On Fri, May 09, 2014 at 09:38:02AM +0200, Linus Walleij wrote:
+> This switches the sunxi pinctrl driver over to using the generic
+> gpiolib irqchip helpers for its chained irqs.
+>=20
+> As the .to_irq() callback on the gpiochip was doing some function
+> indexing this was moved over to the .irq_startup callback on the
+> irqchip (where it belongs, since it is perfectly legal to request
+> an irq from an irqchip without calling gpio_to_irq() first).
+>=20
+> The gpio_chip was converted into a true member of the pinctrl
+> struct instead of being a pointer to a separately allocated
+> object, avoiding an unnecessary allocation and making it possible
+> to use container_of() to get from the struct gpio_chip * back to
+> the sunxi pinctrl state container.
+>=20
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Maxime, can you test this thing? And if it doesn't work, can you
+> figure out what it is that I want you to do and do it ;-)
+> This is done on top of your recently pulled sunxi series.
 
-> Anyway, above is just my opinion :)
-> So, It's up to you, because it's your code :)
 
-No it's not, it's Lejun's driver :)
+I've been quite late at testing this, I'm sorry, but I finally gave it
+a try.
+
+Besides the minor glitches here and there that were expected, I think
+that it can't really work now given the state of gpiolib_irqchip.
+
+The way this controller works depends on two cases:
+
+  - On the older (the one on which we support interrupts) SoC:
+    + we have 8 pin banks, almost all of them being at least able to
+      be muxed to gpio in and out functions.
+    + 32 of these 256 pins are actually muxable to another function
+      that is the one to generate interrupts
+    + The interrupt controller is a single 32 bits register, each bit
+      being about one of these 32 pins, that are pretty much spread
+      across the banks.
+    + There's a single parent interrupt.
+
+  - On the newer code (that is not supported yet) would be a bit
+    easier to support, since the interrupt sources are grouped by
+    banks. That means that we still have our 8 banks, but this time, 4
+    banks are interrupt controllers. These banks support as much
+    interrupts as there is pins in the banks, with a 1:1 mapping
+    between the pin number and the interrupt number.
+
+This is not something that looks to be well supported at the moment in
+gpiolib_irqchip wrapper, especially since it seems to be making the
+assumption that there's as much gpio than there is interrupts.
+
+But I guess some of these changes are still useful, especially the
+ones on the callbacks.
+
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--aqWxf8ydqYKP8htK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJThLCgAAoJEBx+YmzsjxAgnHYP/0Zmsvy/HYhcEhwVFcgxVZM0
+toLzqlX4yD6yDuf3nbFZ1Er/wr+Dgb9ln4TldAeSwhrtc70CCONFW54tDRyS4bht
+zR6e8wu0ZJNa5jByUaZBJGuc0//6ZztCscID1mxWzA36v0lwsfUOZwc4+lyNBPJm
+a3Qq8JQJtcfmsZTyxGG5mzgU/iFOlvfGeimAZ3AxJZzcjDTMpHec49Jcz0b09o4o
+dub2EtrusgDTEQiPcNThjO/70hSn0fDpTesW7nFGlXg0/o/HEnYEvsO4FBh/PQz0
+TtfhdQ8THTjjXW2GMG1IPoBtYu2PMqfQRtT+V6W8wBceRu2hZzg/SYCgF/NFsc5o
+rXchhr/4aHcXOMdQtDupdhX5tIjTYrkJUu1gdE/4VVBZPzZdSodp0pCJrXjFgZjn
+W0Pr5ZDka0F0Cv+43aeYwwTOXg/9+tyWeiI/fwoMWJWX0jGKJlKXBbbjxDBrc5Bv
+ZoGI/ifaa6hm+IfbpQD9iaZ/hB8xtE9ixZtuS/bFegWPOuOqNGtHnH/64DLCby8X
+yiFL91gBc4JHlEB9e5je2kG3ZtA1LtHg4+OuMIOkGh/jcycCTWLF9XOuYg1379ol
+ma3iGFPI+MkPQDR1YMAte7D+gA5IWq0My1pTKBiG3q0KkEwrqAbxIHKTgHMuSBcb
+8xkk6LoFBG+6/nFc6toC
+=lChM
+-----END PGP SIGNATURE-----
+
+--aqWxf8ydqYKP8htK--
