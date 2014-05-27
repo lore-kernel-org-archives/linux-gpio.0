@@ -1,62 +1,52 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v4] gpio: Add support for Intel SoC PMIC (Crystal Cove)
-Date: Tue, 27 May 2014 15:04:09 +0300
-Message-ID: <53847F39.2010503@ti.com>
-References: <1400810423-14067-1-git-send-email-lejun.zhu@linux.intel.com> <CAAVeFu+F=nHDCpL6Vfmq26QNr74mfRD5p9at_osB3R97v7xBSA@mail.gmail.com> <538459E8.6010701@ti.com> <20140527084615.GC1801@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: pch: add slab include
+Date: Tue, 27 May 2014 15:17:44 +0200
+Message-ID: <1401196664-14223-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:49715 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750904AbaE0LPJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 27 May 2014 07:15:09 -0400
-In-Reply-To: <20140527084615.GC1801@lahna.fi.intel.com>
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:44472 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752289AbaE0NRx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 09:17:53 -0400
+Received: by mail-wg0-f45.google.com with SMTP id m15so9278606wgh.4
+        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 06:17:52 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Jean Delvare <jdelvare@suse.de>
 
-Hi Mika,
+After change 3ff35cbcfa4bc7d7dbdd0279e32ea677567ded02
+"gpio-pch: Fix Kconfig dependencies"
+which enabled COMPILE_TEST as an alternative for the PCH
+driver, we get build failures like this:
 
-On 05/27/2014 11:46 AM, Mika Westerberg wrote:
-> On Tue, May 27, 2014 at 12:24:56PM +0300, Grygorii Strashko wrote:
->>>> +
->>>> +       if (retval) {
->>>> +               dev_warn(&pdev->dev, "request irq failed: %d\n", retval);
->>>> +               goto out;
->>>> +       }
->>>> +
->>>> +       retval = gpiochip_add(&cg->chip);
->>>> +       if (retval) {
->>>> +               dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
->>>> +               goto out_free_irq;
->>>> +       }
->>
->> As to my mind, It'll be better to setup IRQ as last probing step and
->> free it as the first step of driver removing.
-> 
-> When gpiochip_add() is called the chip is exported to outside world. At
-> that point anyone can start requesting GPIOs and setup GPIO based
-> interrupts. How does that work if you setup the IRQ after you call
-> gpiochip_add()?
-> 
+drivers/gpio/gpio-pch.c: In function 'pch_gpio_probe':
+drivers/gpio/gpio-pch.c:359:2: error: implicit declaration
+of function 'kzalloc' [-Werror=implicit-function-declaration]
+drivers/gpio/gpio-pch.c:359:7: warning: assignment makes
+pointer from integer without a cast [enabled by default]
+drivers/gpio/gpio-pch.c:442:2: error: implicit declaration
+of function 'kfree' [-Werror=implicit-function-declaration]
 
-It's difficult for me to imagine case when GPIO will be accessed
-until GPIO driver's probe is finished.
+Fix this by including <linux/slab.h> explicitly.
 
-Regarding remove()/suspend() routines, It's like an axiom for me:
-- always disable irq
-- always stop all works/threads created by driver
-- do everything else
-(It's proved by dozens hours of debugging).
+Cc: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-pch.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Anyway, above is just my opinion :)
-So, It's up to you, because it's your code :)
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index 83a156397474..d6eac9b17db9 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -20,6 +20,7 @@
+ #include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
++#include <linux/slab.h>
+ 
+ #define PCH_EDGE_FALLING	0
+ #define PCH_EDGE_RISING		BIT(0)
+-- 
+1.9.0
 
-Also FYI, I did fast analysis of GPIO drivers - funny statistic below:
-- 16 drivers setup IRQs BEFORE calling gpiochip_add();
-- 22 drivers setup IRQs AFTER calling gpiochip_add();
-
-Best regards,
--grygorii
