@@ -1,83 +1,62 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH 2/2][v3] gpio-mpc8xxx: add mpc8xxx_gpio_set_multiple function
-Date: Tue, 27 May 2014 13:14:17 +0200
-Message-ID: <4658251.3PbME5bghW@pcimr>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v4] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Tue, 27 May 2014 15:04:09 +0300
+Message-ID: <53847F39.2010503@ti.com>
+References: <1400810423-14067-1-git-send-email-lejun.zhu@linux.intel.com> <CAAVeFu+F=nHDCpL6Vfmq26QNr74mfRD5p9at_osB3R97v7xBSA@mail.gmail.com> <538459E8.6010701@ti.com> <20140527084615.GC1801@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:59346 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750904AbaE0LOT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 07:14:19 -0400
+Received: from arroyo.ext.ti.com ([192.94.94.40]:49715 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750904AbaE0LPJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 May 2014 07:15:09 -0400
+In-Reply-To: <20140527084615.GC1801@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>, Linus Walleij <linus.walleij@linaro.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
 
-Add a set_multiple function to the MPC8xxx GPIO chip driver and thereby allow
-for actual performance improvements when setting multiple outputs
-simultaneously. In my case the time needed to configure an FPGA goes down from
-48 s to 19 s.
+Hi Mika,
 
-Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
----
-This patch depends on my previous patch "gpiolib: allow simultaneous setting
-of multiple GPIO outputs".
+On 05/27/2014 11:46 AM, Mika Westerberg wrote:
+> On Tue, May 27, 2014 at 12:24:56PM +0300, Grygorii Strashko wrote:
+>>>> +
+>>>> +       if (retval) {
+>>>> +               dev_warn(&pdev->dev, "request irq failed: %d\n", retval);
+>>>> +               goto out;
+>>>> +       }
+>>>> +
+>>>> +       retval = gpiochip_add(&cg->chip);
+>>>> +       if (retval) {
+>>>> +               dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
+>>>> +               goto out_free_irq;
+>>>> +       }
+>>
+>> As to my mind, It'll be better to setup IRQ as last probing step and
+>> free it as the first step of driver removing.
+> 
+> When gpiochip_add() is called the chip is exported to outside world. At
+> that point anyone can start requesting GPIOs and setup GPIO based
+> interrupts. How does that work if you setup the IRQ after you call
+> gpiochip_add()?
+> 
 
-Change log:
-  v3: - change commit message
-  v2: - add this patch (v1 included only changes to gpiolib)
+It's difficult for me to imagine case when GPIO will be accessed
+until GPIO driver's probe is finished.
 
- drivers/gpio/gpio-mpc8xxx.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Regarding remove()/suspend() routines, It's like an axiom for me:
+- always disable irq
+- always stop all works/threads created by driver
+- do everything else
+(It's proved by dozens hours of debugging).
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index d7d6d72..d226f5c 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -105,6 +105,33 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
- }
- 
-+static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
-+				      u32 *mask, u32 *bits)
-+{
-+	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
-+	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
-+	unsigned long flags;
-+	int i;
-+
-+	spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
-+
-+	for (i = 0; i < gc->ngpio; i++) {
-+		if (*mask == 0)
-+			break;
-+		if (*mask & (1 << i)) {
-+			if ((*bits >> i) & 1)
-+				mpc8xxx_gc->data |= mpc8xxx_gpio2mask(i);
-+			else
-+				mpc8xxx_gc->data &= ~mpc8xxx_gpio2mask(i);
-+			*mask &= ~(1 << i);
-+		}
-+	}
-+
-+	out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
-+
-+	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
-+}
-+
- static int mpc8xxx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
-@@ -344,6 +371,7 @@ static void __init mpc8xxx_add_controller(struct device_node *np)
- 	gc->get = of_device_is_compatible(np, "fsl,mpc8572-gpio") ?
- 		mpc8572_gpio_get : mpc8xxx_gpio_get;
- 	gc->set = mpc8xxx_gpio_set;
-+	gc->set_multiple = mpc8xxx_gpio_set_multiple;
- 	gc->to_irq = mpc8xxx_gpio_to_irq;
- 
- 	ret = of_mm_gpiochip_add(np, mm_gc);
+Anyway, above is just my opinion :)
+So, It's up to you, because it's your code :)
 
---
-1.8.5.5
+Also FYI, I did fast analysis of GPIO drivers - funny statistic below:
+- 16 drivers setup IRQs BEFORE calling gpiochip_add();
+- 22 drivers setup IRQs AFTER calling gpiochip_add();
+
+Best regards,
+-grygorii
