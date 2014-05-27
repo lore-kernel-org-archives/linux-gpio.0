@@ -1,44 +1,79 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Add run-time dependencies to R-Car driver
-Date: Tue, 27 May 2014 15:45:57 +0200
-Message-ID: <CACRpkdYoh0o7X1_T6fdQjbvdw9w-TdXCLachEvFcW4SGAFQd-A@mail.gmail.com>
-References: <20140523134214.0f29c9e0@endymion.delvare>
+Subject: Re: PATCH: Fixed missing increase of count variable for devicetree
+ path in driver probing
+Date: Tue, 27 May 2014 15:57:46 +0200
+Message-ID: <CACRpkdb9RtBF=0-JNE5NZ=m+qfGiHmcrtnLDuE1B-Cq7dMd7cQ@mail.gmail.com>
+References: <5382F544.7000400@mycable.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:59521 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752141AbaE0Np7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 09:45:59 -0400
-Received: by mail-ob0-f170.google.com with SMTP id uy5so9220141obc.15
-        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 06:45:58 -0700 (PDT)
-In-Reply-To: <20140523134214.0f29c9e0@endymion.delvare>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:48138 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752078AbaE0N5r (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 09:57:47 -0400
+Received: by mail-oa0-f41.google.com with SMTP id m1so9650512oag.0
+        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 06:57:46 -0700 (PDT)
+In-Reply-To: <5382F544.7000400@mycable.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Magnus Damm <damm@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Alexandre Courbot <gnurou@gmail.com>
+To: Michael Stickel <ms@mycable.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lars Poeschel <larsi@wh2.tu-dresden.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>
 
-On Fri, May 23, 2014 at 1:42 PM, Jean Delvare <jdelvare@suse.de> wrote:
-
-> The Renesas R-Car GPIO driver is only useful on shmobile unless build
-> testing.
->
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Magnus Damm <damm@opensource.se>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-
-Patch applied with Simon's ACK.
-
-> Simon, is it correct? I couldn't remove the dependency on ARM because
-> the driver uses set_irq_flags which is arm-specific.
-
-We usually #ifdef CONFIG_ARM around that function call actually.
-
-But now, we also do that in the core gpiolib irqchip helpers, so just
-switch this driver to use the irqchip helpers and you can drop the ARM
-dependency.
+I have tentatively applied this patch because it looks correct, on
+future postings, please include the linux-gpio mailing list, Alexandre
+Courbot and Lars Poeschel.
 
 Yours,
 Linus Walleij
+
+On Mon, May 26, 2014 at 10:03 AM, Michael Stickel <ms@mycable.de> wrote:
+> Fixed missing increase of count variable for devicetree path in driver
+> probing.
+>
+> The gpio-mcp23s08 driver has two paths for getting the platform
+> registration information. One for the classic platform initialization
+> and one for openfirmware devicetree based initialization. The devicetree
+> based path is missing the increase of the count variable, which results
+> in the count variable to become negative in the later use, where it is
+> decreased. The count variable is used as an index into a vector. This
+> results in accessing invalid memory space and can result in an exception.
+>
+> Tested this with an AM3352 SoC with two mcp23s17 on two chip selects as
+> well as on a shared chip select.
+>
+> Signed-off-by: Michael Stickel <ms@mycable.de>
+>
+> --- linux-3.14-rc8/drivers/gpio/gpio-mcp23s08.c 2014-03-25
+> 03:31:17.000000000 +0100
+> +++
+> /work/ms/daimler-mm-b-bringup/build_xxsnet2/out/work/xxsnet2-poky-linux-gnueabi/linux/3.14-rc8-3/linux-3.14-rc8/drivers/gpio/gpio-mcp23s08.c
+> 2014-05-26 09:44:25.083824057 +0200
+> @@ -895,8 +895,13 @@ static int mcp23s08_probe(struct spi_dev
+>                         return -ENODEV;
+>                 }
+>
+> -               for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++)
+> +               for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
+>                         pullups[addr] = 0;
+> +                       if (spi_present_mask & (1 << addr))
+> +                               chips++;
+> +               }
+> +               if (!chips)
+> +                       return -ENODEV;
+>         } else {
+>                 type = spi_get_device_id(spi)->driver_data;
+>                 pdata = dev_get_platdata(&spi->dev);
+> @@ -935,6 +940,10 @@ static int mcp23s08_probe(struct spi_dev
+>                 if (!(spi_present_mask & (1 << addr)))
+>                         continue;
+>                 chips--;
+> +               if (chips < 0) {
+> +                       dev_err(&spi->dev, "FATAL: invalid negative chip id\n");
+> +                       goto fail;
+> +               }
+>                 data->mcp[addr] = &data->chip[chips];
+>                 status = mcp23s08_probe_one(data->mcp[addr], &spi->dev, spi,
+>                                             0x40 | (addr << 1), type, base,
+> --
+> Michael Stickel
+>
