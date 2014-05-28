@@ -1,66 +1,109 @@
-From: Feng Kan <fkan@apm.com>
-Subject: Re: [PATCH 1/3] gpio: Add APM X-Gene SoC GPIO controller support
-Date: Tue, 27 May 2014 09:59:02 -0700
-Message-ID: <CAL85gmCZD90UUZgC0-X4hui2L1V5TuH++o3fA20pRF_ZQEpDQw@mail.gmail.com>
-References: <1400263432-922-1-git-send-email-fkan@apm.com>
-	<1400263432-922-2-git-send-email-fkan@apm.com>
-	<CAAVeFu+TOfjfvisinv3oJ9PobdV9HcNJhr+3VYneSJ54uGwiAg@mail.gmail.com>
-	<CAL85gmDjVszNd3TB51BGa+78wEEZmJfBOLNKOpTEvMTGU2VdBA@mail.gmail.com>
-	<CACRpkdaVYXU9GN5OymuP3JRsQO3unkRGb5vZN3Jb2nWSnkh1SQ@mail.gmail.com>
+From: "Zhu, Lejun" <lejun.zhu@linux.intel.com>
+Subject: Re: [PATCH v2] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Wed, 28 May 2014 08:46:16 +0800
+Message-ID: <538531D8.409@linux.intel.com>
+References: <1400649756-31353-1-git-send-email-lejun.zhu@linux.intel.com> <CACRpkdYNFpj0VR-N9=9haCT2bAvHoQs-qAhSWOdqhxizsFUbQA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og108.obsmtp.com ([64.18.0.186]:46831 "HELO
-	exprod5og108.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752646AbaE0Q7D (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 May 2014 12:59:03 -0400
-Received: by mail-oa0-f42.google.com with SMTP id j17so9967062oag.1
-        for <linux-gpio@vger.kernel.org>; Tue, 27 May 2014 09:59:02 -0700 (PDT)
-In-Reply-To: <CACRpkdaVYXU9GN5OymuP3JRsQO3unkRGb5vZN3Jb2nWSnkh1SQ@mail.gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:26052 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751379AbaE1AqT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 May 2014 20:46:19 -0400
+In-Reply-To: <CACRpkdYNFpj0VR-N9=9haCT2bAvHoQs-qAhSWOdqhxizsFUbQA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, patches <patches@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-
-On Tue, May 27, 2014 at 1:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, May 21, 2014 at 1:54 AM, Feng Kan <fkan@apm.com> wrote:
->
->> I see each bank as separate gpio chip. It is a simple way to
->> abstract the banks since they can operate independently.
->
-> I think they should also be separate devices, and separate nodes
-> in the device tree.
->
->> It also
->> provided me a way to fix the sysfs gpio base number, regardless if
->> a particular bank node is pulled out.
->
-> The GPIO sysfs is unpredictable for this and many other
-> reasons and should not be relied upon.
->
->> This is also done in similar way
->> in some other gpio drivers such as the dwapb gpio driver.
->
-> I think the dwapb has it's registers mingled while your banks
-> seem to be separate chunks.
-
-Thanks for the comments, I will fix these problems. Just some details
-in terms of the register layout. I will break out the gpio to separate
-device nodes as instructed, I will have to use the reg attribute to offset
-bank registers. Please let me know if it is acceptable.
-
-gfc_gpio_fl0              GFC42'h1701c00c
-gfc_gpio_fl0_mux      GFC42'h1701c010
-gfc_gpio_fl1              GFC42'h1701c018
-gfc_gpio_fl1_mux      GFC42'h1701c01c
-gfc_gpio_fl2              GFC42'h1701c024
-gfc_gpio_fl2_mux      GFC42'h1701c028
-gfc_gpio_fl0_od        GFC42'h1701c030
-gfc_gpio_fl1_od        GFC42'h1701c034
-gfc_gpio_fl2_od        GFC42'h1701c038
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bin.yang@intel.com
 
 
 
->
+On 5/27/2014 5:11 PM, Linus Walleij wrote:
+> On Wed, May 21, 2014 at 7:22 AM, Zhu, Lejun <lejun.zhu@linux.intel.com> wrote:
+> 
+>> Devices based on Intel SoC products such as Baytrail have a Power
+>> Management IC. In the PMIC there are subsystems for voltage regulation,
+>> A/D conversion, GPIO and PWMs. The PMIC in Baytrail-T platform is called
+>> Crystal Cove.
+>>
+>> This patch adds support for the GPIO function in Crystal Cove.
+>>
+>> v2:
+>> - Use IRQ chip helper to provide irqdomain.
+>> - Implement .remove and can now build as a module.
+>> - Various fix for unreadable or ugly code pieces.
+> 
+> This is much improved! I still have comments though.
+> 
+>> +#define GPIO_TO_CTL(gpio, dir)         \
+>> +       ((gpio < 8 ? GPIO0P0CTL ## dir : GPIO1P0CTL ## dir) + (gpio % 8))
+> 
+> This is unreadble. Use an explicit static inline function instead.
+> 
+>> +static void crystalcove_update_irq_type(int gpio, int type)
+>> +{
+>> +       u8 ctli = GPIO_TO_CTL(gpio, I);
+>> +
+>> +       type &= IRQ_TYPE_EDGE_BOTH;
+> 
+> You silently ignore all other type configurations?
+> 
+>> +       intel_soc_pmic_clearb(ctli, CTLI_INTCNT_BE);
+>> +
+>> +       if (type == IRQ_TYPE_EDGE_BOTH)
+>> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_BE);
+>> +       else if (type == IRQ_TYPE_EDGE_RISING)
+>> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_PE);
+>> +       else if (type & IRQ_TYPE_EDGE_FALLING)
+>> +               intel_soc_pmic_setb(ctli, CTLI_INTCNT_NE);
+>> +}
+> 
+> I would prefer a switch(type) {} construction with a default:
+> that warns.
+> 
+> (...)
+>> +static int crystalcove_irq_type(struct irq_data *data, unsigned type)
+>> +{
+>> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+>> +       struct crystalcove_gpio *cg =
+>> +               container_of(gc, struct crystalcove_gpio, chip);
+> 
+> I would create a static inline at the top of the file instead of
+> using container_of() explicitly everywhere:
+> 
+> static inline struct crystalcove_gpio *to_cg(struct gpio_chip *gc)
+> {
+>     return container_of(gc, struct crystalcove_gpio, chip);
+> }
+> 
+> Then just use:
+> 
+> struct crystalcove_gpio *cg = to_cg(gc);
+> 
+> Everywhere. Or if you only want the cg in some case (like this?)
+> 
+> struct crystalcove_gpio *cg = to_cg(irq_data_get_irq_chip_data(data));
+> 
+>> +       cg->trigger_type = type;
+>> +       cg->update |= UPDATE_TYPE;
+>> +
+>> +       return 0;
+>> +}
+> (...)
+> 
+>> +       gpiochip_irqchip_add(&cg->chip, &crystalcove_irqchip, 0,
+>> +                            handle_simple_irq, IRQ_TYPE_NONE);
+> 
+> Really nice. Thanks for doing this!
+> 
 > Yours,
 > Linus Walleij
+> 
+
+Thank you. I will return -EINVAL for unsupported IRQ types and fix all
+the coding style problems you listed here in the next version.
+
+Best Regards
+Lejun
+
