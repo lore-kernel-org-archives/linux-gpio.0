@@ -1,43 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state container
-Date: Wed, 28 May 2014 10:43:15 +0200
-Message-ID: <CACRpkdYng8+Y9jg1qMpwCgqT0SPeM8kr23c1bCQ5Rnvb+wm63g@mail.gmail.com>
-References: <1398287792-19831-1-git-send-email-linus.walleij@linaro.org>
-	<1398287792-19831-2-git-send-email-linus.walleij@linaro.org>
-	<CAGsJ_4wOdD53Fkf+_CtDqSg5Yvz-1kwaWzMJb357uq5BL9_-7Q@mail.gmail.com>
-	<CACRpkdbieXh8iHSCqai03vNbBZ2_2zV1SscXLY+4T9ZprWJEvQ@mail.gmail.com>
-	<CAGsJ_4ygjo_cUFR8bUoWsGrZYHSubam4WWcb-TjQJNjgy9rvKQ@mail.gmail.com>
-	<CACRpkdbQeJwoP7oOzbuhJeuFWxbB5RjFvzqqp8E_1x3=6p-hnQ@mail.gmail.com>
-	<5EB3BFCD089AD643B9BB63439F5FD5E9012BF02A09@SHAASIEXM01.ASIA.ROOT.PRI>
+Subject: Re: [PATCH] RFT: pinctrl: sunxi: convert to GPIO irqchip helpers
+Date: Wed, 28 May 2014 10:57:16 +0200
+Message-ID: <CACRpkda5tnDFgOFUk6GL58s-fWZmRfCLiBvbOqNgwrYVFNWySA@mail.gmail.com>
+References: <1399621082-10712-1-git-send-email-linus.walleij@linaro.org>
+	<20140527153456.GL4730@lukather>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:53445 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751397AbaE1InP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 May 2014 04:43:15 -0400
-Received: by mail-oa0-f49.google.com with SMTP id eb12so10626642oac.8
-        for <linux-gpio@vger.kernel.org>; Wed, 28 May 2014 01:43:15 -0700 (PDT)
-In-Reply-To: <5EB3BFCD089AD643B9BB63439F5FD5E9012BF02A09@SHAASIEXM01.ASIA.ROOT.PRI>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140527153456.GL4730@lukather>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Barry Song <Barry.Song@csr.com>
-Cc: Barry Song <baohua@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <DL-SHA-WorkGroupLinux@internal.csr.com>
 
-On Tue, May 27, 2014 at 5:10 PM, Barry Song <Barry.Song@csr.com> wrote:
+On Tue, May 27, 2014 at 5:34 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
 
->>> after moving pinctrl name from sirfsoc-gpio* to dev_name(&pdev->dev) as below:
->>> - err = gpiochip_add_pin_range(&sgpio->chip.gc, "sirfsoc-gpio*",
->>> + err = gpiochip_add_pin_range(&sgpio->chip.gc, dev_name(&pdev->dev),
->>>
->>> Acked-by: Barry Song <Baohua.Song@csr.com>
+> I've been quite late at testing this, I'm sorry, but I finally gave it
+> a try.
 >
->>Does this mean it works with that change so it's a Tested-by?
->
-> yes. with the above change.
+> Besides the minor glitches here and there that were expected, I think
+> that it can't really work now given the state of gpiolib_irqchip.
 
-OK applied to devel with that change, THANKS Barry, I really like
-the looks of the driver better after this change.
+OK I buy that, it was a nice try from my side :-)
+
+Now let's drop this patch to the floor and accept that the sunxi
+gpio irqs are complex and cannot be handled by simple helpers.
+
+Thanks a lot for testing the code though!
 
 Yours,
 Linus Walleij
