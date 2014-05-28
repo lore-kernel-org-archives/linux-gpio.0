@@ -1,46 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] RFT: gpio: pca953x: use gpiolib irqchip helpers
-Date: Wed, 28 May 2014 15:28:09 +0200
-Message-ID: <CACRpkdbpzkyrdKFjR-gpPzXgQxsrhRmkRFXShG-nBE02+4A+nQ@mail.gmail.com>
-References: <1399635339-16812-1-git-send-email-linus.walleij@linaro.org>
+From: Feng Kan <fkan@apm.com>
+Subject: Re: [PATCH 1/3] gpio: Add APM X-Gene SoC GPIO controller support
+Date: Wed, 28 May 2014 10:01:21 -0700
+Message-ID: <CAL85gmCH4pwScDxhTRFvKYgHqdfG+9x5XWoxZyoNDXbsq-=o4w@mail.gmail.com>
+References: <1400263432-922-1-git-send-email-fkan@apm.com>
+	<1400263432-922-2-git-send-email-fkan@apm.com>
+	<CAAVeFu+TOfjfvisinv3oJ9PobdV9HcNJhr+3VYneSJ54uGwiAg@mail.gmail.com>
+	<CAL85gmDjVszNd3TB51BGa+78wEEZmJfBOLNKOpTEvMTGU2VdBA@mail.gmail.com>
+	<CACRpkdaVYXU9GN5OymuP3JRsQO3unkRGb5vZN3Jb2nWSnkh1SQ@mail.gmail.com>
+	<CAL85gmCZD90UUZgC0-X4hui2L1V5TuH++o3fA20pRF_ZQEpDQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:58583 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753658AbaE1N2J (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 May 2014 09:28:09 -0400
-Received: by mail-ob0-f177.google.com with SMTP id wp4so10505112obc.36
-        for <linux-gpio@vger.kernel.org>; Wed, 28 May 2014 06:28:09 -0700 (PDT)
-In-Reply-To: <1399635339-16812-1-git-send-email-linus.walleij@linaro.org>
+Received: from exprod5og105.obsmtp.com ([64.18.0.180]:33830 "HELO
+	exprod5og105.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751402AbaE1RBW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 May 2014 13:01:22 -0400
+Received: by mail-oa0-f50.google.com with SMTP id i7so11544977oag.9
+        for <linux-gpio@vger.kernel.org>; Wed, 28 May 2014 10:01:21 -0700 (PDT)
+In-Reply-To: <CAL85gmCZD90UUZgC0-X4hui2L1V5TuH++o3fA20pRF_ZQEpDQw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Toby Smith <toby@tismith.id.au>, Aaron Sierra <asierra@xes-inc.com>, Graeme Smecher <gsmecher@threespeedlogic.com>, Andrew Ruder <andy@aeruder.net>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, patches <patches@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, May 9, 2014 at 1:35 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Tue, May 27, 2014 at 9:59 AM, Feng Kan <fkan@apm.com> wrote:
+> On Tue, May 27, 2014 at 1:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Wed, May 21, 2014 at 1:54 AM, Feng Kan <fkan@apm.com> wrote:
+>>
+>>> I see each bank as separate gpio chip. It is a simple way to
+>>> abstract the banks since they can operate independently.
+>>
+>> I think they should also be separate devices, and separate nodes
+>> in the device tree.
+>>
+>>> It also
+>>> provided me a way to fix the sysfs gpio base number, regardless if
+>>> a particular bank node is pulled out.
+>>
+>> The GPIO sysfs is unpredictable for this and many other
+>> reasons and should not be relied upon.
+>>
+>>> This is also done in similar way
+>>> in some other gpio drivers such as the dwapb gpio driver.
+>>
+>> I think the dwapb has it's registers mingled while your banks
+>> seem to be separate chunks.
+>
+> Thanks for the comments, I will fix these problems. Just some details
+> in terms of the register layout. I will break out the gpio to separate
+> device nodes as instructed, I will have to use the reg attribute to offset
+> bank registers. Please let me know if it is acceptable.
+>
+> gfc_gpio_fl0              GFC42'h1701c00c
+> gfc_gpio_fl0_mux      GFC42'h1701c010
+> gfc_gpio_fl1              GFC42'h1701c018
+> gfc_gpio_fl1_mux      GFC42'h1701c01c
+> gfc_gpio_fl2              GFC42'h1701c024
+> gfc_gpio_fl2_mux      GFC42'h1701c028
+> gfc_gpio_fl0_od        GFC42'h1701c030
+> gfc_gpio_fl1_od        GFC42'h1701c034
+> gfc_gpio_fl2_od        GFC42'h1701c038
 
-> This switches the PCA953x driver over to using the gpiolib irqchip
-> helpers to handle the threaded interrups cascaded off this
-> GPIO chip.
+Please kindly give some guidance on this, as you can see the individual
+gpio bank is interleaved in the address space, it is not likely to break this
+into multiple device nodes.
 >
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> PCA953x users: please! help testing this. It is just compile-tested
-> but I'm sure this or something close to it will work just fine.
 >
-> The patch depends on the GPIO tree devel branch, so I have set up
-> a branch you can test:
 >
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#pca953-irqchip-helpers
->
-> The branch is on top of Toby's changes. Please help to provide
-> Tested-by tags.
-
-OK since nobody involved with this driver cares/have time/realized
-they have to test the changes in advance I will now merge this to
-the v3.16 devel branch and if you run into problems we fix this in the
-v3.16 release cycle.
-
-Yours,
-Linus Walleij
+>>
+>> Yours,
+>> Linus Walleij
