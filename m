@@ -1,33 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: pcf857x: Add IRQF_SHARED when request irq
-Date: Wed, 28 May 2014 09:21:28 +0200
-Message-ID: <CACRpkdaDTeBhCaxeO0F8EMH7H5dZy1-mdiwgfVB-vXUU_Df=hA@mail.gmail.com>
-References: <1400824647-2525-1-git-send-email-george.cherian@ti.com>
-	<1400824647-2525-2-git-send-email-george.cherian@ti.com>
+Subject: Re: [PATCH 1/2] RFT: pinctrl: sirf: switch to using allocated state container
+Date: Wed, 28 May 2014 10:43:15 +0200
+Message-ID: <CACRpkdYng8+Y9jg1qMpwCgqT0SPeM8kr23c1bCQ5Rnvb+wm63g@mail.gmail.com>
+References: <1398287792-19831-1-git-send-email-linus.walleij@linaro.org>
+	<1398287792-19831-2-git-send-email-linus.walleij@linaro.org>
+	<CAGsJ_4wOdD53Fkf+_CtDqSg5Yvz-1kwaWzMJb357uq5BL9_-7Q@mail.gmail.com>
+	<CACRpkdbieXh8iHSCqai03vNbBZ2_2zV1SscXLY+4T9ZprWJEvQ@mail.gmail.com>
+	<CAGsJ_4ygjo_cUFR8bUoWsGrZYHSubam4WWcb-TjQJNjgy9rvKQ@mail.gmail.com>
+	<CACRpkdbQeJwoP7oOzbuhJeuFWxbB5RjFvzqqp8E_1x3=6p-hnQ@mail.gmail.com>
+	<5EB3BFCD089AD643B9BB63439F5FD5E9012BF02A09@SHAASIEXM01.ASIA.ROOT.PRI>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:62382 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751155AbaE1HV3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 May 2014 03:21:29 -0400
-Received: by mail-oa0-f53.google.com with SMTP id m1so10484257oag.26
-        for <linux-gpio@vger.kernel.org>; Wed, 28 May 2014 00:21:28 -0700 (PDT)
-In-Reply-To: <1400824647-2525-2-git-send-email-george.cherian@ti.com>
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:53445 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751397AbaE1InP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 May 2014 04:43:15 -0400
+Received: by mail-oa0-f49.google.com with SMTP id eb12so10626642oac.8
+        for <linux-gpio@vger.kernel.org>; Wed, 28 May 2014 01:43:15 -0700 (PDT)
+In-Reply-To: <5EB3BFCD089AD643B9BB63439F5FD5E9012BF02A09@SHAASIEXM01.ASIA.ROOT.PRI>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: George Cherian <george.cherian@ti.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Barry Song <Barry.Song@csr.com>
+Cc: Barry Song <baohua@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <DL-SHA-WorkGroupLinux@internal.csr.com>
 
-On Fri, May 23, 2014 at 7:57 AM, George Cherian <george.cherian@ti.com> wrote:
+On Tue, May 27, 2014 at 5:10 PM, Barry Song <Barry.Song@csr.com> wrote:
 
-> It's quite possible that multiple pcf857x can be hooked up
-> to the same interrupt line with the processor. So add IRQF_SHARED
-> in request irq..
+>>> after moving pinctrl name from sirfsoc-gpio* to dev_name(&pdev->dev) as below:
+>>> - err = gpiochip_add_pin_range(&sgpio->chip.gc, "sirfsoc-gpio*",
+>>> + err = gpiochip_add_pin_range(&sgpio->chip.gc, dev_name(&pdev->dev),
+>>>
+>>> Acked-by: Barry Song <Baohua.Song@csr.com>
 >
-> Signed-off-by: George Cherian <george.cherian@ti.com>
+>>Does this mean it works with that change so it's a Tested-by?
+>
+> yes. with the above change.
 
-Patch applied.
+OK applied to devel with that change, THANKS Barry, I really like
+the looks of the driver better after this change.
 
 Yours,
 Linus Walleij
