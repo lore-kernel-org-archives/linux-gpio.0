@@ -1,44 +1,46 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v3] gpio: dwapb: use a second irq chip
-Date: Wed, 28 May 2014 11:26:53 +0200
-Message-ID: <5385ABDD.6000205@linutronix.de>
-References: <CACRpkdY=oVyBCwRkppq11B0tkn2bMw+-h_fDhy538eatVUJ=pQ@mail.gmail.com>	<1401137894-6096-1-git-send-email-bigeasy@linutronix.de>	<CACRpkdYx9Zwoig5QZmpF1w_Gcyoga8erPZd0RwvHsiC3prjNTA@mail.gmail.com>	<5384BD93.6030502@linutronix.de> <CACRpkdaO+_d_WTE_Or0R1KXqoHyyviFP9eVSHKZ_pB8E8wKoOQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] RFT: gpio: pca953x: use gpiolib irqchip helpers
+Date: Wed, 28 May 2014 15:28:09 +0200
+Message-ID: <CACRpkdbpzkyrdKFjR-gpPzXgQxsrhRmkRFXShG-nBE02+4A+nQ@mail.gmail.com>
+References: <1399635339-16812-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:33298 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752144AbaE1J07 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 May 2014 05:26:59 -0400
-In-Reply-To: <CACRpkdaO+_d_WTE_Or0R1KXqoHyyviFP9eVSHKZ_pB8E8wKoOQ@mail.gmail.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:58583 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753658AbaE1N2J (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 May 2014 09:28:09 -0400
+Received: by mail-ob0-f177.google.com with SMTP id wp4so10505112obc.36
+        for <linux-gpio@vger.kernel.org>; Wed, 28 May 2014 06:28:09 -0700 (PDT)
+In-Reply-To: <1399635339-16812-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jamie Iles <jamie@jamieiles.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Toby Smith <toby@tismith.id.au>, Aaron Sierra <asierra@xes-inc.com>, Graeme Smecher <gsmecher@threespeedlogic.com>, Andrew Ruder <andy@aeruder.net>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On 05/28/2014 11:01 AM, Linus Walleij wrote:
-> On Tue, May 27, 2014 at 6:30 PM, Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
-> 
->> What remains in my queue is:
->>
->> * gpio: dwapb: use irq_linear_revmap() for the faster lookup
->> * gpio: dwapb: use irq_gc_lock() for locking instead bc's lock
->> * gpio: dwapb: use d->mask instead of BIT(bit)
->>
->> what do we do about those?
-> 
-> Rebase on my devel branch and resend please ... but for linear
-> revmap I'd much prefer some effort being put into using the
-> gpiolib irqchip helpers with generic chips instead.
+On Fri, May 9, 2014 at 1:35 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Hmmm. I would have to look what this is about. The irq_linear_revmap()
-lookup is a linear lookup.
+> This switches the PCA953x driver over to using the gpiolib irqchip
+> helpers to handle the threaded interrups cascaded off this
+> GPIO chip.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> PCA953x users: please! help testing this. It is just compile-tested
+> but I'm sure this or something close to it will work just fine.
+>
+> The patch depends on the GPIO tree devel branch, so I have set up
+> a branch you can test:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#pca953-irqchip-helpers
+>
+> The branch is on top of Toby's changes. Please help to provide
+> Tested-by tags.
 
-> 
-> Yours,
-> Linus Walleij
-> 
+OK since nobody involved with this driver cares/have time/realized
+they have to test the changes in advance I will now merge this to
+the v3.16 devel branch and if you run into problems we fix this in the
+v3.16 release cycle.
 
-Sebastian
+Yours,
+Linus Walleij
