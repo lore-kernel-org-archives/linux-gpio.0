@@ -1,83 +1,62 @@
-From: abdoulaye berthe <berthe.ab@gmail.com>
-Subject: [PATCH] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Fri, 30 May 2014 00:32:02 +0200
-Message-ID: <1401402722-26631-1-git-send-email-berthe.ab@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] gpio: gpiolib: set gpiochip_remove retval to void
+Date: Fri, 30 May 2014 08:58:32 +1000
+Message-ID: <20140530085832.711df1c6@canb.auug.org.au>
 References: <CACRpkdZg559ogf5koyxA_urM949ee-+upauYWQmo-sPUQn-g2w@mail.gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZg559ogf5koyxA_urM949ee-+upauYWQmo-sPUQn-g2w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com, sfr@canb.auug.org.au, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: abdoulaye berthe <berthe.ab@gmail.com>
+	<1401402722-26631-1-git-send-email-berthe.ab@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TVK/E9unbWQjnMAzm.Niu=0"; protocol="application/pgp-signature"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54680 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751329AbaE2W6j (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 29 May 2014 18:58:39 -0400
+In-Reply-To: <1401402722-26631-1-git-send-email-berthe.ab@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: abdoulaye berthe <berthe.ab@gmail.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This avoids handling gpiochip remove error in device
-remove handler.
+--Sig_/TVK/E9unbWQjnMAzm.Niu=0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
----
- drivers/gpio/gpiolib.c      | 24 +++++++-----------------
- include/linux/gpio/driver.h |  2 +-
- 2 files changed, 8 insertions(+), 18 deletions(-)
+Hi abdoulaye,
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f48817d..022543f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
-  *
-  * A gpio_chip with any GPIOs still requested may not be removed.
-  */
--int gpiochip_remove(struct gpio_chip *chip)
-+void gpiochip_remove(struct gpio_chip *chip)
- {
- 	unsigned long	flags;
--	int		status = 0;
- 	unsigned	id;
- 
- 	acpi_gpiochip_remove(chip);
-@@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
- 	of_gpiochip_remove(chip);
- 
- 	for (id = 0; id < chip->ngpio; id++) {
--		if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
--			status = -EBUSY;
--			break;
--		}
--	}
--	if (status == 0) {
--		for (id = 0; id < chip->ngpio; id++)
--			chip->desc[id].chip = NULL;
--
--		list_del(&chip->list);
-+		if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
-+			panic("gpio: removing gpiochip with gpios still requested\n");
- 	}
-+	for (id = 0; id < chip->ngpio; id++)
-+		chip->desc[id].chip = NULL;
- 
-+	list_del(&chip->list);
- 	spin_unlock_irqrestore(&gpio_lock, flags);
--
--	if (status == 0)
--		gpiochip_unexport(chip);
--
--	return status;
-+	gpiochip_unexport(chip);
- }
- EXPORT_SYMBOL_GPL(gpiochip_remove);
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 1827b43..72ed256 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -138,7 +138,7 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
- 
- /* add/remove chips */
- extern int gpiochip_add(struct gpio_chip *chip);
--extern int __must_check gpiochip_remove(struct gpio_chip *chip);
-+void gpiochip_remove(struct gpio_chip *chip);
- extern struct gpio_chip *gpiochip_find(void *data,
- 			      int (*match)(struct gpio_chip *chip, void *data));
- 
--- 
-1.8.3.2
+On Fri, 30 May 2014 00:32:02 +0200 abdoulaye berthe <berthe.ab@gmail.com> w=
+rote:
+>
+> +		if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
+> +			panic("gpio: removing gpiochip with gpios still requested\n");
+
+Someone else already commented that panic is probably overkill ... is
+there no way to log this and continue?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/TVK/E9unbWQjnMAzm.Niu=0
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTh7ucAAoJEMDTa8Ir7ZwVzz0P/Al0FVFzrAA6QH0U2YTzs/m6
+uFKcpTHL0k9gxkUNk7irzqqj9iUvKn14Yy0DgoLTFxtFOF+Fpo+RAJ9RBAw2aaAp
+I8AOd6MGNHV2gViB58NAlOGCrTQJ5pnR8QVwCpKPtNYrRuMUbnSUjPTI1/kFLLkN
+junPrCw+5gJVabJ8RauBZwLIsDtU5rVaEriANtBZNb8MvdLjQJlJ0jWx+XSf1WtL
+hvz9XtJJI+gXUyZP+1h6R3h5U1alC4VhAJ7WUvmN6GticC+R2RiIw+thV52p0AxH
+gsXQMNFsgbnQEBSdVdLDGEXp5ZAPyvQLlSifC5Y+s05lwakcZKsmUu6so8Hx1GfN
+XJAhQmBwLTvCpzEcuv7xd1GO1mG1LbgYlKPG91OH7a3W2KWqcykVNNPUl9OYgzw7
+tD0gXgX9uzp67XBiG/e0FvyT10AJmHxBe+HvSfhSTHwdvPf178x4BCDOflxxMVeI
+zz9rG80xiyLJ1wZsjc+fNzdivx+dNvwSkdjOvFMHp78isvAE/Gl2Xkjmu1R3E3Da
+qmQTPV81yizUw3WNbmiIHiitN6PpeqjSYkLZJz6WKj0AEtxbZBOdh1/duxG25S82
+PeyIX/EU1u/gbHoQRlhodlHl8cBJ3LXnjB5Zmjpz6ZQgMFqhKrvS2Ix7yk8qzaxX
+I1L8ZujZSaEnBbPhEboE
+=nnbe
+-----END PGP SIGNATURE-----
+
+--Sig_/TVK/E9unbWQjnMAzm.Niu=0--
