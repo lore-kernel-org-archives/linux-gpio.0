@@ -1,237 +1,231 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] RFT: pinctrl: spear: switch plgpio to irqchip helpers
-Date: Thu, 29 May 2014 11:25:31 +0200
-Message-ID: <1401355531-632-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2][v3] gpiolib: allow simultaneous setting of multiple
+ GPIO outputs
+Date: Thu, 29 May 2014 12:10:02 +0200
+Message-ID: <CACRpkdZq1N-C=rowPt3t1gf24Dio0LUK4HULvZ-47jHVm1pVwA@mail.gmail.com>
+References: <7079851.LZm0BOlnTs@pcimr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:57082 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932836AbaE2JZq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 May 2014 05:25:46 -0400
-Received: by mail-we0-f177.google.com with SMTP id x48so79012wes.8
-        for <linux-gpio@vger.kernel.org>; Thu, 29 May 2014 02:25:44 -0700 (PDT)
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:35931 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752982AbaE2KKC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 May 2014 06:10:02 -0400
+Received: by mail-ob0-f171.google.com with SMTP id wn1so100147obc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 29 May 2014 03:10:02 -0700 (PDT)
+In-Reply-To: <7079851.LZm0BOlnTs@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, spear-devel@list.st.com
+To: Rojhalat Ibrahim <imr@rtschenk.de>, Grant Likely <grant.likely@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>, Mark Brown <broonie@kernel.org>
 
-This switches the SPEAr PLGPIO driver over to using the irqchip
-helpers.
+On Tue, May 27, 2014 at 1:14 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 
-As part of this effort, also get rid of the strange irq_base
-calculation and failure to use d->hwirq for obtaining a local
-irqchip offset.
+> Introduce a new function gpiod_set_raw_array to the consumer interface which
+> allows setting multiple outputs with just one function call. Also add an
+> optional set_multiple function to the driver interface. Without an
+> implementation of that function in the chip driver outputs are set
+> sequentially.
+>
+> Implementing the set_multiple function in a chip driver allows for:
+> - Improved performance for certain use cases. The original motivation for this
+>   was the task of configuring an FPGA. In that specific case, where 9 GPIO
+>   lines have to be set many times, configuration time goes down from 48 s to
+>   19 s when using the new function.
+> - Simultaneous glitch-free setting of multiple pins on any kind of parallel
+>   bus attached to GPIOs provided they all reside on the same chip and bank.
+>
+> Limitations:
+>   - Performance is only improved for normal high-low outputs. Open drain and
+>     open source outputs are always set separately from each other. Those kinds
+>     of outputs could probably be accelerated in a similar way if we could
+>     forgo the error checking when setting GPIO directions.
+>   - There is no gpiod_set_array function that regards the ACTIVE_LOW bits.
+>     The raw function should be sufficient for many use cases. So I avoided
+>     the code duplication the other functions would require.
+>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> ---
+> Change log:
+>   v3: - add documentation
+>       - change commit message
+>   v2: - use descriptor interface
+>       - allow arbitrary groups of GPIOs spanning multiple chips
 
-Cc: Viresh Kumar <viresh.linux@gmail.com>
-Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-Cc: spear-devel@list.st.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-SPEAr folks: please make sure to test this, it is part of an
-important GPIO refactoring round. If it doesn't work: please do
-an honest attempt at troubleshooting.
----
- drivers/pinctrl/spear/Kconfig          |  1 +
- drivers/pinctrl/spear/pinctrl-plgpio.c | 81 +++++++++++++---------------------
- 2 files changed, 31 insertions(+), 51 deletions(-)
+This concept has been brought up before. Please keep Grant Likley in
+the loop on these postings as he has some history with this.
 
-diff --git a/drivers/pinctrl/spear/Kconfig b/drivers/pinctrl/spear/Kconfig
-index 04d93e602674..9ef18eb958e1 100644
---- a/drivers/pinctrl/spear/Kconfig
-+++ b/drivers/pinctrl/spear/Kconfig
-@@ -48,6 +48,7 @@ config PINCTRL_SPEAR1340
- config PINCTRL_SPEAR_PLGPIO
- 	bool "SPEAr SoC PLGPIO Controller"
- 	depends on GPIOLIB && PINCTRL_SPEAR
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to support PLGPIO controller on ST Microelectronics SPEAr
- 	  SoCs.
-diff --git a/drivers/pinctrl/spear/pinctrl-plgpio.c b/drivers/pinctrl/spear/pinctrl-plgpio.c
-index ff2940e9f2a7..3a20cdc65810 100644
---- a/drivers/pinctrl/spear/pinctrl-plgpio.c
-+++ b/drivers/pinctrl/spear/pinctrl-plgpio.c
-@@ -11,12 +11,11 @@
- 
- #include <linux/clk.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
- #include <linux/io.h>
--#include <linux/irq.h>
--#include <linux/irqdomain.h>
--#include <linux/irqchip/chained_irq.h>
- #include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
-@@ -54,7 +53,6 @@ struct plgpio_regs {
-  *
-  * lock: lock for guarding gpio registers
-  * base: base address of plgpio block
-- * irq_base: irq number of plgpio0
-  * chip: gpio framework specific chip information structure
-  * p2o: function ptr for pin to offset conversion. This is required only for
-  *	machines where mapping b/w pin and offset is not 1-to-1.
-@@ -68,8 +66,6 @@ struct plgpio {
- 	spinlock_t		lock;
- 	void __iomem		*base;
- 	struct clk		*clk;
--	unsigned		irq_base;
--	struct irq_domain	*irq_domain;
- 	struct gpio_chip	chip;
- 	int			(*p2o)(int pin);	/* pin_to_offset */
- 	int			(*o2p)(int offset);	/* offset_to_pin */
-@@ -280,21 +276,12 @@ disable_clk:
- 	pinctrl_free_gpio(gpio);
- }
- 
--static int plgpio_to_irq(struct gpio_chip *chip, unsigned offset)
--{
--	struct plgpio *plgpio = container_of(chip, struct plgpio, chip);
--
--	if (IS_ERR_VALUE(plgpio->irq_base))
--		return -EINVAL;
--
--	return irq_find_mapping(plgpio->irq_domain, offset);
--}
--
- /* PLGPIO IRQ */
- static void plgpio_irq_disable(struct irq_data *d)
- {
--	struct plgpio *plgpio = irq_data_get_irq_chip_data(d);
--	int offset = d->irq - plgpio->irq_base;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct plgpio *plgpio = container_of(gc, struct plgpio, chip);
-+	int offset = d->hwirq;
- 	unsigned long flags;
- 
- 	/* get correct offset for "offset" pin */
-@@ -311,8 +298,9 @@ static void plgpio_irq_disable(struct irq_data *d)
- 
- static void plgpio_irq_enable(struct irq_data *d)
- {
--	struct plgpio *plgpio = irq_data_get_irq_chip_data(d);
--	int offset = d->irq - plgpio->irq_base;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct plgpio *plgpio = container_of(gc, struct plgpio, chip);
-+	int offset = d->hwirq;
- 	unsigned long flags;
- 
- 	/* get correct offset for "offset" pin */
-@@ -329,8 +317,9 @@ static void plgpio_irq_enable(struct irq_data *d)
- 
- static int plgpio_irq_set_type(struct irq_data *d, unsigned trigger)
- {
--	struct plgpio *plgpio = irq_data_get_irq_chip_data(d);
--	int offset = d->irq - plgpio->irq_base;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct plgpio *plgpio = container_of(gc, struct plgpio, chip);
-+	int offset = d->hwirq;
- 	void __iomem *reg_off;
- 	unsigned int supported_type = 0, val;
- 
-@@ -369,7 +358,8 @@ static struct irq_chip plgpio_irqchip = {
- 
- static void plgpio_irq_handler(unsigned irq, struct irq_desc *desc)
- {
--	struct plgpio *plgpio = irq_get_handler_data(irq);
-+	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-+	struct plgpio *plgpio = container_of(gc, struct plgpio, chip);
- 	struct irq_chip *irqchip = irq_desc_get_chip(desc);
- 	int regs_count, count, pin, offset, i = 0;
- 	unsigned long pending;
-@@ -410,7 +400,8 @@ static void plgpio_irq_handler(unsigned irq, struct irq_desc *desc)
- 
- 			/* get correct irq line number */
- 			pin = i * MAX_GPIO_PER_REG + pin;
--			generic_handle_irq(plgpio_to_irq(&plgpio->chip, pin));
-+			generic_handle_irq(
-+				irq_find_mapping(gc->irqdomain, pin));
- 		}
- 	}
- 	chained_irq_exit(irqchip, desc);
-@@ -523,10 +514,9 @@ end:
- }
- static int plgpio_probe(struct platform_device *pdev)
- {
--	struct device_node *np = pdev->dev.of_node;
- 	struct plgpio *plgpio;
- 	struct resource *res;
--	int ret, irq, i;
-+	int ret, irq;
- 
- 	plgpio = devm_kzalloc(&pdev->dev, sizeof(*plgpio), GFP_KERNEL);
- 	if (!plgpio) {
-@@ -563,7 +553,6 @@ static int plgpio_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, plgpio);
- 	spin_lock_init(&plgpio->lock);
- 
--	plgpio->irq_base = -1;
- 	plgpio->chip.base = -1;
- 	plgpio->chip.request = plgpio_request;
- 	plgpio->chip.free = plgpio_free;
-@@ -571,10 +560,10 @@ static int plgpio_probe(struct platform_device *pdev)
- 	plgpio->chip.direction_output = plgpio_direction_output;
- 	plgpio->chip.get = plgpio_get_value;
- 	plgpio->chip.set = plgpio_set_value;
--	plgpio->chip.to_irq = plgpio_to_irq;
- 	plgpio->chip.label = dev_name(&pdev->dev);
- 	plgpio->chip.dev = &pdev->dev;
- 	plgpio->chip.owner = THIS_MODULE;
-+	plgpio->chip.of_node = pdev->dev.of_node;
- 
- 	if (!IS_ERR(plgpio->clk)) {
- 		ret = clk_prepare(plgpio->clk);
-@@ -592,35 +581,25 @@ static int plgpio_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_info(&pdev->dev, "irqs not supported\n");
--		return 0;
--	}
--
--	plgpio->irq_base = irq_alloc_descs(-1, 0, plgpio->chip.ngpio, 0);
--	if (IS_ERR_VALUE(plgpio->irq_base)) {
--		/* we would not support irq for gpio */
--		dev_warn(&pdev->dev, "couldn't allocate irq base\n");
-+		dev_info(&pdev->dev, "PLGPIO registered without IRQs\n");
- 		return 0;
- 	}
- 
--	plgpio->irq_domain = irq_domain_add_legacy(np, plgpio->chip.ngpio,
--			plgpio->irq_base, 0, &irq_domain_simple_ops, NULL);
--	if (WARN_ON(!plgpio->irq_domain)) {
--		dev_err(&pdev->dev, "irq domain init failed\n");
--		irq_free_descs(plgpio->irq_base, plgpio->chip.ngpio);
--		ret = -ENXIO;
-+	ret = gpiochip_irqchip_add(&plgpio->chip,
-+				   &plgpio_irqchip,
-+				   0,
-+				   handle_simple_irq,
-+				   IRQ_TYPE_NONE);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to add irqchip to gpiochip\n");
- 		goto remove_gpiochip;
- 	}
- 
--	irq_set_chained_handler(irq, plgpio_irq_handler);
--	for (i = 0; i < plgpio->chip.ngpio; i++) {
--		irq_set_chip_and_handler(i + plgpio->irq_base, &plgpio_irqchip,
--				handle_simple_irq);
--		set_irq_flags(i + plgpio->irq_base, IRQF_VALID);
--		irq_set_chip_data(i + plgpio->irq_base, plgpio);
--	}
-+	gpiochip_set_chained_irqchip(&plgpio->chip,
-+				     &plgpio_irqchip,
-+				     irq,
-+				     plgpio_irq_handler);
- 
--	irq_set_handler_data(irq, plgpio);
- 	dev_info(&pdev->dev, "PLGPIO registered with IRQs\n");
- 
- 	return 0;
--- 
-1.9.3
+As this is a speed optimization basically, do you have performance
+numbers? Like how much quicker is your code in some critical
+usecase as measured by perf or throughput whatever before and
+after doing this?
 
+Notice that the SPI bitbang driver in drivers/spi/spi-gpio.c was one
+of the most important consumers of this API IIRC. So I'm CC:ing
+Mark Brown.
+
+> +The following two functions set the raw output values of an array of GPIOs:
+> +
+> +       void gpiod_set_raw_array(unsigned int array_size,
+> +                                struct gpio_desc **desc_array,
+> +                                int *value_array)
+> +       void gpiod_set_raw_array_cansleep(unsigned int array_size,
+> +                                         struct gpio_desc **desc_array,
+> +                                         int *value_array)
+
+So this interface looks quite nice.
+
+I don't see why the complex loop in the raw setter
+below cannot actually also handle non-raw (cooked? hehe)
+values with some single-liner to invert the value if it
+is active low.
+
+> +static void _gpio_chip_set_multiple(struct gpio_chip *chip,
+
+I hate _underscored function names, just call it
+gpio_chip_set_multiple_offsets() or  whatever.
+
+> +                                   u32 mask[ARCH_NR_GPIOS/32],
+> +                                   u32 bits[ARCH_NR_GPIOS/32])
+> +{
+
+First: NO, you NEVER tie any code into ARCH_NR_GPIOS
+because that is something we want to get rid of. Just use
+regular pointers, add a count argument if need be.
+
+> +       if (chip->set_multiple) {
+> +               chip->set_multiple(chip, mask, bits);
+
+Simple and quick OK. But even this is making a quite
+nasty assumption...
+
+> +       } else {
+> +               int i;
+> +               for (i = 0; i < ARCH_NR_GPIOS; i++) {
+
+As I said you cannot depend on ARCH_NR_GPIOS and not
+introduce more dependencies to it. Figure out something else.
+Like using chip->ngpio to iterate.
+
+> +                       if (i > chip->ngpio - 1)
+> +                               break;
+> +                       if (mask[i/32] == 0) {
+> +                               /* skip ahead */
+> +                               i = (i/32 + 1) * 32 - 1;
+> +                               continue;
+> +                       }
+> +                       if (mask[i/32] & (1 << (i % 32))) {
+> +                               chip->set(chip, i, (bits[i/32] >> (i % 32)) & 1);
+> +                               mask[i/32] &= ~(1 << (i % 32));
+> +                       }
+> +               }
+> +       }
+> +}
+
+This code is a bit convoluted but I *guess* the idea is to iterate
+over the 32 bits in the argument word by word. Add some
+comments describing what's going on.
+
+Some chips have 8bit or 16bit registers actually but AFAICT
+that is not what this is about, rather about the fact that the
+function takes 32bit arguments.
+
+> +static void _gpiod_set_raw_array(unsigned int array_size,
+
+No underscored function name.
+
+> +                                struct gpio_desc **desc_array,
+> +                                int *value_array)
+> +{
+> +       struct gpio_chip *chip = desc_array[0]->chip;
+> +       u32 mask[ARCH_NR_GPIOS/32];
+> +       u32 bits[ARCH_NR_GPIOS/32];
+
+Again dependency to ARCH_NR_GPIOS. Don't do it.
+
+> +       int count = 0;
+> +       int i;
+> +
+> +       memset(mask, 0, sizeof(mask));
+> +       for (i = 0; i < array_size; i++) {
+> +               struct gpio_desc *desc = desc_array[i];
+> +               int hwgpio = gpio_chip_hwgpio(desc);
+> +               int value = value_array[i];
+> +
+> +               /* another chip; push collected bits to outputs */
+> +               if (desc->chip != chip) {
+
+Clever logic!
+
+> +                       if (count != 0) {
+> +                               _gpio_chip_set_multiple(chip, mask, bits);
+> +                               memset(mask, 0, sizeof(mask));
+> +                               count = 0;
+> +                       }
+> +                       chip = desc->chip;
+> +               }
+> +               /* collect all normal outputs belonging to the same chip */
+> +               /* open drain and open source outputs are set individually */
+> +               trace_gpio_value(desc_to_gpio(desc), 0, value);
+> +               if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
+> +                       _gpio_set_open_drain_value(desc, value);
+> +               } else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
+> +                       _gpio_set_open_source_value(desc, value);
+> +               } else {
+> +                       mask[hwgpio/32] |= (1 << (hwgpio % 32));
+> +                       if (value) {
+> +                               bits[hwgpio/32] |= (1 << (hwgpio % 32));
+> +                       } else {
+> +                               bits[hwgpio/32] &= ~(1 << (hwgpio % 32));
+> +                       }
+> +                       count++;
+> +               }
+
+This is also real smart and nice code.
+
+The assumption is that this iteration hotloop will be quicker
+to run, and the driver can take shortcuts improving performance.
+As mentione above we need some proof of that as it complicates
+the code a lot for this performance improvement.
+
+> +       }
+> +       if (count != 0) {
+> +               _gpio_chip_set_multiple(chip, mask, bits);
+> +       }
+> +}
+> +
+
+(...)
+
+>  static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+>  {
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index 1827b43..d7968c8 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -32,6 +32,7 @@ struct seq_file;
+>   * @get: returns value for signal "offset"; for output signals this
+>   *     returns either the value actually sensed, or zero
+>   * @set: assigns output value for signal "offset"
+> + * @set_multiple: assigns output values for multiple signals defined by "mask"
+>   * @set_debounce: optional hook for setting debounce time for specified gpio in
+>   *      interrupt triggered gpio chips
+>   * @to_irq: optional hook supporting non-static gpio_to_irq() mappings;
+> @@ -84,6 +85,8 @@ struct gpio_chip {
+>                                                 unsigned offset);
+>         void                    (*set)(struct gpio_chip *chip,
+>                                                 unsigned offset, int value);
+> +       void                    (*set_multiple)(struct gpio_chip *chip,
+> +                                               u32 *mask, u32 *bits);
+
+This sets the chunk size to 32bits which means that any GPIO
+controller with say 8bit registers will get a complex demuxing
+scheme.
+
+But thinking of it I think it's a reasonable compromise given that
+so many GPIO drivers are actually 32bit.
+
+However some of the real slow I2C expander GPIOs are 8bit.
+
+Yours,
+Linus Walleij
