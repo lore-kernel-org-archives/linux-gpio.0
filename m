@@ -1,61 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4] gpio: Add support for Intel SoC PMIC (Crystal Cove)
-Date: Thu, 29 May 2014 15:37:37 +0200
-Message-ID: <CACRpkdbe1=Yt3UDm9f4ZmZ+K2ZB9nVL+RNr7eU_TbnK-CmNY+A@mail.gmail.com>
-References: <1400810423-14067-1-git-send-email-lejun.zhu@linux.intel.com>
-	<CAAVeFu+F=nHDCpL6Vfmq26QNr74mfRD5p9at_osB3R97v7xBSA@mail.gmail.com>
-	<538459E8.6010701@ti.com>
-	<20140527084615.GC1801@lahna.fi.intel.com>
-	<53847F39.2010503@ti.com>
+Subject: Re: [PATCH v3] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Thu, 29 May 2014 15:40:03 +0200
+Message-ID: <CACRpkdYXT7NR6kWyzBbo2aR_Cu0=9wOFbWTA0zZyN90nUb4CAw@mail.gmail.com>
+References: <1400734743-3154-1-git-send-email-lejun.zhu@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53847F39.2010503@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:37257 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932597AbaE2NkE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 May 2014 09:40:04 -0400
+Received: by mail-ob0-f178.google.com with SMTP id va2so323960obc.9
+        for <linux-gpio@vger.kernel.org>; Thu, 29 May 2014 06:40:03 -0700 (PDT)
+In-Reply-To: <1400734743-3154-1-git-send-email-lejun.zhu@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Zhu, Lejun" <lejun.zhu@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
 
-On Tue, May 27, 2014 at 2:04 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 05/27/2014 11:46 AM, Mika Westerberg wrote:
+On Thu, May 22, 2014 at 6:59 AM, Zhu, Lejun <lejun.zhu@linux.intel.com> wrote:
 
-> Regarding remove()/suspend() routines, It's like an axiom for me:
-> - always disable irq
-> - always stop all works/threads created by driver
-> - do everything else
-> (It's proved by dozens hours of debugging).
+> Devices based on Intel SoC products such as Baytrail have a Power
+> Management IC. In the PMIC there are subsystems for voltage regulation,
+> A/D conversion, GPIO and PWMs. The PMIC in Baytrail-T platform is called
+> Crystal Cove.
 >
-> Anyway, above is just my opinion :)
+> This patch adds support for the GPIO function in Crystal Cove.
+>
+> v2:
+> - Use IRQ chip helper to provide irqdomain.
+> - Implement .remove and can now build as a module.
+> - Various fix for unreadable or ugly code pieces.
+> v3:
+> - More fix in irq_handler and probe.
 
-We cannot really let such things be up to someone's
-opinion... we need to figure out what is the right way to
-do it and do it that way, else we have ambigous semantics
-in gpiolib and/or irqchip, which i *hate*.
+(...)
 
-> So, It's up to you, because it's your code :)
+> +       gpiochip_irqchip_add(&cg->chip, &crystalcove_irqchip, 0,
+> +                            handle_simple_irq, IRQ_TYPE_NONE);
+> +
+> +       retval = request_threaded_irq(irq, NULL, crystalcove_gpio_irq_handler,
+> +                                     IRQF_ONESHOT, KBUILD_MODNAME, cg);
+> +
+> +       if (retval) {
+> +               dev_warn(&pdev->dev, "request irq failed: %d\n", retval);
+> +               goto out;
+> +       }
+> +
+> +       retval = gpiochip_add(&cg->chip);
+> +       if (retval) {
+> +               dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
+> +               goto out_free_irq;
+> +       }
 
-No, let's figure out what is right...
-
-And, FWIW your sequence looks perfectly reasonable.
-
-> Also FYI, I did fast analysis of GPIO drivers - funny statistic below:
-> - 16 drivers setup IRQs BEFORE calling gpiochip_add();
-> - 22 drivers setup IRQs AFTER calling gpiochip_add();
-
-My idea is that you should call gpiochip_add() *first* and then
-add the IRQs to the chip. In succession.
-
-Rationale: with dynamic GPIO numbers, gpio_to_irq()
-cannot reasonably be working before the gpiochip is added,
-so it should be added first, then the irqchip. Since irq_to_gpio()
-is *NOT* to be used (rather obliterated), this is the sequence
-we mandate.
-
-This is how the new irqchip helpers work by the way. As I
-introduce this to more and more drivers it will look more and
-more like this. And attack patches tagged RFT switching the
-semantics of drivers are appreciated.
+As concluded from discussion, please switch the order of
+gpiochip_irqchip_add() and gpiochip_add() so that the
+gpiochip is added first, then the irqchip.
 
 Yours,
 Linus Walleij
