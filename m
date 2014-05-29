@@ -1,49 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: select IRQ_DOMAIN for gpiolib irqchip helpers
-Date: Thu, 29 May 2014 16:54:12 +0200
-Message-ID: <1401375252-29260-1-git-send-email-linus.walleij@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v4] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Thu, 29 May 2014 18:00:58 +0300
+Message-ID: <20140529150058.GB6263@lahna.fi.intel.com>
+References: <1400810423-14067-1-git-send-email-lejun.zhu@linux.intel.com>
+ <CAAVeFu+F=nHDCpL6Vfmq26QNr74mfRD5p9at_osB3R97v7xBSA@mail.gmail.com>
+ <538459E8.6010701@ti.com>
+ <20140527084615.GC1801@lahna.fi.intel.com>
+ <53847F39.2010503@ti.com>
+ <CACRpkdbe1=Yt3UDm9f4ZmZ+K2ZB9nVL+RNr7eU_TbnK-CmNY+A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f171.google.com ([74.125.82.171]:48170 "EHLO
-	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932720AbaE2OyU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 May 2014 10:54:20 -0400
-Received: by mail-we0-f171.google.com with SMTP id w62so540707wes.16
-        for <linux-gpio@vger.kernel.org>; Thu, 29 May 2014 07:54:18 -0700 (PDT)
+Received: from mga09.intel.com ([134.134.136.24]:37257 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756055AbaE2PBH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 29 May 2014 11:01:07 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbe1=Yt3UDm9f4ZmZ+K2ZB9nVL+RNr7eU_TbnK-CmNY+A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
 
-These helpers depend on the IRQ_DOMAIN so select it explicitly,
-as it will not be present on all platforms such as Intel
-desktops and laptops using Intel-MID.
+On Thu, May 29, 2014 at 03:37:37PM +0200, Linus Walleij wrote:
+> My idea is that you should call gpiochip_add() *first* and then
+> add the IRQs to the chip. In succession.
+> 
+> Rationale: with dynamic GPIO numbers, gpio_to_irq()
+> cannot reasonably be working before the gpiochip is added,
+> so it should be added first, then the irqchip. Since irq_to_gpio()
+> is *NOT* to be used (rather obliterated), this is the sequence
+> we mandate.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks for the explanation. Makes sense.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index fa3cb189f972..4a1b5113e527 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -56,6 +56,7 @@ config GPIO_ACPI
- 	depends on ACPI
- 
- config GPIOLIB_IRQCHIP
-+	select IRQ_DOMAIN
- 	bool
- 
- config DEBUG_GPIO
-@@ -710,7 +711,7 @@ config GPIO_AMD8111
- config GPIO_INTEL_MID
- 	bool "Intel Mid GPIO support"
- 	depends on PCI && X86
--	select IRQ_DOMAIN
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say Y here to support Intel Mid GPIO.
- 
--- 
-1.9.3
-
+I was wrong again, oh well it happens ;-)
