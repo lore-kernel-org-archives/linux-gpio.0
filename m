@@ -1,10 +1,10 @@
 From: abdoulaye berthe <berthe.ab@gmail.com>
 Subject: [PATCH] gpio: removes all usage of gpiochip_remove retval
-Date: Thu, 29 May 2014 23:54:52 +0200
-Message-ID: <1401400492-26175-1-git-send-email-berthe.ab@gmail.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Sender: linux-leds-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, m@bues.ch, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, linux-wireless@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-samsungsoc@vger.kernel.org, spear-devel@list.st.com, platform-driver-x86@vger.kernel.org, netdev@vger.kernel.org, devel@driverdev.osuosl.org
+Date: Thu, 29 May 2014 23:57:26 +0200
+Message-ID: <1401400646-26221-1-git-send-email-berthe.ab@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, m@bues.ch, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: abdoulaye berthe <berthe.ab@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
