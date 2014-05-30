@@ -1,43 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: sirf: fix a bad conflict resolution
-Date: Fri, 30 May 2014 09:57:11 +0200
-Message-ID: <1401436631-30576-1-git-send-email-linus.walleij@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v4] gpio: Add support for Intel SoC PMIC (Crystal Cove)
+Date: Fri, 30 May 2014 11:25:03 +0300
+Message-ID: <20140530082503.GA1645@lahna.fi.intel.com>
+References: <1400810423-14067-1-git-send-email-lejun.zhu@linux.intel.com>
+ <CAAVeFu+F=nHDCpL6Vfmq26QNr74mfRD5p9at_osB3R97v7xBSA@mail.gmail.com>
+ <538459E8.6010701@ti.com>
+ <20140527084615.GC1801@lahna.fi.intel.com>
+ <53847F39.2010503@ti.com>
+ <CACRpkdbe1=Yt3UDm9f4ZmZ+K2ZB9nVL+RNr7eU_TbnK-CmNY+A@mail.gmail.com>
+ <20140529150058.GB6263@lahna.fi.intel.com>
+ <53875A4B.2060604@ti.com>
+ <CACRpkdZk9hFUZCoWci15EGFsJ7gOWNyFH13gJjHB9EcQT4ONRQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:53411 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750970AbaE3H5Q (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 May 2014 03:57:16 -0400
-Received: by mail-we0-f179.google.com with SMTP id q59so1538082wes.24
-        for <linux-gpio@vger.kernel.org>; Fri, 30 May 2014 00:57:15 -0700 (PDT)
+Received: from mga11.intel.com ([192.55.52.93]:18399 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751782AbaE3IZJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 30 May 2014 04:25:09 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZk9hFUZCoWci15EGFsJ7gOWNyFH13gJjHB9EcQT4ONRQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Barry Song <Baohua.Song@csr.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jacob.jun.pan@linux.intel.com, bin.yang@intel.com
 
-Commit 294d1351ff47726f0f110b88e816cbafe89512fb
-"pinctrl: sirf: switch to using allocated state container"
-caused a build conflict due to a bad conflict resolution
-when cherry-picking the patch. Fix it up.
+On Thu, May 29, 2014 at 05:22:05PM +0200, Linus Walleij wrote:
+> On Thu, May 29, 2014 at 6:03 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+> 
+> > Also, I'd like to note that GPIO IRQs can be accessible not only
+> > when GPIO chips is added, but also when IRQ domain is registered
+> > (at least it's valid for DT cases). In these cases gpiod_to_irq()
+> > might be not used at all.
+> 
+> Yes. We concluded some time back that gpio_chip:s and
+> irq_chip:s are orthogonal abstractions: you should be able
+> to use one of them without paying any respect to the other.
+> 
+> We only added the ability to flag GPIO lines as used for
+> IRQs so they would not be set to output by mistake...
+> (Straightening up the semantics.)
+> 
+> The only real semantic dependence that really makes sense
+> is .to_irq() which leads to this semantic registration ordering.
 
-Cc: Barry Song <Baohua.Song@csr.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/sirf/pinctrl-sirf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+acpi_gpiochip_request_interrupts() depends on ->to_irq() to be set
+before acpi_gpiochip_add() is called. Since the ordering changes this
+won't work anymore.
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
-index 0e835219c42e..014f5b1fee55 100644
---- a/drivers/pinctrl/sirf/pinctrl-sirf.c
-+++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
-@@ -575,7 +575,7 @@ static void sirfsoc_gpio_handle_irq(unsigned int irq, struct irq_desc *desc)
- 	int i;
- 
- 	for (i = 0; i < SIRFSOC_GPIO_NO_OF_BANKS; i++) {
--		bank = &sgpio_chip.sgpio_bank[i];
-+		bank = &sgpio->sgpio_bank[i];
- 		if (bank->parent_irq == irq)
- 			break;
- 	}
--- 
-1.9.3
-
+I'm thinking that could we solve this so that we call
+acpi_gpiochip_request_interrupts() at the end of gpiochip_irqchip_add()
+and convert both pinctrl-baytrail and gpio-lynxpoint to use
+gpiochip_irqchip_add()?
