@@ -1,31 +1,28 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Fri, 30 May 2014 17:48:59 +0200
-Message-ID: <20140530154859.GK17197@linux-mips.org>
-References: <20140530094025.3b78301e@canb.auug.org.au>
- <1401449454-30895-1-git-send-email-berthe.ab@gmail.com>
- <1401449454-30895-2-git-send-email-berthe.ab@gmail.com>
- <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 1/2] gpio: removes all usage of gpiochip_remove retval
+Date: Sat, 31 May 2014 00:59:53 +0900
+Message-ID: <CAAVeFuLMLfa-1RhcdSrKDUz7=eLqZurBSFSsN7N0x-0S+_btJA@mail.gmail.com>
+References: <20140530094025.3b78301e@canb.auug.org.au> <1401449826-30957-1-git-send-email-berthe.ab@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: abdoulaye berthe <berthe.ab@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, m@bues.ch, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Linux-sh list <linux-sh@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, patches@opensource.wolfsonmicro.com, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, linux-samsungsoc@vger.kernel.org, spear-devel@list.st.com, platform-driver-x86@vger.kernel.org"netdev@vger.kernel.org" <ne>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:65480 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752136AbaE3QAO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 May 2014 12:00:14 -0400
+In-Reply-To: <1401449826-30957-1-git-send-email-berthe.ab@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: abdoulaye berthe <berthe.ab@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, m@bues.ch, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, May 30, 2014 at 01:39:15PM +0200, Geert Uytterhoeven wrote:
+On Fri, May 30, 2014 at 8:37 PM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
+> The aim of this patch is to make gpiochip_remove() behavior consistent,
+> especially when issuing a remove request while the chipio chip is still
+> requested. It is the 1st patch in a serie af 2 patches. the 2nd patch
+> changes the return value of gpiochip_remove() from int to void. This one
+> updates users of the return value.
 
-> > +               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
-> > +                       panic("gpio: removing gpiochip with gpios still requested\n");
-> 
-> panic?
-> 
-> Is this likely to happen?
-
-And while we're at it - panic() is going to add a \n itself so don't pass a
-string ending in \n to panic().
-
-  Ralf
+This comment belongs to a cover letter (PATCH 0/2), not to the first
+patch of your series. Add --cover-letter to git format-patch to
+produce one.
