@@ -1,173 +1,72 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/2][v3] gpio-mpc8xxx: add mpc8xxx_gpio_set_multiple function
-Date: Sun, 1 Jun 2014 18:39:04 +0900
-Message-ID: <CAAVeFu+RSCjeKB2p72cCoJD652iQ2RFx32MT3HafwaUurzVvtg@mail.gmail.com>
-References: <4658251.3PbME5bghW@pcimr> <CACRpkdbneBDv0HxmZr6puthzAx_h-f9FnjUuBWbPEMBu9B8v5g@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2][v3] gpiolib: allow simultaneous setting of multiple
+ GPIO outputs
+Date: Sun, 1 Jun 2014 20:31:50 +0100
+Message-ID: <20140601193150.GS5099@sirena.org.uk>
+References: <7079851.LZm0BOlnTs@pcimr>
+ <CACRpkdZq1N-C=rowPt3t1gf24Dio0LUK4HULvZ-47jHVm1pVwA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iJe1uyGc1/1h0P8m"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f173.google.com ([209.85.128.173]:47821 "EHLO
-	mail-ve0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752096AbaFAJjY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 Jun 2014 05:39:24 -0400
-Received: by mail-ve0-f173.google.com with SMTP id pa12so3981697veb.32
-        for <linux-gpio@vger.kernel.org>; Sun, 01 Jun 2014 02:39:24 -0700 (PDT)
-In-Reply-To: <CACRpkdbneBDv0HxmZr6puthzAx_h-f9FnjUuBWbPEMBu9B8v5g@mail.gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50230 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751507AbaFATcE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 Jun 2014 15:32:04 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZq1N-C=rowPt3t1gf24Dio0LUK4HULvZ-47jHVm1pVwA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rojhalat Ibrahim <imr@rtschenk.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Gerhard Sittig <gsi@denx.de>, Mark Brown <broonie@kernel.org>
+Cc: Rojhalat Ibrahim <imr@rtschenk.de>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>
 
-On Thu, May 29, 2014 at 10:27 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
+
+--iJe1uyGc1/1h0P8m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, May 29, 2014 at 12:10:02PM +0200, Linus Walleij wrote:
 > On Tue, May 27, 2014 at 1:14 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
->
->> Add a set_multiple function to the MPC8xxx GPIO chip driver and thereby allow
->> for actual performance improvements when setting multiple outputs
->> simultaneously. In my case the time needed to configure an FPGA goes down from
->> 48 s to 19 s.
->
-> OK that's substantial. We cannot deny this. Performance is awesome.
->
->> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
->> ---
->> This patch depends on my previous patch "gpiolib: allow simultaneous setting
->> of multiple GPIO outputs".
->>
->> Change log:
->>   v3: - change commit message
->>   v2: - add this patch (v1 included only changes to gpiolib)
->>
->>  drivers/gpio/gpio-mpc8xxx.c | 28 ++++++++++++++++++++++++++++
->>  1 file changed, 28 insertions(+)
->>
->> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
->> index d7d6d72..d226f5c 100644
->> --- a/drivers/gpio/gpio-mpc8xxx.c
->> +++ b/drivers/gpio/gpio-mpc8xxx.c
->> @@ -105,6 +105,33 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->>         spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
->>  }
->>
->> +static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
->> +                                     u32 *mask, u32 *bits)
->> +{
->> +       struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
->> +       struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
->> +       unsigned long flags;
->> +       int i;
->> +
->> +       spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
->> +
->> +       for (i = 0; i < gc->ngpio; i++) {
->> +               if (*mask == 0)
->> +                       break;
->> +               if (*mask & (1 << i)) {
->> +                       if ((*bits >> i) & 1)
->
-> Use
-> #include <linux/bitops.h>
->
-> if (*mask & BIT(i)) {
->     if ((*bits & BIT(i))
->
-> ....
->
->> +                               mpc8xxx_gc->data |= mpc8xxx_gpio2mask(i);
->> +                       else
->> +                               mpc8xxx_gc->data &= ~mpc8xxx_gpio2mask(i);
->
-> But hey:
->
-> #define MPC8XXX_GPIO_PINS       32
->
-> static inline u32 mpc8xxx_gpio2mask(unsigned int gpio)
-> {
->         return 1u << (MPC8XXX_GPIO_PINS - 1 - gpio);
-> }
->
-> So what is happening? Bits are swizzled: bit 0 becomes
-> bit 31, bit 1 becomes bit 30 ... bit 31 becomes bit 0.
-> I'm actually for having a function
->
-> u32 swizzle(u32 foo) {}
->
-> In the kernel doing exactly this, because I read somewhere
-> that there are ultimax ways for doing this. Namely so
-> (drivers/crypto/ux500/cryp/cryp_core.c):
->
-> /**
->  * swap_bits_in_byte - mirror the bits in a byte
->  * @b: the byte to be mirrored
->  *
->  * The bits are swapped the following way:
->  *  Byte b include bits 0-7, nibble 1 (n1) include bits 0-3 and
->  *  nibble 2 (n2) bits 4-7.
->  *
->  *  Nibble 1 (n1):
->  *  (The "old" (moved) bit is replaced with a zero)
->  *  1. Move bit 6 and 7, 4 positions to the left.
->  *  2. Move bit 3 and 5, 2 positions to the left.
->  *  3. Move bit 1-4, 1 position to the left.
->  *
->  *  Nibble 2 (n2):
->  *  1. Move bit 0 and 1, 4 positions to the right.
->  *  2. Move bit 2 and 4, 2 positions to the right.
->  *  3. Move bit 3-6, 1 position to the right.
->  *
->  *  Combine the two nibbles to a complete and swapped byte.
->  */
->
-> static inline u8 swap_bits_in_byte(u8 b)
-> {
-> #define R_SHIFT_4_MASK  (0xc0) /* Bits 6 and 7, right shift 4 */
-> #define R_SHIFT_2_MASK  (0x28) /* (After right shift 4) Bits 3 and 5,
->                                   right shift 2 */
-> #define R_SHIFT_1_MASK  (0x1e) /* (After right shift 2) Bits 1-4,
->                                   right shift 1 */
-> #define L_SHIFT_4_MASK  (0x03) /* Bits 0 and 1, left shift 4 */
-> #define L_SHIFT_2_MASK  (0x14) /* (After left shift 4) Bits 2 and 4,
->                                   left shift 2 */
-> #define L_SHIFT_1_MASK  (0x78) /* (After left shift 1) Bits 3-6,
->                                   left shift 1 */
->
->         u8 n1;
->         u8 n2;
->
->         /* Swap most significant nibble */
->         /* Right shift 4, bits 6 and 7 */
->         n1 = ((b  & R_SHIFT_4_MASK) >> 4) | (b  & ~(R_SHIFT_4_MASK >> 4));
->         /* Right shift 2, bits 3 and 5 */
->         n1 = ((n1 & R_SHIFT_2_MASK) >> 2) | (n1 & ~(R_SHIFT_2_MASK >> 2));
->         /* Right shift 1, bits 1-4 */
->         n1 = (n1  & R_SHIFT_1_MASK) >> 1;
->
->         /* Swap least significant nibble */
->         /* Left shift 4, bits 0 and 1 */
->         n2 = ((b  & L_SHIFT_4_MASK) << 4) | (b  & ~(L_SHIFT_4_MASK << 4));
->         /* Left shift 2, bits 2 and 4 */
->         n2 = ((n2 & L_SHIFT_2_MASK) << 2) | (n2 & ~(L_SHIFT_2_MASK << 2));
->         /* Left shift 1, bits 3-6 */
->         n2 = (n2  & L_SHIFT_1_MASK) << 1;
->
->         return n1 | n2;
-> }
->
-> This can be extended to 16 and 32 bits so if this happens on
-> many places in the kernel then it should be moved to
-> <linux/bitops.h> or similar.
->
->> +                       *mask &= ~(1 << i);
->
-> *mask &= ~BIT(i);
 
-Linus, just for my own education do you have anything against
-__clear_bit(*mask, BIT(i))?
+> > +       void                    (*set_multiple)(struct gpio_chip *chip,
+> > +                                               u32 *mask, u32 *bits);
 
->
->> +               }
->> +       }
->> +       out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
->
-> Yours,
-> Linus Walleij
+> This sets the chunk size to 32bits which means that any GPIO
+> controller with say 8bit registers will get a complex demuxing
+> scheme.
+
+> But thinking of it I think it's a reasonable compromise given that
+> so many GPIO drivers are actually 32bit.
+
+> However some of the real slow I2C expander GPIOs are 8bit.
+
+We can probably librify the demuxing code if we need it, though a lot of
+those devices only have 8 GPIOs in the first place which makes life a
+lot simpler since everything will always be in the same register anyway.
+
+Overall the interface here looks good modulo your concerns about
+ARCH_NR_GPIOs.
+
+--iJe1uyGc1/1h0P8m
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTi3+jAAoJELSic+t+oim90WwP/3b5gAQARNQzkyZoU2GpPDt7
+I2v5PjcK79Kl0asRdF1oQ5laYcak1VsVPuaGXRY14asT/9HHarWIR809eZfHJazL
+JDEFkXarqwxQPCsWGfLReVvr8MBzVIWQDGXYMrtY2ySunXDSJ8N2kPmOemIj9pMD
+f87FJl3eNj0Aa0p7pewc/6G+aWB1fv4AUC0wi3nGSII7aLESl4x4ZTpxqpv4qnti
+8KjQcoWcYFBhTtWX5tO5eTOOIwT6h3XY9P9DIxiXh02812mwBMzh8dj1RKNGpfj9
+PsDawbmpX22NBGzV++bE6IBTdid4rW70I8UsO3Ad4HHmfeutnXHXwBeFJL6jLsTl
+8GPKBdJbg78YdSGbNlR076RzxqdJxBIBIwL7b+IiFegWjP6rL5en1W5MrwonMn4v
+h+b8IhbtTv5MO8GPOL2guZK3g9ogfydkkOL6E4NbB3gJNlkFq7AZoz6KYofSkLEj
+JzYo48VorcC4w5Upia5IQ0W7tCp47HK2Hg0dKgVHloC36P9spgVCOy7lbCQz/4ti
+7KiqmoYKmz2DPCN4pRES0DqZs2jXaeUHIcyy2pMmiY3UM/UIG/QVI8oF3g27YQg6
+rCiiUZYr+MsBB1WnOaDtZ51eFA6UHm8jcZ7I6/0EHFf5VEp9xobAyauNxwHtrr6+
+DEKnRVooengJmPWLgE3z
+=b3fX
+-----END PGP SIGNATURE-----
+
+--iJe1uyGc1/1h0P8m--
