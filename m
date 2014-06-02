@@ -1,329 +1,405 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] RFT: gpio: adnp: switch to use irqchip helpers
-Date: Mon,  2 Jun 2014 15:22:27 +0200
-Message-ID: <1401715347-24996-1-git-send-email-linus.walleij@linaro.org>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH 1/2][v4] gpiolib: allow simultaneous setting of multiple GPIO outputs
+Date: Mon, 02 Jun 2014 17:28:50 +0200
+Message-ID: <2025835.bJlicUAVfz@pcimr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:54537 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754617AbaFBNWr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Jun 2014 09:22:47 -0400
-Received: by mail-wi0-f173.google.com with SMTP id bs8so4578360wib.6
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Jun 2014 06:22:45 -0700 (PDT)
+Received: from mail-out.m-online.net ([212.18.0.10]:41958 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751202AbaFBP2z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Jun 2014 11:28:55 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Roland Stigge <stigge@antcom.de>, Thierry Reding <thierry.reding@gmail.com>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Gerhard Sittig <gsi@denx.de>
 
-This switches the ADNP GPIO driver to use the gpiolib
-irqchip helpers. Also do some random refactoring to make it
-look like most other GPIO drivers.
+Introduce new functions gpiod_set_array & gpiod_set_raw_array to the consumer
+interface which allow setting multiple outputs with just one function call.
+Also add an optional set_multiple function to the driver interface. Without an
+implementation of that function in the chip driver outputs are set
+sequentially.
 
-Cc: Roland Stigge <stigge@antcom.de>
-Cc: Lars Poeschel <poeschel@lemonage.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Implementing the set_multiple function in a chip driver allows for:
+- Improved performance for certain use cases. The original motivation for this
+  was the task of configuring an FPGA. In that specific case, where 9 GPIO
+  lines have to be set many times, configuration time goes down from 48 s to
+  20 s when using the new function.
+- Simultaneous glitch-free setting of multiple pins on any kind of parallel
+  bus attached to GPIOs provided they all reside on the same chip and bank.
+
+Limitations:
+  Performance is only improved for normal high-low outputs. Open drain and
+  open source outputs are always set separately from each other. Those kinds
+  of outputs could probably be accelerated in a similar way if we could
+  forgo the error checking when setting GPIO directions.
+
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
 ---
-LPC32XX maintainers: please help out testing this.
----
- drivers/gpio/Kconfig     |   1 +
- drivers/gpio/gpio-adnp.c | 155 ++++++++++++++---------------------------------
- 2 files changed, 48 insertions(+), 108 deletions(-)
+Change log:
+  v4: - add gpiod_set_array function for setting logical values
+      - change interface of the set_multiple driver function to use
+        unsigned long as type for the bit fields
+      - use generic bitops (which also use unsigned long for bit fields)
+      - do not use ARCH_NR_GPIOS any more
+  v3: - add documentation
+      - change commit message
+  v2: - use descriptor interface
+      - allow arbitrary groups of GPIOs spanning multiple chips
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 4a1b5113e527..5db53cf49cd7 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -660,6 +660,7 @@ config GPIO_ADP5588_IRQ
- config GPIO_ADNP
- 	tristate "Avionic Design N-bit GPIO expander"
- 	depends on I2C && OF_GPIO
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  This option enables support for N GPIOs found on Avionic Design
- 	  I2C GPIO expanders. The register space will be extended by powers
-diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
-index b2239d678d01..c3a0cf497507 100644
---- a/drivers/gpio/gpio-adnp.c
-+++ b/drivers/gpio/gpio-adnp.c
-@@ -6,10 +6,9 @@
-  * published by the Free Software Foundation.
-  */
+ Documentation/gpio/consumer.txt |  23 +++++
+ drivers/gpio/gpiolib.c          | 180 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/consumer.h   |  38 +++++++++
+ include/linux/gpio/driver.h     |   4 +
+ 4 files changed, 245 insertions(+)
+
+diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+index 09854fe..ba02b84 100644
+--- a/Documentation/gpio/consumer.txt
++++ b/Documentation/gpio/consumer.txt
+@@ -163,6 +163,29 @@ The active-low state of a GPIO can also be queried using the following call:
+ Note that these functions should only be used with great moderation ; a driver
+ should not have to care about the physical line level.
  
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
--#include <linux/irqdomain.h>
- #include <linux/module.h>
- #include <linux/of_irq.h>
- #include <linux/seq_file.h>
-@@ -27,8 +26,6 @@ struct adnp {
- 	unsigned int reg_shift;
- 
- 	struct mutex i2c_lock;
--
--	struct irq_domain *domain;
- 	struct mutex irq_lock;
- 
- 	u8 *irq_enable;
-@@ -253,6 +250,7 @@ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- static int adnp_gpio_setup(struct adnp *adnp, unsigned int num_gpios)
- {
- 	struct gpio_chip *chip = &adnp->gpio;
-+	int err;
- 
- 	adnp->reg_shift = get_count_order(num_gpios) - 3;
- 
-@@ -272,6 +270,10 @@ static int adnp_gpio_setup(struct adnp *adnp, unsigned int num_gpios)
- 	chip->of_node = chip->dev->of_node;
- 	chip->owner = THIS_MODULE;
- 
-+	err = gpiochip_add(chip);
-+	if (err)
-+		return err;
++Set multiple GPIO outputs with a single function call
++-----------------------------------------------------
++The following functions set the output values of an array of GPIOs:
 +
- 	return 0;
++	void gpiod_set_array(unsigned int array_size,
++			     struct gpio_desc **desc_array,
++			     int *value_array)
++	void gpiod_set_raw_array(unsigned int array_size,
++				 struct gpio_desc **desc_array,
++				 int *value_array)
++	void gpiod_set_array_cansleep(unsigned int array_size,
++				      struct gpio_desc **desc_array,
++				      int *value_array)
++	void gpiod_set_raw_array_cansleep(unsigned int array_size,
++					  struct gpio_desc **desc_array,
++					  int *value_array)
++
++The array can be an arbitrary set of GPIOs. The functions will try to set
++GPIOs belonging to the same bank or chip simultaneously if supported by the
++corresponding chip driver. In that case a significantly improved performance
++can be expected. If simultaneous setting is not possible the GPIOs will be set
++sequentially.
++
+ GPIOs mapped to IRQs
+ --------------------
+ GPIO lines can quite often be used as IRQs. You can get the IRQ number
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index f48817d..a2be195 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2345,6 +2345,84 @@ static void _gpiod_set_raw_value(struct gpio_desc *desc, bool value)
+ 		chip->set(chip, gpio_chip_hwgpio(desc), value);
  }
  
-@@ -326,7 +328,8 @@ static irqreturn_t adnp_irq(int irq, void *data)
++/*
++ * set multiple outputs on the same chip;
++ * use the chip's set_multiple function if available;
++ * otherwise set the outputs sequentially;
++ * @mask: bit mask array; one bit per output; BITS_PER_LONG bits per word
++ *        defines which outputs are to be changed
++ * @bits: bit value array; one bit per output; BITS_PER_LONG bits per word
++ *        defines the values the outputs specified by mask are to be set to
++ */
++static void gpio_chip_set_multiple(struct gpio_chip *chip,
++				   unsigned long *mask, unsigned long *bits)
++{
++	if (chip->set_multiple) {
++		chip->set_multiple(chip, mask, bits);
++	} else {
++		int i;
++		for (i = 0; i < chip->ngpio; i++) {
++			if (mask[BIT_WORD(i)] == 0) {
++				/* no more set bits in this mask word;
++				 * skip ahead to the next word */
++				i = (BIT_WORD(i) + 1) * BITS_PER_LONG - 1;
++				continue;
++			}
++			/* set outputs if the corresponding mask bit is set */
++			if (__test_and_clear_bit(i, mask)) {
++				chip->set(chip, i, test_bit(i, bits));
++			}
++		}
++	}
++}
++
++static void gpiod_set_array_priv(bool raw, unsigned int array_size,
++				 struct gpio_desc **desc_array,
++				 int *value_array)
++{
++	int i = 0;
++
++	while (i < array_size) {
++		struct gpio_chip *chip = desc_array[i]->chip;
++		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		int count = 0;
++
++		memset(mask, 0, sizeof(mask));
++		do {
++			struct gpio_desc *desc = desc_array[i];
++			int hwgpio = gpio_chip_hwgpio(desc);
++			int value = value_array[i];
++
++			if (!raw && test_bit(FLAG_ACTIVE_LOW, &desc->flags))
++				value = !value;
++			trace_gpio_value(desc_to_gpio(desc), 0, value);
++			/*
++			 * collect all normal outputs belonging to the same chip
++			 * open drain and open source outputs are set individually
++			 */
++			if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
++				_gpio_set_open_drain_value(desc,value);
++			} else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
++				_gpio_set_open_source_value(desc, value);
++			} else {
++				__set_bit(hwgpio, mask);
++				if (value) {
++					__set_bit(hwgpio, bits);
++				} else {
++					__clear_bit(hwgpio, bits);
++				}
++				count++;
++			}
++			i++;
++		} while ((i < array_size) && (desc_array[i]->chip == chip));
++		/* push collected bits to outputs */
++		if (count != 0) {
++			gpio_chip_set_multiple(chip, mask, bits);
++		}
++	}
++}
++
+ /**
+  * gpiod_set_raw_value() - assign a gpio's raw value
+  * @desc: gpio whose value will be assigned
+@@ -2390,6 +2468,60 @@ void gpiod_set_value(struct gpio_desc *desc, int value)
+ EXPORT_SYMBOL_GPL(gpiod_set_value);
  
- 		for_each_set_bit(bit, &pending, 8) {
- 			unsigned int child_irq;
--			child_irq = irq_find_mapping(adnp->domain, base + bit);
-+			child_irq = irq_find_mapping(adnp->gpio.irqdomain,
-+						     base + bit);
- 			handle_nested_irq(child_irq);
- 		}
- 	}
-@@ -334,35 +337,32 @@ static irqreturn_t adnp_irq(int irq, void *data)
- 	return IRQ_HANDLED;
+ /**
++ * gpiod_set_raw_array() - assign values to an array of GPIOs
++ * @array_size: number of elements in the descriptor / value arrays
++ * @desc_array: array of GPIO descriptors whose values will be assigned
++ * @value_array: array of values to assign
++ *
++ * Set the raw values of the GPIOs, i.e. the values of the physical lines
++ * without regard for their ACTIVE_LOW status.
++ *
++ * This function should be called from contexts where we cannot sleep, and will
++ * complain if the GPIO chip functions potentially sleep.
++ */
++void gpiod_set_raw_array(unsigned int array_size,
++			 struct gpio_desc **desc_array, int *value_array)
++{
++	if (array_size == 0)
++		return;
++	if (!desc_array)
++		return;
++	if (!desc_array[0])
++		return;
++	/* Should be using gpiod_set_raw_array_cansleep() */
++	WARN_ON(desc_array[0]->chip->can_sleep);
++	gpiod_set_array_priv(true, array_size, desc_array, value_array);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_raw_array);
++
++/**
++ * gpiod_set_array() - assign values to an array of GPIOs
++ * @array_size: number of elements in the descriptor / value arrays
++ * @desc_array: array of GPIO descriptors whose values will be assigned
++ * @value_array: array of values to assign
++ *
++ * Set the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
++ * into account.
++ *
++ * This function should be called from contexts where we cannot sleep, and will
++ * complain if the GPIO chip functions potentially sleep.
++ */
++void gpiod_set_array(unsigned int array_size,
++		     struct gpio_desc **desc_array, int *value_array)
++{
++	if (array_size == 0)
++		return;
++	if (!desc_array)
++		return;
++	if (!desc_array[0])
++		return;
++	/* Should be using gpiod_set_array_cansleep() */
++	WARN_ON(desc_array[0]->chip->can_sleep);
++	gpiod_set_array_priv(false, array_size, desc_array, value_array);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_array);
++
++/**
+  * gpiod_cansleep() - report whether gpio value access may sleep
+  * @desc: gpio to check
+  *
+@@ -2559,6 +2691,54 @@ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+ 
+ /**
++ * gpiod_set_raw_array_cansleep() - assign values to an array of GPIOs
++ * @array_size: number of elements in the descriptor / value arrays
++ * @desc_array: array of GPIO descriptors whose values will be assigned
++ * @value_array: array of values to assign
++ *
++ * Set the raw values of the GPIOs, i.e. the values of the physical lines
++ * without regard for their ACTIVE_LOW status.
++ *
++ * This function is to be called from contexts that can sleep.
++ */
++void gpiod_set_raw_array_cansleep(unsigned int array_size,
++				  struct gpio_desc **desc_array,
++				  int *value_array)
++{
++	might_sleep_if(extra_checks);
++	if (array_size == 0)
++		return;
++	if (!desc_array)
++		return;
++	gpiod_set_array_priv(true, array_size, desc_array, value_array);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_raw_array_cansleep);
++
++/**
++ * gpiod_set_array_cansleep() - assign values to an array of GPIOs
++ * @array_size: number of elements in the descriptor / value arrays
++ * @desc_array: array of GPIO descriptors whose values will be assigned
++ * @value_array: array of values to assign
++ *
++ * Set the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
++ * into account.
++ *
++ * This function is to be called from contexts that can sleep.
++ */
++void gpiod_set_array_cansleep(unsigned int array_size,
++			      struct gpio_desc **desc_array,
++			      int *value_array)
++{
++	might_sleep_if(extra_checks);
++	if (array_size == 0)
++		return;
++	if (!desc_array)
++		return;
++	gpiod_set_array_priv(false, array_size, desc_array, value_array);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_array_cansleep);
++
++/**
+  * gpiod_add_lookup_table() - register GPIO device consumers
+  * @table: table of consumers to register
+  */
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index bed128e..f87315a 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -40,14 +40,24 @@ int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
+ /* Value get/set from non-sleeping context */
+ int gpiod_get_value(const struct gpio_desc *desc);
+ void gpiod_set_value(struct gpio_desc *desc, int value);
++void gpiod_set_array(unsigned int array_size,
++		     struct gpio_desc **desc_array, int *value_array);
+ int gpiod_get_raw_value(const struct gpio_desc *desc);
+ void gpiod_set_raw_value(struct gpio_desc *desc, int value);
++void gpiod_set_raw_array(unsigned int array_size,
++			 struct gpio_desc **desc_array, int *value_array);
+ 
+ /* Value get/set from sleeping context */
+ int gpiod_get_value_cansleep(const struct gpio_desc *desc);
+ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value);
++void gpiod_set_array_cansleep(unsigned int array_size,
++			      struct gpio_desc **desc_array,
++			      int *value_array);
+ int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc);
+ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
++void gpiod_set_raw_array_cansleep(unsigned int array_size,
++				  struct gpio_desc **desc_array,
++				  int *value_array);
+ 
+ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
+ 
+@@ -139,6 +149,13 @@ static inline void gpiod_set_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
  }
- 
--static int adnp_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
--{
--	struct adnp *adnp = to_adnp(chip);
--	return irq_create_mapping(adnp->domain, offset);
--}
--
--static void adnp_irq_mask(struct irq_data *data)
-+static void adnp_irq_mask(struct irq_data *d)
++static inline void gpiod_set_array(unsigned int array_size,
++				   struct gpio_desc **desc_array,
++				   int *value_array)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++}
+ static inline int gpiod_get_raw_value(const struct gpio_desc *desc)
  {
--	struct adnp *adnp = irq_data_get_irq_chip_data(data);
--	unsigned int reg = data->hwirq >> adnp->reg_shift;
--	unsigned int pos = data->hwirq & 7;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct adnp *adnp = to_adnp(gc);
-+	unsigned int reg = d->hwirq >> adnp->reg_shift;
-+	unsigned int pos = d->hwirq & 7;
- 
- 	adnp->irq_enable[reg] &= ~BIT(pos);
+ 	/* GPIO can never have been requested */
+@@ -150,6 +167,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
  }
++static inline void gpiod_set_raw_array(unsigned int array_size,
++				       struct gpio_desc **desc_array,
++				       int *value_array)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++}
  
--static void adnp_irq_unmask(struct irq_data *data)
-+static void adnp_irq_unmask(struct irq_data *d)
+ static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
  {
--	struct adnp *adnp = irq_data_get_irq_chip_data(data);
--	unsigned int reg = data->hwirq >> adnp->reg_shift;
--	unsigned int pos = data->hwirq & 7;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct adnp *adnp = to_adnp(gc);
-+	unsigned int reg = d->hwirq >> adnp->reg_shift;
-+	unsigned int pos = d->hwirq & 7;
- 
- 	adnp->irq_enable[reg] |= BIT(pos);
+@@ -162,6 +186,13 @@ static inline void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
  }
- 
--static int adnp_irq_set_type(struct irq_data *data, unsigned int type)
-+static int adnp_irq_set_type(struct irq_data *d, unsigned int type)
++static inline void gpiod_set_array_cansleep(unsigned int array_size,
++					    struct gpio_desc **desc_array,
++					    int *value_array)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++}
+ static inline int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
  {
--	struct adnp *adnp = irq_data_get_irq_chip_data(data);
--	unsigned int reg = data->hwirq >> adnp->reg_shift;
--	unsigned int pos = data->hwirq & 7;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct adnp *adnp = to_adnp(gc);
-+	unsigned int reg = d->hwirq >> adnp->reg_shift;
-+	unsigned int pos = d->hwirq & 7;
- 
- 	if (type & IRQ_TYPE_EDGE_RISING)
- 		adnp->irq_rise[reg] |= BIT(pos);
-@@ -387,16 +387,18 @@ static int adnp_irq_set_type(struct irq_data *data, unsigned int type)
- 	return 0;
+ 	/* GPIO can never have been requested */
+@@ -174,6 +205,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
  }
++static inline void gpiod_set_raw_array_cansleep(unsigned int array_size,
++						struct gpio_desc **desc_array,
++						int *value_array)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++}
  
--static void adnp_irq_bus_lock(struct irq_data *data)
-+static void adnp_irq_bus_lock(struct irq_data *d)
+ static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
  {
--	struct adnp *adnp = irq_data_get_irq_chip_data(data);
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct adnp *adnp = to_adnp(gc);
- 
- 	mutex_lock(&adnp->irq_lock);
- }
- 
--static void adnp_irq_bus_unlock(struct irq_data *data)
-+static void adnp_irq_bus_unlock(struct irq_data *d)
- {
--	struct adnp *adnp = irq_data_get_irq_chip_data(data);
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct adnp *adnp = to_adnp(gc);
- 	unsigned int num_regs = 1 << adnp->reg_shift, i;
- 
- 	mutex_lock(&adnp->i2c_lock);
-@@ -408,26 +410,6 @@ static void adnp_irq_bus_unlock(struct irq_data *data)
- 	mutex_unlock(&adnp->irq_lock);
- }
- 
--static int adnp_irq_reqres(struct irq_data *data)
--{
--	struct adnp *adnp = irq_data_get_irq_chip_data(data);
--
--	if (gpio_lock_as_irq(&adnp->gpio, data->hwirq)) {
--		dev_err(adnp->gpio.dev,
--			"unable to lock HW IRQ %lu for IRQ\n",
--			data->hwirq);
--		return -EINVAL;
--	}
--	return 0;
--}
--
--static void adnp_irq_relres(struct irq_data *data)
--{
--	struct adnp *adnp = irq_data_get_irq_chip_data(data);
--
--	gpio_unlock_as_irq(&adnp->gpio, data->hwirq);
--}
--
- static struct irq_chip adnp_irq_chip = {
- 	.name = "gpio-adnp",
- 	.irq_mask = adnp_irq_mask,
-@@ -435,29 +417,6 @@ static struct irq_chip adnp_irq_chip = {
- 	.irq_set_type = adnp_irq_set_type,
- 	.irq_bus_lock = adnp_irq_bus_lock,
- 	.irq_bus_sync_unlock = adnp_irq_bus_unlock,
--	.irq_request_resources = adnp_irq_reqres,
--	.irq_release_resources = adnp_irq_relres,
--};
--
--static int adnp_irq_map(struct irq_domain *domain, unsigned int irq,
--			irq_hw_number_t hwirq)
--{
--	irq_set_chip_data(irq, domain->host_data);
--	irq_set_chip(irq, &adnp_irq_chip);
--	irq_set_nested_thread(irq, true);
--
--#ifdef CONFIG_ARM
--	set_irq_flags(irq, IRQF_VALID);
--#else
--	irq_set_noprobe(irq);
--#endif
--
--	return 0;
--}
--
--static const struct irq_domain_ops adnp_irq_domain_ops = {
--	.map = adnp_irq_map,
--	.xlate = irq_domain_xlate_twocell,
- };
- 
- static int adnp_irq_setup(struct adnp *adnp)
-@@ -503,35 +462,28 @@ static int adnp_irq_setup(struct adnp *adnp)
- 		adnp->irq_enable[i] = 0x00;
- 	}
- 
--	adnp->domain = irq_domain_add_linear(chip->of_node, chip->ngpio,
--					     &adnp_irq_domain_ops, adnp);
--
--	err = request_threaded_irq(adnp->client->irq, NULL, adnp_irq,
--				   IRQF_TRIGGER_RISING | IRQF_ONESHOT,
--				   dev_name(chip->dev), adnp);
-+	err = devm_request_threaded_irq(chip->dev, adnp->client->irq,
-+					NULL, adnp_irq,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					dev_name(chip->dev), adnp);
- 	if (err != 0) {
- 		dev_err(chip->dev, "can't request IRQ#%d: %d\n",
- 			adnp->client->irq, err);
- 		return err;
- 	}
- 
--	chip->to_irq = adnp_gpio_to_irq;
--	return 0;
--}
--
--static void adnp_irq_teardown(struct adnp *adnp)
--{
--	unsigned int irq, i;
--
--	free_irq(adnp->client->irq, adnp);
--
--	for (i = 0; i < adnp->gpio.ngpio; i++) {
--		irq = irq_find_mapping(adnp->domain, i);
--		if (irq > 0)
--			irq_dispose_mapping(irq);
-+	err = gpiochip_irqchip_add(chip,
-+				   &adnp_irq_chip,
-+				   0,
-+				   handle_simple_irq,
-+				   IRQ_TYPE_NONE);
-+	if (err) {
-+		dev_err(chip->dev,
-+			"could not connect irqchip to gpiochip\n");
-+		return err;
- 	}
- 
--	irq_domain_remove(adnp->domain);
-+	return 0;
- }
- 
- static int adnp_i2c_probe(struct i2c_client *client,
-@@ -558,33 +510,23 @@ static int adnp_i2c_probe(struct i2c_client *client,
- 	adnp->client = client;
- 
- 	err = adnp_gpio_setup(adnp, num_gpios);
--	if (err < 0)
-+	if (err)
- 		return err;
- 
- 	if (of_find_property(np, "interrupt-controller", NULL)) {
- 		err = adnp_irq_setup(adnp);
--		if (err < 0)
--			goto teardown;
-+		if (err)
-+			return err;
- 	}
- 
--	err = gpiochip_add(&adnp->gpio);
--	if (err < 0)
--		goto teardown;
--
- 	i2c_set_clientdata(client, adnp);
--	return 0;
- 
--teardown:
--	if (of_find_property(np, "interrupt-controller", NULL))
--		adnp_irq_teardown(adnp);
--
--	return err;
-+	return 0;
- }
- 
- static int adnp_i2c_remove(struct i2c_client *client)
- {
- 	struct adnp *adnp = i2c_get_clientdata(client);
--	struct device_node *np = client->dev.of_node;
- 	int err;
- 
- 	err = gpiochip_remove(&adnp->gpio);
-@@ -594,9 +536,6 @@ static int adnp_i2c_remove(struct i2c_client *client)
- 		return err;
- 	}
- 
--	if (of_find_property(np, "interrupt-controller", NULL))
--		adnp_irq_teardown(adnp);
--
- 	return 0;
- }
- 
--- 
-1.9.3
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 1827b43..9e9ad1e 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -32,6 +32,7 @@ struct seq_file;
+  * @get: returns value for signal "offset"; for output signals this
+  *	returns either the value actually sensed, or zero
+  * @set: assigns output value for signal "offset"
++ * @set_multiple: assigns output values for multiple signals defined by "mask"
+  * @set_debounce: optional hook for setting debounce time for specified gpio in
+  *      interrupt triggered gpio chips
+  * @to_irq: optional hook supporting non-static gpio_to_irq() mappings;
+@@ -84,6 +85,9 @@ struct gpio_chip {
+ 						unsigned offset);
+ 	void			(*set)(struct gpio_chip *chip,
+ 						unsigned offset, int value);
++	void			(*set_multiple)(struct gpio_chip *chip,
++						unsigned long *mask,
++						unsigned long *bits);
+ 	int			(*set_debounce)(struct gpio_chip *chip,
+ 						unsigned offset,
+ 						unsigned debounce);
 
+--
+1.8.5.5
