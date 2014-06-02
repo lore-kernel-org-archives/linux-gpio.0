@@ -1,294 +1,312 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: Re: [PATCH 1/2][v3] gpiolib: allow simultaneous setting of multiple GPIO outputs
-Date: Mon, 02 Jun 2014 10:33:10 +0200
-Message-ID: <2947890.spqKnF5KLh@pcimr>
-References: <7079851.LZm0BOlnTs@pcimr> <CACRpkdZq1N-C=rowPt3t1gf24Dio0LUK4HULvZ-47jHVm1pVwA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO bulk changes for v3.16
+Date: Mon, 2 Jun 2014 10:34:20 +0200
+Message-ID: <CACRpkdY66mpCR857-Q=p__OXY04d0gHmpGtUFOm8DjnmfEtGgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:39767 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752740AbaFBIdO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Jun 2014 04:33:14 -0400
-In-Reply-To: <CACRpkdZq1N-C=rowPt3t1gf24Dio0LUK4HULvZ-47jHVm1pVwA@mail.gmail.com>
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:36602 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751442AbaFBIeV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Jun 2014 04:34:21 -0400
+Received: by mail-oa0-f44.google.com with SMTP id o6so4306176oag.3
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Jun 2014 01:34:20 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Gerhard Sittig <gsi@denx.de>, Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Thursday 29 May 2014 12:10:02 Linus Walleij wrote:
-> On Tue, May 27, 2014 at 1:14 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> 
-> > Introduce a new function gpiod_set_raw_array to the consumer interface which
-> > allows setting multiple outputs with just one function call. Also add an
-> > optional set_multiple function to the driver interface. Without an
-> > implementation of that function in the chip driver outputs are set
-> > sequentially.
-> >
-> > Implementing the set_multiple function in a chip driver allows for:
-> > - Improved performance for certain use cases. The original motivation for this
-> >   was the task of configuring an FPGA. In that specific case, where 9 GPIO
-> >   lines have to be set many times, configuration time goes down from 48 s to
-> >   19 s when using the new function.
-> > - Simultaneous glitch-free setting of multiple pins on any kind of parallel
-> >   bus attached to GPIOs provided they all reside on the same chip and bank.
-> >
-> > Limitations:
-> >   - Performance is only improved for normal high-low outputs. Open drain and
-> >     open source outputs are always set separately from each other. Those kinds
-> >     of outputs could probably be accelerated in a similar way if we could
-> >     forgo the error checking when setting GPIO directions.
-> >   - There is no gpiod_set_array function that regards the ACTIVE_LOW bits.
-> >     The raw function should be sufficient for many use cases. So I avoided
-> >     the code duplication the other functions would require.
-> >
-> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-> > ---
-> > Change log:
-> >   v3: - add documentation
-> >       - change commit message
-> >   v2: - use descriptor interface
-> >       - allow arbitrary groups of GPIOs spanning multiple chips
-> 
-> This concept has been brought up before. Please keep Grant Likley in
-> the loop on these postings as he has some history with this.
-> 
+Hi Linus,
 
-Will do.
+I guess this can go into your desired "next" branch for v3.16 where
+we start landing changes for the v3.16 merge window this week if
+I understand your message correctly.
 
-> As this is a speed optimization basically, do you have performance
-> numbers? Like how much quicker is your code in some critical
-> usecase as measured by perf or throughput whatever before and
-> after doing this?
-> 
+There is a lot of action in the GPIO subsystem doing refactorings
+and cleanups, almost as many deletions as insertions and minor
+feature growth and no new drivers this time. Which is actually
+pretty nice. Some GPIO-related stuff will come in through the pin
+control tree as well.
 
-As mentioned in the commit message my use case is the configuration of an
-FPGA. Using the new function configuration time goes down from 48 s to 19 s.
+I merged in v3.15-rc4 at one time to get rid of nasty conmflicts
+in -next.
 
-> Notice that the SPI bitbang driver in drivers/spi/spi-gpio.c was one
-> of the most important consumers of this API IIRC. So I'm CC:ing
-> Mark Brown.
-> 
-> > +The following two functions set the raw output values of an array of GPIOs:
-> > +
-> > +       void gpiod_set_raw_array(unsigned int array_size,
-> > +                                struct gpio_desc **desc_array,
-> > +                                int *value_array)
-> > +       void gpiod_set_raw_array_cansleep(unsigned int array_size,
-> > +                                         struct gpio_desc **desc_array,
-> > +                                         int *value_array)
-> 
-> So this interface looks quite nice.
-> 
+Fine-grained details in the signed tag as usual.
 
-Thanks.
+The below is well tested in linux-next and should be in real nice
+shape (famous last words), so please pull it in.
 
-> I don't see why the complex loop in the raw setter
-> below cannot actually also handle non-raw (cooked? hehe)
-> values with some single-liner to invert the value if it
-> is active low.
-> 
+Yours,
+Linus Walleij
 
-I will look into that. I did not want to invert the active-low values in
-the array first and then pass the array of partly inverted values to the
-_gpiod_set_raw_array function because that would change the array values
-passed by the user.
-Another way to handle the non-raw values would of course be to do it in the
-same function as the raw values. That would require additional checks and
-would possibly degrade performance for the raw case. But the performance
-impact could also be negligible. So as I said I will look into it.
+The following changes since commit 89ca3b881987f5a4be4c5dbaa7f0df12bbdde2fd:
 
-> > +static void _gpio_chip_set_multiple(struct gpio_chip *chip,
-> 
-> I hate _underscored function names, just call it
-> gpio_chip_set_multiple_offsets() or  whatever.
-> 
+  Linux 3.15-rc4 (2014-05-04 18:14:42 -0700)
 
-Ok.
+are available in the git repository at:
 
-> > +                                   u32 mask[ARCH_NR_GPIOS/32],
-> > +                                   u32 bits[ARCH_NR_GPIOS/32])
-> > +{
-> 
-> First: NO, you NEVER tie any code into ARCH_NR_GPIOS
-> because that is something we want to get rid of. Just use
-> regular pointers, add a count argument if need be.
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.16-1
 
-Will do.
+for you to fetch changes up to fc346270124a1a05a5b3c47f277d467ff410b3ae:
 
-> > +       if (chip->set_multiple) {
-> > +               chip->set_multiple(chip, mask, bits);
-> 
-> Simple and quick OK. But even this is making a quite
-> nasty assumption...
-> 
+  gpio: select IRQ_DOMAIN for gpiolib irqchip helpers (2014-05-29
+16:52:46 +0200)
 
-Could you elaborate? What's the nasty assumption?
+----------------------------------------------------------------
+This is the bulk of GPIO changes for the v3.16 series:
 
-> > +       } else {
-> > +               int i;
-> > +               for (i = 0; i < ARCH_NR_GPIOS; i++) {
-> 
-> As I said you cannot depend on ARCH_NR_GPIOS and not
-> introduce more dependencies to it. Figure out something else.
-> Like using chip->ngpio to iterate.
-> 
+- We are finalizing and fixing up the gpiochip irqchip helpers
+  bringing a helpful irqchip implementation into the gpiolib
+  core and avoiding duplicate code and, more importantly,
+  duplicate bug fixes:
 
-Ok.
+  - Support for using the helpers with threaded interrupt
+    handlers as used on sleeping GPIO-irqchips
 
-> > +                       if (i > chip->ngpio - 1)
-> > +                               break;
-> > +                       if (mask[i/32] == 0) {
-> > +                               /* skip ahead */
-> > +                               i = (i/32 + 1) * 32 - 1;
-> > +                               continue;
-> > +                       }
-> > +                       if (mask[i/32] & (1 << (i % 32))) {
-> > +                               chip->set(chip, i, (bits[i/32] >> (i % 32)) & 1);
-> > +                               mask[i/32] &= ~(1 << (i % 32));
-> > +                       }
-> > +               }
-> > +       }
-> > +}
-> 
-> This code is a bit convoluted but I *guess* the idea is to iterate
-> over the 32 bits in the argument word by word. Add some
-> comments describing what's going on.
-> 
+  - Do not set up hardware triggers for edges or levels if
+    the default IRQ type is IRQ_TYPE_NONE - some drivers
+    would exploit the fact that you could get default
+    initialization of the IRQ type from the core at probe()
+    but if no default type is set up from the helper, we
+    should not call the driver to configure anything. Wait
+    until a consumer requests the interrupt instead.
 
-Will do.
+  - Make the irqchip helpers put the GPIO irqs into their
+    own lock class. The GPIO irqchips can often emit
+    (harmless, but annoying) lockdep warnings about recursions
+    when they are in fact just cascaded IRQs. By putting
+    them into their own lock class we help the lockdep core
+    to keep track of things.
 
-> Some chips have 8bit or 16bit registers actually but AFAICT
-> that is not what this is about, rather about the fact that the
-> function takes 32bit arguments.
-> 
+  - Switch the tc3589x GPIO expanders to use the irqchip
+    helpers
 
-Right.
+  - Switch the OMAP GPIO driver to use the irqchip helpers
 
-> > +static void _gpiod_set_raw_array(unsigned int array_size,
-> 
-> No underscored function name.
-> 
+  - Add some documentation for the irqchip helpers
 
-Ok.
+  - select IRQ_DOMAIN when using the helpers since some
+    platforms may not be using this by default and it's a
+    strict dependency.
 
-> > +                                struct gpio_desc **desc_array,
-> > +                                int *value_array)
-> > +{
-> > +       struct gpio_chip *chip = desc_array[0]->chip;
-> > +       u32 mask[ARCH_NR_GPIOS/32];
-> > +       u32 bits[ARCH_NR_GPIOS/32];
-> 
-> Again dependency to ARCH_NR_GPIOS. Don't do it.
-> 
+- Continued GPIO descriptor refactoring:
 
-Ok.
+  - Remove the one instance of gpio_to_desc() from the
+    device tree code, making the OF GPIO code use GPIO
+    descriptors only.
 
-> > +       int count = 0;
-> > +       int i;
-> > +
-> > +       memset(mask, 0, sizeof(mask));
-> > +       for (i = 0; i < array_size; i++) {
-> > +               struct gpio_desc *desc = desc_array[i];
-> > +               int hwgpio = gpio_chip_hwgpio(desc);
-> > +               int value = value_array[i];
-> > +
-> > +               /* another chip; push collected bits to outputs */
-> > +               if (desc->chip != chip) {
-> 
-> Clever logic!
-> 
+  - Introduce gpiod_get_optional() and
+    gpiod_get_optional_index() akin to the similar
+    regulator functions for cases where the use of GPIO
+    is optional and not strictly required.
 
-Thanks.
+  - Make of_get_named_gpiod_flags() private - we do not
+    want to unnecessarily expose APIs to drivers that
+    make the gpiolib harder than necessary to maintain
+    and refactor. Privatize this function.
 
-> > +                       if (count != 0) {
-> > +                               _gpio_chip_set_multiple(chip, mask, bits);
-> > +                               memset(mask, 0, sizeof(mask));
-> > +                               count = 0;
-> > +                       }
-> > +                       chip = desc->chip;
-> > +               }
-> > +               /* collect all normal outputs belonging to the same chip */
-> > +               /* open drain and open source outputs are set individually */
-> > +               trace_gpio_value(desc_to_gpio(desc), 0, value);
-> > +               if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
-> > +                       _gpio_set_open_drain_value(desc, value);
-> > +               } else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
-> > +                       _gpio_set_open_source_value(desc, value);
-> > +               } else {
-> > +                       mask[hwgpio/32] |= (1 << (hwgpio % 32));
-> > +                       if (value) {
-> > +                               bits[hwgpio/32] |= (1 << (hwgpio % 32));
-> > +                       } else {
-> > +                               bits[hwgpio/32] &= ~(1 << (hwgpio % 32));
-> > +                       }
-> > +                       count++;
-> > +               }
-> 
-> This is also real smart and nice code.
-> 
+- Support "-gpio" suffix for the OF GPIO retrieveal path.
+  We used to look for "foo-gpios" or just "gpios" in device
+  tree nodes, but it turns out that some drivers with a
+  single GPIO line will just state "foo-gpio" (singularis).
+  Sigh. Support this with a fallback looking for it, as
+  this simplifies driver code and handles it in core code.
 
-Thanks again.
+- Switch the ACPI GPIO core to fetch GPIOs with the
+  *_cansleep function variants as the GPIO operation
+  region handler can sleep, and shall be able to handle
+  gpiochips that sleep.
 
-> The assumption is that this iteration hotloop will be quicker
-> to run, and the driver can take shortcuts improving performance.
-> As mentione above we need some proof of that as it complicates
-> the code a lot for this performance improvement.
-> 
+- Tons of cleanups and janitorial work from Jingoo Han,
+  Axel Lin, Javier Martinez Canillas and Abdoulaye Berthe.
+  Notably Jingoo cut off a ton of pointless OOM messages.
 
-See above.
+- Incremental development and fixes for various drivers,
+  nothing really special here.
 
-> > +       }
-> > +       if (count != 0) {
-> > +               _gpio_chip_set_multiple(chip, mask, bits);
-> > +       }
-> > +}
-> > +
-> 
-> (...)
-> 
-> >  static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
-> >  {
-> > diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> > index 1827b43..d7968c8 100644
-> > --- a/include/linux/gpio/driver.h
-> > +++ b/include/linux/gpio/driver.h
-> > @@ -32,6 +32,7 @@ struct seq_file;
-> >   * @get: returns value for signal "offset"; for output signals this
-> >   *     returns either the value actually sensed, or zero
-> >   * @set: assigns output value for signal "offset"
-> > + * @set_multiple: assigns output values for multiple signals defined by "mask"
-> >   * @set_debounce: optional hook for setting debounce time for specified gpio in
-> >   *      interrupt triggered gpio chips
-> >   * @to_irq: optional hook supporting non-static gpio_to_irq() mappings;
-> > @@ -84,6 +85,8 @@ struct gpio_chip {
-> >                                                 unsigned offset);
-> >         void                    (*set)(struct gpio_chip *chip,
-> >                                                 unsigned offset, int value);
-> > +       void                    (*set_multiple)(struct gpio_chip *chip,
-> > +                                               u32 *mask, u32 *bits);
-> 
-> This sets the chunk size to 32bits which means that any GPIO
-> controller with say 8bit registers will get a complex demuxing
-> scheme.
-> 
-> But thinking of it I think it's a reasonable compromise given that
-> so many GPIO drivers are actually 32bit.
-> 
-> However some of the real slow I2C expander GPIOs are 8bit.
-> 
+----------------------------------------------------------------
+Aaron Lu (1):
+      gpio / ACPI: use *_cansleep version of gpiod_get/set APIs
 
-So I'll leave the chunk size at 32 bits.
+Alexander Shiyan (1):
+      gpio: ge: Convert to platform driver
 
-> Yours,
-> Linus Walleij
-> 
+Alexandre Courbot (1):
+      gpio: make of_get_named_gpiod_flags() private
 
-Thanks for the review. I'll send a new revision of the patch soon.
+Anthony Fee (1):
+      gpio: generic: add request function pointer
 
-   Rojhalat
+Arnd Bergmann (2):
+      gpio: always enable GPIO_OMAP on ARCH_OMAP
+      gpio: include linux/bug.h in interface header
 
+Axel Lin (7):
+      gpio: zevio: Remove of_match_ptr around zevio_gpio_of_match
+      gpio: zevio: Get correct gpio output value
+      gpio: max730x: Remove kfree(ts) in __max730x_remove()
+      gpio: pl061/sx150x: Remove unneeded include of linux/workqueue.h
+      gpio: sch311x: Slightly refactor sch311x_detect for better readability
+      gpio: kempld: Fix autoloading of module
+      gpio: rdc321x: Convert to use devm_kzalloc
 
+Daniel Krueger (1):
+      gpio-sch: set output level after configuration of direction
 
+Ezequiel Garcia (1):
+      gpio: mvebu: Remove initcall-based driver initialization
+
+Geert Uytterhoeven (2):
+      gpio: rcar: Add optional functional clock to bindings
+      gpio: rcar: Add minimal runtime PM support
+
+George Cherian (2):
+      gpio: pcf857x: Avoid calling irq_domain_cleanup twice
+      gpio: pcf857x: Add IRQF_SHARED when request irq
+
+Jarkko Nikula (1):
+      Documentation / ACPI: Fix location of GPIO documentation
+
+Javier Martinez Canillas (9):
+      gpio: omap: convert to use irq_domain_add_simple()
+      gpio: omap: check gpiochip_add() return value
+      gpio: omap: add a GPIO_OMAP option instead of using ARCH_OMAP
+      gpio: omap: convert driver to use gpiolib irqchip
+      MAINTAINERS: update GPIO OMAP driver entry
+      gpio: em: use BIT() macro instead of shifting bits
+      gpio: kempld: use BIT() macro instead of shifting bits
+      gpio: omap: use BIT() macro instead of shifting bits
+      gpio: pl061: use BIT() macro instead of shifting bits
+
+Jean Delvare (3):
+      gpio: timberdale: simplify dependencies
+      gpio-pch: Fix Kconfig dependencies
+      gpio: Add run-time dependencies to R-Car driver
+
+Jingoo Han (25):
+      gpio: adp5520: remove unnecessary OOM messages
+      gpio: adp5588: remove unnecessary OOM messages
+      gpio: davinci: remove unnecessary OOM messages
+      gpio: em: remove unnecessary OOM messages
+      gpio: janz-ttl: remove unnecessary OOM messages
+      gpio: lynxpoint: remove unnecessary OOM messages
+      gpio: moxart: remove unnecessary OOM messages
+      gpio: mvebu: remove unnecessary OOM messages
+      gpio: palmas: remove unnecessary OOM messages
+      gpio: rc5t583: remove unnecessary OOM messages
+      gpio: rcar: remove unnecessary OOM messages
+      gpio: rdc321x: remove unnecessary OOM messages
+      gpio: SPEAr: remove unnecessary OOM messages
+      gpio: tegra: remove unnecessary OOM messages
+      gpio: tps6586x: remove unnecessary OOM messages
+      gpio: tps65910: remove unnecessary OOM messages
+      gpio: zevio: remove unnecessary OOM messages
+      gpio: grgpio: Make of_device_id array const
+      gpio: mcp23s08: Make of_device_id array const
+      gpio: mvebu: Make of_device_id array const
+      gpio: palmas: Make of_device_id array const
+      gpio: tegra: Make of_device_id array const
+      gpio: xilinx: Make of_device_id array const
+      gpio: zevio: Make of_device_id array const
+      gpio: ep93xx: Use devm_ioremap_resource()
+
+Linus Walleij (13):
+      gpio: support threaded interrupts in irqchip helpers
+      gpio: tc3589x: use managed resources
+      gpio: tc3589x: get rid of static IRQ base
+      gpio: tc3589x: use gpiolib irqchip helpers
+      gpio: document gpio irqchips a bit more, describe helpers
+      gpio: put GPIO IRQs into their own lock class
+      gpiolib: of: remove gpio_to_desc() usage
+      gpio: do not set up hardware for IRQ_TYPE_NONE
+      Merge tag 'v3.15-rc4' into devel
+      gpio: pch: add slab include
+      gpio: mcp23s08: switch chip count to int
+      gpio: pca953x: use gpiolib irqchip helpers
+      gpio: select IRQ_DOMAIN for gpiolib irqchip helpers
+
+Michael Stickel (1):
+      gpio: mcp23s08: fixed count variable for devicetree probing
+
+Rajendra Nayak (1):
+      gpio: omap: prepare and unprepare the debounce clock
+
+Sebastian Andrzej Siewior (2):
+      gpio: dwapb: drop irq_setup_generic_chip()
+      gpio: dwapb: use a second irq chip
+
+Thierry Reding (5):
+      gpio: of: Remove unneeded dummy function
+      gpio: of: Allow -gpio suffix for property names
+      gpio: Fix gpio_get -> gpiod_get typo in kernel-doc
+      gpio: Add missing device-managed documentation
+      gpio: Add helpers for optional GPIOs
+
+Toby Smith (2):
+      gpio: pca953x: return IRQ_NONE when appropriate
+      gpio: pca953x: request a shared interrupt
+
+Yegor Yefremov (1):
+      gpio: omap: implement get_direction
+
+abdoulaye berthe (4):
+      gpio: bt8xx: use devm function for memory allocation
+      gpio: timberdale: use devm functions
+      gpio: janzttl: use devm function
+      gpio: gpioep93xx: use devm functions
+
+ Documentation/acpi/enumeration.txt                 |   2 +-
+ .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |   6 +
+ Documentation/driver-model/devres.txt              |   7 +
+ Documentation/gpio/driver.txt                      |  59 ++++++
+ MAINTAINERS                                        |   1 +
+ drivers/gpio/Kconfig                               |  20 +-
+ drivers/gpio/Makefile                              |   2 +-
+ drivers/gpio/devres.c                              |  43 +++++
+ drivers/gpio/gpio-adp5520.c                        |   4 +-
+ drivers/gpio/gpio-adp5588.c                        |   4 +-
+ drivers/gpio/gpio-bt8xx.c                          |  19 +-
+ drivers/gpio/gpio-davinci.c                        |   4 +-
+ drivers/gpio/gpio-dwapb.c                          |  38 ++--
+ drivers/gpio/gpio-em.c                             |   3 +-
+ drivers/gpio/gpio-ep93xx.c                         |  34 +---
+ drivers/gpio/gpio-ge.c                             | 174 ++++++-----------
+ drivers/gpio/gpio-generic.c                        |   9 +
+ drivers/gpio/gpio-grgpio.c                         |   2 +-
+ drivers/gpio/gpio-janz-ttl.c                       |  38 +---
+ drivers/gpio/gpio-kempld.c                         |   4 +-
+ drivers/gpio/gpio-lynxpoint.c                      |   4 +-
+ drivers/gpio/gpio-max730x.c                        |   5 +-
+ drivers/gpio/gpio-mcp23s08.c                       |  17 +-
+ drivers/gpio/gpio-moxart.c                         |   4 +-
+ drivers/gpio/gpio-mvebu.c                          |  13 +-
+ drivers/gpio/gpio-omap.c                           | 205 +++++++++++----------
+ drivers/gpio/gpio-palmas.c                         |   6 +-
+ drivers/gpio/gpio-pca953x.c                        | 102 ++++------
+ drivers/gpio/gpio-pcf857x.c                        |  11 +-
+ drivers/gpio/gpio-pch.c                            |   1 +
+ drivers/gpio/gpio-pl061.c                          |  27 ++-
+ drivers/gpio/gpio-rc5t583.c                        |   4 +-
+ drivers/gpio/gpio-rcar.c                           |   9 +-
+ drivers/gpio/gpio-rdc321x.c                        |  23 +--
+ drivers/gpio/gpio-sch.c                            |  26 ++-
+ drivers/gpio/gpio-sch311x.c                        |  16 +-
+ drivers/gpio/gpio-spear-spics.c                    |   4 +-
+ drivers/gpio/gpio-sx150x.c                         |   1 -
+ drivers/gpio/gpio-tc3589x.c                        | 148 ++++-----------
+ drivers/gpio/gpio-tegra.c                          |   6 +-
+ drivers/gpio/gpio-timberdale.c                     |  47 ++---
+ drivers/gpio/gpio-tps6586x.c                       |   4 +-
+ drivers/gpio/gpio-tps65910.c                       |   4 +-
+ drivers/gpio/gpio-xilinx.c                         |   2 +-
+ drivers/gpio/gpio-zevio.c                          |  18 +-
+ drivers/gpio/gpiolib-acpi.c                        |   5 +-
+ drivers/gpio/gpiolib-of.c                          |  16 +-
+ drivers/gpio/gpiolib.c                             | 101 ++++++++--
+ drivers/gpio/gpiolib.h                             |   5 +
+ include/linux/gpio/consumer.h                      |  41 +++++
+ include/linux/gpio/driver.h                        |   5 +-
+ include/linux/mfd/tc3589x.h                        |   1 -
+ include/linux/of_gpio.h                            |  35 +---
+ 53 files changed, 705 insertions(+), 684 deletions(-)
