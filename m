@@ -1,51 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4/4] ARM: delete old reference to ARM_GPIOLIB_COMPLEX
-Date: Wed,  4 Jun 2014 15:33:58 +0200
-Message-ID: <1401888838-3126-5-git-send-email-linus.walleij@linaro.org>
-References: <1401888838-3126-1-git-send-email-linus.walleij@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/4] ARM: mach-s5p: get rid of all <mach/gpio.h> headers
+Date: Wed, 04 Jun 2014 15:58:28 +0200
+Message-ID: <4544212.mqY6dSouMv@wuerfel>
+References: <1401888838-3126-1-git-send-email-linus.walleij@linaro.org> <1401888838-3126-3-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f180.google.com ([74.125.82.180]:63143 "EHLO
-	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753479AbaFDNec (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Jun 2014 09:34:32 -0400
-Received: by mail-we0-f180.google.com with SMTP id q58so8426933wes.25
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Jun 2014 06:34:31 -0700 (PDT)
-In-Reply-To: <1401888838-3126-1-git-send-email-linus.walleij@linaro.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:53875 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753638AbaFDN65 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Jun 2014 09:58:57 -0400
+In-Reply-To: <1401888838-3126-3-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-This inclusion guard became pointless after commit
-40ca061b1bb8827609d39679ddde6705551cb031
-"ARM: 7841/1: sa1100: remove complex GPIO interface"
-which removed the last complex gpiolib interface.
+On Wednesday 04 June 2014 15:33:56 Linus Walleij wrote:
+> This renames all the local <mach/gpio.h> headers in the S5P platforms
+> to <mach/gpio-samsung.h> indicating a scope local to this platform,
+> and cuts the implicit inclusion of <mach/gpio.h> from <linux/gpio.h>
+> by removing the use of NEED_MACH_GPIO_H from all S5P variants.
+> 
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> 
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/include/asm/gpio.h | 2 --
- 1 file changed, 2 deletions(-)
+Hmm, this patch will obviously clash with the removal of S5p64xx
+and s5pc100. It shouldn't be hard to resolve the conflict when we
+merge both into arm-soc/next/cleanup, but maybe there is a way to
+avoid it?
 
-diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
-index 5e1742ea36b7..504dcddebfcc 100644
---- a/arch/arm/include/asm/gpio.h
-+++ b/arch/arm/include/asm/gpio.h
-@@ -5,7 +5,6 @@
- #define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
- #endif
- 
--#ifndef __ARM_GPIOLIB_COMPLEX
- /* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h */
- #include <asm-generic/gpio.h>
- 
-@@ -13,7 +12,6 @@
- #define gpio_get_value  __gpio_get_value
- #define gpio_set_value  __gpio_set_value
- #define gpio_cansleep   __gpio_cansleep
--#endif
- 
- /*
-  * Provide a default gpio_to_irq() which should satisfy every case.
--- 
-1.9.3
-
+	Arnd
