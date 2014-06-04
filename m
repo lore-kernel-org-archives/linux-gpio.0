@@ -1,43 +1,113 @@
-From: Neil Zhang <zhangwm@marvell.com>
-Subject: RE: [PATCH 2/2] gpio: pxa: Make of_device_id array const
-Date: Tue, 3 Jun 2014 20:28:48 -0700
-Message-ID: <9034CBD80F070943B59700D7F8149ED901021E2255@SC-VEXCH4.marvell.com>
-References: <002301cf7f24$9beec360$d3cc4a20$%han@samsung.com>
- <002401cf7f24$cd028b80$6707a280$%han@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: of: Allow -gpio suffix for property names
+Date: Wed, 4 Jun 2014 15:08:39 +0200
+Message-ID: <20140604130837.GA28484@ulmo>
+References: <1398266889-17489-1-git-send-email-thierry.reding@gmail.com>
+ <1398266889-17489-2-git-send-email-thierry.reding@gmail.com>
+ <CACRpkdbF3N5bFY1sFkabDHO7J0F8sb1uU0xL+mjkuF-z7VocMQ@mail.gmail.com>
+ <20140602230457.GE11004@atomide.com>
+ <20140602231423.GF11004@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:15975 "EHLO
-	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753413AbaFDD26 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Jun 2014 23:28:58 -0400
-In-Reply-To: <002401cf7f24$cd028b80$6707a280$%han@samsung.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140602231423.GF11004@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: 'Alexandre Courbot' <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 'Eric Miao' <eric.y.miao@gmail.com>
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEppbmdvbyBIYW4gW21haWx0
-bzpqZzEuaGFuQHNhbXN1bmcuY29tXQ0KPiBTZW50OiAyMDE0xOo21MIzyNUgMjA6MTANCj4gVG86
-ICdMaW51cyBXYWxsZWlqJw0KPiBDYzogJ0FsZXhhbmRyZSBDb3VyYm90JzsgbGludXgtZ3Bpb0B2
-Z2VyLmtlcm5lbC5vcmc7ICdKaW5nb28gSGFuJzsgTmVpbCBaaGFuZzsNCj4gJ0VyaWMgTWlhbycN
-Cj4gU3ViamVjdDogW1BBVENIIDIvMl0gZ3BpbzogcHhhOiBNYWtlIG9mX2RldmljZV9pZCBhcnJh
-eSBjb25zdA0KPiANCj4gTWFrZSBvZl9kZXZpY2VfaWQgYXJyYXkgY29uc3QsIGJlY2F1c2UgYWxs
-IE9GIGZ1bmN0aW9ucyBoYW5kbGUgaXQgYXMgY29uc3QuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBK
-aW5nb28gSGFuIDxqZzEuaGFuQHNhbXN1bmcuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3Bpby9n
-cGlvLXB4YS5jIHwgICAgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAx
-IGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tcHhhLmMg
-Yi9kcml2ZXJzL2dwaW8vZ3Bpby1weGEuYyBpbmRleA0KPiA0MmU2ZTY0Li41MmJiZGEwIDEwMDY0
-NA0KPiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1weGEuYw0KPiArKysgYi9kcml2ZXJzL2dwaW8v
-Z3Bpby1weGEuYw0KPiBAQCAtNDk4LDcgKzQ5OCw3IEBAIHN0YXRpYyBpbnQgcHhhX2dwaW9fbnVt
-cyhzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlDQo+ICpwZGV2KSAgfQ0KPiANCj4gICNpZmRlZiBDT05G
-SUdfT0YNCj4gLXN0YXRpYyBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHB4YV9ncGlvX2R0X2lkc1tdID0g
-ew0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgcHhhX2dwaW9fZHRfaWRzW10g
-PSB7DQo+ICAJeyAuY29tcGF0aWJsZSA9ICJpbnRlbCxweGEyNXgtZ3BpbyIsCS5kYXRhID0gJnB4
-YTI1eF9pZCwgfSwNCj4gIAl7IC5jb21wYXRpYmxlID0gImludGVsLHB4YTI2eC1ncGlvIiwJLmRh
-dGEgPSAmcHhhMjZ4X2lkLCB9LA0KPiAgCXsgLmNvbXBhdGlibGUgPSAiaW50ZWwscHhhMjd4LWdw
-aW8iLAkuZGF0YSA9ICZweGEyN3hfaWQsIH0sDQo+IC0tDQo+IDEuNy4xMC40DQo+IA0KDQpBY2tl
-ZC1ieTogTmVpbCBaaGFuZyA8emhhbmd3bUBtYXJ2ZWxsLmNvbT4NCg0KQmVzdCBSZWdhcmRzLA0K
-TmVpbCBaaGFuZw0K
+
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 02, 2014 at 04:14:23PM -0700, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [140602 16:06]:
+> > * Linus Walleij <linus.walleij@linaro.org> [140425 00:53]:
+> > > On Wed, Apr 23, 2014 at 5:28 PM, Thierry Reding
+> > > <thierry.reding@gmail.com> wrote:
+> > >=20
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >
+> > > > Many bindings use the -gpio suffix in property names. Support this =
+in
+> > > > addition to the -gpios suffix when requesting GPIOs using the new
+> > > > descriptor-based API.
+> > > >
+> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > >=20
+> > > It appears this can save quite a lot of code in drivers, work that
+> > > I trust Thierry to persue based on this to some extent so patch is
+> > > tentatively applied unless something comes up.
+> >=20
+> > Looks like this patch causes a regression where GPIOs on I2C will
+> > no longer return -EPROBE_DEFER but seem to return -ENOENT instead.
+> >=20
+> > This breaks drivers using things like devm_gpiod_get_index()
+> > on a GPIO that's on a I2C bus not probed yet.
+> >=20
+> > Reverting commit dd34c37aa3e (gpio: of: Allow -gpio suffix for
+> > property names) fixes things.
+>=20
+> Looks like something like below fixes the issue.
+>=20
+> Regards,
+>=20
+> Tony
+>=20
+> 8< -----------------------
+> From: Tony Lindgren <tony@atomide.com>
+> Date: Mon, 2 Jun 2014 16:13:46 -0700
+> Subject: [PATCH] gpio: of: Fix handling for deferred probe for -gpio suff=
+ix
+>=20
+> Commit dd34c37aa3e (gpio: of: Allow -gpio suffix for property names)
+> added parsing for both -gpio and -gpios suffix but also changed
+> the handling for deferred probe unintentionally. Because of the
+> looping the second name will now return -ENOENT instead of
+> -EPROBE_DEFER. Fix the issue by breaking out of the loop if
+> -EPROBE_DEFER is encountered.
+>=20
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+>=20
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2614,7 +2614,7 @@ static struct gpio_desc *of_find_gpio(struct device=
+ *dev, const char *con_id,
+> =20
+>  		desc =3D of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
+>  						&of_flags);
+> -		if (!IS_ERR(desc))
+> +		if (!IS_ERR(desc) || (PTR_ERR(desc) =3D=3D -EPROBE_DEFER))
+>  			break;
+>  	}
+
+This looks good to me:
+
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTjxpVAAoJEN0jrNd/PrOhrcIP/jzZ/lA7zWPp2tgU7mPOqDPw
+AEgN5W622UC3wGzvloUfOp2MxP9YbkrZofoL7vMaoId5maQ4ktvIWBMElM28oKxi
+O808R1jY8NYdkh2FRIo+yebxpg63IhRWjJw33Hl3MQpE6dW9/l0YCq7HWiS2fowo
+Uqn6yoYwH/3s8l0tPUuu0KawNbVpZMPa5C1GWesnhR42X/DtssIsRzuNFnGspYnD
+0+cBXknyg46zHoAzsgGG8LqUe5R5pHFcgPtjGyGpwlX4y8I4by+I6OJWPeS5CyT5
+q8jfT3i1BI0CejyDLl5D/zHrSDwNpKyP6/UG2YRUwP/IrSa36aayKjjAb9H9Y9bT
+3BSaT504YMjeFLib0EJ6yNB4pgxb7yy41FCYp2x1Je3606kD66CIn/2VxHJY5ran
+5zG/xYfxpVy3EvbLGpXCq15tt0T0J+1VWEjcK5o0dsF4hYdWMmiS3IbIVi/L/s+K
+/unWI6MFUukE39tGvMOvcbZqRD96LPRTpKbfpnBnIhZaPtG1lliAsPJwFT/MKNWi
+tabDB6QCRQxG5gXHDQOXJPqXlL4L9oExl21qZpV/NH7IV6Bs0wkx8QGAvwO0CqVy
+c2AdTwRrm+3VOEn/RBMUeU3R/jJgoU7o3S7VCdO+uS/S0I33coXd203ofg8M5TUn
+uFAeMSq/LZXdcwlMNPnC
+=BaS6
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
