@@ -1,61 +1,105 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2][v4] gpiolib: allow simultaneous setting of multiple
- GPIO outputs
-Date: Fri, 6 Jun 2014 11:06:50 +0100
-Message-ID: <20140606100650.GG2520@sirena.org.uk>
-References: <2025835.bJlicUAVfz@pcimr>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v2 3/3] Documentation: gpio: Add APM X-Gene SoC GPIO
+ controller DTS binding
+Date: Fri, 6 Jun 2014 09:05:03 -0500
+Message-ID: <CAL_JsqJeC9AVDGcu6TK4fRGGWVYxt36BHNfObhu68mm6XNzs7g@mail.gmail.com>
+References: <1401391413-3833-1-git-send-email-fkan@apm.com>
+	<1401391413-3833-4-git-send-email-fkan@apm.com>
+	<CAAVeFuK_r0HcTAy+BCYZM0+PrqSrduQgOeqggYtSdAgzAxbx+A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Guq+xBHXhbnAFmh4"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56813 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752401AbaFFKYP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jun 2014 06:24:15 -0400
-Content-Disposition: inline
-In-Reply-To: <2025835.bJlicUAVfz@pcimr>
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:39488 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751507AbaFFOFF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jun 2014 10:05:05 -0400
+In-Reply-To: <CAAVeFuK_r0HcTAy+BCYZM0+PrqSrduQgOeqggYtSdAgzAxbx+A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Gerhard Sittig <gsi@denx.de>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Feng Kan <fkan@apm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, patches <patches@apm.com>, Will Deacon <will.deacon@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+On Fri, Jun 6, 2014 at 12:04 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Fri, May 30, 2014 at 4:23 AM, Feng Kan <fkan@apm.com> wrote:
+>> Documentation for APM X-Gene SoC GPIO controller DTS binding.
+>
+> This patch should come before 2/3. You want the binding to be visible
+> before adding entries following it.
+>
+>>
+>> Signed-off-by: Feng Kan <fkan@apm.com>
+>> ---
+>>  .../devicetree/bindings/gpio/gpio-xgene.txt        | 37 ++++++++++++++++++++++
+>>  1 file changed, 37 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+>> new file mode 100644
+>> index 0000000..7219575
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+>> @@ -0,0 +1,37 @@
+>> +APM X-Gene SoC GPIO controller bindings
+>> +
+>> +This is a gpio controller that is part of the flash controller.
+>> +All registers are 32bit and in little endian format.
+>
+> Mmm, does your driver take care of endianness issue if this controller
+> is used on big-endian architectures?
+>
+>> +
+>> +There are three flash controller gpio banks, each bank have 16
+>> +gpio pins.
+>> +
+>> +Required properties:
+>> +- compatible: "apm,xgene-gpio" for X-Gene GPIO controller
+>> +- reg: Physical base address and size of the controller's registers
+>> +- #gpio-cells: Should be two.
+>> +       - first cell is the pin number
+>> +       - second cell is used to specify optional parameters (unused)
+>> +- gpio-controller: Marks the device node as a GPIO controller.
+>> +
+>> +Example:
+>> +       gpio0: gpio0@1701c00c {
+>> +               compatible = "apm,xgene-gpio";
+>> +               reg = <0x0 0x1701c00c 0x0 0x30>;
+>> +               gpio-controller;
+>> +               #gpio-cells = <2>;
+>> +       };
+>> +
+>> +       gpio1: gpio1@1701c018 {
+>> +               compatible = "apm,xgene-gpio";
+>> +               reg = <0x0 0x1701c018 0x0 0x30>;
+>> +               gpio-controller;
+>> +               #gpio-cells = <2>;
+>> +       };
+>> +
+>> +       gpio2: gpio2@1701c024 {
+>> +               compatible = "apm,xgene-gpio";
+>> +               reg = <0x0 0x1701c024 0x0 0x30>;
+>> +               gpio-controller;
+>> +               #gpio-cells = <2>;
+>> +       };
+>
+> While I like this better than the first version, I wonder if we should
+> not have this as a single device, with each bank having an entry in
+> the reg property. Something like:
+>
+> gpio@1701c00c {
+>         compatible = "apm,xgene-gpio";
+>         reg = <0x0 0x1701c00c 0x0 0x30
+>                0x0 0x1701c018 0x0 0x30
+>                0x0 0x1701c024 0x0 0x30>;
 
---Guq+xBHXhbnAFmh4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In both versions, these sizes create overlapping resources. Don't do that.
 
-On Mon, Jun 02, 2014 at 05:28:50PM +0200, Rojhalat Ibrahim wrote:
-> Introduce new functions gpiod_set_array & gpiod_set_raw_array to the consumer
-> interface which allow setting multiple outputs with just one function call.
-> Also add an optional set_multiple function to the driver interface. Without an
-> implementation of that function in the chip driver outputs are set
-> sequentially.
+You could fix it with a size of 0xC, but I think that is overkill.
+Just put the knowledge that the bank stride is 0xC in the driver and
+do a single node. Otherwise you end up with 3 mappings to the same
+address or complex parsing code to avoid that.
 
-Reviwed-by: Mark Brown <broonie@linaro.org>
+Unless the h/w is really so configurable that it could be any sets of
+addresses, just describe the base address. If the number of banks is
+configurable, then add a property for that.
 
-Mainly from the point of view of the API; I did glance at the
-implementation but not in total detail.
-
---Guq+xBHXhbnAFmh4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTkZK3AAoJELSic+t+oim9qP0P/1unBQLC1Z1uPm1hG49gyro0
-7ee+YUNb8CsbuElhYSWRwfDg5N54KIlMTONMGDTGItBfKGsLavYsaelF/5zaXGUv
-8fi3BIOkiU7qvIbQouFvbE/BFVtGgqq70zDxZv+GdgPfshXVdqSYToPUPj2fGI/Y
-74y6DVka5yrUi5Hpk7dgulE/1vkkRhcJ0YAc2dXb+hRvlV5xt/5dX+GZjF2fXF9M
-osxJTmAgFvsjAzfu8XrDXB/KX9jkT9am/ZVOCeY9gX3uk6ga2dnOZzwcIj+uVI+w
-10Pk7a+xkF0qeG6H6PAUYS8ndV5dCcRVLhEf681uHX9yPkNfsP8DYaZuRxxbJ2bb
-tcljG9J5heAQNMnB7XxRnHRjT+3reuqvi9f2WHk7lfvqVRCsAPBx3UwH1FgnzkYV
-6YsKpNYa2i91YzEpB3ogy/WRAikWehRGxjkweH1lFEtDRKs0SGmiyq2BcbxKEL99
-yNzBLMt0kBRb8EyKmlAhtg3SRVyYSiXbUhvFbG4/Z+M+BK8X1EoYPeoNPdif9t6g
-Dhm3JbfwbBwYUWiWPhKx8JjG/Os/5Qvgdsc5t3+aXpEQiKZxyN6N70eKE/u6fJO0
-8QYHRaZTDV2pJkWow0gLpfwcY8RcPCGEw1qNJOQS53bp/yxmHZfM44eF7Hfaw5t9
-LRLksWPiM/FIXwlaEVKB
-=Ht3u
------END PGP SIGNATURE-----
-
---Guq+xBHXhbnAFmh4--
+Rob
