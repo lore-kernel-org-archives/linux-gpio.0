@@ -1,30 +1,39 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 0/4] <mach/gpio.h> purge
-Date: Fri, 6 Jun 2014 14:10:43 +0900
-Message-ID: <CAAVeFuKJE1pCtogU3BrkQHSTQyKOvo_u06Mmdioqu1_+9Nq2nA@mail.gmail.com>
-References: <1401888838-3126-1-git-send-email-linus.walleij@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/4] ARM: mach-s5p: get rid of all <mach/gpio.h> headers
+Date: Fri, 06 Jun 2014 08:50:04 +0200
+Message-ID: <4393612.d5qsoYg5L1@wuerfel>
+References: <1401888838-3126-1-git-send-email-linus.walleij@linaro.org> <1401888838-3126-3-git-send-email-linus.walleij@linaro.org> <4544212.mqY6dSouMv@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f170.google.com ([209.85.128.170]:58978 "EHLO
-	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750740AbaFFFLE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jun 2014 01:11:04 -0400
-Received: by mail-ve0-f170.google.com with SMTP id db11so2450734veb.15
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Jun 2014 22:11:03 -0700 (PDT)
-In-Reply-To: <1401888838-3126-1-git-send-email-linus.walleij@linaro.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:51140 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751969AbaFFGuk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jun 2014 02:50:40 -0400
+In-Reply-To: <4544212.mqY6dSouMv@wuerfel>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Wed, Jun 4, 2014 at 10:33 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> After deleting <mach/gpio.h> from the AT91 only S5P remains.
-> This patch set fixes up S5P and then removes NEED_MACH_GPIO_H
-> permanently removing any references to <mach/gpio.h> from the
-> ARM kernel. Do a small cleanout of a dangling reference to
-> ARM_GPIOLIB_COMPLEX at the same time.
+On Wednesday 04 June 2014 15:58:28 Arnd Bergmann wrote:
+> On Wednesday 04 June 2014 15:33:56 Linus Walleij wrote:
+> > This renames all the local <mach/gpio.h> headers in the S5P platforms
+> > to <mach/gpio-samsung.h> indicating a scope local to this platform,
+> > and cuts the implicit inclusion of <mach/gpio.h> from <linux/gpio.h>
+> > by removing the use of NEED_MACH_GPIO_H from all S5P variants.
+> > 
+> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > 
+> 
+> Hmm, this patch will obviously clash with the removal of S5p64xx
+> and s5pc100. It shouldn't be hard to resolve the conflict when we
+> merge both into arm-soc/next/cleanup, but maybe there is a way to
+> avoid it?
 
-Good riddance indeed!
+Nevermind, given how happy everyone is to see this gone, let's go
+ahead with your current version, and let us handle the conflict in
+arm-soc when we merge both patch sets.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+	Arnd
