@@ -1,39 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/4] ARM: mach-s5p: get rid of all <mach/gpio.h> headers
-Date: Fri, 06 Jun 2014 08:50:04 +0200
-Message-ID: <4393612.d5qsoYg5L1@wuerfel>
-References: <1401888838-3126-1-git-send-email-linus.walleij@linaro.org> <1401888838-3126-3-git-send-email-linus.walleij@linaro.org> <4544212.mqY6dSouMv@wuerfel>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2][v4] gpiolib: allow simultaneous setting of multiple
+ GPIO outputs
+Date: Fri, 6 Jun 2014 11:06:50 +0100
+Message-ID: <20140606100650.GG2520@sirena.org.uk>
+References: <2025835.bJlicUAVfz@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Guq+xBHXhbnAFmh4"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:51140 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751969AbaFFGuk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jun 2014 02:50:40 -0400
-In-Reply-To: <4544212.mqY6dSouMv@wuerfel>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56813 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752401AbaFFKYP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jun 2014 06:24:15 -0400
+Content-Disposition: inline
+In-Reply-To: <2025835.bJlicUAVfz@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Gerhard Sittig <gsi@denx.de>
 
-On Wednesday 04 June 2014 15:58:28 Arnd Bergmann wrote:
-> On Wednesday 04 June 2014 15:33:56 Linus Walleij wrote:
-> > This renames all the local <mach/gpio.h> headers in the S5P platforms
-> > to <mach/gpio-samsung.h> indicating a scope local to this platform,
-> > and cuts the implicit inclusion of <mach/gpio.h> from <linux/gpio.h>
-> > by removing the use of NEED_MACH_GPIO_H from all S5P variants.
-> > 
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > 
-> 
-> Hmm, this patch will obviously clash with the removal of S5p64xx
-> and s5pc100. It shouldn't be hard to resolve the conflict when we
-> merge both into arm-soc/next/cleanup, but maybe there is a way to
-> avoid it?
 
-Nevermind, given how happy everyone is to see this gone, let's go
-ahead with your current version, and let us handle the conflict in
-arm-soc when we merge both patch sets.
+--Guq+xBHXhbnAFmh4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	Arnd
+On Mon, Jun 02, 2014 at 05:28:50PM +0200, Rojhalat Ibrahim wrote:
+> Introduce new functions gpiod_set_array & gpiod_set_raw_array to the consumer
+> interface which allow setting multiple outputs with just one function call.
+> Also add an optional set_multiple function to the driver interface. Without an
+> implementation of that function in the chip driver outputs are set
+> sequentially.
+
+Reviwed-by: Mark Brown <broonie@linaro.org>
+
+Mainly from the point of view of the API; I did glance at the
+implementation but not in total detail.
+
+--Guq+xBHXhbnAFmh4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTkZK3AAoJELSic+t+oim9qP0P/1unBQLC1Z1uPm1hG49gyro0
+7ee+YUNb8CsbuElhYSWRwfDg5N54KIlMTONMGDTGItBfKGsLavYsaelF/5zaXGUv
+8fi3BIOkiU7qvIbQouFvbE/BFVtGgqq70zDxZv+GdgPfshXVdqSYToPUPj2fGI/Y
+74y6DVka5yrUi5Hpk7dgulE/1vkkRhcJ0YAc2dXb+hRvlV5xt/5dX+GZjF2fXF9M
+osxJTmAgFvsjAzfu8XrDXB/KX9jkT9am/ZVOCeY9gX3uk6ga2dnOZzwcIj+uVI+w
+10Pk7a+xkF0qeG6H6PAUYS8ndV5dCcRVLhEf681uHX9yPkNfsP8DYaZuRxxbJ2bb
+tcljG9J5heAQNMnB7XxRnHRjT+3reuqvi9f2WHk7lfvqVRCsAPBx3UwH1FgnzkYV
+6YsKpNYa2i91YzEpB3ogy/WRAikWehRGxjkweH1lFEtDRKs0SGmiyq2BcbxKEL99
+yNzBLMt0kBRb8EyKmlAhtg3SRVyYSiXbUhvFbG4/Z+M+BK8X1EoYPeoNPdif9t6g
+Dhm3JbfwbBwYUWiWPhKx8JjG/Os/5Qvgdsc5t3+aXpEQiKZxyN6N70eKE/u6fJO0
+8QYHRaZTDV2pJkWow0gLpfwcY8RcPCGEw1qNJOQS53bp/yxmHZfM44eF7Hfaw5t9
+LRLksWPiM/FIXwlaEVKB
+=Ht3u
+-----END PGP SIGNATURE-----
+
+--Guq+xBHXhbnAFmh4--
