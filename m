@@ -1,279 +1,329 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH V5 REPOST] mfd: add support for ams AS3722 PMIC
-Date: Fri, 6 Jun 2014 16:28:40 +0100
-Message-ID: <20140606152840.GV24240@lee--X1>
-References: <1382427526-2390-1-git-send-email-ldewangan@nvidia.com>
+From: Feng Kan <fkan@apm.com>
+Subject: Re: [PATCH v2 1/3] gpio: Add APM X-Gene SoC GPIO controller support
+Date: Fri, 6 Jun 2014 15:46:38 -0700
+Message-ID: <CAL85gmBjZ_JWctRN+0GHAA6Wyeq_NpQV941OKgppuJrmh2yx6A@mail.gmail.com>
+References: <1401391413-3833-1-git-send-email-fkan@apm.com>
+	<1401391413-3833-2-git-send-email-fkan@apm.com>
+	<CAAVeFuKwcO=kjijG-Sh66_pod4=-mSjKN3+_a8P-ppomv9wq7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1382427526-2390-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: sameo@linux.intel.com, broonie@kernel.org, linus.walleij@linaro.org, akpm@linux-foundation.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob@landley.net, ijc+devicetree@hellion.org.uk, grant.likely@linaro.org, Florian Lobmaier <florian.lobmaier@ams.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exprod5og108.obsmtp.com ([64.18.0.186]:35287 "HELO
+	exprod5og108.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752269AbaFFWqj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jun 2014 18:46:39 -0400
+Received: by mail-ob0-f176.google.com with SMTP id wo20so3456110obc.7
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Jun 2014 15:46:38 -0700 (PDT)
+In-Reply-To: <CAAVeFuKwcO=kjijG-Sh66_pod4=-mSjKN3+_a8P-ppomv9wq7g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: patches <patches@apm.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Laxman,
+On Thu, Jun 5, 2014 at 10:04 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Fri, May 30, 2014 at 4:23 AM, Feng Kan <fkan@apm.com> wrote:
+>> Add APM X-Gene SoC gpio controller driver.
+>>
+>> Signed-off-by: Feng Kan <fkan@apm.com>
+>> ---
+>>  drivers/gpio/Kconfig      |   9 ++
+>>  drivers/gpio/Makefile     |   1 +
+>>  drivers/gpio/gpio-xgene.c | 231 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 241 insertions(+)
+>>  create mode 100644 drivers/gpio/gpio-xgene.c
+>>
+>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>> index a86c49a..9a15983 100644
+>> --- a/drivers/gpio/Kconfig
+>> +++ b/drivers/gpio/Kconfig
+>> @@ -324,6 +324,15 @@ config GPIO_TZ1090_PDC
+>>         help
+>>           Say yes here to support Toumaz Xenif TZ1090 PDC GPIOs.
+>>
+>> +config GPIO_XGENE
+>> +       bool "APM X-Gene GPIO controller support"
+>> +       depends on ARM64 && OF_GPIO
+>> +       help
+>> +         This driver is to support the GPIO block within the APM X-Gene SoC
+>> +         platform's generic flash controller. The GPIO pins are muxed with
+>> +         the generic flash controller's address and data pins. Say yes
+>> +         here to enable the GFC GPIO functionality.
+>> +
+>>  config GPIO_XILINX
+>>         bool "Xilinx GPIO support"
+>>         depends on PPC_OF || MICROBLAZE || ARCH_ZYNQ
+>> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+>> index 6309aff..f0f2830 100644
+>> --- a/drivers/gpio/Makefile
+>> +++ b/drivers/gpio/Makefile
+>> @@ -98,6 +98,7 @@ obj-$(CONFIG_GPIO_VX855)      += gpio-vx855.o
+>>  obj-$(CONFIG_GPIO_WM831X)      += gpio-wm831x.o
+>>  obj-$(CONFIG_GPIO_WM8350)      += gpio-wm8350.o
+>>  obj-$(CONFIG_GPIO_WM8994)      += gpio-wm8994.o
+>> +obj-$(CONFIG_GPIO_XGENE)       += gpio-xgene.o
+>>  obj-$(CONFIG_GPIO_XILINX)      += gpio-xilinx.o
+>>  obj-$(CONFIG_GPIO_XTENSA)      += gpio-xtensa.o
+>>  obj-$(CONFIG_GPIO_ZEVIO)       += gpio-zevio.o
+>> diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
+>> new file mode 100644
+>> index 0000000..a542f76
+>> --- /dev/null
+>> +++ b/drivers/gpio/gpio-xgene.c
+>> @@ -0,0 +1,231 @@
+>> +/*
+>> + * AppliedMicro X-Gene SoC GPIO Driver
+>> + *
+>> + * Copyright (c) 2014, Applied Micro Circuits Corporation
+>> + * Author: Feng Kan <fkan@apm.com>.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + * You should have received a copy of the GNU General Public License
+>> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/init.h>
+>> +#include <linux/io.h>
+>> +#include <linux/spinlock.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/of_gpio.h>
+>> +#include <linux/of.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/types.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/bitops.h>
+>> +
+>> +#define GPIO_SET_MASK(x)       BIT(x + 16)
+>> +
+>> +#define GPIO_SET_DR_OFFSET     0x00
+>> +#define GPIO_DATA_OFFSET       0x08
+>> +
+>> +#define XGENE_MAX_GPIO_PER_BANK        16
+>> +
+>> +struct xgene_gpio;
+>> +
+>> +struct xgene_gpio {
+>> +       struct  device          *dev;
+>> +       struct xgene_gpio_bank  *banks;
+>
+> I am not seeing this member being used at all in your driver, apart
+> from being kzalloc'd.
+>
+>> +       struct gpio_chip        chip;
+>> +       void __iomem            *base;
+>> +       spinlock_t              lock;
+>> +#ifdef CONFIG_PM
+>> +       u32                     set_dr_val;
+>> +       u32                     od_val;
+>> +#endif
+>> +};
+>> +
+>> +static inline struct xgene_gpio *to_xgene_gpio(struct gpio_chip *chip)
+>> +{
+>> +       return container_of(chip, struct xgene_gpio, chip);
+>> +}
+>> +
+>> +static int xgene_gpio_get(struct gpio_chip *gc, unsigned int offset)
+>> +{
+>> +       struct xgene_gpio *bank = to_xgene_gpio(gc);
+>> +
+>> +       return !!(ioread32(bank->base + GPIO_DATA_OFFSET) & BIT(offset));
+>> +}
+>> +
+>> +static void xgene_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
+>> +{
+>> +       struct xgene_gpio *bank = to_xgene_gpio(gc);
+>> +       unsigned long flags;
+>> +       u32 setval;
+>> +
+>> +       spin_lock_irqsave(&bank->lock, flags);
+>> +
+>> +       setval = ioread32(bank->base + GPIO_SET_DR_OFFSET);
+>> +       if (val)
+>> +               setval |= GPIO_SET_MASK(offset);
+>> +       else
+>> +               setval &= ~GPIO_SET_MASK(offset);
+>
+> Let's use __set_bit and __clear_bit here and everywhere it applies.
+This is a bit of issue on arm64, where the op for set_bit requires
+unsigned long.
+Any suggestions?
 
-This patch has already been applied, but ...
+>
+>> +       iowrite32(setval, bank->base + GPIO_SET_DR_OFFSET);
+>> +
+>> +       spin_unlock_irqrestore(&bank->lock, flags);
+>> +}
+>> +
+>> +static int xgene_gpio_dir_in(struct gpio_chip *gc, unsigned int offset)
+>> +{
+>> +       struct xgene_gpio *bank = to_xgene_gpio(gc);
+>> +       unsigned long flags;
+>> +       u32 dirval;
+>> +
+>> +       spin_lock_irqsave(&bank->lock, flags);
+>> +
+>> +       dirval = ioread32(bank->base + GPIO_SET_DR_OFFSET);
+>> +       dirval |= BIT(offset);
+>> +       iowrite32(dirval, bank->base + GPIO_SET_DR_OFFSET);
+>> +
+>> +       spin_unlock_irqrestore(&bank->lock, flags);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int xgene_gpio_dir_out(struct gpio_chip *gc,
+>> +                                       unsigned int offset, int val)
+>> +{
+>> +       struct xgene_gpio *bank = to_xgene_gpio(gc);
+>> +       unsigned long flags;
+>> +       u32 dirval;
+>> +
+>> +       spin_lock_irqsave(&bank->lock, flags);
+>> +
+>> +       dirval = ioread32(bank->base + GPIO_SET_DR_OFFSET);
+>> +       dirval &= ~BIT(offset);
+>> +       iowrite32(dirval, bank->base + GPIO_SET_DR_OFFSET);
+>> +
+>> +       spin_unlock_irqrestore(&bank->lock, flags);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +#ifdef CONFIG_PM
+>> +static int xgene_gpio_suspend(struct device *dev)
+>> +{
+>> +       struct xgene_gpio *gpio = dev_get_drvdata(dev);
+>> +
+>> +       gpio->set_dr_val = ioread32(gpio->base + GPIO_SET_DR_OFFSET);
+>> +       return 0;
+>> +}
+>> +
+>> +static int xgene_gpio_resume(struct device *dev)
+>> +{
+>> +       struct xgene_gpio *gpio = dev_get_drvdata(dev);
+>> +
+>> +       iowrite32(gpio->set_dr_val, gpio->base + GPIO_SET_DR_OFFSET);
+>> +       return 0;
+>> +}
+>> +
+>> +static SIMPLE_DEV_PM_OPS(xgene_gpio_pm, xgene_gpio_suspend, xgene_gpio_resume);
+>> +#define XGENE_GPIO_PM_OPS      (&xgene_gpio_pm)
+>> +#else
+>> +#define XGENE_GPIO_PM_OPS      NULL
+>> +#endif
+>> +
+>> +static int xgene_gpio_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device_node *np = pdev->dev.of_node;
+>> +       struct resource *res;
+>> +       struct xgene_gpio *gpio;
+>> +       int err = 0;
+>> +       unsigned int bank = 0, ngpio = 0;
+>> +
+>> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+>> +       if (!gpio) {
+>> +               err = -ENOMEM;
+>> +               goto err;
+>> +       }
+>> +       gpio->dev = &pdev->dev;
+>> +
+>> +       gpio->banks = devm_kzalloc(&pdev->dev,
+>> +                                  sizeof(struct xgene_gpio), GFP_KERNEL);
+>> +       if (!gpio->banks) {
+>> +               err = -ENOMEM;
+>> +               goto err;
+>> +       }
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +       gpio->base = devm_ioremap_nocache(&pdev->dev, res->start,
+>> +                                                       resource_size(res));
+>> +       if (IS_ERR(gpio->base)) {
+>> +               err = PTR_ERR(gpio->base);
+>> +               goto err;
+>> +       }
+>> +
+>> +       /*
+>> +        * Determine gpio bank using gpio resource address
+>> +        */
+>> +       bank = (res->start & 0xff) / 0xc - 1;
+>> +       if (bank > 2) {
+>> +               dev_err(gpio->dev, "incorrect gpio base specified\n");
+>> +               goto err;
+>> +       }
+>> +
+>> +       ngpio = XGENE_MAX_GPIO_PER_BANK;
+>> +       gpio->chip.ngpio = ngpio;
+>
+> Maybe use XGENE_MAX_GPIO_PER_BANK directly instead of ngpio which is
+> not used otherwise.
+>
+>> +       gpio->chip.of_node = np;
+>> +       gpio->chip.base = bank * ngpio;
+>
+> This is dangerous. You are assuming that your chip will be the first
+> GPIO chip to be registered. Can't you leave chip.base uninitialized?
+In a SoC system where there are multiple gpio blocks by different vendor, how
+do one assign base to each block? I want them to boot up the system in a way
+that the gpio values make sense each time.
 
-> The ams AS3722 is a compact system PMU suitable for mobile phones,
-> tablets etc. It has 4 DC/DC step-down regulators, 3 DC/DC step-down
-> controller, 11 LDOs, RTC, automatic battery, temperature and
-> over-current monitoring, 8 GPIOs, ADC and a watchdog.
->=20
-> Add MFD core driver for the AS3722 to support core functionality.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Florian Lobmaier <florian.lobmaier@ams.com>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> Acked-by: Stephen Warren <swarren@nvidia.com>
-> ---
-
-[...]
-
-> diff --git a/Documentation/devicetree/bindings/mfd/as3722.txt b/Docum=
-entation/devicetree/bindings/mfd/as3722.txt
-> new file mode 100644
-> index 0000000..fc2191e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/as3722.txt
-> @@ -0,0 +1,194 @@
-> +* ams AS3722 Power management IC.
-> +
-> +Required properties:
-> +-------------------
-> +- compatible: Must be "ams,as3722".
-> +- reg: I2C device address.
-> +- interrupt-controller: AS3722 has internal interrupt controller whi=
-ch takes the
-> +  interrupt request from internal sub-blocks like RTC, regulators, G=
-PIOs as well
-> +  as external input.
-> +- #interrupt-cells: Should be set to 2 for IRQ number and flags.
-> +  The first cell is the IRQ number. IRQ numbers for different interr=
-upt source
-> +  of AS3722 are defined at dt-bindings/mfd/as3722.h
-> +  The second cell is the flags, encoded as the trigger masks from bi=
-nding document
-> +	interrupts.txt, using dt-bindings/irq.
-> +
-> +Optional submodule and their properties:
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Pinmux and GPIO:
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Device has 8 GPIO pins which can be configured as GPIO as well as th=
-e special IO
-> +functions.
-> +
-> +Please refer to pinctrl-bindings.txt in this directory for details o=
-f the
-> +common pinctrl bindings used by client devices, including the meanin=
-g of the
-> +phrase "pin configuration node".
-> +
-> +Following are properties which is needed if GPIO and pinmux function=
-ality
-> +is required:
-> +    Required properties:
-> +    -------------------
-> +	- gpio-controller: Marks the device node as a GPIO controller.
-> +	- #gpio-cells: Number of GPIO cells. Refer to binding document
-> +			gpio/gpio.txt
-> +
-> +    Optional properties:
-> +    --------------------
-> +	Following properties are require if pin control setting is required
-> +	at boot.
-> +	- pinctrl-names: A pinctrl state named "default" be defined, using =
-the
-> +		bindings in pinctrl/pinctrl-binding.txt.
-> +	- pinctrl[0...n]: Properties to contain the phandle that refer to
-> +		different nodes of pin control settings. These nodes represents
-> +		the pin control setting of state 0 to state n. Each of these
-> +		nodes contains different subnodes to represents some desired
-> +		configuration for a list of pins. This configuration can
-> +		include the mux function to select on those pin(s), and
-> +		various pin configuration parameters, such as pull-up,
-> +		open drain.
-> +
-> +		Each subnode have following properties:
-> +		Required properties:
-> +		    - pins: List of pins. Valid values of pins properties are:
-> +				gpio0, gpio1, gpio2, gpio3, gpio4, gpio5,
-> +				gpio6, gpio7
-> +
-> +		Optional properties:
-> +			function, bias-disable, bias-pull-up, bias-pull-down,
-> +			bias-high-impedance, drive-open-drain.
-> +
-> +			Valid values for function properties are:
-> +				gpio, interrupt-out, gpio-in-interrupt,
-> +				vsup-vbat-low-undebounce-out,
-> +				vsup-vbat-low-debounce-out,
-> +				voltage-in-standby, oc-pg-sd0, oc-pg-sd6,
-> +				powergood-out, pwm-in, pwm-out, clk32k-out,
-> +				watchdog-in, soft-reset-in
-> +
-> +Regulators:
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Device has multiple DCDC and LDOs. The node "regulators" is require =
-if regulator
-> +functionality is needed.
-> +
-> +Following are properties of regulator subnode.
-> +
-> +    Optional properties:
-> +    -------------------
-> +	The input supply of regulators are the optional properties on the
-> +	regulator node. The input supply of these regulators are provided
-> +	through following properties:
-> +		vsup-sd2-supply: Input supply for SD2.
-> +		vsup-sd3-supply: Input supply for SD3.
-> +		vsup-sd4-supply: Input supply for SD4.
-> +		vsup-sd5-supply: Input supply for SD5.
-> +		vin-ldo0-supply: Input supply for LDO0.
-> +		vin-ldo1-6-supply: Input supply for LDO1 and LDO6.
-> +		vin-ldo2-5-7-supply: Input supply for LDO2, LDO5 and LDO7.
-> +		vin-ldo3-4-supply: Input supply for LDO3 and LDO4.
-> +		vin-ldo9-10-supply: Input supply for LDO9 and LDO10.
-> +		vin-ldo11-supply: Input supply for LDO11.
-> +
-> +    Optional sub nodes for regulators:
-> +    ---------------------------------
-> +	The subnodes name is the name of regulator and it must be one of:
-> +	sd[0-6], ldo[0-7], ldo[9-11]
-> +
-> +	Each sub-node should contain the constraints and initialization
-> +	information for that regulator. See regulator.txt for a description
-> +	of standard properties for these sub-nodes.
-> +	Additional optional custom properties  are listed below.
-> +		ams,ext-control: External control of the rail. The option of
-> +			this properties will tell which external input is
-> +			controlling this rail. Valid values are 0, 1, 2 ad 3.
-> +			0: There is no external control of this rail.
-> +			1: Rail is controlled by ENABLE1 input pin.
-> +			2: Rail is controlled by ENABLE2 input pin.
-> +			3: Rail is controlled by ENABLE3 input pin.
-> +			Missing this property on DT will be assume as no
-> +			external control. The external control pin macros
-> +			are defined @dt-bindings/mfd/as3722.h
-> +
-> +		ams,enable-tracking: Enable tracking with SD1, only supported
-> +			by LDO3.
-> +
-> +Example:
-> +--------
-> +#include <dt-bindings/mfd/as3722.h>
-> +...
-> +ams3722 {
-> +	compatible =3D "ams,as3722";
-> +	reg =3D <0x48>;
-> +
-> +	interrupt-parent =3D <&intc>;
-> +	interrupt-controller;
-> +	#interrupt-cells =3D <2>;
-> +
-> +	gpio-controller;
-> +	#gpio-cells =3D <2>;
-> +
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&as3722_default>;
-> +
-> +	as3722_default: pinmux {
-> +			gpio0 {
-> +				pins =3D "gpio0";
-> +				function =3D "gpio";
-> +				bias-pull-down;
-> +			};
-> +
-> +			gpio1_2_4_7 {
-> +				pins =3D "gpio1", "gpio2", "gpio4", "gpio7";
-> +				function =3D "gpio";
-> +				bias-pull-up;
-> +			};
-> +
-> +			gpio5 {
-> +				pins =3D "gpio5";
-> +				function =3D "clk32k_out";
-> +			};
-> +	}
-> +
-> +	regulators {
-> +			vsup-sd2-supply =3D <...>;
-> +			...
-> +
-> +			sd0 {
-> +				regulator-name =3D "vdd_cpu";
-> +				regulator-min-microvolt =3D <700000>;
-> +				regulator-max-microvolt =3D <1400000>;
-> +				regulator-always-on;
-> +				ams,ext-control =3D <2>;
-> +			};
-> +
-> +			sd1 {
-> +				regulator-name =3D "vdd_core";
-> +				regulator-min-microvolt =3D <700000>;
-> +				regulator-max-microvolt =3D <1400000>;
-> +				regulator-always-on;
-> +				ams,ext-control =3D <1>;
-> +			};
-> +
-> +			sd2 {
-> +				regulator-name =3D "vddio_ddr";
-> +				regulator-min-microvolt =3D <1350000>;
-> +				regulator-max-microvolt =3D <1350000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			sd4 {
-> +				regulator-name =3D "avdd-hdmi-pex";
-> +				regulator-min-microvolt =3D <1050000>;
-> +				regulator-max-microvolt =3D <1050000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			sd5 {
-> +				regulator-name =3D "vdd-1v8";
-> +				regulator-min-microvolt =3D <1800000>;
-> +				regulator-max-microvolt =3D <1800000>;
-> +				regulator-always-on;
-> +			};
-> +			....
-> +	};
-> +};
-
-[...]
-
-> +static int as3722_i2c_of_probe(struct i2c_client *i2c,
-> +			struct as3722 *as3722)
-> +{
-> +	struct device_node *np =3D i2c->dev.of_node;
-> +	struct irq_data *irq_data;
-> +
-> +	if (!np) {
-> +		dev_err(&i2c->dev, "Device Tree not found\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	irq_data =3D irq_get_irq_data(i2c->irq);
-> +	if (!irq_data) {
-> +		dev_err(&i2c->dev, "Invalid IRQ: %d\n", i2c->irq);
-> +		return -EINVAL;
-> +	}
-> +
-> +	as3722->en_intern_int_pullup =3D of_property_read_bool(np,
-> +					"ams,enable-internal-int-pullup");
-> +	as3722->en_intern_i2c_pullup =3D of_property_read_bool(np,
-> +					"ams,enable-internal-i2c-pullup");
-
-These are still not documented.  Can you please do so?
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+>
+>> +       gpio->chip.label = dev_name(&pdev->dev);
+>> +
+>> +       gpio->chip.direction_input = xgene_gpio_dir_in;
+>> +       gpio->chip.direction_output = xgene_gpio_dir_out;
+>> +       gpio->chip.get = xgene_gpio_get;
+>> +       gpio->chip.set = xgene_gpio_set;
+>> +
+>> +       platform_set_drvdata(pdev, gpio);
+>> +
+>> +       err = gpiochip_add(&gpio->chip);
+>> +       if (err) {
+>> +               dev_err(gpio->dev,
+>> +                       "failed to register gpiochip for bank%d\n", bank);
+>> +               goto err;
+>> +       }
+>> +
+>> +       dev_info(&pdev->dev, "X-Gene GPIO driver registered\n");
+>> +       return 0;
+>> +err:
+>> +       dev_err(&pdev->dev, "X-Gene GPIO driver registration failed\n");
+>> +       return err;
+>> +}
+>> +
+>> +#ifdef CONFIG_OF
+>> +static const struct of_device_id xgene_gpio_of_match[] = {
+>> +       { .compatible = "apm,xgene-gpio", },
+>> +       {},
+>> +};
+>> +MODULE_DEVICE_TABLE(of, xgene_gpio_of_match);
+>> +#endif
+>> +
+>> +static struct platform_driver xgene_gpio_driver = {
+>> +       .driver = {
+>> +               .name = "xgene-gpio",
+>> +               .owner = THIS_MODULE,
+>> +               .of_match_table = of_match_ptr(xgene_gpio_of_match),
+>> +               .pm     = XGENE_GPIO_PM_OPS,
+>> +       },
+>> +       .probe = xgene_gpio_probe,
+>> +};
+>> +
+>> +module_platform_driver(xgene_gpio_driver);
+>> +
+>> +MODULE_AUTHOR("Feng Kan <fkan@apm.com>");
+>> +MODULE_DESCRIPTION("APM X-Gene GPIO driver");
+>> +MODULE_LICENSE("GPL");
+>> --
+>> 1.9.1
+>>
