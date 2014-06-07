@@ -1,299 +1,324 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2 1/3] gpio: Add APM X-Gene SoC GPIO controller support
-Date: Sat, 7 Jun 2014 21:28:22 +0900
-Message-ID: <CAAVeFuL_hit8FRjktuNP8k4EUGAYRMHqRBnGhCU-TzYrOW4J2A@mail.gmail.com>
-References: <1401391413-3833-1-git-send-email-fkan@apm.com>
- <1401391413-3833-2-git-send-email-fkan@apm.com> <CAAVeFuKwcO=kjijG-Sh66_pod4=-mSjKN3+_a8P-ppomv9wq7g@mail.gmail.com>
- <CAL85gmBjZ_JWctRN+0GHAA6Wyeq_NpQV941OKgppuJrmh2yx6A@mail.gmail.com>
+Subject: Re: [PATCH 1/2][v4] gpiolib: allow simultaneous setting of multiple
+ GPIO outputs
+Date: Sat, 7 Jun 2014 22:24:52 +0900
+Message-ID: <CAAVeFuLTo_KqQ6dTi_B0kfV=qMF0rwtvxua_cb3XXCwYSRO7AQ@mail.gmail.com>
+References: <2025835.bJlicUAVfz@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:45842 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752563AbaFGM2n (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Jun 2014 08:28:43 -0400
-In-Reply-To: <CAL85gmBjZ_JWctRN+0GHAA6Wyeq_NpQV941OKgppuJrmh2yx6A@mail.gmail.com>
+Received: from mail-vc0-f175.google.com ([209.85.220.175]:49838 "EHLO
+	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750745AbaFGNZO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Jun 2014 09:25:14 -0400
+Received: by mail-vc0-f175.google.com with SMTP id hy4so187183vcb.6
+        for <linux-gpio@vger.kernel.org>; Sat, 07 Jun 2014 06:25:13 -0700 (PDT)
+In-Reply-To: <2025835.bJlicUAVfz@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Feng Kan <fkan@apm.com>
-Cc: patches <patches@apm.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Gerhard Sittig <gsi@denx.de>
 
-On Sat, Jun 7, 2014 at 7:46 AM, Feng Kan <fkan@apm.com> wrote:
-> On Thu, Jun 5, 2014 at 10:04 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> On Fri, May 30, 2014 at 4:23 AM, Feng Kan <fkan@apm.com> wrote:
->>> Add APM X-Gene SoC gpio controller driver.
->>>
->>> Signed-off-by: Feng Kan <fkan@apm.com>
->>> ---
->>>  drivers/gpio/Kconfig      |   9 ++
->>>  drivers/gpio/Makefile     |   1 +
->>>  drivers/gpio/gpio-xgene.c | 231 ++++++++++++++++++++++++++++++++++++++++++++++
->>>  3 files changed, 241 insertions(+)
->>>  create mode 100644 drivers/gpio/gpio-xgene.c
->>>
->>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->>> index a86c49a..9a15983 100644
->>> --- a/drivers/gpio/Kconfig
->>> +++ b/drivers/gpio/Kconfig
->>> @@ -324,6 +324,15 @@ config GPIO_TZ1090_PDC
->>>         help
->>>           Say yes here to support Toumaz Xenif TZ1090 PDC GPIOs.
->>>
->>> +config GPIO_XGENE
->>> +       bool "APM X-Gene GPIO controller support"
->>> +       depends on ARM64 && OF_GPIO
->>> +       help
->>> +         This driver is to support the GPIO block within the APM X-Gene SoC
->>> +         platform's generic flash controller. The GPIO pins are muxed with
->>> +         the generic flash controller's address and data pins. Say yes
->>> +         here to enable the GFC GPIO functionality.
->>> +
->>>  config GPIO_XILINX
->>>         bool "Xilinx GPIO support"
->>>         depends on PPC_OF || MICROBLAZE || ARCH_ZYNQ
->>> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
->>> index 6309aff..f0f2830 100644
->>> --- a/drivers/gpio/Makefile
->>> +++ b/drivers/gpio/Makefile
->>> @@ -98,6 +98,7 @@ obj-$(CONFIG_GPIO_VX855)      += gpio-vx855.o
->>>  obj-$(CONFIG_GPIO_WM831X)      += gpio-wm831x.o
->>>  obj-$(CONFIG_GPIO_WM8350)      += gpio-wm8350.o
->>>  obj-$(CONFIG_GPIO_WM8994)      += gpio-wm8994.o
->>> +obj-$(CONFIG_GPIO_XGENE)       += gpio-xgene.o
->>>  obj-$(CONFIG_GPIO_XILINX)      += gpio-xilinx.o
->>>  obj-$(CONFIG_GPIO_XTENSA)      += gpio-xtensa.o
->>>  obj-$(CONFIG_GPIO_ZEVIO)       += gpio-zevio.o
->>> diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
->>> new file mode 100644
->>> index 0000000..a542f76
->>> --- /dev/null
->>> +++ b/drivers/gpio/gpio-xgene.c
->>> @@ -0,0 +1,231 @@
->>> +/*
->>> + * AppliedMicro X-Gene SoC GPIO Driver
->>> + *
->>> + * Copyright (c) 2014, Applied Micro Circuits Corporation
->>> + * Author: Feng Kan <fkan@apm.com>.
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + *
->>> + * This program is distributed in the hope that it will be useful,
->>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> + * GNU General Public License for more details.
->>> + *
->>> + * You should have received a copy of the GNU General Public License
->>> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->>> + */
->>> +
->>> +#include <linux/module.h>
->>> +#include <linux/kernel.h>
->>> +#include <linux/init.h>
->>> +#include <linux/io.h>
->>> +#include <linux/spinlock.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/of_gpio.h>
->>> +#include <linux/of.h>
->>> +#include <linux/gpio.h>
->>> +#include <linux/types.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/clk.h>
->>> +#include <linux/bitops.h>
->>> +
->>> +#define GPIO_SET_MASK(x)       BIT(x + 16)
->>> +
->>> +#define GPIO_SET_DR_OFFSET     0x00
->>> +#define GPIO_DATA_OFFSET       0x08
->>> +
->>> +#define XGENE_MAX_GPIO_PER_BANK        16
->>> +
->>> +struct xgene_gpio;
->>> +
->>> +struct xgene_gpio {
->>> +       struct  device          *dev;
->>> +       struct xgene_gpio_bank  *banks;
->>
->> I am not seeing this member being used at all in your driver, apart
->> from being kzalloc'd.
->>
->>> +       struct gpio_chip        chip;
->>> +       void __iomem            *base;
->>> +       spinlock_t              lock;
->>> +#ifdef CONFIG_PM
->>> +       u32                     set_dr_val;
->>> +       u32                     od_val;
->>> +#endif
->>> +};
->>> +
->>> +static inline struct xgene_gpio *to_xgene_gpio(struct gpio_chip *chip)
->>> +{
->>> +       return container_of(chip, struct xgene_gpio, chip);
->>> +}
->>> +
->>> +static int xgene_gpio_get(struct gpio_chip *gc, unsigned int offset)
->>> +{
->>> +       struct xgene_gpio *bank = to_xgene_gpio(gc);
->>> +
->>> +       return !!(ioread32(bank->base + GPIO_DATA_OFFSET) & BIT(offset));
->>> +}
->>> +
->>> +static void xgene_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
->>> +{
->>> +       struct xgene_gpio *bank = to_xgene_gpio(gc);
->>> +       unsigned long flags;
->>> +       u32 setval;
->>> +
->>> +       spin_lock_irqsave(&bank->lock, flags);
->>> +
->>> +       setval = ioread32(bank->base + GPIO_SET_DR_OFFSET);
->>> +       if (val)
->>> +               setval |= GPIO_SET_MASK(offset);
->>> +       else
->>> +               setval &= ~GPIO_SET_MASK(offset);
->>
->> Let's use __set_bit and __clear_bit here and everywhere it applies.
-> This is a bit of issue on arm64, where the op for set_bit requires
-> unsigned long.
-> Any suggestions?
-
-You could change setval to be an unsigned long as well, and have it
-casted to u32 in your call to iowrite32 below, but that's not
-necessarily better. Maybe the current form is ok indeed.
-
+On Tue, Jun 3, 2014 at 12:28 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+> Introduce new functions gpiod_set_array & gpiod_set_raw_array to the consumer
+> interface which allow setting multiple outputs with just one function call.
+> Also add an optional set_multiple function to the driver interface. Without an
+> implementation of that function in the chip driver outputs are set
+> sequentially.
 >
->>
->>> +       iowrite32(setval, bank->base + GPIO_SET_DR_OFFSET);
->>> +
->>> +       spin_unlock_irqrestore(&bank->lock, flags);
->>> +}
->>> +
->>> +static int xgene_gpio_dir_in(struct gpio_chip *gc, unsigned int offset)
->>> +{
->>> +       struct xgene_gpio *bank = to_xgene_gpio(gc);
->>> +       unsigned long flags;
->>> +       u32 dirval;
->>> +
->>> +       spin_lock_irqsave(&bank->lock, flags);
->>> +
->>> +       dirval = ioread32(bank->base + GPIO_SET_DR_OFFSET);
->>> +       dirval |= BIT(offset);
->>> +       iowrite32(dirval, bank->base + GPIO_SET_DR_OFFSET);
->>> +
->>> +       spin_unlock_irqrestore(&bank->lock, flags);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static int xgene_gpio_dir_out(struct gpio_chip *gc,
->>> +                                       unsigned int offset, int val)
->>> +{
->>> +       struct xgene_gpio *bank = to_xgene_gpio(gc);
->>> +       unsigned long flags;
->>> +       u32 dirval;
->>> +
->>> +       spin_lock_irqsave(&bank->lock, flags);
->>> +
->>> +       dirval = ioread32(bank->base + GPIO_SET_DR_OFFSET);
->>> +       dirval &= ~BIT(offset);
->>> +       iowrite32(dirval, bank->base + GPIO_SET_DR_OFFSET);
->>> +
->>> +       spin_unlock_irqrestore(&bank->lock, flags);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +#ifdef CONFIG_PM
->>> +static int xgene_gpio_suspend(struct device *dev)
->>> +{
->>> +       struct xgene_gpio *gpio = dev_get_drvdata(dev);
->>> +
->>> +       gpio->set_dr_val = ioread32(gpio->base + GPIO_SET_DR_OFFSET);
->>> +       return 0;
->>> +}
->>> +
->>> +static int xgene_gpio_resume(struct device *dev)
->>> +{
->>> +       struct xgene_gpio *gpio = dev_get_drvdata(dev);
->>> +
->>> +       iowrite32(gpio->set_dr_val, gpio->base + GPIO_SET_DR_OFFSET);
->>> +       return 0;
->>> +}
->>> +
->>> +static SIMPLE_DEV_PM_OPS(xgene_gpio_pm, xgene_gpio_suspend, xgene_gpio_resume);
->>> +#define XGENE_GPIO_PM_OPS      (&xgene_gpio_pm)
->>> +#else
->>> +#define XGENE_GPIO_PM_OPS      NULL
->>> +#endif
->>> +
->>> +static int xgene_gpio_probe(struct platform_device *pdev)
->>> +{
->>> +       struct device_node *np = pdev->dev.of_node;
->>> +       struct resource *res;
->>> +       struct xgene_gpio *gpio;
->>> +       int err = 0;
->>> +       unsigned int bank = 0, ngpio = 0;
->>> +
->>> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
->>> +       if (!gpio) {
->>> +               err = -ENOMEM;
->>> +               goto err;
->>> +       }
->>> +       gpio->dev = &pdev->dev;
->>> +
->>> +       gpio->banks = devm_kzalloc(&pdev->dev,
->>> +                                  sizeof(struct xgene_gpio), GFP_KERNEL);
->>> +       if (!gpio->banks) {
->>> +               err = -ENOMEM;
->>> +               goto err;
->>> +       }
->>> +
->>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +       gpio->base = devm_ioremap_nocache(&pdev->dev, res->start,
->>> +                                                       resource_size(res));
->>> +       if (IS_ERR(gpio->base)) {
->>> +               err = PTR_ERR(gpio->base);
->>> +               goto err;
->>> +       }
->>> +
->>> +       /*
->>> +        * Determine gpio bank using gpio resource address
->>> +        */
->>> +       bank = (res->start & 0xff) / 0xc - 1;
->>> +       if (bank > 2) {
->>> +               dev_err(gpio->dev, "incorrect gpio base specified\n");
->>> +               goto err;
->>> +       }
->>> +
->>> +       ngpio = XGENE_MAX_GPIO_PER_BANK;
->>> +       gpio->chip.ngpio = ngpio;
->>
->> Maybe use XGENE_MAX_GPIO_PER_BANK directly instead of ngpio which is
->> not used otherwise.
->>
->>> +       gpio->chip.of_node = np;
->>> +       gpio->chip.base = bank * ngpio;
->>
->> This is dangerous. You are assuming that your chip will be the first
->> GPIO chip to be registered. Can't you leave chip.base uninitialized?
-> In a SoC system where there are multiple gpio blocks by different vendor, how
-> do one assign base to each block? I want them to boot up the system in a way
-> that the gpio values make sense each time.
+> Implementing the set_multiple function in a chip driver allows for:
+> - Improved performance for certain use cases. The original motivation for this
+>   was the task of configuring an FPGA. In that specific case, where 9 GPIO
+>   lines have to be set many times, configuration time goes down from 48 s to
+>   20 s when using the new function.
+> - Simultaneous glitch-free setting of multiple pins on any kind of parallel
+>   bus attached to GPIOs provided they all reside on the same chip and bank.
+>
+> Limitations:
+>   Performance is only improved for normal high-low outputs. Open drain and
+>   open source outputs are always set separately from each other. Those kinds
+>   of outputs could probably be accelerated in a similar way if we could
+>   forgo the error checking when setting GPIO directions.
+>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> ---
+> Change log:
+>   v4: - add gpiod_set_array function for setting logical values
+>       - change interface of the set_multiple driver function to use
+>         unsigned long as type for the bit fields
+>       - use generic bitops (which also use unsigned long for bit fields)
+>       - do not use ARCH_NR_GPIOS any more
+>   v3: - add documentation
+>       - change commit message
+>   v2: - use descriptor interface
+>       - allow arbitrary groups of GPIOs spanning multiple chips
+>
+>  Documentation/gpio/consumer.txt |  23 +++++
+>  drivers/gpio/gpiolib.c          | 180 ++++++++++++++++++++++++++++++++++++++++
+>  include/linux/gpio/consumer.h   |  38 +++++++++
+>  include/linux/gpio/driver.h     |   4 +
+>  4 files changed, 245 insertions(+)
+>
+> diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+> index 09854fe..ba02b84 100644
+> --- a/Documentation/gpio/consumer.txt
+> +++ b/Documentation/gpio/consumer.txt
+> @@ -163,6 +163,29 @@ The active-low state of a GPIO can also be queried using the following call:
+>  Note that these functions should only be used with great moderation ; a driver
+>  should not have to care about the physical line level.
+>
+> +Set multiple GPIO outputs with a single function call
+> +-----------------------------------------------------
+> +The following functions set the output values of an array of GPIOs:
+> +
+> +       void gpiod_set_array(unsigned int array_size,
+> +                            struct gpio_desc **desc_array,
+> +                            int *value_array)
+> +       void gpiod_set_raw_array(unsigned int array_size,
+> +                                struct gpio_desc **desc_array,
+> +                                int *value_array)
+> +       void gpiod_set_array_cansleep(unsigned int array_size,
+> +                                     struct gpio_desc **desc_array,
+> +                                     int *value_array)
+> +       void gpiod_set_raw_array_cansleep(unsigned int array_size,
+> +                                         struct gpio_desc **desc_array,
+> +                                         int *value_array)
+> +
+> +The array can be an arbitrary set of GPIOs. The functions will try to set
+> +GPIOs belonging to the same bank or chip simultaneously if supported by the
+> +corresponding chip driver. In that case a significantly improved performance
+> +can be expected. If simultaneous setting is not possible the GPIOs will be set
+> +sequentially.
+> +
+>  GPIOs mapped to IRQs
+>  --------------------
+>  GPIO lines can quite often be used as IRQs. You can get the IRQ number
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index f48817d..a2be195 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2345,6 +2345,84 @@ static void _gpiod_set_raw_value(struct gpio_desc *desc, bool value)
+>                 chip->set(chip, gpio_chip_hwgpio(desc), value);
+>  }
+>
+> +/*
+> + * set multiple outputs on the same chip;
+> + * use the chip's set_multiple function if available;
+> + * otherwise set the outputs sequentially;
+> + * @mask: bit mask array; one bit per output; BITS_PER_LONG bits per word
+> + *        defines which outputs are to be changed
+> + * @bits: bit value array; one bit per output; BITS_PER_LONG bits per word
+> + *        defines the values the outputs specified by mask are to be set to
+> + */
+> +static void gpio_chip_set_multiple(struct gpio_chip *chip,
+> +                                  unsigned long *mask, unsigned long *bits)
+> +{
+> +       if (chip->set_multiple) {
+> +               chip->set_multiple(chip, mask, bits);
+> +       } else {
+> +               int i;
+> +               for (i = 0; i < chip->ngpio; i++) {
+> +                       if (mask[BIT_WORD(i)] == 0) {
+> +                               /* no more set bits in this mask word;
+> +                                * skip ahead to the next word */
+> +                               i = (BIT_WORD(i) + 1) * BITS_PER_LONG - 1;
+> +                               continue;
+> +                       }
+> +                       /* set outputs if the corresponding mask bit is set */
+> +                       if (__test_and_clear_bit(i, mask)) {
+> +                               chip->set(chip, i, test_bit(i, bits));
 
-This used to be done in board files ; some older arm boards are still
-doing it. But this is really legacy and in your case you don't use
-board files anyway.
+Shouldn't this be
 
-Ideally you should really not rely on global GPIO numbers. Device tree
-lets you assign GPIO to functions without having to rely on that
-knowledge. The gpiod interface completely gets rid of it. The only
-use-case I can think of is if you need to access the GPIO from the
-sysfs interface. Is it the case? If so, I'd suggest we try to devise a
-solution for this too. Otherwise, can you elaborate on why the GPIO
-numbers are important to you?
+        chip->set(chip, i, test_bit(i, bits[BIT_WORD(i)]);
 
-In any case you cannot have your driver just assume that some range in
-the GPIO numberspace will be free. That's just not portable.
+?
+
+> +                       }
+> +               }
+> +       }
+> +}
+> +
+> +static void gpiod_set_array_priv(bool raw, unsigned int array_size,
+> +                                struct gpio_desc **desc_array,
+> +                                int *value_array)
+> +{
+> +       int i = 0;
+> +
+> +       while (i < array_size) {
+> +               struct gpio_chip *chip = desc_array[i]->chip;
+> +               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+> +               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+
+Nice, you fixed this even better than I suggested. Great to see the
+variable-length array seems to be ok.
+
+> +               int count = 0;
+> +
+> +               memset(mask, 0, sizeof(mask));
+> +               do {
+> +                       struct gpio_desc *desc = desc_array[i];
+> +                       int hwgpio = gpio_chip_hwgpio(desc);
+> +                       int value = value_array[i];
+> +
+> +                       if (!raw && test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+> +                               value = !value;
+> +                       trace_gpio_value(desc_to_gpio(desc), 0, value);
+> +                       /*
+> +                        * collect all normal outputs belonging to the same chip
+> +                        * open drain and open source outputs are set individually
+> +                        */
+> +                       if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
+> +                               _gpio_set_open_drain_value(desc,value);
+> +                       } else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
+> +                               _gpio_set_open_source_value(desc, value);
+> +                       } else {
+> +                               __set_bit(hwgpio, mask);
+> +                               if (value) {
+> +                                       __set_bit(hwgpio, bits);
+> +                               } else {
+> +                                       __clear_bit(hwgpio, bits);
+
+Same here, no more divisions or modulos in the code: great use of the
+bit operations!
+
+> +                               }
+> +                               count++;
+> +                       }
+> +                       i++;
+> +               } while ((i < array_size) && (desc_array[i]->chip == chip));
+> +               /* push collected bits to outputs */
+> +               if (count != 0) {
+> +                       gpio_chip_set_multiple(chip, mask, bits);
+> +               }
+> +       }
+> +}
+
+So this function will perform optimally if GPIOs belonging to the same
+chip are contiguous in the array of gpio_desc. I.e. if you have
+interleaved GPIO chips, gpio_chip_set_multiple() will be called
+multiple times per chip. It might be worth to mention this in the
+documentation of the public functions.
+
+> +
+>  /**
+>   * gpiod_set_raw_value() - assign a gpio's raw value
+>   * @desc: gpio whose value will be assigned
+> @@ -2390,6 +2468,60 @@ void gpiod_set_value(struct gpio_desc *desc, int value)
+>  EXPORT_SYMBOL_GPL(gpiod_set_value);
+>
+>  /**
+> + * gpiod_set_raw_array() - assign values to an array of GPIOs
+> + * @array_size: number of elements in the descriptor / value arrays
+> + * @desc_array: array of GPIO descriptors whose values will be assigned
+> + * @value_array: array of values to assign
+> + *
+> + * Set the raw values of the GPIOs, i.e. the values of the physical lines
+> + * without regard for their ACTIVE_LOW status.
+> + *
+> + * This function should be called from contexts where we cannot sleep, and will
+> + * complain if the GPIO chip functions potentially sleep.
+> + */
+> +void gpiod_set_raw_array(unsigned int array_size,
+> +                        struct gpio_desc **desc_array, int *value_array)
+> +{
+> +       if (array_size == 0)
+> +               return;
+> +       if (!desc_array)
+> +               return;
+> +       if (!desc_array[0])
+> +               return;
+
+I'm still not convinced we need that last one. If any descriptor is
+NULL gpiod_set_array_priv() will crash anyway, so we might as well
+crash earlier... The user needs to provide valid data, and here in
+particular you cannot check every faulty case without parsing the GPIO
+array several times. If you want to validate the GPIOs this should be
+done for each of them in gpiod_set_array_priv().
+
+> +       /* Should be using gpiod_set_raw_array_cansleep() */
+> +       WARN_ON(desc_array[0]->chip->can_sleep);
+
+This will only check for the first chip in the array, but again you
+would need to make another array pass to check everything properly
+here.
+
+However, if you pass an additional can_sleep parameter to
+gpiod_set_array_priv, you can have the can_sleep property of each chip
+tested there. Maybe this should be moved there?
+
+Moving these tests would also simplify your 4 public functions.
+
+So in conclusion for these functions:
+1) check the validity of each individual GPIO in
+gpiod_set_array_priv() (if you want to check their validity at all!)
+2) add a can_sleep parameter to gpiod_set_array_priv() and check each
+chip as it comes by
+3) Remove the check against array_size since gpiod_set_array_priv()
+will return immediatly if it is 0.
+
+And voila! Simpler and safer functions. :)
+
+> +       gpiod_set_array_priv(true, array_size, desc_array, value_array);
+> +}
+> +EXPORT_SYMBOL_GPL(gpiod_set_raw_array);
+> +
+> +/**
+> + * gpiod_set_array() - assign values to an array of GPIOs
+> + * @array_size: number of elements in the descriptor / value arrays
+> + * @desc_array: array of GPIO descriptors whose values will be assigned
+> + * @value_array: array of values to assign
+> + *
+> + * Set the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
+> + * into account.
+> + *
+> + * This function should be called from contexts where we cannot sleep, and will
+> + * complain if the GPIO chip functions potentially sleep.
+> + */
+> +void gpiod_set_array(unsigned int array_size,
+> +                    struct gpio_desc **desc_array, int *value_array)
+> +{
+> +       if (array_size == 0)
+> +               return;
+> +       if (!desc_array)
+> +               return;
+> +       if (!desc_array[0])
+> +               return;
+> +       /* Should be using gpiod_set_array_cansleep() */
+> +       WARN_ON(desc_array[0]->chip->can_sleep);
+> +       gpiod_set_array_priv(false, array_size, desc_array, value_array);
+> +}
+> +EXPORT_SYMBOL_GPL(gpiod_set_array);
+> +
+> +/**
+>   * gpiod_cansleep() - report whether gpio value access may sleep
+>   * @desc: gpio to check
+>   *
+> @@ -2559,6 +2691,54 @@ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+>  EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+>
+>  /**
+> + * gpiod_set_raw_array_cansleep() - assign values to an array of GPIOs
+> + * @array_size: number of elements in the descriptor / value arrays
+> + * @desc_array: array of GPIO descriptors whose values will be assigned
+> + * @value_array: array of values to assign
+> + *
+> + * Set the raw values of the GPIOs, i.e. the values of the physical lines
+> + * without regard for their ACTIVE_LOW status.
+> + *
+> + * This function is to be called from contexts that can sleep.
+> + */
+> +void gpiod_set_raw_array_cansleep(unsigned int array_size,
+> +                                 struct gpio_desc **desc_array,
+> +                                 int *value_array)
+> +{
+> +       might_sleep_if(extra_checks);
+
+This one can stay here, as I suppose the compiler will optimize it
+away, something we could not do in gpiod_set_array_priv().
+
+This patch is turning into something really nice. It is very clear,
+well documented and makes smart use of bit ops. Great job. I guess I
+will have nothing to say after one or two more passes.
 
 Alex.
