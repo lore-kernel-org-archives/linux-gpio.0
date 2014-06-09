@@ -1,34 +1,145 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V5 REPOST] mfd: add support for ams AS3722 PMIC
-Date: Mon, 9 Jun 2014 12:40:33 +0530
-Message-ID: <53955DE9.3090201@nvidia.com>
-References: <1382427526-2390-1-git-send-email-ldewangan@nvidia.com> <20140606152840.GV24240@lee--X1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] power: poweroff: gpio: convert to use descriptors
+Date: Mon,  9 Jun 2014 11:22:08 +0200
+Message-ID: <1402305728-2155-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:4759 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868AbaFIHKz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jun 2014 03:10:55 -0400
-In-Reply-To: <20140606152840.GV24240@lee--X1>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:56792 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S936175AbaFIJWR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jun 2014 05:22:17 -0400
+Received: by mail-wg0-f44.google.com with SMTP id x13so2740042wgg.15
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Jun 2014 02:22:16 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: "sameo@linux.intel.com" <sameo@linux.intel.com>, "broonie@kernel.org" <broonie@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "rob@landley.net" <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "grant.likely@linaro.org" <grant.likely@linaro.org>, Florian Lobmaier <florian.lobmai>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, linux-kernel@vger.kernel.org
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Friday 06 June 2014 08:58 PM, Lee Jones wrote:
-> Laxman,
->
-> This patch has already been applied, but ...
->
-> +	as3722->en_intern_int_pullup = of_property_read_bool(np,
-> +					"ams,enable-internal-int-pullup");
-> +	as3722->en_intern_i2c_pullup = of_property_read_bool(np,
-> +					"ams,enable-internal-i2c-pullup");
-> These are still not documented.  Can you please do so?
->
+This switches the GPIO poweroff driver to use GPIO descriptors
+rather than numeral GPIOs. We get rid of the specific inversion
+handling as GPIO descriptors know if they are active low or
+high and can assert the line properly, so we do not need to
+check the flag OF_GPIO_ACTIVE_LOW returned from the old call
+of_get_gpio_flags() anymore.
 
-Sure, Thanks for pointing this out. I sent the patch.
-Thanks,
-Laxman
+Also convert to use managed resources and use dev_* message
+printing while we're at it.
+
+Cc: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/power/reset/gpio-poweroff.c | 52 ++++++++++++++-----------------------
+ 1 file changed, 19 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/power/reset/gpio-poweroff.c b/drivers/power/reset/gpio-poweroff.c
+index e290d48ddd99..41e1594589d5 100644
+--- a/drivers/power/reset/gpio-poweroff.c
++++ b/drivers/power/reset/gpio-poweroff.c
+@@ -15,31 +15,29 @@
+ #include <linux/init.h>
+ #include <linux/delay.h>
+ #include <linux/platform_device.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_gpio.h>
+ #include <linux/module.h>
+ 
+ /*
+  * Hold configuration here, cannot be more than one instance of the driver
+  * since pm_power_off itself is global.
+  */
+-static int gpio_num = -1;
+-static int gpio_active_low;
++static struct gpio_desc *reset_gpio;
+ 
+ static void gpio_poweroff_do_poweroff(void)
+ {
+-	BUG_ON(!gpio_is_valid(gpio_num));
++	BUG_ON(!reset_gpio);
+ 
+ 	/* drive it active, also inactive->active edge */
+-	gpio_direction_output(gpio_num, !gpio_active_low);
++	gpiod_direction_output(reset_gpio, 1);
+ 	mdelay(100);
+ 	/* drive inactive, also active->inactive edge */
+-	gpio_set_value(gpio_num, gpio_active_low);
++	gpiod_set_value(reset_gpio, 0);
+ 	mdelay(100);
+ 
+ 	/* drive it active, also inactive->active edge */
+-	gpio_set_value(gpio_num, !gpio_active_low);
++	gpiod_set_value(reset_gpio, 1);
+ 
+ 	/* give it some time */
+ 	mdelay(3000);
+@@ -49,54 +47,42 @@ static void gpio_poweroff_do_poweroff(void)
+ 
+ static int gpio_poweroff_probe(struct platform_device *pdev)
+ {
+-	enum of_gpio_flags flags;
+ 	bool input = false;
+-	int ret;
+ 
+ 	/* If a pm_power_off function has already been added, leave it alone */
+ 	if (pm_power_off != NULL) {
+-		pr_err("%s: pm_power_off function already registered",
++		dev_err(&pdev->dev,
++			"%s: pm_power_off function already registered",
+ 		       __func__);
+ 		return -EBUSY;
+ 	}
+ 
+-	gpio_num = of_get_gpio_flags(pdev->dev.of_node, 0, &flags);
+-	if (!gpio_is_valid(gpio_num))
+-		return gpio_num;
+-
+-	gpio_active_low = flags & OF_GPIO_ACTIVE_LOW;
++	reset_gpio = devm_gpiod_get(&pdev->dev, NULL);
++	if (!reset_gpio)
++		return -ENODEV;
+ 
+ 	input = of_property_read_bool(pdev->dev.of_node, "input");
+ 
+-	ret = gpio_request(gpio_num, "poweroff-gpio");
+-	if (ret) {
+-		pr_err("%s: Could not get GPIO %d", __func__, gpio_num);
+-		return ret;
+-	}
+ 	if (input) {
+-		if (gpio_direction_input(gpio_num)) {
+-			pr_err("Could not set direction of GPIO %d to input",
+-			       gpio_num);
+-			goto err;
++		if (gpiod_direction_input(reset_gpio)) {
++			dev_err(&pdev->dev,
++				"Could not set direction of reset GPIO to input\n");
++			return -ENODEV;
+ 		}
+ 	} else {
+-		if (gpio_direction_output(gpio_num, gpio_active_low)) {
+-			pr_err("Could not set direction of GPIO %d", gpio_num);
+-			goto err;
++		if (gpiod_direction_output(reset_gpio, 0)) {
++			dev_err(&pdev->dev,
++				"Could not set direction of reset GPIO\n");
++			return -ENODEV;
+ 		}
+ 	}
+ 
+ 	pm_power_off = &gpio_poweroff_do_poweroff;
+ 	return 0;
+-
+-err:
+-	gpio_free(gpio_num);
+-	return -ENODEV;
+ }
+ 
+ static int gpio_poweroff_remove(struct platform_device *pdev)
+ {
+-	gpio_free(gpio_num);
+ 	if (pm_power_off == &gpio_poweroff_do_poweroff)
+ 		pm_power_off = NULL;
+ 
+-- 
+1.9.3
+
