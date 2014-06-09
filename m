@@ -1,44 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/4] ARM: mach-s5p: get rid of all <mach/gpio.h> headers
-Date: Mon, 9 Jun 2014 13:36:33 +0200
-Message-ID: <CACRpkdZMwLv1rHS+mSAT4YP3F0VUtt9E-u3p89a-YzRRFbugGQ@mail.gmail.com>
-References: <1401888838-3126-1-git-send-email-linus.walleij@linaro.org>
-	<1401888838-3126-3-git-send-email-linus.walleij@linaro.org>
-	<4544212.mqY6dSouMv@wuerfel>
+Subject: Re: [PATCH V5 REPOST] mfd: add support for ams AS3722 PMIC
+Date: Mon, 9 Jun 2014 13:57:16 +0200
+Message-ID: <CACRpkdYPxPo2VPS=7-5UKWVJuQaZBV8JVGnfLQb=FxeemiCBgA@mail.gmail.com>
+References: <1382427526-2390-1-git-send-email-ldewangan@nvidia.com>
+	<20140606152840.GV24240@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:49866 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933458AbaFILge (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jun 2014 07:36:34 -0400
-Received: by mail-ob0-f175.google.com with SMTP id wo20so5689082obc.6
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Jun 2014 04:36:33 -0700 (PDT)
-In-Reply-To: <4544212.mqY6dSouMv@wuerfel>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140606152840.GV24240@lee--X1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Landley <rob@landley.net>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, Florian Lobmaier <florian.lobmaier@ams.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Wed, Jun 4, 2014 at 3:58 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 04 June 2014 15:33:56 Linus Walleij wrote:
->> This renames all the local <mach/gpio.h> headers in the S5P platforms
->> to <mach/gpio-samsung.h> indicating a scope local to this platform,
->> and cuts the implicit inclusion of <mach/gpio.h> from <linux/gpio.h>
->> by removing the use of NEED_MACH_GPIO_H from all S5P variants.
->>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Fri, Jun 6, 2014 at 5:28 PM, Lee Jones <lee.jones@linaro.org> wrote:
+
+>> +     as3722->en_intern_int_pullup = of_property_read_bool(np,
+>> +                                     "ams,enable-internal-int-pullup");
+>> +     as3722->en_intern_i2c_pullup = of_property_read_bool(np,
+>> +                                     "ams,enable-internal-i2c-pullup");
 >
-> Hmm, this patch will obviously clash with the removal of S5p64xx
-> and s5pc100.
+> These are still not documented.  Can you please do so?
 
-So it is happening? I was actually expecting that to happen in
-v3.14 or so and now I finally lost my patience ;-)
+...and these look an awful lot like some pin config shoehorned
+silently into the MFD subsystem.
 
-> It shouldn't be hard to resolve the conflict when we
-> merge both into arm-soc/next/cleanup,
+There *are* cases where a complete pin control driver for some
+IP is overkill though, I'm worried if this is some generic disease
+with this driver :-/
 
-First come, first serve. I will send my pull request at the end
-of the merge window I hope. If removal comes first, I'll rebase.
-
-Linus
+Yours,
+Linus Walleij
