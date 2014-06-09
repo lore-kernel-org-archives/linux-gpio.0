@@ -1,89 +1,152 @@
-From: Ben Dooks <ben@trinity.fluff.org>
-Subject: Re: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Mon, 9 Jun 2014 00:18:23 +0100
-Message-ID: <20140608231823.GB10112@trinity.fluff.org>
-References: <20140530094025.3b78301e@canb.auug.org.au>
- <1401449454-30895-1-git-send-email-berthe.ab@gmail.com>
- <1401449454-30895-2-git-send-email-berthe.ab@gmail.com>
- <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
- <5388C0F1.90503@gmail.com>
- <5388CB1B.3090802@metafoo.de>
+From: Houcheng Lin <houcheng@gmail.com>
+Subject: Re: [RFC PATCH] gpio: Add a defer reset object to send board specific reset
+Date: Mon, 9 Jun 2014 11:37:56 +0800
+Message-ID: <CAL8JtxCZ_L9LnL9ZR8jb6CJmbBAv2nyye+rsrodkgAvG3mV5mQ@mail.gmail.com>
+References: <1402189798-7665-1-git-send-email-houcheng@gmail.com>
+	<CAAVeFuKGyGXQtD9XwqQ=V1M4-tHQLBF5j5i3+-eGCawS0iJNew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <5388CB1B.3090802@metafoo.de>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: David Daney <ddaney.cavm@gmail.com>, abdoulaye berthe <berthe.ab@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, m@bues.ch, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Linux-sh list <linux-sh@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, patches@opensource.wolfsonmicro.com, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:58581 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753907AbaFIDh4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Jun 2014 23:37:56 -0400
+In-Reply-To: <CAAVeFuKGyGXQtD9XwqQ=V1M4-tHQLBF5j5i3+-eGCawS0iJNew@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Olof Johansson <olof@lixom.net>
 
-On Fri, May 30, 2014 at 08:16:59PM +0200, Lars-Peter Clausen wrote:
-> On 05/30/2014 07:33 PM, David Daney wrote:
-> >On 05/30/2014 04:39 AM, Geert Uytterhoeven wrote:
-> >>On Fri, May 30, 2014 at 1:30 PM, abdoulaye berthe <berthe.ab@gmail.com>
-> >>wrote:
-> >>>--- a/drivers/gpio/gpiolib.c
-> >>>+++ b/drivers/gpio/gpiolib.c
-> >>>@@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct
-> >>>gpio_chip *gpiochip);
-> >>>   *
-> >>>   * A gpio_chip with any GPIOs still requested may not be removed.
-> >>>   */
-> >>>-int gpiochip_remove(struct gpio_chip *chip)
-> >>>+void gpiochip_remove(struct gpio_chip *chip)
-> >>>  {
-> >>>         unsigned long   flags;
-> >>>-       int             status = 0;
-> >>>         unsigned        id;
-> >>>
-> >>>         acpi_gpiochip_remove(chip);
-> >>>@@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
-> >>>         of_gpiochip_remove(chip);
-> >>>
-> >>>         for (id = 0; id < chip->ngpio; id++) {
-> >>>-               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
-> >>>-                       status = -EBUSY;
-> >>>-                       break;
-> >>>-               }
-> >>>-       }
-> >>>-       if (status == 0) {
-> >>>-               for (id = 0; id < chip->ngpio; id++)
-> >>>-                       chip->desc[id].chip = NULL;
-> >>>-
-> >>>-               list_del(&chip->list);
-> >>>+               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
-> >>>+                       panic("gpio: removing gpiochip with gpios still
-> >>>requested\n");
-> >>
-> >>panic?
-> >
-> >NACK to the patch for this reason.  The strongest thing you should do here
-> >is WARN.
-> >
-> >That said, I am not sure why we need this whole patch set in the first place.
-> 
-> Well, what currently happens when you remove a device that is a
-> provider of a gpio_chip which is still in use, is that the kernel
-> crashes. Probably with a rather cryptic error message. So this patch
-> doesn't really change the behavior, but makes it more explicit what
-> is actually wrong. And even if you replace the panic() by a WARN()
-> it will again just crash slightly later.
-> 
-> This is a design flaw in the GPIO subsystem that needs to be fixed.
+# RESEND and please ignore previous mail #
 
-Surely then the best way is to error out to the module unload and
-stop the driver being unloaded?
+On 2014/06/08 20:58, Alexandre Courbot wrote:
+> Interesting approach to a long-standing problem. I had my own
+> embarrassing attempt at it (power sequences), and more recently Olof
+> (CC'd) sent something related for the MMC bus
+> (http://www.spinics.net/lists/devicetree/msg18900.html - I'm not sure
+> what has become of this patch?). And there are certainly other
+> attempts that I don't know of. So, let's say that this time we do it
+> for real. There are some points I like in your approach, like the fact
+> that it is completely bus-agnostic. But although it will certainly not
+> end up being as controversial as the power sequences have been, I am
+> not sure everybody will agree to use the DT this way...
 
--- 
-Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
+Thanks a lot for your reply. I not sure if DT people like this approach to use
+DT. As most poeple use DT as a script to describe a hardware board: cpu,
+buses, memory, address mappings and devices. But I think the DT file can also
+be a interface between hardware and software engineers. From the software
+engineer's view to a board, he may not get clear informed that this board's
+some chip need a special reset signal when bus is on. From the hardware
+engineer's view, every devices may works well on bootloader but not in Linux.
+The DT file can serve as note between the two engineers, and a defered reset
+object specify in DT file level can a useful note in this situation.
 
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
+>> Example dts File
+>> ----------------
+>>     usb-ehci-chip@1211000{
+>>         usb-phy = <&usb2_phy>;
+>>         defer_reset_vbus {
+>>             compatible = "defer-reset";
+>>             reset-gpios = <&gpx3 5 1>;
+>>             reset-init = <0>;
+>>             reset-end = <1>;
+>>             delay = <5>;
+>>         };
+>>     };
+>
+> Here I am not convinced that everybody will like the fact that this
+> appears as a device of its own, with its own compatible property.
+> Let's see what the DT people think of it.
+Yes, this patch need DT people agree to use DT in this way.
+>
+> +       /* setup parameters */
+> +       of_property_read_u32_array(dnode, "reset-init", reset_init, count);
+> +       of_property_read_u32_array(dnode, "reset-end", reset_end, count);
+> +       of_property_read_u32(dnode, "delay", &delay);
+> +
+> +       /* reset init */
+> +       for (i = 0; i < count; i++) {
+> +               gpio = of_get_named_gpio(dnode, "reset-gpios", i);
+>
+> Quick note: please make use of the gpiod interface in your code.
+> (include/linux/gpio/consumer.h and Documentation/gpio/consumer.txt).
+> That will simplify it a great deal and will force you to actually
+> request the GPIOs, which you omitted here.
+I ommitted this and will add code to use consumer.h in next version.
+> +static int gdr_probe(struct platform_device *pdev)
+> +{
+> +       struct list_head *pos;
+> +
+> +       pr_debug("gpio defer reset probe\n");
+> +       list_for_each(pos, &deferred_reset_list) {
+> +               struct platform_device *pd;
+> +               struct defer_reset_private *prv = list_entry(
+> +                       pos, struct defer_reset_private, next);
+> +               if (prv->issued)
+> +                       continue;
+> +               pd = of_find_device_by_node(
+> +                       prv->node->parent);
+> +               if (pd->dev.driver != 0) {
+> +                       gdr_issue_reset(pdev, prv->node);
+> +                       prv->issued = 1;
+>
+> Is there anything that prevents you from removing (and freeing) the
+> items from the list once the reset is issued?
+
+Nothing prevents the removing and freeing. The resources claimed by this
+driver are no depend to others and should be release immediately after usage.
+The free of resources will be added in next version.
+
+>
+>
+>> +               }
+>> +       }
+>> +       list_for_each(pos, &deferred_reset_list) {
+>> +               struct defer_reset_private *prv = list_entry(pos,
+>> +                       struct defer_reset_private, next);
+>> +               if (!prv->issued)
+>> +                       return -EPROBE_DEFER;
+>> +       }
+>> +       return 0;
+>
+> If you can remove your defer_reset_private instances as they are
+> processed you can simple return 0 if the list is empty, or
+> -EPROBE_DEFER otherwise. And probably get rid of your "issued" member
+> too.
+>
+> Also, once everything is processed, it would be nice to de-register your device.
+
+Yes, the driver only need a list to keep all pending deferred reset. Once
+a reset is issued, the corresponding deferred-reset object in list can be
+removed and that the member "issued" can no longer needed. When list empty,
+de-register this device from kernel.
+
+>
+> Before doing a more thorough review, I'd like to discuss the basic
+> idea. All the previous attempts at implementing an out-of-bus reset
+> mechanism are strong evidence that something like this is needed.
+> Having a generic mechanism would be a great plus. I am not convinced
+> that using a dummy device instance is the right thing to do though.
+> Also depending on the bus or device you might desire a different
+> timing for issuing the reset: e.g. I know of a modem on a discoverable
+> bus (MMC) that will only let itself be probed after the reset is
+> applied.
+
+On some hardware board's resetting signal's timing sequence depends on
+initialization of a device. Pull the reseting logic onto the device level fits
+the original hardware and no need to modify the chip driver's source code.
+
+However, this mechanism is encasulated as a dummy, pseudo device in kerne. By
+nature, it should be a system type/errata, bus feature or kernel feature. I am
+not sure if it is okay that a kernel feature code can registers a driver, run
+probe code and de-register driver. Is there any suggestion ?
+
+>
+> Maybe something ought to be implemented at a deeper level, like the
+> bus (as in, all of them) of even the device layer?
+>
+> Alex.
+
+Thanks a lot for spending time and giving comments.
+Best regards,
+Houcheng Lin
