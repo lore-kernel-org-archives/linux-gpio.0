@@ -1,61 +1,51 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Subject: RE: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Mon, 9 Jun 2014 13:43:56 +0000
-Message-ID: <063D6719AE5E284EB5DD2968C1650D6D17259A1F@AcuExch.aculab.com>
-References: <20140530094025.3b78301e@canb.auug.org.au>
- <1401449454-30895-1-git-send-email-berthe.ab@gmail.com>
- <1401449454-30895-2-git-send-email-berthe.ab@gmail.com>
- <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
- <5388C0F1.90503@gmail.com> <5388CB1B.3090802@metafoo.de>
- <20140608231823.GB10112@trinity.fluff.org> <53959A93.7080308@metafoo.de>
- <5395B379.2010706@samsung.com>
+From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH] USB: ftdi_sio: add GPIO support
+Date: Mon, 9 Jun 2014 15:23:13 +0100
+Message-ID: <20140609152313.45f353d6@alan.etchedpixels.co.uk>
+References: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <5395B379.2010706@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: 'Andrzej Hajda' <a.hajda@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, Ben Dooks <ben@trinity.fluff.org>
-Cc: driverdevel <devel@driverdev.osuosl.org>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, "spear-devel@list.st.com" <spear-devel@list.st.com>, David Daney <ddaney.cavm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "patches@opensource.wolfsonmicro.com" <patches@opensource.wolfsonmicro.com>, linux-wireless <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "m@bues.ch" <m@bues.ch>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-samsungsoc@vger.kerne
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:58396 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752662AbaFIOXo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jun 2014 10:23:44 -0400
+In-Reply-To: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sascha Silbe <x-linux@infra-silbe.de>
+Cc: Johan Hovold <jhovold@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Of Andrzej Hajda
-...
-> > You can't error out on module unload, although that's not really relevant
-> > here. gpiochip_remove() is typically called when the device that registered
-> > the GPIO chip is unbound. And despite some remove() callbacks having a
-> > return type of int you can not abort the removal of a device.
-> 
-> It is a design flaw in many subsystems having providers and consumers,
-> not only GPIO. The same situation is with clock providers, regulators,
-> phys, drm_panels, ..., at least it was such last time I have tested it.
-> 
-> The problem is that many frameworks assumes that lifetime of provider is
-> always bigger than lifetime of its consumers, and this is wrong
-> assumption - usually it is not possible to prevent unbinding driver from
-> device, so if the device is a provider there is no way to inform
-> consumers about his removal.
-> 
-> Some solution for such problems is to use some kind of availability
-> callbacks for requesting resources (gpios, clocks, regulators,...)
-> instead of simple 'getters' (clk_get, gpiod_get). Callbacks should
-> guarantee that the resource is always valid between callback reporting
-> its availability and callback reporting its removal. Such approach seems
-> to be complicated at the first sight but it should allow to make the
-> code safe and as a bonus it will allow to avoid deferred probing.
-> Btw I have send already RFC for such framework [1].
+>  #include <linux/kernel.h>
+>  #include <linux/errno.h>
+> +#ifdef CONFIG_GPIOLIB
+> +#include <linux/gpio.h>
+> +#endif
 
-Callbacks for delete are generally a locking nightmare.
-A two-way handshake is also usually needed to avoid problems
-with concurrent disconnect requests.
 
-	David
+Please create a new struct, a new file and put all the GPIO stuff in
+there rather than #if bombing the driver.
+
+You can then declare blank methods for the gpio stuff if GPIO is not
+compiled in - ie in the headers
+
+
+#ifdef CONFIG_GPIOLIB
+extern int ftdi_gpio_open(struct ftdi_private *priv);
+etc...
+#else
+extern inline  int ftdi_gpio_open(struct ftdi_private *priv) { return 0 };
+#endif
+
+
+that keeps the code itself clean and easy to read and also ensures all
+the types are checked everywhere we want.
+
+Functionality wise nothing stands out as a problem. I would expect -EBUSY
+not -ENXIO if the port was being used for GPIO so could not be used for
+tty.
+
+I would favour the new config option.
+
+Alan
