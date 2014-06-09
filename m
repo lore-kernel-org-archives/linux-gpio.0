@@ -1,145 +1,93 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] power: poweroff: gpio: convert to use descriptors
-Date: Mon,  9 Jun 2014 11:22:08 +0200
-Message-ID: <1402305728-2155-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:56792 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S936175AbaFIJWR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jun 2014 05:22:17 -0400
-Received: by mail-wg0-f44.google.com with SMTP id x13so2740042wgg.15
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Jun 2014 02:22:16 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
+Date: Mon, 09 Jun 2014 13:29:23 +0200
+Message-ID: <53959A93.7080308@metafoo.de>
+References: <20140530094025.3b78301e@canb.auug.org.au>
+ <1401449454-30895-1-git-send-email-berthe.ab@gmail.com>
+ <1401449454-30895-2-git-send-email-berthe.ab@gmail.com>
+ <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
+ <5388C0F1.90503@gmail.com> <5388CB1B.3090802@metafoo.de>
+ <20140608231823.GB10112@trinity.fluff.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20140608231823.GB10112@trinity.fluff.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Ben Dooks <ben@trinity.fluff.org>
+Cc: Linux MIPS Mailing List <linux-mips@linux-mips.org>, m@bues.ch, Linux-sh list <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, platform-driver-x86@vger.kernel.org, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, Alexandre Courbot <gnurou@gmail.com>, patches@opensource.wolfsonmicro.com, linux-samsungsoc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, spear-devel@list.st.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Daney <ddaney.cavm@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, linux-kernel@vger.kernel.
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, linux-kernel@vger.kernel.org
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-This switches the GPIO poweroff driver to use GPIO descriptors
-rather than numeral GPIOs. We get rid of the specific inversion
-handling as GPIO descriptors know if they are active low or
-high and can assert the line properly, so we do not need to
-check the flag OF_GPIO_ACTIVE_LOW returned from the old call
-of_get_gpio_flags() anymore.
+On 06/09/2014 01:18 AM, Ben Dooks wrote:
+> On Fri, May 30, 2014 at 08:16:59PM +0200, Lars-Peter Clausen wrote:
+>> On 05/30/2014 07:33 PM, David Daney wrote:
+>>> On 05/30/2014 04:39 AM, Geert Uytterhoeven wrote:
+>>>> On Fri, May 30, 2014 at 1:30 PM, abdoulaye berthe <berthe.ab@gmail.com>
+>>>> wrote:
+>>>>> --- a/drivers/gpio/gpiolib.c
+>>>>> +++ b/drivers/gpio/gpiolib.c
+>>>>> @@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct
+>>>>> gpio_chip *gpiochip);
+>>>>>    *
+>>>>>    * A gpio_chip with any GPIOs still requested may not be removed.
+>>>>>    */
+>>>>> -int gpiochip_remove(struct gpio_chip *chip)
+>>>>> +void gpiochip_remove(struct gpio_chip *chip)
+>>>>>   {
+>>>>>          unsigned long   flags;
+>>>>> -       int             status = 0;
+>>>>>          unsigned        id;
+>>>>>
+>>>>>          acpi_gpiochip_remove(chip);
+>>>>> @@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
+>>>>>          of_gpiochip_remove(chip);
+>>>>>
+>>>>>          for (id = 0; id < chip->ngpio; id++) {
+>>>>> -               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
+>>>>> -                       status = -EBUSY;
+>>>>> -                       break;
+>>>>> -               }
+>>>>> -       }
+>>>>> -       if (status == 0) {
+>>>>> -               for (id = 0; id < chip->ngpio; id++)
+>>>>> -                       chip->desc[id].chip = NULL;
+>>>>> -
+>>>>> -               list_del(&chip->list);
+>>>>> +               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
+>>>>> +                       panic("gpio: removing gpiochip with gpios still
+>>>>> requested\n");
+>>>>
+>>>> panic?
+>>>
+>>> NACK to the patch for this reason.  The strongest thing you should do here
+>>> is WARN.
+>>>
+>>> That said, I am not sure why we need this whole patch set in the first place.
+>>
+>> Well, what currently happens when you remove a device that is a
+>> provider of a gpio_chip which is still in use, is that the kernel
+>> crashes. Probably with a rather cryptic error message. So this patch
+>> doesn't really change the behavior, but makes it more explicit what
+>> is actually wrong. And even if you replace the panic() by a WARN()
+>> it will again just crash slightly later.
+>>
+>> This is a design flaw in the GPIO subsystem that needs to be fixed.
+>
+> Surely then the best way is to error out to the module unload and
+> stop the driver being unloaded?
+>
 
-Also convert to use managed resources and use dev_* message
-printing while we're at it.
+You can't error out on module unload, although that's not really relevant 
+here. gpiochip_remove() is typically called when the device that registered 
+the GPIO chip is unbound. And despite some remove() callbacks having a 
+return type of int you can not abort the removal of a device.
 
-Cc: Alexandre Courbot <acourbot@nvidia.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/power/reset/gpio-poweroff.c | 52 ++++++++++++++-----------------------
- 1 file changed, 19 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/power/reset/gpio-poweroff.c b/drivers/power/reset/gpio-poweroff.c
-index e290d48ddd99..41e1594589d5 100644
---- a/drivers/power/reset/gpio-poweroff.c
-+++ b/drivers/power/reset/gpio-poweroff.c
-@@ -15,31 +15,29 @@
- #include <linux/init.h>
- #include <linux/delay.h>
- #include <linux/platform_device.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/of_platform.h>
--#include <linux/of_gpio.h>
- #include <linux/module.h>
- 
- /*
-  * Hold configuration here, cannot be more than one instance of the driver
-  * since pm_power_off itself is global.
-  */
--static int gpio_num = -1;
--static int gpio_active_low;
-+static struct gpio_desc *reset_gpio;
- 
- static void gpio_poweroff_do_poweroff(void)
- {
--	BUG_ON(!gpio_is_valid(gpio_num));
-+	BUG_ON(!reset_gpio);
- 
- 	/* drive it active, also inactive->active edge */
--	gpio_direction_output(gpio_num, !gpio_active_low);
-+	gpiod_direction_output(reset_gpio, 1);
- 	mdelay(100);
- 	/* drive inactive, also active->inactive edge */
--	gpio_set_value(gpio_num, gpio_active_low);
-+	gpiod_set_value(reset_gpio, 0);
- 	mdelay(100);
- 
- 	/* drive it active, also inactive->active edge */
--	gpio_set_value(gpio_num, !gpio_active_low);
-+	gpiod_set_value(reset_gpio, 1);
- 
- 	/* give it some time */
- 	mdelay(3000);
-@@ -49,54 +47,42 @@ static void gpio_poweroff_do_poweroff(void)
- 
- static int gpio_poweroff_probe(struct platform_device *pdev)
- {
--	enum of_gpio_flags flags;
- 	bool input = false;
--	int ret;
- 
- 	/* If a pm_power_off function has already been added, leave it alone */
- 	if (pm_power_off != NULL) {
--		pr_err("%s: pm_power_off function already registered",
-+		dev_err(&pdev->dev,
-+			"%s: pm_power_off function already registered",
- 		       __func__);
- 		return -EBUSY;
- 	}
- 
--	gpio_num = of_get_gpio_flags(pdev->dev.of_node, 0, &flags);
--	if (!gpio_is_valid(gpio_num))
--		return gpio_num;
--
--	gpio_active_low = flags & OF_GPIO_ACTIVE_LOW;
-+	reset_gpio = devm_gpiod_get(&pdev->dev, NULL);
-+	if (!reset_gpio)
-+		return -ENODEV;
- 
- 	input = of_property_read_bool(pdev->dev.of_node, "input");
- 
--	ret = gpio_request(gpio_num, "poweroff-gpio");
--	if (ret) {
--		pr_err("%s: Could not get GPIO %d", __func__, gpio_num);
--		return ret;
--	}
- 	if (input) {
--		if (gpio_direction_input(gpio_num)) {
--			pr_err("Could not set direction of GPIO %d to input",
--			       gpio_num);
--			goto err;
-+		if (gpiod_direction_input(reset_gpio)) {
-+			dev_err(&pdev->dev,
-+				"Could not set direction of reset GPIO to input\n");
-+			return -ENODEV;
- 		}
- 	} else {
--		if (gpio_direction_output(gpio_num, gpio_active_low)) {
--			pr_err("Could not set direction of GPIO %d", gpio_num);
--			goto err;
-+		if (gpiod_direction_output(reset_gpio, 0)) {
-+			dev_err(&pdev->dev,
-+				"Could not set direction of reset GPIO\n");
-+			return -ENODEV;
- 		}
- 	}
- 
- 	pm_power_off = &gpio_poweroff_do_poweroff;
- 	return 0;
--
--err:
--	gpio_free(gpio_num);
--	return -ENODEV;
- }
- 
- static int gpio_poweroff_remove(struct platform_device *pdev)
- {
--	gpio_free(gpio_num);
- 	if (pm_power_off == &gpio_poweroff_do_poweroff)
- 		pm_power_off = NULL;
- 
--- 
-1.9.3
-
+- Lars
