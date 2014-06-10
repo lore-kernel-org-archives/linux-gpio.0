@@ -1,80 +1,70 @@
-From: abdoulaye berthe <berthe.ab@gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Mon, 9 Jun 2014 23:22:06 +0200
-Message-ID: <CABprByZ0Y3ZxpEwjTUL8hkOrzT6uJoSg+eGRZfjtMjizXfO6fw@mail.gmail.com>
-References: <CAAVeFuLMLfa-1RhcdSrKDUz7=eLqZurBSFSsN7N0x-0S+_btJA@mail.gmail.com>
-	<1401906155-10543-1-git-send-email-berthe.ab@gmail.com>
-	<1401906155-10543-3-git-send-email-berthe.ab@gmail.com>
-	<CAAVeFu+ZWy1He1CxTh+GmHtwow0P=vX_9u0P67-p_ntpqDQGtg@mail.gmail.com>
+Date: Tue, 10 Jun 2014 08:57:32 +0200
+Message-ID: <5396AC5C.2080108@samsung.com>
+References: <20140530094025.3b78301e@canb.auug.org.au>
+ <1401449454-30895-1-git-send-email-berthe.ab@gmail.com>
+ <1401449454-30895-2-git-send-email-berthe.ab@gmail.com>
+ <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
+ <5388C0F1.90503@gmail.com> <5388CB1B.3090802@metafoo.de>
+ <20140608231823.GB10112@trinity.fluff.org> <53959A93.7080308@metafoo.de>
+ <5395B379.2010706@samsung.com>
+ <063D6719AE5E284EB5DD2968C1650D6D17259A1F@AcuExch.aculab.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qa0-f52.google.com ([209.85.216.52]:41229 "EHLO
-	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751223AbaFIVWI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jun 2014 17:22:08 -0400
-In-Reply-To: <CAAVeFu+ZWy1He1CxTh+GmHtwow0P=vX_9u0P67-p_ntpqDQGtg@mail.gmail.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:28328 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754591AbaFJG5n (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jun 2014 02:57:43 -0400
+In-reply-to: <063D6719AE5E284EB5DD2968C1650D6D17259A1F@AcuExch.aculab.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, m@bues.ch, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Laight <David.Laight@ACULAB.COM>, Lars-Peter Clausen <lars@metafoo.de>, Ben Dooks <ben@trinity.fluff.org>
+Cc: driverdevel <devel@driverdev.osuosl.org>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, "spear-devel@list.st.com" <spear-devel@list.st.com>, David Daney <ddaney.cavm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "patches@opensource.wolfsonmicro.com" <patches@opensource.wolfsonmicro.com>, linux-wireless <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "m@bues.ch" <m@bues.ch>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-samsung-soc@vger
 
-How about using the interface tracker described in the link bellow ?
-https://lkml.org/lkml/2014/5/5/55
-Abdoulaye.
+On 06/09/2014 03:43 PM, David Laight wrote:
+> From: Of Andrzej Hajda
+> ...
+>>> You can't error out on module unload, although that's not really relevant
+>>> here. gpiochip_remove() is typically called when the device that registered
+>>> the GPIO chip is unbound. And despite some remove() callbacks having a
+>>> return type of int you can not abort the removal of a device.
+>>
+>> It is a design flaw in many subsystems having providers and consumers,
+>> not only GPIO. The same situation is with clock providers, regulators,
+>> phys, drm_panels, ..., at least it was such last time I have tested it.
+>>
+>> The problem is that many frameworks assumes that lifetime of provider is
+>> always bigger than lifetime of its consumers, and this is wrong
+>> assumption - usually it is not possible to prevent unbinding driver from
+>> device, so if the device is a provider there is no way to inform
+>> consumers about his removal.
+>>
+>> Some solution for such problems is to use some kind of availability
+>> callbacks for requesting resources (gpios, clocks, regulators,...)
+>> instead of simple 'getters' (clk_get, gpiod_get). Callbacks should
+>> guarantee that the resource is always valid between callback reporting
+>> its availability and callback reporting its removal. Such approach seems
+>> to be complicated at the first sight but it should allow to make the
+>> code safe and as a bonus it will allow to avoid deferred probing.
+>> Btw I have send already RFC for such framework [1].
+> 
+> Callbacks for delete are generally a locking nightmare.
+> A two-way handshake is also usually needed to avoid problems
+> with concurrent disconnect requests.
 
+The framework I have proposed is lock-less[1] and concurrent requests
+are serialized so both objections are invalid.
 
+[1]: in fact the framework uses spinlock, but only to protect internal
+list simple operations, and even this could be converted to fully
+lock-less implementation.
 
-On Sun, Jun 8, 2014 at 2:12 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Thu, Jun 5, 2014 at 3:22 AM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
->> This avoids handling gpiochip remove error in device
->> remove handler.
->>
->> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
->> ---
->>  drivers/gpio/gpiolib.c      | 24 +++++++-----------------
->>  include/linux/gpio/driver.h |  2 +-
->>  2 files changed, 8 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->> index f48817d..022543f 100644
->> --- a/drivers/gpio/gpiolib.c
->> +++ b/drivers/gpio/gpiolib.c
->> @@ -1263,10 +1263,9 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
->>   *
->>   * A gpio_chip with any GPIOs still requested may not be removed.
->>   */
->> -int gpiochip_remove(struct gpio_chip *chip)
->> +void gpiochip_remove(struct gpio_chip *chip)
->>  {
->>         unsigned long   flags;
->> -       int             status = 0;
->>         unsigned        id;
->>
->>         acpi_gpiochip_remove(chip);
->> @@ -1278,24 +1277,15 @@ int gpiochip_remove(struct gpio_chip *chip)
->>         of_gpiochip_remove(chip);
->>
->>         for (id = 0; id < chip->ngpio; id++) {
->> -               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
->> -                       status = -EBUSY;
->> -                       break;
->> -               }
->> -       }
->> -       if (status == 0) {
->> -               for (id = 0; id < chip->ngpio; id++)
->> -                       chip->desc[id].chip = NULL;
->> -
->> -               list_del(&chip->list);
->> +               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
->> +                       panic("gpio: removing gpiochip with gpios still requested\n");
->
-> Really, really I don't think we should panic here. Apparently if you
-> don't do this things are going to crash later on some platforms. Could
-> you detail what the problem is exactly so we can try and come with a
-> solution?
->
-> Event if we crash later with a more obscure reason, using pr_err()
-> here to provide some information should be helpful enough.
->
-> Alex.
+Andrzej
+
+> 
+> 	David
+> 
+
