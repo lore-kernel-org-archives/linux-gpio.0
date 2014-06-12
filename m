@@ -1,45 +1,33 @@
-From: Michael Stickel <ms@mycable.de>
-Subject: question: Multiple mcp23s08 on one chip-select with OF
-Date: Thu, 12 Jun 2014 10:12:52 +0200
-Message-ID: <53996104.9070103@mycable.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] RFT: gpio: adnp: switch to use irqchip helpers
+Date: Thu, 12 Jun 2014 10:21:21 +0200
+Message-ID: <CACRpkdYamxVh5RhRk5dQxD2PSnjTWcdf4rvV50mmd844GeeN4w@mail.gmail.com>
+References: <1401715347-24996-1-git-send-email-linus.walleij@linaro.org>
+	<20140604143825.GG28484@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.mycable.de ([46.4.59.52]:56777 "EHLO mail.mycable.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932889AbaFLIV0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 12 Jun 2014 04:21:26 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.mycable.de (Postfix) with ESMTP id 4F8C235A5E03
-	for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 10:12:53 +0200 (CEST)
-Received: from mail.mycable.de ([127.0.0.1])
-	by localhost (mail.mycable.de [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id x2vdnwCvPWA1 for <linux-gpio@vger.kernel.org>;
-	Thu, 12 Jun 2014 10:12:53 +0200 (CEST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.mycable.de (Postfix) with ESMTP id 1A52435AE0E3
-	for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 10:12:53 +0200 (CEST)
-Received: from mail.mycable.de ([127.0.0.1])
-	by localhost (mail.mycable.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id yJ9KRTOwPVpR for <linux-gpio@vger.kernel.org>;
-	Thu, 12 Jun 2014 10:12:53 +0200 (CEST)
-Received: from [10.27.1.106] (31-17-105-194-dynip.superkabel.de [31.17.105.194])
-	by mail.mycable.de (Postfix) with ESMTPSA id E8C4535A5E03
-	for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 10:12:52 +0200 (CEST)
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:60789 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932889AbaFLIVV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jun 2014 04:21:21 -0400
+Received: by mail-oa0-f47.google.com with SMTP id n16so982160oag.20
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 01:21:21 -0700 (PDT)
+In-Reply-To: <20140604143825.GG28484@ulmo>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>, Alexandre Courbot <acourbot@nvidia.com>, Roland Stigge <stigge@antcom.de>, Julian Scheel <julian.scheel@avionic-design.de>, Alban Bedel <alban.bedel@avionic-design.de>
 
-Introduction:
- Multiple mcp23s08 can be accessed individually with the same
-chip-select when they have different addresses configured.
-They are configured as one spi-slave and there is one spi-chip created
-for each mcp23s08.
+On Wed, Jun 4, 2014 at 4:38 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
 
-My Question:
- How can I reference a single mcp23s08 gpio-chip in my device-tree. When
-I use the of-handle of the spi-slave, I only reference the first mcp23s08.
+> Adding a few more people from Avionic Design who might be able to test
+> this. I no longer have access to hardware with this controller.
 
-Best Regards
-Michael
+Always keep a copy of everything you ever work on ;-)
+
+If nothing happens I'll just apply the patch and see if that merits
+a reaction.
+
+Yours,
+Linus Walleij
