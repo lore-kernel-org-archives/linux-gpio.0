@@ -1,25 +1,31 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] RFT: pinctrl: spear: switch plgpio to irqchip helpers
-Date: Thu, 12 Jun 2014 12:55:11 +0530
-Message-ID: <CAKohpo=ckbyetHBOTuB=OuHvbhsaf7UAHEqC_JuXXh+Ny3CTmw@mail.gmail.com>
-References: <1401355531-632-1-git-send-email-linus.walleij@linaro.org>
-	<CAOh2x=njLfu5D0=oH6kmdm9hnk3e1RXEsFtwsXJcOJ-JFcm1XQ@mail.gmail.com>
-	<CACRpkdZhJONmqV8SNLxxo1srcRbdmrDwH4x1UiwE=fp1MY370Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: lpc32xx: Make of_device_id array const
+Date: Thu, 12 Jun 2014 09:37:41 +0200
+Message-ID: <CACRpkdaxPKQU8ZmNhnKMvRheu+YW9215rt-1ipmdrwXwF=iGpw@mail.gmail.com>
+References: <002301cf7f24$9beec360$d3cc4a20$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZhJONmqV8SNLxxo1srcRbdmrDwH4x1UiwE=fp1MY370Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "pratyush.anand" <pratyush.anand@st.com>, Mohit Kumar <mohit.kumar@st.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, spear-devel <spear-devel@list.st.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f50.google.com ([209.85.219.50]:61710 "EHLO
+	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932557AbaFLHhm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jun 2014 03:37:42 -0400
+Received: by mail-oa0-f50.google.com with SMTP id n16so964627oag.9
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 00:37:41 -0700 (PDT)
+In-Reply-To: <002301cf7f24$9beec360$d3cc4a20$%han@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Roland Stigge <stigge@antcom.de>
 
-On 12 June 2014 12:53, Linus Walleij <linus.walleij@linaro.org> wrote:
-> Hum? If the maintainers can't maintain the thing, then maybe the
-> machine should just be deleted?
+On Tue, Jun 3, 2014 at 2:09 PM, Jingoo Han <jg1.han@samsung.com> wrote:
 
-It still has some users :)
+> Make of_device_id array const, because all OF functions handle
+> it as const.
+>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 
-> I will just apply this patch then.
+Patch applied with Roland's ACK.
 
-Sure.
+Yours,
+Linus Walleij
