@@ -1,44 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: of: Allow -gpio suffix for property names
-Date: Thu, 12 Jun 2014 10:18:05 +0200
-Message-ID: <CACRpkdb2Yd4_+7d2PDdsKj5hYLNdtnyvO8B3yVVjR3_tWm8xHg@mail.gmail.com>
-References: <1398266889-17489-1-git-send-email-thierry.reding@gmail.com>
-	<1398266889-17489-2-git-send-email-thierry.reding@gmail.com>
-	<CACRpkdbF3N5bFY1sFkabDHO7J0F8sb1uU0xL+mjkuF-z7VocMQ@mail.gmail.com>
-	<20140602230457.GE11004@atomide.com>
-	<20140602231423.GF11004@atomide.com>
+From: Michael Stickel <ms@mycable.de>
+Subject: question: Multiple mcp23s08 on one chip-select with OF
+Date: Thu, 12 Jun 2014 10:12:52 +0200
+Message-ID: <53996104.9070103@mycable.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140602231423.GF11004@atomide.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.mycable.de ([46.4.59.52]:56777 "EHLO mail.mycable.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932889AbaFLIV0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 12 Jun 2014 04:21:26 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.mycable.de (Postfix) with ESMTP id 4F8C235A5E03
+	for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 10:12:53 +0200 (CEST)
+Received: from mail.mycable.de ([127.0.0.1])
+	by localhost (mail.mycable.de [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id x2vdnwCvPWA1 for <linux-gpio@vger.kernel.org>;
+	Thu, 12 Jun 2014 10:12:53 +0200 (CEST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.mycable.de (Postfix) with ESMTP id 1A52435AE0E3
+	for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 10:12:53 +0200 (CEST)
+Received: from mail.mycable.de ([127.0.0.1])
+	by localhost (mail.mycable.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id yJ9KRTOwPVpR for <linux-gpio@vger.kernel.org>;
+	Thu, 12 Jun 2014 10:12:53 +0200 (CEST)
+Received: from [10.27.1.106] (31-17-105-194-dynip.superkabel.de [31.17.105.194])
+	by mail.mycable.de (Postfix) with ESMTPSA id E8C4535A5E03
+	for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 10:12:52 +0200 (CEST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jun 3, 2014 at 1:14 AM, Tony Lindgren <tony@atomide.com> wrote:
+Introduction:
+ Multiple mcp23s08 can be accessed individually with the same
+chip-select when they have different addresses configured.
+They are configured as one spi-slave and there is one spi-chip created
+for each mcp23s08.
 
-> Looks like something like below fixes the issue.
->
-> Regards,
->
-> Tony
->
-> 8< -----------------------
-> From: Tony Lindgren <tony@atomide.com>
-> Date: Mon, 2 Jun 2014 16:13:46 -0700
-> Subject: [PATCH] gpio: of: Fix handling for deferred probe for -gpio suffix
->
-> Commit dd34c37aa3e (gpio: of: Allow -gpio suffix for property names)
-> added parsing for both -gpio and -gpios suffix but also changed
-> the handling for deferred probe unintentionally. Because of the
-> looping the second name will now return -ENOENT instead of
-> -EPROBE_DEFER. Fix the issue by breaking out of the loop if
-> -EPROBE_DEFER is encountered.
->
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+My Question:
+ How can I reference a single mcp23s08 gpio-chip in my device-tree. When
+I use the of-handle of the spi-slave, I only reference the first mcp23s08.
 
-Patch applied for fixes with Thierry's Reveiwed-by tag.
-
-Yours,
-Linus Walleij
+Best Regards
+Michael
