@@ -1,33 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] RFT: gpio: adnp: switch to use irqchip helpers
-Date: Thu, 12 Jun 2014 10:21:21 +0200
-Message-ID: <CACRpkdYamxVh5RhRk5dQxD2PSnjTWcdf4rvV50mmd844GeeN4w@mail.gmail.com>
-References: <1401715347-24996-1-git-send-email-linus.walleij@linaro.org>
-	<20140604143825.GG28484@ulmo>
+Subject: Re: [PATCH] gpio-pxa: gpio0 and gpio1 support on dt
+Date: Thu, 12 Jun 2014 10:43:11 +0200
+Message-ID: <CACRpkdZ3xfOXrMZK-Z7TteOsdnVP8uOY4+DLe7pv_9ydBCRRWQ@mail.gmail.com>
+References: <1401995603-25997-1-git-send-email-andrew.ruder@elecsyscorp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:60789 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932889AbaFLIVV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jun 2014 04:21:21 -0400
-Received: by mail-oa0-f47.google.com with SMTP id n16so982160oag.20
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 01:21:21 -0700 (PDT)
-In-Reply-To: <20140604143825.GG28484@ulmo>
+Received: from mail-oa0-f50.google.com ([209.85.219.50]:35016 "EHLO
+	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932729AbaFLInM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jun 2014 04:43:12 -0400
+Received: by mail-oa0-f50.google.com with SMTP id n16so1006313oag.23
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 01:43:11 -0700 (PDT)
+In-Reply-To: <1401995603-25997-1-git-send-email-andrew.ruder@elecsyscorp.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>, Alexandre Courbot <acourbot@nvidia.com>, Roland Stigge <stigge@antcom.de>, Julian Scheel <julian.scheel@avionic-design.de>, Alban Bedel <alban.bedel@avionic-design.de>
+To: Andrew Ruder <andrew.ruder@elecsyscorp.com>, =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Wed, Jun 4, 2014 at 4:38 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
+On Thu, Jun 5, 2014 at 9:13 PM, Andrew Ruder
+<andrew.ruder@elecsyscorp.com> wrote:
 
-> Adding a few more people from Avionic Design who might be able to test
-> this. I no longer have access to hardware with this controller.
+> pxa_gpio_probe() has some issues supporting the gpio0 and gpio1
+> interrupts under device-tree - it never actually sets up the chain
+> handler to get interrupts on edge detect for GPIO0 and GPIO1.
+>
+> Signed-off-by: Andrew Ruder <andrew.ruder@elecsyscorp.com>
 
-Always keep a copy of everything you ever work on ;-)
+Makes perfect sense. Can I have an ACK from some PXA
+maintainer on this?
 
-If nothing happens I'll just apply the patch and see if that merits
-a reaction.
+The PXA GPIO driver with it's messy irqchip registration looks
+like a good candidate for switching to the gpiolib irqchip helpers
+and rid some code. Just saying.
 
 Yours,
 Linus Walleij
