@@ -1,53 +1,49 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: [PATCH] gpio: mcp23s08: Eliminates redundant checking.
-Date: Tue, 10 Jun 2014 13:46:34 -0500
-Message-ID: <1402425994-2983-1-git-send-email-mwelling@ieee.org>
-References: <20140606033755.GA13605@deathray>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] RFT: pinctrl: spear: switch plgpio to irqchip helpers
+Date: Thu, 12 Jun 2014 09:23:20 +0200
+Message-ID: <CACRpkdZhJONmqV8SNLxxo1srcRbdmrDwH4x1UiwE=fp1MY370Q@mail.gmail.com>
+References: <1401355531-632-1-git-send-email-linus.walleij@linaro.org>
+	<CAOh2x=njLfu5D0=oH6kmdm9hnk3e1RXEsFtwsXJcOJ-JFcm1XQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f177.google.com ([209.85.213.177]:51471 "EHLO
-	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751758AbaFJSq4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jun 2014 14:46:56 -0400
-Received: by mail-ig0-f177.google.com with SMTP id l13so5498753iga.10
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Jun 2014 11:46:55 -0700 (PDT)
-In-Reply-To: <20140606033755.GA13605@deathray>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:34683 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754411AbaFLHXV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jun 2014 03:23:21 -0400
+Received: by mail-ob0-f172.google.com with SMTP id uy5so908536obc.31
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 00:23:20 -0700 (PDT)
+In-Reply-To: <CAOh2x=njLfu5D0=oH6kmdm9hnk3e1RXEsFtwsXJcOJ-JFcm1XQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gregkh@linuxfoundation.org, peter@korsgaard.com, Stephen Rothwell <sfr@canb.auug.org.au>, Michael Stickel <ms@mycable.de>, linux-gpio@vger.kernel.org
-Cc: Michael Welling <mwelling@ieee.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "pratyush.anand" <pratyush.anand@st.com>, Mohit Kumar <mohit.kumar@st.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, spear-devel <spear-devel@list.st.com>
 
-Unnecessary checking was added during the merge of the gpio branch.
-This patch removes the extra unnecessary checking.
+On Tue, Jun 3, 2014 at 6:29 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On Thu, May 29, 2014 at 2:55 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> This switches the SPEAr PLGPIO driver over to using the irqchip
+>> helpers.
+>>
+>> As part of this effort, also get rid of the strange irq_base
+>> calculation and failure to use d->hwirq for obtaining a local
+>> irqchip offset.
+>>
+>> Cc: Viresh Kumar <viresh.linux@gmail.com>
+>> Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+>> Cc: spear-devel@list.st.com
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> SPEAr folks: please make sure to test this, it is part of an
+>> important GPIO refactoring round. If it doesn't work: please do
+>> an honest attempt at troubleshooting.
+>
+> Both me and shiraz can't test it anymore, we switched our jobs :)
+> And not sure who else can do it..
 
-Signed-off-by: Michael Welling <mwelling@ieee.org>
----
- drivers/gpio/gpio-mcp23s08.c |    6 ------
- 1 file changed, 6 deletions(-)
+Hum? If the maintainers can't maintain the thing, then maybe the
+machine should just be deleted?
 
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index fe7c0e2..57adbc9 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -900,8 +900,6 @@ static int mcp23s08_probe(struct spi_device *spi)
- 			if (spi_present_mask & (1 << addr))
- 				chips++;
- 		}
--		if (!chips)
--			return -ENODEV;
- 	} else {
- 		type = spi_get_device_id(spi)->driver_data;
- 		pdata = dev_get_platdata(&spi->dev);
-@@ -940,10 +938,6 @@ static int mcp23s08_probe(struct spi_device *spi)
- 		if (!(spi_present_mask & (1 << addr)))
- 			continue;
- 		chips--;
--		if (chips < 0) {
--			dev_err(&spi->dev, "FATAL: invalid negative chip id\n");
--			goto fail;
--		}
- 		data->mcp[addr] = &data->chip[chips];
- 		status = mcp23s08_probe_one(data->mcp[addr], &spi->dev, spi,
- 					    0x40 | (addr << 1), type, base,
--- 
-1.7.9.5
+I will just apply this patch then.
 
+Yours,
+Linus Walleij
