@@ -1,55 +1,58 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] USB: ftdi_sio: add GPIO support
-Date: Fri, 13 Jun 2014 11:31:57 -0700
-Message-ID: <20140613183157.GA24644@kroah.com>
-References: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
- <CACRpkdbiob-2d4sTmj8bZxo5GVZ0TvF5CT_W94BDsSNiEfB7kQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fix for the v3.16 series
+Date: Fri, 13 Jun 2014 23:46:26 +0200
+Message-ID: <CACRpkdYYbmGaLYOpMhcOBEO5Z-4f+j8AVrG7odu39MdZqtcJyg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48027 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752489AbaFMS2E (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jun 2014 14:28:04 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbiob-2d4sTmj8bZxo5GVZ0TvF5CT_W94BDsSNiEfB7kQ@mail.gmail.com>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:52000 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754033AbaFMVq1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jun 2014 17:46:27 -0400
+Received: by mail-ob0-f171.google.com with SMTP id nu7so3454869obb.30
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jun 2014 14:46:26 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sascha Silbe <x-linux@infra-silbe.de>, Johan Hovold <jhovold@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>
 
-On Fri, Jun 13, 2014 at 09:25:07AM +0200, Linus Walleij wrote:
-> On Mon, Jun 9, 2014 at 3:21 PM, Sascha Silbe <x-linux@infra-silbe.de> wrote:
-> 
-> > The chips can operate either in regular or in bitbang mode. Care was
-> > taken to prevent using GPIOs if the serial device is in use and vice
-> > versa.
-> 
-> Very interesting patch! I've seen USB-based GPIO things before
-> but never a dual-mode thing.
-> 
-> There was already a comment to move the implementation to a
-> separate file, which I won't repeat.
-> 
-> But I also want to bring the device model into question: normally
-> when a mother device spawns children across different subsystems
-> we model them as MFD devices (drivers/mfd) that instantiate
-> children for the different subsystems. So you could spawn a
-> serial and a GPIO device from a USB-based hub device there.
-> 
-> I do not know if that is really apropriate in this case. It seems the
-> device is first and foremost FTDI.
-> 
-> But it could still spawn a child platform device for the GPIO stuff
-> so that this can live as a separate driver under drivers/gpio/gpio-ftdi.c
-> or similar.
-> 
-> You could then use something like:
-> 
-> struct platform_device *gdev;
+Hi Linus,
 
-Ick, no, it's a USB device, do not abuse the platform_device code any
-more than it currently is (note, I HATE the platform device code,
-someday I'll delete it entirely...  Well, I can dream...)
+sending you this vital fix before leaving for a short vacation so it
+does not sit collecting dust in my tree for no good reason.
 
-greg k-h
+Apart from this, our v3.16 cycle looks like a good start.
+
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+
+The following changes since commit 963649d735c8b6eb0f97e82c54f02426ff3f1f45:
+
+  Merge tag 'for-linus-3.16-merge-window' of
+git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs (2014-06-08
+14:35:19 -0700)
+
+are available in the git repository at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.16-2
+
+for you to fetch changes up to 06fc3b70f1dc9c53070fa63a528830f54afc3c38:
+
+  gpio: of: Fix handling for deferred probe for -gpio suffix
+(2014-06-12 09:57:00 +0200)
+
+----------------------------------------------------------------
+A first GPIO fix for the v3.16 series, this was serious since
+it blocks the OMAP boot.
+
+----------------------------------------------------------------
+Tony Lindgren (1):
+      gpio: of: Fix handling for deferred probe for -gpio suffix
+
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
