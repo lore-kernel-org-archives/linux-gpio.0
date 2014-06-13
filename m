@@ -1,306 +1,64 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpio: Add a defer reset object to send board specific reset
-Date: Thu, 12 Jun 2014 14:35:40 +0200
-Message-ID: <CACRpkdZvANiXp2S134jmcsFDr1m=dqGkpsf3Y6ZAg6mvd6RHOQ@mail.gmail.com>
-References: <1402189798-7665-1-git-send-email-houcheng@gmail.com>
+Subject: Re: [PATCH] USB: ftdi_sio: add GPIO support
+Date: Fri, 13 Jun 2014 09:25:07 +0200
+Message-ID: <CACRpkdbiob-2d4sTmj8bZxo5GVZ0TvF5CT_W94BDsSNiEfB7kQ@mail.gmail.com>
+References: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:37882 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752781AbaFLMfl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jun 2014 08:35:41 -0400
-Received: by mail-oa0-f46.google.com with SMTP id m1so1245403oag.33
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Jun 2014 05:35:40 -0700 (PDT)
-In-Reply-To: <1402189798-7665-1-git-send-email-houcheng@gmail.com>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:46349 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750784AbaFMHZI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jun 2014 03:25:08 -0400
+Received: by mail-ob0-f171.google.com with SMTP id nu7so2525229obb.2
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jun 2014 00:25:08 -0700 (PDT)
+In-Reply-To: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Houcheng Lin <houcheng@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Sascha Silbe <x-linux@infra-silbe.de>
+Cc: Johan Hovold <jhovold@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sun, Jun 8, 2014 at 3:09 AM, Houcheng Lin <houcheng@gmail.com> wrote:
+On Mon, Jun 9, 2014 at 3:21 PM, Sascha Silbe <x-linux@infra-silbe.de> wrote:
 
-> In some hardware design, devices on bus need a non-standard and extra reset
-> signal after bus is initialied. Most reason is to wake up device from hanging
-> state.
->
-> The board spefic reset code can not be put into machine init code, as it is
-> too early. This code can not also be put onto chip's driver, as it is board
-> specific and not suitable for a common chip driver.
->
-> Defer Reset Object
-> ------------------
-> The defer reset object is to resolve this issue, developer can put a defer-
-> reset device on the board's dts file and enable DEFER RESET OBJECT CONFIG.
-> During driver init-calls, a defer-reset object is created and issue reset signal
-> after the enclosing device is initialized.
->
-> This eliminate the need to rewrite a driver module with only one purpose: sending
-> a board specific reset. This also allow mainstream kernel to support many boards
-> that modify the common drivers to send board specific reset. Configuring defer-reset
-> device in dts leave the board specific reset rules on board level and simple to
-> maintain.
->
-> Example dts File
-> ----------------
->     usb-ehci-chip@1211000{
->         usb-phy = <&usb2_phy>;
->         defer_reset_vbus {
->             compatible = "defer-reset";
->             reset-gpios = <&gpx3 5 1>;
->             reset-init = <0>;
->             reset-end = <1>;
+> The chips can operate either in regular or in bitbang mode. Care was
+> taken to prevent using GPIOs if the serial device is in use and vice
+> versa.
 
-This needs some serious DT binding documentation. What are you trying to
-achive here? Any kind of sequence encoding in DT is out of the question.
+Very interesting patch! I've seen USB-based GPIO things before
+but never a dual-mode thing.
 
->             delay = <5>;
+There was already a comment to move the implementation to a
+separate file, which I won't repeat.
 
-nanoseconds? milliseconds? seconds? years? picoseconds?
+But I also want to bring the device model into question: normally
+when a mother device spawns children across different subsystems
+we model them as MFD devices (drivers/mfd) that instantiate
+children for the different subsystems. So you could spawn a
+serial and a GPIO device from a USB-based hub device there.
 
->         };
->     };
+I do not know if that is really apropriate in this case. It seems the
+device is first and foremost FTDI.
 
-OK this is interesting stuff..
+But it could still spawn a child platform device for the GPIO stuff
+so that this can live as a separate driver under drivers/gpio/gpio-ftdi.c
+or similar.
 
-But this driver *MUST* live under drivers/power/reset/*, as it
-has absolutely *nothing* to do with GPIO except for being a consumer
-of it. I won't merge it.
+You could then use something like:
 
-And you should discuss it with Dmitry and David W.
+struct platform_device *gdev;
 
-But I will review it nevertheless :-D
+gdev = platform_device_alloc("gpio-ftdi", PLATFORM_DEVID_AUTO);
+/* pdata contains communication cookie for callbacks etc */
+ret = platform_device_add_data(gdev, pdata, sizeof(*pdata));
+ret = platform_device_add(gdev);
 
-> +#include <linux/clk.h>
+Then we can probe that device normally in the GPIO subsystem
+like any other driver, just that it needs some
+<linux/usb/ftdi.h> header or similar to define the function
+calls to communicate with the FTDI driver.
 
-What? This driver is not using any clocks.
-
-> +#include <linux/dma-mapping.h>
-
-What?
-
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/of_platform.h>
-
-No way. Include
-#include <linux/gpio/consumer.h>
-
-Read up on how to use that in
-Documentation/gpio/consumer.txt
-Thanks.
-
-> +#include <linux/platform_device.h>
-> +#include <linux/usb/phy.h>
-> +#include <linux/usb/samsung_usb_phy.h>
-> +#include <linux/usb.h>
-> +#include <linux/usb/hcd.h>
-> +#include <linux/usb/otg.h>
-
-Please go over this list and see what is actually needed.
-
-> +
-> +
-> +#define DRIVER_DESC "GPIO Defer Reset Driver"
-
-#define DRIVER_NAME would be more to the point.
-
-> +#define GDR_MAX_DEV 32
-> +
-> +static DEFINE_MUTEX(deferred_reset_mutex);
-> +static LIST_HEAD(deferred_reset_list);
-> +
-> +struct defer_reset_private {
-> +       struct list_head next;
-> +       struct device_node *node;  /* defer_reset device */
-> +       int    issued;
-
-Use a bool.
-
-> +};
-> +
-> +static void gdr_issue_reset(
-> +       struct platform_device *pdev, struct device_node *dnode)
-> +{
-> +       int gpio;
-> +       int i;
-> +       int count = of_gpio_named_count(dnode, "reset-gpios");
-
-Hm seems reasonable...
-
-> +       u32 reset_init[GDR_MAX_DEV];
-> +       u32 reset_end[GDR_MAX_DEV];
-> +       u32 delay;
-> +
-> +       if (count != of_property_count_u32_elems(dnode, "reset-init")) {
-> +               dev_err(&pdev->dev, "should call std error here, number is wrong:%d\n",
-> +                       of_property_count_u32_elems(dnode, "reset-init"));
-> +               return;
-> +       }
-> +       if (count != of_property_count_u32_elems(dnode, "reset-end")) {
-> +               dev_err(&pdev->dev, "should call std error here, number is wrong:%d\n",
-> +                       of_property_count_u32_elems(dnode, "reset-end"));
-> +               return;
-> +       }
-> +       if (count > GDR_MAX_DEV) {
-> +               dev_err(&pdev->dev, "too large reset array!\n");
-> +               return;
-> +       }
-> +
-> +       /* setup parameters */
-> +       of_property_read_u32_array(dnode, "reset-init", reset_init, count);
-> +       of_property_read_u32_array(dnode, "reset-end", reset_end, count);
-> +       of_property_read_u32(dnode, "delay", &delay);
-
-OK so you stack up these u32's...
-
-> +       /* reset init */
-> +       for (i = 0; i < count; i++) {
-> +               gpio = of_get_named_gpio(dnode, "reset-gpios", i);
-
-Use gpiod interface to obtain a GPIO descriptor.
-
-> +               dev_info(&pdev->dev,
-> +                       "issue reset to gpio %d for device [%s]\n",
-> +                       gpio, dnode->parent->name);
-> +               if (!gpio_is_valid(gpio))
-> +                       continue;
-> +               __gpio_set_value(gpio, reset_init[i]);
-
-__gpio_set_value??
-
-Are you using the platform-specific implementation? No way.
-
-gpiod_set_value() please.
-
-> +       }
-> +       if (delay == 0)
-> +               delay = 5;
-
-So what on earth says that this is a sensible default?
-Why not, say 10 seconds?
-
-I think probe should simply fail if delay is not specified.
-
-> +       mdelay(delay);
-
-Aha so it is milliseconds. OK.
-
-> +       /* reset end */
-> +       for (i = 0; i < count; i++) {
-> +               gpio = of_get_named_gpio(dnode, "reset-gpios", i);
-> +               if (!gpio_is_valid(gpio))
-> +                       continue;
-> +               __gpio_set_value(gpio, reset_end[i]);
-> +       }
-
-OK so reset init and reset end is a way to specify when reset
-is asserted (as one or zero).
-
-DON'T do this. The GPIO bindings already know a way to define
-if GPIOs are active high or low, and the gpiod interface will invert
-the signal for you if this is specified as active low.
-
-This way you get rid of both strange properties.
-
-> +/**
-> +  * the pdev parameter is null as it is provided by register routine, platform_device_register_simple
-> +  **/
-> +static int gdr_probe(struct platform_device *pdev)
-> +{
-> +       struct list_head *pos;
-> +
-> +       pr_debug("gpio defer reset probe\n");
-> +       list_for_each(pos, &deferred_reset_list) {
-> +               struct platform_device *pd;
-> +               struct defer_reset_private *prv = list_entry(
-> +                       pos, struct defer_reset_private, next);
-> +               if (prv->issued)
-> +                       continue;
-> +               pd = of_find_device_by_node(
-> +                       prv->node->parent);
-> +               if (pd->dev.driver != 0) {
-> +                       gdr_issue_reset(pdev, prv->node);
-> +                       prv->issued = 1;
-> +               }
-> +       }
-> +       list_for_each(pos, &deferred_reset_list) {
-> +               struct defer_reset_private *prv = list_entry(pos,
-> +                       struct defer_reset_private, next);
-> +               if (!prv->issued)
-> +                       return -EPROBE_DEFER;
-> +       }
-> +       return 0;
-> +}
-> +
-> +static int gdr_remove(struct platform_device *pdev)
-> +{
-> +       return 0;
-> +}
-
-Isn't this callback optional then?
-
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id gdr_match[] = {
-> +       { .compatible = "gpio-defer-reset" },
-> +       { .compatible = "defer-reset" },
-
-Why two compatible strings? If we're inventing this let's stick to
-one.
-
-> +       {},
-> +};
-> +MODULE_DEVICE_TABLE(of, gdr_match);
-> +#endif
-> +
-> +
-> +static struct platform_driver gdr_driver = {
-> +       .probe      = gdr_probe,
-> +       .remove     = gdr_remove,
-> +       .driver = {
-> +               .name   = "defer-reset",
-
-So why are you not using this #define DRIVER_DESC for the name
-you did up there?
-
-> +               .owner  = THIS_MODULE,
-> +               .of_match_table = of_match_ptr(gdr_match),
-> +       }
-> +};
-> +
-> +static int __init gdr_init(void)
-> +{
-> +       struct device_node *node;
-> +       pr_info("defer-reset-object initialied.\n");
-> +       platform_device_register_simple("defer-reset", -1, NULL, 0);
-> +       mutex_lock(&deferred_reset_mutex);
-> +       for_each_compatible_node(node, NULL, "defer-reset") {
-> +               struct defer_reset_private *prv = kmalloc(
-> +                       sizeof(struct defer_reset_private), GFP_KERNEL);
-> +               prv->node = node;
-> +               prv->issued = 0;
-> +               list_add_tail(&prv->next, &deferred_reset_list);
-> +       }
-> +       mutex_unlock(&deferred_reset_mutex);
-> +       return platform_driver_register(&gdr_driver);
-> +}
-> +module_init(gdr_init);
-
-Hm hm. I don't know if this is a good approach. Grant will know maybe.
-
-> +
-> +static void __exit gdr_cleanup(void)
-> +{
-> +       platform_driver_unregister(&gdr_driver);
-> +}
-> +module_exit(gdr_cleanup);
-
-You forgot to free the deferred_reset_list here. Fix that.
+However Greg is device core maintainer and may have better
+ideas about this!
 
 Yours,
 Linus Walleij
