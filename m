@@ -1,58 +1,66 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fix for the v3.16 series
-Date: Fri, 13 Jun 2014 23:46:26 +0200
-Message-ID: <CACRpkdYYbmGaLYOpMhcOBEO5Z-4f+j8AVrG7odu39MdZqtcJyg@mail.gmail.com>
+From: Houcheng Lin <houcheng@gmail.com>
+Subject: Re: [RFC PATCH] gpio: Add a defer reset object to send board specific reset
+Date: Sun, 15 Jun 2014 13:16:17 +0800
+Message-ID: <CAL8JtxAhx9R2XC11d_eAObnjxFVKQ6R7auvUd_=Uw40HYH3UyQ@mail.gmail.com>
+References: <1402189798-7665-1-git-send-email-houcheng@gmail.com>
+	<CACRpkdZvANiXp2S134jmcsFDr1m=dqGkpsf3Y6ZAg6mvd6RHOQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:52000 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754033AbaFMVq1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jun 2014 17:46:27 -0400
-Received: by mail-ob0-f171.google.com with SMTP id nu7so3454869obb.30
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Jun 2014 14:46:26 -0700 (PDT)
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:33539 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751913AbaFOFQS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Jun 2014 01:16:18 -0400
+In-Reply-To: <CACRpkdZvANiXp2S134jmcsFDr1m=dqGkpsf3Y6ZAg6mvd6RHOQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Linus,
+Hi Linus, please see my replies below,
 
-sending you this vital fix before leaving for a short vacation so it
-does not sit collecting dust in my tree for no good reason.
+2014-06-12 20:35 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+>
+> OK this is interesting stuff..
+>
+> But this driver *MUST* live under drivers/power/reset/*, as it
+> has absolutely *nothing* to do with GPIO except for being a consumer
+> of it. I won't merge it.
+>
+> And you should discuss it with Dmitry and David W.
+>
+> But I will review it nevertheless :-D
 
-Apart from this, our v3.16 cycle looks like a good start.
+Thanks for this information, I changed source to under drivers/
+power/reset.
 
-Please pull it in!
+>
+> OK so reset init and reset end is a way to specify when reset
+> is asserted (as one or zero).
+>
+> DON'T do this. The GPIO bindings already know a way to define
+> if GPIOs are active high or low, and the gpiod interface will invert
+> the signal for you if this is specified as active low.
+>
+> This way you get rid of both strange properties.
+>
 
-Yours,
-Linus Walleij
+May I reserve the "reset-init" and ""reset-end" properties? As
+some boards use power line off to reset device. The power line
+is active high when as power but active low when as a reset signal.
 
+>
+> You forgot to free the deferred_reset_list here. Fix that.
+>
 
-The following changes since commit 963649d735c8b6eb0f97e82c54f02426ff3f1f45:
+Thank a lot for your reviews :) Here are fixed of version 2:
+    - change location to drivers/power/reset
+    - remove unused #include
+    - change to use GPIO descriptor interface and use customer.h
+    - free resources after issue reset. However, if a enclosing
+      chip is not probled, the correpsonding reset will not send
+      and memeory is still not free in this case.
+    - other minor fixs
 
-  Merge tag 'for-linus-3.16-merge-window' of
-git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs (2014-06-08
-14:35:19 -0700)
-
-are available in the git repository at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v3.16-2
-
-for you to fetch changes up to 06fc3b70f1dc9c53070fa63a528830f54afc3c38:
-
-  gpio: of: Fix handling for deferred probe for -gpio suffix
-(2014-06-12 09:57:00 +0200)
-
-----------------------------------------------------------------
-A first GPIO fix for the v3.16 series, this was serious since
-it blocks the OMAP boot.
-
-----------------------------------------------------------------
-Tony Lindgren (1):
-      gpio: of: Fix handling for deferred probe for -gpio suffix
-
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Best regards,
+Houcheng Lin
