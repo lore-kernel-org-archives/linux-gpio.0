@@ -1,327 +1,207 @@
-From: Houcheng Lin <houcheng@gmail.com>
-Subject: [PATCH] [RFC PATCH v2] power:reset: Add defer reset object to send board specific reset
-Date: Sun, 15 Jun 2014 15:11:29 +0800
-Message-ID: <1402816289-7024-1-git-send-email-houcheng@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:51870 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751251AbaFOHLz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Jun 2014 03:11:55 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] [RFC PATCH v2] power:reset: Add defer reset object to
+ send board specific reset
+Date: Sun, 15 Jun 2014 11:09:38 +0200
+Message-ID: <20140615090932.GA29771@earth.universe>
+References: <1402816289-7024-1-git-send-email-houcheng@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1402816289-7024-1-git-send-email-houcheng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Houcheng Lin <houcheng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@linaro.org, robh+dt@kernel.org, dbaryshkov@gmail.com, dwmw2@infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Houcheng Lin <houcheng@gmail.com>
 
-The Problem
------------
-The reset signal on a hardware board is send either:
-    - during machine initialization
-    - during bus master's initialization
 
-In some hardware design, devices on bus need a non-standard and extra reset
-signal after bus is initialied. Most reason is to wake up device from hanging
-state.
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The board spefic reset code can not be put into machine init code, as it is
-too early. This code can not also be put onto chip's driver, as it is board
-specific and not suitable for a common chip driver.
+Hi,
 
-Defer Reset Object
-------------------
-The defer reset object is to resolve this issue, developer can put a defer-
-reset device on the board's dts file and enable DEFER RESET OBJECT CONFIG.
-During driver init-calls, a defer-reset object is created and issue reset signal
-after the enclosing device is initialized.
+On Sun, Jun 15, 2014 at 03:11:29PM +0800, Houcheng Lin wrote:
+> The Problem
+> -----------
+> The reset signal on a hardware board is send either:
+>     - during machine initialization
+>     - during bus master's initialization
+>=20
+> In some hardware design, devices on bus need a non-standard and extra res=
+et
+> signal after bus is initialied. Most reason is to wake up device from han=
+ging
+> state.
+>=20
+> The board spefic reset code can not be put into machine init code, as it =
+is
+> too early. This code can not also be put onto chip's driver, as it is boa=
+rd
+> specific and not suitable for a common chip driver.
+>=20
+> Defer Reset Object
+> ------------------
+> The defer reset object is to resolve this issue, developer can put a defe=
+r-
+> reset device on the board's dts file and enable DEFER RESET OBJECT CONFIG.
+> During driver init-calls, a defer-reset object is created and issue reset=
+ signal
+> after the enclosing device is initialized.
+>=20
+> This eliminate the need to rewrite a driver module with only one purpose:=
+ sending
+> a board specific reset. This also allow mainstream kernel to support many=
+ boards
+> that modify the common drivers to send board specific reset. Configuring =
+defer-reset
+> device in dts leave the board specific reset rules on board level and sim=
+ple to
+> maintain.
+>=20
+> Example dts File
+> ----------------
+>     usb-ehci-chip@1211000{
+>         usb-phy =3D <&usb2_phy>;
+>         defer_reset_vbus {
+>             compatible =3D "defer-reset";
+>             reset-gpios =3D <&gpx3 5 1>;
+>             reset-init =3D <0>;
+>             reset-end =3D <1>;
+>             delay =3D <5>;
+>         };
+>     };
+>=20
+> Block Diagram of dts File
+> -------------------------
+>     +-------------------------------------+
+>     | usb-ehci-chip@1211000               |
+>     |   +-------------------------+       |
+>     |   | defer-reset(gpx3)       |       |
+>     |   +-------------------------+       |
+>     +-------------------------------------+
+>=20
+> Signed-off-by: Houcheng Lin <houcheng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  .../devicetree/bindings/gpio/gpio-defer-reset.txt  |  22 +++
+>  drivers/power/reset/Kconfig                        |   8 +
+>  drivers/power/reset/Makefile                       |   1 +
+>  drivers/power/reset/gpio-defer-reset.c             | 192 +++++++++++++++=
+++++++
 
-This eliminate the need to rewrite a driver module with only one purpose: sending
-a board specific reset. This also allow mainstream kernel to support many boards
-that modify the common drivers to send board specific reset. Configuring defer-reset
-device in dts leave the board specific reset rules on board level and simple to
-maintain.
+I think this belongs to drivers/reset and not to drivers/power/reset.
+The drivers in drivers/power/reset are about board reboot / shutdown.
+This driver seems to be used for periphals.
 
-Example dts File
-----------------
-    usb-ehci-chip@1211000{
-        usb-phy = <&usb2_phy>;
-        defer_reset_vbus {
-            compatible = "defer-reset";
-            reset-gpios = <&gpx3 5 1>;
-            reset-init = <0>;
-            reset-end = <1>;
-            delay = <5>;
-        };
-    };
+>  4 files changed, 223 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-defer-res=
+et.txt
+>  create mode 100644 drivers/power/reset/gpio-defer-reset.c
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-defer-reset.txt =
+b/Documentation/devicetree/bindings/gpio/gpio-defer-reset.txt
+> new file mode 100644
+> index 0000000..5d55830
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-defer-reset.txt
+> @@ -0,0 +1,22 @@
+> +GPIO defer reset binding
+> +
+> +Put a defer-reset device in a device node and enable DEFER RESET OBJECT =
+CONFIG.
+> +During driver init-calls, a defer-reset object will be created and issue=
+ reset
+> +signal after the enclosing device node's initialization complete.
+> +
+> +Required properties:
+> +- compatible:
+> +  - "defer-reset" for creating defer reset object
+> +- reset-gpio: specify gpio pin, can be an array.
+> +- reset-init: specify reset signal initial value, can be 0 or 1.
 
-Block Diagram of dts File
--------------------------
-    +-------------------------------------+
-    | usb-ehci-chip@1211000               |
-    |   +-------------------------+       |
-    |   | defer-reset(gpx3)       |       |
-    |   +-------------------------+       |
-    +-------------------------------------+
+You can simply use GPIO's HIGH_ACTIVE / LOW_ACTIVE flag for the
+"initial value".
 
-Signed-off-by: Houcheng Lin <houcheng@gmail.com>
----
- .../devicetree/bindings/gpio/gpio-defer-reset.txt  |  22 +++
- drivers/power/reset/Kconfig                        |   8 +
- drivers/power/reset/Makefile                       |   1 +
- drivers/power/reset/gpio-defer-reset.c             | 192 +++++++++++++++++++++
- 4 files changed, 223 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-defer-reset.txt
- create mode 100644 drivers/power/reset/gpio-defer-reset.c
+> +- reset-end: specify reset signal end value, can be 0 or 1.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-defer-reset.txt b/Documentation/devicetree/bindings/gpio/gpio-defer-reset.txt
-new file mode 100644
-index 0000000..5d55830
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-defer-reset.txt
-@@ -0,0 +1,22 @@
-+GPIO defer reset binding
-+
-+Put a defer-reset device in a device node and enable DEFER RESET OBJECT CONFIG.
-+During driver init-calls, a defer-reset object will be created and issue reset
-+signal after the enclosing device node's initialization complete.
-+
-+Required properties:
-+- compatible:
-+  - "defer-reset" for creating defer reset object
-+- reset-gpio: specify gpio pin, can be an array.
-+- reset-init: specify reset signal initial value, can be 0 or 1.
-+- reset-end: specify reset signal end value, can be 0 or 1.
-+- delay: specify reset duration in ms.
-+
-+Example:
-+	defer_reset_vbus {
-+		compatible = "defer-reset";
-+		reset-gpios = <&gpx3 5 1>;
-+		reset-init = <0>;
-+		reset-end = <1>;
-+		delay = <5>;
-+	};
-diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-index fa0e4e0..74b7eb0 100644
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@ -57,3 +57,11 @@ config POWER_RESET_XGENE
- 	depends on POWER_RESET
- 	help
- 	  Reboot support for the APM SoC X-Gene Eval boards.
-+
-+config GPIO_DEFER_RESET
-+	bool "Defer reset driver via gpio"
-+	depends on OF_GPIO && POWER_RESET
-+	help
-+	  Enable defer reset drvier
-+	  The reset signal would be issued after a device on USB or PCI bus is initialied.
-+	  The dependency of reset signal and device can be specified in board's dts file.
-diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-index a5b4a77..166baf9 100644
---- a/drivers/power/reset/Makefile
-+++ b/drivers/power/reset/Makefile
-@@ -5,3 +5,4 @@ obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
- obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
- obj-$(CONFIG_POWER_RESET_VEXPRESS) += vexpress-poweroff.o
- obj-$(CONFIG_POWER_RESET_XGENE) += xgene-reboot.o
-+obj-$(CONFIG_GPIO_DEFER_RESET)	+= gpio-defer-reset.o
-diff --git a/drivers/power/reset/gpio-defer-reset.c b/drivers/power/reset/gpio-defer-reset.c
-new file mode 100644
-index 0000000..6425519
---- /dev/null
-+++ b/drivers/power/reset/gpio-defer-reset.c
-@@ -0,0 +1,192 @@
-+/*
-+ * GPIO Defer Reset Driver
-+ *
-+ * Copyright (C) 2014 Houcheng Lin
-+ * Author: Houcheng Lin <houcheng@gmail.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ */
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/delay.h>
-+#include <linux/slab.h>
-+
-+#define DRIVER_NAME "defer-reset"
-+#define DRIVER_DESC "GPIO defer reset driver"
-+#define GDR_MAX_DEV 32
-+
-+
-+static DEFINE_MUTEX(deferred_reset_mutex);
-+static LIST_HEAD(deferred_reset_list);
-+
-+struct defer_reset_private {
-+	struct list_head next;
-+	struct device_node *node;  /* defer_reset device */
-+};
-+
-+static void __exit gdr_cleanup(void);
-+
-+/**
-+ *  @pdev: deferred reset object's pdev
-+ *  @of_node: deferred reset object's OF node
-+ */
-+static int gdr_issue_reset(
-+	struct platform_device *pdev, struct device_node *of_node)
-+{
-+	int i;
-+	int count = of_gpio_named_count(of_node, "reset-gpios");
-+	u8 reset_init[GDR_MAX_DEV];
-+	u8 reset_end[GDR_MAX_DEV];
-+	u8 delay;
-+
-+	if (count != of_property_count_u32_elems(of_node, "reset-init")) {
-+		dev_err(&pdev->dev, "should call std error here, number is wrong:%d\n",
-+			of_property_count_u32_elems(of_node, "reset-init"));
-+		return -EINVAL;
-+	}
-+	if (count != of_property_count_u32_elems(of_node, "reset-end")) {
-+		dev_err(&pdev->dev, "should call std error here, number is wrong:%d\n",
-+			of_property_count_u32_elems(of_node, "reset-end"));
-+		return -EINVAL;
-+	}
-+	if (count > GDR_MAX_DEV) {
-+		dev_err(&pdev->dev, "too large reset array!\n");
-+		return -EINVAL;
-+	}
-+
-+	/* setup parameters */
-+	of_property_read_u8_array(of_node, "reset-init", reset_init, count);
-+	of_property_read_u8_array(of_node, "reset-end", reset_end, count);
-+	of_property_read_u8(of_node, "delay", &delay);
-+
-+	/* HC DEBUG CODE, WONT COMMIT
-+	printk("gpio num:%d\n", of_get_named_gpio(of_node, "reset-gpios", i));
-+	printk("gpiod to gpio num:%d\n", desc_to_gpio(gpiod)); */
-+	/* reset init */
-+	for (i = 0; i < count; i++) {
-+		struct gpio_desc *gpiod = of_get_named_gpiod_flags(of_node,
-+			"reset-gpios", i, NULL);
-+		if (IS_ERR(gpiod)) {
-+			dev_err(&pdev->dev, "error get gpiod:%ld\n",
-+				PTR_ERR(gpiod));
-+			continue;
-+		}
-+		dev_info(&pdev->dev, "issue reset to gpio for device [%s]\n",
-+			of_node->parent->name);
-+		gpiod_set_value(gpiod, reset_init[i]);
-+		gpiod_put(gpiod);
-+	}
-+	if (delay == 0)
-+		delay = 5;
-+	mdelay(delay);
-+	for (i = 0; i < count; i++) {
-+		struct gpio_desc *gpiod = of_get_named_gpiod_flags(of_node,
-+			"reset-gpios", i, NULL);
-+		if (IS_ERR(gpiod)) {
-+			dev_err(&pdev->dev, "error get gpiod:%ld\n",
-+				PTR_ERR(gpiod));
-+			continue;
-+		}
-+		gpiod_set_value(gpiod, reset_end[i]);
-+		gpiod_put(gpiod);
-+	}
-+	return 0;
-+}
-+
-+/**
-+  * the pdev parameter is provided by register routine, platform_device_register_simple
-+  **/
-+static int gdr_probe(struct platform_device *pdev_gdr)
-+{
-+	struct list_head *pos, *n;
-+
-+	pr_debug("gpio defer reset probe\n");
-+
-+	mutex_lock(&deferred_reset_mutex);
-+	list_for_each_safe(pos, n, &deferred_reset_list) {
-+		struct platform_device *pdev;
-+		struct defer_reset_private *pdata = list_entry(
-+			pos, struct defer_reset_private, next);
-+		pdev = of_find_device_by_node(pdata->node->parent);
-+		if (pdev != NULL && pdev->dev.driver != NULL) {
-+			gdr_issue_reset(pdev_gdr, pdata->node);
-+			list_del(&pdata->next);
-+			kfree(pdata);
-+		}
-+		/**
-+		 * for some device no register platfrom deivce yet
-+		 * druing probe will be dropped??
-+		 */
-+		if (pdev == NULL) {
-+			list_del(&pdata->next);
-+			kfree(pdata);
-+		}
-+
-+	}
-+	mutex_unlock(&deferred_reset_mutex);
-+	list_for_each(pos, &deferred_reset_list) {
-+		return -EPROBE_DEFER;
-+	}
-+	platform_device_unregister(pdev_gdr);
-+	gdr_cleanup();
-+	return 0;
-+}
-+
-+
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id gdr_match[] = {
-+	{ .compatible = "defer-reset" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, gdr_match);
-+#endif
-+
-+static struct platform_driver gdr_driver = {
-+	.probe      = gdr_probe,
-+	.driver = {
-+		.name   = DRIVER_NAME,
-+		.owner  = THIS_MODULE,
-+		.of_match_table = of_match_ptr(gdr_match),
-+	}
-+};
-+
-+
-+static int __init gdr_init(void)
-+{
-+	struct device_node *node;
-+	pr_info("defer-reset object initialied.\n");
-+	platform_device_register_simple("defer-reset", -1, NULL, 0);
-+	mutex_lock(&deferred_reset_mutex);
-+	for_each_compatible_node(node, NULL, "defer-reset") {
-+		struct defer_reset_private *pdata = kmalloc(
-+			sizeof(struct defer_reset_private), GFP_KERNEL);
-+		pdata->node = node;
-+		list_add_tail(&pdata->next, &deferred_reset_list);
-+	}
-+	mutex_unlock(&deferred_reset_mutex);
-+	return platform_driver_register(&gdr_driver);
-+}
-+
-+module_init(gdr_init);
-+
-+static void __exit gdr_cleanup(void)
-+{
-+	platform_driver_unregister(&gdr_driver);
-+}
-+
-+module_exit(gdr_cleanup);
-+
-+MODULE_DESCRIPTION(DRIVER_DESC);
-+MODULE_ALIAS("platform:defer-reset");
-+MODULE_AUTHOR("Houcheng Lin");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
+You can use a property without a value for booleans. If the property
+is there, the value is 1 and if its missing the value is 0.
 
+For example in your case you could use
+
+hold-reset-line;
+
+to inform the system, that the reset signal should not be changed
+back after the specified time.
+
+> +- delay: specify reset duration in ms.
+
+Alternatively you could do this via the duration. An infinite long
+reset signal basically means, that the line is never changed back.
+
+> +
+> +Example:
+> +	defer_reset_vbus {
+> +		compatible =3D "defer-reset";
+> +		reset-gpios =3D <&gpx3 5 1>;
+> +		reset-init =3D <0>;
+> +		reset-end =3D <1>;
+> +		delay =3D <5>;
+> +	};
+
+To give a few examples for the above comments:
+
+/* keep "gpx3 5" low for 5ms, change back to high afterwards */
+defer_reset_vbus {
+    compatible =3D "defer-reset";
+    reset-gpios =3D <&gpx3 5 GPIO_ACTIVE_LOW>;
+    duration =3D <5>;
+};
+
+/* keep "gpx3 5" high for 5ms, change back to low afterwards */
+defer_reset_vbus {
+    compatible =3D "defer-reset";
+    reset-gpios =3D <&gpx3 5 GPIO_ACTIVE_HIGH>;
+    duration =3D <5>;
+};
+
+/* keep "gpx3 5" low */
+defer_reset_vbus {
+    compatible =3D "defer-reset";
+    reset-gpios =3D <&gpx3 5 GPIO_ACTIVE_LOW>;
+    duration =3D <0>;
+};
+
+> [...]
+
+-- Sebastian
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJTnWLMAAoJENju1/PIO/qaqHwP/0hgnEbNasmEesFJs5WEFGZF
++FHu8nHzeA4pPn1chOw4NaaHbWhRgMTG7Gx5RbkbHQReid+L9SfwxSFt/Aqm9NU7
+S9QlvvobCbuZiLtRDZhu8fqYPXSHRg5G754ZOy/hQwBHdRdClDn8J0/Enk7jngVw
+yK8ykHZgcLvVAjQGQ+hOUN7YYeXnaJjhv2EPwP0afq4nXd3VTa1kYc0BhJaQTrig
+TletSThNX6pWGx92cYgReIrNPDFMFjJ0pjEB50pZi2VHg3cZtTeVZcos1nDp/qn4
+QLHbtxxmRzzlw3H024SArMCmN5DZ9rcL5iWpiubsVwCxRldRwfUkijk0kLfbB/qd
+tKqmP40xZ0Tc2Jk30LJgZC6YmsMrw3VN83H/wq4xSeT8IrZNSeJd3RwGQMVkBMCd
+g2elbhlEs8KX2LZPwOH+W3B1N6TBVVPVz7ayhS1wljOfJLQY6ob4ioxf53lAYrpC
+FpZT8Oz2rbk4iVPUyCGcC/PqOosVdMEQ3vqQrIsve/Cj/9vH3chhG3IJAKVGIvj0
+jBaCvhI3pC8lQdqNUI1WQaB3TmUAiYSaVJX2abs8b5VOF4PmXcrEzxWZgvObUBqS
+JscsJFd08u6SAWd2oWuqWnzHkKVm1IYxCYxwiXwFI/N9rolA87eBydacyuaRaWQJ
+4/c2ft5rJS+V9iA0/Zsn
+=0cup
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
