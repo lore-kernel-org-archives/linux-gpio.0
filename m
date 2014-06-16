@@ -1,59 +1,43 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH V3 2/3] Documentation: gpio: Add APM X-Gene SoC GPIO
- controller DTS binding
-Date: Mon, 16 Jun 2014 08:02:35 +0900
-Message-ID: <CAAVeFuKnBzK5hfq0G+x7uJPbCrA9ejQMMAbPqLQLX2JJ1=MWKQ@mail.gmail.com>
-References: <1402362278-12419-1-git-send-email-fkan@apm.com> <1402362278-12419-3-git-send-email-fkan@apm.com>
+From: Philipp Hachtmann <hachti@hachti.de>
+Subject: Re: [PATCH] USB: ftdi_sio: add GPIO support
+Date: Mon, 16 Jun 2014 09:15:55 +0200
+Message-ID: <539E99AB.9030907@hachti.de>
+References: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de> <20140610105631.GA10256@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f169.google.com ([209.85.128.169]:38042 "EHLO
-	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751128AbaFOXC4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Jun 2014 19:02:56 -0400
-In-Reply-To: <1402362278-12419-3-git-send-email-fkan@apm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140610105631.GA10256@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>, Sascha Silbe <x-linux@infra-silbe.de>
+Cc: Johan Hovold <jhovold@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Feng Kan <fkan@apm.com>
-Cc: patches <patches@apm.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Jun 10, 2014 at 10:04 AM, Feng Kan <fkan@apm.com> wrote:
-> Documentation for APM X-Gene SoC GPIO controller DTS binding.
->
-> Signed-off-by: Feng Kan <fkan@apm.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-xgene.txt          | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.txt
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
-> new file mode 100644
-> index 0000000..bd5fd85
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
-> @@ -0,0 +1,20 @@
-> +APM X-Gene SoC GPIO controller bindings
-> +
-> +This is a gpio controller that is part of the flash controller.
-> +This gpio controller controls a total of 48 gpios.
-> +
-> +Required properties:
-> +- compatible: "apm,xgene-gpio" for X-Gene GPIO controller
-> +- reg: Physical base address and size of the controller's registers
-> +- #gpio-cells: Should be two.
-> +       - first cell is the pin number
-> +       - second cell is used to specify optional parameters (unused)
-> +- gpio-controller: Marks the device node as a GPIO controller.
-> +
-> +Example:
-> +       gpio0: gpio0@1701c000 {
-> +               compatible = "apm,xgene-gpio";
-> +               reg = <0x0 0x1701c000 0x0 0x40>;
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +       };
+Hi,
 
-Much simpler, and a better fit if the number of banks and GPIOs are
-fixed on this chip as they seem to be.
+> Would this patch interfere with adding support for using the CBUS pins
+> as GPIOs while operating in normal UART mode?
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Most interesting question!
+
+>> Care was taken to prevent using GPIOs if the serial device is in use
+>> and vice versa.
+
+What about CBUS GPIO support?
+
+> Ok, so we're not extending the serial driver with support for
+> controlling some unused pins (e.g. CBUS) but rather implementing support
+> for a mutually exclusive mode.
+For bitbang mode (on the data lines) - yes. But for bitbang on CBUS - no.
+
+
+I have sent a proposal a few weeks ago but Greg did not like special 
+sysfs stuff :-P
+He asked me to use the GPIO subsystem for the CBUS pins. I am out of 
+time until july. But I still want and need CBUS support in parallel with 
+serial/FIFO operation.
+
+
+Regards
+
+Philipp
