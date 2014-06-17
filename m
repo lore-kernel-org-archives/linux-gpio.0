@@ -1,45 +1,60 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: [PATCH] gpio-pxa: gpio0 and gpio1 support on dt
-Date: Tue, 17 Jun 2014 08:18:36 +0800
-Message-ID: <CAN1soZz__VrLj57yLVTgqLnEUnS2wqaAv71kwnbZ5oRCVVoCNw@mail.gmail.com>
-References: <1401995603-25997-1-git-send-email-andrew.ruder@elecsyscorp.com>
-	<CACRpkdZ3xfOXrMZK-Z7TteOsdnVP8uOY4+DLe7pv_9ydBCRRWQ@mail.gmail.com>
+From: Houcheng Lin <houcheng@gmail.com>
+Subject: Re: [PATCH] [RFC PATCH v2] power:reset: Add defer reset object to
+ send board specific reset
+Date: Tue, 17 Jun 2014 23:44:20 +0800
+Message-ID: <CAL8JtxByA0t+Nr-h1W6BZEobO9Gfqtm+7UUpp=yUBO67WRLSDg@mail.gmail.com>
+References: <1402816289-7024-1-git-send-email-houcheng@gmail.com>
+	<20140615090932.GA29771@earth.universe>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f181.google.com ([74.125.82.181]:64406 "EHLO
-	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751573AbaFQASi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Jun 2014 20:18:38 -0400
-In-Reply-To: <CACRpkdZ3xfOXrMZK-Z7TteOsdnVP8uOY4+DLe7pv_9ydBCRRWQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140615090932.GA29771@earth.universe>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Ruder <andrew.ruder@elecsyscorp.com>, =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Thu, Jun 12, 2014 at 4:43 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Jun 5, 2014 at 9:13 PM, Andrew Ruder
-> <andrew.ruder@elecsyscorp.com> wrote:
->
->> pxa_gpio_probe() has some issues supporting the gpio0 and gpio1
->> interrupts under device-tree - it never actually sets up the chain
->> handler to get interrupts on edge detect for GPIO0 and GPIO1.
->>
->> Signed-off-by: Andrew Ruder <andrew.ruder@elecsyscorp.com>
->
-> Makes perfect sense. Can I have an ACK from some PXA
-> maintainer on this?
->
-> The PXA GPIO driver with it's messy irqchip registration looks
-> like a good candidate for switching to the gpiolib irqchip helpers
-> and rid some code. Just saying.
->
-> Yours,
-> Linus Walleij
+Hi,
 
-Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
+2014-06-15 17:09 GMT+08:00 Sebastian Reichel <sre@kernel.org>:
+>
+> I think this belongs to drivers/reset and not to drivers/power/reset.
+> The drivers in drivers/power/reset are about board reboot / shutdown.
+> This driver seems to be used for periphals.
 
-Yes, it's worth to rid some irqchip code.
+Yes, this driver is for pherphials and I think it is reasonble
+to placed it at drivers/reset. I'll moved it in next release.
 
-Regards
-Haojian
+> Alternatively you could do this via the duration. An infinite long
+> reset signal basically means, that the line is never changed back.
+>
+> To give a few examples for the above comments:
+>
+> /* keep "gpx3 5" low for 5ms, change back to high afterwards */
+> defer_reset_vbus {
+>     compatible = "defer-reset";
+>     reset-gpios = <&gpx3 5 GPIO_ACTIVE_LOW>;
+>     duration = <5>;
+> };
+>
+> /* keep "gpx3 5" high for 5ms, change back to low afterwards */
+> defer_reset_vbus {
+>     compatible = "defer-reset";
+>     reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
+>     duration = <5>;
+> };
+>
+> /* keep "gpx3 5" low */
+> defer_reset_vbus {
+>     compatible = "defer-reset";
+>     reset-gpios = <&gpx3 5 GPIO_ACTIVE_LOW>;
+>     duration = <0>;
+
+These DT properties looks simpler and better: Use of GPIO_ACTIVE_HIGH
+and GPIO_ACTIVE_LOW increase readability for HW/SW developer, use
+of <0> to indicate holding the reset signal. I'll updated code according
+on this. Thanks for your comments.
+
+-- 
+Best regards,
+Houcheng Lin
