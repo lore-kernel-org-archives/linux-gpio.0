@@ -1,60 +1,166 @@
-From: Harini Katakam <harinik@xilinx.com>
-Subject: [PATCH v2 2/2] devicetree: Add Zynq GPIO devicetree bindings documentation
-Date: Wed, 18 Jun 2014 17:09:37 +0530
-Message-ID: <1403091577-10232-2-git-send-email-harinik@xilinx.com>
-References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net
-Cc: michal.simek@xilinx.com, soren.brinkmann@xilinx.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, harinikatakamlinux@gmail.com, Harini Katakam <harini.katakam@xilinx.com>, Harini Katakam <harinik@xilinx.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 3/3] drivers/regulator: gpio-regulator.c: use managed resources for probe.
+Date: Wed, 18 Jun 2014 15:05:31 +0200
+Message-ID: <87697987.GOalQlOk20@diego>
+References: <1402411308-14182-1-git-send-email-rob.jones@codethink.co.uk> <1402411308-14182-4-git-send-email-rob.jones@codethink.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:47169 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S966401AbaFRNEP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 18 Jun 2014 09:04:15 -0400
+In-Reply-To: <1402411308-14182-4-git-send-email-rob.jones@codethink.co.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Jones <rob.jones@codethink.co.uk>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk
 
-From: Harini Katakam <harini.katakam@xilinx.com>
+Am Dienstag, 10. Juni 2014, 15:41:48 schrieb Rob Jones:
+> Use managed resource functions for all resource allocations in
+> gpio_regulator_probe().
+> 
+> Remove gpio_regulator_remove() as it is now redundant.
+> 
+> Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
+> Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
 
-Add gpio-zynq bindings documentation.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Signed-off-by: Harini Katakam <harinik@xilinx.com>
-Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
----
 
-v2 changes:
-Improve description.
+> ---
+>  drivers/regulator/gpio-regulator.c |   71
+> ++++++++++++------------------------ 1 file changed, 24 insertions(+), 47
+> deletions(-)
+> 
+> diff --git a/drivers/regulator/gpio-regulator.c
+> b/drivers/regulator/gpio-regulator.c index 989b23b..56341c3 100644
+> --- a/drivers/regulator/gpio-regulator.c
+> +++ b/drivers/regulator/gpio-regulator.c
+> @@ -254,30 +254,31 @@ static int gpio_regulator_probe(struct platform_device
+> *pdev) if (drvdata == NULL)
+>  		return -ENOMEM;
+> 
+> -	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
+> +	drvdata->desc.name = devm_kstrdup(&pdev->dev,
+> +					  config->supply_name,
+> +					  GFP_KERNEL);
+>  	if (drvdata->desc.name == NULL) {
+>  		dev_err(&pdev->dev, "Failed to allocate supply name\n");
+> -		ret = -ENOMEM;
+> -		goto err;
+> +		return -ENOMEM;
+>  	}
+> 
+> -	drvdata->gpios = kmemdup(config->gpios,
+> -				 config->nr_gpios * sizeof(struct gpio),
+> -				 GFP_KERNEL);
+> +	drvdata->gpios = devm_kmemdup(&pdev->dev,
+> +				      config->gpios,
+> +				      config->nr_gpios * sizeof(struct gpio),
+> +				      GFP_KERNEL);
+>  	if (drvdata->gpios == NULL) {
+>  		dev_err(&pdev->dev, "Failed to allocate gpio data\n");
+> -		ret = -ENOMEM;
+> -		goto err_name;
+> +		return -ENOMEM;
+>  	}
+> 
+> -	drvdata->states = kmemdup(config->states,
+> -				  config->nr_states *
+> +	drvdata->states = devm_kmemdup(&pdev->dev,
+> +				       config->states,
+> +				       config->nr_states *
+>  					 sizeof(struct gpio_regulator_state),
+> -				  GFP_KERNEL);
+> +				       GFP_KERNEL);
+>  	if (drvdata->states == NULL) {
+>  		dev_err(&pdev->dev, "Failed to allocate state data\n");
+> -		ret = -ENOMEM;
+> -		goto err_memgpio;
+> +		return -ENOMEM;
+>  	}
+>  	drvdata->nr_states = config->nr_states;
+> 
+> @@ -297,16 +298,17 @@ static int gpio_regulator_probe(struct platform_device
+> *pdev) break;
+>  	default:
+>  		dev_err(&pdev->dev, "No regulator type set\n");
+> -		ret = -EINVAL;
+> -		goto err_memgpio;
+> +		return -EINVAL;
+>  	}
+> 
+>  	drvdata->nr_gpios = config->nr_gpios;
+> -	ret = gpio_request_array(drvdata->gpios, drvdata->nr_gpios);
+> +	ret = devm_gpio_request_array(&pdev->dev,
+> +				      drvdata->gpios,
+> +				      drvdata->nr_gpios);
+>  	if (ret) {
+>  		dev_err(&pdev->dev,
+>  		   "Could not obtain regulator setting GPIOs: %d\n", ret);
+> -		goto err_memstate;
+> +		return ret;
+>  	}
+> 
+>  	/* build initial state from gpio init data. */
+> @@ -337,43 +339,18 @@ static int gpio_regulator_probe(struct platform_device
+> *pdev) cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
+>  	}
+> 
+> -	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+> +	drvdata->dev = devm_regulator_register(&pdev->dev,
+> +					       &drvdata->desc,
+> +					       &cfg);
+>  	if (IS_ERR(drvdata->dev)) {
+>  		ret = PTR_ERR(drvdata->dev);
+>  		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+> -		goto err_stategpio;
+> +		return ret;
+>  	}
+> 
+>  	platform_set_drvdata(pdev, drvdata);
+> 
+>  	return 0;
+> -
+> -err_stategpio:
+> -	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+> -err_memstate:
+> -	kfree(drvdata->states);
+> -err_memgpio:
+> -	kfree(drvdata->gpios);
+> -err_name:
+> -	kfree(drvdata->desc.name);
+> -err:
+> -	return ret;
+> -}
+> -
+> -static int gpio_regulator_remove(struct platform_device *pdev)
+> -{
+> -	struct gpio_regulator_data *drvdata = platform_get_drvdata(pdev);
+> -
+> -	regulator_unregister(drvdata->dev);
+> -
+> -	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+> -
+> -	kfree(drvdata->states);
+> -	kfree(drvdata->gpios);
+> -
+> -	kfree(drvdata->desc.name);
+> -
+> -	return 0;
+>  }
+> 
+>  #if defined(CONFIG_OF)
+> @@ -385,7 +362,7 @@ static const struct of_device_id
+> regulator_gpio_of_match[] = {
+> 
+>  static struct platform_driver gpio_regulator_driver = {
+>  	.probe		= gpio_regulator_probe,
+> -	.remove		= gpio_regulator_remove,
+> +	.remove		= NULL,
+>  	.driver		= {
+>  		.name		= "gpio-regulator",
+>  		.owner		= THIS_MODULE,
 
----
- .../devicetree/bindings/gpio/gpio-zynq.txt         |   24 ++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-zynq.txt b/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-new file mode 100644
-index 0000000..b2c023a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-@@ -0,0 +1,24 @@
-+Xilinx Zynq GPIO controller Device Tree Bindings
-+-------------------------------------------
-+
-+Required properties:
-+- #gpio-cells 		: Should be two. First cell is used to mention
-+			  pin number.
-+- compatible		: Should be "xlnx,zynq-gpio-1.0"
-+- clocks		: Clock specifier (see clock bindings for details)
-+- gpio-controller	: Marks the device node as a GPIO controller.
-+- interrupts		: Interrupt specifier (see interrupt bindings for
-+			  details)
-+- interrupt-parent	: Must be core interrupt controller
-+- reg			: Address and length of the register set for the device
-+
-+Example:
-+	gpio@e000a000 {
-+		#gpio-cells = <2>;
-+		compatible = "xlnx,zynq-gpio-1.0";
-+		clocks = <&clkc 42>;
-+		gpio-controller;
-+		interrupt-parent = <&intc>;
-+		interrupts = <0 20 4>;
-+		reg = <0xe000a000 0x1000>;
-+	};
--- 
-1.7.9.5
