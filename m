@@ -1,202 +1,135 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] gpio: Add driver for Zynq GPIO controller
-Date: Wed, 18 Jun 2014 08:36:52 -0700
-Message-ID: <5cc8b89b-20ff-4fa9-92dd-bb2f6d3512d8@BY2FFO11FD030.protection.gbl>
-References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
+From: Rob Jones <rob.jones@codethink.co.uk>
+Subject: Re: [PATCH 2/3] drivers/base: devres.c: Add block copy func. for
+ managed devices
+Date: Wed, 18 Jun 2014 16:52:20 +0100
+Message-ID: <53A1B5B4.2020704@codethink.co.uk>
+References: <1402411308-14182-1-git-send-email-rob.jones@codethink.co.uk> <1402411308-14182-3-git-send-email-rob.jones@codethink.co.uk> <1713451.AmufNoybT7@diego>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1403091577-10232-1-git-send-email-harinik-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Harini Katakam <harini.katakam-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org, michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, harinikatakamlinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Harini Katakam <harinik-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1713451.AmufNoybT7@diego>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
 
-I did some of the changes for this v2 and a few things are not clear to
-me.
+On 18/06/14 14:05, Heiko St=FCbner wrote:
+> Am Dienstag, 10. Juni 2014, 15:41:47 schrieb Rob Jones:
+>> Add function devm_kmemdup().
+>> Rationalise with devm_kstrdup() to avoid code duplication.
+>>
+>> Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
+>> Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
+>> ---
+>>   drivers/base/devres.c  |   42 ++++++++++++++++++++++++++++++++++--=
+------
+>>   include/linux/device.h |    2 ++
+>>   2 files changed, 36 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+>> index db4e264..978bbe2 100644
+>> --- a/drivers/base/devres.c
+>> +++ b/drivers/base/devres.c
+>> @@ -791,6 +791,20 @@ void * devm_kmalloc(struct device *dev, size_t =
+size,
+>> gfp_t gfp) EXPORT_SYMBOL_GPL(devm_kmalloc);
+>>
+>>   /**
+>> + * static function to avoid code duplication when duplicating buffe=
+rs
+>> + */
+>> +static void *devm_kmemdup_nochecks(struct device *dev, const void *=
+s,
+>> +				    size_t size, gfp_t gfp)
+>> +{
+>> +	void *buf;
+>> +
+>> +	buf =3D devm_kmalloc(dev, size, gfp);
+>> +	if (buf)
+>> +		memcpy(buf, s, size);
+>> +	return buf;
+>> +}
+>> +
+>> +/**
+>>    * devm_kstrdup - Allocate resource managed space and
+>>    *                copy an existing string into that.
+>>    * @dev: Device to allocate memory for
+>> @@ -802,21 +816,33 @@ EXPORT_SYMBOL_GPL(devm_kmalloc);
+>>    */
+>>   char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+>>   {
+>> -	size_t size;
+>> -	char *buf;
+>> -
+>>   	if (!s)
+>>   		return NULL;
+>>
+>> -	size =3D strlen(s) + 1;
+>> -	buf =3D devm_kmalloc(dev, size, gfp);
+>> -	if (buf)
+>> -		memcpy(buf, s, size);
+>> -	return buf;
+>> +	return devm_kmemdup_nochecks(dev, s, (strlen(s)+1), gfp);
+>>   }
+>>   EXPORT_SYMBOL_GPL(devm_kstrdup);
+> hmm, this looks like an unrelated change to me and may warrant a sepa=
+rate
+> patch for the devm_kstrdup change.
 
-The first is, how is userspace supposed to find the correct offset for =
-a
-GPIO pin. E.g. let's say GPIO 10 of this SOC-internal GPIO controller i=
-s
-something I want to control. So, I'd export GPIO (chip-base + 10). But
-this chip-base seems pretty variable. v1 of this patch had it hardcoded
-to 0, which resulted in a predictable offset, but apparently was utterl=
-y
-wrong. Now I see an offset of 138 for this chip when using my config.
-And when I use multi_v7_defconfig the offset is somewhere in the 800s,
-IIRC. The best I found was the 'label' in the gpiochip's sysfs entry,
-but documentation says that is not necessarily unique, and parsing labe=
-s
-seems sub-optimal too.
+On reflection, I agree, I'll separate out the change to devm_kstrdup()=20
+and resubmit.
 
-The second issue is a stack trace (below) I see when triggering
-interrupts (e.g. echo rising > edge; and then pushing the connected
-button). Looking at the stack trace, I don't see an obvious error (I
-think I pretty much copied the IRQ registration from the gpio-pl061.c
-driver you mentioned). Is this an issue in this driver or the core code=
-?
-This happens on Linus' latest tip. Despite all this chatter the system
-still works and doesn't not seem to lock up.
+>
+>
+>>   /**
+>> + * devm_kmemdup - Allocate resource managed space and
+>> + *                copy existing data into that.
+>> + * @dev: Device to allocate memory for
+>> + * @s: the memory block to duplicate
+>> + * @gfp: the GFP mask used in the devm_kmalloc() call when
+>> + *       allocating memory
+>> + * RETURNS:
+>> + * Pointer to allocated string on success, NULL on failure.
+>> + */
+>> +void *devm_kmemdup(struct device *dev, const void *s, size_t size, =
+gfp_t
+>> gfp) +{
+>> +	if (!s || (size =3D=3D 0))
+>> +		return NULL;
+>> +
+>> +	return devm_kmemdup_nochecks(dev, s, size, gfp);
+>> +}
+>> +EXPORT_SYMBOL_GPL(devm_kmemdup);
+>> +
+>> +/**
+>>    * devm_kfree - Resource-managed kfree
+>>    * @dev: Device this memory belongs to
+>>    * @p: Memory to free
+>> diff --git a/include/linux/device.h b/include/linux/device.h
+>> index d1d1c05..7ace116 100644
+>> --- a/include/linux/device.h
+>> +++ b/include/linux/device.h
+>> @@ -623,6 +623,8 @@ static inline void *devm_kcalloc(struct device *=
+dev,
+>>   }
+>>   extern void devm_kfree(struct device *dev, void *p);
+>>   extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t=
+ gfp);
+>> +extern void *devm_kmemdup(struct device *dev,
+>> +			  const void *s, size_t size, gfp_t gfp);
+>>
+>>   void __iomem *devm_ioremap_resource(struct device *dev, struct res=
+ource
+>> *res); void __iomem *devm_request_and_ioremap(struct device *dev,
+>
+>
 
-Here the stack trace:
-# echo rising > edge
-  BUG: sleeping function called from invalid context at kernel/locking/=
-mutex.c:586
-  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
-  no locks held by swapper/0/0.
-  irq event stamp: 55488
-  hardirqs last  enabled at (55485): [<c03bf10c>] cpuidle_enter_state+0=
-x60/0xec
-  hardirqs last disabled at (55486): [<c0014374>] __irq_svc+0x34/0x78
-  softirqs last  enabled at (55488): [<c002fc40>] _local_bh_enable+0x58=
-/0x64
-  softirqs last disabled at (55487): [<c0030534>] irq_enter+0x48/0x88
-  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 3.16.0-rc1-xilinx-00021-gf5=
-ddad957172 #88
-  [<c0017840>] (unwind_backtrace) from [<c0013770>] (show_stack+0x20/0x=
-24)
-  [<c0013770>] (show_stack) from [<c04d94a0>] (dump_stack+0x8c/0xd0)
-  [<c04d94a0>] (dump_stack) from [<c005d5e4>] (__might_sleep+0x1ac/0x1e=
-4)
-  [<c005d5e4>] (__might_sleep) from [<c04dc19c>] (mutex_lock_nested+0x4=
-0/0x46c)
-  [<c04dc19c>] (mutex_lock_nested) from [<c019df34>] (kernfs_notify+0xa=
-c/0x148)
-  [<c019df34>] (kernfs_notify) from [<c02d89e0>] (gpio_sysfs_irq+0x1c/0=
-x24)
-  [<c02d89e0>] (gpio_sysfs_irq) from [<c008588c>] (handle_irq_event_per=
-cpu+0xa8/0x3c0)
-  [<c008588c>] (handle_irq_event_percpu) from [<c0085bf0>] (handle_irq_=
-event+0x4c/0x6c)
-  [<c0085bf0>] (handle_irq_event) from [<c0088a28>] (handle_simple_irq+=
-0xac/0xbc)
-  [<c0088a28>] (handle_simple_irq) from [<c0084fec>] (generic_handle_ir=
-q+0x30/0x40)
-  [<c0084fec>] (generic_handle_irq) from [<c02de3fc>] (zynq_gpio_irqhan=
-dler+0xe8/0x130)
-  [<c02de3fc>] (zynq_gpio_irqhandler) from [<c0084fec>] (generic_handle=
-_irq+0x30/0x40)
-  [<c0084fec>] (generic_handle_irq) from [<c000fd24>] (handle_IRQ+0x78/=
-0xa0)
-  [<c000fd24>] (handle_IRQ) from [<c000868c>] (gic_handle_irq+0x4c/0x70=
-)
-  [<c000868c>] (gic_handle_irq) from [<c0014384>] (__irq_svc+0x44/0x78)
-  Exception stack(0xc0755ec8 to 0xc0755f10)
-  5ec0:                   00000001 00000004 00000000 c075fb70 00000001 =
-edfc9310
-  5ee0: 8ed05707 0000001d 9e7f7ffa 0000001d c0752308 c0755f44 c0755ee0 =
-c0755f10
-  5f00: c0077340 c03bf110 200d0013 ffffffff
-  [<c0014384>] (__irq_svc) from [<c03bf110>] (cpuidle_enter_state+0x64/=
-0xec)
-  [<c03bf110>] (cpuidle_enter_state) from [<c03bf2a0>] (cpuidle_enter+0=
-x24/0x28)
-  [<c03bf2a0>] (cpuidle_enter) from [<c0071d94>] (cpu_idle_loop+0x2e0/0=
-x6fc)
-  [<c0071d94>] (cpu_idle_loop) from [<c00721cc>] (cpupri_find+0x0/0x108=
-)
- =20
-  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-  [ INFO: inconsistent lock state ]
-  3.16.0-rc1-xilinx-00021-gf5ddad957172 #88 Not tainted
-  ---------------------------------
-  inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
-  swapper/0/0 [HC1[1]:SC0[0]:HE0:SE1] takes:
-   (kernfs_mutex){?.+.+.}, at: [<c019df34>] kernfs_notify+0xac/0x148
-  {HARDIRQ-ON-W} state was registered at:
-    [<c0079a08>] lock_acquire+0xfc/0x21c
-    [<c04dc1e0>] mutex_lock_nested+0x84/0x46c
-    [<c019d668>] kernfs_activate+0x2c/0xf8
-    [<c019d9b8>] kernfs_create_root+0xbc/0xe0
-    [<c070edac>] sysfs_init+0x20/0x5c
-    [<c070cef4>] mnt_init+0x108/0x258
-    [<c070caa8>] vfs_caches_init+0x9c/0x110
-    [<c06f5c3c>] start_kernel+0x364/0x3fc
-    [<00008074>] 0x8074
-  irq event stamp: 55488
-  hardirqs last  enabled at (55485): [<c03bf10c>] cpuidle_enter_state+0=
-x60/0xec
-  hardirqs last disabled at (55486): [<c0014374>] __irq_svc+0x34/0x78
-  softirqs last  enabled at (55488): [<c002fc40>] _local_bh_enable+0x58=
-/0x64
-  softirqs last disabled at (55487): [<c0030534>] irq_enter+0x48/0x88
- =20
-  other info that might help us debug this:
-   Possible unsafe locking scenario:
- =20
-         CPU0
-         ----
-    lock(kernfs_mutex);
-    <Interrupt>
-      lock(kernfs_mutex);
- =20
-   *** DEADLOCK ***
- =20
-  no locks held by swapper/0/0.
- =20
-  stack backtrace:
-  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 3.16.0-rc1-xilinx-00021-gf5=
-ddad957172 #88
-  [<c0017840>] (unwind_backtrace) from [<c0013770>] (show_stack+0x20/0x=
-24)
-  [<c0013770>] (show_stack) from [<c04d94a0>] (dump_stack+0x8c/0xd0)
-  [<c04d94a0>] (dump_stack) from [<c0076a50>] (print_usage_bug+0x254/0x=
-2c4)
-  [<c0076a50>] (print_usage_bug) from [<c0076e6c>] (mark_lock+0x3ac/0x6=
-74)
-  [<c0076e6c>] (mark_lock) from [<c0078024>] (__lock_acquire+0x934/0x1b=
-58)
-  [<c0078024>] (__lock_acquire) from [<c0079a08>] (lock_acquire+0xfc/0x=
-21c)
-  [<c0079a08>] (lock_acquire) from [<c04dc1e0>] (mutex_lock_nested+0x84=
-/0x46c)
-  [<c04dc1e0>] (mutex_lock_nested) from [<c019df34>] (kernfs_notify+0xa=
-c/0x148)
-  [<c019df34>] (kernfs_notify) from [<c02d89e0>] (gpio_sysfs_irq+0x1c/0=
-x24)
-  [<c02d89e0>] (gpio_sysfs_irq) from [<c008588c>] (handle_irq_event_per=
-cpu+0xa8/0x3c0)
-  [<c008588c>] (handle_irq_event_percpu) from [<c0085bf0>] (handle_irq_=
-event+0x4c/0x6c)
-  [<c0085bf0>] (handle_irq_event) from [<c0088a28>] (handle_simple_irq+=
-0xac/0xbc)
-  [<c0088a28>] (handle_simple_irq) from [<c0084fec>] (generic_handle_ir=
-q+0x30/0x40)
-  [<c0084fec>] (generic_handle_irq) from [<c02de3fc>] (zynq_gpio_irqhan=
-dler+0xe8/0x130)
-  [<c02de3fc>] (zynq_gpio_irqhandler) from [<c0084fec>] (generic_handle=
-_irq+0x30/0x40)
-  [<c0084fec>] (generic_handle_irq) from [<c000fd24>] (handle_IRQ+0x78/=
-0xa0)
-  [<c000fd24>] (handle_IRQ) from [<c000868c>] (gic_handle_irq+0x4c/0x70=
-)
-  [<c000868c>] (gic_handle_irq) from [<c0014384>] (__irq_svc+0x44/0x78)
-  Exception stack(0xc0755ec8 to 0xc0755f10)
-  5ec0:                   00000001 00000004 00000000 c075fb70 00000001 =
-edfc9310
-  5ee0: 8ed05707 0000001d 9e7f7ffa 0000001d c0752308 c0755f44 c0755ee0 =
-c0755f10
-  5f00: c0077340 c03bf110 200d0013 ffffffff
-  [<c0014384>] (__irq_svc) from [<c03bf110>] (cpuidle_enter_state+0x64/=
-0xec)
-  [<c03bf110>] (cpuidle_enter_state) from [<c03bf2a0>] (cpuidle_enter+0=
-x24/0x28)
-  [<c03bf2a0>] (cpuidle_enter) from [<c0071d94>] (cpu_idle_loop+0x2e0/0=
-x6fc)
-  [<c0071d94>] (cpu_idle_loop) from [<c00721cc>] (cpupri_find+0x0/0x108=
-)
-
-	Thanks,
-	S=C3=B6ren
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Rob Jones
+Project Manager
+Codethink Ltd
+mailto:rob.jones@codethink.co.uk
+tel:+44 161 236 5575
