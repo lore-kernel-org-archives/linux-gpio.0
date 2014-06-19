@@ -1,112 +1,87 @@
 From: Rob Jones <rob.jones@codethink.co.uk>
-Subject: [PATCH 1/4] drivers/gpio: devres.c: allow gpio array requests for managed devices
-Date: Thu, 19 Jun 2014 16:46:02 +0100
-Message-ID: <1403192765-3258-2-git-send-email-rob.jones@codethink.co.uk>
+Subject: [PATCH 2/4] drivers/base: devres.c: Add block copy func. for managed devices
+Date: Thu, 19 Jun 2014 16:46:03 +0100
+Message-ID: <1403192765-3258-3-git-send-email-rob.jones@codethink.co.uk>
 References: <1403192765-3258-1-git-send-email-rob.jones@codethink.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:56706 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-FAIL-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1757652AbaFSPq3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 19 Jun 2014 11:46:29 -0400
 In-Reply-To: <1403192765-3258-1-git-send-email-rob.jones@codethink.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com
 Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@codethink.co.uk, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk, heiko@sntech.de, rob.jones@codethink.co.uk
-List-Id: linux-gpio@vger.kernel.org
 
-Add functions devm_gpio_request_array() and devm_gpio_free_array()
-which are exactly analogous to the equivalent non-managed device
-functions gpio_request_array() and gpio_free_array(), which can be
-found in the module gpiolib.c.
-
-Note that if devm_gpio_request_array() fails, no gpios are obtained.
-No indication is provided as to which particular request failed.
+Add function devm_kmemdup().
 
 Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
 Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
 ---
- drivers/gpio/devres.c |   57 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/gpio.h  |    4 ++++
- 2 files changed, 61 insertions(+)
+ drivers/base/devres.c  |   27 ++++++++++++++++++++++++++-
+ include/linux/device.h |    2 ++
+ 2 files changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index 307464f..d4c2161 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -186,6 +186,63 @@ int devm_gpio_request_one(struct device *dev, unsigned gpio,
- EXPORT_SYMBOL(devm_gpio_request_one);
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index db4e264..9d0f64c 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -793,7 +793,7 @@ EXPORT_SYMBOL_GPL(devm_kmalloc);
+ /**
+  * devm_kstrdup - Allocate resource managed space and
+  *                copy an existing string into that.
+- * @dev: Device to allocate memory for
++ * @dev:Device to allocate memory for
+  * @s: the string to duplicate
+  * @gfp: the GFP mask used in the devm_kmalloc() call when
+  *       allocating memory
+@@ -817,6 +817,31 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+ EXPORT_SYMBOL_GPL(devm_kstrdup);
  
  /**
-+ * devm_gpio_request_array - request multiple GPIOs in a single call
-+ *			     for a managed device
-+ * @dev:	device requesting the gpio
-+ * @array:	array of the 'struct gpio'
-+ * @num:	how many GPIOs in the array
-+ *
-+ * Except for the extra @dev argument, this function takes the
-+ * same arguments and performs the same function as
-+ * gpio_request().  GPIOs requested with this function will be
-+ * automatically freed on driver detach.
-+ *
-+ * If GPIOs allocated with this function need to be freed separately,
-+ * devm_gpio_free_array() or devm_gpio_free() must be used.
++ * devm_kmemdup - Allocate resource managed space and
++ *                copy existing data into that.
++ * @dev:	Device to allocate memory for
++ * @s: 		The memory block to duplicate
++ * @gfp: 	The GFP mask used in the devm_kmalloc() call when
++ *		allocating memory
++ * RETURNS:
++ * Pointer to allocated string on success, NULL on failure.
 + */
-+int devm_gpio_request_array(struct device *dev,
-+			    const struct gpio *array,
-+			    size_t num)
++void *devm_kmemdup(struct device *dev, const void *s, size_t size, gfp_t gfp)
 +{
-+	int i, err = 0;
++	void *buf;
 +
-+	for (i = 0; i < num; i++, array++) {
-+		err = devm_gpio_request_one(dev,
-+					    array->gpio,
-+					    array->flags,
-+					    array->label);
-+		if (err) {
-+			while (i--)
-+				devm_gpio_free(dev, (--array)->gpio);
-+		}
-+	}
++	if (!s || (size == 0))
++		return NULL;
 +
-+	return err;
++	buf = devm_kmalloc(dev, size, gfp);
++	if (buf)
++		memcpy(buf, s, size);
++
++	return buf;
 +}
-+EXPORT_SYMBOL(devm_gpio_request_array);
++EXPORT_SYMBOL_GPL(devm_kmemdup);
 +
 +/**
-+ * devm_gpio_free_array - release multiple GPIOs in a single call
-+ *			  for a managed device
-+ * @dev:	device requesting the gpio
-+ * @array:	array of the 'struct gpio'
-+ * @num:	how many GPIOs in the array
-+ *
-+ * Except for the extra @dev argument, this function takes the
-+ * same arguments and performs the same function as gpio_free_array().
-+ * This function instead of gpio_free_array() should be used to
-+ * manually free GPIOs allocated with devm_gpio_request().
-+ */
-+void devm_gpio_free_array(struct device *dev,
-+			  const struct gpio *array,
-+			  size_t num)
-+{
-+	while (num--)
-+		devm_gpio_free(dev, (array++)->gpio);
-+}
-+EXPORT_SYMBOL(devm_gpio_free_array);
-+
-+/**
-  *      devm_gpio_free - free a GPIO
-  *      @dev: device to free GPIO for
-  *      @gpio: GPIO to free
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 85aa5d0..12d5648 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -84,6 +84,10 @@ struct device;
- int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
- int devm_gpio_request_one(struct device *dev, unsigned gpio,
- 			  unsigned long flags, const char *label);
-+int devm_gpio_request_array(struct device *dev, const struct gpio *array,
-+			    size_t num);
-+void devm_gpio_free_array(struct device *dev, const struct gpio *array,
-+			 size_t num);
- void devm_gpio_free(struct device *dev, unsigned int gpio);
+  * devm_kfree - Resource-managed kfree
+  * @dev: Device this memory belongs to
+  * @p: Memory to free
+diff --git a/include/linux/device.h b/include/linux/device.h
+index d1d1c05..7ace116 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -623,6 +623,8 @@ static inline void *devm_kcalloc(struct device *dev,
+ }
+ extern void devm_kfree(struct device *dev, void *p);
+ extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp);
++extern void *devm_kmemdup(struct device *dev,
++			  const void *s, size_t size, gfp_t gfp);
  
- #else /* ! CONFIG_GPIOLIB */
+ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
+ void __iomem *devm_request_and_ioremap(struct device *dev,
 -- 
 1.7.10.4
+
