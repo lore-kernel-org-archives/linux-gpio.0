@@ -1,152 +1,43 @@
-From: Rob Jones <rob.jones@codethink.co.uk>
-Subject: [PATCH 4/4] drivers/regulator: gpio-regulator.c: use managed resources for probe.
-Date: Thu, 19 Jun 2014 16:46:05 +0100
-Message-ID: <1403192765-3258-5-git-send-email-rob.jones@codethink.co.uk>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 3/4] drivers/base: devres.c: use devm_kmemdup() from
+ with devm_kstrdup()
+Date: Thu, 19 Jun 2014 08:59:27 -0700
+Message-ID: <1403193567.7875.4.camel@joe-AO725>
 References: <1403192765-3258-1-git-send-email-rob.jones@codethink.co.uk>
+	 <1403192765-3258-4-git-send-email-rob.jones@codethink.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403192765-3258-1-git-send-email-rob.jones@codethink.co.uk>
+In-Reply-To: <1403192765-3258-4-git-send-email-rob.jones@codethink.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@codethink.co.uk, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk, heiko@sntech.de, rob.jones@codethink.co.uk
+To: Rob Jones <rob.jones@codethink.co.uk>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@codethink.co.uk, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk, heiko@sntech.de
 List-Id: linux-gpio@vger.kernel.org
 
-Use managed resource functions for all resource allocations in
-gpio_regulator_probe().
+On Thu, 2014-06-19 at 16:46 +0100, Rob Jones wrote:
+> Avoid code duplication by using devm_kmemdup() to copy data instead
+> of having a separate loop within devm_kstrdup().
+> 
+> Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
+> Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
+[]
+> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+[]
+> @@ -802,17 +802,10 @@ EXPORT_SYMBOL_GPL(devm_kmalloc);
+>   */
+>  char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+>  {
+[]
+> +	return devm_kmemdup(dev, s, (strlen(s) + 1), gfp);
+>  }
+>  EXPORT_SYMBOL_GPL(devm_kstrdup);
 
-Remove gpio_regulator_remove() as it is now redundant.
+Making this static inline in the header and dropping
+EXPORT_SYMBOL_GPL might be smaller code.
 
-Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
-Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
----
- drivers/regulator/gpio-regulator.c |   70 ++++++++++++------------------------
- 1 file changed, 23 insertions(+), 47 deletions(-)
-
-diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
-index 989b23b..6edde12 100644
---- a/drivers/regulator/gpio-regulator.c
-+++ b/drivers/regulator/gpio-regulator.c
-@@ -254,30 +254,31 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 	if (drvdata == NULL)
- 		return -ENOMEM;
- 
--	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
-+	drvdata->desc.name = devm_kstrdup(&pdev->dev,
-+					  config->supply_name,
-+					  GFP_KERNEL);
- 	if (drvdata->desc.name == NULL) {
- 		dev_err(&pdev->dev, "Failed to allocate supply name\n");
--		ret = -ENOMEM;
--		goto err;
-+		return -ENOMEM;
- 	}
- 
--	drvdata->gpios = kmemdup(config->gpios,
--				 config->nr_gpios * sizeof(struct gpio),
--				 GFP_KERNEL);
-+	drvdata->gpios = devm_kmemdup(&pdev->dev,
-+				      config->gpios,
-+				      config->nr_gpios * sizeof(struct gpio),
-+				      GFP_KERNEL);
- 	if (drvdata->gpios == NULL) {
- 		dev_err(&pdev->dev, "Failed to allocate gpio data\n");
--		ret = -ENOMEM;
--		goto err_name;
-+		return -ENOMEM;
- 	}
- 
--	drvdata->states = kmemdup(config->states,
--				  config->nr_states *
-+	drvdata->states = devm_kmemdup(&pdev->dev,
-+				       config->states,
-+				       config->nr_states *
- 					 sizeof(struct gpio_regulator_state),
--				  GFP_KERNEL);
-+				       GFP_KERNEL);
- 	if (drvdata->states == NULL) {
- 		dev_err(&pdev->dev, "Failed to allocate state data\n");
--		ret = -ENOMEM;
--		goto err_memgpio;
-+		return -ENOMEM;
- 	}
- 	drvdata->nr_states = config->nr_states;
- 
-@@ -297,16 +298,17 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 		break;
- 	default:
- 		dev_err(&pdev->dev, "No regulator type set\n");
--		ret = -EINVAL;
--		goto err_memgpio;
-+		return -EINVAL;
- 	}
- 
- 	drvdata->nr_gpios = config->nr_gpios;
--	ret = gpio_request_array(drvdata->gpios, drvdata->nr_gpios);
-+	ret = devm_gpio_request_array(&pdev->dev,
-+				      drvdata->gpios,
-+				      drvdata->nr_gpios);
- 	if (ret) {
- 		dev_err(&pdev->dev,
- 		   "Could not obtain regulator setting GPIOs: %d\n", ret);
--		goto err_memstate;
-+		return ret;
- 	}
- 
- 	/* build initial state from gpio init data. */
-@@ -337,43 +339,18 @@ static int gpio_regulator_probe(struct platform_device *pdev)
- 			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
- 	}
- 
--	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
-+	drvdata->dev = devm_regulator_register(&pdev->dev,
-+					       &drvdata->desc,
-+					       &cfg);
- 	if (IS_ERR(drvdata->dev)) {
- 		ret = PTR_ERR(drvdata->dev);
- 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
--		goto err_stategpio;
-+		return ret;
- 	}
- 
- 	platform_set_drvdata(pdev, drvdata);
- 
- 	return 0;
--
--err_stategpio:
--	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
--err_memstate:
--	kfree(drvdata->states);
--err_memgpio:
--	kfree(drvdata->gpios);
--err_name:
--	kfree(drvdata->desc.name);
--err:
--	return ret;
--}
--
--static int gpio_regulator_remove(struct platform_device *pdev)
--{
--	struct gpio_regulator_data *drvdata = platform_get_drvdata(pdev);
--
--	regulator_unregister(drvdata->dev);
--
--	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
--
--	kfree(drvdata->states);
--	kfree(drvdata->gpios);
--
--	kfree(drvdata->desc.name);
--
--	return 0;
- }
- 
- #if defined(CONFIG_OF)
-@@ -385,7 +362,6 @@ static const struct of_device_id regulator_gpio_of_match[] = {
- 
- static struct platform_driver gpio_regulator_driver = {
- 	.probe		= gpio_regulator_probe,
--	.remove		= gpio_regulator_remove,
- 	.driver		= {
- 		.name		= "gpio-regulator",
- 		.owner		= THIS_MODULE,
--- 
-1.7.10.4
+static inline
+char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+{
+	return devm_kmemdup(dev, s, strlen(s) + 1, gfp);
+}
