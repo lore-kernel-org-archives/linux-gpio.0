@@ -1,60 +1,63 @@
 From: Rob Jones <rob.jones@codethink.co.uk>
-Subject: Re: Change gpio-reulator-probe() to use managed resources.
-Date: Fri, 20 Jun 2014 09:38:29 +0100
-Message-ID: <53A3F305.9070903@codethink.co.uk>
-References: <1403192765-3258-1-git-send-email-rob.jones@codethink.co.uk> <20140619175745.GS5099@sirena.org.uk>
+Subject: Re: [PATCH 3/4] drivers/base: devres.c: use devm_kmemdup() from with
+ devm_kstrdup()
+Date: Fri, 20 Jun 2014 10:20:00 +0100
+Message-ID: <53A3FCC0.6050705@codethink.co.uk>
+References: <1403192765-3258-1-git-send-email-rob.jones@codethink.co.uk>	 <1403192765-3258-4-git-send-email-rob.jones@codethink.co.uk> <1403193567.7875.4.camel@joe-AO725>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:46271 "EHLO
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:47514 "EHLO
 	ducie-dc1.codethink.co.uk" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932937AbaFTIih (ORCPT
+	by vger.kernel.org with ESMTP id S934595AbaFTJUI (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 20 Jun 2014 04:38:37 -0400
-In-Reply-To: <20140619175745.GS5099@sirena.org.uk>
+	Fri, 20 Jun 2014 05:20:08 -0400
+In-Reply-To: <1403193567.7875.4.camel@joe-AO725>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@codethink.co.uk, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk, heiko@sntech.de
+To: Joe Perches <joe@perches.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@codethink.co.uk, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk, heiko@sntech.de
 
 
-On 19/06/14 18:57, Mark Brown wrote:
-> On Thu, Jun 19, 2014 at 04:46:01PM +0100, Rob Jones wrote:
->> Add new managed resource functions as needed to achieve this.
+On 19/06/14 16:59, Joe Perches wrote:
+> On Thu, 2014-06-19 at 16:46 +0100, Rob Jones wrote:
+>> Avoid code duplication by using devm_kmemdup() to copy data instead
+>> of having a separate loop within devm_kstrdup().
 >>
->> Amend the following functions:
-> You appear to have omitted the actual patch, I'm quoting the entire
-> mail here.  Please see Documentation/SubmittingPatches for some tips
-> on how to do things.
-
-I omitted to put "[Patch 0/4][v2]" on the front of the subject line.The 
-actual patches followed.
-
-It was a consequence of lack of familiarity with the tools; I'm 
-learning, so it shouldn't happen again. Would you like me to resubmit?
-
+>> Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
+>> Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
+> []
+>> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> []
+>> @@ -802,17 +802,10 @@ EXPORT_SYMBOL_GPL(devm_kmalloc);
+>>    */
+>>   char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+>>   {
+> []
+>> +	return devm_kmemdup(dev, s, (strlen(s) + 1), gfp);
+>>   }
+>>   EXPORT_SYMBOL_GPL(devm_kstrdup);
+> Making this static inline in the header and dropping
+> EXPORT_SYMBOL_GPL might be smaller code.
 >
->> devm_kstrdup()
->> gpio_regulator_probe()
->>
->> Add the following functions:
->>
->> devm_kmemdup()
->> devm_gpio_request_array()
->> devm_gpio_free_array()
->>
->> Remove the following functions:
->>
->> gpio_regulator_remove()
->>
->>
->>  From Rob Jones <rob.jones@codethink.co.uk> # This line is ignored.
->> From: Rob Jones <rob.jones@codethink.co.uk>
->> Subject:
->> In-Reply-To:
->>
->>
+> static inline
+> char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+> {
+> 	return devm_kmemdup(dev, s, strlen(s) + 1, gfp);
+> }
+>
+
+Is it wise not to check for (s == NULL)? Surely the behaviour of 
+strlen(NULL) is undefined.
+
+Consequently, I am, on balance, against making the function static 
+inline. Given that inline is only a recommendation to the compiler, it 
+may well not inline it anyway if the NULL test is present, in which case 
+we would end up with a copy of the code in each module that uses it 
+rather than a single, global, copy. If it didn't need the NULL test, I 
+would agree that it would be best as a static inline but I think it does 
+need it.
 
 -- 
 Rob Jones
