@@ -1,68 +1,67 @@
-From: Rob Jones <rob.jones@codethink.co.uk>
-Subject: Re: [PATCH 3/4] drivers/base: devres.c: use devm_kmemdup() from with
- devm_kstrdup()
-Date: Fri, 20 Jun 2014 10:20:00 +0100
-Message-ID: <53A3FCC0.6050705@codethink.co.uk>
-References: <1403192765-3258-1-git-send-email-rob.jones@codethink.co.uk>	 <1403192765-3258-4-git-send-email-rob.jones@codethink.co.uk> <1403193567.7875.4.camel@joe-AO725>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Change gpio-reulator-probe() to use managed resources.
+Date: Fri, 20 Jun 2014 11:20:37 +0100
+Message-ID: <20140620102037.GV5099@sirena.org.uk>
+References: <1403192765-3258-1-git-send-email-rob.jones@codethink.co.uk>
+ <20140619175745.GS5099@sirena.org.uk>
+ <53A3F305.9070903@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PfYdSB/Wheep+9ho"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:47514 "EHLO
-	ducie-dc1.codethink.co.uk" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S934595AbaFTJUI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 20 Jun 2014 05:20:08 -0400
-In-Reply-To: <1403193567.7875.4.camel@joe-AO725>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50385 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966224AbaFTKU5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Jun 2014 06:20:57 -0400
+Content-Disposition: inline
+In-Reply-To: <53A3F305.9070903@codethink.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@codethink.co.uk, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk, heiko@sntech.de
+To: Rob Jones <rob.jones@codethink.co.uk>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@codethink.co.uk, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk, heiko@sntech.de
 
 
-On 19/06/14 16:59, Joe Perches wrote:
-> On Thu, 2014-06-19 at 16:46 +0100, Rob Jones wrote:
->> Avoid code duplication by using devm_kmemdup() to copy data instead
->> of having a separate loop within devm_kstrdup().
->>
->> Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
->> Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
-> []
->> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> []
->> @@ -802,17 +802,10 @@ EXPORT_SYMBOL_GPL(devm_kmalloc);
->>    */
->>   char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
->>   {
-> []
->> +	return devm_kmemdup(dev, s, (strlen(s) + 1), gfp);
->>   }
->>   EXPORT_SYMBOL_GPL(devm_kstrdup);
-> Making this static inline in the header and dropping
-> EXPORT_SYMBOL_GPL might be smaller code.
->
-> static inline
-> char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
-> {
-> 	return devm_kmemdup(dev, s, strlen(s) + 1, gfp);
-> }
->
+--PfYdSB/Wheep+9ho
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Is it wise not to check for (s == NULL)? Surely the behaviour of 
-strlen(NULL) is undefined.
+On Fri, Jun 20, 2014 at 09:38:29AM +0100, Rob Jones wrote:
 
-Consequently, I am, on balance, against making the function static 
-inline. Given that inline is only a recommendation to the compiler, it 
-may well not inline it anyway if the NULL test is present, in which case 
-we would end up with a copy of the code in each module that uses it 
-rather than a single, global, copy. If it didn't need the NULL test, I 
-would agree that it would be best as a static inline but I think it does 
-need it.
+> I omitted to put "[Patch 0/4][v2]" on the front of the subject line.The
+> actual patches followed.
 
--- 
-Rob Jones
-Project Manager
-Codethink Ltd
-mailto:rob.jones@codethink.co.uk
-tel:+44 161 236 5575
+Oh, so this is associated with a patch series?
 
+> It was a consequence of lack of familiarity with the tools; I'm learning, so
+> it shouldn't happen again. Would you like me to resubmit?
+
+I do see another patch from you for the regulator subsystem which is
+part of a series so I guess no need.
+
+Please, if you are resubmitting try to use a changelog style consistent
+with the code you're submitting against - you've got subject lines with
+"drivers/" which the kernel doesn't do.
+
+--PfYdSB/Wheep+9ho
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTpAryAAoJELSic+t+oim9MuMQAJWSKMrOwfgwNzh5z8zrZhn/
+x/DfvT58n7Pp50TX0CCOV57Y/72yq8H/mbgnzcNcnGP4wNEfR9jyqi0jOU86RJLu
+Izjbu+Pn3bZq1uRNO0wHIA/KTVJAGfrp8FOJkXC1w5pNHuYQ88XTVKwf9ajJ1oBW
+Oj+VXlTCXhD+QXNp0cb7oM6xJHz49vy5vNeQXvZKvkfcje+vg79dPrVIMASrqJwB
+tj535YqDf3Kk8Wz1CcKRl6rmrc75sArdTauFpVjdJyWyfAeHwAJeekTV9StMqQTc
+OoMZeAT2/8Fb6jsqNGxyUcZQ2NfiwHZCGY9jOnY/zcSfCSfcIH94EtWd+DfoB/s4
+W+3LM9+pVu8gtwljBgLYYirjKSHiTHj77pTCDs/OsoF5RF9qcP62eR2PlMJBMMZl
+FSpjMhsp0wXxON965/7E306HaBy1raDozqpeeht77S/Z/4vMcihxs1MBliRi42Yq
+LXxJxBHVp8Qk8toewcOTqaFVG642uz2bECyA6n92POyo7aRF23hZmAhng5HxpOct
+eu1usVIzdDhM9OAZdBuSjiPQRAPdLf3lyYasw+caHvntsszvZuOX6c8Wu0EKLNh2
+GDaBEYX5Y2wv+brTowQ9IJ4UHZG85puzctM7gfqsSp4ay+DCvR/thYjBcXpqyZTB
+s8gmWztLACn4Wj3Y8zKZ
+=rTsz
+-----END PGP SIGNATURE-----
+
+--PfYdSB/Wheep+9ho--
