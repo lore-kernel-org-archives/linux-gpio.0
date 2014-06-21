@@ -1,100 +1,85 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/2][v5] gpio-mpc8xxx: add mpc8xxx_gpio_set_multiple function
-Date: Sat, 21 Jun 2014 16:11:30 +0900
-Message-ID: <CAAVeFu+trpxyK9iY=uZiKRJr9HtpqmpB1WCKWkP_9-oo+f_LHQ@mail.gmail.com>
-References: <4129438.bdYOBL4jO3@pcimr>
+Subject: Re: [PATCH] mmc: core: Add DT bindings for card detect debounce time
+Date: Sat, 21 Jun 2014 16:22:12 +0900
+Message-ID: <CAAVeFu+CW0DSbqc6k145APao2r907sAyMw0+W=hQXxO6LoQx-g@mail.gmail.com>
+References: <1399649837-27286-1-git-send-email-balajitk@ti.com> <CAPDyKFoZ=zjKg5bUMnK_X2XOatT=XSAnBDpYqu0Q2VOkM7hOOA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:37946 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752525AbaFUHLu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Jun 2014 03:11:50 -0400
-Received: by mail-vc0-f174.google.com with SMTP id hy4so4239046vcb.33
-        for <linux-gpio@vger.kernel.org>; Sat, 21 Jun 2014 00:11:50 -0700 (PDT)
-In-Reply-To: <4129438.bdYOBL4jO3@pcimr>
+Received: from mail-vc0-f181.google.com ([209.85.220.181]:37603 "EHLO
+	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758036AbaFUHWd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Jun 2014 03:22:33 -0400
+In-Reply-To: <CAPDyKFoZ=zjKg5bUMnK_X2XOatT=XSAnBDpYqu0Q2VOkM7hOOA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Gerhard Sittig <gsi@denx.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Balaji T K <balajitk@ti.com>, Linus Walleij <linus.walleij@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Jun 16, 2014 at 10:51 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> Add a set_multiple function to the MPC8xxx GPIO chip driver and thereby allow
-> for actual performance improvements when setting multiple outputs
-> simultaneously. In my case the time needed to configure an FPGA goes down from
-> 48 s to 20 s.
+On Wed, Jun 18, 2014 at 10:47 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 9 May 2014 17:37, Balaji T K <balajitk@ti.com> wrote:
+>> Provide an option to get CD debounce time from DT
+>>
+>> Signed-off-by: Balaji T K <balajitk@ti.com>
+>> ---
+>>  Documentation/devicetree/bindings/mmc/mmc.txt |    1 +
+>>  drivers/mmc/core/host.c                       |    6 +++++-
+>>  2 files changed, 6 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/mmc.txt b/Documentation/devicetree/bindings/mmc/mmc.txt
+>> index 9dce540..fae590b 100644
+>> --- a/Documentation/devicetree/bindings/mmc/mmc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/mmc.txt
+>> @@ -17,6 +17,7 @@ Optional properties:
+>>  - bus-width: Number of data lines, can be <1>, <4>, or <8>.  The default
+>>    will be <1> if the property is absent.
+>>  - wp-gpios: Specify GPIOs for write protection, see gpio binding
+>> +- cd-debounce-us: debounce time in microseconds for card detect gpio.
+>>  - cd-inverted: when present, polarity on the CD line is inverted. See the note
+>>    below for the case, when a GPIO is used for the CD line
+>>  - wp-inverted: when present, polarity on the WP line is inverted. See the note
+>> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+>> index fdea825..59cd3a0 100644
+>> --- a/drivers/mmc/core/host.c
+>> +++ b/drivers/mmc/core/host.c
+>> @@ -313,6 +313,7 @@ int mmc_of_parse(struct mmc_host *host)
+>>         bool explicit_inv_wp, gpio_inv_wp = false;
+>>         enum of_gpio_flags flags;
+>>         int len, ret, gpio;
+>> +       unsigned int debounce;
+>>
+>>         if (!host->parent || !host->parent->of_node)
+>>                 return 0;
+>> @@ -367,6 +368,9 @@ int mmc_of_parse(struct mmc_host *host)
+>>                 if (of_find_property(np, "broken-cd", &len))
+>>                         host->caps |= MMC_CAP_NEEDS_POLL;
+>>
+>> +               if (of_property_read_u32(np, "cd-debounce-us", &debounce) < 0)
+>> +                       debounce = 0;
+>> +
 >
-> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> Hi Balaji,
+>
+> Sorry for a late reply.
+>
+> I am wondering whether this should be a generic gpio of property,
+> instead of a mmc specific thing.
+>
+> I have added Linus Walleij and Alexandre Courbot, the maintainers of
+> gpio. Let's see if they can point us in a direction.
 
-IIRC I gave you my reviewed-by on the v4 of this patch. Don't forget
-to carry the tags you received to the following revisions, otherwise
-the maintainer will have to go through the history of your series to
-see who approves your patches.
+I agree it would be nice if the debounce value could be handled by the
+GPIO framework. I just wonder what would be the correct way of doing
+it? Contrary to ACTIVE_LOW and other flags which can be specified with
+the GPIO phandle, debounce is a numeric value. Maybe using a different
+property, e.g.:
 
-Just so Linus don't miss it:
+cd-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
+cd-gpios-debounce = <10>;
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+When looking up a GPIO through gpiod_get(), the GPIO framework could
+then check for -debounce property and set the debounce time
+accordingly. At first sight I'd say that would work and could be used
+for MMC and all other subsystems that need something similar.
 
-> ---
-> This patch depends on my previous patch "gpiolib: allow simultaneous setting
-> of multiple GPIO outputs".
->
-> Change log:
->   v5: - no change
->   v4: - change interface of the set_multiple driver function to use
->         unsigned long as type for the bit fields
->       - use generic bitops (which also use unsigned long for bit fields)
->   v3: - change commit message
->   v2: - add this patch (v1 included only changes to gpiolib)
->
->  drivers/gpio/gpio-mpc8xxx.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-> index d7d6d72..d1ff879 100644
-> --- a/drivers/gpio/gpio-mpc8xxx.c
-> +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -105,6 +105,32 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->         spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
->  }
->
-> +static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
-> +                                     unsigned long *mask, unsigned long *bits)
-> +{
-> +       struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
-> +       struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
-> +       unsigned long flags;
-> +       int i;
-> +
-> +       spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
-> +
-> +       for (i = 0; i < gc->ngpio; i++) {
-> +               if (*mask == 0)
-> +                       break;
-> +               if (__test_and_clear_bit(i, mask)) {
-> +                       if (test_bit(i, bits))
-> +                               mpc8xxx_gc->data |= mpc8xxx_gpio2mask(i);
-> +                       else
-> +                               mpc8xxx_gc->data &= ~mpc8xxx_gpio2mask(i);
-> +               }
-> +       }
-> +
-> +       out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
-> +
-> +       spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
-> +}
-> +
->  static int mpc8xxx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
->  {
->         struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
-> @@ -344,6 +370,7 @@ static void __init mpc8xxx_add_controller(struct device_node *np)
->         gc->get = of_device_is_compatible(np, "fsl,mpc8572-gpio") ?
->                 mpc8572_gpio_get : mpc8xxx_gpio_get;
->         gc->set = mpc8xxx_gpio_set;
-> +       gc->set_multiple = mpc8xxx_gpio_set_multiple;
->         gc->to_irq = mpc8xxx_gpio_to_irq;
->
->         ret = of_mm_gpiochip_add(np, mm_gc);
->
-> --
-> 1.8.5.5
+Alex.
