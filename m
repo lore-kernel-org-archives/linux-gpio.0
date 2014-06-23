@@ -1,64 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2][v5] gpiolib: allow simultaneous setting of multiple
- GPIO outputs
-Date: Sat, 21 Jun 2014 21:24:55 +0100
-Message-ID: <20140621202455.GT5099@sirena.org.uk>
-References: <25983307.ZjJOfz2Kpg@pcimr>
+From: Global Debt Solution <peter.j.kock@frenabb.no>
+Subject: Financial services-Loan 1.3%
+Date: Sun, 22 Jun 2014 20:48:00 -1200
+Message-ID: <669b0c89a584f9e724715b5dc76bd040__18514.7295975641$1403513710$gmane$org@frenabb.no>
+Reply-To: <gds.enquires@webadicta.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Q+wpwnhz7AD6XSs6"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52523 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754007AbaFUUZQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Jun 2014 16:25:16 -0400
-Content-Disposition: inline
-In-Reply-To: <25983307.ZjJOfz2Kpg@pcimr>
+Received: from mail.frenabb.no ([195.18.129.4]:58266 "EHLO smtp.frenabb.no"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752747AbaFWIyz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 23 Jun 2014 04:54:55 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Gerhard Sittig <gsi@denx.de>
 
 
---Q+wpwnhz7AD6XSs6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Jun 16, 2014 at 03:51:23PM +0200, Rojhalat Ibrahim wrote:
-> Introduce new functions gpiod_set_array & gpiod_set_raw_array to the consumer
-> interface which allow setting multiple outputs with just one function call.
-> Also add an optional set_multiple function to the driver interface. Without an
-> implementation of that function in the chip driver outputs are set
-> sequentially.
+-- 
+Good day Ladies/Gentlemen,
 
-I'm pretty sure I reviewed the external interfaces last time and they
-don't seem to have changed so:
+Have you ever searched for Fund, Loans, Financial Assistance or need an 
+accredited lender to help you meet up with your needs and demands? Do 
+you want to buy a Car or any other Property? Or have your Bank turned 
+you down? Are they delaying your plans with too much paper work? Is your 
+monthly income disappearing due to high interest rate on your former 
+Loans, Credit or Bonds? Or you want to make Consolidations?
 
-Reviwed-by: Mark Brown <broonie@linaro.org>
+Get an instant and reliable service from our loaning Agency Global Debt 
+Solution. Our interest rate is 1.3% annaully.
+Apply now:
 
-Please carry forward tags that still apply so people don't need to
-duplicate review.
+Your Full Name:_______________
+Loan amount needed:____________
+Loan duration:____________
+Purpose of loan:_________
+Telephone:___________
+Country:_________
 
---Q+wpwnhz7AD6XSs6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+More details will be sent to you as soon as we receive your 
+application.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTpeoUAAoJELSic+t+oim95ToP/0puqOPIcVHqpwfSAnoyw9WW
-rmU7WDV7axzPeoL3KRwSJ4WUygSeA4AR1rH4wyP53DqWBSitSP1PngLtsdHHLUMH
-Qy/eUFY+m2OjLdE3tXpPT8rMjVK/iW31hqGyHoFhBswZmY4hy03jrn1wPIj5lA3J
-noHgkdCy6TWDcTVGE6kawir1oqqPMx8iTNNgcLMfpm3ccX/CGjZne+eb5ZWe5H+r
-Zm/5ocCrtJiNGtSRAjjP3Rp/mLTkOenbxOf4eeq51T4oEDh2fzJ7QRg4JNQWFKJq
-oqadlXp04i97FRL2Yqw5RdRfX9AG/Xz8v3HK65wp0sjAlw2rAmpsQJ7DR7wOe2My
-3M+K05Iv9Nff7ADmbgPVtVTIi0SIeDlysiZT6XMsGYsUJEqbmE1tKiErXTBq3wQz
-Gkjacqi1uAAPtYsKk84uoGHNHXXj6blaxVl2+D2p06Q+2T/rXmq8Xgv9tNUIClRY
-9105Co7YvwDQtFTG3fJozumPYUIivWfY15Kisod7FVC0RklMjvpCWI2ZiGGDeJJ+
-xiPhI5Q0LSqTkKr3R4b/TObVs1RAgji67RvruuhcqZ2DfVMYA8jfeh5j3rNPBhEU
-GDmMgDDPvxDOxRZWezFm75Dd7kU7CuLWBdaSfDxSeI6bOXAcX9ngNBUPfmTK+nLr
-L8LseKHrmUuRvsfH3tkP
-=Va/h
------END PGP SIGNATURE-----
-
---Q+wpwnhz7AD6XSs6--
+A prompt response is appreciated.
+Sincerely
