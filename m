@@ -1,45 +1,41 @@
-From: Global Debt Solution <peter.j.kock@frenabb.no>
-Subject: Financial services-Loan 1.3%
-Date: Sun, 22 Jun 2014 20:48:00 -1200
-Message-ID: <669b0c89a584f9e724715b5dc76bd040__18514.7295975641$1403513710$gmane$org@frenabb.no>
-Reply-To: <gds.enquires@webadicta.org>
+From: =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
+Subject: [PATCH] gpio: rcar: clamp returned value to [0,1]
+Date: Tue, 24 Jun 2014 04:19:50 +0200
+Message-ID: <1403576390-28381-1-git-send-email-j@bitron.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.frenabb.no ([195.18.129.4]:58266 "EHLO smtp.frenabb.no"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752747AbaFWIyz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 23 Jun 2014 04:54:55 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Magnus Damm <damm@opensource.se>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
 List-Id: linux-gpio@vger.kernel.org
 
+While it will be clamped to bool by gpiolib, let's make this sane
+in the driver as well.
 
+Signed-off-by: J=C3=BCrg Billeter <j@bitron.ch>
+---
+ drivers/gpio/gpio-rcar.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
-Good day Ladies/Gentlemen,
-
-Have you ever searched for Fund, Loans, Financial Assistance or need an 
-accredited lender to help you meet up with your needs and demands? Do 
-you want to buy a Car or any other Property? Or have your Bank turned 
-you down? Are they delaying your plans with too much paper work? Is your 
-monthly income disappearing due to high interest rate on your former 
-Loans, Credit or Bonds? Or you want to make Consolidations?
-
-Get an instant and reliable service from our loaning Agency Global Debt 
-Solution. Our interest rate is 1.3% annaully.
-Apply now:
-
-Your Full Name:_______________
-Loan amount needed:____________
-Loan duration:____________
-Purpose of loan:_________
-Telephone:___________
-Country:_________
-
-More details will be sent to you as soon as we receive your 
-application.
-
-A prompt response is appreciated.
-Sincerely
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 0c9f803..7c62121 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -240,9 +240,9 @@ static int gpio_rcar_get(struct gpio_chip *chip, un=
+signed offset)
+ 	/* testing on r8a7790 shows that INDT does not show correct pin state
+ 	 * when configured as output, so use OUTDT in case of output pins */
+ 	if (gpio_rcar_read(gpio_to_priv(chip), INOUTSEL) & bit)
+-		return (int)(gpio_rcar_read(gpio_to_priv(chip), OUTDT) & bit);
++		return !!(gpio_rcar_read(gpio_to_priv(chip), OUTDT) & bit);
+ 	else
+-		return (int)(gpio_rcar_read(gpio_to_priv(chip), INDT) & bit);
++		return !!(gpio_rcar_read(gpio_to_priv(chip), INDT) & bit);
+ }
+=20
+ static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int=
+ value)
+--=20
+2.0.0
