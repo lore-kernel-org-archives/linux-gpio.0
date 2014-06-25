@@ -1,41 +1,51 @@
-From: =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
-Subject: [PATCH] gpio: rcar: clamp returned value to [0,1]
-Date: Tue, 24 Jun 2014 04:19:50 +0200
-Message-ID: <1403576390-28381-1-git-send-email-j@bitron.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Magnus Damm <damm@opensource.se>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
+From: Feng Kan <fkan@apm.com>
+Subject: [PATCH] arm64: dts: Add Designware GPIO dts binding to APM X-Gene platform
+Date: Wed, 25 Jun 2014 16:56:16 -0700
+Message-ID: <1403740576-7165-1-git-send-email-fkan@apm.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exprod5og104.obsmtp.com ([64.18.0.178]:34402 "HELO
+	exprod5og104.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753302AbaFYX4T (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jun 2014 19:56:19 -0400
+Received: by mail-pb0-f46.google.com with SMTP id md12so2328077pbc.19
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Jun 2014 16:56:18 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: patches@apm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Feng Kan <fkan@apm.com>
 
-While it will be clamped to bool by gpiolib, let's make this sane
-in the driver as well.
+Add Designware GPIO dts binding to APM X-Gene platform
 
-Signed-off-by: J=C3=BCrg Billeter <j@bitron.ch>
+Signed-off-by: Feng Kan <fkan@apm.com>
 ---
- drivers/gpio/gpio-rcar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/apm-storm.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 0c9f803..7c62121 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -240,9 +240,9 @@ static int gpio_rcar_get(struct gpio_chip *chip, un=
-signed offset)
- 	/* testing on r8a7790 shows that INDT does not show correct pin state
- 	 * when configured as output, so use OUTDT in case of output pins */
- 	if (gpio_rcar_read(gpio_to_priv(chip), INOUTSEL) & bit)
--		return (int)(gpio_rcar_read(gpio_to_priv(chip), OUTDT) & bit);
-+		return !!(gpio_rcar_read(gpio_to_priv(chip), OUTDT) & bit);
- 	else
--		return (int)(gpio_rcar_read(gpio_to_priv(chip), INDT) & bit);
-+		return !!(gpio_rcar_read(gpio_to_priv(chip), INDT) & bit);
- }
-=20
- static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int=
- value)
---=20
-2.0.0
+diff --git a/arch/arm64/boot/dts/apm-storm.dtsi b/arch/arm64/boot/dts/apm-storm.dtsi
+index c5f0a47..63e58d3 100644
+--- a/arch/arm64/boot/dts/apm-storm.dtsi
++++ b/arch/arm64/boot/dts/apm-storm.dtsi
+@@ -363,5 +363,20 @@
+ 			#clock-cells = <1>;
+ 			clocks = <&rtcclk 0>;
+ 		};
++
++		dwgpio: dwgpio@1c024000 {
++			compatible = "snps,dw-apb-gpio";
++			reg = <0x0 0x1c024000 0x0 0x1000>;
++			reg-io-width = <4>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			porta: gpio-controller@0 {
++				compatible = "snps,dw-apb-gpio-port";
++				gpio-controller;
++				snps,nr-gpios = <32>;
++				reg = <0>;
++			};
++		};
+ 	};
+ };
+-- 
+1.9.1
+
