@@ -1,34 +1,62 @@
-From: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
-Subject: [PATCH] gpio: gpio-ucb1400.c:  Cleaning up null pointer checks that could never happen
-Date: Thu, 26 Jun 2014 18:18:51 +0200
-Message-ID: <1403799531-20526-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Feng Kan <fkan@apm.com>
+Subject: [PATCH V5 0/3] gpio: Add APM X-Gene SoC platform GPIO driver
+Date: Thu, 26 Jun 2014 15:59:44 -0700
+Message-ID: <1403823587-23404-1-git-send-email-fkan@apm.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exprod5og111.obsmtp.com ([64.18.0.22]:46299 "HELO
+	exprod5og111.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750974AbaFZW7z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jun 2014 18:59:55 -0400
+Received: by mail-pa0-f52.google.com with SMTP id eu11so3770751pac.39
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jun 2014 15:59:54 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: patches@apm.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Feng Kan <fkan@apm.com>
 
-Removal of null pointer checks that could never happen
+This patch add the GPIO controller in the APM X-Gene platform. The GPIO
+controller pins are muxed with the generic flash controller pins on the 
+system.
 
-This was found using a static code analysis program called cppcheck
+V5 Change:
+	1. Remove gpio->dev
+	2. Remove not needed headers. 
+	3. Change to use latest driver.h for gpio.
+	4. Set chip base to -1
+	5. Put back label as it is needed sys interface.
 
-Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
----
- drivers/gpio/gpio-ucb1400.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V4 Change:
+	1. Add remove function for module
+	2. Add set function to dir out function.
+	3. remove sets to np and label in probe.
 
-diff --git a/drivers/gpio/gpio-ucb1400.c b/drivers/gpio/gpio-ucb1400.c
-index 2445fe7..d520dc9 100644
---- a/drivers/gpio/gpio-ucb1400.c
-+++ b/drivers/gpio/gpio-ucb1400.c
-@@ -70,7 +70,7 @@ static int ucb1400_gpio_probe(struct platform_device *dev)
- 	if (err)
- 		goto err;
- 
--	if (ucb && ucb->gpio_setup)
-+	if (ucb->gpio_setup)
- 		err = ucb->gpio_setup(&dev->dev, ucb->gc.ngpio);
- 
- err:
+V3 Change:
+	1. Change code to use single entry to describe gpio node, hardcode
+	   to use bank stride to target gpios.
+	2. Fix up dts and doc accordingly
+
+V2 Change:
+	1. Address concerns from maintainer, split to multiple device node
+	2. Add pm code to restore set register.
+	3. fix up dts and documentation accordingly.
+
+I did not incorporate pin mux functionality at this time, move this to
+bootloader for now. Will submit pinctrl driver seperately. 
+
+Feng Kan (3):
+  gpio: Add APM X-Gene SoC GPIO controller support
+  Documentation: gpio: Add APM X-Gene SoC GPIO controller DTS binding
+  arm64:dts: Add APM X-Gene SoC GPIO controller DTS entries
+
+ .../devicetree/bindings/gpio/gpio-xgene.txt        |  37 ++++
+ arch/arm64/boot/dts/apm-storm.dtsi                 |  21 ++
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-xgene.c                          | 231 +++++++++++++++++++++
+ 5 files changed, 299 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+ create mode 100644 drivers/gpio/gpio-xgene.c
+
 -- 
-1.7.10.4
+1.9.1
+
