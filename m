@@ -1,45 +1,58 @@
-From: Feng Kan <fkan@apm.com>
-Subject: [PATCH V5 3/3] arm64:dts: Add APM X-Gene SoC GPIO controller DTS entries
-Date: Thu, 26 Jun 2014 15:59:47 -0700
-Message-ID: <1403823587-23404-4-git-send-email-fkan@apm.com>
-References: <1403823587-23404-1-git-send-email-fkan@apm.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: [PATCH 1/3] gpio: omap: Remove unnecessary lockdep class
+Date: Fri, 27 Jun 2014 22:17:35 +0200
+Message-ID: <1403900258-20717-2-git-send-email-jmartinez@softcrates.net>
+References: <1403900258-20717-1-git-send-email-jmartinez@softcrates.net>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og106.obsmtp.com ([64.18.0.182]:50560 "HELO
-	exprod5og106.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752070AbaFZW77 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jun 2014 18:59:59 -0400
-Received: by mail-pd0-f176.google.com with SMTP id ft15so3596062pdb.35
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Jun 2014 15:59:58 -0700 (PDT)
-In-Reply-To: <1403823587-23404-1-git-send-email-fkan@apm.com>
+Received: from mail-we0-f172.google.com ([74.125.82.172]:53558 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751550AbaF0UR7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Jun 2014 16:17:59 -0400
+Received: by mail-we0-f172.google.com with SMTP id u57so5585965wes.17
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Jun 2014 13:17:58 -0700 (PDT)
+In-Reply-To: <1403900258-20717-1-git-send-email-jmartinez@softcrates.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: patches@apm.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Feng Kan <fkan@apm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Javier Martinez Canillas <jmartinez@softcrates.net>
 
-Add gpio dts node for APM X-Gene SoC platform.
+GPIO irqchips assign to the cascaded IRQs their own lock class
+in order to avoid warnings about lockdep recursions since that
+allow the lockdep core to keep track of things.
 
-Signed-off-by: Feng Kan <fkan@apm.com>
+Since commit e45d1c80 ("gpio: put GPIO IRQs into their own lock class")
+there is no need to do this in a driver if it's using the GPIO
+irqchip helpers since gpiolib already assigns a lockdep class.
+
+Signed-off-by: Javier Martinez Canillas <jmartinez@softcrates.net>
 ---
- arch/arm64/boot/dts/apm-storm.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpio/gpio-omap.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/apm-storm.dtsi b/arch/arm64/boot/dts/apm-storm.dtsi
-index 40aa96c..a203a4e 100644
---- a/arch/arm64/boot/dts/apm-storm.dtsi
-+++ b/arch/arm64/boot/dts/apm-storm.dtsi
-@@ -397,5 +397,12 @@
- 			#clock-cells = <1>;
- 			clocks = <&rtcclk 0>;
- 		};
-+
-+		gpio: gpio0@1701c000 {
-+			compatible = "apm,xgene-gpio";
-+			reg = <0x0 0x1701c000 0x0 0x40>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
- 	};
- };
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 00f29aa..4b4e1b4 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1025,11 +1025,6 @@ static void __init omap_gpio_show_rev(struct gpio_bank *bank)
+ 	called = true;
+ }
+ 
+-/* This lock class tells lockdep that GPIO irqs are in a different
+- * category than their parents, so it won't report false recursion.
+- */
+-static struct lock_class_key gpio_lock_class;
+-
+ static void omap_gpio_mod_init(struct gpio_bank *bank)
+ {
+ 	void __iomem *base = bank->base;
+@@ -1152,7 +1147,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank)
+ 
+ 	for (j = 0; j < bank->width; j++) {
+ 		int irq = irq_find_mapping(bank->chip.irqdomain, j);
+-		irq_set_lockdep_class(irq, &gpio_lock_class);
+ 		if (bank->is_mpuio) {
+ 			omap_mpuio_alloc_gc(bank, irq, bank->width);
+ 			irq_set_chip_and_handler(irq, NULL, NULL);
 -- 
-1.9.1
+2.0.0.rc2
 
