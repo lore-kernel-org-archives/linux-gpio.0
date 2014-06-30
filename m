@@ -1,35 +1,81 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH V5 0/3] gpio: Add APM X-Gene SoC platform GPIO driver
-Date: Sat, 28 Jun 2014 12:14:57 +0900
-Message-ID: <CAAVeFuLZNr-bkXM-1S15tpz0da7pnppjNbJ6iOZ-6RzEDBZ_Jg@mail.gmail.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH V5 2/3] Documentation: gpio: Add APM X-Gene SoC GPIO
+ controller DTS binding
+Date: Mon, 30 Jun 2014 13:53:39 +0100
+Message-ID: <20140630125339.GA21390@leverpostej>
 References: <1403823587-23404-1-git-send-email-fkan@apm.com>
+ <1403823587-23404-3-git-send-email-fkan@apm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f177.google.com ([209.85.128.177]:43216 "EHLO
-	mail-ve0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752196AbaF1DPS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Jun 2014 23:15:18 -0400
-In-Reply-To: <1403823587-23404-1-git-send-email-fkan@apm.com>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:32952 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751883AbaF3MyQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 30 Jun 2014 08:54:16 -0400
+Content-Disposition: inline
+In-Reply-To: <1403823587-23404-3-git-send-email-fkan@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Feng Kan <fkan@apm.com>
-Cc: patches <patches@apm.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "patches@apm.com" <patches@apm.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Jun 27, 2014 at 7:59 AM, Feng Kan <fkan@apm.com> wrote:
-> This patch add the GPIO controller in the APM X-Gene platform. The GPIO
-> controller pins are muxed with the generic flash controller pins on the
-> system.
->
-> V5 Change:
->         1. Remove gpio->dev
->         2. Remove not needed headers.
->         3. Change to use latest driver.h for gpio.
->         4. Set chip base to -1
->         5. Put back label as it is needed sys interface.
+On Thu, Jun 26, 2014 at 11:59:46PM +0100, Feng Kan wrote:
+> Documentation for APM X-Gene SoC GPIO controller DTS binding.
+> 
+> Signed-off-by: Feng Kan <fkan@apm.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-xgene.txt          | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+> new file mode 100644
+> index 0000000..bd5fd85
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+> @@ -0,0 +1,20 @@
+> +APM X-Gene SoC GPIO controller bindings
+> +
+> +This is a gpio controller that is part of the flash controller.
+> +This gpio controller controls a total of 48 gpios.
+> +
+> +Required properties:
+> +- compatible: "apm,xgene-gpio" for X-Gene GPIO controller
+> +- reg: Physical base address and size of the controller's registers
 
-Let's see what Linus has to say, but to me this iteration looks good!
+There is just the one bank?
 
-The series,
+> +- #gpio-cells: Should be two.
+> +	- first cell is the pin number
+> +	- second cell is used to specify optional parameters (unused)
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Why is there an unused cell?
+
+Why not just make this a single cell if the binding defines no valid
+parameters?
+
+> +- gpio-controller: Marks the device node as a GPIO controller.
+
+No interrupts?
+
+Thanks,
+Mark.
+
+> +
+> +Example:
+> +	gpio0: gpio0@1701c000 {
+> +		compatible = "apm,xgene-gpio";
+> +		reg = <0x0 0x1701c000 0x0 0x40>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +	};
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
