@@ -1,101 +1,64 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC 1/3] gpio: always compile label support
-Date: Tue, 1 Jul 2014 14:45:14 +0900
-Message-ID: <1404193516-4384-2-git-send-email-acourbot@nvidia.com>
-References: <1404193516-4384-1-git-send-email-acourbot@nvidia.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] the great <mach/gpio.h> purge
+Date: Tue, 01 Jul 2014 20:35:19 +0900
+Message-ID: <038801cf9520$894200d0$9bc60270$@samsung.com>
+References: <CACRpkdbPHn6bWdr8t9BrmE2JZZuuVnF7ujzEFdrM86WmrRS5Hw@mail.gmail.com>
+ <02c501cf94d1$fca59720$f5f0c560$@samsung.com>
+ <CAOesGMgkG_LJR2Db6+S339SYpaf+0cBxs2oXNOAHiq4-J3H0pQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404193516-4384-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:23941 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757886AbaGALfc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Jul 2014 07:35:32 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N810012F6UV1X90@mailout2.samsung.com> for
+ linux-gpio@vger.kernel.org; Tue, 01 Jul 2014 20:35:19 +0900 (KST)
+In-reply-to: <CAOesGMgkG_LJR2Db6+S339SYpaf+0cBxs2oXNOAHiq4-J3H0pQ@mail.gmail.com>
+Content-language: ko
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: 'Linus Walleij' <linus.walleij@linaro.org>, arm@kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Compiling out GPIO labels results in a space gain so small that it can
-hardly be justified. Labels can also be useful for printing debug
-messages, so always keep them around.
+Olof Johansson wrote:
+> 
+> On Mon, Jun 30, 2014 at 7:13 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Linus Walleij wrote:
+> >>
+> >> Hi ARM SoC guys,
+> >>
+> > Hi Linus,
+> >
+> >> please pull in this patch set removing <mach/gpio.h> for good.
+> >> I guess it could collide with some S5P deletion.
+> >
+> > Yeah...
+> >
+> >> If you decide to pull the S5P purge first, tell me so I can rebase.
+> >>
+> > So, I think, would be better if we could remove S5P64X0 and S5PC100 then
+> > <mach/gpio.h> in samsung stuff. But it's up to arm-soc maintainer? ;-)
+> 
+> 
+> As long as it's just deletion from both sides, I can happily resolve
+> that when merging.
+> 
+Thanks :)
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/gpiolib.c | 27 ++-------------------------
- 1 file changed, 2 insertions(+), 25 deletions(-)
+> Kukjin, I presume the removal would be in a cleanup branch as well?
+> Please try to send it soon so we can get some time in -next with it.
+> 
+Yeah, I will send it soon if no objections.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 2ebc9071e354..8ba9dbedcfdf 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -66,9 +66,7 @@ struct gpio_desc {
- #define GPIO_FLAGS_MASK		((1 << ID_SHIFT) - 1)
- #define GPIO_TRIGGER_MASK	(BIT(FLAG_TRIG_FALL) | BIT(FLAG_TRIG_RISE))
- 
--#ifdef CONFIG_DEBUG_FS
- 	const char		*label;
--#endif
- };
- static struct gpio_desc gpio_desc[ARCH_NR_GPIOS];
- 
-@@ -87,7 +85,6 @@ static void gpiod_free(struct gpio_desc *desc);
- 
- /* With descriptor prefix */
- 
--#ifdef CONFIG_DEBUG_FS
- #define gpiod_emerg(desc, fmt, ...)					       \
- 	pr_emerg("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?",\
-                  ##__VA_ARGS__)
-@@ -106,20 +103,6 @@ static void gpiod_free(struct gpio_desc *desc);
- #define gpiod_dbg(desc, fmt, ...)					       \
- 	pr_debug("gpio-%d (%s): " fmt, desc_to_gpio(desc), desc->label ? : "?",\
-                  ##__VA_ARGS__)
--#else
--#define gpiod_emerg(desc, fmt, ...)					\
--	pr_emerg("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_crit(desc, fmt, ...)					\
--	pr_crit("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_err(desc, fmt, ...)					\
--	pr_err("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_warn(desc, fmt, ...)					\
--	pr_warn("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_info(desc, fmt, ...)					\
--	pr_info("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#define gpiod_dbg(desc, fmt, ...)					\
--	pr_debug("gpio-%d: " fmt, desc_to_gpio(desc), ##__VA_ARGS__)
--#endif
- 
- /* With chip prefix */
- 
-@@ -138,9 +121,7 @@ static void gpiod_free(struct gpio_desc *desc);
- 
- static inline void desc_set_label(struct gpio_desc *d, const char *label)
- {
--#ifdef CONFIG_DEBUG_FS
- 	d->label = label;
--#endif
- }
- 
- /*
-@@ -1906,8 +1887,8 @@ EXPORT_SYMBOL_GPL(gpio_free_array);
-  * @offset: of signal within controller's 0..(ngpio - 1) range
-  *
-  * Returns NULL if the GPIO is not currently requested, else a string.
-- * If debugfs support is enabled, the string returned is the label passed
-- * to gpio_request(); otherwise it is a meaningless constant.
-+ * The string returned is the label passed to gpio_request(); if none has been
-+ * passed it is a meaningless, non-NULL constant.
-  *
-  * This function is for use by GPIO controller drivers.  The label can
-  * help with diagnostics, and knowing that the signal is used as a GPIO
-@@ -1924,11 +1905,7 @@ const char *gpiochip_is_requested(struct gpio_chip *chip, unsigned offset)
- 
- 	if (test_bit(FLAG_REQUESTED, &desc->flags) == 0)
- 		return NULL;
--#ifdef CONFIG_DEBUG_FS
- 	return desc->label;
--#else
--	return "?";
--#endif
- }
- EXPORT_SYMBOL_GPL(gpiochip_is_requested);
- 
--- 
-2.0.0
+> (I'll do merges in a couple of days, the backlog is building up. :)
+> 
+Sure, thanks.
+
+- Kukjin
+
