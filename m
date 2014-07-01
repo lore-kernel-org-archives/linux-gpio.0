@@ -1,49 +1,59 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] the great <mach/gpio.h> purge
-Date: Mon, 30 Jun 2014 20:31:28 -0700
-Message-ID: <CAOesGMgkG_LJR2Db6+S339SYpaf+0cBxs2oXNOAHiq4-J3H0pQ@mail.gmail.com>
-References: <CACRpkdbPHn6bWdr8t9BrmE2JZZuuVnF7ujzEFdrM86WmrRS5Hw@mail.gmail.com>
-	<02c501cf94d1$fca59720$f5f0c560$@samsung.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [RFC 0/3] gpio: move interfaces into their own files
+Date: Tue, 1 Jul 2014 14:45:13 +0900
+Message-ID: <1404193516-4384-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f177.google.com ([209.85.128.177]:58314 "EHLO
-	mail-ve0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751346AbaGADb2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jun 2014 23:31:28 -0400
-Received: by mail-ve0-f177.google.com with SMTP id i13so8989453veh.36
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Jun 2014 20:31:28 -0700 (PDT)
-In-Reply-To: <02c501cf94d1$fca59720$f5f0c560$@samsung.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4546 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751074AbaGAFrP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Jul 2014 01:47:15 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On Mon, Jun 30, 2014 at 7:13 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Linus Walleij wrote:
->>
->> Hi ARM SoC guys,
->>
-> Hi Linus,
->
->> please pull in this patch set removing <mach/gpio.h> for good.
->> I guess it could collide with some S5P deletion.
->
-> Yeah...
->
->> If you decide to pull the S5P purge first, tell me so I can rebase.
->>
-> So, I think, would be better if we could remove S5P64X0 and S5PC100 then
-> <mach/gpio.h> in samsung stuff. But it's up to arm-soc maintainer? ;-)
+Hi Linus,
 
+I was thinking of doing this since a while already but the recent discussion on
+shared GPIOs made me think I should push this to you and see what you think.
 
-As long as it's just deletion from both sides, I can happily resolve
-that when merging.
+Right now we have 3 different interfaces for GPIO:
+- The core gpiod interface
+- The legacy integer interface, which mostly relies on gpiod
+- The sysfs interface, which relies on gpiod but should probably rely on the
+  integer interface instead
 
-Kukjin, I presume the removal would be in a cleanup branch as well?
-Please try to send it soon so we can get some time in -next with it.
+This series separates the code for the interfaces into their own source file
+and shares what needs to be through the private gpiolib.h header. Label support
+is made mandatory in order to reduce the amount of things added into gpiolib.h.
 
-(I'll do merges in a couple of days, the backlog is building up. :)
+Separating the code should make the various interfaces easier to grasp, and
+will make it easier to implement interface-specific features. It also points
+out some direct usages of descriptors/gpiolib core functions that should be
+gotten rid of in order to make these real "consumers" of the gpiod interface.
 
+This series has been tested and I'm fine with it being merged now if you agree
+with the idea. It would probably be preferable from a cosmetic point of view to
+first turn fix the extra consumers and then separate them so less things end up
+being exported in gpiolib.h, but moving things first has the advantage of
+clearly highlighting what needs to be done and spares us some rebasing hassle.
 
--Olof
+Alexandre Courbot (3):
+  gpio: always compile label support
+  gpio: move sysfs support to its own file
+  gpio: move integer GPIO support to its own file
+
+ drivers/gpio/Makefile         |    2 +
+ drivers/gpio/gpiolib-legacy.c |  112 +++++
+ drivers/gpio/gpiolib-sysfs.c  |  829 ++++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib.c        | 1043 +----------------------------------------
+ drivers/gpio/gpiolib.h        |   91 ++++
+ 5 files changed, 1040 insertions(+), 1037 deletions(-)
+ create mode 100644 drivers/gpio/gpiolib-legacy.c
+ create mode 100644 drivers/gpio/gpiolib-sysfs.c
+
+-- 
+2.0.0
+
