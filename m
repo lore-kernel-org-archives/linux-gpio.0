@@ -1,52 +1,45 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] gpio: rcar: Add support for DT IRQ flags
-Date: Wed, 02 Jul 2014 16:37:38 +0200
-Message-ID: <2822093.Rul4y5g8OD@avalon>
-References: <1396349886-26663-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH 0/3] GPIO OMAP driver changes for v3.17
+Date: Wed, 02 Jul 2014 13:55:17 -0700
+Message-ID: <7h8uobiiq2.fsf@paris.lan>
+References: <1403900258-20717-1-git-send-email-jmartinez@softcrates.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:48871 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753928AbaGBOgo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Jul 2014 10:36:44 -0400
-In-Reply-To: <1396349886-26663-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:56960 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751593AbaGBUzU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Jul 2014 16:55:20 -0400
+Received: by mail-pd0-f170.google.com with SMTP id z10so12538965pdj.15
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Jul 2014 13:55:19 -0700 (PDT)
+In-Reply-To: <1403900258-20717-1-git-send-email-jmartinez@softcrates.net>
+	(Javier Martinez Canillas's message of "Fri, 27 Jun 2014 22:17:34
+	+0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Magnus Damm <damm@opensource.se>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Javier Martinez Canillas <jmartinez@softcrates.net>
 
-Hi Linus,
+Javier Martinez Canillas <javier@dowhile0.org> writes:
 
-Could you please pick this patch up for v3.17 ?
+> Hi Linus,
+>
+> This is a small series with trivial changes to the gpio-omap driver.
+>
+> There are no functional changes. Patches 1 and 2 removes code that it's
+> not necessary anymore now that the driver has been converted to use the
+> gpiolib irqchip and Patch 3 adds an "omap" prefix to all driver functions,
+> something that you suggested me to do before if I remember correctly.
+>
+> The patch-set is composed of the following patches:
+>
+> Javier Martinez Canillas (3):
+>   gpio: omap: Remove unnecessary lockdep class
+>   gpio: omap: Remove unneeded include
+>   gpio: omap: Add an omap prefix to all functions
 
-On Tuesday 01 April 2014 12:58:06 Laurent Pinchart wrote:
-> The gpio-rcar driver has no IRQ domain OF xlate function and thus
-> ignores IRQ flags specified in DT. Fix this by using the two-cell xlate
-> function.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  drivers/gpio/gpio-rcar.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-> index ca76ce7..c9edcc9 100644
-> --- a/drivers/gpio/gpio-rcar.c
-> +++ b/drivers/gpio/gpio-rcar.c
-> @@ -283,6 +283,7 @@ static int gpio_rcar_irq_domain_map(struct irq_domain
-> *h, unsigned int irq,
-> 
->  static struct irq_domain_ops gpio_rcar_irq_domain_ops = {
->  	.map	= gpio_rcar_irq_domain_map,
-> +	.xlate	= irq_domain_xlate_twocell,
->  };
-> 
->  struct gpio_rcar_info {
+Acked-by: Kevin Hilman <khilman@linaro.org>
 
--- 
-Regards,
+For the series.
 
-Laurent Pinchart
-
+Kevin
