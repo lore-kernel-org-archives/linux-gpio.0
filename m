@@ -1,62 +1,52 @@
-From: Pascal Huerst <pascal.huerst@gmail.com>
-Subject: gpio-omap: wakeup mask
-Date: Wed, 02 Jul 2014 14:09:43 +0200
-Message-ID: <53B3F687.5050502@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] gpio: rcar: Add support for DT IRQ flags
+Date: Wed, 02 Jul 2014 16:37:38 +0200
+Message-ID: <2822093.Rul4y5g8OD@avalon>
+References: <1396349886-26663-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:61702 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751297AbaGBMJw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Jul 2014 08:09:52 -0400
+Received: from perceval.ideasonboard.com ([95.142.166.194]:48871 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753928AbaGBOgo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Jul 2014 10:36:44 -0400
+In-Reply-To: <1396349886-26663-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: santosh.shilimkar@ti.com
-Cc: khilman@deeprootsystems.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@zonque.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Magnus Damm <damm@opensource.se>
 
-Hi everyone,
+Hi Linus,
 
-we have a device with an am335x and are using some gpios on bank0 to
-wake up the device from suspend to ram.
+Could you please pick this patch up for v3.17 ?
 
-We have some user buttons which are configured in the devicetree as
-gpio-keys and one power-key which should wake up the device:
+On Tuesday 01 April 2014 12:58:06 Laurent Pinchart wrote:
+> The gpio-rcar driver has no IRQ domain OF xlate function and thus
+> ignores IRQ flags specified in DT. Fix this by using the two-cell xlate
+> function.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/gpio/gpio-rcar.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index ca76ce7..c9edcc9 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -283,6 +283,7 @@ static int gpio_rcar_irq_domain_map(struct irq_domain
+> *h, unsigned int irq,
+> 
+>  static struct irq_domain_ops gpio_rcar_irq_domain_ops = {
+>  	.map	= gpio_rcar_irq_domain_map,
+> +	.xlate	= irq_domain_xlate_twocell,
+>  };
+> 
+>  struct gpio_rcar_info {
 
-&buttons {
-        power {
-                label = "Power";
-                gpios = <&gpio0 6 1>;
-                linux,code = <116>;
-                gpio-key,wakeup;
-        };
+-- 
+Regards,
 
-        one {
-                label = "One";
-                gpios = <&gpio0 11 1>;
-                linux,code = <2>;
-        };
+Laurent Pinchart
 
-        : : :
-}
-
-The problem is, that the device wakes up on any trigger on bank 0. No
-matter which button was pressed. "gpio-key,wakeup" seems not to have any
-influence.
-
-Now, if I comment the following lines out in drivers/gpio/gpio-omap.c :
-set_gpio_trigger(...).
-
-321
-322 if (likely(!(bank->non_wakeup_gpios & gpio_bit))) {
-323    _gpio_rmw(base, bank->regs->wkup_en, gpio_bit, trigger != 0);
-324      bank->context.wake_en =
-325        readl_relaxed(bank->base + bank->regs->wkup_en);
-326 }
-327
-
-Everything works as expected. But I don't really understand why? Is this
-a bug, or does this break something else I have not discovered yet?
-
-Thanks,
-Pascal
