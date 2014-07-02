@@ -1,115 +1,62 @@
-From: Rob Jones <rob.jones@codethink.co.uk>
-Subject: [PATCH V2 2/3] gpio: allow gpio array requests for managed devices
-Date: Wed,  2 Jul 2014 11:05:50 +0100
-Message-ID: <1404295551-13470-3-git-send-email-rob.jones@codethink.co.uk>
-References: <1404295551-13470-1-git-send-email-rob.jones@codethink.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404295551-13470-1-git-send-email-rob.jones@codethink.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel@codethink.co.uk, ian.molton@codethink.co.uk, ben.dooks@codethink.co.uk, heiko@sntech.de, rob.jones@codethink.co.uk
+From: Pascal Huerst <pascal.huerst@gmail.com>
+Subject: gpio-omap: wakeup mask
+Date: Wed, 02 Jul 2014 14:09:43 +0200
+Message-ID: <53B3F687.5050502@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-we0-f177.google.com ([74.125.82.177]:61702 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751297AbaGBMJw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Jul 2014 08:09:52 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: santosh.shilimkar@ti.com
+Cc: khilman@deeprootsystems.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@zonque.org>
 
-Add functions devm_gpio_request_array() and devm_gpio_free_array()
-which are exactly analogous to the equivalent non-managed device
-functions gpio_request_array() and gpio_free_array(), which can be
-found in the module gpiolib.c.
+Hi everyone,
 
-Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
-Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
----
- drivers/gpio/devres.c |   63 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/gpio.h  |    4 ++++
- 2 files changed, 67 insertions(+)
+we have a device with an am335x and are using some gpios on bank0 to
+wake up the device from suspend to ram.
 
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index 307464f..b97c34b 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -186,6 +186,69 @@ int devm_gpio_request_one(struct device *dev, unsigned gpio,
- EXPORT_SYMBOL(devm_gpio_request_one);
- 
- /**
-+ * devm_gpio_request_array - request multiple GPIOs in a single call
-+ *			     for a managed device
-+ * @dev:	device requesting the gpio
-+ * @array:	array of the 'struct gpio'
-+ * @num:	how many GPIOs in the array
-+ *
-+ * Except for the extra @dev argument, this function takes the
-+ * same arguments and performs the same function as
-+ * gpio_request().  GPIOs requested with this function will be
-+ * automatically freed on driver detach.
-+ *
-+ * Note that if any gpio request returns an error, any gpios previously
-+ * obtained are immediately freed and the error code is returned,
-+ * meaning that the whole call failed and no gpios are obtained, no
-+ * indication is provided as to which particular request failed.
-+ *
-+ * If GPIOs allocated with this function need to be freed separately,
-+ * devm_gpio_free_array() or devm_gpio_free() must be used.
-+ */
-+int devm_gpio_request_array(struct device *dev,
-+			    const struct gpio *array,
-+			    size_t num)
-+{
-+	int i, err = 0;
-+
-+	for (i = 0; i < num; i++, array++) {
-+		err = devm_gpio_request_one(dev,
-+					    array->gpio,
-+					    array->flags,
-+					    array->label);
-+		if (err) {
-+			while (i--)
-+				devm_gpio_free(dev, (--array)->gpio);
-+			break;
-+		}
-+	}
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(devm_gpio_request_array);
-+
-+/**
-+ * devm_gpio_free_array - release multiple GPIOs in a single call
-+ *			  for a managed device
-+ * @dev:	device requesting the gpio
-+ * @array:	array of the 'struct gpio'
-+ * @num:	how many GPIOs in the array
-+ *
-+ * Except for the extra @dev argument, this function takes the
-+ * same arguments and performs the same function as gpio_free_array().
-+ * This function instead of gpio_free_array() should be used to
-+ * manually free GPIOs allocated with devm_gpio_request().
-+ */
-+void devm_gpio_free_array(struct device *dev,
-+			  const struct gpio *array,
-+			  size_t num)
-+{
-+	while (num--)
-+		devm_gpio_free(dev, (array++)->gpio);
-+}
-+EXPORT_SYMBOL(devm_gpio_free_array);
-+
-+/**
-  *      devm_gpio_free - free a GPIO
-  *      @dev: device to free GPIO for
-  *      @gpio: GPIO to free
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 85aa5d0..12d5648 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -84,6 +84,10 @@ struct device;
- int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
- int devm_gpio_request_one(struct device *dev, unsigned gpio,
- 			  unsigned long flags, const char *label);
-+int devm_gpio_request_array(struct device *dev, const struct gpio *array,
-+			    size_t num);
-+void devm_gpio_free_array(struct device *dev, const struct gpio *array,
-+			 size_t num);
- void devm_gpio_free(struct device *dev, unsigned int gpio);
- 
- #else /* ! CONFIG_GPIOLIB */
--- 
-1.7.10.4
+We have some user buttons which are configured in the devicetree as
+gpio-keys and one power-key which should wake up the device:
+
+&buttons {
+        power {
+                label = "Power";
+                gpios = <&gpio0 6 1>;
+                linux,code = <116>;
+                gpio-key,wakeup;
+        };
+
+        one {
+                label = "One";
+                gpios = <&gpio0 11 1>;
+                linux,code = <2>;
+        };
+
+        : : :
+}
+
+The problem is, that the device wakes up on any trigger on bank 0. No
+matter which button was pressed. "gpio-key,wakeup" seems not to have any
+influence.
+
+Now, if I comment the following lines out in drivers/gpio/gpio-omap.c :
+set_gpio_trigger(...).
+
+321
+322 if (likely(!(bank->non_wakeup_gpios & gpio_bit))) {
+323    _gpio_rmw(base, bank->regs->wkup_en, gpio_bit, trigger != 0);
+324      bank->context.wake_en =
+325        readl_relaxed(bank->base + bank->regs->wkup_en);
+326 }
+327
+
+Everything works as expected. But I don't really understand why? Is this
+a bug, or does this break something else I have not discovered yet?
+
+Thanks,
+Pascal
