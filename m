@@ -1,41 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
-Date: Sat, 5 Jul 2014 00:55:58 +0200
-Message-ID: <CACRpkdanHjyV_px8v-6VYhEk635N-vtakKrBu9cz_3TBKVV24w@mail.gmail.com>
-References: <CAAVeFuLMLfa-1RhcdSrKDUz7=eLqZurBSFSsN7N0x-0S+_btJA@mail.gmail.com>
-	<1401906155-10543-1-git-send-email-berthe.ab@gmail.com>
-	<1401906155-10543-3-git-send-email-berthe.ab@gmail.com>
-	<CAAVeFu+ZWy1He1CxTh+GmHtwow0P=vX_9u0P67-p_ntpqDQGtg@mail.gmail.com>
+Subject: Re: [PATCH V2 2/3] gpio: allow gpio array requests for managed devices
+Date: Sat, 5 Jul 2014 01:12:14 +0200
+Message-ID: <CACRpkdbA3YJ6O+-cbywP+-DPMT2Q9oRzqvdqjeueUvDP=oWwcQ@mail.gmail.com>
+References: <1404295551-13470-1-git-send-email-rob.jones@codethink.co.uk>
+	<1404295551-13470-3-git-send-email-rob.jones@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:48441 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760224AbaGDWz7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Jul 2014 18:55:59 -0400
-Received: by mail-ob0-f171.google.com with SMTP id nu7so2338917obb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Jul 2014 15:55:59 -0700 (PDT)
-In-Reply-To: <CAAVeFu+ZWy1He1CxTh+GmHtwow0P=vX_9u0P67-p_ntpqDQGtg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1404295551-13470-3-git-send-email-rob.jones@codethink.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Jones <rob.jones@codethink.co.uk>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kernel@codethink.co.uk, Ian Molton <ian.molton@codethink.co.uk>, Ben Dooks <ben.dooks@codethink.co.uk>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: abdoulaye berthe <berthe.ab@gmail.com>, Michael Buesch <m@bues.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Sun, Jun 8, 2014 at 2:12 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Thu, Jun 5, 2014 at 3:22 AM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
+On Wed, Jul 2, 2014 at 12:05 PM, Rob Jones <rob.jones@codethink.co.uk> wrote:
 
->> This avoids handling gpiochip remove error in device
->> remove handler.
->>
-(...)
->> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
->> -               list_del(&chip->list);
->> +               if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags))
->> +                       panic("gpio: removing gpiochip with gpios still requested\n");
+> Add functions devm_gpio_request_array() and devm_gpio_free_array()
+> which are exactly analogous to the equivalent non-managed device
+> functions gpio_request_array() and gpio_free_array(), which can be
+> found in the module gpiolib.c.
 >
-> Really, really I don't think we should panic here.
+> Reviewed-by: Ian Molton <ian.molton@codethink.co.uk>
+> Signed-off-by: Rob Jones <rob.jones@codethink.co.uk>
 
-Nope dev_crit() is the right thing, with a big fat warning message.
+OK I guess this needs to be merged through the regulator tree
+so here is:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
