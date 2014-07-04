@@ -1,43 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V5 2/3] Documentation: gpio: Add APM X-Gene SoC GPIO
- controller DTS binding
-Date: Fri, 4 Jul 2014 23:28:38 +0200
-Message-ID: <CACRpkdZ18SsRBBbngSVyxR0GFkC0kLD4OHm9RJmgZDLXbqvOBQ@mail.gmail.com>
-References: <1403823587-23404-1-git-send-email-fkan@apm.com>
-	<1403823587-23404-3-git-send-email-fkan@apm.com>
-	<20140630125339.GA21390@leverpostej>
+Subject: Re: [PATCH RESEND] pinctrl: Add i.MX1 pincontrol driver
+Date: Fri, 4 Jul 2014 23:49:33 +0200
+Message-ID: <CACRpkdYjK33=GAQ_CSnzcoiAJg+F9sFpxVd93g=K9p6gnvxX1Q@mail.gmail.com>
+References: <1401813230-7855-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:54388 "EHLO
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:47130 "EHLO
 	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753522AbaGDV2i (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Jul 2014 17:28:38 -0400
-Received: by mail-ob0-f175.google.com with SMTP id wm4so2265188obc.20
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Jul 2014 14:28:38 -0700 (PDT)
-In-Reply-To: <20140630125339.GA21390@leverpostej>
+	with ESMTP id S1752848AbaGDVte (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Jul 2014 17:49:34 -0400
+Received: by mail-ob0-f175.google.com with SMTP id wm4so2300677obc.6
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Jul 2014 14:49:33 -0700 (PDT)
+In-Reply-To: <1401813230-7855-1-git-send-email-shc_work@mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Feng Kan <fkan@apm.com>, "patches@apm.com" <patches@apm.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>
 
-On Mon, Jun 30, 2014 at 2:53 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Thu, Jun 26, 2014 at 11:59:46PM +0100, Feng Kan wrote:
+On Tue, Jun 3, 2014 at 6:33 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
 
->> +- #gpio-cells: Should be two.
->> +     - first cell is the pin number
->> +     - second cell is used to specify optional parameters (unused)
+> This patch adds pincontrol driver for Freescale i.MX1 SOCs.
 >
-> Why is there an unused cell?
->
-> Why not just make this a single cell if the binding defines no valid
-> parameters?
+> Acked-by: Shawn Guo <shawn.guo@linaro.org>
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 
-I don't get this either. The only reason would be that this cell
-should contain flags (such as open collector) the code for using
-it being inplemented later.
+Patch applied.
 
-If the controller is too primitive to use such flags it should be onecell.
+Sorry for taking so long time before getting to it!
 
 Yours,
 Linus Walleij
