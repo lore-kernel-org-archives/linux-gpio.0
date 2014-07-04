@@ -1,53 +1,31 @@
-From: Tushar Behera <tushar.b@samsung.com>
-Subject: [PATCH] gpiolib: of: Update debug messages for of_get_named_gpiod_flags
-Date: Fri,  4 Jul 2014 15:22:09 +0530
-Message-ID: <1404467529-26301-1-git-send-email-tushar.b@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, trblinux@gmail.com
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V5 1/3] gpio: Add APM X-Gene SoC GPIO controller support
+Date: Fri, 4 Jul 2014 23:20:00 +0200
+Message-ID: <CACRpkdY9MYWx5uG0jCb7TR59wd0+nKBhJruyD2TE6YKgeAX6Uw@mail.gmail.com>
+References: <1403823587-23404-1-git-send-email-fkan@apm.com>
+	<1403823587-23404-2-git-send-email-fkan@apm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:60096 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753039AbaGDVUB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Jul 2014 17:20:01 -0400
+Received: by mail-ob0-f181.google.com with SMTP id wp4so2273396obc.40
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Jul 2014 14:20:00 -0700 (PDT)
+In-Reply-To: <1403823587-23404-2-git-send-email-fkan@apm.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Feng Kan <fkan@apm.com>
+Cc: patches <patches@apm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Following is the debug output (only a few examples) before and after the patch.
+On Fri, Jun 27, 2014 at 12:59 AM, Feng Kan <fkan@apm.com> wrote:
 
-$ dmesg | grep of_get_named_gpiod_flags
+> Add APM X-Gene SoC gpio controller driver.
+>
+> Signed-off-by: Feng Kan <fkan@apm.com>
 
-Before:
-of_get_named_gpiod_flags: can't parse gpios property of node '/mmc@12220000[0]'
-of_get_named_gpiod_flags exited with status 0
+Patch applied with Alexandre's review tag, good job!
 
-After:
-of_get_named_gpiod_flags: can't parse 'wp-gpios' property of node '/mmc@12220000[0]'
-of_get_named_gpiod_flags: parsed 'gpios' property of node '/gpio-keys/power[0]' - status (0)
-
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
----
- drivers/gpio/gpiolib-of.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index af7e25c..e60cdab 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -82,15 +82,16 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
- 	ret = of_parse_phandle_with_args(np, propname, "#gpio-cells", index,
- 					 &gg_data.gpiospec);
- 	if (ret) {
--		pr_debug("%s: can't parse gpios property of node '%s[%d]'\n",
--			__func__, np->full_name, index);
-+		pr_debug("%s: can't parse '%s' property of node '%s[%d]'\n",
-+			__func__, propname, np->full_name, index);
- 		return ERR_PTR(ret);
- 	}
- 
- 	gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
- 
- 	of_node_put(gg_data.gpiospec.np);
--	pr_debug("%s exited with status %d\n", __func__,
-+	pr_debug("%s: parsed '%s' property of node '%s[%d]' - status (%d)\n",
-+		 __func__, propname, np->full_name, index,
- 		 PTR_ERR_OR_ZERO(gg_data.out_gpio));
- 	return gg_data.out_gpio;
- }
--- 
-1.7.9.5
+Yours,
+Linus Walleij
