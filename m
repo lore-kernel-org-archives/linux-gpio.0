@@ -1,72 +1,53 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: gpio-omap: wakeup mask
-Date: Fri, 4 Jul 2014 00:27:53 -0700
-Message-ID: <20140704072752.GC28884@atomide.com>
-References: <53B3F687.5050502@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:28624 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750988AbaGDH1x (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Jul 2014 03:27:53 -0400
-Content-Disposition: inline
-In-Reply-To: <53B3F687.5050502@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: [PATCH] gpiolib: of: Update debug messages for of_get_named_gpiod_flags
+Date: Fri,  4 Jul 2014 15:22:09 +0530
+Message-ID: <1404467529-26301-1-git-send-email-tushar.b@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: gnurou@gmail.com, linus.walleij@linaro.org, trblinux@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: Pascal Huerst <pascal.huerst@gmail.com>
-Cc: santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@zonque.org>
 
-* Pascal Huerst <pascal.huerst@gmail.com> [140702 05:12]:
-> Hi everyone,
-> 
-> we have a device with an am335x and are using some gpios on bank0 to
-> wake up the device from suspend to ram.
-> 
-> We have some user buttons which are configured in the devicetree as
-> gpio-keys and one power-key which should wake up the device:
-> 
-> &buttons {
->         power {
->                 label = "Power";
->                 gpios = <&gpio0 6 1>;
->                 linux,code = <116>;
->                 gpio-key,wakeup;
->         };
-> 
->         one {
->                 label = "One";
->                 gpios = <&gpio0 11 1>;
->                 linux,code = <2>;
->         };
-> 
->         : : :
-> }
-> 
-> The problem is, that the device wakes up on any trigger on bank 0. No
-> matter which button was pressed. "gpio-key,wakeup" seems not to have any
-> influence.
-> 
-> Now, if I comment the following lines out in drivers/gpio/gpio-omap.c :
-> set_gpio_trigger(...).
-> 
-> 321
-> 322 if (likely(!(bank->non_wakeup_gpios & gpio_bit))) {
-> 323    _gpio_rmw(base, bank->regs->wkup_en, gpio_bit, trigger != 0);
-> 324      bank->context.wake_en =
-> 325        readl_relaxed(bank->base + bank->regs->wkup_en);
-> 326 }
-> 327
-> 
-> Everything works as expected. But I don't really understand why? Is this
-> a bug, or does this break something else I have not discovered yet?
+Following is the debug output (only a few examples) before and after the patch.
 
-The GPIO wake-up events are working from off-idle for omap3
-the last time I checked, so sounds like this is some am335x
-related issue.
+$ dmesg | grep of_get_named_gpiod_flags
 
-What does your bank->context.wake_en mask get set to with this code?
+Before:
+of_get_named_gpiod_flags: can't parse gpios property of node '/mmc@12220000[0]'
+of_get_named_gpiod_flags exited with status 0
 
-Regards,
+After:
+of_get_named_gpiod_flags: can't parse 'wp-gpios' property of node '/mmc@12220000[0]'
+of_get_named_gpiod_flags: parsed 'gpios' property of node '/gpio-keys/power[0]' - status (0)
 
-Tony
+Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+---
+ drivers/gpio/gpiolib-of.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index af7e25c..e60cdab 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -82,15 +82,16 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ 	ret = of_parse_phandle_with_args(np, propname, "#gpio-cells", index,
+ 					 &gg_data.gpiospec);
+ 	if (ret) {
+-		pr_debug("%s: can't parse gpios property of node '%s[%d]'\n",
+-			__func__, np->full_name, index);
++		pr_debug("%s: can't parse '%s' property of node '%s[%d]'\n",
++			__func__, propname, np->full_name, index);
+ 		return ERR_PTR(ret);
+ 	}
+ 
+ 	gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
+ 
+ 	of_node_put(gg_data.gpiospec.np);
+-	pr_debug("%s exited with status %d\n", __func__,
++	pr_debug("%s: parsed '%s' property of node '%s[%d]' - status (%d)\n",
++		 __func__, propname, np->full_name, index,
+ 		 PTR_ERR_OR_ZERO(gg_data.out_gpio));
+ 	return gg_data.out_gpio;
+ }
+-- 
+1.7.9.5
