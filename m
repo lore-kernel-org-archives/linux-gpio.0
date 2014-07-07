@@ -1,59 +1,55 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH v2 1/2] gpio: Add driver for Zynq GPIO controller
-Date: Mon, 7 Jul 2014 18:23:09 +0300
-Message-ID: <20140707152309.GH4939@tarshish>
-References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
- <5cc8b89b-20ff-4fa9-92dd-bb2f6d3512d8@BY2FFO11FD030.protection.gbl>
- <CACRpkdb1M3-hrSKLKWz21LCJ1sMvsq5E-aqkpmVhy0NwOS5HhA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2][v5] gpiolib: allow simultaneous setting of multiple
+ GPIO outputs
+Date: Mon, 7 Jul 2014 17:23:34 +0200
+Message-ID: <CACRpkdYBCHnCRe3sJ5Uf62ZUjZ23wM54nKs6_QwWyswHUsWaEw@mail.gmail.com>
+References: <25983307.ZjJOfz2Kpg@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:47561 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750859AbaGGPXQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 7 Jul 2014 11:23:16 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb1M3-hrSKLKWz21LCJ1sMvsq5E-aqkpmVhy0NwOS5HhA@mail.gmail.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:49066 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751516AbaGGPXf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 11:23:35 -0400
+Received: by mail-ob0-f174.google.com with SMTP id va2so4821985obc.33
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Jul 2014 08:23:34 -0700 (PDT)
+In-Reply-To: <25983307.ZjJOfz2Kpg@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Harini Katakam <harinik@xilinx.com>, Pawel Moll <pawel.moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harinikatakamlinux@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Harini Katakam <harini.katakam@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Gerhard Sittig <gsi@denx.de>, Wolfram Sang <wsa@the-dreams.de>
 
-Hi Linux,
+On Mon, Jun 16, 2014 at 3:51 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 
-On Mon, Jul 07, 2014 at 04:51:56PM +0200, Linus Walleij wrote:
-> On Wed, Jun 18, 2014 at 5:36 PM, S=F6ren Brinkmann <soren.brinkmann@x=
-ilinx.com> wrote:
-> > The first is, how is userspace supposed to find the correct offset =
-for a
-> > GPIO pin.
->=20
-> The sysfs interface to GPIO is *NOT* *GOOD* this is universally
-> agreed upon.
->=20
-> This needs someone to step in and provide a replacement, my preferred
-> mechanism would be a /dev/gpiochip0/... hierarchy using char devices.
+> Introduce new functions gpiod_set_array & gpiod_set_raw_array to the consumer
+> interface which allow setting multiple outputs with just one function call.
+> Also add an optional set_multiple function to the driver interface. Without an
+> implementation of that function in the chip driver outputs are set
+> sequentially.
 
-I really like the ability to control GPIOs from shell, both interactive=
-ly and=20
-scripted. I find it useful for quick hardware level debugging, and for =
-boot=20
-time scripting (mainly in initramfs). Do you intend to preserve this=20
-capability in the future? Will I need a special utility (or Busybox app=
-let) to=20
-do this with char device ioctl?
+Yes this looks good.
 
-baruch
+Except for one thing I mentioned quite early  I think:
 
---=20
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Sy=
-stems
-=3D}------------------------------------------------ooO--U--Ooo--------=
-----{=3D
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+no users!
+
+How am I supposed to test this?
+
+I wanted to see a patch also switching the one in-kernel thing that
+really needs this switched over to using this functionality.
+
+That means, a patch to drivers/i2c/busses/i2c-gpio.c
+to set scl+sda in one go, for example.
+
+Or a similar patch to drivers/spi/spi-gpio.c I guess?
+
+Something that makes sense. As a bonus you get to rewrite
+one of these drivers to use GPIO descriptors ;)
+
+This is not a hard wall, but I highly suspect that there must be
+some driver using this if you want to implement it, right? And the
+two mentioned drivers will be easy to use to test the feature on
+a lot of platforms.
+
+Yours,
+Linus Walleij
