@@ -1,33 +1,75 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio-pxa: gpio0 and gpio1 support on dt
-Date: Mon, 7 Jul 2014 12:55:19 +0200
-Message-ID: <CACRpkdYX-k3bwcCNibxX7wrrZDo6eJ8GrU+yv79tJvz4hWRPOA@mail.gmail.com>
-References: <1401995603-25997-1-git-send-email-andrew.ruder@elecsyscorp.com>
+Subject: Re: [PATCH v2 1/2] gpio: Add driver for Zynq GPIO controller
+Date: Mon, 7 Jul 2014 16:45:28 +0200
+Message-ID: <CACRpkdbc=NDmmjLi_FKvXaQ7H6gY+xHWso=Vi=tgubME4JUfyg@mail.gmail.com>
+References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:56565 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751392AbaGGKzU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 06:55:20 -0400
-Received: by mail-ob0-f170.google.com with SMTP id uz6so4454916obc.1
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Jul 2014 03:55:20 -0700 (PDT)
-In-Reply-To: <1401995603-25997-1-git-send-email-andrew.ruder@elecsyscorp.com>
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:59441 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752050AbaGGOp3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 10:45:29 -0400
+Received: by mail-oa0-f48.google.com with SMTP id m1so4678396oag.35
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Jul 2014 07:45:28 -0700 (PDT)
+In-Reply-To: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Ruder <andrew.ruder@elecsyscorp.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Harini Katakam <harinik@xilinx.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Harini Katakam <harinikatakamlinux@gmail.com>, Harini Katakam <harini.katakam@xilinx.com>
 
-On Thu, Jun 5, 2014 at 9:13 PM, Andrew Ruder
-<andrew.ruder@elecsyscorp.com> wrote:
+On Wed, Jun 18, 2014 at 1:39 PM, Harini Katakam <harinik@xilinx.com> wrote:
 
-> pxa_gpio_probe() has some issues supporting the gpio0 and gpio1
-> interrupts under device-tree - it never actually sets up the chain
-> handler to get interrupts on edge detect for GPIO0 and GPIO1.
+> From: Harini Katakam <harini.katakam@xilinx.com>
 >
-> Signed-off-by: Andrew Ruder <andrew.ruder@elecsyscorp.com>
+> Add support for GPIO controller used by Xilinx Zynq.
+>
+> Signed-off-by: Harini Katakam <harinik@xilinx.com>
+> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> ---
+>
+> v2 changes:
+>  - convert to pm_runtime_force_(suspend|resume)
+>  - add pm_runtime_set_active in probe()
+>  - also (un)prepare clocks when they are dis-/enabled
+>  - add some missing calls to pm_runtime_get()
+>  - use pm_runtime_put() instead of sync variant
+>  - remove gpio chip in driver remove()
+>  - remove redundant type casts
+>  - directly use IO helpers
+>  - use BIT macro to set/clear bits
+>  - migrate to GPIOLIB_IRQCHIP
 
-Patch applied with Haojian's ACK.
+This is a great improvement! Only small stuff remains.
+
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/gpio.h>
+
+This should be:
+#include <linux/gpio/driver.h>
+
+If that doesn't work ... why?
+
+> +/**
+> + * struct zynq_gpio - gpio device private data structure
+> + * @chip:      instance of the gpio_chip
+> + * @base_addr: base address of the GPIO device
+> + * @irq:       irq associated with the controller
+> + * @clk:       clock resource for this controller
+> + */
+> +struct zynq_gpio {
+> +       struct gpio_chip chip;
+> +       void __iomem *base_addr;
+> +       int irq;
+
+Why is irq kept around in this struct? It looks like it could just
+be a local variable in probe()?
+
+> +       struct clk *clk;
+> +};
+
+Apart from that this nitpicking the driver looks very nice.
 
 Yours,
 Linus Walleij
