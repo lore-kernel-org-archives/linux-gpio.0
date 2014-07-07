@@ -1,66 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Anton Vorontsov <anton.vorontsov@linaro.org>
 Subject: Re: [PATCH V5 2/3] Documentation: gpio: Add APM X-Gene SoC GPIO
  controller DTS binding
-Date: Mon, 7 Jul 2014 23:26:18 +0200
-Message-ID: <CACRpkdbt+sj_Htjrj4+hm6KHJfONpTSQyz25Hepkx5kugaO3AA@mail.gmail.com>
+Date: Mon, 7 Jul 2014 14:54:47 -0700
+Message-ID: <20140707215446.GA28692@teo>
 References: <1403823587-23404-1-git-send-email-fkan@apm.com>
-	<1403823587-23404-3-git-send-email-fkan@apm.com>
-	<20140630125339.GA21390@leverpostej>
-	<CACRpkdZ18SsRBBbngSVyxR0GFkC0kLD4OHm9RJmgZDLXbqvOBQ@mail.gmail.com>
-	<CAL85gmD017shZfHGvewyH5FO9vsSFSNGo=vTL68sosvuvODa_A@mail.gmail.com>
+ <1403823587-23404-3-git-send-email-fkan@apm.com>
+ <20140630125339.GA21390@leverpostej>
+ <CACRpkdZ18SsRBBbngSVyxR0GFkC0kLD4OHm9RJmgZDLXbqvOBQ@mail.gmail.com>
+ <CAL85gmD017shZfHGvewyH5FO9vsSFSNGo=vTL68sosvuvODa_A@mail.gmail.com>
+ <CACRpkdbt+sj_Htjrj4+hm6KHJfONpTSQyz25Hepkx5kugaO3AA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:34224 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751397AbaGGV0S (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 17:26:18 -0400
-Received: by mail-oa0-f42.google.com with SMTP id eb12so5414385oac.1
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Jul 2014 14:26:18 -0700 (PDT)
-In-Reply-To: <CAL85gmD017shZfHGvewyH5FO9vsSFSNGo=vTL68sosvuvODa_A@mail.gmail.com>
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:39679 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750868AbaGGVyv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 17:54:51 -0400
+Received: by mail-pd0-f181.google.com with SMTP id v10so6007608pde.40
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Jul 2014 14:54:51 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbt+sj_Htjrj4+hm6KHJfONpTSQyz25Hepkx5kugaO3AA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Feng Kan <fkan@apm.com>, Anton Vorontsov <anton@enomsg.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "patches@apm.com" <patches@apm.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Feng Kan <fkan@apm.com>, Mark Rutland <mark.rutland@arm.com>, "patches@apm.com" <patches@apm.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Jul 7, 2014 at 8:52 PM, Feng Kan <fkan@apm.com> wrote:
-> On Fri, Jul 4, 2014 at 2:28 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Mon, Jul 07, 2014 at 11:26:18PM +0200, Linus Walleij wrote:
+...
+> > There was another reason for this as well, part of the gpio code I read
+> > was confusing me. So I look through the other gpio documentations and
+> > found an example that did this as well.
+> >
+> > int of_gpio_simple_xlate(struct gpio_chip *gc,
+> >                          const struct of_phandle_args *gpiospec, u32 *flags)
+> > {
+> >         /*
+> >          * We're discouraging gpio_cells < 2, since that way you'll have to
+> >          * write your own xlate function (that will have to retrive the GPIO
+> >          * number and the flags from a single gpio cell -- this is possible,
+> >          * but not recommended).
+> >          */
+> 
+> Hm yeah that's right.
+> 
+> This check was added by Anton in 2008. Anton why did we discourage
+> onecell GPIOs?
 
->> I don't get this either. The only reason would be that this cell
->> should contain flags (such as open collector) the code for using
->> it being inplemented later.
->
-> Yes, open drain configuration and mux via pinctrl was something I
-> planned for later.
+Yup, the check was there from the very beginning. Think of
+OF_GPIO_ACTIVE_LOW flag (it is widely used in drivers.)
 
-OK but pinctrl is something else. There is also the GPIO
-OD configuration, as it modifies the behaviour of how to set
-GPIO lines.
+The documentation in Feng's driver says "second cell is used to specify
+optional parameters (unused)," which is not entirely correct. With the
+standard xlate call it is used for active-low flag. You can implement
+active-low flag w/o using the second cell, but it will be ugly.
 
-(Yes I know the frameworks maybe ought to talk to each other
-for such things....)
+Thanks,
 
-So if you plan to do this, add it to the bindings even if you're not
-adding the code for handling it right now.
-
-> There was another reason for this as well, part of the gpio code I read
-> was confusing me. So I look through the other gpio documentations and
-> found an example that did this as well.
->
-> int of_gpio_simple_xlate(struct gpio_chip *gc,
->                          const struct of_phandle_args *gpiospec, u32 *flags)
-> {
->         /*
->          * We're discouraging gpio_cells < 2, since that way you'll have to
->          * write your own xlate function (that will have to retrive the GPIO
->          * number and the flags from a single gpio cell -- this is possible,
->          * but not recommended).
->          */
-
-Hm yeah that's right.
-
-This check was added by Anton in 2008. Anton why did we discourage
-onecell GPIOs?
-
-Yours,
-Linus Walleij
+Anton
