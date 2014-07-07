@@ -1,69 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] mmc: core: Add DT bindings for card detect debounce time
-Date: Mon, 7 Jul 2014 17:12:47 +0200
-Message-ID: <CACRpkda7s_AgPx4a6qu2=FGhfoPyJiZBCJDbd9iWL5qE3DPtXQ@mail.gmail.com>
-References: <1399649837-27286-1-git-send-email-balajitk@ti.com>
-	<CAPDyKFoZ=zjKg5bUMnK_X2XOatT=XSAnBDpYqu0Q2VOkM7hOOA@mail.gmail.com>
-	<CAAVeFu+CW0DSbqc6k145APao2r907sAyMw0+W=hQXxO6LoQx-g@mail.gmail.com>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH v2 1/2] gpio: Add driver for Zynq GPIO controller
+Date: Mon, 7 Jul 2014 18:23:09 +0300
+Message-ID: <20140707152309.GH4939@tarshish>
+References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
+ <5cc8b89b-20ff-4fa9-92dd-bb2f6d3512d8@BY2FFO11FD030.protection.gbl>
+ <CACRpkdb1M3-hrSKLKWz21LCJ1sMvsq5E-aqkpmVhy0NwOS5HhA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:48614 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753521AbaGGPMs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 11:12:48 -0400
-Received: by mail-oa0-f53.google.com with SMTP id l6so4827634oag.12
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Jul 2014 08:12:48 -0700 (PDT)
-In-Reply-To: <CAAVeFu+CW0DSbqc6k145APao2r907sAyMw0+W=hQXxO6LoQx-g@mail.gmail.com>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:47561 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750859AbaGGPXQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 7 Jul 2014 11:23:16 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb1M3-hrSKLKWz21LCJ1sMvsq5E-aqkpmVhy0NwOS5HhA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Balaji T K <balajitk@ti.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Harini Katakam <harinik@xilinx.com>, Pawel Moll <pawel.moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harinikatakamlinux@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Harini Katakam <harini.katakam@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Sat, Jun 21, 2014 at 9:22 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+Hi Linux,
 
->> I have added Linus Walleij and Alexandre Courbot, the maintainers of
->> gpio. Let's see if they can point us in a direction.
->
-> I agree it would be nice if the debounce value could be handled by the
-> GPIO framework.
+On Mon, Jul 07, 2014 at 04:51:56PM +0200, Linus Walleij wrote:
+> On Wed, Jun 18, 2014 at 5:36 PM, S=F6ren Brinkmann <soren.brinkmann@x=
+ilinx.com> wrote:
+> > The first is, how is userspace supposed to find the correct offset =
+for a
+> > GPIO pin.
+>=20
+> The sysfs interface to GPIO is *NOT* *GOOD* this is universally
+> agreed upon.
+>=20
+> This needs someone to step in and provide a replacement, my preferred
+> mechanism would be a /dev/gpiochip0/... hierarchy using char devices.
 
-I agree too.
+I really like the ability to control GPIOs from shell, both interactive=
+ly and=20
+scripted. I find it useful for quick hardware level debugging, and for =
+boot=20
+time scripting (mainly in initramfs). Do you intend to preserve this=20
+capability in the future? Will I need a special utility (or Busybox app=
+let) to=20
+do this with char device ioctl?
 
-> I just wonder what would be the correct way of doing
-> it? Contrary to ACTIVE_LOW and other flags which can be specified with
-> the GPIO phandle, debounce is a numeric value. Maybe using a different
-> property, e.g.:
->
-> cd-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
-> cd-gpios-debounce = <10>;
->
-> When looking up a GPIO through gpiod_get(), the GPIO framework could
-> then check for -debounce property and set the debounce time
-> accordingly. At first sight I'd say that would work and could be used
-> for MMC and all other subsystems that need something similar.
+baruch
 
-Yes, but we also need to write generic debounce handling into
-the gpiolib, so it doesn't matter if the GPIO driver can or cannot
-handle this itself. Some hardware has the capability to debounce
-lines in *hardware*.
-
-Right now a call to gpiod_set_debounce() will fail unless the
-hardware has a debounce option.
-
-What we should really do is make gpiod_set_debounce() always
-work, put the debounce value into the gpio_desc, and move some
-logic similar to what exists in drivers/input/keyboard/gpio_keys.c
-into the gpiolib, then get rid of any local implementations like
-in gpio_keys.
-
-Then we can rely on the gpiolib handling this at all times, and also
-to get the debounce config from DT.
-
-Dmitry, opinions on this?
-
-Anyone up for implementing the timer in gpiolib and moving the
-keyboard driver over to using the gpiolib debounce set?
-
-Yours,
-Linus Walleij
+--=20
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Sy=
+stems
+=3D}------------------------------------------------ooO--U--Ooo--------=
+----{=3D
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
