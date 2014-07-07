@@ -1,67 +1,53 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] mmc: core: Add DT bindings for card detect debounce time
-Date: Mon, 7 Jul 2014 09:59:46 -0700
-Message-ID: <CAKdAkRSNU+1YHp+gsnwaTBb+ui7W9ZUBW4OBQFwDQ5Px-WEr2g@mail.gmail.com>
-References: <1399649837-27286-1-git-send-email-balajitk@ti.com>
-	<CAPDyKFoZ=zjKg5bUMnK_X2XOatT=XSAnBDpYqu0Q2VOkM7hOOA@mail.gmail.com>
-	<CAAVeFu+CW0DSbqc6k145APao2r907sAyMw0+W=hQXxO6LoQx-g@mail.gmail.com>
-	<CACRpkda7s_AgPx4a6qu2=FGhfoPyJiZBCJDbd9iWL5qE3DPtXQ@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] USB: ftdi_sio: add GPIO support
+Date: Mon, 7 Jul 2014 10:31:42 -0700
+Message-ID: <20140707173142.GB8693@kroah.com>
+References: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
+ <CACRpkdbiob-2d4sTmj8bZxo5GVZ0TvF5CT_W94BDsSNiEfB7kQ@mail.gmail.com>
+ <20140613183157.GA24644@kroah.com>
+ <CACRpkdYRm1gE5ai05TK17T3bVHKSVEkXeL5Qci8G=Lpt+UYsug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda7s_AgPx4a6qu2=FGhfoPyJiZBCJDbd9iWL5qE3DPtXQ@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Balaji T K <balajitk@ti.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51579 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750897AbaGGR1T (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 13:27:19 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYRm1gE5ai05TK17T3bVHKSVEkXeL5Qci8G=Lpt+UYsug@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sascha Silbe <x-linux@infra-silbe.de>, Johan Hovold <jhovold@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jul 7, 2014 at 8:12 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sat, Jun 21, 2014 at 9:22 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->
->>> I have added Linus Walleij and Alexandre Courbot, the maintainers of
->>> gpio. Let's see if they can point us in a direction.
->>
->> I agree it would be nice if the debounce value could be handled by the
->> GPIO framework.
->
-> I agree too.
->
->> I just wonder what would be the correct way of doing
->> it? Contrary to ACTIVE_LOW and other flags which can be specified with
->> the GPIO phandle, debounce is a numeric value. Maybe using a different
->> property, e.g.:
->>
->> cd-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
->> cd-gpios-debounce = <10>;
->>
->> When looking up a GPIO through gpiod_get(), the GPIO framework could
->> then check for -debounce property and set the debounce time
->> accordingly. At first sight I'd say that would work and could be used
->> for MMC and all other subsystems that need something similar.
->
-> Yes, but we also need to write generic debounce handling into
-> the gpiolib, so it doesn't matter if the GPIO driver can or cannot
-> handle this itself. Some hardware has the capability to debounce
-> lines in *hardware*.
->
-> Right now a call to gpiod_set_debounce() will fail unless the
-> hardware has a debounce option.
->
-> What we should really do is make gpiod_set_debounce() always
-> work, put the debounce value into the gpio_desc, and move some
-> logic similar to what exists in drivers/input/keyboard/gpio_keys.c
-> into the gpiolib, then get rid of any local implementations like
-> in gpio_keys.
->
-> Then we can rely on the gpiolib handling this at all times, and also
-> to get the debounce config from DT.
->
-> Dmitry, opinions on this?
+On Mon, Jul 07, 2014 at 12:44:28PM +0200, Linus Walleij wrote:
+> On Fri, Jun 13, 2014 at 8:31 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Fri, Jun 13, 2014 at 09:25:07AM +0200, Linus Walleij wrote:
+> 
+> >> But I also want to bring the device model into question: normally
+> >> when a mother device spawns children across different subsystems
+> >> we model them as MFD devices (drivers/mfd) that instantiate
+> >> children for the different subsystems. So you could spawn a
+> >> serial and a GPIO device from a USB-based hub device there.
+> >>
+> >> I do not know if that is really apropriate in this case. It seems the
+> >> device is first and foremost FTDI.
+> >>
+> >> But it could still spawn a child platform device for the GPIO stuff
+> >> so that this can live as a separate driver under drivers/gpio/gpio-ftdi.c
+> >> or similar.
+> >>
+> >> You could then use something like:
+> >>
+> >> struct platform_device *gdev;
+> >
+> > Ick, no, it's a USB device, do not abuse the platform_device code any
+> > more than it currently is (note, I HATE the platform device code,
+> > someday I'll delete it entirely...  Well, I can dream...)
+> 
+> Haha yeah :-)
+> 
+> However is the MFD cell approach acceptable?
 
-I am always happy to hear when common functionality is moved into
-appropriate layer.
-
-Thanks.
-
--- 
-Dmitry
+Yes it is.
