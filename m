@@ -1,44 +1,63 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH v2 2/2] devicetree: Add Zynq GPIO devicetree bindings
- documentation
-Date: Mon, 7 Jul 2014 10:35:02 -0700
-Message-ID: <30b61880-97a0-4e94-a71e-d738f0416d9d@BN1BFFO11FD056.protection.gbl>
-References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
- <1403091577-10232-2-git-send-email-harinik@xilinx.com>
- <CACRpkdYZ8gQ_-z3Ue3WZZ4FiV8dhw_BZez2-PLpeiBTs-UnNFQ@mail.gmail.com>
+From: Feng Kan <fkan@apm.com>
+Subject: Re: [PATCH V5 2/3] Documentation: gpio: Add APM X-Gene SoC GPIO
+ controller DTS binding
+Date: Mon, 7 Jul 2014 11:52:52 -0700
+Message-ID: <CAL85gmD017shZfHGvewyH5FO9vsSFSNGo=vTL68sosvuvODa_A@mail.gmail.com>
+References: <1403823587-23404-1-git-send-email-fkan@apm.com>
+	<1403823587-23404-3-git-send-email-fkan@apm.com>
+	<20140630125339.GA21390@leverpostej>
+	<CACRpkdZ18SsRBBbngSVyxR0GFkC0kLD4OHm9RJmgZDLXbqvOBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYZ8gQ_-z3Ue3WZZ4FiV8dhw_BZez2-PLpeiBTs-UnNFQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Harini Katakam <harinik@xilinx.com>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Harini Katakam <harinikatakamlinux@gmail.com>, Harini Katakam <harini.katakam@xilinx.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exprod5og111.obsmtp.com ([64.18.0.22]:54989 "HELO
+	exprod5og111.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752817AbaGGSwx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 14:52:53 -0400
+Received: by mail-ob0-f172.google.com with SMTP id uy5so5184972obc.31
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Jul 2014 11:52:52 -0700 (PDT)
+In-Reply-To: <CACRpkdZ18SsRBBbngSVyxR0GFkC0kLD4OHm9RJmgZDLXbqvOBQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "patches@apm.com" <patches@apm.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, 2014-07-07 at 04:53PM +0200, Linus Walleij wrote:
-> On Wed, Jun 18, 2014 at 1:39 PM, Harini Katakam <harinik@xilinx.com> =
-wrote:
->=20
-> > From: Harini Katakam <harini.katakam@xilinx.com>
-> >
-> > Add gpio-zynq bindings documentation.
-> >
-> > Signed-off-by: Harini Katakam <harinik@xilinx.com>
-> > Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
-> > ---
-> >
-> > v2 changes:
-> > Improve description.
-> (...)
-> > +- #gpio-cells          : Should be two. First cell is used to ment=
-ion
-> > +                         pin number.
->=20
-> Don't call this "pin number", call it "GPIO line number".
-It's also not mentioning the second cell at all. I'll take the part fro=
-m
-gpio-msm to document this property and replace 'pin' with 'GPIO line'.
+On Fri, Jul 4, 2014 at 2:28 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Jun 30, 2014 at 2:53 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> On Thu, Jun 26, 2014 at 11:59:46PM +0100, Feng Kan wrote:
+>
+>>> +- #gpio-cells: Should be two.
+>>> +     - first cell is the pin number
+>>> +     - second cell is used to specify optional parameters (unused)
+>>
+>> Why is there an unused cell?
+>>
+>> Why not just make this a single cell if the binding defines no valid
+>> parameters?
+>
+> I don't get this either. The only reason would be that this cell
+> should contain flags (such as open collector) the code for using
+> it being inplemented later.
 
-	S=C3=B6ren
+Yes, open drain configuration and mux via pinctrl was something I
+planned for later.
+There was another reason for this as well, part of the gpio code I read
+was confusing me. So I look through the other gpio documentations and
+found an example that did this as well.
+
+int of_gpio_simple_xlate(struct gpio_chip *gc,
+                         const struct of_phandle_args *gpiospec, u32 *flags)
+{
+        /*
+         * We're discouraging gpio_cells < 2, since that way you'll have to
+         * write your own xlate function (that will have to retrive the GPIO
+         * number and the flags from a single gpio cell -- this is possible,
+         * but not recommended).
+         */
+
+Thanks, and please advise me on what to do next.
+>
+> If the controller is too primitive to use such flags it should be onecell.
+>
+> Yours,
+> Linus Walleij
