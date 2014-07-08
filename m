@@ -1,59 +1,54 @@
-From: Anton Vorontsov <anton.vorontsov@linaro.org>
-Subject: Re: [PATCH V5 2/3] Documentation: gpio: Add APM X-Gene SoC GPIO
- controller DTS binding
-Date: Mon, 7 Jul 2014 14:54:47 -0700
-Message-ID: <20140707215446.GA28692@teo>
-References: <1403823587-23404-1-git-send-email-fkan@apm.com>
- <1403823587-23404-3-git-send-email-fkan@apm.com>
- <20140630125339.GA21390@leverpostej>
- <CACRpkdZ18SsRBBbngSVyxR0GFkC0kLD4OHm9RJmgZDLXbqvOBQ@mail.gmail.com>
- <CAL85gmD017shZfHGvewyH5FO9vsSFSNGo=vTL68sosvuvODa_A@mail.gmail.com>
- <CACRpkdbt+sj_Htjrj4+hm6KHJfONpTSQyz25Hepkx5kugaO3AA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: vr41xx: fix up errorpath on probe()
+Date: Tue,  8 Jul 2014 09:23:28 +0200
+Message-ID: <1404804208-16279-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:39679 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868AbaGGVyv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Jul 2014 17:54:51 -0400
-Received: by mail-pd0-f181.google.com with SMTP id v10so6007608pde.40
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Jul 2014 14:54:51 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbt+sj_Htjrj4+hm6KHJfONpTSQyz25Hepkx5kugaO3AA@mail.gmail.com>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:50782 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752230AbaGHHYM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jul 2014 03:24:12 -0400
+Received: by mail-wi0-f176.google.com with SMTP id n3so410135wiv.15
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Jul 2014 00:24:11 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Feng Kan <fkan@apm.com>, Mark Rutland <mark.rutland@arm.com>, "patches@apm.com" <patches@apm.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Jul 07, 2014 at 11:26:18PM +0200, Linus Walleij wrote:
-...
-> > There was another reason for this as well, part of the gpio code I read
-> > was confusing me. So I look through the other gpio documentations and
-> > found an example that did this as well.
-> >
-> > int of_gpio_simple_xlate(struct gpio_chip *gc,
-> >                          const struct of_phandle_args *gpiospec, u32 *flags)
-> > {
-> >         /*
-> >          * We're discouraging gpio_cells < 2, since that way you'll have to
-> >          * write your own xlate function (that will have to retrive the GPIO
-> >          * number and the flags from a single gpio cell -- this is possible,
-> >          * but not recommended).
-> >          */
-> 
-> Hm yeah that's right.
-> 
-> This check was added by Anton in 2008. Anton why did we discourage
-> onecell GPIOs?
+The driver was not checking the return value from gpiochip_add()
+properly, so add a bail-out check.
 
-Yup, the check was there from the very beginning. Think of
-OF_GPIO_ACTIVE_LOW flag (it is widely used in drivers.)
+Reported-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-vr41xx.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-The documentation in Feng's driver says "second cell is used to specify
-optional parameters (unused)," which is not entirely correct. With the
-standard xlate call it is used for active-low flag. You can implement
-active-low flag w/o using the second cell, but it will be ugly.
+diff --git a/drivers/gpio/gpio-vr41xx.c b/drivers/gpio/gpio-vr41xx.c
+index 66cbcc108e62..dbf28fa03f67 100644
+--- a/drivers/gpio/gpio-vr41xx.c
++++ b/drivers/gpio/gpio-vr41xx.c
+@@ -515,7 +515,7 @@ static int giu_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	unsigned int trigger, i, pin;
+ 	struct irq_chip *chip;
+-	int irq, retval;
++	int irq, ret;
+ 
+ 	switch (pdev->id) {
+ 	case GPIO_50PINS_PULLUPDOWN:
+@@ -544,7 +544,11 @@ static int giu_probe(struct platform_device *pdev)
+ 
+ 	vr41xx_gpio_chip.dev = &pdev->dev;
+ 
+-	retval = gpiochip_add(&vr41xx_gpio_chip);
++	ret = gpiochip_add(&vr41xx_gpio_chip);
++	if (!ret) {
++		iounmap(giu_base);
++		return -ENODEV;
++	}
+ 
+ 	giu_write(GIUINTENL, 0);
+ 	giu_write(GIUINTENH, 0);
+-- 
+1.9.3
 
-Thanks,
-
-Anton
