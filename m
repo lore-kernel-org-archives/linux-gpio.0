@@ -1,28 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 3/3] gpio: move integer GPIO support to its own file
-Date: Tue, 8 Jul 2014 10:25:53 +0200
-Message-ID: <CACRpkdYyqNJm9Eoi7uhMKdZt37LVEK+bhWNbuEVfXuQya8BmDw@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [RFC 2/3] gpio: move sysfs support to its own file
+Date: Tue, 8 Jul 2014 17:31:01 +0900
+Message-ID: <CAAVeFuKrvvmWGS0OaP+JBmozT70K9=0ntL7Zx+vZPBjr2H8aDg@mail.gmail.com>
 References: <1404193516-4384-1-git-send-email-acourbot@nvidia.com>
-	<1404193516-4384-4-git-send-email-acourbot@nvidia.com>
+ <1404193516-4384-3-git-send-email-acourbot@nvidia.com> <CACRpkdaRReCWObTBP-ujiM-R9Js2y+L6RFtAfw6AP1cwx1hrHA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404193516-4384-4-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ve0-f170.google.com ([209.85.128.170]:64710 "EHLO
+	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753975AbaGHIbW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jul 2014 04:31:22 -0400
+In-Reply-To: <CACRpkdaRReCWObTBP-ujiM-R9Js2y+L6RFtAfw6AP1cwx1hrHA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jul 1, 2014 at 7:45 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
-
-> The old integer GPIO interface is, in effect, a privileged user of the
-> gpiod interface. Reflect this fact further by moving legacy GPIO support
-> into its own source file. This makes the code clearer and will allow us
-> to disable legacy GPIO support in the (far) future.
+On Tue, Jul 8, 2014 at 5:21 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jul 1, 2014 at 7:45 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 >
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> sysfs support is currently entangled within the core GPIO support, while
+>> it should relly just be a (privileged) user of the integer GPIO API.
+>> This patch is a first step towards making the gpiolib code more readable
+>> by splitting it into logical parts.
+>>
+>> Move all sysfs support to their own source file, and share static
+>> members of gpiolib that need to be in the private gpiolib.h file. In
+>> the future we will want to put some of them back into gpiolib.c, but this
+>> first patch let us at least identify them.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>
+> Patch applied. We really need to make refactorings like this
+> so thanks a lot.
 
-Patch applied.
+Excellent, glad you approve of this. I actually have some more coming
+after that, since the current lack of organization stands in the way
+of a proper multi-consumer GPIO implementation.
 
-Yours,
-Linus Walleij
+Thanks!
+Alex.
