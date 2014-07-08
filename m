@@ -1,65 +1,94 @@
-From: Harini Katakam <harinik@xilinx.com>
-Subject: [PATCH v3 2/2] devicetree: Add Zynq GPIO devicetree bindings documentation
-Date: Tue,  8 Jul 2014 16:32:36 +0530
-Message-ID: <1404817356-21568-2-git-send-email-harinik@xilinx.com>
-References: <1404817356-21568-1-git-send-email-harinik@xilinx.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH v2 1/2] gpio: Add driver for Zynq GPIO controller
+Date: Tue, 8 Jul 2014 08:55:52 -0700
+Message-ID: <3adb614c-38ae-4b0c-9e50-99f071bbf4c5@BL2FFO11FD038.protection.gbl>
+References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
+ <5cc8b89b-20ff-4fa9-92dd-bb2f6d3512d8@BY2FFO11FD030.protection.gbl>
+ <CACRpkdb1M3-hrSKLKWz21LCJ1sMvsq5E-aqkpmVhy0NwOS5HhA@mail.gmail.com>
+ <d1af864d-bf78-48bb-a545-8de3f9def75f@BL2FFO11FD037.protection.gbl>
+ <CACRpkdYSU6NdFuab6rJS7eADSqORNDBzbFfJ65nFoJj3EZVd-g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404817356-21568-1-git-send-email-harinik@xilinx.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYSU6NdFuab6rJS7eADSqORNDBzbFfJ65nFoJj3EZVd-g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rob@landley.net
-Cc: michal.simek@xilinx.com, soren.brinkmann@xilinx.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, harinikatakamlinux@gmail.com, Harini Katakam <harini.katakam@xilinx.com>, Harini Katakam <harinik@xilinx.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Harini Katakam <harini.katakam@xilinx.com>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Harini Katakam <harinikatakamlinux@gmail.com>, Harini Katakam <harinik@xilinx.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Harini Katakam <harini.katakam@xilinx.com>
+Hi Linus,
 
-Add gpio-zynq bindings documentation.
+On Tue, 2014-07-08 at 11:34AM +0200, Linus Walleij wrote:
+> On Mon, Jul 7, 2014 at 6:08 PM, S=C3=B6ren Brinkmann
+> <soren.brinkmann@xilinx.com> wrote:
+>=20
+> >> So: what is the usecase for these GPIOs?
+> >
+> > Yea, in this case it was a button. I have to look at these drivers.=
+ It's
+> > very likely that they cover what I want. But this case is trivial. =
+I
+> > really don't do anything but enabling the IRQ by writing to the edg=
+e
+> > attribute and press the push-button connected to that GPIO line.
+>=20
+> In case of a system using device tree it is very trivial to add a gpi=
+o
+> key binding. After compiling in the gpio keys driver this small
+> snipper type is all that is really needed in most cases:
+>=20
+>         /* User key mapped in as "escape" */
+>         gpio-keys {
+>                 compatible =3D "gpio-keys";
+>                 user-button {
+>                         label =3D "user_button";
+>                         gpios =3D <&gpio0 3 0x1>;
+>                         linux,code =3D <1>; /* KEY_ESC */
+>                         gpio-key,wakeup;
+>                 };
+>         };
 
-Signed-off-by: Harini Katakam <harinik@xilinx.com>
-Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
----
+Thanks for the example. I think for my cases these drivers are exactly
+the right thing.
 
-v3 changes:
-Change description of #gpio-cells - use 'gpio-line' instead of 'pin'
+>=20
+>=20
+> > But as a general note: I think we have quite some customers trying =
+to do
+> > GPIO in userspace.
+>=20
+> For what? I mean the use cases. Usually it is a bad idea, and
+> as shown above, just using the right existing device driver with
+> device tree is much easier, also for an end user, given they know
+> how to alter DTs and compile in kernel modules.
+>=20
+> > With Zynq's FPGA portion, a lot of things come down
+> > to make signals accessible in Linux and a lot of people do not want=
+ or
+> > need a full blown kernel driver and use GPIO. The request for 'how =
+to
+> > handle GPIO IRQs in userspace' is pretty common. Often this gets pa=
+ssed
+> > on to UIO though.
+>=20
+> The short answer is don't handle GPIO IRQs in userspace.
+>=20
+> Userspace drivers is generally a bad idea and should not be written.
+> The kernel is intended to handle hardware.
+>=20
+> The above is doubly true for anything involving IRQs. Just think
+> of what IRQs are. They are one of the reasons why we have a
+> kernel and not just write all software on a system from scratch
+> ourselves.
 
-v2 changes:
-Improve description.
+I fully agree and you don't have to convince me. But to a lot of our
+customers that are used to use FPGAs, SOCs and Linux are pretty new. Yo=
+u
+see a lot of scary stuff. Accessing /dev/mem seems to be a lot of
+people's big hammer solution for everything. Then I always perceive it
+as great progress if things like the sysfs interface are used instead.
 
----
- .../devicetree/bindings/gpio/gpio-zynq.txt         |   26 ++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-zynq.txt b/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-new file mode 100644
-index 0000000..986371a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-@@ -0,0 +1,26 @@
-+Xilinx Zynq GPIO controller Device Tree Bindings
-+-------------------------------------------
-+
-+Required properties:
-+- #gpio-cells 		: Should be two
-+			  - First cell is the GPIO line number
-+			  - Second cell is used to specify optional
-+			    parameters (unused)
-+- compatible		: Should be "xlnx,zynq-gpio-1.0"
-+- clocks		: Clock specifier (see clock bindings for details)
-+- gpio-controller	: Marks the device node as a GPIO controller.
-+- interrupts		: Interrupt specifier (see interrupt bindings for
-+			  details)
-+- interrupt-parent	: Must be core interrupt controller
-+- reg			: Address and length of the register set for the device
-+
-+Example:
-+	gpio@e000a000 {
-+		#gpio-cells = <2>;
-+		compatible = "xlnx,zynq-gpio-1.0";
-+		clocks = <&clkc 42>;
-+		gpio-controller;
-+		interrupt-parent = <&intc>;
-+		interrupts = <0 20 4>;
-+		reg = <0xe000a000 0x1000>;
-+	};
--- 
-1.7.9.5
+	Thanks,
+	S=C3=B6ren
