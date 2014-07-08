@@ -1,41 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: rcar: Add support for DT IRQ flags
-Date: Tue, 8 Jul 2014 10:48:27 +0200
-Message-ID: <CACRpkdbVtUFOVkpVeqVWtmAE_Yj6iYXe9Y6O_ooqXSDsMk4mgg@mail.gmail.com>
-References: <1396349886-26663-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<2822093.Rul4y5g8OD@avalon>
+Subject: Re: [PATCH v2 1/2] gpio: Add driver for Zynq GPIO controller
+Date: Tue, 8 Jul 2014 11:27:57 +0200
+Message-ID: <CACRpkdY+3hy5iw=uRdmu665NWsoGacTMgjUq97219kEcfn7Dqw@mail.gmail.com>
+References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
+	<5cc8b89b-20ff-4fa9-92dd-bb2f6d3512d8@BY2FFO11FD030.protection.gbl>
+	<CACRpkdb1M3-hrSKLKWz21LCJ1sMvsq5E-aqkpmVhy0NwOS5HhA@mail.gmail.com>
+	<20140707152309.GH4939@tarshish>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:64624 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752883AbaGHIs1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jul 2014 04:48:27 -0400
-Received: by mail-ob0-f178.google.com with SMTP id wn1so6068951obc.9
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Jul 2014 01:48:27 -0700 (PDT)
-In-Reply-To: <2822093.Rul4y5g8OD@avalon>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140707152309.GH4939@tarshish>
+Sender: linux-doc-owner@vger.kernel.org
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Harini Katakam <harinik@xilinx.com>, Pawel Moll <pawel.moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harinikatakamlinux@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Harini Katakam <harini.katakam@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Magnus Damm <damm@opensource.se>
 
-On Wed, Jul 2, 2014 at 4:37 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+On Mon, Jul 7, 2014 at 5:23 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+> On Mon, Jul 07, 2014 at 04:51:56PM +0200, Linus Walleij wrote:
 
-> Hi Linus,
+>> This needs someone to step in and provide a replacement, my preferred
+>> mechanism would be a /dev/gpiochip0/... hierarchy using char devices.
 >
-> Could you please pick this patch up for v3.17 ?
->
-> On Tuesday 01 April 2014 12:58:06 Laurent Pinchart wrote:
->> The gpio-rcar driver has no IRQ domain OF xlate function and thus
->> ignores IRQ flags specified in DT. Fix this by using the two-cell xlate
->> function.
->>
->> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> I really like the ability to control GPIOs from shell, both interactively and
+> scripted. I find it useful for quick hardware level debugging,
 
-I don't have this patch in my INBOX, dunno what has gone wrong :-(
+I would be happy to carry it in the unstable-ABI debugfs for sure.
+It's the supported ABI that bothers me.
 
-Can you please resend it so I can apply it?
+> and for boot
+> time scripting (mainly in initramfs).
+
+What is the usecase here?
+
+> Do you intend to preserve this
+> capability in the future? Will I need a special utility (or Busybox applet) to
+> do this with char device ioctl?
+
+It is ABI so we have to preserve it. But sometimes people come with
+new zuper-complex userspace usecases and want to add this or
+that crazy ABI to do stuff in userspace that the kernel can do better.
+And all that I intend to just NACK.
 
 Yours,
 Linus Walleij
