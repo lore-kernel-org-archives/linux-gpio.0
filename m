@@ -1,43 +1,41 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [RFC 2/3] gpio: move sysfs support to its own file
-Date: Tue, 8 Jul 2014 17:31:01 +0900
-Message-ID: <CAAVeFuKrvvmWGS0OaP+JBmozT70K9=0ntL7Zx+vZPBjr2H8aDg@mail.gmail.com>
-References: <1404193516-4384-1-git-send-email-acourbot@nvidia.com>
- <1404193516-4384-3-git-send-email-acourbot@nvidia.com> <CACRpkdaRReCWObTBP-ujiM-R9Js2y+L6RFtAfw6AP1cwx1hrHA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: rcar: Add support for DT IRQ flags
+Date: Tue, 8 Jul 2014 10:48:27 +0200
+Message-ID: <CACRpkdbVtUFOVkpVeqVWtmAE_Yj6iYXe9Y6O_ooqXSDsMk4mgg@mail.gmail.com>
+References: <1396349886-26663-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	<2822093.Rul4y5g8OD@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve0-f170.google.com ([209.85.128.170]:64710 "EHLO
-	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753975AbaGHIbW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jul 2014 04:31:22 -0400
-In-Reply-To: <CACRpkdaRReCWObTBP-ujiM-R9Js2y+L6RFtAfw6AP1cwx1hrHA@mail.gmail.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:64624 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752883AbaGHIs1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jul 2014 04:48:27 -0400
+Received: by mail-ob0-f178.google.com with SMTP id wn1so6068951obc.9
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Jul 2014 01:48:27 -0700 (PDT)
+In-Reply-To: <2822093.Rul4y5g8OD@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Magnus Damm <damm@opensource.se>
 
-On Tue, Jul 8, 2014 at 5:21 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Jul 1, 2014 at 7:45 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Wed, Jul 2, 2014 at 4:37 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+
+> Hi Linus,
 >
->> sysfs support is currently entangled within the core GPIO support, while
->> it should relly just be a (privileged) user of the integer GPIO API.
->> This patch is a first step towards making the gpiolib code more readable
->> by splitting it into logical parts.
->>
->> Move all sysfs support to their own source file, and share static
->> members of gpiolib that need to be in the private gpiolib.h file. In
->> the future we will want to put some of them back into gpiolib.c, but this
->> first patch let us at least identify them.
->>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Could you please pick this patch up for v3.17 ?
 >
-> Patch applied. We really need to make refactorings like this
-> so thanks a lot.
+> On Tuesday 01 April 2014 12:58:06 Laurent Pinchart wrote:
+>> The gpio-rcar driver has no IRQ domain OF xlate function and thus
+>> ignores IRQ flags specified in DT. Fix this by using the two-cell xlate
+>> function.
+>>
+>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Excellent, glad you approve of this. I actually have some more coming
-after that, since the current lack of organization stands in the way
-of a proper multi-consumer GPIO implementation.
+I don't have this patch in my INBOX, dunno what has gone wrong :-(
 
-Thanks!
-Alex.
+Can you please resend it so I can apply it?
+
+Yours,
+Linus Walleij
