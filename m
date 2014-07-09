@@ -1,33 +1,97 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RESEND] gpio: rcar: Add support for DT IRQ flags
-Date: Wed, 9 Jul 2014 12:34:01 +0200
-Message-ID: <CACRpkdbh+xb-bdUufGLVByNyO8RuD=ii0Mb4OCYuZdaaSDevig@mail.gmail.com>
-References: <12008900.rC4lq8SXRG@avalon>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: gpio-omap: wakeup mask
+Date: Wed, 9 Jul 2014 03:41:42 -0700
+Message-ID: <20140709104142.GO28884@atomide.com>
+References: <53B3F687.5050502@gmail.com>
+ <20140704072752.GC28884@atomide.com>
+ <53BD1683.9030505@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:41618 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755476AbaGIKeC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 06:34:02 -0400
-Received: by mail-oa0-f43.google.com with SMTP id o6so7900465oag.30
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Jul 2014 03:34:01 -0700 (PDT)
-In-Reply-To: <12008900.rC4lq8SXRG@avalon>
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:21914 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751271AbaGIKlo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 06:41:44 -0400
+Content-Disposition: inline
+In-Reply-To: <53BD1683.9030505@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Magnus Damm <damm@opensource.se>
+To: Pascal Huerst <pascal.huerst@gmail.com>
+Cc: santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@zonque.org>
 
-On Tue, Jul 8, 2014 at 12:46 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
+* Pascal Huerst <pascal.huerst@gmail.com> [140709 03:18]:
+> Hey Tony, all
+> 
+> On 04.07.2014 09:27, Tony Lindgren wrote:
+> > * Pascal Huerst <pascal.huerst@gmail.com> [140702 05:12]:
+> >> Hi everyone,
+> >>
+> >> we have a device with an am335x and are using some gpios on bank0 to
+> >> wake up the device from suspend to ram.
+> >>
+> >> We have some user buttons which are configured in the devicetree as
+> >> gpio-keys and one power-key which should wake up the device:
+> >>
+> >> &buttons {
+> >>         power {
+> >>                 label = "Power";
+> >>                 gpios = <&gpio0 6 1>;
+> >>                 linux,code = <116>;
+> >>                 gpio-key,wakeup;
+> >>         };
+> >>
+> >>         one {
+> >>                 label = "One";
+> >>                 gpios = <&gpio0 11 1>;
+> >>                 linux,code = <2>;
+> >>         };
+> >>
+> >>         : : :
+> >> }
+> >>
+> >> The problem is, that the device wakes up on any trigger on bank 0. No
+> >> matter which button was pressed. "gpio-key,wakeup" seems not to have any
+> >> influence.
+> >>
+> >> Now, if I comment the following lines out in drivers/gpio/gpio-omap.c :
+> >> set_gpio_trigger(...).
+> >>
+> >> 321
+> >> 322 if (likely(!(bank->non_wakeup_gpios & gpio_bit))) {
+> >> 323    _gpio_rmw(base, bank->regs->wkup_en, gpio_bit, trigger != 0);
+> >> 324      bank->context.wake_en =
+> >> 325        readl_relaxed(bank->base + bank->regs->wkup_en);
+> >> 326 }
+> >> 327
+> >>
+> >> Everything works as expected. But I don't really understand why? Is this
+> >> a bug, or does this break something else I have not discovered yet?
+> > 
+> > The GPIO wake-up events are working from off-idle for omap3
+> > the last time I checked, so sounds like this is some am335x
+> > related issue.
+> 
+> Ok, that sounds reasonable.
+> 
+> > What does your bank->context.wake_en mask get set to with this code?
+> 
+> by calling 'echo mem > /sys/power/state' followed by a wakeup, I get the
+> following:
+> 
+> [   28.992866] bank->context->wake_en = 00080040
+> [   29.020974] PM: noirq resume of devices complete after 22.439 msecs
 
-> The gpio-rcar driver has no IRQ domain OF xlate function and thus
-> ignores IRQ flags specified in DT. Fix this by using the two-cell xlate
-> function.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+I guess that's for gpio bank 0 with no bit 11 as your dts has it
+configured. If you just comment out the _gpio_rmw part above do
+things work as expected?
 
-Patch applied.
+Then if that works as expected, maybe write only some unused bits
+into wkup_en register and see if it still wakes to all events while
+it should not?
 
-Yours,
-Linus Walleij
+It might be worth comparing the GPIO registers between am37xx and
+am335x for the wkup_en register.
+
+Regards,
+
+Tony
