@@ -1,60 +1,32 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: gpio-omap: wakeup mask
-Date: Wed, 9 Jul 2014 08:24:42 -0700
-Message-ID: <20140709152441.GZ28884@atomide.com>
-References: <53B3F687.5050502@gmail.com>
- <20140704072752.GC28884@atomide.com>
- <53BD1683.9030505@gmail.com>
- <20140709104142.GO28884@atomide.com>
- <53BD3950.60000@gmail.com>
+From: Bjorn Andersson <bjorn@kryo.se>
+Subject: Re: [PATCH v3] pinctrl: msm: move all qualcomm drivers to subdir
+Date: Wed, 9 Jul 2014 15:16:24 -0700
+Message-ID: <CAJAp7Oi-UH4SUHNw_gHtm=P8EYG3+BsA=hPAsZZWjfG5KCMJeA@mail.gmail.com>
+References: <1404910216-2170-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53BD3950.60000@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pascal Huerst <pascal.huerst@gmail.com>
-Cc: santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@zonque.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:53540 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755041AbaGIWQY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 18:16:24 -0400
+Received: by mail-oa0-f53.google.com with SMTP id l6so8918171oag.40
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Jul 2014 15:16:24 -0700 (PDT)
+In-Reply-To: <1404910216-2170-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
 
-* Pascal Huerst <pascal.huerst@gmail.com> [140709 05:47]:
-> On 09.07.2014 12:41, Tony Lindgren wrote:
-> 
-> > If you just comment out the _gpio_rmw part above do
-> > things work as expected?
-> 
-> Yes. It only wakes up on gpio 6 not on gpio 11 anymore.
-> 
-> > Then if that works as expected, maybe write only some unused bits
-> > into wkup_en register and see if it still wakes to all events while
-> > it should not?
-> 
-> If I use the following testcode, everything works as expected:
-> 
-> //WARN(true, "WARN: bank->base = %08X\n", bank->base);
-> 
-> if (likely(!(bank->non_wakeup_gpios & gpio_bit))) {
->   //_gpio_rmw(base, bank->regs->wkup_en, gpio_bit, trigger != 0);
->   writel(0xABC00000, base + bank->regs->wkup_en);
-> 
->   bank->context.wake_en = readl_relaxed(bank->base +
->     bank->regs->wkup_en);
->   printk("bank->base = %08X gpio = %i bank->context->wake_en = %08X\n",
->     bank->base, gpio, bank->context.wake_en);
-> }
+On Wed, Jul 9, 2014 at 5:50 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> We have four Qualcomm-related pin control drivers, and now there
+> are drivers coming in for the PMICs on these systems, so let's
+> create a qcom subdirectory to hold all the Qualcomm stuff.
+>
+> Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> Cc: Ivan T. Ivanov <iivanov@mm-sol.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Hmm weird. It sounds like something like the following is happening:
+Nice initiative.
 
-1. The first GPIO bank is always powered, and does not need to set
-   wake-up events
-
-2. When setting the GPIO wake-up events it seems that enabling any
-   wake-up event for the first (16?) bits wakes up the system
-
-You might want to check this with some spare GPIOs not in the
-first bank and see if you need the wake-up events and if enabling
-some bits enables more than one GPIO for wake-up events.
-
-Regards,
-
-Tony
+Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
