@@ -1,97 +1,55 @@
-From: Feng Kan <fkan@apm.com>
-Subject: Re: [PATCH V5 2/3] Documentation: gpio: Add APM X-Gene SoC GPIO
- controller DTS binding
-Date: Tue, 8 Jul 2014 15:54:55 -0700
-Message-ID: <CAL85gmDug-RHV+6gttLkDg+rM5PPHGew9KuX4SNbk9V3qE01=g@mail.gmail.com>
-References: <1403823587-23404-1-git-send-email-fkan@apm.com>
-	<1403823587-23404-3-git-send-email-fkan@apm.com>
-	<20140630125339.GA21390@leverpostej>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: removes all usage of gpiochip_remove retval
+Date: Wed, 9 Jul 2014 09:45:58 +0200
+Message-ID: <CACRpkda6mzVdaN0cvOxpbsxWyCv2nGyDXOjZg_5aT8u7SSQeUw@mail.gmail.com>
+References: <CACRpkdZz+BZHuMY8pB4Ooq0-L-=fjW=OeUOnnS7D3Adzt=dbhQ@mail.gmail.com>
+	<1404592088-26996-1-git-send-email-berthe.ab@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og126.obsmtp.com ([64.18.0.251]:45610 "HELO
-	exprod5og126.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751151AbaGHWy4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Jul 2014 18:54:56 -0400
-Received: by mail-oa0-f47.google.com with SMTP id g18so142605oah.6
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Jul 2014 15:54:55 -0700 (PDT)
-In-Reply-To: <20140630125339.GA21390@leverpostej>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:53126 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751271AbaGIHp7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 03:45:59 -0400
+Received: by mail-ob0-f180.google.com with SMTP id vb8so7555244obc.25
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Jul 2014 00:45:58 -0700 (PDT)
+In-Reply-To: <1404592088-26996-1-git-send-email-berthe.ab@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: "patches@apm.com" <patches@apm.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: abdoulaye berthe <berthe.ab@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Buesch <m@bues.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jun 30, 2014 at 5:53 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Thu, Jun 26, 2014 at 11:59:46PM +0100, Feng Kan wrote:
->> Documentation for APM X-Gene SoC GPIO controller DTS binding.
->>
->> Signed-off-by: Feng Kan <fkan@apm.com>
->> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->>  .../devicetree/bindings/gpio/gpio-xgene.txt          | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
->> new file mode 100644
->> index 0000000..bd5fd85
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
->> @@ -0,0 +1,20 @@
->> +APM X-Gene SoC GPIO controller bindings
->> +
->> +This is a gpio controller that is part of the flash controller.
->> +This gpio controller controls a total of 48 gpios.
->> +
->> +Required properties:
->> +- compatible: "apm,xgene-gpio" for X-Gene GPIO controller
->> +- reg: Physical base address and size of the controller's registers
->
-> There is just the one bank?
+On Sat, Jul 5, 2014 at 10:28 PM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
 
-Internally there are three banks. Due to the fact the address space is
-meshed, It was agreed that we turn this into one simple node.
+> This patch updates users of gpiochip_remove return value.
+>
+> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
 
->
->> +- #gpio-cells: Should be two.
->> +     - first cell is the pin number
->> +     - second cell is used to specify optional parameters (unused)
->
-> Why is there an unused cell?
->
-> Why not just make this a single cell if the binding defines no valid
-> parameters?
-I will update documentation to indicate second cell is used for active low and
-active high setting since that is the behavior of the default of_xlate
-function. All it is
-seems to be doing is flipping the value of the gpio. I initially did
-this because I
-did not want to use additional attributes and followed the example
-documentation of
-number of other gpio driver.
->
->> +- gpio-controller: Marks the device node as a GPIO controller.
->
-> No interrupts?
+This doesn't apply on my devel branch from the GPIO tree.
 
-Yes, no interrupts in this block.
->
-> Thanks,
-> Mark.
->
->> +
->> +Example:
->> +     gpio0: gpio0@1701c000 {
->> +             compatible = "apm,xgene-gpio";
->> +             reg = <0x0 0x1701c000 0x0 0x40>;
->> +             gpio-controller;
->> +             #gpio-cells = <2>;
->> +     };
->> --
->> 1.9.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+Did you really use that branch?
+
+This looks more like it was based on the linux-next tree or
+something.
+
+BTW maybe it's better to split this patch in three:
+
+- One that removes all users in drivers/gpio so I can
+  apply that to the GPIO tree, patch based on the GPIO
+  "devel" branch.
+- One that removes all users in drivers/pinctrl based on
+  the pinctrl "devel" branch so I can apply that to the
+  pinctrl tree.
+- One that removes the rest of the users, that I can maybe
+  just apply to the GPIO tree. This could use some ACKs
+  from the different maintainers, but if I don't get that I can
+  just apply it after some timeout.
+
+Then we will apply the second patch actually changing
+the gpiolib in the next merge window or late in the merge
+cycle.
+
+What do you say?
+
+Yours,
+Linus Walleij
