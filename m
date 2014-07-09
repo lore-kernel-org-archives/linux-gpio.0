@@ -1,51 +1,66 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 0/5] Introduce a managed function for gpio_request_array
-Date: Wed, 9 Jul 2014 21:10:29 +0900
-Message-ID: <CAAVeFuLKdah5JHoetoSwZTxd4qAioCSFEWGgMCv1tY1_BSZowg@mail.gmail.com>
-References: <cover.1404665589.git.himangi774@gmail.com> <CACRpkdYbK3tizezXNaTBT6ANQ8fxoBUH5OATpb5cLykQqRSuKA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: Add DT bindings for card detect debounce time
+Date: Wed, 9 Jul 2014 21:28:15 +0900
+Message-ID: <CAAVeFu+v=4d8juT8G0J8V8GUkUzOw3wn4QrDgzYj9Hv_Y3Ub4g@mail.gmail.com>
+References: <1399649837-27286-1-git-send-email-balajitk@ti.com>
+ <CAPDyKFoZ=zjKg5bUMnK_X2XOatT=XSAnBDpYqu0Q2VOkM7hOOA@mail.gmail.com>
+ <CAAVeFu+CW0DSbqc6k145APao2r907sAyMw0+W=hQXxO6LoQx-g@mail.gmail.com> <CACRpkda7s_AgPx4a6qu2=FGhfoPyJiZBCJDbd9iWL5qE3DPtXQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:36107 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750739AbaGIMKv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 08:10:51 -0400
-In-Reply-To: <CACRpkdYbK3tizezXNaTBT6ANQ8fxoBUH5OATpb5cLykQqRSuKA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkda7s_AgPx4a6qu2=FGhfoPyJiZBCJDbd9iWL5qE3DPtXQ@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Himangi Saraogi <himangi774@gmail.com>, Rob Jones <rob.jones@codethink.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Balaji T K <balajitk@ti.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 9, 2014 at 7:14 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sun, Jul 6, 2014 at 7:46 PM, Himangi Saraogi <himangi774@gmail.com> wrote:
+On Tue, Jul 8, 2014 at 12:12 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Sat, Jun 21, 2014 at 9:22 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
 >
->> This patchset intoduces a new managed interface devm_gpio_request_array,
->> adds it in the documentation and its declaration in the gpio.h include
->> file. Some cases of gpio_request_array are changed to
->> devm_gpio_request_array.
+>>> I have added Linus Walleij and Alexandre Courbot, the maintainers of
+>>> gpio. Let's see if they can point us in a direction.
 >>
->> Himangi Saraogi (5):
->>   gpiolib: devres: Introduce the function devm_request_gpio_array
->>   ASoC: wm1250-ev1: Use devm_gpio_request_array
->>   ASoC: pxa: Use devm_gpio_request_array
->>   ASoC: pxa: e800_wm9712: Introduce the use of devm_gpio_request_array
->>   ASoC: pxa/hx4700: Introduce the use of devm_gpio_request_array
+>> I agree it would be nice if the debounce value could be handled by the
+>> GPIO framework.
 >
-> Sorry, we're not encouraging extension of the old gpio* plain API anymore.
+> I agree too.
 >
-> The right thing to do is convert users over to using GPIO descriptors
-> internally, then introduce devm_gpiod_get_array() if that makes some
-> sense.
+>> I just wonder what would be the correct way of doing
+>> it? Contrary to ACTIVE_LOW and other flags which can be specified with
+>> the GPIO phandle, debounce is a numeric value. Maybe using a different
+>> property, e.g.:
+>>
+>> cd-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
+>> cd-gpios-debounce = <10>;
+>>
+>> When looking up a GPIO through gpiod_get(), the GPIO framework could
+>> then check for -debounce property and set the debounce time
+>> accordingly. At first sight I'd say that would work and could be used
+>> for MMC and all other subsystems that need something similar.
 >
-> Alexandre, what do you say?
+> Yes, but we also need to write generic debounce handling into
+> the gpiolib, so it doesn't matter if the GPIO driver can or cannot
+> handle this itself. Some hardware has the capability to debounce
+> lines in *hardware*.
+>
+> Right now a call to gpiod_set_debounce() will fail unless the
+> hardware has a debounce option.
+>
+> What we should really do is make gpiod_set_debounce() always
+> work, put the debounce value into the gpio_desc, and move some
+> logic similar to what exists in drivers/input/keyboard/gpio_keys.c
+> into the gpiolib, then get rid of any local implementations like
+> in gpio_keys.
+>
+> Then we can rely on the gpiolib handling this at all times, and also
+> to get the debounce config from DT.
+>
+> Dmitry, opinions on this?
+>
+> Anyone up for implementing the timer in gpiolib and moving the
+> keyboard driver over to using the gpiolib debounce set?
 
-I do agree that we want to discourage people from using the integer
-API, and would also prefer to see the consumers converted to gpiod and
-proper gpiod functions introduced.
-
-On the other hand with Rob's similar patch which seems to be about to
-be merged (https://lkml.org/lkml/2014/7/2/149 ) I guess the pressure
-to accept one or the other is quite high. At least, I hope Rob or
-Himangi will follow-up with a patch adding similar functionality to
-the gpiod API, and will consider converting their consumers to it
-(it's for your own good!).
+If this can wait a bit for the Grand GPIO Refactoring and concurrent
+GPIO consumers to be done, I don't mind giving this a shot next. If
+someone else wants/needs it faster, please feel free to take over of
+course.
