@@ -1,48 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] drivers/gpio/gpio-sch311x: check return value of gpiochip_remove()
-Date: Wed, 9 Jul 2014 09:50:45 +0200
-Message-ID: <CACRpkdaVNeY2KLnKSL=3dOPcXwzDX+fQW4xVPSjvUZhuV6Pi_g@mail.gmail.com>
-References: <1404457379-4193-1-git-send-email-varkab@cdac.in>
-	<CAAVeFuK8oQStjAozf_3e3YTWBx3JYzBxEvLUq6n6uke1qaxXvg@mail.gmail.com>
-	<53B94DC6.7070308@gmail.com>
+Subject: Re: [PATCH 0/5] Introduce a managed function for gpio_request_array
+Date: Wed, 9 Jul 2014 12:14:42 +0200
+Message-ID: <CACRpkdYbK3tizezXNaTBT6ANQ8fxoBUH5OATpb5cLykQqRSuKA@mail.gmail.com>
+References: <cover.1404665589.git.himangi774@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53B94DC6.7070308@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Varka Bhadram <varkabhadram@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Varka Bhadram <varkab@cdac.in>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:45554 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755278AbaGIKOn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 06:14:43 -0400
+Received: by mail-oa0-f41.google.com with SMTP id l6so7849712oag.14
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Jul 2014 03:14:43 -0700 (PDT)
+In-Reply-To: <cover.1404665589.git.himangi774@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Himangi Saraogi <himangi774@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, Jul 6, 2014 at 3:23 PM, Varka Bhadram <varkabhadram@gmail.com> =
-wrote:
-> On Sunday 06 July 2014 02:52 PM, Alexandre Courbot wrote:
->> On Fri, Jul 4, 2014 at 4:02 PM, Varka Bhadram <varkabhadram@gmail.co=
-m>
->> wrote:
->>>
->>> This patch eliminates the following warning
->>>
->>> drivers/gpio/gpio-sch311x.c: In function =E2=80=98sch311x_gpio_prob=
-e=E2=80=99:
->>> drivers/gpio/gpio-sch311x.c:286:18: warning: ignoring return value =
-of
->>> =E2=80=98gpiochip_remove=E2=80=99, declared with attribute warn_unu=
-sed_result
->>
->> gpiochip_remove() is to have its return value set to void in another
->> patch, so I'm not sure we need this one in the meantime?
->
->
-> I also saw that patch from abdoulaye berthe<berthe.ab@gmail.com>  .
->
-> If that is accepted its good. If not this may require.
+On Sun, Jul 6, 2014 at 7:46 PM, Himangi Saraogi <himangi774@gmail.com> wrote:
 
-Yeah I'll go remove that. Just working out the patch mechanics right no=
-w,
-we'll probably remove all return value checks in v3.17 and then delete
-the code in gpiolib in late v3.17 cycle or the next merge window.
+> This patchset intoduces a new managed interface devm_gpio_request_array,
+> adds it in the documentation and its declaration in the gpio.h include
+> file. Some cases of gpio_request_array are changed to
+> devm_gpio_request_array.
+>
+> Himangi Saraogi (5):
+>   gpiolib: devres: Introduce the function devm_request_gpio_array
+>   ASoC: wm1250-ev1: Use devm_gpio_request_array
+>   ASoC: pxa: Use devm_gpio_request_array
+>   ASoC: pxa: e800_wm9712: Introduce the use of devm_gpio_request_array
+>   ASoC: pxa/hx4700: Introduce the use of devm_gpio_request_array
+
+Sorry, we're not encouraging extension of the old gpio* plain API anymore.
+
+The right thing to do is convert users over to using GPIO descriptors
+internally, then introduce devm_gpiod_get_array() if that makes some
+sense.
+
+Alexandre, what do you say?
 
 Yours,
 Linus Walleij
