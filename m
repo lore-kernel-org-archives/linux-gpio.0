@@ -1,122 +1,135 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH 1/5] gpiolib: devres: Introduce the function
- devm_request_gpio_array
-Date: Wed, 9 Jul 2014 13:52:54 +0200 (CEST)
-Message-ID: <alpine.DEB.2.10.1407091351530.2375@hadrien>
-References: <cover.1404665589.git.himangi774@gmail.com> <1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com> <53BD2509.6070803@codethink.co.uk>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <53BD2509.6070803@codethink.co.uk>
-Sender: linux-doc-owner@vger.kernel.org
-To: Rob Jones <rob.jones@codethink.co.uk>
-Cc: Himangi Saraogi <himangi774@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-arm-kernel@lists.infradead.org, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, julia.lawall@lip6.fr
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: msm: move all qualcomm drivers to subdir
+Date: Wed,  9 Jul 2014 13:57:32 +0200
+Message-ID: <1404907052-14454-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-we0-f173.google.com ([74.125.82.173]:41704 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751325AbaGIL6T (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 07:58:19 -0400
+Received: by mail-we0-f173.google.com with SMTP id t60so7379861wes.32
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Jul 2014 04:58:18 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
 
+We have four Qualcomm-related pin control drivers, and now there
+are drivers coming in for the PMICs on these systems, so let's
+create a qcom subdirectory to hold all the Qualcomm stuff.
 
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: Ivan T. Ivanov <iivanov@mm-sol.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/Kconfig                      | 40 +---------------------------
+ drivers/pinctrl/Makefile                     |  5 ----
+ drivers/pinctrl/{ => qcom}/pinctrl-apq8064.c |  0
+ drivers/pinctrl/{ => qcom}/pinctrl-ipq8064.c |  0
+ drivers/pinctrl/{ => qcom}/pinctrl-msm.c     |  0
+ drivers/pinctrl/{ => qcom}/pinctrl-msm8960.c |  0
+ drivers/pinctrl/{ => qcom}/pinctrl-msm8x74.c |  0
+ 7 files changed, 1 insertion(+), 44 deletions(-)
+ rename drivers/pinctrl/{ => qcom}/pinctrl-apq8064.c (100%)
+ rename drivers/pinctrl/{ => qcom}/pinctrl-ipq8064.c (100%)
+ rename drivers/pinctrl/{ => qcom}/pinctrl-msm.c (100%)
+ rename drivers/pinctrl/{ => qcom}/pinctrl-msm8960.c (100%)
+ rename drivers/pinctrl/{ => qcom}/pinctrl-msm8x74.c (100%)
 
-On Wed, 9 Jul 2014, Rob Jones wrote:
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index c0f49fb3276c..e2c7e09783fa 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -233,45 +233,6 @@ config PINCTRL_IMX28
+ 	bool
+ 	select PINCTRL_MXS
+ 
+-config PINCTRL_MSM
+-	bool
+-	select PINMUX
+-	select PINCONF
+-	select GENERIC_PINCONF
+-	select GPIOLIB_IRQCHIP
+-
+-config PINCTRL_APQ8064
+-	tristate "Qualcomm APQ8064 pin controller driver"
+-	depends on GPIOLIB && OF
+-	select PINCTRL_MSM
+-	help
+-	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+-	  Qualcomm TLMM block found in the Qualcomm APQ8064 platform.
+-
+-config PINCTRL_IPQ8064
+-	tristate "Qualcomm IPQ8064 pin controller driver"
+-	depends on GPIOLIB && OF
+-	select PINCTRL_MSM
+-	help
+-	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+-	  Qualcomm TLMM block found in the Qualcomm IPQ8064 platform.
+-
+-config PINCTRL_MSM8960
+-	tristate "Qualcomm 8960 pin controller driver"
+-	depends on GPIOLIB && OF
+-	select PINCTRL_MSM
+-	help
+-	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+-	  Qualcomm TLMM block found in the Qualcomm 8960 platform.
+-
+-config PINCTRL_MSM8X74
+-	tristate "Qualcomm 8x74 pin controller driver"
+-	depends on GPIOLIB && OF && (ARCH_QCOM || COMPILE_TEST)
+-	select PINCTRL_MSM
+-	help
+-	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+-	  Qualcomm TLMM block found in the Qualcomm 8974 platform.
+-
+ config PINCTRL_NOMADIK
+ 	bool "Nomadik pin controller driver"
+ 	depends on ARCH_U8500 || ARCH_NOMADIK
+@@ -410,6 +371,7 @@ config PINCTRL_S3C64XX
+ 
+ source "drivers/pinctrl/berlin/Kconfig"
+ source "drivers/pinctrl/mvebu/Kconfig"
++source "drivers/pinctrl/qcom/Kconfig"
+ source "drivers/pinctrl/sh-pfc/Kconfig"
+ source "drivers/pinctrl/spear/Kconfig"
+ source "drivers/pinctrl/sunxi/Kconfig"
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 80bced77446a..a7b8a9e62a14 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -39,11 +39,6 @@ obj-$(CONFIG_PINCTRL_MXS)	+= pinctrl-mxs.o
+ obj-$(CONFIG_PINCTRL_IMX23)	+= pinctrl-imx23.o
+ obj-$(CONFIG_PINCTRL_IMX25)	+= pinctrl-imx25.o
+ obj-$(CONFIG_PINCTRL_IMX28)	+= pinctrl-imx28.o
+-obj-$(CONFIG_PINCTRL_MSM)	+= pinctrl-msm.o
+-obj-$(CONFIG_PINCTRL_APQ8064)	+= pinctrl-apq8064.o
+-obj-$(CONFIG_PINCTRL_IPQ8064)	+= pinctrl-ipq8064.o
+-obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
+-obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
+ obj-$(CONFIG_PINCTRL_NOMADIK)	+= pinctrl-nomadik.o
+ obj-$(CONFIG_PINCTRL_STN8815)	+= pinctrl-nomadik-stn8815.o
+ obj-$(CONFIG_PINCTRL_DB8500)	+= pinctrl-nomadik-db8500.o
+diff --git a/drivers/pinctrl/pinctrl-apq8064.c b/drivers/pinctrl/qcom/pinctrl-apq8064.c
+similarity index 100%
+rename from drivers/pinctrl/pinctrl-apq8064.c
+rename to drivers/pinctrl/qcom/pinctrl-apq8064.c
+diff --git a/drivers/pinctrl/pinctrl-ipq8064.c b/drivers/pinctrl/qcom/pinctrl-ipq8064.c
+similarity index 100%
+rename from drivers/pinctrl/pinctrl-ipq8064.c
+rename to drivers/pinctrl/qcom/pinctrl-ipq8064.c
+diff --git a/drivers/pinctrl/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+similarity index 100%
+rename from drivers/pinctrl/pinctrl-msm.c
+rename to drivers/pinctrl/qcom/pinctrl-msm.c
+diff --git a/drivers/pinctrl/pinctrl-msm8960.c b/drivers/pinctrl/qcom/pinctrl-msm8960.c
+similarity index 100%
+rename from drivers/pinctrl/pinctrl-msm8960.c
+rename to drivers/pinctrl/qcom/pinctrl-msm8960.c
+diff --git a/drivers/pinctrl/pinctrl-msm8x74.c b/drivers/pinctrl/qcom/pinctrl-msm8x74.c
+similarity index 100%
+rename from drivers/pinctrl/pinctrl-msm8x74.c
+rename to drivers/pinctrl/qcom/pinctrl-msm8x74.c
+-- 
+1.9.3
 
-> Please note that I submitted a patch on 02/07/14 to create this
-> function which was acked by Linus Walleij on 05/07/14.
->
-> Great minds think alike, and all that.
->
-> However, I think that the version I submitted better replicates the
-> original (non devm) functionality, see below.
->
-> I didn't, however, add it to the documentation. +1 on that.
->
-> On 06/07/14 18:47, Himangi Saraogi wrote:
-> > This patch introduces the function devm_request_gpio_array that
-> > allocates multiple GPIOs in a single call in a managed manner. The
-> > function is also included in the documentation and a declaration is
-> > added in include/linux/gpio.h.
-> >
-> > Signed-off-by: Himangi Saraogi <himangi774@gmail.com>
-> > ---
-> >   Documentation/driver-model/devres.txt |  1 +
-> >   drivers/gpio/devres.c                 | 21 +++++++++++++++++++++
-> >   include/linux/gpio.h                  |  2 ++
-> >   3 files changed, 24 insertions(+)
-> >
-> > diff --git a/Documentation/driver-model/devres.txt
-> > b/Documentation/driver-model/devres.txt
-> > index 9e2098e..756f6cf 100644
-> > --- a/Documentation/driver-model/devres.txt
-> > +++ b/Documentation/driver-model/devres.txt
-> > @@ -337,6 +337,7 @@ GPIO
-> >     devm_gpiod_put()
-> >     devm_gpio_request()
-> >     devm_gpio_request_one()
-> > +  devm_gpio_request_array()
-> >     devm_gpio_free()
-> >
-> >   SND
-> > diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-> > index 65978cf..adae7fa 100644
-> > --- a/drivers/gpio/devres.c
-> > +++ b/drivers/gpio/devres.c
-> > @@ -229,6 +229,27 @@ int devm_gpio_request_one(struct device *dev, unsigned
-> > gpio,
-> >   EXPORT_SYMBOL(devm_gpio_request_one);
-> >
-> >   /**
-> > + *	devm_gpio_request_array - request multiple GPIOs in a single call
-> > + *	@dev:   device to request for
-> > + *	@array:	array of the 'struct gpio'
-> > + *	@num:	how many GPIOs in the array
-> > + */
-> > +int devm_gpio_request_array(struct device *dev, const struct gpio *array,
-> > +			    size_t num)
-> > +{
-> > +	int i, err;
-> > +
-> > +	for (i = 0; i < num; i++, array++) {
-> > +		err = devm_gpio_request_one(dev, array->gpio, array->flags,
-> > +					    array->label);
-> > +		if (err)
-> > +			return err;
->
-> The failure path in the version I submitted frees up any already
-> allocated gpios on the first failure.
-
-Himangi first proposed doing that, but I thought it was not really in the
-spirit of devm functions, which is to leave that implicit.  No strong
-opinion on the matter, though.
-
-julia
-
-
->
-> > +	}
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(devm_gpio_request_array);
-> > +
-> > +/**
-> >    *      devm_gpio_free - free a GPIO
-> >    *      @dev: device to free GPIO for
-> >    *      @gpio: GPIO to free
-> > diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-> > index 85aa5d0..c85f243 100644
-> > --- a/include/linux/gpio.h
-> > +++ b/include/linux/gpio.h
-> > @@ -84,6 +84,8 @@ struct device;
-> >   int devm_gpio_request(struct device *dev, unsigned gpio, const char
-> > *label);
-> >   int devm_gpio_request_one(struct device *dev, unsigned gpio,
-> >   			  unsigned long flags, const char *label);
-> > +int devm_gpio_request_array(struct device *dev, const struct gpio *array,
-> > +			    size_t num);
-> >   void devm_gpio_free(struct device *dev, unsigned int gpio);
-> >
-> >   #else /* ! CONFIG_GPIOLIB */
-> >
->
-> --
-> Rob Jones
-> Codethink Ltd
-> mailto:rob.jones@codethink.co.uk
-> tel:+44 161 236 5575
->
