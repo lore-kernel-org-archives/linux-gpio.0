@@ -1,97 +1,106 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: gpio-omap: wakeup mask
-Date: Wed, 9 Jul 2014 03:41:42 -0700
-Message-ID: <20140709104142.GO28884@atomide.com>
-References: <53B3F687.5050502@gmail.com>
- <20140704072752.GC28884@atomide.com>
- <53BD1683.9030505@gmail.com>
+From: Rob Jones <rob.jones@codethink.co.uk>
+Subject: Re: [PATCH 1/5] gpiolib: devres: Introduce the function devm_request_gpio_array
+Date: Wed, 09 Jul 2014 12:18:33 +0100
+Message-ID: <53BD2509.6070803@codethink.co.uk>
+References: <cover.1404665589.git.himangi774@gmail.com> <1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:21914 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751271AbaGIKlo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 06:41:44 -0400
-Content-Disposition: inline
-In-Reply-To: <53BD1683.9030505@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Himangi Saraogi <himangi774@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-arm-kernel@lists.infradead.org, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>
+Cc: julia.lawall@lip6.fr
 List-Id: linux-gpio@vger.kernel.org
-To: Pascal Huerst <pascal.huerst@gmail.com>
-Cc: santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@zonque.org>
 
-* Pascal Huerst <pascal.huerst@gmail.com> [140709 03:18]:
-> Hey Tony, all
-> 
-> On 04.07.2014 09:27, Tony Lindgren wrote:
-> > * Pascal Huerst <pascal.huerst@gmail.com> [140702 05:12]:
-> >> Hi everyone,
-> >>
-> >> we have a device with an am335x and are using some gpios on bank0 to
-> >> wake up the device from suspend to ram.
-> >>
-> >> We have some user buttons which are configured in the devicetree as
-> >> gpio-keys and one power-key which should wake up the device:
-> >>
-> >> &buttons {
-> >>         power {
-> >>                 label = "Power";
-> >>                 gpios = <&gpio0 6 1>;
-> >>                 linux,code = <116>;
-> >>                 gpio-key,wakeup;
-> >>         };
-> >>
-> >>         one {
-> >>                 label = "One";
-> >>                 gpios = <&gpio0 11 1>;
-> >>                 linux,code = <2>;
-> >>         };
-> >>
-> >>         : : :
-> >> }
-> >>
-> >> The problem is, that the device wakes up on any trigger on bank 0. No
-> >> matter which button was pressed. "gpio-key,wakeup" seems not to have any
-> >> influence.
-> >>
-> >> Now, if I comment the following lines out in drivers/gpio/gpio-omap.c :
-> >> set_gpio_trigger(...).
-> >>
-> >> 321
-> >> 322 if (likely(!(bank->non_wakeup_gpios & gpio_bit))) {
-> >> 323    _gpio_rmw(base, bank->regs->wkup_en, gpio_bit, trigger != 0);
-> >> 324      bank->context.wake_en =
-> >> 325        readl_relaxed(bank->base + bank->regs->wkup_en);
-> >> 326 }
-> >> 327
-> >>
-> >> Everything works as expected. But I don't really understand why? Is this
-> >> a bug, or does this break something else I have not discovered yet?
-> > 
-> > The GPIO wake-up events are working from off-idle for omap3
-> > the last time I checked, so sounds like this is some am335x
-> > related issue.
-> 
-> Ok, that sounds reasonable.
-> 
-> > What does your bank->context.wake_en mask get set to with this code?
-> 
-> by calling 'echo mem > /sys/power/state' followed by a wakeup, I get the
-> following:
-> 
-> [   28.992866] bank->context->wake_en = 00080040
-> [   29.020974] PM: noirq resume of devices complete after 22.439 msecs
+Please note that I submitted a patch on 02/07/14 to create this
+function which was acked by Linus Walleij on 05/07/14.
 
-I guess that's for gpio bank 0 with no bit 11 as your dts has it
-configured. If you just comment out the _gpio_rmw part above do
-things work as expected?
+Great minds think alike, and all that.
 
-Then if that works as expected, maybe write only some unused bits
-into wkup_en register and see if it still wakes to all events while
-it should not?
+However, I think that the version I submitted better replicates the
+original (non devm) functionality, see below.
 
-It might be worth comparing the GPIO registers between am37xx and
-am335x for the wkup_en register.
+I didn't, however, add it to the documentation. +1 on that.
 
-Regards,
+On 06/07/14 18:47, Himangi Saraogi wrote:
+> This patch introduces the function devm_request_gpio_array that
+> allocates multiple GPIOs in a single call in a managed manner. The
+> function is also included in the documentation and a declaration is
+> added in include/linux/gpio.h.
+>
+> Signed-off-by: Himangi Saraogi <himangi774@gmail.com>
+> ---
+>   Documentation/driver-model/devres.txt |  1 +
+>   drivers/gpio/devres.c                 | 21 +++++++++++++++++++++
+>   include/linux/gpio.h                  |  2 ++
+>   3 files changed, 24 insertions(+)
+>
+> diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+> index 9e2098e..756f6cf 100644
+> --- a/Documentation/driver-model/devres.txt
+> +++ b/Documentation/driver-model/devres.txt
+> @@ -337,6 +337,7 @@ GPIO
+>     devm_gpiod_put()
+>     devm_gpio_request()
+>     devm_gpio_request_one()
+> +  devm_gpio_request_array()
+>     devm_gpio_free()
+>
+>   SND
+> diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+> index 65978cf..adae7fa 100644
+> --- a/drivers/gpio/devres.c
+> +++ b/drivers/gpio/devres.c
+> @@ -229,6 +229,27 @@ int devm_gpio_request_one(struct device *dev, unsigned gpio,
+>   EXPORT_SYMBOL(devm_gpio_request_one);
+>
+>   /**
+> + *	devm_gpio_request_array - request multiple GPIOs in a single call
+> + *	@dev:   device to request for
+> + *	@array:	array of the 'struct gpio'
+> + *	@num:	how many GPIOs in the array
+> + */
+> +int devm_gpio_request_array(struct device *dev, const struct gpio *array,
+> +			    size_t num)
+> +{
+> +	int i, err;
+> +
+> +	for (i = 0; i < num; i++, array++) {
+> +		err = devm_gpio_request_one(dev, array->gpio, array->flags,
+> +					    array->label);
+> +		if (err)
+> +			return err;
 
-Tony
+The failure path in the version I submitted frees up any already
+allocated gpios on the first failure.
+
+> +	}
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_gpio_request_array);
+> +
+> +/**
+>    *      devm_gpio_free - free a GPIO
+>    *      @dev: device to free GPIO for
+>    *      @gpio: GPIO to free
+> diff --git a/include/linux/gpio.h b/include/linux/gpio.h
+> index 85aa5d0..c85f243 100644
+> --- a/include/linux/gpio.h
+> +++ b/include/linux/gpio.h
+> @@ -84,6 +84,8 @@ struct device;
+>   int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
+>   int devm_gpio_request_one(struct device *dev, unsigned gpio,
+>   			  unsigned long flags, const char *label);
+> +int devm_gpio_request_array(struct device *dev, const struct gpio *array,
+> +			    size_t num);
+>   void devm_gpio_free(struct device *dev, unsigned int gpio);
+>
+>   #else /* ! CONFIG_GPIOLIB */
+>
+
+-- 
+Rob Jones
+Codethink Ltd
+mailto:rob.jones@codethink.co.uk
+tel:+44 161 236 5575
