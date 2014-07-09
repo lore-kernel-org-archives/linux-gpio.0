@@ -1,203 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] pinctrl: msm: move all qualcomm drivers to subdir
-Date: Wed,  9 Jul 2014 14:01:43 +0200
-Message-ID: <1404907303-21243-1-git-send-email-linus.walleij@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 0/5] Introduce a managed function for gpio_request_array
+Date: Wed, 9 Jul 2014 21:10:29 +0900
+Message-ID: <CAAVeFuLKdah5JHoetoSwZTxd4qAioCSFEWGgMCv1tY1_BSZowg@mail.gmail.com>
+References: <cover.1404665589.git.himangi774@gmail.com> <CACRpkdYbK3tizezXNaTBT6ANQ8fxoBUH5OATpb5cLykQqRSuKA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:36166 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751351AbaGIMCZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 08:02:25 -0400
-Received: by mail-wi0-f173.google.com with SMTP id cc10so2617881wib.12
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Jul 2014 05:02:24 -0700 (PDT)
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:36107 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750739AbaGIMKv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Jul 2014 08:10:51 -0400
+In-Reply-To: <CACRpkdYbK3tizezXNaTBT6ANQ8fxoBUH5OATpb5cLykQqRSuKA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Himangi Saraogi <himangi774@gmail.com>, Rob Jones <rob.jones@codethink.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Julia Lawall <julia.lawall@lip6.fr>
 
-We have four Qualcomm-related pin control drivers, and now there
-are drivers coming in for the PMICs on these systems, so let's
-create a qcom subdirectory to hold all the Qualcomm stuff.
+On Wed, Jul 9, 2014 at 7:14 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Sun, Jul 6, 2014 at 7:46 PM, Himangi Saraogi <himangi774@gmail.com> wrote:
+>
+>> This patchset intoduces a new managed interface devm_gpio_request_array,
+>> adds it in the documentation and its declaration in the gpio.h include
+>> file. Some cases of gpio_request_array are changed to
+>> devm_gpio_request_array.
+>>
+>> Himangi Saraogi (5):
+>>   gpiolib: devres: Introduce the function devm_request_gpio_array
+>>   ASoC: wm1250-ev1: Use devm_gpio_request_array
+>>   ASoC: pxa: Use devm_gpio_request_array
+>>   ASoC: pxa: e800_wm9712: Introduce the use of devm_gpio_request_array
+>>   ASoC: pxa/hx4700: Introduce the use of devm_gpio_request_array
+>
+> Sorry, we're not encouraging extension of the old gpio* plain API anymore.
+>
+> The right thing to do is convert users over to using GPIO descriptors
+> internally, then introduce devm_gpiod_get_array() if that makes some
+> sense.
+>
+> Alexandre, what do you say?
 
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Ivan T. Ivanov <iivanov@mm-sol.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Actually add the new Kconfig and Makefile to the commit,
-  duh.
----
- drivers/pinctrl/Kconfig                      | 40 +-------------------------
- drivers/pinctrl/Makefile                     |  5 ----
- drivers/pinctrl/qcom/Kconfig                 | 42 ++++++++++++++++++++++++++++
- drivers/pinctrl/qcom/Makefile                |  6 ++++
- drivers/pinctrl/{ => qcom}/pinctrl-apq8064.c |  0
- drivers/pinctrl/{ => qcom}/pinctrl-ipq8064.c |  0
- drivers/pinctrl/{ => qcom}/pinctrl-msm.c     |  0
- drivers/pinctrl/{ => qcom}/pinctrl-msm8960.c |  0
- drivers/pinctrl/{ => qcom}/pinctrl-msm8x74.c |  0
- 9 files changed, 49 insertions(+), 44 deletions(-)
- create mode 100644 drivers/pinctrl/qcom/Kconfig
- create mode 100644 drivers/pinctrl/qcom/Makefile
- rename drivers/pinctrl/{ => qcom}/pinctrl-apq8064.c (100%)
- rename drivers/pinctrl/{ => qcom}/pinctrl-ipq8064.c (100%)
- rename drivers/pinctrl/{ => qcom}/pinctrl-msm.c (100%)
- rename drivers/pinctrl/{ => qcom}/pinctrl-msm8960.c (100%)
- rename drivers/pinctrl/{ => qcom}/pinctrl-msm8x74.c (100%)
+I do agree that we want to discourage people from using the integer
+API, and would also prefer to see the consumers converted to gpiod and
+proper gpiod functions introduced.
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index c0f49fb3276c..e2c7e09783fa 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -233,45 +233,6 @@ config PINCTRL_IMX28
- 	bool
- 	select PINCTRL_MXS
- 
--config PINCTRL_MSM
--	bool
--	select PINMUX
--	select PINCONF
--	select GENERIC_PINCONF
--	select GPIOLIB_IRQCHIP
--
--config PINCTRL_APQ8064
--	tristate "Qualcomm APQ8064 pin controller driver"
--	depends on GPIOLIB && OF
--	select PINCTRL_MSM
--	help
--	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
--	  Qualcomm TLMM block found in the Qualcomm APQ8064 platform.
--
--config PINCTRL_IPQ8064
--	tristate "Qualcomm IPQ8064 pin controller driver"
--	depends on GPIOLIB && OF
--	select PINCTRL_MSM
--	help
--	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
--	  Qualcomm TLMM block found in the Qualcomm IPQ8064 platform.
--
--config PINCTRL_MSM8960
--	tristate "Qualcomm 8960 pin controller driver"
--	depends on GPIOLIB && OF
--	select PINCTRL_MSM
--	help
--	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
--	  Qualcomm TLMM block found in the Qualcomm 8960 platform.
--
--config PINCTRL_MSM8X74
--	tristate "Qualcomm 8x74 pin controller driver"
--	depends on GPIOLIB && OF && (ARCH_QCOM || COMPILE_TEST)
--	select PINCTRL_MSM
--	help
--	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
--	  Qualcomm TLMM block found in the Qualcomm 8974 platform.
--
- config PINCTRL_NOMADIK
- 	bool "Nomadik pin controller driver"
- 	depends on ARCH_U8500 || ARCH_NOMADIK
-@@ -410,6 +371,7 @@ config PINCTRL_S3C64XX
- 
- source "drivers/pinctrl/berlin/Kconfig"
- source "drivers/pinctrl/mvebu/Kconfig"
-+source "drivers/pinctrl/qcom/Kconfig"
- source "drivers/pinctrl/sh-pfc/Kconfig"
- source "drivers/pinctrl/spear/Kconfig"
- source "drivers/pinctrl/sunxi/Kconfig"
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 80bced77446a..a7b8a9e62a14 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -39,11 +39,6 @@ obj-$(CONFIG_PINCTRL_MXS)	+= pinctrl-mxs.o
- obj-$(CONFIG_PINCTRL_IMX23)	+= pinctrl-imx23.o
- obj-$(CONFIG_PINCTRL_IMX25)	+= pinctrl-imx25.o
- obj-$(CONFIG_PINCTRL_IMX28)	+= pinctrl-imx28.o
--obj-$(CONFIG_PINCTRL_MSM)	+= pinctrl-msm.o
--obj-$(CONFIG_PINCTRL_APQ8064)	+= pinctrl-apq8064.o
--obj-$(CONFIG_PINCTRL_IPQ8064)	+= pinctrl-ipq8064.o
--obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
--obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
- obj-$(CONFIG_PINCTRL_NOMADIK)	+= pinctrl-nomadik.o
- obj-$(CONFIG_PINCTRL_STN8815)	+= pinctrl-nomadik-stn8815.o
- obj-$(CONFIG_PINCTRL_DB8500)	+= pinctrl-nomadik-db8500.o
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-new file mode 100644
-index 000000000000..d160a710d704
---- /dev/null
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -0,0 +1,42 @@
-+if (ARCH_QCOM || COMPILE_TEST)
-+
-+config PINCTRL_MSM
-+	bool
-+	select PINMUX
-+	select PINCONF
-+	select GENERIC_PINCONF
-+	select GPIOLIB_IRQCHIP
-+
-+config PINCTRL_APQ8064
-+	tristate "Qualcomm APQ8064 pin controller driver"
-+	depends on GPIOLIB && OF
-+	select PINCTRL_MSM
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm TLMM block found in the Qualcomm APQ8064 platform.
-+
-+config PINCTRL_IPQ8064
-+	tristate "Qualcomm IPQ8064 pin controller driver"
-+	depends on GPIOLIB && OF
-+	select PINCTRL_MSM
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm TLMM block found in the Qualcomm IPQ8064 platform.
-+
-+config PINCTRL_MSM8960
-+	tristate "Qualcomm 8960 pin controller driver"
-+	depends on GPIOLIB && OF
-+	select PINCTRL_MSM
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm TLMM block found in the Qualcomm 8960 platform.
-+
-+config PINCTRL_MSM8X74
-+	tristate "Qualcomm 8x74 pin controller driver"
-+	depends on GPIOLIB && OF
-+	select PINCTRL_MSM
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm TLMM block found in the Qualcomm 8974 platform.
-+
-+endif
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-new file mode 100644
-index 000000000000..2a02602d715c
---- /dev/null
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -0,0 +1,6 @@
-+# Qualcomm pin control drivers
-+obj-$(CONFIG_PINCTRL_MSM)	+= pinctrl-msm.o
-+obj-$(CONFIG_PINCTRL_APQ8064)	+= pinctrl-apq8064.o
-+obj-$(CONFIG_PINCTRL_IPQ8064)	+= pinctrl-ipq8064.o
-+obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
-+obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
-diff --git a/drivers/pinctrl/pinctrl-apq8064.c b/drivers/pinctrl/qcom/pinctrl-apq8064.c
-similarity index 100%
-rename from drivers/pinctrl/pinctrl-apq8064.c
-rename to drivers/pinctrl/qcom/pinctrl-apq8064.c
-diff --git a/drivers/pinctrl/pinctrl-ipq8064.c b/drivers/pinctrl/qcom/pinctrl-ipq8064.c
-similarity index 100%
-rename from drivers/pinctrl/pinctrl-ipq8064.c
-rename to drivers/pinctrl/qcom/pinctrl-ipq8064.c
-diff --git a/drivers/pinctrl/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-similarity index 100%
-rename from drivers/pinctrl/pinctrl-msm.c
-rename to drivers/pinctrl/qcom/pinctrl-msm.c
-diff --git a/drivers/pinctrl/pinctrl-msm8960.c b/drivers/pinctrl/qcom/pinctrl-msm8960.c
-similarity index 100%
-rename from drivers/pinctrl/pinctrl-msm8960.c
-rename to drivers/pinctrl/qcom/pinctrl-msm8960.c
-diff --git a/drivers/pinctrl/pinctrl-msm8x74.c b/drivers/pinctrl/qcom/pinctrl-msm8x74.c
-similarity index 100%
-rename from drivers/pinctrl/pinctrl-msm8x74.c
-rename to drivers/pinctrl/qcom/pinctrl-msm8x74.c
--- 
-1.9.3
-
+On the other hand with Rob's similar patch which seems to be about to
+be merged (https://lkml.org/lkml/2014/7/2/149 ) I guess the pressure
+to accept one or the other is quite high. At least, I hope Rob or
+Himangi will follow-up with a patch adding similar functionality to
+the gpiod API, and will consider converting their consumers to it
+(it's for your own good!).
