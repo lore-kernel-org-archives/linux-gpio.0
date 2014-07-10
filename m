@@ -1,50 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Rob Jones <rob.jones@codethink.co.uk>
 Subject: Re: [PATCH 1/5] gpiolib: devres: Introduce the function devm_request_gpio_array
-Date: Thu, 10 Jul 2014 11:21:32 +0200
-Message-ID: <CACRpkdZWfYN14aki-UqvWp1K0exVj-mMK92q431QueSVvjZFuA@mail.gmail.com>
-References: <cover.1404665589.git.himangi774@gmail.com>
-	<1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com>
-	<53BD2509.6070803@codethink.co.uk>
+Date: Thu, 10 Jul 2014 12:01:28 +0100
+Message-ID: <53BE7288.6060503@codethink.co.uk>
+References: <cover.1404665589.git.himangi774@gmail.com>	<1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com>	<53BD2509.6070803@codethink.co.uk> <CACRpkdZWfYN14aki-UqvWp1K0exVj-mMK92q431QueSVvjZFuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:53054 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751945AbaGJJVc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Jul 2014 05:21:32 -0400
-Received: by mail-oa0-f53.google.com with SMTP id l6so9550580oag.40
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Jul 2014 02:21:32 -0700 (PDT)
-In-Reply-To: <53BD2509.6070803@codethink.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Rob Jones <rob.jones@codethink.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZWfYN14aki-UqvWp1K0exVj-mMK92q431QueSVvjZFuA@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Himangi Saraogi <himangi774@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Julia Lawall <julia.lawall@lip6.fr>
+List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 9, 2014 at 1:18 PM, Rob Jones <rob.jones@codethink.co.uk> wrote:
 
-> Please note that I submitted a patch on 02/07/14 to create this
-> function which was acked by Linus Walleij on 05/07/14.
+
+On 10/07/14 10:21, Linus Walleij wrote:
+> On Wed, Jul 9, 2014 at 1:18 PM, Rob Jones <rob.jones@codethink.co.uk> wrote:
 >
-> Great minds think alike, and all that.
-
-My mind certainly isn't any great :-(
-
-My left hand seems to be unaware of what the right hand is doing.
-
-Did I ACK that for merging through some other tree then?
-
-And I guess if Himangi want to submit these ASoC patches, they
-will have to go through the same tree as those patches in that case?
-
-And would you consider implementing a gpiod version...?
-
-> However, I think that the version I submitted better replicates the
-> original (non devm) functionality, see below.
+>> Please note that I submitted a patch on 02/07/14 to create this
+>> function which was acked by Linus Walleij on 05/07/14.
+>>
+>> Great minds think alike, and all that.
 >
-> I didn't, however, add it to the documentation. +1 on that.
+> My mind certainly isn't any great :-(
+>
 
-Can you include that oneliner in your patch then to reduce
-problems?
+I doubt that :-)
 
-Yours,
-Linus Walleij
+> My left hand seems to be unaware of what the right hand is doing.
+>
+> Did I ACK that for merging through some other tree then?
+>
+
+You did: https://lkml.org/lkml/2014/7/4/715
+
+> And I guess if Himangi want to submit these ASoC patches, they
+> will have to go through the same tree as those patches in that case?
+>
+
+I don't know enough to comment.
+
+> And would you consider implementing a gpiod version...?
+>
+
+I will certainly consider it. I'm in the middle of something else right
+now but I should be available in a day or two and I'll have a look.
+
+>> However, I think that the version I submitted better replicates the
+>> original (non devm) functionality, see below.
+>>
+>> I didn't, however, add it to the documentation. +1 on that.
+>
+> Can you include that oneliner in your patch then to reduce
+> problems?
+>
+
+Certainly, with acknowledgement to Himangi Saraogi. Should I resubmit
+the patch series with amendment or should I put it in as a separate
+patch? Sorry for the noobie question but I *am* new to the kernel
+lists.
+
+> Yours,
+> Linus Walleij
+>
+>
+
+-- 
+Rob Jones
+Codethink Ltd
+mailto:rob.jones@codethink.co.uk
+tel:+44 161 236 5575
