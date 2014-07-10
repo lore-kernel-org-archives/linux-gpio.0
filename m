@@ -1,34 +1,50 @@
-From: Harini Katakam <harinikatakamlinux@gmail.com>
-Subject: Re: [PATCH v3 1/2] gpio: Add driver for Zynq GPIO controller
-Date: Thu, 10 Jul 2014 14:47:29 +0530
-Message-ID: <CAFcVEC+vydShChhKvD6ugbUBfLwd7=XbujjrcVLx6r1xjjkK3g@mail.gmail.com>
-References: <1404817356-21568-1-git-send-email-harinik@xilinx.com>
-	<CACRpkdbaah=y22UAuWXQN2kDddD-pa7JS52hXT6Bx9dUmbSyMw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/5] gpiolib: devres: Introduce the function devm_request_gpio_array
+Date: Thu, 10 Jul 2014 11:21:32 +0200
+Message-ID: <CACRpkdZWfYN14aki-UqvWp1K0exVj-mMK92q431QueSVvjZFuA@mail.gmail.com>
+References: <cover.1404665589.git.himangi774@gmail.com>
+	<1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com>
+	<53BD2509.6070803@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qa0-f50.google.com ([209.85.216.50]:46834 "EHLO
-	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752030AbaGJJRa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Jul 2014 05:17:30 -0400
-In-Reply-To: <CACRpkdbaah=y22UAuWXQN2kDddD-pa7JS52hXT6Bx9dUmbSyMw@mail.gmail.com>
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:53054 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751945AbaGJJVc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Jul 2014 05:21:32 -0400
+Received: by mail-oa0-f53.google.com with SMTP id l6so9550580oag.40
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Jul 2014 02:21:32 -0700 (PDT)
+In-Reply-To: <53BD2509.6070803@codethink.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Harini Katakam <harini.katakam@xilinx.com>
+To: Rob Jones <rob.jones@codethink.co.uk>
+Cc: Himangi Saraogi <himangi774@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Jul 10, 2014 at 2:42 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Jul 8, 2014 at 1:02 PM, Harini Katakam <harinik@xilinx.com> wrote:
->
->> From: Harini Katakam <harini.katakam@xilinx.com>
->>
->> Add support for GPIO controller used by Xilinx Zynq.
->>
->> Signed-off-by: Harini Katakam <harinik@xilinx.com>
->> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
->
-> Patch applied! Thanks for your patient work on this Harini!
->
+On Wed, Jul 9, 2014 at 1:18 PM, Rob Jones <rob.jones@codethink.co.uk> wrote:
 
-Thanks Linus.
-@Soren Thanks.
+> Please note that I submitted a patch on 02/07/14 to create this
+> function which was acked by Linus Walleij on 05/07/14.
+>
+> Great minds think alike, and all that.
+
+My mind certainly isn't any great :-(
+
+My left hand seems to be unaware of what the right hand is doing.
+
+Did I ACK that for merging through some other tree then?
+
+And I guess if Himangi want to submit these ASoC patches, they
+will have to go through the same tree as those patches in that case?
+
+And would you consider implementing a gpiod version...?
+
+> However, I think that the version I submitted better replicates the
+> original (non devm) functionality, see below.
+>
+> I didn't, however, add it to the documentation. +1 on that.
+
+Can you include that oneliner in your patch then to reduce
+problems?
+
+Yours,
+Linus Walleij
