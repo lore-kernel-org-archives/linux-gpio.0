@@ -1,77 +1,54 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/5] gpiolib: devres: Introduce the function devm_request_gpio_array
-Date: Fri, 11 Jul 2014 02:35:40 +0200
-Message-ID: <CABxcv=mhMMQxqVRM28NucnSW62v_3ghnT58JqFxvK=2bjxizdw@mail.gmail.com>
-References: <cover.1404665589.git.himangi774@gmail.com>
-	<1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com>
-	<53BD2509.6070803@codethink.co.uk>
-	<CACRpkdZWfYN14aki-UqvWp1K0exVj-mMK92q431QueSVvjZFuA@mail.gmail.com>
-	<53BE7288.6060503@codethink.co.uk>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH v2 1/2] gpio: Add driver for Zynq GPIO controller
+Date: Fri, 11 Jul 2014 09:28:11 +0300
+Message-ID: <20140711062811.GC3003@tarshish>
+References: <1403091577-10232-1-git-send-email-harinik@xilinx.com>
+ <5cc8b89b-20ff-4fa9-92dd-bb2f6d3512d8@BY2FFO11FD030.protection.gbl>
+ <CACRpkdb1M3-hrSKLKWz21LCJ1sMvsq5E-aqkpmVhy0NwOS5HhA@mail.gmail.com>
+ <20140707152309.GH4939@tarshish>
+ <CACRpkdY+3hy5iw=uRdmu665NWsoGacTMgjUq97219kEcfn7Dqw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <53BE7288.6060503@codethink.co.uk>
-Sender: linux-doc-owner@vger.kernel.org
-To: Rob Jones <rob.jones@codethink.co.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Himangi Saraogi <himangi774@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Julia Lawall <julia.lawall@lip>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:47757 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751213AbaGKG2S (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 11 Jul 2014 02:28:18 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdY+3hy5iw=uRdmu665NWsoGacTMgjUq97219kEcfn7Dqw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Harini Katakam <harinik@xilinx.com>, Pawel Moll <pawel.moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harinikatakamlinux@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Harini Katakam <harini.katakam@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello Rob,
+Hi Linus,
 
-On Thu, Jul 10, 2014 at 1:01 PM, Rob Jones <rob.jones@codethink.co.uk> wrote:
->
->
-> On 10/07/14 10:21, Linus Walleij wrote:
->>
->> On Wed, Jul 9, 2014 at 1:18 PM, Rob Jones <rob.jones@codethink.co.uk>
->> wrote:
->>
->>> Please note that I submitted a patch on 02/07/14 to create this
->>> function which was acked by Linus Walleij on 05/07/14.
->>>
->>> Great minds think alike, and all that.
->>
->>
->> My mind certainly isn't any great :-(
->>
->
-> I doubt that :-)
->
->
->> My left hand seems to be unaware of what the right hand is doing.
->>
->> Did I ACK that for merging through some other tree then?
->>
->
-> You did: https://lkml.org/lkml/2014/7/4/715
->
->
->> And I guess if Himangi want to submit these ASoC patches, they
->> will have to go through the same tree as those patches in that case?
->>
->
-> I don't know enough to comment.
->
->
->> And would you consider implementing a gpiod version...?
->>
->
-> I will certainly consider it. I'm in the middle of something else right
-> now but I should be available in a day or two and I'll have a look.
->
->
+On Tue, Jul 08, 2014 at 11:27:57AM +0200, Linus Walleij wrote:
+> On Mon, Jul 7, 2014 at 5:23 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+> > On Mon, Jul 07, 2014 at 04:51:56PM +0200, Linus Walleij wrote:
+> 
+> >> This needs someone to step in and provide a replacement, my preferred
+> >> mechanism would be a /dev/gpiochip0/... hierarchy using char devices.
+> >
+> > I really like the ability to control GPIOs from shell, both interactively and
+> > scripted. I find it useful for quick hardware level debugging,
+> 
+> I would be happy to carry it in the unstable-ABI debugfs for sure.
+> It's the supported ABI that bothers me.
+> 
+> > and for boot
+> > time scripting (mainly in initramfs).
+> 
+> What is the usecase here?
 
-I'm working on a driver for a PMIC which uses a set of GPIO to select
-a particular register. Right now I'm getting each GPIO independently
-but Linus mentioned [0] the devm_gpio_request_array() patch you
-posted.
+During boot I need to know, for example, when an FPGA is ready to be 
+programmed, and when said FPGA has finished its initialization. I also read 
+the sate of on-board DIP switches to determine the desired boot method. I find 
+the current sysfs interface quite convenient for these and similar tasks.
 
-Now, I'm not using the integer-based GPIO API but the new
-descriptor-based one so I was wondering if you are already
-implementing a devm_gpiod_get_array() or if you want me to implement
-it myself.
+baruch
 
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2014/7/10/166
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
