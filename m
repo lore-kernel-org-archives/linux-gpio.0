@@ -1,33 +1,77 @@
-From: "Ivan T. Ivanov" <iivanov@mm-sol.com>
-Subject: Re: [PATCH v3] pinctrl: msm: move all qualcomm drivers to subdir
-Date: Thu, 10 Jul 2014 15:18:29 +0300
-Message-ID: <1404994709.16296.22.camel@iivanov-dev>
-References: <1404910216-2170-1-git-send-email-linus.walleij@linaro.org>
-	 <CAJAp7Oi-UH4SUHNw_gHtm=P8EYG3+BsA=hPAsZZWjfG5KCMJeA@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 1/5] gpiolib: devres: Introduce the function devm_request_gpio_array
+Date: Fri, 11 Jul 2014 02:35:40 +0200
+Message-ID: <CABxcv=mhMMQxqVRM28NucnSW62v_3ghnT58JqFxvK=2bjxizdw@mail.gmail.com>
+References: <cover.1404665589.git.himangi774@gmail.com>
+	<1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com>
+	<53BD2509.6070803@codethink.co.uk>
+	<CACRpkdZWfYN14aki-UqvWp1K0exVj-mMK92q431QueSVvjZFuA@mail.gmail.com>
+	<53BE7288.6060503@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJAp7Oi-UH4SUHNw_gHtm=P8EYG3+BsA=hPAsZZWjfG5KCMJeA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn@kryo.se>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <53BE7288.6060503@codethink.co.uk>
+Sender: linux-doc-owner@vger.kernel.org
+To: Rob Jones <rob.jones@codethink.co.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Himangi Saraogi <himangi774@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Julia Lawall <julia.lawall@lip>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 2014-07-09 at 15:16 -0700, Bjorn Andersson wrote:
-> On Wed, Jul 9, 2014 at 5:50 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > We have four Qualcomm-related pin control drivers, and now there
-> > are drivers coming in for the PMICs on these systems, so let's
-> > create a qcom subdirectory to hold all the Qualcomm stuff.
-> >
-> > Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> > Cc: Ivan T. Ivanov <iivanov@mm-sol.com>
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Nice initiative.
-> 
-> Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Hello Rob,
 
-+1 from me.
+On Thu, Jul 10, 2014 at 1:01 PM, Rob Jones <rob.jones@codethink.co.uk> wrote:
+>
+>
+> On 10/07/14 10:21, Linus Walleij wrote:
+>>
+>> On Wed, Jul 9, 2014 at 1:18 PM, Rob Jones <rob.jones@codethink.co.uk>
+>> wrote:
+>>
+>>> Please note that I submitted a patch on 02/07/14 to create this
+>>> function which was acked by Linus Walleij on 05/07/14.
+>>>
+>>> Great minds think alike, and all that.
+>>
+>>
+>> My mind certainly isn't any great :-(
+>>
+>
+> I doubt that :-)
+>
+>
+>> My left hand seems to be unaware of what the right hand is doing.
+>>
+>> Did I ACK that for merging through some other tree then?
+>>
+>
+> You did: https://lkml.org/lkml/2014/7/4/715
+>
+>
+>> And I guess if Himangi want to submit these ASoC patches, they
+>> will have to go through the same tree as those patches in that case?
+>>
+>
+> I don't know enough to comment.
+>
+>
+>> And would you consider implementing a gpiod version...?
+>>
+>
+> I will certainly consider it. I'm in the middle of something else right
+> now but I should be available in a day or two and I'll have a look.
+>
+>
 
-Acked-by: Ivan T. Ivanov <iivanov@mm-sol.com>
+I'm working on a driver for a PMIC which uses a set of GPIO to select
+a particular register. Right now I'm getting each GPIO independently
+but Linus mentioned [0] the devm_gpio_request_array() patch you
+posted.
+
+Now, I'm not using the integer-based GPIO API but the new
+descriptor-based one so I was wondering if you are already
+implementing a devm_gpiod_get_array() or if you want me to implement
+it myself.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/7/10/166
