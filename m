@@ -1,276 +1,67 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpio: keystone: add dsp gpio controller driver
-Date: Mon, 14 Jul 2014 20:29:17 +0300
-Message-ID: <53C4136D.5070108@ti.com>
-References: <1405351707-12142-1-git-send-email-grygorii.strashko@ti.com>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: [PATCH 0/2] pinctrl: sunxi: misc improvements for gpio
+Date: Tue, 15 Jul 2014 01:24:35 +0800
+Message-ID: <1405358677-23657-1-git-send-email-wens@csie.org>
+Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:54568 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755819AbaGNQnK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Jul 2014 12:43:10 -0400
-In-Reply-To: <1405351707-12142-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBWNESCPAKGQETYKCLQA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: santosh.shilimkar@ti.com, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: ivan.khoronzhuk@ti.com, m-karicheri2@ti.com, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hi,
 
-On 07/14/2014 06:28 PM, Grygorii Strashko wrote:
-> From: Murali Karicheri <m-karicheri2@ti.com>
->
+These 2 patches are fixes / improvements to the gpio side of the
+sunxi pinctrl driver. They are based on pinctrl/devel (3a19805).
+The patches change the same lines of code, so they are sent together.
 
-I'm sorry for the mess. I've sent wrong patch version.
-Ignore it, please.
+Patch 1 adds locking gpio lines when used as external interrupts.
+Similar patches were done by Linus and other maintainers for various
+platforms.
 
-> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
-> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
-> each DSP core. This is one of the component used by the IPC mechanism used
-> on Keystone SOCs.
->
-> Keystone 2 DSP GPIO controller has specific features:
-> - each GPIO can be configured only as output pin;
-> - setting GPIO value to 1 causes IRQ generation on target DSP core;
-> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
->    pending.
->
-> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
->   .../devicetree/bindings/gpio/gpio-keystone.txt     |   43 ++++++
->   drivers/gpio/Kconfig                               |    8 ++
->   drivers/gpio/Makefile                              |    1 +
->   drivers/gpio/gpio-keystone.c                       |  138 ++++++++++++++++++++
->   4 files changed, 190 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-keystone.txt
->   create mode 100644 drivers/gpio/gpio-keystone.c
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-keystone.txt b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
-> new file mode 100644
-> index 0000000..cdda018
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
-> @@ -0,0 +1,43 @@
-> +Keystone 2 DSP GPIO controller bindings
-> +
-> +HOST OS userland running on ARM can send interrupts to DSP cores using
-> +the DSP GPIO controller IP. It provides 28 IRQ signals per each DSP core.
-> +This is one of the component used by the IPC mechanism used on Keystone SOCs.
-> +
-> +For example TCI6638K2K SoC has 12 DSP GPIO controllers:
-> + - 8 for C66x CorePacx CPUs 0-7
-> +
-> +Keystone 2 DSP GPIO controller has specific features:
-> +- each GPIO can be configured only as output pin;
-> +- setting GPIO value to 1 causes IRQ generation on target DSP core;
-> +- reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
-> +  pending.
-> +
-> +Required Properties:
-> +- compatible: should be "ti,keystone-gpio"
-> +
-> +- ti,syscon-dev:	phandle/offset pair. The phandle to syscon used to
-> +			access device state control registers and the offset
-> +			in order to use block of device's specific registers.
-> +
-> +- gpio-controller : Marks the device node as a gpio controller.
-> +
-> +- #gpio-cells : Should be one.
-> +				See gpio.txt in this directory for a of the cells format
-> +
-> +Please refer to gpio.txt in this directory for details of the common GPIO
-> +bindings used by client devices.
-> +
-> +Example:
-> +	kgpio0: keystone_gpio@02620240 {
-> +		compatible = "ti,keystone-gpio";
-> +		ti,syscon-dev = <&devctrl 0x240>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +
-> +	dsp0: dsp0 {
-> +		compatible = "linux,rproc-user";
-> +		...
-> +		kick-gpio = <&kgpio0 27>;
-> +	};
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 4a1b511..7566283 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -158,6 +158,14 @@ config GPIO_EP93XX
->   	depends on ARCH_EP93XX
->   	select GPIO_GENERIC
->
-> +config GPIO_KEYSTONE
-> +	tristate "Keystone DSP GPIO support"
-> +	depends on ARCH_KEYSTONE
-> +	help
-> +	  Say yes here to support the DSP GPIO driver for Keystone 2. This defines
-> +	  up to 28 GPIOs per each Remote (DSP) core. This is used to send
-> +	  signals from ARM to the Remote (DSP) core.
-> +
->   config GPIO_ZEVIO
->   	bool "LSI ZEVIO SoC memory mapped GPIOs"
->   	depends on ARM && OF_GPIO
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index d10f6a9..520bb2a 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_IOP)		+= gpio-iop.o
->   obj-$(CONFIG_GPIO_IT8761E)	+= gpio-it8761e.o
->   obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
->   obj-$(CONFIG_GPIO_KEMPLD)	+= gpio-kempld.o
-> +obj-$(CONFIG_GPIO_KEYSTONE)	+= gpio-keystone.o
->   obj-$(CONFIG_ARCH_KS8695)	+= gpio-ks8695.o
->   obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
->   obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
-> diff --git a/drivers/gpio/gpio-keystone.c b/drivers/gpio/gpio-keystone.c
-> new file mode 100644
-> index 0000000..9ff3bf6
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-keystone.c
-> @@ -0,0 +1,138 @@
-> +/*
-> + * Keystone 2 DSP GPIO support.
-> + *
-> + * Copyright (C) 2014 Texas Instruments, Inc.
-> + * Author: Murali Karicheri <m-karicheri2@ti.com>
-> + *	   Grygorii Strashko <grygorii.strashko@ti.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/gpio.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
-> +
-> +/* 28 bits in IPCGRx are treated as GPIO pins to generate interrupt */
-> +#define GPIOS_PER_BANK		28
-> +#define GPIO_OFFSET		4
-> +
-> +struct keystone_gpio_bank {
-> +	struct gpio_chip	 chip;
-> +	struct device		*dev;
-> +	struct regmap		*devctrl_regs;
-> +	u32			devctrl_offset;
-> +};
-> +#define chip_to_bank(c) \
-> +	container_of(c, struct keystone_gpio_bank, chip)
-> +
-> +static int keystone_gpio_direction_out(struct gpio_chip *c, unsigned ofs, int val)
-> +{
-> +	return 0;
-> +}
-> +
-> +static int keystone_gpio_get(struct gpio_chip *c, unsigned ofs)
-> +{
-> +	struct keystone_gpio_bank *bank = chip_to_bank(c);
-> +	int bit = ofs + GPIO_OFFSET;
-> +	int ret;
-> +	u32 val = 0;
-> +
-> +	ret = regmap_read(bank->devctrl_regs, bank->devctrl_offset, &val);
-> +	if (ret < 0)
-> +		dev_dbg(bank->dev, "gpio read failed ret(%d)\n", ret);
-> +
-> +	return (val >> bit) & 1;
-> +}
-> +
-> +static void keystone_gpio_set(struct gpio_chip *c, unsigned ofs, int val)
-> +{
-> +	struct keystone_gpio_bank *bank = chip_to_bank(c);
-> +	int bit = ofs + GPIO_OFFSET;
-> +	int ret;
-> +
-> +	if (!val)
-> +		return;
-> +
-> +	ret = regmap_write(bank->devctrl_regs, bank->devctrl_offset,
-> +			   BIT(bit) | 1);
-> +	if (ret < 0)
-> +		dev_dbg(bank->dev, "gpio write failed ret(%d)\n", ret);
-> +}
-> +
-> +static int keystone_gpio_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct keystone_gpio_bank *bank;
-> +	int ret = 0;
-> +
-> +	bank = devm_kzalloc(&pdev->dev, sizeof(*bank), GFP_KERNEL);
-> +	if (!bank)
-> +		return -ENOMEM;
-> +
-> +	bank->devctrl_regs =
-> +		syscon_regmap_lookup_by_phandle(np, "ti,syscon-dev");
-> +	if (IS_ERR(bank->devctrl_regs))
-> +		return PTR_ERR(bank->devctrl_regs);
-> +
-> +	ret = of_property_read_u32_index(np, "ti,syscon-dev", 1,
-> +					 &bank->devctrl_offset);
-> +	if (ret) {
-> +		dev_err(dev, "couldn't read the devctrl_offset offset!\n");
-> +		return ret;
-> +	}
-> +
-> +	bank->dev			= dev;
-> +#ifdef CONFIG_OF_GPIO
-> +	bank->chip.of_node		= of_node_get(np);
-> +#endif
-> +	bank->chip.label		= dev_name(dev);
-> +	bank->chip.get			= keystone_gpio_get;
-> +	bank->chip.set			= keystone_gpio_set;
-> +	bank->chip.direction_output	= keystone_gpio_direction_out;
-> +	bank->chip.base			= -1;
-> +	bank->chip.ngpio		= GPIOS_PER_BANK;
-> +
-> +	platform_set_drvdata(pdev, bank);
-> +
-> +	ret = gpiochip_add(&bank->chip);
-> +	if (ret) {
-> +		dev_err(dev, "gpio chip registration failed ret(%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(bank->dev, "registered %d gpios\n", bank->chip.ngpio);
-> +	return ret;
-> +}
-> +
-> +static int keystone_gpio_remove(struct platform_device *pdev)
-> +{
-> +	struct keystone_gpio_bank *bank = platform_get_drvdata(pdev);
-> +
-> +	return gpiochip_remove(&bank->chip);
-> +}
-> +
-> +static const struct of_device_id keystone_gpio_dt_ids[] = {
-> +	{ .compatible = "ti,keystone-gpio", },
-> +	{ },
-> +};
-> +
-> +static struct platform_driver keystone_gpio_driver = {
-> +	.probe		= keystone_gpio_probe,
-> +	.remove		= keystone_gpio_remove,
-> +	.driver		= {
-> +		.name	= "keystone-gpio",
-> +		.owner	= THIS_MODULE,
-> +		.of_match_table = keystone_gpio_dt_ids,
-> +	},
-> +};
-> +
-> +module_platform_driver(keystone_gpio_driver);
-> +
-> +MODULE_AUTHOR("Texas Instruments");
-> +MODULE_AUTHOR("Murali Karicheri <m-karicheri2@ti.com>");
-> +MODULE_DESCRIPTION("Texas Instruments Keystone 2 DSP GPIO");
-> +MODULE_LICENSE("GPL v2");
->
+A somewhat related issue is that the sunxi pinctrl driver does not
+block users from requesting an already muxed pin as a gpio line.
+Maybe we should do some locking there as well? Are there any kernel
+interfaces for this? Or do we need to do it in the driver specifically
+for our hardware?
 
+(I had the unfortunate experience of poking GPIOs listed in the fex
+files, not noticing they were used by the uart console.)
+
+
+Patch 2 changes the gpio ranges registered by the pinctrl driver.
+Instead of just passing the pin number, we pass the pin offset,
+so that the range is not out of bounds (with respect to gpiochip.ngpio).
+This happens on sun6i/sun8i platforms for the R_PIO controllers.
+
+As gpiochip.base currently matches the pin number base, we get the nice
+result that gpio numbers match pin numbers again.
+
+AFAIK pinctrl pin numbers are device specific, so I'm wondering if we
+should also number them in terms of offsets, rather than absolute pin
+numbers. It's more of an asthetic change though. Any thoughts?
+
+Thank you
+
+
+Cheers
+ChenYu
+
+
+Chen-Yu Tsai (2):
+  pinctrl: sunxi: use gpiolib API to mark a GPIO used as an IRQ
+  pinctrl: sunxi: number gpio ranges starting from 0
+
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
+
+-- 
+2.0.1
