@@ -1,74 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH 2/4] ASoC: s3c64xx/smartq: use dynamic
- registration
-Date: Tue, 15 Jul 2014 11:39:38 +0100
-Message-ID: <20140715103938.GJ6800@sirena.org.uk>
-References: <1405086308-1461192-1-git-send-email-arnd@arndb.de>
- <16507628.c6raaN50oI@wuerfel>
- <20140714183624.GV6800@sirena.org.uk>
- <4657735.1VKsbQGuH6@wuerfel>
- <CAAVeFu+Z2xzUy6pGWu3H4MXdkBq39-USHbwNU9ih6AvvxPyu5A@mail.gmail.com>
+From: Pascal Huerst <pascal.huerst@gmail.com>
+Subject: Re: gpio-omap: wakeup mask
+Date: Tue, 15 Jul 2014 15:27:34 +0200
+Message-ID: <53C52C46.60207@gmail.com>
+References: <53B3F687.5050502@gmail.com> <20140704072752.GC28884@atomide.com> <53BD1683.9030505@gmail.com> <20140709104142.GO28884@atomide.com> <53BD3950.60000@gmail.com> <20140709152441.GZ28884@atomide.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LkBseQZEL/3d2JPd"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38438 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758040AbaGOKkP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Jul 2014 06:40:15 -0400
-Content-Disposition: inline
-In-Reply-To: <CAAVeFu+Z2xzUy6pGWu3H4MXdkBq39-USHbwNU9ih6AvvxPyu5A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20140709152441.GZ28884@atomide.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: santosh.shilimkar@ti.com, khilman@deeprootsystems.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@zonque.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Lars-Peter Clausen <lars@metafoo.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
 
---LkBseQZEL/3d2JPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Jul 15, 2014 at 04:36:20PM +0900, Alexandre Courbot wrote:
+On 09.07.2014 17:24, Tony Lindgren wrote:
+> * Pascal Huerst <pascal.huerst@gmail.com> [140709 05:47]:
+>> On 09.07.2014 12:41, Tony Lindgren wrote:
+>> 
+>>> If you just comment out the _gpio_rmw part above do things work
+>>> as expected?
+>> 
+>> Yes. It only wakes up on gpio 6 not on gpio 11 anymore.
+>> 
+>>> Then if that works as expected, maybe write only some unused
+>>> bits into wkup_en register and see if it still wakes to all
+>>> events while it should not?
+>> 
+>> If I use the following testcode, everything works as expected:
+>> 
+>> //WARN(true, "WARN: bank->base = %08X\n", bank->base);
+>> 
+>> if (likely(!(bank->non_wakeup_gpios & gpio_bit))) { 
+>> //_gpio_rmw(base, bank->regs->wkup_en, gpio_bit, trigger != 0); 
+>> writel(0xABC00000, base + bank->regs->wkup_en);
+>> 
+>> bank->context.wake_en = readl_relaxed(bank->base + 
+>> bank->regs->wkup_en); printk("bank->base = %08X gpio = %i
+>> bank->context->wake_en = %08X\n", bank->base, gpio,
+>> bank->context.wake_en); }
+> 
+> Hmm weird. It sounds like something like the following is
+> happening:
+> 
+> 1. The first GPIO bank is always powered, and does not need to set 
+> wake-up events
 
-> Direction and initial value, on the other hand, are clearly properties
-> that ought to be set by the driver itself. Thus my expectation here
-> would be that the driver sets the GPIO direction and initial value as
-> soon as it gets it using gpiod_direction_output(). In other words,
+I dont think so. If I apply my hack (commenting the _gpio_rmw() call)
+and don't have a wakeup source in the dt, I have to reboot the system,
+sonce im not able to wake it up anymore. Or did I miss something?
 
-Well, it's a bit of a mix really - from a hardware point of view they
-normally are actually often fixed.
+> 2. When setting the GPIO wake-up events it seems that enabling any 
+> wake-up event for the first (16?) bits wakes up the system
+> 
+> You might want to check this with some spare GPIOs not in the first
+> bank and see if you need the wake-up events and if enabling some
+> bits enables more than one GPIO for wake-up events.
 
-> there is no replacement for gpio_request_one() with the gpiod
-> interface. Is there any use-case that cannot be covered by calling
-> gpiod_direction_output() right after gpiod_get()? AFAICT this is what
-> gpio_request_one() was doing anyway.
+Im not sure if this makes sense, since only the first gpio bank can
+act as a wakeup source. So it should not be possible.
 
-Right, the original goal was to provide a better interface for
-requesting a GPIO - it saves a lot of error handling code throughout the
-kernel and avoids the possibility of bugs due to users forgetting to
-mark the directio for the GPIO.  Having a direct replacement also makes
-conversions to gpiod easier.
 
---LkBseQZEL/3d2JPd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
+thanks!
+pascal
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJTxQTnAAoJELSic+t+oim9MVIP/10zkYMLCdAJVQnZZUBU8mWy
-fuBhPCbPrneue715Ok/i/G24Yo2IMfkEjyYCpvEBVD1vMvLzUR9WVz0HorPjJoDQ
-hmDxQyYjkpUeYwDsZFKjF15fINLb7LX9/WS5JhYnJz6NMhi7ZF7nheYDUowC20J+
-2JZcZNcUqQrKoz9d/MqREXTdSsTKk0DKwRdIHPNWvaE5dYCNccLRN61GgFdAv/NM
-GLXwcEz/wxqGrHmnJ2NURZAqSBJZ53ucMRY1orN1PXLPHnolmvKr10Z8VwIQnxH/
-XmTXiTrb39KH8grdfYIs8tO9Bbi1N6wJnQ7cdu90OngmsdDaW7m8yCBUPESCv4gg
-snlbWjRBl3/ZF9pobcHw1zvPkGZ1VBjHXPQCgDMmpfX3GQstF/6UzCcmor/C9dNm
-KleqIMB6ftohJjaR/cynnJXSJsFC86UkKgmC1q9uNF7+ng1kKgNr4/nKS96msuIK
-ka1TxSaaWeh+N3c8Eppg94NywOl2fb7ty47xSDsmgCV3+qzKA2YeACSKLiO8lH1A
-nTx1N75cVjUBZjILgYvO2PFYRVGQuG52AMz83nTFFHijsjBpgrSFTkahyNbJFuN+
-Agzsy3hybDpxb39XjFMm7HxUhlWBsPK+yl8wAahItpjdgOZ/Yea8uHXL+fDyqNvE
-x8Vd3E56YHasjaHbUKZI
-=Lk2/
+iEYEARECAAYFAlPFLEYACgkQo7eFcXQQ8U1NcACbBzQiKoU5MO/MLSdrjeg5CaAc
+YJcAn3bSthD4ByFOQ31jjOFI1F/HP4Lr
+=o4r2
 -----END PGP SIGNATURE-----
-
---LkBseQZEL/3d2JPd--
