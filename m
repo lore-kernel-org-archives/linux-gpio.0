@@ -1,117 +1,48 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: [PATCH 2/2] pinctrl: sunxi: number gpio ranges starting
- from 0
-Date: Tue, 15 Jul 2014 01:24:37 +0800
-Message-ID: <1405358677-23657-3-git-send-email-wens@csie.org>
-References: <1405358677-23657-1-git-send-email-wens@csie.org>
-Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [alsa-devel] [PATCH 2/4] ASoC: s3c64xx/smartq: use dynamic registration
+Date: Tue, 15 Jul 2014 09:19:58 +0200
+Message-ID: <4657735.1VKsbQGuH6@wuerfel>
+References: <1405086308-1461192-1-git-send-email-arnd@arndb.de> <16507628.c6raaN50oI@wuerfel> <20140714183624.GV6800@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBWNESCPAKGQETYKCLQA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1405358677-23657-1-git-send-email-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.131]:58503 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757875AbaGOHU0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Jul 2014 03:20:26 -0400
+In-Reply-To: <20140714183624.GV6800@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, t.figa@samsung.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 
-The pinctrl-sunxi driver originally used the pin number as the gpio
-range offset. This resulted in large, bogus gpio numbers for the
-new sun6i-a31-r pinctrl devices.
+On Monday 14 July 2014 19:36:24 Mark Brown wrote:
+> On Mon, Jul 14, 2014 at 08:23:55PM +0200, Arnd Bergmann wrote:
+> > On Monday 14 July 2014 18:18:12 Lars-Peter Clausen wrote:
+> 
+> > > Yes. But now that you say it the gpiod_direction_output() call is missing 
+> > > from this patch.
+> 
+> > I'm lost now. The GPIO_ACTIVE_HIGH I added comes from Documentation/gpio/board.txt
+> > and as Linus Walleij explained to me the other day, the lookup is supposed
+> > to replace devm_gpio_request_one(), which in turn replaced both the
+> > gpio_request and the gpio_direction_output(). Do I need to put the
+> > gpiod_direction_output() back or is there another interface for that when
+> > registering the board gpios?
+> 
+> Indeed.  If you *do* need an explicit _output() then that sounds to me
+> like we either need a gpiod_get_one() or an extension to the table,
+> looking at the code it seems like this is indeed the case.  We can set
+> if the GPIO is active high/low, or open source/drain but there's no flag
+> for the initial state.
 
-This patch makes the driver number the gpios ranges starting from an
-offset of 0, by subtracting the pin_base number from the pin number.
-This also makes the system-wide gpio number match the pin number.
+(adding Alexandre and the gpio list)
 
-Tested on sun8i with sysfs exported gpios.
+GPIO people: any guidance on how a board file should set a gpio to
+output/default-high in a GPIO_LOOKUP() table to replace a
+devm_gpio_request_one() call in a device driver with devm_gpiod_get()?
+Do we need to add an interface extension to do this, e.g. passing
+GPIOF_OUT_INIT_HIGH as the flags rather than GPIO_ACTIVE_HIGH?
 
-Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
----
-
-This patch also changes the GPIO bindings for R_PIO:
-
-    gpios = <&r_pio B N flag>;
-
-Where B originally was the pinbank label (L or M) counted from A,
-with this patch it becomes (L or M) counted from its pinbank base (L).
-
-Thus
-
-    gpios = <&r_pio 10 11 0>; /* PL11 */
-
-becomes
-
-    gpios = <&r_pio 0 11 0>; /* PL11 */
-
-IMO this is correct, as the binding shows the bank offset and pin offset
-within the bank for the GPIO controller. But I'm worried it might be a
-bit confusing.
-
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 23c1b9f..de4fb06 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -507,7 +507,7 @@ static int sunxi_pinctrl_gpio_of_xlate(struct gpio_chip *gc,
- 	base = PINS_PER_BANK * gpiospec->args[0];
- 	pin = base + gpiospec->args[1];
- 
--	if (pin > (gc->base + gc->ngpio))
-+	if (pin > gc->ngpio)
- 		return -EINVAL;
- 
- 	if (flags)
-@@ -520,12 +520,13 @@ static int sunxi_pinctrl_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- {
- 	struct sunxi_pinctrl *pctl = dev_get_drvdata(chip->dev);
- 	struct sunxi_desc_function *desc;
-+	unsigned pinnum = pctl->desc->pin_base + offset;
- 	unsigned irqnum;
- 
- 	if (offset >= chip->ngpio)
- 		return -ENXIO;
- 
--	desc = sunxi_pinctrl_desc_find_function_by_pin(pctl, offset, "irq");
-+	desc = sunxi_pinctrl_desc_find_function_by_pin(pctl, pinnum, "irq");
- 	if (!desc)
- 		return -EINVAL;
- 
-@@ -548,7 +549,8 @@ static int sunxi_pinctrl_irq_request_resources(struct irq_data *d)
- 	if (!func)
- 		return -EINVAL;
- 
--	ret = gpio_lock_as_irq(pctl->chip, pctl->irq_array[d->hwirq]);
-+	ret = gpio_lock_as_irq(pctl->chip,
-+			pctl->irq_array[d->hwirq] - pctl->desc->pin_base);
- 	if (ret) {
- 		dev_err(pctl->dev, "unable to lock HW IRQ %lu for IRQ\n",
- 			irqd_to_hwirq(d));
-@@ -565,7 +567,8 @@ static void sunxi_pinctrl_irq_release_resources(struct irq_data *d)
- {
- 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
- 
--	gpio_unlock_as_irq(pctl->chip, pctl->irq_array[d->hwirq]);
-+	gpio_unlock_as_irq(pctl->chip,
-+			   pctl->irq_array[d->hwirq] - pctl->desc->pin_base);
- }
- 
- static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int type)
-@@ -931,7 +934,7 @@ int sunxi_pinctrl_init(struct platform_device *pdev,
- 		const struct sunxi_desc_pin *pin = pctl->desc->pins + i;
- 
- 		ret = gpiochip_add_pin_range(pctl->chip, dev_name(&pdev->dev),
--					     pin->pin.number,
-+					     pin->pin.number - pctl->desc->pin_base,
- 					     pin->pin.number, 1);
- 		if (ret)
- 			goto gpiochip_error;
--- 
-2.0.1
+	Arnd
