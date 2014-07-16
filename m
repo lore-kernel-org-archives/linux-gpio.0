@@ -1,57 +1,128 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] the great <mach/gpio.h> purge
-Date: Tue, 15 Jul 2014 18:32:25 -0700
-Message-ID: <CAOesGMg2Qn1B7KmaGnZzT0_RiqAbG7hNUg=a=R0CDjxuP6cBBw@mail.gmail.com>
-References: <CACRpkdbPHn6bWdr8t9BrmE2JZZuuVnF7ujzEFdrM86WmrRS5Hw@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [alsa-devel] [PATCH 2/4] ASoC: s3c64xx/smartq: use dynamic registration
+Date: Wed, 16 Jul 2014 12:00:45 +0900
+Message-ID: <CAAVeFuLfgG6W1qK2ATTbq_ydEOjUuM8Wvftm6N1RK3Kz_y1zHg@mail.gmail.com>
+References: <1405086308-1461192-1-git-send-email-arnd@arndb.de>
+ <16507628.c6raaN50oI@wuerfel> <20140714183624.GV6800@sirena.org.uk>
+ <4657735.1VKsbQGuH6@wuerfel> <CAAVeFu+Z2xzUy6pGWu3H4MXdkBq39-USHbwNU9ih6AvvxPyu5A@mail.gmail.com>
+ <53C4DF0D.8010208@metafoo.de> <CAAVeFuJRCwSwcEOng2M6s+mWhJT8sUtsh7YGE-hBTGUFWAhtrQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f181.google.com ([209.85.220.181]:59311 "EHLO
-	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751593AbaGPBc0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Jul 2014 21:32:26 -0400
-Received: by mail-vc0-f181.google.com with SMTP id lf12so413151vcb.12
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Jul 2014 18:32:25 -0700 (PDT)
-In-Reply-To: <CACRpkdbPHn6bWdr8t9BrmE2JZZuuVnF7ujzEFdrM86WmrRS5Hw@mail.gmail.com>
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:53548 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758144AbaGPDBH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Jul 2014 23:01:07 -0400
+Received: by mail-vc0-f169.google.com with SMTP id hu12so534447vcb.28
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Jul 2014 20:01:05 -0700 (PDT)
+In-Reply-To: <CAAVeFuJRCwSwcEOng2M6s+mWhJT8sUtsh7YGE-hBTGUFWAhtrQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Lars-Peter Clausen <lars@metafoo.de>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Jun 30, 2014 at 1:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> Hi ARM SoC guys,
+On Tue, Jul 15, 2014 at 6:14 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Tue, Jul 15, 2014 at 4:58 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+>> On 07/15/2014 09:36 AM, Alexandre Courbot wrote:
+>>>
+>>> On Tue, Jul 15, 2014 at 4:19 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>>>
+>>>> On Monday 14 July 2014 19:36:24 Mark Brown wrote:
+>>>>>
+>>>>> On Mon, Jul 14, 2014 at 08:23:55PM +0200, Arnd Bergmann wrote:
+>>>>>>
+>>>>>> On Monday 14 July 2014 18:18:12 Lars-Peter Clausen wrote:
+>>>>>
+>>>>>
+>>>>>>> Yes. But now that you say it the gpiod_direction_output() call is
+>>>>>>> missing
+>>>>>>> from this patch.
+>>>>>
+>>>>>
+>>>>>> I'm lost now. The GPIO_ACTIVE_HIGH I added comes from
+>>>>>> Documentation/gpio/board.txt
+>>>>>> and as Linus Walleij explained to me the other day, the lookup is
+>>>>>> supposed
+>>>>>> to replace devm_gpio_request_one(), which in turn replaced both the
+>>>>>> gpio_request and the gpio_direction_output(). Do I need to put the
+>>>>>> gpiod_direction_output() back or is there another interface for that
+>>>>>> when
+>>>>>> registering the board gpios?
+>>>>>
+>>>>>
+>>>>> Indeed.  If you *do* need an explicit _output() then that sounds to me
+>>>>> like we either need a gpiod_get_one() or an extension to the table,
+>>>>> looking at the code it seems like this is indeed the case.  We can set
+>>>>> if the GPIO is active high/low, or open source/drain but there's no flag
+>>>>> for the initial state.
+>>>>
+>>>>
+>>>> (adding Alexandre and the gpio list)
+>>>>
+>>>> GPIO people: any guidance on how a board file should set a gpio to
+>>>> output/default-high in a GPIO_LOOKUP() table to replace a
+>>>> devm_gpio_request_one() call in a device driver with devm_gpiod_get()?
+>>>> Do we need to add an interface extension to do this, e.g. passing
+>>>> GPIOF_OUT_INIT_HIGH as the flags rather than GPIO_ACTIVE_HIGH?
+>>>
+>>>
+>>> The way I see it, GPIO mappings (whether they are done using the
+>>> lookup tables, DT, or ACPI) should only care about details that are
+>>> relevant to the device layout and that should be abstracted to the
+>>> driver (e.g. whether the GPIO is active low or open drain) so drivers
+>>> do not need to check X conditions every time they want to drive the
+>>> GPIO.
+>>>
+>>> Direction and initial value, on the other hand, are clearly properties
+>>> that ought to be set by the driver itself. Thus my expectation here
+>>> would be that the driver sets the GPIO direction and initial value as
+>>> soon as it gets it using gpiod_direction_output(). In other words,
+>>> there is no replacement for gpio_request_one() with the gpiod
+>>> interface. Is there any use-case that cannot be covered by calling
+>>> gpiod_direction_output() right after gpiod_get()? AFAICT this is what
+>>> gpio_request_one() was doing anyway.
+>>
+>>
+>> I agree with you that this is something that should be done in the driver
+>> and not in the lookup table. I think that it is still a good idea to have a
+>> replacement for gpio_request_one with the new GPIO descriptor API. A large
+>> share of the drivers want to call either gpio_direction_input() or
+>> gpio_direction_output() right after requesting the GPIO. Combining both the
+>> requesting and the configuration of the GPIO into one function call makes
+>> the code a bit shorter and also simplifies the error handling. Even more so
+>> if e.g. the GPIO is optional. This was one of the main reasons why
+>> gpio_request_one was introduced, see the commit[1] that added it.
 >
-> please pull in this patch set removing <mach/gpio.h> for good.
-> I guess it could collide with some S5P deletion.
-> If you decide to pull the S5P purge first, tell me so I can rebase.
->
-> Yours,
-> Linus Walleij
->
->
-> The following changes since commit 4c834452aad01531db949414f94f817a86348d59:
->
->   Linux 3.16-rc3 (2014-06-29 14:11:36 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-> tags/gpio-h-purge
->
-> for you to fetch changes up to 53430333c345c3531f9443d43c6fba1da693abe4:
->
->   ARM: delete old reference to ARM_GPIOLIB_COMPLEX (2014-06-30 21:37:39 +0200)
->
-> ----------------------------------------------------------------
-> This is a purge of all things <mach/gpio.h>, now I never
-> want to see it again.
->
-> - Remove the need for <mach/gpio.h> from S5P
-> - Kill CONFIG_NEED_MACH_GPIO_H
-> - Kill remnants of ARM_GPIOLIB_COMPLEX
+> I am not opposed to it as a convenience function. Note that since the
+> open-source and open-drain flags are already handled by the lookup
+> table, the only flags it should handle are those related to direction,
+> value, and (maybe) sysfs export.
 
-Merged. Fixups were trivial since it was just changes against files
-that had been removed.
+Problem is, too much convenience functions seems to ultimately kill convenience.
 
+The canonical way to request a GPIO is by providing a (device,
+function, index) triplet to gpiod_get_index(). Since most functions
+only need one GPIO, we have gpiod_get(device, function) which is
+basically an alias to gpiod_get_index(device, function, 0) (note to
+self: we should probably inline it).
 
--Olof
+On top of these comes another set of convenience functions,
+gpiod_get_optional() and gpiod_get_index_optional(), which return NULL
+instead of -ENOENT if the requested GPIO mapping does not exist. This
+is useful for the common case where a driver can work without a GPIO.
+
+Of course these functions all have devm counterparts, so we currently
+have 8 (devm_)gpiod_get(_index)(_optional) functions.
+
+If we are to add functions with an init flags parameter, we will end
+with 16 functions. That starts to be a bit too much to my taste, and
+maybe that's where GPIO consumers should sacrifice some convenience to
+preserve a comprehensible GPIO API.
+
+There might be other ways to work around this though. For instance, we
+could replace the _optional functions by a GPIOF_OPTIONAL flag to be
+passed to a more generic function that would also accept direction and
+init value flags. Actually I am not seeing any user of the _optional
+variant in -next, so maybe we should just do this. Thierry, since you
+introduced the _optional functions, can we get your thoughts about
+this?
