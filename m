@@ -1,74 +1,73 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH 2/4] ASoC: s3c64xx/smartq: use dynamic
- registration
-Date: Thu, 17 Jul 2014 12:05:40 +0100
-Message-ID: <20140717110540.GS17528@sirena.org.uk>
-References: <CAAVeFuLfgG6W1qK2ATTbq_ydEOjUuM8Wvftm6N1RK3Kz_y1zHg@mail.gmail.com>
- <20140716071237.GA7978@ulmo>
- <CAAVeFuJEjMBX+7vsLk5zXV5Moy=WDmWidpVZjQ_=8VD45+QdHg@mail.gmail.com>
- <20140716075107.GG7978@ulmo>
- <53C63CBA.20809@codethink.co.uk>
- <CAAVeFuK55XzwaU+eOWhfUxJ7wEwGqxRCPDZKf+gVeMgeV8ys6g@mail.gmail.com>
- <20140717074444.GB18640@ulmo>
- <CAAVeFuJQUA+92jGpgDkyQ+=Qu+okBHzS5aFi7gmdwh+qcFp3fg@mail.gmail.com>
- <20140717101723.GR17528@sirena.org.uk>
- <20140717104121.GF17877@ulmo>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] gpio: Add support for GPIOF_ACTIVE_LOW to gpio_request_one
+Date: Thu, 17 Jul 2014 07:34:11 -0700
+Message-ID: <53C7DEE3.6060107@roeck-us.net>
+References: <1405552260-30511-1-git-send-email-linux@roeck-us.net> <CAAVeFuLtUpKKVWAvJ-bw_b36jYFhrzaWeswnJKyehbwn=6y+4Q@mail.gmail.com> <53C76F3C.6090104@roeck-us.net> <CAAVeFuKC19AK8BjM7OBm=FWm0ua5YJXoGRkpOvM1TWkz9yOZ5Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dngyMJhgXGAL5Gb8"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41699 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755929AbaGQLGV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Jul 2014 07:06:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20140717104121.GF17877@ulmo>
+Received: from mail.active-venture.com ([67.228.131.205]:51937 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932930AbaGQOeN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Jul 2014 10:34:13 -0400
+In-Reply-To: <CAAVeFuKC19AK8BjM7OBm=FWm0ua5YJXoGRkpOvM1TWkz9yOZ5Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Jones <rob.jones@codethink.co.uk>, Rojhalat Ibrahim <imr@rtschenk.de>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
+On 07/17/2014 12:26 AM, Alexandre Courbot wrote:
+> On Thu, Jul 17, 2014 at 3:37 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 07/16/2014 11:09 PM, Alexandre Courbot wrote:
+>>>
+>>> On Thu, Jul 17, 2014 at 8:11 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+>>>>
+>>>> The gpio include file and the gpio documentation declare and document
+>>>> GPIOF_ACTIVE_LOW as one of the flags to be passed to gpio_request_one
+>>>> and related functions. However, the flag is not evaluated or used.
+>>>>
+>>>> Check the flag in gpio_request_one and set the gpio internal flag
+>>>> FLAG_ACTIVE_LOW if it is set.
+>>>
+>>>
+>>> What is the point since the integer GPIO API has no clue of the
+>>> active-low status of a GPIO? It is only used by the gpiod and sysfs
+>>> interfaces.
+>>>
+>>
+>> One can use gpio_request_one() to export a gpio pin to user space from
+>> the kernel. That code path does use the flag, as you point out yourself
+>> above.
+>
+> Ok, in that case I suppose it makes sense.
+>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>
+>> One could also argue that the integer gpio API _should_ support this as
+>> well,
+>> but that is a different question.
+>
+> Probably not going to happen. The integer GPIO interface is deprecated
+> and users who need new features should seriously consider switching to
+> gpiod.
+>
 
---dngyMJhgXGAL5Gb8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The new API is unfortunately not equivalent to the old one. For example,
+if I understand correctly, gpiod_get is expected to be used instead of
+gpio_request_one. That may work nicely in a world with full DT or ACPI
+support, but doesn't work as well otherwise unless one drops the notion
+of using platform specific drivers built as modules (gpiod_add_lookup_table
+is not exported, and there is no remove function).
 
-On Thu, Jul 17, 2014 at 12:41:23PM +0200, Thierry Reding wrote:
-> On Thu, Jul 17, 2014 at 11:17:23AM +0100, Mark Brown wrote:
+Specifically, I don't see an easy way to convert mdio-gpio to use the new
+model, and that driver could really use support for an API which supports
+active-low pins. And even if gpiod_add_lookup_table was supported,
+converting a driver like this would be a major pain. Sure, it would be
+all easy if there would be a gpiod equivalent to gpio_request_one and
+gpio_request_array, but that is not the case. This makes converting
+drivers from the old to the new model challenging enough that I suspect
+that it won't really happen.
 
-> > Not so sure about that - what about requesting GPIOs for a bidirectional
-> > bus?  Thinking about SPI bitbanging here.
+Guenter
 
-> Wouldn't you want to use a different means that the gpiod_array_*() API
-> to handle those cases? gpiod_array_*() is probably most useful to handle
-> bulk operations on a set of GPIOs that do essentially the same thing. If
-> you get and then need to index into that array to handle them all
-> differently then you don't gain very much.
-
-For set and get, sure - but it's still useful to be able to do bulk
-requests for GPIOs especially since that's the only bit of the interface
-that requires error handling.
-
---dngyMJhgXGAL5Gb8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTx64BAAoJELSic+t+oim9mpwP/Ax9gXcoZuAluXZwvDnHbFaS
-G6uQ6ZfqxfuqD4QeQjX8BhBH9r5YIbFRwyUgwFAy/tumoOffgiYssvn/sjf3XK1j
-pIiaOVaL5C8ThTAf1d3Fad7M/h+kxdDcUus+v0JOoriqs+fa2vV6HdQBXQVdxra3
-8ZPARmMInw3tqbK8Qj0jmlUfVAOlv9f4O39kMtg0tHexuU1M6bILs9mClCmLlPp4
-EVlGlRWgCtpiO1ZXzCrakZE+VSlBvjTtTi+4PGUglMmuqBq/bPAIUdSUsO0x4s5S
-mL6R7o8qMPZM+uCBKOcxa61fUr2hnfoK2cIZiFdquWtphrjLzAlCzWnnGxynpSqR
-rhNBq8kKaUABpDfEIEnPiqF/+AdLdw65/zi41skQAbpAaImQZ+6b1c3zo3rQ3DUX
-qBtTzzzTmatOOOUyslvqwGkA0faWF8mRxUCzlytJ9CvBnabzg6E7L6IMTwWWsaSP
-zdS+axozOOh22WKPp9hHIQa64y9UphMz+S08WKfJObcM1Svtu1I8/QfFIbhMUqAB
-hzzZgcNOWCp4NIV2k7/3X5LxBL3MPSgbjTGMObXCl9RlHLtU/NWs0/kYknMJLTwc
-MDisdZfKsH3WI11x8VxoWZbAyQDv22PZjli8mflrP4GxPBhqVkng7IOmHsjIRv8j
-k1NQZzHfxrEkVhBosTN0
-=VQOW
------END PGP SIGNATURE-----
-
---dngyMJhgXGAL5Gb8--
