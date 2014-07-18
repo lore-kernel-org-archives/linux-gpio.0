@@ -1,73 +1,100 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] gpio: Add support for GPIOF_ACTIVE_LOW to gpio_request_one
-Date: Thu, 17 Jul 2014 07:34:11 -0700
-Message-ID: <53C7DEE3.6060107@roeck-us.net>
-References: <1405552260-30511-1-git-send-email-linux@roeck-us.net> <CAAVeFuLtUpKKVWAvJ-bw_b36jYFhrzaWeswnJKyehbwn=6y+4Q@mail.gmail.com> <53C76F3C.6090104@roeck-us.net> <CAAVeFuKC19AK8BjM7OBm=FWm0ua5YJXoGRkpOvM1TWkz9yOZ5Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH 2/3] gpio: zynq: Clear pending interrupt when enabling a IRQ
+Date: Fri, 18 Jul 2014 11:52:12 +0200
+Message-ID: <1405677133-8706-2-git-send-email-lars@metafoo.de>
+References: <1405677133-8706-1-git-send-email-lars@metafoo.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:51937 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932930AbaGQOeN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Jul 2014 10:34:13 -0400
-In-Reply-To: <CAAVeFuKC19AK8BjM7OBm=FWm0ua5YJXoGRkpOvM1TWkz9yOZ5Q@mail.gmail.com>
+Received: from smtp-out-181.synserver.de ([212.40.185.181]:1085 "EHLO
+	smtp-out-181.synserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755203AbaGRJwO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Jul 2014 05:52:14 -0400
+In-Reply-To: <1405677133-8706-1-git-send-email-lars@metafoo.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
 
-On 07/17/2014 12:26 AM, Alexandre Courbot wrote:
-> On Thu, Jul 17, 2014 at 3:37 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->> On 07/16/2014 11:09 PM, Alexandre Courbot wrote:
->>>
->>> On Thu, Jul 17, 2014 at 8:11 AM, Guenter Roeck <linux@roeck-us.net> wrote:
->>>>
->>>> The gpio include file and the gpio documentation declare and document
->>>> GPIOF_ACTIVE_LOW as one of the flags to be passed to gpio_request_one
->>>> and related functions. However, the flag is not evaluated or used.
->>>>
->>>> Check the flag in gpio_request_one and set the gpio internal flag
->>>> FLAG_ACTIVE_LOW if it is set.
->>>
->>>
->>> What is the point since the integer GPIO API has no clue of the
->>> active-low status of a GPIO? It is only used by the gpiod and sysfs
->>> interfaces.
->>>
->>
->> One can use gpio_request_one() to export a gpio pin to user space from
->> the kernel. That code path does use the flag, as you point out yourself
->> above.
->
-> Ok, in that case I suppose it makes sense.
->
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->
->> One could also argue that the integer gpio API _should_ support this as
->> well,
->> but that is a different question.
->
-> Probably not going to happen. The integer GPIO interface is deprecated
-> and users who need new features should seriously consider switching to
-> gpiod.
->
+The Zynq GPIO controller does not disable the interrupt detection when the
+interrupt is masked and only disables the propagation of the interrupt. This
+means when the controller detects an interrupt condition while the interrupt is
+logically disabled (and masked) it will propagate the recorded interrupt event
+once the interrupt is enabled. This will cause the interrupt consumer to see
+spurious interrupts to prevent this first make sure that the interrupt is not
+asserted and then enable it.
 
-The new API is unfortunately not equivalent to the old one. For example,
-if I understand correctly, gpiod_get is expected to be used instead of
-gpio_request_one. That may work nicely in a world with full DT or ACPI
-support, but doesn't work as well otherwise unless one drops the notion
-of using platform specific drivers built as modules (gpiod_add_lookup_table
-is not exported, and there is no remove function).
+E.g. when a interrupt is requested with request_irq() it will be configured
+according to the requested type (edge/level triggered, etc.) after that it will
+be enabled. But the detection circuit might have already registered a false
+interrupt before the interrupt type was correctly configured and once the
+interrupt is unmasked this false interrupt will be propagated and the interrupt
+handler for the just request interrupt will called.
 
-Specifically, I don't see an easy way to convert mdio-gpio to use the new
-model, and that driver could really use support for an API which supports
-active-low pins. And even if gpiod_add_lookup_table was supported,
-converting a driver like this would be a major pain. Sure, it would be
-all easy if there would be a gpiod equivalent to gpio_request_one and
-gpio_request_array, but that is not the case. This makes converting
-drivers from the old to the new model challenging enough that I suspect
-that it won't really happen.
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+---
+ drivers/gpio/gpio-zynq.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-Guenter
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 8e6a32f..fa3ad23 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -324,6 +324,48 @@ static void zynq_gpio_irq_unmask(struct irq_data *irq_data)
+ }
+ 
+ /**
++ * zynq_gpio_irq_ack - Acknowledge the interrupt of a gpio pin
++ * @irq_data:	irq data containing irq number of gpio pin for the interrupt
++ *		to ack
++ *
++ * This function calculates gpio pin number from irq number and sets the bit
++ * in the Interrupt Status Register of the corresponding bank, to ACK the irq.
++ */
++static void zynq_gpio_irq_ack(struct irq_data *irq_data)
++{
++	unsigned int device_pin_num, bank_num, bank_pin_num;
++	struct zynq_gpio *gpio = irq_data_get_irq_chip_data(irq_data);
++
++	device_pin_num = irq_data->hwirq;
++	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num);
++	writel_relaxed(BIT(bank_pin_num),
++		       gpio->base_addr + ZYNQ_GPIO_INTSTS_OFFSET(bank_num));
++}
++
++/**
++ * zynq_gpio_irq_enable - Enable the interrupts for a gpio pin
++ * @irq_data:	irq data containing irq number of gpio pin for the interrupt
++ *		to enable
++ *
++ * Clears the INTSTS bit and unmasks the given interrrupt.
++ */
++static void zynq_gpio_irq_enable(struct irq_data *irq_data)
++{
++	/*
++	 * The Zynq GPIO controller does not disable interrupt detection when
++	 * the interrupt is masked and only disables the propagation of the
++	 * interrupt. This means when the controller detects an interrupt
++	 * condition while the interrupt is logically disabled it will propagate
++	 * that interrupt event once the interrupt is enabled. This will cause
++	 * the interrupt consumer to see spurious interrupts to prevent this
++	 * first make sure that the interrupt is not asserted and then enable
++	 * it.
++	 */
++	zynq_gpio_irq_ack(irq_data);
++	zynq_gpio_irq_unmask(irq_data);
++}
++
++/**
+  * zynq_gpio_set_irq_type - Set the irq type for a gpio pin
+  * @irq_data:	irq data containing irq number of gpio pin
+  * @type:	interrupt type that is to be set for the gpio pin
+@@ -407,6 +449,7 @@ static int zynq_gpio_set_wake(struct irq_data *data, unsigned int on)
+ /* irq chip descriptor */
+ static struct irq_chip zynq_gpio_irqchip = {
+ 	.name		= DRIVER_NAME,
++	.irq_enable	= zynq_gpio_irq_enable,
+ 	.irq_mask	= zynq_gpio_irq_mask,
+ 	.irq_unmask	= zynq_gpio_irq_unmask,
+ 	.irq_set_type	= zynq_gpio_set_irq_type,
+-- 
+1.8.0
 
