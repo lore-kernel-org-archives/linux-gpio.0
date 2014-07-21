@@ -1,81 +1,54 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [alsa-devel] [PATCH 2/4] ASoC: s3c64xx/smartq: use dynamic registration
-Date: Mon, 21 Jul 2014 23:19:37 +0900
-Message-ID: <CAAVeFuJVPSxfWx-fw-duhO0KG=nG6AfgC1EGQcDw=ZtmjOZV-Q@mail.gmail.com>
-References: <CAAVeFuJEjMBX+7vsLk5zXV5Moy=WDmWidpVZjQ_=8VD45+QdHg@mail.gmail.com>
- <20140716075107.GG7978@ulmo> <53C63CBA.20809@codethink.co.uk>
- <CAAVeFuK55XzwaU+eOWhfUxJ7wEwGqxRCPDZKf+gVeMgeV8ys6g@mail.gmail.com>
- <20140717074444.GB18640@ulmo> <CAAVeFuJQUA+92jGpgDkyQ+=Qu+okBHzS5aFi7gmdwh+qcFp3fg@mail.gmail.com>
- <20140717101723.GR17528@sirena.org.uk> <20140717104121.GF17877@ulmo>
- <20140717110540.GS17528@sirena.org.uk> <CAAVeFuKQuvTH=5U8chZeMNLjCkfo78+_r2Gx5WUfy+q3F4QZpQ@mail.gmail.com>
- <20140721100412.GT17528@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH RESEND] gpio: Add support for GPIOF_ACTIVE_LOW to gpio_request_one functions
+Date: Mon, 21 Jul 2014 11:12:16 -0700
+Message-ID: <1405966336-6605-1-git-send-email-linux@roeck-us.net>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:56810 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932423AbaGUOT6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Jul 2014 10:19:58 -0400
-Received: by mail-vc0-f176.google.com with SMTP id id10so7522938vcb.21
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Jul 2014 07:19:57 -0700 (PDT)
-In-Reply-To: <20140721100412.GT17528@sirena.org.uk>
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:43373 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932320AbaGUSMb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Jul 2014 14:12:31 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Jones <rob.jones@codethink.co.uk>, Rojhalat Ibrahim <imr@rtschenk.de>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Guenter Roeck <linux@roeck-us.net>
 
-On Mon, Jul 21, 2014 at 7:04 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Mon, Jul 21, 2014 at 12:36:43PM +0900, Alexandre Courbot wrote:
->> On Thu, Jul 17, 2014 at 8:05 PM, Mark Brown <broonie@kernel.org> wrote:
->
->> > For set and get, sure - but it's still useful to be able to do bulk
->> > requests for GPIOs especially since that's the only bit of the interface
->> > that requires error handling.
->
->> I foresee many problems if people start using gpiod_array_get() as a
->> way to spare a few lines of error-checking code. First all the GPIOs
->> would end into an array instead of members with meaningful names -
->> unless they are moved later on, but doing so would add extra code and
->> somewhat kill the purpose. It also becomes more difficult to maintain
->> as you are dealing with array indexes to update all over the code.
->
-> You just need a few defines for the names, it's not a big deal.
->
->> Finally, it will make it more difficult to use gpiod_array_*() the way
->> it is intended to be used, as you would have to discriminate between
->> GPIOs of the same function and the rest by yourself.
->
-> Yes, you probably shouldn't mix and match here but that's fine.
->
->> Also, if such a convenience function is legitimate for GPIO, shouldn't
->> it also apply to other sub-systems? E.g. regulator_array_get()?
->
-> It's certainly a totally reasonable and expected way of using
-> regulator_bulk_get().
->
->> Maybe I am missing your point, but I still think some error-handling
->> code really doesn't hurt here, and the few drivers that would actually
->> benefit from a more automated GPIO request error handling can easily
->> implement it themselves. Let's keep gpiod_array_*() single-purposed
->> and to the point.
->
-> I'm not sure I see the massive complication TBH - it's not so much about
-> complexity as it is about reducing the amount of boilerplate that people
-> need to get right.
+The gpio include file and the gpio documentation declare and document
+GPIOF_ACTIVE_LOW as one of the flags to be passed to gpio_request_one
+and related functions. However, the flag is not evaluated or used.
 
-I guess our disagreement came from the fact that we want the same
-function to perform two different things. GPIOs are different from
-regulators in that the former are really requested using a (dev,
-function, index) vs. a (dev, function) tuple for regulators. I want a
-convenience function to easily request all the GPIOs that match (dev,
-function) so that functionally identical GPIOs can be manipulated as
-an "atomic" set using the rest of the gpiod_array API (which would
-make no sense for regulators which have no "index". You want an
-equivalent to regulator_bulk_get() so a driver can conveniently
-request all its GPIOs no matter the function they fullfil.
+This can cause problems in at least two areas: First, the same API can
+be used to auto-export pins to user space. The missing support for
+GPIOF_ACTIVE_LOW results in unexpected behavior for such auto-exported
+pins. Second, the requested gpio pin can be convered for use by
+gpiod functions with gpio_to_desc(). While gpio API functions do not
+support GPIOF_ACTIVE_LOW, gpiod functions do, which again results in
+unexpected behavior.
 
-These should really be two different functions for two different
-use-cases - gpiod_array_get() that returns an array suitable for being
-manipulated using the rest of the gpiod_array API ; gpiod_bulk_get()
-that takes the equivalent of regulator_bulk_data for GPIOs and fills
-it the same way.
+Check the flag in gpio_request_one and set the gpio internal flag
+FLAG_ACTIVE_LOW if it is set to address those problems.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+Resent with added rationale.
+
+ drivers/gpio/gpiolib.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 2ebc907..43d9e34 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1842,6 +1842,9 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
+ 	if (flags & GPIOF_OPEN_SOURCE)
+ 		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
+ 
++	if (flags & GPIOF_ACTIVE_LOW)
++		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
++
+ 	if (flags & GPIOF_DIR_IN)
+ 		err = gpiod_direction_input(desc);
+ 	else
+-- 
+1.9.1
+
