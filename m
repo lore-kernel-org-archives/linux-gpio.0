@@ -1,96 +1,60 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/3] gpio: zynq: Take bank offset into account when
- reporting a IRQ
-Date: Sat, 19 Jul 2014 13:14:02 +0900
-Message-ID: <CAAVeFuLmLnbnnW50ne77SNAUwbu4pF=jycQ0_7ZgBH+i2uegHA@mail.gmail.com>
-References: <1405677133-8706-1-git-send-email-lars@metafoo.de>
+Subject: Re: [alsa-devel] [PATCH 2/4] ASoC: s3c64xx/smartq: use dynamic registration
+Date: Mon, 21 Jul 2014 12:36:43 +0900
+Message-ID: <CAAVeFuKQuvTH=5U8chZeMNLjCkfo78+_r2Gx5WUfy+q3F4QZpQ@mail.gmail.com>
+References: <CAAVeFuLfgG6W1qK2ATTbq_ydEOjUuM8Wvftm6N1RK3Kz_y1zHg@mail.gmail.com>
+ <20140716071237.GA7978@ulmo> <CAAVeFuJEjMBX+7vsLk5zXV5Moy=WDmWidpVZjQ_=8VD45+QdHg@mail.gmail.com>
+ <20140716075107.GG7978@ulmo> <53C63CBA.20809@codethink.co.uk>
+ <CAAVeFuK55XzwaU+eOWhfUxJ7wEwGqxRCPDZKf+gVeMgeV8ys6g@mail.gmail.com>
+ <20140717074444.GB18640@ulmo> <CAAVeFuJQUA+92jGpgDkyQ+=Qu+okBHzS5aFi7gmdwh+qcFp3fg@mail.gmail.com>
+ <20140717101723.GR17528@sirena.org.uk> <20140717104121.GF17877@ulmo> <20140717110540.GS17528@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:58115 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750773AbaGSEOX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Jul 2014 00:14:23 -0400
-Received: by mail-vc0-f174.google.com with SMTP id la4so8719405vcb.5
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Jul 2014 21:14:22 -0700 (PDT)
-In-Reply-To: <1405677133-8706-1-git-send-email-lars@metafoo.de>
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:54981 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751708AbaGUDhE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Jul 2014 23:37:04 -0400
+Received: by mail-vc0-f178.google.com with SMTP id la4so11044263vcb.23
+        for <linux-gpio@vger.kernel.org>; Sun, 20 Jul 2014 20:37:03 -0700 (PDT)
+In-Reply-To: <20140717110540.GS17528@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Jones <rob.jones@codethink.co.uk>, Rojhalat Ibrahim <imr@rtschenk.de>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Jul 18, 2014 at 6:52 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
-> When looking up the IRQ the bank offset needs to be taken into account.
-> Otherwise interrupts for banks other than bank 0 get incorrectly reported as
-> interrupts for bank 0.
+On Thu, Jul 17, 2014 at 8:05 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, Jul 17, 2014 at 12:41:23PM +0200, Thierry Reding wrote:
+>> On Thu, Jul 17, 2014 at 11:17:23AM +0100, Mark Brown wrote:
 >
-> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-> ---
->  drivers/gpio/gpio-zynq.c | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
+>> > Not so sure about that - what about requesting GPIOs for a bidirectional
+>> > bus?  Thinking about SPI bitbanging here.
 >
-> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-> index c0c53fd..8e6a32f 100644
-> --- a/drivers/gpio/gpio-zynq.c
-> +++ b/drivers/gpio/gpio-zynq.c
-> @@ -136,6 +136,29 @@ static inline void zynq_gpio_get_bank_pin(unsigned int pin_num,
->  }
+>> Wouldn't you want to use a different means that the gpiod_array_*() API
+>> to handle those cases? gpiod_array_*() is probably most useful to handle
+>> bulk operations on a set of GPIOs that do essentially the same thing. If
+>> you get and then need to index into that array to handle them all
+>> differently then you don't gain very much.
 >
->  /**
-> + * zynq_gpio_get_bank_pin - Gets the pin number of the first pin in a bank
-> + * @bank: The bank for which to return the first pin number
-> + *
-> + * Returns the pin number of the first pin in the specified bank
-> + */
-> +static int zynq_gpio_get_bank_offset(unsigned int bank)
-> +{
-> +       switch (bank) {
-> +       case 0:
-> +               return ZYNQ_GPIO_BANK0_PIN_MIN;
-> +       case 1:
-> +               return ZYNQ_GPIO_BANK1_PIN_MIN;
-> +       case 2:
-> +               return ZYNQ_GPIO_BANK2_PIN_MIN;
-> +       case 3:
-> +               return ZYNQ_GPIO_BANK3_PIN_MIN;
-> +       default:
-> +               /* We'll never get here */
-> +               return -1;
-> +       }
-> +}
+> For set and get, sure - but it's still useful to be able to do bulk
+> requests for GPIOs especially since that's the only bit of the interface
+> that requires error handling.
 
-Wouldn't this be handled better by a simple, static array? I.e.
+I foresee many problems if people start using gpiod_array_get() as a
+way to spare a few lines of error-checking code. First all the GPIOs
+would end into an array instead of members with meaningful names -
+unless they are moved later on, but doing so would add extra code and
+somewhat kill the purpose. It also becomes more difficult to maintain
+as you are dealing with array indexes to update all over the code.
+Finally, it will make it more difficult to use gpiod_array_*() the way
+it is intended to be used, as you would have to discriminate between
+GPIOs of the same function and the rest by yourself.
 
-static int zynq_gpio_bank_offset[] = {
-        ZYNQ_GPIO_BANK0_PIN_MIN,
-        ZYNQ_GPIO_BANK1_PIN_MIN,
-        ZYNQ_GPIO_BANK2_PIN_MIN,
-        ZYNQ_GPIO_BANK3_PIN_MIN
-};
+Also, if such a convenience function is legitimate for GPIO, shouldn't
+it also apply to other sub-systems? E.g. regulator_array_get()?
 
-...
-
-        int bank offset = zynq_gpio_bank_offset(bank_num);
-
-> +
-> +/**
->   * zynq_gpio_get_value - Get the state of the specified pin of GPIO device
->   * @chip:      gpio_chip instance to be worked on
->   * @pin:       gpio pin number within the device
-> @@ -419,11 +442,12 @@ static void zynq_gpio_irqhandler(unsigned int irq, struct irq_desc *desc)
->                 if (int_sts) {
->                         int offset;
->                         unsigned long pending = int_sts;
-> +                       int bank_offset = zynq_gpio_get_bank_offset(bank_num);
->
->                         for_each_set_bit(offset, &pending, 32) {
->                                 unsigned int gpio_irq =
->                                         irq_find_mapping(gpio->chip.irqdomain,
-> -                                                       offset);
-> +                                                        offset + bank_offset);
->                                 generic_handle_irq(gpio_irq);
->                         }
->
-> --
-> 1.8.0
->
+Maybe I am missing your point, but I still think some error-handling
+code really doesn't hurt here, and the few drivers that would actually
+benefit from a more automated GPIO request error handling can easily
+implement it themselves. Let's keep gpiod_array_*() single-purposed
+and to the point.
