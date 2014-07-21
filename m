@@ -1,112 +1,126 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/4] ASoC: s3c64xx/smartq: use dynamic
- registration
-Date: Mon, 21 Jul 2014 11:04:12 +0100
-Message-ID: <20140721100412.GT17528@sirena.org.uk>
-References: <CAAVeFuJEjMBX+7vsLk5zXV5Moy=WDmWidpVZjQ_=8VD45+QdHg@mail.gmail.com>
- <20140716075107.GG7978@ulmo> <53C63CBA.20809@codethink.co.uk>
- <CAAVeFuK55XzwaU+eOWhfUxJ7wEwGqxRCPDZKf+gVeMgeV8ys6g@mail.gmail.com>
- <20140717074444.GB18640@ulmo>
- <CAAVeFuJQUA+92jGpgDkyQ+=Qu+okBHzS5aFi7gmdwh+qcFp3fg@mail.gmail.com>
- <20140717101723.GR17528@sirena.org.uk>
- <20140717104121.GF17877@ulmo>
- <20140717110540.GS17528@sirena.org.uk>
- <CAAVeFuKQuvTH=5U8chZeMNLjCkfo78+_r2Gx5WUfy+q3F4QZpQ@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v1] gpio: keystone: add dsp gpio controller driver
+Date: Mon, 21 Jul 2014 17:20:11 +0300
+Message-ID: <53CD219B.1060306@ti.com>
+References: <1405507426-18992-1-git-send-email-grygorii.strashko@ti.com> <53C64E78.4030506@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5141549721771214540=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAAVeFuKQuvTH=5U8chZeMNLjCkfo78+_r2Gx5WUfy+q3F4QZpQ@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Lars-Peter Clausen <lars@metafoo.de>, Rojhalat Ibrahim <imr@rtschenk.de>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Rob Jones <rob.jones@codethink.co.uk>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-gpio@vger.kernel.org
-
-
---===============5141549721771214540==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="N/EvDld9rH7KvG42"
-Content-Disposition: inline
-
-
---N/EvDld9rH7KvG42
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jul 21, 2014 at 12:36:43PM +0900, Alexandre Courbot wrote:
-> On Thu, Jul 17, 2014 at 8:05 PM, Mark Brown <broonie@kernel.org> wrote:
-
-> > For set and get, sure - but it's still useful to be able to do bulk
-> > requests for GPIOs especially since that's the only bit of the interface
-> > that requires error handling.
-
-> I foresee many problems if people start using gpiod_array_get() as a
-> way to spare a few lines of error-checking code. First all the GPIOs
-> would end into an array instead of members with meaningful names -
-> unless they are moved later on, but doing so would add extra code and
-> somewhat kill the purpose. It also becomes more difficult to maintain
-> as you are dealing with array indexes to update all over the code.
-
-You just need a few defines for the names, it's not a big deal.
-
-> Finally, it will make it more difficult to use gpiod_array_*() the way
-> it is intended to be used, as you would have to discriminate between
-> GPIOs of the same function and the rest by yourself.
-
-Yes, you probably shouldn't mix and match here but that's fine.
-
-> Also, if such a convenience function is legitimate for GPIO, shouldn't
-> it also apply to other sub-systems? E.g. regulator_array_get()?
-
-It's certainly a totally reasonable and expected way of using
-regulator_bulk_get().
-
-> Maybe I am missing your point, but I still think some error-handling
-> code really doesn't hurt here, and the few drivers that would actually
-> benefit from a more automated GPIO request error handling can easily
-> implement it themselves. Let's keep gpiod_array_*() single-purposed
-> and to the point.
-
-I'm not sure I see the massive complication TBH - it's not so much about
-complexity as it is about reducing the amount of boilerplate that people
-need to get right.
-
---N/EvDld9rH7KvG42
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTzOWSAAoJELSic+t+oim95aYQAJxhiq0lMHIGSNpO1v54I8f2
-rwpFeIcEvK0ymSAJoGHenAxqYP0DL57bD4JTkYIhtLw3bhc2poNxWtp4ZHoehtTc
-LnvkEOwe07+1CenZJYaA5O+hJl74Ehiy9SMt5iznn+HJ/J+7PKhQyBslmY5dO4If
-dwCMqC1HJ52d6s9mpiZ/qjTvJxWikkwZCZuHcF9RkLEPNXP7V1l7JDZjjepxEQPP
-Jn4Hx+PNndFyt8jQiW0POsVgM+fEroVGhgQcDQRPpYnFO1OGYDSGl/ejsr6J/j4o
-Ly+IvabRi/2dQh1CDK4yr5KV7Rge/JUsbX2KYgvJrgYinrppF9o3d73xISTnoVPy
-mPzaZQ4ioWXNlwY/w9zors70sNRY8Fpu5VNC8u0+9qFkiP/ls97slbcnW0xruRYz
-AgUjpjGOq3hEmFMBjh4w2KNYttRlhR8kl4mIYMaaRFDDjvX3OPKNv38q4WXfvEr3
-i9XBvuStxiHGVCinCoovhzvpL/Lq/Pa8aUM8FCeU87bLUxCm3eLyG5XoNPlCgXzU
-J/IHyX2Lxz3T9btSX93QwC3lafBtY0AkVfzUvzbpqxf2izlo4xDtErl236uh0ERB
-zQl7A1wN5sOivjD28J+fQLlpj1r7fJHD5AjbknV+cQiv/lMdHHRTxtYcfSYeLtAt
-OKRpy20tn7zhTPimqhHP
-=oNtk
------END PGP SIGNATURE-----
-
---N/EvDld9rH7KvG42--
-
---===============5141549721771214540==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:41103 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932153AbaGUNfA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 21 Jul 2014 09:35:00 -0400
+In-Reply-To: <53C64E78.4030506@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Varka Bhadram <varkabhadram@gmail.com>, santosh.shilimkar@ti.com, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: ivan.khoronzhuk@ti.com, m-karicheri2@ti.com, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hi Varka Bhadram,
 
---===============5141549721771214540==--
+On 07/16/2014 01:05 PM, Varka Bhadram wrote:
+> On 07/16/2014 04:13 PM, Grygorii Strashko wrote:
+>> From: Murali Karicheri <m-karicheri2@ti.com>
+>>
+>> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
+>> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ
+>> signals for
+>> each DSP core. This is one of the component used by the IPC mechanism
+>> used
+>> on Keystone SOCs.
+>>
+>> Keystone 2 DSP GPIO controller has specific features:
+>> - each GPIO can be configured only as output pin;
+>> - setting GPIO value to 1 causes IRQ generation on target DSP core;
+>> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+>>    pending.
+>>
+>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> ---
+>>   .../devicetree/bindings/gpio/gpio-keystone.txt     |   43 ++++++
+>>   drivers/gpio/Kconfig                               |    8 ++
+>>   drivers/gpio/Makefile                              |    1 +
+>>   drivers/gpio/gpio-keystone.c                       |  138
+>> ++++++++++++++++++++
+>>   4 files changed, 190 insertions(+)
+>>   create mode 100644
+>> Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+>>   create mode 100644 drivers/gpio/gpio-keystone.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+>> b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+>> new file mode 100644
+>> index 0000000..4f92af4
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+>> @@ -0,0 +1,43 @@
+>> +Keystone 2 DSP GPIO controller bindings
+>> +
+>> +HOST OS userland running on ARM can send interrupts to DSP cores using
+>> +the DSP GPIO controller IP. It provides 28 IRQ signals per each DSP
+>> core.
+>> +This is one of the component used by the IPC mechanism used on
+>> Keystone SOCs.
+>> +
+>> +For example TCI6638K2K SoC has 8 DSP GPIO controllers:
+>> + - 8 for C66x CorePacx CPUs 0-7
+>> +
+>> +Keystone 2 DSP GPIO controller has specific features:
+>> +- each GPIO can be configured only as output pin;
+>> +- setting GPIO value to 1 causes IRQ generation on target DSP core;
+>> +- reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+>> +  pending.
+>> +
+>> +Required Properties:
+>> +- compatible: should be "ti,keystone-dsp-gpio"
+>> +
+>> +- ti,syscon-dev:    phandle/offset pair. The phandle to syscon used to
+>> +            access device state control registers and the offset
+>> +            in order to use block of device's specific registers.
+>> +
+>> +- gpio-controller : Marks the device node as a gpio controller.
+>> +
+>> +- #gpio-cells : Should be one.
+>> +                See gpio.txt in this directory for a of the cells format
+>
+> All the properties not properly aligned. It would be more readable if
+>
+> Required Properties:
+> - compatible        : should be "ti,keystone-dsp-gpio"
+> - ti,syscon-dev        : phandle/offset pair. The phandle to syscon used to
+>                access device state control registers and the offset
+>                in order to use block of device's specific registers.
+> - gpio-controller    : Marks the device node as a gpio controller.
+> - #gpio-cells        : Should be one.
+>                See gpio.txt in this directory for a of the cells format
+
+Unfortunately, the format of DT bindings description is not 
+standardized, but i will try to beautify it :)
+
+>
+>> +
+>> +Please refer to gpio.txt in this directory for details of the common
+>> GPIO
+>> +bindings used by client devices.
+>> +
+>
+> (...)
+>
+>> +static struct platform_driver keystone_gpio_driver = {
+>> +    .probe        = keystone_gpio_probe,
+>> +    .remove        = keystone_gpio_remove,
+>> +    .driver        = {
+>> +        .name    = "keystone-dsp-gpio",
+>> +        .owner    = THIS_MODULE,
+>
+> We can drop owner field...  :-)  .It will update by module_platform_driver
+>
+>
+
+Thanks for your comments - I'll wait a bit and re-send.
+
+Regards,
+- grygorii
+
