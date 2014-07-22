@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 3/5] gpio: make gpiochip_get_desc() gpiolib-private
-Date: Tue, 22 Jul 2014 16:17:41 +0900
-Message-ID: <1406013463-19218-4-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 4/5] gpio: remove gpiod_lock/unlock_as_irq()
+Date: Tue, 22 Jul 2014 16:17:42 +0900
+Message-ID: <1406013463-19218-5-git-send-email-acourbot@nvidia.com>
 References: <1406013463-19218-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,69 +12,209 @@ To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
-As GPIO descriptors are not going to remain unique anymore, having this
-function public is not safe. Restrain its use to gpiolib since we have
-no user outside of it.
+gpio_lock/unlock_as_irq() are working with (chip, offset) arguments and
+are thus not using the old integer namespace. Therefore, there is no
+reason to have gpiod variants of these functions working with
+descriptors, especially since the (chip, offset) tuple is more suitable
+to the users of these functions (GPIO drivers, whereas GPIO descriptors
+are targeted at GPIO consumers).
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpio/gpiolib-of.c   | 2 +-
- drivers/gpio/gpiolib.c      | 1 -
- drivers/gpio/gpiolib.h      | 2 ++
- include/linux/gpio/driver.h | 3 ---
- 4 files changed, 3 insertions(+), 5 deletions(-)
+ Documentation/gpio/driver.txt |  4 ++--
+ drivers/gpio/gpiolib-acpi.c   |  6 +++---
+ drivers/gpio/gpiolib-legacy.c | 12 ------------
+ drivers/gpio/gpiolib-sysfs.c  |  4 ++--
+ drivers/gpio/gpiolib.c        | 30 ++++++++++++++++--------------
+ include/asm-generic/gpio.h    |  3 ---
+ include/linux/gpio/driver.h   |  4 ++--
+ 7 files changed, 25 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 3e2fae205bee..7cfdc2278905 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -23,7 +23,7 @@
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/slab.h>
+diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+index fa9a0a8b3734..224dbbcd1804 100644
+--- a/Documentation/gpio/driver.txt
++++ b/Documentation/gpio/driver.txt
+@@ -157,12 +157,12 @@ Locking IRQ usage
+ Input GPIOs can be used as IRQ signals. When this happens, a driver is requested
+ to mark the GPIO as being used as an IRQ:
  
--struct gpio_desc;
-+#include "gpiolib.h"
+-	int gpiod_lock_as_irq(struct gpio_desc *desc)
++	int gpio_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
  
- /* Private data structure for of_gpiochip_find_and_xlate */
- struct gg_data {
+ This will prevent the use of non-irq related GPIO APIs until the GPIO IRQ lock
+ is released:
+ 
+-	void gpiod_unlock_as_irq(struct gpio_desc *desc)
++	void gpio_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
+ 
+ When implementing an irqchip inside a GPIO driver, these two functions should
+ typically be called in the .startup() and .shutdown() callbacks from the
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 4a987917c186..d2e8600df02c 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -157,7 +157,7 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+ 
+ 	gpiod_direction_input(desc);
+ 
+-	ret = gpiod_lock_as_irq(desc);
++	ret = gpio_lock_as_irq(chip, pin);
+ 	if (ret) {
+ 		dev_err(chip->dev, "Failed to lock GPIO as interrupt\n");
+ 		goto fail_free_desc;
+@@ -212,7 +212,7 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+ fail_free_event:
+ 	kfree(event);
+ fail_unlock_irq:
+-	gpiod_unlock_as_irq(desc);
++	gpio_unlock_as_irq(chip, pin);
+ fail_free_desc:
+ 	gpiochip_free_own_desc(desc);
+ 
+@@ -263,7 +263,7 @@ static void acpi_gpiochip_free_interrupts(struct acpi_gpio_chip *acpi_gpio)
+ 		desc = gpiochip_get_desc(chip, event->pin);
+ 		if (WARN_ON(IS_ERR(desc)))
+ 			continue;
+-		gpiod_unlock_as_irq(desc);
++		gpio_unlock_as_irq(chip, event->pin);
+ 		gpiochip_free_own_desc(desc);
+ 		list_del(&event->node);
+ 		kfree(event);
+diff --git a/drivers/gpio/gpiolib-legacy.c b/drivers/gpio/gpiolib-legacy.c
+index eb5a4e2cee85..c3e3823a40b9 100644
+--- a/drivers/gpio/gpiolib-legacy.c
++++ b/drivers/gpio/gpiolib-legacy.c
+@@ -97,15 +97,3 @@ void gpio_free_array(const struct gpio *array, size_t num)
+ 		gpio_free((array++)->gpio);
+ }
+ EXPORT_SYMBOL_GPL(gpio_free_array);
+-
+-int gpio_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
+-{
+-	return gpiod_lock_as_irq(gpiochip_get_desc(chip, offset));
+-}
+-EXPORT_SYMBOL_GPL(gpio_lock_as_irq);
+-
+-void gpio_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
+-{
+-	return gpiod_unlock_as_irq(gpiochip_get_desc(chip, offset));
+-}
+-EXPORT_SYMBOL_GPL(gpio_unlock_as_irq);
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index f150aa288fa1..be45a9283c28 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -161,7 +161,7 @@ static int gpio_setup_irq(struct gpio_desc *desc, struct device *dev,
+ 	desc->flags &= ~GPIO_TRIGGER_MASK;
+ 
+ 	if (!gpio_flags) {
+-		gpiod_unlock_as_irq(desc);
++		gpio_unlock_as_irq(desc->chip, gpio_chip_hwgpio(desc));
+ 		ret = 0;
+ 		goto free_id;
+ 	}
+@@ -200,7 +200,7 @@ static int gpio_setup_irq(struct gpio_desc *desc, struct device *dev,
+ 	if (ret < 0)
+ 		goto free_id;
+ 
+-	ret = gpiod_lock_as_irq(desc);
++	ret = gpio_lock_as_irq(desc->chip, gpio_chip_hwgpio(desc));
+ 	if (ret < 0) {
+ 		gpiod_warn(desc, "failed to flag the GPIO for IRQ\n");
+ 		goto free_id;
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index c5509359ba88..38d176e31379 100644
+index 38d176e31379..7582207c92e7 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -82,7 +82,6 @@ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
- 
- 	return &chip->desc[hwnum];
- }
--EXPORT_SYMBOL_GPL(gpiochip_get_desc);
+@@ -1428,44 +1428,46 @@ int gpiod_to_irq(const struct gpio_desc *desc)
+ EXPORT_SYMBOL_GPL(gpiod_to_irq);
  
  /**
-  * Convert a GPIO descriptor to the integer namespace.
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 98020c393eb3..acbb9335f08c 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -51,6 +51,8 @@ void gpiochip_free_own_desc(struct gpio_desc *desc);
- struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
- 		   const char *list_name, int index, enum of_gpio_flags *flags);
+- * gpiod_lock_as_irq() - lock a GPIO to be used as IRQ
+- * @gpio: the GPIO line to lock as used for IRQ
++ * gpio_lock_as_irq() - lock a GPIO to be used as IRQ
++ * @chip: the chip the GPIO to lock belongs to
++ * @offset: the offset of the GPIO to lock as IRQ
+  *
+  * This is used directly by GPIO drivers that want to lock down
+  * a certain GPIO line to be used for IRQs.
+  */
+-int gpiod_lock_as_irq(struct gpio_desc *desc)
++int gpio_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+-	if (!desc)
++	if (offset >= chip->ngpio)
+ 		return -EINVAL;
  
-+struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip, u16 hwnum);
-+
- extern struct spinlock gpio_lock;
- extern struct list_head gpio_chips;
+-	if (test_bit(FLAG_IS_OUT, &desc->flags)) {
+-		gpiod_err(desc,
++	if (test_bit(FLAG_IS_OUT, &chip->desc[offset].flags)) {
++		chip_err(chip,
+ 			  "%s: tried to flag a GPIO set as output for IRQ\n",
+ 			  __func__);
+ 		return -EIO;
+ 	}
  
+-	set_bit(FLAG_USED_AS_IRQ, &desc->flags);
++	set_bit(FLAG_USED_AS_IRQ, &chip->desc[offset].flags);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(gpiod_lock_as_irq);
++EXPORT_SYMBOL_GPL(gpio_lock_as_irq);
+ 
+ /**
+- * gpiod_unlock_as_irq() - unlock a GPIO used as IRQ
+- * @gpio: the GPIO line to unlock from IRQ usage
++ * gpio_unlock_as_irq() - unlock a GPIO used as IRQ
++ * @chip: the chip the GPIO to lock belongs to
++ * @offset: the offset of the GPIO to lock as IRQ
+  *
+  * This is used directly by GPIO drivers that want to indicate
+  * that a certain GPIO is no longer used exclusively for IRQ.
+  */
+-void gpiod_unlock_as_irq(struct gpio_desc *desc)
++void gpio_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+-	if (!desc)
++	if (offset >= chip->ngpio)
+ 		return;
+ 
+-	clear_bit(FLAG_USED_AS_IRQ, &desc->flags);
++	clear_bit(FLAG_USED_AS_IRQ, &chip->desc[offset].flags);
+ }
+-EXPORT_SYMBOL_GPL(gpiod_unlock_as_irq);
++EXPORT_SYMBOL_GPL(gpio_unlock_as_irq);
+ 
+ /**
+  * gpiod_get_raw_value_cansleep() - return a gpio's raw value
+diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
+index 23e364538ab5..c1d4105e1c1d 100644
+--- a/include/asm-generic/gpio.h
++++ b/include/asm-generic/gpio.h
+@@ -110,9 +110,6 @@ static inline int __gpio_to_irq(unsigned gpio)
+ 	return gpiod_to_irq(gpio_to_desc(gpio));
+ }
+ 
+-extern int gpio_lock_as_irq(struct gpio_chip *chip, unsigned int offset);
+-extern void gpio_unlock_as_irq(struct gpio_chip *chip, unsigned int offset);
+-
+ extern int gpio_request_one(unsigned gpio, unsigned long flags, const char *label);
+ extern int gpio_request_array(const struct gpio *array, size_t num);
+ extern void gpio_free_array(const struct gpio *array, size_t num);
 diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 573e4f3243d0..4dc79714c136 100644
+index 4dc79714c136..7b8b00235d29 100644
 --- a/include/linux/gpio/driver.h
 +++ b/include/linux/gpio/driver.h
-@@ -151,9 +151,6 @@ void gpiod_unlock_as_irq(struct gpio_desc *desc);
+@@ -146,8 +146,8 @@ extern struct gpio_chip *gpiochip_find(void *data,
+ 			      int (*match)(struct gpio_chip *chip, void *data));
+ 
+ /* lock/unlock as IRQ */
+-int gpiod_lock_as_irq(struct gpio_desc *desc);
+-void gpiod_unlock_as_irq(struct gpio_desc *desc);
++int gpio_lock_as_irq(struct gpio_chip *chip, unsigned int offset);
++void gpio_unlock_as_irq(struct gpio_chip *chip, unsigned int offset);
  
  struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
  
--struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
--				    u16 hwnum);
--
- enum gpio_lookup_flags {
- 	GPIO_ACTIVE_HIGH = (0 << 0),
- 	GPIO_ACTIVE_LOW = (1 << 0),
 -- 
 2.0.1
