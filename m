@@ -1,66 +1,24 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH 5/5] gpio: move gpio_ensure_requested() into legacy C
- file
-Date: Tue, 22 Jul 2014 14:00:30 +0530
-Message-ID: <53CE2126.9000804@gmail.com>
-References: <1406013463-19218-1-git-send-email-acourbot@nvidia.com> <1406013463-19218-6-git-send-email-acourbot@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: remove all usage of gpio_remove ret val in driver/pinctl
+Date: Tue, 22 Jul 2014 16:34:53 +0200
+Message-ID: <CACRpkdZTPNDJc0bTtoTo0cY44Si_eS5Du7cFrK0VgBH5guzL0A@mail.gmail.com>
+References: <CACRpkda6mzVdaN0cvOxpbsxWyCv2nGyDXOjZg_5aT8u7SSQeUw@mail.gmail.com>
+	<1405197014-25225-1-git-send-email-berthe.ab@gmail.com>
+	<1405197014-25225-3-git-send-email-berthe.ab@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:37890 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbaGVIbx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Jul 2014 04:31:53 -0400
-In-Reply-To: <1406013463-19218-6-git-send-email-acourbot@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1405197014-25225-3-git-send-email-berthe.ab@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: abdoulaye berthe <berthe.ab@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Buesch <m@bues.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
 
-On 07/22/2014 12:47 PM, Alexandre Courbot wrote:
+On Sat, Jul 12, 2014 at 10:30 PM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
 
-(...)
+> Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
 
-> +	if (WARN(test_and_set_bit(FLAG_REQUESTED, &desc->flags) == 0,
-> +			"autorequest GPIO-%d\n", desc_to_gpio(desc))) {
-> +		if (!try_module_get(chip->owner)) {
-> +			gpiod_err(desc, "%s: module can't be gotten\n",
-> +					__func__);
+This patch applied to the pin control git tree.
 
-Should match open parenthesis '('
-
-	gpiod_err(desc, "%s: module can't be gotten\n",
-		  __func__);
-
-> +			clear_bit(FLAG_REQUESTED, &desc->flags);
-> +			/* lose */
-> +			err = -EIO;
-> +			goto end;
-> +		}
-> +		desc->label = "[auto]";
-> +		/* caller must chip->request() w/o spinlock */
-> +		if (chip->request)
-> +			request = true;
-> +	}
-> +
-> +end:
-> +	spin_unlock_irqrestore(&gpio_lock, flags);
-> +
-> +	if (request) {
-> +		might_sleep_if(chip->can_sleep);
-> +		err = chip->request(chip, gpio_chip_hwgpio(desc));
-> +
-> +		if (err < 0) {
-> +			gpiod_dbg(desc, "%s: chip request fail, %d\n",
-> +					__func__, err);
-
-Dto..
-
-(...)
-
-
--- 
-Regards,
-Varka Bhadram.
-
+Yours,
+Linus Walleij
