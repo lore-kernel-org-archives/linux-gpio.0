@@ -1,54 +1,87 @@
 From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH RESEND] gpio: Add support for GPIOF_ACTIVE_LOW to gpio_request_one functions
-Date: Mon, 21 Jul 2014 11:12:16 -0700
-Message-ID: <1405966336-6605-1-git-send-email-linux@roeck-us.net>
+Subject: [PATCH] gpiolib: Export gpiochip_request_own_desc and gpiochip_free_own_desc
+Date: Mon, 21 Jul 2014 21:26:34 -0700
+Message-ID: <1406003194-20351-1-git-send-email-linux@roeck-us.net>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:43373 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932320AbaGUSMb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Jul 2014 14:12:31 -0400
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:35297 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750785AbaGVE0u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Jul 2014 00:26:50 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-The gpio include file and the gpio documentation declare and document
-GPIOF_ACTIVE_LOW as one of the flags to be passed to gpio_request_one
-and related functions. However, the flag is not evaluated or used.
+Both functions were introduced to let gpio drivers request their own
+gpio pins. Without exporting the functions, this can however only be
+used by gpio drivers built into the kernel.
 
-This can cause problems in at least two areas: First, the same API can
-be used to auto-export pins to user space. The missing support for
-GPIOF_ACTIVE_LOW results in unexpected behavior for such auto-exported
-pins. Second, the requested gpio pin can be convered for use by
-gpiod functions with gpio_to_desc(). While gpio API functions do not
-support GPIOF_ACTIVE_LOW, gpiod functions do, which again results in
-unexpected behavior.
+Secondary impact is that the functions can not currently be used by
+platform initialization code associated with the gpio-pca953x driver.
+This code permits auto-export of gpio pins through platform data, but
+if this functionality is used, the module can no longer be unloaded due
+to the problem solved with the introduction of gpiochip_request_own_desc
+and gpiochip_free_own_desc.
 
-Check the flag in gpio_request_one and set the gpio internal flag
-FLAG_ACTIVE_LOW if it is set to address those problems.
+Export both function so they can be used from modules and from
+platform initialization code.
 
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
-Resent with added rationale.
-
- drivers/gpio/gpiolib.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpiolib.c        | 2 ++
+ drivers/gpio/gpiolib.h        | 3 ---
+ include/linux/gpio/consumer.h | 3 +++
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 2ebc907..43d9e34 100644
+index 43d9e34..04c647e 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -1842,6 +1842,9 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
- 	if (flags & GPIOF_OPEN_SOURCE)
- 		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
+@@ -1953,6 +1953,7 @@ int gpiochip_request_own_desc(struct gpio_desc *desc, const char *label)
  
-+	if (flags & GPIOF_ACTIVE_LOW)
-+		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 	return __gpiod_request(desc, label);
+ }
++EXPORT_SYMBOL(gpiochip_request_own_desc);
+ 
+ /**
+  * gpiochip_free_own_desc - Free GPIO requested by the chip driver
+@@ -1966,6 +1967,7 @@ void gpiochip_free_own_desc(struct gpio_desc *desc)
+ 	if (desc)
+ 		__gpiod_free(desc);
+ }
++EXPORT_SYMBOL(gpiochip_free_own_desc);
+ 
+ /* Drivers MUST set GPIO direction before making get/set calls.  In
+  * some cases this is done in early boot, before IRQs are enabled.
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 1a4103d..2bdb69d 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -45,9 +45,6 @@ acpi_get_gpiod_by_index(struct device *dev, int index,
+ }
+ #endif
+ 
+-int gpiochip_request_own_desc(struct gpio_desc *desc, const char *label);
+-void gpiochip_free_own_desc(struct gpio_desc *desc);
+-
+ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ 		   const char *list_name, int index, enum of_gpio_flags *flags);
+ 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 05e53cc..e85f7e6 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -32,6 +32,9 @@ struct gpio_desc *__must_check gpiod_get_index_optional(struct device *dev,
+ 
+ void gpiod_put(struct gpio_desc *desc);
+ 
++int gpiochip_request_own_desc(struct gpio_desc *desc, const char *label);
++void gpiochip_free_own_desc(struct gpio_desc *desc);
 +
- 	if (flags & GPIOF_DIR_IN)
- 		err = gpiod_direction_input(desc);
- 	else
+ struct gpio_desc *__must_check devm_gpiod_get(struct device *dev,
+ 					      const char *con_id);
+ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
 -- 
 1.9.1
 
