@@ -1,71 +1,64 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/2] pinctrl: sunxi: misc improvements for gpio
-Date: Tue, 22 Jul 2014 18:33:10 +0200
-Message-ID: <CACRpkdZhZkB6=_ehVXxWAnvkVYy_KOU84fcGRSRTc9-2X2paqQ@mail.gmail.com>
-References: <1405358677-23657-1-git-send-email-wens@csie.org>
-Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 3/3] driver:gpio remove all usage of
+ gpio_remove retval in driver
+Date: Tue, 22 Jul 2014 10:51:22 -0700
+Message-ID: <20140722175121.GA5489@core.coreip.homeip.net>
+References: <CACRpkda6mzVdaN0cvOxpbsxWyCv2nGyDXOjZg_5aT8u7SSQeUw@mail.gmail.com>
+ <1405197014-25225-1-git-send-email-berthe.ab@gmail.com>
+ <1405197014-25225-4-git-send-email-berthe.ab@gmail.com>
+ <CACRpkdasp9bLULT7NJM9nYX58rRSsQKXFddOLz9Ah6kp-j-3=Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBR5EXKPAKGQE4IASMGY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1405358677-23657-1-git-send-email-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdasp9bLULT7NJM9nYX58rRSsQKXFddOLz9Ah6kp-j-3=Q@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mips@linux-mips.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Matthew Garrett <matthew.garrett@nebula.com>, Samuel Ortiz <sameo@linux.intel.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, abdoulaye berthe <berthe.ab@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Michael
 List-Id: linux-gpio@vger.kernel.org
 
-I'm waiting for Maxime to look at these patches before merging.
+On Tue, Jul 22, 2014 at 05:08:13PM +0200, Linus Walleij wrote:
+> On Sat, Jul 12, 2014 at 10:30 PM, abdoulaye berthe <berthe.ab@gmail.com> wrote:
+> 
+> Heads up. Requesting ACKs for this patch or I'm atleast warning that it will be
+> applied. We're getting rid of the return value from gpiochip_remove().
+> 
+> > this remove all reference to gpio_remove retval in all driver
+> > except pinctrl and gpio. the same thing is done for gpio and
+> > pinctrl in two different patches.
+> >
+> > Signed-off-by: abdoulaye berthe <berthe.ab@gmail.com>
+> (...)
+> 
+> I think this patch probably needs to be broken down per-subsystem as it
+> hits all over the map. But let's start requesting ACKs for the
+> individual pieces.
+> Actually I think it will be OK to merge because there is likely not much churn
+> around these code sites.
+> 
+> I'm a bit torn between just wanting a big patch for this hitting drivers/gpio
+> and smaller patches hitting one subsystem at a time. We should be able
+> to hammer this in one switch strike.
 
-On Mon, Jul 14, 2014 at 7:24 PM, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org> wrote:
+...
 
-> These 2 patches are fixes / improvements to the gpio side of the
-> sunxi pinctrl driver. They are based on pinctrl/devel (3a19805).
-> The patches change the same lines of code, so they are sent together.
->
-> Patch 1 adds locking gpio lines when used as external interrupts.
-> Similar patches were done by Linus and other maintainers for various
-> platforms.
+> 
+> >  drivers/input/keyboard/adp5588-keys.c          |  4 +---
+> >  drivers/input/keyboard/adp5589-keys.c          |  4 +---
+> >  drivers/input/touchscreen/ad7879.c             | 10 +++-------
+> 
+> Dmitry can you ACK this?
 
-Nice.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-> A somewhat related issue is that the sunxi pinctrl driver does not
-> block users from requesting an already muxed pin as a gpio line.
-> Maybe we should do some locking there as well? Are there any kernel
-> interfaces for this? Or do we need to do it in the driver specifically
-> for our hardware?
->
-> (I had the unfortunate experience of poking GPIOs listed in the fex
-> files, not noticing they were used by the uart console.)
-
-
-The pin control core explicitly allows concurrent muxing to some
-certain function and GPIO usage (see Documentation/pinctrl.txt).
-
-This is because some HW may allow you to e.g. "spy" on pins
-using it's GPIO registers, or use it from the GPIO subsystem
-at the same time some other way.
-
-If this does not apply to your hardware, you can further
-restrictions in the driver, for example pinctrl_request_gpio()
-can return something negative from the pin control part
-of the driver, like -EBUSY.
-
-> AFAIK pinctrl pin numbers are device specific, so I'm wondering if we
-> should also number them in terms of offsets, rather than absolute pin
-> numbers. It's more of an asthetic change though. Any thoughts?
-
-Usually I say these pin numbers should try to match what is
-in the data sheet so it is easy to understand and debug. Sometimes
-pins are numbered with letters and stuff so they rather have names
-than numbers, then some artificial numbering is applied, whatever
-is helpful.
-
-I'm not directly familiar with the sunxi numbering system though...
-
-Yours,
-Linus Walleij
+-- 
+Dmitry
