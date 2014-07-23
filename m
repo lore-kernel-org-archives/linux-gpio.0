@@ -1,154 +1,47 @@
-From: Varka Bhadram <varkabhadram-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: keystone: add dsp gpio controller driver
-Date: Wed, 23 Jul 2014 21:24:07 +0530
-Message-ID: <53CFDA9F.2010406@gmail.com>
-References: <1406126699-10053-1-git-send-email-grygorii.strashko@ti.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MV0gZ3Bpbzoga2V5c3RvbmU6IGFkZCBkc3AgZ3BpbyBj?=
+ =?UTF-8?B?b250cm9sbGVyIGRyaXZlcg==?=
+Date: Wed, 23 Jul 2014 19:19:40 +0400
+Message-ID: <1406128780.455243415@f419.i.mail.ru>
+References: <1405507426-18992-1-git-send-email-grygorii.strashko@ti.com>
+ <CACRpkdYY_a_9G-VLBbv2a22Cg4j0t3Wv4W1h0n6-ccCXgVJXsA@mail.gmail.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1406126699-10053-1-git-send-email-grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, santosh.shilimkar-l0cyMroinI0@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: ivan.khoronzhuk-l0cyMroinI0@public.gmane.org, m-karicheri2-l0cyMroinI0@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fallback8.mail.ru ([94.100.181.110]:49133 "EHLO
+	fallback8.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756875AbaGWQd3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Jul 2014 12:33:29 -0400
+Received: from f419.i.mail.ru (f419.i.mail.ru [185.5.136.90])
+	by fallback8.mail.ru (mPOP.Fallback_MX) with ESMTP id A2A54603FB2D
+	for <linux-gpio@vger.kernel.org>; Wed, 23 Jul 2014 19:20:02 +0400 (MSK)
+In-Reply-To: <CACRpkdYY_a_9G-VLBbv2a22Cg4j0t3Wv4W1h0n6-ccCXgVJXsA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
+Cc: =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?TXVyYWxpZGhhcmFuIEthcmljaGVyaQ==?= <m-karicheri2@ti.com>, =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko@ti.com>
 
-
-On Wednesday 23 July 2014 08:14 PM, Grygorii Strashko wrote:
-
-(...)
-
-> +
-> +Required Properties:
-> +- compatible: should be "ti,keystone-dsp-gpio"
-> +
-> +- ti,syscon-dev : phandle/offset pair. The phandle to syscon used to
-> +				  access device state control registers and the offset
-> +				  in order to use block of device's specific registers.
-> +
-> +- gpio-controller : Marks the device node as a gpio controller.
-> +
-> +- #gpio-cells : Should be one.
-> +				See gpio.txt in this directory for a of the cells format
-> +
-
-proper indentation for all the properties...
-
-> +Please refer to gpio.txt in this directory for details of the common GPIO
-> +bindings used by client devices.
-> +
-> +Example:
-> +	dspgpio0: keystone_dsp_gpio@02620240 {
-> +		compatible = "ti,keystone-dsp-gpio";
-> +		ti,syscon-dev = <&devctrl 0x240>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +
-> +	dsp0: dsp0 {
-> +		compatible = "linux,rproc-user";
-> +		...
-> +		kick-gpio = <&dspgpio0 27>;
-> +	};
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 4a1b511..990871f 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -158,6 +158,14 @@ config GPIO_EP93XX
->   	depends on ARCH_EP93XX
->   	select GPIO_GENERIC
->   
-> +config GPIO_KEYSTONE_DSP
-> +	tristate "Keystone DSP GPIO support"
-> +	depends on ARCH_KEYSTONE
-> +	help
-> +	  Say yes here to support the DSP GPIO driver for Keystone 2. This defines
-> +	  up to 28 GPIOs per each Remote (DSP) core. This is used to send
-> +	  signals from ARM to the Remote (DSP) core.
-> +
->   config GPIO_ZEVIO
->   	bool "LSI ZEVIO SoC memory mapped GPIOs"
->   	depends on ARM && OF_GPIO
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index d10f6a9..15c3389 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_IOP)		+= gpio-iop.o
->   obj-$(CONFIG_GPIO_IT8761E)	+= gpio-it8761e.o
->   obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
->   obj-$(CONFIG_GPIO_KEMPLD)	+= gpio-kempld.o
-> +obj-$(CONFIG_GPIO_KEYSTONE_DSP)	+= gpio-keystone.o
->   obj-$(CONFIG_ARCH_KS8695)	+= gpio-ks8695.o
->   obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
->   obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
-> diff --git a/drivers/gpio/gpio-keystone.c b/drivers/gpio/gpio-keystone.c
-> new file mode 100644
-> index 0000000..7909a1c
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-keystone.c
-> @@ -0,0 +1,138 @@
-> +/*
-> + * Keystone 2 DSP GPIO support.
-> + *
-> + * Copyright (C) 2014 Texas Instruments, Inc.
-> + * Author: Murali Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>
-> + *	   Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/gpio.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
-> +
-
-includes in alphabetical order..
-
-> +/* 28 bits in IPCGRx are treated as GPIO pins to generate interrupt */
-> +#define GPIOS_PER_BANK		28
-> +#define GPIO_OFFSET		4
-> +
-> +struct keystone_gpio_bank {
-> +	struct gpio_chip	 chip;
-> +	struct device		*dev;
-> +	struct regmap		*devctrl_regs;
-> +	u32			devctrl_offset;
-> +};
-> +#define chip_to_bank(c) \
-> +	container_of(c, struct keystone_gpio_bank, chip)
-> +
-> +static int keystone_gpio_direction_out(struct gpio_chip *c,
-> +					unsigned ofs, int val)
-> +{
-> +	return 0;
-> +}
-> +
-> +static int keystone_gpio_get(struct gpio_chip *c, unsigned ofs)
-> +{
-> +	struct keystone_gpio_bank *bank = chip_to_bank(c);
-> +	int bit = ofs + GPIO_OFFSET;
-> +	int ret;
-> +	u32 val = 0;
-> +
-> +	ret = regmap_read(bank->devctrl_regs, bank->devctrl_offset, &val);
-> +	if (ret < 0)
-> +		dev_dbg(bank->dev, "gpio read failed ret(%d)\n", ret);
-
-If this read fails what will happen...?
-
-we will get the debug message and return (val >> bit) & 1, But this val can be garbage or zero...?
-
-> +
-> +	return (val >> bit) & 1;
-> +}
-
--- 
--Varka Bhadram
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+V2VkLCAyMyBKdWwgMjAxNCAxNzoxMDoyNiArMDIwMCDQvtGCIExpbnVzIFdhbGxlaWogPGxpbnVz
+LndhbGxlaWpAbGluYXJvLm9yZz46Cj4gT24gV2VkLCBKdWwgMTYsIDIwMTQgYXQgMTI6NDMgUE0s
+IEdyeWdvcmlpIFN0cmFzaGtvCj4gPGdyeWdvcmlpLnN0cmFzaGtvQHRpLmNvbT4gd3JvdGU6Cj4g
+Cj4gPiBGcm9tOiBNdXJhbGkgS2FyaWNoZXJpIDxtLWthcmljaGVyaTJAdGkuY29tPgo+ID4KPiA+
+IE9uIEtleXN0b25lIFNPQ3MsIEFSTSBob3N0IGNhbiBzZW5kIGludGVycnVwdHMgdG8gRFNQIGNv
+cmVzIHVzaW5nIHRoZQo+ID4gRFNQIEdQSU8gY29udHJvbGxlciBJUC4gRWFjaCBEU1AgR1BJTyBj
+b250cm9sbGVyIHByb3ZpZGVzIDI4IElSUSBzaWduYWxzIGZvcgo+ID4gZWFjaCBEU1AgY29yZS4g
+VGhpcyBpcyBvbmUgb2YgdGhlIGNvbXBvbmVudCB1c2VkIGJ5IHRoZSBJUEMgbWVjaGFuaXNtIHVz
+ZWQKPiA+IG9uIEtleXN0b25lIFNPQ3MuCj4gPgo+ID4gS2V5c3RvbmUgMiBEU1AgR1BJTyBjb250
+cm9sbGVyIGhhcyBzcGVjaWZpYyBmZWF0dXJlczoKPiA+IC0gZWFjaCBHUElPIGNhbiBiZSBjb25m
+aWd1cmVkIG9ubHkgYXMgb3V0cHV0IHBpbjsKPiA+IC0gc2V0dGluZyBHUElPIHZhbHVlIHRvIDEg
+Y2F1c2VzIElSUSBnZW5lcmF0aW9uIG9uIHRhcmdldCBEU1AgY29yZTsKPiA+IC0gcmVhZGluZyBw
+aW4gdmFsdWUgcmV0dXJucyAwIC0gaWYgSVJRIHdhcyBoYW5kbGVkIG9yIDEgLSBJUlEgaXMgc3Rp
+bGwKPiA+ICAgcGVuZGluZy4KPiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBNdXJhbGkgS2FyaWNoZXJp
+IDxtLWthcmljaGVyaTJAdGkuY29tPgo+ID4gU2lnbmVkLW9mZi1ieTogR3J5Z29yaWkgU3RyYXNo
+a28gPGdyeWdvcmlpLnN0cmFzaGtvQHRpLmNvbT4KLi4uCj4gQW5kIGlmIHlvdSBwcm9jZWVkIHdp
+dGggdGhpcywgcGxlYXNlIGludGVncmF0ZSBpdCB3aXRoCj4gZHJpdmVycy9ncGlvL2dwaW8tc3lz
+Y29uLmMsIEkgZG9uJ3QgbmVlZCBtb3JlIHNwZWNpYWwKPiBzeXNjb25zIEdQSU8gaGFuZGxlcnMu
+Cj4gCj4gPiArI2luY2x1ZGUgPGxpbnV4L21mZC9zeXNjb24uaD4KPiAKPiBLY29uZmlnIG5lZWRz
+IGRlcGVuZHMgb24gTUZEX1NZU0NPTiwgcmlnaHQ/CgpJdCBzaG91bGQgYmUgc2VsZWN0ZWQgYnkg
+dGhlIHBsYXRmb3JtLiBGb3IgY29tcGlsZSB0ZXN0IHRoaXMgc3ltYm9sCmlzIG5vdCBuZWVkZWQu
+CgotLS0KCg==
