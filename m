@@ -1,46 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [alsa-devel] [PATCH 2/4] ASoC: s3c64xx/smartq: use dynamic registration
-Date: Wed, 23 Jul 2014 17:20:27 +0200
-Message-ID: <CACRpkdZr=i+s5DzmR3n+FKC3DzvqfZCKM=HaWSX5WiwcCENBUQ@mail.gmail.com>
-References: <20140714183624.GV6800@sirena.org.uk>
-	<4657735.1VKsbQGuH6@wuerfel>
-	<CAAVeFu+Z2xzUy6pGWu3H4MXdkBq39-USHbwNU9ih6AvvxPyu5A@mail.gmail.com>
-	<53C4DF0D.8010208@metafoo.de>
-	<CAAVeFuJRCwSwcEOng2M6s+mWhJT8sUtsh7YGE-hBTGUFWAhtrQ@mail.gmail.com>
-	<CAAVeFuLfgG6W1qK2ATTbq_ydEOjUuM8Wvftm6N1RK3Kz_y1zHg@mail.gmail.com>
-	<20140716071237.GA7978@ulmo>
-	<CAAVeFuJEjMBX+7vsLk5zXV5Moy=WDmWidpVZjQ_=8VD45+QdHg@mail.gmail.com>
-	<20140716075107.GG7978@ulmo>
-	<53C63CBA.20809@codethink.co.uk>
-	<20140716110927.GK7978@ulmo>
+From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v1] gpio: keystone: add dsp gpio controller driver
+Date: Wed, 23 Jul 2014 11:25:56 -0400
+Message-ID: <53CFD404.7070704@ti.com>
+References: <1405507426-18992-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdYY_a_9G-VLBbv2a22Cg4j0t3Wv4W1h0n6-ccCXgVJXsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:33065 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751692AbaGWPU2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Jul 2014 11:20:28 -0400
-Received: by mail-oa0-f50.google.com with SMTP id g18so1806963oah.37
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Jul 2014 08:20:28 -0700 (PDT)
-In-Reply-To: <20140716110927.GK7978@ulmo>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYY_a_9G-VLBbv2a22Cg4j0t3Wv4W1h0n6-ccCXgVJXsA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Suman Anna <s-anna-l0cyMroinI0@public.gmane.org>, Jaswinder Singh <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ivan.khoronzhuk-l0cyMroinI0@public.gmane.org, Muralidharan Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Jones <rob.jones@codethink.co.uk>, Alexandre Courbot <gnurou@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Jul 16, 2014 at 1:09 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Wed, Jul 16, 2014 at 09:50:02AM +0100, Rob Jones wrote:
-
->> In light of this, should I hold off starting on devm_gpiod_get_array()
->> as discussed on here last week?
+On Wednesday 23 July 2014 11:10 AM, Linus Walleij wrote:
+> On Wed, Jul 16, 2014 at 12:43 PM, Grygorii Strashko
+> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
+> 
+>> From: Murali Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>
+>>
+>> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
+>> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
+>> each DSP core. This is one of the component used by the IPC mechanism used
+>> on Keystone SOCs.
+>>
+>> Keystone 2 DSP GPIO controller has specific features:
+>> - each GPIO can be configured only as output pin;
+>> - setting GPIO value to 1 causes IRQ generation on target DSP core;
+>> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+>>   pending.
+>>
+>> Signed-off-by: Murali Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+> 
+> Pardon me. How is this GENERAL PURPOSE Input/Output?
+> 
+> It seems very very much SPECIAL PURPOSE to me, it's like
+> you're just shoehorning some IPC mechanism into the GPIO
+> subsystem, and this may be because the datasheet calls it
+> GPIO when it's not.
 >
-> I'll let Alex or Linus answer this, since I wasn't involved in the
-> devm_gpiod_get_array() discussions.
+> What other stuff than DSP is connected to these lines, and is it
+> really even external lines? Aren't these just polysilicon rails
+> pretty much hammered to be used by the DSP and nothing else.
+>
+> What is the difference between this and a mailbox IRQ line
+> and the kind of stuff handled by drivers/mailbox?
+>
+I will try to answer this. This IP is indeed a GPIO block
+but the IO's are used just OUTPUT lines from Linux
+HOST perspective. These IOs are connected to the DSPs
+as input/IRQ lines. The DSP-ARM host IPC mechanism used on
+Keystone is Linux user-space based and it does as one of the
+component.
 
-I'm gonna shut up in this thread as Alex is doing such an excellent
-job at hashing out the details of gpiod*, and he understands it way
-better than me.
+Its not mailbox since there is no payload etc attached to it.
+GPIO lib does expose the IO's to userspace and thats what is
+being the case here. I think it is a legitimate usecase.
 
-Yours,
-Linus Walleij
+Sometimes the sending signals to another co-processor might
+appear like shoehorning or odd but it just uses standard
+GPIO library and its capabilities as is.
+
+Regards,
+Santosh
+
+
+
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
