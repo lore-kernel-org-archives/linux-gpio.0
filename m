@@ -1,61 +1,90 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] gpio: extend gpiod_get*() with flags parameter
-Date: Thu, 24 Jul 2014 18:10:30 +0200
-Message-ID: <6059032.T3tqvLkWTo@wuerfel>
-References: <1406214298-20062-1-git-send-email-acourbot@nvidia.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH v1] gpio: keystone: add dsp gpio controller driver
+Date: Thu, 24 Jul 2014 13:52:51 -0500
+Message-ID: <53D15603.5030001@ti.com>
+References: <1405507426-18992-1-git-send-email-grygorii.strashko@ti.com>	<CACRpkdYY_a_9G-VLBbv2a22Cg4j0t3Wv4W1h0n6-ccCXgVJXsA@mail.gmail.com>	<CAJe_ZhdnjyjvEsvK2u7SgS1hJ2fpsXh+=ViGhzakRd+c4ReBaw@mail.gmail.com>	<53D140EC.9020609@ti.com> <CAJe_ZhfCdrgaVEZ5h=+Ko7U3RW2M9QRd3T4=_JzYxKxv+brZFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1406214298-20062-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: linux-wireless@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, linux-mmc@vger.kernel.org, Chris Ball <chris@printf.net>, dri-devel@lists.freedesktop.org, Liam Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Pavel Machek <pavel@ucw.cz>, Jiri Slaby <jslaby@suse.cz>, gnurou@gmail.com, Florian Fainelli <f.fainelli@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexander Shiyan <shc_work@mail.ru>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Paul Handrigan <Paul.Handrigan@cirrus.com>, linux-iio@vger.kernel.org, linux-omap@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcr>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:37872 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759582AbaGXSxI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 24 Jul 2014 14:53:08 -0400
+In-Reply-To: <CAJe_ZhfCdrgaVEZ5h=+Ko7U3RW2M9QRd3T4=_JzYxKxv+brZFg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jassi Brar <jaswinder.singh@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Alexander Shiyan <shc_work@mail.ru>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ivan.khoronzhuk@ti.com, Muralidharan Karicheri <m-karicheri2@ti.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Friday 25 July 2014 00:04:58 Alexandre Courbot wrote:
-> I'm not sure how this could be applied harmlessly though - maybe through
-> a dedicated branch for -next? Problem is that a lot of new code is not
-> yet merged into mainline, and conflicts are very likely to occur. Linus,
-> do you have any suggestion as to how this can be done without blood being
-> spilled?
+Hi,
 
-There is a trick that we sometime use in this situation,
-though it has to be done carefully:
- 
-> diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-> index 7ff30d2..a3fb1d7 100644
-> --- a/Documentation/gpio/consumer.txt
-> +++ b/Documentation/gpio/consumer.txt
-> @@ -29,13 +29,24 @@ gpiod_get() functions. Like many other kernel subsystems, gpiod_get() takes the
->  device that will use the GPIO and the function the requested GPIO is supposed to
->  fulfill:
->  
-> -       struct gpio_desc *gpiod_get(struct device *dev, const char *con_id)
-> +       struct gpio_desc *gpiod_get(struct device *dev, const char *con_id,
-> +                                   enum gpio_flags flags)
->  
-> 
+On 07/24/2014 01:12 PM, Jassi Brar wrote:
+> On 24 July 2014 22:52, Santosh Shilimkar <santosh.shilimkar@ti.com> wrote:
+>> On Thursday 24 July 2014 01:19 PM, Jassi Brar wrote:
+>>> On 23 July 2014 20:40, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>>> On Wed, Jul 16, 2014 at 12:43 PM, Grygorii Strashko
+>>>> <grygorii.strashko@ti.com> wrote:
+>>>>
+>>>>> From: Murali Karicheri <m-karicheri2@ti.com>
+>>>>>
+>>>>> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
+>>>>> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
+>>>>> each DSP core. This is one of the component used by the IPC mechanism used
+>>>>> on Keystone SOCs.
+>>>>>
+>>>>> Keystone 2 DSP GPIO controller has specific features:
+>>>>> - each GPIO can be configured only as output pin;
+>>>>> - setting GPIO value to 1 causes IRQ generation on target DSP core;
+>>>>> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+>>>>>   pending.
+>>>>>
+>>>>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>>>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>>>
+>>>> Pardon me. How is this GENERAL PURPOSE Input/Output?
+>>>>
+>>>> It seems very very much SPECIAL PURPOSE to me, it's like
+>>>> you're just shoehorning some IPC mechanism into the GPIO
+>>>> subsystem, and this may be because the datasheet calls it
+>>>> GPIO when it's not.
+>>>>
+>>>> What other stuff than DSP is connected to these lines, and is it
+>>>> really even external lines? Aren't these just polysilicon rails
+>>>> pretty much hammered to be used by the DSP and nothing else.
+>>>>
+>>>> What is the difference between this and a mailbox IRQ line
+>>>> and the kind of stuff handled by drivers/mailbox?
+>>>>
+>>>> I'd like Suman and Jassi to have a look at this to see if it's
+>>>> actually a mailbox before we proceed.
+>>>>
+>>> The controller seems like most others, only incapable of reading
+>>> signals (output only).
+>>>  The userspace driving those signals to communicate with a DSP isn't
+>>> enough to call it a mailbox usecase, because on a different board the
+>>> userspace may drive those signals to control LEDs :)
+>>>
+>> Exactly !!
+>> And that was my point. Thanks for echo.
+>>
+> Yeah but if the AP and DSP are within the same package (i.e, the
+> 'pins' can't be used for any other purpose on any board), one might
+> sell it as a mailbox. However, since the mailbox protocol driver would
+> be in userspace, I think it is justified to expose that as GPIO
+> otherwise we'll have to add another interface for userspace to control
+> the DSP.
 
+If all these pins or a group of pins are collectively being used to
+denote a message to the DSP, then I can see the argument for this being
+a mailbox platform driver. It then probably would need to be
+supplemented by some other protocol driver to expose the necessary
+functionality to userspace. Otherwise, I agree with Jassi in general.
 
--	struct gpio_desc *gpiod_get(struct device *dev, const char *con_id)
-+	struct gpio_desc *__gpiod_get(struct device *dev, const char *con_id,
-+					enum gpio_flags flags);
-+
-+#define __gpiod_get(dev, con_id, flags, ...) __gpiod_get(dev, con_id, flags)
-+#define gpiod_get(varargs ...) __gpiod_get(varargs, 0)
+That said, having two different drivers for different GPIO IP instances
+within the same SoC doesn't make sense. There should be a single driver
+for all the GPIO IPs in keystone, output/input only are properties of
+the instance and the driver should handle that IMHO.
 
-This will allow both variants to be called, and any users of the three-argument
-version will pass zero as the fourth argument (or whatever you choose there).
-
-Once the conversion is complete, the macros can be removed.
-
-	ARnd
+regards
+Suman
