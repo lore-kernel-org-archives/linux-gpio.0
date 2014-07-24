@@ -1,90 +1,210 @@
 From: Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH v1] gpio: keystone: add dsp gpio controller driver
-Date: Thu, 24 Jul 2014 13:52:51 -0500
-Message-ID: <53D15603.5030001@ti.com>
-References: <1405507426-18992-1-git-send-email-grygorii.strashko@ti.com>	<CACRpkdYY_a_9G-VLBbv2a22Cg4j0t3Wv4W1h0n6-ccCXgVJXsA@mail.gmail.com>	<CAJe_ZhdnjyjvEsvK2u7SgS1hJ2fpsXh+=ViGhzakRd+c4ReBaw@mail.gmail.com>	<53D140EC.9020609@ti.com> <CAJe_ZhfCdrgaVEZ5h=+Ko7U3RW2M9QRd3T4=_JzYxKxv+brZFg@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: keystone: add dsp gpio controller driver
+Date: Thu, 24 Jul 2014 14:15:19 -0500
+Message-ID: <53D15B47.6020802@ti.com>
+References: <1406126699-10053-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:37872 "EHLO arroyo.ext.ti.com"
+Received: from comal.ext.ti.com ([198.47.26.152]:55514 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759582AbaGXSxI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 24 Jul 2014 14:53:08 -0400
-In-Reply-To: <CAJe_ZhfCdrgaVEZ5h=+Ko7U3RW2M9QRd3T4=_JzYxKxv+brZFg@mail.gmail.com>
+	id S933784AbaGXTP1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 24 Jul 2014 15:15:27 -0400
+In-Reply-To: <1406126699-10053-1-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jassi Brar <jaswinder.singh@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Alexander Shiyan <shc_work@mail.ru>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ivan.khoronzhuk@ti.com, Muralidharan Karicheri <m-karicheri2@ti.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Strashko, Grygorii" <grygorii.strashko@ti.com>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "Khoronzhuk, Ivan" <ivan.khoronzhuk@ti.com>, "Karicheri, Muralidharan" <m-karicheri2@ti.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "varkabhadram@gmail.com" <varkabhadram@gmail.com>
 
-Hi,
+Grygorii,
 
-On 07/24/2014 01:12 PM, Jassi Brar wrote:
-> On 24 July 2014 22:52, Santosh Shilimkar <santosh.shilimkar@ti.com> wrote:
->> On Thursday 24 July 2014 01:19 PM, Jassi Brar wrote:
->>> On 23 July 2014 20:40, Linus Walleij <linus.walleij@linaro.org> wrote:
->>>> On Wed, Jul 16, 2014 at 12:43 PM, Grygorii Strashko
->>>> <grygorii.strashko@ti.com> wrote:
->>>>
->>>>> From: Murali Karicheri <m-karicheri2@ti.com>
->>>>>
->>>>> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
->>>>> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
->>>>> each DSP core. This is one of the component used by the IPC mechanism used
->>>>> on Keystone SOCs.
->>>>>
->>>>> Keystone 2 DSP GPIO controller has specific features:
->>>>> - each GPIO can be configured only as output pin;
->>>>> - setting GPIO value to 1 causes IRQ generation on target DSP core;
->>>>> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
->>>>>   pending.
->>>>>
->>>>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
->>>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->>>>
->>>> Pardon me. How is this GENERAL PURPOSE Input/Output?
->>>>
->>>> It seems very very much SPECIAL PURPOSE to me, it's like
->>>> you're just shoehorning some IPC mechanism into the GPIO
->>>> subsystem, and this may be because the datasheet calls it
->>>> GPIO when it's not.
->>>>
->>>> What other stuff than DSP is connected to these lines, and is it
->>>> really even external lines? Aren't these just polysilicon rails
->>>> pretty much hammered to be used by the DSP and nothing else.
->>>>
->>>> What is the difference between this and a mailbox IRQ line
->>>> and the kind of stuff handled by drivers/mailbox?
->>>>
->>>> I'd like Suman and Jassi to have a look at this to see if it's
->>>> actually a mailbox before we proceed.
->>>>
->>> The controller seems like most others, only incapable of reading
->>> signals (output only).
->>>  The userspace driving those signals to communicate with a DSP isn't
->>> enough to call it a mailbox usecase, because on a different board the
->>> userspace may drive those signals to control LEDs :)
->>>
->> Exactly !!
->> And that was my point. Thanks for echo.
->>
-> Yeah but if the AP and DSP are within the same package (i.e, the
-> 'pins' can't be used for any other purpose on any board), one might
-> sell it as a mailbox. However, since the mailbox protocol driver would
-> be in userspace, I think it is justified to expose that as GPIO
-> otherwise we'll have to add another interface for userspace to control
-> the DSP.
+On 07/23/2014 09:44 AM, Strashko, Grygorii wrote:
+> From: Murali Karicheri <m-karicheri2@ti.com>
+> 
+> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
+> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
+> each DSP core. This is one of the component used by the IPC mechanism used
+> on Keystone SOCs.
+> 
+> Keystone 2 DSP GPIO controller has specific features:
+> - each GPIO can be configured only as output pin;
+> - setting GPIO value to 1 causes IRQ generation on target DSP core;
+> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+>   pending.
+> 
+> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+> Changes in v2:
+> - minor comments applied
+> 
+> v1:
+>  https://lkml.org/lkml/2014/7/16/170
+> 
+>  .../devicetree/bindings/gpio/gpio-keystone.txt     |   43 ++++++
+>  drivers/gpio/Kconfig                               |    8 ++
+>  drivers/gpio/Makefile                              |    1 +
+>  drivers/gpio/gpio-keystone.c                       |  138 ++++++++++++++++++++
+>  4 files changed, 190 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+>  create mode 100644 drivers/gpio/gpio-keystone.c
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-keystone.txt b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+> new file mode 100644
+> index 0000000..d412711
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+> @@ -0,0 +1,43 @@
+> +Keystone 2 DSP GPIO controller bindings
+> +
+> +HOST OS userland running on ARM can send interrupts to DSP cores using
+> +the DSP GPIO controller IP. It provides 28 IRQ signals per each DSP core.
+> +This is one of the component used by the IPC mechanism used on Keystone SOCs.
+> +
+> +For example TCI6638K2K SoC has 8 DSP GPIO controllers:
+> + - 8 for C66x CorePacx CPUs 0-7
+> +
+> +Keystone 2 DSP GPIO controller has specific features:
+> +- each GPIO can be configured only as output pin;
+> +- setting GPIO value to 1 causes IRQ generation on target DSP core;
+> +- reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+> +  pending.
+> +
+> +Required Properties:
+> +- compatible: should be "ti,keystone-dsp-gpio"
+> +
+> +- ti,syscon-dev : phandle/offset pair. The phandle to syscon used to
+> +				  access device state control registers and the offset
+> +				  in order to use block of device's specific registers.
+> +
+> +- gpio-controller : Marks the device node as a gpio controller.
+> +
+> +- #gpio-cells : Should be one.
+> +				See gpio.txt in this directory for a of the cells format
+> +
+> +Please refer to gpio.txt in this directory for details of the common GPIO
+> +bindings used by client devices.
+> +
+> +Example:
+> +	dspgpio0: keystone_dsp_gpio@02620240 {
+> +		compatible = "ti,keystone-dsp-gpio";
+> +		ti,syscon-dev = <&devctrl 0x240>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
 
-If all these pins or a group of pins are collectively being used to
-denote a message to the DSP, then I can see the argument for this being
-a mailbox platform driver. It then probably would need to be
-supplemented by some other protocol driver to expose the necessary
-functionality to userspace. Otherwise, I agree with Jassi in general.
+Mismatch? Conflicts with "Should be one".
 
-That said, having two different drivers for different GPIO IP instances
-within the same SoC doesn't make sense. There should be a single driver
-for all the GPIO IPs in keystone, output/input only are properties of
-the instance and the driver should handle that IMHO.
+> +	};
+> +
+> +	dsp0: dsp0 {
+> +		compatible = "linux,rproc-user";
+> +		...
+> +		kick-gpio = <&dspgpio0 27>;
+> +	};
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 4a1b511..990871f 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -158,6 +158,14 @@ config GPIO_EP93XX
+>  	depends on ARCH_EP93XX
+>  	select GPIO_GENERIC
+>  
+> +config GPIO_KEYSTONE_DSP
+> +	tristate "Keystone DSP GPIO support"
+> +	depends on ARCH_KEYSTONE
+> +	help
+> +	  Say yes here to support the DSP GPIO driver for Keystone 2. This defines
+> +	  up to 28 GPIOs per each Remote (DSP) core. This is used to send
+> +	  signals from ARM to the Remote (DSP) core.
+> +
+>  config GPIO_ZEVIO
+>  	bool "LSI ZEVIO SoC memory mapped GPIOs"
+>  	depends on ARM && OF_GPIO
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index d10f6a9..15c3389 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_IOP)		+= gpio-iop.o
+>  obj-$(CONFIG_GPIO_IT8761E)	+= gpio-it8761e.o
+>  obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
+>  obj-$(CONFIG_GPIO_KEMPLD)	+= gpio-kempld.o
+> +obj-$(CONFIG_GPIO_KEYSTONE_DSP)	+= gpio-keystone.o
+>  obj-$(CONFIG_ARCH_KS8695)	+= gpio-ks8695.o
+>  obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
+>  obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
+> diff --git a/drivers/gpio/gpio-keystone.c b/drivers/gpio/gpio-keystone.c
+> new file mode 100644
+> index 0000000..7909a1c
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-keystone.c
+> @@ -0,0 +1,138 @@
+> +/*
+> + * Keystone 2 DSP GPIO support.
+> + *
+> + * Copyright (C) 2014 Texas Instruments, Inc.
+> + * Author: Murali Karicheri <m-karicheri2@ti.com>
+> + *	   Grygorii Strashko <grygorii.strashko@ti.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/gpio.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +
+> +/* 28 bits in IPCGRx are treated as GPIO pins to generate interrupt */
+> +#define GPIOS_PER_BANK		28
+> +#define GPIO_OFFSET		4
+> +
+> +struct keystone_gpio_bank {
+> +	struct gpio_chip	 chip;
+> +	struct device		*dev;
+> +	struct regmap		*devctrl_regs;
+> +	u32			devctrl_offset;
+> +};
+> +#define chip_to_bank(c) \
+> +	container_of(c, struct keystone_gpio_bank, chip)
+> +
+> +static int keystone_gpio_direction_out(struct gpio_chip *c,
+> +					unsigned ofs, int val)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int keystone_gpio_get(struct gpio_chip *c, unsigned ofs)
+> +{
+> +	struct keystone_gpio_bank *bank = chip_to_bank(c);
+> +	int bit = ofs + GPIO_OFFSET;
+> +	int ret;
+> +	u32 val = 0;
+> +
+> +	ret = regmap_read(bank->devctrl_regs, bank->devctrl_offset, &val);
+> +	if (ret < 0)
+> +		dev_dbg(bank->dev, "gpio read failed ret(%d)\n", ret);
+> +
+> +	return (val >> bit) & 1;
+> +}
+> +
+> +static void keystone_gpio_set(struct gpio_chip *c, unsigned ofs, int val)
+> +{
+> +	struct keystone_gpio_bank *bank = chip_to_bank(c);
+> +	int bit = ofs + GPIO_OFFSET;
+> +	int ret;
+> +
+> +	if (!val)
+> +		return;
+> +
+> +	ret = regmap_write(bank->devctrl_regs, bank->devctrl_offset,
+> +			   BIT(bit) | 1);
+
+What is this ORing with 1 for?
 
 regards
 Suman
+
+[snip]
+
