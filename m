@@ -1,79 +1,46 @@
-From: Harini Katakam <harinikatakamlinux@gmail.com>
-Subject: Re: [PATCH 2/3] gpio: zynq: Clear pending interrupt when enabling a IRQ
-Date: Thu, 24 Jul 2014 13:06:16 +0530
-Message-ID: <CAFcVECKD6KyZsrMsym-2mmpgLCMZmriGJwDJFSZz65=9XKp2Tw@mail.gmail.com>
-References: <1405677133-8706-1-git-send-email-lars@metafoo.de>
-	<1405677133-8706-2-git-send-email-lars@metafoo.de>
-	<CACRpkda3p3v7o2itkTPRPr6KFhrUO3M8fvn_2S8oYsd_2oaXaw@mail.gmail.com>
-	<c1290e0f-b2db-48fb-bc32-aabe1e4ce9ff@BN1BFFO11FD023.protection.gbl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpiolib: Export gpiochip_request_own_desc and gpiochip_free_own_desc
+Date: Thu, 24 Jul 2014 10:26:06 +0200
+Message-ID: <CACRpkdZP377kmVYAMWaEg2wJy_P4S67xs857v3pNhTZwvp3ThA@mail.gmail.com>
+References: <1406041261-5716-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f181.google.com ([209.85.160.181]:63922 "EHLO
-	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934061AbaGXHgR convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Jul 2014 03:36:17 -0400
-Received: by mail-yk0-f181.google.com with SMTP id q200so1530838ykb.40
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Jul 2014 00:36:16 -0700 (PDT)
-In-Reply-To: <c1290e0f-b2db-48fb-bc32-aabe1e4ce9ff@BN1BFFO11FD023.protection.gbl>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:32826 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934322AbaGXI0H (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Jul 2014 04:26:07 -0400
+Received: by mail-oa0-f42.google.com with SMTP id n16so3205188oag.15
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Jul 2014 01:26:06 -0700 (PDT)
+In-Reply-To: <1406041261-5716-1-git-send-email-linux@roeck-us.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Hi Lars-Peter,
+On Tue, Jul 22, 2014 at 5:01 PM, Guenter Roeck <linux@roeck-us.net> wrote:
 
-On Wed, Jul 23, 2014 at 11:12 PM, S=C3=B6ren Brinkmann
-<soren.brinkmann@xilinx.com> wrote:
-> On Wed, 2014-07-23 at 04:31PM +0200, Linus Walleij wrote:
->> On Fri, Jul 18, 2014 at 11:52 AM, Lars-Peter Clausen <lars@metafoo.d=
-e> wrote:
->>
->> > The Zynq GPIO controller does not disable the interrupt detection =
-when the
->> > interrupt is masked and only disables the propagation of the inter=
-rupt. This
->> > means when the controller detects an interrupt condition while the=
- interrupt is
->> > logically disabled (and masked) it will propagate the recorded int=
-errupt event
->> > once the interrupt is enabled. This will cause the interrupt consu=
-mer to see
->> > spurious interrupts to prevent this first make sure that the inter=
-rupt is not
->> > asserted and then enable it.
->> >
->> > E.g. when a interrupt is requested with request_irq() it will be c=
-onfigured
->> > according to the requested type (edge/level triggered, etc.) after=
- that it will
->> > be enabled. But the detection circuit might have already registere=
-d a false
->> > interrupt before the interrupt type was correctly configured and o=
-nce the
->> > interrupt is unmasked this false interrupt will be propagated and =
-the interrupt
->> > handler for the just request interrupt will called.
->> >
->> > Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
->>
->> Seems like you know what you're doing.
->>
->> Patch tentatively applied unless Harini or Soren protests...
+> Both functions were introduced to let gpio drivers request their own
+> gpio pins. Without exporting the functions, this can however only be
+> used by gpio drivers built into the kernel.
 >
-> All these things look good to me, though I thought I had tested
-> interrupts on banks other than zero, but it might have slipped throug=
-h.
+> Secondary impact is that the functions can not currently be used by
+> platform initialization code associated with the gpio-pca953x driver.
+> This code permits auto-export of gpio pins through platform data, but
+> if this functionality is used, the module can no longer be unloaded due
+> to the problem solved with the introduction of gpiochip_request_own_desc
+> and gpiochip_free_own_desc.
 >
+> Export both function so they can be used from modules and from
+> platform initialization code.
+>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> v3: Add API documentation.
+>     Use EXPORT_SYMBOL_GPL.
 
-Sorry for the delay - I was away for a few days.
-The change looks OK to me.
+Patch applied with the nice review tags.
 
-Regards,
-Harini
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
