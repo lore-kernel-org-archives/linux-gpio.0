@@ -1,46 +1,49 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpiolib: Export gpiochip_request_own_desc and gpiochip_free_own_desc
-Date: Thu, 24 Jul 2014 10:26:06 +0200
-Message-ID: <CACRpkdZP377kmVYAMWaEg2wJy_P4S67xs857v3pNhTZwvp3ThA@mail.gmail.com>
-References: <1406041261-5716-1-git-send-email-linux@roeck-us.net>
+Subject: Re: [PATCH 3/3] driver:gpio remove all usage of
+	gpio_remove retval in driver
+Date: Thu, 24 Jul 2014 10:29:22 +0200
+Message-ID: <CACRpkdaEF14cB+=SjTHgwGH0z88v82Q_UNPvjzDAbpOb_2ec5Q@mail.gmail.com>
+References: <CACRpkda6mzVdaN0cvOxpbsxWyCv2nGyDXOjZg_5aT8u7SSQeUw@mail.gmail.com>
+ <1405197014-25225-1-git-send-email-berthe.ab@gmail.com>
+ <1405197014-25225-4-git-send-email-berthe.ab@gmail.com>
+ <CACRpkdasp9bLULT7NJM9nYX58rRSsQKXFddOLz9Ah6kp-j-3=Q@mail.gmail.com>
+ <20140722151125.GS17528@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:32826 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934322AbaGXI0H (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Jul 2014 04:26:07 -0400
-Received: by mail-oa0-f42.google.com with SMTP id n16so3205188oag.15
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Jul 2014 01:26:06 -0700 (PDT)
-In-Reply-To: <1406041261-5716-1-git-send-email-linux@roeck-us.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20140722151125.GS17528@sirena.org.uk>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-mips@linux-mips.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Matthew Garrett <matthew.garrett@nebula.com>, Samuel Ortiz <sameo@linux.intel.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, abdoulaye berthe <berthe.ab@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Buesch <m@bues.ch>, Greg KH <gregkh>
 List-Id: linux-gpio@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Tue, Jul 22, 2014 at 5:01 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+On Tue, Jul 22, 2014 at 5:11 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Jul 22, 2014 at 05:08:13PM +0200, Linus Walleij wrote:
+>
+>> Heads up. Requesting ACKs for this patch or I'm atleast warning that it will be
+>> applied. We're getting rid of the return value from gpiochip_remove().
+>
+> Can someone send the patch please?  Splitting it up per-subsystem would
+> probably be easier...
 
-> Both functions were introduced to let gpio drivers request their own
-> gpio pins. Without exporting the functions, this can however only be
-> used by gpio drivers built into the kernel.
->
-> Secondary impact is that the functions can not currently be used by
-> platform initialization code associated with the gpio-pca953x driver.
-> This code permits auto-export of gpio pins through platform data, but
-> if this functionality is used, the module can no longer be unloaded due
-> to the problem solved with the introduction of gpiochip_request_own_desc
-> and gpiochip_free_own_desc.
->
-> Export both function so they can be used from modules and from
-> platform initialization code.
->
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> v3: Add API documentation.
->     Use EXPORT_SYMBOL_GPL.
+OK Abdoulaye maybe we can do it a piece at a time?
 
-Patch applied with the nice review tags.
+I have removed the __must_check attribute from gpiochip_remove()
+in the gpiolib, so the compiler won't complain about this being missing
+anymore as of kernel v3.17. I also dropped the check in the GPIO
+and pin control subsystem, and other subsystems can start
+dropping the checks too if they are OK with the build warnings
+from the kautobuild until the __must_check removal has propagated
+upstream.
 
 Yours,
 Linus Walleij
