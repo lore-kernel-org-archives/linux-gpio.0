@@ -1,59 +1,33 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH 2/2] pinctrl: sunxi: number gpio ranges
- starting from 0
-Date: Fri, 25 Jul 2014 00:17:20 +0800
-Message-ID: <CAGb2v66jhspz7ornqQ0UXy6cRXptbOvUhQPX6jYttyCqmkZaxA@mail.gmail.com>
-References: <1405358677-23657-1-git-send-email-wens@csie.org>
- <1405358677-23657-3-git-send-email-wens@csie.org> <CAGb2v64mZjmB+ftQ7yM5LzhUyPVGtCXq6DOUQ-pumLb73_DYLQ@mail.gmail.com>
- <20140724160141.GZ20328@lukather>
-Reply-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: remove gpio_ensure_requested()
+Date: Thu, 24 Jul 2014 18:21:12 +0200
+Message-ID: <CACRpkdaLokvZwb_tPdj21iF25AOJ_K6gWA5QK_VVz2Z4U9stkA@mail.gmail.com>
+References: <1406181062-29596-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBJXDYSPAKGQEOI7CYTA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20140724160141.GZ20328@lukather>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1406181062-29596-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jul 25, 2014 at 12:01 AM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> On Thu, Jul 24, 2014 at 09:19:18PM +0800, Chen-Yu Tsai wrote:
->> > This patch also changes the GPIO bindings for R_PIO:
->> >
->> >     gpios = <&r_pio B N flag>;
->> >
->> > Where B originally was the pinbank label (L or M) counted from A,
->> > with this patch it becomes (L or M) counted from its pinbank base (L).
->> >
->> > Thus
->> >
->> >     gpios = <&r_pio 10 11 0>; /* PL11 */
->> >
->> > becomes
->> >
->> >     gpios = <&r_pio 0 11 0>; /* PL11 */
->> >
->> > IMO this is correct, as the binding shows the bank offset and pin offset
->> > within the bank for the GPIO controller. But I'm worried it might be a
->> > bit confusing.
->>
->> I see you Acked this patch, but also in your reply to my cover letter,
->> you mentioned that you want absolute pin numbers matching the datasheets.
->> What about the GPIO DT bindings, as I explained above?
->>
->> Just double checking. Thanks.
+On Thu, Jul 24, 2014 at 7:51 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+
+> gpio_ensure_requested() has been introduced in Feb. 2008 by commit
+> d2876d08d86f2 to force users of the GPIO API to explicitly request GPIOs
+> before using them.
 >
-> I'd like it to have the absolute numbers in sysfs, but the relative
-> one in the DT. But I guess it's already what's happening, right?
+> Hopefully by now all GPIOs are correctly requested and this extra check
+> can be omitted ; in any case the GPIO maintainers won't feel bad if
+> machines start failing after 6 years of warnings.
+>
+> This patch removes that function from the dark ages.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-That's right. Just checking. :)
+Hm you took the opportunity to also refactor the debounce ops
+to static inlines, I see why though so patch applied!
 
-
-ChenYu
+Yours,
+Linus Walleij
