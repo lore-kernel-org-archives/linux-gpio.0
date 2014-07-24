@@ -1,49 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] driver:gpio remove all usage of
-	gpio_remove retval in driver
-Date: Thu, 24 Jul 2014 10:29:22 +0200
-Message-ID: <CACRpkdaEF14cB+=SjTHgwGH0z88v82Q_UNPvjzDAbpOb_2ec5Q@mail.gmail.com>
-References: <CACRpkda6mzVdaN0cvOxpbsxWyCv2nGyDXOjZg_5aT8u7SSQeUw@mail.gmail.com>
- <1405197014-25225-1-git-send-email-berthe.ab@gmail.com>
- <1405197014-25225-4-git-send-email-berthe.ab@gmail.com>
- <CACRpkdasp9bLULT7NJM9nYX58rRSsQKXFddOLz9Ah6kp-j-3=Q@mail.gmail.com>
- <20140722151125.GS17528@sirena.org.uk>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 1/2] pinctrl: sunxi: use gpiolib API to mark a GPIO used
+ as an IRQ
+Date: Thu, 24 Jul 2014 13:46:14 +0200
+Message-ID: <20140724114614.GU20328@lukather>
+References: <1405358677-23657-1-git-send-email-wens@csie.org>
+ <1405358677-23657-2-git-send-email-wens@csie.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20140722151125.GS17528@sirena.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-mips@linux-mips.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Matthew Garrett <matthew.garrett@nebula.com>, Samuel Ortiz <sameo@linux.intel.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, abdoulaye berthe <berthe.ab@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Buesch <m@bues.ch>, Greg KH <gregkh>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yRXsXhSYq7voLSEz"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from top.free-electrons.com ([176.31.233.9]:47563 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751058AbaGXLuO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Jul 2014 07:50:14 -0400
+Content-Disposition: inline
+In-Reply-To: <1405358677-23657-2-git-send-email-wens@csie.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 
-On Tue, Jul 22, 2014 at 5:11 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Jul 22, 2014 at 05:08:13PM +0200, Linus Walleij wrote:
->
->> Heads up. Requesting ACKs for this patch or I'm atleast warning that it will be
->> applied. We're getting rid of the return value from gpiochip_remove().
->
-> Can someone send the patch please?  Splitting it up per-subsystem would
-> probably be easier...
 
-OK Abdoulaye maybe we can do it a piece at a time?
+--yRXsXhSYq7voLSEz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have removed the __must_check attribute from gpiochip_remove()
-in the gpiolib, so the compiler won't complain about this being missing
-anymore as of kernel v3.17. I also dropped the check in the GPIO
-and pin control subsystem, and other subsystems can start
-dropping the checks too if they are OK with the build warnings
-from the kautobuild until the __must_check removal has propagated
-upstream.
+Hi Chen-Yu,
 
-Yours,
-Linus Walleij
+Sorry for the belated reply.
+
+On Tue, Jul 15, 2014 at 01:24:36AM +0800, Chen-Yu Tsai wrote:
+> When an IRQ is started on a GPIO line, mark this GPIO as IRQ in
+> the gpiolib so we can keep track of the usage centrally.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+It looks fine:
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--yRXsXhSYq7voLSEz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJT0PIFAAoJEBx+YmzsjxAgU58QAIJwW9R28dzQBFGvw/KRUbPv
+UzUhKdjffQESfaSh6LoaIZSMnrk8rqbTqWUhZhW3SCsKkSPC0z36pL6Kstt+csDu
+F79vvlp/Fg+sFyhiddpFgZSPvRbkTVfcuvOjxHrIZRpkdP2CYtAiBUeu11j/ZffO
+4E+Idd9vaHoDCzGMHRZZxF0WLZCmxgBptBXfabFzgkYy4utVhjiDC+m5YKh+lJo0
+NhXR6qkm58T+VaPT3hYkXNB/dDmk/ekE4fJhmmQ3VMDIe5Z7LSZSYV+k4hqakMaU
+zpGI/rd9+fG72kGG0509urwpLxl2gxvNTRIxNLNaJmbI2UMqqf9pYsfj4SfzAssr
+lnznOKYcNEKHgRabLRjetsCqGKYpGxuPAgNeOgCzQ1MiOb9pQyJsfrWokdIZzKZu
+R/rIe4Wl4mVsnmol9l6loBG3A3yvtShRiSxx33Hl6PoHDFA27lysiljkqKjlvtqJ
+ion+AqigzpeNRJDsin1yNs7CVD2vSayrCMbwz05L/0tP7EZQcsAhnfBjp35qhd4m
+OOADDNmwanLEOU3Qcol66f1Z4s9uH97CfjZubxnszVcQ+KdUSiyPLr6ojgndlNgk
+RtRL9C6OwlgAHYo0MPapqA0b4vWwXXblq9TVyZFgXz9FJiC550m6FVJ4qb3wVxrM
+benDuxyj5mnqM1JyRGJ9
+=TjMs
+-----END PGP SIGNATURE-----
+
+--yRXsXhSYq7voLSEz--
