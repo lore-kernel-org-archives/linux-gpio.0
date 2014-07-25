@@ -1,230 +1,314 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 1/3] gpio: lynxpoint: Convert to use gpiolib irqchip
-Date: Fri, 25 Jul 2014 09:54:46 +0300
-Message-ID: <1406271288-15995-2-git-send-email-mika.westerberg@linux.intel.com>
-References: <1406271288-15995-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1406271288-15995-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhu Lejun <lejun.zhu@linux.intel.com>, Yang Bin <bin.yang@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
+Subject: Re: [RFC PATCH] gpiolib: Provide and export gpiod_export_name
+Date: Fri, 25 Jul 2014 09:46:54 +0200
+Message-ID: <53D20B6E.9010808@aksignal.cz>
+References: <1406139132-5404-1-git-send-email-linux@roeck-us.net> <CAAVeFuKsJpSYo2DMyTdYE2J5Cu_ZD=b9o-=S0DLDccyNmwniNg@mail.gmail.com> <53D0A7E4.1040707@aksignal.cz> <53D0A983.9000900@roeck-us.net>
+Reply-To: jiri.prchal@aksignal.cz
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <53D0A983.9000900@roeck-us.net>
+Sender: linux-doc-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Instead of open-coding irqchip handling in the driver we can take advantage
-of the new irqchip helpers provided by the gpiolib core.
+What about this modification? If is defined label, use it prioritlly, a=
+t second use name in chip description.
 
-While doing this we also make sure that we call gpiochip_irqchip_add()
-after the gpiochip itself is registered as required.
+@@ -842,7 +842,9 @@ int gpiod_export(struct gpio_desc *desc, bool direc=
+tion_may_change)
+  	spin_unlock_irqrestore(&gpio_lock, flags);
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/gpio/Kconfig          |  2 +-
- drivers/gpio/gpio-lynxpoint.c | 93 ++++++++++++-------------------------------
- 2 files changed, 26 insertions(+), 69 deletions(-)
+  	offset =3D gpio_chip_hwgpio(desc);
+-	if (desc->chip->names && desc->chip->names[offset])
++	if (desc->label)
++		ioname =3D desc->label;
++	else if (desc->chip->names && desc->chip->names[offset])
+  		ioname =3D desc->chip->names[offset];
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 4a1b5113e527..e70297c20487 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -423,7 +423,7 @@ config GPIO_GE_FPGA
- config GPIO_LYNXPOINT
- 	tristate "Intel Lynxpoint GPIO support"
- 	depends on ACPI && X86
--	select IRQ_DOMAIN
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  driver for GPIO functionality on Intel Lynxpoint PCH chipset
- 	  Requires ACPI device enumeration code to set up a platform device.
-diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-index 2bea89b72508..7e3305ae8ec6 100644
---- a/drivers/gpio/gpio-lynxpoint.c
-+++ b/drivers/gpio/gpio-lynxpoint.c
-@@ -25,9 +25,7 @@
- #include <linux/types.h>
- #include <linux/bitops.h>
- #include <linux/interrupt.h>
--#include <linux/irq.h>
- #include <linux/gpio.h>
--#include <linux/irqdomain.h>
- #include <linux/slab.h>
- #include <linux/acpi.h>
- #include <linux/platform_device.h>
-@@ -62,7 +60,6 @@
- 
- struct lp_gpio {
- 	struct gpio_chip	chip;
--	struct irq_domain	*domain;
- 	struct platform_device	*pdev;
- 	spinlock_t		lock;
- 	unsigned long		reg_base;
-@@ -151,7 +148,8 @@ static void lp_gpio_free(struct gpio_chip *chip, unsigned offset)
- 
- static int lp_irq_type(struct irq_data *d, unsigned type)
- {
--	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct lp_gpio *lg = container_of(gc, struct lp_gpio, chip);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	unsigned long flags;
- 	u32 value;
-@@ -236,16 +234,11 @@ static int lp_gpio_direction_output(struct gpio_chip *chip,
- 	return 0;
- }
- 
--static int lp_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
--{
--	struct lp_gpio *lg = container_of(chip, struct lp_gpio, chip);
--	return irq_create_mapping(lg->domain, offset);
--}
--
- static void lp_gpio_irq_handler(unsigned hwirq, struct irq_desc *desc)
- {
- 	struct irq_data *data = irq_desc_get_irq_data(desc);
--	struct lp_gpio *lg = irq_data_get_irq_handler_data(data);
-+	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-+	struct lp_gpio *lg = container_of(gc, struct lp_gpio, chip);
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	u32 base, pin, mask;
- 	unsigned long reg, ena, pending;
-@@ -262,7 +255,7 @@ static void lp_gpio_irq_handler(unsigned hwirq, struct irq_desc *desc)
- 			mask = BIT(pin);
- 			/* Clear before handling so we don't lose an edge */
- 			outl(mask, reg);
--			irq = irq_find_mapping(lg->domain, base + pin);
-+			irq = irq_find_mapping(lg->chip.irqdomain, base + pin);
- 			generic_handle_irq(irq);
- 		}
- 	}
-@@ -279,7 +272,8 @@ static void lp_irq_mask(struct irq_data *d)
- 
- static void lp_irq_enable(struct irq_data *d)
- {
--	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct lp_gpio *lg = container_of(gc, struct lp_gpio, chip);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	unsigned long reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
- 	unsigned long flags;
-@@ -291,7 +285,8 @@ static void lp_irq_enable(struct irq_data *d)
- 
- static void lp_irq_disable(struct irq_data *d)
- {
--	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct lp_gpio *lg = container_of(gc, struct lp_gpio, chip);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	unsigned long reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
- 	unsigned long flags;
-@@ -301,26 +296,6 @@ static void lp_irq_disable(struct irq_data *d)
- 	spin_unlock_irqrestore(&lg->lock, flags);
- }
- 
--static int lp_irq_reqres(struct irq_data *d)
--{
--	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
--
--	if (gpio_lock_as_irq(&lg->chip, irqd_to_hwirq(d))) {
--		dev_err(lg->chip.dev,
--			"unable to lock HW IRQ %lu for IRQ\n",
--			irqd_to_hwirq(d));
--		return -EINVAL;
--	}
--	return 0;
--}
--
--static void lp_irq_relres(struct irq_data *d)
--{
--	struct lp_gpio *lg = irq_data_get_irq_chip_data(d);
--
--	gpio_unlock_as_irq(&lg->chip, irqd_to_hwirq(d));
--}
--
- static struct irq_chip lp_irqchip = {
- 	.name = "LP-GPIO",
- 	.irq_mask = lp_irq_mask,
-@@ -328,8 +303,6 @@ static struct irq_chip lp_irqchip = {
- 	.irq_enable = lp_irq_enable,
- 	.irq_disable = lp_irq_disable,
- 	.irq_set_type = lp_irq_type,
--	.irq_request_resources = lp_irq_reqres,
--	.irq_release_resources = lp_irq_relres,
- 	.flags = IRQCHIP_SKIP_SET_WAKE,
- };
- 
-@@ -348,22 +321,6 @@ static void lp_gpio_irq_init_hw(struct lp_gpio *lg)
- 	}
- }
- 
--static int lp_gpio_irq_map(struct irq_domain *d, unsigned int irq,
--			    irq_hw_number_t hwirq)
--{
--	struct lp_gpio *lg = d->host_data;
--
--	irq_set_chip_and_handler(irq, &lp_irqchip, handle_simple_irq);
--	irq_set_chip_data(irq, lg);
--	irq_set_irq_type(irq, IRQ_TYPE_NONE);
--
--	return 0;
--}
--
--static const struct irq_domain_ops lp_gpio_irq_ops = {
--	.map = lp_gpio_irq_map,
--};
--
- static int lp_gpio_probe(struct platform_device *pdev)
- {
- 	struct lp_gpio *lg;
-@@ -371,7 +328,6 @@ static int lp_gpio_probe(struct platform_device *pdev)
- 	struct resource *io_rc, *irq_rc;
- 	struct device *dev = &pdev->dev;
- 	unsigned long reg_len;
--	unsigned hwirq;
- 	int ret = -ENODEV;
- 
- 	lg = devm_kzalloc(dev, sizeof(struct lp_gpio), GFP_KERNEL);
-@@ -414,27 +370,28 @@ static int lp_gpio_probe(struct platform_device *pdev)
- 	gc->can_sleep = false;
- 	gc->dev = dev;
- 
-+	ret = gpiochip_add(gc);
-+	if (ret) {
-+		dev_err(dev, "failed adding lp-gpio chip\n");
-+		return ret;
-+	}
-+
- 	/* set up interrupts  */
- 	if (irq_rc && irq_rc->start) {
--		hwirq = irq_rc->start;
--		gc->to_irq = lp_gpio_to_irq;
--
--		lg->domain = irq_domain_add_linear(NULL, LP_NUM_GPIO,
--						   &lp_gpio_irq_ops, lg);
--		if (!lg->domain)
--			return -ENXIO;
--
- 		lp_gpio_irq_init_hw(lg);
-+		ret = gpiochip_irqchip_add(gc, &lp_irqchip, 0,
-+					   handle_simple_irq, IRQ_TYPE_NONE);
-+		if (ret) {
-+			dev_err(dev, "failed to add irqchip\n");
-+			gpiochip_remove(gc);
-+			return ret;
-+		}
- 
--		irq_set_handler_data(hwirq, lg);
--		irq_set_chained_handler(hwirq, lp_gpio_irq_handler);
-+		gpiochip_set_chained_irqchip(gc, &lp_irqchip,
-+					     (unsigned)irq_rc->start,
-+					     lp_gpio_irq_handler);
- 	}
- 
--	ret = gpiochip_add(gc);
--	if (ret) {
--		dev_err(dev, "failed adding lp-gpio chip\n");
--		return ret;
--	}
- 	pm_runtime_enable(dev);
- 
- 	return 0;
--- 
-2.0.1
+  	dev =3D device_create(&gpio_class, desc->chip->dev, MKDEV(0, 0),
+
+
+
+Dne 24.7.2014 v 08:36 Guenter Roeck napsal(a):
+> On 07/23/2014 11:29 PM, Ji=C5=99=C3=AD Prchal wrote:
+>> Hi,
+>> just to append to this: is in plan some kind of exporting named GPIO=
+s from device tree to /sys/* or /dev/*? It would
+>> be very useful not only for me. Because I thing what GPIO is used fo=
+r what is hardware design dependent same as for
+>> example what SPI chips are used. And SPI chips are in DT.
+>>
+>
+> Yes, for one of my use cases that is how I would probably configure i=
+t;
+> alternatively it would be configured with platform data. It is
+> somewhat questionable, however, if this approach would be acceptable
+> for the Linux dt community, as it is a corner case between system
+> (hardware) description and configuration.
+>
+> Guenter
+>
+>> Dne 24.7.2014 v 07:44 Alexandre Courbot napsal(a):
+>>> On Thu, Jul 24, 2014 at 3:12 AM, Guenter Roeck <linux@roeck-us.net>=
+ wrote:
+>>>> gpiod_export_name is similar to gpiod_export, but lets the user
+>>>> determine the name used to export a gpio pin.
+>>>>
+>>>> Currently, the pin name is determined by the chip driver with
+>>>> the 'names' array in the gpio_chip data structure, or it is set
+>>>> to gpioX, where X is the pin number, if no name is provided by
+>>>> the chip driver.
+>>>
+>>> Oh, my. I did not even know about this 'names' array. This is prett=
+y
+>>> bad - a GPIO provider should not decide what its GPIOs are used for=
+=2E
+>>>
+>>> Luckily for you, this creates a precedent that makes this patch mor=
+e
+>>> acceptable, in that it is not making the situation worse. Even thou=
+gh
+>>> I consider both solutions to be bad, I actually prefer your
+>>> gpiod_export_name() function to that 'names' array in gpio_chip...
+>>>
+>>>>
+>>>> It is, however, desirable to be able to provide the pin name when
+>>>> exporting the pin, for example from platform code. In other words,
+>>>> it would be useful to move the naming decision from the pin provid=
+er
+>>>> to the pin consumer. The gpio-pca953x driver provides this capabil=
+ity
+>>>> as part of its platform data. Other drivers could be enhanced in a
+>>>> similar way; however, this is not always possible or easy to accom=
+plish.
+>>>> For example, mfd client drivers such as gpio-ich already use platf=
+orm
+>>>> data to pass information from the mfd master driver to the client =
+driver.
+>>>> Overloading this platform data to also provide an array of gpio pi=
+n names
+>>>> would be a challenge if not impossible.
+>>>>
+>>>> The alternative to use gpiod_export_link is also not always desira=
+ble,
+>>>> since it only creates a named link to a different directory, meani=
+ng
+>>>> the named gpio pin is not available in /sys/class/gpio but only
+>>>> in some platform specific directory and thus not as generic as pos=
+sible
+>>>> and/or useful.
+>>>>
+>>>> A specific example for a use case is a gpio pin which reports AC p=
+ower
+>>>> loss to user space. Depending on the platform and platform variant=
+,
+>>>> the pin can be provided by various gpio chip drivers and pin numbe=
+rs.
+>>>> It would be very desirable to have a well defined location such as
+>>>> /sys/class/gpio/ac_power_loss for this pin, so user space knows wh=
+ere
+>>>> to find the attribute without knowledge of the underlying platform
+>>>> variant or oher hardware details.
+>>>
+>>> As I explained on the other thread, I still encourage you to have
+>>> these GPIOs under device nodes that give a hint of who is provided =
+the
+>>> GPIO (effectively exporting the (dev, function) tuple to user-space=
+)
+>>> instead of having them popping out under /sys/class/gpio where nobo=
+dy
+>>> knows where they come from and name collisions are much more likely=
+=2E
+>>>
+>>> Your message sounds like you have no choice but have the named GPIO
+>>> link under the gpiochip's device node, but this is not the case -
+>>> gpio_export_link() let's you specify the device under which the lin=
+k
+>>> should appear. Make that device be your "scu" device and you can ha=
+ve
+>>> a consistent sysfs path to access your GPIOs.
+>>>
+>>> Allowing GPIOs to pop up in the same directory with an arbitrary na=
+me
+>>> is just a recipe for a mess. But that's a recipe that is already
+>>> allowed thanks to that 'names' array. So I'm really confused about
+>>> what to do with this patch. If you can do with gpio_export_link() (=
+and
+>>> I have not seen evidence of the contrary), please go that way inste=
+ad.
+>>>
+>>>>
+>>>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>>>> ---
+>>>> Applies to tip of linux-gpio/for-next.
+>>>>
+>>>>   Documentation/gpio/sysfs.txt  | 12 ++++++++----
+>>>>   drivers/gpio/gpiolib-sysfs.c  | 23 ++++++++++++++++-------
+>>>>   include/linux/gpio/consumer.h |  9 +++++++++
+>>>>   3 files changed, 33 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sys=
+fs.txt
+>>>> index c2c3a97..8e301b2 100644
+>>>> --- a/Documentation/gpio/sysfs.txt
+>>>> +++ b/Documentation/gpio/sysfs.txt
+>>>> @@ -125,7 +125,11 @@ requested using gpio_request():
+>>>>          /* export the GPIO to userspace */
+>>>>          int gpiod_export(struct gpio_desc *desc, bool direction_m=
+ay_change);
+>>>>
+>>>> -       /* reverse gpio_export() */
+>>>> +       /* export named GPIO to userspace */
+>>>> +       int gpiod_export_name(struct gpio_desc *desc, const char *=
+ioname,
+>>>> +                       bool direction_may_change);
+>>>> +
+>>>> +       /* reverse gpio_export() / gpiod_export_name() */
+>>>>          void gpiod_unexport(struct gpio_desc *desc);
+>>>>
+>>>>          /* create a sysfs link to an exported GPIO node */
+>>>> @@ -136,9 +140,9 @@ requested using gpio_request():
+>>>>          int gpiod_sysfs_set_active_low(struct gpio_desc *desc, in=
+t value);
+>>>>
+>>>>   After a kernel driver requests a GPIO, it may only be made avail=
+able in
+>>>> -the sysfs interface by gpiod_export(). The driver can control whe=
+ther the
+>>>> -signal direction may change. This helps drivers prevent userspace=
+ code
+>>>> -from accidentally clobbering important system state.
+>>>> +the sysfs interface by gpiod_export() or gpiod_export_name(). The=
+ driver
+>>>> +can control whether the signal direction may change. This helps d=
+rivers
+>>>> +prevent userspace code from accidentally clobbering important sys=
+tem state.
+>>>>
+>>>>   This explicit exporting can help with debugging (by making some =
+kinds
+>>>>   of experiments easier), or can provide an always-there interface=
+ that's
+>>>> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-s=
+ysfs.c
+>>>> index be45a92..7d36230 100644
+>>>> --- a/drivers/gpio/gpiolib-sysfs.c
+>>>> +++ b/drivers/gpio/gpiolib-sysfs.c
+>>>> @@ -523,13 +523,12 @@ static struct class gpio_class =3D {
+>>>>    *
+>>>>    * Returns zero on success, else an error.
+>>>>    */
+>>>> -int gpiod_export(struct gpio_desc *desc, bool direction_may_chang=
+e)
+>>>> +int gpiod_export_name(struct gpio_desc *desc, const char *ioname,
+>>>> +                     bool direction_may_change)
+>>>>   {
+>>>>          unsigned long           flags;
+>>>>          int                     status;
+>>>> -       const char              *ioname =3D NULL;
+>>>>          struct device           *dev;
+>>>> -       int                     offset;
+>>>>
+>>>>          /* can't export until sysfs is available ... */
+>>>>          if (!gpio_class.p) {
+>>>> @@ -560,10 +559,6 @@ int gpiod_export(struct gpio_desc *desc, bool=
+ direction_may_change)
+>>>>                  direction_may_change =3D false;
+>>>>          spin_unlock_irqrestore(&gpio_lock, flags);
+>>>>
+>>>> -       offset =3D gpio_chip_hwgpio(desc);
+>>>> -       if (desc->chip->names && desc->chip->names[offset])
+>>>> -               ioname =3D desc->chip->names[offset];
+>>>> -
+>>>>          dev =3D device_create(&gpio_class, desc->chip->dev, MKDEV=
+(0, 0),
+>>>>                              desc, ioname ? ioname : "gpio%u",
+>>>>                              desc_to_gpio(desc));
+>>>> @@ -600,6 +595,20 @@ fail_unlock:
+>>>>          gpiod_dbg(desc, "%s: status %d\n", __func__, status);
+>>>>          return status;
+>>>>   }
+>>>> +EXPORT_SYMBOL_GPL(gpiod_export_name);
+>>>> +
+>>>> +int gpiod_export(struct gpio_desc *desc, bool direction_may_chang=
+e)
+>>>> +{
+>>>> +       const char *ioname =3D NULL;
+>>>> +
+>>>> +       if (desc) {
+>>>> +               int offset =3D gpio_chip_hwgpio(desc);
+>>>> +
+>>>> +               if (desc->chip->names && desc->chip->names[offset]=
+)
+>>>> +                       ioname =3D desc->chip->names[offset];
+>>>
+>>> I'd add a
+>>>
+>>> else
+>>>      ioname =3D "gpio%u";
+>>>
+>>> so all the name-chosing code is grouped in the same place. Then you
+>>> can remove that same check from gpiod_export_name().
+>>>
+>>>> +       }
+>>>> +       return gpiod_export_name(desc, ioname, direction_may_chang=
+e);
+>>>> +}
+>>>>   EXPORT_SYMBOL_GPL(gpiod_export);
+>>>>
+>>>>   static int match_export(struct device *dev, const void *data)
+>>>> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/co=
+nsumer.h
+>>>> index 05e53cc..986da3e 100644
+>>>> --- a/include/linux/gpio/consumer.h
+>>>> +++ b/include/linux/gpio/consumer.h
+>>>> @@ -260,6 +260,8 @@ static inline int desc_to_gpio(const struct gp=
+io_desc *desc)
+>>>>   #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_GPIO_SYSFS)
+>>>>
+>>>>   int gpiod_export(struct gpio_desc *desc, bool direction_may_chan=
+ge);
+>>>> +int gpiod_export_name(struct gpio_desc *desc, const char *ioname,
+>>>> +                     bool direction_may_change);
+>>>>   int gpiod_export_link(struct device *dev, const char *name,
+>>>>                        struct gpio_desc *desc);
+>>>>   int gpiod_sysfs_set_active_low(struct gpio_desc *desc, int value=
+);
+>>>> @@ -273,6 +275,13 @@ static inline int gpiod_export(struct gpio_de=
+sc *desc,
+>>>>          return -ENOSYS;
+>>>>   }
+>>>>
+>>>> +static inline int gpiod_export_name(struct gpio_desc *desc,
+>>>> +                                   const char *ioname,
+>>>> +                                   bool direction_may_change)
+>>>> +{
+>>>> +       return -ENOSYS;
+>>>> +}
+>>>> +
+>>>>   static inline int gpiod_export_link(struct device *dev, const ch=
+ar *name,
+>>>>                                      struct gpio_desc *desc)
+>>>>   {
+>>>> --
+>>>> 1.9.1
+>>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-gpi=
+o" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>
+>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
