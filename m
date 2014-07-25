@@ -1,70 +1,49 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] gpio: extend gpiod_get*() with flags
-	parameter
-Date: Fri, 25 Jul 2014 07:52:50 +0100
-Message-ID: <20140725065250.GF7063@lee--X1>
-References: <1406214298-20062-1-git-send-email-acourbot@nvidia.com>
- <20140724161052.GA15615@kroah.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [RFC PATCH] gpiolib: Provide and export gpiod_export_name
+Date: Fri, 25 Jul 2014 07:09:59 -0700
+Message-ID: <53D26537.9000203@roeck-us.net>
+References: <1406139132-5404-1-git-send-email-linux@roeck-us.net> <CAAVeFuKsJpSYo2DMyTdYE2J5Cu_ZD=b9o-=S0DLDccyNmwniNg@mail.gmail.com> <53D0A7E4.1040707@aksignal.cz> <53D0A983.9000900@roeck-us.net> <53D20B6E.9010808@aksignal.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <20140724161052.GA15615@kroah.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-wireless@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Takashi Iwai <tiwai@suse.de>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <chris@printf.net>, dri-devel@lists.freedesktop.org, Liam Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Pavel Machek <pavel@ucw.cz>, Jiri Slaby <jslaby@suse.cz>, gnurou@gmail.com, Florian Fainelli <f.fainelli@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexander Shiyan <shc_work@mail.ru>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, linux-iio@vger.kernel.org, linux-omap@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Hans Verkuil <hans.verkuil@ci>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.active-venture.com ([67.228.131.205]:59144 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752279AbaGYOKA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Jul 2014 10:10:00 -0400
+In-Reply-To: <53D20B6E.9010808@aksignal.cz>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: jiri.prchal@aksignal.cz, Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>
 
-T24gVGh1LCAyNCBKdWwgMjAxNCwgR3JlZyBLcm9haC1IYXJ0bWFuIHdyb3RlOgoKPiBPbiBGcmks
-IEp1bCAyNSwgMjAxNCBhdCAxMjowNDo1OEFNICswOTAwLCBBbGV4YW5kcmUgQ291cmJvdCB3cm90
-ZToKPiA+IFRoZSBodWdlIG1ham9yaXR5IG9mIEdQSU9zIGhhdmUgdGhlaXIgZGlyZWN0aW9uIGFu
-ZCBpbml0aWFsIHZhbHVlIHNldAo+ID4gcmlnaHQgYWZ0ZXIgYmVpbmcgb2J0YWluZWQgYnkgb25l
-IG9mIHRoZSBncGlvZF9nZXQoKSBmdW5jdGlvbnMuIFRoZQo+ID4gaW50ZWdlciBHUElPIEFQSSBo
-YWQgZ3Bpb19yZXF1ZXN0X29uZSgpIHRoYXQgdG9vayBhIGNvbnZlbmllbmNlIGZsYWdzCj4gPiBw
-YXJhbWV0ZXIgYWxsb3dpbmcgdG8gc3BlY2lmeSBhbiBkaXJlY3Rpb24gYW5kIHZhbHVlIGFwcGxp
-ZWQgdG8gdGhlCj4gPiByZXR1cm5lZCBHUElPLiBUaGlzIGZlYXR1cmUgZ3JlYXRseSBzaW1wbGlm
-aWVzIGNsaWVudCBjb2RlIGFuZCBlbnN1cmVzCj4gPiBlcnJvcnMgYXJlIGFsd2F5cyBoYW5kbGVk
-IHByb3Blcmx5Lgo+ID4gCj4gPiBBIHNpbWlsYXIgZmVhdHVyZSBoYXMgYmVlbiByZXF1ZXN0ZWQg
-Zm9yIHRoZSBncGlvZCBBUEkuIFNpbmNlIEdQSU9zIG5lZWQKPiA+IGEgZGlyZWN0aW9uIHRvIGJl
-IHVzZWQgYW55d2F5LCB3ZSBwcmVmZXIgdG8gZXh0ZW5kIHRoZSBleGlzdGluZwo+ID4gZnVuY3Rp
-b25zIGluc3RlYWQgb2YgaW50cm9kdWNpbmcgbmV3IGZ1bmN0aW9ucyB0aGF0IHdvdWxkIHJhaXNl
-IHRoZQo+ID4gbnVtYmVyIG9mIGdwaW9kIGdldHRlcnMgdG8gMTYgKCEpLgo+ID4gCj4gPiBUaGUg
-ZHJhd2JhY2sgb2YgdGhpcyBhcHByb2FjaCBpcyB0aGF0IGFsbCBncGlvZCBjbGllbnRzIG5lZWQg
-dG8gYmUKPiA+IHVwZGF0ZWQsIGJ1dCB0aGVyZSBhcmVuJ3QgdGhhdCBtYW55IGFuZCB0aGUgbW9t
-ZW50IGFuZCB0aGlzIHJlc3VsdHMgaW4KPiA+IHNtYWxsZXIgKGFuZCBob3BlZnVsbHkgc2FmZXIp
-IGNvZGUuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJv
-dEBudmlkaWEuY29tPgo+ID4gLS0tCj4gPiBUaGlzIGNoYW5nZSB3aWxsIGJlIGRpZmZpY3VsdCB0
-byBhcHBseSB3aXRob3V0IGJyZWFraW5nIHRoaW5ncywgYnV0Cj4gPiBsZXQncyB0cnkgdG8gZG8g
-aXQgcmlnaHQuIEhvcGVmdWxseSB0aGUgYmVuZWZpdCB3aWxsIG91dHdlaWdodCB0aGUKPiA+IGRp
-c3R1cmJhbmNlLgo+ID4gCj4gPiBUaGlzIGlzIGEgcGF0Y2ggYWdhaW5zdCAtbmV4dCB0byBsaXN0
-IGFuZCB1cGRhdGUgYWxsIGN1cnJlbnQgZ3Bpb2QKPiA+IGNvbnN1bWVycy4gVXBkYXRlcyBhcmUg
-dHJpdmlhbCBhdCBmaXJzdCBzaWdodCwgYnV0IGl0IHdvdWxkIGJlIG5pY2UgdG8KPiA+IGdldCBh
-cyBtYW55IGFja3MgYXMgcG9zc2libGUgZnJvbSB0aGUgcmVzcGVjdGl2ZSBzdWJzeXN0ZW0gbWFp
-bnRhaW5lcnMuCj4gPiAKPiA+IEknbSBub3Qgc3VyZSBob3cgdGhpcyBjb3VsZCBiZSBhcHBsaWVk
-IGhhcm1sZXNzbHkgdGhvdWdoIC0gbWF5YmUgdGhyb3VnaAo+ID4gYSBkZWRpY2F0ZWQgYnJhbmNo
-IGZvciAtbmV4dD8gUHJvYmxlbSBpcyB0aGF0IGEgbG90IG9mIG5ldyBjb2RlIGlzIG5vdAo+ID4g
-eWV0IG1lcmdlZCBpbnRvIG1haW5saW5lLCBhbmQgY29uZmxpY3RzIGFyZSB2ZXJ5IGxpa2VseSB0
-byBvY2N1ci4gTGludXMsCj4gPiBkbyB5b3UgaGF2ZSBhbnkgc3VnZ2VzdGlvbiBhcyB0byBob3cg
-dGhpcyBjYW4gYmUgZG9uZSB3aXRob3V0IGJsb29kIGJlaW5nCj4gPiBzcGlsbGVkPwo+IAo+IERv
-IHRoaXMgaW4gMyBzdGVwcywgbm90IGFsbCBhdCBvbmNlLgo+IAo+IE1ha2UgYSBuZXcgZnVuY3Rp
-b24gdGhhdCB0YWtlcyB0aGUgbmV3IGFyZ3VtZW50LCBnZXQgdGhhdCBtZXJnZWQKPiAKPiBTdWJt
-aXQgcGF0Y2hlcyB0aGF0IGNvbnZlcnQgZHJpdmVycyBvdmVyIHRvIHVzZSB0aGUgbmV3IGZ1bmN0
-aW9uLgo+IAo+IE9uY2UgYWxsIG9mIHRob3NlIGFyZSBtZXJnZWQsIHJlbW92ZSB0aGUgb2xkIGZ1
-bmN0aW9uLgo+IAo+IFRoYXQgd2F5IHRoZXJlIGFyZSBubyAiZmxhZyBkYXlzIiBuZWVkZWQsIGFu
-ZCBldmVyeW9uZSBpcyBoYXBweSB5b3UKPiBkb24ndCBzZW5kIG91dCBlbWFpbHMgd2l0aCA0MCsg
-cGVvcGxlIGluIHRoZSBUbzogYW5kIENjOiBsaW5lcyA6KQoKKzk5OTk5CgotLSAKTGVlIEpvbmVz
-CkxpbmFybyBTVE1pY3JvZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQKTGluYXJvLm9yZyDi
-lIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBMaW5hcm86IEZhY2Vi
-b29rIHwgVHdpdHRlciB8IEJsb2cKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNhLXByb2pl
-Y3Qub3JnCmh0dHA6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9h
-bHNhLWRldmVsCg==
+On 07/25/2014 12:46 AM, Ji=C5=99=C3=AD Prchal wrote:
+> What about this modification? If is defined label, use it prioritlly,=
+ at second use name in chip description.
+>
+> @@ -842,7 +842,9 @@ int gpiod_export(struct gpio_desc *desc, bool dir=
+ection_may_change)
+>       spin_unlock_irqrestore(&gpio_lock, flags);
+>
+>       offset =3D gpio_chip_hwgpio(desc);
+> -    if (desc->chip->names && desc->chip->names[offset])
+> +    if (desc->label)
+> +        ioname =3D desc->label;
+> +    else if (desc->chip->names && desc->chip->names[offset])
+>           ioname =3D desc->chip->names[offset];
+>
+
+Label is not unique. It is, for example, used by the sysfs export funct=
+ion,
+and all pins exported from user space have the same label. The first
+pin exported through sysfs would be named "sysfs", the second export
+would fail.
+
+Guenter
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
