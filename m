@@ -1,493 +1,208 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpio: add flags argument to gpiod_get*() functions
-Date: Fri, 25 Jul 2014 23:38:36 +0900
-Message-ID: <1406299116-28492-1-git-send-email-acourbot@nvidia.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gnurou.org ([207.192.72.5]:49358 "EHLO mail.gnurou.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752919AbaGYOlz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 25 Jul 2014 10:41:55 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2] gpio: keystone: add dsp gpio controller driver
+Date: Fri, 25 Jul 2014 18:44:50 +0300
+Message-ID: <53D27B72.2060709@ti.com>
+References: <1406126699-10053-1-git-send-email-grygorii.strashko@ti.com> <53D15B47.6020802@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53D15B47.6020802@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Suman Anna <s-anna@ti.com>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "Khoronzhuk, Ivan" <ivan.khoronzhuk@ti.com>, "Karicheri, Muralidharan" <m-karicheri2@ti.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "varkabhadram@gmail.com" <varkabhadram@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 
-The huge majority of GPIOs have their direction and initial value set
-right after being obtained by one of the gpiod_get() functions. The
-integer GPIO API had gpio_request_one() that took a convenience flags
-parameter allowing to specify an direction and value applied to the
-returned GPIO. This feature greatly simplifies client code and ensures
-errors are always handled properly.
+On 07/24/2014 10:15 PM, Suman Anna wrote:
+> Grygorii,
+> 
+> On 07/23/2014 09:44 AM, Strashko, Grygorii wrote:
+>> From: Murali Karicheri <m-karicheri2@ti.com>
+>>
+>> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
+>> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
+>> each DSP core. This is one of the component used by the IPC mechanism used
+>> on Keystone SOCs.
+>>
+>> Keystone 2 DSP GPIO controller has specific features:
+>> - each GPIO can be configured only as output pin;
+>> - setting GPIO value to 1 causes IRQ generation on target DSP core;
+>> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+>>    pending.
+>>
+>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> ---
+>> Changes in v2:
+>> - minor comments applied
+>>
+>> v1:
+>>   https://lkml.org/lkml/2014/7/16/170
+>>
+>>   .../devicetree/bindings/gpio/gpio-keystone.txt     |   43 ++++++
+>>   drivers/gpio/Kconfig                               |    8 ++
+>>   drivers/gpio/Makefile                              |    1 +
+>>   drivers/gpio/gpio-keystone.c                       |  138 ++++++++++++++++++++
+>>   4 files changed, 190 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+>>   create mode 100644 drivers/gpio/gpio-keystone.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-keystone.txt b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+>> new file mode 100644
+>> index 0000000..d412711
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
+>> @@ -0,0 +1,43 @@
+>> +Keystone 2 DSP GPIO controller bindings
+>> +
+>> +HOST OS userland running on ARM can send interrupts to DSP cores using
+>> +the DSP GPIO controller IP. It provides 28 IRQ signals per each DSP core.
+>> +This is one of the component used by the IPC mechanism used on Keystone SOCs.
+>> +
+>> +For example TCI6638K2K SoC has 8 DSP GPIO controllers:
+>> + - 8 for C66x CorePacx CPUs 0-7
+>> +
+>> +Keystone 2 DSP GPIO controller has specific features:
+>> +- each GPIO can be configured only as output pin;
+>> +- setting GPIO value to 1 causes IRQ generation on target DSP core;
+>> +- reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+>> +  pending.
+>> +
+>> +Required Properties:
+>> +- compatible: should be "ti,keystone-dsp-gpio"
+>> +
+>> +- ti,syscon-dev : phandle/offset pair. The phandle to syscon used to
+>> +				  access device state control registers and the offset
+>> +				  in order to use block of device's specific registers.
+>> +
+>> +- gpio-controller : Marks the device node as a gpio controller.
+>> +
+>> +- #gpio-cells : Should be one.
+>> +				See gpio.txt in this directory for a of the cells format
+>> +
+>> +Please refer to gpio.txt in this directory for details of the common GPIO
+>> +bindings used by client devices.
+>> +
+>> +Example:
+>> +	dspgpio0: keystone_dsp_gpio@02620240 {
+>> +		compatible = "ti,keystone-dsp-gpio";
+>> +		ti,syscon-dev = <&devctrl 0x240>;
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+> 
+> Mismatch? Conflicts with "Should be one".
 
-A similar feature has been requested for the gpiod API. Since setting
-the direction of a GPIO is so often the very next action done after
-obtaining its descriptor, we prefer to extend the existing functions
-instead of introducing new functions that would raise the
-number of gpiod getters to 16 (!).
+You are right.
+> 
+>> +	};
+>> +
+>> +	dsp0: dsp0 {
+>> +		compatible = "linux,rproc-user";
+>> +		...
+>> +		kick-gpio = <&dspgpio0 27>;
+>> +	};
+>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>> index 4a1b511..990871f 100644
+>> --- a/drivers/gpio/Kconfig
+>> +++ b/drivers/gpio/Kconfig
+>> @@ -158,6 +158,14 @@ config GPIO_EP93XX
+>>   	depends on ARCH_EP93XX
+>>   	select GPIO_GENERIC
+>>   
+>> +config GPIO_KEYSTONE_DSP
+>> +	tristate "Keystone DSP GPIO support"
+>> +	depends on ARCH_KEYSTONE
+>> +	help
+>> +	  Say yes here to support the DSP GPIO driver for Keystone 2. This defines
+>> +	  up to 28 GPIOs per each Remote (DSP) core. This is used to send
+>> +	  signals from ARM to the Remote (DSP) core.
+>> +
+>>   config GPIO_ZEVIO
+>>   	bool "LSI ZEVIO SoC memory mapped GPIOs"
+>>   	depends on ARM && OF_GPIO
+>> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+>> index d10f6a9..15c3389 100644
+>> --- a/drivers/gpio/Makefile
+>> +++ b/drivers/gpio/Makefile
+>> @@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_IOP)		+= gpio-iop.o
+>>   obj-$(CONFIG_GPIO_IT8761E)	+= gpio-it8761e.o
+>>   obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
+>>   obj-$(CONFIG_GPIO_KEMPLD)	+= gpio-kempld.o
+>> +obj-$(CONFIG_GPIO_KEYSTONE_DSP)	+= gpio-keystone.o
+>>   obj-$(CONFIG_ARCH_KS8695)	+= gpio-ks8695.o
+>>   obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
+>>   obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
+>> diff --git a/drivers/gpio/gpio-keystone.c b/drivers/gpio/gpio-keystone.c
+>> new file mode 100644
+>> index 0000000..7909a1c
+>> --- /dev/null
+>> +++ b/drivers/gpio/gpio-keystone.c
+>> @@ -0,0 +1,138 @@
+>> +/*
+>> + * Keystone 2 DSP GPIO support.
+>> + *
+>> + * Copyright (C) 2014 Texas Instruments, Inc.
+>> + * Author: Murali Karicheri <m-karicheri2@ti.com>
+>> + *	   Grygorii Strashko <grygorii.strashko@ti.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +#include <linux/module.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +/* 28 bits in IPCGRx are treated as GPIO pins to generate interrupt */
+>> +#define GPIOS_PER_BANK		28
+>> +#define GPIO_OFFSET		4
+>> +
+>> +struct keystone_gpio_bank {
+>> +	struct gpio_chip	 chip;
+>> +	struct device		*dev;
+>> +	struct regmap		*devctrl_regs;
+>> +	u32			devctrl_offset;
+>> +};
+>> +#define chip_to_bank(c) \
+>> +	container_of(c, struct keystone_gpio_bank, chip)
+>> +
+>> +static int keystone_gpio_direction_out(struct gpio_chip *c,
+>> +					unsigned ofs, int val)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static int keystone_gpio_get(struct gpio_chip *c, unsigned ofs)
+>> +{
+>> +	struct keystone_gpio_bank *bank = chip_to_bank(c);
+>> +	int bit = ofs + GPIO_OFFSET;
+>> +	int ret;
+>> +	u32 val = 0;
+>> +
+>> +	ret = regmap_read(bank->devctrl_regs, bank->devctrl_offset, &val);
+>> +	if (ret < 0)
+>> +		dev_dbg(bank->dev, "gpio read failed ret(%d)\n", ret);
+>> +
+>> +	return (val >> bit) & 1;
+>> +}
+>> +
+>> +static void keystone_gpio_set(struct gpio_chip *c, unsigned ofs, int val)
+>> +{
+>> +	struct keystone_gpio_bank *bank = chip_to_bank(c);
+>> +	int bit = ofs + GPIO_OFFSET;
+>> +	int ret;
+>> +
+>> +	if (!val)
+>> +		return;
+>> +
+>> +	ret = regmap_write(bank->devctrl_regs, bank->devctrl_offset,
+>> +			   BIT(bit) | 1);
+> 
+> What is this ORing with 1 for?
 
-The drawback of this approach is that all gpiod clients need to be
-updated. To limit the pain, temporary macros are introduced that allow
-gpiod_get*() to be called with or without the extra flags argument. They
-will be removed once all consumer code has been updated.
+This is lock/trigger bit. Once set - Configured GPIO values will be physically applied.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-This dude can be applied harmlessly to the GPIO tree - then I will go
-after every gpiod user to update the calls to gpiod_get*() before
-removing the macros in consumer.h.
-
-Formatting is not fixed everywhere but this is on purpose, to limit the
-amount of noise in the temporary changes.
-
- Documentation/gpio/consumer.txt | 26 ++++++++++---
- drivers/gpio/devres.c           | 40 ++++++++++++--------
- drivers/gpio/gpiolib.c          | 67 +++++++++++++++++++++++-----------
- include/linux/gpio/consumer.h   | 81 +++++++++++++++++++++++++++++++++--------
- 4 files changed, 155 insertions(+), 59 deletions(-)
-
-diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index d8abfc3..7654632 100644
---- a/Documentation/gpio/consumer.txt
-+++ b/Documentation/gpio/consumer.txt
-@@ -29,13 +29,24 @@ gpiod_get() functions. Like many other kernel subsystems, gpiod_get() takes the
- device that will use the GPIO and the function the requested GPIO is supposed to
- fulfill:
- 
--	struct gpio_desc *gpiod_get(struct device *dev, const char *con_id)
-+	struct gpio_desc *gpiod_get(struct device *dev, const char *con_id,
-+				    enum gpiod_flags flags)
- 
- If a function is implemented by using several GPIOs together (e.g. a simple LED
- device that displays digits), an additional index argument can be specified:
- 
- 	struct gpio_desc *gpiod_get_index(struct device *dev,
--					  const char *con_id, unsigned int idx)
-+					  const char *con_id, unsigned int idx,
-+					  enum gpiod_flags flags)
-+
-+The flags parameter is used to optionally specify a direction and initial value
-+for the GPIO. Values can be:
-+
-+* GPIOD_ASIS or 0 to not initialize the GPIO at all. The direction must be set
-+  later with one of the dedicated functions.
-+* GPIOD_IN to initialize the GPIO as input.
-+* GPIOD_OUT_LOW to initialize the GPIO as output with a value of 0.
-+* GPIOD_OUT_HIGH to initialize the GPIO as output with a value of 1.
- 
- Both functions return either a valid GPIO descriptor, or an error code checkable
- with IS_ERR() (they will never return a NULL pointer). -ENOENT will be returned
-@@ -46,11 +57,13 @@ errors and an absence of GPIO for optional GPIO parameters.
- 
- Device-managed variants of these functions are also defined:
- 
--	struct gpio_desc *devm_gpiod_get(struct device *dev, const char *con_id)
-+	struct gpio_desc *devm_gpiod_get(struct device *dev, const char *con_id,
-+					 enum gpiod_flags flags)
- 
- 	struct gpio_desc *devm_gpiod_get_index(struct device *dev,
- 					       const char *con_id,
--					       unsigned int idx)
-+					       unsigned int idx,
-+					       enum gpiod_flags flags)
- 
- A GPIO descriptor can be disposed of using the gpiod_put() function:
- 
-@@ -67,8 +80,9 @@ Using GPIOs
- 
- Setting Direction
- -----------------
--The first thing a driver must do with a GPIO is setting its direction. This is
--done by invoking one of the gpiod_direction_*() functions:
-+The first thing a driver must do with a GPIO is setting its direction. If no
-+direction-setting flags have been given to gpiod_get*(), this is done by
-+invoking one of the gpiod_direction_*() functions:
- 
- 	int gpiod_direction_input(struct gpio_desc *desc)
- 	int gpiod_direction_output(struct gpio_desc *desc, int value)
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index 65978cf..41b2f40 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -39,47 +39,53 @@ static int devm_gpiod_match(struct device *dev, void *res, void *data)
-  * devm_gpiod_get - Resource-managed gpiod_get()
-  * @dev:	GPIO consumer
-  * @con_id:	function within the GPIO consumer
-+ * @flags:	optional GPIO initialization flags
-  *
-  * Managed gpiod_get(). GPIO descriptors returned from this function are
-  * automatically disposed on driver detach. See gpiod_get() for detailed
-  * information about behavior and return values.
-  */
--struct gpio_desc *__must_check devm_gpiod_get(struct device *dev,
--					      const char *con_id)
-+struct gpio_desc *__must_check __devm_gpiod_get(struct device *dev,
-+					      const char *con_id,
-+					      enum gpiod_flags flags)
- {
--	return devm_gpiod_get_index(dev, con_id, 0);
-+	return devm_gpiod_get_index(dev, con_id, 0, flags);
- }
--EXPORT_SYMBOL(devm_gpiod_get);
-+EXPORT_SYMBOL(__devm_gpiod_get);
- 
- /**
-  * devm_gpiod_get_optional - Resource-managed gpiod_get_optional()
-  * @dev: GPIO consumer
-  * @con_id: function within the GPIO consumer
-+ * @flags: optional GPIO initialization flags
-  *
-  * Managed gpiod_get_optional(). GPIO descriptors returned from this function
-  * are automatically disposed on driver detach. See gpiod_get_optional() for
-  * detailed information about behavior and return values.
-  */
--struct gpio_desc *__must_check devm_gpiod_get_optional(struct device *dev,
--						       const char *con_id)
-+struct gpio_desc *__must_check __devm_gpiod_get_optional(struct device *dev,
-+						       const char *con_id,
-+						       enum gpiod_flags flags)
- {
--	return devm_gpiod_get_index_optional(dev, con_id, 0);
-+	return devm_gpiod_get_index_optional(dev, con_id, 0, flags);
- }
--EXPORT_SYMBOL(devm_gpiod_get_optional);
-+EXPORT_SYMBOL(__devm_gpiod_get_optional);
- 
- /**
-  * devm_gpiod_get_index - Resource-managed gpiod_get_index()
-  * @dev:	GPIO consumer
-  * @con_id:	function within the GPIO consumer
-  * @idx:	index of the GPIO to obtain in the consumer
-+ * @flags:	optional GPIO initialization flags
-  *
-  * Managed gpiod_get_index(). GPIO descriptors returned from this function are
-  * automatically disposed on driver detach. See gpiod_get_index() for detailed
-  * information about behavior and return values.
-  */
--struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
-+struct gpio_desc *__must_check __devm_gpiod_get_index(struct device *dev,
- 						    const char *con_id,
--						    unsigned int idx)
-+						    unsigned int idx,
-+						    enum gpiod_flags flags)
- {
- 	struct gpio_desc **dr;
- 	struct gpio_desc *desc;
-@@ -89,7 +95,7 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
- 	if (!dr)
- 		return ERR_PTR(-ENOMEM);
- 
--	desc = gpiod_get_index(dev, con_id, idx);
-+	desc = gpiod_get_index(dev, con_id, idx, flags);
- 	if (IS_ERR(desc)) {
- 		devres_free(dr);
- 		return desc;
-@@ -100,26 +106,28 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_gpiod_get_index);
-+EXPORT_SYMBOL(__devm_gpiod_get_index);
- 
- /**
-  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
-  * @dev: GPIO consumer
-  * @con_id: function within the GPIO consumer
-  * @index: index of the GPIO to obtain in the consumer
-+ * @flags: optional GPIO initialization flags
-  *
-  * Managed gpiod_get_index_optional(). GPIO descriptors returned from this
-  * function are automatically disposed on driver detach. See
-  * gpiod_get_index_optional() for detailed information about behavior and
-  * return values.
-  */
--struct gpio_desc *__must_check devm_gpiod_get_index_optional(struct device *dev,
-+struct gpio_desc *__must_check __devm_gpiod_get_index_optional(struct device *dev,
- 							     const char *con_id,
--							     unsigned int index)
-+							     unsigned int index,
-+							 enum gpiod_flags flags)
- {
- 	struct gpio_desc *desc;
- 
--	desc = devm_gpiod_get_index(dev, con_id, index);
-+	desc = devm_gpiod_get_index(dev, con_id, index, flags);
- 	if (IS_ERR(desc)) {
- 		if (PTR_ERR(desc) == -ENOENT)
- 			return NULL;
-@@ -127,7 +135,7 @@ struct gpio_desc *__must_check devm_gpiod_get_index_optional(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_gpiod_get_index_optional);
-+EXPORT_SYMBOL(__devm_gpiod_get_index_optional);
- 
- /**
-  * devm_gpiod_put - Resource-managed gpiod_put()
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 18b069e..70c48d4 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1578,38 +1578,43 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
-  * gpiod_get - obtain a GPIO for a given GPIO function
-  * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-  * @con_id:	function within the GPIO consumer
-+ * @flags:	optional GPIO initialization flags
-  *
-  * Return the GPIO descriptor corresponding to the function con_id of device
-  * dev, -ENOENT if no GPIO has been assigned to the requested function, or
-  * another IS_ERR() code if an error occured while trying to acquire the GPIO.
-  */
--struct gpio_desc *__must_check gpiod_get(struct device *dev, const char *con_id)
-+struct gpio_desc *__must_check __gpiod_get(struct device *dev, const char *con_id,
-+					 enum gpiod_flags flags)
- {
--	return gpiod_get_index(dev, con_id, 0);
-+	return gpiod_get_index(dev, con_id, 0, flags);
- }
--EXPORT_SYMBOL_GPL(gpiod_get);
-+EXPORT_SYMBOL_GPL(__gpiod_get);
- 
- /**
-  * gpiod_get_optional - obtain an optional GPIO for a given GPIO function
-  * @dev: GPIO consumer, can be NULL for system-global GPIOs
-  * @con_id: function within the GPIO consumer
-+ * @flags: optional GPIO initialization flags
-  *
-  * This is equivalent to gpiod_get(), except that when no GPIO was assigned to
-  * the requested function it will return NULL. This is convenient for drivers
-  * that need to handle optional GPIOs.
-  */
--struct gpio_desc *__must_check gpiod_get_optional(struct device *dev,
--						  const char *con_id)
-+struct gpio_desc *__must_check __gpiod_get_optional(struct device *dev,
-+						  const char *con_id,
-+						  enum gpiod_flags flags)
- {
--	return gpiod_get_index_optional(dev, con_id, 0);
-+	return gpiod_get_index_optional(dev, con_id, 0, flags);
- }
--EXPORT_SYMBOL_GPL(gpiod_get_optional);
-+EXPORT_SYMBOL_GPL(__gpiod_get_optional);
- 
- /**
-  * gpiod_get_index - obtain a GPIO from a multi-index GPIO function
-  * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-  * @con_id:	function within the GPIO consumer
-  * @idx:	index of the GPIO to obtain in the consumer
-+ * @flags:	optional GPIO initialization flags
-  *
-  * This variant of gpiod_get() allows to access GPIOs other than the first
-  * defined one for functions that define several GPIOs.
-@@ -1618,23 +1623,24 @@ EXPORT_SYMBOL_GPL(gpiod_get_optional);
-  * requested function and/or index, or another IS_ERR() code if an error
-  * occured while trying to acquire the GPIO.
-  */
--struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
-+struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
- 					       const char *con_id,
--					       unsigned int idx)
-+					       unsigned int idx,
-+					       enum gpiod_flags flags)
- {
- 	struct gpio_desc *desc = NULL;
- 	int status;
--	enum gpio_lookup_flags flags = 0;
-+	enum gpio_lookup_flags lookupflags = 0;
- 
- 	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
- 
- 	/* Using device tree? */
- 	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node) {
- 		dev_dbg(dev, "using device tree for GPIO lookup\n");
--		desc = of_find_gpio(dev, con_id, idx, &flags);
-+		desc = of_find_gpio(dev, con_id, idx, &lookupflags);
- 	} else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev)) {
- 		dev_dbg(dev, "using ACPI for GPIO lookup\n");
--		desc = acpi_find_gpio(dev, con_id, idx, &flags);
-+		desc = acpi_find_gpio(dev, con_id, idx, &lookupflags);
- 	}
- 
- 	/*
-@@ -1643,7 +1649,7 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	 */
- 	if (!desc || desc == ERR_PTR(-ENOENT)) {
- 		dev_dbg(dev, "using lookup tables for GPIO lookup");
--		desc = gpiod_find(dev, con_id, idx, &flags);
-+		desc = gpiod_find(dev, con_id, idx, &lookupflags);
- 	}
- 
- 	if (IS_ERR(desc)) {
-@@ -1656,16 +1662,33 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	if (status < 0)
- 		return ERR_PTR(status);
- 
--	if (flags & GPIO_ACTIVE_LOW)
-+	if (lookupflags & GPIO_ACTIVE_LOW)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
--	if (flags & GPIO_OPEN_DRAIN)
-+	if (lookupflags & GPIO_OPEN_DRAIN)
- 		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
--	if (flags & GPIO_OPEN_SOURCE)
-+	if (lookupflags & GPIO_OPEN_SOURCE)
- 		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
- 
-+	/* No particular flag request, return here... */
-+	if (flags & GPIOD_FLAGS_BIT_DIR_SET)
-+		return desc;
-+
-+	/* Process flags */
-+	if (flags & GPIOD_FLAGS_BIT_DIR_OUT)
-+		status = gpiod_direction_output(desc,
-+					      flags & GPIOD_FLAGS_BIT_DIR_VAL);
-+	else
-+		status = gpiod_direction_input(desc);
-+
-+	if (status < 0) {
-+		dev_dbg(dev, "setup of GPIO %s failed\n", con_id);
-+		gpiod_put(desc);
-+		return ERR_PTR(status);
-+	}
-+
- 	return desc;
- }
--EXPORT_SYMBOL_GPL(gpiod_get_index);
-+EXPORT_SYMBOL_GPL(__gpiod_get_index);
- 
- /**
-  * gpiod_get_index_optional - obtain an optional GPIO from a multi-index GPIO
-@@ -1673,18 +1696,20 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
-  * @dev: GPIO consumer, can be NULL for system-global GPIOs
-  * @con_id: function within the GPIO consumer
-  * @index: index of the GPIO to obtain in the consumer
-+ * @flags: optional GPIO initialization flags
-  *
-  * This is equivalent to gpiod_get_index(), except that when no GPIO with the
-  * specified index was assigned to the requested function it will return NULL.
-  * This is convenient for drivers that need to handle optional GPIOs.
-  */
--struct gpio_desc *__must_check gpiod_get_index_optional(struct device *dev,
-+struct gpio_desc *__must_check __gpiod_get_index_optional(struct device *dev,
- 							const char *con_id,
--							unsigned int index)
-+							unsigned int index,
-+							enum gpiod_flags flags)
- {
- 	struct gpio_desc *desc;
- 
--	desc = gpiod_get_index(dev, con_id, index);
-+	desc = gpiod_get_index(dev, con_id, index, flags);
- 	if (IS_ERR(desc)) {
- 		if (PTR_ERR(desc) == -ENOENT)
- 			return NULL;
-@@ -1692,7 +1717,7 @@ struct gpio_desc *__must_check gpiod_get_index_optional(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL_GPL(gpiod_get_index_optional);
-+EXPORT_SYMBOL_GPL(__gpiod_get_index_optional);
- 
- /**
-  * gpiod_put - dispose of a GPIO descriptor
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 05e53cc..b7ce0c6 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -18,30 +18,79 @@ struct gpio_desc;
- 
- #ifdef CONFIG_GPIOLIB
- 
-+#define GPIOD_FLAGS_BIT_DIR_SET		BIT(0)
-+#define GPIOD_FLAGS_BIT_DIR_OUT		BIT(1)
-+#define GPIOD_FLAGS_BIT_DIR_VAL		BIT(2)
-+
-+/**
-+ * Optional flags that can be passed to one of gpiod_* to configure direction
-+ * and output value. These values cannot be OR'd.
-+ */
-+enum gpiod_flags {
-+	GPIOD_ASIS	= 0,
-+	GPIOD_IN	= GPIOD_FLAGS_BIT_DIR_SET,
-+	GPIOD_OUT_LOW	= GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT,
-+	GPIOD_OUT_HIGH	= GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT |
-+			  GPIOD_FLAGS_BIT_DIR_VAL,
-+};
-+
- /* Acquire and dispose GPIOs */
--struct gpio_desc *__must_check gpiod_get(struct device *dev,
--					 const char *con_id);
--struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
-+struct gpio_desc *__must_check __gpiod_get(struct device *dev,
-+					 const char *con_id,
-+					 enum gpiod_flags flags);
-+#define __gpiod_get(dev, con_id, flags, ...) __gpiod_get(dev, con_id, flags)
-+#define gpiod_get(varargs...) __gpiod_get(varargs, 0)
-+struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
- 					       const char *con_id,
--					       unsigned int idx);
--struct gpio_desc *__must_check gpiod_get_optional(struct device *dev,
--						  const char *con_id);
--struct gpio_desc *__must_check gpiod_get_index_optional(struct device *dev,
-+					       unsigned int idx,
-+					       enum gpiod_flags flags);
-+#define __gpiod_get_index(dev, con_id, index, flags, ...)		\
-+	__gpiod_get_index(dev, con_id, index, flags)
-+#define gpiod_get_index(varargs...) __gpiod_get_index(varargs, 0)
-+struct gpio_desc *__must_check __gpiod_get_optional(struct device *dev,
-+						  const char *con_id,
-+						  enum gpiod_flags flags);
-+#define __gpiod_get_optional(dev, con_id, flags, ...)			\
-+	__gpiod_get_optional(dev, con_id, flags)
-+#define gpiod_get_optional(varargs...) __gpiod_get_optional(varargs, 0)
-+struct gpio_desc *__must_check __gpiod_get_index_optional(struct device *dev,
- 							const char *con_id,
--							unsigned int index);
-+							unsigned int index,
-+							enum gpiod_flags flags);
-+#define __gpiod_get_index_optional(dev, con_id, index, flags, ...)	\
-+	__gpiod_get_index_optional(dev, con_id, index, flags)
-+#define gpiod_get_index_optional(varargs...)				\
-+	__gpiod_get_index_optional(varargs, 0)
- 
- void gpiod_put(struct gpio_desc *desc);
- 
--struct gpio_desc *__must_check devm_gpiod_get(struct device *dev,
--					      const char *con_id);
--struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
-+struct gpio_desc *__must_check __devm_gpiod_get(struct device *dev,
-+					      const char *con_id,
-+					      enum gpiod_flags flags);
-+#define __devm_gpiod_get(dev, con_id, flags, ...)			\
-+	__devm_gpiod_get(dev, con_id, flags)
-+#define devm_gpiod_get(varargs...) __devm_gpiod_get(varargs, 0)
-+struct gpio_desc *__must_check __devm_gpiod_get_index(struct device *dev,
- 						    const char *con_id,
--						    unsigned int idx);
--struct gpio_desc *__must_check devm_gpiod_get_optional(struct device *dev,
--						       const char *con_id);
-+						    unsigned int idx,
-+						    enum gpiod_flags flags);
-+#define __devm_gpiod_get_index(dev, con_id, index, flags, ...)		\
-+	__devm_gpiod_get_index(dev, con_id, index, flags)
-+#define devm_gpiod_get_index(varargs...) __devm_gpiod_get_index(varargs, 0)
-+struct gpio_desc *__must_check __devm_gpiod_get_optional(struct device *dev,
-+						       const char *con_id,
-+						       enum gpiod_flags flags);
-+#define __devm_gpiod_get_optional(dev, con_id, flags, ...)		\
-+	__devm_gpiod_get_optional(dev, con_id, flags)
-+#define devm_gpiod_get_optional(varargs...)				\
-+	__devm_gpiod_get_optional(varargs, 0)
- struct gpio_desc *__must_check
--devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
--			      unsigned int index);
-+__devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
-+			      unsigned int index, enum gpiod_flags flags);
-+#define __devm_gpiod_get_index_optional(dev, con_id, index, flags, ...)	\
-+	__devm_gpiod_get_index_optional(dev, con_id, index, flags)
-+#define devm_gpiod_get_index_optional(varargs...)			\
-+	__devm_gpiod_get_index_optional(varargs, 0)
- 
- void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
- 
--- 
-2.0.2
-
+Regards,
+-grygorii
