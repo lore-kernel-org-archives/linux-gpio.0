@@ -1,314 +1,70 @@
-From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
-Subject: Re: [RFC PATCH] gpiolib: Provide and export gpiod_export_name
-Date: Fri, 25 Jul 2014 09:46:54 +0200
-Message-ID: <53D20B6E.9010808@aksignal.cz>
-References: <1406139132-5404-1-git-send-email-linux@roeck-us.net> <CAAVeFuKsJpSYo2DMyTdYE2J5Cu_ZD=b9o-=S0DLDccyNmwniNg@mail.gmail.com> <53D0A7E4.1040707@aksignal.cz> <53D0A983.9000900@roeck-us.net>
-Reply-To: jiri.prchal@aksignal.cz
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] gpio: extend gpiod_get*() with flags
+	parameter
+Date: Fri, 25 Jul 2014 07:52:50 +0100
+Message-ID: <20140725065250.GF7063@lee--X1>
+References: <1406214298-20062-1-git-send-email-acourbot@nvidia.com>
+ <20140724161052.GA15615@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <53D0A983.9000900@roeck-us.net>
-Sender: linux-doc-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <20140724161052.GA15615@kroah.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-wireless@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Takashi Iwai <tiwai@suse.de>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Chris Ball <chris@printf.net>, dri-devel@lists.freedesktop.org, Liam Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Pavel Machek <pavel@ucw.cz>, Jiri Slaby <jslaby@suse.cz>, gnurou@gmail.com, Florian Fainelli <f.fainelli@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexander Shiyan <shc_work@mail.ru>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Paul Handrigan <Paul.Handrigan@cirrus.com>, linux-iio@vger.kernel.org, linux-omap@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Hans Verkuil <hans.verkuil@ci>
 List-Id: linux-gpio@vger.kernel.org
 
-What about this modification? If is defined label, use it prioritlly, a=
-t second use name in chip description.
-
-@@ -842,7 +842,9 @@ int gpiod_export(struct gpio_desc *desc, bool direc=
-tion_may_change)
-  	spin_unlock_irqrestore(&gpio_lock, flags);
-
-  	offset =3D gpio_chip_hwgpio(desc);
--	if (desc->chip->names && desc->chip->names[offset])
-+	if (desc->label)
-+		ioname =3D desc->label;
-+	else if (desc->chip->names && desc->chip->names[offset])
-  		ioname =3D desc->chip->names[offset];
-
-  	dev =3D device_create(&gpio_class, desc->chip->dev, MKDEV(0, 0),
-
-
-
-Dne 24.7.2014 v 08:36 Guenter Roeck napsal(a):
-> On 07/23/2014 11:29 PM, Ji=C5=99=C3=AD Prchal wrote:
->> Hi,
->> just to append to this: is in plan some kind of exporting named GPIO=
-s from device tree to /sys/* or /dev/*? It would
->> be very useful not only for me. Because I thing what GPIO is used fo=
-r what is hardware design dependent same as for
->> example what SPI chips are used. And SPI chips are in DT.
->>
->
-> Yes, for one of my use cases that is how I would probably configure i=
-t;
-> alternatively it would be configured with platform data. It is
-> somewhat questionable, however, if this approach would be acceptable
-> for the Linux dt community, as it is a corner case between system
-> (hardware) description and configuration.
->
-> Guenter
->
->> Dne 24.7.2014 v 07:44 Alexandre Courbot napsal(a):
->>> On Thu, Jul 24, 2014 at 3:12 AM, Guenter Roeck <linux@roeck-us.net>=
- wrote:
->>>> gpiod_export_name is similar to gpiod_export, but lets the user
->>>> determine the name used to export a gpio pin.
->>>>
->>>> Currently, the pin name is determined by the chip driver with
->>>> the 'names' array in the gpio_chip data structure, or it is set
->>>> to gpioX, where X is the pin number, if no name is provided by
->>>> the chip driver.
->>>
->>> Oh, my. I did not even know about this 'names' array. This is prett=
-y
->>> bad - a GPIO provider should not decide what its GPIOs are used for=
-=2E
->>>
->>> Luckily for you, this creates a precedent that makes this patch mor=
-e
->>> acceptable, in that it is not making the situation worse. Even thou=
-gh
->>> I consider both solutions to be bad, I actually prefer your
->>> gpiod_export_name() function to that 'names' array in gpio_chip...
->>>
->>>>
->>>> It is, however, desirable to be able to provide the pin name when
->>>> exporting the pin, for example from platform code. In other words,
->>>> it would be useful to move the naming decision from the pin provid=
-er
->>>> to the pin consumer. The gpio-pca953x driver provides this capabil=
-ity
->>>> as part of its platform data. Other drivers could be enhanced in a
->>>> similar way; however, this is not always possible or easy to accom=
-plish.
->>>> For example, mfd client drivers such as gpio-ich already use platf=
-orm
->>>> data to pass information from the mfd master driver to the client =
-driver.
->>>> Overloading this platform data to also provide an array of gpio pi=
-n names
->>>> would be a challenge if not impossible.
->>>>
->>>> The alternative to use gpiod_export_link is also not always desira=
-ble,
->>>> since it only creates a named link to a different directory, meani=
-ng
->>>> the named gpio pin is not available in /sys/class/gpio but only
->>>> in some platform specific directory and thus not as generic as pos=
-sible
->>>> and/or useful.
->>>>
->>>> A specific example for a use case is a gpio pin which reports AC p=
-ower
->>>> loss to user space. Depending on the platform and platform variant=
-,
->>>> the pin can be provided by various gpio chip drivers and pin numbe=
-rs.
->>>> It would be very desirable to have a well defined location such as
->>>> /sys/class/gpio/ac_power_loss for this pin, so user space knows wh=
-ere
->>>> to find the attribute without knowledge of the underlying platform
->>>> variant or oher hardware details.
->>>
->>> As I explained on the other thread, I still encourage you to have
->>> these GPIOs under device nodes that give a hint of who is provided =
-the
->>> GPIO (effectively exporting the (dev, function) tuple to user-space=
-)
->>> instead of having them popping out under /sys/class/gpio where nobo=
-dy
->>> knows where they come from and name collisions are much more likely=
-=2E
->>>
->>> Your message sounds like you have no choice but have the named GPIO
->>> link under the gpiochip's device node, but this is not the case -
->>> gpio_export_link() let's you specify the device under which the lin=
-k
->>> should appear. Make that device be your "scu" device and you can ha=
-ve
->>> a consistent sysfs path to access your GPIOs.
->>>
->>> Allowing GPIOs to pop up in the same directory with an arbitrary na=
-me
->>> is just a recipe for a mess. But that's a recipe that is already
->>> allowed thanks to that 'names' array. So I'm really confused about
->>> what to do with this patch. If you can do with gpio_export_link() (=
-and
->>> I have not seen evidence of the contrary), please go that way inste=
-ad.
->>>
->>>>
->>>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->>>> ---
->>>> Applies to tip of linux-gpio/for-next.
->>>>
->>>>   Documentation/gpio/sysfs.txt  | 12 ++++++++----
->>>>   drivers/gpio/gpiolib-sysfs.c  | 23 ++++++++++++++++-------
->>>>   include/linux/gpio/consumer.h |  9 +++++++++
->>>>   3 files changed, 33 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sys=
-fs.txt
->>>> index c2c3a97..8e301b2 100644
->>>> --- a/Documentation/gpio/sysfs.txt
->>>> +++ b/Documentation/gpio/sysfs.txt
->>>> @@ -125,7 +125,11 @@ requested using gpio_request():
->>>>          /* export the GPIO to userspace */
->>>>          int gpiod_export(struct gpio_desc *desc, bool direction_m=
-ay_change);
->>>>
->>>> -       /* reverse gpio_export() */
->>>> +       /* export named GPIO to userspace */
->>>> +       int gpiod_export_name(struct gpio_desc *desc, const char *=
-ioname,
->>>> +                       bool direction_may_change);
->>>> +
->>>> +       /* reverse gpio_export() / gpiod_export_name() */
->>>>          void gpiod_unexport(struct gpio_desc *desc);
->>>>
->>>>          /* create a sysfs link to an exported GPIO node */
->>>> @@ -136,9 +140,9 @@ requested using gpio_request():
->>>>          int gpiod_sysfs_set_active_low(struct gpio_desc *desc, in=
-t value);
->>>>
->>>>   After a kernel driver requests a GPIO, it may only be made avail=
-able in
->>>> -the sysfs interface by gpiod_export(). The driver can control whe=
-ther the
->>>> -signal direction may change. This helps drivers prevent userspace=
- code
->>>> -from accidentally clobbering important system state.
->>>> +the sysfs interface by gpiod_export() or gpiod_export_name(). The=
- driver
->>>> +can control whether the signal direction may change. This helps d=
-rivers
->>>> +prevent userspace code from accidentally clobbering important sys=
-tem state.
->>>>
->>>>   This explicit exporting can help with debugging (by making some =
-kinds
->>>>   of experiments easier), or can provide an always-there interface=
- that's
->>>> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-s=
-ysfs.c
->>>> index be45a92..7d36230 100644
->>>> --- a/drivers/gpio/gpiolib-sysfs.c
->>>> +++ b/drivers/gpio/gpiolib-sysfs.c
->>>> @@ -523,13 +523,12 @@ static struct class gpio_class =3D {
->>>>    *
->>>>    * Returns zero on success, else an error.
->>>>    */
->>>> -int gpiod_export(struct gpio_desc *desc, bool direction_may_chang=
-e)
->>>> +int gpiod_export_name(struct gpio_desc *desc, const char *ioname,
->>>> +                     bool direction_may_change)
->>>>   {
->>>>          unsigned long           flags;
->>>>          int                     status;
->>>> -       const char              *ioname =3D NULL;
->>>>          struct device           *dev;
->>>> -       int                     offset;
->>>>
->>>>          /* can't export until sysfs is available ... */
->>>>          if (!gpio_class.p) {
->>>> @@ -560,10 +559,6 @@ int gpiod_export(struct gpio_desc *desc, bool=
- direction_may_change)
->>>>                  direction_may_change =3D false;
->>>>          spin_unlock_irqrestore(&gpio_lock, flags);
->>>>
->>>> -       offset =3D gpio_chip_hwgpio(desc);
->>>> -       if (desc->chip->names && desc->chip->names[offset])
->>>> -               ioname =3D desc->chip->names[offset];
->>>> -
->>>>          dev =3D device_create(&gpio_class, desc->chip->dev, MKDEV=
-(0, 0),
->>>>                              desc, ioname ? ioname : "gpio%u",
->>>>                              desc_to_gpio(desc));
->>>> @@ -600,6 +595,20 @@ fail_unlock:
->>>>          gpiod_dbg(desc, "%s: status %d\n", __func__, status);
->>>>          return status;
->>>>   }
->>>> +EXPORT_SYMBOL_GPL(gpiod_export_name);
->>>> +
->>>> +int gpiod_export(struct gpio_desc *desc, bool direction_may_chang=
-e)
->>>> +{
->>>> +       const char *ioname =3D NULL;
->>>> +
->>>> +       if (desc) {
->>>> +               int offset =3D gpio_chip_hwgpio(desc);
->>>> +
->>>> +               if (desc->chip->names && desc->chip->names[offset]=
-)
->>>> +                       ioname =3D desc->chip->names[offset];
->>>
->>> I'd add a
->>>
->>> else
->>>      ioname =3D "gpio%u";
->>>
->>> so all the name-chosing code is grouped in the same place. Then you
->>> can remove that same check from gpiod_export_name().
->>>
->>>> +       }
->>>> +       return gpiod_export_name(desc, ioname, direction_may_chang=
-e);
->>>> +}
->>>>   EXPORT_SYMBOL_GPL(gpiod_export);
->>>>
->>>>   static int match_export(struct device *dev, const void *data)
->>>> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/co=
-nsumer.h
->>>> index 05e53cc..986da3e 100644
->>>> --- a/include/linux/gpio/consumer.h
->>>> +++ b/include/linux/gpio/consumer.h
->>>> @@ -260,6 +260,8 @@ static inline int desc_to_gpio(const struct gp=
-io_desc *desc)
->>>>   #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_GPIO_SYSFS)
->>>>
->>>>   int gpiod_export(struct gpio_desc *desc, bool direction_may_chan=
-ge);
->>>> +int gpiod_export_name(struct gpio_desc *desc, const char *ioname,
->>>> +                     bool direction_may_change);
->>>>   int gpiod_export_link(struct device *dev, const char *name,
->>>>                        struct gpio_desc *desc);
->>>>   int gpiod_sysfs_set_active_low(struct gpio_desc *desc, int value=
-);
->>>> @@ -273,6 +275,13 @@ static inline int gpiod_export(struct gpio_de=
-sc *desc,
->>>>          return -ENOSYS;
->>>>   }
->>>>
->>>> +static inline int gpiod_export_name(struct gpio_desc *desc,
->>>> +                                   const char *ioname,
->>>> +                                   bool direction_may_change)
->>>> +{
->>>> +       return -ENOSYS;
->>>> +}
->>>> +
->>>>   static inline int gpiod_export_link(struct device *dev, const ch=
-ar *name,
->>>>                                      struct gpio_desc *desc)
->>>>   {
->>>> --
->>>> 1.9.1
->>>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-gpi=
-o" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+T24gVGh1LCAyNCBKdWwgMjAxNCwgR3JlZyBLcm9haC1IYXJ0bWFuIHdyb3RlOgoKPiBPbiBGcmks
+IEp1bCAyNSwgMjAxNCBhdCAxMjowNDo1OEFNICswOTAwLCBBbGV4YW5kcmUgQ291cmJvdCB3cm90
+ZToKPiA+IFRoZSBodWdlIG1ham9yaXR5IG9mIEdQSU9zIGhhdmUgdGhlaXIgZGlyZWN0aW9uIGFu
+ZCBpbml0aWFsIHZhbHVlIHNldAo+ID4gcmlnaHQgYWZ0ZXIgYmVpbmcgb2J0YWluZWQgYnkgb25l
+IG9mIHRoZSBncGlvZF9nZXQoKSBmdW5jdGlvbnMuIFRoZQo+ID4gaW50ZWdlciBHUElPIEFQSSBo
+YWQgZ3Bpb19yZXF1ZXN0X29uZSgpIHRoYXQgdG9vayBhIGNvbnZlbmllbmNlIGZsYWdzCj4gPiBw
+YXJhbWV0ZXIgYWxsb3dpbmcgdG8gc3BlY2lmeSBhbiBkaXJlY3Rpb24gYW5kIHZhbHVlIGFwcGxp
+ZWQgdG8gdGhlCj4gPiByZXR1cm5lZCBHUElPLiBUaGlzIGZlYXR1cmUgZ3JlYXRseSBzaW1wbGlm
+aWVzIGNsaWVudCBjb2RlIGFuZCBlbnN1cmVzCj4gPiBlcnJvcnMgYXJlIGFsd2F5cyBoYW5kbGVk
+IHByb3Blcmx5Lgo+ID4gCj4gPiBBIHNpbWlsYXIgZmVhdHVyZSBoYXMgYmVlbiByZXF1ZXN0ZWQg
+Zm9yIHRoZSBncGlvZCBBUEkuIFNpbmNlIEdQSU9zIG5lZWQKPiA+IGEgZGlyZWN0aW9uIHRvIGJl
+IHVzZWQgYW55d2F5LCB3ZSBwcmVmZXIgdG8gZXh0ZW5kIHRoZSBleGlzdGluZwo+ID4gZnVuY3Rp
+b25zIGluc3RlYWQgb2YgaW50cm9kdWNpbmcgbmV3IGZ1bmN0aW9ucyB0aGF0IHdvdWxkIHJhaXNl
+IHRoZQo+ID4gbnVtYmVyIG9mIGdwaW9kIGdldHRlcnMgdG8gMTYgKCEpLgo+ID4gCj4gPiBUaGUg
+ZHJhd2JhY2sgb2YgdGhpcyBhcHByb2FjaCBpcyB0aGF0IGFsbCBncGlvZCBjbGllbnRzIG5lZWQg
+dG8gYmUKPiA+IHVwZGF0ZWQsIGJ1dCB0aGVyZSBhcmVuJ3QgdGhhdCBtYW55IGFuZCB0aGUgbW9t
+ZW50IGFuZCB0aGlzIHJlc3VsdHMgaW4KPiA+IHNtYWxsZXIgKGFuZCBob3BlZnVsbHkgc2FmZXIp
+IGNvZGUuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJv
+dEBudmlkaWEuY29tPgo+ID4gLS0tCj4gPiBUaGlzIGNoYW5nZSB3aWxsIGJlIGRpZmZpY3VsdCB0
+byBhcHBseSB3aXRob3V0IGJyZWFraW5nIHRoaW5ncywgYnV0Cj4gPiBsZXQncyB0cnkgdG8gZG8g
+aXQgcmlnaHQuIEhvcGVmdWxseSB0aGUgYmVuZWZpdCB3aWxsIG91dHdlaWdodCB0aGUKPiA+IGRp
+c3R1cmJhbmNlLgo+ID4gCj4gPiBUaGlzIGlzIGEgcGF0Y2ggYWdhaW5zdCAtbmV4dCB0byBsaXN0
+IGFuZCB1cGRhdGUgYWxsIGN1cnJlbnQgZ3Bpb2QKPiA+IGNvbnN1bWVycy4gVXBkYXRlcyBhcmUg
+dHJpdmlhbCBhdCBmaXJzdCBzaWdodCwgYnV0IGl0IHdvdWxkIGJlIG5pY2UgdG8KPiA+IGdldCBh
+cyBtYW55IGFja3MgYXMgcG9zc2libGUgZnJvbSB0aGUgcmVzcGVjdGl2ZSBzdWJzeXN0ZW0gbWFp
+bnRhaW5lcnMuCj4gPiAKPiA+IEknbSBub3Qgc3VyZSBob3cgdGhpcyBjb3VsZCBiZSBhcHBsaWVk
+IGhhcm1sZXNzbHkgdGhvdWdoIC0gbWF5YmUgdGhyb3VnaAo+ID4gYSBkZWRpY2F0ZWQgYnJhbmNo
+IGZvciAtbmV4dD8gUHJvYmxlbSBpcyB0aGF0IGEgbG90IG9mIG5ldyBjb2RlIGlzIG5vdAo+ID4g
+eWV0IG1lcmdlZCBpbnRvIG1haW5saW5lLCBhbmQgY29uZmxpY3RzIGFyZSB2ZXJ5IGxpa2VseSB0
+byBvY2N1ci4gTGludXMsCj4gPiBkbyB5b3UgaGF2ZSBhbnkgc3VnZ2VzdGlvbiBhcyB0byBob3cg
+dGhpcyBjYW4gYmUgZG9uZSB3aXRob3V0IGJsb29kIGJlaW5nCj4gPiBzcGlsbGVkPwo+IAo+IERv
+IHRoaXMgaW4gMyBzdGVwcywgbm90IGFsbCBhdCBvbmNlLgo+IAo+IE1ha2UgYSBuZXcgZnVuY3Rp
+b24gdGhhdCB0YWtlcyB0aGUgbmV3IGFyZ3VtZW50LCBnZXQgdGhhdCBtZXJnZWQKPiAKPiBTdWJt
+aXQgcGF0Y2hlcyB0aGF0IGNvbnZlcnQgZHJpdmVycyBvdmVyIHRvIHVzZSB0aGUgbmV3IGZ1bmN0
+aW9uLgo+IAo+IE9uY2UgYWxsIG9mIHRob3NlIGFyZSBtZXJnZWQsIHJlbW92ZSB0aGUgb2xkIGZ1
+bmN0aW9uLgo+IAo+IFRoYXQgd2F5IHRoZXJlIGFyZSBubyAiZmxhZyBkYXlzIiBuZWVkZWQsIGFu
+ZCBldmVyeW9uZSBpcyBoYXBweSB5b3UKPiBkb24ndCBzZW5kIG91dCBlbWFpbHMgd2l0aCA0MCsg
+cGVvcGxlIGluIHRoZSBUbzogYW5kIENjOiBsaW5lcyA6KQoKKzk5OTk5CgotLSAKTGVlIEpvbmVz
+CkxpbmFybyBTVE1pY3JvZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQKTGluYXJvLm9yZyDi
+lIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBMaW5hcm86IEZhY2Vi
+b29rIHwgVHdpdHRlciB8IEJsb2cKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNhLXByb2pl
+Y3Qub3JnCmh0dHA6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9h
+bHNhLWRldmVsCg==
