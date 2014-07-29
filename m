@@ -1,54 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: add flags argument to gpiod_get*() functions
-Date: Mon, 28 Jul 2014 12:30:20 +0200
-Message-ID: <CACRpkdZLXr7mTD4H1VXQPqrwZ3gcjU7CtehOK1-1_=L1J3OnfQ@mail.gmail.com>
-References: <1406299116-28492-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: [PATCH 0/4] gpio: pca953x updates for DT
+Date: Tue, 29 Jul 2014 09:24:42 +0200
+Message-ID: <1406618686-22385-1-git-send-email-mpa@pengutronix.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:37652 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871AbaG1KaV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Jul 2014 06:30:21 -0400
-Received: by mail-oa0-f50.google.com with SMTP id g18so8463024oah.23
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Jul 2014 03:30:21 -0700 (PDT)
-In-Reply-To: <1406299116-28492-1-git-send-email-acourbot@nvidia.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:33085 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752223AbaG2HZx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Jul 2014 03:25:53 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Toby Smith <toby@tismith.id.au>, Aaron Sierra <asierra@xes-inc.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Markus Pargmann <mpa@pengutronix.de>
 
-On Fri, Jul 25, 2014 at 4:38 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+Hi,
 
-> The huge majority of GPIOs have their direction and initial value set
-> right after being obtained by one of the gpiod_get() functions. The
-> integer GPIO API had gpio_request_one() that took a convenience flags
-> parameter allowing to specify an direction and value applied to the
-> returned GPIO. This feature greatly simplifies client code and ensures
-> errors are always handled properly.
->
-> A similar feature has been requested for the gpiod API. Since setting
-> the direction of a GPIO is so often the very next action done after
-> obtaining its descriptor, we prefer to extend the existing functions
-> instead of introducing new functions that would raise the
-> number of gpiod getters to 16 (!).
->
-> The drawback of this approach is that all gpiod clients need to be
-> updated. To limit the pain, temporary macros are introduced that allow
-> gpiod_get*() to be called with or without the extra flags argument. They
-> will be removed once all consumer code has been updated.
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> This dude can be applied harmlessly to the GPIO tree - then I will go
-> after every gpiod user to update the calls to gpiod_get*() before
-> removing the macros in consumer.h.
+here are some updates for the pca953x driver for handling DT. The series
+includes some cleanup of deprecated DT properties, adds documentation and
+handling of reset gpio for the chip.
 
-OK I trust you. Patch applied with Broonie's review tag.
+Best regards,
 
-Just so we don't forget how we should move forward: Alex what do
-you think about adding a drivers/gpio/TODO.TXT file outlining the
-overall plan of the gpiod refactoring and clean-up work?
+Markus
 
-Yours,
-Linus Walleij
+
+Markus Pargmann (4):
+  gpio: pca953x: Drop deprecated DT bindings
+  gpio: pca953x: Add DT binding documentation
+  gpio: pca953x: Add pca9506 as DT compatible
+  gpio: pca953x: Add DT binding for reset gpio
+
+ .../devicetree/bindings/gpio/gpio-pca953x.txt      | 45 +++++++++++++
+ drivers/gpio/gpio-pca953x.c                        | 73 +++++++---------------
+ 2 files changed, 67 insertions(+), 51 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+
+-- 
+2.0.1
+
