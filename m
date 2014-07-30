@@ -1,43 +1,34 @@
-From: Markus Mayer <code@mmayer.net>
-Subject: [PATCH] MAINTAINERS: Change maintainer for gpio-bcm-kona.c
-Date: Tue, 29 Jul 2014 11:10:07 -0700
-Message-ID: <1406657407-40031-1-git-send-email-code@mmayer.net>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 6/9] gpiolib: devres: use correct structure type name in sizeof
+Date: Wed, 30 Jul 2014 17:27:38 +0900
+Message-ID: <CAAVeFuLZb3CVV6B771V3-mzYdp0zsxaBfAAdikQDMBxSZTPTjA@mail.gmail.com>
+References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr> <1406647011-8543-7-git-send-email-Julia.Lawall@lip6.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from idcmail-mo2no.shaw.ca ([64.59.134.9]:47690 "EHLO
-	idcmail-mo2no.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751212AbaG2STk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Jul 2014 14:19:40 -0400
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:62515 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751375AbaG3I17 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Jul 2014 04:27:59 -0400
+In-Reply-To: <1406647011-8543-7-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Ray Jui <rjui@broadcom.com>
-Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, Markus Mayer <markus.mayer@linaro.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Since I no longer have access to the hardware, Ray Jui will take over
-maintaining the Kona GPIO driver.
+On Wed, Jul 30, 2014 at 12:16 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> Correct typo in the name of the type given to sizeof.  Because it is the
+> size of a pointer that is wanted, the typo has no impact on compilation or
+> execution.
+>
+> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
+> semantic patch used can be found in message 0 of this patch series.
 
-In addition, my former e-mail addresses mmayer@broadcom.com and
-markus.mayer@linaro.org will cease to function shortly. So, I used an
-address I can still be reached at as the "author" addess here.
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Signed-off-by: Markus Mayer <code@mmayer.net>
-Signed-off-by: Markus Mayer <markus.mayer@linaro.org>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Interestingly the compiler never complains despite gpiod_desc not
+being a declared type...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 61a8f48..888549f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1999,7 +1999,7 @@ S:	Supported
- F:	drivers/scsi/bnx2i/
- 
- BROADCOM KONA GPIO DRIVER
--M:	Markus Mayer <markus.mayer@linaro.org>
-+M:	Ray Jui <rjui@broadcom.com>
- L:	bcm-kernel-feedback-list@broadcom.com
- S:	Supported
- F:	drivers/gpio/gpio-bcm-kona.c
--- 
-1.9.3
-
+Thanks!
