@@ -1,53 +1,44 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: Re: [PATCH 1/2][v5] gpiolib: allow simultaneous setting of multiple GPIO outputs
-Date: Thu, 31 Jul 2014 10:42:03 +0200
-Message-ID: <12452684.GmmEHEPXzu@pcimr>
-References: <25983307.ZjJOfz2Kpg@pcimr> <CAAVeFuJmHkXOa6d8ZN8LBVK=mM_HA_U0QQ0kqbkcaq11ELCrFQ@mail.gmail.com> <20140731071235.GH3407@book.gsilab.sittig.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] gpiolib: Don't allow drivers to specify a base with DT
+Date: Thu, 31 Jul 2014 13:07:48 +0100
+Message-ID: <1406808468-12559-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:60804 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756062AbaGaImH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Jul 2014 04:42:07 -0400
-In-Reply-To: <20140731071235.GH3407@book.gsilab.sittig.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37429 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750774AbaGaMIA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Jul 2014 08:08:00 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gerhard Sittig <gsi@denx.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-On Thursday 31 July 2014 09:12:35 Gerhard Sittig wrote:
-> On Thu, 2014-07-31 at 11:35 +0900, Alexandre Courbot wrote:
-> > 
-> > I'd be surprised if at least *one* such driver was not in mainline
-> > though. Had a quick look but could not find anything that would be an
-> > obvious candidate to use these new functions.
-> 
-> What about drivers/mtd/nand/gpio.c, the GPIO bitbanged NAND
-> controller driver?  Most of the latch, control, and data lines
-> groups are set at the same time.  It should be a perfect example.
-> 
+From: Mark Brown <broonie@linaro.org>
 
-Well, not so perfect, since AFAIUI only a few control signals are managed
-by GPIOs (Chip Enable, Command Latch Enable, Address Latch Enable), but not
-the actual data lines. But granted, at least at one place in the driver three
-lines are set at the same time.
+DT based systems should have no reason to use fixed GPIO numbers but some
+drivers that work on both DT and non-DT platforms specify them anyway. In
+order to improve robustness in cases where drivers use gpio_is_valid() to
+check for a valid GPIO on data initialized to zero as a default and avoid
+bugs due to assuptions about fixed numbers creeping in ignore any specified
+base when DT is in use.
 
-There are a few other drivers which also do that:
-- drivers/tty/serial/serial_mctrl_gpio.c controls multiple modem lines via GPIO
-- drivers/net/phy/mdio-mux-gpio.c a GPIO controlled MDIO bus multiplexer driver
-- drivers/regulator/gpio-regulator.c controls voltage regulators
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All of the above do set multiple GPIOs at the same time, but in all cases
-performance does not really matter. Moreover they all seem a bit obscure to me.
-
-Nevertheless, IMHO they are still better candidates for using the new functions
-than the i2c-gpio or spi-gpio drivers.
-
-So, Linus, would a patched version of one of the mentioned drivers qualify as
-a user that would allow you to merge my patch?
-
-   Rojhalat
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 768f0831db18..11d3cf1cbca7 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -234,7 +234,7 @@ int gpiochip_add(struct gpio_chip *chip)
+ 
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+-	if (base < 0) {
++	if (base < 0 || of_have_populated_dt()) {
+ 		base = gpiochip_find_base(chip->ngpio);
+ 		if (base < 0) {
+ 			status = base;
+-- 
+2.0.1
 
