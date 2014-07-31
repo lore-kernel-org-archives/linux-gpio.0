@@ -1,73 +1,63 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH 3/3] gpio: zynq: Fix IRQ handlers
-Date: Thu, 31 Jul 2014 09:19:30 -0700
-Message-ID: <c9e713ff-b5fb-4a8a-9418-7d01a7383f96@BY2FFO11FD017.protection.gbl>
-References: <1405677133-8706-1-git-send-email-lars@metafoo.de>
- <1405677133-8706-3-git-send-email-lars@metafoo.de>
- <CACRpkdb7FPXr_ktYvHgXFCCuA06=UM7y1-x3+deU0WNDFsgKnw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Feng Kan <fkan@apm.com>
+Subject: [PATCH V6 0/3] gpio: Add APM X-Gene SoC platform GPIO driver
+Date: Thu, 31 Jul 2014 12:03:24 -0700
+Message-ID: <1406833407-28316-1-git-send-email-fkan@apm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1lp0140.outbound.protection.outlook.com ([207.46.163.140]:28683
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751066AbaGaQTo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 31 Jul 2014 12:19:44 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb7FPXr_ktYvHgXFCCuA06=UM7y1-x3+deU0WNDFsgKnw@mail.gmail.com>
+Received: from exprod5og106.obsmtp.com ([64.18.0.182]:46992 "HELO
+	exprod5og106.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750859AbaGaTCa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Jul 2014 15:02:30 -0400
+Received: by mail-pa0-f48.google.com with SMTP id et14so4166748pad.21
+        for <linux-gpio@vger.kernel.org>; Thu, 31 Jul 2014 12:02:29 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Harini Katakam <harinik@xilinx.com>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: patches@apm.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Feng Kan <fkan@apm.com>
 
-On Wed, 2014-07-23 at 04:36PM +0200, Linus Walleij wrote:
-> On Fri, Jul 18, 2014 at 11:52 AM, Lars-Peter Clausen <lars@metafoo.de=
-> wrote:
->=20
-> > The Zynq GPIO interrupt handling code as two main issues:
-> > 1) It does not support IRQF_ONESHOT interrupt since it uses handle_=
-simple_irq()
-> > for the interrupt handler. handle_simple_irq() does not do masking =
-and unmasking
-> > of the IRQ that is required for this chip to be able to support IRQ=
-=46_ONESHOT
-> > IRQs, causing the CPU to lock up in a interrupt storm if such a int=
-errupt is
-> > requested.
-> > 2) Interrupts are acked after the primary interrupt handlers for al=
-l asserted
-> > interrupts in a bank have been called. For edge triggered interrupt=
- this is to
-> > late and may cause a interrupt to be missed. For level triggered on=
-eshot
-> > interrupts this is to early and causes the interrupt handler to run=
- twice per
-> > interrupt.
-> >
-> > This patch addresses the issue by updating the driver to use the co=
-rrect IRQ
-> > chip handler functions that are appropriate for this kind of IRQ co=
-ntroller.
->=20
-> This looks very thought-through. I will give Harini and Soren some da=
-ys
-> more to react before applying (unless patch 1/3 is required to apply =
-this).
+This patch add the GPIO controller in the APM X-Gene platform. The GPIO
+controller pins are muxed with the generic flash controller pins on the 
+system.
 
-Took me a while, but I finally got to pulling the diffs from some
-web-archive and applied them on the current linux-next. I didn't test
-any of the new/fixed functionality, but it doesn't break any of my old
-use-cases. So, I think this is all good.
+V6 Change:
+	1. change attribute description of second cell in gpio dts node
+	   under documentation.
 
-=46or the whole series:
-Acked-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+V5 Change:
+	1. Remove gpio->dev
+	2. Remove not needed headers. 
+	3. Change to use latest driver.h for gpio.
+	4. Set chip base to -1
+	5. Put back label as it is needed sys interface.
 
-	Thanks,
-	S=C3=B6ren
+V4 Change:
+	1. Add remove function for module
+	2. Add set function to dir out function.
+	3. remove sets to np and label in probe.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+V3 Change:
+	1. Change code to use single entry to describe gpio node, hardcode
+	   to use bank stride to target gpios.
+	2. Fix up dts and doc accordingly
+
+V2 Change:
+	1. Address concerns from maintainer, split to multiple device node
+	2. Add pm code to restore set register.
+	3. fix up dts and documentation accordingly.
+
+Feng Kan (3):
+  gpio: Add APM X-Gene SoC GPIO controller support
+  Documentation: gpio: Add APM X-Gene SoC GPIO controller DTS binding
+  arm64:dts: Add APM X-Gene SoC GPIO controller DTS entries
+
+ .../devicetree/bindings/gpio/gpio-xgene.txt        |  22 ++
+ arch/arm64/boot/dts/apm-storm.dtsi                 |   7 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-xgene.c                          | 250 +++++++++++++++++++++
+ 5 files changed, 289 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+ create mode 100644 drivers/gpio/gpio-xgene.c
+
+-- 
+1.9.1
+
