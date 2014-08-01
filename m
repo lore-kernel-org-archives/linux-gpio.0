@@ -1,58 +1,42 @@
-From: Feng Kan <fkan@apm.com>
-Subject: [PATCH V6 2/3] Documentation: gpio: Add APM X-Gene SoC GPIO controller DTS binding
-Date: Thu, 31 Jul 2014 12:03:26 -0700
-Message-ID: <1406833407-28316-3-git-send-email-fkan@apm.com>
-References: <1406833407-28316-1-git-send-email-fkan@apm.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og111.obsmtp.com ([64.18.0.22]:50410 "HELO
-	exprod5og111.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750859AbaGaTCj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Jul 2014 15:02:39 -0400
-Received: by mail-pd0-f171.google.com with SMTP id z10so4016384pdj.30
-        for <linux-gpio@vger.kernel.org>; Thu, 31 Jul 2014 12:02:36 -0700 (PDT)
-In-Reply-To: <1406833407-28316-1-git-send-email-fkan@apm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: =?UTF-8?B?44Kr44Kq44CA44Of44Oz44CA44OS44Kn44OD44OX?=
+	<cm-hiep@jinso.co.jp>
+Subject: [Bug] GPIO-Rcar: Driver does not work after Unbind-rebind.
+Date: Fri, 01 Aug 2014 16:14:27 +0900
+Message-ID: <53DB3E53.2000508@jinso.co.jp>
+Reply-To: cm-hiep@jinso.co.jp
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus Damm <damm@opensource.se>, Simon Horman <simon@horms.net>
+Cc: linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, =?UTF-8?B?U+mWizEyL+ajruacrOOBleOCkw==?= <kuninori.morimoto.gx@renesas.com>, SH-Linux <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: patches@apm.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Feng Kan <fkan@apm.com>
 
-Documentation for APM X-Gene SoC GPIO controller DTS binding.
+Hello,
 
-Signed-off-by: Feng Kan <fkan@apm.com>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
----
- .../devicetree/bindings/gpio/gpio-xgene.txt        | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.txt
+I tested gpio-rcar driver at Linux-upstream-v3.16-rc5 on Lager.
+When I tried to unbind and then rebind the device, error messages occur. 
+Then
+gpio-rcar did not work and interrupt number did not count up any more.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
-new file mode 100644
-index 0000000..86dbb05
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-xgene.txt
-@@ -0,0 +1,22 @@
-+APM X-Gene SoC GPIO controller bindings
-+
-+This is a gpio controller that is part of the flash controller.
-+This gpio controller controls a total of 48 gpios.
-+
-+Required properties:
-+- compatible: "apm,xgene-gpio" for X-Gene GPIO controller
-+- reg: Physical base address and size of the controller's registers
-+- #gpio-cells: Should be two.
-+	- first cell is the pin number
-+	- second cell is used to specify the gpio polarity:
-+		0 = active high
-+		1 = active low
-+- gpio-controller: Marks the device node as a GPIO controller.
-+
-+Example:
-+	gpio0: gpio0@1701c000 {
-+		compatible = "apm,xgene-gpio";
-+		reg = <0x0 0x1701c000 0x0 0x40>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
--- 
-1.9.1
+The error messages is showed as below:
+"irq 0, desc: ee005040, depth: 1, cou0
+->handle_irq():  c005eea0, handle_bad_irq+0x0/0x21c
+->irq_data.chip(): c05de7f8, 0xc05de7f8
+->action():   (null)
+    IRQ_NOPROBE set
+  IRQ_NOREQUEST set
+irq 0, desc: ee005040, depth: 1, count: 0, unhandled: 0
+->handle_irq():  c005eea0, handle_bad_irq+0x0/0x21c
+->irq_data.chip(): c05de7f8, 0xc05de7f8
+->action():   (null)
+    IRQ_NOPROBE set
+  IRQ_NOREQUEST set"
+
+Please see it and fix this bug.
+
+
+Best regards,
+JINSO/Cao Minh Hiep.
 
