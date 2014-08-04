@@ -1,41 +1,57 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] MAINTAINERS: update GPIO include files
-Date: Mon, 4 Aug 2014 13:06:58 +0900
-Message-ID: <1407125218-22026-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpiolib: Don't allow drivers to specify a base with DT
+Date: Mon, 4 Aug 2014 13:21:57 +0900
+Message-ID: <CAAVeFuKv_Qd2u60zSYYKicahDcH1wKs2BVQRGhNsF9civT_S2g@mail.gmail.com>
+References: <1406808468-12559-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:19108 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750716AbaHDEHF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Aug 2014 00:07:05 -0400
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:32932 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750820AbaHDEWS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Aug 2014 00:22:18 -0400
+In-Reply-To: <1406808468-12559-1-git-send-email-broonie@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-Files under include/linux/gpio/ were not reported as part of the GPIO
-subsystem. Fix this.
+On Thu, Jul 31, 2014 at 9:07 PM, Mark Brown <broonie@kernel.org> wrote:
+> From: Mark Brown <broonie@linaro.org>
+>
+> DT based systems should have no reason to use fixed GPIO numbers but some
+> drivers that work on both DT and non-DT platforms specify them anyway. In
+> order to improve robustness in cases where drivers use gpio_is_valid() to
+> check for a valid GPIO on data initialized to zero as a default and avoid
+> bugs due to assuptions about fixed numbers creeping in ignore any specified
+> base when DT is in use.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I agree that DT users should not use the base number at all - but the
+fact is some of them are doing it. Aren't we going to break some
+user-space users that will expect to find a GPIO under a given number?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5e0d24dcb122..d9ca71a31101 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4031,7 +4031,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- S:	Maintained
- F:	Documentation/gpio/
- F:	drivers/gpio/
--F:	include/linux/gpio*
-+F:	include/linux/gpio/
-+F:	include/linux/gpio.h
- F:	include/asm-generic/gpio.h
- 
- GRE DEMULTIPLEXER DRIVER
--- 
-2.0.3
+Also, how is this going to help with gpio_is_valid() against
+zero-initialized data?
 
+>
+> Signed-off-by: Mark Brown <broonie@linaro.org>
+> ---
+>  drivers/gpio/gpiolib.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 768f0831db18..11d3cf1cbca7 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -234,7 +234,7 @@ int gpiochip_add(struct gpio_chip *chip)
+>
+>         spin_lock_irqsave(&gpio_lock, flags);
+>
+> -       if (base < 0) {
+> +       if (base < 0 || of_have_populated_dt()) {
+>                 base = gpiochip_find_base(chip->ngpio);
+>                 if (base < 0) {
+>                         status = base;
+> --
+> 2.0.1
+>
