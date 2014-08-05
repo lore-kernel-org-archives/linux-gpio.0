@@ -1,203 +1,204 @@
-From: =?UTF-8?B?44Kr44Kq44CA44Of44Oz44CA44OS44Kn44OD44OX?=
-	<cm-hiep@jinso.co.jp>
-Subject: Re: [Bug] GPIO-Rcar: Driver does not work after Unbind-rebind.
-Date: Tue, 05 Aug 2014 11:37:23 +0900
-Message-ID: <53E04363.2040709@jinso.co.jp>
-References: <53DB3E53.2000508@jinso.co.jp> <11539044.7ozDkqgRA7@avalon>
-Reply-To: cm-hiep@jinso.co.jp
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2] gpiolib: Provide and export gpiod_export_name
+Date: Tue, 5 Aug 2014 10:10:15 -0700
+Message-ID: <20140805171015.GA10236@roeck-us.net>
+References: <1406308367-28758-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------080404090502030206040107"
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <11539044.7ozDkqgRA7@avalon>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Magnus Damm <damm@opensource.se>, Simon Horman <simon@horms.net>, linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, =?UTF-8?B?U+mWizEyL+ajruacrOOBleOCkw==?= <kuninori.morimoto.gx@renesas.com>, SH-Linux <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:41105 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754753AbaHERKT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Aug 2014 13:10:19 -0400
+Content-Disposition: inline
+In-Reply-To: <1406308367-28758-1-git-send-email-linux@roeck-us.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
 
-This is a multi-part message in MIME format.
---------------080404090502030206040107
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+On Fri, Jul 25, 2014 at 10:12:47AM -0700, Guenter Roeck wrote:
+> gpiod_export_name is similar to gpiod_export, but lets the user
+> determine the name used to export a gpio pin.
+> 
+> Currently, the pin name is determined by the chip driver with
+> the 'names' array in the gpio_chip data structure, or it is set
+> to gpioX, where X is the pin number, if no name is provided by
+> the chip driver.
+> 
+> It is, however, desirable to be able to provide the pin name when
+> exporting the pin, for example from platform code. In other words,
+> it would be useful to move the naming decision from the pin provider
+> to the pin consumer. The gpio-pca953x driver provides this capability
+> as part of its platform data. Other drivers could be enhanced in a
+> similar way; however, this is not always possible or easy to accomplish.
+> For example, mfd client drivers such as gpio-ich already use platform
+> data to pass information from the mfd master driver to the client driver.
+> Overloading this platform data to also provide an array of gpio pin names
+> would be a challenge if not impossible.
+> 
+> The alternative to use gpiod_export_link is also not always desirable,
+> since it only creates a named link to a different directory, meaning
+> the named gpio pin is not available in /sys/class/gpio but only
+> in some platform specific directory and thus not as generic as possible
+> and/or useful.
+> 
+> A specific example for a use case is a gpio pin which reports AC power
+> loss to user space. Depending on the platform and platform variant,
+> the pin can be provided by various gpio chip drivers and pin numbers.
+> It would be very desirable to have a well defined location such as
+> /sys/class/gpio/ac_power_loss for this pin, so user space knows where
+> to find the attribute without knowledge of the underlying platform
+> variant or oher hardware details.
+> 
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-Hi Laurent
-Thanks for your replying!
+Any comments / feedback ?
 
-On 08/05/2014 10:05 AM, Laurent Pinchart wrote:
-> Hello,
->
-> On Friday 01 August 2014 16:14:27 カオ　ミン　ヒェップ wrote:
->> Hello,
->>
->> I tested gpio-rcar driver at Linux-upstream-v3.16-rc5 on Lager.
->> When I tried to unbind and then rebind the device, error messages occur.
->> Then gpio-rcar did not work and interrupt number did not count up any more.
->>
->> The error messages is showed as below:
->> "irq 0, desc: ee005040, depth: 1, cou0
->> ->handle_irq():  c005eea0, handle_bad_irq+0x0/0x21c
->> ->irq_data.chip(): c05de7f8, 0xc05de7f8
->> ->action():   (null)
->>      IRQ_NOPROBE set
->>    IRQ_NOREQUEST set
->> irq 0, desc: ee005040, depth: 1, count: 0, unhandled: 0
->> ->handle_irq():  c005eea0, handle_bad_irq+0x0/0x21c
->> ->irq_data.chip(): c05de7f8, 0xc05de7f8
->> ->action():   (null)
->>      IRQ_NOPROBE set
->>    IRQ_NOREQUEST set"
->>
->> Please see it and fix this bug.
-> Could you please detail the procedure to follow to reproduce the problem ?
->
-Below is the procedure to follow to reproduce the problem:
+Thanks,
+Guenter
 
-1. The first, confirms gpio device:
-# cd /sys/bus/platform/drivers/gpio_rcar;find -type l
-2. unbind the device:
-# cd /sys/bus/platform/drivers/gpio_rcar; echo e6051000.gpio> unbind
-3. Confirm unbind status:
-#  cd /sys/bus/platform/drivers/gpio_rcar;  ls -d e6051000.gpio
-4. rebind the device:
-#  cd /sys/bus/platform/drivers/gpio_rcar; echo e6051000.gpio > bind
-5. confirm bind status:
-#  cd /sys/bus/platform/drivers/gpio_rcar;  ls -d e6051000.gpio
-6.# cat /proc/interrupts | grep e6051000.gpio
-7. Switch SW2 ON/OFF on the board to ensure that device works normally 
-after rebinding.
-
-I attached the detail log of two cases unbinding-rebinding e6051000.gpio 
-and e6053000.gpio
-
---------------080404090502030206040107
-Content-Type: text/plain; charset=UTF-8;
- name="e6051000.gpio_unbind-rebind_log.txt"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="e6051000.gpio_unbind-rebind_log.txt"
-
-IyB1bmFtZSAtYQpMaW51eCBsaW5hcm8tbmFubyAzLjE2LjAtcmM1LTAwMDAxLWdmNTIyYjQ1
-ICMxIFNNUCBUdWUgQXVnIDUgMTA6MjU6MTYgSlNUIDIwMTQgYXJtdjdsIGFybXY3bCBhcm12
-N2wgR05VL0xpbnV4CgojIGRtZXNnIHwgZ3JlcCBncGlvCmdwaW8tcmVndWxhdG9yIHJlZ3Vs
-YXRvckAyOiBDb3VsZCBub3Qgb2J0YWluIHJlZ3VsYXRvciBzZXR0aW5nIEdQSU9zOiAtNTE3
-CnBsYXRmb3JtIHJlZ3VsYXRvckAyOiBEcml2ZXIgZ3Bpby1yZWd1bGF0b3IgcmVxdWVzdHMg
-cHJvYmUgZGVmZXJyYWwKZ3Bpby1yZWd1bGF0b3IgcmVndWxhdG9yQDQ6IENvdWxkIG5vdCBv
-YnRhaW4gcmVndWxhdG9yIHNldHRpbmcgR1BJT3M6IC01MTcKcGxhdGZvcm0gcmVndWxhdG9y
-QDQ6IERyaXZlciBncGlvLXJlZ3VsYXRvciByZXF1ZXN0cyBwcm9iZSBkZWZlcnJhbApncGlv
-X3JjYXIgZTYwNTAwMDAuZ3BpbzogUnVudGltZSBQTSBkaXNhYmxlZCwgY2xvY2sgZm9yY2Vk
-IG9uLgpncGlvX3JjYXIgZTYwNTAwMDAuZ3BpbzogZHJpdmluZyAzMiBHUElPcwpncGlvX3Jj
-YXIgZTYwNTEwMDAuZ3BpbzogUnVudGltZSBQTSBkaXNhYmxlZCwgY2xvY2sgZm9yY2VkIG9u
-LgpncGlvX3JjYXIgZTYwNTEwMDAuZ3BpbzogZHJpdmluZyAzMiBHUElPcwpncGlvX3JjYXIg
-ZTYwNTIwMDAuZ3BpbzogUnVudGltZSBQTSBkaXNhYmxlZCwgY2xvY2sgZm9yY2VkIG9uLgpn
-cGlvX3JjYXIgZTYwNTIwMDAuZ3BpbzogZHJpdmluZyAzMiBHUElPcwpncGlvX3JjYXIgZTYw
-NTMwMDAuZ3BpbzogUnVudGltZSBQTSBkaXNhYmxlZCwgY2xvY2sgZm9yY2VkIG9uLgpncGlv
-X3JjYXIgZTYwNTMwMDAuZ3BpbzogZHJpdmluZyAzMiBHUElPcwpncGlvX3JjYXIgZTYwNTQw
-MDAuZ3BpbzogUnVudGltZSBQTSBkaXNhYmxlZCwgY2xvY2sgZm9yY2VkIG9uLgpncGlvX3Jj
-YXIgZTYwNTQwMDAuZ3BpbzogZHJpdmluZyAzMiBHUElPcwpncGlvX3JjYXIgZTYwNTUwMDAu
-Z3BpbzogUnVudGltZSBQTSBkaXNhYmxlZCwgY2xvY2sgZm9yY2VkIG9uLgpncGlvX3JjYXIg
-ZTYwNTUwMDAuZ3BpbzogZHJpdmluZyAzMiBHUElPcwppbnB1dDogZ3Bpb19rZXlzIGFzIC9k
-ZXZpY2VzL2dwaW9fa2V5cy9pbnB1dC9pbnB1dDAKCiMgY2QgL3N5cy9idXMvcGxhdGZvcm0v
-ZHJpdmVycy9ncGlvX3JjYXI7IGxzIC1kIGU2MDUxMDAwLmdwaW8KZTYwNTEwMDAuZ3BpbwoK
-IyBjZCAvc3lzL2J1cy9wbGF0Zm9ybS9kcml2ZXJzL2dwaW9fcmNhcjsgZWNobyBlNjA1MTAw
-MC5ncGlvPiB1bmJpbmQKCnJvb3RAbGluYXJvLW5hbm86L3N5cy9idXMvcGxhdGZvcm0vZHJp
-dmVycy9ncGlvX3JjYXIjIGxzIC1kIGU2MDUxMDAwLmdwaW8KbHM6IGNhbm5vdCBhY2Nlc3Mg
-ZTYwNTEwMDAuZ3BpbzogTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeQoKcm9vdEBsaW5hcm8t
-bmFubzovc3lzL2J1cy9wbGF0Zm9ybS9kcml2ZXJzL2dwaW9fcmNhciMgbHMgL2Rldi9pbnB1
-dC9ldmVudDAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIApsczogY2Fubm90
-IGFjY2VzcyAvZGV2L2lucHV0L2V2ZW50MDogTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeQoK
-IyAgY2QgL3N5cy9idXMvcGxhdGZvcm0vZHJpdmVycy9ncGlvX3JjYXI7IGVjaG8gZTYwNTEw
-MDAuZ3BpbyA+IGJpbmQKZ3Bpb19yY2FyIGU2MDUxMDAwLmdwaW86IFJ1bnRpbWUgUE0gZGlz
-YWJsZWQsIGNsb2NrIGZvcmNlZCBvbi4KZ3Bpb19yY2FyIGU2MDUxMDAwLmdwaW86IGRyaXZp
-bmcgMzIgR1BJT3MKIyAgbHMgLWQgZTYwNTEwMDAuZ3Bpby9kcml2ZXJzL2dwaW9fcmNhciMg
-Y2QgL3N5cy9idXMvcGxhdGZvcm0vZHJpdmUgCmU2MDUxMDAwLmdwaW8KCiMgY2F0IC9wcm9j
-L2ludGVycnVwdHMgfCBncmVwIGU2MDUxMDAwLmdwaW8KIDM3OiAgICAgICAgICAwICAgICAg
-ICAgIDAgICAgICAgICAgMCAgICAgICAgICAwICAgICAgIEdJQyAgMzcgIGU2MDUxMDAwLmdw
-aW8KNDE5OiAgICAgICAgICAwICAgICAgICAgIDAgICAgICAgICAgMCAgICAgICAgICAwICBl
-NjA1MTAwMC5ncGlvICAxNCAgU1cyLTEKNDIwOiAgICAgICAgICAwICAgICAgICAgIDAgICAg
-ICAgICAgMCAgICAgICAgICAwICBlNjA1MTAwMC5ncGlvICAyNCAgU1cyLTIKNDIxOiAgICAg
-ICAgICAwICAgICAgICAgIDAgICAgICAgICAgMCAgICAgICAgICAwICBlNjA1MTAwMC5ncGlv
-ICAyNiAgU1cyLTMKNDIyOiAgICAgICAgICAwICAgICAgICAgIDAgICAgICAgICAgMCAgICAg
-ICAgICAwICBlNjA1MTAwMC5ncGlvICAyOCAgU1cyLTQKCgpXaGVuIHN3aXRjaHMgdGhlIFNX
-MiBPTi9PRkYsIHRoZSBlcnJvciBtZXNzYWdlcyBvY2N1ciBhcyBiZWxvdzoKCnJvb3RAbGlu
-YXJvLW5hbm86L3N5cy9idXMvcGxhdGZvcm0vZHJpdmVycy9ncGlvX3JjYXIjIGlycSAwLCBk
-ZXNjOiBlZWMwNTA0MCwgZGVwdGg6IDEsIGNvdW50OiAwLCB1bmhhbmRsZWQ6IDAKLT5oYW5k
-bGVfaXJxKCk6ICBjMDA1ZmQwYywgaGFuZGxlX2JhZF9pcnErMHgwLzB4MjFjCi0+aXJxX2Rh
-dGEuY2hpcCgpOiBjMDVlYzc5MCwgMHhjMDVlYzc5MAotPmFjdGlvbigpOiAgIChudWxsKQog
-ICBJUlFfTk9QUk9CRSBzZXQKIElSUV9OT1JFUVVFU1Qgc2V0CmlycSAwLCBkZXNjOiBlZWMw
-NTA0MCwgZGVwdGg6IDEsIGNvdW50OiAwLCB1bmhhbmRsZWQ6IDAKLT5oYW5kbGVfaXJxKCk6
-ICBjMDA1ZmQwYywgaGFuZGxlX2JhZF9pcnErMHgwLzB4MjFjCi0+aXJxX2RhdGEuY2hpcCgp
-OiBjMDVlYzc5MCwgMHhjMDVlYzc5MAotPmFjdGlvbigpOiAgIChudWxsKQogICBJUlFfTk9Q
-Uk9CRSBzZXQKIElSUV9OT1JFUVVFU1Qgc2V0CmlycSAwLCBkZXNjOiBlZWMwNTA0MCwgZGVw
-dGg6IDEsIGNvdW50OiAwLCB1bmhhbmRsZWQ6IDAKLT5oYW5kbGVfaXJxKCk6ICBjMDA1ZmQw
-YywgaGFuZGxlX2JhZF9pcnErMHgwLzB4MjFjCi0+aXJxX2RhdGEuY2hpcCgpOiBjMDVlYzc5
-MCwgMHhjMDVlYzc5MAotPmFjdGlvbigpOiAgIChudWxsKQogICBJUlFfTk9QUk9CRSBzZXQK
-IElSUV9OT1JFUVVFU1Qgc2V0CmlycSAwLCBkZXNjOiBlZWMwNTA0MCwgZGVwdGg6IDEsIGNv
-dW50OiAwLCB1bmhhbmRsZWQ6IDAKLT5oYW5kbGVfaXJxKCk6ICBjMDA1ZmQwYywgaGFuZGxl
-X2JhZF9pcnErMHgwLzB4MjFjCi0+aXJxX2RhdGEuY2hpcCgpOiBjMDVlYzc5MCwgMHhjMDVl
-Yzc5MAotPmFjdGlvbigpOiAgIChudWxsKQogICBJUlFfTk9QUk9CRSBzZXQKIElSUV9OT1JF
-UVVFU1Qgc2V0CmlycSAwLCBkZXNjOiBlZWMwNTA0MCwgZGVwdGg6IDEsIGNvdW50OiAwLCB1
-bmhhbmRsZWQ6IDAKLT5oYW5kbGVfaXJxKCk6ICBjMDA1ZmQwYywgaGFuZGxlX2JhZF9pcnEr
-MHgwLzB4MjFjCi0+aXJxX2RhdGEuY2hpcCgpOiBjMDVlYzc5MCwgMHhjMDVlYzc5MAotPmFj
-dGlvbigpOiAgIChudWxsKQogICBJUlFfTk9QUk9CRSBzZXQKIElSUV9OT1JFUVVFU1Qgc2V0
-Cgo=
---------------080404090502030206040107
-Content-Type: text/plain; charset=UTF-8;
- name="e6053000.gpio_unbind-rebind_log.txt"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="e6053000.gpio_unbind-rebind_log.txt"
-
-IyB1bmFtZSAtYQpMaW51eCBsaW5hcm8tbmFubyAzLjE2LjAtcmM1LTAwMDAxLWdmNTIyYjQ1
-ICMxIFNNUCBUdWUgQXVnIDUgMTA6MjU6MTYgSlNUIDIwMTQgYXJtdjdsIGFybXY3bCBhcm12
-N2wgR05VL0xpbnV4CnJvb3RAbGluYXJvLW5hbm86fiMgY2QgL3N5cy9idXMvcGxhdGZvcm0v
-ZHJpdmVycy9ncGlvX3JjYXI7ZmluZCAtdHlwZSBsCi4vZTYwNTEwMDAuZ3BpbwouL2U2MDUz
-MDAwLmdwaW8KLi9lNjA1NTAwMC5ncGlvCi4vZTYwNTAwMDAuZ3BpbwouL2U2MDUyMDAwLmdw
-aW8KLi9lNjA1NDAwMC5ncGlvCnBsYXRmb3JtIGU2MDUzMDAwLmdwaW86IFJ1bnRpbWUgUE0g
-ZGlzYWJsZWQsIGNsb2NrIGZvcmNlZCBvZmYuCgojZWNobyBlNjA1MzAwMC5ncGlvPiB1bmJp
-bmQKCnJvb3RAbGluYXJvLW5hbm86L3N5cy9idXMvcGxhdGZvcm0vZHJpdmVycy9ncGlvX3Jj
-YXIjIGxzIC1kIGU2MDUzMDAwLmdwaW8KbHM6IGNhbm5vdCBhY2Nlc3MgZTYwNTMwMDAuZ3Bp
-bzogTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeQoKI2VjaG8gZTYwNTMwMDAuZ3BpbyA+IGJp
-bmQKZ3Bpb19yY2FyIGU2MDUzMDAwLmdwaW86IFJ1bnRpbWUgUE0gZGlzYWJsZWQsIGNsb2Nr
-IGZvcmNlZCBvbi4KZ3Bpb19yY2FyIGU2MDUzMDAwLmdwaW86IGRyaXZpbmcgMzIgR1BJT3MK
-CnJvb3RAbGluYXJvLW5hbm86L3N5cy9idXMvcGxhdGZvcm0vZHJpdmVycy9ncGlvX3JjYXIj
-IGxzIC1kIGU2MDUzMDAwLmdwaW8KZTYwNTMwMDAuZ3BpbwoKcm9vdEBsaW5hcm8tbmFubzp+
-IyBjYXQgL3Byb2MvaW50ZXJydXB0cyB8IGdyZXAgZTYwNTMwMDAuZ3BpbwogMzk6ICAgICAg
-ICAgIDAgICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAgIDAgICAgICAgR0lDICAzOSAg
-ZTYwNTMwMDAuZ3BpbwoKCldoZW4gSW5zZXJ0L3JlbW92ZSBtU0QgaW50by9mcm9tIFNEMCBh
-bmQgU0QyIHNsb3QsIHRoZSBlcnJvciBtZXNzYWdlcyBvY2N1ciBhcyBiZWxvdzoKCnJvb3RA
-bGluYXJvLW5hbm86fiMgaXJxIDAsIGRlc2M6IGVlYzA1MDQwLCBkZXB0aDogMSwgY291bnQ6
-IDAsIHVuaGFuZGxlZDogMAotPmhhbmRsZV9pcnEoKTogIGMwMDVmZDBjLCBoYW5kbGVfYmFk
-X2lycSsweDAvMHgyMWMKLT5pcnFfZGF0YS5jaGlwKCk6IGMwNWVjNzkwLCAweGMwNWVjNzkw
-Ci0+YWN0aW9uKCk6ICAgKG51bGwpCiAgIElSUV9OT1BST0JFIHNldAogSVJRX05PUkVRVUVT
-VCBzZXQKaXJxIDAsIGRlc2M6IGVlYzA1MDQwLCBkZXB0aDogMSwgY291bnQ6IDAsIHVuaGFu
-ZGxlZDogMAotPmhhbmRsZV9pcnEoKTogIGMwMDVmZDBjLCBoYW5kbGVfYmFkX2lycSsweDAv
-MHgyMWMKLT5pcnFfZGF0YS5jaGlwKCk6IGMwNWVjNzkwLCAweGMwNWVjNzkwCi0+YWN0aW9u
-KCk6ICAgKG51bGwpCiAgIElSUV9OT1BST0JFIHNldAogSVJRX05PUkVRVUVTVCBzZXQKaXJx
-IDAsIGRlc2M6IGVlYzA1MDQwLCBkZXB0aDogMSwgY291bnQ6IDAsIHVuaGFuZGxlZDogMAot
-PmhhbmRsZV9pcnEoKTogIGMwMDVmZDBjLCBoYW5kbGVfYmFkX2lycSsweDAvMHgyMWMKLT5p
-cnFfZGF0YS5jaGlwKCk6IGMwNWVjNzkwLCAweGMwNWVjNzkwCi0+YWN0aW9uKCk6ICAgKG51
-bGwpCiAgIElSUV9OT1BST0JFIHNldAogSVJRX05PUkVRVUVTVCBzZXQKaXJxIDAsIGRlc2M6
-IGVlYzA1MDQwLCBkZXB0aDogMSwgY291bnQ6IDAsIHVuaGFuZGxlZDogMAotPmhhbmRsZV9p
-cnEoKTogIGMwMDVmZDBjLCBoYW5kbGVfYmFkX2lycSsweDAvMHgyMWMKLT5pcnFfZGF0YS5j
-aGlwKCk6IGMwNWVjNzkwLCAweGMwNWVjNzkwCi0+YWN0aW9uKCk6ICAgKG51bGwpCiAgIElS
-UV9OT1BST0JFIHNldAogSVJRX05PUkVRVUVTVCBzZXQKaXJxIDAsIGRlc2M6IGVlYzA1MDQw
-LCBkZXB0aDogMSwgY291bnQ6IDAsIHVuaGFuZGxlZDogMAotPmhhbmRsZV9pcnEoKTogIGMw
-MDVmZDBjLCBoYW5kbGVfYmFkX2lycSsweDAvMHgyMWMKLT5pcnFfZGF0YS5jaGlwKCk6IGMw
-NWVjNzkwLCAweGMwNWVjNzkwCi0+YWN0aW9uKCk6ICAgKG51bGwpCiAgIElSUV9OT1BST0JF
-IHNldAogSVJRX05PUkVRVUVTVCBzZXQKaXJxIDAsIGRlc2M6IGVlYzA1MDQwLCBkZXB0aDog
-MSwgY291bnQ6IDAsIHVuaGFuZGxlZDogMAotPmhhbmRsZV9pcnEoKTogIGMwMDVmZDBjLCBo
-YW5kbGVfYmFkX2lycSsweDAvMHgyMWMKLT5pcnFfZGF0YS5jaGlwKCk6IGMwNWVjNzkwLCAw
-eGMwNWVjNzkwCi0+YWN0aW9uKCk6ICAgKG51bGwpCiAgIElSUV9OT1BST0JFIHNldAogSVJR
-X05PUkVRVUVTVCBzZXQKaXJxIDAsIGRlc2M6IGVlYzA1MDQwLCBkZXB0aDogMSwgY291bnQ6
-IDAsIHVuaGFuZGxlZDogMAotPmhhbmRsZV9pcnEoKTogIGMwMDVmZDBjLCBoYW5kbGVfYmFk
-X2lycSsweDAvMHgyMWMKLT5pcnFfZGF0YS5jaGlwKCk6IGMwNWVjNzkwLCAweGMwNWVjNzkw
-Ci0+YWN0aW9uKCk6ICAgKG51bGwpCiAgIElSUV9OT1BST0JFIHNldAogSVJRX05PUkVRVUVT
-VCBzZXQKaXJxIDAsIGRlc2M6IGVlYzA1MDQwLCBkZXB0aDogMSwgY291bnQ6IDAsIHVuaGFu
-ZGxlZDogMAotPmhhbmRsZV9pcnEoKTogIGMwMDVmZDBjLCBoYW5kbGVfYmFkX2lycSsweDAv
-MHgyMWMKLT5pcnFfZGF0YS5jaGlwKCk6IGMwNWVjNzkwLCAweGMwNWVjNzkwCi0+YWN0aW9u
-KCk6ICAgKG51bGwpCiAgIElSUV9OT1BST0JFIHNldAogSVJRX05PUkVRVUVTVCBzZXQKaXJx
-IDAsIGRlc2M6IGVlYzA1MDQwLCBkZXB0aDogMSwgY291bnQ6IDAsIHVuaGFuZGxlZDogMAot
-PmhhbmRsZV9pcnEoKTogIGMwMDVmZDBjLCBoYW5kbGVfYmFkX2lycSsweDAvMHgyMWMKLT5p
-cnFfZGF0YS5jaGlwKCk6IGMwNWVjNzkwLCAweGMwNWVjNzkwCi0+YWN0aW9uKCk6ICAgKG51
-bGwpCiAgIElSUV9OT1BST0JFIHNldAogSVJRX05PUkVRVUVTVCBzZXQKCg==
---------------080404090502030206040107--
+> ---
+> v2: Move name creation completely into gpiod_export().
+>     Do not accept NULL name in gpiod_export_name().
+> 
+>  Documentation/gpio/sysfs.txt  | 12 ++++++++----
+>  drivers/gpio/gpiolib-sysfs.c  | 37 ++++++++++++++++++++++++++++---------
+>  include/linux/gpio/consumer.h |  9 +++++++++
+>  3 files changed, 45 insertions(+), 13 deletions(-)
+> 
+> diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
+> index c2c3a97..e59653a 100644
+> --- a/Documentation/gpio/sysfs.txt
+> +++ b/Documentation/gpio/sysfs.txt
+> @@ -125,7 +125,11 @@ requested using gpio_request():
+>  	/* export the GPIO to userspace */
+>  	int gpiod_export(struct gpio_desc *desc, bool direction_may_change);
+>  
+> -	/* reverse gpio_export() */
+> +	/* export named GPIO to userspace */
+> +	int gpiod_export_name(struct gpio_desc *desc, const char *ioname,
+> +			bool direction_may_change);
+> +
+> +	/* reverse gpiod_export() / gpiod_export_name() */
+>  	void gpiod_unexport(struct gpio_desc *desc);
+>  
+>  	/* create a sysfs link to an exported GPIO node */
+> @@ -136,9 +140,9 @@ requested using gpio_request():
+>  	int gpiod_sysfs_set_active_low(struct gpio_desc *desc, int value);
+>  
+>  After a kernel driver requests a GPIO, it may only be made available in
+> -the sysfs interface by gpiod_export(). The driver can control whether the
+> -signal direction may change. This helps drivers prevent userspace code
+> -from accidentally clobbering important system state.
+> +the sysfs interface by gpiod_export() or gpiod_export_name(). The driver
+> +can control whether the signal direction may change. This helps drivers
+> +prevent userspace code from accidentally clobbering important system state.
+>  
+>  This explicit exporting can help with debugging (by making some kinds
+>  of experiments easier), or can provide an always-there interface that's
+> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+> index 5f2150b..0c86a0c 100644
+> --- a/drivers/gpio/gpiolib-sysfs.c
+> +++ b/drivers/gpio/gpiolib-sysfs.c
+> @@ -523,13 +523,12 @@ static struct class gpio_class = {
+>   *
+>   * Returns zero on success, else an error.
+>   */
+> -int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+> +int gpiod_export_name(struct gpio_desc *desc, const char *ioname,
+> +		      bool direction_may_change)
+>  {
+>  	unsigned long		flags;
+>  	int			status;
+> -	const char		*ioname = NULL;
+>  	struct device		*dev;
+> -	int			offset;
+>  
+>  	/* can't export until sysfs is available ... */
+>  	if (!gpio_class.p) {
+> @@ -542,6 +541,11 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (!ioname) {
+> +		pr_debug("%s: invalid ioname\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+>  	mutex_lock(&sysfs_lock);
+>  
+>  	spin_lock_irqsave(&gpio_lock, flags);
+> @@ -560,13 +564,8 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+>  		direction_may_change = false;
+>  	spin_unlock_irqrestore(&gpio_lock, flags);
+>  
+> -	offset = gpio_chip_hwgpio(desc);
+> -	if (desc->chip->names && desc->chip->names[offset])
+> -		ioname = desc->chip->names[offset];
+> -
+>  	dev = device_create(&gpio_class, desc->chip->dev, MKDEV(0, 0),
+> -			    desc, ioname ? ioname : "gpio%u",
+> -			    desc_to_gpio(desc));
+> +			    desc, ioname, desc_to_gpio(desc));
+>  	if (IS_ERR(dev)) {
+>  		status = PTR_ERR(dev);
+>  		goto fail_unlock;
+> @@ -600,6 +599,26 @@ fail_unlock:
+>  	gpiod_dbg(desc, "%s: status %d\n", __func__, status);
+>  	return status;
+>  }
+> +EXPORT_SYMBOL_GPL(gpiod_export_name);
+> +
+> +int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+> +{
+> +	const char *ioname;
+> +	int offset;
+> +
+> +	if (!desc) {
+> +		pr_debug("%s: invalid gpio descriptor\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	offset = gpio_chip_hwgpio(desc);
+> +	if (desc->chip->names && desc->chip->names[offset])
+> +		ioname = desc->chip->names[offset];
+> +	else
+> +		ioname = "gpio%u";
+> +
+> +	return gpiod_export_name(desc, ioname, direction_may_change);
+> +}
+>  EXPORT_SYMBOL_GPL(gpiod_export);
+>  
+>  static int match_export(struct device *dev, const void *data)
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> index 05e53cc..986da3e 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -260,6 +260,8 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
+>  #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_GPIO_SYSFS)
+>  
+>  int gpiod_export(struct gpio_desc *desc, bool direction_may_change);
+> +int gpiod_export_name(struct gpio_desc *desc, const char *ioname,
+> +		      bool direction_may_change);
+>  int gpiod_export_link(struct device *dev, const char *name,
+>  		      struct gpio_desc *desc);
+>  int gpiod_sysfs_set_active_low(struct gpio_desc *desc, int value);
+> @@ -273,6 +275,13 @@ static inline int gpiod_export(struct gpio_desc *desc,
+>  	return -ENOSYS;
+>  }
+>  
+> +static inline int gpiod_export_name(struct gpio_desc *desc,
+> +				    const char *ioname,
+> +				    bool direction_may_change)
+> +{
+> +	return -ENOSYS;
+> +}
+> +
+>  static inline int gpiod_export_link(struct device *dev, const char *name,
+>  				    struct gpio_desc *desc)
+>  {
+> -- 
+> 1.9.1
+> 
+> 
