@@ -1,27 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: add missing includes in machine.h
-Date: Thu, 7 Aug 2014 11:55:32 +0200
-Message-ID: <CACRpkdZXxwRF7=HiOasPRecGuYFX3zzbSL192ynF8gXN=2W4Pw@mail.gmail.com>
-References: <1407125156-14269-1-git-send-email-acourbot@nvidia.com>
+Subject: Re: [PATCH] MAINTAINERS: update GPIO include files
+Date: Thu, 7 Aug 2014 11:56:26 +0200
+Message-ID: <CACRpkdbTCpbz+jwCxKQkTBB+-4DfXEx+_OM-ZZdFjNaevOAebw@mail.gmail.com>
+References: <1407125218-22026-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1407125156-14269-1-git-send-email-acourbot@nvidia.com>
+In-Reply-To: <1407125218-22026-1-git-send-email-acourbot@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 4, 2014 at 6:05 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Mon, Aug 4, 2014 at 6:06 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
-> linux/types.h and linux/list.h should be included so the typed used in
-> the header file are always properly declared.
+> Files under include/linux/gpio/ were not reported as part of the GPIO
+> subsystem. Fix this.
 >
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Reported-by: Thierry Reding <treding@nvidia.com>
 > Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Patch applied, preparing for the v3.17 pull request.
+Patch applied.
 
 Yours,
 Linus Walleij
