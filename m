@@ -1,40 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control bulk changes for the v3.17 cycle
-Date: Thu, 7 Aug 2014 12:23:17 +0200
-Message-ID: <CACRpkda+pZewCMp8BzkGcEvgDL0ZbwW6OujEOCVZW2pQtNghvQ@mail.gmail.com>
+Subject: [GIT PULL] GPIO bulk changes for v3.17
+Date: Fri, 8 Aug 2014 11:36:23 +0200
+Message-ID: <CACRpkdYSybZbO-RRHdDBbQ944ZEDgq4MWcpNBQrhXzAVT9eA9A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:59808 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754265AbaHGKXS convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Aug 2014 06:23:18 -0400
-Received: by mail-oa0-f46.google.com with SMTP id m1so2763684oag.19
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Aug 2014 03:23:17 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, abdoulaye berthe <berthe.ab@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
 Hi Linus,
 
-here is the bulk of the pin control changes for v3.17. I intended to
-send the GPIO tree first, but it needs some icing on top to I need
-to have it boiled in linux-next another night.
+here is the bulk of GPIO changes for the v3.17 cycle. This time around
+there is some action happening, and we will continue in v3.18. It is
+mostly cleanup and refactoring as Alexandre, Abdoulaye and I are
+working in parallell on cleanups, and then a single new driver.
 
-The information is in the tag as usual. I test-merged this branch
-without problems on your master so it should be painless. Some
-minor transient warnings from ignored return values may appear
-on obscure drivers until the merge of the patch removing the
-__must_check attribute from the gpiochip_remove() function appear
-from the GPIO trees. Sorry for that, but would be unwise to rebase
-the tree for that warning alone.
-
-Please pull this in!
+Please pull it in!
 
 Yours,
 Linus Walleij
+
 
 The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626=
 b38f:
@@ -43,294 +31,230 @@ b38f:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.gi=
-t
-tags/pinctrl-v3.17-1
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.17-1
 
-for you to fetch changes up to e1ee5c578fb1fa24b7ccaf1a11237a2bd70b6f9a=
+for you to fetch changes up to bdc6e95e1273b5cef01590273c1a240c53ceeea0=
 :
 
-  pinctrl: baytrail: Convert to use gpiolib irqchip (2014-07-28 12:21:0=
-0 +0200)
+  MAINTAINERS: update GPIO include files (2014-08-07 11:56:06 +0200)
 
 ----------------------------------------------------------------
-This is the bulk pin control changes for the v3.17 merge
-development cycle:
+This is the bulk of GPIO changes for the v3.17 development
+cycle, and this time we got a lot of action going on and
+it will continue:
 
-- Get rid of the .disable() callback from the driver callback
-  vtable. This callback was abused and counterintuitive since
-  a pin or group of pins can be said to always be in some
-  setting, and never really disabled. We now only enable a
-  certain muxing, and move between some certain muxings, we
-  never "disable" a mux setting.
+- The core GPIO library implementation has been split up in
+  three different files:
+  - gpiolib.c for the latest and greatest and shiny GPIO
+    library code using GPIO descriptors only
+  - gpiolib-legacy.c for the old integer number space API
+    that we are phasing out gradually
+  - gpiolib-sysfs.c for the sysfs interface that we are
+    not entirely happy with, but has to live on for
+    ABI compatibility
 
-- Some janitorial moving the MSM, Samsung and Nomadik and
-  drivers to their own subdirectories for a clearer view in
-  the subsystem. This will continue.
+- Add a flags argument to *gpiod_get* functions, with some
+  backward-compatibility macros to ease transitions. We
+  should have had the flags there from the beginning it
+  seems, now we need to clean up the mess. There is a plan
+  on how to move forward here devised by Alexandre Courbot
+  and Mark Brown.
 
-- Kill off the use of the return value from gpiochip_remove(),
-  this will be done in parallel in the GPIO subsystem and
-  hopefully not trigger too many unchecked return value
-  warnings before we get rid of this altogether.
+- Split off a special <linux/gpio/machine.h> header for the
+  board gpio table registration, as per example from the
+  regulator subsystem.
 
-- A huge set of changes and improvements to the Allwinner
-  sunxi drivers especially for their latest A23 and A31 SoCs,
-  and some ground work for the new sun8i platform family.
+- Start to kill off the return value from gpiochip_remove()
+  by removing the __must_check attribute and removing all
+  checks inside the drivers/gpio directory. The rationale
+  is: well what were we supposed to do if there is an error
+  code? Not much: print an error message. And gpiolib already
+  does that. So make this function return void eventually.
 
-- A large set of Rockchip driver improvements adding support
-  for the RK3288 SoC.
+- Some cleanups of hairy gpiolib code, make some functions
+  not to be used outside the library private and make sure
+  they are not exported, remove gpiod_lock/unlock_as_irq()
+  as the existing function is for driver-internal use and
+  fine as it is, delete gpio_ensure_requested() as it is
+  not meaningful anymore.
 
-- Advances in migration of older Freescale platforms to pin
-  control, especially i.MX1.
+- Support the GPIOF_ACTIVE_LOW flag from gpio_request_one()
+  function calls, which is logical since this is already
+  supported when referencing GPIOs from e.g. device trees.
 
-- Samsung and Exynos improvements.
+- Switch STMPE, intel-mid, lynxpoint and ACPI (!) to use
+  the gpiolib irqchip helpers cutting down on GPIO irqchip
+  boilerplate a bit more.
 
-- Support for the Qualcomm MSM8960 SoC.
+- New driver for the Zynq GPIO block.
 
-- Use the gpiolib irqchip helpers for the ST SPEAr and
-  Intel Baytrail drivers.
+- The usual incremental improvements around a bunch of
+  drivers.
 
-- A bunch of nice janitorial work done with cppcheck.
+- Janitorial syntactic and semantic cleanups by Jingoo Han,
+  and Rickard Strandqvist especially.
 
 ----------------------------------------------------------------
-Alexander Shiyan (3):
-      pinctrl: Add i.MX1 pincontrol driver
-      pinctrl: i.MX27: Remove unused structure definition
-      pinctrl: i.MX27: Remove nonexistent pad definitions
+Alexandre Courbot (13):
+      gpio: always compile label support
+      gpio: move sysfs support to its own file
+      gpio: move integer GPIO support to its own file
+      gpio: remove export of private of_get_named_gpio_flags()
+      gpio: simplify gpiochip_export()
+      gpio: make gpiochip_get_desc() gpiolib-private
+      gpio: remove gpiod_lock/unlock_as_irq()
+      gpio: move gpio_ensure_requested() into legacy C file
+      gpio: remove useless check in gpiolib_sysfs_init()
+      gpio: remove gpio_ensure_requested()
+      gpio: add flags argument to gpiod_get*() functions
+      gpio: add missing includes in machine.h
+      MAINTAINERS: update GPIO include files
 
-Andrey Utkin (1):
-      pinctrl: msm: drop negativity check on unsigned value
+Andrew Ruder (1):
+      gpio-pxa: gpio0 and gpio1 support on dt
 
-Andy Gross (1):
-      pinctrl: qcom: Add BUS_HOLD pin bias
+Guenter Roeck (2):
+      gpio: Add support for GPIOF_ACTIVE_LOW to gpio_request_one functi=
+ons
+      gpiolib: Export gpiochip_request_own_desc and gpiochip_free_own_d=
+esc
 
-Bjorn Andersson (2):
-      pinctrl: msm: Add msm8960 definitions
-      pinctrl: qcom: Make muxing of gpio function explicit
+Harini Katakam (2):
+      gpio: Add driver for Zynq GPIO controller
+      devicetree: Add Zynq GPIO devicetree bindings documentation
 
-Chen-Yu Tsai (7):
-      pinctrl: sunxi: Add IRQCHIP_SKIP_SET_WAKE flag for pinctrl irq ch=
-ip
-      pinctrl: sunxi: Fix multi bank interrupt support in gpio_to_irq
-      pinctrl: sunxi: Remove gpio_out function from sun5i-a13 PG0/1/2 p=
-ins
-      pinctrl: sunxi: Add A23 PIO controller support
-      pinctrl: sunxi: Add A23 R_PIO controller support
-      pinctrl: sunxi: use gpiolib API to mark a GPIO used as an IRQ
-      pinctrl: sunxi: number gpio ranges starting from 0
+Javier Martinez Canillas (3):
+      gpio: omap: Remove unnecessary lockdep class
+      gpio: omap: Remove unneeded include
+      gpio: omap: Add an omap prefix to all functions
 
-David PARIS (1):
-      pinctrl: st: add IRQCHIP_SKIP_SET_WAKE flag
+Jingoo Han (2):
+      gpio: lpc32xx: Make of_device_id array const
+      gpio: pxa: Make of_device_id array const
 
-Eric Ernst (1):
-      pinctrl: baytrail: Warn if direct IRQ GPIO set to output
+J=C3=BCrg Billeter (1):
+      gpio: rcar: clamp returned value to [0,1]
 
-=46an Wu (1):
-      pinctrl: avoid duplicated calling enable_pinmux_setting for a pin
+Lars-Peter Clausen (1):
+      gpio: zynq: Clear pending interrupt when enabling a IRQ
 
-Geert Uytterhoeven (1):
-      sh-pfc: Add renesas,pfc-r8a7791 to binding documentation
+Linus Walleij (5):
+      gpio: stmpe: switch to use gpiolib irqchip helpers
+      gpio: intel-mid: switch to using gpiolib irqchip helpers
+      gpio: vr41xx: fix up errorpath on probe()
+      gpio: drop retval check enforcing from gpiochip_remove()
+      gpio: split gpiod board registration into machine header
 
-Hans de Goede (3):
-      pinctrl: sunxi: Move setting of mux to irq type
-      pinctrl: sunxi: Properly handle level triggered gpio interrupts
-      pinctrl: sunxi: Define enable / disable irq callbacks
+Mika Westerberg (2):
+      gpio: lynxpoint: Convert to use gpiolib irqchip
+      gpio / ACPI: Move event handling registration to gpiolib irqchip =
+helpers
 
-Heiko St=C3=BCbner (9):
-      pinctrl: rockchip: generalize bank-quirks
-      pinctrl: rockchip: precalculate iomux offsets
-      pinctrl: rockchip: add support for 4bit wide iomux settings
-      pinctrl: rockchip: enable iomuxes from pmu space
-      pinctrl: rockchip: support unrouted iomuxes per bank
-      pinctrl: rockchip: add support for rk3288 pin-controller
-      pinctrl: rockchip: set is_generic in pinconf_ops
-      pinctrl: rockchip: add separate type for rk3288
-      pinctrl: rockchip: add drive-strength control for rk3288
+Rickard Strandqvist (2):
+      gpio: gpio-twl4030.c: Cleaning up null pointer checks that could
+never happen
+      gpio: gpio-ucb1400.c: Cleaning up null pointer checks that could
+never happen
 
-Himangi Saraogi (1):
-      sh-pfc: sh73a0: Introduce the use of devm_regulator_register
+Sachin Kamat (1):
+      MAINTAINERS: Update Samsung pin control entry
 
-Linus Walleij (3):
-      pinctrl: spear: switch plgpio to irqchip helpers
-      pinctrl: msm: move all qualcomm drivers to subdir
-      pinctrl: nomadik: move all Nomadik drivers to subdir
-
-Maxime Ripard (6):
-      pinctrl: sunxi: Remove irq_mask_ack and use irq_ack instead
-      pinctrl: sunxi: Add macro definition for pinctrl with more than
-one interrupt
-      pinctrl: sunxi: Declare the number of interrupt banks in the desc=
-riptor
-      pinctrl: sunxi: Declare the interrupt function for the A31
-      pinctrl: sunxi: Implement multiple interrupt banks support
-      pinctrl: sunxi: Remove PINCTRL_SUNXI
-
-Mika Westerberg (1):
-      pinctrl: baytrail: Convert to use gpiolib irqchip
-
-Nobuhiro Iwamatsu (1):
-      pinctrl: sh-pfc: r8a7791: Add HSCIF pin support
-
-Rickard Strandqvist (9):
-      pinctrl: pinctrl-at91.c: Cleaning up if unsigned is less than zer=
-o
-      pinctrl: pinctrl-imx.c: Cleaning up if unsigned is less than zero
-      pinctrl: pinctrl-imx1-core.c: Cleaning up if unsigned is less tha=
-n zero
-      pinctrl: pinctrl-st.c: Cleaning up if unsigned is less than zero
-      pinctrl: pinctrl-at91.c: Cleaning up values that are never used
-      pinctrl: pinctrl-single.c: Cleaning up values that are never used
-      pinctrl: pinctrl-adi2.c: Cleaning up wrong format string usage
-      pinctrl: pinctrl-single.c: Cleaning up wrong format string usage
-      pinctrl: pinctrl-st.c: Cleaning up values that are never used
-
-Sachin Kamat (2):
-      pinctrl: bcm281xx: Staticize bcm281xx_pinctrl_probe
-      pinctrl: samsung: Group all drivers in a sub-dir
-
-Sergei Shtylyov (1):
-      sh-pfc: r8a7791: add CAN pin groups
-
-Tomasz Figa (5):
-      pinctrl: samsung: Decouple direction setting from pinctrl
-      pinctrl: samsung: Handle GPIO request and free using pinctrl help=
-ers
-      pinctrl: exynos: Consolidate irq_chips of GPIO and WKUP EINTs
-      pinctrl: samsung: Allow grouping multiple pinmux/pinconf nodes
-      pinctrl: samsung: Allow pin value to be initialized using pinfunc
-
-Uwe Kleine-K=C3=B6nig (1):
-      pinctrl: hide CONFIG_PINMUX and CONFIG_PINCONF
+Tushar Behera (1):
+      gpiolib: of: Update debug messages for of_get_named_gpiod_flags
 
 abdoulaye berthe (1):
-      pinctrl: remove all usage of gpio_remove ret val in driver/pinctl
+      gpio: remove all usage of gpio_remove retval in driver/gpio
 
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    2 +
- .../bindings/pinctrl/qcom,apq8064-pinctrl.txt      |    2 +-
- .../bindings/pinctrl/qcom,ipq8064-pinctrl.txt      |    2 +-
- .../bindings/pinctrl/qcom,msm8960-pinctrl.txt      |  181 +++
- .../bindings/pinctrl/qcom,msm8974-pinctrl.txt      |    2 +-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- .../bindings/pinctrl/rockchip,pinctrl.txt          |    4 +-
- .../bindings/pinctrl/samsung-pinctrl.txt           |   24 +-
- arch/arm/boot/dts/imx27-pinfunc.h                  |   46 -
- arch/arm/mach-sunxi/Kconfig                        |    1 -
- drivers/pinctrl/Kconfig                            |  117 +-
- drivers/pinctrl/Makefile                           |   24 +-
- drivers/pinctrl/core.c                             |   24 +-
- drivers/pinctrl/nomadik/Kconfig                    |   51 +
- drivers/pinctrl/nomadik/Makefile                   |   10 +
- drivers/pinctrl/{ =3D> nomadik}/pinctrl-ab8500.c     |    0
- drivers/pinctrl/{ =3D> nomadik}/pinctrl-ab8505.c     |    0
- drivers/pinctrl/{ =3D> nomadik}/pinctrl-ab8540.c     |    0
- drivers/pinctrl/{ =3D> nomadik}/pinctrl-ab9540.c     |    0
- drivers/pinctrl/{ =3D> nomadik}/pinctrl-abx500.c     |   19 +-
- drivers/pinctrl/{ =3D> nomadik}/pinctrl-abx500.h     |    0
- .../pinctrl/{ =3D> nomadik}/pinctrl-nomadik-db8500.c |    0
- .../pinctrl/{ =3D> nomadik}/pinctrl-nomadik-db8540.c |    0
- .../{ =3D> nomadik}/pinctrl-nomadik-stn8815.c        |    0
- drivers/pinctrl/{ =3D> nomadik}/pinctrl-nomadik.c    |   18 +-
- drivers/pinctrl/{ =3D> nomadik}/pinctrl-nomadik.h    |    0
- drivers/pinctrl/pinctrl-adi2.c                     |   41 +-
- drivers/pinctrl/pinctrl-as3722.c                   |   11 +-
- drivers/pinctrl/pinctrl-at91.c                     |   27 +-
- drivers/pinctrl/pinctrl-baytrail.c                 |  103 +-
- drivers/pinctrl/pinctrl-bcm281xx.c                 |    2 +-
- drivers/pinctrl/pinctrl-bcm2835.c                  |   11 -
- drivers/pinctrl/pinctrl-coh901.c                   |   10 +-
- drivers/pinctrl/pinctrl-imx.c                      |    2 +-
- drivers/pinctrl/pinctrl-imx1-core.c                |    2 +-
- drivers/pinctrl/pinctrl-imx1.c                     |  279 +++++
- drivers/pinctrl/pinctrl-imx27.c                    |   52 -
- drivers/pinctrl/pinctrl-rockchip.c                 |  401 ++++--
- drivers/pinctrl/pinctrl-single.c                   |   61 +-
- drivers/pinctrl/pinctrl-st.c                       |   15 +-
- drivers/pinctrl/pinctrl-tb10x.c                    |   17 -
- drivers/pinctrl/pinctrl-tegra.c                    |   13 -
- drivers/pinctrl/pinctrl-tz1090-pdc.c               |   28 -
- drivers/pinctrl/pinctrl-tz1090.c                   |   58 -
- drivers/pinctrl/pinctrl-u300.c                     |   14 -
- drivers/pinctrl/pinmux.c                           |    4 -
- drivers/pinctrl/qcom/Kconfig                       |   42 +
- drivers/pinctrl/qcom/Makefile                      |    6 +
- drivers/pinctrl/{ =3D> qcom}/pinctrl-apq8064.c       |   19 +-
- drivers/pinctrl/{ =3D> qcom}/pinctrl-ipq8064.c       |   17 +-
- drivers/pinctrl/{ =3D> qcom}/pinctrl-msm.c           |   42 +-
- drivers/pinctrl/{ =3D> qcom}/pinctrl-msm.h           |    0
- drivers/pinctrl/qcom/pinctrl-msm8960.c             | 1282 ++++++++++++=
-++++++++
- drivers/pinctrl/{ =3D> qcom}/pinctrl-msm8x74.c       |   29 +-
- drivers/pinctrl/samsung/Kconfig                    |   28 +
- drivers/pinctrl/samsung/Makefile                   |    7 +
- drivers/pinctrl/{ =3D> samsung}/pinctrl-exynos.c     |  307 +----
- drivers/pinctrl/{ =3D> samsung}/pinctrl-exynos.h     |    0
- drivers/pinctrl/{ =3D> samsung}/pinctrl-exynos5440.c |   10 +-
- drivers/pinctrl/{ =3D> samsung}/pinctrl-s3c24xx.c    |    0
- drivers/pinctrl/{ =3D> samsung}/pinctrl-s3c64xx.c    |    0
- drivers/pinctrl/{ =3D> samsung}/pinctrl-samsung.c    |  728 ++++++----=
--
- drivers/pinctrl/{ =3D> samsung}/pinctrl-samsung.h    |   18 +-
- drivers/pinctrl/sh-pfc/gpio.c                      |    9 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |  417 +++++++
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c                |   11 +-
- drivers/pinctrl/sh-pfc/pinctrl.c                   |   22 -
- drivers/pinctrl/sirf/pinctrl-sirf.c                |   10 -
- drivers/pinctrl/spear/Kconfig                      |    1 +
- drivers/pinctrl/spear/pinctrl-plgpio.c             |   84 +-
- drivers/pinctrl/spear/pinctrl-spear.c              |    7 -
- drivers/pinctrl/sunxi/Kconfig                      |   24 +-
- drivers/pinctrl/sunxi/Makefile                     |    2 +
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c          |    1 +
- drivers/pinctrl/sunxi/pinctrl-sun5i-a10s.c         |    1 +
- drivers/pinctrl/sunxi/pinctrl-sun5i-a13.c          |    4 +-
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c        |    1 +
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c          |  217 ++--
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c          |    1 +
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c        |  142 +++
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c          |  593 +++++++++
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |  187 ++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |   44 +-
- drivers/pinctrl/vt8500/pinctrl-wmt.c               |   21 +-
- include/linux/pinctrl/pinmux.h                     |    2 -
- 85 files changed, 4411 insertions(+), 1604 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt
- create mode 100644 drivers/pinctrl/nomadik/Kconfig
- create mode 100644 drivers/pinctrl/nomadik/Makefile
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-ab8500.c (100%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-ab8505.c (100%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-ab8540.c (100%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-ab9540.c (100%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-abx500.c (98%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-abx500.h (100%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-nomadik-db8500.c (100%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-nomadik-db8540.c (100%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-nomadik-stn8815.c (100%=
-)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-nomadik.c (99%)
- rename drivers/pinctrl/{ =3D> nomadik}/pinctrl-nomadik.h (100%)
- create mode 100644 drivers/pinctrl/pinctrl-imx1.c
- create mode 100644 drivers/pinctrl/qcom/Kconfig
- create mode 100644 drivers/pinctrl/qcom/Makefile
- rename drivers/pinctrl/{ =3D> qcom}/pinctrl-apq8064.c (95%)
- rename drivers/pinctrl/{ =3D> qcom}/pinctrl-ipq8064.c (95%)
- rename drivers/pinctrl/{ =3D> qcom}/pinctrl-msm.c (96%)
- rename drivers/pinctrl/{ =3D> qcom}/pinctrl-msm.h (100%)
- create mode 100644 drivers/pinctrl/qcom/pinctrl-msm8960.c
- rename drivers/pinctrl/{ =3D> qcom}/pinctrl-msm8x74.c (95%)
- create mode 100644 drivers/pinctrl/samsung/Kconfig
- create mode 100644 drivers/pinctrl/samsung/Makefile
- rename drivers/pinctrl/{ =3D> samsung}/pinctrl-exynos.c (79%)
- rename drivers/pinctrl/{ =3D> samsung}/pinctrl-exynos.h (100%)
- rename drivers/pinctrl/{ =3D> samsung}/pinctrl-exynos5440.c (99%)
- rename drivers/pinctrl/{ =3D> samsung}/pinctrl-s3c24xx.c (100%)
- rename drivers/pinctrl/{ =3D> samsung}/pinctrl-s3c64xx.c (100%)
- rename drivers/pinctrl/{ =3D> samsung}/pinctrl-samsung.c (71%)
- rename drivers/pinctrl/{ =3D> samsung}/pinctrl-samsung.h (93%)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ .../devicetree/bindings/gpio/gpio-zynq.txt         |   26 +
+ Documentation/gpio/board.txt                       |    2 +-
+ Documentation/gpio/consumer.txt                    |   26 +-
+ Documentation/gpio/driver.txt                      |   25 +-
+ MAINTAINERS                                        |    7 +-
+ arch/arm/mach-at91/at91rm9200_devices.c            |    2 +-
+ arch/arm/mach-tegra/board-paz00.c                  |    2 +-
+ arch/mips/jz4740/board-qi_lb60.c                   |    1 +
+ drivers/gpio/Kconfig                               |   10 +-
+ drivers/gpio/Makefile                              |    3 +
+ drivers/gpio/devres.c                              |   40 +-
+ drivers/gpio/gpio-74x164.c                         |    8 +-
+ drivers/gpio/gpio-adnp.c                           |    9 +-
+ drivers/gpio/gpio-adp5520.c                        |    8 +-
+ drivers/gpio/gpio-adp5588.c                        |    6 +-
+ drivers/gpio/gpio-amd8111.c                        |    3 +-
+ drivers/gpio/gpio-arizona.c                        |    3 +-
+ drivers/gpio/gpio-cs5535.c                         |    8 +-
+ drivers/gpio/gpio-da9052.c                         |    3 +-
+ drivers/gpio/gpio-da9055.c                         |    3 +-
+ drivers/gpio/gpio-dwapb.c                          |    2 +-
+ drivers/gpio/gpio-em.c                             |    5 +-
+ drivers/gpio/gpio-f7188x.c                         |   18 +-
+ drivers/gpio/gpio-generic.c                        |    3 +-
+ drivers/gpio/gpio-grgpio.c                         |    4 +-
+ drivers/gpio/gpio-ich.c                            |    9 +-
+ drivers/gpio/gpio-intel-mid.c                      |   86 +-
+ drivers/gpio/gpio-it8761e.c                        |    6 +-
+ drivers/gpio/gpio-janz-ttl.c                       |    8 +-
+ drivers/gpio/gpio-kempld.c                         |    3 +-
+ drivers/gpio/gpio-lp3943.c                         |    3 +-
+ drivers/gpio/gpio-lpc32xx.c                        |    2 +-
+ drivers/gpio/gpio-lynxpoint.c                      |   98 +-
+ drivers/gpio/gpio-max730x.c                        |   13 +-
+ drivers/gpio/gpio-max732x.c                        |    7 +-
+ drivers/gpio/gpio-mc33880.c                        |   11 +-
+ drivers/gpio/gpio-mc9s08dz60.c                     |    3 +-
+ drivers/gpio/gpio-mcp23s08.c                       |   26 +-
+ drivers/gpio/gpio-ml-ioh.c                         |    8 +-
+ drivers/gpio/gpio-msm-v2.c                         |    5 +-
+ drivers/gpio/gpio-mxc.c                            |    2 +-
+ drivers/gpio/gpio-octeon.c                         |    3 +-
+ drivers/gpio/gpio-omap.c                           |  275 ++--
+ drivers/gpio/gpio-palmas.c                         |    3 +-
+ drivers/gpio/gpio-pca953x.c                        |    7 +-
+ drivers/gpio/gpio-pcf857x.c                        |    4 +-
+ drivers/gpio/gpio-pch.c                            |   10 +-
+ drivers/gpio/gpio-pxa.c                            |    7 +-
+ drivers/gpio/gpio-rc5t583.c                        |    3 +-
+ drivers/gpio/gpio-rcar.c                           |    9 +-
+ drivers/gpio/gpio-rdc321x.c                        |    7 +-
+ drivers/gpio/gpio-sch.c                            |   16 +-
+ drivers/gpio/gpio-sch311x.c                        |    6 +-
+ drivers/gpio/gpio-sodaville.c                      |    4 +-
+ drivers/gpio/gpio-stmpe.c                          |  119 +-
+ drivers/gpio/gpio-sx150x.c                         |    7 +-
+ drivers/gpio/gpio-syscon.c                         |    3 +-
+ drivers/gpio/gpio-tb10x.c                          |    5 +-
+ drivers/gpio/gpio-tc3589x.c                        |    8 +-
+ drivers/gpio/gpio-timberdale.c                     |    5 +-
+ drivers/gpio/gpio-tps6586x.c                       |    3 +-
+ drivers/gpio/gpio-tps65910.c                       |    3 +-
+ drivers/gpio/gpio-tps65912.c                       |    3 +-
+ drivers/gpio/gpio-ts5500.c                         |    6 +-
+ drivers/gpio/gpio-twl4030.c                        |    6 +-
+ drivers/gpio/gpio-twl6040.c                        |    3 +-
+ drivers/gpio/gpio-ucb1400.c                        |    4 +-
+ drivers/gpio/gpio-viperboard.c                     |   10 +-
+ drivers/gpio/gpio-vr41xx.c                         |    8 +-
+ drivers/gpio/gpio-vx855.c                          |    3 +-
+ drivers/gpio/gpio-wm831x.c                         |    3 +-
+ drivers/gpio/gpio-wm8350.c                         |    3 +-
+ drivers/gpio/gpio-wm8994.c                         |    3 +-
+ drivers/gpio/gpio-zynq.c                           |  692 ++++++++++
+ drivers/gpio/gpiolib-acpi.c                        |   44 +-
+ drivers/gpio/gpiolib-legacy.c                      |  102 ++
+ drivers/gpio/gpiolib-of.c                          |   10 +-
+ drivers/gpio/gpiolib-sysfs.c                       |  827 ++++++++++++
+ drivers/gpio/gpiolib.c                             | 1421 +++---------=
+--------
+ drivers/gpio/gpiolib.h                             |  105 +-
+ include/asm-generic/gpio.h                         |    3 -
+ include/linux/gpio/consumer.h                      |   81 +-
+ include/linux/gpio/driver.h                        |   66 +-
+ include/linux/gpio/machine.h                       |   61 +
+ 84 files changed, 2485 insertions(+), 2003 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-zynq.tx=
+t
+ create mode 100644 drivers/gpio/gpio-zynq.c
+ create mode 100644 drivers/gpio/gpiolib-legacy.c
+ create mode 100644 drivers/gpio/gpiolib-sysfs.c
+ create mode 100644 include/linux/gpio/machine.h
