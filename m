@@ -1,61 +1,60 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: =?UTF-8?q?=5BPATCH=2010/14=5D=20gpio=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5Fput?=
-Date: Fri,  8 Aug 2014 12:07:51 +0200
-Message-ID: <1407492475-26283-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpio: keystone: add dsp gpio controller driver
+Date: Fri, 8 Aug 2014 14:53:50 +0200
+Message-ID: <CACRpkdZAHj+PMu-xJJow+9ndbp9srnQtmb4E2k5x3nkaQA1jCg@mail.gmail.com>
+References: <1406126699-10053-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:48276 "EHLO
-	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756325AbaHHKLP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Aug 2014 06:11:15 -0400
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:55793 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751719AbaHHMxv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Aug 2014 08:53:51 -0400
+Received: by mail-ob0-f175.google.com with SMTP id wp18so3982765obc.6
+        for <linux-gpio@vger.kernel.org>; Fri, 08 Aug 2014 05:53:50 -0700 (PDT)
+In-Reply-To: <1406126699-10053-1-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ivan.khoronzhuk@ti.com, Muralidharan Karicheri <m-karicheri2@ti.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Varka Bhadram <varkabhadram@gmail.com>
 
-=46rom: Julia Lawall <Julia.Lawall@lip6.fr>
+On Wed, Jul 23, 2014 at 4:44 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-Of_node_put supports NULL as its argument, so the initial test is not
-necessary.
+> From: Murali Karicheri <m-karicheri2@ti.com>
+>
+> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
+> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
+> each DSP core. This is one of the component used by the IPC mechanism used
+> on Keystone SOCs.
+>
+> Keystone 2 DSP GPIO controller has specific features:
+> - each GPIO can be configured only as output pin;
+> - setting GPIO value to 1 causes IRQ generation on target DSP core;
+> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+>   pending.
+>
+> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+> Changes in v2:
+> - minor comments applied
 
-Suggested by Uwe Kleine-K=C3=B6nig.
+Hm so there was one major comment, quoting myself:
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+"And if you proceed with this, please integrate it with
+drivers/gpio/gpio-syscon.c, I don't need more special
+syscons GPIO handlers."
 
-// <smpl>
-@@
-expression e;
-@@
+Maybe you missed this in the midst of the other discussions
+about whether this is GPIO at all, but that comment still
+stands even if you talk me down on the generality of this
+driver.
 
--if (e)
-   of_node_put(e);
-// </smpl>
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Make this follow the style in:
+Documentation/devicetree/bindings/gpio/cirrus,clps711x-mctrl-gpio.txt
 
----
- drivers/gpio/gpiolib-of.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 7cfdc22..604dbe6 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -307,7 +307,5 @@ void of_gpiochip_add(struct gpio_chip *chip)
- void of_gpiochip_remove(struct gpio_chip *chip)
- {
- 	gpiochip_remove_pin_ranges(chip);
--
--	if (chip->of_node)
--		of_node_put(chip->of_node);
-+	of_node_put(chip->of_node);
- }
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
