@@ -1,60 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: keystone: add dsp gpio controller driver
-Date: Fri, 8 Aug 2014 14:53:50 +0200
-Message-ID: <CACRpkdZAHj+PMu-xJJow+9ndbp9srnQtmb4E2k5x3nkaQA1jCg@mail.gmail.com>
-References: <1406126699-10053-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH 1/4] gpio: pca953x: Drop deprecated DT bindings
+Date: Fri, 8 Aug 2014 15:07:21 +0200
+Message-ID: <CACRpkdYOuUXv9U+sb_hQFNvVUm1G7W46sRv6n3nSPMwz7yLUiQ@mail.gmail.com>
+References: <1406618686-22385-1-git-send-email-mpa@pengutronix.de>
+	<1406618686-22385-2-git-send-email-mpa@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:55793 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751719AbaHHMxv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Aug 2014 08:53:51 -0400
-Received: by mail-ob0-f175.google.com with SMTP id wp18so3982765obc.6
-        for <linux-gpio@vger.kernel.org>; Fri, 08 Aug 2014 05:53:50 -0700 (PDT)
-In-Reply-To: <1406126699-10053-1-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:42293 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756568AbaHHNHW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Aug 2014 09:07:22 -0400
+Received: by mail-oa0-f45.google.com with SMTP id i7so4040738oag.32
+        for <linux-gpio@vger.kernel.org>; Fri, 08 Aug 2014 06:07:22 -0700 (PDT)
+In-Reply-To: <1406618686-22385-2-git-send-email-mpa@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ivan.khoronzhuk@ti.com, Muralidharan Karicheri <m-karicheri2@ti.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Varka Bhadram <varkabhadram@gmail.com>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Toby Smith <toby@tismith.id.au>, Aaron Sierra <asierra@xes-inc.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Wed, Jul 23, 2014 at 4:44 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Tue, Jul 29, 2014 at 9:24 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
 
-> From: Murali Karicheri <m-karicheri2@ti.com>
+> Drop deprecated DT bindings and use automaticly assigned gpio and irq
+> bases.
 >
-> On Keystone SOCs, ARM host can send interrupts to DSP cores using the
-> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
-> each DSP core. This is one of the component used by the IPC mechanism used
-> on Keystone SOCs.
->
-> Keystone 2 DSP GPIO controller has specific features:
-> - each GPIO can be configured only as output pin;
-> - setting GPIO value to 1 causes IRQ generation on target DSP core;
-> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
->   pending.
->
-> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
-> Changes in v2:
-> - minor comments applied
+> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
 
-Hm so there was one major comment, quoting myself:
+Patch applied.
 
-"And if you proceed with this, please integrate it with
-drivers/gpio/gpio-syscon.c, I don't need more special
-syscons GPIO handlers."
+> -       val = of_get_property(node, "linux,gpio-base", &size);
+> -       WARN(val, "%s: device-tree property 'linux,gpio-base' is deprecated!", __func__);
 
-Maybe you missed this in the midst of the other discussions
-about whether this is GPIO at all, but that comment still
-stands even if you talk me down on the generality of this
-driver.
+Gah! This should never have been merged.
 
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-keystone.txt
-
-Make this follow the style in:
-Documentation/devicetree/bindings/gpio/cirrus,clps711x-mctrl-gpio.txt
+I even consider this patch a bug fix now.
 
 Yours,
 Linus Walleij
