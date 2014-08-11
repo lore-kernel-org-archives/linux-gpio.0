@@ -1,40 +1,73 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 10/14] gpio: delete unneeded test before of_node_put
-Date: Mon, 11 Aug 2014 10:17:22 +0200
-Message-ID: <CACRpkdb8+o0BA_3v9acBX0xybbZSK9zBPFCnjUnpbj=QHjmUyA@mail.gmail.com>
-References: <1407492475-26283-10-git-send-email-Julia.Lawall@lip6.fr>
+Subject: Re: [PATCH 4/4] gpio: pca953x: Add DT binding for reset gpio
+Date: Mon, 11 Aug 2014 10:43:39 +0200
+Message-ID: <CACRpkdY1x41=b_q83fejkTHXGG8GYDFNRUXdt=1AR_R4N18Rwg@mail.gmail.com>
+References: <1406618686-22385-1-git-send-email-mpa@pengutronix.de>
+	<1406618686-22385-5-git-send-email-mpa@pengutronix.de>
+	<CACRpkdY0TqVH1tJR1H89S5hvdJUboQdVtNvZnL3NeWit4f+amw@mail.gmail.com>
+	<1407507094.3354.11.camel@paszta.hi.pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:57409 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751672AbaHKIRX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Aug 2014 04:17:23 -0400
-Received: by mail-oa0-f52.google.com with SMTP id o6so5777744oag.25
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Aug 2014 01:17:22 -0700 (PDT)
-In-Reply-To: <1407492475-26283-10-git-send-email-Julia.Lawall@lip6.fr>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:49239 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464AbaHKInk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Aug 2014 04:43:40 -0400
+Received: by mail-oi0-f48.google.com with SMTP id h136so5293844oig.7
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Aug 2014 01:43:40 -0700 (PDT)
+In-Reply-To: <1407507094.3354.11.camel@paszta.hi.pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Markus Pargmann <mpa@pengutronix.de>, Houcheng Lin <houcheng@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Toby Smith <toby@tismith.id.au>, Aaron Sierra <asierra@xes-inc.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Fri, Aug 8, 2014 at 12:07 PM, Julia Lawall <Julia.Lawall@lip6.fr> wr=
-ote:
-
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Fri, Aug 8, 2014 at 4:11 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> Am Freitag, den 08.08.2014, 15:14 +0200 schrieb Linus Walleij:
+>> On Tue, Jul 29, 2014 at 9:24 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
+>>
+>> > The pca953x has a negated reset input. This patch adds a DT binding for
+>> > the reset gpio and resets the chip when it is probed. This will reset
+>> > the device and leave the gpio in the correct state so reset is not
+>> > triggered.
+>> >
+>> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+>>
+>> Why on earth should this be in the GPIO driver?
+>>
+>> The driver should be in drivers/reset/reset-gpio.c and you
+>> should provide a separate driver for it.
 >
-> Of_node_put supports NULL as its argument, so the initial test is not
-> necessary.
->
-> Suggested by Uwe Kleine-K=C3=B6nig.
+> I still think we should keep using the reset-gpios binding for simple
+> cases like this; I see no reason to add a separate device to the device
+> tree for a single GPIO.
 
-Patch applied.
+In any case you have to propose something generic that
+happens in drivers/gpio/gpiolib.c at the end of the
+gpiochip_add() function, because this will likely appear in
+many other systems.
+
+The binding should also be generic in
+Documentation/devicetree/bindings/gpio/gpio.txt
+not for just this driver.
+
+>> As it happens, Houcheng Lin has already proposed such a
+>> driver:
+>> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
+>
+> That is a different issue, as there the device does not appear on the
+> bus until the reset is released.
+
+You're just looking at the patch description. Look at what the
+driver does.
+
+I wrote this reply to the patch:
+http://marc.info/?l=linux-kernel&m=140480593524472&w=2
+
+With a delay of zero, the reset will be released
+immediately, by the use of a helper OF node and this driver
+from the reset subsystem. It's nice, generic code that solves
+a generic problem of deasserting GPIO lines for
+some reset.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
