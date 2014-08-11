@@ -1,73 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/4] gpio: pca953x: Add DT binding for reset gpio
-Date: Mon, 11 Aug 2014 10:43:39 +0200
-Message-ID: <CACRpkdY1x41=b_q83fejkTHXGG8GYDFNRUXdt=1AR_R4N18Rwg@mail.gmail.com>
-References: <1406618686-22385-1-git-send-email-mpa@pengutronix.de>
-	<1406618686-22385-5-git-send-email-mpa@pengutronix.de>
-	<CACRpkdY0TqVH1tJR1H89S5hvdJUboQdVtNvZnL3NeWit4f+amw@mail.gmail.com>
-	<1407507094.3354.11.camel@paszta.hi.pengutronix.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] gpiolib: Don't allow drivers to specify a base with DT
+Date: Mon, 11 Aug 2014 13:31:46 +0100
+Message-ID: <20140811123146.GA17528@sirena.org.uk>
+References: <1406808468-12559-1-git-send-email-broonie@kernel.org>
+ <CACRpkdaD2K4L+dF3iaXqQTsYJpoVRnRnp-4La38BWC3cRVUm7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3YrECMwokT/57evM"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:49239 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751464AbaHKInk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Aug 2014 04:43:40 -0400
-Received: by mail-oi0-f48.google.com with SMTP id h136so5293844oig.7
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Aug 2014 01:43:40 -0700 (PDT)
-In-Reply-To: <1407507094.3354.11.camel@paszta.hi.pengutronix.de>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58071 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751101AbaHKMbx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Aug 2014 08:31:53 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaD2K4L+dF3iaXqQTsYJpoVRnRnp-4La38BWC3cRVUm7g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Markus Pargmann <mpa@pengutronix.de>, Houcheng Lin <houcheng@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Toby Smith <toby@tismith.id.au>, Aaron Sierra <asierra@xes-inc.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linaro-kernel <linaro-kernel@lists.linaro.org>
 
-On Fri, Aug 8, 2014 at 4:11 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> Am Freitag, den 08.08.2014, 15:14 +0200 schrieb Linus Walleij:
->> On Tue, Jul 29, 2014 at 9:24 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
->>
->> > The pca953x has a negated reset input. This patch adds a DT binding for
->> > the reset gpio and resets the chip when it is probed. This will reset
->> > the device and leave the gpio in the correct state so reset is not
->> > triggered.
->> >
->> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
->>
->> Why on earth should this be in the GPIO driver?
->>
->> The driver should be in drivers/reset/reset-gpio.c and you
->> should provide a separate driver for it.
->
-> I still think we should keep using the reset-gpios binding for simple
-> cases like this; I see no reason to add a separate device to the device
-> tree for a single GPIO.
 
-In any case you have to propose something generic that
-happens in drivers/gpio/gpiolib.c at the end of the
-gpiochip_add() function, because this will likely appear in
-many other systems.
+--3YrECMwokT/57evM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The binding should also be generic in
-Documentation/devicetree/bindings/gpio/gpio.txt
-not for just this driver.
+On Mon, Aug 11, 2014 at 09:26:49AM +0200, Linus Walleij wrote:
+> On Thu, Jul 31, 2014 at 2:07 PM, Mark Brown <broonie@kernel.org> wrote:
 
->> As it happens, Houcheng Lin has already proposed such a
->> driver:
->> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
->
-> That is a different issue, as there the device does not appear on the
-> bus until the reset is released.
+> > -       if (base < 0) {
+> > +       if (base < 0 || of_have_populated_dt()) {
+> >                 base = gpiochip_find_base(chip->ngpio);
 
-You're just looking at the patch description. Look at what the
-driver does.
+> But here I worry about breaking in-transition systems, e.g.
+> defining part of the peripherals through DT but adding a
+> GPIO device with AUXDATA, setting up base that way.
 
-I wrote this reply to the patch:
-http://marc.info/?l=linux-kernel&m=140480593524472&w=2
+> Not that it should stay that way for sure, but it does need
+> some consideration...
 
-With a delay of zero, the reset will be released
-immediately, by the use of a helper OF node and this driver
-from the reset subsystem. It's nice, generic code that solves
-a generic problem of deasserting GPIO lines for
-some reset.
+Could we add a flag that the boards can use to override this behaviour?
 
-Yours,
-Linus Walleij
+--3YrECMwokT/57evM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT6LevAAoJELSic+t+oim9tTcP/ie5aeUkoIiscmD6JMRS1FxC
+ZpSwWVfyKY+jsHUCGbSXCd/2uVKrYvL6c6tu3Itpsr2oDDPp0iM53EckArmpfDt7
+esp5+fzABKnvAS9JI0qXY6rUvGBqK7zMqJVhrTQSwt1MQ4xlX93MtzEGPa3pQJbP
+hPlEdrRv/m14B8DNSOOpOhcRjvgdcEjCsG69yokdEeXgHTXfShdgxV0VqV5a+hea
+lshZ42rWXCs8dkOBRC9pzv1CgBUVWzRM5sf7t1B/i9buvBTPcu7aZhmrSa41NArn
+FNrCmxReJ0NtYdiNBhqAlzUpPIa89RRKC+2uFqbdvvFQAgKQOde7BkRK4pgmOOON
++QOslZk+CVuCvPbBCDikM/XtbSxEIC9IUuj0DRxZe15I3AFRw57gXUqkwLzI8ryY
++Hk9CkSVyfiffO47oj5Kmg0/lQkuA/jommKWJFOL0RzpqN5kVPqY+F72Y/+/+5j5
+sglMFor5xaO6LcSKgOGIouvOMMrTbM45k2jmzYF7+TKuMcGp6meHkL9yyBSMNOOu
+OELadzrW3p3Vz3Lw0m2j3PRb5jkUMChLzXBlK/IU636sNRjiurVtCq+C3Y1N1II/
+fqMm6BUOWUAqLE/VY+czNasLHd7Bazfgk4deiDbA3+9Acyt5ZGRCYdzJ8HURaES0
+kjIcLZN4Q6eErkkkFlgn
+=ewhf
+-----END PGP SIGNATURE-----
+
+--3YrECMwokT/57evM--
