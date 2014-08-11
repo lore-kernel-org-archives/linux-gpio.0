@@ -1,65 +1,74 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH] gpiolib: Don't allow drivers to specify a base with DT
-Date: Mon, 11 Aug 2014 13:31:46 +0100
-Message-ID: <20140811123146.GA17528@sirena.org.uk>
+Date: Mon, 11 Aug 2014 13:38:40 +0100
+Message-ID: <20140811123840.GB17528@sirena.org.uk>
 References: <1406808468-12559-1-git-send-email-broonie@kernel.org>
- <CACRpkdaD2K4L+dF3iaXqQTsYJpoVRnRnp-4La38BWC3cRVUm7g@mail.gmail.com>
+ <CAAVeFuKv_Qd2u60zSYYKicahDcH1wKs2BVQRGhNsF9civT_S2g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3YrECMwokT/57evM"
+	protocol="application/pgp-signature"; boundary="t+rWpiKzV+NkZI0W"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58071 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58084 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751101AbaHKMbx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Aug 2014 08:31:53 -0400
+	with ESMTP id S1751512AbaHKMis (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Aug 2014 08:38:48 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdaD2K4L+dF3iaXqQTsYJpoVRnRnp-4La38BWC3cRVUm7g@mail.gmail.com>
+In-Reply-To: <CAAVeFuKv_Qd2u60zSYYKicahDcH1wKs2BVQRGhNsF9civT_S2g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linaro-kernel <linaro-kernel@lists.linaro.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linaro-kernel@lists.linaro.org
 
 
---3YrECMwokT/57evM
+--t+rWpiKzV+NkZI0W
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Aug 11, 2014 at 09:26:49AM +0200, Linus Walleij wrote:
-> On Thu, Jul 31, 2014 at 2:07 PM, Mark Brown <broonie@kernel.org> wrote:
+On Mon, Aug 04, 2014 at 01:21:57PM +0900, Alexandre Courbot wrote:
+> On Thu, Jul 31, 2014 at 9:07 PM, Mark Brown <broonie@kernel.org> wrote:
 
-> > -       if (base < 0) {
-> > +       if (base < 0 || of_have_populated_dt()) {
-> >                 base = gpiochip_find_base(chip->ngpio);
+> > DT based systems should have no reason to use fixed GPIO numbers but some
+> > drivers that work on both DT and non-DT platforms specify them anyway. In
+> > order to improve robustness in cases where drivers use gpio_is_valid() to
+> > check for a valid GPIO on data initialized to zero as a default and avoid
+> > bugs due to assuptions about fixed numbers creeping in ignore any specified
+> > base when DT is in use.
 
-> But here I worry about breaking in-transition systems, e.g.
-> defining part of the peripherals through DT but adding a
-> GPIO device with AUXDATA, setting up base that way.
+> I agree that DT users should not use the base number at all - but the
+> fact is some of them are doing it. Aren't we going to break some
+> user-space users that will expect to find a GPIO under a given number?
 
-> Not that it should stay that way for sure, but it does need
-> some consideration...
+Is this actually a realistic thing that people do with mainline - I'm
+not convinced that it's going to be robust in general (a lot of DT
+conversions will have broken things for entire architectures) and hard
+coded numbers aren't the sort of things that make it into distros.
 
-Could we add a flag that the boards can use to override this behaviour?
+> Also, how is this going to help with gpio_is_valid() against
+> zero-initialized data?
 
---3YrECMwokT/57evM
+I should have said check for zero instead, sorry - though making 0 not
+be a valid GPIO would help overall.
+
+--t+rWpiKzV+NkZI0W
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT6LevAAoJELSic+t+oim9tTcP/ie5aeUkoIiscmD6JMRS1FxC
-ZpSwWVfyKY+jsHUCGbSXCd/2uVKrYvL6c6tu3Itpsr2oDDPp0iM53EckArmpfDt7
-esp5+fzABKnvAS9JI0qXY6rUvGBqK7zMqJVhrTQSwt1MQ4xlX93MtzEGPa3pQJbP
-hPlEdrRv/m14B8DNSOOpOhcRjvgdcEjCsG69yokdEeXgHTXfShdgxV0VqV5a+hea
-lshZ42rWXCs8dkOBRC9pzv1CgBUVWzRM5sf7t1B/i9buvBTPcu7aZhmrSa41NArn
-FNrCmxReJ0NtYdiNBhqAlzUpPIa89RRKC+2uFqbdvvFQAgKQOde7BkRK4pgmOOON
-+QOslZk+CVuCvPbBCDikM/XtbSxEIC9IUuj0DRxZe15I3AFRw57gXUqkwLzI8ryY
-+Hk9CkSVyfiffO47oj5Kmg0/lQkuA/jommKWJFOL0RzpqN5kVPqY+F72Y/+/+5j5
-sglMFor5xaO6LcSKgOGIouvOMMrTbM45k2jmzYF7+TKuMcGp6meHkL9yyBSMNOOu
-OELadzrW3p3Vz3Lw0m2j3PRb5jkUMChLzXBlK/IU636sNRjiurVtCq+C3Y1N1II/
-fqMm6BUOWUAqLE/VY+czNasLHd7Bazfgk4deiDbA3+9Acyt5ZGRCYdzJ8HURaES0
-kjIcLZN4Q6eErkkkFlgn
-=ewhf
+iQIcBAEBAgAGBQJT6LlNAAoJELSic+t+oim92IQQAJQuGuEvLDa7J718ovqAPkBq
+hib7/EktnLGfFWo5MzM4X6KRzU3yDz3kn4ILr+ukMBYmZ9PLyAqwnRvzZBTdCb9x
+1mfunBCwcTiN3MZ5GxOiSh/f7kfQI8NDJsbSGZGdouL7ZpLD6eT+wP1y71REta9z
+/gsHPOcjgw6sahCNhRBZ5Ov8TpgscvDe6LfCBcj0mBySh1DKzjXO4KpxLW83VcTt
+kstXHgn2F5MGXf0HLDHi54tUNucZaz2Yo/6jmoxZy2pUaOM8euXvpca0vlXvejdL
+Ok4AGm0VQ1tJhz6zU41erq3AIE2zmqVT6z6E3nMNYBr1F8QJ8CmZIFgbtN/ZuuTq
+Dz7JY92w1TPkkim++XWVNCye5vprgmBDnN3drMcCaAIjhH66Z3TXys2EM5Tl7jgH
+bD9MbyKAitpzbdLb9eLIgI+zLuk45bm++i6bW6EorXkQzf/PQ9cdrMa3XzqAKtHD
+cXi/R9Rptkgd4qG+oPgOd7tcCZ3Xme4GIT03WpBa0g1DDs86ayZ2G7dY+71YiUip
+lb/pFKwcWezhowtqbDw93ddJoHvnS78nwd7FROmvypm0R/8mh2XM5KJvOoooJzi8
+RCf+lf3SA2G0KS2bZanOPuhmH+WkmBhTte5xYCRk/GkzHJM42kbXVRFW0EZSOq2U
+irhRmFjwd9aau+TM4tqc
+=j+k+
 -----END PGP SIGNATURE-----
 
---3YrECMwokT/57evM--
+--t+rWpiKzV+NkZI0W--
