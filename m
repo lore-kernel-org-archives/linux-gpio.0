@@ -1,53 +1,38 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 4/4] gpio: pca953x: Add DT binding for reset gpio
-Date: Fri, 08 Aug 2014 16:11:34 +0200
-Message-ID: <1407507094.3354.11.camel@paszta.hi.pengutronix.de>
-References: <1406618686-22385-1-git-send-email-mpa@pengutronix.de>
-	 <1406618686-22385-5-git-send-email-mpa@pengutronix.de>
-	 <CACRpkdY0TqVH1tJR1H89S5hvdJUboQdVtNvZnL3NeWit4f+amw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/3] gpio: zynq: Fix IRQ handlers
+Date: Mon, 11 Aug 2014 09:03:03 +0200
+Message-ID: <CACRpkdYi8oxMr-K=m6E0b+UusNUF1ekDb25HVFmT+HAiyqrMoQ@mail.gmail.com>
+References: <1405677133-8706-1-git-send-email-lars@metafoo.de>
+	<1405677133-8706-3-git-send-email-lars@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:53283 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756662AbaHHOLv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Aug 2014 10:11:51 -0400
-In-Reply-To: <CACRpkdY0TqVH1tJR1H89S5hvdJUboQdVtNvZnL3NeWit4f+amw@mail.gmail.com>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:53365 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752242AbaHKHDE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Aug 2014 03:03:04 -0400
+Received: by mail-oa0-f47.google.com with SMTP id g18so5804237oah.20
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Aug 2014 00:03:03 -0700 (PDT)
+In-Reply-To: <1405677133-8706-3-git-send-email-lars@metafoo.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, Houcheng Lin <houcheng@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Toby Smith <toby@tismith.id.au>, Aaron Sierra <asierra@xes-inc.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Am Freitag, den 08.08.2014, 15:14 +0200 schrieb Linus Walleij:
-> On Tue, Jul 29, 2014 at 9:24 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
-> 
-> > The pca953x has a negated reset input. This patch adds a DT binding for
-> > the reset gpio and resets the chip when it is probed. This will reset
-> > the device and leave the gpio in the correct state so reset is not
-> > triggered.
-> >
-> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
-> 
-> Why on earth should this be in the GPIO driver?
->
-> The driver should be in drivers/reset/reset-gpio.c and you
-> should provide a separate driver for it.
+On Fri, Jul 18, 2014 at 11:52 AM, Lars-Peter Clausen <lars@metafoo.de> =
+wrote:
 
-I still think we should keep using the reset-gpios binding for simple
-cases like this; I see no reason to add a separate device to the device
-tree for a single GPIO.
+> The Zynq GPIO interrupt handling code as two main issues:
+(...)
+> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 
-> As it happens, Houcheng Lin has already proposed such a
-> driver:
-> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
+Patch applied with S=C3=B6ren's ACK!
 
-That is a different issue, as there the device does not appear on the
-bus until the reset is released.
-
-Here the I2C device will be probed from the device tree, so the reset
-can be released or triggered from the probe function.
-
-regards
-Philipp
-
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
