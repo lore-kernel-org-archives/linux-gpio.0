@@ -1,149 +1,51 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH 2/4] gpio: syscon: retrive syscon node and regs offsets from dt
-Date: Wed, 13 Aug 2014 19:16:20 +0300
-Message-ID: <1407946582-20927-3-git-send-email-grygorii.strashko@ti.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCA0LzRdIEFSTTogZHRzOiBrZXlzdG9uZS1rMmhrOiBhZGQg?=
+ =?UTF-8?B?ZHNwIGdwaW8gY29udHJvbGxlcnMgbm9kZXM=?=
+Date: Wed, 13 Aug 2014 20:06:24 +0400
+Message-ID: <1407945984.545232249__2609.92442858896$1407977943$gmane$org@f170.i.mail.ru>
 References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com>
+ <1407946582-20927-5-git-send-email-grygorii.strashko@ti.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:36429 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753118AbaHMPcc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 13 Aug 2014 11:32:32 -0400
-In-Reply-To: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com>
+Received: from fallback2.mail.ru ([94.100.179.22]:52006 "EHLO
+	fallback2.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752279AbaHNA6u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Aug 2014 20:58:50 -0400
+In-Reply-To: <1407946582-20927-5-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, santosh.shilimkar@ti.com, shc_work@mail.ru, linux-gpio@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Grygorii Strashko <grygorii.strashko@ti.com>
+To: =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko@ti.com>
+Cc: =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, santosh.shilimkar@ti.com, linux-gpio@vger.kernel.org
 
-This patch adds handling of new "gpio,syscon-dev" DT property,
-which allows to specify syscon node and data/direction registers
-offsets in DT.
-
-"gpio,syscon-dev" has following format:
-	gpio,syscon-dev = <&syscon_dev data_reg_offset [direction_reg_offset]>;
-
-where
- - syscon_dev - phandle on syscon node
- - data_reg_offset - offset of data register (in bytes)
- - direction_reg_offset - offset of dirrection register (optional, in bytes)
-
-for example:
-	gpio,syscon-dev = <&devctrl 0x254>;
-
-In such way, the support of multiple Syscon GPIO devices is added.
-
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/gpio/gpio-syscon.c |   51 +++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 43 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index 03b4699..05d528f 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -55,6 +55,8 @@ struct syscon_gpio_priv {
- 	struct gpio_chip		chip;
- 	struct regmap			*syscon;
- 	const struct syscon_gpio_data	*data;
-+	u32				dreg_offset;
-+	u32				dir_reg_offset;
- };
- 
- static inline struct syscon_gpio_priv *to_syscon_gpio(struct gpio_chip *chip)
-@@ -65,9 +67,11 @@ static inline struct syscon_gpio_priv *to_syscon_gpio(struct gpio_chip *chip)
- static int syscon_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
- 	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
--	unsigned int val, offs = priv->data->dat_bit_offset + offset;
-+	unsigned int val, offs;
- 	int ret;
- 
-+	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
-+
- 	ret = regmap_read(priv->syscon,
- 			  (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE, &val);
- 	if (ret)
-@@ -79,7 +83,9 @@ static int syscon_gpio_get(struct gpio_chip *chip, unsigned offset)
- static void syscon_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
- {
- 	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
--	unsigned int offs = priv->data->dat_bit_offset + offset;
-+	unsigned int offs;
-+
-+	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
- 
- 	if (priv->data->set) {
- 		priv->data->set(chip, offset, val);
-@@ -97,7 +103,10 @@ static int syscon_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
- 	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
- 
- 	if (priv->data->flags & GPIO_SYSCON_FEAT_DIR) {
--		unsigned int offs = priv->data->dir_bit_offset + offset;
-+		unsigned int offs;
-+
-+		offs = priv->dir_reg_offset +
-+		       priv->data->dir_bit_offset + offset;
- 
- 		regmap_update_bits(priv->syscon,
- 				   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
-@@ -112,7 +121,10 @@ static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
- 	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
- 
- 	if (priv->data->flags & GPIO_SYSCON_FEAT_DIR) {
--		unsigned int offs = priv->data->dir_bit_offset + offset;
-+		unsigned int offs;
-+
-+		offs = priv->dir_reg_offset +
-+		       priv->data->dir_bit_offset + offset;
- 
- 		regmap_update_bits(priv->syscon,
- 				   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
-@@ -147,6 +159,8 @@ static int syscon_gpio_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	const struct of_device_id *of_id = of_match_device(syscon_gpio_ids, dev);
- 	struct syscon_gpio_priv *priv;
-+	struct device_node *np = dev->of_node;
-+	int ret;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -154,10 +168,31 @@ static int syscon_gpio_probe(struct platform_device *pdev)
- 
- 	priv->data = of_id->data;
- 
--	priv->syscon =
--		syscon_regmap_lookup_by_compatible(priv->data->compatible);
--	if (IS_ERR(priv->syscon))
--		return PTR_ERR(priv->syscon);
-+	if (priv->data->compatible) {
-+		priv->syscon = syscon_regmap_lookup_by_compatible(
-+					priv->data->compatible);
-+		if (IS_ERR(priv->syscon))
-+			return PTR_ERR(priv->syscon);
-+	} else {
-+		priv->syscon =
-+			syscon_regmap_lookup_by_phandle(np, "gpio,syscon-dev");
-+		if (IS_ERR(priv->syscon))
-+			return PTR_ERR(priv->syscon);
-+
-+		ret = of_property_read_u32_index(np, "gpio,syscon-dev", 1,
-+						 &priv->dreg_offset);
-+		if (ret)
-+			dev_err(dev, "can't read the data register offset!\n");
-+
-+		priv->dreg_offset <<= 3;
-+
-+		ret = of_property_read_u32_index(np, "gpio,syscon-dev", 2,
-+						 &priv->dir_reg_offset);
-+		if (ret)
-+			dev_err(dev, "can't read the dir register offset!\n");
-+
-+		priv->dir_reg_offset <<= 3;
-+	}
- 
- 	priv->chip.dev = dev;
- 	priv->chip.owner = THIS_MODULE;
--- 
-1.7.9.5
-
+V2VkLCAxMyBBdWcgMjAxNCAxOToxNjoyMiArMDMwMCDQvtGCIEdyeWdvcmlpIFN0cmFzaGtvIDxn
+cnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+Ogo+IEFkZCBLZXlzdG9uZSAyIERTUCBHUElPIG5vZGVz
+Lgo+IERTUCBHUElPIGJhbmtzIDAtNyBjb3JyZXNwb25kIHRvIERTUDAtRFNQNwo+IAo+IFNpZ25l
+ZC1vZmYtYnk6IEdyeWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+Cj4g
+LS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2syaGsuZHRzaSB8ICAgNTYgKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgNTYgaW5zZXJ0
+aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9rMmhrLmR0c2kgYi9h
+cmNoL2FybS9ib290L2R0cy9rMmhrLmR0c2kKPiBpbmRleCAzMjFiYTJmLi4wMDllMTgwIDEwMDY0
+NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2syaGsuZHRzaQo+ICsrKyBiL2FyY2gvYXJtL2Jv
+b3QvZHRzL2syaGsuZHRzaQo+IEBAIC01MCw1ICs1MCw2MSBAQAo+ICAJCQkjaW50ZXJydXB0LWNl
+bGxzID0gPDE+Owo+ICAJCQl0aSxzeXNjb24tZGV2ID0gPCZkZXZjdHJsIDB4MmEwPjsKPiAgCQl9
+Owo+ICsKPiArCQlkc3BncGlvMDoga2V5c3RvbmVfZHNwX2dwaW9AMDI2MjAyNDAgewo+ICsJCQlj
+b21wYXRpYmxlID0gInRpLGtleXN0b25lLW1jdHJsLWdwaW8iOwo+ICsJCQlncGlvLWNvbnRyb2xs
+ZXI7Cj4gKwkJCSNncGlvLWNlbGxzID0gPDI+Owo+ICsJCQlncGlvLHN5c2Nvbi1kZXYgPSA8JmRl
+dmN0cmwgMHgyNDA+Owo+ICsJCX07Cj4gKwo+ICsJCWRzcGdwaW8xOiBrZXlzdG9uZV9kc3BfZ3Bp
+b0AyNjIwMjQ0IHsKPiArCQkJY29tcGF0aWJsZSA9ICJ0aSxrZXlzdG9uZS1tY3RybC1ncGlvIjsK
+PiArCQkJZ3Bpby1jb250cm9sbGVyOwo+ICsJCQkjZ3Bpby1jZWxscyA9IDwyPjsKPiArCQkJZ3Bp
+byxzeXNjb24tZGV2ID0gPCZkZXZjdHJsIDB4MjQ0PjsKPiArCQl9OwouLi4KPiArCQlkc3BncGlv
+Nzoga2V5c3RvbmVfZHNwX2dwaW9AMjYyMDI1QyB7Cj4gKwkJCWNvbXBhdGlibGUgPSAidGksa2V5
+c3RvbmUtbWN0cmwtZ3BpbyI7Cj4gKwkJCWdwaW8tY29udHJvbGxlcjsKPiArCQkJI2dwaW8tY2Vs
+bHMgPSA8Mj47Cj4gKwkJCWdwaW8sc3lzY29uLWRldiA9IDwmZGV2Y3RybCAweDI1Yz47Cj4gKwkJ
+fTsKClNvLCBkZXZjdHJsIGlzIGEgc3lzY29uIGRldmljZSBhbmQgdGhpcyBEVFMgaW50cm9kdWNl
+IHNldmVyYWwKaWRlbnRpY2FsIEdQSU8gZGVzY3JpcHRpb25zPwoKT24gbXkgb3BpbmlvbiB0aGlz
+IHNob3VsZCBiZSBwbGFjZWQgaW4gdGhlIGdwaW8tc3lzY29uLmMsCndoZXJlIHlvdSBjYW4gYWRk
+IHN1cHBvcnQgZm9yIHRpLGtleXN0b25lLWRzcDB7Li43fS1ncGlvLgpTdWNoIGNoYW5nZSB3aWxs
+IGF2b2lkIHBhcnRzIDIgYW5kIDMgb2YgdGhpcyBwYXRjaC4KCnN0YXRpYyBjb25zdCBzdHJ1Y3Qg
+c3lzY29uX2dwaW9fZGF0YSB0aV9rZXlzdG9uZV9kc3AwX2dwaW8gPSB7CiAgLmNvbXBhdGlibGUg
+PSAidGksa2V5c3RvbmUtc3lzY29uIiwKICAuZGF0X2JpdF9vZmZzZXQgPSAweDI0MCAqIDgsCiAg
+Li4uCiAgLnNldCA9IGV0Yy4uLgp9OwoKLS0tCgo=
