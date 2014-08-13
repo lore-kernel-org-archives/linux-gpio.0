@@ -1,107 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4/4] mmc: mmci: augment driver to handle gpio descriptors
-Date: Tue, 12 Aug 2014 19:25:55 +0200
-Message-ID: <1407864355-21545-4-git-send-email-linus.walleij@linaro.org>
-References: <1407864355-21545-1-git-send-email-linus.walleij@linaro.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [RFC PATCH] gpiolib: Provide and export gpiod_export_name
+Date: Tue, 12 Aug 2014 17:29:05 -0700
+Message-ID: <20140813002905.GA31412@roeck-us.net>
+References: <1406139132-5404-1-git-send-email-linux@roeck-us.net>
+ <CAAVeFuKsJpSYo2DMyTdYE2J5Cu_ZD=b9o-=S0DLDccyNmwniNg@mail.gmail.com>
+ <53D0A8B7.2010005@roeck-us.net>
+ <CAAVeFuK5uKhpkpEnoRFGKU4G4Fey0+giz5wwmtr+OCLJHPvnLQ@mail.gmail.com>
+ <53E32C09.5000704@roeck-us.net>
+ <CAAVeFuJohBznnjELvJj0OUCK+anbZ-j1xPc9gyKDGVq9X0MDSA@mail.gmail.com>
+ <53E8DE1D.9070503@roeck-us.net>
+ <CAAVeFuK8kb3kopVaM9qz+qOa4RT_oji8LNLQa_UHDxxxwyfZgw@mail.gmail.com>
+ <53E8EBBD.6080500@roeck-us.net>
+ <CAAVeFuKE8z6JunJT-pE5wyjEBR5KvEUZoh5pASzhg1n2qsWcag@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:49174 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754059AbaHLR0k (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Aug 2014 13:26:40 -0400
-Received: by mail-wg0-f50.google.com with SMTP id n12so10359009wgh.9
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Aug 2014 10:26:39 -0700 (PDT)
-In-Reply-To: <1407864355-21545-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:37844 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751415AbaHMA3J (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Aug 2014 20:29:09 -0400
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuKE8z6JunJT-pE5wyjEBR5KvEUZoh5pASzhg1n2qsWcag@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>
 
-Currently the MMCI driver will only handle GPIO descriptors
-implicitly through the device tree probe glue in mmc_of_init(),
-but devices instatiated other ways such as through board files
-and passing descriptors using the GPIO descriptor table will
-not be able to exploit descriptors.
+On Mon, Aug 11, 2014 at 03:05:54PM -0700, Alexandre Courbot wrote:
+> On Mon, Aug 11, 2014 at 9:13 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> > On 08/11/2014 08:20 AM, Alexandre Courbot wrote:
+> > [ ... ]
+> >
+> >>
+> >> Note that this doesn't change anything to the core of the argument ;
+> >> we have not heard what Linus thinks about named GPIOs in
+> >> /sys/class/gpio yet, maybe he will have a different opinion...
+> >>
+> >
+> > Well, please let me know if/when you are planning to take away
+> > that existing ABI so I can plan accordingly. FWIW, out-of-kernel
+> > users I am currently aware of are Juniper Networks and Zodiac
+> > Aerospace. The latter asked me to help them upstreaming their code.
+> >
+> > If you plan to remove the ABI, you might want to inform its current
+> > in-kernel users. You can look those up yourself.
+> 
+> We are not taking existing user-space ABIs away. But we are also not
+> encouraging people to use bad ABIs by introducing new ways to use
+> them, hence my restraint towards this patch.
+> 
 
-Augment the driver to look for a GPIO descriptor if device
-tree is not used for the device, and if that doesn't work,
-fall back to platform data GPIO assignment using the old
-API. The end goal is to get rid of the platform data integer
-GPIO assingments from the kernel.
+You bring it to the point. You believe that the gpio ABI, or maybe just
+named gpio pins, is a bad idea. Nothing I am going to say will influence
+that opinion; all we do is to keep turning in circles.
 
-This enable the MMCI-embedding platforms to be converted to
-GPIO descritor tables.
+So let's stop wasting our time, agree to disagree, and move on.
 
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/mmc/host/mmci.c | 53 +++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 43 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 7ad463e9741c..24a83af6d153 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1552,16 +1552,49 @@ static int mmci_probe(struct amba_device *dev,
- 	writel(0, host->base + MMCIMASK1);
- 	writel(0xfff, host->base + MMCICLEAR);
- 
--	/* If DT, cd/wp gpios must be supplied through it. */
--	if (!np && gpio_is_valid(plat->gpio_cd)) {
--		ret = mmc_gpio_request_cd(mmc, plat->gpio_cd, 0);
--		if (ret)
--			goto clk_disable;
--	}
--	if (!np && gpio_is_valid(plat->gpio_wp)) {
--		ret = mmc_gpio_request_ro(mmc, plat->gpio_wp);
--		if (ret)
--			goto clk_disable;
-+	/*
-+	 * If:
-+	 * - not using DT but using a descriptor table, or
-+	 * - using a table of descriptors ALONGSIDE DT, or
-+	 * look up these descriptors named "cd" and "wp" right here, fail
-+	 * silently of these do not exist and proceed to try platform data
-+	 */
-+	if (!np) {
-+		ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0);
-+		if (!ret)
-+			dev_info(mmc_dev(mmc), "got CD GPIO (table)\n");
-+		else {
-+			if (ret == -EPROBE_DEFER)
-+				goto clk_disable;
-+			else if (gpio_is_valid(plat->gpio_cd)) {
-+				ret = mmc_gpio_request_cd(mmc, plat->gpio_cd, 0);
-+				if (ret)
-+					goto clk_disable;
-+				else
-+					dev_info(mmc_dev(mmc), "got CD GPIO (pdata)\n");
-+			} else {
-+				dev_dbg(mmc_dev(mmc),
-+					"no CD GPIO in DT, table or pdata\n");
-+			}
-+		}
-+
-+		ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0);
-+		if (!ret)
-+			dev_info(mmc_dev(mmc), "got WP GPIO (table)\n");
-+		else {
-+			if (ret == -EPROBE_DEFER)
-+				goto clk_disable;
-+			else if (gpio_is_valid(plat->gpio_wp)) {
-+				ret = mmc_gpio_request_ro(mmc, plat->gpio_wp);
-+				if (ret)
-+					goto clk_disable;
-+				else
-+					dev_info(mmc_dev(mmc), "got WP GPIO (pdata)\n");
-+			} else {
-+				dev_dbg(mmc_dev(mmc),
-+					"no WP GPIO in DT, table or pdata\n");
-+			}
-+		}
- 	}
- 
- 	ret = devm_request_irq(&dev->dev, dev->irq[0], mmci_irq, IRQF_SHARED,
--- 
-1.9.3
-
+Thanks,
+Guenter
