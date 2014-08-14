@@ -1,51 +1,105 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCA0LzRdIEFSTTogZHRzOiBrZXlzdG9uZS1rMmhrOiBhZGQg?=
- =?UTF-8?B?ZHNwIGdwaW8gY29udHJvbGxlcnMgbm9kZXM=?=
-Date: Wed, 13 Aug 2014 20:06:24 +0400
-Message-ID: <1407945984.545232249__46429.2650264271$1407977955$gmane$org@f170.i.mail.ru>
-References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com>
- <1407946582-20927-5-git-send-email-grygorii.strashko@ti.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 4/4] gpio: pca953x: Add DT binding for reset gpio
+Date: Thu, 14 Aug 2014 11:21:53 +0200
+Message-ID: <1408008113.4035.29.camel@paszta.hi.pengutronix.de>
+References: <1406618686-22385-1-git-send-email-mpa@pengutronix.de>
+	 <1406618686-22385-5-git-send-email-mpa@pengutronix.de>
+	 <CACRpkdY0TqVH1tJR1H89S5hvdJUboQdVtNvZnL3NeWit4f+amw@mail.gmail.com>
+	 <1407507094.3354.11.camel@paszta.hi.pengutronix.de>
+	 <CACRpkdY1x41=b_q83fejkTHXGG8GYDFNRUXdt=1AR_R4N18Rwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1407946582-20927-5-git-send-email-grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Cc: =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, santosh.shilimkar-l0cyMroinI0@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:41046 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750795AbaHNJWG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Aug 2014 05:22:06 -0400
+In-Reply-To: <CACRpkdY1x41=b_q83fejkTHXGG8GYDFNRUXdt=1AR_R4N18Rwg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Markus Pargmann <mpa@pengutronix.de>, Houcheng Lin <houcheng@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Toby Smith <toby@tismith.id.au>, Aaron Sierra <asierra@xes-inc.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-V2VkLCAxMyBBdWcgMjAxNCAxOToxNjoyMiArMDMwMCDQvtGCIEdyeWdvcmlpIFN0cmFzaGtvIDxn
-cnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+Ogo+IEFkZCBLZXlzdG9uZSAyIERTUCBHUElPIG5vZGVz
-Lgo+IERTUCBHUElPIGJhbmtzIDAtNyBjb3JyZXNwb25kIHRvIERTUDAtRFNQNwo+IAo+IFNpZ25l
-ZC1vZmYtYnk6IEdyeWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+Cj4g
-LS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2syaGsuZHRzaSB8ICAgNTYgKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgNTYgaW5zZXJ0
-aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9rMmhrLmR0c2kgYi9h
-cmNoL2FybS9ib290L2R0cy9rMmhrLmR0c2kKPiBpbmRleCAzMjFiYTJmLi4wMDllMTgwIDEwMDY0
-NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2syaGsuZHRzaQo+ICsrKyBiL2FyY2gvYXJtL2Jv
-b3QvZHRzL2syaGsuZHRzaQo+IEBAIC01MCw1ICs1MCw2MSBAQAo+ICAJCQkjaW50ZXJydXB0LWNl
-bGxzID0gPDE+Owo+ICAJCQl0aSxzeXNjb24tZGV2ID0gPCZkZXZjdHJsIDB4MmEwPjsKPiAgCQl9
-Owo+ICsKPiArCQlkc3BncGlvMDoga2V5c3RvbmVfZHNwX2dwaW9AMDI2MjAyNDAgewo+ICsJCQlj
-b21wYXRpYmxlID0gInRpLGtleXN0b25lLW1jdHJsLWdwaW8iOwo+ICsJCQlncGlvLWNvbnRyb2xs
-ZXI7Cj4gKwkJCSNncGlvLWNlbGxzID0gPDI+Owo+ICsJCQlncGlvLHN5c2Nvbi1kZXYgPSA8JmRl
-dmN0cmwgMHgyNDA+Owo+ICsJCX07Cj4gKwo+ICsJCWRzcGdwaW8xOiBrZXlzdG9uZV9kc3BfZ3Bp
-b0AyNjIwMjQ0IHsKPiArCQkJY29tcGF0aWJsZSA9ICJ0aSxrZXlzdG9uZS1tY3RybC1ncGlvIjsK
-PiArCQkJZ3Bpby1jb250cm9sbGVyOwo+ICsJCQkjZ3Bpby1jZWxscyA9IDwyPjsKPiArCQkJZ3Bp
-byxzeXNjb24tZGV2ID0gPCZkZXZjdHJsIDB4MjQ0PjsKPiArCQl9OwouLi4KPiArCQlkc3BncGlv
-Nzoga2V5c3RvbmVfZHNwX2dwaW9AMjYyMDI1QyB7Cj4gKwkJCWNvbXBhdGlibGUgPSAidGksa2V5
-c3RvbmUtbWN0cmwtZ3BpbyI7Cj4gKwkJCWdwaW8tY29udHJvbGxlcjsKPiArCQkJI2dwaW8tY2Vs
-bHMgPSA8Mj47Cj4gKwkJCWdwaW8sc3lzY29uLWRldiA9IDwmZGV2Y3RybCAweDI1Yz47Cj4gKwkJ
-fTsKClNvLCBkZXZjdHJsIGlzIGEgc3lzY29uIGRldmljZSBhbmQgdGhpcyBEVFMgaW50cm9kdWNl
-IHNldmVyYWwKaWRlbnRpY2FsIEdQSU8gZGVzY3JpcHRpb25zPwoKT24gbXkgb3BpbmlvbiB0aGlz
-IHNob3VsZCBiZSBwbGFjZWQgaW4gdGhlIGdwaW8tc3lzY29uLmMsCndoZXJlIHlvdSBjYW4gYWRk
-IHN1cHBvcnQgZm9yIHRpLGtleXN0b25lLWRzcDB7Li43fS1ncGlvLgpTdWNoIGNoYW5nZSB3aWxs
-IGF2b2lkIHBhcnRzIDIgYW5kIDMgb2YgdGhpcyBwYXRjaC4KCnN0YXRpYyBjb25zdCBzdHJ1Y3Qg
-c3lzY29uX2dwaW9fZGF0YSB0aV9rZXlzdG9uZV9kc3AwX2dwaW8gPSB7CiAgLmNvbXBhdGlibGUg
-PSAidGksa2V5c3RvbmUtc3lzY29uIiwKICAuZGF0X2JpdF9vZmZzZXQgPSAweDI0MCAqIDgsCiAg
-Li4uCiAgLnNldCA9IGV0Yy4uLgp9OwoKLS0tCgo=
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi Linus,
+
+Am Montag, den 11.08.2014, 10:43 +0200 schrieb Linus Walleij:
+> On Fri, Aug 8, 2014 at 4:11 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> > Am Freitag, den 08.08.2014, 15:14 +0200 schrieb Linus Walleij:
+> >> On Tue, Jul 29, 2014 at 9:24 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
+> >>
+> >> > The pca953x has a negated reset input. This patch adds a DT binding for
+> >> > the reset gpio and resets the chip when it is probed. This will reset
+> >> > the device and leave the gpio in the correct state so reset is not
+> >> > triggered.
+> >> >
+> >> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> >>
+> >> Why on earth should this be in the GPIO driver?
+> >>
+> >> The driver should be in drivers/reset/reset-gpio.c and you
+> >> should provide a separate driver for it.
+> >
+> > I still think we should keep using the reset-gpios binding for simple
+> > cases like this; I see no reason to add a separate device to the device
+> > tree for a single GPIO.
+> 
+> In any case you have to propose something generic that
+> happens in drivers/gpio/gpiolib.c at the end of the
+> gpiochip_add() function, because this will likely appear in
+> many other systems.
+
+In general, I'd like to keep drivers in control over how and when the
+reset is asserted; mainly because there are variations of reset,
+powerdown/enable, and bootstrap pins that have to be taken into account.
+
+On some devices the powerdown needs to be deasserted before the reset
+can work, on some devices it might be the other way around, or the
+powerdown pin may cause a reset itself, or there are bootstrap pins that
+need to be configured a certain way while the reset is issued (but are
+used for something else while the device is active). Others occasionally
+need to reset the chip while in operation.
+
+If you expect none of those issues for GPIO chips, I don't argue against
+doing this for the drivers in gpiochip_add, if it is documented that
+this function might reset the chip.
+This would work with a separate gpio reset provider driver by just
+calling device_reset(chip->dev) at the end of gpiochip_add.
+With my previous suggestion, as Maxime points out, I'd still need to
+find a way to provide the duration of the reset pulse.
+
+> The binding should also be generic in
+> Documentation/devicetree/bindings/gpio/gpio.txt
+> not for just this driver.
+
+Ideally it should be the same as all other devices with an external
+reset pin.
+
+> >> As it happens, Houcheng Lin has already proposed such a
+> >> driver:
+> >> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
+> >
+> > That is a different issue, as there the device does not appear on the
+> > bus until the reset is released.
+> 
+> You're just looking at the patch description. Look at what the
+> driver does.
+> 
+> I wrote this reply to the patch:
+> http://marc.info/?l=linux-kernel&m=140480593524472&w=2
+> 
+> With a delay of zero, the reset will be released
+> immediately, by the use of a helper OF node and this driver
+> from the reset subsystem. It's nice, generic code that solves
+> a generic problem of deasserting GPIO lines for
+> some reset.
+
+Yes, it does what you want. But its purpose is different, it's a bit
+indirect for the use case at hand, and we'll still find cases where this
+won't work (interaction with other pins). As to whether the sub-node
+might conflict with existing bindings, I don't know. This is something
+that should be taken to devicetree discussion list.
+
+regards
+Philipp
+
