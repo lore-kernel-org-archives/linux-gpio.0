@@ -1,59 +1,119 @@
-From: Daniel Mack <zonque@gmail.com>
-Subject: [PATCH] gpio: pxa: Documentation: provide example bindings for PXA3xx
-Date: Thu, 14 Aug 2014 11:40:24 +0200
-Message-ID: <1408009224-15838-1-git-send-email-zonque@gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 4/4] ARM: dts: keystone-k2hk: add dsp gpio controllers
+ nodes
+Date: Thu, 14 Aug 2014 15:13:39 +0300
+Message-ID: <53ECA7F3.7030702@ti.com>
+References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com> <1407946582-20927-5-git-send-email-grygorii.strashko@ti.com> <1407945984.545232249@f170.i.mail.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:54619 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751861AbaHNJkf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Aug 2014 05:40:35 -0400
-Received: by mail-wi0-f182.google.com with SMTP id d1so2002531wiv.9
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Aug 2014 02:40:32 -0700 (PDT)
+Received: from comal.ext.ti.com ([198.47.26.152]:35636 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753485AbaHNL3u (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 14 Aug 2014 07:29:50 -0400
+In-Reply-To: <1407945984.545232249@f170.i.mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, haojian.zhuang@gmail.com, eric.y.miao@gmail.com, linux-arm-kernel@lists.infradead.org, Daniel Mack <zonque@gmail.com>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, santosh.shilimkar@ti.com, linux-gpio@vger.kernel.org
 
-Add another example to describe bindings that work for PXA3xx boards.
+Hi Alexander,
 
-Signed-off-by: Daniel Mack <zonque@gmail.com>
----
- Documentation/devicetree/bindings/gpio/mrvl-gpio.txt | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+On 08/13/2014 07:06 PM, Alexander Shiyan wrote:
+> Wed, 13 Aug 2014 19:16:22 +0300 =D0=BE=D1=82 Grygorii Strashko <grygo=
+rii.strashko@ti.com>:
+>> Add Keystone 2 DSP GPIO nodes.
+>> DSP GPIO banks 0-7 correspond to DSP0-DSP7
+>>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> ---
+>>   arch/arm/boot/dts/k2hk.dtsi |   56 +++++++++++++++++++++++++++++++=
+++++++++++++
+>>   1 file changed, 56 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/k2hk.dtsi b/arch/arm/boot/dts/k2hk.dt=
+si
+>> index 321ba2f..009e180 100644
+>> --- a/arch/arm/boot/dts/k2hk.dtsi
+>> +++ b/arch/arm/boot/dts/k2hk.dtsi
+>> @@ -50,5 +50,61 @@
+>>   			#interrupt-cells =3D <1>;
+>>   			ti,syscon-dev =3D <&devctrl 0x2a0>;
+>>   		};
+>> +
+>> +		dspgpio0: keystone_dsp_gpio@02620240 {
+>> +			compatible =3D "ti,keystone-mctrl-gpio";
+>> +			gpio-controller;
+>> +			#gpio-cells =3D <2>;
+>> +			gpio,syscon-dev =3D <&devctrl 0x240>;
+>> +		};
+>> +
+>> +		dspgpio1: keystone_dsp_gpio@2620244 {
+>> +			compatible =3D "ti,keystone-mctrl-gpio";
+>> +			gpio-controller;
+>> +			#gpio-cells =3D <2>;
+>> +			gpio,syscon-dev =3D <&devctrl 0x244>;
+>> +		};
+> ...
+>> +		dspgpio7: keystone_dsp_gpio@262025C {
+>> +			compatible =3D "ti,keystone-mctrl-gpio";
+>> +			gpio-controller;
+>> +			#gpio-cells =3D <2>;
+>> +			gpio,syscon-dev =3D <&devctrl 0x25c>;
+>> +		};
+>=20
+> So, devctrl is a syscon device and this DTS introduce several
+> identical GPIO descriptions?
+>=20
+> On my opinion this should be placed in the gpio-syscon.c,
+> where you can add support for ti,keystone-dsp0{..7}-gpio.
+> Such change will avoid parts 2 and 3 of this patch.
+>=20
+> static const struct syscon_gpio_data ti_keystone_dsp0_gpio =3D {
+>    .compatible =3D "ti,keystone-syscon",
+>    .dat_bit_offset =3D 0x240 * 8,
+>    ...
+>    .set =3D etc...
+> };
 
-diff --git a/Documentation/devicetree/bindings/gpio/mrvl-gpio.txt b/Documentation/devicetree/bindings/gpio/mrvl-gpio.txt
-index 6641626..b2afdb2 100644
---- a/Documentation/devicetree/bindings/gpio/mrvl-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/mrvl-gpio.txt
-@@ -19,7 +19,7 @@ Required properties:
- - gpio-controller : Marks the device node as a gpio controller.
- - #gpio-cells : Should be one.  It is the pin number.
- 
--Example:
-+Example for a MMP platform:
- 
- 	gpio: gpio@d4019000 {
- 		compatible = "marvell,mmp-gpio";
-@@ -32,6 +32,19 @@ Example:
- 		#interrupt-cells = <1>;
-       };
- 
-+Example for a PXA3xx platform:
-+
-+	gpio: gpio@40e00000 {
-+		compatible = "intel,pxa3xx-gpio";
-+		reg = <0x40e00000 0x10000>;
-+		interrupt-names = "gpio0", "gpio1", "gpio_mux";
-+		interrupts = <8 9 10>;
-+		gpio-controller;
-+		#gpio-cells = <0x2>;
-+		interrupt-controller;
-+		#interrupt-cells = <0x2>;
-+	};
-+
- * Marvell Orion GPIO Controller
- 
- Required properties:
--- 
-2.0.4
+So, if I understand you right, you propose to add 8 additional compatib=
+le
+strings just to encode different register offsets. Is it?
+1) add "ti,keystone-mctrl-gpio0"..."ti,keystone-mctrl-gpio7"
 
+2) add 8 structures keystone_mctrl_gpio0..keystone_mctrl_gpio7 in gpio-=
+syscon.c
+   (which will have only different values of field - .dat_bit_offset =3D=
+ 0x2yy * 8,)
+
+3) add 8 additional items in array syscon_gpio_ids
+	{
+		.compatible	=3D "ti,keystone-mctrl-gpio0",
+		.data		=3D &keystone_mctrl_gpio0,
+	}, ...
+
+I can do it if you strictly insist, BUT I don't like it :(
+- just imagine how your driver will look look like if 5 or 6 SoCs will =
+re-use it ;)
+- as I mentioned in cover letter and commit messages even each SoC revi=
+sion can have
+  different Syscon implementation with different registers offsets and =
+with different
+  number of Syscon register ranges (for example for Keystone 2 we alrea=
+dy have two
+  Syscon devices defined in DT).
+
+Now we already have 3 Keystone 2 SoC revisions (K2HK, K2L, K2E)  and th=
+ere are no guarantee
+that the next revision k2X will have the same register offset for GPIO0=
+=2E
+
+Best regards,
+-grygorii
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
