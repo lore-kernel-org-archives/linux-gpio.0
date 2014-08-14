@@ -1,73 +1,63 @@
-From: Rob Jones <rob.jones@codethink.co.uk>
-Subject: Re: [PATCH 1/5] gpiolib: devres: Introduce the function devm_request_gpio_array
-Date: Thu, 14 Aug 2014 16:17:02 +0100
-Message-ID: <53ECD2EE.6020101@codethink.co.uk>
-References: <cover.1404665589.git.himangi774@gmail.com>	<1a1752ce7455bac8f2505a9790da891a830699f5.1404665589.git.himangi774@gmail.com>	<53BD2509.6070803@codethink.co.uk>	<CACRpkdZWfYN14aki-UqvWp1K0exVj-mMK92q431QueSVvjZFuA@mail.gmail.com>	<53BE7288.6060503@codethink.co.uk>	<CABxcv=mhMMQxqVRM28NucnSW62v_3ghnT58JqFxvK=2bjxizdw@mail.gmail.com>	<53BFB659.8050306@codethink.co.uk> <CABxcv==adT6YPEekjD1y3ncrj9ghWE8UMuc64AeVWCPVb0ywFw@mail.gmail.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCA0LzRdIEFSTTogZHRzOiBrZXlzdG9uZS1rMmhrOiBhZGQg?=
+ =?UTF-8?B?ZHNwIGdwaW8gY29udHJvbGxlcnMgbm9kZXM=?=
+Date: Thu, 14 Aug 2014 19:26:22 +0400
+Message-ID: <1408029982.880621027@f126.i.mail.ru>
+References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com>
+ <1408018321.928492982@f270.i.mail.ru>
+ <53ECDC54.3060005@ti.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CABxcv==adT6YPEekjD1y3ncrj9ghWE8UMuc64AeVWCPVb0ywFw@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Himangi Saraogi <himangi774@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Julia Lawall <julia.lawall@lip>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from f126.i.mail.ru ([94.100.178.189]:38503 "EHLO f126.i.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754958AbaHNP02 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 14 Aug 2014 11:26:28 -0400
+In-Reply-To: <53ECDC54.3060005@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko@ti.com>
+Cc: =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, devicetree@vger.kernel.org, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>, santosh.shilimkar@ti.com, linux-arm-kernel@lists.infradead.org
 
-I'm afraid too many other things have been landing on my plate and I
-don't think I will be able to get on this for the foreseeable future,
-sorry about this.
-
-On 11/07/14 11:07, Javier Martinez Canillas wrote:
-> Hello Rob,
->
-> On Fri, Jul 11, 2014 at 12:03 PM, Rob Jones <rob.jones@codethink.co.uk> wrote:
->>
->>
->> On 11/07/14 01:35, Javier Martinez Canillas wrote:
->>>
->>> Hello Rob,
->>>
->>> On Thu, Jul 10, 2014 at 1:01 PM, Rob Jones <rob.jones@codethink.co.uk>
->>> wrote:
->>
->>
->> <snip>
->>
->>
->>>>
->>>> I will certainly consider it. I'm in the middle of something else right
->>>> now but I should be available in a day or two and I'll have a look.
->>>>
->>>>
->>>
->>> I'm working on a driver for a PMIC which uses a set of GPIO to select
->>> a particular register. Right now I'm getting each GPIO independently
->>> but Linus mentioned [0] the devm_gpio_request_array() patch you
->>> posted.
->>>
->>> Now, I'm not using the integer-based GPIO API but the new
->>> descriptor-based one so I was wondering if you are already
->>> implementing a devm_gpiod_get_array() or if you want me to implement
->>> it myself.
->>>
->>
->> As I said, I'm deep in something else for the next day or two so if you
->> need it urgently you should probably do it yourself but if you don't
->> mind waiting until next week, I can have a go.
->>
->> Your call, let me know.
->>
->
-> I'm not in a hurry, just wanted to know if it was on your plate. I'll
-> wait for your patch then, thanks!
->
-> Best regards,
-> Javier
->
->
-
--- 
-Rob Jones
-Codethink Ltd
-mailto:rob.jones@codethink.co.uk
-tel:+44 161 236 5575
+VGh1LCAxNCBBdWcgMjAxNCAxODo1NzowOCArMDMwMCDQvtGCIEdyeWdvcmlpIFN0cmFzaGtvIDxn
+cnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+OgouLi4KPiA+Pj4+ICsJCWRzcGdwaW83OiBrZXlzdG9u
+ZV9kc3BfZ3Bpb0AyNjIwMjVDIHsKPiA+Pj4+ICsJCQljb21wYXRpYmxlID0gInRpLGtleXN0b25l
+LW1jdHJsLWdwaW8iOwo+ID4+Pj4gKwkJCWdwaW8tY29udHJvbGxlcjsKPiA+Pj4+ICsJCQkjZ3Bp
+by1jZWxscyA9IDwyPjsKPiA+Pj4+ICsJCQlncGlvLHN5c2Nvbi1kZXYgPSA8JmRldmN0cmwgMHgy
+NWM+Owo+ID4+Pj4gKwkJfTsKPiA+Pj4KPiA+Pj4gU28sIGRldmN0cmwgaXMgYSBzeXNjb24gZGV2
+aWNlIGFuZCB0aGlzIERUUyBpbnRyb2R1Y2Ugc2V2ZXJhbAo+ID4+PiBpZGVudGljYWwgR1BJTyBk
+ZXNjcmlwdGlvbnM/Cj4gPj4+Cj4gPj4+IE9uIG15IG9waW5pb24gdGhpcyBzaG91bGQgYmUgcGxh
+Y2VkIGluIHRoZSBncGlvLXN5c2Nvbi5jLAo+ID4+PiB3aGVyZSB5b3UgY2FuIGFkZCBzdXBwb3J0
+IGZvciB0aSxrZXlzdG9uZS1kc3Awey4uN30tZ3Bpby4KPiA+Pj4gU3VjaCBjaGFuZ2Ugd2lsbCBh
+dm9pZCBwYXJ0cyAyIGFuZCAzIG9mIHRoaXMgcGF0Y2guCj4gPj4+Cj4gPj4+IHN0YXRpYyBjb25z
+dCBzdHJ1Y3Qgc3lzY29uX2dwaW9fZGF0YSB0aV9rZXlzdG9uZV9kc3AwX2dwaW8gPSB7Cj4gPj4+
+ICAgICAuY29tcGF0aWJsZSA9ICJ0aSxrZXlzdG9uZS1zeXNjb24iLAo+ID4+PiAgICAgLmRhdF9i
+aXRfb2Zmc2V0ID0gMHgyNDAgKiA4LAo+ID4+PiAgICAgLi4uCj4gPj4+ICAgICAuc2V0ID0gZXRj
+Li4uCj4gPj4+IH07Cj4gPj4KPiA+PiBTbywgaWYgSSB1bmRlcnN0YW5kIHlvdSByaWdodCwgeW91
+IHByb3Bvc2UgdG8gYWRkIDggYWRkaXRpb25hbCBjb21wYXRpYmxlCj4gPj4gc3RyaW5ncyBqdXN0
+IHRvIGVuY29kZSBkaWZmZXJlbnQgcmVnaXN0ZXIgb2Zmc2V0cy4gSXMgaXQ/Cj4gPj4gMSkgYWRk
+ICJ0aSxrZXlzdG9uZS1tY3RybC1ncGlvMCIuLi4idGksa2V5c3RvbmUtbWN0cmwtZ3BpbzciCj4g
+PiAKPiA+IFllcywgYnV0IHJlcGxhY2UgIm1jdHJsIiB3aXRoICJkc3AiIHNpbmNlIG1jdHJsIGlz
+IG5vdCBhcHBsaWNhYmxlIGhlcmUuCj4gPiAKPiA+PiAyKSBhZGQgOCBzdHJ1Y3R1cmVzIGtleXN0
+b25lX21jdHJsX2dwaW8wLi5rZXlzdG9uZV9tY3RybF9ncGlvNyBpbiBncGlvLXN5c2Nvbi5jCj4g
+Pj4gICAgICh3aGljaCB3aWxsIGhhdmUgb25seSBkaWZmZXJlbnQgdmFsdWVzIG9mIGZpZWxkIC0g
+LmRhdF9iaXRfb2Zmc2V0ID0gMHgyeXkgKiA4LCkKPiA+Pgo+ID4+IDMpIGFkZCA4IGFkZGl0aW9u
+YWwgaXRlbXMgaW4gYXJyYXkgc3lzY29uX2dwaW9faWRzCj4gPj4gCXsKPiA+PiAJCS5jb21wYXRp
+YmxlCT0gInRpLGtleXN0b25lLW1jdHJsLWdwaW8wIiwKPiA+PiAJCS5kYXRhCQk9ICZrZXlzdG9u
+ZV9tY3RybF9ncGlvMCwKPiA+PiAJfSwgLi4uCj4gPj4KPiA+PiBJIGNhbiBkbyBpdCBpZiB5b3Ug
+c3RyaWN0bHkgaW5zaXN0LCBCVVQgSSBkb24ndCBsaWtlIGl0IDooCj4gPj4gLSBqdXN0IGltYWdp
+bmUgaG93IHlvdXIgZHJpdmVyIHdpbGwgbG9vayBsb29rIGxpa2UgaWYgNSBvciA2IFNvQ3Mgd2ls
+bCByZS11c2UgaXQgOykKPiA+PiAtIGFzIEkgbWVudGlvbmVkIGluIGNvdmVyIGxldHRlciBhbmQg
+Y29tbWl0IG1lc3NhZ2VzIGV2ZW4gZWFjaCBTb0MgcmV2aXNpb24gY2FuIGhhdmUKPiA+PiAgICBk
+aWZmZXJlbnQgU3lzY29uIGltcGxlbWVudGF0aW9uIHdpdGggZGlmZmVyZW50IHJlZ2lzdGVycyBv
+ZmZzZXRzIGFuZCB3aXRoIGRpZmZlcmVudAo+ID4+ICAgIG51bWJlciBvZiBTeXNjb24gcmVnaXN0
+ZXIgcmFuZ2VzIChmb3IgZXhhbXBsZSBmb3IgS2V5c3RvbmUgMiB3ZSBhbHJlYWR5IGhhdmUgdHdv
+Cj4gPj4gICAgU3lzY29uIGRldmljZXMgZGVmaW5lZCBpbiBEVCkuCj4gPiAKPiA+IFRoZSBpbml0
+aWFsIHZlcnNpb24gb2YgdGhpcyBkcml2ZXIgY29udGFpbnMgYWRkcmVzc2VzIGFuZCBvZmZzZXRz
+IGluLCBidXQgdGhpcyBhcHByb2FjaCBoYXMKPiA+IGJlZW4gY3JpdGljaXplZCBieSBEVCBtYWlu
+dGFpbmVycy4KPiAKPiBDb3VsZCB5b3UgcHJvdmlkZSBsaW5rIG9uIHRoaXMgdGhyZWFkXiwgcGxz
+PwoKSGVyZSBpcyBhIGxpbmsgdG8gZmlyc3QgdmVyc2lvbjoKaHR0cHM6Ly93d3cubWFpbC1hcmNo
+aXZlLmNvbS9saW51eC1ncGlvQHZnZXIua2VybmVsLm9yZy9tc2cwMTYxNi5odG1sCgpVbmZvcnR1
+bmF0ZWx5LCBJIGxvc3QgdGhyZWFkIGZvciBEVC1yZWxhdGVkIHN0dWZmcy4KCi0tLQoK
