@@ -1,92 +1,33 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCA0LzRdIEFSTTogZHRzOiBrZXlzdG9uZS1rMmhrOiBhZGQg?=
- =?UTF-8?B?ZHNwIGdwaW8gY29udHJvbGxlcnMgbm9kZXM=?=
-Date: Thu, 14 Aug 2014 16:12:01 +0400
-Message-ID: <1408018321.928492982@f270.i.mail.ru>
-References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com>
- <1407945984.545232249@f170.i.mail.ru> <53ECA7F3.7030702@ti.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 1/4] mmc: slot-gpio: switch to use flags when getting GPIO
+Date: Thu, 14 Aug 2014 07:28:14 -0700
+Message-ID: <CAAVeFuLxb+UhVT6xU5Wmuvo8pavEFi-Cdr4BEOb=uzeWnXrfBA@mail.gmail.com>
+References: <1407864355-21545-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <53ECA7F3.7030702@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko@ti.com>
-Cc: =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, devicetree@vger.kernel.org, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>, santosh.shilimkar@ti.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:61736 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751436AbaHNO2f (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Aug 2014 10:28:35 -0400
+In-Reply-To: <1407864355-21545-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-VGh1LCAxNCBBdWcgMjAxNCAxNToxMzozOSArMDMwMCDQvtGCIEdyeWdvcmlpIFN0cmFzaGtvIDxn
-cnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+Ogo+IEhpIEFsZXhhbmRlciwKPiAKPiBPbiAwOC8xMy8y
-MDE0IDA3OjA2IFBNLCBBbGV4YW5kZXIgU2hpeWFuIHdyb3RlOgo+ID4gV2VkLCAxMyBBdWcgMjAx
-NCAxOToxNjoyMiArMDMwMCDQvtGCIEdyeWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hr
-b0B0aS5jb20+Ogo+ID4+IEFkZCBLZXlzdG9uZSAyIERTUCBHUElPIG5vZGVzLgo+ID4+IERTUCBH
-UElPIGJhbmtzIDAtNyBjb3JyZXNwb25kIHRvIERTUDAtRFNQNwo+ID4+Cj4gPj4gU2lnbmVkLW9m
-Zi1ieTogR3J5Z29yaWkgU3RyYXNoa28gPGdyeWdvcmlpLnN0cmFzaGtvQHRpLmNvbT4KPiA+PiAt
-LS0KPiA+PiAgIGFyY2gvYXJtL2Jvb3QvZHRzL2syaGsuZHRzaSB8ICAgNTYgKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ID4+ICAgMSBmaWxlIGNoYW5nZWQsIDU2
-IGluc2VydGlvbnMoKykKPiA+Pgo+ID4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9r
-MmhrLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9rMmhrLmR0c2kKPiA+PiBpbmRleCAzMjFiYTJm
-Li4wMDllMTgwIDEwMDY0NAo+ID4+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2syaGsuZHRzaQo+
-ID4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2syaGsuZHRzaQo+ID4+IEBAIC01MCw1ICs1MCw2
-MSBAQAo+ID4+ICAgCQkJI2ludGVycnVwdC1jZWxscyA9IDwxPjsKPiA+PiAgIAkJCXRpLHN5c2Nv
-bi1kZXYgPSA8JmRldmN0cmwgMHgyYTA+Owo+ID4+ICAgCQl9Owo+ID4+ICsKPiA+PiArCQlkc3Bn
-cGlvMDoga2V5c3RvbmVfZHNwX2dwaW9AMDI2MjAyNDAgewo+ID4+ICsJCQljb21wYXRpYmxlID0g
-InRpLGtleXN0b25lLW1jdHJsLWdwaW8iOwo+ID4+ICsJCQlncGlvLWNvbnRyb2xsZXI7Cj4gPj4g
-KwkJCSNncGlvLWNlbGxzID0gPDI+Owo+ID4+ICsJCQlncGlvLHN5c2Nvbi1kZXYgPSA8JmRldmN0
-cmwgMHgyNDA+Owo+ID4+ICsJCX07Cj4gPj4gKwo+ID4+ICsJCWRzcGdwaW8xOiBrZXlzdG9uZV9k
-c3BfZ3Bpb0AyNjIwMjQ0IHsKPiA+PiArCQkJY29tcGF0aWJsZSA9ICJ0aSxrZXlzdG9uZS1tY3Ry
-bC1ncGlvIjsKPiA+PiArCQkJZ3Bpby1jb250cm9sbGVyOwo+ID4+ICsJCQkjZ3Bpby1jZWxscyA9
-IDwyPjsKPiA+PiArCQkJZ3BpbyxzeXNjb24tZGV2ID0gPCZkZXZjdHJsIDB4MjQ0PjsKPiA+PiAr
-CQl9Owo+ID4gLi4uCj4gPj4gKwkJZHNwZ3Bpbzc6IGtleXN0b25lX2RzcF9ncGlvQDI2MjAyNUMg
-ewo+ID4+ICsJCQljb21wYXRpYmxlID0gInRpLGtleXN0b25lLW1jdHJsLWdwaW8iOwo+ID4+ICsJ
-CQlncGlvLWNvbnRyb2xsZXI7Cj4gPj4gKwkJCSNncGlvLWNlbGxzID0gPDI+Owo+ID4+ICsJCQln
-cGlvLHN5c2Nvbi1kZXYgPSA8JmRldmN0cmwgMHgyNWM+Owo+ID4+ICsJCX07Cj4gPiAKPiA+IFNv
-LCBkZXZjdHJsIGlzIGEgc3lzY29uIGRldmljZSBhbmQgdGhpcyBEVFMgaW50cm9kdWNlIHNldmVy
-YWwKPiA+IGlkZW50aWNhbCBHUElPIGRlc2NyaXB0aW9ucz8KPiA+IAo+ID4gT24gbXkgb3Bpbmlv
-biB0aGlzIHNob3VsZCBiZSBwbGFjZWQgaW4gdGhlIGdwaW8tc3lzY29uLmMsCj4gPiB3aGVyZSB5
-b3UgY2FuIGFkZCBzdXBwb3J0IGZvciB0aSxrZXlzdG9uZS1kc3Awey4uN30tZ3Bpby4KPiA+IFN1
-Y2ggY2hhbmdlIHdpbGwgYXZvaWQgcGFydHMgMiBhbmQgMyBvZiB0aGlzIHBhdGNoLgo+ID4gCj4g
-PiBzdGF0aWMgY29uc3Qgc3RydWN0IHN5c2Nvbl9ncGlvX2RhdGEgdGlfa2V5c3RvbmVfZHNwMF9n
-cGlvID0gewo+ID4gICAgLmNvbXBhdGlibGUgPSAidGksa2V5c3RvbmUtc3lzY29uIiwKPiA+ICAg
-IC5kYXRfYml0X29mZnNldCA9IDB4MjQwICogOCwKPiA+ICAgIC4uLgo+ID4gICAgLnNldCA9IGV0
-Yy4uLgo+ID4gfTsKPiAKPiBTbywgaWYgSSB1bmRlcnN0YW5kIHlvdSByaWdodCwgeW91IHByb3Bv
-c2UgdG8gYWRkIDggYWRkaXRpb25hbCBjb21wYXRpYmxlCj4gc3RyaW5ncyBqdXN0IHRvIGVuY29k
-ZSBkaWZmZXJlbnQgcmVnaXN0ZXIgb2Zmc2V0cy4gSXMgaXQ/Cj4gMSkgYWRkICJ0aSxrZXlzdG9u
-ZS1tY3RybC1ncGlvMCIuLi4idGksa2V5c3RvbmUtbWN0cmwtZ3BpbzciCgpZZXMsIGJ1dCByZXBs
-YWNlICJtY3RybCIgd2l0aCAiZHNwIiBzaW5jZSBtY3RybCBpcyBub3QgYXBwbGljYWJsZSBoZXJl
-LgoKPiAyKSBhZGQgOCBzdHJ1Y3R1cmVzIGtleXN0b25lX21jdHJsX2dwaW8wLi5rZXlzdG9uZV9t
-Y3RybF9ncGlvNyBpbiBncGlvLXN5c2Nvbi5jCj4gICAgKHdoaWNoIHdpbGwgaGF2ZSBvbmx5IGRp
-ZmZlcmVudCB2YWx1ZXMgb2YgZmllbGQgLSAuZGF0X2JpdF9vZmZzZXQgPSAweDJ5eSAqIDgsKQo+
-IAo+IDMpIGFkZCA4IGFkZGl0aW9uYWwgaXRlbXMgaW4gYXJyYXkgc3lzY29uX2dwaW9faWRzCj4g
-CXsKPiAJCS5jb21wYXRpYmxlCT0gInRpLGtleXN0b25lLW1jdHJsLWdwaW8wIiwKPiAJCS5kYXRh
-CQk9ICZrZXlzdG9uZV9tY3RybF9ncGlvMCwKPiAJfSwgLi4uCj4gCj4gSSBjYW4gZG8gaXQgaWYg
-eW91IHN0cmljdGx5IGluc2lzdCwgQlVUIEkgZG9uJ3QgbGlrZSBpdCA6KAo+IC0ganVzdCBpbWFn
-aW5lIGhvdyB5b3VyIGRyaXZlciB3aWxsIGxvb2sgbG9vayBsaWtlIGlmIDUgb3IgNiBTb0NzIHdp
-bGwgcmUtdXNlIGl0IDspCj4gLSBhcyBJIG1lbnRpb25lZCBpbiBjb3ZlciBsZXR0ZXIgYW5kIGNv
-bW1pdCBtZXNzYWdlcyBldmVuIGVhY2ggU29DIHJldmlzaW9uIGNhbiBoYXZlCj4gICBkaWZmZXJl
-bnQgU3lzY29uIGltcGxlbWVudGF0aW9uIHdpdGggZGlmZmVyZW50IHJlZ2lzdGVycyBvZmZzZXRz
-IGFuZCB3aXRoIGRpZmZlcmVudAo+ICAgbnVtYmVyIG9mIFN5c2NvbiByZWdpc3RlciByYW5nZXMg
-KGZvciBleGFtcGxlIGZvciBLZXlzdG9uZSAyIHdlIGFscmVhZHkgaGF2ZSB0d28KPiAgIFN5c2Nv
-biBkZXZpY2VzIGRlZmluZWQgaW4gRFQpLgoKVGhlIGluaXRpYWwgdmVyc2lvbiBvZiB0aGlzIGRy
-aXZlciBjb250YWlucyBhZGRyZXNzZXMgYW5kIG9mZnNldHMgaW4sIGJ1dCB0aGlzIGFwcHJvYWNo
-IGhhcwpiZWVuIGNyaXRpY2l6ZWQgYnkgRFQgbWFpbnRhaW5lcnMuCgoiZGlmZmVyZW50IFN5c2Nv
-biB3aXRoIGRpZmZlcmVudCByZWdpc3RlcnMiIC0gaXMgT0ssIHNpbmNlIHdlIHVzZSBjb21wYXRp
-YmxlIHN0cmluZyBpbiBkZWZpbml0aW9uLgpJZiB5b3UgaGF2ZSB0d28gaWRlbnRpY2FsIHN5c2Nv
-biwganVzdCBhcHBlbmQgYW4gdW5pcXVlIGFkZGl0aW9uYWwgc3RyaW5nIGFuZCB1c2UgaXQgaW4g
-dGhpcyBkcml2ZXIuCgo+IE5vdyB3ZSBhbHJlYWR5IGhhdmUgMyBLZXlzdG9uZSAyIFNvQyByZXZp
-c2lvbnMgKEsySEssIEsyTCwgSzJFKSAgYW5kIHRoZXJlIGFyZSBubyBndWFyYW50ZWUKPiB0aGF0
-IHRoZSBuZXh0IHJldmlzaW9uIGsyWCB3aWxsIGhhdmUgdGhlIHNhbWUgcmVnaXN0ZXIgb2Zmc2V0
-IGZvciBHUElPMC4KClRoZW4gdXNlIG1vcmUgZXhhY3Qgc3RyaW5nIGZvciBzeXNjb24tZ3Bpbywg
-bGlrZSB0aSxrZXlzdG9uZS1rMmhrLWRzcC1ncGlvMC4KCi0tLQoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxp
-c3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZy
-YWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+On Tue, Aug 12, 2014 at 10:25 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> When the slot GPIO driver gets the GPIO to be used for card
+> detect, it is now possible to specify a flag to have the line
+> set up as input. Get rid of the explicit setup call for input
+> and use the flag.
+>
+> The extra argument works as there are transition varargs
+> macros in place in the <linux/gpio/consumer.h> header, in
+> the future we will make the flags argument compulsory.
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+
+Thanks - I actually have a bunch of patches that update some other
+drivers, will try to send them shortly...
