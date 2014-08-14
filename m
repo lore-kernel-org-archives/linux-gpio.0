@@ -1,90 +1,152 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 4/4] mmc: mmci: augment driver to handle gpio descriptors
-Date: Thu, 14 Aug 2014 07:56:22 -0700
-Message-ID: <CAAVeFuKo0DxN9Ff1G9o+ZXp8T+J-ZBE90cqcu5Pdgsq_jAZouw@mail.gmail.com>
-References: <1407864355-21545-1-git-send-email-linus.walleij@linaro.org> <1407864355-21545-4-git-send-email-linus.walleij@linaro.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 4/4] ARM: dts: keystone-k2hk: add dsp gpio controllers
+ nodes
+Date: Thu, 14 Aug 2014 18:57:08 +0300
+Message-ID: <53ECDC54.3060005@ti.com>
+References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com> <1407945984.545232249@f170.i.mail.ru> <53ECA7F3.7030702@ti.com> <1408018321.928492982@f270.i.mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:50891 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751526AbaHNO4n (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Aug 2014 10:56:43 -0400
-In-Reply-To: <1407864355-21545-4-git-send-email-linus.walleij@linaro.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:35133 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754628AbaHNPNT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 14 Aug 2014 11:13:19 -0400
+In-Reply-To: <1408018321.928492982@f270.i.mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, santosh.shilimkar@ti.com, linux-arm-kernel@lists.infradead.org
 
-On Tue, Aug 12, 2014 at 10:25 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> -       /* If DT, cd/wp gpios must be supplied through it. */
-> -       if (!np && gpio_is_valid(plat->gpio_cd)) {
-> -               ret = mmc_gpio_request_cd(mmc, plat->gpio_cd, 0);
-> -               if (ret)
-> -                       goto clk_disable;
-> -       }
-> -       if (!np && gpio_is_valid(plat->gpio_wp)) {
-> -               ret = mmc_gpio_request_ro(mmc, plat->gpio_wp);
-> -               if (ret)
-> -                       goto clk_disable;
-> +       /*
-> +        * If:
-> +        * - not using DT but using a descriptor table, or
-> +        * - using a table of descriptors ALONGSIDE DT, or
-> +        * look up these descriptors named "cd" and "wp" right here, fail
-> +        * silently of these do not exist and proceed to try platform data
-> +        */
-> +       if (!np) {
-> +               ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0);
+On 08/14/2014 03:12 PM, Alexander Shiyan wrote:
+> Thu, 14 Aug 2014 15:13:39 +0300 =D0=BE=D1=82 Grygorii Strashko <grygo=
+rii.strashko@ti.com>:
+>> Hi Alexander,
+>>
+>> On 08/13/2014 07:06 PM, Alexander Shiyan wrote:
+>>> Wed, 13 Aug 2014 19:16:22 +0300 =D0=BE=D1=82 Grygorii Strashko <gry=
+gorii.strashko@ti.com>:
+>>>> Add Keystone 2 DSP GPIO nodes.
+>>>> DSP GPIO banks 0-7 correspond to DSP0-DSP7
+>>>>
+>>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>>> ---
+>>>>    arch/arm/boot/dts/k2hk.dtsi |   56 ++++++++++++++++++++++++++++=
++++++++++++++++
+>>>>    1 file changed, 56 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/k2hk.dtsi b/arch/arm/boot/dts/k2hk.=
+dtsi
+>>>> index 321ba2f..009e180 100644
+>>>> --- a/arch/arm/boot/dts/k2hk.dtsi
+>>>> +++ b/arch/arm/boot/dts/k2hk.dtsi
+>>>> @@ -50,5 +50,61 @@
+>>>>    			#interrupt-cells =3D <1>;
+>>>>    			ti,syscon-dev =3D <&devctrl 0x2a0>;
+>>>>    		};
+>>>> +
+>>>> +		dspgpio0: keystone_dsp_gpio@02620240 {
+>>>> +			compatible =3D "ti,keystone-mctrl-gpio";
+>>>> +			gpio-controller;
+>>>> +			#gpio-cells =3D <2>;
+>>>> +			gpio,syscon-dev =3D <&devctrl 0x240>;
+>>>> +		};
+>>>> +
+>>>> +		dspgpio1: keystone_dsp_gpio@2620244 {
+>>>> +			compatible =3D "ti,keystone-mctrl-gpio";
+>>>> +			gpio-controller;
+>>>> +			#gpio-cells =3D <2>;
+>>>> +			gpio,syscon-dev =3D <&devctrl 0x244>;
+>>>> +		};
+>>> ...
+>>>> +		dspgpio7: keystone_dsp_gpio@262025C {
+>>>> +			compatible =3D "ti,keystone-mctrl-gpio";
+>>>> +			gpio-controller;
+>>>> +			#gpio-cells =3D <2>;
+>>>> +			gpio,syscon-dev =3D <&devctrl 0x25c>;
+>>>> +		};
+>>>
+>>> So, devctrl is a syscon device and this DTS introduce several
+>>> identical GPIO descriptions?
+>>>
+>>> On my opinion this should be placed in the gpio-syscon.c,
+>>> where you can add support for ti,keystone-dsp0{..7}-gpio.
+>>> Such change will avoid parts 2 and 3 of this patch.
+>>>
+>>> static const struct syscon_gpio_data ti_keystone_dsp0_gpio =3D {
+>>>     .compatible =3D "ti,keystone-syscon",
+>>>     .dat_bit_offset =3D 0x240 * 8,
+>>>     ...
+>>>     .set =3D etc...
+>>> };
+>>
+>> So, if I understand you right, you propose to add 8 additional compa=
+tible
+>> strings just to encode different register offsets. Is it?
+>> 1) add "ti,keystone-mctrl-gpio0"..."ti,keystone-mctrl-gpio7"
+>=20
+> Yes, but replace "mctrl" with "dsp" since mctrl is not applicable her=
+e.
+>=20
+>> 2) add 8 structures keystone_mctrl_gpio0..keystone_mctrl_gpio7 in gp=
+io-syscon.c
+>>     (which will have only different values of field - .dat_bit_offse=
+t =3D 0x2yy * 8,)
+>>
+>> 3) add 8 additional items in array syscon_gpio_ids
+>> 	{
+>> 		.compatible	=3D "ti,keystone-mctrl-gpio0",
+>> 		.data		=3D &keystone_mctrl_gpio0,
+>> 	}, ...
+>>
+>> I can do it if you strictly insist, BUT I don't like it :(
+>> - just imagine how your driver will look look like if 5 or 6 SoCs wi=
+ll re-use it ;)
+>> - as I mentioned in cover letter and commit messages even each SoC r=
+evision can have
+>>    different Syscon implementation with different registers offsets =
+and with different
+>>    number of Syscon register ranges (for example for Keystone 2 we a=
+lready have two
+>>    Syscon devices defined in DT).
+>=20
+> The initial version of this driver contains addresses and offsets in,=
+ but this approach has
+> been criticized by DT maintainers.
 
-I am not familiar with this driver, but since mmc_gpiod_request_cd()
-uses gpiod_get(), can't you call it outside of the (!np) condition?
-You should not have to do this kind of check when using the gpiod API.
+Could you provide link on this thread^, pls?
 
-> +               if (!ret)
-> +                       dev_info(mmc_dev(mmc), "got CD GPIO (table)\n");
-> +               else {
+Curious, it looks like Rob Herring has just proposed to encode offsets =
+& bits in DT:
+"Re: [PATCH 2/6] leds: add device tree bindings for syscon LEDs"
+http://www.spinics.net/lists/arm-kernel/msg354182.html
 
-I think you want to add brackets around the dev_info() line to make
-checkpatch.pl happy.
+>=20
+> "different Syscon with different registers" - is OK, since we use com=
+patible string in definition.
+> If you have two identical syscon, just append an unique additional st=
+ring and use it in this driver.
+>=20
+>> Now we already have 3 Keystone 2 SoC revisions (K2HK, K2L, K2E)  and=
+ there are no guarantee
+>> that the next revision k2X will have the same register offset for GP=
+IO0.
+>=20
+> Then use more exact string for syscon-gpio, like ti,keystone-k2hk-dsp=
+-gpio0.
 
-> +                       if (ret == -EPROBE_DEFER)
-> +                               goto clk_disable;
-> +                       else if (gpio_is_valid(plat->gpio_cd)) {
-> +                               ret = mmc_gpio_request_cd(mmc, plat->gpio_cd, 0);
-> +                               if (ret)
-> +                                       goto clk_disable;
-> +                               else
-> +                                       dev_info(mmc_dev(mmc), "got CD GPIO (pdata)\n");
-> +                       } else {
-> +                               dev_dbg(mmc_dev(mmc),
-> +                                       "no CD GPIO in DT, table or pdata\n");
-> +                       }
-> +               }
-> +
-> +               ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0);
-> +               if (!ret)
-> +                       dev_info(mmc_dev(mmc), "got WP GPIO (table)\n");
-> +               else {
+Nothing to say :) - DT is funny thing. It has such good feature as phan=
+dle, but
+people continue hard-coding relation between HW blocks in code :(
 
-Same remark as above.
+Any way, Thanks for your comments. I'll wait a bit then update and rese=
+nd.
 
-> +                       if (ret == -EPROBE_DEFER)
-> +                               goto clk_disable;
-> +                       else if (gpio_is_valid(plat->gpio_wp)) {
-> +                               ret = mmc_gpio_request_ro(mmc, plat->gpio_wp);
-> +                               if (ret)
-> +                                       goto clk_disable;
-> +                               else
-> +                                       dev_info(mmc_dev(mmc), "got WP GPIO (pdata)\n");
-> +                       } else {
-> +                               dev_dbg(mmc_dev(mmc),
-> +                                       "no WP GPIO in DT, table or pdata\n");
-> +                       }
-> +               }
 
-I wonder (again, without knowing better) if this gpiod/gpio fallback
-logic should not be put directly into mmc_gpio_request_ro/cd instead
-of having two functions? Couldn't other drivers also benefit from it
-that way?
+Best regards,
+-grygorii
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
