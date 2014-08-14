@@ -1,63 +1,106 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCA0LzRdIEFSTTogZHRzOiBrZXlzdG9uZS1rMmhrOiBhZGQg?=
- =?UTF-8?B?ZHNwIGdwaW8gY29udHJvbGxlcnMgbm9kZXM=?=
-Date: Thu, 14 Aug 2014 19:26:22 +0400
-Message-ID: <1408029982.880621027@f126.i.mail.ru>
-References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com>
- <1408018321.928492982@f270.i.mail.ru>
- <53ECDC54.3060005@ti.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 4/4] ARM: dts: keystone-k2hk: add dsp gpio controllers
+ nodes
+Date: Thu, 14 Aug 2014 19:54:09 +0300
+Message-ID: <53ECE9B1.4060303@ti.com>
+References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com> <1408018321.928492982@f270.i.mail.ru> <53ECDC54.3060005@ti.com> <1408029982.880621027@f126.i.mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from f126.i.mail.ru ([94.100.178.189]:38503 "EHLO f126.i.mail.ru"
+Received: from comal.ext.ti.com ([198.47.26.152]:47888 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754958AbaHNP02 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 14 Aug 2014 11:26:28 -0400
-In-Reply-To: <53ECDC54.3060005@ti.com>
+	id S1751750AbaHNQKW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 14 Aug 2014 12:10:22 -0400
+In-Reply-To: <1408029982.880621027@f126.i.mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko@ti.com>
-Cc: =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, devicetree@vger.kernel.org, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>, santosh.shilimkar@ti.com, linux-arm-kernel@lists.infradead.org
+To: Alexander Shiyan <shc_work@mail.ru>, Rob Herring <robh+dt@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, santosh.shilimkar@ti.com, linux-arm-kernel@lists.infradead.org
 
-VGh1LCAxNCBBdWcgMjAxNCAxODo1NzowOCArMDMwMCDQvtGCIEdyeWdvcmlpIFN0cmFzaGtvIDxn
-cnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+OgouLi4KPiA+Pj4+ICsJCWRzcGdwaW83OiBrZXlzdG9u
-ZV9kc3BfZ3Bpb0AyNjIwMjVDIHsKPiA+Pj4+ICsJCQljb21wYXRpYmxlID0gInRpLGtleXN0b25l
-LW1jdHJsLWdwaW8iOwo+ID4+Pj4gKwkJCWdwaW8tY29udHJvbGxlcjsKPiA+Pj4+ICsJCQkjZ3Bp
-by1jZWxscyA9IDwyPjsKPiA+Pj4+ICsJCQlncGlvLHN5c2Nvbi1kZXYgPSA8JmRldmN0cmwgMHgy
-NWM+Owo+ID4+Pj4gKwkJfTsKPiA+Pj4KPiA+Pj4gU28sIGRldmN0cmwgaXMgYSBzeXNjb24gZGV2
-aWNlIGFuZCB0aGlzIERUUyBpbnRyb2R1Y2Ugc2V2ZXJhbAo+ID4+PiBpZGVudGljYWwgR1BJTyBk
-ZXNjcmlwdGlvbnM/Cj4gPj4+Cj4gPj4+IE9uIG15IG9waW5pb24gdGhpcyBzaG91bGQgYmUgcGxh
-Y2VkIGluIHRoZSBncGlvLXN5c2Nvbi5jLAo+ID4+PiB3aGVyZSB5b3UgY2FuIGFkZCBzdXBwb3J0
-IGZvciB0aSxrZXlzdG9uZS1kc3Awey4uN30tZ3Bpby4KPiA+Pj4gU3VjaCBjaGFuZ2Ugd2lsbCBh
-dm9pZCBwYXJ0cyAyIGFuZCAzIG9mIHRoaXMgcGF0Y2guCj4gPj4+Cj4gPj4+IHN0YXRpYyBjb25z
-dCBzdHJ1Y3Qgc3lzY29uX2dwaW9fZGF0YSB0aV9rZXlzdG9uZV9kc3AwX2dwaW8gPSB7Cj4gPj4+
-ICAgICAuY29tcGF0aWJsZSA9ICJ0aSxrZXlzdG9uZS1zeXNjb24iLAo+ID4+PiAgICAgLmRhdF9i
-aXRfb2Zmc2V0ID0gMHgyNDAgKiA4LAo+ID4+PiAgICAgLi4uCj4gPj4+ICAgICAuc2V0ID0gZXRj
-Li4uCj4gPj4+IH07Cj4gPj4KPiA+PiBTbywgaWYgSSB1bmRlcnN0YW5kIHlvdSByaWdodCwgeW91
-IHByb3Bvc2UgdG8gYWRkIDggYWRkaXRpb25hbCBjb21wYXRpYmxlCj4gPj4gc3RyaW5ncyBqdXN0
-IHRvIGVuY29kZSBkaWZmZXJlbnQgcmVnaXN0ZXIgb2Zmc2V0cy4gSXMgaXQ/Cj4gPj4gMSkgYWRk
-ICJ0aSxrZXlzdG9uZS1tY3RybC1ncGlvMCIuLi4idGksa2V5c3RvbmUtbWN0cmwtZ3BpbzciCj4g
-PiAKPiA+IFllcywgYnV0IHJlcGxhY2UgIm1jdHJsIiB3aXRoICJkc3AiIHNpbmNlIG1jdHJsIGlz
-IG5vdCBhcHBsaWNhYmxlIGhlcmUuCj4gPiAKPiA+PiAyKSBhZGQgOCBzdHJ1Y3R1cmVzIGtleXN0
-b25lX21jdHJsX2dwaW8wLi5rZXlzdG9uZV9tY3RybF9ncGlvNyBpbiBncGlvLXN5c2Nvbi5jCj4g
-Pj4gICAgICh3aGljaCB3aWxsIGhhdmUgb25seSBkaWZmZXJlbnQgdmFsdWVzIG9mIGZpZWxkIC0g
-LmRhdF9iaXRfb2Zmc2V0ID0gMHgyeXkgKiA4LCkKPiA+Pgo+ID4+IDMpIGFkZCA4IGFkZGl0aW9u
-YWwgaXRlbXMgaW4gYXJyYXkgc3lzY29uX2dwaW9faWRzCj4gPj4gCXsKPiA+PiAJCS5jb21wYXRp
-YmxlCT0gInRpLGtleXN0b25lLW1jdHJsLWdwaW8wIiwKPiA+PiAJCS5kYXRhCQk9ICZrZXlzdG9u
-ZV9tY3RybF9ncGlvMCwKPiA+PiAJfSwgLi4uCj4gPj4KPiA+PiBJIGNhbiBkbyBpdCBpZiB5b3Ug
-c3RyaWN0bHkgaW5zaXN0LCBCVVQgSSBkb24ndCBsaWtlIGl0IDooCj4gPj4gLSBqdXN0IGltYWdp
-bmUgaG93IHlvdXIgZHJpdmVyIHdpbGwgbG9vayBsb29rIGxpa2UgaWYgNSBvciA2IFNvQ3Mgd2ls
-bCByZS11c2UgaXQgOykKPiA+PiAtIGFzIEkgbWVudGlvbmVkIGluIGNvdmVyIGxldHRlciBhbmQg
-Y29tbWl0IG1lc3NhZ2VzIGV2ZW4gZWFjaCBTb0MgcmV2aXNpb24gY2FuIGhhdmUKPiA+PiAgICBk
-aWZmZXJlbnQgU3lzY29uIGltcGxlbWVudGF0aW9uIHdpdGggZGlmZmVyZW50IHJlZ2lzdGVycyBv
-ZmZzZXRzIGFuZCB3aXRoIGRpZmZlcmVudAo+ID4+ICAgIG51bWJlciBvZiBTeXNjb24gcmVnaXN0
-ZXIgcmFuZ2VzIChmb3IgZXhhbXBsZSBmb3IgS2V5c3RvbmUgMiB3ZSBhbHJlYWR5IGhhdmUgdHdv
-Cj4gPj4gICAgU3lzY29uIGRldmljZXMgZGVmaW5lZCBpbiBEVCkuCj4gPiAKPiA+IFRoZSBpbml0
-aWFsIHZlcnNpb24gb2YgdGhpcyBkcml2ZXIgY29udGFpbnMgYWRkcmVzc2VzIGFuZCBvZmZzZXRz
-IGluLCBidXQgdGhpcyBhcHByb2FjaCBoYXMKPiA+IGJlZW4gY3JpdGljaXplZCBieSBEVCBtYWlu
-dGFpbmVycy4KPiAKPiBDb3VsZCB5b3UgcHJvdmlkZSBsaW5rIG9uIHRoaXMgdGhyZWFkXiwgcGxz
-PwoKSGVyZSBpcyBhIGxpbmsgdG8gZmlyc3QgdmVyc2lvbjoKaHR0cHM6Ly93d3cubWFpbC1hcmNo
-aXZlLmNvbS9saW51eC1ncGlvQHZnZXIua2VybmVsLm9yZy9tc2cwMTYxNi5odG1sCgpVbmZvcnR1
-bmF0ZWx5LCBJIGxvc3QgdGhyZWFkIGZvciBEVC1yZWxhdGVkIHN0dWZmcy4KCi0tLQoK
+On 08/14/2014 06:26 PM, Alexander Shiyan wrote:
+> Thu, 14 Aug 2014 18:57:08 +0300 =D0=BE=D1=82 Grygorii Strashko <grygo=
+rii.strashko@ti.com>:
+> ...
+>>>>>> +		dspgpio7: keystone_dsp_gpio@262025C {
+>>>>>> +			compatible =3D "ti,keystone-mctrl-gpio";
+>>>>>> +			gpio-controller;
+>>>>>> +			#gpio-cells =3D <2>;
+>>>>>> +			gpio,syscon-dev =3D <&devctrl 0x25c>;
+>>>>>> +		};
+>>>>>
+>>>>> So, devctrl is a syscon device and this DTS introduce several
+>>>>> identical GPIO descriptions?
+>>>>>
+>>>>> On my opinion this should be placed in the gpio-syscon.c,
+>>>>> where you can add support for ti,keystone-dsp0{..7}-gpio.
+>>>>> Such change will avoid parts 2 and 3 of this patch.
+>>>>>
+>>>>> static const struct syscon_gpio_data ti_keystone_dsp0_gpio =3D {
+>>>>>      .compatible =3D "ti,keystone-syscon",
+>>>>>      .dat_bit_offset =3D 0x240 * 8,
+>>>>>      ...
+>>>>>      .set =3D etc...
+>>>>> };
+>>>>
+>>>> So, if I understand you right, you propose to add 8 additional com=
+patible
+>>>> strings just to encode different register offsets. Is it?
+>>>> 1) add "ti,keystone-mctrl-gpio0"..."ti,keystone-mctrl-gpio7"
+>>>
+>>> Yes, but replace "mctrl" with "dsp" since mctrl is not applicable h=
+ere.
+>>>
+>>>> 2) add 8 structures keystone_mctrl_gpio0..keystone_mctrl_gpio7 in =
+gpio-syscon.c
+>>>>      (which will have only different values of field - .dat_bit_of=
+fset =3D 0x2yy * 8,)
+>>>>
+>>>> 3) add 8 additional items in array syscon_gpio_ids
+>>>> 	{
+>>>> 		.compatible	=3D "ti,keystone-mctrl-gpio0",
+>>>> 		.data		=3D &keystone_mctrl_gpio0,
+>>>> 	}, ...
+>>>>
+>>>> I can do it if you strictly insist, BUT I don't like it :(
+>>>> - just imagine how your driver will look look like if 5 or 6 SoCs =
+will re-use it ;)
+>>>> - as I mentioned in cover letter and commit messages even each SoC=
+ revision can have
+>>>>     different Syscon implementation with different registers offse=
+ts and with different
+>>>>     number of Syscon register ranges (for example for Keystone 2 w=
+e already have two
+>>>>     Syscon devices defined in DT).
+>>>
+>>> The initial version of this driver contains addresses and offsets i=
+n, but this approach has
+>>> been criticized by DT maintainers.
+>>
+>> Could you provide link on this thread^, pls?
+>=20
+> Here is a link to first version:
+> https://www.mail-archive.com/linux-gpio@vger.kernel.org/msg01616.html
+
+10x
+
+>=20
+> Unfortunately, I lost thread for DT-related stuffs.
+>=20
+
+Oh, I've just checked ARM dts directory and found that=20
+constructions like this:
+	vendor,syscon =3D <&syscon_phandle>; /// or even this vendor,syscon =3D=
+ <&syscon_phandle 0x60 2>;
+are widely used as of now.
+Also, According to the bindings doc, the Syscon is not a Linux specific=
+ definition (mfd/syscon.txt).
+
+Regards,
+-grygorii
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
