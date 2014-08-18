@@ -1,106 +1,76 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH 4/4] ARM: dts: keystone-k2hk: add dsp gpio controllers
- nodes
-Date: Thu, 14 Aug 2014 19:54:09 +0300
-Message-ID: <53ECE9B1.4060303@ti.com>
-References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com> <1408018321.928492982@f270.i.mail.ru> <53ECDC54.3060005@ti.com> <1408029982.880621027@f126.i.mail.ru>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH 1/2] gpio: zynq: Reduce level of indention in zynq_gpio_irqhandler()
+Date: Mon, 18 Aug 2014 11:54:55 +0200
+Message-ID: <1408355696-9998-1-git-send-email-lars@metafoo.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:47888 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751750AbaHNQKW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 14 Aug 2014 12:10:22 -0400
-In-Reply-To: <1408029982.880621027@f126.i.mail.ru>
+Received: from smtp-out-006.synserver.de ([212.40.185.6]:1102 "EHLO
+	smtp-out-002.synserver.de" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754233AbaHRJzC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 18 Aug 2014 05:55:02 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>, Rob Herring <robh+dt@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, santosh.shilimkar@ti.com, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
 
-On 08/14/2014 06:26 PM, Alexander Shiyan wrote:
-> Thu, 14 Aug 2014 18:57:08 +0300 =D0=BE=D1=82 Grygorii Strashko <grygo=
-rii.strashko@ti.com>:
-> ...
->>>>>> +		dspgpio7: keystone_dsp_gpio@262025C {
->>>>>> +			compatible =3D "ti,keystone-mctrl-gpio";
->>>>>> +			gpio-controller;
->>>>>> +			#gpio-cells =3D <2>;
->>>>>> +			gpio,syscon-dev =3D <&devctrl 0x25c>;
->>>>>> +		};
->>>>>
->>>>> So, devctrl is a syscon device and this DTS introduce several
->>>>> identical GPIO descriptions?
->>>>>
->>>>> On my opinion this should be placed in the gpio-syscon.c,
->>>>> where you can add support for ti,keystone-dsp0{..7}-gpio.
->>>>> Such change will avoid parts 2 and 3 of this patch.
->>>>>
->>>>> static const struct syscon_gpio_data ti_keystone_dsp0_gpio =3D {
->>>>>      .compatible =3D "ti,keystone-syscon",
->>>>>      .dat_bit_offset =3D 0x240 * 8,
->>>>>      ...
->>>>>      .set =3D etc...
->>>>> };
->>>>
->>>> So, if I understand you right, you propose to add 8 additional com=
-patible
->>>> strings just to encode different register offsets. Is it?
->>>> 1) add "ti,keystone-mctrl-gpio0"..."ti,keystone-mctrl-gpio7"
->>>
->>> Yes, but replace "mctrl" with "dsp" since mctrl is not applicable h=
-ere.
->>>
->>>> 2) add 8 structures keystone_mctrl_gpio0..keystone_mctrl_gpio7 in =
-gpio-syscon.c
->>>>      (which will have only different values of field - .dat_bit_of=
-fset =3D 0x2yy * 8,)
->>>>
->>>> 3) add 8 additional items in array syscon_gpio_ids
->>>> 	{
->>>> 		.compatible	=3D "ti,keystone-mctrl-gpio0",
->>>> 		.data		=3D &keystone_mctrl_gpio0,
->>>> 	}, ...
->>>>
->>>> I can do it if you strictly insist, BUT I don't like it :(
->>>> - just imagine how your driver will look look like if 5 or 6 SoCs =
-will re-use it ;)
->>>> - as I mentioned in cover letter and commit messages even each SoC=
- revision can have
->>>>     different Syscon implementation with different registers offse=
-ts and with different
->>>>     number of Syscon register ranges (for example for Keystone 2 w=
-e already have two
->>>>     Syscon devices defined in DT).
->>>
->>> The initial version of this driver contains addresses and offsets i=
-n, but this approach has
->>> been criticized by DT maintainers.
->>
->> Could you provide link on this thread^, pls?
->=20
-> Here is a link to first version:
-> https://www.mail-archive.com/linux-gpio@vger.kernel.org/msg01616.html
+zynq_gpio_irqhandler() uses up to 7 tabs of indention in some parts. Refactor
+things to use a helper function for the inner loop to reduce the indention to a
+sane level.
 
-10x
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+---
+ drivers/gpio/gpio-zynq.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
->=20
-> Unfortunately, I lost thread for DT-related stuffs.
->=20
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 31ad5df..f440317 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -457,6 +457,24 @@ static struct irq_chip zynq_gpio_edge_irqchip = {
+ 	.irq_set_wake	= zynq_gpio_set_wake,
+ };
+ 
++static void zynq_gpio_handle_bank_irq(struct zynq_gpio *gpio,
++				      unsigned int bank_num,
++				      unsigned long pending)
++{
++	struct irq_domain *irqdomain = gpio->chip.irqdomain;
++	int offset;
++
++	if (!pending)
++		return;
++
++	for_each_set_bit(offset, &pending, 32) {
++		unsigned int gpio_irq;
++
++		gpio_irq = irq_find_mapping(irqdomain, offset);
++		generic_handle_irq(gpio_irq);
++	}
++}
++
+ /**
+  * zynq_gpio_irqhandler - IRQ handler for the gpio banks of a gpio device
+  * @irq:	irq number of the gpio bank where interrupt has occurred
+@@ -482,18 +500,7 @@ static void zynq_gpio_irqhandler(unsigned int irq, struct irq_desc *desc)
+ 					ZYNQ_GPIO_INTSTS_OFFSET(bank_num));
+ 		int_enb = readl_relaxed(gpio->base_addr +
+ 					ZYNQ_GPIO_INTMASK_OFFSET(bank_num));
+-		int_sts &= ~int_enb;
+-		if (int_sts) {
+-			int offset;
+-			unsigned long pending = int_sts;
+-
+-			for_each_set_bit(offset, &pending, 32) {
+-				unsigned int gpio_irq =
+-					irq_find_mapping(gpio->chip.irqdomain,
+-							offset);
+-				generic_handle_irq(gpio_irq);
+-			}
+-		}
++		zynq_gpio_handle_bank_irq(gpio, bank_num, int_sts & ~int_enb);
+ 	}
+ 
+ 	chained_irq_exit(irqchip, desc);
+-- 
+1.8.0
 
-Oh, I've just checked ARM dts directory and found that=20
-constructions like this:
-	vendor,syscon =3D <&syscon_phandle>; /// or even this vendor,syscon =3D=
- <&syscon_phandle 0x60 2>;
-are widely used as of now.
-Also, According to the bindings doc, the Syscon is not a Linux specific=
- definition (mfd/syscon.txt).
-
-Regards,
--grygorii
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
