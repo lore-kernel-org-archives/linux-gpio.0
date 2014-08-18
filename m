@@ -1,36 +1,57 @@
-From: Agron Selimaj <as9902613@gmail.com>
-Subject: Bring a new x86_64 device to Linux
-Date: Mon, 18 Aug 2014 11:59:47 -0400
-Message-ID: <CA+_PYyuy_4Y+YfVnW7yPLP2AA6vbpqvwLaW7w5PyKHxVDhaD8Q@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: select GPIOLIB for MMC support
+Date: Mon, 18 Aug 2014 18:00:37 +0200
+Message-ID: <CAPDyKFoUO7GLfZxVFq0c5BtpnVUSCv0cnb1uz6S2A_4_OcVhqw@mail.gmail.com>
+References: <1408375217-20500-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:53618 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751057AbaHRP7u (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Aug 2014 11:59:50 -0400
-Received: by mail-pd0-f174.google.com with SMTP id fp1so7749550pdb.5
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Aug 2014 08:59:47 -0700 (PDT)
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:51858 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751372AbaHRQAh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Aug 2014 12:00:37 -0400
+Received: by mail-qg0-f44.google.com with SMTP id e89so4844532qgf.3
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Aug 2014 09:00:37 -0700 (PDT)
+In-Reply-To: <1408375217-20500-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, linux-gpio@vger.kernel.org
 
-Hello,
+On 18 August 2014 17:20, Linus Walleij <linus.walleij@linaro.org> wrote:
+> The slot-gpio support has been compiled into the core for some time,
+> and it basically requires GPIOLIB to be present, very few systems
+> are using the archaic GPIO API (just defined function names) and
+> those should be migrated to GPIOLIB anyway.
+>
+> The rewrite to use GPIO descriptors require that we enable GPIOLIB,
+> so make CONFIG_MMC select CONFIG_GPIOLIB.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-I am making a GPIO driver for a custom x86_64 motherboard.
+Thanks! Applied for next.
 
-It came with a windows driver which is fairly simple but before
-reading or witting to a certain GPIO pin I have to keep reading an
-other ioport with inb() until GPIO data is ready.
+I put it prior the other GPIO descriptor patches to not break bisectability.
 
-However, I need to make sure this is the right motherboard so I am
-reading a 10 byte string where the model information is located, but
-just before I read the last byte the kernel is killing my kernel
-module and marking it as tainted. Why would this happen?
+Kind regards
+Uffe
 
-I also noticed that detection and probing is now done using platform
-drivers on ARM platform. I would like to follow the same on x86_64 but
-I don't find any documentation/examples to help me.
-
-
-The kernel version I am working on is 3.12.21
+> ---
+>  drivers/mmc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mmc/Kconfig b/drivers/mmc/Kconfig
+> index f2eeb38efa65..bf44002793c4 100644
+> --- a/drivers/mmc/Kconfig
+> +++ b/drivers/mmc/Kconfig
+> @@ -5,6 +5,7 @@
+>  menuconfig MMC
+>         tristate "MMC/SD/SDIO card support"
+>         depends on HAS_IOMEM
+> +       select GPIOLIB
+>         help
+>           This selects MultiMediaCard, Secure Digital and Secure
+>           Digital I/O support.
+> --
+> 1.9.3
+>
