@@ -1,69 +1,65 @@
-From: Harini Katakam <harinikatakamlinux@gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: zynq: Take bank offset into account when
- reporting a IRQ
-Date: Tue, 19 Aug 2014 00:34:44 +0530
-Message-ID: <CAFcVECKejNNaMykB3nDY6zos1_NEezmK-MDJfmVauSHpLoW09A@mail.gmail.com>
-References: <1408355696-9998-1-git-send-email-lars@metafoo.de>
-	<1408355696-9998-2-git-send-email-lars@metafoo.de>
-	<CAAVeFu+DnWGjsu0t+e5zEkNDG2O5dXs-BHX=BX4RgcpHvTg7=w@mail.gmail.com>
-	<ba183934-971e-47b1-997e-b9634e8bc27a@BN1BFFO11FD002.protection.gbl>
+From: Simon Baatz <gmbnomis@gmail.com>
+Subject: Re: [PATCH 3/4] mmc: host: switch OF parser to use gpio descriptors
+Date: Mon, 18 Aug 2014 21:46:55 +0200
+Message-ID: <20140818194655.GA2565@schnuecks.de>
+References: <1407864355-21545-1-git-send-email-linus.walleij@linaro.org>
+ <1407864355-21545-3-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f174.google.com ([209.85.160.174]:61888 "EHLO
-	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751817AbaHRTEp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Aug 2014 15:04:45 -0400
-Received: by mail-yk0-f174.google.com with SMTP id q9so4573787ykb.5
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Aug 2014 12:04:44 -0700 (PDT)
-In-Reply-To: <ba183934-971e-47b1-997e-b9634e8bc27a@BN1BFFO11FD002.protection.gbl>
+Received: from mail-la0-f50.google.com ([209.85.215.50]:45457 "EHLO
+	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751930AbaHRTrA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Aug 2014 15:47:00 -0400
+Content-Disposition: inline
+In-Reply-To: <1407864355-21545-3-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, Aug 19, 2014 at 12:24 AM, S=C3=B6ren Brinkmann
-<soren.brinkmann@xilinx.com> wrote:
-> On Mon, 2014-08-18 at 09:28AM -0700, Alexandre Courbot wrote:
->> On Mon, Aug 18, 2014 at 2:54 AM, Lars-Peter Clausen <lars@metafoo.de=
-> wrote:
->> > When looking up the IRQ the bank offset needs to be taken into acc=
-ount.
->> > Otherwise interrupts for banks other than bank 0 get incorrectly r=
-eported as
->> > interrupts for bank 0.
->> >
->> > Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
->> > ---
->> > Changes since v1:
->> >         * Use lookup table instead of switch-case.
->> > ---
->> >  drivers/gpio/gpio-zynq.c | 10 +++++++++-
->> >  1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> Yep, you saved 16 lines compared to the first version of this patch.=
- :)
->>
->> I assume overflows over this array cannot happen (otherwise a quick
->> check against ARRAY_SIZE(zynq_gpio_bank_offset) would do the trick),
->> if so:
-> I think that overflow is impossible since we are in a for-loop that r=
-uns
-> from 0..(ZYNQ_GPIO_MAX_BANK - 1).
->
->>
->> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
->
-> For the series:
-> Acked-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Hi Linus,
 
-Acked-by: Harini Katakam <harinik@xilinx.com>
+On Tue, Aug 12, 2014 at 07:25:54PM +0200, Linus Walleij wrote:
+> This switches the central MMC OF parser to use gpio descriptors
+> instead of grabbing GPIOs explicitly from the device tree.
+> This strips out an unecessary use of the integer-based GPIO
+> API that we want to get rid of, cuts down on code as the
+> gpio descriptor code will handle active low flags.
+> 
+> As it is in no way a bug not to supply CD/WP GPIOs the messages
+> about them not being specified have been depromoted from
+> dev_err() to dev_dbg().
 
-Regards,
-Harini
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I think the intention of the current code is to issue an
+error if a valid GPIO was specified but could not be obtained.  It
+should not issue an error just because the CD/WP GPIOs are not
+specified.
+
+This patch changes this behaviour. If the GPIO is specified
+explicitly but cannot be obtained for some reason, the driver's probe
+calling mmc_of_parse() will probably be successful.  Since debug
+level messages are usually not enabled, the problem with the GPIO may
+not even be visible in the logs.  For example, if I specify the same
+GPIO for CD and WP in the DTS:
+
+[    2.093442] kirkwood-pinctrl f1010000.pin-controller: request pin
+44 (PIN44) for mvebu-gpio:44
+[    2.093459] mvsdio f1090000.mvsdio: Got CD GPIO
+[    2.118734] mv643xx_eth_port mv643xx_eth_port.0 eth0: port 0 with
+MAC address 00:50:43:c3:55:55
+
+One can only infer from the missing "Got WP GPIO" that something went
+wrong.  Previously, the driver would not even load:
+
+...
+[    1.973402] mvsdio f1090000.mvsdio: Failed to request WP GPIO: -16!
+[    1.979831] mvsdio: probe of f1090000.mvsdio failed with error -16
+
+One can argue whether the current behaviour is too strict (and we did
+that in the past, leading to the current code), but issuing only a
+debug message when allocating an explicitly requested resource fails
+is too tolerant, IMHO.
+
+
+- Simon
