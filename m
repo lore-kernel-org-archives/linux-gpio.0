@@ -1,45 +1,104 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 0/2] gpio: acpi: some sanity fixes
-Date: Mon, 18 Aug 2014 09:50:55 -0700
-Message-ID: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 1/2] gpio: acpi: normalize use of gpiochip_get_desc()
+Date: Mon, 18 Aug 2014 09:50:56 -0700
+Message-ID: <1408380657-6718-2-git-send-email-acourbot@nvidia.com>
+References: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12376 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751260AbaHRQvH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Aug 2014 12:51:07 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+List-Id: linux-gpio@vger.kernel.org
 
-These two small patches perform some sanity changes in gpiolib-acpi:
+GPIO descriptors are changing from unique and permanent tokens to
+allocated resources. Therefore gpiochip_get_desc() cannot be used as a
+way to obtain a global GPIO descriptor anymore.
 
-1) Stop assuming there is a direct 1:1 mapping between GPIO descriptors
-and GPIO numbers. This should not be taken for granted and will likely
-change in the future. GPIO descriptors should be handled like regulators
-and other allocated resources, i.e. obtained and preserved for later use
-instead of constantly requested using gpiochip_get_desc()
+This patch updates the gpiolib ACPI support code to keep and use the
+descriptor returned by a centralized call to gpiochip_get_desc().
 
-2) Change the prototype of gpiochip_request_own_desc() to match other
-functions in driver.h. This results is a simplification of the related
-code in gpiolib-acpi, which should be a good thing.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-Mika, could I have your ack (or even better, tested-by) on these patches?
-They change some parts of gpiolib-acpi which I cannot test by myself.
-Thanks!
-
-Alexandre Courbot (2):
-  gpio: acpi: normalize use of gpiochip_get_desc()
-  gpio: change gpiochip_request_own_desc() prototype
-
- Documentation/gpio/driver.txt |  3 ++-
- drivers/gpio/gpiolib-acpi.c   | 30 +++++++++++-------------------
- drivers/gpio/gpiolib.c        | 18 ++++++++++++++----
- include/linux/gpio/driver.h   |  3 ++-
- 4 files changed, 29 insertions(+), 25 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index d62eaaa75397..9596a1023579 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -25,10 +25,12 @@ struct acpi_gpio_event {
+ 	acpi_handle handle;
+ 	unsigned int pin;
+ 	unsigned int irq;
++	gpio_desc *desc;
+ };
+ 
+ struct acpi_gpio_connection {
+ 	struct list_head node;
++	unsigned int pin;
+ 	struct gpio_desc *desc;
+ };
+ 
+@@ -197,6 +199,7 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+ 	event->handle = evt_handle;
+ 	event->irq = irq;
+ 	event->pin = pin;
++	event->desc = desc;
+ 
+ 	ret = request_threaded_irq(event->irq, NULL, handler, irqflags,
+ 				   "ACPI:Event", event);
+@@ -280,7 +283,7 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
+ 		struct gpio_desc *desc;
+ 
+ 		free_irq(event->irq, event);
+-		desc = gpiochip_get_desc(chip, event->pin);
++		desc = event->desc;
+ 		if (WARN_ON(IS_ERR(desc)))
+ 			continue;
+ 		gpio_unlock_as_irq(chip, event->pin);
+@@ -406,24 +409,26 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 		struct gpio_desc *desc;
+ 		bool found;
+ 
+-		desc = gpiochip_get_desc(chip, pin);
+-		if (IS_ERR(desc)) {
+-			status = AE_ERROR;
+-			goto out;
+-		}
+-
+ 		mutex_lock(&achip->conn_lock);
+ 
+ 		found = false;
+ 		list_for_each_entry(conn, &achip->conns, node) {
+-			if (conn->desc == desc) {
++			if (conn->pin == pin) {
+ 				found = true;
++				desc = conn->desc;
+ 				break;
+ 			}
+ 		}
+ 		if (!found) {
+ 			int ret;
+ 
++			desc = gpiochip_get_desc(chip, pin);
++			if (IS_ERR(desc)) {
++				status = AE_ERROR;
++				mutex_unlock(&achip->conn_lock);
++				goto out;
++			}
++
+ 			ret = gpiochip_request_own_desc(desc, "ACPI:OpRegion");
+ 			if (ret) {
+ 				status = AE_ERROR;
+@@ -462,6 +467,7 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 				goto out;
+ 			}
+ 
++			conn->pin = pin;
+ 			conn->desc = desc;
+ 			list_add_tail(&conn->node, &achip->conns);
+ 		}
 -- 
 2.0.4
-
