@@ -1,104 +1,65 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 1/2] gpio: acpi: normalize use of gpiochip_get_desc()
-Date: Mon, 18 Aug 2014 09:50:56 -0700
-Message-ID: <1408380657-6718-2-git-send-email-acourbot@nvidia.com>
-References: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH v2 2/2] gpio: zynq: Take bank offset into account when
+ reporting a IRQ
+Date: Mon, 18 Aug 2014 11:54:56 -0700
+Message-ID: <ba183934-971e-47b1-997e-b9634e8bc27a@BN1BFFO11FD002.protection.gbl>
+References: <1408355696-9998-1-git-send-email-lars@metafoo.de>
+ <1408355696-9998-2-git-send-email-lars@metafoo.de>
+ <CAAVeFu+DnWGjsu0t+e5zEkNDG2O5dXs-BHX=BX4RgcpHvTg7=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-by2lp0244.outbound.protection.outlook.com ([207.46.163.244]:8679
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751705AbaHRSzM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 18 Aug 2014 14:55:12 -0400
+Content-Disposition: inline
+In-Reply-To: <CAAVeFu+DnWGjsu0t+e5zEkNDG2O5dXs-BHX=BX4RgcpHvTg7=w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-GPIO descriptors are changing from unique and permanent tokens to
-allocated resources. Therefore gpiochip_get_desc() cannot be used as a
-way to obtain a global GPIO descriptor anymore.
+On Mon, 2014-08-18 at 09:28AM -0700, Alexandre Courbot wrote:
+> On Mon, Aug 18, 2014 at 2:54 AM, Lars-Peter Clausen <lars@metafoo.de>=
+ wrote:
+> > When looking up the IRQ the bank offset needs to be taken into acco=
+unt.
+> > Otherwise interrupts for banks other than bank 0 get incorrectly re=
+ported as
+> > interrupts for bank 0.
+> >
+> > Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+> > ---
+> > Changes since v1:
+> >         * Use lookup table instead of switch-case.
+> > ---
+> >  drivers/gpio/gpio-zynq.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+>=20
+> Yep, you saved 16 lines compared to the first version of this patch. =
+:)
+>=20
+> I assume overflows over this array cannot happen (otherwise a quick
+> check against ARRAY_SIZE(zynq_gpio_bank_offset) would do the trick),
+> if so:
+I think that overflow is impossible since we are in a for-loop that run=
+s
+from 0..(ZYNQ_GPIO_MAX_BANK - 1).
 
-This patch updates the gpiolib ACPI support code to keep and use the
-descriptor returned by a centralized call to gpiochip_get_desc().
+>=20
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/gpiolib-acpi.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+=46or the series:
+Acked-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index d62eaaa75397..9596a1023579 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -25,10 +25,12 @@ struct acpi_gpio_event {
- 	acpi_handle handle;
- 	unsigned int pin;
- 	unsigned int irq;
-+	gpio_desc *desc;
- };
- 
- struct acpi_gpio_connection {
- 	struct list_head node;
-+	unsigned int pin;
- 	struct gpio_desc *desc;
- };
- 
-@@ -197,6 +199,7 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 	event->handle = evt_handle;
- 	event->irq = irq;
- 	event->pin = pin;
-+	event->desc = desc;
- 
- 	ret = request_threaded_irq(event->irq, NULL, handler, irqflags,
- 				   "ACPI:Event", event);
-@@ -280,7 +283,7 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
- 		struct gpio_desc *desc;
- 
- 		free_irq(event->irq, event);
--		desc = gpiochip_get_desc(chip, event->pin);
-+		desc = event->desc;
- 		if (WARN_ON(IS_ERR(desc)))
- 			continue;
- 		gpio_unlock_as_irq(chip, event->pin);
-@@ -406,24 +409,26 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 		struct gpio_desc *desc;
- 		bool found;
- 
--		desc = gpiochip_get_desc(chip, pin);
--		if (IS_ERR(desc)) {
--			status = AE_ERROR;
--			goto out;
--		}
--
- 		mutex_lock(&achip->conn_lock);
- 
- 		found = false;
- 		list_for_each_entry(conn, &achip->conns, node) {
--			if (conn->desc == desc) {
-+			if (conn->pin == pin) {
- 				found = true;
-+				desc = conn->desc;
- 				break;
- 			}
- 		}
- 		if (!found) {
- 			int ret;
- 
-+			desc = gpiochip_get_desc(chip, pin);
-+			if (IS_ERR(desc)) {
-+				status = AE_ERROR;
-+				mutex_unlock(&achip->conn_lock);
-+				goto out;
-+			}
-+
- 			ret = gpiochip_request_own_desc(desc, "ACPI:OpRegion");
- 			if (ret) {
- 				status = AE_ERROR;
-@@ -462,6 +467,7 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 				goto out;
- 			}
- 
-+			conn->pin = pin;
- 			conn->desc = desc;
- 			list_add_tail(&conn->node, &achip->conns);
- 		}
--- 
-2.0.4
+	Thanks,
+	S=C3=B6ren
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
