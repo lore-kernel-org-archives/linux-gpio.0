@@ -1,67 +1,59 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH v2 2/2] gpio: zynq: Take bank offset into account when reporting a IRQ
-Date: Mon, 18 Aug 2014 11:54:56 +0200
-Message-ID: <1408355696-9998-2-git-send-email-lars@metafoo.de>
-References: <1408355696-9998-1-git-send-email-lars@metafoo.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp-out-006.synserver.de ([212.40.185.6]:1120 "EHLO
-	smtp-out-002.synserver.de" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754234AbaHRJzD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 18 Aug 2014 05:55:03 -0400
-In-Reply-To: <1408355696-9998-1-git-send-email-lars@metafoo.de>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/4] mmc: slot-gpio: switch to use flags when getting GPIO
+Date: Mon, 18 Aug 2014 13:25:16 +0200
+Message-ID: <CAPDyKFpc-DSdHr3ksnDEUuP5-W8Xw_RrngCiJqPwVSETHM=eOg@mail.gmail.com>
+References: <1407864355-21545-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1407864355-21545-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
 
-When looking up the IRQ the bank offset needs to be taken into account.
-Otherwise interrupts for banks other than bank 0 get incorrectly reported as
-interrupts for bank 0.
+On 12 August 2014 19:25, Linus Walleij <linus.walleij@linaro.org> wrote:
+> When the slot GPIO driver gets the GPIO to be used for card
+> detect, it is now possible to specify a flag to have the line
+> set up as input. Get rid of the explicit setup call for input
+> and use the flag.
+>
+> The extra argument works as there are transition varargs
+> macros in place in the <linux/gpio/consumer.h> header, in
+> the future we will make the flags argument compulsory.
+>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
----
-Changes since v1:
-	* Use lookup table instead of switch-case.
----
- drivers/gpio/gpio-zynq.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Thanks! Applied for next.
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index f440317..5db1af7 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -138,6 +138,13 @@ static inline void zynq_gpio_get_bank_pin(unsigned int pin_num,
- 	}
- }
- 
-+static const unsigned int zynq_gpio_bank_offset[] = {
-+	ZYNQ_GPIO_BANK0_PIN_MIN,
-+	ZYNQ_GPIO_BANK1_PIN_MIN,
-+	ZYNQ_GPIO_BANK2_PIN_MIN,
-+	ZYNQ_GPIO_BANK3_PIN_MIN,
-+};
-+
- /**
-  * zynq_gpio_get_value - Get the state of the specified pin of GPIO device
-  * @chip:	gpio_chip instance to be worked on
-@@ -461,6 +468,7 @@ static void zynq_gpio_handle_bank_irq(struct zynq_gpio *gpio,
- 				      unsigned int bank_num,
- 				      unsigned long pending)
- {
-+	unsigned int bank_offset = zynq_gpio_bank_offset[bank_num];
- 	struct irq_domain *irqdomain = gpio->chip.irqdomain;
- 	int offset;
- 
-@@ -470,7 +478,7 @@ static void zynq_gpio_handle_bank_irq(struct zynq_gpio *gpio,
- 	for_each_set_bit(offset, &pending, 32) {
- 		unsigned int gpio_irq;
- 
--		gpio_irq = irq_find_mapping(irqdomain, offset);
-+		gpio_irq = irq_find_mapping(irqdomain, offset + bank_offset);
- 		generic_handle_irq(gpio_irq);
- 	}
- }
--- 
-1.8.0
+Kind regards
+Uffe
 
+> ---
+>  drivers/mmc/core/slot-gpio.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+> index 5f89cb83d5f0..908c2b29e79f 100644
+> --- a/drivers/mmc/core/slot-gpio.c
+> +++ b/drivers/mmc/core/slot-gpio.c
+> @@ -308,14 +308,10 @@ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
+>         if (!con_id)
+>                 con_id = ctx->cd_label;
+>
+> -       desc = devm_gpiod_get_index(host->parent, con_id, idx);
+> +       desc = devm_gpiod_get_index(host->parent, con_id, idx, GPIOD_IN);
+>         if (IS_ERR(desc))
+>                 return PTR_ERR(desc);
+>
+> -       ret = gpiod_direction_input(desc);
+> -       if (ret < 0)
+> -               return ret;
+> -
+>         if (debounce) {
+>                 ret = gpiod_set_debounce(desc, debounce);
+>                 if (ret < 0)
+> --
+> 1.9.3
+>
