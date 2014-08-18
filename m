@@ -1,64 +1,143 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] Documentation: gpio: documentation for optional getters functions
-Date: Mon, 18 Aug 2014 09:39:01 -0700
-Message-ID: <1408379941-13954-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 2/2] gpio: change gpiochip_request_own_desc() prototype
+Date: Mon, 18 Aug 2014 09:50:57 -0700
+Message-ID: <1408380657-6718-3-git-send-email-acourbot@nvidia.com>
+References: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:6188 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751604AbaHRQvH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Aug 2014 12:51:07 -0400
+In-Reply-To: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 
-Add a mention about the _optional variants of (devm_)gpiod_get*().
+The current prototype of gpiochip_request_own_desc() requires to obtain
+a pointer to a descriptor. This is in contradiction to all other GPIO
+request schemes, and imposes an extra step of obtaining a descriptor to
+drivers. Most drivers actually cannot even perform that step since the
+function that does it (gpichip_get_desc()) is gpiolib-private.
+
+Change gpiochip_request_own_desc() to return a descriptor from a
+(chip, hwnum) tuple and update users of this function (currently
+gpiolib-acpi only).
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- Documentation/gpio/consumer.txt | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ Documentation/gpio/driver.txt |  3 ++-
+ drivers/gpio/gpiolib-acpi.c   | 20 +++-----------------
+ drivers/gpio/gpiolib.c        | 18 ++++++++++++++----
+ include/linux/gpio/driver.h   |  3 ++-
+ 4 files changed, 21 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index 76546324e968..6ce544191ca6 100644
---- a/Documentation/gpio/consumer.txt
-+++ b/Documentation/gpio/consumer.txt
-@@ -53,7 +53,20 @@ with IS_ERR() (they will never return a NULL pointer). -ENOENT will be returned
- if and only if no GPIO has been assigned to the device/function/index triplet,
- other error codes are used for cases where a GPIO has been assigned but an error
- occurred while trying to acquire it. This is useful to discriminate between mere
--errors and an absence of GPIO for optional GPIO parameters.
-+errors and an absence of GPIO for optional GPIO parameters. For the common
-+pattern where a GPIO is optional, the gpiod_get_optional() and
-+gpiod_get_index_optional() functions can be used. These functions return NULL
-+instead of -ENOENT if no GPIO has been assigned to the requested function:
-+
-+
-+	struct gpio_desc *gpiod_get_optional(struct device *dev,
-+					     const char *con_id,
-+					     enum gpiod_flags flags)
-+
-+	struct gpio_desc *gpiod_get_index_optional(struct device *dev,
-+						   const char *con_id,
-+						   unsigned int index,
-+						   enum gpiod_flags flags)
+diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+index 18790c237977..23b751a10d7b 100644
+--- a/Documentation/gpio/driver.txt
++++ b/Documentation/gpio/driver.txt
+@@ -178,7 +178,8 @@ does not help since it pins the module to the kernel forever (it calls
+ try_module_get()). A GPIO driver can use the following functions instead
+ to request and free descriptors without being pinned to the kernel forever.
  
- Device-managed variants of these functions are also defined:
+-	int gpiochip_request_own_desc(struct gpio_desc *desc, const char *label)
++	struct gpio_desc *gpiochip_request_own_desc(struct gpio_desc *desc,
++						    const char *label)
  
-@@ -65,6 +78,15 @@ Device-managed variants of these functions are also defined:
- 					       unsigned int idx,
- 					       enum gpiod_flags flags)
+ 	void gpiochip_free_own_desc(struct gpio_desc *desc)
  
-+	struct gpio_desc *devm_gpiod_get_optional(struct device *dev,
-+						  const char *con_id,
-+						  enum gpiod_flags flags)
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 9596a1023579..4edfb7a00e0a 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -145,14 +145,8 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+ 	if (!handler)
+ 		return AE_BAD_PARAMETER;
+ 
+-	desc = gpiochip_get_desc(chip, pin);
++	desc = gpiochip_request_own_desc(chip, pin, "ACPI:Event");
+ 	if (IS_ERR(desc)) {
+-		dev_err(chip->dev, "Failed to get GPIO descriptor\n");
+-		return AE_ERROR;
+-	}
+-
+-	ret = gpiochip_request_own_desc(desc, "ACPI:Event");
+-	if (ret) {
+ 		dev_err(chip->dev, "Failed to request GPIO\n");
+ 		return AE_ERROR;
+ 	}
+@@ -420,22 +414,14 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 			}
+ 		}
+ 		if (!found) {
+-			int ret;
+-
+-			desc = gpiochip_get_desc(chip, pin);
++			desc = gpiochip_request_own_desc(chip, pin,
++							 "ACPI:OpRegion");
+ 			if (IS_ERR(desc)) {
+ 				status = AE_ERROR;
+ 				mutex_unlock(&achip->conn_lock);
+ 				goto out;
+ 			}
+ 
+-			ret = gpiochip_request_own_desc(desc, "ACPI:OpRegion");
+-			if (ret) {
+-				status = AE_ERROR;
+-				mutex_unlock(&achip->conn_lock);
+-				goto out;
+-			}
+-
+ 			switch (agpio->io_restriction) {
+ 			case ACPI_IO_RESTRICT_INPUT:
+ 				gpiod_direction_input(desc);
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 15cc0bb65dda..a5831d6a9b91 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -895,12 +895,22 @@ EXPORT_SYMBOL_GPL(gpiochip_is_requested);
+  * allows the GPIO chip module to be unloaded as needed (we assume that the
+  * GPIO chip driver handles freeing the GPIOs it has requested).
+  */
+-int gpiochip_request_own_desc(struct gpio_desc *desc, const char *label)
++struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
++					    const char *label)
+ {
+-	if (!desc || !desc->chip)
+-		return -EINVAL;
++	struct gpio_desc *desc = gpiochip_get_desc(chip, hwnum);
++	int err;
 +
-+	struct gpio_desc * devm_gpiod_get_index_optional(struct device *dev,
-+							const char *con_id,
-+							unsigned int index,
-+							enum gpiod_flags flags)
++	if (IS_ERR(desc)) {
++		chip_err(chip, "failed to get GPIO descriptor\n");
++		return desc;
++	}
 +
- A GPIO descriptor can be disposed of using the gpiod_put() function:
++	err = __gpiod_request(desc, label);
++	if (err < 0)
++		return ERR_PTR(err);
  
- 	void gpiod_put(struct gpio_desc *desc)
+-	return __gpiod_request(desc, label);
++	return desc;
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_request_own_desc);
+ 
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index e78a2373e374..a2de58fffd19 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -166,7 +166,8 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 
+ #endif /* CONFIG_GPIO_IRQCHIP */
+ 
+-int gpiochip_request_own_desc(struct gpio_desc *desc, const char *label);
++struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
++					    const char *label);
+ void gpiochip_free_own_desc(struct gpio_desc *desc);
+ 
+ #else /* CONFIG_GPIOLIB */
 -- 
 2.0.4
 
