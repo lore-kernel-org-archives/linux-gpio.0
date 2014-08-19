@@ -1,47 +1,36 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 1/2] gpio: acpi: normalize use of gpiochip_get_desc()
-Date: Tue, 19 Aug 2014 12:32:44 +0300
-Message-ID: <20140819093244.GJ1660@lahna.fi.intel.com>
+Subject: Re: [PATCH 2/2] gpio: change gpiochip_request_own_desc() prototype
+Date: Tue, 19 Aug 2014 12:34:12 +0300
+Message-ID: <20140819093412.GK1660@lahna.fi.intel.com>
 References: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
- <1408380657-6718-2-git-send-email-acourbot@nvidia.com>
+ <1408380657-6718-3-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:46390 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751563AbaHSJel (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 19 Aug 2014 05:34:41 -0400
 Content-Disposition: inline
-In-Reply-To: <1408380657-6718-2-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1408380657-6718-3-git-send-email-acourbot@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Alexandre Courbot <acourbot@nvidia.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
-List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 18, 2014 at 09:50:56AM -0700, Alexandre Courbot wrote:
-> GPIO descriptors are changing from unique and permanent tokens to
-> allocated resources. Therefore gpiochip_get_desc() cannot be used as a
-> way to obtain a global GPIO descriptor anymore.
+On Mon, Aug 18, 2014 at 09:50:57AM -0700, Alexandre Courbot wrote:
+> The current prototype of gpiochip_request_own_desc() requires to obtain
+> a pointer to a descriptor. This is in contradiction to all other GPIO
+> request schemes, and imposes an extra step of obtaining a descriptor to
+> drivers. Most drivers actually cannot even perform that step since the
+> function that does it (gpichip_get_desc()) is gpiolib-private.
 > 
-> This patch updates the gpiolib ACPI support code to keep and use the
-> descriptor returned by a centralized call to gpiochip_get_desc().
+> Change gpiochip_request_own_desc() to return a descriptor from a
+> (chip, hwnum) tuple and update users of this function (currently
+> gpiolib-acpi only).
 > 
 > Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  drivers/gpio/gpiolib-acpi.c | 22 ++++++++++++++--------
->  1 file changed, 14 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index d62eaaa75397..9596a1023579 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -25,10 +25,12 @@ struct acpi_gpio_event {
->  	acpi_handle handle;
->  	unsigned int pin;
->  	unsigned int irq;
-> +	gpio_desc *desc;
 
-This needs to be 
-	struct gpio_desc *desc;
-
->  };
-
-Tested on Asus T100TA and nothing seems to break, so:
+Tested on Asus T100TA and everything still seems to work so,
 
 Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
