@@ -1,59 +1,53 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/2] gpio: acpi: normalize use of gpiochip_get_desc()
-Date: Tue, 19 Aug 2014 09:59:49 -0700
-Message-ID: <CAAVeFuJ55jikMaNYNqTUVJ==9u+mQr0OtC89PZajCDVLF7TUug@mail.gmail.com>
-References: <1408380657-6718-1-git-send-email-acourbot@nvidia.com>
- <1408380657-6718-2-git-send-email-acourbot@nvidia.com> <20140819093244.GJ1660@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: move GPIOD flags outside #ifdef
+Date: Tue, 19 Aug 2014 12:03:40 -0500
+Message-ID: <1408467820-4766-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:45135 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753250AbaHSRAK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Aug 2014 13:00:10 -0400
-In-Reply-To: <20140819093244.GJ1660@lahna.fi.intel.com>
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:61999 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752586AbaHSRDy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Aug 2014 13:03:54 -0400
+Received: by mail-ig0-f179.google.com with SMTP id h18so9958066igc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Aug 2014 10:03:53 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, Aug 19, 2014 at 2:32 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Mon, Aug 18, 2014 at 09:50:56AM -0700, Alexandre Courbot wrote:
->> GPIO descriptors are changing from unique and permanent tokens to
->> allocated resources. Therefore gpiochip_get_desc() cannot be used as a
->> way to obtain a global GPIO descriptor anymore.
->>
->> This patch updates the gpiolib ACPI support code to keep and use the
->> descriptor returned by a centralized call to gpiochip_get_desc().
->>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->>  drivers/gpio/gpiolib-acpi.c | 22 ++++++++++++++--------
->>  1 file changed, 14 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
->> index d62eaaa75397..9596a1023579 100644
->> --- a/drivers/gpio/gpiolib-acpi.c
->> +++ b/drivers/gpio/gpiolib-acpi.c
->> @@ -25,10 +25,12 @@ struct acpi_gpio_event {
->>       acpi_handle handle;
->>       unsigned int pin;
->>       unsigned int irq;
->> +     gpio_desc *desc;
->
-> This needs to be
->         struct gpio_desc *desc;
->
->>  };
+The GPIOD flags are defined inside the #ifdef CONFIG_GPIOLIB
+switch, making the gpiolib stubs fail if these flags are used
+by a consumer. This is not correct: the stubs should compile
+fine without GPIOLIB.
 
-Oops apologies for this, I should have least have compiled a tree with
-this patch on... >_<;
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ include/linux/gpio/consumer.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
-> Tested on Asus T100TA and nothing seems to break, so:
->
-> Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index b7ce0c64c6f3..c7e17de732f3 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -16,8 +16,6 @@ struct device;
+  */
+ struct gpio_desc;
+ 
+-#ifdef CONFIG_GPIOLIB
+-
+ #define GPIOD_FLAGS_BIT_DIR_SET		BIT(0)
+ #define GPIOD_FLAGS_BIT_DIR_OUT		BIT(1)
+ #define GPIOD_FLAGS_BIT_DIR_VAL		BIT(2)
+@@ -34,6 +32,8 @@ enum gpiod_flags {
+ 			  GPIOD_FLAGS_BIT_DIR_VAL,
+ };
+ 
++#ifdef CONFIG_GPIOLIB
++
+ /* Acquire and dispose GPIOs */
+ struct gpio_desc *__must_check __gpiod_get(struct device *dev,
+ 					 const char *con_id,
+-- 
+1.9.3
 
-Thanks! Will send a v2 for Linus to merge, if he agrees with these two patches.
-Alex.
