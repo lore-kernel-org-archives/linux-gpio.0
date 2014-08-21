@@ -1,88 +1,32 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH v2 3/3] ARM: dts: keystone-k2hk: add dsp gpio controllers nodes
-Date: Thu, 21 Aug 2014 19:23:23 +0300
-Message-ID: <1408638203-8246-4-git-send-email-grygorii.strashko@ti.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MiAzLzNdIEFSTTogZHRzOiBrZXlzdG9uZS1rMmhrOiBh?=
+ =?UTF-8?B?ZGQgZHNwIGdwaW8gY29udHJvbGxlcnMgbm9kZXM=?=
+Date: Thu, 21 Aug 2014 20:47:44 +0400
+Message-ID: <1408639664.245146808__5716.81249789453$1408641005$gmane$org@f420.i.mail.ru>
 References: <53ECE9B1.4060303@ti.com>
  <1408638203-8246-1-git-send-email-grygorii.strashko@ti.com>
+ <1408638203-8246-4-git-send-email-grygorii.strashko@ti.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:37221 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752472AbaHUQYP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 21 Aug 2014 12:24:15 -0400
-In-Reply-To: <1408638203-8246-1-git-send-email-grygorii.strashko@ti.com>
+Received: from fallback7.mail.ru ([94.100.181.128]:60821 "EHLO
+	fallback7.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752590AbaHURJl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Aug 2014 13:09:41 -0400
+In-Reply-To: <1408638203-8246-4-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, santosh.shilimkar@ti.com, Alexander Shiyan <shc_work@mail.ru>, linux-gpio@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Grygorii Strashko <grygorii.strashko@ti.com>
+To: =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko@ti.com>
+Cc: =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, santosh.shilimkar@ti.com, linux-gpio@vger.kernel.org
 
-Add Keystone 2 DSP GPIO nodes.
-DSP GPIO banks 0-7 correspond to DSP0-DSP7
-
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- arch/arm/boot/dts/k2hk.dtsi |   48 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
-
-diff --git a/arch/arm/boot/dts/k2hk.dtsi b/arch/arm/boot/dts/k2hk.dtsi
-index 321ba2f..84a8887 100644
---- a/arch/arm/boot/dts/k2hk.dtsi
-+++ b/arch/arm/boot/dts/k2hk.dtsi
-@@ -50,5 +50,53 @@
- 			#interrupt-cells = <1>;
- 			ti,syscon-dev = <&devctrl 0x2a0>;
- 		};
-+
-+		dspgpio0: keystone_dsp_gpio@02620240 {
-+			compatible = "ti,keystone-dsp-gpio0";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		dspgpio1: keystone_dsp_gpio@02620244 {
-+			compatible = "ti,keystone-dsp-gpio1";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		dspgpio2: keystone_dsp_gpio@02620248 {
-+			compatible = "ti,keystone-dsp-gpio2";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		dspgpio3: keystone_dsp_gpio@0262024c {
-+			compatible = "ti,keystone-dsp-gpio3";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		dspgpio4: keystone_dsp_gpio@02620250 {
-+			compatible = "ti,keystone-dsp-gpio4";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		dspgpio5: keystone_dsp_gpio@02620254 {
-+			compatible = "ti,keystone-dsp-gpio5";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		dspgpio6: keystone_dsp_gpio@02620258 {
-+			compatible = "ti,keystone-dsp-gpio6";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		dspgpio7: keystone_dsp_gpio@0262025C {
-+			compatible = "ti,keystone-dsp-gpio7";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
- 	};
- };
--- 
-1.7.9.5
-
+VGh1LCAyMSBBdWcgMjAxNCAxOToyMzoyMyArMDMwMCDQvtGCIEdyeWdvcmlpIFN0cmFzaGtvIDxn
+cnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+Ogo+IEFkZCBLZXlzdG9uZSAyIERTUCBHUElPIG5vZGVz
+Lgo+IERTUCBHUElPIGJhbmtzIDAtNyBjb3JyZXNwb25kIHRvIERTUDAtRFNQNwo+IAo+IFNpZ25l
+ZC1vZmYtYnk6IEdyeWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+Cj4g
+LS0tCi4uLgo+ICsJCWRzcGdwaW8zOiBrZXlzdG9uZV9kc3BfZ3Bpb0AwMjYyMDI0YyB7Cj4gKwkJ
+CWNvbXBhdGlibGUgPSAidGksa2V5c3RvbmUtZHNwLWdwaW8zIjsKPiArCQkJZ3Bpby1jb250cm9s
+bGVyOwo+ICsJCQkjZ3Bpby1jZWxscyA9IDwyPjsKPiArCQl9OwouLi4KPiArCQlkc3BncGlvNzog
+a2V5c3RvbmVfZHNwX2dwaW9AMDI2MjAyNUMgewoKVXNlIGxvd2VyIGNhc2UgZm9yIGFkZHJlc3Nl
+cy4KCi0tLQoK
