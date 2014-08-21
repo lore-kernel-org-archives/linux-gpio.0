@@ -1,49 +1,73 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] gpio: omap: Fix interrupt names
-Date: Thu, 21 Aug 2014 15:57:36 +0200
-Message-ID: <CABxcv==iGonj_cHXGWJgJFadCm8rZQ8tF5OEmAi2m-j9MtWukA@mail.gmail.com>
-References: <1408627195-18421-1-git-send-email-nm@ti.com>
-	<53F5F600.4040803@ti.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH v2 0/3] gpio: syscon: reuse for keystone 2 socs
+Date: Thu, 21 Aug 2014 19:23:20 +0300
+Message-ID: <1408638203-8246-1-git-send-email-grygorii.strashko@ti.com>
+References: <53ECE9B1.4060303@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <53F5F600.4040803@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:52693 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750858AbaHUQX4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 21 Aug 2014 12:23:56 -0400
+In-Reply-To: <53ECE9B1.4060303@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, santosh.shilimkar@ti.com, Alexander Shiyan <shc_work@mail.ru>, linux-gpio@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Grygorii Strashko <grygorii.strashko@ti.com>
 
-Hello,
+Hi All,
 
-On Thu, Aug 21, 2014 at 3:37 PM, Santosh Shilimkar
-<santosh.shilimkar@ti.com> wrote:
-> On Thursday 21 August 2014 09:19 AM, Nishanth Menon wrote:
->> When viewing the /proc/interrupts, there is no information about which
->> GPIO bank a specific gpio interrupt is hooked on to. This is more than a
->> bit irritating as such information can esily be provided back to the
->> user and at times, can be crucial for debug.
->>
->> So, instead of displaying something like:
->> 31:   0       0  GPIO   0  palmas
->> 32:   0       0  GPIO  27  mmc0
->>
->> Display the following with appropriate device name:
->> 31:   0       0  4ae10000.gpio   0  palmas
->> 32:   0       0  4805d000.gpio  27  mmc0
->>
->> This requires that we create irq_chip instance specific for each GPIO
->> bank which is trivial to achieve.
->>
->> Signed-off-by: Nishanth Menon <nm@ti.com>
->> ---
->> based on v3.17-rc1
-> Looks good..
-> Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
->
+Alexander,
 
-Looks good to me as well.
+I've updated gpio-syscon as requested in [3].
+I still don't like it, but any way I did it :(
 
-Acked-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Linus,
 
-Best regards,
-Javier
+I'd very appreciated if you can comment on these series.
+Personally, I like v1 [3], because this v2 is not elegant and will
+require constant code patching in case of adding new SoCs or new SoC's versions.
+
+This series intended to integrate Keystone 2 DSP GPIO controller functionality
+into gpio-syscon driver (drivers/gpio/gpio-syscon.c) as requested
+by Linus Walleij in [1].
+
+On Keystone SOCs, ARM host can send interrupts to DSP cores using the
+DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
+each DSP core. This is one of the component used by the IPC mechanism used
+on Keystone SOCs.
+
+Keystone 2 DSP GPIO controller has specific features:
+- each GPIO can be configured only as output pin;
+- setting GPIO value to 1 causes IRQ generation on target DSP core;
+- reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+  pending.
+
+The gpio-syscon driver was need to be updated to satisfy Keystone 2 SoC
+requirements:
+- special sequence of operations need to be used to assign output GPIO value.
+   As result, first patch introduces SoC specific callback .set() to configure
+   output GPIO value.
+
+Also, patch 3 was added to illustrate DSP GPIO configuration in DT used by Keystone 2.
+
+Related sicussions:
+ [1] https://lkml.org/lkml/2014/7/16/170
+ [2] https://lkml.org/lkml/2014/7/23/352
+ [3] https://www.mail-archive.com/devicetree@vger.kernel.org/msg37863.html
+
+Grygorii Strashko (3):
+  gpio: syscon: add soc specific callback to assign output value
+  gpio: syscon: reuse for keystone 2 socs
+  ARM: dts: keystone-k2hk: add dsp gpio controllers nodes
+
+ .../bindings/gpio/gpio-mctrl-keystone.txt          |   42 ++++++
+ arch/arm/boot/dts/k2hk.dtsi                        |   48 +++++++
+ drivers/gpio/gpio-syscon.c                         |  140 ++++++++++++++++++++
+ 3 files changed, 230 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mctrl-keystone.txt
+
+-- 
+1.7.9.5
+
