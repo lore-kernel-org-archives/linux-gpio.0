@@ -1,73 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v3.17 series
-Date: Sun, 24 Aug 2014 09:20:13 +0200
-Message-ID: <CACRpkdYvtj_W0bX0FRcs2c1DE9ORv-rA5JWUGkoHpRfi2zcmRQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH linux-next] irq: export handle_fasteoi_irq
+Date: Sun, 24 Aug 2014 22:17:40 +0200
+Message-ID: <4865705.6YRejgXUhp@wuerfel>
+References: <1408663880-29179-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35810 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752033AbaHXHUO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Aug 2014 03:20:14 -0400
-Received: by mail-ob0-f177.google.com with SMTP id wp18so9470839obc.36
-        for <linux-gpio@vger.kernel.org>; Sun, 24 Aug 2014 00:20:13 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1408663880-29179-1-git-send-email-vincent.stehle@laposte.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Vincent =?ISO-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Friday 22 August 2014 01:31:20 Vincent Stehl=E9 wrote:
+> Export handle_fasteoi_irq to be able to use it in e.g. the Zynq gpio =
+driver
+> since commit 6dd859508336 ("gpio: zynq: Fix IRQ handlers").
+>=20
+> This fixes the following link issue:
+>=20
+>   ERROR: "handle_fasteoi_irq" [drivers/gpio/gpio-zynq.ko] undefined!
+>=20
+> Signed-off-by: Vincent Stehl=E9 <vincent.stehle@laposte.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+>=20
 
-here are some post-rc1 GPIO fixes I've collected, nothing
-special apart from the Zynq fix which is for a new driver.
-Please pull them in!
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Yours,
-Linus Walleij
-
-The following changes since commit 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
-
-  Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v3.17-2
-
-for you to fetch changes up to 8117bd531501ec329e4c9ea96fb7f9d5504c82f5:
-
-  gpio-lynxpoint: enable input sensing in resume (2014-08-21 07:44:57 -0500)
-
-----------------------------------------------------------------
-Fixes for the v3.17 series:
-
-- A largeish fix for the IRQ handling in the new Zynq driver.
-  The quite verbose commit message gives the exact details.
-- Move some defines for gpiod flags outside an ifdef to make
-  stub functions work again.
-- Various minor fixes that we can accept for -rc1.
-
-----------------------------------------------------------------
-Julia Lawall (2):
-      gpiolib: devres: use correct structure type name in sizeof
-      gpio: delete unneeded test before of_node_put
-
-Lars-Peter Clausen (1):
-      gpio: zynq: Fix IRQ handlers
-
-Linus Walleij (1):
-      gpio: move GPIOD flags outside #ifdef
-
-Markus Mayer (1):
-      MAINTAINERS: Change maintainer for gpio-bcm-kona.c
-
-Mathias Nyman (1):
-      gpio-lynxpoint: enable input sensing in resume
-
- MAINTAINERS                   |  2 +-
- drivers/gpio/devres.c         |  2 +-
- drivers/gpio/gpio-lynxpoint.c | 18 ++++++++++++++++++
- drivers/gpio/gpio-zynq.c      | 36 ++++++++++++++++++++++++++++--------
- drivers/gpio/gpiolib-of.c     |  4 +---
- include/linux/gpio/consumer.h |  4 ++--
- 6 files changed, 51 insertions(+), 15 deletions(-)
+I saw the same thing here and came up with the same fix.
