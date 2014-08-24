@@ -1,36 +1,73 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH] gpio: omap: Fix interrupt names
-Date: Fri, 22 Aug 2014 21:00:27 -0700
-Message-ID: <7hvbpj6ejo.fsf@paris.lan>
-References: <1408627195-18421-1-git-send-email-nm@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for the v3.17 series
+Date: Sun, 24 Aug 2014 09:20:13 +0200
+Message-ID: <CACRpkdYvtj_W0bX0FRcs2c1DE9ORv-rA5JWUGkoHpRfi2zcmRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1408627195-18421-1-git-send-email-nm@ti.com> (Nishanth Menon's
-	message of "Thu, 21 Aug 2014 08:19:55 -0500")
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35810 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752033AbaHXHUO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Aug 2014 03:20:14 -0400
+Received: by mail-ob0-f177.google.com with SMTP id wp18so9470839obc.36
+        for <linux-gpio@vger.kernel.org>; Sun, 24 Aug 2014 00:20:13 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Nishanth Menon <nm@ti.com> writes:
+Hi Linus,
 
-> When viewing the /proc/interrupts, there is no information about which
-> GPIO bank a specific gpio interrupt is hooked on to. This is more than a
-> bit irritating as such information can esily be provided back to the
-> user and at times, can be crucial for debug.
->
-> So, instead of displaying something like:
-> 31:	0	0  GPIO   0  palmas
-> 32:	0	0  GPIO  27  mmc0
->
-> Display the following with appropriate device name:
-> 31:	0	0  4ae10000.gpio   0  palmas
-> 32:	0	0  4805d000.gpio  27  mmc0
->
-> This requires that we create irq_chip instance specific for each GPIO
-> bank which is trivial to achieve.
->
-> Signed-off-by: Nishanth Menon <nm@ti.com>
+here are some post-rc1 GPIO fixes I've collected, nothing
+special apart from the Zynq fix which is for a new driver.
+Please pull them in!
 
-Acked-by: Kevin Hilman <khilman@linaro.org>
+Yours,
+Linus Walleij
+
+The following changes since commit 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
+
+  Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.17-2
+
+for you to fetch changes up to 8117bd531501ec329e4c9ea96fb7f9d5504c82f5:
+
+  gpio-lynxpoint: enable input sensing in resume (2014-08-21 07:44:57 -0500)
+
+----------------------------------------------------------------
+Fixes for the v3.17 series:
+
+- A largeish fix for the IRQ handling in the new Zynq driver.
+  The quite verbose commit message gives the exact details.
+- Move some defines for gpiod flags outside an ifdef to make
+  stub functions work again.
+- Various minor fixes that we can accept for -rc1.
+
+----------------------------------------------------------------
+Julia Lawall (2):
+      gpiolib: devres: use correct structure type name in sizeof
+      gpio: delete unneeded test before of_node_put
+
+Lars-Peter Clausen (1):
+      gpio: zynq: Fix IRQ handlers
+
+Linus Walleij (1):
+      gpio: move GPIOD flags outside #ifdef
+
+Markus Mayer (1):
+      MAINTAINERS: Change maintainer for gpio-bcm-kona.c
+
+Mathias Nyman (1):
+      gpio-lynxpoint: enable input sensing in resume
+
+ MAINTAINERS                   |  2 +-
+ drivers/gpio/devres.c         |  2 +-
+ drivers/gpio/gpio-lynxpoint.c | 18 ++++++++++++++++++
+ drivers/gpio/gpio-zynq.c      | 36 ++++++++++++++++++++++++++++--------
+ drivers/gpio/gpiolib-of.c     |  4 +---
+ include/linux/gpio/consumer.h |  4 ++--
+ 6 files changed, 51 insertions(+), 15 deletions(-)
