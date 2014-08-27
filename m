@@ -1,262 +1,38 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2] gpio: make driver mcp23s08 to support both device tree
- and platform data
-Date: Tue, 26 Aug 2014 09:53:39 -0700
-Message-ID: <CAAVeFuJe-LoewOaxrhwC=d6bsVeCZvTQL9nHFGf8MRk7myKftw@mail.gmail.com>
-References: <1409048902-21316-1-git-send-email-sonic.adi@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Weike Chen <alvin.chen@intel.com>
+Subject: [PATCH 0/3] The Designware GPIO Supporting
+Date: Wed, 27 Aug 2014 10:46:25 -0700
+Message-ID: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:33428 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752447AbaHZQyA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Aug 2014 12:54:00 -0400
-Received: by mail-ie0-f175.google.com with SMTP id x19so12005429ier.34
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Aug 2014 09:53:59 -0700 (PDT)
-In-Reply-To: <1409048902-21316-1-git-send-email-sonic.adi@gmail.com>
+Received: from mga03.intel.com ([143.182.124.21]:3195 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755684AbaH0JyV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 27 Aug 2014 05:54:21 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sonic Zhang <sonic.adi@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Mika Westerberg <mika.westerberg@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Alvin Chen <alvin.chen@intel.com>
 
-On Tue, Aug 26, 2014 at 3:28 AM, Sonic Zhang <sonic.adi@gmail.com> wrote:
-> From: Sonic Zhang <sonic.zhang@analog.com>
->
-> Device tree is not enabled in some archtecture where gpio driver mcp23s08
-> is still required.
+Hi,
+These patches are for Intel Quark X1000 designware GPIO supporting. The first
+patch enables the Synopsys DesignWare APB GPIO driver to support the MFD device.
+And the Quark designware GPIO controller is registered as MFD device,
+because Quark exports a single PCI device with both GPIO and I2C functions.
+It is about reviewing the GPIO changes in gpio-dwapb, and in near future,
+the Quark I2C driver and the MFD driver that binds these GPIO & I2C
+functions will be sent subsequently. The second patch enables the gpio
+'debounce' feature. And the third patch enables the power management.
 
-Makes your patch bigger, but the resulting code is also more readable.
-Splitting sources of configuration data is always a good idea IMHO.
+Weike Chen (3):
+  GPIO: gpio-dwapb: Enable platform driver binding to MFD driver
+  GPIO: gpio-dwapb: Support Debounce
+  GPIO: gpio-dwapb: Suspend & Resume PM enabling
 
-Would be good to have a tested-by from someone with SPI hardware, if
-you know someone please ask them - otherwise that's what linux-next is
-for. :P
+ drivers/gpio/Kconfig                     |    1 -
+ drivers/gpio/gpio-dwapb.c                |  296 +++++++++++++++++++++++++-----
+ include/linux/platform_data/gpio-dwapb.h |   32 ++++
+ 3 files changed, 280 insertions(+), 49 deletions(-)
+ create mode 100644 include/linux/platform_data/gpio-dwapb.h
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+-- 
+1.7.9.5
 
->
-> Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
->
-> v2-changes:
-> - Parse device tree properties into platform data other than individual variables.
-> ---
->  drivers/gpio/Kconfig         |  1 -
->  drivers/gpio/gpio-mcp23s08.c | 67 +++++++++++++++++++++++++-------------------
->  include/linux/spi/mcp23s08.h | 18 ++++++++++++
->  3 files changed, 56 insertions(+), 30 deletions(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 9de1515..f155b6b 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -796,7 +796,6 @@ config GPIO_MAX7301
->
->  config GPIO_MCP23S08
->         tristate "Microchip MCP23xxx I/O expander"
-> -       depends on OF_GPIO
->         depends on (SPI_MASTER && !I2C) || I2C
->         help
->           SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
-> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-> index 6f183d9..841815f 100644
-> --- a/drivers/gpio/gpio-mcp23s08.c
-> +++ b/drivers/gpio/gpio-mcp23s08.c
-> @@ -479,8 +479,13 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
->
->         mutex_init(&mcp->irq_lock);
->
-> +#ifdef CONFIG_OF
->         mcp->irq_domain = irq_domain_add_linear(chip->of_node, chip->ngpio,
->                                                 &irq_domain_simple_ops, mcp);
-> +#else
-> +       mcp->irq_domain = irq_domain_add_linear(NULL, chip->ngpio,
-> +                                               &irq_domain_simple_ops, mcp);
-> +#endif
->         if (!mcp->irq_domain)
->                 return -ENODEV;
->
-> @@ -581,7 +586,7 @@ done:
->
->  static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->                               void *data, unsigned addr, unsigned type,
-> -                             unsigned base, unsigned pullups)
-> +                             struct mcp23s08_platform_data *pdata, int cs)
->  {
->         int status;
->         bool mirror = false;
-> @@ -635,7 +640,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->                 return -EINVAL;
->         }
->
-> -       mcp->chip.base = base;
-> +       mcp->chip.base = pdata->base;
->         mcp->chip.can_sleep = true;
->         mcp->chip.dev = dev;
->         mcp->chip.owner = THIS_MODULE;
-> @@ -648,11 +653,9 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->         if (status < 0)
->                 goto fail;
->
-> -       mcp->irq_controller = of_property_read_bool(mcp->chip.of_node,
-> -                                               "interrupt-controller");
-> +       mcp->irq_controller = pdata->irq_controller;
->         if (mcp->irq && mcp->irq_controller && (type == MCP_TYPE_017))
-> -               mirror = of_property_read_bool(mcp->chip.of_node,
-> -                                               "microchip,irq-mirror");
-> +               mirror = pdata->mirror;
->
->         if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror) {
->                 /* mcp23s17 has IOCON twice, make sure they are in sync */
-> @@ -668,7 +671,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->         }
->
->         /* configure ~100K pullups */
-> -       status = mcp->ops->write(mcp, MCP_GPPU, pullups);
-> +       status = mcp->ops->write(mcp, MCP_GPPU, pdata->chip[cs].pullups);
->         if (status < 0)
->                 goto fail;
->
-> @@ -768,25 +771,29 @@ MODULE_DEVICE_TABLE(of, mcp23s08_i2c_of_match);
->  static int mcp230xx_probe(struct i2c_client *client,
->                                     const struct i2c_device_id *id)
->  {
-> -       struct mcp23s08_platform_data *pdata;
-> +       struct mcp23s08_platform_data *pdata, local_pdata;
->         struct mcp23s08 *mcp;
-> -       int status, base, pullups;
-> +       int status;
->         const struct of_device_id *match;
->
->         match = of_match_device(of_match_ptr(mcp23s08_i2c_of_match),
->                                         &client->dev);
-> -       pdata = dev_get_platdata(&client->dev);
-> -       if (match || !pdata) {
-> -               base = -1;
-> -               pullups = 0;
-> +       if (match) {
-> +               pdata = &local_pdata;
-> +               pdata->base = -1;
-> +               pdata->chip[0].pullups = 0;
-> +               pdata->irq_controller = of_property_read_bool(
-> +                                       client->dev.of_node,
-> +                                       "interrupt-controller");
-> +               pdata->mirror = of_property_read_bool(client->dev.of_node,
-> +                                                     "microchip,irq-mirror");
->                 client->irq = irq_of_parse_and_map(client->dev.of_node, 0);
->         } else {
-> -               if (!gpio_is_valid(pdata->base)) {
-> +               pdata = dev_get_platdata(&client->dev);
-> +               if (!pdata || !gpio_is_valid(pdata->base)) {
->                         dev_dbg(&client->dev, "invalid platform data\n");
->                         return -EINVAL;
->                 }
-> -               base = pdata->base;
-> -               pullups = pdata->chip[0].pullups;
->         }
->
->         mcp = kzalloc(sizeof(*mcp), GFP_KERNEL);
-> @@ -795,7 +802,7 @@ static int mcp230xx_probe(struct i2c_client *client,
->
->         mcp->irq = client->irq;
->         status = mcp23s08_probe_one(mcp, &client->dev, client, client->addr,
-> -                                   id->driver_data, base, pullups);
-> +                                   id->driver_data, pdata, 0);
->         if (status)
->                 goto fail;
->
-> @@ -863,14 +870,12 @@ static void mcp23s08_i2c_exit(void) { }
->
->  static int mcp23s08_probe(struct spi_device *spi)
->  {
-> -       struct mcp23s08_platform_data   *pdata;
-> +       struct mcp23s08_platform_data   *pdata, local_pdata;
->         unsigned                        addr;
->         int                             chips = 0;
->         struct mcp23s08_driver_data     *data;
->         int                             status, type;
-> -       unsigned                        base = -1,
-> -                                       ngpio = 0,
-> -                                       pullups[ARRAY_SIZE(pdata->chip)];
-> +       unsigned                        ngpio = 0;
->         const struct                    of_device_id *match;
->         u32                             spi_present_mask = 0;
->
-> @@ -893,11 +898,18 @@ static int mcp23s08_probe(struct spi_device *spi)
->                         return -ENODEV;
->                 }
->
-> +               pdata = &local_pdata;
-> +               pdata->base = -1;
->                 for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
-> -                       pullups[addr] = 0;
-> +                       pdata->chip[addr].pullups = 0;
->                         if (spi_present_mask & (1 << addr))
->                                 chips++;
->                 }
-> +               pdata->irq_controller = of_property_read_bool(
-> +                                       spi->dev.of_node,
-> +                                       "interrupt-controller");
-> +               pdata->mirror = of_property_read_bool(spi->dev.of_node,
-> +                                                     "microchip,irq-mirror");
->         } else {
->                 type = spi_get_device_id(spi)->driver_data;
->                 pdata = dev_get_platdata(&spi->dev);
-> @@ -917,10 +929,7 @@ static int mcp23s08_probe(struct spi_device *spi)
->                                 return -EINVAL;
->                         }
->                         spi_present_mask |= 1 << addr;
-> -                       pullups[addr] = pdata->chip[addr].pullups;
->                 }
-> -
-> -               base = pdata->base;
->         }
->
->         if (!chips)
-> @@ -938,13 +947,13 @@ static int mcp23s08_probe(struct spi_device *spi)
->                 chips--;
->                 data->mcp[addr] = &data->chip[chips];
->                 status = mcp23s08_probe_one(data->mcp[addr], &spi->dev, spi,
-> -                                           0x40 | (addr << 1), type, base,
-> -                                           pullups[addr]);
-> +                                           0x40 | (addr << 1), type, pdata,
-> +                                           addr);
->                 if (status < 0)
->                         goto fail;
->
-> -               if (base != -1)
-> -                       base += (type == MCP_TYPE_S17) ? 16 : 8;
-> +               if (pdata->base != -1)
-> +                       pdata->base += (type == MCP_TYPE_S17) ? 16 : 8;
->                 ngpio += (type == MCP_TYPE_S17) ? 16 : 8;
->         }
->         data->ngpio = ngpio;
-> diff --git a/include/linux/spi/mcp23s08.h b/include/linux/spi/mcp23s08.h
-> index 2d676d5..aa07d7b 100644
-> --- a/include/linux/spi/mcp23s08.h
-> +++ b/include/linux/spi/mcp23s08.h
-> @@ -22,4 +22,22 @@ struct mcp23s08_platform_data {
->          * base to base+15 (or base+31 for s17 variant).
->          */
->         unsigned        base;
-> +       /* Marks the device as a interrupt controller.
-> +        * NOTE: The interrupt functionality is only supported for i2c
-> +        * versions of the chips. The spi chips can also do the interrupts,
-> +        * but this is not supported by the linux driver yet.
-> +        */
-> +       bool            irq_controller;
-> +
-> +       /* Sets the mirror flag in the IOCON register. Devices
-> +        * with two interrupt outputs (these are the devices ending with 17 and
-> +        * those that have 16 IOs) have two IO banks: IO 0-7 form bank 1 and
-> +        * IO 8-15 are bank 2. These chips have two different interrupt outputs:
-> +        * One for bank 1 and another for bank 2. If irq-mirror is set, both
-> +        * interrupts are generated regardless of the bank that an input change
-> +        * occurred on. If it is not set, the interrupt are only generated for
-> +        * the bank they belong to.
-> +        * On devices with only one interrupt output this property is useless.
-> +        */
-> +       bool            mirror;
->  };
-> --
-> 1.8.2.3
->
