@@ -1,103 +1,54 @@
-From: Weike Chen <alvin.chen@intel.com>
-Subject: [PATCH 2/3] GPIO: gpio-dwapb: Support Debounce
-Date: Wed, 27 Aug 2014 10:46:27 -0700
-Message-ID: <1409161588-19417-3-git-send-email-alvin.chen@intel.com>
-References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/4] mmc: slot-gpio: switch to use flags when getting GPIO
+Date: Wed, 27 Aug 2014 13:00:50 +0200
+Message-ID: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:3195 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755826AbaH0Jya (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 27 Aug 2014 05:54:30 -0400
-In-Reply-To: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:40232 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755126AbaH0LBC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Aug 2014 07:01:02 -0400
+Received: by mail-wi0-f182.google.com with SMTP id d1so229833wiv.9
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Aug 2014 04:01:00 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Mika Westerberg <mika.westerberg@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Alvin Chen <alvin.chen@intel.com>
+To: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-This patch enables 'debounce' for the designware GPIO, and
-it is based on Josef Ahmad's previous work.
+When the slot GPIO driver gets the GPIO to be used for card
+detect, it is now possible to specify a flag to have the line
+set up as input. Get rid of the explicit setup call for input
+and use the flag.
 
-Reviewed-by: Hock Leong Kweh <hock.leong.kweh@intel.com>
-Reviewed-by: Shevchenko, Andriy <andriy.shevchenko@intel.com>
-Signed-off-by: Weike Chen <alvin.chen@intel.com>
+The extra argument works as there are transition varargs
+macros in place in the <linux/gpio/consumer.h> header, in
+the future we will make the flags argument compulsory.
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-dwapb.c |   42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/mmc/core/slot-gpio.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 155a64b..e0ab988 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -36,6 +36,7 @@
- #define GPIO_INTTYPE_LEVEL	0x38
- #define GPIO_INT_POLARITY	0x3c
- #define GPIO_INTSTATUS		0x40
-+#define GPIO_PORTA_DEBOUNCE	0x48
- #define GPIO_PORTA_EOI		0x4c
- #define GPIO_EXT_PORTA		0x50
- #define GPIO_EXT_PORTB		0x54
-@@ -64,6 +65,23 @@ struct dwapb_gpio {
- 	const struct dwapb_gpio_platform_data	*pdata;
- };
+diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+index 5f89cb83d5f0..908c2b29e79f 100644
+--- a/drivers/mmc/core/slot-gpio.c
++++ b/drivers/mmc/core/slot-gpio.c
+@@ -308,14 +308,10 @@ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
+ 	if (!con_id)
+ 		con_id = ctx->cd_label;
  
-+static inline u32 dwapb_read(struct dwapb_gpio *gpio, unsigned int offset)
-+{
-+	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
-+	void __iomem *reg_base	= gpio->regs;
-+
-+	return bgc->read_reg(reg_base + offset);
-+}
-+
-+static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
-+			       u32 val)
-+{
-+	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
-+	void __iomem *reg_base	= gpio->regs;
-+
-+	bgc->write_reg(reg_base + offset, val);
-+}
-+
- static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
- {
- 	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-@@ -209,6 +227,29 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
- 	return 0;
- }
+-	desc = devm_gpiod_get_index(host->parent, con_id, idx);
++	desc = devm_gpiod_get_index(host->parent, con_id, idx, GPIOD_IN);
+ 	if (IS_ERR(desc))
+ 		return PTR_ERR(desc);
  
-+static int dwapb_gpio_set_debounce(struct gpio_chip *gc,
-+				   unsigned offset, unsigned debounce)
-+{
-+	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-+	struct dwapb_gpio_port *port =
-+			container_of(bgc, struct dwapb_gpio_port, bgc);
-+	struct dwapb_gpio *gpio = port->gpio;
-+	unsigned long flags, val_deb;
-+	unsigned long mask = bgc->pin2mask(bgc, offset);
-+
-+	spin_lock_irqsave(&bgc->lock, flags);
-+
-+	val_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
-+	if (debounce)
-+		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, mask | val_deb);
-+	else
-+		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, ~mask & val_deb);
-+
-+	spin_unlock_irqrestore(&bgc->lock, flags);
-+
-+	return 0;
-+}
-+
- static irqreturn_t dwapb_irq_handler_mfd(int irq, void *dev_id)
- {
- 	struct irq_desc *desc = irq_to_desc(irq);
-@@ -342,6 +383,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 
- 	port->bgc.gc.ngpio = pp->ngpio;
- 	port->bgc.gc.base = pp->gpio_base;
-+	port->bgc.gc.set_debounce = dwapb_gpio_set_debounce;
- 
- 	/*
- 	 * Only port A can provide interrupts in all configurations of the IP.
+-	ret = gpiod_direction_input(desc);
+-	if (ret < 0)
+-		return ret;
+-
+ 	if (debounce) {
+ 		ret = gpiod_set_debounce(desc, debounce);
+ 		if (ret < 0)
 -- 
-1.7.9.5
+1.9.3
 
