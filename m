@@ -1,17 +1,17 @@
 From: atull <atull@opensource.altera.com>
-Subject: Re: [PATCH 3/3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
-Date: Thu, 28 Aug 2014 10:01:02 -0500
-Message-ID: <alpine.DEB.2.02.1408280955560.26299@atx-linux-37>
-References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com> <1409161588-19417-4-git-send-email-alvin.chen@intel.com>
+Subject: Re: [PATCH 2/3] GPIO: gpio-dwapb: Support Debounce
+Date: Thu, 28 Aug 2014 10:11:56 -0500
+Message-ID: <alpine.DEB.2.02.1408281007290.26299@atx-linux-37>
+References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com> <1409161588-19417-3-git-send-email-alvin.chen@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2lp0205.outbound.protection.outlook.com ([207.46.163.205]:40840
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+Received: from mail-bn1blp0189.outbound.protection.outlook.com ([207.46.163.189]:9281
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750896AbaH1PGt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 Aug 2014 11:06:49 -0400
-In-Reply-To: <1409161588-19417-4-git-send-email-alvin.chen@intel.com>
+	id S1751938AbaH1PR2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Aug 2014 11:17:28 -0400
+In-Reply-To: <1409161588-19417-3-git-send-email-alvin.chen@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Weike Chen <alvin.chen@intel.com>
@@ -19,111 +19,101 @@ Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 
 On Wed, 27 Aug 2014, Weike Chen wrote:
 
-> This patch enables suspend and resume mode for the power management, and
+> This patch enables 'debounce' for the designware GPIO, and
 > it is based on Josef Ahmad's previous work.
 > 
 > Reviewed-by: Hock Leong Kweh <hock.leong.kweh@intel.com>
 > Reviewed-by: Shevchenko, Andriy <andriy.shevchenko@intel.com>
 > Signed-off-by: Weike Chen <alvin.chen@intel.com>
 > ---
->  drivers/gpio/gpio-dwapb.c |   67 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
+>  drivers/gpio/gpio-dwapb.c |   42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 > 
 > diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index e0ab988..1055cb3 100644
+> index 155a64b..e0ab988 100644
 > --- a/drivers/gpio/gpio-dwapb.c
 > +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -560,10 +560,77 @@ static const struct of_device_id dwapb_of_match[] = {
+> @@ -36,6 +36,7 @@
+>  #define GPIO_INTTYPE_LEVEL	0x38
+>  #define GPIO_INT_POLARITY	0x3c
+>  #define GPIO_INTSTATUS		0x40
+> +#define GPIO_PORTA_DEBOUNCE	0x48
+>  #define GPIO_PORTA_EOI		0x4c
+>  #define GPIO_EXT_PORTA		0x50
+>  #define GPIO_EXT_PORTB		0x54
+> @@ -64,6 +65,23 @@ struct dwapb_gpio {
+>  	const struct dwapb_gpio_platform_data	*pdata;
 >  };
->  MODULE_DEVICE_TABLE(of, dwapb_of_match);
 >  
-> +#if defined CONFIG_PM_SLEEP
-> +/* Store GPIO context across system-wide suspend/resume transitions */
-> +static struct gpio_saved_regs {
-> +	unsigned long data;
-> +	unsigned long dir;
-> +	unsigned long int_en;
-> +	unsigned long int_mask;
-> +	unsigned long int_type;
-> +	unsigned long int_pol;
-> +	unsigned long int_deb;
-> +} saved_regs;
-> +
-> +static int dwapb_gpio_suspend(struct device *dev)
+> +static inline u32 dwapb_read(struct dwapb_gpio *gpio, unsigned int offset)
 > +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
 > +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
-> +	unsigned long flags;
+> +	void __iomem *reg_base	= gpio->regs;
 > +
-> +	spin_lock_irqsave(&bgc->lock, flags);
+> +	return bgc->read_reg(reg_base + offset);
+> +}
 > +
-> +	saved_regs.int_mask	= dwapb_read(gpio, GPIO_INTMASK);
-> +	saved_regs.int_en	= dwapb_read(gpio, GPIO_INTEN);
-> +	saved_regs.int_deb	= dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
-> +	saved_regs.int_pol	= dwapb_read(gpio, GPIO_INT_POLARITY);
-> +	saved_regs.int_type	= dwapb_read(gpio, GPIO_INTTYPE_LEVEL);
-> +	saved_regs.dir		= dwapb_read(gpio, GPIO_SWPORTA_DDR);
-> +	saved_regs.data		= dwapb_read(gpio, GPIO_SWPORTA_DR);
+> +static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
+> +			       u32 val)
+> +{
+> +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
+> +	void __iomem *reg_base	= gpio->regs;
+> +
+> +	bgc->write_reg(reg_base + offset, val);
+> +}
+> +
 
 Hello,
 
-The DesignWare GPIO IP can be configured to have ports a, b, c, and d. So 
-you will need to save and restore any ports that are present.  I think 
-that *some* configurations of the IP include a register that can tell us 
-how it was configured, but that register is also optional :)  I don't have 
-confidence that we can read/write the registers blindly whether they are 
-known to be there or not.  So you may be stuck with looking at the
-device tree or platform data to know whether banks b, c, or d exist.
+I don't understand the reason for adding dwapb_read and dwapb_write here.  
+The rest of the driver is using readl and writel.  I'd rather not see two 
+different methods being used in the same driver for register access.  
+Maybe I'm missing something, but if we need to add dwapb_read/write, then
+it should be used for all register access.
 
 Alan
 
-> +
-> +	/* Mask out interrupts */
-> +	dwapb_write(gpio, GPIO_INTMASK, 0xffffffff);
-> +
-> +	spin_unlock_irqrestore(&bgc->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dwapb_gpio_resume(struct device *dev)
+>  static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+>  {
+>  	struct bgpio_chip *bgc = to_bgpio_chip(gc);
+> @@ -209,6 +227,29 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+>  	return 0;
+>  }
+>  
+> +static int dwapb_gpio_set_debounce(struct gpio_chip *gc,
+> +				   unsigned offset, unsigned debounce)
 > +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
-> +	unsigned long flags;
+> +	struct bgpio_chip *bgc = to_bgpio_chip(gc);
+> +	struct dwapb_gpio_port *port =
+> +			container_of(bgc, struct dwapb_gpio_port, bgc);
+> +	struct dwapb_gpio *gpio = port->gpio;
+> +	unsigned long flags, val_deb;
+> +	unsigned long mask = bgc->pin2mask(bgc, offset);
 > +
 > +	spin_lock_irqsave(&bgc->lock, flags);
 > +
-> +	dwapb_write(gpio, GPIO_SWPORTA_DR, saved_regs.data);
-> +	dwapb_write(gpio, GPIO_SWPORTA_DDR, saved_regs.dir);
-> +	dwapb_write(gpio, GPIO_INTTYPE_LEVEL, saved_regs.int_type);
-> +	dwapb_write(gpio, GPIO_INT_POLARITY, saved_regs.int_pol);
-> +	dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, saved_regs.int_deb);
-> +	dwapb_write(gpio, GPIO_INTEN, saved_regs.int_en);
-> +	dwapb_write(gpio, GPIO_INTMASK, saved_regs.int_mask);
-> +
-> +	/* Clear out spurious interrupts */
-> +	dwapb_write(gpio, GPIO_PORTA_EOI, 0xffffffff);
+> +	val_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
+> +	if (debounce)
+> +		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, mask | val_deb);
+> +	else
+> +		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, ~mask & val_deb);
 > +
 > +	spin_unlock_irqrestore(&bgc->lock, flags);
 > +
 > +	return 0;
 > +}
-> +#endif
 > +
-> +static SIMPLE_DEV_PM_OPS(dwapb_gpio_pm_ops, dwapb_gpio_suspend,
-> +			 dwapb_gpio_resume);
-> +
->  static struct platform_driver dwapb_gpio_driver = {
->  	.driver		= {
->  		.name	= "gpio-dwapb",
->  		.owner	= THIS_MODULE,
-> +		.pm	= &dwapb_gpio_pm_ops,
->  		.of_match_table = of_match_ptr(dwapb_of_match),
->  	},
->  	.probe		= dwapb_gpio_probe,
+>  static irqreturn_t dwapb_irq_handler_mfd(int irq, void *dev_id)
+>  {
+>  	struct irq_desc *desc = irq_to_desc(irq);
+> @@ -342,6 +383,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>  
+>  	port->bgc.gc.ngpio = pp->ngpio;
+>  	port->bgc.gc.base = pp->gpio_base;
+> +	port->bgc.gc.set_debounce = dwapb_gpio_set_debounce;
+>  
+>  	/*
+>  	 * Only port A can provide interrupts in all configurations of the IP.
 > -- 
 > 1.7.9.5
 > 
