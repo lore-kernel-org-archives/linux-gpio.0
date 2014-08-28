@@ -1,41 +1,37 @@
-From: "Chen, Alvin" <alvin.chen@intel.com>
-Subject: RE: [PATCH 3/3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
-Date: Thu, 28 Aug 2014 01:09:14 +0000
-Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E980AF7@SHSMSX101.ccr.corp.intel.com>
-References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
- <1409161588-19417-4-git-send-email-alvin.chen@intel.com>
- <alpine.DEB.2.02.1408271103120.11131@atx-linux-37>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V6 0/3] gpio: Add APM X-Gene SoC platform GPIO driver
+Date: Thu, 28 Aug 2014 14:22:01 +0200
+Message-ID: <CACRpkdZ79W9wjJ-AdtMqju6EBcTd+TEdUja6XPxfJT04zrDjDg@mail.gmail.com>
+References: <1406833407-28316-1-git-send-email-fkan@apm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:5917 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932305AbaH1BJn convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Aug 2014 21:09:43 -0400
-In-Reply-To: <alpine.DEB.2.02.1408271103120.11131@atx-linux-37>
-Content-Language: en-US
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:44435 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751107AbaH1MWB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Aug 2014 08:22:01 -0400
+Received: by mail-ob0-f179.google.com with SMTP id uz6so525249obc.10
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2014 05:22:01 -0700 (PDT)
+In-Reply-To: <1406833407-28316-1-git-send-email-fkan@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: atull <atull@opensource.altera.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, "yvanderv@opensource.altera.com" <yvanderv@opensource.altera.com>, "dinguyen@opensource.altera.com" <dinguyen@opensource.altera.com>
+To: Feng Kan <fkan@apm.com>
+Cc: patches <patches@apm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-> 
-> Hi Weike,
-> 
-> I tried out these patches on the current master branch (v3.17-rc2-9-g68e3702)
-> with a socfpga cyclone5 board.
-> 
-> If I apply all 3 patches, the kernel doesn't boot.
-> 
-> If I rebuild with only the first patch, I get only one gpio block showing up (should
-> have 3 for this board) and these messages:
-> 
-> 
-> How are you testing this?
-The patches try to not change the current OF flow, and from the log message, the other two GPIO registered failed due to duplicate name.
-Let me check the code to see what happen.
+On Thu, Jul 31, 2014 at 9:03 PM, Feng Kan <fkan@apm.com> wrote:
 
+> This patch add the GPIO controller in the APM X-Gene platform. The GPIO
+> controller pins are muxed with the generic flash controller pins on the
+> system.
+>
+> V6 Change:
+>         1. change attribute description of second cell in gpio dts node
+>            under documentation.
 
-> 
-> Alan
+Patches 1+2 applied to the GPIO tree.
+
+Patch 3 need to go through whatever tree handles this platform,
+but you can add my ACK.
+
+Yours,
+Linus Walleij
