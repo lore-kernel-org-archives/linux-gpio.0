@@ -1,31 +1,134 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V6 3/3] arm64:dts: Add APM X-Gene SoC GPIO controller DTS entries
-Date: Thu, 28 Aug 2014 14:22:33 +0200
-Message-ID: <CACRpkdZ2aYkSSG0QJgbwVxuWW=vine1LGtH7+savAnoWS7XHew@mail.gmail.com>
-References: <1406833407-28316-1-git-send-email-fkan@apm.com>
-	<1406833407-28316-4-git-send-email-fkan@apm.com>
+From: atull <atull@opensource.altera.com>
+Subject: Re: [PATCH 3/3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
+Date: Thu, 28 Aug 2014 10:01:02 -0500
+Message-ID: <alpine.DEB.2.02.1408280955560.26299@atx-linux-37>
+References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com> <1409161588-19417-4-git-send-email-alvin.chen@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:59462 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750890AbaH1MWd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Aug 2014 08:22:33 -0400
-Received: by mail-ob0-f173.google.com with SMTP id uy5so516471obc.18
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2014 05:22:33 -0700 (PDT)
-In-Reply-To: <1406833407-28316-4-git-send-email-fkan@apm.com>
+Received: from mail-bl2lp0205.outbound.protection.outlook.com ([207.46.163.205]:40840
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750896AbaH1PGt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Aug 2014 11:06:49 -0400
+In-Reply-To: <1409161588-19417-4-git-send-email-alvin.chen@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Feng Kan <fkan@apm.com>
-Cc: patches <patches@apm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Weike Chen <alvin.chen@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Mika Westerberg <mika.westerberg@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>
 
-On Thu, Jul 31, 2014 at 9:03 PM, Feng Kan <fkan@apm.com> wrote:
+On Wed, 27 Aug 2014, Weike Chen wrote:
 
-> Add gpio dts node for APM X-Gene SoC platform.
->
-> Signed-off-by: Feng Kan <fkan@apm.com>
+> This patch enables suspend and resume mode for the power management, and
+> it is based on Josef Ahmad's previous work.
+> 
+> Reviewed-by: Hock Leong Kweh <hock.leong.kweh@intel.com>
+> Reviewed-by: Shevchenko, Andriy <andriy.shevchenko@intel.com>
+> Signed-off-by: Weike Chen <alvin.chen@intel.com>
+> ---
+>  drivers/gpio/gpio-dwapb.c |   67 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index e0ab988..1055cb3 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -560,10 +560,77 @@ static const struct of_device_id dwapb_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, dwapb_of_match);
+>  
+> +#if defined CONFIG_PM_SLEEP
+> +/* Store GPIO context across system-wide suspend/resume transitions */
+> +static struct gpio_saved_regs {
+> +	unsigned long data;
+> +	unsigned long dir;
+> +	unsigned long int_en;
+> +	unsigned long int_mask;
+> +	unsigned long int_type;
+> +	unsigned long int_pol;
+> +	unsigned long int_deb;
+> +} saved_regs;
+> +
+> +static int dwapb_gpio_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
+> +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&bgc->lock, flags);
+> +
+> +	saved_regs.int_mask	= dwapb_read(gpio, GPIO_INTMASK);
+> +	saved_regs.int_en	= dwapb_read(gpio, GPIO_INTEN);
+> +	saved_regs.int_deb	= dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
+> +	saved_regs.int_pol	= dwapb_read(gpio, GPIO_INT_POLARITY);
+> +	saved_regs.int_type	= dwapb_read(gpio, GPIO_INTTYPE_LEVEL);
+> +	saved_regs.dir		= dwapb_read(gpio, GPIO_SWPORTA_DDR);
+> +	saved_regs.data		= dwapb_read(gpio, GPIO_SWPORTA_DR);
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Hello,
 
-Yours,
-Linus Walleij
+The DesignWare GPIO IP can be configured to have ports a, b, c, and d. So 
+you will need to save and restore any ports that are present.  I think 
+that *some* configurations of the IP include a register that can tell us 
+how it was configured, but that register is also optional :)  I don't have 
+confidence that we can read/write the registers blindly whether they are 
+known to be there or not.  So you may be stuck with looking at the
+device tree or platform data to know whether banks b, c, or d exist.
+
+Alan
+
+> +
+> +	/* Mask out interrupts */
+> +	dwapb_write(gpio, GPIO_INTMASK, 0xffffffff);
+> +
+> +	spin_unlock_irqrestore(&bgc->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dwapb_gpio_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
+> +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&bgc->lock, flags);
+> +
+> +	dwapb_write(gpio, GPIO_SWPORTA_DR, saved_regs.data);
+> +	dwapb_write(gpio, GPIO_SWPORTA_DDR, saved_regs.dir);
+> +	dwapb_write(gpio, GPIO_INTTYPE_LEVEL, saved_regs.int_type);
+> +	dwapb_write(gpio, GPIO_INT_POLARITY, saved_regs.int_pol);
+> +	dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, saved_regs.int_deb);
+> +	dwapb_write(gpio, GPIO_INTEN, saved_regs.int_en);
+> +	dwapb_write(gpio, GPIO_INTMASK, saved_regs.int_mask);
+> +
+> +	/* Clear out spurious interrupts */
+> +	dwapb_write(gpio, GPIO_PORTA_EOI, 0xffffffff);
+> +
+> +	spin_unlock_irqrestore(&bgc->lock, flags);
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static SIMPLE_DEV_PM_OPS(dwapb_gpio_pm_ops, dwapb_gpio_suspend,
+> +			 dwapb_gpio_resume);
+> +
+>  static struct platform_driver dwapb_gpio_driver = {
+>  	.driver		= {
+>  		.name	= "gpio-dwapb",
+>  		.owner	= THIS_MODULE,
+> +		.pm	= &dwapb_gpio_pm_ops,
+>  		.of_match_table = of_match_ptr(dwapb_of_match),
+>  	},
+>  	.probe		= dwapb_gpio_probe,
+> -- 
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
