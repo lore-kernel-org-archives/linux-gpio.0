@@ -1,124 +1,126 @@
-From: atull <atull@opensource.altera.com>
-Subject: Re: [PATCH 2/3] GPIO: gpio-dwapb: Support Debounce
-Date: Thu, 28 Aug 2014 10:11:56 -0500
-Message-ID: <alpine.DEB.2.02.1408281007290.26299@atx-linux-37>
-References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com> <1409161588-19417-3-git-send-email-alvin.chen@intel.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2 0/3] gpio: syscon: reuse for keystone 2 socs
+Date: Thu, 28 Aug 2014 20:32:25 +0300
+Message-ID: <53FF67A9.4080504@ti.com>
+References: <53ECE9B1.4060303@ti.com> <1408638203-8246-1-git-send-email-grygorii.strashko@ti.com> <1408639874.873856101@f420.i.mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1blp0189.outbound.protection.outlook.com ([207.46.163.189]:9281
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751938AbaH1PR2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 Aug 2014 11:17:28 -0400
-In-Reply-To: <1409161588-19417-3-git-send-email-alvin.chen@intel.com>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:54999 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750958AbaH1RdD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Aug 2014 13:33:03 -0400
+In-Reply-To: <1408639874.873856101@f420.i.mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Weike Chen <alvin.chen@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Mika Westerberg <mika.westerberg@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>
+To: Alexander Shiyan <shc_work@mail.ru>, Linus Walleij <linus.walleij@linaro.org>, santosh.shilimkar@ti.com
+Cc: Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Wed, 27 Aug 2014, Weike Chen wrote:
+Hi Alexander, All,
 
-> This patch enables 'debounce' for the designware GPIO, and
-> it is based on Josef Ahmad's previous work.
-> 
-> Reviewed-by: Hock Leong Kweh <hock.leong.kweh@intel.com>
-> Reviewed-by: Shevchenko, Andriy <andriy.shevchenko@intel.com>
-> Signed-off-by: Weike Chen <alvin.chen@intel.com>
-> ---
->  drivers/gpio/gpio-dwapb.c |   42 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 155a64b..e0ab988 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -36,6 +36,7 @@
->  #define GPIO_INTTYPE_LEVEL	0x38
->  #define GPIO_INT_POLARITY	0x3c
->  #define GPIO_INTSTATUS		0x40
-> +#define GPIO_PORTA_DEBOUNCE	0x48
->  #define GPIO_PORTA_EOI		0x4c
->  #define GPIO_EXT_PORTA		0x50
->  #define GPIO_EXT_PORTB		0x54
-> @@ -64,6 +65,23 @@ struct dwapb_gpio {
->  	const struct dwapb_gpio_platform_data	*pdata;
->  };
->  
-> +static inline u32 dwapb_read(struct dwapb_gpio *gpio, unsigned int offset)
-> +{
-> +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
-> +	void __iomem *reg_base	= gpio->regs;
-> +
-> +	return bgc->read_reg(reg_base + offset);
-> +}
-> +
-> +static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
-> +			       u32 val)
-> +{
-> +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
-> +	void __iomem *reg_base	= gpio->regs;
-> +
-> +	bgc->write_reg(reg_base + offset, val);
-> +}
-> +
+On 08/21/2014 07:51 PM, Alexander Shiyan wrote:
+> Thu, 21 Aug 2014 19:23:20 +0300 =D0=BE=D1=82 Grygorii Strashko <grygo=
+rii.strashko@ti.com>:
+>> Hi All,
+>>
+>> Alexander,
+>>
+>> I've updated gpio-syscon as requested in [3].
+>> I still don't like it, but any way I did it :(
+>>
+>> Linus,
+>>
+>> I'd very appreciated if you can comment on these series.
+>> Personally, I like v1 [3], because this v2 is not elegant and will
+>> require constant code patching in case of adding new SoCs or new SoC=
+'s versions.
+>>
+>> This series intended to integrate Keystone 2 DSP GPIO controller fun=
+ctionality
+>> into gpio-syscon driver (drivers/gpio/gpio-syscon.c) as requested
+>> by Linus Walleij in [1].
+>>
+>> On Keystone SOCs, ARM host can send interrupts to DSP cores using th=
+e
+>> DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ sig=
+nals for
+>> each DSP core. This is one of the component used by the IPC mechanis=
+m used
+>> on Keystone SOCs.
+>>
+>> Keystone 2 DSP GPIO controller has specific features:
+>> - each GPIO can be configured only as output pin;
+>> - setting GPIO value to 1 causes IRQ generation on target DSP core;
+>> - reading pin value returns 0 - if IRQ was handled or 1 - IRQ is sti=
+ll
+>>    pending.
+>>
+>> The gpio-syscon driver was need to be updated to satisfy Keystone 2 =
+SoC
+>> requirements:
+>> - special sequence of operations need to be used to assign output GP=
+IO value.
+>>     As result, first patch introduces SoC specific callback .set() t=
+o configure
+>>     output GPIO value.
+>>
+>> Also, patch 3 was added to illustrate DSP GPIO configuration in DT u=
+sed by Keystone 2.
+>>
+>> Related sicussions:
+>>   [1] https://lkml.org/lkml/2014/7/16/170
+>>   [2] https://lkml.org/lkml/2014/7/23/352
+>>   [3] https://www.mail-archive.com/devicetree@vger.kernel.org/msg378=
+63.html
+>>
+>> Grygorii Strashko (3):
+>>    gpio: syscon: add soc specific callback to assign output value
+>>    gpio: syscon: reuse for keystone 2 socs
+>>    ARM: dts: keystone-k2hk: add dsp gpio controllers nodes
+>>
+>>   .../bindings/gpio/gpio-mctrl-keystone.txt          |   42 ++++++
+>>   arch/arm/boot/dts/k2hk.dtsi                        |   48 +++++++
+>>   drivers/gpio/gpio-syscon.c                         |  140 ++++++++=
+++++++++++++
+>>   3 files changed, 230 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mct=
+rl-keystone.txt
+>=20
+> 1. mctrl -> dsp in filenames
+> 2. mctrl -> dsp in documentation.
+> 3. Here is a more elegant solution for first part.
+>=20
+> --- gpio-syscon.c.old	2014-08-19 09:46:09.000000000 +0400
+> +++ gpio-syscon.c	2014-08-21 20:45:49.357529323 +0400
+> @@ -111,7 +111,7 @@
+>   				   BIT(offs % SYSCON_REG_BITS));
+>   	}
+>  =20
+> -	syscon_gpio_set(chip, offset, val);
+> +	priv->data->set(chip, offset, val);
+>  =20
+>   	return 0;
+>   }
+> @@ -159,7 +159,7 @@
+>   	if (priv->data->flags & GPIO_SYSCON_FEAT_IN)
+>   		priv->chip.direction_input =3D syscon_gpio_dir_in;
+>   	if (priv->data->flags & GPIO_SYSCON_FEAT_OUT) {
+> -		priv->chip.set =3D syscon_gpio_set;
+> +		priv->chip.set =3D priv->data->set ? : syscon_gpio_set;
+>   		priv->chip.direction_output =3D syscon_gpio_dir_out;
+>   	}
 
-Hello,
+yep. It's better.
 
-I don't understand the reason for adding dwapb_read and dwapb_write here.  
-The rest of the driver is using readl and writel.  I'd rather not see two 
-different methods being used in the same driver for register access.  
-Maybe I'm missing something, but if we need to add dwapb_read/write, then
-it should be used for all register access.
+Thanks for your comments.
+I'll wait few days with hope to get some comments from comunity
+(as I'm still thinking v1 is better :) then will update it and re-send.
 
-Alan
-
->  static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
->  {
->  	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-> @@ -209,6 +227,29 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
->  	return 0;
->  }
->  
-> +static int dwapb_gpio_set_debounce(struct gpio_chip *gc,
-> +				   unsigned offset, unsigned debounce)
-> +{
-> +	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-> +	struct dwapb_gpio_port *port =
-> +			container_of(bgc, struct dwapb_gpio_port, bgc);
-> +	struct dwapb_gpio *gpio = port->gpio;
-> +	unsigned long flags, val_deb;
-> +	unsigned long mask = bgc->pin2mask(bgc, offset);
-> +
-> +	spin_lock_irqsave(&bgc->lock, flags);
-> +
-> +	val_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
-> +	if (debounce)
-> +		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, mask | val_deb);
-> +	else
-> +		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, ~mask & val_deb);
-> +
-> +	spin_unlock_irqrestore(&bgc->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
->  static irqreturn_t dwapb_irq_handler_mfd(int irq, void *dev_id)
->  {
->  	struct irq_desc *desc = irq_to_desc(irq);
-> @@ -342,6 +383,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
->  
->  	port->bgc.gc.ngpio = pp->ngpio;
->  	port->bgc.gc.base = pp->gpio_base;
-> +	port->bgc.gc.set_debounce = dwapb_gpio_set_debounce;
->  
->  	/*
->  	 * Only port A can provide interrupts in all configurations of the IP.
-> -- 
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Regards,
+-grygorii
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
