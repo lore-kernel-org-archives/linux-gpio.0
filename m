@@ -1,67 +1,111 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 1/2][v5] gpiolib: allow simultaneous setting of multiple
- GPIO outputs
-Date: Fri, 29 Aug 2014 10:15:14 +0200
-Message-ID: <20140829081514.GA1329@katana>
-References: <25983307.ZjJOfz2Kpg@pcimr>
- <CAAVeFuJmHkXOa6d8ZN8LBVK=mM_HA_U0QQ0kqbkcaq11ELCrFQ@mail.gmail.com>
- <20140731071235.GH3407@book.gsilab.sittig.org>
- <12452684.GmmEHEPXzu@pcimr>
- <CACRpkdZnzVqNm8EoKDSt_LsP0bta8FQYnif4ou+ngFyD-4x-YQ@mail.gmail.com>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: [PATCH v2 2/2] gpio: zynq: Take bank offset into account when
+ reporting a IRQ
+Date: Fri, 29 Aug 2014 11:33:31 +0200
+Message-ID: <540048EB.7000801@monstr.eu>
+References: <1408355696-9998-1-git-send-email-lars@metafoo.de>	<1408355696-9998-2-git-send-email-lars@metafoo.de>	<CACRpkdbWt-ns3xDFYR1P7i40J57x0z51MmPoZ36WOq2j0638Yw@mail.gmail.com>	<53F5F461.8060104@metafoo.de> <CACRpkdYXSj5suu+-mosReFKKJVf_ibaD2R4QG=BWdpBc9nzF4A@mail.gmail.com> <54002D0B.8080509@metafoo.de>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+ protocol="application/pgp-signature";
+ boundary="f4sIKLw19X7pcLXAeJSt9TcS9fQPgNLLJ"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:44016 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752746AbaH2IPM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 29 Aug 2014 04:15:12 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZnzVqNm8EoKDSt_LsP0bta8FQYnif4ou+ngFyD-4x-YQ@mail.gmail.com>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:50992 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752531AbaH2Jdf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 05:33:35 -0400
+Received: by mail-wi0-f169.google.com with SMTP id n3so540161wiv.0
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Aug 2014 02:33:33 -0700 (PDT)
+In-Reply-To: <54002D0B.8080509@metafoo.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rojhalat Ibrahim <imr@rtschenk.de>, Gerhard Sittig <gsi@denx.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>
+To: Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, =?UTF-8?B?U8O2cmVuIEJyaW5rbWE=?= =?UTF-8?B?bm4=?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--f4sIKLw19X7pcLXAeJSt9TcS9fQPgNLLJ
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
+Hi Lars and Linus,
 
-> > So, Linus, would a patched version of one of the mentioned drivers qual=
-ify as
-> > a user that would allow you to merge my patch?
+On 08/29/2014 09:34 AM, Lars-Peter Clausen wrote:
+> On 08/29/2014 09:20 AM, Linus Walleij wrote:
+>> On Thu, Aug 21, 2014 at 3:30 PM, Lars-Peter Clausen <lars@metafoo.de> =
+wrote:
+>>> On 08/21/2014 02:40 PM, Linus Walleij wrote:
+>>>>
+>>>> On Mon, Aug 18, 2014 at 4:54 AM, Lars-Peter Clausen <lars@metafoo.de=
+>
+>>>> wrote:
+>>>>
+>>>>> When looking up the IRQ the bank offset needs to be taken into acco=
+unt.
+>>>>> Otherwise interrupts for banks other than bank 0 get incorrectly re=
+ported
+>>>>> as
+>>>>> interrupts for bank 0.
+>>>>>
+>>>>> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+>>>>> ---
+>>>>> Changes since v1:
+>>>>>           * Use lookup table instead of switch-case.
+>>>>
+>>>>
+>>>> I tried to apply this, but it doesn't apply on top of the other patc=
+h
+>>>> "gpio: zynq: Fix IRQ handlers" that I have queued for fixes.
+>>>
+>>>
+>>> Works fine for me. Did you try to apply both patch 1 and 2 of this se=
+ries or
+>>> just patch 2?
+>>
+>> Yes, and on my fixes branch, as well as on Torvald's master (which now=
+
+>> has patch 1/2) this happens:
+>>
+>> ]$ git am --signoff zynq2.patch
+>> Applying: gpio: zynq: Take bank offset into account when reporting a I=
+RQ
+>> error: patch failed: drivers/gpio/gpio-zynq.c:461
+>> error: drivers/gpio/gpio-zynq.c: patch does not apply
+>> Patch failed at 0001 gpio: zynq: Take bank offset into account when
+>> reporting a IRQ
+>>
+>> Can you please test applying this patch only on upstream this and figu=
+re
+>> out what is wrong?
 >=20
-> I think so. My concern is with code that doesn't get exercised, anywhere.
+> I think there is some confusion here, maybe two different series got mi=
+xed up. Patch 1 of this series is "gpio: zynq: Reduce level of indention =
+in zynq_gpio_irqhandler()", which you just applied, but which is not in L=
+inus' tree or the public gpio tree yet.
 
-If we have a gpio-chardev somewhen, I know a bunch of industrial
-customers who will love it. It always feels a bit awkward to tell them
-they have to fiddle with bits individually if they want to read out an
-ID byte or have paired GPIO for other reasons.
+I have no problem to apply that patches on the top of Linus tree.
+Here is the branch with that two patches.
+http://git.monstr.eu/?p=3Dlinux-2.6-microblaze.git;a=3Dshortlog;h=3Drefs/=
+heads/xnext/zynq-gpio
+
+Feel free to cherry pick them from this branch.
+
+Thanks,
+Michal
 
 
---82I3+IH0IqGh5yIs
+
+
+--f4sIKLw19X7pcLXAeJSt9TcS9fQPgNLLJ
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQIcBAEBAgAGBQJUADaRAAoJEBQN5MwUoCm2C5sQAKAAG1E27lPbDow6a0i/lIvi
-9/XorUEyXvj5LKq9j4qy6X+dxwXReqMNT7vmqpiNgb4kEu/YCPefgUzf3rx+lxZ8
-W+jM2r8yVkEJwI9cBXMU1C1srEZfKqQDZe4bI8nCZdzWVc2BCx821Z0tjaZXtFKP
-tAiZPcrAic/NXiCxAfuD435Sg95kb1GftWSU/vQfh4WA31jwSfclnUwdTMM7Y8KK
-Ud51GRvf5eZas80MiZqTp4hbdr9KZeGASwOvVRw8BHXKCBaQJ6xewktTer9SGG2H
-RarwgJVgmUUZTPzokj1ZXOHV2dsQ80Y69Z4ODbbBGIyUHmqFFpQdeBEy3BQGusoC
-0npEr5hlYYh2Rm331VEcMHHwa0gB/6Pi82gRPdv3QaMcy13kEaeBcWl1uQboZyIh
-2k6iVpA/cdf4PsYV9IqzExYxEz/tMZHwYI3wBWSm1UuOq//nmSZ8IQQ2UgU3t3dK
-/C6e2oe0p6byq/wNTkRR3SYDLO+uNyhXsxzECQc1LA7xAQSm0auQ26XidQ8BRywJ
-ND7WP/tz98qJlaUYBci8gwHDn2pYjVU/pgMW3uc23W9fqLGDKrOqtPjnm1UWoyeU
-QHYV28F0I0ZXQpOikt3n8eHPWQpFS7Nvcx9Uys+aBZCCej3PmDRO/YKtbarT1gjW
-880Iw4lcIv4DZKVmZ5Bq
-=C900
+iEYEARECAAYFAlQASOsACgkQykllyylKDCH3wwCfa8wYCyTXyo5ImBWea6+Cgakb
+590An26B9CBxdFFLHP4p2TR46jnaEapo
+=YOq6
 -----END PGP SIGNATURE-----
 
---82I3+IH0IqGh5yIs--
+--f4sIKLw19X7pcLXAeJSt9TcS9fQPgNLLJ--
