@@ -1,52 +1,62 @@
-From: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Subject: [PATCH 1/3] gpio: zynq: Mask non-wakeup GPIO interrupts on suspend
-Date: Fri, 29 Aug 2014 10:58:45 -0700
-Message-ID: <1409335127-26712-2-git-send-email-soren.brinkmann@xilinx.com>
-References: <1409335127-26712-1-git-send-email-soren.brinkmann@xilinx.com>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: [PATCH v2 0/3] mfd: add support for Diolan DLN-2
+Date: Sat, 30 Aug 2014 01:00:51 +0300
+Message-ID: <1409349654-24841-1-git-send-email-octavian.purdila@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:40402 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753482AbaH2R7D (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 13:59:03 -0400
-In-Reply-To: <1409335127-26712-1-git-send-email-soren.brinkmann@xilinx.com>
+Received: from mga11.intel.com ([192.55.52.93]:5490 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750896AbaH2WFZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 29 Aug 2014 18:05:25 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harinik@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Ezra Savard <ezras@xilinx.com>, Ezra Savard <ezra.savard@xilinx.com>
+To: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org
+Cc: arnd@arndb.de, johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, Octavian Purdila <octavian.purdila@intel.com>
 
-From: Ezra Savard <ezra.savard@xilinx.com>
+This patch series adds support for Diolan USB-I2C/GPIO Master Adapter DLN-2.
+Details about device can be found here:
 
-Added flag to the GPIO chip so that IRQ from non-wakeup GPIO will
-not wake the system.
+https://www.diolan.com/i2c/i2c_interface.html.
 
-Signed-off-by: Ezra Savard <ezra.savard@xilinx.com>
-Reviewed-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
----
- drivers/gpio/gpio-zynq.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Changes since v1:
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index dccadea9d830..d80d722529ad 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -451,7 +451,8 @@ static struct irq_chip zynq_gpio_level_irqchip = {
- 	.irq_unmask	= zynq_gpio_irq_unmask,
- 	.irq_set_type	= zynq_gpio_set_irq_type,
- 	.irq_set_wake	= zynq_gpio_set_wake,
--	.flags		= IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED,
-+	.flags		= IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED |
-+			  IRQCHIP_MASK_ON_SUSPEND,
- };
- 
- static struct irq_chip zynq_gpio_edge_irqchip = {
-@@ -462,6 +463,7 @@ static struct irq_chip zynq_gpio_edge_irqchip = {
- 	.irq_unmask	= zynq_gpio_irq_unmask,
- 	.irq_set_type	= zynq_gpio_set_irq_type,
- 	.irq_set_wake	= zynq_gpio_set_wake,
-+	.flags		= IRQCHIP_MASK_ON_SUSPEND,
- };
- 
- static void zynq_gpio_handle_bank_irq(struct zynq_gpio *gpio,
+ * rewrite the drivers as an MFD
+
+ * rewrite the irq part of the gpio driver to use GPIOLIB_IRQCHIP 
+
+ * cleanup the I/O interface 
+
+ * various fixes and cleanps: check received message sizes before
+   parsing, error handling for usb_submit_urb, check URB status, use
+   single bit manipulation functions instead of bitmap_*, move
+   GFP_KERNEL URB submit away from under lock
+
+
+
+Daniel Baluta (1):
+  gpio: add support for the Diolan DLN-2 USB GPIO driver
+
+Laurentiu Palcu (1):
+  i2c: add support for Diolan DLN-2 USB-I2C adapter
+
+Octavian Purdila (1):
+  mfd: add support for Diolan DLN-2 devices
+
+ drivers/gpio/Kconfig          |  12 +
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-dln2.c      | 506 ++++++++++++++++++++++++++++++++
+ drivers/i2c/busses/Kconfig    |  10 +
+ drivers/i2c/busses/Makefile   |   1 +
+ drivers/i2c/busses/i2c-dln2.c | 300 +++++++++++++++++++
+ drivers/mfd/Kconfig           |   9 +
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/dln2.c            | 652 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/dln2.h      |  64 +++++
+ 10 files changed, 1556 insertions(+)
+ create mode 100644 drivers/gpio/gpio-dln2.c
+ create mode 100644 drivers/i2c/busses/i2c-dln2.c
+ create mode 100644 drivers/mfd/dln2.c
+ create mode 100644 include/linux/mfd/dln2.h
+
 -- 
-2.1.0.1.g27b9230
+1.9.1
 
