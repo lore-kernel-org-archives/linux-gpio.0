@@ -1,111 +1,65 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: [PATCH v2 2/2] gpio: zynq: Take bank offset into account when
- reporting a IRQ
-Date: Fri, 29 Aug 2014 11:33:31 +0200
-Message-ID: <540048EB.7000801@monstr.eu>
-References: <1408355696-9998-1-git-send-email-lars@metafoo.de>	<1408355696-9998-2-git-send-email-lars@metafoo.de>	<CACRpkdbWt-ns3xDFYR1P7i40J57x0z51MmPoZ36WOq2j0638Yw@mail.gmail.com>	<53F5F461.8060104@metafoo.de> <CACRpkdYXSj5suu+-mosReFKKJVf_ibaD2R4QG=BWdpBc9nzF4A@mail.gmail.com> <54002D0B.8080509@metafoo.de>
-Reply-To: monstr@monstr.eu
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/4] mmc: slot-gpio: switch to use flags when getting GPIO
+Date: Fri, 29 Aug 2014 14:16:21 +0200
+Message-ID: <CAPDyKFqw2N9zg41iz=qo3kQghmdYpafYdy545NYuu-Ji6pJELQ@mail.gmail.com>
+References: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="f4sIKLw19X7pcLXAeJSt9TcS9fQPgNLLJ"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:50992 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752531AbaH2Jdf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 05:33:35 -0400
-Received: by mail-wi0-f169.google.com with SMTP id n3so540161wiv.0
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Aug 2014 02:33:33 -0700 (PDT)
-In-Reply-To: <54002D0B.8080509@metafoo.de>
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:40760 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751709AbaH2MQX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 08:16:23 -0400
+Received: by mail-lb0-f176.google.com with SMTP id s7so2420798lbd.7
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Aug 2014 05:16:22 -0700 (PDT)
+In-Reply-To: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, =?UTF-8?B?U8O2cmVuIEJyaW5rbWE=?= =?UTF-8?B?bm4=?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, linux-gpio@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---f4sIKLw19X7pcLXAeJSt9TcS9fQPgNLLJ
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi Lars and Linus,
-
-On 08/29/2014 09:34 AM, Lars-Peter Clausen wrote:
-> On 08/29/2014 09:20 AM, Linus Walleij wrote:
->> On Thu, Aug 21, 2014 at 3:30 PM, Lars-Peter Clausen <lars@metafoo.de> =
-wrote:
->>> On 08/21/2014 02:40 PM, Linus Walleij wrote:
->>>>
->>>> On Mon, Aug 18, 2014 at 4:54 AM, Lars-Peter Clausen <lars@metafoo.de=
+On 27 August 2014 13:00, Linus Walleij <linus.walleij@linaro.org> wrote:
+> When the slot GPIO driver gets the GPIO to be used for card
+> detect, it is now possible to specify a flag to have the line
+> set up as input. Get rid of the explicit setup call for input
+> and use the flag.
 >
->>>> wrote:
->>>>
->>>>> When looking up the IRQ the bank offset needs to be taken into acco=
-unt.
->>>>> Otherwise interrupts for banks other than bank 0 get incorrectly re=
-ported
->>>>> as
->>>>> interrupts for bank 0.
->>>>>
->>>>> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
->>>>> ---
->>>>> Changes since v1:
->>>>>           * Use lookup table instead of switch-case.
->>>>
->>>>
->>>> I tried to apply this, but it doesn't apply on top of the other patc=
-h
->>>> "gpio: zynq: Fix IRQ handlers" that I have queued for fixes.
->>>
->>>
->>> Works fine for me. Did you try to apply both patch 1 and 2 of this se=
-ries or
->>> just patch 2?
->>
->> Yes, and on my fixes branch, as well as on Torvald's master (which now=
+> The extra argument works as there are transition varargs
+> macros in place in the <linux/gpio/consumer.h> header, in
+> the future we will make the flags argument compulsory.
+>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
->> has patch 1/2) this happens:
->>
->> ]$ git am --signoff zynq2.patch
->> Applying: gpio: zynq: Take bank offset into account when reporting a I=
-RQ
->> error: patch failed: drivers/gpio/gpio-zynq.c:461
->> error: drivers/gpio/gpio-zynq.c: patch does not apply
->> Patch failed at 0001 gpio: zynq: Take bank offset into account when
->> reporting a IRQ
->>
->> Can you please test applying this patch only on upstream this and figu=
-re
->> out what is wrong?
->=20
-> I think there is some confusion here, maybe two different series got mi=
-xed up. Patch 1 of this series is "gpio: zynq: Reduce level of indention =
-in zynq_gpio_irqhandler()", which you just applied, but which is not in L=
-inus' tree or the public gpio tree yet.
+Thanks! Applied for next.
 
-I have no problem to apply that patches on the top of Linus tree.
-Here is the branch with that two patches.
-http://git.monstr.eu/?p=3Dlinux-2.6-microblaze.git;a=3Dshortlog;h=3Drefs/=
-heads/xnext/zynq-gpio
+Kind regards
+Uffe
 
-Feel free to cherry pick them from this branch.
-
-Thanks,
-Michal
-
-
-
-
---f4sIKLw19X7pcLXAeJSt9TcS9fQPgNLLJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAlQASOsACgkQykllyylKDCH3wwCfa8wYCyTXyo5ImBWea6+Cgakb
-590An26B9CBxdFFLHP4p2TR46jnaEapo
-=YOq6
------END PGP SIGNATURE-----
-
---f4sIKLw19X7pcLXAeJSt9TcS9fQPgNLLJ--
+> ---
+>  drivers/mmc/core/slot-gpio.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+> index 5f89cb83d5f0..908c2b29e79f 100644
+> --- a/drivers/mmc/core/slot-gpio.c
+> +++ b/drivers/mmc/core/slot-gpio.c
+> @@ -308,14 +308,10 @@ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
+>         if (!con_id)
+>                 con_id = ctx->cd_label;
+>
+> -       desc = devm_gpiod_get_index(host->parent, con_id, idx);
+> +       desc = devm_gpiod_get_index(host->parent, con_id, idx, GPIOD_IN);
+>         if (IS_ERR(desc))
+>                 return PTR_ERR(desc);
+>
+> -       ret = gpiod_direction_input(desc);
+> -       if (ret < 0)
+> -               return ret;
+> -
+>         if (debounce) {
+>                 ret = gpiod_set_debounce(desc, debounce);
+>                 if (ret < 0)
+> --
+> 1.9.3
+>
