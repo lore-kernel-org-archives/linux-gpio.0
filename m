@@ -1,54 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] gpio: syscon: add soc specific callback to assign
- output value
-Date: Fri, 29 Aug 2014 08:19:13 +0200
-Message-ID: <CACRpkdaq2=f92yEEZgGHOtixDk35O9tmN2PZkSPKrGwGVDS_mQ@mail.gmail.com>
-References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com>
-	<1407946582-20927-2-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: pxa: Documentation: provide example bindings for PXA3xx
+Date: Fri, 29 Aug 2014 08:21:10 +0200
+Message-ID: <CACRpkdb3g3Zh625ffGPzuVNhqso=u9mOVJgaqs3hyqJK8Bb5sw@mail.gmail.com>
+References: <1408009224-15838-1-git-send-email-zonque@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:36731 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751578AbaH2GTO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 02:19:14 -0400
-Received: by mail-oi0-f41.google.com with SMTP id u20so1311654oif.14
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2014 23:19:13 -0700 (PDT)
-In-Reply-To: <1407946582-20927-2-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:59576 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750983AbaH2GVL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 02:21:11 -0400
+Received: by mail-oi0-f42.google.com with SMTP id v63so1307443oia.29
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2014 23:21:11 -0700 (PDT)
+In-Reply-To: <1408009224-15838-1-git-send-email-zonque@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Alexander Shiyan <shc_work@mail.ru>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Daniel Mack <zonque@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Aug 13, 2014 at 6:16 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Thu, Aug 14, 2014 at 11:40 AM, Daniel Mack <zonque@gmail.com> wrote:
 
-> Some SoCs (like Keystone) may require to perform special
-> sequence of operations to assign output GPIO value, so default
-> implementation of .set() callback from gpio-syscon driver
-> can't be used.
+> Add another example to describe bindings that work for PXA3xx boards.
 >
-> Hence, add optional, SoC specific callback to assign output
-> gpio value.
->
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Daniel Mack <zonque@gmail.com>
 
-Hm :-/
-
-I didn't realize this wasn't a quite so straight-forward a
-syscon GPIO driver.
-
-Now I start to think that it looks kludgy to bolt this onto
-the other driver and think we may need to go back to the
-other version which puts it as a separate driver. I guess
-that is what you refer to as v1?
-
-I have a hard time to make my mind up about these
-syscon things, sorry :-(
-
-Now I have to ask you: which way do you prefer to do it,
-if you can choose freely? The initial driver or augmenting
-the syscon driver (patch v1)?
+Patch applied.
 
 Yours,
 Linus Walleij
