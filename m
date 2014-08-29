@@ -1,53 +1,67 @@
-From: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH 2/3] GPIO: gpio-dwapb: Support Debounce
-Date: Fri, 29 Aug 2014 07:38:04 +0000
-Message-ID: <1409297883.30155.29.camel@intel.com>
-References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
-	 <1409161588-19417-3-git-send-email-alvin.chen@intel.com>
-	 <alpine.DEB.2.02.1408281007290.26299@atx-linux-37>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 1/2][v5] gpiolib: allow simultaneous setting of multiple
+ GPIO outputs
+Date: Fri, 29 Aug 2014 10:15:14 +0200
+Message-ID: <20140829081514.GA1329@katana>
+References: <25983307.ZjJOfz2Kpg@pcimr>
+ <CAAVeFuJmHkXOa6d8ZN8LBVK=mM_HA_U0QQ0kqbkcaq11ELCrFQ@mail.gmail.com>
+ <20140731071235.GH3407@book.gsilab.sittig.org>
+ <12452684.GmmEHEPXzu@pcimr>
+ <CACRpkdZnzVqNm8EoKDSt_LsP0bta8FQYnif4ou+ngFyD-4x-YQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:8204 "EHLO mga09.intel.com"
+Received: from sauhun.de ([89.238.76.85]:44016 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750800AbaH2Hjg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 29 Aug 2014 03:39:36 -0400
-In-Reply-To: <alpine.DEB.2.02.1408281007290.26299@atx-linux-37>
-Content-Language: en-US
-Content-ID: <DB08BCA516C8BA43817BDBC6326C36AB@intel.com>
+	id S1752746AbaH2IPM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 29 Aug 2014 04:15:12 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZnzVqNm8EoKDSt_LsP0bta8FQYnif4ou+ngFyD-4x-YQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "atull@opensource.altera.com" <atull@opensource.altera.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Chen, Alvin" <alvin.chen@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rojhalat Ibrahim <imr@rtschenk.de>, Gerhard Sittig <gsi@denx.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>
 
-T24gVGh1LCAyMDE0LTA4LTI4IGF0IDEwOjExIC0wNTAwLCBhdHVsbCB3cm90ZToNCj4gT24gV2Vk
-LCAyNyBBdWcgMjAxNCwgV2Vpa2UgQ2hlbiB3cm90ZToNCg0KW10NCg0KPiA+ICtzdGF0aWMgaW5s
-aW5lIHUzMiBkd2FwYl9yZWFkKHN0cnVjdCBkd2FwYl9ncGlvICpncGlvLCB1bnNpZ25lZCBpbnQg
-b2Zmc2V0KQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3QgYmdwaW9fY2hpcCAqYmdjCT0gJmdwaW8tPnBv
-cnRzWzBdLmJnYzsNCj4gPiArCXZvaWQgX19pb21lbSAqcmVnX2Jhc2UJPSBncGlvLT5yZWdzOw0K
-PiA+ICsNCj4gPiArCXJldHVybiBiZ2MtPnJlYWRfcmVnKHJlZ19iYXNlICsgb2Zmc2V0KTsNCj4g
-PiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSB2b2lkIGR3YXBiX3dyaXRlKHN0cnVjdCBk
-d2FwYl9ncGlvICpncGlvLCB1bnNpZ25lZCBpbnQgb2Zmc2V0LA0KPiA+ICsJCQkgICAgICAgdTMy
-IHZhbCkNCj4gPiArew0KPiA+ICsJc3RydWN0IGJncGlvX2NoaXAgKmJnYwk9ICZncGlvLT5wb3J0
-c1swXS5iZ2M7DQo+ID4gKwl2b2lkIF9faW9tZW0gKnJlZ19iYXNlCT0gZ3Bpby0+cmVnczsNCj4g
-PiArDQo+ID4gKwliZ2MtPndyaXRlX3JlZyhyZWdfYmFzZSArIG9mZnNldCwgdmFsKTsNCj4gPiAr
-fQ0KPiA+ICsNCj4gDQo+IEhlbGxvLA0KPiANCj4gSSBkb24ndCB1bmRlcnN0YW5kIHRoZSByZWFz
-b24gZm9yIGFkZGluZyBkd2FwYl9yZWFkIGFuZCBkd2FwYl93cml0ZSBoZXJlLiAgDQo+IFRoZSBy
-ZXN0IG9mIHRoZSBkcml2ZXIgaXMgdXNpbmcgcmVhZGwgYW5kIHdyaXRlbC4gIEknZCByYXRoZXIg
-bm90IHNlZSB0d28gDQo+IGRpZmZlcmVudCBtZXRob2RzIGJlaW5nIHVzZWQgaW4gdGhlIHNhbWUg
-ZHJpdmVyIGZvciByZWdpc3RlciBhY2Nlc3MuICANCj4gTWF5YmUgSSdtIG1pc3Npbmcgc29tZXRo
-aW5nLCBidXQgaWYgd2UgbmVlZCB0byBhZGQgZHdhcGJfcmVhZC93cml0ZSwgdGhlbg0KPiBpdCBz
-aG91bGQgYmUgdXNlZCBmb3IgYWxsIHJlZ2lzdGVyIGFjY2Vzcy4NCg0KQWxhbiwgaXQgd2FzIG15
-IHByb3Bvc2FsLiBJIHJhdGhlciBhZ3JlZSB0aGF0IGlzIGJldHRlciB0byBjb252ZXJ0IGFsbA0K
-YWNjZXNzZXMgdG8gdGhhdC4NCg0KLS0gDQpBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hl
-bmtvQGludGVsLmNvbT4NCkludGVsIEZpbmxhbmQgT3kNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpJbnRlbCBGaW5s
-YW5kIE95ClJlZ2lzdGVyZWQgQWRkcmVzczogUEwgMjgxLCAwMDE4MSBIZWxzaW5raSAKQnVzaW5l
-c3MgSWRlbnRpdHkgQ29kZTogMDM1NzYwNiAtIDQgCkRvbWljaWxlZCBpbiBIZWxzaW5raSAKClRo
-aXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1h
-dGVyaWFsIGZvcgp0aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChzKS4gQW55
-IHJldmlldyBvciBkaXN0cmlidXRpb24KYnkgb3RoZXJzIGlzIHN0cmljdGx5IHByb2hpYml0ZWQu
-IElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZApyZWNpcGllbnQsIHBsZWFzZSBjb250YWN0IHRo
-ZSBzZW5kZXIgYW5kIGRlbGV0ZSBhbGwgY29waWVzLgo=
 
+--82I3+IH0IqGh5yIs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > So, Linus, would a patched version of one of the mentioned drivers qual=
+ify as
+> > a user that would allow you to merge my patch?
+>=20
+> I think so. My concern is with code that doesn't get exercised, anywhere.
+
+If we have a gpio-chardev somewhen, I know a bunch of industrial
+customers who will love it. It always feels a bit awkward to tell them
+they have to fiddle with bits individually if they want to read out an
+ID byte or have paired GPIO for other reasons.
+
+
+--82I3+IH0IqGh5yIs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUADaRAAoJEBQN5MwUoCm2C5sQAKAAG1E27lPbDow6a0i/lIvi
+9/XorUEyXvj5LKq9j4qy6X+dxwXReqMNT7vmqpiNgb4kEu/YCPefgUzf3rx+lxZ8
+W+jM2r8yVkEJwI9cBXMU1C1srEZfKqQDZe4bI8nCZdzWVc2BCx821Z0tjaZXtFKP
+tAiZPcrAic/NXiCxAfuD435Sg95kb1GftWSU/vQfh4WA31jwSfclnUwdTMM7Y8KK
+Ud51GRvf5eZas80MiZqTp4hbdr9KZeGASwOvVRw8BHXKCBaQJ6xewktTer9SGG2H
+RarwgJVgmUUZTPzokj1ZXOHV2dsQ80Y69Z4ODbbBGIyUHmqFFpQdeBEy3BQGusoC
+0npEr5hlYYh2Rm331VEcMHHwa0gB/6Pi82gRPdv3QaMcy13kEaeBcWl1uQboZyIh
+2k6iVpA/cdf4PsYV9IqzExYxEz/tMZHwYI3wBWSm1UuOq//nmSZ8IQQ2UgU3t3dK
+/C6e2oe0p6byq/wNTkRR3SYDLO+uNyhXsxzECQc1LA7xAQSm0auQ26XidQ8BRywJ
+ND7WP/tz98qJlaUYBci8gwHDn2pYjVU/pgMW3uc23W9fqLGDKrOqtPjnm1UWoyeU
+QHYV28F0I0ZXQpOikt3n8eHPWQpFS7Nvcx9Uys+aBZCCej3PmDRO/YKtbarT1gjW
+880Iw4lcIv4DZKVmZ5Bq
+=C900
+-----END PGP SIGNATURE-----
+
+--82I3+IH0IqGh5yIs--
