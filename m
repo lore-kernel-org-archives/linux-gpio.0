@@ -1,65 +1,53 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v2 2/2] gpio: zynq: Take bank offset into account when
- reporting a IRQ
-Date: Fri, 29 Aug 2014 09:34:35 +0200
-Message-ID: <54002D0B.8080509@metafoo.de>
-References: <1408355696-9998-1-git-send-email-lars@metafoo.de>	<1408355696-9998-2-git-send-email-lars@metafoo.de>	<CACRpkdbWt-ns3xDFYR1P7i40J57x0z51MmPoZ36WOq2j0638Yw@mail.gmail.com>	<53F5F461.8060104@metafoo.de> <CACRpkdYXSj5suu+-mosReFKKJVf_ibaD2R4QG=BWdpBc9nzF4A@mail.gmail.com>
+From: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH 2/3] GPIO: gpio-dwapb: Support Debounce
+Date: Fri, 29 Aug 2014 07:38:04 +0000
+Message-ID: <1409297883.30155.29.camel@intel.com>
+References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
+	 <1409161588-19417-3-git-send-email-alvin.chen@intel.com>
+	 <alpine.DEB.2.02.1408281007290.26299@atx-linux-37>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp-out-116.synserver.de ([212.40.185.116]:1094 "EHLO
-	smtp-out-111.synserver.de" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751709AbaH2Hei (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 29 Aug 2014 03:34:38 -0400
-In-Reply-To: <CACRpkdYXSj5suu+-mosReFKKJVf_ibaD2R4QG=BWdpBc9nzF4A@mail.gmail.com>
+Received: from mga09.intel.com ([134.134.136.24]:8204 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750800AbaH2Hjg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 29 Aug 2014 03:39:36 -0400
+In-Reply-To: <alpine.DEB.2.02.1408281007290.26299@atx-linux-37>
+Content-Language: en-US
+Content-ID: <DB08BCA516C8BA43817BDBC6326C36AB@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harini.katakam@xilinx.com>, =?UTF-8?B?U8O2cmVuIEJyaW5rbWE=?= =?UTF-8?B?bm4=?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "atull@opensource.altera.com" <atull@opensource.altera.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Chen, Alvin" <alvin.chen@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>
 
-On 08/29/2014 09:20 AM, Linus Walleij wrote:
-> On Thu, Aug 21, 2014 at 3:30 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
->> On 08/21/2014 02:40 PM, Linus Walleij wrote:
->>>
->>> On Mon, Aug 18, 2014 at 4:54 AM, Lars-Peter Clausen <lars@metafoo.de>
->>> wrote:
->>>
->>>> When looking up the IRQ the bank offset needs to be taken into account.
->>>> Otherwise interrupts for banks other than bank 0 get incorrectly reported
->>>> as
->>>> interrupts for bank 0.
->>>>
->>>> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
->>>> ---
->>>> Changes since v1:
->>>>           * Use lookup table instead of switch-case.
->>>
->>>
->>> I tried to apply this, but it doesn't apply on top of the other patch
->>> "gpio: zynq: Fix IRQ handlers" that I have queued for fixes.
->>
->>
->> Works fine for me. Did you try to apply both patch 1 and 2 of this series or
->> just patch 2?
->
-> Yes, and on my fixes branch, as well as on Torvald's master (which now
-> has patch 1/2) this happens:
->
-> ]$ git am --signoff zynq2.patch
-> Applying: gpio: zynq: Take bank offset into account when reporting a IRQ
-> error: patch failed: drivers/gpio/gpio-zynq.c:461
-> error: drivers/gpio/gpio-zynq.c: patch does not apply
-> Patch failed at 0001 gpio: zynq: Take bank offset into account when
-> reporting a IRQ
->
-> Can you please test applying this patch only on upstream this and figure
-> out what is wrong?
+T24gVGh1LCAyMDE0LTA4LTI4IGF0IDEwOjExIC0wNTAwLCBhdHVsbCB3cm90ZToNCj4gT24gV2Vk
+LCAyNyBBdWcgMjAxNCwgV2Vpa2UgQ2hlbiB3cm90ZToNCg0KW10NCg0KPiA+ICtzdGF0aWMgaW5s
+aW5lIHUzMiBkd2FwYl9yZWFkKHN0cnVjdCBkd2FwYl9ncGlvICpncGlvLCB1bnNpZ25lZCBpbnQg
+b2Zmc2V0KQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3QgYmdwaW9fY2hpcCAqYmdjCT0gJmdwaW8tPnBv
+cnRzWzBdLmJnYzsNCj4gPiArCXZvaWQgX19pb21lbSAqcmVnX2Jhc2UJPSBncGlvLT5yZWdzOw0K
+PiA+ICsNCj4gPiArCXJldHVybiBiZ2MtPnJlYWRfcmVnKHJlZ19iYXNlICsgb2Zmc2V0KTsNCj4g
+PiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSB2b2lkIGR3YXBiX3dyaXRlKHN0cnVjdCBk
+d2FwYl9ncGlvICpncGlvLCB1bnNpZ25lZCBpbnQgb2Zmc2V0LA0KPiA+ICsJCQkgICAgICAgdTMy
+IHZhbCkNCj4gPiArew0KPiA+ICsJc3RydWN0IGJncGlvX2NoaXAgKmJnYwk9ICZncGlvLT5wb3J0
+c1swXS5iZ2M7DQo+ID4gKwl2b2lkIF9faW9tZW0gKnJlZ19iYXNlCT0gZ3Bpby0+cmVnczsNCj4g
+PiArDQo+ID4gKwliZ2MtPndyaXRlX3JlZyhyZWdfYmFzZSArIG9mZnNldCwgdmFsKTsNCj4gPiAr
+fQ0KPiA+ICsNCj4gDQo+IEhlbGxvLA0KPiANCj4gSSBkb24ndCB1bmRlcnN0YW5kIHRoZSByZWFz
+b24gZm9yIGFkZGluZyBkd2FwYl9yZWFkIGFuZCBkd2FwYl93cml0ZSBoZXJlLiAgDQo+IFRoZSBy
+ZXN0IG9mIHRoZSBkcml2ZXIgaXMgdXNpbmcgcmVhZGwgYW5kIHdyaXRlbC4gIEknZCByYXRoZXIg
+bm90IHNlZSB0d28gDQo+IGRpZmZlcmVudCBtZXRob2RzIGJlaW5nIHVzZWQgaW4gdGhlIHNhbWUg
+ZHJpdmVyIGZvciByZWdpc3RlciBhY2Nlc3MuICANCj4gTWF5YmUgSSdtIG1pc3Npbmcgc29tZXRo
+aW5nLCBidXQgaWYgd2UgbmVlZCB0byBhZGQgZHdhcGJfcmVhZC93cml0ZSwgdGhlbg0KPiBpdCBz
+aG91bGQgYmUgdXNlZCBmb3IgYWxsIHJlZ2lzdGVyIGFjY2Vzcy4NCg0KQWxhbiwgaXQgd2FzIG15
+IHByb3Bvc2FsLiBJIHJhdGhlciBhZ3JlZSB0aGF0IGlzIGJldHRlciB0byBjb252ZXJ0IGFsbA0K
+YWNjZXNzZXMgdG8gdGhhdC4NCg0KLS0gDQpBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hl
+bmtvQGludGVsLmNvbT4NCkludGVsIEZpbmxhbmQgT3kNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpJbnRlbCBGaW5s
+YW5kIE95ClJlZ2lzdGVyZWQgQWRkcmVzczogUEwgMjgxLCAwMDE4MSBIZWxzaW5raSAKQnVzaW5l
+c3MgSWRlbnRpdHkgQ29kZTogMDM1NzYwNiAtIDQgCkRvbWljaWxlZCBpbiBIZWxzaW5raSAKClRo
+aXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1h
+dGVyaWFsIGZvcgp0aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChzKS4gQW55
+IHJldmlldyBvciBkaXN0cmlidXRpb24KYnkgb3RoZXJzIGlzIHN0cmljdGx5IHByb2hpYml0ZWQu
+IElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZApyZWNpcGllbnQsIHBsZWFzZSBjb250YWN0IHRo
+ZSBzZW5kZXIgYW5kIGRlbGV0ZSBhbGwgY29waWVzLgo=
 
-I think there is some confusion here, maybe two different series got mixed 
-up. Patch 1 of this series is "gpio: zynq: Reduce level of indention in 
-zynq_gpio_irqhandler()", which you just applied, but which is not in Linus' 
-tree or the public gpio tree yet.
-
-- Lars
