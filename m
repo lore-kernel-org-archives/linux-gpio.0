@@ -1,38 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] RFT: gpio: adnp: switch to use irqchip helpers
-Date: Fri, 29 Aug 2014 14:32:26 +0200
-Message-ID: <CACRpkdbgCWv5xQXAB1H=5P45hVfZ8YVzj6yzEOYfFYkw-nFk8w@mail.gmail.com>
-References: <1401715347-24996-1-git-send-email-linus.walleij@linaro.org>
-	<20140604143825.GG28484@ulmo>
-	<CACRpkdYamxVh5RhRk5dQxD2PSnjTWcdf4rvV50mmd844GeeN4w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] pinctrl: sh-pfc: use a saner Kconfig symbol
+Date: Fri, 29 Aug 2014 14:51:59 +0200
+Message-ID: <1409316719-28904-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:61749 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752551AbaH2Mc1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 08:32:27 -0400
-Received: by mail-oa0-f51.google.com with SMTP id n16so1717216oag.10
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Aug 2014 05:32:26 -0700 (PDT)
-In-Reply-To: <CACRpkdYamxVh5RhRk5dQxD2PSnjTWcdf4rvV50mmd844GeeN4w@mail.gmail.com>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:61491 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752150AbaH2MwL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 08:52:11 -0400
+Received: by mail-wi0-f176.google.com with SMTP id bs8so8983378wib.15
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Aug 2014 05:52:09 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@avionic-design.de>, Lars Poeschel <poeschel@lemonage.de>, Alexandre Courbot <acourbot@nvidia.com>, Roland Stigge <stigge@antcom.de>, Julian Scheel <julian.scheel@avionic-design.de>, Alban Bedel <alban.bedel@avionic-design.de>
+To: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-On Thu, Jun 12, 2014 at 10:21 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Jun 4, 2014 at 4:38 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
->
->> Adding a few more people from Avionic Design who might be able to test
->> this. I no longer have access to hardware with this controller.
->
-> Always keep a copy of everything you ever work on ;-)
->
-> If nothing happens I'll just apply the patch and see if that merits
-> a reaction.
+There is currently a kludge to get the Makefile to move down
+to sh-pfc:s drivers: the arch definitions are used twice to
+get it done. However we can very well use the Kconfig symbol
+for the SH PFC pin control feature itself: it doesn't matter
+that it comes from a lower leaf in the Kconfig hierarchy which
+is completely orthogonal.
 
-OK applied this now.
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 7ebb3c5a9c30..0ffe1f608c67 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -60,8 +60,7 @@ obj-$(CONFIG_PLAT_ORION)        += mvebu/
+ obj-y				+= nomadik/
+ obj-$(CONFIG_ARCH_QCOM)		+= qcom/
+ obj-$(CONFIG_PINCTRL_SAMSUNG)	+= samsung/
+-obj-$(CONFIG_ARCH_SHMOBILE)	+= sh-pfc/
+-obj-$(CONFIG_SUPERH)		+= sh-pfc/
++obj-$(CONFIG_PINCTRL_SH_PFC)	+= sh-pfc/
+ obj-$(CONFIG_PLAT_SPEAR)	+= spear/
+ obj-$(CONFIG_ARCH_SUNXI)	+= sunxi/
+ obj-$(CONFIG_ARCH_VT8500)	+= vt8500/
+-- 
+1.9.3
+
