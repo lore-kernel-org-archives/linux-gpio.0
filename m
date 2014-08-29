@@ -1,60 +1,73 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2][v5] gpiolib: allow simultaneous setting of multiple
- GPIO outputs
-Date: Fri, 29 Aug 2014 07:21:15 +0200
-Message-ID: <CACRpkdZnzVqNm8EoKDSt_LsP0bta8FQYnif4ou+ngFyD-4x-YQ@mail.gmail.com>
-References: <25983307.ZjJOfz2Kpg@pcimr>
-	<CAAVeFuJmHkXOa6d8ZN8LBVK=mM_HA_U0QQ0kqbkcaq11ELCrFQ@mail.gmail.com>
-	<20140731071235.GH3407@book.gsilab.sittig.org>
-	<12452684.GmmEHEPXzu@pcimr>
+Subject: Re: [RFC PATCH] gpiolib: Provide and export gpiod_export_name
+Date: Fri, 29 Aug 2014 07:44:02 +0200
+Message-ID: <CACRpkdZfRxNHGtZvzjn_vb2FGNPrvh1znWSGi0znN2_yHmz0Tw@mail.gmail.com>
+References: <1406139132-5404-1-git-send-email-linux@roeck-us.net>
+	<CAAVeFuKsJpSYo2DMyTdYE2J5Cu_ZD=b9o-=S0DLDccyNmwniNg@mail.gmail.com>
+	<53D0A8B7.2010005@roeck-us.net>
+	<CAAVeFuK5uKhpkpEnoRFGKU4G4Fey0+giz5wwmtr+OCLJHPvnLQ@mail.gmail.com>
+	<53E32C09.5000704@roeck-us.net>
+	<CAAVeFuJohBznnjELvJj0OUCK+anbZ-j1xPc9gyKDGVq9X0MDSA@mail.gmail.com>
+	<53E8DE1D.9070503@roeck-us.net>
+	<CAAVeFuK8kb3kopVaM9qz+qOa4RT_oji8LNLQa_UHDxxxwyfZgw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:61713 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751161AbaH2FVQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 01:21:16 -0400
-Received: by mail-oi0-f49.google.com with SMTP id g201so1277355oib.36
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2014 22:21:15 -0700 (PDT)
-In-Reply-To: <12452684.GmmEHEPXzu@pcimr>
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:50044 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751534AbaH2FoD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Aug 2014 01:44:03 -0400
+Received: by mail-oa0-f48.google.com with SMTP id m1so1405000oag.21
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2014 22:44:02 -0700 (PDT)
+In-Reply-To: <CAAVeFuK8kb3kopVaM9qz+qOa4RT_oji8LNLQa_UHDxxxwyfZgw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: Gerhard Sittig <gsi@denx.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>
 
-On Thu, Jul 31, 2014 at 10:42 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> On Thursday 31 July 2014 09:12:35 Gerhard Sittig wrote:
->> On Thu, 2014-07-31 at 11:35 +0900, Alexandre Courbot wrote:
->> >
->> > I'd be surprised if at least *one* such driver was not in mainline
->> > though. Had a quick look but could not find anything that would be an
->> > obvious candidate to use these new functions.
->>
->> What about drivers/mtd/nand/gpio.c, the GPIO bitbanged NAND
->> controller driver?  Most of the latch, control, and data lines
->> groups are set at the same time.  It should be a perfect example.
->>
->
-> Well, not so perfect, since AFAIUI only a few control signals are managed
-> by GPIOs (Chip Enable, Command Latch Enable, Address Latch Enable), but not
-> the actual data lines. But granted, at least at one place in the driver three
-> lines are set at the same time.
->
-> There are a few other drivers which also do that:
-> - drivers/tty/serial/serial_mctrl_gpio.c controls multiple modem lines via GPIO
-> - drivers/net/phy/mdio-mux-gpio.c a GPIO controlled MDIO bus multiplexer driver
-> - drivers/regulator/gpio-regulator.c controls voltage regulators
->
-> All of the above do set multiple GPIOs at the same time, but in all cases
-> performance does not really matter. Moreover they all seem a bit obscure to me.
->
-> Nevertheless, IMHO they are still better candidates for using the new functions
-> than the i2c-gpio or spi-gpio drivers.
->
-> So, Linus, would a patched version of one of the mentioned drivers qualify as
-> a user that would allow you to merge my patch?
+On Mon, Aug 11, 2014 at 5:20 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Tue, Aug 12, 2014 at 12:15 AM, Guenter Roeck <linux@roeck-us.net> wrote:
 
-I think so. My concern is with code that doesn't get exercised, anywhere.
+>> This is just one of many patches which would make it possible to submit
+>> the rest, which would make use of it. What you are saying is that it won't
+>> make sense to submit that series into the kernel, because one of the very
+>> first patches needed to enable that won't be accepted. Kind of a circular
+>> argument, but I guess I'll have to live with it.
+>
+> Well I have not seen the other patches you mention and cannot guess
+> their existence. If you send the full series it will of course be
+> considered as such, but right now this lone patch does not hint any
+> upstream user for this interface.
+>
+> Note that this doesn't change anything to the core of the argument ;
+> we have not heard what Linus thinks about named GPIOs in
+> /sys/class/gpio yet, maybe he will have a different opinion...
+
+The sysfs is sort of broken by design because of things like this and
+some other stuff.
+
+I think the sysfs is scary, for example since it's not hierarchical
+but flat and build on the assumption that there is one single
+GPIO numberspace. As pointed out in some other message
+in the thread it would be nicer to have:
+
+/dev/gpiochip0/gpio0
+/dev/gpiochip0/gpio1
+....
+
+instead of the horrid sysfs ABI that will have to maintain forever.
+
+Still it is true that there is a precedent for named GPIOs in sysfs.
+
+And in the end, userspace needs a way to figure out how to
+get what it needs, a unique string is as good as anything.
+I would be feeling better if userspace got that name from an
+ioctl() on some /dev/* node than by plain filename search in
+sysfs. I somewhat feel a named gpio in sysfs is more
+helpful than just "gpio25".
+
+But I'm not happy about merging the patch if Alexandre is
+hesitant.
 
 Yours,
 Linus Walleij
