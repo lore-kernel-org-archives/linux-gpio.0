@@ -1,191 +1,229 @@
-From: Anders Berg <anders.berg@avagotech.com>
-Subject: [PATCH 1/2] gpio: Add driver for AXM55xx SSP chip selects
-Date: Mon,  1 Sep 2014 14:53:40 +0200
-Message-ID: <1409576021-24828-2-git-send-email-anders.berg@avagotech.com>
-References: <1409576021-24828-1-git-send-email-anders.berg@avagotech.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1409576021-24828-1-git-send-email-anders.berg@avagotech.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Anders Berg <anders.berg@avagotech.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: move varargs hack outside #ifdef GPIOLIB
+Date: Mon,  1 Sep 2014 15:18:27 +0200
+Message-ID: <1409577507-6752-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:49630 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752282AbaIANSd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Sep 2014 09:18:33 -0400
+Received: by mail-we0-f179.google.com with SMTP id t60so5437586wes.10
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Sep 2014 06:18:32 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-The AXM55xx device has a ARM PL022 SSP controller with an extension that
-enables the control of up to five chip select signals. This driver implements
-the logic to control these signals and exports them as GPIOs.
+commit 39b2bbe3d715cf5013b5c48695ccdd25bd3bf120
+"gpio: add flags argument to gpiod_get*() functions"
+added a dynamic flags argument to all the GPIOD getter
+functions, however this did not cover the stubs so
+when people used gpiod stubs to compile out descriptor
+code, compilation failed.
 
-Signed-off-by: Anders Berg <anders.berg@avagotech.com>
+Solve this by:
+- Also rename all the stub functions __gpiod_*
+- Moving the vararg hack outside of #ifdef CONFIG_GPIOLIB
+  so these will always be available.
+
+Cc: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/Kconfig          |   8 +++
- drivers/gpio/Makefile         |   1 +
- drivers/gpio/gpio-axxia-ssp.c | 128 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 137 insertions(+)
- create mode 100644 drivers/gpio/gpio-axxia-ssp.c
+ include/linux/gpio/consumer.h | 105 ++++++++++++++++++++++++------------------
+ 1 file changed, 60 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 9de1515..c2f2686 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -112,6 +112,14 @@ config GPIO_MAX730X
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index c7e17de732f3..12f146fa6604 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -38,60 +38,32 @@ enum gpiod_flags {
+ struct gpio_desc *__must_check __gpiod_get(struct device *dev,
+ 					 const char *con_id,
+ 					 enum gpiod_flags flags);
+-#define __gpiod_get(dev, con_id, flags, ...) __gpiod_get(dev, con_id, flags)
+-#define gpiod_get(varargs...) __gpiod_get(varargs, 0)
+ struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
+ 					       const char *con_id,
+ 					       unsigned int idx,
+ 					       enum gpiod_flags flags);
+-#define __gpiod_get_index(dev, con_id, index, flags, ...)		\
+-	__gpiod_get_index(dev, con_id, index, flags)
+-#define gpiod_get_index(varargs...) __gpiod_get_index(varargs, 0)
+ struct gpio_desc *__must_check __gpiod_get_optional(struct device *dev,
+ 						  const char *con_id,
+ 						  enum gpiod_flags flags);
+-#define __gpiod_get_optional(dev, con_id, flags, ...)			\
+-	__gpiod_get_optional(dev, con_id, flags)
+-#define gpiod_get_optional(varargs...) __gpiod_get_optional(varargs, 0)
+ struct gpio_desc *__must_check __gpiod_get_index_optional(struct device *dev,
+ 							const char *con_id,
+ 							unsigned int index,
+ 							enum gpiod_flags flags);
+-#define __gpiod_get_index_optional(dev, con_id, index, flags, ...)	\
+-	__gpiod_get_index_optional(dev, con_id, index, flags)
+-#define gpiod_get_index_optional(varargs...)				\
+-	__gpiod_get_index_optional(varargs, 0)
+-
+ void gpiod_put(struct gpio_desc *desc);
  
- comment "Memory mapped GPIO drivers:"
+ struct gpio_desc *__must_check __devm_gpiod_get(struct device *dev,
+ 					      const char *con_id,
+ 					      enum gpiod_flags flags);
+-#define __devm_gpiod_get(dev, con_id, flags, ...)			\
+-	__devm_gpiod_get(dev, con_id, flags)
+-#define devm_gpiod_get(varargs...) __devm_gpiod_get(varargs, 0)
+ struct gpio_desc *__must_check __devm_gpiod_get_index(struct device *dev,
+ 						    const char *con_id,
+ 						    unsigned int idx,
+ 						    enum gpiod_flags flags);
+-#define __devm_gpiod_get_index(dev, con_id, index, flags, ...)		\
+-	__devm_gpiod_get_index(dev, con_id, index, flags)
+-#define devm_gpiod_get_index(varargs...) __devm_gpiod_get_index(varargs, 0)
+ struct gpio_desc *__must_check __devm_gpiod_get_optional(struct device *dev,
+ 						       const char *con_id,
+ 						       enum gpiod_flags flags);
+-#define __devm_gpiod_get_optional(dev, con_id, flags, ...)		\
+-	__devm_gpiod_get_optional(dev, con_id, flags)
+-#define devm_gpiod_get_optional(varargs...)				\
+-	__devm_gpiod_get_optional(varargs, 0)
+ struct gpio_desc *__must_check
+ __devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
+ 			      unsigned int index, enum gpiod_flags flags);
+-#define __devm_gpiod_get_index_optional(dev, con_id, index, flags, ...)	\
+-	__devm_gpiod_get_index_optional(dev, con_id, index, flags)
+-#define devm_gpiod_get_index_optional(varargs...)			\
+-	__devm_gpiod_get_index_optional(varargs, 0)
+-
+ void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
  
-+config GPIO_AXXIA_SSP
-+	tristate "AXM55xx SSP chip select pins as GPIO"
-+	depends on ARCH_AXXIA
-+	default y if SPI_MASTER
-+	select GPIO_GENERIC
-+	help
-+	  Say yes here to get GPIO interface for AXM55xx SSP chip select signals.
-+
- config GPIO_CLPS711X
- 	tristate "CLPS711X GPIO support"
- 	depends on ARCH_CLPS711X || COMPILE_TEST
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 5d024e3..01e1869 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_GPIO_ADP5520)	+= gpio-adp5520.o
- obj-$(CONFIG_GPIO_ADP5588)	+= gpio-adp5588.o
- obj-$(CONFIG_GPIO_AMD8111)	+= gpio-amd8111.o
- obj-$(CONFIG_GPIO_ARIZONA)	+= gpio-arizona.o
-+obj-$(CONFIG_GPIO_AXXIA_SSP)	+= gpio-axxia-ssp.o
- obj-$(CONFIG_GPIO_BCM_KONA)	+= gpio-bcm-kona.o
- obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
- obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
-diff --git a/drivers/gpio/gpio-axxia-ssp.c b/drivers/gpio/gpio-axxia-ssp.c
-new file mode 100644
-index 0000000..5884206
---- /dev/null
-+++ b/drivers/gpio/gpio-axxia-ssp.c
-@@ -0,0 +1,128 @@
+ int gpiod_get_direction(const struct gpio_desc *desc);
+@@ -124,27 +96,31 @@ int desc_to_gpio(const struct gpio_desc *desc);
+ 
+ #else /* CONFIG_GPIOLIB */
+ 
+-static inline struct gpio_desc *__must_check gpiod_get(struct device *dev,
+-						       const char *con_id)
++static inline struct gpio_desc *__must_check __gpiod_get(struct device *dev,
++						const char *con_id,
++						enum gpiod_flags flags)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+-static inline struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+-							     const char *con_id,
+-							     unsigned int idx)
++static inline struct gpio_desc *__must_check
++__gpiod_get_index(struct device *dev,
++		  const char *con_id,
++		  unsigned int idx,
++		  enum gpiod_flags flags)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline struct gpio_desc *__must_check
+-gpiod_get_optional(struct device *dev, const char *con_id)
++__gpiod_get_optional(struct device *dev, const char *con_id,
++		     enum gpiod_flags flags)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline struct gpio_desc *__must_check
+-gpiod_get_index_optional(struct device *dev, const char *con_id,
+-			 unsigned int index)
++__gpiod_get_index_optional(struct device *dev, const char *con_id,
++			   unsigned int index, enum gpiod_flags flags)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+@@ -157,28 +133,33 @@ static inline void gpiod_put(struct gpio_desc *desc)
+ 	WARN_ON(1);
+ }
+ 
+-static inline struct gpio_desc *__must_check devm_gpiod_get(struct device *dev,
+-							    const char *con_id)
++static inline struct gpio_desc *__must_check
++__devm_gpiod_get(struct device *dev,
++		 const char *con_id,
++		 enum gpiod_flags flags)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ static inline
+-struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
+-						    const char *con_id,
+-						    unsigned int idx)
++struct gpio_desc *__must_check
++__devm_gpiod_get_index(struct device *dev,
++		       const char *con_id,
++		       unsigned int idx,
++		       enum gpiod_flags flags)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline struct gpio_desc *__must_check
+-devm_gpiod_get_optional(struct device *dev, const char *con_id)
++__devm_gpiod_get_optional(struct device *dev, const char *con_id,
++			  enum gpiod_flags flags)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline struct gpio_desc *__must_check
+-devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
+-			      unsigned int index)
++__devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
++				unsigned int index, enum gpiod_flags flags)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+@@ -303,9 +284,43 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
+ 	return -EINVAL;
+ }
+ 
+-
+ #endif /* CONFIG_GPIOLIB */
+ 
 +/*
-+ * GPIO interface for SSP chip select outputs.
-+ *
-+ * Copyright (C) 2013 LSI Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
++ * Vararg-hacks! This is done to transition the kernel to always pass
++ * the options flags argument to the below functions. During a transition
++ * phase these vararg macros make both old-and-newstyle code compile,
++ * but when all calls to the elder API are removed, these should go away
++ * and the __gpiod_get() etc functions above be renamed just gpiod_get()
++ * etc.
 + */
++#define __gpiod_get(dev, con_id, flags, ...) __gpiod_get(dev, con_id, flags)
++#define gpiod_get(varargs...) __gpiod_get(varargs, 0)
++#define __gpiod_get_index(dev, con_id, index, flags, ...)		\
++	__gpiod_get_index(dev, con_id, index, flags)
++#define gpiod_get_index(varargs...) __gpiod_get_index(varargs, 0)
++#define __gpiod_get_optional(dev, con_id, flags, ...)			\
++	__gpiod_get_optional(dev, con_id, flags)
++#define gpiod_get_optional(varargs...) __gpiod_get_optional(varargs, 0)
++#define __gpiod_get_index_optional(dev, con_id, index, flags, ...)	\
++	__gpiod_get_index_optional(dev, con_id, index, flags)
++#define gpiod_get_index_optional(varargs...)				\
++	__gpiod_get_index_optional(varargs, 0)
++#define __devm_gpiod_get(dev, con_id, flags, ...)			\
++	__devm_gpiod_get(dev, con_id, flags)
++#define devm_gpiod_get(varargs...) __devm_gpiod_get(varargs, 0)
++#define __devm_gpiod_get_index(dev, con_id, index, flags, ...)		\
++	__devm_gpiod_get_index(dev, con_id, index, flags)
++#define devm_gpiod_get_index(varargs...) __devm_gpiod_get_index(varargs, 0)
++#define __devm_gpiod_get_optional(dev, con_id, flags, ...)		\
++	__devm_gpiod_get_optional(dev, con_id, flags)
++#define devm_gpiod_get_optional(varargs...)				\
++	__devm_gpiod_get_optional(varargs, 0)
++#define __devm_gpiod_get_index_optional(dev, con_id, index, flags, ...)	\
++	__devm_gpiod_get_index_optional(dev, con_id, index, flags)
++#define devm_gpiod_get_index_optional(varargs...)			\
++	__devm_gpiod_get_index_optional(varargs, 0)
 +
-+#include <linux/module.h>
-+#include <linux/bitops.h>
-+#include <linux/init.h>
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+
-+struct gpio_dev {
-+	void __iomem    *reg;
-+	struct gpio_chip gpio_chip;
-+};
-+
-+static int ssp_gpio_direction_out(struct gpio_chip *chip,
-+				  unsigned offset, int value)
-+{
-+	/* Always outputs */
-+	return 0;
-+}
-+
-+static int ssp_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
-+{
-+	return -ENXIO;
-+}
-+
-+static int ssp_gpio_get(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct gpio_dev *priv = dev_get_drvdata(chip->dev);
-+	u32 tmp;
-+
-+	tmp = readl(priv->reg);
-+	return !!(tmp & BIT(offset));
-+}
-+
-+static void ssp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-+{
-+	struct gpio_dev *priv = dev_get_drvdata(chip->dev);
-+	u32 tmp;
-+
-+	tmp = readl(priv->reg);
-+	if (value)
-+		tmp |= BIT(offset);
-+	else
-+		tmp &= ~BIT(offset);
-+	writel(tmp, priv->reg);
-+}
-+
-+static int ssp_gpio_probe(struct platform_device *pdev)
-+{
-+	struct gpio_dev *priv;
-+	struct resource *io;
-+	struct gpio_chip *chip;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	priv->reg = devm_ioremap(&pdev->dev, io->start, resource_size(io));
-+	if (!priv->reg)
-+		return -ENXIO;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	chip = &priv->gpio_chip;
-+	chip->dev = &pdev->dev;
-+#ifdef CONFIG_OF_GPIO
-+	chip->of_node = pdev->dev.of_node;
-+#endif
-+	chip->direction_input = ssp_gpio_direction_in;
-+	chip->direction_output = ssp_gpio_direction_out;
-+	chip->get = ssp_gpio_get;
-+	chip->set = ssp_gpio_set;
-+	chip->label = "ssp-gpio";
-+	chip->owner = THIS_MODULE;
-+	chip->base = -1;
-+	chip->ngpio = 5;
-+
-+	/* Set all 5 chip-selects high (de-asserted) by default */
-+	writel(0x1f, priv->reg);
-+
-+	ret = gpiochip_add(chip);
-+	if (ret < 0)
-+		dev_err(&pdev->dev, "failed to register chip, %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int ssp_gpio_remove(struct platform_device *pdev)
-+{
-+	struct gpio_dev *priv = dev_get_drvdata(&pdev->dev);
-+
-+	return gpiochip_remove(&priv->gpio_chip);
-+}
-+
-+static const struct of_device_id ssp_gpio_id_table[] = {
-+	{ .compatible = "lsi,ssp-gpio" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(platform, ssp_gpio_id_table);
-+
-+static struct platform_driver ssp_gpio_driver = {
-+	.driver = {
-+		.name = "ssp-gpio",
-+		.owner = THIS_MODULE,
-+		.of_match_table = ssp_gpio_id_table
-+	},
-+	.probe = ssp_gpio_probe,
-+	.remove = ssp_gpio_remove,
-+};
-+
-+module_platform_driver(ssp_gpio_driver);
-+
-+MODULE_AUTHOR("LSI Corporation");
-+MODULE_DESCRIPTION("GPIO interface for SSP chip selects");
-+MODULE_LICENSE("GPL");
+ #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_GPIO_SYSFS)
+ 
+ int gpiod_export(struct gpio_desc *desc, bool direction_may_change);
 -- 
-1.9.1
+1.9.3
+
