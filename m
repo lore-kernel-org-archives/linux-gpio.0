@@ -1,72 +1,147 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH 1/4] gpio: syscon: add soc specific callback to assign
- output value
-Date: Mon, 1 Sep 2014 17:55:21 +0300
-Message-ID: <540488D9.3040602@ti.com>
-References: <1407946582-20927-1-git-send-email-grygorii.strashko@ti.com>	<1407946582-20927-2-git-send-email-grygorii.strashko@ti.com> <CACRpkdaq2=f92yEEZgGHOtixDk35O9tmN2PZkSPKrGwGVDS_mQ@mail.gmail.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] mfd: add support for Diolan DLN-2 devices
+Date: Mon, 1 Sep 2014 16:46:26 +0100
+Message-ID: <20140901154626.GH8796@lee--X1>
+References: <1409349654-24841-1-git-send-email-octavian.purdila@intel.com>
+ <1409349654-24841-2-git-send-email-octavian.purdila@intel.com>
+ <20140901083744.GE7374@lee--X1>
+ <CAE1zotK0cddns4f4ay-GJie8O2pjb72+-yYndZvW0hbF0D83HA@mail.gmail.com>
+ <20140901095127.GK7374@lee--X1>
+ <CAE1zot+T6eq0jrL6_Qh=5nihNOgGEaWe5RCDk7_1XS8ZWaWKqA@mail.gmail.com>
+ <20140901113949.GP7374@lee--X1>
+ <CAE1zotKNBTEMX8DDYwdwOcq0qZgqxZWazE60TUQeiOmD0a4xbA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:58108 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754125AbaIAO4E (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 1 Sep 2014 10:56:04 -0400
-In-Reply-To: <CACRpkdaq2=f92yEEZgGHOtixDk35O9tmN2PZkSPKrGwGVDS_mQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAE1zotKNBTEMX8DDYwdwOcq0qZgqxZWazE60TUQeiOmD0a4xbA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Alexander Shiyan <shc_work@mail.ru>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Linus,
+On Mon, 01 Sep 2014, Octavian Purdila wrote:
 
-On 08/29/2014 09:19 AM, Linus Walleij wrote:
-> On Wed, Aug 13, 2014 at 6:16 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
-> 
->> Some SoCs (like Keystone) may require to perform special
->> sequence of operations to assign output GPIO value, so default
->> implementation of .set() callback from gpio-syscon driver
->> can't be used.
->>
->> Hence, add optional, SoC specific callback to assign output
->> gpio value.
->>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> 
-> Hm :-/
-> 
-> I didn't realize this wasn't a quite so straight-forward a
-> syscon GPIO driver.
+> On Mon, Sep 1, 2014 at 2:39 PM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrot=
+e:
+> > On Mon, 01 Sep 2014, Octavian Purdila wrote:
+> >
+> >> On Mon, Sep 1, 2014 at 12:51 PM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> =
+wrote:
+> >> > On Mon, 01 Sep 2014, Octavian Purdila wrote:
+> >> >
+> >> >> On Mon, Sep 1, 2014 at 11:37 AM, Lee Jones <lee.jones-QSEj5FYQhm5QFI55V6+gNQ@public.gmane.org=
+g> wrote:
+> >> >> > On Sat, 30 Aug 2014, Octavian Purdila wrote:
+> >> >> >
+> >> >> >> This patch implements the USB part of the Diolan USB-I2C/SPI=
+/GPIO
+> >> >> >> Master Adapter DLN-2. Details about the device can be found =
+here:
+> >> >> >>
+> >> >> >> https://www.diolan.com/i2c/i2c_interface.html.
+> >> >> >>
+> >> >> >> Information about the USB protocol can be found in the Progr=
+ammer's
+> >> >> >> Reference Manual [1], see section 1.7.
+> >> >> >>
+> >> >> >> Because the hardware has a single transmit endpoint and a si=
+ngle
+> >> >> >> receive endpoint the communication between the various DLN2 =
+drivers
+> >> >> >> and the hardware will be muxed/demuxed by this driver.
+> >> >> >>
+> >> >> >> Each DLN2 module will be identified by the handle field with=
+in the DLN2
+> >> >> >> message header. If a DLN2 module issues multiple commands in=
+ parallel
+> >> >> >> they will be identified by the echo counter field in the mes=
+sage header.
+> >> >> >>
+> >> >> >> The DLN2 modules can use the dln2_transfer() function to iss=
+ue a
+> >> >> >> command and wait for its response. They can also register a =
+callback
+> >> >> >> that is going to be called when a specific event id is gener=
+ated by
+> >> >> >> the device (e.g. GPIO interrupts). The device uses handle 0 =
+for
+> >> >> >> sending events.
+> >> >> >>
+> >> >> >> [1] https://www.diolan.com/downloads/dln-api-manual.pdf
+> >> >> >
+> >> >> > MFD is not a dumping ground for misfit h/w.  Almost all of th=
+is code
+> >> >> > looks like it belongs in drivers/usb.  Please move it there.
+> >> >> >
+> >> >>
+> >> >> We initially submitted this driver as a pure USB driver, with o=
+ur own
+> >> >> module registration mechanism, but during the first round of re=
+views
+> >> >> people pointed out that a MFD driver is the better approach, an=
+d I
+> >> >> agree. I also see that there are already a couple of USB driver=
+s
+> >> >> implemented as MFD drivers.
+> >> >
+> >> > Can you link me to your previous submission please?
+> >>
+> >> Sure, here it is:
+> >>
+> >> https://lkml.org/lkml/2014/8/20/228
+> >>
+> >> >
+> >> >> Do you see a better approach?
+> >> >
+> >> > You should have a small MFD driver which controls resources and
+> >> > registers children.  All other functionality should live in thei=
+r
+> >> > respective drivers/X locations i.e. USB functionallity should no=
+rmally
+> >> > live in drivers/usb.
+> >> >
+> >>
+> >> OK, that sounds better. I am not sure how to handle the registrati=
+on
+> >> part though, since in this case we need to create the children at
+> >> runtime, from the usb probe routine.
+> >>
+> >> The only solution I see is to move the driver completely to
+> >> usb/drivers and continue to use the MFD infrastructure. Does that
+> >> sound OK to you?
+> >
+> > I have no problem with that.  If this is an MFD driver, it _should_
+> > live in drivers/mfd.  However, all of that USB specific stuff
+> > defiantly should not.
+> >
+>=20
+> It is a multi-function driver which is using the USB interface, so I
+> am not sure where it belongs. The only driver that calls
+> mfd_add_devices and is not in drivers/mfd is the hid sensor hub
+> driver.
+>=20
+> BTW, the mfd/viperboard.c driver is very similar with this driver. It
+> has less USB specific stuff because the protocol is simpler, but stil=
+l
+> has some.
 
-Yep. At first glance, everything seemed more simple.
+Looking at viperboard.c, it seems to use some basic generic framework
+calls to obtain some information about the device information like
+version numbers.  Your driver is leaps and bounds more USB centric.
 
-> 
-> Now I start to think that it looks kludgy to bolt this onto
-> the other driver and think we may need to go back to the
-> other version which puts it as a separate driver. I guess
-> that is what you refer to as v1?
-> 
-> I have a hard time to make my mind up about these
-> syscon things, sorry :-(
-> 
-> Now I have to ask you: which way do you prefer to do it,
-> if you can choose freely? The initial driver or augmenting
-> the syscon driver (patch v1)?
+Your MFD driver should know about things like; regmap, platform data,
+memory allocation, same-chip devices (children), etc.  Your MFD driver
+should not need to concern itself with; endpoints, slots, URBs, USB
+device IDs and the like.  The later knowledge belongs in drivers/usb.=20
 
-Honestly, I think, It is better to keep Keystone 2 functionality in 
-standalone file [1], as it allows to simply manage this code using
-build system, avoid ugly #ifdefs in code (as you note on patch 3)
-and keep commits history more clear and HW specific (very helpful in 
-case of any issues). 
+You should be calling mfd_add_devices() from within the MFD driver.
+At a guess, I would say that you need a new entry for the USB stuff in
+your mfd_cells structure.
 
-But, as you agree now to take this syscon-based patches, I'll update & re-send them,
-applying comments from Alexander to the patch 1 and your comments to the patch 3 :)
-
-Thanks for your comments.
-
-[1] https://lkml.org/lkml/2014/7/23/352
-
-Best regards,
--grygorii
-
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
