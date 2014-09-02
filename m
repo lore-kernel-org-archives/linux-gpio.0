@@ -1,37 +1,172 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: move varargs hack outside #ifdef GPIOLIB
-Date: Mon, 1 Sep 2014 13:47:24 -0700
-Message-ID: <CAAVeFuJDXHpoPgZ9yi=-+ya2orRpq_D4OHZsMV-0FCAMNVsSTA@mail.gmail.com>
-References: <1409577507-6752-1-git-send-email-linus.walleij@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 1/3] mfd: add support for Diolan DLN-2 devices
+Date: Tue, 2 Sep 2014 09:00:10 +0100
+Message-ID: <20140902080010.GD17117@lee--X1>
+References: <1409349654-24841-2-git-send-email-octavian.purdila@intel.com>
+ <20140901083744.GE7374@lee--X1>
+ <CAE1zotK0cddns4f4ay-GJie8O2pjb72+-yYndZvW0hbF0D83HA@mail.gmail.com>
+ <20140901095127.GK7374@lee--X1>
+ <CAE1zot+T6eq0jrL6_Qh=5nihNOgGEaWe5RCDk7_1XS8ZWaWKqA@mail.gmail.com>
+ <20140901113949.GP7374@lee--X1>
+ <CAE1zotKNBTEMX8DDYwdwOcq0qZgqxZWazE60TUQeiOmD0a4xbA@mail.gmail.com>
+ <20140901154626.GH8796@lee--X1>
+ <CAE1zotL-cjHqrdymzYhZq24zx+0qGY8-4JnrVZf-TGXDf5Sm3w@mail.gmail.com>
+ <20140901175453.GR4894@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:47577 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751426AbaIAUro (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Sep 2014 16:47:44 -0400
-Received: by mail-ie0-f171.google.com with SMTP id rp18so6596374iec.16
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Sep 2014 13:47:44 -0700 (PDT)
-In-Reply-To: <1409577507-6752-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:45158 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752003AbaIBIAS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Sep 2014 04:00:18 -0400
+Received: by mail-ig0-f178.google.com with SMTP id hn18so6812574igb.5
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Sep 2014 01:00:17 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20140901175453.GR4894@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Octavian Purdila <octavian.purdila@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, wsa@the-dreams.de, Samuel Ortiz <sameo@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>
 
-On Mon, Sep 1, 2014 at 6:18 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> commit 39b2bbe3d715cf5013b5c48695ccdd25bd3bf120
-> "gpio: add flags argument to gpiod_get*() functions"
-> added a dynamic flags argument to all the GPIOD getter
-> functions, however this did not cover the stubs so
-> when people used gpiod stubs to compile out descriptor
-> code, compilation failed.
->
-> Solve this by:
-> - Also rename all the stub functions __gpiod_*
-> - Moving the vararg hack outside of #ifdef CONFIG_GPIOLIB
->   so these will always be available.
-Damn, haven't thought about this.
+On Mon, 01 Sep 2014, Johan Hovold wrote:
+> On Mon, Sep 01, 2014 at 07:22:39PM +0300, Octavian Purdila wrote:
+> > On Mon, Sep 1, 2014 at 6:46 PM, Lee Jones <lee.jones@linaro.org> wr=
+ote:
+> > > On Mon, 01 Sep 2014, Octavian Purdila wrote:
+> > >
+> > >> On Mon, Sep 1, 2014 at 2:39 PM, Lee Jones <lee.jones@linaro.org>=
+ wrote:
+> > >> > On Mon, 01 Sep 2014, Octavian Purdila wrote:
+> > >> >> On Mon, Sep 1, 2014 at 12:51 PM, Lee Jones <lee.jones@linaro.=
+org> wrote:
+>=20
+> > >> >> > You should have a small MFD driver which controls resources=
+ and
+> > >> >> > registers children.  All other functionality should live in=
+ their
+> > >> >> > respective drivers/X locations i.e. USB functionallity shou=
+ld normally
+> > >> >> > live in drivers/usb.
+> > >> >> >
+> > >> >>
+> > >> >> OK, that sounds better. I am not sure how to handle the regis=
+tration
+> > >> >> part though, since in this case we need to create the childre=
+n at
+> > >> >> runtime, from the usb probe routine.
+> > >> >>
+> > >> >> The only solution I see is to move the driver completely to
+> > >> >> usb/drivers and continue to use the MFD infrastructure. Does =
+that
+> > >> >> sound OK to you?
+> > >> >
+> > >> > I have no problem with that.  If this is an MFD driver, it _sh=
+ould_
+> > >> > live in drivers/mfd.  However, all of that USB specific stuff
+> > >> > defiantly should not.
+> > >> >
+> > >> > >> It is a multi-function driver which is using the USB interf=
+ace, so I
+> > >> am not sure where it belongs. The only driver that calls
+> > >> mfd_add_devices and is not in drivers/mfd is the hid sensor hub
+> > >> driver.
+> > >>
+> > >> BTW, the mfd/viperboard.c driver is very similar with this drive=
+r. It
+> > >> has less USB specific stuff because the protocol is simpler, but=
+ still
+> > >> has some.
+> > >
+> > > Looking at viperboard.c, it seems to use some basic generic frame=
+work
+> > > calls to obtain some information about the device information lik=
+e
+> > > version numbers.  Your driver is leaps and bounds more USB centri=
+c.
+> > >
+> > > Your MFD driver should know about things like; regmap, platform d=
+ata,
+> > > memory allocation, same-chip devices (children), etc.  Your MFD d=
+river
+> > > should not need to concern itself with; endpoints, slots, URBs, U=
+SB
+> > > device IDs and the like.  The later knowledge belongs in drivers/=
+usb.
+> > >
+> > > You should be calling mfd_add_devices() from within the MFD drive=
+r.
+> > > At a guess, I would say that you need a new entry for the USB stu=
+ff in
+> > > your mfd_cells structure.
+> > >
+> >=20
+> > Makes sense, thanks for making clearing up what the MFD part of the
+> > driver should do.
+> >=20
+> > Here is how I think it could work:
+> >=20
+> >  * keep the usb probe routine in the MFD driver (and keep it a usb =
+driver)
+> >=20
+> >  * add a new cell for the usb part
+> >=20
+> >  * pass the usb_interface via platform_data to the USB sub-driver's
+> > platform_device probe routine and continue the USB setup there
+> >=20
+> > Lee, USB folks, is this acceptable?
+>=20
+> No, no. USB is not a function of the MFD device, it's the transport.
+> Thus there should be no USB MFD-cell. No subdriver can work without i=
+t.
+>=20
+> And the USB id belongs in the MFD-driver in the same way that an
+> i2c id (address) does.
+>=20
+> Just like an MFD device with i2c as a transport, this driver would
+> function as an arbiter to a shared resource (i.e. the register space)=
+=2E
+> The reason it seems much more USB-centric than an i2c-mfd driver is t=
+hat
+> that transport API is simpler and some code have also already been
+> generalised (e.g. regmap), whereas we appear to have only two USB
+> mfd-drivers thus far.
+>=20
+> The viperboard is perhaps a bad example in so far that it has pushed =
+the
+> transport details down into the subdrivers (and thus into gpio, i2c a=
+nd
+> iio subsystems) instead of handling it one place.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Thanks for your explanation.  I take your point about the USB ID and I
+did say I was guessing that the USB part should exist as a child
+device.
 
-Also it is indeed much nicer to have the macro hacks all in one place. Thanks.
+So after your comments I decided to do a little investigation.  It
+appears that this MFD driver is _just_ using the common API which all
+other devices utilising USB comms are forced to use.  Is that correct?
+
+If so, I have a question.  Is there no way to hide more of the USB
+specifics inside a better, simpler API?  It looks like the drivers
+which use USB are subjected to a lot (too much) of what might be
+considered internals.  Or is it just that the client has to tinker
+with too many dials to get anything sensible out? *shudders*
+
+> I haven't looked at the details of the protocol for the device in
+> question, but it might even be possible to use regmap here (as I
+> mentioned in my comments on v1).
+
+Obviously that would be preferred.
+
+Octavian, did you look into that?
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
