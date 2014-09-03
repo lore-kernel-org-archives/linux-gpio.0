@@ -1,50 +1,50 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] mfd: add support for Diolan DLN-2 devices
-Date: Wed, 3 Sep 2014 17:37:07 +0200
-Message-ID: <20140903153707.GC4894@localhost>
-References: <CAE1zot+T6eq0jrL6_Qh=5nihNOgGEaWe5RCDk7_1XS8ZWaWKqA@mail.gmail.com>
- <20140901113949.GP7374@lee--X1>
- <CAE1zotKNBTEMX8DDYwdwOcq0qZgqxZWazE60TUQeiOmD0a4xbA@mail.gmail.com>
- <20140901154626.GH8796@lee--X1>
- <CAE1zotL-cjHqrdymzYhZq24zx+0qGY8-4JnrVZf-TGXDf5Sm3w@mail.gmail.com>
- <20140901175453.GR4894@localhost>
- <20140902080010.GD17117@lee--X1>
- <CAE1zotJzFL0bZvNo4mHK3+EhURarhTPDE5n+SdNzof8Nc-CFew@mail.gmail.com>
- <20140902152311.GY4894@localhost>
- <CAE1zotLnBZ83O23kaDz_xVhhSpPW6YyOQmkaTfZaicmf6MfOdQ@mail.gmail.com>
+From: Bjorn Andersson <bjorn@kryo.se>
+Subject: Re: [PATCH] pinctrl: clean up after enable refactoring
+Date: Wed, 3 Sep 2014 09:14:25 -0700
+Message-ID: <CAJAp7OgyriJHCLmF4EkdqVV-9_-ve4wRb-jQER9y9-Q4nhd81A@mail.gmail.com>
+References: <1409742329-17411-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAE1zotLnBZ83O23kaDz_xVhhSpPW6YyOQmkaTfZaicmf6MfOdQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:64815 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752645AbaICQO1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Sep 2014 12:14:27 -0400
+Received: by mail-la0-f43.google.com with SMTP id ty20so10177828lab.16
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Sep 2014 09:14:25 -0700 (PDT)
+In-Reply-To: <1409742329-17411-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Fan Wu <fwu@marvell.com>
 
-On Wed, Sep 03, 2014 at 04:39:48PM +0300, Octavian Purdila wrote:
-> On Tue, Sep 2, 2014 at 6:23 PM, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+On Wed, Sep 3, 2014 at 4:05 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+[..]
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 80a64cad907d..01eab47a746f 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -134,9 +134,9 @@ static int msm_get_function_groups(struct pinctrl_dev *pctldev,
+>         return 0;
+>  }
+>
+> -static int msm_pinmux_enable(struct pinctrl_dev *pctldev,
+> -                            unsigned function,
+> -                            unsigned group)
+> +static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
+> +                             unsigned function,
+> +                             unsigned group)
+>  {
+>         struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+>         const struct msm_pingroup *g;
+> @@ -170,7 +170,7 @@ static const struct pinmux_ops msm_pinmux_ops = {
+>         .get_functions_count    = msm_get_functions_count,
+>         .get_function_name      = msm_get_function_name,
+>         .get_function_groups    = msm_get_function_groups,
+> -       .enable                 = msm_pinmux_enable,
+> +       .set_mux                = msm_pinmux_set_mux,
+>  };
+>
+>  static int msm_config_reg(struct msm_pinctrl *pctrl,
 
-> > That should be possible using the regmap bus read and write operations.
-> 
-> I took a closer look on the regmap bus read/write operations and I
-> think they are not fit for what we need in the driver. The driver uses
-> a request/response model which, IMHO, does not fit well with a
-> register read/write API. Yes, maybe we can emulate it, but why do
-> that?
-> 
-> >> (Also creating a regmap class for a particular device seems over
-> >> engineering since nobody else is going to use it)
-> >
-> > Possibly, but it would allow subdrivers to be implemented using a
-> > standard interface and also provide register caching for free.
-> 
-> Using a standard interface is nice, but I think that using the right
-> interface type is more important. This hardware does not use registers
-> but a messages to communicate with the OS.
-
-You might be right, and as I mentioned, I haven't looked that closely at
-the protocol yet. I'll take a look at your updated I/O interface and how
-you use it.
-
-Johan
+Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
