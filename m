@@ -1,50 +1,72 @@
-From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: [PATCH] pinctrl: clean up after enable refactoring
-Date: Wed, 3 Sep 2014 09:14:25 -0700
-Message-ID: <CAJAp7OgyriJHCLmF4EkdqVV-9_-ve4wRb-jQER9y9-Q4nhd81A@mail.gmail.com>
-References: <1409742329-17411-1-git-send-email-linus.walleij@linaro.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH v3 0/4] gpio: syscon: reuse for keystone 2 socs
+Date: Wed, 3 Sep 2014 20:05:31 +0300
+Message-ID: <1409763935-5713-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:64815 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752645AbaICQO1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Sep 2014 12:14:27 -0400
-Received: by mail-la0-f43.google.com with SMTP id ty20so10177828lab.16
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Sep 2014 09:14:25 -0700 (PDT)
-In-Reply-To: <1409742329-17411-1-git-send-email-linus.walleij@linaro.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:40820 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932357AbaICRGL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Sep 2014 13:06:11 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Fan Wu <fwu@marvell.com>
+To: Linus Walleij <linus.walleij@linaro.org>, santosh.shilimkar@ti.com, shc_work@mail.ru, linux-gpio@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Grygorii Strashko <grygorii.strashko@ti.com>
 
-On Wed, Sep 3, 2014 at 4:05 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-[..]
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 80a64cad907d..01eab47a746f 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -134,9 +134,9 @@ static int msm_get_function_groups(struct pinctrl_dev *pctldev,
->         return 0;
->  }
->
-> -static int msm_pinmux_enable(struct pinctrl_dev *pctldev,
-> -                            unsigned function,
-> -                            unsigned group)
-> +static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
-> +                             unsigned function,
-> +                             unsigned group)
->  {
->         struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
->         const struct msm_pingroup *g;
-> @@ -170,7 +170,7 @@ static const struct pinmux_ops msm_pinmux_ops = {
->         .get_functions_count    = msm_get_functions_count,
->         .get_function_name      = msm_get_function_name,
->         .get_function_groups    = msm_get_function_groups,
-> -       .enable                 = msm_pinmux_enable,
-> +       .set_mux                = msm_pinmux_set_mux,
->  };
->
->  static int msm_config_reg(struct msm_pinctrl *pctrl,
+This series intended to integrate Keystone 2 DSP GPIO controller functionality
+into gpio-syscon driver (drivers/gpio/gpio-syscon.c) as requested
+by Linus Walleij in [1].
 
-Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+On Keystone SOCs, ARM host can send interrupts to DSP cores using the
+DSP GPIO controller IP. Each DSP GPIO controller provides 28 IRQ signals for
+each DSP core. This is one of the component used by the IPC mechanism used
+on Keystone SOCs.
+
+Keystone 2 DSP GPIO controller has specific features:
+- each GPIO can be configured only as output pin;
+- setting GPIO value to 1 causes IRQ generation on target DSP core;
+- reading pin value returns 0 - if IRQ was handled or 1 - IRQ is still
+  pending.
+
+The gpio-syscon driver was need to be updated to satisfy Keystone 2 SoC
+requirements:
+1) special sequence of operations need to be used to assign output GPIO value.
+   As result, first patch introduces SoC specific callback .set() to configure
+   output GPIO value.
+
+2) - eight (8) GPIO banks should be supported, but current gpio-syscon driver
+   supports only one.
+   - there can be more than on syscon devices per SoC and GPIO specific registers 
+   can be placed any where. More over, number of syscon devices and their
+   configuration can vary even between two versions of the same SoC. 
+   As result, second patch introduces new DT property for gpio-syscon devices:
+ 	gpio,syscon-dev = <&syscon_dev data_reg_offset [direction_reg_offset]>;
+   which allows to specify syscon node and data/direction registers offsets in DT.
+
+Also, patch 4 is added to illustrate DSP GPIO configuration in DT used by Keystone 2.
+
+Related discussions:
+ [1] https://lkml.org/lkml/2014/7/16/170
+ [2] https://lkml.org/lkml/2014/7/23/352
+
+v1:
+ https://www.mail-archive.com/devicetree@vger.kernel.org/msg37812.html
+v2:
+ https://www.mail-archive.com/devicetree@vger.kernel.org/msg38755.html
+
+Grygorii Strashko (4):
+  gpio: syscon: add soc specific callback to assign output value
+  gpio: syscon: retrive syscon node and regs offsets from dt
+  gpio: syscon: reuse for keystone 2 socs
+  ARM: dts: keystone-k2hk: add dsp gpio controllers nodes
+
+ .../devicetree/bindings/gpio/gpio-dsp-keystone.txt | 39 +++++++++
+ arch/arm/boot/dts/k2hk.dtsi                        | 56 +++++++++++++
+ drivers/gpio/gpio-syscon.c                         | 94 +++++++++++++++++++---
+ 3 files changed, 179 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-dsp-keystone.txt
+
+-- 
+1.9.1
+
