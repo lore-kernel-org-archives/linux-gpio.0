@@ -1,919 +1,770 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: clean up after enable refactoring
-Date: Wed,  3 Sep 2014 13:05:29 +0200
-Message-ID: <1409742329-17411-1-git-send-email-linus.walleij@linaro.org>
+From: Fan Wu <fwu@marvell.com>
+Subject: RE: [PATCH] pinctrl: clean up after enable refactoring
+Date: Wed, 3 Sep 2014 04:26:11 -0700
+Message-ID: <BD54883EA7DE8B41A61B7E723561C71136EF588587@sc-vexch3.marvell.com>
+References: <1409742329-17411-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:65448 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932127AbaICLFi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Sep 2014 07:05:38 -0400
-Received: by mail-wi0-f181.google.com with SMTP id e4so9552915wiv.14
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Sep 2014 04:05:37 -0700 (PDT)
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:41457 "EHLO
+	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754760AbaICL0q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Sep 2014 07:26:46 -0400
+In-Reply-To: <1409742329-17411-1-git-send-email-linus.walleij@linaro.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Fan Wu <fwu@marvell.com>
+To: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wilbur Wang <wwang27@marvell.com>, Yilu Mao <ylmao@marvell.com>
 
-commit 2243a87d90b42eb38bc281957df3e57c712b5e56
-"pinctrl: avoid duplicated calling enable_pinmux_setting for a pin"
-removed the .disable callback from the struct pinmux_ops,
-making the .enable() callback the only remaining callback.
-
-However .enable() is a bad name as it seems to imply that a
-muxing can also be disabled. Rename the callback to .set_mux()
-and also take this opportunity to clean out any remaining
-mentions of .disable() from the documentation.
-
-Cc: Fan Wu <fwu@marvell.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- Documentation/pinctrl.txt                    | 14 ++------------
- drivers/pinctrl/berlin/berlin.c              |  8 ++++----
- drivers/pinctrl/mvebu/pinctrl-mvebu.c        |  6 +++---
- drivers/pinctrl/nomadik/pinctrl-abx500.c     |  6 +++---
- drivers/pinctrl/nomadik/pinctrl-nomadik.c    |  6 +++---
- drivers/pinctrl/pinctrl-adi2.c               |  6 +++---
- drivers/pinctrl/pinctrl-as3722.c             |  4 ++--
- drivers/pinctrl/pinctrl-at91.c               |  6 +++---
- drivers/pinctrl/pinctrl-bcm281xx.c           |  8 ++++----
- drivers/pinctrl/pinctrl-bcm2835.c            |  4 ++--
- drivers/pinctrl/pinctrl-imx.c                |  6 +++---
- drivers/pinctrl/pinctrl-imx1-core.c          |  6 +++---
- drivers/pinctrl/pinctrl-lantiq.c             |  8 ++++----
- drivers/pinctrl/pinctrl-mxs.c                |  6 +++---
- drivers/pinctrl/pinctrl-palmas.c             |  5 +++--
- drivers/pinctrl/pinctrl-rockchip.c           |  6 +++---
- drivers/pinctrl/pinctrl-single.c             |  4 ++--
- drivers/pinctrl/pinctrl-st.c                 |  6 +++---
- drivers/pinctrl/pinctrl-tb10x.c              |  4 ++--
- drivers/pinctrl/pinctrl-tegra-xusb.c         |  8 ++++----
- drivers/pinctrl/pinctrl-tegra.c              |  7 ++++---
- drivers/pinctrl/pinctrl-tz1090-pdc.c         |  7 ++++---
- drivers/pinctrl/pinctrl-tz1090.c             |  6 +++---
- drivers/pinctrl/pinctrl-u300.c               |  6 +++---
- drivers/pinctrl/pinmux.c                     | 10 +++++-----
- drivers/pinctrl/qcom/pinctrl-msm.c           |  8 ++++----
- drivers/pinctrl/samsung/pinctrl-exynos5440.c |  7 ++++---
- drivers/pinctrl/samsung/pinctrl-samsung.c    |  7 ++++---
- drivers/pinctrl/sh-pfc/pinctrl.c             |  6 +++---
- drivers/pinctrl/sirf/pinctrl-sirf.c          |  7 ++++---
- drivers/pinctrl/spear/pinctrl-spear.c        |  4 ++--
- drivers/pinctrl/sunxi/pinctrl-sunxi.c        |  8 ++++----
- drivers/pinctrl/vt8500/pinctrl-wmt.c         |  8 ++++----
- include/linux/pinctrl/pinmux.h               |  7 +++----
- 34 files changed, 110 insertions(+), 115 deletions(-)
-
-diff --git a/Documentation/pinctrl.txt b/Documentation/pinctrl.txt
-index 23f1590f49fe..b8f2147b96dd 100644
---- a/Documentation/pinctrl.txt
-+++ b/Documentation/pinctrl.txt
-@@ -702,7 +702,7 @@ static int foo_get_groups(struct pinctrl_dev *pctldev, unsigned selector,
- 	return 0;
- }
- 
--int foo_enable(struct pinctrl_dev *pctldev, unsigned selector,
-+int foo_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
- 		unsigned group)
- {
- 	u8 regbit = (1 << selector + group);
-@@ -711,21 +711,11 @@ int foo_enable(struct pinctrl_dev *pctldev, unsigned selector,
- 	return 0;
- }
- 
--void foo_disable(struct pinctrl_dev *pctldev, unsigned selector,
--		unsigned group)
--{
--	u8 regbit = (1 << selector + group);
--
--	writeb((readb(MUX) & ~(regbit)), MUX)
--	return 0;
--}
--
- struct pinmux_ops foo_pmxops = {
- 	.get_functions_count = foo_get_functions_count,
- 	.get_function_name = foo_get_fname,
- 	.get_function_groups = foo_get_groups,
--	.enable = foo_enable,
--	.disable = foo_disable,
-+	.set_mux = foo_set_mux,
- };
- 
- /* Pinmux operations are handled by some pin controller */
-diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
-index 86db2235ab00..61f1bf0e60ba 100644
---- a/drivers/pinctrl/berlin/berlin.c
-+++ b/drivers/pinctrl/berlin/berlin.c
-@@ -170,9 +170,9 @@ berlin_pinctrl_find_function_by_name(struct berlin_pinctrl *pctrl,
- 	return NULL;
- }
- 
--static int berlin_pinmux_enable(struct pinctrl_dev *pctrl_dev,
--				unsigned function,
--				unsigned group)
-+static int berlin_pinmux_set(struct pinctrl_dev *pctrl_dev,
-+			     unsigned function,
-+			     unsigned group)
- {
- 	struct berlin_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctrl_dev);
- 	const struct berlin_desc_group *group_desc = pctrl->desc->groups + group;
-@@ -197,7 +197,7 @@ static const struct pinmux_ops berlin_pinmux_ops = {
- 	.get_functions_count	= &berlin_pinmux_get_functions_count,
- 	.get_function_name	= &berlin_pinmux_get_function_name,
- 	.get_function_groups	= &berlin_pinmux_get_function_groups,
--	.enable			= &berlin_pinmux_enable,
-+	.set_mux		= &berlin_pinmux_set,
- };
- 
- static int berlin_pinctrl_add_function(struct berlin_pinctrl *pctrl,
-diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-index 9908374f8f92..f3b426cdaf8f 100644
---- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-@@ -259,8 +259,8 @@ static int mvebu_pinmux_get_groups(struct pinctrl_dev *pctldev, unsigned fid,
- 	return 0;
- }
- 
--static int mvebu_pinmux_enable(struct pinctrl_dev *pctldev, unsigned fid,
--			unsigned gid)
-+static int mvebu_pinmux_set(struct pinctrl_dev *pctldev, unsigned fid,
-+			    unsigned gid)
- {
- 	struct mvebu_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
- 	struct mvebu_pinctrl_function *func = &pctl->functions[fid];
-@@ -344,7 +344,7 @@ static const struct pinmux_ops mvebu_pinmux_ops = {
- 	.get_function_groups = mvebu_pinmux_get_groups,
- 	.gpio_request_enable = mvebu_pinmux_gpio_request_enable,
- 	.gpio_set_direction = mvebu_pinmux_gpio_set_direction,
--	.enable = mvebu_pinmux_enable,
-+	.set_mux = mvebu_pinmux_set,
- };
- 
- static int mvebu_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
-diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
-index a53a689a2bfa..b0289824cf73 100644
---- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
-@@ -709,8 +709,8 @@ static int abx500_pmx_get_func_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int abx500_pmx_enable(struct pinctrl_dev *pctldev, unsigned function,
--			     unsigned group)
-+static int abx500_pmx_set(struct pinctrl_dev *pctldev, unsigned function,
-+			  unsigned group)
- {
- 	struct abx500_pinctrl *pct = pinctrl_dev_get_drvdata(pctldev);
- 	struct gpio_chip *chip = &pct->chip;
-@@ -784,7 +784,7 @@ static const struct pinmux_ops abx500_pinmux_ops = {
- 	.get_functions_count = abx500_pmx_get_funcs_cnt,
- 	.get_function_name = abx500_pmx_get_func_name,
- 	.get_function_groups = abx500_pmx_get_func_groups,
--	.enable = abx500_pmx_enable,
-+	.set_mux = abx500_pmx_set,
- 	.gpio_request_enable = abx500_gpio_request_enable,
- 	.gpio_disable_free = abx500_gpio_disable_free,
- };
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index e7cab07eef47..c093d75a022a 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -1647,8 +1647,8 @@ static int nmk_pmx_get_func_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int nmk_pmx_enable(struct pinctrl_dev *pctldev, unsigned function,
--			  unsigned group)
-+static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned function,
-+		       unsigned group)
- {
- 	struct nmk_pinctrl *npct = pinctrl_dev_get_drvdata(pctldev);
- 	const struct nmk_pingroup *g;
-@@ -1810,7 +1810,7 @@ static const struct pinmux_ops nmk_pinmux_ops = {
- 	.get_functions_count = nmk_pmx_get_funcs_cnt,
- 	.get_function_name = nmk_pmx_get_func_name,
- 	.get_function_groups = nmk_pmx_get_func_groups,
--	.enable = nmk_pmx_enable,
-+	.set_mux = nmk_pmx_set,
- 	.gpio_request_enable = nmk_gpio_request_enable,
- 	.gpio_disable_free = nmk_gpio_disable_free,
- };
-diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
-index b092b93c67a1..e02943b0285d 100644
---- a/drivers/pinctrl/pinctrl-adi2.c
-+++ b/drivers/pinctrl/pinctrl-adi2.c
-@@ -619,8 +619,8 @@ static struct pinctrl_ops adi_pctrl_ops = {
- 	.get_group_pins = adi_get_group_pins,
- };
- 
--static int adi_pinmux_enable(struct pinctrl_dev *pctldev, unsigned func_id,
--	unsigned group_id)
-+static int adi_pinmux_set(struct pinctrl_dev *pctldev, unsigned func_id,
-+			  unsigned group_id)
- {
- 	struct adi_pinctrl *pinctrl = pinctrl_dev_get_drvdata(pctldev);
- 	struct gpio_port *port;
-@@ -698,7 +698,7 @@ static int adi_pinmux_request_gpio(struct pinctrl_dev *pctldev,
- }
- 
- static struct pinmux_ops adi_pinmux_ops = {
--	.enable = adi_pinmux_enable,
-+	.set_mux = adi_pinmux_set,
- 	.get_functions_count = adi_pinmux_get_funcs_count,
- 	.get_function_name = adi_pinmux_get_func_name,
- 	.get_function_groups = adi_pinmux_get_groups,
-diff --git a/drivers/pinctrl/pinctrl-as3722.c b/drivers/pinctrl/pinctrl-as3722.c
-index 0e4ec91f4d49..1f790a4b83fe 100644
---- a/drivers/pinctrl/pinctrl-as3722.c
-+++ b/drivers/pinctrl/pinctrl-as3722.c
-@@ -230,7 +230,7 @@ static int as3722_pinctrl_get_func_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int as3722_pinctrl_enable(struct pinctrl_dev *pctldev, unsigned function,
-+static int as3722_pinctrl_set(struct pinctrl_dev *pctldev, unsigned function,
- 		unsigned group)
- {
- 	struct as3722_pctrl_info *as_pci = pinctrl_dev_get_drvdata(pctldev);
-@@ -327,7 +327,7 @@ static const struct pinmux_ops as3722_pinmux_ops = {
- 	.get_functions_count	= as3722_pinctrl_get_funcs_count,
- 	.get_function_name	= as3722_pinctrl_get_func_name,
- 	.get_function_groups	= as3722_pinctrl_get_func_groups,
--	.enable			= as3722_pinctrl_enable,
-+	.set_mux		= as3722_pinctrl_set,
- 	.gpio_request_enable	= as3722_pinctrl_gpio_request_enable,
- 	.gpio_set_direction	= as3722_pinctrl_gpio_set_direction,
- };
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index af1ba4fc150d..4839c36a3a1c 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -554,8 +554,8 @@ static void at91_mux_gpio_enable(void __iomem *pio, unsigned mask, bool input)
- 	writel_relaxed(mask, pio + (input ? PIO_ODR : PIO_OER));
- }
- 
--static int at91_pmx_enable(struct pinctrl_dev *pctldev, unsigned selector,
--			   unsigned group)
-+static int at91_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
-+			unsigned group)
- {
- 	struct at91_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 	const struct at91_pmx_pin *pins_conf = info->groups[group].pins_conf;
-@@ -684,7 +684,7 @@ static const struct pinmux_ops at91_pmx_ops = {
- 	.get_functions_count	= at91_pmx_get_funcs_count,
- 	.get_function_name	= at91_pmx_get_func_name,
- 	.get_function_groups	= at91_pmx_get_groups,
--	.enable			= at91_pmx_enable,
-+	.set_mux		= at91_pmx_set,
- 	.gpio_request_enable	= at91_gpio_request_enable,
- 	.gpio_disable_free	= at91_gpio_disable_free,
- };
-diff --git a/drivers/pinctrl/pinctrl-bcm281xx.c b/drivers/pinctrl/pinctrl-bcm281xx.c
-index c5ca9e633fff..a26e0c2ba33e 100644
---- a/drivers/pinctrl/pinctrl-bcm281xx.c
-+++ b/drivers/pinctrl/pinctrl-bcm281xx.c
-@@ -1055,9 +1055,9 @@ static int bcm281xx_pinctrl_get_fcn_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int bcm281xx_pinmux_enable(struct pinctrl_dev *pctldev,
--				  unsigned function,
--				  unsigned group)
-+static int bcm281xx_pinmux_set(struct pinctrl_dev *pctldev,
-+			       unsigned function,
-+			       unsigned group)
- {
- 	struct bcm281xx_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
- 	const struct bcm281xx_pin_function *f = &pdata->functions[function];
-@@ -1084,7 +1084,7 @@ static struct pinmux_ops bcm281xx_pinctrl_pinmux_ops = {
- 	.get_functions_count = bcm281xx_pinctrl_get_fcns_count,
- 	.get_function_name = bcm281xx_pinctrl_get_fcn_name,
- 	.get_function_groups = bcm281xx_pinctrl_get_fcn_groups,
--	.enable = bcm281xx_pinmux_enable,
-+	.set_mux = bcm281xx_pinmux_set,
- };
- 
- static int bcm281xx_pinctrl_pin_config_get(struct pinctrl_dev *pctldev,
-diff --git a/drivers/pinctrl/pinctrl-bcm2835.c b/drivers/pinctrl/pinctrl-bcm2835.c
-index 5bcfd7ace0cd..eabba02f71f9 100644
---- a/drivers/pinctrl/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/pinctrl-bcm2835.c
-@@ -830,7 +830,7 @@ static int bcm2835_pmx_get_function_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int bcm2835_pmx_enable(struct pinctrl_dev *pctldev,
-+static int bcm2835_pmx_set(struct pinctrl_dev *pctldev,
- 		unsigned func_selector,
- 		unsigned group_selector)
- {
-@@ -869,7 +869,7 @@ static const struct pinmux_ops bcm2835_pmx_ops = {
- 	.get_functions_count = bcm2835_pmx_get_functions_count,
- 	.get_function_name = bcm2835_pmx_get_function_name,
- 	.get_function_groups = bcm2835_pmx_get_function_groups,
--	.enable = bcm2835_pmx_enable,
-+	.set_mux = bcm2835_pmx_set,
- 	.gpio_disable_free = bcm2835_pmx_gpio_disable_free,
- 	.gpio_set_direction = bcm2835_pmx_gpio_set_direction,
- };
-diff --git a/drivers/pinctrl/pinctrl-imx.c b/drivers/pinctrl/pinctrl-imx.c
-index 946d594a64dd..570e5acb4a6a 100644
---- a/drivers/pinctrl/pinctrl-imx.c
-+++ b/drivers/pinctrl/pinctrl-imx.c
-@@ -179,8 +179,8 @@ static const struct pinctrl_ops imx_pctrl_ops = {
- 
- };
- 
--static int imx_pmx_enable(struct pinctrl_dev *pctldev, unsigned selector,
--			   unsigned group)
-+static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
-+		       unsigned group)
- {
- 	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
- 	const struct imx_pinctrl_soc_info *info = ipctl->info;
-@@ -298,7 +298,7 @@ static const struct pinmux_ops imx_pmx_ops = {
- 	.get_functions_count = imx_pmx_get_funcs_count,
- 	.get_function_name = imx_pmx_get_func_name,
- 	.get_function_groups = imx_pmx_get_groups,
--	.enable = imx_pmx_enable,
-+	.set_mux = imx_pmx_set,
- };
- 
- static int imx_pinconf_get(struct pinctrl_dev *pctldev,
-diff --git a/drivers/pinctrl/pinctrl-imx1-core.c b/drivers/pinctrl/pinctrl-imx1-core.c
-index 483420757c9f..176a3e62f1cf 100644
---- a/drivers/pinctrl/pinctrl-imx1-core.c
-+++ b/drivers/pinctrl/pinctrl-imx1-core.c
-@@ -298,8 +298,8 @@ static const struct pinctrl_ops imx1_pctrl_ops = {
- 
- };
- 
--static int imx1_pmx_enable(struct pinctrl_dev *pctldev, unsigned selector,
--			   unsigned group)
-+static int imx1_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
-+			unsigned group)
- {
- 	struct imx1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
- 	const struct imx1_pinctrl_soc_info *info = ipctl->info;
-@@ -385,7 +385,7 @@ static const struct pinmux_ops imx1_pmx_ops = {
- 	.get_functions_count = imx1_pmx_get_funcs_count,
- 	.get_function_name = imx1_pmx_get_func_name,
- 	.get_function_groups = imx1_pmx_get_groups,
--	.enable = imx1_pmx_enable,
-+	.set_mux = imx1_pmx_set,
- };
- 
- static int imx1_pinconf_get(struct pinctrl_dev *pctldev,
-diff --git a/drivers/pinctrl/pinctrl-lantiq.c b/drivers/pinctrl/pinctrl-lantiq.c
-index d22ca252b80d..296e5b37f768 100644
---- a/drivers/pinctrl/pinctrl-lantiq.c
-+++ b/drivers/pinctrl/pinctrl-lantiq.c
-@@ -257,9 +257,9 @@ static int match_group_mux(const struct ltq_pin_group *grp,
- 	return ret;
- }
- 
--static int ltq_pmx_enable(struct pinctrl_dev *pctrldev,
--				unsigned func,
--				unsigned group)
-+static int ltq_pmx_set(struct pinctrl_dev *pctrldev,
-+		       unsigned func,
-+		       unsigned group)
- {
- 	struct ltq_pinmux_info *info = pinctrl_dev_get_drvdata(pctrldev);
- 	const struct ltq_pin_group *pin_grp = &info->grps[group];
-@@ -316,7 +316,7 @@ static const struct pinmux_ops ltq_pmx_ops = {
- 	.get_functions_count	= ltq_pmx_func_count,
- 	.get_function_name	= ltq_pmx_func_name,
- 	.get_function_groups	= ltq_pmx_get_groups,
--	.enable			= ltq_pmx_enable,
-+	.set_mux		= ltq_pmx_set,
- 	.gpio_request_enable	= ltq_pmx_gpio_request_enable,
- };
- 
-diff --git a/drivers/pinctrl/pinctrl-mxs.c b/drivers/pinctrl/pinctrl-mxs.c
-index 40c76f26998c..67035091f8fd 100644
---- a/drivers/pinctrl/pinctrl-mxs.c
-+++ b/drivers/pinctrl/pinctrl-mxs.c
-@@ -195,8 +195,8 @@ static int mxs_pinctrl_get_func_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int mxs_pinctrl_enable(struct pinctrl_dev *pctldev, unsigned selector,
--			      unsigned group)
-+static int mxs_pinctrl_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
-+			       unsigned group)
- {
- 	struct mxs_pinctrl_data *d = pinctrl_dev_get_drvdata(pctldev);
- 	struct mxs_group *g = &d->soc->groups[group];
-@@ -223,7 +223,7 @@ static const struct pinmux_ops mxs_pinmux_ops = {
- 	.get_functions_count = mxs_pinctrl_get_funcs_count,
- 	.get_function_name = mxs_pinctrl_get_func_name,
- 	.get_function_groups = mxs_pinctrl_get_func_groups,
--	.enable = mxs_pinctrl_enable,
-+	.set_mux = mxs_pinctrl_set_mux,
- };
- 
- static int mxs_pinconf_get(struct pinctrl_dev *pctldev,
-diff --git a/drivers/pinctrl/pinctrl-palmas.c b/drivers/pinctrl/pinctrl-palmas.c
-index f13d0e78a41c..e3079d3d19fe 100644
---- a/drivers/pinctrl/pinctrl-palmas.c
-+++ b/drivers/pinctrl/pinctrl-palmas.c
-@@ -685,7 +685,8 @@ static int palmas_pinctrl_get_func_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int palmas_pinctrl_enable(struct pinctrl_dev *pctldev, unsigned function,
-+static int palmas_pinctrl_set_mux(struct pinctrl_dev *pctldev,
-+		unsigned function,
- 		unsigned group)
- {
- 	struct palmas_pctrl_chip_info *pci = pinctrl_dev_get_drvdata(pctldev);
-@@ -742,7 +743,7 @@ static const struct pinmux_ops palmas_pinmux_ops = {
- 	.get_functions_count = palmas_pinctrl_get_funcs_count,
- 	.get_function_name = palmas_pinctrl_get_func_name,
- 	.get_function_groups = palmas_pinctrl_get_func_groups,
--	.enable = palmas_pinctrl_enable,
-+	.set_mux = palmas_pinctrl_set_mux,
- };
- 
- static int palmas_pinconf_get(struct pinctrl_dev *pctldev,
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 5e8b2e04cd7a..b91b966add8f 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -813,8 +813,8 @@ static int rockchip_pmx_get_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int rockchip_pmx_enable(struct pinctrl_dev *pctldev, unsigned selector,
--							    unsigned group)
-+static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
-+			    unsigned group)
- {
- 	struct rockchip_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 	const unsigned int *pins = info->groups[group].pins;
-@@ -889,7 +889,7 @@ static const struct pinmux_ops rockchip_pmx_ops = {
- 	.get_functions_count	= rockchip_pmx_get_funcs_count,
- 	.get_function_name	= rockchip_pmx_get_func_name,
- 	.get_function_groups	= rockchip_pmx_get_groups,
--	.enable			= rockchip_pmx_enable,
-+	.set_mux		= rockchip_pmx_set,
- 	.gpio_set_direction	= rockchip_pmx_gpio_set_direction,
- };
- 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 784de13facf3..9032422ad18f 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -447,7 +447,7 @@ static int pcs_get_function(struct pinctrl_dev *pctldev, unsigned pin,
- 	return 0;
- }
- 
--static int pcs_enable(struct pinctrl_dev *pctldev, unsigned fselector,
-+static int pcs_set_mux(struct pinctrl_dev *pctldev, unsigned fselector,
- 	unsigned group)
- {
- 	struct pcs_device *pcs;
-@@ -519,7 +519,7 @@ static const struct pinmux_ops pcs_pinmux_ops = {
- 	.get_functions_count = pcs_get_functions_count,
- 	.get_function_name = pcs_get_function_name,
- 	.get_function_groups = pcs_get_function_groups,
--	.enable = pcs_enable,
-+	.set_mux = pcs_sex_mux,
- 	.gpio_request_enable = pcs_request_gpio,
- };
- 
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index 5475374d803f..6c4c41bed1e3 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -914,8 +914,8 @@ static struct st_pio_control *st_get_pio_control(
- 	return &bank->pc;
- }
- 
--static int st_pmx_enable(struct pinctrl_dev *pctldev, unsigned fselector,
--		unsigned group)
-+static int st_pmx_set_mux(struct pinctrl_dev *pctldev, unsigned fselector,
-+			unsigned group)
- {
- 	struct st_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 	struct st_pinconf *conf = info->groups[group].pin_conf;
-@@ -951,7 +951,7 @@ static struct pinmux_ops st_pmxops = {
- 	.get_functions_count	= st_pmx_get_funcs_count,
- 	.get_function_name	= st_pmx_get_fname,
- 	.get_function_groups	= st_pmx_get_groups,
--	.enable			= st_pmx_enable,
-+	.set_mux		= st_pmx_set_mux,
- 	.gpio_set_direction	= st_pmx_set_gpio_direction,
- };
- 
-diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
-index 71c5d4f0c538..3b9bfcf717ac 100644
---- a/drivers/pinctrl/pinctrl-tb10x.c
-+++ b/drivers/pinctrl/pinctrl-tb10x.c
-@@ -697,7 +697,7 @@ static void tb10x_gpio_disable_free(struct pinctrl_dev *pctl,
- 	mutex_unlock(&state->mutex);
- }
- 
--static int tb10x_pctl_enable(struct pinctrl_dev *pctl,
-+static int tb10x_pctl_set_mux(struct pinctrl_dev *pctl,
- 			unsigned func_selector, unsigned group_selector)
- {
- 	struct tb10x_pinctrl *state = pinctrl_dev_get_drvdata(pctl);
-@@ -744,7 +744,7 @@ static struct pinmux_ops tb10x_pinmux_ops = {
- 	.get_function_groups = tb10x_get_function_groups,
- 	.gpio_request_enable = tb10x_gpio_request_enable,
- 	.gpio_disable_free = tb10x_gpio_disable_free,
--	.enable = tb10x_pctl_enable,
-+	.set_mux = tb10x_pctl_set_mux,
- };
- 
- static struct pinctrl_desc tb10x_pindesc = {
-diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
-index a06620474845..4648c9e5c582 100644
---- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-@@ -281,9 +281,9 @@ static int tegra_xusb_padctl_get_function_groups(struct pinctrl_dev *pinctrl,
- 	return 0;
- }
- 
--static int tegra_xusb_padctl_pinmux_enable(struct pinctrl_dev *pinctrl,
--					   unsigned int function,
--					   unsigned int group)
-+static int tegra_xusb_padctl_pinmux_set(struct pinctrl_dev *pinctrl,
-+					unsigned int function,
-+					unsigned int group)
- {
- 	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
- 	const struct tegra_xusb_padctl_lane *lane;
-@@ -311,7 +311,7 @@ static const struct pinmux_ops tegra_xusb_padctl_pinmux_ops = {
- 	.get_functions_count = tegra_xusb_padctl_get_functions_count,
- 	.get_function_name = tegra_xusb_padctl_get_function_name,
- 	.get_function_groups = tegra_xusb_padctl_get_function_groups,
--	.enable = tegra_xusb_padctl_pinmux_enable,
-+	.set_mux = tegra_xusb_padctl_pinmux_set,
- };
- 
- static int tegra_xusb_padctl_pinconf_group_get(struct pinctrl_dev *pinctrl,
-diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-index 150af5503c09..e5949d51bc52 100644
---- a/drivers/pinctrl/pinctrl-tegra.c
-+++ b/drivers/pinctrl/pinctrl-tegra.c
-@@ -262,8 +262,9 @@ static int tegra_pinctrl_get_func_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int tegra_pinctrl_enable(struct pinctrl_dev *pctldev, unsigned function,
--			       unsigned group)
-+static int tegra_pinctrl_set_mux(struct pinctrl_dev *pctldev,
-+				 unsigned function,
-+				 unsigned group)
- {
- 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
- 	const struct tegra_pingroup *g;
-@@ -294,7 +295,7 @@ static const struct pinmux_ops tegra_pinmux_ops = {
- 	.get_functions_count = tegra_pinctrl_get_funcs_count,
- 	.get_function_name = tegra_pinctrl_get_func_name,
- 	.get_function_groups = tegra_pinctrl_get_func_groups,
--	.enable = tegra_pinctrl_enable,
-+	.set_mux = tegra_pinctrl_set_mux,
- };
- 
- static int tegra_pinconf_reg(struct tegra_pmx *pmx,
-diff --git a/drivers/pinctrl/pinctrl-tz1090-pdc.c b/drivers/pinctrl/pinctrl-tz1090-pdc.c
-index 41e81a35cabb..3bb6a3b78864 100644
---- a/drivers/pinctrl/pinctrl-tz1090-pdc.c
-+++ b/drivers/pinctrl/pinctrl-tz1090-pdc.c
-@@ -547,8 +547,9 @@ static void tz1090_pdc_pinctrl_mux(struct tz1090_pdc_pmx *pmx,
- 	__global_unlock2(flags);
- }
- 
--static int tz1090_pdc_pinctrl_enable(struct pinctrl_dev *pctldev,
--				     unsigned int function, unsigned int group)
-+static int tz1090_pdc_pinctrl_set_mux(struct pinctrl_dev *pctldev,
-+				      unsigned int function,
-+				      unsigned int group)
- {
- 	struct tz1090_pdc_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
- 	const struct tz1090_pdc_pingroup *grp = &tz1090_pdc_groups[group];
-@@ -634,7 +635,7 @@ static struct pinmux_ops tz1090_pdc_pinmux_ops = {
- 	.get_functions_count	= tz1090_pdc_pinctrl_get_funcs_count,
- 	.get_function_name	= tz1090_pdc_pinctrl_get_func_name,
- 	.get_function_groups	= tz1090_pdc_pinctrl_get_func_groups,
--	.enable			= tz1090_pdc_pinctrl_enable,
-+	.set_mux		= tz1090_pdc_pinctrl_set_mux,
- 	.gpio_request_enable	= tz1090_pdc_pinctrl_gpio_request_enable,
- 	.gpio_disable_free	= tz1090_pdc_pinctrl_gpio_disable_free,
- };
-diff --git a/drivers/pinctrl/pinctrl-tz1090.c b/drivers/pinctrl/pinctrl-tz1090.c
-index 24082216842e..48d36413b99f 100644
---- a/drivers/pinctrl/pinctrl-tz1090.c
-+++ b/drivers/pinctrl/pinctrl-tz1090.c
-@@ -1415,8 +1415,8 @@ found_mux:
-  * the effect is the same as enabling the function on each individual pin in the
-  * group.
-  */
--static int tz1090_pinctrl_enable(struct pinctrl_dev *pctldev,
--				 unsigned int function, unsigned int group)
-+static int tz1090_pinctrl_set_mux(struct pinctrl_dev *pctldev,
-+				  unsigned int function, unsigned int group)
- {
- 	struct tz1090_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
- 	struct tz1090_pingroup *grp;
-@@ -1517,7 +1517,7 @@ static struct pinmux_ops tz1090_pinmux_ops = {
- 	.get_functions_count	= tz1090_pinctrl_get_funcs_count,
- 	.get_function_name	= tz1090_pinctrl_get_func_name,
- 	.get_function_groups	= tz1090_pinctrl_get_func_groups,
--	.enable			= tz1090_pinctrl_enable,
-+	.set_mux		= tz1090_pinctrl_set_mux,
- 	.gpio_request_enable	= tz1090_pinctrl_gpio_request_enable,
- 	.gpio_disable_free	= tz1090_pinctrl_gpio_disable_free,
- };
-diff --git a/drivers/pinctrl/pinctrl-u300.c b/drivers/pinctrl/pinctrl-u300.c
-index 0959bb36450f..e9c7113d81f2 100644
---- a/drivers/pinctrl/pinctrl-u300.c
-+++ b/drivers/pinctrl/pinctrl-u300.c
-@@ -955,8 +955,8 @@ static void u300_pmx_endisable(struct u300_pmx *upmx, unsigned selector,
- 	}
- }
- 
--static int u300_pmx_enable(struct pinctrl_dev *pctldev, unsigned selector,
--			   unsigned group)
-+static int u300_pmx_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
-+			    unsigned group)
- {
- 	struct u300_pmx *upmx;
- 
-@@ -994,7 +994,7 @@ static const struct pinmux_ops u300_pmx_ops = {
- 	.get_functions_count = u300_pmx_get_funcs_count,
- 	.get_function_name = u300_pmx_get_func_name,
- 	.get_function_groups = u300_pmx_get_groups,
--	.enable = u300_pmx_enable,
-+	.set_mux = u300_pmx_set_mux,
- };
- 
- static int u300_pin_config_get(struct pinctrl_dev *pctldev, unsigned pin,
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index c055daf9a80f..b874458dcb88 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -41,7 +41,7 @@ int pinmux_check_ops(struct pinctrl_dev *pctldev)
- 	    !ops->get_functions_count ||
- 	    !ops->get_function_name ||
- 	    !ops->get_function_groups ||
--	    !ops->enable) {
-+	    !ops->set_mux) {
- 		dev_err(pctldev->dev, "pinmux ops lacks necessary functions\n");
- 		return -EINVAL;
- 	}
-@@ -445,15 +445,15 @@ int pinmux_enable_setting(struct pinctrl_setting const *setting)
- 		desc->mux_setting = &(setting->data.mux);
- 	}
- 
--	ret = ops->enable(pctldev, setting->data.mux.func,
--			  setting->data.mux.group);
-+	ret = ops->set_mux(pctldev, setting->data.mux.func,
-+			   setting->data.mux.group);
- 
- 	if (ret)
--		goto err_enable;
-+		goto err_set_mux;
- 
- 	return 0;
- 
--err_enable:
-+err_set_mux:
- 	for (i = 0; i < num_pins; i++) {
- 		desc = pin_desc_get(pctldev, pins[i]);
- 		if (desc)
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 80a64cad907d..01eab47a746f 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -134,9 +134,9 @@ static int msm_get_function_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int msm_pinmux_enable(struct pinctrl_dev *pctldev,
--			     unsigned function,
--			     unsigned group)
-+static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
-+			      unsigned function,
-+			      unsigned group)
- {
- 	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 	const struct msm_pingroup *g;
-@@ -170,7 +170,7 @@ static const struct pinmux_ops msm_pinmux_ops = {
- 	.get_functions_count	= msm_get_functions_count,
- 	.get_function_name	= msm_get_function_name,
- 	.get_function_groups	= msm_get_function_groups,
--	.enable			= msm_pinmux_enable,
-+	.set_mux		= msm_pinmux_set_mux,
- };
- 
- static int msm_config_reg(struct msm_pinctrl *pctrl,
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-index 603da2f9dd95..b995ec2c5d16 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-@@ -364,8 +364,9 @@ static void exynos5440_pinmux_setup(struct pinctrl_dev *pctldev, unsigned select
- }
- 
- /* enable a specified pinmux by writing to registers */
--static int exynos5440_pinmux_enable(struct pinctrl_dev *pctldev, unsigned selector,
--					unsigned group)
-+static int exynos5440_pinmux_set_mux(struct pinctrl_dev *pctldev,
-+				     unsigned selector,
-+				     unsigned group)
- {
- 	exynos5440_pinmux_setup(pctldev, selector, group, true);
- 	return 0;
-@@ -387,7 +388,7 @@ static const struct pinmux_ops exynos5440_pinmux_ops = {
- 	.get_functions_count	= exynos5440_get_functions_count,
- 	.get_function_name	= exynos5440_pinmux_get_fname,
- 	.get_function_groups	= exynos5440_pinmux_get_groups,
--	.enable			= exynos5440_pinmux_enable,
-+	.set_mux		= exynos5440_pinmux_set_mux,
- 	.gpio_set_direction	= exynos5440_pinmux_gpio_set_direction,
- };
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index b07406da333c..4a47691c32b1 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -401,8 +401,9 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- }
- 
- /* enable a specified pinmux by writing to registers */
--static int samsung_pinmux_enable(struct pinctrl_dev *pctldev, unsigned selector,
--					unsigned group)
-+static int samsung_pinmux_set_mux(struct pinctrl_dev *pctldev,
-+				  unsigned selector,
-+				  unsigned group)
- {
- 	samsung_pinmux_setup(pctldev, selector, group, true);
- 	return 0;
-@@ -413,7 +414,7 @@ static const struct pinmux_ops samsung_pinmux_ops = {
- 	.get_functions_count	= samsung_get_functions_count,
- 	.get_function_name	= samsung_pinmux_get_fname,
- 	.get_function_groups	= samsung_pinmux_get_groups,
--	.enable			= samsung_pinmux_enable,
-+	.set_mux		= samsung_pinmux_set_mux,
- };
- 
- /* set or get the pin config settings for a specified pin */
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index 11db3ee39d40..910deaefa0ac 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -312,8 +312,8 @@ static int sh_pfc_get_function_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int sh_pfc_func_enable(struct pinctrl_dev *pctldev, unsigned selector,
--			      unsigned group)
-+static int sh_pfc_func_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
-+			       unsigned group)
- {
- 	struct sh_pfc_pinctrl *pmx = pinctrl_dev_get_drvdata(pctldev);
- 	struct sh_pfc *pfc = pmx->pfc;
-@@ -442,7 +442,7 @@ static const struct pinmux_ops sh_pfc_pinmux_ops = {
- 	.get_functions_count	= sh_pfc_get_functions_count,
- 	.get_function_name	= sh_pfc_get_function_name,
- 	.get_function_groups	= sh_pfc_get_function_groups,
--	.enable			= sh_pfc_func_enable,
-+	.set_mux		= sh_pfc_func_set_mux,
- 	.gpio_request_enable	= sh_pfc_gpio_request_enable,
- 	.gpio_disable_free	= sh_pfc_gpio_disable_free,
- 	.gpio_set_direction	= sh_pfc_gpio_set_direction,
-diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
-index 45f93f952a39..6f252fd7cb0c 100644
---- a/drivers/pinctrl/sirf/pinctrl-sirf.c
-+++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
-@@ -179,8 +179,9 @@ static void sirfsoc_pinmux_endisable(struct sirfsoc_pmx *spmx,
- 	}
- }
- 
--static int sirfsoc_pinmux_enable(struct pinctrl_dev *pmxdev, unsigned selector,
--	unsigned group)
-+static int sirfsoc_pinmux_set_mux(struct pinctrl_dev *pmxdev,
-+				unsigned selector,
-+				unsigned group)
- {
- 	struct sirfsoc_pmx *spmx;
- 
-@@ -237,7 +238,7 @@ static int sirfsoc_pinmux_request_gpio(struct pinctrl_dev *pmxdev,
- }
- 
- static struct pinmux_ops sirfsoc_pinmux_ops = {
--	.enable = sirfsoc_pinmux_enable,
-+	.set_mux = sirfsoc_pinmux_set_mux,
- 	.get_functions_count = sirfsoc_pinmux_get_funcs_count,
- 	.get_function_name = sirfsoc_pinmux_get_func_name,
- 	.get_function_groups = sirfsoc_pinmux_get_groups,
-diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
-index f72cc4e192bd..abdb05ac43dc 100644
---- a/drivers/pinctrl/spear/pinctrl-spear.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear.c
-@@ -268,7 +268,7 @@ static int spear_pinctrl_endisable(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--static int spear_pinctrl_enable(struct pinctrl_dev *pctldev, unsigned function,
-+static int spear_pinctrl_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 		unsigned group)
- {
- 	return spear_pinctrl_endisable(pctldev, function, group, true);
-@@ -338,7 +338,7 @@ static const struct pinmux_ops spear_pinmux_ops = {
- 	.get_functions_count = spear_pinctrl_get_funcs_count,
- 	.get_function_name = spear_pinctrl_get_func_name,
- 	.get_function_groups = spear_pinctrl_get_func_groups,
--	.enable = spear_pinctrl_enable,
-+	.set_mux = spear_pinctrl_set_mux,
- 	.gpio_request_enable = gpio_request_enable,
- 	.gpio_disable_free = gpio_disable_free,
- };
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 3df66e366c87..ef9d804e55de 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -393,9 +393,9 @@ static void sunxi_pmx_set(struct pinctrl_dev *pctldev,
- 	spin_unlock_irqrestore(&pctl->lock, flags);
- }
- 
--static int sunxi_pmx_enable(struct pinctrl_dev *pctldev,
--			    unsigned function,
--			    unsigned group)
-+static int sunxi_pmx_set_mux(struct pinctrl_dev *pctldev,
-+			     unsigned function,
-+			     unsigned group)
- {
- 	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
- 	struct sunxi_pinctrl_group *g = pctl->groups + group;
-@@ -441,7 +441,7 @@ static const struct pinmux_ops sunxi_pmx_ops = {
- 	.get_functions_count	= sunxi_pmx_get_funcs_cnt,
- 	.get_function_name	= sunxi_pmx_get_func_name,
- 	.get_function_groups	= sunxi_pmx_get_func_groups,
--	.enable			= sunxi_pmx_enable,
-+	.set_mux		= sunxi_pmx_set_mux,
- 	.gpio_set_direction	= sunxi_pmx_gpio_set_direction,
- };
- 
-diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-index 8cea355f9a81..d055d63309e4 100644
---- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
-+++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-@@ -131,9 +131,9 @@ static int wmt_set_pinmux(struct wmt_pinctrl_data *data, unsigned func,
- 	return 0;
- }
- 
--static int wmt_pmx_enable(struct pinctrl_dev *pctldev,
--			  unsigned func_selector,
--			  unsigned group_selector)
-+static int wmt_pmx_set_mux(struct pinctrl_dev *pctldev,
-+			   unsigned func_selector,
-+			   unsigned group_selector)
- {
- 	struct wmt_pinctrl_data *data = pinctrl_dev_get_drvdata(pctldev);
- 	u32 pinnum = data->pins[group_selector].number;
-@@ -168,7 +168,7 @@ static struct pinmux_ops wmt_pinmux_ops = {
- 	.get_functions_count = wmt_pmx_get_functions_count,
- 	.get_function_name = wmt_pmx_get_function_name,
- 	.get_function_groups = wmt_pmx_get_function_groups,
--	.enable = wmt_pmx_enable,
-+	.set_mux = wmt_pmx_set_mux,
- 	.gpio_disable_free = wmt_pmx_gpio_disable_free,
- 	.gpio_set_direction = wmt_pmx_gpio_set_direction,
- };
-diff --git a/include/linux/pinctrl/pinmux.h b/include/linux/pinctrl/pinmux.h
-index 3097aafbeb24..511bda9ed4bf 100644
---- a/include/linux/pinctrl/pinmux.h
-+++ b/include/linux/pinctrl/pinmux.h
-@@ -39,13 +39,12 @@ struct pinctrl_dev;
-  *	name can be used with the generic @pinctrl_ops to retrieve the
-  *	actual pins affected. The applicable groups will be returned in
-  *	@groups and the number of groups in @num_groups
-- * @enable: enable a certain muxing function with a certain pin group. The
-+ * @set_mux: enable a certain muxing function with a certain pin group. The
-  *	driver does not need to figure out whether enabling this function
-  *	conflicts some other use of the pins in that group, such collisions
-  *	are handled by the pinmux subsystem. The @func_selector selects a
-  *	certain function whereas @group_selector selects a certain set of pins
-  *	to be used. On simple controllers the latter argument may be ignored
-- * @disable: disable a certain muxing selector with a certain pin group
-  * @gpio_request_enable: requests and enables GPIO on a certain pin.
-  *	Implement this only if you can mux every pin individually as GPIO. The
-  *	affected GPIO range is passed along with an offset(pin number) into that
-@@ -68,8 +67,8 @@ struct pinmux_ops {
- 				  unsigned selector,
- 				  const char * const **groups,
- 				  unsigned * const num_groups);
--	int (*enable) (struct pinctrl_dev *pctldev, unsigned func_selector,
--		       unsigned group_selector);
-+	int (*set_mux) (struct pinctrl_dev *pctldev, unsigned func_selector,
-+			unsigned group_selector);
- 	int (*gpio_request_enable) (struct pinctrl_dev *pctldev,
- 				    struct pinctrl_gpio_range *range,
- 				    unsigned offset);
--- 
-1.9.3
-
+RGVhciBMaW51cywNClRoaXMgaXMgT0sgZm9yIG1lLg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQ0KRnJvbTogTGludXMgV2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9y
+Z10NClNlbnQ6IDIwMTTE6jnUwjPI1SAxOTowNQ0KVG86IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KQ2M6IGxpbnV4LWdw
+aW9Admdlci5rZXJuZWwub3JnOyBMaW51cyBXYWxsZWlqOyBGYW4gV3UNClN1YmplY3Q6IFtQQVRD
+SF0gcGluY3RybDogY2xlYW4gdXAgYWZ0ZXIgZW5hYmxlIHJlZmFjdG9yaW5nDQoNCmNvbW1pdCAy
+MjQzYTg3ZDkwYjQyZWIzOGJjMjgxOTU3ZGYzZTU3YzcxMmI1ZTU2DQoicGluY3RybDogYXZvaWQg
+ZHVwbGljYXRlZCBjYWxsaW5nIGVuYWJsZV9waW5tdXhfc2V0dGluZyBmb3IgYSBwaW4iDQpyZW1v
+dmVkIHRoZSAuZGlzYWJsZSBjYWxsYmFjayBmcm9tIHRoZSBzdHJ1Y3QgcGlubXV4X29wcywgbWFr
+aW5nIHRoZSAuZW5hYmxlKCkgY2FsbGJhY2sgdGhlIG9ubHkgcmVtYWluaW5nIGNhbGxiYWNrLg0K
+DQpIb3dldmVyIC5lbmFibGUoKSBpcyBhIGJhZCBuYW1lIGFzIGl0IHNlZW1zIHRvIGltcGx5IHRo
+YXQgYSBtdXhpbmcgY2FuIGFsc28gYmUgZGlzYWJsZWQuIFJlbmFtZSB0aGUgY2FsbGJhY2sgdG8g
+LnNldF9tdXgoKSBhbmQgYWxzbyB0YWtlIHRoaXMgb3Bwb3J0dW5pdHkgdG8gY2xlYW4gb3V0IGFu
+eSByZW1haW5pbmcgbWVudGlvbnMgb2YgLmRpc2FibGUoKSBmcm9tIHRoZSBkb2N1bWVudGF0aW9u
+Lg0KDQpDYzogRmFuIFd1IDxmd3VAbWFydmVsbC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBMaW51cyBX
+YWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+DQotLS0NCiBEb2N1bWVudGF0aW9uL3Bp
+bmN0cmwudHh0ICAgICAgICAgICAgICAgICAgICB8IDE0ICsrLS0tLS0tLS0tLS0tDQogZHJpdmVy
+cy9waW5jdHJsL2Jlcmxpbi9iZXJsaW4uYyAgICAgICAgICAgICAgfCAgOCArKysrLS0tLQ0KIGRy
+aXZlcnMvcGluY3RybC9tdmVidS9waW5jdHJsLW12ZWJ1LmMgICAgICAgIHwgIDYgKysrLS0tDQog
+ZHJpdmVycy9waW5jdHJsL25vbWFkaWsvcGluY3RybC1hYng1MDAuYyAgICAgfCAgNiArKystLS0N
+CiBkcml2ZXJzL3BpbmN0cmwvbm9tYWRpay9waW5jdHJsLW5vbWFkaWsuYyAgICB8ICA2ICsrKy0t
+LQ0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLWFkaTIuYyAgICAgICAgICAgICAgIHwgIDYgKysr
+LS0tDQogZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXMzNzIyLmMgICAgICAgICAgICAgfCAgNCAr
+Ky0tDQogZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXQ5MS5jICAgICAgICAgICAgICAgfCAgNiAr
+KystLS0NCiBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1iY20yODF4eC5jICAgICAgICAgICB8ICA4
+ICsrKystLS0tDQogZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYmNtMjgzNS5jICAgICAgICAgICAg
+fCAgNCArKy0tDQogZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtaW14LmMgICAgICAgICAgICAgICAg
+fCAgNiArKystLS0NCiBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1pbXgxLWNvcmUuYyAgICAgICAg
+ICB8ICA2ICsrKy0tLQ0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLWxhbnRpcS5jICAgICAgICAg
+ICAgIHwgIDggKysrKy0tLS0NCiBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1teHMuYyAgICAgICAg
+ICAgICAgICB8ICA2ICsrKy0tLQ0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXBhbG1hcy5jICAg
+ICAgICAgICAgIHwgIDUgKysrLS0NCiBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1yb2NrY2hpcC5j
+ICAgICAgICAgICB8ICA2ICsrKy0tLQ0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXNpbmdsZS5j
+ICAgICAgICAgICAgIHwgIDQgKystLQ0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXN0LmMgICAg
+ICAgICAgICAgICAgIHwgIDYgKysrLS0tDQogZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdGIxMHgu
+YyAgICAgICAgICAgICAgfCAgNCArKy0tDQogZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdGVncmEt
+eHVzYi5jICAgICAgICAgfCAgOCArKysrLS0tLQ0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXRl
+Z3JhLmMgICAgICAgICAgICAgIHwgIDcgKysrKy0tLQ0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJs
+LXR6MTA5MC1wZGMuYyAgICAgICAgIHwgIDcgKysrKy0tLQ0KIGRyaXZlcnMvcGluY3RybC9waW5j
+dHJsLXR6MTA5MC5jICAgICAgICAgICAgIHwgIDYgKysrLS0tDQogZHJpdmVycy9waW5jdHJsL3Bp
+bmN0cmwtdTMwMC5jICAgICAgICAgICAgICAgfCAgNiArKystLS0NCiBkcml2ZXJzL3BpbmN0cmwv
+cGlubXV4LmMgICAgICAgICAgICAgICAgICAgICB8IDEwICsrKysrLS0tLS0NCiBkcml2ZXJzL3Bp
+bmN0cmwvcWNvbS9waW5jdHJsLW1zbS5jICAgICAgICAgICB8ICA4ICsrKystLS0tDQogZHJpdmVy
+cy9waW5jdHJsL3NhbXN1bmcvcGluY3RybC1leHlub3M1NDQwLmMgfCAgNyArKysrLS0tDQogZHJp
+dmVycy9waW5jdHJsL3NhbXN1bmcvcGluY3RybC1zYW1zdW5nLmMgICAgfCAgNyArKysrLS0tDQog
+ZHJpdmVycy9waW5jdHJsL3NoLXBmYy9waW5jdHJsLmMgICAgICAgICAgICAgfCAgNiArKystLS0N
+CiBkcml2ZXJzL3BpbmN0cmwvc2lyZi9waW5jdHJsLXNpcmYuYyAgICAgICAgICB8ICA3ICsrKyst
+LS0NCiBkcml2ZXJzL3BpbmN0cmwvc3BlYXIvcGluY3RybC1zcGVhci5jICAgICAgICB8ICA0ICsr
+LS0NCiBkcml2ZXJzL3BpbmN0cmwvc3VueGkvcGluY3RybC1zdW54aS5jICAgICAgICB8ICA4ICsr
+KystLS0tDQogZHJpdmVycy9waW5jdHJsL3Z0ODUwMC9waW5jdHJsLXdtdC5jICAgICAgICAgfCAg
+OCArKysrLS0tLQ0KIGluY2x1ZGUvbGludXgvcGluY3RybC9waW5tdXguaCAgICAgICAgICAgICAg
+IHwgIDcgKysrLS0tLQ0KIDM0IGZpbGVzIGNoYW5nZWQsIDExMCBpbnNlcnRpb25zKCspLCAxMTUg
+ZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL3BpbmN0cmwudHh0IGIv
+RG9jdW1lbnRhdGlvbi9waW5jdHJsLnR4dCBpbmRleCAyM2YxNTkwZjQ5ZmUuLmI4ZjIxNDdiOTZk
+ZCAxMDA2NDQNCi0tLSBhL0RvY3VtZW50YXRpb24vcGluY3RybC50eHQNCisrKyBiL0RvY3VtZW50
+YXRpb24vcGluY3RybC50eHQNCkBAIC03MDIsNyArNzAyLDcgQEAgc3RhdGljIGludCBmb29fZ2V0
+X2dyb3VwcyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLA0K
+ICAgICAgICByZXR1cm4gMDsNCiB9DQoNCi1pbnQgZm9vX2VuYWJsZShzdHJ1Y3QgcGluY3RybF9k
+ZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLA0KK2ludCBmb29fc2V0X211eChzdHJ1Y3Qg
+cGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLA0KICAgICAgICAgICAgICAg
+IHVuc2lnbmVkIGdyb3VwKQ0KIHsNCiAgICAgICAgdTggcmVnYml0ID0gKDEgPDwgc2VsZWN0b3Ig
+KyBncm91cCk7DQpAQCAtNzExLDIxICs3MTEsMTEgQEAgaW50IGZvb19lbmFibGUoc3RydWN0IHBp
+bmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBzZWxlY3RvciwNCiAgICAgICAgcmV0dXJuIDA7
+DQogfQ0KDQotdm9pZCBmb29fZGlzYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVu
+c2lnbmVkIHNlbGVjdG9yLA0KLSAgICAgICAgICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0KLXsNCi0g
+ICAgICAgdTggcmVnYml0ID0gKDEgPDwgc2VsZWN0b3IgKyBncm91cCk7DQotDQotICAgICAgIHdy
+aXRlYigocmVhZGIoTVVYKSAmIH4ocmVnYml0KSksIE1VWCkNCi0gICAgICAgcmV0dXJuIDA7DQot
+fQ0KLQ0KIHN0cnVjdCBwaW5tdXhfb3BzIGZvb19wbXhvcHMgPSB7DQogICAgICAgIC5nZXRfZnVu
+Y3Rpb25zX2NvdW50ID0gZm9vX2dldF9mdW5jdGlvbnNfY291bnQsDQogICAgICAgIC5nZXRfZnVu
+Y3Rpb25fbmFtZSA9IGZvb19nZXRfZm5hbWUsDQogICAgICAgIC5nZXRfZnVuY3Rpb25fZ3JvdXBz
+ID0gZm9vX2dldF9ncm91cHMsDQotICAgICAgIC5lbmFibGUgPSBmb29fZW5hYmxlLA0KLSAgICAg
+ICAuZGlzYWJsZSA9IGZvb19kaXNhYmxlLA0KKyAgICAgICAuc2V0X211eCA9IGZvb19zZXRfbXV4
+LA0KIH07DQoNCiAvKiBQaW5tdXggb3BlcmF0aW9ucyBhcmUgaGFuZGxlZCBieSBzb21lIHBpbiBj
+b250cm9sbGVyICovIGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvYmVybGluL2Jlcmxpbi5j
+IGIvZHJpdmVycy9waW5jdHJsL2Jlcmxpbi9iZXJsaW4uYyBpbmRleCA4NmRiMjIzNWFiMDAuLjYx
+ZjFiZjBlNjBiYSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9iZXJsaW4vYmVybGluLmMN
+CisrKyBiL2RyaXZlcnMvcGluY3RybC9iZXJsaW4vYmVybGluLmMNCkBAIC0xNzAsOSArMTcwLDkg
+QEAgYmVybGluX3BpbmN0cmxfZmluZF9mdW5jdGlvbl9ieV9uYW1lKHN0cnVjdCBiZXJsaW5fcGlu
+Y3RybCAqcGN0cmwsDQogICAgICAgIHJldHVybiBOVUxMOw0KIH0NCg0KLXN0YXRpYyBpbnQgYmVy
+bGluX3Bpbm11eF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RybF9kZXYsDQotICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGZ1bmN0aW9uLA0KLSAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91cCkNCitzdGF0aWMgaW50IGJlcmxpbl9w
+aW5tdXhfc2V0KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0cmxfZGV2LA0KKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB1bnNpZ25lZCBmdW5jdGlvbiwNCisgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgdW5zaWduZWQgZ3JvdXApDQogew0KICAgICAgICBzdHJ1Y3QgYmVybGluX3BpbmN0cmwg
+KnBjdHJsID0gcGluY3RybF9kZXZfZ2V0X2RydmRhdGEocGN0cmxfZGV2KTsNCiAgICAgICAgY29u
+c3Qgc3RydWN0IGJlcmxpbl9kZXNjX2dyb3VwICpncm91cF9kZXNjID0gcGN0cmwtPmRlc2MtPmdy
+b3VwcyArIGdyb3VwOyBAQCAtMTk3LDcgKzE5Nyw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGlu
+bXV4X29wcyBiZXJsaW5fcGlubXV4X29wcyA9IHsNCiAgICAgICAgLmdldF9mdW5jdGlvbnNfY291
+bnQgICAgPSAmYmVybGluX3Bpbm11eF9nZXRfZnVuY3Rpb25zX2NvdW50LA0KICAgICAgICAuZ2V0
+X2Z1bmN0aW9uX25hbWUgICAgICA9ICZiZXJsaW5fcGlubXV4X2dldF9mdW5jdGlvbl9uYW1lLA0K
+ICAgICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3VwcyAgICA9ICZiZXJsaW5fcGlubXV4X2dldF9mdW5j
+dGlvbl9ncm91cHMsDQotICAgICAgIC5lbmFibGUgICAgICAgICAgICAgICAgID0gJmJlcmxpbl9w
+aW5tdXhfZW5hYmxlLA0KKyAgICAgICAuc2V0X211eCAgICAgICAgICAgICAgICA9ICZiZXJsaW5f
+cGlubXV4X3NldCwNCiB9Ow0KDQogc3RhdGljIGludCBiZXJsaW5fcGluY3RybF9hZGRfZnVuY3Rp
+b24oc3RydWN0IGJlcmxpbl9waW5jdHJsICpwY3RybCwgZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGlu
+Y3RybC9tdmVidS9waW5jdHJsLW12ZWJ1LmMgYi9kcml2ZXJzL3BpbmN0cmwvbXZlYnUvcGluY3Ry
+bC1tdmVidS5jDQppbmRleCA5OTA4Mzc0ZjhmOTIuLmYzYjQyNmNkYWY4ZiAxMDA2NDQNCi0tLSBh
+L2RyaXZlcnMvcGluY3RybC9tdmVidS9waW5jdHJsLW12ZWJ1LmMNCisrKyBiL2RyaXZlcnMvcGlu
+Y3RybC9tdmVidS9waW5jdHJsLW12ZWJ1LmMNCkBAIC0yNTksOCArMjU5LDggQEAgc3RhdGljIGlu
+dCBtdmVidV9waW5tdXhfZ2V0X2dyb3VwcyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVu
+c2lnbmVkIGZpZCwNCiAgICAgICAgcmV0dXJuIDA7DQogfQ0KDQotc3RhdGljIGludCBtdmVidV9w
+aW5tdXhfZW5hYmxlKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgdW5zaWduZWQgZmlkLA0K
+LSAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ2lkKQ0KK3N0YXRpYyBpbnQgbXZlYnVf
+cGlubXV4X3NldChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIGZpZCwNCisg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBnaWQpDQogew0KICAgICAgICBzdHJ1
+Y3QgbXZlYnVfcGluY3RybCAqcGN0bCA9IHBpbmN0cmxfZGV2X2dldF9kcnZkYXRhKHBjdGxkZXYp
+Ow0KICAgICAgICBzdHJ1Y3QgbXZlYnVfcGluY3RybF9mdW5jdGlvbiAqZnVuYyA9ICZwY3RsLT5m
+dW5jdGlvbnNbZmlkXTsgQEAgLTM0NCw3ICszNDQsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHBp
+bm11eF9vcHMgbXZlYnVfcGlubXV4X29wcyA9IHsNCiAgICAgICAgLmdldF9mdW5jdGlvbl9ncm91
+cHMgPSBtdmVidV9waW5tdXhfZ2V0X2dyb3VwcywNCiAgICAgICAgLmdwaW9fcmVxdWVzdF9lbmFi
+bGUgPSBtdmVidV9waW5tdXhfZ3Bpb19yZXF1ZXN0X2VuYWJsZSwNCiAgICAgICAgLmdwaW9fc2V0
+X2RpcmVjdGlvbiA9IG12ZWJ1X3Bpbm11eF9ncGlvX3NldF9kaXJlY3Rpb24sDQotICAgICAgIC5l
+bmFibGUgPSBtdmVidV9waW5tdXhfZW5hYmxlLA0KKyAgICAgICAuc2V0X211eCA9IG12ZWJ1X3Bp
+bm11eF9zZXQsDQogfTsNCg0KIHN0YXRpYyBpbnQgbXZlYnVfcGluY3RybF9nZXRfZ3JvdXBzX2Nv
+dW50KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldikgZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGlu
+Y3RybC9ub21hZGlrL3BpbmN0cmwtYWJ4NTAwLmMgYi9kcml2ZXJzL3BpbmN0cmwvbm9tYWRpay9w
+aW5jdHJsLWFieDUwMC5jDQppbmRleCBhNTNhNjg5YTJiZmEuLmIwMjg5ODI0Y2Y3MyAxMDA2NDQN
+Ci0tLSBhL2RyaXZlcnMvcGluY3RybC9ub21hZGlrL3BpbmN0cmwtYWJ4NTAwLmMNCisrKyBiL2Ry
+aXZlcnMvcGluY3RybC9ub21hZGlrL3BpbmN0cmwtYWJ4NTAwLmMNCkBAIC03MDksOCArNzA5LDgg
+QEAgc3RhdGljIGludCBhYng1MDBfcG14X2dldF9mdW5jX2dyb3VwcyhzdHJ1Y3QgcGluY3RybF9k
+ZXYgKnBjdGxkZXYsDQogICAgICAgIHJldHVybiAwOw0KIH0NCg0KLXN0YXRpYyBpbnQgYWJ4NTAw
+X3BteF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBmdW5jdGlv
+biwNCi0gICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQorc3RhdGlj
+IGludCBhYng1MDBfcG14X3NldChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVk
+IGZ1bmN0aW9uLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91cCkNCiB7
+DQogICAgICAgIHN0cnVjdCBhYng1MDBfcGluY3RybCAqcGN0ID0gcGluY3RybF9kZXZfZ2V0X2Ry
+dmRhdGEocGN0bGRldik7DQogICAgICAgIHN0cnVjdCBncGlvX2NoaXAgKmNoaXAgPSAmcGN0LT5j
+aGlwOw0KQEAgLTc4NCw3ICs3ODQsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHBpbm11eF9vcHMg
+YWJ4NTAwX3Bpbm11eF9vcHMgPSB7DQogICAgICAgIC5nZXRfZnVuY3Rpb25zX2NvdW50ID0gYWJ4
+NTAwX3BteF9nZXRfZnVuY3NfY250LA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX25hbWUgPSBhYng1
+MDBfcG14X2dldF9mdW5jX25hbWUsDQogICAgICAgIC5nZXRfZnVuY3Rpb25fZ3JvdXBzID0gYWJ4
+NTAwX3BteF9nZXRfZnVuY19ncm91cHMsDQotICAgICAgIC5lbmFibGUgPSBhYng1MDBfcG14X2Vu
+YWJsZSwNCisgICAgICAgLnNldF9tdXggPSBhYng1MDBfcG14X3NldCwNCiAgICAgICAgLmdwaW9f
+cmVxdWVzdF9lbmFibGUgPSBhYng1MDBfZ3Bpb19yZXF1ZXN0X2VuYWJsZSwNCiAgICAgICAgLmdw
+aW9fZGlzYWJsZV9mcmVlID0gYWJ4NTAwX2dwaW9fZGlzYWJsZV9mcmVlLCAgfTsgZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvcGluY3RybC9ub21hZGlrL3BpbmN0cmwtbm9tYWRpay5jIGIvZHJpdmVycy9w
+aW5jdHJsL25vbWFkaWsvcGluY3RybC1ub21hZGlrLmMNCmluZGV4IGU3Y2FiMDdlZWY0Ny4uYzA5
+M2Q3NWEwMjJhIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL25vbWFkaWsvcGluY3RybC1u
+b21hZGlrLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9ub21hZGlrL3BpbmN0cmwtbm9tYWRpay5j
+DQpAQCAtMTY0Nyw4ICsxNjQ3LDggQEAgc3RhdGljIGludCBubWtfcG14X2dldF9mdW5jX2dyb3Vw
+cyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQogICAgICAgIHJldHVybiAwOw0KIH0NCg0K
+LXN0YXRpYyBpbnQgbm1rX3BteF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1
+bnNpZ25lZCBmdW5jdGlvbiwNCi0gICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3Jv
+dXApDQorc3RhdGljIGludCBubWtfcG14X3NldChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYs
+IHVuc2lnbmVkIGZ1bmN0aW9uLA0KKyAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91
+cCkNCiB7DQogICAgICAgIHN0cnVjdCBubWtfcGluY3RybCAqbnBjdCA9IHBpbmN0cmxfZGV2X2dl
+dF9kcnZkYXRhKHBjdGxkZXYpOw0KICAgICAgICBjb25zdCBzdHJ1Y3Qgbm1rX3Bpbmdyb3VwICpn
+Ow0KQEAgLTE4MTAsNyArMTgxMCw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGlubXV4X29wcyBu
+bWtfcGlubXV4X29wcyA9IHsNCiAgICAgICAgLmdldF9mdW5jdGlvbnNfY291bnQgPSBubWtfcG14
+X2dldF9mdW5jc19jbnQsDQogICAgICAgIC5nZXRfZnVuY3Rpb25fbmFtZSA9IG5ta19wbXhfZ2V0
+X2Z1bmNfbmFtZSwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9ncm91cHMgPSBubWtfcG14X2dldF9m
+dW5jX2dyb3VwcywNCi0gICAgICAgLmVuYWJsZSA9IG5ta19wbXhfZW5hYmxlLA0KKyAgICAgICAu
+c2V0X211eCA9IG5ta19wbXhfc2V0LA0KICAgICAgICAuZ3Bpb19yZXF1ZXN0X2VuYWJsZSA9IG5t
+a19ncGlvX3JlcXVlc3RfZW5hYmxlLA0KICAgICAgICAuZ3Bpb19kaXNhYmxlX2ZyZWUgPSBubWtf
+Z3Bpb19kaXNhYmxlX2ZyZWUsICB9OyBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0
+cmwtYWRpMi5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYWRpMi5jIGluZGV4IGIwOTJiOTNj
+NjdhMS4uZTAyOTQzYjAyODVkIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwt
+YWRpMi5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hZGkyLmMNCkBAIC02MTksOCAr
+NjE5LDggQEAgc3RhdGljIHN0cnVjdCBwaW5jdHJsX29wcyBhZGlfcGN0cmxfb3BzID0gew0KICAg
+ICAgICAuZ2V0X2dyb3VwX3BpbnMgPSBhZGlfZ2V0X2dyb3VwX3BpbnMsDQogfTsNCg0KLXN0YXRp
+YyBpbnQgYWRpX3Bpbm11eF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNp
+Z25lZCBmdW5jX2lkLA0KLSAgICAgICB1bnNpZ25lZCBncm91cF9pZCkNCitzdGF0aWMgaW50IGFk
+aV9waW5tdXhfc2V0KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgdW5zaWduZWQgZnVuY19p
+ZCwNCisgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXBfaWQpDQogew0KICAg
+ICAgICBzdHJ1Y3QgYWRpX3BpbmN0cmwgKnBpbmN0cmwgPSBwaW5jdHJsX2Rldl9nZXRfZHJ2ZGF0
+YShwY3RsZGV2KTsNCiAgICAgICAgc3RydWN0IGdwaW9fcG9ydCAqcG9ydDsNCkBAIC02OTgsNyAr
+Njk4LDcgQEAgc3RhdGljIGludCBhZGlfcGlubXV4X3JlcXVlc3RfZ3BpbyhzdHJ1Y3QgcGluY3Ry
+bF9kZXYgKnBjdGxkZXYsICB9DQoNCiBzdGF0aWMgc3RydWN0IHBpbm11eF9vcHMgYWRpX3Bpbm11
+eF9vcHMgPSB7DQotICAgICAgIC5lbmFibGUgPSBhZGlfcGlubXV4X2VuYWJsZSwNCisgICAgICAg
+LnNldF9tdXggPSBhZGlfcGlubXV4X3NldCwNCiAgICAgICAgLmdldF9mdW5jdGlvbnNfY291bnQg
+PSBhZGlfcGlubXV4X2dldF9mdW5jc19jb3VudCwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9uYW1l
+ID0gYWRpX3Bpbm11eF9nZXRfZnVuY19uYW1lLA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3Vw
+cyA9IGFkaV9waW5tdXhfZ2V0X2dyb3VwcywgZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9w
+aW5jdHJsLWFzMzcyMi5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXMzNzIyLmMNCmluZGV4
+IDBlNGVjOTFmNGQ0OS4uMWY3OTBhNGI4M2ZlIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJs
+L3BpbmN0cmwtYXMzNzIyLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWFzMzcyMi5j
+DQpAQCAtMjMwLDcgKzIzMCw3IEBAIHN0YXRpYyBpbnQgYXMzNzIyX3BpbmN0cmxfZ2V0X2Z1bmNf
+Z3JvdXBzKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCiAgICAgICAgcmV0dXJuIDA7DQog
+fQ0KDQotc3RhdGljIGludCBhczM3MjJfcGluY3RybF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2
+ICpwY3RsZGV2LCB1bnNpZ25lZCBmdW5jdGlvbiwNCitzdGF0aWMgaW50IGFzMzcyMl9waW5jdHJs
+X3NldChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkDQorZnVuY3Rpb24sDQog
+ICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQogew0KICAgICAgICBzdHJ1Y3QgYXMzNzIy
+X3BjdHJsX2luZm8gKmFzX3BjaSA9IHBpbmN0cmxfZGV2X2dldF9kcnZkYXRhKHBjdGxkZXYpOyBA
+QCAtMzI3LDcgKzMyNyw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGlubXV4X29wcyBhczM3MjJf
+cGlubXV4X29wcyA9IHsNCiAgICAgICAgLmdldF9mdW5jdGlvbnNfY291bnQgICAgPSBhczM3MjJf
+cGluY3RybF9nZXRfZnVuY3NfY291bnQsDQogICAgICAgIC5nZXRfZnVuY3Rpb25fbmFtZSAgICAg
+ID0gYXMzNzIyX3BpbmN0cmxfZ2V0X2Z1bmNfbmFtZSwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9n
+cm91cHMgICAgPSBhczM3MjJfcGluY3RybF9nZXRfZnVuY19ncm91cHMsDQotICAgICAgIC5lbmFi
+bGUgICAgICAgICAgICAgICAgID0gYXMzNzIyX3BpbmN0cmxfZW5hYmxlLA0KKyAgICAgICAuc2V0
+X211eCAgICAgICAgICAgICAgICA9IGFzMzcyMl9waW5jdHJsX3NldCwNCiAgICAgICAgLmdwaW9f
+cmVxdWVzdF9lbmFibGUgICAgPSBhczM3MjJfcGluY3RybF9ncGlvX3JlcXVlc3RfZW5hYmxlLA0K
+ICAgICAgICAuZ3Bpb19zZXRfZGlyZWN0aW9uICAgICA9IGFzMzcyMl9waW5jdHJsX2dwaW9fc2V0
+X2RpcmVjdGlvbiwNCiB9Ow0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0
+OTEuYyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEuYyBpbmRleCBhZjFiYTRmYzE1MGQu
+LjQ4MzljMzZhM2ExYyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEu
+Yw0KKysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXQ5MS5jDQpAQCAtNTU0LDggKzU1NCw4
+IEBAIHN0YXRpYyB2b2lkIGF0OTFfbXV4X2dwaW9fZW5hYmxlKHZvaWQgX19pb21lbSAqcGlvLCB1
+bnNpZ25lZCBtYXNrLCBib29sIGlucHV0KQ0KICAgICAgICB3cml0ZWxfcmVsYXhlZChtYXNrLCBw
+aW8gKyAoaW5wdXQgPyBQSU9fT0RSIDogUElPX09FUikpOyAgfQ0KDQotc3RhdGljIGludCBhdDkx
+X3BteF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBzZWxlY3Rv
+ciwNCi0gICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0KK3N0YXRpYyBp
+bnQgYXQ5MV9wbXhfc2V0KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgdW5zaWduZWQgc2Vs
+ZWN0b3IsDQorICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91cCkNCiB7DQogICAg
+ICAgIHN0cnVjdCBhdDkxX3BpbmN0cmwgKmluZm8gPSBwaW5jdHJsX2Rldl9nZXRfZHJ2ZGF0YShw
+Y3RsZGV2KTsNCiAgICAgICAgY29uc3Qgc3RydWN0IGF0OTFfcG14X3BpbiAqcGluc19jb25mID0g
+aW5mby0+Z3JvdXBzW2dyb3VwXS5waW5zX2NvbmY7IEBAIC02ODQsNyArNjg0LDcgQEAgc3RhdGlj
+IGNvbnN0IHN0cnVjdCBwaW5tdXhfb3BzIGF0OTFfcG14X29wcyA9IHsNCiAgICAgICAgLmdldF9m
+dW5jdGlvbnNfY291bnQgICAgPSBhdDkxX3BteF9nZXRfZnVuY3NfY291bnQsDQogICAgICAgIC5n
+ZXRfZnVuY3Rpb25fbmFtZSAgICAgID0gYXQ5MV9wbXhfZ2V0X2Z1bmNfbmFtZSwNCiAgICAgICAg
+LmdldF9mdW5jdGlvbl9ncm91cHMgICAgPSBhdDkxX3BteF9nZXRfZ3JvdXBzLA0KLSAgICAgICAu
+ZW5hYmxlICAgICAgICAgICAgICAgICA9IGF0OTFfcG14X2VuYWJsZSwNCisgICAgICAgLnNldF9t
+dXggICAgICAgICAgICAgICAgPSBhdDkxX3BteF9zZXQsDQogICAgICAgIC5ncGlvX3JlcXVlc3Rf
+ZW5hYmxlICAgID0gYXQ5MV9ncGlvX3JlcXVlc3RfZW5hYmxlLA0KICAgICAgICAuZ3Bpb19kaXNh
+YmxlX2ZyZWUgICAgICA9IGF0OTFfZ3Bpb19kaXNhYmxlX2ZyZWUsDQogfTsNCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1iY20yODF4eC5jIGIvZHJpdmVycy9waW5jdHJsL3Bp
+bmN0cmwtYmNtMjgxeHguYw0KaW5kZXggYzVjYTllNjMzZmZmLi5hMjZlMGMyYmEzM2UgMTAwNjQ0
+DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1iY20yODF4eC5jDQorKysgYi9kcml2ZXJz
+L3BpbmN0cmwvcGluY3RybC1iY20yODF4eC5jDQpAQCAtMTA1NSw5ICsxMDU1LDkgQEAgc3RhdGlj
+IGludCBiY20yODF4eF9waW5jdHJsX2dldF9mY25fZ3JvdXBzKHN0cnVjdCBwaW5jdHJsX2RldiAq
+cGN0bGRldiwNCiAgICAgICAgcmV0dXJuIDA7DQogfQ0KDQotc3RhdGljIGludCBiY20yODF4eF9w
+aW5tdXhfZW5hYmxlKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCi0gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBmdW5jdGlvbiwNCi0gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91cCkNCitzdGF0aWMgaW50IGJjbTI4MXh4X3Bp
+bm11eF9zZXQoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHVuc2lnbmVkIGZ1bmN0aW9uLA0KKyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0KIHsNCiAgICAgICAgc3RydWN0IGJjbTI4MXh4X3BpbmN0
+cmxfZGF0YSAqcGRhdGEgPSBwaW5jdHJsX2Rldl9nZXRfZHJ2ZGF0YShwY3RsZGV2KTsNCiAgICAg
+ICAgY29uc3Qgc3RydWN0IGJjbTI4MXh4X3Bpbl9mdW5jdGlvbiAqZiA9ICZwZGF0YS0+ZnVuY3Rp
+b25zW2Z1bmN0aW9uXTsgQEAgLTEwODQsNyArMTA4NCw3IEBAIHN0YXRpYyBzdHJ1Y3QgcGlubXV4
+X29wcyBiY20yODF4eF9waW5jdHJsX3Bpbm11eF9vcHMgPSB7DQogICAgICAgIC5nZXRfZnVuY3Rp
+b25zX2NvdW50ID0gYmNtMjgxeHhfcGluY3RybF9nZXRfZmNuc19jb3VudCwNCiAgICAgICAgLmdl
+dF9mdW5jdGlvbl9uYW1lID0gYmNtMjgxeHhfcGluY3RybF9nZXRfZmNuX25hbWUsDQogICAgICAg
+IC5nZXRfZnVuY3Rpb25fZ3JvdXBzID0gYmNtMjgxeHhfcGluY3RybF9nZXRfZmNuX2dyb3VwcywN
+Ci0gICAgICAgLmVuYWJsZSA9IGJjbTI4MXh4X3Bpbm11eF9lbmFibGUsDQorICAgICAgIC5zZXRf
+bXV4ID0gYmNtMjgxeHhfcGlubXV4X3NldCwNCiB9Ow0KDQogc3RhdGljIGludCBiY20yODF4eF9w
+aW5jdHJsX3Bpbl9jb25maWdfZ2V0KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWJjbTI4MzUuYyBiL2RyaXZlcnMvcGluY3Ry
+bC9waW5jdHJsLWJjbTI4MzUuYw0KaW5kZXggNWJjZmQ3YWNlMGNkLi5lYWJiYTAyZjcxZjkgMTAw
+NjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1iY20yODM1LmMNCisrKyBiL2RyaXZl
+cnMvcGluY3RybC9waW5jdHJsLWJjbTI4MzUuYw0KQEAgLTgzMCw3ICs4MzAsNyBAQCBzdGF0aWMg
+aW50IGJjbTI4MzVfcG14X2dldF9mdW5jdGlvbl9ncm91cHMoc3RydWN0IHBpbmN0cmxfZGV2ICpw
+Y3RsZGV2LA0KICAgICAgICByZXR1cm4gMDsNCiB9DQoNCi1zdGF0aWMgaW50IGJjbTI4MzVfcG14
+X2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQorc3RhdGljIGludCBiY20yODM1
+X3BteF9zZXQoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KICAgICAgICAgICAgICAgIHVu
+c2lnbmVkIGZ1bmNfc2VsZWN0b3IsDQogICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXBfc2Vs
+ZWN0b3IpDQogew0KQEAgLTg2OSw3ICs4NjksNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHBpbm11
+eF9vcHMgYmNtMjgzNV9wbXhfb3BzID0gew0KICAgICAgICAuZ2V0X2Z1bmN0aW9uc19jb3VudCA9
+IGJjbTI4MzVfcG14X2dldF9mdW5jdGlvbnNfY291bnQsDQogICAgICAgIC5nZXRfZnVuY3Rpb25f
+bmFtZSA9IGJjbTI4MzVfcG14X2dldF9mdW5jdGlvbl9uYW1lLA0KICAgICAgICAuZ2V0X2Z1bmN0
+aW9uX2dyb3VwcyA9IGJjbTI4MzVfcG14X2dldF9mdW5jdGlvbl9ncm91cHMsDQotICAgICAgIC5l
+bmFibGUgPSBiY20yODM1X3BteF9lbmFibGUsDQorICAgICAgIC5zZXRfbXV4ID0gYmNtMjgzNV9w
+bXhfc2V0LA0KICAgICAgICAuZ3Bpb19kaXNhYmxlX2ZyZWUgPSBiY20yODM1X3BteF9ncGlvX2Rp
+c2FibGVfZnJlZSwNCiAgICAgICAgLmdwaW9fc2V0X2RpcmVjdGlvbiA9IGJjbTI4MzVfcG14X2dw
+aW9fc2V0X2RpcmVjdGlvbiwgIH07IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGluY3Ry
+bC1pbXguYyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWlteC5jIGluZGV4IDk0NmQ1OTRhNjRk
+ZC4uNTcwZTVhY2I0YTZhIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtaW14
+LmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWlteC5jDQpAQCAtMTc5LDggKzE3OSw4
+IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGluY3RybF9vcHMgaW14X3BjdHJsX29wcyA9IHsNCg0K
+IH07DQoNCi1zdGF0aWMgaW50IGlteF9wbXhfZW5hYmxlKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0
+bGRldiwgdW5zaWduZWQgc2VsZWN0b3IsDQotICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNp
+Z25lZCBncm91cCkNCitzdGF0aWMgaW50IGlteF9wbXhfc2V0KHN0cnVjdCBwaW5jdHJsX2RldiAq
+cGN0bGRldiwgdW5zaWduZWQgc2VsZWN0b3IsDQorICAgICAgICAgICAgICAgICAgICAgIHVuc2ln
+bmVkIGdyb3VwKQ0KIHsNCiAgICAgICAgc3RydWN0IGlteF9waW5jdHJsICppcGN0bCA9IHBpbmN0
+cmxfZGV2X2dldF9kcnZkYXRhKHBjdGxkZXYpOw0KICAgICAgICBjb25zdCBzdHJ1Y3QgaW14X3Bp
+bmN0cmxfc29jX2luZm8gKmluZm8gPSBpcGN0bC0+aW5mbzsgQEAgLTI5OCw3ICsyOTgsNyBAQCBz
+dGF0aWMgY29uc3Qgc3RydWN0IHBpbm11eF9vcHMgaW14X3BteF9vcHMgPSB7DQogICAgICAgIC5n
+ZXRfZnVuY3Rpb25zX2NvdW50ID0gaW14X3BteF9nZXRfZnVuY3NfY291bnQsDQogICAgICAgIC5n
+ZXRfZnVuY3Rpb25fbmFtZSA9IGlteF9wbXhfZ2V0X2Z1bmNfbmFtZSwNCiAgICAgICAgLmdldF9m
+dW5jdGlvbl9ncm91cHMgPSBpbXhfcG14X2dldF9ncm91cHMsDQotICAgICAgIC5lbmFibGUgPSBp
+bXhfcG14X2VuYWJsZSwNCisgICAgICAgLnNldF9tdXggPSBpbXhfcG14X3NldCwNCiB9Ow0KDQog
+c3RhdGljIGludCBpbXhfcGluY29uZl9nZXQoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtaW14MS1jb3JlLmMgYi9kcml2ZXJz
+L3BpbmN0cmwvcGluY3RybC1pbXgxLWNvcmUuYw0KaW5kZXggNDgzNDIwNzU3YzlmLi4xNzZhM2U2
+MmYxY2YgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1pbXgxLWNvcmUuYw0K
+KysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtaW14MS1jb3JlLmMNCkBAIC0yOTgsOCArMjk4
+LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBwaW5jdHJsX29wcyBpbXgxX3BjdHJsX29wcyA9IHsN
+Cg0KIH07DQoNCi1zdGF0aWMgaW50IGlteDFfcG14X2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYg
+KnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLA0KLSAgICAgICAgICAgICAgICAgICAgICAgICAg
+dW5zaWduZWQgZ3JvdXApDQorc3RhdGljIGludCBpbXgxX3BteF9zZXQoc3RydWN0IHBpbmN0cmxf
+ZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBzZWxlY3RvciwNCisgICAgICAgICAgICAgICAgICAgICAg
+IHVuc2lnbmVkIGdyb3VwKQ0KIHsNCiAgICAgICAgc3RydWN0IGlteDFfcGluY3RybCAqaXBjdGwg
+PSBwaW5jdHJsX2Rldl9nZXRfZHJ2ZGF0YShwY3RsZGV2KTsNCiAgICAgICAgY29uc3Qgc3RydWN0
+IGlteDFfcGluY3RybF9zb2NfaW5mbyAqaW5mbyA9IGlwY3RsLT5pbmZvOyBAQCAtMzg1LDcgKzM4
+NSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGlubXV4X29wcyBpbXgxX3BteF9vcHMgPSB7DQog
+ICAgICAgIC5nZXRfZnVuY3Rpb25zX2NvdW50ID0gaW14MV9wbXhfZ2V0X2Z1bmNzX2NvdW50LA0K
+ICAgICAgICAuZ2V0X2Z1bmN0aW9uX25hbWUgPSBpbXgxX3BteF9nZXRfZnVuY19uYW1lLA0KICAg
+ICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3VwcyA9IGlteDFfcG14X2dldF9ncm91cHMsDQotICAgICAg
+IC5lbmFibGUgPSBpbXgxX3BteF9lbmFibGUsDQorICAgICAgIC5zZXRfbXV4ID0gaW14MV9wbXhf
+c2V0LA0KIH07DQoNCiBzdGF0aWMgaW50IGlteDFfcGluY29uZl9nZXQoc3RydWN0IHBpbmN0cmxf
+ZGV2ICpwY3RsZGV2LCBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtbGFudGlx
+LmMgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1sYW50aXEuYw0KaW5kZXggZDIyY2EyNTJiODBk
+Li4yOTZlNWIzN2Y3NjggMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1sYW50
+aXEuYw0KKysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtbGFudGlxLmMNCkBAIC0yNTcsOSAr
+MjU3LDkgQEAgc3RhdGljIGludCBtYXRjaF9ncm91cF9tdXgoY29uc3Qgc3RydWN0IGx0cV9waW5f
+Z3JvdXAgKmdycCwNCiAgICAgICAgcmV0dXJuIHJldDsNCiB9DQoNCi1zdGF0aWMgaW50IGx0cV9w
+bXhfZW5hYmxlKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0cmxkZXYsDQotICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHVuc2lnbmVkIGZ1bmMsDQotICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0KK3N0YXRpYyBpbnQgbHRxX3BteF9zZXQoc3RydWN0IHBp
+bmN0cmxfZGV2ICpwY3RybGRldiwNCisgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZnVu
+YywNCisgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQogew0KICAgICAgICBz
+dHJ1Y3QgbHRxX3Bpbm11eF9pbmZvICppbmZvID0gcGluY3RybF9kZXZfZ2V0X2RydmRhdGEocGN0
+cmxkZXYpOw0KICAgICAgICBjb25zdCBzdHJ1Y3QgbHRxX3Bpbl9ncm91cCAqcGluX2dycCA9ICZp
+bmZvLT5ncnBzW2dyb3VwXTsgQEAgLTMxNiw3ICszMTYsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0
+IHBpbm11eF9vcHMgbHRxX3BteF9vcHMgPSB7DQogICAgICAgIC5nZXRfZnVuY3Rpb25zX2NvdW50
+ICAgID0gbHRxX3BteF9mdW5jX2NvdW50LA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX25hbWUgICAg
+ICA9IGx0cV9wbXhfZnVuY19uYW1lLA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3VwcyAgICA9
+IGx0cV9wbXhfZ2V0X2dyb3VwcywNCi0gICAgICAgLmVuYWJsZSAgICAgICAgICAgICAgICAgPSBs
+dHFfcG14X2VuYWJsZSwNCisgICAgICAgLnNldF9tdXggICAgICAgICAgICAgICAgPSBsdHFfcG14
+X3NldCwNCiAgICAgICAgLmdwaW9fcmVxdWVzdF9lbmFibGUgICAgPSBsdHFfcG14X2dwaW9fcmVx
+dWVzdF9lbmFibGUsDQogfTsNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJs
+LW14cy5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtbXhzLmMgaW5kZXggNDBjNzZmMjY5OThj
+Li42NzAzNTA5MWY4ZmQgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1teHMu
+Yw0KKysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtbXhzLmMNCkBAIC0xOTUsOCArMTk1LDgg
+QEAgc3RhdGljIGludCBteHNfcGluY3RybF9nZXRfZnVuY19ncm91cHMoc3RydWN0IHBpbmN0cmxf
+ZGV2ICpwY3RsZGV2LA0KICAgICAgICByZXR1cm4gMDsNCiB9DQoNCi1zdGF0aWMgaW50IG14c19w
+aW5jdHJsX2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVj
+dG9yLA0KLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQorc3Rh
+dGljIGludCBteHNfcGluY3RybF9zZXRfbXV4KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwg
+dW5zaWduZWQgc2VsZWN0b3IsDQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWdu
+ZWQgZ3JvdXApDQogew0KICAgICAgICBzdHJ1Y3QgbXhzX3BpbmN0cmxfZGF0YSAqZCA9IHBpbmN0
+cmxfZGV2X2dldF9kcnZkYXRhKHBjdGxkZXYpOw0KICAgICAgICBzdHJ1Y3QgbXhzX2dyb3VwICpn
+ID0gJmQtPnNvYy0+Z3JvdXBzW2dyb3VwXTsgQEAgLTIyMyw3ICsyMjMsNyBAQCBzdGF0aWMgY29u
+c3Qgc3RydWN0IHBpbm11eF9vcHMgbXhzX3Bpbm11eF9vcHMgPSB7DQogICAgICAgIC5nZXRfZnVu
+Y3Rpb25zX2NvdW50ID0gbXhzX3BpbmN0cmxfZ2V0X2Z1bmNzX2NvdW50LA0KICAgICAgICAuZ2V0
+X2Z1bmN0aW9uX25hbWUgPSBteHNfcGluY3RybF9nZXRfZnVuY19uYW1lLA0KICAgICAgICAuZ2V0
+X2Z1bmN0aW9uX2dyb3VwcyA9IG14c19waW5jdHJsX2dldF9mdW5jX2dyb3VwcywNCi0gICAgICAg
+LmVuYWJsZSA9IG14c19waW5jdHJsX2VuYWJsZSwNCisgICAgICAgLnNldF9tdXggPSBteHNfcGlu
+Y3RybF9zZXRfbXV4LA0KIH07DQoNCiBzdGF0aWMgaW50IG14c19waW5jb25mX2dldChzdHJ1Y3Qg
+cGluY3RybF9kZXYgKnBjdGxkZXYsIGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGluY3Ry
+bC1wYWxtYXMuYyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXBhbG1hcy5jDQppbmRleCBmMTNk
+MGU3OGE0MWMuLmUzMDc5ZDNkMTlmZSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9waW5j
+dHJsLXBhbG1hcy5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1wYWxtYXMuYw0KQEAg
+LTY4NSw3ICs2ODUsOCBAQCBzdGF0aWMgaW50IHBhbG1hc19waW5jdHJsX2dldF9mdW5jX2dyb3Vw
+cyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQogICAgICAgIHJldHVybiAwOw0KIH0NCg0K
+LXN0YXRpYyBpbnQgcGFsbWFzX3BpbmN0cmxfZW5hYmxlKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0
+bGRldiwgdW5zaWduZWQgZnVuY3Rpb24sDQorc3RhdGljIGludCBwYWxtYXNfcGluY3RybF9zZXRf
+bXV4KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCisgICAgICAgICAgICAgICB1bnNpZ25l
+ZCBmdW5jdGlvbiwNCiAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91cCkNCiB7DQogICAgICAg
+IHN0cnVjdCBwYWxtYXNfcGN0cmxfY2hpcF9pbmZvICpwY2kgPSBwaW5jdHJsX2Rldl9nZXRfZHJ2
+ZGF0YShwY3RsZGV2KTsgQEAgLTc0Miw3ICs3NDMsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHBp
+bm11eF9vcHMgcGFsbWFzX3Bpbm11eF9vcHMgPSB7DQogICAgICAgIC5nZXRfZnVuY3Rpb25zX2Nv
+dW50ID0gcGFsbWFzX3BpbmN0cmxfZ2V0X2Z1bmNzX2NvdW50LA0KICAgICAgICAuZ2V0X2Z1bmN0
+aW9uX25hbWUgPSBwYWxtYXNfcGluY3RybF9nZXRfZnVuY19uYW1lLA0KICAgICAgICAuZ2V0X2Z1
+bmN0aW9uX2dyb3VwcyA9IHBhbG1hc19waW5jdHJsX2dldF9mdW5jX2dyb3VwcywNCi0gICAgICAg
+LmVuYWJsZSA9IHBhbG1hc19waW5jdHJsX2VuYWJsZSwNCisgICAgICAgLnNldF9tdXggPSBwYWxt
+YXNfcGluY3RybF9zZXRfbXV4LA0KIH07DQoNCiBzdGF0aWMgaW50IHBhbG1hc19waW5jb25mX2dl
+dChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0
+cmwvcGluY3RybC1yb2NrY2hpcC5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtcm9ja2NoaXAu
+Yw0KaW5kZXggNWU4YjJlMDRjZDdhLi5iOTFiOTY2YWRkOGYgMTAwNjQ0DQotLS0gYS9kcml2ZXJz
+L3BpbmN0cmwvcGluY3RybC1yb2NrY2hpcC5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3Ry
+bC1yb2NrY2hpcC5jDQpAQCAtODEzLDggKzgxMyw4IEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBfcG14
+X2dldF9ncm91cHMoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KICAgICAgICByZXR1cm4g
+MDsNCiB9DQoNCi1zdGF0aWMgaW50IHJvY2tjaGlwX3BteF9lbmFibGUoc3RydWN0IHBpbmN0cmxf
+ZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBzZWxlY3RvciwNCi0gICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0KK3N0
+YXRpYyBpbnQgcm9ja2NoaXBfcG14X3NldChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVu
+c2lnbmVkIHNlbGVjdG9yLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGdy
+b3VwKQ0KIHsNCiAgICAgICAgc3RydWN0IHJvY2tjaGlwX3BpbmN0cmwgKmluZm8gPSBwaW5jdHJs
+X2Rldl9nZXRfZHJ2ZGF0YShwY3RsZGV2KTsNCiAgICAgICAgY29uc3QgdW5zaWduZWQgaW50ICpw
+aW5zID0gaW5mby0+Z3JvdXBzW2dyb3VwXS5waW5zOyBAQCAtODg5LDcgKzg4OSw3IEBAIHN0YXRp
+YyBjb25zdCBzdHJ1Y3QgcGlubXV4X29wcyByb2NrY2hpcF9wbXhfb3BzID0gew0KICAgICAgICAu
+Z2V0X2Z1bmN0aW9uc19jb3VudCAgICA9IHJvY2tjaGlwX3BteF9nZXRfZnVuY3NfY291bnQsDQog
+ICAgICAgIC5nZXRfZnVuY3Rpb25fbmFtZSAgICAgID0gcm9ja2NoaXBfcG14X2dldF9mdW5jX25h
+bWUsDQogICAgICAgIC5nZXRfZnVuY3Rpb25fZ3JvdXBzICAgID0gcm9ja2NoaXBfcG14X2dldF9n
+cm91cHMsDQotICAgICAgIC5lbmFibGUgICAgICAgICAgICAgICAgID0gcm9ja2NoaXBfcG14X2Vu
+YWJsZSwNCisgICAgICAgLnNldF9tdXggICAgICAgICAgICAgICAgPSByb2NrY2hpcF9wbXhfc2V0
+LA0KICAgICAgICAuZ3Bpb19zZXRfZGlyZWN0aW9uICAgICA9IHJvY2tjaGlwX3BteF9ncGlvX3Nl
+dF9kaXJlY3Rpb24sDQogfTsNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJs
+LXNpbmdsZS5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc2luZ2xlLmMNCmluZGV4IDc4NGRl
+MTNmYWNmMy4uOTAzMjQyMmFkMThmIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0
+cmwtc2luZ2xlLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXNpbmdsZS5jDQpAQCAt
+NDQ3LDcgKzQ0Nyw3IEBAIHN0YXRpYyBpbnQgcGNzX2dldF9mdW5jdGlvbihzdHJ1Y3QgcGluY3Ry
+bF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHBpbiwNCiAgICAgICAgcmV0dXJuIDA7DQogfQ0KDQot
+c3RhdGljIGludCBwY3NfZW5hYmxlKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgdW5zaWdu
+ZWQgZnNlbGVjdG9yLA0KK3N0YXRpYyBpbnQgcGNzX3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2
+ICpwY3RsZGV2LCB1bnNpZ25lZCBmc2VsZWN0b3IsDQogICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0K
+IHsNCiAgICAgICAgc3RydWN0IHBjc19kZXZpY2UgKnBjczsNCkBAIC01MTksNyArNTE5LDcgQEAg
+c3RhdGljIGNvbnN0IHN0cnVjdCBwaW5tdXhfb3BzIHBjc19waW5tdXhfb3BzID0gew0KICAgICAg
+ICAuZ2V0X2Z1bmN0aW9uc19jb3VudCA9IHBjc19nZXRfZnVuY3Rpb25zX2NvdW50LA0KICAgICAg
+ICAuZ2V0X2Z1bmN0aW9uX25hbWUgPSBwY3NfZ2V0X2Z1bmN0aW9uX25hbWUsDQogICAgICAgIC5n
+ZXRfZnVuY3Rpb25fZ3JvdXBzID0gcGNzX2dldF9mdW5jdGlvbl9ncm91cHMsDQotICAgICAgIC5l
+bmFibGUgPSBwY3NfZW5hYmxlLA0KKyAgICAgICAuc2V0X211eCA9IHBjc19zZXhfbXV4LA0KICAg
+ICAgICAuZ3Bpb19yZXF1ZXN0X2VuYWJsZSA9IHBjc19yZXF1ZXN0X2dwaW8sICB9Ow0KDQpkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3QuYyBiL2RyaXZlcnMvcGluY3RybC9w
+aW5jdHJsLXN0LmMgaW5kZXggNTQ3NTM3NGQ4MDNmLi42YzRjNDFiZWQxZTMgMTAwNjQ0DQotLS0g
+YS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1zdC5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvcGlu
+Y3RybC1zdC5jDQpAQCAtOTE0LDggKzkxNCw4IEBAIHN0YXRpYyBzdHJ1Y3Qgc3RfcGlvX2NvbnRy
+b2wgKnN0X2dldF9waW9fY29udHJvbCgNCiAgICAgICAgcmV0dXJuICZiYW5rLT5wYzsNCiB9DQoN
+Ci1zdGF0aWMgaW50IHN0X3BteF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1
+bnNpZ25lZCBmc2VsZWN0b3IsDQotICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQorc3Rh
+dGljIGludCBzdF9wbXhfc2V0X211eChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2ln
+bmVkIGZzZWxlY3RvciwNCisgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0K
+IHsNCiAgICAgICAgc3RydWN0IHN0X3BpbmN0cmwgKmluZm8gPSBwaW5jdHJsX2Rldl9nZXRfZHJ2
+ZGF0YShwY3RsZGV2KTsNCiAgICAgICAgc3RydWN0IHN0X3BpbmNvbmYgKmNvbmYgPSBpbmZvLT5n
+cm91cHNbZ3JvdXBdLnBpbl9jb25mOyBAQCAtOTUxLDcgKzk1MSw3IEBAIHN0YXRpYyBzdHJ1Y3Qg
+cGlubXV4X29wcyBzdF9wbXhvcHMgPSB7DQogICAgICAgIC5nZXRfZnVuY3Rpb25zX2NvdW50ICAg
+ID0gc3RfcG14X2dldF9mdW5jc19jb3VudCwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9uYW1lICAg
+ICAgPSBzdF9wbXhfZ2V0X2ZuYW1lLA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3VwcyAgICA9
+IHN0X3BteF9nZXRfZ3JvdXBzLA0KLSAgICAgICAuZW5hYmxlICAgICAgICAgICAgICAgICA9IHN0
+X3BteF9lbmFibGUsDQorICAgICAgIC5zZXRfbXV4ICAgICAgICAgICAgICAgID0gc3RfcG14X3Nl
+dF9tdXgsDQogICAgICAgIC5ncGlvX3NldF9kaXJlY3Rpb24gICAgID0gc3RfcG14X3NldF9ncGlv
+X2RpcmVjdGlvbiwNCiB9Ow0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwt
+dGIxMHguYyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXRiMTB4LmMgaW5kZXggNzFjNWQ0ZjBj
+NTM4Li4zYjliZmNmNzE3YWMgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC10
+YjEweC5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC10YjEweC5jDQpAQCAtNjk3LDcg
+KzY5Nyw3IEBAIHN0YXRpYyB2b2lkIHRiMTB4X2dwaW9fZGlzYWJsZV9mcmVlKHN0cnVjdCBwaW5j
+dHJsX2RldiAqcGN0bCwNCiAgICAgICAgbXV0ZXhfdW5sb2NrKCZzdGF0ZS0+bXV0ZXgpOw0KIH0N
+Cg0KLXN0YXRpYyBpbnQgdGIxMHhfcGN0bF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3Rs
+LA0KK3N0YXRpYyBpbnQgdGIxMHhfcGN0bF9zZXRfbXV4KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0
+bCwNCiAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGZ1bmNfc2VsZWN0b3IsIHVuc2ln
+bmVkIGdyb3VwX3NlbGVjdG9yKSAgew0KICAgICAgICBzdHJ1Y3QgdGIxMHhfcGluY3RybCAqc3Rh
+dGUgPSBwaW5jdHJsX2Rldl9nZXRfZHJ2ZGF0YShwY3RsKTsgQEAgLTc0NCw3ICs3NDQsNyBAQCBz
+dGF0aWMgc3RydWN0IHBpbm11eF9vcHMgdGIxMHhfcGlubXV4X29wcyA9IHsNCiAgICAgICAgLmdl
+dF9mdW5jdGlvbl9ncm91cHMgPSB0YjEweF9nZXRfZnVuY3Rpb25fZ3JvdXBzLA0KICAgICAgICAu
+Z3Bpb19yZXF1ZXN0X2VuYWJsZSA9IHRiMTB4X2dwaW9fcmVxdWVzdF9lbmFibGUsDQogICAgICAg
+IC5ncGlvX2Rpc2FibGVfZnJlZSA9IHRiMTB4X2dwaW9fZGlzYWJsZV9mcmVlLA0KLSAgICAgICAu
+ZW5hYmxlID0gdGIxMHhfcGN0bF9lbmFibGUsDQorICAgICAgIC5zZXRfbXV4ID0gdGIxMHhfcGN0
+bF9zZXRfbXV4LA0KIH07DQoNCiBzdGF0aWMgc3RydWN0IHBpbmN0cmxfZGVzYyB0YjEweF9waW5k
+ZXNjID0geyBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdGVncmEteHVzYi5j
+IGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdGVncmEteHVzYi5jDQppbmRleCBhMDY2MjA0NzQ4
+NDUuLjQ2NDhjOWU1YzU4MiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXRl
+Z3JhLXh1c2IuYw0KKysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdGVncmEteHVzYi5jDQpA
+QCAtMjgxLDkgKzI4MSw5IEBAIHN0YXRpYyBpbnQgdGVncmFfeHVzYl9wYWRjdGxfZ2V0X2Z1bmN0
+aW9uX2dyb3VwcyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBpbmN0cmwsDQogICAgICAgIHJldHVybiAw
+Ow0KIH0NCg0KLXN0YXRpYyBpbnQgdGVncmFfeHVzYl9wYWRjdGxfcGlubXV4X2VuYWJsZShzdHJ1
+Y3QgcGluY3RybF9kZXYgKnBpbmN0cmwsDQotICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgdW5zaWduZWQgaW50IGZ1bmN0aW9uLA0KLSAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBncm91cCkNCitzdGF0aWMgaW50IHRl
+Z3JhX3h1c2JfcGFkY3RsX3Bpbm11eF9zZXQoc3RydWN0IHBpbmN0cmxfZGV2ICpwaW5jdHJsLA0K
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBmdW5j
+dGlvbiwNCisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBp
+bnQgZ3JvdXApDQogew0KICAgICAgICBzdHJ1Y3QgdGVncmFfeHVzYl9wYWRjdGwgKnBhZGN0bCA9
+IHBpbmN0cmxfZGV2X2dldF9kcnZkYXRhKHBpbmN0cmwpOw0KICAgICAgICBjb25zdCBzdHJ1Y3Qg
+dGVncmFfeHVzYl9wYWRjdGxfbGFuZSAqbGFuZTsgQEAgLTMxMSw3ICszMTEsNyBAQCBzdGF0aWMg
+Y29uc3Qgc3RydWN0IHBpbm11eF9vcHMgdGVncmFfeHVzYl9wYWRjdGxfcGlubXV4X29wcyA9IHsN
+CiAgICAgICAgLmdldF9mdW5jdGlvbnNfY291bnQgPSB0ZWdyYV94dXNiX3BhZGN0bF9nZXRfZnVu
+Y3Rpb25zX2NvdW50LA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX25hbWUgPSB0ZWdyYV94dXNiX3Bh
+ZGN0bF9nZXRfZnVuY3Rpb25fbmFtZSwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9ncm91cHMgPSB0
+ZWdyYV94dXNiX3BhZGN0bF9nZXRfZnVuY3Rpb25fZ3JvdXBzLA0KLSAgICAgICAuZW5hYmxlID0g
+dGVncmFfeHVzYl9wYWRjdGxfcGlubXV4X2VuYWJsZSwNCisgICAgICAgLnNldF9tdXggPSB0ZWdy
+YV94dXNiX3BhZGN0bF9waW5tdXhfc2V0LA0KIH07DQoNCiBzdGF0aWMgaW50IHRlZ3JhX3h1c2Jf
+cGFkY3RsX3BpbmNvbmZfZ3JvdXBfZ2V0KHN0cnVjdCBwaW5jdHJsX2RldiAqcGluY3RybCwgZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXRlZ3JhLmMgYi9kcml2ZXJzL3BpbmN0
+cmwvcGluY3RybC10ZWdyYS5jIGluZGV4IDE1MGFmNTUwM2MwOS4uZTU5NDlkNTFiYzUyIDEwMDY0
+NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdGVncmEuYw0KKysrIGIvZHJpdmVycy9w
+aW5jdHJsL3BpbmN0cmwtdGVncmEuYw0KQEAgLTI2Miw4ICsyNjIsOSBAQCBzdGF0aWMgaW50IHRl
+Z3JhX3BpbmN0cmxfZ2V0X2Z1bmNfZ3JvdXBzKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwN
+CiAgICAgICAgcmV0dXJuIDA7DQogfQ0KDQotc3RhdGljIGludCB0ZWdyYV9waW5jdHJsX2VuYWJs
+ZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIGZ1bmN0aW9uLA0KLSAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0KK3N0YXRpYyBpbnQgdGVn
+cmFfcGluY3RybF9zZXRfbXV4KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCisgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGZ1bmN0aW9uLA0KKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQogew0KICAgICAgICBzdHJ1Y3Qg
+dGVncmFfcG14ICpwbXggPSBwaW5jdHJsX2Rldl9nZXRfZHJ2ZGF0YShwY3RsZGV2KTsNCiAgICAg
+ICAgY29uc3Qgc3RydWN0IHRlZ3JhX3Bpbmdyb3VwICpnOw0KQEAgLTI5NCw3ICsyOTUsNyBAQCBz
+dGF0aWMgY29uc3Qgc3RydWN0IHBpbm11eF9vcHMgdGVncmFfcGlubXV4X29wcyA9IHsNCiAgICAg
+ICAgLmdldF9mdW5jdGlvbnNfY291bnQgPSB0ZWdyYV9waW5jdHJsX2dldF9mdW5jc19jb3VudCwN
+CiAgICAgICAgLmdldF9mdW5jdGlvbl9uYW1lID0gdGVncmFfcGluY3RybF9nZXRfZnVuY19uYW1l
+LA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3VwcyA9IHRlZ3JhX3BpbmN0cmxfZ2V0X2Z1bmNf
+Z3JvdXBzLA0KLSAgICAgICAuZW5hYmxlID0gdGVncmFfcGluY3RybF9lbmFibGUsDQorICAgICAg
+IC5zZXRfbXV4ID0gdGVncmFfcGluY3RybF9zZXRfbXV4LA0KIH07DQoNCiBzdGF0aWMgaW50IHRl
+Z3JhX3BpbmNvbmZfcmVnKHN0cnVjdCB0ZWdyYV9wbXggKnBteCwgZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvcGluY3RybC9waW5jdHJsLXR6MTA5MC1wZGMuYyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJs
+LXR6MTA5MC1wZGMuYw0KaW5kZXggNDFlODFhMzVjYWJiLi4zYmI2YTNiNzg4NjQgMTAwNjQ0DQot
+LS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC10ejEwOTAtcGRjLmMNCisrKyBiL2RyaXZlcnMv
+cGluY3RybC9waW5jdHJsLXR6MTA5MC1wZGMuYw0KQEAgLTU0Nyw4ICs1NDcsOSBAQCBzdGF0aWMg
+dm9pZCB0ejEwOTBfcGRjX3BpbmN0cmxfbXV4KHN0cnVjdCB0ejEwOTBfcGRjX3BteCAqcG14LA0K
+ICAgICAgICBfX2dsb2JhbF91bmxvY2syKGZsYWdzKTsNCiB9DQoNCi1zdGF0aWMgaW50IHR6MTA5
+MF9wZGNfcGluY3RybF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KLSAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBmdW5jdGlvbiwgdW5z
+aWduZWQgaW50IGdyb3VwKQ0KK3N0YXRpYyBpbnQgdHoxMDkwX3BkY19waW5jdHJsX3NldF9tdXgo
+c3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICB1bnNpZ25lZCBpbnQgZnVuY3Rpb24sDQorICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBncm91cCkNCiB7DQogICAgICAgIHN0cnVjdCB0
+ejEwOTBfcGRjX3BteCAqcG14ID0gcGluY3RybF9kZXZfZ2V0X2RydmRhdGEocGN0bGRldik7DQog
+ICAgICAgIGNvbnN0IHN0cnVjdCB0ejEwOTBfcGRjX3Bpbmdyb3VwICpncnAgPSAmdHoxMDkwX3Bk
+Y19ncm91cHNbZ3JvdXBdOyBAQCAtNjM0LDcgKzYzNSw3IEBAIHN0YXRpYyBzdHJ1Y3QgcGlubXV4
+X29wcyB0ejEwOTBfcGRjX3Bpbm11eF9vcHMgPSB7DQogICAgICAgIC5nZXRfZnVuY3Rpb25zX2Nv
+dW50ICAgID0gdHoxMDkwX3BkY19waW5jdHJsX2dldF9mdW5jc19jb3VudCwNCiAgICAgICAgLmdl
+dF9mdW5jdGlvbl9uYW1lICAgICAgPSB0ejEwOTBfcGRjX3BpbmN0cmxfZ2V0X2Z1bmNfbmFtZSwN
+CiAgICAgICAgLmdldF9mdW5jdGlvbl9ncm91cHMgICAgPSB0ejEwOTBfcGRjX3BpbmN0cmxfZ2V0
+X2Z1bmNfZ3JvdXBzLA0KLSAgICAgICAuZW5hYmxlICAgICAgICAgICAgICAgICA9IHR6MTA5MF9w
+ZGNfcGluY3RybF9lbmFibGUsDQorICAgICAgIC5zZXRfbXV4ICAgICAgICAgICAgICAgID0gdHox
+MDkwX3BkY19waW5jdHJsX3NldF9tdXgsDQogICAgICAgIC5ncGlvX3JlcXVlc3RfZW5hYmxlICAg
+ID0gdHoxMDkwX3BkY19waW5jdHJsX2dwaW9fcmVxdWVzdF9lbmFibGUsDQogICAgICAgIC5ncGlv
+X2Rpc2FibGVfZnJlZSAgICAgID0gdHoxMDkwX3BkY19waW5jdHJsX2dwaW9fZGlzYWJsZV9mcmVl
+LA0KIH07DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdHoxMDkwLmMgYi9k
+cml2ZXJzL3BpbmN0cmwvcGluY3RybC10ejEwOTAuYw0KaW5kZXggMjQwODIyMTY4NDJlLi40OGQz
+NjQxM2I5OWYgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC10ejEwOTAuYw0K
+KysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdHoxMDkwLmMNCkBAIC0xNDE1LDggKzE0MTUs
+OCBAQCBmb3VuZF9tdXg6DQogICogdGhlIGVmZmVjdCBpcyB0aGUgc2FtZSBhcyBlbmFibGluZyB0
+aGUgZnVuY3Rpb24gb24gZWFjaCBpbmRpdmlkdWFsIHBpbiBpbiB0aGUNCiAgKiBncm91cC4NCiAg
+Ki8NCi1zdGF0aWMgaW50IHR6MTA5MF9waW5jdHJsX2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYg
+KnBjdGxkZXYsDQotICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQg
+ZnVuY3Rpb24sIHVuc2lnbmVkIGludCBncm91cCkNCitzdGF0aWMgaW50IHR6MTA5MF9waW5jdHJs
+X3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBmdW5jdGlvbiwgdW5zaWduZWQgaW50IGdyb3Vw
+KQ0KIHsNCiAgICAgICAgc3RydWN0IHR6MTA5MF9wbXggKnBteCA9IHBpbmN0cmxfZGV2X2dldF9k
+cnZkYXRhKHBjdGxkZXYpOw0KICAgICAgICBzdHJ1Y3QgdHoxMDkwX3Bpbmdyb3VwICpncnA7DQpA
+QCAtMTUxNyw3ICsxNTE3LDcgQEAgc3RhdGljIHN0cnVjdCBwaW5tdXhfb3BzIHR6MTA5MF9waW5t
+dXhfb3BzID0gew0KICAgICAgICAuZ2V0X2Z1bmN0aW9uc19jb3VudCAgICA9IHR6MTA5MF9waW5j
+dHJsX2dldF9mdW5jc19jb3VudCwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9uYW1lICAgICAgPSB0
+ejEwOTBfcGluY3RybF9nZXRfZnVuY19uYW1lLA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3Vw
+cyAgICA9IHR6MTA5MF9waW5jdHJsX2dldF9mdW5jX2dyb3VwcywNCi0gICAgICAgLmVuYWJsZSAg
+ICAgICAgICAgICAgICAgPSB0ejEwOTBfcGluY3RybF9lbmFibGUsDQorICAgICAgIC5zZXRfbXV4
+ICAgICAgICAgICAgICAgID0gdHoxMDkwX3BpbmN0cmxfc2V0X211eCwNCiAgICAgICAgLmdwaW9f
+cmVxdWVzdF9lbmFibGUgICAgPSB0ejEwOTBfcGluY3RybF9ncGlvX3JlcXVlc3RfZW5hYmxlLA0K
+ICAgICAgICAuZ3Bpb19kaXNhYmxlX2ZyZWUgICAgICA9IHR6MTA5MF9waW5jdHJsX2dwaW9fZGlz
+YWJsZV9mcmVlLA0KIH07DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdTMw
+MC5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdTMwMC5jIGluZGV4IDA5NTliYjM2NDUwZi4u
+ZTljNzExM2Q4MWYyIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtdTMwMC5j
+DQorKysgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC11MzAwLmMNCkBAIC05NTUsOCArOTU1LDgg
+QEAgc3RhdGljIHZvaWQgdTMwMF9wbXhfZW5kaXNhYmxlKHN0cnVjdCB1MzAwX3BteCAqdXBteCwg
+dW5zaWduZWQgc2VsZWN0b3IsDQogICAgICAgIH0NCiB9DQoNCi1zdGF0aWMgaW50IHUzMDBfcG14
+X2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLA0K
+LSAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQorc3RhdGljIGludCB1
+MzAwX3BteF9zZXRfbXV4KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgdW5zaWduZWQgc2Vs
+ZWN0b3IsDQorICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQogew0K
+ICAgICAgICBzdHJ1Y3QgdTMwMF9wbXggKnVwbXg7DQoNCkBAIC05OTQsNyArOTk0LDcgQEAgc3Rh
+dGljIGNvbnN0IHN0cnVjdCBwaW5tdXhfb3BzIHUzMDBfcG14X29wcyA9IHsNCiAgICAgICAgLmdl
+dF9mdW5jdGlvbnNfY291bnQgPSB1MzAwX3BteF9nZXRfZnVuY3NfY291bnQsDQogICAgICAgIC5n
+ZXRfZnVuY3Rpb25fbmFtZSA9IHUzMDBfcG14X2dldF9mdW5jX25hbWUsDQogICAgICAgIC5nZXRf
+ZnVuY3Rpb25fZ3JvdXBzID0gdTMwMF9wbXhfZ2V0X2dyb3VwcywNCi0gICAgICAgLmVuYWJsZSA9
+IHUzMDBfcG14X2VuYWJsZSwNCisgICAgICAgLnNldF9tdXggPSB1MzAwX3BteF9zZXRfbXV4LA0K
+IH07DQoNCiBzdGF0aWMgaW50IHUzMDBfcGluX2NvbmZpZ19nZXQoc3RydWN0IHBpbmN0cmxfZGV2
+ICpwY3RsZGV2LCB1bnNpZ25lZCBwaW4sIGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGlu
+bXV4LmMgYi9kcml2ZXJzL3BpbmN0cmwvcGlubXV4LmMgaW5kZXggYzA1NWRhZjlhODBmLi5iODc0
+NDU4ZGNiODggMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGlubXV4LmMNCisrKyBiL2Ry
+aXZlcnMvcGluY3RybC9waW5tdXguYw0KQEAgLTQxLDcgKzQxLDcgQEAgaW50IHBpbm11eF9jaGVj
+a19vcHMoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2KQ0KICAgICAgICAgICAgIW9wcy0+Z2V0
+X2Z1bmN0aW9uc19jb3VudCB8fA0KICAgICAgICAgICAgIW9wcy0+Z2V0X2Z1bmN0aW9uX25hbWUg
+fHwNCiAgICAgICAgICAgICFvcHMtPmdldF9mdW5jdGlvbl9ncm91cHMgfHwNCi0gICAgICAgICAg
+ICFvcHMtPmVuYWJsZSkgew0KKyAgICAgICAgICAgIW9wcy0+c2V0X211eCkgew0KICAgICAgICAg
+ICAgICAgIGRldl9lcnIocGN0bGRldi0+ZGV2LCAicGlubXV4IG9wcyBsYWNrcyBuZWNlc3Nhcnkg
+ZnVuY3Rpb25zXG4iKTsNCiAgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCiAgICAgICAg
+fQ0KQEAgLTQ0NSwxNSArNDQ1LDE1IEBAIGludCBwaW5tdXhfZW5hYmxlX3NldHRpbmcoc3RydWN0
+IHBpbmN0cmxfc2V0dGluZyBjb25zdCAqc2V0dGluZykNCiAgICAgICAgICAgICAgICBkZXNjLT5t
+dXhfc2V0dGluZyA9ICYoc2V0dGluZy0+ZGF0YS5tdXgpOw0KICAgICAgICB9DQoNCi0gICAgICAg
+cmV0ID0gb3BzLT5lbmFibGUocGN0bGRldiwgc2V0dGluZy0+ZGF0YS5tdXguZnVuYywNCi0gICAg
+ICAgICAgICAgICAgICAgICAgICAgc2V0dGluZy0+ZGF0YS5tdXguZ3JvdXApOw0KKyAgICAgICBy
+ZXQgPSBvcHMtPnNldF9tdXgocGN0bGRldiwgc2V0dGluZy0+ZGF0YS5tdXguZnVuYywNCisgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHNldHRpbmctPmRhdGEubXV4Lmdyb3VwKTsNCg0KICAgICAg
+ICBpZiAocmV0KQ0KLSAgICAgICAgICAgICAgIGdvdG8gZXJyX2VuYWJsZTsNCisgICAgICAgICAg
+ICAgICBnb3RvIGVycl9zZXRfbXV4Ow0KDQogICAgICAgIHJldHVybiAwOw0KDQotZXJyX2VuYWJs
+ZToNCitlcnJfc2V0X211eDoNCiAgICAgICAgZm9yIChpID0gMDsgaSA8IG51bV9waW5zOyBpKysp
+IHsNCiAgICAgICAgICAgICAgICBkZXNjID0gcGluX2Rlc2NfZ2V0KHBjdGxkZXYsIHBpbnNbaV0p
+Ow0KICAgICAgICAgICAgICAgIGlmIChkZXNjKQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3Ry
+bC9xY29tL3BpbmN0cmwtbXNtLmMgYi9kcml2ZXJzL3BpbmN0cmwvcWNvbS9waW5jdHJsLW1zbS5j
+DQppbmRleCA4MGE2NGNhZDkwN2QuLjAxZWFiNDdhNzQ2ZiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
+cGluY3RybC9xY29tL3BpbmN0cmwtbXNtLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9xY29tL3Bp
+bmN0cmwtbXNtLmMNCkBAIC0xMzQsOSArMTM0LDkgQEAgc3RhdGljIGludCBtc21fZ2V0X2Z1bmN0
+aW9uX2dyb3VwcyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQogICAgICAgIHJldHVybiAw
+Ow0KIH0NCg0KLXN0YXRpYyBpbnQgbXNtX3Bpbm11eF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2
+ICpwY3RsZGV2LA0KLSAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBmdW5jdGlv
+biwNCi0gICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQorc3RhdGlj
+IGludCBtc21fcGlubXV4X3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZnVuY3Rpb24sDQorICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91cCkNCiB7DQogICAgICAgIHN0cnVjdCBt
+c21fcGluY3RybCAqcGN0cmwgPSBwaW5jdHJsX2Rldl9nZXRfZHJ2ZGF0YShwY3RsZGV2KTsNCiAg
+ICAgICAgY29uc3Qgc3RydWN0IG1zbV9waW5ncm91cCAqZzsNCkBAIC0xNzAsNyArMTcwLDcgQEAg
+c3RhdGljIGNvbnN0IHN0cnVjdCBwaW5tdXhfb3BzIG1zbV9waW5tdXhfb3BzID0gew0KICAgICAg
+ICAuZ2V0X2Z1bmN0aW9uc19jb3VudCAgICA9IG1zbV9nZXRfZnVuY3Rpb25zX2NvdW50LA0KICAg
+ICAgICAuZ2V0X2Z1bmN0aW9uX25hbWUgICAgICA9IG1zbV9nZXRfZnVuY3Rpb25fbmFtZSwNCiAg
+ICAgICAgLmdldF9mdW5jdGlvbl9ncm91cHMgICAgPSBtc21fZ2V0X2Z1bmN0aW9uX2dyb3VwcywN
+Ci0gICAgICAgLmVuYWJsZSAgICAgICAgICAgICAgICAgPSBtc21fcGlubXV4X2VuYWJsZSwNCisg
+ICAgICAgLnNldF9tdXggICAgICAgICAgICAgICAgPSBtc21fcGlubXV4X3NldF9tdXgsDQogfTsN
+Cg0KIHN0YXRpYyBpbnQgbXNtX2NvbmZpZ19yZWcoc3RydWN0IG1zbV9waW5jdHJsICpwY3RybCwg
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9zYW1zdW5nL3BpbmN0cmwtZXh5bm9zNTQ0MC5j
+IGIvZHJpdmVycy9waW5jdHJsL3NhbXN1bmcvcGluY3RybC1leHlub3M1NDQwLmMNCmluZGV4IDYw
+M2RhMmY5ZGQ5NS4uYjk5NWVjMmM1ZDE2IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL3Nh
+bXN1bmcvcGluY3RybC1leHlub3M1NDQwLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9zYW1zdW5n
+L3BpbmN0cmwtZXh5bm9zNTQ0MC5jDQpAQCAtMzY0LDggKzM2NCw5IEBAIHN0YXRpYyB2b2lkIGV4
+eW5vczU0NDBfcGlubXV4X3NldHVwKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgdW5zaWdu
+ZWQgc2VsZWN0ICB9DQoNCiAvKiBlbmFibGUgYSBzcGVjaWZpZWQgcGlubXV4IGJ5IHdyaXRpbmcg
+dG8gcmVnaXN0ZXJzICovIC1zdGF0aWMgaW50IGV4eW5vczU0NDBfcGlubXV4X2VuYWJsZShzdHJ1
+Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLA0KLSAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGdyb3VwKQ0KK3N0YXRpYyBpbnQg
+ZXh5bm9zNTQ0MF9waW5tdXhfc2V0X211eChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQor
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgc2VsZWN0b3IsDQor
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQogew0K
+ICAgICAgICBleHlub3M1NDQwX3Bpbm11eF9zZXR1cChwY3RsZGV2LCBzZWxlY3RvciwgZ3JvdXAs
+IHRydWUpOw0KICAgICAgICByZXR1cm4gMDsNCkBAIC0zODcsNyArMzg4LDcgQEAgc3RhdGljIGNv
+bnN0IHN0cnVjdCBwaW5tdXhfb3BzIGV4eW5vczU0NDBfcGlubXV4X29wcyA9IHsNCiAgICAgICAg
+LmdldF9mdW5jdGlvbnNfY291bnQgICAgPSBleHlub3M1NDQwX2dldF9mdW5jdGlvbnNfY291bnQs
+DQogICAgICAgIC5nZXRfZnVuY3Rpb25fbmFtZSAgICAgID0gZXh5bm9zNTQ0MF9waW5tdXhfZ2V0
+X2ZuYW1lLA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3VwcyAgICA9IGV4eW5vczU0NDBfcGlu
+bXV4X2dldF9ncm91cHMsDQotICAgICAgIC5lbmFibGUgICAgICAgICAgICAgICAgID0gZXh5bm9z
+NTQ0MF9waW5tdXhfZW5hYmxlLA0KKyAgICAgICAuc2V0X211eCAgICAgICAgICAgICAgICA9IGV4
+eW5vczU0NDBfcGlubXV4X3NldF9tdXgsDQogICAgICAgIC5ncGlvX3NldF9kaXJlY3Rpb24gICAg
+ID0gZXh5bm9zNTQ0MF9waW5tdXhfZ3Bpb19zZXRfZGlyZWN0aW9uLA0KIH07DQoNCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL3BpbmN0cmwvc2Ftc3VuZy9waW5jdHJsLXNhbXN1bmcuYyBiL2RyaXZlcnMv
+cGluY3RybC9zYW1zdW5nL3BpbmN0cmwtc2Ftc3VuZy5jDQppbmRleCBiMDc0MDZkYTMzM2MuLjRh
+NDc2OTFjMzJiMSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9zYW1zdW5nL3BpbmN0cmwt
+c2Ftc3VuZy5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvc2Ftc3VuZy9waW5jdHJsLXNhbXN1bmcu
+Yw0KQEAgLTQwMSw4ICs0MDEsOSBAQCBzdGF0aWMgdm9pZCBzYW1zdW5nX3Bpbm11eF9zZXR1cChz
+dHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLCAgfQ0KDQogLyog
+ZW5hYmxlIGEgc3BlY2lmaWVkIHBpbm11eCBieSB3cml0aW5nIHRvIHJlZ2lzdGVycyAqLyAtc3Rh
+dGljIGludCBzYW1zdW5nX3Bpbm11eF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2
+LCB1bnNpZ25lZCBzZWxlY3RvciwNCi0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICB1bnNpZ25lZCBncm91cCkNCitzdGF0aWMgaW50IHNhbXN1bmdfcGlubXV4X3NldF9tdXgo
+c3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHVuc2lnbmVkIHNlbGVjdG9yLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHVuc2lnbmVkIGdyb3VwKQ0KIHsNCiAgICAgICAgc2Ftc3VuZ19waW5tdXhfc2V0dXAocGN0
+bGRldiwgc2VsZWN0b3IsIGdyb3VwLCB0cnVlKTsNCiAgICAgICAgcmV0dXJuIDA7DQpAQCAtNDEz
+LDcgKzQxNCw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGlubXV4X29wcyBzYW1zdW5nX3Bpbm11
+eF9vcHMgPSB7DQogICAgICAgIC5nZXRfZnVuY3Rpb25zX2NvdW50ICAgID0gc2Ftc3VuZ19nZXRf
+ZnVuY3Rpb25zX2NvdW50LA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX25hbWUgICAgICA9IHNhbXN1
+bmdfcGlubXV4X2dldF9mbmFtZSwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9ncm91cHMgICAgPSBz
+YW1zdW5nX3Bpbm11eF9nZXRfZ3JvdXBzLA0KLSAgICAgICAuZW5hYmxlICAgICAgICAgICAgICAg
+ICA9IHNhbXN1bmdfcGlubXV4X2VuYWJsZSwNCisgICAgICAgLnNldF9tdXggICAgICAgICAgICAg
+ICAgPSBzYW1zdW5nX3Bpbm11eF9zZXRfbXV4LA0KIH07DQoNCiAvKiBzZXQgb3IgZ2V0IHRoZSBw
+aW4gY29uZmlnIHNldHRpbmdzIGZvciBhIHNwZWNpZmllZCBwaW4gKi8gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvcGluY3RybC9zaC1wZmMvcGluY3RybC5jIGIvZHJpdmVycy9waW5jdHJsL3NoLXBmYy9w
+aW5jdHJsLmMNCmluZGV4IDExZGIzZWUzOWQ0MC4uOTEwZGVhZWZhMGFjIDEwMDY0NA0KLS0tIGEv
+ZHJpdmVycy9waW5jdHJsL3NoLXBmYy9waW5jdHJsLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9z
+aC1wZmMvcGluY3RybC5jDQpAQCAtMzEyLDggKzMxMiw4IEBAIHN0YXRpYyBpbnQgc2hfcGZjX2dl
+dF9mdW5jdGlvbl9ncm91cHMoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KICAgICAgICBy
+ZXR1cm4gMDsNCiB9DQoNCi1zdGF0aWMgaW50IHNoX3BmY19mdW5jX2VuYWJsZShzdHJ1Y3QgcGlu
+Y3RybF9kZXYgKnBjdGxkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLA0KLSAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQorc3RhdGljIGludCBzaF9wZmNfZnVuY19zZXRf
+bXV4KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwgdW5zaWduZWQgc2VsZWN0b3IsDQorICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXApDQogew0KICAgICAgICBz
+dHJ1Y3Qgc2hfcGZjX3BpbmN0cmwgKnBteCA9IHBpbmN0cmxfZGV2X2dldF9kcnZkYXRhKHBjdGxk
+ZXYpOw0KICAgICAgICBzdHJ1Y3Qgc2hfcGZjICpwZmMgPSBwbXgtPnBmYzsNCkBAIC00NDIsNyAr
+NDQyLDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBwaW5tdXhfb3BzIHNoX3BmY19waW5tdXhfb3Bz
+ID0gew0KICAgICAgICAuZ2V0X2Z1bmN0aW9uc19jb3VudCAgICA9IHNoX3BmY19nZXRfZnVuY3Rp
+b25zX2NvdW50LA0KICAgICAgICAuZ2V0X2Z1bmN0aW9uX25hbWUgICAgICA9IHNoX3BmY19nZXRf
+ZnVuY3Rpb25fbmFtZSwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9ncm91cHMgICAgPSBzaF9wZmNf
+Z2V0X2Z1bmN0aW9uX2dyb3VwcywNCi0gICAgICAgLmVuYWJsZSAgICAgICAgICAgICAgICAgPSBz
+aF9wZmNfZnVuY19lbmFibGUsDQorICAgICAgIC5zZXRfbXV4ICAgICAgICAgICAgICAgID0gc2hf
+cGZjX2Z1bmNfc2V0X211eCwNCiAgICAgICAgLmdwaW9fcmVxdWVzdF9lbmFibGUgICAgPSBzaF9w
+ZmNfZ3Bpb19yZXF1ZXN0X2VuYWJsZSwNCiAgICAgICAgLmdwaW9fZGlzYWJsZV9mcmVlICAgICAg
+PSBzaF9wZmNfZ3Bpb19kaXNhYmxlX2ZyZWUsDQogICAgICAgIC5ncGlvX3NldF9kaXJlY3Rpb24g
+ICAgID0gc2hfcGZjX2dwaW9fc2V0X2RpcmVjdGlvbiwNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Bp
+bmN0cmwvc2lyZi9waW5jdHJsLXNpcmYuYyBiL2RyaXZlcnMvcGluY3RybC9zaXJmL3BpbmN0cmwt
+c2lyZi5jDQppbmRleCA0NWY5M2Y5NTJhMzkuLjZmMjUyZmQ3Y2IwYyAxMDA2NDQNCi0tLSBhL2Ry
+aXZlcnMvcGluY3RybC9zaXJmL3BpbmN0cmwtc2lyZi5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwv
+c2lyZi9waW5jdHJsLXNpcmYuYw0KQEAgLTE3OSw4ICsxNzksOSBAQCBzdGF0aWMgdm9pZCBzaXJm
+c29jX3Bpbm11eF9lbmRpc2FibGUoc3RydWN0IHNpcmZzb2NfcG14ICpzcG14LA0KICAgICAgICB9
+DQogfQ0KDQotc3RhdGljIGludCBzaXJmc29jX3Bpbm11eF9lbmFibGUoc3RydWN0IHBpbmN0cmxf
+ZGV2ICpwbXhkZXYsIHVuc2lnbmVkIHNlbGVjdG9yLA0KLSAgICAgICB1bnNpZ25lZCBncm91cCkN
+CitzdGF0aWMgaW50IHNpcmZzb2NfcGlubXV4X3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2ICpw
+bXhkZXYsDQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIHNlbGVjdG9y
+LA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91cCkNCiB7DQog
+ICAgICAgIHN0cnVjdCBzaXJmc29jX3BteCAqc3BteDsNCg0KQEAgLTIzNyw3ICsyMzgsNyBAQCBz
+dGF0aWMgaW50IHNpcmZzb2NfcGlubXV4X3JlcXVlc3RfZ3BpbyhzdHJ1Y3QgcGluY3RybF9kZXYg
+KnBteGRldiwgIH0NCg0KIHN0YXRpYyBzdHJ1Y3QgcGlubXV4X29wcyBzaXJmc29jX3Bpbm11eF9v
+cHMgPSB7DQotICAgICAgIC5lbmFibGUgPSBzaXJmc29jX3Bpbm11eF9lbmFibGUsDQorICAgICAg
+IC5zZXRfbXV4ID0gc2lyZnNvY19waW5tdXhfc2V0X211eCwNCiAgICAgICAgLmdldF9mdW5jdGlv
+bnNfY291bnQgPSBzaXJmc29jX3Bpbm11eF9nZXRfZnVuY3NfY291bnQsDQogICAgICAgIC5nZXRf
+ZnVuY3Rpb25fbmFtZSA9IHNpcmZzb2NfcGlubXV4X2dldF9mdW5jX25hbWUsDQogICAgICAgIC5n
+ZXRfZnVuY3Rpb25fZ3JvdXBzID0gc2lyZnNvY19waW5tdXhfZ2V0X2dyb3VwcywgZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvcGluY3RybC9zcGVhci9waW5jdHJsLXNwZWFyLmMgYi9kcml2ZXJzL3BpbmN0
+cmwvc3BlYXIvcGluY3RybC1zcGVhci5jDQppbmRleCBmNzJjYzRlMTkyYmQuLmFiZGIwNWFjNDNk
+YyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9zcGVhci9waW5jdHJsLXNwZWFyLmMNCisr
+KyBiL2RyaXZlcnMvcGluY3RybC9zcGVhci9waW5jdHJsLXNwZWFyLmMNCkBAIC0yNjgsNyArMjY4
+LDcgQEAgc3RhdGljIGludCBzcGVhcl9waW5jdHJsX2VuZGlzYWJsZShzdHJ1Y3QgcGluY3RybF9k
+ZXYgKnBjdGxkZXYsDQogICAgICAgIHJldHVybiAwOw0KIH0NCg0KLXN0YXRpYyBpbnQgc3BlYXJf
+cGluY3RybF9lbmFibGUoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBmdW5j
+dGlvbiwNCitzdGF0aWMgaW50IHNwZWFyX3BpbmN0cmxfc2V0X211eChzdHJ1Y3QgcGluY3RybF9k
+ZXYgKnBjdGxkZXYsIHVuc2lnbmVkDQorZnVuY3Rpb24sDQogICAgICAgICAgICAgICAgdW5zaWdu
+ZWQgZ3JvdXApDQogew0KICAgICAgICByZXR1cm4gc3BlYXJfcGluY3RybF9lbmRpc2FibGUocGN0
+bGRldiwgZnVuY3Rpb24sIGdyb3VwLCB0cnVlKTsgQEAgLTMzOCw3ICszMzgsNyBAQCBzdGF0aWMg
+Y29uc3Qgc3RydWN0IHBpbm11eF9vcHMgc3BlYXJfcGlubXV4X29wcyA9IHsNCiAgICAgICAgLmdl
+dF9mdW5jdGlvbnNfY291bnQgPSBzcGVhcl9waW5jdHJsX2dldF9mdW5jc19jb3VudCwNCiAgICAg
+ICAgLmdldF9mdW5jdGlvbl9uYW1lID0gc3BlYXJfcGluY3RybF9nZXRfZnVuY19uYW1lLA0KICAg
+ICAgICAuZ2V0X2Z1bmN0aW9uX2dyb3VwcyA9IHNwZWFyX3BpbmN0cmxfZ2V0X2Z1bmNfZ3JvdXBz
+LA0KLSAgICAgICAuZW5hYmxlID0gc3BlYXJfcGluY3RybF9lbmFibGUsDQorICAgICAgIC5zZXRf
+bXV4ID0gc3BlYXJfcGluY3RybF9zZXRfbXV4LA0KICAgICAgICAuZ3Bpb19yZXF1ZXN0X2VuYWJs
+ZSA9IGdwaW9fcmVxdWVzdF9lbmFibGUsDQogICAgICAgIC5ncGlvX2Rpc2FibGVfZnJlZSA9IGdw
+aW9fZGlzYWJsZV9mcmVlLCAgfTsgZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9zdW54aS9w
+aW5jdHJsLXN1bnhpLmMgYi9kcml2ZXJzL3BpbmN0cmwvc3VueGkvcGluY3RybC1zdW54aS5jDQpp
+bmRleCAzZGY2NmUzNjZjODcuLmVmOWQ4MDRlNTVkZSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGlu
+Y3RybC9zdW54aS9waW5jdHJsLXN1bnhpLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9zdW54aS9w
+aW5jdHJsLXN1bnhpLmMNCkBAIC0zOTMsOSArMzkzLDkgQEAgc3RhdGljIHZvaWQgc3VueGlfcG14
+X3NldChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQogICAgICAgIHNwaW5fdW5sb2NrX2ly
+cXJlc3RvcmUoJnBjdGwtPmxvY2ssIGZsYWdzKTsgIH0NCg0KLXN0YXRpYyBpbnQgc3VueGlfcG14
+X2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQotICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgdW5zaWduZWQgZnVuY3Rpb24sDQotICAgICAgICAgICAgICAgICAgICAgICAgICAg
+dW5zaWduZWQgZ3JvdXApDQorc3RhdGljIGludCBzdW54aV9wbXhfc2V0X211eChzdHJ1Y3QgcGlu
+Y3RybF9kZXYgKnBjdGxkZXYsDQorICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVk
+IGZ1bmN0aW9uLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBncm91cCkN
+CiB7DQogICAgICAgIHN0cnVjdCBzdW54aV9waW5jdHJsICpwY3RsID0gcGluY3RybF9kZXZfZ2V0
+X2RydmRhdGEocGN0bGRldik7DQogICAgICAgIHN0cnVjdCBzdW54aV9waW5jdHJsX2dyb3VwICpn
+ID0gcGN0bC0+Z3JvdXBzICsgZ3JvdXA7IEBAIC00NDEsNyArNDQxLDcgQEAgc3RhdGljIGNvbnN0
+IHN0cnVjdCBwaW5tdXhfb3BzIHN1bnhpX3BteF9vcHMgPSB7DQogICAgICAgIC5nZXRfZnVuY3Rp
+b25zX2NvdW50ICAgID0gc3VueGlfcG14X2dldF9mdW5jc19jbnQsDQogICAgICAgIC5nZXRfZnVu
+Y3Rpb25fbmFtZSAgICAgID0gc3VueGlfcG14X2dldF9mdW5jX25hbWUsDQogICAgICAgIC5nZXRf
+ZnVuY3Rpb25fZ3JvdXBzICAgID0gc3VueGlfcG14X2dldF9mdW5jX2dyb3VwcywNCi0gICAgICAg
+LmVuYWJsZSAgICAgICAgICAgICAgICAgPSBzdW54aV9wbXhfZW5hYmxlLA0KKyAgICAgICAuc2V0
+X211eCAgICAgICAgICAgICAgICA9IHN1bnhpX3BteF9zZXRfbXV4LA0KICAgICAgICAuZ3Bpb19z
+ZXRfZGlyZWN0aW9uICAgICA9IHN1bnhpX3BteF9ncGlvX3NldF9kaXJlY3Rpb24sDQogfTsNCg0K
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC92dDg1MDAvcGluY3RybC13bXQuYyBiL2RyaXZl
+cnMvcGluY3RybC92dDg1MDAvcGluY3RybC13bXQuYw0KaW5kZXggOGNlYTM1NWY5YTgxLi5kMDU1
+ZDYzMzA5ZTQgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvdnQ4NTAwL3BpbmN0cmwtd210
+LmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC92dDg1MDAvcGluY3RybC13bXQuYw0KQEAgLTEzMSw5
+ICsxMzEsOSBAQCBzdGF0aWMgaW50IHdtdF9zZXRfcGlubXV4KHN0cnVjdCB3bXRfcGluY3RybF9k
+YXRhICpkYXRhLCB1bnNpZ25lZCBmdW5jLA0KICAgICAgICByZXR1cm4gMDsNCiB9DQoNCi1zdGF0
+aWMgaW50IHdtdF9wbXhfZW5hYmxlKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCi0gICAg
+ICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgZnVuY19zZWxlY3RvciwNCi0gICAgICAgICAg
+ICAgICAgICAgICAgICAgdW5zaWduZWQgZ3JvdXBfc2VsZWN0b3IpDQorc3RhdGljIGludCB3bXRf
+cG14X3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgdW5zaWduZWQgZnVuY19zZWxlY3RvciwNCisgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHVuc2lnbmVkIGdyb3VwX3NlbGVjdG9yKQ0KIHsNCiAgICAgICAgc3RydWN0IHdtdF9w
+aW5jdHJsX2RhdGEgKmRhdGEgPSBwaW5jdHJsX2Rldl9nZXRfZHJ2ZGF0YShwY3RsZGV2KTsNCiAg
+ICAgICAgdTMyIHBpbm51bSA9IGRhdGEtPnBpbnNbZ3JvdXBfc2VsZWN0b3JdLm51bWJlcjsNCkBA
+IC0xNjgsNyArMTY4LDcgQEAgc3RhdGljIHN0cnVjdCBwaW5tdXhfb3BzIHdtdF9waW5tdXhfb3Bz
+ID0gew0KICAgICAgICAuZ2V0X2Z1bmN0aW9uc19jb3VudCA9IHdtdF9wbXhfZ2V0X2Z1bmN0aW9u
+c19jb3VudCwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9uYW1lID0gd210X3BteF9nZXRfZnVuY3Rp
+b25fbmFtZSwNCiAgICAgICAgLmdldF9mdW5jdGlvbl9ncm91cHMgPSB3bXRfcG14X2dldF9mdW5j
+dGlvbl9ncm91cHMsDQotICAgICAgIC5lbmFibGUgPSB3bXRfcG14X2VuYWJsZSwNCisgICAgICAg
+LnNldF9tdXggPSB3bXRfcG14X3NldF9tdXgsDQogICAgICAgIC5ncGlvX2Rpc2FibGVfZnJlZSA9
+IHdtdF9wbXhfZ3Bpb19kaXNhYmxlX2ZyZWUsDQogICAgICAgIC5ncGlvX3NldF9kaXJlY3Rpb24g
+PSB3bXRfcG14X2dwaW9fc2V0X2RpcmVjdGlvbiwgIH07IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
+bnV4L3BpbmN0cmwvcGlubXV4LmggYi9pbmNsdWRlL2xpbnV4L3BpbmN0cmwvcGlubXV4LmggaW5k
+ZXggMzA5N2FhZmJlYjI0Li41MTFiZGE5ZWQ0YmYgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL2xpbnV4
+L3BpbmN0cmwvcGlubXV4LmgNCisrKyBiL2luY2x1ZGUvbGludXgvcGluY3RybC9waW5tdXguaA0K
+QEAgLTM5LDEzICszOSwxMiBAQCBzdHJ1Y3QgcGluY3RybF9kZXY7DQogICogICAgIG5hbWUgY2Fu
+IGJlIHVzZWQgd2l0aCB0aGUgZ2VuZXJpYyBAcGluY3RybF9vcHMgdG8gcmV0cmlldmUgdGhlDQog
+ICogICAgIGFjdHVhbCBwaW5zIGFmZmVjdGVkLiBUaGUgYXBwbGljYWJsZSBncm91cHMgd2lsbCBi
+ZSByZXR1cm5lZCBpbg0KICAqICAgICBAZ3JvdXBzIGFuZCB0aGUgbnVtYmVyIG9mIGdyb3VwcyBp
+biBAbnVtX2dyb3Vwcw0KLSAqIEBlbmFibGU6IGVuYWJsZSBhIGNlcnRhaW4gbXV4aW5nIGZ1bmN0
+aW9uIHdpdGggYSBjZXJ0YWluIHBpbiBncm91cC4gVGhlDQorICogQHNldF9tdXg6IGVuYWJsZSBh
+IGNlcnRhaW4gbXV4aW5nIGZ1bmN0aW9uIHdpdGggYSBjZXJ0YWluIHBpbiBncm91cC4NCisgVGhl
+DQogICogICAgIGRyaXZlciBkb2VzIG5vdCBuZWVkIHRvIGZpZ3VyZSBvdXQgd2hldGhlciBlbmFi
+bGluZyB0aGlzIGZ1bmN0aW9uDQogICogICAgIGNvbmZsaWN0cyBzb21lIG90aGVyIHVzZSBvZiB0
+aGUgcGlucyBpbiB0aGF0IGdyb3VwLCBzdWNoIGNvbGxpc2lvbnMNCiAgKiAgICAgYXJlIGhhbmRs
+ZWQgYnkgdGhlIHBpbm11eCBzdWJzeXN0ZW0uIFRoZSBAZnVuY19zZWxlY3RvciBzZWxlY3RzIGEN
+CiAgKiAgICAgY2VydGFpbiBmdW5jdGlvbiB3aGVyZWFzIEBncm91cF9zZWxlY3RvciBzZWxlY3Rz
+IGEgY2VydGFpbiBzZXQgb2YgcGlucw0KICAqICAgICB0byBiZSB1c2VkLiBPbiBzaW1wbGUgY29u
+dHJvbGxlcnMgdGhlIGxhdHRlciBhcmd1bWVudCBtYXkgYmUgaWdub3JlZA0KLSAqIEBkaXNhYmxl
+OiBkaXNhYmxlIGEgY2VydGFpbiBtdXhpbmcgc2VsZWN0b3Igd2l0aCBhIGNlcnRhaW4gcGluIGdy
+b3VwDQogICogQGdwaW9fcmVxdWVzdF9lbmFibGU6IHJlcXVlc3RzIGFuZCBlbmFibGVzIEdQSU8g
+b24gYSBjZXJ0YWluIHBpbi4NCiAgKiAgICAgSW1wbGVtZW50IHRoaXMgb25seSBpZiB5b3UgY2Fu
+IG11eCBldmVyeSBwaW4gaW5kaXZpZHVhbGx5IGFzIEdQSU8uIFRoZQ0KICAqICAgICBhZmZlY3Rl
+ZCBHUElPIHJhbmdlIGlzIHBhc3NlZCBhbG9uZyB3aXRoIGFuIG9mZnNldChwaW4gbnVtYmVyKSBp
+bnRvIHRoYXQNCkBAIC02OCw4ICs2Nyw4IEBAIHN0cnVjdCBwaW5tdXhfb3BzIHsNCiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBzZWxlY3RvciwNCiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICogY29uc3QgKipncm91cHMsDQogICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgKiBjb25zdCBudW1fZ3JvdXBz
+KTsNCi0gICAgICAgaW50ICgqZW5hYmxlKSAoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1
+bnNpZ25lZCBmdW5jX3NlbGVjdG9yLA0KLSAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBn
+cm91cF9zZWxlY3Rvcik7DQorICAgICAgIGludCAoKnNldF9tdXgpIChzdHJ1Y3QgcGluY3RybF9k
+ZXYgKnBjdGxkZXYsIHVuc2lnbmVkIGZ1bmNfc2VsZWN0b3IsDQorICAgICAgICAgICAgICAgICAg
+ICAgICB1bnNpZ25lZCBncm91cF9zZWxlY3Rvcik7DQogICAgICAgIGludCAoKmdwaW9fcmVxdWVz
+dF9lbmFibGUpIChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQogICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgcGluY3RybF9ncGlvX3JhbmdlICpyYW5nZSwNCiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIG9mZnNldCk7DQotLQ0K
+MS45LjMNCg0K
