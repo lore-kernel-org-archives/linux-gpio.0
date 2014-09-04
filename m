@@ -1,44 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Thu, 4 Sep 2014 18:29:32 +0200
-Message-ID: <CACRpkda14yOtM=sfsiy2vajd-u-+YbkXZAADQLVNurM4TdCDeQ@mail.gmail.com>
-References: <1409335127-26712-1-git-send-email-soren.brinkmann@xilinx.com>
-	<1409335127-26712-4-git-send-email-soren.brinkmann@xilinx.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/3] gpio: add support for the Diolan DLN-2 USB GPIO driver
+Date: Thu, 4 Sep 2014 18:32:46 +0200
+Message-ID: <CACRpkdbu+hwXtM=Xqur6_Z4C3UkQRDu_YQviZ4F+xAUvX63q0g@mail.gmail.com>
+References: <1409349654-24841-1-git-send-email-octavian.purdila@intel.com>
+	<1409349654-24841-4-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:49010 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751674AbaIDQ3c (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Sep 2014 12:29:32 -0400
-Received: by mail-ob0-f175.google.com with SMTP id wp4so7602963obc.6
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Sep 2014 09:29:32 -0700 (PDT)
-In-Reply-To: <1409335127-26712-4-git-send-email-soren.brinkmann@xilinx.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1409349654-24841-4-git-send-email-octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Harini Katakam <harinik@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Ezra Savard <ezras@xilinx.com>
 
-On Fri, Aug 29, 2014 at 7:58 PM, Soren Brinkmann
-<soren.brinkmann@xilinx.com> wrote:
+On Sat, Aug 30, 2014 at 12:00 AM, Octavian Purdila
+<octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
 
-> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
-> marking/unmarking a GPIO as wake IRQ.
-> The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
-> is associated with that GPIO and the irqchip implements set_wake().
-> Writing 'enabled' to that file will enable wake for that GPIO, while
-> writing 'disabled' will disable wake.
-> Reading that file will return either 'disabled' or 'enabled' depening on
-> the currently set flag for the GPIO's IRQ.
+> From: Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 >
-> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> This patch adds GPIO and IRQ support for the Diolan DLN-2 GPIO module.
+>
+> Information about the USB protocol interface can be found in the
+> Programmer's Reference Manual [1], see section 2.9 for the GPIO
+> module commands and responses.
+>
+> [1] https://www.diolan.com/downloads/dln-api-manual.pdf
+>
+> Signed-off-by: Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
-While I do see the utility of this patch, any kind of interrupt and
-related handling in userspace makes me super-stressed and
-nervous.
+I like this version. I assume you need to funnel it with the
+rest of the patches through the MFD tree so:
 
-I need wide consent for this and please post this patch separately
-from the zynq-related patches.
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
 Yours,
 Linus Walleij
