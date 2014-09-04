@@ -1,317 +1,127 @@
-From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-Subject: Re: [PATCH 1/3] GPIO: gpio-dwapb: Enable platform driver binding to
+From: "Chen, Alvin" <alvin.chen@intel.com>
+Subject: RE: [PATCH 1/3] GPIO: gpio-dwapb: Enable platform driver binding to
  MFD driver
-Date: Wed, 3 Sep 2014 22:03:02 +0200
-Message-ID: <20140903200302.GA7673@breakpoint.cc>
+Date: Thu, 4 Sep 2014 02:00:03 +0000
+Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E982384@SHSMSX101.ccr.corp.intel.com>
 References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
  <1409161588-19417-2-git-send-email-alvin.chen@intel.com>
+ <20140903200302.GA7673@breakpoint.cc>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Chamillionaire.breakpoint.cc ([80.244.247.6]:53206 "EHLO
-	Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751544AbaICUDI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Sep 2014 16:03:08 -0400
-Content-Disposition: inline
-In-Reply-To: <1409161588-19417-2-git-send-email-alvin.chen@intel.com>
+Received: from mga02.intel.com ([134.134.136.20]:43100 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751266AbaIDCA0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 3 Sep 2014 22:00:26 -0400
+In-Reply-To: <20140903200302.GA7673@breakpoint.cc>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Weike Chen <alvin.chen@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Mika Westerberg <mika.westerberg@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>
+To: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>
 
-On 2014-08-27 10:46:26 [-0700], Weike Chen wrote:
-> index 9de1515..8250a44 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -136,7 +136,6 @@ config GPIO_DWAPB
->  	tristate "Synopsys DesignWare APB GPIO driver"
->  	select GPIO_GENERIC
->  	select GENERIC_IRQ_CHIP
-> -	depends on OF_GPIO
-
-you need either OF_GPIO or PCI
-
->  	help
->  	  Say Y or M here to build support for the Synopsys DesignWare APB
->  	  GPIO block.
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index d6618a6..155a64b 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -21,6 +21,7 @@
->  #include <linux/of_irq.h>
->  #include <linux/platform_device.h>
->  #include <linux/spinlock.h>
-> +#include <linux/platform_data/gpio-dwapb.h>
-> =20
->  #define GPIO_SWPORTA_DR		0x00
->  #define GPIO_SWPORTA_DDR	0x04
-> @@ -52,14 +53,15 @@ struct dwapb_gpio_port {
->  	struct bgpio_chip	bgc;
->  	bool			is_registered;
->  	struct dwapb_gpio	*gpio;
-> +	struct dwapb_gpio_port_property *pp;
->  };
-> =20
->  struct dwapb_gpio {
->  	struct	device		*dev;
->  	void __iomem		*regs;
->  	struct dwapb_gpio_port	*ports;
-> -	unsigned int		nr_ports;
-
-you could keep this the way it is
-
->  	struct irq_domain	*domain;
-> +	const struct dwapb_gpio_platform_data	*pdata;
-
-and not making this a member of this struct. I've been going up and dow=
-n
-the source and I don't see the need to marry dwapb_gpio to
-dwapb_gpio_platform_data.=20
-That dwapb_gpio_port_property thing has a long name. Could you just set
-it up, pass it for registration and the free it? You can't free the
-pdata for the non-OF tree but for the OF case you keep that struct
-around for no reason.
-You could safe some memory and use pdata directly for setup.
-
->  };
-> =20
->  static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
-> @@ -207,22 +209,24 @@ static int dwapb_irq_set_type(struct irq_data *=
-d, u32 type)
->  	return 0;
->  }
-> =20
-> +static irqreturn_t dwapb_irq_handler_mfd(int irq, void *dev_id)
-> +{
-> +	struct irq_desc *desc =3D irq_to_desc(irq);
-> +
-> +	dwapb_irq_handler(irq, desc);
-> +
-> +	return IRQ_HANDLED;
-
-I suggest to teach dwapb_irq_handler() to return something that makes
-you decide whether or not IRQ_HANDLED is the thing to do here. If
-something goes crazy the core has no way of knowing and shutting you do=
-wn.
-Also invoking ->irq_eoi() _before_ your shared was invoked might not sm=
-art.
-What you want is something like
-
- static u32 _dwapb_irq_handler(struct dwapb_gpio *gpio,  struct irq_chi=
-p *chip)
- {
-         u32 irq_status =3D readl_relaxed(gpio->regs + GPIO_INTSTATUS);
-	 u32 ret =3D irq_status;
-=20
-         while (irq_status) {
-                 int hwirq =3D fls(irq_status) - 1;
-                 int gpio_irq =3D irq_find_mapping(gpio->domain, hwirq)=
-;
-=20
-                 generic_handle_irq(gpio_irq);
-                 irq_status &=3D ~BIT(hwirq);
-=20
-                 if ((irq_get_trigger_type(gpio_irq) & IRQ_TYPE_SENSE_M=
-ASK)
-                         =3D=3D IRQ_TYPE_EDGE_BOTH)
-                         dwapb_toggle_trigger(gpio, hwirq);
-         }
-	 return ret;
- }
-
- static void dwapb_irq_handler(u32 irq, struct irq_desc *desc)
- {
-         struct dwapb_gpio *gpio =3D irq_get_handler_data(irq);
-         struct irq_chip *chip =3D irq_desc_get_chip(desc);
-
-	_dwapb_irq_handler(gpio, chip);
-=20
-         if (chip->irq_eoi)
-                 chip->irq_eoi(irq_desc_get_irq_data(desc));
- }
-
- static irqreturn_t dwapb_irq_handler_mfd(int irq, void *dev_id)
- {
- 	struct irq_desc *desc =3D irq_to_desc(irq);
-	struct irq_chip *chip =3D irq_desc_get_chip(desc);
-	int worked;
-=20
- 	worked =3D dwapb_irq_handler(dev_id, chip);
-	if (worked)
-		return IRQ_HANDLED;
-	else
-		return IRQ_NONE;
- }
-
-How about it?
-
-> +
->  static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->  				 struct dwapb_gpio_port *port)
->  {
->  	struct gpio_chip *gc =3D &port->bgc.gc;
-> -	struct device_node *node =3D  gc->of_node;
-> -	struct irq_chip_generic	*irq_gc;
-> +	struct device_node *node =3D port->pp->node;
-> +	struct irq_chip_generic	*irq_gc =3D NULL;
->  	unsigned int hwirq, ngpio =3D gc->ngpio;
->  	struct irq_chip_type *ct;
-> -	int err, irq, i;
-> -
-> -	irq =3D irq_of_parse_and_map(node, 0);
-> -	if (!irq) {
-> -		dev_warn(gpio->dev, "no irq for bank %s\n",
-> -			port->bgc.gc.of_node->full_name);
-> -		return;
-> -	}
-> +	int err, i;
-> =20
->  	gpio->domain =3D irq_domain_add_linear(node, ngpio,
->  					     &irq_generic_chip_ops, gpio);
-> @@ -269,8 +273,24 @@ static void dwapb_configure_irqs(struct dwapb_gp=
-io *gpio,
->  	irq_gc->chip_types[1].type =3D IRQ_TYPE_EDGE_BOTH;
->  	irq_gc->chip_types[1].handler =3D handle_edge_irq;
-> =20
-> -	irq_set_chained_handler(irq, dwapb_irq_handler);
-> -	irq_set_handler_data(irq, gpio);
-> +	if (!port->pp->irq_shared) {
-> +		irq_set_chained_handler(port->pp->irq, dwapb_irq_handler);
-> +	} else {
-> +		/*
-> +		 * Request a shared IRQ since where MFD would have devices
-> +		 * using the same irq pin
-> +		 */
-> +		err =3D devm_request_irq(gpio->dev, port->pp->irq,
-> +				       dwapb_irq_handler_mfd,
-> +				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
-> +		if (err) {
-> +			dev_err(gpio->dev, "error requesting IRQ\n");
-> +			irq_domain_remove(gpio->domain);
-> +			gpio->domain =3D NULL;
-> +			return;
-> +		}
-> +	}
-> +	irq_set_handler_data(port->pp->irq, gpio);
-
-This does not look like it belongs here. It should only be used togethe=
-r
-with irq_set_chained_handler() or am I missing here something?
-
-> =20
->  	for (hwirq =3D 0 ; hwirq < ngpio ; hwirq++)
->  		irq_create_mapping(gpio->domain, hwirq);
-> @@ -296,57 +316,43 @@ static void dwapb_irq_teardown(struct dwapb_gpi=
-o *gpio)
->  }
-> =20
->  static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
-> -			       struct device_node *port_np,
-> +			       struct dwapb_gpio_port_property *pp,
->  			       unsigned int offs)
->  {
->  	struct dwapb_gpio_port *port;
-> -	u32 port_idx, ngpio;
->  	void __iomem *dat, *set, *dirout;
->  	int err;
-> =20
-> -	if (of_property_read_u32(port_np, "reg", &port_idx) ||
-> -		port_idx >=3D DWAPB_MAX_PORTS) {
-> -		dev_err(gpio->dev, "missing/invalid port index for %s\n",
-> -			port_np->full_name);
-> -		return -EINVAL;
-> -	}
-> -
->  	port =3D &gpio->ports[offs];
->  	port->gpio =3D gpio;
-> +	port->pp   =3D pp;
-> =20
-> -	if (of_property_read_u32(port_np, "snps,nr-gpios", &ngpio)) {
-> -		dev_info(gpio->dev, "failed to get number of gpios for %s\n",
-> -			 port_np->full_name);
-> -		ngpio =3D 32;
-> -	}
-> -
-> -	dat =3D gpio->regs + GPIO_EXT_PORTA + (port_idx * GPIO_EXT_PORT_SIZ=
-E);
-> -	set =3D gpio->regs + GPIO_SWPORTA_DR + (port_idx * GPIO_SWPORT_DR_S=
-IZE);
-> +	dat =3D gpio->regs + GPIO_EXT_PORTA + (pp->idx * GPIO_EXT_PORT_SIZE=
-);
-> +	set =3D gpio->regs + GPIO_SWPORTA_DR + (pp->idx * GPIO_SWPORT_DR_SI=
-ZE);
->  	dirout =3D gpio->regs + GPIO_SWPORTA_DDR +
-> -		(port_idx * GPIO_SWPORT_DDR_SIZE);
-> +		(pp->idx * GPIO_SWPORT_DDR_SIZE);
-> =20
->  	err =3D bgpio_init(&port->bgc, gpio->dev, 4, dat, set, NULL, dirout=
-,
->  			 NULL, false);
->  	if (err) {
->  		dev_err(gpio->dev, "failed to init gpio chip for %s\n",
-> -			port_np->full_name);
-> +			pp->name);
->  		return err;
->  	}
-> =20
-> -	port->bgc.gc.ngpio =3D ngpio;
-> -	port->bgc.gc.of_node =3D port_np;
-> +	port->bgc.gc.ngpio =3D pp->ngpio;
-> +	port->bgc.gc.base =3D pp->gpio_base;
-> =20
->  	/*
->  	 * Only port A can provide interrupts in all configurations of the =
-IP.
->  	 */
-So we had a port_idx check which was refered by the comment. Now we hav=
-e
-a comment and no check for it. You could do that loop over that array
-here and keep that check.
-
-> -	if (port_idx =3D=3D 0 &&
-> -	    of_property_read_bool(port_np, "interrupt-controller"))
-> +	if (pp->irq)
->  		dwapb_configure_irqs(gpio, port);
-> =20
->  	err =3D gpiochip_add(&port->bgc.gc);
->  	if (err)
->  		dev_err(gpio->dev, "failed to register gpiochip for %s\n",
-> -			port_np->full_name);
-> +			pp->name);
->  	else
->  		port->is_registered =3D true;
-> =20
-> @@ -357,30 +363,115 @@ static void dwapb_gpio_unregister(struct dwapb=
-_gpio *gpio)
->  {
->  	unsigned int m;
-> =20
-> -	for (m =3D 0; m < gpio->nr_ports; ++m)
-> +	for (m =3D 0; m < gpio->pdata->nports; ++m)
->  		if (gpio->ports[m].is_registered)
->  			gpiochip_remove(&gpio->ports[m].bgc.gc);
->  }
-> =20
-> +/*
-> + * Handlers for alternative sources of platform_data
-> + */
-
-Those abvious comments=E2=80=A6
-
-> +
-> +#ifdef CONFIG_OF_GPIO
-> +/*
-> + * Translate OpenFirmware node properties into platform_data
-> + */
-=E2=80=A6 are not really helping
-
-> +static struct dwapb_gpio_platform_data *
-
-Sebastian
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+PiANCj4gPiAtLS0gYS9kcml2ZXJzL2dwaW8vS2NvbmZpZw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3Bp
+by9LY29uZmlnDQo+ID4gQEAgLTEzNiw3ICsxMzYsNiBAQCBjb25maWcgR1BJT19EV0FQQg0KPiA+
+ICAJdHJpc3RhdGUgIlN5bm9wc3lzIERlc2lnbldhcmUgQVBCIEdQSU8gZHJpdmVyIg0KPiA+ICAJ
+c2VsZWN0IEdQSU9fR0VORVJJQw0KPiA+ICAJc2VsZWN0IEdFTkVSSUNfSVJRX0NISVANCj4gPiAt
+CWRlcGVuZHMgb24gT0ZfR1BJTw0KPiB5b3UgbmVlZCBlaXRoZXIgT0ZfR1BJTyBvciBQQ0kNClNp
+bmNlIHdlIGVuYWJsZSB0aGlzIG1vZHVsZSBub3Qgb25seSBzdXBwb3J0IE9GIGRldmljZXMsIGJ1
+dCBhbHNvIHN1cHBvcnQgTUZEIGRldmljZXMsIHNvIHdlIHJlbW92ZSBPRl9HUElPIGRlcGVuZGVu
+Y3kuDQpGb3IgJ1BDSScsIHRoZSBvcmlnaW5hbCBjb2RlIGlzIGFsc28gbm90IGRlcGVuZGVkIG9u
+IFBDSSwgYW5kIHRoaXMgcGF0Y2ggYWxzbyBub3QsIGRvIHlvdSB0aGluayBpdCBpcyBuZWNlc3Nh
+cnk/DQoNCj4gPg0KPiA+ICBzdHJ1Y3QgZHdhcGJfZ3BpbyB7DQo+ID4gIAlzdHJ1Y3QJZGV2aWNl
+CQkqZGV2Ow0KPiA+ICAJdm9pZCBfX2lvbWVtCQkqcmVnczsNCj4gPiAgCXN0cnVjdCBkd2FwYl9n
+cGlvX3BvcnQJKnBvcnRzOw0KPiA+IC0JdW5zaWduZWQgaW50CQlucl9wb3J0czsNCj4geW91IGNv
+dWxkIGtlZXAgdGhpcyB0aGUgd2F5IGl0IGlzDQpJdCBoYXMgYmVlbiBtb3ZlZCB0byAncGRhdGEn
+Lg0KDQo+ID4gIAlzdHJ1Y3QgaXJxX2RvbWFpbgkqZG9tYWluOw0KPiA+ICsJY29uc3Qgc3RydWN0
+IGR3YXBiX2dwaW9fcGxhdGZvcm1fZGF0YQkqcGRhdGE7DQo+IA0KPiBhbmQgbm90IG1ha2luZyB0
+aGlzIGEgbWVtYmVyIG9mIHRoaXMgc3RydWN0LiBJJ3ZlIGJlZW4gZ29pbmcgdXAgYW5kIGRvd24g
+dGhlDQo+IHNvdXJjZSBhbmQgSSBkb24ndCBzZWUgdGhlIG5lZWQgdG8gbWFycnkgZHdhcGJfZ3Bp
+byB0bw0KPiBkd2FwYl9ncGlvX3BsYXRmb3JtX2RhdGEuDQo+IFRoYXQgZHdhcGJfZ3Bpb19wb3J0
+X3Byb3BlcnR5IHRoaW5nIGhhcyBhIGxvbmcgbmFtZS4gQ291bGQgeW91IGp1c3Qgc2V0IGl0IHVw
+LA0KPiBwYXNzIGl0IGZvciByZWdpc3RyYXRpb24gYW5kIHRoZSBmcmVlIGl0PyBZb3UgY2FuJ3Qg
+ZnJlZSB0aGUgcGRhdGEgZm9yIHRoZSBub24tT0YNCj4gdHJlZSBidXQgZm9yIHRoZSBPRiBjYXNl
+IHlvdSBrZWVwIHRoYXQgc3RydWN0IGFyb3VuZCBmb3Igbm8gcmVhc29uLg0KPiBZb3UgY291bGQg
+c2FmZSBzb21lIG1lbW9yeSBhbmQgdXNlIHBkYXRhIGRpcmVjdGx5IGZvciBzZXR1cC4NCkhlcmUs
+ICdwZGF0YScgaXMgdXNlZCBmb3IgYm90aCBPRiBhbmQgTUZELiBGb3IgTUZELCAncGRhdGEnIGlz
+IHBhc3NlZCBmcm9tIE1GRC4NCkZvciBPRiwgJ3BkYXRhJyBpcyBnZXR0aW5nIGZyb20gZGV2aWNl
+IG5vZGVzIHByb3BlcnRpZXMuIFdoeSBkbyB3ZSBoYXZlIHN1Y2ggZGVzaWduPyBCZWNhdXNlIGl0
+IGNhbiBtYWtlIHRoZSBoYW5kbGluZw0KbW9yZSBlYXN5IGZvciBmbG93aW5nIHJvdXRpbmUuIEFs
+bCBuZWNlc3NhcnkgcHJvcGVydGllcyBnZXQgZnJvbSAncGRhdGEnLCBuZXZlciBjYXJlIGl0IGlz
+IGZyb20gT0Ygb3IgTUZELiBBbmQgc29tZW9uZQ0KYXJlIHdvcmtpbmcgb24gcmVwbGFjaW5nIE9G
+IGludGVyZmFjZSB3aXRoIGEgZmlybXdhcmUgYWdub3N0aWMgZGV2aWNlX3Byb3BlcnR5KiBpbnRl
+cmZhY2Ugd2hpY2ggd2lsbCB3b3JrIHdpdGggYm90aCBPRiBhbmQgQUNQSS4NCk1vcmUgaW5mb3Jt
+YXRpb24gZm9yIHRoaXMgZGVzaWduLCBwbGVhc2UgY29udGFjdCBEYXJyZW4gSGFydCA8ZHZoYXJ0
+QGxpbnV4LmludGVsLmNvbT4uIERhcnJlbiBIYXJ0IHdyb3RlIHRvIG1lOg0KIkdlbmVyYWxseSBz
+cGVha2luZywgcmF0aGVyIHRoYW4gaWYvZWxzZSBibG9ja3MgdGhyb3VnaG91dCB0aGUgY29kZSBj
+aGVja2luZyBpZiBpdCBpcyBlbnVtZXJhdGVkIHZpYSBvcGVuIGZpcm13YXJlIG9yIGFzIGEgcGxh
+dGZvcm0gZGV2aWNlLA0KYSBjbGVhbmVyIGFwcHJvYWNoIGlzIHRvIGNoZWNrIGlmIHRoZSBwZGF0
+YSBpcyBudWxsLCBhbmQgaWYgc28sIHBvcHVsYXRlIHRoZSBwZGF0YSBmcm9tIHRoZSBvcGVuIGZp
+cm13YXJlIGRlc2NyaXB0aW9uIGlmIHByZXNlbnQuDQpUaGVuIHVzZSB0aGUgcGRhdGEgdGhyb3Vn
+aG91dCB0aGUgZHJpdmVyLg0KDQpTb21ldGhpbmcgdG8ga2VlcCBpbiBtaW5kIGlzIHRoYXQgd2Ug
+YXJlIHdvcmtpbmcgdG8gcmVwbGFjZSB0aGUgb2ZfKiBpbnRlcmZhY2Ugd2l0aCBhIGZpcm13YXJl
+IGFnbm9zdGljIGRldmljZV9wcm9wZXJ0eSogaW50ZXJmYWNlDQp3aGljaCB3aWxsIHdvcmsgd2l0
+aCBib3RoIE9GIGFuZCBBQ1BJLiBQYXRjaGVzIHRvIGhpdCBMS01MIHRoaXMgd2VlayBmb3IgdGhl
+IGFjcGkgYW5kIGRyaXZlciBjb3JlLiANCk9yZ2FuaXppbmcgdGhlIGNvZGUgYXMgZGVzY3JpYmVk
+IGFib3ZlIHdpbGwgYmV0dGVyIGVuY2Fwc3VsYXRlIHRoZSBmaXJtd2FyZS1jb25maWcgbG9naWMg
+YW5kIG1ha2UgaXQgZWFzaWVyIHRvIHVwZGF0ZS4iDQoNCkFuZCB5b3UgY2FuIGFsc28gcmVmZXIg
+dGhlIGNvZGUgJ2RyaXZlci9pbnB1dC9rZXlib2FyZC9ncGlvX2tleXMuYycsIGFuZCB0aGlzIHBh
+dGNoIHRha2VzIGl0IGFzIGFuIGV4YW1wbGUuDQoNCg0KPiA+ICB9Ow0KPiA+DQo+ID4gIHN0YXRp
+YyBpbnQgZHdhcGJfZ3Bpb190b19pcnEoc3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkIG9m
+ZnNldCkNCj4gPiBAQCAtMjA3LDIyICsyMDksMjQgQEAgc3RhdGljIGludCBkd2FwYl9pcnFfc2V0
+X3R5cGUoc3RydWN0IGlycV9kYXRhICpkLA0KPiB1MzIgdHlwZSkNCj4gPiAgCXJldHVybiAwOw0K
+PiA+ICB9DQo+ID4NCj4gPiArc3RhdGljIGlycXJldHVybl90IGR3YXBiX2lycV9oYW5kbGVyX21m
+ZChpbnQgaXJxLCB2b2lkICpkZXZfaWQpIHsNCj4gPiArCXN0cnVjdCBpcnFfZGVzYyAqZGVzYyA9
+IGlycV90b19kZXNjKGlycSk7DQo+ID4gKw0KPiA+ICsJZHdhcGJfaXJxX2hhbmRsZXIoaXJxLCBk
+ZXNjKTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gSVJRX0hBTkRMRUQ7DQo+IA0KPiBJIHN1Z2dlc3Qg
+dG8gdGVhY2ggZHdhcGJfaXJxX2hhbmRsZXIoKSB0byByZXR1cm4gc29tZXRoaW5nIHRoYXQgbWFr
+ZXMgeW91DQo+IGRlY2lkZSB3aGV0aGVyIG9yIG5vdCBJUlFfSEFORExFRCBpcyB0aGUgdGhpbmcg
+dG8gZG8gaGVyZS4gSWYgc29tZXRoaW5nIGdvZXMNCj4gY3JhenkgdGhlIGNvcmUgaGFzIG5vIHdh
+eSBvZiBrbm93aW5nIGFuZCBzaHV0dGluZyB5b3UgZG93bi4NCj4gQWxzbyBpbnZva2luZyAtPmly
+cV9lb2koKSBfYmVmb3JlXyB5b3VyIHNoYXJlZCB3YXMgaW52b2tlZCBtaWdodCBub3Qgc21hcnQu
+DQo+IFdoYXQgeW91IHdhbnQgaXMgc29tZXRoaW5nIGxpa2UNCj4gDQo+ICBzdGF0aWMgdTMyIF9k
+d2FwYl9pcnFfaGFuZGxlcihzdHJ1Y3QgZHdhcGJfZ3BpbyAqZ3BpbywgIHN0cnVjdCBpcnFfY2hp
+cA0KPiAqY2hpcCkgIHsNCj4gICAgICAgICAgdTMyIGlycV9zdGF0dXMgPSByZWFkbF9yZWxheGVk
+KGdwaW8tPnJlZ3MgKyBHUElPX0lOVFNUQVRVUyk7DQo+IAkgdTMyIHJldCA9IGlycV9zdGF0dXM7
+DQo+IA0KPiAgICAgICAgICB3aGlsZSAoaXJxX3N0YXR1cykgew0KPiAgICAgICAgICAgICAgICAg
+IGludCBod2lycSA9IGZscyhpcnFfc3RhdHVzKSAtIDE7DQo+ICAgICAgICAgICAgICAgICAgaW50
+IGdwaW9faXJxID0gaXJxX2ZpbmRfbWFwcGluZyhncGlvLT5kb21haW4sIGh3aXJxKTsNCj4gDQo+
+ICAgICAgICAgICAgICAgICAgZ2VuZXJpY19oYW5kbGVfaXJxKGdwaW9faXJxKTsNCj4gICAgICAg
+ICAgICAgICAgICBpcnFfc3RhdHVzICY9IH5CSVQoaHdpcnEpOw0KPiANCj4gICAgICAgICAgICAg
+ICAgICBpZiAoKGlycV9nZXRfdHJpZ2dlcl90eXBlKGdwaW9faXJxKSAmDQo+IElSUV9UWVBFX1NF
+TlNFX01BU0spDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICA9PSBJUlFfVFlQRV9FREdFX0JP
+VEgpDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICBkd2FwYl90b2dnbGVfdHJpZ2dlcihncGlv
+LCBod2lycSk7DQo+ICAgICAgICAgIH0NCj4gCSByZXR1cm4gcmV0Ow0KPiAgfQ0KPiANCj4gIHN0
+YXRpYyB2b2lkIGR3YXBiX2lycV9oYW5kbGVyKHUzMiBpcnEsIHN0cnVjdCBpcnFfZGVzYyAqZGVz
+YykgIHsNCj4gICAgICAgICAgc3RydWN0IGR3YXBiX2dwaW8gKmdwaW8gPSBpcnFfZ2V0X2hhbmRs
+ZXJfZGF0YShpcnEpOw0KPiAgICAgICAgICBzdHJ1Y3QgaXJxX2NoaXAgKmNoaXAgPSBpcnFfZGVz
+Y19nZXRfY2hpcChkZXNjKTsNCj4gDQo+IAlfZHdhcGJfaXJxX2hhbmRsZXIoZ3BpbywgY2hpcCk7
+DQo+IA0KPiAgICAgICAgICBpZiAoY2hpcC0+aXJxX2VvaSkNCj4gICAgICAgICAgICAgICAgICBj
+aGlwLT5pcnFfZW9pKGlycV9kZXNjX2dldF9pcnFfZGF0YShkZXNjKSk7DQo+ICB9DQo+IA0KPiAg
+c3RhdGljIGlycXJldHVybl90IGR3YXBiX2lycV9oYW5kbGVyX21mZChpbnQgaXJxLCB2b2lkICpk
+ZXZfaWQpICB7DQo+ICAJc3RydWN0IGlycV9kZXNjICpkZXNjID0gaXJxX3RvX2Rlc2MoaXJxKTsN
+Cj4gCXN0cnVjdCBpcnFfY2hpcCAqY2hpcCA9IGlycV9kZXNjX2dldF9jaGlwKGRlc2MpOw0KPiAJ
+aW50IHdvcmtlZDsNCj4gDQo+ICAJd29ya2VkID0gZHdhcGJfaXJxX2hhbmRsZXIoZGV2X2lkLCBj
+aGlwKTsNCj4gCWlmICh3b3JrZWQpDQo+IAkJcmV0dXJuIElSUV9IQU5ETEVEOw0KPiAJZWxzZQ0K
+PiAJCXJldHVybiBJUlFfTk9ORTsNCj4gIH0NCj4gDQo+IEhvdyBhYm91dCBpdD8NCk9LLCBJIHdp
+bGwgaW1wcm92ZSBpdCBhcyB5b3VyIHN1Z2dlc3Rpb24uDQoNCg0KPiA+ICsJaXJxX3NldF9oYW5k
+bGVyX2RhdGEocG9ydC0+cHAtPmlycSwgZ3Bpbyk7DQo+IA0KPiBUaGlzIGRvZXMgbm90IGxvb2sg
+bGlrZSBpdCBiZWxvbmdzIGhlcmUuIEl0IHNob3VsZCBvbmx5IGJlIHVzZWQgdG9nZXRoZXIgd2l0
+aA0KPiBpcnFfc2V0X2NoYWluZWRfaGFuZGxlcigpIG9yIGFtIEkgbWlzc2luZyBoZXJlIHNvbWV0
+aGluZz8NClRoaXMgcGF0Y2ggcmV1c2VkICcgZHdhcGJfaXJxX2hhbmRsZXInLCBpdCBuZWVkcyB0
+aGUgaXJxIGhhbmRsZXIgZGF0YS4gRm9yICcgaXJxX3NldF9oYW5kbGVyX2RhdGEnLCBpdCBqdXN0
+IHNldHMgdGhlIGlycSBkYXRhLg0KV2h5IGRvIHlvdSB0aGluayBpdCBtdXN0IGJlIHVzZWQgdG9n
+ZXRoZXIgd2l0aCAnIGlycV9zZXRfY2hhaW5lZF9oYW5kbGVyJz8NCg0KPiA+ICAJLyoNCj4gPiAg
+CSAqIE9ubHkgcG9ydCBBIGNhbiBwcm92aWRlIGludGVycnVwdHMgaW4gYWxsIGNvbmZpZ3VyYXRp
+b25zIG9mIHRoZSBJUC4NCj4gPiAgCSAqLw0KPiBTbyB3ZSBoYWQgYSBwb3J0X2lkeCBjaGVjayB3
+aGljaCB3YXMgcmVmZXJlZCBieSB0aGUgY29tbWVudC4gTm93IHdlIGhhdmUgYQ0KPiBjb21tZW50
+IGFuZCBubyBjaGVjayBmb3IgaXQuIFlvdSBjb3VsZCBkbyB0aGF0IGxvb3Agb3ZlciB0aGF0IGFy
+cmF5IGhlcmUgYW5kDQo+IGtlZXAgdGhhdCBjaGVjay4NCkxldCBtZSBtb3ZlIGl0IHRvICdkd2Fw
+Yl9ncGlvX2dldF9wZGF0YV9vZicuDQoNCj4gPg0KPiA+ICsvKg0KPiA+ICsgKiBIYW5kbGVycyBm
+b3IgYWx0ZXJuYXRpdmUgc291cmNlcyBvZiBwbGF0Zm9ybV9kYXRhICAqLw0KPiANCj4gVGhvc2Ug
+YWJ2aW91cyBjb21tZW50c+KApg0KPiANCj4gPiArDQo+ID4gKyNpZmRlZiBDT05GSUdfT0ZfR1BJ
+Tw0KPiA+ICsvKg0KPiA+ICsgKiBUcmFuc2xhdGUgT3BlbkZpcm13YXJlIG5vZGUgcHJvcGVydGll
+cyBpbnRvIHBsYXRmb3JtX2RhdGEgICovDQo+IOKApiBhcmUgbm90IHJlYWxseSBoZWxwaW5nDQpM
+ZXQgbWUgcmVtb3ZlIHRoZW0uDQoNCj4gPiArc3RhdGljIHN0cnVjdCBkd2FwYl9ncGlvX3BsYXRm
+b3JtX2RhdGEgKg0KPiANCj4gU2ViYXN0aWFuDQo=
