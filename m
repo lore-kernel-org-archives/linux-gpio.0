@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gpio: zynq: Mask non-wakeup GPIO interrupts on suspend
-Date: Thu, 4 Sep 2014 18:22:50 +0200
-Message-ID: <CACRpkdbn9XiBXcTr+znxu9MxLdUT5XpSoTdnPKRcfDJyG5cwuQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpio: zynq: Fixed broken wakeup implementation
+Date: Thu, 4 Sep 2014 18:27:11 +0200
+Message-ID: <CACRpkdbb0oeA0b5SSLtR6U7jv8asCeEJdHEsDAg7_tH+GHc5RQ@mail.gmail.com>
 References: <1409335127-26712-1-git-send-email-soren.brinkmann@xilinx.com>
-	<1409335127-26712-2-git-send-email-soren.brinkmann@xilinx.com>
+	<1409335127-26712-3-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:55052 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751437AbaIDQWv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Sep 2014 12:22:51 -0400
-Received: by mail-ob0-f181.google.com with SMTP id vb8so7549556obc.40
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Sep 2014 09:22:51 -0700 (PDT)
-In-Reply-To: <1409335127-26712-2-git-send-email-soren.brinkmann@xilinx.com>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:56584 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754449AbaIDQ1M (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Sep 2014 12:27:12 -0400
+Received: by mail-oi0-f53.google.com with SMTP id x69so1771427oia.12
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Sep 2014 09:27:11 -0700 (PDT)
+In-Reply-To: <1409335127-26712-3-git-send-email-soren.brinkmann@xilinx.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Soren Brinkmann <soren.brinkmann@xilinx.com>
@@ -24,13 +24,20 @@ On Fri, Aug 29, 2014 at 7:58 PM, Soren Brinkmann
 
 > From: Ezra Savard <ezra.savard@xilinx.com>
 >
-> Added flag to the GPIO chip so that IRQ from non-wakeup GPIO will
-> not wake the system.
+> Use of unmask/mask in set_wake was an incorrect implementation. The new
+> implementation correctly sets wakeup for the gpio chip's IRQ so the gpio chip
+> will not sleep while wakeup-enabled gpio are in use.
 >
 > Signed-off-by: Ezra Savard <ezra.savard@xilinx.com>
 > Reviewed-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
 
 Patch applied.
+
+However the problems seems quite generic.
+
+Do you see this kind of error in other GPIO drivers?
+
+IRQchip semantics always make me nervous.
 
 Yours,
 Linus Walleij
