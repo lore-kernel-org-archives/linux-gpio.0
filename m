@@ -1,47 +1,60 @@
-From: "Chen, Alvin" <alvin.chen@intel.com>
-Subject: RE: [PATCH 3/3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
-Date: Fri, 5 Sep 2014 02:09:22 +0000
-Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E9826A6@SHSMSX101.ccr.corp.intel.com>
-References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
-	<1409161588-19417-4-git-send-email-alvin.chen@intel.com>
- <CACRpkdZJSf+EfYN=hHxRnpjQZGuqroBL0c+08Ng=dRkS0GZySA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Weike Chen <alvin.chen@intel.com>
+Subject: [PATCH 0/3 v2] The Designware GPIO Supporting
+Date: Fri,  5 Sep 2014 07:53:15 -0700
+Message-ID: <1409928798-31895-1-git-send-email-alvin.chen@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:27515 "EHLO mga11.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:15023 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753435AbaIECJ0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 4 Sep 2014 22:09:26 -0400
-In-Reply-To: <CACRpkdZJSf+EfYN=hHxRnpjQZGuqroBL0c+08Ng=dRkS0GZySA@mail.gmail.com>
-Content-Language: en-US
+	id S1753636AbaIEHBU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 5 Sep 2014 03:01:20 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Alvin Chen <alvin.chen@intel.com>
 
-PiANCj4gPiArI2lmIGRlZmluZWQgQ09ORklHX1BNX1NMRUVQDQo+IA0KPiBJIHdvbmRlciB3aGV0
-aGVyIGl0J3Mgd29ydGggI2lmZGVmOmluIG91dCBzdWNoIHRoaW5ncywgaXQgY2x1dHRlcnMgdGhl
-IHBsYWNlLg0KT0suIEkgd2lsbCB1c2UgJyNpZmRlZicuDQo+IA0KPiA+ICsvKiBTdG9yZSBHUElP
-IGNvbnRleHQgYWNyb3NzIHN5c3RlbS13aWRlIHN1c3BlbmQvcmVzdW1lIHRyYW5zaXRpb25zDQo+
-ID4gKyovIHN0YXRpYyBzdHJ1Y3QgZ3Bpb19zYXZlZF9yZWdzIHsNCj4gDQo+IENhbGwgdGhlIHN0
-cnVjdDoNCj4gDQo+IHN0cnVjdCBkd2FwYl9jb250ZXh0DQo+IA0KPiBiZWNhdXNlIHRoYXQgaXMg
-ZWFzaWVyIHRvIHVuZGVyc3RhbmQuDQo+IA0KT0suDQoNCj4gPiArICAgICAgIHVuc2lnbmVkIGxv
-bmcgZGF0YTsNCj4gPiArICAgICAgIHVuc2lnbmVkIGxvbmcgZGlyOw0KPiA+ICsgICAgICAgdW5z
-aWduZWQgbG9uZyBpbnRfZW47DQo+ID4gKyAgICAgICB1bnNpZ25lZCBsb25nIGludF9tYXNrOw0K
-PiA+ICsgICAgICAgdW5zaWduZWQgbG9uZyBpbnRfdHlwZTsNCj4gPiArICAgICAgIHVuc2lnbmVk
-IGxvbmcgaW50X3BvbDsNCj4gPiArICAgICAgIHVuc2lnbmVkIGxvbmcgaW50X2RlYjsNCj4gPiAr
-fSBzYXZlZF9yZWdzOw0KPiANCj4gU2luZ2xldG9uIGh1aD8NCj4gDQo+IEluc2VydCB0aGlzIGlu
-dG8gdGhlIGR5bmFtaWNhbGx5IGFsbG9jYXRlZCBwZXItcG9ydCBvciBjaGlwIHN0cnVjdCBpbnN0
-ZWFkLg0KPiANCkhvdyBhYm91dCB0aGUgZm9sbG93aW5nPw0KDQpzdGF0aWMgc3RydWN0IGR3YXBi
-X2NvbnRleHQgew0KCXUzMiBkYXRhW0RXQVBCX01BWF9QT1JUU107DQoJdTMyIGRpcltEV0FQQl9N
-QVhfUE9SVFNdOw0KCXUzMiBleHRbRFdBUEJfTUFYX1BPUlRTXTsNCgl1MzIgaW50X2VuOw0KCXUz
-MiBpbnRfbWFzazsNCgl1MzIgaW50X3R5cGU7DQoJdTMyIGludF9wb2w7DQoJdTMyIGludF9kZWI7
-DQp9IGR3YXBiX2NvbnRleHQ7DQoNClNpbmNlIG9ubHkgcG9ydEEgY2FuIHN1cHBvcnQgaXJxLCBh
-bmQgdGhlIGlycSByZWxhdGVkIHJlZ2lzdGVycyBhcmUgb25seSBmb3IgcG9ydEEuIENvbXBhcmlu
-ZyB0byBhbGxvY2F0ZSBmb3IgZWFjaCBwb3J0DQpkeW5hbWljYWxseSwgaXQgaXMgbW9yZSBkaXJl
-Y3RseSBhbmQgZWFzeSB0byB1bmRlcnN0YW5kLiANCg0KDQo+ICsgICAgICAgZHdhcGJfd3JpdGUo
-Z3BpbywgR1BJT19TV1BPUlRBX0RSLCBzYXZlZF9yZWdzLmRhdGEpOw0KPiArICAgICAgIGR3YXBi
-X3dyaXRlKGdwaW8sIEdQSU9fU1dQT1JUQV9ERFIsIHNhdmVkX3JlZ3MuZGlyKTsNCj4gDQo+IEFu
-ZCBwb3J0IEIsIEMsIEQ/DQo+IA0KPiBUaGlzIGxvb2tzIGxpa2UgYSBjcnVkZSBoYWNrLg0KSSB3
-aWxsIGFkZCBwb3J0IEIsIEMsIEQuDQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0K
+Hi,
+These patches are for Intel Quark X1000 designware GPIO supporting. The first
+patch enables the Synopsys DesignWare APB GPIO driver to support the MFD device.
+And the Quark designware GPIO controller is registered as MFD device,
+because Quark exports a single PCI device with both GPIO and I2C functions.
+It is about reviewing the GPIO changes in gpio-dwapb, and in near future,
+the Quark I2C driver and the MFD driver that binds these GPIO & I2C
+functions will be sent subsequently. The second patch enables the gpio
+'debounce' feature. And the third patch enables the power management.
+
+---
+v2:
+ [PATCH 1/3]
+ * Fixed a bug to set the base gpio number to '-1' for the OF flow.
+ * Set device node for each gpio chip for the OF flow.
+ * Change the name of 'struct dwapb_gpio_platform_data' to
+   'struct dwapb_platform_data'.
+ * Change the name of 'struct dwapb_gpio_port_property' to
+   'struct dwapb_port_property'.
+ * Access pdata directly in 'probe' instead of accesing it
+   by 'struct dwapb_gpio'.
+ * Free 'pdata' at the end of 'probe' if it is OF case to save memory.
+ * Improve the interrupt handler.
+ * Move 'irq_set_handler_data' together with 'irq_set_chained_hanlder'.
+ * Remove unncessary comments.
+ [PATCH 2/3]
+ * Change all 'readl'&'writel' to 'dwapb_read'&'dwapb_write'.
+ [PATCH 3/3]
+ * Change the name for 'struct gpio_saved_regs' to 'struct dwapb_context'.
+ * Save the registers for all ports according to the port index.
+ * Change '#if defined' to '#ifdef'.
+
+Weike Chen (3):
+  GPIO: gpio-dwapb: Enable platform driver binding to MFD driver
+  GPIO: gpio-dwapb: Support Debounce
+  GPIO: gpio-dwapb: Suspend & Resume PM enabling
+
+ drivers/gpio/Kconfig                     |    1 -
+ drivers/gpio/gpio-dwapb.c                |  397 +++++++++++++++++++++++++-----
+ include/linux/platform_data/gpio-dwapb.h |   32 +++
+ 3 files changed, 365 insertions(+), 65 deletions(-)
+ create mode 100644 include/linux/platform_data/gpio-dwapb.h
+
+-- 
+1.7.9.5
+
