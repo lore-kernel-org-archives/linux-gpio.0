@@ -1,164 +1,47 @@
-From: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Subject: [PATCH RESEND] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Thu,  4 Sep 2014 10:58:25 -0700
-Message-ID: <1409853506-26279-1-git-send-email-soren.brinkmann@xilinx.com>
+From: "Chen, Alvin" <alvin.chen@intel.com>
+Subject: RE: [PATCH 3/3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
+Date: Fri, 5 Sep 2014 02:09:22 +0000
+Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E9826A6@SHSMSX101.ccr.corp.intel.com>
+References: <1409161588-19417-1-git-send-email-alvin.chen@intel.com>
+	<1409161588-19417-4-git-send-email-alvin.chen@intel.com>
+ <CACRpkdZJSf+EfYN=hHxRnpjQZGuqroBL0c+08Ng=dRkS0GZySA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:37254 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751449AbaIDR6g (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Sep 2014 13:58:36 -0400
+Received: from mga11.intel.com ([192.55.52.93]:27515 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753435AbaIECJ0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 4 Sep 2014 22:09:26 -0400
+In-Reply-To: <CACRpkdZJSf+EfYN=hHxRnpjQZGuqroBL0c+08Ng=dRkS0GZySA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>
 
-Add an attribute 'wakeup' to the GPIO sysfs interface which allows
-marking/unmarking a GPIO as wake IRQ.
-The file 'wakeup' is created in each exported GPIOs directory, if an IR=
-Q
-is associated with that GPIO and the irqchip implements set_wake().
-Writing 'enabled' to that file will enable wake for that GPIO, while
-writing 'disabled' will disable wake.
-Reading that file will return either 'disabled' or 'enabled' depening o=
-n
-the currently set flag for the GPIO's IRQ.
-
-Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
----
-Hi all,
-
-I originally submitted this patch with a few fixes for Zynq's GPIO driv=
-er
-(https://lkml.org/lkml/2014/8/29/391). Since this change is not just
-Zynq-related and has broader impact, Linus asked me to post this again,=
- separate
-from the Zynq series.
-
-Let me just quote myself from the original submission:
-"I'm still not fully convinced that the gpio_keys are the best
-replacement for the sysfs interface when it comes to inputs. For that
-reason and to have a way to do some quick wake testing, I'd like to
-propose adding the ability to control wake through the sysfs interface
-(patch 3)."
-
-	Thanks,
-	S=C3=B6ren
-
- drivers/gpio/gpiolib-sysfs.c | 75 ++++++++++++++++++++++++++++++++++++=
-++++----
- 1 file changed, 69 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.=
-c
-index 5f2150b619a7..aaf021eaaff5 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -286,6 +286,56 @@ found:
-=20
- static DEVICE_ATTR(edge, 0644, gpio_edge_show, gpio_edge_store);
-=20
-+static ssize_t gpio_wakeup_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	ssize_t			status;
-+	const struct gpio_desc	*desc =3D dev_get_drvdata(dev);
-+	int			irq =3D gpiod_to_irq(desc);
-+	struct irq_desc		*irq_desc =3D irq_to_desc(irq);
-+
-+	mutex_lock(&sysfs_lock);
-+
-+	if (irqd_is_wakeup_set(&irq_desc->irq_data))
-+		status =3D sprintf(buf, "enabled\n");
-+	else
-+		status =3D sprintf(buf, "disabled\n");
-+
-+	mutex_unlock(&sysfs_lock);
-+
-+	return status;
-+}
-+
-+static ssize_t gpio_wakeup_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t size)
-+{
-+	int			ret;
-+	unsigned int		on;
-+	struct gpio_desc	*desc =3D dev_get_drvdata(dev);
-+	int			irq =3D gpiod_to_irq(desc);
-+
-+	mutex_lock(&sysfs_lock);
-+
-+	if (sysfs_streq("enabled", buf))
-+		on =3D true;
-+	else if (sysfs_streq("disabled", buf))
-+		on =3D false;
-+	else
-+		return -EINVAL;
-+
-+	ret =3D irq_set_irq_wake(irq, on);
-+
-+	mutex_unlock(&sysfs_lock);
-+
-+	if (ret)
-+		pr_warn("%s: failed to %s wake\n", __func__,
-+				on ? "enable" : "disable");
-+
-+	return size;
-+}
-+
-+static DEVICE_ATTR(wakeup, 0644, gpio_wakeup_show, gpio_wakeup_store);
-+
- static int sysfs_set_active_low(struct gpio_desc *desc, struct device =
-*dev,
- 				int value)
- {
-@@ -526,7 +576,7 @@ static struct class gpio_class =3D {
- int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- {
- 	unsigned long		flags;
--	int			status;
-+	int			status, irq;
- 	const char		*ioname =3D NULL;
- 	struct device		*dev;
- 	int			offset;
-@@ -582,11 +632,24 @@ int gpiod_export(struct gpio_desc *desc, bool dir=
-ection_may_change)
- 			goto fail_unregister_device;
- 	}
-=20
--	if (gpiod_to_irq(desc) >=3D 0 && (direction_may_change ||
--				       !test_bit(FLAG_IS_OUT, &desc->flags))) {
--		status =3D device_create_file(dev, &dev_attr_edge);
--		if (status)
--			goto fail_unregister_device;
-+	irq =3D gpiod_to_irq(desc);
-+	if (irq >=3D 0) {
-+		struct irq_desc *irq_desc =3D irq_to_desc(irq);
-+		struct irq_chip	*irqchip =3D irq_desc_get_chip(irq_desc);
-+
-+		if (direction_may_change ||
-+				!test_bit(FLAG_IS_OUT, &desc->flags)) {
-+			status =3D device_create_file(dev, &dev_attr_edge);
-+			if (status)
-+				goto fail_unregister_device;
-+		}
-+
-+		if (irqchip->flags & IRQCHIP_SKIP_SET_WAKE ||
-+				irqchip->irq_set_wake) {
-+			status =3D device_create_file(dev, &dev_attr_wakeup);
-+			if (status)
-+				goto fail_unregister_device;
-+		}
- 	}
-=20
- 	set_bit(FLAG_EXPORT, &desc->flags);
---=20
-2.1.0.1.g27b9230
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+PiANCj4gPiArI2lmIGRlZmluZWQgQ09ORklHX1BNX1NMRUVQDQo+IA0KPiBJIHdvbmRlciB3aGV0
+aGVyIGl0J3Mgd29ydGggI2lmZGVmOmluIG91dCBzdWNoIHRoaW5ncywgaXQgY2x1dHRlcnMgdGhl
+IHBsYWNlLg0KT0suIEkgd2lsbCB1c2UgJyNpZmRlZicuDQo+IA0KPiA+ICsvKiBTdG9yZSBHUElP
+IGNvbnRleHQgYWNyb3NzIHN5c3RlbS13aWRlIHN1c3BlbmQvcmVzdW1lIHRyYW5zaXRpb25zDQo+
+ID4gKyovIHN0YXRpYyBzdHJ1Y3QgZ3Bpb19zYXZlZF9yZWdzIHsNCj4gDQo+IENhbGwgdGhlIHN0
+cnVjdDoNCj4gDQo+IHN0cnVjdCBkd2FwYl9jb250ZXh0DQo+IA0KPiBiZWNhdXNlIHRoYXQgaXMg
+ZWFzaWVyIHRvIHVuZGVyc3RhbmQuDQo+IA0KT0suDQoNCj4gPiArICAgICAgIHVuc2lnbmVkIGxv
+bmcgZGF0YTsNCj4gPiArICAgICAgIHVuc2lnbmVkIGxvbmcgZGlyOw0KPiA+ICsgICAgICAgdW5z
+aWduZWQgbG9uZyBpbnRfZW47DQo+ID4gKyAgICAgICB1bnNpZ25lZCBsb25nIGludF9tYXNrOw0K
+PiA+ICsgICAgICAgdW5zaWduZWQgbG9uZyBpbnRfdHlwZTsNCj4gPiArICAgICAgIHVuc2lnbmVk
+IGxvbmcgaW50X3BvbDsNCj4gPiArICAgICAgIHVuc2lnbmVkIGxvbmcgaW50X2RlYjsNCj4gPiAr
+fSBzYXZlZF9yZWdzOw0KPiANCj4gU2luZ2xldG9uIGh1aD8NCj4gDQo+IEluc2VydCB0aGlzIGlu
+dG8gdGhlIGR5bmFtaWNhbGx5IGFsbG9jYXRlZCBwZXItcG9ydCBvciBjaGlwIHN0cnVjdCBpbnN0
+ZWFkLg0KPiANCkhvdyBhYm91dCB0aGUgZm9sbG93aW5nPw0KDQpzdGF0aWMgc3RydWN0IGR3YXBi
+X2NvbnRleHQgew0KCXUzMiBkYXRhW0RXQVBCX01BWF9QT1JUU107DQoJdTMyIGRpcltEV0FQQl9N
+QVhfUE9SVFNdOw0KCXUzMiBleHRbRFdBUEJfTUFYX1BPUlRTXTsNCgl1MzIgaW50X2VuOw0KCXUz
+MiBpbnRfbWFzazsNCgl1MzIgaW50X3R5cGU7DQoJdTMyIGludF9wb2w7DQoJdTMyIGludF9kZWI7
+DQp9IGR3YXBiX2NvbnRleHQ7DQoNClNpbmNlIG9ubHkgcG9ydEEgY2FuIHN1cHBvcnQgaXJxLCBh
+bmQgdGhlIGlycSByZWxhdGVkIHJlZ2lzdGVycyBhcmUgb25seSBmb3IgcG9ydEEuIENvbXBhcmlu
+ZyB0byBhbGxvY2F0ZSBmb3IgZWFjaCBwb3J0DQpkeW5hbWljYWxseSwgaXQgaXMgbW9yZSBkaXJl
+Y3RseSBhbmQgZWFzeSB0byB1bmRlcnN0YW5kLiANCg0KDQo+ICsgICAgICAgZHdhcGJfd3JpdGUo
+Z3BpbywgR1BJT19TV1BPUlRBX0RSLCBzYXZlZF9yZWdzLmRhdGEpOw0KPiArICAgICAgIGR3YXBi
+X3dyaXRlKGdwaW8sIEdQSU9fU1dQT1JUQV9ERFIsIHNhdmVkX3JlZ3MuZGlyKTsNCj4gDQo+IEFu
+ZCBwb3J0IEIsIEMsIEQ/DQo+IA0KPiBUaGlzIGxvb2tzIGxpa2UgYSBjcnVkZSBoYWNrLg0KSSB3
+aWxsIGFkZCBwb3J0IEIsIEMsIEQuDQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0K
