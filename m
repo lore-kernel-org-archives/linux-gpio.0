@@ -1,34 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpiolib: Provide and export gpiod_export_name
-Date: Fri, 5 Sep 2014 10:46:00 +0200
-Message-ID: <CACRpkdY3ukXTHsYK3N2g9dXCV_37kqwCPb-jbPMdpMDT4uLYmQ@mail.gmail.com>
-References: <CAAVeFuKsJpSYo2DMyTdYE2J5Cu_ZD=b9o-=S0DLDccyNmwniNg@mail.gmail.com>
-	<53D0A8B7.2010005@roeck-us.net>
-	<CAAVeFuK5uKhpkpEnoRFGKU4G4Fey0+giz5wwmtr+OCLJHPvnLQ@mail.gmail.com>
-	<53E32C09.5000704@roeck-us.net>
-	<CAAVeFuJohBznnjELvJj0OUCK+anbZ-j1xPc9gyKDGVq9X0MDSA@mail.gmail.com>
-	<53E8DE1D.9070503@roeck-us.net>
-	<CAAVeFuK8kb3kopVaM9qz+qOa4RT_oji8LNLQa_UHDxxxwyfZgw@mail.gmail.com>
-	<CACRpkdZfRxNHGtZvzjn_vb2FGNPrvh1znWSGi0znN2_yHmz0Tw@mail.gmail.com>
-	<5400159F.4070608@roeck-us.net>
-	<CAAVeFu+kfJULtfAsHSdSAfro5gxjUFzYZxo1pC7jESFTERtN9A@mail.gmail.com>
-	<20140829173746.GA14028@roeck-us.net>
-	<CAAVeFuLmeNNdAmd+J2YU4e21oJSa_phoFoPP8BOv7hKgzimY=g@mail.gmail.com>
+From: Anders Berg <anders.berg@avagotech.com>
+Subject: Re: [PATCH 1/2] gpio: Add driver for AXM55xx SSP chip selects
+Date: Fri, 5 Sep 2014 11:05:37 +0200
+Message-ID: <CAE0=X_3QO5p26M=FS7joKS3zD6LAM_moFutHNcyE1-CjauL3Rw@mail.gmail.com>
+References: <1409576021-24828-1-git-send-email-anders.berg@avagotech.com>
+	<1409576021-24828-2-git-send-email-anders.berg@avagotech.com>
+	<CACRpkdby4H-fivNn_kG2uL0EjsCGAc+t6OyFi0+VcNGf2Z9NQA@mail.gmail.com>
+	<20140904170630.GL29327@sirena.org.uk>
+	<CACRpkdZEoBan=Lqr1T-iY41U9NfMA_MCLX3LA=juw7X4pmRvSQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuLmeNNdAmd+J2YU4e21oJSa_phoFoPP8BOv7hKgzimY=g@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exprod7og127.obsmtp.com ([64.18.2.210]:56947 "EHLO
+	exprod7og127.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753636AbaIEJFn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Sep 2014 05:05:43 -0400
+Received: by mail-vc0-f170.google.com with SMTP id la4so12170951vcb.29
+        for <linux-gpio@vger.kernel.org>; Fri, 05 Sep 2014 02:05:37 -0700 (PDT)
+In-Reply-To: <CACRpkdZEoBan=Lqr1T-iY41U9NfMA_MCLX3LA=juw7X4pmRvSQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sun, Aug 31, 2014 at 2:57 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Thu, Sep 4, 2014 at 7:06 PM, Mark Brown <broonie@kernel.org> wrote:
+>> On Thu, Sep 04, 2014 at 07:04:44PM +0200, Linus Walleij wrote:
+>>> I need an ACK from Mark Brown on this before I apply.
+>>> The driver seems to do what it should, but I need Mark to
+>>> be OK with exporting the CS signals from an SSP/SPI block
+>>> to be exposed to Linux as GPIOs.
+>>>
+>>> (Top-posting and quoting patch verbatim so Mark gets it.)
+>>
+>> I don't see any sort of reasoning for this?
+>
+> Maybe there was some earlier, but this is an excellent opportunity
+> to repeat it... So Anders: why do you want to do this?
+>
 
-> Linus, please consider my position about this patch as neutral, and
-> feel free to take it if you think it is worth.
+Well, the problem with adding this to the spi-pl022 driver (as a
+vendor specific extension) is that this IP block unfortunately isn't
+distinguishable from the standard ARM PL022 implementation (same
+values in the PrimeCell identification registers). That's why I went
+down the GPIO path...
 
-I will meditate on this.
-
-Yours,
-Linus Walleij
+/Anders
