@@ -1,48 +1,62 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MyAzLzRdIGdwaW86IHN5c2NvbjogcmV1c2UgZm9yIGtl?=
- =?UTF-8?B?eXN0b25lIDIgc29jcw==?=
-Date: Fri, 05 Sep 2014 12:40:19 +0400
-Message-ID: <1409906419.21574740@f322.i.mail.ru>
-References: <1409763935-5713-1-git-send-email-grygorii.strashko@ti.com>
- <1409763935-5713-4-git-send-email-grygorii.strashko@ti.com>
- <CACRpkdbz3zXjVSRXtyE1A5-QjJ3dTiuCO=r=sFY1UZe+VnORgw@mail.gmail.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for the v3.17 series
+Date: Fri, 5 Sep 2014 10:41:24 +0200
+Message-ID: <CACRpkdZ0m1D5pnZaH9yJLKHLu_Npd9KDZTUyrp5RHC3SduvAYw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fallback1.mail.ru ([94.100.181.184]:57368 "EHLO
-	fallback1.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751688AbaIEIkx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Sep 2014 04:40:53 -0400
-In-Reply-To: <CACRpkdbz3zXjVSRXtyE1A5-QjJ3dTiuCO=r=sFY1UZe+VnORgw@mail.gmail.com>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:35651 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751828AbaIEIlY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Sep 2014 04:41:24 -0400
+Received: by mail-ob0-f171.google.com with SMTP id wn1so8443691obc.30
+        for <linux-gpio@vger.kernel.org>; Fri, 05 Sep 2014 01:41:24 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
-Cc: =?UTF-8?B?ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc=?= <devicetree@vger.kernel.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?U2FudG9zaCBTaGlsaW1rYXI=?= <santosh.shilimkar@ti.com>, =?UTF-8?B?bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn?= <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko@ti.com>, =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-RnJpLCA1IFNlcCAyMDE0IDEwOjMwOjIwICswMjAwINC+0YIgTGludXMgV2FsbGVpaiA8bGludXMu
-d2FsbGVpakBsaW5hcm8ub3JnPjoKPiBPbiBXZWQsIFNlcCAzLCAyMDE0IGF0IDc6MDUgUE0sIEdy
-eWdvcmlpIFN0cmFzaGtvCj4gPGdyeWdvcmlpLnN0cmFzaGtvQHRpLmNvbT4gd3JvdGU6Cj4gCj4g
-PiBPbiBLZXlzdG9uZSBTT0NzLCBBUk0gaG9zdCBjYW4gc2VuZCBpbnRlcnJ1cHRzIHRvIERTUCBj
-b3JlcyB1c2luZyB0aGUKPiA+IERTUCBHUElPIGNvbnRyb2xsZXIgSVAuIEVhY2ggRFNQIEdQSU8g
-Y29udHJvbGxlciBwcm92aWRlcyAyOCBJUlEgc2lnbmFscyBmb3IKPiA+IGVhY2ggRFNQIGNvcmUu
-IFRoaXMgaXMgb25lIG9mIHRoZSBjb21wb25lbnQgdXNlZCBieSB0aGUgSVBDIG1lY2hhbmlzbSB1
-c2VkCj4gPiBvbiBLZXlzdG9uZSBTT0NzLgo+ID4KPiA+IEtleXN0b25lIDIgRFNQIEdQSU8gY29u
-dHJvbGxlciBoYXMgc3BlY2lmaWMgZmVhdHVyZXM6Cj4gPiAtIGVhY2ggR1BJTyBjYW4gYmUgY29u
-ZmlndXJlZCBvbmx5IGFzIG91dHB1dCBwaW47Cj4gPiAtIHNldHRpbmcgR1BJTyB2YWx1ZSB0byAx
-IGNhdXNlcyBJUlEgZ2VuZXJhdGlvbiBvbiB0YXJnZXQgRFNQIGNvcmU7Cj4gPiAtIHJlYWRpbmcg
-cGluIHZhbHVlIHJldHVybnMgMCAtIGlmIElSUSB3YXMgaGFuZGxlZCBvciAxIC0gSVJRIGlzIHN0
-aWxsCj4gPiAgIHBlbmRpbmcuCj4gPgo+ID4gVGhpcyBwYXRjaCB1cGRhdGVzIGdwaW8tc3lzY29u
-IGRyaXZlciB0byBiZSByZXVzZWQgYnkgS2V5c3RvbmUgMiBTb0NzLAo+ID4gYmVjYXVzZSB0aGUg
-S2V5c3RvbmUgMiBEU1AgR1BJTyBjb250cm9sbGVyIGlzIGNvbnRyb2xsZWQgdGhyb3VnaCBTeXNj
-b24KPiA+IGRldmljZXMgYW5kLCBhcyByZXF1ZXN0ZWQgYnkgTGludXMgV2FsbGVpaiwgc3VjaCBr
-aW5kIG9mIEdQSU8gY29udHJvbGxlcnMKPiA+IHNob3VsZCBiZSBpbnRlZ3JhdGVkIHdpdGggZHJp
-dmVycy9ncGlvL2dwaW8tc3lzY29uLmMgZHJpdmVyLgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IEdy
-eWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+Cj4gPiAtLS0KPiA+ICAu
-Li4vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8tZHNwLWtleXN0b25lLnR4dCB8IDM5ICsr
-KysrKysrKysrKysrKysrKysrKysKPiAKPiBSb2IsIGNhbiB5b3UgbG9vayBhdCB0aGVzZSBiaW5k
-aW5ncz8KPiAKPiBJIHN1c3BlY3QgdGhleSBtYXkgZmFsbCB1bmRlciB5b3VyIGNhdGVnb3J5IG9m
-ICJub3QgYSByZWFsIGRldmljZSwgYnV0Cj4gbGVha2luZyBMaW51eCBpbXBsZW1lbnRhdGlvbiBp
-bnRlcm5hbHMiLgoKVGhpcyBpcyB0aGUgcmVhc29uIHdoeSBJIHN1Z2dlc3RlZCB0byBtb3ZlIHRo
-ZSBvZmZzZXRzIGluIHRoZSBkcml2ZXIuCgotLS0KCg==
+Hi Linus,
+
+again there are some GPIO fixes for v3.17. The details are in
+the tag.
+
+Please pull it in!
+
+
+The following changes since commit 52addcf9d6669fa439387610bc65c92fa0980cef:
+
+  Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.17-3
+
+for you to fetch changes up to 0dbc8b7afef6e4fddcfebcbacbeb269a0a3b06d5:
+
+  gpio: move varargs hack outside #ifdef GPIOLIB (2014-09-02 10:09:43 +0200)
+
+----------------------------------------------------------------
+GPIO fixes for the v3.17 series:
+
+- Some documentation sync
+- Resource leak in the bt8xx driver
+- Again fix the way varargs are used to handle the
+  optional flags on the gpiod_* accessors. Now hopefully
+  nailed the entire problem.
+
+----------------------------------------------------------------
+Alexandre Courbot (1):
+      Documentation: gpio: documentation for optional getters functions
+
+Linus Walleij (1):
+      gpio: move varargs hack outside #ifdef GPIOLIB
+
+Michael Auchter (1):
+      gpio: bt8xx: fix release of managed resources
+
+ Documentation/gpio/consumer.txt |  24 ++++++++-
+ drivers/gpio/gpio-bt8xx.c       |   3 --
+ include/linux/gpio/consumer.h   | 105 +++++++++++++++++++++++-----------------
+ 3 files changed, 83 insertions(+), 49 deletions(-)
