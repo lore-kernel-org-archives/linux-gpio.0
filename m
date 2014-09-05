@@ -1,44 +1,37 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/3 v2] GPIO: gpio-dwapb: Enable platform driver binding to MFD driver
-Date: Fri, 05 Sep 2014 14:20:57 +0200
-Message-ID: <31986364.cn091cmIXU@wuerfel>
-References: <1409928798-31895-1-git-send-email-alvin.chen@intel.com> <4656BEB6164FC34F8171C6538F1A595B2E9829DA@SHSMSX101.ccr.corp.intel.com> <1409918522.30155.89.camel@intel.com>
+From: Anders Berg <anders.berg@avagotech.com>
+Subject: Re: [PATCH 1/2] gpio: Add driver for AXM55xx SSP chip selects
+Date: Fri, 5 Sep 2014 15:40:44 +0200
+Message-ID: <CAE0=X_1CZkSjmde4o1707scjJtdzZdXokaS--3VjEuE4XTac-Q@mail.gmail.com>
+References: <1409576021-24828-1-git-send-email-anders.berg@avagotech.com>
+	<1409576021-24828-2-git-send-email-anders.berg@avagotech.com>
+	<20140905094747.GE30401@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:50636 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932146AbaIEMVP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Sep 2014 08:21:15 -0400
-In-Reply-To: <1409918522.30155.89.camel@intel.com>
+Received: from exprod7og104.obsmtp.com ([64.18.2.161]:47306 "EHLO
+	exprod7og104.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756701AbaIENkw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Sep 2014 09:40:52 -0400
+Received: by mail-vc0-f172.google.com with SMTP id le20so961601vcb.31
+        for <linux-gpio@vger.kernel.org>; Fri, 05 Sep 2014 06:40:45 -0700 (PDT)
+In-Reply-To: <20140905094747.GE30401@n2100.arm.linux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Cc: "Chen, Alvin" <alvin.chen@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "sebastian@breakpoint.cc" <sebastian@breakpoint.cc>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>, "atull@opensource.altera.com" <atull@opensource.altera.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Friday 05 September 2014 12:02:01 Shevchenko, Andriy wrote:
-> > irq = irq_of_parse_and_map(node, 0);
-> > If (!irq) {
-> > pp->irq = -1;
-> > return;
-> > } else {
-> > pp->irq = irq;
-> > }
-> > Then the code looks strange.
-> > 
-> > How do you think?
-> 
-> If I understood correctly you messed up with hwirq vs. virq.
-> Otherwise you have mention that you are using virq everywhere (I guess
-> you may rename the field in the structure), but in this case the field
-> in the platform_data looks a bit strange.
+On Fri, Sep 5, 2014 at 11:47 AM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Mon, Sep 01, 2014 at 02:53:40PM +0200, Anders Berg wrote:
+>> The AXM55xx device has a ARM PL022 SSP controller with an extension that
+>> enables the control of up to five chip select signals. This driver implements
+>> the logic to control these signals and exports them as GPIOs.
+>>
+>> Signed-off-by: Anders Berg <anders.berg@avagotech.com>
+>
+> So, what happens if the GPIO driver binds first, followed by the SSP
+> device?  Please test that scenario out before this patch gets merged.
+>
 
-The field in platform_data should be the mapped virtual irq number, it
-makes no sense to use the hwirq unless you also add a pointer to the domain
-in which that hwirq exists.
-
-Also the output of irq_of_parse_and_map() is a mapped irq, as the name
-suggests.
-
-	Arnd
+Both scenarios work.
+/Anders
