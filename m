@@ -1,68 +1,44 @@
-From: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH 1/3 v2] GPIO: gpio-dwapb: Enable platform driver binding
- to MFD driver
-Date: Fri, 5 Sep 2014 12:02:01 +0000
-Message-ID: <1409918522.30155.89.camel@intel.com>
-References: <1409928798-31895-1-git-send-email-alvin.chen@intel.com>
-	 <1409928798-31895-2-git-send-email-alvin.chen@intel.com>
-	 <1409908917.30155.84.camel@intel.com>
-	 <4656BEB6164FC34F8171C6538F1A595B2E9829DA@SHSMSX101.ccr.corp.intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/3 v2] GPIO: gpio-dwapb: Enable platform driver binding to MFD driver
+Date: Fri, 05 Sep 2014 14:20:57 +0200
+Message-ID: <31986364.cn091cmIXU@wuerfel>
+References: <1409928798-31895-1-git-send-email-alvin.chen@intel.com> <4656BEB6164FC34F8171C6538F1A595B2E9829DA@SHSMSX101.ccr.corp.intel.com> <1409918522.30155.89.camel@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:21225 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932171AbaIEMEO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 5 Sep 2014 08:04:14 -0400
-In-Reply-To: <4656BEB6164FC34F8171C6538F1A595B2E9829DA@SHSMSX101.ccr.corp.intel.com>
-Content-Language: en-US
-Content-ID: <4716A4D10706B54DB49DB39C9F341257@intel.com>
+Received: from mout.kundenserver.de ([212.227.126.130]:50636 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932146AbaIEMVP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Sep 2014 08:21:15 -0400
+In-Reply-To: <1409918522.30155.89.camel@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Chen, Alvin" <alvin.chen@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "sebastian@breakpoint.cc" <sebastian@breakpoint.cc>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>, "atull@opensource.altera.com" <atull@opensource.altera.com>
+To: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
+Cc: "Chen, Alvin" <alvin.chen@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "sebastian@breakpoint.cc" <sebastian@breakpoint.cc>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>, "atull@opensource.altera.com" <atull@opensource.altera.com>
 
-T24gRnJpLCAyMDE0LTA5LTA1IGF0IDEwOjIwICswMDAwLCBDaGVuLCBBbHZpbiB3cm90ZToNCj4g
-PiA+IC0JcG9ydC0+YmdjLmdjLm5ncGlvID0gbmdwaW87DQo+ID4gPiAtCXBvcnQtPmJnYy5nYy5v
-Zl9ub2RlID0gcG9ydF9ucDsNCj4gPiA+ICsjaWZkZWYgQ09ORklHX09GX0dQSU8NCj4gPiANCj4g
-PiBEbyB3ZSByZWFsbHkgbmVlZCB0aGlzICNpZmRlZiA/DQo+ID4gb2Zfbm9kZSB3aWxsIGJlIE5V
-TEwgYW55d2F5LCBvciBJIG1pc3NlZCBzb21ldGhpbmc/DQo+IFllcywgb3RoZXJ3aXNlLCBjYW4n
-dCBjb21waWxlIGl0LiBQbGVhc2UgcmVmZXIgJ3N0cnVjdCBncGlvX2NoaXAnLCAnZ2Mub2Zfbm9k
-ZScgaXMgaW4gT0ZfR1BJTyBtaWNybyBhbHNvLg0KDQpBaCwgb2theS4gVGh1cywgaXQgZGVwZW5k
-cyB0byBMaW51cyBvcGluaW9uLCBzaW5jZSBJLCBmb3IgZXhhbXBsZSwgd291bGQNCmxpa2UgdG8g
-c2VlIHRoaXMgZmllbGQgcHJlc2VudCBpbiB0aGUgc3RydWN0dXJlIGluZGVwZW5kZW50bHkgb2YN
-Ck9GX0dQSU8uDQoNCj4gDQo+ID4gPiArCWlmIChwcC0+aXJxKQ0KPiA+IA0KPiA+IGlycSA9PSAw
-IGlzIGEgdmFsaWQgaHdpcnEgKGhhcmR3YXJlIGlycSkgbnVtYmVyLiBZZXMsIHRoZXJlIGlzIHVu
-bGlrZWx5IHdlIGhhdmUgaXQNCj4gPiBzb21ld2hlcmUsIGJ1dCBzdGlsbCBpdCdzIHBvc3NpYmxl
-LiBBbmQgeWVzLCBJUlEgZnJhbWV3b3JrIGRvZXNuJ3Qgd29yayB3aXRoDQo+ID4gdmlycSA9PSAw
-ICgqdmlydHVhbCogaXJxKSwgYnV0IGFjY2VwdHMgaHdpcnEgPT0gMC4gSSByZWNvbW1lbmQgdG8g
-dXNlIGludCB0eXBlIGZvcg0KPiA+IGlycSBsaW5lIG51bWJlciwgYW5kIHJlY29nbml6ZSBuZWdh
-dGl2ZSB2YWx1ZSAodXN1YWxseSAtMSkgYXMgbm8gaXJxIG5lZWRlZCAvDQo+ID4gZm91bmQuDQo+
-IFVuZGVyc3RhbmQuIEJ1dCBpZiB5b3UgcmVmZXIgdGhlIG9yaWdpbmFsIGNvZGUsIHlvdSBjYW4g
-c2VlOg0KPiBpcnEgPSBpcnFfb2ZfcGFyc2VfYW5kX21hcChub2RlLCAwKTsNCj4gSWYgKCFpcnEp
-IHsNCj4gLi4uLi4uDQo+IHJldHVybjsNCj4gfQ0KPiBGcm9tIGFib3ZlIGNvZGUsIGlmIGlycT0w
-LCBpdCBpbmRpY2F0ZXMgaXJxIGlzIG5vdCBzdXBwb3J0ZWQgZm9yIE9GIGRldmljZXMuIElmIHdl
-IHVzZSAnLTEnIHRvIGluZGljYXRlIGlycSBpcyBub3Qgc3VwcG9ydGVkLiBUbyBtYWtlIE9GIHdv
-cmssIHRoZW4gb3VyIGNvZGUgc2hvdWxkIGJlOg0KDQpZZXMsIGxpa2UgSSBzYWlkIGFib3ZlLiBZ
-b3UgaW50cm9kdWNlIGh3IGlycSBpbiB0aGUgcGRhdGEsIHdoaWNoIGNvdWxkDQpiZSAwLg0KDQoN
-Cj4gaXJxID0gaXJxX29mX3BhcnNlX2FuZF9tYXAobm9kZSwgMCk7DQo+IElmICghaXJxKSB7DQo+
-IHBwLT5pcnEgPSAtMTsNCj4gcmV0dXJuOw0KPiB9IGVsc2Ugew0KPiBwcC0+aXJxID0gaXJxOw0K
-PiB9DQo+IFRoZW4gdGhlIGNvZGUgbG9va3Mgc3RyYW5nZS4NCj4gDQo+IEhvdyBkbyB5b3UgdGhp
-bms/DQoNCklmIEkgdW5kZXJzdG9vZCBjb3JyZWN0bHkgeW91IG1lc3NlZCB1cCB3aXRoIGh3aXJx
-IHZzLiB2aXJxLg0KT3RoZXJ3aXNlIHlvdSBoYXZlIG1lbnRpb24gdGhhdCB5b3UgYXJlIHVzaW5n
-IHZpcnEgZXZlcnl3aGVyZSAoSSBndWVzcw0KeW91IG1heSByZW5hbWUgdGhlIGZpZWxkIGluIHRo
-ZSBzdHJ1Y3R1cmUpLCBidXQgaW4gdGhpcyBjYXNlIHRoZSBmaWVsZA0KaW4gdGhlIHBsYXRmb3Jt
-X2RhdGEgbG9va3MgYSBiaXQgc3RyYW5nZS4gTGludXMsIHdoYXQgZG8geW91IHRoaW5rPw0KDQoN
-ClAuUy4gUGxlYXNlLCByZW1vdmUgbXkgUmV2aWV3ZWQtYnkgdGFnIHNpbmNlIGNvZGUgaXMgY2hh
-bmdlZCBlbm91Z2guDQoNCi0tIA0KQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXkuc2hldmNoZW5rb0Bp
-bnRlbC5jb20+DQpJbnRlbCBGaW5sYW5kIE95DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KSW50ZWwgRmlubGFuZCBP
-eQpSZWdpc3RlcmVkIEFkZHJlc3M6IFBMIDI4MSwgMDAxODEgSGVsc2lua2kgCkJ1c2luZXNzIElk
-ZW50aXR5IENvZGU6IDAzNTc2MDYgLSA0IApEb21pY2lsZWQgaW4gSGVsc2lua2kgCgpUaGlzIGUt
-bWFpbCBhbmQgYW55IGF0dGFjaG1lbnRzIG1heSBjb250YWluIGNvbmZpZGVudGlhbCBtYXRlcmlh
-bCBmb3IKdGhlIHNvbGUgdXNlIG9mIHRoZSBpbnRlbmRlZCByZWNpcGllbnQocykuIEFueSByZXZp
-ZXcgb3IgZGlzdHJpYnV0aW9uCmJ5IG90aGVycyBpcyBzdHJpY3RseSBwcm9oaWJpdGVkLiBJZiB5
-b3UgYXJlIG5vdCB0aGUgaW50ZW5kZWQKcmVjaXBpZW50LCBwbGVhc2UgY29udGFjdCB0aGUgc2Vu
-ZGVyIGFuZCBkZWxldGUgYWxsIGNvcGllcy4K
+On Friday 05 September 2014 12:02:01 Shevchenko, Andriy wrote:
+> > irq = irq_of_parse_and_map(node, 0);
+> > If (!irq) {
+> > pp->irq = -1;
+> > return;
+> > } else {
+> > pp->irq = irq;
+> > }
+> > Then the code looks strange.
+> > 
+> > How do you think?
+> 
+> If I understood correctly you messed up with hwirq vs. virq.
+> Otherwise you have mention that you are using virq everywhere (I guess
+> you may rename the field in the structure), but in this case the field
+> in the platform_data looks a bit strange.
 
+The field in platform_data should be the mapped virtual irq number, it
+makes no sense to use the hwirq unless you also add a pointer to the domain
+in which that hwirq exists.
+
+Also the output of irq_of_parse_and_map() is a mapped irq, as the name
+suggests.
+
+	Arnd
