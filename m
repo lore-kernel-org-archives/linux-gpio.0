@@ -1,376 +1,116 @@
-From: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 2/3] i2c: add support for Diolan DLN-2 USB-I2C adapter
-Date: Fri,  5 Sep 2014 18:17:58 +0300
-Message-ID: <1409930279-1382-3-git-send-email-octavian.purdila@intel.com>
-References: <1409930279-1382-1-git-send-email-octavian.purdila@intel.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1409930279-1382-1-git-send-email-octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: arnd-r2nGTMty4D4@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: [PATCH] gpiolib: fix a few issues with gpiochip_remove
+Date: Fri,  5 Sep 2014 18:22:04 +0300
+Message-ID: <1409930524-1529-1-git-send-email-octavian.purdila@intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:64644 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754920AbaIEPWe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 5 Sep 2014 11:22:34 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
 
-From: Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+The current implementation of gpiochip_remove() does not check to see
+if the GPIO pins are busy before removing the associated irqchip and
+this is causing the following warning:
 
-This patch adds support for the Diolan DLN-2 I2C master module. Due
-to hardware limitations it does not support SMBUS quick commands.
+WARNING: CPU: 3 PID: 553 at fs/proc/generic.c:521 remove_proc_entry+0x19f/0x1b0()
+remove_proc_entry: removing non-empty directory 'irq/24', leaking at least 'bmc150_accel_event'
+Call Trace:
+ [<ffffffff81a78504>] dump_stack+0x4e/0x7a
+ [<ffffffff810c79bd>] warn_slowpath_common+0x7d/0xa0
+ [<ffffffff810c7a2c>] warn_slowpath_fmt+0x4c/0x50
+ [<ffffffff8125259f>] remove_proc_entry+0x19f/0x1b0
+ [<ffffffff811138ae>] unregister_irq_proc+0xce/0xf0
+ [<ffffffff8110dbc1>] free_desc+0x31/0x70
+ [<ffffffff8110dc3c>] irq_free_descs+0x3c/0x80
+ [<ffffffff81113096>] irq_dispose_mapping+0x36/0x50
+ [<ffffffff8148549a>] gpiochip_remove+0x5a/0x160
+ [<ffffffff814895d8>] dln2_do_remove+0x18/0x80
+ [<ffffffff8148966a>] dln2_gpio_remove+0x2a/0x30
+ [<ffffffff816143bd>] platform_drv_remove+0x1d/0x40
+...
 
-Information about the USB protocol interface can be found in the
-Programmer's Reference Manual [1], see section 6.2.2 for the I2C
-master module commands and responses.
+and bug:
 
-[1] https://www.diolan.com/downloads/dln-api-manual.pdf
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:97
+in_atomic(): 1, irqs_disabled(): 1, pid: 553, name: khubd
+Preemption disabled at:[<ffffffff81485462>] gpiochip_remove+0x22/0x160
+Call Trace:
+ [<ffffffff81a78504>] dump_stack+0x4e/0x7a
+ [<ffffffff810e8dff>] __might_sleep+0x10f/0x180
+ [<ffffffff81a7f3f0>] mutex_lock+0x20/0x3d
+ [<ffffffff8110dbcd>] free_desc+0x3d/0x70
+ [<ffffffff8110dc3c>] irq_free_descs+0x3c/0x80
+ [<ffffffff81113096>] irq_dispose_mapping+0x36/0x50
+ [<ffffffff8148549a>] gpiochip_remove+0x5a/0x160
+ [<ffffffff814895d8>] dln2_do_remove+0x18/0x80
+ [<ffffffff8148966a>] dln2_gpio_remove+0x2a/0x30
+ [<ffffffff816143bd>] platform_drv_remove+0x1d/0x40
+...
 
-Signed-off-by: Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+The current implementaion also does a partial cleanup if one of the
+pins is busy, which makes it impossible to retry the remove operation
+later.
+
+A retry operation is needed in the case of MFD devices that bundles a
+GPIO device and another device that is an indirect consumer of the
+GPIO device (typical an I2C bus).
+
+In this case, when the MFD device is removed, if an I2C device
+associated with the I2C bus of the MFD device is using a GPIO pin (as
+an interrupt source for example), and the remove routine for the GPIO
+device is called first, then the removal of the gpio chip will fail.
+
+However, we can later retry the gpio chip removal, as the I2C bus will
+eventually be removed which will cause the I2C device to release the
+GPIO pin.
+
+This patch modifies gpiochip_remove to be atomic (i.e. if it fails no
+partial cleanup is done) and it also moves gpiochip_irqchip_remove()
+out of the spinlock to avoid the bug above.
+
+Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
 ---
- drivers/i2c/busses/Kconfig    |  10 ++
- drivers/i2c/busses/Makefile   |   1 +
- drivers/i2c/busses/i2c-dln2.c | 301 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 312 insertions(+)
- create mode 100644 drivers/i2c/busses/i2c-dln2.c
+ drivers/gpio/gpiolib.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 2ac87fa..4873161 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -1021,4 +1021,14 @@ config SCx200_ACB
- 	  This support is also available as a module.  If so, the module
- 	  will be called scx200_acb.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 15cc0bb..0f53bef 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -314,14 +314,8 @@ int gpiochip_remove(struct gpio_chip *chip)
+ 	int		status = 0;
+ 	unsigned	id;
  
-+config I2C_DLN2
-+       tristate "Diolan DLN-2 USB I2C adapter"
-+       depends on USB && MFD_DLN2
-+       help
-+         If you say yes to this option, support will be included for Diolan
-+         DLN2, a USB to I2C interface.
-+
-+         This driver can also be built as a module.  If so, the module
-+         will be called i2c-dln2.
-+
- endmenu
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 49bf07e..3118fea 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -100,5 +100,6 @@ obj-$(CONFIG_I2C_ELEKTOR)	+= i2c-elektor.o
- obj-$(CONFIG_I2C_PCA_ISA)	+= i2c-pca-isa.o
- obj-$(CONFIG_I2C_SIBYTE)	+= i2c-sibyte.o
- obj-$(CONFIG_SCx200_ACB)	+= scx200_acb.o
-+obj-$(CONFIG_I2C_DLN2)		+= i2c-dln2.o
+-	acpi_gpiochip_remove(chip);
+-
+ 	spin_lock_irqsave(&gpio_lock, flags);
  
- ccflags-$(CONFIG_I2C_DEBUG_BUS) := -DDEBUG
-diff --git a/drivers/i2c/busses/i2c-dln2.c b/drivers/i2c/busses/i2c-dln2.c
-new file mode 100644
-index 0000000..93e85ff
---- /dev/null
-+++ b/drivers/i2c/busses/i2c-dln2.c
-@@ -0,0 +1,301 @@
-+/*
-+ * Driver for the Diolan DLN-2 USB-I2C adapter
-+ *
-+ * Copyright (c) 2014 Intel Corporation
-+ *
-+ * Derived from:
-+ *  i2c-diolan-u2c.c
-+ *  Copyright (c) 2010-2011 Ericsson AB
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation, version 2.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/module.h>
-+#include <linux/types.h>
-+#include <linux/slab.h>
-+#include <linux/i2c.h>
-+
-+#include <linux/platform_device.h>
-+#include <linux/mfd/dln2.h>
-+
-+#define DRIVER_NAME			"dln2-i2c"
-+
-+#define DLN2_I2C_MODULE_ID		0x03
-+#define DLN2_I2C_CMD(cmd)		DLN2_CMD(cmd, DLN2_I2C_MODULE_ID)
-+
-+/* I2C commands */
-+#define DLN2_I2C_GET_PORT_COUNT		DLN2_I2C_CMD(0x00)
-+#define DLN2_I2C_ENABLE			DLN2_I2C_CMD(0x01)
-+#define DLN2_I2C_DISABLE			DLN2_I2C_CMD(0x02)
-+#define DLN2_I2C_IS_ENABLED		DLN2_I2C_CMD(0x03)
-+#define DLN2_I2C_SET_FREQUENCY		DLN2_I2C_CMD(0x04)
-+#define DLN2_I2C_GET_FREQUENCY		DLN2_I2C_CMD(0x05)
-+#define DLN2_I2C_WRITE			DLN2_I2C_CMD(0x06)
-+#define DLN2_I2C_READ			DLN2_I2C_CMD(0x07)
-+#define DLN2_I2C_SCAN_DEVICES		DLN2_I2C_CMD(0x08)
-+#define DLN2_I2C_PULLUP_ENABLE		DLN2_I2C_CMD(0x09)
-+#define DLN2_I2C_PULLUP_DISABLE		DLN2_I2C_CMD(0x0A)
-+#define DLN2_I2C_PULLUP_IS_ENABLED	DLN2_I2C_CMD(0x0B)
-+#define DLN2_I2C_TRANSFER		DLN2_I2C_CMD(0x0C)
-+#define DLN2_I2C_SET_MAX_REPLY_COUNT	DLN2_I2C_CMD(0x0D)
-+#define DLN2_I2C_GET_MAX_REPLY_COUNT	DLN2_I2C_CMD(0x0E)
-+#define DLN2_I2C_GET_MIN_FREQUENCY	DLN2_I2C_CMD(0x40)
-+#define DLN2_I2C_GET_MAX_FREQUENCY	DLN2_I2C_CMD(0x41)
-+
-+#define DLN2_I2C_FREQ_FAST		400000
-+#define DLN2_I2C_FREQ_STD		100000
-+
-+#define DLN2_I2C_MAX_XFER_SIZE		256
-+
-+struct dln2_i2c {
-+	struct platform_device *pdev;
-+	struct i2c_adapter adapter;
-+};
-+
-+static uint frequency = DLN2_I2C_FREQ_STD;	/* I2C clock frequency in Hz */
-+
-+module_param(frequency, uint, S_IRUGO | S_IWUSR);
-+MODULE_PARM_DESC(frequency, "I2C clock frequency in hertz");
-+
-+static int dln2_i2c_set_state(struct dln2_i2c *dln2, u8 state)
-+{
-+	int ret;
-+	u8 port = 0;
-+
-+	ret = dln2_transfer(dln2->pdev,
-+			    state ? DLN2_I2C_ENABLE : DLN2_I2C_DISABLE,
-+			    &port, sizeof(port), NULL, NULL);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+#define dln2_i2c_enable(dln2)	dln2_i2c_set_state(dln2, 1)
-+#define dln2_i2c_disable(dln2)	dln2_i2c_set_state(dln2, 0)
-+
-+static int dln2_i2c_set_frequency(struct dln2_i2c *dln2, u32 freq)
-+{
-+	int ret;
-+	struct tx_data {
-+		u8 port;
-+		__le32 freq;
-+	} __packed tx;
-+
-+	tx.port = 0;
-+	tx.freq = cpu_to_le32(freq);
-+
-+	ret = dln2_transfer(dln2->pdev, DLN2_I2C_SET_FREQUENCY, &tx, sizeof(tx),
-+			    NULL, NULL);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int dln2_i2c_write(struct dln2_i2c *dln2, u8 addr,
-+			  u8 *data, u16 data_len)
-+{
-+	int ret, len;
-+	struct tx_data {
-+		u8 port;
-+		u8 addr;
-+		u8 mem_addr_len;
-+		__le32 mem_addr;
-+		__le16 buf_len;
-+		u8 buf[DLN2_I2C_MAX_XFER_SIZE];
-+	} __packed tx;
-+
-+	if (data_len > DLN2_I2C_MAX_XFER_SIZE)
-+		return -ENOSPC;
-+
-+	tx.port = 0;
-+	tx.addr = addr;
-+	tx.mem_addr_len = 0;
-+	tx.mem_addr = 0;
-+	tx.buf_len = cpu_to_le16(data_len);
-+	memcpy(tx.buf, data, data_len);
-+
-+	len = sizeof(tx) + data_len - DLN2_I2C_MAX_XFER_SIZE;
-+	ret = dln2_transfer(dln2->pdev, DLN2_I2C_WRITE, &tx, len,
-+			    NULL, NULL);
-+	if (ret < 0)
-+		return ret;
-+
-+	return data_len;
-+}
-+
-+static int dln2_i2c_read(struct dln2_i2c *dln2, u16 addr, u8 *data,
-+			 u16 data_len)
-+{
-+	struct tx_data {
-+		u8 port;
-+		u8 addr;
-+		u8 mem_addr_len;
-+		__le32 mem_addr;
-+		__le16 buf_len;
-+	} __packed tx;
-+	struct rx_data {
-+		__le16 buf_len;
-+		u8 buf[DLN2_I2C_MAX_XFER_SIZE];
-+	} __packed rx;
-+	int ret, buf_len, rx_len = sizeof(rx);
-+
-+	tx.port = 0;
-+	tx.addr = addr;
-+	tx.mem_addr_len = 0;
-+	tx.mem_addr = 0;
-+	tx.buf_len = cpu_to_le16(data_len);
-+
-+	ret = dln2_transfer(dln2->pdev, DLN2_I2C_READ, &tx, sizeof(tx),
-+			    &rx, &rx_len);
-+	if (ret < 0)
-+		return ret;
-+	if (rx_len < 2)
-+		return -EPROTO;
-+
-+	buf_len = le16_to_cpu(rx.buf_len);
-+	if (rx_len + sizeof(__le16) <  buf_len)
-+		return -EPROTO;
-+
-+	memcpy(data, rx.buf, buf_len);
-+
-+	return buf_len;
-+}
-+
-+static int dln2_i2c_setup(struct dln2_i2c *dln2)
-+{
-+	int ret;
-+
-+	ret = dln2_i2c_disable(dln2);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Set I2C frequency */
-+	ret = dln2_i2c_set_frequency(dln2, frequency);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = dln2_i2c_enable(dln2);
-+
-+	return ret;
-+}
-+
-+static int dln2_i2c_xfer(struct i2c_adapter *adapter,
-+			 struct i2c_msg *msgs, int num)
-+{
-+	struct dln2_i2c *dln2 = i2c_get_adapdata(adapter);
-+	struct i2c_msg *pmsg;
-+	int i;
-+	int ret = 0;
-+
-+	for (i = 0; i < num; i++) {
-+		pmsg = &msgs[i];
-+
-+		if (pmsg->len > DLN2_I2C_MAX_XFER_SIZE)
-+			return -EINVAL;
-+
-+		if (pmsg->flags & I2C_M_RD) {
-+			ret = dln2_i2c_read(dln2, pmsg->addr, pmsg->buf,
-+					    pmsg->len);
-+			if (ret < 0)
-+				return ret;
-+
-+			pmsg->len = ret;
-+		} else {
-+			ret = dln2_i2c_write(dln2, pmsg->addr, pmsg->buf,
-+					     pmsg->len);
-+			if (ret != pmsg->len)
-+				return -EPROTO;
-+		}
+-	gpiochip_irqchip_remove(chip);
+-	gpiochip_remove_pin_ranges(chip);
+-	of_gpiochip_remove(chip);
+-
+ 	for (id = 0; id < chip->ngpio; id++) {
+ 		if (test_bit(FLAG_REQUESTED, &chip->desc[id].flags)) {
+ 			status = -EBUSY;
+@@ -337,8 +331,13 @@ int gpiochip_remove(struct gpio_chip *chip)
+ 
+ 	spin_unlock_irqrestore(&gpio_lock, flags);
+ 
+-	if (status == 0)
++	if (status == 0) {
++		gpiochip_irqchip_remove(chip);
++		gpiochip_remove_pin_ranges(chip);
++		of_gpiochip_remove(chip);
++		acpi_gpiochip_remove(chip);
+ 		gpiochip_unexport(chip);
 +	}
-+
-+	return num;
-+}
-+
-+/*
-+ * Return list of supported functionality.
-+ */
-+static u32 dln2_i2c_func(struct i2c_adapter *a)
-+{
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA |
-+		I2C_FUNC_SMBUS_WORD_DATA | I2C_FUNC_SMBUS_BLOCK_PROC_CALL |
-+		I2C_FUNC_SMBUS_I2C_BLOCK;
-+}
-+
-+static const struct i2c_algorithm dln2_i2c_usb_algorithm = {
-+	.master_xfer = dln2_i2c_xfer,
-+	.functionality = dln2_i2c_func,
-+};
-+
-+/* device layer */
-+
-+static int dln2_i2c_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	struct device *dev = &pdev->dev;
-+	struct dln2_i2c *dln2 = kzalloc(sizeof(*dln2), GFP_KERNEL);
-+
-+	if (!dln2)
-+		return -ENOMEM;
-+
-+	dln2->pdev = pdev;
-+
-+	/* setup i2c adapter description */
-+	dln2->adapter.owner = THIS_MODULE;
-+	dln2->adapter.class = I2C_CLASS_HWMON;
-+	dln2->adapter.algo = &dln2_i2c_usb_algorithm;
-+	dln2->adapter.dev.parent = dev;
-+	i2c_set_adapdata(&dln2->adapter, dln2);
-+	snprintf(dln2->adapter.name, sizeof(dln2->adapter.name), DRIVER_NAME);
-+
-+	/* initialize the i2c interface */
-+	ret = dln2_i2c_setup(dln2);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to initialize adapter\n");
-+		goto error_free;
-+	}
-+
-+	/* and finally attach to i2c layer */
-+	ret = i2c_add_adapter(&dln2->adapter);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to add I2C adapter\n");
-+		goto error_free;
-+	}
-+
-+	platform_set_drvdata(pdev, dln2);
-+
-+	return 0;
-+
-+error_free:
-+	kfree(dln2);
-+
-+	return ret;
-+}
-+
-+static int dln2_i2c_remove(struct platform_device *pdev)
-+{
-+	struct dln2_i2c *dln2 = platform_get_drvdata(pdev);
-+
-+	i2c_del_adapter(&dln2->adapter);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver dln2_i2c_driver = {
-+	.driver.name	= DRIVER_NAME,
-+	.driver.owner	= THIS_MODULE,
-+	.probe		= dln2_i2c_probe,
-+	.remove		= dln2_i2c_remove,
-+};
-+
-+module_platform_driver(dln2_i2c_driver);
-+
-+MODULE_AUTHOR("Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>");
-+MODULE_DESCRIPTION(DRIVER_NAME " driver");
-+MODULE_LICENSE("GPL");
+ 
+ 	return status;
+ }
 -- 
 1.9.1
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
