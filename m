@@ -1,37 +1,67 @@
-From: Anders Berg <anders.berg@avagotech.com>
-Subject: Re: [PATCH 1/2] gpio: Add driver for AXM55xx SSP chip selects
-Date: Fri, 5 Sep 2014 15:40:44 +0200
-Message-ID: <CAE0=X_1CZkSjmde4o1707scjJtdzZdXokaS--3VjEuE4XTac-Q@mail.gmail.com>
-References: <1409576021-24828-1-git-send-email-anders.berg@avagotech.com>
-	<1409576021-24828-2-git-send-email-anders.berg@avagotech.com>
-	<20140905094747.GE30401@n2100.arm.linux.org.uk>
+From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
+Subject: Re: [PATCH] pinctrl: single: fix freudian slip
+Date: Fri, 5 Sep 2014 16:23:30 +0200
+Message-ID: <20140905162330.75247029@ipc1.ka-ro>
+References: <1409903739-25998-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod7og104.obsmtp.com ([64.18.2.161]:47306 "EHLO
-	exprod7og104.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756701AbaIENkw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Sep 2014 09:40:52 -0400
-Received: by mail-vc0-f172.google.com with SMTP id le20so961601vcb.31
-        for <linux-gpio@vger.kernel.org>; Fri, 05 Sep 2014 06:40:45 -0700 (PDT)
-In-Reply-To: <20140905094747.GE30401@n2100.arm.linux.org.uk>
+Received: from mail.karo-electronics.de ([81.173.242.67]:49614 "EHLO
+	mail.karo-electronics.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932614AbaIEOXo convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Sep 2014 10:23:44 -0400
+In-Reply-To: <1409903739-25998-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Fri, Sep 5, 2014 at 11:47 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Mon, Sep 01, 2014 at 02:53:40PM +0200, Anders Berg wrote:
->> The AXM55xx device has a ARM PL022 SSP controller with an extension that
->> enables the control of up to five chip select signals. This driver implements
->> the logic to control these signals and exports them as GPIOs.
->>
->> Signed-off-by: Anders Berg <anders.berg@avagotech.com>
->
-> So, what happens if the GPIO driver binds first, followed by the SSP
-> device?  Please test that scenario out before this patch gets merged.
->
+Hi,
 
-Both scenarios work.
-/Anders
+Linus Walleij wrote:
+> commit 03e9f0cac5da6af85758276cb4624caf5911f2b9
+> "pinctrl: clean up after enable refactoring"
+> renamed the vtable callback .enable to .set_mux. The
+> renaming was done manually, and one of the alterations
+> contained a freudian slip. I confess, I am human.
+>=20
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/pinctrl/pinctrl-single.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinct=
+rl-single.c
+> index 9032422ad18f..fb94b772ad62 100644
+> --- a/drivers/pinctrl/pinctrl-single.c
+> +++ b/drivers/pinctrl/pinctrl-single.c
+> @@ -519,7 +519,7 @@ static const struct pinmux_ops pcs_pinmux_ops =3D=
+ {
+>  	.get_functions_count =3D pcs_get_functions_count,
+>  	.get_function_name =3D pcs_get_function_name,
+>  	.get_function_groups =3D pcs_get_function_groups,
+> -	.set_mux =3D pcs_sex_mux,
+> +	.set_mux =3D pcs_set_mux,
+>  	.gpio_request_enable =3D pcs_request_gpio,
+>  };
+> =20
+Congrats, you passed the Turing test! ;)
+
+
+Lothar Wa=C3=9Fmann
+--=20
+___________________________________________________________
+
+Ka-Ro electronics GmbH | Pascalstra=C3=9Fe 22 | D - 52076 Aachen
+Phone: +49 2408 1402-0 | Fax: +49 2408 1402-10
+Gesch=C3=A4ftsf=C3=BChrer: Matthias Kaussen
+Handelsregistereintrag: Amtsgericht Aachen, HRB 4996
+
+www.karo-electronics.de | info@karo-electronics.de
+___________________________________________________________
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
