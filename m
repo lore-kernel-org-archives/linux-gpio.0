@@ -1,62 +1,66 @@
-From: "Chen, Alvin" <alvin.chen@intel.com>
-Subject: RE: [PATCH 1/3 v2] GPIO: gpio-dwapb: Enable platform driver binding
- to MFD driver
-Date: Fri, 5 Sep 2014 10:20:53 +0000
-Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E9829DA@SHSMSX101.ccr.corp.intel.com>
-References: <1409928798-31895-1-git-send-email-alvin.chen@intel.com>
-	 <1409928798-31895-2-git-send-email-alvin.chen@intel.com>
- <1409908917.30155.84.camel@intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/3 v2] GPIO: gpio-dwapb: Enable platform driver binding to MFD driver
+Date: Fri, 05 Sep 2014 13:50:06 +0200
+Message-ID: <3465722.Gc9y01nQRe@wuerfel>
+References: <1409928798-31895-1-git-send-email-alvin.chen@intel.com> <1409928798-31895-2-git-send-email-alvin.chen@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:63678 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756626AbaIEKVZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 5 Sep 2014 06:21:25 -0400
-In-Reply-To: <1409908917.30155.84.camel@intel.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1409928798-31895-2-git-send-email-alvin.chen@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Weike Chen <alvin.chen@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "sebastian@breakpoint.cc" <sebastian@breakpoint.cc>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>, "atull@opensource.altera.com" <atull@opensource.altera.com>
 
-PiA+IC1zdGF0aWMgdm9pZCBkd2FwYl9pcnFfaGFuZGxlcih1MzIgaXJxLCBzdHJ1Y3QgaXJxX2Rl
-c2MgKmRlc2MpDQo+ID4gK3N0YXRpYyB1MzIgX2R3YXBiX2lycV9oYW5kbGVyKHN0cnVjdCBkd2Fw
-Yl9ncGlvICpncGlvKQ0KPiANCj4gV2hhdCBhYm91dCBkd2FwYl9kb19pcnEoKSA/DQpPSywgSSB3
-aWxsIGltcHJvdmUgaXQuDQoNCj4gPiArc3RhdGljIGlycXJldHVybl90IGR3YXBiX2lycV9oYW5k
-bGVyX21mZChpbnQgaXJxLCB2b2lkICpkZXZfaWQpIHsNCj4gPiArCXUzMiB3b3JrZWQ7DQo+ID4g
-KwlzdHJ1Y3QgZHdhcGJfZ3BpbyAqZ3BpbyA9IChzdHJ1Y3QgZHdhcGJfZ3BpbyAqKWRldl9pZDsN
-Cj4gDQo+IE5vIG5lZWQgdG8gY2FzdCBleHBsaWNpdGx5IGZyb20gdm9pZCAqLg0KT0suDQoNCg0K
-PiA+IC0JcG9ydC0+YmdjLmdjLm5ncGlvID0gbmdwaW87DQo+ID4gLQlwb3J0LT5iZ2MuZ2Mub2Zf
-bm9kZSA9IHBvcnRfbnA7DQo+ID4gKyNpZmRlZiBDT05GSUdfT0ZfR1BJTw0KPiANCj4gRG8gd2Ug
-cmVhbGx5IG5lZWQgdGhpcyAjaWZkZWYgPw0KPiBvZl9ub2RlIHdpbGwgYmUgTlVMTCBhbnl3YXks
-IG9yIEkgbWlzc2VkIHNvbWV0aGluZz8NClllcywgb3RoZXJ3aXNlLCBjYW4ndCBjb21waWxlIGl0
-LiBQbGVhc2UgcmVmZXIgJ3N0cnVjdCBncGlvX2NoaXAnLCAnZ2Mub2Zfbm9kZScgaXMgaW4gT0Zf
-R1BJTyBtaWNybyBhbHNvLg0KDQo+ID4gKwlpZiAocHAtPmlycSkNCj4gDQo+IGlycSA9PSAwIGlz
-IGEgdmFsaWQgaHdpcnEgKGhhcmR3YXJlIGlycSkgbnVtYmVyLiBZZXMsIHRoZXJlIGlzIHVubGlr
-ZWx5IHdlIGhhdmUgaXQNCj4gc29tZXdoZXJlLCBidXQgc3RpbGwgaXQncyBwb3NzaWJsZS4gQW5k
-IHllcywgSVJRIGZyYW1ld29yayBkb2Vzbid0IHdvcmsgd2l0aA0KPiB2aXJxID09IDAgKCp2aXJ0
-dWFsKiBpcnEpLCBidXQgYWNjZXB0cyBod2lycSA9PSAwLiBJIHJlY29tbWVuZCB0byB1c2UgaW50
-IHR5cGUgZm9yDQo+IGlycSBsaW5lIG51bWJlciwgYW5kIHJlY29nbml6ZSBuZWdhdGl2ZSB2YWx1
-ZSAodXN1YWxseSAtMSkgYXMgbm8gaXJxIG5lZWRlZCAvDQo+IGZvdW5kLg0KVW5kZXJzdGFuZC4g
-QnV0IGlmIHlvdSByZWZlciB0aGUgb3JpZ2luYWwgY29kZSwgeW91IGNhbiBzZWU6DQppcnEgPSBp
-cnFfb2ZfcGFyc2VfYW5kX21hcChub2RlLCAwKTsNCklmICghaXJxKSB7DQouLi4uLi4NCnJldHVy
-bjsNCn0NCkZyb20gYWJvdmUgY29kZSwgaWYgaXJxPTAsIGl0IGluZGljYXRlcyBpcnEgaXMgbm90
-IHN1cHBvcnRlZCBmb3IgT0YgZGV2aWNlcy4gSWYgd2UgdXNlICctMScgdG8gaW5kaWNhdGUgaXJx
-IGlzIG5vdCBzdXBwb3J0ZWQuIFRvIG1ha2UgT0Ygd29yaywgdGhlbiBvdXIgY29kZSBzaG91bGQg
-YmU6DQoNCmlycSA9IGlycV9vZl9wYXJzZV9hbmRfbWFwKG5vZGUsIDApOw0KSWYgKCFpcnEpIHsN
-CnBwLT5pcnEgPSAtMTsNCnJldHVybjsNCn0gZWxzZSB7DQpwcC0+aXJxID0gaXJxOw0KfQ0KVGhl
-biB0aGUgY29kZSBsb29rcyBzdHJhbmdlLg0KDQpIb3cgZG8geW91IHRoaW5rPw0KDQo+ID4gKwli
-b29sIGlzX29mOw0KPiANCj4gaXNfcGRhdGFfYWxsb2MgKGl0IG1pZ2h0IGJlIG5vdCBvbmx5IE9G
-IGNhc2UgaW4gZnV0dXJlKS4NCj4gDQpPSw0KDQoNCj4gPiArCWlmICghcGRhdGEpIHsNCj4gDQo+
-ICgqKQ0KDQo+ID4gKwkJcGRhdGEgPSBkd2FwYl9ncGlvX2dldF9wZGF0YV9vZihkZXYpOw0KPiA+
-ICsJCWlmIChJU19FUlIocGRhdGEpKQ0KPiA+ICsJCQlyZXR1cm4gUFRSX0VSUihwZGF0YSk7DQo+
-IA0KPiA+ICsJCWlzX29mID0gdHJ1ZTsNCj4gPiArCX0gZWxzZSB7DQo+ID4gKwkJaXNfb2YgPSBm
-YWxzZTsNCj4gDQo+IEluc3RlYWQgb2YgYWJvdmUgdGhyZWUgbGluZXMsIGhvdyBhYm91dA0KPiBi
-b29sIGlzX3BkYXRhX2FsbG9jID0gIXBkYXRhOw0KPiANCj4gQW5kICgqKSBpZiAoaXNfcGRhdGFf
-YWxsb2MpIC4uLg0KPiANCk9LLiBJIHdpbGwgaW1wcm92ZSB0aGlzIHBhcnQuDQoNCj4gPiArCWlm
-IChpc19vZikgew0KPiA+ICsJCWR3YXBiX2ZyZWVfcGRhdGFfb2YoZGV2LCBwZGF0YSk7DQo+ID4g
-KwkJcGRhdGEgPSBOVUxMOw0KPiANCj4gQmVzaWRlcyB0aGF0IHBkYXRhIGFzc2lnbm1lbnQgaXMg
-cHJvYmFibHkgcmVkdW5kYW50LCB5b3UgbWF5IHVzZSBwbGFpbg0KPiBrbWFsbG9jL2tmcmVlIGFu
-ZCBhdm9pZCB1bm5lY2Vzc2FyeSBkZXZtXyogY2FsbHMuDQo+IA0KT0suDQoNCg==
+On Friday 05 September 2014 07:53:16 Weike Chen wrote:
+>  
+> -	irq_set_chained_handler(irq, dwapb_irq_handler);
+> -	irq_set_handler_data(irq, gpio);
+> +	if (!pp->irq_shared) {
+> +		irq_set_chained_handler(pp->irq, dwapb_irq_handler);
+> +		irq_set_handler_data(pp->irq, gpio);
+> +	} else {
+> +		/*
+> +		 * Request a shared IRQ since where MFD would have devices
+> +		 * using the same irq pin
+> +		 */
+> +		err = devm_request_irq(gpio->dev, pp->irq,
+> +				       dwapb_irq_handler_mfd,
+> +				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
+> +		if (err) {
+> +			dev_err(gpio->dev, "error requesting IRQ\n");
+> +			irq_domain_remove(gpio->domain);
+> +			gpio->domain = NULL;
+> +			return;
+> +		}
+> +	}
+>
+
+I think this need some better documentation. Why is it safe to use
+devm_request_irq rather than irq_set_chained_handler here?
+
+
+>  
+> +#ifdef CONFIG_OF_GPIO
+> +
+> +static struct dwapb_platform_data *
+> +dwapb_gpio_get_pdata_of(struct device *dev)
+> +{
+> +	struct device_node *node, *port_np;
+> +	struct dwapb_platform_data *pdata;
+> +	struct dwapb_port_property *pp;
+> +	int nports;
+> +	int i;
+> +
+> +	node = dev->of_node;
+> +	if (!node)
+> +		return ERR_PTR(-ENODEV);
+
+Please replace the #ifdef above with 
+
+	if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
+
+here so get you proper compile-time coverage of the DT code path.
+
+	Arnd
