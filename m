@@ -1,76 +1,61 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 4/4] ARM: dts: vf610: Use new GPIO support
-Date: Sat,  6 Sep 2014 18:25:07 +0200
-Message-ID: <00b4375542ac3698ed59d3ea353cc14e1c00a5bc.1410020459.git.stefan@agner.ch>
-References: <cover.1410020458.git.stefan@agner.ch>
+Subject: [PATCH 0/4] vf610: Add GPIO support
+Date: Sat,  6 Sep 2014 18:25:03 +0200
+Message-ID: <cover.1410020458.git.stefan@agner.ch>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1410020458.git.stefan@agner.ch>
-In-Reply-To: <cover.1410020458.git.stefan@agner.ch>
-References: <cover.1410020458.git.stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com, shawn.guo@freescale.com, kernel@pengutronix.de
 Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stefan@agner.ch
 List-Id: linux-gpio@vger.kernel.org
 
-Use GPIO support by adding SD card detection configuration and
-GPIO pinmux for Colibri's standard GPIO pins.
+This patchset adds GPIO support for Vybrid. The first patch is a
+preparation patch which makes sure we can detect whether a pin is
+initialized by the pinmux subsystem or not. This is required since
+the gpio_request_enable/gpio_set_direction function need to know
+if the pins mux register offsets are valid or not.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/vf610-colibri.dtsi | 8 ++++++++
- arch/arm/boot/dts/vf610-twr.dts      | 1 +
- arch/arm/boot/dts/vf610.dtsi         | 1 +
- 3 files changed, 10 insertions(+)
+To get valid mux register offset for a pin, we need to have a pinmux
+group configuration in the device tree. For the SD card detection pin
+this is within the esdhc pingroup. Since the pingroup is used by the
+driver, the mux and configuration register gets applied by the pinmux
+subsystem.
 
-diff --git a/arch/arm/boot/dts/vf610-colibri.dtsi b/arch/arm/boot/dts/vf610-colibri.dtsi
-index 0cd8343..afe7cdc 100644
---- a/arch/arm/boot/dts/vf610-colibri.dtsi
-+++ b/arch/arm/boot/dts/vf610-colibri.dtsi
-@@ -31,6 +31,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_esdhc1>;
- 	bus-width = <4>;
-+	cd-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
- };
- 
- &fec1 {
-@@ -71,6 +72,13 @@
- 
- &iomuxc {
- 	vf610-colibri {
-+		pinctrl_gpio: gpios {
-+			fsl,pins = <
-+				VF610_PAD_PTD9__GPIO_88		0x219d
-+				VF610_PAD_PTD10__GPIO_89	0x219d
-+			>;
-+		};
-+
- 		pinctrl_esdhc1: esdhc1grp {
- 			fsl,pins = <
- 				VF610_PAD_PTA24__ESDHC1_CLK	0x31ef
-diff --git a/arch/arm/boot/dts/vf610-twr.dts b/arch/arm/boot/dts/vf610-twr.dts
-index 189b697..3fe8a8f 100644
---- a/arch/arm/boot/dts/vf610-twr.dts
-+++ b/arch/arm/boot/dts/vf610-twr.dts
-@@ -116,6 +116,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_esdhc1>;
- 	bus-width = <4>;
-+	cd-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/vf610.dtsi b/arch/arm/boot/dts/vf610.dtsi
-index 4d2ec32..467c97e 100644
---- a/arch/arm/boot/dts/vf610.dtsi
-+++ b/arch/arm/boot/dts/vf610.dtsi
-@@ -11,6 +11,7 @@
- #include "vf610-pinfunc.h"
- #include <dt-bindings/clock/vf610-clock.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	aliases {
+However, the group does not need to be used anywhere, just the
+configuration itself makes sure the mux register offset is known to
+the pinmux driver. If a GPIO is requested then, the SoC's default pin
+config is still in place. Is this the expected behaviour of a pinmux
+driver? How can I make sure that a GPIO only pin (used by user-space
+for instance) get a valid pin configuration applied?
+
+To get the mux register offset, I also thought about calculating the
+value in those two functions instead, however this seems not to be
+consistent with the rest of the driver.
+
+Other then that, the GPIO/IRQ chip driver is quite straight forward
+and makes use of CONFIG_GPIOLIB_IRQCHIP. The only thing which is a
+bit weird: There is no actual mask register for the GPIO interrupts.
+There is only a configuration register, which, if configured, enables
+the interrupt. Since the mask/unmask functions are requierd, the
+driver writes/clears the configuration register in the mask/umask
+functions.
+
+Stefan Agner (4):
+  pinctrl: imx: detect uninitialized pins
+  pinctrl: imx: add gpio pinmux support for vf610
+  gpio: vf610: add gpiolib/IRQ chip driver for Vybird
+  ARM: dts: vf610: Use new GPIO support
+
+ arch/arm/boot/dts/vf610-colibri.dtsi |   8 +
+ arch/arm/boot/dts/vf610-twr.dts      |   1 +
+ arch/arm/boot/dts/vf610.dtsi         |   1 +
+ drivers/gpio/Kconfig                 |   7 +
+ drivers/gpio/Makefile                |   1 +
+ drivers/gpio/gpio-vf610.c            | 285 +++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-imx.c        |  63 +++++++-
+ drivers/pinctrl/pinctrl-imx.h        |   8 +-
+ drivers/pinctrl/pinctrl-vf610.c      |   4 +-
+ 9 files changed, 368 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/gpio/gpio-vf610.c
+
 -- 
 2.1.0
