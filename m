@@ -1,56 +1,119 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2] gpio: Add driver for AXM55xx SSP chip selects
-Date: Sat, 6 Sep 2014 14:53:08 +0100
-Message-ID: <20140906135308.GC2601@sirena.org.uk>
-References: <1409576021-24828-1-git-send-email-anders.berg@avagotech.com>
- <1409576021-24828-2-git-send-email-anders.berg@avagotech.com>
- <CACRpkdby4H-fivNn_kG2uL0EjsCGAc+t6OyFi0+VcNGf2Z9NQA@mail.gmail.com>
- <20140904170630.GL29327@sirena.org.uk>
- <CACRpkdZEoBan=Lqr1T-iY41U9NfMA_MCLX3LA=juw7X4pmRvSQ@mail.gmail.com>
- <CAE0=X_3QO5p26M=FS7joKS3zD6LAM_moFutHNcyE1-CjauL3Rw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pAwQNkOnpTn9IO2O"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAE0=X_3QO5p26M=FS7joKS3zD6LAM_moFutHNcyE1-CjauL3Rw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anders Berg <anders.berg@avagotech.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 1/4] pinctrl: imx: detect uninitialized pins
+Date: Sat,  6 Sep 2014 18:25:04 +0200
+Message-ID: <6d676a88eb82a47f8fa9e16abbc768e3e9ac236a.1410020458.git.stefan@agner.ch>
+References: <cover.1410020458.git.stefan@agner.ch>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.102]:49540 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751371AbaIFQZQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Sep 2014 12:25:16 -0400
+In-Reply-To: <cover.1410020458.git.stefan@agner.ch>
+In-Reply-To: <cover.1410020458.git.stefan@agner.ch>
+References: <cover.1410020458.git.stefan@agner.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, shawn.guo@freescale.com, kernel@pengutronix.de
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stefan@agner.ch
 
+The pinctrl driver initialized the register offsets for the pins
+with 0. On Vybrid an offset of 0 is a valid offset for the pinctrl
+mux register. So far, this was solved using the ZERO_OFFSET_VALID
+flag which allowed offsets of 0. However, this does not allow to
+verify whether a pins struct imx_pmx_func was initialized or not.
 
---pAwQNkOnpTn9IO2O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Use signed offset values for register offsets and initialize those
+with -1 in order to detect uninitialized offset values reliable.
 
-On Fri, Sep 05, 2014 at 11:05:37AM +0200, Anders Berg wrote:
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/pinctrl/pinctrl-imx.c   | 9 +++++----
+ drivers/pinctrl/pinctrl-imx.h   | 7 +++----
+ drivers/pinctrl/pinctrl-vf610.c | 2 +-
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-> Well, the problem with adding this to the spi-pl022 driver (as a
-> vendor specific extension) is that this IP block unfortunately isn't
-> distinguishable from the standard ARM PL022 implementation (same
-> values in the PrimeCell identification registers). That's why I went
-> down the GPIO path...
+diff --git a/drivers/pinctrl/pinctrl-imx.c b/drivers/pinctrl/pinctrl-imx.c
+index 946d594..0d4558b 100644
+--- a/drivers/pinctrl/pinctrl-imx.c
++++ b/drivers/pinctrl/pinctrl-imx.c
+@@ -204,7 +204,7 @@ static int imx_pmx_enable(struct pinctrl_dev *pctldev, unsigned selector,
+ 		pin_id = pin->pin;
+ 		pin_reg = &info->pin_regs[pin_id];
+ 
+-		if (!(info->flags & ZERO_OFFSET_VALID) && !pin_reg->mux_reg) {
++		if (pin_reg->mux_reg == -1) {
+ 			dev_err(ipctl->dev, "Pin(%s) does not support mux function\n",
+ 				info->pins[pin_id].name);
+ 			return -EINVAL;
+@@ -308,7 +308,7 @@ static int imx_pinconf_get(struct pinctrl_dev *pctldev,
+ 	const struct imx_pinctrl_soc_info *info = ipctl->info;
+ 	const struct imx_pin_reg *pin_reg = &info->pin_regs[pin_id];
+ 
+-	if (!(info->flags & ZERO_OFFSET_VALID) && !pin_reg->conf_reg) {
++	if (pin_reg->conf_reg == -1) {
+ 		dev_err(info->dev, "Pin(%s) does not support config function\n",
+ 			info->pins[pin_id].name);
+ 		return -EINVAL;
+@@ -331,7 +331,7 @@ static int imx_pinconf_set(struct pinctrl_dev *pctldev,
+ 	const struct imx_pin_reg *pin_reg = &info->pin_regs[pin_id];
+ 	int i;
+ 
+-	if (!(info->flags & ZERO_OFFSET_VALID) && !pin_reg->conf_reg) {
++	if (pin_reg->conf_reg == -1) {
+ 		dev_err(info->dev, "Pin(%s) does not support config function\n",
+ 			info->pins[pin_id].name);
+ 		return -EINVAL;
+@@ -586,10 +586,11 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+ 	if (!ipctl)
+ 		return -ENOMEM;
+ 
+-	info->pin_regs = devm_kzalloc(&pdev->dev, sizeof(*info->pin_regs) *
++	info->pin_regs = devm_kmalloc(&pdev->dev, sizeof(*info->pin_regs) *
+ 				      info->npins, GFP_KERNEL);
+ 	if (!info->pin_regs)
+ 		return -ENOMEM;
++	memset(info->pin_regs, 0xff, sizeof(*info->pin_regs) * info->npins);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	ipctl->base = devm_ioremap_resource(&pdev->dev, res);
+diff --git a/drivers/pinctrl/pinctrl-imx.h b/drivers/pinctrl/pinctrl-imx.h
+index db408b0..49e55d3 100644
+--- a/drivers/pinctrl/pinctrl-imx.h
++++ b/drivers/pinctrl/pinctrl-imx.h
+@@ -67,8 +67,8 @@ struct imx_pmx_func {
+  * @conf_reg: config register offset
+  */
+ struct imx_pin_reg {
+-	u16 mux_reg;
+-	u16 conf_reg;
++	s16 mux_reg;
++	s16 conf_reg;
+ };
+ 
+ struct imx_pinctrl_soc_info {
+@@ -83,8 +83,7 @@ struct imx_pinctrl_soc_info {
+ 	unsigned int flags;
+ };
+ 
+-#define ZERO_OFFSET_VALID	0x1
+-#define SHARE_MUX_CONF_REG	0x2
++#define SHARE_MUX_CONF_REG	0x1
+ 
+ #define NO_MUX		0x0
+ #define NO_PAD		0x0
+diff --git a/drivers/pinctrl/pinctrl-vf610.c b/drivers/pinctrl/pinctrl-vf610.c
+index bddd913..b788e15 100644
+--- a/drivers/pinctrl/pinctrl-vf610.c
++++ b/drivers/pinctrl/pinctrl-vf610.c
+@@ -299,7 +299,7 @@ static const struct pinctrl_pin_desc vf610_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
+ 	.pins = vf610_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(vf610_pinctrl_pads),
+-	.flags = ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
++	.flags = SHARE_MUX_CONF_REG,
+ };
+ 
+ static struct of_device_id vf610_pinctrl_of_match[] = {
+-- 
+2.1.0
 
-Would it not be more straightforward to just register it as a platform
-device in this case, or use a separate OF ID in the DT?  We appear to
-specify a compatible string when registering AMBA devices even if we are
-capable of identifying using the ID registers.
-
---pAwQNkOnpTn9IO2O
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUCxHEAAoJECTWi3JdVIfQ0uUH/A2xoGk4MXCll2e7e6pUQIPH
-SQ5bBfvdjxyCVunWYUjlqdFKgJ4BPOiC53cACl9tdjN3M0Tog12Xcf9RmsLjDy+x
-NDcTUH/9WSiOf0SZ1VaNs8X6QlHsp/kLeSXmEr4M7XMO71hPAC9NNH1vxUksPA2p
-kexibLyxh2hbtvQyhs+qD9IZnTLLKhi7385RBsjY+vjriVrqaZ5w0D3R/ms39AkS
-Lkw8DyDbj2Lk2wIJvlKb2jHv1jmco+DhS1ns6vK2kbs1xPDMW4Li1Se5mZTTHaUz
-6yAbYLNzFOtDuRz5wJvjezZCAhSITzbxVgC8pBjd6IDMibBVm4OGczF1CxburTE=
-=sp84
------END PGP SIGNATURE-----
-
---pAwQNkOnpTn9IO2O--
