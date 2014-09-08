@@ -1,98 +1,73 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 1/2] x86, gpio: Increase ARCH_NR_GPIOs to 512
-Date: Mon,  8 Sep 2014 14:47:59 +0300
-Message-ID: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v3 1/3] mfd: add support for Diolan DLN-2 devices
+Date: Mon, 8 Sep 2014 14:08:20 +0200
+Message-ID: <20140908120820.GB9560@localhost>
+References: <1409930279-1382-1-git-send-email-octavian.purdila@intel.com>
+ <1409930279-1382-2-git-send-email-octavian.purdila@intel.com>
+ <20140908113233.GA9560@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:54092 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753376AbaIHLsg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 8 Sep 2014 07:48:36 -0400
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:51627 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752421AbaIHMKa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Sep 2014 08:10:30 -0400
+Content-Disposition: inline
+In-Reply-To: <20140908113233.GA9560@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Ning Li <ning.li@intel.com>, Alan Cox <alan@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mark Brown <broonie@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org, arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 
-Some newer Intel SoCs like Braswell already have more than 256 GPIOs
-available so the default limit is exceeded. In order to support these add
-back the custom GPIO header with limit of 512 GPIOs for x86.
+On Mon, Sep 08, 2014 at 01:32:33PM +0200, Johan Hovold wrote:
+> On Fri, Sep 05, 2014 at 06:17:57PM +0300, Octavian Purdila wrote:
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- arch/x86/Kconfig            |  1 +
- arch/x86/include/asm/gpio.h | 54 +++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 51 insertions(+), 4 deletions(-)
+> > +static int _dln2_transfer(struct dln2_dev *dln2, u16 handle, u16 cmd,
+> > +			  void *obuf, int obuf_len, void *ibuf, int *ibuf_len)
+> > +{
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 778178f4c7d1..0bf6fe76e7ba 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -136,6 +136,7 @@ config X86
- 	select HAVE_ACPI_APEI if ACPI
- 	select HAVE_ACPI_APEI_NMI if ACPI
- 	select ACPI_LEGACY_TABLES_LOOKUP if ACPI
-+	select ARCH_HAVE_CUSTOM_GPIO_H
- 
- config INSTRUCTION_DECODER
- 	def_bool y
-diff --git a/arch/x86/include/asm/gpio.h b/arch/x86/include/asm/gpio.h
-index b3799d88ffcf..152b71788f2d 100644
---- a/arch/x86/include/asm/gpio.h
-+++ b/arch/x86/include/asm/gpio.h
-@@ -1,4 +1,50 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-+/*
-+ * GPIO customization for x86.
-+ *
-+ * Based on the original code:
-+ *
-+ * Copyright (c) 2007-2008  MontaVista Software, Inc.
-+ * Author: Anton Vorontsov <avorontsov@ru.mvista.com>
-+ *
-+ * Copyright (c) 2014, Intel Corporation.
-+ * Author: Mika Westerberg <mika.westerberg@linux.intel.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __ASM_X86_GPIO_H
-+#define __ASM_X86_GPIO_H
-+
-+#define ARCH_NR_GPIOS 512
-+#include <asm-generic/gpio.h>
-+
-+#ifdef CONFIG_GPIOLIB
-+static inline int gpio_get_value(unsigned int gpio)
-+{
-+	return __gpio_get_value(gpio);
-+}
-+
-+static inline void gpio_set_value(unsigned int gpio, int value)
-+{
-+	__gpio_set_value(gpio, value);
-+}
-+
-+static inline int gpio_cansleep(unsigned int gpio)
-+{
-+	return __gpio_cansleep(gpio);
-+}
-+
-+static inline int gpio_to_irq(unsigned int gpio)
-+{
-+	return __gpio_to_irq(gpio);
-+}
-+
-+static inline int irq_to_gpio(unsigned int irq)
-+{
-+	return -EINVAL;
-+}
-+#endif /* CONFIG_GPIOLIB */
-+
-+#endif /* __ASM_X86_GPIO_H */
--- 
-2.1.0
+<snip>
 
+> > +	/* if we got here we know that the response header has been checked */
+> > +	rsp = rxc->urb->transfer_buffer;
+> > +	result = le16_to_cpu(rsp->result);
+> 
+> Yes, but you haven't verified that rsp->hdr.size > 0, so you may still
+> be reading stale data.
+
+I meant that you haven't verified that the payload size > 1 (the header
+size is included in rsp->hdr.size and result is two byte wide).
+
+> > +
+> > +	if (result) {
+> > +		dev_dbg(dev, "%d received response with error %d\n",
+> > +			handle, result);
+> > +		ret = -EREMOTEIO;
+> > +		goto out_free_rx_slot;
+> > +	}
+> > +
+> > +	if (!ibuf) {
+> > +		ret = 0;
+> > +		goto out_free_rx_slot;
+> > +	}
+> > +
+> > +	if (*ibuf_len > rxc->urb->actual_length - sizeof(*rsp))
+> > +		*ibuf_len = rxc->urb->actual_length - sizeof(*rsp);
+> 
+> And then you get an underflow here, although that doesn't seem to cause
+> any troubles in this case.
+
+Unless ibuf_len is -1... 
+
+> But why isn't ibuf_len unsigned?
+>
+> > +
+> > +	memcpy(ibuf, rsp + 1, *ibuf_len);
+> > +
+> > +out_free_rx_slot:
+> > +	free_rx_slot(dln2, rxs, rx_slot);
+> > +
+> > +	return ret;
+> > +}
+
+Johan
