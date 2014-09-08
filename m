@@ -1,73 +1,56 @@
-From: Johan Hovold <johan@kernel.org>
+From: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v3 1/3] mfd: add support for Diolan DLN-2 devices
-Date: Mon, 8 Sep 2014 14:08:20 +0200
-Message-ID: <20140908120820.GB9560@localhost>
+Date: Mon, 8 Sep 2014 16:20:34 +0300
+Message-ID: <CAE1zotL3rKb3ayjgp0DbTr-a9xAhEJk6ybdqGEzg3UtuBUKWMw@mail.gmail.com>
 References: <1409930279-1382-1-git-send-email-octavian.purdila@intel.com>
- <1409930279-1382-2-git-send-email-octavian.purdila@intel.com>
- <20140908113233.GA9560@localhost>
+	<1409930279-1382-2-git-send-email-octavian.purdila@intel.com>
+	<20140908113233.GA9560@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f169.google.com ([209.85.217.169]:51627 "EHLO
-	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752421AbaIHMKa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Sep 2014 08:10:30 -0400
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20140908113233.GA9560@localhost>
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org, arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 
-On Mon, Sep 08, 2014 at 01:32:33PM +0200, Johan Hovold wrote:
+On Mon, Sep 8, 2014 at 2:32 PM, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+>
 > On Fri, Sep 05, 2014 at 06:17:57PM +0300, Octavian Purdila wrote:
+> > This patch implements the USB part of the Diolan USB-I2C/SPI/GPIO
+> > Master Adapter DLN-2. Details about the device can be found here:
+> >
+<snip>
+>
+> First of all, this is much cleaner than the first non-MFD version. I'll
+> have a look at the subdrivers shortly as well.
+>
 
-> > +static int _dln2_transfer(struct dln2_dev *dln2, u16 handle, u16 cmd,
-> > +			  void *obuf, int obuf_len, void *ibuf, int *ibuf_len)
-> > +{
+Hi Johan,
+
+I have addressed all you comments except one, please see bellow. I
+will wait for the review on the subdrivers before submitting a new
+version of the patch set. Thanks for for review !
 
 <snip>
-
-> > +	/* if we got here we know that the response header has been checked */
-> > +	rsp = rxc->urb->transfer_buffer;
-> > +	result = le16_to_cpu(rsp->result);
-> 
-> Yes, but you haven't verified that rsp->hdr.size > 0, so you may still
-> be reading stale data.
-
-I meant that you haven't verified that the payload size > 1 (the header
-size is included in rsp->hdr.size and result is two byte wide).
-
+> > +static bool find_free_slot(struct dln2_mod_rx_slots *rxs, int *slot)
+> > +{
+> > +     unsigned long flags;
 > > +
-> > +	if (result) {
-> > +		dev_dbg(dev, "%d received response with error %d\n",
-> > +			handle, result);
-> > +		ret = -EREMOTEIO;
-> > +		goto out_free_rx_slot;
-> > +	}
+> > +     spin_lock_irqsave(&rxs->lock, flags);
 > > +
-> > +	if (!ibuf) {
-> > +		ret = 0;
-> > +		goto out_free_rx_slot;
-> > +	}
+> > +     *slot = find_first_zero_bit(&rxs->bmap, DLN2_MAX_RX_SLOTS);
 > > +
-> > +	if (*ibuf_len > rxc->urb->actual_length - sizeof(*rsp))
-> > +		*ibuf_len = rxc->urb->actual_length - sizeof(*rsp);
-> 
-> And then you get an underflow here, although that doesn't seem to cause
-> any troubles in this case.
-
-Unless ibuf_len is -1... 
-
-> But why isn't ibuf_len unsigned?
+> > +     if (*slot < DLN2_MAX_RX_SLOTS) {
+> > +             struct dln2_rx_context *rxc = &rxs->slots[*slot];
+> > +
+> > +             init_completion(&rxc->done);
 >
-> > +
-> > +	memcpy(ibuf, rsp + 1, *ibuf_len);
-> > +
-> > +out_free_rx_slot:
-> > +	free_rx_slot(dln2, rxs, rx_slot);
-> > +
-> > +	return ret;
-> > +}
+> Initialise the completions when you allocate them (and there's no need
+> to re-init here).
+>
 
-Johan
+You are right, but I think we need a reinit_completion(). Technically
+we don't, as we don't use complete_all(), but I feel it is cleaner
+that way. I will move the initialization in probe and add the
+reinit_completion() in free_rx_slot. Is that OK with you?
