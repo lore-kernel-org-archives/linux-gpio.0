@@ -1,51 +1,63 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 3/4 v2] mmc: host: switch OF parser to use gpio descriptors
-Date: Tue, 9 Sep 2014 14:29:35 +0200
-Message-ID: <CAPDyKFpXqQLH0mBJ1skQ0sSD_BPg9dN4zkcx19wDUi=Jea4hPQ@mail.gmail.com>
-References: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org>
-	<1409137253-25189-3-git-send-email-linus.walleij@linaro.org>
-	<CACRpkdasOHPvb8ev5BrT4LPVYSJYATXnpRjazdAupb6zy4-NrA@mail.gmail.com>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH 1/4 v3] GPIO: gpio-dwapb: Enable platform driver binding
+ to MFD driver
+Date: Tue, 09 Sep 2014 10:05:33 -0700
+Message-ID: <D034802C.A7BEE%dvhart@linux.intel.com>
+References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com>
+ <1410286081-16653-2-git-send-email-alvin.chen@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdasOHPvb8ev5BrT4LPVYSJYATXnpRjazdAupb6zy4-NrA@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain;
+	charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:58226 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752840AbaIIRGc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 9 Sep 2014 13:06:32 -0400
+In-Reply-To: <1410286081-16653-2-git-send-email-alvin.chen@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Weike Chen <alvin.chen@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
 
-On 9 September 2014 09:05, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Aug 27, 2014 at 1:00 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->
->> This switches the central MMC OF parser to use gpio descriptors
->> instead of grabbing GPIOs explicitly from the device tree.
->> This strips out an unecessary use of the integer-based GPIO
->> API that we want to get rid of, cuts down on code as the
->> gpio descriptor code will handle active low flags.
->>
->> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> ChangeLog v1->v2:
->> - Restore error reporting as done in previous stand-alone
->>   patch.
->
-> Hi Ulf,
->
-> the v2 version of this patch set should be working fine on
-> v3.17-rc4, as I merged a patch setting up the correct
-> prototypes for systems without gpiolib.
->
-> Fenguang's build tests are working on it atleast, I promise...
->
-> Tell me if you want me to resend the patch set or if you can
-> take the same patches again, but on top of -rc4. There is
-> no change in them.
->
+On 9/9/14, 11:07, "Weike Chen" <alvin.chen@intel.com> wrote:
 
-Hi Linus,
+>The Synopsys DesignWare APB GPIO driver only supports open firmware
+>devices.
+>But, like Intel Quark X1000 SOC, which has a single PCI function exporting
+>a GPIO and an I2C controller, it is a Multifunction device. This patch is
+>to enable the current Synopsys DesignWare APB GPIO driver to support the
+>Multifunction device which exports the designware GPIO controller.
+>
+>Reviewed-by: Hock Leong Kweh <hock.leong.kweh@intel.com>
+>Signed-off-by: Weike Chen <alvin.chen@intel.com>
+>---
+> drivers/gpio/Kconfig                     |    1 -
+> drivers/gpio/gpio-dwapb.c                |  226
+>++++++++++++++++++++++--------
+> include/linux/platform_data/gpio-dwapb.h |   32 +++++
+> 3 files changed, 201 insertions(+), 58 deletions(-)
+> create mode 100644 include/linux/platform_data/gpio-dwapb.h
+>
+>diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>index 9de1515..8250a44 100644
+>--- a/drivers/gpio/Kconfig
+>+++ b/drivers/gpio/Kconfig
+>@@ -136,7 +136,6 @@ config GPIO_DWAPB
+> 	tristate "Synopsys DesignWare APB GPIO driver"
+> 	select GPIO_GENERIC
+> 	select GENERIC_IRQ_CHIP
+>-	depends on OF_GPIO
 
-I have re-applied them again, let's hope for better luck this time. :-)
+You cover this specific dependencies with inline ifdefs, but you lose the
+CONFIG_OF depends by dropping it, and there are no such checks in the
+probe routine. Assumptions of OF are not limited to probe in this driver.
 
-Kind regards
-Uffe
+While I would like to see this assumption properly abstracted, the most
+expedient/immediate fix is probably to add a depends on OF above.
+
+--
+Darren
+Intel Open Source Technology Center
+
+
