@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 17/26] gpio: wm8994: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:42 +0530
-Message-ID: <1410258591-28248-18-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 21/26] gpio: lantiq: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:46 +0530
+Message-ID: <1410258591-28248-22-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:38042 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756319AbaIIKaa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:30 -0400
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:24220 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756319AbaIIKad (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:33 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,33 +23,25 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-wm8994.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/gpio/gpio-mm-lantiq.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-wm8994.c b/drivers/gpio/gpio-wm8994.c
-index 6f5e42d..4f4a488 100644
---- a/drivers/gpio/gpio-wm8994.c
-+++ b/drivers/gpio/gpio-wm8994.c
-@@ -295,18 +295,7 @@ static struct platform_driver wm8994_gpio_driver = {
- 	.probe		= wm8994_gpio_probe,
- 	.remove		= wm8994_gpio_remove,
+diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
+index 2983dfb..142f638 100644
+--- a/drivers/gpio/gpio-mm-lantiq.c
++++ b/drivers/gpio/gpio-mm-lantiq.c
+@@ -149,10 +149,4 @@ static struct platform_driver ltq_mm_driver = {
+ 		.of_match_table = ltq_mm_match,
+ 	},
  };
 -
--static int __init wm8994_gpio_init(void)
+-static int __init ltq_mm_init(void)
 -{
--	return platform_driver_register(&wm8994_gpio_driver);
+-	return platform_driver_register(&ltq_mm_driver);
 -}
--subsys_initcall(wm8994_gpio_init);
 -
--static void __exit wm8994_gpio_exit(void)
--{
--	platform_driver_unregister(&wm8994_gpio_driver);
--}
--module_exit(wm8994_gpio_exit);
-+module_platform_driver(wm8994_gpio_driver);
- 
- MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
- MODULE_DESCRIPTION("GPIO interface for WM8994");
+-subsys_initcall(ltq_mm_init);
++module_platform_driver(ltq_mm_driver);
 -- 
 1.9.1
 
