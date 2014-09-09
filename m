@@ -1,50 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4 v2] mmc: host: switch OF parser to use gpio descriptors
-Date: Tue, 9 Sep 2014 09:05:47 +0200
-Message-ID: <CACRpkdasOHPvb8ev5BrT4LPVYSJYATXnpRjazdAupb6zy4-NrA@mail.gmail.com>
-References: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org>
-	<1409137253-25189-3-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] x86, gpio: Increase ARCH_NR_GPIOs to 512
+Date: Tue, 9 Sep 2014 09:24:59 +0200
+Message-ID: <CACRpkdb=yO3TbStfEesJCGDL3D_bq6_C0jwPUmKVuE+Otg8G4g@mail.gmail.com>
+References: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:59966 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753381AbaIIHFu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 03:05:50 -0400
-Received: by mail-ob0-f173.google.com with SMTP id uy5so11810276obc.18
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Sep 2014 00:05:50 -0700 (PDT)
-In-Reply-To: <1409137253-25189-3-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Ning Li <ning.li@intel.com>, Alan Cox <alan@linux.intel.com>, Mark Brown <broonie@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Wed, Aug 27, 2014 at 1:00 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Mon, Sep 8, 2014 at 1:47 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-> This switches the central MMC OF parser to use gpio descriptors
-> instead of grabbing GPIOs explicitly from the device tree.
-> This strips out an unecessary use of the integer-based GPIO
-> API that we want to get rid of, cuts down on code as the
-> gpio descriptor code will handle active low flags.
+> Some newer Intel SoCs like Braswell already have more than 256 GPIOs
+> available so the default limit is exceeded. In order to support these add
+> back the custom GPIO header with limit of 512 GPIOs for x86.
 >
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Restore error reporting as done in previous stand-alone
->   patch.
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Hi Ulf,
+Argh! This is the kind of stuff I want to get rid of ....
 
-the v2 version of this patch set should be working fine on
-v3.17-rc4, as I merged a patch setting up the correct
-prototypes for systems without gpiolib.
+Preferably gpio should be a subsystem without a lot of hooks all over
+the place with arch-specific modifications for this and that, including
+the max number of GPIOs.
 
-Fenguang's build tests are working on it atleast, I promise...
+I would actually prefer if you bump the value in
+include/asm-generic/gpio.h to 512 over this.
 
-Tell me if you want me to resend the patch set or if you can
-take the same patches again, but on top of -rc4. There is
-no change in them.
+But better still, now that we have descriptors etc would be to define
+some new per-arch selectable config option like
+CONFIG_ONLY_DYNAMIC_GPIO that changes the GPIO
+core to use something like a radix tree to store and retrieve
+descriptors.
+
+I.e. in drivers/gpio/gpiolib.c get rid of this:
+static struct gpio_desc gpio_desc[ARCH_NR_GPIOS];
+
+Replace it with a radix tree of descriptors.
+
+This however makes it *impossible* to use things like desc_to_gpio()
+and/or gpio_to_desc() so the code has to be augmented all over the
+place to avoid any uses of GPIO numbers on that architecture,
+but I am sure it *can* be done on pure ACPI or device tree
+systems, and that's what we should aim for.
+
+Comments?
 
 Yours,
 Linus Walleij
