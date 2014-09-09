@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 10/26] gpio: tc3589x: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:35 +0530
-Message-ID: <1410258591-28248-11-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 16/26] gpio: wm8350: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:41 +0530
+Message-ID: <1410258591-28248-17-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:49377 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932424AbaIIKaQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:16 -0400
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:59149 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756320AbaIIKa0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:26 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,33 +23,33 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-tc3589x.c | 13 +------------
+ drivers/gpio/gpio-wm8350.c | 13 +------------
  1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
-index 7324869..b67016f 100644
---- a/drivers/gpio/gpio-tc3589x.c
-+++ b/drivers/gpio/gpio-tc3589x.c
-@@ -328,18 +328,7 @@ static struct platform_driver tc3589x_gpio_driver = {
- 	.probe		= tc3589x_gpio_probe,
- 	.remove		= tc3589x_gpio_remove,
+diff --git a/drivers/gpio/gpio-wm8350.c b/drivers/gpio/gpio-wm8350.c
+index 060b893..7016eef 100644
+--- a/drivers/gpio/gpio-wm8350.c
++++ b/drivers/gpio/gpio-wm8350.c
+@@ -155,18 +155,7 @@ static struct platform_driver wm8350_gpio_driver = {
+ 	.probe		= wm8350_gpio_probe,
+ 	.remove		= wm8350_gpio_remove,
  };
 -
--static int __init tc3589x_gpio_init(void)
+-static int __init wm8350_gpio_init(void)
 -{
--	return platform_driver_register(&tc3589x_gpio_driver);
+-	return platform_driver_register(&wm8350_gpio_driver);
 -}
--subsys_initcall(tc3589x_gpio_init);
+-subsys_initcall(wm8350_gpio_init);
 -
--static void __exit tc3589x_gpio_exit(void)
+-static void __exit wm8350_gpio_exit(void)
 -{
--	platform_driver_unregister(&tc3589x_gpio_driver);
+-	platform_driver_unregister(&wm8350_gpio_driver);
 -}
--module_exit(tc3589x_gpio_exit);
-+module_platform_driver(tc3589x_gpio_driver);
+-module_exit(wm8350_gpio_exit);
++module_platform_driver(wm8350_gpio_driver);
  
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("TC3589x GPIO driver");
+ MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
+ MODULE_DESCRIPTION("GPIO interface for WM8350 PMICs");
 -- 
 1.9.1
 
