@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 16/26] gpio: wm8350: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:41 +0530
-Message-ID: <1410258591-28248-17-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 14/26] gpio: twl4030: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:39 +0530
+Message-ID: <1410258591-28248-15-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:59149 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756320AbaIIKa0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:26 -0400
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:38042 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756319AbaIIKa1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:27 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,33 +23,33 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-wm8350.c | 13 +------------
+ drivers/gpio/gpio-twl4030.c | 13 +------------
  1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-wm8350.c b/drivers/gpio/gpio-wm8350.c
-index 060b893..7016eef 100644
---- a/drivers/gpio/gpio-wm8350.c
-+++ b/drivers/gpio/gpio-wm8350.c
-@@ -155,18 +155,7 @@ static struct platform_driver wm8350_gpio_driver = {
- 	.probe		= wm8350_gpio_probe,
- 	.remove		= wm8350_gpio_remove,
+diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
+index 118828b..b6aa502 100644
+--- a/drivers/gpio/gpio-twl4030.c
++++ b/drivers/gpio/gpio-twl4030.c
+@@ -611,18 +611,7 @@ static struct platform_driver gpio_twl4030_driver = {
+ 	.probe		= gpio_twl4030_probe,
+ 	.remove		= gpio_twl4030_remove,
  };
 -
--static int __init wm8350_gpio_init(void)
+-static int __init gpio_twl4030_init(void)
 -{
--	return platform_driver_register(&wm8350_gpio_driver);
+-	return platform_driver_register(&gpio_twl4030_driver);
 -}
--subsys_initcall(wm8350_gpio_init);
+-subsys_initcall(gpio_twl4030_init);
 -
--static void __exit wm8350_gpio_exit(void)
+-static void __exit gpio_twl4030_exit(void)
 -{
--	platform_driver_unregister(&wm8350_gpio_driver);
+-	platform_driver_unregister(&gpio_twl4030_driver);
 -}
--module_exit(wm8350_gpio_exit);
-+module_platform_driver(wm8350_gpio_driver);
+-module_exit(gpio_twl4030_exit);
++module_platform_driver(gpio_twl4030_driver);
  
- MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
- MODULE_DESCRIPTION("GPIO interface for WM8350 PMICs");
+ MODULE_AUTHOR("Texas Instruments, Inc.");
+ MODULE_DESCRIPTION("GPIO interface for TWL4030");
 -- 
 1.9.1
 
