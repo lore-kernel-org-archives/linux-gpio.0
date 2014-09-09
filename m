@@ -1,55 +1,62 @@
-From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 23/26] gpio: rc5t583: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:48 +0530
-Message-ID: <1410258591-28248-24-git-send-email-kamlakant.patel@linaro.org>
-References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: Re: [PATCH v3 3/3] gpio: add support for the Diolan DLN-2 USB GPIO driver
+Date: Tue, 9 Sep 2014 13:27:01 +0300
+Message-ID: <CAE1zotJ8rZTvtSoWAz+upAo64OxWVMGRj-Bivy5QFv57cQ8bJw@mail.gmail.com>
+References: <1409930279-1382-1-git-send-email-octavian.purdila@intel.com>
+	<1409930279-1382-4-git-send-email-octavian.purdila@intel.com>
+	<20140905153835.GC13242@localhost>
+	<CAE1zotK4QkA9PWW=uOmM-j=N=MNuBt1v3CgdA+GXctdFUZ3QKA@mail.gmail.com>
+	<20140909093606.GB2974@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:16234 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756724AbaIIKae (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:34 -0400
-In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140909093606.GB2974@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, wsa@the-dreams.de, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org
 
-From: Kamlakant Patel <kamlakant.patel@linaro.org>
+On Tue, Sep 9, 2014 at 12:36 PM, Johan Hovold <johan@kernel.org> wrote:
+> On Fri, Sep 05, 2014 at 07:04:51PM +0300, Octavian Purdila wrote:
+>> On Fri, Sep 5, 2014 at 6:38 PM, Johan Hovold <johan@kernel.org> wrote:
+>> > On Fri, Sep 05, 2014 at 06:17:59PM +0300, Octavian Purdila wrote:
+>
+>> > In general, how well have these patches been tested with disconnect
+>> > events? At least gpiolib is known to blow up (sooner or later) when a
+>> > gpiochip is removed when having requested gpios.
+>>
+>> I do disconnect tests regularly. Since switching to the new irq
+>> interface the following patch is needed:
+>>
+>> https://lkml.org/lkml/2014/9/5/408
+>>
+>> With it and the current patch sets things seems to work well.
+>
+> I see no comments from Linus W on that patch?
+>
+> And I can confirm that things do blow up.
+>
+> After disconnecting while having a gpio exported, I get the familiar
+> OOPS below when reconnecting the device.
+>
+> This has also been reported here:
+>
+>         https://lkml.org/lkml/2014/8/4/303
+>
 
-Convert *_initcall based probing of GPIO drivers to regular
-module_init based probe.
+Hi Johan,
 
-Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
----
- drivers/gpio/gpio-rc5t583.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+I did not test with gpio exported via sysfs, only with an i2c driver
+that requests a gpio irq. That works because when the i2c bus gets
+removed the i2c device gets removed as well and that drops the
+requested irq which frees the gpio.
 
-diff --git a/drivers/gpio/gpio-rc5t583.c b/drivers/gpio/gpio-rc5t583.c
-index 769233d..1074f99 100644
---- a/drivers/gpio/gpio-rc5t583.c
-+++ b/drivers/gpio/gpio-rc5t583.c
-@@ -160,18 +160,7 @@ static struct platform_driver rc5t583_gpio_driver = {
- 	.probe		= rc5t583_gpio_probe,
- 	.remove		= rc5t583_gpio_remove,
- };
--
--static int __init rc5t583_gpio_init(void)
--{
--	return platform_driver_register(&rc5t583_gpio_driver);
--}
--subsys_initcall(rc5t583_gpio_init);
--
--static void __exit rc5t583_gpio_exit(void)
--{
--	platform_driver_unregister(&rc5t583_gpio_driver);
--}
--module_exit(rc5t583_gpio_exit);
-+module_platform_driver(rc5t583_gpio_driver);
- 
- MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
- MODULE_DESCRIPTION("GPIO interface for RC5T583");
--- 
-1.9.1
+I do see your point with exporting a gpio via sysfs. So I will drop
+the remove retry from the patch.
 
+However, I think the above mentioned patch is worth merging as it is
+simple enough and it fixes a couple of issues in the gpio remove path.
+But I guess we can discuss this in that thread, when Linus W gets to
+it.
+
+And thanks a lot for spending so much time on reviewing these patches.
