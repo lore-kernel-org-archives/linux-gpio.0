@@ -1,53 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: "H. Peter Anvin" <hpa@zytor.com>
 Subject: Re: [PATCH 1/2] x86, gpio: Increase ARCH_NR_GPIOs to 512
-Date: Tue, 9 Sep 2014 09:24:59 +0200
-Message-ID: <CACRpkdb=yO3TbStfEesJCGDL3D_bq6_C0jwPUmKVuE+Otg8G4g@mail.gmail.com>
-References: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Date: Tue, 9 Sep 2014 00:41:47 -0700
+Message-ID: <8B06FF90-41FC-49F8-B330-EC3911BEA2AE@zytor.com>
+References: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com> <CACRpkdb=yO3TbStfEesJCGDL3D_bq6_C0jwPUmKVuE+Otg8G4g@mail.gmail.com>
+Mime-Version: 1.0 (1.0)
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com>
+In-Reply-To: <CACRpkdb=yO3TbStfEesJCGDL3D_bq6_C0jwPUmKVuE+Otg8G4g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Ning Li <ning.li@intel.com>, Alan Cox <alan@linux.intel.com>, Mark Brown <broonie@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>, Ning Li <ning.li@intel.com>, Alan Cox <alan@linux.intel.com>, Mark Brown <broonie@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 8, 2014 at 1:47 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+Isn't this exactly what ida is for?
 
-> Some newer Intel SoCs like Braswell already have more than 256 GPIOs
-> available so the default limit is exceeded. In order to support these add
-> back the custom GPIO header with limit of 512 GPIOs for x86.
->
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Sent from my tablet, pardon any formatting problems.
 
-Argh! This is the kind of stuff I want to get rid of ....
-
-Preferably gpio should be a subsystem without a lot of hooks all over
-the place with arch-specific modifications for this and that, including
-the max number of GPIOs.
-
-I would actually prefer if you bump the value in
-include/asm-generic/gpio.h to 512 over this.
-
-But better still, now that we have descriptors etc would be to define
-some new per-arch selectable config option like
-CONFIG_ONLY_DYNAMIC_GPIO that changes the GPIO
-core to use something like a radix tree to store and retrieve
-descriptors.
-
-I.e. in drivers/gpio/gpiolib.c get rid of this:
-static struct gpio_desc gpio_desc[ARCH_NR_GPIOS];
-
-Replace it with a radix tree of descriptors.
-
-This however makes it *impossible* to use things like desc_to_gpio()
-and/or gpio_to_desc() so the code has to be augmented all over the
-place to avoid any uses of GPIO numbers on that architecture,
-but I am sure it *can* be done on pure ACPI or device tree
-systems, and that's what we should aim for.
-
-Comments?
-
-Yours,
-Linus Walleij
+> On Sep 9, 2014, at 0:24, Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+> On Mon, Sep 8, 2014 at 1:47 PM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> 
+>> Some newer Intel SoCs like Braswell already have more than 256 GPIOs
+>> available so the default limit is exceeded. In order to support these add
+>> back the custom GPIO header with limit of 512 GPIOs for x86.
+>> 
+>> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Argh! This is the kind of stuff I want to get rid of ....
+> 
+> Preferably gpio should be a subsystem without a lot of hooks all over
+> the place with arch-specific modifications for this and that, including
+> the max number of GPIOs.
+> 
+> I would actually prefer if you bump the value in
+> include/asm-generic/gpio.h to 512 over this.
+> 
+> But better still, now that we have descriptors etc would be to define
+> some new per-arch selectable config option like
+> CONFIG_ONLY_DYNAMIC_GPIO that changes the GPIO
+> core to use something like a radix tree to store and retrieve
+> descriptors.
+> 
+> I.e. in drivers/gpio/gpiolib.c get rid of this:
+> static struct gpio_desc gpio_desc[ARCH_NR_GPIOS];
+> 
+> Replace it with a radix tree of descriptors.
+> 
+> This however makes it *impossible* to use things like desc_to_gpio()
+> and/or gpio_to_desc() so the code has to be augmented all over the
+> place to avoid any uses of GPIO numbers on that architecture,
+> but I am sure it *can* be done on pure ACPI or device tree
+> systems, and that's what we should aim for.
+> 
+> Comments?
+> 
+> Yours,
+> Linus Walleij
