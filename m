@@ -1,65 +1,102 @@
-From: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
-Subject: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
-Date: Tue, 9 Sep 2014 15:12:25 +0800
-Message-ID: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 2/3] i2c: add support for Diolan DLN-2 USB-I2C adapter
+Date: Tue, 9 Sep 2014 09:20:29 +0100
+Message-ID: <20140909082029.GJ30307@lee--X1>
+References: <1409930279-1382-1-git-send-email-octavian.purdila@intel.com>
+ <1409930279-1382-3-git-send-email-octavian.purdila@intel.com>
+ <20140908144447.GD9560@localhost>
+ <CAE1zot+R25OAu9d9WB2tOFqO9J9m-Vwo25msn6TD2HxseBTUzQ@mail.gmail.com>
+ <20140908163058.GF9560@localhost>
+ <CAE1zotJomxwAJA3aXm9MHnHd5Pg9V=K7XaptOPWkArV0jio4DQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cnbjrel01.sonyericsson.com ([219.141.167.165]:4170 "EHLO
-	cnbjrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756013AbaIIHWm convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 9 Sep 2014 03:22:42 -0400
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAE1zotJomxwAJA3aXm9MHnHd5Pg9V=K7XaptOPWkArV0jio4DQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, wsa@the-dreams.de, Samuel Ortiz <sameo@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "'linus.walleij@linaro.org'" <linus.walleij@linaro.org>, "'gnurou@gmail.com'" <gnurou@gmail.com>, "'linux-gpio@vger.kernel.org'" <linux-gpio@vger.kernel.org>, "'akpm@linux-foundation.org'" <akpm@linux-foundation.org>
 
-this patch change use from irq_create_mapping to irq_alloc_descs_from,
-use irq_create_mapping to alloc virq one by one is not safe,
-it can't promise the allcated virqs are continuous,
-in stead, we use irq_alloc_descs_from() to alloc virqs in one time,
-so that the allocated virqs are in continuous bitmaps.
+On Mon, 08 Sep 2014, Octavian Purdila wrote:
 
-Signed-off-by: Yalin Wang <yalin.wang@sonymobile.com>
----
- drivers/gpio/gpiolib.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+> On Mon, Sep 8, 2014 at 7:30 PM, Johan Hovold <johan@kernel.org> wrote=
+:
+> > On Mon, Sep 08, 2014 at 06:57:29PM +0300, Octavian Purdila wrote:
+> >> On Mon, Sep 8, 2014 at 5:44 PM, Johan Hovold <johan@kernel.org> wr=
+ote:
+> >>
+> >> <snip>
+> >>
+> >> Hi Johan,
+> >>
+> >> Again, thanks for the detailed review, I am addressing your review
+> >> comments as we speak. Some questions below.
+> >>
+> >> <snip>
+> >>
+> >> > > +     int ret, len;
+> >> > > +     struct tx_data {
+> >> > > +             u8 port;
+> >> > > +             u8 addr;
+> >> > > +             u8 mem_addr_len;
+> >> > > +             __le32 mem_addr;
+> >> > > +             __le16 buf_len;
+> >> > > +             u8 buf[DLN2_I2C_MAX_XFER_SIZE];
+> >> > > +     } __packed tx;
+> >> >
+> >> > Allocate these buffers dynamically (possibly at probe).
+> >> >
+> >>
+> >> I double checked this, and DLN2_I2C_MAX_XFER_SIZE should actually =
+be <
+> >> 64 as the USB endpoint configuration max packet size is 64. In thi=
+s
+> >> case, can we keep it on the stack?
+> >
+> > It's better to lift that restriction and allocate it dynamically. U=
+sing
+> > larger buffers (> EP size) is also more efficient.
+> >
+> >> <snip>
+> >>
+> >> > > +     int ret, buf_len, rx_len =3D sizeof(rx);
+> >> >
+> >> > Again, one declaration per line.
+> >>
+> >> AFAICS there are many places where declaration on the same line
+> >> (initialization included) are used. When did this became a coding
+> >> style issue?
+> >
+> > It's ugly, hurts readability, and can also obfuscate the fact that =
+your
+> > function really needs to be refactored.
+> >
+> > And it's in the CodingStyle:
+> >
+> >         "To this end, use just one data declaration per line (no co=
+mmas
+> >         for multiple data declarations)."
+> >
+>=20
+> OK, I always thought that was for when declaring structures/unions.
+> Just one more question on this subject: is the following allowed:
+>=20
+> int ret, len;
+>=20
+> or should it be:
+>=20
+> int ret;
+> int len;
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 15cc0bb..2b6c441 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -566,7 +566,6 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 			 unsigned int type)
- {
- 	struct device_node *of_node;
--	unsigned int offset;
- 	unsigned irq_base = 0;
- 
- 	if (!gpiochip || !irqchip)
-@@ -604,14 +603,13 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	 * any gpiochip calls. If the first_irq was zero, this is
- 	 * necessary to allocate descriptors for all IRQs.
- 	 */
--	for (offset = 0; offset < gpiochip->ngpio; offset++) {
--		irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
--		if (offset == 0)
--			/*
--			 * Store the base into the gpiochip to be used when
--			 * unmapping the irqs.
--			 */
--			gpiochip->irq_base = irq_base;
-+	if (first_irq > 0) {
-+		gpiochip->irq_base = first_irq;
-+	} else {
-+		gpiochip->irq_base = irq_alloc_descs_from(1, gpiochip->ngpio,
-+				of_node_to_nid(of_node));
-+		irq_domain_associate_many(gpiochip->irqdomain,
-+				gpiochip->irq_base, 0, gpiochip->ngpio);
- 	}
- 
- 	acpi_gpiochip_request_interrupts(gpiochip);
--- 
-2.1.0
+Common sense usually prevails here.  I sometimes bunch up the really
+simple/obvious/throw-away variables like; i, j, k, ret, val etc,
+especially when there are a lot of variables in use, but it's nicer to
+see the less used, more complex ones on separate lines.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
