@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 15/26] gpio: wm831x: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:40 +0530
-Message-ID: <1410258591-28248-16-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 20/26] gpio: lynxpoint: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:45 +0530
+Message-ID: <1410258591-28248-21-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:38042 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756319AbaIIKa0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:26 -0400
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:16234 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756722AbaIIKac (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:32 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,33 +23,34 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-wm831x.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/gpio/gpio-lynxpoint.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
-index 58ce75c..22d4b17 100644
---- a/drivers/gpio/gpio-wm831x.c
-+++ b/drivers/gpio/gpio-wm831x.c
-@@ -289,18 +289,7 @@ static struct platform_driver wm831x_gpio_driver = {
- 	.probe		= wm831x_gpio_probe,
- 	.remove		= wm831x_gpio_remove,
+diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
+index fa945ec..1b676f3 100644
+--- a/drivers/gpio/gpio-lynxpoint.c
++++ b/drivers/gpio/gpio-lynxpoint.c
+@@ -455,19 +455,7 @@ static struct platform_driver lp_gpio_driver = {
+ 		.acpi_match_table = ACPI_PTR(lynxpoint_gpio_acpi_match),
+ 	},
  };
 -
--static int __init wm831x_gpio_init(void)
+-static int __init lp_gpio_init(void)
 -{
--	return platform_driver_register(&wm831x_gpio_driver);
+-	return platform_driver_register(&lp_gpio_driver);
 -}
--subsys_initcall(wm831x_gpio_init);
 -
--static void __exit wm831x_gpio_exit(void)
+-static void __exit lp_gpio_exit(void)
 -{
--	platform_driver_unregister(&wm831x_gpio_driver);
+-	platform_driver_unregister(&lp_gpio_driver);
 -}
--module_exit(wm831x_gpio_exit);
-+module_platform_driver(wm831x_gpio_driver);
+-
+-subsys_initcall(lp_gpio_init);
+-module_exit(lp_gpio_exit);
++module_platform_driver(lp_gpio_driver);
  
- MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
- MODULE_DESCRIPTION("GPIO interface for WM831x PMICs");
+ MODULE_AUTHOR("Mathias Nyman (Intel)");
+ MODULE_DESCRIPTION("GPIO interface for Intel Lynxpoint");
 -- 
 1.9.1
 
