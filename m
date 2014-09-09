@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 21/26] gpio: lantiq: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:46 +0530
-Message-ID: <1410258591-28248-22-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 18/26] gpio: zynq: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:43 +0530
+Message-ID: <1410258591-28248-19-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:24220 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756319AbaIIKad (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:33 -0400
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:16234 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756620AbaIIKaa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:30 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,25 +23,32 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-mm-lantiq.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/gpio/gpio-zynq.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
-index 2983dfb..142f638 100644
---- a/drivers/gpio/gpio-mm-lantiq.c
-+++ b/drivers/gpio/gpio-mm-lantiq.c
-@@ -149,10 +149,4 @@ static struct platform_driver ltq_mm_driver = {
- 		.of_match_table = ltq_mm_match,
- 	},
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 31ad5df..a112600 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -695,17 +695,7 @@ static struct platform_driver zynq_gpio_driver = {
+ 	.probe = zynq_gpio_probe,
+ 	.remove = zynq_gpio_remove,
  };
 -
--static int __init ltq_mm_init(void)
+-/**
+- * zynq_gpio_init - Initial driver registration call
+- *
+- * Return: value from platform_driver_register
+- */
+-static int __init zynq_gpio_init(void)
 -{
--	return platform_driver_register(&ltq_mm_driver);
+-	return platform_driver_register(&zynq_gpio_driver);
 -}
--
--subsys_initcall(ltq_mm_init);
-+module_platform_driver(ltq_mm_driver);
+-postcore_initcall(zynq_gpio_init);
++module_platform_driver(zynq_gpio_driver);
+ 
+ MODULE_AUTHOR("Xilinx Inc.");
+ MODULE_DESCRIPTION("Zynq GPIO driver");
 -- 
 1.9.1
 
