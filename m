@@ -1,54 +1,38 @@
-From: "Chen, Alvin" <alvin.chen@intel.com>
-Subject: RE: [PATCH 1/3 v2] GPIO: gpio-dwapb: Enable platform driver binding
- to MFD driver
-Date: Tue, 9 Sep 2014 01:50:42 +0000
-Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E983296@SHSMSX101.ccr.corp.intel.com>
-References: <1409928798-31895-1-git-send-email-alvin.chen@intel.com>
- <4656BEB6164FC34F8171C6538F1A595B2E9829DA@SHSMSX101.ccr.corp.intel.com>
- <1409918522.30155.89.camel@intel.com> <31986364.cn091cmIXU@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:55642 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755387AbaIIBur convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Sep 2014 21:50:47 -0400
-In-Reply-To: <31986364.cn091cmIXU@wuerfel>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+From: Aaron Lu <aaron.lu@intel.com>
+Subject: [PATCH 0/2] Support CrystalCove PMIC ACPI operation region
+Date: Tue,  9 Sep 2014 10:26:00 +0800
+Message-ID: <1410229562-11507-1-git-send-email-aaron.lu@intel.com>
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, =?UTF-8?q?Daniel=20Gl=C3=B6ckner?= <dg@emlix.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "sebastian@breakpoint.cc" <sebastian@breakpoint.cc>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>, "atull@opensource.altera.com" <atull@opensource.altera.com>
 
-> On Friday 05 September 2014 12:02:01 Shevchenko, Andriy wrote:
-> > > irq = irq_of_parse_and_map(node, 0); If (!irq) {
-> > > pp->irq = -1;
-> > > return;
-> > > } else {
-> > > pp->irq = irq;
-> > > }
-> > > Then the code looks strange.
-> > >
-> > > How do you think?
-> >
-> > If I understood correctly you messed up with hwirq vs. virq.
-> > Otherwise you have mention that you are using virq everywhere (I guess
-> > you may rename the field in the structure), but in this case the field
-> > in the platform_data looks a bit strange.
-> 
-> The field in platform_data should be the mapped virtual irq number, it makes no
-> sense to use the hwirq unless you also add a pointer to the domain in which
-> that hwirq exists.
-> 
-> Also the output of irq_of_parse_and_map() is a mapped irq, as the name
-> suggests.
-> 
-I agree with Arnd. Here, the 'irq' is 'virq'.
-Andriy, you may be confused by the code like 'irq_create_mapping'. For Quark case, it has 8 GPIO pins, and each pin can trigger
-interrupt, but all these interrupts are triggered by PCI irq which is shared. The 'irq' in pdata is PCI irq. As all GPIO interrupts connect to the PCI
-irq, once the GPIO interrupt is triggered, and the PCI irq handler will be called 'dwapb_irq_handler_mfd'. And in 'dwapb_do_irq', it will read the
-interrupt register to see the interrupt is triggered by which GPIO pin, and 'irq_create_mapping' is for this case.
+The two patches add support for CrystalCove PMIC ACPI operation region.
+The PMIC chip has two customized operation regions: one for power rail
+manipulation and one for thermal purpose: sensor temperature reading
+and trip point value reading/setting.
 
+For an example ASL code on ASUS T100 with CrystalCove PMIC, see here:
+https://gist.github.com/aaronlu/f5f65771a6c3251fae5d
 
-.
+Aaron Lu (2):
+  gpio / CrystalCove: support virtual GPIO
+  PMIC / opregion: support PMIC customized operation region for
+    CrystalCove
+
+ drivers/gpio/gpio-crystalcove.c           |  19 +-
+ drivers/mfd/Kconfig                       |  11 +
+ drivers/mfd/Makefile                      |   1 +
+ drivers/mfd/intel_soc_pmic_crc.c          |   3 +
+ drivers/mfd/intel_soc_pmic_crc_opregion.c | 229 +++++++++++++++++++
+ drivers/mfd/intel_soc_pmic_opregion.c     | 350 ++++++++++++++++++++++++++++++
+ drivers/mfd/intel_soc_pmic_opregion.h     |  35 +++
+ include/asm-generic/gpio.h                |   2 +-
+ 8 files changed, 646 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/mfd/intel_soc_pmic_crc_opregion.c
+ create mode 100644 drivers/mfd/intel_soc_pmic_opregion.c
+ create mode 100644 drivers/mfd/intel_soc_pmic_opregion.h
+
+-- 
+1.9.3
