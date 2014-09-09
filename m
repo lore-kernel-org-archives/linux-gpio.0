@@ -1,61 +1,65 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH 1/2] x86, gpio: Increase ARCH_NR_GPIOs to 512
-Date: Tue, 9 Sep 2014 00:41:47 -0700
-Message-ID: <8B06FF90-41FC-49F8-B330-EC3911BEA2AE@zytor.com>
-References: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com> <CACRpkdb=yO3TbStfEesJCGDL3D_bq6_C0jwPUmKVuE+Otg8G4g@mail.gmail.com>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb=yO3TbStfEesJCGDL3D_bq6_C0jwPUmKVuE+Otg8G4g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>, Ning Li <ning.li@intel.com>, Alan Cox <alan@linux.intel.com>, Mark Brown <broonie@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
+Subject: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
+Date: Tue, 9 Sep 2014 15:12:25 +0800
+Message-ID: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from cnbjrel01.sonyericsson.com ([219.141.167.165]:4170 "EHLO
+	cnbjrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756013AbaIIHWm convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 9 Sep 2014 03:22:42 -0400
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "'linus.walleij@linaro.org'" <linus.walleij@linaro.org>, "'gnurou@gmail.com'" <gnurou@gmail.com>, "'linux-gpio@vger.kernel.org'" <linux-gpio@vger.kernel.org>, "'akpm@linux-foundation.org'" <akpm@linux-foundation.org>
 
-Isn't this exactly what ida is for?
+this patch change use from irq_create_mapping to irq_alloc_descs_from,
+use irq_create_mapping to alloc virq one by one is not safe,
+it can't promise the allcated virqs are continuous,
+in stead, we use irq_alloc_descs_from() to alloc virqs in one time,
+so that the allocated virqs are in continuous bitmaps.
 
-Sent from my tablet, pardon any formatting problems.
+Signed-off-by: Yalin Wang <yalin.wang@sonymobile.com>
+---
+ drivers/gpio/gpiolib.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-> On Sep 9, 2014, at 0:24, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> On Mon, Sep 8, 2014 at 1:47 PM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> 
->> Some newer Intel SoCs like Braswell already have more than 256 GPIOs
->> available so the default limit is exceeded. In order to support these add
->> back the custom GPIO header with limit of 512 GPIOs for x86.
->> 
->> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> 
-> Argh! This is the kind of stuff I want to get rid of ....
-> 
-> Preferably gpio should be a subsystem without a lot of hooks all over
-> the place with arch-specific modifications for this and that, including
-> the max number of GPIOs.
-> 
-> I would actually prefer if you bump the value in
-> include/asm-generic/gpio.h to 512 over this.
-> 
-> But better still, now that we have descriptors etc would be to define
-> some new per-arch selectable config option like
-> CONFIG_ONLY_DYNAMIC_GPIO that changes the GPIO
-> core to use something like a radix tree to store and retrieve
-> descriptors.
-> 
-> I.e. in drivers/gpio/gpiolib.c get rid of this:
-> static struct gpio_desc gpio_desc[ARCH_NR_GPIOS];
-> 
-> Replace it with a radix tree of descriptors.
-> 
-> This however makes it *impossible* to use things like desc_to_gpio()
-> and/or gpio_to_desc() so the code has to be augmented all over the
-> place to avoid any uses of GPIO numbers on that architecture,
-> but I am sure it *can* be done on pure ACPI or device tree
-> systems, and that's what we should aim for.
-> 
-> Comments?
-> 
-> Yours,
-> Linus Walleij
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 15cc0bb..2b6c441 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -566,7 +566,6 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 			 unsigned int type)
+ {
+ 	struct device_node *of_node;
+-	unsigned int offset;
+ 	unsigned irq_base = 0;
+ 
+ 	if (!gpiochip || !irqchip)
+@@ -604,14 +603,13 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 	 * any gpiochip calls. If the first_irq was zero, this is
+ 	 * necessary to allocate descriptors for all IRQs.
+ 	 */
+-	for (offset = 0; offset < gpiochip->ngpio; offset++) {
+-		irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
+-		if (offset == 0)
+-			/*
+-			 * Store the base into the gpiochip to be used when
+-			 * unmapping the irqs.
+-			 */
+-			gpiochip->irq_base = irq_base;
++	if (first_irq > 0) {
++		gpiochip->irq_base = first_irq;
++	} else {
++		gpiochip->irq_base = irq_alloc_descs_from(1, gpiochip->ngpio,
++				of_node_to_nid(of_node));
++		irq_domain_associate_many(gpiochip->irqdomain,
++				gpiochip->irq_base, 0, gpiochip->ngpio);
+ 	}
+ 
+ 	acpi_gpiochip_request_interrupts(gpiochip);
+-- 
+2.1.0
