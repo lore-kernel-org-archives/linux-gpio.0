@@ -1,63 +1,94 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: [PATCH 1/4 v3] GPIO: gpio-dwapb: Enable platform driver binding
- to MFD driver
-Date: Tue, 09 Sep 2014 10:05:33 -0700
-Message-ID: <D034802C.A7BEE%dvhart@linux.intel.com>
-References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com>
- <1410286081-16653-2-git-send-email-alvin.chen@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:58226 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752840AbaIIRGc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 9 Sep 2014 13:06:32 -0400
-In-Reply-To: <1410286081-16653-2-git-send-email-alvin.chen@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: [PATCH v4 0/3] mfd: add support for Diolan DLN-2
+Date: Tue,  9 Sep 2014 22:24:43 +0300
+Message-ID: <1410290686-6680-1-git-send-email-octavian.purdila@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org
+Cc: arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Weike Chen <alvin.chen@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
 
-On 9/9/14, 11:07, "Weike Chen" <alvin.chen@intel.com> wrote:
+This patch series adds support for Diolan USB-I2C/GPIO Master Adapter
+DLN-2. Details about device can be found here:
 
->The Synopsys DesignWare APB GPIO driver only supports open firmware
->devices.
->But, like Intel Quark X1000 SOC, which has a single PCI function exporting
->a GPIO and an I2C controller, it is a Multifunction device. This patch is
->to enable the current Synopsys DesignWare APB GPIO driver to support the
->Multifunction device which exports the designware GPIO controller.
->
->Reviewed-by: Hock Leong Kweh <hock.leong.kweh@intel.com>
->Signed-off-by: Weike Chen <alvin.chen@intel.com>
->---
-> drivers/gpio/Kconfig                     |    1 -
-> drivers/gpio/gpio-dwapb.c                |  226
->++++++++++++++++++++++--------
-> include/linux/platform_data/gpio-dwapb.h |   32 +++++
-> 3 files changed, 201 insertions(+), 58 deletions(-)
-> create mode 100644 include/linux/platform_data/gpio-dwapb.h
->
->diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->index 9de1515..8250a44 100644
->--- a/drivers/gpio/Kconfig
->+++ b/drivers/gpio/Kconfig
->@@ -136,7 +136,6 @@ config GPIO_DWAPB
-> 	tristate "Synopsys DesignWare APB GPIO driver"
-> 	select GPIO_GENERIC
-> 	select GENERIC_IRQ_CHIP
->-	depends on OF_GPIO
+https://www.diolan.com/i2c/i2c_interface.html.
 
-You cover this specific dependencies with inline ifdefs, but you lose the
-CONFIG_OF depends by dropping it, and there are no such checks in the
-probe routine. Assumptions of OF are not limited to probe in this driver.
+Changes since v3:
 
-While I would like to see this assumption properly abstracted, the most
-expedient/immediate fix is probably to add a depends on OF above.
+ * Mostly addressing latest review comments from Johan
 
---
-Darren
-Intel Open Source Technology Center
+ * MFD driver: more message size checks for responses, switched to
+   using unsigned for buffer sizes and use const void * for output
+   buffer for the dln2_transfer() API, more codying style cleanups,
+   renamed DLN2_HANDLE_GPIO_EVENT to DLN2_HANDLE_EVENT
+
+ * MFD driver: turns out the RX buf size was too low for certain I2C
+   drivers (I was seeing request up to 257 bytes), so increase it from
+   64 to 512
+
+ * GPIO driver: revert the retry chip remove change, as there are
+   still issues if the gpio if exported to sysfs; coding style
+   cleanups, correctly clamp no pin numbers to 32, use devm_kzalloc
+   and simplify the error path in probe, cache pin direction to save
+   one transfer when reading the pin value
+
+ * I2C driver: add an i2c port parameter in the platform data
+   (although only one port seems to be supported), make frequency a
+   sysfs attribute instead of a module paramter, coding style
+   cleanups, use devm_kzalloc and simplify the error path in probe,
+   move the I2C buffers from the stack to the dln2_i2c structure (it
+   is enough as we can have only one transfer at a time on the i2c
+   adapter)
+
+Changes since v2:
+
+ * MFD driver: fix a few obsolete comments for the DLN2 I/O API
+
+ * GPIO driver: retry the chip remove call if -EBUSY is returned, see
+   the comments in dln2_do_remove for more details; also removed a
+   redundant !dln2->pdev check from dln2_irq_event - we do it in
+   dln2_transfer already
+
+ * I2C driver: add I2C_FUNC_SMBUS_I2C_BLOCK support
+
+Changes since v1:
+
+ * rewrite the drivers as an MFD
+
+ * rewrite the irq part of the gpio driver to use GPIOLIB_IRQCHIP
+
+ * cleanup the I/O interface
+
+ * various fixes and cleanps: check received message sizes before
+   parsing, error handling for usb_submit_urb, check URB status, use
+   single bit manipulation functions instead of bitmap_*, move
+   GFP_KERNEL URB submit away from under lock
 
 
+Daniel Baluta (1):
+  gpio: add support for the Diolan DLN-2 USB GPIO driver
+
+Laurentiu Palcu (1):
+  i2c: add support for Diolan DLN-2 USB-I2C adapter
+
+Octavian Purdila (1):
+  mfd: add support for Diolan DLN-2 devices
+
+ drivers/gpio/Kconfig          |  12 +
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-dln2.c      | 529 ++++++++++++++++++++++++++++++++
+ drivers/i2c/busses/Kconfig    |  10 +
+ drivers/i2c/busses/Makefile   |   1 +
+ drivers/i2c/busses/i2c-dln2.c | 390 ++++++++++++++++++++++++
+ drivers/mfd/Kconfig           |   9 +
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/dln2.c            | 681 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/dln2.h      |  71 +++++
+ 10 files changed, 1705 insertions(+)
+ create mode 100644 drivers/gpio/gpio-dln2.c
+ create mode 100644 drivers/i2c/busses/i2c-dln2.c
+ create mode 100644 drivers/mfd/dln2.c
+ create mode 100644 include/linux/mfd/dln2.h
+
+-- 
+1.9.1
