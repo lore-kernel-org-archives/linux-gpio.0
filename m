@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 14/26] gpio: twl4030: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:39 +0530
-Message-ID: <1410258591-28248-15-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 15/26] gpio: wm831x: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:40 +0530
+Message-ID: <1410258591-28248-16-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
 Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:38042 "EHLO
 	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756319AbaIIKa1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:27 -0400
+	with ESMTP id S1756319AbaIIKa0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:26 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,33 +23,33 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-twl4030.c | 13 +------------
+ drivers/gpio/gpio-wm831x.c | 13 +------------
  1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
-index 118828b..b6aa502 100644
---- a/drivers/gpio/gpio-twl4030.c
-+++ b/drivers/gpio/gpio-twl4030.c
-@@ -611,18 +611,7 @@ static struct platform_driver gpio_twl4030_driver = {
- 	.probe		= gpio_twl4030_probe,
- 	.remove		= gpio_twl4030_remove,
+diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
+index 58ce75c..22d4b17 100644
+--- a/drivers/gpio/gpio-wm831x.c
++++ b/drivers/gpio/gpio-wm831x.c
+@@ -289,18 +289,7 @@ static struct platform_driver wm831x_gpio_driver = {
+ 	.probe		= wm831x_gpio_probe,
+ 	.remove		= wm831x_gpio_remove,
  };
 -
--static int __init gpio_twl4030_init(void)
+-static int __init wm831x_gpio_init(void)
 -{
--	return platform_driver_register(&gpio_twl4030_driver);
+-	return platform_driver_register(&wm831x_gpio_driver);
 -}
--subsys_initcall(gpio_twl4030_init);
+-subsys_initcall(wm831x_gpio_init);
 -
--static void __exit gpio_twl4030_exit(void)
+-static void __exit wm831x_gpio_exit(void)
 -{
--	platform_driver_unregister(&gpio_twl4030_driver);
+-	platform_driver_unregister(&wm831x_gpio_driver);
 -}
--module_exit(gpio_twl4030_exit);
-+module_platform_driver(gpio_twl4030_driver);
+-module_exit(wm831x_gpio_exit);
++module_platform_driver(wm831x_gpio_driver);
  
- MODULE_AUTHOR("Texas Instruments, Inc.");
- MODULE_DESCRIPTION("GPIO interface for TWL4030");
+ MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
+ MODULE_DESCRIPTION("GPIO interface for WM831x PMICs");
 -- 
 1.9.1
 
