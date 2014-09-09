@@ -1,44 +1,54 @@
 From: "Chen, Alvin" <alvin.chen@intel.com>
 Subject: RE: [PATCH 1/3 v2] GPIO: gpio-dwapb: Enable platform driver binding
  to MFD driver
-Date: Tue, 9 Sep 2014 01:20:29 +0000
-Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E983253@SHSMSX101.ccr.corp.intel.com>
+Date: Tue, 9 Sep 2014 01:50:42 +0000
+Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E983296@SHSMSX101.ccr.corp.intel.com>
 References: <1409928798-31895-1-git-send-email-alvin.chen@intel.com>
- <1409928798-31895-2-git-send-email-alvin.chen@intel.com>
- <3465722.Gc9y01nQRe@wuerfel>
+ <4656BEB6164FC34F8171C6538F1A595B2E9829DA@SHSMSX101.ccr.corp.intel.com>
+ <1409918522.30155.89.camel@intel.com> <31986364.cn091cmIXU@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:61613 "EHLO mga09.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:55642 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755568AbaIIBUv convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Sep 2014 21:20:51 -0400
-In-Reply-To: <3465722.Gc9y01nQRe@wuerfel>
+	id S1755387AbaIIBur convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Sep 2014 21:50:47 -0400
+In-Reply-To: <31986364.cn091cmIXU@wuerfel>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "sebastian@breakpoint.cc" <sebastian@breakpoint.cc>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>, "atull@opensource.altera.com" <atull@opensource.altera.com>
 
+> On Friday 05 September 2014 12:02:01 Shevchenko, Andriy wrote:
+> > > irq = irq_of_parse_and_map(node, 0); If (!irq) {
+> > > pp->irq = -1;
+> > > return;
+> > > } else {
+> > > pp->irq = irq;
+> > > }
+> > > Then the code looks strange.
+> > >
+> > > How do you think?
 > >
-> > +#ifdef CONFIG_OF_GPIO
-> > +
-> > +static struct dwapb_platform_data *
-> > +dwapb_gpio_get_pdata_of(struct device *dev) {
-> > +	struct device_node *node, *port_np;
-> > +	struct dwapb_platform_data *pdata;
-> > +	struct dwapb_port_property *pp;
-> > +	int nports;
-> > +	int i;
-> > +
-> > +	node = dev->of_node;
-> > +	if (!node)
-> > +		return ERR_PTR(-ENODEV);
+> > If I understood correctly you messed up with hwirq vs. virq.
+> > Otherwise you have mention that you are using virq everywhere (I guess
+> > you may rename the field in the structure), but in this case the field
+> > in the platform_data looks a bit strange.
 > 
-> Please replace the #ifdef above with
+> The field in platform_data should be the mapped virtual irq number, it makes no
+> sense to use the hwirq unless you also add a pointer to the domain in which
+> that hwirq exists.
 > 
-> 	if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
+> Also the output of irq_of_parse_and_map() is a mapped irq, as the name
+> suggests.
 > 
-> here so get you proper compile-time coverage of the DT code path.
-OK, I will improve it.
+I agree with Arnd. Here, the 'irq' is 'virq'.
+Andriy, you may be confused by the code like 'irq_create_mapping'. For Quark case, it has 8 GPIO pins, and each pin can trigger
+interrupt, but all these interrupts are triggered by PCI irq which is shared. The 'irq' in pdata is PCI irq. As all GPIO interrupts connect to the PCI
+irq, once the GPIO interrupt is triggered, and the PCI irq handler will be called 'dwapb_irq_handler_mfd'. And in 'dwapb_do_irq', it will read the
+interrupt register to see the interrupt is triggered by which GPIO pin, and 'irq_create_mapping' is for this case.
+
+
+.
