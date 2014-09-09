@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 18/26] gpio: zynq: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:43 +0530
-Message-ID: <1410258591-28248-19-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 19/26] gpio: da9055: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:44 +0530
+Message-ID: <1410258591-28248-20-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:16234 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756620AbaIIKaa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:30 -0400
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:38042 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756718AbaIIKab (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:31 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,32 +23,33 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-zynq.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/gpio/gpio-da9055.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 31ad5df..a112600 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -695,17 +695,7 @@ static struct platform_driver zynq_gpio_driver = {
- 	.probe = zynq_gpio_probe,
- 	.remove = zynq_gpio_remove,
+diff --git a/drivers/gpio/gpio-da9055.c b/drivers/gpio/gpio-da9055.c
+index 9167c43..21c31b0 100644
+--- a/drivers/gpio/gpio-da9055.c
++++ b/drivers/gpio/gpio-da9055.c
+@@ -186,18 +186,7 @@ static struct platform_driver da9055_gpio_driver = {
+ 		.owner	= THIS_MODULE,
+ 	},
  };
 -
--/**
-- * zynq_gpio_init - Initial driver registration call
-- *
-- * Return: value from platform_driver_register
-- */
--static int __init zynq_gpio_init(void)
+-static int __init da9055_gpio_init(void)
 -{
--	return platform_driver_register(&zynq_gpio_driver);
+-	return platform_driver_register(&da9055_gpio_driver);
 -}
--postcore_initcall(zynq_gpio_init);
-+module_platform_driver(zynq_gpio_driver);
+-subsys_initcall(da9055_gpio_init);
+-
+-static void __exit da9055_gpio_exit(void)
+-{
+-	platform_driver_unregister(&da9055_gpio_driver);
+-}
+-module_exit(da9055_gpio_exit);
++module_platform_driver(da9055_gpio_driver);
  
- MODULE_AUTHOR("Xilinx Inc.");
- MODULE_DESCRIPTION("Zynq GPIO driver");
+ MODULE_AUTHOR("David Dajun Chen <dchen@diasemi.com>");
+ MODULE_DESCRIPTION("DA9055 GPIO Device Driver");
 -- 
 1.9.1
 
