@@ -1,14 +1,16 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 00/26] gpio: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:25 +0530
-Message-ID: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 01/26] gpio: em: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:26 +0530
+Message-ID: <1410258591-28248-2-git-send-email-kamlakant.patel@linaro.org>
+References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:36487 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932299AbaIIK3r (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:29:47 -0400
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:10155 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932389AbaIIK3s (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:29:48 -0400
+In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
@@ -16,68 +18,38 @@ Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org
 
 From: Kamlakant Patel <kamlakant.patel@linaro.org>
 
-This patch removes *_initcall based driver initialization
-and adds regular module_platform_driver to instantiate
-GPIO drivers which makes the code smaller and simpler.
+Convert *_initcall based probing of GPIO drivers to regular
+module_init based probe.
 
-NOTE: This patch needs to be tested on different platforms.
+Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
+---
+ drivers/gpio/gpio-em.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-Kamlakant Patel (26):
-  gpio: em: use platform based module init
-  gpio: ep93xx: use platform based module init
-  gpio: iop: use platform based module init
-  gpio: msm-v1: use platform based module init
-  gpio: mxc: use platform based module init
-  gpio: mxs: use platform based module init
-  gpio: palmas: use platform based module init
-  gpio: SPEAr: use platform based module init
-  gpio: stmpe: use platform based module init
-  gpio: tc3589x: use platform based module init
-  gpio: tps6586x: use platform based module init
-  gpio: tps65910: use platform based module init
-  gpio: use platform based module init
-  gpio: twl4030: use platform based module init
-  gpio: wm831x: use platform based module init
-  gpio: wm8350: use platform based module init
-  gpio: wm8994: use platform based module init
-  gpio: zynq: use platform based module init
-  gpio: da9055: use platform based module init
-  gpio: lynxpoint: use platform based module init
-  gpio: lantiq: use platform based module init
-  gpio: msic: use platform based module init
-  gpio: rc5t583: use platform based module init
-  gpio: xway: use platform based module init
-  gpio: tz1090-pdc: use platform based module init
-  gpio: tz1090: use platform based module init
-
- drivers/gpio/gpio-da9055.c      | 13 +------------
- drivers/gpio/gpio-em.c          | 13 +------------
- drivers/gpio/gpio-ep93xx.c      |  7 +------
- drivers/gpio/gpio-iop.c         |  7 +------
- drivers/gpio/gpio-lynxpoint.c   | 14 +-------------
- drivers/gpio/gpio-mm-lantiq.c   |  8 +-------
- drivers/gpio/gpio-msic.c        |  8 +-------
- drivers/gpio/gpio-msm-v1.c      |  6 +-----
- drivers/gpio/gpio-mxc.c         |  7 +------
- drivers/gpio/gpio-mxs.c         |  6 +-----
- drivers/gpio/gpio-palmas.c      | 13 +------------
- drivers/gpio/gpio-rc5t583.c     | 13 +------------
- drivers/gpio/gpio-spear-spics.c |  7 +------
- drivers/gpio/gpio-stmpe.c       | 13 +------------
- drivers/gpio/gpio-stp-xway.c    |  8 +-------
- drivers/gpio/gpio-tc3589x.c     | 13 +------------
- drivers/gpio/gpio-tps6586x.c    | 13 +------------
- drivers/gpio/gpio-tps65910.c    | 13 +------------
- drivers/gpio/gpio-tps65912.c    | 13 +------------
- drivers/gpio/gpio-twl4030.c     | 13 +------------
- drivers/gpio/gpio-tz1090-pdc.c  |  7 +------
- drivers/gpio/gpio-tz1090.c      |  7 +------
- drivers/gpio/gpio-wm831x.c      | 13 +------------
- drivers/gpio/gpio-wm8350.c      | 13 +------------
- drivers/gpio/gpio-wm8994.c      | 13 +------------
- drivers/gpio/gpio-zynq.c        | 12 +-----------
- 26 files changed, 26 insertions(+), 247 deletions(-)
-
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index fe49ec3..c8df9b4 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -431,18 +431,7 @@ static struct platform_driver em_gio_device_driver = {
+ 		.owner		= THIS_MODULE,
+ 	}
+ };
+-
+-static int __init em_gio_init(void)
+-{
+-	return platform_driver_register(&em_gio_device_driver);
+-}
+-postcore_initcall(em_gio_init);
+-
+-static void __exit em_gio_exit(void)
+-{
+-	platform_driver_unregister(&em_gio_device_driver);
+-}
+-module_exit(em_gio_exit);
++module_platform_driver(em_gio_device_driver);
+ 
+ MODULE_AUTHOR("Magnus Damm");
+ MODULE_DESCRIPTION("Renesas Emma Mobile GIO Driver");
 -- 
 1.9.1
 
