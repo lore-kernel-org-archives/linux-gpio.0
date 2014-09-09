@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 08/26] gpio: SPEAr: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:33 +0530
-Message-ID: <1410258591-28248-9-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 12/26] gpio: tps65910: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:37 +0530
+Message-ID: <1410258591-28248-13-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:36487 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932400AbaIIKaA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:00 -0400
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:35709 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932425AbaIIKaQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:16 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,27 +23,33 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-spear-spics.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/gpio/gpio-tps65910.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-spear-spics.c b/drivers/gpio/gpio-spear-spics.c
-index 353263c..fe27b6d 100644
---- a/drivers/gpio/gpio-spear-spics.c
-+++ b/drivers/gpio/gpio-spear-spics.c
-@@ -196,12 +196,7 @@ static struct platform_driver spics_gpio_driver = {
- 		.of_match_table = spics_gpio_of_match,
- 	},
+diff --git a/drivers/gpio/gpio-tps65910.c b/drivers/gpio/gpio-tps65910.c
+index 88f1f5f..a5e6665 100644
+--- a/drivers/gpio/gpio-tps65910.c
++++ b/drivers/gpio/gpio-tps65910.c
+@@ -200,18 +200,7 @@ static struct platform_driver tps65910_gpio_driver = {
+ 	.probe		= tps65910_gpio_probe,
+ 	.remove		= tps65910_gpio_remove,
  };
 -
--static int __init spics_gpio_init(void)
+-static int __init tps65910_gpio_init(void)
 -{
--	return platform_driver_register(&spics_gpio_driver);
+-	return platform_driver_register(&tps65910_gpio_driver);
 -}
--subsys_initcall(spics_gpio_init);
-+module_platform_driver(spics_gpio_driver);
+-subsys_initcall(tps65910_gpio_init);
+-
+-static void __exit tps65910_gpio_exit(void)
+-{
+-	platform_driver_unregister(&tps65910_gpio_driver);
+-}
+-module_exit(tps65910_gpio_exit);
++module_platform_driver(tps65910_gpio_driver);
  
- MODULE_AUTHOR("Shiraz Hashim <shiraz.linux.kernel@gmail.com>");
- MODULE_DESCRIPTION("ST Microlectronics SPEAr SPI Chip Select Abstraction");
+ MODULE_AUTHOR("Graeme Gregory <gg@slimlogic.co.uk>");
+ MODULE_AUTHOR("Jorge Eduardo Candelaria jedu@slimlogic.co.uk>");
 -- 
 1.9.1
 
