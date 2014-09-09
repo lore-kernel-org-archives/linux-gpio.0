@@ -1,15 +1,15 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [RTF] [PATCH 19/26] gpio: da9055: use platform based module init
-Date: Tue, 9 Sep 2014 15:59:44 +0530
-Message-ID: <1410258591-28248-20-git-send-email-kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 24/26] gpio: xway: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:49 +0530
+Message-ID: <1410258591-28248-25-git-send-email-kamlakant.patel@linaro.org>
 References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:38042 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756718AbaIIKab (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:31 -0400
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:52734 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756725AbaIIKae (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:30:34 -0400
 In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,33 +23,25 @@ module_init based probe.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/gpio-da9055.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/gpio/gpio-stp-xway.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-da9055.c b/drivers/gpio/gpio-da9055.c
-index 9167c43..21c31b0 100644
---- a/drivers/gpio/gpio-da9055.c
-+++ b/drivers/gpio/gpio-da9055.c
-@@ -186,18 +186,7 @@ static struct platform_driver da9055_gpio_driver = {
- 		.owner	= THIS_MODULE,
+diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
+index 04882a9..0f7088c 100644
+--- a/drivers/gpio/gpio-stp-xway.c
++++ b/drivers/gpio/gpio-stp-xway.c
+@@ -291,10 +291,4 @@ static struct platform_driver xway_stp_driver = {
+ 		.of_match_table = xway_stp_match,
  	},
  };
 -
--static int __init da9055_gpio_init(void)
+-int __init xway_stp_init(void)
 -{
--	return platform_driver_register(&da9055_gpio_driver);
+-	return platform_driver_register(&xway_stp_driver);
 -}
--subsys_initcall(da9055_gpio_init);
 -
--static void __exit da9055_gpio_exit(void)
--{
--	platform_driver_unregister(&da9055_gpio_driver);
--}
--module_exit(da9055_gpio_exit);
-+module_platform_driver(da9055_gpio_driver);
- 
- MODULE_AUTHOR("David Dajun Chen <dchen@diasemi.com>");
- MODULE_DESCRIPTION("DA9055 GPIO Device Driver");
+-subsys_initcall(xway_stp_init);
++module_platform_driver(xway_stp_driver);
 -- 
 1.9.1
 
