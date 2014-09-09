@@ -1,82 +1,83 @@
-From: Weike Chen <alvin.chen@intel.com>
-Subject: [PATCH 3/4 v3] GPIO: gpio-dwapb: Support Debounce
-Date: Tue,  9 Sep 2014 11:08:00 -0700
-Message-ID: <1410286081-16653-4-git-send-email-alvin.chen@intel.com>
-References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com>
+From: <kamlakant.patel@linaro.org>
+Subject: [RTF] [PATCH 00/26] gpio: use platform based module init
+Date: Tue, 9 Sep 2014 15:59:25 +0530
+Message-ID: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:51732 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756149AbaIIKQn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 9 Sep 2014 06:16:43 -0400
-In-Reply-To: <1410286081-16653-1-git-send-email-alvin.chen@intel.com>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:36487 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932299AbaIIK3r (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Sep 2014 06:29:47 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Alvin Chen <alvin.chen@intel.com>, Arnd Bergmann <arnd@arndb.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org
 
-This patch enables 'debounce' for the designware GPIO, and
-it is based on Josef Ahmad's previous work.
+From: Kamlakant Patel <kamlakant.patel@linaro.org>
 
-Reviewed-by: Hock Leong Kweh <hock.leong.kweh@intel.com>
-Reviewed-by: Shevchenko, Andriy <andriy.shevchenko@intel.com>
-Signed-off-by: Weike Chen <alvin.chen@intel.com>
----
- drivers/gpio/gpio-dwapb.c |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+This patch removes *_initcall based driver initialization
+and adds regular module_platform_driver to instantiate
+GPIO drivers which makes the code smaller and simpler.
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index c78a878..a90afb9 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -37,6 +37,7 @@
- #define GPIO_INTTYPE_LEVEL	0x38
- #define GPIO_INT_POLARITY	0x3c
- #define GPIO_INTSTATUS		0x40
-+#define GPIO_PORTA_DEBOUNCE	0x48
- #define GPIO_PORTA_EOI		0x4c
- #define GPIO_EXT_PORTA		0x50
- #define GPIO_EXT_PORTB		0x54
-@@ -235,6 +236,29 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
- 	return 0;
- }
- 
-+static int dwapb_gpio_set_debounce(struct gpio_chip *gc,
-+				   unsigned offset, unsigned debounce)
-+{
-+	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-+	struct dwapb_gpio_port *port =
-+			container_of(bgc, struct dwapb_gpio_port, bgc);
-+	struct dwapb_gpio *gpio = port->gpio;
-+	unsigned long flags, val_deb;
-+	unsigned long mask = bgc->pin2mask(bgc, offset);
-+
-+	spin_lock_irqsave(&bgc->lock, flags);
-+
-+	val_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
-+	if (debounce)
-+		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, mask | val_deb);
-+	else
-+		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, ~mask & val_deb);
-+
-+	spin_unlock_irqrestore(&bgc->lock, flags);
-+
-+	return 0;
-+}
-+
- static irqreturn_t dwapb_irq_handler_mfd(int irq, void *dev_id)
- {
- 	u32 worked;
-@@ -373,6 +397,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	port->bgc.gc.ngpio = pp->ngpio;
- 	port->bgc.gc.base = pp->gpio_base;
- 
-+	/* Only port A support debounce */
-+	if (pp->idx == 0)
-+		port->bgc.gc.set_debounce = dwapb_gpio_set_debounce;
-+
- 	if (pp->irq)
- 		dwapb_configure_irqs(gpio, port, pp);
- 
+NOTE: This patch needs to be tested on different platforms.
+
+Kamlakant Patel (26):
+  gpio: em: use platform based module init
+  gpio: ep93xx: use platform based module init
+  gpio: iop: use platform based module init
+  gpio: msm-v1: use platform based module init
+  gpio: mxc: use platform based module init
+  gpio: mxs: use platform based module init
+  gpio: palmas: use platform based module init
+  gpio: SPEAr: use platform based module init
+  gpio: stmpe: use platform based module init
+  gpio: tc3589x: use platform based module init
+  gpio: tps6586x: use platform based module init
+  gpio: tps65910: use platform based module init
+  gpio: use platform based module init
+  gpio: twl4030: use platform based module init
+  gpio: wm831x: use platform based module init
+  gpio: wm8350: use platform based module init
+  gpio: wm8994: use platform based module init
+  gpio: zynq: use platform based module init
+  gpio: da9055: use platform based module init
+  gpio: lynxpoint: use platform based module init
+  gpio: lantiq: use platform based module init
+  gpio: msic: use platform based module init
+  gpio: rc5t583: use platform based module init
+  gpio: xway: use platform based module init
+  gpio: tz1090-pdc: use platform based module init
+  gpio: tz1090: use platform based module init
+
+ drivers/gpio/gpio-da9055.c      | 13 +------------
+ drivers/gpio/gpio-em.c          | 13 +------------
+ drivers/gpio/gpio-ep93xx.c      |  7 +------
+ drivers/gpio/gpio-iop.c         |  7 +------
+ drivers/gpio/gpio-lynxpoint.c   | 14 +-------------
+ drivers/gpio/gpio-mm-lantiq.c   |  8 +-------
+ drivers/gpio/gpio-msic.c        |  8 +-------
+ drivers/gpio/gpio-msm-v1.c      |  6 +-----
+ drivers/gpio/gpio-mxc.c         |  7 +------
+ drivers/gpio/gpio-mxs.c         |  6 +-----
+ drivers/gpio/gpio-palmas.c      | 13 +------------
+ drivers/gpio/gpio-rc5t583.c     | 13 +------------
+ drivers/gpio/gpio-spear-spics.c |  7 +------
+ drivers/gpio/gpio-stmpe.c       | 13 +------------
+ drivers/gpio/gpio-stp-xway.c    |  8 +-------
+ drivers/gpio/gpio-tc3589x.c     | 13 +------------
+ drivers/gpio/gpio-tps6586x.c    | 13 +------------
+ drivers/gpio/gpio-tps65910.c    | 13 +------------
+ drivers/gpio/gpio-tps65912.c    | 13 +------------
+ drivers/gpio/gpio-twl4030.c     | 13 +------------
+ drivers/gpio/gpio-tz1090-pdc.c  |  7 +------
+ drivers/gpio/gpio-tz1090.c      |  7 +------
+ drivers/gpio/gpio-wm831x.c      | 13 +------------
+ drivers/gpio/gpio-wm8350.c      | 13 +------------
+ drivers/gpio/gpio-wm8994.c      | 13 +------------
+ drivers/gpio/gpio-zynq.c        | 12 +-----------
+ 26 files changed, 26 insertions(+), 247 deletions(-)
+
 -- 
-1.7.9.5
+1.9.1
 
