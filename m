@@ -1,29 +1,44 @@
 From: "Chen, Alvin" <alvin.chen@intel.com>
-Subject: RE: [PATCH 2/3 v2] GPIO: gpio-dwapb: Support Debounce
-Date: Tue, 9 Sep 2014 00:47:11 +0000
-Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E983231@SHSMSX101.ccr.corp.intel.com>
+Subject: RE: [PATCH 1/3 v2] GPIO: gpio-dwapb: Enable platform driver binding
+ to MFD driver
+Date: Tue, 9 Sep 2014 01:20:29 +0000
+Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E983253@SHSMSX101.ccr.corp.intel.com>
 References: <1409928798-31895-1-git-send-email-alvin.chen@intel.com>
-	 <1409928798-31895-3-git-send-email-alvin.chen@intel.com>
-	 <1409908999.30155.85.camel@intel.com>
-	 <4656BEB6164FC34F8171C6538F1A595B2E98298B@SHSMSX101.ccr.corp.intel.com>
- <1409918621.30155.90.camel@intel.com>
+ <1409928798-31895-2-git-send-email-alvin.chen@intel.com>
+ <3465722.Gc9y01nQRe@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1409918621.30155.90.camel@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:61613 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755568AbaIIBUv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Sep 2014 21:20:51 -0400
+In-Reply-To: <3465722.Gc9y01nQRe@wuerfel>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "sebastian@breakpoint.cc" <sebastian@breakpoint.cc>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "dvhart@linux.intel.com" <dvhart@linux.intel.com>, "atull@opensource.altera.com" <atull@opensource.altera.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
 
-PiA+IFNpbmNlIHRoZSAnZGVib3VuY2UnIGZlYXR1cmUgYWxzbyBuZWVkcyByZWFkL3dyaXRlLCBp
-ZiB3ZSBzcGxpdGUgdGhpcw0KPiA+IHBhdGNoLCB0aGVuIGZvciAnZGVib3VuY2UnLCBPbmUgcGF0
-Y2ggdXNlIHJlYWRsL3dyaXRlbCwgYW5kIGFub3RoZXINCj4gPiBwYXRjaCBjaGFuZ2UgdG8gZHdh
-cGJfcmVhZC93cml0ZS4gSXQgc2VlbXMgZHVwbGljYXRlIHNpbmNlIHRoZSBwcmV2aW91cw0KPiBw
-YXRjaCB1c2UgcmVhZGwvd3JpdGVsIGFuZCB0aGUgZmxsb3dpbmcgb25lIGNoYW5nZSBpdCBpbW1l
-ZGlhdGVseS4NCj4gPiBTaW5jZSB0aGlzIHBhdGNoIGlzIHNtYWxsLCBjb3VsZCB3ZSBqdXN0IG1h
-a2UgdGhlbSB0b2dldGhlcj8gSG93IGRvIHlvdQ0KPiB0aGluaz8NCj4gDQo+IE1ha2UgdGhlIGR3
-YXBiX3dyaXRlbC9yZWFkbCBwYXRjaCBnb2VzIGZpcnN0IGluIHRoZSBzZXJpZXMuDQo+IA0KT0su
-DQo=
+> >
+> > +#ifdef CONFIG_OF_GPIO
+> > +
+> > +static struct dwapb_platform_data *
+> > +dwapb_gpio_get_pdata_of(struct device *dev) {
+> > +	struct device_node *node, *port_np;
+> > +	struct dwapb_platform_data *pdata;
+> > +	struct dwapb_port_property *pp;
+> > +	int nports;
+> > +	int i;
+> > +
+> > +	node = dev->of_node;
+> > +	if (!node)
+> > +		return ERR_PTR(-ENODEV);
+> 
+> Please replace the #ifdef above with
+> 
+> 	if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
+> 
+> here so get you proper compile-time coverage of the DT code path.
+OK, I will improve it.
