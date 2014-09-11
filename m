@@ -1,62 +1,43 @@
-From: atull <atull@opensource.altera.com>
-Subject: Re: [PATCH 4/4 v3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
-Date: Thu, 11 Sep 2014 11:40:13 -0500
-Message-ID: <alpine.DEB.2.02.1409111138080.4869@atx-linux-37>
-References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com> <1410286081-16653-5-git-send-email-alvin.chen@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1410286081-16653-5-git-send-email-alvin.chen@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Weike Chen <alvin.chen@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
+From: weiyj_lk@163.com
+Subject: [PATCH -next] gpio: Fix return value check in xgene_gpio_probe()
+Date: Fri, 12 Sep 2014 07:12:14 +0800
+Message-ID: <1410477134-5556-1-git-send-email-weiyj_lk@163.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from m12-15.163.com ([220.181.12.15]:58419 "EHLO m12-15.163.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751215AbaIKXMb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 11 Sep 2014 19:12:31 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-gpio@vger.kernel.org
 
-On Tue, 9 Sep 2014, Weike Chen wrote:
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
->  
->  struct dwapb_gpio;
-> +struct dwapb_context;
->  
->  struct dwapb_gpio_port {
->  	struct bgpio_chip	bgc;
->  	bool			is_registered;
->  	struct dwapb_gpio	*gpio;
-> +	struct dwapb_context	*ctx;
+In case of error, the function devm_ioremap_nocache() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value check
+should be replaced with NULL test.
 
-Alvin,
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+---
+ drivers/gpio/gpio-xgene.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Will this build if CONFIG_PM_SLEEP is not defined?
+diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
+index e25ba14..cf751f5 100644
+--- a/drivers/gpio/gpio-xgene.c
++++ b/drivers/gpio/gpio-xgene.c
+@@ -182,8 +182,8 @@ static int xgene_gpio_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	gpio->base = devm_ioremap_nocache(&pdev->dev, res->start,
+ 							resource_size(res));
+-	if (IS_ERR(gpio->base)) {
+-		err = PTR_ERR(gpio->base);
++	if (!gpio->base) {
++		err = -ENOMEM;
+ 		goto err;
+ 	}
+ 
 
-Alan
-
-> +	unsigned int		idx;
->  };
->  
-
->  struct dwapb_gpio {
-> @@ -377,6 +380,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
->  
->  	port = &gpio->ports[offs];
->  	port->gpio = gpio;
-> +	port->idx = pp->idx;
->  
->  	dat = gpio->regs + GPIO_EXT_PORTA + (pp->idx * GPIO_EXT_PORT_SIZE);
->  	set = gpio->regs + GPIO_SWPORTA_DR + (pp->idx * GPIO_SWPORT_DR_SIZE);
-> @@ -584,10 +588,115 @@ static const struct of_device_id dwapb_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, dwapb_of_match);
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +/* Store GPIO context across system-wide suspend/resume transitions */
-> +struct dwapb_context {
-> +	u32 data;
-> +	u32 dir;
-> +	u32 ext;
-> +	u32 int_en;
-> +	u32 int_mask;
-> +	u32 int_type;
-> +	u32 int_pol;
-> +	u32 int_deb;
-> +};
-> +
