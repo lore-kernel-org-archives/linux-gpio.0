@@ -1,49 +1,62 @@
 From: atull <atull@opensource.altera.com>
-Subject: RE: [PATCH 1/4 v3] GPIO: gpio-dwapb: Enable platform driver binding
- to MFD driver
-Date: Thu, 11 Sep 2014 10:40:58 -0500
-Message-ID: <alpine.DEB.2.02.1409111039210.19272@atx-linux-37>
-References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com> <1410286081-16653-2-git-send-email-alvin.chen@intel.com> <alpine.DEB.2.02.1409101353500.2790@atx-linux-37>  <4656BEB6164FC34F8171C6538F1A595B2E98F982@SHSMSX101.ccr.corp.intel.com>
+Subject: Re: [PATCH 4/4 v3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
+Date: Thu, 11 Sep 2014 11:40:13 -0500
+Message-ID: <alpine.DEB.2.02.1409111138080.4869@atx-linux-37>
+References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com> <1410286081-16653-5-git-send-email-alvin.chen@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4656BEB6164FC34F8171C6538F1A595B2E98F982@SHSMSX101.ccr.corp.intel.com>
+In-Reply-To: <1410286081-16653-5-git-send-email-alvin.chen@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Chen, Alvin" <alvin.chen@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
+To: Weike Chen <alvin.chen@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 11 Sep 2014, Chen, Alvin wrote:
+On Tue, 9 Sep 2014, Weike Chen wrote:
 
-> > >
-> > > Hi Alvin,
-> > >
-> > > I did a quick test and this looks like it works for me (with device tree).
-> > > I had a couple of small fixes below.
-> > It is very appreciated to help testing.
+>  
+>  struct dwapb_gpio;
+> +struct dwapb_context;
+>  
+>  struct dwapb_gpio_port {
+>  	struct bgpio_chip	bgc;
+>  	bool			is_registered;
+>  	struct dwapb_gpio	*gpio;
+> +	struct dwapb_context	*ctx;
 
-Sure.  Thanks for adding features to the driver!
+Alvin,
 
-> > 
-> > 
-> > > Alan
-> > >
-> > > >
-> > > > -	port->bgc.gc.ngpio = ngpio;
-> > > > -	port->bgc.gc.of_node = port_np;
-> > > > +#ifdef CONFIG_OF_GPIO
-> > > > +	port->bgc.gc.of_node = pp->node;
-> > > > +#endif
-> > >
-> > > Please use 'if (IS_ENABLED(CONFIG_OF_GPIO)) as a conditional as you do
-> > > elsewhere.
-> > OK.
-> > 
-> Alan, I just do a quick test, here we can't use 'IS_ENABLED', it can't be compiled without OF_GPIO set.
-> Because 'gc.of_node' is not defined without 'OF_GPIO'. You can refer the structure of 'gc'.
-> 
+Will this build if CONFIG_PM_SLEEP is not defined?
 
-That makes sense.
-
-Thanks,
 Alan
+
+> +	unsigned int		idx;
+>  };
+>  
+
+>  struct dwapb_gpio {
+> @@ -377,6 +380,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>  
+>  	port = &gpio->ports[offs];
+>  	port->gpio = gpio;
+> +	port->idx = pp->idx;
+>  
+>  	dat = gpio->regs + GPIO_EXT_PORTA + (pp->idx * GPIO_EXT_PORT_SIZE);
+>  	set = gpio->regs + GPIO_SWPORTA_DR + (pp->idx * GPIO_SWPORT_DR_SIZE);
+> @@ -584,10 +588,115 @@ static const struct of_device_id dwapb_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, dwapb_of_match);
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +/* Store GPIO context across system-wide suspend/resume transitions */
+> +struct dwapb_context {
+> +	u32 data;
+> +	u32 dir;
+> +	u32 ext;
+> +	u32 int_en;
+> +	u32 int_mask;
+> +	u32 int_type;
+> +	u32 int_pol;
+> +	u32 int_deb;
+> +};
+> +
