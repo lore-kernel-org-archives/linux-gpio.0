@@ -1,43 +1,42 @@
-From: weiyj_lk@163.com
-Subject: [PATCH -next] gpio: Fix return value check in xgene_gpio_probe()
-Date: Fri, 12 Sep 2014 07:12:14 +0800
-Message-ID: <1410477134-5556-1-git-send-email-weiyj_lk@163.com>
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: "Chen, Alvin" <alvin.chen@intel.com>
+Subject: RE: [PATCH 4/4 v3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
+Date: Fri, 12 Sep 2014 02:27:33 +0000
+Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E990CFF@SHSMSX101.ccr.corp.intel.com>
+References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com>
+ <1410286081-16653-5-git-send-email-alvin.chen@intel.com>
+ <alpine.DEB.2.02.1409111138080.4869@atx-linux-37>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from m12-15.163.com ([220.181.12.15]:58419 "EHLO m12-15.163.com"
+Received: from mga11.intel.com ([192.55.52.93]:54682 "EHLO mga11.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751215AbaIKXMb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 11 Sep 2014 19:12:31 -0400
+	id S1751616AbaILC21 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Sep 2014 22:28:27 -0400
+In-Reply-To: <alpine.DEB.2.02.1409111138080.4869@atx-linux-37>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-gpio@vger.kernel.org
+To: atull <atull@opensource.altera.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> On Tue, 9 Sep 2014, Weike Chen wrote:
+> 
+> >
+> >  struct dwapb_gpio;
+> > +struct dwapb_context;
+> >
+> >  struct dwapb_gpio_port {
+> >  	struct bgpio_chip	bgc;
+> >  	bool			is_registered;
+> >  	struct dwapb_gpio	*gpio;
+> > +	struct dwapb_context	*ctx;
+> 
+> Alvin,
+> 
+> Will this build if CONFIG_PM_SLEEP is not defined?
+Actually, PM_SLEEP is always set as 'y' in 'kerne/power/Kconfig'. But I manually change it to 'n', this module can be compiled correctly.
+You may be concern with 'ctx', and you can see 'ctx' accessing is always in CONFIG_PM_SLEEP.
 
-In case of error, the function devm_ioremap_nocache() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value check
-should be replaced with NULL test.
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- drivers/gpio/gpio-xgene.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
-index e25ba14..cf751f5 100644
---- a/drivers/gpio/gpio-xgene.c
-+++ b/drivers/gpio/gpio-xgene.c
-@@ -182,8 +182,8 @@ static int xgene_gpio_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	gpio->base = devm_ioremap_nocache(&pdev->dev, res->start,
- 							resource_size(res));
--	if (IS_ERR(gpio->base)) {
--		err = PTR_ERR(gpio->base);
-+	if (!gpio->base) {
-+		err = -ENOMEM;
- 		goto err;
- 	}
- 
-
+> Alan
