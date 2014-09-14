@@ -1,38 +1,61 @@
-From: atull <atull@opensource.altera.com>
-Subject: RE: [PATCH 4/4 v3] GPIO: gpio-dwapb: Suspend & Resume PM enabling
-Date: Fri, 12 Sep 2014 10:46:54 -0500
-Message-ID: <alpine.DEB.2.02.1409121045070.373@atx-linux-37>
-References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com> <1410286081-16653-5-git-send-email-alvin.chen@intel.com> <alpine.DEB.2.02.1409111138080.4869@atx-linux-37> <4656BEB6164FC34F8171C6538F1A595B2E990CFF@SHSMSX101.ccr.corp.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4656BEB6164FC34F8171C6538F1A595B2E990CFF@SHSMSX101.ccr.corp.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Chen, Alvin" <alvin.chen@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
+From: Fabian Frederick <fabf@skynet.be>
+Subject: [PATCH 1/1 linux-next] gpio: use container_of to resolve cs5535_gpio_chip from gpio_chip
+Date: Sun, 14 Sep 2014 15:56:55 +0200
+Message-ID: <1410703015-24127-1-git-send-email-fabf@skynet.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailrelay012.isp.belgacom.be ([195.238.6.179]:43233 "EHLO
+	mailrelay012.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752489AbaINN5V (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 14 Sep 2014 09:57:21 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Fabian Frederick <fabf@skynet.be>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Fri, 12 Sep 2014, Chen, Alvin wrote:
+Use container_of instead of casting first structure member.
 
-> > On Tue, 9 Sep 2014, Weike Chen wrote:
-> > 
-> > >
-> > >  struct dwapb_gpio;
-> > > +struct dwapb_context;
-> > >
-> > >  struct dwapb_gpio_port {
-> > >  	struct bgpio_chip	bgc;
-> > >  	bool			is_registered;
-> > >  	struct dwapb_gpio	*gpio;
-> > > +	struct dwapb_context	*ctx;
-> > 
-> > Alvin,
-> > 
-> > Will this build if CONFIG_PM_SLEEP is not defined?
-> Actually, PM_SLEEP is always set as 'y' in 'kerne/power/Kconfig'. But I manually change it to 'n', this module can be compiled correctly.
-> You may be concern with 'ctx', and you can see 'ctx' accessing is always in CONFIG_PM_SLEEP.
+Signed-off-by: Fabian Frederick <fabf@skynet.be>
+---
+Compiled but untested.
 
-Yes and in the case of 'struct dwapb_context *ctx;' it is ok for struct 
-dwapb_context to be an incomplete type since that's just a pointer.
+ drivers/gpio/gpio-cs5535.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Alan 
+diff --git a/drivers/gpio/gpio-cs5535.c b/drivers/gpio/gpio-cs5535.c
+index 92ec58f..668127f 100644
+--- a/drivers/gpio/gpio-cs5535.c
++++ b/drivers/gpio/gpio-cs5535.c
+@@ -201,7 +201,8 @@ EXPORT_SYMBOL_GPL(cs5535_gpio_setup_event);
+ 
+ static int chip_gpio_request(struct gpio_chip *c, unsigned offset)
+ {
+-	struct cs5535_gpio_chip *chip = (struct cs5535_gpio_chip *) c;
++	struct cs5535_gpio_chip *chip =
++		container_of(c, struct cs5535_gpio_chip, chip);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&chip->lock, flags);
+@@ -241,7 +242,8 @@ static void chip_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ 
+ static int chip_direction_input(struct gpio_chip *c, unsigned offset)
+ {
+-	struct cs5535_gpio_chip *chip = (struct cs5535_gpio_chip *) c;
++	struct cs5535_gpio_chip *chip =
++		container_of(c, struct cs5535_gpio_chip, chip);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&chip->lock, flags);
+@@ -254,7 +256,8 @@ static int chip_direction_input(struct gpio_chip *c, unsigned offset)
+ 
+ static int chip_direction_output(struct gpio_chip *c, unsigned offset, int val)
+ {
+-	struct cs5535_gpio_chip *chip = (struct cs5535_gpio_chip *) c;
++	struct cs5535_gpio_chip *chip =
++		container_of(c, struct cs5535_gpio_chip, chip);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&chip->lock, flags);
+-- 
+1.9.1
+
