@@ -1,63 +1,43 @@
-From: Aaron Lu <aaron.lu@intel.com>
-Subject: Re: [PATCH 0/2] Support CrystalCove PMIC ACPI operation region
-Date: Mon, 15 Sep 2014 10:57:29 +0800
-Message-ID: <20140915025727.GA14730@aaronlu.sh.intel.com>
-References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 1/2] gpio: Increase ARCH_NR_GPIOs to 512
+Date: Mon, 15 Sep 2014 17:09:44 +0300
+Message-ID: <1410790185-31101-1-git-send-email-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:59460 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753273AbaIOC5n (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Sep 2014 22:57:43 -0400
-Content-Disposition: inline
-In-Reply-To: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>
+Received: from mga11.intel.com ([192.55.52.93]:32865 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751979AbaIOOJt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 15 Sep 2014 10:09:49 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, Daniel =?iso-8859-1?Q?Gl=F6ckner?= <dg@emlix.com>, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alan Cox <alan@linux.intel.com>, Ning Li <ning.li@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I wonder if anyone has looked at this?
+Some newer Intel SoCs, like Braswell already have more than 256 GPIOs
+available so the default limit is exceeded. Instead of adding more
+architecture specific gpio.h files with custom ARCH_NR_GPIOs we increase
+the gpiolib default limit to be twice the current.
 
-Note that this is for CrystalCove PMIC operation region support and the
-CrystalCove driver is already in mainline, not for the DollarCove PMIC
-driver that Jacob is currently upstreaming, so the patch doesn't have
-any dependency.
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+Changes to previous version is that now we increase the common limit
+instead of adding x86 specific gpio.h
 
-Regards,
-Aaron
+ include/asm-generic/gpio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, Sep 09, 2014 at 10:32:46AM +0800, Aaron Lu wrote:
-> The two patches add support for CrystalCove PMIC ACPI operation region.
-> The PMIC chip has two customized operation regions: one for power rail
-> manipulation and one for thermal purpose: sensor temperature reading
-> and trip point value reading/setting.
-> 
-> For an example ASL code on ASUS T100 with CrystalCove PMIC, see here:
-> https://gist.github.com/aaronlu/f5f65771a6c3251fae5d
-> 
-> Aaron Lu (2):
->   gpio / CrystalCove: support virtual GPIO
->   PMIC / opregion: support PMIC customized operation region for
->     CrystalCove
-> 
->  drivers/gpio/gpio-crystalcove.c           |  19 +-
->  drivers/mfd/Kconfig                       |  11 +
->  drivers/mfd/Makefile                      |   1 +
->  drivers/mfd/intel_soc_pmic_crc.c          |   3 +
->  drivers/mfd/intel_soc_pmic_crc_opregion.c | 229 +++++++++++++++++++
->  drivers/mfd/intel_soc_pmic_opregion.c     | 350 ++++++++++++++++++++++++++++++
->  drivers/mfd/intel_soc_pmic_opregion.h     |  35 +++
->  include/asm-generic/gpio.h                |   2 +-
->  8 files changed, 646 insertions(+), 4 deletions(-)
->  create mode 100644 drivers/mfd/intel_soc_pmic_crc_opregion.c
->  create mode 100644 drivers/mfd/intel_soc_pmic_opregion.c
->  create mode 100644 drivers/mfd/intel_soc_pmic_opregion.h
-> 
-> -- 
-> 1.9.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
+index c1d4105e1c1d..383ade1a211b 100644
+--- a/include/asm-generic/gpio.h
++++ b/include/asm-generic/gpio.h
+@@ -27,7 +27,7 @@
+  */
+ 
+ #ifndef ARCH_NR_GPIOS
+-#define ARCH_NR_GPIOS		256
++#define ARCH_NR_GPIOS		512
+ #endif
+ 
+ /*
+-- 
+2.1.0
+
