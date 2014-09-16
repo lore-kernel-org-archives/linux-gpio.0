@@ -1,32 +1,147 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 0/4] gpio: syscon: reuse for keystone 2 socs
-Date: Tue, 16 Sep 2014 14:43:17 -0700
-Message-ID: <CACRpkdaB7YpYjuND+Dic2eM=0OB0Sk=gGRRd7QrQj1Ze1MYXaQ@mail.gmail.com>
-References: <1409763935-5713-1-git-send-email-grygorii.strashko@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:42804 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753777AbaIPVnR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Sep 2014 17:43:17 -0400
-Received: by mail-oi0-f47.google.com with SMTP id e131so255418oig.6
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Sep 2014 14:43:17 -0700 (PDT)
-In-Reply-To: <1409763935-5713-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH] pinctrl: remove remaining users of gpiochip_remove() retval
+Date: Tue, 16 Sep 2014 15:07:54 -0700
+Message-ID: <1410905274-22339-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Alexander Shiyan <shc_work@mail.ru>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Sep 3, 2014 at 10:05 AM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+Some drivers accidentally still use the return value from
+gpiochip_remove(). Get rid of them so we can simplify this function
+and get rid of the return value.
 
-> This series intended to integrate Keystone 2 DSP GPIO controller functionality
-> into gpio-syscon driver (drivers/gpio/gpio-syscon.c) as requested
-> by Linus Walleij in [1].
+Abdoulaye Berthe <berthe.ab@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+This patch will be merged through the GPIO tree.
+---
+ drivers/pinctrl/nomadik/pinctrl-abx500.c     | 14 ++------------
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c    |  2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c           |  9 +--------
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c |  6 +-----
+ drivers/pinctrl/samsung/pinctrl-samsung.c    | 13 +++----------
+ 5 files changed, 8 insertions(+), 36 deletions(-)
 
-OK no comments on DT stuff etc for two weeks, so merged patches
-1-3, the 4th you can take through the keystone git.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+index a53a689a2bfa..7df34b70e8b6 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
++++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+@@ -1298,10 +1298,7 @@ static int abx500_gpio_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ out_rem_chip:
+-	err = gpiochip_remove(&pct->chip);
+-	if (err)
+-		dev_info(&pdev->dev, "failed to remove gpiochip\n");
+-
++	gpiochip_remove(&pct->chip);
+ 	return ret;
+ }
+ 
+@@ -1312,15 +1309,8 @@ out_rem_chip:
+ static int abx500_gpio_remove(struct platform_device *pdev)
+ {
+ 	struct abx500_pinctrl *pct = platform_get_drvdata(pdev);
+-	int ret;
+-
+-	ret = gpiochip_remove(&pct->chip);
+-	if (ret < 0) {
+-		dev_err(pct->dev, "unable to remove gpiochip: %d\n",
+-			ret);
+-		return ret;
+-	}
+ 
++	gpiochip_remove(&pct->chip);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index e7cab07eef47..4332b38c52ab 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -1261,7 +1261,7 @@ static int nmk_gpio_probe(struct platform_device *dev)
+ 				   IRQ_TYPE_EDGE_FALLING);
+ 	if (ret) {
+ 		dev_err(&dev->dev, "could not add irqchip\n");
+-		ret = gpiochip_remove(&nmk_chip->chip);
++		gpiochip_remove(&nmk_chip->chip);
+ 		return -ENODEV;
+ 	}
+ 	/* Then register the chain on the parent IRQ */
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 2738108caff2..041677113a48 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -903,16 +903,9 @@ EXPORT_SYMBOL(msm_pinctrl_probe);
+ int msm_pinctrl_remove(struct platform_device *pdev)
+ {
+ 	struct msm_pinctrl *pctrl = platform_get_drvdata(pdev);
+-	int ret;
+-
+-	ret = gpiochip_remove(&pctrl->chip);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to remove gpiochip\n");
+-		return ret;
+-	}
+ 
++	gpiochip_remove(&pctrl->chip);
+ 	pinctrl_unregister(pctrl->pctrl);
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL(msm_pinctrl_remove);
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index 603da2f9dd95..8ef370244aee 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -873,11 +873,7 @@ static int exynos5440_gpiolib_register(struct platform_device *pdev,
+ static int exynos5440_gpiolib_unregister(struct platform_device *pdev,
+ 				struct exynos5440_pinctrl_priv_data *priv)
+ {
+-	int ret = gpiochip_remove(priv->gc);
+-	if (ret) {
+-		dev_err(&pdev->dev, "gpio chip remove failed\n");
+-		return ret;
+-	}
++	gpiochip_remove(priv->gc);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index b07406da333c..0d137c56a6a5 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -945,9 +945,7 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
+ 
+ fail:
+ 	for (--i, --bank; i >= 0; --i, --bank)
+-		if (gpiochip_remove(&bank->gpio_chip))
+-			dev_err(&pdev->dev, "gpio chip %s remove failed\n",
+-							bank->gpio_chip.label);
++		gpiochip_remove(&bank->gpio_chip);
+ 	return ret;
+ }
+ 
+@@ -957,16 +955,11 @@ static int samsung_gpiolib_unregister(struct platform_device *pdev,
+ {
+ 	struct samsung_pin_ctrl *ctrl = drvdata->ctrl;
+ 	struct samsung_pin_bank *bank = ctrl->pin_banks;
+-	int ret = 0;
+ 	int i;
+ 
+ 	for (i = 0; !ret && i < ctrl->nr_banks; ++i, ++bank)
+-		ret = gpiochip_remove(&bank->gpio_chip);
+-
+-	if (ret)
+-		dev_err(&pdev->dev, "gpio chip remove failed\n");
+-
+-	return ret;
++		gpiochip_remove(&bank->gpio_chip);
++	return 0;
+ }
+ 
+ static const struct of_device_id samsung_pinctrl_dt_match[];
+-- 
+1.9.3
