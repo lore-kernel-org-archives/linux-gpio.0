@@ -1,200 +1,114 @@
-From: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 4/4 v4] GPIO: gpio-dwapb: Suspend & Resume PM enabling
-Date: Tue, 16 Sep 2014 10:26:45 +0300
-Message-ID: <1410852405.7023.48.camel@linux.intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 3/4 v4] GPIO: gpio-dwapb: Support Debounce
+Date: Tue, 16 Sep 2014 11:37:49 +0300
+Message-ID: <1410856669.7023.54.camel@linux.intel.com>
 References: <1410859335-11080-1-git-send-email-alvin.chen@intel.com>
-	 <1410859335-11080-5-git-send-email-alvin.chen@intel.com>
+	 <1410859335-11080-4-git-send-email-alvin.chen@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1410859335-11080-5-git-send-email-alvin.chen-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Weike Chen <alvin.chen-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, atull <atull-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Boon Leong Ong <boon.leong.ong-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hock Leong Kweh <hock.leong.kweh-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Darren Hart <dvhart-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Sebastian Andrzej Siewior <sebastian-E0PNVn5OA6ohrxcnuTQ+TQ@public.gmane.org>, Mika Westerberg <mika.westerberg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:9911 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753314AbaIPIh4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 16 Sep 2014 04:37:56 -0400
+In-Reply-To: <1410859335-11080-4-git-send-email-alvin.chen@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Weike Chen <alvin.chen@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Arnd Bergmann <arnd@arndb.de>
 
 On Tue, 2014-09-16 at 02:22 -0700, Weike Chen wrote:
-> This patch enables suspend and resume mode for the power management, and
+> This patch enables 'debounce' for the designware GPIO, and
 > it is based on Josef Ahmad's previous work.
 > 
+> Reviewed-by: Hock Leong Kweh <hock.leong.kweh@intel.com>
+> Reviewed-by: Shevchenko, Andriy <andriy.shevchenko@intel.com>
 
-Few comments below.
+This line is wrong. How come?
 
-> Reviewed-by: Hock Leong Kweh <hock.leong.kweh-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Couple of minor comments below, and after addressing them, please, use 
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-You still keep that guy as reviewer in a whole series, however I didn't
-see a word from him here. How is it possible?
-
-> Signed-off-by: Weike Chen <alvin.chen-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Weike Chen <alvin.chen@intel.com>
 > ---
->  drivers/gpio/gpio-dwapb.c |  109 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 109 insertions(+)
+>  drivers/gpio/gpio-dwapb.c |   28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 > 
 > diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 9a76e3c..14d83af 100644
+> index 534945c..9a76e3c 100644
 > --- a/drivers/gpio/gpio-dwapb.c
 > +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -50,11 +50,14 @@
->  #define GPIO_SWPORT_DDR_SIZE	(GPIO_SWPORTB_DDR - GPIO_SWPORTA_DDR)
+> @@ -37,6 +37,7 @@
+>  #define GPIO_INTTYPE_LEVEL	0x38
+>  #define GPIO_INT_POLARITY	0x3c
+>  #define GPIO_INTSTATUS		0x40
+> +#define GPIO_PORTA_DEBOUNCE	0x48
+>  #define GPIO_PORTA_EOI		0x4c
+>  #define GPIO_EXT_PORTA		0x50
+>  #define GPIO_EXT_PORTB		0x54
+> @@ -235,6 +236,29 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+>  	return 0;
+>  }
 >  
->  struct dwapb_gpio;
-> +struct dwapb_context;
->  
->  struct dwapb_gpio_port {
->  	struct bgpio_chip	bgc;
->  	bool			is_registered;
->  	struct dwapb_gpio	*gpio;
-> +	struct dwapb_context	*ctx;
-> +	unsigned int		idx;
->  };
->  
->  struct dwapb_gpio {
-> @@ -377,6 +380,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
->  
->  	port = &gpio->ports[offs];
->  	port->gpio = gpio;
-> +	port->idx = pp->idx;
->  
->  	dat = gpio->regs + GPIO_EXT_PORTA + (pp->idx * GPIO_EXT_PORT_SIZE);
->  	set = gpio->regs + GPIO_SWPORTA_DR + (pp->idx * GPIO_SWPORT_DR_SIZE);
-> @@ -584,10 +588,115 @@ static const struct of_device_id dwapb_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, dwapb_of_match);
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +/* Store GPIO context across system-wide suspend/resume transitions */
-> +struct dwapb_context {
-> +	u32 data;
-> +	u32 dir;
-> +	u32 ext;
-> +	u32 int_en;
-> +	u32 int_mask;
-> +	u32 int_type;
-> +	u32 int_pol;
-> +	u32 int_deb;
-> +};
-
-> +
-> +static int dwapb_gpio_suspend(struct device *dev)
+> +static int dwapb_gpio_set_debounce(struct gpio_chip *gc,
+> +				   unsigned offset, unsigned debounce)
 > +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
-> +	unsigned long flags;
-> +	int i;
+> +	struct bgpio_chip *bgc = to_bgpio_chip(gc);
+> +	struct dwapb_gpio_port *port =
+> +			container_of(bgc, struct dwapb_gpio_port, bgc);
+
+Does it make sense to introduce an inline helper like
+
+static inline struct dwapb_gpio_port *to_dwapb_gpio_port(struct
+bgpio_chip *gc)
+{...}
+
+?
+
+There is also another place where it could be used.
+
+> +	struct dwapb_gpio *gpio = port->gpio;
+> +	unsigned long flags, val_deb;
+> +	unsigned long mask = bgc->pin2mask(bgc, offset);
 > +
 > +	spin_lock_irqsave(&bgc->lock, flags);
-> +	for (i = 0; i < gpio->nr_ports; i++) {
-> +		unsigned int offset;
-> +		unsigned int idx = gpio->ports[i].idx;
-> +		struct dwapb_context *ctx = gpio->ports[i].ctx;
 > +
-> +		if (!ctx) {
-> +			ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +			gpio->ports[i].ctx = ctx;
-> +		}
+> +	val_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
+> +	if (debounce)
+> +		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, mask | val_deb);
 
-I don't think it's a right place to allocate this resource, especially
-with devm_ helper. Can you move this to probe() stage?
+May you put value on the first place? Like 'val_deb | mask'.
 
-Or you even can embed contex structure inside chip one with #ifdef
-CONFIG_PM_SLEEP.
+> +	else
+> +		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, ~mask & val_deb);
 
-Maybe others could comment on this.
+Ditto.
 
 > +
-> +		offset = GPIO_SWPORTA_DDR + (idx * GPIO_SWPORT_DDR_SIZE);
 
-No need to have parentheses here. Check the code below as well.
-
-> +		ctx->dir = dwapb_read(gpio, offset);
-> +
-> +		offset = GPIO_SWPORTA_DR + (idx * GPIO_SWPORT_DR_SIZE);
-> +		ctx->data = dwapb_read(gpio, offset);
-> +
-> +		offset = GPIO_EXT_PORTA + (idx * GPIO_EXT_PORT_SIZE);
-> +		ctx->ext = dwapb_read(gpio, offset);
-> +
-> +		/* Only port A can provide interrupts */
-> +		if (idx == 0) {
-> +			ctx->int_mask	= dwapb_read(gpio, GPIO_INTMASK);
-> +			ctx->int_en	= dwapb_read(gpio, GPIO_INTEN);
-> +			ctx->int_pol	= dwapb_read(gpio, GPIO_INT_POLARITY);
-> +			ctx->int_type	= dwapb_read(gpio, GPIO_INTTYPE_LEVEL);
-> +			ctx->int_deb	= dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
-> +
-> +			/* Mask out interrupts */
-> +			dwapb_write(gpio, GPIO_INTMASK, 0xffffffff);
-> +		}
-> +	}
 > +	spin_unlock_irqrestore(&bgc->lock, flags);
 > +
 > +	return 0;
 > +}
 > +
-> +static int dwapb_gpio_resume(struct device *dev)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct bgpio_chip *bgc	= &gpio->ports[0].bgc;
-> +	unsigned long flags;
-> +	int i;
+>  static irqreturn_t dwapb_irq_handler_mfd(int irq, void *dev_id)
+>  {
+>  	u32 worked;
+> @@ -373,6 +397,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>  	port->bgc.gc.ngpio = pp->ngpio;
+>  	port->bgc.gc.base = pp->gpio_base;
+>  
+> +	/* Only port A support debounce */
+> +	if (pp->idx == 0)
+> +		port->bgc.gc.set_debounce = dwapb_gpio_set_debounce;
 > +
-> +	spin_lock_irqsave(&bgc->lock, flags);
-> +	for (i = 0; i < gpio->nr_ports; i++) {
-> +		unsigned int offset;
-> +		unsigned int idx = gpio->ports[i].idx;
-> +		struct dwapb_context *ctx = gpio->ports[i].ctx;
-> +
-> +		BUG_ON(ctx == 0);
-> +
-> +		offset = GPIO_SWPORTA_DR + (idx * GPIO_SWPORT_DR_SIZE);
-> +		dwapb_write(gpio, offset, ctx->data);
-> +
-> +		offset = GPIO_SWPORTA_DDR + (idx * GPIO_SWPORT_DDR_SIZE);
-> +		dwapb_write(gpio, offset, ctx->dir);
-> +
-> +		offset = GPIO_EXT_PORTA + (idx * GPIO_EXT_PORT_SIZE);
-> +		dwapb_write(gpio, offset, ctx->ext);
-> +
-> +		/* Only port A can provide interrupts */
-> +		if (idx == 0) {
-> +			dwapb_write(gpio, GPIO_INTTYPE_LEVEL, ctx->int_type);
-> +			dwapb_write(gpio, GPIO_INT_POLARITY, ctx->int_pol);
-> +			dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, ctx->int_deb);
-> +			dwapb_write(gpio, GPIO_INTEN, ctx->int_en);
-> +			dwapb_write(gpio, GPIO_INTMASK, ctx->int_mask);
-> +
-> +			/* Clear out spurious interrupts */
-> +			dwapb_write(gpio, GPIO_PORTA_EOI, 0xffffffff);
-> +		}
-> +	}
-> +	spin_unlock_irqrestore(&bgc->lock, flags);
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(dwapb_gpio_pm_ops, dwapb_gpio_suspend,
-> +			 dwapb_gpio_resume);
-> +
->  static struct platform_driver dwapb_gpio_driver = {
->  	.driver		= {
->  		.name	= "gpio-dwapb",
->  		.owner	= THIS_MODULE,
-> +		.pm	= &dwapb_gpio_pm_ops,
->  		.of_match_table = of_match_ptr(dwapb_of_match),
->  	},
->  	.probe		= dwapb_gpio_probe,
-
+>  	if (pp->irq)
+>  		dwapb_configure_irqs(gpio, port, pp);
+>  
 
 
 -- 
-Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Intel Finland Oy
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
