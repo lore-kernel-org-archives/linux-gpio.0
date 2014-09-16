@@ -1,69 +1,56 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 0/2] Support CrystalCove PMIC ACPI operation region
-Date: Mon, 15 Sep 2014 23:43:17 +0100
-Message-ID: <20140915224317.GF25162@lee--X1>
-References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>
- <20140915025727.GA14730@aaronlu.sh.intel.com>
+From: "Chen, Alvin" <alvin.chen@intel.com>
+Subject: RE: [PATCH 1/4 v3] GPIO: gpio-dwapb: Enable platform driver binding
+ to MFD driver
+Date: Tue, 16 Sep 2014 01:07:31 +0000
+Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E9918D4@SHSMSX101.ccr.corp.intel.com>
+References: <1410286081-16653-1-git-send-email-alvin.chen@intel.com>
+  <1410286081-16653-2-git-send-email-alvin.chen@intel.com>
+  <alpine.DEB.2.02.1409101353500.2790@atx-linux-37>
+ <1410422381.7023.15.camel@intel.com>
+ <alpine.DEB.2.02.1409111020130.19272@atx-linux-37>
+ <4656BEB6164FC34F8171C6538F1A595B2E9915E6@SHSMSX101.ccr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140915025727.GA14730@aaronlu.sh.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, Daniel =?iso-8859-1?Q?Gl=F6ckner?= <dg@emlix.com>, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:37706 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752379AbaIPBHq convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Sep 2014 21:07:46 -0400
+In-Reply-To: <4656BEB6164FC34F8171C6538F1A595B2E9915E6@SHSMSX101.ccr.corp.intel.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+Cc: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'robh+dt@kernel.org'" <robh+dt@kernel.org>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, "'devicetree@vger.kernel.org'" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "'gnurou@gmail.com'" <gnurou@gmail.com>, "'linus.walleij@linaro.org'" <linus.walleij@linaro.org>, "'linux-gpio@vger.kernel.org'" <linux-gpio@vger.kernel.org>, "'sebastian@breakpoint.cc'" <sebastian@breakpoint.cc>, "'grant.likely@linaro.org'" <grant.likely@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "'dvhart@linux.intel.com'" <dvhart@linux.intel.com>, "'arnd@arndb.de'" <arnd@arndb.de>, 'atull' <atull@opensource.altera.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
 
-On Mon, 15 Sep 2014, Aaron Lu wrote:
 
-> I wonder if anyone has looked at this?
->=20
-> Note that this is for CrystalCove PMIC operation region support and t=
-he
-> CrystalCove driver is already in mainline, not for the DollarCove PMI=
-C
-> driver that Jacob is currently upstreaming, so the patch doesn't have
-> any dependency.
+> 
+> > >
+> > > > >  static int dwapb_gpio_probe(struct platform_device *pdev)  {
+> > > > > +	int i;
+> > > > >  	struct resource *res;
+> > > > >  	struct dwapb_gpio *gpio;
+> > > > > -	struct device_node *np;
+> > > > >  	int err;
+> > > > > -	unsigned int offs = 0;
+> > > > > +	struct device *dev = &pdev->dev;
+> > > > > +	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
+> > > > > +	bool is_pdata_alloc = !pdata;
+> > > >
+> > > > Please combine the int's in one line (int err, i;) and put them as
+> > > > the last one on this list.  It looks the same to the compiler of
+> > > > course, but more uniform for human eyes :)
+> > >
+> > > Do you think it's a good idea? In this case I, for example, would
+> > > like to see int err as a separate line at the end of definition
+> > > block. It would be better to distinguish counters and return code storage.
+> > > Moreover, often counters would be unsigned int.
+> >
+> > If they are both 'int' they should be combined.  If 'i' is changed to
+> > be an unsigned int they would be separate.
+> 
+> Linus, do you have any idea about it? I think it is not a big issue.
+> >
 
-Not yet.  It is on my list of TODOs though.
-
-> On Tue, Sep 09, 2014 at 10:32:46AM +0800, Aaron Lu wrote:
-> > The two patches add support for CrystalCove PMIC ACPI operation reg=
-ion.
-> > The PMIC chip has two customized operation regions: one for power r=
-ail
-> > manipulation and one for thermal purpose: sensor temperature readin=
-g
-> > and trip point value reading/setting.
-> >=20
-> > For an example ASL code on ASUS T100 with CrystalCove PMIC, see her=
-e:
-> > https://gist.github.com/aaronlu/f5f65771a6c3251fae5d
-> >=20
-> > Aaron Lu (2):
-> >   gpio / CrystalCove: support virtual GPIO
-> >   PMIC / opregion: support PMIC customized operation region for
-> >     CrystalCove
-> >=20
-> >  drivers/gpio/gpio-crystalcove.c           |  19 +-
-> >  drivers/mfd/Kconfig                       |  11 +
-> >  drivers/mfd/Makefile                      |   1 +
-> >  drivers/mfd/intel_soc_pmic_crc.c          |   3 +
-> >  drivers/mfd/intel_soc_pmic_crc_opregion.c | 229 ++++++++++++++++++=
-+
-> >  drivers/mfd/intel_soc_pmic_opregion.c     | 350 ++++++++++++++++++=
-++++++++++++
-> >  drivers/mfd/intel_soc_pmic_opregion.h     |  35 +++
-> >  include/asm-generic/gpio.h                |   2 +-
-> >  8 files changed, 646 insertions(+), 4 deletions(-)
-> >  create mode 100644 drivers/mfd/intel_soc_pmic_crc_opregion.c
-> >  create mode 100644 drivers/mfd/intel_soc_pmic_opregion.c
-> >  create mode 100644 drivers/mfd/intel_soc_pmic_opregion.h
-> >=20
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Since no further feedbacks, I decide to use 'unsigned int i' to align the two feedbacks, since 'i' is just a counter.
+And will send a new version with just this changes later.
