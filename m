@@ -1,52 +1,32 @@
-From: atull <atull@opensource.altera.com>
-Subject: Re: [PATCH 1/4 v4] GPIO: gpio-dwapb: Enable platform driver binding
- to MFD driver
-Date: Tue, 16 Sep 2014 09:22:43 -0500
-Message-ID: <alpine.DEB.2.02.1409160921020.4740@atx-linux-37>
-References: <1410859335-11080-1-git-send-email-alvin.chen@intel.com> <1410859335-11080-2-git-send-email-alvin.chen@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 0/4] gpio: syscon: reuse for keystone 2 socs
+Date: Tue, 16 Sep 2014 14:43:17 -0700
+Message-ID: <CACRpkdaB7YpYjuND+Dic2eM=0OB0Sk=gGRRd7QrQj1Ze1MYXaQ@mail.gmail.com>
+References: <1409763935-5713-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1on0079.outbound.protection.outlook.com ([157.56.110.79]:61830
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754568AbaIPOnZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 16 Sep 2014 10:43:25 -0400
-In-Reply-To: <1410859335-11080-2-git-send-email-alvin.chen@intel.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:42804 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753777AbaIPVnR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Sep 2014 17:43:17 -0400
+Received: by mail-oi0-f47.google.com with SMTP id e131so255418oig.6
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Sep 2014 14:43:17 -0700 (PDT)
+In-Reply-To: <1409763935-5713-1-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Weike Chen <alvin.chen@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andriy Shevchenko <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Alexander Shiyan <shc_work@mail.ru>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, 16 Sep 2014, Weike Chen wrote:
+On Wed, Sep 3, 2014 at 10:05 AM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-One more:
+> This series intended to integrate Keystone 2 DSP GPIO controller functionality
+> into gpio-syscon driver (drivers/gpio/gpio-syscon.c) as requested
+> by Linus Walleij in [1].
 
-> +
-> +		/*
-> +		 * Only port A can provide interrupts in all configurations of
-> +		 * the IP.
-> +		 */
-> +		if (pp->idx == 0 &&
-> +		    of_property_read_bool(port_np, "interrupt-controller")) {
-> +			pp->irq = irq_of_parse_and_map(port_np, 0);
-> +			if (!pp->irq) {
-> +				dev_warn(dev, "no irq for bank %s\n",
-> +					 port_np->full_name);
-> +			}
-> +		} else {
-> +			pp->irq	= 0;
-> +		}
+OK no comments on DT stuff etc for two weeks, so merged patches
+1-3, the 4th you can take through the keystone git.
 
-The else clause is not needed since pp->irq == 0 already, right?
-
-Alan
-
-> +
-> +		pp->irq_shared	= false;
-> +		pp->gpio_base	= -1;
-> +		pp->name	= port_np->full_name;
-> +	}
-> +
-> +	return pdata;
-> +}
+Yours,
+Linus Walleij
