@@ -1,40 +1,105 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 1/3] mfd: add support for Diolan DLN-2 devices
-Date: Wed, 17 Sep 2014 09:38:25 +0200
-Message-ID: <20140917073825.GE20727@localhost>
-References: <1410290686-6680-1-git-send-email-octavian.purdila@intel.com>
- <1410290686-6680-2-git-send-email-octavian.purdila@intel.com>
- <20140916232149.GB30918@lee--X1>
- <CAE1zotJWUnduPUd9C8EgSHHSo-OCgdj7c-sKaT5M2Ajj2CmNWw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAE1zotJWUnduPUd9C8EgSHHSo-OCgdj7c-sKaT5M2Ajj2CmNWw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Weike Chen <alvin.chen@intel.com>
+Subject: [PATCH 0/4 v5] The Designware GPIO Supporting
+Date: Wed, 17 Sep 2014 09:18:38 -0700
+Message-ID: <1410970722-8579-1-git-send-email-alvin.chen@intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:28461 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751854AbaIQI03 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 17 Sep 2014 04:26:29 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Boon Leong Ong <boon.leong.ong@intel.com>, Hock Leong Kweh <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Mika Westerberg <mika.westerberg@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Alvin Chen <alvin.chen@intel.com>
 
-On Wed, Sep 17, 2014 at 10:25:18AM +0300, Octavian Purdila wrote:
-> On Wed, Sep 17, 2014 at 2:21 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> >
-> > On Tue, 09 Sep 2014, Octavian Purdila wrote:
-> >
-> > > This patch implements the USB part of the Diolan USB-I2C/SPI/GPIO
-> > > Master Adapter DLN-2. Details about the device can be found here:
-> > >
-> > > https://www.diolan.com/i2c/i2c_interface.html.
-> > >
-> > > Information about the USB protocol can be found in the Programmer's
-> > > Reference Manual [1], see section 1.7.
-> >
-> > This driver really needs a USB Ack before I can accept it.
-> >
-> 
-> Greg, Johan, is the driver acceptable now?
+Hi,
+These patches are for Intel Quark X1000 designware GPIO supporting. The first
+patch enables the Synopsys DesignWare APB GPIO driver to support the MFD device.
+And the Quark designware GPIO controller is registered as MFD device,
+because Quark exports a single PCI device with both GPIO and I2C functions.
+It is about reviewing the GPIO changes in gpio-dwapb, and in near future,
+the Quark I2C driver and the MFD driver that binds these GPIO & I2C
+functions will be sent subsequently. The second patch replaces all
+'readl&writel' with 'dwapb_read'&'dwapb_write. The third patch enables the gpio
+'debounce' feature. And the fourth patch enables the power management.
 
-I started looking through v4 yesterday and found a few more things. Will
-send you some you comments shortly.
+---
+v5:
+ [PATCH 1/4]
+ * Remove 'pp->irq = 0' since the memory is already set to '0'.
+ [PATCH 2/4]
+ * No changes.
+ [PATCH 3/4]
+ * Correct the 'Reviewed-by'.
+ * Use inline helper for 'container_of'.
+ * Other minor fixes.
+ [PATCH 4/4]
+ * Allocate PM context in 'probe' if 'PM_SLEEP' is enabled.
+ * Other minor fixes.
 
-Johan
+v4:
+ [PATCH 1/4]
+ * Use 'unsigned int i' instead of 'int i' in 'probe'.
+ [PATCH 2/4]
+ * No changes.
+ [PATCH 3/4]
+ * No changes.
+ [PATCH 4/4]
+ * No changes.
+
+v3:
+ Split [PATCH 2/3] into two patches [PATCH 2/4] and [PATCH 3/4],
+ and now inlucde 4 patches.
+
+ [PATCH 1/4]
+ * Use 'is_pdata_alloc' instead of 'is_of'.
+ * Allocate 'pdata' by 'kmalloc/kfree' instead of 'devm_*' for OF.
+ * Use 'IS_ENABLED(CONFIG_OF_GPIO)' instead of '#ifdef CONFIG_OF_GPIO'.
+ * A couple of other minor changes.
+ [PATCH 2/4]
+ * New patch splitted from the original [PATCH 2/3]
+ * Use 'dwapb_read/write' instead of readl&writel.
+ [PATCH 3/4]
+ * Move 'dwapb_read/write' defination to new patch [PATCH 2/4].
+ * Only port A support 'debounce' now.
+ [PATCH 4/4]
+ * The original patch [PATCH 3/3]
+ * Use 'struct dwapb_context' instead of 'struct gpio_saved_regs'.
+ * Allocate and save context dynamically by per port.
+
+v2:
+ [PATCH 1/3]
+ * Fixed a bug to set the base gpio number to '-1' for the OF flow.
+ * Set device node for each gpio chip for the OF flow.
+ * Change the name of 'struct dwapb_gpio_platform_data' to
+   'struct dwapb_platform_data'.
+ * Change the name of 'struct dwapb_gpio_port_property' to
+   'struct dwapb_port_property'.
+ * Access pdata directly in 'probe' instead of accesing it
+   by 'struct dwapb_gpio'.
+ * Free 'pdata' at the end of 'probe' if it is OF case to save memory.
+ * Improve the interrupt handler.
+ * Move 'irq_set_handler_data' together with 'irq_set_chained_hanlder'.
+ * Remove unncessary comments.
+ [PATCH 2/3]
+ * Change all 'readl'&'writel' to 'dwapb_read'&'dwapb_write'.
+ [PATCH 3/3]
+ * Change the name for 'struct gpio_saved_regs' to 'struct dwapb_context'.
+ * Save the registers for all ports according to the port index.
+ * Change '#if defined' to '#ifdef'.
+
+Weike Chen (4):
+  GPIO: gpio-dwapb: Enable platform driver binding to MFD driver
+  GPIO: gpio-dwapb: Change readl&writel to dwapb_read&dwapb_write
+  GPIO: gpio-dwapb: Support Debounce
+  GPIO: gpio-dwapb: Suspend & Resume PM enabling
+
+ drivers/gpio/Kconfig                     |    1 -
+ drivers/gpio/gpio-dwapb.c                |  410 +++++++++++++++++++++++++-----
+ include/linux/platform_data/gpio-dwapb.h |   32 +++
+ 3 files changed, 374 insertions(+), 69 deletions(-)
+ create mode 100644 include/linux/platform_data/gpio-dwapb.h
+
+-- 
+1.7.9.5
+
