@@ -1,38 +1,37 @@
 From: "Chen, Alvin" <alvin.chen@intel.com>
-Subject: RE: [PATCH 3/4 v4] GPIO: gpio-dwapb: Support Debounce
-Date: Wed, 17 Sep 2014 06:47:35 +0000
-Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E99254E@SHSMSX101.ccr.corp.intel.com>
+Subject: RE: [PATCH 1/4 v4] GPIO: gpio-dwapb: Enable platform driver binding
+ to MFD driver
+Date: Wed, 17 Sep 2014 07:09:42 +0000
+Message-ID: <4656BEB6164FC34F8171C6538F1A595B2E9925AB@SHSMSX101.ccr.corp.intel.com>
 References: <1410859335-11080-1-git-send-email-alvin.chen@intel.com>
-	 <1410859335-11080-4-git-send-email-alvin.chen@intel.com>
- <1410856669.7023.54.camel@linux.intel.com>
+ <1410859335-11080-2-git-send-email-alvin.chen@intel.com>
+ <alpine.DEB.2.02.1409160921020.4740@atx-linux-37>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:7469 "EHLO mga02.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:32023 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751790AbaIQGry (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 17 Sep 2014 02:47:54 -0400
-In-Reply-To: <1410856669.7023.54.camel@linux.intel.com>
+	id S1751406AbaIQHKC convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Sep 2014 03:10:02 -0400
+In-Reply-To: <alpine.DEB.2.02.1409160921020.4740@atx-linux-37>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, atull <atull@opensource.altera.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, "Westerberg, Mika" <mika.westerberg@intel.com>, Arnd Bergmann <arnd@arndb.de>
+To: atull <atull@opensource.altera.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ong, Boon Leong" <boon.leong.ong@intel.com>, "Kweh, Hock Leong" <hock.leong.kweh@intel.com>, Darren Hart <dvhart@linux.intel.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, "Westerberg, Mika" <mika.westerberg@intel.com>, "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>
 
-PiA+ICsJc3RydWN0IGJncGlvX2NoaXAgKmJnYyA9IHRvX2JncGlvX2NoaXAoZ2MpOw0KPiA+ICsJ
-c3RydWN0IGR3YXBiX2dwaW9fcG9ydCAqcG9ydCA9DQo+ID4gKwkJCWNvbnRhaW5lcl9vZihiZ2Ms
-IHN0cnVjdCBkd2FwYl9ncGlvX3BvcnQsIGJnYyk7DQo+IA0KPiBEb2VzIGl0IG1ha2Ugc2Vuc2Ug
-dG8gaW50cm9kdWNlIGFuIGlubGluZSBoZWxwZXIgbGlrZQ0KPiANCj4gc3RhdGljIGlubGluZSBz
-dHJ1Y3QgZHdhcGJfZ3Bpb19wb3J0ICp0b19kd2FwYl9ncGlvX3BvcnQoc3RydWN0IGJncGlvX2No
-aXANCj4gKmdjKSB7Li4ufQ0KPiANCj4gPw0KDQpPSy4NCg0KPiBUaGVyZSBpcyBhbHNvIGFub3Ro
-ZXIgcGxhY2Ugd2hlcmUgaXQgY291bGQgYmUgdXNlZC4NCj4gDQo+ID4gKwlzdHJ1Y3QgZHdhcGJf
-Z3BpbyAqZ3BpbyA9IHBvcnQtPmdwaW87DQo+ID4gKwl1bnNpZ25lZCBsb25nIGZsYWdzLCB2YWxf
-ZGViOw0KPiA+ICsJdW5zaWduZWQgbG9uZyBtYXNrID0gYmdjLT5waW4ybWFzayhiZ2MsIG9mZnNl
-dCk7DQo+ID4gKw0KPiA+ICsJc3Bpbl9sb2NrX2lycXNhdmUoJmJnYy0+bG9jaywgZmxhZ3MpOw0K
-PiA+ICsNCj4gPiArCXZhbF9kZWIgPSBkd2FwYl9yZWFkKGdwaW8sIEdQSU9fUE9SVEFfREVCT1VO
-Q0UpOw0KPiA+ICsJaWYgKGRlYm91bmNlKQ0KPiA+ICsJCWR3YXBiX3dyaXRlKGdwaW8sIEdQSU9f
-UE9SVEFfREVCT1VOQ0UsIG1hc2sgfCB2YWxfZGViKTsNCj4gDQo+IE1heSB5b3UgcHV0IHZhbHVl
-IG9uIHRoZSBmaXJzdCBwbGFjZT8gTGlrZSAndmFsX2RlYiB8IG1hc2snLg0KDQpPSy4NCg0KPiA+
-ICsJZWxzZQ0KPiA+ICsJCWR3YXBiX3dyaXRlKGdwaW8sIEdQSU9fUE9SVEFfREVCT1VOQ0UsIH5t
-YXNrICYgdmFsX2RlYik7DQo+IA0KPiBEaXR0by4NCj4gDQpPSy4NCj4gPiArDQoNCg==
+> > +		if (pp->idx == 0 &&
+> > +		    of_property_read_bool(port_np, "interrupt-controller")) {
+> > +			pp->irq = irq_of_parse_and_map(port_np, 0);
+> > +			if (!pp->irq) {
+> > +				dev_warn(dev, "no irq for bank %s\n",
+> > +					 port_np->full_name);
+> > +			}
+> > +		} else {
+> > +			pp->irq	= 0;
+> > +		}
+> 
+> The else clause is not needed since pp->irq == 0 already, right?
+> 
+Yes, while call kcalloc, the memory is set to '0'. I will improve it.
