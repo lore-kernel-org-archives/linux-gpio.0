@@ -1,53 +1,86 @@
 From: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Subject: [PATCH 0/3] Enable Quark X1000 support in gpio-sch
-Date: Wed, 17 Sep 2014 16:49:02 +0800
-Message-ID: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:26031 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751842AbaIQItd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 17 Sep 2014 04:49:33 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 2/3] gpio: sch: Add support for Intel Quark X1000 SoC
+Date: Wed, 17 Sep 2014 16:49:04 +0800
+Message-ID: <1410943745-9354-3-git-send-email-rebecca.swee.fun.chang@intel.com>
+References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+Intel Quark X1000 provides a total of 16 GPIOs. The GPIOs are split between
+the legacy I/O bridge and the GPIO controller.
 
-This patch series is about enabling legacy GPIO support for Quark X1000.
-The patches were developed on top of Mika Westerberg's commit on
-consolidating core and resume banks. Please refer to the link below for
-more information about his commit.
-https://lkml.org/lkml/2014/8/17/13
+GPIO-SCH is the GPIO pins on legacy bridge for Intel Quark SoC.
+Intel Quark X1000 has 2 GPIOs powered by the core power well and 6 from
+the suspend power well.
 
-The patches are generally enable GPIO support for Intel Quark X1000 SoC.
-In the first patch of the series, I've also done some consolidating work as
-there are similar algorithms that can be merged and generalized.
+This piece of work is derived from Dan O'Donovan's initial work for Quark
+X1000 enabling.
 
-The second patch is about adding Quark X1000 pci ids and gpio pins supported
-in the legacy gpio bridge.
+Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+---
+ drivers/gpio/Kconfig    |   11 +++++++++--
+ drivers/gpio/gpio-sch.c |    6 ++++++
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-The last patch in the series is about enable IRQ handling for gpio-sch. Intel
-Quark X1000's legacy GPIO is an IRQ based GPIO. The IRQ resources will be
-provided by MFD's lpc_sch.c. The changes in MFD (lpc_sch.c) required in order
-to support gpio-sch has been merged into linux-next.git.
-
-The patches has been built and tested working on Intel Galileo board.
-
-Thank you.
-
-Regards
-Rebecca
-
-Chang Rebecca Swee Fun (3):
-  gpio: sch: Consolidate similar algorithms
-  gpio: sch: Add support for Intel Quark X1000 SoC
-  gpio: sch: Enable IRQ support for Quark X1000
-
- drivers/gpio/Kconfig    |   11 +-
- drivers/gpio/gpio-sch.c |  362 ++++++++++++++++++++++++++++++++++++++++-------
- 2 files changed, 318 insertions(+), 55 deletions(-)
-
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 690904a..64683a9 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -356,25 +356,32 @@ config GPIO_VR41XX
+ 	  Say yes here to support the NEC VR4100 series General-purpose I/O Uint
+ 
+ config GPIO_SCH
+-	tristate "Intel SCH/TunnelCreek/Centerton GPIO"
++	tristate "Intel SCH/TunnelCreek/Centerton/Quark X1000 GPIO"
+ 	depends on PCI && X86
+ 	select MFD_CORE
+ 	select LPC_SCH
+ 	help
+ 	  Say yes here to support GPIO interface on Intel Poulsbo SCH,
+-	  Intel Tunnel Creek processor or Intel Centerton processor.
++	  Intel Tunnel Creek processor, Intel Centerton processor or
++	  Intel Quark X1000 SoC.
++
+ 	  The Intel SCH contains a total of 14 GPIO pins. Ten GPIOs are
+ 	  powered by the core power rail and are turned off during sleep
+ 	  modes (S3 and higher). The remaining four GPIOs are powered by
+ 	  the Intel SCH suspend power supply. These GPIOs remain
+ 	  active during S3. The suspend powered GPIOs can be used to wake the
+ 	  system from the Suspend-to-RAM state.
++
+ 	  The Intel Tunnel Creek processor has 5 GPIOs powered by the
+ 	  core power rail and 9 from suspend power supply.
++
+ 	  The Intel Centerton processor has a total of 30 GPIO pins.
+ 	  Twenty-one are powered by the core power rail and 9 from the
+ 	  suspend power supply.
+ 
++	  The Intel Quark X1000 SoC has 2 GPIOs powered by the core
++	  power well and 6 from the suspend power well.
++
+ config GPIO_ICH
+ 	tristate "Intel ICH GPIO"
+ 	depends on PCI && X86
+diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+index 2189c22..38d6e74 100644
+--- a/drivers/gpio/gpio-sch.c
++++ b/drivers/gpio/gpio-sch.c
+@@ -241,6 +241,12 @@ static int sch_gpio_probe(struct platform_device *pdev)
+ 		sch->chip.ngpio = 30;
+ 		break;
+ 
++	case PCI_DEVICE_ID_INTEL_QUARK_X1000_ILB:
++		sch->core_base = 0;
++		sch->resume_base = 2;
++		sch->chip.ngpio = 8;
++		break;
++
+ 	default:
+ 		return -ENODEV;
+ 	}
 -- 
 1.7.9.5
-
