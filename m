@@ -1,431 +1,278 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 3/3] gpio: sch: Enable IRQ support for Quark X1000
-Date: Thu, 18 Sep 2014 14:31:22 +0300
-Message-ID: <20140918113122.GO10854@lahna.fi.intel.com>
-References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
- <1410943745-9354-4-git-send-email-rebecca.swee.fun.chang@intel.com>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 1/3] mfd: add support for Diolan DLN-2 devices
+Date: Thu, 18 Sep 2014 13:31:50 +0200
+Message-ID: <20140918113150.GB2337@localhost>
+References: <1410290686-6680-1-git-send-email-octavian.purdila@intel.com>
+ <1410290686-6680-2-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:14629 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756307AbaIRLb0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 18 Sep 2014 07:31:26 -0400
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1410943745-9354-4-git-send-email-rebecca.swee.fun.chang@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1410290686-6680-2-git-send-email-octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 17, 2014 at 04:49:05PM +0800, Chang Rebecca Swee Fun wrote:
-> Intel Quark X1000 GPIO controller supports interrupt handling for
-> both core power well and resume power well. This patch is to enable
-> the IRQ support and provide IRQ handling for Intel Quark X1000
-> GPIO-SCH device driver.
-> 
-> This piece of work is derived from Dan O'Donovan's initial work for
-> Quark X1000 enabling.
-> 
-> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-> ---
->  drivers/gpio/gpio-sch.c |  267 ++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 253 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-> index 38d6e74..c6c64a5 100644
-> --- a/drivers/gpio/gpio-sch.c
-> +++ b/drivers/gpio/gpio-sch.c
-> @@ -28,17 +28,30 @@
->  #include <linux/pci_ids.h>
->  
->  #include <linux/gpio.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
->  
->  #define GEN	0x00
->  #define GIO	0x04
->  #define GLV	0x08
-> +#define GTPE	0x0C
-> +#define GTNE	0x10
-> +#define GGPE	0x14
-> +#define GSMI	0x18
-> +#define GTS	0x1C
-> +#define CGNMIEN	0x40
-> +#define RGNMIEN	0x44
->  
->  struct sch_gpio {
->  	struct gpio_chip chip;
-> +	struct irq_data data;
->  	spinlock_t lock;
->  	unsigned short iobase;
->  	unsigned short core_base;
->  	unsigned short resume_base;
-> +	int irq_base;
-> +	int irq_num;
-> +	int irq_support;
->  };
->  
->  #define to_sch_gpio(c)	container_of(c, struct sch_gpio, chip)
-> @@ -67,10 +80,11 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
->  
->  static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio, unsigned reg)
->  {
-> +	unsigned long flags;
->  	unsigned short offset, bit;
->  	u8 enable;
->  
-> -	spin_lock(&sch->lock);
-> +	spin_lock_irqsave(&sch->lock, flags);
->  
->  	offset = sch_gpio_offset(sch, gpio, reg);
->  	bit = sch_gpio_bit(sch, gpio);
-> @@ -79,15 +93,16 @@ static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio, unsigned reg)
->  	if (!(enable & BIT(bit)))
->  		outb(enable | BIT(bit), sch->iobase + offset);
->  
-> -	spin_unlock(&sch->lock);
-> +	spin_unlock_irqrestore(&sch->lock, flags);
->  }
->  
->  static void sch_gpio_disable(struct sch_gpio *sch, unsigned gpio, unsigned reg)
->  {
-> +	unsigned long flags;
->  	unsigned short offset, bit;
->  	u8 disable;
->  
-> -	spin_lock(&sch->lock);
-> +	spin_lock_irqsave(&sch->lock, flags);
->  
->  	offset = sch_gpio_offset(sch, gpio, reg);
->  	bit = sch_gpio_bit(sch, gpio);
-> @@ -96,7 +111,7 @@ static void sch_gpio_disable(struct sch_gpio *sch, unsigned gpio, unsigned reg)
->  	if (disable & BIT(bit))
->  		outb(disable & ~BIT(bit), sch->iobase + offset);
->  
-> -	spin_unlock(&sch->lock);
-> +	spin_unlock_irqrestore(&sch->lock, flags);
->  }
->  
->  static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
-> @@ -134,10 +149,11 @@ static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
->  static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
->  {
->  	struct sch_gpio *sch = to_sch_gpio(gc);
-> +	unsigned long flags;
->  
-> -	spin_lock(&sch->lock);
-> +	spin_lock_irqsave(&sch->lock, flags);
->  	sch_gpio_enable(sch, gpio_num, GIO);
-> -	spin_unlock(&sch->lock);
-> +	spin_unlock_irqrestore(&sch->lock, flags);
->  	return 0;
->  }
->  
-> @@ -145,10 +161,11 @@ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
->  				  int val)
->  {
->  	struct sch_gpio *sch = to_sch_gpio(gc);
-> +	unsigned long flags;
->  
-> -	spin_lock(&sch->lock);
-> +	spin_lock_irqsave(&sch->lock, flags);
->  	sch_gpio_disable(sch, gpio_num, GIO);
-> -	spin_unlock(&sch->lock);
-> +	spin_unlock_irqrestore(&sch->lock, flags);
->  
->  	/*
->  	 * according to the datasheet, writing to the level register has no
-> @@ -171,10 +188,18 @@ static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
->  static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
->  {
->  	struct sch_gpio *sch = to_sch_gpio(gc);
-> +	unsigned long flags;
->  
-> -	spin_lock(&sch->lock);
-> +	spin_lock_irqsave(&sch->lock, flags);
->  	sch_gpio_reg_set(gc, gpio_num, GLV, val);
-> -	spin_unlock(&sch->lock);
-> +	spin_unlock_irqrestore(&sch->lock, flags);
+On Tue, Sep 09, 2014 at 10:24:44PM +0300, Octavian Purdila wrote:
+
+> +static int alloc_rx_slot(struct dln2_mod_rx_slots *rxs)
+> +{
+> +	int ret;
+> +	int slot;
+> +
+> +	/* No need to timeout here, the wait is bounded by the timeout
+> +	 * in _dln2_transfer
+> +	 */
+> +	ret = wait_event_interruptible(rxs->wq, find_free_slot(rxs, &slot));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return slot;
 > +}
 > +
-> +static int sch_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+> +static void free_rx_slot(struct dln2_dev *dln2, struct dln2_mod_rx_slots *rxs,
+> +			 int slot)
 > +{
-> +	struct sch_gpio *sch = to_sch_gpio(gc);
-> +
-> +	return sch->irq_base + offset;
->  }
->  
->  static struct gpio_chip sch_gpio_chip = {
-> @@ -184,12 +209,160 @@ static struct gpio_chip sch_gpio_chip = {
->  	.get			= sch_gpio_get,
->  	.direction_output	= sch_gpio_direction_out,
->  	.set			= sch_gpio_set,
-> +	.to_irq			= sch_gpio_to_irq,
-> +};
-> +
-> +static void sch_gpio_irq_enable(struct irq_data *d)
-> +{
-> +	struct sch_gpio *sch = container_of(d, struct sch_gpio, data);
-> +	u32 gpio_num;
-> +
-> +	gpio_num = d->irq - sch->irq_base;
-> +	sch_gpio_enable(sch, gpio_num, GGPE);
-> +}
-> +
-> +static void sch_gpio_irq_disable(struct irq_data *d)
-> +{
-> +	struct sch_gpio *sch = container_of(d, struct sch_gpio, data);
-> +	u32 gpio_num;
-> +
-> +	gpio_num = d->irq - sch->irq_base;
-> +	sch_gpio_disable(sch, gpio_num, GGPE);
-> +}
-> +
-> +static void sch_gpio_irq_ack(struct irq_data *d)
-> +{
-> +	struct sch_gpio *sch = container_of(d, struct sch_gpio, data);
-> +	u32 gpio_num;
-> +
-> +	gpio_num = d->irq - sch->irq_base;
-> +	sch_gpio_reg_set(&(sch->chip), gpio_num, GTS, 1);
-> +}
-> +
-> +static int sch_gpio_irq_type(struct irq_data *d, unsigned type)
-> +{
-> +	struct sch_gpio *sch = container_of(d, struct sch_gpio, data);
+> +	struct urb *urb = NULL;
 > +	unsigned long flags;
-> +	u32 gpio_num;
+> +	struct dln2_rx_context *rxc;
+> +	struct device *dev = &dln2->interface->dev;
+> +	int ret;
 > +
-> +	if (d == NULL)
-> +		return -EINVAL;
+> +	spin_lock_irqsave(&rxs->lock, flags);
 > +
-> +	gpio_num = d->irq - sch->irq_base;
+> +	clear_bit(slot, &rxs->bmap);
 > +
-> +	spin_lock_irqsave(&sch->lock, flags);
+> +	rxc = &rxs->slots[slot];
+> +	rxc->connected = false;
+> +	urb = rxc->urb;
+> +	rxc->urb = NULL;
+> +	reinit_completion(&rxc->done);
 > +
-> +	switch (type) {
-> +	case IRQ_TYPE_EDGE_RISING:
-> +		sch_gpio_enable(sch, gpio_num, GTPE);
-> +		sch_gpio_disable(sch, gpio_num, GTNE);
+> +	spin_unlock_irqrestore(&rxs->lock, flags);
+> +
+> +	if (urb)  {
+> +		ret = usb_submit_urb(urb, GFP_KERNEL);
+> +		if (ret < 0)
+> +			dev_err(dev, "failed to re-submit RX URB: %d\n", ret);
+> +	}
+> +
+> +	wake_up_interruptible(&rxs->wq);
+> +}
+
+> +static void dln2_rx_transfer(struct dln2_dev *dln2, struct urb *urb,
+> +			     u16 handle, u16 rx_slot)
+> +{
+> +	struct dln2_mod_rx_slots *rxs = &dln2->mod_rx_slots[handle];
+> +	struct dln2_rx_context *rxc;
+> +	struct device *dev = &dln2->interface->dev;
+> +	int err;
+> +
+> +	spin_lock(&rxs->lock);
+> +	rxc = &rxs->slots[rx_slot];
+> +	if (rxc->connected) {
+> +		rxc->urb = urb;
+> +		complete(&rxc->done);
+> +	} else {
+> +		dev_warn(dev, "dropping response %d/%d", handle, rx_slot);
+> +		err = usb_submit_urb(urb, GFP_ATOMIC);
+> +		if (err < 0)
+> +			dev_err(dev, "failed to re-submit RX URB: %d\n", err);
+> +	}
+> +	spin_unlock(&rxs->lock);
+> +}
+
+> +static void dln2_rx(struct urb *urb)
+> +{
+> +	int err;
+> +	struct dln2_dev *dln2 = urb->context;
+> +	struct dln2_header *hdr = urb->transfer_buffer;
+> +	struct device *dev = &dln2->interface->dev;
+> +	u16 id, echo, handle, size;
+> +	u8 *data;
+> +	int len;
+> +
+> +	switch (urb->status) {
+> +	case 0:
+> +		/* success */
 > +		break;
-> +
-> +	case IRQ_TYPE_EDGE_FALLING:
-> +		sch_gpio_enable(sch, gpio_num, GTNE);
-> +		sch_gpio_disable(sch, gpio_num, GTPE);
-> +		break;
-> +
-> +	case IRQ_TYPE_EDGE_BOTH:
-> +		sch_gpio_enable(sch, gpio_num, GTPE);
-> +		sch_gpio_enable(sch, gpio_num, GTNE);
-> +		break;
-> +
-> +	case IRQ_TYPE_NONE:
-> +		sch_gpio_disable(sch, gpio_num, GTPE);
-> +		sch_gpio_disable(sch, gpio_num, GTNE);
-> +		break;
-> +
+> +	case -ECONNRESET:
+> +	case -ENOENT:
+> +	case -ESHUTDOWN:
+> +	case -EPIPE:
+> +		/* this urb is terminated, clean up */
+> +		dev_dbg(dev, "urb shutting down with status %d\n", urb->status);
+> +		return;
 > +	default:
-> +		spin_unlock_irqrestore(&sch->lock, flags);
-> +		return -EINVAL;
+> +		dev_dbg(dev, "nonzero urb status received %d\n", urb->status);
+> +		goto out;
 > +	}
 > +
-> +	spin_unlock_irqrestore(&sch->lock, flags);
+> +	if (urb->actual_length < sizeof(struct dln2_header)) {
+> +		dev_err(dev, "short response: %d\n", urb->actual_length);
+> +		goto out;
+> +	}
 > +
-> +	return 0;
+> +	handle = le16_to_cpu(hdr->handle);
+> +	id = le16_to_cpu(hdr->id);
+> +	echo = le16_to_cpu(hdr->echo);
+> +	size = le16_to_cpu(hdr->size);
+> +
+> +	if (size != urb->actual_length) {
+> +		dev_err(dev, "size mismatch: handle %x cmd %x echo %x size %d actual %d\n",
+> +			handle, id, echo, size, urb->actual_length);
+> +		goto out;
+> +	}
+> +
+> +	if (handle >= DLN2_MAX_MODULES) {
+> +		dev_warn(dev, "RX: invalid handle %d\n", handle);
+> +		goto out;
+> +	}
+> +
+> +	data = urb->transfer_buffer + sizeof(struct dln2_header);
+> +	len = urb->actual_length - sizeof(struct dln2_header);
+> +
+> +	if (handle == DLN2_HANDLE_EVENT) {
+> +		dln2_run_rx_callbacks(dln2, id, echo, data, len);
+> +		err = usb_submit_urb(urb, GFP_ATOMIC);
+> +		if (err < 0)
+> +			goto out_submit_failed;
+> +	} else {
+> +		dln2_rx_transfer(dln2, urb, handle, echo);
+> +	}
+> +
+> +	return;
+> +
+> +out:
+> +	err = usb_submit_urb(urb, GFP_ATOMIC);
+> +out_submit_failed:
+> +	if (err < 0)
+> +		dev_err(dev, "failed to re-submit RX URB: %d\n", err);
 > +}
-> +
-> +static struct irq_chip sch_irq_chip = {
-> +	.irq_enable	= sch_gpio_irq_enable,
-> +	.irq_disable	= sch_gpio_irq_disable,
-> +	.irq_ack	= sch_gpio_irq_ack,
-> +	.irq_set_type	= sch_gpio_irq_type,
->  };
->  
-> +static void sch_gpio_irqs_init(struct sch_gpio *sch, unsigned int num)
+
+> +static int _dln2_transfer(struct dln2_dev *dln2, u16 handle, u16 cmd,
+> +			  const void *obuf, unsigned obuf_len,
+> +			  void *ibuf, unsigned *ibuf_len)
 > +{
-> +	unsigned int i;
+> +	int ret = 0;
+> +	u16 result;
+> +	int rx_slot;
+> +	struct dln2_response *rsp;
+> +	struct dln2_rx_context *rxc;
+> +	struct device *dev = &dln2->interface->dev;
+> +	const int timeout = DLN2_USB_TIMEOUT * HZ / 1000;
+> +	struct dln2_mod_rx_slots *rxs = &dln2->mod_rx_slots[handle];
 > +
-> +	for (i = 0; i < num; i++) {
-> +		irq_set_chip_data(i + sch->irq_base, sch);
-> +		irq_set_chip_and_handler_name(i + sch->irq_base,
-> +					      &sch_irq_chip,
-> +					      handle_simple_irq,
-> +					      "sch_gpio_irq_chip");
-> +	}
-> +}
+> +	rx_slot = alloc_rx_slot(rxs);
+> +	if (rx_slot < 0)
+> +		return rx_slot;
 > +
-> +static void sch_gpio_irqs_deinit(struct sch_gpio *sch, unsigned int num)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < num; i++) {
-> +		irq_set_chip_data(i + sch->irq_base, 0);
-> +		irq_set_chip_and_handler_name(i + sch->irq_base, 0, 0, 0);
-> +	}
-> +}
-> +
-> +static void sch_gpio_irq_disable_all(struct sch_gpio *sch, unsigned int num)
-> +{
-> +	unsigned long flags;
-> +	unsigned int gpio_num;
-> +
-> +	spin_lock_irqsave(&sch->lock, flags);
-> +
-> +	for (gpio_num = 0; gpio_num < num; gpio_num++) {
-> +		sch_gpio_disable(sch, gpio_num, GTPE);
-> +		sch_gpio_disable(sch, gpio_num, GTNE);
-> +		sch_gpio_disable(sch, gpio_num, GGPE);
-> +		sch_gpio_disable(sch, gpio_num, GSMI);
-> +
-> +		if (gpio_num >= 2)
-> +			sch_gpio_disable(sch, gpio_num, RGNMIEN);
-> +		else
-> +			sch_gpio_disable(sch, gpio_num, CGNMIEN);
-> +
-> +		/* clear any pending interrupts */
-> +		sch_gpio_reg_set(&sch->chip, gpio_num, GTS, 1);
+> +	ret = dln2_send_wait(dln2, handle, cmd, rx_slot, obuf, obuf_len);
+> +	if (ret < 0) {
+> +		free_rx_slot(dln2, rxs, rx_slot);
+> +		dev_err(dev, "USB write failed: %d", ret);
+> +		return ret;
 > +	}
 > +
-> +	spin_unlock_irqrestore(&sch->lock, flags);
-> +}
+> +	rxc = &rxs->slots[rx_slot];
 > +
-> +static irqreturn_t sch_gpio_irq_handler(int irq, void *dev_id)
-> +{
-> +	struct sch_gpio *sch = dev_id;
-> +	int res;
-> +	unsigned int i;
-> +	int ret = IRQ_NONE;
-> +
-> +	for (i = 0; i < sch->chip.ngpio; i++) {
-> +		res = sch_gpio_reg_get(&sch->chip, i, GTS);
-> +		if (res) {
-> +			/* clear by setting GTS to 1 */
-> +			sch_gpio_reg_set(&sch->chip, i, GTS, 1);
-> +			generic_handle_irq(sch->irq_base + i);
-> +			ret = IRQ_HANDLED;
-> +		}
+> +	ret = wait_for_completion_interruptible_timeout(&rxc->done, timeout);
+> +	if (ret <= 0) {
+> +		if (!ret)
+> +			ret = -ETIMEDOUT;
+> +		goto out_free_rx_slot;
 > +	}
+> +
+> +	/* if we got here we know that the response header has been checked */
+> +	rsp = rxc->urb->transfer_buffer;
+> +	if (rsp->hdr.size < sizeof(*rsp)) {
+> +		ret = -EPROTO;
+> +		goto out_free_rx_slot;
+> +	}
+> +
+> +	result = le16_to_cpu(rsp->result);
+> +	if (result) {
+> +		dev_dbg(dev, "%d received response with error %d\n",
+> +			handle, result);
+> +		ret = -EREMOTEIO;
+> +		goto out_free_rx_slot;
+> +	}
+> +
+> +	if (!ibuf) {
+> +		ret = 0;
+> +		goto out_free_rx_slot;
+> +	}
+> +
+> +	if (*ibuf_len > rsp->hdr.size - sizeof(*rsp))
+> +		*ibuf_len = rsp->hdr.size - sizeof(*rsp);
+> +
+> +	memcpy(ibuf, rsp + 1, *ibuf_len);
+> +
+> +out_free_rx_slot:
+> +	free_rx_slot(dln2, rxs, rx_slot);
 > +
 > +	return ret;
 > +}
 > +
->  static int sch_gpio_probe(struct platform_device *pdev)
->  {
->  	struct sch_gpio *sch;
-> -	struct resource *res;
-> +	struct resource *res, *irq;
-> +	int err;
->  
->  	sch = devm_kzalloc(&pdev->dev, sizeof(*sch), GFP_KERNEL);
->  	if (!sch)
-> @@ -203,6 +376,17 @@ static int sch_gpio_probe(struct platform_device *pdev)
->  				 pdev->name))
->  		return -EBUSY;
->  
-> +	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> +	sch->irq_support = !!irq;
-> +	if (sch->irq_support) {
-> +		sch->irq_num = irq->start;
-> +		if (sch->irq_num < 0) {
-> +			dev_warn(&pdev->dev,
-> +				 "failed to obtain irq number for device\n");
-> +			sch->irq_support = 0;
-> +		}
+> +int dln2_transfer(struct platform_device *pdev, u16 cmd,
+> +		  const void *obuf, unsigned obuf_len,
+> +		  void *ibuf, unsigned *ibuf_len)
+> +{
+> +	struct dln2_platform_data *dln2_pdata;
+> +	struct dln2_dev *dln2;
+> +	u16 h;
+> +
+> +	/* USB device has been disconnected, bail out */
+> +	if (!pdev)
+> +		return -ENODEV;
+
+This isn't sufficient to prevent I/O after disconnect, or worse.
+
+You set pdev to NULL in the platform device's remove callbacks, but you
+have no synchronisation.
+
+To take one example: in _dln2_transfer above you wait for completion,
+but you never wake the process up in case the urb is killed due to a
+disconnect. Hence you get a timeout much later, call free_rx_slot which
+tries to send of another urb using potentially already freed data.
+
+> +
+> +	dln2 = dev_get_drvdata(pdev->dev.parent);
+> +	dln2_pdata = dev_get_platdata(&pdev->dev);
+> +	h = dln2_pdata->handle;
+> +
+> +	return _dln2_transfer(dln2, h, cmd, obuf, obuf_len, ibuf, ibuf_len);
+> +}
+> +EXPORT_SYMBOL(dln2_transfer);
+
+> +static void dln2_free_rx_urbs(struct dln2_dev *dln2)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < DLN2_MAX_URBS; i++) {
+> +		usb_kill_urb(dln2->rx_urb[i]);
+> +		usb_free_urb(dln2->rx_urb[i]);
+> +		kfree(dln2->rx_buf[i]);
 > +	}
+> +}
 > +
->  	spin_lock_init(&sch->lock);
->  	sch->iobase = res->start;
->  	sch->chip = sch_gpio_chip;
-> @@ -251,17 +435,72 @@ static int sch_gpio_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  	}
->  
-> +	err = gpiochip_add(&sch->chip);
-> +	if (err < 0)
-> +		goto err_sch_gpio;
-> +
-> +	if (sch->irq_support) {
-> +		sch->irq_base = irq_alloc_descs(-1, 0, sch->chip.ngpio,
-> +						NUMA_NO_NODE);
-> +		if (sch->irq_base < 0) {
-> +			dev_err(&pdev->dev,
-> +				"failed to add GPIO IRQ descs\n");
-> +			sch->irq_base = -1;
-> +			goto err_sch_intr_chip;
-> +		}
+> +static void dln2_free(struct dln2_dev *dln2)
+> +{
+> +	dln2_free_rx_urbs(dln2);
+> +	usb_put_dev(dln2->usb_dev);
+> +	kfree(dln2);
+> +}
 
-Was there some reason why you can't use gpiochip_irqchip_* helpers here?
+> +static void dln2_disconnect(struct usb_interface *interface)
+> +{
+> +	struct dln2_dev *dln2 = usb_get_intfdata(interface);
+> +
+> +	mfd_remove_devices(&interface->dev);
 
-> +
-> +		/* disable interrupts */
-> +		sch_gpio_irq_disable_all(sch, sch->chip.ngpio);
-> +
-> +		err = request_irq(sch->irq_num, sch_gpio_irq_handler,
-> +				  IRQF_SHARED, KBUILD_MODNAME, sch);
+You need to make sure all I/O has stopped here.
 
-This seems weird, typically irqchip drivers don't call request_irq()
-directly but instead irq_set_chained_handler() or similar. With
-gpiochip_irqchip_* stuff you don't need even that.
+> +	dln2_free(dln2);
+> +}
 
-> +		if (err) {
-> +			dev_err(&pdev->dev,
-> +				"%s failed to request IRQ\n", __func__);
-> +			goto err_sch_request_irq;
-> +		}
-> +
-> +		sch_gpio_irqs_init(sch, sch->chip.ngpio);
-> +	}
-> +
->  	platform_set_drvdata(pdev, sch);
->  
-> -	return gpiochip_add(&sch->chip);
-> +	return 0;
-> +
-> +err_sch_request_irq:
-> +	irq_free_descs(sch->irq_base, sch->chip.ngpio);
-> +
-> +err_sch_intr_chip:
-> +	if (gpiochip_remove(&sch->chip))
-> +		dev_err(&pdev->dev,
-> +			"%s gpiochip_remove() failed\n", __func__);
-> +
-> +err_sch_gpio:
-> +	release_region(res->start, resource_size(res));
-> +
-> +	return err;
->  }
->  
->  static int sch_gpio_remove(struct platform_device *pdev)
->  {
->  	struct sch_gpio *sch = platform_get_drvdata(pdev);
-> +	int err;
->  
-> -	gpiochip_remove(&sch->chip);
-> -	return 0;
-> +	if (sch->irq_support) {
-> +		sch_gpio_irqs_deinit(sch, sch->chip.ngpio);
-> +
-> +		if (sch->irq_num >= 0)
-> +			free_irq(sch->irq_num, sch);
-> +
-> +		irq_free_descs(sch->irq_base, sch->chip.ngpio);
-> +	}
-> +
-> +	err = gpiochip_remove(&sch->chip);
-> +	if (err)
-> +		dev_err(&pdev->dev,
-> +			"%s gpiochip_remove() failed\n", __func__);
-> +
-> +	return err;
->  }
->  
->  static struct platform_driver sch_gpio_driver = {
-> -- 
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Johan
