@@ -1,125 +1,275 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v4 2/3] i2c: add support for Diolan DLN-2 USB-I2C adapter
-Date: Thu, 18 Sep 2014 11:13:13 +0200
-Message-ID: <20140918091313.GA1989@localhost>
+Subject: Re: [PATCH v4 3/3] gpio: add support for the Diolan DLN-2 USB GPIO
+ driver
+Date: Thu, 18 Sep 2014 12:54:58 +0200
+Message-ID: <20140918105458.GA2337@localhost>
 References: <1410290686-6680-1-git-send-email-octavian.purdila@intel.com>
- <1410290686-6680-3-git-send-email-octavian.purdila@intel.com>
- <20140917094445.GG20727@localhost>
- <CAE1zotJt+Eq7dCaWgFUV_=tXvHL=nExW-KeL3gzTUEgqu8AX9Q@mail.gmail.com>
- <20140918081959.GH20727@localhost>
- <CAE1zotKB48T9qz4NaxMbMMiuit_v+Zd9wpcdQrVFw7nVCBYX-w@mail.gmail.com>
+ <1410290686-6680-4-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:47501 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753431AbaIRJPj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Sep 2014 05:15:39 -0400
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:57278 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756210AbaIRK5X (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Sep 2014 06:57:23 -0400
 Content-Disposition: inline
-In-Reply-To: <CAE1zotKB48T9qz4NaxMbMMiuit_v+Zd9wpcdQrVFw7nVCBYX-w@mail.gmail.com>
+In-Reply-To: <1410290686-6680-4-git-send-email-octavian.purdila@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, wsa@the-dreams.de, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org, arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 
-On Thu, Sep 18, 2014 at 11:49:19AM +0300, Octavian Purdila wrote:
-> On Thu, Sep 18, 2014 at 11:19 AM, Johan Hovold <johan@kernel.org> wrote:
-> > On Wed, Sep 17, 2014 at 01:07:51PM +0300, Octavian Purdila wrote:
-> >> On Wed, Sep 17, 2014 at 12:44 PM, Johan Hovold <johan@kernel.org> wrote:
-> >>
-> >> <snip>
-> >>
-> >> >> +     /*
-> >> >> +      * Buffer to hold the packet for read or write transfers. One
-> >> >> +      * is enough since we can't have multiple transfers in
-> >> >> +      * parallel on the i2c adapter.
-> >> >> +      */
-> >> >> +     union {
-> >> >> +             struct {
-> >> >> +                     u8 port;
-> >> >> +                     u8 addr;
-> >> >> +                     u8 mem_addr_len;
-> >> >> +                     __le32 mem_addr;
-> >> >> +                     __le16 buf_len;
-> >> >> +                     u8 buf[DLN2_I2C_MAX_XFER_SIZE];
-> >> >> +             } __packed tx;
-> >> >> +             struct {
-> >> >> +                     __le16 buf_len;
-> >> >> +                     u8 buf[DLN2_I2C_MAX_XFER_SIZE];
-> >> >> +             } __packed rx;
-> >> >> +     } buf;
-> >> >
-> >> > While this works in this case due to the extra copy you do in
-> >> > dln2_transfer, allocating buffers that would (generally) be used for DMA
-> >> > transfers as part of a larger structure is a recipe for trouble.
-> >> >
-> >> > It's probably better to allocate separately, if only to prevent people
-> >> > from thinking there might be a bug here.
-> >> >
-> >>
-> >> Just to make sure I understand this, what could the issues be? The
-> >> buffers not being aligned or not allocated in continuous physical
-> >> memory?
-> >
-> > Yes, the buffer (and any subsequent field) would have to be cache-line
-> > aligned to avoid corruption due to cache-line sharing on some systems.
-> >
-> 
-> Ah, ok, makes sense now. But is it safe to use kmalloc() in this case?
-> Does kmalloc() prevent cache line sharing?
+On Tue, Sep 09, 2014 at 10:24:46PM +0300, Octavian Purdila wrote:
 
-Yes, it does (as long as you allocate the buffer separately from the
-containing struct).
+<snip>
 
-> >> <snip>
-> >>
-> >> >> +
-> >> >> +     rx_buf_len = le16_to_cpu(dln2->buf.rx.buf_len);
-> >> >> +     if (rx_len < rx_buf_len + sizeof(dln2->buf.rx.buf_len))
-> >> >> +             return -EPROTO;
-> >> >> +
-> >> >> +     if (data_len > rx_buf_len)
-> >> >> +             data_len = rx_buf_len;
-> >> >
-> >> > You're still not checking that the received data does not overflow the
-> >> > supplied buffer as I already commented on v3.
-> >> >
-> >> >> +
-> >> >> +     memcpy(data, dln2->buf.rx.buf, data_len);
-> >> >> +
-> >> >> +     return data_len;
-> >> >> +}
-> >>
-> >> Hmm, perhaps I am missing something, but we never transfer more then
-> >> data_len, where data_len is the size of the buffer supplied by the
-> >> user.
-> >
-> > That is the amount of data you request from the device, but you never
-> > check how much is actually returned.
-> >
-> 
-> Actually we check the receive buffer size here:
-> 
->     if (data_len > rx_buf_len)
->         data_len = rx_buf_len;
-> 
-> rx_buf_len is the i2c received payload size while rx_len is the length
-> of received message
+> +#define DLN2_GPIO_DIRECTION_IN		0
+> +#define DLN2_GPIO_DIRECTION_OUT		1
+> +
+> +static int dln2_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+> +{
+> +	int ret;
+> +	struct dln2_gpio *dln2 = container_of(chip, struct dln2_gpio, gpio);
+> +	struct dln2_gpio_pin req = {
+> +		.pin = cpu_to_le16(offset),
+> +	};
+> +	struct dln2_gpio_pin_val rsp;
+> +	int len = sizeof(rsp);
+> +
+> +	if (test_bit(offset, dln2->pin_dir_set)) {
+> +		rsp.value = !!test_bit(offset, dln2->pin_dir);
+> +		goto report;
+> +	}
+> +
+> +	ret = dln2_transfer(dln2->pdev, DLN2_GPIO_PIN_GET_DIRECTION,
+> +			    &req, sizeof(req), &rsp, &len);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (len < sizeof(rsp) || req.pin != rsp.pin)
+> +		return -EPROTO;
+> +	set_bit(offset, dln2->pin_dir_set);
 
-Bah, you're right. You never explicitly check for overflow, but also
-never use more than data_len bytes of the returned buffer.
+You shouldn't set this flag until you've stored the direction.
 
-I think you should add explicit checks, and return an error in this case
-rather than silently truncate the data.
+> +
+> +report:
+> +	switch (rsp.value) {
+> +	case DLN2_GPIO_DIRECTION_IN:
+> +		clear_bit(offset, dln2->pin_dir);
+> +		return 1;
+> +	case DLN2_GPIO_DIRECTION_OUT:
+> +		set_bit(offset, dln2->pin_dir);
+> +		return 0;
+> +	default:
+> +		return -EPROTO;
+> +	}
+> +}
+> +
+> +static int dln2_gpio_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	struct dln2_gpio *dln2 = container_of(chip, struct dln2_gpio, gpio);
+> +	int dir;
+> +
+> +	dir = dln2_gpio_get_direction(chip, offset);
+> +	if (dir < 0)
+> +		return dir;
+> +
+> +	if (dir)
+> +		return dln2_gpio_pin_get_in_val(dln2, offset);
+> +
+> +	return dln2_gpio_pin_get_out_val(dln2, offset);
+> +}
+> +
+> +static void dln2_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+> +{
+> +	struct dln2_gpio *dln2 = container_of(chip, struct dln2_gpio, gpio);
+> +
+> +	dln2_gpio_pin_set_out_val(dln2, offset, value);
+> +}
+> +
+> +static int dln2_gpio_set_direction(struct gpio_chip *chip, unsigned offset,
+> +				   unsigned dir)
+> +{
+> +	struct dln2_gpio *dln2 = container_of(chip, struct dln2_gpio, gpio);
+> +	struct dln2_gpio_pin_val req = {
+> +		.pin = cpu_to_le16(offset),
+> +		.value = cpu_to_le16(dir),
+> +	};
+> +
+> +	set_bit(offset, dln2->pin_dir_set);
 
-> > You really should clean up the error handling of this function as it is
-> > currently not very readable.
-> >
-> 
-> Perhaps adding some comments similar to the the explanation above would help?
+Set flag after you store the direction below.
 
-It's more the logic of this function I find a bit twisted. I think you
-should clean it up and consider adding appropriately named (temporary)
-variables to make it more readable.
+> +	if (dir == DLN2_GPIO_DIRECTION_OUT)
+> +		set_bit(offset, dln2->pin_dir);
+> +	else
+> +		clear_bit(offset, dln2->pin_dir);
+
+Either way, it looks like this could race with get_direction() if you
+get a set_direction() while get_direction() is retrieving the direction
+from the device.
+
+This would break gpio_get().
+
+> +
+> +	return dln2_transfer(dln2->pdev, DLN2_GPIO_PIN_SET_DIRECTION,
+> +			     &req, sizeof(req), NULL, NULL);
+> +}
+
+<snip>
+
+> +static int dln2_gpio_set_event_cfg(struct dln2_gpio *dln2, unsigned pin,
+> +				   unsigned type, unsigned period)
+> +{
+> +	struct {
+> +		__le16 pin;
+> +		u8 type;
+> +		__le16 period;
+> +	} __packed req = {
+> +		.pin = cpu_to_le16(pin),
+> +		.type = type,
+> +		.period = cpu_to_le16(period),
+> +	};
+> +
+> +	return dln2_transfer(dln2->pdev, DLN2_GPIO_PIN_SET_EVENT_CFG,
+> +			     &req, sizeof(req), NULL, NULL);
+> +}
+> +
+> +static void dln2_irq_work(struct work_struct *w)
+> +{
+> +	struct dln2_irq_work *iw = container_of(w, struct dln2_irq_work, work);
+> +	struct dln2_gpio *dln2 = iw->dln2;
+> +	u8 type = iw->type & DLN2_GPIO_EVENT_MASK;
+> +
+> +	if (test_bit(iw->pin, dln2->irqs_enabled))
+> +		dln2_gpio_set_event_cfg(dln2, iw->pin, type, 0);
+> +	else
+> +		dln2_gpio_set_event_cfg(dln2, iw->pin, DLN2_GPIO_EVENT_NONE, 0);
+> +}
+> +
+> +static void dln2_irq_enable(struct irq_data *irqd)
+> +{
+> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
+> +	struct dln2_gpio *dln2 = container_of(gc, struct dln2_gpio, gpio);
+> +	int pin = irqd_to_hwirq(irqd);
+> +
+> +	set_bit(pin, dln2->irqs_enabled);
+> +	schedule_work(&dln2->irq_work[pin].work);
+> +}
+> +
+> +static void dln2_irq_disable(struct irq_data *irqd)
+> +{
+> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
+> +	struct dln2_gpio *dln2 = container_of(gc, struct dln2_gpio, gpio);
+> +	int pin = irqd_to_hwirq(irqd);
+> +
+> +	clear_bit(pin, dln2->irqs_enabled);
+> +	schedule_work(&dln2->irq_work[pin].work);
+> +}
+
+<snip>
+
+> +static int dln2_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct dln2_gpio *dln2;
+> +	struct device *dev = &pdev->dev;
+> +	int pins = dln2_gpio_get_pin_count(pdev);
+
+Again, don't do non-trivial intialisations when declaring your variables.
+
+> +	int i, ret;
+> +
+> +	if (pins < 0) {
+> +		dev_err(dev, "failed to get pin count: %d\n", pins);
+> +		return pins;
+> +	}
+> +	if (pins > DLN2_GPIO_MAX_PINS) {
+> +		pins = DLN2_GPIO_MAX_PINS;
+> +		dev_warn(dev, "clamping pins to %d\n", DLN2_GPIO_MAX_PINS);
+> +	}
+> +
+> +	dln2 = devm_kzalloc(&pdev->dev, sizeof(*dln2), GFP_KERNEL);
+> +	if (!dln2)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < DLN2_GPIO_MAX_PINS; i++) {
+> +		INIT_WORK(&dln2->irq_work[i].work, dln2_irq_work);
+> +		dln2->irq_work[i].pin = i;
+> +		dln2->irq_work[i].dln2 = dln2;
+> +	}
+> +
+> +	dln2->pdev = pdev;
+> +
+> +	dln2->gpio.label = "dln2";
+> +	dln2->gpio.dev = dev;
+> +	dln2->gpio.owner = THIS_MODULE;
+> +	dln2->gpio.base = -1;
+> +	dln2->gpio.ngpio = pins;
+> +	dln2->gpio.exported = 1;
+> +	dln2->gpio.set = dln2_gpio_set;
+> +	dln2->gpio.get = dln2_gpio_get;
+> +	dln2->gpio.request = dln2_gpio_request;
+> +	dln2->gpio.free = dln2_gpio_free;
+> +	dln2->gpio.get_direction = dln2_gpio_get_direction;
+> +	dln2->gpio.direction_input = dln2_gpio_direction_input;
+> +	dln2->gpio.direction_output = dln2_gpio_direction_output;
+> +	dln2->gpio.set_debounce = dln2_gpio_set_debounce;
+> +
+> +	platform_set_drvdata(pdev, dln2);
+> +
+> +	ret = gpiochip_add(&dln2->gpio);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to add gpio chip: %d\n", ret);
+> +		goto out;
+> +	}
+> +
+> +	ret = gpiochip_irqchip_add(&dln2->gpio, &dln2_gpio_irqchip, 0,
+> +				   handle_simple_irq, IRQ_TYPE_NONE);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to add irq chip: %d\n", ret);
+> +		goto out_gpiochip_remove;
+> +	}
+> +
+> +	ret = dln2_register_event_cb(pdev, DLN2_GPIO_CONDITION_MET_EV,
+> +				     dln2_gpio_event);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register event cb: %d\n", ret);
+> +		goto out_gpiochip_remove;
+> +	}
+> +
+> +	return 0;
+> +
+> +out_gpiochip_remove:
+> +	gpiochip_remove(&dln2->gpio);
+> +out:
+> +	return ret;
+> +}
+> +
+> +static int dln2_gpio_remove(struct platform_device *pdev)
+> +{
+> +	struct dln2_gpio *dln2 = platform_get_drvdata(pdev);
+> +
+> +	dln2_unregister_event_cb(pdev, DLN2_GPIO_CONDITION_MET_EV);
+> +	dln2->pdev = NULL;
+> +	gpiochip_remove(&dln2->gpio);
+
+You probably need to flush all your work structs here.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver dln2_gpio_driver = {
+> +	.driver.name	= DRIVER_NAME,
+> +	.driver.owner	= THIS_MODULE,
+> +	.probe		= dln2_gpio_probe,
+> +	.remove		= dln2_gpio_remove,
+> +};
+> +
+> +module_platform_driver(dln2_gpio_driver);
+> +
+> +MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com");
+> +MODULE_DESCRIPTION(DRIVER_NAME "driver");
+> +MODULE_LICENSE("GPL");
 
 Johan
