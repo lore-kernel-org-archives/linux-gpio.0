@@ -1,109 +1,116 @@
-From: Octavian Purdila <octavian.purdila@intel.com>
-Subject: Re: [PATCH v4 2/3] i2c: add support for Diolan DLN-2 USB-I2C adapter
-Date: Thu, 18 Sep 2014 11:49:19 +0300
-Message-ID: <CAE1zotKB48T9qz4NaxMbMMiuit_v+Zd9wpcdQrVFw7nVCBYX-w@mail.gmail.com>
-References: <1410290686-6680-1-git-send-email-octavian.purdila@intel.com>
-	<1410290686-6680-3-git-send-email-octavian.purdila@intel.com>
-	<20140917094445.GG20727@localhost>
-	<CAE1zotJt+Eq7dCaWgFUV_=tXvHL=nExW-KeL3gzTUEgqu8AX9Q@mail.gmail.com>
-	<20140918081959.GH20727@localhost>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] gpio: samsung: Remove remaining check for
+ CONFIG_S5P_GPIO_DRVSTR
+Date: Thu, 18 Sep 2014 10:57:29 +0200
+Message-ID: <1411030649.2017.7.camel@x220>
+References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
+	 <53C67783.4090407@samsung.com> <1409825317.5546.94.camel@x220>
+	 <201409041803.46098.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f181.google.com ([74.125.82.181]:43341 "EHLO
-	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753309AbaIRItU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Sep 2014 04:49:20 -0400
-Received: by mail-we0-f181.google.com with SMTP id w62so519067wes.26
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Sep 2014 01:49:19 -0700 (PDT)
-In-Reply-To: <20140918081959.GH20727@localhost>
+Received: from cpsmtpb-ews05.kpnxchange.com ([213.75.39.8]:55242 "EHLO
+	cpsmtpb-ews05.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754609AbaIRI5c (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 18 Sep 2014 04:57:32 -0400
+In-Reply-To: <201409041803.46098.arnd@arndb.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, wsa@the-dreams.de, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 18, 2014 at 11:19 AM, Johan Hovold <johan@kernel.org> wrote:
-> On Wed, Sep 17, 2014 at 01:07:51PM +0300, Octavian Purdila wrote:
->> On Wed, Sep 17, 2014 at 12:44 PM, Johan Hovold <johan@kernel.org> wrote:
->>
->> <snip>
->>
->> >> +     /*
->> >> +      * Buffer to hold the packet for read or write transfers. One
->> >> +      * is enough since we can't have multiple transfers in
->> >> +      * parallel on the i2c adapter.
->> >> +      */
->> >> +     union {
->> >> +             struct {
->> >> +                     u8 port;
->> >> +                     u8 addr;
->> >> +                     u8 mem_addr_len;
->> >> +                     __le32 mem_addr;
->> >> +                     __le16 buf_len;
->> >> +                     u8 buf[DLN2_I2C_MAX_XFER_SIZE];
->> >> +             } __packed tx;
->> >> +             struct {
->> >> +                     __le16 buf_len;
->> >> +                     u8 buf[DLN2_I2C_MAX_XFER_SIZE];
->> >> +             } __packed rx;
->> >> +     } buf;
->> >
->> > While this works in this case due to the extra copy you do in
->> > dln2_transfer, allocating buffers that would (generally) be used for DMA
->> > transfers as part of a larger structure is a recipe for trouble.
->> >
->> > It's probably better to allocate separately, if only to prevent people
->> > from thinking there might be a bug here.
->> >
->>
->> Just to make sure I understand this, what could the issues be? The
->> buffers not being aligned or not allocated in continuous physical
->> memory?
->
-> Yes, the buffer (and any subsequent field) would have to be cache-line
-> aligned to avoid corruption due to cache-line sharing on some systems.
->
+On Thu, 2014-09-04 at 18:03 +0200, Arnd Bergmann wrote:
+> On Thursday 04 September 2014, Paul Bolle wrote: 
+> > That check for CONFIG_S5P_GPIO_DRVSTR is still present in v3.17-rc3 and
+> > next-20140903. Should I submit the trivial patch to remove it (and the
+> > dead code it hides)?
+> 
+> Yes, I think this one is an obvious candidate for removal.
 
-Ah, ok, makes sense now. But is it safe to use kmalloc() in this case?
-Does kmalloc() prevent cache line sharing?
+Still there in v3.17-rc5 and next-20140918. So I submit yet another
+trivial cleanup.
 
->> <snip>
->>
->> >> +
->> >> +     rx_buf_len = le16_to_cpu(dln2->buf.rx.buf_len);
->> >> +     if (rx_len < rx_buf_len + sizeof(dln2->buf.rx.buf_len))
->> >> +             return -EPROTO;
->> >> +
->> >> +     if (data_len > rx_buf_len)
->> >> +             data_len = rx_buf_len;
->> >
->> > You're still not checking that the received data does not overflow the
->> > supplied buffer as I already commented on v3.
->> >
->> >> +
->> >> +     memcpy(data, dln2->buf.rx.buf, data_len);
->> >> +
->> >> +     return data_len;
->> >> +}
->>
->> Hmm, perhaps I am missing something, but we never transfer more then
->> data_len, where data_len is the size of the buffer supplied by the
->> user.
->
-> That is the amount of data you request from the device, but you never
-> check how much is actually returned.
->
+Done on top of next-20140918. Only tested by grepping the tree. Please
+note that, obviously, nothing uses s5p_gpio_get_drvstr() or
+s5p_gpio_set_drvstr().
 
-Actually we check the receive buffer size here:
 
-    if (data_len > rx_buf_len)
-        data_len = rx_buf_len;
+Paul Bolle
+-------->8--------
+From: Paul Bolle <pebolle@tiscali.nl>
 
-rx_buf_len is the i2c received payload size while rx_len is the length
-of received message
+Commit d78c16ccde96 ("ARM: SAMSUNG: Remove remaining legacy code")
+removed the Kconfig symbol S5P_GPIO_DRVSTR. It didn't remove one check
+for the related macro. Remove that check and the dead code it hides.
 
-> You really should clean up the error handling of this function as it is
-> currently not very readable.
->
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+---
+ drivers/gpio/gpio-samsung.c | 50 ---------------------------------------------
+ 1 file changed, 50 deletions(-)
 
-Perhaps adding some comments similar to the the explanation above would help?
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index 3810da47043f..7c288ba4dc87 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -1309,56 +1309,6 @@ samsung_gpio_pull_t s3c_gpio_getpull(unsigned int pin)
+ }
+ EXPORT_SYMBOL(s3c_gpio_getpull);
+ 
+-#ifdef CONFIG_S5P_GPIO_DRVSTR
+-s5p_gpio_drvstr_t s5p_gpio_get_drvstr(unsigned int pin)
+-{
+-	struct samsung_gpio_chip *chip = samsung_gpiolib_getchip(pin);
+-	unsigned int off;
+-	void __iomem *reg;
+-	int shift;
+-	u32 drvstr;
+-
+-	if (!chip)
+-		return -EINVAL;
+-
+-	off = pin - chip->chip.base;
+-	shift = off * 2;
+-	reg = chip->base + 0x0C;
+-
+-	drvstr = __raw_readl(reg);
+-	drvstr = drvstr >> shift;
+-	drvstr &= 0x3;
+-
+-	return (__force s5p_gpio_drvstr_t)drvstr;
+-}
+-EXPORT_SYMBOL(s5p_gpio_get_drvstr);
+-
+-int s5p_gpio_set_drvstr(unsigned int pin, s5p_gpio_drvstr_t drvstr)
+-{
+-	struct samsung_gpio_chip *chip = samsung_gpiolib_getchip(pin);
+-	unsigned int off;
+-	void __iomem *reg;
+-	int shift;
+-	u32 tmp;
+-
+-	if (!chip)
+-		return -EINVAL;
+-
+-	off = pin - chip->chip.base;
+-	shift = off * 2;
+-	reg = chip->base + 0x0C;
+-
+-	tmp = __raw_readl(reg);
+-	tmp &= ~(0x3 << shift);
+-	tmp |= drvstr << shift;
+-
+-	__raw_writel(tmp, reg);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(s5p_gpio_set_drvstr);
+-#endif	/* CONFIG_S5P_GPIO_DRVSTR */
+-
+ #ifdef CONFIG_PLAT_S3C24XX
+ unsigned int s3c2410_modify_misccr(unsigned int clear, unsigned int change)
+ {
+-- 
+1.9.3
+
