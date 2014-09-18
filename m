@@ -1,36 +1,115 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v3 0/4] gpio: syscon: reuse for keystone 2 socs
-Date: Wed, 17 Sep 2014 19:05:52 +0300
-Message-ID: <5419B160.4030001@ti.com>
-References: <1409763935-5713-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdaB7YpYjuND+Dic2eM=0OB0Sk=gGRRd7QrQj1Ze1MYXaQ@mail.gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v4 2/3] i2c: add support for Diolan DLN-2 USB-I2C adapter
+Date: Thu, 18 Sep 2014 10:19:59 +0200
+Message-ID: <20140918081959.GH20727@localhost>
+References: <1410290686-6680-1-git-send-email-octavian.purdila@intel.com>
+ <1410290686-6680-3-git-send-email-octavian.purdila@intel.com>
+ <20140917094445.GG20727@localhost>
+ <CAE1zotJt+Eq7dCaWgFUV_=tXvHL=nExW-KeL3gzTUEgqu8AX9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:44339 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754831AbaIQQG3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 17 Sep 2014 12:06:29 -0400
-In-Reply-To: <CACRpkdaB7YpYjuND+Dic2eM=0OB0Sk=gGRRd7QrQj1Ze1MYXaQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAE1zotJt+Eq7dCaWgFUV_=tXvHL=nExW-KeL3gzTUEgqu8AX9Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, wsa@the-dreams.de, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Alexander Shiyan <shc_work@mail.ru>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 09/17/2014 12:43 AM, Linus Walleij wrote:
-> On Wed, Sep 3, 2014 at 10:05 AM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
->
->> This series intended to integrate Keystone 2 DSP GPIO controller functionality
->> into gpio-syscon driver (drivers/gpio/gpio-syscon.c) as requested
->> by Linus Walleij in [1].
->
-> OK no comments on DT stuff etc for two weeks, so merged patches
-> 1-3, the 4th you can take through the keystone git.
->
+On Wed, Sep 17, 2014 at 01:07:51PM +0300, Octavian Purdila wrote:
+> On Wed, Sep 17, 2014 at 12:44 PM, Johan Hovold <johan@kernel.org> wrote:
+> 
+> <snip>
+> 
+> >> +     /*
+> >> +      * Buffer to hold the packet for read or write transfers. One
+> >> +      * is enough since we can't have multiple transfers in
+> >> +      * parallel on the i2c adapter.
+> >> +      */
+> >> +     union {
+> >> +             struct {
+> >> +                     u8 port;
+> >> +                     u8 addr;
+> >> +                     u8 mem_addr_len;
+> >> +                     __le32 mem_addr;
+> >> +                     __le16 buf_len;
+> >> +                     u8 buf[DLN2_I2C_MAX_XFER_SIZE];
+> >> +             } __packed tx;
+> >> +             struct {
+> >> +                     __le16 buf_len;
+> >> +                     u8 buf[DLN2_I2C_MAX_XFER_SIZE];
+> >> +             } __packed rx;
+> >> +     } buf;
+> >
+> > While this works in this case due to the extra copy you do in
+> > dln2_transfer, allocating buffers that would (generally) be used for DMA
+> > transfers as part of a larger structure is a recipe for trouble.
+> >
+> > It's probably better to allocate separately, if only to prevent people
+> > from thinking there might be a bug here.
+> >
+> 
+> Just to make sure I understand this, what could the issues be? The
+> buffers not being aligned or not allocated in continuous physical
+> memory?
 
-Thank you.
+Yes, the buffer (and any subsequent field) would have to be cache-line
+aligned to avoid corruption due to cache-line sharing on some systems.
 
-Regards,
--grygorii
+> <snip>
+> 
+> >> +
+> >> +     rx_buf_len = le16_to_cpu(dln2->buf.rx.buf_len);
+> >> +     if (rx_len < rx_buf_len + sizeof(dln2->buf.rx.buf_len))
+> >> +             return -EPROTO;
+> >> +
+> >> +     if (data_len > rx_buf_len)
+> >> +             data_len = rx_buf_len;
+> >
+> > You're still not checking that the received data does not overflow the
+> > supplied buffer as I already commented on v3.
+> >
+> >> +
+> >> +     memcpy(data, dln2->buf.rx.buf, data_len);
+> >> +
+> >> +     return data_len;
+> >> +}
+> 
+> Hmm, perhaps I am missing something, but we never transfer more then
+> data_len, where data_len is the size of the buffer supplied by the
+> user.
 
+That is the amount of data you request from the device, but you never
+check how much is actually returned.
+
+You really should clean up the error handling of this function as it is
+currently not very readable.
+
+> <snip>
+> 
+> >> +
+> >> +     platform_set_drvdata(pdev, dln2);
+> >> +
+> >> +     ret = device_create_file(dev, &dev_attr_freq);
+> >> +     if (ret < 0) {
+> >> +             dev_err(dev, "failed to add freq attribute\n");
+> >> +             return ret;
+> >> +     }
+> >
+> > There are a couple of problems here. First, you should not make this an
+> > attribute of the platform device, which is created before any driver is
+> > bound (might not ever happen).
+> >
+> > Instead add the attribute to the i2c adapter below. However, you need to
+> > do this using device attribute groups to avoid racing with userspace (as
+> > you are when using device_create_file after the device itself has been
+> > created).
+> >
+> > You should probably also make your attribute name less generic by adding
+> > a "dln2_"-prefix.
+> 
+> Thanks for the detailed review and explanations, as always :)
+
+You're welcome.
+
+Johan
