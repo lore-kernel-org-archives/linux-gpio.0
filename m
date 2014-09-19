@@ -1,69 +1,71 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] x86, gpio: Increase ARCH_NR_GPIOs to 512
-Date: Fri, 19 Sep 2014 10:48:01 -0700
-Message-ID: <CACRpkdYbmcxi=BXEyGzLpxN4omt+v_Cg_BxCiN4vS9ZUwYTLzQ@mail.gmail.com>
-References: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com>
-	<CACRpkdb=yO3TbStfEesJCGDL3D_bq6_C0jwPUmKVuE+Otg8G4g@mail.gmail.com>
-	<CAAVeFuKK0BNpYPwZ8c4DbhWmbFnRVuaDo2AqfSNBgBPyUou0_A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: [PATCH v5 0/4] mfd: add support for Diolan DLN-2
+Date: Fri, 19 Sep 2014 23:22:41 +0300
+Message-ID: <1411158165-25794-1-git-send-email-octavian.purdila@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f170.google.com ([209.85.223.170]:38811 "EHLO
-	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756626AbaISRsC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Sep 2014 13:48:02 -0400
-Received: by mail-ie0-f170.google.com with SMTP id x19so1088509ier.15
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Sep 2014 10:48:01 -0700 (PDT)
-In-Reply-To: <CAAVeFuKK0BNpYPwZ8c4DbhWmbFnRVuaDo2AqfSNBgBPyUou0_A@mail.gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:11041 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757934AbaISUXS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 19 Sep 2014 16:23:18 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Ning Li <ning.li@intel.com>, Alan Cox <alan@linux.intel.com>, Mark Brown <broonie@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org
+Cc: arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
 
-On Fri, Sep 19, 2014 at 12:20 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Tue, Sep 9, 2014 at 4:24 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+This patch series adds support for Diolan USB-I2C/GPIO Master Adapter
+DLN-2. Details about device can be found here:
 
->> This however makes it *impossible* to use things like desc_to_gpio()
->> and/or gpio_to_desc() so the code has to be augmented all over the
->> place to avoid any uses of GPIO numbers on that architecture,
->> but I am sure it *can* be done on pure ACPI or device tree
->> systems, and that's what we should aim for.
->
-> desc_to_gpio()/gpio_to_desc() could still work even if we remove the
-> big array of GPIO descriptors. Actually that's what I intended to do
-> when I first submitted the gpiod patches some time ago but it was
-> rejected for performance reasons.
+https://www.diolan.com/i2c/i2c_interface.html.
 
-OK. I'm ready to revisit the subject.
+Changes since v4:
 
-> desc_to_gpio() actually doesn't even access this array - it does its
-> job using the chip base and the beginning address of its descriptors
-> array.
+* Add a new gpiolib chip flag to allow blocking chips with non threaded
+  IRQ handlers
 
-Right.
+* MFD: set GPLv2 as license, fix a couple of coding style issues, add
+  code to stop I/O after USB disconnect and prevent further I/O,
+  simplify the DNL2 platform data
 
-> gpio_to_desc() would suffer a performance hit. What I initially
-> proposed was to parse the linked list of GPIO chips and check if the
-> requested number is in their assigned range. This is obviously slower
-> than accessing an array, but if we consider that we generally don't
-> have too many GPIO chips on a given hardware I don't think the hit
-> would be that bad. It would also give some incentive for people to
-> move to the gpiod interface.
+* GPIO: add modalias, set GPLv2 as license, rework pin direction
+  caching, use irq_find_mapping in dln2_irq_unmask, allocate irq work
+  based on the number of pins read from the device, flush irq work at
+  remove time, use RCU to iterate and run the callback list
 
-I think the performance hit is acceptable, because this should
-not be on a hot path anyway. I would say go ahead with this refactoring.
+* I2C: add modalias, set GPLv2 as license, allocate the RX/TX buf
+  separately to avoid cache line sharing issue, don't truncate i2c
+  reads, use u32 instead of uint32_t, attach the sysfs freq attribute
+  to the i2c adapter device instead of the platform device (and also
+  use device attribute groups), simplify dln2_i2c_read a bit
 
-> I also have a patch in my queue that enables multiple users on the
-> same GPIO descriptor (something requested since some time already).
-> What happens with it is that descriptors ownership is fully
-> transferred to the gpio_chip instances, and the static array becomes a
-> array of double-pointers, making it considerable smaller and reducing
-> the impact of increasing its size. Maybe I should submit that change
-> just for this case?
 
-Ummmmm I think that is an orthogonal thing, but honestly I'm
-not following the double-pointers thing, so I guess I need to see
-the patch.
+Daniel Baluta (1):
+  gpio: add support for the Diolan DLN-2 USB GPIO driver
 
-Yours,
-Linus Walleij
+Laurentiu Palcu (1):
+  i2c: add support for Diolan DLN-2 USB-I2C adapter
+
+Octavian Purdila (2):
+  mfd: add support for Diolan DLN-2 devices
+  gpiolib: add irq_not_threaded flag to gpio_chip
+
+ drivers/gpio/Kconfig          |  12 +
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-dln2.c      | 554 ++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib.c        |   2 +-
+ drivers/i2c/busses/Kconfig    |  10 +
+ drivers/i2c/busses/Makefile   |   1 +
+ drivers/i2c/busses/i2c-dln2.c | 383 +++++++++++++++++++++
+ drivers/mfd/Kconfig           |   9 +
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/dln2.c            | 758 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h   |   3 +
+ include/linux/mfd/dln2.h      |  67 ++++
+ 12 files changed, 1800 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-dln2.c
+ create mode 100644 drivers/i2c/busses/i2c-dln2.c
+ create mode 100644 drivers/mfd/dln2.c
+ create mode 100644 include/linux/mfd/dln2.h
+
+-- 
+1.9.1
+
