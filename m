@@ -1,31 +1,30 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [RTF] [PATCH 00/26] gpio: use platform based module init
-Date: Fri, 19 Sep 2014 17:36:18 +0900
-Message-ID: <CAAVeFuKH_hz4Doi=omVxtdE291r0No_yB=mSAvC0oScg=b=VMQ@mail.gmail.com>
-References: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
+Subject: Re: [PATCH -next] gpio: Fix return value check in xgene_gpio_probe()
+Date: Fri, 19 Sep 2014 17:40:30 +0900
+Message-ID: <CAAVeFu+aVzSy1HaoeOyeaJ2=ArjOctgEOLdp-i7Q66muZ7E5tw@mail.gmail.com>
+References: <1410477134-5556-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:32824 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754595AbaISIgj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Sep 2014 04:36:39 -0400
-Received: by mail-ig0-f169.google.com with SMTP id l13so632709iga.4
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Sep 2014 01:36:38 -0700 (PDT)
-In-Reply-To: <1410258591-28248-1-git-send-email-kamlakant.patel@linaro.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:49205 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751149AbaISIkw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Sep 2014 04:40:52 -0400
+Received: by mail-ie0-f172.google.com with SMTP id rp18so1037969iec.17
+        for <linux-gpio@vger.kernel.org>; Fri, 19 Sep 2014 01:40:52 -0700 (PDT)
+In-Reply-To: <1410477134-5556-1-git-send-email-weiyj_lk@163.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: kamlakant.patel@linaro.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: weiyj_lk@163.com
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Sep 9, 2014 at 7:29 PM,  <kamlakant.patel@linaro.org> wrote:
-> From: Kamlakant Patel <kamlakant.patel@linaro.org>
+On Fri, Sep 12, 2014 at 8:12 AM,  <weiyj_lk@163.com> wrote:
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 >
-> This patch removes *_initcall based driver initialization
-> and adds regular module_platform_driver to instantiate
-> GPIO drivers which makes the code smaller and simpler.
+> In case of error, the function devm_ioremap_nocache() returns NULL
+> pointer not ERR_PTR(). The IS_ERR() test in the return value check
+> should be replaced with NULL test.
 >
-> NOTE: This patch needs to be tested on different platforms.
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-I'd say this looks good - have you at least tested this on one or more
-of the modified drivers?
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
