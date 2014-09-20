@@ -1,52 +1,51 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: [PATCH gpio v1 2/2] gpio: ks8695: fix 'else should follow close brace '}''
-Date: Sat, 20 Sep 2014 20:44:31 +0530
-Message-ID: <1411226071-11625-2-git-send-email-varkab@cdac.in>
-References: <1411226071-11625-1-git-send-email-varkab@cdac.in>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:32772 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752483AbaITPOt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 20 Sep 2014 11:14:49 -0400
-Received: by mail-pa0-f53.google.com with SMTP id hz1so1922159pad.40
-        for <linux-gpio@vger.kernel.org>; Sat, 20 Sep 2014 08:14:48 -0700 (PDT)
-In-Reply-To: <1411226071-11625-1-git-send-email-varkab@cdac.in>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ben Gamari <bgamari.foss@gmail.com>
+Subject: Re: [RFC PATCH] gpio: add GPIO hogging mechanism
+Date: Sat, 20 Sep 2014 17:37:19 -0400
+Message-ID: <87fvfmynw0.fsf@gmail.com>
+References: <1387463671-1164-1-git-send-email-b.brezillon@overkiz.com> <1387463671-1164-2-git-send-email-b.brezillon@overkiz.com> <20131219164109.GB27409@kroah.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20131219164109.GB27409@kroah.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Boris BREZILLON <b.brezillon@overkiz.com>
+Cc: Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Mark Rutland <mark.rutland@arm.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, Varka Bhadram <varkab@cdac.in>
+
+--=-=-=
+Content-Type: text/plain
+
+Hi Boris,
+
+I'm just returning to this now.
 
 
-Signed-off-by: Varka Bhadram <varkab@cdac.in>
----
- drivers/gpio/gpio-ks8695.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
 
-diff --git a/drivers/gpio/gpio-ks8695.c b/drivers/gpio/gpio-ks8695.c
-index ba2d2f1..10c7377 100644
---- a/drivers/gpio/gpio-ks8695.c
-+++ b/drivers/gpio/gpio-ks8695.c
-@@ -276,17 +276,14 @@ static int ks8695_gpio_show(struct seq_file *s, void *unused)
- 				case IOPC_TM_EDGE:
- 					seq_printf(s, "(Edges)");	break;
- 				}
--			}
--			else
-+			} else
- 				seq_printf(s, "GPIO\t");
--		}
--		else if (i <= KS8695_GPIO_5) {
-+		} else if (i <= KS8695_GPIO_5) {
- 			if (ctrl & enable[i])
- 				seq_printf(s, "TOUT%i\t", i - KS8695_GPIO_4);
- 			else
- 				seq_printf(s, "GPIO\t");
--		}
--		else
-+		} else
- 			seq_printf(s, "GPIO\t");
- 
- 		seq_printf(s, "\t");
--- 
-1.7.9.5
+> I don't understand what makes GPIO's "special" enough to get included in
+> the driver core like this, and called for each and every device that is
+> added to the system.
+>
+I'm also a bit confused why GPIOs ended up in the driver core but
+perhaps I'm missing something. What was your motivation here?
 
+Cheers,
+
+- Ben
+
+--=-=-=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJUHfOPAAoJEErkyLZmeNiD/ucIAKfJqb41jB7GYeFrwAQ6nP0L
+M7s45uYdzwLj4OSd2UAxqZ+4wOcFRs8pim78cGIhelnVa/da94WYLiUARLW80OPq
+yZQ4xZY5c1O1tI882lvsiE1lmHLKtlm4mzfQPjJ0xHgmBnF/kfkbsOIL3qHofiau
+Tvd5GBBEIc2KpIk7pN8QR1X1sNS5QUembBeVARA8QDZeEiOuLUUYA1UZbRQr2iFd
+jrwW1W6E3yji31Get4SB7TDTMtsunu5o8XnX0KSaEeqK5TZylHVTELcJX8gehetJ
+XrMO1Z9H20+sION0d4M8gHyfIC04G1q+aSsIrqje3iQuFlQDqMBr7VP0otxW4/4=
+=KM9x
+-----END PGP SIGNATURE-----
+--=-=-=--
