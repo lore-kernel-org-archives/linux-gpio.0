@@ -1,68 +1,56 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/2] x86, gpio: Increase ARCH_NR_GPIOs to 512
-Date: Sat, 20 Sep 2014 14:56:48 +0900
-Message-ID: <CAAVeFuL46SVb_X2is6yNSK30_FjUVw+Cbnm6B8q59PHN69ZA1w@mail.gmail.com>
-References: <1410176880-22524-1-git-send-email-mika.westerberg@linux.intel.com>
- <CACRpkdb=yO3TbStfEesJCGDL3D_bq6_C0jwPUmKVuE+Otg8G4g@mail.gmail.com>
- <CAAVeFuKK0BNpYPwZ8c4DbhWmbFnRVuaDo2AqfSNBgBPyUou0_A@mail.gmail.com> <CACRpkdYbmcxi=BXEyGzLpxN4omt+v_Cg_BxCiN4vS9ZUwYTLzQ@mail.gmail.com>
+From: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 4/4] gpio: add support for the Diolan DLN-2 USB GPIO driver
+Date: Sat, 20 Sep 2014 09:32:24 +0300
+Message-ID: <CAE1zot+ENng7QE42UK9jahCcgNq6eLjKH4BMPX7OtAwHQLQnCg@mail.gmail.com>
+References: <1411158165-25794-1-git-send-email-octavian.purdila@intel.com>
+	<1411158165-25794-5-git-send-email-octavian.purdila@intel.com>
+	<201409200448.48180.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYbmcxi=BXEyGzLpxN4omt+v_Cg_BxCiN4vS9ZUwYTLzQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Ning Li <ning.li@intel.com>, Alan Cox <alan@linux.intel.com>, Mark Brown <broonie@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201409200448.48180.arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Sep 20, 2014 at 2:48 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Sep 19, 2014 at 12:20 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> On Tue, Sep 9, 2014 at 4:24 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Sat, Sep 20, 2014 at 5:48 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Friday 19 September 2014, Octavian Purdila wrote:
+>> +struct dln2_gpio_pin {
+>> +     __le16 pin;
+>> +} __packed;
 >
->>> This however makes it *impossible* to use things like desc_to_gpio()
->>> and/or gpio_to_desc() so the code has to be augmented all over the
->>> place to avoid any uses of GPIO numbers on that architecture,
->>> but I am sure it *can* be done on pure ACPI or device tree
->>> systems, and that's what we should aim for.
->>
->> desc_to_gpio()/gpio_to_desc() could still work even if we remove the
->> big array of GPIO descriptors. Actually that's what I intended to do
->> when I first submitted the gpiod patches some time ago but it was
->> rejected for performance reasons.
+> This does not need to be marked packed, since it is never embedded in another
+> structure.
 >
-> OK. I'm ready to revisit the subject.
->
->> desc_to_gpio() actually doesn't even access this array - it does its
->> job using the chip base and the beginning address of its descriptors
->> array.
->
-> Right.
->
->> gpio_to_desc() would suffer a performance hit. What I initially
->> proposed was to parse the linked list of GPIO chips and check if the
->> requested number is in their assigned range. This is obviously slower
->> than accessing an array, but if we consider that we generally don't
->> have too many GPIO chips on a given hardware I don't think the hit
->> would be that bad. It would also give some incentive for people to
->> move to the gpiod interface.
->
-> I think the performance hit is acceptable, because this should
-> not be on a hot path anyway. I would say go ahead with this refactoring.
 
-Great! I will come with something once my holidays are over. It should
-not be a complex change.
+Will do.
 
+>> +struct dln2_gpio_pin_val {
+>> +     __le16 pin;
+>> +     u8 value;
+>> +} __packed;
 >
->> I also have a patch in my queue that enables multiple users on the
->> same GPIO descriptor (something requested since some time already).
->> What happens with it is that descriptors ownership is fully
->> transferred to the gpio_chip instances, and the static array becomes a
->> array of double-pointers, making it considerable smaller and reducing
->> the impact of increasing its size. Maybe I should submit that change
->> just for this case?
+> It's enough here to mark just the 'pin' member as packed.
 >
-> Ummmmm I think that is an orthogonal thing, but honestly I'm
-> not following the double-pointers thing, so I guess I need to see
-> the patch.
 
-Yes, this is completely orthogonal, and actually this won't be needed
-if we decide to get rid of that array.
+OK.
+
+>> +static int dln2_gpio_get_pin_count(struct platform_device *pdev)
+>> +{
+>> +     int ret;
+>> +     __le16 count;
+>> +     int len = sizeof(count);
+>> +
+>> +     ret = dln2_transfer(pdev, DLN2_GPIO_GET_PIN_COUNT, NULL, 0, &count,
+>> +                         &len);
+>
+> You must not do a USB transaction on stack memory.
+>
+
+dln2_transfer allocate a new buffer (in dln2_prep_buf(), with
+kmalloc()) and does the USB transfer with that buffer.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
