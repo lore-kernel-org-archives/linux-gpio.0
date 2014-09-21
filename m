@@ -1,56 +1,41 @@
-From: Ben Gamari <bgamari.foss@gmail.com>
-Subject: Re: [RFC PATCH] gpio: add GPIO hogging mechanism
-Date: Sat, 20 Sep 2014 18:26:54 -0400
-Message-ID: <87a95uylld.fsf@gmail.com>
-References: <1387463671-1164-1-git-send-email-b.brezillon@overkiz.com> <1387463671-1164-2-git-send-email-b.brezillon@overkiz.com> <20131219164109.GB27409@kroah.com> <87fvfmynw0.fsf@gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/3] gpio: xgene: Fix missing spin_lock_init()
+Date: Sun, 21 Sep 2014 12:31:29 +0800
+Message-ID: <1411273889.20539.0.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <87fvfmynw0.fsf@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Boris BREZILLON <b.brezillon@overkiz.com>
-Cc: Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Mark Rutland <mark.rutland@arm.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:35654 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751021AbaIUEbd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Sep 2014 00:31:33 -0400
+Received: by mail-pd0-f179.google.com with SMTP id ft15so2367113pdb.10
+        for <linux-gpio@vger.kernel.org>; Sat, 20 Sep 2014 21:31:33 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Feng Kan <fkan@apm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-xgene.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ben Gamari <bgamari.foss@gmail.com> writes:
+diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
+index e25ba14..256c785 100644
+--- a/drivers/gpio/gpio-xgene.c
++++ b/drivers/gpio/gpio-xgene.c
+@@ -189,6 +189,7 @@ static int xgene_gpio_probe(struct platform_device *pdev)
+ 
+ 	gpio->chip.ngpio = XGENE_MAX_GPIOS;
+ 
++	spin_lock_init(&gpio->lock);
+ 	gpio->chip.dev = &pdev->dev;
+ 	gpio->chip.direction_input = xgene_gpio_dir_in;
+ 	gpio->chip.direction_output = xgene_gpio_dir_out;
+-- 
+1.9.1
 
-> Hi Boris,
->
-> I'm just returning to this now.
->
->
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
->
->> I don't understand what makes GPIO's "special" enough to get included in
->> the driver core like this, and called for each and every device that is
->> added to the system.
->>
-> I'm also a bit confused why GPIOs ended up in the driver core but
-> perhaps I'm missing something. What was your motivation here?
->
-Somehow I overlooked the message in which you responded to this. Ignore
-the above.
 
-Cheers,
 
-- Ben
-
---=-=-=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJUHf8uAAoJEErkyLZmeNiDA3QH+wRXGjXScBmI5Urn09LLfQX+
-XSkYi9g9MB93LRhdpHdJ5RINzR4BdfqmUXn6M8oia16OiaoxMHdA/o5HmJGUWYBr
-5+gf4wAkc7xtefV2KMmkeH44u7tpdpLvyRv/NALdSjsl68fefk8k+q6/LqrSOmOH
-0Dqz6rq6TvEHoONoX6yzs1cgl3zTXdIxmQYgL44w/+q6vQRjEkOiXUV/0LRY+EkD
-jex4wmKbfPVdHATLw5Rn9CIaLFMBXHb/GaynSEOtpzLicClKgwgUQn4iVuniMvp/
-/gbymKQy5dxfztLqmdD8H46YWC1CtbWQNUqlOue3EMkH2edAQ/mRC/pPWFnIcGY=
-=UOUS
------END PGP SIGNATURE-----
---=-=-=--
