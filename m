@@ -1,274 +1,103 @@
-From: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
-Subject: RE: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
-Date: Mon, 22 Sep 2014 05:43:36 +0000
-Message-ID: <50B33AC5ED75F74F991980326F1C438D0FBDB28B@PGSMSX108.gar.corp.intel.com>
-References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
- <1410943745-9354-2-git-send-email-rebecca.swee.fun.chang@intel.com>
- <20140918111705.GM10854@lahna.fi.intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH 1/4] mmc: slot-gpio: switch to use flags when getting
+ GPIO
+Date: Mon, 22 Sep 2014 11:20:16 +0300
+Message-ID: <541FDBC0.4020302@intel.com>
+References: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org> <CAPDyKFqw2N9zg41iz=qo3kQghmdYpafYdy545NYuu-Ji6pJELQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:4449 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751058AbaIVFoW convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Sep 2014 01:44:22 -0400
-In-Reply-To: <20140918111705.GM10854@lahna.fi.intel.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFqw2N9zg41iz=qo3kQghmdYpafYdy545NYuu-Ji6pJELQ@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: 'Mika Westerberg' <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Replied inline. :)
+On 08/29/2014 03:16 PM, Ulf Hansson wrote:
+> On 27 August 2014 13:00, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> When the slot GPIO driver gets the GPIO to be used for card
+>> detect, it is now possible to specify a flag to have the line
+>> set up as input. Get rid of the explicit setup call for input
+>> and use the flag.
+>>
+>> The extra argument works as there are transition varargs
+>> macros in place in the <linux/gpio/consumer.h> header, in
+>> the future we will make the flags argument compulsory.
+>>
+>> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Thanks! Applied for next.
 
-> -----Original Message-----
-> From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
-> Sent: 18 September, 2014 7:17 PM
-> To: Chang, Rebecca Swee Fun
-> Cc: Linus Walleij; linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
-> 
-> On Wed, Sep 17, 2014 at 04:49:03PM +0800, Chang Rebecca Swee Fun wrote:
-> > Consolidating similar algorithms into common functions to make GPIO
-> > SCH simpler and manageable.
-> >
-> > Signed-off-by: Chang Rebecca Swee Fun
-> > <rebecca.swee.fun.chang@intel.com>
-> > ---
-> >  drivers/gpio/gpio-sch.c |   95 ++++++++++++++++++++++++++--------------------
-> -
-> >  1 file changed, 53 insertions(+), 42 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c index
-> > 99720c8..2189c22 100644
-> > --- a/drivers/gpio/gpio-sch.c
-> > +++ b/drivers/gpio/gpio-sch.c
-> > @@ -43,6 +43,8 @@ struct sch_gpio {
-> >
-> >  #define to_sch_gpio(c)	container_of(c, struct sch_gpio, chip)
-> >
-> > +static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int
-> > +val);
-> > +
-> 
-> Is it possible to move the sch_gpio_set() function here instead of forward
-> declaring it?
+Unfortunately it doesn't seem to work.  I needed the patch
+below.
 
-Yes, it is possible. There is a reason I submitted the code in this structure. By putting the sch_gpio_set() function below will makes the diff patch looks neat and easy for review.
-If it doesn't make sense to make the patch for easy reviewing, I can change by moving the function above.
 
-> 
-> >  static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
-> >  				unsigned reg)
-> >  {
-> > @@ -63,94 +65,89 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch,
-> unsigned gpio)
-> >  	return gpio % 8;
-> >  }
-> >
-> > -static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio)
-> > +static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio,
-> > +unsigned reg)
-> 
-> I don't see much value in doing this.
-> 
-> To me sch_gpio_enable(sch, gpio) is more intuitive than sch_gpio_enable(sch,
-> gpio, GEN). Why do I need to pass register to enable function in the first place?
-> It should know better how to enable the GPIO, right?
-> 
-> Same goes for others.
+From: Adrian Hunter <adrian.hunter@intel.com>
+Date: Mon, 22 Sep 2014 11:01:16 +0300
+Subject: [PATCH] gpio: Fix gpio direction flags not getting set
 
-The register values are required when it comes to IRQ handling. By passing in the registers values, we can make full use of the algorithms without introducing extra/similar algorithms to compute other register offset values.
-For example, we have other offset values to handle such as:-
-GTPE	0x0C
-GTNE	0x10
-GGPE	0x14
-GSMI	0x18
-GTS	0x1C
-CGNMIEN	0x40
-RGNMIEN	0x44
+GPIO direction flags are not getting set because
+an 'if' statement is the wrong way around.
 
-Regards
-Rebecca
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 15cc0bb..3b54edf 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1674,7 +1674,7 @@ struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
+ 		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
+ 
+ 	/* No particular flag request, return here... */
+-	if (flags & GPIOD_FLAGS_BIT_DIR_SET)
++	if (!(flags & GPIOD_FLAGS_BIT_DIR_SET))
+ 		return desc;
+ 
+ 	/* Process flags */
+-- 
+1.8.3.2
+
+
 
 > 
-> >  {
-> >  	unsigned short offset, bit;
-> >  	u8 enable;
-> >
-> >  	spin_lock(&sch->lock);
-> >
-> > -	offset = sch_gpio_offset(sch, gpio, GEN);
-> > +	offset = sch_gpio_offset(sch, gpio, reg);
-> >  	bit = sch_gpio_bit(sch, gpio);
-> >
-> >  	enable = inb(sch->iobase + offset);
-> > -	if (!(enable & (1 << bit)))
-> > -		outb(enable | (1 << bit), sch->iobase + offset);
-> > +	if (!(enable & BIT(bit)))
-> > +		outb(enable | BIT(bit), sch->iobase + offset);
-> >
-> >  	spin_unlock(&sch->lock);
-> >  }
-> >
-> > -static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned
-> > gpio_num)
-> > +static void sch_gpio_disable(struct sch_gpio *sch, unsigned gpio,
-> > +unsigned reg)
-> >  {
-> > -	struct sch_gpio *sch = to_sch_gpio(gc);
-> > -	u8 curr_dirs;
-> >  	unsigned short offset, bit;
-> > +	u8 disable;
-> >
-> >  	spin_lock(&sch->lock);
-> >
-> > -	offset = sch_gpio_offset(sch, gpio_num, GIO);
-> > -	bit = sch_gpio_bit(sch, gpio_num);
-> > -
-> > -	curr_dirs = inb(sch->iobase + offset);
-> > +	offset = sch_gpio_offset(sch, gpio, reg);
-> > +	bit = sch_gpio_bit(sch, gpio);
-> >
-> > -	if (!(curr_dirs & (1 << bit)))
-> > -		outb(curr_dirs | (1 << bit), sch->iobase + offset);
-> > +	disable = inb(sch->iobase + offset);
-> > +	if (disable & BIT(bit))
-> > +		outb(disable & ~BIT(bit), sch->iobase + offset);
-> >
-> >  	spin_unlock(&sch->lock);
-> > -	return 0;
-> >  }
-> >
-> > -static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
-> > +static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio,
-> > +unsigned reg)
-> >  {
-> >  	struct sch_gpio *sch = to_sch_gpio(gc);
-> > -	int res;
-> >  	unsigned short offset, bit;
-> > +	u8 curr_dirs;
-> >
-> > -	offset = sch_gpio_offset(sch, gpio_num, GLV);
-> > -	bit = sch_gpio_bit(sch, gpio_num);
-> > +	offset = sch_gpio_offset(sch, gpio, reg);
-> > +	bit = sch_gpio_bit(sch, gpio);
-> >
-> > -	res = !!(inb(sch->iobase + offset) & (1 << bit));
-> > +	curr_dirs = !!(inb(sch->iobase + offset) & BIT(bit));
-> >
-> > -	return res;
-> > +	return curr_dirs;
-> >  }
-> >
-> > -static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int
-> > val)
-> > +static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned
-> reg,
-> > +			     int val)
-> >  {
-> >  	struct sch_gpio *sch = to_sch_gpio(gc);
-> > -	u8 curr_vals;
-> >  	unsigned short offset, bit;
-> > +	u8 curr_dirs;
-> >
-> > -	spin_lock(&sch->lock);
-> > -
-> > -	offset = sch_gpio_offset(sch, gpio_num, GLV);
-> > -	bit = sch_gpio_bit(sch, gpio_num);
-> > +	offset = sch_gpio_offset(sch, gpio, reg);
-> > +	bit = sch_gpio_bit(sch, gpio);
-> >
-> > -	curr_vals = inb(sch->iobase + offset);
-> > +	curr_dirs = inb(sch->iobase + offset);
-> >
-> >  	if (val)
-> > -		outb(curr_vals | (1 << bit), sch->iobase + offset);
-> > +		outb(curr_dirs | BIT(bit), sch->iobase + offset);
-> >  	else
-> > -		outb((curr_vals & ~(1 << bit)), sch->iobase + offset);
-> > +		outb((curr_dirs & ~BIT(bit)), sch->iobase + offset); }
-> > +
-> > +static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned
-> > +gpio_num) {
-> > +	struct sch_gpio *sch = to_sch_gpio(gc);
-> >
-> > +	spin_lock(&sch->lock);
-> > +	sch_gpio_enable(sch, gpio_num, GIO);
-> >  	spin_unlock(&sch->lock);
-> > +	return 0;
-> >  }
-> >
-> >  static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
-> >  				  int val)
-> >  {
-> >  	struct sch_gpio *sch = to_sch_gpio(gc);
-> > -	u8 curr_dirs;
-> > -	unsigned short offset, bit;
-> >
-> >  	spin_lock(&sch->lock);
-> > -
-> > -	offset = sch_gpio_offset(sch, gpio_num, GIO);
-> > -	bit = sch_gpio_bit(sch, gpio_num);
-> > -
-> > -	curr_dirs = inb(sch->iobase + offset);
-> > -	if (curr_dirs & (1 << bit))
-> > -		outb(curr_dirs & ~(1 << bit), sch->iobase + offset);
-> > -
-> > +	sch_gpio_disable(sch, gpio_num, GIO);
-> >  	spin_unlock(&sch->lock);
-> >
-> >  	/*
-> > @@ -166,6 +163,20 @@ static int sch_gpio_direction_out(struct gpio_chip
-> *gc, unsigned gpio_num,
-> >  	return 0;
-> >  }
-> >
-> > +static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num) {
-> > +	return sch_gpio_reg_get(gc, gpio_num, GLV); }
-> > +
-> > +static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int
-> > +val) {
-> > +	struct sch_gpio *sch = to_sch_gpio(gc);
-> > +
-> > +	spin_lock(&sch->lock);
-> > +	sch_gpio_reg_set(gc, gpio_num, GLV, val);
-> > +	spin_unlock(&sch->lock);
-> > +}
-> > +
-> >  static struct gpio_chip sch_gpio_chip = {
-> >  	.label			= "sch_gpio",
-> >  	.owner			= THIS_MODULE,
-> > @@ -209,13 +220,13 @@ static int sch_gpio_probe(struct platform_device
-> *pdev)
-> >  		 * GPIO7 is configured by the CMC as SLPIOVR
-> >  		 * Enable GPIO[9:8] core powered gpios explicitly
-> >  		 */
-> > -		sch_gpio_enable(sch, 8);
-> > -		sch_gpio_enable(sch, 9);
-> > +		sch_gpio_enable(sch, 8, GEN);
-> > +		sch_gpio_enable(sch, 9, GEN);
+> Kind regards
+> Uffe
 > 
-> For example here, which one is more readable?
+>> ---
+>>  drivers/mmc/core/slot-gpio.c | 6 +-----
+>>  1 file changed, 1 insertion(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+>> index 5f89cb83d5f0..908c2b29e79f 100644
+>> --- a/drivers/mmc/core/slot-gpio.c
+>> +++ b/drivers/mmc/core/slot-gpio.c
+>> @@ -308,14 +308,10 @@ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
+>>         if (!con_id)
+>>                 con_id = ctx->cd_label;
+>>
+>> -       desc = devm_gpiod_get_index(host->parent, con_id, idx);
+>> +       desc = devm_gpiod_get_index(host->parent, con_id, idx, GPIOD_IN);
+>>         if (IS_ERR(desc))
+>>                 return PTR_ERR(desc);
+>>
+>> -       ret = gpiod_direction_input(desc);
+>> -       if (ret < 0)
+>> -               return ret;
+>> -
+>>         if (debounce) {
+>>                 ret = gpiod_set_debounce(desc, debounce);
+>>                 if (ret < 0)
+>> --
+>> 1.9.3
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> >  		/*
-> >  		 * SUS_GPIO[2:0] enabled by default
-> >  		 * Enable SUS_GPIO3 resume powered gpio explicitly
-> >  		 */
-> > -		sch_gpio_enable(sch, 13);
-> > +		sch_gpio_enable(sch, 13, GEN);
-> 
-> Or here?
-> 
-> >  		break;
-> >
-> >  	case PCI_DEVICE_ID_INTEL_ITC_LPC:
-> > --
-> > 1.7.9.5
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe
-> > linux-kernel" in the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > Please read the FAQ at  http://www.tux.org/lkml/
+
