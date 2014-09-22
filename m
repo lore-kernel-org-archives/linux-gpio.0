@@ -1,54 +1,297 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] GPIO: 74xx-mmio: Add DT bindings documentation
-Date: Mon, 22 Sep 2014 13:39:26 +0200
-Message-ID: <CAMuHMdV2gkx+tVoYL_zcYg0ZtYkkascQiTOaTfDUuRVMxFkdTw@mail.gmail.com>
-References: <1411112404-16040-1-git-send-email-shc_work@mail.ru>
-	<1411112404-16040-3-git-send-email-shc_work@mail.ru>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO
+ adapter
+Date: Mon, 22 Sep 2014 13:43:57 +0200
+Message-ID: <20140922114357.GG5237@localhost>
+References: <1411378458-18424-1-git-send-email-muth@cypress.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:46891 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752688AbaIVLj2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Sep 2014 07:39:28 -0400
-In-Reply-To: <1411112404-16040-3-git-send-email-shc_work@mail.ru>
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:37449 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753501AbaIVLq3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Sep 2014 07:46:29 -0400
+Content-Disposition: inline
+In-Reply-To: <1411378458-18424-1-git-send-email-muth@cypress.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Muthu Mani <muth@cypress.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Rajaram Regupathy <rera@cypress.com>
 
-On Fri, Sep 19, 2014 at 9:40 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-74xx-mmio.txt
-> @@ -0,0 +1,30 @@
-> +* 74XX MMIO GPIO driver
+On Mon, Sep 22, 2014 at 03:04:18PM +0530, Muthu Mani wrote:
+> Adds support for USB-GPIO interface of Cypress Semiconductor
+> CYUSBS234 USB-Serial Bridge controller.
+> 
+> The GPIO get/set can be done through vendor command
+> on control endpoint.
+> 
+> Details about the device can be found at:
+> http://www.cypress.com/?rID=84126
+> 
+> Signed-off-by: Muthu Mani <muth@cypress.com>
+> Signed-off-by: Rajaram Regupathy <rera@cypress.com>
+> ---
+>  drivers/gpio/Kconfig          |  13 +++
+>  drivers/gpio/Makefile         |   1 +
+>  drivers/gpio/gpio-cyusbs23x.c | 190 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 204 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-cyusbs23x.c
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 9de1515..932e07c 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -886,6 +886,19 @@ config GPIO_BCM_KONA
+>  
+>  comment "USB GPIO expanders:"
+>  
+> +config GPIO_CYUSBS23X
+> +	tristate "CYUSBS23x GPIO support"
+> +	depends on MFD_CYUSBS23X && USB
+> +	help
+> +	  Say yes here to access the GPIO signals of Cypress
+> +	  Semiconductor CYUSBS23x USB Serial Bridge Controller.
 > +
-> +Required properties:
-> +- compatible: Should contain one of the following:
-> +   "ti,74ahc1g125": for 74AHC1G125 (1-bit Input),
-> +   "ti,74auc1g174": for 74AUC1G74 (1-bit Output),
-> +   "ti,74lvc2g125": for 74LVC2G125 (2-bit Input),
-> +   "ti,74hc74":     for 74HC74 (2-bit Output),
-> +   "ti,74hc125":    for 74HC125 (4-bit Input),
-> +   "ti,74hc175":    for 74HC175 (4-bit Output),
-> +   "ti,74hc365":    for 74HC365 (6-bit Input),
-> +   "ti,74hc174":    for 74HC174 (6-bit Output),
-> +   "ti,74hc244":    for 74HC244 (8-bit Input),
-> +   "ti,74hc273":    for 74HC273 (8-bit Output),
-> +   "ti,74ac1624":   for 74AC1624 (16-bit Input),
-> +   "ti,74ac16374":  for 74AC16374 (16-bit Output).
+> +	  This driver enables the GPIO interface of CYUSBS23x USB Serial
+> +	  Bridge controller.
+> +
+> +	  This driver can also be built as a module. If so, the module will be
+> +	  called gpio-cyusbs23x.
+> +
+>  config GPIO_VIPERBOARD
+>  	tristate "Viperboard GPIO a & b support"
+>  	depends on MFD_VIPERBOARD && USB
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index 5d024e3..3ad89f1 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -23,6 +23,7 @@ obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
+>  obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
+>  obj-$(CONFIG_GPIO_CS5535)	+= gpio-cs5535.o
+>  obj-$(CONFIG_GPIO_CRYSTAL_COVE)	+= gpio-crystalcove.o
+> +obj-$(CONFIG_GPIO_CYUSBS23X)	+= gpio-cyusbs23x.o
+>  obj-$(CONFIG_GPIO_DA9052)	+= gpio-da9052.o
+>  obj-$(CONFIG_GPIO_DA9055)	+= gpio-da9055.o
+>  obj-$(CONFIG_GPIO_DAVINCI)	+= gpio-davinci.o
+> diff --git a/drivers/gpio/gpio-cyusbs23x.c b/drivers/gpio/gpio-cyusbs23x.c
+> new file mode 100644
+> index 0000000..8aa3ab6
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-cyusbs23x.c
+> @@ -0,0 +1,190 @@
+> +/*
+> + * Cypress USB-Serial Bridge Controller GPIO driver
+> + *
+> + * Copyright (c) 2014 Cypress Semiconductor Corporation.
+> + *
+> + * Author:
+> + *   Muthu Mani <muth@cypress.com>
+> + *
+> + * Additional contributors include:
+> + *   Rajaram Regupathy <rera@cypress.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms of the GNU General Public License version 2 as published by
+> + * the Free Software Foundation.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/errno.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +#include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <linux/usb.h>
+> +#include <linux/gpio.h>
+> +
+> +#include <linux/mfd/cyusbs23x.h>
+> +
+> +#define CY_GPIO_GET_LEN		(2)
+> +
+> +struct cyusbs_gpio {
+> +	struct gpio_chip gpio;
+> +	struct cyusbs23x *cyusbs;
+> +};
+> +
+> +static int cy_gpio_get(struct gpio_chip *chip,
+> +			unsigned offset)
+> +{
+> +	int ret;
+> +	char buf[CY_GPIO_GET_LEN];
 
-As the actual implementation technology doesn't matter, I think you
-should use the base name where appropriate.
-E.g. "ti,7474" instead of "ti,74hc74".
+Buffers used for USB (DMA) transfers cannot be allocated on the stack.
+Use kmalloc and friends.
 
-Gr{oetje,eeting}s,
+> +	__u16 wIndex, wValue;
 
-                        Geert
+u16 throughout.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +	struct cyusbs_gpio *gpio =
+> +				container_of(chip, struct cyusbs_gpio, gpio);
+> +	struct cyusbs23x *cyusbs = gpio->cyusbs;
+> +
+> +	dev_dbg(&cyusbs->usb_intf->dev, "%s: %d\n", __func__,
+> +		offset);
+> +	wValue = offset;
+> +	wIndex = 0;
+> +
+> +	mutex_lock(&cyusbs->lock);
+> +	ret = usb_control_msg(cyusbs->usb_dev,
+> +			usb_rcvctrlpipe(cyusbs->usb_dev, 0),
+> +			CY_GPIO_GET_VALUE_CMD,
+> +			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
+> +			wValue, wIndex, buf, CY_GPIO_GET_LEN, 2000);
+> +	mutex_unlock(&cyusbs->lock);
+> +
+> +	dev_dbg(&cyusbs->usb_intf->dev, "%s: %d %02x %02x\n", __func__,
+> +		ret, buf[0], buf[1]);
+> +
+> +	if (ret == CY_GPIO_GET_LEN) {
+> +		if (buf[0] == 0)
+> +			ret = buf[1];
+> +		else
+> +			ret = -EINVAL;
+> +	} else {
+> +		ret = -EREMOTEIO;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void cy_gpio_set(struct gpio_chip *chip,
+> +			unsigned offset, int value)
+> +{
+> +	int ret;
+> +	__u16 wIndex, wValue;
+> +	struct cyusbs_gpio *gpio =
+> +			container_of(chip, struct cyusbs_gpio, gpio);
+> +	struct cyusbs23x *cyusbs = gpio->cyusbs;
+> +
+> +	dev_dbg(&cyusbs->usb_intf->dev, "%s: %d\n", __func__,
+> +		offset);
+> +	wValue = offset;
+> +	wIndex = value;
+> +
+> +	mutex_lock(&cyusbs->lock);
+> +	ret = usb_control_msg(cyusbs->usb_dev,
+> +			usb_sndctrlpipe(cyusbs->usb_dev, 0),
+> +			CY_GPIO_SET_VALUE_CMD,
+> +			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
+> +			wValue, wIndex, NULL, 0, 2000);
+> +	mutex_unlock(&cyusbs->lock);
+> +
+> +	if (ret < 0)
+> +		dev_err(&cyusbs->usb_intf->dev, "error setting gpio:%d\n", ret);
+> +}
+> +
+> +static int cy_gpio_direction_input(struct gpio_chip *chip,
+> +					unsigned offset)
+> +{
+> +	return 0;
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Aren't the GPIOs output-only?
+
+> +}
+> +
+> +static int cy_gpio_direction_output(struct gpio_chip *chip,
+> +					unsigned offset, int value)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int cyusbs23x_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct cyusbs23x *cyusbs;
+> +	struct cyusbs_gpio *cy_gpio;
+> +	int ret = 0;
+> +
+> +	dev_dbg(&pdev->dev, "%s\n", __func__);
+> +
+> +	cyusbs = dev_get_drvdata(pdev->dev.parent);
+> +
+> +	cy_gpio = devm_kzalloc(&pdev->dev, sizeof(*cy_gpio), GFP_KERNEL);
+> +	if (cy_gpio == NULL)
+> +		return -ENOMEM;
+> +
+> +	cy_gpio->cyusbs = cyusbs;
+> +	/* registering gpio */
+> +	cy_gpio->gpio.label = "cyusbs23x gpio";
+> +	cy_gpio->gpio.dev = &pdev->dev;
+> +	cy_gpio->gpio.owner = THIS_MODULE;
+> +	cy_gpio->gpio.base = -1;
+> +	cy_gpio->gpio.ngpio = 12; /* total GPIOs */
+
+I think you need to read out the gpio config from the device eeprom and
+implement a request() callback where you verify that a requested gpio is
+actually available (mode dependent, and there are never more than 10
+gpios availble).
+
+> +	cy_gpio->gpio.can_sleep = true;
+> +	cy_gpio->gpio.set = cy_gpio_set;
+> +	cy_gpio->gpio.get = cy_gpio_get;
+> +	cy_gpio->gpio.direction_input = cy_gpio_direction_input;
+> +	cy_gpio->gpio.direction_output = cy_gpio_direction_output;
+> +	ret = gpiochip_add(&cy_gpio->gpio);
+> +	if (ret < 0) {
+> +		dev_err(cy_gpio->gpio.dev, "could not add gpio");
+> +		goto error;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, cy_gpio);
+> +
+> +	dev_dbg(&pdev->dev, "added GPIO\n");
+> +	return ret;
+> +
+> +error:
+> +	dev_dbg(&pdev->dev, "error occured %d\n", ret);
+> +	return ret;
+> +}
+> +
+> +static int cyusbs23x_gpio_remove(struct platform_device *pdev)
+> +{
+> +	struct cyusbs_gpio *cy_gpio = platform_get_drvdata(pdev);
+> +
+> +	dev_dbg(&pdev->dev, "%s\n", __func__);
+> +
+> +	gpiochip_remove(&cy_gpio->gpio);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver cyusbs23x_gpio_driver = {
+> +	.driver.name    = "cyusbs23x-gpio",
+> +	.driver.owner   = THIS_MODULE,
+> +	.probe          = cyusbs23x_gpio_probe,
+> +	.remove         = cyusbs23x_gpio_remove,
+> +};
+> +
+> +static int __init cyusbs23x_gpio_init(void)
+> +{
+> +	return platform_driver_register(&cyusbs23x_gpio_driver);
+> +}
+> +subsys_initcall(cyusbs23x_gpio_init);
+> +
+> +static void __exit cyusbs23x_gpio_exit(void)
+> +{
+> +	platform_driver_unregister(&cyusbs23x_gpio_driver);
+> +}
+> +module_exit(cyusbs23x_gpio_exit);
+
+module_platform_driver
+
+> +
+> +MODULE_AUTHOR("Rajaram Regupathy <rera@cypress.com>");
+> +MODULE_AUTHOR("Muthu Mani <muth@cypress.com>");
+> +MODULE_DESCRIPTION("gpio-cyusbs23x driver v0.1");
+> +MODULE_LICENSE("GPL");
+
+Description and license comments from i2c patch apply here as well.
+
+> +MODULE_ALIAS("platform:cyusbs23x-gpio");
+> +
+
+Stray new line.
+
+Johan
