@@ -1,7 +1,7 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 2/9] ARM: dts: vf610: add global power controller (GPC)
-Date: Mon, 22 Sep 2014 19:09:23 +0200
-Message-ID: <21796ac49b3b40094cdea25f6d7c887dc53eefab.1411404079.git.stefan@agner.ch>
+Subject: [PATCH 3/9] ARM: dts: vf610: add on-chip SRAM
+Date: Mon, 22 Sep 2014 19:09:24 +0200
+Message-ID: <593e881b5050795076426a4071bfa1bff66cb215.1411404079.git.stefan@agner.ch>
 References: <cover.1411404079.git.stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,28 +23,42 @@ To: shawn.guo@freescale.com, kernel@pengutronix.de, linus.walleij@linaro.org, gn
 Cc: linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, stefan@agner.ch, linux-gpio@vger.kernel.org, jingchang.lu@freescale.com, b20788@freescale.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add global power controller module (GPC) to Vybrid device tree.
-
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/vf610.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/vf610.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 diff --git a/arch/arm/boot/dts/vf610.dtsi b/arch/arm/boot/dts/vf610.dtsi
-index 122a64956..67bb3b7 100644
+index 67bb3b7..d2128e5 100644
 --- a/arch/arm/boot/dts/vf610.dtsi
 +++ b/arch/arm/boot/dts/vf610.dtsi
-@@ -367,6 +367,11 @@
- 				clocks = <&clks VF610_CLK_USBC0>;
- 			};
+@@ -69,6 +69,27 @@
+ 		interrupt-parent = <&intc>;
+ 		ranges;
  
-+			gpc: gpc@4006c000 {
-+				compatible = "fsl,vf610-gpc";
-+				reg = <0x4006c000 0x1000>;
-+			};
++		ocram0: sram@3f000000 {
++			compatible = "mmio-sram";
++			reg = <0x3f000000 0x40000>;
++		};
 +
- 			src: src@4006e000 {
- 				compatible = "fsl,vf610-src";
- 				reg = <0x4006e000 0x1000>;
++		ocram1: sram@3f040000 {
++			compatible = "mmio-sram";
++			reg = <0x3f040000 0x40000>;
++		};
++
++		gfxram0: sram@3f400000 {
++			compatible = "mmio-sram";
++			reg = <0x3f400000 0x80000>;
++		};
++
++		/* used by L2 cache */
++		gfxram1: sram@3f480000 {
++			compatible = "mmio-sram";
++			reg = <0x3f480000 0x80000>;
++		};
++
+ 		aips0: aips-bus@40000000 {
+ 			compatible = "fsl,aips-bus", "simple-bus";
+ 			#address-cells = <1>;
 -- 
 2.1.0
