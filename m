@@ -1,103 +1,46 @@
-From: 'Mika Westerberg' <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
-Date: Mon, 22 Sep 2014 12:25:28 +0300
-Message-ID: <20140922092528.GM1786@lahna.fi.intel.com>
-References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
- <1410943745-9354-2-git-send-email-rebecca.swee.fun.chang@intel.com>
- <20140918111705.GM10854@lahna.fi.intel.com>
- <50B33AC5ED75F74F991980326F1C438D0FBDB28B@PGSMSX108.gar.corp.intel.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH gpio v1 2/2] gpio: ks8695: fix 'else should follow close
+ brace '}''
+Date: Mon, 22 Sep 2014 18:48:03 +0900
+Message-ID: <CAAVeFu+NVmV+MqPXBUD3+3Zio44AZF5-YPV_p4KRzOHLrRFB2Q@mail.gmail.com>
+References: <1411226071-11625-1-git-send-email-varkab@cdac.in> <1411226071-11625-2-git-send-email-varkab@cdac.in>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:24929 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751070AbaIVJ1k (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 22 Sep 2014 05:27:40 -0400
-Content-Disposition: inline
-In-Reply-To: <50B33AC5ED75F74F991980326F1C438D0FBDB28B@PGSMSX108.gar.corp.intel.com>
+Received: from mail-ig0-f169.google.com ([209.85.213.169]:59645 "EHLO
+	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753673AbaIVJsZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Sep 2014 05:48:25 -0400
+Received: by mail-ig0-f169.google.com with SMTP id l13so3796899iga.2
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Sep 2014 02:48:24 -0700 (PDT)
+In-Reply-To: <1411226071-11625-2-git-send-email-varkab@cdac.in>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Varka Bhadram <varkabhadram@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Varka Bhadram <varkab@cdac.in>
 
-On Mon, Sep 22, 2014 at 05:43:36AM +0000, Chang, Rebecca Swee Fun wrote:
-> Replied inline. :)
-> 
-> > -----Original Message-----
-> > From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
-> > Sent: 18 September, 2014 7:17 PM
-> > To: Chang, Rebecca Swee Fun
-> > Cc: Linus Walleij; linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
-> > 
-> > On Wed, Sep 17, 2014 at 04:49:03PM +0800, Chang Rebecca Swee Fun wrote:
-> > > Consolidating similar algorithms into common functions to make GPIO
-> > > SCH simpler and manageable.
-> > >
-> > > Signed-off-by: Chang Rebecca Swee Fun
-> > > <rebecca.swee.fun.chang@intel.com>
-> > > ---
-> > >  drivers/gpio/gpio-sch.c |   95 ++++++++++++++++++++++++++--------------------
-> > -
-> > >  1 file changed, 53 insertions(+), 42 deletions(-)
-> > >
-> > > diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c index
-> > > 99720c8..2189c22 100644
-> > > --- a/drivers/gpio/gpio-sch.c
-> > > +++ b/drivers/gpio/gpio-sch.c
-> > > @@ -43,6 +43,8 @@ struct sch_gpio {
-> > >
-> > >  #define to_sch_gpio(c)	container_of(c, struct sch_gpio, chip)
-> > >
-> > > +static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int
-> > > +val);
-> > > +
-> > 
-> > Is it possible to move the sch_gpio_set() function here instead of forward
-> > declaring it?
-> 
-> Yes, it is possible. There is a reason I submitted the code in this
-> structure. By putting the sch_gpio_set() function below will makes the
-> diff patch looks neat and easy for review.  If it doesn't make sense
-> to make the patch for easy reviewing, I can change by moving the
-> function above.
+On Sun, Sep 21, 2014 at 12:14 AM, Varka Bhadram <varkabhadram@gmail.com> wrote:
+>
+> Signed-off-by: Varka Bhadram <varkab@cdac.in>
+> ---
+>  drivers/gpio/gpio-ks8695.c |    9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-ks8695.c b/drivers/gpio/gpio-ks8695.c
+> index ba2d2f1..10c7377 100644
+> --- a/drivers/gpio/gpio-ks8695.c
+> +++ b/drivers/gpio/gpio-ks8695.c
+> @@ -276,17 +276,14 @@ static int ks8695_gpio_show(struct seq_file *s, void *unused)
+>                                 case IOPC_TM_EDGE:
+>                                         seq_printf(s, "(Edges)");       break;
+>                                 }
+> -                       }
+> -                       else
+> +                       } else
+>                                 seq_printf(s, "GPIO\t");
 
-I think that we are interested in the end result (e.g) the driver and if
-we can avoid forward declarations the better.
+According to the kernel code formatting guidelines, this should actually be
 
-> > 
-> > >  static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
-> > >  				unsigned reg)
-> > >  {
-> > > @@ -63,94 +65,89 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch,
-> > unsigned gpio)
-> > >  	return gpio % 8;
-> > >  }
-> > >
-> > > -static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio)
-> > > +static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio,
-> > > +unsigned reg)
-> > 
-> > I don't see much value in doing this.
-> > 
-> > To me sch_gpio_enable(sch, gpio) is more intuitive than sch_gpio_enable(sch,
-> > gpio, GEN). Why do I need to pass register to enable function in the first place?
-> > It should know better how to enable the GPIO, right?
-> > 
-> > Same goes for others.
-> 
-> The register values are required when it comes to IRQ handling. By
-> passing in the registers values, we can make full use of the
-> algorithms without introducing extra/similar algorithms to compute
-> other register offset values.
-> For example, we have other offset values to handle such as:-
-> GTPE	0x0C
-> GTNE	0x10
-> GGPE	0x14
-> GSMI	0x18
-> GTS	0x1C
-> CGNMIEN	0x40
-> RGNMIEN	0x44
-
-Well, can we at least call it something else than sch_gpio_enable()?
-Perhaps sch_gpio_set_value() or so?
+        } else {
+                seq_printf(s, "GPIO\t");
+        }
