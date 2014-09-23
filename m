@@ -1,58 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
-Date: Tue, 23 Sep 2014 12:21:58 +0200
-Message-ID: <CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
-References: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 2/4] pinctrl: imx: add gpio pinmux support for vf610
+Date: Tue, 23 Sep 2014 13:24:18 +0200
+Message-ID: <0498face86b4dcbdf35619c8b124675c@agner.ch>
+References: <cover.1410020458.git.stefan@agner.ch>
+ <4cf96e22ce2c7646513b64260c7bb1a2279e232d.1410020459.git.stefan@agner.ch>
+ <CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_azOic7AA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:46592 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754283AbaIWKV7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 06:21:59 -0400
-Received: by mail-ie0-f173.google.com with SMTP id tr6so9056545ieb.4
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 03:21:58 -0700 (PDT)
-In-Reply-To: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>
+Received: from mail.kmu-office.ch ([178.209.48.102]:43267 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755185AbaIWLYz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 07:24:55 -0400
+In-Reply-To: <CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_azOic7AA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
-Cc: "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 9, 2014 at 9:12 AM, Wang, Yalin <Yalin.Wang@sonymobile.com> wrote:
+Am 2014-09-23 11:48, schrieb Linus Walleij:
+> On Sat, Sep 6, 2014 at 6:25 PM, Stefan Agner <stefan@agner.ch> wrote:
+> 
+>> Add pinmux support for GPIO for Vybrid (vf610) IOMUX controller.
+>> This is needed since direction configuration is not part of the
+>> GPIO module in Vybrid.
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> (...)
+> 
+>> -arch_initcall(vf610_pinctrl_init);
+>> +postcore_initcall(vf610_pinctrl_init);
+> 
+> Why is this necessary? You should be able to rely on deferred
+> probing to do its work here. I think this should be module_init()
+> or driver_initcall() really.
 
-> this patch change use from irq_create_mapping to irq_alloc_descs_from,
-> use irq_create_mapping to alloc virq one by one is not safe,
-> it can't promise the allcated virqs are continuous,
-> in stead, we use irq_alloc_descs_from() to alloc virqs in one time,
-> so that the allocated virqs are in continuous bitmaps.
->
-> Signed-off-by: Yalin Wang <yalin.wang@sonymobile.com>
+Currently deferred probe doesn't work for gpiolib drivers which try to
+add gpio-ranges from device tree:
+gpiochip_add calls of_gpiochip_add_pin_range (through of_gpiochip_add).
+This function tries to get the pinctrl driver, which is not registred at
+that time. Currently the driver does not defer probing but fails
+silently...
 
-(...)
+We would need to alter the return values of those two functions
+(of_gpiochip_add_pin_range/of_gpiochip_add) and honor the return value
+in gpiochip_add. 
 
-> -       for (offset = 0; offset < gpiochip->ngpio; offset++) {
-> -               irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
-> -               if (offset == 0)
-> -                       /*
-> -                        * Store the base into the gpiochip to be used when
-> -                        * unmapping the irqs.
-> -                        */
-> -                       gpiochip->irq_base = irq_base;
-> +       if (first_irq > 0) {
-> +               gpiochip->irq_base = first_irq;
+Currently, it seems that we quite often use an early initcall to get the
+pinctrl loaded early:
+$ grep -h -o ".*_initcall" drivers/pinctrl/*.c | sort | uniq -c
+     18 arch_initcall
+      3 core_initcall
+      3 postcore_initcall
+      1 subsys_initcall
 
-Wait is this safe? Now you assume all descriptors are pre-allocated
-and associated in this case, atleast explain what is going on.
+IMHO for those core services, it also makes sense to have them
+initialized early. I'd rather prefer this hard coded than having dozens
+of "requests probe deferral" messages...
 
-> +       } else {
-> +               gpiochip->irq_base = irq_alloc_descs_from(1, gpiochip->ngpio,
-> +                               of_node_to_nid(of_node));
-> +               irq_domain_associate_many(gpiochip->irqdomain,
-> +                               gpiochip->irq_base, 0, gpiochip->ngpio);
-
-This part looks OK.
-
-I'm holding this patch back until the above is clarified.
-
-Yours,
-Linus Walleij
+--
+Stefan
