@@ -1,27 +1,96 @@
 From: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
 Subject: RE: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc
  virqs
-Date: Tue, 23 Sep 2014 21:39:55 +0800
-Message-ID: <35FD53F367049845BC99AC72306C23D103D6DB4D6F2B@CNBJMBX05.corpusers.net>
+Date: Tue, 23 Sep 2014 22:15:15 +0800
+Message-ID: <35FD53F367049845BC99AC72306C23D103D6DB4D6F2C@CNBJMBX05.corpusers.net>
 References: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>,<CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
- <35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>,<54216EA5.5010506@ti.com>,<35FD53F367049845BC99AC72306C23D103D6DB4D6F2A@CNBJMBX05.corpusers.net>
+ <35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>,<54216EA5.5010506@ti.com>,<35FD53F367049845BC99AC72306C23D103D6DB4D6F2A@CNBJMBX05.corpusers.net>,<35FD53F367049845BC99AC72306C23D103D6DB4D6F2B@CNBJMBX05.corpusers.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cnbjrel02.sonyericsson.com ([219.141.167.166]:17869 "EHLO
-	cnbjrel02.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755441AbaIWNlR convert rfc822-to-8bit
+Received: from cnbjrel01.sonyericsson.com ([219.141.167.165]:2610 "EHLO
+	cnbjrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753133AbaIWOPT convert rfc822-to-8bit
 	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 23 Sep 2014 09:41:17 -0400
-In-Reply-To: <35FD53F367049845BC99AC72306C23D103D6DB4D6F2A@CNBJMBX05.corpusers.net>
+	Tue, 23 Sep 2014 10:15:19 -0400
+In-Reply-To: <35FD53F367049845BC99AC72306C23D103D6DB4D6F2B@CNBJMBX05.corpusers.net>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Wang, Yalin" <Yalin.Wang@sonymobile.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
 
 hi 
+
+but it is not safe with a little problem,
+when remove , should not assume physical irq start from 0,
+i change like this,
+store gpiochip->irq_base = first_irq;
+
+---
+
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 15cc0bb..c5fb2c1 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -517,14 +517,14 @@ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+  */
+ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+ {
+-	unsigned int offset;
+-
++	int i;
+ 	acpi_gpiochip_free_interrupts(gpiochip);
+ 
+ 	/* Remove all IRQ mappings and delete the domain */
+ 	if (gpiochip->irqdomain) {
+-		for (offset = 0; offset < gpiochip->ngpio; offset++)
+-			irq_dispose_mapping(gpiochip->irq_base + offset);
++		for (i = 0; i < gpiochip->ngpio; i++)
++			irq_dispose_mapping(irq_find_mapping(gpiochip->irqdomain,
++						gpiochip->irq_base + i));
+ 		irq_domain_remove(gpiochip->irqdomain);
+ 	}
+ 
+@@ -596,6 +596,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 		gpiochip->irqchip = NULL;
+ 		return -EINVAL;
+ 	}
++	gpiochip->irq_base = first_irq;
+ 	irqchip->irq_request_resources = gpiochip_irq_reqres;
+ 	irqchip->irq_release_resources = gpiochip_irq_relres;
+ 
+@@ -604,14 +605,10 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 	 * any gpiochip calls. If the first_irq was zero, this is
+ 	 * necessary to allocate descriptors for all IRQs.
+ 	 */
+-	for (offset = 0; offset < gpiochip->ngpio; offset++) {
+-		irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
+-		if (offset == 0)
+-			/*
+-			 * Store the base into the gpiochip to be used when
+-			 * unmapping the irqs.
+-			 */
+-			gpiochip->irq_base = irq_base;
++	if (first_irq == 0) {
++		for (offset = 0; offset < gpiochip->ngpio; offset++)
++			irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
++
+ 	}
+ 
+ 	acpi_gpiochip_request_interrupts(gpiochip);
+
+
+________________________________________
+From: Wang, Yalin
+Sent: Tuesday, September 23, 2014 9:39 PM
+To: Wang, Yalin; Grygorii Strashko; Linus Walleij
+Cc: gnurou@gmail.com; linux-gpio@vger.kernel.org; akpm@linux-foundation.org
+Subject: RE: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
+
+hi
 
 sorry,
 i don't notice Grygorii's patch ,
