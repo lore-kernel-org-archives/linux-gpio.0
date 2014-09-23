@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] pinctrl: imx: detect uninitialized pins
-Date: Tue, 23 Sep 2014 11:46:20 +0200
-Message-ID: <CACRpkdbzvyN0ecP2JA6LhYkPYhe_vJTrLvx4WOW73SRyoMLPEg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] pinctrl: imx: add gpio pinmux support for vf610
+Date: Tue, 23 Sep 2014 11:48:05 +0200
+Message-ID: <CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_azOic7AA@mail.gmail.com>
 References: <cover.1410020458.git.stefan@agner.ch>
-	<6d676a88eb82a47f8fa9e16abbc768e3e9ac236a.1410020458.git.stefan@agner.ch>
+	<4cf96e22ce2c7646513b64260c7bb1a2279e232d.1410020459.git.stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:52524 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753133AbaIWJqV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 05:46:21 -0400
-Received: by mail-ie0-f182.google.com with SMTP id tp5so3732480ieb.41
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 02:46:20 -0700 (PDT)
-In-Reply-To: <6d676a88eb82a47f8fa9e16abbc768e3e9ac236a.1410020458.git.stefan@agner.ch>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:41630 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754920AbaIWJsH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 05:48:07 -0400
+Received: by mail-ie0-f174.google.com with SMTP id rd18so3644199iec.5
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 02:48:06 -0700 (PDT)
+In-Reply-To: <4cf96e22ce2c7646513b64260c7bb1a2279e232d.1410020459.git.stefan@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Stefan Agner <stefan@agner.ch>
@@ -21,18 +21,19 @@ Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, S
 
 On Sat, Sep 6, 2014 at 6:25 PM, Stefan Agner <stefan@agner.ch> wrote:
 
-> The pinctrl driver initialized the register offsets for the pins
-> with 0. On Vybrid an offset of 0 is a valid offset for the pinctrl
-> mux register. So far, this was solved using the ZERO_OFFSET_VALID
-> flag which allowed offsets of 0. However, this does not allow to
-> verify whether a pins struct imx_pmx_func was initialized or not.
->
-> Use signed offset values for register offsets and initialize those
-> with -1 in order to detect uninitialized offset values reliable.
+> Add pinmux support for GPIO for Vybrid (vf610) IOMUX controller.
+> This is needed since direction configuration is not part of the
+> GPIO module in Vybrid.
 >
 > Signed-off-by: Stefan Agner <stefan@agner.ch>
+(...)
 
-Patch applied.
+> -arch_initcall(vf610_pinctrl_init);
+> +postcore_initcall(vf610_pinctrl_init);
+
+Why is this necessary? You should be able to rely on deferred
+probing to do its work here. I think this should be module_init()
+or driver_initcall() really.
 
 Yours,
 Linus Walleij
