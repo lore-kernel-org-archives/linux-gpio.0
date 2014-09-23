@@ -1,83 +1,33 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 4/9] ARM: dts: vf610-colibri: GPIO power key
-Date: Mon, 22 Sep 2014 19:09:25 +0200
-Message-ID: <2c2c603ecaae889c93cea081fd6b1f015fa6cf3a.1411404079.git.stefan@agner.ch>
-References: <cover.1411404079.git.stefan@agner.ch>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/4] vf610: Add GPIO support
+Date: Tue, 23 Sep 2014 11:28:09 +0200
+Message-ID: <CACRpkdayLPMpcNLKo1wTrvvcnD1DedLTteTqtuGdy3v_AZZ0iQ@mail.gmail.com>
+References: <cover.1410020458.git.stefan@agner.ch>
+	<CACRpkdZRcP+ue0qM70mQujiSV=5TqAGs1S=WBNFOZ2HLMzjfQQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1411404079.git.stefan@agner.ch>
-In-Reply-To: <cover.1411404079.git.stefan@agner.ch>
-References: <cover.1411404079.git.stefan@agner.ch>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: shawn.guo@freescale.com, kernel@pengutronix.de, linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, stefan@agner.ch, linux-gpio@vger.kernel.org, jingchang.lu@freescale.com, b20788@freescale.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:50426 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754446AbaIWJ2K (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 05:28:10 -0400
+Received: by mail-ig0-f170.google.com with SMTP id a13so5250866igq.1
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 02:28:09 -0700 (PDT)
+In-Reply-To: <CACRpkdZRcP+ue0qM70mQujiSV=5TqAGs1S=WBNFOZ2HLMzjfQQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Enable GPIO power key on pad 41 which is routed to our default
-wakeup pin SO-DIMM 45.
+On Fri, Sep 19, 2014 at 7:36 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Sat, Sep 6, 2014 at 9:25 AM, Stefan Agner <stefan@agner.ch> wrote:
+>
+>> This patchset adds GPIO support for Vybrid.
+>
+> Can I get some review from the i.MX driver maintainers for this
+> patchset?
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/vf610-colibri-eval-v3.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+I will now just apply the patches.
 
-diff --git a/arch/arm/boot/dts/vf610-colibri-eval-v3.dts b/arch/arm/boot/dts/vf610-colibri-eval-v3.dts
-index 7fb3066..e707243 100644
---- a/arch/arm/boot/dts/vf610-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/vf610-colibri-eval-v3.dts
-@@ -8,6 +8,7 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/input/input.h>
- #include "vf610-colibri.dtsi"
- 
- / {
-@@ -17,6 +18,20 @@
- 	chosen {
- 		bootargs = "console=ttyLP0,115200";
- 	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpiokeys>;
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
-+			linux,code = <KEY_POWER>;
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
- };
- 
- &esdhc1 {
-@@ -44,3 +59,14 @@
- &uart2 {
- 	status = "okay";
- };
-+
-+
-+&iomuxc {
-+	vf610-colibri {
-+		pinctrl_gpiokeys: gpiokeys {
-+			fsl,pins = <
-+				VF610_PAD_PTB19__GPIO_41	0x219d
-+			>;
-+		};
-+	};
-+};
--- 
-2.1.0
+Yours,
+Linus Walleij
