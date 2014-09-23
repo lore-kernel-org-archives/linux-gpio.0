@@ -1,79 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: Fix ngpio in gpio-xilinx driver
-Date: Tue, 23 Sep 2014 17:38:51 +0200
-Message-ID: <CACRpkdZJajGr+Y4OTBf0W697G9ipBKH-y67EU69C-6cCiVbSRw@mail.gmail.com>
-References: <1411031032-20649-1-git-send-email-gvormayr@gmail.com>
+Subject: Re: [PATCH] gpio: samsung: Remove remaining check for CONFIG_S5P_GPIO_DRVSTR
+Date: Tue, 23 Sep 2014 17:42:16 +0200
+Message-ID: <CACRpkdZ8ZnD7t+QKTD9MkN7AWXtcNbO8H382-V6KeLcXG_MHkA@mail.gmail.com>
+References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
+	<53C67783.4090407@samsung.com>
+	<1409825317.5546.94.camel@x220>
+	<201409041803.46098.arnd@arndb.de>
+	<1411030649.2017.7.camel@x220>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1411031032-20649-1-git-send-email-gvormayr@gmail.com>
+In-Reply-To: <1411030649.2017.7.camel@x220>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Gernot Vormayr <gvormayr@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 18, 2014 at 11:03 AM, Gernot Vormayr <gvormayr@gmail.com> wrote:
+On Thu, Sep 18, 2014 at 10:57 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
 
-> If one adds 'gpio-controller;' to the chip in the devicetree, then
-> initialization fails with 'gpiochip_find_base: cannot find free range',
-> because ngpio is 0. This patch fixes the bug.
+> From: Paul Bolle <pebolle@tiscali.nl>
 >
-> Tested on ml507 board.
+> Commit d78c16ccde96 ("ARM: SAMSUNG: Remove remaining legacy code")
+> removed the Kconfig symbol S5P_GPIO_DRVSTR. It didn't remove one check
+> for the related macro. Remove that check and the dead code it hides.
 >
-> Signed-off-by: Gernot Vormayr <gvormayr@gmail.com>
-> ---
->  drivers/gpio/gpio-xilinx.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-> index 1248186..4606ad2 100644
-> --- a/drivers/gpio/gpio-xilinx.c
-> +++ b/drivers/gpio/gpio-xilinx.c
-> @@ -197,6 +197,7 @@ static int xgpio_of_probe(struct device_node *np)
->         struct xgpio_instance *chip;
->         int status = 0;
->         const u32 *tree_info;
-> +       u32 ngpio;
->
->         chip = kzalloc(sizeof(*chip), GFP_KERNEL);
->         if (!chip)
-> @@ -215,8 +216,9 @@ static int xgpio_of_probe(struct device_node *np)
->         chip->mmchip.gc.ngpio = 32;
+> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 
-Delete that line ^
-
->
->         /* Check device node and parent device node for device width */
-> -       of_property_read_u32(np, "xlnx,gpio-width",
-> -                             (u32 *)&chip->mmchip.gc.ngpio);
-> +       status = of_property_read_u32(np, "xlnx,gpio-width", &ngpio);
-> +       if (status == 0)
-> +               chip->mmchip.gc.ngpio = (u16)ngpio;
-
-Rewrite like this:
-
-if (of_property_read_u32(np, "xlnx,gpio-width", &ngpio))
-    ngpio = 32;
-chip->mmchip.gc.ngpio = (u16)ngpio;
-
->
->         spin_lock_init(&chip->gpio_lock);
->
-> @@ -262,8 +264,9 @@ static int xgpio_of_probe(struct device_node *np)
->                 chip->mmchip.gc.ngpio = 32;
->
->                 /* Check device node and parent device node for device width */
-> -               of_property_read_u32(np, "xlnx,gpio2-width",
-> -                                    (u32 *)&chip->mmchip.gc.ngpio);
-> +               status = of_property_read_u32(np, "xlnx,gpio2-width", &ngpio);
-> +               if (status == 0)
-> +                       chip->mmchip.gc.ngpio = (u16)ngpio;
-
-Same comment.
-
-The fact that the same code appears in two places tells us something
-is not quite right. Can you look into consolidating this (in a separate
-patch)?
+Patch applied with Tomasz Review tag.
 
 Yours,
 Linus Walleij
