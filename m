@@ -1,92 +1,143 @@
-From: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
-Subject: RE: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc
- virqs
-Date: Tue, 23 Sep 2014 20:03:18 +0800
-Message-ID: <35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>
-References: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>,<CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: pca953x: Fix warning when HW interrupts are rescheduled
+ by the softirq tasklet
+Date: Tue, 23 Sep 2014 15:26:53 +0300
+Message-ID: <5421670D.10200@ti.com>
+References: <1410251533-4990-1-git-send-email-LW@KARO-electronics.de> <CACRpkdbTXtx+EU4Dw1fxeThRUG4s5XvcJnAJ9PJd8i4KKGC65A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cnbjrel01.sonyericsson.com ([219.141.167.165]:13912 "EHLO
-	cnbjrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751307AbaIWMHp convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 23 Sep 2014 08:07:45 -0400
-In-Reply-To: <CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
-Content-Language: en-US
+Received: from comal.ext.ti.com ([198.47.26.152]:55480 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751412AbaIWM1K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 23 Sep 2014 08:27:10 -0400
+In-Reply-To: <CACRpkdbTXtx+EU4Dw1fxeThRUG4s5XvcJnAJ9PJd8i4KKGC65A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?TG90aGFyIFdhw59tYQ==?= =?UTF-8?B?bm4=?= <LW@karo-electronics.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-hi 
+On 09/23/2014 03:04 PM, Linus Walleij wrote:
+> On Tue, Sep 9, 2014 at 10:32 AM, Lothar Wa=C3=9Fmann <LW@karo-electro=
+nics.de> wrote:
+>=20
+>> When using e.g. the matrix_keymap driver with the gpio-pca953x drive=
+r,
+>> the following warning may be issued when a keypress is detected:
+>> WARNING: CPU: 0 PID: 3 at kernel/irq/manage.c:677 irq_nested_primary=
+_handler+0x18/0x2c()
+>> Primary handler called for nested irq 245
+>> Modules linked in: evbug ci_hdrc_imx usbmisc_imx ci_hdrc udc_core eh=
+ci_hcd phy_mxs_usb
+>> CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: G        W     3.16.0-karo+=
+ #118
+>> [<c00142cc>] (unwind_backtrace) from [<c00118f8>] (show_stack+0x10/0=
+x14)
+>> [<c00118f8>] (show_stack) from [<c001bf10>] (warn_slowpath_common+0x=
+64/0x84)
+>> [<c001bf10>] (warn_slowpath_common) from [<c001bfc4>] (warn_slowpath=
+_fmt+0x30/0x40)
+>> [<c001bfc4>] (warn_slowpath_fmt) from [<c004ce08>] (irq_nested_prima=
+ry_handler+0x18/0x2c)
+>> [<c004ce08>] (irq_nested_primary_handler) from [<c004cb80>] (handle_=
+irq_event_percpu+0x50/0x168)
+>> [<c004cb80>] (handle_irq_event_percpu) from [<c004ccf8>] (handle_irq=
+_event+0x60/0x7c)
+>> [<c004ccf8>] (handle_irq_event) from [<c004f02c>] (handle_simple_irq=
++0x78/0xdc)
+>> [<c004f02c>] (handle_simple_irq) from [<c004ed14>] (resend_irqs+0x4c=
+/0x78)
+>> [<c004ed14>] (resend_irqs) from [<c001f3ec>] (tasklet_action+0x74/0x=
+d8)
+>> [<c001f3ec>] (tasklet_action) from [<c001f760>] (__do_softirq+0xd0/0=
+x1f4)
+>> [<c001f760>] (__do_softirq) from [<c001f8c4>] (run_ksoftirqd+0x40/0x=
+64)
+>> [<c001f8c4>] (run_ksoftirqd) from [<c003d464>] (smpboot_thread_fn+0x=
+174/0x234)
+>> [<c003d464>] (smpboot_thread_fn) from [<c0036dd4>] (kthread+0xb4/0xd=
+0)
+>> [<c0036dd4>] (kthread) from [<c000f0f0>] (ret_from_fork+0x14/0x24)
+>> ---[ end trace a68cf7bc5348c4f7 ]---
+>>
+>> This happens when an IRQ is detected by the GPIO driver while the GP=
+IO
+>> client driver (matrix_keypad in this case) has disabled the irq for
+>> the GPIO it has acquired. When the HW IRQ is being rescheduled by th=
+e
+>> softirq thread, the primary IRQ handler is called for the nested IRQ
+>> registered by the client driver rather than for the parent IRQ from
+>> the GPIO driver.
+>>
+>> This patch makes sure, that the parent_irq (gpio-pca953x) is
+>> rescheduled rather than the nested irq registered by the matrix_keyp=
+ad
+>> driver.
+>> Similar patches are most probably required for a bunch of other
+>> drivers too.
+>>
+>> Signed-off-by: Lothar Wa=C3=9Fmann <LW@KARO-electronics.de>
+>> ---
+>>   drivers/gpio/gpio-pca953x.c |   12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x=
+=2Ec
+>> index e2da64a..770ef6b 100644
+>> --- a/drivers/gpio/gpio-pca953x.c
+>> +++ b/drivers/gpio/gpio-pca953x.c
+>> @@ -518,6 +518,7 @@ static int pca953x_irq_setup(struct pca953x_chip=
+ *chip,
+>>                               int irq_base)
+>>   {
+>>          struct i2c_client *client =3D chip->client;
+>> +       struct gpio_chip *gpio_chip =3D &chip->gpio_chip;
+>>          int ret, i, offset =3D 0;
+>>
+>>          if (client->irq && irq_base !=3D -1
+>> @@ -567,6 +568,17 @@ static int pca953x_irq_setup(struct pca953x_chi=
+p *chip,
+>>                                  "could not connect irqchip to gpioc=
+hip\n");
+>>                          return ret;
+>>                  }
+>> +
+>> +               for (i =3D 0; i < NBANK(chip); i++) {
+>> +                       int j;
+>> +
+>> +                       for (j =3D 0; j < BANK_SZ; j++) {
+>> +                               int gpio =3D gpio_chip->base + i * B=
+ANK_SZ + j;
+>> +                               int irq =3D gpio_to_irq(gpio);
+>> +
+>> +                               irq_set_parent(irq, client->irq);
+>> +                       }
+>> +               }
+>=20
+> While this is fixing the problem, but isn't the right fix to patch
+> the function gpiochip_irq_map() in gpiolib.c to call
+> irq_set_parent() for each IRQ as it gets mapped?
+>=20
+> This driver is using the gpiolib irqchip helpers...
+>=20
+> Then you fix not just this driver but all drivers, plus the complex
+> loop and calls to gpio_to_irq() etc goes away.
 
-this is because , here:
+The problem here is that:
+- we don't know parent IRQ number inside gpiolib irqchip;
+- there can be more then one Parent IRQ per GPIO chip
 
-gpiochip->irqdomain = irq_domain_add_simple(of_node,
-					gpiochip->ngpio, first_irq,
-					&gpiochip_domain_ops, gpiochip);
+in other words, the knowledge about Parent IRQs is specific to drivers =
+:(
 
+Might be custom .irq_map() callback can be used to fix this issue?=20
 
- irq_domain_add_simple() in this function,
- 	if (first_irq > 0) {
-		if (IS_ENABLED(CONFIG_SPARSE_IRQ)) {
-			/* attempt to allocated irq_descs */
-			int rc = irq_alloc_descs(first_irq, first_irq, size,
-					of_node_to_nid(of_node));
-			if (rc < 0)
-				pr_info("Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n",
-						first_irq);
-		}
-		irq_domain_associate_many(domain, first_irq, 0, size);
-	}
+Regards,
+-grygorii
 
-if first_irq  > 0 , it will allocate it ,
-and make sure the return virq is equal to first_irq  .
-so we don't need allocate it again .
-________________________________________
-From: Linus Walleij [linus.walleij@linaro.org]
-Sent: Tuesday, September 23, 2014 6:21 PM
-To: Wang, Yalin
-Cc: gnurou@gmail.com; linux-gpio@vger.kernel.org; akpm@linux-foundation.org
-Subject: Re: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
-
-On Tue, Sep 9, 2014 at 9:12 AM, Wang, Yalin <Yalin.Wang@sonymobile.com> wrote:
-
-> this patch change use from irq_create_mapping to irq_alloc_descs_from,
-> use irq_create_mapping to alloc virq one by one is not safe,
-> it can't promise the allcated virqs are continuous,
-> in stead, we use irq_alloc_descs_from() to alloc virqs in one time,
-> so that the allocated virqs are in continuous bitmaps.
->
-> Signed-off-by: Yalin Wang <yalin.wang@sonymobile.com>
-
-(...)
-
-> -       for (offset = 0; offset < gpiochip->ngpio; offset++) {
-> -               irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
-> -               if (offset == 0)
-> -                       /*
-> -                        * Store the base into the gpiochip to be used when
-> -                        * unmapping the irqs.
-> -                        */
-> -                       gpiochip->irq_base = irq_base;
-> +       if (first_irq > 0) {
-> +               gpiochip->irq_base = first_irq;
-
-Wait is this safe? Now you assume all descriptors are pre-allocated
-and associated in this case, atleast explain what is going on.
-
-> +       } else {
-> +               gpiochip->irq_base = irq_alloc_descs_from(1, gpiochip->ngpio,
-> +                               of_node_to_nid(of_node));
-> +               irq_domain_associate_many(gpiochip->irqdomain,
-> +                               gpiochip->irq_base, 0, gpiochip->ngpio);
-
-This part looks OK.
-
-I'm holding this patch back until the above is clarified.
-
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
