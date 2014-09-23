@@ -1,95 +1,60 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 5/5] Documentation: dts: Add bindings for Vybrid GPIO/PORT module
-Date: Tue, 23 Sep 2014 19:37:57 +0200
-Message-ID: <f31547327a4bb43c0756dbeed6b5665b5433463b.1411492954.git.stefan@agner.ch>
-References: <cover.1411492954.git.stefan@agner.ch>
+From: behanw@converseincode.com
+Subject: [PATCH] gpio, bcm-kona, LLVMLinux: Remove use of __initconst
+Date: Tue, 23 Sep 2014 12:30:16 -0700
+Message-ID: <1411500616-12863-1-git-send-email-behanw@converseincode.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.102]:50338 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756479AbaIWRiU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 13:38:20 -0400
-In-Reply-To: <cover.1411492954.git.stefan@agner.ch>
-In-Reply-To: <cover.1411492954.git.stefan@agner.ch>
-References: <cover.1411492954.git.stefan@agner.ch>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:41445 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756011AbaIWTaX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 15:30:23 -0400
+Received: by mail-pa0-f52.google.com with SMTP id hz1so7038852pad.25
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 12:30:22 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, shawn.guo@freescale.com, kernel@pengutronix.de
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com, stefan@agner.ch
+To: bcm@fixthebug.org, chris@printf.net, gnurou@gmail.com, linus.walleij@linaro.org, mporter@linaro.org, ulf.hansson@linaro.org
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, rjui@broadcom.com, Behan Webster <behanw@converseincode.com>
 
-The Vybrid SoC device tree (vf610.dtsi) used this bindings since
-its initial commit in May 2013. However, a proper gpiolib driver
-was missing so far. With the addition of the gpiolib driver,
-the bindings proved to be useful and complete, hence a good time
-to add the documentation.
+From: Behan Webster <behanw@converseincode.com>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+The __initconst is in the wrong place, and when moved to the correct place
+it uncovers an error where the variable is used by non-init data structures.
+
+Instead merely make them const and put the const in the right spot.
+
+Signed-off-by: Behan Webster <behanw@converseincode.com>
+Reviewed-by: Mark Charlebois <charlebm@gmail.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../devicetree/bindings/gpio/gpio-vf610.txt        | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-vf610.txt
+ drivers/gpio/gpio-bcm-kona.c      | 2 +-
+ drivers/mmc/host/sdhci-bcm-kona.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.txt b/Documentation/devicetree/bindings/gpio/gpio-vf610.txt
-new file mode 100644
-index 0000000..da84121
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.txt
-@@ -0,0 +1,56 @@
-+* Freescale VF610 PORT/GPIO module
-+
-+The Freescale PORT/GPIO modules are two adjacent modules providing GPIO
-+functionality. Each pair serves 32 GPIOs. The VF610 has 5 instances of
-+each, and each PORT module has its own interrupt.
-+
-+Required properties for GPIO node:
-+- compatible : Should be "fsl,<soc>-gpio", currently "fsl,vf610-gpio"
-+- reg : The first reg tuple represents the PORT module, the second tuple
-+  the GPIO module.
-+- interrupts : Should be the port interrupt shared by all 32 pins.
-+- gpio-controller : Marks the device node as a gpio controller.
-+- #gpio-cells : Should be two. The first cell is the pin number and
-+  the second cell is used to specify the gpio polarity:
-+      0 = active high
-+      1 = active low
-+- interrupt-controller: Marks the device node as an interrupt controller.
-+- #interrupt-cells : Should be 2.  The first cell is the GPIO number.
-+  The second cell bits[3:0] is used to specify trigger type and level flags:
-+      1 = low-to-high edge triggered.
-+      2 = high-to-low edge triggered.
-+      4 = active high level-sensitive.
-+      8 = active low level-sensitive.
-+
-+Note: Each GPIO port should have an alias correctly numbered in "aliases"
-+node.
-+
-+Examples:
-+
-+aliases {
-+	gpio0 = &gpio1;
-+	gpio1 = &gpio2;
-+};
-+
-+gpio1: gpio@40049000 {
-+	compatible = "fsl,vf610-gpio";
-+	reg = <0x40049000 0x1000 0x400ff000 0x40>;
-+	interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	gpio-ranges = <&iomuxc 0 0 32>;
-+};
-+
-+gpio2: gpio@4004a000 {
-+	compatible = "fsl,vf610-gpio";
-+	reg = <0x4004a000 0x1000 0x400ff040 0x40>;
-+	interrupts = <0 108 IRQ_TYPE_LEVEL_HIGH>;
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	gpio-ranges = <&iomuxc 0 32 32>;
-+};
-+
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 3f6b33c..de0801e 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -496,7 +496,7 @@ static struct irq_chip bcm_gpio_irq_chip = {
+ 	.irq_release_resources = bcm_kona_gpio_irq_relres,
+ };
+ 
+-static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
++static struct of_device_id const bcm_kona_gpio_of_match[] = {
+ 	{ .compatible = "brcm,kona-gpio" },
+ 	{}
+ };
+diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
+index dd780c3..4bb06c8 100644
+--- a/drivers/mmc/host/sdhci-bcm-kona.c
++++ b/drivers/mmc/host/sdhci-bcm-kona.c
+@@ -225,7 +225,7 @@ static struct sdhci_pltfm_data sdhci_pltfm_data_kona = {
+ 		SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ };
+ 
+-static struct __initconst of_device_id sdhci_bcm_kona_of_match[] = {
++static struct of_device_id const sdhci_bcm_kona_of_match[] = {
+ 	{ .compatible = "brcm,kona-sdhci"},
+ 	{ .compatible = "bcm,kona-sdhci"}, /* deprecated name */
+ 	{}
 -- 
-2.1.0
+1.9.1
 
