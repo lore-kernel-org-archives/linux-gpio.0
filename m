@@ -1,27 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] GPIO: gpiolib: trivial: Add missing carriage return
-Date: Tue, 23 Sep 2014 17:48:13 +0200
-Message-ID: <CACRpkda3KeasN-cqyRXXudE6=gPNaL1UqO+KnAnnopv6LZZNPA@mail.gmail.com>
-References: <1411112365-15967-1-git-send-email-shc_work@mail.ru>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCAyLzJdIEdQSU86IDc0eHgtbW1pbzogQWRkIERUIGJpbmRp?=
+ =?UTF-8?B?bmdzIGRvY3VtZW50YXRpb24=?=
+Date: Tue, 23 Sep 2014 20:51:27 +0400
+Message-ID: <1411491087.608315333@f51.i.mail.ru>
+References: <1411112404-16040-1-git-send-email-shc_work@mail.ru>
+ <1411112404-16040-3-git-send-email-shc_work@mail.ru>
+ <CAMuHMdV2gkx+tVoYL_zcYg0ZtYkkascQiTOaTfDUuRVMxFkdTw@mail.gmail.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:61203 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753291AbaIWPsN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 11:48:13 -0400
-Received: by mail-ig0-f176.google.com with SMTP id hn15so4832418igb.9
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 08:48:13 -0700 (PDT)
-In-Reply-To: <1411112365-15967-1-git-send-email-shc_work@mail.ru>
+Received: from fallback7.mail.ru ([94.100.181.128]:59267 "EHLO
+	fallback7.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932128AbaIWRD0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 13:03:26 -0400
+In-Reply-To: <CAMuHMdV2gkx+tVoYL_zcYg0ZtYkkascQiTOaTfDUuRVMxFkdTw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: =?UTF-8?B?R2VlcnQgVXl0dGVyaG9ldmVu?= <geert@linux-m68k.org>
+Cc: =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, =?UTF-8?B?ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc=?= <devicetree@vger.kernel.org>
 
-On Fri, Sep 19, 2014 at 9:39 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+TW9uLCAyMiBTZXAgMjAxNCAxMzozOToyNiArMDIwMCDQvtGCIEdlZXJ0IFV5dHRlcmhvZXZlbiA8
+Z2VlcnRAbGludXgtbTY4ay5vcmc+Ogo+IE9uIEZyaSwgU2VwIDE5LCAyMDE0IGF0IDk6NDAgQU0s
+IEFsZXhhbmRlciBTaGl5YW4gPHNoY193b3JrQG1haWwucnU+IHdyb3RlOgo+ID4gLS0tIC9kZXYv
+bnVsbAo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bp
+by03NHh4LW1taW8udHh0Cj4gPiBAQCAtMCwwICsxLDMwIEBACj4gPiArKiA3NFhYIE1NSU8gR1BJ
+TyBkcml2ZXIKPiA+ICsKPiA+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+ID4gKy0gY29tcGF0aWJs
+ZTogU2hvdWxkIGNvbnRhaW4gb25lIG9mIHRoZSBmb2xsb3dpbmc6Cj4gPiArICAgInRpLDc0YWhj
+MWcxMjUiOiBmb3IgNzRBSEMxRzEyNSAoMS1iaXQgSW5wdXQpLAo+ID4gKyAgICJ0aSw3NGF1YzFn
+MTc0IjogZm9yIDc0QVVDMUc3NCAoMS1iaXQgT3V0cHV0KSwKPiA+ICsgICAidGksNzRsdmMyZzEy
+NSI6IGZvciA3NExWQzJHMTI1ICgyLWJpdCBJbnB1dCksCj4gPiArICAgInRpLDc0aGM3NCI6ICAg
+ICBmb3IgNzRIQzc0ICgyLWJpdCBPdXRwdXQpLAo+ID4gKyAgICJ0aSw3NGhjMTI1IjogICAgZm9y
+IDc0SEMxMjUgKDQtYml0IElucHV0KSwKPiA+ICsgICAidGksNzRoYzE3NSI6ICAgIGZvciA3NEhD
+MTc1ICg0LWJpdCBPdXRwdXQpLAo+ID4gKyAgICJ0aSw3NGhjMzY1IjogICAgZm9yIDc0SEMzNjUg
+KDYtYml0IElucHV0KSwKPiA+ICsgICAidGksNzRoYzE3NCI6ICAgIGZvciA3NEhDMTc0ICg2LWJp
+dCBPdXRwdXQpLAo+ID4gKyAgICJ0aSw3NGhjMjQ0IjogICAgZm9yIDc0SEMyNDQgKDgtYml0IElu
+cHV0KSwKPiA+ICsgICAidGksNzRoYzI3MyI6ICAgIGZvciA3NEhDMjczICg4LWJpdCBPdXRwdXQp
+LAo+ID4gKyAgICJ0aSw3NGFjMTYyNCI6ICAgZm9yIDc0QUMxNjI0ICgxNi1iaXQgSW5wdXQpLAo+
+ID4gKyAgICJ0aSw3NGFjMTYzNzQiOiAgZm9yIDc0QUMxNjM3NCAoMTYtYml0IE91dHB1dCkuCj4g
+Cj4gQXMgdGhlIGFjdHVhbCBpbXBsZW1lbnRhdGlvbiB0ZWNobm9sb2d5IGRvZXNuJ3QgbWF0dGVy
+LCBJIHRoaW5rIHlvdQo+IHNob3VsZCB1c2UgdGhlIGJhc2UgbmFtZSB3aGVyZSBhcHByb3ByaWF0
+ZS4KPiBFLmcuICJ0aSw3NDc0IiBpbnN0ZWFkIG9mICJ0aSw3NGhjNzQiLgoKTWFrZSBzZW5zZS4K
+CkxpbnVzLCB3aGF0IHlvdSB0aGluayBvdmVyYWxsIGFib3V0IHRoaXMgZHJpdmVyPwoKLS0tCgo=
