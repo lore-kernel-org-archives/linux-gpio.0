@@ -1,34 +1,43 @@
-From: Gernot Vormayr <gvormayr@gmail.com>
-Subject: Re: [PATCH 1/1] gpio: Fix ngpio in gpio-xilinx driver
-Date: Wed, 24 Sep 2014 00:48:36 +0200
-Message-ID: <CAN+KFvYH_QcaUD5sgqYQTrTtWz7Sh+vV=f=X2D1NFgDBLHqgjA@mail.gmail.com>
-References: <1411031032-20649-1-git-send-email-gvormayr@gmail.com>
-	<CACRpkdZJajGr+Y4OTBf0W697G9ipBKH-y67EU69C-6cCiVbSRw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:61282 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756759AbaIWWsh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 18:48:37 -0400
-In-Reply-To: <CACRpkdZJajGr+Y4OTBf0W697G9ipBKH-y67EU69C-6cCiVbSRw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: behanw@converseincode.com
+Subject: [PATCH v2 1/2] gpio, bcm-kona, LLVMLinux: Remove use of __initconst
+Date: Tue, 23 Sep 2014 15:55:07 -0700
+Message-ID: <1411512908-19237-1-git-send-email-behanw@converseincode.com>
+References: <20140923212922.GG12270@beef>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20140923212922.GG12270@beef>
+Sender: linux-mmc-owner@vger.kernel.org
+To: bcm@fixthebug.org, chris@printf.net, gnurou@gmail.com, linus.walleij@linaro.org, mporter@linaro.org, ulf.hansson@linaro.org
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, rjui@broadcom.com, Behan Webster <behanw@converseincode.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Sep 23, 2014 at 5:38 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> The fact that the same code appears in two places tells us something
-> is not quite right. Can you look into consolidating this (in a separate
-> patch)?
+From: Behan Webster <behanw@converseincode.com>
 
+The __initconst is in the wrong place, and when moved to the correct place
+it uncovers an error where the variable is used by non-init data structures.
 
-Well, I already thought about that, but since the second time is for the
-second part of a dual gpio, which has different device tree property names,
-the only way of consolidating that I can think of right now would be to
-create a function that takes the property names. If you think that's ok,
-I can try to come up with something.
+Instead merely make them const and put the const in the right spot.
 
-Cheers,
-Gernot Vormayr
+Signed-off-by: Behan Webster <behanw@converseincode.com>
+Reviewed-by: Mark Charlebois <charlebm@gmail.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Matt Porter <mporter@linaro.org>
+---
+ drivers/gpio/gpio-bcm-kona.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 3f6b33c..de0801e 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -496,7 +496,7 @@ static struct irq_chip bcm_gpio_irq_chip = {
+ 	.irq_release_resources = bcm_kona_gpio_irq_relres,
+ };
+ 
+-static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
++static struct of_device_id const bcm_kona_gpio_of_match[] = {
+ 	{ .compatible = "brcm,kona-gpio" },
+ 	{}
+ };
+-- 
+1.9.1
+
