@@ -1,34 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] gpio: Increase ARCH_NR_GPIOs to 512
-Date: Tue, 23 Sep 2014 17:23:14 +0200
-Message-ID: <CACRpkdZ_-LY=RC48KB1aOGkqjeF1U24ddfvwef4pLarw_oN69w@mail.gmail.com>
-References: <1410790185-31101-1-git-send-email-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 0/3] Enable Quark X1000 support in gpio-sch
+Date: Tue, 23 Sep 2014 17:33:31 +0200
+Message-ID: <CACRpkdYZEMdOM82tUE8RUNZF0rC=5vTOxVZEYd9Ns5tLWpYgzA@mail.gmail.com>
+References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:40035 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753708AbaIWPXP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 11:23:15 -0400
-Received: by mail-ie0-f176.google.com with SMTP id ar1so9260752iec.7
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 08:23:14 -0700 (PDT)
-In-Reply-To: <1410790185-31101-1-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:45875 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753660AbaIWPdc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 11:33:32 -0400
+Received: by mail-ie0-f173.google.com with SMTP id tr6so9787668ieb.18
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 08:33:32 -0700 (PDT)
+In-Reply-To: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Alan Cox <alan@linux.intel.com>, Ning Li <ning.li@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Sep 15, 2014 at 4:09 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Wed, Sep 17, 2014 at 10:49 AM, Chang Rebecca Swee Fun
+<rebecca.swee.fun.chang@intel.com> wrote:
 
-> Some newer Intel SoCs, like Braswell already have more than 256 GPIOs
-> available so the default limit is exceeded. Instead of adding more
-> architecture specific gpio.h files with custom ARCH_NR_GPIOs we increase
-> the gpiolib default limit to be twice the current.
->
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> This patch series is about enabling legacy GPIO support for Quark X1000.
+> The patches were developed on top of Mika Westerberg's commit on
+> consolidating core and resume banks. Please refer to the link below for
+> more information about his commit.
+> https://lkml.org/lkml/2014/8/17/13
 
-Patch applied with the extended blurb in the commit message.
+I'm waiting for Mika's comments to be addressed for this patch
+series before reviewing further.
 
 Yours,
 Linus Walleij
