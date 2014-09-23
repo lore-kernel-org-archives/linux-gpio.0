@@ -1,50 +1,80 @@
-From: behanw@converseincode.com
-Subject: [PATCH v2 2/2] mmc, sdhci, bcm-kona, LLVMLinux: Remove use of __initconst
-Date: Tue, 23 Sep 2014 15:55:08 -0700
-Message-ID: <1411512908-19237-2-git-send-email-behanw@converseincode.com>
-References: <20140923212922.GG12270@beef>
- <1411512908-19237-1-git-send-email-behanw@converseincode.com>
+From: Gernot Vormayr <gvormayr@gmail.com>
+Subject: [PATCH v2 1/1] gpio: Fix ngpio in gpio-xilinx driver
+Date: Wed, 24 Sep 2014 00:58:45 +0200
+Message-ID: <1411513125-20712-1-git-send-email-gvormayr@gmail.com>
+References: <1411031032-20649-1-git-send-email-gvormayr@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:60673 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756904AbaIWWzZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 18:55:25 -0400
-Received: by mail-pa0-f51.google.com with SMTP id eu11so5755413pac.38
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 15:55:25 -0700 (PDT)
-In-Reply-To: <1411512908-19237-1-git-send-email-behanw@converseincode.com>
+Received: from mail-we0-f177.google.com ([74.125.82.177]:58404 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932233AbaIWW6z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 18:58:55 -0400
+In-Reply-To: <1411031032-20649-1-git-send-email-gvormayr@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: bcm@fixthebug.org, chris@printf.net, gnurou@gmail.com, linus.walleij@linaro.org, mporter@linaro.org, ulf.hansson@linaro.org
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, rjui@broadcom.com, Behan Webster <behanw@converseincode.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Gernot Vormayr <gvormayr@gmail.com>
 
-From: Behan Webster <behanw@converseincode.com>
+If one adds gpio-controller; to the chip in the devicetree, then
+initialization fails with 'gpiochip_find_base: cannot find free range',
+because ngpio is 0. This patch fixes the bug.
 
-The __initconst is in the wrong place, and when moved to the correct place
-it uncovers an error where the variable is used by non-init data structures.
+This version includes the suggestions from Linus Walleij.
 
-Instead merely make them const and put the const in the right spot.
+Tested on ml507 board.
 
-Signed-off-by: Behan Webster <behanw@converseincode.com>
-Reviewed-by: Mark Charlebois <charlebm@gmail.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Matt Porter <mporter@linaro.org>
+Signed-off-by: Gernot Vormayr <gvormayr@gmail.com>
 ---
- drivers/mmc/host/sdhci-bcm-kona.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-xilinx.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
-index dd780c3..4bb06c8 100644
---- a/drivers/mmc/host/sdhci-bcm-kona.c
-+++ b/drivers/mmc/host/sdhci-bcm-kona.c
-@@ -225,7 +225,7 @@ static struct sdhci_pltfm_data sdhci_pltfm_data_kona = {
- 		SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
- };
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 1248186..c11bc11 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -197,6 +197,7 @@ static int xgpio_of_probe(struct device_node *np)
+ 	struct xgpio_instance *chip;
+ 	int status = 0;
+ 	const u32 *tree_info;
++	u32 ngpio;
  
--static struct __initconst of_device_id sdhci_bcm_kona_of_match[] = {
-+static struct of_device_id const sdhci_bcm_kona_of_match[] = {
- 	{ .compatible = "brcm,kona-sdhci"},
- 	{ .compatible = "bcm,kona-sdhci"}, /* deprecated name */
- 	{}
+ 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+ 	if (!chip)
+@@ -211,12 +212,11 @@ static int xgpio_of_probe(struct device_node *np)
+ 	/* Update GPIO direction shadow register with default value */
+ 	of_property_read_u32(np, "xlnx,tri-default", &chip->gpio_dir);
+ 
+-	/* By default assume full GPIO controller */
+-	chip->mmchip.gc.ngpio = 32;
+-
+-	/* Check device node and parent device node for device width */
+-	of_property_read_u32(np, "xlnx,gpio-width",
+-			      (u32 *)&chip->mmchip.gc.ngpio);
++	/* Check device node and parent device node for device width
++	   and assume default width of 32 */
++	if (of_property_read_u32(np, "xlnx,gpio-width", &ngpio))
++		ngpio = 32;
++	chip->mmchip.gc.ngpio = (u16)ngpio;
+ 
+ 	spin_lock_init(&chip->gpio_lock);
+ 
+@@ -258,12 +258,11 @@ static int xgpio_of_probe(struct device_node *np)
+ 		/* Update GPIO direction shadow register with default value */
+ 		of_property_read_u32(np, "xlnx,tri-default-2", &chip->gpio_dir);
+ 
+-		/* By default assume full GPIO controller */
+-		chip->mmchip.gc.ngpio = 32;
+-
+-		/* Check device node and parent device node for device width */
+-		of_property_read_u32(np, "xlnx,gpio2-width",
+-				     (u32 *)&chip->mmchip.gc.ngpio);
++		/* Check device node and parent device node for device width
++		   and assume default width of 32 */
++		if (of_property_read_u32(np, "xlnx,gpio2-width", &ngpio))
++			ngpio = 32;
++		chip->mmchip.gc.ngpio = (u16)ngpio;
+ 
+ 		spin_lock_init(&chip->gpio_lock);
+ 
 -- 
-1.9.1
+2.1.0
 
