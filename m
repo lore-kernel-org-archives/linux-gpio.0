@@ -1,25 +1,40 @@
 From: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
 Subject: RE: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc
  virqs
-Date: Tue, 23 Sep 2014 21:37:58 +0800
-Message-ID: <35FD53F367049845BC99AC72306C23D103D6DB4D6F2A@CNBJMBX05.corpusers.net>
+Date: Tue, 23 Sep 2014 21:39:55 +0800
+Message-ID: <35FD53F367049845BC99AC72306C23D103D6DB4D6F2B@CNBJMBX05.corpusers.net>
 References: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>,<CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
- <35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>,<54216EA5.5010506@ti.com>
+ <35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>,<54216EA5.5010506@ti.com>,<35FD53F367049845BC99AC72306C23D103D6DB4D6F2A@CNBJMBX05.corpusers.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cnbjrel01.sonyericsson.com ([219.141.167.165]:19702 "EHLO
-	cnbjrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751883AbaIWNiD convert rfc822-to-8bit
+Received: from cnbjrel02.sonyericsson.com ([219.141.167.166]:17869 "EHLO
+	cnbjrel02.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755441AbaIWNlR convert rfc822-to-8bit
 	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 23 Sep 2014 09:38:03 -0400
-In-Reply-To: <54216EA5.5010506@ti.com>
+	Tue, 23 Sep 2014 09:41:17 -0400
+In-Reply-To: <35FD53F367049845BC99AC72306C23D103D6DB4D6F2A@CNBJMBX05.corpusers.net>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+To: "Wang, Yalin" <Yalin.Wang@sonymobile.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+
+hi 
+
+sorry,
+i don't notice Grygorii's patch ,
+yes, this patch is more easy,
+it is ok to fix this problem.
+
+Great!
+________________________________________
+From: Wang, Yalin
+Sent: Tuesday, September 23, 2014 9:37 PM
+To: Grygorii Strashko; Linus Walleij
+Cc: gnurou@gmail.com; linux-gpio@vger.kernel.org; akpm@linux-foundation.org
+Subject: RE: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
 
 Hi
 
@@ -37,9 +52,9 @@ in fact , we can allow the virq are allocated one by one,
 but this need change gpiochip_irqchip_remove( ) function,
 it should not assume the virq are contentious,
 i think both method are ok ,
-it is just decided by how you want design it :) 
+it is just decided by how you want design it :)
 
-To summarize, we should make gpiochip_irqchip_add() and 
+To summarize, we should make gpiochip_irqchip_add() and
 gpiochip_irqchip_remove() both work correctly.
 
 
