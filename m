@@ -1,72 +1,34 @@
-From: Matt Porter <mporter@linaro.org>
-Subject: Re: [PATCH] gpio, bcm-kona, LLVMLinux: Remove use of __initconst
-Date: Tue, 23 Sep 2014 17:29:22 -0400
-Message-ID: <20140923212922.GG12270@beef>
-References: <1411500616-12863-1-git-send-email-behanw@converseincode.com>
+From: Gernot Vormayr <gvormayr@gmail.com>
+Subject: Re: [PATCH 1/1] gpio: Fix ngpio in gpio-xilinx driver
+Date: Wed, 24 Sep 2014 00:48:36 +0200
+Message-ID: <CAN+KFvYH_QcaUD5sgqYQTrTtWz7Sh+vV=f=X2D1NFgDBLHqgjA@mail.gmail.com>
+References: <1411031032-20649-1-git-send-email-gvormayr@gmail.com>
+	<CACRpkdZJajGr+Y4OTBf0W697G9ipBKH-y67EU69C-6cCiVbSRw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:58481 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751790AbaIWV30 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 17:29:26 -0400
-Received: by mail-ie0-f180.google.com with SMTP id ar1so7188448iec.25
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 14:29:26 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1411500616-12863-1-git-send-email-behanw@converseincode.com>
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:61282 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756759AbaIWWsh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 18:48:37 -0400
+In-Reply-To: <CACRpkdZJajGr+Y4OTBf0W697G9ipBKH-y67EU69C-6cCiVbSRw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: behanw@converseincode.com
-Cc: bcm@fixthebug.org, chris@printf.net, gnurou@gmail.com, linus.walleij@linaro.org, ulf.hansson@linaro.org, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, rjui@broadcom.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Sep 23, 2014 at 12:30:16PM -0700, behanw@converseincode.com wrote:
-> From: Behan Webster <behanw@converseincode.com>
-> 
-> The __initconst is in the wrong place, and when moved to the correct place
-> it uncovers an error where the variable is used by non-init data structures.
-> 
-> Instead merely make them const and put the const in the right spot.
-> 
-> Signed-off-by: Behan Webster <behanw@converseincode.com>
-> Reviewed-by: Mark Charlebois <charlebm@gmail.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpio/gpio-bcm-kona.c      | 2 +-
->  drivers/mmc/host/sdhci-bcm-kona.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+On Tue, Sep 23, 2014 at 5:38 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> The fact that the same code appears in two places tells us something
+> is not quite right. Can you look into consolidating this (in a separate
+> patch)?
 
-As mentioned on IRC, Linus, Chris, and Ulf probably would like this
-split to go into each respective tree.
 
--Matt
+Well, I already thought about that, but since the second time is for the
+second part of a dual gpio, which has different device tree property names,
+the only way of consolidating that I can think of right now would be to
+create a function that takes the property names. If you think that's ok,
+I can try to come up with something.
 
-> 
-> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-> index 3f6b33c..de0801e 100644
-> --- a/drivers/gpio/gpio-bcm-kona.c
-> +++ b/drivers/gpio/gpio-bcm-kona.c
-> @@ -496,7 +496,7 @@ static struct irq_chip bcm_gpio_irq_chip = {
->  	.irq_release_resources = bcm_kona_gpio_irq_relres,
->  };
->  
-> -static struct __initconst of_device_id bcm_kona_gpio_of_match[] = {
-> +static struct of_device_id const bcm_kona_gpio_of_match[] = {
->  	{ .compatible = "brcm,kona-gpio" },
->  	{}
->  };
-> diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
-> index dd780c3..4bb06c8 100644
-> --- a/drivers/mmc/host/sdhci-bcm-kona.c
-> +++ b/drivers/mmc/host/sdhci-bcm-kona.c
-> @@ -225,7 +225,7 @@ static struct sdhci_pltfm_data sdhci_pltfm_data_kona = {
->  		SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
->  };
->  
-> -static struct __initconst of_device_id sdhci_bcm_kona_of_match[] = {
-> +static struct of_device_id const sdhci_bcm_kona_of_match[] = {
->  	{ .compatible = "brcm,kona-sdhci"},
->  	{ .compatible = "bcm,kona-sdhci"}, /* deprecated name */
->  	{}
-> -- 
-> 1.9.1
-> 
+Cheers,
+Gernot Vormayr
