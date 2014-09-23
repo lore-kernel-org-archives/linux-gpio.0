@@ -1,34 +1,79 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] Enable Quark X1000 support in gpio-sch
-Date: Tue, 23 Sep 2014 17:33:31 +0200
-Message-ID: <CACRpkdYZEMdOM82tUE8RUNZF0rC=5vTOxVZEYd9Ns5tLWpYgzA@mail.gmail.com>
-References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+Subject: Re: [PATCH 1/1] gpio: Fix ngpio in gpio-xilinx driver
+Date: Tue, 23 Sep 2014 17:38:51 +0200
+Message-ID: <CACRpkdZJajGr+Y4OTBf0W697G9ipBKH-y67EU69C-6cCiVbSRw@mail.gmail.com>
+References: <1411031032-20649-1-git-send-email-gvormayr@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:45875 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753660AbaIWPdc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 11:33:32 -0400
-Received: by mail-ie0-f173.google.com with SMTP id tr6so9787668ieb.18
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 08:33:32 -0700 (PDT)
-In-Reply-To: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1411031032-20649-1-git-send-email-gvormayr@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gernot Vormayr <gvormayr@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 17, 2014 at 10:49 AM, Chang Rebecca Swee Fun
-<rebecca.swee.fun.chang@intel.com> wrote:
+On Thu, Sep 18, 2014 at 11:03 AM, Gernot Vormayr <gvormayr@gmail.com> wrote:
 
-> This patch series is about enabling legacy GPIO support for Quark X1000.
-> The patches were developed on top of Mika Westerberg's commit on
-> consolidating core and resume banks. Please refer to the link below for
-> more information about his commit.
-> https://lkml.org/lkml/2014/8/17/13
+> If one adds 'gpio-controller;' to the chip in the devicetree, then
+> initialization fails with 'gpiochip_find_base: cannot find free range',
+> because ngpio is 0. This patch fixes the bug.
+>
+> Tested on ml507 board.
+>
+> Signed-off-by: Gernot Vormayr <gvormayr@gmail.com>
+> ---
+>  drivers/gpio/gpio-xilinx.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+> index 1248186..4606ad2 100644
+> --- a/drivers/gpio/gpio-xilinx.c
+> +++ b/drivers/gpio/gpio-xilinx.c
+> @@ -197,6 +197,7 @@ static int xgpio_of_probe(struct device_node *np)
+>         struct xgpio_instance *chip;
+>         int status = 0;
+>         const u32 *tree_info;
+> +       u32 ngpio;
+>
+>         chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+>         if (!chip)
+> @@ -215,8 +216,9 @@ static int xgpio_of_probe(struct device_node *np)
+>         chip->mmchip.gc.ngpio = 32;
 
-I'm waiting for Mika's comments to be addressed for this patch
-series before reviewing further.
+Delete that line ^
+
+>
+>         /* Check device node and parent device node for device width */
+> -       of_property_read_u32(np, "xlnx,gpio-width",
+> -                             (u32 *)&chip->mmchip.gc.ngpio);
+> +       status = of_property_read_u32(np, "xlnx,gpio-width", &ngpio);
+> +       if (status == 0)
+> +               chip->mmchip.gc.ngpio = (u16)ngpio;
+
+Rewrite like this:
+
+if (of_property_read_u32(np, "xlnx,gpio-width", &ngpio))
+    ngpio = 32;
+chip->mmchip.gc.ngpio = (u16)ngpio;
+
+>
+>         spin_lock_init(&chip->gpio_lock);
+>
+> @@ -262,8 +264,9 @@ static int xgpio_of_probe(struct device_node *np)
+>                 chip->mmchip.gc.ngpio = 32;
+>
+>                 /* Check device node and parent device node for device width */
+> -               of_property_read_u32(np, "xlnx,gpio2-width",
+> -                                    (u32 *)&chip->mmchip.gc.ngpio);
+> +               status = of_property_read_u32(np, "xlnx,gpio2-width", &ngpio);
+> +               if (status == 0)
+> +                       chip->mmchip.gc.ngpio = (u16)ngpio;
+
+Same comment.
+
+The fact that the same code appears in two places tells us something
+is not quite right. Can you look into consolidating this (in a separate
+patch)?
 
 Yours,
 Linus Walleij
