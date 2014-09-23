@@ -1,167 +1,122 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 3/4] gpio: vf610: add gpiolib/IRQ chip driver for Vybird
-Date: Tue, 23 Sep 2014 13:51:17 +0200
-Message-ID: <a7c933339713dc1783770faf1eceb734@agner.ch>
-References: <cover.1410020458.git.stefan@agner.ch>
- <ff236f6dab7f3408551f8f4b0345e62b37fd99c5.1410020459.git.stefan@agner.ch>
- <CACRpkdaNbTj+hXtNFZ6DqosHPfHg2G+X2Cb_S_15mULpdebgrQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pca953x: Fix warning when HW interrupts are
+ rescheduled by the softirq tasklet
+Date: Tue, 23 Sep 2014 14:04:10 +0200
+Message-ID: <CACRpkdbTXtx+EU4Dw1fxeThRUG4s5XvcJnAJ9PJd8i4KKGC65A@mail.gmail.com>
+References: <1410251533-4990-1-git-send-email-LW@KARO-electronics.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.102]:43756 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751412AbaIWLvy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 07:51:54 -0400
-In-Reply-To: <CACRpkdaNbTj+hXtNFZ6DqosHPfHg2G+X2Cb_S_15mULpdebgrQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1410251533-4990-1-git-send-email-LW@KARO-electronics.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Sep 9, 2014 at 10:32 AM, Lothar Wa=C3=9Fmann <LW@karo-electroni=
+cs.de> wrote:
 
-Thanks for your review!
+> When using e.g. the matrix_keymap driver with the gpio-pca953x driver=
+,
+> the following warning may be issued when a keypress is detected:
+> WARNING: CPU: 0 PID: 3 at kernel/irq/manage.c:677 irq_nested_primary_=
+handler+0x18/0x2c()
+> Primary handler called for nested irq 245
+> Modules linked in: evbug ci_hdrc_imx usbmisc_imx ci_hdrc udc_core ehc=
+i_hcd phy_mxs_usb
+> CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: G        W     3.16.0-karo+ =
+#118
+> [<c00142cc>] (unwind_backtrace) from [<c00118f8>] (show_stack+0x10/0x=
+14)
+> [<c00118f8>] (show_stack) from [<c001bf10>] (warn_slowpath_common+0x6=
+4/0x84)
+> [<c001bf10>] (warn_slowpath_common) from [<c001bfc4>] (warn_slowpath_=
+fmt+0x30/0x40)
+> [<c001bfc4>] (warn_slowpath_fmt) from [<c004ce08>] (irq_nested_primar=
+y_handler+0x18/0x2c)
+> [<c004ce08>] (irq_nested_primary_handler) from [<c004cb80>] (handle_i=
+rq_event_percpu+0x50/0x168)
+> [<c004cb80>] (handle_irq_event_percpu) from [<c004ccf8>] (handle_irq_=
+event+0x60/0x7c)
+> [<c004ccf8>] (handle_irq_event) from [<c004f02c>] (handle_simple_irq+=
+0x78/0xdc)
+> [<c004f02c>] (handle_simple_irq) from [<c004ed14>] (resend_irqs+0x4c/=
+0x78)
+> [<c004ed14>] (resend_irqs) from [<c001f3ec>] (tasklet_action+0x74/0xd=
+8)
+> [<c001f3ec>] (tasklet_action) from [<c001f760>] (__do_softirq+0xd0/0x=
+1f4)
+> [<c001f760>] (__do_softirq) from [<c001f8c4>] (run_ksoftirqd+0x40/0x6=
+4)
+> [<c001f8c4>] (run_ksoftirqd) from [<c003d464>] (smpboot_thread_fn+0x1=
+74/0x234)
+> [<c003d464>] (smpboot_thread_fn) from [<c0036dd4>] (kthread+0xb4/0xd0=
+)
+> [<c0036dd4>] (kthread) from [<c000f0f0>] (ret_from_fork+0x14/0x24)
+> ---[ end trace a68cf7bc5348c4f7 ]---
+>
+> This happens when an IRQ is detected by the GPIO driver while the GPI=
+O
+> client driver (matrix_keypad in this case) has disabled the irq for
+> the GPIO it has acquired. When the HW IRQ is being rescheduled by the
+> softirq thread, the primary IRQ handler is called for the nested IRQ
+> registered by the client driver rather than for the parent IRQ from
+> the GPIO driver.
+>
+> This patch makes sure, that the parent_irq (gpio-pca953x) is
+> rescheduled rather than the nested irq registered by the matrix_keypa=
+d
+> driver.
+> Similar patches are most probably required for a bunch of other
+> drivers too.
+>
+> Signed-off-by: Lothar Wa=C3=9Fmann <LW@KARO-electronics.de>
+> ---
+>  drivers/gpio/gpio-pca953x.c |   12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.=
+c
+> index e2da64a..770ef6b 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -518,6 +518,7 @@ static int pca953x_irq_setup(struct pca953x_chip =
+*chip,
+>                              int irq_base)
+>  {
+>         struct i2c_client *client =3D chip->client;
+> +       struct gpio_chip *gpio_chip =3D &chip->gpio_chip;
+>         int ret, i, offset =3D 0;
+>
+>         if (client->irq && irq_base !=3D -1
+> @@ -567,6 +568,17 @@ static int pca953x_irq_setup(struct pca953x_chip=
+ *chip,
+>                                 "could not connect irqchip to gpiochi=
+p\n");
+>                         return ret;
+>                 }
+> +
+> +               for (i =3D 0; i < NBANK(chip); i++) {
+> +                       int j;
+> +
+> +                       for (j =3D 0; j < BANK_SZ; j++) {
+> +                               int gpio =3D gpio_chip->base + i * BA=
+NK_SZ + j;
+> +                               int irq =3D gpio_to_irq(gpio);
+> +
+> +                               irq_set_parent(irq, client->irq);
+> +                       }
+> +               }
 
-Am 2014-09-23 11:58, schrieb Linus Walleij:
-> On Sat, Sep 6, 2014 at 6:25 PM, Stefan Agner <stefan@agner.ch> wrote:
-> 
->> Add a gpiolib and IRQ chip driver for Vybrid ARM SoC using the
->> Vybrid's GPIO and PORT module. The driver is instanced once per
->> each GPIO/PORT module pair and handles 32 GPIO's.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> (...)
->>  obj-$(CONFIG_GPIO_UCB1400)     += gpio-ucb1400.o
->> +obj-$(CONFIG_GPIO_VF610)       += gpio-vf610.o
-> 
-> Some like to keep GPIOs tightly associated with a pin controller
-> in a file next to the pin controller.
-> 
-> I.e. in drivers/pinctrl/freescale/gpio-vf610.c
-> 
-> But this works too. Any preference?
+While this is fixing the problem, but isn't the right fix to patch
+the function gpiochip_irq_map() in gpiolib.c to call
+irq_set_parent() for each IRQ as it gets mapped?
 
-The other Freescale GPIO drivers (e.g. gpio-mxs.c/gpio-mxc.c) are
-located under drivers/gpio/ hence I would prefer to leave them there,
-even we use pinctrl here. Unless someone at Freescale has another
-opinion on this?
+This driver is using the gpiolib irqchip helpers...
 
+Then you fix not just this driver but all drivers, plus the complex
+loop and calls to gpio_to_irq() etc goes away.
 
-> 
->> +#define GPIO_PER_PORT          32
-> 
-> Very generic define. VF610_GPIOS_PER_PORT?
-
-Agreed
-
-> 
->> +struct vf610_gpio_port {
->> +       struct gpio_chip gc;
->> +       void __iomem *base;
->> +       void __iomem *gpio_base;
->> +       u8 irqc[GPIO_PER_PORT];
->> +       int irq;
-> 
-> irq? Why do you need to keep this around?
-> 
->> +static const struct of_device_id vf610_gpio_dt_ids[] = {
->> +       { .compatible = "fsl,vf610-gpio" },
->> +       { /* sentinel */ }
->> +};
->> +
->> +static inline void vf610_gpio_writel(u32 val, void __iomem *reg)
->> +{
->> +       __raw_writel(val, reg);
-> 
-> Use writel_relaxed() instead unless you can explain why you want this.
-> 
-> (Same for all occurences.)
-
-Agreed, I have don't know why I used the __raw variant here. I think its
-because copied this two stubs from gpio-tegra.c.
-
-> 
->> +static int vf610_gpio_get(struct gpio_chip *gc, unsigned int gpio)
->> +{
->> +       struct vf610_gpio_port *port =
->> +               container_of(gc, struct vf610_gpio_port, gc);
->> +
->> +       return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR) & 1 << gpio);
-> 
-> #include <linux/bitops.h>
-> 
-> ... & BIT(gpio)
-> 
->> +static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->> +{
->> +       struct vf610_gpio_port *port =
->> +               container_of(gc, struct vf610_gpio_port, gc);
->> +       unsigned long mask = 1 << gpio;
-> 
-> = BIT(gpio);
-> 
->> +static void vf610_gpio_irq_handler(u32 irq, struct irq_desc *desc)
->> +{
->> +       struct vf610_gpio_port *port = irq_get_handler_data(irq);
->> +       struct irq_chip *chip = irq_desc_get_chip(desc);
->> +       int pin;
->> +       unsigned long irq_isfr;
->> +
->> +       chained_irq_enter(chip, desc);
->> +
->> +       irq_isfr = vf610_gpio_readl(port->base + PORT_ISFR);
->> +
->> +       for_each_set_bit(pin, &irq_isfr, GPIO_PER_PORT) {
->> +               vf610_gpio_writel(1 << pin, port->base + PORT_ISFR);
-> 
-> BIT(pin)
-> 
-> (etc)
-
-Ok, will replace those bit operations.
-
-> 
->> +       port->irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
->> +       if (port->irq == NO_IRQ)
->> +               return -ENODEV;
-> 
-> Can't you just use a local int irq; variable for this?
-> 
->> +static int __init gpio_vf610_init(void)
->> +{
->> +       return platform_driver_register(&vf610_gpio_driver);
->> +}
->> +postcore_initcall(gpio_vf610_init);
-> 
-> postcore again. I don't like this, can you get rid of it?
-
-I guess we could load this driver easily a bit later. IMHO, since lots
-of other driver use GPIO's, we should it load before all the drivers
-gets loaded (before device_initcall).
-
-Most GPIO driver do this, some statistic again:
-$ grep -h -o ".*_initcall" drivers/gpio/*.c | sort | uniq -c | sort -n
--r
-     33 subsys_initcall
-     14 postcore_initcall
-      2 device_initcall
-      2 arch_initcall
-      1 late_initcall
-      1 core_initcall
-
-My proposal:
-Use subsys_initcall (which is called after arch_initcall) in this GPIO
-driver and leave the pinctrl driver as arch_initcall. This way we are
-absolutely sure that the GPIO driver gets loaded after the pinctrl and
-also leave the pinctrl at its current value.
-
---
-Stefan
-
-
-> 
-> Overall the driver looks very nice except for these nitty gritty details.
-> 
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
