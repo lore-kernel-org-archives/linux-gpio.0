@@ -1,17 +1,23 @@
 From: Matt Porter <mporter@linaro.org>
 Subject: Re: [PATCH] gpio, bcm-kona, LLVMLinux: Remove use of __initconst
-Date: Tue, 23 Sep 2014 17:20:42 -0400
-Message-ID: <20140923212042.GF12270@beef>
+Date: Tue, 23 Sep 2014 17:29:22 -0400
+Message-ID: <20140923212922.GG12270@beef>
 References: <1411500616-12863-1-git-send-email-behanw@converseincode.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:58481 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751790AbaIWV30 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 17:29:26 -0400
+Received: by mail-ie0-f180.google.com with SMTP id ar1so7188448iec.25
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Sep 2014 14:29:26 -0700 (PDT)
 Content-Disposition: inline
 In-Reply-To: <1411500616-12863-1-git-send-email-behanw@converseincode.com>
-Sender: linux-mmc-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: behanw@converseincode.com
 Cc: bcm@fixthebug.org, chris@printf.net, gnurou@gmail.com, linus.walleij@linaro.org, ulf.hansson@linaro.org, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, rjui@broadcom.com
-List-Id: linux-gpio@vger.kernel.org
 
 On Tue, Sep 23, 2014 at 12:30:16PM -0700, behanw@converseincode.com wrote:
 > From: Behan Webster <behanw@converseincode.com>
@@ -28,6 +34,12 @@ On Tue, Sep 23, 2014 at 12:30:16PM -0700, behanw@converseincode.com wrote:
 >  drivers/gpio/gpio-bcm-kona.c      | 2 +-
 >  drivers/mmc/host/sdhci-bcm-kona.c | 2 +-
 >  2 files changed, 2 insertions(+), 2 deletions(-)
+
+As mentioned on IRC, Linus, Chris, and Ulf probably would like this
+split to go into each respective tree.
+
+-Matt
+
 > 
 > diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
 > index 3f6b33c..de0801e 100644
@@ -55,7 +67,6 @@ On Tue, Sep 23, 2014 at 12:30:16PM -0700, behanw@converseincode.com wrote:
 >  	{ .compatible = "brcm,kona-sdhci"},
 >  	{ .compatible = "bcm,kona-sdhci"}, /* deprecated name */
 >  	{}
-
-Acked-by: Matt Porter <mporter@linaro.org>
-
--Matt
+> -- 
+> 1.9.1
+> 
