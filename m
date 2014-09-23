@@ -1,119 +1,56 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 1/5] pinctrl: imx: detect uninitialized pins
-Date: Tue, 23 Sep 2014 19:37:53 +0200
-Message-ID: <6d676a88eb82a47f8fa9e16abbc768e3e9ac236a.1411492954.git.stefan@agner.ch>
-References: <cover.1411492954.git.stefan@agner.ch>
+Subject: [PATCH v2 0/5] vf610: Add GPIO support
+Date: Tue, 23 Sep 2014 19:37:52 +0200
+Message-ID: <cover.1411492954.git.stefan@agner.ch>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.102]:50269 "EHLO
+Received: from mail.kmu-office.ch ([178.209.48.102]:50244 "EHLO
 	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756426AbaIWRiQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 13:38:16 -0400
-In-Reply-To: <cover.1411492954.git.stefan@agner.ch>
-In-Reply-To: <cover.1411492954.git.stefan@agner.ch>
-References: <cover.1411492954.git.stefan@agner.ch>
+	with ESMTP id S1756424AbaIWRiP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 13:38:15 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com, shawn.guo@freescale.com, kernel@pengutronix.de
 Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com, stefan@agner.ch
 
-The pinctrl driver initialized the register offsets for the pins
-with 0. On Vybrid an offset of 0 is a valid offset for the pinctrl
-mux register. So far, this was solved using the ZERO_OFFSET_VALID
-flag which allowed offsets of 0. However, this does not allow to
-verify whether a pins struct imx_pmx_func was initialized or not.
+These include the review of Linus and Bill. I also added a patch
+creating the Documentation for the GPIO/PORT module (altough, the
+device tree bindings are already in use and not part this patch).
+Then there is a small extension to Colibri VF61 device tree, and
+because of that change I refrained to add Linus Acked-By to the DTS
+patch. Linus, if you agree, can you send the Ack for that patch
+again?
 
-Use signed offset values for register offsets and initialize those
-with -1 in order to detect uninitialized offset values reliable.
+Changes in v2:
+- Use bit operations in GPIO driver
+- Use VF610_ prefix for GPIOS_PER_PORT define
+- Drop irq in drivers struct
+- Use arch/subsys_initicall for GPIO/pinctrl driver
+- Fix log message title
+- Add documentation for GPIO/PORT module bindings
+- Extended GPIO device tree bindings for Colibri VF61
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/pinctrl/pinctrl-imx.c   | 9 +++++----
- drivers/pinctrl/pinctrl-imx.h   | 7 +++----
- drivers/pinctrl/pinctrl-vf610.c | 2 +-
- 3 files changed, 9 insertions(+), 9 deletions(-)
+Stefan Agner (5):
+  pinctrl: imx: detect uninitialized pins
+  pinctrl: imx: add gpio pinmux support for vf610
+  gpio: vf610: add gpiolib/IRQ chip driver for Vybrid
+  ARM: dts: vf610: use new GPIO support
+  Documentation: dts: Add bindings for Vybrid GPIO/PORT module
 
-diff --git a/drivers/pinctrl/pinctrl-imx.c b/drivers/pinctrl/pinctrl-imx.c
-index 946d594..0d4558b 100644
---- a/drivers/pinctrl/pinctrl-imx.c
-+++ b/drivers/pinctrl/pinctrl-imx.c
-@@ -204,7 +204,7 @@ static int imx_pmx_enable(struct pinctrl_dev *pctldev, unsigned selector,
- 		pin_id = pin->pin;
- 		pin_reg = &info->pin_regs[pin_id];
- 
--		if (!(info->flags & ZERO_OFFSET_VALID) && !pin_reg->mux_reg) {
-+		if (pin_reg->mux_reg == -1) {
- 			dev_err(ipctl->dev, "Pin(%s) does not support mux function\n",
- 				info->pins[pin_id].name);
- 			return -EINVAL;
-@@ -308,7 +308,7 @@ static int imx_pinconf_get(struct pinctrl_dev *pctldev,
- 	const struct imx_pinctrl_soc_info *info = ipctl->info;
- 	const struct imx_pin_reg *pin_reg = &info->pin_regs[pin_id];
- 
--	if (!(info->flags & ZERO_OFFSET_VALID) && !pin_reg->conf_reg) {
-+	if (pin_reg->conf_reg == -1) {
- 		dev_err(info->dev, "Pin(%s) does not support config function\n",
- 			info->pins[pin_id].name);
- 		return -EINVAL;
-@@ -331,7 +331,7 @@ static int imx_pinconf_set(struct pinctrl_dev *pctldev,
- 	const struct imx_pin_reg *pin_reg = &info->pin_regs[pin_id];
- 	int i;
- 
--	if (!(info->flags & ZERO_OFFSET_VALID) && !pin_reg->conf_reg) {
-+	if (pin_reg->conf_reg == -1) {
- 		dev_err(info->dev, "Pin(%s) does not support config function\n",
- 			info->pins[pin_id].name);
- 		return -EINVAL;
-@@ -586,10 +586,11 @@ int imx_pinctrl_probe(struct platform_device *pdev,
- 	if (!ipctl)
- 		return -ENOMEM;
- 
--	info->pin_regs = devm_kzalloc(&pdev->dev, sizeof(*info->pin_regs) *
-+	info->pin_regs = devm_kmalloc(&pdev->dev, sizeof(*info->pin_regs) *
- 				      info->npins, GFP_KERNEL);
- 	if (!info->pin_regs)
- 		return -ENOMEM;
-+	memset(info->pin_regs, 0xff, sizeof(*info->pin_regs) * info->npins);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	ipctl->base = devm_ioremap_resource(&pdev->dev, res);
-diff --git a/drivers/pinctrl/pinctrl-imx.h b/drivers/pinctrl/pinctrl-imx.h
-index db408b0..49e55d3 100644
---- a/drivers/pinctrl/pinctrl-imx.h
-+++ b/drivers/pinctrl/pinctrl-imx.h
-@@ -67,8 +67,8 @@ struct imx_pmx_func {
-  * @conf_reg: config register offset
-  */
- struct imx_pin_reg {
--	u16 mux_reg;
--	u16 conf_reg;
-+	s16 mux_reg;
-+	s16 conf_reg;
- };
- 
- struct imx_pinctrl_soc_info {
-@@ -83,8 +83,7 @@ struct imx_pinctrl_soc_info {
- 	unsigned int flags;
- };
- 
--#define ZERO_OFFSET_VALID	0x1
--#define SHARE_MUX_CONF_REG	0x2
-+#define SHARE_MUX_CONF_REG	0x1
- 
- #define NO_MUX		0x0
- #define NO_PAD		0x0
-diff --git a/drivers/pinctrl/pinctrl-vf610.c b/drivers/pinctrl/pinctrl-vf610.c
-index bddd913..b788e15 100644
---- a/drivers/pinctrl/pinctrl-vf610.c
-+++ b/drivers/pinctrl/pinctrl-vf610.c
-@@ -299,7 +299,7 @@ static const struct pinctrl_pin_desc vf610_pinctrl_pads[] = {
- static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
- 	.pins = vf610_pinctrl_pads,
- 	.npins = ARRAY_SIZE(vf610_pinctrl_pads),
--	.flags = ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
-+	.flags = SHARE_MUX_CONF_REG,
- };
- 
- static struct of_device_id vf610_pinctrl_of_match[] = {
+ .../devicetree/bindings/gpio/gpio-vf610.txt        |  56 ++++
+ arch/arm/boot/dts/vf610-colibri-eval-v3.dts        |   5 +
+ arch/arm/boot/dts/vf610-colibri.dtsi               |  19 ++
+ arch/arm/boot/dts/vf610-twr.dts                    |   1 +
+ arch/arm/boot/dts/vf610.dtsi                       |   1 +
+ drivers/gpio/Kconfig                               |   7 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-vf610.c                          | 284 +++++++++++++++++++++
+ drivers/pinctrl/pinctrl-imx.c                      |  63 ++++-
+ drivers/pinctrl/pinctrl-imx.h                      |   8 +-
+ drivers/pinctrl/pinctrl-vf610.c                    |   2 +-
+ 11 files changed, 438 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-vf610.txt
+ create mode 100644 drivers/gpio/gpio-vf610.c
+
 -- 
 2.1.0
 
