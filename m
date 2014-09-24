@@ -1,107 +1,84 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v5 1/4] mfd: add support for Diolan DLN-2 devices
-Date: Wed, 24 Sep 2014 17:07:49 +0200
-Message-ID: <20140924150749.GG16198@localhost>
-References: <1411158165-25794-1-git-send-email-octavian.purdila@intel.com>
- <1411158165-25794-2-git-send-email-octavian.purdila@intel.com>
- <20140924104809.GA16198@localhost>
- <CAE1zotLu7pN9pC_C+iRwSpMh2iPW5E1CL4RiycLK-jV_FZEfOQ@mail.gmail.com>
- <20140924135444.GD16198@localhost>
- <CAE1zot+BqL4=kTJaQYwPxL-19W-+2nomXXrKaogJZRXuvrVE0A@mail.gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 3/4] gpio: vf610: add gpiolib/IRQ chip driver for Vybird
+Date: Wed, 24 Sep 2014 17:14:49 +0200
+Message-ID: <2543d19c268e9ef1609759e98f3818d9@agner.ch>
+References: <cover.1410020458.git.stefan@agner.ch>
+ <ff236f6dab7f3408551f8f4b0345e62b37fd99c5.1410020459.git.stefan@agner.ch>
+ <CACRpkdaNbTj+hXtNFZ6DqosHPfHg2G+X2Cb_S_15mULpdebgrQ@mail.gmail.com>
+ <a7c933339713dc1783770faf1eceb734@agner.ch>
+ <CACRpkdbJePuG0g=AFGqjDS4=yW0CXnkpf1Yr_1P4e9Kkpu9n-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAE1zot+BqL4=kTJaQYwPxL-19W-+2nomXXrKaogJZRXuvrVE0A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, wsa@the-dreams.de, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset=
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.102]:38857 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753859AbaIXPP2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 11:15:28 -0400
+In-Reply-To: <CACRpkdbJePuG0g=AFGqjDS4=yW0CXnkpf1Yr_1P4e9Kkpu9n-g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@linaro.org>
 
-On Wed, Sep 24, 2014 at 05:54:15PM +0300, Octavian Purdila wrote:
-> On Wed, Sep 24, 2014 at 4:54 PM, Johan Hovold <johan@kernel.org> wrote:
-> > On Wed, Sep 24, 2014 at 04:36:22PM +0300, Octavian Purdila wrote:
-> >> On Wed, Sep 24, 2014 at 1:48 PM, Johan Hovold <johan@kernel.org> wrote:
-> >> > On Fri, Sep 19, 2014 at 11:22:42PM +0300, Octavian Purdila wrote:
-> >>
-> >> <snip>
-> >>
-> >> >> + * dln2_dev.mod_rx_slots and then the echo header field to index the
-> >> >> + * slots field and find the receive context for a particular
-> >> >> + * request.
-> >> >> + */
-> >> >> +struct dln2_mod_rx_slots {
-> >> >> +     /* RX slots bitmap */
-> >> >> +     unsigned long bmap;
-> >> >> +
-> >> >> +     /* used to wait for a free RX slot */
-> >> >> +     wait_queue_head_t wq;
-> >> >> +
-> >> >> +     /* used to wait for an RX operation to complete */
-> >> >> +     struct dln2_rx_context slots[DLN2_MAX_RX_SLOTS];
-> >> >> +
-> >> >> +     /* device has been disconnected */
-> >> >> +     bool disconnected;
-> >> >
-> >> > This belongs in the dln2_dev struct.
-> >> >
-> >> > I think you're overcomplicating the disconnect handling by intertwining
-> >> > it with your slots.
-> >> >
-> >> > Add a lock, an active-transfer counter, a disconnected flag, and a wait
-> >> > queue to struct dln2_dev.
-> >> >
-> >>
-> >> I agree that disconnected is better suited in dln2_dev.
-> >>
-> >> However, I don't think that we need the active-transfer counter and a
-> >> new wait queue. We can simply use the existing waiting queues and the
-> >> implicit alloc_rx_slot()/free_rx_slot() calls to see if we are still
-> >> waiting for I/O.
-> >
-> > Just because you can reuse them doesn't mean it's a good idea. By
-> > separating a generic disconnect solution from your custom slot
-> > implementation we get something that is way easier to verify for
-> > correctness and that could also be reused in other drivers.
+Am 2014-09-24 13:10, schrieb Linus Walleij:
+> On Tue, Sep 23, 2014 at 1:51 PM, Stefan Agner <stefan@agner.ch> wrote:
+>> [Me]
+>>> postcore again. I don't like this, can you get rid of it?
+>>
+>> I guess we could load this driver easily a bit later. IMHO, since lots
+>> of other driver use GPIO's, we should it load before all the drivers
+>> gets loaded (before device_initcall).
 > 
-> Maybe I miss-understood what you are proposing, let me try to
-> summarize it to see if I got it right.
+> Nope. We use deferred probing to control that today. Ideally
+> all drivers should be device_initcall() and deferred probe be used
+> to order things, not by playing around with initcalls.
 > 
-> You are suggesting to add a counter, increment it in alloc_rx_slot(),
-> decrement it in free_rx_slot().
 
-No increment it at the start of _dln2_transfer, and decrement it before
-returning from that function.
+You can not "nope" my humble opinion, this is not possible, its write
+protected! :-)
 
-> Then add a new waitqueue in dln2_dev
-> and in free_rx_slot() wake it up while in disconnect do a wait_event()
-> on it and check for the counter.
+I fully understand the deferred probe approach, and I also think its
+really a good approach for almost all drivers. The system by itself
+makes sure the drivers are loaded in correct order. But if all drivers
+use pinctrl, and the pinctrl happens to be the last initialized driver,
+I first get 30 messages with probe deferred before the pinctrl driver
+finally gets initialized. IMHO, this is a waste of resources... Giving
+the system some hint what we need early (e.g. pinctrl or even GPIO
+drivers) is just sensible. But maybe I miss something here...
 
-Where you also wake the disconnect (or wait-until-sent) wait queue.
+Fact is, currently, without touching GPIO infrastructure code, the GPIO
+driver can not be deferred when the pinctrl driver is missing. The
+of_gpiochip_add_pin_range function does not handle the missing pinctrl
+driver. Hence as of now, the pinctrl still needs an earlier initcall.
+But anyway, currently the pinctrl driver is already using arch_initcall,
+this patch set is no longer touching that.
 
-> Also, alloc_rx_slot() should fail if
-> the disconnect flag is set.
+>> Most GPIO driver do this, some statistic again:
+>> $ grep -h -o ".*_initcall" drivers/gpio/*.c | sort | uniq -c | sort -n
+>> -r
+>>      33 subsys_initcall
+>>      14 postcore_initcall
+>>       2 device_initcall
+>>       2 arch_initcall
+>>       1 late_initcall
+>>       1 core_initcall
+> 
+> Yeah old legacy. There are patch attacks to get rid of this.
+> 
+> The reason we can't just change them is because sometimes
+> dependent drivers do not handle the errorpath very well can can't
+> defer cleanly.
+> 
+> With a new driver I expect deferred probe to be used.
+> 
 
-That is not required, but you can bail out early after alloc_rx_slot if
-the disconnect flag is set (no locking).
+Actually, the esdhc driver gets the cd-gpio directly and does not handle
+EPROBE_DEFER properly, hence Vybrid would be affected too. But I
+understand that we need to start somewhere. I will change the GPIO
+driver to device_initcall and going to fix esdhc driver.
 
-> In this case we are still coupled to the slots implementation, in the
-> sense that you would need to understand the slots implementation to
-> understand how the disconnect works. We are also doing two wake-up
-> operations which I find redundant and which does not add much value in
-> clarity (since we still need to wake-up all completions for each
-> handle).
->
-> I do agree that using a counter instead of checking the bitmaps is
-> cleaner though.
+--
+Stefan
 
-You only need to the wake up if disconnected is set when returning from
-_dln2_transfer.
 
-Sure, the optimisation bit -- to abort any ongoing transfer -- still
-requires some insight into the slot implementation.
-
-But this way everything disconnect related (correctness-wise) is
-isolated to _dln2_transfer and dln2_disconnect.
-
-Johan
