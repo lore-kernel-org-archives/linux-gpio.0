@@ -1,148 +1,116 @@
-From: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
-Subject: RE: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
-Date: Wed, 24 Sep 2014 00:55:07 +0000
-Message-ID: <50B33AC5ED75F74F991980326F1C438D0FBDBA92@PGSMSX108.gar.corp.intel.com>
-References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
- <1410943745-9354-2-git-send-email-rebecca.swee.fun.chang@intel.com>
- <20140918111705.GM10854@lahna.fi.intel.com>
- <50B33AC5ED75F74F991980326F1C438D0FBDB28B@PGSMSX108.gar.corp.intel.com>
- <20140922092528.GM1786@lahna.fi.intel.com>
+From: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
+Subject: RE: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc
+ virqs
+Date: Wed, 24 Sep 2014 09:59:54 +0800
+Message-ID: <35FD53F367049845BC99AC72306C23D103D6DB49162C@CNBJMBX05.corpusers.net>
+References: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>,<CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
+ <35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>,<54216EA5.5010506@ti.com>,<35FD53F367049845BC99AC72306C23D103D6DB4D6F2A@CNBJMBX05.corpusers.net>,<35FD53F367049845BC99AC72306C23D103D6DB4D6F2B@CNBJMBX05.corpusers.net>
+ <35FD53F367049845BC99AC72306C23D103D6DB4D6F2C@CNBJMBX05.corpusers.net>
+ <54218BAC.3070303@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:27794 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753440AbaIXAz3 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Sep 2014 20:55:29 -0400
-In-Reply-To: <20140922092528.GM1786@lahna.fi.intel.com>
+Received: from cnbjrel01.sonyericsson.com ([219.141.167.165]:16275 "EHLO
+	cnbjrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752738AbaIXB75 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 23 Sep 2014 21:59:57 -0400
+In-Reply-To: <54218BAC.3070303@ti.com>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: 'Mika Westerberg' <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: 'Grygorii Strashko' <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
 
+Hi Grygorii,
 
+Yeah, you are right,
+I really make a mistake .
 
-> -----Original Message-----
-> From: 'Mika Westerberg' [mailto:mika.westerberg@linux.intel.com]
-> Sent: 22 September, 2014 5:25 PM
-> To: Chang, Rebecca Swee Fun
-> Cc: Linus Walleij; linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
+I think both our patch are ok to fix this problem,
+But we use different solutions.
+
+My patch have a advantage than yours that
+It alloc virqs in one time and when free it,
+Doesn't need call irqa_find_mapping() one by one, performance
+Is better .
+
+For my patch, you said " As for me, you patch will completely disable Sparse IRQ feature :("
+
+Why? Could you make me clear ? :)
+
+Then we can decide which solution to use to fix this issue. 
+
+Thanks
+
+-----Original Message-----
+> hi
 > 
-> On Mon, Sep 22, 2014 at 05:43:36AM +0000, Chang, Rebecca Swee Fun wrote:
-> > Replied inline. :)
-> >
-> > > -----Original Message-----
-> > > From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
-> > > Sent: 18 September, 2014 7:17 PM
-> > > To: Chang, Rebecca Swee Fun
-> > > Cc: Linus Walleij; linux-gpio@vger.kernel.org;
-> > > linux-kernel@vger.kernel.org
-> > > Subject: Re: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
-> > >
-> > > On Wed, Sep 17, 2014 at 04:49:03PM +0800, Chang Rebecca Swee Fun
-> wrote:
-> > > > Consolidating similar algorithms into common functions to make
-> > > > GPIO SCH simpler and manageable.
-> > > >
-> > > > Signed-off-by: Chang Rebecca Swee Fun
-> > > > <rebecca.swee.fun.chang@intel.com>
-> > > > ---
-> > > >  drivers/gpio/gpio-sch.c |   95 ++++++++++++++++++++++++++---------------
-> -----
-> > > -
-> > > >  1 file changed, 53 insertions(+), 42 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-> > > > index
-> > > > 99720c8..2189c22 100644
-> > > > --- a/drivers/gpio/gpio-sch.c
-> > > > +++ b/drivers/gpio/gpio-sch.c
-> > > > @@ -43,6 +43,8 @@ struct sch_gpio {
-> > > >
-> > > >  #define to_sch_gpio(c)	container_of(c, struct sch_gpio, chip)
-> > > >
-> > > > +static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num,
-> > > > +int val);
-> > > > +
-> > >
-> > > Is it possible to move the sch_gpio_set() function here instead of
-> > > forward declaring it?
-> >
-> > Yes, it is possible. There is a reason I submitted the code in this
-> > structure. By putting the sch_gpio_set() function below will makes the
-> > diff patch looks neat and easy for review.  If it doesn't make sense
-> > to make the patch for easy reviewing, I can change by moving the
-> > function above.
+> but it is not safe with a little problem, when remove , should not 
+> assume physical irq start from 0, i change like this, store 
+> gpiochip->irq_base = first_irq;
 > 
-> I think that we are interested in the end result (e.g) the driver and if we can
-> avoid forward declarations the better.
-
-Alright. I can move it up to avoid the forward declaration.
-
+> ---
 > 
-> > >
-> > > >  static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
-> > > >  				unsigned reg)
-> > > >  {
-> > > > @@ -63,94 +65,89 @@ static unsigned sch_gpio_bit(struct sch_gpio
-> > > > *sch,
-> > > unsigned gpio)
-> > > >  	return gpio % 8;
-> > > >  }
-> > > >
-> > > > -static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio)
-> > > > +static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio,
-> > > > +unsigned reg)
-> > >
-> > > I don't see much value in doing this.
-> > >
-> > > To me sch_gpio_enable(sch, gpio) is more intuitive than
-> > > sch_gpio_enable(sch, gpio, GEN). Why do I need to pass register to enable
-> function in the first place?
-> > > It should know better how to enable the GPIO, right?
-> > >
-> > > Same goes for others.
-> >
-> > The register values are required when it comes to IRQ handling. By
-> > passing in the registers values, we can make full use of the
-> > algorithms without introducing extra/similar algorithms to compute
-> > other register offset values.
-> > For example, we have other offset values to handle such as:-
-> > GTPE	0x0C
-> > GTNE	0x10
-> > GGPE	0x14
-> > GSMI	0x18
-> > GTS	0x1C
-> > CGNMIEN	0x40
-> > RGNMIEN	0x44
 > 
-> Well, can we at least call it something else than sch_gpio_enable()?
-> Perhaps sch_gpio_set_value() or so?
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c index 
+> 15cc0bb..c5fb2c1 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -517,14 +517,14 @@ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+>    */
+>   static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+>   {
+> -	unsigned int offset;
+> -
+> +	int i;
+>   	acpi_gpiochip_free_interrupts(gpiochip);
+>   
+>   	/* Remove all IRQ mappings and delete the domain */
+>   	if (gpiochip->irqdomain) {
+> -		for (offset = 0; offset < gpiochip->ngpio; offset++)
+> -			irq_dispose_mapping(gpiochip->irq_base + offset);
+> +		for (i = 0; i < gpiochip->ngpio; i++)
+> +			irq_dispose_mapping(irq_find_mapping(gpiochip->irqdomain,
+> +						gpiochip->irq_base + i));
 
-sch_gpio_set_value() sounds good. After think twice, I intend to merge sch_gpio_enable() and sch_gpio_disable() into one functions. Using variable "enable" as an indicator, I can control whether to enable or disable when calling the function. Here is my draft:
+No:) it should start from 0
+irq_dispose_mapping(irq_find_mapping(gpiochip->irqdomain, i));
 
-static void sch_gpio_set_value(struct sch_gpio *sch, unsigned gpio, unsigned reg, unsigned int enable)
-{
-	unsigned long flags;
-	unsigned short offset, bit;
-	u8 set;
+irq_domain_add_simple() uses hwirq_base == 0 and current implementation of gpiolib irqchip helpers doesn't support setting of custom hwirq_base.
+  
 
-	spin_lock_irqsave(&sch->lock, flags);
-	offset = sch_gpio_offset(sch, gpio, reg);
-	bit = sch_gpio_bit(sch, gpio);
+>   		irq_domain_remove(gpiochip->irqdomain);
+>   	}
+>   
+> @@ -596,6 +596,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+>   		gpiochip->irqchip = NULL;
+>   		return -EINVAL;
+>   	}
+> +	gpiochip->irq_base = first_irq;
+>   	irqchip->irq_request_resources = gpiochip_irq_reqres;
+>   	irqchip->irq_release_resources = gpiochip_irq_relres;
+>   
+> @@ -604,14 +605,10 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+>   	 * any gpiochip calls. If the first_irq was zero, this is
+>   	 * necessary to allocate descriptors for all IRQs.
+>   	 */
+> -	for (offset = 0; offset < gpiochip->ngpio; offset++) {
+> -		irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
+> -		if (offset == 0)
+> -			/*
+> -			 * Store the base into the gpiochip to be used when
+> -			 * unmapping the irqs.
+> -			 */
+> -			gpiochip->irq_base = irq_base;
+> +	if (first_irq == 0) {
+> +		for (offset = 0; offset < gpiochip->ngpio; offset++)
+> +			irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
+> +
+>   	}
+>   
+>   	acpi_gpiochip_request_interrupts(gpiochip);
+> 
+> 
 
-	set = inb(sch->iobase + offset); 
-	if (enable)
-		outb(set | BIT(bit), sch->iobase + offset);
-	else
-		outb(disable & ~BIT(bit), sch->iobase + offset);
-
-	spin_unlock_irqrestore(&sch->lock, flags);
-}
-
-Do you think this make sense? I am in the progress of implementing and testing.
-
-Rebecca
