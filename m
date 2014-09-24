@@ -1,49 +1,51 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] gpio: only enable kona driver on BCM_MOBILE or for
- compile testing
-Date: Wed, 24 Sep 2014 10:06:25 +0200
-Message-ID: <20140924080625.GE3755@pengutronix.de>
-References: <1392990146-18916-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdZg5uoP5LurL5vOPCaKQu2B=neybuo=gwM_JT7UAhRkjg@mail.gmail.com>
- <530FB808.5050802@broadcom.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: fix a few issues with gpiochip_remove
+Date: Wed, 24 Sep 2014 10:51:23 +0200
+Message-ID: <CACRpkdZGBe1UfazBUgtq=oHgRpFPkRcxYtJz++JgUbzUSiOsyg@mail.gmail.com>
+References: <1409930524-1529-1-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <530FB808.5050802@broadcom.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Markus Mayer <mmayer@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:46192 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753225AbaIXIvY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 04:51:24 -0400
+Received: by mail-ig0-f178.google.com with SMTP id r10so6107270igi.11
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 01:51:24 -0700 (PDT)
+In-Reply-To: <1409930524-1529-1-git-send-email-octavian.purdila@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Feb 27, 2014 at 02:11:20PM -0800, Markus Mayer wrote:
-> On 14-02-27 01:16 AM, Linus Walleij wrote:
-> >On Fri, Feb 21, 2014 at 2:42 PM, Uwe Kleine-K=F6nig
-> ><u.kleine-koenig@pengutronix.de> wrote:
-> >
-> >>This change makes it easier to configure a kernel for a real machine by
-> >>not showing the option to enable it at all if COMPILE_TEST is off.
-> >>
-> >>Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> >
-> >Markus: can you ACK this patch?
-> =
+On Fri, Sep 5, 2014 at 5:22 PM, Octavian Purdila
+<octavian.purdila@intel.com> wrote:
 
-> Acked-by: Markus Mayer <mmayer@broadcom.com>
-ping!
+> The current implementation of gpiochip_remove() does not check to see
+> if the GPIO pins are busy before removing the associated irqchip and
+> this is causing the following warning:
+(...)
+> A retry operation is needed in the case of MFD devices that bundles a
+> GPIO device and another device that is an indirect consumer of the
+> GPIO device (typical an I2C bus).
 
-Uwe
+We have just finalized a set of patches making gpiochip_remove()
+not return an error code, because it just must work.
 
--- =
+It seems like this patch want us to sort of reverse that whole train
+of work and go back to the old style of having gpiochip_remove()
+be able to fail :-/
 
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+I would suggest that if this usecase is to be supported for thing
+like MFD devices, we need to introduce gpiochip_try_remove()
+in parallel with the current implementation, so that those drivers
+that actually want to retry the remove the chip can use that
+interface explicitly.
+
+Can you look into this option?
+
+Please also look over gpiochip_remove() as it looks right now
+in linux-next...
+
+Yours,
+Linus Walleij
