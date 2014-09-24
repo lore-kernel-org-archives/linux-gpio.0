@@ -1,26 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH gpio v1 1/2] gpio: ks8695: fix switch case indentation
-Date: Wed, 24 Sep 2014 10:57:20 +0200
-Message-ID: <CACRpkdb2r77TP1UpY+2PGFRzeXxgJiBvhWoSJdBJJ7pz_rk5Pg@mail.gmail.com>
-References: <1411226071-11625-1-git-send-email-varkab@cdac.in>
+Subject: Re: [PATCH 3/3] gpio: xgene: Remove unneeded #ifdef CONFIG_OF guard
+Date: Wed, 24 Sep 2014 11:03:26 +0200
+Message-ID: <CACRpkdb=xW9mHDkdr82MnSGpXovZF01sE-GynzoZjc_JvkyMfg@mail.gmail.com>
+References: <1411273889.20539.0.camel@phoenix>
+	<1411273979.20539.2.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:45669 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753245AbaIXI5V (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 04:57:21 -0400
-Received: by mail-ie0-f178.google.com with SMTP id at20so11248622iec.9
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 01:57:20 -0700 (PDT)
-In-Reply-To: <1411226071-11625-1-git-send-email-varkab@cdac.in>
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:45425 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751414AbaIXJD1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 05:03:27 -0400
+Received: by mail-ig0-f179.google.com with SMTP id l13so6140644iga.12
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 02:03:26 -0700 (PDT)
+In-Reply-To: <1411273979.20539.2.camel@phoenix>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Varka Bhadram <varkabhadram@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Varka Bhadram <varkab@cdac.in>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Feng Kan <fkan@apm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, Sep 20, 2014 at 5:14 PM, Varka Bhadram <varkabhadram@gmail.com> wrote:
+On Sun, Sep 21, 2014 at 6:32 AM, Axel Lin <axel.lin@ingics.com> wrote:
 
-> Signed-off-by: Varka Bhadram <varkab@cdac.in>
+> This driver depends on OF_GPIO, so it won't be built if !CONFIG_OF.
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
 Patch applied.
 
