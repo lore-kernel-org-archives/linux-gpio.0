@@ -1,51 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: fix a few issues with gpiochip_remove
-Date: Wed, 24 Sep 2014 10:51:23 +0200
-Message-ID: <CACRpkdZGBe1UfazBUgtq=oHgRpFPkRcxYtJz++JgUbzUSiOsyg@mail.gmail.com>
-References: <1409930524-1529-1-git-send-email-octavian.purdila@intel.com>
+Subject: Re: [PATCH v5 3/4] gpiolib: add irq_not_threaded flag to gpio_chip
+Date: Wed, 24 Sep 2014 10:54:51 +0200
+Message-ID: <CACRpkdbnXo9VhybkZeP7Z4b0pxCHorGJvbRw-dh_X0dWT2iC8g@mail.gmail.com>
+References: <1411158165-25794-1-git-send-email-octavian.purdila@intel.com>
+	<1411158165-25794-4-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:46192 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753225AbaIXIvY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 04:51:24 -0400
-Received: by mail-ig0-f178.google.com with SMTP id r10so6107270igi.11
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 01:51:24 -0700 (PDT)
-In-Reply-To: <1409930524-1529-1-git-send-email-octavian.purdila@intel.com>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:64896 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750817AbaIXIyw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 04:54:52 -0400
+Received: by mail-ie0-f173.google.com with SMTP id tr6so11311414ieb.32
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 01:54:51 -0700 (PDT)
+In-Reply-To: <1411158165-25794-4-git-send-email-octavian.purdila@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, johan@kernel.org, Daniel Baluta <daniel.baluta@intel.com>, laurentiu.palcu@intel.com, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 
-On Fri, Sep 5, 2014 at 5:22 PM, Octavian Purdila
+On Fri, Sep 19, 2014 at 10:22 PM, Octavian Purdila
 <octavian.purdila@intel.com> wrote:
 
-> The current implementation of gpiochip_remove() does not check to see
-> if the GPIO pins are busy before removing the associated irqchip and
-> this is causing the following warning:
-(...)
-> A retry operation is needed in the case of MFD devices that bundles a
-> GPIO device and another device that is an indirect consumer of the
-> GPIO device (typical an I2C bus).
+> Some GPIO chips (e.g. the DLN2 USB adapter) have blocking get/set
+> operation but do not need a threaded irq handler.
+>
+> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
 
-We have just finalized a set of patches making gpiochip_remove()
-not return an error code, because it just must work.
-
-It seems like this patch want us to sort of reverse that whole train
-of work and go back to the old style of having gpiochip_remove()
-be able to fail :-/
-
-I would suggest that if this usecase is to be supported for thing
-like MFD devices, we need to introduce gpiochip_try_remove()
-in parallel with the current implementation, so that those drivers
-that actually want to retry the remove the chip can use that
-interface explicitly.
-
-Can you look into this option?
-
-Please also look over gpiochip_remove() as it looks right now
-in linux-next...
+Usually I don't apply patches adding interfaces with no users, but
+this seems very useful, so patch applied. I guess your driver will
+appear on v3.19+ so then you can rely on this having been merged
+for v3.18.
 
 Yours,
 Linus Walleij
