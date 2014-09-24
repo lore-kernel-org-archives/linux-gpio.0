@@ -1,55 +1,91 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] gpio: vf610: add gpiolib/IRQ chip driver for Vybird
-Date: Wed, 24 Sep 2014 13:10:34 +0200
-Message-ID: <CACRpkdbJePuG0g=AFGqjDS4=yW0CXnkpf1Yr_1P4e9Kkpu9n-g@mail.gmail.com>
-References: <cover.1410020458.git.stefan@agner.ch>
-	<ff236f6dab7f3408551f8f4b0345e62b37fd99c5.1410020459.git.stefan@agner.ch>
-	<CACRpkdaNbTj+hXtNFZ6DqosHPfHg2G+X2Cb_S_15mULpdebgrQ@mail.gmail.com>
-	<a7c933339713dc1783770faf1eceb734@agner.ch>
+Subject: Re: [PATCH] gpio: pca953x: Fix warning when HW interrupts are
+ rescheduled by the softirq tasklet
+Date: Wed, 24 Sep 2014 13:17:12 +0200
+Message-ID: <CACRpkdYCsdMcJY7Y0gK4_zPxiWRFKkzi2TaZUi1Vn7Kp0Cbgzg@mail.gmail.com>
+References: <1410251533-4990-1-git-send-email-LW@KARO-electronics.de>
+	<CACRpkdbTXtx+EU4Dw1fxeThRUG4s5XvcJnAJ9PJd8i4KKGC65A@mail.gmail.com>
+	<5421670D.10200@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:33176 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752274AbaIXLKf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 07:10:35 -0400
-Received: by mail-ie0-f173.google.com with SMTP id tr6so11198953ieb.4
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 04:10:35 -0700 (PDT)
-In-Reply-To: <a7c933339713dc1783770faf1eceb734@agner.ch>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:50846 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751284AbaIXLRN convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 07:17:13 -0400
+Received: by mail-ig0-f178.google.com with SMTP id r10so6280206igi.17
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 04:17:12 -0700 (PDT)
+In-Reply-To: <5421670D.10200@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, Sep 23, 2014 at 1:51 PM, Stefan Agner <stefan@agner.ch> wrote:
-> [Me]
->> postcore again. I don't like this, can you get rid of it?
+On Tue, Sep 23, 2014 at 2:26 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> On 09/23/2014 03:04 PM, Linus Walleij wrote:
+>> On Tue, Sep 9, 2014 at 10:32 AM, Lothar Wa=C3=9Fmann <LW@karo-electr=
+onics.de> wrote:
+
+>>> @@ -567,6 +568,17 @@ static int pca953x_irq_setup(struct pca953x_ch=
+ip *chip,
+>>>                                  "could not connect irqchip to gpio=
+chip\n");
+>>>                          return ret;
+>>>                  }
+>>> +
+>>> +               for (i =3D 0; i < NBANK(chip); i++) {
+>>> +                       int j;
+>>> +
+>>> +                       for (j =3D 0; j < BANK_SZ; j++) {
+>>> +                               int gpio =3D gpio_chip->base + i * =
+BANK_SZ + j;
+>>> +                               int irq =3D gpio_to_irq(gpio);
+>>> +
+>>> +                               irq_set_parent(irq, client->irq);
+>>> +                       }
+>>> +               }
+>>
+>> While this is fixing the problem, but isn't the right fix to patch
+>> the function gpiochip_irq_map() in gpiolib.c to call
+>> irq_set_parent() for each IRQ as it gets mapped?
+>>
+>> This driver is using the gpiolib irqchip helpers...
+>>
+>> Then you fix not just this driver but all drivers, plus the complex
+>> loop and calls to gpio_to_irq() etc goes away.
 >
-> I guess we could load this driver easily a bit later. IMHO, since lots
-> of other driver use GPIO's, we should it load before all the drivers
-> gets loaded (before device_initcall).
+> The problem here is that:
+> - we don't know parent IRQ number inside gpiolib irqchip;
+> - there can be more then one Parent IRQ per GPIO chip
 
-Nope. We use deferred probing to control that today. Ideally
-all drivers should be device_initcall() and deferred probe be used
-to order things, not by playing around with initcalls.
+We could for the simple case:
 
-> Most GPIO driver do this, some statistic again:
-> $ grep -h -o ".*_initcall" drivers/gpio/*.c | sort | uniq -c | sort -n
-> -r
->      33 subsys_initcall
->      14 postcore_initcall
->       2 device_initcall
->       2 arch_initcall
->       1 late_initcall
->       1 core_initcall
+void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+                  struct irq_chip *irqchip,
+                  int parent_irq,
+                  irq_flow_handler_t parent_handler)
 
-Yeah old legacy. There are patch attacks to get rid of this.
+Note parent_irq.
 
-The reason we can't just change them is because sometimes
-dependent drivers do not handle the errorpath very well can can't
-defer cleanly.
+Just add a field for parent_irq in struct gpio_chip so the
+mapping function has this around.
 
-With a new driver I expect deferred probe to be used.
+But the second case with multiple parents is a valid
+counterargument, gpiolib irqchip helpers
+is just for the simple case of a cascaded IRQ off a single
+parent, not for complex scenarios.
+
+So PCA cannot use gpiochip_set_chained_irqchip()?
+
+Anyway I feel I should fix this as per above for all
+chips using that function, right?
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
