@@ -1,76 +1,64 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 5/9] gpio: vf610: Extend with wakeup support
-Date: Wed, 24 Sep 2014 12:06:19 +0200
-Message-ID: <1411553179.2735.4.camel@pengutronix.de>
-References: <cover.1411404079.git.stefan@agner.ch>
-	 <704b6bb97147b3d0ee1557b43d85ab9376c28666.1411404079.git.stefan@agner.ch>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: Re: [PATCH] gpiolib: fix a few issues with gpiochip_remove
+Date: Wed, 24 Sep 2014 13:25:29 +0300
+Message-ID: <CAE1zotJ8J-qP+HM0GSXJ0WL-GcGGOEGKEW-X2Fd6F=1gQbFBww@mail.gmail.com>
+References: <1409930524-1529-1-git-send-email-octavian.purdila@intel.com>
+	<CACRpkdZGBe1UfazBUgtq=oHgRpFPkRcxYtJz++JgUbzUSiOsyg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:52706 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753698AbaIXKGk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 06:06:40 -0400
-In-Reply-To: <704b6bb97147b3d0ee1557b43d85ab9376c28666.1411404079.git.stefan@agner.ch>
+Received: from mail-wg0-f50.google.com ([74.125.82.50]:57168 "EHLO
+	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750940AbaIXKZa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 06:25:30 -0400
+Received: by mail-wg0-f50.google.com with SMTP id l18so4927053wgh.21
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 03:25:29 -0700 (PDT)
+In-Reply-To: <CACRpkdZGBe1UfazBUgtq=oHgRpFPkRcxYtJz++JgUbzUSiOsyg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawn.guo@freescale.com, kernel@pengutronix.de, linus.walleij@linaro.org, gnurou@gmail.com, linux@arm.linux.org.uk, jingchang.lu@freescale.com, b20788@freescale.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Stefan,
+On Wed, Sep 24, 2014 at 11:51 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Fri, Sep 5, 2014 at 5:22 PM, Octavian Purdila
+> <octavian.purdila@intel.com> wrote:
+>
+>> The current implementation of gpiochip_remove() does not check to see
+>> if the GPIO pins are busy before removing the associated irqchip and
+>> this is causing the following warning:
+> (...)
+>> A retry operation is needed in the case of MFD devices that bundles a
+>> GPIO device and another device that is an indirect consumer of the
+>> GPIO device (typical an I2C bus).
+>
+> We have just finalized a set of patches making gpiochip_remove()
+> not return an error code, because it just must work.
+>
+> It seems like this patch want us to sort of reverse that whole train
+> of work and go back to the old style of having gpiochip_remove()
+> be able to fail :-/
+>
+> I would suggest that if this usecase is to be supported for thing
+> like MFD devices, we need to introduce gpiochip_try_remove()
+> in parallel with the current implementation, so that those drivers
+> that actually want to retry the remove the chip can use that
+> interface explicitly.
+>
+> Can you look into this option?
+>
+> Please also look over gpiochip_remove() as it looks right now
+> in linux-next...
+>
 
-Am Montag, den 22.09.2014, 19:09 +0200 schrieb Stefan Agner:
-> Support Vybrid GPIO's as wakeup source by requesting the parent
-> IRQ as wakeup IRQ.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/gpio/gpio-vf610.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-> index 5f59424..50326af 100644
-> --- a/drivers/gpio/gpio-vf610.c
-> +++ b/drivers/gpio/gpio-vf610.c
-> @@ -196,12 +196,28 @@ static void vf610_gpio_irq_unmask(struct irq_data *d)
->  			  pcr_base);
->  }
->  
-> +static int vf610_gpio_irq_set_wake(struct irq_data *d, u32 enable)
-> +{
-> +	struct vf610_gpio_port *port = irq_data_get_irq_chip_data(d);
-> +
-> +	if (enable)
-> +		enable_irq_wake(port->irq);
-> +	else
-> +		disable_irq_wake(port->irq);
-> +
-> +	return 0;
-> +}
-> +
-> +
->  static struct irq_chip vf610_gpio_irq_chip = {
->  	.name		= "gpio-vf610",
->  	.irq_ack	= vf610_gpio_irq_ack,
->  	.irq_mask	= vf610_gpio_irq_mask,
->  	.irq_unmask	= vf610_gpio_irq_unmask,
->  	.irq_set_type	= vf610_gpio_irq_set_type,
-> +#ifdef CONFIG_PM_SLEEP
-> +	.irq_set_wake	= vf610_gpio_irq_set_wake,
-> +#endif
+I was not aware of the changes to gpiochip_remove() when I sent this
+patch and I do agree that it is better to have gpiochip_remove() not
+be able to fail.
 
-Either you need to get rid of this #ifdef and always assign this
-function or you need to wrap the function itself into the same #ifdef.
-Otherwise you provoke a unused function warning with !CONFIG_PM_SLEEP.
+The main issue is actually with USB devices not necessarily MFD. If
+the USB device is unplugged while IRQ GPIOs are requested then I see
+the issues mentioned in the patch.
 
-Given that this function isn't really that big I would argue to just
-drop the #ifdef.
-
-Regards,
-Lucas 
-
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
-
+I will try to rework the patch to use the assumption that
+gpiochip_remove() must not fail. That will likely need adding some
+reference counting when calling gpiod_request() and gpiod_free().
