@@ -1,37 +1,55 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v5 3/4] gpiolib: add irq_not_threaded flag to gpio_chip
-Date: Wed, 24 Sep 2014 13:01:42 +0200
-Message-ID: <20140924110142.GC17019@localhost>
-References: <1411158165-25794-1-git-send-email-octavian.purdila@intel.com>
- <1411158165-25794-4-git-send-email-octavian.purdila@intel.com>
- <CACRpkdbnXo9VhybkZeP7Z4b0pxCHorGJvbRw-dh_X0dWT2iC8g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/4] gpio: vf610: add gpiolib/IRQ chip driver for Vybird
+Date: Wed, 24 Sep 2014 13:10:34 +0200
+Message-ID: <CACRpkdbJePuG0g=AFGqjDS4=yW0CXnkpf1Yr_1P4e9Kkpu9n-g@mail.gmail.com>
+References: <cover.1410020458.git.stefan@agner.ch>
+	<ff236f6dab7f3408551f8f4b0345e62b37fd99c5.1410020459.git.stefan@agner.ch>
+	<CACRpkdaNbTj+hXtNFZ6DqosHPfHg2G+X2Cb_S_15mULpdebgrQ@mail.gmail.com>
+	<a7c933339713dc1783770faf1eceb734@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbnXo9VhybkZeP7Z4b0pxCHorGJvbRw-dh_X0dWT2iC8g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Octavian Purdila <octavian.purdila@intel.com>, Greg KH <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, johan@kernel.org, Daniel Baluta <daniel.baluta@intel.com>, laurentiu.palcu@intel.com, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:33176 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752274AbaIXLKf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 07:10:35 -0400
+Received: by mail-ie0-f173.google.com with SMTP id tr6so11198953ieb.4
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 04:10:35 -0700 (PDT)
+In-Reply-To: <a7c933339713dc1783770faf1eceb734@agner.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>
 
-On Wed, Sep 24, 2014 at 10:54:51AM +0200, Linus Walleij wrote:
-> On Fri, Sep 19, 2014 at 10:22 PM, Octavian Purdila
-> <octavian.purdila@intel.com> wrote:
-> 
-> > Some GPIO chips (e.g. the DLN2 USB adapter) have blocking get/set
-> > operation but do not need a threaded irq handler.
-> >
-> > Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
-> 
-> Usually I don't apply patches adding interfaces with no users, but
-> this seems very useful, so patch applied. I guess your driver will
-> appear on v3.19+ so then you can rely on this having been merged
-> for v3.18.
+On Tue, Sep 23, 2014 at 1:51 PM, Stefan Agner <stefan@agner.ch> wrote:
+> [Me]
+>> postcore again. I don't like this, can you get rid of it?
+>
+> I guess we could load this driver easily a bit later. IMHO, since lots
+> of other driver use GPIO's, we should it load before all the drivers
+> gets loaded (before device_initcall).
 
-Octavian, please include this one in any future revision of you series
-so that it is self-contained (at least until v3.18-rc1 is out)
-nonetheless.
+Nope. We use deferred probing to control that today. Ideally
+all drivers should be device_initcall() and deferred probe be used
+to order things, not by playing around with initcalls.
 
-Thanks,
-Johan
+> Most GPIO driver do this, some statistic again:
+> $ grep -h -o ".*_initcall" drivers/gpio/*.c | sort | uniq -c | sort -n
+> -r
+>      33 subsys_initcall
+>      14 postcore_initcall
+>       2 device_initcall
+>       2 arch_initcall
+>       1 late_initcall
+>       1 core_initcall
+
+Yeah old legacy. There are patch attacks to get rid of this.
+
+The reason we can't just change them is because sometimes
+dependent drivers do not handle the errorpath very well can can't
+defer cleanly.
+
+With a new driver I expect deferred probe to be used.
+
+Yours,
+Linus Walleij
