@@ -1,39 +1,39 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/4] mmc: slot-gpio: switch to use flags when getting GPIO
-Date: Wed, 24 Sep 2014 16:38:18 +0900
-Message-ID: <CAAVeFuK+RLFu-RgU-qyKe7rj2kgVDBVxXgBeg-teLo2NXLEfYA@mail.gmail.com>
-References: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org>
- <CAPDyKFqw2N9zg41iz=qo3kQghmdYpafYdy545NYuu-Ji6pJELQ@mail.gmail.com>
- <541FDBC0.4020302@intel.com> <CACRpkdbBq0VCBAOv7QX8pk73-_hU5Yy6QWURr5NohpG+osaYow@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: Fix potentially NULL handler data passed to chained
+ irqchip handler
+Date: Wed, 24 Sep 2014 09:48:07 +0200
+Message-ID: <CACRpkdaCb0pEncKJ_OD6BG6tgRBOj7k7OQJuE4de0EJn_7ZQUQ@mail.gmail.com>
+References: <1410873795-31980-1-git-send-email-jarkko.nikula@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbBq0VCBAOv7QX8pk73-_hU5Yy6QWURr5NohpG+osaYow@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:38192 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751371AbaIXHsI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 03:48:08 -0400
+Received: by mail-ig0-f182.google.com with SMTP id hn15so6045803igb.15
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Sep 2014 00:48:07 -0700 (PDT)
+In-Reply-To: <1410873795-31980-1-git-send-email-jarkko.nikula@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Stable <stable@vger.kernel.org>
 
-On Mon, Sep 22, 2014 at 9:37 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Sep 22, 2014 at 10:20 AM, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
->> Unfortunately it doesn't seem to work.  I needed the patch
->> below.
->>
->>
->> From: Adrian Hunter <adrian.hunter@intel.com>
->> Date: Mon, 22 Sep 2014 11:01:16 +0300
->> Subject: [PATCH] gpio: Fix gpio direction flags not getting set
->>
->> GPIO direction flags are not getting set because
->> an 'if' statement is the wrong way around.
->>
->> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->
-> Oopps that's a bug, patch applied for fixes, so it'll work when
-> this hits upstream.
->
-> Alex: confirm?
+On Tue, Sep 16, 2014 at 3:23 PM, Jarkko Nikula
+<jarkko.nikula@linux.intel.com> wrote:
 
-Oh yes absolutely, this was a mistake of mine. Thanks and sorry for
-the inconvenience.
+> There is possibility with misconfigured pins that interrupt occurs instantly
+> after setting irq_set_chained_handler() in gpiochip_set_chained_irqchip().
+> Now if handler gets called before irq_set_handler_data() the handler gets
+> NULL handler data.
+>
+> Fix this by moving irq_set_handler_data() call before
+> irq_set_chained_handler() in gpiochip_set_chained_irqchip().
+>
+> Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> Cc: Stable <stable@vger.kernel.org> # 3.15+
+
+Patch applied for fixes with Alex's review tag.
+
+Yours,
+Linus Walleij
