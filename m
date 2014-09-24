@@ -1,52 +1,76 @@
-From: 'Mika Westerberg' <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
-Date: Wed, 24 Sep 2014 12:50:52 +0300
-Message-ID: <20140924095052.GZ1786@lahna.fi.intel.com>
-References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
- <1410943745-9354-2-git-send-email-rebecca.swee.fun.chang@intel.com>
- <20140918111705.GM10854@lahna.fi.intel.com>
- <50B33AC5ED75F74F991980326F1C438D0FBDB28B@PGSMSX108.gar.corp.intel.com>
- <20140922092528.GM1786@lahna.fi.intel.com>
- <50B33AC5ED75F74F991980326F1C438D0FBDBA92@PGSMSX108.gar.corp.intel.com>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 5/9] gpio: vf610: Extend with wakeup support
+Date: Wed, 24 Sep 2014 12:06:19 +0200
+Message-ID: <1411553179.2735.4.camel@pengutronix.de>
+References: <cover.1411404079.git.stefan@agner.ch>
+	 <704b6bb97147b3d0ee1557b43d85ab9376c28666.1411404079.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:37139 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751693AbaIXJvZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 24 Sep 2014 05:51:25 -0400
-Content-Disposition: inline
-In-Reply-To: <50B33AC5ED75F74F991980326F1C438D0FBDBA92@PGSMSX108.gar.corp.intel.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:52706 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753698AbaIXKGk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Sep 2014 06:06:40 -0400
+In-Reply-To: <704b6bb97147b3d0ee1557b43d85ab9376c28666.1411404079.git.stefan@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawn.guo@freescale.com, kernel@pengutronix.de, linus.walleij@linaro.org, gnurou@gmail.com, linux@arm.linux.org.uk, jingchang.lu@freescale.com, b20788@freescale.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, Sep 24, 2014 at 12:55:07AM +0000, Chang, Rebecca Swee Fun wrote:
-> > > The register values are required when it comes to IRQ handling. By
-> > > passing in the registers values, we can make full use of the
-> > > algorithms without introducing extra/similar algorithms to compute
-> > > other register offset values.
-> > > For example, we have other offset values to handle such as:-
-> > > GTPE	0x0C
-> > > GTNE	0x10
-> > > GGPE	0x14
-> > > GSMI	0x18
-> > > GTS	0x1C
-> > > CGNMIEN	0x40
-> > > RGNMIEN	0x44
-> > 
-> > Well, can we at least call it something else than sch_gpio_enable()?
-> > Perhaps sch_gpio_set_value() or so?
+Hi Stefan,
+
+Am Montag, den 22.09.2014, 19:09 +0200 schrieb Stefan Agner:
+> Support Vybrid GPIO's as wakeup source by requesting the parent
+> IRQ as wakeup IRQ.
 > 
-> sch_gpio_set_value() sounds good. After think twice, I intend to merge
-> sch_gpio_enable() and sch_gpio_disable() into one functions. Using
-> variable "enable" as an indicator, I can control whether to enable or
-> disable when calling the function. Here is my draft:
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/gpio/gpio-vf610.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+> index 5f59424..50326af 100644
+> --- a/drivers/gpio/gpio-vf610.c
+> +++ b/drivers/gpio/gpio-vf610.c
+> @@ -196,12 +196,28 @@ static void vf610_gpio_irq_unmask(struct irq_data *d)
+>  			  pcr_base);
+>  }
+>  
+> +static int vf610_gpio_irq_set_wake(struct irq_data *d, u32 enable)
+> +{
+> +	struct vf610_gpio_port *port = irq_data_get_irq_chip_data(d);
+> +
+> +	if (enable)
+> +		enable_irq_wake(port->irq);
+> +	else
+> +		disable_irq_wake(port->irq);
+> +
+> +	return 0;
+> +}
+> +
+> +
+>  static struct irq_chip vf610_gpio_irq_chip = {
+>  	.name		= "gpio-vf610",
+>  	.irq_ack	= vf610_gpio_irq_ack,
+>  	.irq_mask	= vf610_gpio_irq_mask,
+>  	.irq_unmask	= vf610_gpio_irq_unmask,
+>  	.irq_set_type	= vf610_gpio_irq_set_type,
+> +#ifdef CONFIG_PM_SLEEP
+> +	.irq_set_wake	= vf610_gpio_irq_set_wake,
+> +#endif
 
-Actually sch_gpio_set_value() is too close to sch_gpio_set() which sets
-the GPIO to 1 or 0. How about sch_gpio_register_set() or something along
-those lines?
+Either you need to get rid of this #ifdef and always assign this
+function or you need to wrap the function itself into the same #ifdef.
+Otherwise you provoke a unused function warning with !CONFIG_PM_SLEEP.
 
-And I don't think it is good idea to add yet another functionality, like
-enable there. Please leave sch_gpio_enable()/sch_gpio_disable() as is.
+Given that this function isn't really that big I would argue to just
+drop the #ifdef.
+
+Regards,
+Lucas 
+
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
+
