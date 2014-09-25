@@ -1,154 +1,112 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: [PATCH v2 2/5] pinctrl: imx: add gpio pinmux support for vf610
-Date: Thu, 25 Sep 2014 10:47:13 +0800
-Message-ID: <20140925024712.GB6405@dragon>
-References: <cover.1411492954.git.stefan@agner.ch>
- <bb68d2360314158cd8ccb9c6794877c3bb45d72e.1411492954.git.stefan@agner.ch>
+From: Aaron Lu <aaron.lu@intel.com>
+Subject: [PATCH v2 1/2] gpio / CrystalCove: support virtual GPIO
+Date: Thu, 25 Sep 2014 10:57:26 +0800
+Message-ID: <54238496.70505@intel.com>
+References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>	<1410229968-11638-2-git-send-email-aaron.lu@intel.com> <CACRpkdaJjqs9WNcVvjsSWhzLD2QpcyR11MVm4xhm4GqB28eOCA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1on0145.outbound.protection.outlook.com ([157.56.110.145]:55942
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751232AbaIYCsC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 24 Sep 2014 22:48:02 -0400
-Content-Disposition: inline
-In-Reply-To: <bb68d2360314158cd8ccb9c6794877c3bb45d72e.1411492954.git.stefan@agner.ch>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaJjqs9WNcVvjsSWhzLD2QpcyR11MVm4xhm4GqB28eOCA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, =?windows-1252?Q?Dani?= =?windows-1252?Q?el_Gl=F6ckner?= <dg@emlix.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com
 
-On Tue, Sep 23, 2014 at 07:37:54PM +0200, Stefan Agner wrote:
-> Add pinmux support for GPIO for Vybrid (vf610) IOMUX controller.
-> This is needed since direction configuration is not part of the
-> GPIO module in Vybrid.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  drivers/pinctrl/pinctrl-imx.c   | 54 +++++++++++++++++++++++++++++++++++++++++
->  drivers/pinctrl/pinctrl-imx.h   |  1 +
->  drivers/pinctrl/pinctrl-vf610.c |  2 +-
->  3 files changed, 56 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-imx.c b/drivers/pinctrl/pinctrl-imx.c
-> index 0d4558b..64d1b59 100644
-> --- a/drivers/pinctrl/pinctrl-imx.c
-> +++ b/drivers/pinctrl/pinctrl-imx.c
-> @@ -294,10 +294,59 @@ static int imx_pmx_get_groups(struct pinctrl_dev *pctldev, unsigned selector,
->  	return 0;
->  }
->  
-> +static int imx_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
-> +			struct pinctrl_gpio_range *range, unsigned offset)
-> +{
-> +	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
-> +	const struct imx_pinctrl_soc_info *info = ipctl->info;
-> +	const struct imx_pin_reg *pin_reg;
-> +	u32 reg;
-> +
-> +	if (!(info->flags & GPIO_CONTROL))
-> +		return -EINVAL;
-> +
-> +	pin_reg = &info->pin_regs[offset];
-> +	if (pin_reg->mux_reg == -1)
-> +		return -EINVAL;
-> +
-> +	reg = readl(ipctl->base + pin_reg->mux_reg);
-> +	reg &= ~(0x7 << 20);
-> +	writel(reg, ipctl->base + pin_reg->mux_reg);
+The virtual GPIO introduced in ACPI table of Baytrail-T based system is
+used to solve a problem under Windows. We do not have such problems
+under Linux so we do not actually need them. But we have to tell GPIO
+library that the Crystal Cove GPIO chip has this many GPIO pins or the
+common GPIO handler will refuse any access to those high number GPIO
+pins, which will resulted in a failure evaluation of every ACPI control
+method that is used to turn on/off power resource and/or report sensor
+temperatures.
 
-Isn't this setup redundant at all, since imx_pmx_enable() already takes
-care of setting mux register including GPIO mode?
+Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+---
+v2: remove the hunk to increase NR_GPIO to 512.
 
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
-> +	   struct pinctrl_gpio_range *range, unsigned offset, bool input)
-> +{
-> +	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
-> +	const struct imx_pinctrl_soc_info *info = ipctl->info;
-> +	const struct imx_pin_reg *pin_reg;
-> +	u32 reg;
-> +
-> +	if (!(info->flags & GPIO_CONTROL))
-> +		return -EINVAL;
-> +
-> +	pin_reg = &info->pin_regs[offset];
-> +	if (pin_reg->mux_reg == -1)
-> +		return -EINVAL;
-> +
-> +	reg = readl(ipctl->base + pin_reg->mux_reg);
-> +	if (input)
-> +		reg &= ~0x2;
-> +	else
-> +		reg |= 0x2;
+ drivers/gpio/gpio-crystalcove.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-This is all about Output Buffer Enable (OBE) bit.  What about Input
-Buffer Enable (IBE) bit?  Don't we need to set or clear it as per GPIO
-direction as well?
-
-> +	writel(reg, ipctl->base + pin_reg->mux_reg);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct pinmux_ops imx_pmx_ops = {
->  	.get_functions_count = imx_pmx_get_funcs_count,
->  	.get_function_name = imx_pmx_get_func_name,
->  	.get_function_groups = imx_pmx_get_groups,
-> +	.gpio_request_enable = imx_pmx_gpio_request_enable,
-> +	.gpio_set_direction = imx_pmx_gpio_set_direction,
->  	.enable = imx_pmx_enable,
->  };
->  
-> @@ -579,6 +628,11 @@ int imx_pinctrl_probe(struct platform_device *pdev,
->  		dev_err(&pdev->dev, "wrong pinctrl info\n");
->  		return -EINVAL;
->  	}
-> +
-> +	/* GPIO control functions only intended for shared mux/conf register */
-> +	if (info->flags & GPIO_CONTROL)
-> +		BUG_ON(!(info->flags & SHARE_MUX_CONF_REG));
-> +
-
-If this is always true, why don't we just use flag SHARE_MUX_CONF_REG
-and save GPIO_CONTROL?  This check doesn't make too much sense to me if
-we choose to have a new flag for GPIO setup.  IMO, we should probably
-either drop the GPIO_CONTROL flag or the check.
-
-Shawn
-
->  	info->dev = &pdev->dev;
->  
->  	/* Create state holders etc for this driver */
-> diff --git a/drivers/pinctrl/pinctrl-imx.h b/drivers/pinctrl/pinctrl-imx.h
-> index 49e55d3..8f37ca4 100644
-> --- a/drivers/pinctrl/pinctrl-imx.h
-> +++ b/drivers/pinctrl/pinctrl-imx.h
-> @@ -84,6 +84,7 @@ struct imx_pinctrl_soc_info {
->  };
->  
->  #define SHARE_MUX_CONF_REG	0x1
-> +#define GPIO_CONTROL		0x2
->  
->  #define NO_MUX		0x0
->  #define NO_PAD		0x0
-> diff --git a/drivers/pinctrl/pinctrl-vf610.c b/drivers/pinctrl/pinctrl-vf610.c
-> index b788e15..fdf5661 100644
-> --- a/drivers/pinctrl/pinctrl-vf610.c
-> +++ b/drivers/pinctrl/pinctrl-vf610.c
-> @@ -299,7 +299,7 @@ static const struct pinctrl_pin_desc vf610_pinctrl_pads[] = {
->  static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
->  	.pins = vf610_pinctrl_pads,
->  	.npins = ARRAY_SIZE(vf610_pinctrl_pads),
-> -	.flags = SHARE_MUX_CONF_REG,
-> +	.flags = SHARE_MUX_CONF_REG | GPIO_CONTROL,
->  };
->  
->  static struct of_device_id vf610_pinctrl_of_match[] = {
-> -- 
-> 2.1.0
-> 
+diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
+index e3712f0e51ab..186b76ef71a1 100644
+--- a/drivers/gpio/gpio-crystalcove.c
++++ b/drivers/gpio/gpio-crystalcove.c
+@@ -24,6 +24,7 @@
+ #include <linux/mfd/intel_soc_pmic.h>
+ 
+ #define CRYSTALCOVE_GPIO_NUM	16
++#define CRYSTALCOVE_VGPIO_NUM	0x5e
+ 
+ #define UPDATE_IRQ_TYPE		BIT(0)
+ #define UPDATE_IRQ_MASK		BIT(1)
+@@ -130,6 +131,9 @@ static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
+ {
+ 	struct crystalcove_gpio *cg = to_cg(chip);
+ 
++	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++		return 0;
++
+ 	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
+ 			    CTLO_INPUT_SET);
+ }
+@@ -139,6 +143,9 @@ static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
+ {
+ 	struct crystalcove_gpio *cg = to_cg(chip);
+ 
++	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++		return 0;
++
+ 	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
+ 			    CTLO_OUTPUT_SET | value);
+ }
+@@ -149,6 +156,9 @@ static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ 	int ret;
+ 	unsigned int val;
+ 
++	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++		return 0;
++
+ 	ret = regmap_read(cg->regmap, to_reg(gpio, CTRL_IN), &val);
+ 	if (ret)
+ 		return ret;
+@@ -161,6 +171,9 @@ static void crystalcove_gpio_set(struct gpio_chip *chip,
+ {
+ 	struct crystalcove_gpio *cg = to_cg(chip);
+ 
++	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++		return;
++
+ 	if (value)
+ 		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 1);
+ 	else
+@@ -256,7 +269,7 @@ static irqreturn_t crystalcove_gpio_irq_handler(int irq, void *data)
+ 
+ 	pending = p0 | p1 << 8;
+ 
+-	for (gpio = 0; gpio < cg->chip.ngpio; gpio++) {
++	for (gpio = 0; gpio < CRYSTALCOVE_GPIO_NUM; gpio++) {
+ 		if (pending & BIT(gpio)) {
+ 			virq = irq_find_mapping(cg->chip.irqdomain, gpio);
+ 			generic_handle_irq(virq);
+@@ -273,7 +286,7 @@ static void crystalcove_gpio_dbg_show(struct seq_file *s,
+ 	int gpio, offset;
+ 	unsigned int ctlo, ctli, mirqs0, mirqsx, irq;
+ 
+-	for (gpio = 0; gpio < cg->chip.ngpio; gpio++) {
++	for (gpio = 0; gpio < CRYSTALCOVE_GPIO_NUM; gpio++) {
+ 		regmap_read(cg->regmap, to_reg(gpio, CTRL_OUT), &ctlo);
+ 		regmap_read(cg->regmap, to_reg(gpio, CTRL_IN), &ctli);
+ 		regmap_read(cg->regmap, gpio < 8 ? MGPIO0IRQS0 : MGPIO1IRQS0,
+@@ -320,7 +333,7 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
+ 	cg->chip.get = crystalcove_gpio_get;
+ 	cg->chip.set = crystalcove_gpio_set;
+ 	cg->chip.base = -1;
+-	cg->chip.ngpio = CRYSTALCOVE_GPIO_NUM;
++	cg->chip.ngpio = CRYSTALCOVE_VGPIO_NUM;
+ 	cg->chip.can_sleep = true;
+ 	cg->chip.dev = dev;
+ 	cg->chip.dbg_show = crystalcove_gpio_dbg_show;
+-- 
+1.9.3
