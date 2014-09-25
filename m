@@ -1,36 +1,64 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] gpio / CrystalCove: support virtual GPIO
-Date: Thu, 25 Sep 2014 15:16:26 +0200
-Message-ID: <CACRpkdYeOfsx-PpEKaJY14sUqQ2VRiNmXnn_m-mrMzpBtcuBpg@mail.gmail.com>
-References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>
-	<1410229968-11638-2-git-send-email-aaron.lu@intel.com>
-	<CACRpkdaJjqs9WNcVvjsSWhzLD2QpcyR11MVm4xhm4GqB28eOCA@mail.gmail.com>
-	<54238496.70505@intel.com>
+Subject: Re: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
+Date: Thu, 25 Sep 2014 15:18:16 +0200
+Message-ID: <CACRpkdawGzikHPR30ZCSH4+=gZNsOwr8EhEFXswDwOPUWn9h1g@mail.gmail.com>
+References: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>
+	<CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
+	<35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>
+	<54216EA5.5010506@ti.com>
+	<CACRpkdaM-1btosNFGMJy_U4F6rQfiG7sQXyyM0gyQ6OhC=_c8Q@mail.gmail.com>
+	<35FD53F367049845BC99AC72306C23D103D6DB491636@CNBJMBX05.corpusers.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <54238496.70505@intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, =?UTF-8?Q?Daniel_Gl=C3=B6ckner?= <dg@emlix.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:38778 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751641AbaIYNSQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 09:18:16 -0400
+Received: by mail-ie0-f169.google.com with SMTP id rp18so11735708iec.0
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Sep 2014 06:18:16 -0700 (PDT)
+In-Reply-To: <35FD53F367049845BC99AC72306C23D103D6DB491636@CNBJMBX05.corpusers.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
 
-On Thu, Sep 25, 2014 at 4:57 AM, Aaron Lu <aaron.lu@intel.com> wrote:
-
-> The virtual GPIO introduced in ACPI table of Baytrail-T based system is
-> used to solve a problem under Windows. We do not have such problems
-> under Linux so we do not actually need them. But we have to tell GPIO
-> library that the Crystal Cove GPIO chip has this many GPIO pins or the
-> common GPIO handler will refuse any access to those high number GPIO
-> pins, which will resulted in a failure evaluation of every ACPI control
-> method that is used to turn on/off power resource and/or report sensor
-> temperatures.
+On Thu, Sep 25, 2014 at 9:47 AM, Wang, Yalin <Yalin.Wang@sonymobile.com> wrote:
+>> From: Linus Walleij [mailto:linus.walleij@linaro.org]
+>>
+>> On Tue, Sep 23, 2014 at 2:59 PM, Grygorii Strashko
+>> <grygorii.strashko@ti.com> wrote:
+>>
+>> > Now the "irq_base" is used only twice in gpiolib code and below diff
+>> > should allow to drop it completely from gpiolib code.
+>> >
+>> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c index
+>> > 15cc0bb..81762ed 100644
+>> > --- a/drivers/gpio/gpiolib.c
+>> > +++ b/drivers/gpio/gpiolib.c
+>> > @@ -524,7 +524,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip
+>> *gpiochip)
+>> >         /* Remove all IRQ mappings and delete the domain */
+>> >         if (gpiochip->irqdomain) {
+>> >                 for (offset = 0; offset < gpiochip->ngpio; offset++)
+>> > -                       irq_dispose_mapping(gpiochip->irq_base + offset);
+>> > +
+>> > + irq_dispose_mapping(irq_find_mapping(gpiochip->irqdomain, offset));
+>> >                 irq_domain_remove(gpiochip->irqdomain);
+>> >         }
+>> >
+>> > not tested.
+>>
+>> I like the looks of this.
+>>
+>> Grygorii, can you send a proper, tested patch for this? Thansk!
 >
-> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> ---
-> v2: remove the hunk to increase NR_GPIO to 512.
+> Could we also remove gpiochip->irq_base if use this solution?
+> It seems gpiochip->irq_base is useless .
 
-Patch applied with Mika's ACK, also renumbered 0x5e to 94.
+I think it is used in some drivers and especially for pin ranges
+visavis the pin control subsystem, so that could be a complex
+operation.
 
 Yours,
 Linus Walleij
