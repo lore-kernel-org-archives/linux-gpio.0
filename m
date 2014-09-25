@@ -1,69 +1,189 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pca953x: Fix warning when HW interrupts are
- rescheduled by the softirq tasklet
-Date: Thu, 25 Sep 2014 10:07:40 +0200
-Message-ID: <CACRpkdYtjQC_hCiqSB7fidct6CjJ5kMbj0PegW3MEuouBajv+g@mail.gmail.com>
-References: <1410251533-4990-1-git-send-email-LW@KARO-electronics.de>
-	<CACRpkdbTXtx+EU4Dw1fxeThRUG4s5XvcJnAJ9PJd8i4KKGC65A@mail.gmail.com>
-	<5421670D.10200@ti.com>
-	<CACRpkdYCsdMcJY7Y0gK4_zPxiWRFKkzi2TaZUi1Vn7Kp0Cbgzg@mail.gmail.com>
-	<5422B8F0.9060803@ti.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v2 3/5] gpio: vf610: add gpiolib/IRQ chip driver for
+ Vybrid
+Date: Thu, 25 Sep 2014 10:10:31 +0200
+Message-ID: <fc26fd2a2b95b010d43ec653b6724d7d@agner.ch>
+References: <cover.1411492954.git.stefan@agner.ch>
+ <81b47949f0806a335f380be916ec88f07b31290a.1411492954.git.stefan@agner.ch>
+ <20140925055446.GC6405@dragon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:41847 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751160AbaIYIHl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 04:07:41 -0400
-Received: by mail-ie0-f180.google.com with SMTP id ar1so9947893iec.25
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Sep 2014 01:07:40 -0700 (PDT)
-In-Reply-To: <5422B8F0.9060803@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140925055446.GC6405@dragon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shawn Guo <shawn.guo@freescale.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Wed, Sep 24, 2014 at 2:28 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 09/24/2014 02:17 PM, Linus Walleij wrote:
+Am 2014-09-25 07:55, schrieb Shawn Guo:
+> On Tue, Sep 23, 2014 at 07:37:55PM +0200, Stefan Agner wrote:
+>> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+>> new file mode 100644
+>> index 0000000..6649a13
+>> --- /dev/null
+>> +++ b/drivers/gpio/gpio-vf610.c
+>> @@ -0,0 +1,284 @@
+>> +/*
+>> + * vf610 GPIO support through PORT and GPIO module
+>> + *
+>> + * Copyright (c) 2014 Toradex AG.
+>> + *
+>> + * Author: Stefan Agner <stefan@agner.ch>.
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> + * modify it under the terms of the GNU General Public License
+>> + * as published by the Free Software Foundation; either version 2
+>> + * of the License, or (at your option) any later version.
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/init.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/bitops.h>
+>> +#include <linux/gpio.h>
+> 
+> You might want to have the headers sort alphabetically.
+> 
+>> +#include <linux/platform_device.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/of_irq.h>
+>> +#include <linux/module.h>
+>> +#include <asm-generic/bug.h>
+> 
+> Why do we need this header?
+> 
+>> +
+>> +
+> 
+> One new line is enough.
+> 
+>> +#define VF610_GPIO_PER_PORT		32
+>> +
+>> +struct vf610_gpio_port {
+>> +	struct gpio_chip gc;
+>> +	void __iomem *base;
+>> +	void __iomem *gpio_base;
+>> +	u8 irqc[VF610_GPIO_PER_PORT];
+>> +};
+>> +
+>> +#define GPIO_PDOR		0x00
+>> +#define GPIO_PSOR		0x04
+>> +#define GPIO_PCOR		0x08
+>> +#define GPIO_PTOR		0x0c
+>> +#define GPIO_PDIR		0x10
+>> +
+>> +#define PORT_PCR(n)		(n * 0x4)
+> 
+> s/n/(n)
+> 
+> ...
+> 
+>> +static int vf610_gpio_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct device_node *np = dev->of_node;
+>> +	struct vf610_gpio_port *port;
+>> +	struct resource *iores;
+>> +	struct gpio_chip *gc;
+>> +	int irq, ret;
+>> +
+>> +	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
+>> +	if (!port)
+>> +		return -ENOMEM;
+>> +
+>> +	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	port->base = devm_ioremap_resource(dev, iores);
+>> +	if (IS_ERR(port->base))
+>> +		return PTR_ERR(port->base);
+>> +
+>> +	iores = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>> +	port->gpio_base = devm_ioremap_resource(dev, iores);
+>> +	if (IS_ERR(port->gpio_base))
+>> +		return PTR_ERR(port->gpio_base);
+>> +
+>> +	irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
+> 
+> Why not platform_get_irq()?
 
->> So PCA cannot use gpiochip_set_chained_irqchip()?
->
-> Yes. It can't - pca is i2c device.
+I thought we need that mapping, but this is done dynamically when using
+gpiochip_irqchip_add.
 
-? I don't get this statement.
+> 
+>> +	if (irq == NO_IRQ)
+>> +		return -ENODEV;
+> 
+> Instead of using NO_IRQ, we should check if irq is a negative value and
+> propagate the value as the return, something like:
+> 
+> 	if (irq < 0)
+> 		return irq;
+> 
 
-Why does the fact that it is an I2C device matter?
-We have several devices that are in fact on top of
-I2C (albeit as MFD cells) like gpio-tc3589x.c.
+Agreed on everything, will fix that.
 
->> Anyway I feel I should fix this as per above for all
->> chips using that function, right?
->
-> Pls note, the gpiochip_irqchip_add() is called before
-> gpiochip_set_chained_irqchip() in all places now.
-
-Yes, but the .map function isn't called until a client
-wants to use an IRQ. And that won't happen until after
-we exit the whole .probe() function.
-
-> Also seems, we should assume that
-> gpiochip_set_chained_irqchip() can be called
-> few times and it could be unsafe to use it for storing parent_irq.
-
-Well it happens in one single driver, and was done by me.
-Maybe I should either disallow that, as that means we're adding
-multiple parents (which is what you want, right?) or actually
-implement it in a way so that multiple parents can be handled
-by the helpers, by adding the parents to a list or something.
-
-> So maybe it would be enough to just adding field for parent_irq
-> in struct gpio_chip + fix for gpiochip_irq_map() to re-use it
-> (to fix simple cases :).
-
-Yes for the simple case. But maybe it's better to patch
-gpiochip_set_chained_irqchip() to handle also the complex
-case per above?
-
-Yours,
-Linus Walleij
+> 
+>> +
+>> +	gc = &port->gc;
+>> +	gc->of_node = np;
+>> +	gc->dev = dev;
+>> +	gc->label = "vf610-gpio",
+>> +	gc->ngpio = VF610_GPIO_PER_PORT,
+>> +	gc->base = of_alias_get_id(np, "gpio") * VF610_GPIO_PER_PORT;
+>> +
+>> +	gc->request = vf610_gpio_request,
+>> +	gc->free = vf610_gpio_free,
+>> +	gc->direction_input = vf610_gpio_direction_input,
+>> +	gc->get = vf610_gpio_get,
+>> +	gc->direction_output = vf610_gpio_direction_output,
+>> +	gc->set = vf610_gpio_set,
+>> +
+>> +	ret = gpiochip_add(gc);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	/* Clear the interrupt status register for all GPIO's */
+>> +	vf610_gpio_writel(~0, port->base + PORT_ISFR);
+>> +
+>> +	ret = gpiochip_irqchip_add(gc, &vf610_gpio_irq_chip, 0,
+>> +				   handle_simple_irq, IRQ_TYPE_NONE);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to add irqchip\n");
+>> +		gpiochip_remove(gc);
+>> +		return ret;
+>> +	}
+>> +	gpiochip_set_chained_irqchip(gc, &vf610_gpio_irq_chip, irq,
+>> +				     vf610_gpio_irq_handler);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct platform_driver vf610_gpio_driver = {
+>> +	.driver		= {
+>> +		.name	= "gpio-vf610",
+>> +		.owner	= THIS_MODULE,
+>> +		.of_match_table = vf610_gpio_dt_ids,
+>> +	},
+>> +	.probe		= vf610_gpio_probe,
+>> +};
+>> +
+>> +static int __init gpio_vf610_init(void)
+>> +{
+>> +	return platform_driver_register(&vf610_gpio_driver);
+>> +}
+>> +subsys_initcall(gpio_vf610_init);
+>> +
+>> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
+>> +MODULE_DESCRIPTION("Freescale VF610 GPIO");
+>> +MODULE_LICENSE("GPL v2");
+>> --
+>> 2.1.0
+>>
