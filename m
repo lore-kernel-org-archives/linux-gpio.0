@@ -1,53 +1,69 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: only enable kona driver on BCM_MOBILE or for
- compile testing
-Date: Thu, 25 Sep 2014 09:51:35 +0200
-Message-ID: <CACRpkdarku3XYSJ+-cUmd-FdK8sqd6=XBC6NJ9RL4V4hHh0vmA@mail.gmail.com>
-References: <1392990146-18916-1-git-send-email-u.kleine-koenig@pengutronix.de>
-	<CACRpkdZg5uoP5LurL5vOPCaKQu2B=neybuo=gwM_JT7UAhRkjg@mail.gmail.com>
-	<530FB808.5050802@broadcom.com>
-	<20140924080625.GE3755@pengutronix.de>
+Subject: Re: [PATCH] gpio: pca953x: Fix warning when HW interrupts are
+ rescheduled by the softirq tasklet
+Date: Thu, 25 Sep 2014 10:07:40 +0200
+Message-ID: <CACRpkdYtjQC_hCiqSB7fidct6CjJ5kMbj0PegW3MEuouBajv+g@mail.gmail.com>
+References: <1410251533-4990-1-git-send-email-LW@KARO-electronics.de>
+	<CACRpkdbTXtx+EU4Dw1fxeThRUG4s5XvcJnAJ9PJd8i4KKGC65A@mail.gmail.com>
+	<5421670D.10200@ti.com>
+	<CACRpkdYCsdMcJY7Y0gK4_zPxiWRFKkzi2TaZUi1Vn7Kp0Cbgzg@mail.gmail.com>
+	<5422B8F0.9060803@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:64386 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751505AbaIYHvg convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 03:51:36 -0400
-Received: by mail-ie0-f173.google.com with SMTP id tr6so13325100ieb.32
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Sep 2014 00:51:35 -0700 (PDT)
-In-Reply-To: <20140924080625.GE3755@pengutronix.de>
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:41847 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751160AbaIYIHl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 04:07:41 -0400
+Received: by mail-ie0-f180.google.com with SMTP id ar1so9947893iec.25
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Sep 2014 01:07:40 -0700 (PDT)
+In-Reply-To: <5422B8F0.9060803@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Markus Mayer <mmayer@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Wed, Sep 24, 2014 at 10:06 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Thu, Feb 27, 2014 at 02:11:20PM -0800, Markus Mayer wrote:
->> On 14-02-27 01:16 AM, Linus Walleij wrote:
->> >On Fri, Feb 21, 2014 at 2:42 PM, Uwe Kleine-K=C3=B6nig
->> ><u.kleine-koenig@pengutronix.de> wrote:
->> >
->> >>This change makes it easier to configure a kernel for a real machi=
-ne by
->> >>not showing the option to enable it at all if COMPILE_TEST is off.
->> >>
->> >>Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.=
-de>
->> >
->> >Markus: can you ACK this patch?
->>
->> Acked-by: Markus Mayer <mmayer@broadcom.com>
-> ping!
+On Wed, Sep 24, 2014 at 2:28 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> On 09/24/2014 02:17 PM, Linus Walleij wrote:
 
-Patch applied with Markus' ACK!
+>> So PCA cannot use gpiochip_set_chained_irqchip()?
+>
+> Yes. It can't - pca is i2c device.
+
+? I don't get this statement.
+
+Why does the fact that it is an I2C device matter?
+We have several devices that are in fact on top of
+I2C (albeit as MFD cells) like gpio-tc3589x.c.
+
+>> Anyway I feel I should fix this as per above for all
+>> chips using that function, right?
+>
+> Pls note, the gpiochip_irqchip_add() is called before
+> gpiochip_set_chained_irqchip() in all places now.
+
+Yes, but the .map function isn't called until a client
+wants to use an IRQ. And that won't happen until after
+we exit the whole .probe() function.
+
+> Also seems, we should assume that
+> gpiochip_set_chained_irqchip() can be called
+> few times and it could be unsafe to use it for storing parent_irq.
+
+Well it happens in one single driver, and was done by me.
+Maybe I should either disallow that, as that means we're adding
+multiple parents (which is what you want, right?) or actually
+implement it in a way so that multiple parents can be handled
+by the helpers, by adding the parents to a list or something.
+
+> So maybe it would be enough to just adding field for parent_irq
+> in struct gpio_chip + fix for gpiochip_irq_map() to re-use it
+> (to fix simple cases :).
+
+Yes for the simple case. But maybe it's better to patch
+gpiochip_set_chained_irqchip() to handle also the complex
+case per above?
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
