@@ -1,39 +1,159 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] mmc, sdhci, bcm-kona, LLVMLinux: Remove use of __initconst
-Date: Thu, 25 Sep 2014 10:18:28 +0200
-Message-ID: <CACRpkdYR25dswGSd+qc8rSG=F8qL6jf6=BJdMVJXfzFV3cvsnQ@mail.gmail.com>
-References: <20140923212922.GG12270@beef>
-	<1411512908-19237-1-git-send-email-behanw@converseincode.com>
-	<1411512908-19237-2-git-send-email-behanw@converseincode.com>
-	<5774775.2EcFmuR4sV@wuerfel>
-	<54230B9C.9090703@converseincode.com>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: [PATCH v2 2/5] pinctrl: imx: add gpio pinmux support for vf610
+Date: Thu, 25 Sep 2014 17:07:15 +0800
+Message-ID: <20140925090714.GH6405@dragon>
+References: <cover.1411492954.git.stefan@agner.ch>
+ <bb68d2360314158cd8ccb9c6794877c3bb45d72e.1411492954.git.stefan@agner.ch>
+ <20140925024712.GB6405@dragon>
+ <1d3735aff5e0961c43d349d673a1c2b2@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:60975 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750947AbaIYIS3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 04:18:29 -0400
-Received: by mail-ie0-f173.google.com with SMTP id tr6so13329018ieb.18
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Sep 2014 01:18:28 -0700 (PDT)
-In-Reply-To: <54230B9C.9090703@converseincode.com>
+Received: from mail-bn1bon0147.outbound.protection.outlook.com ([157.56.111.147]:22307
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751237AbaIYJIE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 25 Sep 2014 05:08:04 -0400
+Content-Disposition: inline
+In-Reply-To: <1d3735aff5e0961c43d349d673a1c2b2@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Behan Webster <behanw@converseincode.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Christian Daudt <bcm@fixthebug.org>, Chris Ball <chris@printf.net>, Alexandre Courbot <gnurou@gmail.com>, Matt Porter <mporter@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ray Jui <rjui@broadcom.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com
 
-On Wed, Sep 24, 2014 at 8:21 PM, Behan Webster
-<behanw@converseincode.com> wrote:
-> On 09/24/14 02:22, Arnd Bergmann wrote:
->>   but the first one seems
->> easier to read for someone familiar with kernel code.
->
-> No worries. Happy to post a v3.
->
-> Linus Walleij: Would you like me to respin the "gpio, bcm-kona, LLVMLinux:
-> Remove use of __initconst" patch as well?
+On Thu, Sep 25, 2014 at 09:00:41AM +0200, Stefan Agner wrote:
+> Am 2014-09-25 04:47, schrieb Shawn Guo:
+> > On Tue, Sep 23, 2014 at 07:37:54PM +0200, Stefan Agner wrote:
+> >> Add pinmux support for GPIO for Vybrid (vf610) IOMUX controller.
+> >> This is needed since direction configuration is not part of the
+> >> GPIO module in Vybrid.
+> >>
+> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> ---
+> >>  drivers/pinctrl/pinctrl-imx.c   | 54 +++++++++++++++++++++++++++++++++++++++++
+> >>  drivers/pinctrl/pinctrl-imx.h   |  1 +
+> >>  drivers/pinctrl/pinctrl-vf610.c |  2 +-
+> >>  3 files changed, 56 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/pinctrl/pinctrl-imx.c b/drivers/pinctrl/pinctrl-imx.c
+> >> index 0d4558b..64d1b59 100644
+> >> --- a/drivers/pinctrl/pinctrl-imx.c
+> >> +++ b/drivers/pinctrl/pinctrl-imx.c
+> >> @@ -294,10 +294,59 @@ static int imx_pmx_get_groups(struct pinctrl_dev *pctldev, unsigned selector,
+> >>  	return 0;
+> >>  }
+> >>
+> >> +static int imx_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
+> >> +			struct pinctrl_gpio_range *range, unsigned offset)
+> >> +{
+> >> +	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> >> +	const struct imx_pinctrl_soc_info *info = ipctl->info;
+> >> +	const struct imx_pin_reg *pin_reg;
+> >> +	u32 reg;
+> >> +
+> >> +	if (!(info->flags & GPIO_CONTROL))
+> >> +		return -EINVAL;
+> >> +
+> >> +	pin_reg = &info->pin_regs[offset];
+> >> +	if (pin_reg->mux_reg == -1)
+> >> +		return -EINVAL;
+> >> +
+> >> +	reg = readl(ipctl->base + pin_reg->mux_reg);
+> >> +	reg &= ~(0x7 << 20);
+> >> +	writel(reg, ipctl->base + pin_reg->mux_reg);
+> > 
+> > Isn't this setup redundant at all, since imx_pmx_enable() already takes
+> > care of setting mux register including GPIO mode?
+> > 
+> 
+> Yes currently this is redundant, when a pinmux is actually applied. What
+> is the expected behaviour? Is a explicit pinmux necessary before we can
+> use GPIO? If not, maybe it would make more sense to use imx_pmx_enable
+> here to write all pinctrl settings?
 
-No it's already applied.
+Okay, as per Documentation/pinctrl.txt, it's required that GPIO and
+PINCTRL can be used as orthogonal.  That said, your code does the right
+thing.  Sorry for the noisy comment.
 
-Yours,
-Linus Walleij
+> 
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+> >> +	   struct pinctrl_gpio_range *range, unsigned offset, bool input)
+> >> +{
+> >> +	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> >> +	const struct imx_pinctrl_soc_info *info = ipctl->info;
+> >> +	const struct imx_pin_reg *pin_reg;
+> >> +	u32 reg;
+> >> +
+> >> +	if (!(info->flags & GPIO_CONTROL))
+> >> +		return -EINVAL;
+> >> +
+> >> +	pin_reg = &info->pin_regs[offset];
+> >> +	if (pin_reg->mux_reg == -1)
+> >> +		return -EINVAL;
+> >> +
+> >> +	reg = readl(ipctl->base + pin_reg->mux_reg);
+> >> +	if (input)
+> >> +		reg &= ~0x2;
+> >> +	else
+> >> +		reg |= 0x2;
+> > 
+> > This is all about Output Buffer Enable (OBE) bit.  What about Input
+> > Buffer Enable (IBE) bit?  Don't we need to set or clear it as per GPIO
+> > direction as well?
+> > 
+> 
+> The leave the input buffer doesn't hurt, it allows to read back the
+> value which is actually "on the wire". If a pin is hard on GND, one can
+> actually see that.
+
+Okay.
+
+> 
+> >> +	writel(reg, ipctl->base + pin_reg->mux_reg);
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >>  static const struct pinmux_ops imx_pmx_ops = {
+> >>  	.get_functions_count = imx_pmx_get_funcs_count,
+> >>  	.get_function_name = imx_pmx_get_func_name,
+> >>  	.get_function_groups = imx_pmx_get_groups,
+> >> +	.gpio_request_enable = imx_pmx_gpio_request_enable,
+> >> +	.gpio_set_direction = imx_pmx_gpio_set_direction,
+> >>  	.enable = imx_pmx_enable,
+> >>  };
+> >>
+> >> @@ -579,6 +628,11 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+> >>  		dev_err(&pdev->dev, "wrong pinctrl info\n");
+> >>  		return -EINVAL;
+> >>  	}
+> >> +
+> >> +	/* GPIO control functions only intended for shared mux/conf register */
+> >> +	if (info->flags & GPIO_CONTROL)
+> >> +		BUG_ON(!(info->flags & SHARE_MUX_CONF_REG));
+> >> +
+> > 
+> > If this is always true, why don't we just use flag SHARE_MUX_CONF_REG
+> > and save GPIO_CONTROL?  This check doesn't make too much sense to me if
+> > we choose to have a new flag for GPIO setup.  IMO, we should probably
+> > either drop the GPIO_CONTROL flag or the check.
+> > 
+> 
+> Well, this is always true because the vf610 driver configures both
+> configs. But when somebody accidentally enables GPIO_CONFIG without
+> understanding the implications... This was more meant like "don't try to
+> use the GPIO_CONTROL just like that, its Vybird specific".
+
+But it will become a blocker if some day an i.MX controller (no flag
+SHARE_MUX_CONF_REG) needs to use GPIO_CONFIG.
+
+> But I'm ok to remove this runtime check, maybe a comment describing the
+> flags is more appropriate..?
+
+Sounds good.
+
+Shawn
