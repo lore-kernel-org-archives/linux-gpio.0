@@ -1,255 +1,181 @@
-From: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO adapter
-Date: Thu, 25 Sep 2014 11:21:58 +0530
-Message-ID: <1411624319-5596-1-git-send-email-muth@cypress.com>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: [PATCH v2 3/5] gpio: vf610: add gpiolib/IRQ chip driver for
+ Vybrid
+Date: Thu, 25 Sep 2014 13:55:03 +0800
+Message-ID: <20140925055446.GC6405@dragon>
+References: <cover.1411492954.git.stefan@agner.ch>
+ <81b47949f0806a335f380be916ec88f07b31290a.1411492954.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <81b47949f0806a335f380be916ec88f07b31290a.1411492954.git.stefan@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com
 List-Id: linux-gpio@vger.kernel.org
 
-Adds support for USB-GPIO interface of Cypress Semiconductor
-CYUSBS234 USB-Serial Bridge controller.
+On Tue, Sep 23, 2014 at 07:37:55PM +0200, Stefan Agner wrote:
+> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+> new file mode 100644
+> index 0000000..6649a13
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-vf610.c
+> @@ -0,0 +1,284 @@
+> +/*
+> + * vf610 GPIO support through PORT and GPIO module
+> + *
+> + * Copyright (c) 2014 Toradex AG.
+> + *
+> + * Author: Stefan Agner <stefan@agner.ch>.
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version 2
+> + * of the License, or (at your option) any later version.
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/bitops.h>
+> +#include <linux/gpio.h>
 
-The GPIO get/set can be done through vendor command on control endpoint.
+You might want to have the headers sort alphabetically.
 
-Details about the device can be found at:
-http://www.cypress.com/?rID=84126
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/module.h>
+> +#include <asm-generic/bug.h>
 
-Signed-off-by: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
----
- drivers/gpio/Kconfig          |  13 +++
- drivers/gpio/Makefile         |   1 +
- drivers/gpio/gpio-cyusbs23x.c | 182 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 196 insertions(+)
- create mode 100644 drivers/gpio/gpio-cyusbs23x.c
+Why do we need this header?
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 9de1515..932e07c 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -886,6 +886,19 @@ config GPIO_BCM_KONA
- 
- comment "USB GPIO expanders:"
- 
-+config GPIO_CYUSBS23X
-+	tristate "CYUSBS23x GPIO support"
-+	depends on MFD_CYUSBS23X && USB
-+	help
-+	  Say yes here to access the GPIO signals of Cypress
-+	  Semiconductor CYUSBS23x USB Serial Bridge Controller.
-+
-+	  This driver enables the GPIO interface of CYUSBS23x USB Serial
-+	  Bridge controller.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called gpio-cyusbs23x.
-+
- config GPIO_VIPERBOARD
- 	tristate "Viperboard GPIO a & b support"
- 	depends on MFD_VIPERBOARD && USB
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 5d024e3..3ad89f1 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -23,6 +23,7 @@ obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
- obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
- obj-$(CONFIG_GPIO_CS5535)	+= gpio-cs5535.o
- obj-$(CONFIG_GPIO_CRYSTAL_COVE)	+= gpio-crystalcove.o
-+obj-$(CONFIG_GPIO_CYUSBS23X)	+= gpio-cyusbs23x.o
- obj-$(CONFIG_GPIO_DA9052)	+= gpio-da9052.o
- obj-$(CONFIG_GPIO_DA9055)	+= gpio-da9055.o
- obj-$(CONFIG_GPIO_DAVINCI)	+= gpio-davinci.o
-diff --git a/drivers/gpio/gpio-cyusbs23x.c b/drivers/gpio/gpio-cyusbs23x.c
-new file mode 100644
-index 0000000..ad83b00
---- /dev/null
-+++ b/drivers/gpio/gpio-cyusbs23x.c
-@@ -0,0 +1,182 @@
-+/*
-+ * GPIO subdriver for Cypress CYUSBS234 USB-Serial Bridge controller.
-+ * Details about the device can be found at:
-+ *    http://www.cypress.com/?rID=84126
-+ * All GPIOs are exposed for get operation and only unused GPIOs can be set.
-+ *
-+ * Copyright (c) 2014 Cypress Semiconductor Corporation.
-+ *
-+ * Author:
-+ *   Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-+ *
-+ * Additional contributors include:
-+ *   Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/mutex.h>
-+#include <linux/platform_device.h>
-+
-+#include <linux/usb.h>
-+#include <linux/gpio.h>
-+
-+#include <linux/mfd/cyusbs23x.h>
-+
-+#define CY_GPIO_GET_LEN		(2)
-+
-+struct cyusbs_gpio {
-+	struct gpio_chip gpio;
-+	struct cyusbs23x *cyusbs;
-+};
-+
-+static int cy_gpio_get(struct gpio_chip *chip,
-+			unsigned offset)
-+{
-+	int ret;
-+	char *buf;
-+	u16 wIndex, wValue;
-+	struct cyusbs_gpio *gpio =
-+				container_of(chip, struct cyusbs_gpio, gpio);
-+	struct cyusbs23x *cyusbs = gpio->cyusbs;
-+
-+	dev_dbg(&cyusbs->usb_intf->dev, "%s: %d\n", __func__,
-+		offset);
-+	wValue = offset;
-+	wIndex = 0;
-+	buf = kmalloc(CY_GPIO_GET_LEN, GFP_KERNEL);
-+
-+	mutex_lock(&cyusbs->lock);
-+	ret = usb_control_msg(cyusbs->usb_dev,
-+			usb_rcvctrlpipe(cyusbs->usb_dev, 0),
-+			CY_GPIO_GET_VALUE_CMD,
-+			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
-+			wValue, wIndex, buf, CY_GPIO_GET_LEN, 2000);
-+	mutex_unlock(&cyusbs->lock);
-+
-+	dev_dbg(&cyusbs->usb_intf->dev, "%s: %d %02x %02x\n", __func__,
-+		ret, buf[0], buf[1]);
-+
-+	if (ret == CY_GPIO_GET_LEN) {
-+		if (buf[0] == 0)
-+			ret = buf[1];
-+		else
-+			ret = -EINVAL;
-+	} else {
-+		ret = -EREMOTEIO;
-+	}
-+
-+	kfree(buf);
-+	return ret;
-+}
-+
-+static void cy_gpio_set(struct gpio_chip *chip,
-+			unsigned offset, int value)
-+{
-+	int ret;
-+	u16 wIndex, wValue;
-+	struct cyusbs_gpio *gpio =
-+			container_of(chip, struct cyusbs_gpio, gpio);
-+	struct cyusbs23x *cyusbs = gpio->cyusbs;
-+
-+	dev_dbg(&cyusbs->usb_intf->dev, "%s: %d\n", __func__,
-+		offset);
-+	wValue = offset;
-+	wIndex = value;
-+
-+	mutex_lock(&cyusbs->lock);
-+	ret = usb_control_msg(cyusbs->usb_dev,
-+			usb_sndctrlpipe(cyusbs->usb_dev, 0),
-+			CY_GPIO_SET_VALUE_CMD,
-+			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
-+			wValue, wIndex, NULL, 0, 2000);
-+	mutex_unlock(&cyusbs->lock);
-+
-+	if (ret < 0)
-+		dev_err(&cyusbs->usb_intf->dev, "error setting gpio:%d\n", ret);
-+}
-+
-+static int cy_gpio_direction_input(struct gpio_chip *chip,
-+					unsigned offset)
-+{
-+	return 0;
-+}
-+
-+static int cy_gpio_direction_output(struct gpio_chip *chip,
-+					unsigned offset, int value)
-+{
-+	return 0;
-+}
-+
-+static int cyusbs23x_gpio_probe(struct platform_device *pdev)
-+{
-+	struct cyusbs23x *cyusbs;
-+	struct cyusbs_gpio *cy_gpio;
-+	int ret = 0;
-+
-+	dev_dbg(&pdev->dev, "%s\n", __func__);
-+
-+	cyusbs = dev_get_drvdata(pdev->dev.parent);
-+
-+	cy_gpio = devm_kzalloc(&pdev->dev, sizeof(*cy_gpio), GFP_KERNEL);
-+	if (cy_gpio == NULL)
-+		return -ENOMEM;
-+
-+	cy_gpio->cyusbs = cyusbs;
-+	/* registering gpio */
-+	cy_gpio->gpio.label = dev_name(&pdev->dev);
-+	cy_gpio->gpio.dev = &pdev->dev;
-+	cy_gpio->gpio.owner = THIS_MODULE;
-+	cy_gpio->gpio.base = -1;
-+	cy_gpio->gpio.ngpio = 12; /* total GPIOs */
-+	cy_gpio->gpio.can_sleep = true;
-+	cy_gpio->gpio.set = cy_gpio_set;
-+	cy_gpio->gpio.get = cy_gpio_get;
-+	cy_gpio->gpio.direction_input = cy_gpio_direction_input;
-+	cy_gpio->gpio.direction_output = cy_gpio_direction_output;
-+	ret = gpiochip_add(&cy_gpio->gpio);
-+	if (ret < 0) {
-+		dev_err(cy_gpio->gpio.dev, "could not add gpio");
-+		goto error;
-+	}
-+
-+	platform_set_drvdata(pdev, cy_gpio);
-+
-+	dev_dbg(&pdev->dev, "added GPIO\n");
-+	return ret;
-+
-+error:
-+	dev_dbg(&pdev->dev, "error occured %d\n", ret);
-+	return ret;
-+}
-+
-+static int cyusbs23x_gpio_remove(struct platform_device *pdev)
-+{
-+	struct cyusbs_gpio *cy_gpio = platform_get_drvdata(pdev);
-+
-+	dev_dbg(&pdev->dev, "%s\n", __func__);
-+	gpiochip_remove(&cy_gpio->gpio);
-+	return 0;
-+}
-+
-+static struct platform_driver cyusbs23x_gpio_driver = {
-+	.driver.name    = "cyusbs23x-gpio",
-+	.driver.owner   = THIS_MODULE,
-+	.probe          = cyusbs23x_gpio_probe,
-+	.remove         = cyusbs23x_gpio_remove,
-+};
-+
-+module_platform_driver(cyusbs23x_gpio_driver);
-+
-+MODULE_AUTHOR("Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>");
-+MODULE_AUTHOR("Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>");
-+MODULE_DESCRIPTION("GPIO driver for CYUSBS23x");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:cyusbs23x-gpio");
--- 
-1.8.3.2
+> +
+> +
+
+One new line is enough.
+
+> +#define VF610_GPIO_PER_PORT		32
+> +
+> +struct vf610_gpio_port {
+> +	struct gpio_chip gc;
+> +	void __iomem *base;
+> +	void __iomem *gpio_base;
+> +	u8 irqc[VF610_GPIO_PER_PORT];
+> +};
+> +
+> +#define GPIO_PDOR		0x00
+> +#define GPIO_PSOR		0x04
+> +#define GPIO_PCOR		0x08
+> +#define GPIO_PTOR		0x0c
+> +#define GPIO_PDIR		0x10
+> +
+> +#define PORT_PCR(n)		(n * 0x4)
+
+s/n/(n)
+
+...
+
+> +static int vf610_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct vf610_gpio_port *port;
+> +	struct resource *iores;
+> +	struct gpio_chip *gc;
+> +	int irq, ret;
+> +
+> +	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	port->base = devm_ioremap_resource(dev, iores);
+> +	if (IS_ERR(port->base))
+> +		return PTR_ERR(port->base);
+> +
+> +	iores = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	port->gpio_base = devm_ioremap_resource(dev, iores);
+> +	if (IS_ERR(port->gpio_base))
+> +		return PTR_ERR(port->gpio_base);
+> +
+> +	irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
+
+Why not platform_get_irq()?
+
+> +	if (irq == NO_IRQ)
+> +		return -ENODEV;
+
+Instead of using NO_IRQ, we should check if irq is a negative value and
+propagate the value as the return, something like:
+
+	if (irq < 0)
+		return irq;
+
+Shawn
+
+> +
+> +	gc = &port->gc;
+> +	gc->of_node = np;
+> +	gc->dev = dev;
+> +	gc->label = "vf610-gpio",
+> +	gc->ngpio = VF610_GPIO_PER_PORT,
+> +	gc->base = of_alias_get_id(np, "gpio") * VF610_GPIO_PER_PORT;
+> +
+> +	gc->request = vf610_gpio_request,
+> +	gc->free = vf610_gpio_free,
+> +	gc->direction_input = vf610_gpio_direction_input,
+> +	gc->get = vf610_gpio_get,
+> +	gc->direction_output = vf610_gpio_direction_output,
+> +	gc->set = vf610_gpio_set,
+> +
+> +	ret = gpiochip_add(gc);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Clear the interrupt status register for all GPIO's */
+> +	vf610_gpio_writel(~0, port->base + PORT_ISFR);
+> +
+> +	ret = gpiochip_irqchip_add(gc, &vf610_gpio_irq_chip, 0,
+> +				   handle_simple_irq, IRQ_TYPE_NONE);
+> +	if (ret) {
+> +		dev_err(dev, "failed to add irqchip\n");
+> +		gpiochip_remove(gc);
+> +		return ret;
+> +	}
+> +	gpiochip_set_chained_irqchip(gc, &vf610_gpio_irq_chip, irq,
+> +				     vf610_gpio_irq_handler);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver vf610_gpio_driver = {
+> +	.driver		= {
+> +		.name	= "gpio-vf610",
+> +		.owner	= THIS_MODULE,
+> +		.of_match_table = vf610_gpio_dt_ids,
+> +	},
+> +	.probe		= vf610_gpio_probe,
+> +};
+> +
+> +static int __init gpio_vf610_init(void)
+> +{
+> +	return platform_driver_register(&vf610_gpio_driver);
+> +}
+> +subsys_initcall(gpio_vf610_init);
+> +
+> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
+> +MODULE_DESCRIPTION("Freescale VF610 GPIO");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.1.0
+> 
