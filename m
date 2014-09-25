@@ -1,41 +1,36 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 1/9] ARM: dts: vf610: Add system reset controller (SRC)
-Date: Thu, 25 Sep 2014 15:08:59 +0200
-Message-ID: <1411650539.5671.4.camel@pengutronix.de>
-References: <cover.1411404079.git.stefan@agner.ch>
-	 <2ca1cf3732a00512fa19b6118f9fb30aba014deb.1411404079.git.stefan@agner.ch>
-	 <CACRpkdbryJVW9e9N5+f3rWEGZ2YvLPJsvBtNSa9nPJpLVXhm0g@mail.gmail.com>
-	 <45f7af8b2dbe11967bb2ad87826b934c@agner.ch>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/2] gpio / CrystalCove: support virtual GPIO
+Date: Thu, 25 Sep 2014 15:16:26 +0200
+Message-ID: <CACRpkdYeOfsx-PpEKaJY14sUqQ2VRiNmXnn_m-mrMzpBtcuBpg@mail.gmail.com>
+References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>
+	<1410229968-11638-2-git-send-email-aaron.lu@intel.com>
+	<CACRpkdaJjqs9WNcVvjsSWhzLD2QpcyR11MVm4xhm4GqB28eOCA@mail.gmail.com>
+	<54238496.70505@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <45f7af8b2dbe11967bb2ad87826b934c@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, jingchang.lu@freescale.com, Huang Yongcai-B20788 <b20788@freescale.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <54238496.70505@intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Aaron Lu <aaron.lu@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, =?UTF-8?Q?Daniel_Gl=C3=B6ckner?= <dg@emlix.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Stefan,
+On Thu, Sep 25, 2014 at 4:57 AM, Aaron Lu <aaron.lu@intel.com> wrote:
 
-Am Mittwoch, den 24.09.2014, 18:41 +0200 schrieb Stefan Agner:
-> Am 2014-09-24 11:16, schrieb Linus Walleij:
-> > On Mon, Sep 22, 2014 at 7:09 PM, Stefan Agner <stefan@agner.ch> wrote:
-> > 
-> >> Add device tree property for system reset controller.
-> >>
-> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > 
-> > Are there already device tree bindings for SRC and GRC?
-> 
-> Yes there are used in the i.MX6 world for instance, see imx6qdl.dtsi.
-> The SRC also has quite generic documentation, however, the GPC module
-> currently lacks documentation...
+> The virtual GPIO introduced in ACPI table of Baytrail-T based system is
+> used to solve a problem under Windows. We do not have such problems
+> under Linux so we do not actually need them. But we have to tell GPIO
+> library that the Crystal Cove GPIO chip has this many GPIO pins or the
+> common GPIO handler will refuse any access to those high number GPIO
+> pins, which will resulted in a failure evaluation of every ACPI control
+> method that is used to turn on/off power resource and/or report sensor
+> temperatures.
+>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> ---
+> v2: remove the hunk to increase NR_GPIO to 512.
 
-A patch that adds GPC binding documentation is part of this i.MX6 power
-domain series:
+Patch applied with Mika's ACK, also renumbered 0x5e to 94.
 
-http://www.spinics.net/lists/devicetree/msg48454.html
-
-regards
-Philipp
+Yours,
+Linus Walleij
