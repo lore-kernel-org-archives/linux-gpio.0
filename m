@@ -1,64 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
-Date: Thu, 25 Sep 2014 15:18:16 +0200
-Message-ID: <CACRpkdawGzikHPR30ZCSH4+=gZNsOwr8EhEFXswDwOPUWn9h1g@mail.gmail.com>
-References: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>
-	<CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
-	<35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>
-	<54216EA5.5010506@ti.com>
-	<CACRpkdaM-1btosNFGMJy_U4F6rQfiG7sQXyyM0gyQ6OhC=_c8Q@mail.gmail.com>
-	<35FD53F367049845BC99AC72306C23D103D6DB491636@CNBJMBX05.corpusers.net>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH 1/2] gpiolib: irqchip: use irq_find_mapping while removing irqchip
+Date: Thu, 25 Sep 2014 19:09:23 +0300
+Message-ID: <1411661364-19620-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:38778 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751641AbaIYNSQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 09:18:16 -0400
-Received: by mail-ie0-f169.google.com with SMTP id rp18so11735708iec.0
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Sep 2014 06:18:16 -0700 (PDT)
-In-Reply-To: <35FD53F367049845BC99AC72306C23D103D6DB491636@CNBJMBX05.corpusers.net>
+Received: from devils.ext.ti.com ([198.47.26.153]:59720 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752130AbaIYQJh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 12:09:37 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Wang, Yalin" <Yalin.Wang@sonymobile.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Yalin.Wang@sonymobile.com, linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
 
-On Thu, Sep 25, 2014 at 9:47 AM, Wang, Yalin <Yalin.Wang@sonymobile.com> wrote:
->> From: Linus Walleij [mailto:linus.walleij@linaro.org]
->>
->> On Tue, Sep 23, 2014 at 2:59 PM, Grygorii Strashko
->> <grygorii.strashko@ti.com> wrote:
->>
->> > Now the "irq_base" is used only twice in gpiolib code and below diff
->> > should allow to drop it completely from gpiolib code.
->> >
->> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c index
->> > 15cc0bb..81762ed 100644
->> > --- a/drivers/gpio/gpiolib.c
->> > +++ b/drivers/gpio/gpiolib.c
->> > @@ -524,7 +524,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip
->> *gpiochip)
->> >         /* Remove all IRQ mappings and delete the domain */
->> >         if (gpiochip->irqdomain) {
->> >                 for (offset = 0; offset < gpiochip->ngpio; offset++)
->> > -                       irq_dispose_mapping(gpiochip->irq_base + offset);
->> > +
->> > + irq_dispose_mapping(irq_find_mapping(gpiochip->irqdomain, offset));
->> >                 irq_domain_remove(gpiochip->irqdomain);
->> >         }
->> >
->> > not tested.
->>
->> I like the looks of this.
->>
->> Grygorii, can you send a proper, tested patch for this? Thansk!
->
-> Could we also remove gpiochip->irq_base if use this solution?
-> It seems gpiochip->irq_base is useless .
+There is no guarantee that VIRQs will be allocated sequentially
+for gpio irqchip in gpiochip_irqchip_add().
+Therefore, it's unsafe to dispose VIRQ in gpiochip_irqchip_remove()
+basing on index relatively to stored irq_base value.
 
-I think it is used in some drivers and especially for pin ranges
-visavis the pin control subsystem, so that could be a complex
-operation.
+Hence, use irq_find_mapping for VIRQ finding  in gpiochip_irqchip_remove()
+instead of irq_base + index.
 
-Yours,
-Linus Walleij
+Reported-by: Wang, Yalin <Yalin.Wang@sonymobile.com>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpiolib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 15cc0bb..f6bf368 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -524,7 +524,8 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+ 	/* Remove all IRQ mappings and delete the domain */
+ 	if (gpiochip->irqdomain) {
+ 		for (offset = 0; offset < gpiochip->ngpio; offset++)
+-			irq_dispose_mapping(gpiochip->irq_base + offset);
++			irq_dispose_mapping(
++				irq_find_mapping(gpiochip->irqdomain, offset));
+ 		irq_domain_remove(gpiochip->irqdomain);
+ 	}
+ 
+-- 
+1.9.1
+
