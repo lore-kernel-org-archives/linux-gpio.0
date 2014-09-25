@@ -1,53 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v3.17 series
-Date: Thu, 25 Sep 2014 09:13:40 +0200
-Message-ID: <CACRpkdY+QryWtpvAWFF_0Ev0rgiJvhOvwkZexsnp5wPY4y0jow@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib:change to use irq_alloc_descs_from to alloc virqs
+Date: Thu, 25 Sep 2014 09:39:07 +0200
+Message-ID: <CACRpkdaM-1btosNFGMJy_U4F6rQfiG7sQXyyM0gyQ6OhC=_c8Q@mail.gmail.com>
+References: <35FD53F367049845BC99AC72306C23D103CDBFBFB017@CNBJMBX05.corpusers.net>
+	<CACRpkdbmnPcDFHu6oLhXQERyFzXD2K1QHH1hRUtci41KuEDdtQ@mail.gmail.com>
+	<35FD53F367049845BC99AC72306C23D103D6DB4D6F29@CNBJMBX05.corpusers.net>
+	<54216EA5.5010506@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:40782 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751031AbaIYHjI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 03:39:08 -0400
+Received: by mail-ie0-f172.google.com with SMTP id rp18so11123909iec.17
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Sep 2014 00:39:08 -0700 (PDT)
+In-Reply-To: <54216EA5.5010506@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: "Wang, Yalin" <Yalin.Wang@sonymobile.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
 
-Hi Linus,
+On Tue, Sep 23, 2014 at 2:59 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-here are two last minute GPIO fixes for the v3.17 series, as it happens
-both also set to go into stable.
+> Now the "irq_base" is used only twice in gpiolib code and below diff should
+> allow to drop it completely from gpiolib code.
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 15cc0bb..81762ed 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -524,7 +524,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+>         /* Remove all IRQ mappings and delete the domain */
+>         if (gpiochip->irqdomain) {
+>                 for (offset = 0; offset < gpiochip->ngpio; offset++)
+> -                       irq_dispose_mapping(gpiochip->irq_base + offset);
+> +                       irq_dispose_mapping(irq_find_mapping(gpiochip->irqdomain, offset));
+>                 irq_domain_remove(gpiochip->irqdomain);
+>         }
+>
+> not tested.
 
-Please pull them in!
+I like the looks of this.
+
+Grygorii, can you send a proper, tested patch for this? Thansk!
 
 Yours,
 Linus Walleij
-
-The following changes since commit 0f33be009b89d2268e94194dc4fd01a7851b6d51:
-
-  Linux 3.17-rc6 (2014-09-21 15:43:02 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v3.17-4
-
-for you to fetch changes up to 324b0398781e7afb846378dd2d8a4374faaf236b:
-
-  gpio: Fix potential NULL handler data in chained irqchip handler
-(2014-09-24 09:47:20 +0200)
-
-----------------------------------------------------------------
-Two GPIO fixes:
-- GPIO direction flags where handled wrong in the new
-  descriptor-based API, so direction changes did not always
-  "take".
-- Fix a handler installation race in the generic GPIO
-  irqchip code.
-
-----------------------------------------------------------------
-Adrian Hunter (1):
-      gpio: Fix gpio direction flags not getting set
-
-Jarkko Nikula (1):
-      gpio: Fix potential NULL handler data in chained irqchip handler
-
- drivers/gpio/gpiolib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
