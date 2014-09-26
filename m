@@ -1,66 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: set parent irq on chained handlers
-Date: Fri, 26 Sep 2014 13:52:29 +0200
-Message-ID: <1411732349-19178-1-git-send-email-linus.walleij@linaro.org>
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v4 0/4] vf610: Add GPIO support
+Date: Fri, 26 Sep 2014 13:57:07 +0200
+Message-ID: <cover.1411731755.git.stefan@agner.ch>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:35922 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753851AbaIZLwg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Sep 2014 07:52:36 -0400
-Received: by mail-wg0-f45.google.com with SMTP id x13so8886189wgg.28
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Sep 2014 04:52:35 -0700 (PDT)
+Received: from mail.kmu-office.ch ([178.209.48.102]:47653 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753724AbaIZL5R (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Sep 2014 07:57:17 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: linus.walleij@linaro.org, shawn.guo@freescale.com
+Cc: gnurou@gmail.com, kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com, l.stach@pengutronix.de, stefan@agner.ch
 
-If the IRQ from the parent is nested the IRQ may need to be
-resent under certain conditions. Currently the chained IRQ
-handler in gpiolib does not handle connecting nested IRQs
-but it is conceptually correct to indicate the actual parent
-IRQ.
+Rebased version on top of pinctrl branch. In Shawn's tree the
+Colibri VF61 DT file is already split, hence this v4 would not apply
+cleanly. But I guess patch 3/4 goes anyway through Shawn's branch.
+Shawn, to have that patch applying cleanly, you need to pick the
+patch from v3 patchset.
 
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Since 3rd version of the GPIO support for Vybrid now also includes
+the wakeup support which was part of the suspend/resume patchset
+I sent earlier this week.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 550e575c6ffb..9362b5b817af 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -398,17 +398,30 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- 				  int parent_irq,
- 				  irq_flow_handler_t parent_handler)
- {
-+	unsigned int offset;
-+
- 	if (gpiochip->can_sleep) {
- 		chip_err(gpiochip, "you cannot have chained interrupts on a chip that may sleep\n");
- 		return;
- 	}
-+	if (!gpiochip->irqdomain) {
-+		chip_err(gpiochip, "called %s before setting up irqchip\n",
-+			 __func__);
-+		return;
-+	}
- 
- 	irq_set_chained_handler(parent_irq, parent_handler);
-+
- 	/*
- 	 * The parent irqchip is already using the chip_data for this
- 	 * irqchip, so our callbacks simply use the handler_data.
- 	 */
- 	irq_set_handler_data(parent_irq, gpiochip);
-+
-+	/* Set the parent IRQ for all affected IRQs */
-+	for (offset = 0; offset < gpiochip->ngpio; offset++)
-+		irq_set_parent(irq_find_mapping(gpiochip->irqdomain, offset),
-+			       parent_irq);
- }
- EXPORT_SYMBOL_GPL(gpiochip_set_chained_irqchip);
- 
+Changes in v4:
+- Rebased on pinctrl devel branch (which has one patch already applied
+  hence is not part of this version now)
+
+Changes in v3:
+- Configure the pin completely on imx_pmx_gpio_request_enable
+- Drop the GPIO_CONTROL flag in favor of using the existing
+  SHARE_MUX_CONF_REG flag
+- Extend GPIO driver to also include wakeup support
+- Cleanup includes in GPIO driver file
+- Add brackets in PORT_PCR define
+- Use platform_get_irq in favor of irq_of_parse_and_map
+- Use device_initcall instead of subsys_initicall
+
+Changes in v2:
+- Use bit operations in GPIO driver
+- Use VF610_ prefix for GPIOS_PER_PORT define
+- Drop irq in drivers struct
+- Use arch/subsys_initicall for GPIO/pinctrl driver
+- Fix log message title
+- Add documentation for GPIO/PORT module bindings
+- Extended GPIO device tree bindings for Colibri VF61
+
+Stefan Agner (4):
+  pinctrl: imx: add gpio pinmux support for vf610
+  gpio: vf610: add gpiolib/IRQ chip driver for Vybrid
+  ARM: dts: vf610: use new GPIO support
+  Documentation: dts: add bindings for Vybrid GPIO/PORT module
+
+ .../devicetree/bindings/gpio/gpio-vf610.txt        |  56 ++++
+ arch/arm/boot/dts/vf610-colibri.dts                |   9 +
+ arch/arm/boot/dts/vf610-twr.dts                    |   1 +
+ arch/arm/boot/dts/vf610.dtsi                       |   1 +
+ drivers/gpio/Kconfig                               |   7 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-vf610.c                          | 295 +++++++++++++++++++++
+ drivers/pinctrl/freescale/pinctrl-imx.c            |  72 +++++
+ 8 files changed, 442 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-vf610.txt
+ create mode 100644 drivers/gpio/gpio-vf610.c
+
 -- 
-1.9.3
+2.1.0
 
