@@ -1,95 +1,67 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: [PATCH v3 4/5] ARM: dts: vf610: use new GPIO support
-Date: Fri, 26 Sep 2014 09:21:27 +0800
-Message-ID: <20140926012126.GC21077@dragon>
-References: <cover.1411662961.git.stefan@agner.ch>
- <590a5fbc4f8b552355a93c1002041765352cd1c3.1411662961.git.stefan@agner.ch>
+From: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
+Subject: RE: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
+Date: Fri, 26 Sep 2014 01:35:49 +0000
+Message-ID: <50B33AC5ED75F74F991980326F1C438D0FBE8725@PGSMSX108.gar.corp.intel.com>
+References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <1410943745-9354-2-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <20140918111705.GM10854@lahna.fi.intel.com>
+ <50B33AC5ED75F74F991980326F1C438D0FBDB28B@PGSMSX108.gar.corp.intel.com>
+ <20140922092528.GM1786@lahna.fi.intel.com>
+ <50B33AC5ED75F74F991980326F1C438D0FBDBA92@PGSMSX108.gar.corp.intel.com>
+ <20140924095052.GZ1786@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1bn0108.outbound.protection.outlook.com ([157.56.110.108]:15556
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753179AbaIZBVx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 25 Sep 2014 21:21:53 -0400
-Content-Disposition: inline
-In-Reply-To: <590a5fbc4f8b552355a93c1002041765352cd1c3.1411662961.git.stefan@agner.ch>
+Received: from mga03.intel.com ([134.134.136.65]:53589 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752749AbaIZBgy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Sep 2014 21:36:54 -0400
+In-Reply-To: <20140924095052.GZ1786@lahna.fi.intel.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com, l.stach@pengutronix.de
+To: 'Mika Westerberg' <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Sep 25, 2014 at 06:37:08PM +0200, Stefan Agner wrote:
-> Use GPIO support by adding SD card detection configuration and
-> GPIO pinmux for Colibri's standard GPIO pins. Attach the GPIO
-> pins to the iomuxc node to get the GPIO pin settings applied.
+
+
+> -----Original Message-----
+> From: 'Mika Westerberg' [mailto:mika.westerberg@linux.intel.com]
+> Sent: 24 September, 2014 5:51 PM
+> To: Chang, Rebecca Swee Fun
+> Cc: Linus Walleij; linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 1/3] gpio: sch: Consolidate similar algorithms
 > 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  arch/arm/boot/dts/vf610-colibri.dtsi | 9 +++++++++
->  arch/arm/boot/dts/vf610-twr.dts      | 1 +
->  arch/arm/boot/dts/vf610.dtsi         | 1 +
->  3 files changed, 11 insertions(+)
+> On Wed, Sep 24, 2014 at 12:55:07AM +0000, Chang, Rebecca Swee Fun wrote:
+> > > > The register values are required when it comes to IRQ handling. By
+> > > > passing in the registers values, we can make full use of the
+> > > > algorithms without introducing extra/similar algorithms to compute
+> > > > other register offset values.
+> > > > For example, we have other offset values to handle such as:-
+> > > > GTPE	0x0C
+> > > > GTNE	0x10
+> > > > GGPE	0x14
+> > > > GSMI	0x18
+> > > > GTS	0x1C
+> > > > CGNMIEN	0x40
+> > > > RGNMIEN	0x44
+> > >
+> > > Well, can we at least call it something else than sch_gpio_enable()?
+> > > Perhaps sch_gpio_set_value() or so?
+> >
+> > sch_gpio_set_value() sounds good. After think twice, I intend to merge
+> > sch_gpio_enable() and sch_gpio_disable() into one functions. Using
+> > variable "enable" as an indicator, I can control whether to enable or
+> > disable when calling the function. Here is my draft:
 > 
-> diff --git a/arch/arm/boot/dts/vf610-colibri.dtsi b/arch/arm/boot/dts/vf610-colibri.dtsi
-> index 0cd8343..efd4322 100644
-> --- a/arch/arm/boot/dts/vf610-colibri.dtsi
-> +++ b/arch/arm/boot/dts/vf610-colibri.dtsi
-> @@ -31,6 +31,7 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_esdhc1>;
->  	bus-width = <4>;
-> +	cd-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
->  };
->  
->  &fec1 {
-> @@ -71,6 +72,14 @@
->  
->  &iomuxc {
->  	vf610-colibri {
-> +		pinctrl_gpio_ext: gpio_ext {
-> +			fsl,pins = <
-> +				VF610_PAD_PTD10__GPIO_89	0x22ed /* EXT_IO_0 */
-> +				VF610_PAD_PTD9__GPIO_88		0x22ed /* EXT_IO_1 */
-> +				VF610_PAD_PTD26__GPIO_68	0x22ed /* EXT_IO_2 */
-> +			>;
-> +		};
-> +
-
-I'm not sure these GPIOs will be set up at anywhere.  To set them up,
-you need to either have pinctrl_gpio_ext referenced by some client
-device in its pinctrl-* property or put these pins into hog group (see
-example in arch/arm/boot/dts/vf610-twr.dts).
-
-Shawn
-
->  		pinctrl_esdhc1: esdhc1grp {
->  			fsl,pins = <
->  				VF610_PAD_PTA24__ESDHC1_CLK	0x31ef
-> diff --git a/arch/arm/boot/dts/vf610-twr.dts b/arch/arm/boot/dts/vf610-twr.dts
-> index 189b697..3fe8a8f 100644
-> --- a/arch/arm/boot/dts/vf610-twr.dts
-> +++ b/arch/arm/boot/dts/vf610-twr.dts
-> @@ -116,6 +116,7 @@
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_esdhc1>;
->  	bus-width = <4>;
-> +	cd-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
->  	status = "okay";
->  };
->  
-> diff --git a/arch/arm/boot/dts/vf610.dtsi b/arch/arm/boot/dts/vf610.dtsi
-> index 4d2ec32..467c97e 100644
-> --- a/arch/arm/boot/dts/vf610.dtsi
-> +++ b/arch/arm/boot/dts/vf610.dtsi
-> @@ -11,6 +11,7 @@
->  #include "vf610-pinfunc.h"
->  #include <dt-bindings/clock/vf610-clock.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/gpio/gpio.h>
->  
->  / {
->  	aliases {
-> -- 
-> 2.1.0
+> Actually sch_gpio_set_value() is too close to sch_gpio_set() which sets the GPIO
+> to 1 or 0. How about sch_gpio_register_set() or something along those lines?
 > 
+> And I don't think it is good idea to add yet another functionality, like enable
+> there. Please leave sch_gpio_enable()/sch_gpio_disable() as is.
+
+Alright, I will change the sch_gpio_enable()/sch_gpio_disable() into sch_gpio_register_set()/sch_gpio_register_clear().
+Thanks.
+
+Rebecca
