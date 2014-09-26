@@ -1,47 +1,113 @@
-From: Aaron Lu <aaron.lu@intel.com>
-Subject: Re: [PATCH v2 1/2] gpio / CrystalCove: support virtual GPIO
-Date: Fri, 26 Sep 2014 13:22:21 +0800
-Message-ID: <5424F80D.9070400@intel.com>
-References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>	<1410229968-11638-2-git-send-email-aaron.lu@intel.com>	<CACRpkdaJjqs9WNcVvjsSWhzLD2QpcyR11MVm4xhm4GqB28eOCA@mail.gmail.com>	<54238496.70505@intel.com> <CACRpkdYeOfsx-PpEKaJY14sUqQ2VRiNmXnn_m-mrMzpBtcuBpg@mail.gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v3 4/5] ARM: dts: vf610: use new GPIO support
+Date: Fri, 26 Sep 2014 09:40:34 +0200
+Message-ID: <f3bba83ea15d680c852eb7d6e45de08a@agner.ch>
+References: <cover.1411662961.git.stefan@agner.ch>
+ <590a5fbc4f8b552355a93c1002041765352cd1c3.1411662961.git.stefan@agner.ch>
+ <20140926012126.GC21077@dragon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:56373 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751202AbaIZFWo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Sep 2014 01:22:44 -0400
-In-Reply-To: <CACRpkdYeOfsx-PpEKaJY14sUqQ2VRiNmXnn_m-mrMzpBtcuBpg@mail.gmail.com>
+Received: from mail.kmu-office.ch ([178.209.48.102]:42388 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753258AbaIZHlQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Sep 2014 03:41:16 -0400
+In-Reply-To: <20140926012126.GC21077@dragon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, =?windows-1252?Q?Dani?= =?windows-1252?Q?el_Gl=F6ckner?= <dg@emlix.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Shawn Guo <shawn.guo@freescale.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com, l.stach@pengutronix.de
 
-On 09/25/2014 09:16 PM, Linus Walleij wrote:
-> On Thu, Sep 25, 2014 at 4:57 AM, Aaron Lu <aaron.lu@intel.com> wrote:
-> 
->> The virtual GPIO introduced in ACPI table of Baytrail-T based system is
->> used to solve a problem under Windows. We do not have such problems
->> under Linux so we do not actually need them. But we have to tell GPIO
->> library that the Crystal Cove GPIO chip has this many GPIO pins or the
->> common GPIO handler will refuse any access to those high number GPIO
->> pins, which will resulted in a failure evaluation of every ACPI control
->> method that is used to turn on/off power resource and/or report sensor
->> temperatures.
+Am 2014-09-26 03:21, schrieb Shawn Guo:
+> On Thu, Sep 25, 2014 at 06:37:08PM +0200, Stefan Agner wrote:
+>> Use GPIO support by adding SD card detection configuration and
+>> GPIO pinmux for Colibri's standard GPIO pins. Attach the GPIO
+>> pins to the iomuxc node to get the GPIO pin settings applied.
 >>
->> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
 >> ---
->> v2: remove the hunk to increase NR_GPIO to 512.
+>>  arch/arm/boot/dts/vf610-colibri.dtsi | 9 +++++++++
+>>  arch/arm/boot/dts/vf610-twr.dts      | 1 +
+>>  arch/arm/boot/dts/vf610.dtsi         | 1 +
+>>  3 files changed, 11 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/vf610-colibri.dtsi b/arch/arm/boot/dts/vf610-colibri.dtsi
+>> index 0cd8343..efd4322 100644
+>> --- a/arch/arm/boot/dts/vf610-colibri.dtsi
+>> +++ b/arch/arm/boot/dts/vf610-colibri.dtsi
+>> @@ -31,6 +31,7 @@
+>>  	pinctrl-names = "default";
+>>  	pinctrl-0 = <&pinctrl_esdhc1>;
+>>  	bus-width = <4>;
+>> +	cd-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+>>  };
+>>
+>>  &fec1 {
+>> @@ -71,6 +72,14 @@
+>>
+>>  &iomuxc {
+>>  	vf610-colibri {
+>> +		pinctrl_gpio_ext: gpio_ext {
+>> +			fsl,pins = <
+>> +				VF610_PAD_PTD10__GPIO_89	0x22ed /* EXT_IO_0 */
+>> +				VF610_PAD_PTD9__GPIO_88		0x22ed /* EXT_IO_1 */
+>> +				VF610_PAD_PTD26__GPIO_68	0x22ed /* EXT_IO_2 */
+>> +			>;
+>> +		};
+>> +
 > 
-> Patch applied with Mika's ACK, also renumbered 0x5e to 94.
-
-Thanks for taking care of this.
-
-Regards,
-Aaron
-
+> I'm not sure these GPIOs will be set up at anywhere.  To set them up,
+> you need to either have pinctrl_gpio_ext referenced by some client
+> device in its pinctrl-* property or put these pins into hog group (see
+> example in arch/arm/boot/dts/vf610-twr.dts).
 > 
-> Yours,
-> Linus Walleij
+> Shawn
 > 
 
+This GPIO's are meant to be used from user space by default. The latest
+implementation of imx_pmx_gpio_request_enable not only takes care of the
+muxing, but also applies the whole pad settings. Hence we do not need
+the pinctrl subsystem to apply it (through pinctrl-* dt properties).
+
+I changed this now in v3, in v2 I had still to use the pinctrl-*
+properties. I like that 3rd version much more, this way the pin only
+really gets muxed when the user uses it (e.g. we save power because the
+pad is disabled when the GPIO is not in use). If the pin needs to be in
+a defined state, then we would have to explicitly configure/enable it
+through a pinctrl-* properties, but this is not the case for these
+external GPIO's.
+
+--
+Stefan
+
+>>  		pinctrl_esdhc1: esdhc1grp {
+>>  			fsl,pins = <
+>>  				VF610_PAD_PTA24__ESDHC1_CLK	0x31ef
+>> diff --git a/arch/arm/boot/dts/vf610-twr.dts b/arch/arm/boot/dts/vf610-twr.dts
+>> index 189b697..3fe8a8f 100644
+>> --- a/arch/arm/boot/dts/vf610-twr.dts
+>> +++ b/arch/arm/boot/dts/vf610-twr.dts
+>> @@ -116,6 +116,7 @@
+>>  	pinctrl-names = "default";
+>>  	pinctrl-0 = <&pinctrl_esdhc1>;
+>>  	bus-width = <4>;
+>> +	cd-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+>>  	status = "okay";
+>>  };
+>>
+>> diff --git a/arch/arm/boot/dts/vf610.dtsi b/arch/arm/boot/dts/vf610.dtsi
+>> index 4d2ec32..467c97e 100644
+>> --- a/arch/arm/boot/dts/vf610.dtsi
+>> +++ b/arch/arm/boot/dts/vf610.dtsi
+>> @@ -11,6 +11,7 @@
+>>  #include "vf610-pinfunc.h"
+>>  #include <dt-bindings/clock/vf610-clock.h>
+>>  #include <dt-bindings/interrupt-controller/irq.h>
+>> +#include <dt-bindings/gpio/gpio.h>
+>>
+>>  / {
+>>  	aliases {
+>> --
+>> 2.1.0
+>>
