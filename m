@@ -1,44 +1,105 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 0/5] vf610: Add GPIO support
-Date: Fri, 26 Sep 2014 10:52:37 +0200
-Message-ID: <CACRpkdaOZ-mN3LrGKWzmtm0+SJaWdaz5LG5H9UYi_e9GQRvaDg@mail.gmail.com>
-References: <cover.1411662961.git.stefan@agner.ch>
+Subject: Re: [PATCH] gpio: pca953x: Fix warning when HW interrupts are
+ rescheduled by the softirq tasklet
+Date: Fri, 26 Sep 2014 11:07:41 +0200
+Message-ID: <CACRpkdahDFpP_3eJuAweYua4Cp2iJAd1BDUQHJ90O_bU3cuheg@mail.gmail.com>
+References: <1410251533-4990-1-git-send-email-LW@KARO-electronics.de>
+	<CACRpkdbTXtx+EU4Dw1fxeThRUG4s5XvcJnAJ9PJd8i4KKGC65A@mail.gmail.com>
+	<5421670D.10200@ti.com>
+	<CACRpkdYCsdMcJY7Y0gK4_zPxiWRFKkzi2TaZUi1Vn7Kp0Cbgzg@mail.gmail.com>
+	<5422B8F0.9060803@ti.com>
+	<CACRpkdYtjQC_hCiqSB7fidct6CjJ5kMbj0PegW3MEuouBajv+g@mail.gmail.com>
+	<54244243.3090904@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:50549 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754123AbaIZIwi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Sep 2014 04:52:38 -0400
-Received: by mail-ie0-f173.google.com with SMTP id tr6so15107271ieb.4
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Sep 2014 01:52:37 -0700 (PDT)
-In-Reply-To: <cover.1411662961.git.stefan@agner.ch>
+Received: from mail-ie0-f171.google.com ([209.85.223.171]:60141 "EHLO
+	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752874AbaIZJHm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Sep 2014 05:07:42 -0400
+Received: by mail-ie0-f171.google.com with SMTP id rd18so10603204iec.2
+        for <linux-gpio@vger.kernel.org>; Fri, 26 Sep 2014 02:07:41 -0700 (PDT)
+In-Reply-To: <54244243.3090904@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bpringlemeir@nbsps.com, Lucas Stach <l.stach@pengutronix.de>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Thu, Sep 25, 2014 at 6:37 PM, Stefan Agner <stefan@agner.ch> wrote:
-
-> This 3rd version of the GPIO support for Vybrid now also includes
-> the wakeup support which was part of the suspend/resume patchset
-> I sent earlier this week.
+On Thu, Sep 25, 2014 at 6:26 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> On 09/25/2014 11:07 AM, Linus Walleij wrote:
+>> On Wed, Sep 24, 2014 at 2:28 PM, Grygorii Strashko
+>> <grygorii.strashko@ti.com> wrote:
+>>> On 09/24/2014 02:17 PM, Linus Walleij wrote:
+>>
+>>>> So PCA cannot use gpiochip_set_chained_irqchip()?
+>>>
+>>> Yes. It can't - pca is i2c device.
+>>
+>> ? I don't get this statement.
+>>
+>> Why does the fact that it is an I2C device matter?
+>> We have several devices that are in fact on top of
+>> I2C (albeit as MFD cells) like gpio-tc3589x.c.
 >
-> Changes in v3:
+> gpio-tc3589x.c doesn't call gpiochip_set_chained_irqchip()
 
-I've already applied patch 1/5.
+Ah yeah you're right of course. I considered adding a separate
+registration function for the sleeping handlers, like
+gpiochip_set_threaded_irqchip() that would handle
+setting up the nested case.
 
-However I had to fix conflicts against the development branch and
-from patch 2/5 and onward there are even more conflicts, the most
-obvious is that the driver is moved to drivers/pinctrl/freescale, but
-there are other conflicts as well.
+>> Yes, but the .map function isn't called until a client
+>> wants to use an IRQ. And that won't happen until after
+>> we exit the whole .probe() function.
+>
+> .map function is called from irq_create_mapping() which,
+> in turn, can be called as from irq_domain_add_simple() -
+> as result .map will be always called from gpiochip_irqchip_add().
 
-Can you please rebase patches 2-5 onto my "devel" branch from
-the pin control tree and resend, also collect ACKs.
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel
+Ah yeah you're right, I was just wrong here :-/
 
-I saw there was still discussion on 2/5 as well, but I'm ready
-to merge anything ACKed by Shawn.
+>> Well it happens in one single driver, and was done by me.
+>> Maybe I should either disallow that, as that means we're adding
+>> multiple parents (which is what you want, right?) or actually
+>> implement it in a way so that multiple parents can be handled
+>> by the helpers, by adding the parents to a list or something.
+>
+> Sorry, but It seems the simplest way is to allow drivers to manage
+> parent IRQs for the complex cases. So, I vote for custom .map()
+> callback, but It could be not too simple to implement it, because
+> private driver data need to be passed as parameter to this callback
+> somehow.
+
+Yeah. Well what I'm thinking as subsystem maintainer, is that
+when I added the generic GPIOlib irqchip helpers we managed to
+smoke out a large:ish set of subtle bugs that different drivers
+had created independently of each other.
+
+So centralizing code is very important if at all possible to bring
+down the maintainer burden.
+
+So for that reason I'm looking a second and a third time at these
+things before going ahead with custom code in drivers...
+
+> === Simple one - driver need to set parent_irq before adding gpiochip ===
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 8aa84d5..292840b 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -447,8 +447,11 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+>         irq_set_lockdep_class(irq, &gpiochip_irq_lock_class);
+>         irq_set_chip_and_handler(irq, chip->irqchip, chip->irq_handler);
+>         /* Chips that can sleep need nested thread handlers */
+> -       if (chip->can_sleep)
+> +       if (chip->can_sleep) {
+>                 irq_set_nested_thread(irq, 1);
+> +               if (chip->parent_irq)
+> +                       irq_set_parent(irq, chip->parent_irq);
+> +       }
+
+Yeah I need to think of something like this...
 
 Yours,
 Linus Walleij
