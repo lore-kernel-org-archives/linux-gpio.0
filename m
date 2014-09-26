@@ -1,114 +1,78 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpio: set parent irq on chained handlers
-Date: Fri, 26 Sep 2014 15:20:23 +0300
-Message-ID: <54255A07.9060708@ti.com>
-References: <1411732349-19178-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC/RFT PATCH 2/2] gpiolib: irqchip: get rid of irq_base
+Date: Fri, 26 Sep 2014 14:33:55 +0200
+Message-ID: <CACRpkdaG6d4Cvkjreo3EKfJF_p-yQ38T-cLLjnnQOCztw1DSFg@mail.gmail.com>
+References: <1411661364-19620-1-git-send-email-grygorii.strashko@ti.com>
+	<1411661364-19620-2-git-send-email-grygorii.strashko@ti.com>
+	<CACRpkdZSOhNTV5eKB10-=1F-pWOkUmUyo1p04bD+bUW2GK54OA@mail.gmail.com>
+	<5425439C.7010506@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:34873 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753529AbaIZMUa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Sep 2014 08:20:30 -0400
-In-Reply-To: <1411732349-19178-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:46243 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753707AbaIZMd4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Sep 2014 08:33:56 -0400
+Received: by mail-ie0-f170.google.com with SMTP id x19so12727745ier.29
+        for <linux-gpio@vger.kernel.org>; Fri, 26 Sep 2014 05:33:56 -0700 (PDT)
+In-Reply-To: <5425439C.7010506@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "Wang, Yalin" <Yalin.Wang@sonymobile.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 09/26/2014 02:52 PM, Linus Walleij wrote:
-> If the IRQ from the parent is nested the IRQ may need to be
-> resent under certain conditions. Currently the chained IRQ
-> handler in gpiolib does not handle connecting nested IRQs
+On Fri, Sep 26, 2014 at 12:44 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> On 09/26/2014 11:44 AM, Linus Walleij wrote:
+>>
+>> On Thu, Sep 25, 2014 at 6:09 PM, Grygorii Strashko
+>> <grygorii.strashko@ti.com> wrote:
+>>
+>>> Remove irq_base from struct gpio_chip, as it is seems to
+>>> be unused.
+>>> Aslo, using this field by drivers is unsafe because it's
+>>> uncompatible with Sparse IRQ feature.
+>>>
+>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>> ---
+>>> Hi Linus,
+>>>
+>>> I've not found users of this field in drivers/gpio/ folder,
+>>> so I've decided to created this patch to get more comments.
+>>
+>>
+>> Wut?
+>>
+>> git grep '>irq_base'
+>> (...)
+>> drivers/gpio/gpio-max732x.c:    return chip->irq_base + off;
+>
+> ^struct max732x_chip *chip;
+>
+>> drivers/gpio/gpio-ml-ioh.c:     return chip->irq_base + offset;
+>
+> ^struct ioh_gpio *chip
+>
+>> drivers/gpio/gpio-pch.c:        chip->irq_base = irq_base;
+>
+> ^struct pch_gpio *chip
+>
+>> etc etc
+>
+> etc ;)
 
-Seems there is still some misunderstanding ( - chained vs nested IRQs
+Aha now the variable names are confusing me at no end too :-)
 
-> but it is conceptually correct to indicate the actual parent
-> IRQ.
->=20
-> Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> I've spent some time checking it, but it's possible
+> that I missed smth or it's used outside gpio directory.
 
-+ Reported-by: Lothar Wa=DFmann <LW@karo-electronics.de>
+It'd be good if we could estimate this, I'd prefer if we could do
+some semantic grep like cocinelle does to see if the (foo)->irq_base
+affects a case where (foo) is struct gpio_chip...
 
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->   drivers/gpio/gpiolib.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
->=20
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 550e575c6ffb..9362b5b817af 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -398,17 +398,30 @@ void gpiochip_set_chained_irqchip(struct gpio_c=
-hip *gpiochip,
->   				  int parent_irq,
->   				  irq_flow_handler_t parent_handler)
->   {
-> +	unsigned int offset;
-> +
->   	if (gpiochip->can_sleep) {
->   		chip_err(gpiochip, "you cannot have chained interrupts on a chip =
-that may sleep\n");
->   		return;
->   	}
+But I guess I can also just apply the patch and throw it at
+the autobuilders. I'm just worried about cases the autobuilder
+would miss.
 
-
-This function can't be called by gpio-pca953x.c driver  (
-
-> +	if (!gpiochip->irqdomain) {
-> +		chip_err(gpiochip, "called %s before setting up irqchip\n",
-> +			 __func__);
-> +		return;
-> +	}
->  =20
->   	irq_set_chained_handler(parent_irq, parent_handler);
-> +
->   	/*
->   	 * The parent irqchip is already using the chip_data for this
->   	 * irqchip, so our callbacks simply use the handler_data.
->   	 */
->   	irq_set_handler_data(parent_irq, gpiochip);
-> +
-> +	/* Set the parent IRQ for all affected IRQs */
-> +	for (offset =3D 0; offset < gpiochip->ngpio; offset++)
-> +		irq_set_parent(irq_find_mapping(gpiochip->irqdomain, offset),
-> +			       parent_irq);
->   }
->   EXPORT_SYMBOL_GPL(gpiochip_set_chained_irqchip);
->  =20
->=20
-
-May be some simple helper can be added instead:
- void gpiochip_set_nested_irqchip(struct gpio_chip *gpiochip,
-   				  int parent_irq)
-  {
- 	unsigned int offset;
-=20
-   	if (!gpiochip->can_sleep && !chip->irq_not_threaded) {
-   		chip_err(gpiochip, "you cannot have nested interrupts on a chip th=
-at can't sleep\n");
-   		return;
-   	}
-
-	if (!gpiochip->irqdomain) {
-		chip_err(gpiochip, "called %s before setting up irqchip\n",
-			 __func__);
-		return;
-	}
-=20
-
-	/* Set the parent IRQ for all affected IRQs */
-	for (offset =3D 0; offset < gpiochip->ngpio; offset++)
-		irq_set_parent(irq_find_mapping(gpiochip->irqdomain, offset),
-			       parent_irq);
- }
- EXPORT_SYMBOL_GPL(gpiochip_set_nested_irqchip);
-=20
-regards,
--grygorii
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
