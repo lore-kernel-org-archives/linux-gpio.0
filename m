@@ -1,36 +1,55 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: [PATCH v3 4/5] ARM: dts: vf610: use new GPIO support
-Date: Fri, 26 Sep 2014 22:51:49 +0800
-Message-ID: <20140926145147.GA5737@dragon>
-References: <cover.1411662961.git.stefan@agner.ch>
- <590a5fbc4f8b552355a93c1002041765352cd1c3.1411662961.git.stefan@agner.ch>
- <20140926012126.GC21077@dragon>
- <f3bba83ea15d680c852eb7d6e45de08a@agner.ch>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] pinctrl: remove remaining users of gpiochip_remove() retval
+Date: Fri, 26 Sep 2014 22:41:32 +0200
+Message-ID: <201409262241.32579.arnd@arndb.de>
+References: <1410905274-22339-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <f3bba83ea15d680c852eb7d6e45de08a@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpringlemeir@nbsps.com, l.stach@pengutronix.de
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:61097 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754829AbaIZUli (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Sep 2014 16:41:38 -0400
+In-Reply-To: <1410905274-22339-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Fri, Sep 26, 2014 at 09:40:34AM +0200, Stefan Agner wrote:
-> This GPIO's are meant to be used from user space by default. The latest
-> implementation of imx_pmx_gpio_request_enable not only takes care of the
-> muxing, but also applies the whole pad settings. Hence we do not need
-> the pinctrl subsystem to apply it (through pinctrl-* dt properties).
+On Wednesday 17 September 2014, Linus Walleij wrote:
+> Some drivers accidentally still use the return value from
+> gpiochip_remove(). Get rid of them so we can simplify this function
+> and get rid of the return value.
 > 
-> I changed this now in v3, in v2 I had still to use the pinctrl-*
-> properties. I like that 3rd version much more, this way the pin only
-> really gets muxed when the user uses it (e.g. we save power because the
-> pad is disabled when the GPIO is not in use). If the pin needs to be in
-> a defined state, then we would have to explicitly configure/enable it
-> through a pinctrl-* properties, but this is not the case for these
-> external GPIO's.
+> Cc: Abdoulaye Berthe <berthe.ab@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> This patch will be merged through the GPIO tree.
 
-Ah, yes, you're right.  I was still thinking about the way how it worked
-before your patch.
+Hi Linus, this patch caused a new build warning in some configurations:
 
-Patch applied, thanks.
+> diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+> index a53a689a2bfa..7df34b70e8b6 100644
+> --- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
+> +++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+> @@ -1298,10 +1298,7 @@ static int abx500_gpio_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  out_rem_chip:
+> -	err = gpiochip_remove(&pct->chip);
+> -	if (err)
+> -		dev_info(&pdev->dev, "failed to remove gpiochip\n");
+> -
+> +	gpiochip_remove(&pct->chip);
+>  	return ret;
+>  }
+
+
+drivers/pinctrl/nomadik/pinctrl-abx500.c: In function 'abx500_gpio_probe':
+drivers/pinctrl/nomadik/pinctrl-abx500.c:1208:11: warning: unused variable 'err' [-Wunused-variable]
+
+Please fix by removing that variable.
+
+	Arnd
