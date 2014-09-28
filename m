@@ -1,46 +1,37 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: [PATCH 0/9] ARM: vf610: Suspend/resume support
-Date: Sun, 28 Sep 2014 11:15:10 +0800
-Message-ID: <20140928031508.GB12999@dragon>
-References: <cover.1411404079.git.stefan@agner.ch>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] pinctrl: remove remaining users of gpiochip_remove()
+ retval
+Date: Sun, 28 Sep 2014 11:08:38 +0200
+Message-ID: <20140928090838.GD31554@pengutronix.de>
+References: <1410905274-22339-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1bon0130.outbound.protection.outlook.com ([157.56.111.130]:10272
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753371AbaI1DPv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 27 Sep 2014 23:15:51 -0400
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <cover.1411404079.git.stefan@agner.ch>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1410905274-22339-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: kernel@pengutronix.de, linus.walleij@linaro.org, gnurou@gmail.com, linux@arm.linux.org.uk, jingchang.lu@freescale.com, b20788@freescale.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Mon, Sep 22, 2014 at 07:09:21PM +0200, Stefan Agner wrote:
-> This patchset provides suspend/resume support for Freescale Vybrid
-> SoC (vf610). The code is generally aligned to the implementation
-> for i.MX6. The subsystems SRC and GPC need some changes to support
-> the Vybrid specific implementation.
-> 
-> This patchset relies on GPIO driver to be present (in order to
-> provide a wakeup source) as well as using the ARM Global Timer
-> clock source (the Vybrid specifc PIT clock source, vf_pit_timer.c
-> does not support shutdown).
-> 
-> The implemented sleep states (LP-RUN and STOP), are not the most
-> power saving functions available on Vybrid. Especially for
-> suspend-to-memory one of the LPSTOP modes looks more appropriate.
-> However, the complexity is somewhat higher (we would need to move
-> execution path to SRAM and store IOMUX and DDRMC configuration).
-> Currently, I have not the resources to look into that so I hope
-> that this initial code qualifies as power saving functions to be
-> applied.
+Hello Linus,
 
-So you have quite a lot of unnecessary code which is only needed by
-suspend from SRAM (store IOMUX and DDRMC configuration).
+On Tue, Sep 16, 2014 at 03:07:54PM -0700, Linus Walleij wrote:
+> Some drivers accidentally still use the return value from
+> gpiochip_remove(). Get rid of them so we can simplify this function
+> and get rid of the return value.
+>=20
+> Abdoulaye Berthe <berthe.ab@gmail.com>
+Is there a "Signed-off-by: " (or an other tag) missing?
 
-Not happy with that.
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Shawn
+Best regards
+Uwe
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
