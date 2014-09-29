@@ -1,39 +1,115 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzJdIEdQSU86IEFkZCBkcml2ZXIgZm9yIDc0eHgtSUNz?=
- =?UTF-8?B?IHdpdGggTU1JTyBhY2Nlc3M=?=
-Date: Mon, 29 Sep 2014 16:10:41 +0400
-Message-ID: <1411992641.669702342@f127.i.mail.ru>
-References: <1411112404-16040-1-git-send-email-shc_work@mail.ru>
- <1411112404-16040-2-git-send-email-shc_work@mail.ru>
- <CACRpkdYAohAjHiabQC7zs=CrJzDJh+jFKTYhATFoHdNOH2Ef0A@mail.gmail.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Bill Pringlemeir <bpringlemeir@nbsps.com>
+Subject: Re: [PATCH v2 2/5] pinctrl: imx: add gpio pinmux support for vf610
+Date: Mon, 29 Sep 2014 11:05:49 -0400
+Message-ID: <87sijaeab6.fsf@nbsps.com>
+References: <cover.1411492954.git.stefan@agner.ch>
+ <bb68d2360314158cd8ccb9c6794877c3bb45d72e.1411492954.git.stefan@agner.ch>
+ <20140925024712.GB6405@dragon>
+ <1d3735aff5e0961c43d349d673a1c2b2@agner.ch>
+ <20140925090714.GH6405@dragon>
+ <26008fa68a3eaf5f806a7dc4df48f77e@agner.ch> <877g0rlkh3.fsf@nbsps.com>
+ <e9ddcd256056187ffea0b05b7b31c1a6@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fallback2.mail.ru ([94.100.179.22]:49494 "EHLO
-	fallback2.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754651AbaI2Mpo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Sep 2014 08:45:44 -0400
-In-Reply-To: <CACRpkdYAohAjHiabQC7zs=CrJzDJh+jFKTYhATFoHdNOH2Ef0A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: gnurou@gmail.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Shawn Guo <shawn.guo@freescale.com>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
-Cc: =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, =?UTF-8?B?ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc=?= <devicetree@vger.kernel.org>
 
-TW9uLCAyOSBTZXAgMjAxNCAxNDowNDo0NyArMDIwMCDQvtGCIExpbnVzIFdhbGxlaWogPGxpbnVz
-LndhbGxlaWpAbGluYXJvLm9yZz46Cj4gT24gRnJpLCBTZXAgMTksIDIwMTQgYXQgOTo0MCBBTSwg
-QWxleGFuZGVyIFNoaXlhbiA8c2hjX3dvcmtAbWFpbC5ydT4gd3JvdGU6Cj4gCj4gPiBUaGlzIHBh
-dGNoIGFkZHMgZHJpdmVyIHRvIHN1cHBvcnQgR1BJTyBmdW5jdGlvbmFsaXR5IGZvciA3NHh4LWNv
-bXBhdGlibGUKPiA+IElDcyB3aXRoIE1NSU8gYWNjZXNzLiBDb21wYXRpYmxlIG1vZGVscyBpbmNs
-dWRlOgo+ID4gIDEgYml0OiAgIDc0QUhDMUcxMjUgKElucHV0KSwgNzRBVUMxRzc0IChPdXRwdXQp
-Cj4gPiAgMiBiaXRzOiAgNzRMVkMyRzEyNSAoSW5wdXQpLCA3NEhDNzQgKE91dHB1dCkKPiA+ICA0
-IGJpdHM6ICA3NEhDMTI1IChJbnB1dCksIDc0SEMxNzUgKE91dHB1dCkKPiA+ICA2IGJpdHM6ICA3
-NEhDMzY1IChJbnB1dCksIDc0SEMxNzQgKE91dHB1dCkKPiA+ICA4IGJpdHM6ICA3NEhDMjQ0IChJ
-bnB1dCksIDc0SEMyNzMgKE91dHB1dCkKPiA+ICAxNiBiaXRzOiA3NEFDMTYyNCAoSW5wdXQpLCA3
-NEFDMTYzNzQgKE91dHB1dCkKPiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kZXIgU2hpeWFu
-IDxzaGNfd29ya0BtYWlsLnJ1Pgo+IAo+IExvb2tpbmcgZ29vZCwgaWYgeW91IGZpeCB1cCB0aGUg
-RFQgYmluZGluZ3MgdG8gbm90IGluY2x1ZGUKPiB0ZWNobm9sb2d5IGFzIGluZGljYXRlZCBpbiBy
-ZXBseSB0byBwYXRjaCAyLzIgSSdsbCBiZSBoYXBweSB0bwo+IGFwcGx5IHRoaXMgcGF0Y2guCgpI
-ZWxsby4KCkNoYW5nZSBhZmZlY3RzIGJvdGggcGFydHMgb2YgdGhlIHBhdGNoLCBzbyBJIHdpbGwg
-c2VuZCBjb21wbGV0ZSBwYXRjaCBhcyBhIHYyLgoKVGhhbmtzIQotLS0KCg==
+
+>> On 25 Sep 2014, stefan@agner.ch wrote:
+
+>>> IMHO, fully orthogonal is not possible, since on Vybrid those two
+>>> depend on each other. But in order to make it "more orthogonal", we
+>>> maybe should force applying the full configuration in
+>>> imx_pmx_gpio_request_enable (e.g. drive strenght etc), rather then
+>>> only mux the pad to to GPIO...
+>>> What do you think?
+
+> Am 2014-09-25 18:43, schrieb Bill Pringlemeir:
+
+>> The muxing must have been done, that is correct.  However, this could
+>> be by a boot loader, by some other API, etc.  People maybe concerned
+>> about Linux affecting 'CAN' (or some 'mission critical' pins) muxing
+>> for instance, but want the A5 to handle GPIO.
+>>
+>> If somewhere, somehow the pin was muxed properly and the GPIO code
+>> still works, I believe this is a win.  I see that this flexibility
+>> makes it more difficult to get something that just works.  I think
+>> the device trees take care of this for normal users.  It might be
+>> appropriate to add a DT node that sets 'GPIO_CONTROL' and put a note
+>> in the DT-GPIO document, that pinctrl is needed for a normal case or
+>> if some external muxing is used or not needed, then 'control=false'
+>> can be set (or whatever good DT terminology)?  Then the
+>> 'GPIO_CONTROL' check would be in the 'vf610_gpio_direction_input()'
+>> functions.  The 'pinctrl' functions are currently compiled to stubs
+>> if that is configured out.
+
+On 26 Sep 2014, stefan@agner.ch wrote:
+
+> Currently pinctrl is not optional for Vybrid (Kconfig mandates pinctrl
+> by "select PINCTRL_VF610").
+
+> IMHO there is no real value having a way to mark a pin as "muxed
+> externally" (control=false). If we use a pin, we should configure and
+> mux that properly in Linux, and if we don't have valid
+> configuration/mux information, we should not touch that pin.
+
+I didn't mean per-pin, I meant for the GPIO controller as a whole.  I
+was also looking at a IOMUX controlled by the M4 and/or a boot loader.
+I agree it is not possible with the mainline.  This just makes it even
+less possible.  This is great if we know we are going that route.
+
+> In v2 of this patchset, the GPIO code only worked when there _is_ a
+> pinctrl entry for that GPIO pin in the DT. This is because I need the
+> register offset, which is provided by the entry itself. But the pad
+> configuration is another point, which I did not consider in v2. But in
+> v3, the GPIO code also writes the pad control.
+
+I was a little concerned about this as the pin may have pull-ups and
+pull-downs.  We would not want to dynamically change this.  However, I
+don't fully understand this path.
+
+[snip]
+
+>> Then there is 'multi-machine' support with DT and compile time
+>> selects with CONFIG_PINCTRL and I don't think there is a lot of
+>> additional code or confusion?
+
+> I don't understand that.
+
+I was thinking of a modified Vybrid which would allow us to not select
+PINCTRL.  As per Shawn's comment, it is suppose to be
+optional/orthogonal to the GPIO controller.  If someone made the change
+to not select PINCTRL_VF610, then the GPIO code calls would currently
+compile to stubs.  To get the same things with a multi-machine
+(Vybrid/Imx with/without pinctrl), then you could use the DT property
+which would avoid the pinctrl calls.
+
+The more required modules we require for each feature, the harder it is
+to partition the AIPS peripherals between cores.  It sort of makes the
+mainline Linux only useful for the VF5xx non-secure parts.
+
+I guess another option is to make another pinctrl module for the Vybrid
+which uses some inter-core communications to alter the MUX
+configuration.  This makes sense for the pinctrl and the CCM/clock
+modules.  Each and every driver depends on them, so it is probably good
+for sanity to require that Linux has some version of these modules.  If
+the 'M4' was to control the pins and/or clock, then some other modules
+could be written that makes some calls to that CPU (or world).
+
+For other AIPS peripherals, it would be nice if they could be either
+configured out and/or set to disabled by the device tree.
+
+Regards,
+Bill Pringlemeir.
