@@ -1,95 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: nomadik: improve GPIO debug prints
-Date: Tue, 30 Sep 2014 15:06:57 +0200
-Message-ID: <1412082417-10178-1-git-send-email-linus.walleij@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] gpiolib: fix callers of gpiochip_remove
+Date: Tue, 30 Sep 2014 15:24:08 +0200
+Message-ID: <2923496.zl6JUbOQrZ@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:53985 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750836AbaI3NHD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 09:07:03 -0400
-Received: by mail-wg0-f43.google.com with SMTP id a1so3663289wgh.14
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Sep 2014 06:07:01 -0700 (PDT)
+Received: from mout.kundenserver.de ([212.227.17.10]:49242 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750908AbaI3NYS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 09:24:18 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-The debugfs file would only define if the line was "pulled" and
-not which direction (pull up or pull down). Improve this by
-taking two print paths depending on whether the pin is set as
-input or output and use the data register directly to figure
-out whether the pin is set for pull up or pull down.
+A recent API change made gpiochip_remove return void instead of an
+error value, which broke drivers that use this return value:
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 36 +++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
+gpio/gpio-sch311x.c: In function 'sch311x_gpio_probe':
+gpio/gpio-sch311x.c:286:7: error: void value not ignored as it ought to be
+   if (gpiochip_remove(&priv->blocks[i].chip))
+       ^
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index c4d9c5daa21b..3b7c733de489 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -986,6 +986,7 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
- 		container_of(chip, struct nmk_gpio_chip, chip);
- 	int mode;
- 	bool is_out;
-+	bool data_out;
- 	bool pull;
- 	u32 bit = 1 << offset;
- 	const char *modes[] = {
-@@ -998,28 +999,41 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
- 		[NMK_GPIO_ALT_C+3]	= "altC3",
- 		[NMK_GPIO_ALT_C+4]	= "altC4",
- 	};
-+	const char *pulls[] = {
-+		"none     ",
-+		"pull down",
-+		"pull up  ",
-+	};
+This changes the callers that I have found during randconfig testing
+so they no longer depend on the error code.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: e1db1706c86e ("gpio: gpiolib: set gpiochip_remove retval to void")
+
+diff --git a/drivers/gpio/gpio-sch311x.c b/drivers/gpio/gpio-sch311x.c
+index 223830cb95ca..1c8e45b92471 100644
+--- a/drivers/gpio/gpio-sch311x.c
++++ b/drivers/gpio/gpio-sch311x.c
+@@ -283,9 +283,7 @@ exit_err:
+ 	release_region(pdata->runtime_reg + GP1, 6);
+ 	/* release already registered chips */
+ 	for (--i; i >= 0; i--)
+-		if (gpiochip_remove(&priv->blocks[i].chip))
+-			dev_err(&pdev->dev,
+-				"Could not unregister gpiochip, %d\n", err);
++		gpiochip_remove(&priv->blocks[i].chip);
  
- 	clk_enable(nmk_chip->clk);
- 	is_out = !!(readl(nmk_chip->addr + NMK_GPIO_DIR) & bit);
- 	pull = !(readl(nmk_chip->addr + NMK_GPIO_PDIS) & bit);
-+	data_out = !!(readl(nmk_chip->addr + NMK_GPIO_DAT) & bit);
- 	mode = nmk_gpio_get_mode(gpio);
- 	if ((mode == NMK_GPIO_ALT_C) && pctldev)
- 		mode = nmk_prcm_gpiocr_get_mode(pctldev, gpio);
+ 	return err;
+ }
+diff --git a/drivers/pinctrl/pinctrl-bcm2835.c b/drivers/pinctrl/pinctrl-bcm2835.c
+index 9771bdb7ff38..a12c78206e36 100644
+--- a/drivers/pinctrl/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/pinctrl-bcm2835.c
+@@ -1029,7 +1029,8 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
  
--	seq_printf(s, " gpio-%-3d (%-20.20s) %s %s %s %s",
--		   gpio, label ?: "(none)",
--		   is_out ? "out" : "in ",
--		   chip->get
--		   ? (chip->get(chip, offset) ? "hi" : "lo")
--		   : "?  ",
--		   (mode < 0) ? "unknown" : modes[mode],
--		   pull ? "pull" : "none");
--
--	if (!is_out) {
-+	if (is_out) {
-+		seq_printf(s, " gpio-%-3d (%-20.20s) out %s        %s",
-+			   gpio,
-+			   label ?: "(none)",
-+			   data_out ? "hi" : "lo",
-+			   (mode < 0) ? "unknown" : modes[mode]);
-+	} else {
- 		int irq = gpio_to_irq(gpio);
- 		struct irq_desc	*desc = irq_to_desc(irq);
-+		int pullidx = 0;
+ 	pc->pctl_dev = pinctrl_register(&bcm2835_pinctrl_desc, dev, pc);
+ 	if (!pc->pctl_dev) {
+-		return gpiochip_remove(&pc->gpio_chip) ? : -EINVAL;
++		gpiochip_remove(&pc->gpio_chip);
++		return -EINVAL;
+ 	}
  
--		/* This races with request_irq(), set_irq_type(),
-+		if (pull)
-+			pullidx = data_out ? 1 : 2;
-+
-+		seq_printf(s, " gpio-%-3d (%-20.20s) in  %s %s",
-+			   gpio,
-+			   label ?: "(none)",
-+			   pulls[pullidx],
-+			   (mode < 0) ? "unknown" : modes[mode]);
-+		/*
-+		 * This races with request_irq(), set_irq_type(),
- 		 * and set_irq_wake() ... but those are "rare".
- 		 */
- 		if (irq > 0 && desc && desc->action) {
--- 
-1.9.3
+ 	pc->gpio_range = bcm2835_pinctrl_gpio_range;
+@@ -1045,7 +1046,8 @@ static int bcm2835_pinctrl_remove(struct platform_device *pdev)
+ 	struct bcm2835_pinctrl *pc = platform_get_drvdata(pdev);
+ 
+ 	pinctrl_unregister(pc->pctl_dev);
+-	return gpiochip_remove(&pc->gpio_chip);
++	gpiochip_remove(&pc->gpio_chip);
++	return 0;
+ }
+ 
+ static struct of_device_id bcm2835_pinctrl_match[] = {
 
