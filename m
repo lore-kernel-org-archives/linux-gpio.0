@@ -1,112 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] pinctrl: abx500: refactor DT parser to take two paths
-Date: Tue, 30 Sep 2014 11:22:57 +0200
-Message-ID: <1412068977-24296-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 2/3] i2c: add support for Cypress CYUSBS234 USB-I2C
+ adapter
+Date: Tue, 30 Sep 2014 12:09:36 +0200
+Message-ID: <20140930100936.GB17834@localhost>
+References: <1411378426-18387-1-git-send-email-muth@cypress.com>
+ <20140922113026.GF5237@localhost>
+ <6876ca326315426889d3dc596a495b23@BY2PR06MB076.namprd06.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:41548 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750782AbaI3KMR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 06:12:17 -0400
+Content-Disposition: inline
+In-Reply-To: <6876ca326315426889d3dc596a495b23@BY2PR06MB076.namprd06.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Muthu Mani <muth@cypress.com>
+Cc: Johan Hovold <johan@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>
 
-We refactor the DT parser to look for either a config or a
-function and then look for further nodes and reserve maps,
-not the two things mixed up like prior to this patch.
+On Thu, Sep 25, 2014 at 05:46:16AM +0000, Muthu Mani wrote:
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/nomadik/pinctrl-abx500.c | 54 +++++++++++++++++---------------
- 1 file changed, 28 insertions(+), 26 deletions(-)
+> > > +static int cy_i2c_xfer(struct i2c_adapter *adapter,
+> > > +                    struct i2c_msg *msgs, int num) {
+> > > +     int ret = 0;
+> > > +     struct cyusbs_i2c *cy_i2c;
+> > > +     struct cyusbs23x *cyusbs = (struct cyusbs23x
+> > > +*)adapter->algo_data;
+> > > +
+> > > +     dev_dbg(&adapter->dev, "%s\n", __func__);
+> > > +
+> > > +     if (num > 1) {
+> > > +             dev_err(&adapter->dev, "i2c_msg number is > 1\n");
+> > > +             return -EIO;
+> > > +     }
+> > 
+> > Why not handle multiple messages?
+> 
+> This iteration of the driver is designed to handle only a single
+> message at a time.
+> It can be expanded to handle multiple messages in future.
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
-index be95f5e68c01..af0d417fe3fb 100644
---- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
-@@ -893,19 +893,32 @@ static int abx500_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	unsigned long *configs;
- 	unsigned int nconfigs = 0;
- 	bool has_config = 0;
--	unsigned reserve = 0;
- 	struct property *prop;
- 	const char *group, *gpio_name;
- 	struct device_node *np_config;
- 
- 	ret = of_property_read_string(np, "ste,function", &function);
--	if (ret >= 0)
--		reserve = 1;
-+	if (ret >= 0) {
-+		ret = of_property_count_strings(np, "ste,pins");
-+		if (ret < 0)
-+			goto exit;
-+
-+		ret = pinctrl_utils_reserve_map(pctldev, map, reserved_maps,
-+						num_maps, ret);
-+		if (ret < 0)
-+			goto exit;
-+
-+		of_property_for_each_string(np, "ste,pins", prop, group) {
-+			ret = abx500_dt_add_map_mux(map, reserved_maps,
-+					num_maps, group, function);
-+			if (ret < 0)
-+				goto exit;
-+		}
-+	}
- 
- 	ret = pinconf_generic_parse_dt_config(np, &configs, &nconfigs);
- 	if (nconfigs)
- 		has_config = 1;
--
- 	np_config = of_parse_phandle(np, "ste,config", 0);
- 	if (np_config) {
- 		ret = pinconf_generic_parse_dt_config(np_config, &configs,
-@@ -914,29 +927,18 @@ static int abx500_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 			goto exit;
- 		has_config |= nconfigs;
- 	}
-+	if (has_config) {
-+		ret = of_property_count_strings(np, "ste,pins");
-+		if (ret < 0)
-+			goto exit;
- 
--	ret = of_property_count_strings(np, "ste,pins");
--	if (ret < 0)
--		goto exit;
--
--	if (has_config)
--		reserve++;
--
--	reserve *= ret;
--
--	ret = pinctrl_utils_reserve_map(pctldev, map, reserved_maps,
--					num_maps, reserve);
--	if (ret < 0)
--		goto exit;
-+		ret = pinctrl_utils_reserve_map(pctldev, map,
-+						reserved_maps,
-+						num_maps, ret);
-+		if (ret < 0)
-+			goto exit;
- 
--	of_property_for_each_string(np, "ste,pins", prop, group) {
--		if (function) {
--			ret = abx500_dt_add_map_mux(map, reserved_maps,
--					num_maps, group, function);
--			if (ret < 0)
--				goto exit;
--		}
--		if (has_config) {
-+		of_property_for_each_string(np, "ste,pins", prop, group) {
- 			gpio_name = abx500_find_pin_name(pctldev, group);
- 
- 			ret = abx500_dt_add_map_configs(map, reserved_maps,
-@@ -944,8 +946,8 @@ static int abx500_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 			if (ret < 0)
- 				goto exit;
- 		}
--
- 	}
-+
- exit:
- 	return ret;
- }
--- 
-1.9.3
+No, please do that now. It's just a matter of adding a for loop.
+
+Thanks,
+Johan
