@@ -1,99 +1,129 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: alter device tree bindings for functions
-Date: Tue, 30 Sep 2014 09:15:28 +0200
-Message-ID: <1412061328-20966-1-git-send-email-linus.walleij@linaro.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: handle also nested irqchips in the chained handler
+ set-up
+Date: Tue, 30 Sep 2014 10:53:21 +0300
+Message-ID: <542A6171.6010908@ti.com>
+References: <1411735327-30733-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:60996 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751591AbaI3HPd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 03:15:33 -0400
-Received: by mail-wi0-f178.google.com with SMTP id ho1so3660114wib.17
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Sep 2014 00:15:31 -0700 (PDT)
+Received: from devils.ext.ti.com ([198.47.26.153]:37532 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750830AbaI3HxZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 03:53:25 -0400
+In-Reply-To: <1411735327-30733-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>
 
-For function and group configuration nodes, use "function"
-"groups" string pairs, not "pins" where there should be
-"groups".
+Hi Linus,
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- .../bindings/pinctrl/pinctrl-bindings.txt          | 39 ++++++++++++++++------
- 1 file changed, 29 insertions(+), 10 deletions(-)
+On 09/26/2014 03:42 PM, Linus Walleij wrote:
+> To unify how we connect cascaded IRQ chips to parent IRQs, if
+> NULL us passed as handler to the gpiochip_set_chained_irqchip()
+> function, assume the chips is nested rather than chained, and
+> we still get the parent set up correctly by way of this function
+> call.
+>
+> Alter the drivers for tc3589x and stmpe to use this to set up
+> their chained handlers as a demonstration of the usage.
+>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-index fa40a177164c..4f5a0c3af8b9 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-@@ -127,6 +127,24 @@ whether there is any interaction between the child and intermediate parent
- nodes, is again defined entirely by the binding for the individual pin
- controller device.
- 
-+== Generic pin multiplexing node content ==
-+
-+pin multiplexing nodes:
-+
-+function		- the mux function to select
-+groups			- the list of groups to select with this function
-+
-+Example:
-+
-+state_0_node_a {
-+	function = "uart0";
-+	groups = "u0rxtx", "u0rtscts";
-+};
-+state_1_node_a {
-+	function = "spi0";
-+	groups = "spi0pins";
-+};
-+
- == Generic pin configuration node content ==
- 
- Many data items that are represented in a pin configuration node are common
-@@ -140,7 +158,6 @@ Supported generic properties are:
- 
- pins			- the list of pins that properties in the node
- 			  apply to
--function		- the mux function to select
- bias-disable		- disable any pin bias
- bias-high-impedance	- high impedance mode ("third-state", "floating")
- bias-bus-hold		- latch weakly
-@@ -163,6 +180,17 @@ output-low		- set the pin to output mode with low level
- output-high		- set the pin to output mode with high level
- slew-rate		- set the slew rate
- 
-+For example:
-+
-+state_0_node_a {
-+	pins = "GPIO0_AJ5", "GPIO2_AH4"; /* CTS+RXD */
-+	bias-pull-up;
-+};
-+state_1_node_a {
-+	pins = "GPIO1_AJ3", "GPIO3_AH3"; /* RTS+TXD */
-+	output-high;
-+};
-+
- Some of the generic properties take arguments. For those that do, the
- arguments are described below.
- 
-@@ -170,15 +198,6 @@ arguments are described below.
-   binding for the hardware defines:
-   - Whether the entries are integers or strings, and their meaning.
- 
--- function takes a list of function names/IDs as a required argument. The
--  specific binding for the hardware defines:
--  - Whether the entries are integers or strings, and their meaning.
--  - Whether only a single entry is allowed (which is applied to all entries
--    in the pins property), or whether there may alternatively be one entry per
--    entry in the pins property, in which case the list lengths must match, and
--    for each list index i, the function at list index i is applied to the pin
--    at list index i.
--
- - bias-pull-up, -down and -pin-default take as optional argument on hardware
-   supporting it the pull strength in Ohm. bias-disable will disable the pull.
- 
--- 
-1.9.3
+Wouldn't it be better to squash gpiolib changes in
+previous patch (or vice versa)?:
+   "[PATCH] gpio: set parent irq on chained handlers"
+   http://comments.gmane.org/gmane.linux.kernel.gpio/4147
+
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>   Documentation/gpio/driver.txt |  3 ++-
+>   drivers/gpio/gpio-stmpe.c     | 18 ++++++++++++------
+>   drivers/gpio/gpio-tc3589x.c   |  5 +++++
+>   drivers/gpio/gpiolib.c        | 34 +++++++++++++++++++---------------
+>   4 files changed, 38 insertions(+), 22 deletions(-)
+>
+> diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+> index 23b751a10d7b..31e0b5db55d8 100644
+> --- a/Documentation/gpio/driver.txt
+> +++ b/Documentation/gpio/driver.txt
+> @@ -124,7 +124,8 @@ symbol:
+>   * gpiochip_set_chained_irqchip(): sets up a chained irq handler for a
+>     gpio_chip from a parent IRQ and passes the struct gpio_chip* as handler
+>     data. (Notice handler data, since the irqchip data is likely used by the
+> -  parent irqchip!) This is for the chained type of chip.
+> +  parent irqchip!) This is for the chained type of chip. This is also used
+> +  to set up a nested irqchip if NULL is passed as handler.
+>
+>   To use the helpers please keep the following in mind:
+>
+
+[...]
+
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 9362b5b817af..6e00c82be142 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -385,13 +385,14 @@ static struct gpio_chip *find_chip_by_name(const char *name)
+>    */
+>
+>   /**
+> - * gpiochip_add_chained_irqchip() - adds a chained irqchip to a gpiochip
+> - * @gpiochip: the gpiochip to add the irqchip to
+> - * @irqchip: the irqchip to add to the gpiochip
+> + * gpiochip_set_chained_irqchip() - sets a chained irqchip to a gpiochip
+> + * @gpiochip: the gpiochip to set the irqchip chain to
+> + * @irqchip: the irqchip to chain to the gpiochip
+>    * @parent_irq: the irq number corresponding to the parent IRQ for this
+>    * chained irqchip
+>    * @parent_handler: the parent interrupt handler for the accumulated IRQ
+> - * coming out of the gpiochip
+> + * coming out of the gpiochip. If the interrupt is nested rather than
+> + * cascaded, pass NULL in this handler argument
+>    */
+>   void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+>   				  struct irq_chip *irqchip,
+> @@ -400,23 +401,26 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+>   {
+>   	unsigned int offset;
+>
+> -	if (gpiochip->can_sleep) {
+> -		chip_err(gpiochip, "you cannot have chained interrupts on a chip that may sleep\n");
+> -		return;
+> -	}
+>   	if (!gpiochip->irqdomain) {
+>   		chip_err(gpiochip, "called %s before setting up irqchip\n",
+>   			 __func__);
+>   		return;
+>   	}
+>
+> -	irq_set_chained_handler(parent_irq, parent_handler);
+> -
+> -	/*
+> -	 * The parent irqchip is already using the chip_data for this
+> -	 * irqchip, so our callbacks simply use the handler_data.
+> -	 */
+> -	irq_set_handler_data(parent_irq, gpiochip);
+> +	if (parent_handler) {
+> +		if (gpiochip->can_sleep) {
+> +			chip_err(gpiochip,
+> +				 "you cannot have chained interrupts on a "
+> +				 "chip that may sleep\n");
+> +			return;
+> +		}
+> +		irq_set_chained_handler(parent_irq, parent_handler);
+> +		/*
+> +		 * The parent irqchip is already using the chip_data for this
+> +		 * irqchip, so our callbacks simply use the handler_data.
+> +		 */
+> +		irq_set_handler_data(parent_irq, gpiochip);
+> +	}
+>
+>   	/* Set the parent IRQ for all affected IRQs */
+>   	for (offset = 0; offset < gpiochip->ngpio; offset++)
+>
+
+Regards,
+-grygorii
 
