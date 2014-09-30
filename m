@@ -1,163 +1,95 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 3/4 v2] mmc: host: switch OF parser to use gpio descriptors
-Date: Tue, 30 Sep 2014 13:30:44 +0200
-Message-ID: <CABxcv==ipqvs+XpuWMVjmLPTHArBa2Kqk2Zcxn5du5+oXK3RyQ@mail.gmail.com>
-References: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org>
-	<1409137253-25189-3-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1409137253-25189-3-git-send-email-linus.walleij@linaro.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: nomadik: improve GPIO debug prints
+Date: Tue, 30 Sep 2014 15:06:57 +0200
+Message-ID: <1412082417-10178-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:53985 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750836AbaI3NHD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 09:07:03 -0400
+Received: by mail-wg0-f43.google.com with SMTP id a1so3663289wgh.14
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Sep 2014 06:07:01 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hello Linus,
+The debugfs file would only define if the line was "pulled" and
+not which direction (pull up or pull down). Improve this by
+taking two print paths depending on whether the pin is set as
+input or output and use the data register directly to figure
+out whether the pin is set for pull up or pull down.
 
-On Wed, Aug 27, 2014 at 1:00 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> This switches the central MMC OF parser to use gpio descriptors
-> instead of grabbing GPIOs explicitly from the device tree.
-> This strips out an unecessary use of the integer-based GPIO
-> API that we want to get rid of, cuts down on code as the
-> gpio descriptor code will handle active low flags.
->
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 36 +++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 11 deletions(-)
 
-Card detection is failing in some boards because this patch changes
-some semantics. I tried to come up with a fix but I didn't find an
-obvious way to do it (more on that below).
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index c4d9c5daa21b..3b7c733de489 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -986,6 +986,7 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
+ 		container_of(chip, struct nmk_gpio_chip, chip);
+ 	int mode;
+ 	bool is_out;
++	bool data_out;
+ 	bool pull;
+ 	u32 bit = 1 << offset;
+ 	const char *modes[] = {
+@@ -998,28 +999,41 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
+ 		[NMK_GPIO_ALT_C+3]	= "altC3",
+ 		[NMK_GPIO_ALT_C+4]	= "altC4",
+ 	};
++	const char *pulls[] = {
++		"none     ",
++		"pull down",
++		"pull up  ",
++	};
+ 
+ 	clk_enable(nmk_chip->clk);
+ 	is_out = !!(readl(nmk_chip->addr + NMK_GPIO_DIR) & bit);
+ 	pull = !(readl(nmk_chip->addr + NMK_GPIO_PDIS) & bit);
++	data_out = !!(readl(nmk_chip->addr + NMK_GPIO_DAT) & bit);
+ 	mode = nmk_gpio_get_mode(gpio);
+ 	if ((mode == NMK_GPIO_ALT_C) && pctldev)
+ 		mode = nmk_prcm_gpiocr_get_mode(pctldev, gpio);
+ 
+-	seq_printf(s, " gpio-%-3d (%-20.20s) %s %s %s %s",
+-		   gpio, label ?: "(none)",
+-		   is_out ? "out" : "in ",
+-		   chip->get
+-		   ? (chip->get(chip, offset) ? "hi" : "lo")
+-		   : "?  ",
+-		   (mode < 0) ? "unknown" : modes[mode],
+-		   pull ? "pull" : "none");
+-
+-	if (!is_out) {
++	if (is_out) {
++		seq_printf(s, " gpio-%-3d (%-20.20s) out %s        %s",
++			   gpio,
++			   label ?: "(none)",
++			   data_out ? "hi" : "lo",
++			   (mode < 0) ? "unknown" : modes[mode]);
++	} else {
+ 		int irq = gpio_to_irq(gpio);
+ 		struct irq_desc	*desc = irq_to_desc(irq);
++		int pullidx = 0;
+ 
+-		/* This races with request_irq(), set_irq_type(),
++		if (pull)
++			pullidx = data_out ? 1 : 2;
++
++		seq_printf(s, " gpio-%-3d (%-20.20s) in  %s %s",
++			   gpio,
++			   label ?: "(none)",
++			   pulls[pullidx],
++			   (mode < 0) ? "unknown" : modes[mode]);
++		/*
++		 * This races with request_irq(), set_irq_type(),
+ 		 * and set_irq_wake() ... but those are "rare".
+ 		 */
+ 		if (irq > 0 && desc && desc->action) {
+-- 
+1.9.3
 
->
-> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> index 95cceae96944..6f7ed9c50346 100644
-> --- a/drivers/mmc/core/host.c
-> +++ b/drivers/mmc/core/host.c
-> @@ -310,9 +310,7 @@ int mmc_of_parse(struct mmc_host *host)
->  {
->         struct device_node *np;
->         u32 bus_width;
-> -       bool explicit_inv_wp, gpio_inv_wp = false;
-> -       enum of_gpio_flags flags;
-> -       int len, ret, gpio;
-> +       int len, ret;
->
->         if (!host->parent || !host->parent->of_node)
->                 return 0;
-> @@ -360,60 +358,40 @@ int mmc_of_parse(struct mmc_host *host)
->         if (of_find_property(np, "non-removable", &len)) {
->                 host->caps |= MMC_CAP_NONREMOVABLE;
->         } else {
-> -               bool explicit_inv_cd, gpio_inv_cd = false;
-> -
-> -               explicit_inv_cd = of_property_read_bool(np, "cd-inverted");
-> +               if (of_property_read_bool(np, "cd-inverted"))
-> +                       host->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
->
-
-The card-detect signal active high flag is set if the "cd-inverted"
-property is found but in the original code MMC_CAP2_CD_ACTIVE_HIGH was
-set only if "cd-inverted" was true and the card detect GPIO flag was
-OF_GPIO_ACTIVE_HIGH.
-
->                 if (of_find_property(np, "broken-cd", &len))
->                         host->caps |= MMC_CAP_NEEDS_POLL;
->
-> -               gpio = of_get_named_gpio_flags(np, "cd-gpios", 0, &flags);
-> -               if (gpio == -EPROBE_DEFER)
-> -                       return gpio;
-> -               if (gpio_is_valid(gpio)) {
-> -                       if (!(flags & OF_GPIO_ACTIVE_LOW))
-> -                               gpio_inv_cd = true;
-> -
-> -                       ret = mmc_gpio_request_cd(host, gpio, 0);
-> -                       if (ret < 0) {
-> -                               dev_err(host->parent,
-> -                                       "Failed to request CD GPIO #%d: %d!\n",
-> -                                       gpio, ret);
-> +               ret = mmc_gpiod_request_cd(host, "cd", 0, false, 0);
-
-Now false is passed as the override_active_level bool parameter but
-mmc_gpio_request_cd() sets ctx->override_cd_active_level = true. Which
-means that after this patch, mmc_gpio_get_cd() does not take into
-account if host->caps2 has MMC_CAP2_CD_ACTIVE_HIGH set.
-
-> +               if (ret) {
-> +                       if (ret == -EPROBE_DEFER)
->                                 return ret;
-> -                       } else {
-> -                               dev_info(host->parent, "Got CD GPIO #%d.\n",
-> -                                        gpio);
-> +                       if (ret != -ENOENT) {
-> +                               dev_err(host->parent,
-> +                                       "Failed to request CD GPIO: %d\n",
-> +                                       ret);
->                         }
-> -               }
-> -
-> -               if (explicit_inv_cd ^ gpio_inv_cd)
-> -                       host->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
-> +               } else
-> +                       dev_info(host->parent, "Got CD GPIO\n");
->         }
->
->         /* Parse Write Protection */
-> -       explicit_inv_wp = of_property_read_bool(np, "wp-inverted");
-> -
-> -       gpio = of_get_named_gpio_flags(np, "wp-gpios", 0, &flags);
-> -       if (gpio == -EPROBE_DEFER) {
-> -               ret = -EPROBE_DEFER;
-> -               goto out;
-> -       }
-> -       if (gpio_is_valid(gpio)) {
-> -               if (!(flags & OF_GPIO_ACTIVE_LOW))
-> -                       gpio_inv_wp = true;
-> +       if (of_property_read_bool(np, "wp-inverted"))
-> +               host->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
->
-> -               ret = mmc_gpio_request_ro(host, gpio);
-> -               if (ret < 0) {
-> -                       dev_err(host->parent,
-> -                               "Failed to request WP GPIO: %d!\n", ret);
-> +       ret = mmc_gpiod_request_ro(host, "wp", 0, false, 0);
-> +       if (ret) {
-> +               if (ret == -EPROBE_DEFER)
->                         goto out;
-> -               } else {
-> -                               dev_info(host->parent, "Got WP GPIO #%d.\n",
-> -                                        gpio);
-> +               if (ret != -ENOENT) {
-> +                       dev_err(host->parent,
-> +                               "Failed to request WP GPIO: %d\n",
-> +                               ret);
->                 }
-> -       }
-> -       if (explicit_inv_wp ^ gpio_inv_wp)
-> -               host->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
-
-Same issue with write-protect signal active high. After this patch
-MMC_CAP2_RO_ACTIVE_HIGH is always set while before it was
-conditionally set depending of the write-protect GPIO flag value.
-
-> +       } else
-> +               dev_info(host->parent, "Got WP GPIO\n");
->
->         if (of_find_property(np, "cap-sd-highspeed", &len))
->                 host->caps |= MMC_CAP_SD_HIGHSPEED;
-> --
-
-Passing true to mmc_gpiod_request_cd() and not setting
-MMC_CAP2_RO_ACTIVE_HIGH makes card detection work again on this board.
-The former is a one-liner but the later is more complicated since
-AFAIU the idea of the GPIO descriptor code is to handle the flags but
-in this case this detail is needed.
-
-Should we set MMC_CAP2_{CD,RO}_ACTIVE_HIGH in
-mmc_gpiod_request_{cd,ro} or add functions to get the flags for these
-cd and wp GPIO in order to set the host->caps2 flags according to the
-old logic?
-
-Thanks a lot and best regards,
-Javier
