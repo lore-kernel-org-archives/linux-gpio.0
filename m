@@ -1,72 +1,47 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] mmc: core: restore detect line inversion semantics
-Date: Tue, 30 Sep 2014 17:07:19 +0200
-Message-ID: <CABxcv=n-+H3wrAr_vzEsXK_vOwQc8520wM=LJhzw70ZoSbJ_Ew@mail.gmail.com>
-References: <1412085943-16872-1-git-send-email-linus.walleij@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] gpiolib: fix callers of gpiochip_remove
+Date: Tue, 30 Sep 2014 17:18:35 +0200
+Message-ID: <2272579.vn7eKdEJtW@wuerfel>
+References: <2923496.zl6JUbOQrZ@wuerfel> <CACRpkdYdwhujkP_66GCNktcvXFOzmGW=3t6BvCSXXMnHu03eEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:56075 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751192AbaI3PHU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 11:07:20 -0400
-Received: by mail-ob0-f175.google.com with SMTP id m8so15281024obr.34
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Sep 2014 08:07:19 -0700 (PDT)
-In-Reply-To: <1412085943-16872-1-git-send-email-linus.walleij@linaro.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:51924 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863AbaI3PTK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 11:19:10 -0400
+In-Reply-To: <CACRpkdYdwhujkP_66GCNktcvXFOzmGW=3t6BvCSXXMnHu03eEg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org
 
-Hello Linus,
+On Tuesday 30 September 2014 16:11:28 Linus Walleij wrote:
+> On Tue, Sep 30, 2014 at 3:24 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> 
+> > A recent API change made gpiochip_remove return void instead of an
+> > error value, which broke drivers that use this return value:
+> >
+> > gpio/gpio-sch311x.c: In function 'sch311x_gpio_probe':
+> > gpio/gpio-sch311x.c:286:7: error: void value not ignored as it ought to be
+> >    if (gpiochip_remove(&priv->blocks[i].chip))
+> >        ^
+> >
+> > This changes the callers that I have found during randconfig testing
+> > so they no longer depend on the error code.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > Fixes: e1db1706c86e ("gpio: gpiolib: set gpiochip_remove retval to void")
+> 
+> Hm AFAICT these are already fixes in my GPIO tree
+> and linux-next...
+> 
+> Am I looking in the wrong place?
+> 
+> 
 
-On Tue, Sep 30, 2014 at 4:05 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> commit 98e90de99a0c43bd434da814c882c4332441871e
-> "mmc: host: switch OF parser to use gpio descriptors"
-> switched the semantic behaviour of card detect and read
-> only flags such that the inversion capability flag would
-> only be set if inversion was explicitly specified in the
-> device tree, in the hopes that no-one was using double
-> inversion.
->
-> It turns out that the XOR:ing between the explicit
-> inversion was indeed in use, so we need to restore the
-> old semantics where both ways of inversion are checked
-> and the end result XOR:ed.
->
-> Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+No, it's my fault, I seem to have a patch in my tree that reverts those
+changes.
 
-Thanks a lot for the quick patch. It makes the card detection work
-again but needs two subtle changes to have the same semantics than
-before.
-
-> -               ret = mmc_gpiod_request_cd(host, "cd", 0, false, 0);
-> +               ret = mmc_gpiod_request_cd(host, "cd", 0, false,
-> +                                          0, &gpio_invert);
-
-As mentioned in the other thread, the old code uses
-mmc_gpio_request_cd() which always sets override_active_level to true
-so this should be:
-
-ret = mmc_gpiod_request_cd(host, "cd", 0, true, 0, &gpio_invert);
-
-> @@ -316,6 +317,8 @@ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
->                         return ret;
->         }
->
-> +       *gpio_invert = gpiod_is_active_low(desc);
-> +
-
-The old code set gpio_inv_cd if (!(flags & OF_GPIO_ACTIVE_LOW)) so the
-above should be:
-
-*gpio_invert = !gpiod_is_active_low(desc);
-
-And the same applies to the gpio_invert assignment in
-mmc_gpiod_request_ro(). With these two changes:
-
-Tested-by: Javier Martinez Canillas <javier@dowhile0.org>
-
-Best regards,
-Javier
+	Arnd
