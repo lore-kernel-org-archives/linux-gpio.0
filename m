@@ -1,96 +1,163 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO
- adapter
-Date: Tue, 30 Sep 2014 13:21:36 +0200
-Message-ID: <20140930112136.GC17834@localhost>
-References: <1411378458-18424-1-git-send-email-muth@cypress.com>
- <20140922114357.GG5237@localhost>
- <7e6ba8fdbdb643c885369e37e2bcd25a@BY2PR06MB076.namprd06.prod.outlook.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 3/4 v2] mmc: host: switch OF parser to use gpio descriptors
+Date: Tue, 30 Sep 2014 13:30:44 +0200
+Message-ID: <CABxcv==ipqvs+XpuWMVjmLPTHArBa2Kqk2Zcxn5du5+oXK3RyQ@mail.gmail.com>
+References: <1409137253-25189-1-git-send-email-linus.walleij@linaro.org>
+	<1409137253-25189-3-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:36128 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751044AbaI3LYR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Sep 2014 07:24:17 -0400
-Content-Disposition: inline
-In-Reply-To: <7e6ba8fdbdb643c885369e37e2bcd25a@BY2PR06MB076.namprd06.prod.outlook.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1409137253-25189-3-git-send-email-linus.walleij@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Muthu Mani <muth@cypress.com>
-Cc: Johan Hovold <johan@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>
 
-On Thu, Sep 25, 2014 at 05:47:11AM +0000, Muthu Mani wrote:
-> > -----Original Message-----
-> > From: Johan Hovold [mailto:jhovold@gmail.com] On Behalf Of Johan Hovold
+Hello Linus,
 
-> > > +static int cy_gpio_direction_input(struct gpio_chip *chip,
-> > > +                                     unsigned offset) {
-> > > +     return 0;
-> > 
-> > Aren't the GPIOs output-only?
-> 
-> No.
+On Wed, Aug 27, 2014 at 1:00 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> This switches the central MMC OF parser to use gpio descriptors
+> instead of grabbing GPIOs explicitly from the device tree.
+> This strips out an unecessary use of the integer-based GPIO
+> API that we want to get rid of, cuts down on code as the
+> gpio descriptor code will handle active low flags.
+>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>
 
-Then you should implement this callback to configure the pin as an
-input.
+Card detection is failing in some boards because this patch changes
+some semantics. I tried to come up with a fix but I didn't find an
+obvious way to do it (more on that below).
 
-Or can the configuration only be made through your configuration tools
-and stored in eeprom?
+>
+> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> index 95cceae96944..6f7ed9c50346 100644
+> --- a/drivers/mmc/core/host.c
+> +++ b/drivers/mmc/core/host.c
+> @@ -310,9 +310,7 @@ int mmc_of_parse(struct mmc_host *host)
+>  {
+>         struct device_node *np;
+>         u32 bus_width;
+> -       bool explicit_inv_wp, gpio_inv_wp = false;
+> -       enum of_gpio_flags flags;
+> -       int len, ret, gpio;
+> +       int len, ret;
+>
+>         if (!host->parent || !host->parent->of_node)
+>                 return 0;
+> @@ -360,60 +358,40 @@ int mmc_of_parse(struct mmc_host *host)
+>         if (of_find_property(np, "non-removable", &len)) {
+>                 host->caps |= MMC_CAP_NONREMOVABLE;
+>         } else {
+> -               bool explicit_inv_cd, gpio_inv_cd = false;
+> -
+> -               explicit_inv_cd = of_property_read_bool(np, "cd-inverted");
+> +               if (of_property_read_bool(np, "cd-inverted"))
+> +                       host->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
+>
 
-Then you need to retrieve the actual config and implement these
-callbacks (e.g. fail if not matching the eeprom config) along with
-get_direction().
+The card-detect signal active high flag is set if the "cd-inverted"
+property is found but in the original code MMC_CAP2_CD_ACTIVE_HIGH was
+set only if "cd-inverted" was true and the card detect GPIO flag was
+OF_GPIO_ACTIVE_HIGH.
 
-> > > +}
-> > > +
-> > > +static int cy_gpio_direction_output(struct gpio_chip *chip,
-> > > +                                     unsigned offset, int value) {
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int cyusbs23x_gpio_probe(struct platform_device *pdev) {
-> > > +     struct cyusbs23x *cyusbs;
-> > > +     struct cyusbs_gpio *cy_gpio;
-> > > +     int ret = 0;
-> > > +
-> > > +     dev_dbg(&pdev->dev, "%s\n", __func__);
-> > > +
-> > > +     cyusbs = dev_get_drvdata(pdev->dev.parent);
-> > > +
-> > > +     cy_gpio = devm_kzalloc(&pdev->dev, sizeof(*cy_gpio), GFP_KERNEL);
-> > > +     if (cy_gpio == NULL)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     cy_gpio->cyusbs = cyusbs;
-> > > +     /* registering gpio */
-> > > +     cy_gpio->gpio.label = "cyusbs23x gpio";
-> > > +     cy_gpio->gpio.dev = &pdev->dev;
-> > > +     cy_gpio->gpio.owner = THIS_MODULE;
-> > > +     cy_gpio->gpio.base = -1;
-> > > +     cy_gpio->gpio.ngpio = 12; /* total GPIOs */
-> > 
-> > I think you need to read out the gpio config from the device eeprom and
-> > implement a request() callback where you verify that a requested gpio is
-> > actually available (mode dependent, and there are never more than 10 gpios
-> > availble).
-> 
-> In this initial driver, all GPIOs are made available to user space.
-> Additional functionalities will be added in the next version of the driver.
+>                 if (of_find_property(np, "broken-cd", &len))
+>                         host->caps |= MMC_CAP_NEEDS_POLL;
+>
+> -               gpio = of_get_named_gpio_flags(np, "cd-gpios", 0, &flags);
+> -               if (gpio == -EPROBE_DEFER)
+> -                       return gpio;
+> -               if (gpio_is_valid(gpio)) {
+> -                       if (!(flags & OF_GPIO_ACTIVE_LOW))
+> -                               gpio_inv_cd = true;
+> -
+> -                       ret = mmc_gpio_request_cd(host, gpio, 0);
+> -                       if (ret < 0) {
+> -                               dev_err(host->parent,
+> -                                       "Failed to request CD GPIO #%d: %d!\n",
+> -                                       gpio, ret);
+> +               ret = mmc_gpiod_request_cd(host, "cd", 0, false, 0);
 
-I think this needs to be implemented now. It's needed for direction
-handling as well as mentioned above.
+Now false is passed as the override_active_level bool parameter but
+mmc_gpio_request_cd() sets ctx->override_cd_active_level = true. Which
+means that after this patch, mmc_gpio_get_cd() does not take into
+account if host->caps2 has MMC_CAP2_CD_ACTIVE_HIGH set.
 
-> > > +     cy_gpio->gpio.can_sleep = true;
-> > > +     cy_gpio->gpio.set = cy_gpio_set;
-> > > +     cy_gpio->gpio.get = cy_gpio_get;
-> > > +     cy_gpio->gpio.direction_input = cy_gpio_direction_input;
-> > > +     cy_gpio->gpio.direction_output = cy_gpio_direction_output;
-> > > +     ret = gpiochip_add(&cy_gpio->gpio);
-> > > +     if (ret < 0) {
-> > > +             dev_err(cy_gpio->gpio.dev, "could not add gpio");
-> > > +             goto error;
-> > > +     }
+> +               if (ret) {
+> +                       if (ret == -EPROBE_DEFER)
+>                                 return ret;
+> -                       } else {
+> -                               dev_info(host->parent, "Got CD GPIO #%d.\n",
+> -                                        gpio);
+> +                       if (ret != -ENOENT) {
+> +                               dev_err(host->parent,
+> +                                       "Failed to request CD GPIO: %d\n",
+> +                                       ret);
+>                         }
+> -               }
+> -
+> -               if (explicit_inv_cd ^ gpio_inv_cd)
+> -                       host->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
+> +               } else
+> +                       dev_info(host->parent, "Got CD GPIO\n");
+>         }
+>
+>         /* Parse Write Protection */
+> -       explicit_inv_wp = of_property_read_bool(np, "wp-inverted");
+> -
+> -       gpio = of_get_named_gpio_flags(np, "wp-gpios", 0, &flags);
+> -       if (gpio == -EPROBE_DEFER) {
+> -               ret = -EPROBE_DEFER;
+> -               goto out;
+> -       }
+> -       if (gpio_is_valid(gpio)) {
+> -               if (!(flags & OF_GPIO_ACTIVE_LOW))
+> -                       gpio_inv_wp = true;
+> +       if (of_property_read_bool(np, "wp-inverted"))
+> +               host->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
+>
+> -               ret = mmc_gpio_request_ro(host, gpio);
+> -               if (ret < 0) {
+> -                       dev_err(host->parent,
+> -                               "Failed to request WP GPIO: %d!\n", ret);
+> +       ret = mmc_gpiod_request_ro(host, "wp", 0, false, 0);
+> +       if (ret) {
+> +               if (ret == -EPROBE_DEFER)
+>                         goto out;
+> -               } else {
+> -                               dev_info(host->parent, "Got WP GPIO #%d.\n",
+> -                                        gpio);
+> +               if (ret != -ENOENT) {
+> +                       dev_err(host->parent,
+> +                               "Failed to request WP GPIO: %d\n",
+> +                               ret);
+>                 }
+> -       }
+> -       if (explicit_inv_wp ^ gpio_inv_wp)
+> -               host->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
 
-Thanks,
-Johan
+Same issue with write-protect signal active high. After this patch
+MMC_CAP2_RO_ACTIVE_HIGH is always set while before it was
+conditionally set depending of the write-protect GPIO flag value.
+
+> +       } else
+> +               dev_info(host->parent, "Got WP GPIO\n");
+>
+>         if (of_find_property(np, "cap-sd-highspeed", &len))
+>                 host->caps |= MMC_CAP_SD_HIGHSPEED;
+> --
+
+Passing true to mmc_gpiod_request_cd() and not setting
+MMC_CAP2_RO_ACTIVE_HIGH makes card detection work again on this board.
+The former is a one-liner but the later is more complicated since
+AFAIU the idea of the GPIO descriptor code is to handle the flags but
+in this case this detail is needed.
+
+Should we set MMC_CAP2_{CD,RO}_ACTIVE_HIGH in
+mmc_gpiod_request_{cd,ro} or add functions to get the flags for these
+cd and wp GPIO in order to set the host->caps2 flags according to the
+old logic?
+
+Thanks a lot and best regards,
+Javier
