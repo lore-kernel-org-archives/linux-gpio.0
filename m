@@ -1,82 +1,104 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/2] led: remove use of gpiochip_remove() retval
-Date: Tue, 30 Sep 2014 14:21:45 -0700
-Message-ID: <CAK5ve-KCYHySjs4f+rd+kAvKQmTkJqsq87Muq_j-D0nB7WSYjQ@mail.gmail.com>
-References: <1412087707-8313-1-git-send-email-pramod.gurav@smartplayin.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1412087707-8313-1-git-send-email-pramod.gurav@smartplayin.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pramod Gurav <pramod.gurav@smartplayin.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Pramod Gurav <pramod.gurav@smartplayin.com>
+Subject: [PATCH] ASoC: remove use of gpiochip_remove() retval
+Date: Wed,  1 Oct 2014 11:17:46 +0530
+Message-ID: <1412142466-14932-1-git-send-email-pramod.gurav@smartplayin.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp82.ord1c.emailsrvr.com ([108.166.43.82]:55606 "EHLO
+	smtp82.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750861AbaJAFoO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Oct 2014 01:44:14 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Pramod Gurav <pramod.gurav@smartplayin.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-gpio@vger.kernel.org
 
-On Tue, Sep 30, 2014 at 7:35 AM, Pramod Gurav
-<pramod.gurav@smartplayin.com> wrote:
-> Get rid of using return value from gpiochip_remove() as it returns
-> void.
->
+Get rid of using return value from gpiochip_remove() as it returns
+void with a new change in kernel.
 
-Looks good to me. I will merge it.
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+CC: Liam Girdwood <lgirdwood@gmail.com>
+CC: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz> 
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: alsa-devel@alsa-project.org
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
+---
+ sound/soc/codecs/wm5100.c |    5 +----
+ sound/soc/codecs/wm8903.c |    6 +-----
+ sound/soc/codecs/wm8962.c |    5 +----
+ sound/soc/codecs/wm8996.c |    6 +-----
+ 4 files changed, 4 insertions(+), 18 deletions(-)
 
-But what's in the first patch. I just got this second patch in my email inbox.
+diff --git a/sound/soc/codecs/wm5100.c b/sound/soc/codecs/wm5100.c
+index 7bb0d36..a01ad62 100644
+--- a/sound/soc/codecs/wm5100.c
++++ b/sound/soc/codecs/wm5100.c
+@@ -2319,11 +2319,8 @@ static void wm5100_init_gpio(struct i2c_client *i2c)
+ static void wm5100_free_gpio(struct i2c_client *i2c)
+ {
+ 	struct wm5100_priv *wm5100 = i2c_get_clientdata(i2c);
+-	int ret;
+ 
+-	ret = gpiochip_remove(&wm5100->gpio_chip);
+-	if (ret != 0)
+-		dev_err(&i2c->dev, "Failed to remove GPIOs: %d\n", ret);
++	gpiochip_remove(&wm5100->gpio_chip);
+ }
+ #else
+ static void wm5100_init_gpio(struct i2c_client *i2c)
+diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
+index aa09848..c038b3e 100644
+--- a/sound/soc/codecs/wm8903.c
++++ b/sound/soc/codecs/wm8903.c
+@@ -1877,11 +1877,7 @@ static void wm8903_init_gpio(struct wm8903_priv *wm8903)
+ 
+ static void wm8903_free_gpio(struct wm8903_priv *wm8903)
+ {
+-	int ret;
+-
+-	ret = gpiochip_remove(&wm8903->gpio_chip);
+-	if (ret != 0)
+-		dev_err(wm8903->dev, "Failed to remove GPIOs: %d\n", ret);
++	gpiochip_remove(&wm8903->gpio_chip);
+ }
+ #else
+ static void wm8903_init_gpio(struct wm8903_priv *wm8903)
+diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
+index 1098ae3..9077411 100644
+--- a/sound/soc/codecs/wm8962.c
++++ b/sound/soc/codecs/wm8962.c
+@@ -3398,11 +3398,8 @@ static void wm8962_init_gpio(struct snd_soc_codec *codec)
+ static void wm8962_free_gpio(struct snd_soc_codec *codec)
+ {
+ 	struct wm8962_priv *wm8962 = snd_soc_codec_get_drvdata(codec);
+-	int ret;
+ 
+-	ret = gpiochip_remove(&wm8962->gpio_chip);
+-	if (ret != 0)
+-		dev_err(codec->dev, "Failed to remove GPIOs: %d\n", ret);
++	gpiochip_remove(&wm8962->gpio_chip);
+ }
+ #else
+ static void wm8962_init_gpio(struct snd_soc_codec *codec)
+diff --git a/sound/soc/codecs/wm8996.c b/sound/soc/codecs/wm8996.c
+index f16ff4f..b1dcc11 100644
+--- a/sound/soc/codecs/wm8996.c
++++ b/sound/soc/codecs/wm8996.c
+@@ -2216,11 +2216,7 @@ static void wm8996_init_gpio(struct wm8996_priv *wm8996)
+ 
+ static void wm8996_free_gpio(struct wm8996_priv *wm8996)
+ {
+-	int ret;
+-
+-	ret = gpiochip_remove(&wm8996->gpio_chip);
+-	if (ret != 0)
+-		dev_err(wm8996->dev, "Failed to remove GPIOs: %d\n", ret);
++	gpiochip_remove(&wm8996->gpio_chip);
+ }
+ #else
+ static void wm8996_init_gpio(struct wm8996_priv *wm8996)
+-- 
+1.7.9.5
 
--Bryan
-
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Bryan Wu <cooloney@gmail.com>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: linux-leds@vger.kernel.org
->
-> Cc: linux-gpio@vger.kernel.org
->
-> Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
-> ---
->  drivers/leds/leds-pca9532.c |   10 ++--------
->  drivers/leds/leds-tca6507.c |    7 ++-----
->  2 files changed, 4 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index 4a0e786..5a6363d 100644
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
-> @@ -319,14 +319,8 @@ static int pca9532_destroy_devices(struct pca9532_data *data, int n_devs)
->         }
->
->  #ifdef CONFIG_LEDS_PCA9532_GPIO
-> -       if (data->gpio.dev) {
-> -               int err = gpiochip_remove(&data->gpio);
-> -               if (err) {
-> -                       dev_err(&data->client->dev, "%s failed, %d\n",
-> -                                               "gpiochip_remove()", err);
-> -                       return err;
-> -               }
-> -       }
-> +       if (data->gpio.dev)
-> +               gpiochip_remove(&data->gpio);
->  #endif
->
->         return 0;
-> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-> index 3d9e267..20fa8e7 100644
-> --- a/drivers/leds/leds-tca6507.c
-> +++ b/drivers/leds/leds-tca6507.c
-> @@ -667,11 +667,8 @@ static int tca6507_probe_gpios(struct i2c_client *client,
->
->  static void tca6507_remove_gpio(struct tca6507_chip *tca)
->  {
-> -       if (tca->gpio.ngpio) {
-> -               int err = gpiochip_remove(&tca->gpio);
-> -               dev_err(&tca->client->dev, "%s failed, %d\n",
-> -                       "gpiochip_remove()", err);
-> -       }
-> +       if (tca->gpio.ngpio)
-> +               gpiochip_remove(&tca->gpio);
->  }
->  #else /* CONFIG_GPIOLIB */
->  static int tca6507_probe_gpios(struct i2c_client *client,
-> --
-> 1.7.9.5
->
