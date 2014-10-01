@@ -1,39 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] mfd: remove use of gpiochip_remove() retval
-Date: Wed, 1 Oct 2014 09:45:48 +0200
-Message-ID: <CACRpkdZVyxN+W_8s3Hvij0wu=bE-tyAFhJPVKumRvDkpUDuncA@mail.gmail.com>
-References: <1412086542-1662-1-git-send-email-pramod.gurav@smartplayin.com>
-	<1412086542-1662-2-git-send-email-pramod.gurav@smartplayin.com>
+From: Pramod Gurav <pramod.gurav@smartplayin.com>
+Subject: Re: [PATCH 1/2] gpio: remove remaining users of gpiochip_remove()
+ retval
+Date: Wed, 01 Oct 2014 13:22:17 +0530
+Message-ID: <542BB2B1.9010107@smartplayin.com>
+References: <1412086542-1662-1-git-send-email-pramod.gurav@smartplayin.com> <CACRpkdaCcaNmv=fciiVJdmu3M7-dhqjqgAuP6eeJkkfptFbA1Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:39903 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750780AbaJAHps (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Oct 2014 03:45:48 -0400
-Received: by mail-ie0-f179.google.com with SMTP id ar1so259688iec.10
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Oct 2014 00:45:48 -0700 (PDT)
-In-Reply-To: <1412086542-1662-2-git-send-email-pramod.gurav@smartplayin.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaCcaNmv=fciiVJdmu3M7-dhqjqgAuP6eeJkkfptFbA1Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Pramod Gurav <pramod.gurav@smartplayin.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Sep 30, 2014 at 4:15 PM, Pramod Gurav
-<pramod.gurav@smartplayin.com> wrote:
+On Wednesday 01 October 2014 01:13 PM, Linus Walleij wrote:
+> On Tue, Sep 30, 2014 at 4:15 PM, Pramod Gurav
+> <pramod.gurav@smartplayin.com> wrote:
+> 
+>> Some driver in gpio still check for return value from gpiochip_remove
+>> Get rid of the check for return value.
+>>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>> Cc: linux-gpio@vger.kernel.org
+>>
+>> Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
+> 
+> This is already fixed in the GPIO tree, and in linux-next.
+> 
+> I have got more patches like this from other people, and cannot
+> quite understand what kind of tree you are actually looking at?
+> 
+Sorry for this Linus. I have applied these patches on linux-next's
+3.17-rc6. Just checked the other patch fixing these have come after rc6.
+Should have done on master or gpio tree master.
 
-> Get rid of using return value from gpiochip_remove() as it returns
-> void.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> CC: Lee Jones <lee.jones@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
->
-> Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
+Will be more careful next time.
 
-Already fixed in the GPIO tree.
-
-Yours,
-Linus Walleij
+> Yours,
+> Linus Walleij
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
