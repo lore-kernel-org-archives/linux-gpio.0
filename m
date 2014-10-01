@@ -1,50 +1,58 @@
-From: Pramod Gurav <pramod.gurav@smartplayin.com>
-Subject: Re: [PATCH] HID: cp2112: remove use of gpiochip_remove() retval
-Date: Wed, 01 Oct 2014 13:49:16 +0530
-Message-ID: <542BB904.1010705@smartplayin.com>
-References: <1412087049-4368-1-git-send-email-pramod.gurav@smartplayin.com> <alpine.LNX.2.00.1410010917000.26311@pobox.suse.cz> <542BACB3.3010203@smartplayin.com> <alpine.LNX.2.00.1410011000450.26311@pobox.suse.cz>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH] mmc: core: restore detect line inversion semantics
+Date: Wed, 1 Oct 2014 10:22:59 +0200
+Message-ID: <CABxcv=kmryUgM-FR97nTHqiB9k-=VGNBcWhcH06h0p8ytxBCLg@mail.gmail.com>
+References: <1412085943-16872-1-git-send-email-linus.walleij@linaro.org>
+	<CABxcv=n-+H3wrAr_vzEsXK_vOwQc8520wM=LJhzw70ZoSbJ_Ew@mail.gmail.com>
+	<CACRpkdZPPZfF9cG-sCSG3agdkE8ToPTGi4yQ5jW2Ab60PW_t2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp82.ord1c.emailsrvr.com ([108.166.43.82]:48358 "EHLO
-	smtp82.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751613AbaJAIPn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Oct 2014 04:15:43 -0400
-In-Reply-To: <alpine.LNX.2.00.1410011000450.26311@pobox.suse.cz>
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:38305 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751119AbaJAIXA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Oct 2014 04:23:00 -0400
+Received: by mail-wg0-f51.google.com with SMTP id l18so479277wgh.10
+        for <linux-gpio@vger.kernel.org>; Wed, 01 Oct 2014 01:22:59 -0700 (PDT)
+In-Reply-To: <CACRpkdZPPZfF9cG-sCSG3agdkE8ToPTGi4yQ5jW2Ab60PW_t2Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
 
-On Wednesday 01 October 2014 01:31 PM, Jiri Kosina wrote:
-> On Wed, 1 Oct 2014, Pramod Gurav wrote:
-> 
->>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>>>> Cc: Alexandre Courbot <gnurou@gmail.com>
->>>>> Cc: Jiri Kosina <jkosina@suse.cz>
->>>>> Cc: linux-input@vger.kernel.org 
->>>>> Cc: linux-gpio@vger.kernel.org
->>>>>
->>>>> Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
->>> I guess this depends on some other patch that hasn't gone to Linus yet, 
->>> right? As Linus' tree currently has this prototype:
+Hello Linus,
+
+On Wed, Oct 1, 2014 at 9:54 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Sep 30, 2014 at 5:07 PM, Javier Martinez Canillas
+> <javier@dowhile0.org> wrote:
 >>>
->>> 	int gpiochip_remove(struct gpio_chip *chip)
+>>> +       *gpio_invert = gpiod_is_active_low(desc);
+>>> +
 >>
->> Yes. It is yet to make it to linus's tree. But the change is there in
->> linux-next master branch.
-> 
-> Alright. It probably makes most sense to take this patch together with the 
-> prototype change in one pile (i.e. not through my tree).
-> 
-> For that purpose
-> 
-> 	Acked-by: Jiri Kosina <jkosina@suse.cz>
+>> The old code set gpio_inv_cd if (!(flags & OF_GPIO_ACTIVE_LOW)) so the
+>> above should be:
+>>
+>> *gpio_invert = !gpiod_is_active_low(desc);
+>
+> Argh, done it like this in v2, but isn't that variable name a lie then?
+> If it's active low then it's inverted, but if it's not active low it's not
+> inverted right...
+>
 
-Jiri,
+Right, the logic is confusing at the very least. I'm not familiar with
+this code though, I just was bitten by this issue :-)
 
-Just realized when Linus told me these changes are already in his tree
-as well as in mast of linux-tree. Sorry for spaming and late realizing this.
+> Sigh, atleast we have restored the semantics, but maybe we need
+> to comb over this again.
+>
 
-> 
+Agreed.
+
+For completeness I just tested v2 of your patch and it makes the card
+detection work again. Thanks a lot for all your help!
+
+> Yours,
+> Linus Walleij
+
+Best regards,
+Javier
