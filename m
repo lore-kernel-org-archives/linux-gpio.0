@@ -1,104 +1,109 @@
 From: Pramod Gurav <pramod.gurav@smartplayin.com>
-Subject: [PATCH] ASoC: remove use of gpiochip_remove() retval
-Date: Wed,  1 Oct 2014 11:17:46 +0530
-Message-ID: <1412142466-14932-1-git-send-email-pramod.gurav@smartplayin.com>
+Subject: [PATCH] serial: remove use of gpiochip_remove() retval
+Date: Wed,  1 Oct 2014 11:27:49 +0530
+Message-ID: <1412143069-18562-1-git-send-email-pramod.gurav@smartplayin.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp82.ord1c.emailsrvr.com ([108.166.43.82]:55606 "EHLO
-	smtp82.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750861AbaJAFoO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Oct 2014 01:44:14 -0400
+Received: from smtp114.ord1c.emailsrvr.com ([108.166.43.114]:54659 "EHLO
+	smtp114.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750981AbaJAFyQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Oct 2014 01:54:16 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Pramod Gurav <pramod.gurav@smartplayin.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-gpio@vger.kernel.org
+Cc: Pramod Gurav <pramod.gurav@smartplayin.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org
 
 Get rid of using return value from gpiochip_remove() as it returns
 void with a new change in kernel.
 
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
-CC: Liam Girdwood <lgirdwood@gmail.com>
-CC: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz> 
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: linux-serial@vger.kernel.org
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
 ---
- sound/soc/codecs/wm5100.c |    5 +----
- sound/soc/codecs/wm8903.c |    6 +-----
- sound/soc/codecs/wm8962.c |    5 +----
- sound/soc/codecs/wm8996.c |    6 +-----
- 4 files changed, 4 insertions(+), 18 deletions(-)
+ drivers/tty/serial/max310x.c   |   10 ++++------
+ drivers/tty/serial/sc16is7xx.c |   13 +++++--------
+ 2 files changed, 9 insertions(+), 14 deletions(-)
 
-diff --git a/sound/soc/codecs/wm5100.c b/sound/soc/codecs/wm5100.c
-index 7bb0d36..a01ad62 100644
---- a/sound/soc/codecs/wm5100.c
-+++ b/sound/soc/codecs/wm5100.c
-@@ -2319,11 +2319,8 @@ static void wm5100_init_gpio(struct i2c_client *i2c)
- static void wm5100_free_gpio(struct i2c_client *i2c)
- {
- 	struct wm5100_priv *wm5100 = i2c_get_clientdata(i2c);
--	int ret;
+diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
+index 82573dc..0041a64 100644
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
+@@ -1248,7 +1248,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
+ 	mutex_destroy(&s->mutex);
  
--	ret = gpiochip_remove(&wm5100->gpio_chip);
--	if (ret != 0)
--		dev_err(&i2c->dev, "Failed to remove GPIOs: %d\n", ret);
-+	gpiochip_remove(&wm5100->gpio_chip);
- }
- #else
- static void wm5100_init_gpio(struct i2c_client *i2c)
-diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
-index aa09848..c038b3e 100644
---- a/sound/soc/codecs/wm8903.c
-+++ b/sound/soc/codecs/wm8903.c
-@@ -1877,11 +1877,7 @@ static void wm8903_init_gpio(struct wm8903_priv *wm8903)
+ #ifdef CONFIG_GPIOLIB
+-	WARN_ON(gpiochip_remove(&s->gpio));
++	gpiochip_remove(&s->gpio);
  
- static void wm8903_free_gpio(struct wm8903_priv *wm8903)
+ out_uart:
+ #endif
+@@ -1263,12 +1263,10 @@ out_clk:
+ static int max310x_remove(struct device *dev)
  {
--	int ret;
--
--	ret = gpiochip_remove(&wm8903->gpio_chip);
--	if (ret != 0)
--		dev_err(wm8903->dev, "Failed to remove GPIOs: %d\n", ret);
-+	gpiochip_remove(&wm8903->gpio_chip);
- }
- #else
- static void wm8903_init_gpio(struct wm8903_priv *wm8903)
-diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
-index 1098ae3..9077411 100644
---- a/sound/soc/codecs/wm8962.c
-+++ b/sound/soc/codecs/wm8962.c
-@@ -3398,11 +3398,8 @@ static void wm8962_init_gpio(struct snd_soc_codec *codec)
- static void wm8962_free_gpio(struct snd_soc_codec *codec)
- {
- 	struct wm8962_priv *wm8962 = snd_soc_codec_get_drvdata(codec);
--	int ret;
+ 	struct max310x_port *s = dev_get_drvdata(dev);
+-	int i, ret = 0;
++	int i;
  
--	ret = gpiochip_remove(&wm8962->gpio_chip);
--	if (ret != 0)
--		dev_err(codec->dev, "Failed to remove GPIOs: %d\n", ret);
-+	gpiochip_remove(&wm8962->gpio_chip);
- }
- #else
- static void wm8962_init_gpio(struct snd_soc_codec *codec)
-diff --git a/sound/soc/codecs/wm8996.c b/sound/soc/codecs/wm8996.c
-index f16ff4f..b1dcc11 100644
---- a/sound/soc/codecs/wm8996.c
-+++ b/sound/soc/codecs/wm8996.c
-@@ -2216,11 +2216,7 @@ static void wm8996_init_gpio(struct wm8996_priv *wm8996)
+ #ifdef CONFIG_GPIOLIB
+-	ret = gpiochip_remove(&s->gpio);
+-	if (ret)
+-		return ret;
++	gpiochip_remove(&s->gpio);
+ #endif
  
- static void wm8996_free_gpio(struct wm8996_priv *wm8996)
- {
--	int ret;
--
--	ret = gpiochip_remove(&wm8996->gpio_chip);
--	if (ret != 0)
--		dev_err(wm8996->dev, "Failed to remove GPIOs: %d\n", ret);
-+	gpiochip_remove(&wm8996->gpio_chip);
+ 	for (i = 0; i < s->uart.nr; i++) {
+@@ -1282,7 +1280,7 @@ static int max310x_remove(struct device *dev)
+ 	uart_unregister_driver(&s->uart);
+ 	clk_disable_unprepare(s->clk);
+ 
+-	return ret;
++	return 0;
  }
- #else
- static void wm8996_init_gpio(struct wm8996_priv *wm8996)
+ 
+ static const struct of_device_id __maybe_unused max310x_dt_ids[] = {
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 3284c31..6246820 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1157,7 +1157,7 @@ static int sc16is7xx_probe(struct device *dev,
+ 
+ #ifdef CONFIG_GPIOLIB
+ 	if (devtype->nr_gpio)
+-		WARN_ON(gpiochip_remove(&s->gpio));
++		gpiochip_remove(&s->gpio);
+ 
+ out_uart:
+ #endif
+@@ -1173,14 +1173,11 @@ out_clk:
+ static int sc16is7xx_remove(struct device *dev)
+ {
+ 	struct sc16is7xx_port *s = dev_get_drvdata(dev);
+-	int i, ret = 0;
++	int i;
+ 
+ #ifdef CONFIG_GPIOLIB
+-	if (s->devtype->nr_gpio) {
+-		ret = gpiochip_remove(&s->gpio);
+-		if (ret)
+-			return ret;
+-	}
++	if (s->devtype->nr_gpio)
++		gpiochip_remove(&s->gpio);
+ #endif
+ 
+ 	for (i = 0; i < s->uart.nr; i++) {
+@@ -1195,7 +1192,7 @@ static int sc16is7xx_remove(struct device *dev)
+ 	if (!IS_ERR(s->clk))
+ 		clk_disable_unprepare(s->clk);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct of_device_id __maybe_unused sc16is7xx_dt_ids[] = {
 -- 
 1.7.9.5
 
