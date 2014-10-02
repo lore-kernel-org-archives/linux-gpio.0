@@ -1,49 +1,34 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] gpio: pch: Build context save/restore only for PM
-Date: Thu,  2 Oct 2014 09:20:21 +0200
-Message-ID: <1412234421-11065-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:56663 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751182AbaJBHUY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Oct 2014 03:20:24 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] serial: remove use of gpiochip_remove() retval
+Date: Thu, 2 Oct 2014 09:21:52 +0200
+Message-ID: <CACRpkdZkXjTNo6koF3wn9q-tsBQkOu8+5Q7A+qku0Od_YWULjw@mail.gmail.com>
+References: <1412143069-18562-1-git-send-email-pramod.gurav@smartplayin.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <1412143069-18562-1-git-send-email-pramod.gurav@smartplayin.com>
+Sender: linux-serial-owner@vger.kernel.org
+To: Pramod Gurav <pramod.gurav@smartplayin.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Wed, Oct 1, 2014 at 7:57 AM, Pramod Gurav
+<pramod.gurav@smartplayin.com> wrote:
 
-The pch_gpio_save_reg_conf() and pch_gpio_restore_reg_conf() functions
-are only used in pch_gpio_suspend() and pch_gpio_resume(), respectively.
-Since the latter are only built if PM is enabled, make the former build
-under the same conditions.
+> Get rid of using return value from gpiochip_remove() as it returns
+> void with a new change in kernel.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jslaby@suse.cz>
+> Cc: linux-serial@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpio/gpio-pch.c | 2 ++
- 1 file changed, 2 insertions(+)
+NACK.
 
-diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-index e0ac549dccb5..2d9a950ca2d4 100644
---- a/drivers/gpio/gpio-pch.c
-+++ b/drivers/gpio/gpio-pch.c
-@@ -171,6 +171,7 @@ static int pch_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM
- /*
-  * Save register configuration and disable interrupts.
-  */
-@@ -206,6 +207,7 @@ static void pch_gpio_restore_reg_conf(struct pch_gpio *chip)
- 		iowrite32(chip->pch_gpio_reg.gpio_use_sel_reg,
- 			  &chip->reg->gpio_use_sel);
- }
-+#endif
- 
- static int pch_gpio_to_irq(struct gpio_chip *gpio, unsigned offset)
- {
--- 
-2.1.0
+Already fixed through the GPIO tree.
 
+Yours,
+Linus Walleij
