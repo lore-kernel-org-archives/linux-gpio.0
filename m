@@ -1,120 +1,239 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] gpio: stmpe: add verbose debug code
-Date: Thu,  2 Oct 2014 07:55:41 +0200
-Message-ID: <1412229341-2161-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH v4] mmc: core: restore detect line inversion semantics
+Date: Thu,  2 Oct 2014 09:08:46 +0200
+Message-ID: <1412233726-16797-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:64897 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751337AbaJBFzr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Oct 2014 01:55:47 -0400
-Received: by mail-lb0-f179.google.com with SMTP id l4so1621223lbv.10
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Oct 2014 22:55:46 -0700 (PDT)
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:54054 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751185AbaJBHI4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Oct 2014 03:08:56 -0400
+Received: by mail-wi0-f172.google.com with SMTP id n3so2934369wiv.5
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Oct 2014 00:08:54 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Ulf Hansson <ulf.hansson@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-To troubleshoot the STMPE GPIO driver, some more detailed
-debug information giving the exact info on how each pin is
-used will be helpful.
+commit 98e90de99a0c43bd434da814c882c4332441871e
+"mmc: host: switch OF parser to use gpio descriptors"
+switched the semantic behaviour of card detect and read
+only flags such that the inversion capability flag would
+only be set if inversion was explicitly specified in the
+device tree, in the hopes that no-one was using double
+inversion.
 
+It turns out that the XOR:ing between the explicit
+inversion was indeed in use, so we need to restore the
+old semantics where both ways of inversion are checked
+and the end result XOR:ed.
+
+Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+Tested-by: Javier Martinez Canillas <javier@dowhile0.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-stmpe.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ChangeLog v3->v4:
+- Fix breakage in sdhci-acpi.c due to changed function
+  prototype.
+ChangeLog v2->v3:
+- Make it possible to pass NULL as pointer for the gpio_invert
+  variable, so we don't need dummy variables in callers
+ChangeLog v1->v2:
+- Always set override_active_level when getting CD GPIO
+- Invert the return value from gpiod_is_active_low() to
+  follow the old semantics
+---
+ drivers/mmc/core/host.c       | 32 ++++++++++++++++++++++++++++----
+ drivers/mmc/core/slot-gpio.c  | 14 ++++++++++++--
+ drivers/mmc/host/mmci.c       |  4 ++--
+ drivers/mmc/host/sdhci-acpi.c |  2 +-
+ include/linux/mmc/slot-gpio.h |  4 ++--
+ 5 files changed, 45 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index a888e6ec5c6e..24108c45f7b7 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -211,6 +211,77 @@ static void stmpe_gpio_irq_unmask(struct irq_data *d)
- 	stmpe_gpio->regs[REG_IE][regoffset] |= mask;
- }
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index 31969436d77c..03c53b72a2d6 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -311,6 +311,7 @@ int mmc_of_parse(struct mmc_host *host)
+ 	struct device_node *np;
+ 	u32 bus_width;
+ 	int len, ret;
++	bool cap_invert, gpio_invert;
  
-+static void stmpe_dbg_show_one(struct seq_file *s,
-+			       struct gpio_chip *gc,
-+			       unsigned offset, unsigned gpio)
-+{
-+	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(gc);
-+	struct stmpe *stmpe = stmpe_gpio->stmpe;
-+	const char *label = gpiochip_is_requested(gc, offset);
-+	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
-+	bool val = !!stmpe_gpio_get(gc, offset);
-+	u8 dir_reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
-+	u8 mask = 1 << (offset % 8);
-+	int ret;
-+	u8 dir;
-+
-+	ret = stmpe_reg_read(stmpe, dir_reg);
-+	if (ret < 0)
-+		return;
-+	dir = !!(ret & mask);
-+
-+	if (dir) {
-+		seq_printf(s, " gpio-%-3d (%-20.20s) out %s",
-+			   gpio, label ?: "(none)",
-+			   val ? "hi" : "lo");
-+	} else {
-+		u8 edge_det_reg = stmpe->regs[STMPE_IDX_GPEDR_MSB] + num_banks - 1 - (offset / 8);
-+		u8 rise_reg = stmpe->regs[STMPE_IDX_GPRER_LSB] - (offset / 8);
-+		u8 fall_reg = stmpe->regs[STMPE_IDX_GPFER_LSB] - (offset / 8);
-+		u8 irqen_reg = stmpe->regs[STMPE_IDX_IEGPIOR_LSB] - (offset / 8);
-+		bool edge_det;
-+		bool rise;
-+		bool fall;
-+		bool irqen;
-+
-+		ret = stmpe_reg_read(stmpe, edge_det_reg);
-+		if (ret < 0)
-+			return;
-+		edge_det = !!(ret & mask);
-+		ret = stmpe_reg_read(stmpe, rise_reg);
-+		if (ret < 0)
-+			return;
-+		rise = !!(ret & mask);
-+		ret = stmpe_reg_read(stmpe, fall_reg);
-+		if (ret < 0)
-+			return;
-+		fall = !!(ret & mask);
-+		ret = stmpe_reg_read(stmpe, irqen_reg);
-+		if (ret < 0)
-+			return;
-+		irqen = !!(ret & mask);
-+
-+		seq_printf(s, " gpio-%-3d (%-20.20s) in  %s %s %s%s%s",
-+			   gpio, label ?: "(none)",
-+			   val ? "hi" : "lo",
-+			   edge_det ? "edge-asserted" : "edge-inactive",
-+			   irqen ? "IRQ-enabled" : "",
-+			   rise ? " rising-edge-detection" : "",
-+			   fall ? " falling-edge-detection" : "");
-+	}
-+}
-+
-+static void stmpe_dbg_show(struct seq_file *s, struct gpio_chip *gc)
-+{
-+	unsigned i;
-+	unsigned gpio = gc->base;
-+
-+	for (i = 0; i < gc->ngpio; i++, gpio++) {
-+		stmpe_dbg_show_one(s, gc, i, gpio);
-+		seq_printf(s, "\n");
-+	}
-+}
-+
- static struct irq_chip stmpe_gpio_irq_chip = {
- 	.name			= "stmpe-gpio",
- 	.irq_bus_lock		= stmpe_gpio_irq_lock,
-@@ -293,6 +364,9 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
- #endif
- 	stmpe_gpio->chip.base = -1;
+ 	if (!host->parent || !host->parent->of_node)
+ 		return 0;
+@@ -359,12 +360,15 @@ int mmc_of_parse(struct mmc_host *host)
+ 		host->caps |= MMC_CAP_NONREMOVABLE;
+ 	} else {
+ 		if (of_property_read_bool(np, "cd-inverted"))
+-			host->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
++			cap_invert = true;
++		else
++			cap_invert = false;
  
-+	if (IS_ENABLED(CONFIG_DEBUG_FS))
-+                stmpe_gpio->chip.dbg_show = stmpe_dbg_show;
+ 		if (of_find_property(np, "broken-cd", &len))
+ 			host->caps |= MMC_CAP_NEEDS_POLL;
+ 
+-		ret = mmc_gpiod_request_cd(host, "cd", 0, false, 0);
++		ret = mmc_gpiod_request_cd(host, "cd", 0, true,
++					   0, &gpio_invert);
+ 		if (ret) {
+ 			if (ret == -EPROBE_DEFER)
+ 				return ret;
+@@ -375,13 +379,29 @@ int mmc_of_parse(struct mmc_host *host)
+ 			}
+ 		} else
+ 			dev_info(host->parent, "Got CD GPIO\n");
 +
- 	if (pdata)
- 		stmpe_gpio->norequest_mask = pdata->norequest_mask;
- 	else if (np)
++		/*
++		 * There are two ways to flag that the CD line is inverted:
++		 * through the cd-inverted flag and by the GPIO line itself
++		 * being inverted from the GPIO subsystem. This is a leftover
++		 * from the times when the GPIO subsystem did not make it
++		 * possible to flag a line as inverted.
++		 *
++		 * If the capability on the host AND the GPIO line are
++		 * both inverted, the end result is that the CD line is
++		 * not inverted.
++		 */
++		if (cap_invert ^ gpio_invert)
++			host->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
+ 	}
+ 
+ 	/* Parse Write Protection */
+ 	if (of_property_read_bool(np, "wp-inverted"))
+-		host->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
++		cap_invert = true;
++	else
++		cap_invert = false;
+ 
+-	ret = mmc_gpiod_request_ro(host, "wp", 0, false, 0);
++	ret = mmc_gpiod_request_ro(host, "wp", 0, false, 0, &gpio_invert);
+ 	if (ret) {
+ 		if (ret == -EPROBE_DEFER)
+ 			goto out;
+@@ -393,6 +413,10 @@ int mmc_of_parse(struct mmc_host *host)
+ 	} else
+ 		dev_info(host->parent, "Got WP GPIO\n");
+ 
++	/* See the comment on CD inversion above */
++	if (cap_invert ^ gpio_invert)
++		host->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
++
+ 	if (of_find_property(np, "cap-sd-highspeed", &len))
+ 		host->caps |= MMC_CAP_SD_HIGHSPEED;
+ 	if (of_find_property(np, "cap-mmc-highspeed", &len))
+diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+index 38f76555d4bf..69bbf2adb329 100644
+--- a/drivers/mmc/core/slot-gpio.c
++++ b/drivers/mmc/core/slot-gpio.c
+@@ -281,6 +281,8 @@ EXPORT_SYMBOL(mmc_gpio_free_cd);
+  * @idx: index of the GPIO to obtain in the consumer
+  * @override_active_level: ignore %GPIO_ACTIVE_LOW flag
+  * @debounce: debounce time in microseconds
++ * @gpio_invert: will return whether the GPIO line is inverted or not, set
++ * to NULL to ignore
+  *
+  * Use this function in place of mmc_gpio_request_cd() to use the GPIO
+  * descriptor API.  Note that it is paired with mmc_gpiod_free_cd() not
+@@ -291,7 +293,7 @@ EXPORT_SYMBOL(mmc_gpio_free_cd);
+  */
+ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
+ 			 unsigned int idx, bool override_active_level,
+-			 unsigned int debounce)
++			 unsigned int debounce, bool *gpio_invert)
+ {
+ 	struct mmc_gpio *ctx;
+ 	struct gpio_desc *desc;
+@@ -316,6 +318,9 @@ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
+ 			return ret;
+ 	}
+ 
++	if (gpio_invert)
++		*gpio_invert = !gpiod_is_active_low(desc);
++
+ 	ctx->override_cd_active_level = override_active_level;
+ 	ctx->cd_gpio = desc;
+ 
+@@ -330,6 +335,8 @@ EXPORT_SYMBOL(mmc_gpiod_request_cd);
+  * @idx: index of the GPIO to obtain in the consumer
+  * @override_active_level: ignore %GPIO_ACTIVE_LOW flag
+  * @debounce: debounce time in microseconds
++ * @gpio_invert: will return whether the GPIO line is inverted or not,
++ * set to NULL to ignore
+  *
+  * Use this function in place of mmc_gpio_request_ro() to use the GPIO
+  * descriptor API.  Note that it is paired with mmc_gpiod_free_ro() not
+@@ -339,7 +346,7 @@ EXPORT_SYMBOL(mmc_gpiod_request_cd);
+  */
+ int mmc_gpiod_request_ro(struct mmc_host *host, const char *con_id,
+ 			 unsigned int idx, bool override_active_level,
+-			 unsigned int debounce)
++			 unsigned int debounce, bool *gpio_invert)
+ {
+ 	struct mmc_gpio *ctx;
+ 	struct gpio_desc *desc;
+@@ -364,6 +371,9 @@ int mmc_gpiod_request_ro(struct mmc_host *host, const char *con_id,
+ 			return ret;
+ 	}
+ 
++	if (gpio_invert)
++		*gpio_invert = !gpiod_is_active_low(desc);
++
+ 	ctx->override_ro_active_level = override_active_level;
+ 	ctx->ro_gpio = desc;
+ 
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index c9dafed550f2..43af791e2e45 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -1682,7 +1682,7 @@ static int mmci_probe(struct amba_device *dev,
+ 	 * silently of these do not exist and proceed to try platform data
+ 	 */
+ 	if (!np) {
+-		ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0);
++		ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0, NULL);
+ 		if (ret < 0) {
+ 			if (ret == -EPROBE_DEFER)
+ 				goto clk_disable;
+@@ -1693,7 +1693,7 @@ static int mmci_probe(struct amba_device *dev,
+ 			}
+ 		}
+ 
+-		ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0);
++		ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0, NULL);
+ 		if (ret < 0) {
+ 			if (ret == -EPROBE_DEFER)
+ 				goto clk_disable;
+diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
+index 3483c089baa7..327bc24ec8ce 100644
+--- a/drivers/mmc/host/sdhci-acpi.c
++++ b/drivers/mmc/host/sdhci-acpi.c
+@@ -352,7 +352,7 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
+ 	if (sdhci_acpi_flag(c, SDHCI_ACPI_SD_CD)) {
+ 		bool v = sdhci_acpi_flag(c, SDHCI_ACPI_SD_CD_OVERRIDE_LEVEL);
+ 
+-		if (mmc_gpiod_request_cd(host->mmc, NULL, 0, v, 0)) {
++		if (mmc_gpiod_request_cd(host->mmc, NULL, 0, v, 0, NULL)) {
+ 			dev_warn(dev, "failed to setup card detect gpio\n");
+ 			c->use_runtime_pm = false;
+ 		}
+diff --git a/include/linux/mmc/slot-gpio.h b/include/linux/mmc/slot-gpio.h
+index a0d0442c15bf..e56fa24c9322 100644
+--- a/include/linux/mmc/slot-gpio.h
++++ b/include/linux/mmc/slot-gpio.h
+@@ -24,10 +24,10 @@ void mmc_gpio_free_cd(struct mmc_host *host);
+ 
+ int mmc_gpiod_request_cd(struct mmc_host *host, const char *con_id,
+ 			 unsigned int idx, bool override_active_level,
+-			 unsigned int debounce);
++			 unsigned int debounce, bool *gpio_invert);
+ int mmc_gpiod_request_ro(struct mmc_host *host, const char *con_id,
+ 			 unsigned int idx, bool override_active_level,
+-			 unsigned int debounce);
++			 unsigned int debounce, bool *gpio_invert);
+ void mmc_gpiod_free_cd(struct mmc_host *host);
+ void mmc_gpiod_request_cd_irq(struct mmc_host *host);
+ 
 -- 
 1.9.3
 
