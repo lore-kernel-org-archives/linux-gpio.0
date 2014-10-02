@@ -1,35 +1,62 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pch: Build context save/restore only for PM
-Date: Thu, 2 Oct 2014 10:01:06 +0200
-Message-ID: <CACRpkdYu3W9Y10UBtEKaOP+k3bzZQLD4tM9gXpLe9UAtjk7cdw@mail.gmail.com>
-References: <1412234421-11065-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH 0/7] pinctrl: force-convert to generic DT bindings
+Date: Thu,  2 Oct 2014 10:40:13 +0200
+Message-ID: <1412239220-22495-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:50130 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751182AbaJBIBH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Oct 2014 04:01:07 -0400
-Received: by mail-ig0-f172.google.com with SMTP id r2so442072igi.11
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Oct 2014 01:01:06 -0700 (PDT)
-In-Reply-To: <1412234421-11065-1-git-send-email-thierry.reding@gmail.com>
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:60386 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398AbaJBIk1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Oct 2014 04:40:27 -0400
+Received: by mail-wg0-f52.google.com with SMTP id a1so2445154wgh.35
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Oct 2014 01:40:26 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, Oct 2, 2014 at 9:20 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
+I've had it with custom "foo,function" and "foo,groups", "foo,pins"
+etc custom bindings for pin control.
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> The pch_gpio_save_reg_conf() and pch_gpio_restore_reg_conf() functions
-> are only used in pch_gpio_suspend() and pch_gpio_resume(), respectively.
-> Since the latter are only built if PM is enabled, make the former build
-> under the same conditions.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Yes, I know we could not agree in the past on some generic bindings
+and no, the older systems will not be converted if they are in
+deployment.
 
-Patch applied.
+But I *know* the nomadik pin controllers does not have deployed
+device trees in the wild, so I will just convert them to use the
+standard bindings I just posted in other patches, using simple names
+like "function", "groups", "pins" etc.
 
-Yours,
-Linus Walleij
+After this atleast the abx500 pin controller is phased over to
+use the generic bindings and can be held up as an example. I will
+also move the code parsing the bindings into the core, so that any
+pin controller using this can rely on that code and we do not
+need to invent more crazy parsers all over the place.
+
+Linus Walleij (7):
+  pinctrl: nomadik: force-convert to generic mux bindings
+  pinctrl: abx500: force-convert to generic mux bindings
+  pinctrl: nomadik: force-convert to generic config bindings
+  pinctrl: abx500: force-convert to generic config bindings
+  pinctrl: abx500: retire phandle config mechanism
+  pinctrl: abx500: update device tree bindings
+  pinctrl: abx500: mark pin config as generic
+
+ .../devicetree/bindings/pinctrl/ste,abx500.txt     | 184 +++++++----------
+ arch/arm/boot/dts/ste-ccu8540-pinctrl.dtsi         |  64 +++---
+ arch/arm/boot/dts/ste-href-ab8500.dtsi             | 162 +++++++--------
+ arch/arm/boot/dts/ste-href-ab8505.dtsi             |  90 ++++----
+ arch/arm/boot/dts/ste-href-family-pinctrl.dtsi     | 230 ++++++++++-----------
+ arch/arm/boot/dts/ste-href-stuib.dtsi              |   4 +-
+ arch/arm/boot/dts/ste-href-tvk1281618.dtsi         |  12 +-
+ arch/arm/boot/dts/ste-hrefprev60.dtsi              |  20 +-
+ arch/arm/boot/dts/ste-hrefv60plus.dtsi             |  42 ++--
+ arch/arm/boot/dts/ste-nomadik-s8815.dts            |   8 +-
+ arch/arm/boot/dts/ste-nomadik-stn8815.dtsi         |  32 +--
+ arch/arm/boot/dts/ste-snowball.dts                 |  36 ++--
+ drivers/pinctrl/nomadik/pinctrl-abx500.c           |  33 ++-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c          |  18 +-
+ 14 files changed, 449 insertions(+), 486 deletions(-)
+
+-- 
+1.9.3
+
