@@ -1,35 +1,29 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2 1/2] GPIO: Add driver for 74xx-ICs with MMIO access
-Date: Sun, 5 Oct 2014 19:07:27 +0900
-Message-ID: <CAAVeFu+htDNcGrgK-DE74A4CpRJrBzGoV4egM4nDFP3yF6kmDg@mail.gmail.com>
-References: <1412321517-28348-1-git-send-email-shc_work@mail.ru>
+Subject: Re: [PATCH] gpio: Switch to using managed resources with devm_
+Date: Sun, 5 Oct 2014 19:28:55 +0900
+Message-ID: <CAAVeFuJsWJ5Yu8+cSS4VSpQyqFzxO57QCXdP-ZjoY_-RcuPC-A@mail.gmail.com>
+References: <1412160393-5848-1-git-send-email-pramod.gurav@smartplayin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f175.google.com ([209.85.213.175]:59701 "EHLO
-	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751010AbaJEKHs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 5 Oct 2014 06:07:48 -0400
-Received: by mail-ig0-f175.google.com with SMTP id uq10so1296110igb.2
-        for <linux-gpio@vger.kernel.org>; Sun, 05 Oct 2014 03:07:47 -0700 (PDT)
-In-Reply-To: <1412321517-28348-1-git-send-email-shc_work@mail.ru>
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:49127 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751010AbaJEK3Q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 5 Oct 2014 06:29:16 -0400
+In-Reply-To: <1412160393-5848-1-git-send-email-pramod.gurav@smartplayin.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Pramod Gurav <pramod.gurav@smartplayin.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 3, 2014 at 4:31 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
-> This patch adds driver to support GPIO functionality for 74xx-compatible
-> ICs with MMIO access. Compatible models include:
->  1 bit:   741G125 (Input), 741G74 (Output)
->  2 bits:  742G125 (Input), 7474 (Output)
->  4 bits:  74125 (Input), 74175 (Output)
->  6 bits:  74365 (Input), 74174 (Output)
->  8 bits:  74244 (Input), 74273 (Output)
->  16 bits: 741624 (Input), 7416374 (Output)
->
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+On Wed, Oct 1, 2014 at 7:46 PM, Pramod Gurav
+<pramod.gurav@smartplayin.com> wrote:
+> This change switches to devm_request_region to request region
+> and hence simplifies the module unload and does away with
+> release_region in remove function.
 
-Nothing to say, this looks just good!
+Your subject line should probably start with "gpio: cs5535:"
+
+Otherwise,
 
 Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
