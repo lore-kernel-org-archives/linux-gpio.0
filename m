@@ -1,38 +1,35 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH 2/2] led: remove use of gpiochip_remove() retval
-Date: Fri, 3 Oct 2014 10:15:21 -0700
-Message-ID: <CAK5ve-+_6sVypk_UTQ5kD4dMx+yqFk_4yQZTY3gOAjCRQ5YO8w@mail.gmail.com>
-References: <1412087707-8313-1-git-send-email-pramod.gurav@smartplayin.com>
- <CAK5ve-KCYHySjs4f+rd+kAvKQmTkJqsq87Muq_j-D0nB7WSYjQ@mail.gmail.com> <CACRpkdZDVPTKX4N9fxYdr1OEBQ_BisU2vXrvNRZ3YXCax4jm+A@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2 1/2] GPIO: Add driver for 74xx-ICs with MMIO access
+Date: Sun, 5 Oct 2014 19:07:27 +0900
+Message-ID: <CAAVeFu+htDNcGrgK-DE74A4CpRJrBzGoV4egM4nDFP3yF6kmDg@mail.gmail.com>
+References: <1412321517-28348-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:47463 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751573AbaJCRPn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Oct 2014 13:15:43 -0400
-In-Reply-To: <CACRpkdZDVPTKX4N9fxYdr1OEBQ_BisU2vXrvNRZ3YXCax4jm+A@mail.gmail.com>
+Received: from mail-ig0-f175.google.com ([209.85.213.175]:59701 "EHLO
+	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751010AbaJEKHs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 5 Oct 2014 06:07:48 -0400
+Received: by mail-ig0-f175.google.com with SMTP id uq10so1296110igb.2
+        for <linux-gpio@vger.kernel.org>; Sun, 05 Oct 2014 03:07:47 -0700 (PDT)
+In-Reply-To: <1412321517-28348-1-git-send-email-shc_work@mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Pramod Gurav <pramod.gurav@smartplayin.com>, lkml <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Oct 2, 2014 at 12:12 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Sep 30, 2014 at 11:21 PM, Bryan Wu <cooloney@gmail.com> wrote:
->> On Tue, Sep 30, 2014 at 7:35 AM, Pramod Gurav
->> <pramod.gurav@smartplayin.com> wrote:
->>> Get rid of using return value from gpiochip_remove() as it returns
->>> void.
->>
->> Looks good to me. I will merge it.
+On Fri, Oct 3, 2014 at 4:31 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
+> This patch adds driver to support GPIO functionality for 74xx-compatible
+> ICs with MMIO access. Compatible models include:
+>  1 bit:   741G125 (Input), 741G74 (Output)
+>  2 bits:  742G125 (Input), 7474 (Output)
+>  4 bits:  74125 (Input), 74175 (Output)
+>  6 bits:  74365 (Input), 74174 (Output)
+>  8 bits:  74244 (Input), 74273 (Output)
+>  16 bits: 741624 (Input), 7416374 (Output)
 >
-> Please don't.
->
-> The issue is already fixed through the GPIO tree, where the
-> API change is.
->
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 
-Oh, really. I wasn't aware that. Let me drop this change then.
+Nothing to say, this looks just good!
 
-Thanks,
--Bryan
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
