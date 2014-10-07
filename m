@@ -1,109 +1,73 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCHv2 2/3] gpio: sch: Add support for Intel Quark X1000 SoC
-Date: Tue, 7 Oct 2014 16:43:02 +0300
-Message-ID: <CAHp75VcypTyGV_vmf0-=tEgwx4__LgCHfLuj4STnhvKaaSXMZQ@mail.gmail.com>
-References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-	<1411726047-3224-3-git-send-email-rebecca.swee.fun.chang@intel.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: simple-card: Add mic and hp detect gpios.
+Date: Tue, 7 Oct 2014 17:36:54 +0100
+Message-ID: <20141007163654.GJ4609@sirena.org.uk>
+References: <1412198720-2326-1-git-send-email-dgreid@chromium.org>
+ <20141002155350.GU4273@sirena.org.uk>
+ <CAMuHMdWh=sXAD59T1T=gvROX+fbF6=gFo6C0nkJdfnCrdNrwYg@mail.gmail.com>
+ <20141007123856.GF4609@sirena.org.uk>
+ <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1411726047-3224-3-git-send-email-rebecca.swee.fun.chang@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gVeFDRGtAQ0W7qcm"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38923 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753459AbaJGQhW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Oct 2014 12:37:22 -0400
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-
-On Fri, Sep 26, 2014 at 1:07 PM, Chang Rebecca Swee Fun
-<rebecca.swee.fun.chang@intel.com> wrote:
-> Intel Quark X1000 provides a total of 16 GPIOs. The GPIOs are split between
-> the legacy I/O bridge and the GPIO controller.
->
-> GPIO-SCH is the GPIO pins on legacy bridge for Intel Quark SoC.
-> Intel Quark X1000 has 2 GPIOs powered by the core power well and 6 from
-> the suspend power well.
->
-> This piece of work is derived from Dan O'Donovan's initial work for Quark
-> X1000 enabling.
->
-> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-> ---
->  drivers/gpio/Kconfig    |   11 +++++++++--
->  drivers/gpio/gpio-sch.c |    6 ++++++
->  2 files changed, 15 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 690904a..64683a9 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -356,25 +356,32 @@ config GPIO_VR41XX
->           Say yes here to support the NEC VR4100 series General-purpose I/O Uint
->
->  config GPIO_SCH
-> -       tristate "Intel SCH/TunnelCreek/Centerton GPIO"
-> +       tristate "Intel SCH/TunnelCreek/Centerton/Quark X1000 GPIO"
-
-Do we need 'X1000' here right now?
-
->         depends on PCI && X86
->         select MFD_CORE
->         select LPC_SCH
->         help
->           Say yes here to support GPIO interface on Intel Poulsbo SCH,
-> -         Intel Tunnel Creek processor or Intel Centerton processor.
-> +         Intel Tunnel Creek processor, Intel Centerton processor or
-
-I think you may use comma before 'or' word.
-
-> +         Intel Quark X1000 SoC.
-> +
->           The Intel SCH contains a total of 14 GPIO pins. Ten GPIOs are
->           powered by the core power rail and are turned off during sleep
->           modes (S3 and higher). The remaining four GPIOs are powered by
->           the Intel SCH suspend power supply. These GPIOs remain
->           active during S3. The suspend powered GPIOs can be used to wake the
->           system from the Suspend-to-RAM state.
-> +
->           The Intel Tunnel Creek processor has 5 GPIOs powered by the
->           core power rail and 9 from suspend power supply.
-> +
->           The Intel Centerton processor has a total of 30 GPIO pins.
->           Twenty-one are powered by the core power rail and 9 from the
->           suspend power supply.
->
-> +         The Intel Quark X1000 SoC has 2 GPIOs powered by the core
-> +         power well and 6 from the suspend power well.
-> +
->  config GPIO_ICH
->         tristate "Intel ICH GPIO"
->         depends on PCI && X86
-> diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-> index 6e89be9..952990f 100644
-> --- a/drivers/gpio/gpio-sch.c
-> +++ b/drivers/gpio/gpio-sch.c
-> @@ -241,6 +241,12 @@ static int sch_gpio_probe(struct platform_device *pdev)
->                 sch->chip.ngpio = 30;
->                 break;
->
-> +       case PCI_DEVICE_ID_INTEL_QUARK_X1000_ILB:
-> +               sch->core_base = 0;
-> +               sch->resume_base = 2;
-> +               sch->chip.ngpio = 8;
-> +               break;
-> +
->         default:
->                 return -ENODEV;
->         }
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dylan Reid <dgreid@chromium.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, jay.xu@rock-chips.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, sonnyrao@chromium.org, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 
+--gVeFDRGtAQ0W7qcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-With Best Regards,
-Andy Shevchenko
+On Tue, Oct 07, 2014 at 03:10:01PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Oct 7, 2014 at 2:38 PM, Mark Brown <broonie@kernel.org> wrote:
+
+> > The fix here is to not allow 0 as a GPIO in the core code (which
+> > should've been there already).
+
+> Unfortunately it's not there.
+
+> And it's not as simple as changing the definition of gpio_is_valid()
+> (crash in gpio_get_value()):
+
+>     gpiochip_add: GPIOs 0..211 (r8a7740_pfc) failed to register
+>     sh-pfc pfc-r8a7740: failed to init GPIO chip, ignoring...
+>     sh-pfc pfc-r8a7740: r8a7740_pfc support registered
+>     Unable to handle kernel NULL pointer dereference at virtual address 0000004c
+
+Right, obviously it's not going to work if the platform actually uses 0
+as a valid GPIO.
+
+> Quoting Linus (https://lkml.org/lkml/2014/9/4/464):
+> "Fixing the old global GPIO numberspace API is a waste of time IMO".
+
+> Hence I've just sent a patch to initialize the GPIO numbers with -ENOENT.
+
+I do think it's worth renumbering the platforms since it's *relatively*
+little work per platform compared to completing the gpiod transition.
+
+--gVeFDRGtAQ0W7qcm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUNBalAAoJECTWi3JdVIfQ50UH/jlCUwuw+qpYsFxnMr6HgFWm
+o56BLqUOI12FQpV7cZbOVwDFcXXZJ+VWfl1oJbcPcLcmR8M830I2BVrtPg4jNud2
+2kZRaPrpt4m2kLeLsQ2e1pUUlWNrlfgwv8mXDrQL2OKdvY+c95J0x7Z7ZBJNPbAB
+569Qx53AicNeRZH9s2jm9lPh9EtseSL51p5VBlRjvMTESSUgMdz+uzGsi1fwEbgU
+Uxk0EsBbQ2zwvDAVicTtdgR4jawavgz9+YOF7iFmo+GCfSm+Z3N9VNQPG6FjoB89
+wRqGwrn2NoV2tJKXdAjIIY+JmaRm+LIfgWRC3N4Yn59A5EPsW/oczRnbBSs/qXk=
+=FKzE
+-----END PGP SIGNATURE-----
+
+--gVeFDRGtAQ0W7qcm--
