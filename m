@@ -1,73 +1,165 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: simple-card: Add mic and hp detect gpios.
-Date: Tue, 7 Oct 2014 17:36:54 +0100
-Message-ID: <20141007163654.GJ4609@sirena.org.uk>
-References: <1412198720-2326-1-git-send-email-dgreid@chromium.org>
- <20141002155350.GU4273@sirena.org.uk>
- <CAMuHMdWh=sXAD59T1T=gvROX+fbF6=gFo6C0nkJdfnCrdNrwYg@mail.gmail.com>
- <20141007123856.GF4609@sirena.org.uk>
- <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 2/4] i2c: add support for Diolan DLN-2 USB-I2C adapter
+Date: Tue, 7 Oct 2014 18:46:36 +0200
+Message-ID: <20141007164636.GG5362@localhost>
+References: <1411661254-5204-1-git-send-email-octavian.purdila@intel.com>
+ <1411661254-5204-3-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gVeFDRGtAQ0W7qcm"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38923 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753459AbaJGQhW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Oct 2014 12:37:22 -0400
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dylan Reid <dgreid@chromium.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, jay.xu@rock-chips.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, sonnyrao@chromium.org, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-
-
---gVeFDRGtAQ0W7qcm
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <1411661254-5204-3-git-send-email-octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 07, 2014 at 03:10:01PM +0200, Geert Uytterhoeven wrote:
-> On Tue, Oct 7, 2014 at 2:38 PM, Mark Brown <broonie@kernel.org> wrote:
+On Thu, Sep 25, 2014 at 07:07:32PM +0300, Octavian Purdila wrote:
+> From: Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> 
+> This patch adds support for the Diolan DLN-2 I2C master module. Due
+> to hardware limitations it does not support SMBUS quick commands.
+> 
+> Information about the USB protocol interface can be found in the
+> Programmer's Reference Manual [1], see section 6.2.2 for the I2C
+> master module commands and responses.
+> 
+> [1] https://www.diolan.com/downloads/dln-api-manual.pdf
+> 
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> ---
 
-> > The fix here is to not allow 0 as a GPIO in the core code (which
-> > should've been there already).
+[...]
 
-> Unfortunately it's not there.
+> +#define DLN2_I2C_MAX_XFER_SIZE		256
+> +#define DLN2_I2C_BUF_SIZE		(DLN2_I2C_MAX_XFER_SIZE + 16)
+> +
+> +struct dln2_i2c {
+> +	struct platform_device *pdev;
+> +	struct i2c_adapter adapter;
+> +	u32 freq;
+> +	u32 min_freq;
+> +	u32 max_freq;
+> +	u8 port;
+> +	/*
+> +	 * Buffer to hold the packet for read or write transfers. One
+> +	 * is enough since we can't have multiple transfers in
+> +	 * parallel on the i2c adapter.
+> +	 */
+> +	void *buf;
+> +};
+> +
+> +static int dln2_i2c_enable(struct dln2_i2c *dln2, bool enable)
+> +{
+> +	int ret;
+> +	u16 cmd;
+> +
+> +	if (enable)
+> +		cmd = DLN2_I2C_ENABLE;
+> +	else
+> +		cmd = DLN2_I2C_DISABLE;
+> +
+> +	ret = dln2_transfer(dln2->pdev, cmd, &dln2->port, sizeof(dln2->port),
+> +			    NULL, NULL);
 
-> And it's not as simple as changing the definition of gpio_is_valid()
-> (crash in gpio_get_value()):
+Don't use the port member of dln2 directly here. Encode the protocol in
+the function as you already do for most other messages (and did in
+previous versions). You could even declare a
+	
+	struct {
+		u8 port;
+	} tx;
 
->     gpiochip_add: GPIOs 0..211 (r8a7740_pfc) failed to register
->     sh-pfc pfc-r8a7740: failed to init GPIO chip, ignoring...
->     sh-pfc pfc-r8a7740: r8a7740_pfc support registered
->     Unable to handle kernel NULL pointer dereference at virtual address 0000004c
+for consistency.
 
-Right, obviously it's not going to work if the platform actually uses 0
-as a valid GPIO.
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int dln2_i2c_set_frequency(struct dln2_i2c *dln2, u32 freq)
+> +{
+> +	int ret;
+> +	struct tx_data {
+> +		u8 port;
+> +		__le32 freq;
+> +	} __packed tx;
+> +
+> +	tx.port = dln2->port;
+> +	tx.freq = cpu_to_le32(freq);
+> +
+> +	ret = dln2_transfer(dln2->pdev, DLN2_I2C_SET_FREQUENCY, &tx, sizeof(tx),
+> +			    NULL, NULL);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	dln2->freq = freq;
+> +
+> +	return 0;
+> +}
+> +
+> +static int dln2_i2c_get_freq(struct dln2_i2c *dln2, u16 cmd, u32 *res)
+> +{
+> +	int ret;
+> +	__le32 freq;
+> +	unsigned len = sizeof(freq);
+> +
+> +	ret = dln2_transfer(dln2->pdev, cmd, &dln2->port, sizeof(dln2->port),
+> +			    &freq, &len);
 
-> Quoting Linus (https://lkml.org/lkml/2014/9/4/464):
-> "Fixing the old global GPIO numberspace API is a waste of time IMO".
+Same here.
 
-> Hence I've just sent a patch to initialize the GPIO numbers with -ENOENT.
+> +	if (ret < 0)
+> +		return ret;
+> +	if (len < sizeof(freq))
+> +		return -EPROTO;
+> +
+> +	*res = le32_to_cpu(freq);
+> +
+> +	return 0;
+> +}
+> +
 
-I do think it's worth renumbering the platforms since it's *relatively*
-little work per platform compared to completing the gpiod transition.
+[...]
 
---gVeFDRGtAQ0W7qcm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +static ssize_t dln2_i2c_freq_show(struct device *dev,
+> +				  struct device_attribute *attr, char *buf)
+> +{
+> +	struct dln2_i2c *dln2 = dev_get_drvdata(dev);
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%d\n", dln2->freq);
+> +}
+> +
+> +static ssize_t dln2_i2c_freq_store(struct device *dev,
+> +				   struct device_attribute *attr,
+> +				   const char *buf, size_t count)
+> +{
+> +	struct dln2_i2c *dln2 = dev_get_drvdata(dev);
+> +	unsigned long freq;
+> +	int ret;
+> +
+> +	if (kstrtoul(buf, 0, &freq) || freq < dln2->min_freq ||
+> +	    freq > dln2->max_freq)
+> +		return -EINVAL;
+> +
+> +	ret = dln2_i2c_enable(dln2, false);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = dln2_i2c_set_frequency(dln2, freq);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = dln2_i2c_enable(dln2, true);
+> +
+> +	return count;
+> +}
+> +
+> +static DEVICE_ATTR_RW(dln2_i2c_freq);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+You forgot to add the required documentation of the attribute to
+Documentation/ABI as requested.
 
-iQEcBAEBAgAGBQJUNBalAAoJECTWi3JdVIfQ50UH/jlCUwuw+qpYsFxnMr6HgFWm
-o56BLqUOI12FQpV7cZbOVwDFcXXZJ+VWfl1oJbcPcLcmR8M830I2BVrtPg4jNud2
-2kZRaPrpt4m2kLeLsQ2e1pUUlWNrlfgwv8mXDrQL2OKdvY+c95J0x7Z7ZBJNPbAB
-569Qx53AicNeRZH9s2jm9lPh9EtseSL51p5VBlRjvMTESSUgMdz+uzGsi1fwEbgU
-Uxk0EsBbQ2zwvDAVicTtdgR4jawavgz9+YOF7iFmo+GCfSm+Z3N9VNQPG6FjoB89
-wRqGwrn2NoV2tJKXdAjIIY+JmaRm+LIfgWRC3N4Yn59A5EPsW/oczRnbBSs/qXk=
-=FKzE
------END PGP SIGNATURE-----
-
---gVeFDRGtAQ0W7qcm--
+Johan
