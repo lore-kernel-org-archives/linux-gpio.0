@@ -1,75 +1,208 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] ASoC: simple-card: Add mic and hp detect gpios.
-Date: Tue, 7 Oct 2014 15:10:01 +0200
-Message-ID: <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
-References: <1412198720-2326-1-git-send-email-dgreid@chromium.org>
-	<20141002155350.GU4273@sirena.org.uk>
-	<CAMuHMdWh=sXAD59T1T=gvROX+fbF6=gFo6C0nkJdfnCrdNrwYg@mail.gmail.com>
-	<20141007123856.GF4609@sirena.org.uk>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCHv2 1/3] gpio: sch: Consolidate similar algorithms
+Date: Tue, 7 Oct 2014 16:40:35 +0300
+Message-ID: <CAHp75VfV-yvSz1JuCnfL1ESbz-H6+yMqKvowJXKiOR3JftO60Q@mail.gmail.com>
+References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+	<1411726047-3224-2-git-send-email-rebecca.swee.fun.chang@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:52485 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751094AbaJGNKD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Oct 2014 09:10:03 -0400
-In-Reply-To: <20141007123856.GF4609@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1411726047-3224-2-git-send-email-rebecca.swee.fun.chang@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Dylan Reid <dgreid@chromium.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, jay.xu@rock-chips.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, sonnyrao@chromium.org, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-(re-added some context, CC Linus, Alexandre, linux-gpio)
-
-On Tue, Oct 7, 2014 at 2:38 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Oct 07, 2014 at 02:32:57PM +0200, Geert Uytterhoeven wrote:
->> Unfortunately there's no equivalent code for platform data, and the
->> uninitialized default of 0 for gpio_hp_det and gpio_mic_det doesn't
->> play well with asm-generic's gpio_is_valid():
->>
->> static inline bool gpio_is_valid(int number)
->> {
->>         return number >= 0 && number < ARCH_NR_GPIOS;
->> }
->>
->> Hence on r8a7740/armadillo-legacy, which uses platform devices instead of DT:
+On Fri, Sep 26, 2014 at 1:07 PM, Chang Rebecca Swee Fun
+<rebecca.swee.fun.chang@intel.com> wrote:
+> Consolidating similar algorithms into common functions to make
+> GPIO SCH simpler and manageable.
 >
->>     sh-mobile-hdmi sh-mobile-hdmi: SH Mobile HDMI Audio Codec
->>     sh-mobile-hdmi sh-mobile-hdmi: ASoC: DAPM unknown pin Headphones
->>     sh-mobile-hdmi sh-mobile-hdmi: ASoC: DAPM unknown pin Mic Jack
+> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+> ---
+>  drivers/gpio/gpio-sch.c |   95 ++++++++++++++++++++++++++---------------------
+>  1 file changed, 53 insertions(+), 42 deletions(-)
 >
->> After that the kernel log is spammed ca. 7 times per second with:
+> diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+> index 99720c8..6e89be9 100644
+> --- a/drivers/gpio/gpio-sch.c
+> +++ b/drivers/gpio/gpio-sch.c
+> @@ -63,94 +63,105 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
+>         return gpio % 8;
+>  }
 >
->>     sh-mobile-hdmi sh-mobile-hdmi: ASoC: DAPM unknown pin Headphones
+> -static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio)
+> +static void sch_gpio_register_set(struct sch_gpio *sch, unsigned gpio,
+> +                                 unsigned reg)
+>  {
+>         unsigned short offset, bit;
+>         u8 enable;
 >
->> Reverting commit 3fe240326cc395c66 ("ASoC: simple-card: Add mic and
->> hp detect gpios.") fixes this.
+>         spin_lock(&sch->lock);
 >
-> The fix here is to not allow 0 as a GPIO in the core code (which
-> should've been there already).
+> -       offset = sch_gpio_offset(sch, gpio, GEN);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+>         bit = sch_gpio_bit(sch, gpio);
+>
+>         enable = inb(sch->iobase + offset);
+> -       if (!(enable & (1 << bit)))
+> -               outb(enable | (1 << bit), sch->iobase + offset);
+> +       if (!(enable & BIT(bit)))
+> +               outb(enable | BIT(bit), sch->iobase + offset);
+>
+>         spin_unlock(&sch->lock);
+>  }
+>
+> -static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned  gpio_num)
+> +static void sch_gpio_register_clear(struct sch_gpio *sch, unsigned gpio,
+> +                                   unsigned reg)
+>  {
+> -       struct sch_gpio *sch = to_sch_gpio(gc);
+> -       u8 curr_dirs;
+>         unsigned short offset, bit;
+> +       u8 disable;
+>
+>         spin_lock(&sch->lock);
+>
+> -       offset = sch_gpio_offset(sch, gpio_num, GIO);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> -
+> -       curr_dirs = inb(sch->iobase + offset);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+> +       bit = sch_gpio_bit(sch, gpio);
+>
+> -       if (!(curr_dirs & (1 << bit)))
+> -               outb(curr_dirs | (1 << bit), sch->iobase + offset);
+> +       disable = inb(sch->iobase + offset);
+> +       if (disable & BIT(bit))
+> +               outb(disable & ~BIT(bit), sch->iobase + offset);
+>
+>         spin_unlock(&sch->lock);
+> -       return 0;
+>  }
+>
+> -static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+> +static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
+>  {
+>         struct sch_gpio *sch = to_sch_gpio(gc);
+> -       int res;
+>         unsigned short offset, bit;
+> +       u8 curr_dirs;
+>
+> -       offset = sch_gpio_offset(sch, gpio_num, GLV);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+> +       bit = sch_gpio_bit(sch, gpio);
+>
+> -       res = !!(inb(sch->iobase + offset) & (1 << bit));
+> +       curr_dirs = !!(inb(sch->iobase + offset) & BIT(bit));
+>
+> -       return res;
+> +       return curr_dirs;
+>  }
+>
+> -static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+> +static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
+> +                            int val)
+>  {
+>         struct sch_gpio *sch = to_sch_gpio(gc);
+> -       u8 curr_vals;
+>         unsigned short offset, bit;
+> +       u8 curr_dirs;
+>
+> -       spin_lock(&sch->lock);
+> -
+> -       offset = sch_gpio_offset(sch, gpio_num, GLV);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+> +       bit = sch_gpio_bit(sch, gpio);
+>
+> -       curr_vals = inb(sch->iobase + offset);
+> +       curr_dirs = inb(sch->iobase + offset);
+>
+>         if (val)
+> -               outb(curr_vals | (1 << bit), sch->iobase + offset);
+> +               outb(curr_dirs | BIT(bit), sch->iobase + offset);
+>         else
+> -               outb((curr_vals & ~(1 << bit)), sch->iobase + offset);
+> +               outb((curr_dirs & ~BIT(bit)), sch->iobase + offset);
 
-Unfortunately it's not there.
+Looks like internal parentheses are redundant.
 
-And it's not as simple as changing the definition of gpio_is_valid()
-(crash in gpio_get_value()):
+> +}
+>
+> +static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+> +{
+> +       struct sch_gpio *sch = to_sch_gpio(gc);
+> +
+> +       spin_lock(&sch->lock);
+> +       sch_gpio_register_set(sch, gpio_num, GIO);
+>         spin_unlock(&sch->lock);
+> +       return 0;
+>  }
+>
+> -static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+> -                                 int val)
+> +static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+> +{
+> +       return sch_gpio_reg_get(gc, gpio_num, GLV);
+> +}
+> +
+> +static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+>  {
+>         struct sch_gpio *sch = to_sch_gpio(gc);
+> -       u8 curr_dirs;
+> -       unsigned short offset, bit;
+>
+>         spin_lock(&sch->lock);
+> +       sch_gpio_reg_set(gc, gpio_num, GLV, val);
+> +       spin_unlock(&sch->lock);
+> +}
+>
+> -       offset = sch_gpio_offset(sch, gpio_num, GIO);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> -
+> -       curr_dirs = inb(sch->iobase + offset);
+> -       if (curr_dirs & (1 << bit))
+> -               outb(curr_dirs & ~(1 << bit), sch->iobase + offset);
+> +static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+> +                                 int val)
+> +{
+> +       struct sch_gpio *sch = to_sch_gpio(gc);
+>
+> +       spin_lock(&sch->lock);
+> +       sch_gpio_register_clear(sch, gpio_num, GIO);
+>         spin_unlock(&sch->lock);
+>
+>         /*
+> @@ -209,13 +220,13 @@ static int sch_gpio_probe(struct platform_device *pdev)
+>                  * GPIO7 is configured by the CMC as SLPIOVR
+>                  * Enable GPIO[9:8] core powered gpios explicitly
+>                  */
+> -               sch_gpio_enable(sch, 8);
+> -               sch_gpio_enable(sch, 9);
+> +               sch_gpio_register_set(sch, 8, GEN);
+> +               sch_gpio_register_set(sch, 9, GEN);
+>                 /*
+>                  * SUS_GPIO[2:0] enabled by default
+>                  * Enable SUS_GPIO3 resume powered gpio explicitly
+>                  */
+> -               sch_gpio_enable(sch, 13);
+> +               sch_gpio_register_set(sch, 13, GEN);
+>                 break;
+>
+>         case PCI_DEVICE_ID_INTEL_ITC_LPC:
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-    gpiochip_add: GPIOs 0..211 (r8a7740_pfc) failed to register
-    sh-pfc pfc-r8a7740: failed to init GPIO chip, ignoring...
-    sh-pfc pfc-r8a7740: r8a7740_pfc support registered
-    Unable to handle kernel NULL pointer dereference at virtual address 0000004c
 
-Quoting Linus (https://lkml.org/lkml/2014/9/4/464):
-"Fixing the old global GPIO numberspace API is a waste of time IMO".
 
-Hence I've just sent a patch to initialize the GPIO numbers with -ENOENT.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+With Best Regards,
+Andy Shevchenko
