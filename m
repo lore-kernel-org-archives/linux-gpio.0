@@ -1,62 +1,75 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO adapter
-Date: Tue, 7 Oct 2014 19:03:56 +0900
-Message-ID: <CAAVeFu+vBZ49ciZT+-dnKXks201_psy_NtYsTjw0ptOkx2es7Q@mail.gmail.com>
-References: <1412606822-3406-1-git-send-email-muth@cypress.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] ASoC: simple-card: Add mic and hp detect gpios.
+Date: Tue, 7 Oct 2014 15:10:01 +0200
+Message-ID: <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
+References: <1412198720-2326-1-git-send-email-dgreid@chromium.org>
+	<20141002155350.GU4273@sirena.org.uk>
+	<CAMuHMdWh=sXAD59T1T=gvROX+fbF6=gFo6C0nkJdfnCrdNrwYg@mail.gmail.com>
+	<20141007123856.GF4609@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:56697 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753176AbaJGKES (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Oct 2014 06:04:18 -0400
-In-Reply-To: <1412606822-3406-1-git-send-email-muth@cypress.com>
+Received: from mail-la0-f47.google.com ([209.85.215.47]:52485 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751094AbaJGNKD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Oct 2014 09:10:03 -0400
+In-Reply-To: <20141007123856.GF4609@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Muthu Mani <muth@cypress.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-usb@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>, Johan Hovold <johan@kernel.org>
+To: Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Dylan Reid <dgreid@chromium.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, jay.xu@rock-chips.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, sonnyrao@chromium.org, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Oct 6, 2014 at 11:47 PM, Muthu Mani <muth@cypress.com> wrote:
-> +
-> +static int cy_gpio_direction_input(struct gpio_chip *chip,
-> +                                       unsigned offset)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int cy_gpio_direction_output(struct gpio_chip *chip,
-> +                                       unsigned offset, int value)
-> +{
-> +       return 0;
-> +}
+(re-added some context, CC Linus, Alexandre, linux-gpio)
 
-If that chip is capable of both output and input, shouldn't these
-functions be implemented? I think this has already been pointed out in
-a previous version but you did not reply.
+On Tue, Oct 7, 2014 at 2:38 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Oct 07, 2014 at 02:32:57PM +0200, Geert Uytterhoeven wrote:
+>> Unfortunately there's no equivalent code for platform data, and the
+>> uninitialized default of 0 for gpio_hp_det and gpio_mic_det doesn't
+>> play well with asm-generic's gpio_is_valid():
+>>
+>> static inline bool gpio_is_valid(int number)
+>> {
+>>         return number >= 0 && number < ARCH_NR_GPIOS;
+>> }
+>>
+>> Hence on r8a7740/armadillo-legacy, which uses platform devices instead of DT:
+>
+>>     sh-mobile-hdmi sh-mobile-hdmi: SH Mobile HDMI Audio Codec
+>>     sh-mobile-hdmi sh-mobile-hdmi: ASoC: DAPM unknown pin Headphones
+>>     sh-mobile-hdmi sh-mobile-hdmi: ASoC: DAPM unknown pin Mic Jack
+>
+>> After that the kernel log is spammed ca. 7 times per second with:
+>
+>>     sh-mobile-hdmi sh-mobile-hdmi: ASoC: DAPM unknown pin Headphones
+>
+>> Reverting commit 3fe240326cc395c66 ("ASoC: simple-card: Add mic and
+>> hp detect gpios.") fixes this.
+>
+> The fix here is to not allow 0 as a GPIO in the core code (which
+> should've been there already).
 
-> +
-> +static int cyusbs23x_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct cyusbs23x *cyusbs;
-> +       struct cyusbs_gpio *cy_gpio;
-> +       int ret = 0;
-> +
-> +       dev_dbg(&pdev->dev, "%s\n", __func__);
+Unfortunately it's not there.
 
-> +
-> +       cyusbs = dev_get_drvdata(pdev->dev.parent);
-> +
-> +       cy_gpio = devm_kzalloc(&pdev->dev, sizeof(*cy_gpio), GFP_KERNEL);
-> +       if (cy_gpio == NULL)
-> +               return -ENOMEM;
-> +
-> +       cy_gpio->cyusbs = cyusbs;
-> +       /* registering gpio */
-> +       cy_gpio->gpio.label = dev_name(&pdev->dev);
-> +       cy_gpio->gpio.dev = &pdev->dev;
-> +       cy_gpio->gpio.owner = THIS_MODULE;
-> +       cy_gpio->gpio.base = -1;
-> +       cy_gpio->gpio.ngpio = 12; /* total GPIOs */
+And it's not as simple as changing the definition of gpio_is_valid()
+(crash in gpio_get_value()):
 
-Isn't there a way to get the number of GPIOs from a reliable source?
-If not, please at least use a macro here.
+    gpiochip_add: GPIOs 0..211 (r8a7740_pfc) failed to register
+    sh-pfc pfc-r8a7740: failed to init GPIO chip, ignoring...
+    sh-pfc pfc-r8a7740: r8a7740_pfc support registered
+    Unable to handle kernel NULL pointer dereference at virtual address 0000004c
+
+Quoting Linus (https://lkml.org/lkml/2014/9/4/464):
+"Fixing the old global GPIO numberspace API is a waste of time IMO".
+
+Hence I've just sent a patch to initialize the GPIO numbers with -ENOENT.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
