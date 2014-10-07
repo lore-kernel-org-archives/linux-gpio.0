@@ -1,73 +1,177 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v6 1/4] mfd: add support for Diolan DLN-2 devices
-Date: Tue, 7 Oct 2014 19:10:03 +0200
-Message-ID: <20141007171003.GI5362@localhost>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: Re: [PATCH v6 2/4] i2c: add support for Diolan DLN-2 USB-I2C adapter
+Date: Tue, 7 Oct 2014 20:52:35 +0300
+Message-ID: <CAE1zotKiYGXDbE0yVOz1ROuTxMf_Sfpn-0ghOM1dLEu1oEGZuw@mail.gmail.com>
 References: <1411661254-5204-1-git-send-email-octavian.purdila@intel.com>
- <1411661254-5204-2-git-send-email-octavian.purdila@intel.com>
- <20141003171207.GC2394@localhost>
- <CAE1zotLEV-=JvCJvEQqg8CA6fu3UWmPOx3ZYgpd+rYSuSEVmNQ@mail.gmail.com>
+	<1411661254-5204-3-git-send-email-octavian.purdila@intel.com>
+	<20141007164636.GG5362@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:52721 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752858AbaJGRM4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Oct 2014 13:12:56 -0400
-Content-Disposition: inline
-In-Reply-To: <CAE1zotLEV-=JvCJvEQqg8CA6fu3UWmPOx3ZYgpd+rYSuSEVmNQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141007164636.GG5362@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org
 
-On Mon, Oct 06, 2014 at 03:17:22PM +0300, Octavian Purdila wrote:
-> On Fri, Oct 3, 2014 at 8:12 PM, Johan Hovold <johan@kernel.org> wrote:
-> >
-> > On Thu, Sep 25, 2014 at 07:07:31PM +0300, Octavian Purdila wrote:
-> > > This patch implements the USB part of the Diolan USB-I2C/SPI/GPIO
-> > > Master Adapter DLN-2. Details about the device can be found here:
-> > >
-> 
-> <snip>
-> 
-> > > +
-> > > +             ret = dln2_submit_urb(dln2, dln2->rx_urb[i], GFP_KERNEL);
-> > > +             if (ret < 0)
-> > > +                     return ret;
-> >
-> > Is it really worth having this helper only to save a couple of lines on
-> > a dev_err? If you do all resubmissions on completion inline in the
-> > handler, you only have three places where usb_submit_urb is called.
-> >
-> 
-> I moved the completion in the handler as you suggested. I have kept
-> the helper, would you prefer to remove it?
+On Tue, Oct 7, 2014 at 7:46 PM, Johan Hovold <johan@kernel.org> wrote:
+> On Thu, Sep 25, 2014 at 07:07:32PM +0300, Octavian Purdila wrote:
+>> From: Laurentiu Palcu <laurentiu.palcu@intel.com>
+>>
+>> This patch adds support for the Diolan DLN-2 I2C master module. Due
+>> to hardware limitations it does not support SMBUS quick commands.
+>>
+>> Information about the USB protocol interface can be found in the
+>> Programmer's Reference Manual [1], see section 6.2.2 for the I2C
+>> master module commands and responses.
+>>
+>> [1] https://www.diolan.com/downloads/dln-api-manual.pdf
+>>
+>> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@intel.com>
+>> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
+>> ---
+>
+> [...]
+>
+>> +#define DLN2_I2C_MAX_XFER_SIZE               256
+>> +#define DLN2_I2C_BUF_SIZE            (DLN2_I2C_MAX_XFER_SIZE + 16)
+>> +
+>> +struct dln2_i2c {
+>> +     struct platform_device *pdev;
+>> +     struct i2c_adapter adapter;
+>> +     u32 freq;
+>> +     u32 min_freq;
+>> +     u32 max_freq;
+>> +     u8 port;
+>> +     /*
+>> +      * Buffer to hold the packet for read or write transfers. One
+>> +      * is enough since we can't have multiple transfers in
+>> +      * parallel on the i2c adapter.
+>> +      */
+>> +     void *buf;
+>> +};
+>> +
+>> +static int dln2_i2c_enable(struct dln2_i2c *dln2, bool enable)
+>> +{
+>> +     int ret;
+>> +     u16 cmd;
+>> +
+>> +     if (enable)
+>> +             cmd = DLN2_I2C_ENABLE;
+>> +     else
+>> +             cmd = DLN2_I2C_DISABLE;
+>> +
+>> +     ret = dln2_transfer(dln2->pdev, cmd, &dln2->port, sizeof(dln2->port),
+>> +                         NULL, NULL);
+>
+> Don't use the port member of dln2 directly here. Encode the protocol in
+> the function as you already do for most other messages (and did in
+> previous versions). You could even declare a
+>
+>         struct {
+>                 u8 port;
+>         } tx;
+>
+> for consistency.
+>
 
-Moved the "completion"? I was suggesting that the URB resubmission
-should be done inline the URB completion handler.
+Yes, I think I did this after Arnd's review on the gpio stuff where I
+thought he suggested to remove the structure, when in fact he asked to
+remove the __packed attribute. I will revert it back.
 
-[ "Completion" may be a little ambiguous. The URB callback is called an
-URB completion handler. Not be confused with the completion structures
-you use to wait for responses. ]
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int dln2_i2c_set_frequency(struct dln2_i2c *dln2, u32 freq)
+>> +{
+>> +     int ret;
+>> +     struct tx_data {
+>> +             u8 port;
+>> +             __le32 freq;
+>> +     } __packed tx;
+>> +
+>> +     tx.port = dln2->port;
+>> +     tx.freq = cpu_to_le32(freq);
+>> +
+>> +     ret = dln2_transfer(dln2->pdev, DLN2_I2C_SET_FREQUENCY, &tx, sizeof(tx),
+>> +                         NULL, NULL);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     dln2->freq = freq;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int dln2_i2c_get_freq(struct dln2_i2c *dln2, u16 cmd, u32 *res)
+>> +{
+>> +     int ret;
+>> +     __le32 freq;
+>> +     unsigned len = sizeof(freq);
+>> +
+>> +     ret = dln2_transfer(dln2->pdev, cmd, &dln2->port, sizeof(dln2->port),
+>> +                         &freq, &len);
+>
+> Same here.
+>
 
-It's fine to keep the helper as long as it's clear that the urb has been
-"cached" and should not be resubmitted (inline) in the completion
-handler in that case.
- 
-> <snip>
-> 
-> > > +     id = dln2->usb_dev->bus->busnum << 8 | dln2->usb_dev->devnum;
-> >
-> > After giving this some more thought, I think you should just
-> > use PLATFORM_DEVID_AUTO as id. I have submitted a series to fix the
-> > other USB MFD drivers and add a convenience helper to register
-> > hotpluggable MFDs here:
-> >
-> 
-> OK, I will use PLATFORM_DEVID_AUTO for now. If your series merges
-> first and I have to resubmit mine, I will switch to using
-> mfd_add_hotplug_devices.
+OK.
 
-Lee merged the helper function earlier today.
+>> +     if (ret < 0)
+>> +             return ret;
+>> +     if (len < sizeof(freq))
+>> +             return -EPROTO;
+>> +
+>> +     *res = le32_to_cpu(freq);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>
+> [...]
+>
+>> +static ssize_t dln2_i2c_freq_show(struct device *dev,
+>> +                               struct device_attribute *attr, char *buf)
+>> +{
+>> +     struct dln2_i2c *dln2 = dev_get_drvdata(dev);
+>> +
+>> +     return snprintf(buf, PAGE_SIZE, "%d\n", dln2->freq);
+>> +}
+>> +
+>> +static ssize_t dln2_i2c_freq_store(struct device *dev,
+>> +                                struct device_attribute *attr,
+>> +                                const char *buf, size_t count)
+>> +{
+>> +     struct dln2_i2c *dln2 = dev_get_drvdata(dev);
+>> +     unsigned long freq;
+>> +     int ret;
+>> +
+>> +     if (kstrtoul(buf, 0, &freq) || freq < dln2->min_freq ||
+>> +         freq > dln2->max_freq)
+>> +             return -EINVAL;
+>> +
+>> +     ret = dln2_i2c_enable(dln2, false);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     ret = dln2_i2c_set_frequency(dln2, freq);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     ret = dln2_i2c_enable(dln2, true);
+>> +
+>> +     return count;
+>> +}
+>> +
+>> +static DEVICE_ATTR_RW(dln2_i2c_freq);
+>
+> You forgot to add the required documentation of the attribute to
+> Documentation/ABI as requested.
+>
 
-Johan
+Hmm, I did add a new entry in Documentation/ABI/ at
+testing/sysfs-bus-i2c-busses-dln2. It should be right at the beginning
+at the patch.
