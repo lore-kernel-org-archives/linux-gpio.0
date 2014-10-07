@@ -1,79 +1,168 @@
-From: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 1/4] mfd: add support for Diolan DLN-2 devices
-Date: Tue, 7 Oct 2014 21:01:27 +0300
-Message-ID: <CAE1zotLmO=VPkE5RYpr1k0-3N8__7A8pWCEM23hXh6nzEqAjeQ@mail.gmail.com>
-References: <1411661254-5204-1-git-send-email-octavian.purdila@intel.com>
-	<1411661254-5204-2-git-send-email-octavian.purdila@intel.com>
-	<20141003171207.GC2394@localhost>
-	<CAE1zotLEV-=JvCJvEQqg8CA6fu3UWmPOx3ZYgpd+rYSuSEVmNQ@mail.gmail.com>
-	<20141007171003.GI5362@localhost>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH RESEND] gpio: lib-sysfs: Add 'wakeup' attribute
+Date: Tue, 7 Oct 2014 13:28:32 -0700
+Message-ID: <f931db7ac1184254ba87b8abdba2a13a@BN1BFFO11FD013.protection.gbl>
+References: <1409853506-26279-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141007171003.GI5362@localhost>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1409853506-26279-1-git-send-email-soren.brinkmann@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 7, 2014 at 8:10 PM, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Mon, Oct 06, 2014 at 03:17:22PM +0300, Octavian Purdila wrote:
->> On Fri, Oct 3, 2014 at 8:12 PM, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->> >
->> > On Thu, Sep 25, 2014 at 07:07:31PM +0300, Octavian Purdila wrote:
->> > > This patch implements the USB part of the Diolan USB-I2C/SPI/GPIO
->> > > Master Adapter DLN-2. Details about the device can be found here:
->> > >
->>
->> <snip>
->>
->> > > +
->> > > +             ret = dln2_submit_urb(dln2, dln2->rx_urb[i], GFP_KERNEL);
->> > > +             if (ret < 0)
->> > > +                     return ret;
->> >
->> > Is it really worth having this helper only to save a couple of lines on
->> > a dev_err? If you do all resubmissions on completion inline in the
->> > handler, you only have three places where usb_submit_urb is called.
->> >
->>
->> I moved the completion in the handler as you suggested. I have kept
->> the helper, would you prefer to remove it?
->
-> Moved the "completion"? I was suggesting that the URB resubmission
-> should be done inline the URB completion handler.
->
-> [ "Completion" may be a little ambiguous. The URB callback is called an
-> URB completion handler. Not be confused with the completion structures
-> you use to wait for responses. ]
->
+Hi Linus,
 
-Sorry, I meant to say resubmission instead of completion.
+just wanted to check on the status of this patch?
 
-> It's fine to keep the helper as long as it's clear that the urb has been
-> "cached" and should not be resubmitted (inline) in the completion
-> handler in that case.
->
+	Thanks,
+	S=C3=B6ren
 
-Not sure I follow you here. I kept the helper and I call it from the
-completion handler, from free_rx_slot and from dln2_setup_rx_ubs.
-
->
->> <snip>
->>
->> > > +     id = dln2->usb_dev->bus->busnum << 8 | dln2->usb_dev->devnum;
->> >
->> > After giving this some more thought, I think you should just
->> > use PLATFORM_DEVID_AUTO as id. I have submitted a series to fix the
->> > other USB MFD drivers and add a convenience helper to register
->> > hotpluggable MFDs here:
->> >
->>
->> OK, I will use PLATFORM_DEVID_AUTO for now. If your series merges
->> first and I have to resubmit mine, I will switch to using
->> mfd_add_hotplug_devices.
->
-> Lee merged the helper function earlier today.
->
-
-Yep, noticed that, I did a rebase earlier.
+On Thu, 2014-09-04 at 10:58AM -0700, Soren Brinkmann wrote:
+> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
+> marking/unmarking a GPIO as wake IRQ.
+> The file 'wakeup' is created in each exported GPIOs directory, if an =
+IRQ
+> is associated with that GPIO and the irqchip implements set_wake().
+> Writing 'enabled' to that file will enable wake for that GPIO, while
+> writing 'disabled' will disable wake.
+> Reading that file will return either 'disabled' or 'enabled' depening=
+ on
+> the currently set flag for the GPIO's IRQ.
+>=20
+> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> ---
+> Hi all,
+>=20
+> I originally submitted this patch with a few fixes for Zynq's GPIO dr=
+iver
+> (https://lkml.org/lkml/2014/8/29/391). Since this change is not just
+> Zynq-related and has broader impact, Linus asked me to post this agai=
+n, separate
+> from the Zynq series.
+>=20
+> Let me just quote myself from the original submission:
+> "I'm still not fully convinced that the gpio_keys are the best
+> replacement for the sysfs interface when it comes to inputs. For that
+> reason and to have a way to do some quick wake testing, I'd like to
+> propose adding the ability to control wake through the sysfs interfac=
+e
+> (patch 3)."
+>=20
+> 	Thanks,
+> 	S=C3=B6ren
+>=20
+>  drivers/gpio/gpiolib-sysfs.c | 75 ++++++++++++++++++++++++++++++++++=
+++++++----
+>  1 file changed, 69 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysf=
+s.c
+> index 5f2150b619a7..aaf021eaaff5 100644
+> --- a/drivers/gpio/gpiolib-sysfs.c
+> +++ b/drivers/gpio/gpiolib-sysfs.c
+> @@ -286,6 +286,56 @@ found:
+> =20
+>  static DEVICE_ATTR(edge, 0644, gpio_edge_show, gpio_edge_store);
+> =20
+> +static ssize_t gpio_wakeup_show(struct device *dev,
+> +		struct device_attribute *attr, char *buf)
+> +{
+> +	ssize_t			status;
+> +	const struct gpio_desc	*desc =3D dev_get_drvdata(dev);
+> +	int			irq =3D gpiod_to_irq(desc);
+> +	struct irq_desc		*irq_desc =3D irq_to_desc(irq);
+> +
+> +	mutex_lock(&sysfs_lock);
+> +
+> +	if (irqd_is_wakeup_set(&irq_desc->irq_data))
+> +		status =3D sprintf(buf, "enabled\n");
+> +	else
+> +		status =3D sprintf(buf, "disabled\n");
+> +
+> +	mutex_unlock(&sysfs_lock);
+> +
+> +	return status;
+> +}
+> +
+> +static ssize_t gpio_wakeup_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t size)
+> +{
+> +	int			ret;
+> +	unsigned int		on;
+> +	struct gpio_desc	*desc =3D dev_get_drvdata(dev);
+> +	int			irq =3D gpiod_to_irq(desc);
+> +
+> +	mutex_lock(&sysfs_lock);
+> +
+> +	if (sysfs_streq("enabled", buf))
+> +		on =3D true;
+> +	else if (sysfs_streq("disabled", buf))
+> +		on =3D false;
+> +	else
+> +		return -EINVAL;
+> +
+> +	ret =3D irq_set_irq_wake(irq, on);
+> +
+> +	mutex_unlock(&sysfs_lock);
+> +
+> +	if (ret)
+> +		pr_warn("%s: failed to %s wake\n", __func__,
+> +				on ? "enable" : "disable");
+> +
+> +	return size;
+> +}
+> +
+> +static DEVICE_ATTR(wakeup, 0644, gpio_wakeup_show, gpio_wakeup_store=
+);
+> +
+>  static int sysfs_set_active_low(struct gpio_desc *desc, struct devic=
+e *dev,
+>  				int value)
+>  {
+> @@ -526,7 +576,7 @@ static struct class gpio_class =3D {
+>  int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+>  {
+>  	unsigned long		flags;
+> -	int			status;
+> +	int			status, irq;
+>  	const char		*ioname =3D NULL;
+>  	struct device		*dev;
+>  	int			offset;
+> @@ -582,11 +632,24 @@ int gpiod_export(struct gpio_desc *desc, bool d=
+irection_may_change)
+>  			goto fail_unregister_device;
+>  	}
+> =20
+> -	if (gpiod_to_irq(desc) >=3D 0 && (direction_may_change ||
+> -				       !test_bit(FLAG_IS_OUT, &desc->flags))) {
+> -		status =3D device_create_file(dev, &dev_attr_edge);
+> -		if (status)
+> -			goto fail_unregister_device;
+> +	irq =3D gpiod_to_irq(desc);
+> +	if (irq >=3D 0) {
+> +		struct irq_desc *irq_desc =3D irq_to_desc(irq);
+> +		struct irq_chip	*irqchip =3D irq_desc_get_chip(irq_desc);
+> +
+> +		if (direction_may_change ||
+> +				!test_bit(FLAG_IS_OUT, &desc->flags)) {
+> +			status =3D device_create_file(dev, &dev_attr_edge);
+> +			if (status)
+> +				goto fail_unregister_device;
+> +		}
+> +
+> +		if (irqchip->flags & IRQCHIP_SKIP_SET_WAKE ||
+> +				irqchip->irq_set_wake) {
+> +			status =3D device_create_file(dev, &dev_attr_wakeup);
+> +			if (status)
+> +				goto fail_unregister_device;
+> +		}
+>  	}
+> =20
+>  	set_bit(FLAG_EXPORT, &desc->flags);
+> --=20
+> 2.1.0.1.g27b9230
+>=20
