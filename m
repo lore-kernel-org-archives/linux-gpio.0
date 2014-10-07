@@ -1,64 +1,75 @@
-From: Benoit Parrot <bparrot@ti.com>
-Subject: Re: [RFC PATCH] gpio: add GPIO hogging mechanism
-Date: Mon, 6 Oct 2014 10:37:36 -0500
-Message-ID: <20141006153736.GB973@ti.com>
-References: <CACRpkdb47TFJX=7kEM-D3+HB1JvBe1y+D10ohTqa5D=brp1dfQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb47TFJX=7kEM-D3+HB1JvBe1y+D10ohTqa5D=brp1dfQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Pramod Gurav <pramod.gurav@smartplayin.com>
+Subject: [PATCH v2] gpio: cs5535: Switch to using managed resources with devm_
+Date: Tue,  7 Oct 2014 12:35:16 +0530
+Message-ID: <1412665516-3796-1-git-send-email-pramod.gurav@smartplayin.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp90.ord1c.emailsrvr.com ([108.166.43.90]:58662 "EHLO
+	smtp90.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751223AbaJGHBs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Oct 2014 03:01:48 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Pramod Gurav <pramod.gurav@smartplayin.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Linus,
+This change switches to devm_request_region to request region
+and hence simplifies the module unload and does away with
+release_region in remove function.
 
-Sorry about the resend, but i just realized i should have copied you
-directly on the follow-up.
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+---
 
-Please let me know what you think.
-I do have a modified version of Boris' first patch addressing your original 
-comments which I am planning to submit if you it is still a valid idea.
+Changes since v1:
 
-Regards,
-Benoit Parrot
+Change commit subject to reflect cs5535.
 
-Linus Walleij <linus.walleij <at> linaro.org> writes:
+ drivers/gpio/gpio-cs5535.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-> 
-> On Wed, Jan 8, 2014 at 11:18 AM, boris brezillon
-> <b.brezillon <at> overkiz.com> wrote:
-> 
-> > Anyway, do you want me to rework the gpio hog as described below ?
-> 
-> If you feel you have time, drive and a proper usecase for testing it,
-> sure. I just want it to be driven my someone who *really* needs
-> that feature.
-
-As Felipe mentioned we do have several evm with IO-expander controlling 
-various mux. This feature would be very nice to have as we now have to 
-insert the board related gpio setting code in the pdata-quirks which 
-works temporarily but we are looking for an upstreamable solution.
-
-I am leaning toward taking Boris patch set and reworking them given the 
-comments you already had, unless you have a better ideas in mind.
-
-Regards,
-Benoit Parrot
-
-> 
-> Yours,
-> Linus Walleij
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" 
-in
-> the body of a message to majordomo <at> vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-
-
-
+diff --git a/drivers/gpio/gpio-cs5535.c b/drivers/gpio/gpio-cs5535.c
+index 668127f..71484ee 100644
+--- a/drivers/gpio/gpio-cs5535.c
++++ b/drivers/gpio/gpio-cs5535.c
+@@ -322,7 +322,8 @@ static int cs5535_gpio_probe(struct platform_device *pdev)
+ 		goto done;
+ 	}
+ 
+-	if (!request_region(res->start, resource_size(res), pdev->name)) {
++	if (!devm_request_region(&pdev->dev, res->start, resource_size(res),
++				 pdev->name)) {
+ 		dev_err(&pdev->dev, "can't request region\n");
+ 		goto done;
+ 	}
+@@ -348,24 +349,18 @@ static int cs5535_gpio_probe(struct platform_device *pdev)
+ 	/* finally, register with the generic GPIO API */
+ 	err = gpiochip_add(&cs5535_gpio_chip.chip);
+ 	if (err)
+-		goto release_region;
++		goto done;
+ 
+ 	return 0;
+ 
+-release_region:
+-	release_region(res->start, resource_size(res));
+ done:
+ 	return err;
+ }
+ 
+ static int cs5535_gpio_remove(struct platform_device *pdev)
+ {
+-	struct resource *r;
+-
+ 	gpiochip_remove(&cs5535_gpio_chip.chip);
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_IO, 0);
+-	release_region(r->start, resource_size(r));
+ 	return 0;
+ }
+ 
+-- 
+1.7.9.5
 
