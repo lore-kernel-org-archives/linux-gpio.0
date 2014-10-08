@@ -1,50 +1,50 @@
-From: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v3 1/3] mfd: add support for Cypress CYUSBS234 USB Serial
- Bridge controller
-Date: Wed, 8 Oct 2014 07:03:32 +0000
-Message-ID: <44890a00b3914a5bb489cc95e5fe7cbf@BN1PR06MB069.namprd06.prod.outlook.com>
-References: <1412599949-3818-1-git-send-email-muth@cypress.com>
- <20141006133302.GA2306@localhost>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] ASoC: simple-card: Add mic and hp detect gpios.
+Date: Wed, 8 Oct 2014 16:05:59 +0900
+Message-ID: <CAAVeFuJB=bF3g2czT1ed1UX85R_hBXqFAKdeLJcASRcXQujFJw@mail.gmail.com>
+References: <1412198720-2326-1-git-send-email-dgreid@chromium.org>
+ <20141002155350.GU4273@sirena.org.uk> <CAMuHMdWh=sXAD59T1T=gvROX+fbF6=gFo6C0nkJdfnCrdNrwYg@mail.gmail.com>
+ <20141007123856.GF4609@sirena.org.uk> <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
+ <20141007163654.GJ4609@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141006133302.GA2306@localhost>
-Content-Language: en-US
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20141007163654.GJ4609@sirena.org.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, Dylan Reid <dgreid@chromium.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, jay.xu@rock-chips.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, sonnyrao@chromium.org, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-> -----Original Message-----
-> From: Johan Hovold [mailto:jhovold-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org] On Behalf Of Johan Hovold
-> Sent: Monday, October 06, 2014 7:03 PM
-> To: Muthu Mani
-> Cc: Samuel Ortiz; Lee Jones; Wolfram Sang; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Linus
-> Walleij; Alexandre Courbot; linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
-> kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Rajaram Regupathy
-> Subject: Re: [PATCH v3 1/3] mfd: add support for Cypress CYUSBS234 USB
-> Serial Bridge controller
-> 
-> On Mon, Oct 06, 2014 at 06:22:29PM +0530, Muthu Mani wrote:
-> > Adds support for USB-I2C/GPIO interfaces of Cypress Semiconductor
-> > CYUSBS234 USB-Serial Bridge controller.
-> >
-> > Details about the device can be found at:
-> > http://www.cypress.com/?rID=84126
-> >
-> > Signed-off-by: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-> > Signed-off-by: Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-> > ---
-> 
-> Please resend this series and include a revision changelog per patch (you can
-> keep it under the cut-off line).
-> 
-> Also, make sure not to drop thread participants from CC when resending.
+On Wed, Oct 8, 2014 at 1:36 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Oct 07, 2014 at 03:10:01PM +0200, Geert Uytterhoeven wrote:
+>> On Tue, Oct 7, 2014 at 2:38 PM, Mark Brown <broonie@kernel.org> wrote:
+>
+>> > The fix here is to not allow 0 as a GPIO in the core code (which
+>> > should've been there already).
+>
+>> Unfortunately it's not there.
+>
+>> And it's not as simple as changing the definition of gpio_is_valid()
+>> (crash in gpio_get_value()):
+>
+>>     gpiochip_add: GPIOs 0..211 (r8a7740_pfc) failed to register
+>>     sh-pfc pfc-r8a7740: failed to init GPIO chip, ignoring...
+>>     sh-pfc pfc-r8a7740: r8a7740_pfc support registered
+>>     Unable to handle kernel NULL pointer dereference at virtual address 0000004c
+>
+> Right, obviously it's not going to work if the platform actually uses 0
+> as a valid GPIO.
+>
+>> Quoting Linus (https://lkml.org/lkml/2014/9/4/464):
+>> "Fixing the old global GPIO numberspace API is a waste of time IMO".
+>
+>> Hence I've just sent a patch to initialize the GPIO numbers with -ENOENT.
+>
+> I do think it's worth renumbering the platforms since it's *relatively*
+> little work per platform compared to completing the gpiod transition.
 
-Thanks, I have resent it.
-
-> 
-> Thanks,
-> Johan
+But transition to gpiod is the way to ultimately fix this issue, as
+well as many others. Not to mention that renumbering GPIOs will
+certainly make a few users of the GPIO sysfs (another abomination,
+agreed) unhappy. I can only recommend switching drivers to gpiod when
+such issues are spotted.
