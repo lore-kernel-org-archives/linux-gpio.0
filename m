@@ -1,280 +1,788 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO bulk changes for the v3.18 series
-Date: Wed, 8 Oct 2014 09:50:18 +0200
-Message-ID: <CACRpkdYa1YKwPxL2CjWr4wnw8pV=GjJ9Yz-VS3+FvKNFdwMHRA@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/2] PMIC / opregion: support PMIC customized operation
+ region for CrystalCove
+Date: Wed, 8 Oct 2014 09:05:15 +0100
+Message-ID: <20141008080515.GC20647@lee--X1>
+References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>
+ <1410229968-11638-3-git-send-email-aaron.lu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1410229968-11638-3-git-send-email-aaron.lu@intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Aaron Lu <aaron.lu@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, Daniel =?iso-8859-1?Q?Gl=F6ckner?= <dg@emlix.com>, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+To all those CC'ed,
 
-here is the bulk of GPIO changes for the v3.18 cycle.
-
-When I tested to pull this into your tree I found two conflicts that
-also appeared in linux-next, one in the qualcomm driver which
-is trivial and one in the gpiolib.c which is also kind of trivial (lowe=
-r
-hunk is the correct one).
-
-The removal if the return value from gpiochip_remove() hits sites
-a bit all over the kernel (showing how this API permeates platforms)
-but they are mostly ACKed and have survived linux-next testing.
-
-The feature details are in the tag.
-
-Please pull this in! (And fix the glorious conflicts...)
-
-Yours,
-Linus Walleij
-
-
-The following changes since commit 52addcf9d6669fa439387610bc65c92fa098=
-0cef:
-
-  Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v3.18-1
-
-for you to fetch changes up to a092e19b688be88f7329bd05f90cb92ebe1a4f5b=
-:
-
-  gpio: pch: Build context save/restore only for PM (2014-10-02 16:07:0=
-0 +0200)
-
-----------------------------------------------------------------
-This is the bulk of GPIO changes for the v3.18 development
-cycle:
-
-- Increase the default ARCH_NR_GPIO from 256 to 512. This
-  was done to avoid having a custom <asm/gpio.h> header for
-  the x86 architecture - GPIO is custom and complicated
-  enough as it is already! We want to move to a radix to
-  store the descriptors going forward, and finally get rid
-  of this fixed array size altogether.
-
-- Endgame patching of the gpio_remove() semantics initiated
-  by Abdoulaye Berthe. It is not accepted by the system that
-  the removal of a GPIO chip fails during e.g. reboot or
-  shutdown, and therefore the return value has now painfully
-  been refactored away. For special cases like GPIO expanders
-  on a hot-pluggable bus like USB, we may later add some
-  gpiochip_try_remove() call, but for the cases we have now,
-  return values are moot.
-
-- Some incremental refactoring of the gpiolib core and ACPI
-  GPIO library for more descriptor usage.
-
-- Refactor the chained IRQ handler set-up method to handle
-  also threaded, nested interrupts and set up the parent IRQ
-  correctly. Switch STMPE and TC3589x drivers to use this
-  registration method.
-
-- Add a .irq_not_threaded flag to the struct gpio_chip, so
-  that also GPIO expanders that block but are still not
-  using threaded IRQ handlers.
-
-- New drivers for the ARM64 X-Gene SoC GPIO controller.
-
-- The syscon GPIO driver has been improved to handle the
-  "DSP GPIO" found on the TI Keystone 2 SoC:s.
-
-- ADNP driver switched to use gpiolib irqchip helpers.
-
-- Refactor the DWAPB driver to support being instantiated
-  from and MFD cell (platform device).
-
-- Incremental feature improvement in the Zynq, MCP23S08,
-  DWAPB, OMAP, Xilinx and Crystalcove drivers.
-
-- Various minor fixes.
-
-----------------------------------------------------------------
-Aaron Lu (1):
-      gpio: crystalcove: support virtual GPIO
-
-Alexander Shiyan (1):
-      GPIO: gpiolib: trivial: Add missing carriage return
-
-Alexandre Courbot (2):
-      gpio: acpi: normalize use of gpiochip_get_desc()
-      gpio: change gpiochip_request_own_desc() prototype
-
-Axel Lin (3):
-      gpio: xgene: Fix missing spin_lock_init()
-      gpio: xgene: Remove unneeded forward declation for struct xgene_g=
-pio
-      gpio: xgene: Remove unneeded #ifdef CONFIG_OF guard
-
-Behan Webster (1):
-      gpio, bcm-kona, LLVMLinux: Remove use of __initconst
-
-Daniel Mack (1):
-      gpio: pxa: Documentation: provide example bindings for PXA3xx
-
-Ezra Savard (2):
-      gpio: zynq: Mask non-wakeup GPIO interrupts on suspend
-      gpio: zynq: Fixed broken wakeup implementation
-
-=46abian Frederick (1):
-      gpio: use container_of to resolve cs5535_gpio_chip from gpio_chip
-
-=46eng Kan (2):
-      gpio: Add APM X-Gene SoC GPIO controller support
-      Documentation: gpio: Add APM X-Gene SoC GPIO controller DTS bindi=
+> The Baytrail-T platform firmware has defined two customized operation
+> regions for PMIC chip Crystal Cove - one is for power resource handli=
 ng
+> and one is for thermal: sensor temperature reporting, trip point sett=
+ing,
+> etc. This patch adds support for them on top of the existing Crystal =
+Cove
+> PMIC driver.
+>=20
+> The reason to split code into a separate file intel_soc_pmic_opregion=
+=2Ec
+> is that there are more PMIC driver with ACPI operation region support
+> coming and we can re-use those code. The intel_soc_pmic_opregion_data
+> structure is created also for this purpose: when we need to support a
+> new PMIC's operation region, we just need to fill those callbacks and
+> the two register mapping tables.
+>=20
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> ---
+>  drivers/mfd/Kconfig                       |  11 +
+>  drivers/mfd/Makefile                      |   1 +
+>  drivers/mfd/intel_soc_pmic_crc.c          |   3 +
+>  drivers/mfd/intel_soc_pmic_crc_opregion.c | 229 +++++++++++++++++++
+>  drivers/mfd/intel_soc_pmic_opregion.c     | 350 ++++++++++++++++++++=
+++++++++++
+>  drivers/mfd/intel_soc_pmic_opregion.h     |  35 +++
 
-Gernot Vormayr (1):
-      gpio: Fix ngpio in gpio-xilinx driver
+With the influx of new same-chip devices, I think the MFD subsystem is
+fast becoming overloaded.  I think all of the PMIC handling should in
+fact either live in Regulators or have its own subsystem.
 
-Grygorii Strashko (4):
-      gpio: syscon: add soc specific callback to assign output value
-      gpio: syscon: retrive syscon node and regs offsets from dt
-      gpio: syscon: reuse for keystone 2 socs
-      gpiolib: irqchip: use irq_find_mapping while removing irqchip
+Let's open this up to the floor by Cc'ing some probable interested
+parties.
 
-Lars-Peter Clausen (2):
-      gpio: zynq: Reduce level of indention in zynq_gpio_irqhandler()
-      gpio: zynq: Take bank offset into account when reporting a IRQ
+[Leaving the driver code in, but my comments stop here]
 
-Linus Walleij (11):
-      gpio: adnp: switch to use irqchip helpers
-      pinctrl: remove remaining users of gpiochip_remove() retval
-      gpio: remove remaining users of gpiochip_remove() retval
-      tty: sc16is7xx: remove retval from gpiochip_remove()
-      gpio: dwapb: fix pointer to integer cast
-      gpio: set parent irq on chained handlers
-      gpio: handle also nested irqchips in the chained handler set-up
-      gpio: staticize xway_stp_init()
-      gpio: stmpe: fix up interrupt enable logic
-      gpio: stmpe: add verbose debug code
-      pinctrl: abx500: get rid of unused variable
+>  6 files changed, 629 insertions(+)
+>  create mode 100644 drivers/mfd/intel_soc_pmic_crc_opregion.c
+>  create mode 100644 drivers/mfd/intel_soc_pmic_opregion.c
+>  create mode 100644 drivers/mfd/intel_soc_pmic_opregion.h
+>=20
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index de5abf244746..77a7229058a6 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -266,6 +266,17 @@ config INTEL_SOC_PMIC
+>  	  thermal, charger and related power management functions
+>  	  on these systems.
+> =20
+> +config CRC_PMIC_OPREGION
+> +	tristate "ACPI operation region support for CrystalCove PMIC"
+> +	depends on ACPI
+> +	depends on INTEL_SOC_PMIC
+> +	help
+> +	  Select this option to enable support for ACPI operation
+> +	  region of the PMIC chip. The operation region can be used
+> +	  to control power rails and sensor reading/writing on the
+> +	  PMIC chip. This config addes ACPI operation region support
+> +	  for CrystalCove PMIC.
+> +
+>  config MFD_INTEL_MSIC
+>  	bool "Intel MSIC"
+>  	depends on INTEL_SCU_IPC
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index f00148782d9b..e02f0573e293 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -172,3 +172,4 @@ obj-$(CONFIG_MFD_IPAQ_MICRO)	+=3D ipaq-micro.o
+> =20
+>  intel-soc-pmic-objs		:=3D intel_soc_pmic_core.o intel_soc_pmic_crc.o
+>  obj-$(CONFIG_INTEL_SOC_PMIC)	+=3D intel-soc-pmic.o
+> +obj-$(CONFIG_CRC_PMIC_OPREGION) +=3D intel_soc_pmic_crc_opregion.o i=
+ntel_soc_pmic_opregion.o
+> diff --git a/drivers/mfd/intel_soc_pmic_crc.c b/drivers/mfd/intel_soc=
+_pmic_crc.c
+> index 7107cab832e6..48845d636bba 100644
+> --- a/drivers/mfd/intel_soc_pmic_crc.c
+> +++ b/drivers/mfd/intel_soc_pmic_crc.c
+> @@ -106,6 +106,9 @@ static struct mfd_cell crystal_cove_dev[] =3D {
+>  		.num_resources =3D ARRAY_SIZE(gpio_resources),
+>  		.resources =3D gpio_resources,
+>  	},
+> +	{
+> +		.name =3D "crystal_cove_region",
+> +	},
+>  };
+> =20
+>  static struct regmap_config crystal_cove_regmap_config =3D {
+> diff --git a/drivers/mfd/intel_soc_pmic_crc_opregion.c b/drivers/mfd/=
+intel_soc_pmic_crc_opregion.c
+> new file mode 100644
+> index 000000000000..27b67dc3fa8d
+> --- /dev/null
+> +++ b/drivers/mfd/intel_soc_pmic_crc_opregion.c
+> @@ -0,0 +1,229 @@
+> +/*
+> + * intel_soc_pmic_crc_opregion.c - Intel SoC PMIC operation region D=
+river
+> + *
+> + * Copyright (C) 2014 Intel Corporation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License versi=
+on
+> + * 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/acpi.h>
+> +#include <linux/mfd/intel_soc_pmic.h>
+> +#include <linux/regmap.h>
+> +#include <linux/platform_device.h>
+> +#include "intel_soc_pmic_opregion.h"
+> +
+> +#define PWR_SOURCE_SELECT	BIT(1)
+> +
+> +#define PMIC_A0LOCK_REG		0xc5
+> +
+> +static struct pmic_pwr_table pwr_table[] =3D {
+> +	{
+> +		.address =3D 0x24,
+> +		.pwr_reg =3D {
+> +			.reg =3D 0x66,
+> +			.bit =3D 0x00,
+> +		},
+> +	},	/* X285 -> V2P85SX, camara */
+> +	{
+> +		.address =3D 0x48,
+> +		.pwr_reg =3D {
+> +			.reg =3D 0x5d,
+> +			.bit =3D 0x00,
+> +		},
+> +	},	/* V18X -> V1P8SX, eMMC/camara/audio */
+> +};
+> +
+> +static struct pmic_dptf_table dptf_table[] =3D {
+> +	{
+> +		.address =3D 0x00,
+> +		.reg =3D 0x75
+> +	},	/* TMP0 -> SYS0_THRM_RSLT_L */
+> +	{
+> +		.address =3D 0x04,
+> +		.reg =3D 0x95
+> +	},	/* AX00 -> SYS0_THRMALRT0_L */
+> +	{
+> +		.address =3D 0x08,
+> +		.reg =3D 0x97
+> +	},	/* AX01 -> SYS0_THRMALRT1_L */
+> +	{
+> +		.address =3D 0x0c,
+> +		.reg =3D 0x77
+> +	},	/* TMP1 -> SYS1_THRM_RSLT_L */
+> +	{
+> +		.address =3D 0x10,
+> +		.reg =3D 0x9a
+> +	},	/* AX10 -> SYS1_THRMALRT0_L */
+> +	{
+> +		.address =3D 0x14,
+> +		.reg =3D 0x9c
+> +	},	/* AX11 -> SYS1_THRMALRT1_L */
+> +	{
+> +		.address =3D 0x18,
+> +		.reg =3D 0x79
+> +	},	/* TMP2 -> SYS2_THRM_RSLT_L */
+> +	{
+> +		.address =3D 0x1c,
+> +		.reg =3D 0x9f
+> +	},	/* AX20 -> SYS2_THRMALRT0_L */
+> +	{
+> +		.address =3D 0x20,
+> +		.reg =3D 0xa1
+> +	},	/* AX21 -> SYS2_THRMALRT1_L */
+> +	{
+> +		.address =3D 0x48,
+> +		.reg =3D 0x94
+> +	},	/* PEN0 -> SYS0_THRMALRT0_H */
+> +	{
+> +		.address =3D 0x4c,
+> +		.reg =3D 0x99
+> +	},	/* PEN1 -> SYS1_THRMALRT1_H */
+> +	{
+> +		.address =3D 0x50,
+> +		.reg =3D 0x9e
+> +	},	/* PEN2 -> SYS2_THRMALRT2_H */
+> +};
+> +
+> +static int intel_crc_pmic_get_power(struct regmap *regmap,
+> +				    struct pmic_pwr_reg *preg, u64 *value)
+> +{
+> +	int data;
+> +
+> +	if (regmap_read(regmap, preg->reg, &data))
+> +		return -EIO;
+> +
+> +	*value =3D (data & PWR_SOURCE_SELECT) && (data & BIT(preg->bit)) ? =
+1 : 0;
+> +	return 0;
+> +}
+> +
+> +static int intel_crc_pmic_update_power(struct regmap *regmap,
+> +				       struct pmic_pwr_reg *preg, bool on)
+> +{
+> +	int data;
+> +
+> +	if (regmap_read(regmap, preg->reg, &data))
+> +		return -EIO;
+> +
+> +	if (on) {
+> +		data |=3D PWR_SOURCE_SELECT | BIT(preg->bit);
+> +	} else {
+> +		data &=3D ~BIT(preg->bit);
+> +		data |=3D PWR_SOURCE_SELECT;
+> +	}
+> +
+> +	if (regmap_write(regmap, preg->reg, data))
+> +		return -EIO;
+> +	return 0;
+> +}
+> +
+> +/* Raw temperature value is 10bits: 8bits in reg and 2bits in reg-1 =
+bit0,1 */
+> +static int intel_crc_pmic_get_raw_temp(struct regmap *regmap, int re=
+g)
+> +{
+> +	int temp_l, temp_h;
+> +
+> +	if (regmap_read(regmap, reg, &temp_l) ||
+> +	    regmap_read(regmap, reg - 1, &temp_h))
+> +		return -EIO;
+> +
+> +	return (temp_l | ((temp_h & 0x3) << 8));
+> +}
+> +
+> +static int
+> +intel_crc_pmic_update_aux(struct regmap *regmap, int reg, int raw)
+> +{
+> +	if (regmap_write(regmap, reg, raw) ||
+> +	    regmap_update_bits(regmap, reg - 1, 0x3, raw >> 8))
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +intel_crc_pmic_get_policy(struct regmap *regmap, int reg, u64 *value=
+)
+> +{
+> +	int pen;
+> +
+> +	if (regmap_read(regmap, reg, &pen))
+> +		return -EIO;
+> +	*value =3D pen >> 7;
+> +	return 0;
+> +}
+> +
+> +static int intel_crc_pmic_update_policy(struct regmap *regmap,
+> +					int reg, int enable)
+> +{
+> +	int alert0;
+> +
+> +	/* Update to policy enable bit requires unlocking a0lock */
+> +	if (regmap_read(regmap, PMIC_A0LOCK_REG, &alert0))
+> +		return -EIO;
+> +	if (regmap_update_bits(regmap, PMIC_A0LOCK_REG, 0x01, 0))
+> +		return -EIO;
+> +
+> +	if (regmap_update_bits(regmap, reg, 0x80, enable << 7))
+> +		return -EIO;
+> +
+> +	/* restore alert0 */
+> +	if (regmap_write(regmap, PMIC_A0LOCK_REG, alert0))
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct intel_soc_pmic_opregion_data intel_crc_pmic_opregion_d=
+ata =3D {
+> +	.get_power	=3D intel_crc_pmic_get_power,
+> +	.update_power	=3D intel_crc_pmic_update_power,
+> +	.get_raw_temp	=3D intel_crc_pmic_get_raw_temp,
+> +	.update_aux	=3D intel_crc_pmic_update_aux,
+> +	.get_policy	=3D intel_crc_pmic_get_policy,
+> +	.update_policy	=3D intel_crc_pmic_update_policy,
+> +	.pwr_table	=3D pwr_table,
+> +	.pwr_table_count=3D ARRAY_SIZE(pwr_table),
+> +	.dptf_table	=3D dptf_table,
+> +	.dptf_table_count =3D ARRAY_SIZE(dptf_table),
+> +};
+> +
+> +static int intel_crc_pmic_opregion_probe(struct platform_device *pde=
+v)
+> +{
+> +	struct intel_soc_pmic *pmic =3D dev_get_drvdata(pdev->dev.parent);
+> +	return intel_soc_pmic_install_opregion_handler(&pdev->dev,
+> +			ACPI_HANDLE(pdev->dev.parent), pmic->regmap,
+> +			&intel_crc_pmic_opregion_data);
+> +}
+> +
+> +static int intel_crc_pmic_opregion_remove(struct platform_device *pd=
+ev)
+> +{
+> +	intel_soc_pmic_remove_opregion_handler(ACPI_HANDLE(pdev->dev.parent=
+));
+> +	return 0;
+> +}
+> +
+> +#define DRV_NAME "crystal_cove_region"
+> +
+> +static struct platform_device_id crystal_cove_opregion_id_table[] =3D=
+ {
+> +	{ .name =3D DRV_NAME },
+> +	{},
+> +};
+> +
+> +static struct platform_driver intel_crc_pmic_opregion_driver =3D {
+> +	.probe =3D intel_crc_pmic_opregion_probe,
+> +	.remove =3D intel_crc_pmic_opregion_remove,
+> +	.id_table =3D crystal_cove_opregion_id_table,
+> +	.driver =3D {
+> +		.name =3D DRV_NAME,
+> +	},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(platform, crystal_cove_opregion_id_table);
+> +
+> +module_platform_driver(intel_crc_pmic_opregion_driver);
+> +
+> +MODULE_DESCRIPTION("CrystalCove ACPI opregion driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/mfd/intel_soc_pmic_opregion.c b/drivers/mfd/inte=
+l_soc_pmic_opregion.c
+> new file mode 100644
+> index 000000000000..62824a35ce97
+> --- /dev/null
+> +++ b/drivers/mfd/intel_soc_pmic_opregion.c
+> @@ -0,0 +1,350 @@
+> +/*
+> + * intel_soc_pmic_opregion.c - Intel SoC PMIC operation region Drive=
+r
+> + *
+> + * Copyright (C) 2014 Intel Corporation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License versi=
+on
+> + * 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/acpi.h>
+> +#include <linux/regmap.h>
+> +#include "intel_soc_pmic_opregion.h"
+> +
+> +#define PMIC_PMOP_OPREGION_ID	0x8d
+> +#define PMIC_DPTF_OPREGION_ID	0x8c
+> +
+> +struct acpi_lpat {
+> +	int temp;
+> +	int raw;
+> +};
+> +
+> +struct intel_soc_pmic_opregion {
+> +	struct mutex lock;
+> +	struct acpi_lpat *lpat;
+> +	int lpat_count;
+> +	struct regmap *regmap;
+> +	struct intel_soc_pmic_opregion_data *data;
+> +};
+> +
+> +static struct pmic_pwr_reg *
+> +pmic_get_pwr_reg(int address, struct pmic_pwr_table *table, int coun=
+t)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < count; i++) {
+> +		if (table[i].address =3D=3D address)
+> +			return &table[i].pwr_reg;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +static int
+> +pmic_get_dptf_reg(int address, struct pmic_dptf_table *table, int co=
+unt)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < count; i++) {
+> +		if (table[i].address =3D=3D address)
+> +			return table[i].reg;
+> +	}
+> +	return -ENOENT;
+> +}
+> +
+> +/* Return temperature from raw value through LPAT table */
+> +static int raw_to_temp(struct acpi_lpat *lpat, int count, int raw)
+> +{
+> +	int i, delta_temp, delta_raw, temp;
+> +
+> +	for (i =3D 0; i < count - 1; i++) {
+> +		if ((raw >=3D lpat[i].raw && raw <=3D lpat[i+1].raw) ||
+> +		    (raw <=3D lpat[i].raw && raw >=3D lpat[i+1].raw))
+> +			break;
+> +	}
+> +
+> +	if (i =3D=3D count - 1)
+> +		return -ENOENT;
+> +
+> +	delta_temp =3D lpat[i+1].temp - lpat[i].temp;
+> +	delta_raw =3D lpat[i+1].raw - lpat[i].raw;
+> +	temp =3D lpat[i].temp + (raw - lpat[i].raw) * delta_temp / delta_ra=
+w;
+> +
+> +	return temp;
+> +}
+> +
+> +/* Return raw value from temperature through LPAT table */
+> +static int temp_to_raw(struct acpi_lpat *lpat, int count, int temp)
+> +{
+> +	int i, delta_temp, delta_raw, raw;
+> +
+> +	for (i =3D 0; i < count - 1; i++) {
+> +		if (temp >=3D lpat[i].temp && temp <=3D lpat[i+1].temp)
+> +			break;
+> +	}
+> +
+> +	if (i =3D=3D count - 1)
+> +		return -ENOENT;
+> +
+> +	delta_temp =3D lpat[i+1].temp - lpat[i].temp;
+> +	delta_raw =3D lpat[i+1].raw - lpat[i].raw;
+> +	raw =3D lpat[i].raw + (temp - lpat[i].temp) * delta_raw / delta_tem=
+p;
+> +
+> +	return raw;
+> +}
+> +
+> +static void
+> +pmic_dptf_lpat(struct intel_soc_pmic_opregion *opregion, acpi_handle=
+ handle,
+> +	       struct device *dev)
+> +{
+> +	struct acpi_buffer buffer =3D { ACPI_ALLOCATE_BUFFER, NULL };
+> +	union acpi_object *obj_p, *obj_e;
+> +	int *lpat, i;
+> +	acpi_status status;
+> +
+> +	status =3D acpi_evaluate_object(handle, "LPAT", NULL, &buffer);
+> +	if (ACPI_FAILURE(status))
+> +		return;
+> +
+> +	obj_p =3D (union acpi_object *)buffer.pointer;
+> +	if (!obj_p || (obj_p->type !=3D ACPI_TYPE_PACKAGE) ||
+> +	    (obj_p->package.count % 2) || (obj_p->package.count < 4))
+> +		goto out;
+> +
+> +	lpat =3D devm_kmalloc(dev, sizeof(*lpat) * obj_p->package.count,
+> +			    GFP_KERNEL);
+> +	if (!lpat)
+> +		goto out;
+> +
+> +	for (i =3D 0; i < obj_p->package.count; i++) {
+> +		obj_e =3D &obj_p->package.elements[i];
+> +		if (obj_e->type !=3D ACPI_TYPE_INTEGER)
+> +			goto out;
+> +		lpat[i] =3D obj_e->integer.value;
+> +	}
+> +
+> +	opregion->lpat =3D (struct acpi_lpat *)lpat;
+> +	opregion->lpat_count =3D obj_p->package.count / 2;
+> +
+> +out:
+> +	kfree(buffer.pointer);
+> +}
+> +
+> +static acpi_status
+> +intel_soc_pmic_pmop_handler(u32 function, acpi_physical_address addr=
+ess,
+> +			    u32 bits, u64 *value64,
+> +			    void *handler_context, void *region_context)
+> +{
+> +	struct intel_soc_pmic_opregion *opregion =3D region_context;
+> +	struct regmap *regmap =3D opregion->regmap;
+> +	struct intel_soc_pmic_opregion_data *d =3D opregion->data;
+> +	struct pmic_pwr_reg *preg;
+> +	int result;
+> +
+> +	if (bits !=3D 32 || !value64)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	if (function =3D=3D ACPI_WRITE && !(*value64 =3D=3D 0 || *value64 =3D=
+=3D 1))
+> +		return AE_BAD_PARAMETER;
+> +
+> +	preg =3D pmic_get_pwr_reg(address, d->pwr_table, d->pwr_table_count=
+);
+> +	if (!preg)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	mutex_lock(&opregion->lock);
+> +
+> +	if (function =3D=3D ACPI_READ)
+> +		result =3D d->get_power(regmap, preg, value64);
+> +	else
+> +		result =3D d->update_power(regmap, preg, *value64 =3D=3D 1);
+> +
+> +	mutex_unlock(&opregion->lock);
+> +
+> +	return result ? AE_ERROR : AE_OK;
+> +}
+> +
+> +static acpi_status pmic_read_temp(struct intel_soc_pmic_opregion *op=
+region,
+> +				  int reg, u64 *value)
+> +{
+> +	int raw_temp, temp;
+> +
+> +	if (!opregion->data->get_raw_temp)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	raw_temp =3D opregion->data->get_raw_temp(opregion->regmap, reg);
+> +	if (raw_temp < 0)
+> +		return AE_ERROR;
+> +
+> +	if (!opregion->lpat) {
+> +		*value =3D raw_temp;
+> +		return AE_OK;
+> +	}
+> +
+> +	temp =3D raw_to_temp(opregion->lpat, opregion->lpat_count, raw_temp=
+);
+> +	if (temp < 0)
+> +		return AE_ERROR;
+> +
+> +	*value =3D temp;
+> +	return AE_OK;
+> +}
+> +
+> +static acpi_status pmic_dptf_temp(struct intel_soc_pmic_opregion *op=
+region,
+> +				  int reg, u32 function, u64 *value)
+> +{
+> +	if (function !=3D ACPI_READ)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	return pmic_read_temp(opregion, reg, value);
+> +}
+> +
+> +static acpi_status pmic_dptf_aux(struct intel_soc_pmic_opregion *opr=
+egion,
+> +				 int reg, u32 function, u64 *value)
+> +{
+> +	int raw_temp;
+> +
+> +	if (function =3D=3D ACPI_READ)
+> +		return pmic_read_temp(opregion, reg, value);
+> +
+> +	if (!opregion->data->update_aux)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	if (opregion->lpat) {
+> +		raw_temp =3D temp_to_raw(opregion->lpat, opregion->lpat_count,
+> +					 *value);
+> +		if (raw_temp < 0)
+> +			return AE_ERROR;
+> +	} else {
+> +		raw_temp =3D *value;
+> +	}
+> +
+> +	return opregion->data->update_aux(opregion->regmap, reg, raw_temp) =
+?
+> +		AE_ERROR : AE_OK;
+> +}
+> +
+> +static acpi_status pmic_dptf_pen(struct intel_soc_pmic_opregion *opr=
+egion,
+> +				 int reg, u32 function, u64 *value)
+> +{
+> +	struct intel_soc_pmic_opregion_data *d =3D opregion->data;
+> +	struct regmap *regmap =3D opregion->regmap;
+> +
+> +	if (!d->get_policy || !d->update_policy)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	if (function =3D=3D ACPI_READ)
+> +		return d->get_policy(regmap, reg, value) ? AE_ERROR : AE_OK;
+> +
+> +	if (*value !=3D 0 || *value !=3D 1)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	return d->update_policy(regmap, reg, *value) ? AE_ERROR : AE_OK;
+> +}
+> +
+> +static bool pmic_dptf_is_temp(int address)
+> +{
+> +	return (address <=3D 0x3c) && !(address % 12);
+> +}
+> +
+> +static bool pmic_dptf_is_aux(int address)
+> +{
+> +	return (address >=3D 4 && address <=3D 0x40 && !((address - 4) % 12=
+)) ||
+> +	       (address >=3D 8 && address <=3D 0x44 && !((address - 8) % 12=
+));
+> +}
+> +
+> +static bool pmic_dptf_is_pen(int address)
+> +{
+> +	return address >=3D 0x48 && address <=3D 0x5c;
+> +}
+> +
+> +static acpi_status
+> +intel_soc_pmic_dptf_handler(u32 function, acpi_physical_address addr=
+ess,
+> +			    u32 bits, u64 *value64,
+> +			    void *handler_context, void *region_context)
+> +{
+> +	struct intel_soc_pmic_opregion *opregion =3D region_context;
+> +	int reg;
+> +	int result;
+> +
+> +	if (bits !=3D 32 || !value64)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	reg =3D pmic_get_dptf_reg(address, opregion->data->dptf_table,
+> +				opregion->data->dptf_table_count);
+> +	if (!reg)
+> +		return AE_BAD_PARAMETER;
+> +
+> +	mutex_lock(&opregion->lock);
+> +
+> +	result =3D AE_BAD_PARAMETER;
+> +	if (pmic_dptf_is_temp(address))
+> +		result =3D pmic_dptf_temp(opregion, reg, function, value64);
+> +	else if (pmic_dptf_is_aux(address))
+> +		result =3D pmic_dptf_aux(opregion, reg, function, value64);
+> +	else if (pmic_dptf_is_pen(address))
+> +		result =3D pmic_dptf_pen(opregion, reg, function, value64);
+> +
+> +	mutex_unlock(&opregion->lock);
+> +
+> +	return result;
+> +}
+> +
+> +int
+> +intel_soc_pmic_install_opregion_handler(struct device *dev,
+> +					acpi_handle handle,
+> +					struct regmap *regmap,
+> +					struct intel_soc_pmic_opregion_data *d)
+> +{
+> +	acpi_status status;
+> +	struct intel_soc_pmic_opregion *opregion;
+> +
+> +	if (!dev || !regmap || !d)
+> +		return -EINVAL;
+> +
+> +	if (!handle)
+> +		return -ENODEV;
+> +
+> +	opregion =3D devm_kzalloc(dev, sizeof(*opregion), GFP_KERNEL);
+> +	if (!opregion)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&opregion->lock);
+> +	opregion->regmap =3D regmap;
+> +	pmic_dptf_lpat(opregion, handle, dev);
+> +
+> +	status =3D acpi_install_address_space_handler(handle,
+> +						    PMIC_PMOP_OPREGION_ID,
+> +						    intel_soc_pmic_pmop_handler,
+> +						    NULL, opregion);
+> +	if (ACPI_FAILURE(status))
+> +		return -ENODEV;
+> +
+> +	status =3D acpi_install_address_space_handler(handle,
+> +						    PMIC_DPTF_OPREGION_ID,
+> +						    intel_soc_pmic_dptf_handler,
+> +						    NULL, opregion);
+> +	if (ACPI_FAILURE(status)) {
+> +		acpi_remove_address_space_handler(handle, PMIC_PMOP_OPREGION_ID,
+> +						  intel_soc_pmic_pmop_handler);
+> +		return -ENODEV;
+> +	}
+> +
+> +	opregion->data =3D d;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(intel_soc_pmic_install_opregion_handler);
+> +
+> +void intel_soc_pmic_remove_opregion_handler(acpi_handle handle)
+> +{
+> +	acpi_remove_address_space_handler(handle, PMIC_PMOP_OPREGION_ID,
+> +					  intel_soc_pmic_pmop_handler);
+> +	acpi_remove_address_space_handler(handle, PMIC_DPTF_OPREGION_ID,
+> +					  intel_soc_pmic_dptf_handler);
+> +}
+> +EXPORT_SYMBOL_GPL(intel_soc_pmic_remove_opregion_handler);
+> +
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/mfd/intel_soc_pmic_opregion.h b/drivers/mfd/inte=
+l_soc_pmic_opregion.h
+> new file mode 100644
+> index 000000000000..752ec3d2bcbb
+> --- /dev/null
+> +++ b/drivers/mfd/intel_soc_pmic_opregion.h
+> @@ -0,0 +1,35 @@
+> +#ifndef __INTEL_SOC_PMIC_OPREGION_H
+> +#define __INTEL_SOC_PMIC_OPREGION_H
+> +
+> +struct pmic_pwr_reg {
+> +	int reg;	/* corresponding PMIC register */
+> +	int bit;	/* control bit for power */
+> +};
+> +
+> +struct pmic_pwr_table {
+> +	int address;	/* operation region address */
+> +	struct pmic_pwr_reg pwr_reg;
+> +};
+> +
+> +struct pmic_dptf_table {
+> +	int address;	/* operation region address */
+> +	int reg;	/* corresponding thermal register */
+> +};
+> +
+> +struct intel_soc_pmic_opregion_data {
+> +	int (*get_power)(struct regmap *r, struct pmic_pwr_reg *preg, u64 *=
+value);
+> +	int (*update_power)(struct regmap *r, struct pmic_pwr_reg *preg, bo=
+ol on);
+> +	int (*get_raw_temp)(struct regmap *r, int reg);
+> +	int (*update_aux)(struct regmap *r, int reg, int raw_temp);
+> +	int (*get_policy)(struct regmap *r, int reg, u64 *value);
+> +	int (*update_policy)(struct regmap *r, int reg, int enable);
+> +	struct pmic_pwr_table *pwr_table;
+> +	int pwr_table_count;
+> +	struct pmic_dptf_table *dptf_table;
+> +	int dptf_table_count;
+> +};
+> +
+> +int intel_soc_pmic_install_opregion_handler(struct device *dev, acpi=
+_handle handle, struct regmap *regmap, struct intel_soc_pmic_opregion_d=
+ata *d);
+> +void intel_soc_pmic_remove_opregion_handler(acpi_handle handle);
+> +
+> +#endif
 
-Markus Pargmann (2):
-      gpio: pca953x: Drop deprecated DT bindings
-      gpio: pca953x: Add DT binding documentation
-
-Michal Simek (1):
-      gpio: zynq: Remove .owner field for driver
-
-Mika Westerberg (1):
-      gpio: Increase ARCH_NR_GPIOs to 512
-
-Nishanth Menon (1):
-      gpio: omap: Fix interrupt names
-
-Octavian Purdila (1):
-      gpiolib: add irq_not_threaded flag to gpio_chip
-
-Paul Bolle (1):
-      gpio: samsung: Remove remaining check for CONFIG_S5P_GPIO_DRVSTR
-
-Sonic Zhang (1):
-      gpio: mcp23s08 to support both device tree and platform data
-
-Thierry Reding (1):
-      gpio: pch: Build context save/restore only for PM
-
-Uwe Kleine-K=C3=B6nig (2):
-      gpio: kona: enable only on BCM_MOBILE or for compile testing
-      pinctrl: bcm281xx: make Kconfig dependency more strict
-
-Varka Bhadram (2):
-      gpio: ks8695: fix switch case indentation
-      gpio: ks8695: fix 'else should follow close brace '}''
-
-Wei Yongjun (1):
-      gpio: Fix return value check in xgene_gpio_probe()
-
-Weike Chen (4):
-      GPIO: gpio-dwapb: Enable platform driver binding to MFD driver
-      GPIO: gpio-dwapb: Change readl&writel to dwapb_read&dwapb_write
-      GPIO: gpio-dwapb: Support Debounce
-      GPIO: gpio-dwapb: Suspend & Resume PM enabling
-
-abdoulaye berthe (2):
-      driver:gpio remove all usage of gpio_remove retval in driver
-      gpio: gpiolib: set gpiochip_remove retval to void
-
- .../devicetree/bindings/gpio/gpio-dsp-keystone.txt |  39 ++
- .../devicetree/bindings/gpio/gpio-pca953x.txt      |  39 ++
- .../devicetree/bindings/gpio/gpio-xgene.txt        |  22 ++
- .../devicetree/bindings/gpio/mrvl-gpio.txt         |  15 +-
- Documentation/gpio/driver.txt                      |   6 +-
- arch/arm/common/scoop.c                            |  10 +-
- arch/mips/txx9/generic/setup.c                     |   4 +-
- arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c     |   3 +-
- arch/sh/boards/mach-x3proto/gpio.c                 |   6 +-
- drivers/bcma/driver_gpio.c                         |   3 +-
- drivers/gpio/Kconfig                               |  14 +-
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-adnp.c                           | 155 +++-----
- drivers/gpio/gpio-bcm-kona.c                       |   2 +-
- drivers/gpio/gpio-crystalcove.c                    |  28 +-
- drivers/gpio/gpio-cs5535.c                         |   9 +-
- drivers/gpio/gpio-dwapb.c                          | 410 +++++++++++++=
-++++----
- drivers/gpio/gpio-ks8695.c                         |  30 +-
- drivers/gpio/gpio-mcp23s08.c                       |  64 ++--
- drivers/gpio/gpio-omap.c                           |  33 +-
- drivers/gpio/gpio-pca953x.c                        |  54 +--
- drivers/gpio/gpio-pch.c                            |   2 +
- drivers/gpio/gpio-samsung.c                        |  50 ---
- drivers/gpio/gpio-stmpe.c                          |  99 ++++-
- drivers/gpio/gpio-stp-xway.c                       |   2 +-
- drivers/gpio/gpio-syscon.c                         |  94 ++++-
- drivers/gpio/gpio-tc3589x.c                        |   5 +
- drivers/gpio/gpio-xgene.c                          | 244 ++++++++++++
- drivers/gpio/gpio-xilinx.c                         |  27 +-
- drivers/gpio/gpio-zynq.c                           |  89 +++--
- drivers/gpio/gpiolib-acpi.c                        |  30 +-
- drivers/gpio/gpiolib.c                             |  90 +++--
- drivers/hid/hid-cp2112.c                           |   6 +-
- drivers/input/keyboard/adp5588-keys.c              |   4 +-
- drivers/input/keyboard/adp5589-keys.c              |   4 +-
- drivers/input/touchscreen/ad7879.c                 |  10 +-
- drivers/leds/leds-pca9532.c                        |  10 +-
- drivers/leds/leds-tca6507.c                        |   7 +-
- drivers/media/dvb-frontends/cxd2820r_core.c        |  10 +-
- drivers/mfd/asic3.c                                |   3 +-
- drivers/mfd/htc-i2cpld.c                           |   8 +-
- drivers/mfd/sm501.c                                |  17 +-
- drivers/mfd/tc6393xb.c                             |  13 +-
- drivers/mfd/ucb1x00-core.c                         |   8 +-
- drivers/pinctrl/Kconfig                            |   2 +-
- drivers/pinctrl/nomadik/pinctrl-abx500.c           |  16 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c          |   2 +-
- drivers/pinctrl/qcom/pinctrl-msm.c                 |   9 +-
- drivers/pinctrl/samsung/pinctrl-exynos5440.c       |   6 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c          |  15 +-
- drivers/pinctrl/sirf/pinctrl-sirf.c                |   3 +-
- drivers/platform/x86/intel_pmic_gpio.c             |   3 +-
- drivers/ssb/driver_gpio.c                          |   3 +-
- drivers/staging/vme/devices/vme_pio2_gpio.c        |   4 +-
- drivers/tty/serial/max310x.c                       |  10 +-
- drivers/tty/serial/sc16is7xx.c                     |  13 +-
- drivers/video/fbdev/via/via-gpio.c                 |  10 +-
- include/asm-generic/gpio.h                         |   2 +-
- include/linux/gpio/driver.h                        |   8 +-
- include/linux/platform_data/gpio-dwapb.h           |  32 ++
- include/linux/spi/mcp23s08.h                       |  18 +
- sound/soc/codecs/wm5100.c                          |   5 +-
- sound/soc/codecs/wm8903.c                          |   6 +-
- sound/soc/codecs/wm8962.c                          |   5 +-
- sound/soc/codecs/wm8996.c                          |   6 +-
- 65 files changed, 1297 insertions(+), 660 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-dsp-key=
-stone.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pca953x=
-=2Etxt
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.t=
-xt
- create mode 100644 drivers/gpio/gpio-xgene.c
- create mode 100644 include/linux/platform_data/gpio-dwapb.h
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
