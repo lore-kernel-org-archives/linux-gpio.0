@@ -1,114 +1,85 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
-Date: Wed, 08 Oct 2014 17:13:28 +0200
-Message-ID: <1843196.sbXNmZyoMx@wuerfel>
-References: <1412779948-28769-1-git-send-email-yvo@apm.com> <1412779948-28769-2-git-send-email-yvo@apm.com>
+From: RR <rajaram.officemails@gmail.com>
+Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO adapter
+Date: Wed, 8 Oct 2014 16:46:55 -0700
+Message-ID: <CACdXCX7PqUHRKJ0KipmYzRF54XRmMYYArr5iof36VskJ75PaKg@mail.gmail.com>
+References: <1412606822-3406-1-git-send-email-muth@cypress.com>
+	<CAAVeFu+vBZ49ciZT+-dnKXks201_psy_NtYsTjw0ptOkx2es7Q@mail.gmail.com>
+	<405b439b16ea40078718da326343f673@BN1PR06MB069.namprd06.prod.outlook.com>
+	<CAAVeFu+X0Lk=5sNm9kOwGX=2-DYN_-5v-7M9bAWXraffKsTkMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:56551 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752503AbaJHPNk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Oct 2014 11:13:40 -0400
-In-Reply-To: <1412779948-28769-2-git-send-email-yvo@apm.com>
+Received: from mail-ig0-f169.google.com ([209.85.213.169]:50465 "EHLO
+	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751289AbaJHXq5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Oct 2014 19:46:57 -0400
+In-Reply-To: <CAAVeFu+X0Lk=5sNm9kOwGX=2-DYN_-5v-7M9bAWXraffKsTkMg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Y Vo <yvo@apm.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Tin Huynh <tnhuynh@apm.com>, patches@apm.com, Toan Le <toanle@apm.com>, Phong Vo <pvo@apm.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Muthu Mani <muth@cypress.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>, Johan Hovold <johan@kernel.org>
 
-On Wednesday 08 October 2014 21:52:26 Y Vo wrote:
-> +
-> +#define GICD_SPI_BASE			0x78010000
+On Wed, Oct 8, 2014 at 12:18 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Wed, Oct 8, 2014 at 4:09 PM, Muthu Mani <muth@cypress.com> wrote:
+>>> -----Original Message-----
+>>> From: Alexandre Courbot [mailto:gnurou@gmail.com]
+>>> Sent: Tuesday, October 07, 2014 3:34 PM
+>>> To: Muthu Mani
+>>> Cc: Samuel Ortiz; Lee Jones; Wolfram Sang; Linus Walleij; Greg Kroah-
+>>> Hartman; linux-i2c@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
+>>> usb@vger.kernel.org; Linux Kernel Mailing List; Rajaram Regupathy; Johan
+>>> Hovold
+>>> Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-
+>>> GPIO adapter
+>>>
+>>> On Mon, Oct 6, 2014 at 11:47 PM, Muthu Mani <muth@cypress.com> wrote:
+>>> > +
+>>> > +static int cy_gpio_direction_input(struct gpio_chip *chip,
+>>> > +                                       unsigned offset) {
+>>> > +       return 0;
+>>> > +}
+>>> > +
+>>> > +static int cy_gpio_direction_output(struct gpio_chip *chip,
+>>> > +                                       unsigned offset, int value) {
+>>> > +       return 0;
+>>> > +}
+>>>
+>>> If that chip is capable of both output and input, shouldn't these functions be
+>>> implemented? I think this has already been pointed out in a previous version
+>>> but you did not reply.
+>>
+>> Thanks for your inputs.
+>>
+>> Only the GPIOs which are configured to be output GPIO can be set.
+>
+> In that case cy_gpio_set() should return an error for GPIOs which are
+> not configured as outputs. Is that guaranteed by the current
+> implementation?
+>
+>> The set operation would fail trying to set the input or unconfigured GPIOs.
+>> In this version of driver, this support is not added, it can be introduced in future versions.
+>> I will add a TODO note in the code.
+>
+> Argh, no TODO please. Actual code that will turn this code into a
+> solid driver that can be merged.
 
-You can't hardcode register locations. Please use the proper interfaces
-to do whatever you want.
+Does a driver targeted for a custom device has to implement every
+functionality in the 1st version ? My understanding is that Linux
+follows incremental model and allows incremental merge.
 
-It's probably not ok to map any GIC registers into the GPIO driver,
-it should operate as a nested irqchip.
+(On a side note the driver is functionally verified with the necessary hardware)
 
-> +
-> +static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
-> +{
-> +	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> +	struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
-> +	u32 data;
-> +
-> +	if (chip->irq[gpio]) {
-> +		data = ioread32(chip->gic_regs + GICD_SPIR1);
-> +	} else {
-> +		data = ioread32(mm_gc->regs + MPA_GPIO_IN_ADDR);
-> +	}
-> +
-> +	return (data &  GPIO_MASK(gpio)) ? 1 : 0;
-> +}
+Please correct me if I am missing something
 
-This should not assume that a particular upstream irqchip is used,
-and more importantly it should not touch its registers.
-
-> +static int apm_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
-> +{
-> +	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> +	struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
-> +
-> +	if (chip->irq[gpio])
-> +		return chip->irq[gpio];
-> +
-> +	return -ENXIO;
-> +}
-> +
-> +static int gpio_sb_probe(struct platform_device *pdev)
-> +{
-> +	struct of_mm_gpio_chip *mm;
-> +	struct xgene_gpio_sb *apm_gc;
-> +	u32 ret, i;
-> +	u32 default_pins[] = {0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D};
-
-Why are these hardcoded? The "apm,xgene-gpio-sb" compatible string
-seems very generic, but the list of pins here seems very specific
-to a particular implementation.
-
-> +	mm->gc.ngpio = XGENE_MAX_GPIO_DS;
-> +	apm_gc->nirq = XGENE_MAX_GPIO_DS_IRQ;
-> +
-> +	apm_gc->gic_regs = ioremap(GICD_SPI_BASE, 16);
-> +	if (!apm_gc->gic_regs)
-> +		return -ENOMEM;
-> +
-> +	apm_gc->irq = devm_kzalloc(&pdev->dev, sizeof(u32) * XGENE_MAX_GPIO_DS,
-> +				   GFP_KERNEL);
-> +	if (!apm_gc->irq)
-> +		return -ENOMEM;
-> +	memset(apm_gc->irq, 0, sizeof(u32) * XGENE_MAX_GPIO_DS);
-
-kzalloc implies memset.
-
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	mm->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	if (!mm->regs)
-> +		return PTR_ERR(mm->regs);
-> +
-> +	for (i = 0; i < apm_gc->nirq; i++) {
-> +		apm_gc->irq[default_pins[i]] = platform_get_irq(pdev, i);
-> +		xgene_gpio_set_bit(mm->regs + MPA_GPIO_SEL_LO,
-> +				   default_pins[i] * 2, 1);
-> +		xgene_gpio_set_bit(mm->regs + MPA_GPIO_INT_LVL, i, 1);
-> +	}
-> +	mm->gc.of_node = pdev->dev.of_node;
-> +	ret = gpiochip_add(&mm->gc);
-> +	if (ret)
-> +		dev_err(&pdev->dev, "failed to register X-Gene GPIO Standby driver");
-> +	else
-> +		dev_info(&pdev->dev, "X-Gene GPIO Standby driver registered\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static int xgene_gpio_sb_probe(struct platform_device *pdev)
-> +{
-> +	return gpio_sb_probe(pdev);
-> +}
-
-This function is pointless, just call the real one instead.
-
-	ARnd
+>
+> Can all GPIOs be set as input or output? If so, please implement
+> cy_gpio_direction_*() and make sure that cy_gpio_set() behaves
+> properly if a GPIO is not an output. If the input/output GPIOs are
+> fixed, please make cy_gpio_direction_*() return an error if the GPIO
+> capabilities does not correspond to what is asked, and again ensure
+> that cy_gpio_set() works as expected.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
