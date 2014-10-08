@@ -1,91 +1,100 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: simple-card: Add mic and hp detect
-	gpios.
-Date: Wed, 8 Oct 2014 12:40:24 +0100
-Message-ID: <20141008114024.GW4609@sirena.org.uk>
-References: <1412198720-2326-1-git-send-email-dgreid@chromium.org>
- <20141002155350.GU4273@sirena.org.uk>
- <CAMuHMdWh=sXAD59T1T=gvROX+fbF6=gFo6C0nkJdfnCrdNrwYg@mail.gmail.com>
- <20141007123856.GF4609@sirena.org.uk>
- <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
- <20141007163654.GJ4609@sirena.org.uk>
- <CAAVeFuJB=bF3g2czT1ed1UX85R_hBXqFAKdeLJcASRcXQujFJw@mail.gmail.com>
- <CACRpkdY+KQ1OMh565desoqVP-AUJL-VjFx-D5LiaNpXs5oOsnA@mail.gmail.com>
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH 2/2] PMIC / opregion: support PMIC customized operation
+ region for CrystalCove
+Date: Wed, 8 Oct 2014 04:58:12 -0700
+Message-ID: <20141008045812.734a24db@ultegra>
+References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>
+	<1410229968-11638-3-git-send-email-aaron.lu@intel.com>
+	<20141008080515.GC20647@lee--X1>
+	<CACRpkdaPFzq=Qya_UoZpxHom+VcynTwQL9EfdLb_Vpr=g6+Prg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7756922123913068394=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CACRpkdY+KQ1OMh565desoqVP-AUJL-VjFx-D5LiaNpXs5oOsnA@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaPFzq=Qya_UoZpxHom+VcynTwQL9EfdLb_Vpr=g6+Prg@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Dylan Reid <dgreid@chromium.org>, jay.xu@rock-chips.com, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Aaron Lu <aaron.lu@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, Daniel =?UTF-8?B?R2zDtmNrbmVy?= <dg@emlix.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Wed, 8 Oct 2014 11:16:11 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
---===============7756922123913068394==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HRz4dlJa0zmFsB3a"
-Content-Disposition: inline
+> On Wed, Oct 8, 2014 at 10:05 AM, Lee Jones <lee.jones@linaro.org>
+> wrote:
+> 
+> > With the influx of new same-chip devices, I think the MFD subsystem
+> > is fast becoming overloaded.  I think all of the PMIC handling
+> > should in fact either live in Regulators or have its own subsystem.
+> 
+> You have a valid point, and it's been raised before that MFD risk
+> being a dumping ground of the same kind that drivers/misc used to be
+> (is?).
+> 
+> PMIC (Power Management Integrated Circuit) is often not even a
+> correct name for the thing if it contains things like audio amplifiers
+> USB PHY intrerfaces or LED boosters as some do.
+> 
+> MSIC (Mixed-Signal Integrated Circuit) is the correct name for
+> silicon that is created as a one-stop shop for anything combining
+> digital and analog constructions, often in a higher micron node
+> (not as densely integrated) as a digital IC (the latter referred to
+> as SoCs, "baseband", "CPU" and whatnot).
+> 
+> If they shall live in MFD the driver there should (IMHO) just be
+> an exchange station, multiplexing messages and spawning
+> MFD cells into platform devices for respective *real* subsystem,
+> various misc stuff should not be allowed to be shoehorned
+> into MFD just because there is no other place to put it.
+> 
+I agree since in most cases there are not much common code to
+consolidate among cell drivers. MFD is convenient as an exchange
+station as you pointed out but the same time, drivers can create their
+own platform devices without MFD. Perhaps we can add a set of MFD
+internal APIs for PMIC for the things are common, e.g.
+- regmap
+- irq chip
 
+> This driver clearly does not qualify, look:
+> 
+ACPI is kind of special since it is already an abstraction of the HW
+making it easy to consolidate code. Perhaps that is why Aaron provides
+the kind of callbacks for each PMIC.
+> > +static int intel_crc_pmic_update_power(struct regmap *regmap,
+> > +                                    struct pmic_pwr_reg *preg,
+> > bool on) +{
+> > +     int data;
+> > +
+> > +     if (regmap_read(regmap, preg->reg, &data))
+> > +             return -EIO;
+> > +
+> > +     if (on) {
+> > +             data |= PWR_SOURCE_SELECT | BIT(preg->bit);
+> > +     } else {
+> > +             data &= ~BIT(preg->bit);
+> > +             data |= PWR_SOURCE_SELECT;
+> > +     }
+> > +
+> > +     if (regmap_write(regmap, preg->reg, data))
+> > +             return -EIO;
+> > +     return 0;
+> > +}
+> 
+> Selecting power source? Isn't that something and MFD cell
+> spawned driver in either drivers/regulator or drivers/power should
+> be doing?
+> 
+The difference in this case is that opregion handler driver does not
+need the interfaces provided by sys/class/power_supply, or regulator
+etc. By moving them away from the opregion common code, you would need
+to export the APIs. I think we can have opregion code under
+drivers/acpi?
+> I know I have sinned in this regard in the past. But let's move
+> forward with defining what this subsystem should *REALLY*
+> be.
+> 
 
---HRz4dlJa0zmFsB3a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Yours,
+> Linus Walleij
 
-On Wed, Oct 08, 2014 at 10:50:00AM +0200, Linus Walleij wrote:
-> On Wed, Oct 8, 2014 at 9:05 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-
-> > But transition to gpiod is the way to ultimately fix this issue, as
-> > well as many others. Not to mention that renumbering GPIOs will
-> > certainly make a few users of the GPIO sysfs (another abomination,
-> > agreed) unhappy. I can only recommend switching drivers to gpiod when
-> > such issues are spotted.
-
-> Yeah that is another issue ... we end up in catch 22 situations like
-> that, renumber the GPIOs, OK, then we break the ABI.
-
-> Admittedly that "ABI" is something people break all the time,
-> /sys/*gpioN just isnt what it should be, not stable at all.
-
-> I'm not against renumbering GPIO if it's minor effort, but if it
-> start to consume hundreds of hours and regressions and what not,
-> that time is better spent focusing on the gpiod transition.
-
-My guess is that it's relatively little work for most platforms - with
-the systems I've done enough work on to notice everything is keyed off a
-few defines in the header file.  Things tend to be worse in out of tree
-code but mainline's generally been pretty good.
-
---HRz4dlJa0zmFsB3a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUNSKnAAoJECTWi3JdVIfQUC4IAIIKAItpa7qYGixEZO6V2j+v
-DO22WyxAr59ZyS+dRaPwsWC/gtBFYdGs8QtiawoXRec1LqYH6ZxyJSCXBFFMRb1I
-H+ddDAB4JtKJGYv9Ci0kvW19C0gnVwDICaAb5a0KcA8vT7gh9WmPOlnJqceU6Glv
-tZUb3TyW8PVHeJBvHAPF3o/wGPHcao/RPeeIEZArJVbGZCcnVJKlR90AtMXx/WgV
-8bWp4DHr8ki+L9kWi7JePf1r/xy2Dq70RJhnQsiJqhF0cj0eQHgsEt/yx5tIlKni
-EhWrsU3awr0E8sNAJ7/G2e9Dv24HsjdjKogWzQ84CjEk8NT6EFPIFO6jpQ2B2fM=
-=ZYo0
------END PGP SIGNATURE-----
-
---HRz4dlJa0zmFsB3a--
-
---===============7756922123913068394==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7756922123913068394==--
+[Jacob Pan]
