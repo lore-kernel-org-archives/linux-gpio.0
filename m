@@ -1,63 +1,74 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] ASoC: simple-card: Add mic and hp detect
-	gpios.
-Date: Wed, 8 Oct 2014 10:50:00 +0200
-Message-ID: <CACRpkdY+KQ1OMh565desoqVP-AUJL-VjFx-D5LiaNpXs5oOsnA@mail.gmail.com>
-References: <1412198720-2326-1-git-send-email-dgreid@chromium.org>
- <20141002155350.GU4273@sirena.org.uk>
- <CAMuHMdWh=sXAD59T1T=gvROX+fbF6=gFo6C0nkJdfnCrdNrwYg@mail.gmail.com>
- <20141007123856.GF4609@sirena.org.uk>
- <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
- <20141007163654.GJ4609@sirena.org.uk>
- <CAAVeFuJB=bF3g2czT1ed1UX85R_hBXqFAKdeLJcASRcXQujFJw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PMIC / opregion: support PMIC customized operation
+ region for CrystalCove
+Date: Wed, 8 Oct 2014 11:16:11 +0200
+Message-ID: <CACRpkdaPFzq=Qya_UoZpxHom+VcynTwQL9EfdLb_Vpr=g6+Prg@mail.gmail.com>
+References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com>
+	<1410229968-11638-3-git-send-email-aaron.lu@intel.com>
+	<20141008080515.GC20647@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAAVeFuJB=bF3g2czT1ed1UX85R_hBXqFAKdeLJcASRcXQujFJw@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, Linux-sh list <linux-sh@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Dylan Reid <dgreid@chromium.org>, jay.xu@rock-chips.com, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <20141008080515.GC20647@lee--X1>
+Sender: linux-arch-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Aaron Lu <aaron.lu@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, =?UTF-8?Q?Daniel_Gl=C3=B6ckner?= <dg@emlix.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 8, 2014 at 9:05 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Wed, Oct 8, 2014 at 1:36 AM, Mark Brown <broonie@kernel.org> wrote:
->> On Tue, Oct 07, 2014 at 03:10:01PM +0200, Geert Uytterhoeven wrote:
+On Wed, Oct 8, 2014 at 10:05 AM, Lee Jones <lee.jones@linaro.org> wrote:
 
->> Right, obviously it's not going to work if the platform actually uses 0
->> as a valid GPIO.
->>
->>> Quoting Linus (https://lkml.org/lkml/2014/9/4/464):
->>> "Fixing the old global GPIO numberspace API is a waste of time IMO".
->>
->>> Hence I've just sent a patch to initialize the GPIO numbers with -ENOENT.
->>
->> I do think it's worth renumbering the platforms since it's *relatively*
->> little work per platform compared to completing the gpiod transition.
->
-> But transition to gpiod is the way to ultimately fix this issue, as
-> well as many others. Not to mention that renumbering GPIOs will
-> certainly make a few users of the GPIO sysfs (another abomination,
-> agreed) unhappy. I can only recommend switching drivers to gpiod when
-> such issues are spotted.
+> With the influx of new same-chip devices, I think the MFD subsystem is
+> fast becoming overloaded.  I think all of the PMIC handling should in
+> fact either live in Regulators or have its own subsystem.
 
-Yeah that is another issue ... we end up in catch 22 situations like
-that, renumber the GPIOs, OK, then we break the ABI.
+You have a valid point, and it's been raised before that MFD risk being
+a dumping ground of the same kind that drivers/misc used to be (is?).
 
-Admittedly that "ABI" is something people break all the time,
-/sys/*gpioN just isnt what it should be, not stable at all.
+PMIC (Power Management Integrated Circuit) is often not even a
+correct name for the thing if it contains things like audio amplifiers
+USB PHY intrerfaces or LED boosters as some do.
 
-I'm not against renumbering GPIO if it's minor effort, but if it
-start to consume hundreds of hours and regressions and what not,
-that time is better spent focusing on the gpiod transition.
+MSIC (Mixed-Signal Integrated Circuit) is the correct name for
+silicon that is created as a one-stop shop for anything combining
+digital and analog constructions, often in a higher micron node
+(not as densely integrated) as a digital IC (the latter referred to
+as SoCs, "baseband", "CPU" and whatnot).
+
+If they shall live in MFD the driver there should (IMHO) just be
+an exchange station, multiplexing messages and spawning
+MFD cells into platform devices for respective *real* subsystem,
+various misc stuff should not be allowed to be shoehorned
+into MFD just because there is no other place to put it.
+
+This driver clearly does not qualify, look:
+
+> +static int intel_crc_pmic_update_power(struct regmap *regmap,
+> +                                    struct pmic_pwr_reg *preg, bool on)
+> +{
+> +     int data;
+> +
+> +     if (regmap_read(regmap, preg->reg, &data))
+> +             return -EIO;
+> +
+> +     if (on) {
+> +             data |= PWR_SOURCE_SELECT | BIT(preg->bit);
+> +     } else {
+> +             data &= ~BIT(preg->bit);
+> +             data |= PWR_SOURCE_SELECT;
+> +     }
+> +
+> +     if (regmap_write(regmap, preg->reg, data))
+> +             return -EIO;
+> +     return 0;
+> +}
+
+Selecting power source? Isn't that something and MFD cell
+spawned driver in either drivers/regulator or drivers/power should
+be doing?
+
+I know I have sinned in this regard in the past. But let's move
+forward with defining what this subsystem should *REALLY*
+be.
 
 Yours,
 Linus Walleij
