@@ -1,68 +1,280 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO adapter
-Date: Wed, 8 Oct 2014 16:18:36 +0900
-Message-ID: <CAAVeFu+X0Lk=5sNm9kOwGX=2-DYN_-5v-7M9bAWXraffKsTkMg@mail.gmail.com>
-References: <1412606822-3406-1-git-send-email-muth@cypress.com>
- <CAAVeFu+vBZ49ciZT+-dnKXks201_psy_NtYsTjw0ptOkx2es7Q@mail.gmail.com> <405b439b16ea40078718da326343f673@BN1PR06MB069.namprd06.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO bulk changes for the v3.18 series
+Date: Wed, 8 Oct 2014 09:50:18 +0200
+Message-ID: <CACRpkdYa1YKwPxL2CjWr4wnw8pV=GjJ9Yz-VS3+FvKNFdwMHRA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <405b439b16ea40078718da326343f673-W5EIp8XyyIo12s5EQIJpXb9PrO6axcR4XA4E9RH9d+qIuWR1G4zioA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 8, 2014 at 4:09 PM, Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org> wrote:
->> -----Original Message-----
->> From: Alexandre Courbot [mailto:gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
->> Sent: Tuesday, October 07, 2014 3:34 PM
->> To: Muthu Mani
->> Cc: Samuel Ortiz; Lee Jones; Wolfram Sang; Linus Walleij; Greg Kroah-
->> Hartman; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
->> usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Linux Kernel Mailing List; Rajaram Regupathy; Johan
->> Hovold
->> Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-
->> GPIO adapter
->>
->> On Mon, Oct 6, 2014 at 11:47 PM, Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org> wrote:
->> > +
->> > +static int cy_gpio_direction_input(struct gpio_chip *chip,
->> > +                                       unsigned offset) {
->> > +       return 0;
->> > +}
->> > +
->> > +static int cy_gpio_direction_output(struct gpio_chip *chip,
->> > +                                       unsigned offset, int value) {
->> > +       return 0;
->> > +}
->>
->> If that chip is capable of both output and input, shouldn't these functions be
->> implemented? I think this has already been pointed out in a previous version
->> but you did not reply.
->
-> Thanks for your inputs.
->
-> Only the GPIOs which are configured to be output GPIO can be set.
+Hi Linus,
 
-In that case cy_gpio_set() should return an error for GPIOs which are
-not configured as outputs. Is that guaranteed by the current
-implementation?
+here is the bulk of GPIO changes for the v3.18 cycle.
 
-> The set operation would fail trying to set the input or unconfigured GPIOs.
-> In this version of driver, this support is not added, it can be introduced in future versions.
-> I will add a TODO note in the code.
+When I tested to pull this into your tree I found two conflicts that
+also appeared in linux-next, one in the qualcomm driver which
+is trivial and one in the gpiolib.c which is also kind of trivial (lowe=
+r
+hunk is the correct one).
 
-Argh, no TODO please. Actual code that will turn this code into a
-solid driver that can be merged.
+The removal if the return value from gpiochip_remove() hits sites
+a bit all over the kernel (showing how this API permeates platforms)
+but they are mostly ACKed and have survived linux-next testing.
 
-Can all GPIOs be set as input or output? If so, please implement
-cy_gpio_direction_*() and make sure that cy_gpio_set() behaves
-properly if a GPIO is not an output. If the input/output GPIOs are
-fixed, please make cy_gpio_direction_*() return an error if the GPIO
-capabilities does not correspond to what is asked, and again ensure
-that cy_gpio_set() works as expected.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The feature details are in the tag.
+
+Please pull this in! (And fix the glorious conflicts...)
+
+Yours,
+Linus Walleij
+
+
+The following changes since commit 52addcf9d6669fa439387610bc65c92fa098=
+0cef:
+
+  Linux 3.17-rc2 (2014-08-25 15:36:20 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.18-1
+
+for you to fetch changes up to a092e19b688be88f7329bd05f90cb92ebe1a4f5b=
+:
+
+  gpio: pch: Build context save/restore only for PM (2014-10-02 16:07:0=
+0 +0200)
+
+----------------------------------------------------------------
+This is the bulk of GPIO changes for the v3.18 development
+cycle:
+
+- Increase the default ARCH_NR_GPIO from 256 to 512. This
+  was done to avoid having a custom <asm/gpio.h> header for
+  the x86 architecture - GPIO is custom and complicated
+  enough as it is already! We want to move to a radix to
+  store the descriptors going forward, and finally get rid
+  of this fixed array size altogether.
+
+- Endgame patching of the gpio_remove() semantics initiated
+  by Abdoulaye Berthe. It is not accepted by the system that
+  the removal of a GPIO chip fails during e.g. reboot or
+  shutdown, and therefore the return value has now painfully
+  been refactored away. For special cases like GPIO expanders
+  on a hot-pluggable bus like USB, we may later add some
+  gpiochip_try_remove() call, but for the cases we have now,
+  return values are moot.
+
+- Some incremental refactoring of the gpiolib core and ACPI
+  GPIO library for more descriptor usage.
+
+- Refactor the chained IRQ handler set-up method to handle
+  also threaded, nested interrupts and set up the parent IRQ
+  correctly. Switch STMPE and TC3589x drivers to use this
+  registration method.
+
+- Add a .irq_not_threaded flag to the struct gpio_chip, so
+  that also GPIO expanders that block but are still not
+  using threaded IRQ handlers.
+
+- New drivers for the ARM64 X-Gene SoC GPIO controller.
+
+- The syscon GPIO driver has been improved to handle the
+  "DSP GPIO" found on the TI Keystone 2 SoC:s.
+
+- ADNP driver switched to use gpiolib irqchip helpers.
+
+- Refactor the DWAPB driver to support being instantiated
+  from and MFD cell (platform device).
+
+- Incremental feature improvement in the Zynq, MCP23S08,
+  DWAPB, OMAP, Xilinx and Crystalcove drivers.
+
+- Various minor fixes.
+
+----------------------------------------------------------------
+Aaron Lu (1):
+      gpio: crystalcove: support virtual GPIO
+
+Alexander Shiyan (1):
+      GPIO: gpiolib: trivial: Add missing carriage return
+
+Alexandre Courbot (2):
+      gpio: acpi: normalize use of gpiochip_get_desc()
+      gpio: change gpiochip_request_own_desc() prototype
+
+Axel Lin (3):
+      gpio: xgene: Fix missing spin_lock_init()
+      gpio: xgene: Remove unneeded forward declation for struct xgene_g=
+pio
+      gpio: xgene: Remove unneeded #ifdef CONFIG_OF guard
+
+Behan Webster (1):
+      gpio, bcm-kona, LLVMLinux: Remove use of __initconst
+
+Daniel Mack (1):
+      gpio: pxa: Documentation: provide example bindings for PXA3xx
+
+Ezra Savard (2):
+      gpio: zynq: Mask non-wakeup GPIO interrupts on suspend
+      gpio: zynq: Fixed broken wakeup implementation
+
+=46abian Frederick (1):
+      gpio: use container_of to resolve cs5535_gpio_chip from gpio_chip
+
+=46eng Kan (2):
+      gpio: Add APM X-Gene SoC GPIO controller support
+      Documentation: gpio: Add APM X-Gene SoC GPIO controller DTS bindi=
+ng
+
+Gernot Vormayr (1):
+      gpio: Fix ngpio in gpio-xilinx driver
+
+Grygorii Strashko (4):
+      gpio: syscon: add soc specific callback to assign output value
+      gpio: syscon: retrive syscon node and regs offsets from dt
+      gpio: syscon: reuse for keystone 2 socs
+      gpiolib: irqchip: use irq_find_mapping while removing irqchip
+
+Lars-Peter Clausen (2):
+      gpio: zynq: Reduce level of indention in zynq_gpio_irqhandler()
+      gpio: zynq: Take bank offset into account when reporting a IRQ
+
+Linus Walleij (11):
+      gpio: adnp: switch to use irqchip helpers
+      pinctrl: remove remaining users of gpiochip_remove() retval
+      gpio: remove remaining users of gpiochip_remove() retval
+      tty: sc16is7xx: remove retval from gpiochip_remove()
+      gpio: dwapb: fix pointer to integer cast
+      gpio: set parent irq on chained handlers
+      gpio: handle also nested irqchips in the chained handler set-up
+      gpio: staticize xway_stp_init()
+      gpio: stmpe: fix up interrupt enable logic
+      gpio: stmpe: add verbose debug code
+      pinctrl: abx500: get rid of unused variable
+
+Markus Pargmann (2):
+      gpio: pca953x: Drop deprecated DT bindings
+      gpio: pca953x: Add DT binding documentation
+
+Michal Simek (1):
+      gpio: zynq: Remove .owner field for driver
+
+Mika Westerberg (1):
+      gpio: Increase ARCH_NR_GPIOs to 512
+
+Nishanth Menon (1):
+      gpio: omap: Fix interrupt names
+
+Octavian Purdila (1):
+      gpiolib: add irq_not_threaded flag to gpio_chip
+
+Paul Bolle (1):
+      gpio: samsung: Remove remaining check for CONFIG_S5P_GPIO_DRVSTR
+
+Sonic Zhang (1):
+      gpio: mcp23s08 to support both device tree and platform data
+
+Thierry Reding (1):
+      gpio: pch: Build context save/restore only for PM
+
+Uwe Kleine-K=C3=B6nig (2):
+      gpio: kona: enable only on BCM_MOBILE or for compile testing
+      pinctrl: bcm281xx: make Kconfig dependency more strict
+
+Varka Bhadram (2):
+      gpio: ks8695: fix switch case indentation
+      gpio: ks8695: fix 'else should follow close brace '}''
+
+Wei Yongjun (1):
+      gpio: Fix return value check in xgene_gpio_probe()
+
+Weike Chen (4):
+      GPIO: gpio-dwapb: Enable platform driver binding to MFD driver
+      GPIO: gpio-dwapb: Change readl&writel to dwapb_read&dwapb_write
+      GPIO: gpio-dwapb: Support Debounce
+      GPIO: gpio-dwapb: Suspend & Resume PM enabling
+
+abdoulaye berthe (2):
+      driver:gpio remove all usage of gpio_remove retval in driver
+      gpio: gpiolib: set gpiochip_remove retval to void
+
+ .../devicetree/bindings/gpio/gpio-dsp-keystone.txt |  39 ++
+ .../devicetree/bindings/gpio/gpio-pca953x.txt      |  39 ++
+ .../devicetree/bindings/gpio/gpio-xgene.txt        |  22 ++
+ .../devicetree/bindings/gpio/mrvl-gpio.txt         |  15 +-
+ Documentation/gpio/driver.txt                      |   6 +-
+ arch/arm/common/scoop.c                            |  10 +-
+ arch/mips/txx9/generic/setup.c                     |   4 +-
+ arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c     |   3 +-
+ arch/sh/boards/mach-x3proto/gpio.c                 |   6 +-
+ drivers/bcma/driver_gpio.c                         |   3 +-
+ drivers/gpio/Kconfig                               |  14 +-
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-adnp.c                           | 155 +++-----
+ drivers/gpio/gpio-bcm-kona.c                       |   2 +-
+ drivers/gpio/gpio-crystalcove.c                    |  28 +-
+ drivers/gpio/gpio-cs5535.c                         |   9 +-
+ drivers/gpio/gpio-dwapb.c                          | 410 +++++++++++++=
+++++----
+ drivers/gpio/gpio-ks8695.c                         |  30 +-
+ drivers/gpio/gpio-mcp23s08.c                       |  64 ++--
+ drivers/gpio/gpio-omap.c                           |  33 +-
+ drivers/gpio/gpio-pca953x.c                        |  54 +--
+ drivers/gpio/gpio-pch.c                            |   2 +
+ drivers/gpio/gpio-samsung.c                        |  50 ---
+ drivers/gpio/gpio-stmpe.c                          |  99 ++++-
+ drivers/gpio/gpio-stp-xway.c                       |   2 +-
+ drivers/gpio/gpio-syscon.c                         |  94 ++++-
+ drivers/gpio/gpio-tc3589x.c                        |   5 +
+ drivers/gpio/gpio-xgene.c                          | 244 ++++++++++++
+ drivers/gpio/gpio-xilinx.c                         |  27 +-
+ drivers/gpio/gpio-zynq.c                           |  89 +++--
+ drivers/gpio/gpiolib-acpi.c                        |  30 +-
+ drivers/gpio/gpiolib.c                             |  90 +++--
+ drivers/hid/hid-cp2112.c                           |   6 +-
+ drivers/input/keyboard/adp5588-keys.c              |   4 +-
+ drivers/input/keyboard/adp5589-keys.c              |   4 +-
+ drivers/input/touchscreen/ad7879.c                 |  10 +-
+ drivers/leds/leds-pca9532.c                        |  10 +-
+ drivers/leds/leds-tca6507.c                        |   7 +-
+ drivers/media/dvb-frontends/cxd2820r_core.c        |  10 +-
+ drivers/mfd/asic3.c                                |   3 +-
+ drivers/mfd/htc-i2cpld.c                           |   8 +-
+ drivers/mfd/sm501.c                                |  17 +-
+ drivers/mfd/tc6393xb.c                             |  13 +-
+ drivers/mfd/ucb1x00-core.c                         |   8 +-
+ drivers/pinctrl/Kconfig                            |   2 +-
+ drivers/pinctrl/nomadik/pinctrl-abx500.c           |  16 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c          |   2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c                 |   9 +-
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c       |   6 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |  15 +-
+ drivers/pinctrl/sirf/pinctrl-sirf.c                |   3 +-
+ drivers/platform/x86/intel_pmic_gpio.c             |   3 +-
+ drivers/ssb/driver_gpio.c                          |   3 +-
+ drivers/staging/vme/devices/vme_pio2_gpio.c        |   4 +-
+ drivers/tty/serial/max310x.c                       |  10 +-
+ drivers/tty/serial/sc16is7xx.c                     |  13 +-
+ drivers/video/fbdev/via/via-gpio.c                 |  10 +-
+ include/asm-generic/gpio.h                         |   2 +-
+ include/linux/gpio/driver.h                        |   8 +-
+ include/linux/platform_data/gpio-dwapb.h           |  32 ++
+ include/linux/spi/mcp23s08.h                       |  18 +
+ sound/soc/codecs/wm5100.c                          |   5 +-
+ sound/soc/codecs/wm8903.c                          |   6 +-
+ sound/soc/codecs/wm8962.c                          |   5 +-
+ sound/soc/codecs/wm8996.c                          |   6 +-
+ 65 files changed, 1297 insertions(+), 660 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-dsp-key=
+stone.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pca953x=
+=2Etxt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene.t=
+xt
+ create mode 100644 drivers/gpio/gpio-xgene.c
+ create mode 100644 include/linux/platform_data/gpio-dwapb.h
