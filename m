@@ -1,63 +1,91 @@
-From: Octavian Purdila <octavian.purdila@intel.com>
-Subject: Re: [PATCH v6 2/4] i2c: add support for Diolan DLN-2 USB-I2C adapter
-Date: Wed, 8 Oct 2014 14:07:53 +0300
-Message-ID: <CAE1zot+SffBoD8hrpr1xyzJ+cCtmFCjb_vRYAHR4GgKKANdQRQ@mail.gmail.com>
-References: <1411661254-5204-1-git-send-email-octavian.purdila@intel.com>
-	<1411661254-5204-3-git-send-email-octavian.purdila@intel.com>
-	<20141008104214.GD1990@localhost>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: simple-card: Add mic and hp detect
+	gpios.
+Date: Wed, 8 Oct 2014 12:40:24 +0100
+Message-ID: <20141008114024.GW4609@sirena.org.uk>
+References: <1412198720-2326-1-git-send-email-dgreid@chromium.org>
+ <20141002155350.GU4273@sirena.org.uk>
+ <CAMuHMdWh=sXAD59T1T=gvROX+fbF6=gFo6C0nkJdfnCrdNrwYg@mail.gmail.com>
+ <20141007123856.GF4609@sirena.org.uk>
+ <CAMuHMdV39fM_TCa+WSvswij6dxD2vwfJT+FueBtxndpsymP9CQ@mail.gmail.com>
+ <20141007163654.GJ4609@sirena.org.uk>
+ <CAAVeFuJB=bF3g2czT1ed1UX85R_hBXqFAKdeLJcASRcXQujFJw@mail.gmail.com>
+ <CACRpkdY+KQ1OMh565desoqVP-AUJL-VjFx-D5LiaNpXs5oOsnA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141008104214.GD1990@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============7756922123913068394=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CACRpkdY+KQ1OMh565desoqVP-AUJL-VjFx-D5LiaNpXs5oOsnA@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Dylan Reid <dgreid@chromium.org>, jay.xu@rock-chips.com, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 8, 2014 at 1:42 PM, Johan Hovold <johan@kernel.org> wrote:
-> On Thu, Sep 25, 2014 at 07:07:32PM +0300, Octavian Purdila wrote:
->
->> diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-busses-dln2 b/Documentation/ABI/testing/sysfs-bus-i2c-busses-dln2
->> new file mode 100644
->> index 0000000..ad55af6
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-bus-i2c-busses-dln2
->
-> This is a nonstandard path that does not match the attribute path (or
-> any other convention followed under ABI/).
->
-> I suggest you rename it
->
->         sysfs-class-i2c-adapter-dln2
->
->> @@ -0,0 +1,5 @@
->> +What:                /sys/bus/i2c/devices/.../dln2_i2c_freq
->
-> I think you should rename the attribute "bus_frequency" and name the
-> attribute group "dln2". That way the attribute will show up as
->
->         .../<device>/dln2/bus_frequency
->
-> Then the "What:" field should read
->
->         What:           /sys/class/i2c-adapter/<device>/dln2/bus_frequency
->
->> +Date:                September 2014
->> +Contact:     Octavian Purdila <octavian.purdila@intel.com>
->> +Description:
->> +             This attribute shows/sets the frequency (in Hz) of the I2C bus.
->
-> I'd reword this "Set the frequency...".
->
-> Please also describe under what circumstances this may fail, that is,
-> when setting a frequency less than or greater than the min or max
-> frequencies reported by the device.
->
-> Perhaps you should even consider exporting those two values?
->
 
-I noticed that a few other USB boards support this. Perhaps it is time
-to add these entries to the core i2c layer?
+--===============7756922123913068394==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HRz4dlJa0zmFsB3a"
+Content-Disposition: inline
 
-In that case I think is better to remove the setting and update the
-drievr when the patches for the i2c layer are ready?
+
+--HRz4dlJa0zmFsB3a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Oct 08, 2014 at 10:50:00AM +0200, Linus Walleij wrote:
+> On Wed, Oct 8, 2014 at 9:05 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+
+> > But transition to gpiod is the way to ultimately fix this issue, as
+> > well as many others. Not to mention that renumbering GPIOs will
+> > certainly make a few users of the GPIO sysfs (another abomination,
+> > agreed) unhappy. I can only recommend switching drivers to gpiod when
+> > such issues are spotted.
+
+> Yeah that is another issue ... we end up in catch 22 situations like
+> that, renumber the GPIOs, OK, then we break the ABI.
+
+> Admittedly that "ABI" is something people break all the time,
+> /sys/*gpioN just isnt what it should be, not stable at all.
+
+> I'm not against renumbering GPIO if it's minor effort, but if it
+> start to consume hundreds of hours and regressions and what not,
+> that time is better spent focusing on the gpiod transition.
+
+My guess is that it's relatively little work for most platforms - with
+the systems I've done enough work on to notice everything is keyed off a
+few defines in the header file.  Things tend to be worse in out of tree
+code but mainline's generally been pretty good.
+
+--HRz4dlJa0zmFsB3a
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUNSKnAAoJECTWi3JdVIfQUC4IAIIKAItpa7qYGixEZO6V2j+v
+DO22WyxAr59ZyS+dRaPwsWC/gtBFYdGs8QtiawoXRec1LqYH6ZxyJSCXBFFMRb1I
+H+ddDAB4JtKJGYv9Ci0kvW19C0gnVwDICaAb5a0KcA8vT7gh9WmPOlnJqceU6Glv
+tZUb3TyW8PVHeJBvHAPF3o/wGPHcao/RPeeIEZArJVbGZCcnVJKlR90AtMXx/WgV
+8bWp4DHr8ki+L9kWi7JePf1r/xy2Dq70RJhnQsiJqhF0cj0eQHgsEt/yx5tIlKni
+EhWrsU3awr0E8sNAJ7/G2e9Dv24HsjdjKogWzQ84CjEk8NT6EFPIFO6jpQ2B2fM=
+=ZYo0
+-----END PGP SIGNATURE-----
+
+--HRz4dlJa0zmFsB3a--
+
+--===============7756922123913068394==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7756922123913068394==--
