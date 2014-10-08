@@ -1,67 +1,61 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v6 1/4] mfd: add support for Diolan DLN-2 devices
-Date: Wed, 8 Oct 2014 11:30:02 +0200
-Message-ID: <20141008093002.GC1990@localhost>
+Subject: Re: [PATCH v6 2/4] i2c: add support for Diolan DLN-2 USB-I2C adapter
+Date: Wed, 8 Oct 2014 12:42:14 +0200
+Message-ID: <20141008104214.GD1990@localhost>
 References: <1411661254-5204-1-git-send-email-octavian.purdila@intel.com>
- <1411661254-5204-2-git-send-email-octavian.purdila@intel.com>
- <20141003171207.GC2394@localhost>
- <CAE1zotLEV-=JvCJvEQqg8CA6fu3UWmPOx3ZYgpd+rYSuSEVmNQ@mail.gmail.com>
- <20141007171003.GI5362@localhost>
- <CAE1zotLmO=VPkE5RYpr1k0-3N8__7A8pWCEM23hXh6nzEqAjeQ@mail.gmail.com>
+ <1411661254-5204-3-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:49980 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755571AbaJHKpI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Oct 2014 06:45:08 -0400
 Content-Disposition: inline
-In-Reply-To: <CAE1zotLmO=VPkE5RYpr1k0-3N8__7A8pWCEM23hXh6nzEqAjeQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org
+In-Reply-To: <1411661254-5204-3-git-send-email-octavian.purdila@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org, arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 
-On Tue, Oct 07, 2014 at 09:01:27PM +0300, Octavian Purdila wrote:
-> On Tue, Oct 7, 2014 at 8:10 PM, Johan Hovold <johan@kernel.org> wrote:
-> > On Mon, Oct 06, 2014 at 03:17:22PM +0300, Octavian Purdila wrote:
-> >> On Fri, Oct 3, 2014 at 8:12 PM, Johan Hovold <johan@kernel.org> wrote:
-> >> >
-> >> > On Thu, Sep 25, 2014 at 07:07:31PM +0300, Octavian Purdila wrote:
-> >> > > This patch implements the USB part of the Diolan USB-I2C/SPI/GPIO
-> >> > > Master Adapter DLN-2. Details about the device can be found here:
-> >> > >
-> >>
-> >> <snip>
-> >>
-> >> > > +
-> >> > > +             ret = dln2_submit_urb(dln2, dln2->rx_urb[i], GFP_KERNEL);
-> >> > > +             if (ret < 0)
-> >> > > +                     return ret;
-> >> >
-> >> > Is it really worth having this helper only to save a couple of lines on
-> >> > a dev_err? If you do all resubmissions on completion inline in the
-> >> > handler, you only have three places where usb_submit_urb is called.
-> >>
-> >> I moved the completion in the handler as you suggested. I have kept
-> >> the helper, would you prefer to remove it?
-> >
-> > Moved the "completion"? I was suggesting that the URB resubmission
-> > should be done inline the URB completion handler.
-> >
-> > [ "Completion" may be a little ambiguous. The URB callback is called an
-> > URB completion handler. Not be confused with the completion structures
-> > you use to wait for responses. ]
-> >
-> 
-> Sorry, I meant to say resubmission instead of completion.
-> 
-> > It's fine to keep the helper as long as it's clear that the urb has been
-> > "cached" and should not be resubmitted (inline) in the completion
-> > handler in that case.
-> 
-> Not sure I follow you here. I kept the helper and I call it from the
-> completion handler, from free_rx_slot and from dln2_setup_rx_ubs.
+On Thu, Sep 25, 2014 at 07:07:32PM +0300, Octavian Purdila wrote:
 
-Ah sorry, I was referring to your other helper dln2_rx_transfer().
+> diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-busses-dln2 b/Documentation/ABI/testing/sysfs-bus-i2c-busses-dln2
+> new file mode 100644
+> index 0000000..ad55af6
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-i2c-busses-dln2
 
-I still think you should do away with the dln2_submit_urb() helper as
-it needlessly hides what's on going without any real gain.
+This is a nonstandard path that does not match the attribute path (or
+any other convention followed under ABI/).
+
+I suggest you rename it
+
+	sysfs-class-i2c-adapter-dln2
+
+> @@ -0,0 +1,5 @@
+> +What:		/sys/bus/i2c/devices/.../dln2_i2c_freq
+
+I think you should rename the attribute "bus_frequency" and name the
+attribute group "dln2". That way the attribute will show up as
+
+	.../<device>/dln2/bus_frequency
+
+Then the "What:" field should read
+
+	What:		/sys/class/i2c-adapter/<device>/dln2/bus_frequency
+
+> +Date:		September 2014
+> +Contact:	Octavian Purdila <octavian.purdila@intel.com>
+> +Description:
+> +		This attribute shows/sets the frequency (in Hz) of the I2C bus.
+
+I'd reword this "Set the frequency...".
+
+Please also describe under what circumstances this may fail, that is,
+when setting a frequency less than or greater than the min or max
+frequencies reported by the device.
+
+Perhaps you should even consider exporting those two values?
 
 Johan
