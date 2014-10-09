@@ -1,62 +1,58 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 1/4] mfd: add support for Diolan DLN-2 devices
-Date: Thu, 9 Oct 2014 15:16:36 +0200
-Message-ID: <20141009131636.GO1990@localhost>
-References: <1411661254-5204-1-git-send-email-octavian.purdila@intel.com>
- <1411661254-5204-2-git-send-email-octavian.purdila@intel.com>
- <20141008092347.GB1990@localhost>
- <CAE1zotKHq1Fj_AqKzfnBHoypetb6Yz3OsHnqfeHN5PrVJtuHVw@mail.gmail.com>
- <20141008120410.GE1990@localhost>
- <CAE1zot+muJn5ngxpq8LeF9J+7kZqCiStzvcxLLP0wf08TjWG4A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v7 0/4]  mfd: add support for Diolan DLN-2
+Date: Thu,  9 Oct 2014 22:22:17 +0300
+Message-ID: <1412882541-10934-1-git-send-email-octavian.purdila@intel.com>
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAE1zot+muJn5ngxpq8LeF9J+7kZqCiStzvcxLLP0wf08TjWG4A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: arnd-r2nGTMty4D4@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 08, 2014 at 03:33:28PM +0300, Octavian Purdila wrote:
-> On Wed, Oct 8, 2014 at 3:04 PM, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> > On Wed, Oct 08, 2014 at 01:54:07PM +0300, Octavian Purdila wrote:
-> >> On Wed, Oct 8, 2014 at 12:23 PM, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> >> > On Thu, Sep 25, 2014 at 07:07:31PM +0300, Octavian Purdila wrote:
-> >> >
-> >> >> +static void dln2_rx_transfer(struct dln2_dev *dln2, struct urb *urb,
-> >> >> +                          u16 handle, u16 rx_slot)
-> >> >> +{
-> >> >> +     struct dln2_mod_rx_slots *rxs = &dln2->mod_rx_slots[handle];
-> >> >> +     struct dln2_rx_context *rxc;
-> >> >> +     struct device *dev = &dln2->interface->dev;
-> >> >> +
-> >> >> +     spin_lock(&rxs->lock);
-> >> >
-> >> > You must use spin_lock_irqsave here as you call it from the completion
-> >> > handler.
-> >>
-> >> Why? AFAICS the completion handler gets called from the HCD irq handler:
-> >
-> > The completion handler is currently called with local interrupts
-> > disabled but that is about to change once all drivers have been updated:
-> >
-> >         http://marc.info/?l=linux-usb&m=137353360511003&w=2
-> >
-> > In this case you could probably get away with not disabling interrupts
-> > anyway, but using the irqsave versions would make it obvious.
-> >
-> 
-> I was not assuming that interrupts are disabled while running the
-> completion handler. Since that spinlock is not touched by any other
-> interrupt context code I don't think irqsave is necessary.
+Changes since v6:
 
-No, it isn't necessary so leave it as it is.
+* MFD: make sure DLN2_HANDLE_EVENT stays 0, move a few operations out
+  of the lock block, renamed one missed _rx_callback function to
+  _event_callback, speed-up disconnect by checking for it in
+  find_free_slot, remove the URB submit helper and simplify URB
+  resubmit code, use mfd_add_hotplug_devices, change the driver name
+  to dln2 (from usb-dln2), initialize disconnect_lock
 
-But you are exporting interfaces to other drivers and it may appear to
-someone that those could possibly end up indirectly calling a function
-taking that lock in IRQ context. We know that isn't the case now, but I
-bet someone will post conversion patch for that spinlock at some point.
-;)
+* GPIO: no changes
 
-Johan
+* I2C: keep sorting in Kconfig and Makefile, add warning for transfers
+  bigger then DLN2_I2C_MAX_XFER_SIZE, remove frequency code - I will
+  send a separate patch that moves this to i2c core, revert to using
+  tx structures for dln2_i2c_enable
+
+
+
+Daniel Baluta (1):
+  gpio: add support for the Diolan DLN-2 USB GPIO driver
+
+Laurentiu Palcu (1):
+  i2c: add support for Diolan DLN-2 USB-I2C adapter
+
+Octavian Purdila (2):
+  mfd: add support for Diolan DLN-2 devices
+  gpiolib: add irq_not_threaded flag to gpio_chip
+
+ drivers/gpio/Kconfig          |  12 +
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-dln2.c      | 555 +++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib.c        |   2 +-
+ drivers/i2c/busses/Kconfig    |  10 +
+ drivers/i2c/busses/Makefile   |   1 +
+ drivers/i2c/busses/i2c-dln2.c | 275 +++++++++++++++
+ drivers/mfd/Kconfig           |   9 +
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/dln2.c            | 755 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h   |   3 +
+ include/linux/mfd/dln2.h      |  67 ++++
+ 12 files changed, 1690 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-dln2.c
+ create mode 100644 drivers/i2c/busses/i2c-dln2.c
+ create mode 100644 drivers/mfd/dln2.c
+ create mode 100644 include/linux/mfd/dln2.h
+
+-- 
+1.9.1
