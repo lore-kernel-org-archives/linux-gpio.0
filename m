@@ -1,83 +1,32 @@
-From: Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
-Date: Thu,  9 Oct 2014 17:42:15 +0800
-Message-ID: <1412847735-498-1-git-send-email-haojian.zhuang@linaro.org>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v1 0/3] gpio: Add APM X-Gene standy platform GPIO driver
+Date: Thu, 9 Oct 2014 10:42:49 +0100
+Message-ID: <20141009094248.GB3869@leverpostej>
+References: <1412779948-28769-1-git-send-email-yvo@apm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:51484 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754506AbaJIJn3 (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:59370 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754400AbaJIJn3 (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Oct 2014 05:43:29 -0400
-Received: by mail-oi0-f53.google.com with SMTP id v63so1899680oia.40
-        for <linux-gpio@vger.kernel.org>; Thu, 09 Oct 2014 02:43:29 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1412779948-28769-1-git-send-email-yvo@apm.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+To: Y Vo <yvo@apm.com>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, "patches@apm.com" <patches@apm.com>
 
-gpio-ranges property could binds gpio to pinctrl. But there may be some
-gpios without pinctrl operation. So check whether gpio-ranges property
-exists in device node first.
+> CONFIDENTIALITY NOTICE: This e-mail message, including any attachments, 
+> is for the sole use of the intended recipient(s) and contains information
+> that is confidential and proprietary to Applied Micro Circuits Corporation or its subsidiaries. 
+> It is to be used solely for the purpose of furthering the parties' business relationship. 
+> All unauthorized review, use, disclosure or distribution is prohibited. 
+> If you are not the intended recipient, please contact the sender by reply e-mail 
+> and destroy all copies of the original message.
 
-Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
----
- drivers/gpio/gpio-pl061.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+You will need to resend this series without this disclaimer on each and
+every patch.
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 84b49cf..d1813f0 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -52,28 +52,34 @@ struct pl061_gpio {
- 
- 	void __iomem		*base;
- 	struct gpio_chip	gc;
-+	int			uses_pinctrl;
- 
- #ifdef CONFIG_PM
- 	struct pl061_context_save_regs csave_regs;
- #endif
- };
- 
--static int pl061_gpio_request(struct gpio_chip *chip, unsigned offset)
-+static int pl061_gpio_request(struct gpio_chip *gc, unsigned offset)
- {
- 	/*
- 	 * Map back to global GPIO space and request muxing, the direction
- 	 * parameter does not matter for this controller.
- 	 */
--	int gpio = chip->base + offset;
-+	struct pl061_gpio *chip = container_of(gc, struct pl061_gpio, gc);
-+	int gpio = gc->base + offset;
- 
--	return pinctrl_request_gpio(gpio);
-+	if (chip->uses_pinctrl)
-+		return pinctrl_request_gpio(gpio);
-+	return 0;
- }
- 
--static void pl061_gpio_free(struct gpio_chip *chip, unsigned offset)
-+static void pl061_gpio_free(struct gpio_chip *gc, unsigned offset)
- {
--	int gpio = chip->base + offset;
-+	struct pl061_gpio *chip = container_of(gc, struct pl061_gpio, gc);
-+	int gpio = gc->base + offset;
- 
--	pinctrl_free_gpio(gpio);
-+	if (chip->uses_pinctrl)
-+		pinctrl_free_gpio(gpio);
- }
- 
- static int pl061_direction_input(struct gpio_chip *gc, unsigned offset)
-@@ -264,6 +270,9 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	spin_lock_init(&chip->lock);
- 
-+	/* Hook the request()/free() for pinctrl operation */
-+	if (of_property_read_bool(dev->of_node, "gpio-ranges"))
-+		chip->uses_pinctrl = true;
- 	chip->gc.request = pl061_gpio_request;
- 	chip->gc.free = pl061_gpio_free;
- 	chip->gc.direction_input = pl061_direction_input;
--- 
-1.9.1
-
+Mark.
