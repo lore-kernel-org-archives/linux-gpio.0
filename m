@@ -1,46 +1,30 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCHv2 0/3] Enable Quark X1000 support in gpio-sch
-Date: Thu, 9 Oct 2014 15:28:31 +0900
-Message-ID: <CAAVeFuKcK_Ave41S6gVBE1ZQda22WPDgDxpCatkmccn3uNmyEQ@mail.gmail.com>
-References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+Subject: Re: [PATCH] gpio: amd8111: unmap ioport on failure case
+Date: Thu, 9 Oct 2014 15:48:52 +0900
+Message-ID: <CAAVeFuK2WGsBJnPr=v3wyD+od3qUZrMqsVZj+PZ0RdhQuRfASA@mail.gmail.com>
+References: <1412157780-32219-1-git-send-email-pramod.gurav@smartplayin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:61800 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750752AbaJIG2w (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Oct 2014 02:28:52 -0400
-In-Reply-To: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:44911 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750800AbaJIGtM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Oct 2014 02:49:12 -0400
+In-Reply-To: <1412157780-32219-1-git-send-email-pramod.gurav@smartplayin.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Pramod Gurav <pramod.gurav@smartplayin.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Sep 26, 2014 at 7:07 PM, Chang Rebecca Swee Fun
-<rebecca.swee.fun.chang@intel.com> wrote:
-> Hi,
+On Wed, Oct 1, 2014 at 7:03 PM, Pramod Gurav
+<pramod.gurav@smartplayin.com> wrote:
+> This change unmaps ioport when gpiochip_add fails
 >
-> This is a revised version for gpio-sch.
->
-> Change log for V2:
-> Patch 1:
-> - Move sch_gpio_get() and sch_gpio_set() to avoid forward declaration.
-> - Changed sch_gpio_enable()/sch_gpio_disable() to sch_gpio_register_set()/
->   sch_gpio_register_clear().
->
-> Patch 3:
-> - Changed all sch_gpio_enable()/sch_gpio_disable() to sch_gpio_register_set()/
->   sch_gpio_register_clear().
->
-> Version 1:
-> This patch series is about enabling legacy GPIO support for Quark X1000.
-> The patches were developed on top of Mika Westerberg's commit on
-> consolidating core and resume banks. Please refer to the link below for
-> more information about his commit.
-> https://lkml.org/lkml/2014/8/17/13
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
 
-Sorry for the late review. I tried to apply the patch you mentioned
-above before your series, and even Mika's patch won't apply on Linus'
-devel branch or today's -next. This make it difficult to make a good
-review. Could you rebase and resend this series once all its
-dependencies have been merge by Linus W. ?
+Yep, looks like you need this indeed.
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
