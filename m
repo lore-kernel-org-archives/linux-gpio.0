@@ -1,127 +1,70 @@
-From: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 1/4] mfd: add support for Diolan DLN-2 devices
-Date: Thu, 9 Oct 2014 23:27:12 +0300
-Message-ID: <CAE1zotJTQATJkTQinnWOg=NJbG+SWzNNdgB2uVEJgubnhtyXbA@mail.gmail.com>
-References: <1412882541-10934-1-git-send-email-octavian.purdila@intel.com>
-	<1412882541-10934-2-git-send-email-octavian.purdila@intel.com>
-	<1412883877.2975.26.camel@joe-AO725>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 1/2] DT: Add documentation for gpio-rt2880
+Date: Fri, 10 Oct 2014 00:30:16 +0400
+Message-ID: <5436F058.6010406@cogentembedded.com>
+References: <1412885241-12476-1-git-send-email-blogic@openwrt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1412883877.2975.26.camel@joe-AO725>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Baluta <daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:47862 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751676AbaJIUaU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Oct 2014 16:30:20 -0400
+Received: by mail-lb0-f180.google.com with SMTP id n15so1918169lbi.11
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Oct 2014 13:30:18 -0700 (PDT)
+In-Reply-To: <1412885241-12476-1-git-send-email-blogic@openwrt.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: John Crispin <blogic@openwrt.org>, Ralf Baechle <ralf@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mips@linux-mips.org, linux-gpio@vger.kernel.org
 
-On Thu, Oct 9, 2014 at 10:44 PM, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org> wrote:
-> On Thu, 2014-10-09 at 22:22 +0300, Octavian Purdila wrote:
->> This patch implements the USB part of the Diolan USB-I2C/SPI/GPIO
->> Master Adapter DLN-2. Details about the device can be found here:
->
-> trivia:
->
->> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> []
->> +config MFD_DLN2
->> +     tristate "Diolan DLN2 support"
->> +     select MFD_CORE
->> +     depends on USB
->> +     help
->> +       This adds support for Diolan USB-I2C/SPI/GPIO Master Adapter DLN-2.
->> +       Additional drivers must be enabled in order to use the functionality
->> +       of the device.
->
-> additional drivers like...
->
+Hello.
 
-I will rephrase.
+On 10/10/2014 12:07 AM, John Crispin wrote:
 
->> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-> []
-> +struct dln2_mod_rx_slots {
-> +       /* RX slots bitmap */
-> +       unsigned long bmap;
->
-> Probably better as:
->         DECLARE_BITMAP(bmap, DLN2_MAX_RX_SLOTS);
->
-> Then a lot of &ptr->bmap uses can be ptr->bmap
->
+> Describe gpio-rt2880 binding.
 
-Originally I was using DECLARE_BITMAP, but during the review process
-Johan suggested to use unsigned long. Now that I think about it, it
-sounds better to use DECLARE_BITMAP and of couse keep using
-find_first_bit, set_bit, etc. Johan do you see any issue with that?
+> Signed-off-by: John Crispin <blogic@openwrt.org>
+> Cc: linux-mips@linux-mips.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> ---
+>   .../devicetree/bindings/gpio/gpio-rt2880.txt       |   40 ++++++++++++++++++++
+>   1 file changed, 40 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rt2880.txt
 
->> +struct dln2_dev {
->> +     struct usb_device *usb_dev;
->> +     struct usb_interface *interface;
->> +     u8 ep_in;
->> +     u8 ep_out;
->> +
->> +     struct urb *rx_urb[DLN2_MAX_URBS];
->> +     void *rx_buf[DLN2_MAX_URBS];
->> +
->> +     struct dln2_mod_rx_slots mod_rx_slots[DLN2_HANDLES];
->> +
->> +     struct list_head event_cb_list;
->> +     spinlock_t event_cb_lock;
->> +
->> +     bool disconnect;
->> +     int active_transfers;
->> +     wait_queue_head_t disconnect_wq;
->> +     spinlock_t disconnect_lock;
->> +};
->
-> Maybe reorder the bools and u8s to pack this a bit better?
->
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-rt2880.txt b/Documentation/devicetree/bindings/gpio/gpio-rt2880.txt
+> new file mode 100644
+> index 0000000..b4acf02
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-rt2880.txt
+> @@ -0,0 +1,40 @@
+> +Ralink SoC GPIO controller bindings
+> +
+> +Required properties:
+> +- compatible:
+> +  - "ralink,rt2880-gpio" for Ralink controllers
+> +- #gpio-cells : Should be two.
+> +  - first cell is the pin number
+> +  - second cell is used to specify optional parameters (unused)
+> +- gpio-controller : Marks the device node as a GPIO controller
+> +- reg : Physical base address and length of the controller's registers
+> +- interrupt-parent: phandle to the INTC device node
 
-I prefer to keep it this way, it's not wasting a lot since you will
-only have a handful of these devices, and it keeps the related data
-together.
+    It's not a required property, it can be inherited from the nodes above.
 
->> +int dln2_register_event_cb(struct platform_device *pdev, u16 id,
->> +                        dln2_event_cb_t rx_cb)
->> +{
->> +     struct dln2_dev *dln2 = dev_get_drvdata(pdev->dev.parent);
->> +     struct dln2_event_cb_entry *i, *new;
->
-> new isn't a very good name
->
+> +- interrupts : Specify the INTC interrupt number
+> +- ralink,num-gpios : Specify the number of GPIOs
+> +- ralink,register-map : The register layout depends on the GPIO bank and actual
+> +		SoC type. Register offsets need to be in this order.
+> +		[ INT, EDGE, RENA, FENA, DATA, DIR, POL, SET, RESET, TOGGLE ]
 
-Yes, new_cb should be better.
+    This should be determined by the "compatible" property alone, I think.
 
->> +static void dln2_run_event_callbacks(struct dln2_dev *dln2, u16 id, u16 echo,
->> +                                  void *data, int len)
->> +{
->> +     struct dln2_event_cb_entry *i;
->> +
->> +     rcu_read_lock();
->> +
->> +     list_for_each_entry_rcu(i, &dln2->event_cb_list, list)
->> +             if (i->id == id)
->> +                     i->callback(i->pdev, echo, data, len);
->
-> probably nicer with braces
->
->> +static int dln2_setup_rx_urbs(struct dln2_dev *dln2,
->> +                           struct usb_host_interface *hostif)
->> +{
->> +     int i;
->> +     const int rx_max_size = DLN2_RX_BUF_SIZE;
->> +
->> +     for (i = 0; i < DLN2_MAX_URBS; i++) {
->> +             int ret;
->> +             struct device *dev = &dln2->interface->dev;
->> +
->> +             dln2->rx_buf[i] = kmalloc(rx_max_size, GFP_KERNEL);
->> +             if (!dln2->rx_buf[i])
->> +                     return -ENOMEM;
->
-> memory leaks on failure?
->
+> +
+> +Optional properties:
+> +- ralink,gpio-base : Specify the GPIO chips base number
 
-No, dln2_free_rx_urbs will do the cleanup (even in case of failures above).
+WBR, Sergei
 
-Thanks for the review Joe.
