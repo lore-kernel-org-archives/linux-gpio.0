@@ -1,85 +1,46 @@
-From: RR <rajaram.officemails@gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO adapter
-Date: Wed, 8 Oct 2014 16:46:55 -0700
-Message-ID: <CACdXCX7PqUHRKJ0KipmYzRF54XRmMYYArr5iof36VskJ75PaKg@mail.gmail.com>
-References: <1412606822-3406-1-git-send-email-muth@cypress.com>
-	<CAAVeFu+vBZ49ciZT+-dnKXks201_psy_NtYsTjw0ptOkx2es7Q@mail.gmail.com>
-	<405b439b16ea40078718da326343f673@BN1PR06MB069.namprd06.prod.outlook.com>
-	<CAAVeFu+X0Lk=5sNm9kOwGX=2-DYN_-5v-7M9bAWXraffKsTkMg@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCHv2 0/3] Enable Quark X1000 support in gpio-sch
+Date: Thu, 9 Oct 2014 15:28:31 +0900
+Message-ID: <CAAVeFuKcK_Ave41S6gVBE1ZQda22WPDgDxpCatkmccn3uNmyEQ@mail.gmail.com>
+References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:50465 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751289AbaJHXq5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Oct 2014 19:46:57 -0400
-In-Reply-To: <CAAVeFu+X0Lk=5sNm9kOwGX=2-DYN_-5v-7M9bAWXraffKsTkMg@mail.gmail.com>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:61800 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750752AbaJIG2w (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Oct 2014 02:28:52 -0400
+In-Reply-To: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Muthu Mani <muth@cypress.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>, Johan Hovold <johan@kernel.org>
+To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 8, 2014 at 12:18 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Wed, Oct 8, 2014 at 4:09 PM, Muthu Mani <muth@cypress.com> wrote:
->>> -----Original Message-----
->>> From: Alexandre Courbot [mailto:gnurou@gmail.com]
->>> Sent: Tuesday, October 07, 2014 3:34 PM
->>> To: Muthu Mani
->>> Cc: Samuel Ortiz; Lee Jones; Wolfram Sang; Linus Walleij; Greg Kroah-
->>> Hartman; linux-i2c@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
->>> usb@vger.kernel.org; Linux Kernel Mailing List; Rajaram Regupathy; Johan
->>> Hovold
->>> Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-
->>> GPIO adapter
->>>
->>> On Mon, Oct 6, 2014 at 11:47 PM, Muthu Mani <muth@cypress.com> wrote:
->>> > +
->>> > +static int cy_gpio_direction_input(struct gpio_chip *chip,
->>> > +                                       unsigned offset) {
->>> > +       return 0;
->>> > +}
->>> > +
->>> > +static int cy_gpio_direction_output(struct gpio_chip *chip,
->>> > +                                       unsigned offset, int value) {
->>> > +       return 0;
->>> > +}
->>>
->>> If that chip is capable of both output and input, shouldn't these functions be
->>> implemented? I think this has already been pointed out in a previous version
->>> but you did not reply.
->>
->> Thanks for your inputs.
->>
->> Only the GPIOs which are configured to be output GPIO can be set.
+On Fri, Sep 26, 2014 at 7:07 PM, Chang Rebecca Swee Fun
+<rebecca.swee.fun.chang@intel.com> wrote:
+> Hi,
 >
-> In that case cy_gpio_set() should return an error for GPIOs which are
-> not configured as outputs. Is that guaranteed by the current
-> implementation?
+> This is a revised version for gpio-sch.
 >
->> The set operation would fail trying to set the input or unconfigured GPIOs.
->> In this version of driver, this support is not added, it can be introduced in future versions.
->> I will add a TODO note in the code.
+> Change log for V2:
+> Patch 1:
+> - Move sch_gpio_get() and sch_gpio_set() to avoid forward declaration.
+> - Changed sch_gpio_enable()/sch_gpio_disable() to sch_gpio_register_set()/
+>   sch_gpio_register_clear().
 >
-> Argh, no TODO please. Actual code that will turn this code into a
-> solid driver that can be merged.
-
-Does a driver targeted for a custom device has to implement every
-functionality in the 1st version ? My understanding is that Linux
-follows incremental model and allows incremental merge.
-
-(On a side note the driver is functionally verified with the necessary hardware)
-
-Please correct me if I am missing something
-
+> Patch 3:
+> - Changed all sch_gpio_enable()/sch_gpio_disable() to sch_gpio_register_set()/
+>   sch_gpio_register_clear().
 >
-> Can all GPIOs be set as input or output? If so, please implement
-> cy_gpio_direction_*() and make sure that cy_gpio_set() behaves
-> properly if a GPIO is not an output. If the input/output GPIOs are
-> fixed, please make cy_gpio_direction_*() return an error if the GPIO
-> capabilities does not correspond to what is asked, and again ensure
-> that cy_gpio_set() works as expected.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> Version 1:
+> This patch series is about enabling legacy GPIO support for Quark X1000.
+> The patches were developed on top of Mika Westerberg's commit on
+> consolidating core and resume banks. Please refer to the link below for
+> more information about his commit.
+> https://lkml.org/lkml/2014/8/17/13
+
+Sorry for the late review. I tried to apply the patch you mentioned
+above before your series, and even Mika's patch won't apply on Linus'
+devel branch or today's -next. This make it difficult to make a good
+review. Could you rebase and resend this series once all its
+dependencies have been merge by Linus W. ?
