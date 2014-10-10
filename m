@@ -1,89 +1,40 @@
-From: Y Vo <yvo@apm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
-Date: Fri, 10 Oct 2014 10:22:34 +0700
-Message-ID: <CAL4ahLeZsT4KN22Jgxa8EJD8eEcWwN-wddCFvXY+8Yvb5hCGFA@mail.gmail.com>
-References: <1412779948-28769-1-git-send-email-yvo@apm.com>
-	<1843196.sbXNmZyoMx@wuerfel>
-	<CAL4ahLfpubEqi49gy8T9pyrf=1j__LbAsKUyr5i=koNyp0Mmig@mail.gmail.com>
-	<2334188.M3m5hnmS5j@wuerfel>
+Date: Fri, 10 Oct 2014 09:26:46 +0200
+Message-ID: <2508938.qoNAztonL9@wuerfel>
+References: <1412779948-28769-1-git-send-email-yvo@apm.com> <2334188.M3m5hnmS5j@wuerfel> <CAL4ahLeZsT4KN22Jgxa8EJD8eEcWwN-wddCFvXY+8Yvb5hCGFA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og122.obsmtp.com ([64.18.0.192]:57791 "HELO
-	exprod5og122.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751261AbaJJDWg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Oct 2014 23:22:36 -0400
-Received: by mail-la0-f43.google.com with SMTP id mc6so2447074lab.16
-        for <linux-gpio@vger.kernel.org>; Thu, 09 Oct 2014 20:22:34 -0700 (PDT)
-In-Reply-To: <2334188.M3m5hnmS5j@wuerfel>
+Received: from mout.kundenserver.de ([212.227.17.13]:64348 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750905AbaJJH0x (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Oct 2014 03:26:53 -0400
+In-Reply-To: <CAL4ahLeZsT4KN22Jgxa8EJD8eEcWwN-wddCFvXY+8Yvb5hCGFA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
+To: Y Vo <yvo@apm.com>
 Cc: linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Tin Huynh <tnhuynh@apm.com>, patches@apm.com, Toan Le <toanle@apm.com>, Phong Vo <pvo@apm.com>
 
-Dear Arnd,
+On Friday 10 October 2014 10:22:34 Y Vo wrote:
+> APM:  There are 6 GPIOs which can support IRQ, they are fixed to use
+> external IRQ from XGIC.  (The XGIC is based on the ARM Generic
+> Interrupt Controller Architecture Specification, Architecture version
+> 2.0, The XGIC provides the mechanism to collect interrupt requests
+> (IRQs) from both on-chip as well as off-chip sources and deliver them
+> to the multiple X-Gene1 cores within the X-Gene1 processor),  So there
+> are no way to read the GPIO DS when configure as an interrupt. They
+> are specific GPIO for boot another boot chip in X-Gene which can
+> access when boot up. So this is hardwire in the GPIO block.
+> GPIO_DS8 ---> External IRQ0 (XGIC40)
+> GPIO_DS9 ---> External IRQ1 (XGIC41)
+> ...
+> GPIO_DS13 ---> External IRQ5(XGIC45)
 
-Pls see my answer below:
+Could you read the status of the external IRQ line using irq_get_pending()
+or another public interface?
 
-On Thu, Oct 9, 2014 at 7:13 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 09 October 2014 16:31:18 Y Vo wrote:
->> Dear Arnd,
->>
->> Thanks a lot for your review. Pls see my answer on blue text below.
->
-> Please do not send html-encoded email, it will get dropped by all mailing
-> lists.
->
->>
->> On Wed, Oct 8, 2014 at 10:13 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->>
->> > On Wednesday 08 October 2014 21:52:26 Y Vo wrote:
->> > > +
->> > > +#define GICD_SPI_BASE                        0x78010000
->> >
->> > You can't hardcode register locations. Please use the proper interfaces
->> > to do whatever you want.
->> > *APM: We will do that.*
->>
->>
->>
->> >
->> > It's probably not ok to map any GIC registers into the GPIO driver,
->> > it should operate as a nested irqchip.
->> >
->>
->>  *APM: We will find the solution, the problem is we want to read the status
->> of that GPIO in case it is configured IRQ. In this case we must access to
->> GIC to read the true value.*
->
-> Can you explain what the hardware does here? Do you mean you have no way
-> to read the GPIO level from the GPIO controller for any pin that is
-> configured as an interrupt?
->
-> Can you route all GPIO pins to arbitrary upstream IRQ lines, or is this
-> hardwired in the GPIO block?
+If not, we may have to add an interface for doing this.
 
-APM:  There are 6 GPIOs which can support IRQ, they are fixed to use
-external IRQ from XGIC.  (The XGIC is based on the ARM Generic
-Interrupt Controller Architecture Specification, Architecture version
-2.0, The XGIC provides the mechanism to collect interrupt requests
-(IRQs) from both on-chip as well as off-chip sources and deliver them
-to the multiple X-Gene1 cores within the X-Gene1 processor),  So there
-are no way to read the GPIO DS when configure as an interrupt. They
-are specific GPIO for boot another boot chip in X-Gene which can
-access when boot up. So this is hardwire in the GPIO block.
-GPIO_DS8 ---> External IRQ0 (XGIC40)
-GPIO_DS9 ---> External IRQ1 (XGIC41)
-...
-GPIO_DS13 ---> External IRQ5(XGIC45)
-
->
->         Arnd
-CONFIDENTIALITY NOTICE: This e-mail message, including any attachments, 
-is for the sole use of the intended recipient(s) and contains information
-that is confidential and proprietary to Applied Micro Circuits Corporation or its subsidiaries. 
-It is to be used solely for the purpose of furthering the parties' business relationship. 
-All unauthorized review, use, disclosure or distribution is prohibited. 
-If you are not the intended recipient, please contact the sender by reply e-mail 
-and destroy all copies of the original message.
-
+	Arnd
