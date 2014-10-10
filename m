@@ -1,62 +1,81 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] mfd: add support for Cypress CYUSBS234 USB Serial
- Bridge controller
-Date: Fri, 10 Oct 2014 17:17:18 +0100
-Message-ID: <20141010161718.GA8767@lee--X1>
-References: <1412606587-3323-1-git-send-email-muth@cypress.com>
- <20141009074029.GL20647@lee--X1>
- <db79d07038e44d428f8ca6d82508d4ad@BN1PR06MB069.namprd06.prod.outlook.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <db79d07038e44d428f8ca6d82508d4ad-W5EIp8XyyIo12s5EQIJpXb9PrO6axcR4XA4E9RH9d+qIuWR1G4zioA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: John Crispin <blogic@openwrt.org>
+Subject: [PATCH 3/5] DT: Add documentation for gpio-mt7621
+Date: Fri, 10 Oct 2014 22:28:48 +0200
+Message-ID: <1412972930-16777-3-git-send-email-blogic@openwrt.org>
+References: <1412972930-16777-1-git-send-email-blogic@openwrt.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from static.88-198-24-112.clients.your-server.de ([88.198.24.112]:49288
+	"EHLO nbd.name" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755049AbaJJUzd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Oct 2014 16:55:33 -0400
+In-Reply-To: <1412972930-16777-1-git-send-email-blogic@openwrt.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org, linux-gpio@vger.kernel.org
 
-> > -----Original Message-----
-> > From: Lee Jones [mailto:lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org]
-> > Sent: Thursday, October 09, 2014 1:10 PM
-> > To: Muthu Mani
-> > Cc: Samuel Ortiz; Wolfram Sang; Linus Walleij; Alexandre Courbot;
-> > gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
-> > gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
-> > kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Rajaram Regupathy; Johan Hovold
-> > Subject: Re: [PATCH v3 1/3] mfd: add support for Cypress CYUSBS234 =
-USB
-> > Serial Bridge controller
+Describe gpio-mt7621 binding.
 
-Why is this in here?
+Signed-off-by: John Crispin <blogic@openwrt.org>
+Cc: linux-mips@linux-mips.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+---
+ .../devicetree/bindings/gpio/gpio-mt7621.txt       |   45 ++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mt7621.txt
 
-> > > +     cyusbs->usb_dev =3D usb_get_dev(interface_to_usbdev(interfa=
-ce));
-> >=20
-> > Can you do this last?  Then you can remove the 'error' error path.
->=20
-> mfd_add_devices would utlimately invoke the cell drivers' probe befor=
-e returning and cell drivers use usb_dev in their probe.
-> So, leaving it as such.
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mt7621.txt b/Documentation/devicetree/bindings/gpio/gpio-mt7621.txt
+new file mode 100644
+index 0000000..ade0efe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-mt7621.txt
+@@ -0,0 +1,45 @@
++Mediatek SoC GPIO controller bindings
++
++The IP core used inside these SoCs has 1-N banks of 32 GPIOs each. Unfortunately
++the registers of all the banks are interwoven inside one single IO range. We
++really want to load one GPIO controller instance per bank. to make this possible
++we support 2 types of nodes. The parent node defines the memory I/O range and
++has N children each describing a single bank.
++
++Required properties for the top level node:
++- compatible:
++  - "mediatek,mt7621-gpio" for Mediatek controllers
++- reg : Physical base address and length of the controller's registers
++
++Required properties for the GPIO bank node:
++- compatible:
++  - "mediatek,mt7621-gpio-bank" for Mediatek banks
++- #gpio-cells : Should be two.
++  - first cell is the pin number
++  - second cell is used to specify optional parameters (unused)
++- gpio-controller : Marks the device node as a GPIO controller
++- reg : The id of the bank that the node describes.
++
++
++Example:
++	gpio@600 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		compatible = "mediatek,mt7621-gpio";
++		reg = <0x600 0x100>;
++
++		gpio0: bank@0 {
++			reg = <0>;
++			compatible = "mediatek,mt7621-gpio-bank";
++			gpio-controller;
++			#gpio-cells = <2>;
++		};
++
++		gpio1: bank@1 {
++			reg = <1>;
++			compatible = "mediatek,mt7621-gpio-bank";
++			gpio-controller;
++			#gpio-cells = <2>;
++		};
++	};
+-- 
+1.7.10.4
 
-Can you move it down to just about mfd_add_devices() then.  That way
-can you at least return directly in the other error paths.
-
-[...]
-
-> > > +MODULE_AUTHOR("Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>");
-> > > +MODULE_AUTHOR("Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>");
-> > > +MODULE_DESCRIPTION("Cypress CYUSBS23x mfd core driver");
-> >=20
-> > s/mfd/MFD/
->=20
-> Is there a typo?
-
-Yes mfd should be MFD, as I sed (spelt this way on purpose).
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
