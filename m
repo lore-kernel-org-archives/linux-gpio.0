@@ -1,74 +1,70 @@
 From: John Crispin <blogic@openwrt.org>
-Subject: [PATCH 1/5] DT: Add documentation for gpio-rt2880
-Date: Fri, 10 Oct 2014 22:28:46 +0200
-Message-ID: <1412972930-16777-1-git-send-email-blogic@openwrt.org>
+Subject: [PATCH 5/5] MIPS: ralink: we require gpiolib
+Date: Fri, 10 Oct 2014 22:28:50 +0200
+Message-ID: <1412972930-16777-5-git-send-email-blogic@openwrt.org>
+References: <1412972930-16777-1-git-send-email-blogic@openwrt.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from static.88-198-24-112.clients.your-server.de ([88.198.24.112]:49284
+Received: from static.88-198-24-112.clients.your-server.de ([88.198.24.112]:49294
 	"EHLO nbd.name" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755046AbaJJUzd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Oct 2014 16:55:33 -0400
+	with ESMTP id S1755108AbaJJUze (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Oct 2014 16:55:34 -0400
+In-Reply-To: <1412972930-16777-1-git-send-email-blogic@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Ralf Baechle <ralf@linux-mips.org>
 Cc: linux-mips@linux-mips.org, linux-gpio@vger.kernel.org
 
-Describe gpio-rt2880 binding.
+Select ARCH_REQUIRE_GPIOLIB by default when building a kernel for RALINK.
 
 Signed-off-by: John Crispin <blogic@openwrt.org>
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
 ---
- .../devicetree/bindings/gpio/gpio-rt2880.txt       |   40 ++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rt2880.txt
+ arch/mips/Kconfig                        |    1 +
+ arch/mips/include/asm/mach-ralink/gpio.h |   24 ++++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+ create mode 100644 arch/mips/include/asm/mach-ralink/gpio.h
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-rt2880.txt b/Documentation/devicetree/bindings/gpio/gpio-rt2880.txt
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 2d255e8..380cce3 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -453,6 +453,7 @@ config RALINK
+ 	select RESET_CONTROLLER
+ 	select PINCTRL
+ 	select PINCTRL_RT2880
++	select ARCH_REQUIRE_GPIOLIB
+ 
+ config SGI_IP22
+ 	bool "SGI IP22 (Indy/Indigo2)"
+diff --git a/arch/mips/include/asm/mach-ralink/gpio.h b/arch/mips/include/asm/mach-ralink/gpio.h
 new file mode 100644
-index 0000000..b4acf02
+index 0000000..f68ee16
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-rt2880.txt
-@@ -0,0 +1,40 @@
-+Ralink SoC GPIO controller bindings
++++ b/arch/mips/include/asm/mach-ralink/gpio.h
+@@ -0,0 +1,24 @@
++/*
++ *  Ralink SoC GPIO API support
++ *
++ *  Copyright (C) 2008-2009 Gabor Juhos <juhosg@openwrt.org>
++ *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
++ *
++ *  This program is free software; you can redistribute it and/or modify it
++ *  under the terms of the GNU General Public License version 2 as published
++ *  by the Free Software Foundation.
++ *
++ */
 +
-+Required properties:
-+- compatible:
-+  - "ralink,rt2880-gpio" for Ralink controllers
-+- #gpio-cells : Should be two.
-+  - first cell is the pin number
-+  - second cell is used to specify optional parameters (unused)
-+- gpio-controller : Marks the device node as a GPIO controller
-+- reg : Physical base address and length of the controller's registers
-+- interrupt-parent: phandle to the INTC device node
-+- interrupts : Specify the INTC interrupt number
-+- ralink,num-gpios : Specify the number of GPIOs
-+- ralink,register-map : The register layout depends on the GPIO bank and actual
-+		SoC type. Register offsets need to be in this order.
-+		[ INT, EDGE, RENA, FENA, DATA, DIR, POL, SET, RESET, TOGGLE ]
++#ifndef __ASM_MACH_RALINK_GPIO_H
++#define __ASM_MACH_RALINK_GPIO_H
 +
-+Optional properties:
-+- ralink,gpio-base : Specify the GPIO chips base number
++#define ARCH_NR_GPIOS	128
++#include <asm-generic/gpio.h>
 +
-+Example:
++#define gpio_get_value	__gpio_get_value
++#define gpio_set_value	__gpio_set_value
++#define gpio_cansleep	__gpio_cansleep
++#define gpio_to_irq	__gpio_to_irq
 +
-+	gpio0: gpio@600 {
-+		compatible = "ralink,rt5350-gpio", "ralink,rt2880-gpio";
-+
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+
-+		reg = <0x600 0x34>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <6>;
-+
-+		ralink,gpio-base = <0>;
-+		ralink,num-gpios = <24>;
-+		ralink,register-map = [ 00 04 08 0c
-+				20 24 28 2c
-+				30 34 ];
-+
-+	};
++#endif /* __ASM_MACH_RALINK_GPIO_H */
 -- 
 1.7.10.4
 
