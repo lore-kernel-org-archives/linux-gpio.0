@@ -1,116 +1,139 @@
 From: David Cohen <david.a.cohen@linux.intel.com>
 Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
  Intel Baytrail
-Date: Mon, 13 Oct 2014 13:16:01 -0700
-Message-ID: <20141013201601.GC4034@psi-dev26.jf.intel.com>
+Date: Mon, 13 Oct 2014 13:19:15 -0700
+Message-ID: <20141013201915.GD4034@psi-dev26.jf.intel.com>
 References: <1412355319-18946-1-git-send-email-david.a.cohen@linux.intel.com>
  <1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
  <20141013191405.GB29810@saruman>
  <20141013192404.GB4034@psi-dev26.jf.intel.com>
  <20141013192632.GC29810@saruman>
+ <20141013193618.GD29810@saruman>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20141013192632.GC29810@saruman>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20141013193618.GD29810@saruman>
+Sender: stable-owner@vger.kernel.org
 To: Felipe Balbi <balbi@ti.com>
 Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 13, 2014 at 02:26:32PM -0500, Felipe Balbi wrote:
-> Hi,
-> 
-> On Mon, Oct 13, 2014 at 12:24:04PM -0700, David Cohen wrote:
-> > On Mon, Oct 13, 2014 at 02:14:05PM -0500, Felipe Balbi wrote:
-> > > On Mon, Oct 13, 2014 at 11:23:59AM -0700, David Cohen wrote:
-> > > > Even if a gpio pin is set to output, we still need to set INPUT_EN bit
-> > > 
-> > > here you say you're setting that bit.
-> > > 
-> > > > to be able to read its value. Without this change, we'll always read low
-> > > > level state.
+On Mon, Oct 13, 2014 at 02:36:18PM -0500, Felipe Balbi wrote:
+> On Mon, Oct 13, 2014 at 02:26:32PM -0500, Felipe Balbi wrote:
+> > Hi,
+> > 
+> > On Mon, Oct 13, 2014 at 12:24:04PM -0700, David Cohen wrote:
+> > > On Mon, Oct 13, 2014 at 02:14:05PM -0500, Felipe Balbi wrote:
+> > > > On Mon, Oct 13, 2014 at 11:23:59AM -0700, David Cohen wrote:
+> > > > > Even if a gpio pin is set to output, we still need to set INPUT_EN bit
 > > > > 
-> > > > Cc: <stable@vger.kernel.org> # v3.14+
-> > > > Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
-> > > > ---
+> > > > here you say you're setting that bit.
 > > > > 
-> > > > Hi,
+> > > > > to be able to read its value. Without this change, we'll always read low
+> > > > > level state.
+> > > > > 
+> > > > > Cc: <stable@vger.kernel.org> # v3.14+
+> > > > > Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
+> > > > > ---
+> > > > > 
+> > > > > Hi,
+> > > > > 
+> > > > > I'm resending same v1 patch but now copying linux stable and linux gpio.
+> > > > > This patch is meant for all linux stable trees >= v3.14.
+> > > > > 
+> > > > > Br, David
+> > > > > ---
+> > > > > 
+> > > > >  drivers/pinctrl/pinctrl-baytrail.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
+> > > > > index e12e5b07f6d7..c23d8ded936d 100644
+> > > > > --- a/drivers/pinctrl/pinctrl-baytrail.c
+> > > > > +++ b/drivers/pinctrl/pinctrl-baytrail.c
+> > > > > @@ -318,7 +318,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
+> > > > >  		"Potential Error: Setting GPIO with direct_irq_en to output");
+> > > > >  
+> > > > >  	reg_val = readl(reg) | BYT_DIR_MASK;
+> > > > > -	reg_val &= ~BYT_OUTPUT_EN;
+> > > > > +	reg_val &= ~(BYT_OUTPUT_EN | BYT_INPUT_EN);
 > > > > 
-> > > > I'm resending same v1 patch but now copying linux stable and linux gpio.
-> > > > This patch is meant for all linux stable trees >= v3.14.
+> > > > but code is clearing it. Also, you're not patching byt_gpio_get(), so
+> > > > you can't be 'reading its value' either. Quite frankly, this looks very
+> > > > fishy to me. Comments on BYT_OUTPUT_EN and BYT_INPUT_EN states that
+> > > > those bits are active low, meaning that clearing them enables that
+> > > > particular feature.
 > > > > 
-> > > > Br, David
-> > > > ---
-> > > > 
-> > > >  drivers/pinctrl/pinctrl-baytrail.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > How can you enable a pin to be both OUTPUT and INPUT ? Look like what
+> > > > you really want is:
 > > > > 
 > > > > diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
-> > > > index e12e5b07f6d7..c23d8ded936d 100644
+> > > > index e12e5b0..69f882d 100644
 > > > > --- a/drivers/pinctrl/pinctrl-baytrail.c
 > > > > +++ b/drivers/pinctrl/pinctrl-baytrail.c
-> > > > @@ -318,7 +318,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
-> > > >  		"Potential Error: Setting GPIO with direct_irq_en to output");
+> > > > @@ -290,6 +290,7 @@ static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+> > > >  
+> > > >  	value = readl(reg) | BYT_DIR_MASK;
+> > > >  	value &= ~BYT_INPUT_EN;		/* active low */
+> > > > +	value |= BYT_OUTPUT_EN;		/* disable output */
+> > > >  	writel(value, reg);
+> > > >  
+> > > >  	spin_unlock_irqrestore(&vg->lock, flags);
+> > > > @@ -319,6 +320,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
 > > > >  
 > > > >  	reg_val = readl(reg) | BYT_DIR_MASK;
-> > > > -	reg_val &= ~BYT_OUTPUT_EN;
-> > > > +	reg_val &= ~(BYT_OUTPUT_EN | BYT_INPUT_EN);
+> > > >  	reg_val &= ~BYT_OUTPUT_EN;
+> > > > +	value |= BYT_INPUT_EN;		/* disable input */
+> > > >  
+> > > >  	if (value)
+> > > >  		writel(reg_val | BYT_LEVEL, reg);
+> > > > 
+> > > > completely untested however. Care to further explain why clearing both
+> > > > bits - thus enabling both INPUT and OUTPUT - is correct ?
 > > > 
-> > > but code is clearing it. Also, you're not patching byt_gpio_get(), so
-> > > you can't be 'reading its value' either. Quite frankly, this looks very
-> > > fishy to me. Comments on BYT_OUTPUT_EN and BYT_INPUT_EN states that
-> > > those bits are active low, meaning that clearing them enables that
-> > > particular feature.
+> > > Actually I really meant what I sent, but perhaps I misspoke during
+> > > explanation. We need to clear the bit to enable the functionality.
 > > > 
-> > > How can you enable a pin to be both OUTPUT and INPUT ? Look like what
-> > > you really want is:
+> > > !BYT_INPUT_EN allows us to read the value. !BYT_OUTPUT_EN allows us to
+> > > set a value. If we want to set a value (acting as output) and still be
+> > > able to read via sysfs, we need to set both functionality (i.e. clear
+> > > both bits).
 > > > 
-> > > diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
-> > > index e12e5b0..69f882d 100644
-> > > --- a/drivers/pinctrl/pinctrl-baytrail.c
-> > > +++ b/drivers/pinctrl/pinctrl-baytrail.c
-> > > @@ -290,6 +290,7 @@ static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-> > >  
-> > >  	value = readl(reg) | BYT_DIR_MASK;
-> > >  	value &= ~BYT_INPUT_EN;		/* active low */
-> > > +	value |= BYT_OUTPUT_EN;		/* disable output */
-> > >  	writel(value, reg);
-> > >  
-> > >  	spin_unlock_irqrestore(&vg->lock, flags);
-> > > @@ -319,6 +320,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
-> > >  
-> > >  	reg_val = readl(reg) | BYT_DIR_MASK;
-> > >  	reg_val &= ~BYT_OUTPUT_EN;
-> > > +	value |= BYT_INPUT_EN;		/* disable input */
-> > >  
-> > >  	if (value)
-> > >  		writel(reg_val | BYT_LEVEL, reg);
-> > > 
-> > > completely untested however. Care to further explain why clearing both
-> > > bits - thus enabling both INPUT and OUTPUT - is correct ?
+> > > I'll resend the patch with a better comment.
 > > 
-> > Actually I really meant what I sent, but perhaps I misspoke during
-> > explanation. We need to clear the bit to enable the functionality.
-> > 
-> > !BYT_INPUT_EN allows us to read the value. !BYT_OUTPUT_EN allows us to
-> > set a value. If we want to set a value (acting as output) and still be
-> > able to read via sysfs, we need to set both functionality (i.e. clear
-> > both bits).
-> > 
-> > I'll resend the patch with a better comment.
+> > Alright, just make sure that exposing a pin through sysfs and making it
+> > output high, then later switching it to input works. It looks like
+> > byt_gpio_direction_input() still needs to make sure OUTPUT is set.
 > 
-> Alright, just make sure that exposing a pin through sysfs and making it
-> output high, then later switching it to input works. It looks like
+> I also noticed that this is missing:
+> 
+> diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
+> index e12e5b0..7db5ab9 100644
+> --- a/drivers/pinctrl/pinctrl-baytrail.c
+> +++ b/drivers/pinctrl/pinctrl-baytrail.c
+> @@ -614,3 +614,9 @@ static int __init byt_gpio_init(void)
+>  }
+>  
+>  subsys_initcall(byt_gpio_init);
+> +
+> +static void __exit byt_gpio_exit(void)
+> +{
+> +	platform_driver_unregister(&byt_gpio_driver);
+> +}
+> +module_exit(byt_gpio_exit);
+> 
+> (also untested)
 
-It does. I'm sending this patch based on internal fix I did to read the
-value via sysfs. It's already tested and validated :)
+It sure does. Want to send a formal patch and I Ack?
 
-> byt_gpio_direction_input() still needs to make sure OUTPUT is set.
+> 
+> ps: is BayTrail documentation available publicly ?
 
-That's handled by BYT_DIR_MASK here:
+Check Minnowboard Max :) It's baytrail.
 
-        value = readl(reg) | BYT_DIR_MASK;
-        value &= ~BYT_INPUT_EN;         /* active low */
+BR, David
 
-Br, David
+> 
+> -- 
+> balbi
