@@ -1,82 +1,46 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 2/2] PMIC / opregion: support PMIC customized operation region for CrystalCove
-Date: Mon, 13 Oct 2014 16:51:57 +0200
-Message-ID: <1472711.eXHKSpNgJz@vostro.rjw.lan>
-References: <1410229968-11638-1-git-send-email-aaron.lu@intel.com> <54365398.10701@intel.com> <20141013090213.GB2829@aaronlu.sh.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <20141013090213.GB2829@aaronlu.sh.intel.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, Lejun Zhu <lejun.zhu@intel.com>, Radivoje Jovanovic <radivoje.jovanovic@intel.com>, Daniel =?ISO-8859-1?Q?Gl=F6ckner?= <dg@emlix.com>, linux-acpi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: [PATCH] pinctrl: baytrail: show output gpio state correctly on Intel Baytrail
+Date: Mon, 13 Oct 2014 11:23:59 -0700
+Message-ID: <1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
+References: <1412355319-18946-1-git-send-email-david.a.cohen@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1412355319-18946-1-git-send-email-david.a.cohen@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, David Cohen <david.a.cohen@linux.intel.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Monday, October 13, 2014 05:02:13 PM Aaron Lu wrote:
-> On Thu, Oct 09, 2014 at 05:21:28PM +0800, Aaron Lu wrote:
-> > On 10/08/2014 04:05 PM, Lee Jones wrote:
-> > > To all those CC'ed,
-> > > 
-> > >> The Baytrail-T platform firmware has defined two customized operation
-> > >> regions for PMIC chip Crystal Cove - one is for power resource handling
-> > >> and one is for thermal: sensor temperature reporting, trip point setting,
-> > >> etc. This patch adds support for them on top of the existing Crystal Cove
-> > >> PMIC driver.
-> > >>
-> > >> The reason to split code into a separate file intel_soc_pmic_opregion.c
-> > >> is that there are more PMIC driver with ACPI operation region support
-> > >> coming and we can re-use those code. The intel_soc_pmic_opregion_data
-> > >> structure is created also for this purpose: when we need to support a
-> > >> new PMIC's operation region, we just need to fill those callbacks and
-> > >> the two register mapping tables.
-> > >>
-> > >> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> > >> ---
-> > >>  drivers/mfd/Kconfig                       |  11 +
-> > >>  drivers/mfd/Makefile                      |   1 +
-> > >>  drivers/mfd/intel_soc_pmic_crc.c          |   3 +
-> > >>  drivers/mfd/intel_soc_pmic_crc_opregion.c | 229 +++++++++++++++++++
-> > >>  drivers/mfd/intel_soc_pmic_opregion.c     | 350 ++++++++++++++++++++++++++++++
-> > >>  drivers/mfd/intel_soc_pmic_opregion.h     |  35 +++
-> > > 
-> > > With the influx of new same-chip devices, I think the MFD subsystem is
-> > > fast becoming overloaded.  I think all of the PMIC handling should in
-> > > fact either live in Regulators or have its own subsystem.
-> > > 
-> > > Let's open this up to the floor by Cc'ing some probable interested
-> > > parties.
-> > 
-> > The ACPI operation region handler provides implementation for the ASL
-> > code written by firmware developer, and since the ACPI PMIC device node
-> > has two customized operation regions: power rail handling and thermal
-> > sensor manipulating, implementing the handler will inevitably touch
-> > power rail registers and thermal registers of the PMIC chip. In this
-> > regard, it doesn't fit what the MFD subsystem is meant to contain(
-> > according to your comments, I didn't know this before, sorry about that).
-> > 
-> > It seems that we have two options:
-> > 1 Create two cell devices from the PMIC I2C driver, one for power and
-> >   one for thermal; the driver for the power part goes to drivers/power
-> >   or drivers/regulator and the driver for thermal one goes to
-> >   drivers/thermal;
-> >   The problem of this approach is that, the operation region handler
-> >   driver doesn't really need to expose those power or thermal sysfs
-> >   interfaces for user space to consume, perhaps it shouldn't, as its
-> >   sole purpose is to satisfy the ASL code access, not more.
-> > 2 Move these operation region handler drivers to drivers/acpi
-> >   We now have EC operation region handler driver there, but we also have
-> >   I2C, GPIO, i915 operation region handlers in their own subsystems. Not
-> >   sure if PMIC operation region handler qualifies there.
-> 
-> Rafael,
-> 
-> May I have your opinion on option 2? Do you think it is OK to place the
-> operation region code under drivers/acpi? Thanks.
+Even if a gpio pin is set to output, we still need to set INPUT_EN bit
+to be able to read its value. Without this change, we'll always read low
+level state.
 
-In my opinion, yes it is.  After all, operation regions are a mechanism by
-which the AML interpreter can access hardware.
+Cc: <stable@vger.kernel.org> # v3.14+
+Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
+---
 
+Hi,
+
+I'm resending same v1 patch but now copying linux stable and linux gpio.
+This patch is meant for all linux stable trees >= v3.14.
+
+Br, David
+---
+
+ drivers/pinctrl/pinctrl-baytrail.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
+index e12e5b07f6d7..c23d8ded936d 100644
+--- a/drivers/pinctrl/pinctrl-baytrail.c
++++ b/drivers/pinctrl/pinctrl-baytrail.c
+@@ -318,7 +318,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
+ 		"Potential Error: Setting GPIO with direct_irq_en to output");
+ 
+ 	reg_val = readl(reg) | BYT_DIR_MASK;
+-	reg_val &= ~BYT_OUTPUT_EN;
++	reg_val &= ~(BYT_OUTPUT_EN | BYT_INPUT_EN);
+ 
+ 	if (value)
+ 		writel(reg_val | BYT_LEVEL, reg);
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+2.1.0
