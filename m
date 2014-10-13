@@ -1,53 +1,18 @@
-From: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
-Subject: RE: [PATCHv2 0/3] Enable Quark X1000 support in gpio-sch
-Date: Mon, 13 Oct 2014 03:41:06 +0000
-Message-ID: <50B33AC5ED75F74F991980326F1C438D0FBECEA6@PGSMSX108.gar.corp.intel.com>
-References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
- <CAAVeFuKcK_Ave41S6gVBE1ZQda22WPDgDxpCatkmccn3uNmyEQ@mail.gmail.com>
+From: geohughes@iprimus.com.au
+Subject: Re:
+Date: Mon, 13 Oct 2014 16:18:27 +1000
+Message-ID: <542C53FE0000D50E@cpms01.int.iprimus.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:14090 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752701AbaJMDm0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 12 Oct 2014 23:42:26 -0400
-In-Reply-To: <CAAVeFuKcK_Ave41S6gVBE1ZQda22WPDgDxpCatkmccn3uNmyEQ@mail.gmail.com>
-Content-Language: en-US
+Received: from mail06.syd.iprimus.net.au ([210.50.76.229]:18619 "EHLO
+	mail06.syd.iprimus.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753100AbaJMG2a (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Oct 2014 02:28:30 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: 'Alexandre Courbot' <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWxleGFuZHJlIENvdXJi
-b3QgW21haWx0bzpnbnVyb3VAZ21haWwuY29tXQ0KPiBTZW50OiAwOSBPY3RvYmVyLCAyMDE0IDI6
-MjkgUE0NCj4gVG86IENoYW5nLCBSZWJlY2NhIFN3ZWUgRnVuDQo+IENjOiBMaW51cyBXYWxsZWlq
-OyBXZXN0ZXJiZXJnLCBNaWthOyBHUElPIFN1YnN5c3RlbSBNYWlsaW5nIExpc3Q7IExpbnV4IEtl
-cm5lbA0KPiBNYWlsaW5nIExpc3QNCj4gU3ViamVjdDogUmU6IFtQQVRDSHYyIDAvM10gRW5hYmxl
-IFF1YXJrIFgxMDAwIHN1cHBvcnQgaW4gZ3Bpby1zY2gNCj4gDQo+IE9uIEZyaSwgU2VwIDI2LCAy
-MDE0IGF0IDc6MDcgUE0sIENoYW5nIFJlYmVjY2EgU3dlZSBGdW4NCj4gPHJlYmVjY2Euc3dlZS5m
-dW4uY2hhbmdAaW50ZWwuY29tPiB3cm90ZToNCj4gPiBIaSwNCj4gPg0KPiA+IFRoaXMgaXMgYSBy
-ZXZpc2VkIHZlcnNpb24gZm9yIGdwaW8tc2NoLg0KPiA+DQo+ID4gQ2hhbmdlIGxvZyBmb3IgVjI6
-DQo+ID4gUGF0Y2ggMToNCj4gPiAtIE1vdmUgc2NoX2dwaW9fZ2V0KCkgYW5kIHNjaF9ncGlvX3Nl
-dCgpIHRvIGF2b2lkIGZvcndhcmQgZGVjbGFyYXRpb24uDQo+ID4gLSBDaGFuZ2VkIHNjaF9ncGlv
-X2VuYWJsZSgpL3NjaF9ncGlvX2Rpc2FibGUoKSB0byBzY2hfZ3Bpb19yZWdpc3Rlcl9zZXQoKS8N
-Cj4gPiAgIHNjaF9ncGlvX3JlZ2lzdGVyX2NsZWFyKCkuDQo+ID4NCj4gPiBQYXRjaCAzOg0KPiA+
-IC0gQ2hhbmdlZCBhbGwgc2NoX2dwaW9fZW5hYmxlKCkvc2NoX2dwaW9fZGlzYWJsZSgpIHRvDQo+
-IHNjaF9ncGlvX3JlZ2lzdGVyX3NldCgpLw0KPiA+ICAgc2NoX2dwaW9fcmVnaXN0ZXJfY2xlYXIo
-KS4NCj4gPg0KPiA+IFZlcnNpb24gMToNCj4gPiBUaGlzIHBhdGNoIHNlcmllcyBpcyBhYm91dCBl
-bmFibGluZyBsZWdhY3kgR1BJTyBzdXBwb3J0IGZvciBRdWFyayBYMTAwMC4NCj4gPiBUaGUgcGF0
-Y2hlcyB3ZXJlIGRldmVsb3BlZCBvbiB0b3Agb2YgTWlrYSBXZXN0ZXJiZXJnJ3MgY29tbWl0IG9u
-DQo+ID4gY29uc29saWRhdGluZyBjb3JlIGFuZCByZXN1bWUgYmFua3MuIFBsZWFzZSByZWZlciB0
-byB0aGUgbGluayBiZWxvdw0KPiA+IGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0IGhpcyBjb21t
-aXQuDQo+ID4gaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTQvOC8xNy8xMw0KPiANCj4gU29ycnkg
-Zm9yIHRoZSBsYXRlIHJldmlldy4gSSB0cmllZCB0byBhcHBseSB0aGUgcGF0Y2ggeW91IG1lbnRp
-b25lZCBhYm92ZSBiZWZvcmUNCj4geW91ciBzZXJpZXMsIGFuZCBldmVuIE1pa2EncyBwYXRjaCB3
-b24ndCBhcHBseSBvbiBMaW51cycNCj4gZGV2ZWwgYnJhbmNoIG9yIHRvZGF5J3MgLW5leHQuIFRo
-aXMgbWFrZSBpdCBkaWZmaWN1bHQgdG8gbWFrZSBhIGdvb2QgcmV2aWV3Lg0KPiBDb3VsZCB5b3Ug
-cmViYXNlIGFuZCByZXNlbmQgdGhpcyBzZXJpZXMgb25jZSBhbGwgaXRzIGRlcGVuZGVuY2llcyBo
-YXZlIGJlZW4NCj4gbWVyZ2UgYnkgTGludXMgVy4gPw0KDQpIaSwgSSd2ZSBub3RpY2VkIHRoYXQg
-TWlrYSBoYWQgc2VudCBhIFYyc2VyaWVzIG9uIGhpcyB3b3JrLiBSZWZlcnJpbmcgdG8gaGlzIHN1
-Ym1pc3Npb24gaW46IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE0LzkvMTYvMjEzLCB0aGlzIHBh
-dGNoIHdhcyBhYmxlIHRvIHBhdGNoIG9uIHRvZGF5J3Mga2VybmVsIHRyZWUuIFRoZSBwYXRjaGVz
-IG9uIG15IHNlcmllcyBhcmUgYWJsZSB0byBwYXRjaCBpbiB0b28uIERvIEkgbmVlZCB0byByZXNl
-bmQgc2luY2UgdGhlcmUgaXMgbm8gY2hhbmdlcyBvbiBteSBzaWRlPw0KDQpSZWJlY2NhDQo=
+I am Mr Tan Wong and i have a Business Proposal for you.If Interested do
+contact me at my email for further details tan.wong4040@yahoo.com.hk
+
