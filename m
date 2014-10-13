@@ -1,108 +1,53 @@
-From: Alexey Ignatov <lexszero@gmail.com>
-Subject: [PATCH] gpiolib: allow exporting gpios with custom names
-Date: Sat, 11 Oct 2014 21:45:16 +0400
-Message-ID: <1413049516-27021-1-git-send-email-lexszero@gmail.com>
+From: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
+Subject: RE: [PATCHv2 0/3] Enable Quark X1000 support in gpio-sch
+Date: Mon, 13 Oct 2014 03:41:06 +0000
+Message-ID: <50B33AC5ED75F74F991980326F1C438D0FBECEA6@PGSMSX108.gar.corp.intel.com>
+References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <CAAVeFuKcK_Ave41S6gVBE1ZQda22WPDgDxpCatkmccn3uNmyEQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f50.google.com ([209.85.215.50]:46431 "EHLO
-	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752677AbaJKRq1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 11 Oct 2014 13:46:27 -0400
-Received: by mail-la0-f50.google.com with SMTP id s18so4939864lam.9
-        for <linux-gpio@vger.kernel.org>; Sat, 11 Oct 2014 10:46:25 -0700 (PDT)
+Received: from mga03.intel.com ([134.134.136.65]:14090 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752701AbaJMDm0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 12 Oct 2014 23:42:26 -0400
+In-Reply-To: <CAAVeFuKcK_Ave41S6gVBE1ZQda22WPDgDxpCatkmccn3uNmyEQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexey Ignatov <lexszero@gmail.com>
+To: 'Alexandre Courbot' <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-This allows exporting gpio pins to sysfs with custom names. Before
-this patch only gpiochip-supplied names was used, or generic gpio%d.
-Added gpiod_export_name() and gpio_export_name() functions.
-gpio_request_one() now uses new behaviour with 'label' as gpio name.
-
-Signed-off-by: Alexey Ignatov <lexszero@gmail.com>
----
- drivers/gpio/gpiolib-sysfs.c  | 16 +++++++++++++++-
- drivers/gpio/gpiolib.h        |  1 +
- include/asm-generic/gpio.h    |  6 ++++++
- include/linux/gpio/consumer.h |  2 ++
- 4 files changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 5f2150b..7c56a50 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -561,7 +561,9 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 
- 	offset = gpio_chip_hwgpio(desc);
--	if (desc->chip->names && desc->chip->names[offset])
-+	if (desc->ioname)
-+		ioname = desc->ioname;
-+	else if (desc->chip->names && desc->chip->names[offset])
- 		ioname = desc->chip->names[offset];
- 
- 	dev = device_create(&gpio_class, desc->chip->dev, MKDEV(0, 0),
-@@ -602,6 +604,18 @@ fail_unlock:
- }
- EXPORT_SYMBOL_GPL(gpiod_export);
- 
-+int gpiod_export_name(struct gpio_desc *desc, bool direction_may_change,
-+		const char *name)
-+{
-+	if (!desc) {
-+		pr_debug("%s: invalid gpio descriptor\n", __func__);
-+		return -EINVAL;
-+	}
-+	desc->ioname = name;
-+	return gpiod_export(desc, direction_may_change);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_export_name);
-+
- static int match_export(struct device *dev, const void *data)
- {
- 	return dev_get_drvdata(dev) == data;
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 9db2b6a..9df4bcf 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -64,6 +64,7 @@ extern struct list_head gpio_chips;
- 
- struct gpio_desc {
- 	struct gpio_chip	*chip;
-+	const char			*ioname;
- 	unsigned long		flags;
- /* flag symbols are bit numbers */
- #define FLAG_REQUESTED	0
-diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
-index c1d4105..7957b22 100644
---- a/include/asm-generic/gpio.h
-+++ b/include/asm-generic/gpio.h
-@@ -123,6 +123,12 @@ static inline int gpio_export(unsigned gpio, bool direction_may_change)
- 	return gpiod_export(gpio_to_desc(gpio), direction_may_change);
- }
- 
-+static inline int gpio_export_name(unsigned gpio, bool direction_may_change,
-+		const char *name)
-+{
-+	return gpiod_export_name(gpio_to_desc(gpio), direction_may_change, name);
-+}
-+
- static inline int gpio_export_link(struct device *dev, const char *name,
- 				   unsigned gpio)
- {
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 12f146f..2f4c129 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -324,6 +324,8 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
- #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_GPIO_SYSFS)
- 
- int gpiod_export(struct gpio_desc *desc, bool direction_may_change);
-+int gpiod_export_name(struct gpio_desc *desc, bool direction_may_change,
-+		const char *name);
- int gpiod_export_link(struct device *dev, const char *name,
- 		      struct gpio_desc *desc);
- int gpiod_sysfs_set_active_low(struct gpio_desc *desc, int value);
--- 
-1.8.5.3
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWxleGFuZHJlIENvdXJi
+b3QgW21haWx0bzpnbnVyb3VAZ21haWwuY29tXQ0KPiBTZW50OiAwOSBPY3RvYmVyLCAyMDE0IDI6
+MjkgUE0NCj4gVG86IENoYW5nLCBSZWJlY2NhIFN3ZWUgRnVuDQo+IENjOiBMaW51cyBXYWxsZWlq
+OyBXZXN0ZXJiZXJnLCBNaWthOyBHUElPIFN1YnN5c3RlbSBNYWlsaW5nIExpc3Q7IExpbnV4IEtl
+cm5lbA0KPiBNYWlsaW5nIExpc3QNCj4gU3ViamVjdDogUmU6IFtQQVRDSHYyIDAvM10gRW5hYmxl
+IFF1YXJrIFgxMDAwIHN1cHBvcnQgaW4gZ3Bpby1zY2gNCj4gDQo+IE9uIEZyaSwgU2VwIDI2LCAy
+MDE0IGF0IDc6MDcgUE0sIENoYW5nIFJlYmVjY2EgU3dlZSBGdW4NCj4gPHJlYmVjY2Euc3dlZS5m
+dW4uY2hhbmdAaW50ZWwuY29tPiB3cm90ZToNCj4gPiBIaSwNCj4gPg0KPiA+IFRoaXMgaXMgYSBy
+ZXZpc2VkIHZlcnNpb24gZm9yIGdwaW8tc2NoLg0KPiA+DQo+ID4gQ2hhbmdlIGxvZyBmb3IgVjI6
+DQo+ID4gUGF0Y2ggMToNCj4gPiAtIE1vdmUgc2NoX2dwaW9fZ2V0KCkgYW5kIHNjaF9ncGlvX3Nl
+dCgpIHRvIGF2b2lkIGZvcndhcmQgZGVjbGFyYXRpb24uDQo+ID4gLSBDaGFuZ2VkIHNjaF9ncGlv
+X2VuYWJsZSgpL3NjaF9ncGlvX2Rpc2FibGUoKSB0byBzY2hfZ3Bpb19yZWdpc3Rlcl9zZXQoKS8N
+Cj4gPiAgIHNjaF9ncGlvX3JlZ2lzdGVyX2NsZWFyKCkuDQo+ID4NCj4gPiBQYXRjaCAzOg0KPiA+
+IC0gQ2hhbmdlZCBhbGwgc2NoX2dwaW9fZW5hYmxlKCkvc2NoX2dwaW9fZGlzYWJsZSgpIHRvDQo+
+IHNjaF9ncGlvX3JlZ2lzdGVyX3NldCgpLw0KPiA+ICAgc2NoX2dwaW9fcmVnaXN0ZXJfY2xlYXIo
+KS4NCj4gPg0KPiA+IFZlcnNpb24gMToNCj4gPiBUaGlzIHBhdGNoIHNlcmllcyBpcyBhYm91dCBl
+bmFibGluZyBsZWdhY3kgR1BJTyBzdXBwb3J0IGZvciBRdWFyayBYMTAwMC4NCj4gPiBUaGUgcGF0
+Y2hlcyB3ZXJlIGRldmVsb3BlZCBvbiB0b3Agb2YgTWlrYSBXZXN0ZXJiZXJnJ3MgY29tbWl0IG9u
+DQo+ID4gY29uc29saWRhdGluZyBjb3JlIGFuZCByZXN1bWUgYmFua3MuIFBsZWFzZSByZWZlciB0
+byB0aGUgbGluayBiZWxvdw0KPiA+IGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0IGhpcyBjb21t
+aXQuDQo+ID4gaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTQvOC8xNy8xMw0KPiANCj4gU29ycnkg
+Zm9yIHRoZSBsYXRlIHJldmlldy4gSSB0cmllZCB0byBhcHBseSB0aGUgcGF0Y2ggeW91IG1lbnRp
+b25lZCBhYm92ZSBiZWZvcmUNCj4geW91ciBzZXJpZXMsIGFuZCBldmVuIE1pa2EncyBwYXRjaCB3
+b24ndCBhcHBseSBvbiBMaW51cycNCj4gZGV2ZWwgYnJhbmNoIG9yIHRvZGF5J3MgLW5leHQuIFRo
+aXMgbWFrZSBpdCBkaWZmaWN1bHQgdG8gbWFrZSBhIGdvb2QgcmV2aWV3Lg0KPiBDb3VsZCB5b3Ug
+cmViYXNlIGFuZCByZXNlbmQgdGhpcyBzZXJpZXMgb25jZSBhbGwgaXRzIGRlcGVuZGVuY2llcyBo
+YXZlIGJlZW4NCj4gbWVyZ2UgYnkgTGludXMgVy4gPw0KDQpIaSwgSSd2ZSBub3RpY2VkIHRoYXQg
+TWlrYSBoYWQgc2VudCBhIFYyc2VyaWVzIG9uIGhpcyB3b3JrLiBSZWZlcnJpbmcgdG8gaGlzIHN1
+Ym1pc3Npb24gaW46IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE0LzkvMTYvMjEzLCB0aGlzIHBh
+dGNoIHdhcyBhYmxlIHRvIHBhdGNoIG9uIHRvZGF5J3Mga2VybmVsIHRyZWUuIFRoZSBwYXRjaGVz
+IG9uIG15IHNlcmllcyBhcmUgYWJsZSB0byBwYXRjaCBpbiB0b28uIERvIEkgbmVlZCB0byByZXNl
+bmQgc2luY2UgdGhlcmUgaXMgbm8gY2hhbmdlcyBvbiBteSBzaWRlPw0KDQpSZWJlY2NhDQo=
