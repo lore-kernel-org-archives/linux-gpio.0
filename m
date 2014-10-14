@@ -1,42 +1,49 @@
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: [RFC/PATCH] gpio/pinctrl: baytrail: move gpio driver from pinctrl
- to gpio directory
-Date: Tue, 14 Oct 2014 13:35:43 +0300
-Message-ID: <543CFC7F.2070607@linux.intel.com>
-References: <1413227857-555-1-git-send-email-david.a.cohen@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: [PATCH v2] pinctrl: baytrail: show output gpio state correctly on Intel Baytrail
+Date: Tue, 14 Oct 2014 10:54:37 -0700
+Message-ID: <1413309277-32485-1-git-send-email-david.a.cohen@linux.intel.com>
+References: <1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:10512 "EHLO mga11.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:20966 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754690AbaJNKgk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 14 Oct 2014 06:36:40 -0400
-In-Reply-To: <1413227857-555-1-git-send-email-david.a.cohen@linux.intel.com>
+	id S1752580AbaJNRyH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 14 Oct 2014 13:54:07 -0400
+In-Reply-To: <1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>, linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, David Cohen <david.a.cohen@linux.intel.com>, stable@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>
 
-On 13.10.2014 22:17, David Cohen wrote:
-> Even though GPIO module on Intel Bay Trail is able to control pin
-> functionality, it's unlikely Linux kernel driver will ever support it
-> since BIOS should handle all pin muxing itself.
-> 
-> Currently this driver does not register any pinctrl interface and
-> doesn't call any pinctrl interface. It just uses on internal functions
-> the 'struct pinctrl_gpio_range', which is a weak justification to not be
-> under gpio directory.
-> 
+Even if a gpio pin is set to output, we still need to set INPUT_EN
+functionality (by clearing INPUT_EN bit) to be able to read the pin's
+level.
 
-This discussion was held when gpio-baytrail was first submitted.
-These threads explain the gpio/pinctrl-baytrail history:
+E.g. without this change, we'll always read low level state from sysfs.
 
-http://marc.info/?l=linux-kernel&m=136981432427668&w=2
-http://marc.info/?l=linux-kernel&m=137113578604763&w=2
-http://marc.info/?l=linux-kernel&m=137155497023054&w=2
+Cc: <stable@vger.kernel.org> # v3.14+
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
+---
 
-A proper pinctrl driver for baytrail is still not yet ruled out
+v1 to v2: improved patch's body description as requested by Felipe Balbi
+---
 
--Mathias 
+ drivers/pinctrl/pinctrl-baytrail.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
+index e12e5b07f6d7..c23d8ded936d 100644
+--- a/drivers/pinctrl/pinctrl-baytrail.c
++++ b/drivers/pinctrl/pinctrl-baytrail.c
+@@ -318,7 +318,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
+ 		"Potential Error: Setting GPIO with direct_irq_en to output");
+ 
+ 	reg_val = readl(reg) | BYT_DIR_MASK;
+-	reg_val &= ~BYT_OUTPUT_EN;
++	reg_val &= ~(BYT_OUTPUT_EN | BYT_INPUT_EN);
+ 
+ 	if (value)
+ 		writel(reg_val | BYT_LEVEL, reg);
+-- 
+2.1.0
 
