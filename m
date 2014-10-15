@@ -1,94 +1,56 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2] pinctrl: baytrail: show output gpio state correctly
- on Intel Baytrail
-Date: Tue, 14 Oct 2014 13:19:01 -0500
-Message-ID: <20141014181901.GD18747@saruman>
-References: <1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
- <1413309277-32485-1-git-send-email-david.a.cohen@linux.intel.com>
-Reply-To: <balbi@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/3] gpio: sch: Enable IRQ support for Quark X1000
+Date: Wed, 15 Oct 2014 08:55:37 +0200
+Message-ID: <CACRpkdaP_kRPLCyVATPN9LjnwNqBEf2-fDqHUqjxdS2aBt1Ljw@mail.gmail.com>
+References: <1410943745-9354-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+	<1410943745-9354-4-git-send-email-rebecca.swee.fun.chang@intel.com>
+	<20140918113122.GO10854@lahna.fi.intel.com>
+	<50B33AC5ED75F74F991980326F1C438D0FBE89AD@PGSMSX108.gar.corp.intel.com>
+	<20140926091805.GV1786@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="g7w8+K/95kPelPD2"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:49199 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755375AbaJNSTO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 14 Oct 2014 14:19:14 -0400
-Content-Disposition: inline
-In-Reply-To: <1413309277-32485-1-git-send-email-david.a.cohen@linux.intel.com>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:34707 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751130AbaJOGzi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Oct 2014 02:55:38 -0400
+Received: by mail-ie0-f175.google.com with SMTP id x19so625106ier.34
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Oct 2014 23:55:37 -0700 (PDT)
+In-Reply-To: <20140926091805.GV1786@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, stable@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---g7w8+K/95kPelPD2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Sep 26, 2014 at 11:18 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Fri, Sep 26, 2014 at 09:14:48AM +0000, Chang, Rebecca Swee Fun wrote:
 
-On Tue, Oct 14, 2014 at 10:54:37AM -0700, David Cohen wrote:
-> Even if a gpio pin is set to output, we still need to set INPUT_EN
-> functionality (by clearing INPUT_EN bit) to be able to read the pin's
-> level.
->=20
-> E.g. without this change, we'll always read low level state from sysfs.
->=20
-> Cc: <stable@vger.kernel.org> # v3.14+
-> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-> Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
+>> > > +
+>> > > +         /* disable interrupts */
+>> > > +         sch_gpio_irq_disable_all(sch, sch->chip.ngpio);
+>> > > +
+>> > > +         err = request_irq(sch->irq_num, sch_gpio_irq_handler,
+>> > > +                           IRQF_SHARED, KBUILD_MODNAME, sch);
+>> >
+>> > This seems weird, typically irqchip drivers don't call request_irq() directly but
+>> > instead irq_set_chained_handler() or similar. With
+>> > gpiochip_irqchip_* stuff you don't need even that.
+>> >
+>> Regarding this, gpio-sch is actually using shared interrupts and the
+>> IRQ resources are from ACPI SCI. As per my understanding, resources
+>> from ACPI SCI might be shared for power management purposes. In this
+>> case, irq_set_chained_handler() might not be able to use here. What do
+>> you think?
+>
+> I think you are right. And then you can't use gpiochip_irqchip_* helpers
+> either :-(
 
-Reviewed-by: Felipe Balbi <balbi@ti.com>
+No since that implies that the gpiochip lives in its own irqdomain,
+and this driver uses a linear range of irqs provided from another
+domain, just allocates descriptors for them.
 
-> ---
->=20
-> v1 to v2: improved patch's body description as requested by Felipe Balbi
-> ---
->=20
->  drivers/pinctrl/pinctrl-baytrail.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl=
--baytrail.c
-> index e12e5b07f6d7..c23d8ded936d 100644
-> --- a/drivers/pinctrl/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/pinctrl-baytrail.c
-> @@ -318,7 +318,7 @@ static int byt_gpio_direction_output(struct gpio_chip=
- *chip,
->  		"Potential Error: Setting GPIO with direct_irq_en to output");
-> =20
->  	reg_val =3D readl(reg) | BYT_DIR_MASK;
-> -	reg_val &=3D ~BYT_OUTPUT_EN;
-> +	reg_val &=3D ~(BYT_OUTPUT_EN | BYT_INPUT_EN);
-> =20
->  	if (value)
->  		writel(reg_val | BYT_LEVEL, reg);
-> --=20
-> 2.1.0
->=20
+I'll take a look at this and see if it's merge material now.
 
---=20
-balbi
-
---g7w8+K/95kPelPD2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUPWkVAAoJEIaOsuA1yqREX/gP/2ZVnuFrAXQ+MankSxtZ8/uB
-AeiuUBN9DG0JqQ1FNQ0/5Ve4iYEx8o2CRdsco7zxWXfYhiUD01ghORFyvDbfRH3D
-0GirFxWsJHvpBayL8qBm7CBgxMGVjzO9SFpq8zP38MT84wRZAc5ZOzxDESZEw0rf
-vR8MDpucsoLjZerjcegpTFqRf/fW+lHSHOyN0TimQbeLAJP0iDjkEChalecaCY9p
-ibXeby7V9YA/wVUviBdGJx3btMPBu2m51nxjN4kbzcthQdHL29j0A103hu3Zrom1
-a+tMDjYa/fhPNMfRsf1ZpDWnk3ntdjFkaw4E+jHP3S0suCjKktZfcCep2F+KOeNG
-EiikqOu6Z5toxF1y72rhF5aWhYb47PziwlkGaCNOuqstUD8XaX6JqqfKOb1iSWp1
-Ayi4r8NJ8hNOrLZtj5eb6UB1b7EqK45nUDQuIMgtPpyMXd+WL5v8r4zLqsWdZ6WO
-n53x/S5gc0V2uUcQpdeXd/RBeQtOH+kB0Un9qqdrgSp3QaOjNigg8CmIA+K3h3uh
-5iTd2ZEzsD3TU5QM/5ZZE1drUmHn81V56EV0kVIBXj6rma9IzoFHzWU0FXinZOdR
-qym0/Y//osM4ctPDeKKbdRManwFki05MHbYlH6g990Oc+IXfEK/99mcBP7lvSo41
-Ozoqida1T5T2TU+z3jr9
-=4zHm
------END PGP SIGNATURE-----
-
---g7w8+K/95kPelPD2--
+Yours,
+Linus Walleij
