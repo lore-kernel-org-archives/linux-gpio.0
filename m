@@ -1,252 +1,80 @@
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Subject: Re: [PATCH 10/16] gpio: add driver for Atheros AR2315 SoC GPIO controller
-Date: Wed, 15 Oct 2014 15:12:52 +0400
-Message-ID: <CAHNKnsSj6gdZgc9JqWgskMB8v49t04g5B1TKC3TTnTgch4zNtA@mail.gmail.com>
-References: <1411929195-23775-1-git-send-email-ryazanov.s.a@gmail.com>
-	<1411929195-23775-11-git-send-email-ryazanov.s.a@gmail.com>
-	<CACRpkdYWNjE1KS8GQo0fRrgT-Siwe7=SAOGQqBVqoW+Ypg-jAw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: [PATCH v8 0/4] mfd: add support for Diolan DLN-2
+Date: Wed, 15 Oct 2014 17:48:07 +0300
+Message-ID: <1413384491-23703-1-git-send-email-octavian.purdila@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yh0-f46.google.com ([209.85.213.46]:33502 "EHLO
-	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbaJOLMw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Oct 2014 07:12:52 -0400
-Received: by mail-yh0-f46.google.com with SMTP id f73so459098yha.33
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Oct 2014 04:12:52 -0700 (PDT)
-In-Reply-To: <CACRpkdYWNjE1KS8GQo0fRrgT-Siwe7=SAOGQqBVqoW+Ypg-jAw@mail.gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:46210 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751281AbaJOOsT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 15 Oct 2014 10:48:19 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org
+Cc: arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
 
-Hi Linus,
+This patch series adds support for Diolan USB-I2C/GPIO Master Adapter
+DLN-2. Details about device can be found here:
 
-thank you for so detailed review!
+https://www.diolan.com/i2c/i2c_interface.html.
 
-I have one more generic question: could you merge driver without
-GPIOLIB_IRQCHIP usage? Currently no one driver for the AR231x SoCs
-uses irq_domain and I do not like to enable IRQ_DOMAIN just for one
-driver. I plan to convert drivers to make them irq_domain aware a bit
-later.
+Changes since v7:
 
-Please, find my comments below.
+ * MFD: add results parameter to dln2_transfer to allow receiving the
+   hardware result code; also fix dln2_transfer to return error only
+   if the result code is > 0x80;
 
-2014-10-15 12:58 GMT+04:00, Linus Walleij <linus.walleij@linaro.org>:
-> On Sun, Sep 28, 2014 at 8:33 PM, Sergey Ryazanov <ryazanov.s.a@gmail.com>
-> wrote:
->
->> Atheros AR2315 SoC have a builtin GPIO controller, which could be
->> accessed via memory mapped registers. This patch adds new driver
->> for them.
->>
->> Signed-off-by: Sergey Ryazanov <ryazanov.s.a@gmail.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Cc: linux-gpio@vger.kernel.org
->
->> +config GPIO_AR2315
->> +       bool "AR2315 SoC GPIO support"
->> +       default y if SOC_AR2315
->> +       depends on SOC_AR2315
->> +       help
->> +         Say yes here to enable GPIO support for Atheros AR2315+ SoCs.
->
-> select GPIOLIB_IRQCHIP
->
-> As far as I can see this driver should use the gpiolib irqchip helpers
-> and create a cascading irqchip. The code uses some copy/pasting
-> from earlier drivers which is not a good idea. Look at one of the drivers
-> using GPIOLIB_IRQCHIP and be inspired, check e.g. gpio-pl061.c
-> or gpio-zynq.c
->
-Yes, this driver is pretty old, I updated it with newer API except
-IRQ_DOMAIN, which I left for stage 2. Thank you for your hint about
-reference realization.
+ * GPIO: update to the new dln2_transfer API
 
->> +static u32 ar2315_gpio_intmask;
->> +static u32 ar2315_gpio_intval;
->> +static unsigned ar2315_gpio_irq_base;
->> +static void __iomem *ar2315_mem;
->
-> No static locals. Allocate and use a state container, see
-> Documentation/driver-model/design-patterns.txt
->
-Is that rule mandatory for drivers, which serve only one device?
+ * I2C: update to the new dln2_transfer API, use DECLARE_BITMAP, use
+   new_cb as a variable name instead of new, update the Kconfig help
+   to mentioned DLN2_I2C and DLN2_GPIO, remove i2c_setup as it is not
+   useful anymore after removing the frequency code
 
->> +static inline u32 ar2315_gpio_reg_read(unsigned reg)
->> +{
->> +       return __raw_readl(ar2315_mem + reg);
->> +}
->
-> Use readl_relaxed() instead.
->
-readl_relaxed() converts the bit ordering and seems inapplicable in this case.
+Changes since v6:
 
->> +static inline void ar2315_gpio_reg_write(unsigned reg, u32 val)
->> +{
->> +       __raw_writel(val, ar2315_mem + reg);
->> +}
->
-> Use writel_relaxed() instead.
->
-> When you use the state container, you need to do a
-> state dereference like that:
->
-> mystate->base + reg
->
-> So I don't think these inlines buy you anything. Just use
-> readl/writel_relaxed directly in the code.
->
-These helpers make code shorter and clearer. I can use macros if you
-do preferred.
+* MFD: make sure DLN2_HANDLE_EVENT stays 0, move a few operations out
+  of the lock block, renamed one missed _rx_callback function to
+  _event_callback, speed-up disconnect by checking for it in
+  find_free_slot, remove the URB submit helper and simplify URB
+  resubmit code, use mfd_add_hotplug_devices, change the driver name
+  to dln2 (from usb-dln2), initialize disconnect_lock
 
->> +static inline void ar2315_gpio_reg_mask(unsigned reg, u32 mask, u32 val)
->> +{
->> +       ar2315_gpio_reg_write(reg, (ar2315_gpio_reg_read(reg) & ~mask) |
->> val);
->> +}
->
-> Too simple helper IMO, if you wanna do this in some organized fashion,
-> use regmap.
->
->> +static void ar2315_gpio_int_setup(unsigned gpio, int trig)
->> +{
->> +       u32 reg = ar2315_gpio_reg_read(AR2315_GPIO_INT);
->> +
->> +       reg &= ~(AR2315_GPIO_INT_NUM_M | AR2315_GPIO_INT_TRIG_M);
->> +       reg |= gpio | AR2315_GPIO_INT_TRIG(trig);
->> +       ar2315_gpio_reg_write(AR2315_GPIO_INT, reg);
->> +}
->
-> Trig? Isn't this supposed to be done in the .set_type()
-> callback?
->
-Yep. I tried to cheat kernel and made as if driver does not supports
-any other trigger types :)
+* GPIO: no changes
 
->> +static void ar2315_gpio_irq_unmask(struct irq_data *d)
->> +{
->> +       unsigned gpio = d->irq - ar2315_gpio_irq_base;
->
-> This kind of weird calculations go away with irqdomain and that
-> is in turn used by GPIOLIB_IRQCHIP.
->
-> After that you will just use d->hwirq. And name the variable
-> "offset" while you're at it.
->
->> +       u32 dir = ar2315_gpio_reg_read(AR2315_GPIO_DIR);
->> +
->> +       /* Enable interrupt with edge detection */
->> +       if ((dir & AR2315_GPIO_DIR_M(gpio)) != AR2315_GPIO_DIR_I(gpio))
->> +               return;
->> +
->> +       ar2315_gpio_intmask |= (1 << gpio);
->
-> #include <linux/bitops.h>
->
-> ar2315_gpio_intmask |= BIT(gpio);
->
->> +       ar2315_gpio_int_setup(gpio, AR2315_GPIO_INT_TRIG_EDGE);
->> +}
->
->> +static struct irq_chip ar2315_gpio_irq_chip = {
->> +       .name           = DRIVER_NAME,
->> +       .irq_unmask     = ar2315_gpio_irq_unmask,
->> +       .irq_mask       = ar2315_gpio_irq_mask,
->> +};
->
-> So why is .set_type() not implemented and instead hard-coded into
-> the unmask function? Please fix this. It will be called by the
-> core eventually no matter what.
->
-The interrupt configuration is a bit complex. This controller could be
-configured to generate interrupts only for two lines at once. Or in
-other words: user could select any two lines to generate interrupt.
+* I2C: keep sorting in Kconfig and Makefile, add warning for transfers
+  bigger then DLN2_I2C_MAX_XFER_SIZE, remove frequency code - I will
+  send a separate patch that moves this to i2c core, revert to using
+  tx structures for dln2_i2c_enable
 
->> +static void ar2315_gpio_irq_init(unsigned irq)
->> +{
->> +       unsigned i;
->> +
->> +       ar2315_gpio_intval = ar2315_gpio_reg_read(AR2315_GPIO_DI);
->> +       for (i = 0; i < AR2315_GPIO_NUM; i++) {
->> +               unsigned _irq = ar2315_gpio_irq_base + i;
->> +
->> +               irq_set_chip_and_handler(_irq, &ar2315_gpio_irq_chip,
->> +                                        handle_level_irq);
->> +       }
->> +       irq_set_chained_handler(irq, ar2315_gpio_irq_handler);
->> +}
->
-> No, use the gpiolib irqchip helpers.
->
->> +static int ar2315_gpio_get_val(struct gpio_chip *chip, unsigned gpio)
->> +{
->> +       return (ar2315_gpio_reg_read(AR2315_GPIO_DI) >> gpio) & 1;
->> +}
->
-> Do this instead:
->
-> return !!(ar2315_gpio_reg_read(AR2315_GPIO_DI) & BIT(offset));
->
->> +static int ar2315_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
->> +{
->> +       return ar2315_gpio_irq_base + gpio;
->> +}
->
-> You do not implement this at all when using the gpiolib irqchip helpers.
->
->> +static int ar2315_gpio_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct resource *res;
->> +       unsigned irq;
->> +       int ret;
->> +
->> +       if (ar2315_mem)
->> +               return -EBUSY;
->> +
->> +       res = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
->> DRIVER_NAME);
->> +       if (!res) {
->> +               dev_err(dev, "not found IRQ number\n");
->> +               return -ENXIO;
->> +       }
->> +       irq = res->start;
->
-> Use
->
-> irq = platform_get_irq_byname(pdev, DRIVER_NAME);
-> if (irq < 0)...
->
->> +       ret = irq_alloc_descs(-1, 0, AR2315_GPIO_NUM, 0);
->> +       if (ret < 0) {
->> +               dev_err(dev, "failed to allocate IRQ numbers\n");
->> +               return ret;
->> +       }
->> +       ar2315_gpio_irq_base = ret;
->> +
->> +       ar2315_gpio_irq_init(irq);
->
-> No, let GPIOLIB_IRQCHIP handle this.
->
->> +static int __init ar2315_gpio_init(void)
->> +{
->> +       return platform_driver_register(&ar2315_gpio_driver);
->> +}
->> +subsys_initcall(ar2315_gpio_init);
->
-> Why are you using subsys_initcall()?
->
-> This should not be necessary.
->
-I have users of GPIO in arch code, what called earlier than the
-devices initcall.
 
-> Yours,
-> Linus Walleij
->
+Daniel Baluta (1):
+  gpio: add support for the Diolan DLN-2 USB GPIO driver
+
+Laurentiu Palcu (1):
+  i2c: add support for Diolan DLN-2 USB-I2C adapter
+
+Octavian Purdila (2):
+  mfd: add support for Diolan DLN-2 devices
+  gpiolib: add irq_not_threaded flag to gpio_chip
+
+ drivers/gpio/Kconfig          |  12 +
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-dln2.c      | 557 +++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib.c        |   2 +-
+ drivers/i2c/busses/Kconfig    |  10 +
+ drivers/i2c/busses/Makefile   |   1 +
+ drivers/i2c/busses/i2c-dln2.c | 270 +++++++++++++++
+ drivers/mfd/Kconfig           |  11 +
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/dln2.c            | 756 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h   |   3 +
+ include/linux/mfd/dln2.h      |  69 ++++
+ 12 files changed, 1692 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-dln2.c
+ create mode 100644 drivers/i2c/busses/i2c-dln2.c
+ create mode 100644 drivers/mfd/dln2.c
+ create mode 100644 include/linux/mfd/dln2.h
 
 -- 
-BR,
-Sergey
+1.9.1
+
