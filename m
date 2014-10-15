@@ -1,105 +1,252 @@
-From: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
-Subject: RE: [PATCHv2 3/3] gpio: sch: Enable IRQ support for Quark X1000
-Date: Wed, 15 Oct 2014 09:20:06 +0000
-Message-ID: <50B33AC5ED75F74F991980326F1C438D0FBEE12A@PGSMSX108.gar.corp.intel.com>
-References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-	<1411726047-3224-4-git-send-email-rebecca.swee.fun.chang@intel.com>
- <CACRpkdY=FmMR2Gg-yaasMxMkjmVz2TOWDAVb8DJak9CXWtnk7A@mail.gmail.com>
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Subject: Re: [PATCH 10/16] gpio: add driver for Atheros AR2315 SoC GPIO controller
+Date: Wed, 15 Oct 2014 15:12:52 +0400
+Message-ID: <CAHNKnsSj6gdZgc9JqWgskMB8v49t04g5B1TKC3TTnTgch4zNtA@mail.gmail.com>
+References: <1411929195-23775-1-git-send-email-ryazanov.s.a@gmail.com>
+	<1411929195-23775-11-git-send-email-ryazanov.s.a@gmail.com>
+	<CACRpkdYWNjE1KS8GQo0fRrgT-Siwe7=SAOGQqBVqoW+Ypg-jAw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:20823 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751598AbaJOJUx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 15 Oct 2014 05:20:53 -0400
-In-Reply-To: <CACRpkdY=FmMR2Gg-yaasMxMkjmVz2TOWDAVb8DJak9CXWtnk7A@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-yh0-f46.google.com ([209.85.213.46]:33502 "EHLO
+	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751214AbaJOLMw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Oct 2014 07:12:52 -0400
+Received: by mail-yh0-f46.google.com with SMTP id f73so459098yha.33
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Oct 2014 04:12:52 -0700 (PDT)
+In-Reply-To: <CACRpkdYWNjE1KS8GQo0fRrgT-Siwe7=SAOGQqBVqoW+Ypg-jAw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: 'Linus Walleij' <linus.walleij@linaro.org>, Denis Turischev <denis.turischev@compulab.co.il>
-Cc: "Westerberg, Mika" <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMgV2FsbGVpaiBb
-bWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogMTUgT2N0b2JlciwgMjAx
-NCAzOjEzIFBNDQo+IFRvOiBDaGFuZywgUmViZWNjYSBTd2VlIEZ1bjsgRGVuaXMgVHVyaXNjaGV2
-DQo+IENjOiBXZXN0ZXJiZXJnLCBNaWthOyBHUElPIFN1YnN5c3RlbSBNYWlsaW5nIExpc3Q7IExp
-bnV4IEtlcm5lbCBNYWlsaW5nIExpc3QNCj4gU3ViamVjdDogUmU6IFtQQVRDSHYyIDMvM10gZ3Bp
-bzogc2NoOiBFbmFibGUgSVJRIHN1cHBvcnQgZm9yIFF1YXJrIFgxMDAwDQo+IA0KPiBPbiBGcmks
-IFNlcCAyNiwgMjAxNCBhdCAxMjowNyBQTSwgQ2hhbmcgUmViZWNjYSBTd2VlIEZ1bg0KPiA8cmVi
-ZWNjYS5zd2VlLmZ1bi5jaGFuZ0BpbnRlbC5jb20+IHdyb3RlOg0KPiANCj4gPiBJbnRlbCBRdWFy
-ayBYMTAwMCBHUElPIGNvbnRyb2xsZXIgc3VwcG9ydHMgaW50ZXJydXB0IGhhbmRsaW5nIGZvciBi
-b3RoDQo+ID4gY29yZSBwb3dlciB3ZWxsIGFuZCByZXN1bWUgcG93ZXIgd2VsbC4gVGhpcyBwYXRj
-aCBpcyB0byBlbmFibGUgdGhlIElSUQ0KPiA+IHN1cHBvcnQgYW5kIHByb3ZpZGUgSVJRIGhhbmRs
-aW5nIGZvciBJbnRlbCBRdWFyayBYMTAwMCBHUElPLVNDSCBkZXZpY2UNCj4gPiBkcml2ZXIuDQo+
-ID4NCj4gPiBUaGlzIHBpZWNlIG9mIHdvcmsgaXMgZGVyaXZlZCBmcm9tIERhbiBPJ0Rvbm92YW4n
-cyBpbml0aWFsIHdvcmsgZm9yDQo+ID4gUXVhcmsgWDEwMDAgZW5hYmxpbmcuDQo+ID4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBDaGFuZyBSZWJlY2NhIFN3ZWUgRnVuDQo+ID4gPHJlYmVjY2Euc3dlZS5m
-dW4uY2hhbmdAaW50ZWwuY29tPg0KPiAoLi4uKQ0KPiANCj4gVGhpcyBwYXRjaCBuZWVkcyB0byBi
-ZSByZWJhc2VkIG9uIHRoZSBncGlvIGdpdCAiZGV2ZWwiIGJyYW5jaCBvciBUb3J2YWxkcycNCj4g
-SEVBRCBiZWZvcmUgSSBjYW4gYXBwbHkgaXQuDQoNCkkgd2lsbCByZWJhc2UgYW5kIHJlc2VuZCB3
-aXRoIHRoZSBmaXhlcyBiZWxvdy4NCg0KPiANCj4gPiAgI2RlZmluZSBHRU4gICAgMHgwMA0KPiA+
-ICAjZGVmaW5lIEdJTyAgICAweDA0DQo+ID4gICNkZWZpbmUgR0xWICAgIDB4MDgNCj4gPiArI2Rl
-ZmluZSBHVFBFICAgMHgwQw0KPiA+ICsjZGVmaW5lIEdUTkUgICAweDEwDQo+ID4gKyNkZWZpbmUg
-R0dQRSAgIDB4MTQNCj4gPiArI2RlZmluZSBHU01JICAgMHgxOA0KPiA+ICsjZGVmaW5lIEdUUyAg
-ICAweDFDDQo+ID4gKyNkZWZpbmUgQ0dOTUlFTiAgICAgICAgMHg0MA0KPiA+ICsjZGVmaW5lIFJH
-Tk1JRU4gICAgICAgIDB4NDQNCj4gDQo+IFNvIHRoZSBpbml0aWFsIFNDSCBkcml2ZXIgZm9yIHRo
-ZSBJbnRlbCBQb3Vsc2JvIHdhcyBzdWJtaXR0ZWQgYnkgRGVuaXMgVHVyaXNjaGV2DQo+IGluIDIw
-MTAuDQo+IA0KPiBEb2VzIHRoZXNlIHJlZ2lzdGVycyBleGlzdCBhbmQgd29yayBvbiB0aGUgUG91
-bHNibyBhcyB3ZWxsPw0KPiANCj4gSXMgaXQgcmVhbGx5IGVub3VnaCB0byBkaXN0aW5ndWlzaCBi
-ZXR3ZWVuIHRoZXNlIHZhcmlhbnRzIGJ5IGNoZWNraW5nIGlmIHdlJ3JlDQo+IGdldHRpbmcgYW4g
-SVJRIHJlc291cmNlIG9uIHRoZSBkZXZpY2Ugb3Igbm90Pw0KPiBJcyB0aGVyZSBzb21lIHZlcnNp
-b24gcmVnaXN0ZXIgb3Igc28/DQoNClRoZSByZWdpc3RlciB2YWx1ZXMgZGVmaW5lZCBoZXJlIGFy
-ZSBvZmZzZXQgdmFsdWUsIHRoZXkgYXJlIG5vdCB0aGUgZXhhY3QgcmVnaXN0ZXIgYWRkcmVzcy4g
-DQpUaGV5IGFyZSBub3QgdmVyc2lvbiByZWdpc3RlciBhcyBpdCBqdXN0IGNhcnJpZXMgYSByZWdp
-c3RlciBvZmZzZXQgdmFsdWUuDQoNCj4gPiAgc3RydWN0IHNjaF9ncGlvIHsNCj4gPiAgICAgICAg
-IHN0cnVjdCBncGlvX2NoaXAgY2hpcDsNCj4gPiArICAgICAgIHN0cnVjdCBpcnFfZGF0YSBkYXRh
-Ow0KPiA+ICAgICAgICAgc3BpbmxvY2tfdCBsb2NrOw0KPiA+ICAgICAgICAgdW5zaWduZWQgc2hv
-cnQgaW9iYXNlOw0KPiA+ICAgICAgICAgdW5zaWduZWQgc2hvcnQgY29yZV9iYXNlOw0KPiA+ICAg
-ICAgICAgdW5zaWduZWQgc2hvcnQgcmVzdW1lX2Jhc2U7DQo+ID4gKyAgICAgICBpbnQgaXJxX2Jh
-c2U7DQo+ID4gKyAgICAgICBpbnQgaXJxX251bTsNCj4gPiArICAgICAgIGludCBpcnFfc3VwcG9y
-dDsNCj4gDQo+IElzbid0IHRoYXQgYSBib29sPw0KPiANCj4gPiArICAgICAgIGlycSA9IHBsYXRm
-b3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX0lSUSwgMCk7DQo+ID4gKyAgICAgICBz
-Y2gtPmlycV9zdXBwb3J0ID0gISFpcnE7DQo+IA0KPiBZZWFoLCBpdCdzIGEgYm9vbC4uLi4NCg0K
-SSB3aWxsIGNoYW5nZSBpdCB0byBib29sLg0KDQo+IA0KPiA+ICsgICAgICAgaWYgKHNjaC0+aXJx
-X3N1cHBvcnQpIHsNCj4gPiArICAgICAgICAgICAgICAgc2NoLT5pcnFfbnVtID0gaXJxLT5zdGFy
-dDsNCj4gPiArICAgICAgICAgICAgICAgaWYgKHNjaC0+aXJxX251bSA8IDApIHsNCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICBkZXZfd2FybigmcGRldi0+ZGV2LA0KPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICJmYWlsZWQgdG8gb2J0YWluIGlycSBudW1iZXIgZm9yIGRl
-dmljZVxuIik7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgc2NoLT5pcnFfc3VwcG9ydCA9
-IDA7DQo+IA0KPiA9IGZhbHNlOw0KDQpOb3RlZA0KPiANCj4gPiArICAgICAgIGlmIChzY2gtPmly
-cV9zdXBwb3J0KSB7DQo+ID4gKyAgICAgICAgICAgICAgIHNjaC0+aXJxX2Jhc2UgPSBpcnFfYWxs
-b2NfZGVzY3MoLTEsIDAsIHNjaC0+Y2hpcC5uZ3BpbywNCj4gPiArICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBOVU1BX05PX05PREUpOw0KPiA+ICsgICAgICAg
-ICAgICAgICBpZiAoc2NoLT5pcnFfYmFzZSA8IDApIHsNCj4gPiArICAgICAgICAgICAgICAgICAg
-ICAgICBkZXZfZXJyKCZwZGV2LT5kZXYsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAiZmFpbGVkIHRvIGFkZCBHUElPIElSUSBkZXNjc1xuIik7DQo+IA0KPiBGYWlsZWQgdG8g
-KmFsbG9jYXRlKiBhY3R1YWxseS4uLg0KPiANCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBz
-Y2gtPmlycV9iYXNlID0gLTE7DQo+IA0KPiBUaGlzIGlzIG92ZXJ6ZWFsb3VzLiBEcm9wIGl0Lg0K
-PiANCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGVycl9zY2hfaW50cl9jaGlwOw0K
-PiANCj4gWW91J3JlIGJhaWxpbmcgb3V0IGFueXdheSwgc2VlLg0KDQpOb3RlZC4gSSB3aWxsIGNo
-YW5nZSB0aGUgcGhyYXNlIGFjY29yZGluZ2x5IGFuZCByZW1vdmUgdGhlIGV4cHJlc3Npb24gb24g
-bmV4dCBzdWJtaXNzaW9uLg0KDQo+IA0KPiA+ICBzdGF0aWMgaW50IHNjaF9ncGlvX3JlbW92ZShz
-dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KSAgew0KPiA+ICAgICAgICAgc3RydWN0IHNjaF9n
-cGlvICpzY2ggPSBwbGF0Zm9ybV9nZXRfZHJ2ZGF0YShwZGV2KTsNCj4gPiArICAgICAgIGludCBl
-cnI7DQo+ID4NCj4gPiAtICAgICAgIGdwaW9jaGlwX3JlbW92ZSgmc2NoLT5jaGlwKTsNCj4gPiAt
-ICAgICAgIHJldHVybiAwOw0KPiA+ICsgICAgICAgaWYgKHNjaC0+aXJxX3N1cHBvcnQpIHsNCj4g
-PiArICAgICAgICAgICAgICAgc2NoX2dwaW9faXJxc19kZWluaXQoc2NoLCBzY2gtPmNoaXAubmdw
-aW8pOw0KPiA+ICsNCj4gPiArICAgICAgICAgICAgICAgaWYgKHNjaC0+aXJxX251bSA+PSAwKQ0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGZyZWVfaXJxKHNjaC0+aXJxX251bSwgc2NoKTsN
-Cj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIGlycV9mcmVlX2Rlc2NzKHNjaC0+aXJxX2Jhc2Us
-IHNjaC0+Y2hpcC5uZ3Bpbyk7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsgICAgICAgZXJy
-ID0gZ3Bpb2NoaXBfcmVtb3ZlKCZzY2gtPmNoaXApOw0KPiA+ICsgICAgICAgaWYgKGVycikNCj4g
-PiArICAgICAgICAgICAgICAgZGV2X2VycigmcGRldi0+ZGV2LA0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICIlcyBncGlvY2hpcF9yZW1vdmUoKSBmYWlsZWRcbiIsIF9fZnVuY19fKTsNCj4g
-DQo+IFNvIGdwaW9jaGlwX3JlbW92ZSgpIGRvZXMgKk5PVCogcmV0dXJuIGFuIGVycm9yIGluIHRo
-ZSBjdXJyZW50DQo+IGtlcm5lbC4gV2UganVzdCByZW1vdmVkIHRoYXQgcmV0dXJuIHZhbHVlIGZy
-b20gdGhlIFNDSCBkcml2ZXIgaW4gdGhlDQo+IHByZXZpb3VzIGN5Y2xlIGZvciB0aGUgcmVhc29u
-IHRoYXQgd2Ugd2VyZSBraWxsaW5nIG9mZiB0aGUgcmV0dXJuIHR5cGUuDQo+IGNvbW1pdCA5ZjUx
-MzJhZTgyZmRiYjA0N2NjMTg3YmY2ODlhODFjOGNjMGRlN2ZhDQo+ICJncGlvOiByZW1vdmUgYWxs
-IHVzYWdlIG9mIGdwaW9fcmVtb3ZlIHJldHZhbCBpbiBkcml2ZXIvZ3BpbyINCj4gDQo+IFNvIGRv
-bid0IHJlaW50cm9kdWNlIHN0dWZmIHdlJ3JlIGFjdGl2ZWx5IHRyeWluZyB0byBnZXQgcmlkIG9m
-Lg0KPiANCj4gQXBhcnQgZnJvbSB0aGlzIGlzIGxvb2tzIE9LLCBNaWthIGNhbiB5b3UgQUNLIHRo
-ZSBlbmQgcmVzdWx0Pw0KDQpOb3RlZCB3aXRoIHRoYW5rcy4gSSB3aWxsIGRvIHRoZSBjaGFuZ2Vz
-IHJlcXVpcmVkIGFuZCByZXNlbmQgdGhlIHNlcmllcy4NClRoYW5rcy4NCg0KUmVnYXJkcw0KUmVi
-ZWNjYQ0K
+Hi Linus,
+
+thank you for so detailed review!
+
+I have one more generic question: could you merge driver without
+GPIOLIB_IRQCHIP usage? Currently no one driver for the AR231x SoCs
+uses irq_domain and I do not like to enable IRQ_DOMAIN just for one
+driver. I plan to convert drivers to make them irq_domain aware a bit
+later.
+
+Please, find my comments below.
+
+2014-10-15 12:58 GMT+04:00, Linus Walleij <linus.walleij@linaro.org>:
+> On Sun, Sep 28, 2014 at 8:33 PM, Sergey Ryazanov <ryazanov.s.a@gmail.com>
+> wrote:
+>
+>> Atheros AR2315 SoC have a builtin GPIO controller, which could be
+>> accessed via memory mapped registers. This patch adds new driver
+>> for them.
+>>
+>> Signed-off-by: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>> Cc: linux-gpio@vger.kernel.org
+>
+>> +config GPIO_AR2315
+>> +       bool "AR2315 SoC GPIO support"
+>> +       default y if SOC_AR2315
+>> +       depends on SOC_AR2315
+>> +       help
+>> +         Say yes here to enable GPIO support for Atheros AR2315+ SoCs.
+>
+> select GPIOLIB_IRQCHIP
+>
+> As far as I can see this driver should use the gpiolib irqchip helpers
+> and create a cascading irqchip. The code uses some copy/pasting
+> from earlier drivers which is not a good idea. Look at one of the drivers
+> using GPIOLIB_IRQCHIP and be inspired, check e.g. gpio-pl061.c
+> or gpio-zynq.c
+>
+Yes, this driver is pretty old, I updated it with newer API except
+IRQ_DOMAIN, which I left for stage 2. Thank you for your hint about
+reference realization.
+
+>> +static u32 ar2315_gpio_intmask;
+>> +static u32 ar2315_gpio_intval;
+>> +static unsigned ar2315_gpio_irq_base;
+>> +static void __iomem *ar2315_mem;
+>
+> No static locals. Allocate and use a state container, see
+> Documentation/driver-model/design-patterns.txt
+>
+Is that rule mandatory for drivers, which serve only one device?
+
+>> +static inline u32 ar2315_gpio_reg_read(unsigned reg)
+>> +{
+>> +       return __raw_readl(ar2315_mem + reg);
+>> +}
+>
+> Use readl_relaxed() instead.
+>
+readl_relaxed() converts the bit ordering and seems inapplicable in this case.
+
+>> +static inline void ar2315_gpio_reg_write(unsigned reg, u32 val)
+>> +{
+>> +       __raw_writel(val, ar2315_mem + reg);
+>> +}
+>
+> Use writel_relaxed() instead.
+>
+> When you use the state container, you need to do a
+> state dereference like that:
+>
+> mystate->base + reg
+>
+> So I don't think these inlines buy you anything. Just use
+> readl/writel_relaxed directly in the code.
+>
+These helpers make code shorter and clearer. I can use macros if you
+do preferred.
+
+>> +static inline void ar2315_gpio_reg_mask(unsigned reg, u32 mask, u32 val)
+>> +{
+>> +       ar2315_gpio_reg_write(reg, (ar2315_gpio_reg_read(reg) & ~mask) |
+>> val);
+>> +}
+>
+> Too simple helper IMO, if you wanna do this in some organized fashion,
+> use regmap.
+>
+>> +static void ar2315_gpio_int_setup(unsigned gpio, int trig)
+>> +{
+>> +       u32 reg = ar2315_gpio_reg_read(AR2315_GPIO_INT);
+>> +
+>> +       reg &= ~(AR2315_GPIO_INT_NUM_M | AR2315_GPIO_INT_TRIG_M);
+>> +       reg |= gpio | AR2315_GPIO_INT_TRIG(trig);
+>> +       ar2315_gpio_reg_write(AR2315_GPIO_INT, reg);
+>> +}
+>
+> Trig? Isn't this supposed to be done in the .set_type()
+> callback?
+>
+Yep. I tried to cheat kernel and made as if driver does not supports
+any other trigger types :)
+
+>> +static void ar2315_gpio_irq_unmask(struct irq_data *d)
+>> +{
+>> +       unsigned gpio = d->irq - ar2315_gpio_irq_base;
+>
+> This kind of weird calculations go away with irqdomain and that
+> is in turn used by GPIOLIB_IRQCHIP.
+>
+> After that you will just use d->hwirq. And name the variable
+> "offset" while you're at it.
+>
+>> +       u32 dir = ar2315_gpio_reg_read(AR2315_GPIO_DIR);
+>> +
+>> +       /* Enable interrupt with edge detection */
+>> +       if ((dir & AR2315_GPIO_DIR_M(gpio)) != AR2315_GPIO_DIR_I(gpio))
+>> +               return;
+>> +
+>> +       ar2315_gpio_intmask |= (1 << gpio);
+>
+> #include <linux/bitops.h>
+>
+> ar2315_gpio_intmask |= BIT(gpio);
+>
+>> +       ar2315_gpio_int_setup(gpio, AR2315_GPIO_INT_TRIG_EDGE);
+>> +}
+>
+>> +static struct irq_chip ar2315_gpio_irq_chip = {
+>> +       .name           = DRIVER_NAME,
+>> +       .irq_unmask     = ar2315_gpio_irq_unmask,
+>> +       .irq_mask       = ar2315_gpio_irq_mask,
+>> +};
+>
+> So why is .set_type() not implemented and instead hard-coded into
+> the unmask function? Please fix this. It will be called by the
+> core eventually no matter what.
+>
+The interrupt configuration is a bit complex. This controller could be
+configured to generate interrupts only for two lines at once. Or in
+other words: user could select any two lines to generate interrupt.
+
+>> +static void ar2315_gpio_irq_init(unsigned irq)
+>> +{
+>> +       unsigned i;
+>> +
+>> +       ar2315_gpio_intval = ar2315_gpio_reg_read(AR2315_GPIO_DI);
+>> +       for (i = 0; i < AR2315_GPIO_NUM; i++) {
+>> +               unsigned _irq = ar2315_gpio_irq_base + i;
+>> +
+>> +               irq_set_chip_and_handler(_irq, &ar2315_gpio_irq_chip,
+>> +                                        handle_level_irq);
+>> +       }
+>> +       irq_set_chained_handler(irq, ar2315_gpio_irq_handler);
+>> +}
+>
+> No, use the gpiolib irqchip helpers.
+>
+>> +static int ar2315_gpio_get_val(struct gpio_chip *chip, unsigned gpio)
+>> +{
+>> +       return (ar2315_gpio_reg_read(AR2315_GPIO_DI) >> gpio) & 1;
+>> +}
+>
+> Do this instead:
+>
+> return !!(ar2315_gpio_reg_read(AR2315_GPIO_DI) & BIT(offset));
+>
+>> +static int ar2315_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
+>> +{
+>> +       return ar2315_gpio_irq_base + gpio;
+>> +}
+>
+> You do not implement this at all when using the gpiolib irqchip helpers.
+>
+>> +static int ar2315_gpio_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct resource *res;
+>> +       unsigned irq;
+>> +       int ret;
+>> +
+>> +       if (ar2315_mem)
+>> +               return -EBUSY;
+>> +
+>> +       res = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
+>> DRIVER_NAME);
+>> +       if (!res) {
+>> +               dev_err(dev, "not found IRQ number\n");
+>> +               return -ENXIO;
+>> +       }
+>> +       irq = res->start;
+>
+> Use
+>
+> irq = platform_get_irq_byname(pdev, DRIVER_NAME);
+> if (irq < 0)...
+>
+>> +       ret = irq_alloc_descs(-1, 0, AR2315_GPIO_NUM, 0);
+>> +       if (ret < 0) {
+>> +               dev_err(dev, "failed to allocate IRQ numbers\n");
+>> +               return ret;
+>> +       }
+>> +       ar2315_gpio_irq_base = ret;
+>> +
+>> +       ar2315_gpio_irq_init(irq);
+>
+> No, let GPIOLIB_IRQCHIP handle this.
+>
+>> +static int __init ar2315_gpio_init(void)
+>> +{
+>> +       return platform_driver_register(&ar2315_gpio_driver);
+>> +}
+>> +subsys_initcall(ar2315_gpio_init);
+>
+> Why are you using subsys_initcall()?
+>
+> This should not be necessary.
+>
+I have users of GPIO in arch code, what called earlier than the
+devices initcall.
+
+> Yours,
+> Linus Walleij
+>
+
+-- 
+BR,
+Sergey
