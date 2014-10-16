@@ -1,69 +1,107 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v8 2/4] i2c: add support for Diolan DLN-2 USB-I2C adapter
-Date: Thu, 16 Oct 2014 08:58:52 +0200
-Message-ID: <20141016065852.GB1949@katana>
-References: <1413384491-23703-1-git-send-email-octavian.purdila@intel.com>
- <1413384491-23703-3-git-send-email-octavian.purdila@intel.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [RFC/PATCH] gpio/pinctrl: baytrail: move gpio driver from
+ pinctrl to gpio directory
+Date: Thu, 16 Oct 2014 11:01:23 +0300
+Message-ID: <20141016080123.GW2255@lahna.fi.intel.com>
+References: <1413227857-555-1-git-send-email-david.a.cohen@linux.intel.com>
+ <543CFC7F.2070607@linux.intel.com>
+ <20141014174535.GA6516@psi-dev26.jf.intel.com>
+ <20141015070812.GM2255@lahna.fi.intel.com>
+ <20141015165542.GA4529@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1413384491-23703-3-git-send-email-octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20141015165542.GA4529@psi-dev26.jf.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+On Wed, Oct 15, 2014 at 09:55:42AM -0700, David Cohen wrote:
+> Hi Mika,
+> 
+> Thanks for your feedback. See below my reply.
+> 
+> On Wed, Oct 15, 2014 at 10:08:12AM +0300, Mika Westerberg wrote:
+> > On Tue, Oct 14, 2014 at 10:45:35AM -0700, David Cohen wrote:
+> > > Hi Mathias,
+> > > 
+> > > On Tue, Oct 14, 2014 at 01:35:43PM +0300, Mathias Nyman wrote:
+> > > > On 13.10.2014 22:17, David Cohen wrote:
+> > > > > Even though GPIO module on Intel Bay Trail is able to control pin
+> > > > > functionality, it's unlikely Linux kernel driver will ever support it
+> > > > > since BIOS should handle all pin muxing itself.
+> > > > > 
+> > > > > Currently this driver does not register any pinctrl interface and
+> > > > > doesn't call any pinctrl interface. It just uses on internal functions
+> > > > > the 'struct pinctrl_gpio_range', which is a weak justification to not be
+> > > > > under gpio directory.
+> > > > > 
+> > > > 
+> > > > This discussion was held when gpio-baytrail was first submitted.
+> > > > These threads explain the gpio/pinctrl-baytrail history:
+> > > > 
+> > > > http://marc.info/?l=linux-kernel&m=136981432427668&w=2
+> > > > http://marc.info/?l=linux-kernel&m=137113578604763&w=2
+> > > > http://marc.info/?l=linux-kernel&m=137155497023054&w=2
+> > > 
+> > > Thanks for pointing that out.
+> > > 
+> > > > 
+> > > > A proper pinctrl driver for baytrail is still not yet ruled out
+> > > 
+> > > Having it inside pinctrl directory is creating some confusion because
+> > > ppl expect it to implement the actual pinctrl interface.
+> > 
+> > A typical pinctrl driver can implement both a pinctrl interface and a
+> > GPIO interface. So it is not uncommon to look the GPIO drivers under
+> > drivers/pinctrl/*.
+> 
+> Agreed :)
+> But pinctrl-baytrail has no pinctrl interface, just gpio.
 
---eJnRUKwClWJh1Khz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The hardware is capable of muxing pins etc. it just has not been
+implemented because we currently don't have need for anything else.
+I have seen that in some of our internal trees the driver is also muxing
+alternate functions to the pins (using non-pinctrl interface). So maybe
+it will get a full pinctrl support in the future.
 
-On Wed, Oct 15, 2014 at 05:48:09PM +0300, Octavian Purdila wrote:
-> From: Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
->=20
-> This patch adds support for the Diolan DLN-2 I2C master module. Due
-> to hardware limitations it does not support SMBUS quick commands.
->=20
-> Information about the USB protocol interface can be found in the
-> Programmer's Reference Manual [1], see section 6.2.2 for the I2C
-> master module commands and responses.
->=20
-> [1] https://www.diolan.com/downloads/dln-api-manual.pdf
->=20
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+We certainly don't want to move it from pinctrl to gpio and then back.
 
-For the I2C part:
+> > Furthermore the driver announces that it is a GPIO driver in its Kconfig
+> > entry:
+> > 
+> > config PINCTRL_BAYTRAIL
+> >         bool "Intel Baytrail GPIO pin control"
+> > 
+> > so I don't quite get why this would confuse people.
+> 
+> How come? You just wrote the inconsistence :)
 
-Acked-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Well, it says it is a "GPIO pin control" :-)
 
-I assume this goes together with the other patches. If I should pick it,
-let me know.
+> We're enabling PINCTRL_BAYTRAIL to build a gpio only driver.
+> 
+> > 
+> > We are also planning to add more Intel pinctrl (real) drivers in the
+> > future. drivers/pinctrl/intel/* should be the place where people find
+> > the pinctrl/GPIO drivers for newer Intel hardware.
+> 
+> I fully agree pinctrl/gpio drivers should stay under drivers/pinctrl.
+> But we're talking about a gpio driver. IMHO we should at least mention
+> in the driver it lacks pinctrl interface currently but it will come in
+> future.
 
+OK, why not.
 
---eJnRUKwClWJh1Khz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> A side discussion would be why a distro would want to have the pinctrl
+> interface on Bay Trail. I'd assume any driver being the consumer of it
+> is likely to be wrong. When Linux boots, all pins' functions should be
+> already set.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+In an ideal world, yes. However, the reality has shown that BIOS/FW gets
+these wrong and we need to work it around in the OS.
 
-iQIcBAEBAgAGBQJUP2ysAAoJEBQN5MwUoCm2EL4P/2nEGEcmbkZOlRj3E9HRcOnV
-k07zI8+Cr2fa4bMTM6vZkSJkG+iC3kwmwGszU0hdeMw0ysoBlp5IIkIFNHVln6A+
-oNmTmhXnYbjzJvGyiWYarKS3wQ/r8DdT0FheQttTStN1qJhK4a32ID6/vJwFjbmU
-fNHYdn+O3ReWxM6yKFdYoXdNWLjOcphndF7zJ4FYyFCz6di5CaY5FZ8UfFhQenoG
-VPGsFqcyJjL4I+OjWPCqJW1dqimmYN/IYOj7pC8T/dZ3JASw2UG/fMg6ba0H2CQo
-Cv/C0ilRmrTkTHF7pG7FE9r3MrnpulbIl2MlLwTBEd6bDJSMnGS/uBNFgVKOv9+6
-CPsrvWvYcx34hckHsNZ1T+bHhYNqwrk7p/W84yzUNtb8EA/cd44aTbHA4Q1lJoPd
-xwmoCVeLZX3wBJUas0leDyC99Y+3MOke8iyUxUPWYbddTCagDKGrtnupEv0oyeZM
-6OHr4Lml+Ghvbn9yWzR7za8HyYzA2L8qdYofsSzJNosy6EkZMYV1F+cXMTlfUi6G
-DgM1iwmazG10apxePJ6rbQDQE2ylOt6/Yq5tZpCsSSY4i+mF31ixBhbFH4VMofOT
-7yIJQJOMG2VRfGo3/5GoqqOjTO8y+hpzkO2EFJ2an3az4E29oUaJmIGvuNdMsnM2
-AW8ErWBNurh/f4LGQiE3
-=SNVk
------END PGP SIGNATURE-----
-
---eJnRUKwClWJh1Khz--
+Also for devices like MinnowBoard MAX (which has Baytrail SoC), you
+actually might want to mux some other function out of certain pins.
