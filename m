@@ -1,114 +1,69 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCHv3 3/3] gpio: sch: Enable IRQ support for Quark X1000
-Date: Thu, 16 Oct 2014 09:31:44 +0530
-Message-ID: <543F4328.2030801@gmail.com>
-References: <1413431475-12799-1-git-send-email-rebecca.swee.fun.chang@intel.com> <1413431475-12799-4-git-send-email-rebecca.swee.fun.chang@intel.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v8 2/4] i2c: add support for Diolan DLN-2 USB-I2C adapter
+Date: Thu, 16 Oct 2014 08:58:52 +0200
+Message-ID: <20141016065852.GB1949@katana>
+References: <1413384491-23703-1-git-send-email-octavian.purdila@intel.com>
+ <1413384491-23703-3-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:64234 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750719AbaJPEEe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Oct 2014 00:04:34 -0400
-In-Reply-To: <1413431475-12799-4-git-send-email-rebecca.swee.fun.chang@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1413384491-23703-3-git-send-email-octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.baluta-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denis Turischev <denis.turischev@compulab.co.il>
-
-On 10/16/2014 09:21 AM, Chang Rebecca Swee Fun wrote:
-> Intel Quark X1000 GPIO controller supports interrupt handling for
-> both core power well and resume power well. This patch is to enable
-> the IRQ support and provide IRQ handling for Intel Quark X1000
-> GPIO-SCH device driver.
-
-(...)
-
->   static int sch_gpio_probe(struct platform_device *pdev)
->   {
->   	struct sch_gpio *sch;
-> -	struct resource *res;
-> +	struct resource *res, *irq;
-> +	int err;
->   
->   	sch = devm_kzalloc(&pdev->dev, sizeof(*sch), GFP_KERNEL);
->   	if (!sch)
-> @@ -203,6 +376,17 @@ static int sch_gpio_probe(struct platform_device *pdev)
->   				 pdev->name))
->   		return -EBUSY;
->   
-> +	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> +	sch->irq_support = !!irq;
-> +	if (sch->irq_support) {
-> +		sch->irq_num = irq->start;
-> +		if (sch->irq_num < 0) {
-> +			dev_warn(&pdev->dev,
-> +				 "failed to obtain irq number for device\n");
-> +			sch->irq_support = false;
-> +		}
-> +	}
-> +
->   	spin_lock_init(&sch->lock);
->   	sch->iobase = res->start;
->   	sch->chip = sch_gpio_chip;
-> @@ -251,15 +435,64 @@ static int sch_gpio_probe(struct platform_device *pdev)
->   		return -ENODEV;
->   	}
->   
-> +	err = gpiochip_add(&sch->chip);
-> +	if (err < 0)
-> +		goto err_sch_gpio;
-> +
-> +	if (sch->irq_support) {
-> +		sch->irq_base = irq_alloc_descs(-1, 0, sch->chip.ngpio,
-> +						NUMA_NO_NODE);
-> +		if (sch->irq_base < 0) {
-> +			dev_err(&pdev->dev,
-> +				"failed to allocate GPIO IRQ descs\n");
-> +			goto err_sch_intr_chip;
-> +		}
-> +
-> +		/* disable interrupts */
-> +		sch_gpio_irq_disable_all(sch, sch->chip.ngpio);
-> +
-> +		err = request_irq(sch->irq_num, sch_gpio_irq_handler,
-> +				  IRQF_SHARED, KBUILD_MODNAME, sch);
-> +		if (err) {
-> +			dev_err(&pdev->dev,
-> +				"%s failed to request IRQ\n", __func__);
-> +			goto err_sch_request_irq;
-> +		}
-> +
-> +		sch_gpio_irqs_init(sch, sch->chip.ngpio);
-> +	}
-> +
->   	platform_set_drvdata(pdev, sch);
->   
-> -	return gpiochip_add(&sch->chip);
-> +	return 0;
-> +
-> +err_sch_request_irq:
-> +	irq_free_descs(sch->irq_base, sch->chip.ngpio);
-> +
-> +err_sch_intr_chip:
-> +	if (gpiochip_remove(&sch->chip))
-
-gpiochip_remove() return 'void' [0].
-
-> +		dev_err(&pdev->dev,
-> +			"%s gpiochip_remove() failed\n", __func__);
-> +
-> +err_sch_gpio:
-> +	release_region(res->start, resource_size(res));
-> +
-> +	return err;
->   }
-
-[0]:https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/tree/drivers/gpio/gpiolib.c#n311
 
 
--- 
-Regards,
-Varka Bhadram.
+--eJnRUKwClWJh1Khz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 15, 2014 at 05:48:09PM +0300, Octavian Purdila wrote:
+> From: Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+>=20
+> This patch adds support for the Diolan DLN-2 I2C master module. Due
+> to hardware limitations it does not support SMBUS quick commands.
+>=20
+> Information about the USB protocol interface can be found in the
+> Programmer's Reference Manual [1], see section 6.2.2 for the I2C
+> master module commands and responses.
+>=20
+> [1] https://www.diolan.com/downloads/dln-api-manual.pdf
+>=20
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+
+For the I2C part:
+
+Acked-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+
+I assume this goes together with the other patches. If I should pick it,
+let me know.
+
+
+--eJnRUKwClWJh1Khz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUP2ysAAoJEBQN5MwUoCm2EL4P/2nEGEcmbkZOlRj3E9HRcOnV
+k07zI8+Cr2fa4bMTM6vZkSJkG+iC3kwmwGszU0hdeMw0ysoBlp5IIkIFNHVln6A+
+oNmTmhXnYbjzJvGyiWYarKS3wQ/r8DdT0FheQttTStN1qJhK4a32ID6/vJwFjbmU
+fNHYdn+O3ReWxM6yKFdYoXdNWLjOcphndF7zJ4FYyFCz6di5CaY5FZ8UfFhQenoG
+VPGsFqcyJjL4I+OjWPCqJW1dqimmYN/IYOj7pC8T/dZ3JASw2UG/fMg6ba0H2CQo
+Cv/C0ilRmrTkTHF7pG7FE9r3MrnpulbIl2MlLwTBEd6bDJSMnGS/uBNFgVKOv9+6
+CPsrvWvYcx34hckHsNZ1T+bHhYNqwrk7p/W84yzUNtb8EA/cd44aTbHA4Q1lJoPd
+xwmoCVeLZX3wBJUas0leDyC99Y+3MOke8iyUxUPWYbddTCagDKGrtnupEv0oyeZM
+6OHr4Lml+Ghvbn9yWzR7za8HyYzA2L8qdYofsSzJNosy6EkZMYV1F+cXMTlfUi6G
+DgM1iwmazG10apxePJ6rbQDQE2ylOt6/Yq5tZpCsSSY4i+mF31ixBhbFH4VMofOT
+7yIJQJOMG2VRfGo3/5GoqqOjTO8y+hpzkO2EFJ2an3az4E29oUaJmIGvuNdMsnM2
+AW8ErWBNurh/f4LGQiE3
+=SNVk
+-----END PGP SIGNATURE-----
+
+--eJnRUKwClWJh1Khz--
