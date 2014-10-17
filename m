@@ -1,66 +1,177 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCHv2 0/3] Enable Quark X1000 support in gpio-sch
-Date: Fri, 17 Oct 2014 17:02:47 +0900
-Message-ID: <CAAVeFu+HioBqoT85B1-wwOfad8Sq3zFreY2N9YaJLq7JtiuqEA@mail.gmail.com>
-References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
- <CAAVeFuKcK_Ave41S6gVBE1ZQda22WPDgDxpCatkmccn3uNmyEQ@mail.gmail.com> <50B33AC5ED75F74F991980326F1C438D0FBECEA6@PGSMSX108.gar.corp.intel.com>
+Subject: Re: [PATCHv3 1/3] gpio: sch: Consolidate similar algorithms
+Date: Fri, 17 Oct 2014 17:43:54 +0900
+Message-ID: <CAAVeFuKVH4R0r1mdxgNRJY=D9hVSyO7NQ5eCOn4qcYMz6+vR3w@mail.gmail.com>
+References: <1413431475-12799-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <1413431475-12799-2-git-send-email-rebecca.swee.fun.chang@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f175.google.com ([209.85.213.175]:35491 "EHLO
-	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729AbaJQIDI convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Oct 2014 04:03:08 -0400
-In-Reply-To: <50B33AC5ED75F74F991980326F1C438D0FBECEA6@PGSMSX108.gar.corp.intel.com>
+Received: from mail-ig0-f181.google.com ([209.85.213.181]:36622 "EHLO
+	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbaJQIoP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Oct 2014 04:44:15 -0400
+In-Reply-To: <1413431475-12799-2-git-send-email-rebecca.swee.fun.chang@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denis Turischev <denis.turischev@compulab.co.il>
 
-On Mon, Oct 13, 2014 at 12:41 PM, Chang, Rebecca Swee Fun
+On Thu, Oct 16, 2014 at 12:51 PM, Chang Rebecca Swee Fun
 <rebecca.swee.fun.chang@intel.com> wrote:
+> Consolidating similar algorithms into common functions to make
+> GPIO SCH simpler and manageable.
 >
+> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+> ---
+>  drivers/gpio/gpio-sch.c |   95 ++++++++++++++++++++++++++---------------------
+>  1 file changed, 53 insertions(+), 42 deletions(-)
 >
->> -----Original Message-----
->> From: Alexandre Courbot [mailto:gnurou@gmail.com]
->> Sent: 09 October, 2014 2:29 PM
->> To: Chang, Rebecca Swee Fun
->> Cc: Linus Walleij; Westerberg, Mika; GPIO Subsystem Mailing List; Linux Kernel
->> Mailing List
->> Subject: Re: [PATCHv2 0/3] Enable Quark X1000 support in gpio-sch
->>
->> On Fri, Sep 26, 2014 at 7:07 PM, Chang Rebecca Swee Fun
->> <rebecca.swee.fun.chang@intel.com> wrote:
->> > Hi,
->> >
->> > This is a revised version for gpio-sch.
->> >
->> > Change log for V2:
->> > Patch 1:
->> > - Move sch_gpio_get() and sch_gpio_set() to avoid forward declaration.
->> > - Changed sch_gpio_enable()/sch_gpio_disable() to sch_gpio_register_set()/
->> >   sch_gpio_register_clear().
->> >
->> > Patch 3:
->> > - Changed all sch_gpio_enable()/sch_gpio_disable() to
->> sch_gpio_register_set()/
->> >   sch_gpio_register_clear().
->> >
->> > Version 1:
->> > This patch series is about enabling legacy GPIO support for Quark X1000.
->> > The patches were developed on top of Mika Westerberg's commit on
->> > consolidating core and resume banks. Please refer to the link below
->> > for more information about his commit.
->> > https://lkml.org/lkml/2014/8/17/13
->>
->> Sorry for the late review. I tried to apply the patch you mentioned above before
->> your series, and even Mika's patch won't apply on Linus'
->> devel branch or today's -next. This make it difficult to make a good review.
->> Could you rebase and resend this series once all its dependencies have been
->> merge by Linus W. ?
+> diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+> index 99720c8..6e89be9 100644
+> --- a/drivers/gpio/gpio-sch.c
+> +++ b/drivers/gpio/gpio-sch.c
+> @@ -63,94 +63,105 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
+>         return gpio % 8;
+>  }
 >
-> Hi, I've noticed that Mika had sent a V2series on his work. Referring to his submission in: https://lkml.org/lkml/2014/9/16/213, this patch was able to patch on today's kernel tree. The patches on my series are able to patch in too. Do I need to resend since there is no changes on my side?
+> -static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio)
+> +static void sch_gpio_register_set(struct sch_gpio *sch, unsigned gpio,
+> +                                 unsigned reg)
+>  {
+>         unsigned short offset, bit;
+>         u8 enable;
+>
+>         spin_lock(&sch->lock);
 
-I got your v3 applied on top of Linus' devel tree and Mika's patch
-without any issue. Thanks.
+...
+
+>
+> -       offset = sch_gpio_offset(sch, gpio, GEN);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+>         bit = sch_gpio_bit(sch, gpio);
+>
+>         enable = inb(sch->iobase + offset);
+
+I see identical blocks of code in sch_gpio_register_clear(),
+sch_gpio_reg_get() and sch_gpio_reg_set() (and possibly other
+functions?). Maybe this could be factorized into an inline function
+that would return the "enable" variable?
+
+Also, "enable" looks like the wrong name here. The exact same result
+is later called "disable" and "curr_dirs" later.
+
+> -       if (!(enable & (1 << bit)))
+> -               outb(enable | (1 << bit), sch->iobase + offset);
+> +       if (!(enable & BIT(bit)))
+> +               outb(enable | BIT(bit), sch->iobase + offset);
+>
+>         spin_unlock(&sch->lock);
+>  }
+>
+> -static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned  gpio_num)
+> +static void sch_gpio_register_clear(struct sch_gpio *sch, unsigned gpio,
+> +                                   unsigned reg)
+>  {
+> -       struct sch_gpio *sch = to_sch_gpio(gc);
+> -       u8 curr_dirs;
+>         unsigned short offset, bit;
+> +       u8 disable;
+>
+>         spin_lock(&sch->lock);
+>
+> -       offset = sch_gpio_offset(sch, gpio_num, GIO);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> -
+> -       curr_dirs = inb(sch->iobase + offset);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+> +       bit = sch_gpio_bit(sch, gpio);
+>
+> -       if (!(curr_dirs & (1 << bit)))
+> -               outb(curr_dirs | (1 << bit), sch->iobase + offset);
+> +       disable = inb(sch->iobase + offset);
+> +       if (disable & BIT(bit))
+> +               outb(disable & ~BIT(bit), sch->iobase + offset);
+>
+>         spin_unlock(&sch->lock);
+> -       return 0;
+>  }
+>
+> -static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+> +static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
+>  {
+>         struct sch_gpio *sch = to_sch_gpio(gc);
+> -       int res;
+>         unsigned short offset, bit;
+> +       u8 curr_dirs;
+>
+> -       offset = sch_gpio_offset(sch, gpio_num, GLV);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+> +       bit = sch_gpio_bit(sch, gpio);
+>
+> -       res = !!(inb(sch->iobase + offset) & (1 << bit));
+> +       curr_dirs = !!(inb(sch->iobase + offset) & BIT(bit));
+>
+> -       return res;
+> +       return curr_dirs;
+>  }
+>
+> -static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+> +static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
+> +                            int val)
+>  {
+>         struct sch_gpio *sch = to_sch_gpio(gc);
+> -       u8 curr_vals;
+>         unsigned short offset, bit;
+> +       u8 curr_dirs;
+>
+> -       spin_lock(&sch->lock);
+> -
+> -       offset = sch_gpio_offset(sch, gpio_num, GLV);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+> +       bit = sch_gpio_bit(sch, gpio);
+>
+> -       curr_vals = inb(sch->iobase + offset);
+> +       curr_dirs = inb(sch->iobase + offset);
+>
+>         if (val)
+> -               outb(curr_vals | (1 << bit), sch->iobase + offset);
+> +               outb(curr_dirs | BIT(bit), sch->iobase + offset);
+>         else
+> -               outb((curr_vals & ~(1 << bit)), sch->iobase + offset);
+> +               outb((curr_dirs & ~BIT(bit)), sch->iobase + offset);
+> +}
+
+Mmmm this really looks like sch_gpio_register_set() and
+sch_gpio_register_clear() could just call sch_gpio_reg_set() right
+after acquiring the spinlock. Also the names are very similar and it
+is not clear why you need two different functions here. Couldn't you
+call sch_gpio_reg_set(gc, gpio, reg, 1) in place of
+sch_gpio_register_set() and sch_gpio_reg_set(gc, gpio, reg, 0) for
+sch_gpio_register_clear()? You may need to acquire the spinlock before
+some call sites, but that's preferable to having very similar
+functions bearing a very similar name IMHO.
+
+>
+> +static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+> +{
+> +       struct sch_gpio *sch = to_sch_gpio(gc);
+> +
+> +       spin_lock(&sch->lock);
+> +       sch_gpio_register_set(sch, gpio_num, GIO);
+
+So here you are acquiring sch->lock, then calling
+sch_gpio_register_set() which will try to acquire the same spinlock
+first thing. Wouldn't that deadlock? Have you tested changing the
+direction of a GPIO? This again speaks in favor or reducing the number
+of similar functions in this file.
+
+Unless I misunderstood something there are still some issues that make
+this file harder to understand than it should, and which can sometimes
+bork the system altogether. It is a good idea to cleanup this file,
+but please try to go one step further - this should simplify locking
+and ultimately get rid of the locking issues.
+
+And hopefully I will also take less time to review v4. :P
