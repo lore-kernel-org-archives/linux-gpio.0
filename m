@@ -1,129 +1,66 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [RFC/PATCH] gpio/pinctrl: baytrail: move gpio driver from
- pinctrl to gpio directory
-Date: Thu, 16 Oct 2014 18:53:22 -0700
-Message-ID: <20141017015322.GB4513@psi-dev26.jf.intel.com>
-References: <1413227857-555-1-git-send-email-david.a.cohen@linux.intel.com>
- <543CFC7F.2070607@linux.intel.com>
- <20141014174535.GA6516@psi-dev26.jf.intel.com>
- <20141015070812.GM2255@lahna.fi.intel.com>
- <20141015165542.GA4529@psi-dev26.jf.intel.com>
- <20141016080123.GW2255@lahna.fi.intel.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCHv2 0/3] Enable Quark X1000 support in gpio-sch
+Date: Fri, 17 Oct 2014 17:02:47 +0900
+Message-ID: <CAAVeFu+HioBqoT85B1-wwOfad8Sq3zFreY2N9YaJLq7JtiuqEA@mail.gmail.com>
+References: <1411726047-3224-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <CAAVeFuKcK_Ave41S6gVBE1ZQda22WPDgDxpCatkmccn3uNmyEQ@mail.gmail.com> <50B33AC5ED75F74F991980326F1C438D0FBECEA6@PGSMSX108.gar.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:60838 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751643AbaJQBwr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 16 Oct 2014 21:52:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20141016080123.GW2255@lahna.fi.intel.com>
+Received: from mail-ig0-f175.google.com ([209.85.213.175]:35491 "EHLO
+	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750729AbaJQIDI convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Oct 2014 04:03:08 -0400
+In-Reply-To: <50B33AC5ED75F74F991980326F1C438D0FBECEA6@PGSMSX108.gar.corp.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Thu, Oct 16, 2014 at 11:01:23AM +0300, Mika Westerberg wrote:
-> On Wed, Oct 15, 2014 at 09:55:42AM -0700, David Cohen wrote:
-> > Hi Mika,
-> > 
-> > Thanks for your feedback. See below my reply.
-> > 
-> > On Wed, Oct 15, 2014 at 10:08:12AM +0300, Mika Westerberg wrote:
-> > > On Tue, Oct 14, 2014 at 10:45:35AM -0700, David Cohen wrote:
-> > > > Hi Mathias,
-> > > > 
-> > > > On Tue, Oct 14, 2014 at 01:35:43PM +0300, Mathias Nyman wrote:
-> > > > > On 13.10.2014 22:17, David Cohen wrote:
-> > > > > > Even though GPIO module on Intel Bay Trail is able to control pin
-> > > > > > functionality, it's unlikely Linux kernel driver will ever support it
-> > > > > > since BIOS should handle all pin muxing itself.
-> > > > > > 
-> > > > > > Currently this driver does not register any pinctrl interface and
-> > > > > > doesn't call any pinctrl interface. It just uses on internal functions
-> > > > > > the 'struct pinctrl_gpio_range', which is a weak justification to not be
-> > > > > > under gpio directory.
-> > > > > > 
-> > > > > 
-> > > > > This discussion was held when gpio-baytrail was first submitted.
-> > > > > These threads explain the gpio/pinctrl-baytrail history:
-> > > > > 
-> > > > > http://marc.info/?l=linux-kernel&m=136981432427668&w=2
-> > > > > http://marc.info/?l=linux-kernel&m=137113578604763&w=2
-> > > > > http://marc.info/?l=linux-kernel&m=137155497023054&w=2
-> > > > 
-> > > > Thanks for pointing that out.
-> > > > 
-> > > > > 
-> > > > > A proper pinctrl driver for baytrail is still not yet ruled out
-> > > > 
-> > > > Having it inside pinctrl directory is creating some confusion because
-> > > > ppl expect it to implement the actual pinctrl interface.
-> > > 
-> > > A typical pinctrl driver can implement both a pinctrl interface and a
-> > > GPIO interface. So it is not uncommon to look the GPIO drivers under
-> > > drivers/pinctrl/*.
-> > 
-> > Agreed :)
-> > But pinctrl-baytrail has no pinctrl interface, just gpio.
-> 
-> The hardware is capable of muxing pins etc. it just has not been
-> implemented because we currently don't have need for anything else.
-> I have seen that in some of our internal trees the driver is also muxing
-> alternate functions to the pins (using non-pinctrl interface). So maybe
-> it will get a full pinctrl support in the future.
-> 
-> We certainly don't want to move it from pinctrl to gpio and then back.
-> 
-> > > Furthermore the driver announces that it is a GPIO driver in its Kconfig
-> > > entry:
-> > > 
-> > > config PINCTRL_BAYTRAIL
-> > >         bool "Intel Baytrail GPIO pin control"
-> > > 
-> > > so I don't quite get why this would confuse people.
-> > 
-> > How come? You just wrote the inconsistence :)
-> 
-> Well, it says it is a "GPIO pin control" :-)
+On Mon, Oct 13, 2014 at 12:41 PM, Chang, Rebecca Swee Fun
+<rebecca.swee.fun.chang@intel.com> wrote:
+>
+>
+>> -----Original Message-----
+>> From: Alexandre Courbot [mailto:gnurou@gmail.com]
+>> Sent: 09 October, 2014 2:29 PM
+>> To: Chang, Rebecca Swee Fun
+>> Cc: Linus Walleij; Westerberg, Mika; GPIO Subsystem Mailing List; Linux Kernel
+>> Mailing List
+>> Subject: Re: [PATCHv2 0/3] Enable Quark X1000 support in gpio-sch
+>>
+>> On Fri, Sep 26, 2014 at 7:07 PM, Chang Rebecca Swee Fun
+>> <rebecca.swee.fun.chang@intel.com> wrote:
+>> > Hi,
+>> >
+>> > This is a revised version for gpio-sch.
+>> >
+>> > Change log for V2:
+>> > Patch 1:
+>> > - Move sch_gpio_get() and sch_gpio_set() to avoid forward declaration.
+>> > - Changed sch_gpio_enable()/sch_gpio_disable() to sch_gpio_register_set()/
+>> >   sch_gpio_register_clear().
+>> >
+>> > Patch 3:
+>> > - Changed all sch_gpio_enable()/sch_gpio_disable() to
+>> sch_gpio_register_set()/
+>> >   sch_gpio_register_clear().
+>> >
+>> > Version 1:
+>> > This patch series is about enabling legacy GPIO support for Quark X1000.
+>> > The patches were developed on top of Mika Westerberg's commit on
+>> > consolidating core and resume banks. Please refer to the link below
+>> > for more information about his commit.
+>> > https://lkml.org/lkml/2014/8/17/13
+>>
+>> Sorry for the late review. I tried to apply the patch you mentioned above before
+>> your series, and even Mika's patch won't apply on Linus'
+>> devel branch or today's -next. This make it difficult to make a good review.
+>> Could you rebase and resend this series once all its dependencies have been
+>> merge by Linus W. ?
+>
+> Hi, I've noticed that Mika had sent a V2series on his work. Referring to his submission in: https://lkml.org/lkml/2014/9/16/213, this patch was able to patch on today's kernel tree. The patches on my series are able to patch in too. Do I need to resend since there is no changes on my side?
 
-PINCTRL_BAYTRAIL means it implements pinctrl iterface. The text says
-otherwise.
-
-> 
-> > We're enabling PINCTRL_BAYTRAIL to build a gpio only driver.
-> > 
-> > > 
-> > > We are also planning to add more Intel pinctrl (real) drivers in the
-> > > future. drivers/pinctrl/intel/* should be the place where people find
-> > > the pinctrl/GPIO drivers for newer Intel hardware.
-> > 
-> > I fully agree pinctrl/gpio drivers should stay under drivers/pinctrl.
-> > But we're talking about a gpio driver. IMHO we should at least mention
-> > in the driver it lacks pinctrl interface currently but it will come in
-> > future.
-> 
-> OK, why not.
-> 
-> > A side discussion would be why a distro would want to have the pinctrl
-> > interface on Bay Trail. I'd assume any driver being the consumer of it
-> > is likely to be wrong. When Linux boots, all pins' functions should be
-> > already set.
-> 
-> In an ideal world, yes. However, the reality has shown that BIOS/FW gets
-> these wrong and we need to work it around in the OS.
-
-But we never upstream these workarounds, right? :)
-That would be useful during internal development while we get a fix from
-fw developers. Any driver upstreamed for Bay Trail actually using this
-pinctrl interface is very likely to be wrong.
-
-> 
-> Also for devices like MinnowBoard MAX (which has Baytrail SoC), you
-> actually might want to mux some other function out of certain pins.
-
-I fully agree on this one. MinnowBoard MAX is a valid reason to expose
-pinctrl interface. A TODO comment on Kconfig help text and/or on driver
-should be enough then.
-
-Br, David
+I got your v3 applied on top of Linus' devel tree and Mika's patch
+without any issue. Thanks.
