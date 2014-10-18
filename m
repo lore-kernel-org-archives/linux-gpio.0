@@ -1,86 +1,56 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
-Date: Fri, 17 Oct 2014 18:26:12 +0900
-Message-ID: <CAAVeFuJf0V6erNuzgipB1O4hSU_E+HiotEWVE5byYkj=0u+HbA@mail.gmail.com>
-References: <1412847735-498-1-git-send-email-haojian.zhuang@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: nomadik: amend MMC/SD pins
+Date: Sat, 18 Oct 2014 14:57:53 +0200
+Message-ID: <1413637073-3443-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:53835 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751373AbaJQJ0c (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Oct 2014 05:26:32 -0400
-Received: by mail-ig0-f172.google.com with SMTP id r2so1220040igi.11
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Oct 2014 02:26:32 -0700 (PDT)
-In-Reply-To: <1412847735-498-1-git-send-email-haojian.zhuang@linaro.org>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:36614 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751606AbaJRM6C (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Oct 2014 08:58:02 -0400
+Received: by mail-la0-f43.google.com with SMTP id mc6so1940445lab.2
+        for <linux-gpio@vger.kernel.org>; Sat, 18 Oct 2014 05:58:00 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, Oct 9, 2014 at 6:42 PM, Haojian Zhuang
-<haojian.zhuang@linaro.org> wrote:
-> gpio-ranges property could binds gpio to pinctrl. But there may be some
-> gpios without pinctrl operation. So check whether gpio-ranges property
-> exists in device node first.
->
-> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
-> ---
->  drivers/gpio/gpio-pl061.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-> index 84b49cf..d1813f0 100644
-> --- a/drivers/gpio/gpio-pl061.c
-> +++ b/drivers/gpio/gpio-pl061.c
-> @@ -52,28 +52,34 @@ struct pl061_gpio {
->
->         void __iomem            *base;
->         struct gpio_chip        gc;
-> +       int                     uses_pinctrl;
->
->  #ifdef CONFIG_PM
->         struct pl061_context_save_regs csave_regs;
->  #endif
->  };
->
-> -static int pl061_gpio_request(struct gpio_chip *chip, unsigned offset)
-> +static int pl061_gpio_request(struct gpio_chip *gc, unsigned offset)
->  {
->         /*
->          * Map back to global GPIO space and request muxing, the direction
->          * parameter does not matter for this controller.
->          */
-> -       int gpio = chip->base + offset;
-> +       struct pl061_gpio *chip = container_of(gc, struct pl061_gpio, gc);
-> +       int gpio = gc->base + offset;
->
-> -       return pinctrl_request_gpio(gpio);
-> +       if (chip->uses_pinctrl)
-> +               return pinctrl_request_gpio(gpio);
-> +       return 0;
->  }
->
-> -static void pl061_gpio_free(struct gpio_chip *chip, unsigned offset)
-> +static void pl061_gpio_free(struct gpio_chip *gc, unsigned offset)
->  {
-> -       int gpio = chip->base + offset;
-> +       struct pl061_gpio *chip = container_of(gc, struct pl061_gpio, gc);
-> +       int gpio = gc->base + offset;
->
-> -       pinctrl_free_gpio(gpio);
-> +       if (chip->uses_pinctrl)
-> +               pinctrl_free_gpio(gpio);
->  }
->
->  static int pl061_direction_input(struct gpio_chip *gc, unsigned offset)
-> @@ -264,6 +270,9 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
->
->         spin_lock_init(&chip->lock);
->
-> +       /* Hook the request()/free() for pinctrl operation */
-> +       if (of_property_read_bool(dev->of_node, "gpio-ranges"))
-> +               chip->uses_pinctrl = true;
+There is a missing MMC/SD pin for MCDATDIR2 which is routed as
+alt B, add it to the MMC/SD pin group and functions.
 
-You probably want to document this property in
-Documentation/devicetree/bindings/gpio/pl061-gpio.txt.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
+index ed39dcafd4f8..2cd71470f270 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
+@@ -291,6 +291,7 @@ static const unsigned u0_a_1_pins[] = { STN8815_PIN_B4, STN8815_PIN_D5,
+ static const unsigned mmcsd_a_1_pins[] = { STN8815_PIN_B10, STN8815_PIN_A10,
+ 	STN8815_PIN_C11, STN8815_PIN_B11, STN8815_PIN_A11, STN8815_PIN_C12,
+ 	STN8815_PIN_B12, STN8815_PIN_A12, STN8815_PIN_C13, STN8815_PIN_C15 };
++static const unsigned mmcsd_b_1_pins[] = { STN8815_PIN_D15 };
+ static const unsigned u1_a_1_pins[] = { STN8815_PIN_M2, STN8815_PIN_L1,
+ 					STN8815_PIN_F3, STN8815_PIN_F2 };
+ static const unsigned i2c1_a_1_pins[] = { STN8815_PIN_L4, STN8815_PIN_L3 };
+@@ -305,6 +306,7 @@ static const unsigned i2cusb_b_1_pins[] = { STN8815_PIN_C21, STN8815_PIN_C20 };
+ static const struct nmk_pingroup nmk_stn8815_groups[] = {
+ 	STN8815_PIN_GROUP(u0_a_1, NMK_GPIO_ALT_A),
+ 	STN8815_PIN_GROUP(mmcsd_a_1, NMK_GPIO_ALT_A),
++	STN8815_PIN_GROUP(mmcsd_b_1, NMK_GPIO_ALT_B),
+ 	STN8815_PIN_GROUP(u1_a_1, NMK_GPIO_ALT_A),
+ 	STN8815_PIN_GROUP(i2c1_a_1, NMK_GPIO_ALT_A),
+ 	STN8815_PIN_GROUP(i2c0_a_1, NMK_GPIO_ALT_A),
+@@ -317,7 +319,7 @@ static const struct nmk_pingroup nmk_stn8815_groups[] = {
+ static const char * const a##_groups[] = { b };
+ 
+ STN8815_FUNC_GROUPS(u0, "u0_a_1");
+-STN8815_FUNC_GROUPS(mmcsd, "mmcsd_a_1");
++STN8815_FUNC_GROUPS(mmcsd, "mmcsd_a_1", "mmcsd_b_1");
+ STN8815_FUNC_GROUPS(u1, "u1_a_1", "u1_b_1");
+ STN8815_FUNC_GROUPS(i2c1, "i2c1_a_1");
+ STN8815_FUNC_GROUPS(i2c0, "i2c0_a_1");
+-- 
+1.9.3
+
