@@ -1,56 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: nomadik: amend MMC/SD pins
-Date: Sat, 18 Oct 2014 14:57:53 +0200
-Message-ID: <1413637073-3443-1-git-send-email-linus.walleij@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpiolib: allow exporting gpios with custom names
+Date: Mon, 20 Oct 2014 10:29:09 +0900
+Message-ID: <CAAVeFuLDrbmXTshzrpHoh9W78vi96CrrpD7ULDrBry-Y3cs2iw@mail.gmail.com>
+References: <1413049516-27021-1-git-send-email-lexszero@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:36614 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751606AbaJRM6C (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Oct 2014 08:58:02 -0400
-Received: by mail-la0-f43.google.com with SMTP id mc6so1940445lab.2
-        for <linux-gpio@vger.kernel.org>; Sat, 18 Oct 2014 05:58:00 -0700 (PDT)
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:39271 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752093AbaJTB3a (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 19 Oct 2014 21:29:30 -0400
+Received: by mail-ie0-f173.google.com with SMTP id tp5so3815826ieb.18
+        for <linux-gpio@vger.kernel.org>; Sun, 19 Oct 2014 18:29:29 -0700 (PDT)
+In-Reply-To: <1413049516-27021-1-git-send-email-lexszero@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Alexey Ignatov <lexszero@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-There is a missing MMC/SD pin for MCDATDIR2 which is routed as
-alt B, add it to the MMC/SD pin group and functions.
+Hi,
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Sun, Oct 12, 2014 at 2:45 AM, Alexey Ignatov <lexszero@gmail.com> wrote:
+> This allows exporting gpio pins to sysfs with custom names. Before
+> this patch only gpiochip-supplied names was used, or generic gpio%d.
+> Added gpiod_export_name() and gpio_export_name() functions.
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-index ed39dcafd4f8..2cd71470f270 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-@@ -291,6 +291,7 @@ static const unsigned u0_a_1_pins[] = { STN8815_PIN_B4, STN8815_PIN_D5,
- static const unsigned mmcsd_a_1_pins[] = { STN8815_PIN_B10, STN8815_PIN_A10,
- 	STN8815_PIN_C11, STN8815_PIN_B11, STN8815_PIN_A11, STN8815_PIN_C12,
- 	STN8815_PIN_B12, STN8815_PIN_A12, STN8815_PIN_C13, STN8815_PIN_C15 };
-+static const unsigned mmcsd_b_1_pins[] = { STN8815_PIN_D15 };
- static const unsigned u1_a_1_pins[] = { STN8815_PIN_M2, STN8815_PIN_L1,
- 					STN8815_PIN_F3, STN8815_PIN_F2 };
- static const unsigned i2c1_a_1_pins[] = { STN8815_PIN_L4, STN8815_PIN_L3 };
-@@ -305,6 +306,7 @@ static const unsigned i2cusb_b_1_pins[] = { STN8815_PIN_C21, STN8815_PIN_C20 };
- static const struct nmk_pingroup nmk_stn8815_groups[] = {
- 	STN8815_PIN_GROUP(u0_a_1, NMK_GPIO_ALT_A),
- 	STN8815_PIN_GROUP(mmcsd_a_1, NMK_GPIO_ALT_A),
-+	STN8815_PIN_GROUP(mmcsd_b_1, NMK_GPIO_ALT_B),
- 	STN8815_PIN_GROUP(u1_a_1, NMK_GPIO_ALT_A),
- 	STN8815_PIN_GROUP(i2c1_a_1, NMK_GPIO_ALT_A),
- 	STN8815_PIN_GROUP(i2c0_a_1, NMK_GPIO_ALT_A),
-@@ -317,7 +319,7 @@ static const struct nmk_pingroup nmk_stn8815_groups[] = {
- static const char * const a##_groups[] = { b };
- 
- STN8815_FUNC_GROUPS(u0, "u0_a_1");
--STN8815_FUNC_GROUPS(mmcsd, "mmcsd_a_1");
-+STN8815_FUNC_GROUPS(mmcsd, "mmcsd_a_1", "mmcsd_b_1");
- STN8815_FUNC_GROUPS(u1, "u1_a_1", "u1_b_1");
- STN8815_FUNC_GROUPS(i2c1, "i2c1_a_1");
- STN8815_FUNC_GROUPS(i2c0, "i2c0_a_1");
--- 
-1.9.3
+This looks very similar to another proposal that has been posted a few
+months ago:
 
+https://lkml.org/lkml/2014/7/23/537
+
+There has been a lenghty discussion about the merits/drawbacks of
+doing this instead of using gpiod_export_link(). To summarize my
+opinion on the matter, I *really* think using gpiod_export_link() is a
+better solution since it puts the GPIO under its owner's /sysfs node,
+instead of having totally unrelated GPIOs arbitrarily named under
+/sys/class/gpio. IIRC Linus was not too enthusiastic neither.
+
+Could you explain why you think this change is needed, how you plan to
+make use of it, and why you cannot use gpiod_export_link() to do the
+same?
+
+> gpio_request_one() now uses new behaviour with 'label' as gpio name.
+
+Doesn't this mean that drivers that used gpio_request_one() to export
+a GPIO might see the exported name change all of a sudden? This might
+make a few people unhappy (also, I could not see this change in your
+patch, but only had a quick look).
