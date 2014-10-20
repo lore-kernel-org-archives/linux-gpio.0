@@ -1,28 +1,54 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v8 3/4] gpiolib: add irq_not_threaded flag to gpio_chip
-Date: Mon, 20 Oct 2014 14:08:38 +0900
-Message-ID: <CAAVeFuJ4B37YgvTBctXqmtWJtg3b19PDt1EEZF5Rc6KVXZzUtw@mail.gmail.com>
-References: <1413384491-23703-1-git-send-email-octavian.purdila@intel.com> <1413384491-23703-4-git-send-email-octavian.purdila@intel.com>
+From: John Crispin <blogic@openwrt.org>
+Subject: Re: [PATCH 2/5] GPIO: MIPS: ralink: add gpio driver for ralink rt2880
+ SoC
+Date: Mon, 20 Oct 2014 07:27:13 +0200
+Message-ID: <54449D31.9020108@openwrt.org>
+References: <1412972930-16777-1-git-send-email-blogic@openwrt.org> <1412972930-16777-2-git-send-email-blogic@openwrt.org> <CAAVeFu+BAwDOV1siPkRSOes0iJETLWcKEBBFrTn6o=d+CYQPPw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:62665 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750945AbaJTFI7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Oct 2014 01:08:59 -0400
-In-Reply-To: <1413384491-23703-4-git-send-email-octavian.purdila@intel.com>
+Received: from arrakis.dune.hu ([78.24.191.176]:49299 "EHLO arrakis.dune.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751220AbaJTF1U (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 20 Oct 2014 01:27:20 -0400
+In-Reply-To: <CAAVeFu+BAwDOV1siPkRSOes0iJETLWcKEBBFrTn6o=d+CYQPPw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Johan Hovold <johan@kernel.org>, daniel.baluta@intel.com, laurentiu.palcu@intel.com, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>, John Crispin <blogic@openwrt.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Oct 15, 2014 at 11:48 PM, Octavian Purdila
-<octavian.purdila@intel.com> wrote:
-> Some GPIO chips (e.g. the DLN2 USB adapter) have blocking get/set
-> operation but do not need a threaded irq handler.
+Hi,
 
-Sorry if you already explained this (I have been a little bit late
-with the GPIO reviews recently), but does this optimization bring a
-significant benefit that justifies adding another field in struct
-gpio_chip? If so it would be nice to have it in the commit message. If
-not, do we need this at all?
+
+On 20/10/2014 06:41, Alexandre Courbot wrote:
+
+On Sat, Oct 11, 2014 at 5:28 AM, John Crispin <blogic@openwrt.org> wrote:
+> Add gpio driver for Ralink SoC. This driver makes the gpio core on
+
+Makes the gpio core what?
+
+> RT2880, RT305x, rt3352, rt3662, rt3883, rt5350 and mt7620 work.
+
+work as it says in the last work of the sentence
+
+[snip..]
+
+> This (and the device tree bindings) seems the indicate that the 
+> registers offset can vary depending on the chip and bank. The chip
+> can be specified using the compatible property, as for the bank you
+> can also require a property giving the bank number. With these two
+> bits of information, this driver should be able to pick the right
+> register layout out of an in-driver table. This would be much
+> cleaner that letting the DT specify whatever layout it wants.
+
+i tend to disagree. if we put the register offsets into the driver we
+will have lots of static arrays (5 or 6) and with each new soc we need
+to potentially need to patch the driver causing us in openwrt to carry
+lots of patches and have to worry about upstreaming them. From my
+understanding, the dts has this exact purpose, describing the hardware
+and in turn reducing the boiler plate and static code in the drivers.
+If have sent other drivers that do the same and was told there that
+this is totally legit.
+
+	John
