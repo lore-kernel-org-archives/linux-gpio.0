@@ -1,349 +1,512 @@
-From: Benoit Parrot <bparrot@ti.com>
-Subject: [RFC Patch] gpio: add GPIO hogging mechanism
-Date: Tue, 21 Oct 2014 15:09:58 -0500
-Message-ID: <1413922198-29373-1-git-send-email-bparrot@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Jiri Prchal <jiri.prchal@aksignal.cz>
+Subject: [PATCH] gpio: add gpio_of_helper
+Date: Wed, 22 Oct 2014 10:26:41 +0200
+Message-ID: <4b0bcf4679163c0da53e412a47eecd4bb03849b8.1413966148.git.jiri.prchal@aksignal.cz>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:41077 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932836AbaJUUKS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Oct 2014 16:10:18 -0400
+Received: from router.aksignal.cz ([188.175.113.102]:55466 "EHLO
+	router.aksignal.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754565AbaJVIcy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Oct 2014 04:32:54 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Benoit Parrot <bparrot@ti.com>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, panto@antoniou-consulting.com, Jiri Prchal <jiri.prchal@aksignal.cz>
 
-Based on Boris Brezillion work this is a reworked patch
-of his initial GPIO hogging mechanism.
-This patch provides a way to initally configure specific GPIO
-when the gpio controller is probe.
+This patch adds new driver "gpio-of-helper", witch has possibility to export
+gpios defined in dt. It exports them in defined name under
+/sysfs/class/gpio/name.
+It's rebased from Pantelis Antoniou patch to new kernel.
+Usage example:
+	gpio {
+		compatible = "gpio-of-helper";
+		status = "okay";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_gpio>;
 
-The actual DT scanning to collect the GPIO specific data is performed
-as part of the gpiochip_add().
+		gsm_on {
+			gpio-name = "gsm_on";
+			gpio = <&pioB 13 GPIO_ACTIVE_HIGH>;
+			output;
+			init-low;
+		};
+	};
 
-The purpose of this is to allows specific GPIOs to be configured
-without any driver specific code.
-This particularly usueful because board design are getting
-increassingly complex and given SoC pins can now have upward
-of 10 mux values a lot of connections are now dependent on
-external IO muxes to switch various modes and combination.
+This patch needs Alexey Ignatov [PATCH] gpiolib: allow exporting gpios with
+custom names.
 
-Specific drivers should not necessarily need to be aware of
-what accounts to a specific board implementation. This board level
-"description" should be best kept as part of the dts file.
-
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Signed-off-by: Jiri Prchal <jiri.prchal@aksignal.cz>
 ---
- Documentation/devicetree/bindings/gpio/gpio.txt | 33 +++++++++
- drivers/gpio/gpiolib-of.c                       | 99 +++++++++++++++++++++++++
- drivers/gpio/gpiolib.c                          | 81 ++++++++++++++++++++
- include/linux/of_gpio.h                         | 11 +++
- 4 files changed, 224 insertions(+)
+ drivers/gpio/Kconfig          |  14 ++
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-of-helper.c | 423 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 438 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index 3fb8f53..a9700d8 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -103,6 +103,26 @@ Every GPIO controller node must contain both an empty "gpio-controller"
- property, and a #gpio-cells integer property, which indicates the number of
- cells in a gpio-specifier.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 9de1515..3ec127f 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -85,6 +85,20 @@ config GPIO_SYSFS
+ 	  Kernel drivers may also request that a particular GPIO be
+ 	  exported to userspace; this can be useful when debugging.
  
-+It might contain GPIO hog definitions. GPIO hogging is a mechanism providing
-+automatic GPIO request and configuration as part of the gpio-controller's
-+driver probe function.
++config GPIO_OF_HELPER
++	bool "GPIO OF helper device"
++	depends on OF_GPIO
++	help
++	  Say Y here to add an GPIO OF helper driver
 +
-+Each GPIO hog definition is represented as a child node of the GPIO controller.
-+Required properties:
-+- gpios: store the gpio information (id, flags, ...). Shall contain the
-+  number of cells specified in its parent node (GPIO controller node).
-+- input: a property specifying to set the GPIO direction as input.
-+- output-high: a property specifying to set the GPIO direction to output with
-+  the value high.
-+- output-low: a property specifying to set the GPIO direction to output with
-+  the value low.
++	  Allows you specify a GPIO helper based on OF
++	  which allows simple export of GPIO functionality
++	  in user-space.
 +
-+Optional properties:
-+- line-name: the GPIO label name. If not present the node name is used.
++	  Features include, value set/get, direction control,
++	  interrupt/value change poll support, event counting
++	  and others.
 +
-+A GPIO controller can request GPIO hogs using the "gpio-hogs" property, which
-+encodes a list of requested GPIO hogs.
-+
- Example of two SOC GPIO banks defined as gpio-controller nodes:
+ config GPIO_GENERIC
+ 	tristate
  
- 	qe_pio_a: gpio-controller@1400 {
-@@ -110,6 +130,19 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
- 		reg = <0x1400 0x18>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-hogs = <&line_b>;
-+
-+		/* line_a hog is defined but not enabled in this example*/
-+		line_a: line_a {
-+			gpios = <5 0>;
-+			input;
-+		};
-+
-+		line_b: line_b {
-+			gpios = <6 0>;
-+			output-low;
-+			line-name = "foo-bar-gpio";
-+		};
- 	};
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 5d024e3..6708880 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_GPIOLIB)		+= gpiolib-legacy.o
+ obj-$(CONFIG_OF_GPIO)		+= gpiolib-of.o
+ obj-$(CONFIG_GPIO_SYSFS)	+= gpiolib-sysfs.o
+ obj-$(CONFIG_GPIO_ACPI)		+= gpiolib-acpi.o
++obj-$(CONFIG_GPIO_OF_HELPER)	+= gpio-of-helper.o
  
- 	qe_pio_e: gpio-controller@1460 {
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 604dbe6..7308dfc 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -111,6 +111,105 @@ int of_get_named_gpio_flags(struct device_node *np, const char *list_name,
- EXPORT_SYMBOL(of_get_named_gpio_flags);
- 
- /**
-+ * of_get_gpio_hog() - Get a GPIO hog descriptor, names and flags for GPIO API
-+ * @np:		device node to get GPIO from
-+ * @index:	index of the GPIO
-+ * @name:	GPIO line name
-+ * @flags:	a flags pointer to fill in
+ # Device drivers. Generally keep list sorted alphabetically
+ obj-$(CONFIG_GPIO_GENERIC)	+= gpio-generic.o
+diff --git a/drivers/gpio/gpio-of-helper.c b/drivers/gpio/gpio-of-helper.c
+new file mode 100644
+index 0000000..4e6f2e2
+--- /dev/null
++++ b/drivers/gpio/gpio-of-helper.c
+@@ -0,0 +1,423 @@
++/*
++ * GPIO OF based helper
 + *
-+ * Returns GPIO descriptor to use with Linux GPIO API, or one of the errno
-+ * value on the error condition.
++ * A simple DT based driver to provide access to GPIO functionality
++ * to user-space via sysfs.
++ *
++ * Copyright (C) 2013 Pantelis Antoniou <panto@antoniou-consulting.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 + */
-+struct gpio_desc *of_get_gpio_hog(struct device_node *np, int index,
-+				  const char **name, unsigned long *flags)
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/string.h>
++#include <linux/timer.h>
++#include <linux/errno.h>
++#include <linux/init.h>
++#include <linux/delay.h>
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_gpio.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/pinctrl/consumer.h>
++#include <linux/atomic.h>
++#include <linux/clk.h>
++#include <linux/interrupt.h>
++#include <linux/math64.h>
++#include <linux/atomic.h>
++#include <linux/idr.h>
++
++/* fwd decl. */
++struct gpio_of_helper_info;
++
++enum gpio_type {
++	GPIO_TYPE_INPUT = 0,
++	GPIO_TYPE_OUTPUT = 1,
++};
++
++struct gpio_of_entry {
++	int id;
++	struct gpio_of_helper_info *info;
++	struct device_node *node;
++	enum gpio_type type;
++	int gpio;
++	enum of_gpio_flags gpio_flags;
++	int irq;
++	const char *name;
++	atomic64_t counter;
++	unsigned int count_flags;
++#define COUNT_RISING_EDGE	(1 << 0)
++#define COUNT_FALLING_EDGE	(1 << 1)
++};
++
++struct gpio_of_helper_info {
++	struct platform_device *pdev;
++	struct idr idr;
++};
++
++static DEFINE_IDR(gpio_of_helper_idr);
++static DEFINE_SPINLOCK(gpio_of_helper_lock);
++
++static const struct of_device_id gpio_of_helper_of_match[] = {
++	{ .compatible = "gpio-of-helper", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, gpio_of_helper_of_match);
++
++static ssize_t gpio_of_helper_show_status(struct device *dev,
++				struct device_attribute *attr, char *buf)
 +{
-+	struct device_node *cfg_np, *chip_np;
-+	enum of_gpio_flags xlate_flags;
-+	unsigned long req_flags = 0;
-+	struct gpio_desc *desc;
-+	struct gg_data gg_data = {
-+		.flags = &xlate_flags,
-+		.out_gpio = NULL,
-+	};
-+	u32 tmp;
-+	int i;
-+	int ret;
++	struct platform_device *pdev = to_platform_device(dev);
++	struct gpio_of_helper_info *info = platform_get_drvdata(pdev);
++	struct gpio_of_entry *entry;
++	char *p, *e;
++	int id, n;
 +
-+	cfg_np = of_parse_phandle(np, "gpio-hogs", index);
-+	if (!cfg_np)
-+		return ERR_PTR(-EINVAL);
-+
-+	chip_np = cfg_np->parent;
-+	if (!chip_np) {
-+		desc = ERR_PTR(-EINVAL);
-+		goto out;
++	p = buf;
++	e = p + PAGE_SIZE;
++	n = 0;
++	idr_for_each_entry(&info->idr, entry, id) {
++		switch (entry->type) {
++		case GPIO_TYPE_INPUT:
++			n = snprintf(p, e - p, "%2d %-24s %3d %-3s %llu\n",
++				entry->id, entry->name, entry->gpio, "IN",
++				(unsigned long long)
++					atomic64_read(&entry->counter));
++			break;
++		case GPIO_TYPE_OUTPUT:
++			n = snprintf(p, e - p, "%2d %-24s %3d %-3s\n",
++				entry->id, entry->name, entry->gpio, "OUT");
++			break;
++		}
++		p += n;
 +	}
 +
-+	ret = of_property_read_u32(chip_np, "#gpio-cells", &tmp);
-+	if (ret) {
-+		desc = ERR_PTR(ret);
-+		goto out;
++	return p - buf;
++}
++
++static DEVICE_ATTR(status, S_IRUGO,
++		gpio_of_helper_show_status, NULL);
++
++static irqreturn_t gpio_of_helper_handler(int irq, void *ptr)
++{
++	struct gpio_of_entry *entry = ptr;
++
++	/* caution - low speed interfaces only! */
++	atomic64_inc(&entry->counter);
++
++	return IRQ_HANDLED;
++}
++
++static struct gpio_of_entry *
++gpio_of_entry_create(struct gpio_of_helper_info *info, struct device_node *node)
++{
++	struct platform_device *pdev = info->pdev;
++	struct device *dev = &pdev->dev;
++	struct gpio_of_entry *entry;
++	int err, gpio, irq;
++	unsigned int req_flags, count_flags, irq_flags;
++	enum gpio_type type;
++	enum of_gpio_flags gpio_flags;
++	const char *name;
++
++	/* get the type of the node first */
++	if (of_property_read_bool(node, "input"))
++		type = GPIO_TYPE_INPUT;
++	else if (of_property_read_bool(node, "output"))
++		type = GPIO_TYPE_OUTPUT;
++	else {
++		dev_err(dev, "Not valid gpio node type\n");
++		err = -EINVAL;
++		goto err_bad_node;
 +	}
 +
-+	if (tmp > MAX_PHANDLE_ARGS) {
-+		desc = ERR_PTR(-EINVAL);
-+		goto out;
++	/* get the name */
++	err = of_property_read_string(node, "gpio-name", &name);
++	if (err != 0) {
++		dev_err(dev, "Failed to get name property\n");
++		goto err_bad_node;
 +	}
 +
-+	gg_data.gpiospec.args_count = tmp;
-+	gg_data.gpiospec.np = chip_np;
-+	for (i = 0; i < tmp; i++) {
-+		ret = of_property_read_u32(cfg_np, "gpios",
-+					   &gg_data.gpiospec.args[i]);
-+		if (ret) {
-+			desc = ERR_PTR(ret);
-+			goto out;
++	err = of_get_named_gpio_flags(node, "gpio", 0, &gpio_flags);
++	if (IS_ERR_VALUE(err)) {
++		dev_err(dev, "Failed to get gpio property of '%s'\n", name);
++		goto err_bad_node;
++	}
++	gpio = err;
++
++	if (!gpio_is_valid(gpio)) {
++		dev_err(dev, "Skipping unavailable gpio %d (%s)\n",
++		         gpio, name);
++		goto err_bad_node;
++	}
++
++	req_flags = 0;
++	count_flags = 0;
++
++	/* set the request flags */
++	switch (type) {
++		case GPIO_TYPE_INPUT:
++			req_flags = GPIOF_DIR_IN;
++			if (of_property_read_bool(node, "count-falling-edge"))
++				count_flags |= COUNT_FALLING_EDGE;
++			if (of_property_read_bool(node, "count-rising-edge"))
++				count_flags |= COUNT_RISING_EDGE;
++			break;
++		case GPIO_TYPE_OUTPUT:
++			req_flags = GPIOF_DIR_OUT;
++			if (of_property_read_bool(node, "init-high"))
++				req_flags |= GPIOF_OUT_INIT_HIGH;
++			else if (of_property_read_bool(node, "init-low"))
++				req_flags |= GPIOF_OUT_INIT_LOW;
++			break;
++	}
++	if (gpio_flags)
++		req_flags |= GPIOF_ACTIVE_LOW;
++
++	/* request the gpio */
++	err = devm_gpio_request_one(dev, gpio, req_flags, name);
++	if (err != 0) {
++		dev_err(dev, "Failed to request gpio '%s'\n", name);
++		goto err_bad_node;
++	}
++
++	gpio_export_name(gpio, 0, name);
++
++	irq = -1;
++	irq_flags = 0;
++
++	/* counter mode requested - need an interrupt */
++	if (count_flags != 0) {
++		irq = gpio_to_irq(gpio);
++		if (IS_ERR_VALUE(irq)) {
++			dev_err(dev, "Failed to request gpio '%s'\n", name);
++			goto err_bad_node;
++		}
++
++		if (count_flags & COUNT_RISING_EDGE)
++			irq_flags |= IRQF_TRIGGER_RISING;
++		if (count_flags & COUNT_FALLING_EDGE)
++			irq_flags |= IRQF_TRIGGER_FALLING;
++	}
++
++	entry = devm_kzalloc(dev, sizeof(*entry), GFP_KERNEL);
++	if (entry == NULL) {
++		dev_err(dev, "Failed to allocate gpio entry of '%s'\n", name);
++		err = -ENOMEM;
++		goto err_no_mem;
++	}
++
++	entry->id = -1;
++	entry->info = info;
++	entry->node = of_node_get(node); /* get node reference */
++	entry->type = type;
++	entry->gpio = gpio;
++	entry->gpio_flags = gpio_flags;
++	entry->irq = irq;
++	entry->name = name;
++
++	idr_preload(GFP_KERNEL);
++	spin_lock(&gpio_of_helper_lock);
++	err = idr_alloc(&gpio_of_helper_idr, entry, 0, 0, GFP_NOWAIT);
++	if (err >= 0)
++		entry->id = err;
++	spin_unlock(&gpio_of_helper_lock);
++	idr_preload_end();
++	if (err < 0) {
++		dev_err(dev, "Failed to idr_get_new  of '%s'\n", name);
++		goto err_fail_idr;
++	}
++
++	/* interrupt enable is last thing done */
++	if (irq >= 0) {
++		atomic64_set(&entry->counter, 0);
++		entry->count_flags = count_flags;
++		err = devm_request_irq(dev, irq, gpio_of_helper_handler,
++				irq_flags, name, entry);
++		if (err != 0) {
++			dev_err(dev, "Failed to request irq of '%s'\n", name);
++			goto err_no_irq;
 +		}
 +	}
 +
-+	gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
-+	if (!gg_data.out_gpio) {
-+		if (cfg_np->parent == np)
-+			desc = ERR_PTR(-ENXIO);
-+		else
-+			desc = ERR_PTR(-EPROBE_DEFER);
++	dev_info(dev, "Allocated GPIO id=%d\n", entry->id);
 +
-+		goto out;
-+	}
++	return entry;
 +
-+	if (xlate_flags & OF_GPIO_ACTIVE_LOW)
-+		req_flags |= GPIOF_ACTIVE_LOW;
-+
-+	if (of_property_read_bool(cfg_np, "input")) {
-+		req_flags |= GPIOF_DIR_IN;
-+	} else if (of_property_read_bool(cfg_np, "output-high")) {
-+		req_flags |= GPIOF_INIT_HIGH;
-+	} else if (!of_property_read_bool(cfg_np, "output-low")) {
-+		desc = ERR_PTR(-EINVAL);
-+		goto out;
-+	}
-+
-+	if (of_property_read_bool(cfg_np, "open-drain-line"))
-+		req_flags |= GPIOF_OPEN_DRAIN;
-+
-+	if (of_property_read_bool(cfg_np, "open-source-line"))
-+		req_flags |= GPIOF_OPEN_DRAIN;
-+
-+	if (name && of_property_read_string(cfg_np, "line-name", name))
-+		*name = cfg_np->name;
-+
-+	if (flags)
-+		*flags = req_flags;
-+
-+	desc = gg_data.out_gpio;
-+
-+out:
-+	of_node_put(cfg_np);
-+
-+	return desc;
-+}
-+
-+/**
-  * of_gpio_simple_xlate - translate gpio_spec to the GPIO number and flags
-  * @gc:		pointer to the gpio_chip structure
-  * @np:		device node of the GPIO chip
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e8e98ca..b6f5bdb 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -55,6 +55,9 @@ static DEFINE_MUTEX(gpio_lookup_lock);
- static LIST_HEAD(gpio_lookup_list);
- LIST_HEAD(gpio_chips);
- 
-+struct gpio_desc *__must_check gpiod_get_hog_index(struct device *dev,
-+						   unsigned int idx);
-+
- static inline void desc_set_label(struct gpio_desc *d, const char *label)
- {
- 	d->label = label;
-@@ -226,6 +229,8 @@ int gpiochip_add(struct gpio_chip *chip)
- 	int		status = 0;
- 	unsigned	id;
- 	int		base = chip->base;
-+	struct gpio_desc	*desc;
-+	int		i;
- 
- 	if ((!gpio_is_valid(base) || !gpio_is_valid(base + chip->ngpio - 1))
- 			&& base >= 0) {
-@@ -275,6 +280,16 @@ int gpiochip_add(struct gpio_chip *chip)
- 	of_gpiochip_add(chip);
- 	acpi_gpiochip_add(chip);
- 
-+	/*
-+	 * Instantiate GPIO hogs
-+	 * There shouldn't be mores hogs then gpio available on this chip
-+	 */
-+	for (i = 0; i < chip->ngpio; i++) {
-+		desc = gpiod_get_hog_index(chip->dev, i);
-+		if (IS_ERR(desc))
-+			break;
-+	}
-+
- 	if (status)
- 		goto fail;
- 
-@@ -1742,6 +1757,72 @@ struct gpio_desc *__must_check __gpiod_get_index_optional(struct device *dev,
- EXPORT_SYMBOL_GPL(__gpiod_get_index_optional);
- 
- /**
-+ * gpiod_get_hog_index - obtain a GPIO from a multi-index GPIO hog
-+ * @dev:	GPIO consumer
-+ * @idx:	index of the GPIO to obtain
-+ *
-+ * This should only be used by the gpiochip_add to request/set GPIO initial
-+ * configuration.
-+ *
-+ * Return a valid GPIO descriptor, or an IS_ERR() condition in case of error.
-+ */
-+struct gpio_desc *__must_check gpiod_get_hog_index(struct device *dev,
-+						   unsigned int idx)
-+{
-+	struct gpio_desc *desc = NULL;
-+	int err;
-+	unsigned long flags;
-+	const char *name;
-+
-+	/* Using device tree? */
-+	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
-+		desc = of_get_gpio_hog(dev->of_node, idx, &name, &flags);
-+
-+	if (!desc)
-+		return ERR_PTR(-ENOTSUPP);
-+	else if (IS_ERR(desc))
-+		return desc;
-+
-+	dev_dbg(dev, "gpio-hog: GPIO:%d (%s) as %s%s\n",
-+		desc_to_gpio(desc), name, (flags&GPIOF_DIR_IN)?"input":"output",
-+		(flags&GPIOF_DIR_IN)?"":(flags&GPIOF_INIT_HIGH)?"/high":"/low");
-+
-+	err = gpiod_request(desc, name);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	if (flags & GPIOF_OPEN_DRAIN)
-+		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
-+
-+	if (flags & GPIOF_OPEN_SOURCE)
-+		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
-+
-+	if (flags & GPIOF_ACTIVE_LOW)
-+		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-+
-+	if (flags & GPIOF_DIR_IN)
-+		err = gpiod_direction_input(desc);
-+	else
-+		err = gpiod_direction_output_raw(desc,
-+				(flags & GPIOF_INIT_HIGH) ? 1 : 0);
-+
-+	if (err)
-+		goto free_gpio;
-+
-+	if (flags & GPIOF_EXPORT) {
-+		err = gpiod_export(desc, flags & GPIOF_EXPORT_CHANGEABLE);
-+		if (err)
-+			goto free_gpio;
-+	}
-+
-+	return desc;
-+
-+free_gpio:
-+	gpiod_free(desc);
++err_fail_idr:
++	/* nothing to do */
++err_no_irq:
++	/* release node ref */
++	of_node_put(node);
++	/* nothing else needs to be done, devres handles it */
++err_no_mem:
++err_bad_node:
 +	return ERR_PTR(err);
 +}
 +
-+/**
-  * gpiod_put - dispose of a GPIO descriptor
-  * @desc:	GPIO descriptor to dispose of
-  *
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index 38fc050..52d154c 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -59,6 +59,9 @@ extern int of_gpio_simple_xlate(struct gpio_chip *gc,
- 				const struct of_phandle_args *gpiospec,
- 				u32 *flags);
- 
-+extern struct gpio_desc *of_get_gpio_hog(struct device_node *np, int index,
-+					 const char **name,
-+					 unsigned long *flags);
- #else /* CONFIG_OF_GPIO */
- 
- /* Drivers may not strictly depend on the GPIO support, so let them link. */
-@@ -78,6 +81,14 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
- static inline void of_gpiochip_add(struct gpio_chip *gc) { }
- static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
- 
-+static inline struct gpio_desc *of_get_gpio_hog(struct device_node *np,
-+						int index,
-+						const char **name,
-+						unsigned long *flags)
++static int gpio_of_entry_destroy(struct gpio_of_entry *entry)
 +{
-+	return ERR_PTR(-ENOSYS);
++	struct gpio_of_helper_info *info = entry->info;
++	struct platform_device *pdev = info->pdev;
++	struct device *dev = &pdev->dev;
++
++	dev_info(dev, "Destroying GPIO id=%d\n", entry->id);
++
++	/* remove from the IDR */
++	idr_remove(&info->idr, entry->id);
++
++	/* remove node ref */
++	of_node_put(entry->node);
++
++	/* free gpio */
++	devm_gpio_free(dev, entry->gpio);
++
++	/* gree irq */
++	if (entry->irq >= 0)
++		devm_free_irq(dev, entry->irq, entry);
++
++	/* and free */
++	devm_kfree(dev, entry);
++
++	return 0;
 +}
 +
- #endif /* CONFIG_OF_GPIO */
- 
- /**
++static int gpio_of_helper_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct gpio_of_helper_info *info;
++	struct gpio_of_entry *entry;
++	struct device_node *pnode = pdev->dev.of_node;
++	struct device_node *cnode;
++	struct pinctrl *pinctrl;
++	int err;
++
++	/* we only support OF */
++	if (pnode == NULL) {
++		dev_err(&pdev->dev, "No platform of_node!\n");
++		return -ENODEV;
++	}
++
++	pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
++	if (IS_ERR(pinctrl)) {
++		/* special handling for probe defer */
++		if (PTR_ERR(pinctrl) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++
++		dev_warn(&pdev->dev,
++			"pins are not configured from the driver\n");
++	}
++
++	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
++	if (info == NULL) {
++		dev_err(&pdev->dev, "Failed to allocate info\n");
++		err = -ENOMEM;
++		goto err_no_mem;
++	}
++	platform_set_drvdata(pdev, info);
++	info->pdev = pdev;
++
++	idr_init(&info->idr);
++
++	err = device_create_file(dev, &dev_attr_status);
++	if (err != 0) {
++		dev_err(dev, "Failed to create status sysfs attribute\n");
++		goto err_no_sysfs;
++	}
++
++	for_each_child_of_node(pnode, cnode) {
++
++		entry = gpio_of_entry_create(info, cnode);
++		if (IS_ERR_OR_NULL(entry)) {
++			dev_err(dev, "Failed to create gpio entry\n");
++			err = PTR_ERR(entry);
++			goto err_fail_entry;
++		}
++	}
++
++	dev_info(&pdev->dev, "ready\n");
++
++	return 0;
++err_fail_entry:
++	device_remove_file(&pdev->dev, &dev_attr_status);
++err_no_sysfs:
++err_no_mem:
++	return err;
++}
++
++static int gpio_of_helper_remove(struct platform_device *pdev)
++{
++	struct gpio_of_helper_info *info = platform_get_drvdata(pdev);
++	struct gpio_of_entry *entry;
++	int id;
++
++	dev_info(&pdev->dev, "removing\n");
++
++	device_remove_file(&pdev->dev, &dev_attr_status);
++
++	id = 0;
++	idr_for_each_entry(&info->idr, entry, id) {
++		/* destroy each and every one */
++		gpio_of_entry_destroy(entry);
++	}
++
++	return 0;
++}
++
++#ifdef CONFIG_PM
++#ifdef CONFIG_PM_RUNTIME
++static int gpio_of_helper_runtime_suspend(struct device *dev)
++{
++	/* place holder */
++	return 0;
++}
++
++static int gpio_of_helper_runtime_resume(struct device *dev)
++{
++	/* place holder */
++	return 0;
++}
++#endif /* CONFIG_PM_RUNTIME */
++
++static struct dev_pm_ops gpio_of_helper_pm_ops = {
++	SET_RUNTIME_PM_OPS(gpio_of_helper_runtime_suspend,
++			   gpio_of_helper_runtime_resume, NULL)
++};
++#define GPIO_OF_HELPER_PM_OPS (&gpio_of_helper_pm_ops)
++#else
++#define GPIO_OF_HELPER_PM_OPS NULL
++#endif /* CONFIG_PM */
++
++struct platform_driver gpio_of_helper_driver = {
++	.probe		= gpio_of_helper_probe,
++	.remove		= gpio_of_helper_remove,
++	.driver = {
++		.name		= "gpio-of-helper",
++		.owner		= THIS_MODULE,
++		.pm		= GPIO_OF_HELPER_PM_OPS,
++		.of_match_table	= gpio_of_helper_of_match,
++	},
++};
++
++module_platform_driver(gpio_of_helper_driver);
++
++MODULE_AUTHOR("Pantelis Antoniou <panto@antoniou-consulting.com>");
++MODULE_DESCRIPTION("GPIO OF Helper driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:gpio-of-helper");
 -- 
-1.8.5.1
+1.9.1
 
