@@ -1,350 +1,495 @@
-From: Pantelis Antoniou <panto@antoniou-consulting.com>
-Subject: Re: [PATCH] gpio: add gpio_of_helper
-Date: Thu, 23 Oct 2014 14:23:46 +0300
-Message-ID: <F82900FA-5999-4B39-8E7E-6FAA99ABDB2D@antoniou-consulting.com>
-References: <4b0bcf4679163c0da53e412a47eecd4bb03849b8.1413966148.git.jiri.prchal@aksignal.cz> <CAAVeFuJrmea6yZn2J28ihs3+=FYkZ2QxDv6F7qiq+TPpv_odpw@mail.gmail.com> <E5E0C172-C51D-46DC-AE15-71308BDC9829@antoniou-consulting.com> <CAAVeFuLh99MJXNNuh=L37pNzgun-Qi=3J4uK4eUSC5Qy107Gzw@mail.gmail.com> <E44127F1-1B6B-4BB0-866A-7B142F295FAE@antoniou-consulting.com> <CAAVeFuKj66r4UNZ33z3BT5m=7iB3tMC-u_eUDcJmvaNFj-0y5Q@mail.gmail.com> <54489EC9.4020108@aksignal.cz> <CAAVeFuK4HxzwKye-RJCMeOSHNGNcvXV49hxnKL+u6ttidze7Tg@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 8.0 \(1990.1\))
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v8 1/4] mfd: add support for Diolan DLN-2 devices
+Date: Thu, 23 Oct 2014 17:16:43 +0200
+Message-ID: <20141023151643.GA7270@localhost>
+References: <1413384491-23703-1-git-send-email-octavian.purdila@intel.com>
+ <1413384491-23703-2-git-send-email-octavian.purdila@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from li42-95.members.linode.com ([209.123.162.95]:34013 "EHLO
-	li42-95.members.linode.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932446AbaJWLXx convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 23 Oct 2014 07:23:53 -0400
-In-Reply-To: <CAAVeFuK4HxzwKye-RJCMeOSHNGNcvXV49hxnKL+u6ttidze7Tg@mail.gmail.com>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:52863 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755348AbaJWPTr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Oct 2014 11:19:47 -0400
+Content-Disposition: inline
+In-Reply-To: <1413384491-23703-2-git-send-email-octavian.purdila@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Jiri Prchal <jiri.prchal@aksignal.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Grant Likely <grant.likely@secretlab.ca>
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org, arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 
-Hi Alexandre,
+On Wed, Oct 15, 2014 at 05:48:08PM +0300, Octavian Purdila wrote:
 
-> On Oct 23, 2014, at 11:53 AM, Alexandre Courbot <gnurou@gmail.com> wr=
-ote:
->=20
-> On Thu, Oct 23, 2014 at 3:23 PM, Ji=C5=99=C3=AD Prchal <jiri.prchal@a=
-ksignal.cz> wrote:
->>=20
->>=20
->> Dne 23.10.2014 v 07:08 Alexandre Courbot napsal(a):
->>=20
->>> On Wed, Oct 22, 2014 at 6:58 PM, Pantelis Antoniou
->>> <panto@antoniou-consulting.com> wrote:
->>>>=20
->>>> Hi Alexandre,
->>>>=20
->>>>> On Oct 22, 2014, at 12:41 PM, Alexandre Courbot <gnurou@gmail.com=
->
->>>>> wrote:
->>>>>=20
->>>>> On Wed, Oct 22, 2014 at 6:24 PM, Pantelis Antoniou
->>>>> <panto@antoniou-consulting.com> wrote:
->>>>>>=20
->>>>>> Hi Alexandre,
->>>>>>=20
->>>>>>> On Oct 22, 2014, at 12:18 PM, Alexandre Courbot <gnurou@gmail.c=
-om>
->>>>>>> wrote:
->>>>>>>=20
->>>>>>> On Wed, Oct 22, 2014 at 5:26 PM, Jiri Prchal <jiri.prchal@aksig=
-nal.cz>
->>>>>>> wrote:
->>>>>>>>=20
->>>>>>>> This patch adds new driver "gpio-of-helper", witch has possibi=
-lity to
->>>>>>>> export
->>>>>>>> gpios defined in dt. It exports them in defined name under
->>>>>>>> /sysfs/class/gpio/name.
->>>>>>>> It's rebased from Pantelis Antoniou patch to new kernel.
->>>>>>>> Usage example:
->>>>>>>>       gpio {
->>>>>>>>               compatible =3D "gpio-of-helper";
->>>>>>>>               status =3D "okay";
->>>>>>>>               pinctrl-names =3D "default";
->>>>>>>>               pinctrl-0 =3D <&pinctrl_gpio>;
->>>>>>>>=20
->>>>>>>>               gsm_on {
->>>>>>>>                       gpio-name =3D "gsm_on";
->>>>>>>>                       gpio =3D <&pioB 13 GPIO_ACTIVE_HIGH>;
->>>>>>>>                       output;
->>>>>>>>                       init-low;
->>>>>>>>               };
->>>>>>>>       };
->>>>>>>>=20
->>>>>>>> This patch needs Alexey Ignatov [PATCH] gpiolib: allow exporti=
-ng
->>>>>>>> gpios with
->>>>>>>> custom names.
->>>>>>>=20
->>>>>>>=20
->>>>>>> We will need to see whether the pre-requisite patch can get mer=
-ged
->>>>>>> first, but there are a couple of things that are wrong with you=
-r patch
->>>>>>> anyway:
->>>>>>>=20
->>>>>>> - it is missing a bindings documentation
->>>>>>> - it is using the legacy integer GPIOs instead of the descripto=
-r
->>>>>>> interface (see include/linux/gpio/consumer.h). Since this is DT=
--based,
->>>>>>> there is absolutely no reason to not use the descriptors interf=
-ace.
->>>>>>> - it seems quite long for what it needs to do
->>>>>>> - the MODULE_AUTHOR has not signed-off this patch (?)
->>>>>>>=20
->>>>>>> But what makes me nervous is that this encourages more usage of=
- the
->>>>>>> sysfs interface, an in a way that is potentially harmful.
->>>>>>>=20
->>>>>>> Also, I don't know if the DT people will be happy with this ide=
-a.
->>>>>>> Since this concerns DT, please also add the devicetree list and=
- get a
->>>>>>> Acked-by for the bindings you want to push by a DT maintainer.
->>>>>>=20
->>>>>>=20
->>>>>> Since I=E2=80=99m the original perpetrator, let me put a few wor=
-ds here for
->>>>>> posterity.
->>>>>>=20
->>>>>> This patch was meant as a quick and dirty method for doing the
->>>>>> automatic export
->>>>>> and pinmux configuration from DT on a 3.8 kernel. The kernel API=
-s have
->>>>>> moved on
->>>>>> since. It wasn=E2=80=99t meant to be submitted for mainline righ=
-t as it is.
->>>>>>=20
->>>>>> Unfortunately (or fortunately for many people) it does what a lo=
-t of
->>>>>> people need
->>>>>> i.e. configures a board with heavily pinmuxed GPIO right at boot=
- time.
->>>>>>=20
->>>>>> I=E2=80=99m open at having a small discussion about how to do wh=
-at the users of
->>>>>> this patch
->>>>>> do =E2=80=98right=E2=80=99.
->>>>>=20
->>>>>=20
->>>>> Sure, although the discussion might turn out to not be that "smal=
-l". :)
->>>>>=20
->>>>=20
->>>> Heh ;)
->>>>=20
->>>>> Pinmux configuration sounds like a job for pinmux more than GPIO,=
- and
->>>>> exporting potentially many GPIOs to user-space sounds like a work=
- for
->>>>> a proper driver.
->>>>>=20
->>>>=20
->>>> I=E2=80=99m afraid that=E2=80=99s not the case. A great many users=
- do not require
->>>> anything
->>>> more than setting a pinmux and the GPIO configuration (input/outpu=
-t).
->>>> They can then do low speed I/O using the sysfs interface, without =
-having
->>>> to
->>>> use any complex APIs (shell works just fine).
->>>>=20
->>>> Think of stuff like controlling a sprinkler valve, or something li=
-ke a
->>>> mechanical
->>>> door detection open state.
->>>=20
->>>=20
->>> That sounds like any kind of arbitrary device that can be temporari=
-ly
->>> connected to a set of GPIOs that will be bit-banged. Is my
->>> interpretation correct?
->>=20
->>=20
->> Not only temporarily. For example on/off switch of some hw on board =
-like gsm
->> modem.
->=20
-> ... which should be handled in-kernel.
->=20
+Here's some late feedback due to travels. You managed to get two updates
+in there so commenting on the diff from v6.
 
-Not really. This is part of some kind user-space ABI but which has to d=
-o
-with the mapping of an named GPIO in the board schematics to user-space=
-=2E
+> +struct dln2_event_cb_entry {
+> +	struct list_head list;
+> +	u16 id;
+> +	struct platform_device *pdev;
+> +	dln2_event_cb_t callback;
+> +};
+> +
+> +int dln2_register_event_cb(struct platform_device *pdev, u16 id,
+> +			   dln2_event_cb_t rx_cb)
+> +{
+> +	struct dln2_dev *dln2 = dev_get_drvdata(pdev->dev.parent);
+> +	struct dln2_event_cb_entry *i, *new_cb;
 
->> Or some optocoupler isoleted in/outs for general use from userspace.
->=20
-> ... which should thus be configured from userspace.
->=20
+Can you use a name which does not have the same suffix as the actual
+callback function (i.e. "_cb"). Just call it "entry" or something.
 
-No. It is used from userspace, but the the configuration of such is per=
-formed
-by board specific means in the kernel.
-=20
->>>=20
->>>=20
->>> In that case, I seriously doubt that this should be part of the DT.
->>> Right now the DT is part of the firmware, and an immutable descript=
-ion
->>> of the hardware layout of a board - definitely such devices do not =
-fit
->>=20
->> This is our case of gpio. It's like LEDs, they are hw layout of boar=
-d,
->> but they are in/out instead of LEDs are only output.
->>>=20
->>> into that definition. This might change once the Device Tree Overla=
-ys
->>> are merged, but we are not there yet. If the DT maintainers say thi=
-s
->>> is a valid use-case for overlays, then I will reconsider my positio=
-n,
->>> but in any case it really looks like this could/should be done from
->>> user-space.
->>=20
->> I don't think so as I explained - HW layout of boerd.
->=20
-> If it is a static hardware layout that makes the case even clearer -
-> these devices should have a proper kernel driver that configures thes=
-e
-> GPIOs, and exports a proper interface to userspace, not just raw
-> GPIOs.
+> +	unsigned long flags;
+> +	int ret = 0;
+> +
+> +	new_cb = kmalloc(sizeof(*new_cb), GFP_KERNEL);
 
-Raw GPIOs is what the user-space application wants to use. There is no
-higher abstraction possible.
+Use kzalloc here.
 
-What these applications need are:
+> +	if (!new_cb)
+> +		return -ENOMEM;
+> +
+> +	new_cb->id = id;
+> +	new_cb->callback = rx_cb;
+> +	new_cb->pdev = pdev;
+> +
+> +	spin_lock_irqsave(&dln2->event_cb_lock, flags);
+> +
+> +	list_for_each_entry(i, &dln2->event_cb_list, list) {
+> +		if (i->id == id) {
+> +			ret = -EBUSY;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!ret)
+> +		list_add_rcu(&new_cb->list, &dln2->event_cb_list);
+> +
+> +	spin_unlock_irqrestore(&dln2->event_cb_lock, flags);
+> +
+> +	if (ret)
+> +		kfree(new_cb);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(dln2_register_event_cb);
+> +
+> +void dln2_unregister_event_cb(struct platform_device *pdev, u16 id)
+> +{
+> +	struct dln2_dev *dln2 = dev_get_drvdata(pdev->dev.parent);
+> +	struct dln2_event_cb_entry *i;
+> +	unsigned long flags;
+> +	bool found = false;
+> +
+> +	spin_lock_irqsave(&dln2->event_cb_lock, flags);
+> +
+> +	list_for_each_entry(i, &dln2->event_cb_list, list) {
+> +		if (i->id == id) {
+> +			list_del_rcu(&i->list);
+> +			found = true;
+> +			break;
+> +		}
+> +	}
+> +
+> +	spin_unlock_irqrestore(&dln2->event_cb_lock, flags);
+> +
+> +	if (found) {
+> +		synchronize_rcu();
+> +		kfree(i);
+> +	}
+> +}
+> +EXPORT_SYMBOL(dln2_unregister_event_cb);
+> +
 
-1. A way to map a GPIO to a name that is board invariant. Many boards
-move GPIOs around but the function typically stays the same. So for
-instance rev-0 might have GARAGE_DOOR to GPIO_A10, and on subsequent
-revision rev-1 it might be GARAGE_DOOR to GPIO_B08. The user-space
-application that controls everything does not want to deal with revisio=
-ns
-ideally, just to know that the named GARAGE_DOOR gpio exists.
+Please add a comment describing the return value (i.e. when the urb had
+been saved and shouldn't be resubmitted).
 
-2. A way to have the pinmux configuration of said GPIO configured witho=
-ut
-having to do anything explicit. I.e. on am335x the pinmux configuration=
- is
-decoupled from the GPIO driver; having a GPIO configured as a GPIO does=
- not
-alter the pinmux settings.
+Also could rename this helper so it doesn't appear to be a variant of
+dln2_transfer (e.g. something with "complete" in the name).
 
-3. The user-space facing API must be simple, preferably file based like=
- the
-sysfs method right now. It is very simple to use even from within scrip=
-ts.
-=20
->=20
->> In other way I'm looking forward for DT overlays.
->>>=20
->>>=20
->>> You have almost all the necessary pieces: you can export, configure
->>> and manipulate any GPIO from the sysfs interface. The only thing yo=
-u
->>> would be missing is a way to give a name to a GPIO, something that =
-can
->>> easily be fixed.
->>=20
->> But isn't it nice to have already exported gpios which are layouted =
-out
->> from board. All other unexported gpios aren't connected to anywhere =
-on
->> board. So user don't have to export or unexport anything.
->>>=20
->>>=20
->>> Since the devices you want to configure that way are typically
->>> removable or usage-specific, why would you want to store that
->>> information all the way up into the firmware? A commonly accepted
->>> wisdom is that what can be done in user-space should be done in
->>> user-space, and it really looks like this applies here.
->>=20
->> They are NOT removable.
->>>=20
->>>=20
->>> Say you buy a Jetson TK1 to control that sprinkler valve (a good us=
-e
->>> for all these GPU cores!). The mainline DT has no knowledge about t=
-he
->>> valve, so using your proposed way you will have to re-build and fla=
-sh
->>> a custom device tree just to be able to use your sprinkler. If you
->>> decide to assign your board to something else, you will need anothe=
-r
->>> DT.
->>=20
->> But if you buy more "real world ready" board with for example 8 powe=
-r
->> outputs for sprinkler valves, why has user think about what gpio to
->> export, if there could be valve0 - 7 ready. If he will use only valv=
-e0
->> does not mater, all unused gpio can't be used for anything else sinc=
-e
->> they has layout for valves.
->=20
-> The problem is indeed different.
->=20
-> If your sprinkler valves are wired on your board and the lines cannot
-> be used for anything else, then what you need is a driver for the
-> valve that will acquire the GPIOs and export its own userspace
-> interface under /sys/.
->=20
-> You device tree must reflect the layout of the board ; in this case
-> "here is a valve that uses this GPIO active-low". Saying "this GPIO i=
-s
-> output active-low and named valve0" is not a good description of your
-> hardware.
->=20
+> +static bool dln2_rx_transfer(struct dln2_dev *dln2, struct urb *urb,
+> +			     u16 handle, u16 rx_slot)
+> +{
+> +	struct dln2_mod_rx_slots *rxs = &dln2->mod_rx_slots[handle];
+> +	struct dln2_rx_context *rxc;
+> +	bool ret = false;
+> +
+> +	rxc = &rxs->slots[rx_slot];
+> +
+> +	/*
+> +	 * No need to disable interrupts as this lock is not taken in
+> +	 * interrupt context elsewhere in this driver and this
+> +	 * function (or its callers) are not exported to other
+> +	 * modules.
 
-There is no higher layer driver API. We don=E2=80=99t want to litter th=
-e kernel
-with =E2=80=98valve=E2=80=99 drivers, there=E2=80=99s no such thing. Th=
-ere=E2=80=99s only digital I/Os
-that=E2=80=99s connected to low speed devices.
+Why do you break comment lines already at 70 chars?
 
-If we are going for a higher layer API that would be something very thi=
-n
-like a user-space GPIO driver. Do you see the conundrum?
+> +	 */
+> +	spin_lock(&rxs->lock);
+> +	if (rxc->in_use && !rxc->urb) {
+> +		rxc->urb = urb;
+> +		complete(&rxc->done);
+> +		ret = true;
+> +	}
+> +	spin_unlock(&rxs->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static void dln2_run_event_callbacks(struct dln2_dev *dln2, u16 id, u16 echo,
+> +				     void *data, int len)
+> +{
+> +	struct dln2_event_cb_entry *i;
+> +
+> +	rcu_read_lock();
+> +
+> +	list_for_each_entry_rcu(i, &dln2->event_cb_list, list)
+> +		if (i->id == id)
+> +			i->callback(i->pdev, echo, data, len);
+> +
+> +	rcu_read_unlock();
+> +}
+> +
+> +static void dln2_rx(struct urb *urb)
+> +{
+> +	struct dln2_dev *dln2 = urb->context;
+> +	struct dln2_header *hdr = urb->transfer_buffer;
+> +	struct device *dev = &dln2->interface->dev;
+> +	u16 id, echo, handle, size;
+> +	u8 *data;
+> +	int len;
+> +	int err;
+> +
+> +	switch (urb->status) {
+> +	case 0:
+> +		/* success */
+> +		break;
+> +	case -ECONNRESET:
+> +	case -ENOENT:
+> +	case -ESHUTDOWN:
+> +	case -EPIPE:
+> +		/* this urb is terminated, clean up */
+> +		dev_dbg(dev, "urb shutting down with status %d\n", urb->status);
+> +		return;
+> +	default:
+> +		dev_dbg(dev, "nonzero urb status received %d\n", urb->status);
+> +		goto out;
+> +	}
+> +
+> +	if (urb->actual_length < sizeof(struct dln2_header)) {
+> +		dev_err(dev, "short response: %d\n", urb->actual_length);
+> +		goto out;
+> +	}
+> +
+> +	handle = le16_to_cpu(hdr->handle);
+> +	id = le16_to_cpu(hdr->id);
+> +	echo = le16_to_cpu(hdr->echo);
+> +	size = le16_to_cpu(hdr->size);
+> +
+> +	if (size != urb->actual_length) {
+> +		dev_err(dev, "size mismatch: handle %x cmd %x echo %x size %d actual %d\n",
+> +			handle, id, echo, size, urb->actual_length);
+> +		goto out;
+> +	}
+> +
+> +	if (handle >= DLN2_HANDLES) {
+> +		dev_warn(dev, "RX: invalid handle %d\n", handle);
+> +		goto out;
+> +	}
+> +
+> +	data = urb->transfer_buffer + sizeof(struct dln2_header);
+> +	len = urb->actual_length - sizeof(struct dln2_header);
+> +
+> +	if (handle == DLN2_HANDLE_EVENT) {
+> +		dln2_run_event_callbacks(dln2, id, echo, data, len);
+> +	} else {
+> +		/* URB will be re-submitted in free_rx_slot */
 
->>>=20
->>>=20
->>> Instead, have a shell script or a systemd unit tmpfile that will
->>> perform the correct setup at boot time. Then you can easily switch
->>> usages from user-space (systemctl stop sprinkler && systemctl start
->>> doordetect). This is much, much more flexible. At least until the
->>> Device Tree Overlays are merged, but even then this seems overkill.
->>=20
->> I seriously think about it, but I think if LEDs are in DT, GPIOs sho=
-uld
->> be there too. In other way, I don't like exporting without given nam=
-e.
->=20
-> LEDs are actually a perfect example of what you should do. They are a
-> simple device often plugged to a GPIO that controls them. We could
-> very well do what you propose: export GPIOs named "ledXX" and call it
-> a day. Instead we have a driver that exports a proper device node in
-> /sys with the operations that are relevant to a LED.
->=20
-> Once your GPIOs are assigned to a given function, they are not
-> "general purpose" anymore. Therefore you should expose the right
-> abstraction to your users, even if that means writing some more code.
+Refer to _dln2_transfer (the only place where free_rx_slot is used) as
+well.
 
-Please, try to understand how our users use our linux kernel drivers.
+> +		if (dln2_rx_transfer(dln2, urb, handle, echo))
+> +			return;
+> +		dev_warn(dev, "bad/late response %d/%d\n", handle, echo);
 
-Jiri=E2=80=99s concerns are valid and I have seen his use patterns in c=
-ountless
-other cases.
+Move this message back to the helper.
 
-Regards
+> +	}
+> +
+> +out:
+> +	err = usb_submit_urb(urb, GFP_ATOMIC);
+> +	if (err < 0)
+> +		dev_err(dev, "failed to resubmit RX URB: %d\n", err);
+> +}
+> +
 
-=E2=80=94 Pantelis
-  --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[...]
+
+> +static int dln2_setup_rx_urbs(struct dln2_dev *dln2,
+> +			      struct usb_host_interface *hostif)
+> +{
+> +	int i;
+> +	const int rx_max_size = DLN2_RX_BUF_SIZE;
+> +
+> +	for (i = 0; i < DLN2_MAX_URBS; i++) {
+> +		int ret;
+> +		struct device *dev = &dln2->interface->dev;
+
+Move these out of the loop.
+
+> +
+> +		dln2->rx_buf[i] = kmalloc(rx_max_size, GFP_KERNEL);
+> +		if (!dln2->rx_buf[i])
+> +			return -ENOMEM;
+> +
+> +		dln2->rx_urb[i] = usb_alloc_urb(0, GFP_KERNEL);
+> +		if (!dln2->rx_urb[i])
+> +			return -ENOMEM;
+> +
+> +		usb_fill_bulk_urb(dln2->rx_urb[i], dln2->usb_dev,
+> +				  usb_rcvbulkpipe(dln2->usb_dev, dln2->ep_in),
+> +				  dln2->rx_buf[i], rx_max_size, dln2_rx, dln2);
+> +
+> +		ret = usb_submit_urb(dln2->rx_urb[i], GFP_KERNEL);
+> +		if (ret < 0) {
+> +			dev_err(dev, "failed to submit RX URB: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct dln2_platform_data dln2_pdata_gpio = {
+> +	.handle = DLN2_HANDLE_GPIO,
+> +};
+> +
+> +/* Only one I2C port seems to be supported on current hardware */
+> +static struct dln2_platform_data dln2_pdata_i2c = {
+> +	.handle = DLN2_HANDLE_I2C,
+> +	.port = 0,
+> +};
+> +
+> +static const struct mfd_cell dln2_devs[] = {
+> +	{
+> +		.name = "dln2-gpio",
+> +		.platform_data = &dln2_pdata_gpio,
+> +		.pdata_size = sizeof(struct dln2_platform_data),
+> +	},
+> +	{
+> +		.name = "dln2-i2c",
+> +		.platform_data = &dln2_pdata_i2c,
+> +		.pdata_size = sizeof(struct dln2_platform_data),
+> +	},
+> +};
+> +
+> +static void dln2_disconnect(struct usb_interface *interface)
+> +{
+> +	struct dln2_dev *dln2 = usb_get_intfdata(interface);
+> +	int i, j;
+> +
+> +	/* don't allow starting new transfers */
+> +	spin_lock(&dln2->disconnect_lock);
+> +	dln2->disconnect = true;
+> +	spin_unlock(&dln2->disconnect_lock);
+> +
+> +	/* cancel in progress transfers */
+> +	for (i = 0; i < DLN2_HANDLES; i++) {
+> +		struct dln2_mod_rx_slots *rxs = &dln2->mod_rx_slots[i];
+> +		unsigned long flags;
+> +
+> +		spin_lock_irqsave(&rxs->lock, flags);
+> +
+> +		/* cancel all response waiters */
+> +		for (j = 0; j < DLN2_MAX_RX_SLOTS; j++) {
+> +			struct dln2_rx_context *rxc = &rxs->slots[j];
+> +
+> +			if (rxc->in_use)
+> +				complete(&rxc->done);
+> +		}
+> +
+> +		spin_unlock_irqrestore(&rxs->lock, flags);
+> +	}
+> +
+> +	/* wait for transfers to end */
+> +	wait_event(dln2->disconnect_wq, !dln2->active_transfers);
+> +
+> +	mfd_remove_devices(&interface->dev);
+> +
+> +	dln2_free(dln2);
+> +}
+> +
+> +static int dln2_probe(struct usb_interface *interface,
+> +		      const struct usb_device_id *usb_id)
+> +{
+> +	struct usb_host_interface *hostif = interface->cur_altsetting;
+> +	struct device *dev = &interface->dev;
+> +	struct dln2_dev *dln2;
+> +	int ret;
+> +	int i, j;
+> +
+> +	if (hostif->desc.bInterfaceNumber != 0 ||
+> +	    hostif->desc.bNumEndpoints < 2)
+> +		return -ENODEV;
+> +
+> +	dln2 = kzalloc(sizeof(*dln2), GFP_KERNEL);
+> +	if (!dln2)
+> +		return -ENOMEM;
+> +
+> +	dln2->ep_out = hostif->endpoint[0].desc.bEndpointAddress;
+> +	dln2->ep_in = hostif->endpoint[1].desc.bEndpointAddress;
+> +	dln2->usb_dev = usb_get_dev(interface_to_usbdev(interface));
+> +	dln2->interface = interface;
+> +	usb_set_intfdata(interface, dln2);
+> +	init_waitqueue_head(&dln2->disconnect_wq);
+> +
+> +	for (i = 0; i < DLN2_HANDLES; i++) {
+> +		init_waitqueue_head(&dln2->mod_rx_slots[i].wq);
+> +		spin_lock_init(&dln2->mod_rx_slots[i].lock);
+> +		for (j = 0; j < DLN2_MAX_RX_SLOTS; j++)
+> +			init_completion(&dln2->mod_rx_slots[i].slots[j].done);
+> +	}
+> +
+> +	spin_lock_init(&dln2->event_cb_lock);
+> +	spin_lock_init(&dln2->disconnect_lock);
+> +	INIT_LIST_HEAD(&dln2->event_cb_list);
+> +
+> +	ret = dln2_setup_rx_urbs(dln2, hostif);
+> +	if (ret)
+> +		goto out_cleanup;
+> +
+> +	ret = dln2_hw_init(dln2);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to initialize hardware\n");
+> +		goto out_cleanup;
+> +	}
+> +
+> +	ret = mfd_add_hotplug_devices(dev, dln2_devs, ARRAY_SIZE(dln2_devs));
+
+So this now depends on 15bb4d6e8534 ("mfd: core: Add helper function to
+register hotplug devices") in the MFD tree.
+
+Please mention what tree the patch is against in your cover letter (I
+noticed you had rebased when it no longer applied to 3.17).
+
+You should drop the gpiolib patch now that v3.18-rc1 is out as well.
+
+> +	if (ret != 0) {
+> +		dev_err(dev, "failed to add mfd devices to core\n");
+> +		goto out_cleanup;
+> +	}
+> +
+> +	return 0;
+> +
+> +out_cleanup:
+> +	dln2_free(dln2);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct usb_device_id dln2_table[] = {
+> +	{ USB_DEVICE(0xa257, 0x2013) },
+> +	{ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(usb, dln2_table);
+> +
+> +static struct usb_driver dln2_driver = {
+> +	.name = "dln2",
+> +	.probe = dln2_probe,
+> +	.disconnect = dln2_disconnect,
+> +	.id_table = dln2_table,
+> +};
+> +
+> +module_usb_driver(dln2_driver);
+> +
+> +MODULE_AUTHOR("Octavian Purdila <octavian.purdila@intel.com>");
+> +MODULE_DESCRIPTION("Core driver for the Diolan DLN2 interface adapter");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/linux/mfd/dln2.h b/include/linux/mfd/dln2.h
+> new file mode 100644
+> index 0000000..57ddc58
+> --- /dev/null
+> +++ b/include/linux/mfd/dln2.h
+> @@ -0,0 +1,69 @@
+> +#ifndef __LINUX_USB_DLN2_H
+> +#define __LINUX_USB_DLN2_H
+> +
+> +#define DLN2_CMD(cmd, id)		((cmd) | ((id) << 8))
+> +
+> +struct dln2_platform_data {
+> +	u16 handle;		/* sub-driver handle (internally used only) */
+> +	u8 port;		/* I2C/SPI port */
+> +};
+> +
+> +/**
+> + * dln2_event_cb_t - event callback function signature
+> + *
+> + * @pdev - the sub-device that registered this callback
+> + * @echo - the echo header field received in the message
+> + * @data - the data payload
+> + * @len  - the data payload length
+> + *
+> + * The callback function is called in interrupt context and the data
+> + * payload is only valid during the call. If the user needs later
+> + * access of the data, it must copy it.
+> + */
+> +
+> +typedef void (*dln2_event_cb_t)(struct platform_device *pdev, u16 echo,
+> +				const void *data, int len);
+> +
+> +/**
+> + * dl2n_register_event_cb - register a callback function for an event
+> + *
+> + * @pdev - the sub-device that registers the callback
+> + * @event - the event for which to register a callback
+> + * @event_cb - the callback function
+> + *
+> + * @return 0 in case of success, negative value in case of error
+> + */
+> +int dln2_register_event_cb(struct platform_device *pdev, u16 event,
+> +			   dln2_event_cb_t event_cb);
+> +
+> +/**
+> + * dln2_unregister_event_cb - unregister the callback function for an event
+> + *
+> + * @pdev - the sub-device that registered the callback
+> + * @event - the event for which to register a callback
+> + */
+> +void dln2_unregister_event_cb(struct platform_device *pdev, u16 event);
+> +
+> +/**
+> + * dln2_transfer - issue a DLN2 command and wait for a response and
+> + * the associated data
+> + *
+> + * @pdev - the sub-device which is issuing this transfer
+> + * @cmd - the command to be sent to the device
+> + * @obuf - the buffer to be sent to the device; it can be NULL if the
+> + *	user doesn't need to transmit data with this command
+> + * @obuf_len - the size of the buffer to be sent to the device
+> + * @ibuf - any data associated with the response will be copied here;
+> + *	it can be NULL if the user doesn't need the response data
+> + * @ibuf_len - must be initialized to the input buffer size; it will
+> + *	be modified to indicate the actual data transfered;
+> + * @result - pointer to store the result code received from hardware;
+> + *	it can be NULL if the user doesn't need the result code
+> + *
+> + * @return 0 for success, negative value for errors
+> + */
+> +int dln2_transfer(struct platform_device *pdev, u16 cmd,
+> +		  const void *obuf, unsigned obuf_len,
+> +		  void *ibuf, unsigned *ibuf_len, u16 *result);
+
+Why add yet another parameter for the result and then never even use it?
+Please remove it. You can add a new function for it (and a wrapper)
+later if it's ever needed.
+
+You should also consider adding a convenience function for when you
+don't care about any returned data (e.g. dln2_transfer_tx) so you don't
+have to pass all those NULLs (most calls currently have three NULL
+params).
+
+> +
+> +#endif
+
+Johan
