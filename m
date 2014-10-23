@@ -1,208 +1,155 @@
-From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
-Subject: Re: [PATCH] gpio: add gpio_of_helper
-Date: Thu, 23 Oct 2014 08:23:05 +0200
-Message-ID: <54489EC9.4020108@aksignal.cz>
-References: <4b0bcf4679163c0da53e412a47eecd4bb03849b8.1413966148.git.jiri.prchal@aksignal.cz> <CAAVeFuJrmea6yZn2J28ihs3+=FYkZ2QxDv6F7qiq+TPpv_odpw@mail.gmail.com> <E5E0C172-C51D-46DC-AE15-71308BDC9829@antoniou-consulting.com> <CAAVeFuLh99MJXNNuh=L37pNzgun-Qi=3J4uK4eUSC5Qy107Gzw@mail.gmail.com> <E44127F1-1B6B-4BB0-866A-7B142F295FAE@antoniou-consulting.com> <CAAVeFuKj66r4UNZ33z3BT5m=7iB3tMC-u_eUDcJmvaNFj-0y5Q@mail.gmail.com>
-Reply-To: jiri.prchal@aksignal.cz
+From: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
+Subject: RE: [PATCHv3 1/3] gpio: sch: Consolidate similar algorithms
+Date: Thu, 23 Oct 2014 07:23:25 +0000
+Message-ID: <50B33AC5ED75F74F991980326F1C438D0FC00913@PGSMSX108.gar.corp.intel.com>
+References: <1413431475-12799-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <1413431475-12799-2-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <CAAVeFuKVH4R0r1mdxgNRJY=D9hVSyO7NQ5eCOn4qcYMz6+vR3w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from router.aksignal.cz ([188.175.113.102]:39388 "EHLO
-	router.aksignal.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750827AbaJWGXM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Oct 2014 02:23:12 -0400
-In-Reply-To: <CAAVeFuKj66r4UNZ33z3BT5m=7iB3tMC-u_eUDcJmvaNFj-0y5Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuKVH4R0r1mdxgNRJY=D9hVSyO7NQ5eCOn4qcYMz6+vR3w@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Alexandre Courbot' <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denis Turischev <denis.turischev@compulab.co.il>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Grant Likely <grant.likely@secretlab.ca>
 
-
-
-Dne 23.10.2014 v 07:08 Alexandre Courbot napsal(a):
-> On Wed, Oct 22, 2014 at 6:58 PM, Pantelis Antoniou
-> <panto@antoniou-consulting.com> wrote:
->> Hi Alexandre,
->>
->>> On Oct 22, 2014, at 12:41 PM, Alexandre Courbot <gnurou@gmail.com> =
-wrote:
->>>
->>> On Wed, Oct 22, 2014 at 6:24 PM, Pantelis Antoniou
->>> <panto@antoniou-consulting.com> wrote:
->>>> Hi Alexandre,
->>>>
->>>>> On Oct 22, 2014, at 12:18 PM, Alexandre Courbot <gnurou@gmail.com=
-> wrote:
->>>>>
->>>>> On Wed, Oct 22, 2014 at 5:26 PM, Jiri Prchal <jiri.prchal@aksigna=
-l.cz> wrote:
->>>>>> This patch adds new driver "gpio-of-helper", witch has possibili=
-ty to export
->>>>>> gpios defined in dt. It exports them in defined name under
->>>>>> /sysfs/class/gpio/name.
->>>>>> It's rebased from Pantelis Antoniou patch to new kernel.
->>>>>> Usage example:
->>>>>>        gpio {
->>>>>>                compatible =3D "gpio-of-helper";
->>>>>>                status =3D "okay";
->>>>>>                pinctrl-names =3D "default";
->>>>>>                pinctrl-0 =3D <&pinctrl_gpio>;
->>>>>>
->>>>>>                gsm_on {
->>>>>>                        gpio-name =3D "gsm_on";
->>>>>>                        gpio =3D <&pioB 13 GPIO_ACTIVE_HIGH>;
->>>>>>                        output;
->>>>>>                        init-low;
->>>>>>                };
->>>>>>        };
->>>>>>
->>>>>> This patch needs Alexey Ignatov [PATCH] gpiolib: allow exporting=
- gpios with
->>>>>> custom names.
->>>>>
->>>>> We will need to see whether the pre-requisite patch can get merge=
-d
->>>>> first, but there are a couple of things that are wrong with your =
-patch
->>>>> anyway:
->>>>>
->>>>> - it is missing a bindings documentation
->>>>> - it is using the legacy integer GPIOs instead of the descriptor
->>>>> interface (see include/linux/gpio/consumer.h). Since this is DT-b=
-ased,
->>>>> there is absolutely no reason to not use the descriptors interfac=
-e.
->>>>> - it seems quite long for what it needs to do
->>>>> - the MODULE_AUTHOR has not signed-off this patch (?)
->>>>>
->>>>> But what makes me nervous is that this encourages more usage of t=
-he
->>>>> sysfs interface, an in a way that is potentially harmful.
->>>>>
->>>>> Also, I don't know if the DT people will be happy with this idea.
->>>>> Since this concerns DT, please also add the devicetree list and g=
-et a
->>>>> Acked-by for the bindings you want to push by a DT maintainer.
->>>>
->>>> Since I=E2=80=99m the original perpetrator, let me put a few words=
- here for posterity.
->>>>
->>>> This patch was meant as a quick and dirty method for doing the aut=
-omatic export
->>>> and pinmux configuration from DT on a 3.8 kernel. The kernel APIs =
-have moved on
->>>> since. It wasn=E2=80=99t meant to be submitted for mainline right =
-as it is.
->>>>
->>>> Unfortunately (or fortunately for many people) it does what a lot =
-of people need
->>>> i.e. configures a board with heavily pinmuxed GPIO right at boot t=
-ime.
->>>>
->>>> I=E2=80=99m open at having a small discussion about how to do what=
- the users of this patch
->>>> do =E2=80=98right=E2=80=99.
->>>
->>> Sure, although the discussion might turn out to not be that "small"=
-=2E :)
->>>
->>
->> Heh ;)
->>
->>> Pinmux configuration sounds like a job for pinmux more than GPIO, a=
-nd
->>> exporting potentially many GPIOs to user-space sounds like a work f=
-or
->>> a proper driver.
->>>
->>
->> I=E2=80=99m afraid that=E2=80=99s not the case. A great many users d=
-o not require anything
->> more than setting a pinmux and the GPIO configuration (input/output)=
-=2E
->> They can then do low speed I/O using the sysfs interface, without ha=
-ving to
->> use any complex APIs (shell works just fine).
->>
->> Think of stuff like controlling a sprinkler valve, or something like=
- a mechanical
->> door detection open state.
->
-> That sounds like any kind of arbitrary device that can be temporarily
-> connected to a set of GPIOs that will be bit-banged. Is my
-> interpretation correct?
-
-Not only temporarily. For example on/off switch of some hw on board lik=
-e gsm modem.
-Or some optocoupler isoleted in/outs for general use from userspace.
->
-> In that case, I seriously doubt that this should be part of the DT.
-> Right now the DT is part of the firmware, and an immutable descriptio=
-n
-> of the hardware layout of a board - definitely such devices do not fi=
-t
-This is our case of gpio. It's like LEDs, they are hw layout of board,
-but they are in/out instead of LEDs are only output.
-> into that definition. This might change once the Device Tree Overlays
-> are merged, but we are not there yet. If the DT maintainers say this
-> is a valid use-case for overlays, then I will reconsider my position,
-> but in any case it really looks like this could/should be done from
-> user-space.
-I don't think so as I explained - HW layout of boerd.
-In other way I'm looking forward for DT overlays.
->
-> You have almost all the necessary pieces: you can export, configure
-> and manipulate any GPIO from the sysfs interface. The only thing you
-> would be missing is a way to give a name to a GPIO, something that ca=
-n
-> easily be fixed.
-But isn't it nice to have already exported gpios which are layouted out
-from board. All other unexported gpios aren't connected to anywhere on
-board. So user don't have to export or unexport anything.
->
-> Since the devices you want to configure that way are typically
-> removable or usage-specific, why would you want to store that
-> information all the way up into the firmware? A commonly accepted
-> wisdom is that what can be done in user-space should be done in
-> user-space, and it really looks like this applies here.
-They are NOT removable.
->
-> Say you buy a Jetson TK1 to control that sprinkler valve (a good use
-> for all these GPU cores!). The mainline DT has no knowledge about the
-> valve, so using your proposed way you will have to re-build and flash
-> a custom device tree just to be able to use your sprinkler. If you
-> decide to assign your board to something else, you will need another
-> DT.
-But if you buy more "real world ready" board with for example 8 power
-outputs for sprinkler valves, why has user think about what gpio to
-export, if there could be valve0 - 7 ready. If he will use only valve0
-does not mater, all unused gpio can't be used for anything else since
-they has layout for valves.
->
-> Instead, have a shell script or a systemd unit tmpfile that will
-> perform the correct setup at boot time. Then you can easily switch
-> usages from user-space (systemctl stop sprinkler && systemctl start
-> doordetect). This is much, much more flexible. At least until the
-> Device Tree Overlays are merged, but even then this seems overkill.
-I seriously think about it, but I think if LEDs are in DT, GPIOs should
-be there too. In other way, I don't like exporting without given name.
->
-> So I don't see any good reason to accept this patch for now. I'm read=
-y
-> to discuss and work on the required improvements to the sysfs
-> interface though - actually this might be a good opportunity to write
-> a better alternative sysfs interface that does not depend on the
-> integer GPIO space, something I have in mind since some time already.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+VGhhbmtzIGZvciB0aGUgcmV2aWV3IGNvbW1lbnRzLiBQbGVhc2UgY2hlY2sgbXkgcmVwbHkgYmVs
+b3cuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWxleGFuZHJlIENv
+dXJib3QgW21haWx0bzpnbnVyb3VAZ21haWwuY29tXQ0KPiBTZW50OiAxNyBPY3RvYmVyLCAyMDE0
+IDQ6NDQgUE0NCj4gVG86IENoYW5nLCBSZWJlY2NhIFN3ZWUgRnVuDQo+IENjOiBMaW51cyBXYWxs
+ZWlqOyBXZXN0ZXJiZXJnLCBNaWthOyBHUElPIFN1YnN5c3RlbSBNYWlsaW5nIExpc3Q7IExpbnV4
+IEtlcm5lbA0KPiBNYWlsaW5nIExpc3Q7IERlbmlzIFR1cmlzY2hldg0KPiBTdWJqZWN0OiBSZTog
+W1BBVENIdjMgMS8zXSBncGlvOiBzY2g6IENvbnNvbGlkYXRlIHNpbWlsYXIgYWxnb3JpdGhtcw0K
+PiANCj4gT24gVGh1LCBPY3QgMTYsIDIwMTQgYXQgMTI6NTEgUE0sIENoYW5nIFJlYmVjY2EgU3dl
+ZSBGdW4NCj4gPHJlYmVjY2Euc3dlZS5mdW4uY2hhbmdAaW50ZWwuY29tPiB3cm90ZToNCj4gPiBD
+b25zb2xpZGF0aW5nIHNpbWlsYXIgYWxnb3JpdGhtcyBpbnRvIGNvbW1vbiBmdW5jdGlvbnMgdG8g
+bWFrZSBHUElPDQo+ID4gU0NIIHNpbXBsZXIgYW5kIG1hbmFnZWFibGUuDQo+ID4NCj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBDaGFuZyBSZWJlY2NhIFN3ZWUgRnVuDQo+ID4gPHJlYmVjY2Euc3dlZS5mdW4u
+Y2hhbmdAaW50ZWwuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2dwaW8vZ3Bpby1zY2guYyB8
+ICAgOTUgKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAt
+DQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA1MyBpbnNlcnRpb25zKCspLCA0MiBkZWxldGlvbnMoLSkN
+Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwaW8vZ3Bpby1zY2guYyBiL2RyaXZlcnMv
+Z3Bpby9ncGlvLXNjaC5jIGluZGV4DQo+ID4gOTk3MjBjOC4uNmU4OWJlOSAxMDA2NDQNCj4gPiAt
+LS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1zY2guYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlv
+LXNjaC5jDQo+ID4gQEAgLTYzLDk0ICs2MywxMDUgQEAgc3RhdGljIHVuc2lnbmVkIHNjaF9ncGlv
+X2JpdChzdHJ1Y3Qgc2NoX2dwaW8gKnNjaCwNCj4gdW5zaWduZWQgZ3BpbykNCj4gPiAgICAgICAg
+IHJldHVybiBncGlvICUgODsNCj4gPiAgfQ0KPiA+DQo+ID4gLXN0YXRpYyB2b2lkIHNjaF9ncGlv
+X2VuYWJsZShzdHJ1Y3Qgc2NoX2dwaW8gKnNjaCwgdW5zaWduZWQgZ3BpbykNCj4gPiArc3RhdGlj
+IHZvaWQgc2NoX2dwaW9fcmVnaXN0ZXJfc2V0KHN0cnVjdCBzY2hfZ3BpbyAqc2NoLCB1bnNpZ25l
+ZCBncGlvLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBy
+ZWcpDQo+ID4gIHsNCj4gPiAgICAgICAgIHVuc2lnbmVkIHNob3J0IG9mZnNldCwgYml0Ow0KPiA+
+ICAgICAgICAgdTggZW5hYmxlOw0KPiA+DQo+ID4gICAgICAgICBzcGluX2xvY2soJnNjaC0+bG9j
+ayk7DQo+IA0KPiAuLi4NCj4gDQo+ID4NCj4gPiAtICAgICAgIG9mZnNldCA9IHNjaF9ncGlvX29m
+ZnNldChzY2gsIGdwaW8sIEdFTik7DQo+ID4gKyAgICAgICBvZmZzZXQgPSBzY2hfZ3Bpb19vZmZz
+ZXQoc2NoLCBncGlvLCByZWcpOw0KPiA+ICAgICAgICAgYml0ID0gc2NoX2dwaW9fYml0KHNjaCwg
+Z3Bpbyk7DQo+ID4NCj4gPiAgICAgICAgIGVuYWJsZSA9IGluYihzY2gtPmlvYmFzZSArIG9mZnNl
+dCk7DQo+IA0KPiBJIHNlZSBpZGVudGljYWwgYmxvY2tzIG9mIGNvZGUgaW4gc2NoX2dwaW9fcmVn
+aXN0ZXJfY2xlYXIoKSwNCj4gc2NoX2dwaW9fcmVnX2dldCgpIGFuZCBzY2hfZ3Bpb19yZWdfc2V0
+KCkgKGFuZCBwb3NzaWJseSBvdGhlciBmdW5jdGlvbnM/KS4NCj4gTWF5YmUgdGhpcyBjb3VsZCBi
+ZSBmYWN0b3JpemVkIGludG8gYW4gaW5saW5lIGZ1bmN0aW9uIHRoYXQgd291bGQgcmV0dXJuIHRo
+ZQ0KPiAiZW5hYmxlIiB2YXJpYWJsZT8NCj4gDQo+IEFsc28sICJlbmFibGUiIGxvb2tzIGxpa2Ug
+dGhlIHdyb25nIG5hbWUgaGVyZS4gVGhlIGV4YWN0IHNhbWUgcmVzdWx0IGlzIGxhdGVyDQo+IGNh
+bGxlZCAiZGlzYWJsZSIgYW5kICJjdXJyX2RpcnMiIGxhdGVyLg0KDQpSZWZlcnJpbmcgdG8geW91
+ciBjb21tZW50cyBiZWxvdywgdGhpcyB3aWxsIGJlIGdldCByaWQgb2YgYWZ0ZXIgdGhlIHNjaF9n
+cGlvX3JlZ2lzdGVyX3NldCgpIGFuZCBzY2hfZ3Bpb19yZWdpc3Rlcl9jbGVhcigpIGJlaW5nIHJl
+cGxhY2VkIGJ5IHNjaF9ncGlvX3JlZ19zZXQoZ2MsIGdwaW8sIHJlZywgMSkgYW5kIHNjaF9ncGlv
+X3JlZ19zZXQoZ2MsIGdwaW8sIHJlZywgMCkuDQpUaGVyZSB3aWxsIGJlIGxlc3MgaWRlbnRpY2Fs
+IGJsb2NrIG9mICJvZmZzZXQiLCAiYml0IiwgYW5kICJlbmFibGUiIG5vciAiZGlzYWJsZSIuIFNv
+IHRoZXJlIGlzIG5vIG5lZWQgdG8gZmFjdG9yaXplIHRoZSBpZGVudGljYWwgYmxvY2tzIGludG8g
+aW5saW5lIGZ1bmN0aW9uLg0KDQo+IA0KPiA+IC0gICAgICAgaWYgKCEoZW5hYmxlICYgKDEgPDwg
+Yml0KSkpDQo+ID4gLSAgICAgICAgICAgICAgIG91dGIoZW5hYmxlIHwgKDEgPDwgYml0KSwgc2No
+LT5pb2Jhc2UgKyBvZmZzZXQpOw0KPiA+ICsgICAgICAgaWYgKCEoZW5hYmxlICYgQklUKGJpdCkp
+KQ0KPiA+ICsgICAgICAgICAgICAgICBvdXRiKGVuYWJsZSB8IEJJVChiaXQpLCBzY2gtPmlvYmFz
+ZSArIG9mZnNldCk7DQo+ID4NCj4gPiAgICAgICAgIHNwaW5fdW5sb2NrKCZzY2gtPmxvY2spOw0K
+PiA+ICB9DQo+ID4NCj4gPiAtc3RhdGljIGludCBzY2hfZ3Bpb19kaXJlY3Rpb25faW4oc3RydWN0
+IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkDQo+ID4gZ3Bpb19udW0pDQo+ID4gK3N0YXRpYyB2b2lk
+IHNjaF9ncGlvX3JlZ2lzdGVyX2NsZWFyKHN0cnVjdCBzY2hfZ3BpbyAqc2NoLCB1bnNpZ25lZCBn
+cGlvLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIHJl
+ZykNCj4gPiAgew0KPiA+IC0gICAgICAgc3RydWN0IHNjaF9ncGlvICpzY2ggPSB0b19zY2hfZ3Bp
+byhnYyk7DQo+ID4gLSAgICAgICB1OCBjdXJyX2RpcnM7DQo+ID4gICAgICAgICB1bnNpZ25lZCBz
+aG9ydCBvZmZzZXQsIGJpdDsNCj4gPiArICAgICAgIHU4IGRpc2FibGU7DQo+ID4NCj4gPiAgICAg
+ICAgIHNwaW5fbG9jaygmc2NoLT5sb2NrKTsNCj4gPg0KPiA+IC0gICAgICAgb2Zmc2V0ID0gc2No
+X2dwaW9fb2Zmc2V0KHNjaCwgZ3Bpb19udW0sIEdJTyk7DQo+ID4gLSAgICAgICBiaXQgPSBzY2hf
+Z3Bpb19iaXQoc2NoLCBncGlvX251bSk7DQo+ID4gLQ0KPiA+IC0gICAgICAgY3Vycl9kaXJzID0g
+aW5iKHNjaC0+aW9iYXNlICsgb2Zmc2V0KTsNCj4gPiArICAgICAgIG9mZnNldCA9IHNjaF9ncGlv
+X29mZnNldChzY2gsIGdwaW8sIHJlZyk7DQo+ID4gKyAgICAgICBiaXQgPSBzY2hfZ3Bpb19iaXQo
+c2NoLCBncGlvKTsNCj4gPg0KPiA+IC0gICAgICAgaWYgKCEoY3Vycl9kaXJzICYgKDEgPDwgYml0
+KSkpDQo+ID4gLSAgICAgICAgICAgICAgIG91dGIoY3Vycl9kaXJzIHwgKDEgPDwgYml0KSwgc2No
+LT5pb2Jhc2UgKyBvZmZzZXQpOw0KPiA+ICsgICAgICAgZGlzYWJsZSA9IGluYihzY2gtPmlvYmFz
+ZSArIG9mZnNldCk7DQo+ID4gKyAgICAgICBpZiAoZGlzYWJsZSAmIEJJVChiaXQpKQ0KPiA+ICsg
+ICAgICAgICAgICAgICBvdXRiKGRpc2FibGUgJiB+QklUKGJpdCksIHNjaC0+aW9iYXNlICsgb2Zm
+c2V0KTsNCj4gPg0KPiA+ICAgICAgICAgc3Bpbl91bmxvY2soJnNjaC0+bG9jayk7DQo+ID4gLSAg
+ICAgICByZXR1cm4gMDsNCj4gPiAgfQ0KPiA+DQo+ID4gLXN0YXRpYyBpbnQgc2NoX2dwaW9fZ2V0
+KHN0cnVjdCBncGlvX2NoaXAgKmdjLCB1bnNpZ25lZCBncGlvX251bSkNCj4gPiArc3RhdGljIGlu
+dCBzY2hfZ3Bpb19yZWdfZ2V0KHN0cnVjdCBncGlvX2NoaXAgKmdjLCB1bnNpZ25lZCBncGlvLA0K
+PiA+ICt1bnNpZ25lZCByZWcpDQo+ID4gIHsNCj4gPiAgICAgICAgIHN0cnVjdCBzY2hfZ3BpbyAq
+c2NoID0gdG9fc2NoX2dwaW8oZ2MpOw0KPiA+IC0gICAgICAgaW50IHJlczsNCj4gPiAgICAgICAg
+IHVuc2lnbmVkIHNob3J0IG9mZnNldCwgYml0Ow0KPiA+ICsgICAgICAgdTggY3Vycl9kaXJzOw0K
+PiA+DQo+ID4gLSAgICAgICBvZmZzZXQgPSBzY2hfZ3Bpb19vZmZzZXQoc2NoLCBncGlvX251bSwg
+R0xWKTsNCj4gPiAtICAgICAgIGJpdCA9IHNjaF9ncGlvX2JpdChzY2gsIGdwaW9fbnVtKTsNCj4g
+PiArICAgICAgIG9mZnNldCA9IHNjaF9ncGlvX29mZnNldChzY2gsIGdwaW8sIHJlZyk7DQo+ID4g
+KyAgICAgICBiaXQgPSBzY2hfZ3Bpb19iaXQoc2NoLCBncGlvKTsNCj4gPg0KPiA+IC0gICAgICAg
+cmVzID0gISEoaW5iKHNjaC0+aW9iYXNlICsgb2Zmc2V0KSAmICgxIDw8IGJpdCkpOw0KPiA+ICsg
+ICAgICAgY3Vycl9kaXJzID0gISEoaW5iKHNjaC0+aW9iYXNlICsgb2Zmc2V0KSAmIEJJVChiaXQp
+KTsNCj4gPg0KPiA+IC0gICAgICAgcmV0dXJuIHJlczsNCj4gPiArICAgICAgIHJldHVybiBjdXJy
+X2RpcnM7DQo+ID4gIH0NCj4gPg0KPiA+IC1zdGF0aWMgdm9pZCBzY2hfZ3Bpb19zZXQoc3RydWN0
+IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkIGdwaW9fbnVtLCBpbnQNCj4gPiB2YWwpDQo+ID4gK3N0
+YXRpYyB2b2lkIHNjaF9ncGlvX3JlZ19zZXQoc3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVk
+IGdwaW8sIHVuc2lnbmVkDQo+IHJlZywNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGludCB2YWwpDQo+ID4gIHsNCj4gPiAgICAgICAgIHN0cnVjdCBzY2hfZ3BpbyAqc2NoID0gdG9f
+c2NoX2dwaW8oZ2MpOw0KPiA+IC0gICAgICAgdTggY3Vycl92YWxzOw0KPiA+ICAgICAgICAgdW5z
+aWduZWQgc2hvcnQgb2Zmc2V0LCBiaXQ7DQo+ID4gKyAgICAgICB1OCBjdXJyX2RpcnM7DQo+ID4N
+Cj4gPiAtICAgICAgIHNwaW5fbG9jaygmc2NoLT5sb2NrKTsNCj4gPiAtDQo+ID4gLSAgICAgICBv
+ZmZzZXQgPSBzY2hfZ3Bpb19vZmZzZXQoc2NoLCBncGlvX251bSwgR0xWKTsNCj4gPiAtICAgICAg
+IGJpdCA9IHNjaF9ncGlvX2JpdChzY2gsIGdwaW9fbnVtKTsNCj4gPiArICAgICAgIG9mZnNldCA9
+IHNjaF9ncGlvX29mZnNldChzY2gsIGdwaW8sIHJlZyk7DQo+ID4gKyAgICAgICBiaXQgPSBzY2hf
+Z3Bpb19iaXQoc2NoLCBncGlvKTsNCj4gPg0KPiA+IC0gICAgICAgY3Vycl92YWxzID0gaW5iKHNj
+aC0+aW9iYXNlICsgb2Zmc2V0KTsNCj4gPiArICAgICAgIGN1cnJfZGlycyA9IGluYihzY2gtPmlv
+YmFzZSArIG9mZnNldCk7DQo+ID4NCj4gPiAgICAgICAgIGlmICh2YWwpDQo+ID4gLSAgICAgICAg
+ICAgICAgIG91dGIoY3Vycl92YWxzIHwgKDEgPDwgYml0KSwgc2NoLT5pb2Jhc2UgKyBvZmZzZXQp
+Ow0KPiA+ICsgICAgICAgICAgICAgICBvdXRiKGN1cnJfZGlycyB8IEJJVChiaXQpLCBzY2gtPmlv
+YmFzZSArIG9mZnNldCk7DQo+ID4gICAgICAgICBlbHNlDQo+ID4gLSAgICAgICAgICAgICAgIG91
+dGIoKGN1cnJfdmFscyAmIH4oMSA8PCBiaXQpKSwgc2NoLT5pb2Jhc2UgKyBvZmZzZXQpOw0KPiA+
+ICsgICAgICAgICAgICAgICBvdXRiKChjdXJyX2RpcnMgJiB+QklUKGJpdCkpLCBzY2gtPmlvYmFz
+ZSArIG9mZnNldCk7IH0NCj4gDQo+IE1tbW0gdGhpcyByZWFsbHkgbG9va3MgbGlrZSBzY2hfZ3Bp
+b19yZWdpc3Rlcl9zZXQoKSBhbmQNCj4gc2NoX2dwaW9fcmVnaXN0ZXJfY2xlYXIoKSBjb3VsZCBq
+dXN0IGNhbGwgc2NoX2dwaW9fcmVnX3NldCgpIHJpZ2h0IGFmdGVyDQo+IGFjcXVpcmluZyB0aGUg
+c3BpbmxvY2suIEFsc28gdGhlIG5hbWVzIGFyZSB2ZXJ5IHNpbWlsYXIgYW5kIGl0IGlzIG5vdCBj
+bGVhciB3aHkNCj4geW91IG5lZWQgdHdvIGRpZmZlcmVudCBmdW5jdGlvbnMgaGVyZS4gQ291bGRu
+J3QgeW91IGNhbGwgc2NoX2dwaW9fcmVnX3NldChnYywNCj4gZ3BpbywgcmVnLCAxKSBpbiBwbGFj
+ZSBvZg0KPiBzY2hfZ3Bpb19yZWdpc3Rlcl9zZXQoKSBhbmQgc2NoX2dwaW9fcmVnX3NldChnYywg
+Z3BpbywgcmVnLCAwKSBmb3INCj4gc2NoX2dwaW9fcmVnaXN0ZXJfY2xlYXIoKT8gWW91IG1heSBu
+ZWVkIHRvIGFjcXVpcmUgdGhlIHNwaW5sb2NrIGJlZm9yZSBzb21lDQo+IGNhbGwgc2l0ZXMsIGJ1
+dCB0aGF0J3MgcHJlZmVyYWJsZSB0byBoYXZpbmcgdmVyeSBzaW1pbGFyIGZ1bmN0aW9ucyBiZWFy
+aW5nIGEgdmVyeQ0KPiBzaW1pbGFyIG5hbWUgSU1ITy4NCg0KVGhhbmtzIGZvciBwb2ludGluZyB0
+aGF0IG91dC4gSSB0aGluayBJIGNhbiByZXBsYWNlZCBhbGwgc2NoX2dwaW9fcmVnaXN0ZXJfc2V0
+KCkgYW5kIHNjaF9ncGlvX3JlZ2lzdGVyX2NsZWFyKCkgd2l0aCBzY2hfZ3Bpb19yZWdfc2V0KGdj
+LCBncGlvLCByZWcsIDAvMSkuDQpSZWdhcmRpbmcgdGhlIHNwaW5sb2NrLCBpbiBmYWN0LCBJIGhh
+dmUgdGVzdGVkIHVzaW5nIHRoZSBHUElPIGRyaXZlciB0aHJvdWdoIHN5c2ZzLiBJIGRpZG4ndCBl
+bmNvdW50ZXIgYW55IGRlYWRsb2NrIGlzc3VlLCBidXQgdGhlIGRvdWJsZSBsb2NraW5nIGlzIHJl
+YWxseSBhbiBpc3N1ZS4NClRoaXMgZG91YmxlIGxvY2sgcHJvYmxlbSBjYW4gYWxzbyBiZSBmaXgg
+YnkgY2FsbGluZyBzY2hfZ3Bpb19yZWdfc2V0KGdjLCBncGlvLCByZWcsIDAvMSkgaW4gcGxhY2Ug
+b2Ygc2NoX2dwaW9fcmVnaXN0ZXJfc2V0KCkgYW5kIHNjaF9ncGlvX3JlZ2lzdGVyX2NsZWFyKCku
+DQoNCj4gDQo+ID4NCj4gPiArc3RhdGljIGludCBzY2hfZ3Bpb19kaXJlY3Rpb25faW4oc3RydWN0
+IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkDQo+ID4gK2dwaW9fbnVtKSB7DQo+ID4gKyAgICAgICBz
+dHJ1Y3Qgc2NoX2dwaW8gKnNjaCA9IHRvX3NjaF9ncGlvKGdjKTsNCj4gPiArDQo+ID4gKyAgICAg
+ICBzcGluX2xvY2soJnNjaC0+bG9jayk7DQo+ID4gKyAgICAgICBzY2hfZ3Bpb19yZWdpc3Rlcl9z
+ZXQoc2NoLCBncGlvX251bSwgR0lPKTsNCj4gDQo+IFNvIGhlcmUgeW91IGFyZSBhY3F1aXJpbmcg
+c2NoLT5sb2NrLCB0aGVuIGNhbGxpbmcNCj4gc2NoX2dwaW9fcmVnaXN0ZXJfc2V0KCkgd2hpY2gg
+d2lsbCB0cnkgdG8gYWNxdWlyZSB0aGUgc2FtZSBzcGlubG9jayBmaXJzdCB0aGluZy4NCj4gV291
+bGRuJ3QgdGhhdCBkZWFkbG9jaz8gSGF2ZSB5b3UgdGVzdGVkIGNoYW5naW5nIHRoZSBkaXJlY3Rp
+b24gb2YgYSBHUElPPyBUaGlzDQo+IGFnYWluIHNwZWFrcyBpbiBmYXZvciBvciByZWR1Y2luZyB0
+aGUgbnVtYmVyIG9mIHNpbWlsYXIgZnVuY3Rpb25zIGluIHRoaXMgZmlsZS4NCj4gDQo+IFVubGVz
+cyBJIG1pc3VuZGVyc3Rvb2Qgc29tZXRoaW5nIHRoZXJlIGFyZSBzdGlsbCBzb21lIGlzc3VlcyB0
+aGF0IG1ha2UgdGhpcyBmaWxlDQo+IGhhcmRlciB0byB1bmRlcnN0YW5kIHRoYW4gaXQgc2hvdWxk
+LCBhbmQgd2hpY2ggY2FuIHNvbWV0aW1lcyBib3JrIHRoZSBzeXN0ZW0NCj4gYWx0b2dldGhlci4g
+SXQgaXMgYSBnb29kIGlkZWEgdG8gY2xlYW51cCB0aGlzIGZpbGUsIGJ1dCBwbGVhc2UgdHJ5IHRv
+IGdvIG9uZSBzdGVwDQo+IGZ1cnRoZXIgLSB0aGlzIHNob3VsZCBzaW1wbGlmeSBsb2NraW5nIGFu
+ZCB1bHRpbWF0ZWx5IGdldCByaWQgb2YgdGhlIGxvY2tpbmcgaXNzdWVzLg0KPiANCj4gQW5kIGhv
+cGVmdWxseSBJIHdpbGwgYWxzbyB0YWtlIGxlc3MgdGltZSB0byByZXZpZXcgdjQuIDpQDQoNClRo
+YW5rcyBmb3IgdGhlIHJldmlldy4gSSB3aWxsIHRha2Ugbm90ZSBvbiB0aGUgbG9ja2luZyBwYXJ0
+IGFuZCByZXNlbmQgbGF0ZXIgb3IgbmV4dCB3ZWVrLiBBcHByZWNpYXRlIHlvdXIgcmV2aWV3IGNv
+bW1lbnRzLiBUaGFuayB5b3UhDQoNClJlYmVjY2ENCg==
