@@ -1,27 +1,29 @@
-From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
+From: Alexandre Courbot <gnurou@gmail.com>
 Subject: Re: [PATCH] gpio: add gpio_of_helper
-Date: Wed, 22 Oct 2014 13:05:54 +0200
-Message-ID: <54478F92.9040305@aksignal.cz>
-References: <4b0bcf4679163c0da53e412a47eecd4bb03849b8.1413966148.git.jiri.prchal@aksignal.cz> <CAAVeFuJrmea6yZn2J28ihs3+=FYkZ2QxDv6F7qiq+TPpv_odpw@mail.gmail.com> <E5E0C172-C51D-46DC-AE15-71308BDC9829@antoniou-consulting.com> <CAAVeFuLh99MJXNNuh=L37pNzgun-Qi=3J4uK4eUSC5Qy107Gzw@mail.gmail.com> <E44127F1-1B6B-4BB0-866A-7B142F295FAE@antoniou-consulting.com>
-Reply-To: jiri.prchal@aksignal.cz
+Date: Thu, 23 Oct 2014 14:08:17 +0900
+Message-ID: <CAAVeFuKj66r4UNZ33z3BT5m=7iB3tMC-u_eUDcJmvaNFj-0y5Q@mail.gmail.com>
+References: <4b0bcf4679163c0da53e412a47eecd4bb03849b8.1413966148.git.jiri.prchal@aksignal.cz>
+ <CAAVeFuJrmea6yZn2J28ihs3+=FYkZ2QxDv6F7qiq+TPpv_odpw@mail.gmail.com>
+ <E5E0C172-C51D-46DC-AE15-71308BDC9829@antoniou-consulting.com>
+ <CAAVeFuLh99MJXNNuh=L37pNzgun-Qi=3J4uK4eUSC5Qy107Gzw@mail.gmail.com> <E44127F1-1B6B-4BB0-866A-7B142F295FAE@antoniou-consulting.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from [188.175.113.102] ([188.175.113.102]:59158 "EHLO
-	router.aksignal.cz" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-	with ESMTP id S932499AbaJVLGb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Oct 2014 07:06:31 -0400
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:38645 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751010AbaJWFIi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Oct 2014 01:08:38 -0400
+Received: by mail-ie0-f179.google.com with SMTP id ar1so277777iec.24
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Oct 2014 22:08:37 -0700 (PDT)
 In-Reply-To: <E44127F1-1B6B-4BB0-866A-7B142F295FAE@antoniou-consulting.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Pantelis Antoniou <panto@antoniou-consulting.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>
+To: Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: Jiri Prchal <jiri.prchal@aksignal.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Grant Likely <grant.likely@secretlab.ca>
 
-Hi all,
-
-Dne 22.10.2014 v 11:58 Pantelis Antoniou napsal(a):
+On Wed, Oct 22, 2014 at 6:58 PM, Pantelis Antoniou
+<panto@antoniou-consulting.com> wrote:
 > Hi Alexandre,
 >
 >> On Oct 22, 2014, at 12:41 PM, Alexandre Courbot <gnurou@gmail.com> w=
@@ -42,19 +44,19 @@ y to export
 >>>>> /sysfs/class/gpio/name.
 >>>>> It's rebased from Pantelis Antoniou patch to new kernel.
 >>>>> Usage example:
->>>>>        gpio {
->>>>>                compatible =3D "gpio-of-helper";
->>>>>                status =3D "okay";
->>>>>                pinctrl-names =3D "default";
->>>>>                pinctrl-0 =3D <&pinctrl_gpio>;
+>>>>>       gpio {
+>>>>>               compatible =3D "gpio-of-helper";
+>>>>>               status =3D "okay";
+>>>>>               pinctrl-names =3D "default";
+>>>>>               pinctrl-0 =3D <&pinctrl_gpio>;
 >>>>>
->>>>>                gsm_on {
->>>>>                        gpio-name =3D "gsm_on";
->>>>>                        gpio =3D <&pioB 13 GPIO_ACTIVE_HIGH>;
->>>>>                        output;
->>>>>                        init-low;
->>>>>                };
->>>>>        };
+>>>>>               gsm_on {
+>>>>>                       gpio-name =3D "gsm_on";
+>>>>>                       gpio =3D <&pioB 13 GPIO_ACTIVE_HIGH>;
+>>>>>                       output;
+>>>>>                       init-low;
+>>>>>               };
+>>>>>       };
 >>>>>
 >>>>> This patch needs Alexey Ignatov [PATCH] gpiolib: allow exporting =
 gpios with
@@ -64,8 +66,6 @@ gpios with
 >>>> first, but there are a couple of things that are wrong with your p=
 atch
 >>>> anyway:
-
-Let's continue discussion that "someone" need gpio_export_name.
 >>>>
 >>>> - it is missing a bindings documentation
 >>>> - it is using the legacy integer GPIOs instead of the descriptor
@@ -75,8 +75,6 @@ sed,
 =2E
 >>>> - it seems quite long for what it needs to do
 >>>> - the MODULE_AUTHOR has not signed-off this patch (?)
-
-OK, this was just first try mainly to open discussion.
 >>>>
 >>>> But what makes me nervous is that this encourages more usage of th=
 e
@@ -96,13 +94,6 @@ matic export
 ave moved on
 >>> since. It wasn=E2=80=99t meant to be submitted for mainline right a=
 s it is.
-
-Dirty, but is functional.
-I'm using something like this from 2.6.38! Than I switched to 3.8, devi=
-cetree,
-find and apply this patch, but for other reasons moved to newer kernels=
- and every
-time need to rebase this.
 >>>
 >>> Unfortunately (or fortunately for many people) it does what a lot o=
 f people need
@@ -132,30 +123,53 @@ r
 > They can then do low speed I/O using the sysfs interface, without hav=
 ing to
 > use any complex APIs (shell works just fine).
-
-That is exactly what we need.
 >
 > Think of stuff like controlling a sprinkler valve, or something like =
 a mechanical
 > door detection open state.
->
->> We need to understand why this is needed, and then see if the DT
->> bindings are acceptable before going any further.
->
-> I can take care of the bindings if we get into some kind of agreement=
- on the basic
-> interface. I=E2=80=99m CCing device tree and the DT maintainer.
->
-> Regards
->
-> =E2=80=94 Pantelis
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+
+That sounds like any kind of arbitrary device that can be temporarily
+connected to a set of GPIOs that will be bit-banged. Is my
+interpretation correct?
+
+In that case, I seriously doubt that this should be part of the DT.
+Right now the DT is part of the firmware, and an immutable description
+of the hardware layout of a board - definitely such devices do not fit
+into that definition. This might change once the Device Tree Overlays
+are merged, but we are not there yet. If the DT maintainers say this
+is a valid use-case for overlays, then I will reconsider my position,
+but in any case it really looks like this could/should be done from
+user-space.
+
+You have almost all the necessary pieces: you can export, configure
+and manipulate any GPIO from the sysfs interface. The only thing you
+would be missing is a way to give a name to a GPIO, something that can
+easily be fixed.
+
+Since the devices you want to configure that way are typically
+removable or usage-specific, why would you want to store that
+information all the way up into the firmware? A commonly accepted
+wisdom is that what can be done in user-space should be done in
+user-space, and it really looks like this applies here.
+
+Say you buy a Jetson TK1 to control that sprinkler valve (a good use
+for all these GPU cores!). The mainline DT has no knowledge about the
+valve, so using your proposed way you will have to re-build and flash
+a custom device tree just to be able to use your sprinkler. If you
+decide to assign your board to something else, you will need another
+DT.
+
+Instead, have a shell script or a systemd unit tmpfile that will
+perform the correct setup at boot time. Then you can easily switch
+usages from user-space (systemctl stop sprinkler && systemctl start
+doordetect). This is much, much more flexible. At least until the
+Device Tree Overlays are merged, but even then this seems overkill.
+
+So I don't see any good reason to accept this patch for now. I'm ready
+to discuss and work on the required improvements to the sysfs
+interface though - actually this might be a good opportunity to write
+a better alternative sysfs interface that does not depend on the
+integer GPIO space, something I have in mind since some time already.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
