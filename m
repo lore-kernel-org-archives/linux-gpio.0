@@ -1,95 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
-Date: Fri, 24 Oct 2014 14:14:43 +0200
-Message-ID: <CACRpkdY3-Y0eA_o2enfxbqWUpwPoo_5oM9t=uU=QSTAw4MPf9Q@mail.gmail.com>
-References: <1412779948-28769-1-git-send-email-yvo@apm.com>
-	<1412779948-28769-2-git-send-email-yvo@apm.com>
+Subject: Re: [PATCH v5 1/4] pinctrl: imx: add gpio pinmux support for vf610
+Date: Fri, 24 Oct 2014 14:20:24 +0200
+Message-ID: <CACRpkdYh6gc+tGdXvhQeX-oTC_BK3n9cXetFbX+0XBRjAp9HPA@mail.gmail.com>
+References: <cover.1413488264.git.stefan@agner.ch>
+	<a6e91699b6bf7dc4e8293374bce7c05a0d40053c.1413488264.git.stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yh0-f45.google.com ([209.85.213.45]:38650 "EHLO
-	mail-yh0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756224AbaJXMOo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Oct 2014 08:14:44 -0400
-Received: by mail-yh0-f45.google.com with SMTP id f73so474529yha.32
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Oct 2014 05:14:44 -0700 (PDT)
-In-Reply-To: <1412779948-28769-2-git-send-email-yvo@apm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <a6e91699b6bf7dc4e8293374bce7c05a0d40053c.1413488264.git.stefan@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bpringlemeir@nbsps.com, Lucas Stach <l.stach@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Y Vo <yvo@apm.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, patches <patches@apm.com>
 
-On Wed, Oct 8, 2014 at 4:52 PM, Y Vo <yvo@apm.com> wrote:
+On Thu, Oct 16, 2014 at 9:47 PM, Stefan Agner <stefan@agner.ch> wrote:
 
-> Add APM X-Gene standby GPIO controller driver.
+> Add pinmux support for GPIO for Vybrid (vf610) IOMUX controller.
+> This is needed since direction configuration is not part of the
+> GPIO module in Vybrid.
 >
-> Signed-off-by: Y Vo <yvo@apm.com>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Acked-by: Shawn Guo <shawn.guo@freescale.com>
 
-That's a very terse commit message. Please tell us a bit about the
-hardware and what platforms it is used on, etc.
-
-For example that is uses ACPI, as seems to be the case.
-
-> +config GPIO_XGENE_SB
-> +       tristate "APM X-Gene GPIO standby controller support"
-> +       depends on ARCH_XGENE && OF_GPIO
-
-If this platform uses ACPI (as is implied below), why is it depending on
-OF_GPIO but not GPIO_ACPI...
-
-(...)
-> +#include <linux/of_gpio.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/acpi.h>
-
-So this platform uses some interesting combination of ACPI and device tree
-at the same time? Or alternatively?
-
-
-> +struct xgene_gpio_sb {
-> +       struct of_mm_gpio_chip mm;
-> +       u32 *irq;
-> +       u32 nirq;
-> +       void __iomem *gic_regs;
-> +       spinlock_t lock; /* mutual exclusion */
-> +};
-
-Document this struct using kerneldoc instead.
-
-> +       apm_gc->irq = devm_kzalloc(&pdev->dev, sizeof(u32) * XGENE_MAX_GPIO_DS,
-> +                                  GFP_KERNEL);
-> +       if (!apm_gc->irq)
-> +               return -ENOMEM;
-> +       memset(apm_gc->irq, 0, sizeof(u32) * XGENE_MAX_GPIO_DS);
-(...)
-> +       for (i = 0; i < apm_gc->nirq; i++) {
-> +               apm_gc->irq[default_pins[i]] = platform_get_irq(pdev, i);
-
-So the IRQs for all the GPIO pins are handled somewhere else instead
-of being a cascaded IRQ controller.
-
-This means that the IRQ lines from each individual GPIO pin is
-connected to a unique IRQ line on a secondary interrupt controller,
-instead of the GPIO block being a cascaded interrupt controller
-in its own right.
-
-Is this correct?
-
-Usually there is a single IRQ line out from a GPIO block... not
-one per GPIO.
-
-I really want to look at the code for that interrupt controller to see
-what's going on here, please provide me a pointer to the
-relevant code.
-
-> +static int xgene_gpio_sb_remove(struct platform_device *pdev)
-> +{
-> +       struct of_mm_gpio_chip *mm = platform_get_drvdata(pdev);
-> +
-> +       return gpiochip_remove(&mm->gc);
-
-This function has changed signature and doesn't return a value
-anymore.
+Patch applied to the pin control tree.
 
 Yours,
 Linus Walleij
