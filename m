@@ -1,181 +1,64 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
+From: Andrew Lunn <andrew@lunn.ch>
 Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
-Date: Fri, 24 Oct 2014 09:30:52 -0700
-Message-ID: <20141024163051.GG4529@psi-dev26.jf.intel.com>
+Date: Fri, 24 Oct 2014 22:45:32 +0200
+Message-ID: <20141024204532.GA6436@lunn.ch>
 References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
  <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20141024163051.GG4529@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:52532 "EHLO mga11.intel.com"
+Received: from vps0.lunn.ch ([178.209.37.122]:43447 "EHLO vps0.lunn.ch"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755390AbaJXQaN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 24 Oct 2014 12:30:13 -0400
+	id S1751397AbaJXUqu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 24 Oct 2014 16:46:50 -0400
 Content-Disposition: inline
-In-Reply-To: <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <20141024163051.GG4529@psi-dev26.jf.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Fri, Oct 24, 2014 at 01:59:19PM +0200, Thomas Petazzoni wrote:
-> This commit adds the implementation of ->suspend() and ->resume()
-> platform_driver hooks in order to save and restore the state of the
-> GPIO configuration. In order to achieve that, additional fields are
-> added to the mvebu_gpio_chip structure.
+> > +	switch (mvchip->soc_variant) {
+> > +	case MVEBU_GPIO_SOC_VARIANT_ORION:
+> > +		mvchip->edge_mask_regs[0] =
+> > +			readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
+> > +		mvchip->level_mask_regs[0] =
+> > +			readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
+> > +		break;
+> > +	case MVEBU_GPIO_SOC_VARIANT_MV78200:
+> > +		for (i = 0; i < 2; i++) {
+> > +			mvchip->edge_mask_regs[i] =
+> > +				readl(mvchip->membase +
+> > +				      GPIO_EDGE_MASK_MV78200_OFF(i));
+> > +			mvchip->level_mask_regs[i] =
+> > +				readl(mvchip->membase +
+> > +				      GPIO_LEVEL_MASK_MV78200_OFF(i));
+> > +		}
+> > +		break;
+> > +	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+> > +		for (i = 0; i < 4; i++) {
+> > +			mvchip->edge_mask_regs[i] =
+> > +				readl(mvchip->membase +
+> > +				      GPIO_EDGE_MASK_ARMADAXP_OFF(i));
+> > +			mvchip->level_mask_regs[i] =
+> > +				readl(mvchip->membase +
+> > +				      GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
+> > +		}
+> > +		break;
+> > +	default:
+> > +		BUG();
 > 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> ---
->  drivers/gpio/gpio-mvebu.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 99 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-> index 418e386..dd5545c 100644
-> --- a/drivers/gpio/gpio-mvebu.c
-> +++ b/drivers/gpio/gpio-mvebu.c
-> @@ -83,6 +83,14 @@ struct mvebu_gpio_chip {
->  	int		   irqbase;
->  	struct irq_domain *domain;
->  	int                soc_variant;
-> +
-> +	/* Used to preserve GPIO registers accross suspend/resume */
-> +	u32                out_reg;
-> +	u32                io_conf_reg;
-> +	u32                blink_en_reg;
-> +	u32                in_pol_reg;
-> +	u32                edge_mask_regs[4];
-> +	u32                level_mask_regs[4];
->  };
->  
->  /*
-> @@ -554,6 +562,93 @@ static const struct of_device_id mvebu_gpio_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, mvebu_gpio_of_match);
->  
-> +static int mvebu_gpio_suspend(struct platform_device *pdev, pm_message_t state)
-> +{
-> +	struct mvebu_gpio_chip *mvchip = platform_get_drvdata(pdev);
-> +	int i;
-> +
-> +	mvchip->out_reg = readl(mvebu_gpioreg_out(mvchip));
-> +	mvchip->io_conf_reg = readl(mvebu_gpioreg_io_conf(mvchip));
-> +	mvchip->blink_en_reg = readl(mvebu_gpioreg_blink(mvchip));
-> +	mvchip->in_pol_reg = readl(mvebu_gpioreg_in_pol(mvchip));
-> +
-> +	switch (mvchip->soc_variant) {
-> +	case MVEBU_GPIO_SOC_VARIANT_ORION:
-> +		mvchip->edge_mask_regs[0] =
-> +			readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
-> +		mvchip->level_mask_regs[0] =
-> +			readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
-> +		break;
-> +	case MVEBU_GPIO_SOC_VARIANT_MV78200:
-> +		for (i = 0; i < 2; i++) {
-> +			mvchip->edge_mask_regs[i] =
-> +				readl(mvchip->membase +
-> +				      GPIO_EDGE_MASK_MV78200_OFF(i));
-> +			mvchip->level_mask_regs[i] =
-> +				readl(mvchip->membase +
-> +				      GPIO_LEVEL_MASK_MV78200_OFF(i));
-> +		}
-> +		break;
-> +	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
-> +		for (i = 0; i < 4; i++) {
-> +			mvchip->edge_mask_regs[i] =
-> +				readl(mvchip->membase +
-> +				      GPIO_EDGE_MASK_ARMADAXP_OFF(i));
-> +			mvchip->level_mask_regs[i] =
-> +				readl(mvchip->membase +
-> +				      GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
-> +		}
-> +		break;
-> +	default:
-> +		BUG();
+> Isn't it too severe? Is the platform going too unstable if driver
+> reaches this case?
+> I'd consider a WARN() instead.
 
-Isn't it too severe? Is the platform going too unstable if driver
-reaches this case?
-I'd consider a WARN() instead.
+This is a common pattern in this driver. So i guess Thomas just
+cut/pasted the switch statement from _probe(), which also has the
+BUG().
 
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int mvebu_gpio_resume(struct platform_device *pdev)
-> +{
-> +	struct mvebu_gpio_chip *mvchip = platform_get_drvdata(pdev);
-> +	int i;
-> +
-> +	writel(mvchip->out_reg, mvebu_gpioreg_out(mvchip));
-> +	writel(mvchip->io_conf_reg, mvebu_gpioreg_io_conf(mvchip));
-> +	writel(mvchip->blink_en_reg, mvebu_gpioreg_blink(mvchip));
-> +	writel(mvchip->in_pol_reg, mvebu_gpioreg_in_pol(mvchip));
-> +
-> +	switch (mvchip->soc_variant) {
-> +	case MVEBU_GPIO_SOC_VARIANT_ORION:
-> +		writel(mvchip->edge_mask_regs[0],
-> +		       mvchip->membase + GPIO_EDGE_MASK_OFF);
-> +		writel(mvchip->level_mask_regs[0],
-> +		       mvchip->membase + GPIO_LEVEL_MASK_OFF);
-> +		break;
-> +	case MVEBU_GPIO_SOC_VARIANT_MV78200:
-> +		for (i = 0; i < 2; i++) {
-> +			writel(mvchip->edge_mask_regs[i],
-> +			       mvchip->membase + GPIO_EDGE_MASK_MV78200_OFF(i));
-> +			writel(mvchip->level_mask_regs[i],
-> +			       mvchip->membase +
-> +			       GPIO_LEVEL_MASK_MV78200_OFF(i));
-> +		}
-> +		break;
-> +	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
-> +		for (i = 0; i < 4; i++) {
-> +			writel(mvchip->edge_mask_regs[i],
-> +			       mvchip->membase +
-> +			       GPIO_EDGE_MASK_ARMADAXP_OFF(i));
-> +			writel(mvchip->level_mask_regs[i],
-> +			       mvchip->membase +
-> +			       GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
-> +		}
-> +		break;
-> +	default:
-> +		BUG();
+Given that _probe() should of thrown a BUG() in this situation, if it
+happens here, it means mvchip->soc_variant has been corrupted, and so
+bad things are happening. So a BUG() is maybe called for?
 
-Ditto.
-
-Br, David Cohen
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int mvebu_gpio_probe(struct platform_device *pdev)
->  {
->  	struct mvebu_gpio_chip *mvchip;
-> @@ -577,6 +672,8 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
->  	if (!mvchip)
->  		return -ENOMEM;
->  
-> +	platform_set_drvdata(pdev, mvchip);
-> +
->  	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
->  		dev_err(&pdev->dev, "Missing ngpios OF property\n");
->  		return -ENODEV;
-> @@ -735,5 +832,7 @@ static struct platform_driver mvebu_gpio_driver = {
->  		.of_match_table = mvebu_gpio_of_match,
->  	},
->  	.probe		= mvebu_gpio_probe,
-> +	.suspend        = mvebu_gpio_suspend,
-> +	.resume         = mvebu_gpio_resume,
->  };
->  module_platform_driver(mvebu_gpio_driver);
-> -- 
-> 2.0.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	 Andrew
