@@ -1,70 +1,46 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
-Date: Fri, 24 Oct 2014 15:46:59 +0200
-Message-ID: <2988580.WvjMBY1UOc@wuerfel>
-References: <1412779948-28769-1-git-send-email-yvo@apm.com> <1412779948-28769-2-git-send-email-yvo@apm.com> <CACRpkdY3-Y0eA_o2enfxbqWUpwPoo_5oM9t=uU=QSTAw4MPf9Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: [PATCH] gpio: msm-v1: Fix typo in function argument
+Date: Fri, 24 Oct 2014 15:29:57 +0100
+Message-ID: <1414160997-30575-1-git-send-email-daniel.thompson@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:64049 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756525AbaJXNrJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Oct 2014 09:47:09 -0400
-In-Reply-To: <CACRpkdY3-Y0eA_o2enfxbqWUpwPoo_5oM9t=uU=QSTAw4MPf9Q@mail.gmail.com>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:38278 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755386AbaJXOaP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Oct 2014 10:30:15 -0400
+Received: by mail-wi0-f169.google.com with SMTP id q5so1328790wiv.0
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Oct 2014 07:30:14 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Y Vo <yvo@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, patches <patches@apm.com>
+To: Jiri Kosina <trivial@kernel.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org, John Stultz <john.stultz@linaro.org>, Sumit Semwal <sumit.semwal@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Friday 24 October 2014 14:14:43 Linus Walleij wrote:
-> On Wed, Oct 8, 2014 at 4:52 PM, Y Vo <yvo@apm.com> wrote:
-> 
-> > Add APM X-Gene standby GPIO controller driver.
-> >
-> > Signed-off-by: Y Vo <yvo@apm.com>
-> 
-> That's a very terse commit message. Please tell us a bit about the
-> hardware and what platforms it is used on, etc.
-> 
-> For example that is uses ACPI, as seems to be the case.
+irq_set_irq_wake() treats its second argument as a boolean. It is much
+easier to read code when constant booleans are either 0 or 1!
 
-I think that was just the header file inclusion, but no actual ACPI
-support. Al Stone is experimenting with ACPI support for X-Gene, and
-some earlier patches from APM had rudimentary support as well, but
-we are not adding ACPI support to X-Gene drivers upstream until we
-know whether we can support the entire platform in that mode or not.
+This particular line of code distracted me somewhat when I was doing a bit of
+work in a code browser since it (spuriously) got me worried that I had
+misunderstood how irq_set_irq_wake() worked.
 
-> So this platform uses some interesting combination of ACPI and device tree
-> at the same time? Or alternatively?
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+---
+ drivers/gpio/gpio-msm-v1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Just DT at the moment.
+diff --git a/drivers/gpio/gpio-msm-v1.c b/drivers/gpio/gpio-msm-v1.c
+index 73b7396..997e61e 100644
+--- a/drivers/gpio/gpio-msm-v1.c
++++ b/drivers/gpio/gpio-msm-v1.c
+@@ -686,7 +686,7 @@ static int gpio_msm_v1_probe(struct platform_device *pdev)
+ 	irq_set_chained_handler(irq1, msm_gpio_irq_handler);
+ 	irq_set_chained_handler(irq2, msm_gpio_irq_handler);
+ 	irq_set_irq_wake(irq1, 1);
+-	irq_set_irq_wake(irq2, 2);
++	irq_set_irq_wake(irq2, 1);
+ 	return 0;
+ }
 
-> > +       apm_gc->irq = devm_kzalloc(&pdev->dev, sizeof(u32) * XGENE_MAX_GPIO_DS,
-> > +                                  GFP_KERNEL);
-> > +       if (!apm_gc->irq)
-> > +               return -ENOMEM;
-> > +       memset(apm_gc->irq, 0, sizeof(u32) * XGENE_MAX_GPIO_DS);
-> (...)
-> > +       for (i = 0; i < apm_gc->nirq; i++) {
-> > +               apm_gc->irq[default_pins[i]] = platform_get_irq(pdev, i);
-> 
-> So the IRQs for all the GPIO pins are handled somewhere else instead
-> of being a cascaded IRQ controller.
-> 
-> This means that the IRQ lines from each individual GPIO pin is
-> connected to a unique IRQ line on a secondary interrupt controller,
-> instead of the GPIO block being a cascaded interrupt controller
-> in its own right.
-> 
-> Is this correct?
+--
+1.9.3
 
-See the discussion I had on this. Yes, each line is connected to a
-GIC SPI interrupt by itself. I've discussed this with Marc Zyngier
-and Thomas Gleixner at the conference last week, and we concluded
-that we will need a new generic interface to get data out of the
-parent interrupt controller in a proper way. The current implementation
-just maps the GIC registers and reads them directly, which of course
-is not a proper way to do it.
-
-	Arnd
