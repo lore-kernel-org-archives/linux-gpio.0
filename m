@@ -1,162 +1,95 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH 06/17] gpio: mvebu: add suspend/resume support
-Date: Fri, 24 Oct 2014 13:59:19 +0200
-Message-ID: <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
+Date: Fri, 24 Oct 2014 14:14:43 +0200
+Message-ID: <CACRpkdY3-Y0eA_o2enfxbqWUpwPoo_5oM9t=uU=QSTAw4MPf9Q@mail.gmail.com>
+References: <1412779948-28769-1-git-send-email-yvo@apm.com>
+	<1412779948-28769-2-git-send-email-yvo@apm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:38823 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S933186AbaJXL7t (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Oct 2014 07:59:49 -0400
-In-Reply-To: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Received: from mail-yh0-f45.google.com ([209.85.213.45]:38650 "EHLO
+	mail-yh0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756224AbaJXMOo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Oct 2014 08:14:44 -0400
+Received: by mail-yh0-f45.google.com with SMTP id f73so474529yha.32
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Oct 2014 05:14:44 -0700 (PDT)
+In-Reply-To: <1412779948-28769-2-git-send-email-yvo@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, devicetree@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Y Vo <yvo@apm.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, patches <patches@apm.com>
 
-This commit adds the implementation of ->suspend() and ->resume()
-platform_driver hooks in order to save and restore the state of the
-GPIO configuration. In order to achieve that, additional fields are
-added to the mvebu_gpio_chip structure.
+On Wed, Oct 8, 2014 at 4:52 PM, Y Vo <yvo@apm.com> wrote:
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org
----
- drivers/gpio/gpio-mvebu.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+> Add APM X-Gene standby GPIO controller driver.
+>
+> Signed-off-by: Y Vo <yvo@apm.com>
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 418e386..dd5545c 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -83,6 +83,14 @@ struct mvebu_gpio_chip {
- 	int		   irqbase;
- 	struct irq_domain *domain;
- 	int                soc_variant;
-+
-+	/* Used to preserve GPIO registers accross suspend/resume */
-+	u32                out_reg;
-+	u32                io_conf_reg;
-+	u32                blink_en_reg;
-+	u32                in_pol_reg;
-+	u32                edge_mask_regs[4];
-+	u32                level_mask_regs[4];
- };
- 
- /*
-@@ -554,6 +562,93 @@ static const struct of_device_id mvebu_gpio_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, mvebu_gpio_of_match);
- 
-+static int mvebu_gpio_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct mvebu_gpio_chip *mvchip = platform_get_drvdata(pdev);
-+	int i;
-+
-+	mvchip->out_reg = readl(mvebu_gpioreg_out(mvchip));
-+	mvchip->io_conf_reg = readl(mvebu_gpioreg_io_conf(mvchip));
-+	mvchip->blink_en_reg = readl(mvebu_gpioreg_blink(mvchip));
-+	mvchip->in_pol_reg = readl(mvebu_gpioreg_in_pol(mvchip));
-+
-+	switch (mvchip->soc_variant) {
-+	case MVEBU_GPIO_SOC_VARIANT_ORION:
-+		mvchip->edge_mask_regs[0] =
-+			readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
-+		mvchip->level_mask_regs[0] =
-+			readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
-+		break;
-+	case MVEBU_GPIO_SOC_VARIANT_MV78200:
-+		for (i = 0; i < 2; i++) {
-+			mvchip->edge_mask_regs[i] =
-+				readl(mvchip->membase +
-+				      GPIO_EDGE_MASK_MV78200_OFF(i));
-+			mvchip->level_mask_regs[i] =
-+				readl(mvchip->membase +
-+				      GPIO_LEVEL_MASK_MV78200_OFF(i));
-+		}
-+		break;
-+	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
-+		for (i = 0; i < 4; i++) {
-+			mvchip->edge_mask_regs[i] =
-+				readl(mvchip->membase +
-+				      GPIO_EDGE_MASK_ARMADAXP_OFF(i));
-+			mvchip->level_mask_regs[i] =
-+				readl(mvchip->membase +
-+				      GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
-+		}
-+		break;
-+	default:
-+		BUG();
-+	}
-+
-+	return 0;
-+}
-+
-+static int mvebu_gpio_resume(struct platform_device *pdev)
-+{
-+	struct mvebu_gpio_chip *mvchip = platform_get_drvdata(pdev);
-+	int i;
-+
-+	writel(mvchip->out_reg, mvebu_gpioreg_out(mvchip));
-+	writel(mvchip->io_conf_reg, mvebu_gpioreg_io_conf(mvchip));
-+	writel(mvchip->blink_en_reg, mvebu_gpioreg_blink(mvchip));
-+	writel(mvchip->in_pol_reg, mvebu_gpioreg_in_pol(mvchip));
-+
-+	switch (mvchip->soc_variant) {
-+	case MVEBU_GPIO_SOC_VARIANT_ORION:
-+		writel(mvchip->edge_mask_regs[0],
-+		       mvchip->membase + GPIO_EDGE_MASK_OFF);
-+		writel(mvchip->level_mask_regs[0],
-+		       mvchip->membase + GPIO_LEVEL_MASK_OFF);
-+		break;
-+	case MVEBU_GPIO_SOC_VARIANT_MV78200:
-+		for (i = 0; i < 2; i++) {
-+			writel(mvchip->edge_mask_regs[i],
-+			       mvchip->membase + GPIO_EDGE_MASK_MV78200_OFF(i));
-+			writel(mvchip->level_mask_regs[i],
-+			       mvchip->membase +
-+			       GPIO_LEVEL_MASK_MV78200_OFF(i));
-+		}
-+		break;
-+	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
-+		for (i = 0; i < 4; i++) {
-+			writel(mvchip->edge_mask_regs[i],
-+			       mvchip->membase +
-+			       GPIO_EDGE_MASK_ARMADAXP_OFF(i));
-+			writel(mvchip->level_mask_regs[i],
-+			       mvchip->membase +
-+			       GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
-+		}
-+		break;
-+	default:
-+		BUG();
-+	}
-+
-+	return 0;
-+}
-+
- static int mvebu_gpio_probe(struct platform_device *pdev)
- {
- 	struct mvebu_gpio_chip *mvchip;
-@@ -577,6 +672,8 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	if (!mvchip)
- 		return -ENOMEM;
- 
-+	platform_set_drvdata(pdev, mvchip);
-+
- 	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
- 		dev_err(&pdev->dev, "Missing ngpios OF property\n");
- 		return -ENODEV;
-@@ -735,5 +832,7 @@ static struct platform_driver mvebu_gpio_driver = {
- 		.of_match_table = mvebu_gpio_of_match,
- 	},
- 	.probe		= mvebu_gpio_probe,
-+	.suspend        = mvebu_gpio_suspend,
-+	.resume         = mvebu_gpio_resume,
- };
- module_platform_driver(mvebu_gpio_driver);
--- 
-2.0.0
+That's a very terse commit message. Please tell us a bit about the
+hardware and what platforms it is used on, etc.
 
+For example that is uses ACPI, as seems to be the case.
+
+> +config GPIO_XGENE_SB
+> +       tristate "APM X-Gene GPIO standby controller support"
+> +       depends on ARCH_XGENE && OF_GPIO
+
+If this platform uses ACPI (as is implied below), why is it depending on
+OF_GPIO but not GPIO_ACPI...
+
+(...)
+> +#include <linux/of_gpio.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/acpi.h>
+
+So this platform uses some interesting combination of ACPI and device tree
+at the same time? Or alternatively?
+
+
+> +struct xgene_gpio_sb {
+> +       struct of_mm_gpio_chip mm;
+> +       u32 *irq;
+> +       u32 nirq;
+> +       void __iomem *gic_regs;
+> +       spinlock_t lock; /* mutual exclusion */
+> +};
+
+Document this struct using kerneldoc instead.
+
+> +       apm_gc->irq = devm_kzalloc(&pdev->dev, sizeof(u32) * XGENE_MAX_GPIO_DS,
+> +                                  GFP_KERNEL);
+> +       if (!apm_gc->irq)
+> +               return -ENOMEM;
+> +       memset(apm_gc->irq, 0, sizeof(u32) * XGENE_MAX_GPIO_DS);
+(...)
+> +       for (i = 0; i < apm_gc->nirq; i++) {
+> +               apm_gc->irq[default_pins[i]] = platform_get_irq(pdev, i);
+
+So the IRQs for all the GPIO pins are handled somewhere else instead
+of being a cascaded IRQ controller.
+
+This means that the IRQ lines from each individual GPIO pin is
+connected to a unique IRQ line on a secondary interrupt controller,
+instead of the GPIO block being a cascaded interrupt controller
+in its own right.
+
+Is this correct?
+
+Usually there is a single IRQ line out from a GPIO block... not
+one per GPIO.
+
+I really want to look at the code for that interrupt controller to see
+what's going on here, please provide me a pointer to the
+relevant code.
+
+> +static int xgene_gpio_sb_remove(struct platform_device *pdev)
+> +{
+> +       struct of_mm_gpio_chip *mm = platform_get_drvdata(pdev);
+> +
+> +       return gpiochip_remove(&mm->gc);
+
+This function has changed signature and doesn't return a value
+anymore.
+
+Yours,
+Linus Walleij
