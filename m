@@ -1,30 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 3/4] ARM: dts: vf610: use new GPIO support
-Date: Fri, 24 Oct 2014 14:24:23 +0200
-Message-ID: <CACRpkdYBBucVNeG7kAjZdqnKYTk6ZCcHa6aBrtgBL+h5AoWNvw@mail.gmail.com>
-References: <cover.1413488264.git.stefan@agner.ch>
-	<150ed46ff5102dc0fc8bd81160387cfeee748a27.1413488264.git.stefan@agner.ch>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
+Date: Fri, 24 Oct 2014 15:46:59 +0200
+Message-ID: <2988580.WvjMBY1UOc@wuerfel>
+References: <1412779948-28769-1-git-send-email-yvo@apm.com> <1412779948-28769-2-git-send-email-yvo@apm.com> <CACRpkdY3-Y0eA_o2enfxbqWUpwPoo_5oM9t=uU=QSTAw4MPf9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <150ed46ff5102dc0fc8bd81160387cfeee748a27.1413488264.git.stefan@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bpringlemeir@nbsps.com, Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:64049 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756525AbaJXNrJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Oct 2014 09:47:09 -0400
+In-Reply-To: <CACRpkdY3-Y0eA_o2enfxbqWUpwPoo_5oM9t=uU=QSTAw4MPf9Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Y Vo <yvo@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, patches <patches@apm.com>
 
-On Thu, Oct 16, 2014 at 9:47 PM, Stefan Agner <stefan@agner.ch> wrote:
+On Friday 24 October 2014 14:14:43 Linus Walleij wrote:
+> On Wed, Oct 8, 2014 at 4:52 PM, Y Vo <yvo@apm.com> wrote:
+> 
+> > Add APM X-Gene standby GPIO controller driver.
+> >
+> > Signed-off-by: Y Vo <yvo@apm.com>
+> 
+> That's a very terse commit message. Please tell us a bit about the
+> hardware and what platforms it is used on, etc.
+> 
+> For example that is uses ACPI, as seems to be the case.
 
-> Use GPIO support by adding SD card detection configuration and
-> GPIO pinmux for Colibri's standard GPIO pins. Attach the GPIO
-> pins to the iomuxc node to get the GPIO pin settings applied.
->
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+I think that was just the header file inclusion, but no actual ACPI
+support. Al Stone is experimenting with ACPI support for X-Gene, and
+some earlier patches from APM had rudimentary support as well, but
+we are not adding ACPI support to X-Gene drivers upstream until we
+know whether we can support the entire platform in that mode or not.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> So this platform uses some interesting combination of ACPI and device tree
+> at the same time? Or alternatively?
 
-Please take this through whatever platform tree funnels those DTS
-patches.
+Just DT at the moment.
 
-Yours,
-Linus Walleij
+> > +       apm_gc->irq = devm_kzalloc(&pdev->dev, sizeof(u32) * XGENE_MAX_GPIO_DS,
+> > +                                  GFP_KERNEL);
+> > +       if (!apm_gc->irq)
+> > +               return -ENOMEM;
+> > +       memset(apm_gc->irq, 0, sizeof(u32) * XGENE_MAX_GPIO_DS);
+> (...)
+> > +       for (i = 0; i < apm_gc->nirq; i++) {
+> > +               apm_gc->irq[default_pins[i]] = platform_get_irq(pdev, i);
+> 
+> So the IRQs for all the GPIO pins are handled somewhere else instead
+> of being a cascaded IRQ controller.
+> 
+> This means that the IRQ lines from each individual GPIO pin is
+> connected to a unique IRQ line on a secondary interrupt controller,
+> instead of the GPIO block being a cascaded interrupt controller
+> in its own right.
+> 
+> Is this correct?
+
+See the discussion I had on this. Yes, each line is connected to a
+GIC SPI interrupt by itself. I've discussed this with Marc Zyngier
+and Thomas Gleixner at the conference last week, and we concluded
+that we will need a new generic interface to get data out of the
+parent interrupt controller in a proper way. The current implementation
+just maps the GIC registers and reads them directly, which of course
+is not a proper way to do it.
+
+	Arnd
