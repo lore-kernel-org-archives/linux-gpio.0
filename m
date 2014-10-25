@@ -1,64 +1,42 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
-Date: Fri, 24 Oct 2014 22:45:32 +0200
-Message-ID: <20141024204532.GA6436@lunn.ch>
-References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
- <20141024163051.GG4529@psi-dev26.jf.intel.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH] pinctrl: mxs: warn if functions are not grouped by name
+Date: Sat, 25 Oct 2014 20:24:35 +0800
+Message-ID: <20141025122433.GD3648@tiger>
+References: <1413884445-28347-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:43447 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751397AbaJXUqu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 24 Oct 2014 16:46:50 -0400
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:47697 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751355AbaJYTUy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Oct 2014 15:20:54 -0400
+Received: by mail-pa0-f44.google.com with SMTP id et14so3007588pad.31
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Oct 2014 12:20:54 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20141024163051.GG4529@psi-dev26.jf.intel.com>
+In-Reply-To: <1413884445-28347-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de
 
-> > +	switch (mvchip->soc_variant) {
-> > +	case MVEBU_GPIO_SOC_VARIANT_ORION:
-> > +		mvchip->edge_mask_regs[0] =
-> > +			readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
-> > +		mvchip->level_mask_regs[0] =
-> > +			readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
-> > +		break;
-> > +	case MVEBU_GPIO_SOC_VARIANT_MV78200:
-> > +		for (i = 0; i < 2; i++) {
-> > +			mvchip->edge_mask_regs[i] =
-> > +				readl(mvchip->membase +
-> > +				      GPIO_EDGE_MASK_MV78200_OFF(i));
-> > +			mvchip->level_mask_regs[i] =
-> > +				readl(mvchip->membase +
-> > +				      GPIO_LEVEL_MASK_MV78200_OFF(i));
-> > +		}
-> > +		break;
-> > +	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
-> > +		for (i = 0; i < 4; i++) {
-> > +			mvchip->edge_mask_regs[i] =
-> > +				readl(mvchip->membase +
-> > +				      GPIO_EDGE_MASK_ARMADAXP_OFF(i));
-> > +			mvchip->level_mask_regs[i] =
-> > +				readl(mvchip->membase +
-> > +				      GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
-> > +		}
-> > +		break;
-> > +	default:
-> > +		BUG();
-> 
-> Isn't it too severe? Is the platform going too unstable if driver
-> reaches this case?
-> I'd consider a WARN() instead.
+On Tue, Oct 21, 2014 at 11:40:45AM +0200, Uwe Kleine-K=F6nig wrote:
+> The mxs pinctrl driver cannot handle when functions are not grouped b=
+y
+> name (which IMO is a bug). This happens for example if a
+> imx28-somemachine.dts provides a function that has the same name as a
+> function defined in imx28.dtsi.
+>=20
+> The proper way to fix that would be to check for duplicates in the lo=
+ops
+> (which increases parsing time) or parse the groups first and sort the
+> resulting array.
+>=20
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-This is a common pattern in this driver. So i guess Thomas just
-cut/pasted the switch statement from _probe(), which also has the
-BUG().
-
-Given that _probe() should of thrown a BUG() in this situation, if it
-happens here, it means mvchip->soc_variant has been corrupted, and so
-bad things are happening. So a BUG() is maybe called for?
-
-	 Andrew
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
