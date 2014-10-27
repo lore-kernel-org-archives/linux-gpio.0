@@ -1,32 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/5] MIPS: ralink: we require gpiolib
-Date: Mon, 27 Oct 2014 17:42:33 +0100
-Message-ID: <CACRpkdZmf6q5apZAYGtjO_GeG-BRBzTOKa53vi3J_5riqrN-zQ@mail.gmail.com>
-References: <1412972930-16777-1-git-send-email-blogic@openwrt.org>
-	<1412972930-16777-5-git-send-email-blogic@openwrt.org>
+Subject: Re: [PATCH v2] gpio: lib-sysfs: Add 'wakeup' attribute
+Date: Mon, 27 Oct 2014 17:52:04 +0100
+Message-ID: <CACRpkdYh3bZLodeNYubu_WQ-O=5My0Jt=b3g2GT3Mvy2XZMrLg@mail.gmail.com>
+References: <1413244255-3880-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:64820 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751362AbaJ0Qme (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 12:42:34 -0400
-Received: by mail-ie0-f173.google.com with SMTP id tr6so4686910ieb.4
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2014 09:42:33 -0700 (PDT)
-In-Reply-To: <1412972930-16777-5-git-send-email-blogic@openwrt.org>
+Received: from mail-ig0-f175.google.com ([209.85.213.175]:54687 "EHLO
+	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752508AbaJ0QwF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 12:52:05 -0400
+Received: by mail-ig0-f175.google.com with SMTP id a13so821540igq.14
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2014 09:52:05 -0700 (PDT)
+In-Reply-To: <1413244255-3880-1-git-send-email-soren.brinkmann@xilinx.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: John Crispin <blogic@openwrt.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 10, 2014 at 10:28 PM, John Crispin <blogic@openwrt.org> wrote:
+On Tue, Oct 14, 2014 at 1:50 AM, Soren Brinkmann
+<soren.brinkmann@xilinx.com> wrote:
 
-> Select ARCH_REQUIRE_GPIOLIB by default when building a kernel for RALINK.
+> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
+> marking/unmarking a GPIO as wake IRQ.
+> The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
+> is associated with that GPIO and the irqchip implements set_wake().
+> Writing 'enabled' to that file will enable wake for that GPIO, while
+> writing 'disabled' will disable wake.
+> Reading that file will return either 'disabled' or 'enabled' depening on
+> the currently set flag for the GPIO's IRQ.
 >
-> Signed-off-by: John Crispin <blogic@openwrt.org>
+> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> v2:
+>  - fix error path to unlock mutex before return
 
-Happy with selecting this, but don't think you need the altered
-mach gpio.h header. Do like x86 does.
+As you're adding an ABI, you should be patching
+Documentation/ABI/testing/sysfs-gpio and
+Documentation/gpio/sysfs.txt in this patch.
+
+While I *HATE* the idea of adding IRQ support to userspace
+for GPIOs, this "just" adds the wakeup capacity, so I guess I'm
+OK with it.
+
+Provided you add it to the ABI doc...
 
 Yours,
 Linus Walleij
