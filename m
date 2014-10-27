@@ -1,49 +1,70 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: msm-v1: Fix typo in function argument
-Date: Mon, 27 Oct 2014 14:00:21 +0900
-Message-ID: <CAAVeFuLZJtdUXNyT6Nbi7jbZ-MsVjUFkmPg9oVEa=ZpkZRwkbw@mail.gmail.com>
-References: <1414160997-30575-1-git-send-email-daniel.thompson@linaro.org>
+Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
+Date: Mon, 27 Oct 2014 14:27:16 +0900
+Message-ID: <CAAVeFu+_UZkQHa38wvaBSmRZCWof6-J13eVYgrG6KS7yargsYA@mail.gmail.com>
+References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20141024163051.GG4529@psi-dev26.jf.intel.com> <20141024204532.GA6436@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:59507 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750785AbaJ0FAo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 01:00:44 -0400
-In-Reply-To: <1414160997-30575-1-git-send-email-daniel.thompson@linaro.org>
+Received: from mail-ig0-f176.google.com ([209.85.213.176]:56619 "EHLO
+	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752557AbaJ0F1g (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 01:27:36 -0400
+In-Reply-To: <20141024204532.GA6436@lunn.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jiri Kosina <trivial@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, patches@linaro.org, linaro-kernel@lists.linaro.org, John Stultz <john.stultz@linaro.org>, Sumit Semwal <sumit.semwal@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: David Cohen <david.a.cohen@linux.intel.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 24, 2014 at 11:29 PM, Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
-> irq_set_irq_wake() treats its second argument as a boolean. It is much
-> easier to read code when constant booleans are either 0 or 1!
+On Sat, Oct 25, 2014 at 5:45 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+>> > +   switch (mvchip->soc_variant) {
+>> > +   case MVEBU_GPIO_SOC_VARIANT_ORION:
+>> > +           mvchip->edge_mask_regs[0] =
+>> > +                   readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
+>> > +           mvchip->level_mask_regs[0] =
+>> > +                   readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
+>> > +           break;
+>> > +   case MVEBU_GPIO_SOC_VARIANT_MV78200:
+>> > +           for (i = 0; i < 2; i++) {
+>> > +                   mvchip->edge_mask_regs[i] =
+>> > +                           readl(mvchip->membase +
+>> > +                                 GPIO_EDGE_MASK_MV78200_OFF(i));
+>> > +                   mvchip->level_mask_regs[i] =
+>> > +                           readl(mvchip->membase +
+>> > +                                 GPIO_LEVEL_MASK_MV78200_OFF(i));
+>> > +           }
+>> > +           break;
+>> > +   case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+>> > +           for (i = 0; i < 4; i++) {
+>> > +                   mvchip->edge_mask_regs[i] =
+>> > +                           readl(mvchip->membase +
+>> > +                                 GPIO_EDGE_MASK_ARMADAXP_OFF(i));
+>> > +                   mvchip->level_mask_regs[i] =
+>> > +                           readl(mvchip->membase +
+>> > +                                 GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
+>> > +           }
+>> > +           break;
+>> > +   default:
+>> > +           BUG();
+>>
+>> Isn't it too severe? Is the platform going too unstable if driver
+>> reaches this case?
+>> I'd consider a WARN() instead.
 >
-> This particular line of code distracted me somewhat when I was doing a bit of
-> work in a code browser since it (spuriously) got me worried that I had
-> misunderstood how irq_set_irq_wake() worked.
+> This is a common pattern in this driver. So i guess Thomas just
+> cut/pasted the switch statement from _probe(), which also has the
+> BUG().
 >
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> ---
->  drivers/gpio/gpio-msm-v1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-msm-v1.c b/drivers/gpio/gpio-msm-v1.c
-> index 73b7396..997e61e 100644
-> --- a/drivers/gpio/gpio-msm-v1.c
-> +++ b/drivers/gpio/gpio-msm-v1.c
-> @@ -686,7 +686,7 @@ static int gpio_msm_v1_probe(struct platform_device *pdev)
->         irq_set_chained_handler(irq1, msm_gpio_irq_handler);
->         irq_set_chained_handler(irq2, msm_gpio_irq_handler);
->         irq_set_irq_wake(irq1, 1);
-> -       irq_set_irq_wake(irq2, 2);
-> +       irq_set_irq_wake(irq2, 1);
->         return 0;
+> Given that _probe() should of thrown a BUG() in this situation, if it
+> happens here, it means mvchip->soc_variant has been corrupted, and so
+> bad things are happening. So a BUG() is maybe called for?
 
-That could be confusing indeed.
+I agree that BUG() is adequate here. probe() should recognize the
+exact same set of chips - if we reach this point this means that
+either the data has been corrupted or we added support for a new chip
+in probe() and forgot suspend/resume. In both cases the driver should
+express its discontent.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
