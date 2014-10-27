@@ -1,34 +1,59 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: amd8111: unmap ioport on failure case
-Date: Mon, 27 Oct 2014 16:27:27 +0100
-Message-ID: <CACRpkdZjqLUMVGZzqkK+E+0BBquu8fw-=6FivFzmO8cUnZe5dw@mail.gmail.com>
-References: <1412157780-32219-1-git-send-email-pramod.gurav@smartplayin.com>
+Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO adapter
+Date: Mon, 27 Oct 2014 16:30:34 +0100
+Message-ID: <CACRpkdbe6OC-4CZ_DiUBcuv9wsMVtvk1FpkdNn5pZG+sgP6wZQ@mail.gmail.com>
+References: <1412606822-3406-1-git-send-email-muth@cypress.com>
+	<CAAVeFu+vBZ49ciZT+-dnKXks201_psy_NtYsTjw0ptOkx2es7Q@mail.gmail.com>
+	<405b439b16ea40078718da326343f673@BN1PR06MB069.namprd06.prod.outlook.com>
+	<CAAVeFu+X0Lk=5sNm9kOwGX=2-DYN_-5v-7M9bAWXraffKsTkMg@mail.gmail.com>
+	<CACdXCX7PqUHRKJ0KipmYzRF54XRmMYYArr5iof36VskJ75PaKg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:48621 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752001AbaJ0P12 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 11:27:28 -0400
-Received: by mail-ig0-f171.google.com with SMTP id l13so6512954iga.4
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2014 08:27:27 -0700 (PDT)
-In-Reply-To: <1412157780-32219-1-git-send-email-pramod.gurav@smartplayin.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACdXCX7PqUHRKJ0KipmYzRF54XRmMYYArr5iof36VskJ75PaKg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: RR <rajaram.officemails@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Muthu Mani <muth@cypress.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>, Johan Hovold <johan@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Pramod Gurav <pramod.gurav@smartplayin.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Oct 1, 2014 at 12:03 PM, Pramod Gurav
-<pramod.gurav@smartplayin.com> wrote:
+On Thu, Oct 9, 2014 at 1:46 AM, RR <rajaram.officemails@gmail.com> wrote:
+> On Wed, Oct 8, 2014 at 12:18 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+>> On Wed, Oct 8, 2014 at 4:09 PM, Muthu Mani <muth@cypress.com> wrote:
 
-> This change unmaps ioport when gpiochip_add fails
+>>>> > +static int cy_gpio_direction_output(struct gpio_chip *chip,
+>>>> > +                                       unsigned offset, int value) {
+>>>> > +       return 0;
+>>>> > +}
+>>>>
+>>>> If that chip is capable of both output and input, shouldn't these functions be
+>>>> implemented? I think this has already been pointed out in a previous version
+>>>> but you did not reply.
+>>>
+>>> Thanks for your inputs.
+>>>
+>>> Only the GPIOs which are configured to be output GPIO can be set.
+>>
+>> In that case cy_gpio_set() should return an error for GPIOs which are
+>> not configured as outputs. Is that guaranteed by the current
+>> implementation?
+>>
+>>> The set operation would fail trying to set the input or unconfigured GPIOs.
+>>> In this version of driver, this support is not added, it can be introduced in future versions.
+>>> I will add a TODO note in the code.
+>>
+>> Argh, no TODO please. Actual code that will turn this code into a
+>> solid driver that can be merged.
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
+> Does a driver targeted for a custom device has to implement every
+> functionality in the 1st version ?
 
-Patch applied. Sorry for disproportionate delays...
+When you post a driver to the GPIO maintainers it is *NOT* tageted
+at a consumer device, it is targeted at the kernel community and
+upstream maintainers.
+
+Of course you can deliver add-on patches out-of-tree to your
+customers, it's generally a bad idea for the long term and maintenance
+of your driver, but it's your pick.
 
 Yours,
 Linus Walleij
