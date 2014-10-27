@@ -1,50 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Mon, 27 Oct 2014 17:52:04 +0100
-Message-ID: <CACRpkdYh3bZLodeNYubu_WQ-O=5My0Jt=b3g2GT3Mvy2XZMrLg@mail.gmail.com>
-References: <1413244255-3880-1-git-send-email-soren.brinkmann@xilinx.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v9 1/4] mfd: add support for Diolan DLN-2 devices
+Date: Mon, 27 Oct 2014 09:57:49 -0700
+Message-ID: <1414429069.8884.10.camel@perches.com>
+References: <1414427472-4100-1-git-send-email-octavian.purdila@intel.com>
+	 <1414427472-4100-2-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f175.google.com ([209.85.213.175]:54687 "EHLO
-	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752508AbaJ0QwF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 12:52:05 -0400
-Received: by mail-ig0-f175.google.com with SMTP id a13so821540igq.14
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2014 09:52:05 -0700 (PDT)
-In-Reply-To: <1413244255-3880-1-git-send-email-soren.brinkmann@xilinx.com>
+Received: from smtprelay0130.hostedemail.com ([216.40.44.130]:48247 "EHLO
+	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751113AbaJ0Q5y (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 27 Oct 2014 12:57:54 -0400
+In-Reply-To: <1414427472-4100-2-git-send-email-octavian.purdila@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org, arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 
-On Tue, Oct 14, 2014 at 1:50 AM, Soren Brinkmann
-<soren.brinkmann@xilinx.com> wrote:
+On Mon, 2014-10-27 at 18:31 +0200, Octavian Purdila wrote:
+> This patch implements the USB part of the Diolan USB-I2C/SPI/GPIO
+> Master Adapter DLN-2. Details about the device can be found here:
 
-> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
-> marking/unmarking a GPIO as wake IRQ.
-> The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
-> is associated with that GPIO and the irqchip implements set_wake().
-> Writing 'enabled' to that file will enable wake for that GPIO, while
-> writing 'disabled' will disable wake.
-> Reading that file will return either 'disabled' or 'enabled' depening on
-> the currently set flag for the GPIO's IRQ.
->
-> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> v2:
->  - fix error path to unlock mutex before return
+trivia:
 
-As you're adding an ABI, you should be patching
-Documentation/ABI/testing/sysfs-gpio and
-Documentation/gpio/sysfs.txt in this patch.
+> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+[]
+> +static int _dln2_transfer(struct dln2_dev *dln2, u16 handle, u16 cmd,
+> +			  const void *obuf, unsigned obuf_len,
+> +			  void *ibuf, unsigned *ibuf_len)
+> +{
+> +	int ret = 0;
+> +	int rx_slot;
+> +	struct dln2_response *rsp;
+> +	struct dln2_rx_context *rxc;
+> +	struct device *dev = &dln2->interface->dev;
+> +	const int timeout = DLN2_USB_TIMEOUT * HZ / 1000;
 
-While I *HATE* the idea of adding IRQ support to userspace
-for GPIOs, this "just" adds the wakeup capacity, so I guess I'm
-OK with it.
+unsigned long timeout?
 
-Provided you add it to the ABI doc...
+[]
 
-Yours,
-Linus Walleij
+> +	ret = wait_for_completion_interruptible_timeout(&rxc->done, timeout);
+> +	if (ret <= 0) {
+> +		if (!ret)
+> +			ret = -ETIMEDOUT;
+> +		goto out_free_rx_slot;
+> +	}
+
+[]
+
+> +static int dln2_print_serialno(struct dln2_dev *dln2)
+> +{
+> +	int ret;
+> +	__le32 serial_no;
+> +	int len = sizeof(serial_no);
+> +	struct device *dev = &dln2->interface->dev;
+> +
+> +	ret = _dln2_transfer(dln2, DLN2_HANDLE_CTRL, CMD_GET_DEVICE_SN, NULL, 0,
+> +			     &serial_no, &len);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (len < sizeof(serial_no))
+> +		return -EREMOTEIO;
+> +
+> +	dev_info(dev, "Diolan DLN2 serial 0x%x\n", le32_to_cpu(serial_no));
+
+why a hex serial #?
+
+
