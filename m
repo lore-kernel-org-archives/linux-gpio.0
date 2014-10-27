@@ -1,60 +1,90 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: dwapb: fix compile errors
-Date: Mon, 27 Oct 2014 18:20:14 +0100
-Message-ID: <1414430414-12586-1-git-send-email-linus.walleij@linaro.org>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
+Date: Mon, 27 Oct 2014 10:45:52 -0700
+Message-ID: <20141027174552.GH4529@psi-dev26.jf.intel.com>
+References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20141024163051.GG4529@psi-dev26.jf.intel.com>
+ <20141024204532.GA6436@lunn.ch>
+ <CAAVeFu+_UZkQHa38wvaBSmRZCWof6-J13eVYgrG6KS7yargsYA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:60429 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751368AbaJ0RUU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 13:20:20 -0400
-Received: by mail-wg0-f50.google.com with SMTP id z12so3648181wgg.33
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2014 10:20:19 -0700 (PDT)
+Received: from mga14.intel.com ([192.55.52.115]:41604 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750873AbaJ0RzG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 27 Oct 2014 13:55:06 -0400
+Content-Disposition: inline
+In-Reply-To: <CAAVeFu+_UZkQHa38wvaBSmRZCWof6-J13eVYgrG6KS7yargsYA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Jamie Iles <jamie@jamieiles.com>, Alan Tull <atull@altera.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Whereas the DWAPB driver does not really depend on the ARM
-architecture, it uses [readl|writel]_relaxed() not found on
-arch such as Blackfin, so restrict this to ARM until there is
-another architecture that can make use of it.
+On Mon, Oct 27, 2014 at 02:27:16PM +0900, Alexandre Courbot wrote:
+> On Sat, Oct 25, 2014 at 5:45 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+> >> > +   switch (mvchip->soc_variant) {
+> >> > +   case MVEBU_GPIO_SOC_VARIANT_ORION:
+> >> > +           mvchip->edge_mask_regs[0] =
+> >> > +                   readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
+> >> > +           mvchip->level_mask_regs[0] =
+> >> > +                   readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
+> >> > +           break;
+> >> > +   case MVEBU_GPIO_SOC_VARIANT_MV78200:
+> >> > +           for (i = 0; i < 2; i++) {
+> >> > +                   mvchip->edge_mask_regs[i] =
+> >> > +                           readl(mvchip->membase +
+> >> > +                                 GPIO_EDGE_MASK_MV78200_OFF(i));
+> >> > +                   mvchip->level_mask_regs[i] =
+> >> > +                           readl(mvchip->membase +
+> >> > +                                 GPIO_LEVEL_MASK_MV78200_OFF(i));
+> >> > +           }
+> >> > +           break;
+> >> > +   case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+> >> > +           for (i = 0; i < 4; i++) {
+> >> > +                   mvchip->edge_mask_regs[i] =
+> >> > +                           readl(mvchip->membase +
+> >> > +                                 GPIO_EDGE_MASK_ARMADAXP_OFF(i));
+> >> > +                   mvchip->level_mask_regs[i] =
+> >> > +                           readl(mvchip->membase +
+> >> > +                                 GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
+> >> > +           }
+> >> > +           break;
+> >> > +   default:
+> >> > +           BUG();
+> >>
+> >> Isn't it too severe? Is the platform going too unstable if driver
+> >> reaches this case?
+> >> I'd consider a WARN() instead.
+> >
+> > This is a common pattern in this driver. So i guess Thomas just
+> > cut/pasted the switch statement from _probe(), which also has the
+> > BUG().
+> >
+> > Given that _probe() should of thrown a BUG() in this situation, if it
+> > happens here, it means mvchip->soc_variant has been corrupted, and so
+> > bad things are happening. So a BUG() is maybe called for?
+> 
+> I agree that BUG() is adequate here. probe() should recognize the
+> exact same set of chips - if we reach this point this means that
+> either the data has been corrupted or we added support for a new chip
+> in probe() and forgot suspend/resume. In both cases the driver should
+> express its discontent.
 
-It is also using the of_node of the gpiochip, so fix this
-too by requiring OF_GPIO.
+Just for the records, since I don't know this platform very well :)
 
-All error/warnings:
+IMHO unless this issue is the source of a serious instability or data
+corruption, a WARN() would be a better way for the driver express its
+discontent. It's way better to have a functional platform for further
+debugging.
 
-make.cross ARCH=blackfin
-drivers/gpio/gpio-dwapb.c: In function 'dwapb_irq_handler':
-drivers/gpio/gpio-dwapb.c:91:2: error: implicit declaration of function 'readl_relaxed' [-Werror=implicit-function-declaration]
-drivers/gpio/gpio-dwapb.c: In function 'dwapb_configure_irqs':
-drivers/gpio/gpio-dwapb.c:212:32: error: 'struct gpio_chip' has no member named 'of_node'
-drivers/gpio/gpio-dwapb.c:221:16: error: 'struct gpio_chip' has no member named 'of_node'
-drivers/gpio/gpio-dwapb.c: In function 'dwapb_gpio_add_port':
-drivers/gpio/gpio-dwapb.c:331:14: error: 'struct gpio_chip' has no member named 'of_node'
-cc1: some warnings being treated as errors
+This driver can also be compiled as a module. I wonder if it's a good
+behavior boot the platform and then crash the kernel when loading the
+module driver.
 
-Cc: Jamie Iles <jamie@jamieiles.com>
-Cc: Alan Tull <atull@altera.com>
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+But anyway, that would be just me.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 690ad0b20414..414d0559d32f 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -148,6 +148,8 @@ config GPIO_GENERIC_PLATFORM
- 
- config GPIO_DWAPB
- 	tristate "Synopsys DesignWare APB GPIO driver"
-+	depends on ARM
-+	depends on OF_GPIO
- 	select GPIO_GENERIC
- 	select GENERIC_IRQ_CHIP
- 	help
--- 
-1.9.3
+Br, David Cohen
 
+> 
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
