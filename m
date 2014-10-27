@@ -1,70 +1,112 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
-Date: Mon, 27 Oct 2014 14:27:16 +0900
-Message-ID: <CAAVeFu+_UZkQHa38wvaBSmRZCWof6-J13eVYgrG6KS7yargsYA@mail.gmail.com>
-References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
- <20141024163051.GG4529@psi-dev26.jf.intel.com> <20141024204532.GA6436@lunn.ch>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: Re: [PATCH v8 2/4] i2c: add support for Diolan DLN-2 USB-I2C adapter
+Date: Mon, 27 Oct 2014 14:42:57 +0200
+Message-ID: <CAMoF9u2S9ZbsgeVaBKhc0o5Zo2pz7naomUv2RbvN-G=0C2Dt9A@mail.gmail.com>
+References: <1413384491-23703-1-git-send-email-octavian.purdila@intel.com>
+	<1413384491-23703-3-git-send-email-octavian.purdila@intel.com>
+	<20141023151940.GA21210@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:56619 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752557AbaJ0F1g (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 01:27:36 -0400
-In-Reply-To: <20141024204532.GA6436@lunn.ch>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:58456 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753174AbaJ0MnA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 08:43:00 -0400
+Received: by mail-ob0-f173.google.com with SMTP id wn1so1156439obc.4
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2014 05:43:00 -0700 (PDT)
+In-Reply-To: <20141023151940.GA21210@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: David Cohen <david.a.cohen@linux.intel.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Octavian Purdila <octavian.purdila@intel.com>, Greg KH <gregkh@linuxfoundation.org>, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org, Arnd Bergmann <arnd@arndb.de>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 
-On Sat, Oct 25, 2014 at 5:45 AM, Andrew Lunn <andrew@lunn.ch> wrote:
->> > +   switch (mvchip->soc_variant) {
->> > +   case MVEBU_GPIO_SOC_VARIANT_ORION:
->> > +           mvchip->edge_mask_regs[0] =
->> > +                   readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
->> > +           mvchip->level_mask_regs[0] =
->> > +                   readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
->> > +           break;
->> > +   case MVEBU_GPIO_SOC_VARIANT_MV78200:
->> > +           for (i = 0; i < 2; i++) {
->> > +                   mvchip->edge_mask_regs[i] =
->> > +                           readl(mvchip->membase +
->> > +                                 GPIO_EDGE_MASK_MV78200_OFF(i));
->> > +                   mvchip->level_mask_regs[i] =
->> > +                           readl(mvchip->membase +
->> > +                                 GPIO_LEVEL_MASK_MV78200_OFF(i));
->> > +           }
->> > +           break;
->> > +   case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
->> > +           for (i = 0; i < 4; i++) {
->> > +                   mvchip->edge_mask_regs[i] =
->> > +                           readl(mvchip->membase +
->> > +                                 GPIO_EDGE_MASK_ARMADAXP_OFF(i));
->> > +                   mvchip->level_mask_regs[i] =
->> > +                           readl(mvchip->membase +
->> > +                                 GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
->> > +           }
->> > +           break;
->> > +   default:
->> > +           BUG();
->>
->> Isn't it too severe? Is the platform going too unstable if driver
->> reaches this case?
->> I'd consider a WARN() instead.
+On Thu, Oct 23, 2014 at 6:19 PM, Johan Hovold <johan@kernel.org> wrote:
 >
-> This is a common pattern in this driver. So i guess Thomas just
-> cut/pasted the switch statement from _probe(), which also has the
-> BUG().
+> On Wed, Oct 15, 2014 at 05:48:09PM +0300, Octavian Purdila wrote:
 >
-> Given that _probe() should of thrown a BUG() in this situation, if it
-> happens here, it means mvchip->soc_variant has been corrupted, and so
-> bad things are happening. So a BUG() is maybe called for?
+> > +static int dln2_i2c_xfer(struct i2c_adapter *adapter,
+> > +                      struct i2c_msg *msgs, int num)
+> > +{
+> > +     struct dln2_i2c *dln2 = i2c_get_adapdata(adapter);
+> > +     struct i2c_msg *pmsg;
+> > +     struct device *dev = &dln2->pdev->dev;
+>
+> You want to use the i2c-adapter device here (not the platform device).
+>
 
-I agree that BUG() is adequate here. probe() should recognize the
-exact same set of chips - if we reach this point this means that
-either the data has been corrupted or we added support for a new chip
-in probe() and forgot suspend/resume. In both cases the driver should
-express its discontent.
+You are right, I will fix in v9.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> > +     int i;
+> > +
+> > +     for (i = 0; i < num; i++) {
+> > +             int ret;
+> > +
+> > +             pmsg = &msgs[i];
+> > +
+> > +             if (pmsg->len > DLN2_I2C_MAX_XFER_SIZE) {
+> > +                     dev_warn(dev, "maximum transfer size exceeded\n");
+> > +                     return -EOPNOTSUPP;
+> > +             }
+> > +
+> > +             if (pmsg->flags & I2C_M_RD) {
+> > +                     ret = dln2_i2c_read(dln2, pmsg->addr, pmsg->buf,
+> > +                                         pmsg->len);
+> > +                     if (ret < 0)
+> > +                             return ret;
+> > +
+> > +                     pmsg->len = ret;
+> > +             } else {
+> > +                     ret = dln2_i2c_write(dln2, pmsg->addr, pmsg->buf,
+> > +                                          pmsg->len);
+> > +                     if (ret != pmsg->len)
+> > +                             return -EPROTO;
+> > +             }
+> > +     }
+> > +
+> > +     return num;
+> > +}
+>
+> [...]
+>
+> > +static int dln2_i2c_probe(struct platform_device *pdev)
+> > +{
+> > +     int ret;
+> > +     struct dln2_i2c *dln2;
+> > +     struct device *dev = &pdev->dev;
+> > +     struct dln2_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> > +
+> > +     dln2 = devm_kzalloc(dev, sizeof(*dln2), GFP_KERNEL);
+> > +     if (!dln2)
+> > +             return -ENOMEM;
+> > +
+> > +     dln2->buf = devm_kmalloc(dev, DLN2_I2C_BUF_SIZE, GFP_KERNEL);
+> > +     if (!dln2->buf)
+> > +             return -ENOMEM;
+> > +
+> > +     dln2->pdev = pdev;
+> > +     dln2->port = pdata->port;
+> > +
+> > +     /* setup i2c adapter description */
+> > +     dln2->adapter.owner = THIS_MODULE;
+> > +     dln2->adapter.class = I2C_CLASS_HWMON;
+> > +     dln2->adapter.algo = &dln2_i2c_usb_algorithm;
+> > +     dln2->adapter.dev.parent = dev;
+> > +     i2c_set_adapdata(&dln2->adapter, dln2);
+> > +     snprintf(dln2->adapter.name, sizeof(dln2->adapter.name), "%s-%s-%d",
+> > +              "dln2-i2c", dev_name(pdev->dev.parent), dln2->port);
+> > +
+> > +     platform_set_drvdata(pdev, dln2);
+> > +
+> > +     /* initialize the i2c interface */
+>
+> No longer "initialisation" since you dropped the frequency setup?
+>
+> > +     ret = dln2_i2c_enable(dln2, true);
+> > +     if (ret < 0) {
+> > +             dev_err(dev, "failed to initialize adapter: %d\n", ret);
+>
+> Same here.
+
+Hmm, I still consider this to be an initialization operation, albeit
+less complex then it was before. If you don't mind too much, I would
+prefer to keep it this way.
