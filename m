@@ -1,340 +1,255 @@
-From: Octavian Purdila <octavian.purdila@intel.com>
-Subject: [PATCH v9 2/4] i2c: add support for Diolan DLN-2 USB-I2C adapter
-Date: Mon, 27 Oct 2014 18:31:10 +0200
-Message-ID: <1414427472-4100-3-git-send-email-octavian.purdila@intel.com>
-References: <1414427472-4100-1-git-send-email-octavian.purdila@intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1414427472-4100-1-git-send-email-octavian.purdila@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, lee.jones@linaro.org
-Cc: arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] GPIO: MIPS: ralink: add gpio driver for ralink SoC
+Date: Mon, 27 Oct 2014 17:36:03 +0100
+Message-ID: <CACRpkdb62hLJqAW2cP4jvDpn9M4j4zxypjSf2fOoNK+LwOHjtw@mail.gmail.com>
+References: <1412885241-12476-1-git-send-email-blogic@openwrt.org>
+	<1412885241-12476-2-git-send-email-blogic@openwrt.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f181.google.com ([209.85.213.181]:49173 "EHLO
+	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750943AbaJ0QgE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Oct 2014 12:36:04 -0400
+Received: by mail-ig0-f181.google.com with SMTP id l13so6735200iga.8
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2014 09:36:03 -0700 (PDT)
+In-Reply-To: <1412885241-12476-2-git-send-email-blogic@openwrt.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: John Crispin <blogic@openwrt.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-From: Laurentiu Palcu <laurentiu.palcu@intel.com>
+On Thu, Oct 9, 2014 at 10:07 PM, John Crispin <blogic@openwrt.org> wrote:
 
-This patch adds support for the Diolan DLN-2 I2C master module. Due
-to hardware limitations it does not support SMBUS quick commands.
+> Add gpio driver for Ralink SoC. This driver makes the gpio core on
+> RT2880, RT305x, rt3352, rt3662, rt3883, rt5350 and mt7620 work.
+>
+> Signed-off-by: John Crispin <blogic@openwrt.org>
+> Cc: linux-mips@linux-mips.org
+> Cc: linux-gpio@vger.kernel.org
 
-Information about the USB protocol interface can be found in the
-Programmer's Reference Manual [1], see section 6.2.2 for the I2C
-master module commands and responses.
+As mentioned I think this driver should register the GPIO to pin
+range using gpiochip_add_pin_range() or
+gpiochip_add_pingroup_range().
 
-[1] https://www.diolan.com/downloads/dln-api-manual.pdf
+> +++ b/arch/mips/include/asm/mach-ralink/gpio.h
+> @@ -0,0 +1,24 @@
+> +/*
+> + *  Ralink SoC GPIO API support
+> + *
+> + *  Copyright (C) 2008-2009 Gabor Juhos <juhosg@openwrt.org>
+> + *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
+> + *
+> + *  This program is free software; you can redistribute it and/or modify it
+> + *  under the terms of the GNU General Public License version 2 as published
+> + *  by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#ifndef __ASM_MACH_RALINK_GPIO_H
+> +#define __ASM_MACH_RALINK_GPIO_H
+> +
+> +#define ARCH_NR_GPIOS  128
 
-Signed-off-by: Laurentiu Palcu <laurentiu.palcu@intel.com>
-Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
----
- drivers/i2c/busses/Kconfig    |  10 ++
- drivers/i2c/busses/Makefile   |   1 +
- drivers/i2c/busses/i2c-dln2.c | 267 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 278 insertions(+)
- create mode 100644 drivers/i2c/busses/i2c-dln2.c
+The generic definition is 512, do you really need to
+modify this?
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 2ac87fa..2f3f371 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -858,6 +858,16 @@ config I2C_DIOLAN_U2C
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-diolan-u2c.
- 
-+config I2C_DLN2
-+       tristate "Diolan DLN-2 USB I2C adapter"
-+       depends on MFD_DLN2
-+       help
-+         If you say yes to this option, support will be included for Diolan
-+         DLN2, a USB to I2C interface.
-+
-+         This driver can also be built as a module.  If so, the module
-+         will be called i2c-dln2.
-+
- config I2C_PARPORT
- 	tristate "Parallel port adapter"
- 	depends on PARPORT
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 49bf07e..4755f79 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_I2C_RCAR)		+= i2c-rcar.o
- 
- # External I2C/SMBus adapter drivers
- obj-$(CONFIG_I2C_DIOLAN_U2C)	+= i2c-diolan-u2c.o
-+obj-$(CONFIG_I2C_DLN2)		+= i2c-dln2.o
- obj-$(CONFIG_I2C_PARPORT)	+= i2c-parport.o
- obj-$(CONFIG_I2C_PARPORT_LIGHT)	+= i2c-parport-light.o
- obj-$(CONFIG_I2C_ROBOTFUZZ_OSIF)	+= i2c-robotfuzz-osif.o
-diff --git a/drivers/i2c/busses/i2c-dln2.c b/drivers/i2c/busses/i2c-dln2.c
-new file mode 100644
-index 0000000..010a5fa
---- /dev/null
-+++ b/drivers/i2c/busses/i2c-dln2.c
-@@ -0,0 +1,267 @@
-+/*
-+ * Driver for the Diolan DLN-2 USB-I2C adapter
-+ *
-+ * Copyright (c) 2014 Intel Corporation
-+ *
-+ * Derived from:
-+ *  i2c-diolan-u2c.c
-+ *  Copyright (c) 2010-2011 Ericsson AB
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation, version 2.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/types.h>
-+#include <linux/slab.h>
-+#include <linux/i2c.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/dln2.h>
-+
-+#define DLN2_I2C_MODULE_ID		0x03
-+#define DLN2_I2C_CMD(cmd)		DLN2_CMD(cmd, DLN2_I2C_MODULE_ID)
-+
-+/* I2C commands */
-+#define DLN2_I2C_GET_PORT_COUNT		DLN2_I2C_CMD(0x00)
-+#define DLN2_I2C_ENABLE			DLN2_I2C_CMD(0x01)
-+#define DLN2_I2C_DISABLE		DLN2_I2C_CMD(0x02)
-+#define DLN2_I2C_IS_ENABLED		DLN2_I2C_CMD(0x03)
-+#define DLN2_I2C_WRITE			DLN2_I2C_CMD(0x06)
-+#define DLN2_I2C_READ			DLN2_I2C_CMD(0x07)
-+#define DLN2_I2C_SCAN_DEVICES		DLN2_I2C_CMD(0x08)
-+#define DLN2_I2C_PULLUP_ENABLE		DLN2_I2C_CMD(0x09)
-+#define DLN2_I2C_PULLUP_DISABLE		DLN2_I2C_CMD(0x0A)
-+#define DLN2_I2C_PULLUP_IS_ENABLED	DLN2_I2C_CMD(0x0B)
-+#define DLN2_I2C_TRANSFER		DLN2_I2C_CMD(0x0C)
-+#define DLN2_I2C_SET_MAX_REPLY_COUNT	DLN2_I2C_CMD(0x0D)
-+#define DLN2_I2C_GET_MAX_REPLY_COUNT	DLN2_I2C_CMD(0x0E)
-+
-+#define DLN2_I2C_MAX_XFER_SIZE		256
-+#define DLN2_I2C_BUF_SIZE		(DLN2_I2C_MAX_XFER_SIZE + 16)
-+
-+struct dln2_i2c {
-+	struct platform_device *pdev;
-+	struct i2c_adapter adapter;
-+	u8 port;
-+	/*
-+	 * Buffer to hold the packet for read or write transfers. One is enough
-+	 * since we can't have multiple transfers in parallel on the i2c bus.
-+	 */
-+	void *buf;
-+};
-+
-+static int dln2_i2c_enable(struct dln2_i2c *dln2, bool enable)
-+{
-+	int ret;
-+	u16 cmd;
-+	struct {
-+		u8 port;
-+	} tx;
-+
-+	tx.port = dln2->port;
-+
-+	if (enable)
-+		cmd = DLN2_I2C_ENABLE;
-+	else
-+		cmd = DLN2_I2C_DISABLE;
-+
-+	ret = dln2_transfer_tx(dln2->pdev, cmd, &tx, sizeof(tx));
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int dln2_i2c_write(struct dln2_i2c *dln2, u8 addr,
-+			  u8 *data, u16 data_len)
-+{
-+	int ret;
-+	struct {
-+		u8 port;
-+		u8 addr;
-+		u8 mem_addr_len;
-+		__le32 mem_addr;
-+		__le16 buf_len;
-+		u8 buf[DLN2_I2C_MAX_XFER_SIZE];
-+	} __packed *tx = dln2->buf;
-+	unsigned len;
-+
-+	BUILD_BUG_ON(sizeof(*tx) > DLN2_I2C_BUF_SIZE);
-+
-+	tx->port = dln2->port;
-+	tx->addr = addr;
-+	tx->mem_addr_len = 0;
-+	tx->mem_addr = 0;
-+	tx->buf_len = cpu_to_le16(data_len);
-+	memcpy(tx->buf, data, data_len);
-+
-+	len = sizeof(*tx) + data_len - DLN2_I2C_MAX_XFER_SIZE;
-+	ret = dln2_transfer_tx(dln2->pdev, DLN2_I2C_WRITE, tx, len);
-+	if (ret < 0)
-+		return ret;
-+
-+	return data_len;
-+}
-+
-+static int dln2_i2c_read(struct dln2_i2c *dln2, u16 addr, u8 *data,
-+			 u16 data_len)
-+{
-+	int ret;
-+	struct {
-+		u8 port;
-+		u8 addr;
-+		u8 mem_addr_len;
-+		__le32 mem_addr;
-+		__le16 buf_len;
-+	} __packed tx;
-+	struct {
-+		__le16 buf_len;
-+		u8 buf[DLN2_I2C_MAX_XFER_SIZE];
-+	} __packed *rx = dln2->buf;
-+	unsigned rx_len = sizeof(*rx);
-+
-+	BUILD_BUG_ON(sizeof(*rx) > DLN2_I2C_BUF_SIZE);
-+
-+	tx.port = dln2->port;
-+	tx.addr = addr;
-+	tx.mem_addr_len = 0;
-+	tx.mem_addr = 0;
-+	tx.buf_len = cpu_to_le16(data_len);
-+
-+	ret = dln2_transfer(dln2->pdev, DLN2_I2C_READ, &tx, sizeof(tx),
-+			    rx, &rx_len);
-+	if (ret < 0)
-+		return ret;
-+	if (rx_len < sizeof(rx->buf_len) + data_len)
-+		return -EPROTO;
-+	if (le16_to_cpu(rx->buf_len) != data_len)
-+		return -EPROTO;
-+
-+	memcpy(data, rx->buf, data_len);
-+
-+	return data_len;
-+}
-+
-+static int dln2_i2c_xfer(struct i2c_adapter *adapter,
-+			 struct i2c_msg *msgs, int num)
-+{
-+	struct dln2_i2c *dln2 = i2c_get_adapdata(adapter);
-+	struct i2c_msg *pmsg;
-+	struct device *dev = &dln2->adapter.dev;
-+	int i;
-+
-+	for (i = 0; i < num; i++) {
-+		int ret;
-+
-+		pmsg = &msgs[i];
-+
-+		if (pmsg->len > DLN2_I2C_MAX_XFER_SIZE) {
-+			dev_warn(dev, "maximum transfer size exceeded\n");
-+			return -EOPNOTSUPP;
-+		}
-+
-+		if (pmsg->flags & I2C_M_RD) {
-+			ret = dln2_i2c_read(dln2, pmsg->addr, pmsg->buf,
-+					    pmsg->len);
-+			if (ret < 0)
-+				return ret;
-+
-+			pmsg->len = ret;
-+		} else {
-+			ret = dln2_i2c_write(dln2, pmsg->addr, pmsg->buf,
-+					     pmsg->len);
-+			if (ret != pmsg->len)
-+				return -EPROTO;
-+		}
-+	}
-+
-+	return num;
-+}
-+
-+static u32 dln2_i2c_func(struct i2c_adapter *a)
-+{
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA |
-+		I2C_FUNC_SMBUS_WORD_DATA | I2C_FUNC_SMBUS_BLOCK_PROC_CALL |
-+		I2C_FUNC_SMBUS_I2C_BLOCK;
-+}
-+
-+static const struct i2c_algorithm dln2_i2c_usb_algorithm = {
-+	.master_xfer = dln2_i2c_xfer,
-+	.functionality = dln2_i2c_func,
-+};
-+
-+static int dln2_i2c_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	struct dln2_i2c *dln2;
-+	struct device *dev = &pdev->dev;
-+	struct dln2_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+
-+	dln2 = devm_kzalloc(dev, sizeof(*dln2), GFP_KERNEL);
-+	if (!dln2)
-+		return -ENOMEM;
-+
-+	dln2->buf = devm_kmalloc(dev, DLN2_I2C_BUF_SIZE, GFP_KERNEL);
-+	if (!dln2->buf)
-+		return -ENOMEM;
-+
-+	dln2->pdev = pdev;
-+	dln2->port = pdata->port;
-+
-+	/* setup i2c adapter description */
-+	dln2->adapter.owner = THIS_MODULE;
-+	dln2->adapter.class = I2C_CLASS_HWMON;
-+	dln2->adapter.algo = &dln2_i2c_usb_algorithm;
-+	dln2->adapter.dev.parent = dev;
-+	i2c_set_adapdata(&dln2->adapter, dln2);
-+	snprintf(dln2->adapter.name, sizeof(dln2->adapter.name), "%s-%s-%d",
-+		 "dln2-i2c", dev_name(pdev->dev.parent), dln2->port);
-+
-+	platform_set_drvdata(pdev, dln2);
-+
-+	/* initialize the i2c interface */
-+	ret = dln2_i2c_enable(dln2, true);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to initialize adapter: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* and finally attach to i2c layer */
-+	ret = i2c_add_adapter(&dln2->adapter);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to add I2C adapter: %d\n", ret);
-+		goto out_disable;
-+	}
-+
-+	return 0;
-+
-+out_disable:
-+	dln2_i2c_enable(dln2, false);
-+
-+	return ret;
-+}
-+
-+static int dln2_i2c_remove(struct platform_device *pdev)
-+{
-+	struct dln2_i2c *dln2 = platform_get_drvdata(pdev);
-+
-+	i2c_del_adapter(&dln2->adapter);
-+	dln2_i2c_enable(dln2, false);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver dln2_i2c_driver = {
-+	.driver.name	= "dln2-i2c",
-+	.probe		= dln2_i2c_probe,
-+	.remove		= dln2_i2c_remove,
-+};
-+
-+module_platform_driver(dln2_i2c_driver);
-+
-+MODULE_AUTHOR("Laurentiu Palcu <laurentiu.palcu@intel.com>");
-+MODULE_DESCRIPTION("Driver for the Diolan DLN2 I2C master interface");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:dln2-i2c");
--- 
-1.9.1
+> +#include <asm-generic/gpio.h>
+> +
+> +#define gpio_get_value __gpio_get_value
+> +#define gpio_set_value __gpio_set_value
+> +#define gpio_cansleep  __gpio_cansleep
+> +#define gpio_to_irq    __gpio_to_irq
+> +
+> +#endif /* __ASM_MACH_RALINK_GPIO_H */
+
+The rest is jus what you get without providing this file
+at all, right?
+
+> +++ b/drivers/gpio/gpio-rt2880.c
+> @@ -0,0 +1,354 @@
+> +/*
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms of the GNU General Public License version 2 as published
+> + * by the Free Software Foundation.
+> + *
+> + * Copyright (C) 2009-2011 Gabor Juhos <juhosg@openwrt.org>
+> + * Copyright (C) 2013 John Crispin <blogic@openwrt.org>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/io.h>
+> +#include <linux/gpio.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/irqdomain.h>
+
+If this is a cascaded GPIO chip (one accumulated IRQ line from all the
+GPIO lines) you should instead select GPIOLIB_IRQCHIP
+and follow the example of the drivers that use this.
+
+> +enum ralink_gpio_reg {
+> +       GPIO_REG_INT = 0,
+> +       GPIO_REG_EDGE,
+> +       GPIO_REG_RENA,
+> +       GPIO_REG_FENA,
+> +       GPIO_REG_DATA,
+> +       GPIO_REG_DIR,
+> +       GPIO_REG_POL,
+> +       GPIO_REG_SET,
+> +       GPIO_REG_RESET,
+> +       GPIO_REG_TOGGLE,
+> +       GPIO_REG_MAX
+> +};
+
+No that I see why this needs an enumerator and cannot just
+be #defined, but whatdoIknow...
+
+> +struct ralink_gpio_chip {
+> +       struct gpio_chip chip;
+> +       u8 regs[GPIO_REG_MAX];
+> +
+> +       spinlock_t lock;
+> +       void __iomem *membase;
+> +       struct irq_domain *domain;
+> +       int irq;
+
+Usually you don't need to keep the irq number around.
+
+> +
+> +       u32 rising;
+> +       u32 falling;
+> +};
+
+Some of this could use some kerneldoc.
+
+> +#define MAP_MAX        4
+> +static struct irq_domain *irq_map[MAP_MAX];
+> +static int irq_map_count;
+> +static atomic_t irq_refcount = ATOMIC_INIT(0);
+
+I don't get why you have a per-device state container and then
+add these static locals for the irqdomains that seems unnecessary.
+I prefer if all of it goes into the state container.
+
+> +static int ralink_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
+> +{
+> +       struct ralink_gpio_chip *rg = to_ralink_gpio(chip);
+> +
+> +       if (rg->irq < 1)
+> +               return -1;
+> +
+> +       return irq_create_mapping(rg->domain, pin);
+> +}
+
+So this would rather use
+irq_find_mapping(chip->irqdomain, pin);
+with GPIOLIB_IRQCHIP selected.
+
+> +static void ralink_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < irq_map_count; i++) {
+> +               struct irq_domain *domain = irq_map[i];
+> +               struct ralink_gpio_chip *rg;
+> +               unsigned long pending;
+> +               int bit;
+> +
+> +               rg = (struct ralink_gpio_chip *) domain->host_data;
+> +               pending = rt_gpio_r32(rg, GPIO_REG_INT);
+> +
+> +               for_each_set_bit(bit, &pending, rg->chip.ngpio) {
+> +                       u32 map = irq_find_mapping(domain, bit);
+> +
+> +                       generic_handle_irq(map);
+> +                       rt_gpio_w32(rg, GPIO_REG_INT, BIT(bit));
+> +               }
+> +       }
+> +}
+
+Atleast set the driver state container in irq_get_handler_data() so you don't
+need the static locals to find the maps.
+
+If you use GPIOLIB_IRQCHIP you have the gpiochip in the handler datar,
+and the irqdomain in the gpiochip.
+
+> +static int gpio_map(struct irq_domain *d, unsigned int irq, irq_hw_number_t hw)
+> +{
+> +       irq_set_chip_and_handler(irq, &ralink_gpio_irq_chip, handle_level_irq);
+> +       irq_set_handler_data(irq, d);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct irq_domain_ops irq_domain_ops = {
+> +       .xlate = irq_domain_xlate_onecell,
+> +       .map = gpio_map,
+> +};
+> +
+> +static void ralink_gpio_irq_init(struct device_node *np,
+> +                                struct ralink_gpio_chip *rg)
+> +{
+> +       if (irq_map_count >= MAP_MAX)
+> +               return;
+> +
+> +       rg->irq = irq_of_parse_and_map(np, 0);
+> +       if (!rg->irq)
+> +               return;
+> +
+> +       rg->domain = irq_domain_add_linear(np, rg->chip.ngpio,
+> +                                          &irq_domain_ops, rg);
+> +       if (!rg->domain) {
+> +               dev_err(rg->chip.dev, "irq_domain_add_linear failed\n");
+> +               return;
+> +       }
+> +
+> +       irq_map[irq_map_count++] = rg->domain;
+> +
+> +       rt_gpio_w32(rg, GPIO_REG_RENA, 0x0);
+> +       rt_gpio_w32(rg, GPIO_REG_FENA, 0x0);
+> +
+> +       if (!atomic_read(&irq_refcount))
+> +               irq_set_chained_handler(rg->irq, ralink_gpio_irq_handler);
+> +       atomic_inc(&irq_refcount);
+> +
+> +       dev_info(rg->chip.dev, "registering %d irq handlers\n", rg->chip.ngpio);
+> +}
+
+Use GPIOLIB_IRQCHIP to centralize all this complex stuff.
+
+> +       if (of_property_read_u8_array(np, "ralink,register-map",
+> +                       rg->regs, GPIO_REG_MAX)) {
+> +               dev_err(&pdev->dev, "failed to read register definition\n");
+> +               return -EINVAL;
+> +       }
+
+Is this really wise? Isn't it better to encode the type of block
+and then have these register maps statically in the driver here.
+
+> +       ngpio = of_get_property(np, "ralink,num-gpios", NULL);
+> +       if (!ngpio) {
+> +               dev_err(&pdev->dev, "failed to read number of pins\n");
+> +               return -EINVAL;
+> +       }
+
+Also the number of gpios would come from the version ID.
+
+> +       gpiobase = of_get_property(np, "ralink,gpio-base", NULL);
+> +       if (gpiobase)
+> +               rg->chip.base = be32_to_cpu(*gpiobase);
+> +       else
+> +               rg->chip.base = -1;
+
+Over my dead body. We want dynamic GPIO numbers.
+Nobody will OK that DT binding anyway.
+
+Just set this to -1 and be happy.
+
+> +subsys_initcall(ralink_gpio_init);
+
+Does it need to be this early, really?
+
+Yours,
+Linus Walleij
