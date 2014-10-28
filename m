@@ -1,28 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Rockchip patch storm
-Date: Tue, 28 Oct 2014 17:21:46 +0100
-Message-ID: <CACRpkdacdWa2FbntzxF1Ou1Mo1bemWxJpNBfQhSc3n19hsQPPw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: rename gpio_lock_as_irq to gpiochip_lock_as_irq
+Date: Tue, 28 Oct 2014 17:32:14 +0100
+Message-ID: <CACRpkdbFYi3O7ONeo-Z1iA_ZkL-YSekL7hDz9Dj1eHdKe5y8Tg@mail.gmail.com>
+References: <1414052827-21942-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:45658 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751490AbaJ1QVq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 12:21:46 -0400
-Received: by mail-ie0-f175.google.com with SMTP id at20so1009584iec.6
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 09:21:46 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1414052827-21942-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Doug Anderson <dianders@chromium.org>, Chris Zhong <zyw@rock-chips.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi guys,
+On Thu, Oct 23, 2014 at 10:27 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 
-with all the rockchip patches and cross-review going on may I ask
-that you decide on a person to collect and send pull requests to me
-for the Rockchip patch stack?
+> This function actually operates on a gpio_chip, so its prefix should
+> reflect that fact for consistency with other functions defined in
+> gpio/driver.h.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> Just a consistency change ; hopefully we can slip this under the GPIO
+> tree without getting acked-bys from each subsystem.
 
-Preferably Heiko.
+OK patch applied, hope I don't get too much breakage from new
+drivers using the call. Maybe I'll have to apply the patch to
+both the GPIO and pin control subsystem :-P
 
 Yours,
 Linus Walleij
