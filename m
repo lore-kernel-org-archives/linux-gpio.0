@@ -1,37 +1,60 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: [PATCH gpio v2 0/3] cleanup on resource check
-Date: Tue, 28 Oct 2014 12:07:04 +0530
-Message-ID: <1414478227-24674-1-git-send-email-varkab@cdac.in>
+From: gimlets74552@gmail.com
+Subject: Fix Penguin Penalty 17th October2014 ( mail-archive.com )
+Date: Tue, 28 Oct 2014 13:01:15 +0530
+Message-ID: <544f4647.0986460a.7c3d.2921@mx.google.com>
+Reply-To: sexpert277@gmail.com
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:33455 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757344AbaJ1GkK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 02:40:10 -0400
-Received: by mail-pa0-f54.google.com with SMTP id rd3so21496pab.41
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2014 23:40:09 -0700 (PDT)
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:63963 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751940AbaJ1HbV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 03:31:21 -0400
+Received: by mail-pa0-f66.google.com with SMTP id rd3so53894pab.5
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 00:31:20 -0700 (PDT)
+Received: from localhost.localdomain ([202.164.40.59])
+        by mx.google.com with ESMTPSA id pg9sm774340pdb.71.2014.10.28.00.31.16
+        for <linux-gpio@vger.kernel.org>
+        (version=TLSv1 cipher=RC4-SHA bits=128/128);
+        Tue, 28 Oct 2014 00:31:19 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, Varka Bhadram <varkab@cdac.in>
 
-This series removes the duplication of sanity check for
-platform_get_resource() return resource. It will be checked 
-with devm_ioremap_resource()
+Dear Sir
 
-Series based on devel branch of [1].
+Did your website get hit by Google Penguin update on October 17th 2014?=
+ What basically is Google Penguin Update? It is actually a code name fo=
+r Google algorithm which aims at decreasing your websites search engine=
+ rankings that violate Google=92s guidelines by using black hat SEO tec=
+hniques to rank your webpage by giving number of spammy links to the pa=
+ge.
+=20
+We are one of those few SEO companies that can help you avoid penalties=
+ from Google Updates like Penguin and Panda. Our clients have survived =
+all the previous and present updates with ease. They have never been hi=
+t because we use 100% white hat SEO techniques to rank Webpages.  Simpl=
+e thing that we do to keep websites away from any Penguin or Panda pena=
+lties is follow Google guidelines and we give Google users the best ans=
+wers to their queries.
 
-[1]: https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git
+If you are looking to increase the quality of your websites and to get =
+more targeted traffic or save your websites from these Google penalties=
+ email us back with your interest.=20
 
-Varka Bhadram (3):
-  gpio: gpio-davinci: remove duplicate check on resource
-  gpio: gpio-stp-xway: remove duplicate check on resource
-  gpio: gpio-tb10x: remove duplicate check on resource
+We will be glad to serve you and help you grow your business.
 
- drivers/gpio/gpio-davinci.c  |    5 -----
- drivers/gpio/gpio-stp-xway.c |    8 ++------
- drivers/gpio/gpio-tb10x.c    |    7 +------
- 3 files changed, 3 insertions(+), 17 deletions(-)
+Regards
 
--- 
-1.7.9.5
+Vince G
 
+SEO Manager ( TOB )
+B7 Green Avenue, Amritsar 143001 Punjab
+____________________________
+NO CLICK in the subject to STOP EMAILS
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
