@@ -1,78 +1,111 @@
-From: Octavian Purdila <octavian.purdila@intel.com>
-Subject: Re: [PATCH v9 1/4] mfd: add support for Diolan DLN-2 devices
-Date: Tue, 28 Oct 2014 15:25:36 +0200
-Message-ID: <CAMoF9u3DDPFXHKUmmPhAEXiqV3p5TaMfvQU-_HTmLO6amDxntw@mail.gmail.com>
-References: <1414427472-4100-1-git-send-email-octavian.purdila@intel.com>
-	<1414427472-4100-2-git-send-email-octavian.purdila@intel.com>
-	<1414429069.8884.10.camel@perches.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 10/16] gpio: add driver for Atheros AR2315 SoC GPIO controller
+Date: Tue, 28 Oct 2014 15:37:35 +0100
+Message-ID: <CACRpkdZk9ZmoRELY8mT-6hbPkM3j9xPJzDFs1fyW17BxqxT0UQ@mail.gmail.com>
+References: <1411929195-23775-1-git-send-email-ryazanov.s.a@gmail.com>
+	<1411929195-23775-11-git-send-email-ryazanov.s.a@gmail.com>
+	<CACRpkdYWNjE1KS8GQo0fRrgT-Siwe7=SAOGQqBVqoW+Ypg-jAw@mail.gmail.com>
+	<CAHNKnsSj6gdZgc9JqWgskMB8v49t04g5B1TKC3TTnTgch4zNtA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1414429069.8884.10.camel@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Octavian Purdila <octavian.purdila@intel.com>, Greg KH <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, wsa@the-dreams.de, sameo@linux.intel.com, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Johan Hovold <johan@kernel.org>, Daniel Baluta <daniel.baluta@intel.com>, Laurentiu Palcu <laurentiu.palcu@intel.com>, linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:59123 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753500AbaJ1Ohg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 10:37:36 -0400
+Received: by mail-ie0-f172.google.com with SMTP id rl12so795047iec.3
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 07:37:35 -0700 (PDT)
+In-Reply-To: <CAHNKnsSj6gdZgc9JqWgskMB8v49t04g5B1TKC3TTnTgch4zNtA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Oct 27, 2014 at 6:57 PM, Joe Perches <joe@perches.com> wrote:
-> On Mon, 2014-10-27 at 18:31 +0200, Octavian Purdila wrote:
->> This patch implements the USB part of the Diolan USB-I2C/SPI/GPIO
->> Master Adapter DLN-2. Details about the device can be found here:
->
-> trivia:
->
+On Wed, Oct 15, 2014 at 1:12 PM, Sergey Ryazanov <ryazanov.s.a@gmail.com> wrote:
+> 2014-10-15 12:58 GMT+04:00, Linus Walleij <linus.walleij@linaro.org>:
+>> On Sun, Sep 28, 2014 at 8:33 PM, Sergey Ryazanov <ryazanov.s.a@gmail.com>
 
-Thanks for the review Joe.
+> I have one more generic question: could you merge driver without
+> GPIOLIB_IRQCHIP usage?
 
->> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-> []
->> +static int _dln2_transfer(struct dln2_dev *dln2, u16 handle, u16 cmd,
->> +                       const void *obuf, unsigned obuf_len,
->> +                       void *ibuf, unsigned *ibuf_len)
->> +{
->> +     int ret = 0;
->> +     int rx_slot;
->> +     struct dln2_response *rsp;
->> +     struct dln2_rx_context *rxc;
->> +     struct device *dev = &dln2->interface->dev;
->> +     const int timeout = DLN2_USB_TIMEOUT * HZ / 1000;
->
-> unsigned long timeout?
->
+No.
 
-Ok.
+> Currently no one driver for the AR231x SoCs
+> uses irq_domain and I do not like to enable IRQ_DOMAIN just for one
+> driver. I plan to convert drivers to make them irq_domain aware a bit
+> later.
 
-> []
->
->> +     ret = wait_for_completion_interruptible_timeout(&rxc->done, timeout);
->> +     if (ret <= 0) {
->> +             if (!ret)
->> +                     ret = -ETIMEDOUT;
->> +             goto out_free_rx_slot;
->> +     }
->
-> []
+I don't believe any such promises. It's nothing personal, just I've
+been burned too many times by people promising to "fix later".
 
-I think you forgot to add your comments here?
+>>> +static u32 ar2315_gpio_intmask;
+>>> +static u32 ar2315_gpio_intval;
+>>> +static unsigned ar2315_gpio_irq_base;
+>>> +static void __iomem *ar2315_mem;
+>>
+>> No static locals. Allocate and use a state container, see
+>> Documentation/driver-model/design-patterns.txt
+>>
+> Is that rule mandatory for drivers, which serve only one device?
 
->
->> +static int dln2_print_serialno(struct dln2_dev *dln2)
->> +{
->> +     int ret;
->> +     __le32 serial_no;
->> +     int len = sizeof(serial_no);
->> +     struct device *dev = &dln2->interface->dev;
->> +
->> +     ret = _dln2_transfer(dln2, DLN2_HANDLE_CTRL, CMD_GET_DEVICE_SN, NULL, 0,
->> +                          &serial_no, &len);
->> +     if (ret < 0)
->> +             return ret;
->> +     if (len < sizeof(serial_no))
->> +             return -EREMOTEIO;
->> +
->> +     dev_info(dev, "Diolan DLN2 serial 0x%x\n", le32_to_cpu(serial_no));
->
-> why a hex serial #?
->
+There is no central authority which decides what is mandatory
+or not. It is mandatory to get a driver past the GPIO maintainer.
 
-Good point, I will switch it to decimal.
+>>> +static inline u32 ar2315_gpio_reg_read(unsigned reg)
+>>> +{
+>>> +       return __raw_readl(ar2315_mem + reg);
+>>> +}
+>>
+>> Use readl_relaxed() instead.
+>>
+> readl_relaxed() converts the bit ordering and seems inapplicable in this case.
+
+It assumes the peripherals IO memory is little endian.
+
+If the IO memory for this device is little endian, please stay with
+[readl|writel]_relaxed so it looks familiar.
+
+Or is this machine really using big endian hardware registers?
+In that case I understand your comment...
+
+>> When you use the state container, you need to do a
+>> state dereference like that:
+>>
+>> mystate->base + reg
+>>
+>> So I don't think these inlines buy you anything. Just use
+>> readl/writel_relaxed directly in the code.
+>>
+> These helpers make code shorter and clearer. I can use macros if you
+> do preferred.
+
+No big deal. Keep it if you like it this way.
+
+>> So why is .set_type() not implemented and instead hard-coded into
+>> the unmask function? Please fix this. It will be called by the
+>> core eventually no matter what.
+>>
+> The interrupt configuration is a bit complex. This controller could be
+> configured to generate interrupts only for two lines at once. Or in
+> other words: user could select any two lines to generate interrupt.
+
+Oh well, better just handle it I guess...
+
+>>> +static int __init ar2315_gpio_init(void)
+>>> +{
+>>> +       return platform_driver_register(&ar2315_gpio_driver);
+>>> +}
+>>> +subsys_initcall(ar2315_gpio_init);
+>>
+>> Why are you using subsys_initcall()?
+>>
+>> This should not be necessary.
+>>
+> I have users of GPIO in arch code, what called earlier than the
+> devices initcall.
+
+OK? Why are there such users that early and what do they
+use the GPIOs for? Any reason they cannot be device_initcall()s?
+
+Yours,
+Linus Walleij
