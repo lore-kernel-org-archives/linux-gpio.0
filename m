@@ -1,46 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC/PATCH] gpio/pinctrl: baytrail: move gpio driver from pinctrl
- to gpio directory
-Date: Tue, 28 Oct 2014 16:10:26 +0100
-Message-ID: <CACRpkdafsd3VDiEKbdooXx+mdAtf-3B6QBOEGeHgyJf9GKHqhQ@mail.gmail.com>
-References: <1413227857-555-1-git-send-email-david.a.cohen@linux.intel.com>
-	<543CFC7F.2070607@linux.intel.com>
-	<20141014174535.GA6516@psi-dev26.jf.intel.com>
-	<20141015070812.GM2255@lahna.fi.intel.com>
-	<20141015165542.GA4529@psi-dev26.jf.intel.com>
-	<20141016080123.GW2255@lahna.fi.intel.com>
-	<20141017015322.GB4513@psi-dev26.jf.intel.com>
+Subject: Re: [PATCH] gpio: grgpio: remove irq_domain resources on failure
+Date: Tue, 28 Oct 2014 16:13:50 +0100
+Message-ID: <CACRpkdaX2OmTbUw3ZWV8q6P0vqMa60cOJjPCmK2H0czrty_fXQ@mail.gmail.com>
+References: <1412188684-20820-1-git-send-email-pramod.gurav@smartplayin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:51139 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751647AbaJ1PK1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 11:10:27 -0400
-Received: by mail-ig0-f172.google.com with SMTP id h15so6934956igd.5
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 08:10:26 -0700 (PDT)
-In-Reply-To: <20141017015322.GB4513@psi-dev26.jf.intel.com>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:60319 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752111AbaJ1PNv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 11:13:51 -0400
+Received: by mail-ie0-f173.google.com with SMTP id tr6so867363ieb.4
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 08:13:50 -0700 (PDT)
+In-Reply-To: <1412188684-20820-1-git-send-email-pramod.gurav@smartplayin.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Pramod Gurav <pramod.gurav@smartplayin.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 17, 2014 at 3:53 AM, David Cohen
-<david.a.cohen@linux.intel.com> wrote:
-> On Thu, Oct 16, 2014 at 11:01:23AM +0300, Mika Westerberg wrote:
+On Wed, Oct 1, 2014 at 8:38 PM, Pramod Gurav
+<pramod.gurav@smartplayin.com> wrote:
 
->> In an ideal world, yes. However, the reality has shown that BIOS/FW gets
->> these wrong and we need to work it around in the OS.
+> Call irq_domain_remove when gpiochip_add fails to release irq_domain
+> resources.
 >
-> But we never upstream these workarounds, right? :)
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Pramod Gurav <pramod.gurav@smartplayin.com>
 
-Unless you discover it after it hits the market, right?
+Patch applied.
 
-I think this driver is just fine exactly where it is. Besides, the driver
-is fully aware of all its pins, and just look at all the pull up etc
-information displayed by byt_gpio_dbg_show(), it doesn't get more
-pin control than that even if you don't implement the pin control
-API.
+This driver is doing really weird stuff in it's IRQ remapping business...
 
 Yours,
 Linus Walleij
