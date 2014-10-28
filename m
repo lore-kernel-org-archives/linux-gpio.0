@@ -1,59 +1,76 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [RFC/PATCH] gpio/pinctrl: baytrail: move gpio driver from
- pinctrl to gpio directory
-Date: Tue, 28 Oct 2014 09:42:59 -0700
-Message-ID: <20141028164259.GA16355@psi-dev26.jf.intel.com>
-References: <1413227857-555-1-git-send-email-david.a.cohen@linux.intel.com>
- <543CFC7F.2070607@linux.intel.com>
- <20141014174535.GA6516@psi-dev26.jf.intel.com>
- <20141015070812.GM2255@lahna.fi.intel.com>
- <20141015165542.GA4529@psi-dev26.jf.intel.com>
- <20141016080123.GW2255@lahna.fi.intel.com>
- <20141017015322.GB4513@psi-dev26.jf.intel.com>
- <CACRpkdafsd3VDiEKbdooXx+mdAtf-3B6QBOEGeHgyJf9GKHqhQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: add gpio_of_helper
+Date: Tue, 28 Oct 2014 18:09:45 +0100
+Message-ID: <CACRpkdaHOq64NToHa7_ZiBkuQXY03h0J1hZXqskeOnwiGx+p_g@mail.gmail.com>
+References: <4b0bcf4679163c0da53e412a47eecd4bb03849b8.1413966148.git.jiri.prchal@aksignal.cz>
+	<CAAVeFuJrmea6yZn2J28ihs3+=FYkZ2QxDv6F7qiq+TPpv_odpw@mail.gmail.com>
+	<E5E0C172-C51D-46DC-AE15-71308BDC9829@antoniou-consulting.com>
+	<CAAVeFuLh99MJXNNuh=L37pNzgun-Qi=3J4uK4eUSC5Qy107Gzw@mail.gmail.com>
+	<E44127F1-1B6B-4BB0-866A-7B142F295FAE@antoniou-consulting.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:14377 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751081AbaJ1Qxl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 28 Oct 2014 12:53:41 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdafsd3VDiEKbdooXx+mdAtf-3B6QBOEGeHgyJf9GKHqhQ@mail.gmail.com>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:47487 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751647AbaJ1RJq convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 13:09:46 -0400
+Received: by mail-ie0-f175.google.com with SMTP id at20so1139725iec.34
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 10:09:45 -0700 (PDT)
+In-Reply-To: <E44127F1-1B6B-4BB0-866A-7B142F295FAE@antoniou-consulting.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Grant Likely <grant.likely@secretlab.ca>
 
-On Tue, Oct 28, 2014 at 04:10:26PM +0100, Linus Walleij wrote:
-> On Fri, Oct 17, 2014 at 3:53 AM, David Cohen
-> <david.a.cohen@linux.intel.com> wrote:
-> > On Thu, Oct 16, 2014 at 11:01:23AM +0300, Mika Westerberg wrote:
-> 
-> >> In an ideal world, yes. However, the reality has shown that BIOS/FW gets
-> >> these wrong and we need to work it around in the OS.
-> >
-> > But we never upstream these workarounds, right? :)
-> 
-> Unless you discover it after it hits the market, right?
+On Wed, Oct 22, 2014 at 11:58 AM, Pantelis Antoniou
+<panto@antoniou-consulting.com> wrote:
+>> On Oct 22, 2014, at 12:41 PM, Alexandre Courbot <gnurou@gmail.com> w=
+rote:
 
-This is quite unlikely to happen. A pin mux misconfigured would have
-quite bad side effects. But considering it happens, IMHO not even this
-case would make an upstreamed baytrail pinctrl API consumer correct. The
-FW should get updated instead. But...
+>> Pinmux configuration sounds like a job for pinmux more than GPIO, an=
+d
+>> exporting potentially many GPIOs to user-space sounds like a work fo=
+r
+>> a proper driver.
+>
+> I=E2=80=99m afraid that=E2=80=99s not the case. A great many users (.=
+=2E.)
 
-> 
-> I think this driver is just fine exactly where it is. Besides, the driver
-> is fully aware of all its pins, and just look at all the pull up etc
-> information displayed by byt_gpio_dbg_show(), it doesn't get more
-> pin control than that even if you don't implement the pin control
-> API.
+How many are many? How long is a piece of string? "Many" may
+refer to every system on the market or me and my friends.
+That claim has to be more specific.
 
-... considering the development boards + the case you mentioned above,
-my RFC got more buried than it already was :)
+> do not require anything
+> more than setting a pinmux
 
-Br, David
+Which can be done (from device tree if need be) using pin control
+hogs.
 
-> 
-> Yours,
-> Linus Walleij
+> and the GPIO configuration (input/output).
+
+And we have GPIO hogs for that in the pipe.
+
+> They can then do low speed I/O using the sysfs interface, without hav=
+ing to
+> use any complex APIs (shell works just fine).
+
+So what is added is export capability, which could be done by supplanti=
+ng
+the GPIO hogging mechanism with some linux,export thing.
+
+> Think of stuff like controlling a sprinkler valve, or something like =
+a mechanical
+> door detection open state.
+
+OK it's in the department of automatic control, which is arguably the
+only technical area where userspace GPIO handling actually makes
+sense.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
