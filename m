@@ -1,42 +1,35 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] Documentation: gpio: guidelines for bindings
-Date: Tue, 28 Oct 2014 18:18:32 +0900
-Message-ID: <CAAVeFu+2OfRbU845uD29-oZww1Xu2VrGbx_m0J0SaoMr7Z8UQQ@mail.gmail.com>
-References: <1414470034-16143-1-git-send-email-acourbot@nvidia.com> <4048602.9BsHAsA6cq@wuerfel>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/5] DT: Add documentation for gpio-mt7621
+Date: Tue, 28 Oct 2014 10:37:33 +0100
+Message-ID: <CACRpkdZtpMY7pLjZ_nUrVSUVxBuQe496cs_JFCV-zEojDokK4Q@mail.gmail.com>
+References: <1412972930-16777-1-git-send-email-blogic@openwrt.org>
+	<1412972930-16777-3-git-send-email-blogic@openwrt.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:59051 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750740AbaJ1JSx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 05:18:53 -0400
-In-Reply-To: <4048602.9BsHAsA6cq@wuerfel>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:53661 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751155AbaJ1Jhe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 05:37:34 -0400
+Received: by mail-ig0-f174.google.com with SMTP id h18so4719493igc.13
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 02:37:33 -0700 (PDT)
+In-Reply-To: <1412972930-16777-3-git-send-email-blogic@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: John Crispin <blogic@openwrt.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Oct 28, 2014 at 6:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 28 October 2014 13:20:34 Alexandre Courbot wrote:
->> +GPIO properties should be named "[<name>-]gpios", with <name> being the con_id
->> +argument that is passed to gpiod_get(). While a NULL con_id is accepted by the
->> +GPIO API for compatibility reasons (resolving to the "gpios" property), it is
->> +not allowed for new bindings.
->> +
->> +GPIO properties can contain one or more GPIO phandles, but only in exceptional
->> +cases should they contain more than one. If your device uses several GPIOs with
->> +distinct functions, reference each of them under its own property, giving it a
->> +meaningful name. The only case where an array of GPIOs is accepted is when
->> +several GPIOs serve the same function (e.g. a parallel data line). In that case
->> +individual GPIOs can be retrieved using gpiod_get_index().
->> +
->> +The exact meaning of each gpios property must be documented in the device tree
->>  binding for each device.
->
-> The binding should be written in an OS neutral way, so it would be better to avoid
-> direct references to Linux APIs in the part that specifies the allowed properties.
->
-> Could you reword this so the Linux interfaces are described in an "implementation
-> notes" section that is separate from the main part?
+On Fri, Oct 10, 2014 at 10:28 PM, John Crispin <blogic@openwrt.org> wrote:
 
-You're right - will fix this and resubmit. Thanks!
+> Describe gpio-mt7621 binding.
+>
+> Signed-off-by: John Crispin <blogic@openwrt.org>
+> Cc: linux-mips@linux-mips.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+
+These bindings look fine.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
