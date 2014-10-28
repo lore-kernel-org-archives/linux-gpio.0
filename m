@@ -1,111 +1,91 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 10/16] gpio: add driver for Atheros AR2315 SoC GPIO controller
-Date: Tue, 28 Oct 2014 15:37:35 +0100
-Message-ID: <CACRpkdZk9ZmoRELY8mT-6hbPkM3j9xPJzDFs1fyW17BxqxT0UQ@mail.gmail.com>
-References: <1411929195-23775-1-git-send-email-ryazanov.s.a@gmail.com>
-	<1411929195-23775-11-git-send-email-ryazanov.s.a@gmail.com>
-	<CACRpkdYWNjE1KS8GQo0fRrgT-Siwe7=SAOGQqBVqoW+Ypg-jAw@mail.gmail.com>
-	<CAHNKnsSj6gdZgc9JqWgskMB8v49t04g5B1TKC3TTnTgch4zNtA@mail.gmail.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
+ Intel Baytrail
+Date: Tue, 28 Oct 2014 09:42:49 -0500
+Message-ID: <20141028144249.GD8123@saruman>
+References: <1412355319-18946-1-git-send-email-david.a.cohen@linux.intel.com>
+ <1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
+ <20141013191405.GB29810@saruman>
+ <20141013192404.GB4034@psi-dev26.jf.intel.com>
+ <20141013192632.GC29810@saruman>
+ <20141013193618.GD29810@saruman>
+ <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:59123 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753500AbaJ1Ohg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 10:37:36 -0400
-Received: by mail-ie0-f172.google.com with SMTP id rl12so795047iec.3
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 07:37:35 -0700 (PDT)
-In-Reply-To: <CAHNKnsSj6gdZgc9JqWgskMB8v49t04g5B1TKC3TTnTgch4zNtA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jCrbxBqMcLqd4mOl"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Felipe Balbi <balbi@ti.com>, David Cohen <david.a.cohen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Oct 15, 2014 at 1:12 PM, Sergey Ryazanov <ryazanov.s.a@gmail.com> wrote:
-> 2014-10-15 12:58 GMT+04:00, Linus Walleij <linus.walleij@linaro.org>:
->> On Sun, Sep 28, 2014 at 8:33 PM, Sergey Ryazanov <ryazanov.s.a@gmail.com>
+--jCrbxBqMcLqd4mOl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I have one more generic question: could you merge driver without
-> GPIOLIB_IRQCHIP usage?
+On Tue, Oct 28, 2014 at 11:15:20AM +0100, Linus Walleij wrote:
+> On Mon, Oct 13, 2014 at 9:36 PM, Felipe Balbi <balbi@ti.com> wrote:
+> > On Mon, Oct 13, 2014 at 02:26:32PM -0500, Felipe Balbi wrote:
+>=20
+> > I also noticed that this is missing:
+> >
+> > diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinct=
+rl-baytrail.c
+> > index e12e5b0..7db5ab9 100644
+> > --- a/drivers/pinctrl/pinctrl-baytrail.c
+> > +++ b/drivers/pinctrl/pinctrl-baytrail.c
+> > @@ -614,3 +614,9 @@ static int __init byt_gpio_init(void)
+> >  }
+> >
+> >  subsys_initcall(byt_gpio_init);
+> > +
+> > +static void __exit byt_gpio_exit(void)
+> > +{
+> > +       platform_driver_unregister(&byt_gpio_driver);
+> > +}
+> > +module_exit(byt_gpio_exit);
+>=20
+> But the Baytrail driver is not a loadable module, it is bool:
+>=20
+> config PINCTRL_BAYTRAIL
+>         bool "Intel Baytrail GPIO pin control"
+>         depends on GPIOLIB && ACPI && X86
+>=20
+> (...)
+>=20
+> So I guess it won't need handling for removal, as it can only
+> be compiled-in.
 
-No.
+you can still unbind it through sysfs, right ? The thing also already
+provides a ->remove() method anyway.
 
-> Currently no one driver for the AR231x SoCs
-> uses irq_domain and I do not like to enable IRQ_DOMAIN just for one
-> driver. I plan to convert drivers to make them irq_domain aware a bit
-> later.
+--=20
+balbi
 
-I don't believe any such promises. It's nothing personal, just I've
-been burned too many times by people promising to "fix later".
+--jCrbxBqMcLqd4mOl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->>> +static u32 ar2315_gpio_intmask;
->>> +static u32 ar2315_gpio_intval;
->>> +static unsigned ar2315_gpio_irq_base;
->>> +static void __iomem *ar2315_mem;
->>
->> No static locals. Allocate and use a state container, see
->> Documentation/driver-model/design-patterns.txt
->>
-> Is that rule mandatory for drivers, which serve only one device?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-There is no central authority which decides what is mandatory
-or not. It is mandatory to get a driver past the GPIO maintainer.
+iQIcBAEBAgAGBQJUT6tpAAoJEIaOsuA1yqREyd4P/1u2RmMoV9t9VrgfXSt3IAOK
+KCtgG/oAH+VSmOeLj480lTWupWNxOqV8MPaDcVec7xCcNr8pVGtTqWIJ2a1fNjLC
+99dxr9PCeB93g71p7HbAFRI2rHFdPjpKBP9sikFUAI8EpryevSzPUQrKN0T829Dv
+OGZUTEOjd5GXgOa008RQ0r7LCebVOitwfG1chasOwVXHs+qzhfL/Y3mS+ftnwpRS
+jMGCKJkyE6vIST/f28gtC8j77Wu33HFw4s3elha2nETHDBTnRerljKLi0nZ74FUP
+sw5PnMWlwkagDHSCeJS5aNN1w+GIoSZKbplBraMxf3qOIgjKFIsLSV9PGdz38RZm
+kJGxPQ0vrFbaCg/6226DFynb4cXVfaC6xYKQqF5O/oP08iMiOplRMrtwE5FI0xAX
+SSUNUNTg5MPnkbXHeNp9pod81U8TTuMgB/QKQsNwER2UdO/c+ZwR7yqbUknSE0C8
+qSlHTid7rb7MfpsveQrrHByWjxEagq3mldUHm8p8O2nkYMugG4M+UyHA8QHIqVr2
+I+LqXpxdaZ6qSwQMOOmDt5cY7ucjESJWmEUuGZugKetoZctfajDDGjAMUVo+wAVi
+v00t6X/awCuh2lwuXGKSbn6JSUS+gLC7SN/rotFkXHNZ0WK/uio/hU/k8AvS1ctU
+1v1aufg4OFgcQbsxZNnQ
+=so8J
+-----END PGP SIGNATURE-----
 
->>> +static inline u32 ar2315_gpio_reg_read(unsigned reg)
->>> +{
->>> +       return __raw_readl(ar2315_mem + reg);
->>> +}
->>
->> Use readl_relaxed() instead.
->>
-> readl_relaxed() converts the bit ordering and seems inapplicable in this case.
-
-It assumes the peripherals IO memory is little endian.
-
-If the IO memory for this device is little endian, please stay with
-[readl|writel]_relaxed so it looks familiar.
-
-Or is this machine really using big endian hardware registers?
-In that case I understand your comment...
-
->> When you use the state container, you need to do a
->> state dereference like that:
->>
->> mystate->base + reg
->>
->> So I don't think these inlines buy you anything. Just use
->> readl/writel_relaxed directly in the code.
->>
-> These helpers make code shorter and clearer. I can use macros if you
-> do preferred.
-
-No big deal. Keep it if you like it this way.
-
->> So why is .set_type() not implemented and instead hard-coded into
->> the unmask function? Please fix this. It will be called by the
->> core eventually no matter what.
->>
-> The interrupt configuration is a bit complex. This controller could be
-> configured to generate interrupts only for two lines at once. Or in
-> other words: user could select any two lines to generate interrupt.
-
-Oh well, better just handle it I guess...
-
->>> +static int __init ar2315_gpio_init(void)
->>> +{
->>> +       return platform_driver_register(&ar2315_gpio_driver);
->>> +}
->>> +subsys_initcall(ar2315_gpio_init);
->>
->> Why are you using subsys_initcall()?
->>
->> This should not be necessary.
->>
-> I have users of GPIO in arch code, what called earlier than the
-> devices initcall.
-
-OK? Why are there such users that early and what do they
-use the GPIOs for? Any reason they cannot be device_initcall()s?
-
-Yours,
-Linus Walleij
+--jCrbxBqMcLqd4mOl--
