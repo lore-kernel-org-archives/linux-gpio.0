@@ -1,91 +1,65 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
- Intel Baytrail
-Date: Tue, 28 Oct 2014 09:42:49 -0500
-Message-ID: <20141028144249.GD8123@saruman>
-References: <1412355319-18946-1-git-send-email-david.a.cohen@linux.intel.com>
- <1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
- <20141013191405.GB29810@saruman>
- <20141013192404.GB4034@psi-dev26.jf.intel.com>
- <20141013192632.GC29810@saruman>
- <20141013193618.GD29810@saruman>
- <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 11/15] sound: soc: poodle: make use of new locomo GPIO
+ interface
+Date: Tue, 28 Oct 2014 14:58:50 +0000
+Message-ID: <20141028145850.GU18557@sirena.org.uk>
+References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
+ <1414454528-24240-12-git-send-email-dbaryshkov@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jCrbxBqMcLqd4mOl"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="8gjvNdKnYEg0NgYj"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Felipe Balbi <balbi@ti.com>, David Cohen <david.a.cohen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
+In-Reply-To: <1414454528-24240-12-git-send-email-dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
---jCrbxBqMcLqd4mOl
+
+--8gjvNdKnYEg0NgYj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2014 at 11:15:20AM +0100, Linus Walleij wrote:
-> On Mon, Oct 13, 2014 at 9:36 PM, Felipe Balbi <balbi@ti.com> wrote:
-> > On Mon, Oct 13, 2014 at 02:26:32PM -0500, Felipe Balbi wrote:
->=20
-> > I also noticed that this is missing:
-> >
-> > diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinct=
-rl-baytrail.c
-> > index e12e5b0..7db5ab9 100644
-> > --- a/drivers/pinctrl/pinctrl-baytrail.c
-> > +++ b/drivers/pinctrl/pinctrl-baytrail.c
-> > @@ -614,3 +614,9 @@ static int __init byt_gpio_init(void)
-> >  }
-> >
-> >  subsys_initcall(byt_gpio_init);
-> > +
-> > +static void __exit byt_gpio_exit(void)
-> > +{
-> > +       platform_driver_unregister(&byt_gpio_driver);
-> > +}
-> > +module_exit(byt_gpio_exit);
->=20
-> But the Baytrail driver is not a loadable module, it is bool:
->=20
-> config PINCTRL_BAYTRAIL
->         bool "Intel Baytrail GPIO pin control"
->         depends on GPIOLIB && ACPI && X86
->=20
-> (...)
->=20
-> So I guess it won't need handling for removal, as it can only
-> be compiled-in.
+On Tue, Oct 28, 2014 at 03:02:04AM +0300, Dmitry Eremin-Solenikov wrote:
+> Since LoCoMo driver has been converted to provide proper gpiolib
+> interface, make poodle ASoC platform driver use gpiolib API.
 
-you can still unbind it through sysfs, right ? The thing also already
-provides a ->remove() method anyway.
+Please use subject lines matching the style for the subsystem.
 
---=20
-balbi
+> +	ret = gpio_request_array(poodle_gpios, ARRAY_SIZE(poodle_gpios));
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "gpio_request_array() failed: %d\n",
+> +				ret);
+> +		return ret;
+> +	}
 
---jCrbxBqMcLqd4mOl
+I sense a need for devm_gpio_request_array() here.  Otherwise this looks
+fine - ideally it'd move to gpiod but moving to gpiolib is a clear win
+so no need to block on this.
+
+Acked-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+with at least the subject line fixed.
+
+--8gjvNdKnYEg0NgYj
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUT6tpAAoJEIaOsuA1yqREyd4P/1u2RmMoV9t9VrgfXSt3IAOK
-KCtgG/oAH+VSmOeLj480lTWupWNxOqV8MPaDcVec7xCcNr8pVGtTqWIJ2a1fNjLC
-99dxr9PCeB93g71p7HbAFRI2rHFdPjpKBP9sikFUAI8EpryevSzPUQrKN0T829Dv
-OGZUTEOjd5GXgOa008RQ0r7LCebVOitwfG1chasOwVXHs+qzhfL/Y3mS+ftnwpRS
-jMGCKJkyE6vIST/f28gtC8j77Wu33HFw4s3elha2nETHDBTnRerljKLi0nZ74FUP
-sw5PnMWlwkagDHSCeJS5aNN1w+GIoSZKbplBraMxf3qOIgjKFIsLSV9PGdz38RZm
-kJGxPQ0vrFbaCg/6226DFynb4cXVfaC6xYKQqF5O/oP08iMiOplRMrtwE5FI0xAX
-SSUNUNTg5MPnkbXHeNp9pod81U8TTuMgB/QKQsNwER2UdO/c+ZwR7yqbUknSE0C8
-qSlHTid7rb7MfpsveQrrHByWjxEagq3mldUHm8p8O2nkYMugG4M+UyHA8QHIqVr2
-I+LqXpxdaZ6qSwQMOOmDt5cY7ucjESJWmEUuGZugKetoZctfajDDGjAMUVo+wAVi
-v00t6X/awCuh2lwuXGKSbn6JSUS+gLC7SN/rotFkXHNZ0WK/uio/hU/k8AvS1ctU
-1v1aufg4OFgcQbsxZNnQ
-=so8J
+iQEcBAEBAgAGBQJUT68pAAoJECTWi3JdVIfQYyYH+QGeymd7BRFPtelbajCPw7hF
+pZtjJ8IMNDHVFq7cb6nHCJDADtnjFr4H3wn4O/C7hjbVpFomxDExEiGZri2z97CZ
+8XR1cFMTwDhZ9+5Vy4xZLQXjK3fHMB7VW7NvED34HiBNuPXlcXfH+4+opgN4WACS
+a5kCtgAOdwgZzkDQcn34bIMzHnKoLxu4EzJ4IBegj3BKwLbDidTsdqzR9hIEnrA9
+Itqct65aE2A1LG+wdwwSB6wttnUWuYviq5sY/W9LBa+g3w++6dkdeB5PRtD6Iatw
+TCf7R9XJBYlu7T86V1XdB38ln7qc1KHYi16HHKeRwZPnuFWVFxuFH5J2hF9G5Ls=
+=vsEb
 -----END PGP SIGNATURE-----
 
---jCrbxBqMcLqd4mOl--
+--8gjvNdKnYEg0NgYj--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
