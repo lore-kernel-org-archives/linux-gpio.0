@@ -1,123 +1,113 @@
-From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
-Subject: Re: [PATCH] gpio: add gpio_of_helper
-Date: Wed, 29 Oct 2014 08:55:45 +0100
-Message-ID: <54509D81.4070907@aksignal.cz>
-References: <4b0bcf4679163c0da53e412a47eecd4bb03849b8.1413966148.git.jiri.prchal@aksignal.cz> <CAAVeFuJrmea6yZn2J28ihs3+=FYkZ2QxDv6F7qiq+TPpv_odpw@mail.gmail.com> <E5E0C172-C51D-46DC-AE15-71308BDC9829@antoniou-consulting.com> <CAAVeFuLh99MJXNNuh=L37pNzgun-Qi=3J4uK4eUSC5Qy107Gzw@mail.gmail.com> <E44127F1-1B6B-4BB0-866A-7B142F295FAE@antoniou-consulting.com> <CACRpkdaHOq64NToHa7_ZiBkuQXY03h0J1hZXqskeOnwiGx+p_g@mail.gmail.com> <6090A789-9F1B-4787-A9C6-9770A598525D@antoniou-consulting.com>
-Reply-To: jiri.prchal@aksignal.cz
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v2] Documentation: gpio: guidelines for bindings
+Date: Wed, 29 Oct 2014 17:13:14 +0900
+Message-ID: <1414570394-11706-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from router.aksignal.cz ([188.175.113.102]:46804 "EHLO
-	router.aksignal.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755860AbaJ2Hzu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 03:55:50 -0400
-In-Reply-To: <6090A789-9F1B-4787-A9C6-9770A598525D@antoniou-consulting.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Pantelis Antoniou <panto@antoniou-consulting.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Grant Likely <grant.likely@secretlab.ca>
 
-Hi all,
+Now that ACPI supports named GPIO properties, either through ACPI 5.1 or
+the per-driver ACPI GPIO mappings, we can be more narrow about the way
+GPIOs should be specified in Device Tree bindings.
 
-Dne 28.10.2014 v 18:28 Pantelis Antoniou napsal(a):
-> Hi Linus,
->
->> On Oct 28, 2014, at 19:09 , Linus Walleij <linus.walleij@linaro.org>=
- wrote:
->>
->> On Wed, Oct 22, 2014 at 11:58 AM, Pantelis Antoniou
->> <panto@antoniou-consulting.com> wrote:
->>>> On Oct 22, 2014, at 12:41 PM, Alexandre Courbot <gnurou@gmail.com>=
- wrote:
->>
->>>> Pinmux configuration sounds like a job for pinmux more than GPIO, =
-and
->>>> exporting potentially many GPIOs to user-space sounds like a work =
-for
->>>> a proper driver.
->>>
->>> I=E2=80=99m afraid that=E2=80=99s not the case. A great many users =
-(...)
->>
->> How many are many? How long is a piece of string? "Many" may
->> refer to every system on the market or me and my friends.
->> That claim has to be more specific.
->>
->
-> On every embedded product board that I have worked on for a customer,
-> invariably user-space GPIO was required for some odd pieces of hardwa=
-re.
->
-> I guess that=E2=80=99s in the dozen range for me, and Jiri that origi=
-nally posted
-> seems to be doing something similar too.
-Yes.
->
->>> do not require anything
->>> more than setting a pinmux
->>
->> Which can be done (from device tree if need be) using pin control
->> hogs.
->>
->
->>> and the GPIO configuration (input/output).
->>
->> And we have GPIO hogs for that in the pipe.
->>
->
-> The original proposal was on January, and there=E2=80=99s a RFC poste=
-d just a few days back.
-> I will take a look.
->
->>> They can then do low speed I/O using the sysfs interface, without h=
-aving to
->>> use any complex APIs (shell works just fine).
->>
->> So what is added is export capability, which could be done by suppla=
-nting
->> the GPIO hogging mechanism with some linux,export thing.
->>
->
-> Yes, that would be nice.
-That would be nice for me too, I'll try it later, now I have more urgen=
-t work.
->
->>> Think of stuff like controlling a sprinkler valve, or something lik=
-e a mechanical
->>> door detection open state.
->>
->> OK it's in the department of automatic control, which is arguably th=
-e
->> only technical area where userspace GPIO handling actually makes
->> sense.
->>
->
-> Err, let=E2=80=99s just say that I completely disagree, but whatever.
->
-> If the new GPIO hogging methods make it in mainline along with the ex=
-port
-> mechanism it=E2=80=99d be fine by me.
->
->> Yours,
->> Linus Walleij
->
-> Regards
->
-> =E2=80=94 Pantelis
+This patch updates the GPIO DT bindings documentation to highlight the
+following rules for new GPIO bindings:
 
-Yours
-Jiri
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+- All new bindings must have a meaningful name (e.g. the "gpios"
+  property must not be used)
+- The only suffix allowed is "-gpios", no matter the number of
+  descriptors in the property
+- GPIOs can only be grouped under the same property when they serve the
+  same purpose, a case that should remain exceptional (e.g. bit-banged
+  data lines).
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Arnd Bergmann <arnd@arndb.de>
+CC: Rafael J. Wysocki <rjw@rjwysocki.net>
+CC: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+Changes since v1:
+- Rewritten in OS-neutral manner.
+
+ Documentation/devicetree/bindings/gpio/gpio.txt | 40 ++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 14 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index 3fb8f53071b8..b9bd1d64cfa6 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -13,13 +13,22 @@ properties, each containing a 'gpio-list':
+ 	gpio-specifier : Array of #gpio-cells specifying specific gpio
+ 			 (controller specific)
+ 
+-GPIO properties should be named "[<name>-]gpios". The exact
+-meaning of each gpios property must be documented in the device tree
+-binding for each device.
++GPIO properties should be named "[<name>-]gpios", with <name> being the purpose
++of this GPIO for the device. While a non-existent <name> is considered valid
++for compatibility reasons (resolving to the "gpios" property), it is not allowed
++for new bindings.
+ 
+-For example, the following could be used to describe GPIO pins used
+-as chip select lines; with chip selects 0, 1 and 3 populated, and chip
+-select 2 left empty:
++GPIO properties can contain one or more GPIO phandles, but only in exceptional
++cases should they contain more than one. If your device uses several GPIOs with
++distinct functions, reference each of them under its own property, giving it a
++meaningful name. The only case where an array of GPIOs is accepted is when
++several GPIOs serve the same function (e.g. a parallel data line).
++
++The exact purpose of each gpios property must be documented in the device tree
++binding of the device.
++
++The following example could be used to describe GPIO pins used as device enable
++and bit-banged data signals:
+ 
+ 	gpio1: gpio1 {
+ 		gpio-controller
+@@ -30,10 +39,12 @@ select 2 left empty:
+ 		 #gpio-cells = <1>;
+ 	};
+ 	[...]
+-	 chipsel-gpios = <&gpio1 12 0>,
+-			 <&gpio1 13 0>,
+-			 <0>, /* holes are permitted, means no GPIO 2 */
+-			 <&gpio2 2>;
++
++	enable-gpios = <&gpio2 2>;
++	data-gpios = <&gpio1 12 0>,
++		     <&gpio1 13 0>,
++		     <&gpio1 14 0>,
++		     <&gpio1 15 0>;
+ 
+ Note that gpio-specifier length is controller dependent.  In the
+ above example, &gpio1 uses 2 cells to specify a gpio, while &gpio2
+@@ -42,16 +53,17 @@ only uses one.
+ gpio-specifier may encode: bank, pin position inside the bank,
+ whether pin is open-drain and whether pin is logically inverted.
+ Exact meaning of each specifier cell is controller specific, and must
+-be documented in the device tree binding for the device.
++be documented in the device tree binding for the device. Use the macros
++defined in include/dt-bindings/gpio/gpio.h whenever possible:
+ 
+ Example of a node using GPIOs:
+ 
+ 	node {
+-		gpios = <&qe_pio_e 18 0>;
++		enable-gpios = <&qe_pio_e 18 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-In this example gpio-specifier is "18 0" and encodes GPIO pin number,
+-and GPIO flags as accepted by the "qe_pio_e" gpio-controller.
++GPIO_ACTIVE_HIGH is 0, so in this example gpio-specifier is "18 0" and encodes
++GPIO pin number, and GPIO flags as accepted by the "qe_pio_e" gpio-controller.
+ 
+ 1.1) GPIO specifier best practices
+ ----------------------------------
+-- 
+2.1.2
