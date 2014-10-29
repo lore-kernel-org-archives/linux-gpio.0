@@ -1,80 +1,43 @@
-From: RR <rajaram.officemails@gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO adapter
-Date: Wed, 29 Oct 2014 07:51:06 +0530
-Message-ID: <CACdXCX4z=AbL6-O3Y76ZtLwyZ1F82_N4y60VmBKXnzf3KXvOzg@mail.gmail.com>
-References: <1412606822-3406-1-git-send-email-muth@cypress.com>
-	<CAAVeFu+vBZ49ciZT+-dnKXks201_psy_NtYsTjw0ptOkx2es7Q@mail.gmail.com>
-	<405b439b16ea40078718da326343f673@BN1PR06MB069.namprd06.prod.outlook.com>
-	<CAAVeFu+X0Lk=5sNm9kOwGX=2-DYN_-5v-7M9bAWXraffKsTkMg@mail.gmail.com>
-	<CACdXCX7PqUHRKJ0KipmYzRF54XRmMYYArr5iof36VskJ75PaKg@mail.gmail.com>
-	<CACRpkdbe6OC-4CZ_DiUBcuv9wsMVtvk1FpkdNn5pZG+sgP6wZQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 11/15] sound: soc: poodle: make use of new locomo GPIO interface
+Date: Wed, 29 Oct 2014 12:03:34 +0900
+Message-ID: <CAAVeFuKgARoMFzf+663iP6cULs93d4WSQS8ESjUb9VcxguWurA@mail.gmail.com>
+References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
+ <1414454528-24240-12-git-send-email-dbaryshkov@gmail.com> <20141028145850.GU18557@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbe6OC-4CZ_DiUBcuv9wsMVtvk1FpkdNn5pZG+sgP6wZQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Muthu Mani <muth@cypress.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>, Johan Hovold <johan@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:43229 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753711AbaJ2DDz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 23:03:55 -0400
+In-Reply-To: <20141028145850.GU18557@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Liam Girdwood <lgirdwood@gma>
 
-On Mon, Oct 27, 2014 at 9:00 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Oct 9, 2014 at 1:46 AM, RR <rajaram.officemails@gmail.com> wrote:
->> On Wed, Oct 8, 2014 at 12:18 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->>> On Wed, Oct 8, 2014 at 4:09 PM, Muthu Mani <muth@cypress.com> wrote:
+On Tue, Oct 28, 2014 at 11:58 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Oct 28, 2014 at 03:02:04AM +0300, Dmitry Eremin-Solenikov wrote:
+>> Since LoCoMo driver has been converted to provide proper gpiolib
+>> interface, make poodle ASoC platform driver use gpiolib API.
 >
->>>>> > +static int cy_gpio_direction_output(struct gpio_chip *chip,
->>>>> > +                                       unsigned offset, int value) {
->>>>> > +       return 0;
->>>>> > +}
->>>>>
->>>>> If that chip is capable of both output and input, shouldn't these functions be
->>>>> implemented? I think this has already been pointed out in a previous version
->>>>> but you did not reply.
->>>>
->>>> Thanks for your inputs.
->>>>
->>>> Only the GPIOs which are configured to be output GPIO can be set.
->>>
->>> In that case cy_gpio_set() should return an error for GPIOs which are
->>> not configured as outputs. Is that guaranteed by the current
->>> implementation?
->>>
->>>> The set operation would fail trying to set the input or unconfigured GPIOs.
->>>> In this version of driver, this support is not added, it can be introduced in future versions.
->>>> I will add a TODO note in the code.
->>>
->>> Argh, no TODO please. Actual code that will turn this code into a
->>> solid driver that can be merged.
->>
->> Does a driver targeted for a custom device has to implement every
->> functionality in the 1st version ?
+> Please use subject lines matching the style for the subsystem.
 >
-> When you post a driver to the GPIO maintainers it is *NOT* tageted
-> at a consumer device, it is targeted at the kernel community and
-> upstream maintainers.
-
-Totally agree. What I was conveying the patch has not modified
-any "core" kernel function and is specific to a device thus will not
-affect system.
-
+>> +     ret = gpio_request_array(poodle_gpios, ARRAY_SIZE(poodle_gpios));
+>> +     if (ret) {
+>> +             dev_err(&pdev->dev, "gpio_request_array() failed: %d\n",
+>> +                             ret);
+>> +             return ret;
+>> +     }
 >
-> Of course you can deliver add-on patches out-of-tree to your
-> customers, it's generally a bad idea for the long term and maintenance
-> of your driver, but it's your pick.
+> I sense a need for devm_gpio_request_array() here.  Otherwise this looks
+> fine - ideally it'd move to gpiod but moving to gpiolib is a clear win
+> so no need to block on this.
 
-AFAIR In the recent past xHCI or gadget core or musb or dw3
-patches were added in increments. May be my analogy is incorrect and
-I am ignorant of some philosophy here.
-
-Sincerely I somehow was not convinced basic functionality is missing
-as referred in the review comment.We have tested the driver for most of
-the functionality of our DVK and is working perfectly.
-
-Moreover currently we do not expect an user to set gpio direction as
-it involves vendor specific usb control commands.
-
-Having said that we have taken the feedback and working to close this.
-
->
-> Yours,
-> Linus Walleij
+I wish Dmitry took the opportunity to move this driver to the gpiod
+API, especially since doing so would be trivial for this driver. Not a
+critical requirement though, the present patch is already an
+improvement. But if you want to do that last step, please have a look
+at Documentation/gpio/consumer.txt and the "Platform Data" section of
+Documentation/gpio/board.txt.
