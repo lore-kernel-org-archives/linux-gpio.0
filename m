@@ -1,136 +1,80 @@
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Subject: Re: [PATCH 10/16] gpio: add driver for Atheros AR2315 SoC GPIO controller
-Date: Wed, 29 Oct 2014 00:08:45 +0300
-Message-ID: <CAHNKnsRgH9tZ2T9JpVRGARarzSJAmwzyw6cF+VgR1XQ9UkKRuA@mail.gmail.com>
-References: <1411929195-23775-1-git-send-email-ryazanov.s.a@gmail.com>
- <1411929195-23775-11-git-send-email-ryazanov.s.a@gmail.com>
- <CACRpkdYWNjE1KS8GQo0fRrgT-Siwe7=SAOGQqBVqoW+Ypg-jAw@mail.gmail.com>
- <CAHNKnsSj6gdZgc9JqWgskMB8v49t04g5B1TKC3TTnTgch4zNtA@mail.gmail.com> <CACRpkdZk9ZmoRELY8mT-6hbPkM3j9xPJzDFs1fyW17BxqxT0UQ@mail.gmail.com>
+From: RR <rajaram.officemails@gmail.com>
+Subject: Re: [PATCH v3 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO adapter
+Date: Wed, 29 Oct 2014 07:51:06 +0530
+Message-ID: <CACdXCX4z=AbL6-O3Y76ZtLwyZ1F82_N4y60VmBKXnzf3KXvOzg@mail.gmail.com>
+References: <1412606822-3406-1-git-send-email-muth@cypress.com>
+	<CAAVeFu+vBZ49ciZT+-dnKXks201_psy_NtYsTjw0ptOkx2es7Q@mail.gmail.com>
+	<405b439b16ea40078718da326343f673@BN1PR06MB069.namprd06.prod.outlook.com>
+	<CAAVeFu+X0Lk=5sNm9kOwGX=2-DYN_-5v-7M9bAWXraffKsTkMg@mail.gmail.com>
+	<CACdXCX7PqUHRKJ0KipmYzRF54XRmMYYArr5iof36VskJ75PaKg@mail.gmail.com>
+	<CACRpkdbe6OC-4CZ_DiUBcuv9wsMVtvk1FpkdNn5pZG+sgP6wZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f171.google.com ([209.85.160.171]:47270 "EHLO
-	mail-yk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750786AbaJ1VJH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Oct 2014 17:09:07 -0400
-Received: by mail-yk0-f171.google.com with SMTP id 20so732502yks.30
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Oct 2014 14:09:05 -0700 (PDT)
-In-Reply-To: <CACRpkdZk9ZmoRELY8mT-6hbPkM3j9xPJzDFs1fyW17BxqxT0UQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbe6OC-4CZ_DiUBcuv9wsMVtvk1FpkdNn5pZG+sgP6wZQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Muthu Mani <muth@cypress.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>, Johan Hovold <johan@kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-2014-10-28 17:37 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Oct 15, 2014 at 1:12 PM, Sergey Ryazanov <ryazanov.s.a@gmail.com> wrote:
->> 2014-10-15 12:58 GMT+04:00, Linus Walleij <linus.walleij@linaro.org>:
->>> On Sun, Sep 28, 2014 at 8:33 PM, Sergey Ryazanov <ryazanov.s.a@gmail.com>
+On Mon, Oct 27, 2014 at 9:00 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Oct 9, 2014 at 1:46 AM, RR <rajaram.officemails@gmail.com> wrote:
+>> On Wed, Oct 8, 2014 at 12:18 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+>>> On Wed, Oct 8, 2014 at 4:09 PM, Muthu Mani <muth@cypress.com> wrote:
 >
->> I have one more generic question: could you merge driver without
->> GPIOLIB_IRQCHIP usage?
+>>>>> > +static int cy_gpio_direction_output(struct gpio_chip *chip,
+>>>>> > +                                       unsigned offset, int value) {
+>>>>> > +       return 0;
+>>>>> > +}
+>>>>>
+>>>>> If that chip is capable of both output and input, shouldn't these functions be
+>>>>> implemented? I think this has already been pointed out in a previous version
+>>>>> but you did not reply.
+>>>>
+>>>> Thanks for your inputs.
+>>>>
+>>>> Only the GPIOs which are configured to be output GPIO can be set.
+>>>
+>>> In that case cy_gpio_set() should return an error for GPIOs which are
+>>> not configured as outputs. Is that guaranteed by the current
+>>> implementation?
+>>>
+>>>> The set operation would fail trying to set the input or unconfigured GPIOs.
+>>>> In this version of driver, this support is not added, it can be introduced in future versions.
+>>>> I will add a TODO note in the code.
+>>>
+>>> Argh, no TODO please. Actual code that will turn this code into a
+>>> solid driver that can be merged.
+>>
+>> Does a driver targeted for a custom device has to implement every
+>> functionality in the 1st version ?
 >
-> No.
->
-Ok.
+> When you post a driver to the GPIO maintainers it is *NOT* tageted
+> at a consumer device, it is targeted at the kernel community and
+> upstream maintainers.
 
->> Currently no one driver for the AR231x SoCs
->> uses irq_domain and I do not like to enable IRQ_DOMAIN just for one
->> driver. I plan to convert drivers to make them irq_domain aware a bit
->> later.
->
-> I don't believe any such promises. It's nothing personal, just I've
-> been burned too many times by people promising to "fix later".
->
-Now I drop the driver from the series and return to the development a
-bit later, when finished the basic code for the MIPS architecture. In
-that case I will have a time to write the driver that does not require
-further fixes.
+Totally agree. What I was conveying the patch has not modified
+any "core" kernel function and is specific to a device thus will not
+affect system.
 
+>
+> Of course you can deliver add-on patches out-of-tree to your
+> customers, it's generally a bad idea for the long term and maintenance
+> of your driver, but it's your pick.
 
->>>> +static u32 ar2315_gpio_intmask;
->>>> +static u32 ar2315_gpio_intval;
->>>> +static unsigned ar2315_gpio_irq_base;
->>>> +static void __iomem *ar2315_mem;
->>>
->>> No static locals. Allocate and use a state container, see
->>> Documentation/driver-model/design-patterns.txt
->>>
->> Is that rule mandatory for drivers, which serve only one device?
->
-> There is no central authority which decides what is mandatory
-> or not. It is mandatory to get a driver past the GPIO maintainer.
->
-Nice point :)
+AFAIR In the recent past xHCI or gadget core or musb or dw3
+patches were added in increments. May be my analogy is incorrect and
+I am ignorant of some philosophy here.
 
->>>> +static inline u32 ar2315_gpio_reg_read(unsigned reg)
->>>> +{
->>>> +       return __raw_readl(ar2315_mem + reg);
->>>> +}
->>>
->>> Use readl_relaxed() instead.
->>>
->> readl_relaxed() converts the bit ordering and seems inapplicable in this case.
->
-> It assumes the peripherals IO memory is little endian.
->
-> If the IO memory for this device is little endian, please stay with
-> [readl|writel]_relaxed so it looks familiar.
->
-> Or is this machine really using big endian hardware registers?
-> In that case I understand your comment...
->
-Yes, AR5312 and AR2315 SoCs are big endian machines with big endian registers.
+Sincerely I somehow was not convinced basic functionality is missing
+as referred in the review comment.We have tested the driver for most of
+the functionality of our DVK and is working perfectly.
 
+Moreover currently we do not expect an user to set gpio direction as
+it involves vendor specific usb control commands.
 
->>> When you use the state container, you need to do a
->>> state dereference like that:
->>>
->>> mystate->base + reg
->>>
->>> So I don't think these inlines buy you anything. Just use
->>> readl/writel_relaxed directly in the code.
->>>
->> These helpers make code shorter and clearer. I can use macros if you
->> do preferred.
->
-> No big deal. Keep it if you like it this way.
->
->>> So why is .set_type() not implemented and instead hard-coded into
->>> the unmask function? Please fix this. It will be called by the
->>> core eventually no matter what.
->>>
->> The interrupt configuration is a bit complex. This controller could be
->> configured to generate interrupts only for two lines at once. Or in
->> other words: user could select any two lines to generate interrupt.
->
-> Oh well, better just handle it I guess...
->
-Will do in v2.
+Having said that we have taken the feedback and working to close this.
 
->>>> +static int __init ar2315_gpio_init(void)
->>>> +{
->>>> +       return platform_driver_register(&ar2315_gpio_driver);
->>>> +}
->>>> +subsys_initcall(ar2315_gpio_init);
->>>
->>> Why are you using subsys_initcall()?
->>>
->>> This should not be necessary.
->>>
->> I have users of GPIO in arch code, what called earlier than the
->> devices initcall.
 >
-> OK? Why are there such users that early and what do they
-> use the GPIOs for? Any reason they cannot be device_initcall()s?
->
-One GPIO line is used in reset handler to be able to reliably reset
-the chip. This is a workaround from vendor's reference design to
-eliminate a hw bug in the reset circuit of the AR2315 SoC. So I prefer
-to have GPIO controller in ready state as soon as possible.
-
 > Yours,
 > Linus Walleij
-
--- 
-BR,
-Sergey
