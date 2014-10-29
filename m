@@ -1,42 +1,72 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2] Documentation: gpio: guidelines for bindings
-Date: Wed, 29 Oct 2014 10:56:52 +0200
-Message-ID: <20141029085652.GK1304@lahna.fi.intel.com>
-References: <1414570394-11706-1-git-send-email-acourbot@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
+Date: Wed, 29 Oct 2014 10:52:47 +0100
+Message-ID: <CACRpkdao2F1NK-3QpqSOLzFdvjWFVU4HqcqZPA2fXHpQN=BUsQ@mail.gmail.com>
+References: <1412779948-28769-1-git-send-email-yvo@apm.com>
+	<1412779948-28769-2-git-send-email-yvo@apm.com>
+	<CACRpkdY3-Y0eA_o2enfxbqWUpwPoo_5oM9t=uU=QSTAw4MPf9Q@mail.gmail.com>
+	<2988580.WvjMBY1UOc@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:48361 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753699AbaJ2I45 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 29 Oct 2014 04:56:57 -0400
-Content-Disposition: inline
-In-Reply-To: <1414570394-11706-1-git-send-email-acourbot@nvidia.com>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:39796 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755726AbaJ2Jws (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 05:52:48 -0400
+Received: by mail-ig0-f180.google.com with SMTP id h3so2768606igd.7
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2014 02:52:48 -0700 (PDT)
+In-Reply-To: <2988580.WvjMBY1UOc@wuerfel>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Y Vo <yvo@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, patches <patches@apm.com>
 
-On Wed, Oct 29, 2014 at 05:13:14PM +0900, Alexandre Courbot wrote:
-> Now that ACPI supports named GPIO properties, either through ACPI 5.1 or
-> the per-driver ACPI GPIO mappings, we can be more narrow about the way
-> GPIOs should be specified in Device Tree bindings.
-> 
-> This patch updates the GPIO DT bindings documentation to highlight the
-> following rules for new GPIO bindings:
-> 
-> - All new bindings must have a meaningful name (e.g. the "gpios"
->   property must not be used)
-> - The only suffix allowed is "-gpios", no matter the number of
->   descriptors in the property
-> - GPIOs can only be grouped under the same property when they serve the
->   same purpose, a case that should remain exceptional (e.g. bit-banged
->   data lines).
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> CC: Linus Walleij <linus.walleij@linaro.org>
-> CC: Arnd Bergmann <arnd@arndb.de>
-> CC: Rafael J. Wysocki <rjw@rjwysocki.net>
-> CC: Mika Westerberg <mika.westerberg@linux.intel.com>
+On Fri, Oct 24, 2014 at 3:46 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Friday 24 October 2014 14:14:43 Linus Walleij wrote:
+>> On Wed, Oct 8, 2014 at 4:52 PM, Y Vo <yvo@apm.com> wrote:
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> > +       apm_gc->irq = devm_kzalloc(&pdev->dev, sizeof(u32) * XGENE_MAX_GPIO_DS,
+>> > +                                  GFP_KERNEL);
+>> > +       if (!apm_gc->irq)
+>> > +               return -ENOMEM;
+>> > +       memset(apm_gc->irq, 0, sizeof(u32) * XGENE_MAX_GPIO_DS);
+>> (...)
+>> > +       for (i = 0; i < apm_gc->nirq; i++) {
+>> > +               apm_gc->irq[default_pins[i]] = platform_get_irq(pdev, i);
+>>
+>> So the IRQs for all the GPIO pins are handled somewhere else instead
+>> of being a cascaded IRQ controller.
+>>
+>> This means that the IRQ lines from each individual GPIO pin is
+>> connected to a unique IRQ line on a secondary interrupt controller,
+>> instead of the GPIO block being a cascaded interrupt controller
+>> in its own right.
+>>
+>> Is this correct?
+>
+> See the discussion I had on this. Yes, each line is connected to a
+> GIC SPI interrupt by itself. I've discussed this with Marc Zyngier
+> and Thomas Gleixner at the conference last week, and we concluded
+> that we will need a new generic interface to get data out of the
+> parent interrupt controller in a proper way. The current implementation
+> just maps the GIC registers and reads them directly, which of course
+> is not a proper way to do it.
+
+Hmmmmmm. OK shall we hold this driver until the infrastructure
+issues are resolved?
+
+The following is a recurring pattern among GPIO controllers:
+the GPIO controller can go offline (asycnhcronous) and while it
+is offline a secondary logic triggers an IRQ that wakes the system
+up, however the GPIO logic cannot really "see" that IRQ since
+it was sleeping when it arrived.
+
+Thus a latent IRQ is pending in the wakeup logic. This concept
+exists in drivers/pinctrl/nomadik/pinctrl-nomadik.c and I strongly
+prefer to call these "latent irqs" as it's a clear unambigous
+terminology.
+
+So is this a case of latent IRQs pending in the GIC?
+
+Yours,
+Linus Walleij
