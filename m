@@ -1,80 +1,44 @@
-From: Y Vo <yvo@apm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
-Date: Wed, 29 Oct 2014 22:09:00 +0700
-Message-ID: <CAL4ahLeyPgska0AcgS756y1Nh2tEeJ4A4k4bTJrU0pzqgG08PA@mail.gmail.com>
-References: <1412779948-28769-1-git-send-email-yvo@apm.com>
-	<2988580.WvjMBY1UOc@wuerfel>
-	<CACRpkdao2F1NK-3QpqSOLzFdvjWFVU4HqcqZPA2fXHpQN=BUsQ@mail.gmail.com>
-	<2178918.XVCQXOyoGA@wuerfel>
+Date: Wed, 29 Oct 2014 16:16:56 +0100
+Message-ID: <2250730.N6DdkCTXkh@wuerfel>
+References: <1412779948-28769-1-git-send-email-yvo@apm.com> <2178918.XVCQXOyoGA@wuerfel> <CAL4ahLeyPgska0AcgS756y1Nh2tEeJ4A4k4bTJrU0pzqgG08PA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og105.obsmtp.com ([64.18.0.180]:38465 "HELO
-	exprod5og105.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S933143AbaJ2PJD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 11:09:03 -0400
-Received: by mail-pd0-f174.google.com with SMTP id p10so3128484pdj.19
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2014 08:09:01 -0700 (PDT)
-In-Reply-To: <2178918.XVCQXOyoGA@wuerfel>
+Received: from mout.kundenserver.de ([212.227.17.10]:52934 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933194AbaJ2PR3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 11:17:29 -0400
+In-Reply-To: <CAL4ahLeyPgska0AcgS756y1Nh2tEeJ4A4k4bTJrU0pzqgG08PA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
+To: Y Vo <yvo@apm.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, patches <patches@apm.com>
 
-Hi Arnd,
+On Wednesday 29 October 2014 22:09:00 Y Vo wrote:
+> Hi Arnd,
+> 
+> Per Linus, shall we hold this driver until the GIC submission complete
+> ? Or we will send the version without access GIC to read status in
+> case the GPIO is configured IRQ ?
 
-Per Linus, shall we hold this driver until the GIC submission complete
-? Or we will send the version without access GIC to read status in
-case the GPIO is configured IRQ ?
+I'm fine with it either way.
 
-+static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
-+{
-+       struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-+       struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
-+       u32 data;
-+
-+       data = ioread32(mm_gc->regs + MPA_GPIO_IN_ADDR);
-+
-+       return (data &  GPIO_MASK(gpio)) ? 1 : 0;
-+}
+> +static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
+> +{
+> +       struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+> +       struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
+> +       u32 data;
+> +
+> +       data = ioread32(mm_gc->regs + MPA_GPIO_IN_ADDR);
+> +
+> +       return (data &  GPIO_MASK(gpio)) ? 1 : 0;
+> +}
 
-Regards,
-Y
+This would be actually broken, right? Maybe it's better to change the
+driver so that it refuses to map GPIO lines that are hardwired to
+the interrupt controller, until we can support that.
 
-On Wed, Oct 29, 2014 at 5:24 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 29 October 2014 10:52:47 Linus Walleij wrote:
->> On Fri, Oct 24, 2014 at 3:46 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->> > On Friday 24 October 2014 14:14:43 Linus Walleij wrote:
->> > See the discussion I had on this. Yes, each line is connected to a
->> > GIC SPI interrupt by itself. I've discussed this with Marc Zyngier
->> > and Thomas Gleixner at the conference last week, and we concluded
->> > that we will need a new generic interface to get data out of the
->> > parent interrupt controller in a proper way. The current implementation
->> > just maps the GIC registers and reads them directly, which of course
->> > is not a proper way to do it.
->>
->> Hmmmmmm. OK shall we hold this driver until the infrastructure
->> issues are resolved?
->
-> Y could send a first version that does not support the IRQ lines
-> if he wants to speed up the process.
->
->> The following is a recurring pattern among GPIO controllers:
->> the GPIO controller can go offline (asycnhcronous) and while it
->> is offline a secondary logic triggers an IRQ that wakes the system
->> up, however the GPIO logic cannot really "see" that IRQ since
->> it was sleeping when it arrived.
->>
->> Thus a latent IRQ is pending in the wakeup logic. This concept
->> exists in drivers/pinctrl/nomadik/pinctrl-nomadik.c and I strongly
->> prefer to call these "latent irqs" as it's a clear unambigous
->> terminology.
->>
->> So is this a case of latent IRQs pending in the GIC?
->
-> I think this case is different, from what I understand, the GPIO
-> controller cannot implement gpio_chip->get() for any line that
-> is connected to the GIC, and it has to ask the GIC instead.
-> This seems independent of the online/offline state of the controller.
->
->         Arnd
+	Arnd
