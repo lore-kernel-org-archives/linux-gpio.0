@@ -1,111 +1,74 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v6 0/7] This is the 1st version of suspend for RK3288.
-Date: Wed, 29 Oct 2014 15:26:21 -0700
-Message-ID: <CAD=FV=U-HesWSHdtiNq=5KquuBUR5_EBrL=rfZsAZEn+uuU5gw@mail.gmail.com>
-References: <1414583525-17395-1-git-send-email-zyw@rock-chips.com>
-	<7hppda7iaa.fsf@deeprootsystems.com>
-	<2524690.yVcDsnFz2O@diego>
+From: Benoit Parrot <bparrot@ti.com>
+Subject: Re: [RFC Patch] gpio: add GPIO hogging mechanism
+Date: Wed, 29 Oct 2014 18:09:12 -0500
+Message-ID: <20141029230912.GF29965@ti.com>
+References: <1413922198-29373-1-git-send-email-bparrot@ti.com>
+ <20141029104559.GC21251@lukather>
+ <20141029164122.GC29965@ti.com>
+ <20141029164746.GD21251@lukather>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:47793 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757667AbaJ2W0W convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 18:26:22 -0400
-Received: by mail-oi0-f44.google.com with SMTP id h136so3099872oig.31
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2014 15:26:21 -0700 (PDT)
-In-Reply-To: <2524690.yVcDsnFz2O@diego>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:41076 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757279AbaJ2XJQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 29 Oct 2014 19:09:16 -0400
+Content-Disposition: inline
+In-Reply-To: <20141029164746.GD21251@lukather>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Kevin Hilman <khilman@kernel.org>, Chris Zhong <zyw@rock-chips.com>, Mike Turquette <mturquette@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Russell King <linux@arm.linux.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tony Xie <xxx@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Heiko,
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote on Wed [2014-Oct-29 17:47:46 +0100]:
+> On Wed, Oct 29, 2014 at 11:41:22AM -0500, Benoit Parrot wrote:
+> > Maxime Ripard <maxime.ripard@free-electrons.com> wrote on Wed [2014-Oct-29 11:45:59 +0100]:
+> > > Hi,
+> > > 
+> > > On Tue, Oct 21, 2014 at 03:09:58PM -0500, Benoit Parrot wrote:
+> > > > Based on Boris Brezillion work this is a reworked patch
+> > > > of his initial GPIO hogging mechanism.
+> > > > This patch provides a way to initally configure specific GPIO
+> > > > when the gpio controller is probe.
+> > > > 
+> > > > The actual DT scanning to collect the GPIO specific data is performed
+> > > > as part of the gpiochip_add().
+> > > > 
+> > > > The purpose of this is to allows specific GPIOs to be configured
+> > > > without any driver specific code.
+> > > > This particularly usueful because board design are getting
+> > > > increassingly complex and given SoC pins can now have upward
+> > > > of 10 mux values a lot of connections are now dependent on
+> > > > external IO muxes to switch various modes and combination.
+> > > > 
+> > > > Specific drivers should not necessarily need to be aware of
+> > > > what accounts to a specific board implementation. This board level
+> > > > "description" should be best kept as part of the dts file.
+> > > > 
+> > > > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> > > 
+> > > I've been thinking about this for quite some time, it's good to see
+> > > some progress on that :)
+> > > 
+> > > However, I have a slightly different use case for it: the Allwinner
+> > > SoCs have a vdd pin coming in for every gpio bank. Nothing out of the
+> > > ordinary so far, except that some of the boards are using a
+> > > GPIO-controlled regulator to feed another bank vdd. That obviously
+> > > causes a chicken-egg issue, since for the gpio-regulator driver to
+> > > probe, it needs to gpio driver, and for the gpio driver to probe, it
+> > > needs the regulator driver.
+> > 
+> > Unless the gpio controlling the vdd pin is from the same bank your
+> > trying to power up I do not see the issue here.
+> 
+> Not the same bank, but the same driver.
 
-On Wed, Oct 29, 2014 at 2:50 PM, Heiko St=C3=BCbner <heiko@sntech.de> w=
-rote:
-> Am Mittwoch, 29. Oktober 2014, 13:06:05 schrieb Kevin Hilman:
->> Hi Chris,
->>
->> Chris Zhong <zyw@rock-chips.com> writes:
->> > RK3288 can shut down the cpu, gpu and other device controllers in =
-suspend,
->> > and it will pull the GLOBAL_PWROFF pin to high in the final stage =
-of the
->> > process of suspend, pull the pin to low again when resume.
->>
->> I tried to test this on top of linux-next (next-20141029) and it doe=
-sn't
->> wake up from serial port activity.
->>
->> Can you describe how to test this, as well as describe dependencies =
-on
->> other out-of-tree patches, including pointers to where they've been
->> posted.
->>
->> Also, please describe how you tested this and on which hardware
->> platforms.  It's a big help to reviewers to know how it's been teste=
-d,
->> and for anyone with similar hardware to know what else it's been tes=
-ted
->> on.
->
-> When testing this series it did go to sleep with
->
-> / # echo mem > /sys/power/state
-> PM: Syncing filesystems ... done.
-> Freezing user space processes ... (elapsed 0.010 seconds) done.
-> Freezing remaining freezable tasks ... (elapsed 0.010 seconds) done.
-> PM: suspend of devices complete after 0.001 msecs
-> PM: late suspend of devices complete after 0.001 msecs
-> PM: noirq suspend of devices complete after 0.001 msecs
-> Disabling non-boot CPUs ...
-> CPU1: shutdown
-> CPU2: shutdown
-> CPU3: shutdown
->
-> and the change in pmic-noise lets me assume it's really asleep.
->
->
-> But I'm not exactly sure how to wake it up again. I even hard-wired t=
-he gpio-
-> keys to always enable the irq wake, but so far it didn't wake again w=
-hen
-> pressing the power-key on the evb.
->
-> If anyone wants to peek, the collected patches (Doug's and Chris') ca=
-n be
-> found on [0].
+How are you currently working around this issue?
 
-Unless you get a device tree that sets up regulator states I think
-you're going to be SOL.  In other words one thing that will definitely
-bite you is (7592100 ARM: dts: add suspend voltage setting for RK808).
-
-That's referencing the "global_pwroff" which means we'll be telling
-the PMIC when we suspend.  That's good but the PMIC hasn't been
-programmed with any reasonable voltages because all the device tree
-properties are ignored.  That's not good.  You can see my comments
-about this at <https://patchwork.kernel.org/patch/5186951/>
-
-Also: I think that I remember the GPU being pretty unhappy if you
-turned its voltage off but didn't gate its power domain.  At the
-moment I've got all the power domain patches sitting in my tree plus
-<https://chromium-review.googlesource.com/#/c/223464/>.  You might
-also just be able to change the GPU not to be powered off in suspend
-(but then you need to program a good voltage to it).
+> 
+> -- 
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
 
-At the moment all of my testing is happening in the chromeos-3.14 tree
-(which has a ton of backports and thus isn't that different than
-mainline as far as Rockchip is concerned).  You could theoretically
-try jamming Chris's stuff into the top of the chromeos-3.14 tree and
-see what happens on EVB.  I may be able to give that a shot
-tomorrow...
-
--Doug
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
