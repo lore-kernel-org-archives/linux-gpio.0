@@ -1,173 +1,172 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [PATCH 2/5] gpio: timberdale: convert to use basic mmio gpio library
-Date: Wed, 29 Oct 2014 19:26:42 +0530
-Message-ID: <1414591005-30961-3-git-send-email-kamlakant.patel@linaro.org>
+Subject: [PATCH 4/5] gpio: ge: convert to use basic mmio gpio library
+Date: Wed, 29 Oct 2014 19:26:44 +0530
+Message-ID: <1414591005-30961-5-git-send-email-kamlakant.patel@linaro.org>
 References: <1414591005-30961-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
 Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:36456 "EHLO
 	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932834AbaJ2N50 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 09:57:26 -0400
+	with ESMTP id S932964AbaJ2N5a (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 09:57:30 -0400
 In-Reply-To: <1414591005-30961-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>
+Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org, Martyn Welch <martyn.welch@ge.com>
 
 From: Kamlakant Patel <kamlakant.patel@linaro.org>
 
-This patch converts TIMBERDALE GPIO driver to use basic_mmio_gpio
+This patch converts GE GPIO driver to use basic_mmio_gpio
 generic library.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/Kconfig           |  1 +
- drivers/gpio/gpio-timberdale.c | 90 ++++++++++++------------------------------
- 2 files changed, 27 insertions(+), 64 deletions(-)
+ drivers/gpio/Kconfig   |  1 +
+ drivers/gpio/gpio-ge.c | 96 ++++++++++++++++++++------------------------------
+ 2 files changed, 40 insertions(+), 57 deletions(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 3bd4d63..875d312 100644
+index 8cbc3ab..35a315d 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -783,6 +783,7 @@ config GPIO_SODAVILLE
- config GPIO_TIMBERDALE
- 	bool "Support for timberdale GPIO IP"
- 	depends on MFD_TIMBERDALE
+@@ -429,6 +429,7 @@ config GPIO_VX855
+ config GPIO_GE_FPGA
+ 	bool "GE FPGA based GPIO"
+ 	depends on GE_FPGA
 +	select GPIO_GENERIC
- 	---help---
- 	Add support for the GPIO IP in the timberdale FPGA.
- 
-diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index a685a3c..363ede8 100644
---- a/drivers/gpio/gpio-timberdale.c
-+++ b/drivers/gpio/gpio-timberdale.c
-@@ -28,7 +28,7 @@
- #include <linux/timb_gpio.h>
- #include <linux/interrupt.h>
- #include <linux/slab.h>
--
+ 	help
+ 	  Support for common GPIO functionality provided on some GE Single Board
+ 	  Computers.
+diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
+index 1237a73..7579d2e 100644
+--- a/drivers/gpio/gpio-ge.c
++++ b/drivers/gpio/gpio-ge.c
+@@ -21,7 +21,9 @@
+ #include <linux/io.h>
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
++#include <linux/of_address.h>
+ #include <linux/module.h>
 +#include <linux/basic_mmio_gpio.h>
- #define DRIVER_NAME "timb-gpio"
  
- #define TGPIOVAL	0x00
-@@ -50,52 +50,6 @@ struct timbgpio {
- 	unsigned long		last_ier;
- };
+ #define GEF_GPIO_DIRECT		0x00
+ #define GEF_GPIO_IN		0x04
+@@ -33,53 +35,6 @@
+ #define GEF_GPIO_OVERRUN	0x1C
+ #define GEF_GPIO_MODE		0x20
  
--static int timbgpio_update_bit(struct gpio_chip *gpio, unsigned index,
--	unsigned offset, bool enabled)
+-static void gef_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 -{
--	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
--	u32 reg;
+-	struct of_mm_gpio_chip *mmchip = to_of_mm_gpio_chip(chip);
+-	unsigned int data;
 -
--	spin_lock(&tgpio->lock);
--	reg = ioread32(tgpio->membase + offset);
--
--	if (enabled)
--		reg |= (1 << index);
+-	data = ioread32be(mmchip->regs + GEF_GPIO_OUT);
+-	if (value)
+-		data = data | BIT(offset);
 -	else
--		reg &= ~(1 << index);
+-		data = data & ~BIT(offset);
+-	iowrite32be(data, mmchip->regs + GEF_GPIO_OUT);
+-}
 -
--	iowrite32(reg, tgpio->membase + offset);
--	spin_unlock(&tgpio->lock);
+-static int gef_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+-{
+-	unsigned int data;
+-	struct of_mm_gpio_chip *mmchip = to_of_mm_gpio_chip(chip);
+-
+-	data = ioread32be(mmchip->regs + GEF_GPIO_DIRECT);
+-	data = data | BIT(offset);
+-	iowrite32be(data, mmchip->regs + GEF_GPIO_DIRECT);
 -
 -	return 0;
 -}
 -
--static int timbgpio_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
+-static int gef_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int value)
 -{
--	return timbgpio_update_bit(gpio, nr, TGPIODIR, true);
+-	unsigned int data;
+-	struct of_mm_gpio_chip *mmchip = to_of_mm_gpio_chip(chip);
+-
+-	/* Set value before switching to output */
+-	gef_gpio_set(mmchip->regs + GEF_GPIO_OUT, offset, value);
+-
+-	data = ioread32be(mmchip->regs + GEF_GPIO_DIRECT);
+-	data = data & ~BIT(offset);
+-	iowrite32be(data, mmchip->regs + GEF_GPIO_DIRECT);
+-
+-	return 0;
 -}
 -
--static int timbgpio_gpio_get(struct gpio_chip *gpio, unsigned nr)
+-static int gef_gpio_get(struct gpio_chip *chip, unsigned offset)
 -{
--	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
--	u32 value;
+-	struct of_mm_gpio_chip *mmchip = to_of_mm_gpio_chip(chip);
 -
--	value = ioread32(tgpio->membase + TGPIOVAL);
--	return (value & (1 << nr)) ? 1 : 0;
+-	return !!(ioread32be(mmchip->regs + GEF_GPIO_IN) & BIT(offset));
 -}
 -
--static int timbgpio_gpio_direction_output(struct gpio_chip *gpio,
--						unsigned nr, int val)
--{
--	return timbgpio_update_bit(gpio, nr, TGPIODIR, false);
--}
--
--static void timbgpio_gpio_set(struct gpio_chip *gpio,
--				unsigned nr, int val)
--{
--	timbgpio_update_bit(gpio, nr, TGPIOVAL, val != 0);
--}
--
- static int timbgpio_to_irq(struct gpio_chip *gpio, unsigned offset)
+ static const struct of_device_id gef_gpio_ids[] = {
+ 	{
+ 		.compatible	= "gef,sbc610-gpio",
+@@ -99,22 +54,49 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
  {
- 	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
-@@ -225,7 +179,7 @@ static int timbgpio_probe(struct platform_device *pdev)
- {
- 	int err, i;
- 	struct device *dev = &pdev->dev;
--	struct gpio_chip *gc;
+ 	const struct of_device_id *of_id =
+ 		of_match_device(gef_gpio_ids, &pdev->dev);
+-	struct of_mm_gpio_chip *mmchip;
 +	struct bgpio_chip *bgc;
- 	struct timbgpio *tgpio;
- 	struct resource *iomem;
- 	struct timbgpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
-@@ -247,6 +201,11 @@ static int timbgpio_probe(struct platform_device *pdev)
- 		dev_err(dev, "Memory alloc failed\n");
- 		return -EINVAL;
- 	}
-+
-+	bgc = devm_kzalloc(dev, sizeof(*bgc), GFP_KERNEL);
++	void __iomem *regs;
++	int ret;
+ 
+-	mmchip = devm_kzalloc(&pdev->dev, sizeof(*mmchip), GFP_KERNEL);
+-	if (!mmchip)
++	bgc = devm_kzalloc(&pdev->dev, sizeof(*bgc), GFP_KERNEL);
 +	if (!bgc)
-+		return -EINVAL;
-+
- 	tgpio->irq_base = pdata->irq_base;
- 
- 	spin_lock_init(&tgpio->lock);
-@@ -263,22 +222,25 @@ static int timbgpio_probe(struct platform_device *pdev)
  		return -ENOMEM;
- 	}
  
--	gc = &tgpio->gpio;
--
--	gc->label = dev_name(&pdev->dev);
--	gc->owner = THIS_MODULE;
--	gc->dev = &pdev->dev;
--	gc->direction_input = timbgpio_gpio_direction_input;
--	gc->get = timbgpio_gpio_get;
--	gc->direction_output = timbgpio_gpio_direction_output;
--	gc->set = timbgpio_gpio_set;
--	gc->to_irq = (irq >= 0 && tgpio->irq_base > 0) ? timbgpio_to_irq : NULL;
--	gc->dbg_show = NULL;
--	gc->base = pdata->gpio_base;
--	gc->ngpio = pdata->nr_pins;
--	gc->can_sleep = false;
--
--	err = gpiochip_add(gc);
-+	err = bgpio_init(bgc, dev, 4, tgpio->membase + TGPIOVAL,
-+			 NULL, NULL, tgpio->membase + TGPIODIR, NULL, 0);
++	regs = of_iomap(pdev->dev.of_node, 0);
++	if (!regs)
++		return -ENOMEM;
 +
-+	if (err) {
++	ret = bgpio_init(bgc, &pdev->dev, 4, regs + GEF_GPIO_IN,
++			 regs + GEF_GPIO_OUT, NULL, NULL,
++			 regs + GEF_GPIO_DIRECT, BGPIOF_BIG_ENDIAN_BYTE_ORDER);
++	if (ret) {
 +		dev_err(&pdev->dev, "bgpio_init failed\n");
-+		return err;
++		goto err0;
 +	}
-+	bgc->gc.label = dev_name(&pdev->dev);
-+	bgc->gc.owner = THIS_MODULE;
-+	bgc->gc.dev = &pdev->dev;
-+	bgc->gc.to_irq = (irq >= 0 && tgpio->irq_base > 0) ?
-+						timbgpio_to_irq : NULL;
-+	bgc->gc.dbg_show = NULL;
-+	bgc->gc.base = pdata->gpio_base;
-+	bgc->gc.ngpio = pdata->nr_pins;
-+	bgc->gc.can_sleep = false;
 +
-+	tgpio->gpio = bgc->gc;
-+	err = gpiochip_add(&bgc->gc);
- 	if (err)
- 		return err;
+ 	/* Setup pointers to chip functions */
+-	mmchip->gc.ngpio = (u16)(uintptr_t)of_id->data;
+-	mmchip->gc.of_gpio_n_cells = 2;
+-	mmchip->gc.direction_input = gef_gpio_dir_in;
+-	mmchip->gc.direction_output = gef_gpio_dir_out;
+-	mmchip->gc.get = gef_gpio_get;
+-	mmchip->gc.set = gef_gpio_set;
++	bgc->gc.label = kstrdup(pdev->dev.of_node->full_name, GFP_KERNEL);
++	if (!bgc->gc.label)
++		goto err0;
++
++	bgc->gc.base = -1;
++	bgc->gc.ngpio = (u16)(uintptr_t)of_id->data;
++	bgc->gc.of_gpio_n_cells = 2;
++	bgc->gc.of_node = pdev->dev.of_node;
  
+ 	/* This function adds a memory mapped GPIO chip */
+-	return of_mm_gpiochip_add(pdev->dev.of_node, mmchip);
++	ret = gpiochip_add(&bgc->gc);
++	if (ret)
++		goto err1;
++
++	return 0;
++err1:
++	kfree(bgc->gc.label);
++err0:
++	iounmap(regs);
++	pr_err("%s: GPIO chip registration failed\n",
++			pdev->dev.of_node->full_name);
++	return ret;
+ };
+ 
+ static struct platform_driver gef_gpio_driver = {
 -- 
 1.9.1
 
