@@ -1,87 +1,80 @@
-From: <kamlakant.patel@linaro.org>
-Subject: [PATCH 5/5] gpio: document basic mmio gpio library
-Date: Wed, 29 Oct 2014 19:34:17 +0530
-Message-ID: <1414591457-31074-1-git-send-email-kamlakant.patel@linaro.org>
+From: Y Vo <yvo@apm.com>
+Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
+Date: Wed, 29 Oct 2014 22:09:00 +0700
+Message-ID: <CAL4ahLeyPgska0AcgS756y1Nh2tEeJ4A4k4bTJrU0pzqgG08PA@mail.gmail.com>
+References: <1412779948-28769-1-git-send-email-yvo@apm.com>
+	<2988580.WvjMBY1UOc@wuerfel>
+	<CACRpkdao2F1NK-3QpqSOLzFdvjWFVU4HqcqZPA2fXHpQN=BUsQ@mail.gmail.com>
+	<2178918.XVCQXOyoGA@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:22117 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932768AbaJ2OE3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 10:04:29 -0400
+Received: from exprod5og105.obsmtp.com ([64.18.0.180]:38465 "HELO
+	exprod5og105.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S933143AbaJ2PJD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 11:09:03 -0400
+Received: by mail-pd0-f174.google.com with SMTP id p10so3128484pdj.19
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2014 08:09:01 -0700 (PDT)
+In-Reply-To: <2178918.XVCQXOyoGA@wuerfel>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, patches <patches@apm.com>
 
-From: Kamlakant Patel <kamlakant.patel@linaro.org>
+Hi Arnd,
 
-This is a brief documentation on how to use GPIO Generic
-library for memory-mapped GPIO controllers.
+Per Linus, shall we hold this driver until the GIC submission complete
+? Or we will send the version without access GIC to read status in
+case the GPIO is configured IRQ ?
 
-Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
----
- Documentation/gpio/driver.txt | 50 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
++static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
++{
++       struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
++       struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
++       u32 data;
++
++       data = ioread32(mm_gc->regs + MPA_GPIO_IN_ADDR);
++
++       return (data &  GPIO_MASK(gpio)) ? 1 : 0;
++}
 
-diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
-index 31e0b5d..563abea 100644
---- a/Documentation/gpio/driver.txt
-+++ b/Documentation/gpio/driver.txt
-@@ -190,3 +190,53 @@ gpiochip_free_own_desc().
- These functions must be used with care since they do not affect module use
- count. Do not use the functions to request gpio descriptors not owned by the
- calling driver.
-+
-+
-+Generic driver for memory-mapped GPIO controllers
-+-------------------------------------------------
-+The GPIO generic library provides support for basic platform_device
-+memory-mapped GPIO controllers, which can be accessed by selecting Kconfig
-+symbol GPIO_GENERIC and using library functions provided by GPIO generic
-+driver (see drivers/gpio/gpio-generic.c).
-+The simplest form of a GPIO controller that the driver support is just a
-+single "data" register, where GPIO state can be read and/or written.
-+
-+The driver can be registered using "basic-mmio-gpio" or for big-endian
-+notation support use "basic-mmio-gpio-be". The code will configure gpio_chip
-+and issue gpiochip_add().
-+
-+The driver supports:
-+- 8/16/32/64 bits registers. The number of GPIOs is determined by the width of
-+  the registers.
-+- GPIO controllers with clear/set registers.
-+- GPIO controllers with a single "data" register.
-+- Big endian bits/GPIOs ordering.
-+
-+For setting GPIO's there are three supported configurations:
-+- single input/output register resource (named "dat").
-+- set/clear pair (named "set" and "clr").
-+- single output register resource and single input resource ("set" and dat").
-+
-+For setting the GPIO direction, there are three supported configurations:
-+- simple bidirection GPIO that requires no configuration.
-+- an output direction register (named "dirout") where a 1 bit indicates the
-+  GPIO is an output.
-+- an input direction register (named "dirin") where a 1 bit indicates the GPIO
-+  is an input.
-+
-+It is possible to use only parts of GPIO generic library. Each GPIO controller
-+using GPIO generic library needs to include the following header.
-+
-+        #include <linux/basic_mmio_gpio.h>
-+
-+Use bgpio_init to configure gpio_chip and bgpio_remove to remove the controller.
-+int bgpio_init(struct bgpio_chip *bgc, struct device *dev,
-+               unsigned long sz, void __iomem *dat, void __iomem *set,
-+               void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
-+               unsigned long flags);
-+
-+The "flag" parameter can be following depending on controller configuration:
-+BGPIOF_BIG_ENDIAN               BIT(0)
-+BGPIOF_UNREADABLE_REG_SET       BIT(1) /* reg_set is unreadable */
-+BGPIOF_UNREADABLE_REG_DIR       BIT(2) /* reg_dir is unreadable */
-+BGPIOF_BIG_ENDIAN_BYTE_ORDER    BIT(3)
--- 
-1.9.1
+Regards,
+Y
 
+On Wed, Oct 29, 2014 at 5:24 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wednesday 29 October 2014 10:52:47 Linus Walleij wrote:
+>> On Fri, Oct 24, 2014 at 3:46 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> > On Friday 24 October 2014 14:14:43 Linus Walleij wrote:
+>> > See the discussion I had on this. Yes, each line is connected to a
+>> > GIC SPI interrupt by itself. I've discussed this with Marc Zyngier
+>> > and Thomas Gleixner at the conference last week, and we concluded
+>> > that we will need a new generic interface to get data out of the
+>> > parent interrupt controller in a proper way. The current implementation
+>> > just maps the GIC registers and reads them directly, which of course
+>> > is not a proper way to do it.
+>>
+>> Hmmmmmm. OK shall we hold this driver until the infrastructure
+>> issues are resolved?
+>
+> Y could send a first version that does not support the IRQ lines
+> if he wants to speed up the process.
+>
+>> The following is a recurring pattern among GPIO controllers:
+>> the GPIO controller can go offline (asycnhcronous) and while it
+>> is offline a secondary logic triggers an IRQ that wakes the system
+>> up, however the GPIO logic cannot really "see" that IRQ since
+>> it was sleeping when it arrived.
+>>
+>> Thus a latent IRQ is pending in the wakeup logic. This concept
+>> exists in drivers/pinctrl/nomadik/pinctrl-nomadik.c and I strongly
+>> prefer to call these "latent irqs" as it's a clear unambigous
+>> terminology.
+>>
+>> So is this a case of latent IRQs pending in the GIC?
+>
+> I think this case is different, from what I understand, the GPIO
+> controller cannot implement gpio_chip->get() for any line that
+> is connected to the GIC, and it has to ask the GIC instead.
+> This seems independent of the online/offline state of the controller.
+>
+>         Arnd
