@@ -1,44 +1,68 @@
-From: Kevin Hilman <khilman@kernel.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
 Subject: Re: [PATCH v6 0/7] This is the 1st version of suspend for RK3288.
-Date: Wed, 29 Oct 2014 13:06:05 -0700
-Message-ID: <7hppda7iaa.fsf@deeprootsystems.com>
-References: <1414583525-17395-1-git-send-email-zyw@rock-chips.com>
+Date: Wed, 29 Oct 2014 22:50:53 +0100
+Message-ID: <2524690.yVcDsnFz2O@diego>
+References: <1414583525-17395-1-git-send-email-zyw@rock-chips.com> <7hppda7iaa.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:44690 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753043AbaJ2UGJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Oct 2014 16:06:09 -0400
-Received: by mail-pa0-f44.google.com with SMTP id bj1so3896520pad.3
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2014 13:06:08 -0700 (PDT)
-In-Reply-To: <1414583525-17395-1-git-send-email-zyw@rock-chips.com> (Chris
-	Zhong's message of "Wed, 29 Oct 2014 19:51:58 +0800")
+Received: from gloria.sntech.de ([95.129.55.99]:51325 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755698AbaJ2Vru (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 29 Oct 2014 17:47:50 -0400
+In-Reply-To: <7hppda7iaa.fsf@deeprootsystems.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: heiko@sntech.de, dianders@chromium.org, mturquette@linaro.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Russell King <linux@arm.linux.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, Tony Xie <xxx@rock-chips.com>, linux-arm-kernel@lists.infradead.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Chris Zhong <zyw@rock-chips.com>, dianders@chromium.org, mturquette@linaro.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Russell King <linux@arm.linux.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, Tony Xie <xxx@rock-chips.com>, linux-arm-kernel@lists.infradead.org
 
-Hi Chris,
+Am Mittwoch, 29. Oktober 2014, 13:06:05 schrieb Kevin Hilman:
+> Hi Chris,
+> 
+> Chris Zhong <zyw@rock-chips.com> writes:
+> > RK3288 can shut down the cpu, gpu and other device controllers in suspend,
+> > and it will pull the GLOBAL_PWROFF pin to high in the final stage of the
+> > process of suspend, pull the pin to low again when resume.
+> 
+> I tried to test this on top of linux-next (next-20141029) and it doesn't
+> wake up from serial port activity.
+> 
+> Can you describe how to test this, as well as describe dependencies on
+> other out-of-tree patches, including pointers to where they've been
+> posted.
+> 
+> Also, please describe how you tested this and on which hardware
+> platforms.  It's a big help to reviewers to know how it's been tested,
+> and for anyone with similar hardware to know what else it's been tested
+> on.
 
-Chris Zhong <zyw@rock-chips.com> writes:
+When testing this series it did go to sleep with
 
-> RK3288 can shut down the cpu, gpu and other device controllers in suspend,
-> and it will pull the GLOBAL_PWROFF pin to high in the final stage of the
-> process of suspend, pull the pin to low again when resume.
+/ # echo mem > /sys/power/state 
+PM: Syncing filesystems ... done.
+Freezing user space processes ... (elapsed 0.010 seconds) done.
+Freezing remaining freezable tasks ... (elapsed 0.010 seconds) done.
+PM: suspend of devices complete after 0.001 msecs
+PM: late suspend of devices complete after 0.001 msecs
+PM: noirq suspend of devices complete after 0.001 msecs
+Disabling non-boot CPUs ...
+CPU1: shutdown
+CPU2: shutdown
+CPU3: shutdown
 
-I tried to test this on top of linux-next (next-20141029) and it doesn't
-wake up from serial port activity.
+and the change in pmic-noise lets me assume it's really asleep.
 
-Can you describe how to test this, as well as describe dependencies on
-other out-of-tree patches, including pointers to where they've been
-posted.
 
-Also, please describe how you tested this and on which hardware
-platforms.  It's a big help to reviewers to know how it's been tested,
-and for anyone with similar hardware to know what else it's been tested
-on.
+But I'm not exactly sure how to wake it up again. I even hard-wired the gpio-
+keys to always enable the irq wake, but so far it didn't wake again when 
+pressing the power-key on the evb.
 
-Thanks,
+If anyone wants to peek, the collected patches (Doug's and Chris') can be 
+found on [0].
 
-Kevin
+
+Heiko
+
+
+[0] https://github.com/mmind/linux-rockchip/tree/wip/rk3288-suspend
