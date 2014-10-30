@@ -1,38 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: msm-v1: Fix typo in function argument
-Date: Thu, 30 Oct 2014 16:00:39 +0100
-Message-ID: <CACRpkdYr8K7HM1G=EkUUeuTO_B8X0-sc9hh5C9bLxy=Bz2NkkA@mail.gmail.com>
-References: <1414160997-30575-1-git-send-email-daniel.thompson@linaro.org>
+Subject: Re: [RFC/PATCH] gpio/pinctrl: baytrail: move gpio driver from pinctrl
+ to gpio directory
+Date: Thu, 30 Oct 2014 16:26:54 +0100
+Message-ID: <CACRpkdYzuc+EmgjGtXaFKWRgEu1-B9tEiBnH_wTaa7vw4qPr+A@mail.gmail.com>
+References: <1413227857-555-1-git-send-email-david.a.cohen@linux.intel.com>
+	<543CFC7F.2070607@linux.intel.com>
+	<20141014174535.GA6516@psi-dev26.jf.intel.com>
+	<20141015070812.GM2255@lahna.fi.intel.com>
+	<20141015165542.GA4529@psi-dev26.jf.intel.com>
+	<20141016080123.GW2255@lahna.fi.intel.com>
+	<20141017015322.GB4513@psi-dev26.jf.intel.com>
+	<CACRpkdafsd3VDiEKbdooXx+mdAtf-3B6QBOEGeHgyJf9GKHqhQ@mail.gmail.com>
+	<20141028164259.GA16355@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f177.google.com ([209.85.213.177]:40696 "EHLO
-	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760485AbaJ3PAt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Oct 2014 11:00:49 -0400
-Received: by mail-ig0-f177.google.com with SMTP id hl2so4335933igb.10
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Oct 2014 08:00:49 -0700 (PDT)
-In-Reply-To: <1414160997-30575-1-git-send-email-daniel.thompson@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141028164259.GA16355@psi-dev26.jf.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jiri Kosina <trivial@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Patch Tracking <patches@linaro.org>, linaro-kernel <linaro-kernel@lists.linaro.org>, John Stultz <john.stultz@linaro.org>, Sumit Semwal <sumit.semwal@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Fri, Oct 24, 2014 at 4:29 PM, Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
-
-> irq_set_irq_wake() treats its second argument as a boolean. It is much
-> easier to read code when constant booleans are either 0 or 1!
+On Tue, Oct 28, 2014 at 5:42 PM, David Cohen
+<david.a.cohen@linux.intel.com> wrote:
+> On Tue, Oct 28, 2014 at 04:10:26PM +0100, Linus Walleij wrote:
+>> On Fri, Oct 17, 2014 at 3:53 AM, David Cohen
+>> <david.a.cohen@linux.intel.com> wrote:
+>> > On Thu, Oct 16, 2014 at 11:01:23AM +0300, Mika Westerberg wrote:
+>>
+>> >> In an ideal world, yes. However, the reality has shown that BIOS/FW gets
+>> >> these wrong and we need to work it around in the OS.
+>> >
+>> > But we never upstream these workarounds, right? :)
+>>
+>> Unless you discover it after it hits the market, right?
 >
-> This particular line of code distracted me somewhat when I was doing a bit of
-> work in a code browser since it (spuriously) got me worried that I had
-> misunderstood how irq_set_irq_wake() worked.
->
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
+> This is quite unlikely to happen. A pin mux misconfigured would have
+> quite bad side effects
 
-Patch applied with Alexandre's Review tag.
+This is not what typically happens. Mux is not the problem, the
+problem is going to be pin config.
+
+What happens is that someone designs a board with a pull-up
+resistor mounted on it, and the device ships with the internal
+on-soc software controlled pull-up enabled as well.
+
+A few weeks later someone discovers that the device is
+consuming too much power, and start hunting for power
+regressions.
+
+They realize that the on-soc pull up should not have been enabled
+since the one in hardware (soldered on the board) is good enough,
+and having them both active leads to leak current as the sum
+resistance of two parallel pull-ups is Rtot = R1*R2/(R1+R2).
+
+And they start putting in software quirks to turn off the internal
+pull-up to meet power targets.
 
 Yours,
 Linus Walleij
