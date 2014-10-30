@@ -1,78 +1,52 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Subject: Re: I2C OF IRQ parsing issue due to probe ordering
-Date: Thu, 30 Oct 2014 14:15:43 +0200
-Message-ID: <15051800.BQpGCgk7GR@avalon>
-References: <2287003.09eTeKUr1V@avalon> <545227E4.5070507@vanguardiasur.com.ar>
+Date: Thu, 30 Oct 2014 14:53:42 +0200
+Message-ID: <1718941.Qj8UzhsRTh@avalon>
+References: <2287003.09eTeKUr1V@avalon> <20141027125819.GA12641@katana>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <545227E4.5070507-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ezequiel Garcia <ezequiel-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50642 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759979AbaJ3Mxf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Oct 2014 08:53:35 -0400
+In-Reply-To: <20141027125819.GA12641@katana>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Ezequiel,
+Hi Wolfram and Thierry,
 
-On Thursday 30 October 2014 08:58:28 Ezequiel Garcia wrote:
-> On 10/25/2014 07:13 PM, Laurent Pinchart wrote:
-> > Hello,
-> > 
-> > I recently ran into an issue with the OF IRQ parsing code in the I2C core
-> > (of_i2c_register_devices in drivers/i2c/i2c-core.c).
-> > 
-> > My DT contains the following nodes.
-> > 
-> >         gpio1: gpio@e6051000 {
-> >                 ...
-> >                 #interrupt-cells = <2>;
-> >                 interrupt-controller;
-> >                 clocks = <&mstp9_clks R8A7790_CLK_GPIO1>;
-> >         };
-> >         
-> >         iic2: i2c@e6520000 {
-> >                 #address-cells = <1>;
-> >                 #size-cells = <0>;
-> >                 ...
-> >                 hdmi@39 {
-> >                         compatible = "adi,adv7511w";
-> >                         reg = <0x39>;
-> >                         interrupt-parent = <&gpio1>;
-> >                         interrupts = <15 IRQ_TYPE_EDGE_FALLING>;
-> >                         ...
-> >                 };
-> >         };
-> >         
-> >         mstp9_clks: mstp9_clks@e6150994 {
-> >                 ...
-> >         };
-> > 
+On Monday 27 October 2014 13:58:19 Wolfram Sang wrote:
 > > The i2c@e6520000 node is probed before the gpio@e6051000 node. The
 > > of_i2c_register_devices() function tries to register all children,
 > > including hdmi@39. It tries to parse and map the I2C client IRQ by
 > > calling irq_of_parse_and_map(), which returns 0 as the interrupt
 > > controller isn't probed yet. The adv7511 driver later probes the hdmi@39
 > > device and gets client->irq set to 0.
-> > 
-> > We can't control the probe order.
 > 
-> Maybe I'm missing something, but I think your i2c adapter is probed with
-> a subsys_initcall (as many other adapters). Otherwise, I can't see why
-> it would be probed before the the gpio controller.
+> I've got this strange feeling of deja vu... Ah, here: Thierry Reding
+> tackled this problem a year ago. His series:
+
+Thanks for the pointer.
+
+> https://lkml.org/lkml/2013/9/16/111 (of/irq: Defer interrupt reference
+> resolution)
 > 
-> I think this initcall is your problem. Have you tried just using
-> platform_driver's probe?
+> He did a V2 (which never made it to the i2c list). Seems like the first
+> two patches made it and the rest got stalled without discussion?
+> 
+> https://lkml.org/lkml/2013/9/18/216
+> 
+> Adding Thierry to the queue. Maybe he can bring some light to what
+> happened to his series.
 
-My I2C controller driver uses module_platform_driver(). The reason why the 
-GPIO controller is probed later is because the GPIO requires a clock, and the 
-clock device is probed after the I2C controller, resulting in a deferred 
-probing the first time the GPIO controller is probed.
-
-In the general case probe ordering can't be controlled, especially with DT. I 
-believe we thus need a generic solution.
+That's exactly what I need :-) Thierry, do you plan to respin the series ?
 
 -- 
 Regards,
 
 Laurent Pinchart
+
