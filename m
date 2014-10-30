@@ -1,72 +1,63 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Wolfram Sang <wsa@the-dreams.de>
 Subject: Re: I2C OF IRQ parsing issue due to probe ordering
-Date: Thu, 30 Oct 2014 15:12:43 +0200
-Message-ID: <2475312.fxdzhGkprr@avalon>
-References: <2287003.09eTeKUr1V@avalon> <1718941.Qj8UzhsRTh@avalon> <20141030130207.GB19386@ulmo>
+Date: Thu, 30 Oct 2014 14:21:36 +0100
+Message-ID: <20141030132136.GA23852@katana>
+References: <2287003.09eTeKUr1V@avalon>
+ <20141027125819.GA12641@katana>
+ <20141030125645.GA19386@ulmo>
+ <1441244.9DO8HMds24@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50669 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759755AbaJ3NMe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Oct 2014 09:12:34 -0400
-In-Reply-To: <20141030130207.GB19386@ulmo>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1441244.9DO8HMds24@avalon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Thierry,
 
-On Thursday 30 October 2014 14:02:09 Thierry Reding wrote:
-> On Thu, Oct 30, 2014 at 02:53:42PM +0200, Laurent Pinchart wrote:
-> > On Monday 27 October 2014 13:58:19 Wolfram Sang wrote:
-> > > > The i2c@e6520000 node is probed before the gpio@e6051000 node. The
-> > > > of_i2c_register_devices() function tries to register all children,
-> > > > including hdmi@39. It tries to parse and map the I2C client IRQ by
-> > > > calling irq_of_parse_and_map(), which returns 0 as the interrupt
-> > > > controller isn't probed yet. The adv7511 driver later probes the
-> > > > hdmi@39
-> > > > device and gets client->irq set to 0.
-> > > 
-> > > I've got this strange feeling of deja vu... Ah, here: Thierry Reding
-> > 
-> > > tackled this problem a year ago. His series:
-> > Thanks for the pointer.
-> > 
-> > > https://lkml.org/lkml/2013/9/16/111 (of/irq: Defer interrupt reference
-> > > resolution)
-> > > 
-> > > He did a V2 (which never made it to the i2c list). Seems like the first
-> > > two patches made it and the rest got stalled without discussion?
-> > > 
-> > > https://lkml.org/lkml/2013/9/18/216
-> > > 
-> > > Adding Thierry to the queue. Maybe he can bring some light to what
-> > > happened to his series.
-> > 
-> > That's exactly what I need :-) Thierry, do you plan to respin the series ?
-> 
-> Not really. Like I said in my reply to Wolfram, a different set of
-> patches was merged subsequently to solve this issue for platform
-> devices, which makes my patchset mostly obsolete. But I think the
-> solution that you proposed would work well if you do:
-> 
-> -		int irq = irq_of_parse_and_map(dev->of_node, 0);
-> +		int irq = of_irq_get(dev->of_node, 0);
-> 
-> And then changing irq_create_of_mapping() should no longer be necessary.
+--OXfL5xGRrasGEqWY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It looks like it would work, yes. I'll test it and will resubmit my patch.
 
-> I still think it's kind of lame to handle -EPROBE_DEFER specially as was
-> done in of_irq_get(), but given how worried people were about the more
-> invasive changes needed to propagate the correct error code all the way
-> up it seems like that's as good as it's going to get.
+> > See:
+> >=20
+> > 	9ec36cafe43b of/irq: do irq resolution in platform_get_irq
+> >=20
+> > I suspect a similar thing could be done for I2C.
+>=20
+> That could work. We would need to introduce a new i2c_get_irq() function=
+=20
+> though. Wolfram, would you be fine with that ?
 
--- 
-Regards,
+I'd think it will look pretty similar to platform_get_irq, no? That is
+fine with me.
 
-Laurent Pinchart
 
+--OXfL5xGRrasGEqWY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUUjtgAAoJEBQN5MwUoCm2kEUQAJMwlni8AXCmzVG5wNPuEZHJ
+DLfxkUzXyDoOB0VLMlVcPHoaoxpZBbgzOhS1ODFVtfcoTBMmjWN4Xq5SR5BgeWxu
+BHfywPFgxdGKBKYqeB0wRMOhhVyhU112XgOYQHhJhyTQHmkMYrHjImrX8zqc2KEQ
+lpQhUCVawaVQd+fE+CTkDkAJozGHksGGA6HA/lg7JF2e0EfSVmcLUITLpR+aHFCc
+g2GZ95VVJDH2ISgaEpf1Az23UJcy2xczsew6hAPrhNBIMlXsEmTUwJxvzA6F8JwS
+4zVKiKfApguJioYRnKU6q8X6FtBsn0h1JYVDzn+f0tdjBtBiLQxJ5mLuKopCdWCr
+QzgvITd8xCoHYhjRSmVBBMYTC19tjqhZoOR/HNZliXRwpONDLJNVEbDQYj42CLcr
+8Eo9TDcu2hDeXY9FqPg/SI4KSYBow5OwDQs5uQ6jEiBVrhm24OX0shbjx4NZ3JKf
+0RPyCuJGObbuLixN++4R1H2o82HSxO7lmTdFnVqbVHGjuLZ6LoeMxn0yIe2l1DQ6
+nCB0YG0fWPbSz0+vWp4hi4PkWe5jf3iITZ+lDus9CfENy4Jz/UjmVZ94FPHIVW2g
+mDMcig3Koh19Fe+OkXXGhL4CZFiklzHJN55Iic4wFKH5Ws0gbCgyg7jS/cFyYO3O
+oZHOptiqZcmCw0AzCj+J
+=fJtU
+-----END PGP SIGNATURE-----
+
+--OXfL5xGRrasGEqWY--
