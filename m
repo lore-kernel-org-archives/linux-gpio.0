@@ -1,55 +1,40 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
-Date: Fri, 31 Oct 2014 09:14:35 +0100
-Message-ID: <20141031091435.2149346d@free-electrons.com>
-References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
-	<CACRpkda-8p=e_12vpUNt3_Y0EVPDArEKJUi63B8CGemNwVuQ0w@mail.gmail.com>
-	<54533FAF.7010505@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH 1/2] pinctrl: Add output-disable
+Date: Fri, 31 Oct 2014 09:49:35 +0100
+Message-ID: <CACRpkdagHFAaPmQptsm7pz_JqYUCbU-0FoH45vrXo8pG6mTAxA@mail.gmail.com>
+References: <1414529835-16207-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:40547 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750912AbaJaIOk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Oct 2014 04:14:40 -0400
-In-Reply-To: <54533FAF.7010505@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1414529835-16207-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Sonny Rao <sonnyrao@chromium.org>, linux-rockchip@lists.infradead.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Sherman Yin <syin@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello,
+On Tue, Oct 28, 2014 at 9:57 PM, Doug Anderson <dianders@chromium.org> wrote:
+> The pinctrl bindings / API allow you to specify that:
+> - a pin should be an output
+> - a pin should have its input path enabled / disabled
+>
+> ...but they don't allow you to tell a pin to stop outputting.  Lets
+> add a new setting for that just in case the bootloader (or the default
+> state) left a pin as an output and we don't want it that way anymore.
+>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+(...)
+> + * @PIN_CONFIG_OUTPUT_DISABLE: this will configure the pin _not_ to output.
+> + *     Parameter should be 1.
 
-On Fri, 31 Oct 2014 08:52:15 +0100, Gregory CLEMENT wrote:
+This doesn't make sense. The pin is either low, high, some analog mode
+or tristate/high impedance.
 
-> >> +       switch (mvchip->soc_variant) {
-> >> +       case MVEBU_GPIO_SOC_VARIANT_ORION:
-> >> +               mvchip->edge_mask_regs[0] =
-> >> +                       readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
-> >> +               mvchip->level_mask_regs[0] =
-> >> +                       readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
-> >> +               break;
-> > 
-> > You are assigning index [0] twice, why? There must be some
-> > reason, and it should be stated in a comment. If the first read
-> > is necessary for hardware reasons, don't assign it but
-> > discard the result.
-> 
-> Maybe I missed something but for me these 2 registers are different:
-> one is the _EDGE_ mask and the other the _LEVEL_ mask.
+It does *not* stop existing.
 
-Good that you looked at it Greg because I must admit I did not
-understand the comment from Linus :-)
+Figure out the exact electronic meaning of what happens when you do
+"output disable" in your hardware, I think it is very likely that
+PIN_CONFIG_BIAS_HIGH_IMPEDANCE is what you are really
+after here.
 
-I read things again and both the variable *and* the register offset are
-different. I guess it's probably due to a -ENOTENOUGHCOFFEE :-)
-
-Thanks!
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Yours,
+Linus Walleij
