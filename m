@@ -1,71 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
-Date: Fri, 31 Oct 2014 08:00:10 +0100
-Message-ID: <CACRpkda-8p=e_12vpUNt3_Y0EVPDArEKJUi63B8CGemNwVuQ0w@mail.gmail.com>
-References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v3] gpio: lib-sysfs: Add 'wakeup' attribute
+Date: Fri, 31 Oct 2014 08:03:56 +0100
+Message-ID: <CACRpkdaduj3MaEN=hmL54ANJiP0B5MdH9qSqWRukX4H7pFt_Hw@mail.gmail.com>
+References: <1414434602-14263-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:55748 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754435AbaJaHAL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Oct 2014 03:00:11 -0400
-Received: by mail-ig0-f172.google.com with SMTP id a13so428534igq.5
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Oct 2014 00:00:11 -0700 (PDT)
-In-Reply-To: <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1414434602-14263-1-git-send-email-soren.brinkmann@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Soren Brinkmann <soren.brinkmann@xilinx.com>, linux-api@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, Jonathan Corbet <corbet@lwn.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 24, 2014 at 1:59 PM, Thomas Petazzoni
-<thomas.petazzoni@free-electrons.com> wrote:
+On Mon, Oct 27, 2014 at 7:30 PM, Soren Brinkmann
+<soren.brinkmann@xilinx.com> wrote:
 
-> This commit adds the implementation of ->suspend() and ->resume()
-> platform_driver hooks in order to save and restore the state of the
-> GPIO configuration. In order to achieve that, additional fields are
-> added to the mvebu_gpio_chip structure.
+> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
+> marking/unmarking a GPIO as wake IRQ.
+> The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
+> is associated with that GPIO and the irqchip implements set_wake().
+> Writing 'enabled' to that file will enable wake for that GPIO, while
+> writing 'disabled' will disable wake.
+> Reading that file will return either 'disabled' or 'enabled' depening on
+> the currently set flag for the GPIO's IRQ.
 >
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-
+> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> v3:
+>  - add documentation
+> v2:
+>  - fix error path to unlock mutex before return
 (...)
-> +       mvchip->out_reg = readl(mvebu_gpioreg_out(mvchip));
-> +       mvchip->io_conf_reg = readl(mvebu_gpioreg_io_conf(mvchip));
-> +       mvchip->blink_en_reg = readl(mvebu_gpioreg_blink(mvchip));
-> +       mvchip->in_pol_reg = readl(mvebu_gpioreg_in_pol(mvchip));
 
-OK...
+Looking better!
 
-> +       switch (mvchip->soc_variant) {
-> +       case MVEBU_GPIO_SOC_VARIANT_ORION:
-> +               mvchip->edge_mask_regs[0] =
-> +                       readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
-> +               mvchip->level_mask_regs[0] =
-> +                       readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
-> +               break;
+> +       "wakeup" ... reads as either "enabled" or "disabled". Write these
+> +               strings to set/clear the 'wakeup' flag of the IRQ associated
+> +               with this GPIO. If the IRQ has the 'wakeup' flag set, it can
+> +               wake the system from sleep states.
+> +
+> +               This file exists only if the pin can generate interrupts and
+> +               the driver implements the required infrastructure.
 
-You are assigning index [0] twice, why? There must be some
-reason, and it should be stated in a comment. If the first read
-is necessary for hardware reasons, don't assign it but
-discard the result.
+Should this not be 0/1 rather than the string "enabled"/"disabled"?
 
-(void) readl(...);
+I think that is the common pattern in sysfs?
 
-(This pattern repeats for each save call below.)
-
-> +       switch (mvchip->soc_variant) {
-> +       case MVEBU_GPIO_SOC_VARIANT_ORION:
-> +               writel(mvchip->edge_mask_regs[0],
-> +                      mvchip->membase + GPIO_EDGE_MASK_OFF);
-> +               writel(mvchip->level_mask_regs[0],
-> +                      mvchip->membase + GPIO_LEVEL_MASK_OFF);
-
-And on the way up same thing. Now you write
-each register twice. Why?
+Not sure, but want an indication from the ABI people.
 
 Yours,
 Linus Walleij
