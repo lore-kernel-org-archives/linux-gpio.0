@@ -1,75 +1,54 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 02/15] GPIO: port LoCoMo gpio support from old driver
-Date: Fri, 31 Oct 2014 13:39:59 +0400
-Message-ID: <CALT56yOgMUA7o2dzfHph=S2zkDV4zERzMh4ishpPwpAx7Cqj6Q@mail.gmail.com>
-References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
-	<1414454528-24240-3-git-send-email-dbaryshkov@gmail.com>
-	<CACRpkdY7tRadod2vQfEytmw-ubaMAvr_=XTczD5bUMkqie0xkg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: bcm2835: Start GPIO numeration at zero
+Date: Fri, 31 Oct 2014 10:49:28 +0100
+Message-ID: <CACRpkdbhEBQfEpkK6-4GNyTQvvJ2qJ+RfXUULJNxvrbrpv1NAg@mail.gmail.com>
+References: <1414447799-1284-1-git-send-email-matthias.klein@linux.com>
+	<544ECAB2.3060706@wwwdotorg.org>
+	<544ECFB4.7040704@linux.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdY7tRadod2vQfEytmw-ubaMAvr_=XTczD5bUMkqie0xkg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f173.google.com ([209.85.213.173]:44112 "EHLO
+	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932795AbaJaJt3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Oct 2014 05:49:29 -0400
+Received: by mail-ig0-f173.google.com with SMTP id r10so607397igi.12
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Oct 2014 02:49:29 -0700 (PDT)
+In-Reply-To: <544ECFB4.7040704@linux.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Matthias Klein <matthias.klein@linux.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-rpi-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-2014-10-31 10:48 GMT+03:00 Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
-> On Tue, Oct 28, 2014 at 1:01 AM, Dmitry Eremin-Solenikov
-> <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Tue, Oct 28, 2014 at 12:05 AM, Matthias Klein
+<matthias.klein@linux.com> wrote:
+> Am 27.10.2014 um 23:44 schrieb Stephen Warren:
+
+>> What's the motivation for this? The GPIO IDs should all come from DT,
+>> which encodes everything as an ID relative to a particular controllers, and
+>> hence the actual value of the base address should be irrelevant.
 >
->> Add gpiolib driver for gpio pins placed on the LoCoMo GA.
->>
->> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->
+> - To be in sync with the GPIO numbers in the datasheet / documentation
 
-[skipped]
+We are moving away from global GPIO numbers because they are
+an eternal pain. We would replace them with a local offset number
+just as the second column in /proc/interrupts
 
-> (etc, everywhere this pattern occurs).
->> +static void locomo_gpio_set(struct gpio_chip *chip,
->> +               unsigned offset, int value)
->> +{
->> +       struct locomo_gpio *lg = container_of(chip, struct locomo_gpio, gpio);
->> +       unsigned long flags;
->> +
->> +       spin_lock_irqsave(&lg->lock, flags);
->> +
->> +       __locomo_gpio_set(chip, offset, value);
->> +
->> +       spin_unlock_irqrestore(&lg->lock, flags);
->
-> If you actually always have to be getting and releasing a spin lock around
-> the register writes, contemplate using regmap-mmio because that
-> is part of what it does.
->
-> But is this locking really necessary?
+Hm we should patch <debugfs/gpio> to show local offsets...
 
-I have a custom of doing such locking and never having to think about
-somebody breaking into RMW cycles.
+> - For userland applications which rely on these GPIO numbers
 
-Also isn't regmap an overkill here? Wouldn't regmap also do a lock/unlock
-around each register read/write/RMW?
+ARGH!!!
 
->> +static int locomo_gpio_remove(struct platform_device *pdev)
->> +{
->> +       struct locomo_gpio *lg = platform_get_drvdata(pdev);
->> +       int ret;
->> +
->> +       ret = gpiochip_remove(&lg->gpio);
->> +       if (ret) {
->> +               dev_err(&pdev->dev, "Can't remove gpio chip: %d\n", ret);
->> +               return ret;
->> +       }
->
-> The return value from gpiochip_remove() has been removed in v3.18-rc1
-> so this will not compile.
+A much better idea is to add labels to your GPIOs so you can
+identify them by name. Augment the driver with labeling capability
+if need be, see e.g. commit 781f6d710d4482eab05cfaad50060a0ea8c0e4e0
+"gpio: generic: Add label to platform data"
 
-Yes, the fix will be in the next iteration. This patchset was based on 3.17
+You just need to figure out how to do the same naming from the
+device tree. Maybe some new binding is needed, others are
+discussing how to do exporting of GPIOs from devicetree
+anyway, see the mailing list.
 
--- 
-With best wishes
-Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
