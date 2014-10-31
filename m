@@ -1,58 +1,151 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH 11/15] sound: soc: poodle: make use of new locomo GPIO interface
-Date: Fri, 31 Oct 2014 13:58:47 +0400
-Message-ID: <CALT56yP6K-sXOGM4z-WRsvFVjOi-13wM+Ewqn6WpDmNB4xcOEg@mail.gmail.com>
-References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
-	<1414454528-24240-12-git-send-email-dbaryshkov@gmail.com>
-	<20141028145850.GU18557@sirena.org.uk>
-	<CAAVeFuKgARoMFzf+663iP6cULs93d4WSQS8ESjUb9VcxguWurA@mail.gmail.com>
-	<CACRpkdY-RDuxGMWe_SD613ovsEoHhxjP1+3T-m_zKQSx=mkFjA@mail.gmail.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
+ Intel Baytrail
+Date: Fri, 31 Oct 2014 08:20:05 -0500
+Message-ID: <20141031132005.GB1273@saruman>
+References: <1412355319-18946-1-git-send-email-david.a.cohen@linux.intel.com>
+ <1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
+ <20141013191405.GB29810@saruman>
+ <20141013192404.GB4034@psi-dev26.jf.intel.com>
+ <20141013192632.GC29810@saruman>
+ <20141013193618.GD29810@saruman>
+ <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
+ <20141028144249.GD8123@saruman>
+ <CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY-RDuxGMWe_SD613ovsEoHhxjP1+3T-m_zKQSx=mkFjA@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kORqDWCi7qDJ0mEj"
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jingoo
+Cc: Felipe Balbi <balbi@ti.com>, David Cohen <david.a.cohen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2014-10-31 12:52 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Oct 29, 2014 at 4:03 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> On Tue, Oct 28, 2014 at 11:58 PM, Mark Brown <broonie@kernel.org> wrote:
->>> On Tue, Oct 28, 2014 at 03:02:04AM +0300, Dmitry Eremin-Solenikov wrote:
->>>> Since LoCoMo driver has been converted to provide proper gpiolib
->>>> interface, make poodle ASoC platform driver use gpiolib API.
->>>
->>> Please use subject lines matching the style for the subsystem.
->>>
->>>> +     ret = gpio_request_array(poodle_gpios, ARRAY_SIZE(poodle_gpios));
->>>> +     if (ret) {
->>>> +             dev_err(&pdev->dev, "gpio_request_array() failed: %d\n",
->>>> +                             ret);
->>>> +             return ret;
->>>> +     }
->>>
->>> I sense a need for devm_gpio_request_array() here.  Otherwise this looks
->>> fine - ideally it'd move to gpiod but moving to gpiolib is a clear win
->>> so no need to block on this.
->>
->> I wish Dmitry took the opportunity to move this driver to the gpiod
->> API, especially since doing so would be trivial for this driver.
->
-> +1 on this.
->
-> However this platform is not device tree, so this implies setting up
-> a descriptor table for the affected driver(s) to work properly.
-> See Documentation/gpio/board.txt
+--kORqDWCi7qDJ0mEj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I checked the gpiod interfaces after original suggestion by Alexandre.
+Hi,
 
-Introducing those mapping tables (much like pinctrl tables) look like
-a duplicate effort if Russell will permit adding a DT support. So
-I thought that I will reconsider gpiod/pinctrl/etc after fixing
-LoCoMo, reiterating IRQ patches, possibly switching to COMMON_CLK
-and (finally) thinking about device tree support.
+On Fri, Oct 31, 2014 at 09:12:16AM +0100, Linus Walleij wrote:
+> On Tue, Oct 28, 2014 at 3:42 PM, Felipe Balbi <balbi@ti.com> wrote:
+> > On Tue, Oct 28, 2014 at 11:15:20AM +0100, Linus Walleij wrote:
+> >> On Mon, Oct 13, 2014 at 9:36 PM, Felipe Balbi <balbi@ti.com> wrote:
+> >> > On Mon, Oct 13, 2014 at 02:26:32PM -0500, Felipe Balbi wrote:
+> >>
+> >> > I also noticed that this is missing:
+> >> >
+> >> > diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pi=
+nctrl-baytrail.c
+> >> > index e12e5b0..7db5ab9 100644
+> >> > --- a/drivers/pinctrl/pinctrl-baytrail.c
+> >> > +++ b/drivers/pinctrl/pinctrl-baytrail.c
+> >> > @@ -614,3 +614,9 @@ static int __init byt_gpio_init(void)
+> >> >  }
+> >> >
+> >> >  subsys_initcall(byt_gpio_init);
+> >> > +
+> >> > +static void __exit byt_gpio_exit(void)
+> >> > +{
+> >> > +       platform_driver_unregister(&byt_gpio_driver);
+> >> > +}
+> >> > +module_exit(byt_gpio_exit);
+> >>
+> >> But the Baytrail driver is not a loadable module, it is bool:
+> >>
+> >> config PINCTRL_BAYTRAIL
+> >>         bool "Intel Baytrail GPIO pin control"
+> >>         depends on GPIOLIB && ACPI && X86
+> >>
+> >> (...)
+> >>
+> >> So I guess it won't need handling for removal, as it can only
+> >> be compiled-in.
+> >
+> > you can still unbind it through sysfs, right ? The thing also already
+> > provides a ->remove() method anyway.
+>=20
+> Yes you're right of course...
+>=20
+> But another way to get rid of the dilemma is to set
+> .suppress_bind_attrs =3D true on the .driver field of the
+> device driver. The one can't unbind it through sysfs anymore.
+>=20
+>         .driver =3D {
+>                 .name   =3D "foo",
+>                 .suppress_bind_attrs =3D true,
+>         },
+>=20
+> So one of them need to be done.
+>=20
+> I suspect this is a kind of common problem...
 
--- 
-With best wishes
-Dmitry
+so instead of taking of taking a three-liner which just makes sure this
+can be used as "intended" you prefer to:
+
+diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-b=
+aytrail.c
+index e12e5b0..254ba81 100644
+--- a/drivers/pinctrl/pinctrl-baytrail.c
++++ b/drivers/pinctrl/pinctrl-baytrail.c
+@@ -587,16 +587,6 @@ static const struct acpi_device_id byt_gpio_acpi_match=
+[] =3D {
+ };
+ MODULE_DEVICE_TABLE(acpi, byt_gpio_acpi_match);
+=20
+-static int byt_gpio_remove(struct platform_device *pdev)
+-{
+-	struct byt_gpio *vg =3D platform_get_drvdata(pdev);
+-
+-	pm_runtime_disable(&pdev->dev);
+-	gpiochip_remove(&vg->chip);
+-
+-	return 0;
+-}
+-
+ static struct platform_driver byt_gpio_driver =3D {
+ 	.probe          =3D byt_gpio_probe,
+ 	.remove         =3D byt_gpio_remove,
+@@ -605,6 +595,7 @@ static struct platform_driver byt_gpio_driver =3D {
+ 		.owner  =3D THIS_MODULE,
+ 		.pm	=3D &byt_gpio_pm_ops,
+ 		.acpi_match_table =3D ACPI_PTR(byt_gpio_acpi_match),
++		.suppress_bind_attrs =3D true,
+ 	},
+ };
+=20
+
+I don't quite care since this is not an architecture I work for, but I
+prefer drivers which can be unbound one way or another. Not to mention
+that there's already a ->remove callback on the platform_driver anyway.
+
+--=20
+balbi
+
+--kORqDWCi7qDJ0mEj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUU4yFAAoJEIaOsuA1yqRE3scQAJUfzS3wiRnhk1MhnEuZyky3
+u+BnmP+BJ+qscfAF38HIMTQRifV+JemDu8/lqXLPQCQH8Q3IkBhk9HR96boa/53M
+nV/5dTH39a+LUpl8MeQEBBIWt/MBXeBaI9DLksGGziiUP+86OpP1VNakesjqtj53
+tqMB2dVDx60i03i8g19FqPkHzKjwMFbUcDEY9RPwDLKhjO1mz6SQUxBEePM6Ws7e
+grDgcDcRFq2B8blbSPTIExhxyCd+3RegABqIBm9OFeTMPQEbImXp5totuzzYGfcy
+kSAsU2aDNNxNlwdtokk5Xt9KzugL8CdZ1hcPes1Nt6NtPy7rwf6NsqQZzV1Q/Y8g
+U8J3Umtb0f1vXz96vJBIyTpahXdZSlTt0hvd/LwV2n2oEvHTy2103rIrNCZvQsaH
+1VTiwqwO9SSSVw60Rzi92ZRyMhmEcv8ZXAUzd3LIr8uHSDQDXT7H/9BYWibemVmZ
+FTkxV9PHGA8sbDWn4GQaGsiW2FfhKY6PX5QtL9SSabSpVhpZs44tk2TbDeVew2sH
+jj9U7QOxR0uZ3yBZpmjtLpFA3JwyUYQh4/xtzda/xLa+9kOdpwp4HIK46fVnI1JP
+okVda9H0TrveT3FY3ZogDwrOcVfQqgmuGoRkmViRRKi2LlSCJhqO4fCVWHWAH8Mj
+wg4JSQd/4AqqYTHpNaeF
+=btQh
+-----END PGP SIGNATURE-----
+
+--kORqDWCi7qDJ0mEj--
