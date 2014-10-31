@@ -1,81 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
- Intel Baytrail
-Date: Fri, 31 Oct 2014 09:12:16 +0100
-Message-ID: <CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
-References: <1412355319-18946-1-git-send-email-david.a.cohen@linux.intel.com>
-	<1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
-	<20141013191405.GB29810@saruman>
-	<20141013192404.GB4034@psi-dev26.jf.intel.com>
-	<20141013192632.GC29810@saruman>
-	<20141013193618.GD29810@saruman>
-	<CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
-	<20141028144249.GD8123@saruman>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
+Date: Fri, 31 Oct 2014 09:14:35 +0100
+Message-ID: <20141031091435.2149346d@free-electrons.com>
+References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
+	<CACRpkda-8p=e_12vpUNt3_Y0EVPDArEKJUi63B8CGemNwVuQ0w@mail.gmail.com>
+	<54533FAF.7010505@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:42867 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750894AbaJaIMR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Oct 2014 04:12:17 -0400
-Received: by mail-ie0-f169.google.com with SMTP id tr6so782984ieb.14
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Oct 2014 01:12:16 -0700 (PDT)
-In-Reply-To: <20141028144249.GD8123@saruman>
+Received: from down.free-electrons.com ([37.187.137.238]:40547 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750912AbaJaIOk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Oct 2014 04:14:40 -0400
+In-Reply-To: <54533FAF.7010505@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: David Cohen <david.a.cohen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Oct 28, 2014 at 3:42 PM, Felipe Balbi <balbi@ti.com> wrote:
-> On Tue, Oct 28, 2014 at 11:15:20AM +0100, Linus Walleij wrote:
->> On Mon, Oct 13, 2014 at 9:36 PM, Felipe Balbi <balbi@ti.com> wrote:
->> > On Mon, Oct 13, 2014 at 02:26:32PM -0500, Felipe Balbi wrote:
->>
->> > I also noticed that this is missing:
->> >
->> > diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
->> > index e12e5b0..7db5ab9 100644
->> > --- a/drivers/pinctrl/pinctrl-baytrail.c
->> > +++ b/drivers/pinctrl/pinctrl-baytrail.c
->> > @@ -614,3 +614,9 @@ static int __init byt_gpio_init(void)
->> >  }
->> >
->> >  subsys_initcall(byt_gpio_init);
->> > +
->> > +static void __exit byt_gpio_exit(void)
->> > +{
->> > +       platform_driver_unregister(&byt_gpio_driver);
->> > +}
->> > +module_exit(byt_gpio_exit);
->>
->> But the Baytrail driver is not a loadable module, it is bool:
->>
->> config PINCTRL_BAYTRAIL
->>         bool "Intel Baytrail GPIO pin control"
->>         depends on GPIOLIB && ACPI && X86
->>
->> (...)
->>
->> So I guess it won't need handling for removal, as it can only
->> be compiled-in.
->
-> you can still unbind it through sysfs, right ? The thing also already
-> provides a ->remove() method anyway.
+Hello,
 
-Yes you're right of course...
+On Fri, 31 Oct 2014 08:52:15 +0100, Gregory CLEMENT wrote:
 
-But another way to get rid of the dilemma is to set
-.suppress_bind_attrs = true on the .driver field of the
-device driver. The one can't unbind it through sysfs anymore.
+> >> +       switch (mvchip->soc_variant) {
+> >> +       case MVEBU_GPIO_SOC_VARIANT_ORION:
+> >> +               mvchip->edge_mask_regs[0] =
+> >> +                       readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
+> >> +               mvchip->level_mask_regs[0] =
+> >> +                       readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
+> >> +               break;
+> > 
+> > You are assigning index [0] twice, why? There must be some
+> > reason, and it should be stated in a comment. If the first read
+> > is necessary for hardware reasons, don't assign it but
+> > discard the result.
+> 
+> Maybe I missed something but for me these 2 registers are different:
+> one is the _EDGE_ mask and the other the _LEVEL_ mask.
 
-        .driver = {
-                .name   = "foo",
-                .suppress_bind_attrs = true,
-        },
+Good that you looked at it Greg because I must admit I did not
+understand the comment from Linus :-)
 
-So one of them need to be done.
+I read things again and both the variable *and* the register offset are
+different. I guess it's probably due to a -ENOTENOUGHCOFFEE :-)
 
-I suspect this is a kind of common problem...
+Thanks!
 
-Yours,
-Linus Walleij
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
