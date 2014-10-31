@@ -1,127 +1,71 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [RFC Patch] gpio: add GPIO hogging mechanism
-Date: Thu, 30 Oct 2014 18:16:09 +0100
-Message-ID: <20141030171609.GQ21251@lukather>
-References: <1413922198-29373-1-git-send-email-bparrot@ti.com>
- <20141029104559.GC21251@lukather>
- <20141029164122.GC29965@ti.com>
- <20141029164746.GD21251@lukather>
- <20141029230912.GF29965@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
+Date: Fri, 31 Oct 2014 08:00:10 +0100
+Message-ID: <CACRpkda-8p=e_12vpUNt3_Y0EVPDArEKJUi63B8CGemNwVuQ0w@mail.gmail.com>
+References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Idd68gPqKLz5+Ci0"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:52618 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S934059AbaJ3RUF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Oct 2014 13:20:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20141029230912.GF29965@ti.com>
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:55748 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754435AbaJaHAL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Oct 2014 03:00:11 -0400
+Received: by mail-ig0-f172.google.com with SMTP id a13so428534igq.5
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Oct 2014 00:00:11 -0700 (PDT)
+In-Reply-To: <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Benoit Parrot <bparrot@ti.com>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Fri, Oct 24, 2014 at 1:59 PM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
 
---Idd68gPqKLz5+Ci0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> This commit adds the implementation of ->suspend() and ->resume()
+> platform_driver hooks in order to save and restore the state of the
+> GPIO configuration. In order to achieve that, additional fields are
+> added to the mvebu_gpio_chip structure.
+>
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
 
-On Wed, Oct 29, 2014 at 06:09:12PM -0500, Benoit Parrot wrote:
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote on Wed [2014-Oct-2=
-9 17:47:46 +0100]:
-> > On Wed, Oct 29, 2014 at 11:41:22AM -0500, Benoit Parrot wrote:
-> > > Maxime Ripard <maxime.ripard@free-electrons.com> wrote on Wed [2014-O=
-ct-29 11:45:59 +0100]:
-> > > > Hi,
-> > > >=20
-> > > > On Tue, Oct 21, 2014 at 03:09:58PM -0500, Benoit Parrot wrote:
-> > > > > Based on Boris Brezillion work this is a reworked patch
-> > > > > of his initial GPIO hogging mechanism.
-> > > > > This patch provides a way to initally configure specific GPIO
-> > > > > when the gpio controller is probe.
-> > > > >=20
-> > > > > The actual DT scanning to collect the GPIO specific data is perfo=
-rmed
-> > > > > as part of the gpiochip_add().
-> > > > >=20
-> > > > > The purpose of this is to allows specific GPIOs to be configured
-> > > > > without any driver specific code.
-> > > > > This particularly usueful because board design are getting
-> > > > > increassingly complex and given SoC pins can now have upward
-> > > > > of 10 mux values a lot of connections are now dependent on
-> > > > > external IO muxes to switch various modes and combination.
-> > > > >=20
-> > > > > Specific drivers should not necessarily need to be aware of
-> > > > > what accounts to a specific board implementation. This board level
-> > > > > "description" should be best kept as part of the dts file.
-> > > > >=20
-> > > > > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> > > >=20
-> > > > I've been thinking about this for quite some time, it's good to see
-> > > > some progress on that :)
-> > > >=20
-> > > > However, I have a slightly different use case for it: the Allwinner
-> > > > SoCs have a vdd pin coming in for every gpio bank. Nothing out of t=
-he
-> > > > ordinary so far, except that some of the boards are using a
-> > > > GPIO-controlled regulator to feed another bank vdd. That obviously
-> > > > causes a chicken-egg issue, since for the gpio-regulator driver to
-> > > > probe, it needs to gpio driver, and for the gpio driver to probe, it
-> > > > needs the regulator driver.
-> > >=20
-> > > Unless the gpio controlling the vdd pin is from the same bank your
-> > > trying to power up I do not see the issue here.
-> >=20
-> > Not the same bank, but the same driver.
->=20
-> How are you currently working around this issue?
+(...)
+> +       mvchip->out_reg = readl(mvebu_gpioreg_out(mvchip));
+> +       mvchip->io_conf_reg = readl(mvebu_gpioreg_io_conf(mvchip));
+> +       mvchip->blink_en_reg = readl(mvebu_gpioreg_blink(mvchip));
+> +       mvchip->in_pol_reg = readl(mvebu_gpioreg_in_pol(mvchip));
 
-For now, we are not, which is exactly why I'm interested in such a
-mechanism :)
+OK...
 
-What I was thinking about for this case would be to "fake" the fact
-that the GPIO is even there. The regulator driver would probe, claim
-the GPIO, without actually doing anything more than just storing the
-value to set, which would be set in the hardware only when the GPIO
-driver probes.
+> +       switch (mvchip->soc_variant) {
+> +       case MVEBU_GPIO_SOC_VARIANT_ORION:
+> +               mvchip->edge_mask_regs[0] =
+> +                       readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
+> +               mvchip->level_mask_regs[0] =
+> +                       readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
+> +               break;
 
-I'm not very happy about it though, because that would mean that
-drivers that require more than just a value assignment (for example
-set high, wait, set low, for a reset for example) wouldn't even know
-that what they expect didn't happen.
+You are assigning index [0] twice, why? There must be some
+reason, and it should be stated in a comment. If the first read
+is necessary for hardware reasons, don't assign it but
+discard the result.
 
-Maybe that could work by passing some kind of flag to gpio_request to
-trigger that mecanism, I don't know.
+(void) readl(...);
 
-Maxime
+(This pattern repeats for each save call below.)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> +       switch (mvchip->soc_variant) {
+> +       case MVEBU_GPIO_SOC_VARIANT_ORION:
+> +               writel(mvchip->edge_mask_regs[0],
+> +                      mvchip->membase + GPIO_EDGE_MASK_OFF);
+> +               writel(mvchip->level_mask_regs[0],
+> +                      mvchip->membase + GPIO_LEVEL_MASK_OFF);
 
---Idd68gPqKLz5+Ci0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+And on the way up same thing. Now you write
+each register twice. Why?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUUnJZAAoJEBx+YmzsjxAgcsoP/3oPbCKHLIzeqjxpZMJk7y/O
-E+M/Tq43OOfEYDUMRI3RY6vE1tSh7gYHHYLNdEmqqTQqQO98i6zLriERxSgiFjIj
-SU3yjJVKsRi2VSj0MP3TiWg7r1EVl9RJCwIuKOmWrI4bCI8UuTP8WBKOnta02y84
-+V32N8M3nQ6cvge4fMzyN1pDSQYsXIX57bEQfSdPHLgzY+uD5IrQ4WAkHep4Us6R
-Y38flewF3L873XYQ3o2UAhHGV2P4zAKLa5CY6tgjkDtkjatPs4oim07vCYNHPqkA
-qdgANoHmZUH7NrJ1giBu8Z4UHCd7rqNLMwKRGZmMODhTLrUQFnW7ZL+Fb9H955ZO
-Z7PqCkBTva7w10m7Mpxu5d1tTjaKBfDyprFfIyR4rkiZLzJV9KtQaWVulBXHTmuL
-9FLepwpEO6WBMtt9/WGHJaYjIEJS1gDLTpnC9GIhbFXqBWyA//xJbyujiliumcEx
-DYXRKih+DIVyDlnlucf5lQMEnfM1S/IvHPLEUoQ1wjcURgwss5N9L+aAQa2GNubh
-tPxcPuIROsRTfP8I3eYsn/RYLsEhp4xodJyNex/4mQFswmBEEs8wfT+kH8ZoUCi/
-NdgJQi1RPljGuPzNUzoGZhYf3B34h8oMGmEHKD7XI64hU8dNPjK7h+s7Z3OiSb3E
-srklg4Yfb/79iINSi5DY
-=oXUw
------END PGP SIGNATURE-----
-
---Idd68gPqKLz5+Ci0--
+Yours,
+Linus Walleij
