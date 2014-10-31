@@ -1,33 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 09/15] ARM: sa1100: don't preallocate IRQ space for locomo
-Date: Fri, 31 Oct 2014 08:50:47 +0100
-Message-ID: <CACRpkdZnAtXtdtKbuqj8a_6a=2jS_Jf6yrq=iz-GJV+4RifRhw@mail.gmail.com>
-References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
-	<1414454528-24240-10-git-send-email-dbaryshkov@gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
+Date: Fri, 31 Oct 2014 08:52:15 +0100
+Message-ID: <54533FAF.7010505@free-electrons.com>
+References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>	<1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com> <CACRpkda-8p=e_12vpUNt3_Y0EVPDArEKJUi63B8CGemNwVuQ0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f175.google.com ([209.85.213.175]:48920 "EHLO
-	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756506AbaJaHus (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Oct 2014 03:50:48 -0400
-Received: by mail-ig0-f175.google.com with SMTP id h3so488378igd.2
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Oct 2014 00:50:47 -0700 (PDT)
-In-Reply-To: <1414454528-24240-10-git-send-email-dbaryshkov@gmail.com>
+Received: from down.free-electrons.com ([37.187.137.238]:40335 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751244AbaJaHwW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Oct 2014 03:52:22 -0400
+In-Reply-To: <CACRpkda-8p=e_12vpUNt3_Y0EVPDArEKJUi63B8CGemNwVuQ0w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Oct 28, 2014 at 1:02 AM, Dmitry Eremin-Solenikov
-<dbaryshkov@gmail.com> wrote:
+Hi Linus,
 
-> As new locomo driver properly supports SPARSE_IRQ, stop playing with
-> NR_IRQS on sa1100 (locomo was the last chip requiring NR_IRQ tricks).
->
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
-That's right! By moving to irqdomain things get even better :)
+> 
+>> +       switch (mvchip->soc_variant) {
+>> +       case MVEBU_GPIO_SOC_VARIANT_ORION:
+>> +               mvchip->edge_mask_regs[0] =
+>> +                       readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
+>> +               mvchip->level_mask_regs[0] =
+>> +                       readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
+>> +               break;
+> 
+> You are assigning index [0] twice, why? There must be some
+> reason, and it should be stated in a comment. If the first read
+> is necessary for hardware reasons, don't assign it but
+> discard the result.
 
-Yours,
-Linus Walleij
+Maybe I missed something but for me these 2 registers are different:
+one is the _EDGE_ mask and the other the _LEVEL_ mask.
+
+Gregory
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
