@@ -1,62 +1,68 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 11/15] sound: soc: poodle: make use of new locomo GPIO interface
-Date: Sat, 1 Nov 2014 14:42:33 +0900
-Message-ID: <CAAVeFuKuBeoF0i4RpuXo=H1G4C6BfjC0hEUyN2TO02UM0DsHfg@mail.gmail.com>
-References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
- <1414454528-24240-12-git-send-email-dbaryshkov@gmail.com> <20141028145850.GU18557@sirena.org.uk>
- <CAAVeFuKgARoMFzf+663iP6cULs93d4WSQS8ESjUb9VcxguWurA@mail.gmail.com>
- <CACRpkdY-RDuxGMWe_SD613ovsEoHhxjP1+3T-m_zKQSx=mkFjA@mail.gmail.com> <CALT56yP6K-sXOGM4z-WRsvFVjOi-13wM+Ewqn6WpDmNB4xcOEg@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: bcm2835: Start GPIO numeration at zero
+Date: Sat, 1 Nov 2014 15:13:31 +0900
+Message-ID: <CAAVeFuL-D9Z+6zbEt0x1kv7f8iHH9z94jjrqkpa89QO8SK3SUg@mail.gmail.com>
+References: <1414447799-1284-1-git-send-email-matthias.klein@linux.com>
+ <544ECAB2.3060706@wwwdotorg.org> <544ECFB4.7040704@linux.com> <CACRpkdbhEBQfEpkK6-4GNyTQvvJ2qJ+RfXUULJNxvrbrpv1NAg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <CALT56yP6K-sXOGM4z-WRsvFVjOi-13wM+Ewqn6WpDmNB4xcOEg@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Ji
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:52902 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751303AbaKAGNw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Nov 2014 02:13:52 -0400
+In-Reply-To: <CACRpkdbhEBQfEpkK6-4GNyTQvvJ2qJ+RfXUULJNxvrbrpv1NAg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Klein <matthias.klein@linux.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-rpi-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Oct 31, 2014 at 6:58 PM, Dmitry Eremin-Solenikov
-<dbaryshkov@gmail.com> wrote:
-> 2014-10-31 12:52 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Wed, Oct 29, 2014 at 4:03 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->>> On Tue, Oct 28, 2014 at 11:58 PM, Mark Brown <broonie@kernel.org> wrote:
->>>> On Tue, Oct 28, 2014 at 03:02:04AM +0300, Dmitry Eremin-Solenikov wrote:
->>>>> Since LoCoMo driver has been converted to provide proper gpiolib
->>>>> interface, make poodle ASoC platform driver use gpiolib API.
->>>>
->>>> Please use subject lines matching the style for the subsystem.
->>>>
->>>>> +     ret = gpio_request_array(poodle_gpios, ARRAY_SIZE(poodle_gpios));
->>>>> +     if (ret) {
->>>>> +             dev_err(&pdev->dev, "gpio_request_array() failed: %d\n",
->>>>> +                             ret);
->>>>> +             return ret;
->>>>> +     }
->>>>
->>>> I sense a need for devm_gpio_request_array() here.  Otherwise this looks
->>>> fine - ideally it'd move to gpiod but moving to gpiolib is a clear win
->>>> so no need to block on this.
->>>
->>> I wish Dmitry took the opportunity to move this driver to the gpiod
->>> API, especially since doing so would be trivial for this driver.
->>
->> +1 on this.
->>
->> However this platform is not device tree, so this implies setting up
->> a descriptor table for the affected driver(s) to work properly.
->> See Documentation/gpio/board.txt
+On Fri, Oct 31, 2014 at 6:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Oct 28, 2014 at 12:05 AM, Matthias Klein
+> <matthias.klein@linux.com> wrote:
+>> Am 27.10.2014 um 23:44 schrieb Stephen Warren:
 >
-> I checked the gpiod interfaces after original suggestion by Alexandre.
+>>> What's the motivation for this? The GPIO IDs should all come from DT,
+>>> which encodes everything as an ID relative to a particular controllers, and
+>>> hence the actual value of the base address should be irrelevant.
+>>
+>> - To be in sync with the GPIO numbers in the datasheet / documentation
 >
-> Introducing those mapping tables (much like pinctrl tables) look like
-> a duplicate effort if Russell will permit adding a DT support. So
-> I thought that I will reconsider gpiod/pinctrl/etc after fixing
-> LoCoMo, reiterating IRQ patches, possibly switching to COMMON_CLK
-> and (finally) thinking about device tree support.
+> We are moving away from global GPIO numbers because they are
+> an eternal pain. We would replace them with a local offset number
+> just as the second column in /proc/interrupts
+>
+> Hm we should patch <debugfs/gpio> to show local offsets...
+>
+>> - For userland applications which rely on these GPIO numbers
+>
+> ARGH!!!
+>
+> A much better idea is to add labels to your GPIOs so you can
+> identify them by name. Augment the driver with labeling capability
+> if need be, see e.g. commit 781f6d710d4482eab05cfaad50060a0ea8c0e4e0
+> "gpio: generic: Add label to platform data"
+>
+> You just need to figure out how to do the same naming from the
+> device tree. Maybe some new binding is needed, others are
+> discussing how to do exporting of GPIOs from devicetree
+> anyway, see the mailing list.
 
-Note that the mapping tables are likely not going to end up being
-huge, and taking that step will allow you to convert to the gpiod
-interface, something you would probably want to do later when adding
-DT support anyway. So at the end of the day there would be very little
-wasted effort: once converting to DT, just add the GPIO properties
-into the appropriate node, remove the mapping tables, and you're done.
+On a related note we are feeling more and more pressure for a way to
+unambiguously access GPIOs from user-space, and we should probably try
+and come with a solution for this. Ideas so far:
+
+1) Export GPIOs with a name - it seems like this one will happen soon.
+
+2) Export GPIOs using their controller-relative number (instead of
+their global number) under the controller's sysfs node. But since
+controllers are also named after the first global number they manage,
+we would still have a problem here.
+
+In any case this reliance of user-space on particular GPIO numbers is
+becoming a burden. We will soon get rid of the global
+ARCH_NR_GPIOS-sized array of gpio_descs, and the next step would be to
+get rid of the ARCH_NR_GPIOS itself. However, this macro is used to
+decide the starting number for GPIO chips without an explicit "base"
+attribute, so I am not sure whether we can remove it at all, unless we
+can agree that GPIO numbers are variable and not part of the ABI.
