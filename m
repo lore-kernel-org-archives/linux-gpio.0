@@ -1,149 +1,92 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC] gpio: remove gpio_descs global array
-Date: Sat,  1 Nov 2014 16:03:00 +0900
-Message-ID: <1414825380-15322-1-git-send-email-acourbot@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [Regression Resend] mmc: mx28: sd card detection broken since
+ 3.18-rc1
+Date: Sat, 1 Nov 2014 22:40:04 +0100 (CET)
+Message-ID: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de>
+Reply-To: Stefan Wahren <stefan.wahren@i2se.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.187]:55590 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751076AbaKAVkc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Nov 2014 17:40:32 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, festevam@gmail.com, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Replace the ARCH_NR_GPIOS-sized static array of GPIO descriptors by
-dynamically-allocated arrays for each GPIO chip.
+Hi,
 
-This change makes gpio_to_desc() perform in O(n) (where n is the number
-of GPIO chips registered) instead of O(1), however since n is rarely
-bigger than 1 or 2 no noticeable performance issue should be expected.
-Besides this provides more incentive for GPIO consumers to move to the
-gpiod interface. One could use a O(log(n)) structure to link the GPIO
-chips together, but considering the low limit of n the hypothetical
-performance benefit is probably not worth the added complexity.
+i was testing Linux Kernel 3.18-rc2 with my i.MX28 board (I2SE Duckbill) and ran
+into the problem that the sd card isn't detected from the Kernel at booting
+(driver: mxs-mmc.c). That results in a endless wait for the root partition
 
-The issue with this patch is its use of kzalloc() in gpiochip_add(), a
-function potentially called during early boot, before kzalloc() becomes
-usable. Hence its [RFC] status until we can find a solution for this or
-agree that this issue is actually never ran into (from which point can
-one use kzalloc()?)
+Here are the relevant messages (bad case):
 
-While writing this I noticed a couple of weird things done in
-gpiochip_add()/gpiochip_remove() and I suspect other people will find
-them as well, but for now I'd like to focus on the kzalloc() issue and
-see if we can push this forward. :)
+[...]
+[    1.501883] mxs-mmc 80010000.ssp: initialized
+[    1.521203] TCP: cubic registered
+[    1.530850] NET: Registered protocol family 10
+[    1.548469] mip6: Mobile IPv6
+[    1.551698] sit: IPv6 over IPv4 tunneling driver
+[    1.566016] ip6_gre: GRE over IPv6 tunneling driver
+[    1.575831] NET: Registered protocol family 17
+[    1.581640] bridge: automatic filtering via arp/ip/ip6tables has been
+deprecated. Update your scripts to load br_netfilter if you need this.
+[    1.595635] Key type dns_resolver registered
+[    1.604302] registered taskstats version 1
+[    1.618188] stmp3xxx-rtc 80056000.rtc: setting system clock to 1970-01-01
+00:00:03 UTC (3)
+[    1.675580] Waiting for root device /dev/mmcblk0p3...
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/gpiolib.c | 48 +++++++++++++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 15 deletions(-)
+In Linux Kernel 3.17 that problem didn't exist (good case):
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 50e18a4..013e01e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -47,8 +47,6 @@
-  */
- DEFINE_SPINLOCK(gpio_lock);
- 
--static struct gpio_desc gpio_desc[ARCH_NR_GPIOS];
--
- #define GPIO_OFFSET_VALID(chip, offset) (offset >= 0 && offset < chip->ngpio)
- 
- static DEFINE_MUTEX(gpio_lookup_lock);
-@@ -65,10 +63,23 @@ static inline void desc_set_label(struct gpio_desc *d, const char *label)
-  */
- struct gpio_desc *gpio_to_desc(unsigned gpio)
- {
--	if (WARN(!gpio_is_valid(gpio), "invalid GPIO %d\n", gpio))
--		return NULL;
--	else
--		return &gpio_desc[gpio];
-+	struct gpio_chip *chip;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&gpio_lock, flags);
-+
-+	list_for_each_entry(chip, &gpio_chips, list) {
-+		if (chip->base <= gpio && chip->base + chip->ngpio > gpio) {
-+			spin_unlock_irqrestore(&gpio_lock, flags);
-+			return &chip->desc[gpio - chip->base];
-+		}
-+	}
-+
-+	spin_unlock_irqrestore(&gpio_lock, flags);
-+
-+	pr_warn("invalid GPIO %d\n", gpio);
-+	dump_stack();
-+	return NULL;
- }
- EXPORT_SYMBOL_GPL(gpio_to_desc);
- 
-@@ -91,7 +102,7 @@ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
-  */
- int desc_to_gpio(const struct gpio_desc *desc)
- {
--	return desc - &gpio_desc[0];
-+	return desc->chip->base + (desc - &desc->chip->desc[0]);
- }
- EXPORT_SYMBOL_GPL(desc_to_gpio);
- 
-@@ -226,12 +237,13 @@ int gpiochip_add(struct gpio_chip *chip)
- 	int		status = 0;
- 	unsigned	id;
- 	int		base = chip->base;
-+	struct gpio_desc *descs;
- 
--	if ((!gpio_is_valid(base) || !gpio_is_valid(base + chip->ngpio - 1))
--			&& base >= 0) {
--		status = -EINVAL;
--		goto fail;
--	}
-+	/* TODO context is potentially before kmalloc will work - how can we */
-+	/* workaround this? */
-+	descs = kzalloc(sizeof(descs[0] * chip->ngpio, GFP_KERNEL);
-+	if (!descs)
-+		return -ENOMEM;
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
-@@ -247,10 +259,8 @@ int gpiochip_add(struct gpio_chip *chip)
- 	status = gpiochip_add_to_list(chip);
- 
- 	if (status == 0) {
--		chip->desc = &gpio_desc[chip->base];
--
- 		for (id = 0; id < chip->ngpio; id++) {
--			struct gpio_desc *desc = &chip->desc[id];
-+			struct gpio_desc *desc = &descs[id];
- 			desc->chip = chip;
- 
- 			/* REVISIT:  most hardware initializes GPIOs as
-@@ -266,6 +276,8 @@ int gpiochip_add(struct gpio_chip *chip)
- 		}
- 	}
- 
-+	chip->desc = descs;
-+
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 
- #ifdef CONFIG_PINCTRL
-@@ -291,6 +303,9 @@ int gpiochip_add(struct gpio_chip *chip)
- unlock:
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- fail:
-+	chip->desc = NULL;
-+	kfree(descs);
-+
- 	/* failures here can mean systems won't boot... */
- 	pr_err("%s: GPIOs %d..%d (%s) failed to register\n", __func__,
- 		chip->base, chip->base + chip->ngpio - 1,
-@@ -331,6 +346,9 @@ void gpiochip_remove(struct gpio_chip *chip)
- 	list_del(&chip->list);
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 	gpiochip_unexport(chip);
-+
-+	kfree(chip->desc);
-+	chip->descs = NULL;
- }
- EXPORT_SYMBOL_GPL(gpiochip_remove);
- 
--- 
-2.1.3
+[...]
+[    1.546857] mxs-mmc 80010000.ssp: initialized
+[    1.576363] TCP: cubic registered
+[    1.588856] NET: Registered protocol family 10
+[    1.608208] mmc0: host does not support reading read-only switch. assuming
+write-enable.
+[    1.616927] mip6: Mobile IPv6
+[    1.620028] sit: IPv6 over IPv4 tunneling driver
+[    1.629900] mmc0: new high speed SDHC card at address 0007
+[    1.642901] ip6_gre: GRE over IPv6 tunneling driver
+[    1.652047] mmcblk0: mmc0:0007 SD16G 14.6 GiB
+[    1.662108] NET: Registered protocol family 17
+[    1.678091]  mmcblk0: p1 p2 p3
+[...]
+
+I've have bisected the problem to this commit:
+
+commit 89168b48991537bec2573b3b6a8841df74465b12
+Author: Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu Oct 2 09:08:46 2014 +0200
+
+    mmc: core: restore detect line inversion semantics
+   
+    commit 98e90de99a0c43bd434da814c882c4332441871e
+    "mmc: host: switch OF parser to use gpio descriptors"
+    switched the semantic behaviour of card detect and read
+    only flags such that the inversion capability flag would
+    only be set if inversion was explicitly specified in the
+    device tree, in the hopes that no-one was using double
+    inversion.
+   
+    It turns out that the XOR:ing between the explicit
+    inversion was indeed in use, so we need to restore the
+    old semantics where both ways of inversion are checked
+    and the end result XOR:ed.
+   
+    Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+    Tested-by: Javier Martinez Canillas <javier@dowhile0.org>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+    Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kernel command line: -e noinitrd console=ttyAMA0,115200 root=/dev/mmcblk0p3 rw
+rootwait
+
+It looks to me that the patch didn't fix all host controller.
+
+BR Stefan
