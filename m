@@ -1,90 +1,122 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v6 1/7] pinctrl: rockchip: add suspend/resume functions
-Date: Sun, 02 Nov 2014 21:47:11 +0100
-Message-ID: <17050885.jWlDmdlhNv@diego>
-References: <1414583525-17395-1-git-send-email-zyw@rock-chips.com> <1414583525-17395-2-git-send-email-zyw@rock-chips.com>
+From: =?UTF-8?B?S3Jpc3RpbmEgTWFydMWhZW5rbw==?=
+	<kristina.martsenko@gmail.com>
+Subject: Re: [Regression Resend] mmc: mx28: sd card detection broken since
+ 3.18-rc1
+Date: Mon, 03 Nov 2014 01:01:07 +0200
+Message-ID: <5456B7B3.60401@gmail.com>
+References: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1414583525-17395-2-git-send-email-zyw@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: dianders@chromium.org, mturquette@linaro.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Russell King <linux@arm.linux.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, khilman@kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, festevam@gmail.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Chris,
+On 01/11/14 23:40, Stefan Wahren wrote:
+> Hi,
+> 
+> i was testing Linux Kernel 3.18-rc2 with my i.MX28 board (I2SE Duckbill) and ran
+> into the problem that the sd card isn't detected from the Kernel at booting
+> (driver: mxs-mmc.c). That results in a endless wait for the root partition
+> 
+> Here are the relevant messages (bad case):
+> 
+> [...]
+> [    1.501883] mxs-mmc 80010000.ssp: initialized
+> [    1.521203] TCP: cubic registered
+> [    1.530850] NET: Registered protocol family 10
+> [    1.548469] mip6: Mobile IPv6
+> [    1.551698] sit: IPv6 over IPv4 tunneling driver
+> [    1.566016] ip6_gre: GRE over IPv6 tunneling driver
+> [    1.575831] NET: Registered protocol family 17
+> [    1.581640] bridge: automatic filtering via arp/ip/ip6tables has been
+> deprecated. Update your scripts to load br_netfilter if you need this.
+> [    1.595635] Key type dns_resolver registered
+> [    1.604302] registered taskstats version 1
+> [    1.618188] stmp3xxx-rtc 80056000.rtc: setting system clock to 1970-01-01
+> 00:00:03 UTC (3)
+> [    1.675580] Waiting for root device /dev/mmcblk0p3...
+> 
+> In Linux Kernel 3.17 that problem didn't exist (good case):
+> 
+> [...]
+> [    1.546857] mxs-mmc 80010000.ssp: initialized
+> [    1.576363] TCP: cubic registered
+> [    1.588856] NET: Registered protocol family 10
+> [    1.608208] mmc0: host does not support reading read-only switch. assuming
+> write-enable.
+> [    1.616927] mip6: Mobile IPv6
+> [    1.620028] sit: IPv6 over IPv4 tunneling driver
+> [    1.629900] mmc0: new high speed SDHC card at address 0007
+> [    1.642901] ip6_gre: GRE over IPv6 tunneling driver
+> [    1.652047] mmcblk0: mmc0:0007 SD16G 14.6 GiB
+> [    1.662108] NET: Registered protocol family 17
+> [    1.678091]  mmcblk0: p1 p2 p3
+> [...]
+> 
+> I've have bisected the problem to this commit:
+> 
+> commit 89168b48991537bec2573b3b6a8841df74465b12
+> Author: Linus Walleij <linus.walleij@linaro.org>
+> Date:   Thu Oct 2 09:08:46 2014 +0200
+> 
+>     mmc: core: restore detect line inversion semantics
+>    
+>     commit 98e90de99a0c43bd434da814c882c4332441871e
+>     "mmc: host: switch OF parser to use gpio descriptors"
+>     switched the semantic behaviour of card detect and read
+>     only flags such that the inversion capability flag would
+>     only be set if inversion was explicitly specified in the
+>     device tree, in the hopes that no-one was using double
+>     inversion.
+>    
+>     It turns out that the XOR:ing between the explicit
+>     inversion was indeed in use, so we need to restore the
+>     old semantics where both ways of inversion are checked
+>     and the end result XOR:ed.
+>    
+>     Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+>     Tested-by: Javier Martinez Canillas <javier@dowhile0.org>
+>     Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>     Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> 
+> Kernel command line: -e noinitrd console=ttyAMA0,115200 root=/dev/mmcblk0p3 rw
+> rootwait
+> 
+> It looks to me that the patch didn't fix all host controller.
 
-Am Mittwoch, 29. Oktober 2014, 19:51:59 schrieb Chris Zhong:
-> support suspend/resume of pinctrl, it allows handling sleep mode
-> for hogged pins in pinctrl
+I ran into this issue as well. Seems that a card-detect flag 
+(MMC_CAP2_CD_ACTIVE_HIGH) can currently be set based on an 
+uninitialized variable, which can lead to the card being reported as 
+not present. This patch fixes it for me:
 
-I've now applied patches 1 and 2 of your series to my v3.19-pinctrl/next 
-branch and will be sending a pull request to LinusW shortly.
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index 03c53b72a2d6..f0e187682d3b 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -311,7 +311,7 @@ int mmc_of_parse(struct mmc_host *host)
+ 	struct device_node *np;
+ 	u32 bus_width;
+ 	int len, ret;
+-	bool cap_invert, gpio_invert;
++	bool cap_invert, gpio_invert = false;
+ 
+ 	if (!host->parent || !host->parent->of_node)
+ 		return 0;
+@@ -401,6 +401,7 @@ int mmc_of_parse(struct mmc_host *host)
+ 	else
+ 		cap_invert = false;
+ 
++	gpio_invert = false;
+ 	ret = mmc_gpiod_request_ro(host, "wp", 0, false, 0, &gpio_invert);
+ 	if (ret) {
+ 		if (ret == -EPROBE_DEFER)
 
-So _if_ a v7 becomes necessary you don't need to include these two patches 
-anymore.
+Let me know if this also fixes it for you, and I'll send in a proper 
+patch.
 
-
-Heiko
-
-
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Tested-by: Doug Anderson <dianders@chromium.org>
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> ---
-> 
-> Changes in v6: None
-> Changes in v5:
-> - reset-author
-> - use "__maybe_unused" annotation
-> 
-> Changes in v4:
-> - use SIMPLE_DEV_PM_OPS for suspend/resume struct
-> 
-> Changes in v3: None
-> Changes in v2: None
-> 
->  drivers/pinctrl/pinctrl-rockchip.c |   18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
-> b/drivers/pinctrl/pinctrl-rockchip.c index 016f457..172ad1d 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -1770,6 +1770,23 @@ static struct rockchip_pin_ctrl
-> *rockchip_pinctrl_get_soc_data( return ctrl;
->  }
-> 
-> +static int __maybe_unused rockchip_pinctrl_suspend(struct device *dev)
-> +{
-> +	struct rockchip_pinctrl *info = dev_get_drvdata(dev);
-> +
-> +	return pinctrl_force_sleep(info->pctl_dev);
-> +}
-> +
-> +static int __maybe_unused rockchip_pinctrl_resume(struct device *dev)
-> +{
-> +	struct rockchip_pinctrl *info = dev_get_drvdata(dev);
-> +
-> +	return pinctrl_force_default(info->pctl_dev);
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(rockchip_pinctrl_dev_pm_ops,
-> rockchip_pinctrl_suspend, +			 rockchip_pinctrl_resume);
-> +
->  static int rockchip_pinctrl_probe(struct platform_device *pdev)
->  {
->  	struct rockchip_pinctrl *info;
-> @@ -1983,6 +2000,7 @@ static struct platform_driver rockchip_pinctrl_driver
-> = { .driver = {
->  		.name	= "rockchip-pinctrl",
->  		.owner	= THIS_MODULE,
-> +		.pm = &rockchip_pinctrl_dev_pm_ops,
->  		.of_match_table = rockchip_pinctrl_dt_match,
->  	},
->  };
+Thanks,
+Kristina
