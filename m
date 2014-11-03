@@ -1,8 +1,8 @@
-From: Felipe Balbi <balbi@ti.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
  Intel Baytrail
-Date: Mon, 3 Nov 2014 09:35:33 -0600
-Message-ID: <20141103153533.GF27425@saruman>
+Date: Mon, 3 Nov 2014 17:42:07 +0200
+Message-ID: <20141103154207.GC1618@lahna.fi.intel.com>
 References: <20141013193618.GD29810@saruman>
  <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
  <20141028144249.GD8123@saruman>
@@ -13,104 +13,59 @@ References: <20141013193618.GD29810@saruman>
  <20141103092402.GA1304@lahna.fi.intel.com>
  <20141103150048.GB27425@saruman>
  <20141103152743.GB1618@lahna.fi.intel.com>
-Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:57774 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752091AbaKCPmN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 3 Nov 2014 10:42:13 -0500
 Content-Disposition: inline
 In-Reply-To: <20141103152743.GB1618@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Felipe Balbi <balbi@ti.com>, David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-
---rMWmSaSbD7nr+du9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
+To: Felipe Balbi <balbi@ti.com>
+Cc: David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
 
 On Mon, Nov 03, 2014 at 05:27:43PM +0200, Mika Westerberg wrote:
 > On Mon, Nov 03, 2014 at 09:00:48AM -0600, Felipe Balbi wrote:
 > > On Mon, Nov 03, 2014 at 11:24:02AM +0200, Mika Westerberg wrote:
 > > > On Fri, Oct 31, 2014 at 11:45:09AM -0700, David Cohen wrote:
-> > > > > I think adding the module exit + allowing this driver to be a mod=
-ule
-> > > > > would be a good approach. Then we don't need to force generic x86=
- kernel
-> > > > > binaries to always have this driver. Unless Mathias or Mika knows=
- a
+> > > > > I think adding the module exit + allowing this driver to be a module
+> > > > > would be a good approach. Then we don't need to force generic x86 kernel
+> > > > > binaries to always have this driver. Unless Mathias or Mika knows a
 > > > > > constraint to force this driver to be builtin only.
-> > > >=20
+> > > > 
 > > > > It helps if I CC them when asking for feedback :)
-> > > >=20
-> > > > Mathias, Mika, do you know any constraint that forces pinctrl-baytr=
-ail
+> > > > 
+> > > > Mathias, Mika, do you know any constraint that forces pinctrl-baytrail
 > > > > to be bool?
-> > >=20
+> > > 
 > > > The only constraint that has been keeping this driver as bool is that
 > > > some machines like, Asus T100, uses ACPI GPIO operation regions for
 > > > toggling GPIOs to get things like sensor hub powered on. The GPIO
 > > > operation region code does not yet handle -EPROBE_DEFER so only way to
-> > > ensure that the operation region is there is to have the driver compi=
-led
+> > > ensure that the operation region is there is to have the driver compiled
 > > > in to the kernel.
-> >=20
+> > 
 > > But that's not enough excuse to have every single x86 in the market
 > > shipping with this driver. Think about a distro kernel, most likely this
 > > gets enabled and it's wrong in 80% of the cases.
->=20
+> 
 > True, but see below.
->=20
+> 
 > > It would be nicer to add EPROBE_DEFER support, convert this into
-> > tristate and have default =3D M if BAYTRAIL, or something.
->=20
+> > tristate and have default = M if BAYTRAIL, or something.
+> 
 > If it were simple as that we would have done that already. Please check
 > drivers/gpio/gpiolib-acpi.c:acpi_gpio_adr_space_handler() and tell me
 > how we can do that.
->=20
-> The problem is that it is *firmware* code that decides to use the GPIO
-> at some random point in time and we have no way to tell it to retry
-> later when the GPIO is available.
 
-which means that even with the driver built-in, there is still the
-possibility that firmware will try to access it before
-pinctrl-baytrail's init function is called and you'd end up in the same
-situation.
+Actually the above is not the problem because we already have registered
+the GPIO chip and hence we have the GPIO available to the firmware code.
 
-The fact is that currently you're forcing every x86 (even non-Intel) to
-ship with this driver statically linked into it just because a small
-percent of x86 systems might need to have this ready-to-go early enough.
-
-Unfortunately I don't know ACPI enough to tell you if there is a way to
-tell firmware "hey, you can use GPIOs now", so I'l refrain from
-commenting on that. But that doesn't change the fact that this is wrong.
-
---=20
-balbi
-
---rMWmSaSbD7nr+du9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUV6DFAAoJEIaOsuA1yqREhlEP/j+DPv+44nXaklYhSW4S0tdL
-GB4Yd5J9F2nc+z33drogERFT4P4k1Yq92WeW7rOpKI3KbKHNXL40BaUVicl3i+Lr
-xiZkQs/sHnSTvSrRLydgzc97XHyqqsIp9+WQmiPYZ6V7z11KhJ2gy80noCs0fwEn
-f7m9B/APReEO0vuE134p16avB5xtPhAYh+A4HYkCezQMxtCxXBPRAW9+c7urn9zj
-qhJoI1rN8x4v4RtE7cbH5oltZ3lyIlV3pQ/CyDcmFV798vzgtNJZr5wwaP7QTjxZ
-PZquj2gNYX7Q4IIFjVcozjBSTOKdYhY8KiKkk2MwGqbFwEB6q3e3e+uH7L0kA/9O
-eyObtZ1185QJN69f4QIbYQlNzIJbJBrD/XFv5dQ3+CTXSjM1O7/Jw9d+tvD+R0BE
-nYGLIDbXrn3MV8VRUJNRB5dX0I/6/K4Uy7hUk/Jpxmfu8+nMvO/gWCYgmwbSBZsV
-M2rPQZNw0BZ9sP8AInzY7EnpEQzGT2hX7LF+MBHdIbzMEAOKRdukPzytB3YPRPK5
-fja8hjXce5UjqSKhvlCmroinhNrj1EA9qpWsQunfw2ESSKGpzu8tD+lMUZUrZ866
-qKFSEdsnglM18PehjYKsRpC2/9TFVAslYa+ZPxpTBmRiU71YWAnFLL41OmNBxL0+
-NGvROFT3mpPncVM0ICbu
-=bfI3
------END PGP SIGNATURE-----
-
---rMWmSaSbD7nr+du9--
+The real problem is that if the ACPI GPIO operation handler is not there
+at the time firmware decides to do something it will just skip things
+that depend on the operation region. So if it has a GPIO that is used to
+turn on sensor hub or touch panel or whatever, this will not be done and
+it results that the device in question might not work properly.
