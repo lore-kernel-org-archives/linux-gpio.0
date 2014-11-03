@@ -1,70 +1,46 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [Regression Resend] mmc: mx28: sd card detection broken since
- 3.18-rc1
-Date: Mon, 03 Nov 2014 08:15:53 +0100
-Message-ID: <54572BA9.1090305@i2se.com>
-References: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de> <5456B7B3.60401@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
+ Intel Baytrail
+Date: Mon, 3 Nov 2014 11:24:02 +0200
+Message-ID: <20141103092402.GA1304@lahna.fi.intel.com>
+References: <20141013191405.GB29810@saruman>
+ <20141013192404.GB4034@psi-dev26.jf.intel.com>
+ <20141013192632.GC29810@saruman>
+ <20141013193618.GD29810@saruman>
+ <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
+ <20141028144249.GD8123@saruman>
+ <CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
+ <20141031132005.GB1273@saruman>
+ <20141031162339.GA7136@psi-dev26.jf.intel.com>
+ <20141031184509.GA2224@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:57047 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751032AbaKCHQ7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Nov 2014 02:16:59 -0500
-In-Reply-To: <5456B7B3.60401@gmail.com>
+Received: from mga09.intel.com ([134.134.136.24]:13617 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750925AbaKCJYH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 3 Nov 2014 04:24:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20141031184509.GA2224@psi-dev26.jf.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?S3Jpc3RpbmEgTWFydMWhZW5rbw==?= <kristina.martsenko@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, festevam@gmail.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Felipe Balbi <balbi@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
 
-Hello Kristina,
+On Fri, Oct 31, 2014 at 11:45:09AM -0700, David Cohen wrote:
+> > I think adding the module exit + allowing this driver to be a module
+> > would be a good approach. Then we don't need to force generic x86 kernel
+> > binaries to always have this driver. Unless Mathias or Mika knows a
+> > constraint to force this driver to be builtin only.
+> 
+> It helps if I CC them when asking for feedback :)
+> 
+> Mathias, Mika, do you know any constraint that forces pinctrl-baytrail
+> to be bool?
 
-Am 03.11.2014 um 00:01 schrieb Kristina Mart=C5=A1enko:
-> [...]
-> I ran into this issue as well. Seems that a card-detect flag=20
-> (MMC_CAP2_CD_ACTIVE_HIGH) can currently be set based on an=20
-> uninitialized variable, which can lead to the card being reported as=20
-> not present. This patch fixes it for me:
->
-> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> index 03c53b72a2d6..f0e187682d3b 100644
-> --- a/drivers/mmc/core/host.c
-> +++ b/drivers/mmc/core/host.c
-> @@ -311,7 +311,7 @@ int mmc_of_parse(struct mmc_host *host)
->  	struct device_node *np;
->  	u32 bus_width;
->  	int len, ret;
-> -	bool cap_invert, gpio_invert;
-> +	bool cap_invert, gpio_invert =3D false;
-> =20
->  	if (!host->parent || !host->parent->of_node)
->  		return 0;
-> @@ -401,6 +401,7 @@ int mmc_of_parse(struct mmc_host *host)
->  	else
->  		cap_invert =3D false;
-> =20
-> +	gpio_invert =3D false;
->  	ret =3D mmc_gpiod_request_ro(host, "wp", 0, false, 0, &gpio_invert)=
-;
->  	if (ret) {
->  		if (ret =3D=3D -EPROBE_DEFER)
->
-> Let me know if this also fixes it for you, and I'll send in a proper=20
-> patch.
-
-the patch works for me too. You can also add:
-
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-
-> Thanks,
-> Kristina
-
-Thanks a lot
-Stefan
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The only constraint that has been keeping this driver as bool is that
+some machines like, Asus T100, uses ACPI GPIO operation regions for
+toggling GPIOs to get things like sensor hub powered on. The GPIO
+operation region code does not yet handle -EPROBE_DEFER so only way to
+ensure that the operation region is there is to have the driver compiled
+in to the kernel.
