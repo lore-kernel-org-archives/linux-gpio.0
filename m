@@ -1,119 +1,106 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
- Intel Baytrail
-Date: Mon, 3 Nov 2014 09:50:11 -0600
-Message-ID: <20141103155011.GH27425@saruman>
-References: <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
- <20141028144249.GD8123@saruman>
- <CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
- <20141031132005.GB1273@saruman>
- <20141031162339.GA7136@psi-dev26.jf.intel.com>
- <20141031184509.GA2224@psi-dev26.jf.intel.com>
- <20141103092402.GA1304@lahna.fi.intel.com>
- <20141103150048.GB27425@saruman>
- <20141103152743.GB1618@lahna.fi.intel.com>
- <20141103154207.GC1618@lahna.fi.intel.com>
-Reply-To: <balbi@ti.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
+Date: Mon, 03 Nov 2014 18:53:29 +0100
+Message-ID: <5457C119.90809@free-electrons.com>
+References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com> <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tT3UgwmDxwvOMqfu"
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141103154207.GC1618@lahna.fi.intel.com>
-Sender: stable-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Felipe Balbi <balbi@ti.com>, David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:55334 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753205AbaKCRxc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Nov 2014 12:53:32 -0500
+In-Reply-To: <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
---tT3UgwmDxwvOMqfu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 24/10/2014 13:59, Thomas Petazzoni wrote:
+> This commit adds the implementation of ->suspend() and ->resume()
+> platform_driver hooks in order to save and restore the state of the
+> GPIO configuration. In order to achieve that, additional fields are
+> added to the mvebu_gpio_chip structure.
+> 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> ---
+>  drivers/gpio/gpio-mvebu.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 99 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+> index 418e386..dd5545c 100644
+> --- a/drivers/gpio/gpio-mvebu.c
+> +++ b/drivers/gpio/gpio-mvebu.c
+> @@ -83,6 +83,14 @@ struct mvebu_gpio_chip {
+>  	int		   irqbase;
+>  	struct irq_domain *domain;
+>  	int                soc_variant;
+> +
+> +	/* Used to preserve GPIO registers accross suspend/resume */
+                                           across
 
-Hi,
+> +	u32                out_reg;
+> +	u32                io_conf_reg;
+> +	u32                blink_en_reg;
+> +	u32                in_pol_reg;
+> +	u32                edge_mask_regs[4];
+> +	u32                level_mask_regs[4];
+>  };
+>  
+>  /*
+> @@ -554,6 +562,93 @@ static const struct of_device_id mvebu_gpio_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, mvebu_gpio_of_match);
+>  
+> +static int mvebu_gpio_suspend(struct platform_device *pdev, pm_message_t state)
+> +{
+> +	struct mvebu_gpio_chip *mvchip = platform_get_drvdata(pdev);
+> +	int i;
+> +
+> +	mvchip->out_reg = readl(mvebu_gpioreg_out(mvchip));
+> +	mvchip->io_conf_reg = readl(mvebu_gpioreg_io_conf(mvchip));
+> +	mvchip->blink_en_reg = readl(mvebu_gpioreg_blink(mvchip));
+> +	mvchip->in_pol_reg = readl(mvebu_gpioreg_in_pol(mvchip));
+> +
+> +	switch (mvchip->soc_variant) {
+> +	case MVEBU_GPIO_SOC_VARIANT_ORION:
+> +		mvchip->edge_mask_regs[0] =
+> +			readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
+> +		mvchip->level_mask_regs[0] =
+> +			readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
+> +		break;
+> +	case MVEBU_GPIO_SOC_VARIANT_MV78200:
+> +		for (i = 0; i < 2; i++) {
+> +			mvchip->edge_mask_regs[i] =
+> +				readl(mvchip->membase +
+> +				      GPIO_EDGE_MASK_MV78200_OFF(i));
+> +			mvchip->level_mask_regs[i] =
+> +				readl(mvchip->membase +
+> +				      GPIO_LEVEL_MASK_MV78200_OFF(i));
+> +		}
+> +		break;
 
-On Mon, Nov 03, 2014 at 05:42:07PM +0200, Mika Westerberg wrote:
-> On Mon, Nov 03, 2014 at 05:27:43PM +0200, Mika Westerberg wrote:
-> > On Mon, Nov 03, 2014 at 09:00:48AM -0600, Felipe Balbi wrote:
-> > > On Mon, Nov 03, 2014 at 11:24:02AM +0200, Mika Westerberg wrote:
-> > > > On Fri, Oct 31, 2014 at 11:45:09AM -0700, David Cohen wrote:
-> > > > > > I think adding the module exit + allowing this driver to be a m=
-odule
-> > > > > > would be a good approach. Then we don't need to force generic x=
-86 kernel
-> > > > > > binaries to always have this driver. Unless Mathias or Mika kno=
-ws a
-> > > > > > constraint to force this driver to be builtin only.
-> > > > >=20
-> > > > > It helps if I CC them when asking for feedback :)
-> > > > >=20
-> > > > > Mathias, Mika, do you know any constraint that forces pinctrl-bay=
-trail
-> > > > > to be bool?
-> > > >=20
-> > > > The only constraint that has been keeping this driver as bool is th=
-at
-> > > > some machines like, Asus T100, uses ACPI GPIO operation regions for
-> > > > toggling GPIOs to get things like sensor hub powered on. The GPIO
-> > > > operation region code does not yet handle -EPROBE_DEFER so only way=
- to
-> > > > ensure that the operation region is there is to have the driver com=
-piled
-> > > > in to the kernel.
-> > >=20
-> > > But that's not enough excuse to have every single x86 in the market
-> > > shipping with this driver. Think about a distro kernel, most likely t=
-his
-> > > gets enabled and it's wrong in 80% of the cases.
-> >=20
-> > True, but see below.
-> >=20
-> > > It would be nicer to add EPROBE_DEFER support, convert this into
-> > > tristate and have default =3D M if BAYTRAIL, or something.
-> >=20
-> > If it were simple as that we would have done that already. Please check
-> > drivers/gpio/gpiolib-acpi.c:acpi_gpio_adr_space_handler() and tell me
-> > how we can do that.
->=20
-> Actually the above is not the problem because we already have registered
-> the GPIO chip and hence we have the GPIO available to the firmware code.
+I don't know if the suspend is supported on this platform but as we were
+on the road to remove this platform I don't know it it worth testing it unless
+some interested users show up.
 
-what happens before you registered the gpio chip ? It takes some time
-=66rom head.S to gpiochip_irqchip_add(). Anywhere between that time,
-firmware could try to access gpios and the same problem would occur.
+I didn't tested it on a mv782xx platform but the patch looks correct:
 
-> The real problem is that if the ACPI GPIO operation handler is not there
-> at the time firmware decides to do something it will just skip things
-> that depend on the operation region. So if it has a GPIO that is used to
-> turn on sensor hub or touch panel or whatever, this will not be done and
-> it results that the device in question might not work properly.
+Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-that's an issue that needs solving, but forcing every x86 kernel to ship
-with this driver, is not a proper solution.
 
---=20
-balbi
+Thanks,
 
---tT3UgwmDxwvOMqfu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Gregory
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iQIcBAEBAgAGBQJUV6QzAAoJEIaOsuA1yqRE66QP/1rC0KgtEScVJCq8+I14sHEN
-jyw6vwxXPsFpMmhJPKDoaVk6ZGkYmLgY4Xkq3R5yfy/pmg2NPh4FZzYfX58xpuT4
-HdeLE8aejAsf2DZ83vp0mHwyBVh7xBXjkiZCj+jBrPpFwlGG9WktovZjZ+E91vzA
-qD5MWVdK8cHMwS570O8WcDebEhco84KWqZpcAi+lh277ldkXdDgrWmPQgKxiw1G/
-H+WUJyUNBrZnCJQp2oKDuzD2deOnxx5aPIrQih3zRQ+7Zwozp5mHuN1bdGV4+KtN
-3eLB4KjGC3aVqmSGoNIiHCaXD+EBMvrDKWR7Q2XzP+ex8RCK9InEU0WVvL9lpmPV
-TN54ILhPPSxpr4o3l/tXQdbIq1fxi2Y+CYElAT3umjWqROmg1M/qMVlkjAt76GaK
-pyqAWKXs6GoILYCxiY89dqZhegMAdpAPxJHDwSDsmrTKMpFHHyqyROFxDT1g9i/b
-ez0LcNTR5pTtcnm1JSY2gbY+iTsaROxouFVzXlq/vWd8SqYO1AwEyHMgwg7W2AS1
-zLG9mbpR3I/r2Y7uTkEHScJJE/YmL8uYozmAyH6HN21eUgk4TIhWHnVTHGy4nqcZ
-QZgxHtooO7J6/FOrNTlfsOuhvblW83cT5+1RIDgkQmDPApKOP6Ux7/EGY6RkJuiB
-+EIS/BKkvSt8IUr1nQfy
-=l3w5
------END PGP SIGNATURE-----
 
---tT3UgwmDxwvOMqfu--
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
