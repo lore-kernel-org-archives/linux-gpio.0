@@ -1,46 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH 06/17] gpio: mvebu: add suspend/resume support
-Date: Mon, 3 Nov 2014 14:26:59 +0100
-Message-ID: <CACRpkdaMrLBejKShTZoHW8BZb9AJguGJ96eEMp+eo3kmH=yDwA@mail.gmail.com>
+Date: Mon, 3 Nov 2014 14:29:11 +0100
+Message-ID: <CACRpkdZXhAbta_GsM64AdQzxxKHAVQWfbAZoTp7rfNvN8TfBMw@mail.gmail.com>
 References: <1414151970-6626-1-git-send-email-thomas.petazzoni@free-electrons.com>
 	<1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
-	<CACRpkda-8p=e_12vpUNt3_Y0EVPDArEKJUi63B8CGemNwVuQ0w@mail.gmail.com>
-	<54533FAF.7010505@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:53141 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751460AbaKCN1A (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Nov 2014 08:27:00 -0500
-Received: by mail-ig0-f178.google.com with SMTP id a13so4547664igq.5
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Nov 2014 05:27:00 -0800 (PST)
-In-Reply-To: <54533FAF.7010505@free-electrons.com>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:48056 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751130AbaKCN3M (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Nov 2014 08:29:12 -0500
+Received: by mail-ie0-f173.google.com with SMTP id tr6so5182745ieb.4
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Nov 2014 05:29:11 -0800 (PST)
+In-Reply-To: <1414151970-6626-7-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 31, 2014 at 8:52 AM, Gregory CLEMENT
-<gregory.clement@free-electrons.com> wrote:
-> Hi Linus,
->>> +       switch (mvchip->soc_variant) {
->>> +       case MVEBU_GPIO_SOC_VARIANT_ORION:
->>> +               mvchip->edge_mask_regs[0] =
->>> +                       readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
->>> +               mvchip->level_mask_regs[0] =
->>> +                       readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
->>> +               break;
->>
->> You are assigning index [0] twice, why? There must be some
->> reason, and it should be stated in a comment. If the first read
->> is necessary for hardware reasons, don't assign it but
->> discard the result.
+On Fri, Oct 24, 2014 at 1:59 PM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
+
+> This commit adds the implementation of ->suspend() and ->resume()
+> platform_driver hooks in order to save and restore the state of the
+> GPIO configuration. In order to achieve that, additional fields are
+> added to the mvebu_gpio_chip structure.
 >
-> Maybe I missed something but for me these 2 registers are different:
-> one is the _EDGE_ mask and the other the _LEVEL_ mask.
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
 
-Yeah haha I must have had a bad perception day :D
+Patch applied with Alexandre's ACK.
 
 Yours,
 Linus Walleij
