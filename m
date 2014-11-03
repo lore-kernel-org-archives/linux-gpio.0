@@ -1,46 +1,49 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
- Intel Baytrail
-Date: Mon, 3 Nov 2014 11:24:02 +0200
-Message-ID: <20141103092402.GA1304@lahna.fi.intel.com>
-References: <20141013191405.GB29810@saruman>
- <20141013192404.GB4034@psi-dev26.jf.intel.com>
- <20141013192632.GC29810@saruman>
- <20141013193618.GD29810@saruman>
- <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
- <20141028144249.GD8123@saruman>
- <CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
- <20141031132005.GB1273@saruman>
- <20141031162339.GA7136@psi-dev26.jf.intel.com>
- <20141031184509.GA2224@psi-dev26.jf.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC Patch] gpio: add GPIO hogging mechanism
+Date: Mon, 3 Nov 2014 10:43:46 +0100
+Message-ID: <CACRpkda-HbKmN_RisHpWRV4bquwpBsd4RgaA5pW0qXrhYChRYA@mail.gmail.com>
+References: <1413922198-29373-1-git-send-email-bparrot@ti.com>
+	<3D00ADB3-00B3-40A8-8263-444BCADDAC33@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:13617 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750925AbaKCJYH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 3 Nov 2014 04:24:07 -0500
-Content-Disposition: inline
-In-Reply-To: <20141031184509.GA2224@psi-dev26.jf.intel.com>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:63374 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750991AbaKCJnr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Nov 2014 04:43:47 -0500
+Received: by mail-ig0-f182.google.com with SMTP id hn18so4287124igb.3
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Nov 2014 01:43:46 -0800 (PST)
+In-Reply-To: <3D00ADB3-00B3-40A8-8263-444BCADDAC33@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: Felipe Balbi <balbi@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
+To: Pantelis Antoniou <pantelis.antoniou@gmail.com>
+Cc: Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Fri, Oct 31, 2014 at 11:45:09AM -0700, David Cohen wrote:
-> > I think adding the module exit + allowing this driver to be a module
-> > would be a good approach. Then we don't need to force generic x86 kernel
-> > binaries to always have this driver. Unless Mathias or Mika knows a
-> > constraint to force this driver to be builtin only.
-> 
-> It helps if I CC them when asking for feedback :)
-> 
-> Mathias, Mika, do you know any constraint that forces pinctrl-baytrail
-> to be bool?
+On Wed, Oct 29, 2014 at 9:53 AM, Pantelis Antoniou
+<pantelis.antoniou@gmail.com> wrote:
 
-The only constraint that has been keeping this driver as bool is that
-some machines like, Asus T100, uses ACPI GPIO operation regions for
-toggling GPIOs to get things like sensor hub powered on. The GPIO
-operation region code does not yet handle -EPROBE_DEFER so only way to
-ensure that the operation region is there is to have the driver compiled
-in to the kernel.
+> 3) I=E2=80=99m not very fond of having this being part of the gpio co=
+ntroller. This
+> configuration conceptually has little to do with the gpio controller =
+per se,
+> it is more of a board specific thing. Why not come up with a gpio-hog=
+ driver that
+> references GPIOs? That way with a single gpio-hog driver instance you=
+ could setup
+> all the GPIO-hogging configuration for all GPIOs on the board, even o=
+ne that
+> lie on different GPIO controllers.
+
+You have a point. But it's vital that we set up hogs at the same time a=
+s the
+gpio_chip is probed, not later, or there may be a race as to who
+gets the GPIO line, and that should be avoided at any cost.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
