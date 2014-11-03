@@ -1,80 +1,116 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Felipe Balbi <balbi@ti.com>
 Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
  Intel Baytrail
-Date: Mon, 3 Nov 2014 16:33:15 +0100
-Message-ID: <CACRpkdY8wPbfx-1fZ_PbY=F_+tRMg_Xe9B9uFKO5AfE5P7PB0w@mail.gmail.com>
-References: <1412355319-18946-1-git-send-email-david.a.cohen@linux.intel.com>
-	<1413224639-21552-1-git-send-email-david.a.cohen@linux.intel.com>
-	<20141013191405.GB29810@saruman>
-	<20141013192404.GB4034@psi-dev26.jf.intel.com>
-	<20141013192632.GC29810@saruman>
-	<20141013193618.GD29810@saruman>
-	<CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
-	<20141028144249.GD8123@saruman>
-	<CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
-	<20141031132005.GB1273@saruman>
+Date: Mon, 3 Nov 2014 09:35:33 -0600
+Message-ID: <20141103153533.GF27425@saruman>
+References: <20141013193618.GD29810@saruman>
+ <CACRpkdYDiFvwsPwqACXS2bZU9peUyJEn-fpzVqZKYXseuEFGGA@mail.gmail.com>
+ <20141028144249.GD8123@saruman>
+ <CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
+ <20141031132005.GB1273@saruman>
+ <20141031162339.GA7136@psi-dev26.jf.intel.com>
+ <20141031184509.GA2224@psi-dev26.jf.intel.com>
+ <20141103092402.GA1304@lahna.fi.intel.com>
+ <20141103150048.GB27425@saruman>
+ <20141103152743.GB1618@lahna.fi.intel.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20141031132005.GB1273@saruman>
-Sender: stable-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: David Cohen <david.a.cohen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20141103152743.GB1618@lahna.fi.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Felipe Balbi <balbi@ti.com>, David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 31, 2014 at 2:20 PM, Felipe Balbi <balbi@ti.com> wrote:
-> [Me]
+--rMWmSaSbD7nr+du9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> But another way to get rid of the dilemma is to set
->> .suppress_bind_attrs = true on the .driver field of the
->> device driver. The one can't unbind it through sysfs anymore.
->>
->>         .driver = {
->>                 .name   = "foo",
->>                 .suppress_bind_attrs = true,
->>         },
->>
->> So one of them need to be done.
->>
->> I suspect this is a kind of common problem...
->
-> so instead of taking of taking a three-liner which just makes sure this
-> can be used as "intended" you prefer to:
->
-> diff --git a/drivers/pinctrl/pinctrl-baytrail.c b/drivers/pinctrl/pinctrl-baytrail.c
-> index e12e5b0..254ba81 100644
-> --- a/drivers/pinctrl/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/pinctrl-baytrail.c
-> @@ -587,16 +587,6 @@ static const struct acpi_device_id byt_gpio_acpi_match[] = {
->  };
->  MODULE_DEVICE_TABLE(acpi, byt_gpio_acpi_match);
->
-> -static int byt_gpio_remove(struct platform_device *pdev)
-> -{
-> -       struct byt_gpio *vg = platform_get_drvdata(pdev);
-> -
-> -       pm_runtime_disable(&pdev->dev);
-> -       gpiochip_remove(&vg->chip);
-> -
-> -       return 0;
-> -}
-> -
->  static struct platform_driver byt_gpio_driver = {
->         .probe          = byt_gpio_probe,
->         .remove         = byt_gpio_remove,
-> @@ -605,6 +595,7 @@ static struct platform_driver byt_gpio_driver = {
->                 .owner  = THIS_MODULE,
->                 .pm     = &byt_gpio_pm_ops,
->                 .acpi_match_table = ACPI_PTR(byt_gpio_acpi_match),
-> +               .suppress_bind_attrs = true,
->         },
->  };
+Hi,
 
-I don't know, if the driver *really* cannot be removed from sysfs
-it is actually the right solution don't you think?
+On Mon, Nov 03, 2014 at 05:27:43PM +0200, Mika Westerberg wrote:
+> On Mon, Nov 03, 2014 at 09:00:48AM -0600, Felipe Balbi wrote:
+> > On Mon, Nov 03, 2014 at 11:24:02AM +0200, Mika Westerberg wrote:
+> > > On Fri, Oct 31, 2014 at 11:45:09AM -0700, David Cohen wrote:
+> > > > > I think adding the module exit + allowing this driver to be a mod=
+ule
+> > > > > would be a good approach. Then we don't need to force generic x86=
+ kernel
+> > > > > binaries to always have this driver. Unless Mathias or Mika knows=
+ a
+> > > > > constraint to force this driver to be builtin only.
+> > > >=20
+> > > > It helps if I CC them when asking for feedback :)
+> > > >=20
+> > > > Mathias, Mika, do you know any constraint that forces pinctrl-baytr=
+ail
+> > > > to be bool?
+> > >=20
+> > > The only constraint that has been keeping this driver as bool is that
+> > > some machines like, Asus T100, uses ACPI GPIO operation regions for
+> > > toggling GPIOs to get things like sensor hub powered on. The GPIO
+> > > operation region code does not yet handle -EPROBE_DEFER so only way to
+> > > ensure that the operation region is there is to have the driver compi=
+led
+> > > in to the kernel.
+> >=20
+> > But that's not enough excuse to have every single x86 in the market
+> > shipping with this driver. Think about a distro kernel, most likely this
+> > gets enabled and it's wrong in 80% of the cases.
+>=20
+> True, but see below.
+>=20
+> > It would be nicer to add EPROBE_DEFER support, convert this into
+> > tristate and have default =3D M if BAYTRAIL, or something.
+>=20
+> If it were simple as that we would have done that already. Please check
+> drivers/gpio/gpiolib-acpi.c:acpi_gpio_adr_space_handler() and tell me
+> how we can do that.
+>=20
+> The problem is that it is *firmware* code that decides to use the GPIO
+> at some random point in time and we have no way to tell it to retry
+> later when the GPIO is available.
 
-Else we're just leaving a nicely designed self-destruct
-mechanism around.
+which means that even with the driver built-in, there is still the
+possibility that firmware will try to access it before
+pinctrl-baytrail's init function is called and you'd end up in the same
+situation.
 
-Yours,
-Linus Walleij
+The fact is that currently you're forcing every x86 (even non-Intel) to
+ship with this driver statically linked into it just because a small
+percent of x86 systems might need to have this ready-to-go early enough.
+
+Unfortunately I don't know ACPI enough to tell you if there is a way to
+tell firmware "hey, you can use GPIOs now", so I'l refrain from
+commenting on that. But that doesn't change the fact that this is wrong.
+
+--=20
+balbi
+
+--rMWmSaSbD7nr+du9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUV6DFAAoJEIaOsuA1yqREhlEP/j+DPv+44nXaklYhSW4S0tdL
+GB4Yd5J9F2nc+z33drogERFT4P4k1Yq92WeW7rOpKI3KbKHNXL40BaUVicl3i+Lr
+xiZkQs/sHnSTvSrRLydgzc97XHyqqsIp9+WQmiPYZ6V7z11KhJ2gy80noCs0fwEn
+f7m9B/APReEO0vuE134p16avB5xtPhAYh+A4HYkCezQMxtCxXBPRAW9+c7urn9zj
+qhJoI1rN8x4v4RtE7cbH5oltZ3lyIlV3pQ/CyDcmFV798vzgtNJZr5wwaP7QTjxZ
+PZquj2gNYX7Q4IIFjVcozjBSTOKdYhY8KiKkk2MwGqbFwEB6q3e3e+uH7L0kA/9O
+eyObtZ1185QJN69f4QIbYQlNzIJbJBrD/XFv5dQ3+CTXSjM1O7/Jw9d+tvD+R0BE
+nYGLIDbXrn3MV8VRUJNRB5dX0I/6/K4Uy7hUk/Jpxmfu8+nMvO/gWCYgmwbSBZsV
+M2rPQZNw0BZ9sP8AInzY7EnpEQzGT2hX7LF+MBHdIbzMEAOKRdukPzytB3YPRPK5
+fja8hjXce5UjqSKhvlCmroinhNrj1EA9qpWsQunfw2ESSKGpzu8tD+lMUZUrZ866
+qKFSEdsnglM18PehjYKsRpC2/9TFVAslYa+ZPxpTBmRiU71YWAnFLL41OmNBxL0+
+NGvROFT3mpPncVM0ICbu
+=bfI3
+-----END PGP SIGNATURE-----
+
+--rMWmSaSbD7nr+du9--
