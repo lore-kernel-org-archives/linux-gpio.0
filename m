@@ -1,115 +1,147 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
- Intel Baytrail
-Date: Mon, 3 Nov 2014 14:19:03 -0800
-Message-ID: <20141103221903.GA20305@psi-dev26.jf.intel.com>
-References: <CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
- <20141031132005.GB1273@saruman>
- <20141031162339.GA7136@psi-dev26.jf.intel.com>
- <20141031184509.GA2224@psi-dev26.jf.intel.com>
- <20141103092402.GA1304@lahna.fi.intel.com>
- <20141103150048.GB27425@saruman>
- <20141103152743.GB1618@lahna.fi.intel.com>
- <20141103154207.GC1618@lahna.fi.intel.com>
- <20141103155011.GH27425@saruman>
- <20141103184247.GD1618@lahna.fi.intel.com>
+From: Michael Heimpold <mhei@heimpold.de>
+Subject: Re: [Regression Resend] mmc: mx28: sd card detection broken since 3.18-rc1
+Date: Tue, 04 Nov 2014 00:26:38 +0100
+Message-ID: <2622508.LMF0YfKZGi@kerker>
+References: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de> <8090335.0rPHov2cpK@kerker> <5457F8BD.1040800@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141103184247.GD1618@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Felipe Balbi <balbi@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.160]:31258 "EHLO
+	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751046AbaKCX0l convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Nov 2014 18:26:41 -0500
+In-Reply-To: <5457F8BD.1040800@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Kristina =?utf-8?B?TWFydMWhZW5rbw==?= <kristina.martsenko@gmail.com>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Mika,
+Hi Kristina,
 
-Thanks for your feedbacks :)
-
-On Mon, Nov 03, 2014 at 08:42:47PM +0200, Mika Westerberg wrote:
-> On Mon, Nov 03, 2014 at 09:50:11AM -0600, Felipe Balbi wrote:
+Am Montag, 3. November 2014, 23:50:53 schrieb Kristina Mart=C5=A1enko:
+> On 03/11/14 22:49, Michael Heimpold wrote:
 > > Hi,
-> > 
-> > On Mon, Nov 03, 2014 at 05:42:07PM +0200, Mika Westerberg wrote:
-> > > On Mon, Nov 03, 2014 at 05:27:43PM +0200, Mika Westerberg wrote:
-> > > > On Mon, Nov 03, 2014 at 09:00:48AM -0600, Felipe Balbi wrote:
-> > > > > On Mon, Nov 03, 2014 at 11:24:02AM +0200, Mika Westerberg wrote:
-> > > > > > On Fri, Oct 31, 2014 at 11:45:09AM -0700, David Cohen wrote:
-> > > > > > > > I think adding the module exit + allowing this driver to be a module
-> > > > > > > > would be a good approach. Then we don't need to force generic x86 kernel
-> > > > > > > > binaries to always have this driver. Unless Mathias or Mika knows a
-> > > > > > > > constraint to force this driver to be builtin only.
-> > > > > > > 
-> > > > > > > It helps if I CC them when asking for feedback :)
-> > > > > > > 
-> > > > > > > Mathias, Mika, do you know any constraint that forces pinctrl-baytrail
-> > > > > > > to be bool?
-> > > > > > 
-> > > > > > The only constraint that has been keeping this driver as bool is that
-> > > > > > some machines like, Asus T100, uses ACPI GPIO operation regions for
-> > > > > > toggling GPIOs to get things like sensor hub powered on. The GPIO
-> > > > > > operation region code does not yet handle -EPROBE_DEFER so only way to
-> > > > > > ensure that the operation region is there is to have the driver compiled
-> > > > > > in to the kernel.
-> > > > > 
-> > > > > But that's not enough excuse to have every single x86 in the market
-> > > > > shipping with this driver. Think about a distro kernel, most likely this
-> > > > > gets enabled and it's wrong in 80% of the cases.
-> > > > 
-> > > > True, but see below.
-> > > > 
-> > > > > It would be nicer to add EPROBE_DEFER support, convert this into
-> > > > > tristate and have default = M if BAYTRAIL, or something.
-> > > > 
-> > > > If it were simple as that we would have done that already. Please check
-> > > > drivers/gpio/gpiolib-acpi.c:acpi_gpio_adr_space_handler() and tell me
-> > > > how we can do that.
-> > > 
-> > > Actually the above is not the problem because we already have registered
-> > > the GPIO chip and hence we have the GPIO available to the firmware code.
-> > 
-> > what happens before you registered the gpio chip ? It takes some time
-> > from head.S to gpiochip_irqchip_add(). Anywhere between that time,
-> > firmware could try to access gpios and the same problem would occur.
-> 
-> The operation region is not ready and the firmware does not try to use
-> it. However, the subsys_initcall() is there just to be sure that the
-> GPIO driver gets loaded before anything that is going to use GPIOs from
-> firmware.
+>=20
+> Hi Michael,
+>=20
+> > Am Montag, 3. November 2014, 01:01:07 schrieben Sie:
+> >> On 01/11/14 23:40, Stefan Wahren wrote:
+> >>> Hi,
+> >>>
+> >>> i was testing Linux Kernel 3.18-rc2 with my i.MX28 board (I2SE Du=
+ckbill) and ran
+> >>> into the problem that the sd card isn't detected from the Kernel =
+at booting
+> >>> (driver: mxs-mmc.c). That results in a endless wait for the root =
+partition
+> >>
+> >> I ran into this issue as well. Seems that a card-detect flag=20
+> >> (MMC_CAP2_CD_ACTIVE_HIGH) can currently be set based on an=20
+> >> uninitialized variable, which can lead to the card being reported =
+as=20
+> >> not present. This patch fixes it for me:
+> >>
+> >> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> >> index 03c53b72a2d6..f0e187682d3b 100644
+> >> --- a/drivers/mmc/core/host.c
+> >> +++ b/drivers/mmc/core/host.c
+> >> @@ -311,7 +311,7 @@ int mmc_of_parse(struct mmc_host *host)
+> >>  	struct device_node *np;
+> >>  	u32 bus_width;
+> >>  	int len, ret;
+> >> -	bool cap_invert, gpio_invert;
+> >> +	bool cap_invert, gpio_invert =3D false;
+> >> =20
+> >=20
+> > sorry, but I don't understand how your patch fixes the problem.
+> >=20
+> > First use of the gpio_invert bool is in line 370/371 within mmc_gpi=
+od_request_cd
+> > (re-wrapped into a single line here for better reading):
+> >=20
+> > -snip-
+> > ret =3D mmc_gpiod_request_cd(host, "cd", 0, true,  0, &gpio_invert)=
+;
+> > -snap-
+> >=20
+> > A pointer to the bool is passed, and inside mmc_gpiod_request_cd (d=
+rivers/mmc/core/slot-gpio.c,
+> > line 322), always a value is assigned:
+> >=20
+> > -snip-
+> > if (gpio_invert)
+> >                 *gpio_invert =3D !gpiod_is_active_low(desc);
+> > -snap-
+> >=20
+> > So returning to mmc_of_parse, the bool should always have an initia=
+lized value.
+> > Apart from some error handling, the bool is used immediately in the=
+ xor expression
+> > and results in setting MMC_CAP2_CD_ACTIVE_HIGH bit, or not.
+> >=20
+> > I also cannot see a code path, where gpio_invert is used without a =
+call to mmc_gpiod_request_cd.
+> >=20
+> > Would be nice, if you could point me to what I'm missing.
+>=20
+> mmc_gpiod_request_cd can return without ever reaching the line where=20
+> the value is assigned to gpio_invert:
+>=20
+> desc =3D devm_gpiod_get_index(host->parent, con_id, idx, GPIOD_IN);
+> if (IS_ERR(desc))
+> 	return PTR_ERR(desc);
+>=20
+> This can happen when the host controller doesn't use a GPIO for card=20
+> detection (but instead uses a dedicated pin). In this case=20
+> devm_gpiod_get_index will return -ENOENT.
+>=20
 
-That sounds hackish and dangerous. There are shared registers between
-different GPIOs.
+ah, I see - thank you for taking the time to explain.
 
-> 
-> > > The real problem is that if the ACPI GPIO operation handler is not there
-> > > at the time firmware decides to do something it will just skip things
-> > > that depend on the operation region. So if it has a GPIO that is used to
-> > > turn on sensor hub or touch panel or whatever, this will not be done and
-> > > it results that the device in question might not work properly.
-> > 
-> > that's an issue that needs solving, but forcing every x86 kernel to ship
-> > with this driver, is not a proper solution.
-> 
-> I would rather have the driver build in to the kernel now (and btw it
-> has been already in mainline quite some time so I suspect many distros
-> have already enabled it), than turning it module and render some devices
-> that have been working previously, fail suddenly.
+> >>  	if (!host->parent || !host->parent->of_node)
+> >>  		return 0;
+> >> @@ -401,6 +401,7 @@ int mmc_of_parse(struct mmc_host *host)
+> >>  	else
+> >>  		cap_invert =3D false;
+> >> =20
+> >> +	gpio_invert =3D false;
+> >>  	ret =3D mmc_gpiod_request_ro(host, "wp", 0, false, 0, &gpio_inve=
+rt);
+> >=20
+> > Same here. The functions always assigns a value when a pointer is g=
+iven.
+>=20
+> Same thing, the function can return before gpio_invert is ever assign=
+ed=20
+> to.
+>=20
+> > (And this change is unrelated to the reporters problem, so should b=
+e fixed with a
+> > dedicated patch.)
+>=20
+> Since both flags are set wrong for the exact same reason, and they're=
+=20
+> both regressions in 3.18, I thought it would make sense to fix them=20
+> both in one patch. (Especially since I think it's cleaner to split th=
+e=20
+> gpio_invert variable into cd_gpio_invert and ro_gpio_invert, and I wa=
+s=20
+> going to do that in the patch I'd send.) Let me know if you still thi=
+nk=20
+> I should send separate patches for them.
+=20
+Splitting the variable sounds good to me and will improve readability. =
+In this case
+(and with proper commit message) I think it's really possible to combin=
+e both fixes
+in one patch.
 
-Hm.... it sounds like we're saying: we got it working somehow and from
-now on we'll avoid change it to not create regression.
+Thanks,
+Michael
 
-Correct if I'm wrong, but there's nothing really preventing this driver
-to be a module beside the buggy ACPI interface that allows kernel and fw
-to play freely (and silently) with same piece of hw.
-
-IMHO we could allow this driver be M, but default to Y and an
-explanation to set to Y in case FW needs to use GPIO before module gets
-loaded. Since we've development board (Minnow Max), we should let kernel
-more free for other developers as well.
-
-Br, David
-
-> 
-> There is a mechanism in ACPI to solve these issues, called _DEP, but it
-> is still very much work in progress.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
