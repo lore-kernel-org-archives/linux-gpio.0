@@ -1,8 +1,8 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
  Intel Baytrail
-Date: Tue, 4 Nov 2014 09:51:35 +0200
-Message-ID: <20141104075135.GE1618@lahna.fi.intel.com>
+Date: Tue, 4 Nov 2014 09:59:36 +0200
+Message-ID: <20141104075936.GF1618@lahna.fi.intel.com>
 References: <20141031132005.GB1273@saruman>
  <20141031162339.GA7136@psi-dev26.jf.intel.com>
  <20141031184509.GA2224@psi-dev26.jf.intel.com>
@@ -12,25 +12,35 @@ References: <20141031132005.GB1273@saruman>
  <20141103154207.GC1618@lahna.fi.intel.com>
  <20141103155011.GH27425@saruman>
  <20141103184247.GD1618@lahna.fi.intel.com>
- <20141103204038.GB17356@saruman>
+ <20141103221903.GA20305@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:44218 "EHLO mga11.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:11129 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751989AbaKDHvj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 4 Nov 2014 02:51:39 -0500
+	id S1750870AbaKDIAP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 4 Nov 2014 03:00:15 -0500
 Content-Disposition: inline
-In-Reply-To: <20141103204038.GB17356@saruman>
+In-Reply-To: <20141103221903.GA20305@psi-dev26.jf.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Felipe Balbi <balbi@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
 
-On Mon, Nov 03, 2014 at 02:40:38PM -0600, Felipe Balbi wrote:
-> Hi,
+On Mon, Nov 03, 2014 at 02:19:03PM -0800, David Cohen wrote:
+> Hi Mika,
+> 
+> Thanks for your feedbacks :)
 > 
 > On Mon, Nov 03, 2014 at 08:42:47PM +0200, Mika Westerberg wrote:
+> > On Mon, Nov 03, 2014 at 09:50:11AM -0600, Felipe Balbi wrote:
+> > > Hi,
+> > > 
+> > > On Mon, Nov 03, 2014 at 05:42:07PM +0200, Mika Westerberg wrote:
+> > > > On Mon, Nov 03, 2014 at 05:27:43PM +0200, Mika Westerberg wrote:
+> > > > > On Mon, Nov 03, 2014 at 09:00:48AM -0600, Felipe Balbi wrote:
+> > > > > > On Mon, Nov 03, 2014 at 11:24:02AM +0200, Mika Westerberg wrote:
+> > > > > > > On Fri, Oct 31, 2014 at 11:45:09AM -0700, David Cohen wrote:
 > > > > > > > > > I think adding the module exit + allowing this driver to be a module
 > > > > > > > > > would be a good approach. Then we don't need to force generic x86 kernel
 > > > > > > > > > binaries to always have this driver. Unless Mathias or Mika knows a
@@ -73,17 +83,11 @@ On Mon, Nov 03, 2014 at 02:40:38PM -0600, Felipe Balbi wrote:
 > > GPIO driver gets loaded before anything that is going to use GPIOs from
 > > firmware.
 > 
-> alright, so how does the firmware know that the operation region is
-> ready and why can't that be deferred until pinctrl-baytrail (module or
-> built-in) has finished probing ? That would sort both issues, would it
-> not ?
+> That sounds hackish and dangerous. There are shared registers between
+> different GPIOs.
 
-The firmware checks the dependent object for AVBL or similar variable.
-If it is != 0 it assumes that the operation region is there. The problem
-is how can you tell the firmware that it should somehow try again?
-
-Here _DEP is the right solution as it forces the dependencies to be
-loaded first.
+For one it certainly is not hackish and dangerous. It is well defined
+in the ACPI specification as interfaces between firmware and OS.
 
 > > > > The real problem is that if the ACPI GPIO operation handler is not there
 > > > > at the time firmware decides to do something it will just skip things
@@ -99,9 +103,26 @@ loaded first.
 > > have already enabled it), than turning it module and render some devices
 > > that have been working previously, fail suddenly.
 > 
-> that's why I said you should default to Y if BAYTRAIL or make it
-> tristate and always default to M.
+> Hm.... it sounds like we're saying: we got it working somehow and from
+> now on we'll avoid change it to not create regression.
 
-So you are saying it is better to add config option BAYTRAIL and then
-make the driver Y? Well, now generic distros need to select that as Y
-which doesn't solve anything.
+That's exactly what I'm saying :-)
+
+> Correct if I'm wrong, but there's nothing really preventing this driver
+> to be a module beside the buggy ACPI interface that allows kernel and fw
+> to play freely (and silently) with same piece of hw.
+
+Not a buggy ACPI interface. Lack of implementation from Linux side.
+
+> IMHO we could allow this driver be M, but default to Y and an
+> explanation to set to Y in case FW needs to use GPIO before module gets
+> loaded. Since we've development board (Minnow Max), we should let kernel
+> more free for other developers as well.
+
+All I'm saying both to you guys that this is the reasoning we have the
+driver as a bool. Which is what you asked from me in the first place.
+
+Since you both insist to turn it module, please send a patch with the
+corresponding changelog telling why you think it does not need to build
+in and let's see if we are getting any regressions. If yes, then we just
+revert the patch. Does that work for you?
