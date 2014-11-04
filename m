@@ -1,88 +1,403 @@
 From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH 2/3][v6] gpio-mpc8xxx: add mpc8xxx_gpio_set_multiple function
-Date: Tue, 04 Nov 2014 17:12:09 +0100
-Message-ID: <1714329.9fHI1iKR0j@pcimr>
+Subject: [PATCH 1/3][v6] gpiolib: allow simultaneous setting of multiple GPIO outputs
+Date: Tue, 04 Nov 2014 17:12:06 +0100
+Message-ID: <2001937.AhYQP8b40K@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:35314 "EHLO
+Received: from mail-out.m-online.net ([212.18.0.10]:33047 "EHLO
 	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754599AbaKDQML (ORCPT
+	with ESMTP id S1754654AbaKDQML (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Nov 2014 11:12:11 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Gerhard Sittig <gsi@denx.de>
 
-Add a set_multiple function to the MPC8xxx GPIO chip driver and thereby allow
-for actual performance improvements when setting multiple outputs
-simultaneously. In my case the time needed to configure an FPGA goes down from
-48 s to 20 s.
+Introduce new functions gpiod_set_array & gpiod_set_raw_array to the consumer
+interface which allow setting multiple outputs with just one function call.
+Also add an optional set_multiple function to the driver interface. Without an
+implementation of that function in the chip driver outputs are set
+sequentially.
+
+Implementing the set_multiple function in a chip driver allows for:
+- Improved performance for certain use cases. The original motivation for this
+  was the task of configuring an FPGA. In that specific case, where 9 GPIO
+  lines have to be set many times, configuration time goes down from 48 s to
+  20 s when using the new function.
+- Simultaneous glitch-free setting of multiple pins on any kind of parallel
+  bus attached to GPIOs provided they all reside on the same chip and bank.
+
+Limitations:
+  Performance is only improved for normal high-low outputs. Open drain and
+  open source outputs are always set separately from each other. Those kinds
+  of outputs could probably be accelerated in a similar way if we could
+  forgo the error checking when setting GPIO directions.
 
 Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
 Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Reviewed-by: Mark Brown <broonie@linaro.org>
 ---
-This patch depends on my previous patch "gpiolib: allow simultaneous setting
-of multiple GPIO outputs".
-
 Change log:
   v6: - rebase on current linux-gpio devel branch
-  v5: - no change
-  v4: - change interface of the set_multiple driver function to use
+  v5: - check can_sleep property per chip
+      - remove superfluous checks
+      - supplement documentation
+  v4: - add gpiod_set_array function for setting logical values
+      - change interface of the set_multiple driver function to use
         unsigned long as type for the bit fields
       - use generic bitops (which also use unsigned long for bit fields)
-  v3: - change commit message
-  v2: - add this patch (v1 included only changes to gpiolib)
+      - do not use ARCH_NR_GPIOS any more
+  v3: - add documentation
+      - change commit message
+  v2: - use descriptor interface
+      - allow arbitrary groups of GPIOs spanning multiple chips
 
- drivers/gpio/gpio-mpc8xxx.c |   27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ Documentation/gpio/consumer.txt |   27 ++++++
+ drivers/gpio/gpiolib.c          |  168 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/consumer.h   |   38 +++++++++
+ include/linux/gpio/driver.h     |    4 
+ 4 files changed, 237 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index d7d6d72..d1ff879 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -105,6 +105,32 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+index 6ce5441..c67f806 100644
+--- a/Documentation/gpio/consumer.txt
++++ b/Documentation/gpio/consumer.txt
+@@ -199,6 +199,33 @@ The active-low state of a GPIO can also be queried using the following call:
+ Note that these functions should only be used with great moderation ; a driver
+ should not have to care about the physical line level.
+ 
++
++Set multiple GPIO outputs with a single function call
++-----------------------------------------------------
++The following functions set the output values of an array of GPIOs:
++
++	void gpiod_set_array(unsigned int array_size,
++			     struct gpio_desc **desc_array,
++			     int *value_array)
++	void gpiod_set_raw_array(unsigned int array_size,
++				 struct gpio_desc **desc_array,
++				 int *value_array)
++	void gpiod_set_array_cansleep(unsigned int array_size,
++				      struct gpio_desc **desc_array,
++				      int *value_array)
++	void gpiod_set_raw_array_cansleep(unsigned int array_size,
++					  struct gpio_desc **desc_array,
++					  int *value_array)
++
++The array can be an arbitrary set of GPIOs. The functions will try to set
++GPIOs belonging to the same bank or chip simultaneously if supported by the
++corresponding chip driver. In that case a significantly improved performance
++can be expected. If simultaneous setting is not possible the GPIOs will be set
++sequentially.
++Note that for optimal performance GPIOs belonging to the same chip should be
++contiguous within the array of descriptors.
++
++
+ GPIOs mapped to IRQs
+ --------------------
+ GPIO lines can quite often be used as IRQs. You can get the IRQ number
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 50e18a4..eb739a5 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1254,6 +1254,88 @@ static void _gpiod_set_raw_value(struct gpio_desc *desc, bool value)
+ 		chip->set(chip, gpio_chip_hwgpio(desc), value);
  }
  
-+static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
-+				      unsigned long *mask, unsigned long *bits)
++/*
++ * set multiple outputs on the same chip;
++ * use the chip's set_multiple function if available;
++ * otherwise set the outputs sequentially;
++ * @mask: bit mask array; one bit per output; BITS_PER_LONG bits per word
++ *        defines which outputs are to be changed
++ * @bits: bit value array; one bit per output; BITS_PER_LONG bits per word
++ *        defines the values the outputs specified by mask are to be set to
++ */
++static void gpio_chip_set_multiple(struct gpio_chip *chip,
++				   unsigned long *mask, unsigned long *bits)
 +{
-+	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
-+	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
-+	unsigned long flags;
-+	int i;
-+
-+	spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
-+
-+	for (i = 0; i < gc->ngpio; i++) {
-+		if (*mask == 0)
-+			break;
-+		if (__test_and_clear_bit(i, mask)) {
-+			if (test_bit(i, bits))
-+				mpc8xxx_gc->data |= mpc8xxx_gpio2mask(i);
-+			else
-+				mpc8xxx_gc->data &= ~mpc8xxx_gpio2mask(i);
++	if (chip->set_multiple) {
++		chip->set_multiple(chip, mask, bits);
++	} else {
++		int i;
++		for (i = 0; i < chip->ngpio; i++) {
++			if (mask[BIT_WORD(i)] == 0) {
++				/* no more set bits in this mask word;
++				 * skip ahead to the next word */
++				i = (BIT_WORD(i) + 1) * BITS_PER_LONG - 1;
++				continue;
++			}
++			/* set outputs if the corresponding mask bit is set */
++			if (__test_and_clear_bit(i, mask)) {
++				chip->set(chip, i, test_bit(i, bits));
++			}
 +		}
 +	}
-+
-+	out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
-+
-+	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
 +}
 +
- static int mpc8xxx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
-@@ -344,6 +370,7 @@ static void __init mpc8xxx_add_controller(struct device_node *np)
- 	gc->get = of_device_is_compatible(np, "fsl,mpc8572-gpio") ?
- 		mpc8572_gpio_get : mpc8xxx_gpio_get;
- 	gc->set = mpc8xxx_gpio_set;
-+	gc->set_multiple = mpc8xxx_gpio_set_multiple;
- 	gc->to_irq = mpc8xxx_gpio_to_irq;
++static void gpiod_set_array_priv(bool raw, bool can_sleep,
++				 unsigned int array_size,
++				 struct gpio_desc **desc_array,
++				 int *value_array)
++{
++	int i = 0;
++
++	while (i < array_size) {
++		struct gpio_chip *chip = desc_array[i]->chip;
++		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		int count = 0;
++
++		if (!can_sleep) {
++			WARN_ON(chip->can_sleep);
++		}
++		memset(mask, 0, sizeof(mask));
++		do {
++			struct gpio_desc *desc = desc_array[i];
++			int hwgpio = gpio_chip_hwgpio(desc);
++			int value = value_array[i];
++
++			if (!raw && test_bit(FLAG_ACTIVE_LOW, &desc->flags))
++				value = !value;
++			trace_gpio_value(desc_to_gpio(desc), 0, value);
++			/*
++			 * collect all normal outputs belonging to the same chip
++			 * open drain and open source outputs are set individually
++			 */
++			if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
++				_gpio_set_open_drain_value(desc,value);
++			} else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
++				_gpio_set_open_source_value(desc, value);
++			} else {
++				__set_bit(hwgpio, mask);
++				if (value) {
++					__set_bit(hwgpio, bits);
++				} else {
++					__clear_bit(hwgpio, bits);
++				}
++				count++;
++			}
++			i++;
++		} while ((i < array_size) && (desc_array[i]->chip == chip));
++		/* push collected bits to outputs */
++		if (count != 0) {
++			gpio_chip_set_multiple(chip, mask, bits);
++		}
++	}
++}
++
+ /**
+  * gpiod_set_raw_value() - assign a gpio's raw value
+  * @desc: gpio whose value will be assigned
+@@ -1299,6 +1381,48 @@ void gpiod_set_value(struct gpio_desc *desc, int value)
+ EXPORT_SYMBOL_GPL(gpiod_set_value);
  
- 	ret = of_mm_gpiochip_add(np, mm_gc);
+ /**
++ * gpiod_set_raw_array() - assign values to an array of GPIOs
++ * @array_size: number of elements in the descriptor / value arrays
++ * @desc_array: array of GPIO descriptors whose values will be assigned
++ * @value_array: array of values to assign
++ *
++ * Set the raw values of the GPIOs, i.e. the values of the physical lines
++ * without regard for their ACTIVE_LOW status.
++ *
++ * This function should be called from contexts where we cannot sleep, and will
++ * complain if the GPIO chip functions potentially sleep.
++ */
++void gpiod_set_raw_array(unsigned int array_size,
++			 struct gpio_desc **desc_array, int *value_array)
++{
++	if (!desc_array)
++		return;
++	gpiod_set_array_priv(true, false, array_size, desc_array, value_array);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_raw_array);
++
++/**
++ * gpiod_set_array() - assign values to an array of GPIOs
++ * @array_size: number of elements in the descriptor / value arrays
++ * @desc_array: array of GPIO descriptors whose values will be assigned
++ * @value_array: array of values to assign
++ *
++ * Set the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
++ * into account.
++ *
++ * This function should be called from contexts where we cannot sleep, and will
++ * complain if the GPIO chip functions potentially sleep.
++ */
++void gpiod_set_array(unsigned int array_size,
++		     struct gpio_desc **desc_array, int *value_array)
++{
++	if (!desc_array)
++		return;
++	gpiod_set_array_priv(false, false, array_size, desc_array, value_array);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_array);
++
++/**
+  * gpiod_cansleep() - report whether gpio value access may sleep
+  * @desc: gpio to check
+  *
+@@ -1458,6 +1582,50 @@ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+ 
+ /**
++ * gpiod_set_raw_array_cansleep() - assign values to an array of GPIOs
++ * @array_size: number of elements in the descriptor / value arrays
++ * @desc_array: array of GPIO descriptors whose values will be assigned
++ * @value_array: array of values to assign
++ *
++ * Set the raw values of the GPIOs, i.e. the values of the physical lines
++ * without regard for their ACTIVE_LOW status.
++ *
++ * This function is to be called from contexts that can sleep.
++ */
++void gpiod_set_raw_array_cansleep(unsigned int array_size,
++				  struct gpio_desc **desc_array,
++				  int *value_array)
++{
++	might_sleep_if(extra_checks);
++	if (!desc_array)
++		return;
++	gpiod_set_array_priv(true, true, array_size, desc_array, value_array);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_raw_array_cansleep);
++
++/**
++ * gpiod_set_array_cansleep() - assign values to an array of GPIOs
++ * @array_size: number of elements in the descriptor / value arrays
++ * @desc_array: array of GPIO descriptors whose values will be assigned
++ * @value_array: array of values to assign
++ *
++ * Set the logical values of the GPIOs, i.e. taking their ACTIVE_LOW status
++ * into account.
++ *
++ * This function is to be called from contexts that can sleep.
++ */
++void gpiod_set_array_cansleep(unsigned int array_size,
++			      struct gpio_desc **desc_array,
++			      int *value_array)
++{
++	might_sleep_if(extra_checks);
++	if (!desc_array)
++		return;
++	gpiod_set_array_priv(false, true, array_size, desc_array, value_array);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_array_cansleep);
++
++/**
+  * gpiod_add_lookup_table() - register GPIO device consumers
+  * @table: table of consumers to register
+  */
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 12f146f..83c0a61 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -74,14 +74,24 @@ int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
+ /* Value get/set from non-sleeping context */
+ int gpiod_get_value(const struct gpio_desc *desc);
+ void gpiod_set_value(struct gpio_desc *desc, int value);
++void gpiod_set_array(unsigned int array_size,
++		     struct gpio_desc **desc_array, int *value_array);
+ int gpiod_get_raw_value(const struct gpio_desc *desc);
+ void gpiod_set_raw_value(struct gpio_desc *desc, int value);
++void gpiod_set_raw_array(unsigned int array_size,
++			 struct gpio_desc **desc_array, int *value_array);
+ 
+ /* Value get/set from sleeping context */
+ int gpiod_get_value_cansleep(const struct gpio_desc *desc);
+ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value);
++void gpiod_set_array_cansleep(unsigned int array_size,
++			      struct gpio_desc **desc_array,
++			      int *value_array);
+ int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc);
+ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
++void gpiod_set_raw_array_cansleep(unsigned int array_size,
++				  struct gpio_desc **desc_array,
++				  int *value_array);
+ 
+ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
+ 
+@@ -210,6 +220,13 @@ static inline void gpiod_set_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
++static inline void gpiod_set_array(unsigned int array_size,
++				   struct gpio_desc **desc_array,
++				   int *value_array)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++}
+ static inline int gpiod_get_raw_value(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+@@ -221,6 +238,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
++static inline void gpiod_set_raw_array(unsigned int array_size,
++				       struct gpio_desc **desc_array,
++				       int *value_array)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++}
+ 
+ static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
+ {
+@@ -233,6 +257,13 @@ static inline void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
++static inline void gpiod_set_array_cansleep(unsigned int array_size,
++					    struct gpio_desc **desc_array,
++					    int *value_array)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++}
+ static inline int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+@@ -245,6 +276,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
++static inline void gpiod_set_raw_array_cansleep(unsigned int array_size,
++						struct gpio_desc **desc_array,
++						int *value_array)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++}
+ 
+ static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+ {
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index ff200a7..c497c62 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -32,6 +32,7 @@ struct seq_file;
+  * @get: returns value for signal "offset"; for output signals this
+  *	returns either the value actually sensed, or zero
+  * @set: assigns output value for signal "offset"
++ * @set_multiple: assigns output values for multiple signals defined by "mask"
+  * @set_debounce: optional hook for setting debounce time for specified gpio in
+  *      interrupt triggered gpio chips
+  * @to_irq: optional hook supporting non-static gpio_to_irq() mappings;
+@@ -89,6 +90,9 @@ struct gpio_chip {
+ 						unsigned offset);
+ 	void			(*set)(struct gpio_chip *chip,
+ 						unsigned offset, int value);
++	void			(*set_multiple)(struct gpio_chip *chip,
++						unsigned long *mask,
++						unsigned long *bits);
+ 	int			(*set_debounce)(struct gpio_chip *chip,
+ 						unsigned offset,
+ 						unsigned debounce);
 
 --
 2.0.4
