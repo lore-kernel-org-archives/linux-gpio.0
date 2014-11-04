@@ -1,147 +1,113 @@
-From: Michael Heimpold <mhei@heimpold.de>
-Subject: Re: [Regression Resend] mmc: mx28: sd card detection broken since 3.18-rc1
-Date: Tue, 04 Nov 2014 00:26:38 +0100
-Message-ID: <2622508.LMF0YfKZGi@kerker>
-References: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de> <8090335.0rPHov2cpK@kerker> <5457F8BD.1040800@gmail.com>
+From: Benoit Parrot <bparrot@ti.com>
+Subject: Re: [RFC Patch] gpio: add GPIO hogging mechanism
+Date: Mon, 3 Nov 2014 18:38:27 -0600
+Message-ID: <20141104003827.GA24005@ti.com>
+References: <1413922198-29373-1-git-send-email-bparrot@ti.com>
+ <CACRpkdak3EACNpgEznN85d7gPHsMOBW+Ondwx23XhLaVEdjo8Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.160]:31258 "EHLO
-	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751046AbaKCX0l convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Nov 2014 18:26:41 -0500
-In-Reply-To: <5457F8BD.1040800@gmail.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:36445 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750914AbaKDAi3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 3 Nov 2014 19:38:29 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdak3EACNpgEznN85d7gPHsMOBW+Ondwx23XhLaVEdjo8Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kristina =?utf-8?B?TWFydMWhZW5rbw==?= <kristina.martsenko@gmail.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Kristina,
+Linus,
 
-Am Montag, 3. November 2014, 23:50:53 schrieb Kristina Mart=C5=A1enko:
-> On 03/11/14 22:49, Michael Heimpold wrote:
-> > Hi,
->=20
-> Hi Michael,
->=20
-> > Am Montag, 3. November 2014, 01:01:07 schrieben Sie:
-> >> On 01/11/14 23:40, Stefan Wahren wrote:
-> >>> Hi,
-> >>>
-> >>> i was testing Linux Kernel 3.18-rc2 with my i.MX28 board (I2SE Du=
-ckbill) and ran
-> >>> into the problem that the sd card isn't detected from the Kernel =
-at booting
-> >>> (driver: mxs-mmc.c). That results in a endless wait for the root =
-partition
-> >>
-> >> I ran into this issue as well. Seems that a card-detect flag=20
-> >> (MMC_CAP2_CD_ACTIVE_HIGH) can currently be set based on an=20
-> >> uninitialized variable, which can lead to the card being reported =
-as=20
-> >> not present. This patch fixes it for me:
-> >>
-> >> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> >> index 03c53b72a2d6..f0e187682d3b 100644
-> >> --- a/drivers/mmc/core/host.c
-> >> +++ b/drivers/mmc/core/host.c
-> >> @@ -311,7 +311,7 @@ int mmc_of_parse(struct mmc_host *host)
-> >>  	struct device_node *np;
-> >>  	u32 bus_width;
-> >>  	int len, ret;
-> >> -	bool cap_invert, gpio_invert;
-> >> +	bool cap_invert, gpio_invert =3D false;
-> >> =20
-> >=20
-> > sorry, but I don't understand how your patch fixes the problem.
-> >=20
-> > First use of the gpio_invert bool is in line 370/371 within mmc_gpi=
-od_request_cd
-> > (re-wrapped into a single line here for better reading):
-> >=20
-> > -snip-
-> > ret =3D mmc_gpiod_request_cd(host, "cd", 0, true,  0, &gpio_invert)=
-;
-> > -snap-
-> >=20
-> > A pointer to the bool is passed, and inside mmc_gpiod_request_cd (d=
-rivers/mmc/core/slot-gpio.c,
-> > line 322), always a value is assigned:
-> >=20
-> > -snip-
-> > if (gpio_invert)
-> >                 *gpio_invert =3D !gpiod_is_active_low(desc);
-> > -snap-
-> >=20
-> > So returning to mmc_of_parse, the bool should always have an initia=
-lized value.
-> > Apart from some error handling, the bool is used immediately in the=
- xor expression
-> > and results in setting MMC_CAP2_CD_ACTIVE_HIGH bit, or not.
-> >=20
-> > I also cannot see a code path, where gpio_invert is used without a =
-call to mmc_gpiod_request_cd.
-> >=20
-> > Would be nice, if you could point me to what I'm missing.
->=20
-> mmc_gpiod_request_cd can return without ever reaching the line where=20
-> the value is assigned to gpio_invert:
->=20
-> desc =3D devm_gpiod_get_index(host->parent, con_id, idx, GPIOD_IN);
-> if (IS_ERR(desc))
-> 	return PTR_ERR(desc);
->=20
-> This can happen when the host controller doesn't use a GPIO for card=20
-> detection (but instead uses a dedicated pin). In this case=20
-> devm_gpiod_get_index will return -ENOENT.
->=20
+Thanks for the feedback.
 
-ah, I see - thank you for taking the time to explain.
+To summarize the hog feature should be local to gpiolib-of.c, correct?
 
-> >>  	if (!host->parent || !host->parent->of_node)
-> >>  		return 0;
-> >> @@ -401,6 +401,7 @@ int mmc_of_parse(struct mmc_host *host)
-> >>  	else
-> >>  		cap_invert =3D false;
-> >> =20
-> >> +	gpio_invert =3D false;
-> >>  	ret =3D mmc_gpiod_request_ro(host, "wp", 0, false, 0, &gpio_inve=
-rt);
-> >=20
-> > Same here. The functions always assigns a value when a pointer is g=
-iven.
->=20
-> Same thing, the function can return before gpio_invert is ever assign=
-ed=20
-> to.
->=20
-> > (And this change is unrelated to the reporters problem, so should b=
-e fixed with a
-> > dedicated patch.)
->=20
-> Since both flags are set wrong for the exact same reason, and they're=
-=20
-> both regressions in 3.18, I thought it would make sense to fix them=20
-> both in one patch. (Especially since I think it's cleaner to split th=
-e=20
-> gpio_invert variable into cd_gpio_invert and ro_gpio_invert, and I wa=
-s=20
-> going to do that in the patch I'd send.) Let me know if you still thi=
-nk=20
-> I should send separate patches for them.
-=20
-Splitting the variable sounds good to me and will improve readability. =
-In this case
-(and with proper commit message) I think it's really possible to combin=
-e both fixes
-in one patch.
+I also also need some clarifications, see below.
 
-Thanks,
-Michael
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Linus Walleij <linus.walleij@linaro.org> wrote on Mon [2014-Nov-03 10:59:53 +0100]:
+> On Tue, Oct 21, 2014 at 10:09 PM, Benoit Parrot <bparrot@ti.com> wrote:
+> 
+> >         qe_pio_a: gpio-controller@1400 {
+> > @@ -110,6 +130,19 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
+> >                 reg = <0x1400 0x18>;
+> >                 gpio-controller;
+> >                 #gpio-cells = <2>;
+> > +               gpio-hogs = <&line_b>;
+> > +
+> > +               /* line_a hog is defined but not enabled in this example*/
+> > +               line_a: line_a {
+> > +                       gpios = <5 0>;
+> > +                       input;
+> > +               };
+> > +
+> > +               line_b: line_b {
+> > +                       gpios = <6 0>;
+> > +                       output-low;
+> > +                       line-name = "foo-bar-gpio";
+> > +               };
+> 
+> 
+> I don't see the point of having unused hogs and enabling them using
+> phandles.
+> 
+> Just let the core walk over all children nodes of a GPIO controller
+> and hog them. Put in a bool property saying it's a hog.
+> 
+> +               line_b: line_b {
+> +                       gpio-hog;
+> +                       gpios = <6 0>;
+> +                       output-low;
+> +                       line-name = "foo-bar-gpio";
+> +               };
+> 
+> I don't quite see the point with input hogs that noone can use
+> but whatever.
+> 
+> I am thinking that maybe the line name should be compulsory
+> so as to improbe readability. I mean there is always a reason
+> why you're hogging a pin and the name should say it.
+
+Ok, so as an alternative I had presented something like this in my reply
+to Alexandre Courbot's review comments:
+
+  I did consider a "pinmux" flavored format (not sure how hard to parse it would be).
+  It would allow grouping if nothing else.
+
+  	/* Line syntax: line_name <gpio# flags> direction-value [export] */
+	gpio-hogs = <&group_y>;
+
+	group_y: group_y {
+		gpio-hogs-group = <
+			line_x <15 0> output-low
+			line_y <16 0> output-high export
+			line_z <17 0> input
+		>;
+	};
+
+Now based on your comment would something like this work?
+
+     qe_pio_a: gpio-controller@1400 {
+	reg = <0x1400 0x18>;
+	gpio-controller;
+	#gpio-cells = <2>;
+
+  	/* Line syntax: line_name <gpio# flags> direction-value [export] */
+	gpio-hogs: {
+		gpio-hogs-group = <
+			foo-bar-gpio <15 0> output-low
+			bar-foo-gpio <16 0> output-high export
+		>;
+	};
+     };
+
+This would group all hogs for one controller under a single child node.
+Again I am not sure how feasible or easy to implement the DT parsing would be. 
+
+I guess for completeness if you could also comment on my reply to Alexandre from Oct 29th,
+that would be great, before I head in the wrong directions. 
+
+Regards,
+Benoit
