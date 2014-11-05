@@ -1,100 +1,127 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
- Intel Baytrail
-Date: Tue, 4 Nov 2014 13:51:53 -0800
-Message-ID: <20141104215153.GA25606@psi-dev26.jf.intel.com>
-References: <20141103152743.GB1618@lahna.fi.intel.com>
- <20141103154207.GC1618@lahna.fi.intel.com>
- <20141103155011.GH27425@saruman>
- <20141103184247.GD1618@lahna.fi.intel.com>
- <20141103221903.GA20305@psi-dev26.jf.intel.com>
- <20141104075936.GF1618@lahna.fi.intel.com>
- <20141104180526.GB2224@psi-dev26.jf.intel.com>
- <20141104185702.GR1618@lahna.fi.intel.com>
- <20141104191115.GC2224@psi-dev26.jf.intel.com>
- <20141104193424.GT1618@lahna.fi.intel.com>
+From: =?UTF-8?q?Kristina=20Mart=C5=A1enko?=
+	<kristina.martsenko@gmail.com>
+Subject: [PATCH] mmc: core: fix card detection regression
+Date: Wed,  5 Nov 2014 02:22:41 +0200
+Message-ID: <1415146961-25993-1-git-send-email-kristina.martsenko@gmail.com>
+References: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141104193424.GT1618@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Felipe Balbi <balbi@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f51.google.com ([209.85.215.51]:55444 "EHLO
+	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751812AbaKEAYF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Nov 2014 19:24:05 -0500
+In-Reply-To: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stefan Wahren <stefan.wahren@i2se.com>, Fabio Estevam <festevam@gmail.com>, Michael Heimpold <mhei@heimpold.de>, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Kristina=20Mart=C5=A1enko?= <kristina.martsenko@gmail.com>
 
-On Tue, Nov 04, 2014 at 09:34:24PM +0200, Mika Westerberg wrote:
-> On Tue, Nov 04, 2014 at 11:11:16AM -0800, David Cohen wrote:
-> > > It is not implicit at all.
-> > > 
-> > > The user of the GPIO in ACPI DSDT table says something like:
-> > > 
-> > > 	Name (_DEP, Package () { \_SB.GPO2 })
-> > > 
-> > > or similar. That is *explicit* dependency. Here \_SB.GPO2 is one of the
-> > > GPIO banks.
-> > 
-> > Either kernel knows on-the-fly or statically the required dependency.
-> > The static dependency is well described by Kconfig. An on-the-fly
-> > dependency could be a probe execution failing because it couldn't access
-> > part of required resources. If the dependency is temporarily not
-> > described this way, it would still be acceptable a documentation
-> > somewhere explaining that we do have this hidden thing going on.
-> 
-> The only thing kernel knows about this is when it finds that the
-> device in question has _DEP object. Once that happens and it evaluates
+Since commit 89168b489915 ("mmc: core: restore detect line inversion
+semantics"), the SD card on i.MX28 (and possibly other) devices isn't
+detected and booting stops at:
 
-That's all kernel needs to know.
+[    4.120617] Waiting for root device /dev/mmcblk0p3...
 
-> to a list of devices we depend on, we can defer this particular driver
-> going further in probe until all the dependencies listed in _DEP are
-> resolved.
+This is caused by the MMC_CAP2_CD_ACTIVE_HIGH flag being set incorrectl=
+y
+when the host controller doesn't use a GPIO for card detection (but
+instead uses a dedicated pin). In this case mmc_gpiod_request_cd() will
+return before assigning to the gpio_invert variable, leaving the
+variable uninitialized. The variable then gets used to set the flag.
+This patch fixes the issue by making sure gpio_invert is set to false
+when a GPIO isn't used. After this patch, i.MX28 boots fine.
 
-That's the best way to prevent this issue IMHO, but looks like it's
-already being addressed:
-https://lkml.org/lkml/2014/10/27/455
+The MMC_CAP2_RO_ACTIVE_HIGH (write protect) flag is also set incorrectl=
+y
+for the exact same reason (it uses the same uninitialized variable), so
+this patch fixes that too.
 
-> 
-> The documentation you are after is ACPI 5.1 specification downloadable
-> freely at uefi.org/acpi.
+=46ixes: 89168b489915 ("mmc: core: restore detect line inversion semant=
+ics")
+Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Kristina Mart=C5=A1enko <kristina.martsenko@gmail.com>
+---
+This is a different version of the previous patch [1], so I haven't
+included the Reviewed-by and Tested-by's. Would be nice if someone coul=
+d
+test this version as well.
 
-Nope. The documentation I am referring to is the one that doesn't exist.
-It supposed to be a simple comment on pinctrl_baytrail.c's file, or
-maybe a comment on Kconfig. Wherever it could tell ppl not involved with
-original development that there might be an implicit dependency to this
-gpio driver by other drivers. And because of that, it's recommended to
-let this driver probed as soon as possible on Bay Trail platforms.
+[1] http://thread.gmane.org/gmane.linux.kernel.gpio/4609/focus=3D29576
 
-BTW if we can't find the dependency either on Kconfig or on kernel
-codes, if no dependent is checking for this resource when probing, if
-all we have to define that this dependency exists is by looking random
-ACPI tables (which are neither generic, nor part of kernel), it is then
-implicit WRT kernel. Kernel cannot find it, nor developers can foresee
-it.
+ drivers/mmc/core/host.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-> 
-> > > > But IMHO all dependency to a driver should be explicitly described
-> > > > (e.g. on Kconfigs, or maybe failing probe). With current situation if we
-> > > > do not select pinctrl_baytrail, instead of affecting just the drivers
-> > > > that explicitly depend on that, it affects others which we are unable to
-> > > > easily identify.
-> > > 
-> > > So how do you propose we describe the dependency? It is completely in
-> > > firmware. Should we make i2c-hid.c dependent on pinctrl-baytrail.c just
-> > > because some underlying firmware method (_PSx for example) needs the
-> > > GPIO but the driver itself does not?
-> > 
-> > i2c-hid.c should fail, WARN, yell, scream or whatever :)
-> > This way one could say: hey, we needed GPIO.
-> 
-> But i2c-hid.c does not know anything about GPIOS in the first place.
-> Like I said the dependency is in the firmware level. It may need GPIOs
-> to do something or not but the driver never sees those GPIOs.
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index 03c53b72a2d6..270d58a4c43d 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -311,7 +311,8 @@ int mmc_of_parse(struct mmc_host *host)
+ 	struct device_node *np;
+ 	u32 bus_width;
+ 	int len, ret;
+-	bool cap_invert, gpio_invert;
++	bool cd_cap_invert, cd_gpio_invert =3D false;
++	bool ro_cap_invert, ro_gpio_invert =3D false;
+=20
+ 	if (!host->parent || !host->parent->of_node)
+ 		return 0;
+@@ -359,16 +360,13 @@ int mmc_of_parse(struct mmc_host *host)
+ 	if (of_find_property(np, "non-removable", &len)) {
+ 		host->caps |=3D MMC_CAP_NONREMOVABLE;
+ 	} else {
+-		if (of_property_read_bool(np, "cd-inverted"))
+-			cap_invert =3D true;
+-		else
+-			cap_invert =3D false;
++		cd_cap_invert =3D of_property_read_bool(np, "cd-inverted");
+=20
+ 		if (of_find_property(np, "broken-cd", &len))
+ 			host->caps |=3D MMC_CAP_NEEDS_POLL;
+=20
+ 		ret =3D mmc_gpiod_request_cd(host, "cd", 0, true,
+-					   0, &gpio_invert);
++					   0, &cd_gpio_invert);
+ 		if (ret) {
+ 			if (ret =3D=3D -EPROBE_DEFER)
+ 				return ret;
+@@ -391,17 +389,14 @@ int mmc_of_parse(struct mmc_host *host)
+ 		 * both inverted, the end result is that the CD line is
+ 		 * not inverted.
+ 		 */
+-		if (cap_invert ^ gpio_invert)
++		if (cd_cap_invert ^ cd_gpio_invert)
+ 			host->caps2 |=3D MMC_CAP2_CD_ACTIVE_HIGH;
+ 	}
+=20
+ 	/* Parse Write Protection */
+-	if (of_property_read_bool(np, "wp-inverted"))
+-		cap_invert =3D true;
+-	else
+-		cap_invert =3D false;
++	ro_cap_invert =3D of_property_read_bool(np, "wp-inverted");
+=20
+-	ret =3D mmc_gpiod_request_ro(host, "wp", 0, false, 0, &gpio_invert);
++	ret =3D mmc_gpiod_request_ro(host, "wp", 0, false, 0, &ro_gpio_invert=
+);
+ 	if (ret) {
+ 		if (ret =3D=3D -EPROBE_DEFER)
+ 			goto out;
+@@ -414,7 +409,7 @@ int mmc_of_parse(struct mmc_host *host)
+ 		dev_info(host->parent, "Got WP GPIO\n");
+=20
+ 	/* See the comment on CD inversion above */
+-	if (cap_invert ^ gpio_invert)
++	if (ro_cap_invert ^ ro_gpio_invert)
+ 		host->caps2 |=3D MMC_CAP2_RO_ACTIVE_HIGH;
+=20
+ 	if (of_find_property(np, "cap-sd-highspeed", &len))
+--=20
+2.0.2
 
-AFAIU any gpio usage by FW would start from a call from i2c-hid.c
-driver. Maybe this call could fail, and then nothing implicit happens.
-But i2c-hid.c does know about the dependency if checks its ACPI table
-during the probe. But that's being addressed by the thread I posted
-above.
-
-Br, David
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
