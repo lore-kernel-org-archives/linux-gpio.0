@@ -1,59 +1,126 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] mmc: core: fix card detection regression
-Date: Tue, 4 Nov 2014 22:48:45 -0200
-Message-ID: <CAOMZO5CKB4aHTyYCvnT0UZCi4Pe+XyDa2-G1kpzyce1J3y3nfQ@mail.gmail.com>
-References: <1747777414.897866.1414878004147.JavaMail.open-xchange@oxbsltgw09.schlund.de>
-	<1415146961-25993-1-git-send-email-kristina.martsenko@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
+ Intel Baytrail
+Date: Wed, 5 Nov 2014 10:40:33 +0200
+Message-ID: <20141105084033.GU1618@lahna.fi.intel.com>
+References: <20141103154207.GC1618@lahna.fi.intel.com>
+ <20141103155011.GH27425@saruman>
+ <20141103184247.GD1618@lahna.fi.intel.com>
+ <20141103221903.GA20305@psi-dev26.jf.intel.com>
+ <20141104075936.GF1618@lahna.fi.intel.com>
+ <20141104180526.GB2224@psi-dev26.jf.intel.com>
+ <20141104185702.GR1618@lahna.fi.intel.com>
+ <20141104191115.GC2224@psi-dev26.jf.intel.com>
+ <20141104193424.GT1618@lahna.fi.intel.com>
+ <20141104215153.GA25606@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:51644 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751421AbaKEAsr convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Nov 2014 19:48:47 -0500
-In-Reply-To: <1415146961-25993-1-git-send-email-kristina.martsenko@gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:35026 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751176AbaKEIqG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 5 Nov 2014 03:46:06 -0500
+Content-Disposition: inline
+In-Reply-To: <20141104215153.GA25606@psi-dev26.jf.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Kristina_Mart=C5=A1enko?= <kristina.martsenko@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Linus Walleij <linus.walleij@linaro.org>, Stefan Wahren <stefan.wahren@i2se.com>, Michael Heimpold <mhei@heimpold.de>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Felipe Balbi <balbi@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, mathias.nyman@linux.intel.com
 
-Hi Kristina,
+On Tue, Nov 04, 2014 at 01:51:53PM -0800, David Cohen wrote:
+> On Tue, Nov 04, 2014 at 09:34:24PM +0200, Mika Westerberg wrote:
+> > On Tue, Nov 04, 2014 at 11:11:16AM -0800, David Cohen wrote:
+> > > > It is not implicit at all.
+> > > > 
+> > > > The user of the GPIO in ACPI DSDT table says something like:
+> > > > 
+> > > > 	Name (_DEP, Package () { \_SB.GPO2 })
+> > > > 
+> > > > or similar. That is *explicit* dependency. Here \_SB.GPO2 is one of the
+> > > > GPIO banks.
+> > > 
+> > > Either kernel knows on-the-fly or statically the required dependency.
+> > > The static dependency is well described by Kconfig. An on-the-fly
+> > > dependency could be a probe execution failing because it couldn't access
+> > > part of required resources. If the dependency is temporarily not
+> > > described this way, it would still be acceptable a documentation
+> > > somewhere explaining that we do have this hidden thing going on.
+> > 
+> > The only thing kernel knows about this is when it finds that the
+> > device in question has _DEP object. Once that happens and it evaluates
+> 
+> That's all kernel needs to know.
+> 
+> > to a list of devices we depend on, we can defer this particular driver
+> > going further in probe until all the dependencies listed in _DEP are
+> > resolved.
+> 
+> That's the best way to prevent this issue IMHO, but looks like it's
+> already being addressed:
+> https://lkml.org/lkml/2014/10/27/455
 
-On Tue, Nov 4, 2014 at 10:22 PM, Kristina Mart=C5=A1enko
-<kristina.martsenko@gmail.com> wrote:
-> Since commit 89168b489915 ("mmc: core: restore detect line inversion
-> semantics"), the SD card on i.MX28 (and possibly other) devices isn't
-> detected and booting stops at:
->
-> [    4.120617] Waiting for root device /dev/mmcblk0p3...
->
-> This is caused by the MMC_CAP2_CD_ACTIVE_HIGH flag being set incorrec=
-tly
-> when the host controller doesn't use a GPIO for card detection (but
-> instead uses a dedicated pin). In this case mmc_gpiod_request_cd() wi=
-ll
-> return before assigning to the gpio_invert variable, leaving the
-> variable uninitialized. The variable then gets used to set the flag.
-> This patch fixes the issue by making sure gpio_invert is set to false
-> when a GPIO isn't used. After this patch, i.MX28 boots fine.
->
-> The MMC_CAP2_RO_ACTIVE_HIGH (write protect) flag is also set incorrec=
-tly
-> for the exact same reason (it uses the same uninitialized variable), =
-so
-> this patch fixes that too.
->
-> Fixes: 89168b489915 ("mmc: core: restore detect line inversion semant=
-ics")
-> Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
-> Signed-off-by: Kristina Mart=C5=A1enko <kristina.martsenko@gmail.com>
+Yes, that's the patch series.
 
-This fixes mx28 card detection, thanks!
+> > 
+> > The documentation you are after is ACPI 5.1 specification downloadable
+> > freely at uefi.org/acpi.
+> 
+> Nope. The documentation I am referring to is the one that doesn't exist.
+> It supposed to be a simple comment on pinctrl_baytrail.c's file, or
+> maybe a comment on Kconfig. Wherever it could tell ppl not involved with
+> original development that there might be an implicit dependency to this
+> gpio driver by other drivers. And because of that, it's recommended to
+> let this driver probed as soon as possible on Bay Trail platforms.
 
-Tested-by: Fabio Estevam <fabio.estevam@freescale.com>
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Are we going to add similar to other drivers as well? I2C core for
+example installs I2C operation region handlers for every I2C controller
+that happens to have an ACPI handle.
+
+> BTW if we can't find the dependency either on Kconfig or on kernel
+> codes, if no dependent is checking for this resource when probing, if
+> all we have to define that this dependency exists is by looking random
+> ACPI tables (which are neither generic, nor part of kernel), it is then
+> implicit WRT kernel. Kernel cannot find it, nor developers can foresee
+> it.
+
+OK.
+
+> > > > > But IMHO all dependency to a driver should be explicitly described
+> > > > > (e.g. on Kconfigs, or maybe failing probe). With current situation if we
+> > > > > do not select pinctrl_baytrail, instead of affecting just the drivers
+> > > > > that explicitly depend on that, it affects others which we are unable to
+> > > > > easily identify.
+> > > > 
+> > > > So how do you propose we describe the dependency? It is completely in
+> > > > firmware. Should we make i2c-hid.c dependent on pinctrl-baytrail.c just
+> > > > because some underlying firmware method (_PSx for example) needs the
+> > > > GPIO but the driver itself does not?
+> > > 
+> > > i2c-hid.c should fail, WARN, yell, scream or whatever :)
+> > > This way one could say: hey, we needed GPIO.
+> > 
+> > But i2c-hid.c does not know anything about GPIOS in the first place.
+> > Like I said the dependency is in the firmware level. It may need GPIOs
+> > to do something or not but the driver never sees those GPIOs.
+> 
+> AFAIU any gpio usage by FW would start from a call from i2c-hid.c
+
+Not necesarily. Even before we enter the probe of the i2c-hid.c, the
+ACPI power domain might try to power on the device. That might involve
+toggling GPIOs from the AML code.
+
+Same thing during system suspend/resume.
+
+The driver is not involved in this but it is the ACPI device related to
+the i2c-hid.c that has the GPIO dependency.
+
+> driver. Maybe this call could fail, and then nothing implicit happens.
+> But i2c-hid.c does know about the dependency if checks its ACPI table
+> during the probe. But that's being addressed by the thread I posted
+> above.
+
+Indeed.
+
+However, now that I look at the _DEP implementation closely it seems to
+leave this to the drivers and not automatically prevent probing a driver
+if the device in questions has unmet dependencies...
