@@ -1,92 +1,76 @@
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH] gpio-rcar: .irq_set_wake() support to work with suspend_device_irqs()
-Date: Fri,  7 Nov 2014 18:22:45 +0900
-Message-ID: <1415352165-26597-1-git-send-email-ykaneko0929@gmail.com>
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
+Subject: [PATCH] gpio: rcar: Add r8a7793 and r8a7794 support
+Date: Fri,  7 Nov 2014 18:23:39 +0900
+Message-ID: <1415352219-26644-1-git-send-email-ykaneko0929@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:60936 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750919AbaKGJYo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Nov 2014 04:24:44 -0500
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
 
-From: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
+From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
 
-All IRQs in the kernel get disabled by PM core prior to .suspend_noirq()
-step through kernel/irq/pm.c::suspend_device_irqs().
+The device tree probing for R-Car M2-N (r8a7793) and R-Car E2 (r8a7794)
+is added.
 
-The SYSC hardware block in the R-Car SoCs, on the other hand, uses any
-interrupt as wake-up source(es) and requires them to be unmasked during
-the system is suspended.
-
-This patch implements .irq_set_wake() which makes __disable_irq() call
-a NOP when a GPIO port is claimed as a wake-up source.
-
-Signed-off-by: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
 Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
 
 This patch is based on for-next branch of Linus Walleij's gpio tree.
 
- drivers/gpio/gpio-rcar.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt |  4 +++-
+ drivers/gpio/gpio-rcar.c                                     | 11 +++++++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 941a26a..38fb86f 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -6,7 +6,9 @@ Required Properties:
+     - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
+     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
+     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
+-    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2) compatible GPIO controller.
++    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO controller.
++    - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO controller.
++    - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
+     - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+ 
+   - reg: Base address and length of each memory resource used by the GPIO
 diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index bf6c094..ef71ca8 100644
+index ef71ca8..947654e 100644
 --- a/drivers/gpio/gpio-rcar.c
 +++ b/drivers/gpio/gpio-rcar.c
-@@ -38,6 +38,7 @@ struct gpio_rcar_priv {
- 	struct gpio_chip gpio_chip;
- 	struct irq_chip irq_chip;
- 	struct irq_domain *irq_domain;
-+	u32 no_suspend; /* do not disable this GPIO port during suspend */
- };
- 
- #define IOINTSEL 0x00
-@@ -83,6 +84,15 @@ static void gpio_rcar_irq_disable(struct irq_data *d)
- {
- 	struct gpio_rcar_priv *p = irq_data_get_irq_chip_data(d);
- 
-+	if (p->no_suspend & BIT(irqd_to_hwirq(d))) {
-+		/*
-+		 * This GPIO port is claimed as a wake-up source and
-+		 * currently in a no-suspend-requested state.  Don't
-+		 * disable this IRQ during suspend.
-+		 */
-+		return;
-+	}
-+
- 	gpio_rcar_write(p, INTMSK, ~BIT(irqd_to_hwirq(d)));
- }
- 
-@@ -164,6 +174,20 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
- 	return 0;
- }
- 
-+static int gpio_rcar_irq_set_wake(struct irq_data *d, unsigned int on)
-+{
-+	struct gpio_rcar_priv *p = irq_data_get_irq_chip_data(d);
-+	unsigned int hwirq = irqd_to_hwirq(d);
-+
-+	dev_dbg(&p->pdev->dev, "wake irq = %u %s\n", hwirq, on ? "on" : "off");
-+
-+	if (on)
-+		p->no_suspend |= BIT(hwirq);
-+	else
-+		p->no_suspend &= ~BIT(hwirq);
-+	return 0;
-+}
-+
- static irqreturn_t gpio_rcar_irq_handler(int irq, void *dev_id)
- {
- 	struct gpio_rcar_priv *p = dev_id;
-@@ -416,6 +440,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	irq_chip->irq_mask = gpio_rcar_irq_disable;
- 	irq_chip->irq_unmask = gpio_rcar_irq_enable;
- 	irq_chip->irq_set_type = gpio_rcar_irq_set_type;
-+	irq_chip->irq_set_wake = gpio_rcar_irq_set_wake;
- 	irq_chip->flags	= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_SET_TYPE_MASKED
- 			 | IRQCHIP_MASK_ON_SUSPEND;
- 
+@@ -1,6 +1,7 @@
+ /*
+  * Renesas R-Car GPIO Support
+  *
++ *  Copyright (C) 2014 Renesas Electronics Corporation
+  *  Copyright (C) 2013 Magnus Damm
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -327,6 +328,16 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 			.has_both_edge_trigger = true,
+ 		},
+ 	}, {
++		.compatible = "renesas,gpio-r8a7793",
++		.data = (void *)&(const struct gpio_rcar_info) {
++			.has_both_edge_trigger = true,
++		},
++	}, {
++		.compatible = "renesas,gpio-r8a7794",
++		.data = (void *)&(const struct gpio_rcar_info) {
++			.has_both_edge_trigger = true,
++		},
++	}, {
+ 		.compatible = "renesas,gpio-rcar",
+ 		.data = (void *)&(const struct gpio_rcar_info) {
+ 			.has_both_edge_trigger = false,
 -- 
 1.9.1
 
