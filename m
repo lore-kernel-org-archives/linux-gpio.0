@@ -1,94 +1,41 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO and I2C
-Date: Mon, 10 Nov 2014 17:43:55 +0000
-Message-ID: <20141110174355.GM24004@x1>
-References: <1415281685-14866-1-git-send-email-octavian.purdila@intel.com>
- <20141110151226.GD24004@x1>
- <20141110160426.GK24004@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH 1/1] gpio: mcp23s08: Do not free unrequested interrupt
+Date: Tue, 11 Nov 2014 09:08:43 +0100
+Message-ID: <1415693323-19046-1-git-send-email-alexander.stein@systec-electronic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f179.google.com ([209.85.213.179]:53389 "EHLO
-	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753634AbaKJRoD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Nov 2014 12:44:03 -0500
-Received: by mail-ig0-f179.google.com with SMTP id r10so9571835igi.0
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Nov 2014 09:44:02 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20141110160426.GK24004@x1>
+Received: from webbox1416.server-home.net ([77.236.96.61]:35729 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752185AbaKKIGz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 11 Nov 2014 03:06:55 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: gregkh@linuxfoundation.org, linus.walleij@linaro.org, gnurou@gmail.com, wsa@the-dreams.de, sameo@linux.intel.com, arnd@arndb.de, johan@kernel.org, daniel.baluta@intel.com, laurentiu.palcu@intel.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
 
-> Please don't pull this -- it is missing a patch.
->=20
-> Will fix.
+If devm_request_threaded_irq fails for some reason we call
+mcp23s08_irq_teardown afterwards.
+Do not free the unrequested interrupt in this case. free_irq can also be
+omitted for the error free case because we use devm_request_threaded_irq.
 
-Okay, dependency fixed.  Sorry for the fuss.  Pull when ready.
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+ drivers/gpio/gpio-mcp23s08.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> > [Subject change -- in case you miss it]
-> >=20
-> > Linus, Wolfram,
-> >=20
-> > Enjoy!
-> >=20
-> > The following changes since commit f114040e3ea6e07372334ade75d1ee07=
-75c355e1:
-> >=20
-> >   Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
-> >=20
-> > are available in the git repository at:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib=
--mfd-gpio-i2c-v3.19
-> >=20
-> > for you to fetch changes up to e7d146b11a8a33b6033220b0f4fc4de2ab29=
-218a:
-> >=20
-> >   gpio: add support for the Diolan DLN-2 USB GPIO driver (2014-11-1=
-0 15:05:49 +0000)
-> >=20
-> > ----------------------------------------------------------------
-> > Immutable branch between MFD, GPIO and I2C
-> >=20
-> > ----------------------------------------------------------------
-> > Daniel Baluta (1):
-> >       gpio: add support for the Diolan DLN-2 USB GPIO driver
-> >=20
-> > Laurentiu Palcu (1):
-> >       i2c: add support for Diolan DLN-2 USB-I2C adapter
-> >=20
-> > Octavian Purdila (1):
-> >       mfd: Add support for Diolan DLN-2 devices
-> >=20
-> >  drivers/gpio/Kconfig          |  12 +
-> >  drivers/gpio/Makefile         |   1 +
-> >  drivers/gpio/gpio-dln2.c      | 553 ++++++++++++++++++++++++++++++
-> >  drivers/i2c/busses/Kconfig    |  10 +
-> >  drivers/i2c/busses/Makefile   |   1 +
-> >  drivers/i2c/busses/i2c-dln2.c | 267 +++++++++++++++
-> >  drivers/mfd/Kconfig           |  10 +
-> >  drivers/mfd/Makefile          |   1 +
-> >  drivers/mfd/dln2.c            | 763 ++++++++++++++++++++++++++++++=
-++++++++++++
-> >  include/linux/mfd/dln2.h      | 103 ++++++
-> >  10 files changed, 1721 insertions(+)
-> >  create mode 100644 drivers/gpio/gpio-dln2.c
-> >  create mode 100644 drivers/i2c/busses/i2c-dln2.c
-> >  create mode 100644 drivers/mfd/dln2.c
-> >  create mode 100644 include/linux/mfd/dln2.h
-> >=20
->=20
+diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+index 8488e2f..d5e9586 100644
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@ -514,8 +514,6 @@ static void mcp23s08_irq_teardown(struct mcp23s08 *mcp)
+ {
+ 	unsigned int irq, i;
+ 
+-	free_irq(mcp->irq, mcp);
+-
+ 	for (i = 0; i < mcp->chip.ngpio; i++) {
+ 		irq = irq_find_mapping(mcp->irq_domain, i);
+ 		if (irq > 0)
+-- 
+2.0.4
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
