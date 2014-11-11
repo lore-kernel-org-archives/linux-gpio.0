@@ -1,59 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] gpio: remove gpio_descs global array
-Date: Tue, 11 Nov 2014 11:31:35 +0100
-Message-ID: <CACRpkdaA=F852HRhEYLYscCyTr5pYmNSAGw-dZU=oA4C6Qh2gA@mail.gmail.com>
-References: <1414825380-15322-1-git-send-email-acourbot@nvidia.com>
-	<CACRpkdaaXxXCm9===0zaKW5QJsHFBznnERdFrcbtKLQhxygzhA@mail.gmail.com>
-	<CAAVeFu+fsgG86b8iYVeHNmGqtb2m_P6esF1QFrbsMhwTh+P7Aw@mail.gmail.com>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH 02/15] GPIO: port LoCoMo gpio support from old driver
+Date: Tue, 11 Nov 2014 17:16:38 +0400
+Message-ID: <CALT56yPr42FV66USngocw=eWPt81d5R2MJxmzBnv02HOMmXAkA@mail.gmail.com>
+References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
+	<1414454528-24240-3-git-send-email-dbaryshkov@gmail.com>
+	<CACRpkdY7tRadod2vQfEytmw-ubaMAvr_=XTczD5bUMkqie0xkg@mail.gmail.com>
+	<CALT56yOgMUA7o2dzfHph=S2zkDV4zERzMh4ishpPwpAx7Cqj6Q@mail.gmail.com>
+	<CACRpkdb7v3LmOhbhQ9TPk1_bnLnpwizawW6RQvhQRLSjRewAaQ@mail.gmail.com>
+	<CALT56yO9f8wzaArnmfQSDzCM3S+2oT+62anH5kbFY3WdEt_HZg@mail.gmail.com>
+	<20141106060335.GR8509@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:59583 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751437AbaKKKbg convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Nov 2014 05:31:36 -0500
-Received: by mail-ie0-f173.google.com with SMTP id tr6so11139043ieb.32
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Nov 2014 02:31:36 -0800 (PST)
-In-Reply-To: <CAAVeFu+fsgG86b8iYVeHNmGqtb2m_P6esF1QFrbsMhwTh+P7Aw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20141106060335.GR8509@sirena.org.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Nov 4, 2014 at 10:10 AM, Alexandre Courbot <gnurou@gmail.com> w=
-rote:
-> On Mon, Nov 3, 2014 at 11:11 PM, Linus Walleij <linus.walleij@linaro.=
-org> wrote:
->> On Sat, Nov 1, 2014 at 8:03 AM, Alexandre Courbot <acourbot@nvidia.c=
-om> wrote:
->>
->>> The issue with this patch is its use of kzalloc() in gpiochip_add()=
-, a
->>> function potentially called during early boot, before kzalloc() bec=
-omes
->>> usable. Hence its [RFC] status until we can find a solution for thi=
-s or
->>> agree that this issue is actually never ran into (from which point =
-can
->>> one use kzalloc()?)
->>
->> So which driver requires that the gpiochip be statically defined...
->> I heard about early call but not *that* early.
+2014-11-06 9:03 GMT+03:00 Mark Brown <broonie@kernel.org>:
+> On Thu, Nov 06, 2014 at 01:33:24AM +0400, Dmitry Eremin-Solenikov wrote:
+>> 2014-11-03 16:43 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
 >
-> Let me know if you feel adventurous - in that case I will submit a
-> proper version of this patch to put in -next, and we'll see if people
-> complain... :)
+>> > Yes that's the point: if you use regmap mmio you get the RMW-locking
+>> > for free, with the regmap implementation.
+>
+>> Just to be more concrete. Currently locomo_gpio_ack_irq() function uses
+>> one lock and one unlock for doing 3 consecutive RMW I I convert locomo
+>> to regmap, will that be 3 lock/unlock calls or still one? (Or maybe I'm
+>> trying to be over-protective here and adding more lock/unlock cycles
+>> won't matter that much?)
+>
+> You'll get three lock/unlocks, we could add an interface for bulk
+> updates under one lock if it's important though.
+>
+>> Next question: if I have to export regmap to several subdrivers, is it better
+>> to have one big regmap or to have one-map-per-driver approach?
+>
+> One regmap for the physical register map which is shared between all the
+> users.
 
-=D0=BB=D0=B5=D1=81 =D1=80=D1=83=D0=B1=D1=8F=D1=82 =E2=80=94 =D1=89=D0=B5=
-=D0=BF=D0=BA=D0=B8 =D0=BB=D0=B5=D1=82=D1=8F=D1=82 as the russians say.
+Mark, Linus,
 
-Let us have the patch.
+Just to better understand your suggestions: do you want me to convert
+to regmap only gpio driver or do you suggest to convert all LoCoMo drivers?
+That is doable, of course, but the amount of changes is overwhelming.
+Also I'm concerned about the performance impact from going through
+regmap layers.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+With best wishes
+Dmitry
