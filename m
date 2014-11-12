@@ -1,49 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/3] gpio: arizona: Add support for CS47L24
-Date: Tue, 11 Nov 2014 17:16:08 +0000
-Message-ID: <20141111171608.GZ3815@sirena.org.uk>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/3] mfd: arizona: Add support for CS47L24
+Date: Wed, 12 Nov 2014 09:34:04 +0000
+Message-ID: <20141112093404.GC23178@opensource.wolfsonmicro.com>
 References: <20141111165227.GA24344@opensource.wolfsonmicro.com>
- <20141111170432.GB25738@opensource.wolfsonmicro.com>
+ <20141111170319.GA25738@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UQXM1TyQrj1TTJf+"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33577 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751086AbaKKRRe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Nov 2014 12:17:34 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
 Content-Disposition: inline
-In-Reply-To: <20141111170432.GB25738@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+In-Reply-To: <20141111170319.GA25738@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, ckeepax@opensource.wolfsonmicro.com
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, tiwai@suse.de, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, lgirdwood@gmail.com, linux-gpio@vger.kernel.org, broonie@kernel.org, lee.jones@linaro.org
+List-Id: linux-gpio@vger.kernel.org
 
+On Tue, Nov 11, 2014 at 05:03:19PM +0000, Richard Fitzgerald wrote:
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> ---
+>  drivers/mfd/Kconfig              |    6 +
+>  drivers/mfd/Makefile             |    3 +
+>  drivers/mfd/arizona-core.c       |   91 ++-
+>  drivers/mfd/arizona-irq.c        |   42 +-
+>  drivers/mfd/arizona-spi.c        |    9 +
+>  drivers/mfd/arizona.h            |    5 +
+>  drivers/mfd/cs47l24-tables.c     | 1632 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/arizona/core.h |    4 +
+>  8 files changed, 1765 insertions(+), 27 deletions(-)
+>  create mode 100644 drivers/mfd/cs47l24-tables.c
 
---UQXM1TyQrj1TTJf+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Its worth noting this patch chain depends on the three MFD
+patches Lee merged the other day from me so it would probably
+make sense to push the whole series through the MFD tree if
+possible.
 
-On Tue, Nov 11, 2014 at 05:04:32PM +0000, Richard Fitzgerald wrote:
-
-> + * Copyright 2014 CirrusLogic, Inc.
-
-Deathtospaces.
-
---UQXM1TyQrj1TTJf+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUYkRYAAoJECTWi3JdVIfQ3JAH/A9WeY1B1wrly4T60UT1l4eI
-CvClLp6IHg6/Qofi9HbXWyH3JhfFvRS8EF6Rk4EiIKEsbuP0/V/q3HD50gMvznzN
-K7VtinQP7GSCKqUIPVNwY2acoT5ou1YgqH363CrCd3iDDMNPTCylmGr1joDl+lWa
-RhH5t26sg8KvqSt3zDipKgZo01O4aunon3WYZrvRjaTBd6rJlFN7kNeq4VC6dsJn
-ag9Ag9OwnpzbSAnmXTbH+HrHI9L4Mm2OZx3UOA1v1T423KZFSOhl1Ef17BVyf9/U
-0YS+GMXsfl340M+McUpbfANcG8GdXoNCckTPgsdhxY+9ojFCohg56jNPExDV0KY=
-=mqhu
------END PGP SIGNATURE-----
-
---UQXM1TyQrj1TTJf+--
+Thanks,
+Charles
