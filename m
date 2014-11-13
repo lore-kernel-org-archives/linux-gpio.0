@@ -1,56 +1,33 @@
-From: Naitik Amin <naitik.amin@ametek.com>
-Subject: gpio-pca953x.c
-Date: Wed, 12 Nov 2014 14:54:18 +0000 (UTC)
-Message-ID: <loom.20141112T153203-751@post.gmane.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH V3 2/5] MIPS: Loongson: Add Loongson-3A/3B GPIO support
+Date: Thu, 13 Nov 2014 15:26:09 +0900
+Message-ID: <CAAVeFuJ1+y8wooVAHMST9zC4_Z8SE6x=VASsFkUwCVFcA8xuLg@mail.gmail.com>
+References: <1415794700-7579-1-git-send-email-chenhc@lemote.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:51299 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752832AbaKLPKI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 12 Nov 2014 10:10:08 -0500
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glg-linux-gpio@m.gmane.org>)
-	id 1XoZYa-0000BF-95
-	for linux-gpio@vger.kernel.org; Wed, 12 Nov 2014 16:10:07 +0100
-Received: from adsl-070-147-034-178.sip.bct.bellsouth.net ([70.147.34.178])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Nov 2014 16:10:04 +0100
-Received: from naitik.amin by adsl-070-147-034-178.sip.bct.bellsouth.net with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Nov 2014 16:10:04 +0100
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:34774 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750907AbaKMG0a (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Nov 2014 01:26:30 -0500
+Received: by mail-ie0-f175.google.com with SMTP id y20so15278875ier.34
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Nov 2014 22:26:30 -0800 (PST)
+In-Reply-To: <1415794700-7579-1-git-send-email-chenhc@lemote.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Huacai Chen <chenhc@lemote.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, John Crispin <john@phrozen.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Hongbing Hu <huhb@lemote.com>
 
-HI there,
+On Wed, Nov 12, 2014 at 9:18 PM, Huacai Chen <chenhc@lemote.com> wrote:
+> Improve Loongson-2's GPIO driver to support Loongson-3A/3B, and move it
+> to drivers/gpio directory.
 
-I am trying to use the gpio driver for pca953x with IRQ enabled config. When 
-the device gets probbed, I gives me an error saying :
-"failed to set trigger mode 8"
+Could you split this in two patches:
+1/2: move GPIO driver to drivers/gpio
+2/2: support new devices in GPIO driver
 
-The probe called,
-ret = devm_request_threaded_irq(&client->dev,
-					client->irq,
-					   NULL,
-					   pca953x_irq_handler,
-					   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-					   dev_name(&client->dev), chip);
+and add the "-C" option to git format-patch so that file renaming gets
+detected. This will make the changes easier to evaluate.
 
-with IRQF_TRIGGER_LOW as a flag
-
-I did some tracing and found out, irq set type, went to gic_set_type in irq-
-gic.c ( http://lxr.free-electrons.com/source/drivers/irqchip/irq-gic.c#L187 )
-
-But gic_set_type, only wants to see either IRQF_TRIGGER_HIGH OR 
-IRQF_TRIGGER_LOW, thats why it returned.
-
-Questions
-1. Is it correct that irq set type went to gic_set_type, bcoz pca953x does 
-provide one of itself.
-
-
-
-
+Thanks,
+Alex.
