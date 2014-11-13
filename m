@@ -1,33 +1,38 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH V3 2/5] MIPS: Loongson: Add Loongson-3A/3B GPIO support
-Date: Thu, 13 Nov 2014 15:26:09 +0900
-Message-ID: <CAAVeFuJ1+y8wooVAHMST9zC4_Z8SE6x=VASsFkUwCVFcA8xuLg@mail.gmail.com>
-References: <1415794700-7579-1-git-send-email-chenhc@lemote.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/5] convert to use basic mmio gpio library
+Date: Thu, 13 Nov 2014 10:48:04 +0100
+Message-ID: <CACRpkdZPCTsR6Mev9p1OcPOdT3LSaabBGwHBLWfY3_8diS6gqg@mail.gmail.com>
+References: <1414591005-30961-1-git-send-email-kamlakant.patel@linaro.org>
+	<CAAVeFuK+y-WpDPzU-vyy+FE2Ccbkr_JVK22jJyOW4JuDFdjV6g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:34774 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750907AbaKMG0a (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Nov 2014 01:26:30 -0500
-Received: by mail-ie0-f175.google.com with SMTP id y20so15278875ier.34
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Nov 2014 22:26:30 -0800 (PST)
-In-Reply-To: <1415794700-7579-1-git-send-email-chenhc@lemote.com>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:51709 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932174AbaKMJsG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Nov 2014 04:48:06 -0500
+Received: by mail-ig0-f178.google.com with SMTP id a13so4628834igq.5
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Nov 2014 01:48:04 -0800 (PST)
+In-Reply-To: <CAAVeFuK+y-WpDPzU-vyy+FE2Ccbkr_JVK22jJyOW4JuDFdjV6g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Huacai Chen <chenhc@lemote.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, John Crispin <john@phrozen.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Hongbing Hu <huhb@lemote.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Nov 12, 2014 at 9:18 PM, Huacai Chen <chenhc@lemote.com> wrote:
-> Improve Loongson-2's GPIO driver to support Loongson-3A/3B, and move it
-> to drivers/gpio directory.
+On Fri, Nov 7, 2014 at 10:10 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Wed, Oct 29, 2014 at 10:56 PM,  <kamlakant.patel@linaro.org> wrote:
+>> From: Kamlakant Patel <kamlakant.patel@linaro.org>
+>>
+>> This patch converts GPIO drivers to use BASIC MMIO GPIO library
+>> (i.e GPIO GENERIC library) which makes drivers smaller and simpler.
+>>
+>> This patch needs to be tested on different platforms.
+>
+> This sounds like a good idea, but we will need to get a couple of
+> Tested-by for each patch.
 
-Could you split this in two patches:
-1/2: move GPIO driver to drivers/gpio
-2/2: support new devices in GPIO driver
+Any single Tested-by is enough for me. If it works for someone on
+the real hardware I'll apply it ... testing resources are scarce.
 
-and add the "-C" option to git format-patch so that file renaming gets
-detected. This will make the changes easier to evaluate.
-
-Thanks,
-Alex.
+Yours,
+Linus Walleij
