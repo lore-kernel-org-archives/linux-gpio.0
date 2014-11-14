@@ -1,104 +1,109 @@
-From: =?ISO-8859-2?Q?Janusz_U=BFycki?= <j.uzycki@elproma.com.pl>
-Subject: Re: [PATCH v2] serial: mxs-auart: Fix mxs_auart_set_ldisc()
-Date: Fri, 14 Nov 2014 23:53:14 +0100
-Message-ID: <546687DA.6010503@elproma.com.pl>
-References: <1415831569-6904-1-git-send-email-festevam@gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on Intel Baytrail
+Date: Sat, 15 Nov 2014 00:19:57 +0100
+Message-ID: <3213116.fzuiWWWLrg@vostro.rjw.lan>
+References: <20141103150048.GB27425@saruman> <CACRpkdZg9-h+SVEe1mDHWm2kCfR3wc6uCvaLJsXpJm7xNL=r-w@mail.gmail.com> <20141114095340.GZ1454@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from v032797.home.net.pl ([89.161.177.31]:55253 "HELO
-	v032797.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1422720AbaKNWxL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Nov 2014 17:53:11 -0500
-In-Reply-To: <1415831569-6904-1-git-send-email-festevam@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20141114095340.GZ1454@lahna.fi.intel.com>
+Sender: stable-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Greg Kroah-Hartman <greg@kroah.com>, David Cohen <david.a.cohen@linux.intel.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>, gregkh@linuxfoundation.org
-Cc: linux-serial@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi,
+On Friday, November 14, 2014 11:53:40 AM Mika Westerberg wrote:
+> +Rafael
+> 
+> On Fri, Nov 14, 2014 at 10:39:07AM +0100, Linus Walleij wrote:
+> > On Tue, Nov 4, 2014 at 7:57 PM, Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
+> > > On Tue, Nov 04, 2014 at 10:05:26AM -0800, David Cohen wrote:
+> > 
+> > >> It looks we have an implicit dependency to GPIO driver in Bay Trail, and
+> > >> having this window until load the module is not acceptable to fulfill
+> > >> this implicit dependency.
+> > >
+> > > It is not implicit at all.
+> > >
+> > > The user of the GPIO in ACPI DSDT table says something like:
+> > >
+> > >         Name (_DEP, Package () { \_SB.GPO2 })
+> > >
+> > > or similar. That is *explicit* dependency. Here \_SB.GPO2 is one of the
+> > > GPIO banks.
+> > 
+> > That's very nice for ACPI. But what do you expect the Linux kernel to
+> > do with that?
+> 
+> It should prevent the driver from probing until all the devices listed
+> in _DEP have drivers probed.
 
-Procedure of the test:
-* PPS source connected to a DCD line of the driver (gpio)
-* ldattach PPS /dev/ttyAPPn
-* watch -n 1 cat /sys/class/pps/pps0/assert
-* watch -n 1 cat /sys/class/pps/pps0/clear
+Not only or not precisely that.
 
-I just tested and finally it works on my hardware and 
-3.18.0-rc4-next-20141114+.
-Before I applied the your patch-fix and 2 others which were missed (I 
-apologize you here):
-"[PATCH] serial: mxs-auart: fix gpio change detection on interrupt"
-"[PATCH] gpio: mxs: implement get_direction callback"
+By the spec, _DEP is supposed to indicate an "operation region dependency",
+which means that device A is providing an operation region handler that will
+be invoked when AML executed for device B accesses certain things.
 
-I submitted them as separate patches because the first fixes tty-next 
-and the second
-concerns gpio-next (gpiolib in fact).
-I hope they could be picked up for linux-next.
+In other words, the operation region handler provided by A should be functional
+when said AML is invoked for device B.  There are ACPI objects that are required
+to not depend on any operation regions with such dependencies and those can be
+safely evaluated at any time, but currently we evaluate more than that during
+device enumeration alone.  So this affects more than just driver probing even
+with the restricted spec-compliant interpretation.
 
-My next step for the mxs-auart driver will be:
-* RFC patch for spinlocks in the driver, I hope it helps here:
-    http://thread.gmane.org/gmane.linux.serial/16795
-    It wasn't continued here:
-    http://www.spinics.net/lists/linux-serial/msg10887.html
-    "By the way, where did the spinlocks go in this driver?"
-* sync the driver to commit d41510ce2f071c9ccb1903d7a5135443a57dbe4e:
-   ( "serial: Take uart port lock for direct *_enable_ms()")
-* sync the driver to commit cab68f89546ba5a04bf28aaeaca841d4ccc2fd52:
-   ( "serial: Test/disable MSIs if switching from N_PPS")
-* tx_empty() fix like here with better explanation:
-   http://comments.gmane.org/gmane.linux.ports.arm.kernel/283882
+> However, it turned out that this is not that straightforward after all
+> :-( For one, it looks like _DEP is used also for non-operation region
+> dependencies. This is not in the ACPI spec but we have seen this in real
+> machines out there.
 
-have a nice weekend
-Janusz
+Yeah.  _DEP is apparently used to indicate any functional dependencies as
+in "device B depends on device A somehow" which has much more far reaching
+consequences.  In particular, it implies that A needs to be functional
+whenever B is in use, so for example A may not be suspended when B is
+active and so on.
 
-W dniu 2014-11-12 o 23:32, Fabio Estevam pisze:
-> From: Fabio Estevam <fabio.estevam@freescale.com>
->
-> Commit 732a84a037a4 ("serial: core: Pass termios to set_ldisc() notifications")
-> changed the set_ldisc prototype.
->
-> At the time of this commit the mxs_auart driver did not implement set_ldisc,
-> so that's why it has not been converted.
->
-> Adapt also mxs_auart_set_ldisc() so that the following build warning can be
-> fixed:
->
-> drivers/tty/serial/mxs-auart.c:962:2: warning: initialization from
-> incompatible pointer type
->    .set_ldisc      = mxs_auart_set_ldisc,
->    ^
-> drivers/tty/serial/mxs-auart.c:962:2: warning: (near initialization
-> for 'mxs_auart_ops.set_ldisc')
->
-> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
-> ---
-> Changes since v1:
-> - Fix the explanation for the error
->
-> Janusz,
->
-> This is build-tested only. Please test it on real hardware, if possible.
->
->   drivers/tty/serial/mxs-auart.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
-> index 3784920..a6d2bb9f4 100644
-> --- a/drivers/tty/serial/mxs-auart.c
-> +++ b/drivers/tty/serial/mxs-auart.c
-> @@ -784,9 +784,10 @@ static void mxs_auart_settermios(struct uart_port *u,
->   		mxs_auart_disable_ms(u);
->   }
->   
-> -static void mxs_auart_set_ldisc(struct uart_port *port, int new)
-> +static void mxs_auart_set_ldisc(struct uart_port *port,
-> +				struct ktermios *termios)
->   {
-> -	if (new == N_PPS) {
-> +	if (termios->c_line == N_PPS) {
->   		port->flags |= UPF_HARDPPS_CD;
->   		mxs_auart_enable_ms(port);
->   	} else {
+> Other thing I heard, is that handling all these dependencies in driver
+> core might be nightmare to maintain.
 
+That if we can come up with a way to represent those dependencies in a
+sensible way, which hasn't happened yet so far.
+
+> > Basically that is just like getting an -EPROBE_DEFER from the
+> > gpiochip when the gpiod_get() call is issued, and you have to wait
+> > because the gpiochip is not probed yet. We can solve that at runtime
+> > right?
+> 
+> Yes we can if the driver core prevents probing the driver.
+> 
+> > I had a discussion with Greg the other day that we have no way of
+> > expressing inside the kernel that a resource such as a GPIO, a pin,
+> > a clk or a regulator is used by some module. It's just a synchronous
+> > gpiod_get() or whatever call, then there is a warning if you remove
+> > a gpiochip with gpios still in use.
+> > 
+> > What is needed to make use of such a dependency mechanism is
+> > a way to graph the dependencies between kernel drivers and
+> > the resources (gpios, clocks, regulators...) they provide to other
+> > drivers, so this information can be used when probing, removing,
+> > powering up/down the cluster.
+> > 
+> > That problem needs to be solved in the device core, until then there
+> > is not way to actually use that ACPI _DEP property for what I can
+> > tell.
+> 
+> I agree.
+
+Yup.
+
+> > (On a side note: whoever came up with the idea that ACPI props
+> > be 4 characters wide and start with an underscore and this
+> > backslash obfuscation needs to... think differently.)
+
+That happened 20+ years ago and the goal was to squeeze an object name
+into sizeof(int) amount of memory (on a 32-bit system).  That way names
+could be represented by ints.  Yes, people were thinking differently at
+that time. :-)
+
+Rafael
