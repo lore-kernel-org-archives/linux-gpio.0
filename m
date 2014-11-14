@@ -1,61 +1,164 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 01/15] mfd: add new driver for Sharp LoCoMo
-Date: Fri, 14 Nov 2014 15:10:00 +0000
-Message-ID: <20141114151000.GC3815@sirena.org.uk>
-References: <1414454528-24240-1-git-send-email-dbaryshkov@gmail.com>
- <1414454528-24240-2-git-send-email-dbaryshkov@gmail.com>
- <CACRpkdbW3NA00zMZr216ZeZpgVkXwKUo30biTVd5kcHKGGtkHg@mail.gmail.com>
- <CALT56yNX8v4mZn=o1ZoVLHPmg6wq0dgFNowpqNuFtU=eCc+d8w@mail.gmail.com>
- <CACRpkdaKUZjbSEH75M9xudTF9HefwOCVEe5otv9-9f2UG8=hVg@mail.gmail.com>
- <CALT56yM8B3ffYb0=EZVbRRGDZSxMci2sRp9XVtjQuLa5abN+cg@mail.gmail.com>
- <20141105202405.GJ8509@sirena.org.uk>
- <CALT56yOtjNbYOWM4ba5yP8pz7bNLY5BWpkkpfmv5QZU-7Y5u_g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0hFlL8mdTQLjOaTk"
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCHv2 05/16] gpio: mvebu: add suspend/resume support
+Date: Fri, 14 Nov 2014 16:21:25 +0100
+Message-ID: <1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38367 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965233AbaKNPLn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Nov 2014 10:11:43 -0500
-Content-Disposition: inline
-In-Reply-To: <CALT56yOtjNbYOWM4ba5yP8pz7bNLY5BWpkkpfmv5QZU-7Y5u_g@mail.gmail.com>
+Received: from down.free-electrons.com ([37.187.137.238]:35888 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S965769AbaKNPVu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Nov 2014 10:21:50 -0500
+In-Reply-To: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andrea Adami <andrea.adami@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, devicetree@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
+This commit adds the implementation of ->suspend() and ->resume()
+platform_driver hooks in order to save and restore the state of the
+GPIO configuration. In order to achieve that, additional fields are
+added to the mvebu_gpio_chip structure.
 
---0hFlL8mdTQLjOaTk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/gpio/gpio-mvebu.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
-On Fri, Nov 14, 2014 at 04:47:00PM +0400, Dmitry Eremin-Solenikov wrote:
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 418e386..dd5545c 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -83,6 +83,14 @@ struct mvebu_gpio_chip {
+ 	int		   irqbase;
+ 	struct irq_domain *domain;
+ 	int                soc_variant;
++
++	/* Used to preserve GPIO registers accross suspend/resume */
++	u32                out_reg;
++	u32                io_conf_reg;
++	u32                blink_en_reg;
++	u32                in_pol_reg;
++	u32                edge_mask_regs[4];
++	u32                level_mask_regs[4];
+ };
+ 
+ /*
+@@ -554,6 +562,93 @@ static const struct of_device_id mvebu_gpio_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, mvebu_gpio_of_match);
+ 
++static int mvebu_gpio_suspend(struct platform_device *pdev, pm_message_t state)
++{
++	struct mvebu_gpio_chip *mvchip = platform_get_drvdata(pdev);
++	int i;
++
++	mvchip->out_reg = readl(mvebu_gpioreg_out(mvchip));
++	mvchip->io_conf_reg = readl(mvebu_gpioreg_io_conf(mvchip));
++	mvchip->blink_en_reg = readl(mvebu_gpioreg_blink(mvchip));
++	mvchip->in_pol_reg = readl(mvebu_gpioreg_in_pol(mvchip));
++
++	switch (mvchip->soc_variant) {
++	case MVEBU_GPIO_SOC_VARIANT_ORION:
++		mvchip->edge_mask_regs[0] =
++			readl(mvchip->membase + GPIO_EDGE_MASK_OFF);
++		mvchip->level_mask_regs[0] =
++			readl(mvchip->membase + GPIO_LEVEL_MASK_OFF);
++		break;
++	case MVEBU_GPIO_SOC_VARIANT_MV78200:
++		for (i = 0; i < 2; i++) {
++			mvchip->edge_mask_regs[i] =
++				readl(mvchip->membase +
++				      GPIO_EDGE_MASK_MV78200_OFF(i));
++			mvchip->level_mask_regs[i] =
++				readl(mvchip->membase +
++				      GPIO_LEVEL_MASK_MV78200_OFF(i));
++		}
++		break;
++	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
++		for (i = 0; i < 4; i++) {
++			mvchip->edge_mask_regs[i] =
++				readl(mvchip->membase +
++				      GPIO_EDGE_MASK_ARMADAXP_OFF(i));
++			mvchip->level_mask_regs[i] =
++				readl(mvchip->membase +
++				      GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
++		}
++		break;
++	default:
++		BUG();
++	}
++
++	return 0;
++}
++
++static int mvebu_gpio_resume(struct platform_device *pdev)
++{
++	struct mvebu_gpio_chip *mvchip = platform_get_drvdata(pdev);
++	int i;
++
++	writel(mvchip->out_reg, mvebu_gpioreg_out(mvchip));
++	writel(mvchip->io_conf_reg, mvebu_gpioreg_io_conf(mvchip));
++	writel(mvchip->blink_en_reg, mvebu_gpioreg_blink(mvchip));
++	writel(mvchip->in_pol_reg, mvebu_gpioreg_in_pol(mvchip));
++
++	switch (mvchip->soc_variant) {
++	case MVEBU_GPIO_SOC_VARIANT_ORION:
++		writel(mvchip->edge_mask_regs[0],
++		       mvchip->membase + GPIO_EDGE_MASK_OFF);
++		writel(mvchip->level_mask_regs[0],
++		       mvchip->membase + GPIO_LEVEL_MASK_OFF);
++		break;
++	case MVEBU_GPIO_SOC_VARIANT_MV78200:
++		for (i = 0; i < 2; i++) {
++			writel(mvchip->edge_mask_regs[i],
++			       mvchip->membase + GPIO_EDGE_MASK_MV78200_OFF(i));
++			writel(mvchip->level_mask_regs[i],
++			       mvchip->membase +
++			       GPIO_LEVEL_MASK_MV78200_OFF(i));
++		}
++		break;
++	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
++		for (i = 0; i < 4; i++) {
++			writel(mvchip->edge_mask_regs[i],
++			       mvchip->membase +
++			       GPIO_EDGE_MASK_ARMADAXP_OFF(i));
++			writel(mvchip->level_mask_regs[i],
++			       mvchip->membase +
++			       GPIO_LEVEL_MASK_ARMADAXP_OFF(i));
++		}
++		break;
++	default:
++		BUG();
++	}
++
++	return 0;
++}
++
+ static int mvebu_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct mvebu_gpio_chip *mvchip;
+@@ -577,6 +672,8 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
+ 	if (!mvchip)
+ 		return -ENOMEM;
+ 
++	platform_set_drvdata(pdev, mvchip);
++
+ 	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
+ 		dev_err(&pdev->dev, "Missing ngpios OF property\n");
+ 		return -ENODEV;
+@@ -735,5 +832,7 @@ static struct platform_driver mvebu_gpio_driver = {
+ 		.of_match_table = mvebu_gpio_of_match,
+ 	},
+ 	.probe		= mvebu_gpio_probe,
++	.suspend        = mvebu_gpio_suspend,
++	.resume         = mvebu_gpio_resume,
+ };
+ module_platform_driver(mvebu_gpio_driver);
+-- 
+2.1.0
 
-> I'm actually looking at the regulator interface. Since this DAC serves mostly
-> like a (semi-)constant voltage interface, would it be rather logical to use
-> regulator subsystem to drive it?
-
-Possibly...  it's mostly a function of what the consumers of the
-functionality look like - if that code looks weird calling into the
-regulator API then it's bad, if that code looks OK it's fine.  I haven't
-looked at the hardware at all so don't have strong feelings either way
-so long as the result looks tasteful.
-
---0hFlL8mdTQLjOaTk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUZhtHAAoJECTWi3JdVIfQ9u0H/0MiTrLksAi3U2z6tRBVRifd
-8X7vBDcAuPO8IdYuNRiUzB8b6jaDmnAmUc5lrJ4rrAwhrhMKk6I+wNNTAvXXWSRz
-FVjX3yHZomhQ1+Jlz98zcFSnEVxxHpJpN3pRXKL7BN5NTd7fedq5mvdN6899KRIa
-VQ8ByRl5sA8PkMvHN85dT+ECCQbTNQ8Szw96k5/LIRLAR+53rb8oB4y6d23Sqbvh
-mbXzzzjj0ap0LypK8XP7pNrXage5XVY/Y7bLusETEgdhR2Bxkc3YzlhgKY8/gHo4
-x3xdPJAUB/KUQxxEchL/wysUIlC1P8K5Tj29lyuhfztFM9RFxkpnyp8CoCusZtw=
-=Pl/n
------END PGP SIGNATURE-----
-
---0hFlL8mdTQLjOaTk--
