@@ -1,34 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3][v6] serial_mctrl_gpio: use gpiod_set_array function
-Date: Fri, 14 Nov 2014 10:59:49 +0100
-Message-ID: <CACRpkdZURBdaqg=hWpP7WDirQy+zcSEm-_5_X0-2UBO+8yLvng@mail.gmail.com>
-References: <4411649.XDFZ6bkb1u@pcimr>
+Subject: Re: [PATCH v2] gpio: rcar: Add r8a7793 and r8a7794 support
+Date: Fri, 14 Nov 2014 11:04:03 +0100
+Message-ID: <CACRpkdYajBgaRckwjqQdQysLh6hCo_=ztPRexCG=T9KT=-ryJg@mail.gmail.com>
+References: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <4411649.XDFZ6bkb1u@pcimr>
-Sender: linux-serial-owner@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>, Greg Kroah-Hartman <greg@kroah.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Gerhard Sittig <gsi@denx.de>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 4, 2014 at 5:12 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+On Fri, Nov 7, 2014 at 12:54 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
 
-> Make the serial_mctrl_gpio driver the first user of the new gpiod_set_array
-> function. All modem control output signals are now set simultaneously.
+> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
 >
-> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> The device tree probing for R-Car M2-N (r8a7793) and R-Car E2 (r8a7794)
+> is added.
+>
+> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 > ---
-> This patch depends on my previous patch "gpiolib: allow simultaneous setting
-> of multiple GPIO outputs".
 >
-> Change log:
->   v6: - add this patch to the series
+> This patch is based on for-next branch of Linus Walleij's gpio tree.
+>
+> v2 [Yoshihiro Kaneko]
+> * As suggested by Geert Uytterhoeven
+>   - clean up 4 identical copies of struct gpio_rcar_info.
 
-You need to send this patch to Greg and the Linux-serial mailing list so
-I can get an ACK from Greg on it.
+Patch applied.
 
-But I totally accept it as a good first in-kernel usecase!
+As mentions in another thread I want someone to work on using
+GPIOLIB_IRQCHIP for the Rcar driver.
 
 Yours,
 Linus Walleij
