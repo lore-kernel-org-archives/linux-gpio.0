@@ -1,50 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC Patch] gpio: add GPIO hogging mechanism
-Date: Fri, 14 Nov 2014 10:19:47 +0100
-Message-ID: <CACRpkdbO20No0A7ttS=kfMx9qE_MZoZzOtPObHefwnNbixpCeg@mail.gmail.com>
-References: <1413922198-29373-1-git-send-email-bparrot@ti.com>
-	<CAAVeFuK4PaFbbYjUsvA-oO78P5qmQvyGqG+Ov4GLghoC=yPAoA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
+ Intel Baytrail
+Date: Fri, 14 Nov 2014 10:30:55 +0100
+Message-ID: <CACRpkda8eRp5tzvUppVvAfh0djR6q=3kYuec-nvJvnd+aCHC=A@mail.gmail.com>
+References: <20141028144249.GD8123@saruman>
+	<CACRpkdaN5hNWFUOFbHLm8HgZEKVSETUgVF4Cn4UbMQxNEg46Vw@mail.gmail.com>
+	<20141031132005.GB1273@saruman>
+	<20141031162339.GA7136@psi-dev26.jf.intel.com>
+	<20141031184509.GA2224@psi-dev26.jf.intel.com>
+	<20141103092402.GA1304@lahna.fi.intel.com>
+	<20141103150048.GB27425@saruman>
+	<20141103152743.GB1618@lahna.fi.intel.com>
+	<20141103154207.GC1618@lahna.fi.intel.com>
+	<20141103155011.GH27425@saruman>
+	<20141103184247.GD1618@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:44062 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754676AbaKNJTs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Nov 2014 04:19:48 -0500
-Received: by mail-ie0-f180.google.com with SMTP id rl12so2065499iec.25
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2014 01:19:48 -0800 (PST)
-In-Reply-To: <CAAVeFuK4PaFbbYjUsvA-oO78P5qmQvyGqG+Ov4GLghoC=yPAoA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141103184247.GD1618@lahna.fi.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Felipe Balbi <balbi@ti.com>, David Cohen <david.a.cohen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pantelis Antoniou <panto@antoniou-consulting.com>, Jiri Prchal <jiri.prchal@aksignal.cz>
 
-On Wed, Oct 29, 2014 at 8:09 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Wed, Oct 22, 2014 at 5:09 AM, Benoit Parrot <bparrot@ti.com> wrote:
+On Mon, Nov 3, 2014 at 7:42 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Mon, Nov 03, 2014 at 09:50:11AM -0600, Felipe Balbi wrote:
 
-> +               line_b: line_b {
-> +                       line_b {
-> +                               gpios = <6 0>;
-> +                               output-low;
-> +                               line-name = "foo-bar-gpio";
-> +                       };
-> +               };
+>> that's an issue that needs solving, but forcing every x86 kernel to ship
+>> with this driver, is not a proper solution.
 >
-(...)
->
-> I wonder if such usage of child nodes could not interfere with GPIO
-> drivers (existing or to be) that need to use child nodes for other
-> purposes. Right now there is no way to distinguish a hog node from a
-> node that serves another purpose, and that might become a problem in
-> the future.
+> I would rather have the driver build in to the kernel now (and btw it
+> has been already in mainline quite some time so I suspect many distros
+> have already enabled it), than turning it module and render some devices
+> that have been working previously, fail suddenly.
 
-Yes, so I have suggested a hog-something; keyword in there.
+We have an analogous problem with large device tree kernels for ARM
+(supporting a multitude of ARM subarchitectures): a lot of statically
+compiled-in drivers that just idle around after boot.
 
-As long as the children don't have any compatible-strings we can
-decide pretty much how they should be handled internally.
+What would be nice was for the kernel to have a way of marking some
+platform drivers such that if it has not been probed by init_late(),
+the entire driver would be discarded, like a module that gets unloaded.
 
-Are there custom drivers with child nodes inside the main chip
-today?
+When I posed this idea in some forum it was considered "pretty hard
+to achieve" (plus I guess it runs into the dilemma that we can never
+discard strings) but I still think it'd be the right thing to do. It'd be very
+straight-forward for driver authors to annotate their on-chip platform
+drivers with some MODULE_LATE_DISCARD() or whatever.
 
 Yours,
 Linus Walleij
