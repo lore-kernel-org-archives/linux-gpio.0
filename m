@@ -1,38 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: rcar: Add r8a7793 and r8a7794 support
-Date: Fri, 14 Nov 2014 11:04:03 +0100
-Message-ID: <CACRpkdYajBgaRckwjqQdQysLh6hCo_=ztPRexCG=T9KT=-ryJg@mail.gmail.com>
-References: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: [PATCH 2/6 V2] Documentation: devicetree: arizona: Add bindings
+	for WM8280
+Date: Fri, 14 Nov 2014 10:04:37 +0000
+Message-ID: <20141114100437.GA12913@opensource.wolfsonmicro.com>
+References: <1415901046-3391-1-git-send-email-rf@opensource.wolfsonmicro.com> <1415901046-3391-3-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1415901046-3391-3-git-send-email-rf@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lee.jones@linaro.org, lgirdwood@gmail.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, linus.walleij@linaro.org, gnurou@gmail.com, broonie@kernel.org, tiwai@suse.de
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, sameo@linux.intel.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, galak@codeaurora.org, ckeepax@opensource.wolfsonmicro.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 7, 2014 at 12:54 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+---
+ Documentation/devicetree/bindings/mfd/arizona.txt |   15 +++++++++++----
+ 1 files changed, 11 insertions(+), 4 deletions(-)
 
-> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
->
-> The device tree probing for R-Car M2-N (r8a7793) and R-Car E2 (r8a7794)
-> is added.
->
-> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
->
-> This patch is based on for-next branch of Linus Walleij's gpio tree.
->
-> v2 [Yoshihiro Kaneko]
-> * As suggested by Geert Uytterhoeven
->   - clean up 4 identical copies of struct gpio_rcar_info.
-
-Patch applied.
-
-As mentions in another thread I want someone to work on using
-GPIOLIB_IRQCHIP for the Rcar driver.
-
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+index 7bd1273..dc81b71 100644
+--- a/Documentation/devicetree/bindings/mfd/arizona.txt
++++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+@@ -8,6 +8,7 @@ Required properties:
+   - compatible : One of the following chip-specific strings:
+         "wlf,wm5102"
+         "wlf,wm5110"
++        "wlf,wm8280"
+         "wlf,wm8997"
+   - reg : I2C slave address when connected using I2C, chip select number when
+     using SPI.
+@@ -26,10 +27,16 @@ Required properties:
+   - #gpio-cells : Must be 2. The first cell is the pin number and the
+     second cell is used to specify optional parameters (currently unused).
+ 
+-  - AVDD-supply, DBVDD1-supply, DBVDD2-supply, DBVDD3-supply (wm5102, wm5110),
+-    CPVDD-supply, SPKVDDL-supply (wm5102, wm5110), SPKVDDR-supply (wm5102,
+-    wm5110), SPKVDD-supply (wm8997) : Power supplies for the device, as covered
+-    in Documentation/devicetree/bindings/regulator/regulator.txt
++  - AVDD-supply, DBVDD1-supply, CPVDD-supply : Power supplies for the device,
++    as covered in Documentation/devicetree/bindings/regulator/regulator.txt
++  
++  - DBVDD2-supply, DBVDD3-supply : Additional databus power supplies (wm5102,
++    wm5110, wm8280)
++
++  - SPKVDDL-supply, SPKVDDR-supply : Speaker driver power supplies (wm5102,
++    wm5110, wm8280)
++  
++  - SPKVDD-supply : Speaker driver power supply (wm8997)
+ 
+ Optional properties:
+ 
+-- 
+1.7.2.5
