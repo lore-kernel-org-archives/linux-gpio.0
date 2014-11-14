@@ -1,49 +1,68 @@
-From: Dmitry Torokhov <dtor@chromium.org>
-Subject: [PATCH] gpio-tz1090: fix error handling of irq_of_parse_and_map
-Date: Fri, 14 Nov 2014 13:32:56 -0800
-Message-ID: <20141114213256.GA24709@dtor-ws>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f177.google.com ([209.85.213.177]:49925 "EHLO
-	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754335AbaKNVdA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Nov 2014 16:33:00 -0500
-Received: by mail-ig0-f177.google.com with SMTP id uq10so1004016igb.16
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2014 13:32:59 -0800 (PST)
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+From: Janusz Uzycki <j.uzycki@elproma.com.pl>
+Subject: [PATCH] gpio: mxs: implement get_direction callback
+Date: Fri, 14 Nov 2014 23:27:06 +0100
+Message-ID: <1416004026-9667-1-git-send-email-j.uzycki@elproma.com.pl>
+Return-path: <linux-serial-owner@vger.kernel.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org, fabio.estevam@freescale.com, linux-gpio@vger.kernel.org, Janusz Uzycki <j.uzycki@elproma.com.pl>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, James Hogan <james.hogan@imgtec.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-irq_of_parse_and_map() returns 0 on error, so testing for negative
-result never works.
+Function gpiod_get_direction() of gpiolib calls get_direction()
+callback. If chip doesn't implement it EINVAL error is returned.
+The function doesn't use for returned value shadowed FLAG_IS_OUT
+bit of gpio_desc.flags field so the callback is required.
+The patch implements the missing callback.
 
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
+Inspired from arch/arm/mach-at91/gpio.c
+Required to get the patch "serial: mxs-auart: enable PPS support" working.
+
+Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
 ---
 
-Not tested, found by casual inspection of the code.
+Two patches were missed during movements between our internal repos.
+The 2/2 patch is required against commits:
+  f9e42397d79b ("serial: mxs-auart: add interrupts for modem control lines")
+  36a262782b04 ("serial: mxs-auart: enable PPS support")
+I've done build-test for the next only before.
+I should have done hardware test also for the next, sorry.
+Now it is tested for the next on real hardware too.
 
- drivers/gpio/gpio-tz1090.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+---
+ drivers/gpio/gpio-mxs.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/gpio/gpio-tz1090.c b/drivers/gpio/gpio-tz1090.c
-index 9e90177..e3024bb 100644
---- a/drivers/gpio/gpio-tz1090.c
-+++ b/drivers/gpio/gpio-tz1090.c
-@@ -446,7 +446,7 @@ static int tz1090_gpio_bank_probe(struct tz1090_gpio_bank_info *info)
- 	bank->irq = irq_of_parse_and_map(np, 0);
+diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
+index 8ffdd7d..56052c2 100644
+--- a/drivers/gpio/gpio-mxs.c
++++ b/drivers/gpio/gpio-mxs.c
+@@ -227,6 +227,18 @@ static int mxs_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+ 	return irq_find_mapping(port->domain, offset);
+ }
  
- 	/* The interrupt is optional (it may be used by another core on chip) */
--	if (bank->irq < 0) {
-+	if (!bank->irq) {
- 		dev_info(dev, "IRQ not provided for bank %u, IRQs disabled\n",
- 			 info->index);
- 		return 0;
++static int mxs_gpio_get_direction(struct gpio_chip *gc, unsigned offset)
++{
++	struct bgpio_chip *bgc = to_bgpio_chip(gc);
++	struct mxs_gpio_port *port =
++		container_of(bgc, struct mxs_gpio_port, bgc);
++	u32 mask = 1 << offset;
++	u32 dir;
++
++	dir = readl(port->base + PINCTRL_DOE(port));
++	return !(dir & mask);
++}
++
+ static struct platform_device_id mxs_gpio_ids[] = {
+ 	{
+ 		.name = "imx23-gpio",
+@@ -320,6 +332,7 @@ static int mxs_gpio_probe(struct platform_device *pdev)
+ 		goto out_irqdesc_free;
+ 
+ 	port->bgc.gc.to_irq = mxs_gpio_to_irq;
++	port->bgc.gc.get_direction = mxs_gpio_get_direction;
+ 	port->bgc.gc.base = port->id * 32;
+ 
+ 	err = gpiochip_add(&port->bgc.gc);
 -- 
-2.1.0.rc2.206.gedb03e5
+1.7.11.3
 
-
--- 
-Dmitry
