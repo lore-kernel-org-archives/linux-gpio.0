@@ -1,30 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO and I2C
-Date: Fri, 14 Nov 2014 11:05:00 +0100
-Message-ID: <CACRpkdYrwrjh5RztNSo+owCp8Kf=tVb0V-08dhzMO3zbR7hFNQ@mail.gmail.com>
-References: <1415281685-14866-1-git-send-email-octavian.purdila@intel.com>
-	<20141110151226.GD24004@x1>
-	<20141110160426.GK24004@x1>
-	<20141110174355.GM24004@x1>
+Subject: Re: [PATCH 1/1] gpio: mcp23s08: Do not free unrequested interrupt
+Date: Fri, 14 Nov 2014 11:07:57 +0100
+Message-ID: <CACRpkdbUPZrw6_kya12xtxVXpqMm8q_nx-smuCgV1Sq45dbDrQ@mail.gmail.com>
+References: <1415693323-19046-1-git-send-email-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141110174355.GM24004@x1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Octavian Purdila <octavian.purdila@intel.com>, Greg KH <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Samuel Ortiz <sameo@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Johan Hovold <johan@kernel.org>, Daniel Baluta <daniel.baluta@intel.com>, laurentiu.palcu@intel.com, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:51978 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754814AbaKNKH6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Nov 2014 05:07:58 -0500
+Received: by mail-ig0-f179.google.com with SMTP id r10so1227114igi.6
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2014 02:07:57 -0800 (PST)
+In-Reply-To: <1415693323-19046-1-git-send-email-alexander.stein@systec-electronic.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Nov 10, 2014 at 6:43 PM, Lee Jones <lee.jones@linaro.org> wrote:
->> Please don't pull this -- it is missing a patch.
->>
->> Will fix.
+On Tue, Nov 11, 2014 at 9:08 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
+
+> If devm_request_threaded_irq fails for some reason we call
+> mcp23s08_irq_teardown afterwards.
+> Do not free the unrequested interrupt in this case. free_irq can also be
+> omitted for the error free case because we use devm_request_threaded_irq.
 >
-> Okay, dependency fixed.  Sorry for the fuss.  Pull when ready.
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 
-Letting it just sit around unless there are conflicts coming up...
-Seems like this can go through MFD alone from the GPIO side
-of things.
+Patch applied.
+
+We don't have a maintainer for this driver... I'd like someone to look into
+converting it to use GPIOLIB_IRQCHIP.
 
 Yours,
 Linus Walleij
