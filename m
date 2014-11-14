@@ -1,90 +1,41 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: baytrail: show output gpio state correctly on
- Intel Baytrail
-Date: Fri, 14 Nov 2014 11:53:40 +0200
-Message-ID: <20141114095340.GZ1454@lahna.fi.intel.com>
-References: <20141103150048.GB27425@saruman>
- <20141103152743.GB1618@lahna.fi.intel.com>
- <20141103154207.GC1618@lahna.fi.intel.com>
- <20141103155011.GH27425@saruman>
- <20141103184247.GD1618@lahna.fi.intel.com>
- <20141103221903.GA20305@psi-dev26.jf.intel.com>
- <20141104075936.GF1618@lahna.fi.intel.com>
- <20141104180526.GB2224@psi-dev26.jf.intel.com>
- <20141104185702.GR1618@lahna.fi.intel.com>
- <CACRpkdZg9-h+SVEe1mDHWm2kCfR3wc6uCvaLJsXpJm7xNL=r-w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio-rcar: .irq_set_wake() support to work with suspend_device_irqs()
+Date: Fri, 14 Nov 2014 10:53:57 +0100
+Message-ID: <CACRpkdaUxtB1zrvH3B=P6+Vis-KEts50h8U=nOgTpDwp5wNKQQ@mail.gmail.com>
+References: <1415352165-26597-1-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZg9-h+SVEe1mDHWm2kCfR3wc6uCvaLJsXpJm7xNL=r-w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Greg Kroah-Hartman <greg@kroah.com>, David Cohen <david.a.cohen@linux.intel.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1415352165-26597-1-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-+Rafael
+On Fri, Nov 7, 2014 at 10:22 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
 
-On Fri, Nov 14, 2014 at 10:39:07AM +0100, Linus Walleij wrote:
-> On Tue, Nov 4, 2014 at 7:57 PM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > On Tue, Nov 04, 2014 at 10:05:26AM -0800, David Cohen wrote:
-> 
-> >> It looks we have an implicit dependency to GPIO driver in Bay Trail, and
-> >> having this window until load the module is not acceptable to fulfill
-> >> this implicit dependency.
-> >
-> > It is not implicit at all.
-> >
-> > The user of the GPIO in ACPI DSDT table says something like:
-> >
-> >         Name (_DEP, Package () { \_SB.GPO2 })
-> >
-> > or similar. That is *explicit* dependency. Here \_SB.GPO2 is one of the
-> > GPIO banks.
-> 
-> That's very nice for ACPI. But what do you expect the Linux kernel to
-> do with that?
+> From: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
+>
+> All IRQs in the kernel get disabled by PM core prior to .suspend_noirq()
+> step through kernel/irq/pm.c::suspend_device_irqs().
+>
+> The SYSC hardware block in the R-Car SoCs, on the other hand, uses any
+> interrupt as wake-up source(es) and requires them to be unmasked during
+> the system is suspended.
+>
+> This patch implements .irq_set_wake() which makes __disable_irq() call
+> a NOP when a GPIO port is claimed as a wake-up source.
+>
+> Signed-off-by: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
+> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-It should prevent the driver from probing until all the devices listed
-in _DEP have drivers probed.
+Patch tentatively applied unless Magnus or Laurent starts complaining...
 
-However, it turned out that this is not that straightforward after all
-:-( For one, it looks like _DEP is used also for non-operation region
-dependencies. This is not in the ACPI spec but we have seen this in real
-machines out there.
+This driver should be simple to convert to GPIOLIB_IRQCHIP and get
+rid of some code overhead.
 
-Other thing I heard, is that handling all these dependencies in driver
-core might be nightmare to maintain.
+Yoshihiro, can you look into this?
 
-> Basically that is just like getting an -EPROBE_DEFER from the
-> gpiochip when the gpiod_get() call is issued, and you have to wait
-> because the gpiochip is not probed yet. We can solve that at runtime
-> right?
-
-Yes we can if the driver core prevents probing the driver.
-
-> I had a discussion with Greg the other day that we have no way of
-> expressing inside the kernel that a resource such as a GPIO, a pin,
-> a clk or a regulator is used by some module. It's just a synchronous
-> gpiod_get() or whatever call, then there is a warning if you remove
-> a gpiochip with gpios still in use.
-> 
-> What is needed to make use of such a dependency mechanism is
-> a way to graph the dependencies between kernel drivers and
-> the resources (gpios, clocks, regulators...) they provide to other
-> drivers, so this information can be used when probing, removing,
-> powering up/down the cluster.
-> 
-> That problem needs to be solved in the device core, until then there
-> is not way to actually use that ACPI _DEP property for what I can
-> tell.
-
-I agree.
-
-> (On a side note: whoever came up with the idea that ACPI props
-> be 4 characters wide and start with an underscore and this
-> backslash obfuscation needs to... think differently.)
-> 
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
