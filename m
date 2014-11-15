@@ -1,39 +1,38 @@
-From: Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH] gpio-tz1090: fix error handling of irq_of_parse_and_map
-Date: Fri, 14 Nov 2014 16:44:06 -0800
-Message-ID: <4324315.2x5Mj9E2n5@dtor-glaptop>
-References: <20141114213256.GA24709@dtor-ws> <20141114235307.GF1739@jhogan-linux.le.imgtec.org>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH v2] serial: mxs-auart: Fix mxs_auart_set_ldisc()
+Date: Sat, 15 Nov 2014 13:51:39 -0200
+Message-ID: <CAOMZO5Bso8CrDQKaN8F4hgGu==cuss72UX4sFtE3=HoNge04gg@mail.gmail.com>
+References: <1415831569-6904-1-git-send-email-festevam@gmail.com>
+	<546687DA.6010503@elproma.com.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:49438 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752030AbaKOAoI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Nov 2014 19:44:08 -0500
-Received: by mail-ie0-f172.google.com with SMTP id ar1so4275630iec.31
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2014 16:44:07 -0800 (PST)
-In-Reply-To: <20141114235307.GF1739@jhogan-linux.le.imgtec.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <546687DA.6010503@elproma.com.pl>
+Sender: linux-serial-owner@vger.kernel.org
+To: =?UTF-8?Q?Janusz_U=C5=BCycki?= <j.uzycki@elproma.com.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday, November 14, 2014 11:53:07 PM James Hogan wrote:
-> On Fri, Nov 14, 2014 at 01:32:56PM -0800, Dmitry Torokhov wrote:
-> > irq_of_parse_and_map() returns 0 on error, so testing for negative
-> > result never works.
-> > 
-> > Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-> 
-> Good catch, thanks!
-> 
-> Acked-by: James Hogan <james.hogan@imgtec.com>
-> 
-> A quick coccinelle script shows up numerous other cases of this error
-> around the kernel tree too...
+Hi Janusz,
 
-Yeah, I sent out a few patches today.
+On Fri, Nov 14, 2014 at 8:53 PM, Janusz U=C5=BCycki <j.uzycki@elproma.c=
+om.pl> wrote:
+> Hi,
+>
+> Procedure of the test:
+> * PPS source connected to a DCD line of the driver (gpio)
+> * ldattach PPS /dev/ttyAPPn
+> * watch -n 1 cat /sys/class/pps/pps0/assert
+> * watch -n 1 cat /sys/class/pps/pps0/clear
+>
+> I just tested and finally it works on my hardware and
+> 3.18.0-rc4-next-20141114+.
 
-Thanks,
-Dmitry
+In this case, can you provide your Tested-by tag in reply to my patch? =
+Thanks
+--
+To unsubscribe from this list: send the line "unsubscribe linux-serial"=
+ in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
