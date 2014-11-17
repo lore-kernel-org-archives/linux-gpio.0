@@ -1,46 +1,43 @@
-From: =?UTF-8?B?SmFudXN6IFXFvHlja2k=?= <j.uzycki@elproma.com.pl>
-Subject: Re: [PATCH] gpio: mxs: implement get_direction callback
-Date: Mon, 17 Nov 2014 15:29:30 +0100
-Message-ID: <546A064A.5060304@elproma.com.pl>
-References: <1416004026-9667-1-git-send-email-j.uzycki@elproma.com.pl> <20141114232601.GW27002@pengutronix.de> <5467A980.5090204@elproma.com.pl> <20141116214239.GX27002@pengutronix.de> <54693A51.5080907@elproma.com.pl> <54695654.3070209@elproma.com.pl> <20141117082848.GZ27002@pengutronix.de> <5469BBBD.30003@elproma.com.pl> <CACQ1gAha1MuroyB35zN_BuwRNGS_J3Xh1htiHJda_2_19qh31g@mail.gmail.com> <20141117095909.GH27002@pengutronix.de> <CACQ1gAje6OA_n37jE_WnSqg4R+U5tr-bGnnfxpGM5NE9c=dAVg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from v032797.home.net.pl ([89.161.177.31]:56905 "HELO
-	v032797.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751772AbaKQO3Y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 09:29:24 -0500
-In-Reply-To: <CACQ1gAje6OA_n37jE_WnSqg4R+U5tr-bGnnfxpGM5NE9c=dAVg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC] gpio: em: Use dynamic allocation of GPIOs
+Date: Mon, 17 Nov 2014 15:30:32 +0100
+Message-ID: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Genoud <richard.genoud@gmail.com>, =?UTF-8?B?VXdlIEtsZWluZS1L?= =?UTF-8?B?w7ZuaWc=?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, fabio.estevam@freescale.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Richard,
+Use dynamic allocation of GPIOs instead of looking at the gpio%u alias
+in DT.
+---
+  - Is this correct? Not having to care about the alias would simplify the
+    to-be-written DT binding documentation.
+  - Completely untested.
 
-W dniu 2014-11-17 o 11:05, Richard Genoud pisze:
-> 2014-11-17 10:59 GMT+01:00 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pen=
-gutronix.de>:
->
-> well, in this case, request_irq() will fail and all the previously
-> requested irqs will be freed:
->      /*
->       * If something went wrong, rollback.
->       */
->      while (err && (--i >=3D 0))
->          if (irq[i] >=3D 0)
->              free_irq(irq[i], port);
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I hesitate if use the rollback or just call mctrl_gpio_free_irqs().
-Let's note that "i" is enum and the loop ends on i < 0.
+ drivers/gpio/gpio-em.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-best regards
-Janusz
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index 21d34d4d473dcefe..c3434146f605748b 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -330,12 +330,7 @@ static int em_gio_probe(struct platform_device *pdev)
+ 			goto err0;
+ 		}
+ 
+-		ret = of_alias_get_id(pdev->dev.of_node, "gpio");
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "Couldn't get OF id\n");
+-			goto err0;
+-		}
+-		pdata->gpio_base = ret * 32; /* 32 GPIOs per instance */
++		pdata->gpio_base = -1;
+ 	}
+ 
+ 	gpio_chip = &p->gpio_chip;
+-- 
+1.9.1
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
