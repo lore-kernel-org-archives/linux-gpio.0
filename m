@@ -1,58 +1,66 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH][RESEND] serial_mctrl_gpio: use gpiod_set_array function
-Date: Mon, 17 Nov 2014 18:31:30 +0100
-Message-ID: <8534699.OPo8bzguux@pcimr>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] gpio: mxs: implement get_direction callback
+Date: Mon, 17 Nov 2014 19:42:29 +0100
+Message-ID: <20141117184229.GM27002@pengutronix.de>
+References: <1416004026-9667-1-git-send-email-j.uzycki@elproma.com.pl>
+ <20141114232601.GW27002@pengutronix.de>
+ <5467A980.5090204@elproma.com.pl>
+ <20141116214239.GX27002@pengutronix.de>
+ <54693A51.5080907@elproma.com.pl>
+ <54695654.3070209@elproma.com.pl>
+ <20141117082848.GZ27002@pengutronix.de>
+ <546A29B9.5030104@elproma.com.pl>
+ <546A2B69.4010409@elproma.com.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-serial-owner@vger.kernel.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Greg Kroah-Hartman <greg@kroah.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Gerhard Sittig <gsi@denx.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:38911 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751620AbaKQSmi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 13:42:38 -0500
+Content-Disposition: inline
+In-Reply-To: <546A2B69.4010409@elproma.com.pl>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Janusz =?utf-8?Q?U=C5=BCycki?= <j.uzycki@elproma.com.pl>
+Cc: Richard Genoud <richard.genoud@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, fabio.estevam@freescale.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-Make the serial_mctrl_gpio driver the first user of the new gpiod_set_array
-function, which is now available in the linux-gpio devel tree.
-All modem control output signals are now set simultaneously.
+Hello Janusz,
 
-Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
----
-Resend: Add Greg Kroah-Hartman and the linux-serial list to the recipients
-        in hopes of getting an ACK.
+On Mon, Nov 17, 2014 at 06:07:53PM +0100, Janusz U=C5=BCycki wrote:
+> >It looks there could be one more helper useful.
+> >Both atmel_serial.c and mxs-auart.c checks if the line is
+> >supported by mctrl_gpio.
+> >One time it is eg.:
+> >(s->gpio_irq[UART_GPIO_DCD] > 0)
+> >another time it is eg.:
+> >IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(s->gpios, UART_GPIO_RTS))
+> >
+> >The first one is no possible now. The second seems rude.
+> >bool mctrl_gpio_is_gpio((struct mctrl_gpios *gpios, enum
+> >mctrl_gpio_idx gidx);
+> >The name is hard. Moreover the implementation could be very similar
+> >to mctrl_gpio_to_gpiod(). Any ideas?
+>=20
+> The differences:
+> - faster
+> - not exported
+> - used mainly in uart's interrupt
+> - assumes that struct mctrl_gpios *gpios exists
+I wonder why you need it at all?!
 
- drivers/tty/serial/serial_mctrl_gpio.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Best regards
+Uwe
 
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
-index a3035f9..a38596c 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -44,15 +44,21 @@ static const struct {
- void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
- {
- 	enum mctrl_gpio_idx i;
-+	struct gpio_desc *desc_array[UART_GPIO_MAX];
-+	int value_array[UART_GPIO_MAX];
-+	unsigned int count = 0;
- 
- 	if (IS_ERR_OR_NULL(gpios))
- 		return;
- 
- 	for (i = 0; i < UART_GPIO_MAX; i++)
- 		if (!IS_ERR_OR_NULL(gpios->gpio[i]) &&
--		    mctrl_gpios_desc[i].dir_out)
--			gpiod_set_value(gpios->gpio[i],
--					!!(mctrl & mctrl_gpios_desc[i].mctrl));
-+		    mctrl_gpios_desc[i].dir_out) {
-+			desc_array[count] = gpios->gpio[i];
-+			value_array[count] = !!(mctrl & mctrl_gpios_desc[i].mctrl);
-+			count++;
-+		}
-+	gpiod_set_array(count, desc_array, value_array);
- }
- EXPORT_SYMBOL_GPL(mctrl_gpio_set);
- 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig     =
+       |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
 --
-2.0.4
-
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
