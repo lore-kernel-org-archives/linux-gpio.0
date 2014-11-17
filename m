@@ -1,84 +1,77 @@
-From: Janusz Uzycki <j.uzycki@elproma.com.pl>
-Subject: [PATCH v2] gpio: mxs: implement get_direction callback
-Date: Mon, 17 Nov 2014 11:47:36 +0100
-Message-ID: <1416221256-11671-1-git-send-email-j.uzycki@elproma.com.pl>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio-rcar: .irq_set_wake() support to work with suspend_device_irqs()
+Date: Mon, 17 Nov 2014 13:05:24 +0100
+Message-ID: <CAMuHMdUFPVBDbvaMNdPNGG-a9i1d8dAEK5WsREX40iSGVJk8+w@mail.gmail.com>
+References: <1415352165-26597-1-git-send-email-ykaneko0929@gmail.com>
+	<CACRpkdaUxtB1zrvH3B=P6+Vis-KEts50h8U=nOgTpDwp5wNKQQ@mail.gmail.com>
+	<CANqRtoTKKuKnfFN4VYhnt1M8jb-2o+PTaivQvu3ELR32c9DhHQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from v032797.home.net.pl ([89.161.177.31]:58499 "HELO
-	v032797.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751019AbaKQKp0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 05:45:26 -0500
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:43138 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751528AbaKQMF0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 07:05:26 -0500
+In-Reply-To: <CANqRtoTKKuKnfFN4VYhnt1M8jb-2o+PTaivQvu3ELR32c9DhHQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org, Janusz Uzycki <j.uzycki@elproma.com.pl>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Yoshihiro Kaneko <ykaneko0929@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-gpiolib's gpiod_get_direction() function returns the EINVAL error
-if .get_direction callback is not defined.
-The patch implements the callback for mxs chip what is useful
-for debugging.
+Hi Magnus, Kaneko-san,
 
-Commit f9e42397d79b
-("serial: mxs-auart: add interrupts for modem control lines")
-as based on commit ab5e4e4108ca
-("tty/serial: at91: add interrupts for modem control lines")
-uses the gpiod_get_direction() function.
+On Mon, Nov 17, 2014 at 2:06 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> On Fri, Nov 14, 2014 at 6:53 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Fri, Nov 7, 2014 at 10:22 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>>> From: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
+>>>
+>>> All IRQs in the kernel get disabled by PM core prior to .suspend_noirq()
+>>> step through kernel/irq/pm.c::suspend_device_irqs().
+>>>
+>>> The SYSC hardware block in the R-Car SoCs, on the other hand, uses any
+>>> interrupt as wake-up source(es) and requires them to be unmasked during
+>>> the system is suspended.
+>>>
+>>> This patch implements .irq_set_wake() which makes __disable_irq() call
+>>> a NOP when a GPIO port is claimed as a wake-up source.
+>>>
+>>> Signed-off-by: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
+>>> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>>
+>> Patch tentatively applied unless Magnus or Laurent starts complaining...
+>
+> I'll bite. =)
+>
+> Thanks for the efforts, but I doubt that this patch is needed. Unless
+> I'm mistaken this feature is implemented already in the following
+> commits:
+>
+> 4039611 gpio: rcar: Enable mask on suspend
+> fba968a gpio: rcar: Use lazy disable
 
-Inspired from arch/arm/mach-at91/gpio.c
+Good to see you (as the author of the driver and those two fixes) have some
+reservations. I also had my doubts about this patch, but I didn't get to
+testing it earlier...
 
-Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
----
+I can confirm resume from s2ram works without and with this patch.
+So unless this patch is meant to fix something else (is it?), I think it can be
+dropped.
 
-Changes since v1:
-- Fix the explanation why the patch is needed
+>> This driver should be simple to convert to GPIOLIB_IRQCHIP and get
+>> rid of some code overhead.
+>
+> Perhaps Geert [CC:ed] can have a look at this in the not so distant future?
 
-Two patches were missed during movements between our internal repos.
-The 2/2 patch is required against commits:
-  f9e42397d79b ("serial: mxs-auart: add interrupts for modem control lines")
-  36a262782b04 ("serial: mxs-auart: enable PPS support")
-I've done build-test for the next only before.
-I should have done hardware test also for the next, sorry.
-Now it is tested for the next on real hardware too.
+Sure. Will do.
 
-On the moment the patch is required to get the patch
-"serial: mxs-auart: enable PPS support" working.
-It is planned to introduce new mctrl_gpio helpers to avoid
-gpiod_get_direction() function.
+Gr{oetje,eeting}s,
 
----
- drivers/gpio/gpio-mxs.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+                        Geert
 
-diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
-index 8ffdd7d..56052c2 100644
---- a/drivers/gpio/gpio-mxs.c
-+++ b/drivers/gpio/gpio-mxs.c
-@@ -227,6 +227,18 @@ static int mxs_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
- 	return irq_find_mapping(port->domain, offset);
- }
- 
-+static int mxs_gpio_get_direction(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-+	struct mxs_gpio_port *port =
-+		container_of(bgc, struct mxs_gpio_port, bgc);
-+	u32 mask = 1 << offset;
-+	u32 dir;
-+
-+	dir = readl(port->base + PINCTRL_DOE(port));
-+	return !(dir & mask);
-+}
-+
- static struct platform_device_id mxs_gpio_ids[] = {
- 	{
- 		.name = "imx23-gpio",
-@@ -320,6 +332,7 @@ static int mxs_gpio_probe(struct platform_device *pdev)
- 		goto out_irqdesc_free;
- 
- 	port->bgc.gc.to_irq = mxs_gpio_to_irq;
-+	port->bgc.gc.get_direction = mxs_gpio_get_direction;
- 	port->bgc.gc.base = port->id * 32;
- 
- 	err = gpiochip_add(&port->bgc.gc);
--- 
-1.7.11.3
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
