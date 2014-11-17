@@ -1,77 +1,68 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio-rcar: .irq_set_wake() support to work with suspend_device_irqs()
-Date: Mon, 17 Nov 2014 13:05:24 +0100
-Message-ID: <CAMuHMdUFPVBDbvaMNdPNGG-a9i1d8dAEK5WsREX40iSGVJk8+w@mail.gmail.com>
-References: <1415352165-26597-1-git-send-email-ykaneko0929@gmail.com>
-	<CACRpkdaUxtB1zrvH3B=P6+Vis-KEts50h8U=nOgTpDwp5wNKQQ@mail.gmail.com>
-	<CANqRtoTKKuKnfFN4VYhnt1M8jb-2o+PTaivQvu3ELR32c9DhHQ@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/3] mfd: arizona: Add support for CS47L24
+Date: Mon, 17 Nov 2014 12:16:48 +0000
+Message-ID: <20141117121648.GP24004@x1>
+References: <20141111165227.GA24344@opensource.wolfsonmicro.com>
+ <20141111171532.GA26106@opensource.wolfsonmicro.com>
+ <20141113101228.GE24004@x1>
+ <20141113164017.GA12443@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:43138 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751528AbaKQMF0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 07:05:26 -0500
-In-Reply-To: <CANqRtoTKKuKnfFN4VYhnt1M8jb-2o+PTaivQvu3ELR32c9DhHQ@mail.gmail.com>
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:34995 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751566AbaKQMQz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 07:16:55 -0500
+Received: by mail-ie0-f176.google.com with SMTP id rd18so21929626iec.35
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Nov 2014 04:16:54 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20141113164017.GA12443@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Yoshihiro Kaneko <ykaneko0929@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, alsa-devel@alsa-project.org, tiwai@suse.de, patches@opensource.wolfsonmicro.com, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Magnus, Kaneko-san,
+On Thu, 13 Nov 2014, Charles Keepax wrote:
 
-On Mon, Nov 17, 2014 at 2:06 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> On Fri, Nov 14, 2014 at 6:53 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Fri, Nov 7, 2014 at 10:22 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->>> From: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
->>>
->>> All IRQs in the kernel get disabled by PM core prior to .suspend_noirq()
->>> step through kernel/irq/pm.c::suspend_device_irqs().
->>>
->>> The SYSC hardware block in the R-Car SoCs, on the other hand, uses any
->>> interrupt as wake-up source(es) and requires them to be unmasked during
->>> the system is suspended.
->>>
->>> This patch implements .irq_set_wake() which makes __disable_irq() call
->>> a NOP when a GPIO port is claimed as a wake-up source.
->>>
->>> Signed-off-by: Shinya Kuribayashi <shinya.kuribayashi.px@renesas.com>
->>> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
->>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->>
->> Patch tentatively applied unless Magnus or Laurent starts complaining...
+> On Thu, Nov 13, 2014 at 10:12:28AM +0000, Lee Jones wrote:
+> > On Tue, 11 Nov 2014, Richard Fitzgerald wrote:
+> >=20
+> > > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com=
 >
-> I'll bite. =)
->
-> Thanks for the efforts, but I doubt that this patch is needed. Unless
-> I'm mistaken this feature is implemented already in the following
-> commits:
->
-> 4039611 gpio: rcar: Enable mask on suspend
-> fba968a gpio: rcar: Use lazy disable
+> > > ---
+> > >  drivers/mfd/Kconfig              |    6 +
+> > >  drivers/mfd/Makefile             |    3 +
+> > >  drivers/mfd/arizona-core.c       |   91 ++-
+> > >  drivers/mfd/arizona-irq.c        |   42 +-
+> > >  drivers/mfd/arizona-spi.c        |    9 +
+> > >  drivers/mfd/arizona.h            |    5 +
+> > >  drivers/mfd/cs47l24-tables.c     | 1632 ++++++++++++++++++++++++=
+++++++++++++++
+> >=20
+> > No chance.
+> >=20
+> > Please resend with these in a header file (like all of the others).
+> >=20
+> > I'd also like Charles' Reviewed-by before accepting.
+>=20
+> This looks good to me. I don't quite follow what you are
+> requesting with the header file? This still uses the header file
+> for the registers but just defining which are available on this
+> chip.
 
-Good to see you (as the author of the driver and those two fixes) have some
-reservations. I also had my doubts about this patch, but I didn't get to
-testing it earlier...
+Looks like I was a little hasty with my comments.  However 8000 lines
+over 4 platforms just to describe which registers are readable is all
+a little bit grim.  Is there any way you can use ranges instead of
+listing every single register on the chip?  How many gaps are there?=20
 
-I can confirm resume from s2ram works without and with this patch.
-So unless this patch is meant to fix something else (is it?), I think it can be
-dropped.
-
->> This driver should be simple to convert to GPIOLIB_IRQCHIP and get
->> rid of some code overhead.
->
-> Perhaps Geert [CC:ed] can have a look at this in the not so distant future?
-
-Sure. Will do.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
