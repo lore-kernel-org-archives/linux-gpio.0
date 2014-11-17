@@ -1,41 +1,33 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: Check if base is positive before calling gpio_is_valid()
-Date: Mon, 17 Nov 2014 15:31:59 +0100
-Message-ID: <1416234719-16310-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:44391 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752059AbaKQOcE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 09:32:04 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH/RFC] gpio: em: Use dynamic allocation of GPIOs
+Date: Mon, 17 Nov 2014 15:34:26 +0100
+Message-ID: <3857937.SYWZS9fGq6@wuerfel>
+References: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-sh@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-It doesn't make much sense to make some (possible expensive) calls to
-gpio_is_valid() first, and to ignore the result if the base number is
-negative. Check for a positive base number first.
+On Monday 17 November 2014 15:30:32 Geert Uytterhoeven wrote:
+> Use dynamic allocation of GPIOs instead of looking at the gpio%u alias
+> in DT.
+> ---
+>   - Is this correct? Not having to care about the alias would simplify the
+>     to-be-written DT binding documentation.
+>   - Completely untested.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/gpiolib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This will obviously break any user that expects a particular gpio
+number, in particular board files, but I guess also user space
+that tries to access the gpios through sysfs.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 2e3d66adc6880950..bdf2020e103c7bc0 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -227,8 +227,8 @@ int gpiochip_add(struct gpio_chip *chip)
- 	unsigned	id;
- 	int		base = chip->base;
- 
--	if ((!gpio_is_valid(base) || !gpio_is_valid(base + chip->ngpio - 1))
--			&& base >= 0) {
-+	if (base >= 0 &&
-+	    (!gpio_is_valid(base) || !gpio_is_valid(base + chip->ngpio - 1))) {
- 		status = -EINVAL;
- 		goto fail;
- 	}
--- 
-1.9.1
+If you don't have any of those, I guess it's correct.
 
+	Arnd
