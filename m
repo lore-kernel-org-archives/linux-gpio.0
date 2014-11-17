@@ -1,115 +1,71 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: [PATCH 3/3] gpio: mcp23s08: Add option to configure IRQ as active high
-Date: Mon, 17 Nov 2014 09:38:11 +0100
-Message-ID: <1416213491-9775-3-git-send-email-alexander.stein@systec-electronic.com>
-References: <1416213491-9775-1-git-send-email-alexander.stein@systec-electronic.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] gpio: mxs: implement get_direction callback
+Date: Mon, 17 Nov 2014 09:39:39 +0100
+Message-ID: <20141117083939.GC27002@pengutronix.de>
+References: <1416004026-9667-1-git-send-email-j.uzycki@elproma.com.pl>
+ <20141114232601.GW27002@pengutronix.de>
+ <5467A980.5090204@elproma.com.pl>
+ <20141116214239.GX27002@pengutronix.de>
+ <CACQ1gAjjQuiThoTP9D3igmrZyCDpyH7iWCnP5T29K4b-n4FXVg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:35673 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751411AbaKQIgF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 17 Nov 2014 03:36:05 -0500
-In-Reply-To: <1416213491-9775-1-git-send-email-alexander.stein@systec-electronic.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:45374 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751318AbaKQIjp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 03:39:45 -0500
+Content-Disposition: inline
+In-Reply-To: <CACQ1gAjjQuiThoTP9D3igmrZyCDpyH7iWCnP5T29K4b-n4FXVg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Richard Genoud <richard.genoud@gmail.com>
+Cc: Janusz =?utf-8?Q?U=C5=BCycki?= <j.uzycki@elproma.com.pl>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, fabio.estevam@freescale.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Default is active low, but if property is specified in DT set INTPOL flag.
+Hello Richard,
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
----
- .../devicetree/bindings/gpio/gpio-mcp23s08.txt     |  2 ++
- drivers/gpio/gpio-mcp23s08.c                       | 30 +++++++++++++++++-----
- 2 files changed, 25 insertions(+), 7 deletions(-)
+On Mon, Nov 17, 2014 at 09:31:21AM +0100, Richard Genoud wrote:
+> 2014-11-16 22:42 GMT+01:00 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pen=
+gutronix.de>:
+> > On Sat, Nov 15, 2014 at 08:29:04PM +0100, Janusz U=C5=BCycki wrote:
+> >> The commit f9e42397d79b6e810437ba1130b0b4b594f5e56c
+> >> ("serial: mxs-auart: add interrupts for modem control lines")
+> >> is based on Richard's commit ab5e4e4108ca5d8326cb6b4b3a21b096a002f=
+68f
+> >> ("tty/serial: at91: add interrupts for modem control lines").
+> >> Both patches use the condition:
+> >> "if (gpiod && (gpiod_get_direction(gpiod) =3D=3D GPIOF_DIR_IN))"
+> > This is broken. Actually you want to loop only over the functions i=
+n
+> > mctrl_gpios_desc that are inputs (i.e. CTS, DSR, DCD and RNG) and d=
+on't
+> > depend on the hardware state and/or a working gpiod_get_direction.
+> Yes, it seemed a convenient test to locate inputs in atmel_serial's
+> probe function.
+> But you're right, looping on a
+> enum mctrl_gpio_idx [] =3D {
+>         UART_GPIO_CTS, UART_GPIO_DSR,
+>         UART_GPIO_DCD, UART_GPIO_RNG, UART_GPIO_RI
+> };
+> Would better describe what is done, without using gpiod_get_direction=
+().
+Note that UART_GPIO_RNG =3D=3D UART_GPIO_RI. And this is also something=
+ that
+could be handled be generic code, so the respective mctrl_gpio function
+can just loop over mctrl_gpios_desc and skip the entries with
+dir_out=3Dtrue.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-index c306a2d0..47dab72 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-@@ -57,6 +57,8 @@ Optional device specific properties:
-         occurred on. If it is not set, the interrupt are only generated for the
-         bank they belong to.
-         On devices with only one interrupt output this property is useless.
-+- microchip,irq-active-high: Sets the INTPOL flag in the IOCON register. This
-+        configures the IRQ output as active high.
- 
- Example I2C (with interrupt):
- gpiom1: gpio@20 {
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 529025e..1d5ffb4 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -65,6 +65,7 @@ struct mcp23s08_ops {
- 
- struct mcp23s08 {
- 	u8			addr;
-+	bool			irq_active_high;
- 
- 	u16			cache[11];
- 	u16			irq_rise;
-@@ -476,6 +477,7 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
- {
- 	struct gpio_chip *chip = &mcp->chip;
- 	int err, irq, j;
-+	unsigned long irqflags = IRQF_ONESHOT | IRQF_SHARED;
- 
- 	mutex_init(&mcp->irq_lock);
- 
-@@ -484,10 +486,13 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
- 	if (!mcp->irq_domain)
- 		return -ENODEV;
- 
-+	if (mcp->irq_active_high)
-+		irqflags |= IRQF_TRIGGER_HIGH;
-+	else
-+		irqflags |= IRQF_TRIGGER_LOW;
-+
- 	err = devm_request_threaded_irq(chip->dev, mcp->irq, NULL, mcp23s08_irq,
--					IRQF_TRIGGER_LOW | IRQF_ONESHOT |
--					IRQF_SHARED,
--					dev_name(chip->dev), mcp);
-+					irqflags, dev_name(chip->dev), mcp);
- 	if (err != 0) {
- 		dev_err(chip->dev, "unable to request IRQ#%d: %d\n",
- 			mcp->irq, err);
-@@ -589,6 +594,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 
- 	mcp->data = data;
- 	mcp->addr = addr;
-+	mcp->irq_active_high = false;
- 
- 	mcp->chip.direction_input = mcp23s08_direction_input;
- 	mcp->chip.get = mcp23s08_get;
-@@ -648,14 +654,24 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 		goto fail;
- 
- 	mcp->irq_controller = pdata->irq_controller;
--	if (mcp->irq && mcp->irq_controller && (type == MCP_TYPE_017))
--		mirror = pdata->mirror;
-+	if (mcp->irq && mcp->irq_controller) {
-+		mcp->irq_active_high = of_property_read_bool(mcp->chip.of_node,
-+				"microchip,irq-active-high");
- 
--	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror) {
-+		if (type == MCP_TYPE_017)
-+			mirror = pdata->mirror;
-+	}
-+
-+	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror ||
-+	     mcp->irq_active_high) {
- 		/* mcp23s17 has IOCON twice, make sure they are in sync */
- 		status &= ~(IOCON_SEQOP | (IOCON_SEQOP << 8));
- 		status |= IOCON_HAEN | (IOCON_HAEN << 8);
--		status &= ~(IOCON_INTPOL | (IOCON_INTPOL << 8));
-+		if (mcp->irq_active_high)
-+			status |= IOCON_INTPOL | (IOCON_INTPOL << 8);
-+		else
-+			status &= ~(IOCON_INTPOL | (IOCON_INTPOL << 8));
-+
- 		if (mirror)
- 			status |= IOCON_MIRROR | (IOCON_MIRROR << 8);
- 
--- 
-2.0.4
+Best regards
+Uwe
 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig     =
+       |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
