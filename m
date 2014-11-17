@@ -1,77 +1,54 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/3] mfd: arizona: Add support for CS47L24
-Date: Mon, 17 Nov 2014 12:54:33 +0000
-Message-ID: <20141117125433.GA29518@opensource.wolfsonmicro.com>
-References: <20141111165227.GA24344@opensource.wolfsonmicro.com> <20141111171532.GA26106@opensource.wolfsonmicro.com> <20141113101228.GE24004@x1> <20141113164017.GA12443@opensource.wolfsonmicro.com> <20141117121648.GP24004@x1>
+From: Jonas Jensen <jonas.jensen@gmail.com>
+Subject: Re: [PATCH 1/5] gpio: moxart: convert to use basic mmio gpio library
+Date: Mon, 17 Nov 2014 14:58:56 +0100
+Message-ID: <CACmBeS3y2rkY_vJHCQfESMFjudJb7OnVeZ7oNAErTGc+xu3B3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38271 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751751AbaKQMyj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 17 Nov 2014 07:54:39 -0500
-Content-Disposition: inline
-In-Reply-To: <20141117121648.GP24004@x1>
+Received: from mail-la0-f53.google.com ([209.85.215.53]:40378 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753019AbaKQN66 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 08:58:58 -0500
+Received: by mail-la0-f53.google.com with SMTP id pn19so1375272lab.40
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Nov 2014 05:58:57 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, alsa-devel@alsa-project.org, tiwai@suse.de, patches@opensource.wolfsonmicro.com, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Nov 17, 2014 at 12:16:48PM +0000, Lee Jones wrote:
-> On Thu, 13 Nov 2014, Charles Keepax wrote:
->=20
-> > On Thu, Nov 13, 2014 at 10:12:28AM +0000, Lee Jones wrote:
-> > > On Tue, 11 Nov 2014, Richard Fitzgerald wrote:
-> > >=20
-> > > > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.c=
-om>
-> > > > ---
-> > > >  drivers/mfd/Kconfig              |    6 +
-> > > >  drivers/mfd/Makefile             |    3 +
-> > > >  drivers/mfd/arizona-core.c       |   91 ++-
-> > > >  drivers/mfd/arizona-irq.c        |   42 +-
-> > > >  drivers/mfd/arizona-spi.c        |    9 +
-> > > >  drivers/mfd/arizona.h            |    5 +
-> > > >  drivers/mfd/cs47l24-tables.c     | 1632 ++++++++++++++++++++++=
-++++++++++++++++
-> > >=20
-> > > No chance.
-> > >=20
-> > > Please resend with these in a header file (like all of the others=
-).
-> > >=20
-> > > I'd also like Charles' Reviewed-by before accepting.
-> >=20
-> > This looks good to me. I don't quite follow what you are
-> > requesting with the header file? This still uses the header file
-> > for the registers but just defining which are available on this
-> > chip.
->=20
-> Looks like I was a little hasty with my comments.  However 8000 lines
-> over 4 platforms just to describe which registers are readable is all
-> a little bit grim.  Is there any way you can use ranges instead of
-> listing every single register on the chip?  How many gaps are there?=20
->=20
+On 12 November 2014 13:00, Kamlakant Patel <kamlakant.patel@linaro.org> wrote:
+>
+> Hi Jonas,
+>
+> This is an updated version of the previous patch with some fixes.
+> Could you please try it out.
 
-It's debatable. Ranges would be possible but there are a lot of gaps.
-Personally, speaking as someone who has to maintain these drivers, I
-like that fact that I can look at this file and see exactly which regis=
-ters
-are readable and volatile because they are all explicitly listed. It's =
-also
-useful that the files are searchable for specific registers.
+Thanks, it works, tested on UC-7112-LX hardware.
 
-I'll point Charles at this to get his opinion.
+I have one additional nit..
 
-> --=20
-> Lee Jones
-> Linaro STMicroelectronics Landing Team Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The GPIO base number is implicitly changed from 0 to 224
+(ARCH_NR_GPIOS (256) - ngpio (32)) which happen because of
+bgpio_init() (it sets base -1 / gpiochip_find_base() on
+gpiochip_add()). Which is confusing since the valid range (from user
+space) used to be 0-31. So on export we now get:
+
+[root@zurkon ~]# echo 24 > /sys/class/gpio/export
+    [   61.640000] gpio-24 (?): gpiod_request: status -517
+    [   61.650000] export_store: status -19
+
+I see other drivers explicitly set base after bgpio_init(), my
+suggestion is that we do the same here e.g. :
+
+> +       bgc->gc.label = "moxart-gpio";
+> +       bgc->gc.request = moxart_gpio_request;
+> +       bgc->gc.free = moxart_gpio_free;
+> +       bgc->gc.get = moxart_gpio_get;
+> +       bgc->data = bgc->read_reg(bgc->reg_set);
+> +       bgc->gc.ngpio = 32;
+> +       bgc->gc.dev = dev;
+> +       bgc->gc.owner = THIS_MODULE;
+
+bgc->gc.base = 0;
+
+
+Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
