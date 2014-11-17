@@ -1,154 +1,197 @@
-From: =?UTF-8?B?SmFudXN6IFXFvHlja2k=?= <j.uzycki@elproma.com.pl>
+From: Richard Genoud <richard.genoud@gmail.com>
 Subject: Re: [PATCH] gpio: mxs: implement get_direction callback
-Date: Mon, 17 Nov 2014 10:11:25 +0100
-Message-ID: <5469BBBD.30003@elproma.com.pl>
-References: <1416004026-9667-1-git-send-email-j.uzycki@elproma.com.pl> <20141114232601.GW27002@pengutronix.de> <5467A980.5090204@elproma.com.pl> <20141116214239.GX27002@pengutronix.de> <54693A51.5080907@elproma.com.pl> <54695654.3070209@elproma.com.pl> <20141117082848.GZ27002@pengutronix.de>
+Date: Mon, 17 Nov 2014 10:26:17 +0100
+Message-ID: <CACQ1gAjpXnnUPOj3paMGeB=NeQWR_7p6k8WPdxS9YzLakphBhw@mail.gmail.com>
+References: <1416004026-9667-1-git-send-email-j.uzycki@elproma.com.pl>
+ <20141114232601.GW27002@pengutronix.de> <5467A980.5090204@elproma.com.pl>
+ <20141116214239.GX27002@pengutronix.de> <54693A51.5080907@elproma.com.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from v032797.home.net.pl ([89.161.177.31]:53352 "HELO
-	v032797.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751623AbaKQJLV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 04:11:21 -0500
-In-Reply-To: <20141117082848.GZ27002@pengutronix.de>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:46394 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751802AbaKQJ0j convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 04:26:39 -0500
+In-Reply-To: <54693A51.5080907@elproma.com.pl>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>
-Cc: Richard Genoud <richard.genoud@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, fabio.estevam@freescale.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: =?UTF-8?Q?Janusz_U=C5=BCycki?= <j.uzycki@elproma.com.pl>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, fabio.estevam@freescale.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-
-W dniu 2014-11-17 o 09:28, Uwe Kleine-K=C3=B6nig pisze:
-> Hello Janusz,
+2014-11-17 0:59 GMT+01:00 Janusz U=C5=BCycki <j.uzycki@elproma.com.pl>:
 >
-> On Mon, Nov 17, 2014 at 02:58:44AM +0100, Janusz U=C5=BCycki wrote:
->> W dniu 2014-11-17 o 00:59, Janusz U=C5=BCycki pisze:
->>> W dniu 2014-11-16 o 22:42, Uwe Kleine-K=C3=B6nig pisze:
->>> Thanks Uwe. I fully agree with you.
->>> a) was just a starter to your suggestion. My options were too
->>> conservative - I just
->>> wanted to avoid tests on hardware I don't have.
-> That's something you have to live with and that's why there is a merg=
-e
-> window.
->
->>> I don't understand why gpiod_get_direction() always requires the ca=
-llback
->>> and b) would be broken (I'm not so familiar with gpiolib) but I
->>> don't need it now.
+> W dniu 2014-11-16 o 22:42, Uwe Kleine-K=C3=B6nig pisze:
+>>
+>> Hello Janusz,
+>>
+>>
+>> On Fri, Nov 14, 2014 at 11:27:06PM +0100, Janusz Uzycki wrote:
+>>>>>
+>>>>> Function gpiod_get_direction() of gpiolib calls get_direction()
+>>>>> callback. If chip doesn't implement it EINVAL error is returned.
+>>>>> The function doesn't use for returned value shadowed FLAG_IS_OUT
+>>>>> bit of gpio_desc.flags field so the callback is required.
+>>>>
+>>>> This sounds like a bugfix but "required" is wrong as AFAIR this ca=
+ll is
+>>>> optional and hardly used. Or did that change? The only drawback is=
+ that
+>>>> the debug output for (by Linux) uninitialized gpios is wrong.
 >>>
->>> So, it looks we can drop the gpio-mxs patch, yes?
-> That patch is not wrong, just its motivation. IMHO the only valid
-> usecase for .get_direction is debugging.
-
-OK, I will submit v2.
-
->
->>> And, I or Richard should submit a patch for
->>> mctrl_gpio/atmel_serial/mxs-auart
->>> to introduce the irq helper, yes?
+>>> Yes, the callback is optional but gpiod_get_direction() doesn't wor=
+k
+>>> without it.
+>>> gpiod_get_direction() doesn't seem optional,
+>>> Documentation/gpio/consumer.txt:
+>>> "A driver can also query the current direction of a GPIO:
+>>>           int gpiod_get_direction(const struct gpio_desc *desc)
+>>> This function will return either GPIOF_DIR_IN or GPIOF_DIR_OUT.
+>>> Be aware that there is no default direction for GPIOs. Therefore,
+>>> **using a GPIO
+>>> without setting its direction first is illegal and will result in
+>>> undefined
+>>> behavior!**"
+>>> There is nothing about EINVAL error. It happens despite direction w=
+as
+>>> set before. The reason is undefined get_direction callback.
+>>
+>> I still think you must not rely on gpiod_get_direction working. Some
+>> controllers might not be able to provide this info and if you know t=
+hat
+>> the direction was set before, there is no need to ask the framework.
+>> (Although I admit it might be comfortable at times.)
+>>
+>>> The commit f9e42397d79b6e810437ba1130b0b4b594f5e56c
+>>> ("serial: mxs-auart: add interrupts for modem control lines")
+>>> is based on Richard's commit ab5e4e4108ca5d8326cb6b4b3a21b096a002f6=
+8f
+>>> ("tty/serial: at91: add interrupts for modem control lines").
+>>> Both patches use the condition:
+>>> "if (gpiod && (gpiod_get_direction(gpiod) =3D=3D GPIOF_DIR_IN))"
+>>
+>> This is broken. Actually you want to loop only over the functions in
+>> mctrl_gpios_desc that are inputs (i.e. CTS, DSR, DCD and RNG) and do=
+n't
+>> depend on the hardware state and/or a working gpiod_get_direction.
+>>
+>> For that another mctrl_ helper function would be nice that does the
+>> required request_irqs for a given struct mctrl_gpios pointer. That w=
+ould
+>> be more valuable than adding the same boilerplate to another driver.
+>> Also note that there is nothing special required in the irq handler =
+in
+>> this case, just passing your struct uart_port is enough. That also h=
+as
+>> the nice side effect that not the complete driver's logic to dissect=
+ the
+>> irq reason is needed and so probably all drivers using that mctrl_gp=
+io
+>> stuff could be simplified.
+>>
+>> [...]
+>>
+>>
+>>> at91 had defined get_direction() callback, mxs platform not.
+>>> The condition helps to find gpio-inputs to set them as interrupts.
 >>>
->>> You wrote passing uart_port is enough. Argument "name" for
->>> request_irq() can be
->>> recovered from dev_name(dev) or dev_driver_string(dev)  where dev
->>> =3D port_uart->dev.
->>> But irqhandler and mctrl_gpios must be passed to
-> You don't need irqhandler. struct mctrl_gpios is needed of course.
-
-request_irq() needs a irqhandler. Do you thing about a mctrl_ handler=20
-for gpios?
-
->
->>> mctrl_gpio_request_irqs() helper.
->>> The gpio_irq table could be hidden and moved into struct
->>> mctrl_gpios. Then
->>> a second helper function is required: mctrl_gpio_free_irqs().
-> yes.
->
->> After some coding...
->> gpio_irq cannot be hidden - it is used by disable/enable_ms() and
->> not only :/
-> mctrl_gpio_enable_ms(struct mctrl_gpios *gpios);
-
-This makes unable to combine gpio's and chip's lines but it could be=20
-advantage
-to separate them.
-
->
->>> gpio_irq table initialized in mctrl_gpio_request_irqs().
->> or it could be nicely done in mctrl_gpio_init() but the problem is
->> next argument
->> for the function :/
->> eg.:
->> struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int
->> idx, int *irqs)
-> What is idx about? I see it already in the mctrl_gpio API, but there =
-is
-> no documentation about how it's used. Is it always 0?
-
-dt index
-
-> There is no need to pass an output parameter for irqs. Just save them=
- in
-> struct mctrl_gpios.
->
-> I'd go and change all struct device * parameters of the mctrl_gpio AP=
-I
-> to struct uart_port for consistency or add struct uart_port to struct
-> mctrl_gpios.
->
->>> So finally the prototypes would be:
->>> int mctrl_gpio_request_irqs(struct mctrl_gpios*, struct
->>> uart_port*, irqhandler_t);
->>> void mctrl_gpio_free_irqs(struct mctrl_gpios*);
-> I think:
->
-> 	struct mctrl_gpios {
-> 		struct uart_port *port;
-> 		struct {
-> 			gpio_desc *gpio;
-> 			unsigned int irq;
-> 		} mctrl_line[UART_GPIO_MAX];
-> 	};
-
-Looks good. Richard, do you agree?
-
-> 	struct mctrl_gpios *mctrl_gpio_init(struct uart_port *port, unsigned=
- int idx_if_needed);
-> 	int mctrl_gpio_enable_ms(struct mctrl_gpios *gpios);
-> 	int mctrl_gpio_disable_ms(struct mctrl_gpios *gpios);
-> 	void mctrl_gpio_free(struct mctrl_gpios *gpios);
->
-> I think mctrl_gpio_init should request the needed irqs, but not enabl=
+>>> Likely gpiod_get_direction() was used because
+>>> drivers/tty/serial/serial_mctrl_gpio.c
+>>> has no function to read back "dir_out" from mctrl_gpios_desc table.
+>>>
+>>> There were the ways to fix it:
+>>> a) add to serial_mctrl_gpio.c function to read the "dir_out" and us=
 e
-> them.
-
-Yes. I tried to assign irq value in mctrl_gpio_init() only.
-There was another issue if CONFIG_GPIOLIB is not defined but it looks=20
-mctrl_ disable/enable_ms()
-and mctrl_ irq handler solve the problem.
-
->   Not sure there is a corresponding request_irq variant for that.
-
-What would you propose?
-
-> Another open issue is how mctrl_gpio_init should find out about which
-> gpios to use if there is no device tree. This doesn't necessarily nee=
-ds
-> to be solved now, but maybe rename mctrl_gpio_init to
-> mctrl_gpio_init_dt?
-
-Right
-
-best regards
-Janusz
-
+>>> it instead of
+>>>      gpiod_get_direction()
+>>> if gpiod_get_direction() still used in the condition:
+>>> b) modify gpiod_get_direction() implementation in gpiolib.c:
+>>>      if get_direction() callback is not defined use shadow flag
+>>> (FLAG_IS_OUT)
+>>
+>> That would be broken.
+>>
+>>> c) modify drivers/gpio/gpio-generic.c:
+>>>     bgpio_init() could assign to get_direction default callback
+>>>     if BGPIOF_UNREADABLE_REG_DIR is not set
+>>
+>> Not sure this would be correct. I pass the question to Linus.
+>>
+>>> d) implement get_direction callback in gpio-mxs.c
+>>
+>> My suggestion isn't included in your list and IMHO is the best.
+>>
+>>> Solution d) was selected because it is safe for other drivers.
+>>
+>> That's a poor argument. Sure, implementing a generic solution that i=
+s
+>> used on several platforms is not "safe" as you probably cannot test =
+them
+>> all. But the result is better: More generic code, more people using =
+it
+>> and so find the bugs in it.
+>>
+>>> Although a) and b)
+>>> are also nice the patch doesn't modify neither serial_mctrl_gpio.c =
+and
+>>> atmel_serial.c nor gpiolib.c. It focuses on mxs platform as needed =
+for
+>>> the commit "serial: mxs-auart: add interrupts for modem control lin=
+es".
+>>
+>> I wouldn't call a) nice because in the presence of my suggested solu=
+tion
+>> there is no need for a driver to use this function. b) is broken and=
+ so
+>> cannot be nice.
 >
-> Best regards
-> Uwe
 >
+> Thanks Uwe. I fully agree with you.
+> a) was just a starter to your suggestion. My options were too conserv=
+ative -
+> I just
+> wanted to avoid tests on hardware I don't have.
+> I don't understand why gpiod_get_direction() always requires the call=
+back
+> and b) would be broken (I'm not so familiar with gpiolib) but I don't=
+ need
+> it now.
+>
+> So, it looks we can drop the gpio-mxs patch, yes?
+> And, I or Richard should submit a patch for
+> mctrl_gpio/atmel_serial/mxs-auart
+> to introduce the irq helper, yes?
+You're welcome to do it !
+At the time the mctrl_helpers were introduced, there was only one user
+(atmel_serial), so the line between specific code and factorizable
+code was not so clear.
+But clearly, the more we factorize, the better !
 
+> You wrote passing uart_port is enough. Argument "name" for request_ir=
+q() can
+> be
+> recovered from dev_name(dev) or dev_driver_string(dev)  where dev =3D
+> port_uart->dev.
+And, honestly, I'm not sure dev_name(dev) is a good name.
+Having something like dev_name(dev)_port_id_CTS may be better.
+
+> But irqhandler and mctrl_gpios must be passed to mctrl_gpio_request_i=
+rqs()
+> helper.
+> The gpio_irq table could be hidden and moved into struct mctrl_gpios.=
+ Then
+> a second helper function is required: mctrl_gpio_free_irqs().
+> gpio_irq table initialized in mctrl_gpio_request_irqs().
+>
+> So finally the prototypes would be:
+> int mctrl_gpio_request_irqs(struct mctrl_gpios*, struct uart_port*,
+> irqhandler_t);
+> void mctrl_gpio_free_irqs(struct mctrl_gpios*);
+>
+> Richard, what do you think about?
+Seems ok !
+
+Richard.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
