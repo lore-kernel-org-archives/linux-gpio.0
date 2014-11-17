@@ -1,64 +1,54 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] gpio: mxs: implement get_direction callback
-Date: Mon, 17 Nov 2014 19:42:29 +0100
-Message-ID: <20141117184229.GM27002@pengutronix.de>
-References: <1416004026-9667-1-git-send-email-j.uzycki@elproma.com.pl>
- <20141114232601.GW27002@pengutronix.de>
- <5467A980.5090204@elproma.com.pl>
- <20141116214239.GX27002@pengutronix.de>
- <54693A51.5080907@elproma.com.pl>
- <54695654.3070209@elproma.com.pl>
- <20141117082848.GZ27002@pengutronix.de>
- <546A29B9.5030104@elproma.com.pl>
- <546A2B69.4010409@elproma.com.pl>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH v3 0/3] Amlogic Meson pinctrl driver
+Date: Mon, 17 Nov 2014 10:57:45 -0800
+Message-ID: <7d408e1ab6ad46b9ba9010dd18b0df54@BY2FFO11FD038.protection.gbl>
+References: <1416168856-12747-1-git-send-email-b.galvani@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:38911 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751620AbaKQSmi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 13:42:38 -0500
+Received: from mail-by2on0062.outbound.protection.outlook.com ([207.46.100.62]:34432
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751547AbaKQS5u (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 17 Nov 2014 13:57:50 -0500
 Content-Disposition: inline
-In-Reply-To: <546A2B69.4010409@elproma.com.pl>
+In-Reply-To: <1416168856-12747-1-git-send-email-b.galvani@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Janusz =?utf-8?Q?U=C5=BCycki?= <j.uzycki@elproma.com.pl>
-Cc: Richard Genoud <richard.genoud@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, fabio.estevam@freescale.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Beniamino Galvani <b.galvani@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Carlo Caione <carlo@caione.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jerry Cao <jerry.cao@amlogic.com>, Victor Wan <victor.wan@amlogic.com>
 
-Hello Janusz,
+Hi Beniamino,
 
-On Mon, Nov 17, 2014 at 06:07:53PM +0100, Janusz U=C5=BCycki wrote:
-> >It looks there could be one more helper useful.
-> >Both atmel_serial.c and mxs-auart.c checks if the line is
-> >supported by mctrl_gpio.
-> >One time it is eg.:
-> >(s->gpio_irq[UART_GPIO_DCD] > 0)
-> >another time it is eg.:
-> >IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(s->gpios, UART_GPIO_RTS))
-> >
-> >The first one is no possible now. The second seems rude.
-> >bool mctrl_gpio_is_gpio((struct mctrl_gpios *gpios, enum
-> >mctrl_gpio_idx gidx);
-> >The name is hard. Moreover the implementation could be very similar
-> >to mctrl_gpio_to_gpiod(). Any ideas?
+On Sun, 2014-11-16 at 09:14PM +0100, Beniamino Galvani wrote:
+> Hi,
 >=20
-> The differences:
-> - faster
-> - not exported
-> - used mainly in uart's interrupt
-> - assumes that struct mctrl_gpios *gpios exists
-I wonder why you need it at all?!
+> this is the third version of the pinctrl driver for Amlogic Meson. It
+> provides a common infrastructure than can be used by all the SoCs of
+> the family and configuration data specific for Meson8. Adding support
+> for other SoCs should be only matter of defining new pins and banks.
+>=20
+> The driver uses generic DT properties for the definition of mux and
+> configuration nodes; since there is an ongoing effort to centralize
+> the parsing to generic code, I've reused the patch "pinctrl:
+> pinconf-generic: Infer map type from DT property" [1] posted a few
+> days ago by Soren Brinkmann. I will update the series if that patch i=
+s
+> going to change after the mailing list discussion.
 
-Best regards
-Uwe
+Looks really nice to me and it's great that you use my patch as basis.
+Looks like it works for more people than just me :)
+I hope we can convince Linus to take that patch more or less as is. Eve=
+n
+though "kludgy" I don't see an easy way for addressing Linus' comments
+without breaking current users of the interface. It may be easier/bette=
+r
+to gradually migrate to the newly defined bindings and remove the
+kludgyness as user that rely on the current behavior disappear.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig     =
-       |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+	Thanks,
+	S=C3=B6ren
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
