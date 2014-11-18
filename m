@@ -1,49 +1,55 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH/RFC] gpio: em: Use dynamic allocation of GPIOs
-Date: Tue, 18 Nov 2014 12:11:18 +0900
-Message-ID: <CAAVeFuKGYM56KP8TOZAwSjDGWrVNoK1phpxoOdEJ=Ng9haSnmg@mail.gmail.com>
-References: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v2] gpio: mxs: implement get_direction callback
+Date: Tue, 18 Nov 2014 08:55:45 +0100
+Message-ID: <20141118075545.GO27002@pengutronix.de>
+References: <1416221256-11671-1-git-send-email-j.uzycki@elproma.com.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-SH <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-serial-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1416221256-11671-1-git-send-email-j.uzycki@elproma.com.pl>
+Sender: linux-serial-owner@vger.kernel.org
+To: Janusz Uzycki <j.uzycki@elproma.com.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 17, 2014 at 11:30 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Use dynamic allocation of GPIOs instead of looking at the gpio%u alias
-> in DT.
-> ---
->   - Is this correct? Not having to care about the alias would simplify the
->     to-be-written DT binding documentation.
->   - Completely untested.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->  drivers/gpio/gpio-em.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-> index 21d34d4d473dcefe..c3434146f605748b 100644
-> --- a/drivers/gpio/gpio-em.c
-> +++ b/drivers/gpio/gpio-em.c
-> @@ -330,12 +330,7 @@ static int em_gio_probe(struct platform_device *pdev)
->                         goto err0;
->                 }
->
-> -               ret = of_alias_get_id(pdev->dev.of_node, "gpio");
-> -               if (ret < 0) {
-> -                       dev_err(&pdev->dev, "Couldn't get OF id\n");
-> -                       goto err0;
-> -               }
-> -               pdata->gpio_base = ret * 32; /* 32 GPIOs per instance */
-> +               pdata->gpio_base = -1;
+Hello,
 
-User-space might break because of GPIO renumbering. Why not setting
-gpio_base to -1 when the property is not present (instead of
-triggering an error), keeping support for the property so existing
-boards remain safe, and marking the property as deprecated in the
-bindings documentation?
+On Mon, Nov 17, 2014 at 11:47:36AM +0100, Janusz Uzycki wrote:
+> gpiolib's gpiod_get_direction() function returns the EINVAL error
+> if .get_direction callback is not defined.
+> The patch implements the callback for mxs chip what is useful
+s/what/which/
+
+> for debugging.
+>=20
+> Commit f9e42397d79b
+> ("serial: mxs-auart: add interrupts for modem control lines")
+> as based on commit ab5e4e4108ca
+> ("tty/serial: at91: add interrupts for modem control lines")
+> uses the gpiod_get_direction() function.
+This paragraph is obsolete now that we agreed that .get_direction has
+nothing to do with mctrl_gpio, right?
+>=20
+> Inspired from arch/arm/mach-at91/gpio.c
+s/from/by/ I think
+
+Other than that:
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Thanks
+Uwe
+
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-serial"=
+ in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
