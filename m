@@ -1,42 +1,38 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 3/3] ASoC: arizona: Add initial CS47L24 codec driver
-Date: Tue, 18 Nov 2014 17:34:32 +0000
-Message-ID: <20141118173432.GA28674@opensource.wolfsonmicro.com>
-References: <20141111165227.GA24344@opensource.wolfsonmicro.com> <20141111170543.GC25738@opensource.wolfsonmicro.com> <20141118145114.GN22111@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 0/2] Pinctrl fixes for rockchip
+Date: Tue, 18 Nov 2014 15:49:54 -0800
+Message-ID: <1416354596-15013-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41658 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754376AbaKRReh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 18 Nov 2014 12:34:37 -0500
-Content-Disposition: inline
-In-Reply-To: <20141118145114.GN22111@sirena.org.uk>
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:61329 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932936AbaKRXuK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Nov 2014 18:50:10 -0500
+Received: by mail-ie0-f179.google.com with SMTP id rp18so5173525iec.10
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Nov 2014 15:50:09 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, ckeepax@opensource.wolfsonmicro.com
+To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Sonny Rao <sonnyrao@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Chris Zhong <zyw@rock-chips.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, Doug Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 18, 2014 at 02:51:14PM +0000, Mark Brown wrote:
-> On Tue, Nov 11, 2014 at 05:05:43PM +0000, Richard Fitzgerald wrote:
-> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> > ---
-> >  sound/soc/codecs/Kconfig   |    8 +
-> >  sound/soc/codecs/Makefile  |    2 +
-> >  sound/soc/codecs/arizona.c |    5 +
-> >  sound/soc/codecs/cs47l24.c | 1133 ++++++++++++++++++++++++++++++++++++++++++++
-> >  sound/soc/codecs/cs47l24.h |   23 +
-> 
-> Can you split out the arizona.c change into a separate patch to be
-> merged via the MFD tree along with the new #define please?  Everything
-> else can go in via the ASoC tree but that build depends on the new
-> defines.
+These two patches fix some pinctrl issues on rockchip.  The first
+fixes a real issue where interrupts were being left on in
+suspend/resume and waking the system up when they shouldn't.  The
+second fixes purely theoretical problems and could be considered more
+of an RFC patch.
 
-Will do. I'll wait until we've agreed what to do with the MFD tables
-and then respin all these patches.
+I've tested these patches more extensively on a non-mainline tree but
+have done basic compile and boot testing on mainline.  I don't have
+suspend/resume working so well on mainline yet, so I haven't tested
+fully there.
 
-It's probably worth merging the set of WM8280/WM8281 support patches
-first as they are simpler. Then I can rebase these CS47L24 patches
-on top of that.
+
+Doug Anderson (2):
+  pinctrl: rockchip: Handle wakeup pins
+  pinctrl: rockchip: Fix enable/disable/mask/unmask
+
+ drivers/pinctrl/pinctrl-rockchip.c | 51 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 3 deletions(-)
+
+-- 
+2.1.0.rc2.206.gedb03e5
 
