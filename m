@@ -1,56 +1,27 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/3] gpio: arizona: Add support for CS47L24
-Date: Mon, 17 Nov 2014 15:03:00 +0000
-Message-ID: <20141117150300.GG2722@sirena.org.uk>
-References: <20141111165227.GA24344@opensource.wolfsonmicro.com>
- <20141111170432.GB25738@opensource.wolfsonmicro.com>
- <CACRpkdazkS0M6G_gNvfKayZdrU+BMhSSF9iJp=fZEbc=+jDKsA@mail.gmail.com>
- <20141117095801.GA25618@opensource.wolfsonmicro.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: Check if base is positive before calling gpio_is_valid()
+Date: Tue, 18 Nov 2014 12:06:53 +0900
+Message-ID: <CAAVeFuJ_QQLue7Xo8jyG+wyQJD5JCxzJBC39SiK+t0HJu5b13A@mail.gmail.com>
+References: <1416234719-16310-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ExIO7AL6tcaLjJBF"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45397 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753023AbaKQXJG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 18:09:06 -0500
-Content-Disposition: inline
-In-Reply-To: <20141117095801.GA25618@opensource.wolfsonmicro.com>
+Received: from mail-ig0-f169.google.com ([209.85.213.169]:59911 "EHLO
+	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751213AbaKRDHO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Nov 2014 22:07:14 -0500
+In-Reply-To: <1416234719-16310-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "perex@perex.cz" <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, patches@opensource.wolfsonmicro.com, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
+On Mon, Nov 17, 2014 at 11:31 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> It doesn't make much sense to make some (possible expensive) calls to
+> gpio_is_valid() first, and to ignore the result if the base number is
+> negative. Check for a positive base number first.
 
---ExIO7AL6tcaLjJBF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sure.
 
-On Mon, Nov 17, 2014 at 09:58:01AM +0000, Richard Fitzgerald wrote:
-> On Mon, Nov 17, 2014 at 07:41:53AM +0100, Linus Walleij wrote:
-
-> > Apart from the whitespace fix pointed out by Mark,
-
-> THe line Mark commented on isn't a whitespace error. It matches
-> the copyright line style used by Cirrus in other files.
-
-Are you sure you're not copying a mistake someone else introduced here
-or that if it is in some way deliberate it's a good idea?
-
---ExIO7AL6tcaLjJBF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUag4kAAoJECTWi3JdVIfQAvgH/Rs0lTr63qbIiQi9VPlJctYm
-a2R59elTbBtg7ezzVvaR4f3Yvvm3o5JQhfeaMp3xNFa9+w63nxODLP70bK9GMy6W
-aSeLVdSnNdiQNvmtkkpFilB2aDk9rYkN5R0/xlaJufMTsLHC7958MTWg+epkjyMN
-7Q4qOPkW4QAkbCm9HhL+WjDa5ME4frKDMxnCmERfMfhofXwE2kfrfQTux9yASgt4
-9JCa15DYgNMsRBrXNzpTu1hKe9VAqK2lPcvU95bGbTtggGh+dcv+5gqpHJCg9vap
-dpmZrDlo35y5EYccW5FzrTwWUknQprsenevg9lovtw0MVGC8vqsEjuP58RmJlxY=
-=Vis4
------END PGP SIGNATURE-----
-
---ExIO7AL6tcaLjJBF--
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
