@@ -1,105 +1,156 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 1/2] pinctrl: rockchip: Handle wakeup pins
-Date: Tue, 18 Nov 2014 15:49:55 -0800
-Message-ID: <1416354596-15013-2-git-send-email-dianders@chromium.org>
-References: <1416354596-15013-1-git-send-email-dianders@chromium.org>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH] gpio: remove gpio_descs global array
+Date: Wed, 19 Nov 2014 16:51:27 +0900
+Message-ID: <1416383487-15993-1-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:59555 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932938AbaKRXuL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Nov 2014 18:50:11 -0500
-Received: by mail-ie0-f171.google.com with SMTP id rl12so4733041iec.30
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Nov 2014 15:50:10 -0800 (PST)
-In-Reply-To: <1416354596-15013-1-git-send-email-dianders@chromium.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3231 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754824AbaKSHvm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Nov 2014 02:51:42 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Sonny Rao <sonnyrao@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Chris Zhong <zyw@rock-chips.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, Doug Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 
-The rockchip pinctrl driver was using irq_gc_set_wake() as its
-implementation of irq_set_wake() but was totally ignoring everything
-that irq_gc_set_wake() did (which is to upkeep gc->wake_active).
+Replace the ARCH_NR_GPIOS-sized static array of GPIO descriptors by
+dynamically-allocated arrays for each GPIO chip.
 
-Let's fix that by setting gc->wake_active as GPIO_INTEN at suspend
-time and restoring GPIO_INTEN at resume time.
+This change makes gpio_to_desc() perform in O(n) (where n is the number
+of GPIO chips registered) instead of O(1), however since n is rarely
+bigger than 1 or 2 no noticeable performance issue is expected.
+Besides this provides more incentive for GPIO consumers to move to the
+gpiod interface. One could use a O(log(n)) structure to link the GPIO
+chips together, but considering the low limit of n the hypothetical
+performance benefit is probably not worth the added complexity.
 
-NOTE a few quirks when thinking about this patch:
-- Rockchip pinctrl hardware supports both "disable/enable" and
-  "mask/unmask".  Right now we only use "disable/enable" and present
-  those to Linux as "mask/unmask".  This should be OK because
-  enable/disable is optional and Linux will implement it in terms of
-  mask/unmask.  At the moment we always tell hardware all interrupts
-  are unmasked (the boot default).
-- At suspend time Linux tries to call "disable" on all interrupts and
-  also enables wakeup on all wakeup interrupts.  One would think that
-  since "disable" is implemented as "mask" when "disable" isn't
-  provided and that since we were ignoring gc->wake_active that
-  nothing would have woken us up.  That's not the case since Linux
-  "optimizes" things and just leaves interrutps unmasked, assuming it
-  could mask them later when they go off.  That meant that at suspend
-  time all interrupts were actually being left enabled.
+This patch uses kcalloc() in gpiochip_add(), which removes the ability
+to add a chip before kcalloc() can operate. I am not aware of such
+cases, but if someone bisects up to this patch then I will be proven
+wrong...
 
-With this patch random non-wakeup interrupts no longer wake the system
-up.  Wakeup interrupts still wake the system up.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/gpio/gpiolib.c | 47 +++++++++++++++++++++++++++++++----------------
+ 1 file changed, 31 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index ba74f0a..e91e845 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -89,6 +89,7 @@ struct rockchip_iomux {
-  * @reg_pull: optional separate register for additional pull settings
-  * @clk: clock of the gpio bank
-  * @irq: interrupt of the gpio bank
-+ * @saved_enables: Saved content of GPIO_INTEN at suspend time.
-  * @pin_base: first pin number
-  * @nr_pins: number of pins in this bank
-  * @name: name of the bank
-@@ -107,6 +108,7 @@ struct rockchip_pin_bank {
- 	struct regmap			*regmap_pull;
- 	struct clk			*clk;
- 	int				irq;
-+	u32				saved_enables;
- 	u32				pin_base;
- 	u8				nr_pins;
- 	char				*name;
-@@ -1543,6 +1545,23 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
- 	return 0;
- }
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index eb739a51e774..5619922ebf44 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -47,8 +47,6 @@
+  */
+ DEFINE_SPINLOCK(gpio_lock);
  
-+static void rockchip_irq_suspend(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct rockchip_pin_bank *bank = gc->private;
-+
-+	bank->saved_enables = irq_reg_readl(gc, GPIO_INTEN);
-+	irq_reg_writel(gc, gc->wake_active, GPIO_INTEN);
-+}
-+
-+static void rockchip_irq_resume(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct rockchip_pin_bank *bank = gc->private;
-+
-+	irq_reg_writel(gc, bank->saved_enables, GPIO_INTEN);
-+}
-+
- static int rockchip_interrupts_register(struct platform_device *pdev,
- 						struct rockchip_pinctrl *info)
+-static struct gpio_desc gpio_desc[ARCH_NR_GPIOS];
+-
+ #define GPIO_OFFSET_VALID(chip, offset) (offset >= 0 && offset < chip->ngpio)
+ 
+ static DEFINE_MUTEX(gpio_lookup_lock);
+@@ -65,10 +63,22 @@ static inline void desc_set_label(struct gpio_desc *d, const char *label)
+  */
+ struct gpio_desc *gpio_to_desc(unsigned gpio)
  {
-@@ -1587,6 +1606,8 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 		gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
- 		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
- 		gc->chip_types[0].chip.irq_set_wake = irq_gc_set_wake;
-+		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
-+		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
- 		gc->chip_types[0].chip.irq_set_type = rockchip_irq_set_type;
- 		gc->wake_enabled = IRQ_MSK(bank->nr_pins);
+-	if (WARN(!gpio_is_valid(gpio), "invalid GPIO %d\n", gpio))
+-		return NULL;
+-	else
+-		return &gpio_desc[gpio];
++	struct gpio_chip *chip;
++	unsigned long flags;
++
++	spin_lock_irqsave(&gpio_lock, flags);
++
++	list_for_each_entry(chip, &gpio_chips, list) {
++		if (chip->base <= gpio && chip->base + chip->ngpio > gpio) {
++			spin_unlock_irqrestore(&gpio_lock, flags);
++			return &chip->desc[gpio - chip->base];
++		}
++	}
++
++	spin_unlock_irqrestore(&gpio_lock, flags);
++
++	WARN(1, "invalid GPIO %d\n", gpio);
++	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(gpio_to_desc);
+ 
+@@ -91,7 +101,7 @@ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
+  */
+ int desc_to_gpio(const struct gpio_desc *desc)
+ {
+-	return desc - &gpio_desc[0];
++	return desc->chip->base + (desc - &desc->chip->desc[0]);
+ }
+ EXPORT_SYMBOL_GPL(desc_to_gpio);
+ 
+@@ -206,7 +216,7 @@ static int gpiochip_add_to_list(struct gpio_chip *chip)
+ /**
+  * gpiochip_add() - register a gpio_chip
+  * @chip: the chip to register, with chip->base initialized
+- * Context: potentially before irqs or kmalloc will work
++ * Context: potentially before irqs will work
+  *
+  * Returns a negative errno if the chip can't be registered, such as
+  * because the chip->base is invalid or already associated with a
+@@ -226,12 +236,11 @@ int gpiochip_add(struct gpio_chip *chip)
+ 	int		status = 0;
+ 	unsigned	id;
+ 	int		base = chip->base;
++	struct gpio_desc *descs;
+ 
+-	if ((!gpio_is_valid(base) || !gpio_is_valid(base + chip->ngpio - 1))
+-			&& base >= 0) {
+-		status = -EINVAL;
+-		goto fail;
+-	}
++	descs = kcalloc(chip->ngpio, sizeof(descs[0]), GFP_KERNEL);
++	if (!descs)
++		return -ENOMEM;
+ 
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+@@ -247,10 +256,8 @@ int gpiochip_add(struct gpio_chip *chip)
+ 	status = gpiochip_add_to_list(chip);
+ 
+ 	if (status == 0) {
+-		chip->desc = &gpio_desc[chip->base];
+-
+ 		for (id = 0; id < chip->ngpio; id++) {
+-			struct gpio_desc *desc = &chip->desc[id];
++			struct gpio_desc *desc = &descs[id];
+ 			desc->chip = chip;
+ 
+ 			/* REVISIT:  most hardware initializes GPIOs as
+@@ -266,6 +273,8 @@ int gpiochip_add(struct gpio_chip *chip)
+ 		}
+ 	}
+ 
++	chip->desc = descs;
++
+ 	spin_unlock_irqrestore(&gpio_lock, flags);
+ 
+ #ifdef CONFIG_PINCTRL
+@@ -291,6 +300,9 @@ int gpiochip_add(struct gpio_chip *chip)
+ unlock:
+ 	spin_unlock_irqrestore(&gpio_lock, flags);
+ fail:
++	kfree(descs);
++	chip->desc = NULL;
++
+ 	/* failures here can mean systems won't boot... */
+ 	pr_err("%s: GPIOs %d..%d (%s) failed to register\n", __func__,
+ 		chip->base, chip->base + chip->ngpio - 1,
+@@ -331,6 +343,9 @@ void gpiochip_remove(struct gpio_chip *chip)
+ 	list_del(&chip->list);
+ 	spin_unlock_irqrestore(&gpio_lock, flags);
+ 	gpiochip_unexport(chip);
++
++	kfree(chip->desc);
++	chip->desc = NULL;
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_remove);
  
 -- 
-2.1.0.rc2.206.gedb03e5
+2.1.3
 
