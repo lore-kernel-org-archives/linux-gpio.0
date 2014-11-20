@@ -1,109 +1,131 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 1/2] pinctrl: rockchip: Handle wakeup pins
-Date: Wed, 19 Nov 2014 14:51:32 -0800
-Message-ID: <1416437493-25588-2-git-send-email-dianders@chromium.org>
-References: <1416437493-25588-1-git-send-email-dianders@chromium.org>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH] mdio-mux-gpio: Use GPIO descriptor interface and new gpiod_set_array function
+Date: Thu, 20 Nov 2014 13:24:44 +0100
+Message-ID: <6441674.xrJo8HXDvD@pcimr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:50263 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756994AbaKSWvp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Nov 2014 17:51:45 -0500
-Received: by mail-ig0-f169.google.com with SMTP id hl2so6447549igb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2014 14:51:45 -0800 (PST)
-In-Reply-To: <1416437493-25588-1-git-send-email-dianders@chromium.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:60019 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754076AbaKTMYt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Nov 2014 07:24:49 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Sonny Rao <sonnyrao@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Chris Zhong <zyw@rock-chips.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, Doug Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, David Daney <david.daney@cavium.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-The rockchip pinctrl driver was using irq_gc_set_wake() as its
-implementation of irq_set_wake() but was totally ignoring everything
-that irq_gc_set_wake() did (which is to upkeep gc->wake_active).
+Convert mdio-mux-gpio to the GPIO descriptor interface and use the new
+gpiod_set_array function to set all output signals simultaneously.
 
-Let's fix that by setting gc->wake_active as GPIO_INTEN at suspend
-time and restoring GPIO_INTEN at resume time.
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+--
+This patch depends on the gpiod_set_array function, which is available in
+the linux-gpio devel tree.
 
-NOTE a few quirks when thinking about this patch:
-- Rockchip pinctrl hardware supports both "disable/enable" and
-  "mask/unmask".  Right now we only use "disable/enable" and present
-  those to Linux as "mask/unmask".  This should be OK because
-  enable/disable is optional and Linux will implement it in terms of
-  mask/unmask.  At the moment we always tell hardware all interrupts
-  are unmasked (the boot default).
-- At suspend time Linux tries to call "disable" on all interrupts and
-  also enables wakeup on all wakeup interrupts.  One would think that
-  since "disable" is implemented as "mask" when "disable" isn't
-  provided and that since we were ignoring gc->wake_active that
-  nothing would have woken us up.  That's not the case since Linux
-  "optimizes" things and just leaves interrutps unmasked, assuming it
-  could mask them later when they go off.  That meant that at suspend
-  time all interrupts were actually being left enabled.
+ drivers/net/phy/mdio-mux-gpio.c |   35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
 
-With this patch random non-wakeup interrupts no longer wake the system
-up.  Wakeup interrupts still wake the system up.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
----
-Changes in v2: None
-
- drivers/pinctrl/pinctrl-rockchip.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index ba74f0a..e91e845 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -89,6 +89,7 @@ struct rockchip_iomux {
-  * @reg_pull: optional separate register for additional pull settings
-  * @clk: clock of the gpio bank
-  * @irq: interrupt of the gpio bank
-+ * @saved_enables: Saved content of GPIO_INTEN at suspend time.
-  * @pin_base: first pin number
-  * @nr_pins: number of pins in this bank
-  * @name: name of the bank
-@@ -107,6 +108,7 @@ struct rockchip_pin_bank {
- 	struct regmap			*regmap_pull;
- 	struct clk			*clk;
- 	int				irq;
-+	u32				saved_enables;
- 	u32				pin_base;
- 	u8				nr_pins;
- 	char				*name;
-@@ -1543,6 +1545,23 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+index 0966951..3fdea96 100644
+--- a/drivers/net/phy/mdio-mux-gpio.c
++++ b/drivers/net/phy/mdio-mux-gpio.c
+@@ -14,13 +14,13 @@
+ #include <linux/mdio-mux.h>
+ #include <linux/of_gpio.h>
+ 
+-#define DRV_VERSION "1.0"
++#define DRV_VERSION "1.1"
+ #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
+ 
+ #define MDIO_MUX_GPIO_MAX_BITS 8
+ 
+ struct mdio_mux_gpio_state {
+-	int gpio[MDIO_MUX_GPIO_MAX_BITS];
++	struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
+ 	unsigned int num_gpios;
+ 	void *mux_handle;
+ };
+@@ -28,29 +28,23 @@ struct mdio_mux_gpio_state {
+ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ 				   void *data)
+ {
+-	int change;
++	int values[MDIO_MUX_GPIO_MAX_BITS];
+ 	unsigned int n;
+ 	struct mdio_mux_gpio_state *s = data;
+ 
+ 	if (current_child == desired_child)
+ 		return 0;
+ 
+-	change = current_child == -1 ? -1 : current_child ^ desired_child;
+-
+ 	for (n = 0; n < s->num_gpios; n++) {
+-		if (change & 1)
+-			gpio_set_value_cansleep(s->gpio[n],
+-						(desired_child & 1) != 0);
+-		change >>= 1;
+-		desired_child >>= 1;
++		values[n] = (desired_child >> n) & 1;
+ 	}
++	gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
+ 
  	return 0;
  }
  
-+static void rockchip_irq_suspend(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct rockchip_pin_bank *bank = gc->private;
-+
-+	bank->saved_enables = irq_reg_readl(gc, GPIO_INTEN);
-+	irq_reg_writel(gc, gc->wake_active, GPIO_INTEN);
-+}
-+
-+static void rockchip_irq_resume(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct rockchip_pin_bank *bank = gc->private;
-+
-+	irq_reg_writel(gc, bank->saved_enables, GPIO_INTEN);
-+}
-+
- static int rockchip_interrupts_register(struct platform_device *pdev,
- 						struct rockchip_pinctrl *info)
+ static int mdio_mux_gpio_probe(struct platform_device *pdev)
  {
-@@ -1587,6 +1606,8 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 		gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
- 		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
- 		gc->chip_types[0].chip.irq_set_wake = irq_gc_set_wake;
-+		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
-+		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
- 		gc->chip_types[0].chip.irq_set_type = rockchip_irq_set_type;
- 		gc->wake_enabled = IRQ_MSK(bank->nr_pins);
+-	enum of_gpio_flags f;
+ 	struct mdio_mux_gpio_state *s;
+ 	int num_gpios;
+ 	unsigned int n;
+@@ -70,20 +64,17 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ 	s->num_gpios = num_gpios;
  
--- 
-2.1.0.rc2.206.gedb03e5
+ 	for (n = 0; n < num_gpios; ) {
+-		int gpio = of_get_gpio_flags(pdev->dev.of_node, n, &f);
+-		if (gpio < 0) {
+-			r = (gpio == -ENODEV) ? -EPROBE_DEFER : gpio;
++		struct gpio_desc *gpio = gpiod_get_index(&pdev->dev,
++							 "mdio-mux-gpio", n);
++		if (IS_ERR(gpio)) {
++			r = PTR_ERR(gpio);
+ 			goto err;
+ 		}
+ 		s->gpio[n] = gpio;
+ 
+ 		n++;
+ 
+-		r = gpio_request(gpio, "mdio_mux_gpio");
+-		if (r)
+-			goto err;
+-
+-		r = gpio_direction_output(gpio, 0);
++		r = gpiod_direction_output(gpio, 0);
+ 		if (r)
+ 			goto err;
+ 	}
+@@ -98,15 +89,19 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ err:
+ 	while (n) {
+ 		n--;
+-		gpio_free(s->gpio[n]);
++		gpiod_put(s->gpio[n]);
+ 	}
+ 	return r;
+ }
+ 
+ static int mdio_mux_gpio_remove(struct platform_device *pdev)
+ {
++	unsigned int n;
+ 	struct mdio_mux_gpio_state *s = dev_get_platdata(&pdev->dev);
+ 	mdio_mux_uninit(s->mux_handle);
++	for (n = 0; n < s->num_gpios; n++) {
++		gpiod_put(s->gpio[n]);
++	}
+ 	return 0;
+ }
+ 
+--
+2.0.4
 
