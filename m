@@ -1,51 +1,51 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: [RFC PATCH 1/1] gpio: pca953x: Allow interrupt support when compiled as module
-Date: Thu, 20 Nov 2014 15:06:19 +0100
-Message-ID: <1416492379-28433-1-git-send-email-alexander.stein@systec-electronic.com>
+From: Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v2 0/2] gpio: add GPIO hogging mechanism
+Date: Thu, 20 Nov 2014 17:54:42 -0600
+Message-ID: <1416527684-19017-1-git-send-email-bparrot@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:37772 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751139AbaKTOEM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 20 Nov 2014 09:04:12 -0500
+Received: from devils.ext.ti.com ([198.47.26.153]:38484 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756976AbaKTXyw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Nov 2014 18:54:52 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Benoit Parrot <bparrot@ti.com>
 
-With commit 2fd36c55264926e268deb50f6de5f43fa5e490f7
-("i2c: core: Map OF IRQ at probe time") it seems that there is no need
-to force this driver to be compiled into the kernel.
+This patch set re-introduces the gpio hogging concept first 
+presented by Boris Brezillion.
+This patch set provides a way to initally configure specific GPIO
+when the gpio controller is probed.
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
----
-This is completely untested, as I lack a board capable of running a v3.18-rcX
-kernel. But I noticed on an older kernel that this driver failed requesting
-irq 0 during kernel boot. 0 because it's irq parent was not yet probed (also
-a compiled in driver). With the mentioned commit this should work now.
-It is currently only in
-http://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/log/?h=i2c/for-next
+The actual DT scanning to collect the GPIO specific data is performed
+as part of the gpiochip_add().
 
- drivers/gpio/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The purpose of this is to allows specific GPIOs to be configured
+without any driver specific code.
+This particularly useful because board design are getting
+increasingly complex and given SoC pins can now have upward
+of 10 mux values a lot of connections are now dependent on
+external IO muxes to switch various modes and combination.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0959ca9..29973d3 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -547,11 +547,10 @@ config GPIO_PCA953X
- 
- config GPIO_PCA953X_IRQ
- 	bool "Interrupt controller support for PCA953x"
--	depends on GPIO_PCA953X=y
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to enable the pca953x to be used as an interrupt
--	  controller. It requires the driver to be built in the kernel.
-+	  controller.
- 
- config GPIO_PCF857X
- 	tristate "PCF857x, PCA{85,96}7x, and MAX732[89] I2C GPIO expanders"
+Specific drivers should not necessarily need to be aware of
+what accounts to a specific board implementation. This board level
+"description" should be best kept as part of the dts file.
+
+Changes since v1:
+ * Split the devicetree bindings documentation in its own patch.
+ * Refactor the gpio-hog mechanism as private functions meant to
+   be to invoked from of_gpiochip_add().
+
+Benoit Parrot (2):
+  gpio: add GPIO hogging mechanism
+  gpio: Document GPIO hogging mechanism
+
+ Documentation/devicetree/bindings/gpio/gpio.txt |  25 ++++
+ drivers/gpio/gpiolib-of.c                       | 188 ++++++++++++++++++++++++
+ 2 files changed, 213 insertions(+)
+
 -- 
-2.0.4
+1.8.5.1
 
