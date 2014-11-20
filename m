@@ -1,304 +1,51 @@
-From: Vincent Yang <vincent.yang.fujitsu@gmail.com>
-Subject: [PATCH 5/9] gpio: Add Fujitsu MB86S7x GPIO driver
-Date: Thu, 20 Nov 2014 20:37:03 +0800
-Message-ID: <1416487023-25426-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
-References: <1416486442-25200-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [RFC PATCH 1/1] gpio: pca953x: Allow interrupt support when compiled as module
+Date: Thu, 20 Nov 2014 15:06:19 +0100
+Message-ID: <1416492379-28433-1-git-send-email-alexander.stein@systec-electronic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:46136 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075AbaKTMhf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Nov 2014 07:37:35 -0500
-In-Reply-To: <1416486442-25200-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+Received: from webbox1416.server-home.net ([77.236.96.61]:37772 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751139AbaKTOEM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 20 Nov 2014 09:04:12 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: arnd@arndb.de, olof@lixom.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, grant.likely@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, andy.green@linaro.org, patches@linaro.org, jaswinder.singh@linaro.org, Vincent Yang <Vincent.Yang@tw.fujitsu.com>, Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
 
-Driver for Fujitsu MB86S7x SoCs that have a memory mapped GPIO controller.
+With commit 2fd36c55264926e268deb50f6de5f43fa5e490f7
+("i2c: core: Map OF IRQ at probe time") it seems that there is no need
+to force this driver to be compiled into the kernel.
 
-Signed-off-by: Andy Green <andy.green@linaro.org>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
-Signed-off-by: Vincent Yang <Vincent.Yang@tw.fujitsu.com>
-Signed-off-by: Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 ---
- .../bindings/gpio/fujitsu,mb86s70-gpio.txt         |  18 ++
- drivers/gpio/Kconfig                               |   6 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-mb86s7x.c                        | 211 +++++++++++++++++++++
- 4 files changed, 236 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
- create mode 100644 drivers/gpio/gpio-mb86s7x.c
+This is completely untested, as I lack a board capable of running a v3.18-rcX
+kernel. But I noticed on an older kernel that this driver failed requesting
+irq 0 during kernel boot. 0 because it's irq parent was not yet probed (also
+a compiled in driver). With the mentioned commit this should work now.
+It is currently only in
+http://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/log/?h=i2c/for-next
 
-diff --git a/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
-new file mode 100644
-index 0000000..38300ee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
-@@ -0,0 +1,18 @@
-+Fujitsu MB86S7x GPIO Controller
-+-------------------------------
-+
-+Required properties:
-+- compatible: Should be "fujitsu,mb86s70-gpio"
-+- gpio-controller: Marks the device node as a gpio controller.
-+- #gpio-cells: Should be <2>. The first cell is the pin number and the
-+  second cell is used to specify optional parameters:
-+   - bit 0 specifies polarity (0 for normal, 1 for inverted).
-+
-+Examples:
-+	gpio0: gpio@31000000 {
-+		compatible = "fujitsu,mb86s70-gpio";
-+		reg = <0 0x31000000 0x10000>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		clocks = <&clk_alw_2_1>;
-+	};
+ drivers/gpio/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0959ca9..493b7fe 100644
+index 0959ca9..29973d3 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -181,6 +181,12 @@ config GPIO_F7188X
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called f7188x-gpio.
+@@ -547,11 +547,10 @@ config GPIO_PCA953X
  
-+config GPIO_MB86S7X
-+	bool "GPIO support for Fujitsu MB86S7x Platforms"
-+	depends on ARCH_MB86S7X
-+	help
-+	  Say yes here to support the GPIO controller in LSI ZEVIO SoCs.
-+
- config GPIO_MOXART
- 	bool "MOXART GPIO support"
- 	depends on ARCH_MOXART
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index e5d346c..eec0664 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -46,6 +46,7 @@ obj-$(CONFIG_GPIO_MAX730X)	+= gpio-max730x.o
- obj-$(CONFIG_GPIO_MAX7300)	+= gpio-max7300.o
- obj-$(CONFIG_GPIO_MAX7301)	+= gpio-max7301.o
- obj-$(CONFIG_GPIO_MAX732X)	+= gpio-max732x.o
-+obj-$(CONFIG_GPIO_MB86S7X)	+= gpio-mb86s7x.o
- obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
- obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
- obj-$(CONFIG_GPIO_MCP23S08)	+= gpio-mcp23s08.o
-diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
-new file mode 100644
-index 0000000..f0b2dc0
---- /dev/null
-+++ b/drivers/gpio/gpio-mb86s7x.c
-@@ -0,0 +1,211 @@
-+/*
-+ *  linux/drivers/gpio/gpio-mb86s7x.c
-+ *
-+ *  Copyright (C) 2014 Fujitsu Semiconductor Limited
-+ *  Copyright (C) 2014 Linaro Ltd.
-+ *
-+ *  This program is free software: you can redistribute it and/or modify
-+ *  it under the terms of the GNU General Public License as published by
-+ *  the Free Software Foundation, version 2 of the License.
-+ *
-+ *  This program is distributed in the hope that it will be useful,
-+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *  GNU General Public License for more details.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/init.h>
-+#include <linux/clk.h>
-+#include <linux/gpio.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/ioport.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/spinlock.h>
-+#include <linux/slab.h>
-+
-+#define PDR(x)	(0x0 + x)
-+#define DDR(x)	(0x10 + x)
-+#define PFR(x)	(0x20 + x)
-+
-+struct mb86s70_gpio_chip {
-+	spinlock_t lock;
-+	struct clk *clk;
-+	void __iomem *base;
-+	struct gpio_chip gc;
-+};
-+
-+static int mb86s70_gpio_request(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct mb86s70_gpio_chip *gchip = container_of(gc,
-+					struct mb86s70_gpio_chip, gc);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&gchip->lock, flags);
-+	val = readl(gchip->base + PFR(offset / 8 * 4));
-+	val &= ~(1 << (offset % 8)); /* as gpio-port */
-+	writel(val, gchip->base + PFR(offset / 8 * 4));
-+	spin_unlock_irqrestore(&gchip->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void mb86s70_gpio_free(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct mb86s70_gpio_chip *gchip = container_of(gc,
-+					struct mb86s70_gpio_chip, gc);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&gchip->lock, flags);
-+	val = readl(gchip->base + PFR(offset / 8 * 4));
-+	val |= (1 << (offset % 8)); /* as peri-port */
-+	writel(val, gchip->base + PFR(offset / 8 * 4));
-+	spin_unlock_irqrestore(&gchip->lock, flags);
-+}
-+
-+static int mb86s70_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct mb86s70_gpio_chip *gchip =
-+			container_of(gc, struct mb86s70_gpio_chip, gc);
-+	unsigned long flags;
-+	unsigned char val;
-+
-+	spin_lock_irqsave(&gchip->lock, flags);
-+	val = readl(gchip->base + DDR(offset / 8 * 4));
-+	val &= ~(1 << (offset % 8));
-+	writel(val, gchip->base + DDR(offset / 8 * 4));
-+	spin_unlock_irqrestore(&gchip->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int mb86s70_gpio_direction_output(struct gpio_chip *gc,
-+					 unsigned offset, int value)
-+{
-+	struct mb86s70_gpio_chip *gchip =
-+			container_of(gc, struct mb86s70_gpio_chip, gc);
-+	unsigned long flags;
-+	unsigned char val;
-+
-+	spin_lock_irqsave(&gchip->lock, flags);
-+
-+	val = readl(gchip->base + PDR(offset / 8 * 4));
-+	if (value)
-+		val |= (1 << (offset % 8));
-+	else
-+		val &= ~(1 << (offset % 8));
-+	writel(val, gchip->base + PDR(offset / 8 * 4));
-+
-+	val = readl(gchip->base + DDR(offset / 8 * 4));
-+	val |= (1 << (offset % 8));
-+	writel(val, gchip->base + DDR(offset / 8 * 4));
-+
-+	spin_unlock_irqrestore(&gchip->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int mb86s70_gpio_get(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct mb86s70_gpio_chip *gchip =
-+			container_of(gc, struct mb86s70_gpio_chip, gc);
-+	unsigned char val;
-+
-+	val = readl(gchip->base + PDR(offset / 8 * 4));
-+	val &= (1 << (offset % 8));
-+	return val ? 1 : 0;
-+}
-+
-+static void mb86s70_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
-+{
-+	struct mb86s70_gpio_chip *gchip =
-+			container_of(gc, struct mb86s70_gpio_chip, gc);
-+	unsigned long flags;
-+	unsigned char val;
-+
-+	spin_lock_irqsave(&gchip->lock, flags);
-+
-+	val = readl(gchip->base + PDR(offset / 8 * 4));
-+	if (value)
-+		val |= (1 << (offset % 8));
-+	else
-+		val &= ~(1 << (offset % 8));
-+	writel(val, gchip->base + PDR(offset / 8 * 4));
-+
-+	spin_unlock_irqrestore(&gchip->lock, flags);
-+}
-+
-+static int mb86s70_gpio_probe(struct platform_device *pdev)
-+{
-+	struct mb86s70_gpio_chip *gchip;
-+	struct resource *res;
-+	int ret;
-+
-+	gchip = devm_kzalloc(&pdev->dev, sizeof(*gchip), GFP_KERNEL);
-+	if (gchip == NULL)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, gchip);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	gchip->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(gchip->base))
-+		return PTR_ERR(gchip->base);
-+
-+	gchip->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(gchip->clk))
-+		return PTR_ERR(gchip->clk);
-+
-+	clk_prepare_enable(gchip->clk);
-+
-+	spin_lock_init(&gchip->lock);
-+
-+	gchip->gc.direction_output = mb86s70_gpio_direction_output;
-+	gchip->gc.direction_input = mb86s70_gpio_direction_input;
-+	gchip->gc.request = mb86s70_gpio_request;
-+	gchip->gc.free = mb86s70_gpio_free;
-+	gchip->gc.get = mb86s70_gpio_get;
-+	gchip->gc.set = mb86s70_gpio_set;
-+	gchip->gc.label = dev_name(&pdev->dev);
-+	gchip->gc.ngpio = 32;
-+	gchip->gc.owner = THIS_MODULE;
-+	gchip->gc.dev = &pdev->dev;
-+	gchip->gc.base = -1;
-+
-+	ret = gpiochip_add(&gchip->gc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "couldn't register gpio driver\n");
-+		clk_disable_unprepare(gchip->clk);
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id mb86s70_gpio_dt_ids[] = {
-+	{ .compatible = "fujitsu,mb86s70-gpio" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, mb86s70_gpio_dt_ids);
-+
-+static struct platform_driver mb86s70_gpio_driver = {
-+	.probe     = mb86s70_gpio_probe,
-+	.driver    = {
-+		.name  = "mb86s70-gpio",
-+		.of_match_table = mb86s70_gpio_dt_ids,
-+	},
-+};
-+
-+static int __init mb86s70_gpio_init(void)
-+{
-+	return platform_driver_register(&mb86s70_gpio_driver);
-+}
-+subsys_initcall(mb86s70_gpio_init);
-+
-+MODULE_DESCRIPTION("MB86S7x GPIO Driver");
-+MODULE_ALIAS("platform:mb86s70-gpio");
-+MODULE_LICENSE("GPL");
+ config GPIO_PCA953X_IRQ
+ 	bool "Interrupt controller support for PCA953x"
+-	depends on GPIO_PCA953X=y
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Say yes here to enable the pca953x to be used as an interrupt
+-	  controller. It requires the driver to be built in the kernel.
++	  controller.
+ 
+ config GPIO_PCF857X
+ 	tristate "PCF857x, PCA{85,96}7x, and MAX732[89] I2C GPIO expanders"
 -- 
-1.9.0
+2.0.4
 
