@@ -1,60 +1,62 @@
-From: hungering78393@gmail.com
-Subject: Fix Penguin Penalty 17th October2014 ( mail-archive.com )
-Date: Tue, 25 Nov 2014 00:03:50 +0530
-Message-ID: <54737a0c.8536460a.7796.5963@mx.google.com>
-Reply-To: julia.kites@yahoo.com
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 1/2] devicetree: add a binding for GPIOs going though a
+ level shifter
+Date: Mon, 24 Nov 2014 15:01:39 -0600
+Message-ID: <CAL_JsqLZ+TMPg9np77xEvt-J9GTv1RyYL9zo=xsuRa6RxvRn9g@mail.gmail.com>
+References: <1416837696-28066-1-git-send-email-alban.bedel@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:44443 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752322AbaKXSdt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Nov 2014 13:33:49 -0500
-Received: by mail-pa0-f67.google.com with SMTP id lj1so5588488pab.2
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Nov 2014 10:33:49 -0800 (PST)
-Received: from localhost.localdomain ([27.255.204.186])
-        by mx.google.com with ESMTPSA id j5sm13017021pdp.9.2014.11.24.10.33.47
-        for <linux-gpio@vger.kernel.org>
-        (version=TLSv1 cipher=RC4-SHA bits=128/128);
-        Mon, 24 Nov 2014 10:33:48 -0800 (PST)
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:64426 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750726AbaKXVCB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Nov 2014 16:02:01 -0500
+In-Reply-To: <1416837696-28066-1-git-send-email-alban.bedel@avionic-design.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Alban Bedel <alban.bedel@avionic-design.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
 
-Dear Sir
+On Mon, Nov 24, 2014 at 8:01 AM, Alban Bedel
+<alban.bedel@avionic-design.de> wrote:
+> Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
+> ---
+>  .../devicetree/bindings/gpio/gpio-level-shifter.txt       | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt b/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
+> new file mode 100644
+> index 0000000..e108c43
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
+> @@ -0,0 +1,15 @@
+> +GPIO level shifter
+> +
+> +This binding allow supporting GPIOs going though a level shifter.
+> +
+> +Required properties:
+> +- compatible : should be "gpio-level-shifter"
+> +- data-gpios : list of the data GPIO phandles
+> +- #gpio-cells : should be 2
+> +- gpio-controller : marks the device node as a GPIO controller
+> +
+> +Optional properties:
+> +- enable-gpio : phandle of the GPIO that control the level shifter enable pin
+> +- direction-gpio : phandle of the GPIO that control the level shifter direction
 
-Did your website get hit by Google Penguin update on October 17th 2014?=
- What basically is Google Penguin Update? It is actually a code name fo=
-r Google algorithm which aims at decreasing your websites search engine=
- rankings that violate Google=92s guidelines by using black hat SEO tec=
-hniques to rank your webpage by giving number of spammy links to the pa=
-ge.
-=20
-We are one of those few SEO companies that can help you avoid penalties=
- from Google Updates like Penguin and Panda. Our clients have survived =
-all the previous and present updates with ease. They have never been hi=
-t because we use 100% white hat SEO techniques to rank Webpages.  Simpl=
-e thing that we do to keep websites away from any Penguin or Panda pena=
-lties is follow Google guidelines and we give Google users the best ans=
-wers to their queries.
+What if you had 2 level shifters with a common enable, but with
+different directions? We'd have to support an ORing of the enable
+state. That's largely a gpio subsystem problem I guess.
 
-If you are looking to increase the quality of your websites and to get =
-more targeted traffic or save your websites from these Google penalties=
- email us back with your interest.=20
+Otherwise, this looks pretty good to me:
 
-We will be glad to serve you and help you grow your business.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Regards
+Rob
 
-Julia kites
-
-SEO Manager ( TOB )
-B7 Green Avenue, Amritsar 143001 Punjab
-____________________________
-NO CLICK in the subject to STOP EMAILS
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +- vcca-supply : phandle of the regulator for side A of the level shifter
+> +- vccb-supply : phandle of the regulator for side B of the level shifter
+> --
+> 2.1.3
+>
