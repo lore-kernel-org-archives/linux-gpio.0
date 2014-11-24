@@ -1,40 +1,44 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: Re: [PATCH] mdio-mux-gpio: Use GPIO descriptor interface and new gpiod_set_array function
-Date: Mon, 24 Nov 2014 09:35:02 +0100
-Message-ID: <1671914.Rot4bT9ZsP@pcimr>
-References: <6441674.xrJo8HXDvD@pcimr> <20141121.151301.477197043372693075.davem@davemloft.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Alban Bedel <alban.bedel@avionic-design.de>
+Subject: [PATCH 1/2] devicetree: add a binding for GPIOs going though a level shifter
+Date: Mon, 24 Nov 2014 15:01:35 +0100
+Message-ID: <1416837696-28066-1-git-send-email-alban.bedel@avionic-design.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:34985 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753164AbaKXIfI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Nov 2014 03:35:08 -0500
-In-Reply-To: <20141121.151301.477197043372693075.davem@davemloft.net>
+Received: from mout.kundenserver.de ([212.227.126.187]:62814 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751111AbaKXOB4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Nov 2014 09:01:56 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: f.fainelli@gmail.com, netdev@vger.kernel.org, david.daney@cavium.com, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, acourbot@nvidia.com
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Alban Bedel <alban.bedel@avionic-design.de>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
 
-On Friday 21 November 2014 15:13:01 David Miller wrote:
-> From: Rojhalat Ibrahim <imr@rtschenk.de>
-> Date: Thu, 20 Nov 2014 13:24:44 +0100
-> 
-> > Convert mdio-mux-gpio to the GPIO descriptor interface and use the new
-> > gpiod_set_array function to set all output signals simultaneously.
-> > 
-> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-> > --
-> > This patch depends on the gpiod_set_array function, which is available in
-> > the linux-gpio devel tree.
-> 
-> Then I really can't apply it to the networking GIT tree.
-> 
+Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
+---
+ .../devicetree/bindings/gpio/gpio-level-shifter.txt       | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
 
-Then maybe you could ack the patch and then Linus Walleij could apply it to
-the GPIO tree, right?
-
-   Rojhalat
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt b/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
+new file mode 100644
+index 0000000..e108c43
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
+@@ -0,0 +1,15 @@
++GPIO level shifter
++
++This binding allow supporting GPIOs going though a level shifter.
++
++Required properties:
++- compatible : should be "gpio-level-shifter"
++- data-gpios : list of the data GPIO phandles
++- #gpio-cells : should be 2
++- gpio-controller : marks the device node as a GPIO controller
++
++Optional properties:
++- enable-gpio : phandle of the GPIO that control the level shifter enable pin
++- direction-gpio : phandle of the GPIO that control the level shifter direction
++- vcca-supply : phandle of the regulator for side A of the level shifter
++- vccb-supply : phandle of the regulator for side B of the level shifter
+-- 
+2.1.3
 
