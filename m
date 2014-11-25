@@ -1,62 +1,109 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 1/2] devicetree: add a binding for GPIOs going though a
- level shifter
-Date: Mon, 24 Nov 2014 15:01:39 -0600
-Message-ID: <CAL_JsqLZ+TMPg9np77xEvt-J9GTv1RyYL9zo=xsuRa6RxvRn9g@mail.gmail.com>
-References: <1416837696-28066-1-git-send-email-alban.bedel@avionic-design.de>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] mdio-mux-gpio: Use GPIO descriptor interface and new
+ gpiod_set_array function
+Date: Tue, 25 Nov 2014 12:39:13 +0900
+Message-ID: <CAAVeFuKTmQi3vK5vALbT=hseRm9mn=-cb-7hiHwg7Zbczmz_WA@mail.gmail.com>
+References: <6441674.xrJo8HXDvD@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:64426 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750726AbaKXVCB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Nov 2014 16:02:01 -0500
-In-Reply-To: <1416837696-28066-1-git-send-email-alban.bedel@avionic-design.de>
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:43382 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750836AbaKYDje (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Nov 2014 22:39:34 -0500
+In-Reply-To: <6441674.xrJo8HXDvD@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alban Bedel <alban.bedel@avionic-design.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev <netdev@vger.kernel.org>, David Daney <david.daney@cavium.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Mon, Nov 24, 2014 at 8:01 AM, Alban Bedel
-<alban.bedel@avionic-design.de> wrote:
-> Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
-> ---
->  .../devicetree/bindings/gpio/gpio-level-shifter.txt       | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
+On Thu, Nov 20, 2014 at 9:24 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+> Convert mdio-mux-gpio to the GPIO descriptor interface and use the new
+> gpiod_set_array function to set all output signals simultaneously.
 >
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt b/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
-> new file mode 100644
-> index 0000000..e108c43
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-level-shifter.txt
-> @@ -0,0 +1,15 @@
-> +GPIO level shifter
-> +
-> +This binding allow supporting GPIOs going though a level shifter.
-> +
-> +Required properties:
-> +- compatible : should be "gpio-level-shifter"
-> +- data-gpios : list of the data GPIO phandles
-> +- #gpio-cells : should be 2
-> +- gpio-controller : marks the device node as a GPIO controller
-> +
-> +Optional properties:
-> +- enable-gpio : phandle of the GPIO that control the level shifter enable pin
-> +- direction-gpio : phandle of the GPIO that control the level shifter direction
-
-What if you had 2 level shifters with a common enable, but with
-different directions? We'd have to support an ORing of the enable
-state. That's largely a gpio subsystem problem I guess.
-
-Otherwise, this looks pretty good to me:
-
-Acked-by: Rob Herring <robh@kernel.org>
-
-Rob
-
-> +- vcca-supply : phandle of the regulator for side A of the level shifter
-> +- vccb-supply : phandle of the regulator for side B of the level shifter
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
 > --
-> 2.1.3
+> This patch depends on the gpiod_set_array function, which is available in
+> the linux-gpio devel tree.
 >
+>  drivers/net/phy/mdio-mux-gpio.c |   35 +++++++++++++++--------------------
+>  1 file changed, 15 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+> index 0966951..3fdea96 100644
+> --- a/drivers/net/phy/mdio-mux-gpio.c
+> +++ b/drivers/net/phy/mdio-mux-gpio.c
+> @@ -14,13 +14,13 @@
+>  #include <linux/mdio-mux.h>
+>  #include <linux/of_gpio.h>
+>
+> -#define DRV_VERSION "1.0"
+> +#define DRV_VERSION "1.1"
+>  #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
+>
+>  #define MDIO_MUX_GPIO_MAX_BITS 8
+>
+>  struct mdio_mux_gpio_state {
+> -       int gpio[MDIO_MUX_GPIO_MAX_BITS];
+> +       struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
+>         unsigned int num_gpios;
+>         void *mux_handle;
+>  };
+> @@ -28,29 +28,23 @@ struct mdio_mux_gpio_state {
+>  static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+>                                    void *data)
+>  {
+> -       int change;
+> +       int values[MDIO_MUX_GPIO_MAX_BITS];
+>         unsigned int n;
+>         struct mdio_mux_gpio_state *s = data;
+>
+>         if (current_child == desired_child)
+>                 return 0;
+>
+> -       change = current_child == -1 ? -1 : current_child ^ desired_child;
+> -
+>         for (n = 0; n < s->num_gpios; n++) {
+> -               if (change & 1)
+> -                       gpio_set_value_cansleep(s->gpio[n],
+> -                                               (desired_child & 1) != 0);
+> -               change >>= 1;
+> -               desired_child >>= 1;
+> +               values[n] = (desired_child >> n) & 1;
+>         }
+> +       gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
+>
+>         return 0;
+>  }
+>
+>  static int mdio_mux_gpio_probe(struct platform_device *pdev)
+>  {
+> -       enum of_gpio_flags f;
+>         struct mdio_mux_gpio_state *s;
+>         int num_gpios;
+>         unsigned int n;
+> @@ -70,20 +64,17 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+>         s->num_gpios = num_gpios;
+>
+>         for (n = 0; n < num_gpios; ) {
+> -               int gpio = of_get_gpio_flags(pdev->dev.of_node, n, &f);
+> -               if (gpio < 0) {
+> -                       r = (gpio == -ENODEV) ? -EPROBE_DEFER : gpio;
+> +               struct gpio_desc *gpio = gpiod_get_index(&pdev->dev,
+> +                                                        "mdio-mux-gpio", n);
+
+Doesn't this change introduce some incompatibility against the current
+DT bindings? of_get_gpio_flags() looks for a "gpios" property, while
+your call to gpiod_get_index() will look for "mdio-mux-gpio-gpios". It
+should probably be changed to gpiod_get_index(&pdev->dev, NULL, n).
+
+... or even be changed to gpiod_get_index(&pdev->dev, NULL, n,
+GPIOD_OUT_LOW) as the calls to gpiod_get() functions are being updated
+to take an initial state (both variants are currently usable but the
+former one will disappear in the future). This will also allow you to
+get rid of your call to gpiod_direction_output().
+
+Side-note: it would be nice to have a gpiod_get_array() call that does
+exactly what this loop does, and returns an array of gpios directly
+usable by gpiod_set_array*(). And a matching gpiod_put_array() of
+course.
