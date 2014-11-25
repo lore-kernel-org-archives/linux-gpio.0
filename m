@@ -1,53 +1,60 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH] gpio: remove const modifier from gpiod_get_direction()
-Date: Tue, 25 Nov 2014 17:09:03 +0900
-Message-ID: <5474391F.6030908@nvidia.com>
-References: <1416900045-2304-1-git-send-email-acourbot@nvidia.com> <20141125080122.GY4431@pengutronix.de>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: Re: [PATCH] mdio-mux-gpio: Use GPIO descriptor interface and new gpiod_set_array function
+Date: Tue, 25 Nov 2014 09:13:48 +0100
+Message-ID: <8914633.CtiBEziHQ6@pcimr>
+References: <6441674.xrJo8HXDvD@pcimr> <CAAVeFuKTmQi3vK5vALbT=hseRm9mn=-cb-7hiHwg7Zbczmz_WA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5019 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751304AbaKYIJd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 03:09:33 -0500
-In-Reply-To: <20141125080122.GY4431@pengutronix.de>
+Received: from mail-out.m-online.net ([212.18.0.10]:55723 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750996AbaKYINw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 03:13:52 -0500
+In-Reply-To: <CAAVeFuKTmQi3vK5vALbT=hseRm9mn=-cb-7hiHwg7Zbczmz_WA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?windows-1252?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev <netdev@vger.kernel.org>, David Daney <david.daney@cavium.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On 11/25/2014 05:01 PM, Uwe Kleine-K=F6nig wrote:
-> Hello Alexandre,
->
-> just some minor nitpicking on the commit log:
->
-> On Tue, Nov 25, 2014 at 04:20:45PM +0900, Alexandre Courbot wrote:
->> Although gpiod_get_direction() can be considered side-effect free fo=
-r
->> consumers, its internals involve setting or clearing bits in the
->> affected GPIO descriptor, for which we need to force-cast the const
->> descriptor parameter. This could lead to incorrect behavior is the
-> s/ is/ if/, and I think s/parameter/variable to non-const/
->
->> compiler decide to optimize here, so remove this const parameter. Th=
-e
-> s/decide/decides/; s/parameter/attribute/
->
->> intent is to make gpiod_get_direction() private anyway, so it does n=
-ot
->> really matter.
->>
->> Reported-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+On Tuesday 25 November 2014 12:39:13 Alexandre Courbot wrote:
+> On Thu, Nov 20, 2014 at 9:24 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+> > @@ -70,20 +64,17 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+> >         s->num_gpios = num_gpios;
+> >
+> >         for (n = 0; n < num_gpios; ) {
+> > -               int gpio = of_get_gpio_flags(pdev->dev.of_node, n, &f);
+> > -               if (gpio < 0) {
+> > -                       r = (gpio == -ENODEV) ? -EPROBE_DEFER : gpio;
+> > +               struct gpio_desc *gpio = gpiod_get_index(&pdev->dev,
+> > +                                                        "mdio-mux-gpio", n);
+> 
+> Doesn't this change introduce some incompatibility against the current
+> DT bindings? of_get_gpio_flags() looks for a "gpios" property, while
+> your call to gpiod_get_index() will look for "mdio-mux-gpio-gpios". It
+> should probably be changed to gpiod_get_index(&pdev->dev, NULL, n).
+> 
 
-Thanks ; I should have proof-read myself...
+You are right, of course. I'll fix it and post a new patch version.
 
-Sending a v2 with a fixed log and your Ack so Linus can just pick the=20
-patch as-is.
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ... or even be changed to gpiod_get_index(&pdev->dev, NULL, n,
+> GPIOD_OUT_LOW) as the calls to gpiod_get() functions are being updated
+> to take an initial state (both variants are currently usable but the
+> former one will disappear in the future). This will also allow you to
+> get rid of your call to gpiod_direction_output().
+> 
+
+Will do that.
+
+> Side-note: it would be nice to have a gpiod_get_array() call that does
+> exactly what this loop does, and returns an array of gpios directly
+> usable by gpiod_set_array*(). And a matching gpiod_put_array() of
+> course.
+> 
+
+I'll add that to my to-do-list.
+
+
+Thanks
+   Rojhalat
+
