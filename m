@@ -1,107 +1,135 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2] gpio: remove const modifier from gpiod_get_direction()
-Date: Tue, 25 Nov 2014 17:16:31 +0900
-Message-ID: <1416903391-12693-1-git-send-email-acourbot@nvidia.com>
-References: <5474391F.6030908@nvidia.com>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH][v2] mdio-mux-gpio: Use GPIO descriptor interface and new gpiod_set_array function
+Date: Tue, 25 Nov 2014 10:31:18 +0100
+Message-ID: <2814617.OrXEO01vgP@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:6621 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751019AbaKYIQi convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 03:16:38 -0500
-In-Reply-To: <5474391F.6030908@nvidia.com>
+Received: from mail-out.m-online.net ([212.18.0.9]:42737 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750841AbaKYJb0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 04:31:26 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, netdev@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, David Miller <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, David Daney <david.daney@cavium.com>
 
-Although gpiod_get_direction() can be considered side-effect free for
-consumers, its internals involve setting or clearing bits in the
-affected GPIO descriptor, for which we need to force-cast the const
-descriptor variable to non-const. This could lead to incorrect behavior
-if the compiler decides to optimize here, so remove this const
-attribute. The intent is to make gpiod_get_direction() private anyway,
-so it does not really matter.
+Convert mdio-mux-gpio to the GPIO descriptor interface and use the new
+gpiod_set_array function to set all output signals simultaneously.
 
-Reported-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
-Changes since v1:
-- Fixed poor grammar in commit log
-- Added Uwe's Ack
-
- drivers/gpio/gpiolib-sysfs.c  | 2 +-
- drivers/gpio/gpiolib.c        | 8 +++-----
- include/linux/gpio/consumer.h | 2 +-
- 3 files changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.=
-c
-index 781fbed00fc3..2ac1800b58bb 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -41,7 +41,7 @@ static DEFINE_MUTEX(sysfs_lock);
- static ssize_t gpio_direction_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
--	const struct gpio_desc	*desc =3D dev_get_drvdata(dev);
-+	struct gpio_desc	*desc =3D dev_get_drvdata(dev);
- 	ssize_t			status;
-=20
- 	mutex_lock(&sysfs_lock);
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5619922ebf44..0b271ef87c09 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -148,7 +148,7 @@ static int gpiochip_find_base(int ngpio)
-  *
-  * This function may sleep if gpiod_cansleep() is true.
-  */
--int gpiod_get_direction(const struct gpio_desc *desc)
-+int gpiod_get_direction(struct gpio_desc *desc)
- {
- 	struct gpio_chip	*chip;
- 	unsigned		offset;
-@@ -164,13 +164,11 @@ int gpiod_get_direction(const struct gpio_desc *d=
-esc)
- 	if (status > 0) {
- 		/* GPIOF_DIR_IN, or other positive */
- 		status =3D 1;
--		/* FLAG_IS_OUT is just a cache of the result of get_direction(),
--		 * so it does not affect constness per se */
--		clear_bit(FLAG_IS_OUT, &((struct gpio_desc *)desc)->flags);
-+		clear_bit(FLAG_IS_OUT, &desc->flags);
- 	}
- 	if (status =3D=3D 0) {
- 		/* GPIOF_DIR_OUT */
--		set_bit(FLAG_IS_OUT, &((struct gpio_desc *)desc)->flags);
-+		set_bit(FLAG_IS_OUT, &desc->flags);
- 	}
- 	return status;
- }
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consume=
-r.h
-index 83c0a61c605d..d54d158ca327 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -66,7 +66,7 @@ __devm_gpiod_get_index_optional(struct device *dev, c=
-onst char *con_id,
- 			      unsigned int index, enum gpiod_flags flags);
- void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
-=20
--int gpiod_get_direction(const struct gpio_desc *desc);
-+int gpiod_get_direction(struct gpio_desc *desc);
- int gpiod_direction_input(struct gpio_desc *desc);
- int gpiod_direction_output(struct gpio_desc *desc, int value);
- int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
---=20
-2.1.3
-
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+Acked-by: David S. Miller <davem@davemloft.net>
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This patch depends on the gpiod_set_array function, which is available in
+the linux-gpio devel tree.
+
+v2: fix gpiod_get_index usage
+
+ drivers/net/phy/mdio-mux-gpio.c |   38 ++++++++++++++------------------------
+ 1 file changed, 14 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+index 0966951..1167c5b 100644
+--- a/drivers/net/phy/mdio-mux-gpio.c
++++ b/drivers/net/phy/mdio-mux-gpio.c
+@@ -14,13 +14,13 @@
+ #include <linux/mdio-mux.h>
+ #include <linux/of_gpio.h>
+ 
+-#define DRV_VERSION "1.0"
++#define DRV_VERSION "1.1"
+ #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
+ 
+ #define MDIO_MUX_GPIO_MAX_BITS 8
+ 
+ struct mdio_mux_gpio_state {
+-	int gpio[MDIO_MUX_GPIO_MAX_BITS];
++	struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
+ 	unsigned int num_gpios;
+ 	void *mux_handle;
+ };
+@@ -28,29 +28,23 @@ struct mdio_mux_gpio_state {
+ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ 				   void *data)
+ {
+-	int change;
++	int values[MDIO_MUX_GPIO_MAX_BITS];
+ 	unsigned int n;
+ 	struct mdio_mux_gpio_state *s = data;
+ 
+ 	if (current_child == desired_child)
+ 		return 0;
+ 
+-	change = current_child == -1 ? -1 : current_child ^ desired_child;
+-
+ 	for (n = 0; n < s->num_gpios; n++) {
+-		if (change & 1)
+-			gpio_set_value_cansleep(s->gpio[n],
+-						(desired_child & 1) != 0);
+-		change >>= 1;
+-		desired_child >>= 1;
++		values[n] = (desired_child >> n) & 1;
+ 	}
++	gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
+ 
+ 	return 0;
+ }
+ 
+ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ {
+-	enum of_gpio_flags f;
+ 	struct mdio_mux_gpio_state *s;
+ 	int num_gpios;
+ 	unsigned int n;
+@@ -70,22 +64,14 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ 	s->num_gpios = num_gpios;
+ 
+ 	for (n = 0; n < num_gpios; ) {
+-		int gpio = of_get_gpio_flags(pdev->dev.of_node, n, &f);
+-		if (gpio < 0) {
+-			r = (gpio == -ENODEV) ? -EPROBE_DEFER : gpio;
++		struct gpio_desc *gpio = gpiod_get_index(&pdev->dev, NULL, n,
++							 GPIOD_OUT_LOW);
++		if (IS_ERR(gpio)) {
++			r = PTR_ERR(gpio);
+ 			goto err;
+ 		}
+ 		s->gpio[n] = gpio;
+-
+ 		n++;
+-
+-		r = gpio_request(gpio, "mdio_mux_gpio");
+-		if (r)
+-			goto err;
+-
+-		r = gpio_direction_output(gpio, 0);
+-		if (r)
+-			goto err;
+ 	}
+ 
+ 	r = mdio_mux_init(&pdev->dev,
+@@ -98,15 +84,19 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ err:
+ 	while (n) {
+ 		n--;
+-		gpio_free(s->gpio[n]);
++		gpiod_put(s->gpio[n]);
+ 	}
+ 	return r;
+ }
+ 
+ static int mdio_mux_gpio_remove(struct platform_device *pdev)
+ {
++	unsigned int n;
+ 	struct mdio_mux_gpio_state *s = dev_get_platdata(&pdev->dev);
+ 	mdio_mux_uninit(s->mux_handle);
++	for (n = 0; n < s->num_gpios; n++) {
++		gpiod_put(s->gpio[n]);
++	}
+ 	return 0;
+ }
+ 
+--
+2.0.4
+
