@@ -1,56 +1,53 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/4] gpiolib: use const parameters when possible
-Date: Tue, 25 Nov 2014 16:37:57 +0900
-Message-ID: <CAAVeFuJ8=PdV8oiazVVcyrO3Kx4mV6GphxHCGEGX9ooMuoBWtA@mail.gmail.com>
-References: <1360738983-22436-1-git-send-email-gnurou@gmail.com>
- <1360738983-22436-3-git-send-email-gnurou@gmail.com> <20141117090915.GE27002@pengutronix.de>
- <CAAVeFuKzP0ADix8TxC31ohb3ZmnEVmNcO5kgzhZ3DcwAhTq=-Q@mail.gmail.com>
- <20141119084432.GT27002@pengutronix.de> <CAAVeFuLtQoxt_D_TaRQc49Sh0FZTg=q4y5QorZ7OUK+qPE0CbQ@mail.gmail.com>
- <20141119090222.GU27002@pengutronix.de> <CAAVeFu+zc6tiM-SvwQ3mQmkMNdY+1+Ysi0F2eThyCjziKVwpOQ@mail.gmail.com>
- <20141119100954.GV27002@pengutronix.de>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] gpio: remove const modifier from gpiod_get_direction()
+Date: Tue, 25 Nov 2014 09:01:22 +0100
+Message-ID: <20141125080122.GY4431@pengutronix.de>
+References: <1416900045-2304-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:51607 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750770AbaKYHiR convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 02:38:17 -0500
-In-Reply-To: <20141119100954.GV27002@pengutronix.de>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:39940 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750996AbaKYIBZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 03:01:25 -0500
+Content-Disposition: inline
+In-Reply-To: <1416900045-2304-1-git-send-email-acourbot@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Janusz Uzycki <j.uzycki@elproma.com.pl>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, linux-serial@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
 
-On Wed, Nov 19, 2014 at 7:09 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> Hello Alexandre,
->
-> On Wed, Nov 19, 2014 at 06:07:50PM +0900, Alexandre Courbot wrote:
->>  On Wed, Nov 19, 2014 at 6:02 PM, Uwe Kleine-K=C3=B6nig
->> <u.kleine-koenig@pengutronix.de> wrote:
->> > I'd make gpiod_get_direction static and only use it to fill in
->> > /sys/kernel/debug/gpio.
->>
->> That's very tempting. I see only atmel_serial.c using this function,
->> and there is no gpio_get_direction() declared anywhere so no user of
->> this either. I'm not sure what I was thinking when I decided to expo=
-rt
->> it?
-> In next there is also drivers/tty/serial/mxs-auart.c.
+Hello Alexandre,
 
-Ok. I think we can get rid of gpiod_get_direction() if
-serial_mctrl_gpio implements its own way to query the direction (maybe
-using a bitmap in the mctrl_gpios and a mctrl_gpio_get_direction()
-function that queries that map). Using gpiod_get_direction() is just
-too unreliable.
+just some minor nitpicking on the commit log:
 
-Janusz, since your change for mxs-auart is in -next, would you mind
-amending it to do this? Then we could do the same for atmel_serial and
-remove gpiod_get_direction() from the public GPIO interface. This
-function would do more harm than good anyway.
+On Tue, Nov 25, 2014 at 04:20:45PM +0900, Alexandre Courbot wrote:
+> Although gpiod_get_direction() can be considered side-effect free for
+> consumers, its internals involve setting or clearing bits in the
+> affected GPIO descriptor, for which we need to force-cast the const
+> descriptor parameter. This could lead to incorrect behavior is the
+s/ is/ if/, and I think s/parameter/variable to non-const/
 
-Thanks!
+> compiler decide to optimize here, so remove this const parameter. The
+s/decide/decides/; s/parameter/attribute/
+
+> intent is to make gpiod_get_direction() private anyway, so it does no=
+t
+> really matter.
+>=20
+> Reported-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Thanks
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
