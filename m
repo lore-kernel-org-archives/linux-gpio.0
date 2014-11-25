@@ -1,90 +1,58 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpio: remove const modifier from gpiod_get_direction()
-Date: Tue, 25 Nov 2014 16:20:45 +0900
-Message-ID: <1416900045-2304-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 2/4] gpiolib: use const parameters when possible
+Date: Tue, 25 Nov 2014 16:37:57 +0900
+Message-ID: <CAAVeFuJ8=PdV8oiazVVcyrO3Kx4mV6GphxHCGEGX9ooMuoBWtA@mail.gmail.com>
+References: <1360738983-22436-1-git-send-email-gnurou@gmail.com>
+ <1360738983-22436-3-git-send-email-gnurou@gmail.com> <20141117090915.GE27002@pengutronix.de>
+ <CAAVeFuKzP0ADix8TxC31ohb3ZmnEVmNcO5kgzhZ3DcwAhTq=-Q@mail.gmail.com>
+ <20141119084432.GT27002@pengutronix.de> <CAAVeFuLtQoxt_D_TaRQc49Sh0FZTg=q4y5QorZ7OUK+qPE0CbQ@mail.gmail.com>
+ <20141119090222.GU27002@pengutronix.de> <CAAVeFu+zc6tiM-SvwQ3mQmkMNdY+1+Ysi0F2eThyCjziKVwpOQ@mail.gmail.com>
+ <20141119100954.GV27002@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:51607 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbaKYHiR convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 02:38:17 -0500
+In-Reply-To: <20141119100954.GV27002@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Janusz Uzycki <j.uzycki@elproma.com.pl>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, linux-serial@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Although gpiod_get_direction() can be considered side-effect free for
-consumers, its internals involve setting or clearing bits in the
-affected GPIO descriptor, for which we need to force-cast the const
-descriptor parameter. This could lead to incorrect behavior is the
-compiler decide to optimize here, so remove this const parameter. The
-intent is to make gpiod_get_direction() private anyway, so it does not
-really matter.
+On Wed, Nov 19, 2014 at 7:09 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> Hello Alexandre,
+>
+> On Wed, Nov 19, 2014 at 06:07:50PM +0900, Alexandre Courbot wrote:
+>>  On Wed, Nov 19, 2014 at 6:02 PM, Uwe Kleine-K=C3=B6nig
+>> <u.kleine-koenig@pengutronix.de> wrote:
+>> > I'd make gpiod_get_direction static and only use it to fill in
+>> > /sys/kernel/debug/gpio.
+>>
+>> That's very tempting. I see only atmel_serial.c using this function,
+>> and there is no gpio_get_direction() declared anywhere so no user of
+>> this either. I'm not sure what I was thinking when I decided to expo=
+rt
+>> it?
+> In next there is also drivers/tty/serial/mxs-auart.c.
 
-Reported-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/gpiolib-sysfs.c  | 2 +-
- drivers/gpio/gpiolib.c        | 8 +++-----
- include/linux/gpio/consumer.h | 2 +-
- 3 files changed, 5 insertions(+), 7 deletions(-)
+Ok. I think we can get rid of gpiod_get_direction() if
+serial_mctrl_gpio implements its own way to query the direction (maybe
+using a bitmap in the mctrl_gpios and a mctrl_gpio_get_direction()
+function that queries that map). Using gpiod_get_direction() is just
+too unreliable.
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.=
-c
-index 781fbed00fc3..2ac1800b58bb 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -41,7 +41,7 @@ static DEFINE_MUTEX(sysfs_lock);
- static ssize_t gpio_direction_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
--	const struct gpio_desc	*desc =3D dev_get_drvdata(dev);
-+	struct gpio_desc	*desc =3D dev_get_drvdata(dev);
- 	ssize_t			status;
-=20
- 	mutex_lock(&sysfs_lock);
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5619922ebf44..0b271ef87c09 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -148,7 +148,7 @@ static int gpiochip_find_base(int ngpio)
-  *
-  * This function may sleep if gpiod_cansleep() is true.
-  */
--int gpiod_get_direction(const struct gpio_desc *desc)
-+int gpiod_get_direction(struct gpio_desc *desc)
- {
- 	struct gpio_chip	*chip;
- 	unsigned		offset;
-@@ -164,13 +164,11 @@ int gpiod_get_direction(const struct gpio_desc *d=
-esc)
- 	if (status > 0) {
- 		/* GPIOF_DIR_IN, or other positive */
- 		status =3D 1;
--		/* FLAG_IS_OUT is just a cache of the result of get_direction(),
--		 * so it does not affect constness per se */
--		clear_bit(FLAG_IS_OUT, &((struct gpio_desc *)desc)->flags);
-+		clear_bit(FLAG_IS_OUT, &desc->flags);
- 	}
- 	if (status =3D=3D 0) {
- 		/* GPIOF_DIR_OUT */
--		set_bit(FLAG_IS_OUT, &((struct gpio_desc *)desc)->flags);
-+		set_bit(FLAG_IS_OUT, &desc->flags);
- 	}
- 	return status;
- }
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consume=
-r.h
-index 83c0a61c605d..d54d158ca327 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -66,7 +66,7 @@ __devm_gpiod_get_index_optional(struct device *dev, c=
-onst char *con_id,
- 			      unsigned int index, enum gpiod_flags flags);
- void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
-=20
--int gpiod_get_direction(const struct gpio_desc *desc);
-+int gpiod_get_direction(struct gpio_desc *desc);
- int gpiod_direction_input(struct gpio_desc *desc);
- int gpiod_direction_output(struct gpio_desc *desc, int value);
- int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
---=20
-2.1.3
+Janusz, since your change for mxs-auart is in -next, would you mind
+amending it to do this? Then we could do the same for atmel_serial and
+remove gpiod_get_direction() from the public GPIO interface. This
+function would do more harm than good anyway.
+
+Thanks!
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
