@@ -1,87 +1,60 @@
-From: =?UTF-8?B?SmFudXN6IFXFvHlja2k=?= <j.uzycki@elproma.com.pl>
-Subject: Re: [PATCH 2/4] gpiolib: use const parameters when possible
-Date: Tue, 25 Nov 2014 10:36:43 +0100
-Message-ID: <54744DAB.1010603@elproma.com.pl>
-References: <1360738983-22436-1-git-send-email-gnurou@gmail.com> <1360738983-22436-3-git-send-email-gnurou@gmail.com> <20141117090915.GE27002@pengutronix.de> <CAAVeFuKzP0ADix8TxC31ohb3ZmnEVmNcO5kgzhZ3DcwAhTq=-Q@mail.gmail.com> <20141119084432.GT27002@pengutronix.de> <CAAVeFuLtQoxt_D_TaRQc49Sh0FZTg=q4y5QorZ7OUK+qPE0CbQ@mail.gmail.com> <20141119090222.GU27002@pengutronix.de> <CAAVeFu+zc6tiM-SvwQ3mQmkMNdY+1+Ysi0F2eThyCjziKVwpOQ@mail.gmail.com> <20141119100954.GV27002@pengutronix.de> <CAAVeFuJ8=PdV8oiazVVcyrO3Kx4mV6GphxHCGEGX9ooMuoBWtA@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH][v2] mdio-mux-gpio: Use GPIO descriptor interface and
+ new gpiod_set_array function
+Date: Tue, 25 Nov 2014 16:44:04 +0300
+Message-ID: <547487A4.6050203@cogentembedded.com>
+References: <2814617.OrXEO01vgP@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from v032797.home.net.pl ([89.161.177.31]:52416 "HELO
-	v032797.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750828AbaKYJgr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 04:36:47 -0500
-In-Reply-To: <CAAVeFuJ8=PdV8oiazVVcyrO3Kx4mV6GphxHCGEGX9ooMuoBWtA@mail.gmail.com>
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:35474 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751860AbaKYNoH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Nov 2014 08:44:07 -0500
+Received: by mail-lb0-f177.google.com with SMTP id 10so539044lbg.36
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Nov 2014 05:44:05 -0800 (PST)
+In-Reply-To: <2814617.OrXEO01vgP@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaQ==?= =?UTF-8?B?Zw==?= <u.kleine-koenig@pengutronix.de>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, linux-serial@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Rojhalat Ibrahim <imr@rtschenk.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, netdev@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, David Miller <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, David Daney <david.daney@cavium.com>
 
-Hello,
+Hello.
 
-W dniu 2014-11-25 o 08:37, Alexandre Courbot pisze:
-> On Wed, Nov 19, 2014 at 7:09 PM, Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
->> Hello Alexandre,
->>
->> On Wed, Nov 19, 2014 at 06:07:50PM +0900, Alexandre Courbot wrote:
->>>   On Wed, Nov 19, 2014 at 6:02 PM, Uwe Kleine-K=C3=B6nig
->>> <u.kleine-koenig@pengutronix.de> wrote:
->>>> I'd make gpiod_get_direction static and only use it to fill in
->>>> /sys/kernel/debug/gpio.
->>> That's very tempting. I see only atmel_serial.c using this function=
-,
->>> and there is no gpio_get_direction() declared anywhere so no user o=
-f
->>> this either. I'm not sure what I was thinking when I decided to exp=
-ort
->>> it?
->> In next there is also drivers/tty/serial/mxs-auart.c.
-> Ok. I think we can get rid of gpiod_get_direction() if
-> serial_mctrl_gpio implements its own way to query the direction (mayb=
-e
-> using a bitmap in the mctrl_gpios and a mctrl_gpio_get_direction()
-> function that queries that map). Using gpiod_get_direction() is just
-> too unreliable.
+On 11/25/2014 12:31 PM, Rojhalat Ibrahim wrote:
 
-good idea
+> Convert mdio-mux-gpio to the GPIO descriptor interface and use the new
+> gpiod_set_array function to set all output signals simultaneously.
 
->
-> Janusz, since your change for mxs-auart is in -next, would you mind
-> amending it to do this? Then we could do the same for atmel_serial an=
-d
-> remove gpiod_get_direction() from the public GPIO interface. This
-> function would do more harm than good anyway.
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> Acked-by: David S. Miller <davem@davemloft.net>
+> --
+> This patch depends on the gpiod_set_array function, which is available in
+> the linux-gpio devel tree.
 
-After a discussion I prepared RFC patch set to avoid the function.
-You will find it here [1]:
-("[RFC PATCH 1/2] serial: mctrl-gpio: Add irqs helpers for input lines"=
-)
-("[RFC PATCH 2/2] serial: mxs-auart: use helpers for gpio irqs")
-and the function was moved for debug only:
-("[PATCH v3] gpio: mxs: implement get_direction callback")
+> v2: fix gpiod_get_index usage
 
-Affected drivers by the patch set in the next are:
-- atmel_serial
-- mxs-auart
-- clps711x (very basic usage)
-The RFC patch set removes the inconvenient function from mxs-auart as=20
-example.
-I didn't prepared a patch for atmel_serial because I wait for comments =
-about
-mctrl_gpio_is_gpio() function to differentiate if line is GPIO or nativ=
-e in
-enable/disable_ms() callbacks.
-I also can't test it for other devices than mxs (mx28).
+>   drivers/net/phy/mdio-mux-gpio.c |   38 ++++++++++++++------------------------
+>   1 file changed, 14 insertions(+), 24 deletions(-)
 
-[1] http://www.spinics.net/lists/arm-kernel/msg378444.html
+> diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+> index 0966951..1167c5b 100644
+> --- a/drivers/net/phy/mdio-mux-gpio.c
+> +++ b/drivers/net/phy/mdio-mux-gpio.c
+[...]
+> @@ -98,15 +84,19 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+[...]
+>   static int mdio_mux_gpio_remove(struct platform_device *pdev)
+>   {
+> +	unsigned int n;
+>   	struct mdio_mux_gpio_state *s = dev_get_platdata(&pdev->dev);
+>   	mdio_mux_uninit(s->mux_handle);
+> +	for (n = 0; n < s->num_gpios; n++) {
+> +		gpiod_put(s->gpio[n]);
+> +	}
 
-best regards
-Janusz
+    {} not needed; scripts/checkpatch.pl should have complained...
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+WBR, Sergei
+
