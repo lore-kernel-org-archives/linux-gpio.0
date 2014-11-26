@@ -1,40 +1,41 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 0/5] Fix Arndale Octa/Peach Pi boot on Audio subsystem
- clocks
-Date: Wed, 26 Nov 2014 17:31:46 +0100
-Message-ID: <54760072.8010307@collabora.co.uk>
-References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v2 0/2] Pinctrl fixes for rockchip
+Date: Wed, 26 Nov 2014 18:56:54 +0100
+Message-ID: <1796168.f97MNRYGcl@diego>
+References: <1416437493-25588-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:41282 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750845AbaKZQb4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Nov 2014 11:31:56 -0500
-In-Reply-To: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+Received: from gloria.sntech.de ([95.129.55.99]:46671 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750881AbaKZRxK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 26 Nov 2014 12:53:10 -0500
+In-Reply-To: <1416437493-25588-1-git-send-email-dianders@chromium.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Doug Anderson <dianders@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Chris Zhong <zyw@rock-chips.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Krzysztof,
+Linus,
 
-On 11/26/2014 03:24 PM, Krzysztof Kozlowski wrote:
-> Description
-> ===========
-> This patchset tries to solve dependency between AudioSS components
-> (clocks and GPIO) and main clock controller on Exynos platform.
+Am Mittwoch, 19. November 2014, 14:51:31 schrieb Doug Anderson:
+> These two patches fix some pinctrl issues on rockchip.  The first
+> fixes a real issue where interrupts were being left on in
+> suspend/resume and waking the system up when they shouldn't.  The
+> second fixes purely theoretical problems but seems clean.
 > 
-> This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
-> 
+> I've tested these patches more extensively on a non-mainline tree but
+> have done basic compile and boot testing on mainline.  I don't have
+> suspend/resume working so well on mainline yet, so I haven't tested
+> fully there.
 
-I tested and patches #2, #3, #4 solves the boot failure I was facing.
-So for the whole series on an Exynos5420 Peach Pit:
+As indicated by my review-tag in the patches, these look good to me.
+Do you want to take them normally [they should simply go on top of the other 
+patches] or do you prefer another pull request - which feels strange for only 
+two patches :-) .
 
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Thanks a lot for solving this issue.
+Thanks
+Heiko
 
-Best regards,
-Javier
