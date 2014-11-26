@@ -1,46 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 3/6] regulator: arizona-micsupp: Add support for
- WM8280/WM8281
-Date: Wed, 26 Nov 2014 15:38:51 +0000
-Message-ID: <20141126153851.GG7712@sirena.org.uk>
-References: <1417014788-8311-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1417014788-8311-4-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 0/5] Fix Arndale Octa/Peach Pi boot on Audio subsystem
+ clocks
+Date: Wed, 26 Nov 2014 17:31:46 +0100
+Message-ID: <54760072.8010307@collabora.co.uk>
+References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="v3PO+W4hh3dRkCny"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1417014788-8311-4-git-send-email-rf@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: lee.jones@linaro.org, cw00.choi@samsung.com, linus.walleij@linaro.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:41282 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750845AbaKZQb4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Nov 2014 11:31:56 -0500
+In-Reply-To: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+Hello Krzysztof,
 
---v3PO+W4hh3dRkCny
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 11/26/2014 03:24 PM, Krzysztof Kozlowski wrote:
+> Description
+> ===========
+> This patchset tries to solve dependency between AudioSS components
+> (clocks and GPIO) and main clock controller on Exynos platform.
+> 
+> This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
+> 
 
-On Wed, Nov 26, 2014 at 03:13:05PM +0000, Richard Fitzgerald wrote:
+I tested and patches #2, #3, #4 solves the boot failure I was facing.
+So for the whole series on an Exynos5420 Peach Pit:
 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Thanks a lot for solving this issue.
 
---v3PO+W4hh3dRkCny
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUdfQLAAoJECTWi3JdVIfQrT8H/jQfSpqmlDOMA2iNb1GTt27v
-ZrXe9ynN6u6LNkRY6MSEQRPpGV4xWLjJL1WjygPFi1lHg/it34NIN+aHIxqBIJgK
-MYA//+Mo/+dtcstrYa3F05p1KJ4kpm7qt2g3Sb0ItJwsY4iiBPRj96ca3/29TQYU
-Bpv7mwLuoJFMIoRKshC0P+4fVMw4WUib89D0igNTSkXnCb4RHmwYsQ+ZBNHgaL65
-RvFASlQPIFaJO05lqzU4uGyinQFMlNGGdjpvr6HjuMZBsLmb3RGOk44HkgAu2kql
-A7qzUJA5Wsys7TC8xRp9RWoO/DN6nQ6SvE1Ux4i1V3o7EyCvv8elU1frfIwFyiY=
-=6W8O
------END PGP SIGNATURE-----
-
---v3PO+W4hh3dRkCny--
+Best regards,
+Javier
