@@ -1,36 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 3/3] ARM: meson: select PINCTRL_MESON and ARCH_REQUIRE_GPIOLIB
-Date: Thu, 27 Nov 2014 14:49:24 +0100
-Message-ID: <CACRpkdYSvOqvttyZw0wgDhXxRGR0KLfRi-N5Ym5W4mzjAV9=Eg@mail.gmail.com>
-References: <1416168856-12747-1-git-send-email-b.galvani@gmail.com>
-	<1416168856-12747-4-git-send-email-b.galvani@gmail.com>
+Subject: Re: [PATCH 1/3] gpio: mcp23s08: request a shared interrupt
+Date: Thu, 27 Nov 2014 14:51:02 +0100
+Message-ID: <CACRpkdaX=4q04oxGMB4d9Vic1wn4ck1SnfJzRAhEDjJawPagVg@mail.gmail.com>
+References: <1416213491-9775-1-git-send-email-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:48781 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751192AbaK0NtY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 08:49:24 -0500
-Received: by mail-ie0-f182.google.com with SMTP id x19so4629108ier.13
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Nov 2014 05:49:24 -0800 (PST)
-In-Reply-To: <1416168856-12747-4-git-send-email-b.galvani@gmail.com>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:60201 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751407AbaK0NvC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 08:51:02 -0500
+Received: by mail-ig0-f180.google.com with SMTP id h15so4327749igd.13
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Nov 2014 05:51:02 -0800 (PST)
+In-Reply-To: <1416213491-9775-1-git-send-email-alexander.stein@systec-electronic.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Beniamino Galvani <b.galvani@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Carlo Caione <carlo@caione.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jerry Cao <jerry.cao@amlogic.com>, Victor Wan <victor.wan@amlogic.com>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sun, Nov 16, 2014 at 9:14 PM, Beniamino Galvani <b.galvani@gmail.com> wrote:
+On Mon, Nov 17, 2014 at 9:38 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
 
-> Make sure that the Meson pinctrl driver is built whenever Meson
-> support is enabled.
+> Request a shared interrupt when requesting a mcp23s08 GPIO interrupt.
 >
-> Signed-off-by: Beniamino Galvani <b.galvani@gmail.com>
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-(Given we can merge the pinctrl driver)
-
-Please merge this through the ARM SoC tree.
+Patch applied.
 
 Yours,
 Linus Walleij
