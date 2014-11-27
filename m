@@ -1,36 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH/RFC] gpio: em: Use dynamic allocation of GPIOs
-Date: Thu, 27 Nov 2014 15:13:42 +0100
-Message-ID: <CACRpkdaFFYw8446JNWJ1AO+snixcYS=XtbaaW9soqeJ8KHueZQ@mail.gmail.com>
+Date: Thu, 27 Nov 2014 15:17:41 +0100
+Message-ID: <CACRpkdZ-y1bgJBYSzBRLNxughMKS86QWfauzNYGreFG_uB-0uA@mail.gmail.com>
 References: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
+	<CAAVeFuKGYM56KP8TOZAwSjDGWrVNoK1phpxoOdEJ=Ng9haSnmg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:47332 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbaK0ONo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 09:13:44 -0500
-Received: by mail-ig0-f171.google.com with SMTP id z20so4523494igj.10
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Nov 2014 06:13:43 -0800 (PST)
-In-Reply-To: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuKGYM56KP8TOZAwSjDGWrVNoK1phpxoOdEJ=Ng9haSnmg@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-SH <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-On Mon, Nov 17, 2014 at 3:30 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Tue, Nov 18, 2014 at 4:11 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Mon, Nov 17, 2014 at 11:30 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
 
-> Use dynamic allocation of GPIOs instead of looking at the gpio%u alias
-> in DT.
-> ---
->   - Is this correct? Not having to care about the alias would simplify the
->     to-be-written DT binding documentation.
->   - Completely untested.
+>> -               ret = of_alias_get_id(pdev->dev.of_node, "gpio");
+>> -               if (ret < 0) {
+>> -                       dev_err(&pdev->dev, "Couldn't get OF id\n");
+>> -                       goto err0;
+>> -               }
+>> -               pdata->gpio_base = ret * 32; /* 32 GPIOs per instance */
+>> +               pdata->gpio_base = -1;
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> User-space might break because of GPIO renumbering. Why not setting
+> gpio_base to -1 when the property is not present (instead of
+> triggering an error), keeping support for the property so existing
+> boards remain safe, and marking the property as deprecated in the
+> bindings documentation?
 
-Patch applied.
+I don't like the way aliases are used here.
+
+These bindings are undocumented by the way :( :( :(
+
+I've applied it to wait and see what happens instead.
 
 Yours,
 Linus Walleij
