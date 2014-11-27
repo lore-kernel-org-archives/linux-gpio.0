@@ -1,54 +1,51 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCHv2 05/16] gpio: mvebu: add suspend/resume support
-Date: Thu, 27 Nov 2014 19:44:18 +0100
-Message-ID: <20141127194418.43e03e80@free-electrons.com>
-References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
-	<CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
+From: Beniamino Galvani <b.galvani@gmail.com>
+Subject: Re: [PATCH v3 2/3] pinctrl: add driver for Amlogic Meson SoCs
+Date: Thu, 27 Nov 2014 23:34:02 +0100
+Message-ID: <20141127223402.GA11418@gmail.com>
+References: <1416168856-12747-1-git-send-email-b.galvani@gmail.com>
+ <1416168856-12747-3-git-send-email-b.galvani@gmail.com>
+ <CACRpkda-U5OuKdBVGJ8UWprJkAtmTL1m11+AbNskVULPfyS72A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:34700 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750898AbaK0SpT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 13:45:19 -0500
-In-Reply-To: <CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:54387 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750729AbaK0Wgh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 17:36:37 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkda-U5OuKdBVGJ8UWprJkAtmTL1m11+AbNskVULPfyS72A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Carlo Caione <carlo@caione.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jerry Cao <jerry.cao@amlogic.com>, Victor Wan <victor.wan@amlogic.com>
 
-Dear Linus Walleij,
-
-On Thu, 27 Nov 2014 14:29:47 +0100, Linus Walleij wrote:
-> On Fri, Nov 14, 2014 at 4:21 PM, Thomas Petazzoni
-> <thomas.petazzoni@free-electrons.com> wrote:
-> 
-> > This commit adds the implementation of ->suspend() and ->resume()
-> > platform_driver hooks in order to save and restore the state of the
-> > GPIO configuration. In order to achieve that, additional fields are
-> > added to the mvebu_gpio_chip structure.
+On Thu, Nov 27, 2014 at 02:48:31PM +0100, Linus Walleij wrote:
+> On Sun, Nov 16, 2014 at 9:14 PM, Beniamino Galvani <b.galvani@gmail.c=
+om> wrote:
+>=20
+> > This is a driver for the pinmux and GPIO controller available in
+> > Amlogic Meson SoCs. At the moment it only supports Meson8 devices,
+> > however other SoC families like Meson6 and Meson8b (the Cortex-A5
+> > variant) appear to be similar, with just different sets of banks an=
+d
+> > registers.
 > >
-> > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Alexandre Courbot <gnurou@gmail.com>
-> > Cc: linux-gpio@vger.kernel.org
-> > Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> > Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Do you want me to merge the patch or is it dependent on other patches?
+> > GPIO interrupts are not supported at the moment due to lack of
+> > documentation.
+> >
+> > Signed-off-by: Beniamino Galvani <b.galvani@gmail.com>
+>=20
+> This is dependent on S=F6ren's patches I guess?
+>=20
+> OK I'll merge this once we have that other code sorted out.
 
-This patch has already been merged by you, and is already in
-linux-next. See
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=for-next&id=b5b7b487431b01619f2947d91dadd7c7a233692e.
+Yes, this depends on Soren's patches.
 
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Thanks,
+Beniamino
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
