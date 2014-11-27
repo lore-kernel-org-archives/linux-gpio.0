@@ -1,41 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH/RFC] gpio: em: Use dynamic allocation of GPIOs
-Date: Thu, 27 Nov 2014 15:17:41 +0100
-Message-ID: <CACRpkdZ-y1bgJBYSzBRLNxughMKS86QWfauzNYGreFG_uB-0uA@mail.gmail.com>
-References: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
-	<CAAVeFuKGYM56KP8TOZAwSjDGWrVNoK1phpxoOdEJ=Ng9haSnmg@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: mxs: implement get_direction callback
+Date: Thu, 27 Nov 2014 15:22:10 +0100
+Message-ID: <CACRpkdZDCap5s8UvnYd1zf9hc7szQNfwdq+sv9BpFgsd-8_2mA@mail.gmail.com>
+References: <1416387322-17320-1-git-send-email-j.uzycki@elproma.com.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuKGYM56KP8TOZAwSjDGWrVNoK1phpxoOdEJ=Ng9haSnmg@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-SH <linux-sh@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f176.google.com ([209.85.213.176]:52413 "EHLO
+	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750961AbaK0OWK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 09:22:10 -0500
+Received: by mail-ig0-f176.google.com with SMTP id l13so9196429iga.15
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Nov 2014 06:22:10 -0800 (PST)
+In-Reply-To: <1416387322-17320-1-git-send-email-j.uzycki@elproma.com.pl>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Janusz Uzycki <j.uzycki@elproma.com.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "fabio.estevam@freescale.com" <fabio.estevam@freescale.com>, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Nov 18, 2014 at 4:11 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Mon, Nov 17, 2014 at 11:30 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+On Wed, Nov 19, 2014 at 9:55 AM, Janusz Uzycki <j.uzycki@elproma.com.pl> wrote:
 
->> -               ret = of_alias_get_id(pdev->dev.of_node, "gpio");
->> -               if (ret < 0) {
->> -                       dev_err(&pdev->dev, "Couldn't get OF id\n");
->> -                       goto err0;
->> -               }
->> -               pdata->gpio_base = ret * 32; /* 32 GPIOs per instance */
->> +               pdata->gpio_base = -1;
+> gpiolib's gpiod_get_direction() function returns the EINVAL error
+> if .get_direction callback is not defined.
+> The patch implements the callback for mxs chip which is useful
+> for debugging.
 >
-> User-space might break because of GPIO renumbering. Why not setting
-> gpio_base to -1 when the property is not present (instead of
-> triggering an error), keeping support for the property so existing
-> boards remain safe, and marking the property as deprecated in the
-> bindings documentation?
+> Inspired by arch/arm/mach-at91/gpio.c
+>
+> Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
 
-I don't like the way aliases are used here.
-
-These bindings are undocumented by the way :( :( :(
-
-I've applied it to wait and see what happens instead.
+This v3 version applied with Alexandre's ACK.
 
 Yours,
 Linus Walleij
