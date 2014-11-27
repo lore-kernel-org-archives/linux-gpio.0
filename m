@@ -1,32 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt: img,tz1090-pinctrl.txt: Fix typo in binding
-Date: Thu, 27 Nov 2014 14:33:10 +0100
-Message-ID: <CACRpkdYhDDZ4zD6X=aEP+fOK0SNNAQ2=kpHUQjuo6p1ek7kf8A@mail.gmail.com>
-References: <1415979953-22401-1-git-send-email-james.hogan@imgtec.com>
+Subject: Re: [PATCH] gpio-tz1090: fix error handling of irq_of_parse_and_map
+Date: Thu, 27 Nov 2014 14:35:27 +0100
+Message-ID: <CACRpkdZsPKMCm1wv09xTPb3j1MbRRiJaeG9A7OjX+e4PreKSwA@mail.gmail.com>
+References: <20141114213256.GA24709@dtor-ws>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:58498 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751125AbaK0NdL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 08:33:11 -0500
-Received: by mail-ie0-f176.google.com with SMTP id tr6so4526412ieb.21
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Nov 2014 05:33:10 -0800 (PST)
-In-Reply-To: <1415979953-22401-1-git-send-email-james.hogan@imgtec.com>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:45437 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750927AbaK0Nf2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 08:35:28 -0500
+Received: by mail-ig0-f170.google.com with SMTP id r2so10121855igi.5
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Nov 2014 05:35:27 -0800 (PST)
+In-Reply-To: <20141114213256.GA24709@dtor-ws>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Dmitry Torokhov <dtor@chromium.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, James Hogan <james.hogan@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Nov 14, 2014 at 4:45 PM, James Hogan <james.hogan@imgtec.com> wrote:
+On Fri, Nov 14, 2014 at 10:32 PM, Dmitry Torokhov <dtor@chromium.org> wrote:
 
-> Fix a typo, s/which which/which/ in the img,tz1090-pinctrl.txt binding.
+> irq_of_parse_and_map() returns 0 on error, so testing for negative
+> result never works.
 >
-> Signed-off-by: James Hogan <james.hogan@imgtec.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
 
-Patch applied.
+Patch applied with James' ACK.
 
 Yours,
 Linus Walleij
