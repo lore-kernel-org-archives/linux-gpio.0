@@ -1,25 +1,27 @@
-From: Jason Cooper <jason@lakedaemon.net>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Subject: Re: [PATCHv2 05/16] gpio: mvebu: add suspend/resume support
-Date: Thu, 27 Nov 2014 12:53:18 -0500
-Message-ID: <20141127175318.GL22670@titan.lakedaemon.net>
+Date: Thu, 27 Nov 2014 19:44:18 +0100
+Message-ID: <20141127194418.43e03e80@free-electrons.com>
 References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
- <CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
+	<1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
+	<CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:54384 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750895AbaK0Rxa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 12:53:30 -0500
-Content-Disposition: inline
+Received: from down.free-electrons.com ([37.187.137.238]:34700 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750898AbaK0SpT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 13:45:19 -0500
 In-Reply-To: <CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Nov 27, 2014 at 02:29:47PM +0100, Linus Walleij wrote:
+Dear Linus Walleij,
+
+On Thu, 27 Nov 2014 14:29:47 +0100, Linus Walleij wrote:
 > On Fri, Nov 14, 2014 at 4:21 PM, Thomas Petazzoni
 > <thomas.petazzoni@free-electrons.com> wrote:
 > 
@@ -39,18 +41,14 @@ On Thu, Nov 27, 2014 at 02:29:47PM +0100, Linus Walleij wrote:
 > 
 > Do you want me to merge the patch or is it dependent on other patches?
 
-I have a separate branch for this series, mvebu/soc-suspend which
-contains everything.  I've been a bit wrapped around the axle this
-cycle, and didn't want the series to suffer for lack of testing.  So
-when I had a moment, I put the whole thing into mvebu/for-next.  It's
-been there for a while.
+This patch has already been merged by you, and is already in
+linux-next. See
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=for-next&id=b5b7b487431b01619f2947d91dadd7c7a233692e.
 
-If you don't mind, I can just send a pull request to arm-soc for the
-branch as is.
+Best regards,
 
-I can break it up also, but I can't guarantee my availability for the
-next week or two.  So there a risk of the arch changes not making it in.
-
-thx,
-
-Jason.
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
