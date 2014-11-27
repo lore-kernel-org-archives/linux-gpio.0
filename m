@@ -1,37 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio-rcar: .irq_set_wake() support to work with suspend_device_irqs()
-Date: Thu, 27 Nov 2014 15:01:59 +0100
-Message-ID: <CACRpkdZAmrKkWNOyeV+7h+NshQzbBacwi_ticGdLB6Lj12i4ng@mail.gmail.com>
-References: <1415352165-26597-1-git-send-email-ykaneko0929@gmail.com>
-	<CACRpkdaUxtB1zrvH3B=P6+Vis-KEts50h8U=nOgTpDwp5wNKQQ@mail.gmail.com>
-	<CANqRtoTKKuKnfFN4VYhnt1M8jb-2o+PTaivQvu3ELR32c9DhHQ@mail.gmail.com>
-	<CAMuHMdUFPVBDbvaMNdPNGG-a9i1d8dAEK5WsREX40iSGVJk8+w@mail.gmail.com>
+Subject: Re: [PATCH/RFC] gpio: em: Use dynamic allocation of GPIOs
+Date: Thu, 27 Nov 2014 15:13:42 +0100
+Message-ID: <CACRpkdaFFYw8446JNWJ1AO+snixcYS=XtbaaW9soqeJ8KHueZQ@mail.gmail.com>
+References: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdUFPVBDbvaMNdPNGG-a9i1d8dAEK5WsREX40iSGVJk8+w@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Yoshihiro Kaneko <ykaneko0929@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:47332 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891AbaK0ONo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 09:13:44 -0500
+Received: by mail-ig0-f171.google.com with SMTP id z20so4523494igj.10
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Nov 2014 06:13:43 -0800 (PST)
+In-Reply-To: <1416234632-16166-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-On Mon, Nov 17, 2014 at 1:05 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+On Mon, Nov 17, 2014 at 3:30 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> I can confirm resume from s2ram works without and with this patch.
-> So unless this patch is meant to fix something else (is it?), I think it can be
-> dropped.
-
-OK patch is dropped from my queue.
-
->>> This driver should be simple to convert to GPIOLIB_IRQCHIP and get
->>> rid of some code overhead.
->>
->> Perhaps Geert [CC:ed] can have a look at this in the not so distant future?
+> Use dynamic allocation of GPIOs instead of looking at the gpio%u alias
+> in DT.
+> ---
+>   - Is this correct? Not having to care about the alias would simplify the
+>     to-be-written DT binding documentation.
+>   - Completely untested.
 >
-> Sure. Will do.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-THANKS!
+Patch applied.
 
 Yours,
 Linus Walleij
