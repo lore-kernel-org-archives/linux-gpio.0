@@ -1,74 +1,56 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH 3/3] gpio: mcp23s08: Add option to configure IRQ as active high
-Date: Thu, 27 Nov 2014 15:36:39 +0100
-Message-ID: <3020714.NCVpEFcdBT@ws-stein>
-References: <1416213491-9775-1-git-send-email-alexander.stein@systec-electronic.com> <1416213491-9775-3-git-send-email-alexander.stein@systec-electronic.com> <CACRpkdZCA7Zxs0HDpFZSmFmg5hYYAHmeNySFpM-Xq3G322mmbw@mail.gmail.com>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCHv2 05/16] gpio: mvebu: add suspend/resume support
+Date: Thu, 27 Nov 2014 12:53:18 -0500
+Message-ID: <20141127175318.GL22670@titan.lakedaemon.net>
+References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
+ <CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:59488 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750994AbaK0Oed (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 27 Nov 2014 09:34:33 -0500
-In-Reply-To: <CACRpkdZCA7Zxs0HDpFZSmFmg5hYYAHmeNySFpM-Xq3G322mmbw@mail.gmail.com>
+Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:54384 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750895AbaK0Rxa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 12:53:30 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thursday 27 November 2014 14:58:39, Linus Walleij wrote:
-> On Mon, Nov 17, 2014 at 9:38 AM, Alexander Stein
-> <alexander.stein@systec-electronic.com> wrote:
+On Thu, Nov 27, 2014 at 02:29:47PM +0100, Linus Walleij wrote:
+> On Fri, Nov 14, 2014 at 4:21 PM, Thomas Petazzoni
+> <thomas.petazzoni@free-electrons.com> wrote:
 > 
-> > Default is active low, but if property is specified in DT set INTPOL flag.
+> > This commit adds the implementation of ->suspend() and ->resume()
+> > platform_driver hooks in order to save and restore the state of the
+> > GPIO configuration. In order to achieve that, additional fields are
+> > added to the mvebu_gpio_chip structure.
 > >
-> > Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> > ---
-> >  .../devicetree/bindings/gpio/gpio-mcp23s08.txt     |  2 ++
-> >  drivers/gpio/gpio-mcp23s08.c                       | 30 +++++++++++++++++-----
-> >  2 files changed, 25 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-> > index c306a2d0..47dab72 100644
-> > --- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-> > +++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-> > @@ -57,6 +57,8 @@ Optional device specific properties:
-> >          occurred on. If it is not set, the interrupt are only generated for the
-> >          bank they belong to.
-> >          On devices with only one interrupt output this property is useless.
-> > +- microchip,irq-active-high: Sets the INTPOL flag in the IOCON register. This
-> > +        configures the IRQ output as active high.
+> > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Alexandre Courbot <gnurou@gmail.com>
+> > Cc: linux-gpio@vger.kernel.org
+> > Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> > Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 > 
-> I don't understand this AT ALL.
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > 
-> The normal way is that the *client* using the resource specify the
-> polarity.
-> 
-> #include <dt-bindings/interrupt-controller/irq.h>
-> 
-> interrupts = <0 60 IRQ_TYPE_LEVEL_LOW>;
-> 
-> This will then result in .set_type() being called on the irqchip.
-> 
-> I suspect the real change you want to do is to support
-> IRQ_TYPE_LEVEL_HIGH and IRQ_TYPE_LEVEL_LOW
-> in the .set_type() callback or something, or just switch all
-> clients from rising to falling edge or vice versa.
-> 
-> And it says is "configures the IRQ output", this seems more like
-> an input trigger?
-> 
-> Sorry too confused by this, can you explain?
+> Do you want me to merge the patch or is it dependent on other patches?
 
-Sure. Until now ODR is cleared as reset default while INTPOL explicitly gets cleared. So the INT output pin on the MCP23S17 is an active-low output pin which will trigger an active-low interrupt. While this is useually great, as most interrupt pins are active low, our board design requires an active-high output. This is done that the voltage level shift required for the interrupt pin can be done by a simple transistor.
-So, setting IRQ_TYPE_LEVEL_HIGH is simply wrong and this still won't work either as no interrupt will ever arive at the controller. What I need to do, is to change the interrupt polarity (to active high) at MCP23S17 while retaining the interrupt polarity on the controller as active-low.
-So I configure the chip to set the interrupt line as high upon IRQ, thus IRQF_TRIGGER_HIGH has to be passed to request_*irq.
-You might wonder why I then also changed IRQF_TRIGGER_LOW to IRQF_TRIGGER_HIGH for my board the interrupt line is actually active low. This is due the fact that GIC only supports active high-interrupts (any other flag results in request fail) but the microcontroller has a feature to inverse these interrupt triggers.
-I don't know if there is a feature to inverse interrupt polarity individually due to board designs.
-I hope this makes things a bit more clear.
+I have a separate branch for this series, mvebu/soc-suspend which
+contains everything.  I've been a bit wrapped around the axle this
+cycle, and didn't want the series to suffer for lack of testing.  So
+when I had a moment, I put the whole thing into mvebu/for-next.  It's
+been there for a while.
 
-Best regards,
-Alexander
+If you don't mind, I can just send a pull request to arm-soc for the
+branch as is.
 
+I can break it up also, but I can't guarantee my availability for the
+next week or two.  So there a risk of the arch changes not making it in.
+
+thx,
+
+Jason.
