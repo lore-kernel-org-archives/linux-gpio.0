@@ -1,37 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH][v2] mdio-mux-gpio: Use GPIO descriptor interface and new
- gpiod_set_array function
-Date: Fri, 28 Nov 2014 14:49:20 +0100
-Message-ID: <CACRpkdaZZFL+1FC8cANAqkMZu8amkPyC5BDaxTF2Fnj2zpqn1Q@mail.gmail.com>
-References: <2814617.OrXEO01vgP@pcimr>
-	<547487A4.6050203@cogentembedded.com>
+Subject: Re: [PATCH][RESEND] serial_mctrl_gpio: use gpiod_set_array function
+Date: Fri, 28 Nov 2014 14:52:06 +0100
+Message-ID: <CACRpkdaZsOpxi7ZWS9DYnMeui5UgcQ57P65857SyS+wXJ=3XWA@mail.gmail.com>
+References: <8534699.OPo8bzguux@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <547487A4.6050203@cogentembedded.com>
-Sender: netdev-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rojhalat Ibrahim <imr@rtschenk.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, David Miller <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, David Daney <david.daney@cavium.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:50106 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752047AbaK1NwH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 08:52:07 -0500
+Received: by mail-ie0-f175.google.com with SMTP id x19so977044ier.34
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 05:52:06 -0800 (PST)
+In-Reply-To: <8534699.OPo8bzguux@pcimr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Greg Kroah-Hartman <greg@kroah.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Mark Brown <broonie@kernel.org>, Gerhard Sittig <gsi@denx.de>
 
-On Tue, Nov 25, 2014 at 2:44 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 11/25/2014 12:31 PM, Rojhalat Ibrahim wrote:
-> [...]
->>
->>   static int mdio_mux_gpio_remove(struct platform_device *pdev)
->>   {
->> +       unsigned int n;
->>         struct mdio_mux_gpio_state *s = dev_get_platdata(&pdev->dev);
->>         mdio_mux_uninit(s->mux_handle);
->> +       for (n = 0; n < s->num_gpios; n++) {
->> +               gpiod_put(s->gpio[n]);
->> +       }
->
->
->    {} not needed; scripts/checkpatch.pl should have complained...
+On Mon, Nov 17, 2014 at 6:31 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 
-Yep it complains so I fixed it up when applying the patch.
+> Make the serial_mctrl_gpio driver the first user of the new gpiod_set_array
+> function, which is now available in the linux-gpio devel tree.
+> All modem control output signals are now set simultaneously.
+>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+
+Patch applied with Greg's ACK.
 
 Yours,
 Linus Walleij
