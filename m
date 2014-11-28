@@ -1,40 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv2 05/16] gpio: mvebu: add suspend/resume support
-Date: Fri, 28 Nov 2014 16:42:14 +0100
-Message-ID: <CACRpkdaVaTmhRgSkJPCmsHXvkqd4b-BZBsQEbXcZrHdhyMS0WQ@mail.gmail.com>
-References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
-	<CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
-	<20141127194418.43e03e80@free-electrons.com>
+Subject: Re: [PATCH][v3] mdio-mux-gpio: Use GPIO descriptor interface and new
+ gpiod_set_array function
+Date: Fri, 28 Nov 2014 16:56:08 +0100
+Message-ID: <CACRpkdbUZ309SCh2bJD_q5wieNZyRPsGjyUS+-g_Yxg13SPc5A@mail.gmail.com>
+References: <1581158.UhESICdgeM@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:63924 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729AbaK1PmQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 10:42:16 -0500
-Received: by mail-ig0-f171.google.com with SMTP id z20so6006342igj.4
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 07:42:14 -0800 (PST)
-In-Reply-To: <20141127194418.43e03e80@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <1581158.UhESICdgeM@pcimr>
+Sender: netdev-owner@vger.kernel.org
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, David Miller <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, David Daney <david.daney@cavium.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Nov 27, 2014 at 7:44 PM, Thomas Petazzoni
-<thomas.petazzoni@free-electrons.com> wrote:
-> Dear Linus Walleij,
+On Tue, Nov 25, 2014 at 2:57 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> Do you want me to merge the patch or is it dependent on other patches?
+> Convert mdio-mux-gpio to the GPIO descriptor interface and use the new
+> gpiod_set_array function to set all output signals simultaneously.
 >
-> This patch has already been merged by you, and is already in
-> linux-next. See
-> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=for-next&id=b5b7b487431b01619f2947d91dadd7c7a233692e.
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> Acked-by: David S. Miller <davem@davemloft.net>
+> --
+> This patch depends on the gpiod_set_array function, which is available in
+> the linux-gpio devel tree.
+>
+> Change log:
+>   v3: remove unnecessary braces
+>   v2: fix gpiod_get_index usage
 
-Argh, haha yeah it was the resending that confused me... too many
-patches floating around. Well then, it lands upstream.
+I already merged v2 and removed the braces myself.
 
 Yours,
 Linus Walleij
