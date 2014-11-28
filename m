@@ -1,65 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 1/1] gpio: pca953x: Allow interrupt support when
- compiled as module
-Date: Fri, 28 Nov 2014 16:11:02 +0100
-Message-ID: <CACRpkdYRvBQ3WgJv7hXVbe0ubG+Gw9pgDM1Fd4HgMLPE5kQnrA@mail.gmail.com>
-References: <1416492379-28433-1-git-send-email-alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH 3/3] gpio: mcp23s08: Add option to configure IRQ as active high
+Date: Fri, 28 Nov 2014 16:39:31 +0100
+Message-ID: <CACRpkdasOLsPm2jGCLjLa=-mWSuu2GLQLaxbtr8TL6EeQhjPfg@mail.gmail.com>
+References: <1416213491-9775-1-git-send-email-alexander.stein@systec-electronic.com>
+	<1416213491-9775-3-git-send-email-alexander.stein@systec-electronic.com>
+	<CACRpkdZCA7Zxs0HDpFZSmFmg5hYYAHmeNySFpM-Xq3G322mmbw@mail.gmail.com>
+	<3020714.NCVpEFcdBT@ws-stein>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:33949 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751174AbaK1PLE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 10:11:04 -0500
-Received: by mail-ie0-f181.google.com with SMTP id tp5so6115903ieb.40
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 07:11:02 -0800 (PST)
-In-Reply-To: <1416492379-28433-1-git-send-email-alexander.stein@systec-electronic.com>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:46970 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751772AbaK1Pjc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 10:39:32 -0500
+Received: by mail-ie0-f173.google.com with SMTP id y20so6157436ier.4
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 07:39:31 -0800 (PST)
+In-Reply-To: <3020714.NCVpEFcdBT@ws-stein>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Nov 20, 2014 at 3:06 PM, Alexander Stein
+On Thu, Nov 27, 2014 at 3:36 PM, Alexander Stein
 <alexander.stein@systec-electronic.com> wrote:
+> On Thursday 27 November 2014 14:58:39, Linus Walleij wrote:
 
-> With commit 2fd36c55264926e268deb50f6de5f43fa5e490f7
-> ("i2c: core: Map OF IRQ at probe time") it seems that there is no need
-> to force this driver to be compiled into the kernel.
+>> Sorry too confused by this, can you explain?
 >
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> Sure. Until now ODR is cleared as reset default while INTPOL explicitly gets cleared.
+> So the INT output pin on the MCP23S17 is an active-low output pin which will trigger
+> an active-low interrupt.
 
-I don't get this at all.
+OK... I thought it was some kind of input line to the device. Now I get it, it
+is what is generated *out* of this device. Please state this in the bindings.
 
->  config GPIO_PCA953X_IRQ
->         bool "Interrupt controller support for PCA953x"
-> -       depends on GPIO_PCA953X=y
->         select GPIOLIB_IRQCHIP
->         help
->           Say yes here to enable the pca953x to be used as an interrupt
-> -         controller. It requires the driver to be built in the kernel.
-> +         controller.
+> While this is useually great, as most interrupt pins are active low, our board design
+> requires an active-high output.
 
-Why should this *not* be dependent on GPIO_PCA953X?? The config
-flag is only used inside the file that gets built by exactly that
-config flag!
+OK I get it :)
 
-Just remove the "=y" part of the line and test if you like.
+> You might wonder why I then also changed IRQF_TRIGGER_LOW to
+> IRQF_TRIGGER_HIGH for my board the interrupt line is actually active low.
+> This is due the fact that GIC only supports active high-interrupts (any other flag
+> results in request fail) but the microcontroller has a feature to inverse these interrupt triggers.
 
-The dependency makes perfect sense, it'd just that removing it won't
-break the build just because it's only used in that file.
-
-> This is completely untested, as I lack a board capable of running a v3.18-rcX
-> kernel. But I noticed on an older kernel that this driver failed requesting
-> irq 0 during kernel boot. 0 because it's irq parent was not yet probed (also
-> a compiled in driver).
-
-If the parent is not probed, it should get an -EPROBE_DEFER
-as irq number from the parent and bail out, then that is the actual bug
-that needs fixing.
-
-> With the mentioned commit this should work now.
-
-I want it tested before I believe it...
+Very convoluted, but common in electronics, OK, no problem.
 
 Yours,
 Linus Walleij
