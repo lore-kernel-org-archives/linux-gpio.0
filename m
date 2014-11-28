@@ -1,39 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv4 1/3] gpio: sch: Consolidate similar algorithms
-Date: Fri, 28 Nov 2014 14:57:28 +0100
-Message-ID: <CACRpkdbqScGF5WvbOfq5z9b1ga-_rQBvvC5+ZAf6eEKMbyUytQ@mail.gmail.com>
+Subject: Re: [PATCHv4 3/3] gpio: sch: Enable IRQ support for Quark X1000
+Date: Fri, 28 Nov 2014 15:02:42 +0100
+Message-ID: <CACRpkdba0XparJCKrV9XrU3dxTnuWhEYGQQMKzi+SDEiOAsapQ@mail.gmail.com>
 References: <1416977280-27319-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-	<1416977280-27319-2-git-send-email-rebecca.swee.fun.chang@intel.com>
-	<CACRpkdaVfJnMZEnEmm2VP+qO0uaoj9NvNNwcd44qoRkwP59tSA@mail.gmail.com>
+	<1416977280-27319-4-git-send-email-rebecca.swee.fun.chang@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:60648 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751439AbaK1N52 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 08:57:28 -0500
-Received: by mail-ig0-f170.google.com with SMTP id r2so11477544igi.1
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 05:57:28 -0800 (PST)
-In-Reply-To: <CACRpkdaVfJnMZEnEmm2VP+qO0uaoj9NvNNwcd44qoRkwP59tSA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1416977280-27319-4-git-send-email-rebecca.swee.fun.chang@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@intel.com>, Denis Turischev <denis.turischev@compulab.co.il>, Alexandre Courbot <gnurou@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 28, 2014 at 2:54 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 2014-11-26 5:47 GMT+01:00 Chang Rebecca Swee Fun
-> <rebecca.swee.fun.chang@intel.com>:
->
->> Consolidating similar algorithms into common functions to make
->> GPIO SCH simpler and manageable.
->>
->> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
->
-> Patch already applied. If you changed anything, send incremental
-> patches on top of my devel branch or linux-next or something...
+On Wed, Nov 26, 2014 at 5:48 AM, Chang Rebecca Swee Fun
+<rebecca.swee.fun.chang@intel.com> wrote:
 
-Bah it was *NOT* already applied. But it doesn't apply so please rebase
-the patch set to my "devel" branch in the GPIO tree and resend.
+> ntel Quark X1000 GPIO controller supports interrupt handling for
+> both core power well and resume power well. This patch is to enable
+> the IRQ support and provide IRQ handling for Intel Quark X1000
+> GPIO-SCH device driver.
+>
+> This piece of work is derived from Dan O'Donovan's initial work for
+> Quark X1000 enabling.
+>
+> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+
+This is just adding handling of cascading interrupts from a
+GPIO chip as far as I can tell. We don't do that with local
+per-driver hacks anymore if there is no special reason, we have
+helpers on gpiolib to handle this.
+
+Make your Kconfig select GPIOLIB_IRQCHIP and take it from
+there, look at how other drivers using GPIOLIB_IRQCHIP are
+done. Read the documentation for chained irqchips in
+Documentation/gpio/driver.txt
 
 Yours,
 Linus Walleij
