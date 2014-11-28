@@ -1,50 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: mcp23s08: Add option to configure IRQ as active high
-Date: Fri, 28 Nov 2014 16:39:31 +0100
-Message-ID: <CACRpkdasOLsPm2jGCLjLa=-mWSuu2GLQLaxbtr8TL6EeQhjPfg@mail.gmail.com>
-References: <1416213491-9775-1-git-send-email-alexander.stein@systec-electronic.com>
-	<1416213491-9775-3-git-send-email-alexander.stein@systec-electronic.com>
-	<CACRpkdZCA7Zxs0HDpFZSmFmg5hYYAHmeNySFpM-Xq3G322mmbw@mail.gmail.com>
-	<3020714.NCVpEFcdBT@ws-stein>
+Subject: Re: [PATCHv2 05/16] gpio: mvebu: add suspend/resume support
+Date: Fri, 28 Nov 2014 16:42:14 +0100
+Message-ID: <CACRpkdaVaTmhRgSkJPCmsHXvkqd4b-BZBsQEbXcZrHdhyMS0WQ@mail.gmail.com>
+References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
+	<CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
+	<20141127194418.43e03e80@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:46970 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751772AbaK1Pjc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 10:39:32 -0500
-Received: by mail-ie0-f173.google.com with SMTP id y20so6157436ier.4
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 07:39:31 -0800 (PST)
-In-Reply-To: <3020714.NCVpEFcdBT@ws-stein>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:63924 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750729AbaK1PmQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 10:42:16 -0500
+Received: by mail-ig0-f171.google.com with SMTP id z20so6006342igj.4
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 07:42:14 -0800 (PST)
+In-Reply-To: <20141127194418.43e03e80@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Nov 27, 2014 at 3:36 PM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
-> On Thursday 27 November 2014 14:58:39, Linus Walleij wrote:
+On Thu, Nov 27, 2014 at 7:44 PM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
+> Dear Linus Walleij,
 
->> Sorry too confused by this, can you explain?
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> Do you want me to merge the patch or is it dependent on other patches?
 >
-> Sure. Until now ODR is cleared as reset default while INTPOL explicitly gets cleared.
-> So the INT output pin on the MCP23S17 is an active-low output pin which will trigger
-> an active-low interrupt.
+> This patch has already been merged by you, and is already in
+> linux-next. See
+> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=for-next&id=b5b7b487431b01619f2947d91dadd7c7a233692e.
 
-OK... I thought it was some kind of input line to the device. Now I get it, it
-is what is generated *out* of this device. Please state this in the bindings.
-
-> While this is useually great, as most interrupt pins are active low, our board design
-> requires an active-high output.
-
-OK I get it :)
-
-> You might wonder why I then also changed IRQF_TRIGGER_LOW to
-> IRQF_TRIGGER_HIGH for my board the interrupt line is actually active low.
-> This is due the fact that GIC only supports active high-interrupts (any other flag
-> results in request fail) but the microcontroller has a feature to inverse these interrupt triggers.
-
-Very convoluted, but common in electronics, OK, no problem.
+Argh, haha yeah it was the resending that confused me... too many
+patches floating around. Well then, it lands upstream.
 
 Yours,
 Linus Walleij
