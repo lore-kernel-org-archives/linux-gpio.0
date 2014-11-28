@@ -1,88 +1,131 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
-Date: Fri, 28 Nov 2014 13:26:57 +0100
-Message-ID: <CACRpkdZNYMX0qK4desZGY-tDp=VzBamzoU11d8Kf4U+bKbunYQ@mail.gmail.com>
-References: <1416552238-9908-1-git-send-email-heyunlei@huawei.com>
+From: "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
+Subject: Re: [PATCH V5 2/7] MIPS: Cleanup Loongson-2F's gpio driver
+Date: Fri, 28 Nov 2014 21:14:56 +0800
+Message-ID: <tencent_60EBDA3907E4C1985C37621B@qq.com>
+References: <1416561389-1046-1-git-send-email-chenhc@lemote.com>
+	<CAAVeFu+CUCja6jxb0XONj80-6te1t31A49F4owNkWkoy7PcHuQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:38600 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750961AbaK1MdA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 07:33:00 -0500
-Received: by mail-ie0-f177.google.com with SMTP id rd18so5700314iec.8
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 04:32:59 -0800 (PST)
-In-Reply-To: <1416552238-9908-1-git-send-email-heyunlei@huawei.com>
+Received: from smtpbg62.qq.com ([103.7.29.139]:38343 "EHLO smtpbg64.qq.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751101AbaK1NPT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 28 Nov 2014 08:15:19 -0500
+In-Reply-To: <CAAVeFu+CUCja6jxb0XONj80-6te1t31A49F4owNkWkoy7PcHuQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yunlei He <heyunlei@huawei.com>, Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bintian.wang@huawei.com, peifeiyue@huawei.com, Haojian Zhuang <haojian.zhuang@linaro.org>, Xinwei Kong <kong.kongxinwei@hisilicon.com>
+To: =?utf-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>
+Cc: =?utf-8?B?UmFsZiBCYWVjaGxl?= <ralf@linux-mips.org>, =?utf-8?B?Sm9obiBDcmlzcGlu?= <john@phrozen.org>, =?utf-8?B?U3RldmVuIEouIEhpbGw=?= <Steven.Hill@imgtec.com>, =?utf-8?B?bGludXgtbWlwcw==?= <linux-mips@linux-mips.org>, =?utf-8?B?RnV4aW4gWmhhbmc=?= <zhangfx@lemote.com>, =?utf-8?B?d3V6aGFuZ2ppbg==?= <wuzhangjin@gmail.com>, =?utf-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>
 
-On Fri, Nov 21, 2014 at 7:43 AM, Yunlei He <heyunlei@huawei.com> wrote:
+SGksIEFsZXhhbmRyZSwNCg0KSSdtIGFmcmFpZCB0aGF0IEFSQ0hfSEFWRV9DVVNUT01fR1BJ
+T19IIGNhbm5vdCBiZSBzaW1wbHkgcmVtb3ZlZCwgYmVjYXVzZSBBUkNIX0hBVkVfQ1VTVE9N
+X0dQSU9fSCBpcyBzbGVjdGVkIGJ5IENPTkZJR19NSVBTLCBvdGhlciBNSVBTIENQVSAobm90
+IExvb25nc29uKSBtYXkgbmVlZCBpdC4NCiANCkh1YWNhaQ0KIA0KLS0tLS0tLS0tLS0tLS0t
+LS0tIE9yaWdpbmFsIC0tLS0tLS0tLS0tLS0tLS0tLQ0KRnJvbTogICJBbGV4YW5kcmUgQ291
+cmJvdCI8Z251cm91QGdtYWlsLmNvbT47DQpEYXRlOiAgRnJpLCBOb3YgMjgsIDIwMTQgMDM6
+NDggUE0NClRvOiAgIkh1YWNhaSBDaGVuIjxjaGVuaGNAbGVtb3RlLmNvbT47DQpDYzogICJS
+YWxmIEJhZWNobGUiPHJhbGZAbGludXgtbWlwcy5vcmc+OyAiSm9obiBDcmlzcGluIjxqb2hu
+QHBocm96ZW4ub3JnPjsgIlN0ZXZlbiBKLiBIaWxsIjxTdGV2ZW4uSGlsbEBpbWd0ZWMuY29t
+PjsgImxpbnV4LW1pcHMiPGxpbnV4LW1pcHNAbGludXgtbWlwcy5vcmc+OyAiRnV4aW4gWmhh
+bmciPHpoYW5nZnhAbGVtb3RlLmNvbT47ICJ3dXpoYW5namluIjx3dXpoYW5namluQGdtYWls
+LmNvbT47ICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyI8bGludXgtZ3Bpb0B2Z2VyLmtl
+cm5lbC5vcmc+Ow0KU3ViamVjdDogIFJlOiBbUEFUQ0ggVjUgMi83XSBNSVBTOiBDbGVhbnVw
+IExvb25nc29uLTJGJ3MgZ3BpbyBkcml2ZXINCiANCk9uIEZyaSwgTm92IDIxLCAyMDE0IGF0
+IDY6MTYgUE0sIEh1YWNhaSBDaGVuIDxjaGVuaGNAbGVtb3RlLmNvbT4gd3JvdGU6DQo+IFRo
+aXMgY2xlYW51cCBpcyBwcmVwYXJlIHRvIG1vdmUgdGhlIGRyaXZlciB0byBkcml2ZXJzL2dw
+aW8uIEN1c3RvbQ0KPiBkZWZpbml0aW9ucyBvZiBncGlvX2dldF92YWx1ZSgpL2dwaW9fc2V0
+X3ZhbHVlKCkgYXJlIGRyb3BwZWQuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IEh1YWNhaSBDaGVu
+IDxjaGVuaGNAbGVtb3RlLmNvbT4NCj4gLS0tDQo+ICBhcmNoL21pcHMvaW5jbHVkZS9hc20v
+bWFjaC1sb29uZ3Nvbi9ncGlvLmggfCAgIDE1ICsrKy0tLQ0KPiAgYXJjaC9taXBzL2xvb25n
+c29uL2NvbW1vbi9ncGlvLmMgICAgICAgICAgIHwgICA4MiArKysrKysrKysrKy0tLS0tLS0t
+LS0tLS0tLS0tDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDM5IGluc2VydGlvbnMoKyksIDU4IGRl
+bGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9taXBzL2luY2x1ZGUvYXNtL21h
+Y2gtbG9vbmdzb24vZ3Bpby5oIGIvYXJjaC9taXBzL2luY2x1ZGUvYXNtL21hY2gtbG9vbmdz
+b24vZ3Bpby5oDQo+IGluZGV4IDIxMWE3YjcuLmIzYjIxNjkgMTAwNjQ0DQo+IC0tLSBhL2Fy
+Y2gvbWlwcy9pbmNsdWRlL2FzbS9tYWNoLWxvb25nc29uL2dwaW8uaA0KPiArKysgYi9hcmNo
+L21pcHMvaW5jbHVkZS9hc20vbWFjaC1sb29uZ3Nvbi9ncGlvLmgNCj4gQEAgLTEsOCArMSw5
+IEBADQo+ICAvKg0KPiAtICogU1RMUzJGIEdQSU8gU3VwcG9ydA0KPiArICogTG9vbmdzb24g
+R1BJTyBTdXBwb3J0DQo+ICAgKg0KPiAgICogQ29weXJpZ2h0IChjKSAyMDA4ICBSaWNoYXJk
+IExpdSwgU1RNaWNyb2VsZWN0cm9uaWNzIDxyaWNoYXJkLmxpdUBzdC5jb20+DQo+ICAgKiBD
+b3B5cmlnaHQgKGMpIDIwMDgtMjAxMCAgQXJuYXVkIFBhdGFyZCA8YXBhdGFyZEBtYW5kcml2
+YS5jb20+DQo+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTQgIEh1YWNhaSBDaGVuIDxjaGVuaGNA
+bGVtb3RlLmNvbT4NCj4gICAqDQo+ICAgKiBUaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2Fy
+ZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1vZGlmeQ0KPiAgICogaXQgdW5k
+ZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBhcyBwdWJs
+aXNoZWQgYnkNCj4gQEAgLTEwLDE0ICsxMSwxNCBAQA0KPiAgICogKGF0IHlvdXIgb3B0aW9u
+KSBhbnkgbGF0ZXIgdmVyc2lvbi4NCj4gICAqLw0KPg0KPiAtI2lmbmRlZiBfX1NUTFMyRl9H
+UElPX0gNCj4gLSNkZWZpbmUgX19TVExTMkZfR1BJT19IDQo+ICsjaWZuZGVmIF9fTE9PTkdT
+T05fR1BJT19IDQo+ICsjZGVmaW5lIF9fTE9PTkdTT05fR1BJT19IDQo+DQo+ICAjaW5jbHVk
+ZSA8YXNtLWdlbmVyaWMvZ3Bpby5oPg0KPg0KPiAtZXh0ZXJuIHZvaWQgZ3Bpb19zZXRfdmFs
+dWUodW5zaWduZWQgZ3BpbywgaW50IHZhbHVlKTsNCj4gLWV4dGVybiBpbnQgZ3Bpb19nZXRf
+dmFsdWUodW5zaWduZWQgZ3Bpbyk7DQo+IC1leHRlcm4gaW50IGdwaW9fY2Fuc2xlZXAodW5z
+aWduZWQgZ3Bpbyk7DQo+ICsjZGVmaW5lIGdwaW9fZ2V0X3ZhbHVlIF9fZ3Bpb19nZXRfdmFs
+dWUNCj4gKyNkZWZpbmUgZ3Bpb19zZXRfdmFsdWUgX19ncGlvX3NldF92YWx1ZQ0KPiArI2Rl
+ZmluZSBncGlvX2NhbnNsZWVwIF9fZ3Bpb19jYW5zbGVlcA0KDQpTaW5jZSB0aGlzIGFyY2hp
+dGVjdHVyZSBpcyB1c2luZyB0aGUgc3RhbmRhcmQgR1BJTyBmdW5jdGlvbnMsIGNhbid0IHdl
+DQpzaW1wbHkgZ2V0IHJpZCBvZiB0aGlzIGZpbGUgYW5kIHRoZSBBUkNIX0hBVkVfQ1VTVE9N
+X0dQSU9fSCBvcHRpb24gc28NCnRoZSBhbHJlYWR5LWRlZmluZWQgaW5saW5lIGZ1bmN0aW9u
+cyBpbiBpbmNsdWRlL2xpbnV4L2dwaW8uaCBhcmUgdXNlZA0KaW5zdGVhZD8NCg0KPg0KPiAg
+LyogVGhlIGNoaXAgY2FuIGRvIGludGVycnVwdA0KPiAgICogYnV0IGl0IGhhcyBub3QgYmVl
+biB0ZXN0ZWQgYW5kIGRvYyBub3QgY2xlYXINCj4gQEAgLTMyLDQgKzMzLDQgQEAgc3RhdGlj
+IGlubGluZSBpbnQgaXJxX3RvX2dwaW8oaW50IGdwaW8pDQo+ICAgICAgICAgcmV0dXJuIC1F
+SU5WQUw7DQo+ICB9DQo+DQo+IC0jZW5kaWYgICAgICAgICAgICAgICAgICAgICAgICAgLyog
+X19TVExTMkZfR1BJT19IICovDQo+ICsjZW5kaWYgLyogX19MT09OR1NPTl9HUElPX0ggKi8N
+Cj4gZGlmZiAtLWdpdCBhL2FyY2gvbWlwcy9sb29uZ3Nvbi9jb21tb24vZ3Bpby5jIGIvYXJj
+aC9taXBzL2xvb25nc29uL2NvbW1vbi9ncGlvLmMNCj4gaW5kZXggMjlkYmFhMi4uMDg3YWFj
+MyAxMDA2NDQNCj4gLS0tIGEvYXJjaC9taXBzL2xvb25nc29uL2NvbW1vbi9ncGlvLmMNCj4g
+KysrIGIvYXJjaC9taXBzL2xvb25nc29uL2NvbW1vbi9ncGlvLmMNCj4gQEAgLTI0LDU1ICsy
+NCw2IEBADQo+DQo+ICBzdGF0aWMgREVGSU5FX1NQSU5MT0NLKGdwaW9fbG9jayk7DQo+DQo+
+IC1pbnQgZ3Bpb19nZXRfdmFsdWUodW5zaWduZWQgZ3BpbykNCj4gLXsNCj4gLSAgICAgICB1
+MzIgdmFsOw0KPiAtICAgICAgIHUzMiBtYXNrOw0KPiAtDQo+IC0gICAgICAgaWYgKGdwaW8g
+Pj0gU1RMUzJGX05fR1BJTykNCj4gLSAgICAgICAgICAgICAgIHJldHVybiBfX2dwaW9fZ2V0
+X3ZhbHVlKGdwaW8pOw0KPiAtDQo+IC0gICAgICAgbWFzayA9IDEgPDwgKGdwaW8gKyBTVExT
+MkZfR1BJT19JTl9PRkZTRVQpOw0KPiAtICAgICAgIHNwaW5fbG9jaygmZ3Bpb19sb2NrKTsN
+Cj4gLSAgICAgICB2YWwgPSBMT09OR1NPTl9HUElPREFUQTsNCj4gLSAgICAgICBzcGluX3Vu
+bG9jaygmZ3Bpb19sb2NrKTsNCj4gLQ0KPiAtICAgICAgIHJldHVybiAodmFsICYgbWFzaykg
+IT0gMDsNCj4gLX0NCj4gLUVYUE9SVF9TWU1CT0woZ3Bpb19nZXRfdmFsdWUpOw0KPiAtDQo+
+IC12b2lkIGdwaW9fc2V0X3ZhbHVlKHVuc2lnbmVkIGdwaW8sIGludCBzdGF0ZSkNCj4gLXsN
+Cj4gLSAgICAgICB1MzIgdmFsOw0KPiAtICAgICAgIHUzMiBtYXNrOw0KPiAtDQo+IC0gICAg
+ICAgaWYgKGdwaW8gPj0gU1RMUzJGX05fR1BJTykgew0KPiAtICAgICAgICAgICAgICAgX19n
+cGlvX3NldF92YWx1ZShncGlvLCBzdGF0ZSk7DQo+IC0gICAgICAgICAgICAgICByZXR1cm4g
+Ow0KPiAtICAgICAgIH0NCj4gLQ0KPiAtICAgICAgIG1hc2sgPSAxIDw8IGdwaW87DQo+IC0N
+Cj4gLSAgICAgICBzcGluX2xvY2soJmdwaW9fbG9jayk7DQo+IC0gICAgICAgdmFsID0gTE9P
+TkdTT05fR1BJT0RBVEE7DQo+IC0gICAgICAgaWYgKHN0YXRlKQ0KPiAtICAgICAgICAgICAg
+ICAgdmFsIHw9IG1hc2s7DQo+IC0gICAgICAgZWxzZQ0KPiAtICAgICAgICAgICAgICAgdmFs
+ICY9ICh+bWFzayk7DQo+IC0gICAgICAgTE9PTkdTT05fR1BJT0RBVEEgPSB2YWw7DQo+IC0g
+ICAgICAgc3Bpbl91bmxvY2soJmdwaW9fbG9jayk7DQo+IC19DQo+IC1FWFBPUlRfU1lNQk9M
+KGdwaW9fc2V0X3ZhbHVlKTsNCj4gLQ0KPiAtaW50IGdwaW9fY2Fuc2xlZXAodW5zaWduZWQg
+Z3BpbykNCj4gLXsNCj4gLSAgICAgICBpZiAoZ3BpbyA8IFNUTFMyRl9OX0dQSU8pDQo+IC0g
+ICAgICAgICAgICAgICByZXR1cm4gMDsNCj4gLSAgICAgICBlbHNlDQo+IC0gICAgICAgICAg
+ICAgICByZXR1cm4gX19ncGlvX2NhbnNsZWVwKGdwaW8pOw0KPiAtfQ0KPiAtRVhQT1JUX1NZ
+TUJPTChncGlvX2NhbnNsZWVwKTsNCj4gLQ0KPiAgc3RhdGljIGludCBsczJmX2dwaW9fZGly
+ZWN0aW9uX2lucHV0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIGdwaW8pDQo+
+ICB7DQo+ICAgICAgICAgdTMyIHRlbXA7DQo+IEBAIC0xMTMsMTMgKzY0LDQxIEBAIHN0YXRp
+YyBpbnQgbHMyZl9ncGlvX2RpcmVjdGlvbl9vdXRwdXQoc3RydWN0IGdwaW9fY2hpcCAqY2hp
+cCwNCj4NCj4gIHN0YXRpYyBpbnQgbHMyZl9ncGlvX2dldF92YWx1ZShzdHJ1Y3QgZ3Bpb19j
+aGlwICpjaGlwLCB1bnNpZ25lZCBncGlvKQ0KPiAgew0KPiAtICAgICAgIHJldHVybiBncGlv
+X2dldF92YWx1ZShncGlvKTsNCj4gKyAgICAgICB1MzIgdmFsOw0KPiArICAgICAgIHUzMiBt
+YXNrOw0KPiArDQo+ICsgICAgICAgaWYgKGdwaW8gPj0gU1RMUzJGX05fR1BJTykNCj4gKyAg
+ICAgICAgICAgICAgIHJldHVybiBfX2dwaW9fZ2V0X3ZhbHVlKGdwaW8pOw0KDQpUaGlzIGNv
+bmRpdGlvbiBzaG91bGQgbm90IGJlIG5lZWRlZC4gZ3Bpb2xpYiB3aWxsIGFsd2F5cyB1c2Ug
+dGhlIHJpZ2h0IGNoaXAgbm93Lg0KDQo+ICsNCj4gKyAgICAgICBtYXNrID0gMSA8PCAoZ3Bp
+byArIFNUTFMyRl9HUElPX0lOX09GRlNFVCk7DQo+ICsgICAgICAgc3Bpbl9sb2NrKCZncGlv
+X2xvY2spOw0KPiArICAgICAgIHZhbCA9IExPT05HU09OX0dQSU9EQVRBOw0KPiArICAgICAg
+IHNwaW5fdW5sb2NrKCZncGlvX2xvY2spOw0KPiArDQo+ICsgICAgICAgcmV0dXJuICh2YWwg
+JiBtYXNrKSAhPSAwOw0KPiAgfQ0KPg0KPiAgc3RhdGljIHZvaWQgbHMyZl9ncGlvX3NldF92
+YWx1ZShzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLA0KPiAgICAgICAgICAgICAgICAgdW5zaWdu
+ZWQgZ3BpbywgaW50IHZhbHVlKQ0KPiAgew0KPiAtICAgICAgIGdwaW9fc2V0X3ZhbHVlKGdw
+aW8sIHZhbHVlKTsNCj4gKyAgICAgICB1MzIgdmFsOw0KPiArICAgICAgIHUzMiBtYXNrOw0K
+PiArDQo+ICsgICAgICAgaWYgKGdwaW8gPj0gU1RMUzJGX05fR1BJTykgew0KPiArICAgICAg
+ICAgICAgICAgX19ncGlvX3NldF92YWx1ZShncGlvLCB2YWx1ZSk7DQo+ICsgICAgICAgICAg
+ICAgICByZXR1cm47DQo+ICsgICAgICAgfQ0KDQpTYW1lIGhlcmUsIHRoaXMgc2hvdWxkIG5v
+dCBiZSBuZWVkZWQgYXQgYWxsLg0KDQpBbHNvLCBoYXZlIHlvdSB0ZXN0ZWQgdGhhdCB0aGlz
+IGRyaXZlciBzdGlsbCB3b3JrcyBhZnRlciBiZWluZyBtb3ZlZA0KdG8gZHJpdmVycy9ncGlv
+PyBZb3UgYXJlIGluY2x1ZGluZyBhIDxsb29uZ3Nvbi5oPiB0aGF0IEkgYW0gbm90IHN1cmUN
+CnRoZSBjb21waWxlciB3aWxsIGZpbmQgZnJvbSB0aGVyZS4gSSBhbHNvIHN1c3BlY3QgdGhl
+IGFyY2hfaW5pdGNhbGwgaXMNCm5vdCBpZGVhbCBhbnltb3JlIGlmIHlvdSBjb21waWxlIHRo
+ZSBkcml2ZXIgYXMgYSBtb2R1bGUgLSB5b3UgbWF5IHdhbnQNCnRvIHJlbW92ZSB0aGF0IG9w
+dGlvbiBpZiBHUElPcyBhcmUgdXNlZCBlYXJseSBpbiBzeXN0ZW0gYm9vdC4=
 
-> Gpio-ranges property is useful to represent which GPIOs correspond
-> to which pins on which pin controllers. But there may be some gpios
-> without pinctrl operation. So check whether gpio-ranges property
-> exists in device node first.
->
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> Signed-off-by: Xinwei Kong <kong.kongxinwei@hisilicon.com>
-> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
-
-(...)
-
->  Documentation/devicetree/bindings/gpio/pl061-gpio.txt | 2 +-
->  drivers/gpio/gpio-pl061.c                             | 7 +++++--
->  2 files changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.txt b/Documentation/devicetree/bindings/gpio/pl061-gpio.txt
-> index a2c416b..577bcf7 100644
-> --- a/Documentation/devicetree/bindings/gpio/pl061-gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.txt
-> @@ -7,4 +7,4 @@ Required properties:
->    - bit 0 specifies polarity (0 for normal, 1 for inverted)
->  - gpio-controller : Marks the device node as a GPIO controller.
->  - interrupts : Interrupt mapping for GPIO IRQ.
-> -
-> +- gpio-ranges : Interaction with the PINCTRL subsystem
-
-This can be a separate patch. Please send it as such.
-
-> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-> index 84b49cf..01875d1 100644
-> --- a/drivers/gpio/gpio-pl061.c
-> +++ b/drivers/gpio/gpio-pl061.c
-> @@ -24,6 +24,7 @@
->  #include <linux/slab.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/pm.h>
-> +#include <linux/of_address.h>
-
-What you're checking for is not an address. This would be just
-#include <linux/of.h>
-
->         spin_lock_init(&chip->lock);
-> +       if (of_get_property(dev->of_node, "gpio-ranges", NULL)) {
-> +               chip->gc.request = pl061_gpio_request;
-> +               chip->gc.free = pl061_gpio_free;
-> +       }
->
-> -       chip->gc.request = pl061_gpio_request;
-> -       chip->gc.free = pl061_gpio_free;
-
-NAK.
-
-No this does not work. GPIO ranges doe not *have* to come from
-the device tree, it is more common that a GPIO driver adds it by
-way of gpiochip_add_pin_range().
-
-Haojian has already solved this problem in the pinctrl core.
-Inspect commit 51e13c2475913d45a3ec546dee647538a9341d6a
-"pinctrl: check pinctrl ready for gpio range"
-
-The call(s) to pinctrl_request_gpio() from
-pl061_gpio_request() should already return silently with 0
-AFAICT, Haojian do you agree?
-
-Yours,
-Linus Walleij
