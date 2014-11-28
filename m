@@ -1,40 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv4 3/3] gpio: sch: Enable IRQ support for Quark X1000
-Date: Fri, 28 Nov 2014 15:02:42 +0100
-Message-ID: <CACRpkdba0XparJCKrV9XrU3dxTnuWhEYGQQMKzi+SDEiOAsapQ@mail.gmail.com>
-References: <1416977280-27319-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-	<1416977280-27319-4-git-send-email-rebecca.swee.fun.chang@intel.com>
+Subject: Re: [PATCH v2 3/5] pinctrl: exynos: Fix GPIO setup failure because
+ domain clock being gated
+Date: Fri, 28 Nov 2014 15:04:49 +0100
+Message-ID: <CACRpkdb8F8YcvFeHPvOKHjx_p4HEpimck3XRabB3oHpZTdmRQQ@mail.gmail.com>
+References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+	<1417011857-10419-4-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416977280-27319-4-git-send-email-rebecca.swee.fun.chang@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@intel.com>, Denis Turischev <denis.turischev@compulab.co.il>, Alexandre Courbot <gnurou@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:43923 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751353AbaK1OEu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Nov 2014 09:04:50 -0500
+Received: by mail-ig0-f182.google.com with SMTP id hn15so5735308igb.9
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2014 06:04:49 -0800 (PST)
+In-Reply-To: <1417011857-10419-4-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Nov 26, 2014 at 5:48 AM, Chang Rebecca Swee Fun
-<rebecca.swee.fun.chang@intel.com> wrote:
+On Wed, Nov 26, 2014 at 3:24 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
 
-> ntel Quark X1000 GPIO controller supports interrupt handling for
-> both core power well and resume power well. This patch is to enable
-> the IRQ support and provide IRQ handling for Intel Quark X1000
-> GPIO-SCH device driver.
+> The audio subsystem on Exynos 5420 has separate clocks and GPIO. To
+> operate properly on GPIOs the main block clock 'mau_epll' must be
+> enabled.
 >
-> This piece of work is derived from Dan O'Donovan's initial work for
-> Quark X1000 enabling.
+> This was observed on Peach Pi/Pit and Arndale Octa (after enabling i2s0)
+> after introducing runtime PM to pl330 DMA driver. After that commit the
+> 'mau_epll' was gated, because the "amba" clock was disabled and there
+> were no more users of mau_epll.
 >
-> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+> The system hang just before probing i2s0 because
+> samsung_pinmux_setup() tried to access memory from audss block which was
+> gated.
+>
+> Add a clock property to the pinctrl driver and enable the clock during
+> GPIO setup. During normal GPIO operations (set, get, set_direction) the
+> clock is not enabled.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This is just adding handling of cascading interrupts from a
-GPIO chip as far as I can tell. We don't do that with local
-per-driver hacks anymore if there is no special reason, we have
-helpers on gpiolib to handle this.
+Waiting for Tomasz to review this.
 
-Make your Kconfig select GPIOLIB_IRQCHIP and take it from
-there, look at how other drivers using GPIOLIB_IRQCHIP are
-done. Read the documentation for chained irqchips in
-Documentation/gpio/driver.txt
+Can this patch be applied in separation from the others?
 
 Yours,
 Linus Walleij
