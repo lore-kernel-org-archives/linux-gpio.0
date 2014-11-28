@@ -1,51 +1,40 @@
-From: Beniamino Galvani <b.galvani@gmail.com>
-Subject: Re: [PATCH v3 2/3] pinctrl: add driver for Amlogic Meson SoCs
-Date: Thu, 27 Nov 2014 23:34:02 +0100
-Message-ID: <20141127223402.GA11418@gmail.com>
-References: <1416168856-12747-1-git-send-email-b.galvani@gmail.com>
- <1416168856-12747-3-git-send-email-b.galvani@gmail.com>
- <CACRpkda-U5OuKdBVGJ8UWprJkAtmTL1m11+AbNskVULPfyS72A@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH][v3] mdio-mux-gpio: Use GPIO descriptor interface and new
+ gpiod_set_array function
+Date: Fri, 28 Nov 2014 13:30:40 +0900
+Message-ID: <CAAVeFuLDgLXGAedBYOWJqEJvxFAOAv_z6rwHpPyYVZyXx5XHgQ@mail.gmail.com>
+References: <1581158.UhESICdgeM@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f51.google.com ([74.125.82.51]:54387 "EHLO
-	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729AbaK0Wgh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 17:36:37 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkda-U5OuKdBVGJ8UWprJkAtmTL1m11+AbNskVULPfyS72A@mail.gmail.com>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:53361 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750901AbaK1EbB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Nov 2014 23:31:01 -0500
+In-Reply-To: <1581158.UhESICdgeM@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Carlo Caione <carlo@caione.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jerry Cao <jerry.cao@amlogic.com>, Victor Wan <victor.wan@amlogic.com>
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, David Miller <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, David Daney <david.daney@cavium.com>
 
-On Thu, Nov 27, 2014 at 02:48:31PM +0100, Linus Walleij wrote:
-> On Sun, Nov 16, 2014 at 9:14 PM, Beniamino Galvani <b.galvani@gmail.c=
-om> wrote:
->=20
-> > This is a driver for the pinmux and GPIO controller available in
-> > Amlogic Meson SoCs. At the moment it only supports Meson8 devices,
-> > however other SoC families like Meson6 and Meson8b (the Cortex-A5
-> > variant) appear to be similar, with just different sets of banks an=
-d
-> > registers.
-> >
-> > GPIO interrupts are not supported at the moment due to lack of
-> > documentation.
-> >
-> > Signed-off-by: Beniamino Galvani <b.galvani@gmail.com>
->=20
-> This is dependent on S=F6ren's patches I guess?
->=20
-> OK I'll merge this once we have that other code sorted out.
+On Tue, Nov 25, 2014 at 10:57 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+> Convert mdio-mux-gpio to the GPIO descriptor interface and use the new
+> gpiod_set_array function to set all output signals simultaneously.
+>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> Acked-by: David S. Miller <davem@davemloft.net>
+> --
+> This patch depends on the gpiod_set_array function, which is available in
+> the linux-gpio devel tree.
+>
+> Change log:
+>   v3: remove unnecessary braces
+>   v2: fix gpiod_get_index usage
+>
+>  drivers/net/phy/mdio-mux-gpio.c |   37 +++++++++++++------------------------
+>  1 file changed, 13 insertions(+), 24 deletions(-)
 
-Yes, this depends on Soren's patches.
+Looks all good to me! Nice use of this new interface, leading to
+simpler client code.
 
-Thanks,
-Beniamino
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
