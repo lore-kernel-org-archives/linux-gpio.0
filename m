@@ -1,7 +1,7 @@
 From: Jason Cooper <jason@lakedaemon.net>
 Subject: Re: [PATCHv2 05/16] gpio: mvebu: add suspend/resume support
-Date: Sun, 30 Nov 2014 11:49:11 -0500
-Message-ID: <20141130164911.GS22670@titan.lakedaemon.net>
+Date: Sun, 30 Nov 2014 12:01:39 -0500
+Message-ID: <20141130170139.GU22670@titan.lakedaemon.net>
 References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
  <1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
  <CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
@@ -10,18 +10,20 @@ References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.co
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:26698 "EHLO
+Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:36484 "EHLO
 	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751917AbaK3QtZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Nov 2014 11:49:25 -0500
+	with ESMTP id S1752331AbaK3RBz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Nov 2014 12:01:55 -0500
 Content-Disposition: inline
 In-Reply-To: <CACRpkdaVaTmhRgSkJPCmsHXvkqd4b-BZBsQEbXcZrHdhyMS0WQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 Linus, Stephen,
+
+Sorry for the double send.  Forgot to add Stehpen. :(
 
 On Fri, Nov 28, 2014 at 04:42:14PM +0100, Linus Walleij wrote:
 > On Thu, Nov 27, 2014 at 7:44 PM, Thomas Petazzoni
