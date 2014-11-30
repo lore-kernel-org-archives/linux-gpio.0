@@ -1,73 +1,50 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 3/5] pinctrl: exynos: Fix GPIO setup failure because
- domain clock being gated
-Date: Sun, 30 Nov 2014 21:19:44 +0900
-Message-ID: <CA+Ln22Ejo51VPWf6DmuRvV_fZr_H=-BXAshSPSOokNE1bz=-QA@mail.gmail.com>
-References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
-	<1417011857-10419-4-git-send-email-k.kozlowski@samsung.com>
-	<CACRpkdb8F8YcvFeHPvOKHjx_p4HEpimck3XRabB3oHpZTdmRQQ@mail.gmail.com>
-	<1417183724.18249.36.camel@AMDC1943>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCHv2 05/16] gpio: mvebu: add suspend/resume support
+Date: Sun, 30 Nov 2014 11:49:11 -0500
+Message-ID: <20141130164911.GS22670@titan.lakedaemon.net>
+References: <1415978496-9334-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1415978496-9334-6-git-send-email-thomas.petazzoni@free-electrons.com>
+ <CACRpkdb5S7Fv4+Ck2btLPTYWaWr_E-iMcQGeATB4NMwx_T-4GA@mail.gmail.com>
+ <20141127194418.43e03e80@free-electrons.com>
+ <CACRpkdaVaTmhRgSkJPCmsHXvkqd4b-BZBsQEbXcZrHdhyMS0WQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:64700 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751614AbaK3MTp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Nov 2014 07:19:45 -0500
-In-Reply-To: <1417183724.18249.36.camel@AMDC1943>
+Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:26698 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751917AbaK3QtZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Nov 2014 11:49:25 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaVaTmhRgSkJPCmsHXvkqd4b-BZBsQEbXcZrHdhyMS0WQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Krzysztof,
+Linus, Stephen,
 
-2014-11-28 23:08 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com=
->:
-> On pi=C4=85, 2014-11-28 at 15:04 +0100, Linus Walleij wrote:
->> On Wed, Nov 26, 2014 at 3:24 PM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>
->> > The audio subsystem on Exynos 5420 has separate clocks and GPIO. T=
-o
->> > operate properly on GPIOs the main block clock 'mau_epll' must be
->> > enabled.
->> >
->> > This was observed on Peach Pi/Pit and Arndale Octa (after enabling=
- i2s0)
->> > after introducing runtime PM to pl330 DMA driver. After that commi=
-t the
->> > 'mau_epll' was gated, because the "amba" clock was disabled and th=
-ere
->> > were no more users of mau_epll.
->> >
->> > The system hang just before probing i2s0 because
->> > samsung_pinmux_setup() tried to access memory from audss block whi=
-ch was
->> > gated.
->> >
->> > Add a clock property to the pinctrl driver and enable the clock du=
-ring
->> > GPIO setup. During normal GPIO operations (set, get, set_direction=
-) the
->> > clock is not enabled.
+On Fri, Nov 28, 2014 at 04:42:14PM +0100, Linus Walleij wrote:
+> On Thu, Nov 27, 2014 at 7:44 PM, Thomas Petazzoni
+> <thomas.petazzoni@free-electrons.com> wrote:
+> > Dear Linus Walleij,
+> 
+> >> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> >>
+> >> Do you want me to merge the patch or is it dependent on other patches?
+> >
+> > This patch has already been merged by you, and is already in
+> > linux-next. See
+> > https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=for-next&id=b5b7b487431b01619f2947d91dadd7c7a233692e.
+> 
+> Argh, haha yeah it was the resending that confused me... too many
+> patches floating around. Well then, it lands upstream.
 
-Could you make sure that possibility of gating this clock is worth the
-effort of adding gating code to all affected drivers? If there is no
-significant change in power consumption maybe it could be simply keep
-running all the time?
+Odd.  I've had the same patch in mvebu/for-next since the 22nd of
+November...  You'd think it would have caused a merge conflict.
 
-Also isn't a similar problem happening due to power domains? I believe
-the whole maudio block is located in a separate power domain but
-somehow it doesn't get turned off?
+At any rate, I've dropped it from the mvebu/soc-suspend branch and
+updated mvebu/for-next.
 
-Could you investigate the above, please?
+thx,
 
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Jason.
