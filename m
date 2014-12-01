@@ -1,46 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
-Date: Mon, 1 Dec 2014 14:59:18 +0100
-Message-ID: <CACRpkdbywe9rsz+-0n6R_pHVRQkqbhoCmSnSBWL1mZiRxF5wHg@mail.gmail.com>
-References: <1416552238-9908-1-git-send-email-heyunlei@huawei.com>
-	<CACRpkdZNYMX0qK4desZGY-tDp=VzBamzoU11d8Kf4U+bKbunYQ@mail.gmail.com>
-	<CAD6h2NQUoRTtwDxjyryzua9N3oK6vB+iF1MtX6w_2F99x2BjKg@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: iio: dht11 broken
+Date: Mon, 1 Dec 2014 15:08:45 +0100
+Message-ID: <CACRpkdbSUJMF_1_8aZ+ECHAT+ztsa4jXuSFo_+V9gr1MzsNCcg@mail.gmail.com>
+References: <547B4464.9090300@nod.at>
+	<E1XvOXs-00014Z-6F@stardust.g4.wien.funkfeuer.at>
+	<547C4A26.3070108@nod.at>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:37352 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753457AbaLAN7T (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 08:59:19 -0500
-Received: by mail-ig0-f173.google.com with SMTP id r2so13031421igi.6
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Dec 2014 05:59:18 -0800 (PST)
-In-Reply-To: <CAD6h2NQUoRTtwDxjyryzua9N3oK6vB+iF1MtX6w_2F99x2BjKg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <547C4A26.3070108-/L3Ra7n9ekc@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>
+Cc: Harald Geyer <harald-95f8Dae0BrPYtjvyW6yDsg@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Yunlei He <heyunlei@huawei.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wangbintian <bintian.wang@huawei.com>, peifeiyue@huawei.com, Xinwei Kong <kong.kongxinwei@hisilicon.com>
 
-On Fri, Nov 28, 2014 at 6:00 PM, Haojian Zhuang
-<haojian.zhuang@linaro.org> wrote:
+On Mon, Dec 1, 2014 at 11:59 AM, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org> wrote:
+> Am 01.12.2014 um 11:49 schrieb Harald Geyer:
 
-> It's a bit different.
+>> Any input from gpiolib people about what the proper fix would be in
+>> their opinion, of course is appreciated. I don't think the dht11 driver
+>> is doing anything unreasonable per se, so maybe they can clarify how
+>> the API is intended to be used?
 >
-> The commit 51e13c2475 is used to fix this scenario. There're 8 gpio
->  pins in GPIO CHIP #19. There're pin muxing on gpio152 -
->  gpio155. And there're _no_ pin muxing on gpio156 - gpio159. When
-> user tries to request gpio159, he'll meet failure since the pinctrl device
-> can't cover gpio159. But the pinctrl device is already register for
-> gpio152. In order to distinguish whether the pinctrl device registered,
-> I added pinctrl_ready_for_gpio_range(gpio).
->
-> In another scenario, there's no back-end pinctrl device for GPIO
-> CHIP #0. So pinctrl_request_gpio() always returns EPROBE_DEFER.
-> The commit 51e13c2475 can't cover this.
->
-> I suggest to write code in below.
+> Your driver sets up a GPIO as IRQ and then you switch the mode to output
+> to enable the DHT sensor.
+> This is not an API issue, it is an design issue.
+> I'm not a hardware expert but AFAIK setting an IRQ pin into output mode can
+> lead to undefined behavior.
 
-This looks much simpler. Anyway: Xinwei whatever you come up
-with, include Haojian on To: and get is ACK on the solution.
+Well that check is there exactly to prevent madness like this.
+
+IRQs on pins set to output *does* *not* *make* *sense*.
+
+Remove the IRQ before setting the pin to output and vice
+versa and everyone will be happier.
 
 Yours,
 Linus Walleij
