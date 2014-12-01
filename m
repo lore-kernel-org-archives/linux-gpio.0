@@ -1,193 +1,206 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [PATCH v1 1/5] gpio: moxart: convert to use basic mmio gpio library
-Date: Mon, 1 Dec 2014 17:39:34 +0530
-Message-ID: <1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
+Subject: [PATCH v1 2/5] gpio: timberdale: convert to use basic mmio gpio library
+Date: Mon, 1 Dec 2014 17:39:35 +0530
+Message-ID: <1417435778-21879-3-git-send-email-kamlakant.patel@linaro.org>
 References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:14590 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753051AbaLAMI7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 07:08:59 -0500
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:29411 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753051AbaLAMJA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 07:09:00 -0500
 In-Reply-To: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>
-Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>
 
 From: Kamlakant Patel <kamlakant.patel@linaro.org>
 
-This patch converts MOXART GPIO driver to use basic_mmio_gpio
+This patch converts TIMBERDALE GPIO driver to use basic_mmio_gpio
 generic library.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
-Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
 ---
- drivers/gpio/Kconfig       |   1 +
- drivers/gpio/gpio-moxart.c | 101 ++++++++++++++-------------------------------
- 2 files changed, 32 insertions(+), 70 deletions(-)
+ drivers/gpio/Kconfig           |  1 +
+ drivers/gpio/gpio-timberdale.c | 96 ++++++++++++------------------------------
+ 2 files changed, 28 insertions(+), 69 deletions(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0959ca9..3bd4d63 100644
+index 3bd4d63..875d312 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -184,6 +184,7 @@ config GPIO_F7188X
- config GPIO_MOXART
- 	bool "MOXART GPIO support"
- 	depends on ARCH_MOXART
+@@ -783,6 +783,7 @@ config GPIO_SODAVILLE
+ config GPIO_TIMBERDALE
+ 	bool "Support for timberdale GPIO IP"
+ 	depends on MFD_TIMBERDALE
 +	select GPIO_GENERIC
- 	help
- 	  Select this option to enable GPIO driver for
- 	  MOXA ART SoC devices.
-diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
-index 4661e18..122958f 100644
---- a/drivers/gpio/gpio-moxart.c
-+++ b/drivers/gpio/gpio-moxart.c
-@@ -23,21 +23,12 @@
- #include <linux/delay.h>
- #include <linux/timer.h>
- #include <linux/bitops.h>
+ 	---help---
+ 	Add support for the GPIO IP in the timberdale FPGA.
+ 
+diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
+index a685a3c..8849851 100644
+--- a/drivers/gpio/gpio-timberdale.c
++++ b/drivers/gpio/gpio-timberdale.c
+@@ -28,6 +28,7 @@
+ #include <linux/timb_gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/slab.h>
 +#include <linux/basic_mmio_gpio.h>
  
- #define GPIO_DATA_OUT		0x00
- #define GPIO_DATA_IN		0x04
- #define GPIO_PIN_DIRECTION	0x08
+ #define DRIVER_NAME "timb-gpio"
  
--struct moxart_gpio_chip {
--	struct gpio_chip gpio;
--	void __iomem *base;
--};
--
--static inline struct moxart_gpio_chip *to_moxart_gpio(struct gpio_chip *chip)
--{
--	return container_of(chip, struct moxart_gpio_chip, gpio);
--}
--
- static int moxart_gpio_request(struct gpio_chip *chip, unsigned offset)
- {
- 	return pinctrl_request_gpio(offset);
-@@ -48,90 +39,60 @@ static void moxart_gpio_free(struct gpio_chip *chip, unsigned offset)
- 	pinctrl_free_gpio(offset);
- }
+@@ -45,60 +46,15 @@
+ struct timbgpio {
+ 	void __iomem		*membase;
+ 	spinlock_t		lock; /* mutual exclusion */
+-	struct gpio_chip	gpio;
++	struct bgpio_chip	bgc;
+ 	int			irq_base;
+ 	unsigned long		last_ier;
+ };
  
--static void moxart_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+-static int timbgpio_update_bit(struct gpio_chip *gpio, unsigned index,
+-	unsigned offset, bool enabled)
 -{
--	struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
--	void __iomem *ioaddr = gc->base + GPIO_DATA_OUT;
--	u32 reg = readl(ioaddr);
+-	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
+-	u32 reg;
 -
--	if (value)
--		reg = reg | BIT(offset);
+-	spin_lock(&tgpio->lock);
+-	reg = ioread32(tgpio->membase + offset);
+-
+-	if (enabled)
+-		reg |= (1 << index);
 -	else
--		reg = reg & ~BIT(offset);
+-		reg &= ~(1 << index);
 -
--	writel(reg, ioaddr);
+-	iowrite32(reg, tgpio->membase + offset);
+-	spin_unlock(&tgpio->lock);
+-
+-	return 0;
 -}
 -
- static int moxart_gpio_get(struct gpio_chip *chip, unsigned offset)
+-static int timbgpio_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
+-{
+-	return timbgpio_update_bit(gpio, nr, TGPIODIR, true);
+-}
+-
+-static int timbgpio_gpio_get(struct gpio_chip *gpio, unsigned nr)
+-{
+-	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
+-	u32 value;
+-
+-	value = ioread32(tgpio->membase + TGPIOVAL);
+-	return (value & (1 << nr)) ? 1 : 0;
+-}
+-
+-static int timbgpio_gpio_direction_output(struct gpio_chip *gpio,
+-						unsigned nr, int val)
+-{
+-	return timbgpio_update_bit(gpio, nr, TGPIODIR, false);
+-}
+-
+-static void timbgpio_gpio_set(struct gpio_chip *gpio,
+-				unsigned nr, int val)
+-{
+-	timbgpio_update_bit(gpio, nr, TGPIOVAL, val != 0);
+-}
+-
+ static int timbgpio_to_irq(struct gpio_chip *gpio, unsigned offset)
  {
--	struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
--	u32 ret = readl(gc->base + GPIO_PIN_DIRECTION);
-+	struct bgpio_chip *bgc = to_bgpio_chip(chip);
-+	u32 ret = bgc->read_reg(bgc->reg_dir);
+-	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
++	struct bgpio_chip *bgc = container_of(gpio, struct bgpio_chip, gc);
++	struct timbgpio *tgpio = container_of(bgc, struct timbgpio, bgc);
  
- 	if (ret & BIT(offset))
--		return !!(readl(gc->base + GPIO_DATA_OUT) & BIT(offset));
-+		return !!(bgc->read_reg(bgc->reg_set) & BIT(offset));
- 	else
--		return !!(readl(gc->base + GPIO_DATA_IN) & BIT(offset));
--}
--
--static int moxart_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
--{
--	struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
--	void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
--
--	writel(readl(ioaddr) & ~BIT(offset), ioaddr);
--	return 0;
--}
--
--static int moxart_gpio_direction_output(struct gpio_chip *chip,
--					unsigned offset, int value)
--{
--	struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
--	void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
--
--	moxart_gpio_set(chip, offset, value);
--	writel(readl(ioaddr) | BIT(offset), ioaddr);
--	return 0;
-+		return !!(bgc->read_reg(bgc->reg_dat) & BIT(offset));
+ 	if (tgpio->irq_base <= 0)
+ 		return -EINVAL;
+@@ -142,7 +98,7 @@ static int timbgpio_irq_type(struct irq_data *d, unsigned trigger)
+ 	u32 ver;
+ 	int ret = 0;
+ 
+-	if (offset < 0 || offset > tgpio->gpio.ngpio)
++	if (offset < 0 || offset > tgpio->bgc.gc.ngpio)
+ 		return -EINVAL;
+ 
+ 	ver = ioread32(tgpio->membase + TGPIO_VER);
+@@ -208,8 +164,8 @@ static void timbgpio_irq(unsigned int irq, struct irq_desc *desc)
+ 	 */
+ 	iowrite32(0, tgpio->membase + TGPIO_IER);
+ 
+-	for_each_set_bit(offset, &ipr, tgpio->gpio.ngpio)
+-		generic_handle_irq(timbgpio_to_irq(&tgpio->gpio, offset));
++	for_each_set_bit(offset, &ipr, tgpio->bgc.gc.ngpio)
++		generic_handle_irq(timbgpio_to_irq(&tgpio->bgc.gc, offset));
+ 
+ 	iowrite32(tgpio->last_ier, tgpio->membase + TGPIO_IER);
  }
- 
--static struct gpio_chip moxart_template_chip = {
--	.label			= "moxart-gpio",
--	.request		= moxart_gpio_request,
--	.free			= moxart_gpio_free,
--	.direction_input	= moxart_gpio_direction_input,
--	.direction_output	= moxart_gpio_direction_output,
--	.set			= moxart_gpio_set,
--	.get			= moxart_gpio_get,
--	.ngpio			= 32,
--	.owner			= THIS_MODULE,
--};
--
- static int moxart_gpio_probe(struct platform_device *pdev)
+@@ -225,7 +181,6 @@ static int timbgpio_probe(struct platform_device *pdev)
  {
+ 	int err, i;
  	struct device *dev = &pdev->dev;
- 	struct resource *res;
--	struct moxart_gpio_chip *mgc;
-+	struct bgpio_chip *bgc;
-+	void __iomem *base;
- 	int ret;
- 
--	mgc = devm_kzalloc(dev, sizeof(*mgc), GFP_KERNEL);
--	if (!mgc)
-+	bgc = devm_kzalloc(dev, sizeof(*bgc), GFP_KERNEL);
-+	if (!bgc)
- 		return -ENOMEM;
--	mgc->gpio = moxart_template_chip;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mgc->base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(mgc->base))
--		return PTR_ERR(mgc->base);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
--	mgc->gpio.dev = dev;
-+	ret = bgpio_init(bgc, dev, 4, base + GPIO_DATA_IN,
-+		    base + GPIO_DATA_OUT, NULL,
-+		    base + GPIO_PIN_DIRECTION, NULL, 0);
-+	if (ret) {
-+		dev_err(&pdev->dev, "bgpio_init failed\n");
-+		return ret;
-+	}
- 
--	ret = gpiochip_add(&mgc->gpio);
-+	bgc->gc.label = "moxart-gpio";
-+	bgc->gc.request = moxart_gpio_request;
-+	bgc->gc.free = moxart_gpio_free;
-+	bgc->gc.get = moxart_gpio_get;
-+	bgc->data = bgc->read_reg(bgc->reg_set);
-+	bgc->gc.base = 0;
-+	bgc->gc.ngpio = 32;
-+	bgc->gc.dev = dev;
-+	bgc->gc.owner = THIS_MODULE;
+-	struct gpio_chip *gc;
+ 	struct timbgpio *tgpio;
+ 	struct resource *iomem;
+ 	struct timbgpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
+@@ -247,6 +202,7 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 		dev_err(dev, "Memory alloc failed\n");
+ 		return -EINVAL;
+ 	}
 +
-+	ret = gpiochip_add(&bgc->gc);
- 	if (ret) {
- 		dev_err(dev, "%s: gpiochip_add failed\n",
- 			dev->of_node->full_name);
- 		return ret;
+ 	tgpio->irq_base = pdata->irq_base;
+ 
+ 	spin_lock_init(&tgpio->lock);
+@@ -263,22 +219,24 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  	}
  
--	return 0;
-+	return ret;
- }
+-	gc = &tgpio->gpio;
+-
+-	gc->label = dev_name(&pdev->dev);
+-	gc->owner = THIS_MODULE;
+-	gc->dev = &pdev->dev;
+-	gc->direction_input = timbgpio_gpio_direction_input;
+-	gc->get = timbgpio_gpio_get;
+-	gc->direction_output = timbgpio_gpio_direction_output;
+-	gc->set = timbgpio_gpio_set;
+-	gc->to_irq = (irq >= 0 && tgpio->irq_base > 0) ? timbgpio_to_irq : NULL;
+-	gc->dbg_show = NULL;
+-	gc->base = pdata->gpio_base;
+-	gc->ngpio = pdata->nr_pins;
+-	gc->can_sleep = false;
+-
+-	err = gpiochip_add(gc);
++	err = bgpio_init(&tgpio->bgc, dev, 4, tgpio->membase + TGPIOVAL,
++			 NULL, NULL, NULL, tgpio->membase + TGPIODIR, 0);
++
++	if (err) {
++		dev_err(&pdev->dev, "bgpio_init failed\n");
++		return err;
++	}
++	tgpio->bgc.gc.label = dev_name(&pdev->dev);
++	tgpio->bgc.gc.owner = THIS_MODULE;
++	tgpio->bgc.gc.dev = &pdev->dev;
++	tgpio->bgc.gc.to_irq = (irq >= 0 && tgpio->irq_base > 0) ?
++						timbgpio_to_irq : NULL;
++	tgpio->bgc.gc.dbg_show = NULL;
++	tgpio->bgc.gc.base = pdata->gpio_base;
++	tgpio->bgc.gc.ngpio = pdata->nr_pins;
++	tgpio->bgc.gc.can_sleep = false;
++
++	err = gpiochip_add(&tgpio->bgc.gc);
+ 	if (err)
+ 		return err;
  
- static const struct of_device_id moxart_gpio_match[] = {
+@@ -322,7 +280,7 @@ static int timbgpio_remove(struct platform_device *pdev)
+ 		irq_set_handler_data(irq, NULL);
+ 	}
+ 
+-	gpiochip_remove(&tgpio->gpio);
++	gpiochip_remove(&tgpio->bgc.gc);
+ 
+ 	return 0;
+ }
 -- 
 1.9.1
 
