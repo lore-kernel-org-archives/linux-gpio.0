@@ -1,59 +1,47 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: iio: dht11 broken
-Date: Mon, 01 Dec 2014 11:59:50 +0100
-Message-ID: <547C4A26.3070108@nod.at>
-References: <547B4464.9090300@nod.at> <E1XvOXs-00014Z-6F@stardust.g4.wien.funkfeuer.at>
+From: <kamlakant.patel@linaro.org>
+Subject: [PATCH v1 0/5] convert to use basic mmio gpio library
+Date: Mon, 1 Dec 2014 17:39:33 +0530
+Message-ID: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from a.ns.miles-group.at ([95.130.255.143]:65277 "EHLO radon.swed.at"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753154AbaLAK76 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 1 Dec 2014 05:59:58 -0500
-In-Reply-To: <E1XvOXs-00014Z-6F@stardust.g4.wien.funkfeuer.at>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:29411 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753051AbaLAMI5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 07:08:57 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Harald Geyer <harald@ccbib.org>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, javier.martinez@collabora.co.uk, acourbot@nvidia.com, swarren@nvidia.com, jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org
 
-Hi!
+From: Kamlakant Patel <kamlakant.patel@linaro.org>
 
-Am 01.12.2014 um 11:49 schrieb Harald Geyer:
-> Hi Richard!
-> 
-> Richard Weinberger writes:
->> Staring with 3.12 gpiolib refuses to set an GPIO used as IRQ into output mode.
->> see commit d468bf9e (gpio: add API to be strict about GPIO IRQ usage)
->> The dht driver does this and is therefore not functional.
->> As the dht11 driver got merged in 3.13 there is a high chance that it
->> never worked.
-> 
-> Well, I'm developing on mxs and there it works on 3.13 and 3.14 at least.
-> (I have it in production using 3.14.18 ATM.)
->  
->> Harald, are you aware of this issue?
-> 
-> I got one report about this issue, but couldn't reproduce it yet and
-> the reporter didn't agree to quoting his messages to kernel mailing lists,
-> so this has been rather low priority on my todo list. Next plan is to
-> see if I can reproduce the issue on sunxi (A10).
+This patch converts GPIO drivers to use BASIC MMIO GPIO library
+(i.e GPIO GENERIC library) which makes drivers smaller and simpler.
 
-Not all gpio drivers use the new IRQ lock stuff.
+V1:
+Following are the changes compare to previous patch 
+* gpio-moxart.c: Removed unnecessary private structure moxart_gpio_chip and use
+  bgpio_chip.
+* gpio-timberdale.c: Register correct gpio_chip and update code to use
+  bgpio_chip elements.
+* gpio-iop.c: Pass correct parameters to bgpio_init.
 
-> However anybody able to reproduce this and willing to test patches, would
-> of course push this up on my todo list.
-> 
-> Any input from gpiolib people about what the proper fix would be in
-> their opinion, of course is appreciated. I don't think the dht11 driver
-> is doing anything unreasonable per se, so maybe they can clarify how
-> the API is intended to be used?
+Kamlakant Patel (5):
+  gpio: moxart: convert to use basic mmio gpio library
+  gpio: timberdale: convert to use basic mmio gpio library
+  gpio: iop: convert to use basic mmio gpio library
+  gpio: ge: convert to use basic mmio gpio library
+  gpio: document basic mmio gpio library
 
-Your driver sets up a GPIO as IRQ and then you switch the mode to output
-to enable the DHT sensor.
-This is not an API issue, it is an design issue.
-I'm not a hardware expert but AFAIK setting an IRQ pin into output mode can
-lead to undefined behavior.
+ Documentation/gpio/driver.txt  |  50 ++++++++++++++++++++
+ drivers/gpio/Kconfig           |   4 ++
+ drivers/gpio/gpio-ge.c         |  96 ++++++++++++++++-----------------------
+ drivers/gpio/gpio-iop.c        |  96 +++++++--------------------------------
+ drivers/gpio/gpio-moxart.c     | 101 +++++++++++++----------------------------
+ drivers/gpio/gpio-timberdale.c |  96 +++++++++++----------------------------
+ 6 files changed, 168 insertions(+), 275 deletions(-)
 
-Thanks,
-//richard
+-- 
+1.9.1
+
