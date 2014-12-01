@@ -1,64 +1,116 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v1] usb: phy: generic: migrate to gpio_desc
-Date: Mon, 1 Dec 2014 13:01:32 +0900
-Message-ID: <CAAVeFuKHFTuMYS4G468YoCZ-JgaT3zV8ObZ6AHcg06H0yVBgig@mail.gmail.com>
-References: <1415535787-21868-1-git-send-email-robert.jarzmik@free.fr>
- <20141121154358.GF7508@saruman> <CACRpkdZtwYb77ytGiadFnZAUOkr8y_HPQoM3vmXBc+N6dszAJw@mail.gmail.com>
- <87bnno1lbj.fsf@free.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH v2 1/1] gpio: mcp23s08: Add option to configure IRQ output polarity as active high
+Date: Mon,  1 Dec 2014 08:26:00 +0100
+Message-ID: <1417418760-17368-1-git-send-email-alexander.stein@systec-electronic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:41488 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752326AbaLAEBx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Nov 2014 23:01:53 -0500
-In-Reply-To: <87bnno1lbj.fsf@free.fr>
+Received: from webbox1416.server-home.net ([77.236.96.61]:57071 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752608AbaLAHXy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 02:23:54 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Felipe Balbi <balbi@ti.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Mon, Dec 1, 2014 at 5:32 AM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
-> Linus Walleij <linus.walleij@linaro.org> writes:
->
->> This definately make things better so:
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Thanks.
->
->> One comment though:
->>
->>>>       if (dev->of_node) {
->> (...)
->>>> +             nop->gpiod_reset = devm_gpiod_get(dev, "reset-gpios");
->>>> +             err = PTR_ERR(nop->gpiod_reset);
->>>>       } else if (pdata) {
->> (...)
->>>> +             err = devm_gpio_request_one(dev, pdata->gpio_reset, 0,
->>>> +                                         dev_name(dev));
->>>> +             if (!err)
->>>> +                     nop->gpiod_reset = gpio_to_desc(pdata->gpio_reset);
->>>> +     }
->
->> So a next step would be to add support for getting the
->> devm_gpiod_get(dev, "reset-gpios"); outside of the if (dev->of_node)
->> clause, and possibly convert the board files for affected
->> platforms to use descriptors, if they will not be replaced by
->> device tree only.
->
-> OK, if we were to do this, is there a way to build a static platform data with a
-> gpio descriptor ?
-> Ie. can I write something like :
-> struct generic_phy_pdata {
->         struct gpio_desc *reset_gpio;
-> };
->
-> And in machine code :
-> static struct generic_phy_pdata usb_phy __initdata {
->        .reset_gpio = XXX(19),
-> };
->
-> What should "XXX" be like to describe reset_gpio as a ACTIVE_HIGH gpio number 19
-> ?
+Default is active low, but if property is specified in DT set INTPOL flag.
 
-I think what you want to do is explained in the "Platform Data"
-section of Documentation/gpio/board.txt
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+Changes in v2:
+* Modified the commit message and binding text slightly to indicate that
+  this features changes the IRQ output polarity.
+
+ .../devicetree/bindings/gpio/gpio-mcp23s08.txt     |  2 ++
+ drivers/gpio/gpio-mcp23s08.c                       | 30 +++++++++++++++++-----
+ 2 files changed, 25 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
+index c306a2d0..f3332b9 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
+@@ -57,6 +57,8 @@ Optional device specific properties:
+         occurred on. If it is not set, the interrupt are only generated for the
+         bank they belong to.
+         On devices with only one interrupt output this property is useless.
++- microchip,irq-active-high: Sets the INTPOL flag in the IOCON register. This
++        configures the IRQ output polarity as active high.
+ 
+ Example I2C (with interrupt):
+ gpiom1: gpio@20 {
+diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+index 529025e..1d5ffb4 100644
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@ -65,6 +65,7 @@ struct mcp23s08_ops {
+ 
+ struct mcp23s08 {
+ 	u8			addr;
++	bool			irq_active_high;
+ 
+ 	u16			cache[11];
+ 	u16			irq_rise;
+@@ -476,6 +477,7 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
+ {
+ 	struct gpio_chip *chip = &mcp->chip;
+ 	int err, irq, j;
++	unsigned long irqflags = IRQF_ONESHOT | IRQF_SHARED;
+ 
+ 	mutex_init(&mcp->irq_lock);
+ 
+@@ -484,10 +486,13 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
+ 	if (!mcp->irq_domain)
+ 		return -ENODEV;
+ 
++	if (mcp->irq_active_high)
++		irqflags |= IRQF_TRIGGER_HIGH;
++	else
++		irqflags |= IRQF_TRIGGER_LOW;
++
+ 	err = devm_request_threaded_irq(chip->dev, mcp->irq, NULL, mcp23s08_irq,
+-					IRQF_TRIGGER_LOW | IRQF_ONESHOT |
+-					IRQF_SHARED,
+-					dev_name(chip->dev), mcp);
++					irqflags, dev_name(chip->dev), mcp);
+ 	if (err != 0) {
+ 		dev_err(chip->dev, "unable to request IRQ#%d: %d\n",
+ 			mcp->irq, err);
+@@ -589,6 +594,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 
+ 	mcp->data = data;
+ 	mcp->addr = addr;
++	mcp->irq_active_high = false;
+ 
+ 	mcp->chip.direction_input = mcp23s08_direction_input;
+ 	mcp->chip.get = mcp23s08_get;
+@@ -648,14 +654,24 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 		goto fail;
+ 
+ 	mcp->irq_controller = pdata->irq_controller;
+-	if (mcp->irq && mcp->irq_controller && (type == MCP_TYPE_017))
+-		mirror = pdata->mirror;
++	if (mcp->irq && mcp->irq_controller) {
++		mcp->irq_active_high = of_property_read_bool(mcp->chip.of_node,
++				"microchip,irq-active-high");
+ 
+-	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror) {
++		if (type == MCP_TYPE_017)
++			mirror = pdata->mirror;
++	}
++
++	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror ||
++	     mcp->irq_active_high) {
+ 		/* mcp23s17 has IOCON twice, make sure they are in sync */
+ 		status &= ~(IOCON_SEQOP | (IOCON_SEQOP << 8));
+ 		status |= IOCON_HAEN | (IOCON_HAEN << 8);
+-		status &= ~(IOCON_INTPOL | (IOCON_INTPOL << 8));
++		if (mcp->irq_active_high)
++			status |= IOCON_INTPOL | (IOCON_INTPOL << 8);
++		else
++			status &= ~(IOCON_INTPOL | (IOCON_INTPOL << 8));
++
+ 		if (mirror)
+ 			status |= IOCON_MIRROR | (IOCON_MIRROR << 8);
+ 
+-- 
+2.0.4
+
