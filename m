@@ -1,172 +1,172 @@
 From: <kamlakant.patel@linaro.org>
-Subject: [PATCH v1 3/5] gpio: iop: convert to use basic mmio gpio library
-Date: Mon, 1 Dec 2014 17:39:36 +0530
-Message-ID: <1417435778-21879-4-git-send-email-kamlakant.patel@linaro.org>
+Subject: [PATCH v1 4/5] gpio: ge: convert to use basic mmio gpio library
+Date: Mon, 1 Dec 2014 17:39:37 +0530
+Message-ID: <1417435778-21879-5-git-send-email-kamlakant.patel@linaro.org>
 References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
 Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:14590 "EHLO
 	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753051AbaLAMJE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 07:09:04 -0500
+	with ESMTP id S1753051AbaLAMJH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 07:09:07 -0500
 In-Reply-To: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org, Lennert Buytenhek <kernel@wantstofly.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>
+Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, linux-gpio@vger.kernel.org, Martyn Welch <martyn.welch@ge.com>
 
 From: Kamlakant Patel <kamlakant.patel@linaro.org>
 
-This patch converts IOP GPIO driver to use basic_mmio_gpio
+This patch converts GE GPIO driver to use basic_mmio_gpio
 generic library.
 
 Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 ---
- drivers/gpio/Kconfig    |  1 +
- drivers/gpio/gpio-iop.c | 96 +++++++++----------------------------------------
- 2 files changed, 18 insertions(+), 79 deletions(-)
+ drivers/gpio/Kconfig   |  1 +
+ drivers/gpio/gpio-ge.c | 96 ++++++++++++++++++++------------------------------
+ 2 files changed, 40 insertions(+), 57 deletions(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 875d312..8cbc3ab 100644
+index 8cbc3ab..35a315d 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -407,6 +407,7 @@ config GPIO_ICH
- config GPIO_IOP
- 	tristate "Intel IOP GPIO"
- 	depends on ARM && (ARCH_IOP32X || ARCH_IOP33X)
+@@ -429,6 +429,7 @@ config GPIO_VX855
+ config GPIO_GE_FPGA
+ 	bool "GE FPGA based GPIO"
+ 	depends on GE_FPGA
 +	select GPIO_GENERIC
  	help
- 	  Say yes here to support the GPIO functionality of a number of Intel
- 	  IOP32X or IOP33X.
-diff --git a/drivers/gpio/gpio-iop.c b/drivers/gpio/gpio-iop.c
-index 0a5e9d3..d70cf37 100644
---- a/drivers/gpio/gpio-iop.c
-+++ b/drivers/gpio/gpio-iop.c
-@@ -14,19 +14,12 @@
- #include <linux/init.h>
- #include <linux/types.h>
- #include <linux/errno.h>
--#include <linux/gpio.h>
- #include <linux/export.h>
- #include <linux/platform_device.h>
--#include <linux/bitops.h>
--#include <linux/io.h>
+ 	  Support for common GPIO functionality provided on some GE Single Board
+ 	  Computers.
+diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
+index 1237a73..7579d2e 100644
+--- a/drivers/gpio/gpio-ge.c
++++ b/drivers/gpio/gpio-ge.c
+@@ -21,7 +21,9 @@
+ #include <linux/io.h>
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
++#include <linux/of_address.h>
+ #include <linux/module.h>
 +#include <linux/basic_mmio_gpio.h>
  
- #define IOP3XX_N_GPIOS	8
+ #define GEF_GPIO_DIRECT		0x00
+ #define GEF_GPIO_IN		0x04
+@@ -33,53 +35,6 @@
+ #define GEF_GPIO_OVERRUN	0x1C
+ #define GEF_GPIO_MODE		0x20
  
--#define GPIO_IN			0
--#define GPIO_OUT		1
--#define GPIO_LOW		0
--#define GPIO_HIGH		1
--
- /* Memory base offset */
- static void __iomem *base;
- 
-@@ -35,86 +28,31 @@ static void __iomem *base;
- #define IOP3XX_GPID		IOP3XX_GPIO_REG(0x0004)
- #define IOP3XX_GPOD		IOP3XX_GPIO_REG(0x0008)
- 
--static void gpio_line_config(int line, int direction)
+-static void gef_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 -{
--	unsigned long flags;
--	u32 val;
+-	struct of_mm_gpio_chip *mmchip = to_of_mm_gpio_chip(chip);
+-	unsigned int data;
 -
--	local_irq_save(flags);
--	val = readl(IOP3XX_GPOE);
--	if (direction == GPIO_IN) {
--		val |= BIT(line);
--	} else if (direction == GPIO_OUT) {
--		val &= ~BIT(line);
--	}
--	writel(val, IOP3XX_GPOE);
--	local_irq_restore(flags);
+-	data = ioread32be(mmchip->regs + GEF_GPIO_OUT);
+-	if (value)
+-		data = data | BIT(offset);
+-	else
+-		data = data & ~BIT(offset);
+-	iowrite32be(data, mmchip->regs + GEF_GPIO_OUT);
 -}
 -
--static int gpio_line_get(int line)
+-static int gef_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
 -{
--	return !!(readl(IOP3XX_GPID) & BIT(line));
--}
+-	unsigned int data;
+-	struct of_mm_gpio_chip *mmchip = to_of_mm_gpio_chip(chip);
 -
--static void gpio_line_set(int line, int value)
--{
--	unsigned long flags;
--	u32 val;
+-	data = ioread32be(mmchip->regs + GEF_GPIO_DIRECT);
+-	data = data | BIT(offset);
+-	iowrite32be(data, mmchip->regs + GEF_GPIO_DIRECT);
 -
--	local_irq_save(flags);
--	val = readl(IOP3XX_GPOD);
--	if (value == GPIO_LOW) {
--		val &= ~BIT(line);
--	} else if (value == GPIO_HIGH) {
--		val |= BIT(line);
--	}
--	writel(val, IOP3XX_GPOD);
--	local_irq_restore(flags);
--}
--
--static int iop3xx_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
--{
--	gpio_line_config(gpio, GPIO_IN);
 -	return 0;
 -}
 -
--static int iop3xx_gpio_direction_output(struct gpio_chip *chip, unsigned gpio, int level)
+-static int gef_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int value)
 -{
--	gpio_line_set(gpio, level);
--	gpio_line_config(gpio, GPIO_OUT);
+-	unsigned int data;
+-	struct of_mm_gpio_chip *mmchip = to_of_mm_gpio_chip(chip);
+-
+-	/* Set value before switching to output */
+-	gef_gpio_set(mmchip->regs + GEF_GPIO_OUT, offset, value);
+-
+-	data = ioread32be(mmchip->regs + GEF_GPIO_DIRECT);
+-	data = data & ~BIT(offset);
+-	iowrite32be(data, mmchip->regs + GEF_GPIO_DIRECT);
+-
 -	return 0;
 -}
 -
--static int iop3xx_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
+-static int gef_gpio_get(struct gpio_chip *chip, unsigned offset)
 -{
--	return gpio_line_get(gpio);
+-	struct of_mm_gpio_chip *mmchip = to_of_mm_gpio_chip(chip);
+-
+-	return !!(ioread32be(mmchip->regs + GEF_GPIO_IN) & BIT(offset));
 -}
 -
--static void iop3xx_gpio_set_value(struct gpio_chip *chip, unsigned gpio, int value)
--{
--	gpio_line_set(gpio, value);
--}
--
--static struct gpio_chip iop3xx_chip = {
--	.label			= "iop3xx",
--	.direction_input	= iop3xx_gpio_direction_input,
--	.get			= iop3xx_gpio_get_value,
--	.direction_output	= iop3xx_gpio_direction_output,
--	.set			= iop3xx_gpio_set_value,
--	.base			= 0,
--	.ngpio			= IOP3XX_N_GPIOS,
--};
--
- static int iop3xx_gpio_probe(struct platform_device *pdev)
+ static const struct of_device_id gef_gpio_ids[] = {
+ 	{
+ 		.compatible	= "gef,sbc610-gpio",
+@@ -99,22 +54,49 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
  {
- 	struct resource *res;
+ 	const struct of_device_id *of_id =
+ 		of_match_device(gef_gpio_ids, &pdev->dev);
+-	struct of_mm_gpio_chip *mmchip;
 +	struct bgpio_chip *bgc;
++	void __iomem *regs;
 +	int ret;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+-	mmchip = devm_kzalloc(&pdev->dev, sizeof(*mmchip), GFP_KERNEL);
+-	if (!mmchip)
 +	bgc = devm_kzalloc(&pdev->dev, sizeof(*bgc), GFP_KERNEL);
 +	if (!bgc)
-+		return -EINVAL;
+ 		return -ENOMEM;
+ 
++	regs = of_iomap(pdev->dev.of_node, 0);
++	if (!regs)
++		return -ENOMEM;
 +
-+	ret = bgpio_init(bgc, &pdev->dev, 4, IOP3XX_GPID,
-+			 IOP3XX_GPOD, NULL, NULL, IOP3XX_GPOE, 0);
++	ret = bgpio_init(bgc, &pdev->dev, 4, regs + GEF_GPIO_IN,
++			 regs + GEF_GPIO_OUT, NULL, NULL,
++			 regs + GEF_GPIO_DIRECT, BGPIOF_BIG_ENDIAN_BYTE_ORDER);
 +	if (ret) {
 +		dev_err(&pdev->dev, "bgpio_init failed\n");
-+		return ret;
++		goto err0;
 +	}
-+	bgc->gc.label			= "iop3xx";
-+	bgc->gc.base			= 0;
-+	bgc->gc.ngpio			= IOP3XX_N_GPIOS;
++
+ 	/* Setup pointers to chip functions */
+-	mmchip->gc.ngpio = (u16)(uintptr_t)of_id->data;
+-	mmchip->gc.of_gpio_n_cells = 2;
+-	mmchip->gc.direction_input = gef_gpio_dir_in;
+-	mmchip->gc.direction_output = gef_gpio_dir_out;
+-	mmchip->gc.get = gef_gpio_get;
+-	mmchip->gc.set = gef_gpio_set;
++	bgc->gc.label = kstrdup(pdev->dev.of_node->full_name, GFP_KERNEL);
++	if (!bgc->gc.label)
++		goto err0;
++
++	bgc->gc.base = -1;
++	bgc->gc.ngpio = (u16)(uintptr_t)of_id->data;
++	bgc->gc.of_gpio_n_cells = 2;
++	bgc->gc.of_node = pdev->dev.of_node;
  
--	return gpiochip_add(&iop3xx_chip);
-+	return gpiochip_add(&bgc->gc);
- }
+ 	/* This function adds a memory mapped GPIO chip */
+-	return of_mm_gpiochip_add(pdev->dev.of_node, mmchip);
++	ret = gpiochip_add(&bgc->gc);
++	if (ret)
++		goto err1;
++
++	return 0;
++err1:
++	kfree(bgc->gc.label);
++err0:
++	iounmap(regs);
++	pr_err("%s: GPIO chip registration failed\n",
++			pdev->dev.of_node->full_name);
++	return ret;
+ };
  
- static struct platform_driver iop3xx_gpio_driver = {
+ static struct platform_driver gef_gpio_driver = {
 -- 
 1.9.1
 
