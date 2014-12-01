@@ -1,94 +1,196 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [Patch v2 1/2] gpio: add GPIO hogging mechanism
-Date: Mon, 1 Dec 2014 17:36:39 +0100
-Message-ID: <20141201163639.GI25249@lukather>
-References: <1416527684-19017-1-git-send-email-bparrot@ti.com>
- <1416527684-19017-2-git-send-email-bparrot@ti.com>
- <CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH v3] gpio: lib-sysfs: Add 'wakeup' attribute
+Date: Mon, 1 Dec 2014 10:21:40 -0800
+Message-ID: <51327750bb694f229ecb1c229cb80b21@BN1AFFO11FD023.protection.gbl>
+References: <1414434602-14263-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="b+chlBtRKJDCtqTb"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:53793 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752817AbaLAQkE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 11:40:04 -0500
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1414434602-14263-1-git-send-email-soren.brinkmann@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Benoit Parrot <bparrot@ti.com>, Pantelis Antoniou <panto@antoniou-consulting.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
+Another month past. Any updates on this?
 
---b+chlBtRKJDCtqTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	Thanks,
+	S=C3=B6ren
 
-Hi,
-
-On Fri, Nov 28, 2014 at 04:30:01PM +0900, Alexandre Courbot wrote:
-> > +/**
-> > + * do_gpio_hog - Given node is a GPIO hog configuration, handle it
-> > + * @np:                device node to get GPIO from
-> > + *
-> > + * This is only used by of_gpiochip_add to request/set GPIO initial
-> > + * configuration.
-> > + */
-> > +static int do_gpio_hog(struct device_node *np)
-> > +{
-> > +       struct gpio_desc *desc =3D NULL;
-> > +       int err;
-> > +       const char *name;
-> > +       enum gpio_lookup_flags lflags;
-> > +       enum gpiod_flags dflags;
-> > +
-> > +       desc =3D of_get_gpio_hog(np, &name, &lflags, &dflags);
-> > +       if (!desc)
-> > +               return -ENOTSUPP;
-> > +       else if (IS_ERR(desc))
-> > +               return PTR_ERR(desc);
-> > +
-> > +       err =3D gpiod_request(desc, name);
+On Mon, 2014-10-27 at 11:30AM -0700, Soren Brinkmann wrote:
+> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
+> marking/unmarking a GPIO as wake IRQ.
+> The file 'wakeup' is created in each exported GPIOs directory, if an =
+IRQ
+> is associated with that GPIO and the irqchip implements set_wake().
+> Writing 'enabled' to that file will enable wake for that GPIO, while
+> writing 'disabled' will disable wake.
+> Reading that file will return either 'disabled' or 'enabled' depening=
+ on
+> the currently set flag for the GPIO's IRQ.
 >=20
-> Using this function means that a GPIO chip module cannot be unloaded
-> if it uses GPIO hogs. Is it the intended behavior? If not, please use
-> gpiochip_request_own_desc() instead, and make sure to call
-> gpiochip_free_own_desc() for each hog when the driver is unloaded.
-
-The only thing I'd like to have would be that the request here would
-be non-exclusive, so that a later driver would still be allowed later
-on to request that GPIO later on and manage it itself (ideally using
-the usual gpiod_request function).
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---b+chlBtRKJDCtqTb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUfJkXAAoJEBx+YmzsjxAgqY0QAJbT5ky9AzUmJVMbI/JXLVEJ
-sRSHFLrRDQzD9VMaE8tVERMyKOW2KLVZKY74MY6qxhtokSgSa49KICJkSc5nIKIR
-J0Tp73BpB2XPcBHBahtvWiKSvvekpKn3+FslG0Fx4s+8UkgYdPlweNT9D7lWuuTx
-wgBhkU+c7ehPloiKFg4m1EDW0OhL3iAkrXGgh7zVcglGOb489B1sc8FvDvn+DL2o
-kQoxJkoc1ZQMlLV74Uf/fYLeDNWAGiB0f9sDLS3ZLYw0IPgxREV7UJJxXbJkTLZa
-rjKVfD0uDrlKt5THovz/Mw4jA1VAnnkGNJF3YvidPm0bsMoKimJ3i2YKK3ZKnU2F
-gRqA3Ew1AXNLLuBWaR6kfhX4TcJ6KoYIXQOLZYM02jhjkZkyuefunlnBMGiGDnOn
-wwIx6jhYtKIEWxolQBYcISBYnG5XPkxbmW+bb6pKObutlTQP/cPZr6Z4/whbjQvY
-Z3ClNygSoX2PlsvD4iC90o0X11rseJgaLZV0A6f/bFXxyfeTy2o8mmqLOOb+XkA7
-wILCrA8NAe9oKj744/qCj+obtwDd5rbNkm2XwXWEPs17xDyJzMT0QDskrABxNSTV
-N3wLFGE7jhy+fdHRS8GBdr6BQb+u8L6EQHyij6sNDtu5jbqEGqozjy1LzdFxFwlX
-84/vYq92GfF/7QNVUGp2
-=Oa5f
------END PGP SIGNATURE-----
-
---b+chlBtRKJDCtqTb--
+> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> v3:
+>  - add documentation
+> v2:
+>  - fix error path to unlock mutex before return
+>=20
+> As additional reference, these are the email threads of the v2 and v1
+> submission:
+> https://lkml.org/lkml/2014/10/13/481
+> https://lkml.org/lkml/2014/9/4/496
+> ---
+>  Documentation/ABI/testing/sysfs-gpio |  1 +
+>  Documentation/gpio/sysfs.txt         |  8 ++++
+>  drivers/gpio/gpiolib-sysfs.c         | 77 ++++++++++++++++++++++++++=
++++++++---
+>  3 files changed, 80 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-gpio b/Documentation/ABI=
+/testing/sysfs-gpio
+> index 80f4c94c7bef..4cc7f4b3f724 100644
+> --- a/Documentation/ABI/testing/sysfs-gpio
+> +++ b/Documentation/ABI/testing/sysfs-gpio
+> @@ -20,6 +20,7 @@ Description:
+>  	    /value ... always readable, writes fail for input GPIOs
+>  	    /direction ... r/w as: in, out (default low); write: high, low
+>  	    /edge ... r/w as: none, falling, rising, both
+> +	    /wakeup ... r/w as: enabled, disabled
+>  	/gpiochipN ... for each gpiochip; #N is its first GPIO
+>  	    /base ... (r/o) same as N
+>  	    /label ... (r/o) descriptive, not necessarily unique
+> diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.=
+txt
+> index c2c3a97f8ff7..f703377d528f 100644
+> --- a/Documentation/gpio/sysfs.txt
+> +++ b/Documentation/gpio/sysfs.txt
+> @@ -97,6 +97,14 @@ and have the following read/write attributes:
+>  		for "rising" and "falling" edges will follow this
+>  		setting.
+> =20
+> +	"wakeup" ... reads as either "enabled" or "disabled". Write these
+> +		strings to set/clear the 'wakeup' flag of the IRQ associated
+> +		with this GPIO. If the IRQ has the 'wakeup' flag set, it can
+> +		wake the system from sleep states.
+> +
+> +		This file exists only if the pin can generate interrupts and
+> +		the driver implements the required infrastructure.
+> +
+>  GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for th=
+e
+>  controller implementing GPIOs starting at #42) and have the followin=
+g
+>  read-only attributes:
+> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysf=
+s.c
+> index 5f2150b619a7..7588b6d5ba94 100644
+> --- a/drivers/gpio/gpiolib-sysfs.c
+> +++ b/drivers/gpio/gpiolib-sysfs.c
+> @@ -286,6 +286,58 @@ found:
+> =20
+>  static DEVICE_ATTR(edge, 0644, gpio_edge_show, gpio_edge_store);
+> =20
+> +static ssize_t gpio_wakeup_show(struct device *dev,
+> +		struct device_attribute *attr, char *buf)
+> +{
+> +	ssize_t			status;
+> +	const struct gpio_desc	*desc =3D dev_get_drvdata(dev);
+> +	int			irq =3D gpiod_to_irq(desc);
+> +	struct irq_desc		*irq_desc =3D irq_to_desc(irq);
+> +
+> +	mutex_lock(&sysfs_lock);
+> +
+> +	if (irqd_is_wakeup_set(&irq_desc->irq_data))
+> +		status =3D sprintf(buf, "enabled\n");
+> +	else
+> +		status =3D sprintf(buf, "disabled\n");
+> +
+> +	mutex_unlock(&sysfs_lock);
+> +
+> +	return status;
+> +}
+> +
+> +static ssize_t gpio_wakeup_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t size)
+> +{
+> +	int			ret;
+> +	unsigned int		on;
+> +	struct gpio_desc	*desc =3D dev_get_drvdata(dev);
+> +	int			irq =3D gpiod_to_irq(desc);
+> +
+> +	mutex_lock(&sysfs_lock);
+> +
+> +	if (sysfs_streq("enabled", buf)) {
+> +		on =3D true;
+> +	} else if (sysfs_streq("disabled", buf)) {
+> +		on =3D false;
+> +	} else {
+> +		mutex_unlock(&sysfs_lock);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret =3D irq_set_irq_wake(irq, on);
+> +
+> +	mutex_unlock(&sysfs_lock);
+> +
+> +	if (ret)
+> +		pr_warn("%s: failed to %s wake\n", __func__,
+> +				on ? "enable" : "disable");
+> +
+> +	return size;
+> +}
+> +
+> +static DEVICE_ATTR(wakeup, 0644, gpio_wakeup_show, gpio_wakeup_store=
+);
+> +
+>  static int sysfs_set_active_low(struct gpio_desc *desc, struct devic=
+e *dev,
+>  				int value)
+>  {
+> @@ -526,7 +578,7 @@ static struct class gpio_class =3D {
+>  int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+>  {
+>  	unsigned long		flags;
+> -	int			status;
+> +	int			status, irq;
+>  	const char		*ioname =3D NULL;
+>  	struct device		*dev;
+>  	int			offset;
+> @@ -582,11 +634,24 @@ int gpiod_export(struct gpio_desc *desc, bool d=
+irection_may_change)
+>  			goto fail_unregister_device;
+>  	}
+> =20
+> -	if (gpiod_to_irq(desc) >=3D 0 && (direction_may_change ||
+> -				       !test_bit(FLAG_IS_OUT, &desc->flags))) {
+> -		status =3D device_create_file(dev, &dev_attr_edge);
+> -		if (status)
+> -			goto fail_unregister_device;
+> +	irq =3D gpiod_to_irq(desc);
+> +	if (irq >=3D 0) {
+> +		struct irq_desc *irq_desc =3D irq_to_desc(irq);
+> +		struct irq_chip	*irqchip =3D irq_desc_get_chip(irq_desc);
+> +
+> +		if (direction_may_change ||
+> +				!test_bit(FLAG_IS_OUT, &desc->flags)) {
+> +			status =3D device_create_file(dev, &dev_attr_edge);
+> +			if (status)
+> +				goto fail_unregister_device;
+> +		}
+> +
+> +		if (irqchip->flags & IRQCHIP_SKIP_SET_WAKE ||
+> +				irqchip->irq_set_wake) {
+> +			status =3D device_create_file(dev, &dev_attr_wakeup);
+> +			if (status)
+> +				goto fail_unregister_device;
+> +		}
+>  	}
+> =20
+>  	set_bit(FLAG_EXPORT, &desc->flags);
+> --=20
+> 2.1.2.1.g5e69ed6
+>=20
