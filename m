@@ -1,116 +1,79 @@
 From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: [PATCH v2 1/1] gpio: mcp23s08: Add option to configure IRQ output polarity as active high
-Date: Mon,  1 Dec 2014 08:26:00 +0100
-Message-ID: <1417418760-17368-1-git-send-email-alexander.stein@systec-electronic.com>
+Subject: Re: [RFC PATCH 1/1] gpio: pca953x: Allow interrupt support when compiled as module
+Date: Mon, 01 Dec 2014 08:27:57 +0100
+Message-ID: <30172880.4oYHgH2T9B@ws-stein>
+References: <1416492379-28433-1-git-send-email-alexander.stein@systec-electronic.com> <CACRpkdYRvBQ3WgJv7hXVbe0ubG+Gw9pgDM1Fd4HgMLPE5kQnrA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:57071 "EHLO
+Received: from webbox1416.server-home.net ([77.236.96.61]:57079 "EHLO
 	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752608AbaLAHXy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 02:23:54 -0500
+	by vger.kernel.org with ESMTP id S1752608AbaLAHZv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 02:25:51 -0500
+In-Reply-To: <CACRpkdYRvBQ3WgJv7hXVbe0ubG+Gw9pgDM1Fd4HgMLPE5kQnrA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Default is active low, but if property is specified in DT set INTPOL flag.
+On Friday 28 November 2014 16:11:02, Linus Walleij wrote:
+> On Thu, Nov 20, 2014 at 3:06 PM, Alexander Stein
+> <alexander.stein@systec-electronic.com> wrote:
+> 
+> > With commit 2fd36c55264926e268deb50f6de5f43fa5e490f7
+> > ("i2c: core: Map OF IRQ at probe time") it seems that there is no need
+> > to force this driver to be compiled into the kernel.
+> >
+> > Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> 
+> I don't get this at all.
+> 
+> >  config GPIO_PCA953X_IRQ
+> >         bool "Interrupt controller support for PCA953x"
+> > -       depends on GPIO_PCA953X=y
+> >         select GPIOLIB_IRQCHIP
+> >         help
+> >           Say yes here to enable the pca953x to be used as an interrupt
+> > -         controller. It requires the driver to be built in the kernel.
+> > +         controller.
+> 
+> Why should this *not* be dependent on GPIO_PCA953X?? The config
+> flag is only used inside the file that gets built by exactly that
+> config flag!
+> 
+> Just remove the "=y" part of the line and test if you like.
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
----
-Changes in v2:
-* Modified the commit message and binding text slightly to indicate that
-  this features changes the IRQ output polarity.
+Doh, you're right. Only the =y part should be removed.
 
- .../devicetree/bindings/gpio/gpio-mcp23s08.txt     |  2 ++
- drivers/gpio/gpio-mcp23s08.c                       | 30 +++++++++++++++++-----
- 2 files changed, 25 insertions(+), 7 deletions(-)
+> > This is completely untested, as I lack a board capable of running a v3.18-rcX
+> > kernel. But I noticed on an older kernel that this driver failed requesting
+> > irq 0 during kernel boot. 0 because it's irq parent was not yet probed (also
+> > a compiled in driver).
+> 
+> If the parent is not probed, it should get an -EPROBE_DEFER
+> as irq number from the parent and bail out, then that is the actual bug
+> that needs fixing.
+> 
+> > With the mentioned commit this should work now.
+> 
+> I want it tested before I believe it...
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-index c306a2d0..f3332b9 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-@@ -57,6 +57,8 @@ Optional device specific properties:
-         occurred on. If it is not set, the interrupt are only generated for the
-         bank they belong to.
-         On devices with only one interrupt output this property is useless.
-+- microchip,irq-active-high: Sets the INTPOL flag in the IOCON register. This
-+        configures the IRQ output polarity as active high.
- 
- Example I2C (with interrupt):
- gpiom1: gpio@20 {
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 529025e..1d5ffb4 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -65,6 +65,7 @@ struct mcp23s08_ops {
- 
- struct mcp23s08 {
- 	u8			addr;
-+	bool			irq_active_high;
- 
- 	u16			cache[11];
- 	u16			irq_rise;
-@@ -476,6 +477,7 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
- {
- 	struct gpio_chip *chip = &mcp->chip;
- 	int err, irq, j;
-+	unsigned long irqflags = IRQF_ONESHOT | IRQF_SHARED;
- 
- 	mutex_init(&mcp->irq_lock);
- 
-@@ -484,10 +486,13 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
- 	if (!mcp->irq_domain)
- 		return -ENODEV;
- 
-+	if (mcp->irq_active_high)
-+		irqflags |= IRQF_TRIGGER_HIGH;
-+	else
-+		irqflags |= IRQF_TRIGGER_LOW;
-+
- 	err = devm_request_threaded_irq(chip->dev, mcp->irq, NULL, mcp23s08_irq,
--					IRQF_TRIGGER_LOW | IRQF_ONESHOT |
--					IRQF_SHARED,
--					dev_name(chip->dev), mcp);
-+					irqflags, dev_name(chip->dev), mcp);
- 	if (err != 0) {
- 		dev_err(chip->dev, "unable to request IRQ#%d: %d\n",
- 			mcp->irq, err);
-@@ -589,6 +594,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 
- 	mcp->data = data;
- 	mcp->addr = addr;
-+	mcp->irq_active_high = false;
- 
- 	mcp->chip.direction_input = mcp23s08_direction_input;
- 	mcp->chip.get = mcp23s08_get;
-@@ -648,14 +654,24 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 		goto fail;
- 
- 	mcp->irq_controller = pdata->irq_controller;
--	if (mcp->irq && mcp->irq_controller && (type == MCP_TYPE_017))
--		mirror = pdata->mirror;
-+	if (mcp->irq && mcp->irq_controller) {
-+		mcp->irq_active_high = of_property_read_bool(mcp->chip.of_node,
-+				"microchip,irq-active-high");
- 
--	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror) {
-+		if (type == MCP_TYPE_017)
-+			mirror = pdata->mirror;
-+	}
-+
-+	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror ||
-+	     mcp->irq_active_high) {
- 		/* mcp23s17 has IOCON twice, make sure they are in sync */
- 		status &= ~(IOCON_SEQOP | (IOCON_SEQOP << 8));
- 		status |= IOCON_HAEN | (IOCON_HAEN << 8);
--		status &= ~(IOCON_INTPOL | (IOCON_INTPOL << 8));
-+		if (mcp->irq_active_high)
-+			status |= IOCON_INTPOL | (IOCON_INTPOL << 8);
-+		else
-+			status &= ~(IOCON_INTPOL | (IOCON_INTPOL << 8));
-+
- 		if (mirror)
- 			status |= IOCON_MIRROR | (IOCON_MIRROR << 8);
- 
+Sure, I'll come back when I could actually test this on a more recent kernel.
+
+Best regards,
+Alexander
 -- 
-2.0.4
+Dipl.-Inf. Alexander Stein
+
+SYS TEC electronic GmbH
+Am Windrad 2
+08468 Heinsdorfergrund
+Tel.: 03765 38600-1156
+Fax: 03765 38600-4100
+Email: alexander.stein@systec-electronic.com
+Website: www.systec-electronic.com
+ 
+Managing Director: Dipl.-Phys. Siegmar Schmidt
+Commercial registry: Amtsgericht Chemnitz, HRB 28082
 
