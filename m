@@ -1,79 +1,105 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [RFC PATCH 1/1] gpio: pca953x: Allow interrupt support when compiled as module
-Date: Mon, 01 Dec 2014 08:27:57 +0100
-Message-ID: <30172880.4oYHgH2T9B@ws-stein>
-References: <1416492379-28433-1-git-send-email-alexander.stein@systec-electronic.com> <CACRpkdYRvBQ3WgJv7hXVbe0ubG+Gw9pgDM1Fd4HgMLPE5kQnrA@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 3/5] pinctrl: exynos: Fix GPIO setup failure because
+ domain clock being gated
+Date: Mon, 01 Dec 2014 09:37:23 +0100
+Message-ID: <1417423043.4055.14.camel@AMDC1943>
+References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+ <1417011857-10419-4-git-send-email-k.kozlowski@samsung.com>
+ <CACRpkdb8F8YcvFeHPvOKHjx_p4HEpimck3XRabB3oHpZTdmRQQ@mail.gmail.com>
+ <1417183724.18249.36.camel@AMDC1943>
+ <CA+Ln22Ejo51VPWf6DmuRvV_fZr_H=-BXAshSPSOokNE1bz=-QA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:57079 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752608AbaLAHZv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 02:25:51 -0500
-In-Reply-To: <CACRpkdYRvBQ3WgJv7hXVbe0ubG+Gw9pgDM1Fd4HgMLPE5kQnrA@mail.gmail.com>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:12078 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752479AbaLAIh3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 03:37:29 -0500
+In-reply-to: <CA+Ln22Ejo51VPWf6DmuRvV_fZr_H=-BXAshSPSOokNE1bz=-QA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Friday 28 November 2014 16:11:02, Linus Walleij wrote:
-> On Thu, Nov 20, 2014 at 3:06 PM, Alexander Stein
-> <alexander.stein@systec-electronic.com> wrote:
-> 
-> > With commit 2fd36c55264926e268deb50f6de5f43fa5e490f7
-> > ("i2c: core: Map OF IRQ at probe time") it seems that there is no need
-> > to force this driver to be compiled into the kernel.
-> >
-> > Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> 
-> I don't get this at all.
-> 
-> >  config GPIO_PCA953X_IRQ
-> >         bool "Interrupt controller support for PCA953x"
-> > -       depends on GPIO_PCA953X=y
-> >         select GPIOLIB_IRQCHIP
-> >         help
-> >           Say yes here to enable the pca953x to be used as an interrupt
-> > -         controller. It requires the driver to be built in the kernel.
-> > +         controller.
-> 
-> Why should this *not* be dependent on GPIO_PCA953X?? The config
-> flag is only used inside the file that gets built by exactly that
-> config flag!
-> 
-> Just remove the "=y" part of the line and test if you like.
 
-Doh, you're right. Only the =y part should be removed.
+On nie, 2014-11-30 at 21:19 +0900, Tomasz Figa wrote:
+> Hi Krzysztof,
+>=20
+> 2014-11-28 23:08 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.c=
+om>:
+> > On pi=C4=85, 2014-11-28 at 15:04 +0100, Linus Walleij wrote:
+> >> On Wed, Nov 26, 2014 at 3:24 PM, Krzysztof Kozlowski
+> >> <k.kozlowski@samsung.com> wrote:
+> >>
+> >> > The audio subsystem on Exynos 5420 has separate clocks and GPIO.=
+ To
+> >> > operate properly on GPIOs the main block clock 'mau_epll' must b=
+e
+> >> > enabled.
+> >> >
+> >> > This was observed on Peach Pi/Pit and Arndale Octa (after enabli=
+ng i2s0)
+> >> > after introducing runtime PM to pl330 DMA driver. After that com=
+mit the
+> >> > 'mau_epll' was gated, because the "amba" clock was disabled and =
+there
+> >> > were no more users of mau_epll.
+> >> >
+> >> > The system hang just before probing i2s0 because
+> >> > samsung_pinmux_setup() tried to access memory from audss block w=
+hich was
+> >> > gated.
+> >> >
+> >> > Add a clock property to the pinctrl driver and enable the clock =
+during
+> >> > GPIO setup. During normal GPIO operations (set, get, set_directi=
+on) the
+> >> > clock is not enabled.
+>=20
+> Could you make sure that possibility of gating this clock is worth th=
+e
+> effort of adding gating code to all affected drivers? If there is no
+> significant change in power consumption maybe it could be simply keep
+> running all the time?
 
-> > This is completely untested, as I lack a board capable of running a v3.18-rcX
-> > kernel. But I noticed on an older kernel that this driver failed requesting
-> > irq 0 during kernel boot. 0 because it's irq parent was not yet probed (also
-> > a compiled in driver).
-> 
-> If the parent is not probed, it should get an -EPROBE_DEFER
-> as irq number from the parent and bail out, then that is the actual bug
-> that needs fixing.
-> 
-> > With the mentioned commit this should work now.
-> 
-> I want it tested before I believe it...
+I had an impression that last time you disliked such idea:
+http://www.spinics.net/lists/arm-kernel/msg338127.html
+That's why I developed these patches. Because keeping a clock always on=
+,
+even when it is unused, is undesirable.
 
-Sure, I'll come back when I could actually test this on a more recent kernel.
+Anyway, I did some simple measurements (after booting Arndale Octa
+to /bin/sh, idle):
+ - with mau_epll gated: ~523 mA
+ - with mau_epll always on: ~531 mA
+
+Keeping it on increases energy usage by 1.5% in idle (with measurement
+uncertainty ~0.4%).
+
+
+> Also isn't a similar problem happening due to power domains? I believ=
+e
+> the whole maudio block is located in a separate power domain but
+> somehow it doesn't get turned off?
+
+There is Maudio power domain... but I think it is not related here.
+Pinctrl driver does not have runtime PM and is not attached to a domain=
+=2E
+I thought about other solution to this problem (with utilization of
+power domains):
+ - add runtime PM to pinctrl and audss clocks,
+ - attach pinctrl and audss clocks to maudio power domain,
+ - enable the clock when power domain is turned on.
+However almost the same changes had to be added to pinctrl and audss
+clocks drivers (replace clock_enable() with pm_runtime_get_sync()).
 
 Best regards,
-Alexander
--- 
-Dipl.-Inf. Alexander Stein
+Krzysztof
 
-SYS TEC electronic GmbH
-Am Windrad 2
-08468 Heinsdorfergrund
-Tel.: 03765 38600-1156
-Fax: 03765 38600-4100
-Email: alexander.stein@systec-electronic.com
-Website: www.systec-electronic.com
- 
-Managing Director: Dipl.-Phys. Siegmar Schmidt
-Commercial registry: Amtsgericht Chemnitz, HRB 28082
 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
