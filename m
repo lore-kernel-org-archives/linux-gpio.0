@@ -1,83 +1,77 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [Patch v2 2/2] gpio: Document GPIO hogging mechanism
-Date: Tue, 2 Dec 2014 23:04:23 +0900
-Message-ID: <CAAVeFuK=AdL-kgaXzCVrF-ATPmS4xwC-sfbtQNcVLNAbXGULgQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Patch v2 1/2] gpio: add GPIO hogging mechanism
+Date: Tue, 2 Dec 2014 23:10:07 +0900
+Message-ID: <CAAVeFuJWPvdmO_KPXP2LrkAy4SQDZ+f7pvE6U8r7gPH+jE3Lrw@mail.gmail.com>
 References: <1416527684-19017-1-git-send-email-bparrot@ti.com>
- <1416527684-19017-3-git-send-email-bparrot@ti.com> <CAAVeFuKEXp68LF9LJuKbQ9JM4YiksiG2K0ekPHM=K2ZJHZYDJg@mail.gmail.com>
- <20141201225747.GA24551@ti.com>
+ <1416527684-19017-2-git-send-email-bparrot@ti.com> <CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
+ <20141202002244.GB24551@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:36102 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751305AbaLBOEp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 09:04:45 -0500
-In-Reply-To: <20141201225747.GA24551@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20141202002244.GB24551-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>
+Cc: Pantelis Antoniou <panto-wVdstyuyKrO8r51toPun2/C9HSW9iNxf@public.gmane.org>, Jiri Prchal <jiri.prchal-cKCO0sOKHLPtwjQa/ONI9g@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Benoit Parrot <bparrot@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pantelis Antoniou <panto@antoniou-consulting.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Tue, Dec 2, 2014 at 7:57 AM, Benoit Parrot <bparrot@ti.com> wrote:
-> Alexandre Courbot <gnurou@gmail.com> wrote on Fri [2014-Nov-28 16:31:19 +0900]:
->> On Fri, Nov 21, 2014 at 8:54 AM, Benoit Parrot <bparrot@ti.com> wrote:
->> > Add GPIO hogging documentation to gpio.txt
->> >
->> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
->> > ---
->> > Changes since v1:
->> >  * Split the devicetree bindings documentation in its own patch.
->> >
->> >  Documentation/devicetree/bindings/gpio/gpio.txt | 25 +++++++++++++++++++++++++
->> >  1 file changed, 25 insertions(+)
->> >
->> > diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
->> > index 3fb8f53..82755e2 100644
->> > --- a/Documentation/devicetree/bindings/gpio/gpio.txt
->> > +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
->> > @@ -103,6 +103,24 @@ Every GPIO controller node must contain both an empty "gpio-controller"
->> >  property, and a #gpio-cells integer property, which indicates the number of
->> >  cells in a gpio-specifier.
->> >
->> > +The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
->> > +providing automatic GPIO request and configuration as part of the
->> > +gpio-controller's driver probe function.
+On Tue, Dec 2, 2014 at 9:22 AM, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org> wrote:
+>> > +       }
 >> > +
->> > +Each GPIO hog definition is represented as a child node of the GPIO controller.
->> > +Required properties:
->> > +- gpio-hog: a property specifying that this child node represent a gpio-hog.
->> > +- gpios: store the gpio information (id, flags, ...). Shall contain the
->> > +  number of cells specified in its parent node (GPIO controller node).
->> > +- input: a property specifying to set the GPIO direction as input.
->> > +- output-high: a property specifying to set the GPIO direction to output with
->> > +  the value high.
->> > +- output-low: a property specifying to set the GPIO direction to output with
->> > +  the value low.
+>> > +       if (tmp > MAX_PHANDLE_ARGS) {
+>> > +               desc = ERR_PTR(-EINVAL);
+>> > +               goto out;
+>> > +       }
 >> > +
->> > +Optional properties:
->> > +- line-name: the GPIO label name. If not present the node name is used.
+>> > +       gg_data.gpiospec.args_count = tmp;
+>> > +       gg_data.gpiospec.np = chip_np;
+>> > +       for (i = 0; i < tmp; i++) {
+>> > +               ret = of_property_read_u32(np, "gpios",
+>> > +                                          &gg_data.gpiospec.args[i]);
+>> > +               if (ret) {
+>> > +                       desc = ERR_PTR(ret);
+>> > +                       goto out;
+>> > +               }
+>> > +       }
 >> > +
->> >  Example of two SOC GPIO banks defined as gpio-controller nodes:
->> >
->> >         qe_pio_a: gpio-controller@1400 {
->> > @@ -110,6 +128,13 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
->> >                 reg = <0x1400 0x18>;
->> >                 gpio-controller;
->> >                 #gpio-cells = <2>;
->> > +
->> > +               line_b: line_b {
+>> > +       gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
 >>
->> Mmm what is the label used for? Can this node ever be referenced from
->> somewhere else?
+>> This seems to work but only supports one GPIO per hog node. It would
+>> be nice to be able to specify several GPIOs to which the same settings
+>> need to be applied.
 >
-> It's not used for anything else as far as I know other than as the line-name to be assigned to the gpio being hogged.
-> I guess you agree with Linus and should make the line-name mandatory and remove the label altogether?
+> This is on purpose following Linus Walleij's comment.
+
+Could you point me to his comment? My bad for not remembering what he
+said, but I'd like to understand why.
+
+>> Using this function means that a GPIO chip module cannot be unloaded
+>> if it uses GPIO hogs. Is it the intended behavior? If not, please use
+>> gpiochip_request_own_desc() instead, and make sure to call
+>> gpiochip_free_own_desc() for each hog when the driver is unloaded.
 >
-> I was trying to keep the verbosity to a minimum so as to have the possibilty to keep everything on a single line when possible.
+> So I guess we could add a undo_gpio_hog() function and hook it up under of_gpiochip_remove().
+> Now instead of maintaining a seperate structure just to keep track of hogged descriptor,
+> would it be acceptable to add a new "gpio_desc.flags" value in gpiolib.h says:
+>
+>    #define FLAG_GPIO_IS_HOGGED 10
+>
+> And key on that at removal time instead of creating a list and having to maintain that?
 
-It's just that when you see a label, you expect it to be referenced
-somewhere, which is obviously not the case here. Just having
+Definitely, that would be even better I think.
 
-line_b {
+>> I would suggest to factorize this code that is similar to the one
+>> found in __gpiod_get_index(). Do all the DT parsing in a function that
+>> just returns a descriptor and the
+>
+> I would tend to agree.
+> But as Linus suggested I was trying to contain the changes to gpiolib_of.c only.
 
-would work just as well, wouldn't it?
+If we add a FLAG_GPIO_IS_HOGGED and undo the hogs when the chip is
+unloaded, I would say that this becomes a gpiolib feature. Moving it
+here would also allow non-DT GPIO providers to implement hogs (it
+should be particularly easy to implement for platform data). Linus, do
+you agree?
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
