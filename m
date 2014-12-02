@@ -1,75 +1,21 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] gpio: fix deferred probe detection for legacy API
-Date: Tue,  2 Dec 2014 22:42:04 +0900
-Message-ID: <1417527724-24960-1-git-send-email-acourbot@nvidia.com>
-References: <CAAVeFuJm_UXHioENBg6himgZkEmopr=T8iCbt0xD6-ds6AHyxA@mail.gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuJm_UXHioENBg6himgZkEmopr=T8iCbt0xD6-ds6AHyxA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3] gpio: lib-sysfs: Add 'wakeup' attribute
+Date: Tue, 2 Dec 2014 23:00:00 +0900
+Message-ID: <CAAVeFuKq--w9XzJ9910s166dVxL2Kt0oKQ0xVM_ZRsBhkbxLrQ@mail.gmail.com>
+References: <1414434602-14263-1-git-send-email-soren.brinkmann@xilinx.com> <51327750bb694f229ecb1c229cb80b21@BN1AFFO11FD023.protection.gbl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51327750bb694f229ecb1c229cb80b21-reflc3kr++Mk2TTsEbHRquhlVc3/7hDbVaz/vdPVXQ4@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 14e85c0e69d5 ("gpio: remove gpio_descs global array") changed
-gpio_to_desc()'s behavior to return NULL not only for GPIOs numbers
-not in the valid range, but also for all GPIOs whose controller has not
-been probed yet. Although this behavior is more correct (nothing hints
-that these GPIO numbers will be populated later), this affects
-gpio_request() and gpio_request_one() which call gpiod_request() with a
-NULL descriptor, causing it to return -EINVAL instead of the expected
--EPROBE_DEFER for a non-probed GPIO.
+On Tue, Dec 2, 2014 at 3:21 AM, S=C3=B6ren Brinkmann
+<soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org> wrote:
+> Another month past. Any updates on this?
 
-gpiod_request() is only called with a descriptor obtained from
-gpio_to_desc() from these two functions, so address the issue there.
-
-Other ways to obtain GPIOs rely on well-defined mappings and can thus
-return -EPROBE_DEFER only for relevant GPIOs, and are thus not affected
-by this issue.
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-Hi Geert,
-
-Could we have your Tested-by to confirm this fixes the issue? Thanks!
-
-Hi Linus,
-
-Once Geert confirms this does the trick, Please feel free to squash this
-patch into the gpio_descs array removal one if it is not too late for that.
-
- drivers/gpio/gpiolib-legacy.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib-legacy.c b/drivers/gpio/gpiolib-legacy.c
-index 078ae6c..8b83099 100644
---- a/drivers/gpio/gpiolib-legacy.c
-+++ b/drivers/gpio/gpiolib-legacy.c
-@@ -24,6 +24,10 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
- 
- 	desc = gpio_to_desc(gpio);
- 
-+	/* Compatibility: assume unavailable "valid" GPIOs will appear later */
-+	if (!desc && gpio_is_valid(gpio))
-+		return -EPROBE_DEFER;
-+
- 	err = gpiod_request(desc, label);
- 	if (err)
- 		return err;
-@@ -62,7 +66,13 @@ EXPORT_SYMBOL_GPL(gpio_request_one);
- 
- int gpio_request(unsigned gpio, const char *label)
- {
--	return gpiod_request(gpio_to_desc(gpio), label);
-+	struct gpio_desc *desc = gpio_to_desc(gpio);
-+
-+	/* Compatibility: assume unavailable "valid" GPIOs will appear later */
-+	if (!desc && gpio_is_valid(gpio))
-+		return -EPROBE_DEFER;
-+
-+	return gpiod_request(desc, label);
- }
- EXPORT_SYMBOL_GPL(gpio_request);
- 
--- 
-2.1.3
+Thanks for pinging. We are just waiting for Linus' call on this - as
+far as I am concerned, this looks good.
