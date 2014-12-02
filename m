@@ -1,83 +1,128 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 3/3] gpio: add support for Cypress CYUSBS234 USB-GPIO
- adapter
-Date: Tue, 2 Dec 2014 09:28:56 +0000
-Message-ID: <20141202092856.GD12068@x1>
-References: <1417192911-16719-1-git-send-email-muth@cypress.com>
- <CACRpkdYbbheP5KTuj7f+2cJXrOjjkRZjR0-bth1DF3kCig6n5A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: remove gpio_descs global array
+Date: Tue, 2 Dec 2014 11:32:20 +0100
+Message-ID: <CAMuHMdUQ+rPasUWuGCc0AnV-g6J9zf9HbozuodHaYpy36Khcpg@mail.gmail.com>
+References: <1416383487-15993-1-git-send-email-acourbot@nvidia.com>
+	<CACRpkdZV-nQPXDnxiBgPTZTpyQ2eiKNL8qJY9jRq=A5foc-xmw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f45.google.com ([209.85.192.45]:62135 "EHLO
-	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751072AbaLBJ3D (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 04:29:03 -0500
-Received: by mail-qg0-f45.google.com with SMTP id f51so8922860qge.18
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Dec 2014 01:29:02 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYbbheP5KTuj7f+2cJXrOjjkRZjR0-bth1DF3kCig6n5A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZV-nQPXDnxiBgPTZTpyQ2eiKNL8qJY9jRq=A5foc-xmw@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Muthu Mani <muth@cypress.com>, Samuel Ortiz <sameo@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>, Alexandre Courbot <gnurou@gmail.com>, Johan Hovold <johan@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>
 
-On Mon, 01 Dec 2014, Linus Walleij wrote:
+Hi Linus, Alexandre,
 
-> On Fri, Nov 28, 2014 at 5:41 PM, Muthu Mani <muth@cypress.com> wrote:
->=20
-> > Adds support for USB-GPIO interface of Cypress Semiconductor
-> > CYUSBS234 USB-Serial Bridge controller.
-> >
-> > The GPIO get/set can be done through vendor command on control endp=
-oint
-> > for the configured gpios.
-> >
-> > Details about the device can be found at:
-> > http://www.cypress.com/?rID=3D84126
-> >
-> > Signed-off-by: Muthu Mani <muth@cypress.com>
-> > Signed-off-by: Rajaram Regupathy <rera@cypress.com>
-> > ---
-> > Changes since v3:
->=20
-> (..)
-> > +config GPIO_CYUSBS23X
-> > +       tristate "CYUSBS23x GPIO support"
-> > +       depends on MFD_CYUSBS23X && USB
->=20
-> Doesn't MFD_CYUSV23X already depend on USB?
+On Fri, Nov 28, 2014 at 11:29 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Wed, Nov 19, 2014 at 8:51 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>> Replace the ARCH_NR_GPIOS-sized static array of GPIO descriptors by
+>> dynamically-allocated arrays for each GPIO chip.
+>>
+>> This change makes gpio_to_desc() perform in O(n) (where n is the number
+>> of GPIO chips registered) instead of O(1), however since n is rarely
+>> bigger than 1 or 2 no noticeable performance issue is expected.
+>> Besides this provides more incentive for GPIO consumers to move to the
+>> gpiod interface. One could use a O(log(n)) structure to link the GPIO
+>> chips together, but considering the low limit of n the hypothetical
+>> performance benefit is probably not worth the added complexity.
+>>
+>> This patch uses kcalloc() in gpiochip_add(), which removes the ability
+>> to add a chip before kcalloc() can operate. I am not aware of such
+>> cases, but if someone bisects up to this patch then I will be proven
+>> wrong...
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>
+> OK patch applied. Let's see if the world explodes.
 
-Yup.
+This patch changes a return value from -EPROBE_DEFER to -EINVAL in
+regulator-gpio when a GPIO cannot be found yet, causing probe failures
+on r8a7791/koelsch:
 
-> > +#include <linux/kernel.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/module.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/types.h>
-> > +#include <linux/mutex.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include <linux/usb.h>
-> > +#include <linux/gpio.h>
-> > +
-> > +#include <linux/mfd/cyusbs23x.h>
->=20
-> Why this arbitrary newlines? Add this
->=20
-> #include <linus/bitops.h>
+ of_get_named_gpiod_flags: can't parse 'enable-gpio' property of node
+'/regulator@1[0]'
+ of_get_named_gpiod_flags: parsed 'gpios' property of node
+'/regulator@1[0]' - status (-517)
+-gpio-0 (?): gpiod_request: status -517
+-gpio-regulator regulator@1: Could not obtain regulator setting GPIOs: -517
+-platform regulator@1: Driver gpio-regulator requests probe deferral
++------------[ cut here ]------------
++WARNING: CPU: 0 PID: 1 at
+/scratch/geert/linux/linux-renesas/drivers/gpio/gpiolib.c:80
+gpio_to_desc+0x94/0xac()
++invalid GPIO 0
++Modules linked in:
++CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+3.18.0-rc7-koelsch-05803-ge7a5d822abfc727e #634
++Hardware name: Generic R8A7791 (Flattened Device Tree)
++Backtrace:
++[<c0012118>] (dump_backtrace) from [<c0012338>] (show_stack+0x18/0x1c)
++ r6:c04608f7 r5:00000009 r4:00000000 r3:00200040
++[<c0012320>] (show_stack) from [<c0386e48>] (dump_stack+0x78/0x94)
++[<c0386dd0>] (dump_stack) from [<c0026b84>] (warn_slowpath_common+0x70/0x94)
++ r4:eec53d10 r3:c04f3390
++[<c0026b14>] (warn_slowpath_common) from [<c0026be0>]
+(warn_slowpath_fmt+0x38/0x40)
++ r8:eed4a600 r7:00000001 r6:00000000 r5:00000000 r4:c04f9430
++[<c0026bac>] (warn_slowpath_fmt) from [<c01dd700>] (gpio_to_desc+0x94/0xac)
++ r3:00000000 r2:c0460931
++[<c01dd66c>] (gpio_to_desc) from [<c01df200>] (gpio_request_one+0x18/0xc4)
++ r5:00000000 r4:00000000
++[<c01df1e8>] (gpio_request_one) from [<c01df2d4>]
+(gpio_request_array+0x28/0x60)
++ r6:00000004 r5:00000000 r4:eed5a4c0 r3:00000002
++[<c01df2ac>] (gpio_request_array) from [<c0201b20>]
+(gpio_regulator_probe+0x424/0x5a4)
++ r7:eed4a610 r6:00000004 r5:eed464d0 r4:eed5a5d0
++[<c02016fc>] (gpio_regulator_probe) from [<c022a81c>]
+(platform_drv_probe+0x50/0xa0)
++ r10:00000000 r9:c0509f80 r8:c04fa648 r7:00000000 r6:c04fa648 r5:eed4a610
++ r4:ffffffed
++[<c022a7cc>] (platform_drv_probe) from [<c0229000>]
+(driver_probe_device+0xc0/0x204)
++ r6:00000000 r5:c054ae0c r4:eed4a610 r3:c022a7cc
++[<c0228f40>] (driver_probe_device) from [<c0229200>]
+(__driver_attach+0x70/0x94)
++ r8:c04ee560 r7:c04fe4b0 r6:c04fa648 r5:eed4a644 r4:eed4a610 r3:00000000
++[<c0229190>] (__driver_attach) from [<c02276bc>] (bus_for_each_dev+0x74/0x98)
++ r6:c0229190 r5:c04fa648 r4:00000000 r3:00000001
++[<c0227648>] (bus_for_each_dev) from [<c0228b5c>] (driver_attach+0x20/0x28)
++ r6:eed52300 r5:00000000 r4:c04fa648
++[<c0228b3c>] (driver_attach) from [<c02287f4>] (bus_add_driver+0xe8/0x1d0)
++[<c022870c>] (bus_add_driver) from [<c022989c>] (driver_register+0xa4/0xe8)
++ r7:c04ee560 r6:00000000 r5:c04c0498 r4:c04fa648
++[<c02297f8>] (driver_register) from [<c022a750>]
+(__platform_driver_register+0x50/0x64)
++ r5:c04c0498 r4:eed5a800
++[<c022a700>] (__platform_driver_register) from [<c04c04b0>]
+(gpio_regulator_init+0x18/0x20)
++[<c04c0498>] (gpio_regulator_init) from [<c0009778>]
+(do_one_initcall+0x108/0x1b8)
++[<c0009670>] (do_one_initcall) from [<c04a9e10>]
+(kernel_init_freeable+0x11c/0x1e4)
++ r9:c0509f80 r8:c0509f80 r7:c04dfcf0 r6:c04d7c2c r5:0000006d r4:00000004
++[<c04a9cf4>] (kernel_init_freeable) from [<c0384538>] (kernel_init+0x10/0xec)
++ r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0384528 r4:00000000
++[<c0384528>] (kernel_init) from [<c000ee58>] (ret_from_fork+0x14/0x3c)
++ r4:00000000 r3:eec52000
++---[ end trace e95579bdd1fdbe74 ]---
++gpiod_request: invalid GPIO
++gpio-regulator regulator@1: Could not obtain regulator setting GPIOs: -22
++gpio-regulator: probe of regulator@1 failed with error -22
 
-Narcissist. =3D;-)
+Reverting commit 14e85c0e69d5c7fdbd963edbbec1dc5cdd385200
+("gpio: remove gpio_descs global array") fixes the issue.
 
-[...]
+Gr{oetje,eeting}s,
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+                        Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
