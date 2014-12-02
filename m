@@ -1,41 +1,54 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH 2/2] gpio: pl061: document gpio-ranges property for bindings file
-Date: Tue, 2 Dec 2014 12:33:00 +0800
-Message-ID: <1417494780-3704-3-git-send-email-heyunlei@huawei.com>
-References: <1417494780-3704-1-git-send-email-heyunlei@huawei.com>
+From: Xinwei Kong <kong.kongxinwei@hisilicon.com>
+Subject: Re: [PATCH] gpio: pl061: hook request if gpio-ranges avaiable
+Date: Tue, 2 Dec 2014 15:39:58 +0800
+Message-ID: <547D6CCE.90504@hisilicon.com>
+References: <1416552238-9908-1-git-send-email-heyunlei@huawei.com> <CACRpkdZNYMX0qK4desZGY-tDp=VzBamzoU11d8Kf4U+bKbunYQ@mail.gmail.com> <CAD6h2NQUoRTtwDxjyryzua9N3oK6vB+iF1MtX6w_2F99x2BjKg@mail.gmail.com> <CACRpkdbywe9rsz+-0n6R_pHVRQkqbhoCmSnSBWL1mZiRxF5wHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from [119.145.14.66] ([119.145.14.66]:12018 "EHLO
-	szxga03-in.huawei.com" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-	with ESMTP id S1754158AbaLBEd7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Dec 2014 23:33:59 -0500
-In-Reply-To: <1417494780-3704-1-git-send-email-heyunlei@huawei.com>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:38004 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754037AbaLBHkK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 02:40:10 -0500
+In-Reply-To: <CACRpkdbywe9rsz+-0n6R_pHVRQkqbhoCmSnSBWL1mZiRxF5wHg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: haojian.zhuang@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: bintian.wang@huawei.com, peifeiyue@huawei.com, liguozhu@hisilicon.com, Yunlei He <heyunlei@huawei.com>, Xinwei Kong <kong.kongxinwei@hisilicon.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: liguozhu@hisilicon.com
 
-Document gpio-ranges property in pl061-gpio.txt
+On 2014/12/1 21:59, Linus Walleij wrote:
+> On Fri, Nov 28, 2014 at 6:00 PM, Haojian Zhuang
+> <haojian.zhuang@linaro.org> wrote:
+>
+>> It's a bit different.
+>>
+>> The commit 51e13c2475 is used to fix this scenario. There're 8 gpio
+>>  pins in GPIO CHIP #19. There're pin muxing on gpio152 -
+>>  gpio155. And there're _no_ pin muxing on gpio156 - gpio159. When
+>> user tries to request gpio159, he'll meet failure since the pinctrl device
+>> can't cover gpio159. But the pinctrl device is already register for
+>> gpio152. In order to distinguish whether the pinctrl device registered,
+>> I added pinctrl_ready_for_gpio_range(gpio).
+>>
+>> In another scenario, there's no back-end pinctrl device for GPIO
+>> CHIP #0. So pinctrl_request_gpio() always returns EPROBE_DEFER.
+>> The commit 51e13c2475 can't cover this.
+>>
+>> I suggest to write code in below.
+> This looks much simpler. Anyway: Xinwei whatever you come up
+> with, include Haojian on To: and get is ACK on the solution.
+>
+> Yours,
+> Linus Walleij
+>
+hi Linus:
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Xinwei Kong <kong.kongxinwei@hisilicon.com>
-Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
----
- Documentation/devicetree/bindings/gpio/pl061-gpio.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+two patches slove the same problem about GPIO PL061.  You can understand our
+patches and merge it in the next kernel version while ensuring that others use
+the kernal will not meet with our problem. Because this bug spend  too much
+time to debug our board. I will be glad to reduce the kernel bug and help others.
 
-diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.txt b/Documentation/devicetree/bindings/gpio/pl061-gpio.txt
-index a2c416b..89058d3 100644
---- a/Documentation/devicetree/bindings/gpio/pl061-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.txt
-@@ -7,4 +7,4 @@ Required properties:
-   - bit 0 specifies polarity (0 for normal, 1 for inverted)
- - gpio-controller : Marks the device node as a GPIO controller.
- - interrupts : Interrupt mapping for GPIO IRQ.
--
-+- gpio-ranges : Interaction with the PINCTRL subsystem.
--- 
-1.9.1
-
+yours
+Xinwei   
 
