@@ -1,104 +1,58 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [Patch v2 1/2] gpio: add GPIO hogging mechanism
-Date: Tue, 2 Dec 2014 17:12:27 +0100
-Message-ID: <20141202161227.GH30256@lukather>
-References: <1416527684-19017-1-git-send-email-bparrot@ti.com>
- <1416527684-19017-2-git-send-email-bparrot@ti.com>
- <CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
- <20141201163639.GI25249@lukather>
- <CAAVeFuLTupDenZdSi8KO+dYsf-ekcqjsDaQ2GEzYpBG34oF7Zw@mail.gmail.com>
- <CACRpkdZcNcPBYQM438CZJx1gYst9BFBSTj-3Qv2aPGF9pdWa5g@mail.gmail.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: Requesting different interrupt triggers for the same device type
+Date: Tue, 02 Dec 2014 17:45:53 +0100
+Message-ID: <4282463.CMMRv84cbI@ws-stein>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="aYDVKSzuImP48n7V"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:33678 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932079AbaLBQPE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 11:15:04 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZcNcPBYQM438CZJx1gYst9BFBSTj-3Qv2aPGF9pdWa5g@mail.gmail.com>
+Received: from webbox1416.server-home.net ([77.236.96.61]:50051 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932436AbaLBQnv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 11:43:51 -0500
+Received: from imapserver.systec-electronic.com (unknown [212.185.67.148])
+	by webbox1416.server-home.net (Postfix) with ESMTPA id 1239E27A580
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Dec 2014 17:43:50 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by imapserver.systec-electronic.com (Postfix) with ESMTP id 19245DA0C51
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Dec 2014 17:43:50 +0100 (CET)
+Received: from imapserver.systec-electronic.com ([127.0.0.1])
+	by localhost (imapserver.systec-electronic.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 8Esw6zbMWO5K for <linux-gpio@vger.kernel.org>;
+	Tue,  2 Dec 2014 17:43:48 +0100 (CET)
+Received: from ws-stein.localnet (unknown [192.168.10.109])
+	by imapserver.systec-electronic.com (Postfix) with ESMTPA id 07BE1DA0AD2
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Dec 2014 17:43:48 +0100 (CET)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Benoit Parrot <bparrot@ti.com>, Pantelis Antoniou <panto@antoniou-consulting.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
 
+Hi,
 
---aYDVKSzuImP48n7V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I have a board which has two PCA9555 attached. Due to hardware wirings each has a different interrupt trigger. One is active low and one is active high and each has a different interrupt parent.
+How can I specify this in the device tree? Do I need to set IRQ_TYPE_LEVEL_LOW and IRQ_TYPE_LEVEL_HIGH approriately? How can this work, when the driver requests the interrupt like this?
+> ret = devm_request_threaded_irq(&client->dev,
+> 			client->irq,
+> 			NULL,
+> 			pca953x_irq_handler,
+> 			IRQF_TRIGGER_LOW | IRQF_ONESHOT |
+> 			IRQF_SHARED,
+> 			dev_name(&client->dev), chip);
 
-On Tue, Dec 02, 2014 at 03:29:46PM +0100, Linus Walleij wrote:
-> On Tue, Dec 2, 2014 at 3:13 PM, Alexandre Courbot <gnurou@gmail.com> wrot=
-e:
-> > On Tue, Dec 2, 2014 at 1:36 AM, Maxime Ripard
-> > <maxime.ripard@free-electrons.com> wrote:
->=20
-> >> The only thing I'd like to have would be that the request here would
-> >> be non-exclusive, so that a later driver would still be allowed later
-> >> on to request that GPIO later on and manage it itself (ideally using
-> >> the usual gpiod_request function).
-> >
-> > Actually we have a plan (and I have some code too) to allow multiple
-> > consumers per GPIO. Although like Benoit I wonder why you would want
-> > to hog a GPIO and then request it properly later. Also, that probably
-> > means we should abandon the hog since it actively drives the line and
-> > would interfere with the late requested. How to do that correctly is
-> > not really clear to me.
->=20
-> I don't get the usecase. A hogged GPIO is per definition hogged.
-> This sounds more like "initial settings" or something, which is another
-> usecase altogether.
+The interrupt flags seem rather fixed. Any comments/hints?
 
-We do have one board where we have a pin (let's say GPIO14 of the bank
-A) that enables a regulator that will provide VCC the bank B.
+Best regards,
+Alexander
+-- 
+Dipl.-Inf. Alexander Stein
 
-Now, both banks are handled by the same driver, but in order to have a
-working output on the bank B, we do need to set GPIO14 as soon as
-we're probed.
-
-Just relying on the usual deferred probing introduces a circular
-dependency between the gpio-regulator that needs to grab its GPIO from
-a driver not there yet, and the gpio driver that needs to enable its
-gpio-regulator.
-
-GPIO hogging needs to be the ideal solution for that, since we can
-just enforce the GPIO14 value as the driver is probed, which provides
-the guarantee that any driver using the bank B will actually drive the
-GPIO it might use.
-
-However, an exclusive request will prevent any representation of this
-as a regulator, which sounds a bit weird, since it really is just
-that.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---aYDVKSzuImP48n7V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUfeTrAAoJEBx+YmzsjxAg7wYQAJjqiXLHrQqwc+skXbprskOn
-rcVJePS4tpBlurQ53c3furPKW6R0LQNsyM9pMkllPceFCD7wvsbGvpg1z4yeuUaQ
-Wn7Lzu0fipLPHpCZhXc9bU4Db3CemEAhRoUrDwTV8fvSAcIS2zTxQmqcmGlBUCZQ
-1+mzoB5w3keBrEtkT7Zl9EZyq5Zs8neortY8/fePrPyE69o0dhZ57/uBgIIfXIbs
-BY9QC5Wm5cKMpB9VcERVWzV+VLzCZIJ4pSpWpm9S8qpXtQ/cMOmOT8aNYpNRkant
-mTcP0kVMGf81qyAn9ujD++IScXeM6eMaKdafryXMu8jkY7yVONobB7H3kAUFyG0U
-066z3SodJZ2jiA1O22Zy3TAXrquEw6xRQGZJq4g04me9W8w1LisfCx6MI6SQuZr2
-9rZ7jFgs9LGTtpihacok5xKT2cNafoGYz5U1rfgBkKJDtXGZM7aI4gpM1Td5efRM
-oEHmFWmx5tuINJojWVB8VBifad4z9WwPAyMmT7t8CiVsVyksnUIHrb04pZcYTvd7
-IMdVwIxqP/A0XTJ8nf/bNvib1hxr+whl/UDpLzpLxliexCaHonr5ADVH4QrFe2WU
-NmID1qMhXDAyKGeOElRwY14vQNTC/A/xiMDdcTQ9qFfXOVbozr/EbebiJgkOQWyg
-my+TgT1EUKb5R2YW7wyP
-=+AOe
------END PGP SIGNATURE-----
-
---aYDVKSzuImP48n7V--
+SYS TEC electronic GmbH
+Am Windrad 2
+08468 Heinsdorfergrund
+Tel.: 03765 38600-1156
+Fax: 03765 38600-4100
+Email: alexander.stein@systec-electronic.com
+Website: www.systec-electronic.com
+ 
+Managing Director: Dipl.-Phys. Siegmar Schmidt
+Commercial registry: Amtsgericht Chemnitz, HRB 28082
