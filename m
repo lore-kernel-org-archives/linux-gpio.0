@@ -1,44 +1,52 @@
-From: Kamlakant Patel <kamlakant.patel@linaro.org>
-Subject: Re: [PATCH 1/5] gpio: moxart: convert to use basic mmio gpio library
-Date: Tue, 2 Dec 2014 17:33:28 +0530
-Message-ID: <CA+aN+yvqum=ANR=85Wf7N5901dQ=yeWnckbt4QuPXTjN5sg7vg@mail.gmail.com>
-References: <1414591005-30961-1-git-send-email-kamlakant.patel@linaro.org>
-	<1414591005-30961-2-git-send-email-kamlakant.patel@linaro.org>
-	<CACmBeS2K4pjJ5VZtrjJ-2zwu-hC+c=+6ptkGvX+6w+U4y4Tw0Q@mail.gmail.com>
-	<20141112120043.GA3031@linaro>
-	<CACmBeS1Gf4U-A_-HHy-c+iDRqt81vTaMxjKsekcjnVMvTxTBuw@mail.gmail.com>
-	<CA+aN+yvwDtsm5g2o4mQPUBgzjtkJMUu-DXzXfZKzFyGg-C0PJw@mail.gmail.com>
-	<CACRpkdZFyoSDytyLzpLDUYrmh2xh1VTTqHL7m+a_xqrYdsjfsg@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: remove gpio_descs global array
+Date: Tue, 2 Dec 2014 22:25:16 +0900
+Message-ID: <CAAVeFuJm_UXHioENBg6himgZkEmopr=T8iCbt0xD6-ds6AHyxA@mail.gmail.com>
+References: <1416383487-15993-1-git-send-email-acourbot@nvidia.com>
+ <CACRpkdZV-nQPXDnxiBgPTZTpyQ2eiKNL8qJY9jRq=A5foc-xmw@mail.gmail.com> <CAMuHMdUQ+rPasUWuGCc0AnV-g6J9zf9HbozuodHaYpy36Khcpg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:38905 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754508AbaLBMDa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 07:03:30 -0500
-Received: by mail-la0-f41.google.com with SMTP id hv19so5852921lab.14
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Dec 2014 04:03:28 -0800 (PST)
-In-Reply-To: <CACRpkdZFyoSDytyLzpLDUYrmh2xh1VTTqHL7m+a_xqrYdsjfsg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdUQ+rPasUWuGCc0AnV-g6J9zf9HbozuodHaYpy36Khcpg@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonas Jensen <jonas.jensen@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
-
-On 28 November 2014 at 13:32, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Nov 18, 2014 at 12:35 PM, Kamlakant Patel
-> <kamlakant.patel@linaro.org> wrote:
->> On 17 November 2014 19:23, Jonas Jensen <jonas.jensen@gmail.com> wrote:
->>> On 12 November 2014 13:00, Kamlakant Patel <kamlakant.patel@linaro.org>
+On Tue, Dec 2, 2014 at 7:32 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Linus, Alexandre,
 >
->>> Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
+> On Fri, Nov 28, 2014 at 11:29 AM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+>> On Wed, Nov 19, 2014 at 8:51 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>>> Replace the ARCH_NR_GPIOS-sized static array of GPIO descriptors by
+>>> dynamically-allocated arrays for each GPIO chip.
+>>>
+>>> This change makes gpio_to_desc() perform in O(n) (where n is the number
+>>> of GPIO chips registered) instead of O(1), however since n is rarely
+>>> bigger than 1 or 2 no noticeable performance issue is expected.
+>>> Besides this provides more incentive for GPIO consumers to move to the
+>>> gpiod interface. One could use a O(log(n)) structure to link the GPIO
+>>> chips together, but considering the low limit of n the hypothetical
+>>> performance benefit is probably not worth the added complexity.
+>>>
+>>> This patch uses kcalloc() in gpiochip_add(), which removes the ability
+>>> to add a chip before kcalloc() can operate. I am not aware of such
+>>> cases, but if someone bisects up to this patch then I will be proven
+>>> wrong...
+>>>
+>>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 >>
->> Thanks for testing, I will send v2 patch with above updates.
+>> OK patch applied. Let's see if the world explodes.
 >
-> I can't find this v2 (or is it v3?) in my Inbox, have you sent it?
->
-Sorry for the delay, I have sent updated patch set.
+> This patch changes a return value from -EPROBE_DEFER to -EINVAL in
+> regulator-gpio when a GPIO cannot be found yet, causing probe failures
+> on r8a7791/koelsch:
 
-Thanks,
-Kamlakant Patel
+Hi Geert,
+
+Thanks for signaling this. I think I understand what is going wrong
+and will send a fixup patch in a few minutes.
+
+Cheers,
+Alex.
