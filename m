@@ -1,101 +1,86 @@
 From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Subject: Re: [Patch v2 1/2] gpio: add GPIO hogging mechanism
-Date: Tue, 2 Dec 2014 15:25:36 +0100
-Message-ID: <CACRpkdaVtkWXmf8ON=3Pa2CYZKWRw2am+ULfzsTBPmXjbP44PA@mail.gmail.com>
+Date: Tue, 2 Dec 2014 15:28:11 +0100
+Message-ID: <CACRpkdZPd8w8wiP-dkY4X-jy5Gb7dx6vx3HPxTjHw4NM722NCw@mail.gmail.com>
 References: <1416527684-19017-1-git-send-email-bparrot@ti.com>
 	<1416527684-19017-2-git-send-email-bparrot@ti.com>
 	<CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
 	<20141202002244.GB24551@ti.com>
+	<CAAVeFuJWPvdmO_KPXP2LrkAy4SQDZ+f7pvE6U8r7gPH+jE3Lrw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141202002244.GB24551-l0cyMroinI0@public.gmane.org>
+In-Reply-To: <CAAVeFuJWPvdmO_KPXP2LrkAy4SQDZ+f7pvE6U8r7gPH+jE3Lrw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pantelis Antoniou <panto-wVdstyuyKrO8r51toPun2/C9HSW9iNxf@public.gmane.org>, Jiri Prchal <jiri.prchal-cKCO0sOKHLPtwjQa/ONI9g@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>, Pantelis Antoniou <panto-wVdstyuyKrO8r51toPun2/C9HSW9iNxf@public.gmane.org>, Jiri Prchal <jiri.prchal-cKCO0sOKHLPtwjQa/ONI9g@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Dec 2, 2014 at 1:22 AM, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org> wrote:
-> Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote on Fri [2014-Nov-28 16:30:01 +0900]:
->> On Fri, Nov 21, 2014 at 8:54 AM, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org> wrote:
-
->> > +       }
->> > +
->> > +       if (tmp > MAX_PHANDLE_ARGS) {
->> > +               desc = ERR_PTR(-EINVAL);
->> > +               goto out;
->> > +       }
->> > +
->> > +       gg_data.gpiospec.args_count = tmp;
->> > +       gg_data.gpiospec.np = chip_np;
->> > +       for (i = 0; i < tmp; i++) {
->> > +               ret = of_property_read_u32(np, "gpios",
->> > +                                          &gg_data.gpiospec.args[i]);
->> > +               if (ret) {
->> > +                       desc = ERR_PTR(ret);
->> > +                       goto out;
->> > +               }
->> > +       }
->> > +
->> > +       gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
+On Tue, Dec 2, 2014 at 3:10 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Tue, Dec 2, 2014 at 9:22 AM, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org> wrote:
+>>> > +       }
+>>> > +
+>>> > +       if (tmp > MAX_PHANDLE_ARGS) {
+>>> > +               desc = ERR_PTR(-EINVAL);
+>>> > +               goto out;
+>>> > +       }
+>>> > +
+>>> > +       gg_data.gpiospec.args_count = tmp;
+>>> > +       gg_data.gpiospec.np = chip_np;
+>>> > +       for (i = 0; i < tmp; i++) {
+>>> > +               ret = of_property_read_u32(np, "gpios",
+>>> > +                                          &gg_data.gpiospec.args[i]);
+>>> > +               if (ret) {
+>>> > +                       desc = ERR_PTR(ret);
+>>> > +                       goto out;
+>>> > +               }
+>>> > +       }
+>>> > +
+>>> > +       gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
+>>>
+>>> This seems to work but only supports one GPIO per hog node. It would
+>>> be nice to be able to specify several GPIOs to which the same settings
+>>> need to be applied.
 >>
->> This seems to work but only supports one GPIO per hog node. It would
->> be nice to be able to specify several GPIOs to which the same settings
->> need to be applied.
+>> This is on purpose following Linus Walleij's comment.
 >
-> This is on purpose following Linus Walleij's comment.
+> Could you point me to his comment? My bad for not remembering what he
+> said, but I'd like to understand why.
 
-Yes, I think either we have separate nodes for each hogged line *OR*
-we just put a list of hogs under the gpiochip, no special node at all.
+Said in previous message I think: either one-per-node or lists directly
+in the gpiochip node.
 
-The one-node-per-hog pattern has the upside of being usable
-to also name the hogs. (Exporting them is dubious however!
-I would add a special type of node for that.)
-
->> > +       if (err < 0)
->> > +               return err;
->> > +
->> > +       if (lflags & GPIO_ACTIVE_LOW)
->> > +               set_bit(FLAG_ACTIVE_LOW, &desc->flags);
->> > +       if (lflags & GPIO_OPEN_DRAIN)
->> > +               set_bit(FLAG_OPEN_DRAIN, &desc->flags);
->> > +       if (lflags & GPIO_OPEN_SOURCE)
->> > +               set_bit(FLAG_OPEN_SOURCE, &desc->flags);
->> > +
->> > +       /* No particular flag request, not really hogging then... */
->> > +       if (!(dflags & GPIOD_FLAGS_BIT_DIR_SET)) {
->> > +               pr_warn("%s: GPIO %s: no hogging direction specified, bailing out\n",
->> > +                        __func__, name);
->> > +               err = -EINVAL;
->> > +               goto free_gpio;
->> > +       }
->> > +
->> > +       /* Process flags */
->> > +       if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
->> > +               err = gpiod_direction_output(desc,
->> > +                                            dflags & GPIOD_FLAGS_BIT_DIR_VAL);
->> > +       else
->> > +               err = gpiod_direction_input(desc);
->> > +
->> > +       if (err < 0) {
->> > +               pr_warn("%s: GPIO %s setting direction/value failed\n",
->> > +                        __func__, name);
->> > +               goto free_gpio;
->> > +       }
+>>> Using this function means that a GPIO chip module cannot be unloaded
+>>> if it uses GPIO hogs. Is it the intended behavior? If not, please use
+>>> gpiochip_request_own_desc() instead, and make sure to call
+>>> gpiochip_free_own_desc() for each hog when the driver is unloaded.
 >>
->> I would suggest to factorize this code that is similar to the one
->> found in __gpiod_get_index(). Do all the DT parsing in a function that
->> just returns a descriptor and the
+>> So I guess we could add a undo_gpio_hog() function and hook it up under of_gpiochip_remove().
+>> Now instead of maintaining a seperate structure just to keep track of hogged descriptor,
+>> would it be acceptable to add a new "gpio_desc.flags" value in gpiolib.h says:
+>>
+>>    #define FLAG_GPIO_IS_HOGGED 10
+>>
+>> And key on that at removal time instead of creating a list and having to maintain that?
 >
-> I would tend to agree.
-> But as Linus suggested I was trying to contain the changes to gpiolib_of.c only.
+> Definitely, that would be even better I think.
 
-Yes I prefer we begin by supporting it in OF and then generalize it later
-if more users (board files, ACPI) appear.
+Clever. Go for this.
 
-Not a big deal but I want to avoid big design up front unless it's
-easy and a few alterations.
-http://c2.com/cgi/wiki?BigDesignUpFront
+>>> I would suggest to factorize this code that is similar to the one
+>>> found in __gpiod_get_index(). Do all the DT parsing in a function that
+>>> just returns a descriptor and the
+>>
+>> I would tend to agree.
+>> But as Linus suggested I was trying to contain the changes to gpiolib_of.c only.
+>
+> If we add a FLAG_GPIO_IS_HOGGED and undo the hogs when the chip is
+> unloaded, I would say that this becomes a gpiolib feature. Moving it
+> here would also allow non-DT GPIO providers to implement hogs (it
+> should be particularly easy to implement for platform data). Linus, do
+> you agree?
+
+Yes, this is better and leaves the door open for other users.
 
 Yours,
 Linus Walleij
