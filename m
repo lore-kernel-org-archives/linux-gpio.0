@@ -1,52 +1,105 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: fix deferred probe detection for legacy API
-Date: Tue, 2 Dec 2014 23:22:05 +0900
-Message-ID: <CAAVeFu+2xcpYriQxNx7o7NR4DheoUDLBEZFvoddezagrkS-P0w@mail.gmail.com>
-References: <CAAVeFuJm_UXHioENBg6himgZkEmopr=T8iCbt0xD6-ds6AHyxA@mail.gmail.com>
- <1417527724-24960-1-git-send-email-acourbot@nvidia.com> <CACRpkdY3vHHNSovaEf1UysuQD5gSHM-n6DUSdF372hYMyr9e8g@mail.gmail.com>
- <CAAVeFuJrLth2bT20i0MoPYhLFidNbUEfoUjqdb0oNg6ARCZryg@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [Patch v2 1/2] gpio: add GPIO hogging mechanism
+Date: Tue, 2 Dec 2014 15:25:36 +0100
+Message-ID: <CACRpkdaVtkWXmf8ON=3Pa2CYZKWRw2am+ULfzsTBPmXjbP44PA@mail.gmail.com>
+References: <1416527684-19017-1-git-send-email-bparrot@ti.com>
+	<1416527684-19017-2-git-send-email-bparrot@ti.com>
+	<CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
+	<20141202002244.GB24551@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:37535 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751305AbaLBOW1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 09:22:27 -0500
-In-Reply-To: <CAAVeFuJrLth2bT20i0MoPYhLFidNbUEfoUjqdb0oNg6ARCZryg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20141202002244.GB24551-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pantelis Antoniou <panto-wVdstyuyKrO8r51toPun2/C9HSW9iNxf@public.gmane.org>, Jiri Prchal <jiri.prchal-cKCO0sOKHLPtwjQa/ONI9g@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 2, 2014 at 11:20 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Tue, Dec 2, 2014 at 11:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Dec 2, 2014 at 2:42 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Tue, Dec 2, 2014 at 1:22 AM, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org> wrote:
+> Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote on Fri [2014-Nov-28 16:30:01 +0900]:
+>> On Fri, Nov 21, 2014 at 8:54 AM, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org> wrote:
+
+>> > +       }
+>> > +
+>> > +       if (tmp > MAX_PHANDLE_ARGS) {
+>> > +               desc = ERR_PTR(-EINVAL);
+>> > +               goto out;
+>> > +       }
+>> > +
+>> > +       gg_data.gpiospec.args_count = tmp;
+>> > +       gg_data.gpiospec.np = chip_np;
+>> > +       for (i = 0; i < tmp; i++) {
+>> > +               ret = of_property_read_u32(np, "gpios",
+>> > +                                          &gg_data.gpiospec.args[i]);
+>> > +               if (ret) {
+>> > +                       desc = ERR_PTR(ret);
+>> > +                       goto out;
+>> > +               }
+>> > +       }
+>> > +
+>> > +       gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
 >>
->>> Commit 14e85c0e69d5 ("gpio: remove gpio_descs global array") changed
->>> gpio_to_desc()'s behavior to return NULL not only for GPIOs numbers
->>> not in the valid range, but also for all GPIOs whose controller has not
->>> been probed yet. Although this behavior is more correct (nothing hints
->>> that these GPIO numbers will be populated later), this affects
->>> gpio_request() and gpio_request_one() which call gpiod_request() with a
->>> NULL descriptor, causing it to return -EINVAL instead of the expected
->>> -EPROBE_DEFER for a non-probed GPIO.
->>>
->>> gpiod_request() is only called with a descriptor obtained from
->>> gpio_to_desc() from these two functions, so address the issue there.
->>>
->>> Other ways to obtain GPIOs rely on well-defined mappings and can thus
->>> return -EPROBE_DEFER only for relevant GPIOs, and are thus not affected
->>> by this issue.
->>>
->>> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
->>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->>
->> Patch applied with Geert's tested tag.
+>> This seems to work but only supports one GPIO per hog node. It would
+>> be nice to be able to specify several GPIOs to which the same settings
+>> need to be applied.
 >
-> I just send a v2 which only prints the warning if the GPIO is outside
-> of the valid range (better for legacy API).
+> This is on purpose following Linus Walleij's comment.
 
-... although contrary to what the log says I forgot to add Geerts
-Tested-by tag. Sorry for the noise.
+Yes, I think either we have separate nodes for each hogged line *OR*
+we just put a list of hogs under the gpiochip, no special node at all.
 
-Alex (Zzzz... -_- )
+The one-node-per-hog pattern has the upside of being usable
+to also name the hogs. (Exporting them is dubious however!
+I would add a special type of node for that.)
+
+>> > +       if (err < 0)
+>> > +               return err;
+>> > +
+>> > +       if (lflags & GPIO_ACTIVE_LOW)
+>> > +               set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+>> > +       if (lflags & GPIO_OPEN_DRAIN)
+>> > +               set_bit(FLAG_OPEN_DRAIN, &desc->flags);
+>> > +       if (lflags & GPIO_OPEN_SOURCE)
+>> > +               set_bit(FLAG_OPEN_SOURCE, &desc->flags);
+>> > +
+>> > +       /* No particular flag request, not really hogging then... */
+>> > +       if (!(dflags & GPIOD_FLAGS_BIT_DIR_SET)) {
+>> > +               pr_warn("%s: GPIO %s: no hogging direction specified, bailing out\n",
+>> > +                        __func__, name);
+>> > +               err = -EINVAL;
+>> > +               goto free_gpio;
+>> > +       }
+>> > +
+>> > +       /* Process flags */
+>> > +       if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
+>> > +               err = gpiod_direction_output(desc,
+>> > +                                            dflags & GPIOD_FLAGS_BIT_DIR_VAL);
+>> > +       else
+>> > +               err = gpiod_direction_input(desc);
+>> > +
+>> > +       if (err < 0) {
+>> > +               pr_warn("%s: GPIO %s setting direction/value failed\n",
+>> > +                        __func__, name);
+>> > +               goto free_gpio;
+>> > +       }
+>>
+>> I would suggest to factorize this code that is similar to the one
+>> found in __gpiod_get_index(). Do all the DT parsing in a function that
+>> just returns a descriptor and the
+>
+> I would tend to agree.
+> But as Linus suggested I was trying to contain the changes to gpiolib_of.c only.
+
+Yes I prefer we begin by supporting it in OF and then generalize it later
+if more users (board files, ACPI) appear.
+
+Not a big deal but I want to avoid big design up front unless it's
+easy and a few alterations.
+http://c2.com/cgi/wiki?BigDesignUpFront
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
