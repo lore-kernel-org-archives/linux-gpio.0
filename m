@@ -1,77 +1,52 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Patch v2 1/2] gpio: add GPIO hogging mechanism
-Date: Tue, 2 Dec 2014 23:10:07 +0900
-Message-ID: <CAAVeFuJWPvdmO_KPXP2LrkAy4SQDZ+f7pvE6U8r7gPH+jE3Lrw@mail.gmail.com>
-References: <1416527684-19017-1-git-send-email-bparrot@ti.com>
- <1416527684-19017-2-git-send-email-bparrot@ti.com> <CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
- <20141202002244.GB24551@ti.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: fix deferred probe detection for legacy API
+Date: Tue, 2 Dec 2014 15:11:13 +0100
+Message-ID: <CAMuHMdUVZ9st+UjTcfmncnBQjj_4tiNS3wFu-SpRUdGmg220Ug@mail.gmail.com>
+References: <CAAVeFuJm_UXHioENBg6himgZkEmopr=T8iCbt0xD6-ds6AHyxA@mail.gmail.com>
+	<1417527724-24960-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141202002244.GB24551-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>
-Cc: Pantelis Antoniou <panto-wVdstyuyKrO8r51toPun2/C9HSW9iNxf@public.gmane.org>, Jiri Prchal <jiri.prchal-cKCO0sOKHLPtwjQa/ONI9g@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1417527724-24960-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Dec 2, 2014 at 9:22 AM, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org> wrote:
->> > +       }
->> > +
->> > +       if (tmp > MAX_PHANDLE_ARGS) {
->> > +               desc = ERR_PTR(-EINVAL);
->> > +               goto out;
->> > +       }
->> > +
->> > +       gg_data.gpiospec.args_count = tmp;
->> > +       gg_data.gpiospec.np = chip_np;
->> > +       for (i = 0; i < tmp; i++) {
->> > +               ret = of_property_read_u32(np, "gpios",
->> > +                                          &gg_data.gpiospec.args[i]);
->> > +               if (ret) {
->> > +                       desc = ERR_PTR(ret);
->> > +                       goto out;
->> > +               }
->> > +       }
->> > +
->> > +       gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
->>
->> This seems to work but only supports one GPIO per hog node. It would
->> be nice to be able to specify several GPIOs to which the same settings
->> need to be applied.
->
-> This is on purpose following Linus Walleij's comment.
+Hi Alexandre,
 
-Could you point me to his comment? My bad for not remembering what he
-said, but I'd like to understand why.
-
->> Using this function means that a GPIO chip module cannot be unloaded
->> if it uses GPIO hogs. Is it the intended behavior? If not, please use
->> gpiochip_request_own_desc() instead, and make sure to call
->> gpiochip_free_own_desc() for each hog when the driver is unloaded.
+On Tue, Dec 2, 2014 at 2:42 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> Commit 14e85c0e69d5 ("gpio: remove gpio_descs global array") changed
+> gpio_to_desc()'s behavior to return NULL not only for GPIOs numbers
+> not in the valid range, but also for all GPIOs whose controller has not
+> been probed yet. Although this behavior is more correct (nothing hints
+> that these GPIO numbers will be populated later), this affects
+> gpio_request() and gpio_request_one() which call gpiod_request() with a
+> NULL descriptor, causing it to return -EINVAL instead of the expected
+> -EPROBE_DEFER for a non-probed GPIO.
 >
-> So I guess we could add a undo_gpio_hog() function and hook it up under of_gpiochip_remove().
-> Now instead of maintaining a seperate structure just to keep track of hogged descriptor,
-> would it be acceptable to add a new "gpio_desc.flags" value in gpiolib.h says:
+> gpiod_request() is only called with a descriptor obtained from
+> gpio_to_desc() from these two functions, so address the issue there.
 >
->    #define FLAG_GPIO_IS_HOGGED 10
+> Other ways to obtain GPIOs rely on well-defined mappings and can thus
+> return -EPROBE_DEFER only for relevant GPIOs, and are thus not affected
+> by this issue.
 >
-> And key on that at removal time instead of creating a list and having to maintain that?
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Definitely, that would be even better I think.
+Thanks, this restored functionality. There's still a loud
+WARN(1, "invalid GPIO %d\n", gpio) in gpio_to_desc().
 
->> I would suggest to factorize this code that is similar to the one
->> found in __gpiod_get_index(). Do all the DT parsing in a function that
->> just returns a descriptor and the
->
-> I would tend to agree.
-> But as Linus suggested I was trying to contain the changes to gpiolib_of.c only.
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-If we add a FLAG_GPIO_IS_HOGGED and undo the hogs when the chip is
-unloaded, I would say that this becomes a gpiolib feature. Moving it
-here would also allow non-DT GPIO providers to implement hogs (it
-should be particularly easy to implement for platform data). Linus, do
-you agree?
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
