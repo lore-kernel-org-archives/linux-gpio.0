@@ -1,25 +1,20 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH v2] gpio: fix deferred probe detection for legacy API
-Date: Tue, 2 Dec 2014 15:30:02 +0100
-Message-ID: <CAMuHMdVfmJvaQkKv4gOPu=60gzb40=A56iq+p8dYhrTLcTPOyw@mail.gmail.com>
+Date: Tue, 2 Dec 2014 15:48:42 +0100
+Message-ID: <CACRpkdbF_KbH38Tv3pixcftB6V5sNXMFR3kDeRDXkDEZmz-ATA@mail.gmail.com>
 References: <1417527724-24960-1-git-send-email-acourbot@nvidia.com>
 	<1417529705-1515-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:48316 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753667AbaLBOaF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 09:30:05 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1417529705-1515-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
-
-Hi Alexander,
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
 On Tue, Dec 2, 2014 at 3:15 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+
 > Commit 14e85c0e69d5 ("gpio: remove gpio_descs global array") changed
 > gpio_to_desc()'s behavior to return NULL not only for GPIOs numbers
 > not in the valid range, but also for all GPIOs whose controller has not
@@ -40,22 +35,8 @@ On Tue, Dec 2, 2014 at 3:15 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
 > Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
 > v2:
-> - Add Geert's Tested-by
-> - Only display scary warning on gpio_to_desc() is the GPIO is outside
->   the valid range (pre gpio_desc array removal behavior)
 
-Thanks, the scary warnings are gone, together with a few superfluous
-"gpio-0 (?): gpiod_request: status -517" messages.
+OK threw out v1 and applied this instead.
 
-Have a good night!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
