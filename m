@@ -1,52 +1,64 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: fix deferred probe detection for legacy API
-Date: Tue, 2 Dec 2014 15:11:13 +0100
-Message-ID: <CAMuHMdUVZ9st+UjTcfmncnBQjj_4tiNS3wFu-SpRUdGmg220Ug@mail.gmail.com>
-References: <CAAVeFuJm_UXHioENBg6himgZkEmopr=T8iCbt0xD6-ds6AHyxA@mail.gmail.com>
-	<1417527724-24960-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [Patch v2 1/2] gpio: add GPIO hogging mechanism
+Date: Tue, 2 Dec 2014 23:13:31 +0900
+Message-ID: <CAAVeFuLTupDenZdSi8KO+dYsf-ekcqjsDaQ2GEzYpBG34oF7Zw@mail.gmail.com>
+References: <1416527684-19017-1-git-send-email-bparrot@ti.com>
+ <1416527684-19017-2-git-send-email-bparrot@ti.com> <CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
+ <20141201163639.GI25249@lukather>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1417527724-24960-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:36641 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751169AbaLBONw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 09:13:52 -0500
+In-Reply-To: <20141201163639.GI25249@lukather>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Benoit Parrot <bparrot@ti.com>, Pantelis Antoniou <panto@antoniou-consulting.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Alexandre,
-
-On Tue, Dec 2, 2014 at 2:42 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> Commit 14e85c0e69d5 ("gpio: remove gpio_descs global array") changed
-> gpio_to_desc()'s behavior to return NULL not only for GPIOs numbers
-> not in the valid range, but also for all GPIOs whose controller has not
-> been probed yet. Although this behavior is more correct (nothing hints
-> that these GPIO numbers will be populated later), this affects
-> gpio_request() and gpio_request_one() which call gpiod_request() with a
-> NULL descriptor, causing it to return -EINVAL instead of the expected
-> -EPROBE_DEFER for a non-probed GPIO.
+On Tue, Dec 2, 2014 at 1:36 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
 >
-> gpiod_request() is only called with a descriptor obtained from
-> gpio_to_desc() from these two functions, so address the issue there.
+> On Fri, Nov 28, 2014 at 04:30:01PM +0900, Alexandre Courbot wrote:
+>> > +/**
+>> > + * do_gpio_hog - Given node is a GPIO hog configuration, handle it
+>> > + * @np:                device node to get GPIO from
+>> > + *
+>> > + * This is only used by of_gpiochip_add to request/set GPIO initial
+>> > + * configuration.
+>> > + */
+>> > +static int do_gpio_hog(struct device_node *np)
+>> > +{
+>> > +       struct gpio_desc *desc = NULL;
+>> > +       int err;
+>> > +       const char *name;
+>> > +       enum gpio_lookup_flags lflags;
+>> > +       enum gpiod_flags dflags;
+>> > +
+>> > +       desc = of_get_gpio_hog(np, &name, &lflags, &dflags);
+>> > +       if (!desc)
+>> > +               return -ENOTSUPP;
+>> > +       else if (IS_ERR(desc))
+>> > +               return PTR_ERR(desc);
+>> > +
+>> > +       err = gpiod_request(desc, name);
+>>
+>> Using this function means that a GPIO chip module cannot be unloaded
+>> if it uses GPIO hogs. Is it the intended behavior? If not, please use
+>> gpiochip_request_own_desc() instead, and make sure to call
+>> gpiochip_free_own_desc() for each hog when the driver is unloaded.
 >
-> Other ways to obtain GPIOs rely on well-defined mappings and can thus
-> return -EPROBE_DEFER only for relevant GPIOs, and are thus not affected
-> by this issue.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> The only thing I'd like to have would be that the request here would
+> be non-exclusive, so that a later driver would still be allowed later
+> on to request that GPIO later on and manage it itself (ideally using
+> the usual gpiod_request function).
 
-Thanks, this restored functionality. There's still a loud
-WARN(1, "invalid GPIO %d\n", gpio) in gpio_to_desc().
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Actually we have a plan (and I have some code too) to allow multiple
+consumers per GPIO. Although like Benoit I wonder why you would want
+to hog a GPIO and then request it properly later. Also, that probably
+means we should abandon the hog since it actively drives the line and
+would interfere with the late requested. How to do that correctly is
+not really clear to me.
