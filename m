@@ -1,50 +1,31 @@
-From: "Chang, Rebecca Swee Fun" <rebecca.swee.fun.chang@intel.com>
-Subject: RE: [PATCHv4 3/3] gpio: sch: Enable IRQ support for Quark X1000
-Date: Wed, 3 Dec 2014 02:26:20 +0000
-Message-ID: <50B33AC5ED75F74F991980326F1C438D0FC6DDED@PGSMSX108.gar.corp.intel.com>
-References: <1416977280-27319-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-	<1416977280-27319-4-git-send-email-rebecca.swee.fun.chang@intel.com>
- <CACRpkdba0XparJCKrV9XrU3dxTnuWhEYGQQMKzi+SDEiOAsapQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
+Date: Wed, 3 Dec 2014 11:33:33 +0900
+Message-ID: <CAAVeFuKHYnPgCLFC+0QjYGyPxJ3fddGJkvmUk+=L0TZqsprXWQ@mail.gmail.com>
+References: <1655942.O63mJN07or@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:44672 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750927AbaLCC0d (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 2 Dec 2014 21:26:33 -0500
-In-Reply-To: <CACRpkdba0XparJCKrV9XrU3dxTnuWhEYGQQMKzi+SDEiOAsapQ@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:62977 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750864AbaLCCdy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 21:33:54 -0500
+In-Reply-To: <1655942.O63mJN07or@vostro.rjw.lan>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, Denis Turischev <denis.turischev@compulab.co.il>, Alexandre Courbot <gnurou@gmail.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
 
-SGkgTGludXMsDQpOb3RlZCwgd2hpbGUgSSBjb250aW51ZSB0byB3b3JrIG9uIHRoaXMgSVJRIGZl
-YXR1cmUsIGNhbiBJIHJlc2VuZCBwYXRjaCAxIGFuZCBwYXRjaCAyIChyZWJhc2UgdG8gZGV2ZWwg
-YnJhbmNoKSBpbiB2NSB0aHJlYWQgc28gdGhhdCB5b3UgY2FuIHB1bGwgdGhlbSBpbiBmaXJzdD8g
-DQoNClJlZ2FyZHMsDQpSZWJlY2NhDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
-RnJvbTogTGludXMgV2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4g
-U2VudDogMjggTm92ZW1iZXIsIDIwMTQgMTA6MDMgUE0NCj4gVG86IENoYW5nLCBSZWJlY2NhIFN3
-ZWUgRnVuDQo+IENjOiBMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0OyBHUElPIFN1YnN5c3RlbSBN
-YWlsaW5nIExpc3Q7IFdlc3RlcmJlcmcsIE1pa2E7DQo+IERlbmlzIFR1cmlzY2hldjsgQWxleGFu
-ZHJlIENvdXJib3QNCj4gU3ViamVjdDogUmU6IFtQQVRDSHY0IDMvM10gZ3Bpbzogc2NoOiBFbmFi
-bGUgSVJRIHN1cHBvcnQgZm9yIFF1YXJrIFgxMDAwDQo+IA0KPiBPbiBXZWQsIE5vdiAyNiwgMjAx
-NCBhdCA1OjQ4IEFNLCBDaGFuZyBSZWJlY2NhIFN3ZWUgRnVuDQo+IDxyZWJlY2NhLnN3ZWUuZnVu
-LmNoYW5nQGludGVsLmNvbT4gd3JvdGU6DQo+IA0KPiA+IG50ZWwgUXVhcmsgWDEwMDAgR1BJTyBj
-b250cm9sbGVyIHN1cHBvcnRzIGludGVycnVwdCBoYW5kbGluZyBmb3IgYm90aA0KPiA+IGNvcmUg
-cG93ZXIgd2VsbCBhbmQgcmVzdW1lIHBvd2VyIHdlbGwuIFRoaXMgcGF0Y2ggaXMgdG8gZW5hYmxl
-IHRoZSBJUlENCj4gPiBzdXBwb3J0IGFuZCBwcm92aWRlIElSUSBoYW5kbGluZyBmb3IgSW50ZWwg
-UXVhcmsgWDEwMDAgR1BJTy1TQ0ggZGV2aWNlDQo+ID4gZHJpdmVyLg0KPiA+DQo+ID4gVGhpcyBw
-aWVjZSBvZiB3b3JrIGlzIGRlcml2ZWQgZnJvbSBEYW4gTydEb25vdmFuJ3MgaW5pdGlhbCB3b3Jr
-IGZvcg0KPiA+IFF1YXJrIFgxMDAwIGVuYWJsaW5nLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-Q2hhbmcgUmViZWNjYSBTd2VlIEZ1bg0KPiA+IDxyZWJlY2NhLnN3ZWUuZnVuLmNoYW5nQGludGVs
-LmNvbT4NCj4gDQo+IFRoaXMgaXMganVzdCBhZGRpbmcgaGFuZGxpbmcgb2YgY2FzY2FkaW5nIGlu
-dGVycnVwdHMgZnJvbSBhIEdQSU8gY2hpcCBhcyBmYXIgYXMgSQ0KPiBjYW4gdGVsbC4gV2UgZG9u
-J3QgZG8gdGhhdCB3aXRoIGxvY2FsIHBlci1kcml2ZXIgaGFja3MgYW55bW9yZSBpZiB0aGVyZSBp
-cyBubw0KPiBzcGVjaWFsIHJlYXNvbiwgd2UgaGF2ZSBoZWxwZXJzIG9uIGdwaW9saWIgdG8gaGFu
-ZGxlIHRoaXMuDQo+IA0KPiBNYWtlIHlvdXIgS2NvbmZpZyBzZWxlY3QgR1BJT0xJQl9JUlFDSElQ
-IGFuZCB0YWtlIGl0IGZyb20gdGhlcmUsIGxvb2sgYXQgaG93DQo+IG90aGVyIGRyaXZlcnMgdXNp
-bmcgR1BJT0xJQl9JUlFDSElQIGFyZSBkb25lLiBSZWFkIHRoZSBkb2N1bWVudGF0aW9uIGZvcg0K
-PiBjaGFpbmVkIGlycWNoaXBzIGluIERvY3VtZW50YXRpb24vZ3Bpby9kcml2ZXIudHh0DQo+IA0K
-PiBZb3VycywNCj4gTGludXMgV2FsbGVpag0K
+On Wed, Dec 3, 2014 at 10:50 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
+> selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
+> depending on CONFIG_PM_RUNTIME may now be changed to depend on
+> CONFIG_PM.
+>
+> Replace CONFIG_PM_RUNTIME with CONFIG_PM in drivers/gpio/gpio-omap.c.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
