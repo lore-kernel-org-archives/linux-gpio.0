@@ -1,44 +1,43 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] gpio / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
-Date: Wed, 3 Dec 2014 12:38:12 +0100
-Message-ID: <CABxcv=n-ADTXRaS6_K=B7UZEi9aCysNgS9yMs8jiZWY-2yqRLQ@mail.gmail.com>
-References: <1655942.O63mJN07or@vostro.rjw.lan>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 5/9] gpio: Add Fujitsu MB86S7x GPIO driver
+Date: Wed, 3 Dec 2014 14:32:31 +0100
+Message-ID: <CACRpkdY_DFF8BjwLs5m4fe+-eBjmxYW6z4aU+zxiG+EgZys0+w@mail.gmail.com>
+References: <1416486442-25200-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+	<1416487023-25426-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1655942.O63mJN07or@vostro.rjw.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:56855 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751190AbaLCNcc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Dec 2014 08:32:32 -0500
+Received: by mail-ig0-f179.google.com with SMTP id r2so12714337igi.6
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Dec 2014 05:32:31 -0800 (PST)
+In-Reply-To: <1416487023-25426-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vincent Yang <vincent.yang.fujitsu@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Green <andy.green@linaro.org>, Patch Tracking <patches@linaro.org>, Jaswinder Singh <jaswinder.singh@linaro.org>, Vincent Yang <Vincent.Yang@tw.fujitsu.com>, Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
 
-Hello Rafael,
+On Thu, Nov 20, 2014 at 1:37 PM, Vincent Yang
+<vincent.yang.fujitsu@gmail.com> wrote:
 
-On Wed, Dec 3, 2014 at 2:50 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Driver for Fujitsu MB86S7x SoCs that have a memory mapped GPIO controller.
 >
-> After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
-> selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
-> depending on CONFIG_PM_RUNTIME may now be changed to depend on
-> CONFIG_PM.
->
-> Replace CONFIG_PM_RUNTIME with CONFIG_PM in drivers/gpio/gpio-omap.c.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
+> Signed-off-by: Andy Green <andy.green@linaro.org>
+> Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+> Signed-off-by: Vincent Yang <Vincent.Yang@tw.fujitsu.com>
+> Signed-off-by: Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
 
-Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+This is a very simple MMIO GPIO controller.
 
->
-> Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
-> PM_SLEEP is selected) which is only in linux-next at the moment (via the
-> linux-pm tree).
->
-> Please let me know if it is OK to take this one into linux-pm.
->
+Why can this *not* just select GPIO_GENERIC and
+use drivers/gpio/gpio-generic.c?
 
-AFAICT there isn't another patch for gpio-omap on this cycle so I'm OK
-if you take this through linux-pm.
+You need a smallish driver making use of the generic
+MMIO library, see for example
+drivers/gpio/gpio-74xx-mmio.c
+or any other driver selecting GPIO_GENERIC.
 
-Best regards,
-Javier
+Yours,
+Linus Walleij
