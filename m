@@ -1,43 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/9] gpio: Add Fujitsu MB86S7x GPIO driver
-Date: Wed, 3 Dec 2014 14:32:31 +0100
-Message-ID: <CACRpkdY_DFF8BjwLs5m4fe+-eBjmxYW6z4aU+zxiG+EgZys0+w@mail.gmail.com>
-References: <1416486442-25200-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
-	<1416487023-25426-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+Subject: Re: [PATCH v2 1/1] gpio: mcp23s08: Add option to configure IRQ output
+ polarity as active high
+Date: Wed, 3 Dec 2014 14:35:56 +0100
+Message-ID: <CACRpkdZgDHmYO-LPcugBv5H8wV1HY2rqnhVaoYiaQGhZ24mCkg@mail.gmail.com>
+References: <1417418760-17368-1-git-send-email-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f179.google.com ([209.85.213.179]:56855 "EHLO
-	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751190AbaLCNcc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Dec 2014 08:32:32 -0500
-Received: by mail-ig0-f179.google.com with SMTP id r2so12714337igi.6
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Dec 2014 05:32:31 -0800 (PST)
-In-Reply-To: <1416487023-25426-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:63428 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751738AbaLCNf4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Dec 2014 08:35:56 -0500
+Received: by mail-ie0-f175.google.com with SMTP id x19so8646714ier.20
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Dec 2014 05:35:56 -0800 (PST)
+In-Reply-To: <1417418760-17368-1-git-send-email-alexander.stein@systec-electronic.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vincent Yang <vincent.yang.fujitsu@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Green <andy.green@linaro.org>, Patch Tracking <patches@linaro.org>, Jaswinder Singh <jaswinder.singh@linaro.org>, Vincent Yang <Vincent.Yang@tw.fujitsu.com>, Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Nov 20, 2014 at 1:37 PM, Vincent Yang
-<vincent.yang.fujitsu@gmail.com> wrote:
+On Mon, Dec 1, 2014 at 8:26 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
 
-> Driver for Fujitsu MB86S7x SoCs that have a memory mapped GPIO controller.
+> Default is active low, but if property is specified in DT set INTPOL flag.
 >
-> Signed-off-by: Andy Green <andy.green@linaro.org>
-> Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
-> Signed-off-by: Vincent Yang <Vincent.Yang@tw.fujitsu.com>
-> Signed-off-by: Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> ---
+> Changes in v2:
+> * Modified the commit message and binding text slightly to indicate that
+>   this features changes the IRQ output polarity.
 
-This is a very simple MMIO GPIO controller.
-
-Why can this *not* just select GPIO_GENERIC and
-use drivers/gpio/gpio-generic.c?
-
-You need a smallish driver making use of the generic
-MMIO library, see for example
-drivers/gpio/gpio-74xx-mmio.c
-or any other driver selecting GPIO_GENERIC.
+Patch applied.
 
 Yours,
 Linus Walleij
