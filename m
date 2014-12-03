@@ -1,31 +1,38 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
-Date: Wed, 3 Dec 2014 11:33:33 +0900
-Message-ID: <CAAVeFuKHYnPgCLFC+0QjYGyPxJ3fddGJkvmUk+=L0TZqsprXWQ@mail.gmail.com>
-References: <1655942.O63mJN07or@vostro.rjw.lan>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: Requesting different interrupt triggers for the same device type
+Date: Wed, 3 Dec 2014 13:06:18 +0200
+Message-ID: <547EEEAA.4040605@ti.com>
+References: <4282463.CMMRv84cbI@ws-stein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:62977 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750864AbaLCCdy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 21:33:54 -0500
-In-Reply-To: <1655942.O63mJN07or@vostro.rjw.lan>
+Received: from bear.ext.ti.com ([192.94.94.41]:37809 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750840AbaLCLG0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 3 Dec 2014 06:06:26 -0500
+In-Reply-To: <4282463.CMMRv84cbI@ws-stein>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+To: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
 
-On Wed, Dec 3, 2014 at 10:50 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 12/02/2014 06:45 PM, Alexander Stein wrote:
+> Hi,
 >
-> After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
-> selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
-> depending on CONFIG_PM_RUNTIME may now be changed to depend on
-> CONFIG_PM.
+> I have a board which has two PCA9555 attached. Due to hardware wirings each has a different interrupt trigger. One is active low and one is active high and each has a different interrupt parent.
+> How can I specify this in the device tree? Do I need to set IRQ_TYPE_LEVEL_LOW and IRQ_TYPE_LEVEL_HIGH approriately? How can this work, when the driver requests the interrupt like this?
+>> ret = devm_request_threaded_irq(&client->dev,
+>> 			client->irq,
+>> 			NULL,
+>> 			pca953x_irq_handler,
+>> 			IRQF_TRIGGER_LOW | IRQF_ONESHOT |
+>> 			IRQF_SHARED,
+>> 			dev_name(&client->dev), chip);
 >
-> Replace CONFIG_PM_RUNTIME with CONFIG_PM in drivers/gpio/gpio-omap.c.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> The interrupt flags seem rather fixed. Any comments/hints?
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+See, http://www.spinics.net/lists/linux-gpio/msg02731.html
+It may help.
+
+regards,
+-grygorii
