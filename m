@@ -1,58 +1,76 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Requesting different interrupt triggers for the same device type
-Date: Tue, 02 Dec 2014 17:45:53 +0100
-Message-ID: <4282463.CMMRv84cbI@ws-stein>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: [PATCH] gpio / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
+Date: Wed, 03 Dec 2014 02:50:30 +0100
+Message-ID: <1655942.O63mJN07or@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:50051 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932436AbaLBQnv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Dec 2014 11:43:51 -0500
-Received: from imapserver.systec-electronic.com (unknown [212.185.67.148])
-	by webbox1416.server-home.net (Postfix) with ESMTPA id 1239E27A580
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Dec 2014 17:43:50 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by imapserver.systec-electronic.com (Postfix) with ESMTP id 19245DA0C51
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Dec 2014 17:43:50 +0100 (CET)
-Received: from imapserver.systec-electronic.com ([127.0.0.1])
-	by localhost (imapserver.systec-electronic.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 8Esw6zbMWO5K for <linux-gpio@vger.kernel.org>;
-	Tue,  2 Dec 2014 17:43:48 +0100 (CET)
-Received: from ws-stein.localnet (unknown [192.168.10.109])
-	by imapserver.systec-electronic.com (Postfix) with ESMTPA id 07BE1DA0AD2
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Dec 2014 17:43:48 +0100 (CET)
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
 
-Hi,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I have a board which has two PCA9555 attached. Due to hardware wirings each has a different interrupt trigger. One is active low and one is active high and each has a different interrupt parent.
-How can I specify this in the device tree? Do I need to set IRQ_TYPE_LEVEL_LOW and IRQ_TYPE_LEVEL_HIGH approriately? How can this work, when the driver requests the interrupt like this?
-> ret = devm_request_threaded_irq(&client->dev,
-> 			client->irq,
-> 			NULL,
-> 			pca953x_irq_handler,
-> 			IRQF_TRIGGER_LOW | IRQF_ONESHOT |
-> 			IRQF_SHARED,
-> 			dev_name(&client->dev), chip);
+After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
+selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
+depending on CONFIG_PM_RUNTIME may now be changed to depend on
+CONFIG_PM.
 
-The interrupt flags seem rather fixed. Any comments/hints?
+Replace CONFIG_PM_RUNTIME with CONFIG_PM in drivers/gpio/gpio-omap.c.
 
-Best regards,
-Alexander
--- 
-Dipl.-Inf. Alexander Stein
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-SYS TEC electronic GmbH
-Am Windrad 2
-08468 Heinsdorfergrund
-Tel.: 03765 38600-1156
-Fax: 03765 38600-4100
-Email: alexander.stein@systec-electronic.com
-Website: www.systec-electronic.com
+Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
+PM_SLEEP is selected) which is only in linux-next at the moment (via the
+linux-pm tree).
+
+Please let me know if it is OK to take this one into linux-pm.
+
+---
+ drivers/gpio/gpio-omap.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+Index: linux-pm/drivers/gpio/gpio-omap.c
+===================================================================
+--- linux-pm.orig/drivers/gpio/gpio-omap.c
++++ linux-pm/drivers/gpio/gpio-omap.c
+@@ -1259,7 +1259,7 @@ static int omap_gpio_probe(struct platfo
  
-Managing Director: Dipl.-Phys. Siegmar Schmidt
-Commercial registry: Amtsgericht Chemnitz, HRB 28082
+ #ifdef CONFIG_ARCH_OMAP2PLUS
+ 
+-#if defined(CONFIG_PM_RUNTIME)
++#if defined(CONFIG_PM)
+ static void omap_gpio_restore_context(struct gpio_bank *bank);
+ 
+ static int omap_gpio_runtime_suspend(struct device *dev)
+@@ -1440,7 +1440,7 @@ static int omap_gpio_runtime_resume(stru
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_PM_RUNTIME */
++#endif /* CONFIG_PM */
+ 
+ void omap2_gpio_prepare_for_idle(int pwr_mode)
+ {
+@@ -1468,7 +1468,7 @@ void omap2_gpio_resume_after_idle(void)
+ 	}
+ }
+ 
+-#if defined(CONFIG_PM_RUNTIME)
++#if defined(CONFIG_PM)
+ static void omap_gpio_init_context(struct gpio_bank *p)
+ {
+ 	struct omap_gpio_reg_offs *regs = p->regs;
+@@ -1525,7 +1525,7 @@ static void omap_gpio_restore_context(st
+ 	writel_relaxed(bank->context.irqenable2,
+ 				bank->base + bank->regs->irqenable2);
+ }
+-#endif /* CONFIG_PM_RUNTIME */
++#endif /* CONFIG_PM */
+ #else
+ #define omap_gpio_runtime_suspend NULL
+ #define omap_gpio_runtime_resume NULL
+
