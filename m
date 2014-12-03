@@ -1,45 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
-Date: Wed, 3 Dec 2014 14:54:07 +0100
-Message-ID: <CACRpkdYt7fSbve9oYsThuBAN_bnKQ+yOmV4kr6PhUpnKHuoXBg@mail.gmail.com>
-References: <1655942.O63mJN07or@vostro.rjw.lan>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v1] usb: phy: generic: migrate to gpio_desc
+Date: Wed, 03 Dec 2014 23:54:45 +0100
+Message-ID: <87mw74z6mi.fsf@free.fr>
+References: <1415535787-21868-1-git-send-email-robert.jarzmik@free.fr>
+	<20141121154358.GF7508@saruman>
+	<CACRpkdZtwYb77ytGiadFnZAUOkr8y_HPQoM3vmXBc+N6dszAJw@mail.gmail.com>
+	<87bnno1lbj.fsf@free.fr>
+	<CAAVeFuKHFTuMYS4G468YoCZ-JgaT3zV8ObZ6AHcg06H0yVBgig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:53337 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751536AbaLCNyI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Dec 2014 08:54:08 -0500
-Received: by mail-ig0-f180.google.com with SMTP id h15so12768279igd.7
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Dec 2014 05:54:08 -0800 (PST)
-In-Reply-To: <1655942.O63mJN07or@vostro.rjw.lan>
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:22233 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752273AbaLCWyv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Dec 2014 17:54:51 -0500
+In-Reply-To: <CAAVeFuKHFTuMYS4G468YoCZ-JgaT3zV8ObZ6AHcg06H0yVBgig@mail.gmail.com>
+	(Alexandre Courbot's message of "Mon, 1 Dec 2014 13:01:32 +0900")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Felipe Balbi <balbi@ti.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Dec 3, 2014 at 2:50 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+Alexandre Courbot <gnurou@gmail.com> writes:
 
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
-> selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
-> depending on CONFIG_PM_RUNTIME may now be changed to depend on
-> CONFIG_PM.
->
-> Replace CONFIG_PM_RUNTIME with CONFIG_PM in drivers/gpio/gpio-omap.c.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->
-> Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
-> PM_SLEEP is selected) which is only in linux-next at the moment (via the
-> linux-pm tree).
->
-> Please let me know if it is OK to take this one into linux-pm.
+> I think what you want to do is explained in the "Platform Data"
+> section of Documentation/gpio/board.txt
+Ah yeah, already one year and I never checked again this documemtation.
 
-Go ahead. Should be no collissions.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks.
 
-Yours,
-Linus Walleij
+-- 
+Robert
