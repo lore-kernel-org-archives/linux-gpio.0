@@ -1,61 +1,135 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: Requesting different interrupt triggers for the same device type
-Date: Thu, 4 Dec 2014 14:06:29 +0200
-Message-ID: <54804E45.7090808@ti.com>
-References: <4282463.CMMRv84cbI@ws-stein> <547EEEAA.4040605@ti.com> <1646345.4akWfRNnkY@ws-stein>
+From: Kamlakant Patel <kamlakant.patel@linaro.org>
+Subject: Re: [PATCH v1 5/5] gpio: document basic mmio gpio library
+Date: Thu, 4 Dec 2014 17:52:24 +0530
+Message-ID: <CA+aN+ytaGkpxh81e+1r8-05nm4sw5oKb2bykiiEuPUzAeqx6Ow@mail.gmail.com>
+References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
+	<1417435778-21879-6-git-send-email-kamlakant.patel@linaro.org>
+	<CAAVeFuJ0iOY7XdZfhMUyo=Hsh7xjF-GNqk6DkAT-ZwydpsE1_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:35010 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753915AbaLDMGe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 4 Dec 2014 07:06:34 -0500
-In-Reply-To: <1646345.4akWfRNnkY@ws-stein>
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:47399 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753916AbaLDMW1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 07:22:27 -0500
+Received: by mail-lb0-f180.google.com with SMTP id l4so14056757lbv.11
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Dec 2014 04:22:25 -0800 (PST)
+In-Reply-To: <CAAVeFuJ0iOY7XdZfhMUyo=Hsh7xjF-GNqk6DkAT-ZwydpsE1_Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-On 12/04/2014 10:27 AM, Alexander Stein wrote:
-> Hello Grygorii,
-> 
-> On Wednesday 03 December 2014 13:06:18, Grygorii Strashko wrote:
->> On 12/02/2014 06:45 PM, Alexander Stein wrote:
->>> Hi,
->>>
->>> I have a board which has two PCA9555 attached. Due to hardware wirings each has a different interrupt trigger. One is active low and one is active high and each has a different interrupt parent.
->>> How can I specify this in the device tree? Do I need to set IRQ_TYPE_LEVEL_LOW and IRQ_TYPE_LEVEL_HIGH approriately? How can this work, when the driver requests the interrupt like this?
->>>> ret = devm_request_threaded_irq(&client->dev,
->>>> 			client->irq,
->>>> 			NULL,
->>>> 			pca953x_irq_handler,
->>>> 			IRQF_TRIGGER_LOW | IRQF_ONESHOT |
->>>> 			IRQF_SHARED,
->>>> 			dev_name(&client->dev), chip);
->>>
->>> The interrupt flags seem rather fixed. Any comments/hints?
+On 4 December 2014 at 14:42, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
+>> From: Kamlakant Patel <kamlakant.patel@linaro.org>
 >>
->> See, http://www.spinics.net/lists/linux-gpio/msg02731.html
->> It may help.
-> 
-> Well, removing that trigger here (and in another driver where INT line is shared) it "works". It seems that each (DT-) driver should remove those explicit flags, no?
+>> This is a brief documentation on how to use GPIO Generic
+>> library for memory-mapped GPIO controllers.
+>>
+>> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
+>> ---
+>>  Documentation/gpio/driver.txt | 50 +++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 50 insertions(+)
+>
+> Yum, more doc!
+>
+>>
+>> diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+>> index 31e0b5d..563abea 100644
+>> --- a/Documentation/gpio/driver.txt
+>> +++ b/Documentation/gpio/driver.txt
+>> @@ -190,3 +190,53 @@ gpiochip_free_own_desc().
+>>  These functions must be used with care since they do not affect module use
+>>  count. Do not use the functions to request gpio descriptors not owned by the
+>>  calling driver.
+>> +
+>> +
+>> +Generic driver for memory-mapped GPIO controllers
+>> +-------------------------------------------------
+>> +The GPIO generic library provides support for basic platform_device
+>> +memory-mapped GPIO controllers, which can be accessed by selecting Kconfig
+>> +symbol GPIO_GENERIC and using library functions provided by GPIO generic
+>> +driver (see drivers/gpio/gpio-generic.c).
+>> +The simplest form of a GPIO controller that the driver support is just a
+>
+> s/support/supports
+>
+>> +single "data" register, where GPIO state can be read and/or written.
+>> +
+>> +The driver can be registered using "basic-mmio-gpio" or for big-endian
+>> +notation support use "basic-mmio-gpio-be". The code will configure gpio_chip
+>
+> Using where? You should say that this is for the platform device name.
+>
+>> +and issue gpiochip_add().
+>
+>> +
+>> +The driver supports:
+>> +- 8/16/32/64 bits registers. The number of GPIOs is determined by the width of
+>> +  the registers.
+>> +- GPIO controllers with clear/set registers.
+>> +- GPIO controllers with a single "data" register.
+>> +- Big endian bits/GPIOs ordering.
+>
+> Maybe add a sentence indicating that these settings are defined in the
+> drivers using named memory resources.
+>
+>> +
+>> +For setting GPIO's there are three supported configurations:
+>> +- single input/output register resource (named "dat").
+>
+> This resource seems to be mandatory - please make sure you mention this fact.
+>
+>> +- set/clear pair (named "set" and "clr").
+>> +- single output register resource and single input resource ("set" and dat").
+>> +
+>> +For setting the GPIO direction, there are three supported configurations:
+>> +- simple bidirection GPIO that requires no configuration.
+>
+> s/bidirection/bidirectional maybe?
+>
+>> +- an output direction register (named "dirout") where a 1 bit indicates the
+>> +  GPIO is an output.
+>> +- an input direction register (named "dirin") where a 1 bit indicates the GPIO
+>> +  is an input.
+>> +
+>> +It is possible to use only parts of GPIO generic library. Each GPIO controller
+>> +using GPIO generic library needs to include the following header.
+>> +
+>> +        #include <linux/basic_mmio_gpio.h>
+>> +
+>> +Use bgpio_init to configure gpio_chip and bgpio_remove to remove the controller.
+>> +int bgpio_init(struct bgpio_chip *bgc, struct device *dev,
+>> +               unsigned long sz, void __iomem *dat, void __iomem *set,
+>> +               void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
+>> +               unsigned long flags);
+>
+> If you put the prototype for bgpio_init(), please also put the one of
+> bgpio_remove()...
+>
+>> +
+>> +The "flag" parameter can be following depending on controller configuration:
+>> +BGPIOF_BIG_ENDIAN               BIT(0)
+>> +BGPIOF_UNREADABLE_REG_SET       BIT(1) /* reg_set is unreadable */
+>> +BGPIOF_UNREADABLE_REG_DIR       BIT(2) /* reg_dir is unreadable */
+>> +BGPIOF_BIG_ENDIAN_BYTE_ORDER    BIT(3)
+>
+> Right now this documentation is a little bit confusing. Basically
+> there are two ways to use this driver:
+>
+> 1) Name your platform device ""basic-mmio-gpio" or
+> "basic-mmio-gpio-be", set the right named memory resources to specify
+> the desired configuration, and let bgpio_pdev_probe() do all the work.
+>
+> 2) Allocate a bgpio_chip yourself, call bgpio_init() on it and its
+> resources, and finally invoke gpiochip_add() yourself.
+>
+> These two different ways of doing kind of seem to be mixed together.
+> Can you try to highlight the fact that these are alternatives?
 
-Hm. I think yes, in general. But problem is compatibility with non-DT builds and it
-should be solved somehow in per-driver specific way.
+Thanks for the review comments and suggestions. I will update and send
+the patch.
 
-probably simplest way would be smth. like this:
-
-unsigned long irqflags = 0;
-
-if (!dev->of_node)
-	irqflags = IRQF_TRIGGER_LOW;
-
-devm_request_threaded_irq(..,  irqflags | IRQF_ONESHOT | IRQF_SHARED, ..);
-
-regards,
--grygorii
-
-
-
-
+Thanks,
+Kamlakant Patel
