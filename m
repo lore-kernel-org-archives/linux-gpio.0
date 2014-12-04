@@ -1,124 +1,185 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v1 5/5] gpio: document basic mmio gpio library
-Date: Thu, 4 Dec 2014 18:12:38 +0900
-Message-ID: <CAAVeFuJ0iOY7XdZfhMUyo=Hsh7xjF-GNqk6DkAT-ZwydpsE1_Q@mail.gmail.com>
-References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org> <1417435778-21879-6-git-send-email-kamlakant.patel@linaro.org>
+Subject: Re: [PATCH v1 1/5] gpio: moxart: convert to use basic mmio gpio library
+Date: Thu, 4 Dec 2014 18:17:39 +0900
+Message-ID: <CAAVeFuLHjxTi+OyT2aV4u0BG3_2b9X2JxhD+sW+cU2MUvpWTMQ@mail.gmail.com>
+References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org> <1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:65501 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752056AbaLDJM7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 04:12:59 -0500
-In-Reply-To: <1417435778-21879-6-git-send-email-kamlakant.patel@linaro.org>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:33869 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751391AbaLDJSA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 04:18:00 -0500
+Received: by mail-ig0-f174.google.com with SMTP id hn15so18381984igb.7
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Dec 2014 01:18:00 -0800 (PST)
+In-Reply-To: <1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Kamlakant Patel <kamlakant.patel@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
 > From: Kamlakant Patel <kamlakant.patel@linaro.org>
 >
-> This is a brief documentation on how to use GPIO Generic
-> library for memory-mapped GPIO controllers.
+> This patch converts MOXART GPIO driver to use basic_mmio_gpio
+> generic library.
 >
 > Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
+> Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
 > ---
->  Documentation/gpio/driver.txt | 50 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-
-Yum, more doc!
-
+>  drivers/gpio/Kconfig       |   1 +
+>  drivers/gpio/gpio-moxart.c | 101 ++++++++++++++-------------------------------
+>  2 files changed, 32 insertions(+), 70 deletions(-)
 >
-> diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
-> index 31e0b5d..563abea 100644
-> --- a/Documentation/gpio/driver.txt
-> +++ b/Documentation/gpio/driver.txt
-> @@ -190,3 +190,53 @@ gpiochip_free_own_desc().
->  These functions must be used with care since they do not affect module use
->  count. Do not use the functions to request gpio descriptors not owned by the
->  calling driver.
-> +
-> +
-> +Generic driver for memory-mapped GPIO controllers
-> +-------------------------------------------------
-> +The GPIO generic library provides support for basic platform_device
-> +memory-mapped GPIO controllers, which can be accessed by selecting Kconfig
-> +symbol GPIO_GENERIC and using library functions provided by GPIO generic
-> +driver (see drivers/gpio/gpio-generic.c).
-> +The simplest form of a GPIO controller that the driver support is just a
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 0959ca9..3bd4d63 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -184,6 +184,7 @@ config GPIO_F7188X
+>  config GPIO_MOXART
+>         bool "MOXART GPIO support"
+>         depends on ARCH_MOXART
+> +       select GPIO_GENERIC
+>         help
+>           Select this option to enable GPIO driver for
+>           MOXA ART SoC devices.
+> diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
+> index 4661e18..122958f 100644
+> --- a/drivers/gpio/gpio-moxart.c
+> +++ b/drivers/gpio/gpio-moxart.c
+> @@ -23,21 +23,12 @@
+>  #include <linux/delay.h>
+>  #include <linux/timer.h>
+>  #include <linux/bitops.h>
+> +#include <linux/basic_mmio_gpio.h>
+>
+>  #define GPIO_DATA_OUT          0x00
+>  #define GPIO_DATA_IN           0x04
+>  #define GPIO_PIN_DIRECTION     0x08
+>
+> -struct moxart_gpio_chip {
+> -       struct gpio_chip gpio;
+> -       void __iomem *base;
+> -};
+> -
+> -static inline struct moxart_gpio_chip *to_moxart_gpio(struct gpio_chip *chip)
+> -{
+> -       return container_of(chip, struct moxart_gpio_chip, gpio);
+> -}
+> -
+>  static int moxart_gpio_request(struct gpio_chip *chip, unsigned offset)
+>  {
+>         return pinctrl_request_gpio(offset);
+> @@ -48,90 +39,60 @@ static void moxart_gpio_free(struct gpio_chip *chip, unsigned offset)
+>         pinctrl_free_gpio(offset);
+>  }
+>
+> -static void moxart_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+> -{
+> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
+> -       void __iomem *ioaddr = gc->base + GPIO_DATA_OUT;
+> -       u32 reg = readl(ioaddr);
+> -
+> -       if (value)
+> -               reg = reg | BIT(offset);
+> -       else
+> -               reg = reg & ~BIT(offset);
+> -
+> -       writel(reg, ioaddr);
+> -}
+> -
+>  static int moxart_gpio_get(struct gpio_chip *chip, unsigned offset)
+>  {
+> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
+> -       u32 ret = readl(gc->base + GPIO_PIN_DIRECTION);
+> +       struct bgpio_chip *bgc = to_bgpio_chip(chip);
+> +       u32 ret = bgc->read_reg(bgc->reg_dir);
+>
+>         if (ret & BIT(offset))
+> -               return !!(readl(gc->base + GPIO_DATA_OUT) & BIT(offset));
+> +               return !!(bgc->read_reg(bgc->reg_set) & BIT(offset));
+>         else
+> -               return !!(readl(gc->base + GPIO_DATA_IN) & BIT(offset));
+> -}
+> -
+> -static int moxart_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+> -{
+> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
+> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
+> -
+> -       writel(readl(ioaddr) & ~BIT(offset), ioaddr);
+> -       return 0;
+> -}
+> -
+> -static int moxart_gpio_direction_output(struct gpio_chip *chip,
+> -                                       unsigned offset, int value)
+> -{
+> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
+> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
+> -
+> -       moxart_gpio_set(chip, offset, value);
+> -       writel(readl(ioaddr) | BIT(offset), ioaddr);
+> -       return 0;
+> +               return !!(bgc->read_reg(bgc->reg_dat) & BIT(offset));
+>  }
+>
+> -static struct gpio_chip moxart_template_chip = {
+> -       .label                  = "moxart-gpio",
+> -       .request                = moxart_gpio_request,
+> -       .free                   = moxart_gpio_free,
+> -       .direction_input        = moxart_gpio_direction_input,
+> -       .direction_output       = moxart_gpio_direction_output,
+> -       .set                    = moxart_gpio_set,
+> -       .get                    = moxart_gpio_get,
+> -       .ngpio                  = 32,
+> -       .owner                  = THIS_MODULE,
+> -};
+> -
+>  static int moxart_gpio_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+>         struct resource *res;
+> -       struct moxart_gpio_chip *mgc;
+> +       struct bgpio_chip *bgc;
+> +       void __iomem *base;
+>         int ret;
+>
+> -       mgc = devm_kzalloc(dev, sizeof(*mgc), GFP_KERNEL);
+> -       if (!mgc)
+> +       bgc = devm_kzalloc(dev, sizeof(*bgc), GFP_KERNEL);
+> +       if (!bgc)
+>                 return -ENOMEM;
+> -       mgc->gpio = moxart_template_chip;
+>
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       mgc->base = devm_ioremap_resource(dev, res);
+> -       if (IS_ERR(mgc->base))
+> -               return PTR_ERR(mgc->base);
+> +       base = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(base))
+> +               return PTR_ERR(base);
+>
+> -       mgc->gpio.dev = dev;
+> +       ret = bgpio_init(bgc, dev, 4, base + GPIO_DATA_IN,
+> +                   base + GPIO_DATA_OUT, NULL,
+> +                   base + GPIO_PIN_DIRECTION, NULL, 0);
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "bgpio_init failed\n");
+> +               return ret;
+> +       }
+>
+> -       ret = gpiochip_add(&mgc->gpio);
+> +       bgc->gc.label = "moxart-gpio";
+> +       bgc->gc.request = moxart_gpio_request;
+> +       bgc->gc.free = moxart_gpio_free;
+> +       bgc->gc.get = moxart_gpio_get;
+> +       bgc->data = bgc->read_reg(bgc->reg_set);
+> +       bgc->gc.base = 0;
 
-s/support/supports
+Do we actually want all instances of this driver to clain GPIOs 0..31?
 
-> +single "data" register, where GPIO state can be read and/or written.
-> +
-> +The driver can be registered using "basic-mmio-gpio" or for big-endian
-> +notation support use "basic-mmio-gpio-be". The code will configure gpio_chip
+If so,
 
-Using where? You should say that this is for the platform device name.
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-> +and issue gpiochip_add().
-
-> +
-> +The driver supports:
-> +- 8/16/32/64 bits registers. The number of GPIOs is determined by the width of
-> +  the registers.
-> +- GPIO controllers with clear/set registers.
-> +- GPIO controllers with a single "data" register.
-> +- Big endian bits/GPIOs ordering.
-
-Maybe add a sentence indicating that these settings are defined in the
-drivers using named memory resources.
-
-> +
-> +For setting GPIO's there are three supported configurations:
-> +- single input/output register resource (named "dat").
-
-This resource seems to be mandatory - please make sure you mention this fact.
-
-> +- set/clear pair (named "set" and "clr").
-> +- single output register resource and single input resource ("set" and dat").
-> +
-> +For setting the GPIO direction, there are three supported configurations:
-> +- simple bidirection GPIO that requires no configuration.
-
-s/bidirection/bidirectional maybe?
-
-> +- an output direction register (named "dirout") where a 1 bit indicates the
-> +  GPIO is an output.
-> +- an input direction register (named "dirin") where a 1 bit indicates the GPIO
-> +  is an input.
-> +
-> +It is possible to use only parts of GPIO generic library. Each GPIO controller
-> +using GPIO generic library needs to include the following header.
-> +
-> +        #include <linux/basic_mmio_gpio.h>
-> +
-> +Use bgpio_init to configure gpio_chip and bgpio_remove to remove the controller.
-> +int bgpio_init(struct bgpio_chip *bgc, struct device *dev,
-> +               unsigned long sz, void __iomem *dat, void __iomem *set,
-> +               void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
-> +               unsigned long flags);
-
-If you put the prototype for bgpio_init(), please also put the one of
-bgpio_remove()...
-
-> +
-> +The "flag" parameter can be following depending on controller configuration:
-> +BGPIOF_BIG_ENDIAN               BIT(0)
-> +BGPIOF_UNREADABLE_REG_SET       BIT(1) /* reg_set is unreadable */
-> +BGPIOF_UNREADABLE_REG_DIR       BIT(2) /* reg_dir is unreadable */
-> +BGPIOF_BIG_ENDIAN_BYTE_ORDER    BIT(3)
-
-Right now this documentation is a little bit confusing. Basically
-there are two ways to use this driver:
-
-1) Name your platform device ""basic-mmio-gpio" or
-"basic-mmio-gpio-be", set the right named memory resources to specify
-the desired configuration, and let bgpio_pdev_probe() do all the work.
-
-2) Allocate a bgpio_chip yourself, call bgpio_init() on it and its
-resources, and finally invoke gpiochip_add() yourself.
-
-These two different ways of doing kind of seem to be mixed together.
-Can you try to highlight the fact that these are alternatives?
+Since this patch greatly simplifies the code and has been properly tested.
