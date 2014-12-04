@@ -1,135 +1,51 @@
-From: Kamlakant Patel <kamlakant.patel@linaro.org>
-Subject: Re: [PATCH v1 5/5] gpio: document basic mmio gpio library
-Date: Thu, 4 Dec 2014 17:52:24 +0530
-Message-ID: <CA+aN+ytaGkpxh81e+1r8-05nm4sw5oKb2bykiiEuPUzAeqx6Ow@mail.gmail.com>
-References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
-	<1417435778-21879-6-git-send-email-kamlakant.patel@linaro.org>
-	<CAAVeFuJ0iOY7XdZfhMUyo=Hsh7xjF-GNqk6DkAT-ZwydpsE1_Q@mail.gmail.com>
+From: He YunLei <heyunlei@huawei.com>
+Subject: Re: [PATCH 1/2] gpio: pl061: hook request if gpio-ranges avaiable
+Date: Thu, 4 Dec 2014 21:33:58 +0800
+Message-ID: <548062C6.60801@huawei.com>
+References: <1417494780-3704-1-git-send-email-heyunlei@huawei.com> <1417494780-3704-2-git-send-email-heyunlei@huawei.com> <CACRpkdZbei_gpWR7LfSKb-d=ti9POMR9n9k2z8OMfhgm5BwDFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:47399 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753916AbaLDMW1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 07:22:27 -0500
-Received: by mail-lb0-f180.google.com with SMTP id l4so14056757lbv.11
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Dec 2014 04:22:25 -0800 (PST)
-In-Reply-To: <CAAVeFuJ0iOY7XdZfhMUyo=Hsh7xjF-GNqk6DkAT-ZwydpsE1_Q@mail.gmail.com>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:27333 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753956AbaLDNeO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 08:34:14 -0500
+In-Reply-To: <CACRpkdZbei_gpWR7LfSKb-d=ti9POMR9n9k2z8OMfhgm5BwDFg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wangbintian <bintian.wang@huawei.com>, peifeiyue@huawei.com, liguozhu@hisilicon.com, Xinwei Kong <kong.kongxinwei@hisilicon.com>
 
-On 4 December 2014 at 14:42, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
->> From: Kamlakant Patel <kamlakant.patel@linaro.org>
+On 2014/12/3 21:45, Linus Walleij wrote:
+> On Tue, Dec 2, 2014 at 5:32 AM, Yunlei He <heyunlei@huawei.com> wrote:
+>
+>> Gpio-ranges property is useful to represent which GPIOs correspond
+>> to which pins on which pin controllers. But there may be some gpios
+>> without pinctrl operation. So check whether gpio-ranges property
+>> exists in device node first.
 >>
->> This is a brief documentation on how to use GPIO Generic
->> library for memory-mapped GPIO controllers.
->>
->> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
->> ---
->>  Documentation/gpio/driver.txt | 50 +++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 50 insertions(+)
+>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>> Signed-off-by: Xinwei Kong <kong.kongxinwei@hisilicon.com>
+>> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
 >
-> Yum, more doc!
+> Yep simple and elegant.
 >
->>
->> diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
->> index 31e0b5d..563abea 100644
->> --- a/Documentation/gpio/driver.txt
->> +++ b/Documentation/gpio/driver.txt
->> @@ -190,3 +190,53 @@ gpiochip_free_own_desc().
->>  These functions must be used with care since they do not affect module use
->>  count. Do not use the functions to request gpio descriptors not owned by the
->>  calling driver.
->> +
->> +
->> +Generic driver for memory-mapped GPIO controllers
->> +-------------------------------------------------
->> +The GPIO generic library provides support for basic platform_device
->> +memory-mapped GPIO controllers, which can be accessed by selecting Kconfig
->> +symbol GPIO_GENERIC and using library functions provided by GPIO generic
->> +driver (see drivers/gpio/gpio-generic.c).
->> +The simplest form of a GPIO controller that the driver support is just a
+> Patch applied.
 >
-> s/support/supports
+> However I wonder if it would be possible to move this to the
+> gpiolib.c or gpiolib-of.c core so not all drivers with this problem
+> has to implement it.
 >
->> +single "data" register, where GPIO state can be read and/or written.
->> +
->> +The driver can be registered using "basic-mmio-gpio" or for big-endian
->> +notation support use "basic-mmio-gpio-be". The code will configure gpio_chip
+> Yours,
+> Linus Walleij
 >
-> Using where? You should say that this is for the platform device name.
 >
->> +and issue gpiochip_add().
->
->> +
->> +The driver supports:
->> +- 8/16/32/64 bits registers. The number of GPIOs is determined by the width of
->> +  the registers.
->> +- GPIO controllers with clear/set registers.
->> +- GPIO controllers with a single "data" register.
->> +- Big endian bits/GPIOs ordering.
->
-> Maybe add a sentence indicating that these settings are defined in the
-> drivers using named memory resources.
->
->> +
->> +For setting GPIO's there are three supported configurations:
->> +- single input/output register resource (named "dat").
->
-> This resource seems to be mandatory - please make sure you mention this fact.
->
->> +- set/clear pair (named "set" and "clr").
->> +- single output register resource and single input resource ("set" and dat").
->> +
->> +For setting the GPIO direction, there are three supported configurations:
->> +- simple bidirection GPIO that requires no configuration.
->
-> s/bidirection/bidirectional maybe?
->
->> +- an output direction register (named "dirout") where a 1 bit indicates the
->> +  GPIO is an output.
->> +- an input direction register (named "dirin") where a 1 bit indicates the GPIO
->> +  is an input.
->> +
->> +It is possible to use only parts of GPIO generic library. Each GPIO controller
->> +using GPIO generic library needs to include the following header.
->> +
->> +        #include <linux/basic_mmio_gpio.h>
->> +
->> +Use bgpio_init to configure gpio_chip and bgpio_remove to remove the controller.
->> +int bgpio_init(struct bgpio_chip *bgc, struct device *dev,
->> +               unsigned long sz, void __iomem *dat, void __iomem *set,
->> +               void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
->> +               unsigned long flags);
->
-> If you put the prototype for bgpio_init(), please also put the one of
-> bgpio_remove()...
->
->> +
->> +The "flag" parameter can be following depending on controller configuration:
->> +BGPIOF_BIG_ENDIAN               BIT(0)
->> +BGPIOF_UNREADABLE_REG_SET       BIT(1) /* reg_set is unreadable */
->> +BGPIOF_UNREADABLE_REG_DIR       BIT(2) /* reg_dir is unreadable */
->> +BGPIOF_BIG_ENDIAN_BYTE_ORDER    BIT(3)
->
-> Right now this documentation is a little bit confusing. Basically
-> there are two ways to use this driver:
->
-> 1) Name your platform device ""basic-mmio-gpio" or
-> "basic-mmio-gpio-be", set the right named memory resources to specify
-> the desired configuration, and let bgpio_pdev_probe() do all the work.
->
-> 2) Allocate a bgpio_chip yourself, call bgpio_init() on it and its
-> resources, and finally invoke gpiochip_add() yourself.
->
-> These two different ways of doing kind of seem to be mixed together.
-> Can you try to highlight the fact that these are alternatives?
+Thanks for your suggest, I can move this judgement to the gpiolib.c in function
+gpio_request() along with a symbol uses_pinctrl in struct gpio_chip. But the symbol
+uses_pinctrl still need to assign a value in device initial time. So I think that drivers
+do this separately is better.
 
-Thanks for the review comments and suggestions. I will update and send
-the patch.
+Yours,
+Yunlei
 
-Thanks,
-Kamlakant Patel
