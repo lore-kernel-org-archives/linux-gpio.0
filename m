@@ -1,185 +1,172 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v1 1/5] gpio: moxart: convert to use basic mmio gpio library
-Date: Thu, 4 Dec 2014 18:17:39 +0900
-Message-ID: <CAAVeFuLHjxTi+OyT2aV4u0BG3_2b9X2JxhD+sW+cU2MUvpWTMQ@mail.gmail.com>
-References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org> <1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:33869 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751391AbaLDJSA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 04:18:00 -0500
-Received: by mail-ig0-f174.google.com with SMTP id hn15so18381984igb.7
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Dec 2014 01:18:00 -0800 (PST)
-In-Reply-To: <1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 2/2] pinctrl: cherryview: Save and restore pin configs over system sleep
+Date: Thu,  4 Dec 2014 12:32:50 +0200
+Message-ID: <1417689170-41627-2-git-send-email-mika.westerberg@linux.intel.com>
+References: <1417689170-41627-1-git-send-email-mika.westerberg@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1417689170-41627-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Kamlakant Patel <kamlakant.patel@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
-> From: Kamlakant Patel <kamlakant.patel@linaro.org>
->
-> This patch converts MOXART GPIO driver to use basic_mmio_gpio
-> generic library.
->
-> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
-> Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
-> ---
->  drivers/gpio/Kconfig       |   1 +
->  drivers/gpio/gpio-moxart.c | 101 ++++++++++++++-------------------------------
->  2 files changed, 32 insertions(+), 70 deletions(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 0959ca9..3bd4d63 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -184,6 +184,7 @@ config GPIO_F7188X
->  config GPIO_MOXART
->         bool "MOXART GPIO support"
->         depends on ARCH_MOXART
-> +       select GPIO_GENERIC
->         help
->           Select this option to enable GPIO driver for
->           MOXA ART SoC devices.
-> diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
-> index 4661e18..122958f 100644
-> --- a/drivers/gpio/gpio-moxart.c
-> +++ b/drivers/gpio/gpio-moxart.c
-> @@ -23,21 +23,12 @@
->  #include <linux/delay.h>
->  #include <linux/timer.h>
->  #include <linux/bitops.h>
-> +#include <linux/basic_mmio_gpio.h>
->
->  #define GPIO_DATA_OUT          0x00
->  #define GPIO_DATA_IN           0x04
->  #define GPIO_PIN_DIRECTION     0x08
->
-> -struct moxart_gpio_chip {
-> -       struct gpio_chip gpio;
-> -       void __iomem *base;
-> -};
-> -
-> -static inline struct moxart_gpio_chip *to_moxart_gpio(struct gpio_chip *chip)
-> -{
-> -       return container_of(chip, struct moxart_gpio_chip, gpio);
-> -}
-> -
->  static int moxart_gpio_request(struct gpio_chip *chip, unsigned offset)
->  {
->         return pinctrl_request_gpio(offset);
-> @@ -48,90 +39,60 @@ static void moxart_gpio_free(struct gpio_chip *chip, unsigned offset)
->         pinctrl_free_gpio(offset);
->  }
->
-> -static void moxart_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-> -{
-> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
-> -       void __iomem *ioaddr = gc->base + GPIO_DATA_OUT;
-> -       u32 reg = readl(ioaddr);
-> -
-> -       if (value)
-> -               reg = reg | BIT(offset);
-> -       else
-> -               reg = reg & ~BIT(offset);
-> -
-> -       writel(reg, ioaddr);
-> -}
-> -
->  static int moxart_gpio_get(struct gpio_chip *chip, unsigned offset)
->  {
-> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
-> -       u32 ret = readl(gc->base + GPIO_PIN_DIRECTION);
-> +       struct bgpio_chip *bgc = to_bgpio_chip(chip);
-> +       u32 ret = bgc->read_reg(bgc->reg_dir);
->
->         if (ret & BIT(offset))
-> -               return !!(readl(gc->base + GPIO_DATA_OUT) & BIT(offset));
-> +               return !!(bgc->read_reg(bgc->reg_set) & BIT(offset));
->         else
-> -               return !!(readl(gc->base + GPIO_DATA_IN) & BIT(offset));
-> -}
-> -
-> -static int moxart_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-> -{
-> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
-> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
-> -
-> -       writel(readl(ioaddr) & ~BIT(offset), ioaddr);
-> -       return 0;
-> -}
-> -
-> -static int moxart_gpio_direction_output(struct gpio_chip *chip,
-> -                                       unsigned offset, int value)
-> -{
-> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
-> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
-> -
-> -       moxart_gpio_set(chip, offset, value);
-> -       writel(readl(ioaddr) | BIT(offset), ioaddr);
-> -       return 0;
-> +               return !!(bgc->read_reg(bgc->reg_dat) & BIT(offset));
->  }
->
-> -static struct gpio_chip moxart_template_chip = {
-> -       .label                  = "moxart-gpio",
-> -       .request                = moxart_gpio_request,
-> -       .free                   = moxart_gpio_free,
-> -       .direction_input        = moxart_gpio_direction_input,
-> -       .direction_output       = moxart_gpio_direction_output,
-> -       .set                    = moxart_gpio_set,
-> -       .get                    = moxart_gpio_get,
-> -       .ngpio                  = 32,
-> -       .owner                  = THIS_MODULE,
-> -};
-> -
->  static int moxart_gpio_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
->         struct resource *res;
-> -       struct moxart_gpio_chip *mgc;
-> +       struct bgpio_chip *bgc;
-> +       void __iomem *base;
->         int ret;
->
-> -       mgc = devm_kzalloc(dev, sizeof(*mgc), GFP_KERNEL);
-> -       if (!mgc)
-> +       bgc = devm_kzalloc(dev, sizeof(*bgc), GFP_KERNEL);
-> +       if (!bgc)
->                 return -ENOMEM;
-> -       mgc->gpio = moxart_template_chip;
->
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       mgc->base = devm_ioremap_resource(dev, res);
-> -       if (IS_ERR(mgc->base))
-> -               return PTR_ERR(mgc->base);
-> +       base = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(base))
-> +               return PTR_ERR(base);
->
-> -       mgc->gpio.dev = dev;
-> +       ret = bgpio_init(bgc, dev, 4, base + GPIO_DATA_IN,
-> +                   base + GPIO_DATA_OUT, NULL,
-> +                   base + GPIO_PIN_DIRECTION, NULL, 0);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "bgpio_init failed\n");
-> +               return ret;
-> +       }
->
-> -       ret = gpiochip_add(&mgc->gpio);
-> +       bgc->gc.label = "moxart-gpio";
-> +       bgc->gc.request = moxart_gpio_request;
-> +       bgc->gc.free = moxart_gpio_free;
-> +       bgc->gc.get = moxart_gpio_get;
-> +       bgc->data = bgc->read_reg(bgc->reg_set);
-> +       bgc->gc.base = 0;
+Before resuming from system sleep BIOS restores its view of pin
+configuration. If we have configured some pins differently from that, for
+instance some driver requested a pin as a GPIO but it was not in GPIO mode
+originally, our view of the pin configuration will not match the hardware
+state anymore.
 
-Do we actually want all instances of this driver to clain GPIOs 0..31?
+This patch saves the pin configuration and interrupt mask registers on
+suspend and restores them on exit. This should make sure that the
+previously configured state is still in effect.
 
-If so,
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 104 +++++++++++++++++++++++++++++
+ 1 file changed, 104 insertions(+)
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-
-Since this patch greatly simplifies the code and has been properly tested.
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index e9f8b39d1a9f..dde67d425e9c 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -148,6 +148,11 @@ struct chv_community {
+ 	size_t ngpios;
+ };
+ 
++struct chv_pin_context {
++	u32 padctrl0;
++	u32 padctrl1;
++};
++
+ /**
+  * struct chv_pinctrl - CHV pinctrl private structure
+  * @dev: Pointer to the parent device
+@@ -172,6 +177,8 @@ struct chv_pinctrl {
+ 	spinlock_t lock;
+ 	unsigned intr_lines[16];
+ 	const struct chv_community *community;
++	u32 saved_intmask;
++	struct chv_pin_context *saved_pin_context;
+ };
+ 
+ #define gpiochip_to_pinctrl(c) container_of(c, struct chv_pinctrl, chip)
+@@ -1443,6 +1450,14 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
+ 	spin_lock_init(&pctrl->lock);
+ 	pctrl->dev = &pdev->dev;
+ 
++#ifdef CONFIG_PM_SLEEP
++	pctrl->saved_pin_context = devm_kcalloc(pctrl->dev,
++		pctrl->community->npins, sizeof(*pctrl->saved_pin_context),
++		GFP_KERNEL);
++	if (!pctrl->saved_pin_context)
++		return -ENOMEM;
++#endif
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pctrl->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(pctrl->regs))
+@@ -1486,6 +1501,94 @@ static int chv_pinctrl_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int chv_pinctrl_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
++	int i;
++
++	pctrl->saved_intmask = readl(pctrl->regs + CHV_INTMASK);
++
++	for (i = 0; i < pctrl->community->npins; i++) {
++		const struct pinctrl_pin_desc *desc;
++		struct chv_pin_context *ctx;
++		void __iomem *reg;
++
++		desc = &pctrl->community->pins[i];
++		if (chv_pad_locked(pctrl, desc->number))
++			continue;
++
++		ctx = &pctrl->saved_pin_context[i];
++
++		reg = chv_padreg(pctrl, desc->number, CHV_PADCTRL0);
++		ctx->padctrl0 = readl(reg) & ~CHV_PADCTRL0_GPIORXSTATE;
++
++		reg = chv_padreg(pctrl, desc->number, CHV_PADCTRL1);
++		ctx->padctrl1 = readl(reg);
++	}
++
++	return 0;
++}
++
++static int chv_pinctrl_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
++	int i;
++
++	/*
++	 * Mask all interrupts before restoring per-pin configuration
++	 * registers because we don't know in which state BIOS left them
++	 * upon exiting suspend.
++	 */
++	chv_writel(0, pctrl->regs + CHV_INTMASK);
++
++	for (i = 0; i < pctrl->community->npins; i++) {
++		const struct pinctrl_pin_desc *desc;
++		const struct chv_pin_context *ctx;
++		void __iomem *reg;
++		u32 val;
++
++		desc = &pctrl->community->pins[i];
++		if (chv_pad_locked(pctrl, desc->number))
++			continue;
++
++		ctx = &pctrl->saved_pin_context[i];
++
++		/* Only restore if our saved state differs from the current */
++		reg = chv_padreg(pctrl, desc->number, CHV_PADCTRL0);
++		val = readl(reg) & ~CHV_PADCTRL0_GPIORXSTATE;
++		if (ctx->padctrl0 != val) {
++			chv_writel(ctx->padctrl0, reg);
++			dev_dbg(pctrl->dev, "restored pin %2u ctrl0 0x%08x\n",
++				desc->number, readl(reg));
++		}
++
++		reg = chv_padreg(pctrl, desc->number, CHV_PADCTRL1);
++		val = readl(reg);
++		if (ctx->padctrl1 != val) {
++			chv_writel(ctx->padctrl1, reg);
++			dev_dbg(pctrl->dev, "restored pin %2u ctrl1 0x%08x\n",
++				desc->number, readl(reg));
++		}
++	}
++
++	/*
++	 * Now that all pins are restored to known state, we can restore
++	 * the interrupt mask register as well.
++	 */
++	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
++	chv_writel(pctrl->saved_intmask, pctrl->regs + CHV_INTMASK);
++
++	return 0;
++}
++#endif
++
++static const struct dev_pm_ops chv_pinctrl_pm_ops = {
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(chv_pinctrl_suspend, chv_pinctrl_resume)
++};
++
+ static const struct acpi_device_id chv_pinctrl_acpi_match[] = {
+ 	{ "INT33FF" },
+ 	{ }
+@@ -1498,6 +1601,7 @@ static struct platform_driver chv_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "cherryview-pinctrl",
+ 		.owner = THIS_MODULE,
++		.pm = &chv_pinctrl_pm_ops,
+ 		.acpi_match_table = chv_pinctrl_acpi_match,
+ 	},
+ };
+-- 
+2.1.3
