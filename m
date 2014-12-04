@@ -1,51 +1,81 @@
-From: He YunLei <heyunlei@huawei.com>
-Subject: Re: [PATCH 1/2] gpio: pl061: hook request if gpio-ranges avaiable
-Date: Thu, 4 Dec 2014 21:33:58 +0800
-Message-ID: <548062C6.60801@huawei.com>
-References: <1417494780-3704-1-git-send-email-heyunlei@huawei.com> <1417494780-3704-2-git-send-email-heyunlei@huawei.com> <CACRpkdZbei_gpWR7LfSKb-d=ti9POMR9n9k2z8OMfhgm5BwDFg@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [Patch v2 1/2] gpio: add GPIO hogging mechanism
+Date: Thu, 4 Dec 2014 23:15:38 +0900
+Message-ID: <CAAVeFu+Gms6ptyK6j1Zy_wWg+9URs+9zBu=pOiwiEERO=8NjNw@mail.gmail.com>
+References: <1416527684-19017-1-git-send-email-bparrot@ti.com>
+ <1416527684-19017-2-git-send-email-bparrot@ti.com> <CAAVeFu+VZiuzobB7McSAUehKUHJjBv1o8ZpYjSHJAKjr3o5wTA@mail.gmail.com>
+ <20141201163639.GI25249@lukather> <CAAVeFuLTupDenZdSi8KO+dYsf-ekcqjsDaQ2GEzYpBG34oF7Zw@mail.gmail.com>
+ <CACRpkdZcNcPBYQM438CZJx1gYst9BFBSTj-3Qv2aPGF9pdWa5g@mail.gmail.com> <20141202161227.GH30256@lukather>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:27333 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753956AbaLDNeO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 08:34:14 -0500
-In-Reply-To: <CACRpkdZbei_gpWR7LfSKb-d=ti9POMR9n9k2z8OMfhgm5BwDFg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141202161227.GH30256@lukather>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Benoit Parrot <bparrot@ti.com>, Pantelis Antoniou <panto@antoniou-consulting.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wangbintian <bintian.wang@huawei.com>, peifeiyue@huawei.com, liguozhu@hisilicon.com, Xinwei Kong <kong.kongxinwei@hisilicon.com>
 
-On 2014/12/3 21:45, Linus Walleij wrote:
-> On Tue, Dec 2, 2014 at 5:32 AM, Yunlei He <heyunlei@huawei.com> wrote:
->
->> Gpio-ranges property is useful to represent which GPIOs correspond
->> to which pins on which pin controllers. But there may be some gpios
->> without pinctrl operation. So check whether gpio-ranges property
->> exists in device node first.
+On Wed, Dec 3, 2014 at 1:12 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Tue, Dec 02, 2014 at 03:29:46PM +0100, Linus Walleij wrote:
+>> On Tue, Dec 2, 2014 at 3:13 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+>> > On Tue, Dec 2, 2014 at 1:36 AM, Maxime Ripard
+>> > <maxime.ripard@free-electrons.com> wrote:
 >>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> Signed-off-by: Xinwei Kong <kong.kongxinwei@hisilicon.com>
->> Signed-off-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+>> >> The only thing I'd like to have would be that the request here would
+>> >> be non-exclusive, so that a later driver would still be allowed later
+>> >> on to request that GPIO later on and manage it itself (ideally using
+>> >> the usual gpiod_request function).
+>> >
+>> > Actually we have a plan (and I have some code too) to allow multiple
+>> > consumers per GPIO. Although like Benoit I wonder why you would want
+>> > to hog a GPIO and then request it properly later. Also, that probably
+>> > means we should abandon the hog since it actively drives the line and
+>> > would interfere with the late requested. How to do that correctly is
+>> > not really clear to me.
+>>
+>> I don't get the usecase. A hogged GPIO is per definition hogged.
+>> This sounds more like "initial settings" or something, which is another
+>> usecase altogether.
 >
-> Yep simple and elegant.
+> We do have one board where we have a pin (let's say GPIO14 of the bank
+> A) that enables a regulator that will provide VCC the bank B.
 >
-> Patch applied.
+> Now, both banks are handled by the same driver, but in order to have a
+> working output on the bank B, we do need to set GPIO14 as soon as
+> we're probed.
 >
-> However I wonder if it would be possible to move this to the
-> gpiolib.c or gpiolib-of.c core so not all drivers with this problem
-> has to implement it.
->
-> Yours,
-> Linus Walleij
->
->
-Thanks for your suggest, I can move this judgement to the gpiolib.c in function
-gpio_request() along with a symbol uses_pinctrl in struct gpio_chip. But the symbol
-uses_pinctrl still need to assign a value in device initial time. So I think that drivers
-do this separately is better.
+> Just relying on the usual deferred probing introduces a circular
+> dependency between the gpio-regulator that needs to grab its GPIO from
+> a driver not there yet, and the gpio driver that needs to enable its
+> gpio-regulator.
 
-Yours,
-Yunlei
+I don't get it. According to what you said, the following order should
+go through IIUC:
 
+1) bank A is probed, gpio 14 is available
+2) gpio-regulator is probed, acquires GPIO 14, regulator for Bank B is available
+3) bank B is probed, grabs its regulator and turn it on, probes.
+
+What am I missing?
+
+>
+> GPIO hogging needs to be the ideal solution for that, since we can
+> just enforce the GPIO14 value as the driver is probed, which provides
+> the guarantee that any driver using the bank B will actually drive the
+> GPIO it might use.
+
+At this point I start wondering if such initial setup should not be
+the job of the bootloader? GPIO hogging ought to be simple and
+definitive, adding the possibility to have it just as an initial value
+would considerably complexify it. E.g. when is the gpio chip driver
+supposed to release the hogged descriptor in such a case?
+
+Note that if the multiple GPIO consumer feature we are planning goes
+through, you should be able to use both hogging *and* a regulator on
+the same GPIO and achieve what you want. The expectation of multiple
+consumers is that the board designers know what they are doing, and
+this case would certainly fit (chip hogs the line and doesn't touch
+the value after that, letting the regulator control it without any
+conflict afterwards), although it would of course be better to solve
+the issue through regular probing...
