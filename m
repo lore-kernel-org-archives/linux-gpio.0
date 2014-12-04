@@ -1,58 +1,90 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: Requesting different interrupt triggers for the same device type
-Date: Thu, 04 Dec 2014 09:27:19 +0100
-Message-ID: <1646345.4akWfRNnkY@ws-stein>
-References: <4282463.CMMRv84cbI@ws-stein> <547EEEAA.4040605@ti.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCHv4 1/3] gpio: sch: Consolidate similar algorithms
+Date: Thu, 4 Dec 2014 17:43:36 +0900
+Message-ID: <CAAVeFuLRbouvGXYUZ5nM-+X+2S3nyJdziHTz-yrZo49PHSp7XQ@mail.gmail.com>
+References: <1416977280-27319-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <1416977280-27319-2-git-send-email-rebecca.swee.fun.chang@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:50233 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752493AbaLDIZP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 03:25:15 -0500
-In-Reply-To: <547EEEAA.4040605@ti.com>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:48949 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752706AbaLDIn5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 03:43:57 -0500
+In-Reply-To: <1416977280-27319-2-git-send-email-rebecca.swee.fun.chang@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: linux-gpio@vger.kernel.org
+To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, Denis Turischev <denis.turischev@compulab.co.il>
 
-Hello Grygorii,
+2014-11-26 13:47 GMT+09:00 Chang Rebecca Swee Fun
+<rebecca.swee.fun.chang@intel.com>:
+> Consolidating similar algorithms into common functions to make
+> GPIO SCH simpler and manageable.
+>
+> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+> ---
+>  drivers/gpio/gpio-sch.c |   81 ++++++++++++++++-------------------------------
+>  1 file changed, 28 insertions(+), 53 deletions(-)
 
-On Wednesday 03 December 2014 13:06:18, Grygorii Strashko wrote:
-> On 12/02/2014 06:45 PM, Alexander Stein wrote:
-> > Hi,
-> >
-> > I have a board which has two PCA9555 attached. Due to hardware wirings each has a different interrupt trigger. One is active low and one is active high and each has a different interrupt parent.
-> > How can I specify this in the device tree? Do I need to set IRQ_TYPE_LEVEL_LOW and IRQ_TYPE_LEVEL_HIGH approriately? How can this work, when the driver requests the interrupt like this?
-> >> ret = devm_request_threaded_irq(&client->dev,
-> >> 			client->irq,
-> >> 			NULL,
-> >> 			pca953x_irq_handler,
-> >> 			IRQF_TRIGGER_LOW | IRQF_ONESHOT |
-> >> 			IRQF_SHARED,
-> >> 			dev_name(&client->dev), chip);
-> >
-> > The interrupt flags seem rather fixed. Any comments/hints?
-> 
-> See, http://www.spinics.net/lists/linux-gpio/msg02731.html
-> It may help.
+Your v3 had this:
 
-Well, removing that trigger here (and in another driver where INT line is shared) it "works". It seems that each (DT-) driver should remove those explicit flags, no?
+ drivers/gpio/gpio-sch.c |   95 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 53 insertions(+), 42 deletions(-)
 
-Best regards,
-Alexander
--- 
-Dipl.-Inf. Alexander Stein
+Just looking at these two lines we can already tell this v4 is going
+to be *much* better. :)
 
-SYS TEC electronic GmbH
-Am Windrad 2
-08468 Heinsdorfergrund
-Tel.: 03765 38600-1156
-Fax: 03765 38600-4100
-Email: alexander.stein@systec-electronic.com
-Website: www.systec-electronic.com
- 
-Managing Director: Dipl.-Phys. Siegmar Schmidt
-Commercial registry: Amtsgericht Chemnitz, HRB 28082
+>
+> diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+> index 99720c8..7967f14 100644
+> --- a/drivers/gpio/gpio-sch.c
+> +++ b/drivers/gpio/gpio-sch.c
+> @@ -63,75 +63,59 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
+>         return gpio % 8;
+>  }
+>
+> -static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio)
+> +static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
+>  {
+> +       struct sch_gpio *sch = to_sch_gpio(gc);
+>         unsigned short offset, bit;
+> -       u8 enable;
+> -
+> -       spin_lock(&sch->lock);
+> +       u8 curr_dirs;
 
+This name sounds weird in this function. It has been copied from the
+direction setting functions, but this function is much more generic.
+So maybe come with a more generic name as well?
+
+>
+> -       offset = sch_gpio_offset(sch, gpio, GEN);
+> +       offset = sch_gpio_offset(sch, gpio, reg);
+>         bit = sch_gpio_bit(sch, gpio);
+>
+> -       enable = inb(sch->iobase + offset);
+> -       if (!(enable & (1 << bit)))
+> -               outb(enable | (1 << bit), sch->iobase + offset);
+> +       curr_dirs = !!(inb(sch->iobase + offset) & BIT(bit));
+>
+> -       spin_unlock(&sch->lock);
+> +       return curr_dirs;
+>  }
+>
+> -static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned  gpio_num)
+> +static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
+> +                            int val)
+>  {
+>         struct sch_gpio *sch = to_sch_gpio(gc);
+> -       u8 curr_dirs;
+>         unsigned short offset, bit;
+> +       u8 curr_dirs;
+
+Same here.
+
+Meh, I guess that's my only complain... This really makes the driver
+easier to understand, so after fixing this minor issue and rebasing on
+Linus' devel branch, feel free to add my
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
