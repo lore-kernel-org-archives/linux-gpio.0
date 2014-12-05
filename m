@@ -1,141 +1,52 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH 1/4] pinctrl: Broadcom Cygnus pinctrl device tree binding
-Date: Thu, 4 Dec 2014 14:35:22 -0800
-Message-ID: <5480E1AA.4060108@broadcom.com>
-References: <rjui@broadcom.com>	<1417730171-30455-1-git-send-email-rjui@broadcom.com>	<1417730171-30455-2-git-send-email-rjui@broadcom.com> <CAAfyv37Z=Bs1Ggydg5bX5z=005P+LOXNp0qNMA43a3BsAPSA7w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAfyv37Z=Bs1Ggydg5bX5z=005P+LOXNp0qNMA43a3BsAPSA7w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Belisko Marek <marek.belisko@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Scott Branden <sbranden@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+From: Zhou Wang <wangzhou.bry@gmail.com>
+Subject: [PATCH v4 0/4] ARM: hip04: add GPIO support
+Date: Fri,  5 Dec 2014 11:38:38 +0800
+Message-ID: <1417750722-14027-1-git-send-email-wangzhou.bry@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:58864 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932863AbaLEDk1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Dec 2014 22:40:27 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, liguozhu@hisilicon.com
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, atull@altera.com, sebastian.hesselbarth@gmail.com, bigeasy@linutronix.de, jamie@jamieiles.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, wangzhou1@hisilicon.com, Zhou Wang <wangzhou.bry@gmail.com>
 
+This series add the support for the GPIOs of Hisilicon Soc hip04. Hip04 uses
+synopsis' GPIO IP, and we use the dwapb GPIO driver here. This series add the
+corresponding dts.
 
+The 3/4 patch supports to find GPIO base number in increasing order,
+if gpio-number-forward is defined in related dts nodes. If there are some
+GPIO controllers in one Soc, all related GPIO dts node should contain
+gpio-number-forward property. If not, error will come out.
 
-On 12/4/2014 2:16 PM, Belisko Marek wrote:
-> On Thu, Dec 4, 2014 at 10:56 PM, Ray Jui <rjui@broadcom.com> wrote:
->> Device tree binding documentation for Broadcom Cygnus pinctrl driver
->>
->> Signed-off-by: Ray Jui <rjui@broadcom.com>
->> Reviewed-by: Scott Branden <sbranden@broadcom.com>
->> ---
->>   .../bindings/pinctrl/brcm,cygnus-pinctrl.txt       |   92 ++++++++++++++++++++
->>   1 file changed, 92 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinctrl.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinctrl.txt
->> new file mode 100644
->> index 0000000..86e4579
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinctrl.txt
->> @@ -0,0 +1,92 @@
->> +Broadcom Cygnus Pin Controller
->> +
->> +The Cygnus pin controller supports setting the alternate functions of groups
->> +of pins. Pinmux configuration on individual pins is not supported by the
->> +Cygnus A0 SoC.
->> +
->> +Required properties:
->> +
->> +- compatible:
->> +    Must be "brcm,cygnus-pinctrl"
->> +
->> +- reg:
->> +    Define the base and range of the I/O address space that contain the Cygnus
->> +pin control registers
->> +
->> +- brcm,groups:
->> +    This can be strings of one or more group names. This defines the group(s)
->> +that one wants to configure
->> +
->> +- brcm,function:
->> +    This is the alternate function that one wants to configure to. Valid
->> +alternate functions are "alt1", "alt2", "alt3", "alt4"
->> +
->> +Each child node represents a configuration. Client devices reference the the
->> +child node to enable the mux configuration.
->> +
->> +For example:
->> +
->> +       pinctrl: pinctrl@0x0301d0c8 {
->> +               compatible = "brcm,cygnus-pinctrl";
->> +               reg = <0x0301d0c8 0x2c>;
->> +
->> +               i2s_0: i2s_0 {
->> +                       brcm,groups = "smart_card0", "smart_card0_fcb";
->> +                       brcm,function = "alt2";
->> +               };
->> +
->> +               i2s_1: i2s_1 {
->> +                       brcm,groups = "smart_card1", "smart_card1_fcb";
->> +                       brcm,function = "alt2";
->> +               };
->> +
->> +               spi_0: spi_0 {
->> +                       brcm,groups = "spi0";
->> +                       brcm,function = "alt1";
->> +               };
->> +       }
->> +
->> +       spi0@18028000 {
->> +                       compatible = "arm,pl022", "arm,primecell";
->> +                       reg = <0x18028000 0x1000>;
->> +                       #address-cells = <1>;
->> +                       #size-cells = <0>;
->> +                       interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
->> +                       pinctrl-0 = <&spi_0>;
->> +                       clocks = <&axi81_clk>;
->> +                       clock-names = "apb_pclk";
->> +       };
->> +
->> +Consider the following snapshot of Cygnus pinmux table:
->> +
->> +number    pin            group              alt1             alt2        alt3        alt4
->> +------    ---            ----               ----             ----        ----        ----
->> +42        sc0_clk        smart_card0        SMART CARD0      I2S_0       N/A         chip_gpio24
->> +43        sc0_cmdvcc_l   smart_card0        SMART CARD0      I2S_0       N/A         STRAP
->> +44        sc0_detect     smart_card0        SMART CARD0      I2S_0       N/A         chip_gpio25
->> +45        sc0_fcb        smart_card0_fcb    SMART CARD0_FCB  I2S_0       N/A         chip_gpio26
->> +46        sc0_io         smart_card0        SMART CARD0      I2S_0       N/A         chip_gpio27
->> +47        sc0_rst_l      smart_card0        SMART CARD0      SPDIF       N/A         STRAP
->> +
->> +Note due to limitation of the Cygnus hardware, pinmux configuration can only
->> +be group based. To enable I2S_0 function, one needs the following child node
->> +configuration:
->> +
->> +       i2s_0: i2s_0 {
->> +               brcm,groups = "smart_card0", "smart_card0_fcb";
->> +               brcm,function = "alt2";
->> +       };
->> +
->> +This tells the Cygnus pin controller to configure groups "smart_card0" and
->> +"smart_card0_fcb" to I2S_0. With this configuration, pins 42, 43, 44, 45, 46
->> +become I2C_0, and pin 47 becomes SPDIF
->                    ^^^^ typo - should be I2S_0
-Oh yeah. Will change from I2C_0 to I2S_0. Thanks.
->> +
->> +Consider another example, that one wants to configure the above pins as GPIO:
->> +
->> +       gpio_24_27: gpio_24_27 {
->> +               brcm,groups = "smart_card0", "smart_card0_fcb";
->> +               brcm,function = "alt4";
->> +       };
->> +
->> +With the above configuration, pins 42, 44, 45, 46 become GPIO, and 43 and 47
->> +become reserved for STRAP
->> --
->> 1.7.9.5
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
-> BR,
->
-> marek
->
+Change in v4:
+- Delete "default 128 if ARCH_HIP04" in arch/arm/Kconfig
+- add a new patch to support find GPIO base number in increasing order
+- add gpio-number-forward property in snps gpio binding doc
+Change in v3:
+- Move CONFIG_GPIO_DWAPB to hisi_defconfig
+- Add CONFIG_GPIOLIB, CONFIG_GPIO_SYSFS in hisi_defconfig
+Change in v2:
+- Add select GPIO_DWAPB in arch/arm/mach-hisi/Kconfig
+
+Link for v3:
+- http://www.spinics.net/lists/devicetree/msg60324.html
+
+Zhou Wang (4):
+  ARM: hip04: add GPIO configure in hisi_defconfig
+  ARM: dts: hip04: add GPIO pieces
+  gpio: Add find base in a increasing order
+  Documentation: dt: gpio: Add gpio-number-forward property in snps
+    gpio binding doc
+
+ .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |    2 +
+ arch/arm/boot/dts/hip04.dtsi                       |   79 ++++++++++++++++++++
+ arch/arm/configs/hisi_defconfig                    |    3 +
+ drivers/gpio/gpiolib.c                             |   63 +++++++++++++---
+ 4 files changed, 138 insertions(+), 9 deletions(-)
+
+-- 
+1.7.9.5
+
