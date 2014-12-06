@@ -1,40 +1,47 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 2/5] gpio: Cygnus: add GPIO driver
-Date: Fri, 05 Dec 2014 20:24:25 -0800
-Message-ID: <1417839865.31745.10.camel@perches.com>
-References: <Ray Jui <rjui@broadcom.com>
-	 <1417826408-1600-1-git-send-email-rjui@broadcom.com>
-	 <1417826408-1600-3-git-send-email-rjui@broadcom.com>
-	 <1417829282.31745.3.camel@perches.com> <5482668F.1040907@broadcom.com>
-	 <1417833291.31745.5.camel@perches.com> <54827B07.3000707@broadcom.com>
+From: Muthu Mani <muth@cypress.com>
+Subject: RE: [PATCH v4 1/3] mfd: add support for Cypress CYUSBS234 USB Serial
+ Bridge controller
+Date: Sat, 6 Dec 2014 10:54:26 +0000
+Message-ID: <BN1PR06MB069DE9058CA3EE9B5635E1DCC660@BN1PR06MB069.namprd06.prod.outlook.com>
+References: <1417241944-17799-1-git-send-email-muth@cypress.com>
+ <20141201121533.GE15845@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtprelay0083.hostedemail.com ([216.40.44.83]:35606 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751052AbaLFEYb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Dec 2014 23:24:31 -0500
-In-Reply-To: <54827B07.3000707@broadcom.com>
+Received: from mail-bl2on0122.outbound.protection.outlook.com ([65.55.169.122]:37958
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751523AbaLFKyf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 6 Dec 2014 05:54:35 -0500
+In-Reply-To: <20141201121533.GE15845@x1>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rajaram Regupathy <rera@cypress.com>
 
-On Fri, 2014-12-05 at 19:41 -0800, Ray Jui wrote:
-> On 12/5/2014 6:34 PM, Joe Perches wrote:
-> > On Fri, 2014-12-05 at 18:14 -0800, Ray Jui wrote:
-> >> On 12/5/2014 5:28 PM, Joe Perches wrote:
-> >>> On Fri, 2014-12-05 at 16:40 -0800, Ray Jui wrote:
-> >>>> +			for_each_set_bit(bit, &val, 32) {
-[]
-> Actually, by reviewing the code more deeply, I'm not sure why using 
-> for_each_set_bit here is 'endian unsafe'.
-
-It's not.  The 32 confused me as it was long
-and sizeof(long) isn't necessarily 32.
-
-Maybe the 32 should be a #define
-
-
-
+VGhhbmtzIGZvciB5b3VyIGlucHV0cy4NCg0KPiA+ICsvKiBTZXJpYWwgaW50ZXJmYWNlcyAoSTJD
+LCBTUEksIFVBUlQpIGRpZmZlciBpbiBpbnRlcmZhY2Ugc3ViY2xhc3MgKi8NCj4gPiArZW51bSBj
+eV9zY2JfbW9kZXMgew0KPiA+ICsgICAgICAgQ1lfVVNCU19TQ0JfRElTQUJMRUQgPSAwLA0KPiA+
+ICsgICAgICAgQ1lfVVNCU19TQ0JfVUFSVCA9IDEsDQo+ID4gKyAgICAgICBDWV9VU0JTX1NDQl9T
+UEkgPSAyLA0KPiA+ICsgICAgICAgQ1lfVVNCU19TQ0JfSTJDID0gMw0KPg0KPiBXaHkgaGF2ZSB5
+b3UgbnVtYmVyZWQgdGhlc2UgaW5kaXZpZHVhbGx5Pw0KDQpJIGhhdmUgY2hhbmdlZCB0aGVtIGFz
+ICNkZWZpbmUncyBub3cuIFRoZXNlIHZhbHVlcyBhcmUgbm90IGFyYml0cmFyeS4NCg0KPiA+ICsg
+ICAgICAgLyogU2VyaWFsIGludGVyZmFjZXMgKEkyQywgU1BJLCBVQVJUKSBkaWZmZXIgaW4gaW50
+ZXJmYWNlIHN1YmNsYXNzICovDQo+ID4gKyAgICAgICBzd2l0Y2ggKGludGVyZmFjZS0+Y3VyX2Fs
+dHNldHRpbmctPmRlc2MuYkludGVyZmFjZVN1YkNsYXNzKSB7DQo+ID4gKyAgICAgICBjYXNlIENZ
+X1VTQlNfU0NCX0kyQzoNCj4gPiArICAgICAgICAgICAgICAgZGV2X2luZm8oJmludGVyZmFjZS0+
+ZGV2LCAidXNpbmcgSTJDIGludGVyZmFjZVxuIik7DQo+ID4gKyAgICAgICAgICAgICAgIGN5dXNi
+czIzeF9kZXZzID0gY3l1c2JzMjN4X2kyY19ncGlvX2RldnM7DQo+ID4gKyAgICAgICAgICAgICAg
+IG5kZXZzID0gQVJSQVlfU0laRShjeXVzYnMyM3hfaTJjX2dwaW9fZGV2cyk7DQo+DQo+IE5vdCBz
+dXJlIEkgZ2V0IHRoaXMuICBXaHkgZG8geW91IGhhdmUgbG9jYWwgdmFyaWFibGVzIGZvciB0aGVz
+ZSBpbnN0ZWFkIG9mIHVzaW5nDQo+IHRoZW0gZGlyZWN0bHk/DQoNCldlIGFyZSBwbGFubmluZyB0
+byBzdXBwb3J0IG90aGVyIHByb3RvY29scyBpbiBmdXR1cmUuIFRvIGZhY2lsaXRhdGUgdGhhdCwg
+bG9jYWwgdmFyaWFibGVzIGFyZSB1c2VkLg0KDQo+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiAr
+DQo+ID4gK2Vycm9yOg0KPiA+ICsgICAgICAgdXNiX3B1dF9kZXYoY3l1c2JzLT51c2JfZGV2KTsN
+Cj4NCj4gSXNuJ3QgdGhlcmUgYSBkZXZtXyogdmVyc2lvbiBvZiB1c2Jfc2V0X2ludGZkYXRhKCk/
+DQoNCk5vLg0KDQpUaGFua3MsDQpNdXRodQ0KDQpUaGlzIG1lc3NhZ2UgYW5kIGFueSBhdHRhY2ht
+ZW50cyBtYXkgY29udGFpbiBDeXByZXNzIChvciBpdHMgc3Vic2lkaWFyaWVzKSBjb25maWRlbnRp
+YWwgaW5mb3JtYXRpb24uIElmIGl0IGhhcyBiZWVuIHJlY2VpdmVkIGluIGVycm9yLCBwbGVhc2Ug
+YWR2aXNlIHRoZSBzZW5kZXIgYW5kIGltbWVkaWF0ZWx5IGRlbGV0ZSB0aGlzIG1lc3NhZ2UuDQo=
