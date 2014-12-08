@@ -1,17 +1,18 @@
 From: Ray Jui <rjui@broadcom.com>
 Subject: Re: [PATCH 2/5] gpio: Cygnus: add GPIO driver
-Date: Sun, 7 Dec 2014 17:34:18 -0800
-Message-ID: <5485001A.7050909@broadcom.com>
-References: <Ray Jui <rjui@broadcom.com>	 <1417826408-1600-1-git-send-email-rjui@broadcom.com>	 <1417826408-1600-3-git-send-email-rjui@broadcom.com>	 <1417829282.31745.3.camel@perches.com> <5482668F.1040907@broadcom.com>	 <1417833291.31745.5.camel@perches.com> <54827B07.3000707@broadcom.com> <1417839865.31745.10.camel@perches.com>
+Date: Sun, 7 Dec 2014 17:59:57 -0800
+Message-ID: <5485061D.1060302@broadcom.com>
+References: <Ray Jui <rjui@broadcom.com>	 <1417826408-1600-1-git-send-email-rjui@broadcom.com>	 <1417826408-1600-3-git-send-email-rjui@broadcom.com> <1417829282.31745.3.camel@perches.com> <5482668F.1040907@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:17726 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751414AbaLHBeU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Dec 2014 20:34:20 -0500
-In-Reply-To: <1417839865.31745.10.camel@perches.com>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:19488 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751072AbaLHCAA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Dec 2014 21:00:00 -0500
+In-Reply-To: <5482668F.1040907@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Joe Perches <joe@perches.com>
@@ -19,22 +20,65 @@ Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutl
 
 
 
-On 12/5/2014 8:24 PM, Joe Perches wrote:
-> On Fri, 2014-12-05 at 19:41 -0800, Ray Jui wrote:
->> On 12/5/2014 6:34 PM, Joe Perches wrote:
->>> On Fri, 2014-12-05 at 18:14 -0800, Ray Jui wrote:
->>>> On 12/5/2014 5:28 PM, Joe Perches wrote:
->>>>> On Fri, 2014-12-05 at 16:40 -0800, Ray Jui wrote:
->>>>>> +			for_each_set_bit(bit, &val, 32) {
-> []
->> Actually, by reviewing the code more deeply, I'm not sure why using
->> for_each_set_bit here is 'endian unsafe'.
->
-> It's not.  The 32 confused me as it was long
-> and sizeof(long) isn't necessarily 32.
->
-> Maybe the 32 should be a #define
+On 12/5/2014 6:14 PM, Ray Jui wrote:
+>>> +static struct irq_chip bcm_cygnus_gpio_irq_chip =3D {
+>>> +    .name =3D "bcm-cygnus-gpio",
+>>> +    .irq_ack =3D bcm_cygnus_gpio_irq_ack,
+>>> +    .irq_mask =3D bcm_cygnus_gpio_irq_mask,
+>>> +    .irq_unmask =3D bcm_cygnus_gpio_irq_unmask,
+>>> +    .irq_set_type =3D bcm_cygnus_gpio_irq_set_type,
+>>> +};
+>>
+>> const?
+>>
 >
 >
+> Sure, will add const to bcm_cygnus_gpio_irq_chip
 >
-Okay, to improve readability, I will change 32 to NGPIOS_PER_BANK.
+>>> +static struct irq_domain_ops bcm_cygnus_irq_ops =3D {
+>>> +    .map =3D bcm_cygnus_gpio_irq_map,
+>>> +    .unmap =3D bcm_cygnus_gpio_irq_unmap,
+>>> +    .xlate =3D irq_domain_xlate_twocell,
+>>> +};
+>>
+>> const here too?
+>>
+>
+> Yes, will make bcm_cygnus_irq_ops const.
+>
+Actually, I cannot make them const here. Note they are passed into othe=
+r=20
+APIs which can potentially modifies their values internally.
+
+drivers/gpio/gpio-bcm-cygnus.c: In function =91bcm_cygnus_gpio_irq_map=92=
+:
+drivers/gpio/gpio-bcm-cygnus.c:430:4: warning: passing argument 2 of=20
+=91irq_set_chip_and_handler=92 discards =91const=92 qualifier from poin=
+ter=20
+target type [enabled by default]
+     handle_simple_irq);
+     ^
+In file included from drivers/gpio/gpio-bcm-cygnus.c:17:0:
+include/linux/irq.h:461:20: note: expected =91struct irq_chip *=92 but=20
+argument is of type =91const struct irq_chip *=92
+  static inline void irq_set_chip_and_handler(unsigned int irq, struct=20
+irq_chip *chip,
+                     ^
+drivers/gpio/gpio-bcm-cygnus.c: In function =91bcm_cygnus_gpio_probe=92=
+:
+drivers/gpio/gpio-bcm-cygnus.c:679:5: warning: passing argument 2 of=20
+=91irq_set_chip_and_handler=92 discards =91const=92 qualifier from poin=
+ter=20
+target type [enabled by default]
+      handle_simple_irq);
+      ^
+In file included from drivers/gpio/gpio-bcm-cygnus.c:17:0:
+include/linux/irq.h:461:20: note: expected =91struct irq_chip *=92 but=20
+argument is of type =91const struct irq_chip *=92
+  static inline void irq_set_chip_and_handler(unsigned int irq, struct=20
+irq_chip *chip,
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
