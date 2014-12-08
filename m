@@ -1,16 +1,17 @@
 From: Ray Jui <rjui@broadcom.com>
-Subject: [PATCH v3 0/5] Add gpio support to Broadcom Cygnus SoC
-Date: Mon, 8 Dec 2014 10:47:42 -0800
-Message-ID: <1418064468-8512-1-git-send-email-rjui@broadcom.com>
+Subject: [PATCH v2 0/5] Add gpio support to Broadcom Cygnus SoC
+Date: Mon, 8 Dec 2014 10:47:43 -0800
+Message-ID: <1418064468-8512-2-git-send-email-rjui@broadcom.com>
 References: <Ray Jui <rjui@broadcom.com>
+ <1418064468-8512-1-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:13630 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751072AbaLHSp0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Dec 2014 13:45:26 -0500
-In-Reply-To: <Ray Jui <rjui@broadcom.com>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:24586 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751072AbaLHSp3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Dec 2014 13:45:29 -0500
+In-Reply-To: <1418064468-8512-1-git-send-email-rjui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>
@@ -20,10 +21,6 @@ This patchset contains the initial GPIO support for the Broadcom Cygnus SoC.
 Cygnus has 3 GPIO controllers: 1) the ASIU GPIO; 2) the chipCommonG GPIO;
 and 3) the ALWAYS-ON GPIO. All 3 types of GPIO controllers are supported by
 the same Cygnus GPIO driver
-
-Changes from v2:
- - Consolidate different compatible IDs into "brcm,cygnus-gpio"
- - Get rid of redundant "no-interrupt" property
 
 Changes from v1:
  - Get rid of inline qualifier
@@ -37,14 +34,14 @@ Ray Jui (5):
   ARM: dts: enable GPIO for Broadcom Cygnus
   MAINTAINERS: Entry for Cygnus GPIO driver
 
- .../devicetree/bindings/gpio/brcm,cygnus-gpio.txt  |   82 +++
+ .../devicetree/bindings/gpio/brcm,cygnus-gpio.txt  |   85 +++
  MAINTAINERS                                        |    7 +
  arch/arm/boot/dts/bcm-cygnus.dtsi                  |   30 +
  arch/arm/mach-bcm/Kconfig                          |    1 +
  drivers/gpio/Kconfig                               |   11 +
  drivers/gpio/Makefile                              |    1 +
- drivers/gpio/gpio-bcm-cygnus.c                     |  705 ++++++++++++++++++++
- 7 files changed, 837 insertions(+)
+ drivers/gpio/gpio-bcm-cygnus.c                     |  712 ++++++++++++++++++++
+ 7 files changed, 847 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt
  create mode 100644 drivers/gpio/gpio-bcm-cygnus.c
 
