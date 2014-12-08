@@ -1,128 +1,170 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: [PATCH v2 1/5] gpio: Cygnus: define Broadcom Cygnus GPIO binding
-Date: Sun, 7 Dec 2014 18:38:32 -0800
-Message-ID: <1418006316-324-2-git-send-email-rjui@broadcom.com>
-References: <Ray Jui <rjui@broadcom.com>
- <1418006316-324-1-git-send-email-rjui@broadcom.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1418006316-324-1-git-send-email-rjui@broadcom.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark
- Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus
- Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>
-Cc: devicetree@vger.kernel.org, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org
+From: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Subject: [PATCHv5 1/2] gpio: sch: Consolidate similar algorithms
+Date: Mon,  8 Dec 2014 17:38:09 +0800
+Message-ID: <1418031490-17716-2-git-send-email-rebecca.swee.fun.chang@intel.com>
+References: <1418031490-17716-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:38652 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752419AbaLHJju (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 8 Dec 2014 04:39:50 -0500
+In-Reply-To: <1418031490-17716-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, denis.turischev@compulab.co.il, Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
 
-Document the GPIO device tree binding for Broadcom Cygnus SoC
+Consolidating similar algorithms into common functions to make
+GPIO SCH simpler and manageable.
 
-Signed-off-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
+Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- .../devicetree/bindings/gpio/brcm,cygnus-gpio.txt  |   85 ++++++++++++++++++++
- 1 file changed, 85 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt
+ drivers/gpio/gpio-sch.c | 81 +++++++++++++++++--------------------------------
+ 1 file changed, 28 insertions(+), 53 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt b/Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt
-new file mode 100644
-index 0000000..24a1513
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt
-@@ -0,0 +1,85 @@
-+Broadcom Cygnus GPIO Controller
-+
-+Required properties:
-+
-+- compatible:
-+    Currently supported Cygnus GPIO controllers include:
-+    "brcm,cygnus-ccm-gpio": ChipcommonG GPIO controller
-+    "brcm,cygnus-asiu-gpio": ASIU GPIO controller
-+    "brcm,cygnus-crmu-gpio": CRMU GPIO controller
-+
-+- reg:
-+    Define the base and range of the I/O address space that contain the Cygnus
-+GPIO controller registers
-+
-+- ngpios:
-+    Total number of GPIOs the controller provides
-+
-+- #gpio-cells:
-+    Must be two. The first cell is the GPIO pin number (within the
-+controller's domain) and the second cell is used for the following:
-+    bit[0]: polarity (0 for normal and 1 for inverted)
-+    bit[18:16]: internal pull up/down: 0 - pull up/down disabled
-+                                       1 - pull up enabled
-+                                       2 - pull down enabled
-+    bit[22:20]: drive strength: 0 - 2 mA
-+                                1 - 4 mA
-+                                2 - 6 mA
-+                                3 - 8 mA
-+                                4 - 10 mA
-+                                5 - 12 mA
-+                                6 - 14 mA
-+                                7 - 16 mA
-+
-+- gpio-controller:
-+    Specifies that the node is a GPIO controller
-+
-+Optional properties:
-+
-+- interrupt-controller:
-+    Specifies that the node is an interrupt controller. Not all Cygnus GPIO
-+interfaces support interrupt, e.g., the CRMU GPIO controller does not have its
-+interrupt routed to the main processor's GIC
-+
-+- interrupts:
-+    The interrupt outputs from the GPIO controller.
-+
-+- no-interrupt:
-+    Specifies that the GPIO interface does not support interrupt
-+
-+Example:
-+	gpio_asiu: gpio@180a5000 {
-+		compatible = "brcm,cygnus-asiu-gpio";
-+		reg = <0x180a5000 0x668>;
-+		ngpios = <122>;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		interrupt-controller;
-+		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpio_crmu: gpio@03024800 {
-+		compatible = "brcm,cygnus-crmu-gpio";
-+		reg = <0x03024800 0x50>;
-+		ngpios = <6>;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		no-interrupt;
-+	};
-+
-+	/*
-+	 * Touchscreen that uses the ASIU GPIO 100, with internal pull-up
-+	 * enabled
-+	 */
-+	tsc {
-+		...
-+		...
-+		gpio-event = <&gpio_asiu 100 0x10000>;
-+	};
-+
-+	/* Bluetooth that uses the CRMU GPIO 2, with polarity inverted */
-+	bluetooth {
-+		...
-+		...
-+		bcm,rfkill-bank-sel = <&gpio_crmu 2 1>
-+	}
+diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+index 99720c8..054a8ea 100644
+--- a/drivers/gpio/gpio-sch.c
++++ b/drivers/gpio/gpio-sch.c
+@@ -63,75 +63,59 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
+ 	return gpio % 8;
+ }
+ 
+-static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio)
++static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
+ {
++	struct sch_gpio *sch = to_sch_gpio(gc);
+ 	unsigned short offset, bit;
+-	u8 enable;
+-
+-	spin_lock(&sch->lock);
++	u8 reg_val;
+ 
+-	offset = sch_gpio_offset(sch, gpio, GEN);
++	offset = sch_gpio_offset(sch, gpio, reg);
+ 	bit = sch_gpio_bit(sch, gpio);
+ 
+-	enable = inb(sch->iobase + offset);
+-	if (!(enable & (1 << bit)))
+-		outb(enable | (1 << bit), sch->iobase + offset);
++	reg_val = !!(inb(sch->iobase + offset) & BIT(bit));
+ 
+-	spin_unlock(&sch->lock);
++	return reg_val;
+ }
+ 
+-static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned  gpio_num)
++static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
++			     int val)
+ {
+ 	struct sch_gpio *sch = to_sch_gpio(gc);
+-	u8 curr_dirs;
+ 	unsigned short offset, bit;
++	u8 reg_val;
+ 
+-	spin_lock(&sch->lock);
++	offset = sch_gpio_offset(sch, gpio, reg);
++	bit = sch_gpio_bit(sch, gpio);
+ 
+-	offset = sch_gpio_offset(sch, gpio_num, GIO);
+-	bit = sch_gpio_bit(sch, gpio_num);
++	reg_val = inb(sch->iobase + offset);
+ 
+-	curr_dirs = inb(sch->iobase + offset);
++	if (val)
++		outb(reg_val | BIT(bit), sch->iobase + offset);
++	else
++		outb((reg_val & ~BIT(bit)), sch->iobase + offset);
++}
+ 
+-	if (!(curr_dirs & (1 << bit)))
+-		outb(curr_dirs | (1 << bit), sch->iobase + offset);
++static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
++{
++	struct sch_gpio *sch = to_sch_gpio(gc);
+ 
++	spin_lock(&sch->lock);
++	sch_gpio_reg_set(sch, gpio_num, GIO, 1);
+ 	spin_unlock(&sch->lock);
+ 	return 0;
+ }
+ 
+ static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+ {
+-	struct sch_gpio *sch = to_sch_gpio(gc);
+-	int res;
+-	unsigned short offset, bit;
+-
+-	offset = sch_gpio_offset(sch, gpio_num, GLV);
+-	bit = sch_gpio_bit(sch, gpio_num);
+-
+-	res = !!(inb(sch->iobase + offset) & (1 << bit));
+-
+-	return res;
++	return sch_gpio_reg_get(gc, gpio_num, GLV);
+ }
+ 
+ static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+ {
+ 	struct sch_gpio *sch = to_sch_gpio(gc);
+-	u8 curr_vals;
+-	unsigned short offset, bit;
+ 
+ 	spin_lock(&sch->lock);
+-
+-	offset = sch_gpio_offset(sch, gpio_num, GLV);
+-	bit = sch_gpio_bit(sch, gpio_num);
+-
+-	curr_vals = inb(sch->iobase + offset);
+-
+-	if (val)
+-		outb(curr_vals | (1 << bit), sch->iobase + offset);
+-	else
+-		outb((curr_vals & ~(1 << bit)), sch->iobase + offset);
+-
++	sch_gpio_reg_set(gc, gpio_num, GLV, val);
+ 	spin_unlock(&sch->lock);
+ }
+ 
+@@ -139,18 +123,9 @@ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+ 				  int val)
+ {
+ 	struct sch_gpio *sch = to_sch_gpio(gc);
+-	u8 curr_dirs;
+-	unsigned short offset, bit;
+ 
+ 	spin_lock(&sch->lock);
+-
+-	offset = sch_gpio_offset(sch, gpio_num, GIO);
+-	bit = sch_gpio_bit(sch, gpio_num);
+-
+-	curr_dirs = inb(sch->iobase + offset);
+-	if (curr_dirs & (1 << bit))
+-		outb(curr_dirs & ~(1 << bit), sch->iobase + offset);
+-
++	sch_gpio_reg_set(sch, gpio_num, GIO, 0);
+ 	spin_unlock(&sch->lock);
+ 
+ 	/*
+@@ -209,13 +184,13 @@ static int sch_gpio_probe(struct platform_device *pdev)
+ 		 * GPIO7 is configured by the CMC as SLPIOVR
+ 		 * Enable GPIO[9:8] core powered gpios explicitly
+ 		 */
+-		sch_gpio_enable(sch, 8);
+-		sch_gpio_enable(sch, 9);
++		sch_gpio_reg_set(sch, 8, GEN, 1);
++		sch_gpio_reg_set(sch, 9, GEN, 1);
+ 		/*
+ 		 * SUS_GPIO[2:0] enabled by default
+ 		 * Enable SUS_GPIO3 resume powered gpio explicitly
+ 		 */
+-		sch_gpio_enable(sch, 13);
++		sch_gpio_reg_set(sch, 13, GEN, 1);
+ 		break;
+ 
+ 	case PCI_DEVICE_ID_INTEL_ITC_LPC:
 -- 
-1.7.9.5
+1.9.1
+
