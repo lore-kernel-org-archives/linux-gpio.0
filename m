@@ -1,143 +1,97 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH 1/4] gpio/xilinx: remove offset property
-Date: Mon,  8 Dec 2014 16:07:53 +0100
-Message-ID: <1418051276-5476-2-git-send-email-ricardo.ribalda@gmail.com>
-References: <1418051276-5476-1-git-send-email-ricardo.ribalda@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH] gpio: sn54hc595: new driver for GPIO shift registers chipsets
+Date: Mon, 8 Dec 2014 16:23:01 +0100
+Message-ID: <CACna6rwRR7FpS97Znyk3ewVW58dn5yYTj8OjCstsuzzX8Prg5Q@mail.gmail.com>
+References: <1418048833-27658-1-git-send-email-zajec5@gmail.com>
+	<CAMuHMdUMDCeAt5oXtbJSRrw2ES36Szj5KuXEyyeMRS26i1Y97w@mail.gmail.com>
+	<CACna6rxdub-PvCOKZzKKkiWOEuPsq4=QrJSNv_j4K+7QHKd=PQ@mail.gmail.com>
+	<CAMuHMdWf_Cw7DTqhut6Mcic1FmcJjHdXWuXkNZM2z0Zx9wjCxw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:53534 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755480AbaLHPIC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Dec 2014 10:08:02 -0500
-In-Reply-To: <1418051276-5476-1-git-send-email-ricardo.ribalda@gmail.com>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:51198 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755572AbaLHPXC convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Dec 2014 10:23:02 -0500
+In-Reply-To: <CAMuHMdWf_Cw7DTqhut6Mcic1FmcJjHdXWuXkNZM2z0Zx9wjCxw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Gabor Juhos <juhosg@openwrt.org>, Miguel Gaio <miguel.gaio@efixo.com>
 
-Instead of calculating the register offset per call, pre-calculate it on
-probe time.
+On 8 December 2014 at 16:03, Geert Uytterhoeven <geert@linux-m68k.org> =
+wrote:
+> Hi Rafa=C5=82,
+>
+> On Mon, Dec 8, 2014 at 3:47 PM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail=
+=2Ecom> wrote:
+>> On 8 December 2014 at 15:41, Geert Uytterhoeven <geert@linux-m68k.or=
+g> wrote:
+>>> On Mon, Dec 8, 2014 at 3:27 PM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gma=
+il.com> wrote:
+>>>> SN54HC595 and SN74HC595 are devices based on shift registers contr=
+olled
+>>>> with 5 input signals (serial-in) and providing 8 outputs (parallel=
+-out).
+>>>>
+>>>> They are present on some Broadcom home router boards where manufac=
+turer
+>>>> needed few extra GPIOs.
+>>>>
+>>>> This driver simply uses specified GPIOs to control shift registers=
+ and
+>>>> registers another GPIO chip. So you can call it a GPIO extender.
+>>>>
+>>>> Due to the hardware design only output direction is supported. Rea=
+ding
+>>>> values is handled using tiny internal cache.
+>>>>
+>>>> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
+>>>> ---
+>>>>  .../devicetree/bindings/gpio/gpio-sn54hc595.txt    |  35 ++++
+>>>>  drivers/gpio/Kconfig                               |  11 ++
+>>>>  drivers/gpio/Makefile                              |   1 +
+>>>>  drivers/gpio/gpio-sn54hc595.c                      | 219 ++++++++=
++++++++++++++
+>>>
+>>> The '595 is already handled by drivers/gpio/gpio-74x164.c.
+>>
+>> gpio-74x164.c seems to be tight closely to the SPI. In my case it's
+>> GPIO-controller '595.
+>
+> Right. gpio-74x164.c uses the SPI framework, so it will work with any=
+ SPI
+> master controller, while your driver contains a very simple variant (=
+without any
+> timing constraints) of spi-gpio.c, and is limited to connecting to GP=
+IO pins.
+>
+>> Do you have any other idea how we could handle this?
+>
+> Your driver does provide OE support, which gpio-74x164 doesn't suppor=
+t.
+> Perhaps that can be added to gpio-74x164 instead?
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/gpio/gpio-xilinx.c | 33 +++++++++++----------------------
- 1 file changed, 11 insertions(+), 22 deletions(-)
+It's not the missing OE support in gpio-74x164 that worries me, but
+the whole rest.
 
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index ba18b06..9483950 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -50,7 +50,6 @@ struct xgpio_instance {
- 	struct of_mm_gpio_chip mmchip;
- 	u32 gpio_state;
- 	u32 gpio_dir;
--	u32 offset;
- 	spinlock_t gpio_lock;
- };
- 
-@@ -65,12 +64,8 @@ struct xgpio_instance {
- static int xgpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct xgpio_instance *chip =
--	    container_of(mm_gc, struct xgpio_instance, mmchip);
- 
--	void __iomem *regs = mm_gc->regs + chip->offset;
--
--	return !!(xgpio_readreg(regs + XGPIO_DATA_OFFSET) & BIT(gpio));
-+	return !!(xgpio_readreg(mm_gc->regs + XGPIO_DATA_OFFSET) & BIT(gpio));
- }
- 
- /**
-@@ -88,7 +83,6 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
-@@ -98,8 +92,7 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	else
- 		chip->gpio_state &= ~BIT(gpio);
- 
--	xgpio_writereg(regs + chip->offset + XGPIO_DATA_OFFSET,
--							 chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET, chip->gpio_state);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- }
-@@ -119,13 +112,12 @@ static int xgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
- 	/* Set the GPIO bit in shadow register and set direction as input */
- 	chip->gpio_dir |= BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_TRI_OFFSET, chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- 
-@@ -148,7 +140,6 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
-@@ -157,12 +148,11 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 		chip->gpio_state |= BIT(gpio);
- 	else
- 		chip->gpio_state &= ~BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_DATA_OFFSET,
--		       chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET, chip->gpio_state);
- 
- 	/* Clear the GPIO bit in shadow register and set direction as output */
- 	chip->gpio_dir &= ~BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_TRI_OFFSET, chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- 
-@@ -178,10 +168,8 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
- 
--	xgpio_writereg(mm_gc->regs + chip->offset + XGPIO_DATA_OFFSET,
--							chip->gpio_state);
--	xgpio_writereg(mm_gc->regs + chip->offset + XGPIO_TRI_OFFSET,
--							 chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET,	chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- }
- 
- /**
-@@ -247,9 +235,6 @@ static int xgpio_of_probe(struct device_node *np)
- 		if (!chip)
- 			return -ENOMEM;
- 
--		/* Add dual channel offset */
--		chip->offset = XGPIO_CHANNEL_OFFSET;
--
- 		/* Update GPIO state shadow register with default value */
- 		of_property_read_u32(np, "xlnx,dout-default-2",
- 				     &chip->gpio_state);
-@@ -285,6 +270,10 @@ static int xgpio_of_probe(struct device_node *np)
- 			np->full_name, status);
- 			return status;
- 		}
-+
-+		/* Add dual channel offset */
-+		chip->mmchip.regs += XGPIO_CHANNEL_OFFSET;
-+
- 		pr_info("XGpio: %s: dual channel registered, base is %d\n",
- 					np->full_name, chip->mmchip.gc.base);
- 	}
--- 
-2.1.3
+I would need to modify gpio-74x164 to:
+1) Use another OF table with different entry
+2) Use different probe function that doesn't take spi_device parameter
+and doesn't do spi setup
+3) Extend struct gen_74x164_chip to include GPIOs
+4) Use totally different __gen_74x164_write_config
 
+Amount of shared code would be so small I doubt it's worth it. Both
+driver are quite trivial (200 or less LOC). Sharing:
+1) ~5 lines long __gen_74x164_write_config
+2) ~5 lines long gen_74x164_set_value
+3) 1 line long gen_74x164_direction_output
+makes me feel it's not really worth combining these two drivers into a =
+one.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
