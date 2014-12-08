@@ -1,85 +1,36 @@
-From: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Subject: [PATCHv5 0/2] Enable Quark X1000 support in gpio-sch
-Date: Mon,  8 Dec 2014 17:38:08 +0800
-Message-ID: <1418031490-17716-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, denis.turischev@compulab.co.il, Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 1/5] gpio: Cygnus: define Broadcom Cygnus GPIO binding
+Date: Mon, 08 Dec 2014 12:22:20 +0100
+Message-ID: <2594176.SCRFa6Sb3O@wuerfel>
+References: <1418006316-324-2-git-send-email-rjui@broadcom.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:58312 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752111AbaLHLWm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Dec 2014 06:22:42 -0500
+In-Reply-To: <1418006316-324-2-git-send-email-rjui@broadcom.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ray Jui <rjui@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-Hi all,
+On Sunday 07 December 2014 18:38:32 Ray Jui wrote:
+> +Required properties:
+> +
+> +- compatible:
+> +    Currently supported Cygnus GPIO controllers include:
+> +    "brcm,cygnus-ccm-gpio": ChipcommonG GPIO controller
+> +    "brcm,cygnus-asiu-gpio": ASIU GPIO controller
+> +    "brcm,cygnus-crmu-gpio": CRMU GPIO controller
 
-This is a revised version for enabling Quark X1000 support in gpio-sch.
-This version of patch series had changed according to the feedback provided
-by Alexandre and Linus.
+How different are these? If they are almost the same, would it
+be better to use the same compatible string for all of them and
+describe the differences in extra properties?
 
-Change log for V5:
-Patch 1:
-- Change variable curr_dirs to reg_val in order to make driver code easier to
-  understand.
+If they are rather different, maybe you should have a separate
+binding and driver for each?
 
-Patch 3:
-- Dropped patch 3 for now. We need to re-design the driver's IRQ implementation.
-
-The patches need to be patched on top of Mika Westerberg's commit at:
-gpio: sch: Consolidate core and resume banks
-http://marc.info/?l=linux-kernel&m=141392647225885&w=2
-
-The patches has been verifed and tested working on Galileo Board. GPIO sysfs
-was able to export gpio pins and changing pin direction. GPIO values were
-able to controlled. One of the GPIO pins which is connected to on-board LED
-was used to test GPIO functionality. We are able to turn the LED on/off by
-changing the pin direction and pin value.
-
-Please help to review the patches once again and thanks for all the review
-comments. Your comments are valuable to me and help me to gain more in this
-Open Source community as I'm quite a newbie in this area. Thanks for your
-patience.
-
-Regards,
-Rebecca
-
-Change log for V4:
-Patch 1:
-- Removed redundant/duplicated functions of sch_gpio_register_set() and
-  sch_gpio_register_clear(). The function call had been replaced by
-  sch_gpio_reg_set(gc, gpio, reg, 1) in place of sch_gpio_register_set() and
-  sch_gpio_reg_set(gc, gpio, reg, 0) for sch_gpio_register_clear().
-- Resolved double spinlock issue caught by Alexandre.
-
-Patch 3:
-- Dropped the usage of "if" block that checking irq_data struct
-- Restructured the irq detect by using platform_get_irq(pdev, 0) instead of
-  platform_get_resource(pdev, IORESOURCE_IRQ, 0) to get IRQ resources from
-  MFD LPS-SCH.
-
-Change log for V3:
-Patch 3:
-- Change variable type of irq_support to bool.
-- Update error message and remove redundant code.
-- Revert gpiochip_remove() to avoid it to return a value.
-
-Change log for V2:
-Patch 1:
-- Move sch_gpio_get() and sch_gpio_set() to avoid forward declaration.
-- Changed sch_gpio_enable()/sch_gpio_disable() to sch_gpio_register_set()/
-  sch_gpio_register_clear().
-
-Patch 3:
-- Changed all sch_gpio_enable()/sch_gpio_disable() to sch_gpio_register_set()/
-  sch_gpio_register_clear().
-
-Version 1:
-Initial version.
-
-Chang Rebecca Swee Fun (2):
-  gpio: sch: Consolidate similar algorithms
-  gpio: sch: Add support for Intel Quark X1000 SoC
-
- drivers/gpio/Kconfig    | 11 +++++--
- drivers/gpio/gpio-sch.c | 87 +++++++++++++++++++------------------------------
- 2 files changed, 43 insertions(+), 55 deletions(-)
-
--- 
-1.9.1
+	Arnd
