@@ -1,25 +1,22 @@
-From: Ray Jui <rjui@broadcom.com>
+From: Alexandre Courbot <gnurou@gmail.com>
 Subject: Re: [PATCH] gpio: bcm-kona: memory corruption fix
-Date: Mon, 8 Dec 2014 15:35:13 -0800
-Message-ID: <548635B1.5060705@broadcom.com>
+Date: Tue, 9 Dec 2014 12:06:10 +0900
+Message-ID: <CAAVeFuK2AJvSkZEafrGRw8VjQO-zXABJJMHbK5pxYOL4ypsVsg@mail.gmail.com>
 References: <1418074473-10811-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:15887 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752261AbaLHXfS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Dec 2014 18:35:18 -0500
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:62678 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103AbaLIDGb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Dec 2014 22:06:31 -0500
 In-Reply-To: <1418074473-10811-1-git-send-email-olof@lixom.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+To: Olof Johansson <olof@lixom.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, rjui@broadcom.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com
 
-
-
-On 12/8/2014 1:34 PM, Olof Johansson wrote:
+On Tue, Dec 9, 2014 at 6:34 AM, Olof Johansson <olof@lixom.net> wrote:
 > In one instance the base address of the internal controller state
 > structure is passed into a function doing writel to an offset of
 > the pointer passed in is used, instead of the register base.
@@ -37,34 +34,7 @@ On 12/8/2014 1:34 PM, Olof Johansson wrote:
 > As far as I can tell, this bug has been here for a long time and is
 > not new, but I found it when hunting down another heisenbug on this
 > platform.
->
-> Not marking for stable since I am unaware of any upstream user of kona
-> on a product that would benefit from it.
->
-> Signed-off-by: Olof Johansson <olof@lixom.net>
 
-Acked-by: Ray Jui <rjui@broadcom.com>
+Ouch. Thanks for fixing this.
 
-> ---
->   drivers/gpio/gpio-bcm-kona.c |    4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-> index de0801e..d552cca 100644
-> --- a/drivers/gpio/gpio-bcm-kona.c
-> +++ b/drivers/gpio/gpio-bcm-kona.c
-> @@ -549,11 +549,11 @@ static void bcm_kona_gpio_reset(struct bcm_kona_gpio *kona_gpio)
->   	/* disable interrupts and clear status */
->   	for (i = 0; i < kona_gpio->num_bank; i++) {
->   		/* Unlock the entire bank first */
-> -		bcm_kona_gpio_write_lock_regs(kona_gpio, i, UNLOCK_CODE);
-> +		bcm_kona_gpio_write_lock_regs(kona_gpio->reg_base, i, UNLOCK_CODE);
->   		writel(0xffffffff, reg_base + GPIO_INT_MASK(i));
->   		writel(0xffffffff, reg_base + GPIO_INT_STATUS(i));
->   		/* Now re-lock the bank */
-> -		bcm_kona_gpio_write_lock_regs(kona_gpio, i, LOCK_CODE);
-> +		bcm_kona_gpio_write_lock_regs(kona_gpio->reg_base, i, LOCK_CODE);
->   	}
->   }
->
->
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
