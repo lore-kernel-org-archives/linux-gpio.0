@@ -1,13 +1,16 @@
-From: A H <andrzej.hajda@gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: [RFC 00/15] Resource tracking/allocation framework
-Date: Wed, 10 Dec 2014 18:23:49 +0100
-Message-ID: <CA+tnuKYSDZ0mtzQ_g1QjovJwG01OgPjSXuozEBXQsEZv_2o-=w@mail.gmail.com>
+Date: Wed, 10 Dec 2014 17:39:18 +0000
+Message-ID: <20141210173918.GN11285@n2100.arm.linux.org.uk>
 References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
  <20141210161620.GM11285@n2100.arm.linux.org.uk>
+ <CA+tnuKYSDZ0mtzQ_g1QjovJwG01OgPjSXuozEBXQsEZv_2o-=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0092008341=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20141210161620.GM11285@n2100.arm.linux.org.uk>
+Content-Disposition: inline
+In-Reply-To: <CA+tnuKYSDZ0mtzQ_g1QjovJwG01OgPjSXuozEBXQsEZv_2o-=w@mail.gmail.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -17,132 +20,33 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: A H <andrzej.hajda@gmail.com>
 Cc: Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, open list <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
---===============0092008341==
-Content-Type: multipart/alternative; boundary=001a11c38be840a7290509dfec03
-
---001a11c38be840a7290509dfec03
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-10 gru 2014 17:16 "Russell King - ARM Linux" <linux@arm.linux.org.uk>
-napisa=C5=82(a):
->
-> On Wed, Dec 10, 2014 at 04:48:18PM +0100, Andrzej Hajda wrote:
-> > 3. There are drivers which can work without specific resource, but if
-> >   the resource becomes available/unavailable it can do some additional
-stuff.
-> >   An example of such driver is DRM driver (more precisely
-drm_connector) -
-> >   it can start without attached drm_panel, but if the panel becomes
-available it
-> >   can react by generating HPD event and start using it.
->
-> Bad example, and actually incorrect.  DRM connectors are referenced in
-> userspace by an IDR number, which can be re-used in the case of a
-> connector appearing, disappearing, and then a different connector
-> re-appearing.
-
-But it is not about reappearing of drm_connector, it is about reappearing
-of drm_panel which is fortunately not a part of drm driver. Connector here
-is only consumer of drm_panel which should have possibility to receive
-notifications on panel (dis-)appearance.
-
-Regards
-Andrzej
-
->
-> DRM really is *not* safe to hotplug like this: DRM is more a card-level
-> thing, which is why we have the component helpers - which allow us to
-> merge several devices into one logical card-like device in a generic
-> manner.
->
-> DRM needs a stable picture of the CRTCs, encoders and connectors, which
-> should _never_ change during the lifetime of the DRM device.  Devices
-> attached to connectors can be hotplugged, but that's about the limit of
-> hot-plugging in DRM.
->
-> --
-> FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-> according to speedtest.net.
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---001a11c38be840a7290509dfec03
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<p dir=3D"ltr"><br>
-10 gru 2014 17:16 &quot;Russell King - ARM Linux&quot; &lt;<a href=3D"mailt=
-o:linux@arm.linux.org.uk">linux@arm.linux.org.uk</a>&gt; napisa=C5=82(a):<b=
-r>
-&gt;<br>
-&gt; On Wed, Dec 10, 2014 at 04:48:18PM +0100, Andrzej Hajda wrote:<br>
-&gt; &gt; 3. There are drivers which can work without specific resource, bu=
-t if<br>
-&gt; &gt;=C2=A0 =C2=A0the resource becomes available/unavailable it can do =
-some additional stuff.<br>
-&gt; &gt;=C2=A0 =C2=A0An example of such driver is DRM driver (more precise=
-ly drm_connector) -<br>
-&gt; &gt;=C2=A0 =C2=A0it can start without attached drm_panel, but if the p=
-anel becomes available it<br>
-&gt; &gt;=C2=A0 =C2=A0can react by generating HPD event and start using it.=
-<br>
-&gt;<br>
-&gt; Bad example, and actually incorrect.=C2=A0 DRM connectors are referenc=
-ed in<br>
-&gt; userspace by an IDR number, which can be re-used in the case of a<br>
-&gt; connector appearing, disappearing, and then a different connector<br>
-&gt; re-appearing.</p>
-<p dir=3D"ltr">But it is not about reappearing of drm_connector, it is abou=
-t reappearing of drm_panel which is fortunately not a part of drm driver. C=
-onnector here is only consumer of drm_panel which should have possibility t=
-o receive notifications on panel (dis-)appearance. </p>
-<p dir=3D"ltr">Regards<br>
-Andrzej</p>
-<p dir=3D"ltr">&gt;<br>
-&gt; DRM really is *not* safe to hotplug like this: DRM is more a card-leve=
-l<br>
-&gt; thing, which is why we have the component helpers - which allow us to<=
-br>
-&gt; merge several devices into one logical card-like device in a generic<b=
-r>
-&gt; manner.<br>
-&gt;<br>
-&gt; DRM needs a stable picture of the CRTCs, encoders and connectors, whic=
-h<br>
-&gt; should _never_ change during the lifetime of the DRM device.=C2=A0 Dev=
-ices<br>
-&gt; attached to connectors can be hotplugged, but that&#39;s about the lim=
-it of<br>
-&gt; hot-plugging in DRM.<br>
-&gt;<br>
-&gt; --<br>
-&gt; FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up<=
-br>
-&gt; according to <a href=3D"http://speedtest.net">speedtest.net</a>.<br>
-&gt; _______________________________________________<br>
-&gt; dri-devel mailing list<br>
-&gt; <a href=3D"mailto:dri-devel@lists.freedesktop.org">dri-devel@lists.fre=
-edesktop.org</a><br>
-&gt; <a href=3D"http://lists.freedesktop.org/mailman/listinfo/dri-devel">ht=
-tp://lists.freedesktop.org/mailman/listinfo/dri-devel</a></p>
-
---001a11c38be840a7290509dfec03--
-
---===============0092008341==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============0092008341==--
+T24gV2VkLCBEZWMgMTAsIDIwMTQgYXQgMDY6MjM6NDlQTSArMDEwMCwgQSBIIHdyb3RlOgo+IDEw
+IGdydSAyMDE0IDE3OjE2ICJSdXNzZWxsIEtpbmcgLSBBUk0gTGludXgiIDxsaW51eEBhcm0ubGlu
+dXgub3JnLnVrPgo+IG5hcGlzYcWCKGEpOgo+ID4KPiA+IE9uIFdlZCwgRGVjIDEwLCAyMDE0IGF0
+IDA0OjQ4OjE4UE0gKzAxMDAsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4gPiA+IDMuIFRoZXJlIGFy
+ZSBkcml2ZXJzIHdoaWNoIGNhbiB3b3JrIHdpdGhvdXQgc3BlY2lmaWMgcmVzb3VyY2UsIGJ1dCBp
+Zgo+ID4gPiAgIHRoZSByZXNvdXJjZSBiZWNvbWVzIGF2YWlsYWJsZS91bmF2YWlsYWJsZSBpdCBj
+YW4gZG8gc29tZSBhZGRpdGlvbmFsCj4gc3R1ZmYuCj4gPiA+ICAgQW4gZXhhbXBsZSBvZiBzdWNo
+IGRyaXZlciBpcyBEUk0gZHJpdmVyIChtb3JlIHByZWNpc2VseQo+IGRybV9jb25uZWN0b3IpIC0K
+PiA+ID4gICBpdCBjYW4gc3RhcnQgd2l0aG91dCBhdHRhY2hlZCBkcm1fcGFuZWwsIGJ1dCBpZiB0
+aGUgcGFuZWwgYmVjb21lcwo+IGF2YWlsYWJsZSBpdAo+ID4gPiAgIGNhbiByZWFjdCBieSBnZW5l
+cmF0aW5nIEhQRCBldmVudCBhbmQgc3RhcnQgdXNpbmcgaXQuCj4gPgo+ID4gQmFkIGV4YW1wbGUs
+IGFuZCBhY3R1YWxseSBpbmNvcnJlY3QuICBEUk0gY29ubmVjdG9ycyBhcmUgcmVmZXJlbmNlZCBp
+bgo+ID4gdXNlcnNwYWNlIGJ5IGFuIElEUiBudW1iZXIsIHdoaWNoIGNhbiBiZSByZS11c2VkIGlu
+IHRoZSBjYXNlIG9mIGEKPiA+IGNvbm5lY3RvciBhcHBlYXJpbmcsIGRpc2FwcGVhcmluZywgYW5k
+IHRoZW4gYSBkaWZmZXJlbnQgY29ubmVjdG9yCj4gPiByZS1hcHBlYXJpbmcuCj4gCj4gQnV0IGl0
+IGlzIG5vdCBhYm91dCByZWFwcGVhcmluZyBvZiBkcm1fY29ubmVjdG9yLCBpdCBpcyBhYm91dCBy
+ZWFwcGVhcmluZwo+IG9mIGRybV9wYW5lbCB3aGljaCBpcyBmb3J0dW5hdGVseSBub3QgYSBwYXJ0
+IG9mIGRybSBkcml2ZXIuIENvbm5lY3RvciBoZXJlCj4gaXMgb25seSBjb25zdW1lciBvZiBkcm1f
+cGFuZWwgd2hpY2ggc2hvdWxkIGhhdmUgcG9zc2liaWxpdHkgdG8gcmVjZWl2ZQo+IG5vdGlmaWNh
+dGlvbnMgb24gcGFuZWwgKGRpcy0pYXBwZWFyYW5jZS4KCk9rYXksIHNvIHRoYXQncyBleGFjdGx5
+IGxpa2UgYSBwYW5lbCBiZWluZyAiaG90cGx1Z2dlZCIgdG8gdGhlIGNvbm5lY3RvciwKd2hpY2gg
+c2hvdWxkIGJlIGZpbmUuCgotLSAKRlRUQyBicm9hZGJhbmQgZm9yIDAuOG1pbGUgbGluZTogY3Vy
+cmVudGx5IGF0IDkuNU1icHMgZG93biA0MDBrYnBzIHVwCmFjY29yZGluZyB0byBzcGVlZHRlc3Qu
+bmV0LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
