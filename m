@@ -1,203 +1,54 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v4 2/4] gpio/xilinx: Convert the driver to platform device interface
-Date: Wed, 10 Dec 2014 16:56:17 +0100
-Message-ID: <1418226977-17128-1-git-send-email-ricardo.ribalda@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC 04/15] regulator: add restrack support
+Date: Wed, 10 Dec 2014 16:07:20 +0000
+Message-ID: <20141210160720.GS11764@sirena.org.uk>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <1418226513-14105-5-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="W/1XGRQlv2BMqnS3"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1418226513-14105-5-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, boris.brezillon@
 List-Id: linux-gpio@vger.kernel.org
 
-This way we do not need to transverse the device tree manually and we
-support hot plugged devices.
 
-Also Implement remove callback so the driver can be unloaded
+--W/1XGRQlv2BMqnS3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
+On Wed, Dec 10, 2014 at 04:48:22PM +0100, Andrzej Hajda wrote:
+> Regulators supports various methods of lookup.
+> The patch adds restrack support only to DT based regulators.
 
-v4: Add missing module_exit
+Why, what does this mean and how might one use it?  I've not looked at
+the code since I don't know what it's supposed to accomplish...
 
- drivers/gpio/gpio-xilinx.c | 83 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 66 insertions(+), 17 deletions(-)
+One very high level thing is that anything that only works for DT only
+seems to be a non-starter, the API should be hiding details of the
+firmware interface.
 
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index e668ec4..c7ed92b 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -44,12 +44,18 @@
-  * gpio_state: GPIO state shadow register
-  * gpio_dir: GPIO direction shadow register
-  * gpio_lock: Lock used for synchronization
-+ * inited: True if the port has been inited
-  */
- struct xgpio_instance {
- 	struct of_mm_gpio_chip mmchip;
- 	u32 gpio_state;
- 	u32 gpio_dir;
- 	spinlock_t gpio_lock;
-+	bool inited;
-+};
-+
-+struct xgpio {
-+	struct xgpio_instance port[2];
- };
- 
- /**
-@@ -172,24 +178,56 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
- }
- 
- /**
-+ * xgpio_remove - Remove method for the GPIO device.
-+ * @pdev: pointer to the platform device
-+ *
-+ * This function remove gpiochips and frees all the allocated resources.
-+ */
-+static int xgpio_remove(struct platform_device *pdev)
-+{
-+	struct xgpio *xgpio = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < 2; i++) {
-+		if (!xgpio->port[i].inited)
-+			continue;
-+		gpiochip_remove(&xgpio->port[i].mmchip.gc);
-+
-+		if (i == 1)
-+			xgpio->port[i].mmchip.regs -= XGPIO_CHANNEL_OFFSET;
-+
-+		iounmap(xgpio->port[i].mmchip.regs);
-+		kfree(xgpio->port[i].mmchip.gc.label);
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-  * xgpio_of_probe - Probe method for the GPIO device.
-- * @np: pointer to device tree node
-+ * @pdev: pointer to the platform device
-  *
-  * This function probes the GPIO device in the device tree. It initializes the
-  * driver data structure. It returns 0, if the driver is bound to the GPIO
-  * device, or a negative value if there is an error.
-  */
--static int xgpio_of_probe(struct device_node *np)
-+static int xgpio_probe(struct platform_device *pdev)
- {
-+	struct xgpio *xgpio;
- 	struct xgpio_instance *chip;
- 	int status = 0;
-+	struct device_node *np = pdev->dev.of_node;
- 	const u32 *tree_info;
- 	u32 ngpio;
- 
--	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
--	if (!chip)
-+	xgpio = devm_kzalloc(&pdev->dev, sizeof(*xgpio), GFP_KERNEL);
-+	if (!xgpio)
- 		return -ENOMEM;
- 
-+	platform_set_drvdata(pdev, xgpio);
-+
-+	chip = &xgpio->port[0];
-+
- 	/* Update GPIO state shadow register with default value */
- 	of_property_read_u32(np, "xlnx,dout-default", &chip->gpio_state);
- 
-@@ -209,6 +247,7 @@ static int xgpio_of_probe(struct device_node *np)
- 
- 	spin_lock_init(&chip->gpio_lock);
- 
-+	chip->mmchip.gc.dev = &pdev->dev;
- 	chip->mmchip.gc.direction_input = xgpio_dir_in;
- 	chip->mmchip.gc.direction_output = xgpio_dir_out;
- 	chip->mmchip.gc.get = xgpio_get;
-@@ -219,20 +258,18 @@ static int xgpio_of_probe(struct device_node *np)
- 	/* Call the OF gpio helper to setup and register the GPIO device */
- 	status = of_mm_gpiochip_add(np, &chip->mmchip);
- 	if (status) {
--		kfree(chip);
- 		pr_err("%s: error in probe function with status %d\n",
- 		       np->full_name, status);
- 		return status;
- 	}
-+	chip->inited = true;
- 
- 	pr_info("XGpio: %s: registered, base is %d\n", np->full_name,
- 							chip->mmchip.gc.base);
- 
- 	tree_info = of_get_property(np, "xlnx,is-dual", NULL);
- 	if (tree_info && be32_to_cpup(tree_info)) {
--		chip = kzalloc(sizeof(*chip), GFP_KERNEL);
--		if (!chip)
--			return -ENOMEM;
-+		chip = &xgpio->port[1];
- 
- 		/* Update GPIO state shadow register with default value */
- 		of_property_read_u32(np, "xlnx,dout-default-2",
-@@ -254,6 +291,7 @@ static int xgpio_of_probe(struct device_node *np)
- 
- 		spin_lock_init(&chip->gpio_lock);
- 
-+		chip->mmchip.gc.dev = &pdev->dev;
- 		chip->mmchip.gc.direction_input = xgpio_dir_in;
- 		chip->mmchip.gc.direction_output = xgpio_dir_out;
- 		chip->mmchip.gc.get = xgpio_get;
-@@ -264,7 +302,7 @@ static int xgpio_of_probe(struct device_node *np)
- 		/* Call the OF gpio helper to setup and register the GPIO dev */
- 		status = of_mm_gpiochip_add(np, &chip->mmchip);
- 		if (status) {
--			kfree(chip);
-+			xgpio_remove(pdev);
- 			pr_err("%s: error in probe function with status %d\n",
- 			np->full_name, status);
- 			return status;
-@@ -272,6 +310,7 @@ static int xgpio_of_probe(struct device_node *np)
- 
- 		/* Add dual channel offset */
- 		chip->mmchip.regs += XGPIO_CHANNEL_OFFSET;
-+		chip->inited = true;
- 
- 		pr_info("XGpio: %s: dual channel registered, base is %d\n",
- 					np->full_name, chip->mmchip.gc.base);
-@@ -285,19 +324,29 @@ static const struct of_device_id xgpio_of_match[] = {
- 	{ /* end of list */ },
- };
- 
--static int __init xgpio_init(void)
--{
--	struct device_node *np;
-+MODULE_DEVICE_TABLE(of, xgpio_of_match);
- 
--	for_each_matching_node(np, xgpio_of_match)
--		xgpio_of_probe(np);
-+static struct platform_driver xgpio_plat_driver = {
-+	.probe		= xgpio_probe,
-+	.remove		= xgpio_remove,
-+	.driver		= {
-+			.name = "gpio-xilinx",
-+			.of_match_table	= xgpio_of_match,
-+	},
-+};
- 
--	return 0;
-+static int __init xgpio_init(void)
-+{
-+	return platform_driver_register(&xgpio_plat_driver);
- }
- 
--/* Make sure we get initialized before anyone else tries to use us */
- subsys_initcall(xgpio_init);
--/* No exit call at the moment as we cannot unregister of GPIO chips */
-+
-+static void __exit xgpio_exit(void)
-+{
-+	platform_driver_unregister(&xgpio_plat_driver);
-+}
-+module_exit(xgpio_exit);
- 
- MODULE_AUTHOR("Xilinx, Inc.");
- MODULE_DESCRIPTION("Xilinx GPIO driver");
--- 
-2.1.3
+--W/1XGRQlv2BMqnS3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUiG+3AAoJECTWi3JdVIfQmAwH/jiUhtG2zZjX7a2DvVgSimtx
+Ed87dh0BkNgWFNjrbsMbEBlThMTPHFJDPrA3jOuXvBkOeW1AENCdWLpHUmNhMiL5
+XG1hWqS3RaPMYdFK1UBH18hzrn7QwdBh2WbTcRU5lMyvM2tCiQVMFS/LNNivcYhJ
+lY1y5Ol0cTLU0uTh12vSNK53x4tsgbWCAFYOn91F3Kh572wnTYvo3WVub8Cv/7wP
+KjOMQ24tzUD4fWFL2LNkRF8XM1yXesB6JdTogtXxyv0wh0GhF0bYVxeMcHFKqWoq
+BqEQllGFsJHEvYSghmd2m0cd3D1csRDkmOfFUDnkoTMjtzPQsPvzk4Ti+Nr2zIs=
+=1JPy
+-----END PGP SIGNATURE-----
+
+--W/1XGRQlv2BMqnS3--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
