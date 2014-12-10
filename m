@@ -1,7 +1,7 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v3 1/4] gpio/xilinx: Remove offset property
-Date: Wed, 10 Dec 2014 16:24:57 +0100
-Message-ID: <1418225100-2949-2-git-send-email-ricardo.ribalda@gmail.com>
+Subject: [PATCH v3 3/4] gpio/xilinx: Add support for X86 Arch
+Date: Wed, 10 Dec 2014 16:24:59 +0100
+Message-ID: <1418225100-2949-4-git-send-email-ricardo.ribalda@gmail.com>
 References: <1418225100-2949-1-git-send-email-ricardo.ribalda@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1418225100-2949-1-git-send-email-ricardo.ribalda@gmail.com>
@@ -10,140 +10,44 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Instead of calculating the register offset per call, pre-calculate it on
-probe time.
+Core can be accessed via PCIe on X86 platform.
+This patch also allows the driver to be used as module.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
+v3: Fix log message
 
-v3: Remove offset from kernel-doc
+ drivers/gpio/Kconfig       | 4 ++--
+ drivers/gpio/gpio-xilinx.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
- drivers/gpio/gpio-xilinx.c | 34 +++++++++++-----------------------
- 1 file changed, 11 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 0959ca9..7f8ba83 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -343,8 +343,8 @@ config GPIO_XGENE
+ 	  here to enable the GFC GPIO functionality.
+ 
+ config GPIO_XILINX
+-	bool "Xilinx GPIO support"
+-	depends on PPC_OF || MICROBLAZE || ARCH_ZYNQ
++	tristate "Xilinx GPIO support"
++	depends on OF_GPIO && (PPC_OF || MICROBLAZE || ARCH_ZYNQ || ARCH_X86)
+ 	help
+ 	  Say yes here to support the Xilinx FPGA GPIO device
+ 
 diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index ba18b06..e668ec4 100644
+index 9a81c82..0607d97 100644
 --- a/drivers/gpio/gpio-xilinx.c
 +++ b/drivers/gpio/gpio-xilinx.c
-@@ -43,14 +43,12 @@
-  * struct of_mm_gpio_chip mmchip: OF GPIO chip for memory mapped banks
-  * gpio_state: GPIO state shadow register
-  * gpio_dir: GPIO direction shadow register
-- * offset: GPIO channel offset
-  * gpio_lock: Lock used for synchronization
-  */
- struct xgpio_instance {
- 	struct of_mm_gpio_chip mmchip;
- 	u32 gpio_state;
- 	u32 gpio_dir;
--	u32 offset;
- 	spinlock_t gpio_lock;
- };
+@@ -30,7 +30,7 @@
+ #define XGPIO_CHANNEL_OFFSET	0x8
  
-@@ -65,12 +63,8 @@ struct xgpio_instance {
- static int xgpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct xgpio_instance *chip =
--	    container_of(mm_gc, struct xgpio_instance, mmchip);
- 
--	void __iomem *regs = mm_gc->regs + chip->offset;
--
--	return !!(xgpio_readreg(regs + XGPIO_DATA_OFFSET) & BIT(gpio));
-+	return !!(xgpio_readreg(mm_gc->regs + XGPIO_DATA_OFFSET) & BIT(gpio));
- }
- 
- /**
-@@ -88,7 +82,6 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
-@@ -98,8 +91,7 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	else
- 		chip->gpio_state &= ~BIT(gpio);
- 
--	xgpio_writereg(regs + chip->offset + XGPIO_DATA_OFFSET,
--							 chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET, chip->gpio_state);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- }
-@@ -119,13 +111,12 @@ static int xgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
- 	/* Set the GPIO bit in shadow register and set direction as input */
- 	chip->gpio_dir |= BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_TRI_OFFSET, chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- 
-@@ -148,7 +139,6 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
-@@ -157,12 +147,11 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 		chip->gpio_state |= BIT(gpio);
- 	else
- 		chip->gpio_state &= ~BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_DATA_OFFSET,
--		       chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET, chip->gpio_state);
- 
- 	/* Clear the GPIO bit in shadow register and set direction as output */
- 	chip->gpio_dir &= ~BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_TRI_OFFSET, chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- 
-@@ -178,10 +167,8 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
- 
--	xgpio_writereg(mm_gc->regs + chip->offset + XGPIO_DATA_OFFSET,
--							chip->gpio_state);
--	xgpio_writereg(mm_gc->regs + chip->offset + XGPIO_TRI_OFFSET,
--							 chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET,	chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- }
- 
- /**
-@@ -247,9 +234,6 @@ static int xgpio_of_probe(struct device_node *np)
- 		if (!chip)
- 			return -ENOMEM;
- 
--		/* Add dual channel offset */
--		chip->offset = XGPIO_CHANNEL_OFFSET;
--
- 		/* Update GPIO state shadow register with default value */
- 		of_property_read_u32(np, "xlnx,dout-default-2",
- 				     &chip->gpio_state);
-@@ -285,6 +269,10 @@ static int xgpio_of_probe(struct device_node *np)
- 			np->full_name, status);
- 			return status;
- 		}
-+
-+		/* Add dual channel offset */
-+		chip->mmchip.regs += XGPIO_CHANNEL_OFFSET;
-+
- 		pr_info("XGpio: %s: dual channel registered, base is %d\n",
- 					np->full_name, chip->mmchip.gc.base);
- 	}
+ /* Read/Write access to the GPIO registers */
+-#ifdef CONFIG_ARCH_ZYNQ
++#if defined(CONFIG_ARCH_ZYNQ) || defined(CONFIG_X86)
+ # define xgpio_readreg(offset)		readl(offset)
+ # define xgpio_writereg(offset, val)	writel(val, offset)
+ #else
 -- 
 2.1.3
