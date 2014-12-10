@@ -1,95 +1,152 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] gpio: pcf857x: Propagate wake-up setting to parent irq controller
-Date: Wed, 10 Dec 2014 14:36:14 +0100
-Message-ID: <1418218575-17694-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59516 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753044AbaLJNgW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Dec 2014 08:36:22 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v2 1/3] gpio/xilinx: Remove offset property
+Date: Wed, 10 Dec 2014 15:18:04 +0100
+Message-ID: <3c4acafb6be84bf0a27f11b16d0309c3@BL2FFO11FD025.protection.gbl>
+References: <1418217710-11987-1-git-send-email-ricardo.ribalda@gmail.com>
+ <1418217710-11987-2-git-send-email-ricardo.ribalda@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1418217710-11987-2-git-send-email-ricardo.ribalda@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Ingo Molnar <mingo@redhat.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-The pcf857x GPIO and interrupt controller uses dummy_irq_chip, which
-does not implement irq_chip.irq_set_wake() and does not set
-IRQCHIP_SKIP_SET_WAKE.
+On 12/10/2014 02:21 PM, Ricardo Ribalda Delgado wrote:
+> Instead of calculating the register offset per call, pre-calculate it on
+> probe time.
+> 
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+> 
+> v2: Add Acked-by 
+> 
+>  drivers/gpio/gpio-xilinx.c | 33 +++++++++++----------------------
+>  1 file changed, 11 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+> index ba18b06..9483950 100644
+> --- a/drivers/gpio/gpio-xilinx.c
+> +++ b/drivers/gpio/gpio-xilinx.c
+> @@ -50,7 +50,6 @@ struct xgpio_instance {
+>  	struct of_mm_gpio_chip mmchip;
+>  	u32 gpio_state;
+>  	u32 gpio_dir;
+> -	u32 offset;
 
-This causes two s2ram issues if wake-up is enabled for the pcf857x GPIO
-pins:
-  1. During resume from s2ram, the following warning is printed:
+when you remove offset property you should also remove offset from comment
+above of this structure.
 
-     WARNING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
-     Unbalanced IRQ 113 wake disable
+>  	spinlock_t gpio_lock;
+>  };
+>  
+> @@ -65,12 +64,8 @@ struct xgpio_instance {
+>  static int xgpio_get(struct gpio_chip *gc, unsigned int gpio)
+>  {
+>  	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+> -	struct xgpio_instance *chip =
+> -	    container_of(mm_gc, struct xgpio_instance, mmchip);
+>  
+> -	void __iomem *regs = mm_gc->regs + chip->offset;
+> -
+> -	return !!(xgpio_readreg(regs + XGPIO_DATA_OFFSET) & BIT(gpio));
+> +	return !!(xgpio_readreg(mm_gc->regs + XGPIO_DATA_OFFSET) & BIT(gpio));
+>  }
+>  
+>  /**
+> @@ -88,7 +83,6 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+>  	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+>  	struct xgpio_instance *chip =
+>  	    container_of(mm_gc, struct xgpio_instance, mmchip);
+> -	void __iomem *regs = mm_gc->regs;
+>  
+>  	spin_lock_irqsave(&chip->gpio_lock, flags);
+>  
+> @@ -98,8 +92,7 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+>  	else
+>  		chip->gpio_state &= ~BIT(gpio);
+>  
+> -	xgpio_writereg(regs + chip->offset + XGPIO_DATA_OFFSET,
+> -							 chip->gpio_state);
+> +	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET, chip->gpio_state);
+>  
+>  	spin_unlock_irqrestore(&chip->gpio_lock, flags);
+>  }
+> @@ -119,13 +112,12 @@ static int xgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+>  	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+>  	struct xgpio_instance *chip =
+>  	    container_of(mm_gc, struct xgpio_instance, mmchip);
+> -	void __iomem *regs = mm_gc->regs;
+>  
+>  	spin_lock_irqsave(&chip->gpio_lock, flags);
+>  
+>  	/* Set the GPIO bit in shadow register and set direction as input */
+>  	chip->gpio_dir |= BIT(gpio);
+> -	xgpio_writereg(regs + chip->offset + XGPIO_TRI_OFFSET, chip->gpio_dir);
+> +	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
+>  
+>  	spin_unlock_irqrestore(&chip->gpio_lock, flags);
+>  
+> @@ -148,7 +140,6 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+>  	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+>  	struct xgpio_instance *chip =
+>  	    container_of(mm_gc, struct xgpio_instance, mmchip);
+> -	void __iomem *regs = mm_gc->regs;
+>  
+>  	spin_lock_irqsave(&chip->gpio_lock, flags);
+>  
+> @@ -157,12 +148,11 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+>  		chip->gpio_state |= BIT(gpio);
+>  	else
+>  		chip->gpio_state &= ~BIT(gpio);
+> -	xgpio_writereg(regs + chip->offset + XGPIO_DATA_OFFSET,
+> -		       chip->gpio_state);
+> +	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET, chip->gpio_state);
+>  
+>  	/* Clear the GPIO bit in shadow register and set direction as output */
+>  	chip->gpio_dir &= ~BIT(gpio);
+> -	xgpio_writereg(regs + chip->offset + XGPIO_TRI_OFFSET, chip->gpio_dir);
+> +	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
+>  
+>  	spin_unlock_irqrestore(&chip->gpio_lock, flags);
+>  
+> @@ -178,10 +168,8 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
+>  	struct xgpio_instance *chip =
+>  	    container_of(mm_gc, struct xgpio_instance, mmchip);
+>  
+> -	xgpio_writereg(mm_gc->regs + chip->offset + XGPIO_DATA_OFFSET,
+> -							chip->gpio_state);
+> -	xgpio_writereg(mm_gc->regs + chip->offset + XGPIO_TRI_OFFSET,
+> -							 chip->gpio_dir);
+> +	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET,	chip->gpio_state);
+> +	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
+>  }
+>  
+>  /**
+> @@ -247,9 +235,6 @@ static int xgpio_of_probe(struct device_node *np)
+>  		if (!chip)
+>  			return -ENOMEM;
+>  
+> -		/* Add dual channel offset */
+> -		chip->offset = XGPIO_CHANNEL_OFFSET;
+> -
+>  		/* Update GPIO state shadow register with default value */
+>  		of_property_read_u32(np, "xlnx,dout-default-2",
+>  				     &chip->gpio_state);
+> @@ -285,6 +270,10 @@ static int xgpio_of_probe(struct device_node *np)
+>  			np->full_name, status);
+>  			return status;
+>  		}
+> +
+> +		/* Add dual channel offset */
+> +		chip->mmchip.regs += XGPIO_CHANNEL_OFFSET;
+> +
+>  		pr_info("XGpio: %s: dual channel registered, base is %d\n",
+>  					np->full_name, chip->mmchip.gc.base);
+>  	}
+> 
 
-  2. Wake-up through the pcf857x GPIO pins may fail, as the parent
-     interrupt controller may be suspended.
-
-Migrate the pcf857x GPIO and interrupt controller from dummy_irq_chip to
-its own irq_chip. This irq chip implements irq_chip.irq_set_wake() to
-propagate its wake-up setting to the parent interrupt controller.
-
-This fixes wake-up through gpio-keys on sh73a0/kzm9g, where the pcf857x
-interrupt is cascaded to irq-renesas-intc-irqpin, and the latter must
-not be suspended when wake-up is enabled.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/gpio-pcf857x.c | 33 ++++++++++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 236708ad0a5ba0ab..22dbecb004cf6c5b 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -218,14 +218,45 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+/*
-+ * NOP functions
-+ */
-+static void noop(struct irq_data *data) { }
-+
-+static unsigned int noop_ret(struct irq_data *data)
-+{
-+	return 0;
-+}
-+
-+static int pcf857x_irq_set_wake(struct irq_data *data, unsigned int on)
-+{
-+	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
-+
-+	irq_set_irq_wake(gpio->client->irq, on);
-+	return 0;
-+}
-+
-+static struct irq_chip pcf857x_irq_chip = {
-+	.name		= "pcf857x",
-+	.irq_startup	= noop_ret,
-+	.irq_shutdown	= noop,
-+	.irq_enable	= noop,
-+	.irq_disable	= noop,
-+	.irq_ack	= noop,
-+	.irq_mask	= noop,
-+	.irq_unmask	= noop,
-+	.irq_set_wake	= pcf857x_irq_set_wake,
-+};
-+
- static int pcf857x_irq_domain_map(struct irq_domain *domain, unsigned int irq,
- 				 irq_hw_number_t hw)
- {
- 	struct pcf857x *gpio = domain->host_data;
- 
- 	irq_set_chip_and_handler(irq,
--				 &dummy_irq_chip,
-+				 &pcf857x_irq_chip,
- 				 handle_level_irq);
-+	irq_set_chip_data(irq, gpio);
- #ifdef CONFIG_ARM
- 	set_irq_flags(irq, IRQF_VALID);
- #else
--- 
-1.9.1
-
+Thanks,
+Michal
