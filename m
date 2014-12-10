@@ -1,217 +1,178 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v3 2/4] gpio/xilinx: Convert the driver to platform device
- interface
-Date: Wed, 10 Dec 2014 16:29:11 +0100
-Message-ID: <8a16af8e063b4250ba5e78f2409efef4@BN1AFFO11FD024.protection.gbl>
-References: <1418225100-2949-1-git-send-email-ricardo.ribalda@gmail.com>
- <1418225100-2949-3-git-send-email-ricardo.ribalda@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [RFC 00/15] Resource tracking/allocation framework
+Date: Wed, 10 Dec 2014 16:48:18 +0100
+Message-ID: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2on0065.outbound.protection.outlook.com ([207.46.100.65]:37024
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1757150AbaLJP3Z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 10 Dec 2014 10:29:25 -0500
-In-Reply-To: <1418225100-2949-3-git-send-email-ricardo.ribalda@gmail.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:60962 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756341AbaLJPsy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Dec 2014 10:48:54 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: open list <linux-kernel@vger.kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>b
 
-On 12/10/2014 04:24 PM, Ricardo Ribalda Delgado wrote:
-> This way we do not need to transverse the device tree manually and we
-> support hot plugged devices.
-> 
-> Also Implement remove callback so the driver can be unloaded
-> 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
-> 
-> v3:
-> Add inited to kernel-doc
-> Keep the driver in susbys_initcall
-> 
-> 
->  drivers/gpio/gpio-xilinx.c | 77 ++++++++++++++++++++++++++++++++++++----------
->  1 file changed, 60 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-> index e668ec4..9a81c82 100644
-> --- a/drivers/gpio/gpio-xilinx.c
-> +++ b/drivers/gpio/gpio-xilinx.c
-> @@ -44,12 +44,18 @@
->   * gpio_state: GPIO state shadow register
->   * gpio_dir: GPIO direction shadow register
->   * gpio_lock: Lock used for synchronization
-> + * inited: True if the port has been inited
->   */
->  struct xgpio_instance {
->  	struct of_mm_gpio_chip mmchip;
->  	u32 gpio_state;
->  	u32 gpio_dir;
->  	spinlock_t gpio_lock;
-> +	bool inited;
-> +};
-> +
-> +struct xgpio {
-> +	struct xgpio_instance port[2];
->  };
->  
->  /**
-> @@ -172,24 +178,56 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
->  }
->  
->  /**
-> + * xgpio_remove - Remove method for the GPIO device.
-> + * @pdev: pointer to the platform device
-> + *
-> + * This function remove gpiochips and frees all the allocated resources.
-> + */
-> +static int xgpio_remove(struct platform_device *pdev)
-> +{
-> +	struct xgpio *xgpio = platform_get_drvdata(pdev);
-> +	int i;
-> +
-> +	for (i = 0; i < 2; i++) {
-> +		if (!xgpio->port[i].inited)
-> +			continue;
-> +		gpiochip_remove(&xgpio->port[i].mmchip.gc);
-> +
-> +		if (i == 1)
-> +			xgpio->port[i].mmchip.regs -= XGPIO_CHANNEL_OFFSET;
-> +
-> +		iounmap(xgpio->port[i].mmchip.regs);
-> +		kfree(xgpio->port[i].mmchip.gc.label);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
->   * xgpio_of_probe - Probe method for the GPIO device.
-> - * @np: pointer to device tree node
-> + * @pdev: pointer to the platform device
->   *
->   * This function probes the GPIO device in the device tree. It initializes the
->   * driver data structure. It returns 0, if the driver is bound to the GPIO
->   * device, or a negative value if there is an error.
->   */
-> -static int xgpio_of_probe(struct device_node *np)
-> +static int xgpio_probe(struct platform_device *pdev)
->  {
-> +	struct xgpio *xgpio;
->  	struct xgpio_instance *chip;
->  	int status = 0;
-> +	struct device_node *np = pdev->dev.of_node;
->  	const u32 *tree_info;
->  	u32 ngpio;
->  
-> -	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
-> -	if (!chip)
-> +	xgpio = devm_kzalloc(&pdev->dev, sizeof(*xgpio), GFP_KERNEL);
-> +	if (!xgpio)
->  		return -ENOMEM;
->  
-> +	platform_set_drvdata(pdev, xgpio);
-> +
-> +	chip = &xgpio->port[0];
-> +
->  	/* Update GPIO state shadow register with default value */
->  	of_property_read_u32(np, "xlnx,dout-default", &chip->gpio_state);
->  
-> @@ -209,6 +247,7 @@ static int xgpio_of_probe(struct device_node *np)
->  
->  	spin_lock_init(&chip->gpio_lock);
->  
-> +	chip->mmchip.gc.dev = &pdev->dev;
->  	chip->mmchip.gc.direction_input = xgpio_dir_in;
->  	chip->mmchip.gc.direction_output = xgpio_dir_out;
->  	chip->mmchip.gc.get = xgpio_get;
-> @@ -219,20 +258,18 @@ static int xgpio_of_probe(struct device_node *np)
->  	/* Call the OF gpio helper to setup and register the GPIO device */
->  	status = of_mm_gpiochip_add(np, &chip->mmchip);
->  	if (status) {
-> -		kfree(chip);
->  		pr_err("%s: error in probe function with status %d\n",
->  		       np->full_name, status);
->  		return status;
->  	}
-> +	chip->inited = true;
->  
->  	pr_info("XGpio: %s: registered, base is %d\n", np->full_name,
->  							chip->mmchip.gc.base);
->  
->  	tree_info = of_get_property(np, "xlnx,is-dual", NULL);
->  	if (tree_info && be32_to_cpup(tree_info)) {
-> -		chip = kzalloc(sizeof(*chip), GFP_KERNEL);
-> -		if (!chip)
-> -			return -ENOMEM;
-> +		chip = &xgpio->port[1];
->  
->  		/* Update GPIO state shadow register with default value */
->  		of_property_read_u32(np, "xlnx,dout-default-2",
-> @@ -254,6 +291,7 @@ static int xgpio_of_probe(struct device_node *np)
->  
->  		spin_lock_init(&chip->gpio_lock);
->  
-> +		chip->mmchip.gc.dev = &pdev->dev;
->  		chip->mmchip.gc.direction_input = xgpio_dir_in;
->  		chip->mmchip.gc.direction_output = xgpio_dir_out;
->  		chip->mmchip.gc.get = xgpio_get;
-> @@ -264,7 +302,7 @@ static int xgpio_of_probe(struct device_node *np)
->  		/* Call the OF gpio helper to setup and register the GPIO dev */
->  		status = of_mm_gpiochip_add(np, &chip->mmchip);
->  		if (status) {
-> -			kfree(chip);
-> +			xgpio_remove(pdev);
->  			pr_err("%s: error in probe function with status %d\n",
->  			np->full_name, status);
->  			return status;
-> @@ -272,6 +310,7 @@ static int xgpio_of_probe(struct device_node *np)
->  
->  		/* Add dual channel offset */
->  		chip->mmchip.regs += XGPIO_CHANNEL_OFFSET;
-> +		chip->inited = true;
->  
->  		pr_info("XGpio: %s: dual channel registered, base is %d\n",
->  					np->full_name, chip->mmchip.gc.base);
-> @@ -285,19 +324,23 @@ static const struct of_device_id xgpio_of_match[] = {
->  	{ /* end of list */ },
->  };
->  
-> -static int __init xgpio_init(void)
-> -{
-> -	struct device_node *np;
-> +MODULE_DEVICE_TABLE(of, xgpio_of_match);
->  
-> -	for_each_matching_node(np, xgpio_of_match)
-> -		xgpio_of_probe(np);
-> +static struct platform_driver xgpio_plat_driver = {
-> +	.probe		= xgpio_probe,
-> +	.remove		= xgpio_remove,
-> +	.driver		= {
-> +			.name = "gpio-xilinx",
-> +			.of_match_table	= xgpio_of_match,
-> +	},
-> +};
->  
-> -	return 0;
-> +static int __init xgpio_init(void)
-> +{
-> +	return platform_driver_register(&xgpio_plat_driver);
->  }
->  
-> -/* Make sure we get initialized before anyone else tries to use us */
->  subsys_initcall(xgpio_init);
-> -/* No exit call at the moment as we cannot unregister of GPIO chips */
->  
+Hi,
 
-Still not correct.
-Here should be module_exit if you want to use as module.
-I expect that you haven't tested it.
+Many kernel frameworks that uses provider/consumer schema suffer from
+few issues:
+1. They have broken driver unbinding handling. When device driver of the provider
+  is unbound from the device, its consumers stay with reference to non-existing
+  objects, as a result we can observe oopses, crashes, hangs.
+  Frameworks tries to handle it by using:
+  - module refcounting (try_module_get/module_put) - as the name says it
+    protects only from module unloading, not driver unbinding. Additionally
+    it can cause circular dependencies of modules and inability to unload them.
+  - ghost providers - when driver is unbound provider is replaced with phony one,
+    which returns errors on every access. It also does not solve the issue -
+    consumer device can hang if the hardware represented by the provider is off.
+2. Consumer does not know when required resource becomes available. Currently it
+  is solved by deferred probing. The main problem with this solution is that it
+  delays deferred device probe to late_initcall, for some devices it is
+  unacceptable/undesirable.
+3. There are drivers which can work without specific resource, but if
+  the resource becomes available/unavailable it can do some additional stuff.
+  An example of such driver is DRM driver (more precisely drm_connector) -
+  it can start without attached drm_panel, but if the panel becomes available it
+  can react by generating HPD event and start using it. Delaying drm
+  initialization due to lack of panel should be avoided - drm can still be
+  usable without it, for example it can still use HDMI monitor.
+  Currently it can be handled by periodic polling drm_panel framework for
+  the panel, but it is rather an workaround, not a real solution.
 
-Thanks,
-Michal
+The main problem with the 1st issue is that drivers cannot be protected from
+unbinding. So there is no way to prevent removal of resources they provide.
+The only solution I see is to provide notifications to consumers about incoming
+removal of resources they are using, so they can react appropriately.
+Symmetrically we can add notifications about appearance of specific resources,
+this way the 2nd issue can be solved.
+And finally with both notifications we can solve the 3rd issue.
 
+In the 1st patch I propose generic framework providing such notifications, named
+track - propositions for better name are welcome.
+Its main feature is that callbacks are serialized but are not called under lock,
+it allows two important things:
+- avoid additional locks in the consumers to protect data access from different
+  callbacks,
+- call the framework from within the callback, so complex dependencies can be
+  modelled this way, without worries about deadlocks due to framework.
+
+The 2nd patch contains restrack framework which uses internally track framework
+to track and automatically allocate different resources. In short it can replace
+all resource allocations with single call + callback. Of course it is just
+a bonus. The most important thing is that it solves all described issues:
+- it can properly handle provider unbind/re-bind,
+- it avoids late init due to deferred probing,
+- it allows to track optional resources.
+
+Simple example taken from restrack commit message:
+
+    static int lcd_probe(...)
+    {
+        struct restrack *rtrack;
+
+    (...initialization w/o resource allocation ...)
+
+        rtrack = devm_restrack_register(dev, lcd_callback,
+                regulator_bulk_restrack_desc(&ctx->supplies[0]),
+                regulator_bulk_restrack_desc(&ctx->supplies[1]),
+                clk_restrack_desc(&ctx->pll_clk, "pll_clk"),
+                clk_restrack_desc(&ctx->bus_clk, "bus_clk"),
+                phy_restrack_desc(&ctx->phy, "dsim"),
+        );
+
+        return PTR_ERR_OR_NULL(rtrack);
+    }
+
+    void lcd_callback(struct device *dev, int ret)
+    {
+        struct lcd_ctx *ctx = dev_get_drvdata(dev);
+
+        if (ret == 0)
+                drm_panel_add(&ctx->panel);
+        else if (ret == -EPROBE_DEFER)
+                drm_panel_remove(&ctx->panel);
+        else
+                dev_err(dev, "restrack error %d\n", ret);
+    }
+
+For other examples look at patches 11, 13, 15.
+
+Patches 3,4,6,8,9 adds restrack support to various frameworks. Restrack support
+is added only to resources exposed via Device Tree. Adding support for non-DT
+resources should be also possible, but I guess it can be more complicated as
+resource lookup mechanism is more fuzzy. Anyway I can work on it if necessary.
+Moreover these patches in some cases adds redundant code for DT lookup,
+this redundancy can be removed in final version of the patchset.
+Also another frameworks may need similar patches.
+
+Patch 11 converts exynos-dsi driver to restrack API. It solves issues of
+provider unbind (1st issue) and late init due to deferred probing (2nd issue).
+
+Patch 13 shows how to deal with optional resources (3rd issue).
+
+Patch 15 is a simple example how to deal with resources depending on other
+resources. In this particular case ld9040 lcd panel driver requires presence
+of regulators and gpio prior to expose drm_panel resource.
+
+Patches 5 and 7 adds helper functions for DT node lookup of resource providers.
+
+Patches 10,12,14 are just fixes or cleanups.
+
+The patchset is based on exynos-drm-next [1] due to fact I have developed it
+on exynos platforms. I can rebase it on other branch, if necessary.
+
+[1]: https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/log/?h=exynos-drm-next
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (15):
+  drivers/base: add track framework
+  drivers/base: add restrack framework
+  drm/panel: add restrack support
+  regulator: add restrack support
+  gpio: move DT parsing code to separate functions
+  gpio: add restrack support
+  clk: add DT parsing function
+  clk: add restrack support
+  phy: add restrack support
+  drm/exynos/dsi: simplify hotplug code
+  drm/exynos/dsi: convert to restrack API
+  drm/exynos/dpi: use common of_graph functions
+  drm/exynos/dpi: convert to restrack API
+  drm/panel/ld9040: do not power off panel on removal
+  drm/panel/ld9040: convert to restrack API
+
+ drivers/base/Makefile                    |   2 +-
+ drivers/base/restrack.c                  | 344 +++++++++++++++++++++++++++++++
+ drivers/base/track.c                     | 241 ++++++++++++++++++++++
+ drivers/clk/clk.c                        |   6 +
+ drivers/clk/clkdev.c                     |  97 +++++++++
+ drivers/gpio/gpiolib-of.c                |  59 +++---
+ drivers/gpio/gpiolib.c                   | 114 +++++++++-
+ drivers/gpio/gpiolib.h                   |   4 +-
+ drivers/gpu/drm/drm_panel.c              |  97 +++++++++
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 193 +++++++----------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 113 +++++-----
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |   7 +
+ drivers/gpu/drm/panel/panel-ld9040.c     |  42 ++--
+ drivers/phy/phy-core.c                   |  90 ++++++++
+ drivers/regulator/core.c                 |  77 +++++++
+ include/drm/drm_panel.h                  |   4 +
+ include/linux/clk.h                      |   3 +
+ include/linux/gpio/consumer.h            |   4 +
+ include/linux/phy/phy.h                  |   3 +
+ include/linux/regulator/consumer.h       |  10 +
+ include/linux/restrack.h                 | 143 +++++++++++++
+ include/linux/track.h                    | 148 +++++++++++++
+ 22 files changed, 1567 insertions(+), 234 deletions(-)
+ create mode 100644 drivers/base/restrack.c
+ create mode 100644 drivers/base/track.c
+ create mode 100644 include/linux/restrack.h
+ create mode 100644 include/linux/track.h
+
+-- 
+1.9.1
 
