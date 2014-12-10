@@ -1,27 +1,26 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v2 3/3] gpio/xilinx: Add support for X86 Arch
-Date: Wed, 10 Dec 2014 15:38:18 +0100
-Message-ID: <8dff12b43e18420b8f4413daf5964afc@BN1BFFO11FD034.protection.gbl>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH v2 2/3] gpio/xilinx: Convert the driver to platform device interface
+Date: Wed, 10 Dec 2014 16:15:07 +0100
+Message-ID: <CAPybu_0CTY1TthEsv_-WY_8yuBTaFCu3-a0Q8kY4EUk-RCpPng@mail.gmail.com>
 References: <1418217710-11987-1-git-send-email-ricardo.ribalda@gmail.com>
- <1418217710-11987-4-git-send-email-ricardo.ribalda@gmail.com>
+ <1418217710-11987-3-git-send-email-ricardo.ribalda@gmail.com> <f86daba7727c4537947191ba871f4606@BY2FFO11FD006.protection.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1418217710-11987-4-git-send-email-ricardo.ribalda@gmail.com>
+In-Reply-To: <f86daba7727c4537947191ba871f4606@BY2FFO11FD006.protection.gbl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 12/10/2014 02:21 PM, Ricardo Ribalda Delgado wrote:
-> Core can be accessed via PCIe on X86 platform.
-> 
+Agree on all :)
 
-You should also describe also that you are changing that this driver
-can be used as module.
+Regarding the kernel-doc patch I rather add it after the other changes.
 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
 
-Thanks,
-Michal
+Will resend in a second, tell me if you want your reviewed-by or
+ack-by for any  of the 3 patches
+
+Thanks!
+-- 
+Ricardo Ribalda
