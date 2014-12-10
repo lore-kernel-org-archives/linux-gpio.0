@@ -1,36 +1,67 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: Re: [PATCH 2/4] gpio/xilinx: Convert the driver to platform device interface
-Date: Wed, 10 Dec 2014 14:22:48 +0100
-Message-ID: <CAPybu_1bB18nQdYBitPPXN1eR4X+XNn+Qr7QJaT1o13V90cvYg@mail.gmail.com>
-References: <1418051276-5476-1-git-send-email-ricardo.ribalda@gmail.com>
- <1418051276-5476-3-git-send-email-ricardo.ribalda@gmail.com>
- <CAAVeFuKj1ekbGyn_bLVN9ndF=B=H=2HQXDzjEvhes=GCcVyv_A@mail.gmail.com>
- <CAPybu_0Z5p1e6O4e3Qg+poJ2GwcHpd5wdnJ3EfPf9aN_VLX1ZA@mail.gmail.com> <CAAVeFuLs8CsNqCKdcB6tgKmbzuFaVDMxduxsXbKmR=mK8+h0=Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuLs8CsNqCKdcB6tgKmbzuFaVDMxduxsXbKmR=mK8+h0=Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] [RFC] genirq: Set IRQCHIP_SKIP_SET_WAKE for no_irq_chip and dummy_irq_chip
+Date: Wed, 10 Dec 2014 14:36:15 +0100
+Message-ID: <1418218575-17694-2-git-send-email-geert+renesas@glider.be>
+References: <1418218575-17694-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1418218575-17694-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Ingo Molnar <mingo@redhat.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-I have just resend the whole patchet. I prefer 2 and 3 splited, so if
-you change your mind It is not a problem to split them again :)
+If no_irq_chip or dummy_irq_chip are used for wake up (e.g. gpio-keys
+with a simple GPIO controller), the following warning is printed on
+resume from s2ram:
 
-Regards!
+    WANING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
+    Unbalanced IRQ 113 wake disable
 
-On Wed, Dec 10, 2014 at 2:09 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Wed, Dec 10, 2014 at 10:07 PM, Ricardo Ribalda Delgado
-> <ricardo.ribalda@gmail.com> wrote:
->> Hello Alexandre
->>
->> Will merge them and resend. May I add your acked by to the merged 2/3?
->
-> Not yet, I'd like to review the merged patch to get a good picture of
-> what it is doing.
+This happens because no_irq_chip and dummy_irq_chip do not implement
+irq_chip.irq_set_wake(), causing set_irq_wake_real() to return -ENXIO,
+and irq_set_irq_wake() to reset the wake_depth to zero.
 
+Set IRQCHIP_SKIP_SET_WAKE to indicate that irq_chip.irq_set_wake() is
+not implemented.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Alternatively, can't we remove IRQCHIP_SKIP_SET_WAKE, and just check for
+the presence of irq_chip.irq_set_wake()?
+I'll be happy to send a patch to do that instead...
 
+Is there anything that relies on this -ENXIO error code?
+All irq_chip implementations that set IRQCHIP_SKIP_SET_WAKE do not
+implement irq_chip.irq_set_wake(). There are probably more of them that
+forgot to set IRQCHIP_SKIP_SET_WAKE though.
+Am I missing something?
+Commit 60f96b41f71d2a13 ("genirq: Add IRQCHIP_SKIP_SET_WAKE flag")
+doesn't explain why adding the flag was chosen.
+
+Thanks!
+---
+ kernel/irq/dummychip.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/irq/dummychip.c b/kernel/irq/dummychip.c
+index 988dc58e8847f6eb..326a67f2410bf95c 100644
+--- a/kernel/irq/dummychip.c
++++ b/kernel/irq/dummychip.c
+@@ -42,6 +42,7 @@ struct irq_chip no_irq_chip = {
+ 	.irq_enable	= noop,
+ 	.irq_disable	= noop,
+ 	.irq_ack	= ack_bad,
++	.flags		= IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
+ /*
+@@ -57,5 +58,6 @@ struct irq_chip dummy_irq_chip = {
+ 	.irq_ack	= noop,
+ 	.irq_mask	= noop,
+ 	.irq_unmask	= noop,
++	.flags		= IRQCHIP_SKIP_SET_WAKE,
+ };
+ EXPORT_SYMBOL_GPL(dummy_irq_chip);
 -- 
-Ricardo Ribalda
+1.9.1
+
