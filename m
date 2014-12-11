@@ -1,83 +1,70 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: sn54hc595: new driver for GPIO shift registers chipsets
-Date: Thu, 11 Dec 2014 12:03:09 +0100
-Message-ID: <CAMuHMdWc1Uu81pG5QiPLpjX4h-3TeBjXXhnCX+4yNNTKQEzo3w@mail.gmail.com>
-References: <1418048833-27658-1-git-send-email-zajec5@gmail.com>
-	<CAMuHMdWf_Cw7DTqhut6Mcic1FmcJjHdXWuXkNZM2z0Zx9wjCxw@mail.gmail.com>
-	<CACna6rwRR7FpS97Znyk3ewVW58dn5yYTj8OjCstsuzzX8Prg5Q@mail.gmail.com>
-	<2176453.HD1opzG9Wg@wuerfel>
-	<CACna6rydKTDO+tBTdNNUDvQCXytE6VnEPjLSGs0yMee8Jz8FGA@mail.gmail.com>
-	<CAMuHMdVvK1CTB1SKiNgD8zB9qorV=sQwRO66Dbm5zy=jhw82RA@mail.gmail.com>
-	<20141209091202.GS8739@lukather>
-	<CACna6rwBO388iF+BJ2=nCEWrNsedag8bbBc+OZYe+pvf4zrmgw@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC 04/15] regulator: add restrack support
+Date: Thu, 11 Dec 2014 12:58:37 +0000
+Message-ID: <20141211125837.GV11764@sirena.org.uk>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <1418226513-14105-5-git-send-email-a.hajda@samsung.com>
+ <20141210160720.GS11764@sirena.org.uk>
+ <548976D2.7080005@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5FNPeqk0egs0iuvD"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:35021 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932478AbaLKLDL convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Dec 2014 06:03:11 -0500
-In-Reply-To: <CACna6rwBO388iF+BJ2=nCEWrNsedag8bbBc+OZYe+pvf4zrmgw@mail.gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55593 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752444AbaLKM7d (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Dec 2014 07:59:33 -0500
+Content-Disposition: inline
+In-Reply-To: <548976D2.7080005@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Gabor Juhos <juhosg@openwrt.org>, Miguel Gaio <miguel.gaio@efixo.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@
 
-On Thu, Dec 11, 2014 at 11:36 AM, Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail=
-=2Ecom> wrote:
-> On 9 December 2014 at 10:12, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> On Mon, Dec 08, 2014 at 05:59:11PM +0100, Geert Uytterhoeven wrote:
->>> > I think that implementing support for this extra SPI layer will
->>> > actually require more code/tricks than a separated driver.
->>>
->>> Yes, it will require more code, as spi-gpio is more generic than yo=
-ur simple
->>> implementation.  But the end result is more flexible and reusable.
->>>
->>> The only thing missing is the programmable OE and reset pins,
->>> which are assumed hardwired by the gpio-74x164 driver.
->>> These could be implemented using new gpio-oe and gpio-reset
->>> properties.
->>
->> From my (very) vague memories of it, OE was actually supported by
->> using it as spi-gpio's chip select.
->>
->> So I'd say that only the gpio-reset should be implemented.
->
-> I've tracked how spi_bitbang_transfer_one does work. Long story short=
- it does:
 
-[deleted standard SPI protocol]
+--5FNPeqk0egs0iuvD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> As you can see, we don't call OE in spi_gpio_chipselect. So currently
-> both input signals and unhandled: OE and SRCLR. Luckily for me, it
-> appears my bootloader puts them in a wanted state, but this still
-> should be handled somehow.
+On Thu, Dec 11, 2014 at 11:49:54AM +0100, Andrzej Hajda wrote:
+> On 12/10/2014 05:07 PM, Mark Brown wrote:
+> > On Wed, Dec 10, 2014 at 04:48:22PM +0100, Andrzej Hajda wrote:
 
-I think you can just add two properties (one array for OE, one for SRCL=
-R)
-to the bindings for the gpio-74x164 driver, so it can set those GPIO pi=
-ns,
-if present. Note that they should be arrays, as gpio-74x164 supports\
-daisy-chaining chips.
+> >> Regulators supports various methods of lookup.
+> >> The patch adds restrack support only to DT based regulators.
 
-Gr{oetje,eeting}s,
+> > Why, what does this mean and how might one use it?  I've not looked at
+> > the code since I don't know what it's supposed to accomplish...
 
-                        Geert
+> Looking at this patch makes no sense without looking at cover letter
+> or at the patch adding restrack framework. In short adding restrack support
+> to regulators will allow to:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+I did look at the cover letter and glance at the first couple of patches
+but I still can't tell what this is really intended to do.  There's a
+lot of implementation detail but not a lot of high level overview so
+it's not very clear to me how exactly this solves problems or how it is
+different to the component framework, it sounds very similar.
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I'd expect someone reading the change in the regulator API to have at
+least some idea how this fits in with the rest of the API and how to use
+it, and probably more importantly I'd expect to be able to understand
+why this is DT only.
+
+--5FNPeqk0egs0iuvD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUiZT9AAoJECTWi3JdVIfQt+cH/0dvoIx1Mg0GgnLlbSrzaC/+
+e9DXQHbh/ynUlqjM60wKCz/xo0mD/glSQQbZaCkpADoBWObnLDnydaGEg8w9fGub
+bN2gDtOcelvibN4ID1nZshRFHWFa1ubdGksf8v2nqvX7cvmdVcw0XLKIjiVlp4aI
+UVhr3RIqZEn4cCmw4FfrAxrxXMJfm9ehl5mecBKRuUlVGWFgw49AEG2GjKnnt2fM
+KogSkZdKOQpaWRQpst+wGnDnOUpYooe3ojfxBIxv6aZyCndXtUMO4Lr+55yhp5n7
+v+j0yRBmUmOPckm+MYU2/Ops09ROpD/FlShbb3jf+HxgLdy6W/kK45N11oadLu4=
+=wRH4
+-----END PGP SIGNATURE-----
+
+--5FNPeqk0egs0iuvD--
