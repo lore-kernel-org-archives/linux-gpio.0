@@ -1,48 +1,142 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [RFC 04/15] regulator: add restrack support
-Date: Thu, 11 Dec 2014 13:43:27 +0000
-Message-ID: <20141211134327.GO11285@n2100.arm.linux.org.uk>
-References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
- <1418226513-14105-5-git-send-email-a.hajda@samsung.com>
- <20141210160720.GS11764@sirena.org.uk>
- <548976D2.7080005@samsung.com>
- <20141211125837.GV11764@sirena.org.uk>
+From: Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH 5/9] gpio: Add Fujitsu MB86S7x GPIO driver
+Date: Thu, 11 Dec 2014 21:30:04 +0530
+Message-ID: <CAJe_ZhejjL+bgNE401-_MTQYMwZvCjzmLHqqudETzP1Ds-_L+Q@mail.gmail.com>
+References: <1416486442-25200-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+	<1416487023-25426-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+	<CAAVeFuL+RKOt1b=JiRTiajGq159_W0kJ2KOiiHa7ZwMBwuk3qg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51787 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932802AbaLKNnp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 11 Dec 2014 08:43:45 -0500
-Content-Disposition: inline
-In-Reply-To: <20141211125837.GV11764@sirena.org.uk>
+Received: from mail-qg0-f49.google.com ([209.85.192.49]:36195 "EHLO
+	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934233AbaLKQAG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Dec 2014 11:00:06 -0500
+Received: by mail-qg0-f49.google.com with SMTP id a108so3980365qge.36
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Dec 2014 08:00:05 -0800 (PST)
+In-Reply-To: <CAAVeFuL+RKOt1b=JiRTiajGq159_W0kJ2KOiiHa7ZwMBwuk3qg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@fr
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Vincent Yang <vincent.yang.fujitsu@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Andy Green <andy.green@linaro.org>, Patch Tracking <patches@linaro.org>, Vincent Yang <Vincent.Yang@tw.fujitsu.com>, Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
 
-On Thu, Dec 11, 2014 at 12:58:37PM +0000, Mark Brown wrote:
-> I'd expect someone reading the change in the regulator API to have at
-> least some idea how this fits in with the rest of the API and how to use
-> it, and probably more importantly I'd expect to be able to understand
-> why this is DT only.
+On 27 November 2014 at 13:03, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Thu, Nov 20, 2014 at 9:37 PM, Vincent Yang
+> <vincent.yang.fujitsu@gmail.com> wrote:
+>> Driver for Fujitsu MB86S7x SoCs that have a memory mapped GPIO controller.
+>>
+>> Signed-off-by: Andy Green <andy.green@linaro.org>
+>> Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+>> Signed-off-by: Vincent Yang <Vincent.Yang@tw.fujitsu.com>
+>> Signed-off-by: Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
+>> ---
+>>  .../bindings/gpio/fujitsu,mb86s70-gpio.txt         |  18 ++
+>>  drivers/gpio/Kconfig                               |   6 +
+>>  drivers/gpio/Makefile                              |   1 +
+>>  drivers/gpio/gpio-mb86s7x.c                        | 211 +++++++++++++++++++++
+>>  4 files changed, 236 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
+>>  create mode 100644 drivers/gpio/gpio-mb86s7x.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
+>> new file mode 100644
+>> index 0000000..38300ee
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
+>> @@ -0,0 +1,18 @@
+>> +Fujitsu MB86S7x GPIO Controller
+>> +-------------------------------
+>> +
+>> +Required properties:
+>> +- compatible: Should be "fujitsu,mb86s70-gpio"
+>> +- gpio-controller: Marks the device node as a gpio controller.
+>> +- #gpio-cells: Should be <2>. The first cell is the pin number and the
+>> +  second cell is used to specify optional parameters:
+>> +   - bit 0 specifies polarity (0 for normal, 1 for inverted).
+>
+> According to the example below and the code, "reg" and "clocks" are
+> also required properties.
+>
+OK, will add them as well.
 
-Yep.
+>> +
+>> +Examples:
+>> +       gpio0: gpio@31000000 {
+>> +               compatible = "fujitsu,mb86s70-gpio";
+>> +               reg = <0 0x31000000 0x10000>;
+>> +               gpio-controller;
+>> +               #gpio-cells = <2>;
+>> +               clocks = <&clk_alw_2_1>;
+>
+> Maybe add a "clocks-names" property so the clock can be given a meaningful name?
+>
+Other mb86s7x drivers don't use that either and we do just fine :)
 
-This is a repetitive problem, and I fully agree with your concern about
-stuff which is supposed to be arch-independent being designed with only
-DT in mind.
+>> +
+>> +#define PDR(x) (0x0 + x)
+>> +#define DDR(x) (0x10 + x)
+>> +#define PFR(x) (0x20 + x)
+>
+> Everytime these macros are used in the code, they are called in the
+> form PFR(offset / 8 * 4). How about doing this operation in the macros
+> instead of repeating it at every call?
+>
+OK
 
-New core kernel features should *not* be designed with only DT in mind -
-DT is not the only firmware description language which the kernel
-supports.  Folk need to understand that if they design a new arch
-independent kernel feature where the sole use case is with DT, that new
-feature is probably going to get rejected, especially when it's
-something as generic as resource tracking.
+>> +
+>> +struct mb86s70_gpio_chip {
+>> +       spinlock_t lock;
+>> +       struct clk *clk;
+>> +       void __iomem *base;
+>> +       struct gpio_chip gc;
+>> +};
+>> +
+>> +static int mb86s70_gpio_request(struct gpio_chip *gc, unsigned offset)
+>> +{
+>> +       struct mb86s70_gpio_chip *gchip = container_of(gc,
+>> +                                       struct mb86s70_gpio_chip, gc);
+>
+> Please have a chip_to_mb86s70() macro to avoid that cumbersome call to
+> container_of in every function. Also I suggest you move the gpio_chip
+> to the top of your mb86s70_gpio_chip structure so the container_of
+> translates to a simple recast without any arithmetic.
+>
+OK
 
-The world is not DT only.
+>> +       unsigned long flags;
+>> +       u32 val;
+>> +
+>> +       spin_lock_irqsave(&gchip->lock, flags);
+>> +       val = readl(gchip->base + PFR(offset / 8 * 4));
+>
+> Same, having mb86s70_readl()/mb86s70_writel() functions would prevent
+> you from explicitly doing pointer arithmetic every time you write a
+> register.
+>
+This becomes trivial after updating macros.
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+>> +       val &= ~(1 << (offset % 8)); /* as gpio-port */
+>
+> val &= ~BIT(offset % 8); ? Same everywhere it applies.
+>
+OK
+
+>> +
+>> +static int mb86s70_gpio_get(struct gpio_chip *gc, unsigned offset)
+>> +{
+>> +       struct mb86s70_gpio_chip *gchip =
+>> +                       container_of(gc, struct mb86s70_gpio_chip, gc);
+>> +       unsigned char val;
+>> +
+>> +       val = readl(gchip->base + PDR(offset / 8 * 4));
+>> +       val &= (1 << (offset % 8));
+>> +       return val ? 1 : 0;
+>
+> Shouldn't this function be protected by the spin lock as well?
+>
+hmm... then we need to fix most other drivers as well :)
+
+> These minor comments aside, the driver looks nice and simple.
+
+Thanks for the review.
+-Jassi
