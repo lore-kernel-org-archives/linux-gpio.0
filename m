@@ -1,41 +1,49 @@
-From: Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH 5/9] gpio: Add Fujitsu MB86S7x GPIO driver
-Date: Thu, 11 Dec 2014 21:31:23 +0530
-Message-ID: <CAJe_Zhef7D5-P4+bfgkbdaDB8HXm-Yb5SyrYRhO+SX1bcoLYNA@mail.gmail.com>
-References: <1416486442-25200-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
-	<1416487023-25426-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
-	<CACRpkdY_DFF8BjwLs5m4fe+-eBjmxYW6z4aU+zxiG+EgZys0+w@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL] bulk GPIO changes for v3.19
+Date: Thu, 11 Dec 2014 11:34:44 -0800
+Message-ID: <CA+55aFx2yi6sxaWt+DZh1QYaqs550Zw1PWOKn0P=0D8fRsqrKA@mail.gmail.com>
+References: <CACRpkda1EPMPTzW56GcCsMnBvn=s1gnp-pHu4cHP-+P-J2q52w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f48.google.com ([209.85.192.48]:48005 "EHLO
-	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934284AbaLKQBY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Dec 2014 11:01:24 -0500
-Received: by mail-qg0-f48.google.com with SMTP id f51so3906663qge.7
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Dec 2014 08:01:23 -0800 (PST)
-In-Reply-To: <CACRpkdY_DFF8BjwLs5m4fe+-eBjmxYW6z4aU+zxiG+EgZys0+w@mail.gmail.com>
+Received: from mail-qc0-f178.google.com ([209.85.216.178]:62249 "EHLO
+	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441AbaLKTep convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Dec 2014 14:34:45 -0500
+In-Reply-To: <CACRpkda1EPMPTzW56GcCsMnBvn=s1gnp-pHu4cHP-+P-J2q52w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Vincent Yang <vincent.yang.fujitsu@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Green <andy.green@linaro.org>, Patch Tracking <patches@linaro.org>, Vincent Yang <Vincent.Yang@tw.fujitsu.com>, Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On 3 December 2014 at 19:02, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Nov 20, 2014 at 1:37 PM, Vincent Yang
-> <vincent.yang.fujitsu@gmail.com> wrote:
+On Tue, Dec 9, 2014 at 1:09 AM, Linus Walleij <linus.walleij@linaro.org=
+> wrote:
 >
->> Driver for Fujitsu MB86S7x SoCs that have a memory mapped GPIO controller.
->>
->> Signed-off-by: Andy Green <andy.green@linaro.org>
->> Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
->> Signed-off-by: Vincent Yang <Vincent.Yang@tw.fujitsu.com>
->> Signed-off-by: Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
->
-> This is a very simple MMIO GPIO controller.
->
-> Why can this *not* just select GPIO_GENERIC and
-> use drivers/gpio/gpio-generic.c?
->
-The math isn't the simple shift operation that the gpio-generic.c assumes.
+> here is the bulk of GPIO changes for the v3.19 kernel series.
+> The major external change is the new API to driver several GPIOs
+> simultaneously, and the major internal change is that we're getting
+> rid of a static array of GPIO descriptors and again moving away,
+> slowly, from the global GPIO numberspace.
 
--jassi
+This does not build for me.
+
+The gpio-mcp23s08.c driver now has a "chip.of_node" access outside of
+#ifdef CONFIG_OF, resulting in
+
+  drivers/gpio/gpio-mcp23s08.c: In function =E2=80=98mcp23s08_probe_one=
+=E2=80=99:
+  drivers/gpio/gpio-mcp23s08.c:658:57: error: =E2=80=98struct gpio_chip=
+=E2=80=99 has
+no member named =E2=80=98of_node=E2=80=99
+     mcp->irq_active_high =3D of_property_read_bool(mcp->chip.of_node,
+
+Should it be using "mcp->chip.dev->of_node" instead? Or should the
+driver just depend on OF?
+
+                        Linus
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
