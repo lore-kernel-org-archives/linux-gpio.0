@@ -1,212 +1,48 @@
-From: Octavian Purdila <octavian.purdila@intel.com>
-Subject: [PATCH 2/3] gpio: dln2: use bus_sync_unlock instead of scheduling work
-Date: Thu, 11 Dec 2014 15:02:30 +0200
-Message-ID: <1418302951-9309-3-git-send-email-octavian.purdila@intel.com>
-References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, lee.jones@linaro.org
-Cc: johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [RFC 04/15] regulator: add restrack support
+Date: Thu, 11 Dec 2014 13:43:27 +0000
+Message-ID: <20141211134327.GO11285@n2100.arm.linux.org.uk>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <1418226513-14105-5-git-send-email-a.hajda@samsung.com>
+ <20141210160720.GS11764@sirena.org.uk>
+ <548976D2.7080005@samsung.com>
+ <20141211125837.GV11764@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51787 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932802AbaLKNnp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 11 Dec 2014 08:43:45 -0500
+Content-Disposition: inline
+In-Reply-To: <20141211125837.GV11764@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@fr
 
-Use the irq_chip bus_sync_unlock method to update hardware registers
-instead of scheduling work from the mask/unmask methods. This simplifies
-a bit the driver and make it more uniform with the other GPIO IRQ
-drivers.
+On Thu, Dec 11, 2014 at 12:58:37PM +0000, Mark Brown wrote:
+> I'd expect someone reading the change in the regulator API to have at
+> least some idea how this fits in with the rest of the API and how to use
+> it, and probably more importantly I'd expect to be able to understand
+> why this is DT only.
 
-Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
----
- drivers/gpio/gpio-dln2.c | 92 +++++++++++++++++++++++++++---------------------
- 1 file changed, 51 insertions(+), 41 deletions(-)
+Yep.
 
-diff --git a/drivers/gpio/gpio-dln2.c b/drivers/gpio/gpio-dln2.c
-index 28a62c4..2fdb138 100644
---- a/drivers/gpio/gpio-dln2.c
-+++ b/drivers/gpio/gpio-dln2.c
-@@ -47,13 +47,6 @@
- 
- #define DLN2_GPIO_MAX_PINS 32
- 
--struct dln2_irq_work {
--	struct work_struct work;
--	struct dln2_gpio *dln2;
--	int pin;
--	int type;
--};
--
- struct dln2_gpio {
- 	struct platform_device *pdev;
- 	struct gpio_chip gpio;
-@@ -66,7 +59,10 @@ struct dln2_gpio {
- 
- 	/* active IRQs - not synced to hardware */
- 	DECLARE_BITMAP(unmasked_irqs, DLN2_GPIO_MAX_PINS);
--	struct dln2_irq_work *irq_work;
-+	/* active IRQS - synced to hardware */
-+	DECLARE_BITMAP(enabled_irqs, DLN2_GPIO_MAX_PINS);
-+	int irq_type[DLN2_GPIO_MAX_PINS];
-+	struct mutex irq_lock;
- };
- 
- struct dln2_gpio_pin {
-@@ -296,18 +292,6 @@ static int dln2_gpio_set_event_cfg(struct dln2_gpio *dln2, unsigned pin,
- 				&req, sizeof(req));
- }
- 
--static void dln2_irq_work(struct work_struct *w)
--{
--	struct dln2_irq_work *iw = container_of(w, struct dln2_irq_work, work);
--	struct dln2_gpio *dln2 = iw->dln2;
--	u8 type = iw->type & DLN2_GPIO_EVENT_MASK;
--
--	if (test_bit(iw->pin, dln2->unmasked_irqs))
--		dln2_gpio_set_event_cfg(dln2, iw->pin, type, 0);
--	else
--		dln2_gpio_set_event_cfg(dln2, iw->pin, DLN2_GPIO_EVENT_NONE, 0);
--}
--
- static void dln2_irq_unmask(struct irq_data *irqd)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
-@@ -315,7 +299,6 @@ static void dln2_irq_unmask(struct irq_data *irqd)
- 	int pin = irqd_to_hwirq(irqd);
- 
- 	set_bit(pin, dln2->unmasked_irqs);
--	schedule_work(&dln2->irq_work[pin].work);
- }
- 
- static void dln2_irq_mask(struct irq_data *irqd)
-@@ -325,7 +308,6 @@ static void dln2_irq_mask(struct irq_data *irqd)
- 	int pin = irqd_to_hwirq(irqd);
- 
- 	clear_bit(pin, dln2->unmasked_irqs);
--	schedule_work(&dln2->irq_work[pin].work);
- }
- 
- static int dln2_irq_set_type(struct irq_data *irqd, unsigned type)
-@@ -336,19 +318,19 @@ static int dln2_irq_set_type(struct irq_data *irqd, unsigned type)
- 
- 	switch (type) {
- 	case IRQ_TYPE_LEVEL_HIGH:
--		dln2->irq_work[pin].type = DLN2_GPIO_EVENT_LVL_HIGH;
-+		dln2->irq_type[pin] = DLN2_GPIO_EVENT_LVL_HIGH;
- 		break;
- 	case IRQ_TYPE_LEVEL_LOW:
--		dln2->irq_work[pin].type = DLN2_GPIO_EVENT_LVL_LOW;
-+		dln2->irq_type[pin] = DLN2_GPIO_EVENT_LVL_LOW;
- 		break;
- 	case IRQ_TYPE_EDGE_BOTH:
--		dln2->irq_work[pin].type = DLN2_GPIO_EVENT_CHANGE;
-+		dln2->irq_type[pin] = DLN2_GPIO_EVENT_CHANGE;
- 		break;
- 	case IRQ_TYPE_EDGE_RISING:
--		dln2->irq_work[pin].type = DLN2_GPIO_EVENT_CHANGE_RISING;
-+		dln2->irq_type[pin] = DLN2_GPIO_EVENT_CHANGE_RISING;
- 		break;
- 	case IRQ_TYPE_EDGE_FALLING:
--		dln2->irq_work[pin].type = DLN2_GPIO_EVENT_CHANGE_FALLING;
-+		dln2->irq_type[pin] = DLN2_GPIO_EVENT_CHANGE_FALLING;
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -357,11 +339,50 @@ static int dln2_irq_set_type(struct irq_data *irqd, unsigned type)
- 	return 0;
- }
- 
-+static void dln2_irq_bus_lock(struct irq_data *irqd)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
-+	struct dln2_gpio *dln2 = container_of(gc, struct dln2_gpio, gpio);
-+
-+	mutex_lock(&dln2->irq_lock);
-+}
-+
-+static void dln2_irq_bus_unlock(struct irq_data *irqd)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
-+	struct dln2_gpio *dln2 = container_of(gc, struct dln2_gpio, gpio);
-+	int pin = irqd_to_hwirq(irqd);
-+	int enabled, unmasked;
-+	unsigned type;
-+	int ret;
-+
-+	enabled = test_bit(pin, dln2->enabled_irqs);
-+	unmasked = test_bit(pin, dln2->unmasked_irqs);
-+
-+	if (enabled != unmasked) {
-+		if (unmasked) {
-+			type = dln2->irq_type[pin] & DLN2_GPIO_EVENT_MASK;
-+			set_bit(pin, dln2->enabled_irqs);
-+		} else {
-+			type = DLN2_GPIO_EVENT_NONE;
-+			clear_bit(pin, dln2->enabled_irqs);
-+		}
-+
-+		ret = dln2_gpio_set_event_cfg(dln2, pin, type, 0);
-+		if (ret)
-+			dev_err(dln2->gpio.dev, "failed to set event\n");
-+	}
-+
-+	mutex_unlock(&dln2->irq_lock);
-+}
-+
- static struct irq_chip dln2_gpio_irqchip = {
- 	.name = "dln2-irq",
- 	.irq_mask = dln2_irq_mask,
- 	.irq_unmask = dln2_irq_unmask,
- 	.irq_set_type = dln2_irq_set_type,
-+	.irq_bus_lock = dln2_irq_bus_lock,
-+	.irq_bus_sync_unlock = dln2_irq_bus_unlock,
- };
- 
- static void dln2_gpio_event(struct platform_device *pdev, u16 echo,
-@@ -393,7 +414,7 @@ static void dln2_gpio_event(struct platform_device *pdev, u16 echo,
- 		return;
- 	}
- 
--	switch (dln2->irq_work[pin].type) {
-+	switch (dln2->irq_type[pin]) {
- 	case DLN2_GPIO_EVENT_CHANGE_RISING:
- 		if (event->value)
- 			generic_handle_irq(irq);
-@@ -412,7 +433,7 @@ static int dln2_gpio_probe(struct platform_device *pdev)
- 	struct dln2_gpio *dln2;
- 	struct device *dev = &pdev->dev;
- 	int pins;
--	int i, ret;
-+	int ret;
- 
- 	pins = dln2_gpio_get_pin_count(pdev);
- 	if (pins < 0) {
-@@ -428,15 +449,7 @@ static int dln2_gpio_probe(struct platform_device *pdev)
- 	if (!dln2)
- 		return -ENOMEM;
- 
--	dln2->irq_work = devm_kcalloc(&pdev->dev, pins,
--				      sizeof(struct dln2_irq_work), GFP_KERNEL);
--	if (!dln2->irq_work)
--		return -ENOMEM;
--	for (i = 0; i < pins; i++) {
--		INIT_WORK(&dln2->irq_work[i].work, dln2_irq_work);
--		dln2->irq_work[i].pin = i;
--		dln2->irq_work[i].dln2 = dln2;
--	}
-+	mutex_init(&dln2->irq_lock);
- 
- 	dln2->pdev = pdev;
- 
-@@ -490,11 +503,8 @@ out:
- static int dln2_gpio_remove(struct platform_device *pdev)
- {
- 	struct dln2_gpio *dln2 = platform_get_drvdata(pdev);
--	int i;
- 
- 	dln2_unregister_event_cb(pdev, DLN2_GPIO_CONDITION_MET_EV);
--	for (i = 0; i < dln2->gpio.ngpio; i++)
--		flush_work(&dln2->irq_work[i].work);
- 	gpiochip_remove(&dln2->gpio);
- 
- 	return 0;
+This is a repetitive problem, and I fully agree with your concern about
+stuff which is supposed to be arch-independent being designed with only
+DT in mind.
+
+New core kernel features should *not* be designed with only DT in mind -
+DT is not the only firmware description language which the kernel
+supports.  Folk need to understand that if they design a new arch
+independent kernel feature where the sole use case is with DT, that new
+feature is probably going to get rejected, especially when it's
+something as generic as resource tracking.
+
+The world is not DT only.
+
 -- 
-1.9.1
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
