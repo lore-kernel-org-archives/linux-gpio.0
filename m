@@ -1,223 +1,76 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v4 2/4] gpio/xilinx: Convert the driver to platform device
- interface
-Date: Thu, 11 Dec 2014 09:48:58 +0100
-Message-ID: <60895095224b455db7100701f2c7d186@BY2FFO11FD004.protection.gbl>
-References: <1418226977-17128-1-git-send-email-ricardo.ribalda@gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH] gpio: sn54hc595: new driver for GPIO shift registers chipsets
+Date: Thu, 11 Dec 2014 11:36:56 +0100
+Message-ID: <CACna6rwBO388iF+BJ2=nCEWrNsedag8bbBc+OZYe+pvf4zrmgw@mail.gmail.com>
+References: <1418048833-27658-1-git-send-email-zajec5@gmail.com>
+	<CAMuHMdWf_Cw7DTqhut6Mcic1FmcJjHdXWuXkNZM2z0Zx9wjCxw@mail.gmail.com>
+	<CACna6rwRR7FpS97Znyk3ewVW58dn5yYTj8OjCstsuzzX8Prg5Q@mail.gmail.com>
+	<2176453.HD1opzG9Wg@wuerfel>
+	<CACna6rydKTDO+tBTdNNUDvQCXytE6VnEPjLSGs0yMee8Jz8FGA@mail.gmail.com>
+	<CAMuHMdVvK1CTB1SKiNgD8zB9qorV=sQwRO66Dbm5zy=jhw82RA@mail.gmail.com>
+	<20141209091202.GS8739@lukather>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2on0090.outbound.protection.outlook.com ([207.46.100.90]:27936
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S932535AbaLKItU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 11 Dec 2014 03:49:20 -0500
-In-Reply-To: <1418226977-17128-1-git-send-email-ricardo.ribalda@gmail.com>
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:61298 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751782AbaLKKg5 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Dec 2014 05:36:57 -0500
+In-Reply-To: <20141209091202.GS8739@lukather>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Gabor Juhos <juhosg@openwrt.org>, Miguel Gaio <miguel.gaio@efixo.com>
 
-On 12/10/2014 04:56 PM, Ricardo Ribalda Delgado wrote:
-> This way we do not need to transverse the device tree manually and we
-> support hot plugged devices.
-> 
-> Also Implement remove callback so the driver can be unloaded
-> 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
-> 
-> v4: Add missing module_exit
-> 
->  drivers/gpio/gpio-xilinx.c | 83 ++++++++++++++++++++++++++++++++++++----------
->  1 file changed, 66 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-> index e668ec4..c7ed92b 100644
-> --- a/drivers/gpio/gpio-xilinx.c
-> +++ b/drivers/gpio/gpio-xilinx.c
-> @@ -44,12 +44,18 @@
->   * gpio_state: GPIO state shadow register
->   * gpio_dir: GPIO direction shadow register
->   * gpio_lock: Lock used for synchronization
-> + * inited: True if the port has been inited
->   */
->  struct xgpio_instance {
->  	struct of_mm_gpio_chip mmchip;
->  	u32 gpio_state;
->  	u32 gpio_dir;
->  	spinlock_t gpio_lock;
-> +	bool inited;
-> +};
-> +
-> +struct xgpio {
-> +	struct xgpio_instance port[2];
->  };
->  
->  /**
-> @@ -172,24 +178,56 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
->  }
->  
->  /**
-> + * xgpio_remove - Remove method for the GPIO device.
-> + * @pdev: pointer to the platform device
-> + *
-> + * This function remove gpiochips and frees all the allocated resources.
-> + */
-> +static int xgpio_remove(struct platform_device *pdev)
-> +{
-> +	struct xgpio *xgpio = platform_get_drvdata(pdev);
-> +	int i;
-> +
-> +	for (i = 0; i < 2; i++) {
-> +		if (!xgpio->port[i].inited)
-> +			continue;
-> +		gpiochip_remove(&xgpio->port[i].mmchip.gc);
-> +
-> +		if (i == 1)
-> +			xgpio->port[i].mmchip.regs -= XGPIO_CHANNEL_OFFSET;
-> +
-> +		iounmap(xgpio->port[i].mmchip.regs);
-> +		kfree(xgpio->port[i].mmchip.gc.label);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
->   * xgpio_of_probe - Probe method for the GPIO device.
-> - * @np: pointer to device tree node
-> + * @pdev: pointer to the platform device
->   *
->   * This function probes the GPIO device in the device tree. It initializes the
->   * driver data structure. It returns 0, if the driver is bound to the GPIO
->   * device, or a negative value if there is an error.
->   */
-> -static int xgpio_of_probe(struct device_node *np)
-> +static int xgpio_probe(struct platform_device *pdev)
->  {
-> +	struct xgpio *xgpio;
->  	struct xgpio_instance *chip;
->  	int status = 0;
-> +	struct device_node *np = pdev->dev.of_node;
->  	const u32 *tree_info;
->  	u32 ngpio;
->  
-> -	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
-> -	if (!chip)
-> +	xgpio = devm_kzalloc(&pdev->dev, sizeof(*xgpio), GFP_KERNEL);
-> +	if (!xgpio)
->  		return -ENOMEM;
->  
-> +	platform_set_drvdata(pdev, xgpio);
-> +
-> +	chip = &xgpio->port[0];
-> +
->  	/* Update GPIO state shadow register with default value */
->  	of_property_read_u32(np, "xlnx,dout-default", &chip->gpio_state);
->  
-> @@ -209,6 +247,7 @@ static int xgpio_of_probe(struct device_node *np)
->  
->  	spin_lock_init(&chip->gpio_lock);
->  
-> +	chip->mmchip.gc.dev = &pdev->dev;
->  	chip->mmchip.gc.direction_input = xgpio_dir_in;
->  	chip->mmchip.gc.direction_output = xgpio_dir_out;
->  	chip->mmchip.gc.get = xgpio_get;
-> @@ -219,20 +258,18 @@ static int xgpio_of_probe(struct device_node *np)
->  	/* Call the OF gpio helper to setup and register the GPIO device */
->  	status = of_mm_gpiochip_add(np, &chip->mmchip);
->  	if (status) {
-> -		kfree(chip);
->  		pr_err("%s: error in probe function with status %d\n",
->  		       np->full_name, status);
->  		return status;
->  	}
-> +	chip->inited = true;
->  
->  	pr_info("XGpio: %s: registered, base is %d\n", np->full_name,
->  							chip->mmchip.gc.base);
->  
->  	tree_info = of_get_property(np, "xlnx,is-dual", NULL);
->  	if (tree_info && be32_to_cpup(tree_info)) {
-> -		chip = kzalloc(sizeof(*chip), GFP_KERNEL);
-> -		if (!chip)
-> -			return -ENOMEM;
-> +		chip = &xgpio->port[1];
->  
->  		/* Update GPIO state shadow register with default value */
->  		of_property_read_u32(np, "xlnx,dout-default-2",
-> @@ -254,6 +291,7 @@ static int xgpio_of_probe(struct device_node *np)
->  
->  		spin_lock_init(&chip->gpio_lock);
->  
-> +		chip->mmchip.gc.dev = &pdev->dev;
->  		chip->mmchip.gc.direction_input = xgpio_dir_in;
->  		chip->mmchip.gc.direction_output = xgpio_dir_out;
->  		chip->mmchip.gc.get = xgpio_get;
-> @@ -264,7 +302,7 @@ static int xgpio_of_probe(struct device_node *np)
->  		/* Call the OF gpio helper to setup and register the GPIO dev */
->  		status = of_mm_gpiochip_add(np, &chip->mmchip);
->  		if (status) {
-> -			kfree(chip);
-> +			xgpio_remove(pdev);
->  			pr_err("%s: error in probe function with status %d\n",
->  			np->full_name, status);
->  			return status;
-> @@ -272,6 +310,7 @@ static int xgpio_of_probe(struct device_node *np)
->  
->  		/* Add dual channel offset */
->  		chip->mmchip.regs += XGPIO_CHANNEL_OFFSET;
-> +		chip->inited = true;
->  
->  		pr_info("XGpio: %s: dual channel registered, base is %d\n",
->  					np->full_name, chip->mmchip.gc.base);
-> @@ -285,19 +324,29 @@ static const struct of_device_id xgpio_of_match[] = {
->  	{ /* end of list */ },
->  };
->  
-> -static int __init xgpio_init(void)
-> -{
-> -	struct device_node *np;
-> +MODULE_DEVICE_TABLE(of, xgpio_of_match);
->  
-> -	for_each_matching_node(np, xgpio_of_match)
-> -		xgpio_of_probe(np);
-> +static struct platform_driver xgpio_plat_driver = {
-> +	.probe		= xgpio_probe,
-> +	.remove		= xgpio_remove,
-> +	.driver		= {
-> +			.name = "gpio-xilinx",
-> +			.of_match_table	= xgpio_of_match,
-> +	},
-> +};
->  
-> -	return 0;
-> +static int __init xgpio_init(void)
-> +{
-> +	return platform_driver_register(&xgpio_plat_driver);
->  }
->  
-> -/* Make sure we get initialized before anyone else tries to use us */
->  subsys_initcall(xgpio_init);
-> -/* No exit call at the moment as we cannot unregister of GPIO chips */
-> +
-> +static void __exit xgpio_exit(void)
-> +{
-> +	platform_driver_unregister(&xgpio_plat_driver);
-> +}
-> +module_exit(xgpio_exit);
->  
->  MODULE_AUTHOR("Xilinx, Inc.");
->  MODULE_DESCRIPTION("Xilinx GPIO driver");
-> 
+On 9 December 2014 at 10:12, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Mon, Dec 08, 2014 at 05:59:11PM +0100, Geert Uytterhoeven wrote:
+>> > I think that implementing support for this extra SPI layer will
+>> > actually require more code/tricks than a separated driver.
+>>
+>> Yes, it will require more code, as spi-gpio is more generic than you=
+r simple
+>> implementation.  But the end result is more flexible and reusable.
+>>
+>> The only thing missing is the programmable OE and reset pins,
+>> which are assumed hardwired by the gpio-74x164 driver.
+>> These could be implemented using new gpio-oe and gpio-reset
+>> properties.
+>
+> From my (very) vague memories of it, OE was actually supported by
+> using it as spi-gpio's chip select.
+>
+> So I'd say that only the gpio-reset should be implemented.
 
-Feel free to add my acked-by line to all these patches.
+I've tracked how spi_bitbang_transfer_one does work. Long story short i=
+t does:
+bitbang->chipselect(spi, BITBANG_CS_ACTIVE);
+bitbang->txrx_bufs(spi, t);
+bitbang->chipselect(spi, BITBANG_CS_INACTIVE);
 
-We have IRQ support in xilinx tree but I also know that this driver
-should be changed a little bit but these patches are at least good step
-on that way.
+txrx_bufs is a pointer to one of:
+bitbang_txrx_be_cpha0
+bitbang_txrx_be_cpha1
 
-Thanks,
-Michal
 
+Now, in cpha[01] for every register bit we call:
+1) setmosi - to set data, so it's serial (SER)
+2) setsck - to shift bits, so it's shift register clock (SRCLK)
+
+Then in spi_gpio_chipselect we call:
+1) cs_gpios[chip], so it's register clock (RCLK)
+
+
+As you can see, we don't call OE in spi_gpio_chipselect. So currently
+both input signals and unhandled: OE and SRCLR. Luckily for me, it
+appears my bootloader puts them in a wanted state, but this still
+should be handled somehow.
+
+--=20
+Rafa=C5=82
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
