@@ -1,68 +1,44 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH] gpio: pcf857x: restore the initial line state of all pcf lines
-Date: Fri, 12 Dec 2014 13:36:41 +0530
-Message-ID: <1418371601-22658-1-git-send-email-kishon@ti.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [RFC 04/15] regulator: add restrack support
+Date: Fri, 12 Dec 2014 09:21:01 +0100
+Message-ID: <548AA56D.8060202@samsung.com>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com> <1418226513-14105-5-git-send-email-a.hajda@samsung.com> <20141210160720.GS11764@sirena.org.uk> <548976D2.7080005@samsung.com> <20141211125837.GV11764@sirena.org.uk> <20141211134327.GO11285@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:44541 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750757AbaLLIGr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 12 Dec 2014 03:06:47 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20141211134327.GO11285@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.orglinux-gpio@vger.kernel.orglinux-kernel@vger.kernel.orgdri-devel@lists.freedesktop.orgdevicetree@vger.kernel.orglinux-kernel@vger.kernel.orglinux-arm-kernel@lists.infradead.orgdri-devel@lists.freedesktop.orgdevicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, nsekhar@ti.com
-Cc: kishon@ti.com, linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org
 
-The reset values for all the PCF lines are high and hence on shutdown
-we should drive all the lines high in order to bring it to the reset state.
+On 12/11/2014 02:43 PM, Russell King - ARM Linux wrote:
+> On Thu, Dec 11, 2014 at 12:58:37PM +0000, Mark Brown wrote:
+>> I'd expect someone reading the change in the regulator API to have at
+>> least some idea how this fits in with the rest of the API and how to use
+>> it, and probably more importantly I'd expect to be able to understand
+>> why this is DT only.
+> 
+> Yep.
+> 
+> This is a repetitive problem, and I fully agree with your concern about
+> stuff which is supposed to be arch-independent being designed with only
+> DT in mind.
+> 
+> New core kernel features should *not* be designed with only DT in mind -
+> DT is not the only firmware description language which the kernel
+> supports.  Folk need to understand that if they design a new arch
+> independent kernel feature where the sole use case is with DT, that new
+> feature is probably going to get rejected, especially when it's
+> something as generic as resource tracking.
+> 
+> The world is not DT only.
+> 
 
-This is actually required since pcf doesn't have a reset line and even after
-warm reset (by invoking "reboot" in prompt) the pcf lines maintains it's
-previous programmed state. This becomes a problem if the boards are designed
-to work with the default initial state.
+OK. I will post next version of patchset with resource/provider lookup
+left to frameworks (regulators, clock, etc), this way it will be fully
+firmware agnostic. I will add also better description of the framework.
 
-DRA7XX_evm uses PCF8575 and one of the PCF output lines feeds to MMC/SD and
-this line should be driven high in order for the MMC/SD to be detected.
-This line is modelled as regulator and the hsmmc driver takes care of enabling
-and disabling it. In the case of 'reboot', during shutdown path as part of it's
-cleanup process the hsmmc driver disables this regulator. This makes MMC boot
-not functional.
-
-Fixed it by driving high all the pcf lines.
-
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/gpio/gpio-pcf857x.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 236708a..00b15b2 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -448,6 +448,14 @@ static int pcf857x_remove(struct i2c_client *client)
- 	return status;
- }
- 
-+static void pcf857x_shutdown(struct i2c_client *client)
-+{
-+	struct pcf857x *gpio = i2c_get_clientdata(client);
-+
-+	/* Drive all the I/O lines high */
-+	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
-+}
-+
- static struct i2c_driver pcf857x_driver = {
- 	.driver = {
- 		.name	= "pcf857x",
-@@ -456,6 +464,7 @@ static struct i2c_driver pcf857x_driver = {
- 	},
- 	.probe	= pcf857x_probe,
- 	.remove	= pcf857x_remove,
-+	.shutdown = pcf857x_shutdown,
- 	.id_table = pcf857x_id,
- };
- 
--- 
-1.7.9.5
-
+Regards
+Andrzej
