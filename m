@@ -1,47 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: mcp23s08: fix up compilation error
-Date: Fri, 12 Dec 2014 16:04:35 +0100
-Message-ID: <1418396675-16959-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:63509 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S967963AbaLLPEo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Dec 2014 10:04:44 -0500
-Received: by mail-wi0-f171.google.com with SMTP id bs8so2754752wib.16
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Dec 2014 07:04:42 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v4 2/3] i2c: add support for Cypress CYUSBS234 USB-I2C
+ adapter
+Date: Fri, 12 Dec 2014 16:03:34 +0000
+Message-ID: <BN1PR06MB06912FCBAAE08006E352008CC600@BN1PR06MB069.namprd06.prod.outlook.com>
+References: <1417241986-17841-1-git-send-email-muth@cypress.com>
+ <20141203110755.GA1039@katana>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20141203110755.GA1039@katana>
+Content-Language: en-US
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Stein <alexander.stein@systec-electronic.com>
 
-The driver depends on the chip.of_node being present to compile,
-which is the case on some target platforms but not others.
-Instead, rely on chip.dev->of_node to be used, as struct device
-always has an of_node in place.
+Hi,
 
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-mcp23s08.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Thanks for reviewing the code.
 
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 93ee7da2d8b0..da9c316059bc 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -655,8 +655,9 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 
- 	mcp->irq_controller = pdata->irq_controller;
- 	if (mcp->irq && mcp->irq_controller) {
--		mcp->irq_active_high = of_property_read_bool(mcp->chip.of_node,
--				"microchip,irq-active-high");
-+		mcp->irq_active_high =
-+			of_property_read_bool(mcp->chip.dev->of_node,
-+					      "microchip,irq-active-high");
- 
- 		if (type == MCP_TYPE_017)
- 			mirror = pdata->mirror;
--- 
-1.9.3
+> > +/*
+> > + * It exposes sysfs entries under the i2c adapter for getting the i2c
+> > +transfer
+> > + * status, reset i2c read/write module, get/set nak and stop bits.
+> > + */
+>
+> Yes, I see that. Yet, I don't know why they are needed? The driver should
+> know when to send NAK/STOP. Why expose that to the user? And why do
+> we need a reset? Are there stability problems? What about unloading the
+> module? And what is the use case for reading the status?
 
+For repeated start (Sr) scenario, the STOP bit will not be set.
+For dummy write scenario (writing EEPROM address from I2C EEPROM slave), the STOP bit should not be set. But, for normal I2C write, the STOP bit should be set.
+We provide control to user to control when to STOP/NAK to handle different scenarios.
+
+The reset is an additional provision given to user to reset the I2C read or write engines. It does not require unloading I2C kernel module.
+The status indicates the information about the last i2c read/write operation.
+
+>
+> > +       if (num > 1) {
+> > +               dev_err(&adapter->dev, "i2c_msg number is > 1\n");
+> > +               return -EIO;
+> > +       }
+>
+> Ouch! Don't you have any repeated start option somewhere?
+
+In this version of the driver, we handle only single i2c message. In future iterations, we will add support for multiple i2c messages.
+
+Thanks,
+Muthu
+
+This message and any attachments may contain Cypress (or its subsidiaries) confidential information. If it has been received in error, please advise the sender and immediately delete this message.
