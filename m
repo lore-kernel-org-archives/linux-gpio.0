@@ -1,91 +1,83 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC 01/15] drivers/base: add track framework
-Date: Mon, 15 Dec 2014 15:00:04 +0100
-Message-ID: <548EE964.2050504@samsung.com>
-References: <548B7653.7020004@gmail.com> <20141215125557.GB11764@sirena.org.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
+Date: Fri, 12 Dec 2014 16:28:16 +0100
+Message-ID: <1628217.66frkAqHMc@wuerfel>
+References: <1418342706-14755-2-git-send-email-rjui@broadcom.com> <1918116.UxUgDPTmcq@wuerfel> <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20141215125557.GB11764@sirena.org.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Russell King <linux@arm.linux.org.uk>, ARM/CLKDEV SUPPORT <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:52534 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051AbaLORxH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Dec 2014 12:53:07 -0500
+In-Reply-To: <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-T24gMTIvMTUvMjAxNCAwMTo1NSBQTSwgTWFyayBCcm93biB3cm90ZToKPiBPbiBTYXQsIERlYyAx
-MywgMjAxNCBhdCAxMjoxMjoxOUFNICswMTAwLCBBSCB3cm90ZToKPj4gTWFyayBCcm93biB3cm90
-ZSBvbiAxMi4xMi4yMDE0IDE3OjM2Ogo+Pj4gT24gV2VkLCBEZWMgMTAsIDIwMTQgYXQgMDQ6NDg6
-MTlQTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4+PiArCQlrZnJlZShwdGFzayk7Cj4+
-Pj4gKwo+Pj4+ICsJCWlmIChlbXB0eSkKPj4+PiArCQkJYnJlYWs7Cj4+Pj4gKwo+Pj4+ICsJCXRy
-YWNrX3Byb2Nlc3NfdGFzayh0cmFjaywgdGFzayk7Cj4+PiAuLi53ZSB0aGVuIGdvIGFuZCBkbyBz
-b21lIG90aGVyIHN0dWZmLCBpbmNsdWRpbmcgcHJvY2Vzc2luZyB0aGF0IHRhc2ssCj4+PiB3aXRo
-b3V0IHRoZSBsb2NrIG9yIG9yIGFueSBvdGhlciBtZWFucyBJIGNhbiBzZWUgb2YgZXhjbHVkaW5n
-IG90aGVyCj4+PiB1c2VycyBiZWZvcmUgZ29pbmcgcm91bmQgYW5kIHJlbW92aW5nIHRoZSB0YXNr
-LiAgVGhpcyBzZWVtcyB0byBsZWF2ZSB1cwo+Pj4gdnVsbmVyYWJsZSB0byBkb3VibGUgZXhlY3V0
-aW9uLgo+PiBObywgaWYgeW91IGxvb2sgYXQgdHJhY2tfYWRkX3Rhc2sgZnVuY3Rpb24geW91IHdp
-bGwgc2VlIHRoYXQgdGhlIHF1ZXVlIGlzCj4+IHByb2Nlc3NlZCBvbmx5IGlmIGl0IGlzIGluaXRp
-YWxseSBlbXB0eSwgb3RoZXJ3aXNlIHRoZSB0YXNrIGlzIG9ubHkgYWRkZWQgdG8KPj4gdGhlIHF1
-ZXVlLCBzbyBpdCB3aWxsIGJlIHByb2Nlc3NlZCBhZnRlciBwcm9jZXNzaW5nIGVhcmxpZXIgdGFz
-a3MuCj4+IFNvIHRoZSBydWxlIGlzIHRoYXQgaWYgc29tZW9uZSBhZGQgdGFzayB0byB0aGUgcXVl
-dWUgaXQgY2hlY2tzIGlmIHRoZSBxdWV1ZQo+PiBpcyBlbXB0eSwgaW4gc3VjaCBjYXNlIGl0IHBy
-b2Nlc3MgYWxsIHRhc2tzIGZyb20gdGhlIHF1ZXVlIHVudGlsCj4+IHRoZSBxdWV1ZSBiZWNvbWVz
-IGVtcHR5LCBldmVuIHRoZSB0YXNrcyBhZGRlZCBieSBvdGhlciBwcm9jZXNzZWQuCj4+IFRoaXMg
-d2F5IGFsbCB0YXNrcyBhcmUgc2VyaWFsaXplZC4KPiBUaGlzIGlzIGFsbCBwcmV0dHkgZmlkZGx5
-IGFuZCBzZWVtcyBmcmFnaWxlIC0gaWYgbm90aGluZyBlbHNlIHRoZSBjb2RlCj4gc2VlbXMgdW5k
-ZXJjb21tZW50ZWQgc2luY2UgdGhlIGFib3ZlIGlzIG9ubHkgZ29pbmcgdG8gYmUgYXBwYXJlbnQg
-d2l0aAo+IGZvbGxvd2luZyB0aHJvdWdoIG11bHRpcGxlIGZ1bmN0aW9ucyBhbmQgd2UncmUgcmVs
-eWluZyBvbiBib3RoIG93bmVyIGFuZAo+IGxpc3QgZW1wdGluZXNzIHdpdGggbW9yZSB0aGFuIG9u
-ZSBwbGFjZSB3aGVyZSBhIHRhc2sgY2FuIGdldCBwcm9jZXNzZWQuCgpJIGhhdmUgY2hhbmdlZCBp
-dCBhbHJlYWR5IHRvIHRlc3QgcXVldWUgb3duZXIsIHRoaXMgd2F5IGl0IHNob3VsZApiZSBtb3Jl
-IGNsZWFyLgoKPgo+Pj4gSSdtIGFsc28gdW5jbGVhciB3aGF0IGlzIHN1cHBvc2VkIHRvIGhhcHBl
-biBpZiBhZGRpbmcgYSBub3RpZmljYXRpb24KPj4+IHJhY2VzIHdpdGggcmVtb3ZpbmcgdGhlIHRo
-aW5nIGJlaW5nIHdhdGNoZWQuCj4+IFRoZSBzZXF1ZW5jZSBzaG91bGQgYmUgYWx3YXlzIGFzIGZv
-bGxvd3M6Cj4+IDEuIGNyZWF0ZSB0aGluZywgdGhlbiBjYWxsIHRyYWNrX3VwKHRoaW5nKS4KPj4g
-Li4uCj4+IDIuIGNhbGwgdHJhY2tfZG93bih0aGluZykgdGhlbiByZW1vdmUgdGhpbmcuCj4+IElm
-IHdlIHB1dCAxIGludG8gcHJvYmUgYW5kIDIgaW50byByZW1vdmUgY2FsbGJhY2sgb2YgdGhlIGRy
-aXZlciBpdCB3aWxsIGJlCj4+IHNhZmUgLSB3ZSBhcmUgc3luY2hyb25pc2VkIGJ5IGRldmljZV9s
-b2NrLiBCdXQgaWYsIGZvciBzb21lIHJlYXNvbiwgd2Ugd2FudAo+PiB0byBjcmVhdGUgb2JqZWN0
-IGFmdGVyIHByb2JlIHdlIHNob3VsZCBkbyBvd24gc3luY2hyb25pemF0aW9uIG9yIGp1c3QgcHV0
-Cj4+IGRldmljZV9sb2NrIGFyb3VuZCAxLiBUaGUgc2FtZSBhcHBsaWVzIGlmIHdlIHdhbnQgdG8g
-cmVtb3ZlCj4+IG9iamVjdCBlYXJsaWVyLiBUaGlzIGlzIHRoZSBjb21tZW50IGFib3ZlIGFib3V0
-LiBJIHdpbGwgZXhwYW5kIGl0IHRvIG1vcmUKPj4gdmVyYm9zZSBleHBsYW5hdGlvbi4KPiBZb3Ug
-Y2FuJ3QgcmVseSBvbiB0aGUgZGV2aWNlIGxvY2sgaGVyZSBzaW5jZSB0aGlzIGlzbid0IHRpZWQg
-dG8ga29iamVjdHMKPiBvciBhbnl0aGluZyBhdCBhbGwgLSBpdCdzIGEgZnJlZXN0YW5kaW5nIGlu
-dGVyZmFjZSBzb21lb25lIGNvdWxkIHBpY2sgdXAKPiBhbmQgdXNlIGluIGFub3RoZXIgY29udGV4
-dC4gIEJlc2lkZXMsIHRoYXQgaXNuJ3QgcmVhbGx5IG15IGNvbmNlcm4gLSBteQo+IGNvbmNlcm4g
-aXMgd2hhdCBoYXBwZW5zIGlmIHNvbWV0aGluZyBhc2tzIHRvIHdhaXQgZm9yIApCdXQgSSBkbyBu
-b3QgcmVseSBoZXJlIG9uIGRldmljZV9sb2NrLCBJIGp1c3QgcG9pbnQgb3V0IHRoYXQgMSBhbmQg
-MgpzaG91bGQgYmUKc3luY2hyb25pemVkIGFuZCBhcyBhIGNvbW1vbiB3YXkgaXMgdG8gcHV0IHN1
-Y2ggdGhpbmdzIGludG8gcHJvYmUKYW5kIHJlbW92ZSwgZGV2aWNlX2xvY2sgY2FuIGRvIHRoZSBz
-eW5jaHJvbml6YXRpb24gZm9yIHVzIGluIHN1Y2ggY2FzZSwKc28gbm8gbmVlZCBmb3IgYWRkaXRp
-b25hbCBzeW5jaHJvbml6YXRpb24uCgpBbmQgdG8gbWFrZSBldmVyeXRoaW5nIGNsZWFyLCB0cmFj
-a191cCB3aWxsIG5vdCBiZSBjYWxsZWQgYnkgdGhlIGRyaXZlcgpkaXJlY3RseSwKaXQgc2hhbGwg
-YmUgY2FsbGVkIGJ5IHJlc3BlY3RpdmUgcmVzb3VyY2UgZnJhbWV3b3JrIGZ1bmN0aW9ucywgZm9y
-IGV4YW1wbGUKYnkgcmVndWxhdG9yX3JlZ2lzdGVyIGFuZCByZWd1bGF0b3JfdW5yZWdpc3Rlci4K
-CkFuZCByZWdhcmRpbmcgeW91ciBpbml0aWFsL3JlYWwgY29uY2VybiwgSSBndWVzcyB5b3UgbWVh
-biB0aGlzIG9uZToKPj4gSSdtIGFsc28gdW5jbGVhciB3aGF0IGlzIHN1cHBvc2VkIHRvIGhhcHBl
-biBpZiBhZGRpbmcgYSBub3RpZmljYXRpb24KPj4gcmFjZXMgd2l0aCByZW1vdmluZyB0aGUgdGhp
-bmcgYmVpbmcgd2F0Y2hlZC4KSSBndWVzcyB5b3UgbWVhbiByZWdpc3RlcmluZyBub3RpZmllciBh
-bmQgcmVtb3ZhbCBvZiB0aGluZyBpdCBpcwpzdXBwb3NlZCB0byB3YXRjaC4KQXMgYWxsIHRyYWNr
-IHRhc2tzIGFyZSBzZXJpYWxpemVkIHRoZXNlIHR3byB3aWxsIGJlIHNlcmlhbGl6ZWQgYWxzbyBz
-bwp3ZSBjYW4gaGF2ZQpvbmx5IHR3byBzY2VuYXJpb3M6CjEuCiAgYSkgcmVnaXN0ZXIgbm90aWZp
-ZXIKICAtIHRoaW5nIGlzIHVwLCBzbyBub3RpZmllciB3aWxsIGJlIGltbWVkaWF0ZWx5IGNhbGxl
-ZCB3aXRoIGluZm8gdGhhdAp0aGUgdGhpbmcgaXMgdXAKICBiKSByZW1vdmUgdGhpbmcKICAtIHRo
-aW5nIHdpbGwgYmUgZG93biwgc28gbm90aWZpZXIgd2lsbCBiZSBjYWxsZWQgd2l0aCBpbmZvIHRo
-YXQgdGhlCnRoaW5nIHdpbGwgYmUgcmVtb3ZlZAoyLgogIGEpIHJlbW92ZSB0aGluZwogIC0gbm90
-aWZpZXIgaXMgbm90IHlldCByZWdpc3RlcmVkLCBzbyBjYWxsYmFjayB3aWxsIG5vdCBiZSBjYWxs
-ZWQsCiAgYikgcmVnaXN0ZXIgbm90aWZpZXIKICAtIHRoaW5nIGlzIGFscmVhZHkgcmVtb3ZlZCwg
-c28gY2FsbGJhY2sgd2lsbCBub3QgYmUgY2FsbGVkLgoKSSBob3BlIHRoaXMgaXMgd2hhdCB5b3Ug
-d2VyZSBhc2tpbmcgZm9yLgoKUmVnYXJkcwpBbmRyemVqCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Friday 12 December 2014 22:05:37 Alexandre Courbot wrote:
+> On Fri, Dec 12, 2014 at 9:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Thursday 11 December 2014 16:05:04 Ray Jui wrote:
+> >> +
+> >> +- linux,gpio-base:
+> >> +    Base GPIO number of this controller
+> >> +
+> >>
+> >
+> > We've NAK'ed properties like this multiple times before, and it
+> > doesn't get any better this time. What are you trying to achieve
+> > here?
+> 
+> I am to blame for suggesting using this property to Ray, and I am
+> fully aware that this has been rejected before, but look at what
+> people came with recently to palliate the lack of control over the
+> GPIO number space for DT platforms:
+> 
+> http://www.spinics.net/lists/arm-kernel/msg384847.html
+> https://lkml.org/lkml/2014/12/10/133
+> 
+> Right now GPIO numbering for platforms using DT is a very inconsistent
+> process, subject to change by the simple action of adjusting the value
+> of ARCH_NR_GPIOS (which we did recently, btw), adding a new GPIO
+> controller, or changing the probe order of devices. For users of the
+> integer or sysfs interfaces, this results in GPIO numbers that change,
+> and drivers and/or user-space programs that behave incorrectly.
+> Ironically, the only way to have consistent numbers is to use the old
+> platform files, where you can specify the base number of a gpio_chip.
+> 
+> DT is actually probably not such a bad place to provide consistency in
+> GPIO numbering. It has a global vision of the system layout, including
+> all GPIO controllers and the number of GPIOs they include, and thus
+> can make informed decisions. It provides a consistent result
+> regardless of probe order. And allowing it to assign GPIO bases to
+> controllers will free us from the nonsensical dependency of some
+> arbitrary upper-bound for GPIO numbers that ARCH_NR_GPIOS imposes on
+> us. Also about ARCH_NR_GPIOS, the plan is to eventually remove it
+> since we don't need it anymore after the removal of the global
+> gpio_descs array. This will again interfere with the numbering of GPIO
+> chips that do not have a base number provided.
+> 
+> Note that I don't really like this, either - but the problem is the
+> GPIO integer interface. Until everyone has upgraded to gpiod and we
+> have a replacement for the current sysfs interface (this will take a
+> while) we have to cope with this. This issue has been bothering users
+> for years, so this time I'd like to try and solve it the less ugly
+> way. If there is a better solution, of course I'm all for it.
+
+I think the scheme will fail if you ever get gpio controllers that are
+not part of the DT: We have hotpluggable devices (PCI, USB, ...) that
+are not represented in DT and that may also provide GPIOs for internal
+uses.
+
+The current state of affairs is definitely problematic, but defining
+the GPIO numbers in DT properties would only be a relative improvement,
+not a solution, and I fear it would make it harder to change the kernel
+to remove the gpio numbers eventually.
+
+I wonder if we could instead come up with an approach that completely
+randomizes the gpio numbers (as a compile-time option) to find any
+places that still rely on specific numbers.
+
+	Arnd
