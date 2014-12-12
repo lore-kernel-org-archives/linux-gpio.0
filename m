@@ -1,54 +1,118 @@
-From: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v4 2/3] i2c: add support for Cypress CYUSBS234 USB-I2C
- adapter
-Date: Fri, 12 Dec 2014 16:03:34 +0000
-Message-ID: <BN1PR06MB06912FCBAAE08006E352008CC600@BN1PR06MB069.namprd06.prod.outlook.com>
-References: <1417241986-17841-1-git-send-email-muth@cypress.com>
- <20141203110755.GA1039@katana>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC 01/15] drivers/base: add track framework
+Date: Fri, 12 Dec 2014 16:36:53 +0000
+Message-ID: <20141212163653.GO11764@sirena.org.uk>
+References: <1418226513-14105-2-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141203110755.GA1039@katana>
-Content-Language: en-US
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="H8fFO+isr9ADh2Iv"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1418226513-14105-2-git-send-email-a.hajda@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
 
-Thanks for reviewing the code.
+--H8fFO+isr9ADh2Iv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > +/*
-> > + * It exposes sysfs entries under the i2c adapter for getting the i2c
-> > +transfer
-> > + * status, reset i2c read/write module, get/set nak and stop bits.
-> > + */
->
-> Yes, I see that. Yet, I don't know why they are needed? The driver should
-> know when to send NAK/STOP. Why expose that to the user? And why do
-> we need a reset? Are there stability problems? What about unloading the
-> module? And what is the use case for reading the status?
+On Wed, Dec 10, 2014 at 04:48:19PM +0100, Andrzej Hajda wrote:
+> track is a generic framework for safe tracking presence of any kernel objects
+> having an id. There are no special requirements about type of object or its
+> id. Id shall be unique.
 
-For repeated start (Sr) scenario, the STOP bit will not be set.
-For dummy write scenario (writing EEPROM address from I2C EEPROM slave), the STOP bit should not be set. But, for normal I2C write, the STOP bit should be set.
-We provide control to user to control when to STOP/NAK to handle different scenarios.
+This is pretty confusing, when it talks about "kernel objects" that
+sounds like it means struct kobject but in fact there's no connection
+with that or any of the other kernel object stuff.  Perhaps it makes
+sense but it should be addressed.
 
-The reset is an additional provision given to user to reset the I2C read or write engines. It does not require unloading I2C kernel module.
-The status indicates the information about the last i2c read/write operation.
+> Typical usage of the framework by consumer looks as follow:
+> 1. Consumer registers notifier callback for objects with given id.
 
->
-> > +       if (num > 1) {
-> > +               dev_err(&adapter->dev, "i2c_msg number is > 1\n");
-> > +               return -EIO;
-> > +       }
->
-> Ouch! Don't you have any repeated start option somewhere?
+This is also a custom thing not connected with the notifier mechanism
+implemented by struct notifier_block.  Again this should probably be
+addressed, even if it's just used internally it seems like there should
+be some opportunity for code reuse here.
 
-In this version of the driver, we handle only single i2c message. In future iterations, we will add support for multiple i2c messages.
+> +	case track_task_up:
+> +		node = track_get_node(track, task->type, task->id, true);
+> +
+> +		node->up = true;
+> +		node->data = task->data;
+> +		list_for_each_entry_safe(itb, node->itb_next, &node->itb_head,
+> +					 list)
+> +			itb->callback(itb, node->data, true);
+> +		return;
+> +	case track_task_down:
 
-Thanks,
-Muthu
+I'm not sure the up and down naming is the most obvious naming for
+users.  It's obviously inspired by semaphores but it's not entirely
+obvious that this is going to make things clear and meaningful for
+someone trying to understand the interface.
 
-This message and any attachments may contain Cypress (or its subsidiaries) confidential information. If it has been received in error, please advise the sender and immediately delete this message.
+> +static int track_process_queue(struct tracker *track)
+> +{
+> +	struct track_task *task, *ptask = NULL;
+> +	unsigned long flags;
+> +	bool empty;
+> +
+> +	/* Queue non-emptiness is used as a sentinel to prevent processing
+> +	 * by multiple threads, so we cannot delete entry from the queue
+> +	 * until it is processed.
+> +	 */
+> +	while (true) {
+> +		spin_lock_irqsave(&track->queue_lock, flags);
+> +
+> +		if (ptask)
+> +			list_del(&ptask->list);
+> +		task = list_first_entry(&track->queue,
+> +					struct track_task, list);
+> +
+> +		empty = list_empty(&track->queue);
+> +		if (empty)
+> +			complete_all(&track->queue_empty);
+> +
+> +		spin_unlock_irqrestore(&track->queue_lock, flags);
+
+Here we get a task from the head of the list and drop the lock, leaving
+the task on the list...
+
+> +		kfree(ptask);
+> +
+> +		if (empty)
+> +			break;
+> +
+> +		track_process_task(track, task);
+
+...we then go and do some other stuff, including processing that task,
+without the lock or or any other means I can see of excluding other
+users before going round and removing the task.  This seems to leave us
+vulnerable to double execution.  I *think* this is supposed to be
+handled by your comment "Provider should take care of calling
+notifications synchronously in proper order" in the changelog but that's
+a bit obscure, it's not specific about what the requirements are (or
+what the limits are supposed to be on the notification callbacks).
+
+I'm also unclear what is supposed to happen if adding a notification
+races with removing the thing being watched.
+
+--H8fFO+isr9ADh2Iv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUixmlAAoJECTWi3JdVIfQYzkH/2PSJ17rhazR845Aysdj33h4
+A05VuTFXiQ8CO8EcV82HCkc+b3nTzdev8gmxCUIFf5F6VPPyHdbueAh3GCvvqYH8
+XAN3WQLPfiSmf/hqKbhAM39SLF/xTUYkUlLsx4foKB6JK5ENvsCoS/M/i022cQfl
+i5y7AruOzC+TAm70HQ/lKhDc5Xu3Pl25+thsVccYL3UUlCIZxiFpTyHueeA5IoTK
+BWJ7uLVLNnq2ngPs+IZpwrl6LmybAp8WHwe+FOYvMeqQd2T5RGjroMfuvyOBGXsH
+yHb/+Qbo3byiFrEjckIFKcK1RBrMb1kqEfvuhpwrIafC7hT6LqHPAT17rOeDlJg=
+=TiBG
+-----END PGP SIGNATURE-----
+
+--H8fFO+isr9ADh2Iv--
