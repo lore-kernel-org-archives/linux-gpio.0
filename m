@@ -1,119 +1,70 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2] gpio: rcar: Add r8a7793 and r8a7794 support
-Date: Fri, 12 Dec 2014 21:17:50 +0200
-Message-ID: <2188270.mR2n2an5Xq@avalon>
-References: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
+From: Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>
+Subject: [Patch v4 0/2] gpio: add GPIO hogging mechanism
+Date: Fri, 12 Dec 2014 16:07:29 -0600
+Message-ID: <1418422051-9471-1-git-send-email-bparrot@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jiri Prchal <jiri.prchal-cKCO0sOKHLPtwjQa/ONI9g@public.gmane.org>, Pantelis Antoniou <panto-wVdstyuyKrO8r51toPun2/C9HSW9iNxf@public.gmane.org>, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Friday 07 November 2014 20:54:08 Yoshihiro Kaneko wrote:
-> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
-> 
-> The device tree probing for R-Car M2-N (r8a7793) and R-Car E2 (r8a7794)
-> is added.
-> 
-> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
-> 
-> This patch is based on for-next branch of Linus Walleij's gpio tree.
-> 
-> v2 [Yoshihiro Kaneko]
-> * As suggested by Geert Uytterhoeven
->   - clean up 4 identical copies of struct gpio_rcar_info.
-> 
->  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |  4 +++-
->  drivers/gpio/gpio-rcar.c                           | 27 ++++++++++++-------
->  2 files changed, 21 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt index
-> 941a26a..38fb86f 100644
-> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> @@ -6,7 +6,9 @@ Required Properties:
->      - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO
-> controller.
->      - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO
-> controller.
->      - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO
-> controller.
-> -    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2) compatible GPIO
-> controller.
-> +    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO
-> controller.
-> +    - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO
-> controller.
-> +    - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO
-> controller.
->      - "renesas,gpio-rcar": for generic R-Car GPIO controller.
-> 
->    - reg: Base address and length of each memory resource used by the GPIO
-> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-> index ef71ca8..24f0343 100644
-> --- a/drivers/gpio/gpio-rcar.c
-> +++ b/drivers/gpio/gpio-rcar.c
-> @@ -1,6 +1,7 @@
->  /*
->   * Renesas R-Car GPIO Support
->   *
-> + *  Copyright (C) 2014 Renesas Electronics Corporation
->   *  Copyright (C) 2013 Magnus Damm
->   *
->   * This program is free software; you can redistribute it and/or modify
-> @@ -315,22 +316,30 @@ struct gpio_rcar_info {
->  	bool has_both_edge_trigger;
->  };
-> 
-> +static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
-> +	.has_both_edge_trigger = false,
-> +};
-> +
-> +static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
-> +	.has_both_edge_trigger = true,
-> +};
+This patch set re-introduces the gpio hogging concept first 
+presented by Boris Brezillion.
+This patch set provides a way to initally configure specific GPIO
+when the gpio controller is probed.
 
-Seriously, doesn't this call for a "renesas,gpio-rcar-gen2" compatible string 
-?
+The actual DT scanning to collect the GPIO specific data is performed
+as part of the of_gpiochip_add().
 
->  static const struct of_device_id gpio_rcar_of_table[] = {
->  	{
->  		.compatible = "renesas,gpio-r8a7790",
-> -		.data = (void *)&(const struct gpio_rcar_info) {
-> -			.has_both_edge_trigger = true,
-> -		},
-> +		.data = &gpio_rcar_info_gen2,
->  	}, {
->  		.compatible = "renesas,gpio-r8a7791",
-> -		.data = (void *)&(const struct gpio_rcar_info) {
-> -			.has_both_edge_trigger = true,
-> -		},
-> +		.data = &gpio_rcar_info_gen2,
-> +	}, {
-> +		.compatible = "renesas,gpio-r8a7793",
-> +		.data = &gpio_rcar_info_gen2,
-> +	}, {
-> +		.compatible = "renesas,gpio-r8a7794",
-> +		.data = &gpio_rcar_info_gen2,
->  	}, {
->  		.compatible = "renesas,gpio-rcar",
-> -		.data = (void *)&(const struct gpio_rcar_info) {
-> -			.has_both_edge_trigger = false,
-> -		},
-> +		.data = &gpio_rcar_info_gen1,
->  	}, {
->  		/* Terminator */
->  	},
+The purpose of this is to allows specific GPIOs to be configured
+without any driver specific code.
+This particularly useful because board design are getting
+increasingly complex and given SoC pins can now have upward
+of 10 mux values a lot of connections are now dependent on
+external IO muxes to switch various modes and combination.
+
+Specific drivers should not necessarily need to be aware of
+what accounts to a specific board implementation. This board level
+"description" should be best kept as part of the dts file.
+
+Changes since v3:
+ * Relocated the non-DT "hog" function to gpiolib.c.
+ * Rename some of the function to be clearer and remove _ prefixes.
+ * Replace the gpiod_request/gpiod_put usage with
+   gpiochip_request_own_desc/free_own_desc version instead.
+ * Refactor some of the logic to better handle error condition/reporting
+ * Renamed the "direction" DT properties to "state".
+
+Changes since v2:
+ * Refactor the gpio-hog mechanism to split the DT related action
+   from the actual "hogging" operation.
+ * This allows non-DT providers to implement hogs as well.
+ * Added FLAG_IS_HOGGED to mark hogged gpio and make gpiochip removal
+   able to release hogged gpio.
+ * Similarly to the hogging, the cleanup is performed as part of
+   of_gpiochip_remove
+
+Changes since v1:
+ * Split the devicetree bindings documentation in its own patch.
+ * Refactor the gpio-hog mechanism as private functions meant to
+   be to invoked from of_gpiochip_add().
+
+Benoit Parrot (2):
+  gpio: add GPIO hogging mechanism
+  gpio: Document GPIO hogging mechanism
+
+ Documentation/devicetree/bindings/gpio/gpio.txt |  23 +++++
+ drivers/gpio/gpiolib-of.c                       | 119 ++++++++++++++++++++++
+ drivers/gpio/gpiolib.c                          | 128 ++++++++++++++++++++----
+ drivers/gpio/gpiolib.h                          |   3 +
+ 4 files changed, 253 insertions(+), 20 deletions(-)
 
 -- 
-Regards,
+1.8.5.1
 
-Laurent Pinchart
-
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
