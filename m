@@ -1,122 +1,68 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: vx855: Switch to use managed resources APIs
-Date: Fri, 12 Dec 2014 12:17:41 +0800
-Message-ID: <1418357861.1093.1.camel@phoenix>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH] gpio: pcf857x: restore the initial line state of all pcf lines
+Date: Fri, 12 Dec 2014 13:36:41 +0530
+Message-ID: <1418371601-22658-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:46978 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759586AbaLLERq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Dec 2014 23:17:46 -0500
-Received: by mail-pa0-f46.google.com with SMTP id lf10so5787594pab.5
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Dec 2014 20:17:45 -0800 (PST)
+Received: from comal.ext.ti.com ([198.47.26.152]:44541 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750757AbaLLIGr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 12 Dec 2014 03:06:47 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Harald Welte <HaraldWelte@viatech.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, nsekhar@ti.com
+Cc: kishon@ti.com, linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org
 
-Use devm_* APIs to simplify the code a bit.
+The reset values for all the PCF lines are high and hence on shutdown
+we should drive all the lines high in order to bring it to the reset state.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+This is actually required since pcf doesn't have a reset line and even after
+warm reset (by invoking "reboot" in prompt) the pcf lines maintains it's
+previous programmed state. This becomes a problem if the boards are designed
+to work with the default initial state.
+
+DRA7XX_evm uses PCF8575 and one of the PCF output lines feeds to MMC/SD and
+this line should be driven high in order for the MMC/SD to be detected.
+This line is modelled as regulator and the hsmmc driver takes care of enabling
+and disabling it. In the case of 'reboot', during shutdown path as part of it's
+cleanup process the hsmmc driver disables this regulator. This makes MMC boot
+not functional.
+
+Fixed it by driving high all the pcf lines.
+
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/gpio/gpio-vx855.c | 44 ++++++--------------------------------------
- 1 file changed, 6 insertions(+), 38 deletions(-)
+ drivers/gpio/gpio-pcf857x.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpio/gpio-vx855.c b/drivers/gpio/gpio-vx855.c
-index 9d21d2f..57b470d 100644
---- a/drivers/gpio/gpio-vx855.c
-+++ b/drivers/gpio/gpio-vx855.c
-@@ -52,8 +52,6 @@ struct vx855_gpio {
- 	spinlock_t lock;
- 	u32 io_gpi;
- 	u32 io_gpo;
--	bool gpi_reserved;
--	bool gpo_reserved;
+diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+index 236708a..00b15b2 100644
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -448,6 +448,14 @@ static int pcf857x_remove(struct i2c_client *client)
+ 	return status;
+ }
+ 
++static void pcf857x_shutdown(struct i2c_client *client)
++{
++	struct pcf857x *gpio = i2c_get_clientdata(client);
++
++	/* Drive all the I/O lines high */
++	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
++}
++
+ static struct i2c_driver pcf857x_driver = {
+ 	.driver = {
+ 		.name	= "pcf857x",
+@@ -456,6 +464,7 @@ static struct i2c_driver pcf857x_driver = {
+ 	},
+ 	.probe	= pcf857x_probe,
+ 	.remove	= pcf857x_remove,
++	.shutdown = pcf857x_shutdown,
+ 	.id_table = pcf857x_id,
  };
  
- /* resolve a GPIx into the corresponding bit position */
-@@ -224,14 +222,13 @@ static int vx855gpio_probe(struct platform_device *pdev)
- 	struct resource *res_gpi;
- 	struct resource *res_gpo;
- 	struct vx855_gpio *vg;
--	int ret;
- 
- 	res_gpi = platform_get_resource(pdev, IORESOURCE_IO, 0);
- 	res_gpo = platform_get_resource(pdev, IORESOURCE_IO, 1);
- 	if (!res_gpi || !res_gpo)
- 		return -EBUSY;
- 
--	vg = kzalloc(sizeof(*vg), GFP_KERNEL);
-+	vg = devm_kzalloc(&pdev->dev, sizeof(*vg), GFP_KERNEL);
- 	if (!vg)
- 		return -ENOMEM;
- 
-@@ -250,56 +247,27 @@ static int vx855gpio_probe(struct platform_device *pdev)
- 	 * succeed. Ignore and continue.
- 	 */
- 
--	if (!request_region(res_gpi->start, resource_size(res_gpi),
--			MODULE_NAME "_gpi"))
-+	if (!devm_request_region(&pdev->dev, res_gpi->start,
-+				 resource_size(res_gpi), MODULE_NAME "_gpi"))
- 		dev_warn(&pdev->dev,
- 			"GPI I/O resource busy, probably claimed by ACPI\n");
--	else
--		vg->gpi_reserved = true;
- 
--	if (!request_region(res_gpo->start, resource_size(res_gpo),
--			MODULE_NAME "_gpo"))
-+	if (!devm_request_region(&pdev->dev, res_gpo->start,
-+				 resource_size(res_gpo), MODULE_NAME "_gpo"))
- 		dev_warn(&pdev->dev,
- 			"GPO I/O resource busy, probably claimed by ACPI\n");
--	else
--		vg->gpo_reserved = true;
- 
- 	vx855gpio_gpio_setup(vg);
- 
--	ret = gpiochip_add(&vg->gpio);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to register GPIOs\n");
--		goto out_release;
--	}
--
--	return 0;
--
--out_release:
--	if (vg->gpi_reserved)
--		release_region(res_gpi->start, resource_size(res_gpi));
--	if (vg->gpo_reserved)
--		release_region(res_gpi->start, resource_size(res_gpo));
--	kfree(vg);
--	return ret;
-+	return gpiochip_add(&vg->gpio);
- }
- 
- static int vx855gpio_remove(struct platform_device *pdev)
- {
- 	struct vx855_gpio *vg = platform_get_drvdata(pdev);
--	struct resource *res;
- 
- 	gpiochip_remove(&vg->gpio);
- 
--	if (vg->gpi_reserved) {
--		res = platform_get_resource(pdev, IORESOURCE_IO, 0);
--		release_region(res->start, resource_size(res));
--	}
--	if (vg->gpo_reserved) {
--		res = platform_get_resource(pdev, IORESOURCE_IO, 1);
--		release_region(res->start, resource_size(res));
--	}
--
--	kfree(vg);
- 	return 0;
- }
- 
 -- 
-1.9.1
-
-
+1.7.9.5
 
