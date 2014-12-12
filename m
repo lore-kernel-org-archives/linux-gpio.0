@@ -1,76 +1,119 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
-Date: Fri, 12 Dec 2014 09:17:27 -0800
-Message-ID: <548B2327.9010004@broadcom.com>
-References: <1418342706-14755-2-git-send-email-rjui@broadcom.com> <1918116.UxUgDPTmcq@wuerfel> <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2] gpio: rcar: Add r8a7793 and r8a7794 support
+Date: Fri, 12 Dec 2014 21:17:50 +0200
+Message-ID: <2188270.mR2n2an5Xq@avalon>
+References: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+On Friday 07 November 2014 20:54:08 Yoshihiro Kaneko wrote:
+> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+> 
+> The device tree probing for R-Car M2-N (r8a7793) and R-Car E2 (r8a7794)
+> is added.
+> 
+> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+> 
+> This patch is based on for-next branch of Linus Walleij's gpio tree.
+> 
+> v2 [Yoshihiro Kaneko]
+> * As suggested by Geert Uytterhoeven
+>   - clean up 4 identical copies of struct gpio_rcar_info.
+> 
+>  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |  4 +++-
+>  drivers/gpio/gpio-rcar.c                           | 27 ++++++++++++-------
+>  2 files changed, 21 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt index
+> 941a26a..38fb86f 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> @@ -6,7 +6,9 @@ Required Properties:
+>      - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO
+> controller.
+>      - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO
+> controller.
+>      - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO
+> controller.
+> -    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2) compatible GPIO
+> controller.
+> +    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO
+> controller.
+> +    - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO
+> controller.
+> +    - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO
+> controller.
+>      - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+> 
+>    - reg: Base address and length of each memory resource used by the GPIO
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index ef71ca8..24f0343 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -1,6 +1,7 @@
+>  /*
+>   * Renesas R-Car GPIO Support
+>   *
+> + *  Copyright (C) 2014 Renesas Electronics Corporation
+>   *  Copyright (C) 2013 Magnus Damm
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+> @@ -315,22 +316,30 @@ struct gpio_rcar_info {
+>  	bool has_both_edge_trigger;
+>  };
+> 
+> +static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+> +	.has_both_edge_trigger = false,
+> +};
+> +
+> +static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+> +	.has_both_edge_trigger = true,
+> +};
 
+Seriously, doesn't this call for a "renesas,gpio-rcar-gen2" compatible string 
+?
 
-On 12/12/2014 5:05 AM, Alexandre Courbot wrote:
-> On Fri, Dec 12, 2014 at 9:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Thursday 11 December 2014 16:05:04 Ray Jui wrote:
->>> +
->>> +- linux,gpio-base:
->>> +    Base GPIO number of this controller
->>> +
->>>
->>
->> We've NAK'ed properties like this multiple times before, and it
->> doesn't get any better this time. What are you trying to achieve
->> here?
->
-> I am to blame for suggesting using this property to Ray, and I am
-> fully aware that this has been rejected before, but look at what
-> people came with recently to palliate the lack of control over the
-> GPIO number space for DT platforms:
->
-> http://www.spinics.net/lists/arm-kernel/msg384847.html
-> https://lkml.org/lkml/2014/12/10/133
->
-> Right now GPIO numbering for platforms using DT is a very inconsistent
-> process, subject to change by the simple action of adjusting the value
-> of ARCH_NR_GPIOS (which we did recently, btw), adding a new GPIO
-> controller, or changing the probe order of devices. For users of the
-> integer or sysfs interfaces, this results in GPIO numbers that change,
-> and drivers and/or user-space programs that behave incorrectly.
-> Ironically, the only way to have consistent numbers is to use the old
-> platform files, where you can specify the base number of a gpio_chip.
->
-> DT is actually probably not such a bad place to provide consistency in
-> GPIO numbering. It has a global vision of the system layout, including
-> all GPIO controllers and the number of GPIOs they include, and thus
-> can make informed decisions. It provides a consistent result
-> regardless of probe order. And allowing it to assign GPIO bases to
-> controllers will free us from the nonsensical dependency of some
-> arbitrary upper-bound for GPIO numbers that ARCH_NR_GPIOS imposes on
-> us. Also about ARCH_NR_GPIOS, the plan is to eventually remove it
-> since we don't need it anymore after the removal of the global
-> gpio_descs array. This will again interfere with the numbering of GPIO
-> chips that do not have a base number provided.
->
-> Note that I don't really like this, either - but the problem is the
-> GPIO integer interface. Until everyone has upgraded to gpiod and we
-> have a replacement for the current sysfs interface (this will take a
-> while) we have to cope with this. This issue has been bothering users
-> for years, so this time I'd like to try and solve it the less ugly
-> way. If there is a better solution, of course I'm all for it.
->
-Agreed.
+>  static const struct of_device_id gpio_rcar_of_table[] = {
+>  	{
+>  		.compatible = "renesas,gpio-r8a7790",
+> -		.data = (void *)&(const struct gpio_rcar_info) {
+> -			.has_both_edge_trigger = true,
+> -		},
+> +		.data = &gpio_rcar_info_gen2,
+>  	}, {
+>  		.compatible = "renesas,gpio-r8a7791",
+> -		.data = (void *)&(const struct gpio_rcar_info) {
+> -			.has_both_edge_trigger = true,
+> -		},
+> +		.data = &gpio_rcar_info_gen2,
+> +	}, {
+> +		.compatible = "renesas,gpio-r8a7793",
+> +		.data = &gpio_rcar_info_gen2,
+> +	}, {
+> +		.compatible = "renesas,gpio-r8a7794",
+> +		.data = &gpio_rcar_info_gen2,
+>  	}, {
+>  		.compatible = "renesas,gpio-rcar",
+> -		.data = (void *)&(const struct gpio_rcar_info) {
+> -			.has_both_edge_trigger = false,
+> -		},
+> +		.data = &gpio_rcar_info_gen1,
+>  	}, {
+>  		/* Terminator */
+>  	},
 
-Since we are just starting to upstream all of our drivers for 
-iProc/Cygnus, enforcing all of our new drivers to use the gpiod 
-interface is not an issue and is something that should be done.
+-- 
+Regards,
 
-Our current issue is really on the sysfs interface, as I mentioned 
-earlier, a lot of our customers use the sysfs interface for GPIO access. 
-Until the sysfs interface issue is resolved, we sort of need a way to 
-maintain the GPIO base between different GPIO controllers.
+Laurent Pinchart
+
