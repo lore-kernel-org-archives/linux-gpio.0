@@ -1,156 +1,308 @@
-From: AH <najdrozszy@gmail.com>
-Subject: Re: [RFC 01/15] drivers/base: add track framework
-Date: Sat, 13 Dec 2014 00:12:19 +0100
-Message-ID: <548B7653.7020004@gmail.com>
-References: <1418226513-14105-2-git-send-email-a.hajda@samsung.com> <20141212163653.GO11764@sirena.org.uk>
+From: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v5 1/3] mfd: add support for Cypress CYUSBS234 USB Serial Bridge controller
+Date: Sat, 13 Dec 2014 17:17:42 +0530
+Message-ID: <1418471264-31896-1-git-send-email-muth@cypress.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f67.google.com ([74.125.82.67]:62664 "EHLO
-	mail-wg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752078AbaLLXMY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Dec 2014 18:12:24 -0500
-In-Reply-To: <20141212163653.GO11764@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, ARM/CLKDEV SUPPORT <linux-arm-kernel@lists.infradead.org>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, "ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
 
-Hi Mark,
+Adds support for USB-I2C/GPIO interfaces of Cypress Semiconductor
+CYUSBS234 USB-Serial Bridge controller.
 
-Thanks for review.
+Details about the device can be found at:
+http://www.cypress.com/?rID=84126
 
-Mark Brown wrote on 12.12.2014 17:36:
-> On Wed, Dec 10, 2014 at 04:48:19PM +0100, Andrzej Hajda wrote:
->> track is a generic framework for safe tracking presence of any kernel objects
->> having an id. There are no special requirements about type of object or its
->> id. Id shall be unique.
->
-> This is pretty confusing, when it talks about "kernel objects" that
-> sounds like it means struct kobject but in fact there's no connection
-> with that or any of the other kernel object stuff.  Perhaps it makes
-> sense but it should be addressed.
->
+Separate cell drivers are available for I2C and GPIO. SPI and UART
+are not supported yet.
 
-OK
+Signed-off-by: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+---
+Changes since v4:
+* Used macros for subclass values
 
->> Typical usage of the framework by consumer looks as follow:
->> 1. Consumer registers notifier callback for objects with given id.
->
-> This is also a custom thing not connected with the notifier mechanism
-> implemented by struct notifier_block.  Again this should probably be
-> addressed, even if it's just used internally it seems like there should
-> be some opportunity for code reuse here.
+Changes since v3:
+* Added devm_* allocation function
+* Added vendor commands to read configuration info
 
-I though about using notfier_block, but beside the struct itself there 
-wouldn't be too much code to reuse. In my previous attempt of this 
-framework more arguments were passed to the callback so I have dropped
-this idea completely, but now after simplifying the callback it fits better.
+Changes since v2:
+* Used auto mfd id to support multiple devices
+* Cleaned up the code
 
->
->> +	case track_task_up:
->> +		node = track_get_node(track, task->type, task->id, true);
->> +
->> +		node->up = true;
->> +		node->data = task->data;
->> +		list_for_each_entry_safe(itb, node->itb_next, &node->itb_head,
->> +					 list)
->> +			itb->callback(itb, node->data, true);
->> +		return;
->> +	case track_task_down:
->
-> I'm not sure the up and down naming is the most obvious naming for
-> users.  It's obviously inspired by semaphores but it's not entirely
-> obvious that this is going to make things clear and meaningful for
-> someone trying to understand the interface.
+Changes since v1:
+* Identified different serial interface and loaded correct cell driver
+* Formed a mfd id to support multiple devices
+* Removed unused platform device
 
-In my 1st attempt I have called the framework interface_tracker, so it 
-was named ifup/ifdown after unix commands:) Now it is less obvious.
-Finding good names is always painful, anyway I will think about it.
+ drivers/mfd/Kconfig           |  11 +++
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/cyusbs23x.c       | 153 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/cyusbs23x.h |  55 +++++++++++++++
+ 4 files changed, 220 insertions(+)
+ create mode 100644 drivers/mfd/cyusbs23x.c
+ create mode 100644 include/linux/mfd/cyusbs23x.h
 
->
->> +static int track_process_queue(struct tracker *track)
->> +{
->> +	struct track_task *task, *ptask = NULL;
->> +	unsigned long flags;
->> +	bool empty;
->> +
->> +	/* Queue non-emptiness is used as a sentinel to prevent processing
->> +	 * by multiple threads, so we cannot delete entry from the queue
->> +	 * until it is processed.
->> +	 */
->> +	while (true) {
->> +		spin_lock_irqsave(&track->queue_lock, flags);
->> +
->> +		if (ptask)
->> +			list_del(&ptask->list);
->> +		task = list_first_entry(&track->queue,
->> +					struct track_task, list);
->> +
->> +		empty = list_empty(&track->queue);
->> +		if (empty)
->> +			complete_all(&track->queue_empty);
->> +
->> +		spin_unlock_irqrestore(&track->queue_lock, flags);
->
-> Here we get a task from the head of the list and drop the lock, leaving
-> the task on the list...
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 2e6b731..109358e 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -128,6 +128,17 @@ config MFD_ASIC3
+          This driver supports the ASIC3 multifunction chip found on many
+          PDAs (mainly iPAQ and HTC based ones)
 
-Yes and it is explained in the comment few lines above.
++config MFD_CYUSBS23X
++       tristate "Cypress CYUSBS23x USB Serial Bridge controller"
++       select MFD_CORE
++       depends on USB
++       help
++         Say yes here if you want support for Cypress Semiconductor
++         CYUSBS23x USB-Serial Bridge controller.
++
++         This driver can also be built as a module. If so, the module will be
++         called cyusbs23x.
++
+ config PMIC_DA903X
+        bool "Dialog Semiconductor DA9030/DA9034 PMIC Support"
+        depends on I2C=y
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 53467e2..c0f6193 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -151,6 +151,7 @@ si476x-core-y := si476x-cmd.o si476x-prop.o si476x-i2c.o
+ obj-$(CONFIG_MFD_SI476X_CORE)  += si476x-core.o
 
->
->> +		kfree(ptask);
->> +
->> +		if (empty)
->> +			break;
->> +
->> +		track_process_task(track, task);
->
-> ...we then go and do some other stuff, including processing that task,
-> without the lock or or any other means I can see of excluding other
-> users before going round and removing the task.  This seems to leave us
-> vulnerable to double execution.
+ obj-$(CONFIG_MFD_CS5535)       += cs5535-mfd.o
++obj-$(CONFIG_MFD_CYUSBS23X)     += cyusbs23x.o
+ obj-$(CONFIG_MFD_OMAP_USB_HOST)        += omap-usb-host.o omap-usb-tll.o
+ obj-$(CONFIG_MFD_PM8921_CORE)  += pm8921-core.o ssbi.o
+ obj-$(CONFIG_MFD_SPMI_PMIC)    += qcom-spmi-pmic.o
+diff --git a/drivers/mfd/cyusbs23x.c b/drivers/mfd/cyusbs23x.c
+new file mode 100644
+index 0000000..18ebe6a
+--- /dev/null
++++ b/drivers/mfd/cyusbs23x.c
+@@ -0,0 +1,153 @@
++/*
++ * Cypress USB-Serial Bridge Controller USB adapter driver
++ *
++ * Copyright (c) 2014 Cypress Semiconductor Corporation.
++ *
++ * Author:
++ *   Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
++ *
++ * Additional contributors include:
++ *   Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ */
++
++/*
++ * This is core MFD driver for Cypress Semiconductor CYUSBS234 USB-Serial
++ * Bridge controller. CYUSBS234 offers a single channel serial interface
++ * (I2C/SPI/UART). It can be configured to enable either of I2C, SPI, UART
++ * interfaces. The GPIOs are also available to access.
++ * Details about the device can be found at:
++ *    http://www.cypress.com/?rID=84126
++ */
++
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++#include <linux/mfd/core.h>
++#include <linux/mfd/cyusbs23x.h>
++#include <linux/usb.h>
++
++/* Serial interfaces (I2C, SPI, UART) differ in interface subclass */
++#define CY_USBS_SCB_DISABLED   0
++#define CY_USBS_SCB_UART       1
++#define CY_USBS_SCB_SPI                2
++#define CY_USBS_SCB_I2C                3
++
++static const struct usb_device_id cyusbs23x_usb_table[] = {
++       { USB_DEVICE(0x04b4, 0x0004) },   /* Cypress Semiconductor CYUSBS234 */
++       { }
++};
++
++MODULE_DEVICE_TABLE(usb, cyusbs23x_usb_table);
++
++static const struct mfd_cell cyusbs23x_i2c_gpio_devs[] = {
++       { .name = "cyusbs23x-i2c", },
++       { .name = "cyusbs23x-gpio", },
++};
++
++static int update_ep_details(struct usb_interface *interface,
++                               struct cyusbs23x *cyusbs)
++{
++       struct usb_host_interface *iface_desc;
++       struct usb_endpoint_descriptor *ep;
++       int i;
++
++       iface_desc = interface->cur_altsetting;
++
++       for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
++
++               ep = &iface_desc->endpoint[i].desc;
++
++               if (!cyusbs->bulk_in_ep_num && usb_endpoint_is_bulk_in(ep))
++                       cyusbs->bulk_in_ep_num = ep->bEndpointAddress;
++               if (!cyusbs->bulk_out_ep_num && usb_endpoint_is_bulk_out(ep))
++                       cyusbs->bulk_out_ep_num = ep->bEndpointAddress;
++               if (!cyusbs->intr_in_ep_num && usb_endpoint_is_int_in(ep))
++                       cyusbs->intr_in_ep_num = ep->bEndpointAddress;
++       }
++
++       dev_dbg(&interface->dev, "%s intr_in=%d, bulk_in=%d, bulk_out=%d\n",
++               __func__, cyusbs->intr_in_ep_num,
++               cyusbs->bulk_in_ep_num, cyusbs->bulk_out_ep_num);
++
++       if (!cyusbs->bulk_in_ep_num || !cyusbs->bulk_out_ep_num ||
++               !cyusbs->intr_in_ep_num) {
++               dev_err(&interface->dev, "%s invalid endpoints\n", __func__);
++               return -ENODEV;
++       }
++
++       return 0;
++}
++
++static int cyusbs23x_probe(struct usb_interface *interface,
++                          const struct usb_device_id *id)
++{
++       struct cyusbs23x *cyusbs;
++       const struct mfd_cell *cyusbs23x_devs;
++       int ret, ndevs;
++
++       cyusbs = devm_kzalloc(&interface->dev, sizeof(*cyusbs), GFP_KERNEL);
++       if (!cyusbs)
++               return -ENOMEM;
++
++       ret = update_ep_details(interface, cyusbs);
++       if (ret)
++               return -ENODEV;
++
++       /* Serial interfaces (I2C, SPI, UART) differ in interface subclass */
++       switch (interface->cur_altsetting->desc.bInterfaceSubClass) {
++       case CY_USBS_SCB_I2C:
++               dev_info(&interface->dev, "using I2C interface\n");
++               cyusbs23x_devs = cyusbs23x_i2c_gpio_devs;
++               ndevs = ARRAY_SIZE(cyusbs23x_i2c_gpio_devs);
++               break;
++       default:
++               dev_err(&interface->dev, "unsupported subclass\n");
++               return -ENODEV;
++       }
++
++       cyusbs->usb_dev = usb_get_dev(interface_to_usbdev(interface));
++       cyusbs->usb_intf = interface;
++       usb_set_intfdata(interface, cyusbs);
++
++       ret = mfd_add_devices(&interface->dev, PLATFORM_DEVID_AUTO,
++                               cyusbs23x_devs, ndevs, NULL, 0, NULL);
++       if (ret) {
++               dev_err(&interface->dev, "Failed to register devices\n");
++               goto error;
++       }
++
++       return 0;
++
++error:
++       usb_put_dev(cyusbs->usb_dev);
++
++       return ret;
++}
++
++static void cyusbs23x_disconnect(struct usb_interface *interface)
++{
++       struct cyusbs23x *cyusbs = usb_get_intfdata(interface);
++
++       mfd_remove_devices(&interface->dev);
++       usb_put_dev(cyusbs->usb_dev);
++}
++
++static struct usb_driver cyusbs23x_usb_driver = {
++       .name           = "cyusbs23x",
++       .probe          = cyusbs23x_probe,
++       .disconnect     = cyusbs23x_disconnect,
++       .id_table       = cyusbs23x_usb_table,
++};
++
++module_usb_driver(cyusbs23x_usb_driver);
++
++MODULE_AUTHOR("Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>");
++MODULE_AUTHOR("Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>");
++MODULE_DESCRIPTION("Cypress CYUSBS23x MFD core driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/mfd/cyusbs23x.h b/include/linux/mfd/cyusbs23x.h
+new file mode 100644
+index 0000000..10899ba
+--- /dev/null
++++ b/include/linux/mfd/cyusbs23x.h
+@@ -0,0 +1,55 @@
++/*
++ * Cypress USB-Serial Bridge Controller definitions
++ *
++ * Copyright (c) 2014 Cypress Semiconductor Corporation.
++ *
++ * Author:
++ *   Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
++ *
++ * Additional contributors include:
++ *   Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ */
++
++#ifndef __MFD_CYUSBS23X_H__
++#define __MFD_CYUSBS23X_H__
++
++#include <linux/types.h>
++#include <linux/usb.h>
++
++/* Structure to hold all device specific stuff */
++struct cyusbs23x {
++       struct usb_device *usb_dev;
++       struct usb_interface *usb_intf;
++
++       u8 bulk_in_ep_num;
++       u8 bulk_out_ep_num;
++       u8 intr_in_ep_num;
++};
++
++enum cy_usbs_vendor_cmds {
++       CY_DEV_READ_CONFIG_CMD         = 0xB5,
++       CY_I2C_GET_CONFIG_CMD          = 0xC4,
++       CY_I2C_SET_CONFIG_CMD          = 0xC5,
++       CY_I2C_WRITE_CMD               = 0xC6,
++       CY_I2C_READ_CMD                = 0xC7,
++       CY_I2C_GET_STATUS_CMD          = 0xC8,
++       CY_I2C_RESET_CMD               = 0xC9,
++       CY_GPIO_GET_CONFIG_CMD         = 0xD8,
++       CY_GPIO_SET_CONFIG_CMD         = 0xD9,
++       CY_GPIO_GET_VALUE_CMD          = 0xDA,
++       CY_GPIO_SET_VALUE_CMD          = 0xDB,
++       CY_DEV_ENABLE_CONFIG_READ_CMD  = 0xE2
++};
++
++/* SCB index shift */
++#define CY_SCB_INDEX_SHIFT      15
++
++#define CY_USBS_CTRL_XFER_TIMEOUT      2000
++#define CY_USBS_BULK_XFER_TIMEOUT      5000
++#define CY_USBS_INTR_XFER_TIMEOUT      5000
++
++#endif /* __MFD_CYUSBS23X_H__ */
+--
+1.8.3.2
 
-No, if you look at track_add_task function you will see that the queue 
-is processed only if it is initially empty, otherwise the task is only 
-added to the queue, so it will be processed after processing earlier tasks.
-So the rule is that if someone add task to the queue it checks if the 
-queue is empty, in such case it process all tasks from the queue until
-the queue becomes empty, even the tasks added by other processed.
-This way all tasks are serialized.
 
-
-> I *think* this is supposed to be
-> handled by your comment "Provider should take care of calling
-> notifications synchronously in proper order" in the changelog but that's
-> a bit obscure, it's not specific about what the requirements are (or
-> what the limits are supposed to be on the notification callbacks).
-
-No, this comment is just to avoid advertising object (ie calling 
-track_up) that can be just removed by concurrent thread.
-
-
->
-> I'm also unclear what is supposed to happen if adding a notification
-> races with removing the thing being watched.
->
-
-The sequence should be always as follows:
-1. create thing, then call track_up(thing).
-...
-2. call track_down(thing) then remove thing.
-
-If we put 1 into probe and 2 into remove callback of the driver it will 
-be safe - we are synchronised by device_lock. But if, for some reason, 
-we want to create object after probe we should do own synchronization or 
-just put device_lock around 1. The same applies if we want to remove
-object earlier. This is the comment above about. I will expand it to 
-more verbose explanation.
-
-Regards
-Andrzej
-
-
-
-
+This message and any attachments may contain Cypress (or its subsidiaries) confidential information. If it has been received in error, please advise the sender and immediately delete this message.
