@@ -1,633 +1,180 @@
-From: Varka Bhadram <varkabhadram-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 2/3] i2c: add support for Cypress CYUSBS234 USB-I2C
- adapter
-Date: Sun, 14 Dec 2014 07:54:49 +0530
-Message-ID: <548CF4F1.7070607@gmail.com>
-References: <1418471264-31896-1-git-send-email-muth@cypress.com> <1418471264-31896-2-git-send-email-muth@cypress.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] bulk GPIO changes for v3.19, take two
+Date: Sun, 14 Dec 2014 22:47:34 +0100
+Message-ID: <CACRpkdZnHSwRZZqgOS+i3U-fEoBZVNJrj-rS5FUiy1Niuyjtgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1418471264-31896-2-git-send-email-muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:52635 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751085AbaLNVrf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Dec 2014 16:47:35 -0500
+Received: by mail-ig0-f182.google.com with SMTP id hn15so4147272igb.3
+        for <linux-gpio@vger.kernel.org>; Sun, 14 Dec 2014 13:47:34 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+
+Hi Linus,
+
+same stuff as last time, now with a fixup patch for the previous
+compile error plus I ran a few extra rounds of compile-testing.
+
+Please pull this in for v3.19!
+
+Yours,
+Linus Walleij
 
 
-On Saturday 13 December 2014 05:17 PM, Muthu Mani wrote:
-> Adds support for USB-I2C interface of Cypress Semiconductor
-> CYUSBS234 USB-Serial Bridge controller.
->
-> The read/write operation is setup using vendor command through control endpoint
-> and actual data transfer happens through bulk in/out endpoints.
->
-> Details about the device can be found at:
-> http://www.cypress.com/?rID=84126
->
-> Signed-off-by: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-> ---
-> Changes since v4:
-> * used interface number from interface pointer instead of separate member var
->
-> Changes since v3:
-> * corrected typo
->
-> Changes since v2:
-> * Retrieved the i2c transfer status using interrupt in endpoint
-> * Used kstrtol instead of manually parsing and scnprintf instead of sprintf
-> * Given i2c adapter device for dev_xxx
-> * cleaned up the code
->
-> Changes since v1:
-> * allocated memory on heap for usb transfer data
-> * Used DEVICE_ATTR_xx and friends and attribute groups
-> * Added the device files under i2c-adapter rather than platform device
->
->   drivers/i2c/busses/Kconfig         |  12 +
->   drivers/i2c/busses/Makefile        |   1 +
->   drivers/i2c/busses/i2c-cyusbs23x.c | 585 +++++++++++++++++++++++++++++++++++++
->   3 files changed, 598 insertions(+)
->   create mode 100644 drivers/i2c/busses/i2c-cyusbs23x.c
->
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index b4d135c..a9cd3e2 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -871,6 +871,18 @@ config I2C_RCAR
->
->   comment "External I2C/SMBus adapter drivers"
->
-> +config I2C_CYUSBS23X
-> +       tristate "CYUSBS23x I2C adapter"
-> +       depends on MFD_CYUSBS23X
-> +       help
-> +         Say yes if you would like to access Cypress CYUSBS23x I2C device.
-> +
-> +         This driver enables the I2C interface of CYUSBS23x USB Serial Bridge
-> +         controller.
-> +
-> +         This driver can also be built as a module. If so, the module will be
-> +         called i2c-cyusbs23x.
-> +
->   config I2C_DIOLAN_U2C
->          tristate "Diolan U2C-12 USB adapter"
->          depends on USB
-> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-> index cdac7f1..ad2b283 100644
-> --- a/drivers/i2c/busses/Makefile
-> +++ b/drivers/i2c/busses/Makefile
-> @@ -86,6 +86,7 @@ obj-$(CONFIG_I2C_XLR)         += i2c-xlr.o
->   obj-$(CONFIG_I2C_RCAR)         += i2c-rcar.o
->
->   # External I2C/SMBus adapter drivers
-> +obj-$(CONFIG_I2C_CYUSBS23X)    += i2c-cyusbs23x.o
->   obj-$(CONFIG_I2C_DIOLAN_U2C)   += i2c-diolan-u2c.o
->   obj-$(CONFIG_I2C_DLN2)         += i2c-dln2.o
->   obj-$(CONFIG_I2C_PARPORT)      += i2c-parport.o
-> diff --git a/drivers/i2c/busses/i2c-cyusbs23x.c b/drivers/i2c/busses/i2c-cyusbs23x.c
-> new file mode 100644
-> index 0000000..452c370
-> --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-cyusbs23x.c
-> @@ -0,0 +1,585 @@
-> +/*
-> + * I2C subdriver for Cypress CYUSBS234 USB-Serial Bridge controller.
-> + * Details about the device can be found at:
-> + *    http://www.cypress.com/?rID=84126
-> + *
-> + * Copyright (c) 2014 Cypress Semiconductor Corporation.
-> + *
-> + * Author:
-> + *   Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-> + *
-> + * Additional contributors include:
-> + *   Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms of the GNU General Public License version 2 as published by
-> + * the Free Software Foundation.
-> + */
-> +
-> +/*
-> + * It exposes sysfs entries under the i2c adapter for getting the i2c transfer
-> + * status, reset i2c read/write module, get/set nak and stop bits.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/errno.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/usb.h>
-> +#include <linux/i2c.h>
-> +#include <linux/mfd/cyusbs23x.h>
-> +
-> +#define CY_I2C_MODE_READ           0
-> +#define CY_I2C_MODE_WRITE          1
-> +
-> +#define CY_I2C_XFER_STATUS_LEN     3
-> +
-> +struct cyusbs_i2c_config {
-> +       /* Frequency of operation. Only valid values are 100KHz and 400KHz */
-> +       u32 frequency;
-> +       u8 slave_addr;        /* Slave address to be used when in slave mode */
-> +       u8 is_msb_first;      /* Whether to transmit MSB first */
-> +       /*
-> +        * Whether block is configured as a master:
-> +        * 1 - The block functions as I2C master;
-> +        * 0 - The block functions as I2C slave
-> +        */
-> +       u8 is_master;
-> +       u8 s_ignore;          /* Ignore general call in slave mode */
-> +       /* Whether to stretch clock in case of no FIFO availability */
-> +       u8 clock_stretch;
-> +       /* Whether to loop back TX data to RX. Valid only for debug purposes */
-> +       u8 is_loopback;
-> +       u8 reserved[6];       /* Reserved for future use */
-> +} __packed;
-> +
-> +struct cyusbs_i2c {
-> +       struct i2c_adapter i2c_adapter;
-> +       struct cyusbs_i2c_config *i2c_config;
-> +       struct mutex lock;
-> +
-> +       bool is_stop_bit;     /* set the stop bit for i2c transfer */
-> +       bool is_nak_bit;      /* set the nak bit for i2c transfer */
-> +};
-> +
-> +#define to_cyusbs_i2c(a) container_of(a, struct cyusbs_i2c, i2c_adapter)
-> +
-> +static int cy_i2c_get_status(struct i2c_adapter *adapter, u8 *buf, u16 mode);
-> +static int cy_i2c_reset(struct i2c_adapter *adapter, u16 mode);
-> +
-> +static ssize_t i2c_read_status_show(struct device *d,
-> +                                   struct device_attribute *attr, char *buf)
-> +{
-> +       struct i2c_adapter *adapter = to_i2c_adapter(d);
-> +
-> +       /* Updates buffer with 3 bytes status (hex data) */
-> +       return cy_i2c_get_status(adapter, buf, CY_I2C_MODE_READ);
-> +}
-> +
-> +static ssize_t i2c_write_status_show(struct device *d,
-> +                                    struct device_attribute *attr, char *buf)
-> +{
-> +       struct i2c_adapter *adapter = to_i2c_adapter(d);
-> +
-> +       /* Updates buffer with 3 bytes status (hex data) */
-> +       return cy_i2c_get_status(adapter, buf, CY_I2C_MODE_WRITE);
-> +}
-> +
-> +static ssize_t i2c_read_reset_store(struct device *d,
-> +                                struct device_attribute *attr,
-> +                                const char *buf, size_t count)
-> +{
-> +       int ret;
-> +       long value;
-> +       struct i2c_adapter *adapter = to_i2c_adapter(d);
-> +
-> +       ret = kstrtol(buf, 0, &value);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (value != 1)
-> +               return -EINVAL;
-> +
-> +       ret = cy_i2c_reset(adapter, CY_I2C_MODE_READ);
-> +       if (!ret)
-> +               ret = count;
-> +
-> +       return ret;
-> +}
-> +
-> +static ssize_t i2c_write_reset_store(struct device *d,
-> +                                 struct device_attribute *attr,
-> +                                 const char *buf, size_t count)
-> +{
-> +       int ret;
-> +       long value;
-> +       struct i2c_adapter *adapter = to_i2c_adapter(d);
-> +
-> +       ret = kstrtol(buf, 0, &value);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (value != 1)
-> +               return -EINVAL;
-> +
-> +       ret = cy_i2c_reset(adapter, CY_I2C_MODE_WRITE);
-> +       if (!ret)
-> +               ret = count;
-> +
-> +       return ret;
-> +}
-> +
-> +static ssize_t is_stop_bit_show(struct device *d,
-> +                               struct device_attribute *attr, char *buf)
-> +{
-> +       struct i2c_adapter *adapter = to_i2c_adapter(d);
-> +       struct cyusbs_i2c *cy_i2c = to_cyusbs_i2c(adapter);
-> +
-> +       return scnprintf(buf, 3, "%d\n", cy_i2c->is_stop_bit);
-> +}
-> +
-> +static ssize_t is_stop_bit_store(struct device *d,
-> +                                struct device_attribute *attr,
-> +                                const char *buf, size_t count)
-> +{
-> +       struct i2c_adapter *adapter = to_i2c_adapter(d);
-> +       struct cyusbs_i2c *cy_i2c = to_cyusbs_i2c(adapter);
-> +       long value;
-> +       int ret;
-> +
-> +       ret = kstrtol(buf, 0, &value);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (value != 0 && value != 1)
-> +               return -EINVAL;
-> +
-> +       cy_i2c->is_stop_bit = (bool)value;
-> +
-> +       return count;
-> +}
-> +
-> +static ssize_t is_nak_bit_show(struct device *d,
-> +                              struct device_attribute *attr, char *buf)
-> +{
-> +       struct i2c_adapter *adapter = to_i2c_adapter(d);
-> +       struct cyusbs_i2c *cy_i2c = to_cyusbs_i2c(adapter);
-> +
-> +       return scnprintf(buf, 3, "%d\n", cy_i2c->is_nak_bit);
-> +}
-> +
-> +static ssize_t is_nak_bit_store(struct device *d,
-> +                               struct device_attribute *attr,
-> +                               const char *buf, size_t count)
-> +{
-> +       struct i2c_adapter *adapter = to_i2c_adapter(d);
-> +       struct cyusbs_i2c *cy_i2c = to_cyusbs_i2c(adapter);
-> +       long value;
-> +       int ret;
-> +
-> +       ret = kstrtol(buf, 0, &value);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (value != 0 && value != 1)
-> +               return -EINVAL;
-> +
-> +       cy_i2c->is_nak_bit = (bool)value;
-> +
-> +       return count;
-> +}
-> +
-> +static DEVICE_ATTR_RO(i2c_read_status);
-> +static DEVICE_ATTR_RO(i2c_write_status);
-> +static DEVICE_ATTR_WO(i2c_read_reset);
-> +static DEVICE_ATTR_WO(i2c_write_reset);
-> +static DEVICE_ATTR_RW(is_stop_bit);
-> +static DEVICE_ATTR_RW(is_nak_bit);
-> +
-> +static struct attribute *cyusbs_i2c_device_attrs[] = {
-> +       &dev_attr_i2c_read_status.attr,
-> +       &dev_attr_i2c_write_status.attr,
-> +       &dev_attr_i2c_read_reset.attr,
-> +       &dev_attr_i2c_write_reset.attr,
-> +       &dev_attr_is_stop_bit.attr,
-> +       &dev_attr_is_nak_bit.attr,
-> +       NULL
-> +};
-> +
-> +ATTRIBUTE_GROUPS(cyusbs_i2c_device);
-> +
-> +static int cy_i2c_get_status(struct i2c_adapter *adapter, u8 *buf, u16 mode)
-> +{
-> +       int ret;
-> +       u16 wIndex, wValue, scb_index;
-> +       u8 *data;
-> +       struct cyusbs23x *cyusbs = (struct cyusbs23x *)adapter->algo_data;
-> +       struct cyusbs_i2c *cy_i2c = to_cyusbs_i2c(adapter);
-> +       u8 ifnum = cyusbs->usb_intf->cur_altsetting->desc.bInterfaceNumber;
-> +
-> +       scb_index = ifnum & 0x01;
-> +       wValue = ((scb_index << CY_SCB_INDEX_SHIFT) | mode);
-> +       wIndex = 0;
+The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
 
-One line space..
+  Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
 
-> +       data = kmalloc(CY_I2C_XFER_STATUS_LEN, GFP_KERNEL);
-> +       if (data == NULL)
-> +               return -ENOMEM;
-> +
+are available in the git repository at:
 
-if(!data)
-	return -ENOMEM;
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.19-2
 
-> +       mutex_lock(&cy_i2c->lock);
-> +       /* read the i2c transfer status */
-> +       ret = usb_control_msg(cyusbs->usb_dev,
-> +                       usb_rcvctrlpipe(cyusbs->usb_dev, 0),
-> +                       CY_I2C_GET_STATUS_CMD,
-> +                       USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
-> +                       wValue, wIndex, data, CY_I2C_XFER_STATUS_LEN,
-> +                       CY_USBS_CTRL_XFER_TIMEOUT);
-> +       mutex_unlock(&cy_i2c->lock);
-> +       if (ret != CY_I2C_XFER_STATUS_LEN) {
-> +               dev_err(&adapter->dev, "%s: failed to get status: %d",
-> +                       __func__, ret);
-> +               ret = usb_translate_errors(ret);
-> +               goto status_error;
-> +       }
-> +
-> +       memcpy(buf, data, CY_I2C_XFER_STATUS_LEN);
-> +       buf[CY_I2C_XFER_STATUS_LEN] = 0;
-> +
-> +       dev_dbg(&adapter->dev, "%s: %02x %02x %02x\n", __func__,
-> +               buf[0], buf[1], buf[2]);
-> +
-> +status_error:
-> +       kfree(data);
-> +       return ret;
-> +}
-> +
-> +static int cy_i2c_reset(struct i2c_adapter *adapter, u16 mode)
-> +{
-> +       int ret;
-> +       u16 wIndex, wValue, scb_index;
-> +       struct cyusbs23x *cyusbs = (struct cyusbs23x *)adapter->algo_data;
-> +       struct cyusbs_i2c *cy_i2c = to_cyusbs_i2c(adapter);
-> +       u8 ifnum = cyusbs->usb_intf->cur_altsetting->desc.bInterfaceNumber;
-> +
-> +       scb_index = ifnum & 0x01;
-> +       wValue = ((scb_index << CY_SCB_INDEX_SHIFT) | mode);
-> +       wIndex = 0;
-> +
-> +       mutex_lock(&cy_i2c->lock);
-> +       ret = usb_control_msg(cyusbs->usb_dev,
-> +                       usb_sndctrlpipe(cyusbs->usb_dev, 0),
-> +                       CY_I2C_RESET_CMD,
-> +                       USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_OUT,
-> +                       wValue, wIndex, NULL, 0, CY_USBS_CTRL_XFER_TIMEOUT);
-> +       mutex_unlock(&cy_i2c->lock);
-> +       if (ret) {
-> +               dev_err(&adapter->dev, "%s: failed to reset: %d",
-> +                       __func__, ret);
-> +               ret = usb_translate_errors(ret);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static int cy_i2c_recv_status(struct i2c_adapter *adapter)
-> +{
-> +       int ret, actual_len;
-> +       u8 *data;
-> +       struct cyusbs23x *cyusbs = (struct cyusbs23x *)adapter->algo_data;
-> +
-> +       data = kmalloc(CY_I2C_XFER_STATUS_LEN, GFP_KERNEL);
-> +       if (data == NULL)
-> +               return -ENOMEM;
-> +
+for you to fetch changes up to 170680abd1eb98a9773ed068435fef9a6402a10f:
 
-if(!data)
-	return -ENOMEM;
+  gpio: mcp23s08: fix up compilation error (2014-12-12 11:22:11 +0100)
 
-> +       /* read the i2c transfer status */
-> +       ret = usb_interrupt_msg(cyusbs->usb_dev,
-> +                       usb_rcvintpipe(cyusbs->usb_dev, cyusbs->intr_in_ep_num),
-> +                       data, CY_I2C_XFER_STATUS_LEN, &actual_len,
-> +                       CY_USBS_INTR_XFER_TIMEOUT);
-> +       if (ret < 0) {
-> +               dev_err(&adapter->dev,
-> +                       "Failed to read from interrupt ep: %d\n", ret);
-> +               ret = usb_translate_errors(ret);
-> +               goto intr_ep_error;
-> +       }
-> +
-> +       dev_dbg(&adapter->dev, "%s: %02x %02x %02x\n", __func__,
-> +               data[0], data[1], data[2]);
-> +
-> +       if (data[0] & 0x1)
-> +               ret = -ETIMEDOUT;
-> +
-> +intr_ep_error:
-> +       kfree(data);
-> +       return ret;
-> +}
-> +
-> +static int cy_get_i2c_config(struct cyusbs23x *cyusbs,
-> +                               struct cyusbs_i2c *cy_i2c)
-> +{
-> +       int ret;
-> +       u16 scb_index;
-> +       u8 ifnum = cyusbs->usb_intf->cur_altsetting->desc.bInterfaceNumber;
-> +
-> +       scb_index = (ifnum & 0x01) << CY_SCB_INDEX_SHIFT;
-> +
-> +       ret = usb_control_msg(cyusbs->usb_dev,
-> +                       usb_rcvctrlpipe(cyusbs->usb_dev, 0),
-> +                       CY_I2C_GET_CONFIG_CMD,
-> +                       USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
-> +                       scb_index, 0, cy_i2c->i2c_config,
-> +                       sizeof(*cy_i2c->i2c_config), CY_USBS_CTRL_XFER_TIMEOUT);
-> +       if (ret != sizeof(*cy_i2c->i2c_config)) {
-> +               dev_err(&cyusbs->usb_intf->dev, "%s: %d\n",
-> +                       __func__, ret);
-> +               ret = usb_translate_errors(ret);
-> +               goto config_error;
-> +       }
-> +
-> +       dev_dbg(&cyusbs->usb_intf->dev,
-> +               "%s: freq=%d, slave_addr=0x%02x, msb_first=%d, master=%d, ignore=%d, clock_stretch=%d, loopback=%d\n",
-> +               __func__, cy_i2c->i2c_config->frequency,
-> +               cy_i2c->i2c_config->slave_addr,
-> +               cy_i2c->i2c_config->is_msb_first,
-> +               cy_i2c->i2c_config->is_master,
-> +               cy_i2c->i2c_config->s_ignore,
-> +               cy_i2c->i2c_config->clock_stretch,
-> +               cy_i2c->i2c_config->is_loopback);
-> +
-> +config_error:
-> +       return ret;
-> +}
-> +
-> +static int cy_i2c_set_data_config(struct cyusbs23x *cyusbs,
-> +                                 struct cyusbs_i2c *cy_i2c, u16 slave_addr,
-> +                                 u16 length, u8 command)
-> +{
-> +       int ret;
-> +       u16 wIndex, wValue, scb_index;
-> +       u8 ifnum = cyusbs->usb_intf->cur_altsetting->desc.bInterfaceNumber;
-> +
-> +       scb_index = (ifnum & 0x01) << CY_SCB_INDEX_SHIFT;
-> +       slave_addr = (slave_addr & 0x7F);
-> +       wValue = scb_index | cy_i2c->is_stop_bit | cy_i2c->is_nak_bit << 1;
-> +       wValue |= (slave_addr << 8);
-> +       wIndex = length;
-> +
-> +       dev_dbg(&cy_i2c->i2c_adapter.dev,
-> +               "%s, cmd=0x%x, val=0x%x, idx=0x%x\n",
-> +               __func__, command, wValue, wIndex);
-> +
-> +       ret = usb_control_msg(cyusbs->usb_dev,
-> +               usb_sndctrlpipe(cyusbs->usb_dev, 0),
-> +               command, USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_OUT,
-> +               wValue, wIndex, NULL, 0, CY_USBS_CTRL_XFER_TIMEOUT);
-> +
-> +       return ret;
-> +}
-> +
-> +static int cy_i2c_read(struct i2c_adapter *adapter, struct i2c_msg *msgs)
-> +{
-> +       int ret;
-> +       int actual_read_len = 0;
-> +       struct cyusbs23x *cyusbs = (struct cyusbs23x *)adapter->algo_data;
-> +
-> +       dev_dbg(&adapter->dev, "%s\n", __func__);
-> +
-> +       ret = usb_bulk_msg(cyusbs->usb_dev,
-> +               usb_rcvbulkpipe(cyusbs->usb_dev, cyusbs->bulk_in_ep_num),
-> +               msgs[0].buf,
-> +               msgs[0].len,
-> +               &actual_read_len, CY_USBS_BULK_XFER_TIMEOUT);
-> +       if (ret)
-> +               dev_err(&adapter->dev,
-> +                       "read %d/%d returned %d\n",
-> +                       actual_read_len, msgs[0].len, ret);
-> +
-> +       ret = cy_i2c_recv_status(adapter);
-> +
-> +       return ret;
-> +}
-> +
-> +static int cy_i2c_write(struct i2c_adapter *adapter, struct i2c_msg *msgs)
-> +{
-> +       int ret;
-> +       int actual_write_len = 0;
-> +       struct cyusbs23x *cyusbs = (struct cyusbs23x *)adapter->algo_data;
-> +
-> +       dev_dbg(&adapter->dev, "%s\n", __func__);
-> +
-> +       ret = usb_bulk_msg(cyusbs->usb_dev,
-> +               usb_sndbulkpipe(cyusbs->usb_dev, cyusbs->bulk_out_ep_num),
-> +               msgs[0].buf,
-> +               msgs[0].len,
-> +               &actual_write_len, CY_USBS_BULK_XFER_TIMEOUT);
-> +       if (ret)
-> +               dev_err(&adapter->dev,
-> +                       "write %d/%d returned %d\n",
-> +                       actual_write_len, msgs[0].len, ret);
-> +
-> +       ret = cy_i2c_recv_status(adapter);
-> +
-> +       return ret;
-> +}
-> +
-> +static int cy_i2c_xfer(struct i2c_adapter *adapter,
-> +                      struct i2c_msg *msgs, int num)
-> +{
-> +       int ret = 0;
-> +       struct cyusbs_i2c *cy_i2c;
-> +       struct cyusbs23x *cyusbs = (struct cyusbs23x *)adapter->algo_data;
-> +
-> +       dev_dbg(&adapter->dev, "%s\n", __func__);
-> +
-> +       if (num > 1) {
-> +               dev_err(&adapter->dev, "i2c_msg number is > 1\n");
-> +               return -EIO;
-> +       }
-> +
-> +       cy_i2c = to_cyusbs_i2c(adapter);
-> +
-> +       mutex_lock(&cy_i2c->lock);
-> +       if (msgs[0].flags & I2C_M_RD) {
-> +               dev_dbg(&adapter->dev,
-> +                       "I2C read requested for addr 0x%02x, data length %d\n",
-> +                       msgs[0].addr, msgs[0].len);
-> +
-> +               ret = cy_i2c_set_data_config(cyusbs, cy_i2c, msgs[0].addr,
-> +                               msgs[0].len, CY_I2C_READ_CMD);
-> +               if (ret < 0) {
-> +                       dev_err(&adapter->dev,
-> +                               "Set Config (read) failed with %d\n", ret);
-> +                       goto io_error;
-> +               }
-> +
-> +               ret = cy_i2c_read(adapter, msgs);
-> +               if (ret) {
-> +                       dev_err(&adapter->dev,
-> +                               "Read failed with error code %d\n", ret);
-> +                       goto io_error;
-> +               }
-> +       } else {
-> +               dev_dbg(&adapter->dev,
-> +                       "I2C write requested for addr 0x%02x, data length %d\n",
-> +                       msgs[0].addr, msgs[0].len);
-> +
-> +               ret = cy_i2c_set_data_config(cyusbs, cy_i2c, msgs[0].addr,
-> +                               msgs[0].len, CY_I2C_WRITE_CMD);
-> +               if (ret < 0) {
-> +                       dev_err(&adapter->dev,
-> +                       "Set Config (write) failed with %d\n", ret);
-> +                       goto io_error;
-> +               }
-> +
-> +               ret = cy_i2c_write(adapter, msgs);
-> +               if (ret) {
-> +                       dev_err(&adapter->dev,
-> +                               "Write failed with error code %d\n", ret);
-> +                       goto io_error;
-> +               }
-> +       }
-> +       mutex_unlock(&cy_i2c->lock);
-> +       return ret;
-> +
-> +io_error:
-> +       mutex_unlock(&cy_i2c->lock);
-> +       return ret;
-> +}
-> +
-> +static u32 cy_i2c_func(struct i2c_adapter *adapter)
-> +{
-> +       return I2C_FUNC_I2C;
-> +}
-> +
-> +static const struct i2c_algorithm i2c_cyusbs23x_algorithm = {
-> +       .master_xfer    = cy_i2c_xfer,
-> +       .functionality  = cy_i2c_func,
-> +};
-> +
-> +static int cyusbs23x_i2c_probe(struct platform_device *pdev)
-> +{
-> +       struct cyusbs23x *cyusbs;
-> +       struct cyusbs_i2c *cy_i2c;
-> +       int ret = 0;
-> +
-> +       dev_dbg(&pdev->dev, "%s\n", __func__);
-> +
-> +       cyusbs = dev_get_drvdata(pdev->dev.parent);
-> +
-> +       cy_i2c = devm_kzalloc(&pdev->dev, sizeof(*cy_i2c), GFP_KERNEL);
-> +       if (cy_i2c == NULL)
-> +               return -ENOMEM;
-> +
+----------------------------------------------------------------
+This is the bulk of GPIO changes for the v3.19 series:
 
-dto...
+- A new API that allows setting more than one GPIO at the
+  time. This is implemented for the new descriptor-based
+  API only and makes it possible to e.g. toggle a clock and
+  data line at the same time, if the hardware can do this
+  with a single register write. Both consumers and drivers
+  need new calls, and the core will fall back to driving
+  individual lines where needed. Implemented for the MPC8xxx
+  driver initially.
+- Patched the mdio-mux-gpio and the serial mctrl driver
+  that drives modems to use the new multiple-setting API
+  to set several signals simultaneously.
+- Get rid of the global GPIO descriptor array, and instead
+  allocate descriptors dynamically for each GPIO on a certain
+  GPIO chip. This moves us closer to getting rid of the
+  limitation of using the global, static GPIO numberspace.
+- New driver and device tree bindings for 74xx ICs.
+- New driver and device tree bindings for the VF610 Vybrid.
+- Support the RCAR r8a7793 and r8a7794.
+- Guidelines for GPIO device tree bindings trying to get
+  things a bit more strict with the advent of combined
+  device properties.
+- Suspend/resume support for the MVEBU driver.
+- A slew of minor fixes and improvements.
 
-> +       cy_i2c->i2c_config = devm_kzalloc(&pdev->dev,
-> +                                       sizeof(struct cyusbs_i2c_config),
-> +                                       GFP_KERNEL);
-> +       if (cy_i2c->i2c_config == NULL)
-> +               return -ENOMEM;
-> +
+----------------------------------------------------------------
+Alexander Shiyan (2):
+      GPIO: Add driver for 74xx-ICs with MMIO access
+      GPIO: 74xx-mmio: Add DT bindings documentation
 
-dto...
+Alexander Stein (4):
+      gpio: mcp23s08: Do not free unrequested interrupt
+      gpio: mcp23s08: request a shared interrupt
+      gpio: mcp23s08: Add simple IRQ support for SPI devices
+      gpio: mcp23s08: Add option to configure IRQ output polarity as active high
 
--- 
-Thanks and Regards,
-Varka Bhadram.
+Alexandre Courbot (5):
+      gpio: rename gpio_lock_as_irq to gpiochip_lock_as_irq
+      Documentation: gpio: guidelines for bindings
+      gpio: remove gpio_descs global array
+      gpio: remove const modifier from gpiod_get_direction()
+      gpio: fix deferred probe detection for legacy API
+
+Daniel Thompson (1):
+      gpio: msm-v1: Fix typo in function argument
+
+Geert Uytterhoeven (2):
+      gpio: Check if base is positive before calling gpio_is_valid()
+      gpio: em: Use dynamic allocation of GPIOs
+
+Hisashi Nakamura (1):
+      gpio: rcar: Add r8a7793 and r8a7794 support
+
+Janusz Uzycki (1):
+      gpio: mxs: implement get_direction callback
+
+Linus Walleij (2):
+      gpio: dwapb: fix compile errors
+      gpio: mcp23s08: fix up compilation error
+
+Pramod Gurav (3):
+      gpio: cs5535: Switch to using managed resources with devm_
+      gpio: amd8111: unmap ioport on failure case
+      gpio: grgpio: remove irq_domain resources on failure
+
+Rojhalat Ibrahim (4):
+      gpiolib: allow simultaneous setting of multiple GPIO outputs
+      gpio-mpc8xxx: add mpc8xxx_gpio_set_multiple function
+      mdio-mux-gpio: Use GPIO descriptor interface and new
+gpiod_set_array function
+      serial: mctrl_gpio: use gpiod_set_array function
+
+Stefan Agner (2):
+      gpio: vf610: add gpiolib/IRQ chip driver for Vybrid
+      Documentation: dts: add bindings for Vybrid GPIO/PORT module
+
+Thomas Petazzoni (1):
+      gpio: mvebu: add suspend/resume support
+
+Varka Bhadram (3):
+      gpio: gpio-stp-xway: remove duplicate check on resource
+      gpio: gpio-tb10x: remove duplicate check on resource
+      gpio: gpio-davinci: remove duplicate check on resource
+
+Yunlei He (2):
+      gpio: pl061: hook request if gpio-ranges avaiable
+      gpio: pl061: document gpio-ranges property for bindings file
+
+ .../devicetree/bindings/gpio/gpio-74xx-mmio.txt    |  30 +++
+ .../devicetree/bindings/gpio/gpio-mcp23s08.txt     |   2 +
+ .../devicetree/bindings/gpio/gpio-vf610.txt        |  55 ++++
+ Documentation/devicetree/bindings/gpio/gpio.txt    |  40 ++-
+ .../devicetree/bindings/gpio/pl061-gpio.txt        |   2 +-
+ .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |   4 +-
+ Documentation/gpio/consumer.txt                    |  27 ++
+ Documentation/gpio/driver.txt                      |   4 +-
+ drivers/gpio/Kconfig                               |  23 ++
+ drivers/gpio/Makefile                              |   2 +
+ drivers/gpio/gpio-74xx-mmio.c                      | 170 ++++++++++++
+ drivers/gpio/gpio-amd8111.c                        |   1 +
+ drivers/gpio/gpio-bcm-kona.c                       |   4 +-
+ drivers/gpio/gpio-cs5535.c                         |  11 +-
+ drivers/gpio/gpio-davinci.c                        |   5 -
+ drivers/gpio/gpio-dwapb.c                          |   4 +-
+ drivers/gpio/gpio-em.c                             |  11 +-
+ drivers/gpio/gpio-grgpio.c                         |   1 +
+ drivers/gpio/gpio-mcp23s08.c                       |  41 ++-
+ drivers/gpio/gpio-mpc8xxx.c                        |  27 ++
+ drivers/gpio/gpio-msm-v1.c                         |   2 +-
+ drivers/gpio/gpio-mvebu.c                          |  99 +++++++
+ drivers/gpio/gpio-mxs.c                            |  13 +
+ drivers/gpio/gpio-omap.c                           |   2 +-
+ drivers/gpio/gpio-pl061.c                          |  20 +-
+ drivers/gpio/gpio-rcar.c                           |  27 +-
+ drivers/gpio/gpio-stp-xway.c                       |   8 +-
+ drivers/gpio/gpio-tb10x.c                          |   7 +-
+ drivers/gpio/gpio-tegra.c                          |   4 +-
+ drivers/gpio/gpio-vf610.c                          | 295 +++++++++++++++++++++
+ drivers/gpio/gpio-vr41xx.c                         |   4 +-
+ drivers/gpio/gpiolib-acpi.c                        |   6 +-
+ drivers/gpio/gpiolib-legacy.c                      |  12 +-
+ drivers/gpio/gpiolib-sysfs.c                       |   6 +-
+ drivers/gpio/gpiolib.c                             | 241 +++++++++++++++--
+ drivers/net/phy/mdio-mux-gpio.c                    |  37 +--
+ drivers/pinctrl/pinctrl-at91.c                     |   4 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |   4 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   6 +-
+ drivers/tty/serial/serial_mctrl_gpio.c             |  12 +-
+ include/linux/gpio.h                               |   7 +-
+ include/linux/gpio/consumer.h                      |  40 ++-
+ include/linux/gpio/driver.h                        |   8 +-
+ 43 files changed, 1166 insertions(+), 162 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-74xx-mmio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-vf610.txt
+ create mode 100644 drivers/gpio/gpio-74xx-mmio.c
+ create mode 100644 drivers/gpio/gpio-vf610.c
