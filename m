@@ -1,180 +1,97 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] bulk GPIO changes for v3.19, take two
-Date: Sun, 14 Dec 2014 22:47:34 +0100
-Message-ID: <CACRpkdZnHSwRZZqgOS+i3U-fEoBZVNJrj-rS5FUiy1Niuyjtgg@mail.gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2] gpio: rcar: Add r8a7793 and r8a7794 support
+Date: Mon, 15 Dec 2014 11:03:49 +0900
+Message-ID: <CANqRtoTA+sPUT8enk_BCzi7Z5xG4Ump29hCAJgm47JgVXoF9WQ@mail.gmail.com>
+References: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
+	<2188270.mR2n2an5Xq@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f182.google.com ([209.85.213.182]:52635 "EHLO
-	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751085AbaLNVrf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Dec 2014 16:47:35 -0500
-Received: by mail-ig0-f182.google.com with SMTP id hn15so4147272igb.3
-        for <linux-gpio@vger.kernel.org>; Sun, 14 Dec 2014 13:47:34 -0800 (PST)
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:63872 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750758AbaLOCDv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Dec 2014 21:03:51 -0500
+In-Reply-To: <2188270.mR2n2an5Xq@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, SH-Linux <linux-sh@vger.kernel.org>
 
-Hi Linus,
+Hi Geert,
 
-same stuff as last time, now with a fixup patch for the previous
-compile error plus I ran a few extra rounds of compile-testing.
+On Sat, Dec 13, 2014 at 4:17 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Friday 07 November 2014 20:54:08 Yoshihiro Kaneko wrote:
+>> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+>>
+>> The device tree probing for R-Car M2-N (r8a7793) and R-Car E2 (r8a7794)
+>> is added.
+>>
+>> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>>
+>> This patch is based on for-next branch of Linus Walleij's gpio tree.
+>>
+>> v2 [Yoshihiro Kaneko]
+>> * As suggested by Geert Uytterhoeven
+>>   - clean up 4 identical copies of struct gpio_rcar_info.
+>>
+>>  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |  4 +++-
+>>  drivers/gpio/gpio-rcar.c                           | 27 ++++++++++++-------
+>>  2 files changed, 21 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+>> b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt index
+>> 941a26a..38fb86f 100644
+>> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+>> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+>> @@ -6,7 +6,9 @@ Required Properties:
+>>      - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO
+>> controller.
+>>      - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO
+>> controller.
+>>      - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO
+>> controller.
+>> -    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2) compatible GPIO
+>> controller.
+>> +    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO
+>> controller.
+>> +    - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO
+>> controller.
+>> +    - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO
+>> controller.
+>>      - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+>>
+>>    - reg: Base address and length of each memory resource used by the GPIO
+>> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+>> index ef71ca8..24f0343 100644
+>> --- a/drivers/gpio/gpio-rcar.c
+>> +++ b/drivers/gpio/gpio-rcar.c
+>> @@ -1,6 +1,7 @@
+>>  /*
+>>   * Renesas R-Car GPIO Support
+>>   *
+>> + *  Copyright (C) 2014 Renesas Electronics Corporation
+>>   *  Copyright (C) 2013 Magnus Damm
+>>   *
+>>   * This program is free software; you can redistribute it and/or modify
+>> @@ -315,22 +316,30 @@ struct gpio_rcar_info {
+>>       bool has_both_edge_trigger;
+>>  };
+>>
+>> +static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+>> +     .has_both_edge_trigger = false,
+>> +};
+>> +
+>> +static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+>> +     .has_both_edge_trigger = true,
+>> +};
+>
+> Seriously, doesn't this call for a "renesas,gpio-rcar-gen2" compatible string
+> ?
 
-Please pull this in for v3.19!
+Maybe, but only if we had a crystal ball and could predict that the IP
+would be guaranteed not to change inside future Gen2 devices! =)
 
-Yours,
-Linus Walleij
-
-
-The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
-
-  Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v3.19-2
-
-for you to fetch changes up to 170680abd1eb98a9773ed068435fef9a6402a10f:
-
-  gpio: mcp23s08: fix up compilation error (2014-12-12 11:22:11 +0100)
-
-----------------------------------------------------------------
-This is the bulk of GPIO changes for the v3.19 series:
-
-- A new API that allows setting more than one GPIO at the
-  time. This is implemented for the new descriptor-based
-  API only and makes it possible to e.g. toggle a clock and
-  data line at the same time, if the hardware can do this
-  with a single register write. Both consumers and drivers
-  need new calls, and the core will fall back to driving
-  individual lines where needed. Implemented for the MPC8xxx
-  driver initially.
-- Patched the mdio-mux-gpio and the serial mctrl driver
-  that drives modems to use the new multiple-setting API
-  to set several signals simultaneously.
-- Get rid of the global GPIO descriptor array, and instead
-  allocate descriptors dynamically for each GPIO on a certain
-  GPIO chip. This moves us closer to getting rid of the
-  limitation of using the global, static GPIO numberspace.
-- New driver and device tree bindings for 74xx ICs.
-- New driver and device tree bindings for the VF610 Vybrid.
-- Support the RCAR r8a7793 and r8a7794.
-- Guidelines for GPIO device tree bindings trying to get
-  things a bit more strict with the advent of combined
-  device properties.
-- Suspend/resume support for the MVEBU driver.
-- A slew of minor fixes and improvements.
-
-----------------------------------------------------------------
-Alexander Shiyan (2):
-      GPIO: Add driver for 74xx-ICs with MMIO access
-      GPIO: 74xx-mmio: Add DT bindings documentation
-
-Alexander Stein (4):
-      gpio: mcp23s08: Do not free unrequested interrupt
-      gpio: mcp23s08: request a shared interrupt
-      gpio: mcp23s08: Add simple IRQ support for SPI devices
-      gpio: mcp23s08: Add option to configure IRQ output polarity as active high
-
-Alexandre Courbot (5):
-      gpio: rename gpio_lock_as_irq to gpiochip_lock_as_irq
-      Documentation: gpio: guidelines for bindings
-      gpio: remove gpio_descs global array
-      gpio: remove const modifier from gpiod_get_direction()
-      gpio: fix deferred probe detection for legacy API
-
-Daniel Thompson (1):
-      gpio: msm-v1: Fix typo in function argument
-
-Geert Uytterhoeven (2):
-      gpio: Check if base is positive before calling gpio_is_valid()
-      gpio: em: Use dynamic allocation of GPIOs
-
-Hisashi Nakamura (1):
-      gpio: rcar: Add r8a7793 and r8a7794 support
-
-Janusz Uzycki (1):
-      gpio: mxs: implement get_direction callback
-
-Linus Walleij (2):
-      gpio: dwapb: fix compile errors
-      gpio: mcp23s08: fix up compilation error
-
-Pramod Gurav (3):
-      gpio: cs5535: Switch to using managed resources with devm_
-      gpio: amd8111: unmap ioport on failure case
-      gpio: grgpio: remove irq_domain resources on failure
-
-Rojhalat Ibrahim (4):
-      gpiolib: allow simultaneous setting of multiple GPIO outputs
-      gpio-mpc8xxx: add mpc8xxx_gpio_set_multiple function
-      mdio-mux-gpio: Use GPIO descriptor interface and new
-gpiod_set_array function
-      serial: mctrl_gpio: use gpiod_set_array function
-
-Stefan Agner (2):
-      gpio: vf610: add gpiolib/IRQ chip driver for Vybrid
-      Documentation: dts: add bindings for Vybrid GPIO/PORT module
-
-Thomas Petazzoni (1):
-      gpio: mvebu: add suspend/resume support
-
-Varka Bhadram (3):
-      gpio: gpio-stp-xway: remove duplicate check on resource
-      gpio: gpio-tb10x: remove duplicate check on resource
-      gpio: gpio-davinci: remove duplicate check on resource
-
-Yunlei He (2):
-      gpio: pl061: hook request if gpio-ranges avaiable
-      gpio: pl061: document gpio-ranges property for bindings file
-
- .../devicetree/bindings/gpio/gpio-74xx-mmio.txt    |  30 +++
- .../devicetree/bindings/gpio/gpio-mcp23s08.txt     |   2 +
- .../devicetree/bindings/gpio/gpio-vf610.txt        |  55 ++++
- Documentation/devicetree/bindings/gpio/gpio.txt    |  40 ++-
- .../devicetree/bindings/gpio/pl061-gpio.txt        |   2 +-
- .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |   4 +-
- Documentation/gpio/consumer.txt                    |  27 ++
- Documentation/gpio/driver.txt                      |   4 +-
- drivers/gpio/Kconfig                               |  23 ++
- drivers/gpio/Makefile                              |   2 +
- drivers/gpio/gpio-74xx-mmio.c                      | 170 ++++++++++++
- drivers/gpio/gpio-amd8111.c                        |   1 +
- drivers/gpio/gpio-bcm-kona.c                       |   4 +-
- drivers/gpio/gpio-cs5535.c                         |  11 +-
- drivers/gpio/gpio-davinci.c                        |   5 -
- drivers/gpio/gpio-dwapb.c                          |   4 +-
- drivers/gpio/gpio-em.c                             |  11 +-
- drivers/gpio/gpio-grgpio.c                         |   1 +
- drivers/gpio/gpio-mcp23s08.c                       |  41 ++-
- drivers/gpio/gpio-mpc8xxx.c                        |  27 ++
- drivers/gpio/gpio-msm-v1.c                         |   2 +-
- drivers/gpio/gpio-mvebu.c                          |  99 +++++++
- drivers/gpio/gpio-mxs.c                            |  13 +
- drivers/gpio/gpio-omap.c                           |   2 +-
- drivers/gpio/gpio-pl061.c                          |  20 +-
- drivers/gpio/gpio-rcar.c                           |  27 +-
- drivers/gpio/gpio-stp-xway.c                       |   8 +-
- drivers/gpio/gpio-tb10x.c                          |   7 +-
- drivers/gpio/gpio-tegra.c                          |   4 +-
- drivers/gpio/gpio-vf610.c                          | 295 +++++++++++++++++++++
- drivers/gpio/gpio-vr41xx.c                         |   4 +-
- drivers/gpio/gpiolib-acpi.c                        |   6 +-
- drivers/gpio/gpiolib-legacy.c                      |  12 +-
- drivers/gpio/gpiolib-sysfs.c                       |   6 +-
- drivers/gpio/gpiolib.c                             | 241 +++++++++++++++--
- drivers/net/phy/mdio-mux-gpio.c                    |  37 +--
- drivers/pinctrl/pinctrl-at91.c                     |   4 +-
- drivers/pinctrl/samsung/pinctrl-exynos.c           |   4 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   6 +-
- drivers/tty/serial/serial_mctrl_gpio.c             |  12 +-
- include/linux/gpio.h                               |   7 +-
- include/linux/gpio/consumer.h                      |  40 ++-
- include/linux/gpio/driver.h                        |   8 +-
- 43 files changed, 1166 insertions(+), 162 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-74xx-mmio.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-vf610.txt
- create mode 100644 drivers/gpio/gpio-74xx-mmio.c
- create mode 100644 drivers/gpio/gpio-vf610.c
+/ magnus
