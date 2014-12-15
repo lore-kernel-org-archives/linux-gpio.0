@@ -1,63 +1,119 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC 02/15] drivers/base: add restrack framework
-Date: Mon, 15 Dec 2014 11:38:32 +0000
-Message-ID: <20141215113832.GX11764@sirena.org.uk>
-References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
- <1418226513-14105-3-git-send-email-a.hajda@samsung.com>
- <20141212165230.GP11764@sirena.org.uk>
- <548E9BB9.806@samsung.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 3/3] mfd: dln2: add suspend/resume functionality
+Date: Mon, 15 Dec 2014 12:43:02 +0100
+Message-ID: <20141215114302.GE6778@localhost>
+References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
+ <1418302951-9309-4-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="elthcBrLbYw+6uqa"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <548E9BB9.806@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@
+In-Reply-To: <1418302951-9309-4-git-send-email-octavian.purdila@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: linus.walleij@linaro.org, lee.jones@linaro.org, johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+On Thu, Dec 11, 2014 at 03:02:31PM +0200, Octavian Purdila wrote:
+> Without suspend/resume functionality in the USB driver the USB core
+> will disconnect and reconnect the DLN2 port and because the GPIO
+> framework does not yet support removal of an in-use controller a
+> suspend/resume operation will result in a crash.
+> 
+> This patch provides suspend and resume functions for the DLN2 driver
+> so that the above scenario is avoided.
+>
+> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
+> ---
+>  drivers/mfd/dln2.c | 41 ++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 38 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+> index 6d49685..08c403c 100644
+> --- a/drivers/mfd/dln2.c
+> +++ b/drivers/mfd/dln2.c
+> @@ -587,7 +587,6 @@ static void dln2_free_rx_urbs(struct dln2_dev *dln2)
+>  	int i;
+>  
+>  	for (i = 0; i < DLN2_MAX_URBS; i++) {
+> -		usb_kill_urb(dln2->rx_urb[i]);
+>  		usb_free_urb(dln2->rx_urb[i]);
+>  		kfree(dln2->rx_buf[i]);
+>  	}
 
---elthcBrLbYw+6uqa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Now dln2_free will no longer stop the urbs before releasing them and
+hence you can get a use after free in the error path of probe where
+dln2_free is called after you have submitted the urbs.
 
-On Mon, Dec 15, 2014 at 09:28:41AM +0100, Andrzej Hajda wrote:
-> On 12/12/2014 05:52 PM, Mark Brown wrote:
-> > On Wed, Dec 10, 2014 at 04:48:20PM +0100, Andrzej Hajda wrote:
+Please be more careful.
 
-> > I don't know about anyone else but I'm having a hard time reading the
-> > restrack name, it looks like a misspelling of restack to me.
+Splitting allocation and submission (and reuse that helper in resume)
+and adding a stop_rx_urbs helper might be a good idea.
 
-> Any alternative names?
+> @@ -665,9 +664,8 @@ static const struct mfd_cell dln2_devs[] = {
+>  	},
+>  };
+>  
+> -static void dln2_disconnect(struct usb_interface *interface)
+> +static void dln2_stop(struct dln2_dev *dln2)
+>  {
+> -	struct dln2_dev *dln2 = usb_get_intfdata(interface);
+>  	int i, j;
+>  
+>  	/* don't allow starting new transfers */
+> @@ -696,6 +694,16 @@ static void dln2_disconnect(struct usb_interface *interface)
+>  	/* wait for transfers to end */
+>  	wait_event(dln2->disconnect_wq, !dln2->active_transfers);
+>  
+> +	for (i = 0; i < DLN2_MAX_URBS; i++)
+> +		usb_kill_urb(dln2->rx_urb[i]);
+> +}
+> +
+> +static void dln2_disconnect(struct usb_interface *interface)
+> +{
+> +	struct dln2_dev *dln2 = usb_get_intfdata(interface);
+> +
+> +	dln2_stop(dln2);
+> +
+>  	mfd_remove_devices(&interface->dev);
+>  
+>  	dln2_free(dln2);
+> @@ -767,11 +775,38 @@ static const struct usb_device_id dln2_table[] = {
+>  
+>  MODULE_DEVICE_TABLE(usb, dln2_table);
 
-Well, even just res_track would help.
+I believe I already asked you to place the new callbacks above the id
+table.
 
-> I will move the code for provider matching to frameworks,
-> so it will be easy to add just dev_info after every failed attempt
-> of getting resource, including deferring. This is the simplest solution
-> and it should be similar in verbosity to deferred probing.
+> +static int dln2_suspend(struct usb_interface *iface, pm_message_t message)
+> +{
+> +	struct dln2_dev *dln2 = usb_get_intfdata(iface);
+> +
+> +	dln2_stop(dln2);
+> +	return 0;
+> +}
+> +
+> +static int dln2_resume(struct usb_interface *iface)
+> +{
+> +	struct dln2_dev *dln2 = usb_get_intfdata(iface);
+> +	int i;
+> +	int ret = 0;
+> +
+> +	dln2->disconnect = false;
+> +
+> +	for (i = 0; i < DLN2_MAX_URBS; i++) {
+> +		ret = usb_submit_urb(dln2->rx_urb[i], GFP_KERNEL);
 
-> Maybe other solution is to provide debug_fs (or device) attribute showing
-> restrack status per device.
+You cannot use GFP_KERNEL in resume, use GFP_NOIO.
 
-I think both are useful - it's often helpful to have a listing of what
-resources have actually been registered, for example to help spot typos.
+> +		if (ret)
 
---elthcBrLbYw+6uqa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Add a dev_err here.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> +			break;
+> +	}
+> +
+> +	return ret;
+> +}
 
-iQEcBAEBAgAGBQJUjsg3AAoJECTWi3JdVIfQ0B8H/RvF/DMTN70TqlHNn9pDjcBk
-TH7amwHd0crIonpZ/NzYIKbmi3GuwBYmcLgPodqEfd0+0wqYiyvp7mF2WQWtRUlI
-KOPghdPrJjDF1k1qJH9XP9bpvqX4k1b+MIWA2SzI0MBkiiXD5g5wZlHmzx+gvBzG
-tsRavBntWRbs0k6xBosyoUFJPD3IUQtYOhgYFkS5FhJjg0uFgokHLO0kL2Fl/5Mp
-vYALsrJJNhT55jgBlckAy6i+fE9+4qltVqw+bGCEUxOdFwlA5PtdA+PjHZqRu4pE
-sWyrpo+P5f47aO7yA9tvgIcjP5KRmbYT/Wa/dvfleWP3xXL85qs1AaeWApeE5Bw=
-=G4p5
------END PGP SIGNATURE-----
-
---elthcBrLbYw+6uqa--
+Johan
