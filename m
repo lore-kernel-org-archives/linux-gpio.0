@@ -1,83 +1,107 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
-Date: Fri, 12 Dec 2014 16:28:16 +0100
-Message-ID: <1628217.66frkAqHMc@wuerfel>
-References: <1418342706-14755-2-git-send-email-rjui@broadcom.com> <1918116.UxUgDPTmcq@wuerfel> <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH] gpio: pcf857x: restore the initial line state of all
+ pcf lines
+Date: Mon, 15 Dec 2014 14:50:23 -0600
+Message-ID: <548F498F.7050202@ti.com>
+References: <1418371601-22658-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:52534 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751051AbaLORxH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Dec 2014 12:53:07 -0500
-In-Reply-To: <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:47497 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751039AbaLOUu0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 15 Dec 2014 15:50:26 -0500
+In-Reply-To: <1418371601-22658-1-git-send-email-kishon@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, nsekhar@ti.com
+Cc: linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, Benoit Parrot <bparrot@ti.com>
 
-On Friday 12 December 2014 22:05:37 Alexandre Courbot wrote:
-> On Fri, Dec 12, 2014 at 9:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Thursday 11 December 2014 16:05:04 Ray Jui wrote:
-> >> +
-> >> +- linux,gpio-base:
-> >> +    Base GPIO number of this controller
-> >> +
-> >>
-> >
-> > We've NAK'ed properties like this multiple times before, and it
-> > doesn't get any better this time. What are you trying to achieve
-> > here?
+On 12/12/2014 02:06 AM, Kishon Vijay Abraham I wrote:
+> The reset values for all the PCF lines are high and hence on shutdown
+> we should drive all the lines high in order to bring it to the reset state.
 > 
-> I am to blame for suggesting using this property to Ray, and I am
-> fully aware that this has been rejected before, but look at what
-> people came with recently to palliate the lack of control over the
-> GPIO number space for DT platforms:
+> This is actually required since pcf doesn't have a reset line and even after
+> warm reset (by invoking "reboot" in prompt) the pcf lines maintains it's
+> previous programmed state. This becomes a problem if the boards are designed
+> to work with the default initial state.
 > 
-> http://www.spinics.net/lists/arm-kernel/msg384847.html
-> https://lkml.org/lkml/2014/12/10/133
+> DRA7XX_evm uses PCF8575 and one of the PCF output lines feeds to MMC/SD and
+> this line should be driven high in order for the MMC/SD to be detected.
+> This line is modelled as regulator and the hsmmc driver takes care of enabling
+> and disabling it. In the case of 'reboot', during shutdown path as part of it's
+> cleanup process the hsmmc driver disables this regulator. This makes MMC boot
+> not functional.
 > 
-> Right now GPIO numbering for platforms using DT is a very inconsistent
-> process, subject to change by the simple action of adjusting the value
-> of ARCH_NR_GPIOS (which we did recently, btw), adding a new GPIO
-> controller, or changing the probe order of devices. For users of the
-> integer or sysfs interfaces, this results in GPIO numbers that change,
-> and drivers and/or user-space programs that behave incorrectly.
-> Ironically, the only way to have consistent numbers is to use the old
-> platform files, where you can specify the base number of a gpio_chip.
+> Fixed it by driving high all the pcf lines.
 > 
-> DT is actually probably not such a bad place to provide consistency in
-> GPIO numbering. It has a global vision of the system layout, including
-> all GPIO controllers and the number of GPIOs they include, and thus
-> can make informed decisions. It provides a consistent result
-> regardless of probe order. And allowing it to assign GPIO bases to
-> controllers will free us from the nonsensical dependency of some
-> arbitrary upper-bound for GPIO numbers that ARCH_NR_GPIOS imposes on
-> us. Also about ARCH_NR_GPIOS, the plan is to eventually remove it
-> since we don't need it anymore after the removal of the global
-> gpio_descs array. This will again interfere with the numbering of GPIO
-> chips that do not have a base number provided.
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/gpio/gpio-pcf857x.c |    9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> Note that I don't really like this, either - but the problem is the
-> GPIO integer interface. Until everyone has upgraded to gpiod and we
-> have a replacement for the current sysfs interface (this will take a
-> while) we have to cope with this. This issue has been bothering users
-> for years, so this time I'd like to try and solve it the less ugly
-> way. If there is a better solution, of course I'm all for it.
+> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+> index 236708a..00b15b2 100644
+> --- a/drivers/gpio/gpio-pcf857x.c
+> +++ b/drivers/gpio/gpio-pcf857x.c
+> @@ -448,6 +448,14 @@ static int pcf857x_remove(struct i2c_client *client)
+>  	return status;
+>  }
+>  
+> +static void pcf857x_shutdown(struct i2c_client *client)
+> +{
+> +	struct pcf857x *gpio = i2c_get_clientdata(client);
+> +
+> +	/* Drive all the I/O lines high */
+> +	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
 
-I think the scheme will fail if you ever get gpio controllers that are
-not part of the DT: We have hotpluggable devices (PCI, USB, ...) that
-are not represented in DT and that may also provide GPIOs for internal
-uses.
+you might force a contention here - depending on System configuration.
+example:
++-------+
+|       |
+|  U1   |         +------+      +-----------+
+|       +--------->      |      |           |
++-------+         |      |      |           |
+                  | Switch<-----+    SoC    |
++-------+         |      |      |           |
+|       |         |      |      |           |
+| U2    <---------+--^---+      +-----------+
+|       |            |
+|       |            |
++-------+            |
+                  +--+--+
+                  |     |
+                  | PCF |
+                  |     |
+                  +-----+
 
-The current state of affairs is definitely problematic, but defining
-the GPIO numbers in DT properties would only be a relative improvement,
-not a solution, and I fear it would make it harder to change the kernel
-to remove the gpio numbers eventually.
+At low, SoC pin is connected to U2 as drive. when reset to high, you
+now have U1 driving to the same pin that SoC has, potentially
+resulting in contention.
 
-I wonder if we could instead come up with an approach that completely
-randomizes the gpio numbers (as a compile-time option) to find any
-places that still rely on specific numbers.
 
-	Arnd
+Unfortunately, at this level, you do not know what the state of the
+system is, blindly forcing a pin level will potentially cause
+contention risk depending on pin configuration.
+
+
+> +}
+> +
+>  static struct i2c_driver pcf857x_driver = {
+>  	.driver = {
+>  		.name	= "pcf857x",
+> @@ -456,6 +464,7 @@ static struct i2c_driver pcf857x_driver = {
+>  	},
+>  	.probe	= pcf857x_probe,
+>  	.remove	= pcf857x_remove,
+> +	.shutdown = pcf857x_shutdown,
+>  	.id_table = pcf857x_id,
+>  };
+>  
+> 
+
+
+-- 
+Regards,
+Nishanth Menon
