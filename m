@@ -1,97 +1,113 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v2] gpio: rcar: Add r8a7793 and r8a7794 support
-Date: Mon, 15 Dec 2014 11:03:49 +0900
-Message-ID: <CANqRtoTA+sPUT8enk_BCzi7Z5xG4Ump29hCAJgm47JgVXoF9WQ@mail.gmail.com>
-References: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
-	<2188270.mR2n2an5Xq@avalon>
+From: Zhou Wang <wangzhou.bry@gmail.com>
+Subject: Re: [PATCH v4 3/4] gpio: Add find GPIO base in increasing order
+Date: Mon, 15 Dec 2014 12:01:56 +0800
+Message-ID: <548E5D34.6010206@gmail.com>
+References: <1417750722-14027-1-git-send-email-wangzhou.bry@gmail.com> <1417750722-14027-4-git-send-email-wangzhou.bry@gmail.com> <CAAVeFu+Hn1Fk7PDcc4wGHFyJurX0hsW1N1prnPs2j=taGQKrKw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:63872 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbaLOCDv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Dec 2014 21:03:51 -0500
-In-Reply-To: <2188270.mR2n2an5Xq@avalon>
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:34248 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750713AbaLOEBx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Dec 2014 23:01:53 -0500
+In-Reply-To: <CAAVeFu+Hn1Fk7PDcc4wGHFyJurX0hsW1N1prnPs2j=taGQKrKw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, SH-Linux <linux-sh@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, liguozhu@hisilicon.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, atull@altera.com, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, jamie@jamieiles.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, wangzhou1@hisilicon.com
 
-Hi Geert,
-
-On Sat, Dec 13, 2014 at 4:17 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Friday 07 November 2014 20:54:08 Yoshihiro Kaneko wrote:
->> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+On 2014=E5=B9=B412=E6=9C=8810=E6=97=A5 16:51, Alexandre Courbot wrote:
+> On Fri, Dec 5, 2014 at 12:38 PM, Zhou Wang <wangzhou.bry@gmail.com> w=
+rote:
+>> In function gpiochip_find_base, base number of a GPIO controller
+>> is found in decreasing order. ARCH_NR_GPIOS is used to define from
+>> which number we begin to search for base number of a GPIO controller=
+=2E
 >>
->> The device tree probing for R-Car M2-N (r8a7793) and R-Car E2 (r8a7794)
->> is added.
+>> In fact, ARCH_NR_GPIOS brings us some multiplatform problems, like:
+>> http://www.spinics.net/lists/devicetree/msg60433.html
 >>
->> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->>
->> This patch is based on for-next branch of Linus Walleij's gpio tree.
->>
->> v2 [Yoshihiro Kaneko]
->> * As suggested by Geert Uytterhoeven
->>   - clean up 4 identical copies of struct gpio_rcar_info.
->>
->>  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |  4 +++-
->>  drivers/gpio/gpio-rcar.c                           | 27 ++++++++++++-------
->>  2 files changed, 21 insertions(+), 10 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
->> b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt index
->> 941a26a..38fb86f 100644
->> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
->> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
->> @@ -6,7 +6,9 @@ Required Properties:
->>      - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO
->> controller.
->>      - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO
->> controller.
->>      - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO
->> controller.
->> -    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2) compatible GPIO
->> controller.
->> +    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO
->> controller.
->> +    - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO
->> controller.
->> +    - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO
->> controller.
->>      - "renesas,gpio-rcar": for generic R-Car GPIO controller.
->>
->>    - reg: Base address and length of each memory resource used by the GPIO
->> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
->> index ef71ca8..24f0343 100644
->> --- a/drivers/gpio/gpio-rcar.c
->> +++ b/drivers/gpio/gpio-rcar.c
->> @@ -1,6 +1,7 @@
->>  /*
->>   * Renesas R-Car GPIO Support
->>   *
->> + *  Copyright (C) 2014 Renesas Electronics Corporation
->>   *  Copyright (C) 2013 Magnus Damm
->>   *
->>   * This program is free software; you can redistribute it and/or modify
->> @@ -315,22 +316,30 @@ struct gpio_rcar_info {
->>       bool has_both_edge_trigger;
->>  };
->>
->> +static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
->> +     .has_both_edge_trigger = false,
->> +};
->> +
->> +static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
->> +     .has_both_edge_trigger = true,
->> +};
+>> This patch adds the support to find base number of a GPIO controller
+>> in increasing order. It will assign base number from 0.
+>> A new dts property called gpio-number-forward must be add to the rel=
+ated
+>> GPIO dts nodes if you want it works well.
 >
-> Seriously, doesn't this call for a "renesas,gpio-rcar-gen2" compatible string
-> ?
+> Global GPIO numbers are a Linux-only concept, so your property should
+> be named linux,gpio-number-forward.
+>
+> But even that way I don't think I like this idea. This just adds some
+> more mess to how the GPIO number space is constructed, and it is
+> already quite messy as it is. You have no guarantee over the probe
+> order of your GPIO controllers, so they may very well be probed in a
+> different order and end up with different base numbers anytime.
+>
+> Not that this is your fault - the number namespace is broken by desig=
+n
+> and I don't think there is a way to fix it. The long-term solution is
+> to stop using it by switching to the gpiod interface.
+>
+> First a few questions to understand why you need your GPIOs numbered
+> this way, and if you need it at all:
+> - Can't you use the gpiod interface instead so you don't need to rely
+> on GPIO numbers?
 
-Maybe, but only if we had a crystal ball and could predict that the IP
-would be guaranteed not to change inside future Gen2 devices! =)
+Hi Alexandre,
 
-/ magnus
+Sorry for late. Could you give me more clue about the gpiod interface?=20
+Don't we also call gpio_request() which uses GPIO number to request a
+GPIO?
+
+> - Do you plan to use the sysfs interface? If so then we are screwed,
+> because there is no way to use it without using global GPIO numbers.
+
+I am now enabling GPIO in Hip04-d01. Maybe, I can just use
+the default ARCH_NR_GPIOS, then users can manage GPIO through sysfs.
+However if so, GPIO 0~127 will be mapped to GPIO 384~511.
+
+> This is something we should/will fix with named exported GPIOs, but w=
+e
+> are not here yet.
+>
+> As to how we can solve your problem: if you must use GPIO integers
+> (because you need to use the sysfs interface for instance), and need
+> them affected consistently, the only way I can think of is to
+> introduce a "linux,gpio-base" property that will set gpiochip->base t=
+o
+> a fixed number. It still kind of sucks, but at least it will enforce
+
+Thanks for your suggestion. But setting "linux,gpio-base" will bring
+gpio base implementation specific, and in face there is no place to gai=
+n
+this gpio base info, not appropriate both in gpio arch code and dwapb
+code.
+
+Thanks again for your comments,
+Zhou Wang
+
+> that different controllers get the same base number reliably, and the
+> firmware is the best placed to know how many GPIOs each controller ha=
+s
+> and decide an appropriate layout.
+>
+> I know we pushed back against this kind of solution in the past, but
+> it is still more reliable than having a property that affects how the
+> kernel's base finding function works, and will offer us a way to
+> eventually put ARCH_NR_GPIOS and gpiochip_find_base() to rest (at the
+> cost of backwards-compatibility, but we just cannot do without it).
+> Linus, do you agree?
+>
+> In the medium term, we need to offer a solution for user-space to
+> *not* rely on GPIO numbers, and that will necessarily go through a ne=
+w
+> sysfs interface, since at the moment even GPIO chips use their base
+> number in their exported name.
+>
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
