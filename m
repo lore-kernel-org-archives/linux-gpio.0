@@ -1,66 +1,44 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC 02/15] drivers/base: add restrack framework
-Date: Mon, 15 Dec 2014 09:28:41 +0100
-Message-ID: <548E9BB9.806@samsung.com>
-References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
- <1418226513-14105-3-git-send-email-a.hajda@samsung.com>
- <20141212165230.GP11764@sirena.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] gpio: rcar: Add r8a7793 and r8a7794 support
+Date: Mon, 15 Dec 2014 09:41:57 +0100
+Message-ID: <CAMuHMdXBkhKCJg4D-rLUcid8y8WSe6OQ6Qxp39z4t6SqkybjHw@mail.gmail.com>
+References: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
+	<2188270.mR2n2an5Xq@avalon>
+	<CANqRtoTA+sPUT8enk_BCzi7Z5xG4Ump29hCAJgm47JgVXoF9WQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59855 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750966AbaLOI2x (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Dec 2014 03:28:53 -0500
-In-reply-to: <20141212165230.GP11764@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CANqRtoTA+sPUT8enk_BCzi7Z5xG4Ump29hCAJgm47JgVXoF9WQ@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, SH-Linux <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@
 
-On 12/12/2014 05:52 PM, Mark Brown wrote:
-> On Wed, Dec 10, 2014 at 04:48:20PM +0100, Andrzej Hajda wrote:
->> restrack framework allows tracking presence of resources with dynamic life
->> time. Typical example of such resources are all resources provided by device
-> I don't know about anyone else but I'm having a hard time reading the
-> restrack name, it looks like a misspelling of restack to me.
+Hi Magnus,
 
-Any alternative names?
+On Mon, Dec 15, 2014 at 3:03 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> Hi Geert,
 
+For the record, it's Laurent who's questioning this...
+
+> On Sat, Dec 13, 2014 at 4:17 AM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+
+[...]
+
+>> Seriously, doesn't this call for a "renesas,gpio-rcar-gen2" compatible string
+>> ?
 >
-> At a high level my biggest questions here are the relationship between
-> this and the component code and usability.  The usability concern I have
-> is that I see no diagnostics or trace here at all.  This means that if a
-> user looks at their system, sees that the device model claims the driver
-> for a device bound to the device but can't see any sign of the device
-> doing anything they don't have any way of telling why that is other than
-> to look in the driver code, see what resources it was trying to depend
-> on and then go back to the running system to try to understand which of
-> those resources hasn't appeared.
+> Maybe, but only if we had a crystal ball and could predict that the IP
+> would be guaranteed not to change inside future Gen2 devices! =)
 
-I will move the code for provider matching to frameworks,
-so it will be easy to add just dev_info after every failed attempt
-of getting resource, including deferring. This is the simplest solution
-and it should be similar in verbosity to deferred probing.
+Gr{oetje,eeting}s,
 
-Maybe other solution is to provide debug_fs (or device) attribute showing
-restrack status per device.
+                        Geert
 
->
->> +int restrack_up(unsigned long type, const void *id, void *data)
->> +int restrack_down(unsigned long type, const void *id, void *data)
-> Again I'm not sure that the up and down naming is meaningful in the
-> context of this interface.
->
->> +static void restrack_itb_cb(struct track_block *itb, void *data, bool on)
->> +{
-> itb_cb?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Ups I forgot to rename few variables from my previous attempt.
-itb - stayed for interface tracker block.
-
-Regards
-Andrzej
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
