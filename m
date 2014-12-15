@@ -1,38 +1,78 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 1/3] mfd: add support for Cypress CYUSBS234 USB Serial
- Bridge controller
-Date: Mon, 15 Dec 2014 11:07:33 +0100
-Message-ID: <20141215100733.GC6778@localhost>
-References: <1418471264-31896-1-git-send-email-muth@cypress.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1418471264-31896-1-git-send-email-muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+From: Robin van der Gracht <robin@protonic.nl>
+Subject: [PATCH] gpio: mxs: Use PIN2IRQ register to mask interrupts
+Date: Mon, 15 Dec 2014 11:28:32 +0100
+Message-ID: <1418639312-12520-1-git-send-email-robin@protonic.nl>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from protonic.xs4all.nl ([83.163.252.89]:9475 "EHLO
+	protonic.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750768AbaLOLB7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Dec 2014 06:01:59 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, david@protonic.nl, Robin van der Gracht <robin@protonic.nl>
 
-On Sat, Dec 13, 2014 at 05:17:42PM +0530, Muthu Mani wrote:
-> Adds support for USB-I2C/GPIO interfaces of Cypress Semiconductor
-> CYUSBS234 USB-Serial Bridge controller.
-> 
-> Details about the device can be found at:
-> http://www.cypress.com/?rID=84126
-> 
-> Separate cell drivers are available for I2C and GPIO. SPI and UART
-> are not supported yet.
-> 
-> Signed-off-by: Muthu Mani <muth-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Rajaram Regupathy <rera-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-> ---
+The PIN2IRQ register should be used to mask an interrupt. Clearing a
+bit in the IRQEN register only prevents the interrupt from propagating but
+still allows hardware to set the status bit when triggered. So when
+unmasking the interrupt, it will immediately re-trigger if an interrupt
+condition occurred during masking.
 
-The patches in this series are still white-space damaged.
+This is unwanted behavior especially when using level triggered
+interrupts. In this case every interrupt triggers twice. If the
+interrupt is handled in the handler, the second interrupt will be
+the first one to be able to ack the interrupt.
 
-Try sending it to yourself before reposting to the mailings lists again.
+Signed-off-by: Robin van der Gracht <robin@protonic.nl>
+---
+ drivers/gpio/gpio-mxs.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-And as I already asked you, make sure to remove your corporate
-confidentiality footers from mails you post to the lists.
+diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
+index 8ffdd7d..13aeae6 100644
+--- a/drivers/gpio/gpio-mxs.c
++++ b/drivers/gpio/gpio-mxs.c
+@@ -161,14 +161,12 @@ static void mxs_gpio_irq_handler(u32 irq, struct irq_desc *desc)
+ 
+ 	desc->irq_data.chip->irq_ack(&desc->irq_data);
+ 
+-	irq_stat = readl(port->base + PINCTRL_IRQSTAT(port)) &
+-			readl(port->base + PINCTRL_IRQEN(port));
++	irq_stat = readl(port->base + PINCTRL_IRQSTAT(port));
+ 
+ 	while (irq_stat != 0) {
+ 		int irqoffset = fls(irq_stat) - 1;
+ 		if (port->both_edges & (1 << irqoffset))
+ 			mxs_flip_edge(port, irqoffset);
+-
+ 		generic_handle_irq(irq_find_mapping(port->domain, irqoffset));
+ 		irq_stat &= ~(1 << irqoffset);
+ 	}
+@@ -212,7 +210,7 @@ static void __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
+ 	ct->chip.irq_set_type = mxs_gpio_set_irq_type;
+ 	ct->chip.irq_set_wake = mxs_gpio_set_wake_irq;
+ 	ct->regs.ack = PINCTRL_IRQSTAT(port) + MXS_CLR;
+-	ct->regs.mask = PINCTRL_IRQEN(port);
++	ct->regs.mask = PINCTRL_PIN2IRQ(port);
+ 
+ 	irq_setup_generic_chip(gc, IRQ_MSK(32), IRQ_GC_INIT_NESTED_LOCK,
+ 			       IRQ_NOREQUEST, 0);
+@@ -284,11 +282,11 @@ static int mxs_gpio_probe(struct platform_device *pdev)
+ 	port->base = base;
+ 
+ 	/*
+-	 * select the pin interrupt functionality but initially
+-	 * disable the interrupts
++	 * enable interrupts but initially disable
++	 * pin interrupt functionality
+ 	 */
+-	writel(~0U, port->base + PINCTRL_PIN2IRQ(port));
+-	writel(0, port->base + PINCTRL_IRQEN(port));
++	writel(0, port->base + PINCTRL_PIN2IRQ(port));
++	writel(~0U, port->base + PINCTRL_IRQEN(port));
+ 
+ 	/* clear address has to be used to clear IRQSTAT bits */
+ 	writel(~0U, port->base + PINCTRL_IRQSTAT(port) + MXS_CLR);
+-- 
+1.9.1
 
-Johan
