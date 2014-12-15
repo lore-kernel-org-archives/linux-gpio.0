@@ -1,121 +1,108 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v2] gpio: rcar: Add r8a7793 and r8a7794 support
-Date: Mon, 15 Dec 2014 18:39:25 +0900
-Message-ID: <CANqRtoQ=+iH4_mDuPNE=0+xeCc2yB541neZGmb1oVZ-bD-=wuQ@mail.gmail.com>
-References: <1415361248-24610-1-git-send-email-ykaneko0929@gmail.com>
-	<2188270.mR2n2an5Xq@avalon>
-	<CANqRtoTA+sPUT8enk_BCzi7Z5xG4Ump29hCAJgm47JgVXoF9WQ@mail.gmail.com>
-	<1524147.icrOVo31mS@avalon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: tc3589x: get rid of platform data
+Date: Mon, 15 Dec 2014 10:42:02 +0100
+Message-ID: <1418636522-21296-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:36780 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751339AbaLOJj2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Dec 2014 04:39:28 -0500
-In-Reply-To: <1524147.icrOVo31mS@avalon>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:64858 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751156AbaLOJmL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Dec 2014 04:42:11 -0500
+Received: by mail-wi0-f182.google.com with SMTP id h11so8334216wiw.9
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Dec 2014 01:42:10 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, SH-Linux <linux-sh@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi Laurent (not Geert, sorry!),
+This device is only used from the device tree, and the startup()
+and remove() callbacks are not used anywhere in the kernel, so
+retire them and the pdata altogether.
 
-On Mon, Dec 15, 2014 at 5:49 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> Hi Magnus,
->
-> On Monday 15 December 2014 11:03:49 Magnus Damm wrote:
->> On Sat, Dec 13, 2014 at 4:17 AM, Laurent Pinchart wrote:
->> > On Friday 07 November 2014 20:54:08 Yoshihiro Kaneko wrote:
->> >> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
->> >>
->> >> The device tree probing for R-Car M2-N (r8a7793) and R-Car E2 (r8a7794)
->> >> is added.
->> >>
->> >> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
->> >> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> >> ---
->> >>
->> >> This patch is based on for-next branch of Linus Walleij's gpio tree.
->> >>
->> >> v2 [Yoshihiro Kaneko]
->> >> * As suggested by Geert Uytterhoeven
->> >>
->> >>   - clean up 4 identical copies of struct gpio_rcar_info.
->> >>
->> >>  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |  4 +++-
->> >>  drivers/gpio/gpio-rcar.c                           | 27 +++++++++-------
->> >>  2 files changed, 21 insertions(+), 10 deletions(-)
->> >>
->> >> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
->> >> b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt index
->> >> 941a26a..38fb86f 100644
->> >> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
->> >> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
->> >>
->> >> @@ -6,7 +6,9 @@ Required Properties:
->> >>      - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO
->> >> controller.
->> >>      - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO
->> >> controller.
->> >>      - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO
->> >> controller.
->> >> -    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2) compatible GPIO
->> >> controller.
->> >> +    - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO
->> >> controller.
->> >> +    - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO
->> >> controller.
->> >> +    - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO
->> >> controller.
->> >>
->> >>      - "renesas,gpio-rcar": for generic R-Car GPIO controller.
->> >>
->> >>    - reg: Base address and length of each memory resource used by the
->> >>    GPIO
->> >>
->> >> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
->> >> index ef71ca8..24f0343 100644
->> >> --- a/drivers/gpio/gpio-rcar.c
->> >> +++ b/drivers/gpio/gpio-rcar.c
->> >> @@ -1,6 +1,7 @@
->> >>  /*
->> >>   * Renesas R-Car GPIO Support
->> >>   *
->> >> + *  Copyright (C) 2014 Renesas Electronics Corporation
->> >>   *  Copyright (C) 2013 Magnus Damm
->> >>   *
->> >>   * This program is free software; you can redistribute it and/or modify
->> >> @@ -315,22 +316,30 @@ struct gpio_rcar_info {
->> >>       bool has_both_edge_trigger;
->> >>  };
->> >>
->> >> +static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
->> >> +     .has_both_edge_trigger = false,
->> >> +};
->> >> +
->> >> +static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
->> >> +     .has_both_edge_trigger = true,
->> >> +};
->> >
->> > Seriously, doesn't this call for a "renesas,gpio-rcar-gen2" compatible
->> > string ?
->>
->> Maybe, but only if we had a crystal ball and could predict that the IP
->> would be guaranteed not to change inside future Gen2 devices! =)
->
-> Do we expect future Gen2 devices ? And if they happen to be incompatible we
-> could call them v2.5 ;-)
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+MFD folks: this only considers GPIO but touches your include
+file, please ACK this so I can take it through the GPIO tree.
+---
+ drivers/gpio/gpio-tc3589x.c | 15 ++-------------
+ include/linux/mfd/tc3589x.h | 12 ------------
+ 2 files changed, 2 insertions(+), 25 deletions(-)
 
-Random stuff is being invented all the time. I went to an embedded
-fair here in Japan a month or two ago and ran into some customer with
-a board that included a Gen2-related SoC with a name I've never seen
-before. I see them all the time. This particular one had super-many
-camera sensors or something. Anyway, the hardware guys are not asking
-for our permission before they "fork and modify". So following
-well-known part numbers for DT ABI seems like a safe practice to me.
+diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
+index abdcf58935f5..11aed2671065 100644
+--- a/drivers/gpio/gpio-tc3589x.c
++++ b/drivers/gpio/gpio-tc3589x.c
+@@ -232,16 +232,13 @@ static irqreturn_t tc3589x_gpio_irq(int irq, void *dev)
+ static int tc3589x_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct tc3589x *tc3589x = dev_get_drvdata(pdev->dev.parent);
+-	struct tc3589x_gpio_platform_data *pdata;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct tc3589x_gpio *tc3589x_gpio;
+ 	int ret;
+ 	int irq;
+ 
+-	pdata = tc3589x->pdata->gpio;
+-
+-	if (!(pdata || np)) {
+-		dev_err(&pdev->dev, "No platform data or Device Tree found\n");
++	if (!np) {
++		dev_err(&pdev->dev, "No Device Tree node found\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -305,9 +302,6 @@ static int tc3589x_gpio_probe(struct platform_device *pdev)
+ 				     irq,
+ 				     NULL);
+ 
+-	if (pdata && pdata->setup)
+-		pdata->setup(tc3589x, tc3589x_gpio->chip.base);
+-
+ 	platform_set_drvdata(pdev, tc3589x_gpio);
+ 
+ 	return 0;
+@@ -316,11 +310,6 @@ static int tc3589x_gpio_probe(struct platform_device *pdev)
+ static int tc3589x_gpio_remove(struct platform_device *pdev)
+ {
+ 	struct tc3589x_gpio *tc3589x_gpio = platform_get_drvdata(pdev);
+-	struct tc3589x *tc3589x = tc3589x_gpio->tc3589x;
+-	struct tc3589x_gpio_platform_data *pdata = tc3589x->pdata->gpio;
+-
+-	if (pdata && pdata->remove)
+-		pdata->remove(tc3589x, tc3589x_gpio->chip.base);
+ 
+ 	gpiochip_remove(&tc3589x_gpio->chip);
+ 
+diff --git a/include/linux/mfd/tc3589x.h b/include/linux/mfd/tc3589x.h
+index e1c12d84c26a..c203c9c56776 100644
+--- a/include/linux/mfd/tc3589x.h
++++ b/include/linux/mfd/tc3589x.h
+@@ -163,24 +163,12 @@ struct tc3589x_keypad_platform_data {
+ };
+ 
+ /**
+- * struct tc3589x_gpio_platform_data - TC3589x GPIO platform data
+- * @setup: callback for board-specific initialization
+- * @remove: callback for board-specific teardown
+- */
+-struct tc3589x_gpio_platform_data {
+-	void (*setup)(struct tc3589x *tc3589x, unsigned gpio_base);
+-	void (*remove)(struct tc3589x *tc3589x, unsigned gpio_base);
+-};
+-
+-/**
+  * struct tc3589x_platform_data - TC3589x platform data
+  * @block: bitmask of blocks to enable (use TC3589x_BLOCK_*)
+- * @gpio: GPIO-specific platform data
+  * @keypad: keypad-specific platform data
+  */
+ struct tc3589x_platform_data {
+ 	unsigned int block;
+-	struct tc3589x_gpio_platform_data *gpio;
+ 	const struct tc3589x_keypad_platform_data *keypad;
+ };
+ 
+-- 
+1.9.3
 
-Cheers,
-
-/ magnus
