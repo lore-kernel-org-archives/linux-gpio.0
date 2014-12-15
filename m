@@ -1,91 +1,91 @@
-From: Mark Brown <broonie@kernel.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [RFC 01/15] drivers/base: add track framework
-Date: Mon, 15 Dec 2014 12:55:57 +0000
-Message-ID: <20141215125557.GB11764@sirena.org.uk>
-References: <548B7653.7020004@gmail.com>
+Date: Mon, 15 Dec 2014 15:00:04 +0100
+Message-ID: <548EE964.2050504@samsung.com>
+References: <548B7653.7020004@gmail.com> <20141215125557.GB11764@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jmbcokH0GrqI2Ucc"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <548B7653.7020004@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: AH <najdrozszy@gmail.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, ARM/CLKDEV SUPPORT <linux-arm-kernel@lists.infradead.org>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, "ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20141215125557.GB11764@sirena.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Russell King <linux@arm.linux.org.uk>, ARM/CLKDEV SUPPORT <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-
---jmbcokH0GrqI2Ucc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Dec 13, 2014 at 12:12:19AM +0100, AH wrote:
-> Mark Brown wrote on 12.12.2014 17:36:
-> >On Wed, Dec 10, 2014 at 04:48:19PM +0100, Andrzej Hajda wrote:
-
-> >>+		kfree(ptask);
-> >>+
-> >>+		if (empty)
-> >>+			break;
-> >>+
-> >>+		track_process_task(track, task);
-
-> >...we then go and do some other stuff, including processing that task,
-> >without the lock or or any other means I can see of excluding other
-> >users before going round and removing the task.  This seems to leave us
-> >vulnerable to double execution.
-
-> No, if you look at track_add_task function you will see that the queue is
-> processed only if it is initially empty, otherwise the task is only added=
- to
-> the queue, so it will be processed after processing earlier tasks.
-> So the rule is that if someone add task to the queue it checks if the que=
-ue
-> is empty, in such case it process all tasks from the queue until
-> the queue becomes empty, even the tasks added by other processed.
-> This way all tasks are serialized.
-
-This is all pretty fiddly and seems fragile - if nothing else the code
-seems undercommented since the above is only going to be apparent with
-following through multiple functions and we're relying on both owner and
-list emptiness with more than one place where a task can get processed.
-
-> >I'm also unclear what is supposed to happen if adding a notification
-> >races with removing the thing being watched.
-
-> The sequence should be always as follows:
-> 1. create thing, then call track_up(thing).
-> ...
-> 2. call track_down(thing) then remove thing.
-
-> If we put 1 into probe and 2 into remove callback of the driver it will be
-> safe - we are synchronised by device_lock. But if, for some reason, we wa=
-nt
-> to create object after probe we should do own synchronization or just put
-> device_lock around 1. The same applies if we want to remove
-> object earlier. This is the comment above about. I will expand it to more
-> verbose explanation.
-
-You can't rely on the device lock here since this isn't tied to kobjects
-or anything at all - it's a freestanding interface someone could pick up
-and use in another context.  Besides, that isn't really my concern - my
-concern is what happens if something asks to wait for=20
-
---jmbcokH0GrqI2Ucc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUjtpdAAoJECTWi3JdVIfQZ0QH/iMfDK/L9XpgMZHOWJDq1X3N
-HfV1l6yDxaz5H8Css3wMm4KFpVS39H5LIFxhijJdQmX15+F6rPqKnvKCvHb6A05b
-ZoXJoGPePUPOIXK7iivTO+WqhckHzpxDxJ7lghuOSb/40UOZRbvnfFUWIzB4cP+o
-4pvUfA1lckvXEuGc1ucMzQjzGmvahrxDWeK6Yha349tl1UDf5gTX9eA2LWLSvaHG
-++koEZ+F5LM4PM01lpMSdkCeTPmPrVlhes9SVtHZBk676AkSuxx2XGoUDcN3xaTE
-ttvbqHAfE7VtfcBbIB0mwwggl6iA96wKjwslINLQHO5ZXU9dUy0NOFqMtjUWgNk=
-=oZ29
------END PGP SIGNATURE-----
-
---jmbcokH0GrqI2Ucc--
+T24gMTIvMTUvMjAxNCAwMTo1NSBQTSwgTWFyayBCcm93biB3cm90ZToKPiBPbiBTYXQsIERlYyAx
+MywgMjAxNCBhdCAxMjoxMjoxOUFNICswMTAwLCBBSCB3cm90ZToKPj4gTWFyayBCcm93biB3cm90
+ZSBvbiAxMi4xMi4yMDE0IDE3OjM2Ogo+Pj4gT24gV2VkLCBEZWMgMTAsIDIwMTQgYXQgMDQ6NDg6
+MTlQTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4+PiArCQlrZnJlZShwdGFzayk7Cj4+
+Pj4gKwo+Pj4+ICsJCWlmIChlbXB0eSkKPj4+PiArCQkJYnJlYWs7Cj4+Pj4gKwo+Pj4+ICsJCXRy
+YWNrX3Byb2Nlc3NfdGFzayh0cmFjaywgdGFzayk7Cj4+PiAuLi53ZSB0aGVuIGdvIGFuZCBkbyBz
+b21lIG90aGVyIHN0dWZmLCBpbmNsdWRpbmcgcHJvY2Vzc2luZyB0aGF0IHRhc2ssCj4+PiB3aXRo
+b3V0IHRoZSBsb2NrIG9yIG9yIGFueSBvdGhlciBtZWFucyBJIGNhbiBzZWUgb2YgZXhjbHVkaW5n
+IG90aGVyCj4+PiB1c2VycyBiZWZvcmUgZ29pbmcgcm91bmQgYW5kIHJlbW92aW5nIHRoZSB0YXNr
+LiAgVGhpcyBzZWVtcyB0byBsZWF2ZSB1cwo+Pj4gdnVsbmVyYWJsZSB0byBkb3VibGUgZXhlY3V0
+aW9uLgo+PiBObywgaWYgeW91IGxvb2sgYXQgdHJhY2tfYWRkX3Rhc2sgZnVuY3Rpb24geW91IHdp
+bGwgc2VlIHRoYXQgdGhlIHF1ZXVlIGlzCj4+IHByb2Nlc3NlZCBvbmx5IGlmIGl0IGlzIGluaXRp
+YWxseSBlbXB0eSwgb3RoZXJ3aXNlIHRoZSB0YXNrIGlzIG9ubHkgYWRkZWQgdG8KPj4gdGhlIHF1
+ZXVlLCBzbyBpdCB3aWxsIGJlIHByb2Nlc3NlZCBhZnRlciBwcm9jZXNzaW5nIGVhcmxpZXIgdGFz
+a3MuCj4+IFNvIHRoZSBydWxlIGlzIHRoYXQgaWYgc29tZW9uZSBhZGQgdGFzayB0byB0aGUgcXVl
+dWUgaXQgY2hlY2tzIGlmIHRoZSBxdWV1ZQo+PiBpcyBlbXB0eSwgaW4gc3VjaCBjYXNlIGl0IHBy
+b2Nlc3MgYWxsIHRhc2tzIGZyb20gdGhlIHF1ZXVlIHVudGlsCj4+IHRoZSBxdWV1ZSBiZWNvbWVz
+IGVtcHR5LCBldmVuIHRoZSB0YXNrcyBhZGRlZCBieSBvdGhlciBwcm9jZXNzZWQuCj4+IFRoaXMg
+d2F5IGFsbCB0YXNrcyBhcmUgc2VyaWFsaXplZC4KPiBUaGlzIGlzIGFsbCBwcmV0dHkgZmlkZGx5
+IGFuZCBzZWVtcyBmcmFnaWxlIC0gaWYgbm90aGluZyBlbHNlIHRoZSBjb2RlCj4gc2VlbXMgdW5k
+ZXJjb21tZW50ZWQgc2luY2UgdGhlIGFib3ZlIGlzIG9ubHkgZ29pbmcgdG8gYmUgYXBwYXJlbnQg
+d2l0aAo+IGZvbGxvd2luZyB0aHJvdWdoIG11bHRpcGxlIGZ1bmN0aW9ucyBhbmQgd2UncmUgcmVs
+eWluZyBvbiBib3RoIG93bmVyIGFuZAo+IGxpc3QgZW1wdGluZXNzIHdpdGggbW9yZSB0aGFuIG9u
+ZSBwbGFjZSB3aGVyZSBhIHRhc2sgY2FuIGdldCBwcm9jZXNzZWQuCgpJIGhhdmUgY2hhbmdlZCBp
+dCBhbHJlYWR5IHRvIHRlc3QgcXVldWUgb3duZXIsIHRoaXMgd2F5IGl0IHNob3VsZApiZSBtb3Jl
+IGNsZWFyLgoKPgo+Pj4gSSdtIGFsc28gdW5jbGVhciB3aGF0IGlzIHN1cHBvc2VkIHRvIGhhcHBl
+biBpZiBhZGRpbmcgYSBub3RpZmljYXRpb24KPj4+IHJhY2VzIHdpdGggcmVtb3ZpbmcgdGhlIHRo
+aW5nIGJlaW5nIHdhdGNoZWQuCj4+IFRoZSBzZXF1ZW5jZSBzaG91bGQgYmUgYWx3YXlzIGFzIGZv
+bGxvd3M6Cj4+IDEuIGNyZWF0ZSB0aGluZywgdGhlbiBjYWxsIHRyYWNrX3VwKHRoaW5nKS4KPj4g
+Li4uCj4+IDIuIGNhbGwgdHJhY2tfZG93bih0aGluZykgdGhlbiByZW1vdmUgdGhpbmcuCj4+IElm
+IHdlIHB1dCAxIGludG8gcHJvYmUgYW5kIDIgaW50byByZW1vdmUgY2FsbGJhY2sgb2YgdGhlIGRy
+aXZlciBpdCB3aWxsIGJlCj4+IHNhZmUgLSB3ZSBhcmUgc3luY2hyb25pc2VkIGJ5IGRldmljZV9s
+b2NrLiBCdXQgaWYsIGZvciBzb21lIHJlYXNvbiwgd2Ugd2FudAo+PiB0byBjcmVhdGUgb2JqZWN0
+IGFmdGVyIHByb2JlIHdlIHNob3VsZCBkbyBvd24gc3luY2hyb25pemF0aW9uIG9yIGp1c3QgcHV0
+Cj4+IGRldmljZV9sb2NrIGFyb3VuZCAxLiBUaGUgc2FtZSBhcHBsaWVzIGlmIHdlIHdhbnQgdG8g
+cmVtb3ZlCj4+IG9iamVjdCBlYXJsaWVyLiBUaGlzIGlzIHRoZSBjb21tZW50IGFib3ZlIGFib3V0
+LiBJIHdpbGwgZXhwYW5kIGl0IHRvIG1vcmUKPj4gdmVyYm9zZSBleHBsYW5hdGlvbi4KPiBZb3Ug
+Y2FuJ3QgcmVseSBvbiB0aGUgZGV2aWNlIGxvY2sgaGVyZSBzaW5jZSB0aGlzIGlzbid0IHRpZWQg
+dG8ga29iamVjdHMKPiBvciBhbnl0aGluZyBhdCBhbGwgLSBpdCdzIGEgZnJlZXN0YW5kaW5nIGlu
+dGVyZmFjZSBzb21lb25lIGNvdWxkIHBpY2sgdXAKPiBhbmQgdXNlIGluIGFub3RoZXIgY29udGV4
+dC4gIEJlc2lkZXMsIHRoYXQgaXNuJ3QgcmVhbGx5IG15IGNvbmNlcm4gLSBteQo+IGNvbmNlcm4g
+aXMgd2hhdCBoYXBwZW5zIGlmIHNvbWV0aGluZyBhc2tzIHRvIHdhaXQgZm9yIApCdXQgSSBkbyBu
+b3QgcmVseSBoZXJlIG9uIGRldmljZV9sb2NrLCBJIGp1c3QgcG9pbnQgb3V0IHRoYXQgMSBhbmQg
+MgpzaG91bGQgYmUKc3luY2hyb25pemVkIGFuZCBhcyBhIGNvbW1vbiB3YXkgaXMgdG8gcHV0IHN1
+Y2ggdGhpbmdzIGludG8gcHJvYmUKYW5kIHJlbW92ZSwgZGV2aWNlX2xvY2sgY2FuIGRvIHRoZSBz
+eW5jaHJvbml6YXRpb24gZm9yIHVzIGluIHN1Y2ggY2FzZSwKc28gbm8gbmVlZCBmb3IgYWRkaXRp
+b25hbCBzeW5jaHJvbml6YXRpb24uCgpBbmQgdG8gbWFrZSBldmVyeXRoaW5nIGNsZWFyLCB0cmFj
+a191cCB3aWxsIG5vdCBiZSBjYWxsZWQgYnkgdGhlIGRyaXZlcgpkaXJlY3RseSwKaXQgc2hhbGwg
+YmUgY2FsbGVkIGJ5IHJlc3BlY3RpdmUgcmVzb3VyY2UgZnJhbWV3b3JrIGZ1bmN0aW9ucywgZm9y
+IGV4YW1wbGUKYnkgcmVndWxhdG9yX3JlZ2lzdGVyIGFuZCByZWd1bGF0b3JfdW5yZWdpc3Rlci4K
+CkFuZCByZWdhcmRpbmcgeW91ciBpbml0aWFsL3JlYWwgY29uY2VybiwgSSBndWVzcyB5b3UgbWVh
+biB0aGlzIG9uZToKPj4gSSdtIGFsc28gdW5jbGVhciB3aGF0IGlzIHN1cHBvc2VkIHRvIGhhcHBl
+biBpZiBhZGRpbmcgYSBub3RpZmljYXRpb24KPj4gcmFjZXMgd2l0aCByZW1vdmluZyB0aGUgdGhp
+bmcgYmVpbmcgd2F0Y2hlZC4KSSBndWVzcyB5b3UgbWVhbiByZWdpc3RlcmluZyBub3RpZmllciBh
+bmQgcmVtb3ZhbCBvZiB0aGluZyBpdCBpcwpzdXBwb3NlZCB0byB3YXRjaC4KQXMgYWxsIHRyYWNr
+IHRhc2tzIGFyZSBzZXJpYWxpemVkIHRoZXNlIHR3byB3aWxsIGJlIHNlcmlhbGl6ZWQgYWxzbyBz
+bwp3ZSBjYW4gaGF2ZQpvbmx5IHR3byBzY2VuYXJpb3M6CjEuCiAgYSkgcmVnaXN0ZXIgbm90aWZp
+ZXIKICAtIHRoaW5nIGlzIHVwLCBzbyBub3RpZmllciB3aWxsIGJlIGltbWVkaWF0ZWx5IGNhbGxl
+ZCB3aXRoIGluZm8gdGhhdAp0aGUgdGhpbmcgaXMgdXAKICBiKSByZW1vdmUgdGhpbmcKICAtIHRo
+aW5nIHdpbGwgYmUgZG93biwgc28gbm90aWZpZXIgd2lsbCBiZSBjYWxsZWQgd2l0aCBpbmZvIHRo
+YXQgdGhlCnRoaW5nIHdpbGwgYmUgcmVtb3ZlZAoyLgogIGEpIHJlbW92ZSB0aGluZwogIC0gbm90
+aWZpZXIgaXMgbm90IHlldCByZWdpc3RlcmVkLCBzbyBjYWxsYmFjayB3aWxsIG5vdCBiZSBjYWxs
+ZWQsCiAgYikgcmVnaXN0ZXIgbm90aWZpZXIKICAtIHRoaW5nIGlzIGFscmVhZHkgcmVtb3ZlZCwg
+c28gY2FsbGJhY2sgd2lsbCBub3QgYmUgY2FsbGVkLgoKSSBob3BlIHRoaXMgaXMgd2hhdCB5b3Ug
+d2VyZSBhc2tpbmcgZm9yLgoKUmVnYXJkcwpBbmRyemVqCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
