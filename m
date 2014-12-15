@@ -1,78 +1,63 @@
-From: Robin van der Gracht <robin@protonic.nl>
-Subject: [PATCH] gpio: mxs: Use PIN2IRQ register to mask interrupts
-Date: Mon, 15 Dec 2014 11:28:32 +0100
-Message-ID: <1418639312-12520-1-git-send-email-robin@protonic.nl>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from protonic.xs4all.nl ([83.163.252.89]:9475 "EHLO
-	protonic.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750768AbaLOLB7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Dec 2014 06:01:59 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC 02/15] drivers/base: add restrack framework
+Date: Mon, 15 Dec 2014 11:38:32 +0000
+Message-ID: <20141215113832.GX11764@sirena.org.uk>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <1418226513-14105-3-git-send-email-a.hajda@samsung.com>
+ <20141212165230.GP11764@sirena.org.uk>
+ <548E9BB9.806@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="elthcBrLbYw+6uqa"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <548E9BB9.806@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, david@protonic.nl, Robin van der Gracht <robin@protonic.nl>
 
-The PIN2IRQ register should be used to mask an interrupt. Clearing a
-bit in the IRQEN register only prevents the interrupt from propagating but
-still allows hardware to set the status bit when triggered. So when
-unmasking the interrupt, it will immediately re-trigger if an interrupt
-condition occurred during masking.
 
-This is unwanted behavior especially when using level triggered
-interrupts. In this case every interrupt triggers twice. If the
-interrupt is handled in the handler, the second interrupt will be
-the first one to be able to ack the interrupt.
+--elthcBrLbYw+6uqa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Robin van der Gracht <robin@protonic.nl>
----
- drivers/gpio/gpio-mxs.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+On Mon, Dec 15, 2014 at 09:28:41AM +0100, Andrzej Hajda wrote:
+> On 12/12/2014 05:52 PM, Mark Brown wrote:
+> > On Wed, Dec 10, 2014 at 04:48:20PM +0100, Andrzej Hajda wrote:
 
-diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
-index 8ffdd7d..13aeae6 100644
---- a/drivers/gpio/gpio-mxs.c
-+++ b/drivers/gpio/gpio-mxs.c
-@@ -161,14 +161,12 @@ static void mxs_gpio_irq_handler(u32 irq, struct irq_desc *desc)
- 
- 	desc->irq_data.chip->irq_ack(&desc->irq_data);
- 
--	irq_stat = readl(port->base + PINCTRL_IRQSTAT(port)) &
--			readl(port->base + PINCTRL_IRQEN(port));
-+	irq_stat = readl(port->base + PINCTRL_IRQSTAT(port));
- 
- 	while (irq_stat != 0) {
- 		int irqoffset = fls(irq_stat) - 1;
- 		if (port->both_edges & (1 << irqoffset))
- 			mxs_flip_edge(port, irqoffset);
--
- 		generic_handle_irq(irq_find_mapping(port->domain, irqoffset));
- 		irq_stat &= ~(1 << irqoffset);
- 	}
-@@ -212,7 +210,7 @@ static void __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
- 	ct->chip.irq_set_type = mxs_gpio_set_irq_type;
- 	ct->chip.irq_set_wake = mxs_gpio_set_wake_irq;
- 	ct->regs.ack = PINCTRL_IRQSTAT(port) + MXS_CLR;
--	ct->regs.mask = PINCTRL_IRQEN(port);
-+	ct->regs.mask = PINCTRL_PIN2IRQ(port);
- 
- 	irq_setup_generic_chip(gc, IRQ_MSK(32), IRQ_GC_INIT_NESTED_LOCK,
- 			       IRQ_NOREQUEST, 0);
-@@ -284,11 +282,11 @@ static int mxs_gpio_probe(struct platform_device *pdev)
- 	port->base = base;
- 
- 	/*
--	 * select the pin interrupt functionality but initially
--	 * disable the interrupts
-+	 * enable interrupts but initially disable
-+	 * pin interrupt functionality
- 	 */
--	writel(~0U, port->base + PINCTRL_PIN2IRQ(port));
--	writel(0, port->base + PINCTRL_IRQEN(port));
-+	writel(0, port->base + PINCTRL_PIN2IRQ(port));
-+	writel(~0U, port->base + PINCTRL_IRQEN(port));
- 
- 	/* clear address has to be used to clear IRQSTAT bits */
- 	writel(~0U, port->base + PINCTRL_IRQSTAT(port) + MXS_CLR);
--- 
-1.9.1
+> > I don't know about anyone else but I'm having a hard time reading the
+> > restrack name, it looks like a misspelling of restack to me.
 
+> Any alternative names?
+
+Well, even just res_track would help.
+
+> I will move the code for provider matching to frameworks,
+> so it will be easy to add just dev_info after every failed attempt
+> of getting resource, including deferring. This is the simplest solution
+> and it should be similar in verbosity to deferred probing.
+
+> Maybe other solution is to provide debug_fs (or device) attribute showing
+> restrack status per device.
+
+I think both are useful - it's often helpful to have a listing of what
+resources have actually been registered, for example to help spot typos.
+
+--elthcBrLbYw+6uqa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUjsg3AAoJECTWi3JdVIfQ0B8H/RvF/DMTN70TqlHNn9pDjcBk
+TH7amwHd0crIonpZ/NzYIKbmi3GuwBYmcLgPodqEfd0+0wqYiyvp7mF2WQWtRUlI
+KOPghdPrJjDF1k1qJH9XP9bpvqX4k1b+MIWA2SzI0MBkiiXD5g5wZlHmzx+gvBzG
+tsRavBntWRbs0k6xBosyoUFJPD3IUQtYOhgYFkS5FhJjg0uFgokHLO0kL2Fl/5Mp
+vYALsrJJNhT55jgBlckAy6i+fE9+4qltVqw+bGCEUxOdFwlA5PtdA+PjHZqRu4pE
+sWyrpo+P5f47aO7yA9tvgIcjP5KRmbYT/Wa/dvfleWP3xXL85qs1AaeWApeE5Bw=
+=G4p5
+-----END PGP SIGNATURE-----
+
+--elthcBrLbYw+6uqa--
