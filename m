@@ -1,113 +1,326 @@
-From: Zhou Wang <wangzhou.bry@gmail.com>
-Subject: Re: [PATCH v4 3/4] gpio: Add find GPIO base in increasing order
-Date: Mon, 15 Dec 2014 12:01:56 +0800
-Message-ID: <548E5D34.6010206@gmail.com>
-References: <1417750722-14027-1-git-send-email-wangzhou.bry@gmail.com> <1417750722-14027-4-git-send-email-wangzhou.bry@gmail.com> <CAAVeFu+Hn1Fk7PDcc4wGHFyJurX0hsW1N1prnPs2j=taGQKrKw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Vincent Yang <vincent.yang.fujitsu@gmail.com>
+Subject: [PATCH v2 5/8] gpio: Add Fujitsu MB86S7x GPIO driver
+Date: Mon, 15 Dec 2014 15:09:39 +0800
+Message-ID: <1418627379-3231-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
+References: <1418626369-3004-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:34248 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750713AbaLOEBx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Dec 2014 23:01:53 -0500
-In-Reply-To: <CAAVeFu+Hn1Fk7PDcc4wGHFyJurX0hsW1N1prnPs2j=taGQKrKw@mail.gmail.com>
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:65332 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103AbaLOHKO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Dec 2014 02:10:14 -0500
+In-Reply-To: <1418626369-3004-1-git-send-email-Vincent.Yang@tw.fujitsu.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, liguozhu@hisilicon.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, atull@altera.com, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, jamie@jamieiles.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, wangzhou1@hisilicon.com
+To: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de, olof@lixom.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, grant.likely@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, andy.green@linaro.org, patches@linaro.org, jaswinder.singh@linaro.org, Vincent Yang <Vincent.Yang@tw.fujitsu.com>, Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
 
-On 2014=E5=B9=B412=E6=9C=8810=E6=97=A5 16:51, Alexandre Courbot wrote:
-> On Fri, Dec 5, 2014 at 12:38 PM, Zhou Wang <wangzhou.bry@gmail.com> w=
-rote:
->> In function gpiochip_find_base, base number of a GPIO controller
->> is found in decreasing order. ARCH_NR_GPIOS is used to define from
->> which number we begin to search for base number of a GPIO controller=
-=2E
->>
->> In fact, ARCH_NR_GPIOS brings us some multiplatform problems, like:
->> http://www.spinics.net/lists/devicetree/msg60433.html
->>
->> This patch adds the support to find base number of a GPIO controller
->> in increasing order. It will assign base number from 0.
->> A new dts property called gpio-number-forward must be add to the rel=
-ated
->> GPIO dts nodes if you want it works well.
->
-> Global GPIO numbers are a Linux-only concept, so your property should
-> be named linux,gpio-number-forward.
->
-> But even that way I don't think I like this idea. This just adds some
-> more mess to how the GPIO number space is constructed, and it is
-> already quite messy as it is. You have no guarantee over the probe
-> order of your GPIO controllers, so they may very well be probed in a
-> different order and end up with different base numbers anytime.
->
-> Not that this is your fault - the number namespace is broken by desig=
-n
-> and I don't think there is a way to fix it. The long-term solution is
-> to stop using it by switching to the gpiod interface.
->
-> First a few questions to understand why you need your GPIOs numbered
-> this way, and if you need it at all:
-> - Can't you use the gpiod interface instead so you don't need to rely
-> on GPIO numbers?
+Driver for Fujitsu MB86S7x SoCs that have a memory mapped GPIO controller.
 
-Hi Alexandre,
+Signed-off-by: Andy Green <andy.green@linaro.org>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+Signed-off-by: Vincent Yang <Vincent.Yang@tw.fujitsu.com>
+Signed-off-by: Tetsuya Nuriya <nuriya.tetsuya@jp.fujitsu.com>
+---
+ .../bindings/gpio/fujitsu,mb86s70-gpio.txt         |  20 ++
+ drivers/gpio/Kconfig                               |   6 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-mb86s7x.c                        | 231 +++++++++++++++++++++
+ 4 files changed, 258 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
+ create mode 100644 drivers/gpio/gpio-mb86s7x.c
 
-Sorry for late. Could you give me more clue about the gpiod interface?=20
-Don't we also call gpio_request() which uses GPIO number to request a
-GPIO?
+diff --git a/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
+new file mode 100644
+index 0000000..bef353f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
+@@ -0,0 +1,20 @@
++Fujitsu MB86S7x GPIO Controller
++-------------------------------
++
++Required properties:
++- compatible: Should be "fujitsu,mb86s70-gpio"
++- reg: Base address and length of register space
++- clocks: Specify the clock
++- gpio-controller: Marks the device node as a gpio controller.
++- #gpio-cells: Should be <2>. The first cell is the pin number and the
++  second cell is used to specify optional parameters:
++   - bit 0 specifies polarity (0 for normal, 1 for inverted).
++
++Examples:
++	gpio0: gpio@31000000 {
++		compatible = "fujitsu,mb86s70-gpio";
++		reg = <0 0x31000000 0x10000>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		clocks = <&clk 0 2 1>;
++	};
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 23dfd5f..7b7fefe 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -181,6 +181,12 @@ config GPIO_F7188X
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called f7188x-gpio.
+ 
++config GPIO_MB86S7X
++	bool "GPIO support for Fujitsu MB86S7x Platforms"
++	depends on ARCH_MB86S7X
++	help
++	  Say yes here to support the GPIO controller in Fujitsu MB86S70 SoCs.
++
+ config GPIO_MOXART
+ 	bool "MOXART GPIO support"
+ 	depends on ARCH_MOXART
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index e60677b..5a8d09b 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -47,6 +47,7 @@ obj-$(CONFIG_GPIO_MAX730X)	+= gpio-max730x.o
+ obj-$(CONFIG_GPIO_MAX7300)	+= gpio-max7300.o
+ obj-$(CONFIG_GPIO_MAX7301)	+= gpio-max7301.o
+ obj-$(CONFIG_GPIO_MAX732X)	+= gpio-max732x.o
++obj-$(CONFIG_GPIO_MB86S7X)	+= gpio-mb86s7x.o
+ obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
+ obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
+ obj-$(CONFIG_GPIO_MCP23S08)	+= gpio-mcp23s08.o
+diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
+new file mode 100644
+index 0000000..8ba535d
+--- /dev/null
++++ b/drivers/gpio/gpio-mb86s7x.c
+@@ -0,0 +1,231 @@
++/*
++ *  linux/drivers/gpio/gpio-mb86s7x.c
++ *
++ *  Copyright (C) 2014 Fujitsu Semiconductor Limited
++ *  Copyright (C) 2014 Linaro Ltd.
++ *
++ *  This program is free software: you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation, version 2 of the License.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ */
++
++#include <linux/io.h>
++#include <linux/init.h>
++#include <linux/clk.h>
++#include <linux/gpio.h>
++#include <linux/module.h>
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/ioport.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
++#include <linux/slab.h>
++
++/*
++ * Only first 8bits of a register correspond to each pin,
++ * so there are 4 registers for 32 pins.
++ */
++#define PDR(x)	(0x0 + x / 8 * 4)
++#define DDR(x)	(0x10 + x / 8 * 4)
++#define PFR(x)	(0x20 + x / 8 * 4)
++
++#define OFFSET(x)	BIT((x) % 8)
++
++struct mb86s70_gpio_chip {
++	struct gpio_chip gc;
++	void __iomem *base;
++	struct clk *clk;
++	spinlock_t lock;
++};
++
++static inline struct mb86s70_gpio_chip *chip_to_mb86s70(struct gpio_chip *gc)
++{
++	return container_of(gc, struct mb86s70_gpio_chip, gc);
++}
++
++static int mb86s70_gpio_request(struct gpio_chip *gc, unsigned gpio)
++{
++	struct mb86s70_gpio_chip *gchip = chip_to_mb86s70(gc);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&gchip->lock, flags);
++
++	val = readl(gchip->base + PFR(gpio));
++	val &= ~OFFSET(gpio);
++	writel(val, gchip->base + PFR(gpio));
++
++	spin_unlock_irqrestore(&gchip->lock, flags);
++
++	return 0;
++}
++
++static void mb86s70_gpio_free(struct gpio_chip *gc, unsigned gpio)
++{
++	struct mb86s70_gpio_chip *gchip = chip_to_mb86s70(gc);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&gchip->lock, flags);
++
++	val = readl(gchip->base + PFR(gpio));
++	val |= OFFSET(gpio);
++	writel(val, gchip->base + PFR(gpio));
++
++	spin_unlock_irqrestore(&gchip->lock, flags);
++}
++
++static int mb86s70_gpio_direction_input(struct gpio_chip *gc, unsigned gpio)
++{
++	struct mb86s70_gpio_chip *gchip = chip_to_mb86s70(gc);
++	unsigned long flags;
++	unsigned char val;
++
++	spin_lock_irqsave(&gchip->lock, flags);
++
++	val = readl(gchip->base + DDR(gpio));
++	val &= ~OFFSET(gpio);
++	writel(val, gchip->base + DDR(gpio));
++
++	spin_unlock_irqrestore(&gchip->lock, flags);
++
++	return 0;
++}
++
++static int mb86s70_gpio_direction_output(struct gpio_chip *gc,
++					 unsigned gpio, int value)
++{
++	struct mb86s70_gpio_chip *gchip = chip_to_mb86s70(gc);
++	unsigned long flags;
++	unsigned char val;
++
++	spin_lock_irqsave(&gchip->lock, flags);
++
++	val = readl(gchip->base + PDR(gpio));
++	if (value)
++		val |= OFFSET(gpio);
++	else
++		val &= ~OFFSET(gpio);
++	writel(val, gchip->base + PDR(gpio));
++
++	val = readl(gchip->base + DDR(gpio));
++	val |= OFFSET(gpio);
++	writel(val, gchip->base + DDR(gpio));
++
++	spin_unlock_irqrestore(&gchip->lock, flags);
++
++	return 0;
++}
++
++static int mb86s70_gpio_get(struct gpio_chip *gc, unsigned gpio)
++{
++	struct mb86s70_gpio_chip *gchip = chip_to_mb86s70(gc);
++
++	return !!(readl(gchip->base + PDR(gpio)) & OFFSET(gpio));
++}
++
++static void mb86s70_gpio_set(struct gpio_chip *gc, unsigned gpio, int value)
++{
++	struct mb86s70_gpio_chip *gchip = chip_to_mb86s70(gc);
++	unsigned long flags;
++	unsigned char val;
++
++	spin_lock_irqsave(&gchip->lock, flags);
++
++	val = readl(gchip->base + PDR(gpio));
++	if (value)
++		val |= OFFSET(gpio);
++	else
++		val &= ~OFFSET(gpio);
++	writel(val, gchip->base + PDR(gpio));
++
++	spin_unlock_irqrestore(&gchip->lock, flags);
++}
++
++static int mb86s70_gpio_probe(struct platform_device *pdev)
++{
++	struct mb86s70_gpio_chip *gchip;
++	struct resource *res;
++	int ret;
++
++	gchip = devm_kzalloc(&pdev->dev, sizeof(*gchip), GFP_KERNEL);
++	if (gchip == NULL)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, gchip);
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	gchip->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(gchip->base))
++		return PTR_ERR(gchip->base);
++
++	gchip->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(gchip->clk))
++		return PTR_ERR(gchip->clk);
++
++	clk_prepare_enable(gchip->clk);
++
++	spin_lock_init(&gchip->lock);
++
++	gchip->gc.direction_output = mb86s70_gpio_direction_output;
++	gchip->gc.direction_input = mb86s70_gpio_direction_input;
++	gchip->gc.request = mb86s70_gpio_request;
++	gchip->gc.free = mb86s70_gpio_free;
++	gchip->gc.get = mb86s70_gpio_get;
++	gchip->gc.set = mb86s70_gpio_set;
++	gchip->gc.label = dev_name(&pdev->dev);
++	gchip->gc.ngpio = 32;
++	gchip->gc.owner = THIS_MODULE;
++	gchip->gc.dev = &pdev->dev;
++	gchip->gc.base = -1;
++
++	platform_set_drvdata(pdev, gchip);
++
++	ret = gpiochip_add(&gchip->gc);
++	if (ret) {
++		dev_err(&pdev->dev, "couldn't register gpio driver\n");
++		clk_disable_unprepare(gchip->clk);
++	}
++
++	return ret;
++}
++
++static int mb86s70_gpio_remove(struct platform_device *pdev)
++{
++	struct mb86s70_gpio_chip *gchip = platform_get_drvdata(pdev);
++
++	gpiochip_remove(&gchip->gc);
++
++	return 0;
++}
++
++static const struct of_device_id mb86s70_gpio_dt_ids[] = {
++	{ .compatible = "fujitsu,mb86s70-gpio" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, mb86s70_gpio_dt_ids);
++
++static struct platform_driver mb86s70_gpio_driver = {
++	.driver = {
++		.name = "mb86s70-gpio",
++		.of_match_table = mb86s70_gpio_dt_ids,
++	},
++	.probe = mb86s70_gpio_probe,
++	.remove = mb86s70_gpio_remove,
++};
++
++static int __init mb86s70_gpio_init(void)
++{
++	return platform_driver_register(&mb86s70_gpio_driver);
++}
++subsys_initcall(mb86s70_gpio_init);
++
++MODULE_DESCRIPTION("MB86S7x GPIO Driver");
++MODULE_ALIAS("platform:mb86s70-gpio");
++MODULE_LICENSE("GPL");
+-- 
+1.9.0
 
-> - Do you plan to use the sysfs interface? If so then we are screwed,
-> because there is no way to use it without using global GPIO numbers.
-
-I am now enabling GPIO in Hip04-d01. Maybe, I can just use
-the default ARCH_NR_GPIOS, then users can manage GPIO through sysfs.
-However if so, GPIO 0~127 will be mapped to GPIO 384~511.
-
-> This is something we should/will fix with named exported GPIOs, but w=
-e
-> are not here yet.
->
-> As to how we can solve your problem: if you must use GPIO integers
-> (because you need to use the sysfs interface for instance), and need
-> them affected consistently, the only way I can think of is to
-> introduce a "linux,gpio-base" property that will set gpiochip->base t=
-o
-> a fixed number. It still kind of sucks, but at least it will enforce
-
-Thanks for your suggestion. But setting "linux,gpio-base" will bring
-gpio base implementation specific, and in face there is no place to gai=
-n
-this gpio base info, not appropriate both in gpio arch code and dwapb
-code.
-
-Thanks again for your comments,
-Zhou Wang
-
-> that different controllers get the same base number reliably, and the
-> firmware is the best placed to know how many GPIOs each controller ha=
-s
-> and decide an appropriate layout.
->
-> I know we pushed back against this kind of solution in the past, but
-> it is still more reliable than having a property that affects how the
-> kernel's base finding function works, and will offer us a way to
-> eventually put ARCH_NR_GPIOS and gpiochip_find_base() to rest (at the
-> cost of backwards-compatibility, but we just cannot do without it).
-> Linus, do you agree?
->
-> In the medium term, we need to offer a solution for user-space to
-> *not* rely on GPIO numbers, and that will necessarily go through a ne=
-w
-> sysfs interface, since at the moment even GPIO chips use their base
-> number in their exported name.
->
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
