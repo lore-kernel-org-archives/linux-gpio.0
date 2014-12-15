@@ -1,119 +1,91 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 3/3] mfd: dln2: add suspend/resume functionality
-Date: Mon, 15 Dec 2014 12:43:02 +0100
-Message-ID: <20141215114302.GE6778@localhost>
-References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
- <1418302951-9309-4-git-send-email-octavian.purdila@intel.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC 01/15] drivers/base: add track framework
+Date: Mon, 15 Dec 2014 12:55:57 +0000
+Message-ID: <20141215125557.GB11764@sirena.org.uk>
+References: <548B7653.7020004@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jmbcokH0GrqI2Ucc"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1418302951-9309-4-git-send-email-octavian.purdila@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: linus.walleij@linaro.org, lee.jones@linaro.org, johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <548B7653.7020004@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: AH <najdrozszy@gmail.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, ARM/CLKDEV SUPPORT <linux-arm-kernel@lists.infradead.org>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, "ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Dec 11, 2014 at 03:02:31PM +0200, Octavian Purdila wrote:
-> Without suspend/resume functionality in the USB driver the USB core
-> will disconnect and reconnect the DLN2 port and because the GPIO
-> framework does not yet support removal of an in-use controller a
-> suspend/resume operation will result in a crash.
-> 
-> This patch provides suspend and resume functions for the DLN2 driver
-> so that the above scenario is avoided.
->
-> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
-> ---
->  drivers/mfd/dln2.c | 41 ++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 38 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-> index 6d49685..08c403c 100644
-> --- a/drivers/mfd/dln2.c
-> +++ b/drivers/mfd/dln2.c
-> @@ -587,7 +587,6 @@ static void dln2_free_rx_urbs(struct dln2_dev *dln2)
->  	int i;
->  
->  	for (i = 0; i < DLN2_MAX_URBS; i++) {
-> -		usb_kill_urb(dln2->rx_urb[i]);
->  		usb_free_urb(dln2->rx_urb[i]);
->  		kfree(dln2->rx_buf[i]);
->  	}
 
-Now dln2_free will no longer stop the urbs before releasing them and
-hence you can get a use after free in the error path of probe where
-dln2_free is called after you have submitted the urbs.
+--jmbcokH0GrqI2Ucc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please be more careful.
+On Sat, Dec 13, 2014 at 12:12:19AM +0100, AH wrote:
+> Mark Brown wrote on 12.12.2014 17:36:
+> >On Wed, Dec 10, 2014 at 04:48:19PM +0100, Andrzej Hajda wrote:
 
-Splitting allocation and submission (and reuse that helper in resume)
-and adding a stop_rx_urbs helper might be a good idea.
+> >>+		kfree(ptask);
+> >>+
+> >>+		if (empty)
+> >>+			break;
+> >>+
+> >>+		track_process_task(track, task);
 
-> @@ -665,9 +664,8 @@ static const struct mfd_cell dln2_devs[] = {
->  	},
->  };
->  
-> -static void dln2_disconnect(struct usb_interface *interface)
-> +static void dln2_stop(struct dln2_dev *dln2)
->  {
-> -	struct dln2_dev *dln2 = usb_get_intfdata(interface);
->  	int i, j;
->  
->  	/* don't allow starting new transfers */
-> @@ -696,6 +694,16 @@ static void dln2_disconnect(struct usb_interface *interface)
->  	/* wait for transfers to end */
->  	wait_event(dln2->disconnect_wq, !dln2->active_transfers);
->  
-> +	for (i = 0; i < DLN2_MAX_URBS; i++)
-> +		usb_kill_urb(dln2->rx_urb[i]);
-> +}
-> +
-> +static void dln2_disconnect(struct usb_interface *interface)
-> +{
-> +	struct dln2_dev *dln2 = usb_get_intfdata(interface);
-> +
-> +	dln2_stop(dln2);
-> +
->  	mfd_remove_devices(&interface->dev);
->  
->  	dln2_free(dln2);
-> @@ -767,11 +775,38 @@ static const struct usb_device_id dln2_table[] = {
->  
->  MODULE_DEVICE_TABLE(usb, dln2_table);
+> >...we then go and do some other stuff, including processing that task,
+> >without the lock or or any other means I can see of excluding other
+> >users before going round and removing the task.  This seems to leave us
+> >vulnerable to double execution.
 
-I believe I already asked you to place the new callbacks above the id
-table.
+> No, if you look at track_add_task function you will see that the queue is
+> processed only if it is initially empty, otherwise the task is only added=
+ to
+> the queue, so it will be processed after processing earlier tasks.
+> So the rule is that if someone add task to the queue it checks if the que=
+ue
+> is empty, in such case it process all tasks from the queue until
+> the queue becomes empty, even the tasks added by other processed.
+> This way all tasks are serialized.
 
-> +static int dln2_suspend(struct usb_interface *iface, pm_message_t message)
-> +{
-> +	struct dln2_dev *dln2 = usb_get_intfdata(iface);
-> +
-> +	dln2_stop(dln2);
-> +	return 0;
-> +}
-> +
-> +static int dln2_resume(struct usb_interface *iface)
-> +{
-> +	struct dln2_dev *dln2 = usb_get_intfdata(iface);
-> +	int i;
-> +	int ret = 0;
-> +
-> +	dln2->disconnect = false;
-> +
-> +	for (i = 0; i < DLN2_MAX_URBS; i++) {
-> +		ret = usb_submit_urb(dln2->rx_urb[i], GFP_KERNEL);
+This is all pretty fiddly and seems fragile - if nothing else the code
+seems undercommented since the above is only going to be apparent with
+following through multiple functions and we're relying on both owner and
+list emptiness with more than one place where a task can get processed.
 
-You cannot use GFP_KERNEL in resume, use GFP_NOIO.
+> >I'm also unclear what is supposed to happen if adding a notification
+> >races with removing the thing being watched.
 
-> +		if (ret)
+> The sequence should be always as follows:
+> 1. create thing, then call track_up(thing).
+> ...
+> 2. call track_down(thing) then remove thing.
 
-Add a dev_err here.
+> If we put 1 into probe and 2 into remove callback of the driver it will be
+> safe - we are synchronised by device_lock. But if, for some reason, we wa=
+nt
+> to create object after probe we should do own synchronization or just put
+> device_lock around 1. The same applies if we want to remove
+> object earlier. This is the comment above about. I will expand it to more
+> verbose explanation.
 
-> +			break;
-> +	}
-> +
-> +	return ret;
-> +}
+You can't rely on the device lock here since this isn't tied to kobjects
+or anything at all - it's a freestanding interface someone could pick up
+and use in another context.  Besides, that isn't really my concern - my
+concern is what happens if something asks to wait for=20
 
-Johan
+--jmbcokH0GrqI2Ucc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUjtpdAAoJECTWi3JdVIfQZ0QH/iMfDK/L9XpgMZHOWJDq1X3N
+HfV1l6yDxaz5H8Css3wMm4KFpVS39H5LIFxhijJdQmX15+F6rPqKnvKCvHb6A05b
+ZoXJoGPePUPOIXK7iivTO+WqhckHzpxDxJ7lghuOSb/40UOZRbvnfFUWIzB4cP+o
+4pvUfA1lckvXEuGc1ucMzQjzGmvahrxDWeK6Yha349tl1UDf5gTX9eA2LWLSvaHG
+++koEZ+F5LM4PM01lpMSdkCeTPmPrVlhes9SVtHZBk676AkSuxx2XGoUDcN3xaTE
+ttvbqHAfE7VtfcBbIB0mwwggl6iA96wKjwslINLQHO5ZXU9dUy0NOFqMtjUWgNk=
+=oZ29
+-----END PGP SIGNATURE-----
+
+--jmbcokH0GrqI2Ucc--
