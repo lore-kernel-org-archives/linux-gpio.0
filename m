@@ -1,30 +1,53 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6 0/3] Add gpio support to Broadcom Cygnus SoC
-Date: Tue, 16 Dec 2014 09:56:10 +0100
-Message-ID: <6058985.1pSGN9OVHq@wuerfel>
-References: <1418696307-19392-1-git-send-email-rjui@broadcom.com>
+From: Y Vo <yvo@apm.com>
+Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
+Date: Tue, 16 Dec 2014 16:43:02 +0700
+Message-ID: <CAL4ahLfSZjmqqbQ9Xmqae_AVfFZLiUUEN+rABMwiu2_8u4mmPQ@mail.gmail.com>
+References: <1412779948-28769-1-git-send-email-yvo@apm.com>
+ <2178918.XVCQXOyoGA@wuerfel>
+ <CAL4ahLeyPgska0AcgS756y1Nh2tEeJ4A4k4bTJrU0pzqgG08PA@mail.gmail.com>
+ <2250730.N6DdkCTXkh@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:56253 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750794AbaLPI5I (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 03:57:08 -0500
-In-Reply-To: <1418696307-19392-1-git-send-email-rjui@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <2250730.N6DdkCTXkh@wuerfel>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Phong Vo <pvo@apm.com>, Linus Walleij <linus.walleij@linaro.org>, patches <patches@apm.com>, Tin Huynh <tnhuynh@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Toan Le <toanle@apm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-On Monday 15 December 2014 18:18:24 Ray Jui wrote:
-> This patchset contains the initial GPIO support for the Broadcom Cygnus SoC.
-> Cygnus has 3 GPIO controllers: 1) the ASIU GPIO; 2) the chipCommonG GPIO;
-> and 3) the ALWAYS-ON GPIO. All 3 types of GPIO controllers are supported by
-> the same Cygnus GPIO driver
-> 
-> 
+On Wed, Oct 29, 2014 at 10:16 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wednesday 29 October 2014 22:09:00 Y Vo wrote:
+>> Hi Arnd,
+>>
+>> Per Linus, shall we hold this driver until the GIC submission complete
+>> ? Or we will send the version without access GIC to read status in
+>> case the GPIO is configured IRQ ?
+>
+> I'm fine with it either way.
+>
+>> +static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
+>> +{
+>> +       struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+>> +       struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
+>> +       u32 data;
+>> +
+>> +       data = ioread32(mm_gc->regs + MPA_GPIO_IN_ADDR);
+>> +
+>> +       return (data &  GPIO_MASK(gpio)) ? 1 : 0;
+>> +}
+>
+> This would be actually broken, right? Maybe it's better to change the
+> driver so that it refuses to map GPIO lines that are hardwired to
+> the interrupt controller, until we can support that.
 
-Looks good to me now.
-
-	Arnd
+It still works if they are configure as GPIO.
+Do you have any reference to resolve it ?
