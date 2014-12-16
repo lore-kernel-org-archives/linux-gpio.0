@@ -1,7 +1,7 @@
 From: Octavian Purdila <octavian.purdila@intel.com>
-Subject: [PATCH v2 1/4] gpio: dln2: fix issue when an IRQ is unmasked then enabled
-Date: Tue, 16 Dec 2014 17:57:12 +0200
-Message-ID: <1418745435-2851-2-git-send-email-octavian.purdila@intel.com>
+Subject: [PATCH v2 4/4] mfd: dln2: add suspend/resume functionality
+Date: Tue, 16 Dec 2014 17:57:15 +0200
+Message-ID: <1418745435-2851-5-git-send-email-octavian.purdila@intel.com>
 References: <1418745435-2851-1-git-send-email-octavian.purdila@intel.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1418745435-2851-1-git-send-email-octavian.purdila@intel.com>
@@ -10,126 +10,56 @@ To: linus.walleij@linaro.org, lee.jones@linaro.org
 Cc: johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-As noticed during suspend/resume operations, the IRQ can be unmasked
-then disabled in suspend and eventually enabled in resume, but without
-being unmasked.
+Without suspend/resume functionality in the USB driver the USB core
+will disconnect and reconnect the DLN2 port and because the GPIO
+framework does not yet support removal of an in-use controller a
+suspend/resume operation will result in a crash.
 
-The current implementation does not take into account interactions
-between mask/unmask and enable/disable interrupts, and thus in the
-above scenarios the IRQs remain unactive.
-
-To fix this we removed the enable/disable operations as they fallback
-to mask/unmask anyway.
-
-We also remove the pending bitmaks as it is already done in irq_data
-(i.e. IRQS_PENDING).
+This patch provides suspend and resume functions for the DLN2 driver
+so that the above scenario is avoided.
 
 Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
 ---
- drivers/gpio/gpio-dln2.c | 53 +++++++-----------------------------------------
- 1 file changed, 7 insertions(+), 46 deletions(-)
+ drivers/mfd/dln2.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/gpio/gpio-dln2.c b/drivers/gpio/gpio-dln2.c
-index 978b51e..28a62c4 100644
---- a/drivers/gpio/gpio-dln2.c
-+++ b/drivers/gpio/gpio-dln2.c
-@@ -64,9 +64,8 @@ struct dln2_gpio {
- 	 */
- 	DECLARE_BITMAP(output_enabled, DLN2_GPIO_MAX_PINS);
+diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+index 75358d2..f9c4a0b 100644
+--- a/drivers/mfd/dln2.c
++++ b/drivers/mfd/dln2.c
+@@ -791,6 +791,24 @@ out_free:
+ 	return ret;
+ }
  
--	DECLARE_BITMAP(irqs_masked, DLN2_GPIO_MAX_PINS);
--	DECLARE_BITMAP(irqs_enabled, DLN2_GPIO_MAX_PINS);
--	DECLARE_BITMAP(irqs_pending, DLN2_GPIO_MAX_PINS);
-+	/* active IRQs - not synced to hardware */
-+	DECLARE_BITMAP(unmasked_irqs, DLN2_GPIO_MAX_PINS);
- 	struct dln2_irq_work *irq_work;
++static int dln2_suspend(struct usb_interface *iface, pm_message_t message)
++{
++	struct dln2_dev *dln2 = usb_get_intfdata(iface);
++
++	dln2_stop(dln2);
++
++	return 0;
++}
++
++static int dln2_resume(struct usb_interface *iface)
++{
++	struct dln2_dev *dln2 = usb_get_intfdata(iface);
++
++	dln2->disconnect = false;
++
++	return dln2_start_rx_urbs(dln2, GFP_NOIO);
++}
++
+ static const struct usb_device_id dln2_table[] = {
+ 	{ USB_DEVICE(0xa257, 0x2013) },
+ 	{ }
+@@ -803,6 +821,8 @@ static struct usb_driver dln2_driver = {
+ 	.probe = dln2_probe,
+ 	.disconnect = dln2_disconnect,
+ 	.id_table = dln2_table,
++	.suspend = dln2_suspend,
++	.resume = dln2_resume,
  };
  
-@@ -303,29 +302,19 @@ static void dln2_irq_work(struct work_struct *w)
- 	struct dln2_gpio *dln2 = iw->dln2;
- 	u8 type = iw->type & DLN2_GPIO_EVENT_MASK;
- 
--	if (test_bit(iw->pin, dln2->irqs_enabled))
-+	if (test_bit(iw->pin, dln2->unmasked_irqs))
- 		dln2_gpio_set_event_cfg(dln2, iw->pin, type, 0);
- 	else
- 		dln2_gpio_set_event_cfg(dln2, iw->pin, DLN2_GPIO_EVENT_NONE, 0);
- }
- 
--static void dln2_irq_enable(struct irq_data *irqd)
--{
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
--	struct dln2_gpio *dln2 = container_of(gc, struct dln2_gpio, gpio);
--	int pin = irqd_to_hwirq(irqd);
--
--	set_bit(pin, dln2->irqs_enabled);
--	schedule_work(&dln2->irq_work[pin].work);
--}
--
--static void dln2_irq_disable(struct irq_data *irqd)
-+static void dln2_irq_unmask(struct irq_data *irqd)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
- 	struct dln2_gpio *dln2 = container_of(gc, struct dln2_gpio, gpio);
- 	int pin = irqd_to_hwirq(irqd);
- 
--	clear_bit(pin, dln2->irqs_enabled);
-+	set_bit(pin, dln2->unmasked_irqs);
- 	schedule_work(&dln2->irq_work[pin].work);
- }
- 
-@@ -335,27 +324,8 @@ static void dln2_irq_mask(struct irq_data *irqd)
- 	struct dln2_gpio *dln2 = container_of(gc, struct dln2_gpio, gpio);
- 	int pin = irqd_to_hwirq(irqd);
- 
--	set_bit(pin, dln2->irqs_masked);
--}
--
--static void dln2_irq_unmask(struct irq_data *irqd)
--{
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
--	struct dln2_gpio *dln2 = container_of(gc, struct dln2_gpio, gpio);
--	struct device *dev = dln2->gpio.dev;
--	int pin = irqd_to_hwirq(irqd);
--
--	if (test_and_clear_bit(pin, dln2->irqs_pending)) {
--		int irq;
--
--		irq = irq_find_mapping(dln2->gpio.irqdomain, pin);
--		if (!irq) {
--			dev_err(dev, "pin %d not mapped to IRQ\n", pin);
--			return;
--		}
--
--		generic_handle_irq(irq);
--	}
-+	clear_bit(pin, dln2->unmasked_irqs);
-+	schedule_work(&dln2->irq_work[pin].work);
- }
- 
- static int dln2_irq_set_type(struct irq_data *irqd, unsigned type)
-@@ -389,8 +359,6 @@ static int dln2_irq_set_type(struct irq_data *irqd, unsigned type)
- 
- static struct irq_chip dln2_gpio_irqchip = {
- 	.name = "dln2-irq",
--	.irq_enable = dln2_irq_enable,
--	.irq_disable = dln2_irq_disable,
- 	.irq_mask = dln2_irq_mask,
- 	.irq_unmask = dln2_irq_unmask,
- 	.irq_set_type = dln2_irq_set_type,
-@@ -425,13 +393,6 @@ static void dln2_gpio_event(struct platform_device *pdev, u16 echo,
- 		return;
- 	}
- 
--	if (!test_bit(pin, dln2->irqs_enabled))
--		return;
--	if (test_bit(pin, dln2->irqs_masked)) {
--		set_bit(pin, dln2->irqs_pending);
--		return;
--	}
--
- 	switch (dln2->irq_work[pin].type) {
- 	case DLN2_GPIO_EVENT_CHANGE_RISING:
- 		if (event->value)
+ module_usb_driver(dln2_driver);
 -- 
 1.9.1
