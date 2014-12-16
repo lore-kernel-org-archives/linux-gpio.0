@@ -1,226 +1,45 @@
-From: Kamlakant Patel <kamlakant.patel@linaro.org>
-Subject: Re: [PATCH v1 1/5] gpio: moxart: convert to use basic mmio gpio library
-Date: Tue, 16 Dec 2014 10:47:33 +0530
-Message-ID: <CA+aN+ysw1UUwMHLFvZrr1smrHmPtSVmmdJ+n5XyMukGHAmhuSg@mail.gmail.com>
-References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
-	<1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
-	<CAAVeFuLHjxTi+OyT2aV4u0BG3_2b9X2JxhD+sW+cU2MUvpWTMQ@mail.gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: sx150x: Fix comparing wrong value with
+ chip->irq_masked
+Date: Tue, 16 Dec 2014 14:22:27 +0800
+Message-ID: <1418710947.23043.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:49134 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750754AbaLPFRf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 00:17:35 -0500
-Received: by mail-la0-f48.google.com with SMTP id gf13so10405535lab.7
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Dec 2014 21:17:33 -0800 (PST)
-In-Reply-To: <CAAVeFuLHjxTi+OyT2aV4u0BG3_2b9X2JxhD+sW+cU2MUvpWTMQ@mail.gmail.com>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:49388 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750813AbaLPGWc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 01:22:32 -0500
+Received: by mail-pa0-f45.google.com with SMTP id lf10so12883613pab.32
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Dec 2014 22:22:32 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Gregory Bean <gbean@codeaurora.org>
 
-Hi Alexandre,
+Fix a copy-paste bug.
 
-On 4 December 2014 at 14:47, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
->> From: Kamlakant Patel <kamlakant.patel@linaro.org>
->>
->> This patch converts MOXART GPIO driver to use basic_mmio_gpio
->> generic library.
->>
->> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
->> Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
->> ---
->>  drivers/gpio/Kconfig       |   1 +
->>  drivers/gpio/gpio-moxart.c | 101 ++++++++++++++-------------------------------
->>  2 files changed, 32 insertions(+), 70 deletions(-)
->>
->> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->> index 0959ca9..3bd4d63 100644
->> --- a/drivers/gpio/Kconfig
->> +++ b/drivers/gpio/Kconfig
->> @@ -184,6 +184,7 @@ config GPIO_F7188X
->>  config GPIO_MOXART
->>         bool "MOXART GPIO support"
->>         depends on ARCH_MOXART
->> +       select GPIO_GENERIC
->>         help
->>           Select this option to enable GPIO driver for
->>           MOXA ART SoC devices.
->> diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
->> index 4661e18..122958f 100644
->> --- a/drivers/gpio/gpio-moxart.c
->> +++ b/drivers/gpio/gpio-moxart.c
->> @@ -23,21 +23,12 @@
->>  #include <linux/delay.h>
->>  #include <linux/timer.h>
->>  #include <linux/bitops.h>
->> +#include <linux/basic_mmio_gpio.h>
->>
->>  #define GPIO_DATA_OUT          0x00
->>  #define GPIO_DATA_IN           0x04
->>  #define GPIO_PIN_DIRECTION     0x08
->>
->> -struct moxart_gpio_chip {
->> -       struct gpio_chip gpio;
->> -       void __iomem *base;
->> -};
->> -
->> -static inline struct moxart_gpio_chip *to_moxart_gpio(struct gpio_chip *chip)
->> -{
->> -       return container_of(chip, struct moxart_gpio_chip, gpio);
->> -}
->> -
->>  static int moxart_gpio_request(struct gpio_chip *chip, unsigned offset)
->>  {
->>         return pinctrl_request_gpio(offset);
->> @@ -48,90 +39,60 @@ static void moxart_gpio_free(struct gpio_chip *chip, unsigned offset)
->>         pinctrl_free_gpio(offset);
->>  }
->>
->> -static void moxart_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
->> -{
->> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
->> -       void __iomem *ioaddr = gc->base + GPIO_DATA_OUT;
->> -       u32 reg = readl(ioaddr);
->> -
->> -       if (value)
->> -               reg = reg | BIT(offset);
->> -       else
->> -               reg = reg & ~BIT(offset);
->> -
->> -       writel(reg, ioaddr);
->> -}
->> -
->>  static int moxart_gpio_get(struct gpio_chip *chip, unsigned offset)
->>  {
->> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
->> -       u32 ret = readl(gc->base + GPIO_PIN_DIRECTION);
->> +       struct bgpio_chip *bgc = to_bgpio_chip(chip);
->> +       u32 ret = bgc->read_reg(bgc->reg_dir);
->>
->>         if (ret & BIT(offset))
->> -               return !!(readl(gc->base + GPIO_DATA_OUT) & BIT(offset));
->> +               return !!(bgc->read_reg(bgc->reg_set) & BIT(offset));
->>         else
->> -               return !!(readl(gc->base + GPIO_DATA_IN) & BIT(offset));
->> -}
->> -
->> -static int moxart_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
->> -{
->> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
->> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
->> -
->> -       writel(readl(ioaddr) & ~BIT(offset), ioaddr);
->> -       return 0;
->> -}
->> -
->> -static int moxart_gpio_direction_output(struct gpio_chip *chip,
->> -                                       unsigned offset, int value)
->> -{
->> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
->> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
->> -
->> -       moxart_gpio_set(chip, offset, value);
->> -       writel(readl(ioaddr) | BIT(offset), ioaddr);
->> -       return 0;
->> +               return !!(bgc->read_reg(bgc->reg_dat) & BIT(offset));
->>  }
->>
->> -static struct gpio_chip moxart_template_chip = {
->> -       .label                  = "moxart-gpio",
->> -       .request                = moxart_gpio_request,
->> -       .free                   = moxart_gpio_free,
->> -       .direction_input        = moxart_gpio_direction_input,
->> -       .direction_output       = moxart_gpio_direction_output,
->> -       .set                    = moxart_gpio_set,
->> -       .get                    = moxart_gpio_get,
->> -       .ngpio                  = 32,
->> -       .owner                  = THIS_MODULE,
->> -};
->> -
->>  static int moxart_gpio_probe(struct platform_device *pdev)
->>  {
->>         struct device *dev = &pdev->dev;
->>         struct resource *res;
->> -       struct moxart_gpio_chip *mgc;
->> +       struct bgpio_chip *bgc;
->> +       void __iomem *base;
->>         int ret;
->>
->> -       mgc = devm_kzalloc(dev, sizeof(*mgc), GFP_KERNEL);
->> -       if (!mgc)
->> +       bgc = devm_kzalloc(dev, sizeof(*bgc), GFP_KERNEL);
->> +       if (!bgc)
->>                 return -ENOMEM;
->> -       mgc->gpio = moxart_template_chip;
->>
->>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> -       mgc->base = devm_ioremap_resource(dev, res);
->> -       if (IS_ERR(mgc->base))
->> -               return PTR_ERR(mgc->base);
->> +       base = devm_ioremap_resource(dev, res);
->> +       if (IS_ERR(base))
->> +               return PTR_ERR(base);
->>
->> -       mgc->gpio.dev = dev;
->> +       ret = bgpio_init(bgc, dev, 4, base + GPIO_DATA_IN,
->> +                   base + GPIO_DATA_OUT, NULL,
->> +                   base + GPIO_PIN_DIRECTION, NULL, 0);
->> +       if (ret) {
->> +               dev_err(&pdev->dev, "bgpio_init failed\n");
->> +               return ret;
->> +       }
->>
->> -       ret = gpiochip_add(&mgc->gpio);
->> +       bgc->gc.label = "moxart-gpio";
->> +       bgc->gc.request = moxart_gpio_request;
->> +       bgc->gc.free = moxart_gpio_free;
->> +       bgc->gc.get = moxart_gpio_get;
->> +       bgc->data = bgc->read_reg(bgc->reg_set);
->> +       bgc->gc.base = 0;
->
-> Do we actually want all instances of this driver to clain GPIOs 0..31?
->
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-sx150x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is what I got from Jonas in previous discussion:
-...
-Thanks, it works, tested on UC-7112-LX hardware.
+diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
+index bce6c61..6e37257 100644
+--- a/drivers/gpio/gpio-sx150x.c
++++ b/drivers/gpio/gpio-sx150x.c
+@@ -401,7 +401,7 @@ static void sx150x_irq_bus_sync_unlock(struct irq_data *d)
+ 
+ 	/* Avoid updates if nothing changed */
+ 	if (chip->dev_sense == chip->irq_sense &&
+-	    chip->dev_sense == chip->irq_masked)
++	    chip->dev_masked == chip->irq_masked)
+ 		goto out;
+ 
+ 	chip->dev_sense = chip->irq_sense;
+-- 
+1.9.1
 
-I have one additional nit..
 
-The GPIO base number is implicitly changed from 0 to 224
-(ARCH_NR_GPIOS (256) - ngpio (32)) which happen because of
-bgpio_init() (it sets base -1 / gpiochip_find_base() on
-gpiochip_add()). Which is confusing since the valid range (from user
-space) used to be 0-31. So on export we now get:
 
-[root@zurkon ~]# echo 24 > /sys/class/gpio/export
-    [   61.640000] gpio-24 (?): gpiod_request: status -517
-    [   61.650000] export_store: status -19
-
-I see other drivers explicitly set base after bgpio_init(), my
-suggestion is that we do the same here e.g. :
-
-> +       bgc->gc.label = "moxart-gpio";
-> +       bgc->gc.request = moxart_gpio_request;
-> +       bgc->gc.free = moxart_gpio_free;
-> +       bgc->gc.get = moxart_gpio_get;
-> +       bgc->data = bgc->read_reg(bgc->reg_set);
-> +       bgc->gc.ngpio = 32;
-> +       bgc->gc.dev = dev;
-> +       bgc->gc.owner = THIS_MODULE;
-
-bgc->gc.base = 0;
-
-Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
-...
-> If so,
->
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
->
-> Since this patch greatly simplifies the code and has been properly tested.
-
-Thanks,
-Kamlakant Patel
