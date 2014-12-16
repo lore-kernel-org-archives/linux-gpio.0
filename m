@@ -1,45 +1,30 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: sx150x: Fix comparing wrong value with
- chip->irq_masked
-Date: Tue, 16 Dec 2014 14:22:27 +0800
-Message-ID: <1418710947.23043.1.camel@phoenix>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6 0/3] Add gpio support to Broadcom Cygnus SoC
+Date: Tue, 16 Dec 2014 09:56:10 +0100
+Message-ID: <6058985.1pSGN9OVHq@wuerfel>
+References: <1418696307-19392-1-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:49388 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750813AbaLPGWc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 01:22:32 -0500
-Received: by mail-pa0-f45.google.com with SMTP id lf10so12883613pab.32
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Dec 2014 22:22:32 -0800 (PST)
+Received: from mout.kundenserver.de ([212.227.126.131]:56253 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750794AbaLPI5I (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 03:57:08 -0500
+In-Reply-To: <1418696307-19392-1-git-send-email-rjui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Gregory Bean <gbean@codeaurora.org>
+To: Ray Jui <rjui@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-Fix a copy-paste bug.
+On Monday 15 December 2014 18:18:24 Ray Jui wrote:
+> This patchset contains the initial GPIO support for the Broadcom Cygnus SoC.
+> Cygnus has 3 GPIO controllers: 1) the ASIU GPIO; 2) the chipCommonG GPIO;
+> and 3) the ALWAYS-ON GPIO. All 3 types of GPIO controllers are supported by
+> the same Cygnus GPIO driver
+> 
+> 
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-sx150x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good to me now.
 
-diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
-index bce6c61..6e37257 100644
---- a/drivers/gpio/gpio-sx150x.c
-+++ b/drivers/gpio/gpio-sx150x.c
-@@ -401,7 +401,7 @@ static void sx150x_irq_bus_sync_unlock(struct irq_data *d)
- 
- 	/* Avoid updates if nothing changed */
- 	if (chip->dev_sense == chip->irq_sense &&
--	    chip->dev_sense == chip->irq_masked)
-+	    chip->dev_masked == chip->irq_masked)
- 		goto out;
- 
- 	chip->dev_sense = chip->irq_sense;
--- 
-1.9.1
-
-
-
+	Arnd
