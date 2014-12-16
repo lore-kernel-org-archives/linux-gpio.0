@@ -1,114 +1,226 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: [PATCH v6 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
-Date: Mon, 15 Dec 2014 18:18:25 -0800
-Message-ID: <1418696307-19392-2-git-send-email-rjui@broadcom.com>
-References: <Ray Jui <rjui@broadcom.com>
- <1418696307-19392-1-git-send-email-rjui@broadcom.com>
+From: Kamlakant Patel <kamlakant.patel@linaro.org>
+Subject: Re: [PATCH v1 1/5] gpio: moxart: convert to use basic mmio gpio library
+Date: Tue, 16 Dec 2014 10:47:33 +0530
+Message-ID: <CA+aN+ysw1UUwMHLFvZrr1smrHmPtSVmmdJ+n5XyMukGHAmhuSg@mail.gmail.com>
+References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
+	<1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
+	<CAAVeFuLHjxTi+OyT2aV4u0BG3_2b9X2JxhD+sW+cU2MUvpWTMQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1418696307-19392-1-git-send-email-rjui@broadcom.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, Ray Jui <rjui@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f48.google.com ([209.85.215.48]:49134 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754AbaLPFRf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 00:17:35 -0500
+Received: by mail-la0-f48.google.com with SMTP id gf13so10405535lab.7
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Dec 2014 21:17:33 -0800 (PST)
+In-Reply-To: <CAAVeFuLHjxTi+OyT2aV4u0BG3_2b9X2JxhD+sW+cU2MUvpWTMQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Document the GPIO device tree binding for Broadcom Cygnus SoC
+Hi Alexandre,
 
-Signed-off-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
----
- .../devicetree/bindings/gpio/brcm,cygnus-gpio.txt  |   82 ++++++++++++++++++++
- 1 file changed, 82 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt
+On 4 December 2014 at 14:47, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
+>> From: Kamlakant Patel <kamlakant.patel@linaro.org>
+>>
+>> This patch converts MOXART GPIO driver to use basic_mmio_gpio
+>> generic library.
+>>
+>> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
+>> Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
+>> ---
+>>  drivers/gpio/Kconfig       |   1 +
+>>  drivers/gpio/gpio-moxart.c | 101 ++++++++++++++-------------------------------
+>>  2 files changed, 32 insertions(+), 70 deletions(-)
+>>
+>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>> index 0959ca9..3bd4d63 100644
+>> --- a/drivers/gpio/Kconfig
+>> +++ b/drivers/gpio/Kconfig
+>> @@ -184,6 +184,7 @@ config GPIO_F7188X
+>>  config GPIO_MOXART
+>>         bool "MOXART GPIO support"
+>>         depends on ARCH_MOXART
+>> +       select GPIO_GENERIC
+>>         help
+>>           Select this option to enable GPIO driver for
+>>           MOXA ART SoC devices.
+>> diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
+>> index 4661e18..122958f 100644
+>> --- a/drivers/gpio/gpio-moxart.c
+>> +++ b/drivers/gpio/gpio-moxart.c
+>> @@ -23,21 +23,12 @@
+>>  #include <linux/delay.h>
+>>  #include <linux/timer.h>
+>>  #include <linux/bitops.h>
+>> +#include <linux/basic_mmio_gpio.h>
+>>
+>>  #define GPIO_DATA_OUT          0x00
+>>  #define GPIO_DATA_IN           0x04
+>>  #define GPIO_PIN_DIRECTION     0x08
+>>
+>> -struct moxart_gpio_chip {
+>> -       struct gpio_chip gpio;
+>> -       void __iomem *base;
+>> -};
+>> -
+>> -static inline struct moxart_gpio_chip *to_moxart_gpio(struct gpio_chip *chip)
+>> -{
+>> -       return container_of(chip, struct moxart_gpio_chip, gpio);
+>> -}
+>> -
+>>  static int moxart_gpio_request(struct gpio_chip *chip, unsigned offset)
+>>  {
+>>         return pinctrl_request_gpio(offset);
+>> @@ -48,90 +39,60 @@ static void moxart_gpio_free(struct gpio_chip *chip, unsigned offset)
+>>         pinctrl_free_gpio(offset);
+>>  }
+>>
+>> -static void moxart_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+>> -{
+>> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
+>> -       void __iomem *ioaddr = gc->base + GPIO_DATA_OUT;
+>> -       u32 reg = readl(ioaddr);
+>> -
+>> -       if (value)
+>> -               reg = reg | BIT(offset);
+>> -       else
+>> -               reg = reg & ~BIT(offset);
+>> -
+>> -       writel(reg, ioaddr);
+>> -}
+>> -
+>>  static int moxart_gpio_get(struct gpio_chip *chip, unsigned offset)
+>>  {
+>> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
+>> -       u32 ret = readl(gc->base + GPIO_PIN_DIRECTION);
+>> +       struct bgpio_chip *bgc = to_bgpio_chip(chip);
+>> +       u32 ret = bgc->read_reg(bgc->reg_dir);
+>>
+>>         if (ret & BIT(offset))
+>> -               return !!(readl(gc->base + GPIO_DATA_OUT) & BIT(offset));
+>> +               return !!(bgc->read_reg(bgc->reg_set) & BIT(offset));
+>>         else
+>> -               return !!(readl(gc->base + GPIO_DATA_IN) & BIT(offset));
+>> -}
+>> -
+>> -static int moxart_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+>> -{
+>> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
+>> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
+>> -
+>> -       writel(readl(ioaddr) & ~BIT(offset), ioaddr);
+>> -       return 0;
+>> -}
+>> -
+>> -static int moxart_gpio_direction_output(struct gpio_chip *chip,
+>> -                                       unsigned offset, int value)
+>> -{
+>> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
+>> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
+>> -
+>> -       moxart_gpio_set(chip, offset, value);
+>> -       writel(readl(ioaddr) | BIT(offset), ioaddr);
+>> -       return 0;
+>> +               return !!(bgc->read_reg(bgc->reg_dat) & BIT(offset));
+>>  }
+>>
+>> -static struct gpio_chip moxart_template_chip = {
+>> -       .label                  = "moxart-gpio",
+>> -       .request                = moxart_gpio_request,
+>> -       .free                   = moxart_gpio_free,
+>> -       .direction_input        = moxart_gpio_direction_input,
+>> -       .direction_output       = moxart_gpio_direction_output,
+>> -       .set                    = moxart_gpio_set,
+>> -       .get                    = moxart_gpio_get,
+>> -       .ngpio                  = 32,
+>> -       .owner                  = THIS_MODULE,
+>> -};
+>> -
+>>  static int moxart_gpio_probe(struct platform_device *pdev)
+>>  {
+>>         struct device *dev = &pdev->dev;
+>>         struct resource *res;
+>> -       struct moxart_gpio_chip *mgc;
+>> +       struct bgpio_chip *bgc;
+>> +       void __iomem *base;
+>>         int ret;
+>>
+>> -       mgc = devm_kzalloc(dev, sizeof(*mgc), GFP_KERNEL);
+>> -       if (!mgc)
+>> +       bgc = devm_kzalloc(dev, sizeof(*bgc), GFP_KERNEL);
+>> +       if (!bgc)
+>>                 return -ENOMEM;
+>> -       mgc->gpio = moxart_template_chip;
+>>
+>>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> -       mgc->base = devm_ioremap_resource(dev, res);
+>> -       if (IS_ERR(mgc->base))
+>> -               return PTR_ERR(mgc->base);
+>> +       base = devm_ioremap_resource(dev, res);
+>> +       if (IS_ERR(base))
+>> +               return PTR_ERR(base);
+>>
+>> -       mgc->gpio.dev = dev;
+>> +       ret = bgpio_init(bgc, dev, 4, base + GPIO_DATA_IN,
+>> +                   base + GPIO_DATA_OUT, NULL,
+>> +                   base + GPIO_PIN_DIRECTION, NULL, 0);
+>> +       if (ret) {
+>> +               dev_err(&pdev->dev, "bgpio_init failed\n");
+>> +               return ret;
+>> +       }
+>>
+>> -       ret = gpiochip_add(&mgc->gpio);
+>> +       bgc->gc.label = "moxart-gpio";
+>> +       bgc->gc.request = moxart_gpio_request;
+>> +       bgc->gc.free = moxart_gpio_free;
+>> +       bgc->gc.get = moxart_gpio_get;
+>> +       bgc->data = bgc->read_reg(bgc->reg_set);
+>> +       bgc->gc.base = 0;
+>
+> Do we actually want all instances of this driver to clain GPIOs 0..31?
+>
 
-diff --git a/Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt b/Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt
-new file mode 100644
-index 0000000..dca322a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/brcm,cygnus-gpio.txt
-@@ -0,0 +1,82 @@
-+Broadcom Cygnus GPIO Controller
-+
-+Required properties:
-+
-+- compatible:
-+    Must be "brcm,cygnus-gpio"
-+
-+- reg:
-+    Define the base and range of the I/O address space that contain the Cygnus
-+GPIO controller registers
-+
-+- ngpios:
-+    Total number of GPIOs the controller provides
-+
-+- #gpio-cells:
-+    Must be two. The first cell is the GPIO pin number (within the
-+controller's domain) and the second cell is used for the following:
-+    bit[0]: polarity (0 for normal and 1 for inverted)
-+    bit[18:16]: internal pull up/down: 0 - pull up/down disabled
-+                                       1 - pull up enabled
-+                                       2 - pull down enabled
-+    bit[22:20]: drive strength: 0 - 2 mA
-+                                1 - 4 mA
-+                                2 - 6 mA
-+                                3 - 8 mA
-+                                4 - 10 mA
-+                                5 - 12 mA
-+                                6 - 14 mA
-+                                7 - 16 mA
-+
-+- gpio-controller:
-+    Specifies that the node is a GPIO controller
-+
-+Optional properties:
-+
-+- interrupt-controller:
-+    Specifies that the node is an interrupt controller. Not all Cygnus GPIO
-+interfaces support interrupt, e.g., the CRMU GPIO controller does not have its
-+interrupt routed to the main processor's GIC
-+
-+- interrupts:
-+    The interrupt outputs from the GPIO controller.
-+
-+- no-drv-strength:
-+    Specifies the GPIO controller does not support drive strength configuration
-+
-+Example:
-+	gpio_asiu: gpio@180a5000 {
-+		compatible = "brcm,cygnus-gpio";
-+		reg = <0x180a5000 0x668>;
-+		ngpios = <122>;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		interrupt-controller;
-+		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpio_crmu: gpio@03024800 {
-+		compatible = "brcm,cygnus-gpio";
-+		reg = <0x03024800 0x50>;
-+		ngpios = <6>;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		no-drv-strength;
-+	};
-+
-+	/*
-+	 * Touchscreen that uses the ASIU GPIO 100, with internal pull-up
-+	 * enabled
-+	 */
-+	tsc {
-+		...
-+		...
-+		gpio-event = <&gpio_asiu 100 0x10000>;
-+	};
-+
-+	/* Bluetooth that uses the CRMU GPIO 2, with polarity inverted */
-+	bluetooth {
-+		...
-+		...
-+		bcm,rfkill-bank-sel = <&gpio_crmu 2 1>
-+	}
--- 
-1.7.9.5
+Here is what I got from Jonas in previous discussion:
+...
+Thanks, it works, tested on UC-7112-LX hardware.
+
+I have one additional nit..
+
+The GPIO base number is implicitly changed from 0 to 224
+(ARCH_NR_GPIOS (256) - ngpio (32)) which happen because of
+bgpio_init() (it sets base -1 / gpiochip_find_base() on
+gpiochip_add()). Which is confusing since the valid range (from user
+space) used to be 0-31. So on export we now get:
+
+[root@zurkon ~]# echo 24 > /sys/class/gpio/export
+    [   61.640000] gpio-24 (?): gpiod_request: status -517
+    [   61.650000] export_store: status -19
+
+I see other drivers explicitly set base after bgpio_init(), my
+suggestion is that we do the same here e.g. :
+
+> +       bgc->gc.label = "moxart-gpio";
+> +       bgc->gc.request = moxart_gpio_request;
+> +       bgc->gc.free = moxart_gpio_free;
+> +       bgc->gc.get = moxart_gpio_get;
+> +       bgc->data = bgc->read_reg(bgc->reg_set);
+> +       bgc->gc.ngpio = 32;
+> +       bgc->gc.dev = dev;
+> +       bgc->gc.owner = THIS_MODULE;
+
+bgc->gc.base = 0;
+
+Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
+...
+> If so,
+>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+>
+> Since this patch greatly simplifies the code and has been properly tested.
+
+Thanks,
+Kamlakant Patel
