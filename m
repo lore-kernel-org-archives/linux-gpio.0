@@ -1,46 +1,67 @@
-From: Daniel Baluta <daniel.baluta@intel.com>
-Subject: Re: [PATCH RFT] gpio: dln2: Fix gpio output value in dln2_gpio_direction_output()
-Date: Tue, 16 Dec 2014 18:52:45 +0200
-Message-ID: <5490635D.6040305@intel.com>
-References: <1418740800.10278.1.camel@phoenix>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 1/4] ACPICA: take ACPI_MTX_INTERPRETER in acpi_unload_table_id
+Date: Tue, 16 Dec 2014 21:14:14 +0300
+Message-ID: <54907676.4050108@cogentembedded.com>
+References: <1418746353-3481-1-git-send-email-octavian.purdila@intel.com> <1418746353-3481-2-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:26560 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750950AbaLPQ4l (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 16 Dec 2014 11:56:41 -0500
-In-Reply-To: <1418740800.10278.1.camel@phoenix>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1418746353-3481-2-git-send-email-octavian.purdila@intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>, linus.walleij@linaro.org, lee.jones@linaro.org, rjw@rjwysocki.net
+Cc: johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, heikki.krogerus@intel.com, mika.westerberg@linux.intel.com, linux-acpi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Octavian Purdila <octavian.purdila@intel.com>, "Palcu, Laurentiu" <laurentiu.palcu@intel.com>
 
+Hello.
 
+On 12/16/2014 07:12 PM, Octavian Purdila wrote:
 
-On 12/16/2014 04:40 PM, Axel Lin wrote:
-> dln2_gpio_direction_output() ignored the state passed into it. Fix it.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> acpi_tb_delete_namespace_by_owner expects ACPI_MTX_INTERPRETER to be
+> taken. This fixes the following issue:
 
-Tested-by: Daniel Baluta <daniel.baluta@intel.com>
+> ACPI Error: Mutex [0x0] is not acquired, cannot release (20141107/utmutex-322)
+> Call Trace:
+>    [<ffffffff81b0bd28>] dump_stack+0x4f/0x7b
+>    [<ffffffff81546bfc>] acpi_ut_release_mutex+0x47/0x67
+>    [<ffffffff81542cf1>] acpi_tb_delete_namespace_by_owner+0x57/0x8d
+>    [<ffffffff81543ef1>] acpi_unload_table_id+0x3a/0x5e
 
+> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
 > ---
-> I don't have this hardware handy, so only compile test.
->   drivers/gpio/gpio-dln2.c | 1 +
->   1 file changed, 1 insertion(+)
+>   drivers/acpi/acpica/tbxface.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+
+> diff --git a/drivers/acpi/acpica/tbxface.c b/drivers/acpi/acpica/tbxface.c
+> index 6482b0d..9520ae1 100644
+> --- a/drivers/acpi/acpica/tbxface.c
+> +++ b/drivers/acpi/acpica/tbxface.c
+> @@ -281,6 +281,11 @@ acpi_status acpi_unload_table_id(acpi_owner_id id)
 >
-> diff --git a/drivers/gpio/gpio-dln2.c b/drivers/gpio/gpio-dln2.c
-> index 978b51e..1434844 100644
-> --- a/drivers/gpio/gpio-dln2.c
-> +++ b/drivers/gpio/gpio-dln2.c
-> @@ -267,6 +267,7 @@ static int dln2_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
->   static int dln2_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
->   				      int value)
->   {
-> +	dln2_gpio_set(chip, offset, value);
->   	return dln2_gpio_set_direction(chip, offset, DLN2_GPIO_DIRECTION_OUT);
->   }
+>   	ACPI_FUNCTION_TRACE(acpi_unload_table_id);
 >
->
+> +	status = acpi_ut_acquire_mutex(ACPI_MTX_INTERPRETER);
+> +	if (ACPI_FAILURE(status)) {
+> +		return_ACPI_STATUS(status);
+> +	}
+
+    {} not needed here. Please run your patches thru scripts/checkpatch.pl, it 
+should complain in this case.
+
+> +
+>   	/* Find table in the global table list */
+>   	for (i = 0; i < acpi_gbl_root_table_list.current_table_count; ++i) {
+>   		if (id != acpi_gbl_root_table_list.tables[i].owner_id) {
+> @@ -297,6 +302,8 @@ acpi_status acpi_unload_table_id(acpi_owner_id id)
+>   		acpi_tb_set_table_loaded_flag(i, FALSE);
+>   		break;
+>   	}
+> +
+> +	(void)acpi_ut_release_mutex(ACPI_MTX_INTERPRETER);
+
+    Cast to *void*  not necessary either.
+
+[...]
+
+WBR, Sergei
+
