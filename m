@@ -1,42 +1,57 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v1 1/3] gpio: Add APM X-Gene standby GPIO controller driver
-Date: Tue, 16 Dec 2014 10:56:16 +0100
-Message-ID: <1878846.YCCkHOWfdd@wuerfel>
-References: <1412779948-28769-1-git-send-email-yvo@apm.com> <2250730.N6DdkCTXkh@wuerfel> <CAL4ahLfSZjmqqbQ9Xmqae_AVfFZLiUUEN+rABMwiu2_8u4mmPQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH] pinctrl: consumer: use correct retval for placeholder functions
+Date: Tue, 16 Dec 2014 10:59:17 +0100
+Message-ID: <1418723959-10253-1-git-send-email-wsa@the-dreams.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:57544 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750866AbaLPJ41 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 04:56:27 -0500
-In-Reply-To: <CAL4ahLfSZjmqqbQ9Xmqae_AVfFZLiUUEN+rABMwiu2_8u4mmPQ@mail.gmail.com>
+Received: from sauhun.de ([89.238.76.85]:57761 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750974AbaLPJ7l (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 16 Dec 2014 04:59:41 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Y Vo <yvo@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Tin Huynh <tnhuynh@apm.com>, patches <patches@apm.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
 
-On Tuesday 16 December 2014 16:43:02 Y Vo wrote:
-> >> +static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
-> >> +{
-> >> +       struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> >> +       struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
-> >> +       u32 data;
-> >> +
-> >> +       data = ioread32(mm_gc->regs + MPA_GPIO_IN_ADDR);
-> >> +
-> >> +       return (data &  GPIO_MASK(gpio)) ? 1 : 0;
-> >> +}
-> >
-> > This would be actually broken, right? Maybe it's better to change the
-> > driver so that it refuses to map GPIO lines that are hardwired to
-> > the interrupt controller, until we can support that.
-> 
-> It still works if they are configure as GPIO.
-> Do you have any reference to resolve it ?
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Ok, I think I just misunderstood how this works, I assumed that you
-could not reconfigure the lines. Seems ok then.
+These functions are supposed to return an error pointer, not NULL.
 
-	Arnd
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ include/linux/pinctrl/consumer.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
+index e96eea7a835c..5e949122529d 100644
+--- a/include/linux/pinctrl/consumer.h
++++ b/include/linux/pinctrl/consumer.h
+@@ -83,7 +83,7 @@ static inline int pinctrl_gpio_direction_output(unsigned gpio)
+ 
+ static inline struct pinctrl * __must_check pinctrl_get(struct device *dev)
+ {
+-	return NULL;
++	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline void pinctrl_put(struct pinctrl *p)
+@@ -94,7 +94,7 @@ static inline struct pinctrl_state * __must_check pinctrl_lookup_state(
+ 							struct pinctrl *p,
+ 							const char *name)
+ {
+-	return NULL;
++	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline int pinctrl_select_state(struct pinctrl *p,
+@@ -109,7 +109,7 @@ static inline void pinctrl_deselect_state(struct pinctrl *p)
+ 
+ static inline struct pinctrl * __must_check devm_pinctrl_get(struct device *dev)
+ {
+-	return NULL;
++	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline void devm_pinctrl_put(struct pinctrl *p)
+-- 
+2.1.3
+
