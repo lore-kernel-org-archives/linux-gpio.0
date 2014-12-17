@@ -1,64 +1,57 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 6/7] gpio/gpiolib-of: Create of_mm_gpiochip_remove
-Date: Wed, 17 Dec 2014 16:51:13 +0100
-Message-ID: <1418831474-24428-7-git-send-email-ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 3/7] gpio/xilinx: Add support for X86 Arch
+Date: Wed, 17 Dec 2014 16:51:10 +0100
+Message-ID: <1418831474-24428-4-git-send-email-ricardo.ribalda@gmail.com>
 References: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:48517 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751133AbaLQPvV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 10:51:21 -0500
 In-Reply-To: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-List-Id: linux-gpio@vger.kernel.org
 
-Create counterpart of of_mm_gpiochip_add(). This way the modules that
-can be removable do not duplicate the cleanup code.
+Core can be accessed via PCIe on X86 platform.
+This patch also allows the driver to be used as module.
 
-Suggested-by: Alexandre Courbot <gnurou@gmail.com>
+Acked-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/gpio/gpiolib-of.c | 17 +++++++++++++++++
- include/linux/of_gpio.h   |  1 +
- 2 files changed, 18 insertions(+)
+ drivers/gpio/Kconfig       | 4 ++--
+ drivers/gpio/gpio-xilinx.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 604dbe6..3e2c6af 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -204,6 +204,23 @@ err0:
- }
- EXPORT_SYMBOL(of_mm_gpiochip_add);
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 414d055..b17d226 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -366,8 +366,8 @@ config GPIO_XGENE
+ 	  here to enable the GFC GPIO functionality.
  
-+/**
-+ * of_mm_gpiochip_remove - Remove memory mapped GPIO chip (bank)
-+ * @mm_gc:	pointer to the of_mm_gpio_chip allocated structure
-+ */
-+void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
-+{
-+	struct gpio_chip *gc = &mm_gc->gc;
-+
-+	if (!mm_gc)
-+		return;
-+
-+	gpiochip_remove(gc);
-+	iounmap(mm_gc->regs);
-+	kfree(gc->label);
-+}
-+EXPORT_SYMBOL(of_mm_gpiochip_remove);
-+
- #ifdef CONFIG_PINCTRL
- static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- {
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index 38fc050..69dbe31 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -52,6 +52,7 @@ extern int of_get_named_gpio_flags(struct device_node *np,
+ config GPIO_XILINX
+-	bool "Xilinx GPIO support"
+-	depends on PPC_OF || MICROBLAZE || ARCH_ZYNQ
++	tristate "Xilinx GPIO support"
++	depends on OF_GPIO && (PPC_OF || MICROBLAZE || ARCH_ZYNQ || ARCH_X86)
+ 	help
+ 	  Say yes here to support the Xilinx FPGA GPIO device
  
- extern int of_mm_gpiochip_add(struct device_node *np,
- 			      struct of_mm_gpio_chip *mm_gc);
-+extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index c7ed92b..554060a 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -30,7 +30,7 @@
+ #define XGPIO_CHANNEL_OFFSET	0x8
  
- extern void of_gpiochip_add(struct gpio_chip *gc);
- extern void of_gpiochip_remove(struct gpio_chip *gc);
+ /* Read/Write access to the GPIO registers */
+-#ifdef CONFIG_ARCH_ZYNQ
++#if defined(CONFIG_ARCH_ZYNQ) || defined(CONFIG_X86)
+ # define xgpio_readreg(offset)		readl(offset)
+ # define xgpio_writereg(offset, val)	writel(val, offset)
+ #else
 -- 
 2.1.3
+
