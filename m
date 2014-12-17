@@ -1,371 +1,189 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [Patch v4 1/2] gpio: add GPIO hogging mechanism
-Date: Wed, 17 Dec 2014 17:41:51 +0900
-Message-ID: <CAAVeFuLrYovh6-RP0T4Cy8SV2Uuh4k2LD8PKmEahXgr-jKFgtg@mail.gmail.com>
-References: <1418422051-9471-1-git-send-email-bparrot@ti.com> <1418422051-9471-2-git-send-email-bparrot@ti.com>
+Subject: Re: [PATCH v4 2/4] gpio/xilinx: Convert the driver to platform device interface
+Date: Wed, 17 Dec 2014 16:34:04 +0900
+Message-ID: <CAAVeFuKp89U=tUwOSUYktdPamK2=HXqpnJxR7M=H0LSmSYqcDQ@mail.gmail.com>
+References: <1418226977-17128-1-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f177.google.com ([209.85.213.177]:47754 "EHLO
-	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752022AbaLQImM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 03:42:12 -0500
-In-Reply-To: <1418422051-9471-2-git-send-email-bparrot@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1418226977-17128-1-git-send-email-ricardo.ribalda@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Benoit Parrot <bparrot@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>
 
-Looks ok to me. I have a few nits below, but otherwise I am happy with
-how it turned out:
-
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-
-Thanks for your patience with this!
-
-On Sat, Dec 13, 2014 at 7:07 AM, Benoit Parrot <bparrot@ti.com> wrote:
-> Based on Boris Brezillion's work this is a reworked patch
-> of his initial GPIO hogging mechanism.
-> This patch provides a way to initally configure specific GPIO
-
-s/initally/initially
-
-> when the gpio controller is probed.
-
-GPIO in capitals please.
-
+On Thu, Dec 11, 2014 at 12:56 AM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> This way we do not need to transverse the device tree manually and we
+> support hot plugged devices.
 >
-> The actual DT scanning to collect the GPIO specific data is performed
-> as part of the gpiochip_add().
-
-d/the
-
+> Also Implement remove callback so the driver can be unloaded
 >
-> The purpose of this is to allows specific GPIOs to be configured
-
-s/allows/allow
-
-> without any driver specific code.
-> This particularly useful because board design are getting
-
-This is particularly
-
-> increasingly complex and given SoC pins can now have upward
-> of
-
-s/upward of/up to?
-
-> 10 mux values a lot of connections are now dependent on
-
-seems like a comma is missing here.
-
-> external IO muxes to switch various modes and combination.
-
-not sure what a combination is in that context.
-
->
-> Specific drivers should not necessarily need to be aware of
-> what accounts to a specific board implementation. This board level
-> "description" should be best kept as part of the dts file.
->
-> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 > ---
-> Changes since v3:
->  * Relocated the non-DT "hog" function to gpiolib.c.
->  * Rename some of the function to be clearer and remove _ prefixes.
->  * Replace the gpiod_request/gpiod_put usage with
->    gpiochip_request_own_desc/free_own_desc version instead.
->  * Refactor some of the logic to better handle error condition/reporting
->  * Renamed the "direction" DT properties to "state".
 >
->  drivers/gpio/gpiolib-of.c | 119 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/gpio/gpiolib.c    | 128 ++++++++++++++++++++++++++++++++++++++--------
->  drivers/gpio/gpiolib.h    |   3 ++
->  3 files changed, 230 insertions(+), 20 deletions(-)
+> v4: Add missing module_exit
 >
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 604dbe6..5422216 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -22,6 +22,7 @@
->  #include <linux/of_gpio.h>
->  #include <linux/pinctrl/pinctrl.h>
->  #include <linux/slab.h>
-> +#include <linux/gpio/machine.h>
+>  drivers/gpio/gpio-xilinx.c | 83 ++++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 66 insertions(+), 17 deletions(-)
 >
->  #include "gpiolib.h"
->
-> @@ -111,6 +112,122 @@ int of_get_named_gpio_flags(struct device_node *np, const char *list_name,
->  EXPORT_SYMBOL(of_get_named_gpio_flags);
+> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+> index e668ec4..c7ed92b 100644
+> --- a/drivers/gpio/gpio-xilinx.c
+> +++ b/drivers/gpio/gpio-xilinx.c
+> @@ -44,12 +44,18 @@
+>   * gpio_state: GPIO state shadow register
+>   * gpio_dir: GPIO direction shadow register
+>   * gpio_lock: Lock used for synchronization
+> + * inited: True if the port has been inited
+>   */
+>  struct xgpio_instance {
+>         struct of_mm_gpio_chip mmchip;
+>         u32 gpio_state;
+>         u32 gpio_dir;
+>         spinlock_t gpio_lock;
+> +       bool inited;
+> +};
+> +
+> +struct xgpio {
+> +       struct xgpio_instance port[2];
+>  };
 >
 >  /**
-> + * of_get_gpio_hog() - Get a GPIO hog descriptor, names and flags for GPIO API
-> + * @np:                device node to get GPIO from
-> + * @name:      GPIO line name
-> + * @flags:     a flags pointer to fill in
-> + *
-> + * Returns GPIO descriptor to use with Linux GPIO API, or one of the errno
-> + * value on the error condition.
-> + */
-> +
-> +static struct gpio_desc *of_get_gpio_hog(struct device_node *np,
-> +                                 const char **name,
-> +                                 enum gpio_lookup_flags *lflags,
-> +                                 enum gpiod_flags *dflags)
-> +{
-> +       struct device_node *chip_np;
-> +       enum of_gpio_flags xlate_flags;
-> +       struct gpio_desc *desc;
-> +       const char *dir_val;
-> +       struct gg_data gg_data = {
-> +               .flags = &xlate_flags,
-> +               .out_gpio = NULL,
-
-out_gpio will be set to NULL if you don't specify it, so you don't
-need this last line.
-
-> +       };
-> +       u32 tmp;
-> +       int i, ret;
-> +
-> +       chip_np = np->parent;
-> +       if (!chip_np)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       xlate_flags = 0;
-> +       *lflags = 0;
-> +       *dflags = 0;
-> +
-> +       ret = of_property_read_u32(chip_np, "#gpio-cells", &tmp);
-> +       if (ret)
-> +               return ERR_PTR(ret);
-> +
-> +       if (tmp > MAX_PHANDLE_ARGS)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       gg_data.gpiospec.args_count = tmp;
-> +       gg_data.gpiospec.np = chip_np;
-> +       for (i = 0; i < tmp; i++) {
-> +               ret = of_property_read_u32_index(np, "gpios", i,
-> +                                          &gg_data.gpiospec.args[i]);
-> +               if (ret)
-> +                       return ERR_PTR(ret);
-> +       }
-> +
-> +       gpiochip_find(&gg_data, of_gpiochip_find_and_xlate);
-> +       if (!gg_data.out_gpio) {
-> +               if (np->parent == np)
-> +                       return ERR_PTR(-ENXIO);
-> +               else
-> +                       return ERR_PTR(-EPROBE_DEFER);
-> +       }
-> +
-> +       if (xlate_flags & OF_GPIO_ACTIVE_LOW)
-> +               *lflags |= GPIO_ACTIVE_LOW;
-> +
-> +       if (of_property_read_string(np, "state", &dir_val)) {
-> +               pr_warn("%s: GPIO:%d (%s): no hogging state specified, bailing out\n",
-> +                        __func__, desc_to_gpio(gg_data.out_gpio), np->name);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       if (!strcmp(dir_val, "input"))
-> +               *dflags |= GPIOD_IN;
-> +       else if (!strcmp(dir_val, "output-low"))
-> +               *dflags |= GPIOD_OUT_LOW;
-> +       else if (!strcmp(dir_val, "output-high"))
-> +               *dflags |= GPIOD_OUT_HIGH;
-> +       else {
-> +               pr_warn("%s: GPIO:%d (%s): invalid state '%s' requested, bailing out\n",
-> +                        __func__, desc_to_gpio(gg_data.out_gpio),
-> +                       np->name, dir_val);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       if (name && of_property_read_string(np, "line-name", name))
-> +               *name = np->name;
-> +
-> +       desc = gg_data.out_gpio;
-> +
-> +       return desc;
-> +}
-> +
-> +/**
-> + * of_gpiochip_scan_hogs - Scan gpio-controller and apply GPIO hog as requested
-> + * @chip:      gpio chip to act on
-> + *
-> + * This is only used by of_gpiochip_add to request/set GPIO initial
-> + * configuration.
-> + */
-> +static void of_gpiochip_scan_hogs(struct gpio_chip *chip)
-> +{
-> +       struct gpio_desc *desc = NULL;
-> +       struct device_node *np;
-> +       const char *name;
-> +       enum gpio_lookup_flags lflags;
-> +       enum gpiod_flags dflags;
-> +
-> +       for_each_child_of_node(chip->dev->of_node, np) {
-> +               if (!of_property_read_bool(np, "gpio-hog"))
-> +                       continue;
-> +
-> +               desc = of_get_gpio_hog(np, &name, &lflags, &dflags);
-> +               if (IS_ERR(desc))
-> +                       continue;
-> +
-> +               if (gpiod_hog(desc, name, lflags, dflags))
-> +                       continue;
-> +       }
-> +}
-> +
-> +/**
->   * of_gpio_simple_xlate - translate gpio_spec to the GPIO number and flags
->   * @gc:                pointer to the gpio_chip structure
->   * @np:                device node of the GPIO chip
-> @@ -302,6 +419,8 @@ void of_gpiochip_add(struct gpio_chip *chip)
->
->         of_gpiochip_add_pin_range(chip);
->         of_node_get(chip->of_node);
-> +
-> +       of_gpiochip_scan_hogs(chip);
+> @@ -172,24 +178,56 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
 >  }
 >
->  void of_gpiochip_remove(struct gpio_chip *chip)
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 58659db..5527dbb 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -301,6 +301,7 @@ EXPORT_SYMBOL_GPL(gpiochip_add);
->
->  /* Forward-declaration */
->  static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
-> +static void gpiochip_free_hogs(struct gpio_chip *chip);
->
 >  /**
->   * gpiochip_remove() - unregister a gpio_chip
-> @@ -319,6 +320,7 @@ void gpiochip_remove(struct gpio_chip *chip)
->
->         gpiochip_irqchip_remove(chip);
->         gpiochip_remove_pin_ranges(chip);
-> +       gpiochip_free_hogs(chip);
->         of_gpiochip_remove(chip);
->
->         for (id = 0; id < chip->ngpio; id++) {
-> @@ -849,6 +851,7 @@ static bool __gpiod_free(struct gpio_desc *desc)
->                 clear_bit(FLAG_REQUESTED, &desc->flags);
->                 clear_bit(FLAG_OPEN_DRAIN, &desc->flags);
->                 clear_bit(FLAG_OPEN_SOURCE, &desc->flags);
-> +               clear_bit(FLAG_IS_HOGGED, &desc->flags);
->                 ret = true;
->         }
->
-> @@ -1653,6 +1656,47 @@ struct gpio_desc *__must_check __gpiod_get_optional(struct device *dev,
->  }
->  EXPORT_SYMBOL_GPL(__gpiod_get_optional);
->
-> +
-> +/**
-> + * __gpiod_set_helper - helper function to configure a given GPIO
-> + * @desc:      gpio whose value will be assigned
-> + * @con_id:    function within the GPIO consumer
-> + * @lflags:    gpio_lookup_flags - returned from of_find_gpio() or
-> + *             of_get_gpio_hog()
-> + * @dflags:    gpiod_flags - optional GPIO initialization flags
+> + * xgpio_remove - Remove method for the GPIO device.
+> + * @pdev: pointer to the platform device
 > + *
-> + * Return 0 on success, -ENOENT if no GPIO has been assigned to the
-> + * requested function and/or index, or another IS_ERR() code if an error
-> + * occurred while trying to acquire the GPIO.
+> + * This function remove gpiochips and frees all the allocated resources.
 > + */
-> +static int __gpiod_set_helper(struct gpio_desc *desc, const char *con_id,
-> +               unsigned long lflags, enum gpiod_flags dflags)
+> +static int xgpio_remove(struct platform_device *pdev)
 > +{
-> +       int status;
+> +       struct xgpio *xgpio = platform_get_drvdata(pdev);
+> +       int i;
 > +
-> +       if (lflags & GPIO_ACTIVE_LOW)
-> +               set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-> +       if (lflags & GPIO_OPEN_DRAIN)
-> +               set_bit(FLAG_OPEN_DRAIN, &desc->flags);
-> +       if (lflags & GPIO_OPEN_SOURCE)
-> +               set_bit(FLAG_OPEN_SOURCE, &desc->flags);
+> +       for (i = 0; i < 2; i++) {
+> +               if (!xgpio->port[i].inited)
+> +                       continue;
+> +               gpiochip_remove(&xgpio->port[i].mmchip.gc);
 > +
-> +       /* No particular flag request, return here... */
-> +       if (!(dflags & GPIOD_FLAGS_BIT_DIR_SET)) {
-> +               pr_debug("no flags found for %s\n", con_id);
-> +               return 0;
+> +               if (i == 1)
+> +                       xgpio->port[i].mmchip.regs -= XGPIO_CHANNEL_OFFSET;
+> +
+> +               iounmap(xgpio->port[i].mmchip.regs);
+
+This should not be here. The mapping and call to gpiochip_add() are
+performed by of_mm_gpiochip_add(). We should thus have a
+of_mm_gpiochip_remove() function that undoes what _add did instead of
+expected all users to do unmap themselves. Can you add a patch to your
+series that adds this function?
+
+Also I am not sure I understand why the unmapping is done only once.
+Both chips are supposed to have been added (and thus mapped) at this
+stage. Oh right I see, so this driver ends up mapping the same area
+twice! Not only are you iomapping the same area twice, you are
+unmapping it only once, and only if the chip is dual. This looks very
+broken.
+
+Couldn't you redesign the driver the following way: only add one chip
+(since you have 1 DT node), with an extra member to track which GPIOs
+belong to the second chip (in case it is dual), and change the other
+functions to handle this.
+
+> +               kfree(xgpio->port[i].mmchip.gc.label);
 > +       }
 > +
-> +       /* Process flags */
-> +       if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
-> +               status = gpiod_direction_output(desc,
-> +                                             dflags & GPIOD_FLAGS_BIT_DIR_VAL);
-> +       else
-> +               status = gpiod_direction_input(desc);
-> +
-> +       return status;
+> +       return 0;
 > +}
 > +
->  /**
->   * gpiod_get_index - obtain a GPIO from a multi-index GPIO function
->   * @dev:       GPIO consumer, can be NULL for system-global GPIOs
-> @@ -1702,30 +1746,12 @@ struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
->         }
+> +/**
+>   * xgpio_of_probe - Probe method for the GPIO device.
+> - * @np: pointer to device tree node
+> + * @pdev: pointer to the platform device
+>   *
+>   * This function probes the GPIO device in the device tree. It initializes the
+>   * driver data structure. It returns 0, if the driver is bound to the GPIO
+>   * device, or a negative value if there is an error.
+>   */
+> -static int xgpio_of_probe(struct device_node *np)
+> +static int xgpio_probe(struct platform_device *pdev)
+>  {
+> +       struct xgpio *xgpio;
+>         struct xgpio_instance *chip;
+>         int status = 0;
+> +       struct device_node *np = pdev->dev.of_node;
+>         const u32 *tree_info;
+>         u32 ngpio;
 >
->         status = gpiod_request(desc, con_id);
-> -
->         if (status < 0)
->                 return ERR_PTR(status);
+> -       chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+> -       if (!chip)
+> +       xgpio = devm_kzalloc(&pdev->dev, sizeof(*xgpio), GFP_KERNEL);
+> +       if (!xgpio)
+>                 return -ENOMEM;
 >
-> -       if (lookupflags & GPIO_ACTIVE_LOW)
-> -               set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-> -       if (lookupflags & GPIO_OPEN_DRAIN)
-> -               set_bit(FLAG_OPEN_DRAIN, &desc->flags);
-> -       if (lookupflags & GPIO_OPEN_SOURCE)
-> -               set_bit(FLAG_OPEN_SOURCE, &desc->flags);
-> -
-> -       /* No particular flag request, return here... */
-> -       if (!(flags & GPIOD_FLAGS_BIT_DIR_SET))
-> -               return desc;
-> -
-> -       /* Process flags */
-> -       if (flags & GPIOD_FLAGS_BIT_DIR_OUT)
-> -               status = gpiod_direction_output(desc,
-> -                                             flags & GPIOD_FLAGS_BIT_DIR_VAL);
-> -       else
-> -               status = gpiod_direction_input(desc);
-> -
-> +       status = __gpiod_set_helper(desc, con_id, lookupflags, flags);
->         if (status < 0) {
-> -               dev_dbg(dev, "setup of GPIO %s failed\n", con_id);
-> +               pr_debug("setup of GPIO %s failed\n", con_id);
->                 gpiod_put(desc);
->                 return ERR_PTR(status);
->         }
-> @@ -1819,6 +1845,68 @@ struct gpio_desc *__must_check __gpiod_get_index_optional(struct device *dev,
->  EXPORT_SYMBOL_GPL(__gpiod_get_index_optional);
->
->  /**
-> + * gpiod_hog - Hog the specified GPIO desc given the provided flags
-> + * @desc:      gpio whose value will be assigned
-> + * @name:      gpio line name
-> + * @lflags:    gpio_lookup_flags - returned from of_find_gpio() or
-> + *             of_get_gpio_hog()
-> + * @dflags:    gpiod_flags - optional GPIO initialization flags
-> + *
-> + */
-> +int gpiod_hog(struct gpio_desc *desc, const char *name,
-> +             unsigned long lflags, enum gpiod_flags dflags)
-> +{
-> +       struct gpio_chip *chip;
-> +       struct gpio_desc *local_desc;
-> +       int hwnum;
-> +       int status;
+> +       platform_set_drvdata(pdev, xgpio);
 > +
-> +       chip = gpiod_to_chip(desc);
-> +       hwnum = gpio_chip_hwgpio(desc);
+> +       chip = &xgpio->port[0];
 > +
-> +       local_desc = gpiochip_request_own_desc(chip, hwnum, name);
+>         /* Update GPIO state shadow register with default value */
+>         of_property_read_u32(np, "xlnx,dout-default", &chip->gpio_state);
+>
+> @@ -209,6 +247,7 @@ static int xgpio_of_probe(struct device_node *np)
+>
+>         spin_lock_init(&chip->gpio_lock);
+>
+> +       chip->mmchip.gc.dev = &pdev->dev;
+>         chip->mmchip.gc.direction_input = xgpio_dir_in;
+>         chip->mmchip.gc.direction_output = xgpio_dir_out;
+>         chip->mmchip.gc.get = xgpio_get;
+> @@ -219,20 +258,18 @@ static int xgpio_of_probe(struct device_node *np)
+>         /* Call the OF gpio helper to setup and register the GPIO device */
+>         status = of_mm_gpiochip_add(np, &chip->mmchip);
+>         if (status) {
+> -               kfree(chip);
+>                 pr_err("%s: error in probe function with status %d\n",
+>                        np->full_name, status);
+>                 return status;
+>         }
+> +       chip->inited = true;
+>
+>         pr_info("XGpio: %s: registered, base is %d\n", np->full_name,
+>                                                         chip->mmchip.gc.base);
+>
+>         tree_info = of_get_property(np, "xlnx,is-dual", NULL);
+>         if (tree_info && be32_to_cpup(tree_info)) {
+> -               chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+> -               if (!chip)
+> -                       return -ENOMEM;
+> +               chip = &xgpio->port[1];
+>
+>                 /* Update GPIO state shadow register with default value */
+>                 of_property_read_u32(np, "xlnx,dout-default-2",
+> @@ -254,6 +291,7 @@ static int xgpio_of_probe(struct device_node *np)
+>
+>                 spin_lock_init(&chip->gpio_lock);
+>
+> +               chip->mmchip.gc.dev = &pdev->dev;
+>                 chip->mmchip.gc.direction_input = xgpio_dir_in;
+>                 chip->mmchip.gc.direction_output = xgpio_dir_out;
+>                 chip->mmchip.gc.get = xgpio_get;
+> @@ -264,7 +302,7 @@ static int xgpio_of_probe(struct device_node *np)
+>                 /* Call the OF gpio helper to setup and register the GPIO dev */
+>                 status = of_mm_gpiochip_add(np, &chip->mmchip);
+>                 if (status) {
+> -                       kfree(chip);
+> +                       xgpio_remove(pdev);
+>                         pr_err("%s: error in probe function with status %d\n",
+>                         np->full_name, status);
+>                         return status;
+> @@ -272,6 +310,7 @@ static int xgpio_of_probe(struct device_node *np)
+>
+>                 /* Add dual channel offset */
+>                 chip->mmchip.regs += XGPIO_CHANNEL_OFFSET;
+> +               chip->inited = true;
 
-This looks somehow funny because local_desc will be strictly equal to
-desc, but there is nothing you can do here. The DT GPIO lookup process
-should not return a desc, but a (gpiochip*, hwnum) tuple to begin
-with, so let's keep it that way. I made a note to myself to fix this.
+The DT binding also suggests this should be one single chip. There is
+a lot of redundant code that you could suppress if you follow the
+design I suggest above.
