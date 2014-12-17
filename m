@@ -1,155 +1,47 @@
-From: Zhou Wang <wangzhou.bry@gmail.com>
-Subject: Re: [PATCH v4 3/4] gpio: Add find GPIO base in increasing order
-Date: Wed, 17 Dec 2014 19:13:00 +0800
-Message-ID: <5491653C.4040709@gmail.com>
-References: <1417750722-14027-1-git-send-email-wangzhou.bry@gmail.com> <1417750722-14027-4-git-send-email-wangzhou.bry@gmail.com> <CAAVeFu+Hn1Fk7PDcc4wGHFyJurX0hsW1N1prnPs2j=taGQKrKw@mail.gmail.com> <548E5D34.6010206@gmail.com> <CAAVeFuKzY8C+dARt4U8nEFBzEmRt=j34uEnK0vsS91H6jvkkBQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
+Date: Wed, 17 Dec 2014 22:13:26 +0900
+Message-ID: <CAAVeFuL1QEaFMkC1qQ42EEWU_=_KCyO=_waq-7eshPrVY58m0A@mail.gmail.com>
+References: <1418342706-14755-2-git-send-email-rjui@broadcom.com>
+ <1918116.UxUgDPTmcq@wuerfel> <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
+ <1628217.66frkAqHMc@wuerfel> <CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
+ <20141217104428.GV11285@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:57232 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751098AbaLQLNG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 06:13:06 -0500
-In-Reply-To: <CAAVeFuKzY8C+dARt4U8nEFBzEmRt=j34uEnK0vsS91H6jvkkBQ@mail.gmail.com>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:65337 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751227AbaLQNNr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 08:13:47 -0500
+In-Reply-To: <20141217104428.GV11285@n2100.arm.linux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, liguozhu@hisilicon.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, atull@altera.com, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, jamie@jamieiles.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, wangzhou1@hisilicon.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 2014=E5=B9=B412=E6=9C=8817=E6=97=A5 11:09, Alexandre Courbot wrote:
-> On Mon, Dec 15, 2014 at 1:01 PM, Zhou Wang <wangzhou.bry@gmail.com> w=
-rote:
->> On 2014=E5=B9=B412=E6=9C=8810=E6=97=A5 16:51, Alexandre Courbot wrot=
-e:
->>>
->>> On Fri, Dec 5, 2014 at 12:38 PM, Zhou Wang <wangzhou.bry@gmail.com>=
- wrote:
->>>>
->>>> In function gpiochip_find_base, base number of a GPIO controller
->>>> is found in decreasing order. ARCH_NR_GPIOS is used to define from
->>>> which number we begin to search for base number of a GPIO controll=
-er.
->>>>
->>>> In fact, ARCH_NR_GPIOS brings us some multiplatform problems, like=
-:
->>>> http://www.spinics.net/lists/devicetree/msg60433.html
->>>>
->>>> This patch adds the support to find base number of a GPIO controll=
-er
->>>> in increasing order. It will assign base number from 0.
->>>> A new dts property called gpio-number-forward must be add to the r=
-elated
->>>> GPIO dts nodes if you want it works well.
->>>
->>>
->>> Global GPIO numbers are a Linux-only concept, so your property shou=
-ld
->>> be named linux,gpio-number-forward.
->>>
->>> But even that way I don't think I like this idea. This just adds so=
-me
->>> more mess to how the GPIO number space is constructed, and it is
->>> already quite messy as it is. You have no guarantee over the probe
->>> order of your GPIO controllers, so they may very well be probed in =
-a
->>> different order and end up with different base numbers anytime.
->>>
->>> Not that this is your fault - the number namespace is broken by des=
-ign
->>> and I don't think there is a way to fix it. The long-term solution =
-is
->>> to stop using it by switching to the gpiod interface.
->>>
->>> First a few questions to understand why you need your GPIOs numbere=
-d
->>> this way, and if you need it at all:
->>> - Can't you use the gpiod interface instead so you don't need to re=
-ly
->>> on GPIO numbers?
->>
->>
->> Hi Alexandre,
->>
->> Sorry for late. Could you give me more clue about the gpiod interfac=
-e? Don't
->> we also call gpio_request() which uses GPIO number to request a
->> GPIO?
+On Wed, Dec 17, 2014 at 7:44 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Wed, Dec 17, 2014 at 11:45:01AM +0900, Alexandre Courbot wrote:
+>> Actually we are not that far from being able to do completely without
+>> any GPIO number, and maybe that's what we should aim for. I think the
+>> only remaining offender is the sysfs interface.
 >
-> See Documentation/gpio/consumer.txt and Documentation/gpio/board.txt.
-> You can obtain a GPIO descriptor without using a number by calling
-> gpiod_get(). Prior to that, individual GPIOs need to be bound to
-> devices and functions using either DT (preferred) or the platform
-> interface. The old integer-based GPIO interface is considered
-> deprecated, although still widely used. But new code should rely
-> exclusively on gpiod, and we encourage people to convert existing cod=
-e
-> to it too.
+> And that is a user API, and there's lots of users of it (eg, on Raspberry
+> Pi platforms.)  So changing it isn't going to be easy - I'd say that it's
+> impractical.
 >
+> What you're suggesting would be like re-numbering Linux syscalls.
 
-Hi Alexandre,
+Uh, I expressed myself poorly. What I intended to say is that once we
+have a sysfs alternative that does not rely on GPIO numbers (and thus
+have the same feature coverage as the integer interface), we can
+require new platforms to exclusively rely on gpiod/sysfs2, and
+encourage older users to switch to it if they have an issue with the
+way integers are handled or need one of the new features.
 
-Thanks a lot for your explanation!!
-
->>
->>> - Do you plan to use the sysfs interface? If so then we are screwed=
-,
->>> because there is no way to use it without using global GPIO numbers=
-=2E
->>
->>
->> I am now enabling GPIO in Hip04-d01. Maybe, I can just use
->> the default ARCH_NR_GPIOS, then users can manage GPIO through sysfs.
->> However if so, GPIO 0~127 will be mapped to GPIO 384~511.
->
-> Yeah, I know that's not ideal. As a workaround, users can maybe
-> identify the right gpiochip by parsing /sys/class/gpio/gpiochip* and
-> comparing the "label" node. Once the right chip is found, its "base"
-> entry gives the base GPIO number which can be used to export the
-> desired GPIO.
->
-> We are also taking steps to come with a better sysfs interface. I wil=
-l
-> keep you in the loop.
->
-
-Thanks. I'd like to keep an eye on this.
-
-Regard,
-Zhou
-
->>
->>> This is something we should/will fix with named exported GPIOs, but=
- we
->>> are not here yet.
->>>
->>> As to how we can solve your problem: if you must use GPIO integers
->>> (because you need to use the sysfs interface for instance), and nee=
-d
->>> them affected consistently, the only way I can think of is to
->>> introduce a "linux,gpio-base" property that will set gpiochip->base=
- to
->>> a fixed number. It still kind of sucks, but at least it will enforc=
-e
->>
->>
->> Thanks for your suggestion. But setting "linux,gpio-base" will bring
->> gpio base implementation specific, and in face there is no place to =
-gain
->> this gpio base info, not appropriate both in gpio arch code and dwap=
-b
->> code.
->
-> Yeah, besides this property did not receive a warm reception. So my
-> suggestion for now is to workaround the issue using the technique
-> described above, until we come with a better sysfs interface that doe=
-s
-> not rely on GPIO numbers. Sorry for that inconvenience.
->
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I don't foresee that we will ever be able to retire the integer
+interface, however I would like to be able to say "your problem will
+be solved if you switch to gpiod" instead of having to juggle with
+potentially conflicting integer range requirements from different
+platforms. Right now the only thing that prevents us to say that is
+the lack of a consistent sysfs interface.
