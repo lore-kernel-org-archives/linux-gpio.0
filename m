@@ -1,36 +1,69 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH RFT] gpio: dln2: Fix gpio output value in dln2_gpio_direction_output()
-Date: Wed, 17 Dec 2014 17:50:59 +0900
-Message-ID: <CAAVeFuKEF8GiEEjrc_whmEW-C+YxZr_e5LhTCK=wgqQssr7P6Q@mail.gmail.com>
-References: <1418740800.10278.1.camel@phoenix> <5490635D.6040305@intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] gpio: pcf857x: Propagate wake-up setting to parent
+ irq controller
+Date: Wed, 17 Dec 2014 09:13:39 +0100
+Message-ID: <CAMuHMdU1dmD5zTNmBEgCuJLY2LkZMKATVJ8RvUOv-gtzQGpdTw@mail.gmail.com>
+References: <1418218575-17694-1-git-send-email-geert+renesas@glider.be>
+	<CAAVeFuLSq8w_9LoRNni1jiqtY=PjLn7xu2xFxvgSg4Ay=PHjDw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:47307 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751692AbaLQIvU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 03:51:20 -0500
-Received: by mail-ie0-f172.google.com with SMTP id tr6so14653179ieb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 17 Dec 2014 00:51:19 -0800 (PST)
-In-Reply-To: <5490635D.6040305@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuLSq8w_9LoRNni1jiqtY=PjLn7xu2xFxvgSg4Ay=PHjDw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Ingo Molnar <mingo@redhat.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-SH <linux-sh@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Baluta <daniel.baluta@intel.com>
-Cc: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Octavian Purdila <octavian.purdila@intel.com>, "Palcu, Laurentiu" <laurentiu.palcu@intel.com>
 
-On Wed, Dec 17, 2014 at 1:52 AM, Daniel Baluta <daniel.baluta@intel.com> wrote:
->
->
-> On 12/16/2014 04:40 PM, Axel Lin wrote:
+Hi Alexandre,
+
+On Wed, Dec 17, 2014 at 7:01 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Wed, Dec 10, 2014 at 10:36 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> The pcf857x GPIO and interrupt controller uses dummy_irq_chip, which
+>> does not implement irq_chip.irq_set_wake() and does not set
+>> IRQCHIP_SKIP_SET_WAKE.
 >>
->> dln2_gpio_direction_output() ignored the state passed into it. Fix it.
+>> This causes two s2ram issues if wake-up is enabled for the pcf857x GPIO
+>> pins:
+>>   1. During resume from s2ram, the following warning is printed:
 >>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+>>      WARNING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
+>>      Unbalanced IRQ 113 wake disable
+>>
+>>   2. Wake-up through the pcf857x GPIO pins may fail, as the parent
+>>      interrupt controller may be suspended.
+>>
+>> Migrate the pcf857x GPIO and interrupt controller from dummy_irq_chip to
+>> its own irq_chip. This irq chip implements irq_chip.irq_set_wake() to
+>> propagate its wake-up setting to the parent interrupt controller.
+>>
+>> This fixes wake-up through gpio-keys on sh73a0/kzm9g, where the pcf857x
+>> interrupt is cascaded to irq-renesas-intc-irqpin, and the latter must
+>> not be suspended when wake-up is enabled.
 >
->
-> Tested-by: Daniel Baluta <daniel.baluta@intel.com>
+> I am not very familiar with the IRQ subsystem, but wouldn't it be
+> possible (and better) to try and fix/adapt dummy_irq_chip so it
+> displays the right behavior? At least your first point looks like an
+> issue with it.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+I fixed dummy_irq_chip in the second patch of the series ("[PATCH 2/2] [RFC]
+genirq: Set IRQCHIP_SKIP_SET_WAKE for no_irq_chip and dummy_irq_chip:).
+But please note that that would fix the warning (issue 1) only.
 
-But this seems to apply to patches in mid-flight, could it be squashed
-there maybe?
+Pcf857x still needs to propagate the wake-up setting to the parent interrupt
+controller to avoid the parent from being suspended if wake-up is enabled
+(issue 2). That cannot be done in dummy_irq_chip, as dummy_irq_chip doesn't
+know it is cascaded to a parent interrupt controller, nor about the interrupt
+number that is used for the cascade. That information is specific to the child
+driver.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
