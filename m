@@ -1,226 +1,96 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v1 1/5] gpio: moxart: convert to use basic mmio gpio library
-Date: Wed, 17 Dec 2014 11:33:11 +0900
-Message-ID: <CAAVeFuKB=BE6aVaNDrsMfVp35Q4SBzGjSfEisd3PJhgdDDsWkQ@mail.gmail.com>
-References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
- <1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
- <CAAVeFuLHjxTi+OyT2aV4u0BG3_2b9X2JxhD+sW+cU2MUvpWTMQ@mail.gmail.com> <CA+aN+ysw1UUwMHLFvZrr1smrHmPtSVmmdJ+n5XyMukGHAmhuSg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
+Date: Wed, 17 Dec 2014 11:45:01 +0900
+Message-ID: <CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
+References: <1418342706-14755-2-git-send-email-rjui@broadcom.com>
+ <1918116.UxUgDPTmcq@wuerfel> <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
+ <1628217.66frkAqHMc@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:60113 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751055AbaLQCdc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 21:33:32 -0500
-Received: by mail-ie0-f171.google.com with SMTP id rl12so14204921iec.30
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Dec 2014 18:33:31 -0800 (PST)
-In-Reply-To: <CA+aN+ysw1UUwMHLFvZrr1smrHmPtSVmmdJ+n5XyMukGHAmhuSg@mail.gmail.com>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:46163 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751092AbaLQCpW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Dec 2014 21:45:22 -0500
+In-Reply-To: <1628217.66frkAqHMc@wuerfel>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kamlakant Patel <kamlakant.patel@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Dec 16, 2014 at 2:17 PM, Kamlakant Patel
-<kamlakant.patel@linaro.org> wrote:
-> Hi Alexandre,
->
-> On 4 December 2014 at 14:47, Alexandre Courbot <gnurou@gmail.com> wrote:
->> On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
->>> From: Kamlakant Patel <kamlakant.patel@linaro.org>
->>>
->>> This patch converts MOXART GPIO driver to use basic_mmio_gpio
->>> generic library.
->>>
->>> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
->>> Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
->>> ---
->>>  drivers/gpio/Kconfig       |   1 +
->>>  drivers/gpio/gpio-moxart.c | 101 ++++++++++++++-------------------------------
->>>  2 files changed, 32 insertions(+), 70 deletions(-)
->>>
->>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->>> index 0959ca9..3bd4d63 100644
->>> --- a/drivers/gpio/Kconfig
->>> +++ b/drivers/gpio/Kconfig
->>> @@ -184,6 +184,7 @@ config GPIO_F7188X
->>>  config GPIO_MOXART
->>>         bool "MOXART GPIO support"
->>>         depends on ARCH_MOXART
->>> +       select GPIO_GENERIC
->>>         help
->>>           Select this option to enable GPIO driver for
->>>           MOXA ART SoC devices.
->>> diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
->>> index 4661e18..122958f 100644
->>> --- a/drivers/gpio/gpio-moxart.c
->>> +++ b/drivers/gpio/gpio-moxart.c
->>> @@ -23,21 +23,12 @@
->>>  #include <linux/delay.h>
->>>  #include <linux/timer.h>
->>>  #include <linux/bitops.h>
->>> +#include <linux/basic_mmio_gpio.h>
->>>
->>>  #define GPIO_DATA_OUT          0x00
->>>  #define GPIO_DATA_IN           0x04
->>>  #define GPIO_PIN_DIRECTION     0x08
->>>
->>> -struct moxart_gpio_chip {
->>> -       struct gpio_chip gpio;
->>> -       void __iomem *base;
->>> -};
->>> -
->>> -static inline struct moxart_gpio_chip *to_moxart_gpio(struct gpio_chip *chip)
->>> -{
->>> -       return container_of(chip, struct moxart_gpio_chip, gpio);
->>> -}
->>> -
->>>  static int moxart_gpio_request(struct gpio_chip *chip, unsigned offset)
->>>  {
->>>         return pinctrl_request_gpio(offset);
->>> @@ -48,90 +39,60 @@ static void moxart_gpio_free(struct gpio_chip *chip, unsigned offset)
->>>         pinctrl_free_gpio(offset);
->>>  }
->>>
->>> -static void moxart_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
->>> -{
->>> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
->>> -       void __iomem *ioaddr = gc->base + GPIO_DATA_OUT;
->>> -       u32 reg = readl(ioaddr);
->>> -
->>> -       if (value)
->>> -               reg = reg | BIT(offset);
->>> -       else
->>> -               reg = reg & ~BIT(offset);
->>> -
->>> -       writel(reg, ioaddr);
->>> -}
->>> -
->>>  static int moxart_gpio_get(struct gpio_chip *chip, unsigned offset)
->>>  {
->>> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
->>> -       u32 ret = readl(gc->base + GPIO_PIN_DIRECTION);
->>> +       struct bgpio_chip *bgc = to_bgpio_chip(chip);
->>> +       u32 ret = bgc->read_reg(bgc->reg_dir);
->>>
->>>         if (ret & BIT(offset))
->>> -               return !!(readl(gc->base + GPIO_DATA_OUT) & BIT(offset));
->>> +               return !!(bgc->read_reg(bgc->reg_set) & BIT(offset));
->>>         else
->>> -               return !!(readl(gc->base + GPIO_DATA_IN) & BIT(offset));
->>> -}
->>> -
->>> -static int moxart_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
->>> -{
->>> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
->>> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
->>> -
->>> -       writel(readl(ioaddr) & ~BIT(offset), ioaddr);
->>> -       return 0;
->>> -}
->>> -
->>> -static int moxart_gpio_direction_output(struct gpio_chip *chip,
->>> -                                       unsigned offset, int value)
->>> -{
->>> -       struct moxart_gpio_chip *gc = to_moxart_gpio(chip);
->>> -       void __iomem *ioaddr = gc->base + GPIO_PIN_DIRECTION;
->>> -
->>> -       moxart_gpio_set(chip, offset, value);
->>> -       writel(readl(ioaddr) | BIT(offset), ioaddr);
->>> -       return 0;
->>> +               return !!(bgc->read_reg(bgc->reg_dat) & BIT(offset));
->>>  }
->>>
->>> -static struct gpio_chip moxart_template_chip = {
->>> -       .label                  = "moxart-gpio",
->>> -       .request                = moxart_gpio_request,
->>> -       .free                   = moxart_gpio_free,
->>> -       .direction_input        = moxart_gpio_direction_input,
->>> -       .direction_output       = moxart_gpio_direction_output,
->>> -       .set                    = moxart_gpio_set,
->>> -       .get                    = moxart_gpio_get,
->>> -       .ngpio                  = 32,
->>> -       .owner                  = THIS_MODULE,
->>> -};
->>> -
->>>  static int moxart_gpio_probe(struct platform_device *pdev)
->>>  {
->>>         struct device *dev = &pdev->dev;
->>>         struct resource *res;
->>> -       struct moxart_gpio_chip *mgc;
->>> +       struct bgpio_chip *bgc;
->>> +       void __iomem *base;
->>>         int ret;
->>>
->>> -       mgc = devm_kzalloc(dev, sizeof(*mgc), GFP_KERNEL);
->>> -       if (!mgc)
->>> +       bgc = devm_kzalloc(dev, sizeof(*bgc), GFP_KERNEL);
->>> +       if (!bgc)
->>>                 return -ENOMEM;
->>> -       mgc->gpio = moxart_template_chip;
->>>
->>>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> -       mgc->base = devm_ioremap_resource(dev, res);
->>> -       if (IS_ERR(mgc->base))
->>> -               return PTR_ERR(mgc->base);
->>> +       base = devm_ioremap_resource(dev, res);
->>> +       if (IS_ERR(base))
->>> +               return PTR_ERR(base);
->>>
->>> -       mgc->gpio.dev = dev;
->>> +       ret = bgpio_init(bgc, dev, 4, base + GPIO_DATA_IN,
->>> +                   base + GPIO_DATA_OUT, NULL,
->>> +                   base + GPIO_PIN_DIRECTION, NULL, 0);
->>> +       if (ret) {
->>> +               dev_err(&pdev->dev, "bgpio_init failed\n");
->>> +               return ret;
->>> +       }
->>>
->>> -       ret = gpiochip_add(&mgc->gpio);
->>> +       bgc->gc.label = "moxart-gpio";
->>> +       bgc->gc.request = moxart_gpio_request;
->>> +       bgc->gc.free = moxart_gpio_free;
->>> +       bgc->gc.get = moxart_gpio_get;
->>> +       bgc->data = bgc->read_reg(bgc->reg_set);
->>> +       bgc->gc.base = 0;
+On Sat, Dec 13, 2014 at 12:28 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Friday 12 December 2014 22:05:37 Alexandre Courbot wrote:
+>> On Fri, Dec 12, 2014 at 9:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> > On Thursday 11 December 2014 16:05:04 Ray Jui wrote:
+>> >> +
+>> >> +- linux,gpio-base:
+>> >> +    Base GPIO number of this controller
+>> >> +
+>> >>
+>> >
+>> > We've NAK'ed properties like this multiple times before, and it
+>> > doesn't get any better this time. What are you trying to achieve
+>> > here?
 >>
->> Do we actually want all instances of this driver to clain GPIOs 0..31?
+>> I am to blame for suggesting using this property to Ray, and I am
+>> fully aware that this has been rejected before, but look at what
+>> people came with recently to palliate the lack of control over the
+>> GPIO number space for DT platforms:
 >>
+>> http://www.spinics.net/lists/arm-kernel/msg384847.html
+>> https://lkml.org/lkml/2014/12/10/133
+>>
+>> Right now GPIO numbering for platforms using DT is a very inconsistent
+>> process, subject to change by the simple action of adjusting the value
+>> of ARCH_NR_GPIOS (which we did recently, btw), adding a new GPIO
+>> controller, or changing the probe order of devices. For users of the
+>> integer or sysfs interfaces, this results in GPIO numbers that change,
+>> and drivers and/or user-space programs that behave incorrectly.
+>> Ironically, the only way to have consistent numbers is to use the old
+>> platform files, where you can specify the base number of a gpio_chip.
+>>
+>> DT is actually probably not such a bad place to provide consistency in
+>> GPIO numbering. It has a global vision of the system layout, including
+>> all GPIO controllers and the number of GPIOs they include, and thus
+>> can make informed decisions. It provides a consistent result
+>> regardless of probe order. And allowing it to assign GPIO bases to
+>> controllers will free us from the nonsensical dependency of some
+>> arbitrary upper-bound for GPIO numbers that ARCH_NR_GPIOS imposes on
+>> us. Also about ARCH_NR_GPIOS, the plan is to eventually remove it
+>> since we don't need it anymore after the removal of the global
+>> gpio_descs array. This will again interfere with the numbering of GPIO
+>> chips that do not have a base number provided.
+>>
+>> Note that I don't really like this, either - but the problem is the
+>> GPIO integer interface. Until everyone has upgraded to gpiod and we
+>> have a replacement for the current sysfs interface (this will take a
+>> while) we have to cope with this. This issue has been bothering users
+>> for years, so this time I'd like to try and solve it the less ugly
+>> way. If there is a better solution, of course I'm all for it.
 >
-> Here is what I got from Jonas in previous discussion:
-> ...
-> Thanks, it works, tested on UC-7112-LX hardware.
+> I think the scheme will fail if you ever get gpio controllers that are
+> not part of the DT: We have hotpluggable devices (PCI, USB, ...) that
+> are not represented in DT and that may also provide GPIOs for internal
+> uses.
 >
-> I have one additional nit..
->
-> The GPIO base number is implicitly changed from 0 to 224
-> (ARCH_NR_GPIOS (256) - ngpio (32)) which happen because of
-> bgpio_init() (it sets base -1 / gpiochip_find_base() on
-> gpiochip_add()). Which is confusing since the valid range (from user
-> space) used to be 0-31. So on export we now get:
->
-> [root@zurkon ~]# echo 24 > /sys/class/gpio/export
->     [   61.640000] gpio-24 (?): gpiod_request: status -517
->     [   61.650000] export_store: status -19
->
-> I see other drivers explicitly set base after bgpio_init(), my
-> suggestion is that we do the same here e.g. :
->
->> +       bgc->gc.label = "moxart-gpio";
->> +       bgc->gc.request = moxart_gpio_request;
->> +       bgc->gc.free = moxart_gpio_free;
->> +       bgc->gc.get = moxart_gpio_get;
->> +       bgc->data = bgc->read_reg(bgc->reg_set);
->> +       bgc->gc.ngpio = 32;
->> +       bgc->gc.dev = dev;
->> +       bgc->gc.owner = THIS_MODULE;
->
-> bgc->gc.base = 0;
+> The current state of affairs is definitely problematic, but defining
+> the GPIO numbers in DT properties would only be a relative improvement,
+> not a solution, and I fear it would make it harder to change the kernel
+> to remove the gpio numbers eventually.
 
-My problem is that drivers should not decide what their base GPIO
-number is. If all drivers claimed 0, you just could not use two
-different drivers on the same system.
+You are absolutely right that this would be only a partial solution.
+However this is a situation where there is no absolute fix (besides
+dropping the GPIO numbers completely) and the relief this property
+would brings makes it up for its shortcomings IMHO.
 
-But I assume that the driver was already doing that previously, so I
-reluctantly maintain my ack. The GPIO base number is a different issue
-than what this patch series addresses. With the Tested-by from Jonas I
-guess we can at least apply this patch, if Linus agrees.
+> I wonder if we could instead come up with an approach that completely
+> randomizes the gpio numbers (as a compile-time option) to find any
+> places that still rely on specific numbers.
+
+A.k.a. Linus and Alex' hate mail generator. :P
+
+Actually we are not that far from being able to do completely without
+any GPIO number, and maybe that's what we should aim for. I think the
+only remaining offender is the sysfs interface. If we could reach GPIO
+controllers through a fixed path and just export their GPIOs there, I
+believe we would have fixed the whole issue.
