@@ -1,35 +1,84 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
-Date: Wed, 17 Dec 2014 22:16:09 +0900
-Message-ID: <CAAVeFu+CG82UBgsQ4+RNqitUmxxaKi0P50=fjpKCqo0_ODO3jA@mail.gmail.com>
-References: <1418342706-14755-2-git-send-email-rjui@broadcom.com>
- <1628217.66frkAqHMc@wuerfel> <CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
- <4583974.6IftQ5bv2t@wuerfel>
+Subject: Re: [PATCH v4 2/4] gpio/xilinx: Convert the driver to platform device interface
+Date: Wed, 17 Dec 2014 22:26:06 +0900
+Message-ID: <CAAVeFu+--Nn+o+aSngcM=WW3ZTycuAHws6wUi4t8U2bh74TRjA@mail.gmail.com>
+References: <1418226977-17128-1-git-send-email-ricardo.ribalda@gmail.com>
+ <CAAVeFuKp89U=tUwOSUYktdPamK2=HXqpnJxR7M=H0LSmSYqcDQ@mail.gmail.com> <CAPybu_2eXhh7PuOTb=qpnoOOKYwwFynowHpDL-2PdsEqQEWYTQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4583974.6IftQ5bv2t@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:63456 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750995AbaLQN01 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 08:26:27 -0500
+In-Reply-To: <CAPybu_2eXhh7PuOTb=qpnoOOKYwwFynowHpDL-2PdsEqQEWYTQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 17, 2014 at 7:26 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 17 December 2014 11:45:01 Alexandre Courbot wrote:
+On Wed, Dec 17, 2014 at 8:02 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> Hello Alexandre
+>
+>> This should not be here. The mapping and call to gpiochip_add() are
+>> performed by of_mm_gpiochip_add(). We should thus have a
+>> of_mm_gpiochip_remove() function that undoes what _add did instead of
+>> expected all users to do unmap themselves. Can you add a patch to your
+>> series that adds this function?
+>
 >>
->> Actually we are not that far from being able to do completely without
->> any GPIO number, and maybe that's what we should aim for. I think the
->> only remaining offender is the sysfs interface. If we could reach GPIO
->> controllers through a fixed path and just export their GPIOs there, I
->> believe we would have fixed the whole issue.
+>> Also I am not sure I understand why the unmapping is done only once.
+>> Both chips are supposed to have been added (and thus mapped) at this
+>> stage. Oh right I see, so this driver ends up mapping the same area
+>> twice! Not only are you iomapping the same area twice, you are
+>> unmapping it only once, and only if the chip is dual. This looks very
+>> broken.
+>>
 >
-> What about the hundreds of board files and device drivers that still
-> reference hardcoded gpio numbers? The problem seems mostly solved for
-> anything that uses DT, but there are some architectures and a number
-> of ARM platforms that don't use DT and probably never will.
->
-> I would assume they could all be changed to use gpiod_lookup tables,
-> but that's a lot of work.
+> If you look carefully you can see that it is unmapped twice if it is
+> called twice. iounmap is called inside the  for loop.
 
-Indeed, that's not something to expect, as I replied to Russell. Sorry
-about the confusion.
+D'oh, you are right of course. I don't know why, but I thought the
+iounmap() was part of the if (i == 1) conditional block. >_<
+
+>
+>
+>> Couldn't you redesign the driver the following way: only add one chip
+>> (since you have 1 DT node), with an extra member to track which GPIOs
+>> belong to the second chip (in case it is dual), and change the other
+>> functions to handle this.
+>
+> I do not mind rearranging the driver so there is only one gpio device,
+> even for dual chips, but I think this should be done in a separate
+> patch.
+>
+> What about?
+>
+> 1) Keep the current patchset
+>
+> and then
+>
+> 2) Add another patchset with
+>
+>   - xilinx-gpio: only one gpio device
+>   - add  of_mm_gpiochip_remove() to the api
+>   - xilinx gpio: use of_mm_gpiochip_remove
+>   - others: use of_mm_gpiochip_remove
+
+I think this would look better this way:
+
+- xilinx-gpio: remove offset property
+- xilinx-gpio: only one gpio device
+- add  of_mm_gpiochip_remove() to the api
+- xilinx-gpio: use of_mm_gpiochip_remove
+- xilinx-gpio: Convert the driver to platform device interface.
+
+(others: use of_mm_gpiochip_remove would be appreciated of course, but
+I won't ask you to go that far and fix everybody).
+
+The reason for this order is that your current patch would be shorter
+is the driver is turned to add one device only first. It's also
+generally better to work on cleaner code. But to switch the driver to
+single-device, you will first need to remove the offset property
+(IIUC, at least).
