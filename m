@@ -1,76 +1,36 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH v2] gpio: dln2: Fix gpio output value in
- dln2_gpio_direction_output()
-Date: Wed, 17 Dec 2014 17:47:14 +0800
-Message-ID: <1418809634.15005.1.camel@phoenix>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
+Date: Wed, 17 Dec 2014 11:26:40 +0100
+Message-ID: <4583974.6IftQ5bv2t@wuerfel>
+References: <1418342706-14755-2-git-send-email-rjui@broadcom.com> <1628217.66frkAqHMc@wuerfel> <CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:61109 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750999AbaLQJrU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 04:47:20 -0500
-Received: by mail-pa0-f41.google.com with SMTP id rd3so16125039pab.0
-        for <linux-gpio@vger.kernel.org>; Wed, 17 Dec 2014 01:47:19 -0800 (PST)
+Received: from mout.kundenserver.de ([212.227.17.24]:65248 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750829AbaLQK1k (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 05:27:40 -0500
+In-Reply-To: <CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Octavian Purdila <octavian.purdila@intel.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-dln2_gpio_direction_output() ignored the state passed into it. Fix it.
-Also make dln2_gpio_pin_set_out_val return int, so we can check the error value.
+On Wednesday 17 December 2014 11:45:01 Alexandre Courbot wrote:
+> 
+> Actually we are not that far from being able to do completely without
+> any GPIO number, and maybe that's what we should aim for. I think the
+> only remaining offender is the sysfs interface. If we could reach GPIO
+> controllers through a fixed path and just export their GPIOs there, I
+> believe we would have fixed the whole issue.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Tested-by: Daniel Baluta <daniel.baluta@intel.com>
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-Reviewed-by: Octavian Purdila <octavian.purdila@intel.com>
----
-v2: Address Octavian's comment.
- drivers/gpio/gpio-dln2.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+What about the hundreds of board files and device drivers that still
+reference hardcoded gpio numbers? The problem seems mostly solved for
+anything that uses DT, but there are some architectures and a number
+of ARM platforms that don't use DT and probably never will.
 
-diff --git a/drivers/gpio/gpio-dln2.c b/drivers/gpio/gpio-dln2.c
-index 978b51e..2481e8d 100644
---- a/drivers/gpio/gpio-dln2.c
-+++ b/drivers/gpio/gpio-dln2.c
-@@ -141,16 +141,16 @@ static int dln2_gpio_pin_get_out_val(struct dln2_gpio *dln2, unsigned int pin)
- 	return !!ret;
- }
- 
--static void dln2_gpio_pin_set_out_val(struct dln2_gpio *dln2,
--				      unsigned int pin, int value)
-+static int dln2_gpio_pin_set_out_val(struct dln2_gpio *dln2,
-+				     unsigned int pin, int value)
- {
- 	struct dln2_gpio_pin_val req = {
- 		.pin = cpu_to_le16(pin),
- 		.value = value,
- 	};
- 
--	dln2_transfer_tx(dln2->pdev, DLN2_GPIO_PIN_SET_OUT_VAL, &req,
--			 sizeof(req));
-+	return dln2_transfer_tx(dln2->pdev, DLN2_GPIO_PIN_SET_OUT_VAL, &req,
-+				sizeof(req));
- }
- 
- #define DLN2_GPIO_DIRECTION_IN		0
-@@ -267,6 +267,13 @@ static int dln2_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- static int dln2_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 				      int value)
- {
-+	struct dln2_gpio *dln2 = container_of(chip, struct dln2_gpio, gpio);
-+	int ret;
-+
-+	ret = dln2_gpio_pin_set_out_val(dln2, offset, value);
-+	if (ret < 0)
-+		return ret;
-+
- 	return dln2_gpio_set_direction(chip, offset, DLN2_GPIO_DIRECTION_OUT);
- }
- 
--- 
-1.9.1
+I would assume they could all be changed to use gpiod_lookup tables,
+but that's a lot of work.
 
-
-
+	Arnd
