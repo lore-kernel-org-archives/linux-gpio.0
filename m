@@ -1,69 +1,27 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] gpio: pcf857x: Propagate wake-up setting to parent
- irq controller
-Date: Wed, 17 Dec 2014 09:13:39 +0100
-Message-ID: <CAMuHMdU1dmD5zTNmBEgCuJLY2LkZMKATVJ8RvUOv-gtzQGpdTw@mail.gmail.com>
-References: <1418218575-17694-1-git-send-email-geert+renesas@glider.be>
-	<CAAVeFuLSq8w_9LoRNni1jiqtY=PjLn7xu2xFxvgSg4Ay=PHjDw@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v6 0/3] Add gpio support to Broadcom Cygnus SoC
+Date: Wed, 17 Dec 2014 17:06:54 +0900
+Message-ID: <CAAVeFuKYDVdMYqHRij2U3fDQUOhwa8-OYDb4ZNkXevX+qWy04Q@mail.gmail.com>
+References: <rjui@broadcom.com> <1418696307-19392-1-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuLSq8w_9LoRNni1jiqtY=PjLn7xu2xFxvgSg4Ay=PHjDw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Ingo Molnar <mingo@redhat.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-SH <linux-sh@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f171.google.com ([209.85.223.171]:43735 "EHLO
+	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751760AbaLQIHQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 03:07:16 -0500
+In-Reply-To: <1418696307-19392-1-git-send-email-rjui@broadcom.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ray Jui <rjui@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Alexandre,
+On Tue, Dec 16, 2014 at 11:18 AM, Ray Jui <rjui@broadcom.com> wrote:
+> This patchset contains the initial GPIO support for the Broadcom Cygnus SoC.
+> Cygnus has 3 GPIO controllers: 1) the ASIU GPIO; 2) the chipCommonG GPIO;
+> and 3) the ALWAYS-ON GPIO. All 3 types of GPIO controllers are supported by
+> the same Cygnus GPIO driver
 
-On Wed, Dec 17, 2014 at 7:01 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Wed, Dec 10, 2014 at 10:36 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> The pcf857x GPIO and interrupt controller uses dummy_irq_chip, which
->> does not implement irq_chip.irq_set_wake() and does not set
->> IRQCHIP_SKIP_SET_WAKE.
->>
->> This causes two s2ram issues if wake-up is enabled for the pcf857x GPIO
->> pins:
->>   1. During resume from s2ram, the following warning is printed:
->>
->>      WARNING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
->>      Unbalanced IRQ 113 wake disable
->>
->>   2. Wake-up through the pcf857x GPIO pins may fail, as the parent
->>      interrupt controller may be suspended.
->>
->> Migrate the pcf857x GPIO and interrupt controller from dummy_irq_chip to
->> its own irq_chip. This irq chip implements irq_chip.irq_set_wake() to
->> propagate its wake-up setting to the parent interrupt controller.
->>
->> This fixes wake-up through gpio-keys on sh73a0/kzm9g, where the pcf857x
->> interrupt is cascaded to irq-renesas-intc-irqpin, and the latter must
->> not be suspended when wake-up is enabled.
->
-> I am not very familiar with the IRQ subsystem, but wouldn't it be
-> possible (and better) to try and fix/adapt dummy_irq_chip so it
-> displays the right behavior? At least your first point looks like an
-> issue with it.
+No objections for this v6. The series,
 
-I fixed dummy_irq_chip in the second patch of the series ("[PATCH 2/2] [RFC]
-genirq: Set IRQCHIP_SKIP_SET_WAKE for no_irq_chip and dummy_irq_chip:).
-But please note that that would fix the warning (issue 1) only.
-
-Pcf857x still needs to propagate the wake-up setting to the parent interrupt
-controller to avoid the parent from being suspended if wake-up is enabled
-(issue 2). That cannot be done in dummy_irq_chip, as dummy_irq_chip doesn't
-know it is cascaded to a parent interrupt controller, nor about the interrupt
-number that is used for the cascade. That information is specific to the child
-driver.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
