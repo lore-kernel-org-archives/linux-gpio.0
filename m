@@ -1,113 +1,44 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 4/7] gpio/xilinx: Fix kernel-doc
-Date: Wed, 17 Dec 2014 16:51:11 +0100
-Message-ID: <1418831474-24428-5-git-send-email-ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 7/7] gpio/xilinx: Use of_mm_gpiochip_remove
+Date: Wed, 17 Dec 2014 16:51:14 +0100
+Message-ID: <1418831474-24428-8-git-send-email-ricardo.ribalda@gmail.com>
 References: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:32916 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751392AbaLQPvW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 10:51:22 -0500
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:42164 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427AbaLQPvY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Dec 2014 10:51:24 -0500
 In-Reply-To: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-Some documentation were not following the kernel-doc format.
-Backporting patch from Xilinx git repository.
+Use the newly created of_mm_gpiochip_remove function for cleaning up
+of_mm_gpiochip_add
 
-Suggested-by: Michal Simek <michal.simek@xilinx.com>
-Acked-by: Michal Simek <michal.simek@xilinx.com>
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Suggested-by: Alexandre Courbot <gnurou@gmail.com>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/gpio/gpio-xilinx.c | 37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+ drivers/gpio/gpio-xilinx.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index 554060a..9cf4457 100644
+index e89fb42..61243d1 100644
 --- a/drivers/gpio/gpio-xilinx.c
 +++ b/drivers/gpio/gpio-xilinx.c
-@@ -40,11 +40,11 @@
+@@ -236,10 +236,7 @@ static int xgpio_remove(struct platform_device *pdev)
+ {
+ 	struct xgpio_instance *chip = platform_get_drvdata(pdev);
  
- /**
-  * struct xgpio_instance - Stores information about GPIO device
-- * struct of_mm_gpio_chip mmchip: OF GPIO chip for memory mapped banks
-- * gpio_state: GPIO state shadow register
-- * gpio_dir: GPIO direction shadow register
-- * gpio_lock: Lock used for synchronization
-- * inited: True if the port has been inited
-+ * @mmchip: OF GPIO chip for memory mapped banks
-+ * @gpio_state: GPIO state shadow register
-+ * @gpio_dir: GPIO direction shadow register
-+ * @gpio_lock: Lock used for synchronization
-+ * @inited: True if the port has been inited
-  */
- struct xgpio_instance {
- 	struct of_mm_gpio_chip mmchip;
-@@ -63,8 +63,11 @@ struct xgpio {
-  * @gc:     Pointer to gpio_chip device structure.
-  * @gpio:   GPIO signal number.
-  *
-- * This function reads the specified signal of the GPIO device. It returns 0 if
-- * the signal clear, 1 if signal is set or negative value on error.
-+ * This function reads the specified signal of the GPIO device.
-+ *
-+ * Return:
-+ * 0 if direction of GPIO signals is set as input otherwise it
-+ * returns negative error value.
-  */
- static int xgpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
-@@ -107,9 +110,9 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
-  * @gc:     Pointer to gpio_chip device structure.
-  * @gpio:   GPIO signal number.
-  *
-- * This function sets the direction of specified GPIO signal as input.
-- * It returns 0 if direction of GPIO signals is set as input otherwise it
-- * returns negative error value.
-+ * Return:
-+ * 0 - if direction of GPIO signals is set as input
-+ * otherwise it returns negative error value.
-  */
- static int xgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
-@@ -135,8 +138,10 @@ static int xgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
-  * @gpio:   GPIO signal number.
-  * @val:    Value to be written to specified signal.
-  *
-- * This function sets the direction of specified GPIO signal as output. If all
-- * GPIO signals of GPIO chip is configured as input then it returns
-+ * This function sets the direction of specified GPIO signal as output.
-+ *
-+ * Return:
-+ * If all GPIO signals of GPIO chip is configured as input then it returns
-  * error otherwise it returns 0.
-  */
- static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
-@@ -166,7 +171,7 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+-	gpiochip_remove(&chip->mmchip.gc);
+-
+-	iounmap(chip->mmchip.regs);
+-	kfree(chip->mmchip.gc.label);
++	of_mm_gpiochip_remove(&chip->mmchip);
  
- /**
-  * xgpio_save_regs - Set initial values of GPIO pins
-- * @mm_gc: pointer to memory mapped GPIO chip structure
-+ * @mm_gc: Pointer to memory mapped GPIO chip structure
-  */
- static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
- {
-@@ -207,9 +212,9 @@ static int xgpio_remove(struct platform_device *pdev)
-  * xgpio_of_probe - Probe method for the GPIO device.
-  * @pdev: pointer to the platform device
-  *
-- * This function probes the GPIO device in the device tree. It initializes the
-- * driver data structure. It returns 0, if the driver is bound to the GPIO
-- * device, or a negative value if there is an error.
-+ * Return:
-+ * It returns 0, if the driver is bound to the GPIO device, or
-+ * a negative value if there is an error.
-  */
- static int xgpio_probe(struct platform_device *pdev)
- {
+ 	return 0;
+ }
 -- 
 2.1.3
 
