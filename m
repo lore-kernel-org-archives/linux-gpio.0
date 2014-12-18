@@ -1,75 +1,189 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: DT on s3c24xx
-Date: Thu, 18 Dec 2014 22:42:22 +0900
-Message-ID: <CAAVeFu+ZZChxk4djpd-TqK_JB5GcHaKNUxA0O3g14ptOnKQccg@mail.gmail.com>
-References: <CA+E=qVf4nT5x-fRFBu=Wv_VKUnEMAEP4GgJG8em8NyUFkwtbPg@mail.gmail.com>
- <20141218075205.GB10857@pengutronix.de> <CA+E=qVeU4hEX2x9uAPfgqEgpxvA7bUBWqWJtBJdbP=RK6ghfEQ@mail.gmail.com>
+From: Kamlakant Patel <kamlakant.patel@linaro.org>
+Subject: Re: [PATCH v1 5/5] gpio: document basic mmio gpio library
+Date: Thu, 18 Dec 2014 19:14:17 +0530
+Message-ID: <20141218134417.GB2518@linaro>
+References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
+ <1417435778-21879-6-git-send-email-kamlakant.patel@linaro.org>
+ <CAAVeFuJ0iOY7XdZfhMUyo=Hsh7xjF-GNqk6DkAT-ZwydpsE1_Q@mail.gmail.com>
+ <CA+aN+ytaGkpxh81e+1r8-05nm4sw5oKb2bykiiEuPUzAeqx6Ow@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f179.google.com ([209.85.213.179]:58285 "EHLO
-	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751876AbaLRNmn convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Dec 2014 08:42:43 -0500
-In-Reply-To: <CA+E=qVeU4hEX2x9uAPfgqEgpxvA7bUBWqWJtBJdbP=RK6ghfEQ@mail.gmail.com>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:57916 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752370AbaLRNo1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Dec 2014 08:44:27 -0500
+Received: by mail-pa0-f51.google.com with SMTP id ey11so1433398pad.38
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Dec 2014 05:44:26 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CA+aN+ytaGkpxh81e+1r8-05nm4sw5oKb2bykiiEuPUzAeqx6Ow@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, arm-linux <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-On Thu, Dec 18, 2014 at 5:34 PM, Vasily Khoruzhick <anarsoul@gmail.com>=
- wrote:
-> On Thu, Dec 18, 2014 at 10:52 AM, Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
->> Hello,
->
-> Hi Uwe,
->
->> [Cc +=3D linusw, linux-gpio]
->>
->> On Wed, Dec 17, 2014 at 10:04:24PM +0300, Vasily Khoruzhick wrote:
->>> I'd like to port several s3c24xx to DT, and I'm stuck with s3c24xx =
-LCD
->>> controller and power drivers for H1940 and RX1950.
->>>
->>> Please see [1]. I want to move this function into another LCD power
->>> driver, but I'm not sure what to do with s3c_gpio_cfgpin(). I need =
-to
->>> change pin function in runtime, and as far as I understand it shoul=
-d
->>> be handled via pinctrl driver somehow. But how?
->> You can pass >1 pinctrl setups to a node:
->>
->>         somedevice {
->>                 pinctrl-names =3D "default", "foo", "bar";
->>                 pinctrl-0 =3D <&pinctrl_somedevice_default>;
->>                 pinctrl-1 =3D <&pinctrl_somedevice_foo>;
->>                 pinctrl-2 =3D <&pinctrl_somedevice_bar>;
->>                 cfg-gpios =3D <&gpio4 12 3>, <&gpio2 7 5>;
->>         };
->>
->> Then I think you can fiddle with pinctrl_select_state(). For the gpi=
-os
->> you can then use the standard gpiod_{request,direction_{in,out}put}
->> combo.
->
-> Thanks for you response!
->
-> Can I change pin function after gpio was requested? In low-power stat=
-e
-> (i.e. when display is disabled) it's gpio driving some level,
-> and in active state it's some LCD controller pin (don't remember whic=
-h
-> one exactly)
+On Thu, Dec 04, 2014 at 05:52:24PM +0530, Kamlakant Patel wrote:
+> On 4 December 2014 at 14:42, Alexandre Courbot <gnurou@gmail.com> wrote:
+> > On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
+> >> From: Kamlakant Patel <kamlakant.patel@linaro.org>
+> >>
+> >> This is a brief documentation on how to use GPIO Generic
+> >> library for memory-mapped GPIO controllers.
+> >>
+> >> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
+> >> ---
+> >>  Documentation/gpio/driver.txt | 50 +++++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 50 insertions(+)
+> >
+> > Yum, more doc!
+> >
+> >>
+> >> diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+> >> index 31e0b5d..563abea 100644
+> >> --- a/Documentation/gpio/driver.txt
+> >> +++ b/Documentation/gpio/driver.txt
+> >> @@ -190,3 +190,53 @@ gpiochip_free_own_desc().
+> >>  These functions must be used with care since they do not affect module use
+> >>  count. Do not use the functions to request gpio descriptors not owned by the
+> >>  calling driver.
+> >> +
+> >> +
+> >> +Generic driver for memory-mapped GPIO controllers
+> >> +-------------------------------------------------
+> >> +The GPIO generic library provides support for basic platform_device
+> >> +memory-mapped GPIO controllers, which can be accessed by selecting Kconfig
+> >> +symbol GPIO_GENERIC and using library functions provided by GPIO generic
+> >> +driver (see drivers/gpio/gpio-generic.c).
+> >> +The simplest form of a GPIO controller that the driver support is just a
+> >
+> > s/support/supports
+> >
+> >> +single "data" register, where GPIO state can be read and/or written.
+> >> +
+> >> +The driver can be registered using "basic-mmio-gpio" or for big-endian
+> >> +notation support use "basic-mmio-gpio-be". The code will configure gpio_chip
+> >
+> > Using where? You should say that this is for the platform device name.
+> >
+> >> +and issue gpiochip_add().
+> >
+> >> +
+> >> +The driver supports:
+> >> +- 8/16/32/64 bits registers. The number of GPIOs is determined by the width of
+> >> +  the registers.
+> >> +- GPIO controllers with clear/set registers.
+> >> +- GPIO controllers with a single "data" register.
+> >> +- Big endian bits/GPIOs ordering.
+> >
+> > Maybe add a sentence indicating that these settings are defined in the
+> > drivers using named memory resources.
+> >
+> >> +
+> >> +For setting GPIO's there are three supported configurations:
+> >> +- single input/output register resource (named "dat").
+> >
+> > This resource seems to be mandatory - please make sure you mention this fact.
+> >
+> >> +- set/clear pair (named "set" and "clr").
+> >> +- single output register resource and single input resource ("set" and dat").
+> >> +
+> >> +For setting the GPIO direction, there are three supported configurations:
+> >> +- simple bidirection GPIO that requires no configuration.
+> >
+> > s/bidirection/bidirectional maybe?
+> >
+> >> +- an output direction register (named "dirout") where a 1 bit indicates the
+> >> +  GPIO is an output.
+> >> +- an input direction register (named "dirin") where a 1 bit indicates the GPIO
+> >> +  is an input.
+> >> +
+> >> +It is possible to use only parts of GPIO generic library. Each GPIO controller
+> >> +using GPIO generic library needs to include the following header.
+> >> +
+> >> +        #include <linux/basic_mmio_gpio.h>
+> >> +
+> >> +Use bgpio_init to configure gpio_chip and bgpio_remove to remove the controller.
+> >> +int bgpio_init(struct bgpio_chip *bgc, struct device *dev,
+> >> +               unsigned long sz, void __iomem *dat, void __iomem *set,
+> >> +               void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
+> >> +               unsigned long flags);
+> >
+> > If you put the prototype for bgpio_init(), please also put the one of
+> > bgpio_remove()...
+> >
+> >> +
+> >> +The "flag" parameter can be following depending on controller configuration:
+> >> +BGPIOF_BIG_ENDIAN               BIT(0)
+> >> +BGPIOF_UNREADABLE_REG_SET       BIT(1) /* reg_set is unreadable */
+> >> +BGPIOF_UNREADABLE_REG_DIR       BIT(2) /* reg_dir is unreadable */
+> >> +BGPIOF_BIG_ENDIAN_BYTE_ORDER    BIT(3)
+> >
+> > Right now this documentation is a little bit confusing. Basically
+> > there are two ways to use this driver:
+> >
+> > 1) Name your platform device ""basic-mmio-gpio" or
+> > "basic-mmio-gpio-be", set the right named memory resources to specify
+> > the desired configuration, and let bgpio_pdev_probe() do all the work.
+> >
+> > 2) Allocate a bgpio_chip yourself, call bgpio_init() on it and its
+> > resources, and finally invoke gpiochip_add() yourself.
+> >
+> > These two different ways of doing kind of seem to be mixed together.
+> > Can you try to highlight the fact that these are alternatives?
+> 
 
-If your driver can release the GPIO and change the pinctrl when
-switching to active state (and change the pinctrl again and request
-the GPIO when switching to low-power state) then this should be
-doable. I suspect the switch is made by the same driver anyway, isn't
-it?
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This is an updated version of previous patch. Please review.
+
+diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+index 31e0b5d..f6b617a 100644
+--- a/Documentation/gpio/driver.txt
++++ b/Documentation/gpio/driver.txt
+@@ -190,3 +190,45 @@ gpiochip_free_own_desc().
+ These functions must be used with care since they do not affect module use
+ count. Do not use the functions to request gpio descriptors not owned by the
+ calling driver.
++
++
++Generic driver for memory-mapped GPIO controllers
++-------------------------------------------------
++The GPIO generic library provides support for basic platform_device
++memory-mapped GPIO controllers, which can be accessed by selecting Kconfig
++symbol GPIO_GENERIC and using library functions provided by GPIO generic
++driver (see drivers/gpio/gpio-generic.c).
++
++The driver supports registers of the sizes of 8/16/32/64 bits and the number
++of GPIOs are determined by the width of the registers. A set of named memory
++resources should be defined in the drivers (e.g "dat", "set", "clr", "dirout"
++and "dirin"), where "dat" is a mandatory resource.
++
++Each GPIO controller using GPIO generic library needs to include the following
++header.
++        #include <linux/basic_mmio_gpio.h>
++
++There are two ways to use this driver:
++1. Using basic GPIO MMIO Generic driver directly:
++   Name your platform device "basic-mmio-gpio" or "basic-mmio-gpio-be", set the
++   right named memory resources to specify the desired configuration, and let
++   bgpio_pdev_probe do all the work.
++
++2. Using basic GPIO MMIO Generic library in your driver:
++   Allocate a bgpio_chip yourself in your GPIO driver, call bgpio_init() on it
++   and its resources, and finally invoke gpiochip_add yourself. It is possible
++   to use only parts of the driver, you can overwrite functions and variables
++   in your driver, if necessary.
++   You can call bgpio_remove() to unregister a gpio_chip.
++
++For setting up GPIO's there are three supported configurations:
++- single input/output register resource (named "dat").
++- set/clear pair (named "set" and "clr").
++- single output register resource and single input resource ("set" and "dat").
++
++For setting the GPIO direction, there are three supported configurations:
++- simple bidirectional GPIO that requires no configuration.
++- an output direction register (named "dirout") where a 1 bit indicates the
++  GPIO is an output.
++- an input direction register (named "dirin") where a 1 bit indicates the GPIO
++  is an input.
+-- 
+1.9.1
+
