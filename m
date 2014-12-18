@@ -1,109 +1,50 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH] gpio: pcf857x: restore the initial line state of all
- pcf lines
-Date: Thu, 18 Dec 2014 08:11:43 -0600
-Message-ID: <5492E09F.1000003@ti.com>
-References: <1418371601-22658-1-git-send-email-kishon@ti.com> <548F498F.7050202@ti.com> <549271A9.5040701@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: DT on s3c24xx
+Date: Thu, 18 Dec 2014 15:53:14 +0100
+Message-ID: <CACRpkdZumW0bZhc7xK_bes1A7Vuw5QYF2wgG86g0f4-5fJ97Lg@mail.gmail.com>
+References: <CA+E=qVf4nT5x-fRFBu=Wv_VKUnEMAEP4GgJG8em8NyUFkwtbPg@mail.gmail.com>
+	<20141218075205.GB10857@pengutronix.de>
+	<CA+E=qVeU4hEX2x9uAPfgqEgpxvA7bUBWqWJtBJdbP=RK6ghfEQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <549271A9.5040701@ti.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, nsekhar@ti.com
-Cc: linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, Benoit Parrot <bparrot@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:60011 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751033AbaLROxP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Dec 2014 09:53:15 -0500
+Received: by mail-ie0-f175.google.com with SMTP id x19so1235836ier.20
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Dec 2014 06:53:14 -0800 (PST)
+In-Reply-To: <CA+E=qVeU4hEX2x9uAPfgqEgpxvA7bUBWqWJtBJdbP=RK6ghfEQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, arm-linux <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 12/18/2014 12:18 AM, Kishon Vijay Abraham I wrote:
-> 
-> 
-> On Tuesday 16 December 2014 02:20 AM, Nishanth Menon wrote:
->> On 12/12/2014 02:06 AM, Kishon Vijay Abraham I wrote:
->>> The reset values for all the PCF lines are high and hence on shutdown
->>> we should drive all the lines high in order to bring it to the reset state.
->>>
->>> This is actually required since pcf doesn't have a reset line and even after
->>> warm reset (by invoking "reboot" in prompt) the pcf lines maintains it's
->>> previous programmed state. This becomes a problem if the boards are designed
->>> to work with the default initial state.
->>>
->>> DRA7XX_evm uses PCF8575 and one of the PCF output lines feeds to MMC/SD and
->>> this line should be driven high in order for the MMC/SD to be detected.
->>> This line is modelled as regulator and the hsmmc driver takes care of enabling
->>> and disabling it. In the case of 'reboot', during shutdown path as part of it's
->>> cleanup process the hsmmc driver disables this regulator. This makes MMC boot
->>> not functional.
->>>
->>> Fixed it by driving high all the pcf lines.
->>>
->>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>> ---
->>>  drivers/gpio/gpio-pcf857x.c |    9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
->>> index 236708a..00b15b2 100644
->>> --- a/drivers/gpio/gpio-pcf857x.c
->>> +++ b/drivers/gpio/gpio-pcf857x.c
->>> @@ -448,6 +448,14 @@ static int pcf857x_remove(struct i2c_client *client)
->>>  	return status;
->>>  }
->>>  
->>> +static void pcf857x_shutdown(struct i2c_client *client)
->>> +{
->>> +	struct pcf857x *gpio = i2c_get_clientdata(client);
->>> +
->>> +	/* Drive all the I/O lines high */
->>> +	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
->>
->> you might force a contention here - depending on System configuration.
->> example:
->> +-------+
->> |       |
->> |  U1   |         +------+      +-----------+
->> |       +--------->      |      |           |
->> +-------+         |      |      |           |
->>                   | Switch<-----+    SoC    |
->> +-------+         |      |      |           |
->> |       |         |      |      |           |
->> | U2    <---------+--^---+      +-----------+
->> |       |            |
->> |       |            |
->> +-------+            |
->>                   +--+--+
->>                   |     |
->>                   | PCF |
->>                   |     |
->>                   +-----+
->>
->> At low, SoC pin is connected to U2 as drive. when reset to high, you
->> now have U1 driving to the same pin that SoC has, potentially
->> resulting in contention.
->>
->>
->> Unfortunately, at this level, you do not know what the state of the
->> system is, blindly forcing a pin level will potentially cause
->> contention risk depending on pin configuration.
-> 
-> Assume we are doing a reset when the system is powered on, irrespective of the
-> state of the system, we'll be forcing the pin level to the default state.
+On Thu, Dec 18, 2014 at 9:34 AM, Vasily Khoruzhick <anarsoul@gmail.com> wrote:
 
-Yes, I dont deny that system will be fine *after* reset sequence is
-started or completed. However there is a duration between the pcf
-shutdown handler is called and the final reset handler is invoked -
-that is the duration when  the contention might cause device behavior.
-Essentially ignoring the state various drivers have asked PCF to setup
-the pins and doing a hands down configuration may have side effects we
-cant properly expect.
+> Can I change pin function after gpio was requested? In low-power state
+> (i.e. when display is disabled) it's gpio driving some level,
+> and in active state it's some LCD controller pin (don't remember which
+> one exactly)
 
-> 
-> The same thing happens here so I don't think this would be a problem.
-> 
-> Thanks
-> Kishon
-> 
+Please read the section named "GPIO mode pitfalls" in
+Documentation/pinctrl.txt very closely.
 
+Two ways:
 
--- 
-Regards,
-Nishanth Menon
+- You can use the GPIO and pin control interface to the same
+  hardware in parallel. There is no blocking this since there
+  is hardware out that that actually allow this. NOT
+  RECOMMENDED.
+
+- If the "GPIO mode" mentioned is only about e.g. grounding
+  the pins in a low power state and then not really about using
+  them as GPIO, extend the pin controller to be able to e.g.
+  ground the pins with PIN_CONFIG_OUTPUT or
+  PIN_CONFIG_LOW_POWER_MODE if you use
+  generic bindings.
+
+If the usecase is low power, the latter approach is recommended.
+
+Yours,
+Linus Walleij
