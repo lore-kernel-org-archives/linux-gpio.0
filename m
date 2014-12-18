@@ -1,147 +1,93 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 1/7] gpio/xilinx: Remove offset property
-Date: Wed, 17 Dec 2014 16:51:08 +0100
-Message-ID: <1418831474-24428-2-git-send-email-ricardo.ribalda@gmail.com>
-References: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] gpio: pcf857x: restore the initial line state of all
+ pcf lines
+Date: Thu, 18 Dec 2014 11:48:17 +0530
+Message-ID: <549271A9.5040701@ti.com>
+References: <1418371601-22658-1-git-send-email-kishon@ti.com> <548F498F.7050202@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <548F498F.7050202@ti.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, nsekhar@ti.com
+Cc: linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, Benoit Parrot <bparrot@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Instead of calculating the register offset per call, pre-calculate it on
-probe time.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-Acked-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/gpio/gpio-xilinx.c | 34 +++++++++++-----------------------
- 1 file changed, 11 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index ba18b06..e668ec4 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -43,14 +43,12 @@
-  * struct of_mm_gpio_chip mmchip: OF GPIO chip for memory mapped banks
-  * gpio_state: GPIO state shadow register
-  * gpio_dir: GPIO direction shadow register
-- * offset: GPIO channel offset
-  * gpio_lock: Lock used for synchronization
-  */
- struct xgpio_instance {
- 	struct of_mm_gpio_chip mmchip;
- 	u32 gpio_state;
- 	u32 gpio_dir;
--	u32 offset;
- 	spinlock_t gpio_lock;
- };
- 
-@@ -65,12 +63,8 @@ struct xgpio_instance {
- static int xgpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct xgpio_instance *chip =
--	    container_of(mm_gc, struct xgpio_instance, mmchip);
- 
--	void __iomem *regs = mm_gc->regs + chip->offset;
--
--	return !!(xgpio_readreg(regs + XGPIO_DATA_OFFSET) & BIT(gpio));
-+	return !!(xgpio_readreg(mm_gc->regs + XGPIO_DATA_OFFSET) & BIT(gpio));
- }
- 
- /**
-@@ -88,7 +82,6 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
-@@ -98,8 +91,7 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	else
- 		chip->gpio_state &= ~BIT(gpio);
- 
--	xgpio_writereg(regs + chip->offset + XGPIO_DATA_OFFSET,
--							 chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET, chip->gpio_state);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- }
-@@ -119,13 +111,12 @@ static int xgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
- 	/* Set the GPIO bit in shadow register and set direction as input */
- 	chip->gpio_dir |= BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_TRI_OFFSET, chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- 
-@@ -148,7 +139,6 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
--	void __iomem *regs = mm_gc->regs;
- 
- 	spin_lock_irqsave(&chip->gpio_lock, flags);
- 
-@@ -157,12 +147,11 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 		chip->gpio_state |= BIT(gpio);
- 	else
- 		chip->gpio_state &= ~BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_DATA_OFFSET,
--		       chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET, chip->gpio_state);
- 
- 	/* Clear the GPIO bit in shadow register and set direction as output */
- 	chip->gpio_dir &= ~BIT(gpio);
--	xgpio_writereg(regs + chip->offset + XGPIO_TRI_OFFSET, chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- 
- 	spin_unlock_irqrestore(&chip->gpio_lock, flags);
- 
-@@ -178,10 +167,8 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
- 	struct xgpio_instance *chip =
- 	    container_of(mm_gc, struct xgpio_instance, mmchip);
- 
--	xgpio_writereg(mm_gc->regs + chip->offset + XGPIO_DATA_OFFSET,
--							chip->gpio_state);
--	xgpio_writereg(mm_gc->regs + chip->offset + XGPIO_TRI_OFFSET,
--							 chip->gpio_dir);
-+	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET,	chip->gpio_state);
-+	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir);
- }
- 
- /**
-@@ -247,9 +234,6 @@ static int xgpio_of_probe(struct device_node *np)
- 		if (!chip)
- 			return -ENOMEM;
- 
--		/* Add dual channel offset */
--		chip->offset = XGPIO_CHANNEL_OFFSET;
--
- 		/* Update GPIO state shadow register with default value */
- 		of_property_read_u32(np, "xlnx,dout-default-2",
- 				     &chip->gpio_state);
-@@ -285,6 +269,10 @@ static int xgpio_of_probe(struct device_node *np)
- 			np->full_name, status);
- 			return status;
- 		}
-+
-+		/* Add dual channel offset */
-+		chip->mmchip.regs += XGPIO_CHANNEL_OFFSET;
-+
- 		pr_info("XGpio: %s: dual channel registered, base is %d\n",
- 					np->full_name, chip->mmchip.gc.base);
- 	}
--- 
-2.1.3
+On Tuesday 16 December 2014 02:20 AM, Nishanth Menon wrote:
+> On 12/12/2014 02:06 AM, Kishon Vijay Abraham I wrote:
+>> The reset values for all the PCF lines are high and hence on shutdown
+>> we should drive all the lines high in order to bring it to the reset state.
+>>
+>> This is actually required since pcf doesn't have a reset line and even after
+>> warm reset (by invoking "reboot" in prompt) the pcf lines maintains it's
+>> previous programmed state. This becomes a problem if the boards are designed
+>> to work with the default initial state.
+>>
+>> DRA7XX_evm uses PCF8575 and one of the PCF output lines feeds to MMC/SD and
+>> this line should be driven high in order for the MMC/SD to be detected.
+>> This line is modelled as regulator and the hsmmc driver takes care of enabling
+>> and disabling it. In the case of 'reboot', during shutdown path as part of it's
+>> cleanup process the hsmmc driver disables this regulator. This makes MMC boot
+>> not functional.
+>>
+>> Fixed it by driving high all the pcf lines.
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  drivers/gpio/gpio-pcf857x.c |    9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+>> index 236708a..00b15b2 100644
+>> --- a/drivers/gpio/gpio-pcf857x.c
+>> +++ b/drivers/gpio/gpio-pcf857x.c
+>> @@ -448,6 +448,14 @@ static int pcf857x_remove(struct i2c_client *client)
+>>  	return status;
+>>  }
+>>  
+>> +static void pcf857x_shutdown(struct i2c_client *client)
+>> +{
+>> +	struct pcf857x *gpio = i2c_get_clientdata(client);
+>> +
+>> +	/* Drive all the I/O lines high */
+>> +	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
+> 
+> you might force a contention here - depending on System configuration.
+> example:
+> +-------+
+> |       |
+> |  U1   |         +------+      +-----------+
+> |       +--------->      |      |           |
+> +-------+         |      |      |           |
+>                   | Switch<-----+    SoC    |
+> +-------+         |      |      |           |
+> |       |         |      |      |           |
+> | U2    <---------+--^---+      +-----------+
+> |       |            |
+> |       |            |
+> +-------+            |
+>                   +--+--+
+>                   |     |
+>                   | PCF |
+>                   |     |
+>                   +-----+
+> 
+> At low, SoC pin is connected to U2 as drive. when reset to high, you
+> now have U1 driving to the same pin that SoC has, potentially
+> resulting in contention.
+> 
+> 
+> Unfortunately, at this level, you do not know what the state of the
+> system is, blindly forcing a pin level will potentially cause
+> contention risk depending on pin configuration.
+
+Assume we are doing a reset when the system is powered on, irrespective of the
+state of the system, we'll be forcing the pin level to the default state.
+
+The same thing happens here so I don't think this would be a problem.
+
+Thanks
+Kishon
