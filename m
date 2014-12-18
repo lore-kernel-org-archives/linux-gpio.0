@@ -1,189 +1,109 @@
-From: Kamlakant Patel <kamlakant.patel@linaro.org>
-Subject: Re: [PATCH v1 5/5] gpio: document basic mmio gpio library
-Date: Thu, 18 Dec 2014 19:14:17 +0530
-Message-ID: <20141218134417.GB2518@linaro>
-References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
- <1417435778-21879-6-git-send-email-kamlakant.patel@linaro.org>
- <CAAVeFuJ0iOY7XdZfhMUyo=Hsh7xjF-GNqk6DkAT-ZwydpsE1_Q@mail.gmail.com>
- <CA+aN+ytaGkpxh81e+1r8-05nm4sw5oKb2bykiiEuPUzAeqx6Ow@mail.gmail.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH] gpio: pcf857x: restore the initial line state of all
+ pcf lines
+Date: Thu, 18 Dec 2014 08:11:43 -0600
+Message-ID: <5492E09F.1000003@ti.com>
+References: <1418371601-22658-1-git-send-email-kishon@ti.com> <548F498F.7050202@ti.com> <549271A9.5040701@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:57916 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752370AbaLRNo1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Dec 2014 08:44:27 -0500
-Received: by mail-pa0-f51.google.com with SMTP id ey11so1433398pad.38
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Dec 2014 05:44:26 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CA+aN+ytaGkpxh81e+1r8-05nm4sw5oKb2bykiiEuPUzAeqx6Ow@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <549271A9.5040701@ti.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, nsekhar@ti.com
+Cc: linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, Benoit Parrot <bparrot@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-On Thu, Dec 04, 2014 at 05:52:24PM +0530, Kamlakant Patel wrote:
-> On 4 December 2014 at 14:42, Alexandre Courbot <gnurou@gmail.com> wrote:
-> > On Mon, Dec 1, 2014 at 9:09 PM,  <kamlakant.patel@linaro.org> wrote:
-> >> From: Kamlakant Patel <kamlakant.patel@linaro.org>
-> >>
-> >> This is a brief documentation on how to use GPIO Generic
-> >> library for memory-mapped GPIO controllers.
-> >>
-> >> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
-> >> ---
-> >>  Documentation/gpio/driver.txt | 50 +++++++++++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 50 insertions(+)
-> >
-> > Yum, more doc!
-> >
-> >>
-> >> diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
-> >> index 31e0b5d..563abea 100644
-> >> --- a/Documentation/gpio/driver.txt
-> >> +++ b/Documentation/gpio/driver.txt
-> >> @@ -190,3 +190,53 @@ gpiochip_free_own_desc().
-> >>  These functions must be used with care since they do not affect module use
-> >>  count. Do not use the functions to request gpio descriptors not owned by the
-> >>  calling driver.
-> >> +
-> >> +
-> >> +Generic driver for memory-mapped GPIO controllers
-> >> +-------------------------------------------------
-> >> +The GPIO generic library provides support for basic platform_device
-> >> +memory-mapped GPIO controllers, which can be accessed by selecting Kconfig
-> >> +symbol GPIO_GENERIC and using library functions provided by GPIO generic
-> >> +driver (see drivers/gpio/gpio-generic.c).
-> >> +The simplest form of a GPIO controller that the driver support is just a
-> >
-> > s/support/supports
-> >
-> >> +single "data" register, where GPIO state can be read and/or written.
-> >> +
-> >> +The driver can be registered using "basic-mmio-gpio" or for big-endian
-> >> +notation support use "basic-mmio-gpio-be". The code will configure gpio_chip
-> >
-> > Using where? You should say that this is for the platform device name.
-> >
-> >> +and issue gpiochip_add().
-> >
-> >> +
-> >> +The driver supports:
-> >> +- 8/16/32/64 bits registers. The number of GPIOs is determined by the width of
-> >> +  the registers.
-> >> +- GPIO controllers with clear/set registers.
-> >> +- GPIO controllers with a single "data" register.
-> >> +- Big endian bits/GPIOs ordering.
-> >
-> > Maybe add a sentence indicating that these settings are defined in the
-> > drivers using named memory resources.
-> >
-> >> +
-> >> +For setting GPIO's there are three supported configurations:
-> >> +- single input/output register resource (named "dat").
-> >
-> > This resource seems to be mandatory - please make sure you mention this fact.
-> >
-> >> +- set/clear pair (named "set" and "clr").
-> >> +- single output register resource and single input resource ("set" and dat").
-> >> +
-> >> +For setting the GPIO direction, there are three supported configurations:
-> >> +- simple bidirection GPIO that requires no configuration.
-> >
-> > s/bidirection/bidirectional maybe?
-> >
-> >> +- an output direction register (named "dirout") where a 1 bit indicates the
-> >> +  GPIO is an output.
-> >> +- an input direction register (named "dirin") where a 1 bit indicates the GPIO
-> >> +  is an input.
-> >> +
-> >> +It is possible to use only parts of GPIO generic library. Each GPIO controller
-> >> +using GPIO generic library needs to include the following header.
-> >> +
-> >> +        #include <linux/basic_mmio_gpio.h>
-> >> +
-> >> +Use bgpio_init to configure gpio_chip and bgpio_remove to remove the controller.
-> >> +int bgpio_init(struct bgpio_chip *bgc, struct device *dev,
-> >> +               unsigned long sz, void __iomem *dat, void __iomem *set,
-> >> +               void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
-> >> +               unsigned long flags);
-> >
-> > If you put the prototype for bgpio_init(), please also put the one of
-> > bgpio_remove()...
-> >
-> >> +
-> >> +The "flag" parameter can be following depending on controller configuration:
-> >> +BGPIOF_BIG_ENDIAN               BIT(0)
-> >> +BGPIOF_UNREADABLE_REG_SET       BIT(1) /* reg_set is unreadable */
-> >> +BGPIOF_UNREADABLE_REG_DIR       BIT(2) /* reg_dir is unreadable */
-> >> +BGPIOF_BIG_ENDIAN_BYTE_ORDER    BIT(3)
-> >
-> > Right now this documentation is a little bit confusing. Basically
-> > there are two ways to use this driver:
-> >
-> > 1) Name your platform device ""basic-mmio-gpio" or
-> > "basic-mmio-gpio-be", set the right named memory resources to specify
-> > the desired configuration, and let bgpio_pdev_probe() do all the work.
-> >
-> > 2) Allocate a bgpio_chip yourself, call bgpio_init() on it and its
-> > resources, and finally invoke gpiochip_add() yourself.
-> >
-> > These two different ways of doing kind of seem to be mixed together.
-> > Can you try to highlight the fact that these are alternatives?
+On 12/18/2014 12:18 AM, Kishon Vijay Abraham I wrote:
+> 
+> 
+> On Tuesday 16 December 2014 02:20 AM, Nishanth Menon wrote:
+>> On 12/12/2014 02:06 AM, Kishon Vijay Abraham I wrote:
+>>> The reset values for all the PCF lines are high and hence on shutdown
+>>> we should drive all the lines high in order to bring it to the reset state.
+>>>
+>>> This is actually required since pcf doesn't have a reset line and even after
+>>> warm reset (by invoking "reboot" in prompt) the pcf lines maintains it's
+>>> previous programmed state. This becomes a problem if the boards are designed
+>>> to work with the default initial state.
+>>>
+>>> DRA7XX_evm uses PCF8575 and one of the PCF output lines feeds to MMC/SD and
+>>> this line should be driven high in order for the MMC/SD to be detected.
+>>> This line is modelled as regulator and the hsmmc driver takes care of enabling
+>>> and disabling it. In the case of 'reboot', during shutdown path as part of it's
+>>> cleanup process the hsmmc driver disables this regulator. This makes MMC boot
+>>> not functional.
+>>>
+>>> Fixed it by driving high all the pcf lines.
+>>>
+>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>> ---
+>>>  drivers/gpio/gpio-pcf857x.c |    9 +++++++++
+>>>  1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+>>> index 236708a..00b15b2 100644
+>>> --- a/drivers/gpio/gpio-pcf857x.c
+>>> +++ b/drivers/gpio/gpio-pcf857x.c
+>>> @@ -448,6 +448,14 @@ static int pcf857x_remove(struct i2c_client *client)
+>>>  	return status;
+>>>  }
+>>>  
+>>> +static void pcf857x_shutdown(struct i2c_client *client)
+>>> +{
+>>> +	struct pcf857x *gpio = i2c_get_clientdata(client);
+>>> +
+>>> +	/* Drive all the I/O lines high */
+>>> +	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
+>>
+>> you might force a contention here - depending on System configuration.
+>> example:
+>> +-------+
+>> |       |
+>> |  U1   |         +------+      +-----------+
+>> |       +--------->      |      |           |
+>> +-------+         |      |      |           |
+>>                   | Switch<-----+    SoC    |
+>> +-------+         |      |      |           |
+>> |       |         |      |      |           |
+>> | U2    <---------+--^---+      +-----------+
+>> |       |            |
+>> |       |            |
+>> +-------+            |
+>>                   +--+--+
+>>                   |     |
+>>                   | PCF |
+>>                   |     |
+>>                   +-----+
+>>
+>> At low, SoC pin is connected to U2 as drive. when reset to high, you
+>> now have U1 driving to the same pin that SoC has, potentially
+>> resulting in contention.
+>>
+>>
+>> Unfortunately, at this level, you do not know what the state of the
+>> system is, blindly forcing a pin level will potentially cause
+>> contention risk depending on pin configuration.
+> 
+> Assume we are doing a reset when the system is powered on, irrespective of the
+> state of the system, we'll be forcing the pin level to the default state.
+
+Yes, I dont deny that system will be fine *after* reset sequence is
+started or completed. However there is a duration between the pcf
+shutdown handler is called and the final reset handler is invoked -
+that is the duration when  the contention might cause device behavior.
+Essentially ignoring the state various drivers have asked PCF to setup
+the pins and doing a hands down configuration may have side effects we
+cant properly expect.
+
+> 
+> The same thing happens here so I don't think this would be a problem.
+> 
+> Thanks
+> Kishon
 > 
 
-This is an updated version of previous patch. Please review.
 
-diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
-index 31e0b5d..f6b617a 100644
---- a/Documentation/gpio/driver.txt
-+++ b/Documentation/gpio/driver.txt
-@@ -190,3 +190,45 @@ gpiochip_free_own_desc().
- These functions must be used with care since they do not affect module use
- count. Do not use the functions to request gpio descriptors not owned by the
- calling driver.
-+
-+
-+Generic driver for memory-mapped GPIO controllers
-+-------------------------------------------------
-+The GPIO generic library provides support for basic platform_device
-+memory-mapped GPIO controllers, which can be accessed by selecting Kconfig
-+symbol GPIO_GENERIC and using library functions provided by GPIO generic
-+driver (see drivers/gpio/gpio-generic.c).
-+
-+The driver supports registers of the sizes of 8/16/32/64 bits and the number
-+of GPIOs are determined by the width of the registers. A set of named memory
-+resources should be defined in the drivers (e.g "dat", "set", "clr", "dirout"
-+and "dirin"), where "dat" is a mandatory resource.
-+
-+Each GPIO controller using GPIO generic library needs to include the following
-+header.
-+        #include <linux/basic_mmio_gpio.h>
-+
-+There are two ways to use this driver:
-+1. Using basic GPIO MMIO Generic driver directly:
-+   Name your platform device "basic-mmio-gpio" or "basic-mmio-gpio-be", set the
-+   right named memory resources to specify the desired configuration, and let
-+   bgpio_pdev_probe do all the work.
-+
-+2. Using basic GPIO MMIO Generic library in your driver:
-+   Allocate a bgpio_chip yourself in your GPIO driver, call bgpio_init() on it
-+   and its resources, and finally invoke gpiochip_add yourself. It is possible
-+   to use only parts of the driver, you can overwrite functions and variables
-+   in your driver, if necessary.
-+   You can call bgpio_remove() to unregister a gpio_chip.
-+
-+For setting up GPIO's there are three supported configurations:
-+- single input/output register resource (named "dat").
-+- set/clear pair (named "set" and "clr").
-+- single output register resource and single input resource ("set" and "dat").
-+
-+For setting the GPIO direction, there are three supported configurations:
-+- simple bidirectional GPIO that requires no configuration.
-+- an output direction register (named "dirout") where a 1 bit indicates the
-+  GPIO is an output.
-+- an input direction register (named "dirin") where a 1 bit indicates the GPIO
-+  is an input.
 -- 
-1.9.1
-
+Regards,
+Nishanth Menon
