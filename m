@@ -1,43 +1,28 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: [PATCH 5/5] ARM: sa1100: use handle_domain_irq
-Date: Mon, 22 Dec 2014 13:05:40 +0300
-Message-ID: <1419242740-20219-5-git-send-email-dbaryshkov@gmail.com>
-References: <1419242740-20219-1-git-send-email-dbaryshkov@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 15/28] pinctrl: intel: drop owner assignment from
+ platform_drivers
+Date: Mon, 22 Dec 2014 15:35:19 +0200
+Message-ID: <20141222133519.GC1314@lahna.fi.intel.com>
+References: <1419196495-9626-1-git-send-email-wsa@the-dreams.de>
+ <1419196495-9626-16-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:59623 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754237AbaLVKGC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Dec 2014 05:06:02 -0500
-Received: by mail-pa0-f49.google.com with SMTP id eu11so5619512pac.36
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Dec 2014 02:06:02 -0800 (PST)
-In-Reply-To: <1419242740-20219-1-git-send-email-dbaryshkov@gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:23403 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754400AbaLVNgI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 22 Dec 2014 08:36:08 -0500
+Content-Disposition: inline
+In-Reply-To: <1419196495-9626-16-git-send-email-wsa@the-dreams.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-kernel@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-Use handle_domain_irq instead of handle_IRQ to automatically map
-hardware irq number to virq.
+On Sun, Dec 21, 2014 at 10:14:36PM +0100, Wolfram Sang wrote:
+> This platform_driver does not need to set an owner, it will be populated by the
+> driver core.
+> 
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
-Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
----
- arch/arm/mach-sa1100/irq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-sa1100/irq.c b/arch/arm/mach-sa1100/irq.c
-index a7d116a..65aebfa 100644
---- a/arch/arm/mach-sa1100/irq.c
-+++ b/arch/arm/mach-sa1100/irq.c
-@@ -147,7 +147,8 @@ sa1100_handle_irq(struct pt_regs *regs)
- 		if (mask == 0)
- 			break;
- 
--		handle_IRQ(ffs(mask) - 1 + IRQ_GPIO0_SC, regs);
-+		handle_domain_irq(sa1100_normal_irqdomain,
-+				ffs(mask) - 1, regs);
- 	} while (1);
- }
- 
--- 
-2.1.3
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
