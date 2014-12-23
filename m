@@ -1,90 +1,72 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH 3/3] net: ieee802154: don't use devm_pinctrl_get_select_default()
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 2/3] mmc: host: don't use devm_pinctrl_get_select_default()
  in probe
-Date: Tue, 23 Dec 2014 05:58:29 +0530
-Message-ID: <CAEUmHyaSo+rtfobH8jHidcX1e=5fRiCxHKDF=sEEKXPDcD7WeQ@mail.gmail.com>
+Date: Tue, 23 Dec 2014 16:37:52 +0100
+Message-ID: <CAPDyKFrroxHw4qm4GRE2C1iWgf5_-P4W3O9Mxf-7vgg7pXiGqA@mail.gmail.com>
 References: <1419286616-9893-1-git-send-email-wsa@the-dreams.de>
-	<1419286616-9893-3-git-send-email-wsa@the-dreams.de>
-	<CAEUmHyYbPbeWzHEaPYFAV+wTGYqhz7pps6XEzNrK_jQm_HPKpg@mail.gmail.com>
+	<1419286616-9893-2-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:40009 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751262AbaLWA2b (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Dec 2014 19:28:31 -0500
-Received: by mail-la0-f52.google.com with SMTP id hs14so4728031lab.39
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Dec 2014 16:28:29 -0800 (PST)
-In-Reply-To: <CAEUmHyYbPbeWzHEaPYFAV+wTGYqhz7pps6XEzNrK_jQm_HPKpg@mail.gmail.com>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:60394 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756104AbaLWPhx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Dec 2014 10:37:53 -0500
+Received: by mail-qc0-f174.google.com with SMTP id c9so4731752qcz.5
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Dec 2014 07:37:52 -0800 (PST)
+In-Reply-To: <1419286616-9893-2-git-send-email-wsa@the-dreams.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-wpan - ML <linux-wpan@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Nicolas Pitre <nico@fluxnic.net>, Chris Ball <chris@printf.net>, linux-mmc <linux-mmc@vger.kernel.org>
 
-Thanks for the patch.
+On 22 December 2014 at 23:16, Wolfram Sang <wsa@the-dreams.de> wrote:
+> Since commit ab78029ecc34 (drivers/pinctrl: grab default handles from device
+> core), we can rely on device core for setting the default pins.
+>
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
-Acked-by: Varka Bhadram <varkabhadram@gmail.com>
+Thanks! Applied for next, with an updated prefix of the commit header
+to "mmc: mvsdio:".
 
-On Tue, Dec 23, 2014 at 5:40 AM, Varka Bhadram <varkabhadram@gmail.com> wrote:
+Kind regards
+Uffe
+
+> ---
+>  drivers/mmc/host/mvsdio.c | 6 ------
+>  1 file changed, 6 deletions(-)
 >
-> Thanks for the patch.
+> diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
+> index 4f8618f4522d..a2cb92851f1f 100644
+> --- a/drivers/mmc/host/mvsdio.c
+> +++ b/drivers/mmc/host/mvsdio.c
+> @@ -25,7 +25,6 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/mmc/host.h>
+>  #include <linux/mmc/slot-gpio.h>
+> -#include <linux/pinctrl/consumer.h>
 >
-> Acked-by: Varka Bhadram <varkabhadram@gmail.com>
+>  #include <asm/sizes.h>
+>  #include <asm/unaligned.h>
+> @@ -704,7 +703,6 @@ static int mvsd_probe(struct platform_device *pdev)
+>         const struct mbus_dram_target_info *dram;
+>         struct resource *r;
+>         int ret, irq;
+> -       struct pinctrl *pinctrl;
 >
-> On Tue, Dec 23, 2014 at 3:46 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
->>
->> Since commit ab78029ecc34 (drivers/pinctrl: grab default handles from device
->> core), we can rely on device core for setting the default pins.
->>
->> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
->> ---
->>  drivers/net/ieee802154/cc2520.c | 7 -------
->>  1 file changed, 7 deletions(-)
->>
->> diff --git a/drivers/net/ieee802154/cc2520.c b/drivers/net/ieee802154/cc2520.c
->> index c2b7da3da183..033473448d9f 100644
->> --- a/drivers/net/ieee802154/cc2520.c
->> +++ b/drivers/net/ieee802154/cc2520.c
->> @@ -19,7 +19,6 @@
->>  #include <linux/workqueue.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/skbuff.h>
->> -#include <linux/pinctrl/consumer.h>
->>  #include <linux/of_gpio.h>
->>  #include <linux/ieee802154.h>
->>
->> @@ -841,7 +840,6 @@ done:
->>  static int cc2520_probe(struct spi_device *spi)
->>  {
->>         struct cc2520_private *priv;
->> -       struct pinctrl *pinctrl;
->>         struct cc2520_platform_data *pdata;
->>         int ret;
->>
->> @@ -854,11 +852,6 @@ static int cc2520_probe(struct spi_device *spi)
->>
->>         spi_set_drvdata(spi, priv);
->>
->> -       pinctrl = devm_pinctrl_get_select_default(&spi->dev);
->> -       if (IS_ERR(pinctrl))
->> -               dev_warn(&spi->dev,
->> -                        "pinctrl pins are not configured\n");
->> -
->>         pdata = cc2520_get_platform_data(spi);
->>         if (!pdata) {
->>                 dev_err(&spi->dev, "no platform data\n");
->> --
->> 2.1.3
->>
+>         r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         irq = platform_get_irq(pdev, 0);
+> @@ -721,10 +719,6 @@ static int mvsd_probe(struct platform_device *pdev)
+>         host->mmc = mmc;
+>         host->dev = &pdev->dev;
 >
->
->
+> -       pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
+> -       if (IS_ERR(pinctrl))
+> -               dev_warn(&pdev->dev, "no pins associated\n");
+> -
+>         /*
+>          * Some non-DT platforms do not pass a clock, and the clock
+>          * frequency is passed through platform_data. On DT platforms,
 > --
-> Thanks and Regards,
-> Varka Bhadram.
-
-
-
-
--- 
-Thanks and Regards,
-Varka Bhadram.
+> 2.1.3
+>
