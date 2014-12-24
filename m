@@ -1,117 +1,129 @@
-From: Zhou Wang <wangzhou.bry@gmail.com>
-Subject: [PATCH v5 2/2] ARM: dts: hip04: add GPIO pieces
-Date: Wed, 24 Dec 2014 17:23:36 +0800
-Message-ID: <1419413016-31932-3-git-send-email-wangzhou.bry@gmail.com>
-References: <1419413016-31932-1-git-send-email-wangzhou.bry@gmail.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v8 2/2] drivers/gpio: Altera soft IP GPIO driver
+Date: Wed, 24 Dec 2014 03:04:10 -0800
+Message-ID: <1419419050.6157.11.camel@perches.com>
+References: <1419409345-8297-1-git-send-email-thloh@altera.com>
+	 <1419409345-8297-3-git-send-email-thloh@altera.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:60663 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751336AbaLXJZ2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Dec 2014 04:25:28 -0500
-Received: by mail-pd0-f177.google.com with SMTP id ft15so9569853pdb.22
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Dec 2014 01:25:27 -0800 (PST)
-In-Reply-To: <1419413016-31932-1-git-send-email-wangzhou.bry@gmail.com>
+Received: from smtprelay0202.hostedemail.com ([216.40.44.202]:50333 "EHLO
+	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751872AbaLXLEQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 24 Dec 2014 06:04:16 -0500
+In-Reply-To: <1419409345-8297-3-git-send-email-thloh@altera.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, wangzhou1@hisilicon.com, liguozhu@hisilicon.com, Zhou Wang <wangzhou.bry@gmail.com>
+To: thloh@altera.com
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Antti Palosaari <crope@iki.fi>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Dinh Nguyen <dinguyen@altera.com>
 
-Hisilicon Soc hip04 has four GPIO controllers, each one has 32
-GPIOs and can be configured to be an interrupt controller.The GPIO
-controllers are compatible with the snps,dw-apb-gpio driver.
-This patch add the corresponding device tree nodes.
+On Wed, 2014-12-24 at 00:22 -0800, thloh@altera.com wrote:
+> Adds a new driver for Altera soft GPIO IP. The driver is able to
+> do read/write and allows GPIO to be a interrupt controller.
 
-Signed-off-by: Zhou Wang <wangzhou.bry@gmail.com>
----
- arch/arm/boot/dts/hip04.dtsi |   75 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+Some trivial comments, some not quite so trivial.
 
-diff --git a/arch/arm/boot/dts/hip04.dtsi b/arch/arm/boot/dts/hip04.dtsi
-index 2388145..267942a 100644
---- a/arch/arm/boot/dts/hip04.dtsi
-+++ b/arch/arm/boot/dts/hip04.dtsi
-@@ -269,6 +269,81 @@
- 			interrupts = <0 372 4>;
- 		};
- 
-+		gpio@4003000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "snps,dw-apb-gpio";
-+			reg = <0x4003000 0x1000>;
-+
-+			gpio3: gpio-controller@0 {
-+				compatible = "snps,dw-apb-gpio-port";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				snps,nr-gpios = <32>;
-+				reg = <0>;
-+				interrupt-parent = <&gic>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				interrupts = <0 392 4>;
-+			};
-+		};
-+
-+		gpio@4002000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "snps,dw-apb-gpio";
-+			reg = <0x4002000 0x1000>;
-+
-+			gpio2: gpio-controller@0 {
-+			compatible = "snps,dw-apb-gpio-port";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				snps,nr-gpios = <32>;
-+				reg = <0>;
-+				interrupt-parent = <&gic>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				interrupts = <0 391 4>;
-+			};
-+		};
-+
-+		gpio@4001000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "snps,dw-apb-gpio";
-+			reg = <0x4001000 0x1000>;
-+
-+			gpio1: gpio-controller@0 {
-+				compatible = "snps,dw-apb-gpio-port";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				snps,nr-gpios = <32>;
-+				reg = <0>;
-+				interrupt-parent = <&gic>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				interrupts = <0 390 4>;
-+			};
-+		};
-+
-+		gpio@4000000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "snps,dw-apb-gpio";
-+			reg = <0x4000000 0x1000>;
-+
-+			gpio0: gpio-controller@0 {
-+				compatible = "snps,dw-apb-gpio-port";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				snps,nr-gpios = <32>;
-+				reg = <0>;
-+				interrupt-parent = <&gic>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				interrupts = <0 389 4>;
-+			};
-+		};
- 	};
- 
- 	etb@0,e3c42000 {
--- 
-1.7.9.5
+> diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+[]
+> +static int altera_gpio_irq_set_type(struct irq_data *d,
+> +				   unsigned int type)
+> +{
+> +	struct altera_gpio_chip *altera_gc = irq_data_get_irq_chip_data(d);
+> +
+> +	altera_gc = irq_data_get_irq_chip_data(d);
+
+I presume this multiple initialization of altera_gc
+is unnecessary duplication.
+
+> +static void altera_gpio_irq_edge_handler(unsigned int irq,
+> +					struct irq_desc *desc)
+> +{
+> +	struct altera_gpio_chip *altera_gc;
+> +	struct irq_chip *chip;
+> +	struct of_mm_gpio_chip *mm_gc;
+> +	unsigned long status;
+> +	int i;
+> +
+> +	altera_gc = irq_desc_get_handler_data(desc);
+> +	chip = irq_desc_get_chip(desc);
+> +	mm_gc = &altera_gc->mmchip;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	while ((status =
+> +	      (readl(mm_gc->regs + ALTERA_GPIO_EDGE_CAP) &
+> +	      readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK)))) {
+> +		writel(status, mm_gc->regs + ALTERA_GPIO_EDGE_CAP);
+> +		for_each_set_bit(i, &status, mm_gc->gc.ngpio) {
+> +			generic_handle_irq(
+> +				irq_find_mapping(altera_gc->mmchip.gc.irqdomain
+> +						, i));
+
+That's kind of unpleasant to read.
+It might be better to use a separate these statements
+and use a temporary for irq_find_mapping()
+
+> +static void altera_gpio_irq_leveL_high_handler(unsigned int irq,
+> +					      struct irq_desc *desc)
+> +{
+> +	struct altera_gpio_chip *altera_gc;
+> +	struct irq_chip *chip;
+> +	struct of_mm_gpio_chip *mm_gc;
+> +	unsigned long status;
+> +	int i;
+> +
+> +	altera_gc = irq_desc_get_handler_data(desc);
+> +	chip = irq_desc_get_chip(desc);
+> +	mm_gc = &altera_gc->mmchip;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	status = readl(mm_gc->regs + ALTERA_GPIO_DATA);
+> +	status &= readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
+> +
+> +	for_each_set_bit(i, &status, mm_gc->gc.ngpio) {
+> +		generic_handle_irq(
+> +			irq_find_mapping(altera_gc->mmchip.gc.irqdomain, i));
+
+Maybe a temporary here too
+
+> +int altera_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *node = pdev->dev.of_node;
+> +	int id, reg, ret;
+> +	struct altera_gpio_chip *altera_gc;
+> +
+> +	altera_gc = devm_kzalloc(&pdev->dev, sizeof(*altera_gc), GFP_KERNEL);
+> +
+> +	if (altera_gc == NULL)
+> +		return -ENOMEM;
+
+No blank line after the devm_kzalloc please and
+	if (!altera_gc)
+is more common.
+
+
+> +	if (altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH) {
+> +		gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
+> +			&altera_irq_chip,
+> +			altera_gc->mapped_irq,
+> +			altera_gpio_irq_leveL_high_handler);
+> +	} else {
+> +		gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
+> +			&altera_irq_chip,
+> +			altera_gc->mapped_irq,
+> +			altera_gpio_irq_edge_handler);
+> +	}
+
+Sometimes using a ?: ternary is smaller code
+
+	gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
+				     &altera_irq_chip,
+				     altera_gc->mapped_irq,
+				     altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH ?
+				     altera_gpio_irq_leveL_high_handler :
+				     altera_gpio_irq_edge_handler);
+> 
 
