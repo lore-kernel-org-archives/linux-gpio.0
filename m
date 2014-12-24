@@ -1,38 +1,59 @@
-From: Alex Elder <elder@linaro.org>
-Subject: Re: [PATCH] linux/kernel.h: merge ARRAY_AND_SIZE defines
-Date: Wed, 24 Dec 2014 08:02:30 -0600
-Message-ID: <549AC776.8090905@linaro.org>
-References: <1419399496-5955-1-git-send-email-yamada.m@jp.panasonic.com> <1419399879.6157.9.camel@perches.com>
+From: Michael Welling <mwelling@emacinc.com>
+Subject: Linux GPIO internals
+Date: Wed, 24 Dec 2014 15:53:53 -0600
+Message-ID: <20141224215352.GA26482@sysresccd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:40628 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751798AbaLXOCd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Dec 2014 09:02:33 -0500
-Received: by mail-ig0-f176.google.com with SMTP id l13so7424724iga.9
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Dec 2014 06:02:32 -0800 (PST)
-In-Reply-To: <1419399879.6157.9.camel@perches.com>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:64262 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751568AbaLXVyD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Dec 2014 16:54:03 -0500
+Received: by mail-ig0-f174.google.com with SMTP id hn15so7360981igb.13
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Dec 2014 13:54:02 -0800 (PST)
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Joe Perches <joe@perches.com>, Masahiro Yamada <yamada.m@jp.panasonic.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Rusty Russell <rusty@rustcorp.com.au>, Michal Nazarewicz <mina86@mina86.com>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Daniel Borkmann <dborkman@redhat.com>, Alex Elder <alex.elder@linaro.org>, Daniel Walter <dwalter@google.com>, Peter Hurley <peter@hurleysoftware.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: gregkh@linuxfoundation.org, linus.walleij@linaro.org, acourbot@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Roland Stigge <stigge@antcom.de>, Wolfgang Grandegger <wg@grandegger.com>, tstratman@emacinc.com
 
-On 12/23/2014 11:44 PM, Joe Perches wrote:
-> On Wed, 2014-12-24 at 14:38 +0900, Masahiro Yamada wrote:
->> ARRAY_AND_SIZE is a useful macro.  Its definition is already
->> duplicated in some headers.  Move it to include/linux/kernel.h.
-> 
-> I think it's not a good/useful macro and
-> would prefer the uses expanded instead.
+All,
 
-For what it's worth, I agree.	-Alex
+For years now EMAC has provided an out-of-tree series of class drivers
+for accessing various devices. The EMAC GPIO class and character
+interfaces predate the introduction of the gpiolib interface and have
+been ported across several kernel versions.
 
-> The uses of ARRAY_AND_SIZE in structure
-> definitions aren't particularly bad, but the
-> ARRAY_AND_SIZE uses that hide the number of
-> arguments in a function I think are suboptimal.
-> 
-> 
+http://wiki.emacinc.com/wiki/Using_the_EMAC_GPIO_Class
+
+Recently we have come to the conclusion that continuing to provide
+support for these drivers is getting out of hand. It was agreed that we
+move away from our non-standard drivers and use mainstream drivers for our
+newest products.
+
+That being said, we would like to be able to provide the capabilities
+of our old drivers but it is not the case with the current gpiolib
+implementation.
+
+Here are the major concerns that we have with the gpiolib implementation:
+- There is no mechanism to provide simultaneous access to multiple
+  GPIOs from userspace. 
+- The sysfs interface seems to vastly slower than the character
+  interface and it is far more cumbersome to handle access from a
+  userspace C program.
+
+It seems that the first concern was attempted to be addressed by the
+following patch:
+https://lkml.org/lkml/2012/12/23/66
+
+It seems this effort dropped off the radar in January of 2013.
+What happened to this patch?
+
+As for the second issue, I am not sure how to resolve this and am open
+to ideas. I have seen similar concerns in other subsystem that use the
+sysfs interface.
+
+IIO example: 
+http://www.spinics.net/lists/linux-iio/msg15344.html
+
+Suggestions?
 
