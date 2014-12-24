@@ -1,72 +1,89 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 2/3] mmc: host: don't use devm_pinctrl_get_select_default()
- in probe
-Date: Tue, 23 Dec 2014 16:37:52 +0100
-Message-ID: <CAPDyKFrroxHw4qm4GRE2C1iWgf5_-P4W3O9Mxf-7vgg7pXiGqA@mail.gmail.com>
-References: <1419286616-9893-1-git-send-email-wsa@the-dreams.de>
-	<1419286616-9893-2-git-send-email-wsa@the-dreams.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Masahiro Yamada <yamada.m@jp.panasonic.com>
+Subject: [PATCH] linux/kernel.h: merge ARRAY_AND_SIZE defines
+Date: Wed, 24 Dec 2014 14:38:16 +0900
+Message-ID: <1419399496-5955-1-git-send-email-yamada.m@jp.panasonic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:60394 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756104AbaLWPhx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Dec 2014 10:37:53 -0500
-Received: by mail-qc0-f174.google.com with SMTP id c9so4731752qcz.5
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Dec 2014 07:37:52 -0800 (PST)
-In-Reply-To: <1419286616-9893-2-git-send-email-wsa@the-dreams.de>
+Received: from smtp.mei.co.jp ([133.183.100.20]:42762 "EHLO smtp.mei.co.jp"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750746AbaLXFio (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 24 Dec 2014 00:38:44 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Nicolas Pitre <nico@fluxnic.net>, Chris Ball <chris@printf.net>, linux-mmc <linux-mmc@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: Masahiro Yamada <yamada.m@jp.panasonic.com>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Rusty Russell <rusty@rustcorp.com.au>, Michal Nazarewicz <mina86@mina86.com>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Joe Perches <joe@perches.com>, Daniel Borkmann <dborkman@redhat.com>, Alex Elder <alex.elder@linaro.org>, Daniel Walter <dwalter@google.com>, Peter Hurley <peter@hurleysoftware.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On 22 December 2014 at 23:16, Wolfram Sang <wsa@the-dreams.de> wrote:
-> Since commit ab78029ecc34 (drivers/pinctrl: grab default handles from device
-> core), we can rely on device core for setting the default pins.
->
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+ARRAY_AND_SIZE is a useful macro.  Its definition is already
+duplicated in some headers.  Move it to include/linux/kernel.h.
 
-Thanks! Applied for next, with an updated prefix of the commit header
-to "mmc: mvsdio:".
+Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
+---
 
-Kind regards
-Uffe
+ arch/arm/mach-mmp/common.h        | 1 -
+ arch/arm/mach-pxa/generic.h       | 2 --
+ arch/arm/mach-ux500/db8500-regs.h | 2 --
+ drivers/pinctrl/pinctrl-lantiq.h  | 2 --
+ include/linux/kernel.h            | 1 +
+ 5 files changed, 1 insertion(+), 7 deletions(-)
 
-> ---
->  drivers/mmc/host/mvsdio.c | 6 ------
->  1 file changed, 6 deletions(-)
->
-> diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
-> index 4f8618f4522d..a2cb92851f1f 100644
-> --- a/drivers/mmc/host/mvsdio.c
-> +++ b/drivers/mmc/host/mvsdio.c
-> @@ -25,7 +25,6 @@
->  #include <linux/of_irq.h>
->  #include <linux/mmc/host.h>
->  #include <linux/mmc/slot-gpio.h>
-> -#include <linux/pinctrl/consumer.h>
->
->  #include <asm/sizes.h>
->  #include <asm/unaligned.h>
-> @@ -704,7 +703,6 @@ static int mvsd_probe(struct platform_device *pdev)
->         const struct mbus_dram_target_info *dram;
->         struct resource *r;
->         int ret, irq;
-> -       struct pinctrl *pinctrl;
->
->         r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         irq = platform_get_irq(pdev, 0);
-> @@ -721,10 +719,6 @@ static int mvsd_probe(struct platform_device *pdev)
->         host->mmc = mmc;
->         host->dev = &pdev->dev;
->
-> -       pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
-> -       if (IS_ERR(pinctrl))
-> -               dev_warn(&pdev->dev, "no pins associated\n");
-> -
->         /*
->          * Some non-DT platforms do not pass a clock, and the clock
->          * frequency is passed through platform_data. On DT platforms,
-> --
-> 2.1.3
->
+diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
+index cf445ba..e503f63 100644
+--- a/arch/arm/mach-mmp/common.h
++++ b/arch/arm/mach-mmp/common.h
+@@ -1,5 +1,4 @@
+ #include <linux/reboot.h>
+-#define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+ 
+ extern void timer_init(int irq);
+ 
+diff --git a/arch/arm/mach-pxa/generic.h b/arch/arm/mach-pxa/generic.h
+index 7a9fa1a..da11977 100644
+--- a/arch/arm/mach-pxa/generic.h
++++ b/arch/arm/mach-pxa/generic.h
+@@ -23,8 +23,6 @@ extern void pxa_timer_init(void);
+ 	mi->bank[__nr].start = (__start), \
+ 	mi->bank[__nr].size = (__size)
+ 
+-#define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+-
+ #define pxa25x_handle_irq icip_handle_irq
+ extern void __init pxa25x_init_irq(void);
+ extern void __init pxa25x_map_io(void);
+diff --git a/arch/arm/mach-ux500/db8500-regs.h b/arch/arm/mach-ux500/db8500-regs.h
+index 2739955..80a6deb 100644
+--- a/arch/arm/mach-ux500/db8500-regs.h
++++ b/arch/arm/mach-ux500/db8500-regs.h
+@@ -195,6 +195,4 @@
+ /* Used by some plat-nomadik code */
+ #define io_p2v(n)		__io_address(n)
+ 
+-#define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+-
+ #endif
+diff --git a/drivers/pinctrl/pinctrl-lantiq.h b/drivers/pinctrl/pinctrl-lantiq.h
+index c7cfad5..508d205 100644
+--- a/drivers/pinctrl/pinctrl-lantiq.h
++++ b/drivers/pinctrl/pinctrl-lantiq.h
+@@ -21,8 +21,6 @@
+ 
+ #include "core.h"
+ 
+-#define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+-
+ #define LTQ_MAX_MUX		4
+ #define MFPR_FUNC_MASK		0x3
+ 
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 049d43b..4e8fc3d 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -59,6 +59,7 @@ void printch(int c);
+ #define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
+ 
+ #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
++#define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+ 
+ /*
+  * This looks more complex than it should be. But we need to
+-- 
+1.9.1
+
