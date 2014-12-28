@@ -1,40 +1,91 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] pinctrl: rockchip: Avoid losing interrupts when supporting both edges
-Date: Sat, 27 Dec 2014 19:29:23 +0100
-Message-ID: <6699676.mHhQhT5KAT@phil>
-References: <1419274049-5069-1-git-send-email-dianders@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:60259 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751079AbaL0S3c (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 27 Dec 2014 13:29:32 -0500
-In-Reply-To: <1419274049-5069-1-git-send-email-dianders@chromium.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Huacai Chen <chenhc@lemote.com>
+Subject: [PATCH V6 4/8] MIPS: Move Loongson GPIO driver to drivers/gpio
+Date: Sun, 28 Dec 2014 12:57:33 +0800
+Message-ID: <1419742654-15094-2-git-send-email-chenhc@lemote.com>
+References: <1419742654-15094-1-git-send-email-chenhc@lemote.com>
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1419742654-15094-1-git-send-email-chenhc@lemote.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: John Crispin <john@phrozen.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, linux-gpio@vger.kernel.org, Huacai Chen <chenhc@lemote.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandru Stan <amstan@chromium.org>, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Montag, 22. Dezember 2014, 10:47:29 schrieb Doug Anderson:
-> I was seeing cases where I was losing interrupts when inserting and
-> removing SD cards.  Sometimes the card would get "stuck" in the
-> inserted state.
-> 
-> I believe that the problem was related to the code to handle the case
-> where we needed both rising and falling edges.  This code would
-> disable the interrupt as the polarity was switched.  If an interrupt
-> came at the wrong time it could be lost.
-> 
-> We'll match what the gpio-dwapb.c driver does upstream and change the
-> interrupt polarity without disabling things.
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+Move Loongson-2's GPIO driver to drivers/gpio and add Kconfig options.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-on a rk3188 board with the edge triggered power-button
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+---
+ arch/mips/configs/lemote2f_defconfig               |    1 +
+ arch/mips/loongson/common/Makefile                 |    1 -
+ drivers/gpio/Kconfig                               |    6 ++++++
+ drivers/gpio/Makefile                              |    1 +
+ .../common/gpio.c => drivers/gpio/gpio-loongson.c  |    0
+ 5 files changed, 8 insertions(+), 1 deletions(-)
+ rename arch/mips/loongson/common/gpio.c => drivers/gpio/gpio-loongson.c (100%)
 
-
-Heiko
+diff --git a/arch/mips/configs/lemote2f_defconfig b/arch/mips/configs/lemote2f_defconfig
+index 227a9de..0549b01 100644
+--- a/arch/mips/configs/lemote2f_defconfig
++++ b/arch/mips/configs/lemote2f_defconfig
+@@ -172,6 +172,7 @@ CONFIG_SERIAL_8250_FOURPORT=y
+ CONFIG_LEGACY_PTY_COUNT=16
+ CONFIG_HW_RANDOM=y
+ CONFIG_RTC=y
++CONFIG_GPIO_LOONGSON=y
+ CONFIG_THERMAL=y
+ CONFIG_MEDIA_SUPPORT=m
+ CONFIG_VIDEO_DEV=m
+diff --git a/arch/mips/loongson/common/Makefile b/arch/mips/loongson/common/Makefile
+index d87e033..e70c33f 100644
+--- a/arch/mips/loongson/common/Makefile
++++ b/arch/mips/loongson/common/Makefile
+@@ -4,7 +4,6 @@
+ 
+ obj-y += setup.o init.o cmdline.o env.o time.o reset.o irq.o \
+     bonito-irq.o mem.o machtype.o platform.o
+-obj-$(CONFIG_GPIOLIB) += gpio.o
+ obj-$(CONFIG_PCI) += pci.o
+ 
+ #
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 633ec21..3ac5473 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -475,6 +475,12 @@ config GPIO_GRGPIO
+ 	  Select this to support Aeroflex Gaisler GRGPIO cores from the GRLIB
+ 	  VHDL IP core library.
+ 
++config GPIO_LOONGSON
++	tristate "Loongson-2 GPIO support"
++	depends on CPU_LOONGSON2
++	help
++	  driver for GPIO functionality on Loongson-2F processors.
++
+ config GPIO_TB10X
+ 	bool
+ 	select GENERIC_IRQ_CHIP
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 81755f1..caccfad 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -41,6 +41,7 @@ obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
+ obj-$(CONFIG_GPIO_KEMPLD)	+= gpio-kempld.o
+ obj-$(CONFIG_ARCH_KS8695)	+= gpio-ks8695.o
+ obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
++obj-$(CONFIG_GPIO_LOONGSON)	+= gpio-loongson.o
+ obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
+ obj-$(CONFIG_ARCH_LPC32XX)	+= gpio-lpc32xx.o
+ obj-$(CONFIG_GPIO_LYNXPOINT)	+= gpio-lynxpoint.o
+diff --git a/arch/mips/loongson/common/gpio.c b/drivers/gpio/gpio-loongson.c
+similarity index 100%
+rename from arch/mips/loongson/common/gpio.c
+rename to drivers/gpio/gpio-loongson.c
+-- 
+1.7.7.3
