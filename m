@@ -1,52 +1,42 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 3/5] pinctrl: exynos: add exynos5410 SoC specific data
-Date: Sun, 28 Dec 2014 20:16:24 +0900
-Message-ID: <549FE688.1060601@gmail.com>
-References: <547104D5.4030803@suse.de> <1416695185-5198-1-git-send-email-afaerber@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: [PATCH gpio] gpio-amd8111: check ioport_map return value
+Date: Mon, 29 Dec 2014 14:09:01 +0530
+Message-ID: <1419842341-22694-1-git-send-email-varkab@cdac.in>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:41228 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751295AbaL1LQb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Dec 2014 06:16:31 -0500
-In-Reply-To: <1416695185-5198-1-git-send-email-afaerber@suse.de>
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:51824 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751941AbaL2InR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Dec 2014 03:43:17 -0500
+Received: by mail-pd0-f177.google.com with SMTP id ft15so16633342pdb.36
+        for <linux-gpio@vger.kernel.org>; Mon, 29 Dec 2014 00:43:17 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "open list:PIN CONTROL SUBSY..." <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, Varka Bhadram <varkab@cdac.in>
 
-Hi Andreas,
+ioport_map() may fail. Its safe to check the return value.
 
-On 23.11.2014 07:26, Andreas F=C3=A4rber wrote:
-> From: Hakjoo Kim <ruppi.kim@hardkernel.com>
->
-> Add Samsung EXYNOS5410 SoC specific data to enable pinctrl
-> support for all platforms based on EXYNOS5410.
->
-> Signed-off-by: Hakjoo Kim <ruppi.kim@hardkernel.com>
-> [AF: Rebased onto Exynos5260 and irq_chip consolidation]
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->   v2 -> v3:
->   * Rebased (.svc, .{g,w}eint_{con,mask,pend} fields dropped)
->
->   v1 -> v2:
->   * Filled in Sob from Hakjoo Kim
+Signed-off-by: Varka Bhadram <varkab@cdac.in>
+---
+ drivers/gpio/gpio-amd8111.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-Any news on this patch? I'd like to ACK it, but apparently it is waitin=
-g=20
-for a rebase.
+diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
+index 3c09f1a6..a0585c3 100644
+--- a/drivers/gpio/gpio-amd8111.c
++++ b/drivers/gpio/gpio-amd8111.c
+@@ -213,6 +213,11 @@ found:
+ 		goto out;
+ 	}
+ 	gp.pm = ioport_map(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
++	if (!gp.pm) {
++		dev_err(&pdev->dev, "Couldn't map io port into io memory\n");
++		err = -ENOMEM;
++		goto out;
++	}
+ 	gp.pdev = pdev;
+ 	gp.chip.dev = &pdev->dev;
+ 
+-- 
+1.7.9.5
 
-Sorry for the delay, unfortunately things are a little bit busy on my=20
-side nowadays.
-
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
