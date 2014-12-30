@@ -1,42 +1,35 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: [PATCH gpio] gpio-amd8111: check ioport_map return value
-Date: Mon, 29 Dec 2014 14:09:01 +0530
-Message-ID: <1419842341-22694-1-git-send-email-varkab@cdac.in>
+From: Marcel Holtmann <marcel@holtmann.org>
+Subject: Re: [PATCH 3/3] net: ieee802154: don't use devm_pinctrl_get_select_default() in probe
+Date: Mon, 29 Dec 2014 22:17:43 -0800
+Message-ID: <6FEBBFCF-765F-4324-A9B1-92E47826F24A@holtmann.org>
+References: <1419286616-9893-1-git-send-email-wsa@the-dreams.de> <1419286616-9893-3-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0 (Mac OS X Mail 8.1 \(1993\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:51824 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751941AbaL2InR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Dec 2014 03:43:17 -0500
-Received: by mail-pd0-f177.google.com with SMTP id ft15so16633342pdb.36
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Dec 2014 00:43:17 -0800 (PST)
+Received: from senator.holtmann.net ([87.106.208.187]:50912 "EHLO
+	mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751570AbaL3GRs convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Dec 2014 01:17:48 -0500
+In-Reply-To: <1419286616-9893-3-git-send-email-wsa@the-dreams.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, Varka Bhadram <varkab@cdac.in>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Varka Bhadram <varkabhadram@gmail.com>, Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
 
-ioport_map() may fail. Its safe to check the return value.
+Hi Wolfram,
 
-Signed-off-by: Varka Bhadram <varkab@cdac.in>
----
- drivers/gpio/gpio-amd8111.c |    5 +++++
- 1 file changed, 5 insertions(+)
+> Since commit ab78029ecc34 (drivers/pinctrl: grab default handles from device
+> core), we can rely on device core for setting the default pins.
+> 
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+> drivers/net/ieee802154/cc2520.c | 7 -------
+> 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
-index 3c09f1a6..a0585c3 100644
---- a/drivers/gpio/gpio-amd8111.c
-+++ b/drivers/gpio/gpio-amd8111.c
-@@ -213,6 +213,11 @@ found:
- 		goto out;
- 	}
- 	gp.pm = ioport_map(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
-+	if (!gp.pm) {
-+		dev_err(&pdev->dev, "Couldn't map io port into io memory\n");
-+		err = -ENOMEM;
-+		goto out;
-+	}
- 	gp.pdev = pdev;
- 	gp.chip.dev = &pdev->dev;
- 
--- 
-1.7.9.5
+patch has been applied to bluetooth-next tree.
+
+Regards
+
+Marcel
 
