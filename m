@@ -1,35 +1,34 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Subject: Re: [PATCH 3/3] net: ieee802154: don't use devm_pinctrl_get_select_default() in probe
-Date: Mon, 29 Dec 2014 22:17:43 -0800
-Message-ID: <6FEBBFCF-765F-4324-A9B1-92E47826F24A@holtmann.org>
-References: <1419286616-9893-1-git-send-email-wsa@the-dreams.de> <1419286616-9893-3-git-send-email-wsa@the-dreams.de>
-Mime-Version: 1.0 (Mac OS X Mail 8.1 \(1993\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 4/4] Documentation: dt: gpio: Add gpio-number-forward
+ property in snps gpio binding doc
+Date: Wed, 31 Dec 2014 09:18:02 +0100
+Message-ID: <CACRpkdaBVN46BMO3Q5mN8OncghG3VH2=zv66EyWJEK1rwx3P6g@mail.gmail.com>
+References: <1417750722-14027-1-git-send-email-wangzhou.bry@gmail.com>
+	<1417750722-14027-5-git-send-email-wangzhou.bry@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from senator.holtmann.net ([87.106.208.187]:50912 "EHLO
-	mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751570AbaL3GRs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Dec 2014 01:17:48 -0500
-In-Reply-To: <1419286616-9893-3-git-send-email-wsa@the-dreams.de>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:43991 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751407AbaLaISD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Dec 2014 03:18:03 -0500
+Received: by mail-ig0-f180.google.com with SMTP id h15so13575871igd.7
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Dec 2014 00:18:02 -0800 (PST)
+In-Reply-To: <1417750722-14027-5-git-send-email-wangzhou.bry@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Varka Bhadram <varkabhadram@gmail.com>, Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+To: Zhou Wang <wangzhou.bry@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Alexandre Courbot <gnurou@gmail.com>, liguozhu@hisilicon.com, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alan Tull <atull@altera.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jamie Iles <jamie@jamieiles.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, wangzhou1@h
 
-Hi Wolfram,
+On Fri, Dec 5, 2014 at 4:38 AM, Zhou Wang <wangzhou.bry@gmail.com> wrote:
 
-> Since commit ab78029ecc34 (drivers/pinctrl: grab default handles from device
-> core), we can rely on device core for setting the default pins.
-> 
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> ---
-> drivers/net/ieee802154/cc2520.c | 7 -------
-> 1 file changed, 7 deletions(-)
+> This property is used to indicate gpiochip_find_base() to find GPIO
+> base number in increasing order.
+>
+> Signed-off-by: Zhou Wang <wangzhou.bry@gmail.com>
 
-patch has been applied to bluetooth-next tree.
+NAK. GPIO numbers is a Linux-internal thing, not a OS independent
+property.
 
-Regards
-
-Marcel
-
+Yours,
+Linus Walleij
