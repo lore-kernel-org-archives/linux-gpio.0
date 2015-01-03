@@ -1,85 +1,94 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: [PATCH 2/2] gpio: tz1090-pdc: Use resource_size to fix off-by-one
- resource size calculation
-Date: Fri, 2 Jan 2015 10:25:22 +0000
-Message-ID: <54A67212.8060105@imgtec.com>
-References: <1419746439.4496.1.camel@phoenix> <1419746510.4496.2.camel@phoenix>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: Linux GPIO internals
+Date: Sat, 3 Jan 2015 14:12:06 +0100
+Message-ID: <CAAVeFuJcWizqtW4mmD8ow5eg2841vgXhZ=7bHDiO3ZJfE2ezog@mail.gmail.com>
+References: <20141224215352.GA26482@sysresccd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="HJlg7pxrMKUqmNjFt10DagwHP9uWRNQjT"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailapp01.imgtec.com ([195.59.15.196]:14200 "EHLO
-	imgpgp01.kl.imgtec.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750761AbbABKZd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Jan 2015 05:25:33 -0500
-In-Reply-To: <1419746510.4496.2.camel@phoenix>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:47694 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750984AbbACNM1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 3 Jan 2015 08:12:27 -0500
+In-Reply-To: <20141224215352.GA26482@sysresccd>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-metag <linux-metag@vger.kernel.org>
+To: Michael Welling <mwelling@emacinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, "acourbot@nvidia.com" <acourbot@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Roland Stigge <stigge@antcom.de>, Wolfgang Grandegger <wg@grandegger.com>, tstratman@emacinc.com, Rojhalat Ibrahim <imr@rtschenk.de>
 
---HJlg7pxrMKUqmNjFt10DagwHP9uWRNQjT
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hi Michael, sorry for the delayed reply on this interesting issue.
 
-On 28/12/14 06:01, Axel Lin wrote:
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+On Wed, Dec 24, 2014 at 10:53 PM, Michael Welling <mwelling@emacinc.com> wrote:
+> All,
+>
+> For years now EMAC has provided an out-of-tree series of class drivers
+> for accessing various devices. The EMAC GPIO class and character
+> interfaces predate the introduction of the gpiolib interface and have
+> been ported across several kernel versions.
+>
+> http://wiki.emacinc.com/wiki/Using_the_EMAC_GPIO_Class
+>
+> Recently we have come to the conclusion that continuing to provide
+> support for these drivers is getting out of hand. It was agreed that we
+> move away from our non-standard drivers and use mainstream drivers for our
+> newest products.
+>
+> That being said, we would like to be able to provide the capabilities
+> of our old drivers but it is not the case with the current gpiolib
+> implementation.
+>
+> Here are the major concerns that we have with the gpiolib implementation:
+> - There is no mechanism to provide simultaneous access to multiple
+>   GPIOs from userspace.
+> - The sysfs interface seems to vastly slower than the character
+>   interface and it is far more cumbersome to handle access from a
+>   userspace C program.
+>
+> It seems that the first concern was attempted to be addressed by the
+> following patch:
+> https://lkml.org/lkml/2012/12/23/66
+>
+> It seems this effort dropped off the radar in January of 2013.
+> What happened to this patch?
+>
+> As for the second issue, I am not sure how to resolve this and am open
+> to ideas. I have seen similar concerns in other subsystem that use the
+> sysfs interface.
+>
+> IIO example:
+> http://www.spinics.net/lists/linux-iio/msg15344.html
+>
+> Suggestions?
 
-Thanks, both patches
-Acked-by: James Hogan <james.hogan@imgtec.com>
+It seems like your mail is coming just at the right time. We have
+recently merged a patch that allows setting several GPIOs at the same
+time, if the hardware supports it:
 
-Note that the previous off-by-one behaviour should be harmless since the
-SoC IO memory region is unmapped on Meta (i.e. the ioremap becomes a
-no-op as the whole of IO memory is accessible with normal memory
-accesses regardless of MMU).
+http://patchwork.ozlabs.org/patch/406666/
 
-Cheers
-James
+It lacks sysfs support, but we are also increasingly feeling the
+pressure of the old sysfs interface and are planning to develop a new
+one:
 
-> ---
->  drivers/gpio/gpio-tz1090-pdc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/gpio-tz1090-pdc.c b/drivers/gpio/gpio-tz1090-=
-pdc.c
-> index d753622..ede7e40 100644
-> --- a/drivers/gpio/gpio-tz1090-pdc.c
-> +++ b/drivers/gpio/gpio-tz1090-pdc.c
-> @@ -190,7 +190,7 @@ static int tz1090_pdc_gpio_probe(struct platform_de=
-vice *pdev)
-> =20
->  	/* Ioremap the registers */
->  	priv->reg =3D devm_ioremap(&pdev->dev, res_regs->start,
-> -				 res_regs->end - res_regs->start);
-> +				 resource_size(res_regs));
->  	if (!priv->reg) {
->  		dev_err(&pdev->dev, "unable to ioremap registers\n");
->  		return -ENOMEM;
->=20
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311158.html
 
+Our main gripe with the old sysfs interface is its use of the
+(potentially varying) integer GPIO namespace, and we would like one
+that relies on the new gpiod_ functions. But while we are at it, we
+could just as well support GPIO groups and try to make things faster,
+although I am not sure why sysfs would be slower than a character
+device.
 
---HJlg7pxrMKUqmNjFt10DagwHP9uWRNQjT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+On the top of my head, I think we could have an export interface that
+allows to export a group of GPIOs under a given name, and to
+manipulate them using gpiod_set/get_array(). Single GPIOs could be
+exported as a group of 1.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+I have looked at the EMAC GPIO class (very low level, and clearly tied
+to a given subset of GPIO hardware), and anything that makes it
+upstream would need to feature considerably more abstraction, but we
+can certainly try to work something out.
 
-iQIcBAEBAgAGBQJUpnIZAAoJEGwLaZPeOHZ653kP/3E9XwTTmkTC77kTrOxCKzS5
-0/m9pR1MLFQZQIXqN9EWJTH8Y8nA8XOPyAoJ82uAzkUizYmmvWda2st6CLJ/nlfd
-UYXfFdK1ClzDEhi7QjzG49xmWI59rTy69ch4B8NhH/mmgGpf9ef/ucnVT6m7IYd1
-oSY7JIDHaJ2FfTVmN/7dPrlv0AFLdI7j1DpsD/deqE+FXAVQPz/hDUnGJRvj/1hv
-W4YqHXovJaFE/AgqL28b0GtUIt9EMaY1GNbNPWAVmGM08b+UMU/TRiuEeBtNfSck
-J3MM0XfwomOp42AMfHEeqqI14woo2MK+5GdW2cgzjpBerWo2GyD5l8vdQjcj0qid
-1KQ1EREtOGyNEslzOB1qi3agWuhFAjx5Zm6tIFvR2Rm/+z+XEa2SxSoyo4ovD76h
-RavXWfmA2rHqNrM0cG9ZmSl1LeleD6UCSwxPprd6CX1k1hzHFcKWweRWrBRXW8Xa
-xCluogE98ry9VRFUnB07lL5UEXZmEGl4LxRuxQuW1ZWhS4DJz/5tvTBprpyoBvKf
-0wGiTIaPRDjzh5+vX0/5fUBVLr9G4qhJN8Uf189aNhK+K+YUqCkQYIt+klaCNEHP
-sZGzO6mwbz1pMprxcu99LadGr5zWdQZgzaH9sf3w/kv4NMmR7SeIEde1/AJSWMd1
-ChltYH7g6BIF2QrH/iKm
-=xKIG
------END PGP SIGNATURE-----
-
---HJlg7pxrMKUqmNjFt10DagwHP9uWRNQjT--
+Considering the constraints that we have (no GPIO integers for
+exporting, sysfs-based, uses gpiod_*array()), do you think we could
+satisfy your goals as well?
