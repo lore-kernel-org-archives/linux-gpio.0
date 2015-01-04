@@ -1,94 +1,34 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: Linux GPIO internals
-Date: Sat, 3 Jan 2015 14:12:06 +0100
-Message-ID: <CAAVeFuJcWizqtW4mmD8ow5eg2841vgXhZ=7bHDiO3ZJfE2ezog@mail.gmail.com>
-References: <20141224215352.GA26482@sysresccd>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH] linux/kernel.h: merge ARRAY_AND_SIZE defines
+Date: Mon, 05 Jan 2015 10:08:22 +1030
+Message-ID: <87sifqp15d.fsf@rustcorp.com.au>
+References: <1419399496-5955-1-git-send-email-yamada.m@jp.panasonic.com> <1419399879.6157.9.camel@perches.com> <549AC776.8090905@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:47694 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750984AbbACNM1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 3 Jan 2015 08:12:27 -0500
-In-Reply-To: <20141224215352.GA26482@sysresccd>
+Received: from ozlabs.org ([103.22.144.67]:53535 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752895AbbAEE2M (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 4 Jan 2015 23:28:12 -0500
+In-Reply-To: <549AC776.8090905@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@emacinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, "acourbot@nvidia.com" <acourbot@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Roland Stigge <stigge@antcom.de>, Wolfgang Grandegger <wg@grandegger.com>, tstratman@emacinc.com, Rojhalat Ibrahim <imr@rtschenk.de>
+To: Joe Perches <joe@perches.com>, Masahiro Yamada <yamada.m@jp.panasonic.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Michal Nazarewicz <mina86@mina86.com>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Daniel Borkmann <dborkman@redhat.com>, Alex Elder <alex.elder@linaro.org>, Daniel Walter <dwalter@google.com>, Peter Hurley <peter@hurleysoftware.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-Hi Michael, sorry for the delayed reply on this interesting issue.
+Alex Elder <elder@linaro.org> writes:
+> On 12/23/2014 11:44 PM, Joe Perches wrote:
+>> On Wed, 2014-12-24 at 14:38 +0900, Masahiro Yamada wrote:
+>>> ARRAY_AND_SIZE is a useful macro.  Its definition is already
+>>> duplicated in some headers.  Move it to include/linux/kernel.h.
+>> 
+>> I think it's not a good/useful macro and
+>> would prefer the uses expanded instead.
+>
+> For what it's worth, I agree.	-Alex
 
-On Wed, Dec 24, 2014 at 10:53 PM, Michael Welling <mwelling@emacinc.com> wrote:
-> All,
->
-> For years now EMAC has provided an out-of-tree series of class drivers
-> for accessing various devices. The EMAC GPIO class and character
-> interfaces predate the introduction of the gpiolib interface and have
-> been ported across several kernel versions.
->
-> http://wiki.emacinc.com/wiki/Using_the_EMAC_GPIO_Class
->
-> Recently we have come to the conclusion that continuing to provide
-> support for these drivers is getting out of hand. It was agreed that we
-> move away from our non-standard drivers and use mainstream drivers for our
-> newest products.
->
-> That being said, we would like to be able to provide the capabilities
-> of our old drivers but it is not the case with the current gpiolib
-> implementation.
->
-> Here are the major concerns that we have with the gpiolib implementation:
-> - There is no mechanism to provide simultaneous access to multiple
->   GPIOs from userspace.
-> - The sysfs interface seems to vastly slower than the character
->   interface and it is far more cumbersome to handle access from a
->   userspace C program.
->
-> It seems that the first concern was attempted to be addressed by the
-> following patch:
-> https://lkml.org/lkml/2012/12/23/66
->
-> It seems this effort dropped off the radar in January of 2013.
-> What happened to this patch?
->
-> As for the second issue, I am not sure how to resolve this and am open
-> to ideas. I have seen similar concerns in other subsystem that use the
-> sysfs interface.
->
-> IIO example:
-> http://www.spinics.net/lists/linux-iio/msg15344.html
->
-> Suggestions?
+Me too.  It's fine in current usage, but I wouldn't want to see
+more of it.
 
-It seems like your mail is coming just at the right time. We have
-recently merged a patch that allows setting several GPIOs at the same
-time, if the hardware supports it:
-
-http://patchwork.ozlabs.org/patch/406666/
-
-It lacks sysfs support, but we are also increasingly feeling the
-pressure of the old sysfs interface and are planning to develop a new
-one:
-
-http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311158.html
-
-Our main gripe with the old sysfs interface is its use of the
-(potentially varying) integer GPIO namespace, and we would like one
-that relies on the new gpiod_ functions. But while we are at it, we
-could just as well support GPIO groups and try to make things faster,
-although I am not sure why sysfs would be slower than a character
-device.
-
-On the top of my head, I think we could have an export interface that
-allows to export a group of GPIOs under a given name, and to
-manipulate them using gpiod_set/get_array(). Single GPIOs could be
-exported as a group of 1.
-
-I have looked at the EMAC GPIO class (very low level, and clearly tied
-to a given subset of GPIO hardware), and anything that makes it
-upstream would need to feature considerably more abstraction, but we
-can certainly try to work something out.
-
-Considering the constraints that we have (no GPIO integers for
-exporting, sysfs-based, uses gpiod_*array()), do you think we could
-satisfy your goals as well?
+Cheers,
+Rusty.
