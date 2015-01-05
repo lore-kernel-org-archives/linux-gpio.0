@@ -1,34 +1,111 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH] linux/kernel.h: merge ARRAY_AND_SIZE defines
-Date: Mon, 05 Jan 2015 10:08:22 +1030
-Message-ID: <87sifqp15d.fsf@rustcorp.com.au>
-References: <1419399496-5955-1-git-send-email-yamada.m@jp.panasonic.com> <1419399879.6157.9.camel@perches.com> <549AC776.8090905@linaro.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] gpio: pcf857x: restore the initial line state of all
+ pcf lines
+Date: Mon, 5 Jan 2015 11:56:57 +0530
+Message-ID: <54AA2EB1.8090501@ti.com>
+References: <1418371601-22658-1-git-send-email-kishon@ti.com> <548F498F.7050202@ti.com> <549271A9.5040701@ti.com> <5492E09F.1000003@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53535 "EHLO ozlabs.org"
+Received: from arroyo.ext.ti.com ([192.94.94.40]:39987 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752895AbbAEE2M (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 4 Jan 2015 23:28:12 -0500
-In-Reply-To: <549AC776.8090905@linaro.org>
+	id S1750959AbbAEG1F (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 5 Jan 2015 01:27:05 -0500
+In-Reply-To: <5492E09F.1000003@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Joe Perches <joe@perches.com>, Masahiro Yamada <yamada.m@jp.panasonic.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Michal Nazarewicz <mina86@mina86.com>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Daniel Borkmann <dborkman@redhat.com>, Alex Elder <alex.elder@linaro.org>, Daniel Walter <dwalter@google.com>, Peter Hurley <peter@hurleysoftware.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, nsekhar@ti.com
+Cc: linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, Benoit Parrot <bparrot@ti.com>
 
-Alex Elder <elder@linaro.org> writes:
-> On 12/23/2014 11:44 PM, Joe Perches wrote:
->> On Wed, 2014-12-24 at 14:38 +0900, Masahiro Yamada wrote:
->>> ARRAY_AND_SIZE is a useful macro.  Its definition is already
->>> duplicated in some headers.  Move it to include/linux/kernel.h.
->> 
->> I think it's not a good/useful macro and
->> would prefer the uses expanded instead.
->
-> For what it's worth, I agree.	-Alex
+Hi,
 
-Me too.  It's fine in current usage, but I wouldn't want to see
-more of it.
+On Thursday 18 December 2014 07:41 PM, Nishanth Menon wrote:
+> On 12/18/2014 12:18 AM, Kishon Vijay Abraham I wrote:
+>>
+>>
+>> On Tuesday 16 December 2014 02:20 AM, Nishanth Menon wrote:
+>>> On 12/12/2014 02:06 AM, Kishon Vijay Abraham I wrote:
+>>>> The reset values for all the PCF lines are high and hence on shutdown
+>>>> we should drive all the lines high in order to bring it to the reset state.
+>>>>
+>>>> This is actually required since pcf doesn't have a reset line and even after
+>>>> warm reset (by invoking "reboot" in prompt) the pcf lines maintains it's
+>>>> previous programmed state. This becomes a problem if the boards are designed
+>>>> to work with the default initial state.
+>>>>
+>>>> DRA7XX_evm uses PCF8575 and one of the PCF output lines feeds to MMC/SD and
+>>>> this line should be driven high in order for the MMC/SD to be detected.
+>>>> This line is modelled as regulator and the hsmmc driver takes care of enabling
+>>>> and disabling it. In the case of 'reboot', during shutdown path as part of it's
+>>>> cleanup process the hsmmc driver disables this regulator. This makes MMC boot
+>>>> not functional.
+>>>>
+>>>> Fixed it by driving high all the pcf lines.
+>>>>
+>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>> ---
+>>>>  drivers/gpio/gpio-pcf857x.c |    9 +++++++++
+>>>>  1 file changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+>>>> index 236708a..00b15b2 100644
+>>>> --- a/drivers/gpio/gpio-pcf857x.c
+>>>> +++ b/drivers/gpio/gpio-pcf857x.c
+>>>> @@ -448,6 +448,14 @@ static int pcf857x_remove(struct i2c_client *client)
+>>>>  	return status;
+>>>>  }
+>>>>  
+>>>> +static void pcf857x_shutdown(struct i2c_client *client)
+>>>> +{
+>>>> +	struct pcf857x *gpio = i2c_get_clientdata(client);
+>>>> +
+>>>> +	/* Drive all the I/O lines high */
+>>>> +	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
+>>>
+>>> you might force a contention here - depending on System configuration.
+>>> example:
+>>> +-------+
+>>> |       |
+>>> |  U1   |         +------+      +-----------+
+>>> |       +--------->      |      |           |
+>>> +-------+         |      |      |           |
+>>>                   | Switch<-----+    SoC    |
+>>> +-------+         |      |      |           |
+>>> |       |         |      |      |           |
+>>> | U2    <---------+--^---+      +-----------+
+>>> |       |            |
+>>> |       |            |
+>>> +-------+            |
+>>>                   +--+--+
+>>>                   |     |
+>>>                   | PCF |
+>>>                   |     |
+>>>                   +-----+
+>>>
+>>> At low, SoC pin is connected to U2 as drive. when reset to high, you
+>>> now have U1 driving to the same pin that SoC has, potentially
+>>> resulting in contention.
+>>>
+>>>
+>>> Unfortunately, at this level, you do not know what the state of the
+>>> system is, blindly forcing a pin level will potentially cause
+>>> contention risk depending on pin configuration.
+>>
+>> Assume we are doing a reset when the system is powered on, irrespective of the
+>> state of the system, we'll be forcing the pin level to the default state.
+> 
+> Yes, I dont deny that system will be fine *after* reset sequence is
+> started or completed. However there is a duration between the pcf
+> shutdown handler is called and the final reset handler is invoked -
+> that is the duration when  the contention might cause device behavior.
+> Essentially ignoring the state various drivers have asked PCF to setup
+> the pins and doing a hands down configuration may have side effects we
+> cant properly expect.
 
-Cheers,
-Rusty.
+The solution might be to invoke the shutdown handler of the various drivers
+using the PCF before the shutdown handler of the PCF driver itself gets
+invoked? But I'm not sure how can that be achieved in linux kernel :-(
+
+Thanks
+Kishon
