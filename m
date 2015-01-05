@@ -1,62 +1,138 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 2/3] pinctrl: exynos: Fix GPIO setup failure because
- domain clock being gated
-Date: Mon, 05 Jan 2015 15:15:30 +0100
-Message-ID: <1420467330.16219.4.camel@AMDC1943>
-References: <1417777254-26579-1-git-send-email-k.kozlowski@samsung.com>
- <1417777254-26579-3-git-send-email-k.kozlowski@samsung.com>
- <CACRpkdaVJKmMzc0uNL1XK8w93Cf_yWcdW9w4E2NFxroWEkkzZg@mail.gmail.com>
+From: Michael Welling <mwelling@emacinc.com>
+Subject: Re: Linux GPIO internals
+Date: Mon, 5 Jan 2015 11:47:23 -0600
+Message-ID: <20150105174723.GA11391@sysresccd>
+References: <20141224215352.GA26482@sysresccd>
+ <CAAVeFuJcWizqtW4mmD8ow5eg2841vgXhZ=7bHDiO3ZJfE2ezog@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CACRpkdaVJKmMzc0uNL1XK8w93Cf_yWcdW9w4E2NFxroWEkkzZg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:55721 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753165AbbAERrc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Jan 2015 12:47:32 -0500
+Received: by mail-ie0-f182.google.com with SMTP id x19so20235648ier.13
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Jan 2015 09:47:31 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuJcWizqtW4mmD8ow5eg2841vgXhZ=7bHDiO3ZJfE2ezog@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, "acourbot@nvidia.com" <acourbot@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Roland Stigge <stigge@antcom.de>, Wolfgang Grandegger <wg@grandegger.com>, tstratman@emacinc.com, Rojhalat Ibrahim <imr@rtschenk.de>
 
-On pon, 2015-01-05 at 15:05 +0100, Linus Walleij wrote:
-> On Fri, Dec 5, 2014 at 12:00 PM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
+On Sat, Jan 03, 2015 at 02:12:06PM +0100, Alexandre Courbot wrote:
+> Hi Michael, sorry for the delayed reply on this interesting issue.
 > 
-> > The audio subsystem on Exynos 5420 has separate clocks and GPIO. To
-> > operate properly on GPIOs the main block clock 'mau_epll' must be
-> > enabled.
+> On Wed, Dec 24, 2014 at 10:53 PM, Michael Welling <mwelling@emacinc.com> wrote:
+> > All,
 > >
-> > This was observed on Peach Pi/Pit and Arndale Octa (after enabling i2s0)
-> > after introducing runtime PM to pl330 DMA driver. After that commit the
-> > 'mau_epll' was gated, because the "amba" clock was disabled and there
-> > were no more users of mau_epll.
+> > For years now EMAC has provided an out-of-tree series of class drivers
+> > for accessing various devices. The EMAC GPIO class and character
+> > interfaces predate the introduction of the gpiolib interface and have
+> > been ported across several kernel versions.
 > >
-> > The system hang just before probing i2s0 because
-> > samsung_pinmux_setup() tried to access memory from audss block which was
-> > gated.
+> > http://wiki.emacinc.com/wiki/Using_the_EMAC_GPIO_Class
 > >
-> > Add a clock property to the pinctrl driver and enable the clock during
-> > GPIO setup. During normal GPIO operations (set, get, set_direction) the
-> > clock is not enabled.
+> > Recently we have come to the conclusion that continuing to provide
+> > support for these drivers is getting out of hand. It was agreed that we
+> > move away from our non-standard drivers and use mainstream drivers for our
+> > newest products.
 > >
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> > That being said, we would like to be able to provide the capabilities
+> > of our old drivers but it is not the case with the current gpiolib
+> > implementation.
+> >
+> > Here are the major concerns that we have with the gpiolib implementation:
+> > - There is no mechanism to provide simultaneous access to multiple
+> >   GPIOs from userspace.
+> > - The sysfs interface seems to vastly slower than the character
+> >   interface and it is far more cumbersome to handle access from a
+> >   userspace C program.
+> >
+> > It seems that the first concern was attempted to be addressed by the
+> > following patch:
+> > https://lkml.org/lkml/2012/12/23/66
+> >
+> > It seems this effort dropped off the radar in January of 2013.
+> > What happened to this patch?
+> >
+> > As for the second issue, I am not sure how to resolve this and am open
+> > to ideas. I have seen similar concerns in other subsystem that use the
+> > sysfs interface.
+> >
+> > IIO example:
+> > http://www.spinics.net/lists/linux-iio/msg15344.html
+> >
+> > Suggestions?
 > 
-> Tomasz, is this OK and should I apply it for fixes or next?
+> It seems like your mail is coming just at the right time. We have
+> recently merged a patch that allows setting several GPIOs at the same
+> time, if the hardware supports it:
+> 
+> http://patchwork.ozlabs.org/patch/406666/
+>
 
-Ha! That is a good question. The issue is fixed for now by the
-workaround (merged) [1].
+This looks like a good starting point. Being able to access to multiple
+GPIOs simultaneously on the same controller bank is great.
 
-The workaround just enables the clock for entire runtime of Exynos
-5420-like device. This has some energy impact - around 1.5% in idle [2].
+What is nice about the EMAC class is that the GPIOs do not necessarily
+have to be on the same bank (or controller) to be grouped together. The
+system call overhead of accessing a single IO is the same as multiple
+IOs in the same group.
 
-So actually this is question which way we want to solve it:
-1. Stick with the workaround (small piece of code, energy impact when
-not used).
-2. Full clock enable on use (big chunk of code, no energy impact when
-not used).
+Still wondering what happened to the gpioblock patch.
 
-[1]
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=f1e9203e2366164b832d8a6ce10134de8c575178
-[2] http://www.spinics.net/lists/linux-samsung-soc/msg39827.html
+> It lacks sysfs support, but we are also increasingly feeling the
+> pressure of the old sysfs interface and are planning to develop a new
+> one:
+> 
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311158.html
+> 
+> Our main gripe with the old sysfs interface is its use of the
+> (potentially varying) integer GPIO namespace, and we would like one
+> that relies on the new gpiod_ functions. But while we are at it, we
+> could just as well support GPIO groups and try to make things faster,
+> although I am not sure why sysfs would be slower than a character
+> device.
 
-Best regards,
-Krzysztof
+The with the migration from the legacy GPIO namespace it only seems
+natural for the sysfs interface to follow. Adding groups in the process
+would provide most of what is needed.
+
+The sysfs interface is great for command line and scripting languages
+but it has more overhead. It requires string conversion at both the
+kernel and userspace. More system calls are typically required for
+similar transactions.
+
+> 
+> On the top of my head, I think we could have an export interface that
+> allows to export a group of GPIOs under a given name, and to
+> manipulate them using gpiod_set/get_array(). Single GPIOs could be
+> exported as a group of 1.
+>
+
+This sounds good. Currently we group the IOs with devicetree
+registrations.
+
+http://git.emacinc.com/source/linux-at91.git/blob/linux-3.10-at91/arch/arm/boot/dts/ipac-9x25.dts#L226
+
+It would be nice if it were possible to create the groups from
+userspace.
+
+> I have looked at the EMAC GPIO class (very low level, and clearly tied
+> to a given subset of GPIO hardware), and anything that makes it
+> upstream would need to feature considerably more abstraction, but we
+> can certainly try to work something out.
+
+I am more worried about standardizing EMAC's code base than pushing our
+old code into the mainline.
+
+> 
+> Considering the constraints that we have (no GPIO integers for
+> exporting, sysfs-based, uses gpiod_*array()), do you think we could
+> satisfy your goals as well?
+
+This should be satisfactory for most use cases. I will try to support
+efforts toward modernizing the sysfs interface.
+
+Would a character interface to gpiolib ever be considered? 
