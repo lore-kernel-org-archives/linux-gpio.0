@@ -1,55 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gpio: dln2: fix issue when an IRQ is unmasked then enabled
-Date: Mon, 5 Jan 2015 09:55:25 +0100
-Message-ID: <CACRpkdagZrxVAjUtPf6+Eef_pGeReQijBtiR5cT2Yom3BS8qVw@mail.gmail.com>
-References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
-	<1418302951-9309-2-git-send-email-octavian.purdila@intel.com>
-	<CACRpkdYM_Bg_jH_sDuSsdJ1LWKYyj2LURAKRZ8FYODG5Soqa6Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:50791 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751511AbbAEIz0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Jan 2015 03:55:26 -0500
-Received: by mail-ie0-f180.google.com with SMTP id rp18so19391939iec.11
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Jan 2015 00:55:26 -0800 (PST)
-In-Reply-To: <CACRpkdYM_Bg_jH_sDuSsdJ1LWKYyj2LURAKRZ8FYODG5Soqa6Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/2] pinctrl: dove: Constify struct regmap_config and
+ of_device_id
+Date: Mon, 05 Jan 2015 10:03:09 +0100
+Message-ID: <1420448590-9503-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Dec 31, 2014 at 9:55 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Dec 11, 2014 at 2:02 PM, Octavian Purdila
-> <octavian.purdila@intel.com> wrote:
->
->> As noticed during suspend/resume operations, the IRQ can be unmasked
->> then disabled in suspend and eventually enabled in resume, but without
->> being unmasked.
->>
->> The current implementation does not take into account interactions
->> between mask/unmask and enable/disable interrupts, and thus in the
->> above scenarios the IRQs remain unactive.
->>
->> To fix this we removed the enable/disable operations as they fallback
->> to mask/unmask anyway.
->>
->> We also remove the pending bitmaks as it is already done in irq_data
->> (i.e. IRQS_PENDING).
->>
->> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
->
-> Patch applied for fixes.
+The regmap_config struct may be const because it is not modified by the
+driver and regmap_init() accepts pointer to const. Make also
+of_device_id array const.
 
-Bah now that I see there are several versions of the patch set
-floating around and also MFD patches I don't quite understand
-how acute this is or how it's to be applied.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-dove.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-- Are these regression fixes or nice to have for next kernel
- release?
-
-- Are the GPIO patches independent of the MFD patch?
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mvebu/pinctrl-dove.c b/drivers/pinctrl/mvebu/pinctrl-dove.c
+index 89a52e15f0ae..95bfd0653e8f 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-dove.c
++++ b/drivers/pinctrl/mvebu/pinctrl-dove.c
+@@ -751,12 +751,12 @@ static struct mvebu_pinctrl_soc_info dove_pinctrl_info = {
+ 
+ static struct clk *clk;
+ 
+-static struct of_device_id dove_pinctrl_of_match[] = {
++static const struct of_device_id dove_pinctrl_of_match[] = {
+ 	{ .compatible = "marvell,dove-pinctrl", .data = &dove_pinctrl_info },
+ 	{ }
+ };
+ 
+-static struct regmap_config gc_regmap_config = {
++static const struct regmap_config gc_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-- 
+1.9.1
