@@ -1,44 +1,62 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/2] pinctrl: bcm281xx: Constify struct regmap_config
-Date: Mon, 05 Jan 2015 10:03:10 +0100
-Message-ID: <1420448590-9503-2-git-send-email-k.kozlowski@samsung.com>
-References: <1420448590-9503-1-git-send-email-k.kozlowski@samsung.com>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: Re: [PATCH 1/3] gpio: dln2: fix issue when an IRQ is unmasked then enabled
+Date: Mon, 5 Jan 2015 20:42:48 +1000
+Message-ID: <CAE1zotLGqppViL730fCRpv8AFRTbr9q+DWaz4Roj7LWREB=y2Q@mail.gmail.com>
+References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
+	<1418302951-9309-2-git-send-email-octavian.purdila@intel.com>
+	<CACRpkdYM_Bg_jH_sDuSsdJ1LWKYyj2LURAKRZ8FYODG5Soqa6Q@mail.gmail.com>
+	<CACRpkdagZrxVAjUtPf6+Eef_pGeReQijBtiR5cT2Yom3BS8qVw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1420448590-9503-1-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <CACRpkdagZrxVAjUtPf6+Eef_pGeReQijBtiR5cT2Yom3BS8qVw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The regmap_config struct may be const because it is not modified by the
-driver and regmap_init() accepts pointer to const. Make also
-of_device_id array const.
+On Mon, Jan 5, 2015 at 6:55 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Wed, Dec 31, 2014 at 9:55 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Thu, Dec 11, 2014 at 2:02 PM, Octavian Purdila
+> > <octavian.purdila@intel.com> wrote:
+> >
+> >> As noticed during suspend/resume operations, the IRQ can be unmasked
+> >> then disabled in suspend and eventually enabled in resume, but without
+> >> being unmasked.
+> >>
+> >> The current implementation does not take into account interactions
+> >> between mask/unmask and enable/disable interrupts, and thus in the
+> >> above scenarios the IRQs remain unactive.
+> >>
+> >> To fix this we removed the enable/disable operations as they fallback
+> >> to mask/unmask anyway.
+> >>
+> >> We also remove the pending bitmaks as it is already done in irq_data
+> >> (i.e. IRQS_PENDING).
+> >>
+> >> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
+> >
+> > Patch applied for fixes.
+>
+> Bah now that I see there are several versions of the patch set
+> floating around and also MFD patches I don't quite understand
+> how acute this is or how it's to be applied.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/pinctrl/pinctrl-bcm281xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Linus,
 
-diff --git a/drivers/pinctrl/pinctrl-bcm281xx.c b/drivers/pinctrl/pinctrl-bcm281xx.c
-index fa2a00f22ff1..b88cfe5ed55a 100644
---- a/drivers/pinctrl/pinctrl-bcm281xx.c
-+++ b/drivers/pinctrl/pinctrl-bcm281xx.c
-@@ -976,7 +976,7 @@ static inline void bcm281xx_pin_update(u32 *reg_val, u32 *reg_mask,
- 	*reg_mask |= param_mask;
- }
- 
--static struct regmap_config bcm281xx_pinctrl_regmap_config = {
-+static const struct regmap_config bcm281xx_pinctrl_regmap_config = {
- 	.reg_bits = 32,
- 	.reg_stride = 4,
- 	.val_bits = 32,
-@@ -1435,7 +1435,7 @@ static int __init bcm281xx_pinctrl_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id bcm281xx_pinctrl_of_match[] = {
-+static const struct of_device_id bcm281xx_pinctrl_of_match[] = {
- 	{ .compatible = "brcm,bcm11351-pinctrl", },
- 	{ },
- };
--- 
-1.9.1
+Oops I did not noticed you applied the first version. It should not
+matter anyway since I did not make any modifications to the GPIO
+patches in the second version - I just doubled checked it now.
+
+>
+> - Are these regression fixes or nice to have for next kernel
+>  release?
+>
+
+The first patch is a fix. The second is more of a cleanup patch.
+
+> - Are the GPIO patches independent of the MFD patch?
+>
+
+Yes, the GPIO patches are independent of the MFD patches.
