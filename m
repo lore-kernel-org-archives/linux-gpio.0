@@ -1,62 +1,49 @@
-From: Octavian Purdila <octavian.purdila@intel.com>
-Subject: Re: [PATCH 1/3] gpio: dln2: fix issue when an IRQ is unmasked then enabled
-Date: Mon, 5 Jan 2015 20:42:48 +1000
-Message-ID: <CAE1zotLGqppViL730fCRpv8AFRTbr9q+DWaz4Roj7LWREB=y2Q@mail.gmail.com>
-References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
-	<1418302951-9309-2-git-send-email-octavian.purdila@intel.com>
-	<CACRpkdYM_Bg_jH_sDuSsdJ1LWKYyj2LURAKRZ8FYODG5Soqa6Q@mail.gmail.com>
-	<CACRpkdagZrxVAjUtPf6+Eef_pGeReQijBtiR5cT2Yom3BS8qVw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/3] pinctrl: exynos: Fix GPIO setup failure because
+ domain clock being gated
+Date: Mon, 5 Jan 2015 15:05:46 +0100
+Message-ID: <CACRpkdaVJKmMzc0uNL1XK8w93Cf_yWcdW9w4E2NFxroWEkkzZg@mail.gmail.com>
+References: <1417777254-26579-1-git-send-email-k.kozlowski@samsung.com>
+	<1417777254-26579-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdagZrxVAjUtPf6+Eef_pGeReQijBtiR5cT2Yom3BS8qVw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:33653 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753325AbbAEOFr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Jan 2015 09:05:47 -0500
+Received: by mail-ie0-f182.google.com with SMTP id x19so19479286ier.41
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Jan 2015 06:05:47 -0800 (PST)
+In-Reply-To: <1417777254-26579-3-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Jan 5, 2015 at 6:55 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Fri, Dec 5, 2014 at 12:00 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+
+> The audio subsystem on Exynos 5420 has separate clocks and GPIO. To
+> operate properly on GPIOs the main block clock 'mau_epll' must be
+> enabled.
 >
-> On Wed, Dec 31, 2014 at 9:55 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Thu, Dec 11, 2014 at 2:02 PM, Octavian Purdila
-> > <octavian.purdila@intel.com> wrote:
-> >
-> >> As noticed during suspend/resume operations, the IRQ can be unmasked
-> >> then disabled in suspend and eventually enabled in resume, but without
-> >> being unmasked.
-> >>
-> >> The current implementation does not take into account interactions
-> >> between mask/unmask and enable/disable interrupts, and thus in the
-> >> above scenarios the IRQs remain unactive.
-> >>
-> >> To fix this we removed the enable/disable operations as they fallback
-> >> to mask/unmask anyway.
-> >>
-> >> We also remove the pending bitmaks as it is already done in irq_data
-> >> (i.e. IRQS_PENDING).
-> >>
-> >> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
-> >
-> > Patch applied for fixes.
+> This was observed on Peach Pi/Pit and Arndale Octa (after enabling i2s0)
+> after introducing runtime PM to pl330 DMA driver. After that commit the
+> 'mau_epll' was gated, because the "amba" clock was disabled and there
+> were no more users of mau_epll.
 >
-> Bah now that I see there are several versions of the patch set
-> floating around and also MFD patches I don't quite understand
-> how acute this is or how it's to be applied.
-
-Hi Linus,
-
-Oops I did not noticed you applied the first version. It should not
-matter anyway since I did not make any modifications to the GPIO
-patches in the second version - I just doubled checked it now.
-
+> The system hang just before probing i2s0 because
+> samsung_pinmux_setup() tried to access memory from audss block which was
+> gated.
 >
-> - Are these regression fixes or nice to have for next kernel
->  release?
+> Add a clock property to the pinctrl driver and enable the clock during
+> GPIO setup. During normal GPIO operations (set, get, set_direction) the
+> clock is not enabled.
 >
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-The first patch is a fix. The second is more of a cleanup patch.
+Tomasz, is this OK and should I apply it for fixes or next?
 
-> - Are the GPIO patches independent of the MFD patch?
->
-
-Yes, the GPIO patches are independent of the MFD patches.
+Yours,
+Linus Walleij
