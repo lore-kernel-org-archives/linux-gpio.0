@@ -1,168 +1,81 @@
-From: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Subject: [PATCH RESEND v3] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Mon,  5 Jan 2015 10:16:19 -0800
-Message-ID: <1420481779-22841-1-git-send-email-soren.brinkmann@xilinx.com>
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>
+From: <thloh@altera.com>
+Subject: [PATCH v9 1/2] drivers/gpio: Altera soft IP GPIO driver device tree binding
+Date: Mon, 5 Jan 2015 18:19:32 -0800
+Message-ID: <1420510773-24605-2-git-send-email-thloh@altera.com>
+References: <1420510773-24605-1-git-send-email-thloh@altera.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bn1bon0062.outbound.protection.outlook.com ([157.56.111.62]:40880
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753822AbbAFCUT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 5 Jan 2015 21:20:19 -0500
+In-Reply-To: <1420510773-24605-1-git-send-email-thloh@altera.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@linaro.org, akpm@linux-foundation.org, davem@davemloft.net, gregkh@linuxfoundation.org, joe@perches.com, mchehab@osg.samsung.com, crope@iki.fi, linux-gpio@vger.kernel.org
+Cc: thloh.linux@gmail.com, thloh@altera.com
 
-Add an attribute 'wakeup' to the GPIO sysfs interface which allows
-marking/unmarking a GPIO as wake IRQ.
-The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
-is associated with that GPIO and the irqchip implements set_wake().
-Writing 'enabled' to that file will enable wake for that GPIO, while
-writing 'disabled' will disable wake.
-Reading that file will return either 'disabled' or 'enabled' depening on
-the currently set flag for the GPIO's IRQ.
+From: Tien Hock Loh <thloh@altera.com>
 
-Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Adds a new driver device tree binding for Altera soft GPIO IP
+
+Signed-off-by: Tien Hock Loh <thloh@altera.com>
 ---
-v3:
- - add documentation
-v2:
- - fix error path to unlock mutex before return
----
- Documentation/ABI/testing/sysfs-gpio |  1 +
- Documentation/gpio/sysfs.txt         |  8 ++++
- drivers/gpio/gpiolib-sysfs.c         | 77 +++++++++++++++++++++++++++++++++---
- 3 files changed, 80 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/gpio/gpio-altera.txt       | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-altera.txt
 
-diff --git a/Documentation/ABI/testing/sysfs-gpio b/Documentation/ABI/testing/sysfs-gpio
-index 80f4c94c7bef..4cc7f4b3f724 100644
---- a/Documentation/ABI/testing/sysfs-gpio
-+++ b/Documentation/ABI/testing/sysfs-gpio
-@@ -20,6 +20,7 @@ Description:
- 	    /value ... always readable, writes fail for input GPIOs
- 	    /direction ... r/w as: in, out (default low); write: high, low
- 	    /edge ... r/w as: none, falling, rising, both
-+	    /wakeup ... r/w as: enabled, disabled
- 	/gpiochipN ... for each gpiochip; #N is its first GPIO
- 	    /base ... (r/o) same as N
- 	    /label ... (r/o) descriptive, not necessarily unique
-diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
-index c2c3a97f8ff7..f703377d528f 100644
---- a/Documentation/gpio/sysfs.txt
-+++ b/Documentation/gpio/sysfs.txt
-@@ -97,6 +97,14 @@ and have the following read/write attributes:
- 		for "rising" and "falling" edges will follow this
- 		setting.
- 
-+	"wakeup" ... reads as either "enabled" or "disabled". Write these
-+		strings to set/clear the 'wakeup' flag of the IRQ associated
-+		with this GPIO. If the IRQ has the 'wakeup' flag set, it can
-+		wake the system from sleep states.
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-altera.txt b/Documentation/devicetree/bindings/gpio/gpio-altera.txt
+new file mode 100644
+index 0000000..0af2f7c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-altera.txt
+@@ -0,0 +1,43 @@
++Altera GPIO controller bindings
 +
-+		This file exists only if the pin can generate interrupts and
-+		the driver implements the required infrastructure.
++Required properties:
++- compatible:
++  - "altr,pio-1.0"
++- reg: Physical base address and length of the controller's registers.
++- #gpio-cells : Should be 2
++  - The first cell is the gpio offset number.
++  - The second cell is reserved and is currently unused.
++- gpio-controller : Marks the device node as a GPIO controller.
++- interrupt-controller: Mark the device node as an interrupt controller
++- #interrupt-cells : Should be 1. The interrupt type is fixed in the hardware.
++  - The first cell is the GPIO offset number within the GPIO controller.
++- interrupts: Specify the interrupt.
++- altr,interrupt-trigger: Specifies the interrupt trigger type the GPIO
++  hardware is synthesized. This field is required if the Altera GPIO controller
++  used has IRQ enabled as the interrupt type is not software controlled,
++  but hardware synthesized. Required if GPIO is used as an interrupt
++  controller. The value is defined in <dt-bindings/interrupt-controller/irq.h>
++  Only the following flags are supported:
++    IRQ_TYPE_EDGE_RISING
++    IRQ_TYPE_EDGE_FALLING
++    IRQ_TYPE_EDGE_BOTH
++    IRQ_TYPE_LEVEL_HIGH
 +
- GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for the
- controller implementing GPIOs starting at #42) and have the following
- read-only attributes:
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 2ac1800b58bb..05a5fc9503bd 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -286,6 +286,58 @@ found:
- 
- static DEVICE_ATTR(edge, 0644, gpio_edge_show, gpio_edge_store);
- 
-+static ssize_t gpio_wakeup_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	ssize_t			status;
-+	const struct gpio_desc	*desc = dev_get_drvdata(dev);
-+	int			irq = gpiod_to_irq(desc);
-+	struct irq_desc		*irq_desc = irq_to_desc(irq);
++Optional properties:
++- altr,ngpio: Width of the GPIO bank. This defines how many pins the
++  GPIO device has. Ranges between 1-32. Optional and defaults to 32 if not
++  specified.
 +
-+	mutex_lock(&sysfs_lock);
++Example:
 +
-+	if (irqd_is_wakeup_set(&irq_desc->irq_data))
-+		status = sprintf(buf, "enabled\n");
-+	else
-+		status = sprintf(buf, "disabled\n");
-+
-+	mutex_unlock(&sysfs_lock);
-+
-+	return status;
-+}
-+
-+static ssize_t gpio_wakeup_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t size)
-+{
-+	int			ret;
-+	unsigned int		on;
-+	struct gpio_desc	*desc = dev_get_drvdata(dev);
-+	int			irq = gpiod_to_irq(desc);
-+
-+	mutex_lock(&sysfs_lock);
-+
-+	if (sysfs_streq("enabled", buf)) {
-+		on = true;
-+	} else if (sysfs_streq("disabled", buf)) {
-+		on = false;
-+	} else {
-+		mutex_unlock(&sysfs_lock);
-+		return -EINVAL;
-+	}
-+
-+	ret = irq_set_irq_wake(irq, on);
-+
-+	mutex_unlock(&sysfs_lock);
-+
-+	if (ret)
-+		pr_warn("%s: failed to %s wake\n", __func__,
-+				on ? "enable" : "disable");
-+
-+	return size;
-+}
-+
-+static DEVICE_ATTR(wakeup, 0644, gpio_wakeup_show, gpio_wakeup_store);
-+
- static int sysfs_set_active_low(struct gpio_desc *desc, struct device *dev,
- 				int value)
- {
-@@ -526,7 +578,7 @@ static struct class gpio_class = {
- int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- {
- 	unsigned long		flags;
--	int			status;
-+	int			status, irq;
- 	const char		*ioname = NULL;
- 	struct device		*dev;
- 	int			offset;
-@@ -582,11 +634,24 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 			goto fail_unregister_device;
- 	}
- 
--	if (gpiod_to_irq(desc) >= 0 && (direction_may_change ||
--				       !test_bit(FLAG_IS_OUT, &desc->flags))) {
--		status = device_create_file(dev, &dev_attr_edge);
--		if (status)
--			goto fail_unregister_device;
-+	irq = gpiod_to_irq(desc);
-+	if (irq >= 0) {
-+		struct irq_desc *irq_desc = irq_to_desc(irq);
-+		struct irq_chip	*irqchip = irq_desc_get_chip(irq_desc);
-+
-+		if (direction_may_change ||
-+				!test_bit(FLAG_IS_OUT, &desc->flags)) {
-+			status = device_create_file(dev, &dev_attr_edge);
-+			if (status)
-+				goto fail_unregister_device;
-+		}
-+
-+		if (irqchip->flags & IRQCHIP_SKIP_SET_WAKE ||
-+				irqchip->irq_set_wake) {
-+			status = device_create_file(dev, &dev_attr_wakeup);
-+			if (status)
-+				goto fail_unregister_device;
-+		}
- 	}
- 
- 	set_bit(FLAG_EXPORT, &desc->flags);
++gpio_altr: gpio@0xff200000 {
++	compatible = "altr,pio-1.0";
++	reg = <0xff200000 0x10>;
++	interrupts = <0 45 4>;
++	altr,ngpio = <32>;
++	altr,interrupt-trigger = <IRQ_TYPE_EDGE_RISING>;
++	#gpio-cells = <1>;
++	gpio-controller;
++	#interrupt-cells = <1>;
++	interrupt-controller;
++};
 -- 
-2.2.1.1.gb42cc81
+1.7.11.GIT
 
