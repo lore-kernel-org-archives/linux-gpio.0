@@ -1,80 +1,193 @@
-From: <thloh@altera.com>
-Subject: [PATCH v9 0/2] Altera soft IP GPIO driver
-Date: Mon, 5 Jan 2015 18:19:31 -0800
-Message-ID: <1420510773-24605-1-git-send-email-thloh@altera.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Subject: Re: [PATCH v9 2/2] drivers/gpio: Altera soft IP GPIO driver
+Date: Tue, 6 Jan 2015 09:30:39 +0100
+Message-ID: <20150106083039.GA9157@distanz.ch>
+References: <1420510773-24605-1-git-send-email-thloh@altera.com>
+ <1420510773-24605-3-git-send-email-thloh@altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1420510773-24605-3-git-send-email-thloh@altera.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@linaro.org, akpm@linux-foundation.org, davem@davemloft.net, gregkh@linuxfoundation.org, joe@perches.com, mchehab@osg.samsung.com, crope@iki.fi, linux-gpio@vger.kernel.org
-Cc: thloh.linux@gmail.com, thloh@altera.com
+To: thloh@altera.com
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@linaro.org, akpm@linux-foundation.org, davem@davemloft.net, gregkh@linuxfoundation.org, joe@perches.com, mchehab@osg.samsung.com, crope@iki.fi, linux-gpio@vger.kernel.org, thloh.linux@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-From: Tien Hock Loh <thloh@altera.com>
+On 2015-01-06 at 03:19:33 +0100, thloh@altera.com <thloh@altera.com> wrote:
+[...]
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 633ec21..e38beff 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -156,6 +156,14 @@ config GPIO_DWAPB
+>  	  Say Y or M here to build support for the Synopsys DesignWare APB
+>  	  GPIO block.
+>  
+> +config GPIO_ALTERA
+> +       tristate "Altera GPIO"
+> +       depends on OF_GPIO
+> +       help
+> +         Say Y or M here to build support for the Altera PIO device.
+> +
+> +	 If driver is built as a module it will be called gpio-altera.
 
-Adds a new device tree binding and driver for Altera soft GPIO IP.
-The driver is able to do read/write and allows GPIO to be a interrupt
-controller.
+Indentation looks odd. The tristate, depends and help lines should be
+indented by a tab and the help text should be indented by a tab followed
+by two spaces.
 
-Tested on Altera GHRD on interrupt handling and IO.
+> +
+>  config GPIO_IT8761E
+>  	tristate "IT8761E GPIO support"
+>  	depends on X86  # unconditional access to IO space.
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index 81755f1..239b28b 100644
+[...]
+> diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+> new file mode 100644
+> index 0000000..a57b7ab
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-altera.c
+[...]
+> +int altera_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *node = pdev->dev.of_node;
+> +	int id, reg, ret;
+> +	struct altera_gpio_chip *altera_gc;
+> +
+> +	altera_gc = devm_kzalloc(&pdev->dev, sizeof(*altera_gc), GFP_KERNEL);
+> +	if (!altera_gc)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&altera_gc->gpio_lock);
+> +
+> +	id = pdev->id;
 
-v9:
-Removed duplicated initialization on set_type
-using temporals to improve code readability in calling generic_handle_irq
-Using ?: ternary to reduce code size
+id is assigned but never used.
 
-v8:
-Using for_each_set_bit
-added const for struct definition
-removed naggy pr_err
-sort alpha header
-remove unused macros
-use fixed width data types instead of unsigned long
-whitespace issue fixes
-removed _relaxed function for better compatibility across different CPU
-changed irq_create_mapping to platform_get_irq
-updated implementation to use gpiochip_irqchip_add
-reserve interrupt-cells number 2 in device tree binding for future use
-remove confusing sections on devicetree bindings
-Added tristate Kconfig help text
+> +
+> +	if (of_property_read_u32(node, "altr,ngpio", &reg))
+> +		/*By default assume full GPIO controller*/
 
-v7:
-used dev_warn instead of pr_warn
-clean up unnecesarry if else indentation
+Spaces missing after /* and before */
 
-v6:
-Added irq_startup and irq_shutdown
-changed bitwise clamping style
-cleanup bitwise operation to improve readability
-change naming of mapped irqs from virq to mapped_irq
+> +		altera_gc->mmchip.gc.ngpio = ALTERA_GPIO_MAX_NGPIO;
+> +	else
+> +		altera_gc->mmchip.gc.ngpio = reg;
+> +
+> +	if (altera_gc->mmchip.gc.ngpio > 32) {
 
-v5:
-dispose irq_domain mapping correctly
-update optional binding description in binding docs
+Why the magic number 32 here? Better use ALTERA_GPIO_MAX_NGPIO as well.
 
-v4:
-added vendor prefix to devicetree binding for IP specific properties
-using MMIO GPIO helper library instead of manually map PIO to memory
-altera_gpio_chip inline struct documentation to kerneldoc
-using dev_ print to print a better failure message
+> +		dev_warn(&pdev->dev,
+> +			"ngpio is greater than %d, defaulting to %d\n",
+> +			ALTERA_GPIO_MAX_NGPIO, ALTERA_GPIO_MAX_NGPIO);
+> +		altera_gc->mmchip.gc.ngpio = ALTERA_GPIO_MAX_NGPIO;
+> +	}
+> +
+> +	altera_gc->mmchip.gc.direction_input	= altera_gpio_direction_input;
+> +	altera_gc->mmchip.gc.direction_output	= altera_gpio_direction_output;
+> +	altera_gc->mmchip.gc.get		= altera_gpio_get;
+> +	altera_gc->mmchip.gc.set		= altera_gpio_set;
+> +	altera_gc->mmchip.gc.owner		= THIS_MODULE;
+> +	altera_gc->mmchip.gc.dev		= &pdev->dev;
+> +
+> +	ret = of_mm_gpiochip_add(node, &altera_gc->mmchip);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
+> +		return ret;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, altera_gc);
+> +
+> +	altera_gc->mapped_irq = platform_get_irq(pdev, 0);
+> +
+> +	if (altera_gc->mapped_irq < 0)
+> +		goto skip_irq;
+> +
+> +	if (of_property_read_u32(node, "altr,interrupt-type", &reg)) {
+> +		ret = -EINVAL;
+> +		dev_err(&pdev->dev,
+> +			"altr,interrupt-type value not set in device tree\n");
+> +		goto teardown;
+> +	}
+> +	altera_gc->interrupt_trigger = reg;
+> +
+> +	ret = gpiochip_irqchip_add(&altera_gc->mmchip.gc, &altera_irq_chip, 0,
+> +		handle_simple_irq, IRQ_TYPE_NONE);
+> +
+> +	if (ret) {
+> +		dev_info(&pdev->dev, "could not add irqchip\n");
+> +		return ret;
+> +	}
+> +
+> +	gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
+> +		&altera_irq_chip,
+> +		altera_gc->mapped_irq,
+> +		altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH ?
+> +		altera_gpio_irq_leveL_high_handler :
+> +		altera_gpio_irq_edge_handler);
+> +
+> +skip_irq:
+> +	return 0;
+> +teardown:
+> +	pr_err("%s: registration failed with status %d\n",
+> +		node->full_name, ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int altera_gpio_remove(struct platform_device *pdev)
+> +{
+> +	struct altera_gpio_chip *altera_gc = platform_get_drvdata(pdev);
+> +
+> +	gpiochip_remove(&altera_gc->mmchip.gc);
+> +
+> +	irq_set_handler_data(altera_gc->mapped_irq, NULL);
+> +	irq_set_chained_handler(altera_gc->mapped_irq, NULL);
+> +	return -EIO;
+> +}
+> +
+> +static const struct of_device_id altera_gpio_of_match[] = {
+> +	{ .compatible = "altr,pio-1.0", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, altera_gpio_of_match);
+> +
+> +static struct platform_driver altera_gpio_driver = {
+> +	.driver = {
+> +		.name	= "altera_gpio",
+> +		.owner	= THIS_MODULE,
 
-v2, v3:
-Do not reference NO_IRQ
-Updated irq_set_type to only allow the hardware configured irq type
+No need to set this here, platform_driver_register will take care of it.
 
-
-Tien Hock Loh (2):
-  drivers/gpio: Altera soft IP GPIO driver device tree binding
-  drivers/gpio: Altera soft IP GPIO driver
-
- .../devicetree/bindings/gpio/gpio-altera.txt       |  43 +++
- MAINTAINERS                                        |   6 +
- drivers/gpio/Kconfig                               |   8 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-altera.c                         | 405 +++++++++++++++++++++
- 5 files changed, 463 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-altera.txt
- create mode 100644 drivers/gpio/gpio-altera.c
-
--- 
-1.7.11.GIT
+> +		.of_match_table = of_match_ptr(altera_gpio_of_match),
+> +	},
+> +	.probe		= altera_gpio_probe,
+> +	.remove		= altera_gpio_remove,
+> +};
+> +
+> +static int __init altera_gpio_init(void)
+> +{
+> +	return platform_driver_register(&altera_gpio_driver);
+> +}
+> +subsys_initcall(altera_gpio_init);
+> +
+> +static void __exit altera_gpio_exit(void)
+> +{
+> +	platform_driver_unregister(&altera_gpio_driver);
+> +}
+> +module_exit(altera_gpio_exit);
+> +
+> +MODULE_AUTHOR("Tien Hock Loh <thloh@altera.com>");
+> +MODULE_DESCRIPTION("Altera GPIO driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 1.7.11.GIT
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
