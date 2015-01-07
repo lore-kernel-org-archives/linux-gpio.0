@@ -1,69 +1,74 @@
 From: Olliver Schinagl <oliver+list@schinagl.nl>
-Subject: [PATCH v1] gpio: Make the vararg hacks not pass magic values
-Date: Wed,  7 Jan 2015 09:44:57 +0100
-Message-ID: <1420620297-7329-1-git-send-email-oliver+list@schinagl.nl>
+Subject: [PATCH v1 3/4] leds: Let the binding document example for leds-gpio follow the gpio bindings
+Date: Wed,  7 Jan 2015 10:08:41 +0100
+Message-ID: <1420621722-7428-4-git-send-email-oliver+list@schinagl.nl>
+References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Olliver Schinagl <oliver@schinagl.nl>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+Cc: Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 From: Olliver Schinagl <oliver@schinagl.nl>
 
-Right now, in consumer.h, there's some vararg hacks that pass 0 as the
-flags. What actually is passed however is GPIOD_ASIS, which naturally is
-also 0. Using the define/enum rather then the magic 0 makes it the
-define more readable to a passer by.
+In the gpio bindings documents it is requested to use the marco's in
+include/dt-bindings/gpio/gpio.h whenever possible. The gpios in the led
+drivers don't seem to form an exception, so update the example in the
+document bindings.
 
 Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 ---
- include/linux/gpio/consumer.h | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-gpio.txt | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index fd85cb1..45afc2d 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -340,31 +340,32 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
-  * etc.
-  */
- #define __gpiod_get(dev, con_id, flags, ...) __gpiod_get(dev, con_id, flags)
--#define gpiod_get(varargs...) __gpiod_get(varargs, 0)
-+#define gpiod_get(varargs...) __gpiod_get(varargs, GPIOD_ASIS)
- #define __gpiod_get_index(dev, con_id, index, flags, ...)		\
- 	__gpiod_get_index(dev, con_id, index, flags)
--#define gpiod_get_index(varargs...) __gpiod_get_index(varargs, 0)
-+#define gpiod_get_index(varargs...) __gpiod_get_index(varargs, GPIOD_ASIS)
- #define __gpiod_get_optional(dev, con_id, flags, ...)			\
- 	__gpiod_get_optional(dev, con_id, flags)
--#define gpiod_get_optional(varargs...) __gpiod_get_optional(varargs, 0)
-+#define gpiod_get_optional(varargs...) __gpiod_get_optional(varargs, GPIOD_ASIS)
- #define __gpiod_get_index_optional(dev, con_id, index, flags, ...)	\
- 	__gpiod_get_index_optional(dev, con_id, index, flags)
- #define gpiod_get_index_optional(varargs...)				\
--	__gpiod_get_index_optional(varargs, 0)
-+	__gpiod_get_index_optional(varargs, GPIOD_ASIS)
- #define __devm_gpiod_get(dev, con_id, flags, ...)			\
- 	__devm_gpiod_get(dev, con_id, flags)
--#define devm_gpiod_get(varargs...) __devm_gpiod_get(varargs, 0)
-+#define devm_gpiod_get(varargs...) __devm_gpiod_get(varargs, GPIOD_ASIS)
- #define __devm_gpiod_get_index(dev, con_id, index, flags, ...)		\
- 	__devm_gpiod_get_index(dev, con_id, index, flags)
--#define devm_gpiod_get_index(varargs...) __devm_gpiod_get_index(varargs, 0)
-+#define devm_gpiod_get_index(varargs...)				\
-+	__devm_gpiod_get_index(varargs, GPIOD_ASIS)
- #define __devm_gpiod_get_optional(dev, con_id, flags, ...)		\
- 	__devm_gpiod_get_optional(dev, con_id, flags)
- #define devm_gpiod_get_optional(varargs...)				\
--	__devm_gpiod_get_optional(varargs, 0)
-+	__devm_gpiod_get_optional(varargs, GPIOD_ASIS)
- #define __devm_gpiod_get_index_optional(dev, con_id, index, flags, ...)	\
- 	__devm_gpiod_get_index_optional(dev, con_id, index, flags)
- #define devm_gpiod_get_index_optional(varargs...)			\
--	__devm_gpiod_get_index_optional(varargs, 0)
-+	__devm_gpiod_get_index_optional(varargs, GPIOD_ASIS)
+diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+index f77148f..d544cf1 100644
+--- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
++++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+@@ -26,16 +26,18 @@ LED sub-node properties:
  
- #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_GPIO_SYSFS)
+ Examples:
  
++#include <dt-bindings/gpio/gpio.h>
++
+ leds {
+ 	compatible = "gpio-leds";
+ 	hdd {
+ 		label = "IDE Activity";
+-		gpios = <&mcu_pio 0 1>; /* Active low */
++		gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
+ 		linux,default-trigger = "ide-disk";
+ 	};
+ 
+ 	fault {
+-		gpios = <&mcu_pio 1 0>;
++		gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
+ 		/* Keep LED on if BIOS detected hardware fault */
+ 		default-state = "keep";
+ 	};
+@@ -44,11 +46,11 @@ leds {
+ run-control {
+ 	compatible = "gpio-leds";
+ 	red {
+-		gpios = <&mpc8572 6 0>;
++		gpios = <&mpc8572 6 GPIO_ACTIVE_HIHG>;
+ 		default-state = "off";
+ 	};
+ 	green {
+-		gpios = <&mpc8572 7 0>;
++		gpios = <&mpc8572 7 GPIO_ACTIVE_HIGH>;
+ 		default-state = "on";
+ 	};
+ };
+@@ -57,7 +59,7 @@ leds {
+ 	compatible = "gpio-leds";
+ 
+ 	charger-led {
+-		gpios = <&gpio1 2 0>;
++		gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+ 		linux,default-trigger = "max8903-charger-charging";
+ 		retain-state-suspended;
+ 	};
 -- 
 2.1.4
