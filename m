@@ -1,22 +1,39 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 1/2] pinctrl: intel: Pass CONFIG_DEBUG_PINCTRL to drivers
-Date: Wed, 7 Jan 2015 12:25:20 +0200
-Message-ID: <20150107102520.GO1386@lahna.fi.intel.com>
-References: <1417689170-41627-1-git-send-email-mika.westerberg@linux.intel.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v2 4/4] mfd: dln2: add suspend/resume functionality
+Date: Wed, 7 Jan 2015 11:26:37 +0100
+Message-ID: <20150107102637.GD22905@localhost>
+References: <1418745435-2851-1-git-send-email-octavian.purdila@intel.com>
+ <1418745435-2851-5-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f48.google.com ([209.85.215.48]:36394 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751693AbbAGK0h (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Jan 2015 05:26:37 -0500
 Content-Disposition: inline
-In-Reply-To: <1417689170-41627-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1418745435-2851-5-git-send-email-octavian.purdila@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: linus.walleij@linaro.org, lee.jones@linaro.org, johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Thu, Dec 04, 2014 at 12:32:49PM +0200, Mika Westerberg wrote:
-> If the user has selected CONFIG_DEBUG_PINCTRL=y make sure that Intel
-> pinctrl drivers will be compiled with that option as well.
+On Tue, Dec 16, 2014 at 05:57:15PM +0200, Octavian Purdila wrote:
+> Without suspend/resume functionality in the USB driver the USB core
+> will disconnect and reconnect the DLN2 port and because the GPIO
+> framework does not yet support removal of an in-use controller a
+> suspend/resume operation will result in a crash.
 > 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> This patch provides suspend and resume functions for the DLN2 driver
+> so that the above scenario is avoided.
+> 
+> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
 
-Gentle ping on these two.
+This patch looks good now, but how did you say this device was powered?
+
+If powered by vbus you cannot assume that the device maintains it's
+state over a suspend cycle, something which would complicate matters
+quite a bit...
+
+Thanks,
+Johan
