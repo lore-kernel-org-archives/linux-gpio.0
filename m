@@ -1,36 +1,81 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: dln2: Fix gpio output value in dln2_gpio_direction_output()
-Date: Wed, 7 Jan 2015 10:41:04 +0100
-Message-ID: <CACRpkdYFtqzO5Kr9jyQfbjxvT21REeOprWNve_che1cNDCzwFA@mail.gmail.com>
-References: <1418809634.15005.1.camel@phoenix>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/4] mfd: dln2: add start/stop RX URBs helpers
+Date: Wed, 7 Jan 2015 11:22:37 +0100
+Message-ID: <20150107102237.GC22905@localhost>
+References: <1418745435-2851-1-git-send-email-octavian.purdila@intel.com>
+ <1418745435-2851-4-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:63712 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750995AbbAGJlF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Jan 2015 04:41:05 -0500
-Received: by mail-ig0-f176.google.com with SMTP id a13so2409225igq.3
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Jan 2015 01:41:05 -0800 (PST)
-In-Reply-To: <1418809634.15005.1.camel@phoenix>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1418745435-2851-4-git-send-email-octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Daniel Baluta <daniel.baluta@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Octavian Purdila <octavian.purdila@intel.com>
 
-On Wed, Dec 17, 2014 at 10:47 AM, Axel Lin <axel.lin@ingics.com> wrote:
-
-> dln2_gpio_direction_output() ignored the state passed into it. Fix it.
-> Also make dln2_gpio_pin_set_out_val return int, so we can check the error value.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> Tested-by: Daniel Baluta <daniel.baluta@intel.com>
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> Reviewed-by: Octavian Purdila <octavian.purdila@intel.com>
+On Tue, Dec 16, 2014 at 05:57:14PM +0200, Octavian Purdila wrote:
+> This is in preparation for adding suspend / resume support.
+> 
+> Signed-off-by: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 > ---
-> v2: Address Octavian's comment.
+>  drivers/mfd/dln2.c | 51 +++++++++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 41 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+> index 6d49685..75358d2 100644
+> --- a/drivers/mfd/dln2.c
+> +++ b/drivers/mfd/dln2.c
+> @@ -587,12 +587,19 @@ static void dln2_free_rx_urbs(struct dln2_dev *dln2)
+>  	int i;
+>  
+>  	for (i = 0; i < DLN2_MAX_URBS; i++) {
+> -		usb_kill_urb(dln2->rx_urb[i]);
+>  		usb_free_urb(dln2->rx_urb[i]);
+>  		kfree(dln2->rx_buf[i]);
+>  	}
+>  }
+>  
+> +static void dln2_stop_rx_urbs(struct dln2_dev *dln2)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < DLN2_MAX_URBS; i++)
+> +		usb_kill_urb(dln2->rx_urb[i]);
+> +}
+> +
+>  static void dln2_free(struct dln2_dev *dln2)
+>  {
+>  	dln2_free_rx_urbs(dln2);
+> @@ -604,9 +611,7 @@ static int dln2_setup_rx_urbs(struct dln2_dev *dln2,
+>  			      struct usb_host_interface *hostif)
+>  {
+>  	int i;
+> -	int ret;
+>  	const int rx_max_size = DLN2_RX_BUF_SIZE;
+> -	struct device *dev = &dln2->interface->dev;
+>  
+>  	for (i = 0; i < DLN2_MAX_URBS; i++) {
+>  		dln2->rx_buf[i] = kmalloc(rx_max_size, GFP_KERNEL);
+> @@ -621,7 +626,19 @@ static int dln2_setup_rx_urbs(struct dln2_dev *dln2,
+>  				  usb_rcvbulkpipe(dln2->usb_dev, dln2->ep_in),
+>  				  dln2->rx_buf[i], rx_max_size, dln2_rx, dln2);
+>  
 
-This v2 patch applied for fixes.
+You should remove this stray newline as well. 
 
-Yours,
-Linus Walleij
+> -		ret = usb_submit_urb(dln2->rx_urb[i], GFP_KERNEL);
+> +	}
+> +
+> +	return 0;
+> +}
+
+Otherwise,
+
+Reviewed-by: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+Johan
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
