@@ -1,57 +1,105 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v2 4/4] mfd: dln2: add suspend/resume functionality
-Date: Wed, 7 Jan 2015 15:26:05 +0100
-Message-ID: <20150107142605.GG22905@localhost>
-References: <1418745435-2851-1-git-send-email-octavian.purdila@intel.com>
- <1418745435-2851-5-git-send-email-octavian.purdila@intel.com>
- <20150107102637.GD22905@localhost>
- <CAE1zotJ8RcSing2cQWPFzHoEiH1FH1-NsYZrShuQ=hVEwextug@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 4/4] leds: no longer use unnamed gpios
+Date: Wed, 7 Jan 2015 15:55:22 -0800
+Message-ID: <20150107235522.GA6670@dtor-ws>
+References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
+ <1420621722-7428-5-git-send-email-oliver+list@schinagl.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAE1zotJ8RcSing2cQWPFzHoEiH1FH1-NsYZrShuQ=hVEwextug@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+In-Reply-To: <1420621722-7428-5-git-send-email-oliver+list-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olliver Schinagl <oliver+list-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>, Robin Gong <b38343-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Aaron Lu <aaron.lu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 08, 2015 at 02:16:15AM +1300, Octavian Purdila wrote:
-> On Wed, Jan 7, 2015 at 11:26 PM, Johan Hovold <johan@kernel.org> wrote:
-> > On Tue, Dec 16, 2014 at 05:57:15PM +0200, Octavian Purdila wrote:
-> >> Without suspend/resume functionality in the USB driver the USB core
-> >> will disconnect and reconnect the DLN2 port and because the GPIO
-> >> framework does not yet support removal of an in-use controller a
-> >> suspend/resume operation will result in a crash.
-> >>
-> >> This patch provides suspend and resume functions for the DLN2 driver
-> >> so that the above scenario is avoided.
-> >>
-> >> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
-> >
-> > This patch looks good now, but how did you say this device was powered?
-> >
-> > If powered by vbus you cannot assume that the device maintains it's
-> > state over a suspend cycle, something which would complicate matters
-> > quite a bit...
+On Wed, Jan 07, 2015 at 10:08:42AM +0100, Olliver Schinagl wrote:
+> From: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
 > 
-> Yes, the device is powered by VBUS. During my tests, depending on the
-> host and USB port, VBUS is sometimes preserved - and this is the case
-> this patch addresses, and sometimes is not, but in that case because
-> no reset_resume routine is implemented the resume path will go through
-> the disconnect/reconnect process.
+> The gpio document says we should not use unnamed bindings for gpios.
+> This patch uses the 'led-' prefix to the gpios and updates code and
+> documents. Because the devm_get_gpiod_from_child() falls back to using
+> old-style unnamed gpios, we can update the code first, and update
+> dts files as time allows.
+> 
+> Signed-off-by: Olliver Schinagl <oliver-dxLnbx3+1qmEVqv0pETR8A@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/leds/leds-gpio.txt | 12 ++++++------
+>  drivers/leds/leds-gpio.c                             |  2 +-
+>  2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+> index d544cf1..2c138cc 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+> @@ -7,7 +7,7 @@ Each LED is represented as a sub-node of the gpio-leds device.  Each
+>  node's name represents the name of the corresponding LED.
+>  
+>  LED sub-node properties:
+> -- gpios :  Should specify the LED's GPIO, see "gpios property" in
+> +- led-gpios :  Should specify the LED's GPIO, see "gpios property" in
+>    Documentation/devicetree/bindings/gpio/gpio.txt.  Active low LEDs should be
+>    indicated using flags in the GPIO specifier.
+>  - label :  (optional)
+> @@ -32,12 +32,12 @@ leds {
+>  	compatible = "gpio-leds";
+>  	hdd {
+>  		label = "IDE Activity";
+> -		gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
+> +		led-gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
+>  		linux,default-trigger = "ide-disk";
+>  	};
+>  
+>  	fault {
+> -		gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
+> +		led-gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
+>  		/* Keep LED on if BIOS detected hardware fault */
+>  		default-state = "keep";
+>  	};
+> @@ -46,11 +46,11 @@ leds {
+>  run-control {
+>  	compatible = "gpio-leds";
+>  	red {
+> -		gpios = <&mpc8572 6 GPIO_ACTIVE_HIHG>;
+> +		led-gpios = <&mpc8572 6 GPIO_ACTIVE_HIHG>;
+>  		default-state = "off";
+>  	};
+>  	green {
+> -		gpios = <&mpc8572 7 GPIO_ACTIVE_HIGH>;
+> +		led-gpios = <&mpc8572 7 GPIO_ACTIVE_HIGH>;
+>  		default-state = "on";
+>  	};
+>  };
+> @@ -59,7 +59,7 @@ leds {
+>  	compatible = "gpio-leds";
+>  
+>  	charger-led {
+> -		gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+> +		led-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+>  		linux,default-trigger = "max8903-charger-charging";
+>  		retain-state-suspended;
+>  	};
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 8e5af69..5b7bc84 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -184,7 +184,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+>  		struct gpio_led led = {};
+>  		const char *state = NULL;
+>  
+> -		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
+> +		led.gpiod = devm_get_gpiod_from_child(dev, "led", child);
 
-Yes, it depends on the host controller and I believe the common case is
-to drop VBUS.
+Would not this break existing boards using old bindings? You need to
+handle both cases: if you can't located "led-gpios" then you will have to
+try just "gpios".
 
-> This second case is not addressed by
-> the patch, as I think in this second case fixing the GPIO framework to
-> support the removal of an in-use device is the best way to go.
+Thanks.
 
-I agree.
-
-But please do mention that this case is not handled in the commit
-message.
-
-Thanks,
-Johan
+-- 
+Dmitry
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
