@@ -1,32 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: grgpio: Avoid potential NULL pointer dereference
-Date: Thu, 8 Jan 2015 20:14:26 +0100
-Message-ID: <CACRpkdb6dv+CA26QwWLA8VbMUpM61N5u-R4=awdybF2j9dimWQ@mail.gmail.com>
-References: <1419086827.20365.1.camel@phoenix>
+Subject: Re: [PATCH] pinctrl: rockchip: Avoid losing interrupts when
+ supporting both edges
+Date: Thu, 8 Jan 2015 20:25:02 +0100
+Message-ID: <CACRpkdYOqbsTgNMx8n_NmAe2vtfx+mGRGpw3zUCqjsrFiH0ZVw@mail.gmail.com>
+References: <1419274049-5069-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:60389 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001AbbAHTOa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jan 2015 14:14:30 -0500
-Received: by mail-ie0-f171.google.com with SMTP id ar1so11213020iec.2
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Jan 2015 11:14:29 -0800 (PST)
-In-Reply-To: <1419086827.20365.1.camel@phoenix>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1419274049-5069-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Alexandru Stan <amstan@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andreas Larsson <andreas@gaisler.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, Dec 20, 2014 at 3:47 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Mon, Dec 22, 2014 at 7:47 PM, Doug Anderson <dianders@chromium.org> wrote:
 
-> irqmap is optional property, so priv->domain can be NULL if !irqmap.
-> Thus add NULL test for priv->domain before calling irq_domain_remove()
-> to prevent NULL pointer dereference.
+> I was seeing cases where I was losing interrupts when inserting and
+> removing SD cards.  Sometimes the card would get "stuck" in the
+> inserted state.
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> I believe that the problem was related to the code to handle the case
+> where we needed both rising and falling edges.  This code would
+> disable the interrupt as the polarity was switched.  If an interrupt
+> came at the wrong time it could be lost.
+>
+> We'll match what the gpio-dwapb.c driver does upstream and change the
+> interrupt polarity without disabling things.
+>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
 
-Patch applied for fixes. Thanks!
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
