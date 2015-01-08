@@ -1,90 +1,64 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v1 3/4] leds: Let the binding document example for
- leds-gpio follow the gpio bindings
-Date: Wed, 7 Jan 2015 19:45:37 -0600
-Message-ID: <CAL_JsqL_bkn3xUQfn2yt96O29yJwVeLjbkm+cDJTge0JwA9YkQ@mail.gmail.com>
-References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl> <1420621722-7428-4-git-send-email-oliver+list@schinagl.nl>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Thu, 8 Jan 2015 10:25:10 +0200
+Message-ID: <20150108082510.GA19346@kuha.fi.intel.com>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f51.google.com ([74.125.82.51]:46987 "EHLO
-	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752509AbbAHBp7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Jan 2015 20:45:59 -0500
-In-Reply-To: <1420621722-7428-4-git-send-email-oliver+list@schinagl.nl>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Olliver Schinagl <oliver+list@schinagl.nl>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.or
 
-On Wed, Jan 7, 2015 at 3:08 AM, Olliver Schinagl
-<oliver+list@schinagl.nl> wrote:
-> From: Olliver Schinagl <oliver@schinagl.nl>
->
-> In the gpio bindings documents it is requested to use the marco's in
-> include/dt-bindings/gpio/gpio.h whenever possible. The gpios in the led
-> drivers don't seem to form an exception, so update the example in the
-> document bindings.
->
-> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-
-The example isn't exactly wrong, so I'd question how much this is
-really needed, but:
-
-Acked-by: Rob Herring <robh@kernel.org>
-
+On Thu, Dec 18, 2014 at 10:23:18AM +0200, Heikki Krogerus wrote:
+> This makes it possible to assign GPIOs at runtime. The
+> motivation for it is because of need to forward GPIOs from
+> one device to an other. That feature may be useful for
+> example with some mfd devices, but initially it is needed
+> because on some Intel Braswell based ACPI platforms the GPIO
+> resources controlling signals of the USB PHY are given to
+> the controller device object for whatever reason, so the
+> driver of that controller needs be able to pass them to the
+> PHY device somehow.
+> 
+> So basically this is meant to allow patching of bad (bad
+> from Linux kernels point of view) hardware descriptions
+> provided by system fw in the drivers.
+> 
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 > ---
->  Documentation/devicetree/bindings/leds/leds-gpio.txt | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
-> index f77148f..d544cf1 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
-> +++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
-> @@ -26,16 +26,18 @@ LED sub-node properties:
->
->  Examples:
->
-> +#include <dt-bindings/gpio/gpio.h>
-> +
->  leds {
->         compatible = "gpio-leds";
->         hdd {
->                 label = "IDE Activity";
-> -               gpios = <&mcu_pio 0 1>; /* Active low */
-> +               gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
->                 linux,default-trigger = "ide-disk";
->         };
->
->         fault {
-> -               gpios = <&mcu_pio 1 0>;
-> +               gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
->                 /* Keep LED on if BIOS detected hardware fault */
->                 default-state = "keep";
->         };
-> @@ -44,11 +46,11 @@ leds {
->  run-control {
->         compatible = "gpio-leds";
->         red {
-> -               gpios = <&mpc8572 6 0>;
-> +               gpios = <&mpc8572 6 GPIO_ACTIVE_HIHG>;
->                 default-state = "off";
->         };
->         green {
-> -               gpios = <&mpc8572 7 0>;
-> +               gpios = <&mpc8572 7 GPIO_ACTIVE_HIGH>;
->                 default-state = "on";
->         };
->  };
-> @@ -57,7 +59,7 @@ leds {
->         compatible = "gpio-leds";
->
->         charger-led {
-> -               gpios = <&gpio1 2 0>;
-> +               gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
->                 linux,default-trigger = "max8903-charger-charging";
->                 retain-state-suspended;
->         };
-> --
-> 2.1.4
->
+> 
+> Hi,
+> 
+> I'm sending this first as a RFC in case you guys have some better
+> idea how to solve our problem. I actually already have couple
+> platforms where the GPIO resources are given to the "wrong" device
+> objects now.
+> 
+> Originally we were thinking about simply handling our problem with
+> hacks to the PHY drivers, basically also checking if the parent has
+> GPIOs. That would only work if the controller is always the parent,
+> which it's not, but even if it was, it would be too risky. The PHY
+> drivers don't know which controller they are attached to, so what is
+> to say that the GPIOs aren't really attached to the controller.
+> 
+> So the safest way to handle our problem is to deal with it in quirks
+> in the controller drivers. Solving it by bouncing the GPIOs did not
+> feel ideal there doesn't seem to be any other way. The API is copied
+> from clkdev (clk_register_clkdev). In the end it's really only one
+> function for adding the lookups and one for removing them.
+> 
+> The way it's implemented is by modifying the current style of handling
+> the lookups a little bit. The per device lookup table is basically
+> reverted back to the single linked-list format since it seems that
+> these lookups may have to be assigned from several sources.
+> 
+> Thanks,
+
+Gentle ping on this.
+
+-- 
+heikki
