@@ -1,35 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: rockchip: Avoid losing interrupts when
- supporting both edges
-Date: Thu, 8 Jan 2015 20:25:02 +0100
-Message-ID: <CACRpkdYOqbsTgNMx8n_NmAe2vtfx+mGRGpw3zUCqjsrFiH0ZVw@mail.gmail.com>
-References: <1419274049-5069-1-git-send-email-dianders@chromium.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v1 4/4] leds: no longer use unnamed gpios
+Date: Thu, 8 Jan 2015 14:12:49 -0800
+Message-ID: <20150108221249.GH23256@dtor-ws>
+References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
+ <1420621722-7428-5-git-send-email-oliver+list@schinagl.nl>
+ <20150107235522.GA6670@dtor-ws>
+ <54AE43A9.3020309@schinagl.nl>
+ <CAL_JsqJE_PCXrejHO3vfdbbtC4FGyuPhJ8W-A=8nZMcu6aBxCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1419274049-5069-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Alexandru Stan <amstan@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJE_PCXrejHO3vfdbbtC4FGyuPhJ8W-A=8nZMcu6aBxCw@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Olliver Schinagl <oliver@schinagl.nl>, Olliver Schinagl <oliver+list@schinagl.nl>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.or
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Dec 22, 2014 at 7:47 PM, Doug Anderson <dianders@chromium.org> wrote:
+On Thu, Jan 08, 2015 at 08:40:20AM -0600, Rob Herring wrote:
+> On Thu, Jan 8, 2015 at 2:45 AM, Olliver Schinagl <oliver@schinagl.nl> wrote:
+> > Hey Dmitry,
+> >
+> >
+> > On 08-01-15 00:55, Dmitry Torokhov wrote:
+> >>
+> >> On Wed, Jan 07, 2015 at 10:08:42AM +0100, Olliver Schinagl wrote:
+> >>>
+> >>> From: Olliver Schinagl <oliver@schinagl.nl>
+> >>>
+> >>> The gpio document says we should not use unnamed bindings for gpios.
+> >>> This patch uses the 'led-' prefix to the gpios and updates code and
+> >>> documents. Because the devm_get_gpiod_from_child() falls back to using
+> >>> old-style unnamed gpios, we can update the code first, and update
+> >>> dts files as time allows.
+> 
+> [...]
+> 
+> >>> --- a/drivers/leds/leds-gpio.c
+> >>> +++ b/drivers/leds/leds-gpio.c
+> >>> @@ -184,7 +184,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct
+> >>> platform_device *pdev)
+> >>>                 struct gpio_led led = {};
+> >>>                 const char *state = NULL;
+> >>>   -             led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
+> >>> +               led.gpiod = devm_get_gpiod_from_child(dev, "led", child);
+> >>
+> >> Would not this break existing boards using old bindings? You need to
+> >> handle both cases: if you can't located "led-gpios" then you will have to
+> >> try just "gpios".
+> >
+> > Very true. I was rather even hoping we could update all bindings, I don't
+> > mind going through the available dts files to fix them ... But need to know
+> > that that's the proper way to go before doing the work ;)
+> 
+> That will not work. You cannot make changes that require a new dtb
+> with a new kernel. This would also break for the other way around
+> (i.e. a new dtb and old kernel).
+> 
+> You would have to search for both led-gpios and gpios. I'm not sure if
+> we can do that generically for all GPIOs. If you had a node with both
+> "blah-gpios" and "gpios", it would break. I would hope there are no
+> such cases like that. We also now have to consider how ACPI identifies
+> GPIOs and whether this makes sense.
 
-> I was seeing cases where I was losing interrupts when inserting and
-> removing SD cards.  Sometimes the card would get "stuck" in the
-> inserted state.
->
-> I believe that the problem was related to the code to handle the case
-> where we needed both rising and falling edges.  This code would
-> disable the interrupt as the polarity was switched.  If an interrupt
-> came at the wrong time it could be lost.
->
-> We'll match what the gpio-dwapb.c driver does upstream and change the
-> interrupt polarity without disabling things.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+I think only the driver itself can know about such "legacy" mappings and
+make a decision.
 
-Patch applied for fixes.
+Thanks.
 
-Yours,
-Linus Walleij
+-- 
+Dmitry
