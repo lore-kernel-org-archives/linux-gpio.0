@@ -1,44 +1,83 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] gpio: dln2: use bus_sync_unlock instead of scheduling work
-Date: Fri, 9 Jan 2015 07:58:48 +0100
-Message-ID: <CACRpkdY-pW98cymyAKpV4s8x00e-7MPksMX1_0Tj+1QT3WskMw@mail.gmail.com>
-References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
-	<1418302951-9309-3-git-send-email-octavian.purdila@intel.com>
-	<CACRpkdZq4r+3yLvumxM-+f-VyMCb-ZF8xE7_kOx7uAoxrPzpTw@mail.gmail.com>
-	<CAE1zotKu0f+169_WO3O=+Q1hpU_r-x60FLpJRWyd-na7B9T_VA@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/9] ARM Versatile multi-platform support
+Date: Fri, 9 Jan 2015 09:34:46 +0100
+Message-ID: <CACRpkdZpwoY4-9K9_Eh-UikmP5hqQhfu2eZRb-wkVntVn1g5wA@mail.gmail.com>
+References: <1419967718-26909-1-git-send-email-robherring2@gmail.com>
+	<CACRpkda8T8CwghVYtTw41h_y+GdCA5xCEaSL1Jy4VZBo3MAy-Q@mail.gmail.com>
+	<CAL_JsqKLNPVDCUELaZU8JW0roT3RcyqcxtJbvbYQrjzxjt3FeQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAE1zotKu0f+169_WO3O=+Q1hpU_r-x60FLpJRWyd-na7B9T_VA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL_JsqKLNPVDCUELaZU8JW0roT3RcyqcxtJbvbYQrjzxjt3FeQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Peter Maydell <peter.maydell-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jan 9, 2015 at 12:40 AM, Octavian Purdila
-<octavian.purdila@intel.com> wrote:
-> On Thu, Jan 1, 2015 at 9:56 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Thu, Dec 11, 2014 at 2:02 PM, Octavian Purdila
->> <octavian.purdila@intel.com> wrote:
+On Thu, Jan 8, 2015 at 10:38 PM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, Jan 8, 2015 at 1:47 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> On Tue, Dec 30, 2014 at 8:28 PM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 >>
->>> Use the irq_chip bus_sync_unlock method to update hardware registers
->>> instead of scheduling work from the mask/unmask methods. This simplifies
->>> a bit the driver and make it more uniform with the other GPIO IRQ
->>> drivers.
+>>> From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 >>>
->>> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
+>>> This series converts ARM Versatile platform to multi-platform. I started
+>>> this some time ago and some pieces were already merged. The primary
+>>> piece remaining is converting the PCI host to DT which I was waiting for
+>>> the common PCI DT parsing to get settled. Now that that is in place as
+>>> well as a few other pieces are in place like multi-platform fixes for
+>>> CLCD, we can fully convert Versatile to DT and multi-platform.
+>>>
+>>> There's still a few things that need DT support which can be done
+>>> later:
+>>> - MMC card detect and write protect. Should be able to use VExpress
+>>>   support
+>>> - Reboot support. Should be able to re-use Realview reboot code.
+>>> - flash phys-map support. Binding exists, but specifically Vpp control
+>>>   is needed.
+>>> - CLCD support. Not sure where this is at.
 >>
->> Patch applied for fixes.
->>
+>> I like it overall but would like to see some use of the syscon
+>> pattern to access random registers in syscon, and specifically not
+>> to refer to these registers as some "gpio" because they aren't.
 >
-> Hi Linus,
->
-> I don't see the patch applied, could you please consider it for the
-> -for-next branch?
+> I'm not sure I follow. Creating GPIO lines for SD card detect and
+> write protect is exactly how VExpress syscon was implemented.
 
-Ah sorry I thought only the first patch was a critical fix.
-Applied this to fixes too now. Working on queueing the
-GPIO fixes.
+Hm it all boils down to this mfd/vexpress-sysreg.c driver that
+spawns some MFD devices.
+
+>From there a LED, card detect and flash protection are modeled as
+"basic-mmio-gpio" instantiating the drivers/gpio/gpio-generic.c
+driver to drive/read various bits.
+
+Specifically commit 974cc7b93441a0e78f030495436d1be7eb7c208d
+that makes a layered MFD->gpio->gpio LED cake.
+Needless to say neither the GPIO maintainers or the GPIO
+mailing list was included in review of this patch and it was
+merged on its MFD merits :(
+
+It is sort of elegant in a way, but I don't like it when we describe
+registers that are not general purpose as "general purpose input
+output" it is simply ontologically wrong and a misleading hardware
+description. These bits are not general purpose *at* *all* they are
+special purpose.
+
+It is Linux GPIO implementation details leaking into the hardware
+description basically: it just happened to be very convenient to
+describe these register bits as "gpios" as the drivers etc were
+already in place.
+
+I prefer syscon->syscon LED as a two layer cake
+instead of a three layer cake involving GPIO and it's more to the point,
+describing the hardware properly, so I say let's go for that instead.
+
+For card detect and flash protection I suspect we can use
+syscon as well, avoiding shoehorning a GPIO abstraction between
+it.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
