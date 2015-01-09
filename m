@@ -1,44 +1,44 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: [PATCH RESEND gpio] gpio-amd8111: check ioport_map return value
-Date: Fri,  9 Jan 2015 10:38:51 +0530
-Message-ID: <1420780131-6984-1-git-send-email-varkab@cdac.in>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:64067 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750709AbbAIFNH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jan 2015 00:13:07 -0500
-Received: by mail-pa0-f50.google.com with SMTP id bj1so16215317pad.9
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Jan 2015 21:13:06 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] gpio: dln2: use bus_sync_unlock instead of scheduling work
+Date: Fri, 9 Jan 2015 07:58:48 +0100
+Message-ID: <CACRpkdY-pW98cymyAKpV4s8x00e-7MPksMX1_0Tj+1QT3WskMw@mail.gmail.com>
+References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
+	<1418302951-9309-3-git-send-email-octavian.purdila@intel.com>
+	<CACRpkdZq4r+3yLvumxM-+f-VyMCb-ZF8xE7_kOx7uAoxrPzpTw@mail.gmail.com>
+	<CAE1zotKu0f+169_WO3O=+Q1hpU_r-x60FLpJRWyd-na7B9T_VA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAE1zotKu0f+169_WO3O=+Q1hpU_r-x60FLpJRWyd-na7B9T_VA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, Varka Bhadram <varkabhadram@gmail.com>, Varka Bhadram <varkab@cdac.in>
 
-From: Varka Bhadram <varkabhadram@gmail.com>
+On Fri, Jan 9, 2015 at 12:40 AM, Octavian Purdila
+<octavian.purdila@intel.com> wrote:
+> On Thu, Jan 1, 2015 at 9:56 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Thu, Dec 11, 2014 at 2:02 PM, Octavian Purdila
+>> <octavian.purdila@intel.com> wrote:
+>>
+>>> Use the irq_chip bus_sync_unlock method to update hardware registers
+>>> instead of scheduling work from the mask/unmask methods. This simplifies
+>>> a bit the driver and make it more uniform with the other GPIO IRQ
+>>> drivers.
+>>>
+>>> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
+>>
+>> Patch applied for fixes.
+>>
+>
+> Hi Linus,
+>
+> I don't see the patch applied, could you please consider it for the
+> -for-next branch?
 
-ioport_map() may fail. Its safe to check the return value.
+Ah sorry I thought only the first patch was a critical fix.
+Applied this to fixes too now. Working on queueing the
+GPIO fixes.
 
-Signed-off-by: Varka Bhadram <varkab@cdac.in>
----
- drivers/gpio/gpio-amd8111.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
-index d3d2d10..2c4d9ab 100644
---- a/drivers/gpio/gpio-amd8111.c
-+++ b/drivers/gpio/gpio-amd8111.c
-@@ -213,6 +213,11 @@ found:
- 		goto out;
- 	}
- 	gp.pm = ioport_map(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
-+	if (!gp.pm) {
-+		dev_err(&pdev->dev, "Couldn't map io port into io memory\n");
-+		err = -ENOMEM;
-+		goto out;
-+	}
- 	gp.pdev = pdev;
- 	gp.chip.dev = &pdev->dev;
- 
--- 
-1.7.9.5
-
+Yours,
+Linus Walleij
