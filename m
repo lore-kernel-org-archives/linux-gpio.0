@@ -1,35 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: cherryview: Save and restore pin configs
- over system sleep
-Date: Fri, 9 Jan 2015 10:45:04 +0100
-Message-ID: <CACRpkdZnZ_Oz5MsC2XxTwOL=FLY-dA5xNN_tOH5COeNEsLix6Q@mail.gmail.com>
-References: <1417689170-41627-1-git-send-email-mika.westerberg@linux.intel.com>
-	<1417689170-41627-2-git-send-email-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 15/28] pinctrl: intel: drop owner assignment from platform_drivers
+Date: Fri, 9 Jan 2015 10:48:31 +0100
+Message-ID: <CACRpkdajZWaJzirP=qeSGZMjn2kB4MZCPzH30r=WP4CLFYoDkQ@mail.gmail.com>
+References: <1419196495-9626-1-git-send-email-wsa@the-dreams.de>
+	<1419196495-9626-16-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1417689170-41627-2-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:64709 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932145AbbAIJsd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jan 2015 04:48:33 -0500
+Received: by mail-ie0-f180.google.com with SMTP id rp18so14119757iec.11
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2015 01:48:32 -0800 (PST)
+In-Reply-To: <1419196495-9626-16-git-send-email-wsa@the-dreams.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Dec 4, 2014 at 11:32 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Sun, Dec 21, 2014 at 10:14 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-> Before resuming from system sleep BIOS restores its view of pin
-> configuration. If we have configured some pins differently from that, for
-> instance some driver requested a pin as a GPIO but it was not in GPIO mode
-> originally, our view of the pin configuration will not match the hardware
-> state anymore.
+> This platform_driver does not need to set an owner, it will be populated by the
+> driver core.
 >
-> This patch saves the pin configuration and interrupt mask registers on
-> suspend and restores them on exit. This should make sure that the
-> previously configured state is still in effect.
->
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
-Patch applied for 3.20.
+Patch applied.
 
 Yours,
 Linus Walleij
