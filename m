@@ -1,36 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: intel: Pass CONFIG_DEBUG_PINCTRL to drivers
-Date: Fri, 9 Jan 2015 10:42:57 +0100
-Message-ID: <CACRpkdYspQf6UPBjxNu-o1PXn9jfc8xbBPNqSKRa4t6EafFvAA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: cherryview: Save and restore pin configs
+ over system sleep
+Date: Fri, 9 Jan 2015 10:45:04 +0100
+Message-ID: <CACRpkdZnZ_Oz5MsC2XxTwOL=FLY-dA5xNN_tOH5COeNEsLix6Q@mail.gmail.com>
 References: <1417689170-41627-1-git-send-email-mika.westerberg@linux.intel.com>
+	<1417689170-41627-2-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:40518 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756400AbbAIJm6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jan 2015 04:42:58 -0500
-Received: by mail-ie0-f171.google.com with SMTP id ar1so14143821iec.2
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2015 01:42:57 -0800 (PST)
-In-Reply-To: <1417689170-41627-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1417689170-41627-2-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
 On Thu, Dec 4, 2014 at 11:32 AM, Mika Westerberg
 <mika.westerberg@linux.intel.com> wrote:
 
-> If the user has selected CONFIG_DEBUG_PINCTRL=y make sure that Intel
-> pinctrl drivers will be compiled with that option as well.
+> Before resuming from system sleep BIOS restores its view of pin
+> configuration. If we have configured some pins differently from that, for
+> instance some driver requested a pin as a GPIO but it was not in GPIO mode
+> originally, our view of the pin configuration will not match the hardware
+> state anymore.
+>
+> This patch saves the pin configuration and interrupt mask registers on
+> suspend and restores them on exit. This should make sure that the
+> previously configured state is still in effect.
 >
 > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Patch applied, and conjured a patch doing the same on the other
-subdirs so all pinctrl drivers have the -DDEBUG flag set when
-configured it.
-
-Thanks for fixing this and pointing the problem out.
+Patch applied for 3.20.
 
 Yours,
 Linus Walleij
