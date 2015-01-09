@@ -1,35 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/5] gpio: moxart: convert to use basic mmio gpio library
-Date: Fri, 9 Jan 2015 10:25:24 +0100
-Message-ID: <CACRpkdYjPsF_yM_8c14TDs1hQMXwARnJ-k+HZ1gHOEri1NyWxA@mail.gmail.com>
-References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
-	<1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH RESEND v3] gpio: lib-sysfs: Add 'wakeup' attribute
+Date: Fri, 9 Jan 2015 10:32:32 +0100
+Message-ID: <CACRpkda5mAtves=PZibd6jdVP1ztM0EYA+cnw7Gs+mSVXTkqpw@mail.gmail.com>
+References: <1420481779-22841-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:63715 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754505AbbAIJZZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jan 2015 04:25:25 -0500
-Received: by mail-ie0-f176.google.com with SMTP id tr6so14112009ieb.7
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2015 01:25:24 -0800 (PST)
-In-Reply-To: <1417435778-21879-2-git-send-email-kamlakant.patel@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1420481779-22841-1-git-send-email-soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Kamlakant Patel <kamlakant.patel@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Dec 1, 2014 at 1:09 PM,  <kamlakant.patel@linaro.org> wrote:
+On Mon, Jan 5, 2015 at 7:16 PM, Soren Brinkmann
+<soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org> wrote:
 
-> From: Kamlakant Patel <kamlakant.patel@linaro.org>
+> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
+> marking/unmarking a GPIO as wake IRQ.
+> The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
+> is associated with that GPIO and the irqchip implements set_wake().
+> Writing 'enabled' to that file will enable wake for that GPIO, while
+> writing 'disabled' will disable wake.
+> Reading that file will return either 'disabled' or 'enabled' depening on
+> the currently set flag for the GPIO's IRQ.
 >
-> This patch converts MOXART GPIO driver to use basic_mmio_gpio
-> generic library.
->
-> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
-> Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
+> Signed-off-by: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v3:
+>  - add documentation
+> v2:
+>  - fix error path to unlock mutex before return
 
-Patch applied for v3.20. Sorry for eternal delays :(
+Finally applied for v3.20.
+
+Sorry for being a bit conservative and picky at times...
 
 Yours,
 Linus Walleij
