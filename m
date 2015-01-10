@@ -1,80 +1,58 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH 2/7] gpio: mvebu: Fix probe cleanup on error
-Date: Sat, 10 Jan 2015 00:34:48 +0100
-Message-ID: <1420846493-31647-3-git-send-email-andrew@lunn.ch>
-References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
-Sender: linux-pwm-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, kaloz@openwrt.org, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: Re: [PATCH 2/3] gpio: dln2: use bus_sync_unlock instead of scheduling work
+Date: Sat, 10 Jan 2015 21:57:59 +1300
+Message-ID: <CAE1zot+FF-6TVJKaqmQ0Shouhtvo0eWytxGJG1VgqWFAen5JZg@mail.gmail.com>
+References: <1418302951-9309-1-git-send-email-octavian.purdila@intel.com>
+	<1418302951-9309-3-git-send-email-octavian.purdila@intel.com>
+	<CACRpkdZq4r+3yLvumxM-+f-VyMCb-ZF8xE7_kOx7uAoxrPzpTw@mail.gmail.com>
+	<CAE1zotKu0f+169_WO3O=+Q1hpU_r-x60FLpJRWyd-na7B9T_VA@mail.gmail.com>
+	<CACRpkdY-pW98cymyAKpV4s8x00e-7MPksMX1_0Tj+1QT3WskMw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-we0-f169.google.com ([74.125.82.169]:38057 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752115AbbAJI6A (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Jan 2015 03:58:00 -0500
+Received: by mail-we0-f169.google.com with SMTP id m14so11601845wev.0
+        for <linux-gpio@vger.kernel.org>; Sat, 10 Jan 2015 00:57:59 -0800 (PST)
+In-Reply-To: <CACRpkdY-pW98cymyAKpV4s8x00e-7MPksMX1_0Tj+1QT3WskMw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Ensure that when there is an error during probe that the gpiochip is
-removed and the generic irq chip is removed.
+On Fri, Jan 9, 2015 at 7:58 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Jan 9, 2015 at 12:40 AM, Octavian Purdila
+> <octavian.purdila@intel.com> wrote:
+>> On Thu, Jan 1, 2015 at 9:56 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Thu, Dec 11, 2014 at 2:02 PM, Octavian Purdila
+>>> <octavian.purdila@intel.com> wrote:
+>>>
+>>>> Use the irq_chip bus_sync_unlock method to update hardware registers
+>>>> instead of scheduling work from the mask/unmask methods. This simplifies
+>>>> a bit the driver and make it more uniform with the other GPIO IRQ
+>>>> drivers.
+>>>>
+>>>> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
+>>>
+>>> Patch applied for fixes.
+>>>
+>>
+>> Hi Linus,
+>>
+>> I don't see the patch applied, could you please consider it for the
+>> -for-next branch?
+>
+> Ah sorry I thought only the first patch was a critical fix.
+> Applied this to fixes too now. Working on queueing the
+> GPIO fixes.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/gpio/gpio-mvebu.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+Hi Linus,
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 7533d446b820..d0bc123c7975 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -667,6 +667,7 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	unsigned int ngpios;
- 	int soc_variant;
- 	int i, cpu, id;
-+	int err;
- 
- 	match = of_match_device(mvebu_gpio_of_match, &pdev->dev);
- 	if (match)
-@@ -785,14 +786,16 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	mvchip->irqbase = irq_alloc_descs(-1, 0, ngpios, -1);
- 	if (mvchip->irqbase < 0) {
- 		dev_err(&pdev->dev, "no irqs\n");
--		return mvchip->irqbase;
-+		err = mvchip->irqbase;
-+		goto err_gpiochip_add;
- 	}
- 
- 	gc = irq_alloc_generic_chip("mvebu_gpio_irq", 2, mvchip->irqbase,
- 				    mvchip->membase, handle_level_irq);
- 	if (!gc) {
- 		dev_err(&pdev->dev, "Cannot allocate generic irq_chip\n");
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto err_gpiochip_add;
- 	}
- 
- 	gc->private = mvchip;
-@@ -823,13 +826,21 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	if (!mvchip->domain) {
- 		dev_err(&pdev->dev, "couldn't allocate irq domain %s (DT).\n",
- 			mvchip->chip.label);
--		irq_remove_generic_chip(gc, IRQ_MSK(ngpios), IRQ_NOREQUEST,
--					IRQ_LEVEL | IRQ_NOPROBE);
--		kfree(gc);
--		return -ENODEV;
-+		err = -ENODEV;
-+		goto err_generic_chip;
- 	}
- 
- 	return 0;
-+
-+err_generic_chip:
-+	irq_remove_generic_chip(gc, IRQ_MSK(ngpios), IRQ_NOREQUEST,
-+				IRQ_LEVEL | IRQ_NOPROBE);
-+	kfree(gc);
-+
-+err_gpiochip_add:
-+	gpiochip_remove(&mvchip->chip);
-+
-+	return err;
- }
- 
- static struct platform_driver mvebu_gpio_driver = {
--- 
-2.1.3
+Its not a critical fix, its just a clean-up. I thought it would go in
+the the for-next branch (for 3.20) and since I did not see it there I
+thought it got lost.
 
+Sorry for any confusion I may have caused, I am not familiar with the
+GPIO branch work-flow.
