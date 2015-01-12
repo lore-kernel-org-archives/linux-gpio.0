@@ -1,40 +1,74 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH] pinctrl: lantiq: remove bogus of_gpio_chip_add
-Date: Mon, 12 Jan 2015 17:20:51 +0100
-Message-ID: <1421079651-2650-1-git-send-email-johan@kernel.org>
+From: santosh shilimkar <santosh.shilimkar@oracle.com>
+Subject: Re: [PATCH resend 2/2] [RFC] genirq: Set IRQCHIP_SKIP_SET_WAKE for
+ no_irq_chip and dummy_irq_chip
+Date: Mon, 12 Jan 2015 08:37:29 -0800
+Message-ID: <54B3F849.30001@oracle.com>
+References: <1421078671-5920-1-git-send-email-geert+renesas@glider.be> <1421078671-5920-2-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1421078671-5920-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Remove bogus call to of_gpiochip_add (and of_gpio_chip remove in error
-path) which is also called when adding the gpio chip.
+On 1/12/2015 8:04 AM, Geert Uytterhoeven wrote:
+> If no_irq_chip or dummy_irq_chip are used for wake up (e.g. gpio-keys
+> with a simple GPIO controller), the following warning is printed on
+> resume from s2ram:
+>
+>      WANING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
+>      Unbalanced IRQ 113 wake disable
+>
+> This happens because no_irq_chip and dummy_irq_chip do not implement
+> irq_chip.irq_set_wake(), causing set_irq_wake_real() to return -ENXIO,
+> and irq_set_irq_wake() to reset the wake_depth to zero.
+>
+> Set IRQCHIP_SKIP_SET_WAKE to indicate that irq_chip.irq_set_wake() is
+> not implemented.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Alternatively, can't we remove IRQCHIP_SKIP_SET_WAKE, and just check for
+> the presence of irq_chip.irq_set_wake()?
+> I'll be happy to send a patch to do that instead...
+>
+> Is there anything that relies on this -ENXIO error code?
+> All irq_chip implementations that set IRQCHIP_SKIP_SET_WAKE do not
+> implement irq_chip.irq_set_wake(). There are probably more of them that
+> forgot to set IRQCHIP_SKIP_SET_WAKE though.
+> Am I missing something?
+> Commit 60f96b41f71d2a13 ("genirq: Add IRQCHIP_SKIP_SET_WAKE flag")
+> doesn't explain why adding the flag was chosen.
+>
+The flag was added to avoid dummy irq_set_wake() implementation
+as described in the commit.
 
-This prevents adding the same pinctrl range twice.
+------------------
+commit 60f96b41f71d2a13d1c0a457b8b77958f77142d1
+Author: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Date:   Fri Sep 9 13:59:35 2011 +0530
 
-Fixes: 3f8c50c9b110 ("OF: pinctrl: MIPS: lantiq: implement lantiq/xway
-pinctrl support")
+     genirq: Add IRQCHIP_SKIP_SET_WAKE flag
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/pinctrl/pinctrl-xway.c | 2 --
- 1 file changed, 2 deletions(-)
+     Some irq chips need the irq_set_wake() functionality, but do not
+     require a irq_set_wake() callback. Instead of forcing an empty
+     callback to be implemented add a flag which notes this fact. Check for
+     the flag in set_irq_wake_real() and return success when set.
 
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index c5cef59f5965..779950c62e53 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -798,10 +798,8 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 
- 	/* load the gpio chip */
- 	xway_chip.dev = &pdev->dev;
--	of_gpiochip_add(&xway_chip);
- 	ret = gpiochip_add(&xway_chip);
- 	if (ret) {
--		of_gpiochip_remove(&xway_chip);
- 		dev_err(&pdev->dev, "Failed to register gpio chip\n");
- 		return ret;
- 	}
--- 
-2.0.5
+     Signed-off-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+     Cc: Thomas Gleixner <tglx@linutronix.de>
+------------------
+
+Here is the relevant thread.
+http://lists.infradead.org/pipermail/linux-arm-kernel/2011-September/064590.html
+
+As you can read from thread, the idea is to handle the need at
+genirq level. Either with a flag or a dummy function.
+
+Hope this helps.
+
+Regards,
+Santosh
