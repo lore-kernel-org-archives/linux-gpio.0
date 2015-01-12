@@ -1,30 +1,29 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] sh-pfc: r8a7790: add MLB+ pin group
-Date: Mon, 12 Jan 2015 10:42:26 +0100
-Message-ID: <CAMuHMdUF_tugWPmYm-kVrNa6ot51n8E51MmFZjL-qZgZJumMuw@mail.gmail.com>
-References: <4254413.Ay0OtsgpoE@wasted.cogentembedded.com>
+Subject: Re: [PATCH 1/2] sh-pfc: r8a7791: fix typo in MLB_CLK
+Date: Mon, 12 Jan 2015 10:44:31 +0100
+Message-ID: <CAMuHMdUWzfprPsDcjvtqFVm+THB_K1j3iuJjw6LY-VTHhzyk5Q@mail.gmail.com>
+References: <1479250.GJuNxlSkHs@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:58230 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751916AbbALJm2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 04:42:28 -0500
-In-Reply-To: <4254413.Ay0OtsgpoE@wasted.cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1479250.GJuNxlSkHs@wasted.cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Jan 10, 2015 at 7:20 PM, Sergei Shtylyov
+On Sat, Jan 10, 2015 at 7:21 PM, Sergei Shtylyov
 <sergei.shtylyov@cogentembedded.com> wrote:
-> Add MLB+ 3-pin mode pin group to R8A7790 PFC driver.
+> The R8A7791 manual sometimes calls the signal MLB_CLK and sometimes MLB_CK; the
+> latter can only be encountered in the PFC section and  is probably  just a typo
+> (this  signal is always called MLB_CLK in the R8A7790  manual). Fix occurences
+> of MLB_CK throughout the R8A7791 PFC driver.
 >
 > Based on original patch by Andrey Gusakov <andrey.gusakov@cogentembedded.com>.
 >
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Thanks, looks OK to me
+Thanks, looks OK to me.
 
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
