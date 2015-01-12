@@ -1,42 +1,29 @@
-From: Zhou Wang <wangzhou1@hisilicon.com>
-Subject: [PATCH v6 1/2] ARM: hip04: add GPIO configure in hisi_defconfig
-Date: Mon, 12 Jan 2015 15:05:11 +0800
-Message-ID: <1421046312-22170-2-git-send-email-wangzhou1@hisilicon.com>
-References: <1421046312-22170-1-git-send-email-wangzhou1@hisilicon.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 1/7] gpio/xilinx: Remove offset property
+Date: Mon, 12 Jan 2015 10:20:24 +0100
+Message-ID: <CACRpkdaPHE4tdh1QOtDjumzgSzyFMO5XVmnKFRY_Y670N7k_0g@mail.gmail.com>
+References: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
+	<1418831474-24428-2-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([119.145.14.64]:7458 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751331AbbALHFS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 02:05:18 -0500
-In-Reply-To: <1421046312-22170-1-git-send-email-wangzhou1@hisilicon.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1418831474-24428-2-git-send-email-ricardo.ribalda@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, liguozhu@hisilicon.com, Zhou Wang <wangzhou1@hisilicon.com>
 
-The GPIO controller of Hisilicon hip04 Soc uses the IP from Sysnopsis,
-gpio-dwapb.c can be reused to support this GPIO controller. This patch
-adds related configure item in hisi_defconfig.
+On Wed, Dec 17, 2014 at 4:51 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
----
- arch/arm/configs/hisi_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> Instead of calculating the register offset per call, pre-calculate it on
+> probe time.
+>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> Acked-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
-index 1125436..4a50862 100644
---- a/arch/arm/configs/hisi_defconfig
-+++ b/arch/arm/configs/hisi_defconfig
-@@ -50,6 +50,7 @@ CONFIG_GPIO_SYSFS=y
- CONFIG_GPIOLIB=y
- CONFIG_GPIO_GENERIC_PLATFORM=y
- CONFIG_REGULATOR_GPIO=y
-+CONFIG_GPIO_DWAPB=y
- CONFIG_MFD_SYSCON=y
- CONFIG_POWER_RESET_SYSCON=y
- CONFIG_DRM=y
--- 
-1.9.1
+Patch applied. Sorry for the fat delays on this patch set.
 
+Yours,
+Linus Walleij
