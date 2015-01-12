@@ -1,104 +1,86 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 3/5] pinctrl: exynos: Fix GPIO setup failure because
- domain clock being gated
-Date: Mon, 12 Jan 2015 15:11:41 +0100
-Message-ID: <1421071901.20276.7.camel@AMDC1943>
-References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
- <1417011857-10419-4-git-send-email-k.kozlowski@samsung.com>
- <CACRpkdb8F8YcvFeHPvOKHjx_p4HEpimck3XRabB3oHpZTdmRQQ@mail.gmail.com>
- <1417183724.18249.36.camel@AMDC1943>
- <CA+Ln22Ejo51VPWf6DmuRvV_fZr_H=-BXAshSPSOokNE1bz=-QA@mail.gmail.com>
- <1417423043.4055.14.camel@AMDC1943>
- <CA+Ln22H_a9CWxrYO_i9Esm6keXA8XLLYmE1Vg-8ynamJ1sAwpQ@mail.gmail.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
+Date: Mon, 12 Jan 2015 16:07:13 +0100
+Message-ID: <20150112150713.GB8094@lunn.ch>
+References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
+ <1420846493-31647-4-git-send-email-andrew@lunn.ch>
+ <CACRpkdZe2BMtTPU6wkd+gk5mttz3GdL_zYCTPQOaubwRAHbDgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <CA+Ln22H_a9CWxrYO_i9Esm6keXA8XLLYmE1Vg-8ynamJ1sAwpQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZe2BMtTPU6wkd+gk5mttz3GdL_zYCTPQOaubwRAHbDgg@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Imre Kaloz <kaloz@openwrt.org>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On pon, 2014-12-01 at 23:34 +0900, Tomasz Figa wrote:
-> 2014-12-01 17:37 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+On Mon, Jan 12, 2015 at 03:06:14PM +0100, Linus Walleij wrote:
+> On Sat, Jan 10, 2015 at 12:34 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+> 
+> > Armada 370/XP devices can 'blink' gpio lines with a configurable on
+> > and off period. This can be modelled as a PWM.
 > >
-> > On nie, 2014-11-30 at 21:19 +0900, Tomasz Figa wrote:
-> >> Hi Krzysztof,
-> >>
-(...)
+> > However, there are only two sets of PWM configuration registers for
+> > all the gpio lines. This driver simply allows a single gpio line per
+> > gpio chip of 32 lines to be used as a PWM. Attempts to use more return
+> > EBUSY.
 > >
-> >> Also isn't a similar problem happening due to power domains? I believe
-> >> the whole maudio block is located in a separate power domain but
-> >> somehow it doesn't get turned off?
+> > Due to the interleaving of registers it is not simple to separate the
+> > PWM driver from the gpio driver. Thus the gpio driver has been
+> > extended with a PWM driver.
 > >
-> > There is Maudio power domain... but I think it is not related here.
+> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> > ---
+> >  drivers/gpio/Kconfig          |   5 ++
+> >  drivers/gpio/Makefile         |   1 +
+> >  drivers/gpio/gpio-mvebu-pwm.c | 202 ++++++++++++++++++++++++++++++++++++++++++
+> (...)
+> > +++ b/drivers/gpio/gpio-mvebu-pwm.c
+> (...)
+> > +static const struct pwm_ops mvebu_pwm_ops = {
+> > +       .request = mvebu_pwm_request,
+> > +       .free = mvebu_pwm_free,
+> > +       .config = mvebu_pwm_config,
+> > +       .enable = mvebu_pwm_enable,
+> > +       .disable = mvebu_pwm_disable,
+> > +       .owner = THIS_MODULE,
+> > +};
 > 
-> Could you somehow check what happens when the maudio power domain is
-> turned off and maudio pin controller is accessed? Could you also check
-> the difference in power consumption with this domain powered on and
-> off?
-
-Hi Tomasz,
-
-Some time ago you asked for some details of Exynos5420 Maudio domain
-behavior. Here it goes:
-
-1. mau domain ON, EPL: OFF: boot hang (this was behavior after adding
-runtime PM to pl330 driver)
-
-2. maud domain OFF, EPLL OFF: boot hang
-
-3. maud domain ON, EPLL ON: works (current linux-next and mainline)
-
-4. maud domain OFF, EPLL ON: works, almost the same energy consumption
-as in (3) (diff: 0.1% so it is smaller than measuring accuracy).
-
-However an unspecified imprecise abort shows up in (4):
-[   11.911628] Freeing unused kernel memory: 328K (c0674000 - c06c6000)
-[   12.122695] usb 5-1.4: new high-speed USB device number 3 using exynos-ehci
-[   12.190011] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-[   12.219062] usb 5-1.4: New USB device found, idVendor=0b95, idProduct=772a
-[   12.224548] usb 5-1.4: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-[   12.231794] usb 5-1.4: Product: AX88772
-[   12.235681] usb 5-1.4: Manufacturer: ASIX Elec. Corp.
-[   12.240707] usb 5-1.4: SerialNumber: 000001
-[   12.248835] asix 5-1.4:1.0 (unnamed net_device) (uninitialized): invalid hw address, using random
-root@(none):/#
-
-Best regards,
-Krzysztof
-
+> So the first basic notes:
 > 
-> > Pinctrl driver does not have runtime PM and is not attached to a domain.
-> > I thought about other solution to this problem (with utilization of
-> > power domains):
-> >  - add runtime PM to pinctrl and audss clocks,
-> >  - attach pinctrl and audss clocks to maudio power domain,
-> >  - enable the clock when power domain is turned on.
-> > However almost the same changes had to be added to pinctrl and audss
-> > clocks drivers (replace clock_enable() with pm_runtime_get_sync()).
-> 
-> Well, if the dependency is there due to hardware design, I think it
-> needs to be reflected in the drivers as well.
-> 
-> Few other issues that came to my mind:
-> 
->  - Your previous patch added clock control only to pinctrl operations.
-> Shouldn't GPIO operations be included as well?
-> 
->  - If power domain dependency is there too, what happens with GPIO
-> pins if the domain is powered off? If they lose their states, wouldn't
-> it necessary to keep the domain powered on whenever there is some GPIO
-> pin requested (which usually = in use)? (I'd assume that special
-> functions shouldn't take a reference on runtime PM, because they are
-> related to IP blocks in the same PM domain, which will implicitly keep
-> the domain powered on.)
-> 
->  - Doesn't the clock controller also lose its state whenever the power
-> domain is powered off? I guess that would be similar to ISP clock
-> controller, issues of which are still not resolved in mainline.
-> Sylwester could tell you more about this, I guess.
-> 
-> Best regards,
-> Tomasz
+> - PWM maintainer Thierry Reding has to review and ACK this, and the patch needs
+>   to be posted to the linux-pwm mailing list too (check To: line)
+
+Yes, Thierry was in To: and linux-pwm in Cc:
+
+> - Should that driver portion really be in drivers/gpio or rather in drivers/pwm
+
+I also had the same thoughts. What decided it for me is the use of
+gpiolib.h.  That file would have to move somewhere under
+include/linux, or i find a different way of doing what i'm doing
+without using it.
+ 
+> - Why is this not modeled as an MFD spawning a GPIO and a PWM cell,
+>   as is custom? (Bringing MFD maintainers into the picture.)
+>
+> So I am aware that this takes the problem from "quick fix extension to the GPIO
+> driver" to "really nasty hairy re-engineering of the whole shebang" but there is
+> a lot of precedents in the kernel for splitting up this type of hardware in
+> separate drivers under an MFD hub.
+
+Yes, one example would be lp3943, an i2c GPIO and PWM driver.
+
+The nasty hairy re-engineering is one thing that is putting me off.
+
+Another is keeping DT compatibility. Here i'm just adding some
+additional optional properties. I've not looked in detail, but i think
+it is going to be really hard to add an MFD driver without breaking
+the existing DT binding. That is not somewhere i want to go, i'd just
+drop this altogether.
+
+Do you know of any other driver with a DT binding which has been
+refactored into an MFD? An example to look at would be useful.
+
+Thanks
+	Andrew
