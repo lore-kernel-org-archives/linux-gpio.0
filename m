@@ -1,62 +1,59 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [Patch v5 2/2] gpio: Document GPIO hogging mechanism
-Date: Tue, 13 Jan 2015 06:43:33 +0900
-Message-ID: <CAAVeFuLF7EVR-Xta=eNegmGWX9AFu9xmyhXisGCTwc1ds3t1cA@mail.gmail.com>
-References: <1419019671-25377-1-git-send-email-bparrot@ti.com>
- <1419019671-25377-3-git-send-email-bparrot@ti.com> <CACRpkdb7Wq7-rBypqPkefejY5Qfq_KKx91H+DxKWv-TM2y04bg@mail.gmail.com>
- <20150112163902.GE5834@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for the v3.19 series
+Date: Mon, 12 Jan 2015 22:57:49 +0100
+Message-ID: <CACRpkdZFGLWF3h8AjKiUMPWNheLy+dFG4cYnsYXc_CZC+BpouA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150112163902.GE5834@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Benoit Parrot <bparrot@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:38716 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751223AbbALV5u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 16:57:50 -0500
+Received: by mail-ie0-f170.google.com with SMTP id rd18so27876437iec.1
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2015 13:57:49 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jan 13, 2015 at 1:39 AM, Benoit Parrot <bparrot@ti.com> wrote:
-> Linus Walleij <linus.walleij@linaro.org> wrote on Mon [2015-Jan-12 11:20:14 +0100]:
->> On Fri, Dec 19, 2014 at 9:07 PM, Benoit Parrot <bparrot@ti.com> wrote:
->>
->> > Add GPIO hogging documentation to gpio.txt
->> >
->> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
->> > Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->>
->> This is starting to look good ...
->>
->> > +               line_b {
->> > +                       gpio-hog;
->> > +                       gpios = <6 0>;
->> > +                       state = "output-low";
->>
->> I don't like the state string.
->>
->> Instead have boolean properties for all states.
->>
->> line_b {
->>     gpio-hog;
->>     gpios = <6 0>;
->>     output-low;
->>     line-name = "foo-bar-gpio";
->> }
->>
->> Then use of_property_read_bool() in the code to check which
->> state is to be selected intially. You can check that no mutually
->> exclusive state are selected, I don't like that an arbitrary string
->> select the state like that, if we do it that way an enumerator would
->> be better, I prefer bools.
->
-> I am sorry but that is how it was originally in the first patch.
-> Alexandre's review comment suggested this method in [1] and [2] (below).
->
-> Alexandre, any comments?
->
-> [1] http://marc.info/?l=linux-gpio&m=141456662426151&w=2
->
-> [2] http://marc.info/?l=linux-gpio&m=141715982424744&w=2
+Hi Linus,
 
-When Linus and I are in conflict, follow Linus. Arnd's suggestion of
-having enums defined in (IIUC) include/dt-bindings/gpio and using them
-sounds good to me too and might make everyone happy (no possibility of
-conflicting definitions + no strings). Linus, could you comment on it?
+here are some GPIO fixes, mainly affecting the DLN2 IRQ handling.
+Nothing special about them, just fixes.
+
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit b7392d2247cfe6771f95d256374f1a8e6a6f48d6:
+
+  Linux 3.19-rc2 (2014-12-28 16:49:37 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.19-3
+
+for you to fetch changes up to 96b932b84409a5c1037827b4432a2b53adc09a61:
+
+  gpio: dln2: use bus_sync_unlock instead of scheduling work
+(2015-01-09 07:57:35 +0100)
+
+----------------------------------------------------------------
+Some GPIO fixes for the v3.19 series:
+- Three patches fixing IRQ handling for the DLN2
+- Null pointer handling for grgpio
+
+----------------------------------------------------------------
+Axel Lin (2):
+      gpio: dln2: Fix gpio output value in dln2_gpio_direction_output()
+      gpio: grgpio: Avoid potential NULL pointer dereference
+
+Octavian Purdila (2):
+      gpio: dln2: fix issue when an IRQ is unmasked then enabled
+      gpio: dln2: use bus_sync_unlock instead of scheduling work
+
+ drivers/gpio/gpio-dln2.c   | 156 +++++++++++++++++++--------------------------
+ drivers/gpio/gpio-grgpio.c |   3 +-
+ 2 files changed, 69 insertions(+), 90 deletions(-)
