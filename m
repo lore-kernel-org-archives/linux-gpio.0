@@ -1,40 +1,63 @@
-From: Arnaud Patard (Rtp) <arnaud.patard@rtp-net.org>
-Subject: Re: [PATCH v1 3/5] gpio: iop: convert to use basic mmio gpio library
-Date: Mon, 12 Jan 2015 14:39:45 +0100
-Message-ID: <87387g5d9a.fsf@lebrac.rtp-net.org>
-References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
-	<1417435778-21879-4-git-send-email-kamlakant.patel@linaro.org>
-	<CACRpkdYb0abvdSeU0A7UzrkhoADtV6X2QrxtV1h2pPg+HqP=1g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
+Date: Mon, 12 Jan 2015 15:06:14 +0100
+Message-ID: <CACRpkdZe2BMtTPU6wkd+gk5mttz3GdL_zYCTPQOaubwRAHbDgg@mail.gmail.com>
+References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
+	<1420846493-31647-4-git-send-email-andrew@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lebrac.rtp-net.org ([195.154.106.105]:59519 "EHLO
-	lebrac.rtp-net.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751675AbbALNsM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 08:48:12 -0500
-In-Reply-To: <CACRpkdYb0abvdSeU0A7UzrkhoADtV6X2QrxtV1h2pPg+HqP=1g@mail.gmail.com>
-	(Linus Walleij's message of "Fri, 9 Jan 2015 10:19:11 +0100")
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1420846493-31647-4-git-send-email-andrew@lunn.ch>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Thierry Reding <thierry.reding@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Imre Kaloz <kaloz@openwrt.org>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, Lennert Buytenhek <kernel@wantstofly.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>
 
-Linus Walleij <linus.walleij@linaro.org> writes:
+On Sat, Jan 10, 2015 at 12:34 AM, Andrew Lunn <andrew@lunn.ch> wrote:
 
-
-Hi,
-
-> Lennert/Arnaud: is any one of you guys still maintaining and testing
-> IOP stuff so you can say something about this patch?
-
-I'm still using my iop(80219) system to do backups. So, on the good side, I
-still care about it, but on the bad side, it's not easy for me to test
-kernels on it.
-
+> Armada 370/XP devices can 'blink' gpio lines with a configurable on
+> and off period. This can be modelled as a PWM.
 >
-> Or should I just apply it?
+> However, there are only two sets of PWM configuration registers for
+> all the gpio lines. This driver simply allows a single gpio line per
+> gpio chip of 32 lines to be used as a PWM. Attempts to use more return
+> EBUSY.
+>
+> Due to the interleaving of registers it is not simple to separate the
+> PWM driver from the gpio driver. Thus the gpio driver has been
+> extended with a PWM driver.
+>
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> ---
+>  drivers/gpio/Kconfig          |   5 ++
+>  drivers/gpio/Makefile         |   1 +
+>  drivers/gpio/gpio-mvebu-pwm.c | 202 ++++++++++++++++++++++++++++++++++++++++++
+(...)
+> +++ b/drivers/gpio/gpio-mvebu-pwm.c
+(...)
+> +static const struct pwm_ops mvebu_pwm_ops = {
+> +       .request = mvebu_pwm_request,
+> +       .free = mvebu_pwm_free,
+> +       .config = mvebu_pwm_config,
+> +       .enable = mvebu_pwm_enable,
+> +       .disable = mvebu_pwm_disable,
+> +       .owner = THIS_MODULE,
+> +};
 
-I would prefer that some testing is done before applying. I just don't know when
-I'll be able to do. Maybe it's easier for Lennert to test it ?
+So the first basic notes:
 
-Arnaud
+- PWM maintainer Thierry Reding has to review and ACK this, and the patch needs
+  to be posted to the linux-pwm mailing list too (check To: line)
+
+- Should that driver portion really be in drivers/gpio or rather in drivers/pwm
+
+- Why is this not modeled as an MFD spawning a GPIO and a PWM cell,
+  as is custom? (Bringing MFD maintainers into the picture.)
+
+So I am aware that this takes the problem from "quick fix extension to the GPIO
+driver" to "really nasty hairy re-engineering of the whole shebang" but there is
+a lot of precedents in the kernel for splitting up this type of hardware in
+separate drivers under an MFD hub.
+
+Yours,
+Linus Walleij
