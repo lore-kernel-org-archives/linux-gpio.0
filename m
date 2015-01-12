@@ -1,68 +1,55 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH resend 2/2] [RFC] genirq: Set IRQCHIP_SKIP_SET_WAKE for no_irq_chip and dummy_irq_chip
-Date: Mon, 12 Jan 2015 17:04:31 +0100
-Message-ID: <1421078671-5920-2-git-send-email-geert+renesas@glider.be>
-References: <1421078671-5920-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421078671-5920-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4/6] gpio: fix memory leak and sleep-while-atomic
+Date: Mon, 12 Jan 2015 17:12:27 +0100
+Message-ID: <1421079149-2236-5-git-send-email-johan@kernel.org>
+References: <1421079149-2236-1-git-send-email-johan@kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1421079149-2236-1-git-send-email-johan@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-If no_irq_chip or dummy_irq_chip are used for wake up (e.g. gpio-keys
-with a simple GPIO controller), the following warning is printed on
-resume from s2ram:
+Fix memory leak and sleep-while-atomic in gpiochip_remove.
 
-    WANING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
-    Unbalanced IRQ 113 wake disable
+The memory leak was introduced by afa82fab5e13 ("gpio / ACPI: Move event
+handling registration to gpiolib irqchip helpers") that moved the
+release of acpi interrupt resources to gpiochip_irqchip_remove, but by
+then the resources are no longer accessible as the acpi_gpio_chip has
+already been freed by acpi_gpiochip_remove.
 
-This happens because no_irq_chip and dummy_irq_chip do not implement
-irq_chip.irq_set_wake(), causing set_irq_wake_real() to return -ENXIO,
-and irq_set_irq_wake() to reset the wake_depth to zero.
+Note that this also fixes a few potential sleep-while-atomics, which has
+been around since 1425052097b5 ("gpio: add IRQ chip helpers in gpiolib")
+when the call to gpiochip_irqchip_remove while holding a spinlock was
+added (a couple of irq-domain paths can end up grabbing mutexes).
 
-Set IRQCHIP_SKIP_SET_WAKE to indicate that irq_chip.irq_set_wake() is
-not implemented.
+Fixes: afa82fab5e13 ("gpio / ACPI: Move event handling registration to
+gpiolib irqchip helpers")
+Fixes: 1425052097b5 ("gpio: add IRQ chip helpers in gpiolib")
+Cc: stable <stable@vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
-Alternatively, can't we remove IRQCHIP_SKIP_SET_WAKE, and just check for
-the presence of irq_chip.irq_set_wake()?
-I'll be happy to send a patch to do that instead...
+ drivers/gpio/gpiolib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Is there anything that relies on this -ENXIO error code?
-All irq_chip implementations that set IRQCHIP_SKIP_SET_WAKE do not
-implement irq_chip.irq_set_wake(). There are probably more of them that
-forgot to set IRQCHIP_SKIP_SET_WAKE though.
-Am I missing something?
-Commit 60f96b41f71d2a13 ("genirq: Add IRQCHIP_SKIP_SET_WAKE flag")
-doesn't explain why adding the flag was chosen.
-
-Thanks!
----
-Resend: Use Santosh' new email address
-
- kernel/irq/dummychip.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/irq/dummychip.c b/kernel/irq/dummychip.c
-index 988dc58e8847f6eb..326a67f2410bf95c 100644
---- a/kernel/irq/dummychip.c
-+++ b/kernel/irq/dummychip.c
-@@ -42,6 +42,7 @@ struct irq_chip no_irq_chip = {
- 	.irq_enable	= noop,
- 	.irq_disable	= noop,
- 	.irq_ack	= ack_bad,
-+	.flags		= IRQCHIP_SKIP_SET_WAKE,
- };
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 4efb92ca3463..0f8173051edc 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -327,11 +327,12 @@ void gpiochip_remove(struct gpio_chip *chip)
+ 	unsigned long	flags;
+ 	unsigned	id;
  
- /*
-@@ -57,5 +58,6 @@ struct irq_chip dummy_irq_chip = {
- 	.irq_ack	= noop,
- 	.irq_mask	= noop,
- 	.irq_unmask	= noop,
-+	.flags		= IRQCHIP_SKIP_SET_WAKE,
- };
- EXPORT_SYMBOL_GPL(dummy_irq_chip);
++	gpiochip_irqchip_remove(chip);
++
+ 	acpi_gpiochip_remove(chip);
+ 
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+-	gpiochip_irqchip_remove(chip);
+ 	gpiochip_remove_pin_ranges(chip);
+ 	of_gpiochip_remove(chip);
+ 
 -- 
-1.9.1
+2.0.5
