@@ -1,43 +1,40 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH 6/6] gpio: unregister gpiochip device before removing it
-Date: Mon, 12 Jan 2015 17:12:29 +0100
-Message-ID: <1421079149-2236-7-git-send-email-johan@kernel.org>
-References: <1421079149-2236-1-git-send-email-johan@kernel.org>
+Subject: [PATCH] pinctrl: lantiq: remove bogus of_gpio_chip_add
+Date: Mon, 12 Jan 2015 17:20:51 +0100
+Message-ID: <1421079651-2650-1-git-send-email-johan@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421079149-2236-1-git-send-email-johan@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Unregister gpiochip device (used to export information through sysfs)
-before removing it internally. This way removal will reverse addition.
+Remove bogus call to of_gpiochip_add (and of_gpio_chip remove in error
+path) which is also called when adding the gpio chip.
+
+This prevents adding the same pinctrl range twice.
+
+Fixes: 3f8c50c9b110 ("OF: pinctrl: MIPS: lantiq: implement lantiq/xway
+pinctrl support")
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/gpio/gpiolib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-xway.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 37f919dc2cb4..568aa2b6bdb0 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -327,6 +327,8 @@ void gpiochip_remove(struct gpio_chip *chip)
- 	unsigned long	flags;
- 	unsigned	id;
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index c5cef59f5965..779950c62e53 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -798,10 +798,8 @@ static int pinmux_xway_probe(struct platform_device *pdev)
  
-+	gpiochip_unexport(chip);
-+
- 	gpiochip_irqchip_remove(chip);
- 
- 	acpi_gpiochip_remove(chip);
-@@ -343,7 +345,6 @@ void gpiochip_remove(struct gpio_chip *chip)
- 
- 	list_del(&chip->list);
- 	spin_unlock_irqrestore(&gpio_lock, flags);
--	gpiochip_unexport(chip);
- 
- 	kfree(chip->desc);
- 	chip->desc = NULL;
+ 	/* load the gpio chip */
+ 	xway_chip.dev = &pdev->dev;
+-	of_gpiochip_add(&xway_chip);
+ 	ret = gpiochip_add(&xway_chip);
+ 	if (ret) {
+-		of_gpiochip_remove(&xway_chip);
+ 		dev_err(&pdev->dev, "Failed to register gpio chip\n");
+ 		return ret;
+ 	}
 -- 
 2.0.5
