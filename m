@@ -1,59 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v3.19 series
-Date: Mon, 12 Jan 2015 22:57:49 +0100
-Message-ID: <CACRpkdZFGLWF3h8AjKiUMPWNheLy+dFG4cYnsYXc_CZC+BpouA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [RFC PATCH v2 1/4] tty: serial_mctrl_gpio: Add irqs helpers for
+ input lines
+Date: Tue, 13 Jan 2015 07:25:44 +0900
+Message-ID: <CAAVeFu+1=rF1P3Ro2kVTn=6-LvDtcOG0UcTJnKXsN-FQK9b7+Q@mail.gmail.com>
+References: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f170.google.com ([209.85.223.170]:38716 "EHLO
-	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751223AbbALV5u (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 16:57:50 -0500
-Received: by mail-ie0-f170.google.com with SMTP id rd18so27876437iec.1
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2015 13:57:49 -0800 (PST)
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:35494 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750995AbbALW0G (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 17:26:06 -0500
+In-Reply-To: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Janusz Uzycki <j.uzycki@elproma.com.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Alexander Shiyan <shc_work@mail.ru>, fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Linus,
+On Sat, Jan 10, 2015 at 11:32 PM, Janusz Uzycki <j.uzycki@elproma.com.pl> wrote:
+> A driver using mctrl_gpio called gpiod_get_direction() to check if
+> gpio is input line. However .get_direction callback is not available
+> for all platforms. The patch allows to avoid the function.
+> The patch introduces the following helpers:
+> - mctrl_gpio_request_irqs
+> - mctrl_gpio_free_irqs
+> - mctrl_gpio_enable_ms
+> - mctrl_gpio_disable_ms
+> They allow to:
+> - simplify drivers which use mctrl_gpio
+> - hide irq table in mctrl_gpio
+> - use default irq handler for gpios
+> - better separate code for gpio modem lines from uart's code
+> In addition mctrl_gpio_init() has been renamed to mctrl_gpio_init_dt()
+> to focus DT usage. Also mctrl_gpio_init_dt() initializes irq table for
+> gpios now and passes struct uart_port into struct mctrl_gpios.
+> This resulted in changed mctrl_gpio_init_dt() parameter.
+> It also requires port->dev is set before the function is called.
+>
+> There were also fixed:
+> - irq = 0 means invalid/unused (-EINVAL no more used)
+> - mctrl_gpio_request_irqs() doesn't use negative enum value
+>   if request_irq() failed. It just calls mctrl_gpio_free_irqs().
+>
+> The mctrl_gpio_is_gpio() inline function is under discussion
+> and likely it can replace exported mctrl_gpio_to_gpiod() function.
+>
+> IRQ_NOAUTOEN setting and request_irq() order was not commented
+> but it looks right according to other drivers.
 
-here are some GPIO fixes, mainly affecting the DLN2 IRQ handling.
-Nothing special about them, just fixes.
+I cannot provide a full review on this part of the kernel, but this
+series is also useful in that it will allow us to make
+gpiod_get_direction() private. This function should never have been
+public in the first place.
 
-Please pull them in!
+The series,
 
-Yours,
-Linus Walleij
-
-The following changes since commit b7392d2247cfe6771f95d256374f1a8e6a6f48d6:
-
-  Linux 3.19-rc2 (2014-12-28 16:49:37 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v3.19-3
-
-for you to fetch changes up to 96b932b84409a5c1037827b4432a2b53adc09a61:
-
-  gpio: dln2: use bus_sync_unlock instead of scheduling work
-(2015-01-09 07:57:35 +0100)
-
-----------------------------------------------------------------
-Some GPIO fixes for the v3.19 series:
-- Three patches fixing IRQ handling for the DLN2
-- Null pointer handling for grgpio
-
-----------------------------------------------------------------
-Axel Lin (2):
-      gpio: dln2: Fix gpio output value in dln2_gpio_direction_output()
-      gpio: grgpio: Avoid potential NULL pointer dereference
-
-Octavian Purdila (2):
-      gpio: dln2: fix issue when an IRQ is unmasked then enabled
-      gpio: dln2: use bus_sync_unlock instead of scheduling work
-
- drivers/gpio/gpio-dln2.c   | 156 +++++++++++++++++++--------------------------
- drivers/gpio/gpio-grgpio.c |   3 +-
- 2 files changed, 69 insertions(+), 90 deletions(-)
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
