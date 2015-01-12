@@ -1,27 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 6/7] gpio/gpiolib-of: Create of_mm_gpiochip_remove
-Date: Mon, 12 Jan 2015 10:33:49 +0100
-Message-ID: <CACRpkdaGtCrhYpGwCkS02pryT-RjVNX7cHTnQaw7EuEHLP7SUA@mail.gmail.com>
-References: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
-	<1418831474-24428-7-git-send-email-ricardo.ribalda@gmail.com>
-	<CACRpkdYq_tyamCzM575D8vdMg_rvDy93fSm+7Oss3tQzFu+TTA@mail.gmail.com>
-	<CAPybu_1n0mGjm+Si_e4soVcQgGbP=fPFXDU71f3bvABDLraNVQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/2] sh-pfc: r8a7791: add MLB+ pin group
+Date: Mon, 12 Jan 2015 10:39:58 +0100
+Message-ID: <CAMuHMdU8AobZXUR1ABmJA3yTCCjA-uh6hpoYGE6ZXgOOnzB2Ug@mail.gmail.com>
+References: <1771436.VTFsboh7mX@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPybu_1n0mGjm+Si_e4soVcQgGbP=fPFXDU71f3bvABDLraNVQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1771436.VTFsboh7mX@wasted.cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 12, 2015 at 10:31 AM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
+On Sat, Jan 10, 2015 at 7:22 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add MLB+ 3-pin mode pin group to R8A7791 PFC driver.
+>
+> Based on original patch by Andrey Gusakov <andrey.gusakov@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> I think that only gpio-mpc5200.c would benefit from the new API, I can
-> send a patchset to support removal and use the new API if you want.
+Thanks, looks OK to me
 
-That would be awesome.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
