@@ -1,58 +1,42 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [RFC PATCH v2 1/4] tty: serial_mctrl_gpio: Add irqs helpers for
- input lines
-Date: Tue, 13 Jan 2015 07:25:44 +0900
-Message-ID: <CAAVeFu+1=rF1P3Ro2kVTn=6-LvDtcOG0UcTJnKXsN-FQK9b7+Q@mail.gmail.com>
-References: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl>
+From: Beniamino Galvani <b.galvani@gmail.com>
+Subject: Re: [PATCH v3 2/3] pinctrl: add driver for Amlogic Meson SoCs
+Date: Tue, 13 Jan 2015 00:07:49 +0100
+Message-ID: <20150112230749.GA1743@gmail.com>
+References: <1416168856-12747-1-git-send-email-b.galvani@gmail.com>
+ <1416168856-12747-3-git-send-email-b.galvani@gmail.com>
+ <CACRpkda-U5OuKdBVGJ8UWprJkAtmTL1m11+AbNskVULPfyS72A@mail.gmail.com>
+ <20141127223402.GA11418@gmail.com>
+ <CACRpkdY0tv77GgOF91EG8wEzsgQ4OsLUjogNxFjO-rjfY2Q15g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:35494 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750995AbbALW0G (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 17:26:06 -0500
-In-Reply-To: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl>
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:55113 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751318AbbALXIV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 18:08:21 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdY0tv77GgOF91EG8wEzsgQ4OsLUjogNxFjO-rjfY2Q15g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Janusz Uzycki <j.uzycki@elproma.com.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Alexander Shiyan <shc_work@mail.ru>, fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Carlo Caione <carlo@caione.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jerry Cao <jerry.cao@amlogic.com>, Victor Wan <victor.wan@amlogic.com>
 
-On Sat, Jan 10, 2015 at 11:32 PM, Janusz Uzycki <j.uzycki@elproma.com.pl> wrote:
-> A driver using mctrl_gpio called gpiod_get_direction() to check if
-> gpio is input line. However .get_direction callback is not available
-> for all platforms. The patch allows to avoid the function.
-> The patch introduces the following helpers:
-> - mctrl_gpio_request_irqs
-> - mctrl_gpio_free_irqs
-> - mctrl_gpio_enable_ms
-> - mctrl_gpio_disable_ms
-> They allow to:
-> - simplify drivers which use mctrl_gpio
-> - hide irq table in mctrl_gpio
-> - use default irq handler for gpios
-> - better separate code for gpio modem lines from uart's code
-> In addition mctrl_gpio_init() has been renamed to mctrl_gpio_init_dt()
-> to focus DT usage. Also mctrl_gpio_init_dt() initializes irq table for
-> gpios now and passes struct uart_port into struct mctrl_gpios.
-> This resulted in changed mctrl_gpio_init_dt() parameter.
-> It also requires port->dev is set before the function is called.
->
-> There were also fixed:
-> - irq = 0 means invalid/unused (-EINVAL no more used)
-> - mctrl_gpio_request_irqs() doesn't use negative enum value
->   if request_irq() failed. It just calls mctrl_gpio_free_irqs().
->
-> The mctrl_gpio_is_gpio() inline function is under discussion
-> and likely it can replace exported mctrl_gpio_to_gpiod() function.
->
-> IRQ_NOAUTOEN setting and request_irq() order was not commented
-> but it looks right according to other drivers.
+On Mon, Jan 12, 2015 at 01:00:16AM +0100, Linus Walleij wrote:
+> Hi Beniamino,
+>=20
+> sorry for the delay to merging S=F6ren's patches.
+>=20
+> Can you rebase this patch on top of the pin control "devel" branch:
+> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git=
+/log/?h=3Ddevel
 
-I cannot provide a full review on this part of the kernel, but this
-series is also useful in that it will allow us to make
-gpiod_get_direction() private. This function should never have been
-public in the first place.
+I will rebase and submit the patch in the next days.
 
-The series,
-
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Thanks,
+Beniamino
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
