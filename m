@@ -1,33 +1,62 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH] pinctrl: pinconf-generic: loose DT dependence
-Date: Mon, 12 Jan 2015 10:20:49 -0800
-Message-ID: <52c662b797754a37966532ef95304610@BL2FFO11FD050.protection.gbl>
-References: <1421020166-22831-1-git-send-email-linus.walleij@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [Patch v5 2/2] gpio: Document GPIO hogging mechanism
+Date: Tue, 13 Jan 2015 06:43:33 +0900
+Message-ID: <CAAVeFuLF7EVR-Xta=eNegmGWX9AFu9xmyhXisGCTwc1ds3t1cA@mail.gmail.com>
+References: <1419019671-25377-1-git-send-email-bparrot@ti.com>
+ <1419019671-25377-3-git-send-email-bparrot@ti.com> <CACRpkdb7Wq7-rBypqPkefejY5Qfq_KKx91H+DxKWv-TM2y04bg@mail.gmail.com>
+ <20150112163902.GE5834@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1421020166-22831-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <20150112163902.GE5834@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Benoit Parrot <bparrot@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 2015-01-12 at 12:49AM +0100, Linus Walleij wrote:
-> New pin controllers such as ACPI-based may also have custom propertie=
-s
-> to parse, and should be able to use generic pin config. Let's make th=
-e
-> code compile on !OF systems and rename members a bit to underscore it
-> is custom parameters and not necessarily DT parameters.
->=20
-> This fixes a build regression for x86_64 on the zeroday kernel builds=
-=2E
->=20
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Cc: Soren Brinkmann <soren.brinkmann@xilinx.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-and-tested-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+On Tue, Jan 13, 2015 at 1:39 AM, Benoit Parrot <bparrot@ti.com> wrote:
+> Linus Walleij <linus.walleij@linaro.org> wrote on Mon [2015-Jan-12 11:20:14 +0100]:
+>> On Fri, Dec 19, 2014 at 9:07 PM, Benoit Parrot <bparrot@ti.com> wrote:
+>>
+>> > Add GPIO hogging documentation to gpio.txt
+>> >
+>> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+>> > Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>>
+>> This is starting to look good ...
+>>
+>> > +               line_b {
+>> > +                       gpio-hog;
+>> > +                       gpios = <6 0>;
+>> > +                       state = "output-low";
+>>
+>> I don't like the state string.
+>>
+>> Instead have boolean properties for all states.
+>>
+>> line_b {
+>>     gpio-hog;
+>>     gpios = <6 0>;
+>>     output-low;
+>>     line-name = "foo-bar-gpio";
+>> }
+>>
+>> Then use of_property_read_bool() in the code to check which
+>> state is to be selected intially. You can check that no mutually
+>> exclusive state are selected, I don't like that an arbitrary string
+>> select the state like that, if we do it that way an enumerator would
+>> be better, I prefer bools.
+>
+> I am sorry but that is how it was originally in the first patch.
+> Alexandre's review comment suggested this method in [1] and [2] (below).
+>
+> Alexandre, any comments?
+>
+> [1] http://marc.info/?l=linux-gpio&m=141456662426151&w=2
+>
+> [2] http://marc.info/?l=linux-gpio&m=141715982424744&w=2
 
-	S=C3=B6ren
+When Linus and I are in conflict, follow Linus. Arnd's suggestion of
+having enums defined in (IIUC) include/dt-bindings/gpio and using them
+sounds good to me too and might make everyone happy (no possibility of
+conflicting definitions + no strings). Linus, could you comment on it?
