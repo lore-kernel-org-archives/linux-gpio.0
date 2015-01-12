@@ -1,65 +1,41 @@
-From: Arend van Spriel <arend@broadcom.com>
-Subject: Re: [Patch v5 2/2] gpio: Document GPIO hogging mechanism
-Date: Mon, 12 Jan 2015 11:28:00 +0100
-Message-ID: <54B3A1B0.1010005@broadcom.com>
-References: <1419019671-25377-1-git-send-email-bparrot@ti.com>	<1419019671-25377-3-git-send-email-bparrot@ti.com> <CACRpkdb7Wq7-rBypqPkefejY5Qfq_KKx91H+DxKWv-TM2y04bg@mail.gmail.com>
+From: "Imre Kaloz" <kaloz@openwrt.org>
+Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
+Date: Mon, 12 Jan 2015 12:05:50 +0100
+Message-ID: <op.xscjr0cz2s3iss@ecaz>
+References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
+ <1420846493-31647-4-git-send-email-andrew@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:18684 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752020AbbALK2E (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 05:28:04 -0500
-In-Reply-To: <CACRpkdb7Wq7-rBypqPkefejY5Qfq_KKx91H+DxKWv-TM2y04bg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1420846493-31647-4-git-send-email-andrew@lunn.ch>
+Sender: linux-pwm-owner@vger.kernel.org
+To: linus.walleij@linaro.org, Andrew Lunn <andrew@lunn.ch>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>
 
-On 01/12/15 11:20, Linus Walleij wrote:
-> On Fri, Dec 19, 2014 at 9:07 PM, Benoit Parrot<bparrot@ti.com>  wrote:
->
->> Add GPIO hogging documentation to gpio.txt
->>
->> Signed-off-by: Benoit Parrot<bparrot@ti.com>
->> Reviewed-by: Alexandre Courbot<acourbot@nvidia.com>
->
-> This is starting to look good ...
->
->> +               line_b {
->> +                       gpio-hog;
->> +                       gpios =<6 0>;
->> +                       state = "output-low";
->
-> I don't like the state string.
->
-> Instead have boolean properties for all states.
->
-> line_b {
->      gpio-hog;
->      gpios =<6 0>;
->      output-low;
->      line-name = "foo-bar-gpio";
-> }
->
-> Then use of_property_read_bool() in the code to check which
-> state is to be selected intially. You can check that no mutually
-> exclusive state are selected, I don't like that an arbitrary string
-> select the state like that, if we do it that way an enumerator would
-> be better, I prefer bools.
+On Sat, 10 Jan 2015 00:34:49 +0100, Andrew Lunn <andrew@lunn.ch> wrote:
 
-To avoid the mutual exclusive state checking, would it not be more 
-straightforward to use numeric enum values defined in boot/dts/include.
+<snip>
 
-Regards,
-Arend
+> diff --git a/drivers/gpio/gpio-mvebu-pwm.c  
+> b/drivers/gpio/gpio-mvebu-pwm.c
+> new file mode 100644
+> index 000000000000..8a5af11aed67
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-mvebu-pwm.c
+> @@ -0,0 +1,202 @@
+> +#include <linux/err.h>
+> +#include <linux/module.h>
+> +#include <linux/gpio.h>
+> +#include <linux/pwm.h>
+> +#include <linux/clk.h>
+> +#include <linux/platform_device.h>
+> +#include "gpio-mvebu.h"
+> +#include "gpiolib.h"
 
-> Yours,
-> Linus Walleij
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+You also need to include <asm/io.h> for readl_relaxed, and a short  
+description/copyright on the top wouldn't hurt.
 
+
+Imre
