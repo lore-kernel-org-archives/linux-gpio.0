@@ -1,45 +1,40 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
-Date: Mon, 12 Jan 2015 14:12:48 +0100
-Message-ID: <20150112131248.GD19533@lunn.ch>
-References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
- <1420846493-31647-4-git-send-email-andrew@lunn.ch>
- <op.xscjr0cz2s3iss@ecaz>
+From: Arnaud Patard (Rtp) <arnaud.patard@rtp-net.org>
+Subject: Re: [PATCH v1 3/5] gpio: iop: convert to use basic mmio gpio library
+Date: Mon, 12 Jan 2015 14:39:45 +0100
+Message-ID: <87387g5d9a.fsf@lebrac.rtp-net.org>
+References: <1417435778-21879-1-git-send-email-kamlakant.patel@linaro.org>
+	<1417435778-21879-4-git-send-email-kamlakant.patel@linaro.org>
+	<CACRpkdYb0abvdSeU0A7UzrkhoADtV6X2QrxtV1h2pPg+HqP=1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <op.xscjr0cz2s3iss@ecaz>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Imre Kaloz <kaloz@openwrt.org>
-Cc: linus.walleij@linaro.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lebrac.rtp-net.org ([195.154.106.105]:59519 "EHLO
+	lebrac.rtp-net.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751675AbbALNsM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 08:48:12 -0500
+In-Reply-To: <CACRpkdYb0abvdSeU0A7UzrkhoADtV6X2QrxtV1h2pPg+HqP=1g@mail.gmail.com>
+	(Linus Walleij's message of "Fri, 9 Jan 2015 10:19:11 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kamlakant Patel <kamlakant.patel@linaro.org>, Lennert Buytenhek <kernel@wantstofly.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, Mikael Pettersson <mikpe@it.uu.se>
 
-On Mon, Jan 12, 2015 at 12:05:50PM +0100, Imre Kaloz wrote:
-> On Sat, 10 Jan 2015 00:34:49 +0100, Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> <snip>
-> 
-> >diff --git a/drivers/gpio/gpio-mvebu-pwm.c
-> >b/drivers/gpio/gpio-mvebu-pwm.c
-> >new file mode 100644
-> >index 000000000000..8a5af11aed67
-> >--- /dev/null
-> >+++ b/drivers/gpio/gpio-mvebu-pwm.c
-> >@@ -0,0 +1,202 @@
-> >+#include <linux/err.h>
-> >+#include <linux/module.h>
-> >+#include <linux/gpio.h>
-> >+#include <linux/pwm.h>
-> >+#include <linux/clk.h>
-> >+#include <linux/platform_device.h>
-> >+#include "gpio-mvebu.h"
-> >+#include "gpiolib.h"
-> 
-> You also need to include <asm/io.h> for readl_relaxed, and a short
-> description/copyright on the top wouldn't hurt.
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Will do.
 
-Thanks
-	Andrew
+Hi,
+
+> Lennert/Arnaud: is any one of you guys still maintaining and testing
+> IOP stuff so you can say something about this patch?
+
+I'm still using my iop(80219) system to do backups. So, on the good side, I
+still care about it, but on the bad side, it's not easy for me to test
+kernels on it.
+
+>
+> Or should I just apply it?
+
+I would prefer that some testing is done before applying. I just don't know when
+I'll be able to do. Maybe it's easier for Lennert to test it ?
+
+Arnaud
