@@ -1,51 +1,35 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: Re: [PATCH v5 3/7] gpio/xilinx: Add support for X86 Arch
-Date: Mon, 12 Jan 2015 10:31:44 +0100
-Message-ID: <CAPybu_2X17ymd2NK7AHgJ5eaTjbpTQS_8mp8a6ijYsdS+qoQ+Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 0/7]gpio/xilinx: Add support for PCI mapped devices and rmmod
+Date: Mon, 12 Jan 2015 10:32:57 +0100
+Message-ID: <CACRpkdavuy+ww6FTnbH==zSRu9gaM2V0LjK0rbKUAoufv0p-3g@mail.gmail.com>
 References: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
- <1418831474-24428-4-git-send-email-ricardo.ribalda@gmail.com> <CACRpkdYr6OZUjQ8JLzpktQK1xg1Un_SKtU+xr=gFzpSo+A2C-g@mail.gmail.com>
+	<CAPybu_0zkL5MokpWtckz7tC1XWXcEUXoUvriiUZ2Q7yt6p5-MQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYr6OZUjQ8JLzpktQK1xg1Un_SKtU+xr=gFzpSo+A2C-g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Darren Hart <dvhart@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:57159 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752695AbbALJc6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jan 2015 04:32:58 -0500
+Received: by mail-ie0-f169.google.com with SMTP id y20so24329114ier.0
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2015 01:32:57 -0800 (PST)
+In-Reply-To: <CAPybu_0zkL5MokpWtckz7tC1XWXcEUXoUvriiUZ2Q7yt6p5-MQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Hello
+On Thu, Jan 1, 2015 at 4:27 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-On Mon, Jan 12, 2015 at 10:24 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Dec 17, 2014 at 4:51 PM, Ricardo Ribalda Delgado
-> <ricardo.ribalda@gmail.com> wrote:
->
->> Core can be accessed via PCIe on X86 platform.
->> This patch also allows the driver to be used as module.
->>
->> Acked-by: Michal Simek <michal.simek@xilinx.com>
->> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
->
-> PCIe on x86, using device tree? The ACPI people are just gonna love this.
+> I am back from holidays. If there is any change that you want on this
+> series please share.
 
->
-> Patch applied, anyway. DT on x86 is not unheard of.
->
->>  config GPIO_XILINX
->> -       bool "Xilinx GPIO support"
->> -       depends on PPC_OF || MICROBLAZE || ARCH_ZYNQ
->> +       tristate "Xilinx GPIO support"
->> +       depends on OF_GPIO && (PPC_OF || MICROBLAZE || ARCH_ZYNQ || ARCH_X86)
->
-> Maybe you want to add COMPILE_TEST too?
+Noone says anything so I applied them all.
+Looks good to me anyway.
 
-Up to you
+Check the question of whether we should audit other drivers to
+use of_mm_gpiochip_remove().
 
->
-> Yours,
-> Linus Walleij
-
-
-
--- 
-Ricardo Ribalda
+Yours,
+Linus Walleij
