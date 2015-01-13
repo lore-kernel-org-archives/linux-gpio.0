@@ -1,57 +1,73 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH 1/5] gpio: Cygnus: define Broadcom Cygnus GPIO binding
-Date: Tue, 13 Jan 2015 09:07:27 -0800
-Message-ID: <54B550CF.7050001@broadcom.com>
-References: <rjui@broadcom.com>	<1417826408-1600-1-git-send-email-rjui@broadcom.com>	<1417826408-1600-2-git-send-email-rjui@broadcom.com> <CACRpkdaTU_efMOpKoEdBA0rDHyn6wcn7VamUZRiX-K2MYZygBQ@mail.gmail.com>
+From: Benoit Parrot <bparrot@ti.com>
+Subject: Re: [Patch v5 2/2] gpio: Document GPIO hogging mechanism
+Date: Tue, 13 Jan 2015 12:38:10 -0600
+Message-ID: <20150113183810.GG5834@ti.com>
+References: <1419019671-25377-1-git-send-email-bparrot@ti.com>
+ <1419019671-25377-3-git-send-email-bparrot@ti.com>
+ <CACRpkdb7Wq7-rBypqPkefejY5Qfq_KKx91H+DxKWv-TM2y04bg@mail.gmail.com>
+ <20150112163902.GE5834@ti.com>
+ <CAAVeFuLF7EVR-Xta=eNegmGWX9AFu9xmyhXisGCTwc1ds3t1cA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:45367 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751175AbbAMRHa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 12:07:30 -0500
-In-Reply-To: <CACRpkdaTU_efMOpKoEdBA0rDHyn6wcn7VamUZRiX-K2MYZygBQ@mail.gmail.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:40237 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752463AbbAMSiU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 13 Jan 2015 13:38:20 -0500
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuLF7EVR-Xta=eNegmGWX9AFu9xmyhXisGCTwc1ds3t1cA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Scott Branden <sbranden@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>, Arend van Spriel <arend@broadcom.com>
 
+Alexandre Courbot <gnurou@gmail.com> wrote on Tue [2015-Jan-13 06:43:33 +0900]:
+> On Tue, Jan 13, 2015 at 1:39 AM, Benoit Parrot <bparrot@ti.com> wrote:
+> > Linus Walleij <linus.walleij@linaro.org> wrote on Mon [2015-Jan-12 11:20:14 +0100]:
+> >> On Fri, Dec 19, 2014 at 9:07 PM, Benoit Parrot <bparrot@ti.com> wrote:
+> >>
+> >> > Add GPIO hogging documentation to gpio.txt
+> >> >
+> >> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> >> > Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> >>
+> >> This is starting to look good ...
+> >>
+> >> > +               line_b {
+> >> > +                       gpio-hog;
+> >> > +                       gpios = <6 0>;
+> >> > +                       state = "output-low";
+> >>
+> >> I don't like the state string.
+> >>
+> >> Instead have boolean properties for all states.
+> >>
+> >> line_b {
+> >>     gpio-hog;
+> >>     gpios = <6 0>;
+> >>     output-low;
+> >>     line-name = "foo-bar-gpio";
+> >> }
+> >>
+> >> Then use of_property_read_bool() in the code to check which
+> >> state is to be selected intially. You can check that no mutually
+> >> exclusive state are selected, I don't like that an arbitrary string
+> >> select the state like that, if we do it that way an enumerator would
+> >> be better, I prefer bools.
+> >
+> > I am sorry but that is how it was originally in the first patch.
+> > Alexandre's review comment suggested this method in [1] and [2] (below).
+> >
+> > Alexandre, any comments?
+> >
+> > [1] http://marc.info/?l=linux-gpio&m=141456662426151&w=2
+> >
+> > [2] http://marc.info/?l=linux-gpio&m=141715982424744&w=2
+> 
+> When Linus and I are in conflict, follow Linus. Arnd's suggestion of
+> having enums defined in (IIUC) include/dt-bindings/gpio and using them
+> sounds good to me too and might make everyone happy (no possibility of
+> conflicting definitions + no strings). Linus, could you comment on it?
 
-
-On 1/12/2015 11:57 PM, Linus Walleij wrote:
-> On Sat, Dec 6, 2014 at 1:40 AM, Ray Jui <rjui@broadcom.com> wrote:
-> 
->> Document the GPIO device tree binding for Broadcom Cygnus SoC
->>
->> Signed-off-by: Ray Jui <rjui@broadcom.com>
->> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> (...)
->> +- #gpio-cells:
->> +    Must be two. The first cell is the GPIO pin number (within the
->> +controller's domain) and the second cell is used for the following:
->> +    bit[0]: polarity (0 for normal and 1 for inverted)
->> +    bit[18:16]: internal pull up/down: 0 - pull up/down disabled
->> +                                       1 - pull up enabled
->> +                                       2 - pull down enabled
->> +    bit[22:20]: drive strength: 0 - 2 mA
->> +                                1 - 4 mA
->> +                                2 - 6 mA
->> +                                3 - 8 mA
->> +                                4 - 10 mA
->> +                                5 - 12 mA
->> +                                6 - 14 mA
->> +                                7 - 16 mA
-> 
-> No. This pull up/down and drive strength is pin controller
-> business, use a pin control backend behind the GPIO driver
-> see Documentation/pinctrl.txt.
-> 
-> Initial states for these configurations can be set up using
-> pin control hogs since pin control and GPIO is orthogonal.
-> 
-Yes, I got it! See my reply in the GPIO driver review. Thanks.
-
-> Yours,
-> Linus Walleij
-> 
+Understood.
+Now given Linus prefers the bools that is the direction I am going to follow.
