@@ -1,73 +1,114 @@
-From: Benoit Parrot <bparrot@ti.com>
-Subject: Re: [Patch v5 2/2] gpio: Document GPIO hogging mechanism
-Date: Tue, 13 Jan 2015 12:38:10 -0600
-Message-ID: <20150113183810.GG5834@ti.com>
-References: <1419019671-25377-1-git-send-email-bparrot@ti.com>
- <1419019671-25377-3-git-send-email-bparrot@ti.com>
- <CACRpkdb7Wq7-rBypqPkefejY5Qfq_KKx91H+DxKWv-TM2y04bg@mail.gmail.com>
- <20150112163902.GE5834@ti.com>
- <CAAVeFuLF7EVR-Xta=eNegmGWX9AFu9xmyhXisGCTwc1ds3t1cA@mail.gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] pinctrl: fix up device tree bindings
+Date: Tue, 13 Jan 2015 14:06:24 -0600
+Message-ID: <CAL_JsqKQJzUOWE2oJsABH3Aa1cCD+526L0G7-WRH=LbKFxesyQ@mail.gmail.com>
+References: <1420924457-12730-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:40237 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752463AbbAMSiU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 13 Jan 2015 13:38:20 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAVeFuLF7EVR-Xta=eNegmGWX9AFu9xmyhXisGCTwc1ds3t1cA@mail.gmail.com>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:63826 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751043AbbAMUGq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 15:06:46 -0500
+In-Reply-To: <1420924457-12730-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>, Arend van Spriel <arend@broadcom.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Alexandre Courbot <gnurou@gmail.com> wrote on Tue [2015-Jan-13 06:43:33 +0900]:
-> On Tue, Jan 13, 2015 at 1:39 AM, Benoit Parrot <bparrot@ti.com> wrote:
-> > Linus Walleij <linus.walleij@linaro.org> wrote on Mon [2015-Jan-12 11:20:14 +0100]:
-> >> On Fri, Dec 19, 2014 at 9:07 PM, Benoit Parrot <bparrot@ti.com> wrote:
-> >>
-> >> > Add GPIO hogging documentation to gpio.txt
-> >> >
-> >> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> >> > Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> >>
-> >> This is starting to look good ...
-> >>
-> >> > +               line_b {
-> >> > +                       gpio-hog;
-> >> > +                       gpios = <6 0>;
-> >> > +                       state = "output-low";
-> >>
-> >> I don't like the state string.
-> >>
-> >> Instead have boolean properties for all states.
-> >>
-> >> line_b {
-> >>     gpio-hog;
-> >>     gpios = <6 0>;
-> >>     output-low;
-> >>     line-name = "foo-bar-gpio";
-> >> }
-> >>
-> >> Then use of_property_read_bool() in the code to check which
-> >> state is to be selected intially. You can check that no mutually
-> >> exclusive state are selected, I don't like that an arbitrary string
-> >> select the state like that, if we do it that way an enumerator would
-> >> be better, I prefer bools.
-> >
-> > I am sorry but that is how it was originally in the first patch.
-> > Alexandre's review comment suggested this method in [1] and [2] (below).
-> >
-> > Alexandre, any comments?
-> >
-> > [1] http://marc.info/?l=linux-gpio&m=141456662426151&w=2
-> >
-> > [2] http://marc.info/?l=linux-gpio&m=141715982424744&w=2
-> 
-> When Linus and I are in conflict, follow Linus. Arnd's suggestion of
-> having enums defined in (IIUC) include/dt-bindings/gpio and using them
-> sounds good to me too and might make everyone happy (no possibility of
-> conflicting definitions + no strings). Linus, could you comment on it?
+On Sat, Jan 10, 2015 at 3:14 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> After the Nomadik pin controller was force migrated to generic pin
+> control bindings, some leftovers in the documentation need to be
+> cleaned up. The code and device trees are already migrated.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Understood.
-Now given Linus prefers the bools that is the direction I am going to follow.
+Applied for 3.20. Thanks.
+
+> ---
+>  .../devicetree/bindings/pinctrl/ste,nomadik.txt    | 35 ++++++++++++----------
+>  1 file changed, 20 insertions(+), 15 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt b/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
+> index 6b33b9f18e88..f63fcb3ed352 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
+> @@ -16,17 +16,22 @@ mux function to select on those pin(s)/group(s), and various pin configuration
+>  parameters, such as input, output, pull up, pull down...
+>
+>  The name of each subnode is not important; all subnodes should be enumerated
+> -and processed purely based on their content.
+> +and processed purely based on their content. The subnodes use the generic
+> +pin multiplexing node layout from the standard pin control bindings
+> +(see pinctrl-bindings.txt):
+>
+> -Required subnode-properties:
+> -- ste,pins : An array of strings. Each string contains the name of a pin or
+> -    group.
+> -
+> -Optional subnode-properties:
+> -- ste,function: A string containing the name of the function to mux to the
+> +Required pin multiplexing subnode properties:
+> +- function: A string containing the name of the function to mux to the
+>    pin or group.
+> +- groups : An array of strings. Each string contains the name of a pin
+> +  group that will be combined with the function to form a multiplexing
+> +  set-up.
+>
+> -- ste,config: Handle of pin configuration node (e.g. ste,config = <&slpm_in_wkup_pdis>)
+> +Required pin configuration subnode properties:
+> +- pins: A string array describing the pins affected by the configuration
+> +  in the node.
+> +- ste,config: Handle of pin configuration node
+> +  (e.g. ste,config = <&slpm_in_wkup_pdis>)
+>
+>  - ste,input : <0/1/2>
+>         0: input with no pull
+> @@ -97,32 +102,32 @@ Example board file extract:
+>                 uart0 {
+>                         uart0_default_mux: uart0_mux {
+>                                 u0_default_mux {
+> -                                       ste,function = "u0";
+> -                                       ste,pins = "u0_a_1";
+> +                                       function = "u0";
+> +                                       pins = "u0_a_1";
+>                                 };
+>                         };
+>                         uart0_default_mode: uart0_default {
+>                                 uart0_default_cfg1 {
+> -                                       ste,pins = "GPIO0", "GPIO2";
+> +                                       pins = "GPIO0", "GPIO2";
+>                                         ste,input = <1>;
+>                                 };
+>
+>                                 uart0_default_cfg2 {
+> -                                       ste,pins = "GPIO1", "GPIO3";
+> +                                       pins = "GPIO1", "GPIO3";
+>                                         ste,output = <1>;
+>                                 };
+>                         };
+>                         uart0_sleep_mode: uart0_sleep {
+>                                 uart0_sleep_cfg1 {
+> -                                       ste,pins = "GPIO0", "GPIO2";
+> +                                       pins = "GPIO0", "GPIO2";
+>                                         ste,config = <&slpm_in_wkup_pdis>;
+>                                 };
+>                                 uart0_sleep_cfg2 {
+> -                                       ste,pins = "GPIO1";
+> +                                       pins = "GPIO1";
+>                                         ste,config = <&slpm_out_hi_wkup_pdis>;
+>                                 };
+>                                 uart0_sleep_cfg3 {
+> -                                       ste,pins = "GPIO3";
+> +                                       pins = "GPIO3";
+>                                         ste,config = <&slpm_out_wkup_pdis>;
+>                                 };
+>                         };
+> --
+> 1.9.3
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
