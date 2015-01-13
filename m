@@ -1,122 +1,146 @@
-From: =?UTF-8?B?SmFudXN6IFXFvHlja2k=?= <j.uzycki@elproma.com.pl>
-Subject: Re: [RFC PATCH v2 2/4] serial: mxs-auart: Use helpers for gpio irqs
-Date: Tue, 13 Jan 2015 10:48:47 +0100
-Message-ID: <54B4E9FF.5090003@elproma.com.pl>
-References: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl> <1420900366-9169-2-git-send-email-j.uzycki@elproma.com.pl> <20150113080817.GG22880@pengutronix.de> <54B4E588.5010602@elproma.com.pl> <20150113093524.GI22880@pengutronix.de>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH] gpio-generic: add bgpio_set_multiple functions
+Date: Tue, 13 Jan 2015 11:37:24 +0100
+Message-ID: <1474325.ElrvNqxI5B@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from v032797.home.net.pl ([89.161.177.31]:57079 "HELO
-	v032797.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751015AbbAMJsm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:48:42 -0500
-In-Reply-To: <20150113093524.GI22880@pengutronix.de>
+Received: from mail-out.m-online.net ([212.18.0.9]:44946 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751127AbbAMKh1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 05:37:27 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
+Add set_multiple functions to the generic driver for memory-mapped GPIO
+controllers to improve performance when setting multiple outputs
+simultaneously.
 
-W dniu 2015-01-13 o 10:35, Uwe Kleine-K=C3=B6nig pisze:
-> Hello,
->
-> On Tue, Jan 13, 2015 at 10:29:44AM +0100, Janusz U=C5=BCycki wrote:
->> W dniu 2015-01-13 o 09:08, Uwe Kleine-K=C3=B6nig pisze:
->>> Hello,
->>>
->>> On Sat, Jan 10, 2015 at 03:32:44PM +0100, Janusz Uzycki wrote:
->>>> The patch updates mxs-auart driver to use new mctrl_gpio helpers f=
-or
->>>> gpio irqs. The code is much simpler now.
->>>>
->>>> Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
->>>> ---
->>>>
->>>> There is no changes since v1 (rebased only).
->>>>
->>>> ---
->>>>   drivers/tty/serial/mxs-auart.c | 133 ++++-----------------------=
---------------
->>>>   1 file changed, 13 insertions(+), 120 deletions(-)
->>> Very nice!
->>>
->>>> diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/m=
-xs-auart.c
->>>> index ec553f8..2ddba69 100644
->>>> --- a/drivers/tty/serial/mxs-auart.c
->>>> +++ b/drivers/tty/serial/mxs-auart.c
->>>> [...]
->>>> @@ -483,18 +458,9 @@ static void mxs_auart_enable_ms(struct uart_p=
-ort *port)
->>>>   	s->ms_irq_enabled =3D true;
->>>> -	if (s->gpio_irq[UART_GPIO_CTS] >=3D 0)
->>>> -		enable_irq(s->gpio_irq[UART_GPIO_CTS]);
->>>> -	/* TODO: enable AUART_INTR_CTSMIEN otherwise */
->>>> -
->>>> -	if (s->gpio_irq[UART_GPIO_DSR] >=3D 0)
->>>> -		enable_irq(s->gpio_irq[UART_GPIO_DSR]);
->>>> -
->>>> -	if (s->gpio_irq[UART_GPIO_RI] >=3D 0)
->>>> -		enable_irq(s->gpio_irq[UART_GPIO_RI]);
->>>> -
->>>> -	if (s->gpio_irq[UART_GPIO_DCD] >=3D 0)
->>>> -		enable_irq(s->gpio_irq[UART_GPIO_DCD]);
->>>> +	mctrl_gpio_enable_ms(s->gpios);
->>>> +	/* TODO: enable AUART_INTR_CTSMIEN
->>>> +	 * if s->gpios->irq[UART_GPIO_CTS] =3D=3D 0 */
->>> What is the problem here? For the other lines nothing needs to be d=
-one?
->>> This comment doesn't match the coding style.
->> Right, the comment should be rather:
->> /* TODO: enable AUART_INTR_CTSMIEN
->>   * if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_CTS)) */
-> I'd say:
->
-> 	/*
-> 	 * TODO: enable AUART_INTR_CTSMIEN if CTS isn't handled by
-> 	 * mctrl_gpio.
-> 	 */
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+---
+ drivers/gpio/gpio-generic.c |   79 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-exactly, thanks
-
->
->> In this place I marked that CTSMIEN should be switched on
->> enable/disable_ms if CTS
->> is not a gpio. The driver enables CTSMIEN forever what is wrong but
->> I can't test it
->> and I don't need it so I've just marked the fact in the comment.
-> That's what I thought. You're not affected because CTS is a gpio for
-> you (or not?)?  What would be the effect otherwise?
-
-Yes, my CTS is a gpio.
-CTSMIEN control CTS signal of auart block. There is a choice in DT:
-- use auart block's CTS: hardware flow control works for all baud rates=
-,=20
-DMA can be used
-- use gpio as CTS: hardware flow control is limited, DMA disabled but=20
-CTS line is
-   not limited by hardware pinmux
-Both options can't be set at once. I workarounded auart block's CTS irq=
-=20
-handler in condition:
-"if (CTS_AT_AUART() && s->ms_irq_enabled)". Support by _ms would be mor=
-e=20
-elegance
-but as I wrote I couldn't test all cases. Therefore the code for auart=20
-block's CTS is preserved.
-
-best regards
-Janusz
-
->
-> Best regards
-> Uwe
->
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index 16f6115..cb6d0b7 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -160,6 +160,31 @@ static void bgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	spin_unlock_irqrestore(&bgc->lock, flags);
+ }
+ 
++static void bgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
++			       unsigned long *bits)
++{
++	struct bgpio_chip *bgc = to_bgpio_chip(gc);
++	unsigned long flags;
++	int i;
++
++	spin_lock_irqsave(&bgc->lock, flags);
++
++	for (i = 0; i < bgc->bits; i++) {
++		if (*mask == 0)
++			break;
++		if (__test_and_clear_bit(i, mask)) {
++			if (test_bit(i, bits))
++				bgc->data |= bgc->pin2mask(bgc, i);
++			else
++				bgc->data &= ~bgc->pin2mask(bgc, i);
++		}
++	}
++
++	bgc->write_reg(bgc->reg_dat, bgc->data);
++
++	spin_unlock_irqrestore(&bgc->lock, flags);
++}
++
+ static void bgpio_set_with_clear(struct gpio_chip *gc, unsigned int gpio,
+ 				 int val)
+ {
+@@ -172,6 +197,32 @@ static void bgpio_set_with_clear(struct gpio_chip *gc, unsigned int gpio,
+ 		bgc->write_reg(bgc->reg_clr, mask);
+ }
+ 
++static void bgpio_set_multiple_with_clear(struct gpio_chip *gc,
++					  unsigned long *mask,
++					  unsigned long *bits)
++{
++	struct bgpio_chip *bgc = to_bgpio_chip(gc);
++	unsigned long set_mask = 0;
++	unsigned long clear_mask = 0;
++	int i;
++
++	for (i = 0; i < bgc->bits; i++) {
++		if (*mask == 0)
++			break;
++		if (__test_and_clear_bit(i, mask)) {
++			if (test_bit(i, bits))
++				set_mask |= bgc->pin2mask(bgc, i);
++			else
++				clear_mask |= bgc->pin2mask(bgc, i);
++		}
++	}
++
++	if (set_mask)
++		bgc->write_reg(bgc->reg_set, set_mask);
++	if (clear_mask)
++		bgc->write_reg(bgc->reg_clr, clear_mask);
++}
++
+ static void bgpio_set_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+ 	struct bgpio_chip *bgc = to_bgpio_chip(gc);
+@@ -190,6 +241,31 @@ static void bgpio_set_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	spin_unlock_irqrestore(&bgc->lock, flags);
+ }
+ 
++static void bgpio_set_multiple_set(struct gpio_chip *gc, unsigned long *mask,
++				   unsigned long *bits)
++{
++	struct bgpio_chip *bgc = to_bgpio_chip(gc);
++	unsigned long flags;
++	int i;
++
++	spin_lock_irqsave(&bgc->lock, flags);
++
++	for (i = 0; i < bgc->bits; i++) {
++		if (*mask == 0)
++			break;
++		if (__test_and_clear_bit(i, mask)) {
++			if (test_bit(i, bits))
++				bgc->data |= bgc->pin2mask(bgc, i);
++			else
++				bgc->data &= ~bgc->pin2mask(bgc, i);
++		}
++	}
++
++	bgc->write_reg(bgc->reg_set, bgc->data);
++
++	spin_unlock_irqrestore(&bgc->lock, flags);
++}
++
+ static int bgpio_simple_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	return 0;
+@@ -354,11 +430,14 @@ static int bgpio_setup_io(struct bgpio_chip *bgc,
+ 		bgc->reg_set = set;
+ 		bgc->reg_clr = clr;
+ 		bgc->gc.set = bgpio_set_with_clear;
++		bgc->gc.set_multiple = bgpio_set_multiple_with_clear;
+ 	} else if (set && !clr) {
+ 		bgc->reg_set = set;
+ 		bgc->gc.set = bgpio_set_set;
++		bgc->gc.set_multiple = bgpio_set_multiple_set;
+ 	} else {
+ 		bgc->gc.set = bgpio_set;
++		bgc->gc.set_multiple = bgpio_set_multiple;
+ 	}
+ 
+ 	bgc->gc.get = bgpio_get;
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.0.5
+
