@@ -1,53 +1,82 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
-Date: Tue, 13 Jan 2015 09:06:15 +0100
-Message-ID: <CACRpkdZbGjNecrggrFr_18zjobXMBpkrSjBMAUfyfs2ZCebB0w@mail.gmail.com>
-References: <1418342706-14755-2-git-send-email-rjui@broadcom.com>
-	<1918116.UxUgDPTmcq@wuerfel>
-	<CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
-	<1628217.66frkAqHMc@wuerfel>
-	<CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
-	<20141217104428.GV11285@n2100.arm.linux.org.uk>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [RFC PATCH v2 2/4] serial: mxs-auart: Use helpers for gpio irqs
+Date: Tue, 13 Jan 2015 09:08:17 +0100
+Message-ID: <20150113080817.GG22880@pengutronix.de>
+References: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl>
+ <1420900366-9169-2-git-send-email-j.uzycki@elproma.com.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:45665 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751054AbbAMIGQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 03:06:16 -0500
-Received: by mail-ie0-f178.google.com with SMTP id vy18so1442079iec.9
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 00:06:16 -0800 (PST)
-In-Reply-To: <20141217104428.GV11285@n2100.arm.linux.org.uk>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:35019 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751064AbbAMIIY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 03:08:24 -0500
+Content-Disposition: inline
+In-Reply-To: <1420900366-9169-2-git-send-email-j.uzycki@elproma.com.pl>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Janusz Uzycki <j.uzycki@elproma.com.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Dec 17, 2014 at 11:44 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Wed, Dec 17, 2014 at 11:45:01AM +0900, Alexandre Courbot wrote:
->> Actually we are not that far from being able to do completely without
->> any GPIO number, and maybe that's what we should aim for. I think the
->> only remaining offender is the sysfs interface.
->
-> And that is a user API, and there's lots of users of it (eg, on Raspberry
-> Pi platforms.)  So changing it isn't going to be easy - I'd say that it's
-> impractical.
->
-> What you're suggesting would be like re-numbering Linux syscalls.
+Hello,
 
-The problem is that right now if we set the .base of a gpio_chip
-to -1 for dynamic allocation of GPIO numbers and we have more
-than one GPIO chip in the system, the numbers basically depend
-on probe order, and may theoretically even differ between two boots.
+On Sat, Jan 10, 2015 at 03:32:44PM +0100, Janusz Uzycki wrote:
+> The patch updates mxs-auart driver to use new mctrl_gpio helpers for
+> gpio irqs. The code is much simpler now.
+>=20
+> Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
+> ---
+>=20
+> There is no changes since v1 (rebased only).
+>=20
+> ---
+>  drivers/tty/serial/mxs-auart.c | 133 ++++---------------------------=
+----------
+>  1 file changed, 13 insertions(+), 120 deletions(-)
+Very nice!
 
-So in these cases preserving the ABI means preserving the
-unpredictability of these assigned numbers or something.
+> diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-=
+auart.c
+> index ec553f8..2ddba69 100644
+> --- a/drivers/tty/serial/mxs-auart.c
+> +++ b/drivers/tty/serial/mxs-auart.c
+> [...]
+> @@ -483,18 +458,9 @@ static void mxs_auart_enable_ms(struct uart_port=
+ *port)
+> =20
+>  	s->ms_irq_enabled =3D true;
+> =20
+> -	if (s->gpio_irq[UART_GPIO_CTS] >=3D 0)
+> -		enable_irq(s->gpio_irq[UART_GPIO_CTS]);
+> -	/* TODO: enable AUART_INTR_CTSMIEN otherwise */
+> -
+> -	if (s->gpio_irq[UART_GPIO_DSR] >=3D 0)
+> -		enable_irq(s->gpio_irq[UART_GPIO_DSR]);
+> -
+> -	if (s->gpio_irq[UART_GPIO_RI] >=3D 0)
+> -		enable_irq(s->gpio_irq[UART_GPIO_RI]);
+> -
+> -	if (s->gpio_irq[UART_GPIO_DCD] >=3D 0)
+> -		enable_irq(s->gpio_irq[UART_GPIO_DCD]);
+> +	mctrl_gpio_enable_ms(s->gpios);
+> +	/* TODO: enable AUART_INTR_CTSMIEN
+> +	 * if s->gpios->irq[UART_GPIO_CTS] =3D=3D 0 */
+What is the problem here? For the other lines nothing needs to be done?
+This comment doesn't match the coding style.
 
-For the old usecases with a single GPIO controller and a fixed
-base offset of e.g. 0 (which I suspect was implicit in the initial
-design of the subsystem) things work fine as always, it's these new
-dynamic use cases that destabilize the ABI.
+Other than that, this patch looks good.
 
-Yours,
-Linus Walleij
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
