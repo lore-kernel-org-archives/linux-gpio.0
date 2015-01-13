@@ -1,64 +1,47 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
-Date: Tue, 13 Jan 2015 11:41:01 +0000
-Message-ID: <20150113114101.GO12302@n2100.arm.linux.org.uk>
-References: <1418342706-14755-2-git-send-email-rjui@broadcom.com>
- <1918116.UxUgDPTmcq@wuerfel>
- <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
- <1628217.66frkAqHMc@wuerfel>
- <CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
- <20141217104428.GV11285@n2100.arm.linux.org.uk>
- <CACRpkdZbGjNecrggrFr_18zjobXMBpkrSjBMAUfyfs2ZCebB0w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZbGjNecrggrFr_18zjobXMBpkrSjBMAUfyfs2ZCebB0w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: [PATCH 0/3] gpio: sysfs: fix attribute leaks and races
+Date: Tue, 13 Jan 2015 13:00:03 +0100
+Message-ID: <1421150406-20255-1-git-send-email-johan@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:49982 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750969AbbAMMAW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 07:00:22 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
 
-On Tue, Jan 13, 2015 at 09:06:15AM +0100, Linus Walleij wrote:
-> On Wed, Dec 17, 2014 at 11:44 AM, Russell King - ARM Linux
-> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
-> > On Wed, Dec 17, 2014 at 11:45:01AM +0900, Alexandre Courbot wrote:
-> >> Actually we are not that far from being able to do completely without
-> >> any GPIO number, and maybe that's what we should aim for. I think the
-> >> only remaining offender is the sysfs interface.
-> >
-> > And that is a user API, and there's lots of users of it (eg, on Raspberry
-> > Pi platforms.)  So changing it isn't going to be easy - I'd say that it's
-> > impractical.
-> >
-> > What you're suggesting would be like re-numbering Linux syscalls.
-> 
-> The problem is that right now if we set the .base of a gpio_chip
-> to -1 for dynamic allocation of GPIO numbers and we have more
-> than one GPIO chip in the system, the numbers basically depend
-> on probe order, and may theoretically even differ between two boots.
-> 
-> So in these cases preserving the ABI means preserving the
-> unpredictability of these assigned numbers or something.
-> 
-> For the old usecases with a single GPIO controller and a fixed
-> base offset of e.g. 0 (which I suspect was implicit in the initial
-> design of the subsystem) things work fine as always, it's these new
-> dynamic use cases that destabilize the ABI.
+Here are three more patches for 3.19 fixing some long-standing memory
+leaks and races (with userspace) in the gpio sysfs-interface
+implementation.
 
-Since GPIOs are exported through sysfs into userland by GPIO number,
-and we know that there are users of it (see
-https://github.com/pilight/wiringX) which hard encode GPIO numbers,
-so this is *really* something that we as kernel developers can't
-change without breaking such users.
+The memory leaks are marked for stable, but I'll need to backport them
+to pre-3.18 kernels once they are upstream due to commit 0eb4c6c2671c
+("gpio: move sysfs support to its own file").
 
-So, what I'm saying is be very careful about moving to a fully
-dynamic space: you could end up breaking userspace if you do.
+I chose not to mark the final patch for stable as the attribute-creation
+race with userspace (e.g. udev rule) is not as critical (and patch a bit
+more invasive).
+
+Please note that these patches will cause a conflict with 3511ee7b3312
+("gpio: lib-sysfs: Add 'wakeup' attribute") in gpio/devel, which adds
+yet another device attribute without ever removing it. Unless the commit
+in question can be reverted, that leak could be fixed as part of the
+merge resolution, I guess.
+
+Johan
+
+
+Johan Hovold (3):
+  gpio: sysfs: fix gpio-chip device-attribute leak
+  gpio: sysfs: fix gpio device-attribute leak
+  gpio: sysfs: fix gpio attribute-creation race
+
+ drivers/gpio/gpiolib-sysfs.c | 92 +++++++++++++++++++++++++-------------------
+ drivers/gpio/gpiolib.h       |  1 +
+ 2 files changed, 53 insertions(+), 40 deletions(-)
 
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.0.5
+
