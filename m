@@ -1,106 +1,152 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [RFC PATCH v2 2/4] serial: mxs-auart: Use helpers for gpio irqs
-Date: Tue, 13 Jan 2015 10:35:24 +0100
-Message-ID: <20150113093524.GI22880@pengutronix.de>
-References: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl>
- <1420900366-9169-2-git-send-email-j.uzycki@elproma.com.pl>
- <20150113080817.GG22880@pengutronix.de>
- <54B4E588.5010602@elproma.com.pl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 RESEND 1/3] gpio: Add APM X-Gene standby GPIO
+ controller driver
+Date: Tue, 13 Jan 2015 10:40:19 +0100
+Message-ID: <CACRpkdZe7Huiruu-iSNU4MWaiLo_qL=QAab1crummuuVOEJ0zQ@mail.gmail.com>
+References: <1418793050-26927-1-git-send-email-yvo@apm.com>
+	<1418793050-26927-2-git-send-email-yvo@apm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:36574 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075AbbAMJfg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:35:36 -0500
-Content-Disposition: inline
-In-Reply-To: <54B4E588.5010602@elproma.com.pl>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:51387 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751129AbbAMJkU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:40:20 -0500
+Received: by mail-ig0-f174.google.com with SMTP id hn15so16011360igb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 01:40:19 -0800 (PST)
+In-Reply-To: <1418793050-26927-2-git-send-email-yvo@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Janusz =?utf-8?Q?U=C5=BCycki?= <j.uzycki@elproma.com.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Y Vo <yvo@apm.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
 
-Hello,
+On Wed, Dec 17, 2014 at 6:10 AM, Y Vo <yvo@apm.com> wrote:
 
-On Tue, Jan 13, 2015 at 10:29:44AM +0100, Janusz U=C5=BCycki wrote:
->=20
-> W dniu 2015-01-13 o 09:08, Uwe Kleine-K=C3=B6nig pisze:
-> >Hello,
-> >
-> >On Sat, Jan 10, 2015 at 03:32:44PM +0100, Janusz Uzycki wrote:
-> >>The patch updates mxs-auart driver to use new mctrl_gpio helpers fo=
-r
-> >>gpio irqs. The code is much simpler now.
-> >>
-> >>Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
-> >>---
-> >>
-> >>There is no changes since v1 (rebased only).
-> >>
-> >>---
-> >>  drivers/tty/serial/mxs-auart.c | 133 ++++------------------------=
--------------
-> >>  1 file changed, 13 insertions(+), 120 deletions(-)
-> >Very nice!
-> >
-> >>diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mx=
-s-auart.c
-> >>index ec553f8..2ddba69 100644
-> >>--- a/drivers/tty/serial/mxs-auart.c
-> >>+++ b/drivers/tty/serial/mxs-auart.c
-> >>[...]
-> >>@@ -483,18 +458,9 @@ static void mxs_auart_enable_ms(struct uart_po=
-rt *port)
-> >>  	s->ms_irq_enabled =3D true;
-> >>-	if (s->gpio_irq[UART_GPIO_CTS] >=3D 0)
-> >>-		enable_irq(s->gpio_irq[UART_GPIO_CTS]);
-> >>-	/* TODO: enable AUART_INTR_CTSMIEN otherwise */
-> >>-
-> >>-	if (s->gpio_irq[UART_GPIO_DSR] >=3D 0)
-> >>-		enable_irq(s->gpio_irq[UART_GPIO_DSR]);
-> >>-
-> >>-	if (s->gpio_irq[UART_GPIO_RI] >=3D 0)
-> >>-		enable_irq(s->gpio_irq[UART_GPIO_RI]);
-> >>-
-> >>-	if (s->gpio_irq[UART_GPIO_DCD] >=3D 0)
-> >>-		enable_irq(s->gpio_irq[UART_GPIO_DCD]);
-> >>+	mctrl_gpio_enable_ms(s->gpios);
-> >>+	/* TODO: enable AUART_INTR_CTSMIEN
-> >>+	 * if s->gpios->irq[UART_GPIO_CTS] =3D=3D 0 */
-> >What is the problem here? For the other lines nothing needs to be do=
-ne?
-> >This comment doesn't match the coding style.
->=20
-> Right, the comment should be rather:
-> /* TODO: enable AUART_INTR_CTSMIEN
->  * if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_CTS)) */
-I'd say:
+> Add APM X-Gene standby GPIO controller driver.
 
-	/*
-	 * TODO: enable AUART_INTR_CTSMIEN if CTS isn't handled by
-	 * mctrl_gpio.
-	 */
+Write something about what platform an arch this is and so
+on, this is too terse commit message for a new driver.
 
-> In this place I marked that CTSMIEN should be switched on
-> enable/disable_ms if CTS
-> is not a gpio. The driver enables CTSMIEN forever what is wrong but
-> I can't test it
-> and I don't need it so I've just marked the fact in the comment.
-That's what I thought. You're not affected because CTS is a gpio for
-you (or not?)?  What would be the effect otherwise?
+> Signed-off-by: Y Vo <yvo@apm.com>
+(...)
 
-Best regards
-Uwe
+> +config GPIO_XGENE_SB
+> +       tristate "APM X-Gene GPIO standby controller support"
+> +       depends on ARCH_XGENE && OF_GPIO
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig     =
-       |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+select GPIO_GENERIC
+
+see below on why.
+
+> +       help
+> +         This driver supports the GPIO block within the APM X-Gene
+> +         Standby Domain. Say yes here to enable the GPIO functionality.
+> +
+>  config GPIO_XILINX
+>         bool "Xilinx GPIO support"
+>         depends on PPC_OF || MICROBLAZE || ARCH_ZYNQ
+> diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
+> new file mode 100644
+> index 0000000..1248448
+
+(...)
+> +++ b/drivers/gpio/gpio-xgene-sb.c
+> +#include <linux/module.h>
+> +#include <linux/io.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/gpio.h>
+
+#include <linux/gpio/driver.h>
+
+instead.
+
+> +#include <linux/of_irq.h>
+> +#include <linux/acpi.h>
+
+OK, why?
+
+> +#include <linux/efi.h>
+
+Why?
+
+> +#include <linux/string.h>
+> +#include <linux/of_address.h>
+
+#include <linux/basic_mmio_gpio.h>
+when you start using GENERIC_GPIO
+
+> +
+> +#define XGENE_MAX_GPIO_DS              22
+> +#define XGENE_MAX_GPIO_DS_IRQ          6
+> +
+> +#define GPIO_MASK(x)                   (1U << ((x) % 32))
+> +#define GPIO_DIR_IN                    0
+> +#define GPIO_DIR_OUT                   1
+> +
+> +#define MPA_GPIO_INT_LVL               0x0290
+> +#define MPA_GPIO_OE_ADDR               0x029c
+> +#define MPA_GPIO_OUT_ADDR              0x02a0
+> +#define MPA_GPIO_IN_ADDR               0x02a4
+> +#define MPA_GPIO_SEL_LO                        0x0294
+> +#define MPA_GPIO_SEL_HIGH              0x029c
+> +
+> +struct xgene_gpio_sb {
+> +       struct of_mm_gpio_chip mm;
+> +       u32 *irq;
+> +       u32 nirq;
+> +       spinlock_t lock; /* mutual exclusion */
+> +};
+
+Add kerneldoc to this struct.
+
+> +static void xgene_gpio_set_bit(void __iomem *reg, u32 gpio, int val)
+(...)
+> +static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
+
+This looks very much like a memory-mapped standard GPIO controller,
+use drivers/gpio/gpio-generic.c with some IRQ add-on, compare
+to any other driver selecting GPIO_GENERIC for guidance:
+drivers/gpio/gpio-74xx-mmio.c, gpio-dwapb.c etc.
+
+> +static int apm_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
+> +{
+> +       struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+> +       struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
+> +
+> +       if (chip->irq[gpio])
+> +               return chip->irq[gpio];
+> +
+> +       return -ENXIO;
+> +}
+> +
+> +static int xgene_gpio_sb_probe(struct platform_device *pdev)
+> +{
+> +       struct of_mm_gpio_chip *mm;
+> +       struct xgene_gpio_sb *apm_gc;
+> +       u32 ret, i;
+> +       u32 default_pins[] = {0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D};
+
+Um, pins... call these "lines" instead to avoid confusion with the pin
+control subsystem.
+
+> +       struct resource *res;
+> +
+> +       apm_gc = devm_kzalloc(&pdev->dev, sizeof(*apm_gc), GFP_KERNEL);
+> +       if (!apm_gc)
+> +               return -ENOMEM;
+> +
+> +       mm = &apm_gc->mm;
+> +       mm->gc.direction_input = xgene_gpio_sb_dir_in;
+> +       mm->gc.direction_output = xgene_gpio_sb_dir_out;
+> +       mm->gc.get = xgene_gpio_sb_get;
+> +       mm->gc.set = xgene_gpio_sb_set;
+> +       mm->gc.to_irq = apm_gpio_sb_to_irq;
+> +       mm->gc.base = -1;
+> +       mm->gc.label = dev_name(&pdev->dev);
+
+gc has a device tree .np node and a .dev struct device *
+pointer, assign them here. (Also after you switch to GENERIC_GPIO.)
+
+Yours,
+Linus Walleij
