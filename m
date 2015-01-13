@@ -1,60 +1,63 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH] gpio: mxs: Use PIN2IRQ register to mask interrupts
-Date: Tue, 13 Jan 2015 22:21:59 +0800
-Message-ID: <20150113142156.GD19355@dragon>
-References: <1418639312-12520-1-git-send-email-robin@protonic.nl>
- <CACRpkdaqPVED6U6mYWEzfrbtoYdfmdGZ34jjmokMp_KfOCZnaQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: pcf857x: Propagate wake-up setting to parent
+ irq controller
+Date: Tue, 13 Jan 2015 15:26:49 +0100
+Message-ID: <CACRpkdbcdMYXOvFSENZ1f7-4JV9Op+xSqz24UDApetK_LDrY0g@mail.gmail.com>
+References: <1418218575-17694-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:65392 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752505AbbAMOWk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 09:22:40 -0500
-Received: by mail-pd0-f181.google.com with SMTP id v10so3685288pde.12
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 06:22:40 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaqPVED6U6mYWEzfrbtoYdfmdGZ34jjmokMp_KfOCZnaQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1418218575-17694-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Ingo Molnar <mingo@redhat.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Robin van der Gracht <robin@protonic.nl>, Gwenhael Goavec-Merou <gwenhael.goavec-merou@armadeus.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Sascha Hauer <kernel@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Jander <david@protonic.nl>, Marek Vasut <marex@denx.de>
 
-On Tue, Jan 13, 2015 at 07:34:31AM +0100, Linus Walleij wrote:
-> On Mon, Dec 15, 2014 at 11:28 AM, Robin van der Gracht
-> <robin@protonic.nl> wrote:
-> 
-> > The PIN2IRQ register should be used to mask an interrupt. Clearing a
+On Wed, Dec 10, 2014 at 2:36 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-No, PIN2IRQ implements a function select, not a mask.
+> The pcf857x GPIO and interrupt controller uses dummy_irq_chip, which
+> does not implement irq_chip.irq_set_wake() and does not set
+> IRQCHIP_SKIP_SET_WAKE.
+>
+> This causes two s2ram issues if wake-up is enabled for the pcf857x GPIO
+> pins:
+>   1. During resume from s2ram, the following warning is printed:
+>
+>      WARNING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
+>      Unbalanced IRQ 113 wake disable
+>
+>   2. Wake-up through the pcf857x GPIO pins may fail, as the parent
+>      interrupt controller may be suspended.
+>
+> Migrate the pcf857x GPIO and interrupt controller from dummy_irq_chip to
+> its own irq_chip. This irq chip implements irq_chip.irq_set_wake() to
+> propagate its wake-up setting to the parent interrupt controller.
+>
+> This fixes wake-up through gpio-keys on sh73a0/kzm9g, where the pcf857x
+> interrupt is cascaded to irq-renesas-intc-irqpin, and the latter must
+> not be suspended when wake-up is enabled.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(...)
+> +static struct irq_chip pcf857x_irq_chip = {
+> +       .name           = "pcf857x",
+> +       .irq_startup    = noop_ret,
+> +       .irq_shutdown   = noop,
+> +       .irq_enable     = noop,
+> +       .irq_disable    = noop,
+> +       .irq_ack        = noop,
+> +       .irq_mask       = noop,
+> +       .irq_unmask     = noop,
+> +       .irq_set_wake   = pcf857x_irq_set_wake,
+> +};
 
-> > bit in the IRQEN register only prevents the interrupt from propagating but
-> > still allows hardware to set the status bit when triggered.
+Argh this is so simplistic ... any GPIO irqchip worthy of it's name
+shoult at least call gpiochip_lock_as_irq() in .irq_request_resources() and vice
+versa mutatis mutandis in .irq_release_resources().
 
-Isn't it what a mask implementation supposed to do?
+Isn't it possible to also migrate this to GPIOLIB_IRQCHIP when
+you're at it can also cut out a big chunk of rusty code?
 
-> > So when
-> > unmasking the interrupt, it will immediately re-trigger if an interrupt
-> > condition occurred during masking.
-
-Per my understanding, this is the correct behavior.  If you do not want
-that interrupt triggering, you should clear the interrupt status before
-unmasking the interrupt.
-
-Shawn
-
-> >
-> > This is unwanted behavior especially when using level triggered
-> > interrupts. In this case every interrupt triggers twice. If the
-> > interrupt is handled in the handler, the second interrupt will be
-> > the first one to be able to ack the interrupt.
-> >
-> > Signed-off-by: Robin van der Gracht <robin@protonic.nl>
-> 
-> Apparently MXS is a popular GPIO controller without a real maintainer.
-> 
-> Adding some random users to the To: line hoping we get some
-> review of this patch.
-> 
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
