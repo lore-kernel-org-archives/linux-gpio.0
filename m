@@ -1,132 +1,37 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
-Date: Tue, 13 Jan 2015 03:42:56 +0100
-Message-ID: <20150113024256.GH19533@lunn.ch>
-References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
- <1420846493-31647-4-git-send-email-andrew@lunn.ch>
- <CACRpkdZe2BMtTPU6wkd+gk5mttz3GdL_zYCTPQOaubwRAHbDgg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC 05/15] gpio: move DT parsing code to separate functions
+Date: Tue, 13 Jan 2015 07:17:29 +0100
+Message-ID: <CACRpkdZLw=dTQ0zcHYSJ7rC5k3hjTJ-i__25eDyY8gz6PpnpsA@mail.gmail.com>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <1418226513-14105-6-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:50984 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752056AbbAMCo6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 12 Jan 2015 21:44:58 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZe2BMtTPU6wkd+gk5mttz3GdL_zYCTPQOaubwRAHbDgg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1418226513-14105-6-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, open list <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Imre Kaloz <kaloz@openwrt.org>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-> - Why is this not modeled as an MFD spawning a GPIO and a PWM cell,
->   as is custom? (Bringing MFD maintainers into the picture.)
-> 
-> So I am aware that this takes the problem from "quick fix extension to the GPIO
-> driver" to "really nasty hairy re-engineering of the whole shebang" but there is
-> a lot of precedents in the kernel for splitting up this type of hardware in
-> separate drivers under an MFD hub.
-
-Hi Linus
-
-So i thought about this some more. What would an MFD based solution
-look like?
-
-First issue is backwards compatibility. There are currently around 90
-.dts files using this gpio driver. I could imagine a few of these
-being changed to make use of an MFD based driver to make us of the new
-features, but the rest expect backwards compatibility.
-
-I think the only sensible way to achieve this is that the gpio driver
-keeps its existing binding.
-
-We then need to add a new MFD binding, with sub sections for the gpio
-driver and the PWM driver. At a first stab, it would look something
-like:
-
-armada-gpio {
-	compatible = "marvell,armada-gpio";
-        reg = <0xd0018100 0x40>,
-              <0xd00181c0 0x08>;
-
-	gpio: gpio {
-		compatible = "marvell,armada-gpio-gpio";
-		ngpios = <32>;
-		gio-controller;
-		#gpio-cells = <2>;
-		interrupt-controller;
-		#interrupt-cells = <2>;
-		interrupts = <16>, <17>, <18>, <19>;
-		clocks = <&coreclk 0>;
-	};
-
-	pwm: pwm {
-		compatible = "marvell,armada-gpio-pwm";
-		#pwm-cells = <2>;
-		clocks = <&coreclk 0>;
-	};
-};
-
-This does not really describe the hardware. The hardware is more like:
-
-	gpio: gpio {
-		compatible = "marvell,orion-gpio";
-        	reg = <0xd0018100 0x40>;
-		ngpios = <32>;
-		gio-controller;
-		#gpio-cells = <2>;
-		interrupt-controller;
-		#interrupt-cells = <2>;
-		interrupts = <16>, <17>, <18>, <19>;
-		clocks = <&coreclk 0>;
-
-		pwm: pwm {
-			compatible = "marvell,armada-pwm";
-			reg = <0xd00181c0 0x08>;
-			#pwm-cells = <2>;
-			clocks = <&coreclk 0>;
-		};
-	};
-
-but i don't think MFD supports that sort of structure?
-
-So assuming we go with the first binding above, this means the gpio
-driver gains a second binding, probe function, etc for when it is
-probed as part of an MFD.
-
-Now it starts getting nasty hairy. The MFD core driver should offer a
-set of functions to access the hardware, which are shared by the
-gpio-gpio driver and the gpio-pwm driver. However when the gpio driver
-is probed using its current binding, not the MFD binding, it also
-needs access functions.  So we need a library of access functions,
-which can be used directly or via the MFD code. Where do we place
-these? In the gpio driver would make sense, since gpio driver always
-needs them, the MFD is optional. But they could be in the MFD
-driver. The gpio driver is currently built in, meaning the MFD driver
-would be built in, so even if the MFD driver is never probed, it can
-still export functions.
-
-Memory management then becomes fun. If the MFD is probed, it needs to
-allocated the shared memory, used by the access functions etc. If the
-standalone gpio driver is probed, it needs to allocated the memory
-used by the access functions etc.
-
-I'm also worried about race conditions during probe. The pwm driver is
-not independent of the gpio driver. It is a child of the gpio
-driver. It needs to know the gpiochip base and ngpio during its own
-probe function. In effect, we need to ensure that the MFD gpio probe
-has completed successfully before the MFD pwm probe is called.
-
-Nothing completely unsolvable, it just seems ugly and complex.
-
-Humm, that second binding just gave me an idea. The pwm driver is a
-child of the gpio driver. That is the same relationship between an MFD
-driver and its children. So maybe we should move mvebu-gpio.c into
-drives/mfd and add some mfd functionality so it can mfd_add_device()
-the pwm driver when it has completed its own probe? That nicely solves
-the probe race issue, and the library of access functions etc. The
-gpio binding is also backwards compatible since it is being extended
-with an optional MFD child device.
-
-    Andrew
-
+T24gV2VkLCBEZWMgMTAsIDIwMTQgYXQgNDo0OCBQTSwgQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBz
+YW1zdW5nLmNvbT4gd3JvdGU6Cgo+IFRoZSBwYXRjaCBtb3ZlcyBEZXZpY2UgVHJlZSBwYXJzaW5n
+IGxvZ2ljIHRvIHNlcGFyYXRlCj4gZnVuY3Rpb24uCj4KPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVq
+IEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgoKSSB0aGluayB0aGlzIHBhdGNoIG5lZWQgdG8g
+YmUgcmViYXNlZCBvbiB0aGUgR1BJTyBkZXZlbCBicmFuY2gsIGJ1dApsb29rcyBsaWtlIGl0IG1h
+a2VzIHRoaW5ncyBjbGVhbmVyIHNvIGNhbiBzdGFuZCBvbiBpdHMgb3duIG1lcml0cy4KV2UgbW92
+ZXMgc3R1ZmYgYXJvdW5kIGEgYml0IGluIHRoZSBPRiBjb2RlIHRob3VnaC4KClBsZWFzZSByZW1l
+bWJlciB0byBzZW5kIHRoaXMgcGF0Y2ggdG8gdGhlIGxpbnV4LWdwaW8gbGlzdCBhbmQgY29tYWlu
+dGFpbmVyCkFsZXhhbmRyZSBDb3VyYm90IG9uIHJlcG9zdHMuIChDYy10YWdzIGluIHRoZSBwYXRj
+aCBhcmUgZ29vZApmb3IgdGhpcy4pCgpZb3VycywKTGludXMgV2FsbGVpagpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
