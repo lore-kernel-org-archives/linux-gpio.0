@@ -1,160 +1,90 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: stmpe: enforce device tree only mode
-Date: Tue, 13 Jan 2015 08:00:29 +0100
-Message-ID: <1421132429-6947-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:60068 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750921AbbAMHAg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 02:00:36 -0500
-Received: by mail-la0-f47.google.com with SMTP id hz20so1055298lab.6
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2015 23:00:34 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 2/2] sh-pfc: r8a7791: add MLB+ pin group
+Date: Tue, 13 Jan 2015 09:33:46 +0200
+Message-ID: <2344069.Zv21spBk9e@avalon>
+References: <1771436.VTFsboh7mX@wasted.cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1771436.VTFsboh7mX@wasted.cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>
 
-Require that device tree be used with STMPE (all platforms use this)
-and enforce OF_GPIO, then delete the platform data.
+Hi Sergei,
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-MFD: folks: please ACK this so I can funnel it through the GPIO
-tree.
----
- drivers/gpio/Kconfig      |  1 +
- drivers/gpio/gpio-stmpe.c | 23 +++--------------------
- include/linux/mfd/stmpe.h | 16 ----------------
- 3 files changed, 4 insertions(+), 36 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 633ec216e185..5b1821daa1bd 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -624,6 +624,7 @@ config GPIO_SX150X
- config GPIO_STMPE
- 	bool "STMPE GPIOs"
- 	depends on MFD_STMPE
-+	depends on OF_GPIO
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  This enables support for the GPIOs found on the STMPE I/O
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 359536eaca0d..926502145492 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -30,7 +30,7 @@ struct stmpe_gpio {
- 	struct stmpe *stmpe;
- 	struct device *dev;
- 	struct mutex irq_lock;
--	unsigned norequest_mask;
-+	u32 norequest_mask;
- 	/* Caches of interrupt control registers for bus_lock */
- 	u8 regs[CACHE_NR_REGS][CACHE_NR_BANKS];
- 	u8 oldregs[CACHE_NR_REGS][CACHE_NR_BANKS];
-@@ -350,13 +350,10 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
- {
- 	struct stmpe *stmpe = dev_get_drvdata(pdev->dev.parent);
- 	struct device_node *np = pdev->dev.of_node;
--	struct stmpe_gpio_platform_data *pdata;
- 	struct stmpe_gpio *stmpe_gpio;
- 	int ret;
- 	int irq = 0;
- 
--	pdata = stmpe->pdata->gpio;
--
- 	irq = platform_get_irq(pdev, 0);
- 
- 	stmpe_gpio = kzalloc(sizeof(struct stmpe_gpio), GFP_KERNEL);
-@@ -370,19 +367,14 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
- 	stmpe_gpio->chip = template_chip;
- 	stmpe_gpio->chip.ngpio = stmpe->num_gpios;
- 	stmpe_gpio->chip.dev = &pdev->dev;
--#ifdef CONFIG_OF
- 	stmpe_gpio->chip.of_node = np;
--#endif
- 	stmpe_gpio->chip.base = -1;
- 
- 	if (IS_ENABLED(CONFIG_DEBUG_FS))
-                 stmpe_gpio->chip.dbg_show = stmpe_dbg_show;
- 
--	if (pdata)
--		stmpe_gpio->norequest_mask = pdata->norequest_mask;
--	else if (np)
--		of_property_read_u32(np, "st,norequest-mask",
--				&stmpe_gpio->norequest_mask);
-+	of_property_read_u32(np, "st,norequest-mask",
-+			&stmpe_gpio->norequest_mask);
- 
- 	if (irq < 0)
- 		dev_info(&pdev->dev,
-@@ -424,9 +416,6 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
- 					     NULL);
- 	}
- 
--	if (pdata && pdata->setup)
--		pdata->setup(stmpe, stmpe_gpio->chip.base);
--
- 	platform_set_drvdata(pdev, stmpe_gpio);
- 
- 	return 0;
-@@ -443,15 +432,9 @@ static int stmpe_gpio_remove(struct platform_device *pdev)
- {
- 	struct stmpe_gpio *stmpe_gpio = platform_get_drvdata(pdev);
- 	struct stmpe *stmpe = stmpe_gpio->stmpe;
--	struct stmpe_gpio_platform_data *pdata = stmpe->pdata->gpio;
--
--	if (pdata && pdata->remove)
--		pdata->remove(stmpe, stmpe_gpio->chip.base);
- 
- 	gpiochip_remove(&stmpe_gpio->chip);
--
- 	stmpe_disable(stmpe, STMPE_BLOCK_GPIO);
--
- 	kfree(stmpe_gpio);
- 
- 	return 0;
-diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
-index dd908fea8c5b..23a9722c8176 100644
---- a/include/linux/mfd/stmpe.h
-+++ b/include/linux/mfd/stmpe.h
-@@ -119,20 +119,6 @@ extern int stmpe_disable(struct stmpe *stmpe, unsigned int blocks);
- #define STMPE_GPIO_NOREQ_811_TOUCH	(0xf0)
- 
- /**
-- * struct stmpe_gpio_platform_data - STMPE GPIO platform data
-- * @norequest_mask: bitmask specifying which GPIOs should _not_ be
-- *		    requestable due to different usage (e.g. touch, keypad)
-- *		    STMPE_GPIO_NOREQ_* macros can be used here.
-- * @setup: board specific setup callback.
-- * @remove: board specific remove callback
-- */
--struct stmpe_gpio_platform_data {
--	unsigned norequest_mask;
--	void (*setup)(struct stmpe *stmpe, unsigned gpio_base);
--	void (*remove)(struct stmpe *stmpe, unsigned gpio_base);
--};
--
--/**
-  * struct stmpe_ts_platform_data - stmpe811 touch screen controller platform
-  * data
-  * @sample_time: ADC converstion time in number of clock.
-@@ -183,7 +169,6 @@ struct stmpe_ts_platform_data {
-  * @irq_over_gpio: true if gpio is used to get irq
-  * @irq_gpio: gpio number over which irq will be requested (significant only if
-  *	      irq_over_gpio is true)
-- * @gpio: GPIO-specific platform data
-  * @ts: touchscreen-specific platform data
-  */
- struct stmpe_platform_data {
-@@ -195,7 +180,6 @@ struct stmpe_platform_data {
- 	int irq_gpio;
- 	int autosleep_timeout;
- 
--	struct stmpe_gpio_platform_data *gpio;
- 	struct stmpe_ts_platform_data *ts;
- };
- 
+On Saturday 10 January 2015 21:22:36 Sergei Shtylyov wrote:
+> Add MLB+ 3-pin mode pin group to R8A7791 PFC driver.
+> 
+> Based on original patch by Andrey Gusakov
+> <andrey.gusakov@cogentembedded.com>.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> 
+> ---
+> The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git'
+> repo.
+> 
+>  drivers/pinctrl/sh-pfc/pfc-r8a7791.c |   13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> ===================================================================
+> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> @@ -2391,6 +2391,13 @@ static const unsigned int intc_irq3_pins
+>  static const unsigned int intc_irq3_mux[] = {
+>  	IRQ3_MARK,
+>  };
+> +/* - MLB+
+> ------------------------------------------------------------------- */
+> +static const unsigned int mlb_3pin_pins[] = {
+> +	RCAR_GP_PIN(7, 7), RCAR_GP_PIN(7, 8), RCAR_GP_PIN(7, 9),
+> +};
+> +static const unsigned int mlb_3pin_mux[] = {
+> +	MLB_CLK_MARK, MLB_SIG_MARK, MLB_DAT_MARK,
+> +};
+>  /* - MMCIF
+> ------------------------------------------------------------------ */
+> static const unsigned int mmc_data1_pins[] = {
+>  	/* D[0] */
+> @@ -4267,6 +4274,7 @@ static const struct sh_pfc_pin_group pin
+>  	SH_PFC_PIN_GROUP(intc_irq1),
+>  	SH_PFC_PIN_GROUP(intc_irq2),
+>  	SH_PFC_PIN_GROUP(intc_irq3),
+> +	SH_PFC_PIN_GROUP(mlb_3pin),
+>  	SH_PFC_PIN_GROUP(mmc_data1),
+>  	SH_PFC_PIN_GROUP(mmc_data4),
+>  	SH_PFC_PIN_GROUP(mmc_data8),
+> @@ -4648,6 +4656,10 @@ static const char * const intc_groups[]
+>  	"intc_irq3",
+>  };
+> 
+> +static const char * const mlb_groups[] = {
+> +	"mlb_3pin",
+> +};
+> +
+>  static const char * const mmc_groups[] = {
+>  	"mmc_data1",
+>  	"mmc_data4",
+> @@ -4972,6 +4984,7 @@ static const struct sh_pfc_function pinm
+>  	SH_PFC_FUNCTION(i2c7),
+>  	SH_PFC_FUNCTION(i2c8),
+>  	SH_PFC_FUNCTION(intc),
+> +	SH_PFC_FUNCTION(mlb),
+>  	SH_PFC_FUNCTION(mmc),
+>  	SH_PFC_FUNCTION(msiof0),
+>  	SH_PFC_FUNCTION(msiof1),
+
 -- 
-1.9.3
+Regards,
+
+Laurent Pinchart
 
