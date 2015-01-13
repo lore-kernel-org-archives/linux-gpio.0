@@ -1,146 +1,64 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH] gpio-generic: add bgpio_set_multiple functions
-Date: Tue, 13 Jan 2015 11:37:24 +0100
-Message-ID: <1474325.ElrvNqxI5B@pcimr>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
+Date: Tue, 13 Jan 2015 11:41:01 +0000
+Message-ID: <20150113114101.GO12302@n2100.arm.linux.org.uk>
+References: <1418342706-14755-2-git-send-email-rjui@broadcom.com>
+ <1918116.UxUgDPTmcq@wuerfel>
+ <CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
+ <1628217.66frkAqHMc@wuerfel>
+ <CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
+ <20141217104428.GV11285@n2100.arm.linux.org.uk>
+ <CACRpkdZbGjNecrggrFr_18zjobXMBpkrSjBMAUfyfs2ZCebB0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:44946 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751127AbbAMKh1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 05:37:27 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZbGjNecrggrFr_18zjobXMBpkrSjBMAUfyfs2ZCebB0w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-Add set_multiple functions to the generic driver for memory-mapped GPIO
-controllers to improve performance when setting multiple outputs
-simultaneously.
+On Tue, Jan 13, 2015 at 09:06:15AM +0100, Linus Walleij wrote:
+> On Wed, Dec 17, 2014 at 11:44 AM, Russell King - ARM Linux
+> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+> > On Wed, Dec 17, 2014 at 11:45:01AM +0900, Alexandre Courbot wrote:
+> >> Actually we are not that far from being able to do completely without
+> >> any GPIO number, and maybe that's what we should aim for. I think the
+> >> only remaining offender is the sysfs interface.
+> >
+> > And that is a user API, and there's lots of users of it (eg, on Raspberry
+> > Pi platforms.)  So changing it isn't going to be easy - I'd say that it's
+> > impractical.
+> >
+> > What you're suggesting would be like re-numbering Linux syscalls.
+> 
+> The problem is that right now if we set the .base of a gpio_chip
+> to -1 for dynamic allocation of GPIO numbers and we have more
+> than one GPIO chip in the system, the numbers basically depend
+> on probe order, and may theoretically even differ between two boots.
+> 
+> So in these cases preserving the ABI means preserving the
+> unpredictability of these assigned numbers or something.
+> 
+> For the old usecases with a single GPIO controller and a fixed
+> base offset of e.g. 0 (which I suspect was implicit in the initial
+> design of the subsystem) things work fine as always, it's these new
+> dynamic use cases that destabilize the ABI.
 
-Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
----
- drivers/gpio/gpio-generic.c |   79 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+Since GPIOs are exported through sysfs into userland by GPIO number,
+and we know that there are users of it (see
+https://github.com/pilight/wiringX) which hard encode GPIO numbers,
+so this is *really* something that we as kernel developers can't
+change without breaking such users.
 
-diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
-index 16f6115..cb6d0b7 100644
---- a/drivers/gpio/gpio-generic.c
-+++ b/drivers/gpio/gpio-generic.c
-@@ -160,6 +160,31 @@ static void bgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	spin_unlock_irqrestore(&bgc->lock, flags);
- }
- 
-+static void bgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-+			       unsigned long *bits)
-+{
-+	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-+	unsigned long flags;
-+	int i;
-+
-+	spin_lock_irqsave(&bgc->lock, flags);
-+
-+	for (i = 0; i < bgc->bits; i++) {
-+		if (*mask == 0)
-+			break;
-+		if (__test_and_clear_bit(i, mask)) {
-+			if (test_bit(i, bits))
-+				bgc->data |= bgc->pin2mask(bgc, i);
-+			else
-+				bgc->data &= ~bgc->pin2mask(bgc, i);
-+		}
-+	}
-+
-+	bgc->write_reg(bgc->reg_dat, bgc->data);
-+
-+	spin_unlock_irqrestore(&bgc->lock, flags);
-+}
-+
- static void bgpio_set_with_clear(struct gpio_chip *gc, unsigned int gpio,
- 				 int val)
- {
-@@ -172,6 +197,32 @@ static void bgpio_set_with_clear(struct gpio_chip *gc, unsigned int gpio,
- 		bgc->write_reg(bgc->reg_clr, mask);
- }
- 
-+static void bgpio_set_multiple_with_clear(struct gpio_chip *gc,
-+					  unsigned long *mask,
-+					  unsigned long *bits)
-+{
-+	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-+	unsigned long set_mask = 0;
-+	unsigned long clear_mask = 0;
-+	int i;
-+
-+	for (i = 0; i < bgc->bits; i++) {
-+		if (*mask == 0)
-+			break;
-+		if (__test_and_clear_bit(i, mask)) {
-+			if (test_bit(i, bits))
-+				set_mask |= bgc->pin2mask(bgc, i);
-+			else
-+				clear_mask |= bgc->pin2mask(bgc, i);
-+		}
-+	}
-+
-+	if (set_mask)
-+		bgc->write_reg(bgc->reg_set, set_mask);
-+	if (clear_mask)
-+		bgc->write_reg(bgc->reg_clr, clear_mask);
-+}
-+
- static void bgpio_set_set(struct gpio_chip *gc, unsigned int gpio, int val)
- {
- 	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-@@ -190,6 +241,31 @@ static void bgpio_set_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	spin_unlock_irqrestore(&bgc->lock, flags);
- }
- 
-+static void bgpio_set_multiple_set(struct gpio_chip *gc, unsigned long *mask,
-+				   unsigned long *bits)
-+{
-+	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-+	unsigned long flags;
-+	int i;
-+
-+	spin_lock_irqsave(&bgc->lock, flags);
-+
-+	for (i = 0; i < bgc->bits; i++) {
-+		if (*mask == 0)
-+			break;
-+		if (__test_and_clear_bit(i, mask)) {
-+			if (test_bit(i, bits))
-+				bgc->data |= bgc->pin2mask(bgc, i);
-+			else
-+				bgc->data &= ~bgc->pin2mask(bgc, i);
-+		}
-+	}
-+
-+	bgc->write_reg(bgc->reg_set, bgc->data);
-+
-+	spin_unlock_irqrestore(&bgc->lock, flags);
-+}
-+
- static int bgpio_simple_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
- 	return 0;
-@@ -354,11 +430,14 @@ static int bgpio_setup_io(struct bgpio_chip *bgc,
- 		bgc->reg_set = set;
- 		bgc->reg_clr = clr;
- 		bgc->gc.set = bgpio_set_with_clear;
-+		bgc->gc.set_multiple = bgpio_set_multiple_with_clear;
- 	} else if (set && !clr) {
- 		bgc->reg_set = set;
- 		bgc->gc.set = bgpio_set_set;
-+		bgc->gc.set_multiple = bgpio_set_multiple_set;
- 	} else {
- 		bgc->gc.set = bgpio_set;
-+		bgc->gc.set_multiple = bgpio_set_multiple;
- 	}
- 
- 	bgc->gc.get = bgpio_get;
+So, what I'm saying is be very careful about moving to a fully
+dynamic space: you could end up breaking userspace if you do.
 
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
 --
-2.0.5
-
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
