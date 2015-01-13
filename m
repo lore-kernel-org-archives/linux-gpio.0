@@ -1,74 +1,92 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 RESEND 2/3] Documentation: gpio: Add APM X-Gene standby
- GPIO controller DTS binding
-Date: Tue, 13 Jan 2015 10:25:49 +0100
-Message-ID: <CACRpkdbcdf7Ub9uYbeqUe1La1dnVeWCxK8N7=iVZuBtuKHFHFA@mail.gmail.com>
-References: <1418793050-26927-1-git-send-email-yvo@apm.com>
-	<1418793050-26927-3-git-send-email-yvo@apm.com>
+From: =?UTF-8?B?SmFudXN6IFXFvHlja2k=?= <j.uzycki@elproma.com.pl>
+Subject: Re: [RFC PATCH v2 2/4] serial: mxs-auart: Use helpers for gpio irqs
+Date: Tue, 13 Jan 2015 10:29:44 +0100
+Message-ID: <54B4E588.5010602@elproma.com.pl>
+References: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl> <1420900366-9169-2-git-send-email-j.uzycki@elproma.com.pl> <20150113080817.GG22880@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:44033 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751000AbbAMJZu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:25:50 -0500
-Received: by mail-ig0-f181.google.com with SMTP id r2so387537igi.2
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 01:25:50 -0800 (PST)
-In-Reply-To: <1418793050-26927-3-git-send-email-yvo@apm.com>
+Received: from v032797.home.net.pl ([89.161.177.31]:56072 "HELO
+	v032797.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750964AbbAMJ3i (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:29:38 -0500
+In-Reply-To: <20150113080817.GG22880@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Y Vo <yvo@apm.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
+To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Dec 17, 2014 at 6:10 AM, Y Vo <yvo@apm.com> wrote:
-> Documentation for APM X-Gene standby GPIO controller DTS binding.
+
+W dniu 2015-01-13 o 09:08, Uwe Kleine-K=C3=B6nig pisze:
+> Hello,
 >
-> Signed-off-by: Y Vo <yvo@apm.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 31 ++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> On Sat, Jan 10, 2015 at 03:32:44PM +0100, Janusz Uzycki wrote:
+>> The patch updates mxs-auart driver to use new mctrl_gpio helpers for
+>> gpio irqs. The code is much simpler now.
+>>
+>> Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
+>> ---
+>>
+>> There is no changes since v1 (rebased only).
+>>
+>> ---
+>>   drivers/tty/serial/mxs-auart.c | 133 ++++-------------------------=
+------------
+>>   1 file changed, 13 insertions(+), 120 deletions(-)
+> Very nice!
 >
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-> new file mode 100644
-> index 0000000..3215e4d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-> @@ -0,0 +1,31 @@
-> +APM X-Gene Standby GPIO controller bindings
-> +
-> +This is a gpio controller in standby domain.
-> +
-> +There are 20 GPIO pins from 0..21. There is no GPIO_DS14 and GPIO_DS15.
-> +Only GPIO_DS8..GPIO_DS13 support interrupt. IRQ mapping 0x28..0x2d.
-> +
-> +Required properties:
-> +- compatible: "apm,xgene-gpio-sb" for X-Gene Standby GPIO controller
-> +- reg: Physical base address and size of the controller's registers
-> +- #gpio-cells: Should be two.
-> +       - first cell is the pin number
-> +       - second cell is used to specify the gpio polarity:
-> +               0 = active high
-> +               1 = active low
-> +- gpio-controller: Marks the device node as a GPIO controller.
-> +- interrupts: Shall contains the interrupts.
+>> diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs=
+-auart.c
+>> index ec553f8..2ddba69 100644
+>> --- a/drivers/tty/serial/mxs-auart.c
+>> +++ b/drivers/tty/serial/mxs-auart.c
+>> [...]
+>> @@ -483,18 +458,9 @@ static void mxs_auart_enable_ms(struct uart_por=
+t *port)
+>>  =20
+>>   	s->ms_irq_enabled =3D true;
+>>  =20
+>> -	if (s->gpio_irq[UART_GPIO_CTS] >=3D 0)
+>> -		enable_irq(s->gpio_irq[UART_GPIO_CTS]);
+>> -	/* TODO: enable AUART_INTR_CTSMIEN otherwise */
+>> -
+>> -	if (s->gpio_irq[UART_GPIO_DSR] >=3D 0)
+>> -		enable_irq(s->gpio_irq[UART_GPIO_DSR]);
+>> -
+>> -	if (s->gpio_irq[UART_GPIO_RI] >=3D 0)
+>> -		enable_irq(s->gpio_irq[UART_GPIO_RI]);
+>> -
+>> -	if (s->gpio_irq[UART_GPIO_DCD] >=3D 0)
+>> -		enable_irq(s->gpio_irq[UART_GPIO_DCD]);
+>> +	mctrl_gpio_enable_ms(s->gpios);
+>> +	/* TODO: enable AUART_INTR_CTSMIEN
+>> +	 * if s->gpios->irq[UART_GPIO_CTS] =3D=3D 0 */
+> What is the problem here? For the other lines nothing needs to be don=
+e?
+> This comment doesn't match the coding style.
 
->From the example it seems it must contain exactly 6 interrupts?
-Then state this.
+Right, the comment should be rather:
+/* TODO: enable AUART_INTR_CTSMIEN
+  * if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_CTS)) */
 
-> +Example:
-> +       sbgpio: sbgpio@17001000 {
-> +               compatible = "apm,xgene-gpio-sb";
-> +               reg = <0x0 0x17001000 0x0 0x400>;
-> +               #gpio-cells = <2>;
-> +               gpio-controller;
-> +               interrupts =    <0x0 0x28 0x1>,
-> +                               <0x0 0x29 0x1>,
-> +                               <0x0 0x2a 0x1>,
-> +                               <0x0 0x2b 0x1>,
-> +                               <0x0 0x2c 0x1>,
-> +                               <0x0 0x2d 0x1>;
-> +       };
+In this place I marked that CTSMIEN should be switched on=20
+enable/disable_ms if CTS
+is not a gpio. The driver enables CTSMIEN forever what is wrong but I=20
+can't test it
+and I don't need it so I've just marked the fact in the comment.
 
-Yours,
-Linus Walleij
+>
+> Other than that, this patch looks good.
+>
+> Uwe
+>
+
+Thanks
+Janusz
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
