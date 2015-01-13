@@ -1,30 +1,74 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: sx150x: Fix comparing wrong value with chip->irq_masked
-Date: Tue, 13 Jan 2015 10:23:33 +0100
-Message-ID: <CACRpkda0gj7uBepfD5pgOjnV0_YWeGWLDQafoZV0_FEy51kR=A@mail.gmail.com>
-References: <1418710947.23043.1.camel@phoenix>
+Subject: Re: [PATCH v2 RESEND 2/3] Documentation: gpio: Add APM X-Gene standby
+ GPIO controller DTS binding
+Date: Tue, 13 Jan 2015 10:25:49 +0100
+Message-ID: <CACRpkdbcdf7Ub9uYbeqUe1La1dnVeWCxK8N7=iVZuBtuKHFHFA@mail.gmail.com>
+References: <1418793050-26927-1-git-send-email-yvo@apm.com>
+	<1418793050-26927-3-git-send-email-yvo@apm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:37918 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751159AbbAMJXe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:23:34 -0500
-Received: by mail-ie0-f173.google.com with SMTP id y20so1725586ier.4
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 01:23:33 -0800 (PST)
-In-Reply-To: <1418710947.23043.1.camel@phoenix>
+Received: from mail-ig0-f181.google.com ([209.85.213.181]:44033 "EHLO
+	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751000AbbAMJZu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:25:50 -0500
+Received: by mail-ig0-f181.google.com with SMTP id r2so387537igi.2
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 01:25:50 -0800 (PST)
+In-Reply-To: <1418793050-26927-3-git-send-email-yvo@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Gregory Bean <gbean@codeaurora.org>
+To: Y Vo <yvo@apm.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
 
-On Tue, Dec 16, 2014 at 7:22 AM, Axel Lin <axel.lin@ingics.com> wrote:
-
-> Fix a copy-paste bug.
+On Wed, Dec 17, 2014 at 6:10 AM, Y Vo <yvo@apm.com> wrote:
+> Documentation for APM X-Gene standby GPIO controller DTS binding.
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Signed-off-by: Y Vo <yvo@apm.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 31 ++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> new file mode 100644
+> index 0000000..3215e4d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> @@ -0,0 +1,31 @@
+> +APM X-Gene Standby GPIO controller bindings
+> +
+> +This is a gpio controller in standby domain.
+> +
+> +There are 20 GPIO pins from 0..21. There is no GPIO_DS14 and GPIO_DS15.
+> +Only GPIO_DS8..GPIO_DS13 support interrupt. IRQ mapping 0x28..0x2d.
+> +
+> +Required properties:
+> +- compatible: "apm,xgene-gpio-sb" for X-Gene Standby GPIO controller
+> +- reg: Physical base address and size of the controller's registers
+> +- #gpio-cells: Should be two.
+> +       - first cell is the pin number
+> +       - second cell is used to specify the gpio polarity:
+> +               0 = active high
+> +               1 = active low
+> +- gpio-controller: Marks the device node as a GPIO controller.
+> +- interrupts: Shall contains the interrupts.
 
-Patch applied with Alex's review tag.
+>From the example it seems it must contain exactly 6 interrupts?
+Then state this.
+
+> +Example:
+> +       sbgpio: sbgpio@17001000 {
+> +               compatible = "apm,xgene-gpio-sb";
+> +               reg = <0x0 0x17001000 0x0 0x400>;
+> +               #gpio-cells = <2>;
+> +               gpio-controller;
+> +               interrupts =    <0x0 0x28 0x1>,
+> +                               <0x0 0x29 0x1>,
+> +                               <0x0 0x2a 0x1>,
+> +                               <0x0 0x2b 0x1>,
+> +                               <0x0 0x2c 0x1>,
+> +                               <0x0 0x2d 0x1>;
+> +       };
 
 Yours,
 Linus Walleij
