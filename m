@@ -1,83 +1,39 @@
-From: Y Vo <yvo@apm.com>
-Subject: Re: [PATCH v2 RESEND 2/3] Documentation: gpio: Add APM X-Gene standby
- GPIO controller DTS binding
-Date: Tue, 13 Jan 2015 16:41:24 +0700
-Message-ID: <CAL4ahLfcMsu2i2efiwq96a3YD4dChBEuJeEnQ7tsZH6et8H=sw@mail.gmail.com>
-References: <1418793050-26927-1-git-send-email-yvo@apm.com>
-	<1418793050-26927-3-git-send-email-yvo@apm.com>
-	<CACRpkdbcdf7Ub9uYbeqUe1La1dnVeWCxK8N7=iVZuBtuKHFHFA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH] gpio/Kconfig: Fix X86 arch name
+Date: Tue, 13 Jan 2015 10:41:57 +0100
+Message-ID: <1421142117-16371-1-git-send-email-ricardo.ribalda@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og126.obsmtp.com ([64.18.0.251]:49386 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751639AbbAMJlZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:41:25 -0500
-Received: by mail-pa0-f48.google.com with SMTP id rd3so2675492pab.7
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 01:41:24 -0800 (PST)
-In-Reply-To: <CACRpkdbcdf7Ub9uYbeqUe1La1dnVeWCxK8N7=iVZuBtuKHFHFA@mail.gmail.com>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:57129 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751066AbbAMJmC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 04:42:02 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
+To: Paul Bolle <pebolle@tiscali.nl>, Valentin Rothberg <valentinrothberg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-Yes, exactly 6 interrupts. As I describe before:
-- There are 22 GPIO_DSs.
-- Only 6 GPIO_DSs from 0x08..0xD which supports interrupts
+X86 Kconfig symbol is X86, not ARCH_X86.
 
-Regards,
-Y
+Fixes: c586b3075d5b47d8 (gpio/xilinx: Add support for X86 Arch)
+Reported-by: Paul Bolle <pebolle@tiscali.nl>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, Jan 13, 2015 at 4:25 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Dec 17, 2014 at 6:10 AM, Y Vo <yvo@apm.com> wrote:
->> Documentation for APM X-Gene standby GPIO controller DTS binding.
->>
->> Signed-off-by: Y Vo <yvo@apm.com>
->> ---
->>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 31 ++++++++++++++++++++++
->>  1 file changed, 31 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
->> new file mode 100644
->> index 0000000..3215e4d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
->> @@ -0,0 +1,31 @@
->> +APM X-Gene Standby GPIO controller bindings
->> +
->> +This is a gpio controller in standby domain.
->> +
->> +There are 20 GPIO pins from 0..21. There is no GPIO_DS14 and GPIO_DS15.
->> +Only GPIO_DS8..GPIO_DS13 support interrupt. IRQ mapping 0x28..0x2d.
->> +
->> +Required properties:
->> +- compatible: "apm,xgene-gpio-sb" for X-Gene Standby GPIO controller
->> +- reg: Physical base address and size of the controller's registers
->> +- #gpio-cells: Should be two.
->> +       - first cell is the pin number
->> +       - second cell is used to specify the gpio polarity:
->> +               0 = active high
->> +               1 = active low
->> +- gpio-controller: Marks the device node as a GPIO controller.
->> +- interrupts: Shall contains the interrupts.
->
-> From the example it seems it must contain exactly 6 interrupts?
-> Then state this.
->
->> +Example:
->> +       sbgpio: sbgpio@17001000 {
->> +               compatible = "apm,xgene-gpio-sb";
->> +               reg = <0x0 0x17001000 0x0 0x400>;
->> +               #gpio-cells = <2>;
->> +               gpio-controller;
->> +               interrupts =    <0x0 0x28 0x1>,
->> +                               <0x0 0x29 0x1>,
->> +                               <0x0 0x2a 0x1>,
->> +                               <0x0 0x2b 0x1>,
->> +                               <0x0 0x2c 0x1>,
->> +                               <0x0 0x2d 0x1>;
->> +       };
->
-> Yours,
-> Linus Walleij
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 1eff81c..ef421ac 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -368,7 +368,7 @@ config GPIO_XGENE
+ 
+ config GPIO_XILINX
+ 	tristate "Xilinx GPIO support"
+-	depends on OF_GPIO && (PPC_OF || MICROBLAZE || ARCH_ZYNQ || ARCH_X86)
++	depends on OF_GPIO && (PPC_OF || MICROBLAZE || ARCH_ZYNQ || X86)
+ 	help
+ 	  Say yes here to support the Xilinx FPGA GPIO device
+ 
+-- 
+2.1.4
+
