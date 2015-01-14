@@ -1,91 +1,162 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v4 3/4] gpio: Add find GPIO base in increasing order
-Date: Wed, 14 Jan 2015 17:17:23 +0900
-Message-ID: <CAAVeFuJkr9mFwJq0GdbLO7EgbffvD25bjBVdXAFZubq5Sz4MZQ@mail.gmail.com>
-References: <1417750722-14027-1-git-send-email-wangzhou.bry@gmail.com>
- <1417750722-14027-4-git-send-email-wangzhou.bry@gmail.com>
- <CAAVeFu+Hn1Fk7PDcc4wGHFyJurX0hsW1N1prnPs2j=taGQKrKw@mail.gmail.com> <CACRpkdZccD_FM+m3US3e40LitH4OsX-8cSS_ju+C541330PdXw@mail.gmail.com>
+From: Y Vo <yvo@apm.com>
+Subject: Re: [PATCH v2 RESEND 1/3] gpio: Add APM X-Gene standby GPIO
+ controller driver
+Date: Wed, 14 Jan 2015 15:27:55 +0700
+Message-ID: <CAL4ahLfGNc1sL-hr7bZi_pcxjz7CNHjPRSPnJf_TUCGsbweaDA@mail.gmail.com>
+References: <1418793050-26927-1-git-send-email-yvo@apm.com>
+	<1418793050-26927-2-git-send-email-yvo@apm.com>
+	<CACRpkdZe7Huiruu-iSNU4MWaiLo_qL=QAab1crummuuVOEJ0zQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:60444 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932171AbbANIRo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 03:17:44 -0500
-In-Reply-To: <CACRpkdZccD_FM+m3US3e40LitH4OsX-8cSS_ju+C541330PdXw@mail.gmail.com>
+Received: from exprod5og112.obsmtp.com ([64.18.0.24]:40604 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753258AbbANI16 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 03:27:58 -0500
+Received: by mail-pa0-f46.google.com with SMTP id lf10so9122178pab.5
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2015 00:27:56 -0800 (PST)
+In-Reply-To: <CACRpkdZe7Huiruu-iSNU4MWaiLo_qL=QAab1crummuuVOEJ0zQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Zhou Wang <wangzhou.bry@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, liguozhu@hisilicon.com, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alan Tull <atull@altera.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jamie Iles <jamie@jamieiles.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, wangzhou1@hisilicon.com
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
 
-On Wed, Jan 14, 2015 at 5:13 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Dec 10, 2014 at 9:51 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> On Fri, Dec 5, 2014 at 12:38 PM, Zhou Wang <wangzhou.bry@gmail.com> wrote:
->>> In function gpiochip_find_base, base number of a GPIO controller
->>> is found in decreasing order. ARCH_NR_GPIOS is used to define from
->>> which number we begin to search for base number of a GPIO controller.
->>>
->>> In fact, ARCH_NR_GPIOS brings us some multiplatform problems, like:
->>> http://www.spinics.net/lists/devicetree/msg60433.html
->>>
->>> This patch adds the support to find base number of a GPIO controller
->>> in increasing order. It will assign base number from 0.
->>> A new dts property called gpio-number-forward must be add to the related
->>> GPIO dts nodes if you want it works well.
->>
->> Global GPIO numbers are a Linux-only concept, so your property should
->> be named linux,gpio-number-forward.
->>
->> But even that way I don't think I like this idea. This just adds some
->> more mess to how the GPIO number space is constructed, and it is
->> already quite messy as it is. You have no guarantee over the probe
->> order of your GPIO controllers, so they may very well be probed in a
->> different order and end up with different base numbers anytime.
+On Tue, Jan 13, 2015 at 4:40 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Dec 17, 2014 at 6:10 AM, Y Vo <yvo@apm.com> wrote:
 >
-> Yup.
+>> Add APM X-Gene standby GPIO controller driver.
 >
-> The way stuff is usually forced ordered in device tree is to use
-> aliases, e.g.:
+> Write something about what platform an arch this is and so
+> on, this is too terse commit message for a new driver.
 >
->         aliases {
->                 serial0 = &pb1176_serial0;
->                 serial1 = &pb1176_serial1;
->                 serial2 = &pb1176_serial2;
->                 serial3 = &pb1176_serial3;
->                 serial4 = &fpga_serial;
->         };
+>> Signed-off-by: Y Vo <yvo@apm.com>
+> (...)
 >
-> By getting the alias ID with of_alias_get_id(np, "serial")
-> a certain serial port is assigned to be
-> 0, 1, 2 ...
+>> +config GPIO_XGENE_SB
+>> +       tristate "APM X-Gene GPIO standby controller support"
+>> +       depends on ARCH_XGENE && OF_GPIO
 >
-> I think I could accept a tweak of this patch that will register
-> GPIOs beginning from 0 if and only if the alias mechanism is
-> used.
+> select GPIO_GENERIC
+Why ?
+> see below on why.
 >
->         aliases {
->                 gpio0 = &foo_gpio0;
->                 gpio1 = &expander;
->         };
+>> +       help
+>> +         This driver supports the GPIO block within the APM X-Gene
+>> +         Standby Domain. Say yes here to enable the GPIO functionality.
+>> +
+>>  config GPIO_XILINX
+>>         bool "Xilinx GPIO support"
+>>         depends on PPC_OF || MICROBLAZE || ARCH_ZYNQ
+>> diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
+>> new file mode 100644
+>> index 0000000..1248448
 >
+> (...)
+>> +++ b/drivers/gpio/gpio-xgene-sb.c
+>> +#include <linux/module.h>
+>> +#include <linux/io.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/of_gpio.h>
+>> +#include <linux/gpio.h>
 >
-> The actual Linux-specific integer base will *NOT* be in the
-> device tree, but if you know how many GPIOs are on each
-> controller the number space is still stable and predictable
-> beginning from 0. If one want to keep track of the Linux
-> number space one can do so with comments in the device
-> tree or something.
+> #include <linux/gpio/driver.h>
 >
->> I know we pushed back against this kind of solution in the past, but
->> it is still more reliable than having a property that affects how the
->> kernel's base finding function works, and will offer us a way to
->> eventually put ARCH_NR_GPIOS and gpiochip_find_base() to rest (at the
->> cost of backwards-compatibility, but we just cannot do without it).
->> Linus, do you agree?
+> instead.
 >
-> What do you think about the above?
+>> +#include <linux/of_irq.h>
+>> +#include <linux/acpi.h>
+OK.
 
-It would definitely help with the probe order, but unfortunately not
-with the fact that GPIO bases are allocated in decreasing order
-starting from the potentially varying ARCH_NR_GPIOS. So that alone
-will not be able to ensure stable GPIO numbers.
+> OK, why?
+>
+>> +#include <linux/efi.h>
+I will remove.
+
+> Why?
+>
+>> +#include <linux/string.h>
+>> +#include <linux/of_address.h>
+
+I will remove.
+
+> #include <linux/basic_mmio_gpio.h>
+> when you start using GENERIC_GPIO
+>
+>> +
+>> +#define XGENE_MAX_GPIO_DS              22
+>> +#define XGENE_MAX_GPIO_DS_IRQ          6
+>> +
+>> +#define GPIO_MASK(x)                   (1U << ((x) % 32))
+>> +#define GPIO_DIR_IN                    0
+>> +#define GPIO_DIR_OUT                   1
+>> +
+>> +#define MPA_GPIO_INT_LVL               0x0290
+>> +#define MPA_GPIO_OE_ADDR               0x029c
+>> +#define MPA_GPIO_OUT_ADDR              0x02a0
+>> +#define MPA_GPIO_IN_ADDR               0x02a4
+>> +#define MPA_GPIO_SEL_LO                        0x0294
+>> +#define MPA_GPIO_SEL_HIGH              0x029c
+>> +
+>> +struct xgene_gpio_sb {
+>> +       struct of_mm_gpio_chip mm;
+>> +       u32 *irq;
+>> +       u32 nirq;
+>> +       spinlock_t lock; /* mutual exclusion */
+>> +};
+>
+> Add kerneldoc to this struct.
+>
+>> +static void xgene_gpio_set_bit(void __iomem *reg, u32 gpio, int val)
+> (...)
+>> +static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
+>
+> This looks very much like a memory-mapped standard GPIO controller,
+> use drivers/gpio/gpio-generic.c with some IRQ add-on, compare
+> to any other driver selecting GPIO_GENERIC for guidance:
+> drivers/gpio/gpio-74xx-mmio.c, gpio-dwapb.c etc.
+You mean I must rewrite to use GPIO_GENERIC follow gpio-74xx-mmio.c,
+gpio-dwapb.c ?
+
+>> +static int apm_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
+>> +{
+>> +       struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+>> +       struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
+>> +
+>> +       if (chip->irq[gpio])
+>> +               return chip->irq[gpio];
+>> +
+>> +       return -ENXIO;
+>> +}
+>> +
+>> +static int xgene_gpio_sb_probe(struct platform_device *pdev)
+>> +{
+>> +       struct of_mm_gpio_chip *mm;
+>> +       struct xgene_gpio_sb *apm_gc;
+>> +       u32 ret, i;
+>> +       u32 default_pins[] = {0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D};
+>
+> Um, pins... call these "lines" instead to avoid confusion with the pin
+> control subsystem.
+
+I will change.
+
+>> +       struct resource *res;
+>> +
+>> +       apm_gc = devm_kzalloc(&pdev->dev, sizeof(*apm_gc), GFP_KERNEL);
+>> +       if (!apm_gc)
+>> +               return -ENOMEM;
+>> +
+>> +       mm = &apm_gc->mm;
+>> +       mm->gc.direction_input = xgene_gpio_sb_dir_in;
+>> +       mm->gc.direction_output = xgene_gpio_sb_dir_out;
+>> +       mm->gc.get = xgene_gpio_sb_get;
+>> +       mm->gc.set = xgene_gpio_sb_set;
+>> +       mm->gc.to_irq = apm_gpio_sb_to_irq;
+>> +       mm->gc.base = -1;
+>> +       mm->gc.label = dev_name(&pdev->dev);
+>
+> gc has a device tree .np node and a .dev struct device *
+> pointer, assign them here. (Also after you switch to GENERIC_GPIO.)
+>
+> Yours,
+> Linus Walleij
