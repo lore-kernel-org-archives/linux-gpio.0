@@ -1,34 +1,131 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/6] gpio: fix gpio_chip add and remove
-Date: Wed, 14 Jan 2015 14:27:41 +0100
-Message-ID: <CACRpkdZwbigvBE0X9zwAWaaPp4Nt2gHxY+7nrKX5KTOy7J97RA@mail.gmail.com>
-References: <1421079149-2236-1-git-send-email-johan@kernel.org>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH][v2] gpio-generic: add bgpio_set_multiple functions
+Date: Wed, 14 Jan 2015 15:46:38 +0100
+Message-ID: <3218650.3Kg56DKAcg@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:40862 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752345AbbANN1m (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 08:27:42 -0500
-Received: by mail-ie0-f169.google.com with SMTP id y20so8712664ier.0
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2015 05:27:41 -0800 (PST)
-In-Reply-To: <1421079149-2236-1-git-send-email-johan@kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.9]:54079 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753192AbbANOqk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 09:46:40 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Mon, Jan 12, 2015 at 5:12 PM, Johan Hovold <johan@kernel.org> wrote:
+Add set_multiple functions to the generic driver for memory-mapped GPIO
+controllers to improve performance when setting multiple outputs
+simultaneously.
 
-> This series fix a few issues with gpiochip_add and gpiochip_remove.
->
-> The gpio-chip removal paths have probably not been exercised much, and
-> there are further issues here that I'm working on fixing in order better
-> support hot-plugging of gpio chips. I believe these patches should go
-> into 3.19 meanwhile.
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+---
+v2: refactor to reduce duplicate code
 
-GOOD STUFF!
-All six applied for fixes.
+ drivers/gpio/gpio-generic.c |   76 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index 16f6115..b92a690 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -190,6 +190,79 @@ static void bgpio_set_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	spin_unlock_irqrestore(&bgc->lock, flags);
+ }
+ 
++static void bgpio_multiple_get_masks(struct bgpio_chip *bgc,
++				     unsigned long *mask, unsigned long *bits,
++				     unsigned long *set_mask,
++				     unsigned long *clear_mask)
++{
++	int i;
++
++	*set_mask = 0;
++	*clear_mask = 0;
++
++	for (i = 0; i < bgc->bits; i++) {
++		if (*mask == 0)
++			break;
++		if (__test_and_clear_bit(i, mask)) {
++			if (test_bit(i, bits))
++				*set_mask |= bgc->pin2mask(bgc, i);
++			else
++				*clear_mask |= bgc->pin2mask(bgc, i);
++		}
++	}
++}
++
++static void bgpio_set_multiple_single_reg(struct bgpio_chip *bgc,
++					  unsigned long *mask,
++					  unsigned long *bits,
++					  void __iomem *reg)
++{
++	unsigned long flags;
++	unsigned long set_mask, clear_mask;
++
++	spin_lock_irqsave(&bgc->lock, flags);
++
++	bgpio_multiple_get_masks(bgc, mask, bits, &set_mask, &clear_mask);
++
++	bgc->data |= set_mask;
++	bgc->data &= ~clear_mask;
++
++	bgc->write_reg(reg, bgc->data);
++
++	spin_unlock_irqrestore(&bgc->lock, flags);
++}
++
++static void bgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
++			       unsigned long *bits)
++{
++	struct bgpio_chip *bgc = to_bgpio_chip(gc);
++
++	bgpio_set_multiple_single_reg(bgc, mask, bits, bgc->reg_dat);
++}
++
++static void bgpio_set_multiple_set(struct gpio_chip *gc, unsigned long *mask,
++				   unsigned long *bits)
++{
++	struct bgpio_chip *bgc = to_bgpio_chip(gc);
++
++	bgpio_set_multiple_single_reg(bgc, mask, bits, bgc->reg_set);
++}
++
++static void bgpio_set_multiple_with_clear(struct gpio_chip *gc,
++					  unsigned long *mask,
++					  unsigned long *bits)
++{
++	struct bgpio_chip *bgc = to_bgpio_chip(gc);
++	unsigned long set_mask, clear_mask;
++
++	bgpio_multiple_get_masks(bgc, mask, bits, &set_mask, &clear_mask);
++
++	if (set_mask)
++		bgc->write_reg(bgc->reg_set, set_mask);
++	if (clear_mask)
++		bgc->write_reg(bgc->reg_clr, clear_mask);
++}
++
+ static int bgpio_simple_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	return 0;
+@@ -354,11 +427,14 @@ static int bgpio_setup_io(struct bgpio_chip *bgc,
+ 		bgc->reg_set = set;
+ 		bgc->reg_clr = clr;
+ 		bgc->gc.set = bgpio_set_with_clear;
++		bgc->gc.set_multiple = bgpio_set_multiple_with_clear;
+ 	} else if (set && !clr) {
+ 		bgc->reg_set = set;
+ 		bgc->gc.set = bgpio_set_set;
++		bgc->gc.set_multiple = bgpio_set_multiple_set;
+ 	} else {
+ 		bgc->gc.set = bgpio_set;
++		bgc->gc.set_multiple = bgpio_set_multiple;
+ 	}
+ 
+ 	bgc->gc.get = bgpio_get;
+
+--
+2.0.5
+
