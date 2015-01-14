@@ -1,32 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] gpio: Make the vararg hacks not pass magic values
-Date: Wed, 14 Jan 2015 13:33:36 +0100
-Message-ID: <CACRpkdYg=bwRtsj8gbxbZnLtg+746xoJQcQf9FdNkhh_poR=PA@mail.gmail.com>
-References: <1420620297-7329-1-git-send-email-oliver+list@schinagl.nl>
+Subject: Re: [PATCH v1 1/4] gpio:gpiolib: use static const char const * for a
+ suffixes array
+Date: Wed, 14 Jan 2015 13:35:12 +0100
+Message-ID: <CACRpkdYyaK5JjXEwJxzLgd_-0ccTjb1wEFxVUSdLsppcmTMDoA@mail.gmail.com>
+References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
+	<1420621722-7428-2-git-send-email-oliver+list@schinagl.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:38578 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751995AbbANMdh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 07:33:37 -0500
-Received: by mail-ig0-f174.google.com with SMTP id hn15so22139254igb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2015 04:33:36 -0800 (PST)
-In-Reply-To: <1420620297-7329-1-git-send-email-oliver+list@schinagl.nl>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1420621722-7428-2-git-send-email-oliver+list@schinagl.nl>
+Sender: linux-input-owner@vger.kernel.org
 To: Olliver Schinagl <oliver+list@schinagl.nl>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Olliver Schinagl <oliver@schinagl.nl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux
+List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 7, 2015 at 9:44 AM, Olliver Schinagl
+On Wed, Jan 7, 2015 at 10:08 AM, Olliver Schinagl
 <oliver+list@schinagl.nl> wrote:
 
 > From: Olliver Schinagl <oliver@schinagl.nl>
 >
-> Right now, in consumer.h, there's some vararg hacks that pass 0 as the
-> flags. What actually is passed however is GPIOD_ASIS, which naturally is
-> also 0. Using the define/enum rather then the magic 0 makes it the
-> define more readable to a passer by.
+> Checkpatch complains, and probably with good reason that we should use
+> const char const * for the static constant array that never gets
+> changed.
 >
 > Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 
