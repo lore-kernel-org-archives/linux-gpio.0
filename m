@@ -1,301 +1,81 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: Re: [PATCH 1/2] gpiolib: add gpiod_get_array and gpiod_put_array functions
-Date: Wed, 14 Jan 2015 13:55:12 +0100
-Message-ID: <2909581.Ya6Uc7XXnK@pcimr>
-References: <3961090.tifPlxnXvR@pcimr> <CAAVeFuK4ueJ0v8pkbvR+=fTU=6ve0-ie30oTzJe65cVfha-L4g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Wed, 14 Jan 2015 13:58:36 +0100
+Message-ID: <CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:49742 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbbANMzU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 07:55:20 -0500
-In-Reply-To: <CAAVeFuK4ueJ0v8pkbvR+=fTU=6ve0-ie30oTzJe65cVfha-L4g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Wednesday 14 January 2015 14:11:16 Alexandre Courbot wrote:
-> On Sat, Jan 10, 2015 at 12:19 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> > Introduce new functions for conveniently obtaining and disposing of an entire
-> > array of GPIOs with one function call.
-> 
-> Excellent, thanks for following up with this! :)
-> 
-> >
-> > Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
-> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-> > ---
-> >  Documentation/gpio/consumer.txt |   28 ++++++++++++-
-> >  drivers/gpio/gpiolib.c          |   84 ++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/gpio/consumer.h   |   42 ++++++++++++++++++++
-> >  3 files changed, 153 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-> > index c67f806..d02f341 100644
-> > --- a/Documentation/gpio/consumer.txt
-> > +++ b/Documentation/gpio/consumer.txt
-> > @@ -58,7 +58,6 @@ pattern where a GPIO is optional, the gpiod_get_optional() and
-> >  gpiod_get_index_optional() functions can be used. These functions return NULL
-> >  instead of -ENOENT if no GPIO has been assigned to the requested function:
-> >
-> > -
-> >         struct gpio_desc *gpiod_get_optional(struct device *dev,
-> >                                              const char *con_id,
-> >                                              enum gpiod_flags flags)
-> > @@ -68,6 +67,29 @@ instead of -ENOENT if no GPIO has been assigned to the requested function:
-> >                                                    unsigned int index,
-> >                                                    enum gpiod_flags flags)
-> >
-> > +For a function using multiple GPIOs all of those can be obtained with one call:
-> > +
-> > +       int gpiod_get_array(struct device *dev,
-> > +                           const char *con_id,
-> > +                           struct gpio_desc **desc_array,
-> > +                           unsigned int count,
-> > +                           enum gpiod_flags flags)
-> > +
-> > +In this case an array for storing the GPIO descriptors and the number of GPIOs
-> > +are required as additional arguments. This function either returns the
-> > +requested number of GPIOs or an error code. It will not return a positive
-> > +number if some but not all of the requested GPIOs could be obtained.
-> 
-> I wonder if the following interface would not be more convenient, at
-> least for the most common cases:
-> 
->     struct gpiod_descs *gpiod_get_array(struct device *dev, const char
-> *con_id, enum gpiod_flags flags);
-> 
-> Which would *allocate* the array of descriptors to the right number of
-> GPIOs and return them all. The current way of doing requires the user
-> to 1) figure out how many GPIOs there are under (dev, con_id), 2)
-> allocate a the GPIO array and 3) call this function. The array must
-> also be explicitly freed after calling gpiod_put_array().
-> 
-> struct gpiod_descs would be something like this:
-> 
-> struct gpiod_descs {
->     unsigned count;
->     struct gpiod_desc*[];
-> }
-> 
-> It uses a zero-length array to store the actual descriptors and
-> carries the count so the user does not have to remember it (it will
-> always be needed anyway, and that way we don't have to pass it
-> explicitly to gpiod_put_array()).
-> 
-> The nice thing with this interface is that it works identically to
-> gpiod_get(), excepted it can handle 1 GPIO or more. This would be
-> handy in order to implement sysfs v2 on top of it (see
-> https://lkml.org/lkml/2015/1/3/50).
-> 
-> We could even have a macro to iterate over the GPIOs:
-> 
-> #define for_each_gpio(gpiod_descs, gpiod_desc) ...
-> 
+On Thu, Dec 18, 2014 at 9:23 AM, Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
 
-I see your point. It certainly makes sense. 
+> This makes it possible to assign GPIOs at runtime. The
+> motivation for it is because of need to forward GPIOs from
+> one device to an other. That feature may be useful for
+> example with some mfd devices, but initially it is needed
+> because on some Intel Braswell based ACPI platforms the GPIO
+> resources controlling signals of the USB PHY are given to
+> the controller device object for whatever reason, so the
+> driver of that controller needs be able to pass them to the
+> PHY device somehow.
+>
+> So basically this is meant to allow patching of bad (bad
+> from Linux kernels point of view) hardware descriptions
+> provided by system fw in the drivers.
+>
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> ---
+>
+> Hi,
+>
+> I'm sending this first as a RFC in case you guys have some better
+> idea how to solve our problem. I actually already have couple
+> platforms where the GPIO resources are given to the "wrong" device
+> objects now.
+>
+> Originally we were thinking about simply handling our problem with
+> hacks to the PHY drivers, basically also checking if the parent has
+> GPIOs. That would only work if the controller is always the parent,
+> which it's not, but even if it was, it would be too risky. The PHY
+> drivers don't know which controller they are attached to, so what is
+> to say that the GPIOs aren't really attached to the controller.
+>
+> So the safest way to handle our problem is to deal with it in quirks
+> in the controller drivers. Solving it by bouncing the GPIOs did not
+> feel ideal there doesn't seem to be any other way. The API is copied
+> from clkdev (clk_register_clkdev). In the end it's really only one
+> function for adding the lookups and one for removing them.
+>
+> The way it's implemented is by modifying the current style of handling
+> the lookups a little bit. The per device lookup table is basically
+> reverted back to the single linked-list format since it seems that
+> these lookups may have to be assigned from several sources.
 
-The gpiod_get_array function would have to not only allocate the array of
-descriptors but also the struct containing the pointer to the array.
-Alternatively gpiod_get_array could return a struct gpiod_descs instead of
-a pointer to such a struct:
+Oh ain't that great.
 
-	struct gpiod_descs gpiod_get_array(struct device *dev,
-								   const char *con_id,
-								   enum gpiod_flags flags);
+So now we start patching around the kernel because the ACPI
+tables are erroneous for GPIOs. I'd like some feedback from
+Rafael &| Darren on this patch, i.e. if you two think this is a good
+way of accounting for bad GPIO descriptions in ACPI tables then
+ACK this patch.
 
-Errors could be returned either as a negative count or in an additional
-struct member.
+I guess the other option would be to fix up the ACPI DSDT
+itself to put resources right, correct? Is this not possible?
 
-Would that also be an acceptable interface? Or should a gpiod_get_ function
-always return a pointer?
+Alexandre also need to ACK it before I dare do anything with
+it.
 
-> If you think your current interface is necessary because users need to
-> work with already-allocated arrays of descriptors, could you then
-> rename it under a more "private" name (maybe
-> gpiod_fill_array/gpiod_free_array?) and build the
-> gpiod_get_array/gpiod_put_array I suggest on top of it?
-> 
+Do we want to use the same mechanism for augmenting
+bad device trees too?
 
-I think that's unnecessary for now.
+What I like about it so far is the create/remove symmetry
+though.
 
-> Also for the sake of completeness, may I suggest adding the following
-> function to the gpiod interface:
-> 
->     int gpiod_count(struct device *dev, const char *con_id);
-> 
-> Which returns the number of GPIOs that are declared for (dev, con_id)?
-> Right now gpiod_get_array() can only be used properly under the device
-> tree (which provides of_gpio_named_count()), but we also need to
-> enable it for ACPI and platform data.
-> 
-> Having this function will allow users of gpiod_get_index() to know the
-> boundaries they have to work with, no matter how the GPIO mappings are
-> provided. It will also be needed if you implement the version of
-> gpiod_get_array() I suggest.
-> 
-> In your patch 2/2, you will then also want to replace the call to
-> of_gpio_count() in mdio_mux_gpio_probe() by a call to gpiod_count().
-> 
-
-I'll look into that.
-
-> > +The following function behaves differently:
-> > +
-> > +       int gpiod_get_array_optional(struct device *dev,
-> > +                                    const char *con_id,
-> > +                                    struct gpio_desc **desc_array,
-> > +                                    unsigned int could,
-> > +                                    enum gpiod_flags flags)
-> > +
-> > +This one returns the number of GPIOs actually available which can be smaller
-> > +than the requested number or even 0.
-> 
-> There is no user for this function yet but I agree it is good to have.
-> 
-
-So for the interface you propose that would mean:
-
-gpiod_get_array returns with exactly the number of GPIO descriptors as
-gpiod_count returns or an error code whereas gpiod_get_array_optional can also
-return with fewer or no descriptors at all.
-
-Right? Or is one of the two unnecessary?
-
-> > +
-> >  Device-managed variants of these functions are also defined:
-> 
-> Do you plan to also add devm variants of the new get_array() function(s)?
-> 
-
-I probably should. Need to look into it.
-
-> >
-> >         struct gpio_desc *devm_gpiod_get(struct device *dev, const char *con_id,
-> > @@ -91,6 +113,10 @@ A GPIO descriptor can be disposed of using the gpiod_put() function:
-> >
-> >         void gpiod_put(struct gpio_desc *desc)
-> >
-> > +For an array of GPIOs this function can be used:
-> > +
-> > +       void gpiod_put_array(struct gpio_desc **desc_array, unsigned int count)
-> > +
-> >  It is strictly forbidden to use a descriptor after calling this function. The
-> 
-> This paragraph will probably require a s/this/these to be gramatically correct.
-> 
-
-Right.
-
-> >  device-managed variant is, unsurprisingly:
-> >
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index 56b7c5d..d45fa9c 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -1925,6 +1925,76 @@ struct gpio_desc *__must_check __gpiod_get_index_optional(struct device *dev,
-> >  EXPORT_SYMBOL_GPL(__gpiod_get_index_optional);
-> >
-> >  /**
-> > + * gpiod_get_array - obtain multiple GPIOs from a multi-index GPIO function
-> > + * @dev:       GPIO consumer, can be NULL for system-global GPIOs
-> > + * @con_id:    function within the GPIO consumer
-> > + * @desc_array:        descriptor array for the acquired GPIOs
-> > + * @count:     number of GPIOs to obtain in the consumer
-> > + * @flags:     optional GPIO initialization flags
-> > + *
-> > + * This function obtains the specified number of GPIOs starting with index 0
-> > + * for functions that define several GPIOs.
-> > + *
-> > + * Return the actual number of acquired GPIOs, -ENOENT if the actual number of
-> > + * GPIOs assigned to the requested function is smaller than @count,
-> > + * or another IS_ERR() code if an error occurred while trying to acquire the
-> > + * GPIOs.
-> > + */
-> > +int __must_check __gpiod_get_array(struct device *dev, const char *con_id,
-> > +                                  struct gpio_desc **desc_array,
-> > +                                  unsigned int count,
-> > +                                  enum gpiod_flags flags)
-> > +{
-> > +       int r;
-> > +
-> > +       r = gpiod_get_array_optional(dev, con_id, desc_array, count, flags);
-> > +       if ((r >= 0) && (r != count)) {
-> > +               gpiod_put_array(desc_array, r);
-> > +               return -ENOENT;
-> > +       }
-> > +       return r;
-> > +}
-> > +EXPORT_SYMBOL_GPL(__gpiod_get_array);
-> > +
-> > +/**
-> > + * gpiod_get_array_optional - obtain multiple GPIOs from a multi-index GPIO
-> > + *                            function
-> > + * @dev:       GPIO consumer, can be NULL for system-global GPIOs
-> > + * @con_id:    function within the GPIO consumer
-> > + * @desc_array:        descriptor array for the acquired GPIOs
-> > + * @count:     number of GPIOs to obtain in the consumer
-> > + * @flags:     optional GPIO initialization flags
-> > + *
-> > + * This is equivalent to gpiod_get_array(), except that when the actual number
-> > + * of GPIOs assigned to the requested function is smaller than @count it will
-> > + * not return an error but the number of GPIOs actually available.
-> > + */
-> > +int __must_check __gpiod_get_array_optional(struct device *dev,
-> > +                                           const char *con_id,
-> > +                                           struct gpio_desc **desc_array,
-> > +                                           unsigned int count,
-> > +                                           enum gpiod_flags flags)
-> > +{
-> > +       struct gpio_desc *desc;
-> > +       unsigned int n;
-> > +
-> > +       for (n = 0; n < count; ) {
-> > +               desc = gpiod_get_index(dev, con_id, n, flags);
-> > +               if (IS_ERR(desc)) {
-> > +                       if (PTR_ERR(desc) != -ENOENT) {
-> > +                               gpiod_put_array(desc_array, n);
-> > +                               return PTR_ERR(desc);
-> > +                       }
-> > +                       break;
-> > +               }
-> > +               desc_array[n] = desc;
-> > +               n++;
-> > +       }
-> > +       return n;
-> > +}
-> > +EXPORT_SYMBOL_GPL(__gpiod_get_array_optional);
-> > +
-> > +/**
-> >   * gpiod_put - dispose of a GPIO descriptor
-> >   * @desc:      GPIO descriptor to dispose of
-> >   *
-> > @@ -1936,6 +2006,20 @@ void gpiod_put(struct gpio_desc *desc)
-> >  }
-> >  EXPORT_SYMBOL_GPL(gpiod_put);
-> >
-> > +/**
-> > + * gpiod_put_array - dispose of multiple GPIO descriptors
-> > + * @desc_array:        GPIO descriptor array
-> > + * @count:     number of GPIOs in the array
-> > + */
-> > +void gpiod_put_array(struct gpio_desc **desc_array, unsigned int count)
-> > +{
-> > +       unsigned int n;
-> > +
-> > +       for (n = 0; n < count; n++)
-> > +               gpiod_put(desc_array[n]);
-> > +}
-> > +EXPORT_SYMBOL_GPL(gpiod_put_array);
-> 
-> The implementation looks good to me. I'd just like you to consider the
-> alternative interface I propose, as I suspect it might make the life
-> of users easier.
-> 
-
-Thanks for reviewing this.
-
-
+Yours,
+Linus Walleij
