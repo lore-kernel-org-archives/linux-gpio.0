@@ -1,114 +1,210 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH] pinctrl: fix up device tree bindings
-Date: Tue, 13 Jan 2015 14:06:24 -0600
-Message-ID: <CAL_JsqKQJzUOWE2oJsABH3Aa1cCD+526L0G7-WRH=LbKFxesyQ@mail.gmail.com>
-References: <1420924457-12730-1-git-send-email-linus.walleij@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio-generic: add bgpio_set_multiple functions
+Date: Wed, 14 Jan 2015 11:43:54 +0900
+Message-ID: <CAAVeFu+qctx7q_rQ5h4+msHwfkGGjoxf0m+wEPwoNby32E3PWA@mail.gmail.com>
+References: <1474325.ElrvNqxI5B@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:63826 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751043AbbAMUGq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 15:06:46 -0500
-In-Reply-To: <1420924457-12730-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:53162 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751046AbbANCoP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jan 2015 21:44:15 -0500
+Received: by mail-ig0-f182.google.com with SMTP id hn15so6709228igb.3
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 18:44:15 -0800 (PST)
+In-Reply-To: <1474325.ElrvNqxI5B@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Sat, Jan 10, 2015 at 3:14 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> After the Nomadik pin controller was force migrated to generic pin
-> control bindings, some leftovers in the documentation need to be
-> cleaned up. The code and device trees are already migrated.
+On Tue, Jan 13, 2015 at 7:37 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+> Add set_multiple functions to the generic driver for memory-mapped GPIO
+> controllers to improve performance when setting multiple outputs
+> simultaneously.
+
+Great idea ; this driver is an obvious candidate to support this.
+
 >
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-
-Applied for 3.20. Thanks.
-
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
 > ---
->  .../devicetree/bindings/pinctrl/ste,nomadik.txt    | 35 ++++++++++++----------
->  1 file changed, 20 insertions(+), 15 deletions(-)
+>  drivers/gpio/gpio-generic.c |   79 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt b/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
-> index 6b33b9f18e88..f63fcb3ed352 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
-> @@ -16,17 +16,22 @@ mux function to select on those pin(s)/group(s), and various pin configuration
->  parameters, such as input, output, pull up, pull down...
+> diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+> index 16f6115..cb6d0b7 100644
+> --- a/drivers/gpio/gpio-generic.c
+> +++ b/drivers/gpio/gpio-generic.c
+> @@ -160,6 +160,31 @@ static void bgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+>         spin_unlock_irqrestore(&bgc->lock, flags);
+>  }
 >
->  The name of each subnode is not important; all subnodes should be enumerated
-> -and processed purely based on their content.
-> +and processed purely based on their content. The subnodes use the generic
-> +pin multiplexing node layout from the standard pin control bindings
-> +(see pinctrl-bindings.txt):
+> +static void bgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+> +                              unsigned long *bits)
+> +{
+> +       struct bgpio_chip *bgc = to_bgpio_chip(gc);
+> +       unsigned long flags;
+> +       int i;
+> +
+> +       spin_lock_irqsave(&bgc->lock, flags);
+> +
+> +       for (i = 0; i < bgc->bits; i++) {
+> +               if (*mask == 0)
+> +                       break;
+> +               if (__test_and_clear_bit(i, mask)) {
+> +                       if (test_bit(i, bits))
+> +                               bgc->data |= bgc->pin2mask(bgc, i);
+> +                       else
+> +                               bgc->data &= ~bgc->pin2mask(bgc, i);
+> +               }
+> +       }
+> +
+> +       bgc->write_reg(bgc->reg_dat, bgc->data);
+> +
+> +       spin_unlock_irqrestore(&bgc->lock, flags);
+> +}
+> +
+>  static void bgpio_set_with_clear(struct gpio_chip *gc, unsigned int gpio,
+>                                  int val)
+>  {
+> @@ -172,6 +197,32 @@ static void bgpio_set_with_clear(struct gpio_chip *gc, unsigned int gpio,
+>                 bgc->write_reg(bgc->reg_clr, mask);
+>  }
 >
-> -Required subnode-properties:
-> -- ste,pins : An array of strings. Each string contains the name of a pin or
-> -    group.
-> -
-> -Optional subnode-properties:
-> -- ste,function: A string containing the name of the function to mux to the
-> +Required pin multiplexing subnode properties:
-> +- function: A string containing the name of the function to mux to the
->    pin or group.
-> +- groups : An array of strings. Each string contains the name of a pin
-> +  group that will be combined with the function to form a multiplexing
-> +  set-up.
+> +static void bgpio_set_multiple_with_clear(struct gpio_chip *gc,
+> +                                         unsigned long *mask,
+> +                                         unsigned long *bits)
+> +{
+> +       struct bgpio_chip *bgc = to_bgpio_chip(gc);
+> +       unsigned long set_mask = 0;
+> +       unsigned long clear_mask = 0;
+> +       int i;
+> +
+> +       for (i = 0; i < bgc->bits; i++) {
+> +               if (*mask == 0)
+> +                       break;
+> +               if (__test_and_clear_bit(i, mask)) {
+> +                       if (test_bit(i, bits))
+> +                               set_mask |= bgc->pin2mask(bgc, i);
+> +                       else
+> +                               clear_mask |= bgc->pin2mask(bgc, i);
+> +               }
+> +       }
+> +
+> +       if (set_mask)
+> +               bgc->write_reg(bgc->reg_set, set_mask);
+> +       if (clear_mask)
+> +               bgc->write_reg(bgc->reg_clr, clear_mask);
+> +}
+
+Isn't this function missing spinlock protection?
+
+> +
+>  static void bgpio_set_set(struct gpio_chip *gc, unsigned int gpio, int val)
+>  {
+>         struct bgpio_chip *bgc = to_bgpio_chip(gc);
+> @@ -190,6 +241,31 @@ static void bgpio_set_set(struct gpio_chip *gc, unsigned int gpio, int val)
+>         spin_unlock_irqrestore(&bgc->lock, flags);
+>  }
 >
-> -- ste,config: Handle of pin configuration node (e.g. ste,config = <&slpm_in_wkup_pdis>)
-> +Required pin configuration subnode properties:
-> +- pins: A string array describing the pins affected by the configuration
-> +  in the node.
-> +- ste,config: Handle of pin configuration node
-> +  (e.g. ste,config = <&slpm_in_wkup_pdis>)
->
->  - ste,input : <0/1/2>
->         0: input with no pull
-> @@ -97,32 +102,32 @@ Example board file extract:
->                 uart0 {
->                         uart0_default_mux: uart0_mux {
->                                 u0_default_mux {
-> -                                       ste,function = "u0";
-> -                                       ste,pins = "u0_a_1";
-> +                                       function = "u0";
-> +                                       pins = "u0_a_1";
->                                 };
->                         };
->                         uart0_default_mode: uart0_default {
->                                 uart0_default_cfg1 {
-> -                                       ste,pins = "GPIO0", "GPIO2";
-> +                                       pins = "GPIO0", "GPIO2";
->                                         ste,input = <1>;
->                                 };
->
->                                 uart0_default_cfg2 {
-> -                                       ste,pins = "GPIO1", "GPIO3";
-> +                                       pins = "GPIO1", "GPIO3";
->                                         ste,output = <1>;
->                                 };
->                         };
->                         uart0_sleep_mode: uart0_sleep {
->                                 uart0_sleep_cfg1 {
-> -                                       ste,pins = "GPIO0", "GPIO2";
-> +                                       pins = "GPIO0", "GPIO2";
->                                         ste,config = <&slpm_in_wkup_pdis>;
->                                 };
->                                 uart0_sleep_cfg2 {
-> -                                       ste,pins = "GPIO1";
-> +                                       pins = "GPIO1";
->                                         ste,config = <&slpm_out_hi_wkup_pdis>;
->                                 };
->                                 uart0_sleep_cfg3 {
-> -                                       ste,pins = "GPIO3";
-> +                                       pins = "GPIO3";
->                                         ste,config = <&slpm_out_wkup_pdis>;
->                                 };
->                         };
-> --
-> 1.9.3
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> +static void bgpio_set_multiple_set(struct gpio_chip *gc, unsigned long *mask,
+> +                                  unsigned long *bits)
+> +{
+> +       struct bgpio_chip *bgc = to_bgpio_chip(gc);
+> +       unsigned long flags;
+> +       int i;
+> +
+> +       spin_lock_irqsave(&bgc->lock, flags);
+> +
+> +       for (i = 0; i < bgc->bits; i++) {
+> +               if (*mask == 0)
+> +                       break;
+> +               if (__test_and_clear_bit(i, mask)) {
+> +                       if (test_bit(i, bits))
+> +                               bgc->data |= bgc->pin2mask(bgc, i);
+> +                       else
+> +                               bgc->data &= ~bgc->pin2mask(bgc, i);
+> +               }
+> +       }
+> +
+> +       bgc->write_reg(bgc->reg_set, bgc->data);
+> +
+> +       spin_unlock_irqrestore(&bgc->lock, flags);
+> +}
+
+Couldn't it be possible to factorize a great deal of these 3 functions?
+
+The only difference between bgpio_set_multiple() and
+bgpio_set_multiple_set() is the register that is written. In
+bgpio_set_multiple_set(), you only handle the set and cleared bits in
+different variables.
+
+How about a private function that looks like this:
+
+static void __bgpio_multiple_get_masks(struct bgpio_chip *bgc,
+                                       unsigned long *mask, unsigned long *bits,
+                                       unsigned long *set_mask,
+                                       unsigned long *clear_mask)
+{
+       int i;
+
+       *set_mask = 0;
+       *clear_mask = 0;
+
+       for (i = 0; i < bgc->bits; i++) {
+               if (*mask == 0)
+                       break;
+               if (__test_and_clear_bit(i, mask)) {
+                       if (test_bit(i, bits))
+                               *set_mask |= bgc->pin2mask(bgc, i);
+                       else
+                               *clear_mask |= bgc->pin2mask(bgc, i);
+               }
+       }
+}
+
+Then, you could have:
+
+static void bgpio_set_multiple_with_clear(struct gpio_chip *gc,
+                                         unsigned long *mask,
+                                         unsigned long *bits)
+{
+       struct bgpio_chip *bgc = to_bgpio_chip(gc);
+       unsigned long flags;
+       unsigned long set_mask, clear_mask;
+
+       spin_lock_irqsave(&bgc->lock, flags);
+
+       __bgpio_multiple_get_masks(bgc, mask, bits, &set_mask, &clear_mask);
+
+       if (set_mask)
+               bgc->write_reg(bgc->reg_set, set_mask);
+       if (clear_mask)
+               bgc->write_reg(bgc->reg_clr, clear_mask);
+
+       spin_unlock_irqrestore(&bgc->lock, flags);
+}
+
+and:
+
+static void bgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+                              unsigned long *bits)
+{
+       struct bgpio_chip *bgc = to_bgpio_chip(gc);
+       unsigned long flags;
+       unsigned long set_mask, clear_mask;
+
+       spin_lock_irqsave(&bgc->lock, flags);
+
+       __bgpio_multiple_get_masks(bgc, mask, bits, &set_mask, &clear_mask);
+
+       bgc->data |= set_mask;
+       bgc->data &= ~clear_mask;
+
+       bgc->write_reg(bgc->reg_dat, bgc->data);
+
+       spin_unlock_irqrestore(&bgc->lock, flags);
+}
+
+... and something similar for __bgpio_multiple_get_masks. This would
+probably result in a smaller patch on top or reducing duplicate code.
