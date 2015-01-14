@@ -1,81 +1,90 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Wed, 14 Jan 2015 13:58:36 +0100
-Message-ID: <CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: Re: [PATCH 2/2] mdio-mux-gpio: use new gpiod_get_array and gpiod_put_array functions
+Date: Wed, 14 Jan 2015 14:01:38 +0100
+Message-ID: <13936890.kHirFfPof2@pcimr>
+References: <13407316.QPemVgjPDO@pcimr> <CAAVeFuLqV7CvR2-SNWsrQuBzctQx1wiMtWwjw=cPbp5GRnMdcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuLqV7CvR2-SNWsrQuBzctQx1wiMtWwjw=cPbp5GRnMdcw@mail.gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Dec 18, 2014 at 9:23 AM, Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
+On Wednesday 14 January 2015 14:11:27 Alexandre Courbot wrote:
+> On Sat, Jan 10, 2015 at 12:19 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+> > Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
+> > disposing of GPIO descriptors.
+> >
+> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> > ---
+> > This patch depends on my previous patch "gpiolib: add gpiod_get_array and
+> > gpiod_put_array functions".
+> >
+> >  drivers/net/phy/mdio-mux-gpio.c |   28 ++++++++--------------------
+> >  1 file changed, 8 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+> > index 1eaf81e..35c37da 100644
+> > --- a/drivers/net/phy/mdio-mux-gpio.c
+> > +++ b/drivers/net/phy/mdio-mux-gpio.c
+> > @@ -47,7 +47,6 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+> >  {
+> >         struct mdio_mux_gpio_state *s;
+> >         int num_gpios;
+> > -       unsigned int n;
+> >         int r;
+> >
+> >         if (!pdev->dev.of_node)
+> > @@ -63,16 +62,10 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+> >
+> >         s->num_gpios = num_gpios;
+> >
+> > -       for (n = 0; n < num_gpios; ) {
+> > -               struct gpio_desc *gpio = gpiod_get_index(&pdev->dev, NULL, n,
+> > -                                                        GPIOD_OUT_LOW);
+> > -               if (IS_ERR(gpio)) {
+> > -                       r = PTR_ERR(gpio);
+> > -                       goto err;
+> > -               }
+> > -               s->gpio[n] = gpio;
+> > -               n++;
+> > -       }
+> > +       r = gpiod_get_array(&pdev->dev, NULL, s->gpio, num_gpios,
+> > +                           GPIOD_OUT_LOW);
+> > +       if (r != num_gpios)
+> > +               return r;
+> >
+> >         r = mdio_mux_init(&pdev->dev,
+> >                           mdio_mux_gpio_switch_fn, &s->mux_handle, s);
+> > @@ -80,22 +73,17 @@ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+> >         if (r == 0) {
+> >                 pdev->dev.platform_data = s;
+> >                 return 0;
+> > +       } else {
+> > +               gpiod_put_array(s->gpio, num_gpios);
+> > +               return r;
+> >         }
+> 
+> Suggestion: handle the errors in the if condition, and let normal
+> execution be visible at the first level of indentation of the
+> function. I.e:
+> 
+>     if (r != 0) {
+>         gpiod_put_array(s->gpio, num_gpios);
+>         return r;
+>     }
+> 
+>     pdev->dev.platform_data = s;
+>     return 0;
+> 
+> This is how previous errors are handled in this function and is
+> generally a good thing to do as it makes the function's logic easier
+> to follow.
+> 
 
-> This makes it possible to assign GPIOs at runtime. The
-> motivation for it is because of need to forward GPIOs from
-> one device to an other. That feature may be useful for
-> example with some mfd devices, but initially it is needed
-> because on some Intel Braswell based ACPI platforms the GPIO
-> resources controlling signals of the USB PHY are given to
-> the controller device object for whatever reason, so the
-> driver of that controller needs be able to pass them to the
-> PHY device somehow.
->
-> So basically this is meant to allow patching of bad (bad
-> from Linux kernels point of view) hardware descriptions
-> provided by system fw in the drivers.
->
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->
-> Hi,
->
-> I'm sending this first as a RFC in case you guys have some better
-> idea how to solve our problem. I actually already have couple
-> platforms where the GPIO resources are given to the "wrong" device
-> objects now.
->
-> Originally we were thinking about simply handling our problem with
-> hacks to the PHY drivers, basically also checking if the parent has
-> GPIOs. That would only work if the controller is always the parent,
-> which it's not, but even if it was, it would be too risky. The PHY
-> drivers don't know which controller they are attached to, so what is
-> to say that the GPIOs aren't really attached to the controller.
->
-> So the safest way to handle our problem is to deal with it in quirks
-> in the controller drivers. Solving it by bouncing the GPIOs did not
-> feel ideal there doesn't seem to be any other way. The API is copied
-> from clkdev (clk_register_clkdev). In the end it's really only one
-> function for adding the lookups and one for removing them.
->
-> The way it's implemented is by modifying the current style of handling
-> the lookups a little bit. The per device lookup table is basically
-> reverted back to the single linked-list format since it seems that
-> these lookups may have to be assigned from several sources.
+Ok, will do.
 
-Oh ain't that great.
-
-So now we start patching around the kernel because the ACPI
-tables are erroneous for GPIOs. I'd like some feedback from
-Rafael &| Darren on this patch, i.e. if you two think this is a good
-way of accounting for bad GPIO descriptions in ACPI tables then
-ACK this patch.
-
-I guess the other option would be to fix up the ACPI DSDT
-itself to put resources right, correct? Is this not possible?
-
-Alexandre also need to ACK it before I dare do anything with
-it.
-
-Do we want to use the same mechanism for augmenting
-bad device trees too?
-
-What I like about it so far is the create/remove symmetry
-though.
-
-Yours,
-Linus Walleij
+Thanks for the review.
