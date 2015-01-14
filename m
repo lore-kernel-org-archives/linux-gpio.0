@@ -1,54 +1,90 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpiolib: of: Correct error handling in of_get_named_gpiod_flags
-Date: Wed, 14 Jan 2015 14:39:31 +0900
-Message-ID: <CAAVeFu+R7pMiAKg08c4pCWQ+BGtzuGeuS+D6mmUd5RxryHxVpA@mail.gmail.com>
-References: <1420792844-27781-1-git-send-email-hans.holmberg@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 3/4] gpio: Add find GPIO base in increasing order
+Date: Wed, 14 Jan 2015 09:13:02 +0100
+Message-ID: <CACRpkdZccD_FM+m3US3e40LitH4OsX-8cSS_ju+C541330PdXw@mail.gmail.com>
+References: <1417750722-14027-1-git-send-email-wangzhou.bry@gmail.com>
+	<1417750722-14027-4-git-send-email-wangzhou.bry@gmail.com>
+	<CAAVeFu+Hn1Fk7PDcc4wGHFyJurX0hsW1N1prnPs2j=taGQKrKw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:53394 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750715AbbANFjw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 00:39:52 -0500
-Received: by mail-ig0-f171.google.com with SMTP id z20so20861792igj.4
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2015 21:39:51 -0800 (PST)
-In-Reply-To: <1420792844-27781-1-git-send-email-hans.holmberg@intel.com>
+Received: from mail-ig0-f169.google.com ([209.85.213.169]:46180 "EHLO
+	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755257AbbANING (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 03:13:06 -0500
+Received: by mail-ig0-f169.google.com with SMTP id z20so20463171igj.0
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2015 00:13:05 -0800 (PST)
+In-Reply-To: <CAAVeFu+Hn1Fk7PDcc4wGHFyJurX0hsW1N1prnPs2j=taGQKrKw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans Holmberg <hans.holmberg@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Zhou Wang <wangzhou.bry@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, liguozhu@hisilicon.com, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alan Tull <atull@altera.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jamie Iles <jamie@jamieiles.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, wangzhou1@hisilicon.com
 
-On Fri, Jan 9, 2015 at 5:40 PM, Hans Holmberg <hans.holmberg@intel.com> wrote:
-> of_get_named_gpiod_flags fails with -EPROBE_DEFER in cases
-> where the gpio chip is available and the GPIO translation fails.
+On Wed, Dec 10, 2014 at 9:51 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Fri, Dec 5, 2014 at 12:38 PM, Zhou Wang <wangzhou.bry@gmail.com> wrote:
+>> In function gpiochip_find_base, base number of a GPIO controller
+>> is found in decreasing order. ARCH_NR_GPIOS is used to define from
+>> which number we begin to search for base number of a GPIO controller.
+>>
+>> In fact, ARCH_NR_GPIOS brings us some multiplatform problems, like:
+>> http://www.spinics.net/lists/devicetree/msg60433.html
+>>
+>> This patch adds the support to find base number of a GPIO controller
+>> in increasing order. It will assign base number from 0.
+>> A new dts property called gpio-number-forward must be add to the related
+>> GPIO dts nodes if you want it works well.
 >
-> This causes drivers to be re-probed erroneusly, and hides the
-> real problem(i.e. the GPIO number being out of range).
+> Global GPIO numbers are a Linux-only concept, so your property should
+> be named linux,gpio-number-forward.
 >
-> Signed-off-by: Hans Holmberg <hans.holmberg@intel.com>
-> ---
->  drivers/gpio/gpiolib-of.c |   10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 604dbe6..08261f2 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -45,8 +45,14 @@ static int of_gpiochip_find_and_xlate(struct gpio_chip *gc, void *data)
->                 return false;
->
->         ret = gc->of_xlate(gc, &gg_data->gpiospec, gg_data->flags);
-> -       if (ret < 0)
-> -               return false;
-> +       if (ret < 0) {
-> +               /* We've found the gpio chip, but the translation failed.
-> +                * Return true to stop looking and return the translation
-> +                * error via out_gpio
-> +                */
-> +               gg_data->out_gpio = ERR_PTR(ret);
-> +               return true;
-> +        }
+> But even that way I don't think I like this idea. This just adds some
+> more mess to how the GPIO number space is constructed, and it is
+> already quite messy as it is. You have no guarantee over the probe
+> order of your GPIO controllers, so they may very well be probed in a
+> different order and end up with different base numbers anytime.
 
-Nice catch.
+Yup.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+The way stuff is usually forced ordered in device tree is to use
+aliases, e.g.:
+
+        aliases {
+                serial0 = &pb1176_serial0;
+                serial1 = &pb1176_serial1;
+                serial2 = &pb1176_serial2;
+                serial3 = &pb1176_serial3;
+                serial4 = &fpga_serial;
+        };
+
+By getting the alias ID with of_alias_get_id(np, "serial")
+a certain serial port is assigned to be
+0, 1, 2 ...
+
+I think I could accept a tweak of this patch that will register
+GPIOs beginning from 0 if and only if the alias mechanism is
+used.
+
+        aliases {
+                gpio0 = &foo_gpio0;
+                gpio1 = &expander;
+        };
+
+
+The actual Linux-specific integer base will *NOT* be in the
+device tree, but if you know how many GPIOs are on each
+controller the number space is still stable and predictable
+beginning from 0. If one want to keep track of the Linux
+number space one can do so with comments in the device
+tree or something.
+
+> I know we pushed back against this kind of solution in the past, but
+> it is still more reliable than having a property that affects how the
+> kernel's base finding function works, and will offer us a way to
+> eventually put ARCH_NR_GPIOS and gpiochip_find_base() to rest (at the
+> cost of backwards-compatibility, but we just cannot do without it).
+> Linus, do you agree?
+
+What do you think about the above?
+
+Yours,
+Linus Walleij
