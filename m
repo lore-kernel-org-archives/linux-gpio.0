@@ -1,292 +1,105 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [RFC PATCH v2 3/4] serial: at91: Use helpers for gpio irqs
-Date: Wed, 14 Jan 2015 17:10:26 +0100
-Message-ID: <54B694F2.7010507@atmel.com>
-References: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl> <1420900366-9169-3-git-send-email-j.uzycki@elproma.com.pl> <CACQ1gAjS4TG82VzphC5Hd44SekJv8M322x7dvf91m-n-VqN_=A@mail.gmail.com>
+From: Darren Hart <dvhart@linux.intel.com>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Wed, 14 Jan 2015 08:32:12 -0800
+Message-ID: <54B69A0C.7040505@linux.intel.com>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com> <CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:47632 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752677AbbANQK3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 11:10:29 -0500
-In-Reply-To: <CACQ1gAjS4TG82VzphC5Hd44SekJv8M322x7dvf91m-n-VqN_=A@mail.gmail.com>
+Received: from mga09.intel.com ([134.134.136.24]:37380 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751818AbbANQce (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 14 Jan 2015 11:32:34 -0500
+In-Reply-To: <CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Genoud <richard.genoud@gmail.com>, Janusz Uzycki <j.uzycki@elproma.com.pl>
-Cc: fabio.estevam@freescale.com, Alexandre Courbot <gnurou@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, =?windows-1252?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Le 13/01/2015 17:08, Richard Genoud a =E9crit :
-> 2015-01-10 15:32 GMT+01:00 Janusz Uzycki <j.uzycki@elproma.com.pl>:
->> The patch updates atmel_serial driver to use new mctrl_gpio helpers =
-for
->> gpio irqs. The code is simpler now.
+
+
+On 1/14/15 4:58 AM, Linus Walleij wrote:
+> On Thu, Dec 18, 2014 at 9:23 AM, Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> 
+>> This makes it possible to assign GPIOs at runtime. The
+>> motivation for it is because of need to forward GPIOs from
+>> one device to an other. That feature may be useful for
+>> example with some mfd devices, but initially it is needed
+
++Samuel Ortiz for his thoughts on applicability to MFD.
+
+>> because on some Intel Braswell based ACPI platforms the GPIO
+>> resources controlling signals of the USB PHY are given to
+>> the controller device object for whatever reason, so the
+>> driver of that controller needs be able to pass them to the
+>> PHY device somehow.
 >>
->> Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
+>> So basically this is meant to allow patching of bad (bad
+>> from Linux kernels point of view) hardware descriptions
+>> provided by system fw in the drivers.
+>>
+>> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 >> ---
 >>
->> The patch exists since v2.
->> Compile-test only - please test it on real hardware.
+>> Hi,
 >>
->> ---
->>  drivers/tty/serial/atmel_serial.c | 123 +++++++--------------------=
------------
->>  1 file changed, 20 insertions(+), 103 deletions(-)
+>> I'm sending this first as a RFC in case you guys have some better
+>> idea how to solve our problem. I actually already have couple
+>> platforms where the GPIO resources are given to the "wrong" device
+>> objects now.
 >>
->> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/=
-atmel_serial.c
->> index 4d848a2..a59a892 100644
->> --- a/drivers/tty/serial/atmel_serial.c
->> +++ b/drivers/tty/serial/atmel_serial.c
->> @@ -168,7 +168,6 @@ struct atmel_uart_port {
->>         struct circ_buf         rx_ring;
+>> Originally we were thinking about simply handling our problem with
+>> hacks to the PHY drivers, basically also checking if the parent has
+>> GPIOs. That would only work if the controller is always the parent,
+>> which it's not, but even if it was, it would be too risky. The PHY
+>> drivers don't know which controller they are attached to, so what is
+>> to say that the GPIOs aren't really attached to the controller.
 >>
->>         struct mctrl_gpios      *gpios;
->> -       int                     gpio_irq[UART_GPIO_MAX];
->>         unsigned int            tx_done_mask;
->>         bool                    ms_irq_enabled;
->>         bool                    is_usart;       /* usart or uart */
->> @@ -499,24 +498,18 @@ static void atmel_enable_ms(struct uart_port *=
-port)
+>> So the safest way to handle our problem is to deal with it in quirks
+>> in the controller drivers. Solving it by bouncing the GPIOs did not
+>> feel ideal there doesn't seem to be any other way. The API is copied
+>> from clkdev (clk_register_clkdev). In the end it's really only one
+>> function for adding the lookups and one for removing them.
 >>
->>         atmel_port->ms_irq_enabled =3D true;
->>
->> -       if (atmel_port->gpio_irq[UART_GPIO_CTS] >=3D 0)
->> -               enable_irq(atmel_port->gpio_irq[UART_GPIO_CTS]);
->> -       else
->> +       mctrl_gpio_enable_ms(atmel_port->gpios);
->> +
->> +       if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_CTS))
->>                 ier |=3D ATMEL_US_CTSIC;
->>
->> -       if (atmel_port->gpio_irq[UART_GPIO_DSR] >=3D 0)
->> -               enable_irq(atmel_port->gpio_irq[UART_GPIO_DSR]);
->> -       else
->> +       if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_DSR))
->>                 ier |=3D ATMEL_US_DSRIC;
->>
->> -       if (atmel_port->gpio_irq[UART_GPIO_RI] >=3D 0)
->> -               enable_irq(atmel_port->gpio_irq[UART_GPIO_RI]);
->> -       else
->> +       if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_RI))
->>                 ier |=3D ATMEL_US_RIIC;
->>
->> -       if (atmel_port->gpio_irq[UART_GPIO_DCD] >=3D 0)
->> -               enable_irq(atmel_port->gpio_irq[UART_GPIO_DCD]);
->> -       else
->> +       if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_DCD))
->>                 ier |=3D ATMEL_US_DCDIC;
->>
->>         UART_PUT_IER(port, ier);
->> @@ -538,24 +531,18 @@ static void atmel_disable_ms(struct uart_port =
-*port)
->>
->>         atmel_port->ms_irq_enabled =3D false;
->>
->> -       if (atmel_port->gpio_irq[UART_GPIO_CTS] >=3D 0)
->> -               disable_irq(atmel_port->gpio_irq[UART_GPIO_CTS]);
->> -       else
->> +       mctrl_gpio_disable_ms(atmel_port->gpios);
->> +
->> +       if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_CTS))
->>                 idr |=3D ATMEL_US_CTSIC;
->>
->> -       if (atmel_port->gpio_irq[UART_GPIO_DSR] >=3D 0)
->> -               disable_irq(atmel_port->gpio_irq[UART_GPIO_DSR]);
->> -       else
->> +       if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_DSR))
->>                 idr |=3D ATMEL_US_DSRIC;
->>
->> -       if (atmel_port->gpio_irq[UART_GPIO_RI] >=3D 0)
->> -               disable_irq(atmel_port->gpio_irq[UART_GPIO_RI]);
->> -       else
->> +       if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_RI))
->>                 idr |=3D ATMEL_US_RIIC;
->>
->> -       if (atmel_port->gpio_irq[UART_GPIO_DCD] >=3D 0)
->> -               disable_irq(atmel_port->gpio_irq[UART_GPIO_DCD]);
->> -       else
->> +       if (!mctrl_gpio_is_gpio(atmel_port->gpios, UART_GPIO_DCD))
->>                 idr |=3D ATMEL_US_DCDIC;
->>
->>         UART_PUT_IDR(port, idr);
->> @@ -1161,31 +1148,11 @@ atmel_handle_status(struct uart_port *port, =
-unsigned int pending,
->>  static irqreturn_t atmel_interrupt(int irq, void *dev_id)
->>  {
->>         struct uart_port *port =3D dev_id;
->> -       struct atmel_uart_port *atmel_port =3D to_atmel_uart_port(po=
-rt);
->>         unsigned int status, pending, pass_counter =3D 0;
->> -       bool gpio_handled =3D false;
->>
->>         do {
->>                 status =3D atmel_get_lines_status(port);
->>                 pending =3D status & UART_GET_IMR(port);
->> -               if (!gpio_handled) {
->> -                       /*
->> -                        * Dealing with GPIO interrupt
->> -                        */
->> -                       if (irq =3D=3D atmel_port->gpio_irq[UART_GPI=
-O_CTS])
->> -                               pending |=3D ATMEL_US_CTSIC;
->> -
->> -                       if (irq =3D=3D atmel_port->gpio_irq[UART_GPI=
-O_DSR])
->> -                               pending |=3D ATMEL_US_DSRIC;
->> -
->> -                       if (irq =3D=3D atmel_port->gpio_irq[UART_GPI=
-O_RI])
->> -                               pending |=3D ATMEL_US_RIIC;
->> -
->> -                       if (irq =3D=3D atmel_port->gpio_irq[UART_GPI=
-O_DCD])
->> -                               pending |=3D ATMEL_US_DCDIC;
->> -
->> -                       gpio_handled =3D true;
->> -               }
->>                 if (!pending)
->>                         break;
->>
->> @@ -1665,45 +1632,6 @@ static void atmel_get_ip_name(struct uart_por=
-t *port)
->>         }
->>  }
->>
->> -static void atmel_free_gpio_irq(struct uart_port *port)
->> -{
->> -       struct atmel_uart_port *atmel_port =3D to_atmel_uart_port(po=
-rt);
->> -       enum mctrl_gpio_idx i;
->> -
->> -       for (i =3D 0; i < UART_GPIO_MAX; i++)
->> -               if (atmel_port->gpio_irq[i] >=3D 0)
->> -                       free_irq(atmel_port->gpio_irq[i], port);
->> -}
->> -
->> -static int atmel_request_gpio_irq(struct uart_port *port)
->> -{
->> -       struct atmel_uart_port *atmel_port =3D to_atmel_uart_port(po=
-rt);
->> -       int *irq =3D atmel_port->gpio_irq;
->> -       enum mctrl_gpio_idx i;
->> -       int err =3D 0;
->> -
->> -       for (i =3D 0; (i < UART_GPIO_MAX) && !err; i++) {
->> -               if (irq[i] < 0)
->> -                       continue;
->> -
->> -               irq_set_status_flags(irq[i], IRQ_NOAUTOEN);
->> -               err =3D request_irq(irq[i], atmel_interrupt, IRQ_TYP=
-E_EDGE_BOTH,
->> -                                 "atmel_serial", port);
->> -               if (err)
->> -                       dev_err(port->dev, "atmel_startup - Can't ge=
-t %d irq\n",
->> -                               irq[i]);
->> -       }
->> -
->> -       /*
->> -        * If something went wrong, rollback.
->> -        */
->> -       while (err && (--i >=3D 0))
->> -               if (irq[i] >=3D 0)
->> -                       free_irq(irq[i], port);
->> -
->> -       return err;
->> -}
->> -
->>  /*
->>   * Perform initialization and enable port for reception
->>   */
->> @@ -1735,7 +1663,7 @@ static int atmel_startup(struct uart_port *por=
-t)
->>         /*
->>          * Get the GPIO lines IRQ
->>          */
->> -       retval =3D atmel_request_gpio_irq(port);
->> +       retval =3D mctrl_gpio_request_irqs(atmel_port->gpios);
->>         if (retval)
->>                 goto free_irq;
->>
->> @@ -1872,7 +1800,7 @@ static void atmel_shutdown(struct uart_port *p=
-ort)
->>          * Free the interrupts
->>          */
->>         free_irq(port->irq, port);
->> -       atmel_free_gpio_irq(port);
->> +       mctrl_gpio_free_irqs(atmel_port->gpios);
->>
->>         atmel_port->ms_irq_enabled =3D false;
->>
->> @@ -2501,24 +2429,13 @@ static int atmel_serial_resume(struct platfo=
-rm_device *pdev)
->>  #define atmel_serial_resume NULL
->>  #endif
->>
->> -static int atmel_init_gpios(struct atmel_uart_port *p, struct devic=
-e *dev)
->> +static bool atmel_init_gpios(struct atmel_uart_port *p)
->>  {
->> -       enum mctrl_gpio_idx i;
->> -       struct gpio_desc *gpiod;
->> -
->> -       p->gpios =3D mctrl_gpio_init(dev, 0);
->> +       p->gpios =3D mctrl_gpio_init_dt(&p->uart, 0);
->>         if (IS_ERR_OR_NULL(p->gpios))
->> -               return -1;
->> +               return false;
->>
->> -       for (i =3D 0; i < UART_GPIO_MAX; i++) {
->> -               gpiod =3D mctrl_gpio_to_gpiod(p->gpios, i);
->> -               if (gpiod && (gpiod_get_direction(gpiod) =3D=3D GPIO=
-=46_DIR_IN))
->> -                       p->gpio_irq[i] =3D gpiod_to_irq(gpiod);
->> -               else
->> -                       p->gpio_irq[i] =3D -EINVAL;
->> -       }
->> -
->> -       return 0;
->> +       return true;
->>  }
->>
->>  static int atmel_serial_probe(struct platform_device *pdev)
->> @@ -2558,8 +2475,8 @@ static int atmel_serial_probe(struct platform_=
-device *pdev)
->>         port->backup_imr =3D 0;
->>         port->uart.line =3D ret;
->>
->> -       ret =3D atmel_init_gpios(port, &pdev->dev);
->> -       if (ret < 0)
->> +       port->uart.dev =3D &pdev->dev;
->> +       if (!atmel_init_gpios(port))
->>                 dev_err(&pdev->dev, "%s",
->>                         "Failed to initialize GPIOs. The serial port=
- may not work as expected");
->>
->> --
->> 1.7.11.3
->>
->=20
-> It's ok, no regression found in atmel-serial.
-> Tested on an at91sam9g35, full duplex between 2 serial ports at 57600
-> (one with CTS/RTS handled by the controller, the other with CTS/RTS
-> handled via GPIO).
->=20
-> Tested-by: Richard Genoud <richard.genoud@gmail.com>
+>> The way it's implemented is by modifying the current style of handling
+>> the lookups a little bit. The per device lookup table is basically
+>> reverted back to the single linked-list format since it seems that
+>> these lookups may have to be assigned from several sources.
+> 
+> Oh ain't that great.
+> 
+> So now we start patching around the kernel because the ACPI
+> tables are erroneous for GPIOs. I'd like some feedback from
+> Rafael &| Darren on this patch, i.e. if you two think this is a good
+> way of accounting for bad GPIO descriptions in ACPI tables then
+> ACK this patch.
+> 
+> I guess the other option would be to fix up the ACPI DSDT
+> itself to put resources right, correct? Is this not possible?
 
-Richard,
+This is my gut reaction as well. Heikki, why can't we correct the
+firmware tables? That needs to be made clear before we start adding
+hacks to the kernel.
 
-Thanks a lot for having tested this series.
-On my side, it seems good so:
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+You said, "Bad for Linux", why is this not a problem for other operating
+systems?
 
-Bye,
---=20
-Nicolas Ferre
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Alexandre also need to ACK it before I dare do anything with
+> it.
+> 
+> Do we want to use the same mechanism for augmenting
+> bad device trees too?
+> 
+> What I like about it so far is the create/remove symmetry
+> though.
+> 
+> Yours,
+> Linus Walleij
+> 
+
+-- 
+Darren Hart
+Intel Open Source Technology Center
