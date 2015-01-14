@@ -1,162 +1,42 @@
-From: Y Vo <yvo@apm.com>
-Subject: Re: [PATCH v2 RESEND 1/3] gpio: Add APM X-Gene standby GPIO
- controller driver
-Date: Wed, 14 Jan 2015 15:27:55 +0700
-Message-ID: <CAL4ahLfGNc1sL-hr7bZi_pcxjz7CNHjPRSPnJf_TUCGsbweaDA@mail.gmail.com>
-References: <1418793050-26927-1-git-send-email-yvo@apm.com>
-	<1418793050-26927-2-git-send-email-yvo@apm.com>
-	<CACRpkdZe7Huiruu-iSNU4MWaiLo_qL=QAab1crummuuVOEJ0zQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/5] ARM: sa1100: split irq handling for low GPIOs
+Date: Wed, 14 Jan 2015 10:35:29 +0100
+Message-ID: <CACRpkdavZdZuYxLW-i4BJM0hFqt73n7AhrSzUynBsuDNj5HKGg@mail.gmail.com>
+References: <1419242740-20219-1-git-send-email-dbaryshkov@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og112.obsmtp.com ([64.18.0.24]:40604 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753258AbbANI16 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 03:27:58 -0500
-Received: by mail-pa0-f46.google.com with SMTP id lf10so9122178pab.5
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2015 00:27:56 -0800 (PST)
-In-Reply-To: <CACRpkdZe7Huiruu-iSNU4MWaiLo_qL=QAab1crummuuVOEJ0zQ@mail.gmail.com>
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:61569 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753372AbbANJfa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 04:35:30 -0500
+Received: by mail-ie0-f181.google.com with SMTP id rl12so7774311iec.12
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2015 01:35:29 -0800 (PST)
+In-Reply-To: <1419242740-20219-1-git-send-email-dbaryshkov@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jan 13, 2015 at 4:40 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Dec 17, 2014 at 6:10 AM, Y Vo <yvo@apm.com> wrote:
->
->> Add APM X-Gene standby GPIO controller driver.
->
-> Write something about what platform an arch this is and so
-> on, this is too terse commit message for a new driver.
->
->> Signed-off-by: Y Vo <yvo@apm.com>
-> (...)
->
->> +config GPIO_XGENE_SB
->> +       tristate "APM X-Gene GPIO standby controller support"
->> +       depends on ARCH_XGENE && OF_GPIO
->
-> select GPIO_GENERIC
-Why ?
-> see below on why.
->
->> +       help
->> +         This driver supports the GPIO block within the APM X-Gene
->> +         Standby Domain. Say yes here to enable the GPIO functionality.
->> +
->>  config GPIO_XILINX
->>         bool "Xilinx GPIO support"
->>         depends on PPC_OF || MICROBLAZE || ARCH_ZYNQ
->> diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
->> new file mode 100644
->> index 0000000..1248448
->
-> (...)
->> +++ b/drivers/gpio/gpio-xgene-sb.c
->> +#include <linux/module.h>
->> +#include <linux/io.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/of_gpio.h>
->> +#include <linux/gpio.h>
->
-> #include <linux/gpio/driver.h>
->
-> instead.
->
->> +#include <linux/of_irq.h>
->> +#include <linux/acpi.h>
-OK.
+On Mon, Dec 22, 2014 at 11:05 AM, Dmitry Eremin-Solenikov
+<dbaryshkov@gmail.com> wrote:
 
-> OK, why?
+> Low GPIO pins use an interrupt in SC interrupts space. However it's
+> possible to handle them as if all the GPIO interrupts are instead tied
+> to single GPIO handler, which later decodes GEDR register and
+> chain-calls next IRQ handler. So split first 11 interrupts into system
+> part (IRQ_GPIO0_SC - IRQ_GPIO10_SC) which work exactly like the rest of
+> system controller interrupts and real GPIO interrupts
+> (IRQ_GPIO0..IRQ_GPIO10). A single handler sa1100_gpio_handler then
+> decodes and calls next handler.
 >
->> +#include <linux/efi.h>
-I will remove.
+> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
-> Why?
->
->> +#include <linux/string.h>
->> +#include <linux/of_address.h>
+I applied all 5 patches and tested on the Compaq iPAQ H3600
+with some GPIO lines with IRQs and all work as before.
 
-I will remove.
+Tested-by: Linus Walleij <linus.walleij@linaro.org>
+for all 5 patches.
 
-> #include <linux/basic_mmio_gpio.h>
-> when you start using GENERIC_GPIO
->
->> +
->> +#define XGENE_MAX_GPIO_DS              22
->> +#define XGENE_MAX_GPIO_DS_IRQ          6
->> +
->> +#define GPIO_MASK(x)                   (1U << ((x) % 32))
->> +#define GPIO_DIR_IN                    0
->> +#define GPIO_DIR_OUT                   1
->> +
->> +#define MPA_GPIO_INT_LVL               0x0290
->> +#define MPA_GPIO_OE_ADDR               0x029c
->> +#define MPA_GPIO_OUT_ADDR              0x02a0
->> +#define MPA_GPIO_IN_ADDR               0x02a4
->> +#define MPA_GPIO_SEL_LO                        0x0294
->> +#define MPA_GPIO_SEL_HIGH              0x029c
->> +
->> +struct xgene_gpio_sb {
->> +       struct of_mm_gpio_chip mm;
->> +       u32 *irq;
->> +       u32 nirq;
->> +       spinlock_t lock; /* mutual exclusion */
->> +};
->
-> Add kerneldoc to this struct.
->
->> +static void xgene_gpio_set_bit(void __iomem *reg, u32 gpio, int val)
-> (...)
->> +static int xgene_gpio_sb_get(struct gpio_chip *gc, u32 gpio)
->
-> This looks very much like a memory-mapped standard GPIO controller,
-> use drivers/gpio/gpio-generic.c with some IRQ add-on, compare
-> to any other driver selecting GPIO_GENERIC for guidance:
-> drivers/gpio/gpio-74xx-mmio.c, gpio-dwapb.c etc.
-You mean I must rewrite to use GPIO_GENERIC follow gpio-74xx-mmio.c,
-gpio-dwapb.c ?
-
->> +static int apm_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
->> +{
->> +       struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
->> +       struct xgene_gpio_sb *chip = to_xgene_gpio_sb(mm_gc);
->> +
->> +       if (chip->irq[gpio])
->> +               return chip->irq[gpio];
->> +
->> +       return -ENXIO;
->> +}
->> +
->> +static int xgene_gpio_sb_probe(struct platform_device *pdev)
->> +{
->> +       struct of_mm_gpio_chip *mm;
->> +       struct xgene_gpio_sb *apm_gc;
->> +       u32 ret, i;
->> +       u32 default_pins[] = {0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D};
->
-> Um, pins... call these "lines" instead to avoid confusion with the pin
-> control subsystem.
-
-I will change.
-
->> +       struct resource *res;
->> +
->> +       apm_gc = devm_kzalloc(&pdev->dev, sizeof(*apm_gc), GFP_KERNEL);
->> +       if (!apm_gc)
->> +               return -ENOMEM;
->> +
->> +       mm = &apm_gc->mm;
->> +       mm->gc.direction_input = xgene_gpio_sb_dir_in;
->> +       mm->gc.direction_output = xgene_gpio_sb_dir_out;
->> +       mm->gc.get = xgene_gpio_sb_get;
->> +       mm->gc.set = xgene_gpio_sb_set;
->> +       mm->gc.to_irq = apm_gpio_sb_to_irq;
->> +       mm->gc.base = -1;
->> +       mm->gc.label = dev_name(&pdev->dev);
->
-> gc has a device tree .np node and a .dev struct device *
-> pointer, assign them here. (Also after you switch to GENERIC_GPIO.)
->
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
