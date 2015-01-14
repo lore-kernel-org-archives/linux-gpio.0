@@ -1,18 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: dove: Constify struct regmap_config and of_device_id
-Date: Wed, 14 Jan 2015 12:59:54 +0100
-Message-ID: <CACRpkdbe_=M51nGSHxV9BFrxwx7j-V62NSpf2REuXAf1zLycFw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: bcm281xx: Constify struct regmap_config
+Date: Wed, 14 Jan 2015 13:00:53 +0100
+Message-ID: <CACRpkdbLTT7Ut5Va3ktJkMmTxRJ1o7TQxK_YN=wk3BnP0vrdjw@mail.gmail.com>
 References: <1420448590-9503-1-git-send-email-k.kozlowski@samsung.com>
+	<1420448590-9503-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:54351 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752505AbbANL7z (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 06:59:55 -0500
-Received: by mail-ig0-f171.google.com with SMTP id z20so22028010igj.4
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2015 03:59:54 -0800 (PST)
-In-Reply-To: <1420448590-9503-1-git-send-email-k.kozlowski@samsung.com>
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:52933 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751995AbbANMAy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jan 2015 07:00:54 -0500
+Received: by mail-ie0-f177.google.com with SMTP id rd18so8273802iec.8
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2015 04:00:53 -0800 (PST)
+In-Reply-To: <1420448590-9503-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
