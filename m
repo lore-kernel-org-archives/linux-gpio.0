@@ -1,52 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] gpio: sysfs: fix attribute leaks and races
-Date: Thu, 15 Jan 2015 17:33:33 +0100
-Message-ID: <CACRpkdYuC7P0Mhv8dqkhMnem8atH7nu98TjqaiGjPRE6HT52gg@mail.gmail.com>
-References: <1421150406-20255-1-git-send-email-johan@kernel.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH RESEND v3] gpio: lib-sysfs: Add 'wakeup' attribute
+Date: Thu, 15 Jan 2015 17:34:55 +0100
+Message-ID: <CACRpkdYJ_kZw3UfYc5vGd0cxwDJD5WR69c6Q5xTvmFnb7NOfkA@mail.gmail.com>
+References: <1420481779-22841-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421150406-20255-1-git-send-email-johan@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1420481779-22841-1-git-send-email-soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 13, 2015 at 1:00 PM, Johan Hovold <johan@kernel.org> wrote:
+On Mon, Jan 5, 2015 at 7:16 PM, Soren Brinkmann
+<soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org> wrote:
 
-> Here are three more patches for 3.19 fixing some long-standing memory
-> leaks and races (with userspace) in the gpio sysfs-interface
-> implementation.
+> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
+> marking/unmarking a GPIO as wake IRQ.
+> The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
+> is associated with that GPIO and the irqchip implements set_wake().
+> Writing 'enabled' to that file will enable wake for that GPIO, while
+> writing 'disabled' will disable wake.
+> Reading that file will return either 'disabled' or 'enabled' depening on
+> the currently set flag for the GPIO's IRQ.
+>
+> Signed-off-by: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v3:
+>  - add documentation
 
-All three patches applied for fixes.
+As per discussion with Johan Hovold I have had to remove this patch
+from the development tree.
 
-Thank you for daring to go into the sysfs mess, noone dares to go
-there but for you. This interface was merged when the GPIO subsystem
-was unmaintained IIRC and has serious design and code issues.
-
-> The memory leaks are marked for stable, but I'll need to backport the=
-m
-> to pre-3.18 kernels once they are upstream due to commit 0eb4c6c2671c
-> ("gpio: move sysfs support to its own file").
-
-OK we'll run into it. Just send them to Greg once this is upstream.
-
-> Please note that these patches will cause a conflict with 3511ee7b331=
-2
-> ("gpio: lib-sysfs: Add 'wakeup' attribute") in gpio/devel, which adds
-> yet another device attribute without ever removing it. Unless the com=
-mit
-> in question can be reverted, that leak could be fixed as part of the
-> merge resolution, I guess.
-
-I took the patch out of my tree.
-
-S=C3=B6ren: can you rebase the patch on top of my "fixes" branch or
-the next linux-next and I'll apply it once I can merge the next -rc
-into my devel branch.
-Include Johan on CC and check the leak fixes in this patch series
-to make sure we don't add more of them.
+Please rebase as indicated on the "fixes" branch, fix any resource
+leaks, include Johan Hovold on CC for review and resend.
 
 Yours,
 Linus Walleij
