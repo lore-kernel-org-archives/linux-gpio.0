@@ -1,34 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] gpio: max732x: Fix possible deadlock
-Date: Thu, 15 Jan 2015 18:04:16 +0100
-Message-ID: <CACRpkdY9iV8_2BX7fSkkdKFmP3d8QjHATMLfHdP9-oindRWrnw@mail.gmail.com>
-References: <1421156505-16600-1-git-send-email-semen.protsenko@globallogic.com>
-	<1421156505-16600-4-git-send-email-semen.protsenko@globallogic.com>
+From: =?UTF-8?Q?Andreas_Bofj=C3=A4ll?= <andreas@gazonk.org>
+Subject: Re: [PATCH] gpio: f7188x: add GPIO support for F71869
+Date: Thu, 15 Jan 2015 18:12:14 +0100 (CET)
+Message-ID: <alpine.LNX.2.11.1501151810310.25141@gazonk.org>
+References: <1419467255-9658-1-git-send-email-andreas@gazonk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; format=flowed; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:57112 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753808AbbAORER (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 12:04:17 -0500
-Received: by mail-ie0-f169.google.com with SMTP id y20so16014828ier.0
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 09:04:16 -0800 (PST)
-In-Reply-To: <1421156505-16600-4-git-send-email-semen.protsenko@globallogic.com>
+Received: from foo.gazonk.org ([212.247.24.42]:37778 "HELO gazonk.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1751658AbbAORS6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 15 Jan 2015 12:18:58 -0500
+In-Reply-To: <1419467255-9658-1-git-send-email-andreas@gazonk.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Semen Protsenko <semen.protsenko@globallogic.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marc Zyngier <maz@misterjones.org>, Grygorii Strashko <grygorii.strashko@globallogic.com>, Illia Smyrnov <illia.smyrnov@globallogic.com>
+To: linux-gpio@vger.kernel.org
 
-On Tue, Jan 13, 2015 at 2:41 PM, Semen Protsenko
-<semen.protsenko@globallogic.com> wrote:
+On Thu, 25 Dec 2014, Andreas Bofjall wrote:
 
-> This patch was derived from next one:
-> "gpio: fix pca953x set_type 'scheduling while atomic' bug".
+> Add support for the GPIOs found on the Fintek SuperI/O chip F71869, such
+> as the one found on the Jetway JNF99-525 motherboard, to the f7188x gpio
+> driver.
 >
-> After adding entry that consumes max732x GPIO as interrupt line to dts
-> file, deadlock appears somewhere in max732x probe function.
+> Signed-off-by: Andreas Bofjall <andreas@gazonk.org>
 
-Patch applied.
+Hi,
 
-Yours,
-Linus Walleij
+gentle ping on this?
+
+/Andreas
