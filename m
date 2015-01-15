@@ -1,128 +1,94 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Thu, 15 Jan 2015 11:40:03 +0200
-Message-ID: <20150115094003.GA22466@kuha.fi.intel.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
- <CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
- <54B69A0C.7040505@linux.intel.com>
- <2901311.HTghqkaiPd@vostro.rjw.lan>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCHv5 1/2] gpio: sch: Consolidate similar algorithms
+Date: Thu, 15 Jan 2015 10:49:12 +0100
+Message-ID: <CACRpkdbOz0VAH1RzaXdDyfDxzTtAuBNA_yGQoS8G_y8JxCFJiw@mail.gmail.com>
+References: <1418031490-17716-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+	<1418031490-17716-2-git-send-email-rebecca.swee.fun.chang@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2901311.HTghqkaiPd@vostro.rjw.lan>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Darren Hart <dvhart@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Arnd Bergmann <arnd@arndb.de>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Ortiz, Samuel" <samuel.ortiz@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:39342 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751737AbbAOJtN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 04:49:13 -0500
+Received: by mail-ig0-f180.google.com with SMTP id h15so13677851igd.1
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 01:49:12 -0800 (PST)
+In-Reply-To: <1418031490-17716-2-git-send-email-rebecca.swee.fun.chang@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Cc: Mika Westerberg <mika.westerberg@intel.com>, Alexandre Courbot <gnurou@gmail.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denis Turischev <denis.turischev@compulab.co.il>
 
-On Thu, Jan 15, 2015 at 10:28:03AM +0100, Rafael J. Wysocki wrote:
-> On Wednesday, January 14, 2015 08:32:12 AM Darren Hart wrote:
-> > 
-> > On 1/14/15 4:58 AM, Linus Walleij wrote:
-> > > On Thu, Dec 18, 2014 at 9:23 AM, Heikki Krogerus
-> > > <heikki.krogerus@linux.intel.com> wrote:
-> > > 
-> > >> This makes it possible to assign GPIOs at runtime. The
-> > >> motivation for it is because of need to forward GPIOs from
-> > >> one device to an other. That feature may be useful for
-> > >> example with some mfd devices, but initially it is needed
-> > 
-> > +Samuel Ortiz for his thoughts on applicability to MFD.
-> > 
-> > >> because on some Intel Braswell based ACPI platforms the GPIO
-> > >> resources controlling signals of the USB PHY are given to
-> > >> the controller device object for whatever reason, so the
-> > >> driver of that controller needs be able to pass them to the
-> > >> PHY device somehow.
-> > >>
-> > >> So basically this is meant to allow patching of bad (bad
-> > >> from Linux kernels point of view) hardware descriptions
-> > >> provided by system fw in the drivers.
-> > >>
-> > >> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > >> ---
-> > >>
-> > >> Hi,
-> > >>
-> > >> I'm sending this first as a RFC in case you guys have some better
-> > >> idea how to solve our problem. I actually already have couple
-> > >> platforms where the GPIO resources are given to the "wrong" device
-> > >> objects now.
-> > >>
-> > >> Originally we were thinking about simply handling our problem with
-> > >> hacks to the PHY drivers, basically also checking if the parent has
-> > >> GPIOs. That would only work if the controller is always the parent,
-> > >> which it's not, but even if it was, it would be too risky. The PHY
-> > >> drivers don't know which controller they are attached to, so what is
-> > >> to say that the GPIOs aren't really attached to the controller.
-> > >>
-> > >> So the safest way to handle our problem is to deal with it in quirks
-> > >> in the controller drivers. Solving it by bouncing the GPIOs did not
-> > >> feel ideal there doesn't seem to be any other way. The API is copied
-> > >> from clkdev (clk_register_clkdev). In the end it's really only one
-> > >> function for adding the lookups and one for removing them.
-> > >>
-> > >> The way it's implemented is by modifying the current style of handling
-> > >> the lookups a little bit. The per device lookup table is basically
-> > >> reverted back to the single linked-list format since it seems that
-> > >> these lookups may have to be assigned from several sources.
-> > > 
-> > > Oh ain't that great.
-> > > 
-> > > So now we start patching around the kernel because the ACPI
-> > > tables are erroneous for GPIOs. I'd like some feedback from
-> > > Rafael &| Darren on this patch, i.e. if you two think this is a good
-> > > way of accounting for bad GPIO descriptions in ACPI tables then
-> > > ACK this patch.
-> > > 
-> > > I guess the other option would be to fix up the ACPI DSDT
-> > > itself to put resources right, correct? Is this not possible?
-> > 
-> > This is my gut reaction as well.
-> 
-> Pretty much agreed.
-> 
-> > Heikki, why can't we correct the firmware tables? That needs to be made clear
-> > before we start adding hacks to the kernel.
-> 
-> We need to start working in that direction really.  Fixing problems in ACPI
-> tables via kernel code is not going to scale sufficiently IMO.
+On Mon, Dec 8, 2014 at 10:38 AM, Chang Rebecca Swee Fun
+<rebecca.swee.fun.chang@intel.com> wrote:
 
-Fixing the DSDT produced by the firmware was my first suggesting for
-this, but it just does not seem to be happening. These products are
-already out on the market (this is one of them [1]) and what I have
-understood is that the firmware just is what it is. It's almost as if
-there is nobody even developing it for these products anymore. Even
-fixes would not go in and this is not even considered a fix. Things
-work just find for them with their hacked kernel.
+> Consolidating similar algorithms into common functions to make
+> GPIO SCH simpler and manageable.
+>
+> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
-So the firmware and the ACPI tables it provides are not going to be
-fixed. What else can we do? Can we expect the users to always use
-custom DSDT, or maybe somekind of custom AML snipped (is something
-like that even possible), when using these products?
+I have removed this patch from the tree. It breaks completely
+in build and looks strange:
 
-> > You said, "Bad for Linux", why is this not a problem for other operating
-> > systems?
-> 
-> Good question. :-)
+> +static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
+> +                            int val)
 
-I would imagine certain operating systems consider a component like
-PHY as something that should always be handled by the controller
-driver. It does not seem to be a problem for them even if every second
-product using the same SoC happens to have different PHY. All of them
-will have a custom controller driver in any case. Even though the
-example product below is an Android tablet, to me it looks like the
-style of writing software comes straight from those "other" operation
-systems.
+Takes struct gpio_chip * as argument...
 
-At least it seems clear that these guys don't understand that it's not
-possible to do things like write a new driver for every product using
-the same SoC in Linux.
+> +static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+> +{
+> +       struct sch_gpio *sch = to_sch_gpio(gc);
+>
+> +       spin_lock(&sch->lock);
+> +       sch_gpio_reg_set(sch, gpio_num, GIO, 1);
 
-[1] http://www.trekstor.de/detail-surftabs-en/product/surftab-xintron-i-70.html
+Passes something else as argument.
 
-Cheers,
+>  static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+>  {
+>         struct sch_gpio *sch = to_sch_gpio(gc);
+> -       u8 curr_vals;
+> -       unsigned short offset, bit;
+>
+>         spin_lock(&sch->lock);
+> -
+> -       offset = sch_gpio_offset(sch, gpio_num, GLV);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> -
+> -       curr_vals = inb(sch->iobase + offset);
+> -
+> -       if (val)
+> -               outb(curr_vals | (1 << bit), sch->iobase + offset);
+> -       else
+> -               outb((curr_vals & ~(1 << bit)), sch->iobase + offset);
+> -
+> +       sch_gpio_reg_set(gc, gpio_num, GLV, val);
 
--- 
-heikki
+Here it is correct.
+
+> @@ -139,18 +123,9 @@ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+>                                   int val)
+>  {
+>         struct sch_gpio *sch = to_sch_gpio(gc);
+> -       u8 curr_dirs;
+> -       unsigned short offset, bit;
+>
+>         spin_lock(&sch->lock);
+> -
+> -       offset = sch_gpio_offset(sch, gpio_num, GIO);
+> -       bit = sch_gpio_bit(sch, gpio_num);
+> -
+> -       curr_dirs = inb(sch->iobase + offset);
+> -       if (curr_dirs & (1 << bit))
+> -               outb(curr_dirs & ~(1 << bit), sch->iobase + offset);
+> -
+> +       sch_gpio_reg_set(sch, gpio_num, GIO, 0);
+
+Wrong again. Etc.
+
+Makes me suspect that this patch is not tested at all, so dropped.
+
+Yours,
+Linus Walleij
