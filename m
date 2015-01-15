@@ -1,38 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 RESEND 2/3] Documentation: gpio: Add APM X-Gene standby
- GPIO controller DTS binding
-Date: Thu, 15 Jan 2015 17:16:01 +0100
-Message-ID: <CACRpkdaQWf6jOFkX1Lq0NWm_wfxw1NuajOwpJwA5_sZ8CdAa4Q@mail.gmail.com>
-References: <1418793050-26927-1-git-send-email-yvo@apm.com>
-	<1418793050-26927-3-git-send-email-yvo@apm.com>
-	<CACRpkdbcdf7Ub9uYbeqUe1La1dnVeWCxK8N7=iVZuBtuKHFHFA@mail.gmail.com>
-	<CAL4ahLfcMsu2i2efiwq96a3YD4dChBEuJeEnQ7tsZH6et8H=sw@mail.gmail.com>
+Subject: Re: [PATCH] gpio/Kconfig: Fix X86 arch name
+Date: Thu, 15 Jan 2015 17:17:44 +0100
+Message-ID: <CACRpkdaqdw39CO5OuOaawf7rwiKc6uVqGoak=BOSowSpzBH9tg@mail.gmail.com>
+References: <1421142117-16371-1-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:45442 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754187AbbAOQQC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 11:16:02 -0500
-Received: by mail-ig0-f178.google.com with SMTP id b16so15304123igk.5
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 08:16:01 -0800 (PST)
-In-Reply-To: <CAL4ahLfcMsu2i2efiwq96a3YD4dChBEuJeEnQ7tsZH6et8H=sw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1421142117-16371-1-git-send-email-ricardo.ribalda@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Paul Bolle <pebolle@tiscali.nl>, Valentin Rothberg <valentinrothberg@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Y Vo <yvo@apm.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
 
-On Tue, Jan 13, 2015 at 10:41 AM, Y Vo <yvo@apm.com> wrote:
-> Yes, exactly 6 interrupts. As I describe before:
-> - There are 22 GPIO_DSs.
-> - Only 6 GPIO_DSs from 0x08..0xD which supports interrupts
+On Tue, Jan 13, 2015 at 10:41 AM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-What I'm saying is that you need to describe this in the binding
-document itself.
+> X86 Kconfig symbol is X86, not ARCH_X86.
+>
+> Fixes: c586b3075d5b47d8 (gpio/xilinx: Add support for X86 Arch)
+> Reported-by: Paul Bolle <pebolle@tiscali.nl>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-If you described it somewhere else doesn't count.
-
-So update the patch.
+OK patch applied, let's see if the autobuilders puke on us now...
 
 Yours,
 Linus Walleij
