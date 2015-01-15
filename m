@@ -1,41 +1,70 @@
-From: Masahiro Yamada <yamada.m@jp.panasonic.com>
-Subject: [PATCH] Documentation: gpio: fix bindings document
-Date: Thu, 15 Jan 2015 17:52:40 +0900
-Message-ID: <1421311960-4120-1-git-send-email-yamada.m@jp.panasonic.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Thu, 15 Jan 2015 10:21:24 +0100
+Message-ID: <1445095.bPkYZhscYx@vostro.rjw.lan>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com> <20150108082510.GA19346@kuha.fi.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150108082510.GA19346@kuha.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Alexandre Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-gpio@vger.kernel.org, Masahiro Yamada <yamada.m@jp.panasonic.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
----
+On Thursday, January 08, 2015 10:25:10 AM Heikki Krogerus wrote:
+> On Thu, Dec 18, 2014 at 10:23:18AM +0200, Heikki Krogerus wrote:
+> > This makes it possible to assign GPIOs at runtime. The
+> > motivation for it is because of need to forward GPIOs from
+> > one device to an other. That feature may be useful for
+> > example with some mfd devices, but initially it is needed
+> > because on some Intel Braswell based ACPI platforms the GPIO
+> > resources controlling signals of the USB PHY are given to
+> > the controller device object for whatever reason, so the
+> > driver of that controller needs be able to pass them to the
+> > PHY device somehow.
+> > 
+> > So basically this is meant to allow patching of bad (bad
+> > from Linux kernels point of view) hardware descriptions
+> > provided by system fw in the drivers.
+> > 
+> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > ---
+> > 
+> > Hi,
+> > 
+> > I'm sending this first as a RFC in case you guys have some better
+> > idea how to solve our problem. I actually already have couple
+> > platforms where the GPIO resources are given to the "wrong" device
+> > objects now.
+> > 
+> > Originally we were thinking about simply handling our problem with
+> > hacks to the PHY drivers, basically also checking if the parent has
+> > GPIOs. That would only work if the controller is always the parent,
+> > which it's not, but even if it was, it would be too risky. The PHY
+> > drivers don't know which controller they are attached to, so what is
+> > to say that the GPIOs aren't really attached to the controller.
+> > 
+> > So the safest way to handle our problem is to deal with it in quirks
+> > in the controller drivers. Solving it by bouncing the GPIOs did not
+> > feel ideal there doesn't seem to be any other way. The API is copied
+> > from clkdev (clk_register_clkdev). In the end it's really only one
+> > function for adding the lookups and one for removing them.
+> > 
+> > The way it's implemented is by modifying the current style of handling
+> > the lookups a little bit. The per device lookup table is basically
+> > reverted back to the single linked-list format since it seems that
+> > these lookups may have to be assigned from several sources.
+> > 
+> > Thanks,
+> 
+> Gentle ping on this.
 
- Documentation/devicetree/bindings/gpio/gpio.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Please CC patches involving ACPI in *any* *way* way to linux-acpi@vger.kernel.org.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index b9bd1d6..f7a158d 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -69,7 +69,8 @@ GPIO pin number, and GPIO flags as accepted by the "qe_pio_e" gpio-controller.
- ----------------------------------
- 
- A gpio-specifier should contain a flag indicating the GPIO polarity; active-
--high or active-low. If it does, the follow best practices should be followed:
-+high or active-low. If it does, the following best practices should be
-+followed:
- 
- The gpio-specifier's polarity flag should represent the physical level at the
- GPIO controller that achieves (or represents, for inputs) a logically asserted
-@@ -147,7 +148,7 @@ contains information structures as follows:
- 	numeric-gpio-range ::=
- 			<pinctrl-phandle> <gpio-base> <pinctrl-base> <count>
- 	named-gpio-range ::= <pinctrl-phandle> <gpio-base> '<0 0>'
--	gpio-phandle : phandle to pin controller node.
-+	pinctrl-phandle : phandle to pin controller node
- 	gpio-base : Base GPIO ID in the GPIO controller
- 	pinctrl-base : Base pinctrl pin ID in the pin controller
- 	count : The number of GPIOs/pins in this range
+Thanks!
+
 -- 
-1.9.1
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
