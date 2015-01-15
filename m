@@ -1,37 +1,34 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 1/2] sh-pfc: r8a7791: fix typo in MLB_CLK
-Date: Thu, 15 Jan 2015 20:03:49 +0300
-Message-ID: <54B7F2F5.6060207@cogentembedded.com>
-References: <1479250.GJuNxlSkHs@wasted.cogentembedded.com> <CACRpkdYo0Jf5yXrwHsPL+L-6VH7OkpYMi6UtsmrHEG1qmzCCsA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/4] gpio: max732x: Fix possible deadlock
+Date: Thu, 15 Jan 2015 18:04:16 +0100
+Message-ID: <CACRpkdY9iV8_2BX7fSkkdKFmP3d8QjHATMLfHdP9-oindRWrnw@mail.gmail.com>
+References: <1421156505-16600-1-git-send-email-semen.protsenko@globallogic.com>
+	<1421156505-16600-4-git-send-email-semen.protsenko@globallogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYo0Jf5yXrwHsPL+L-6VH7OkpYMi6UtsmrHEG1qmzCCsA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:57112 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753808AbbAORER (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 12:04:17 -0500
+Received: by mail-ie0-f169.google.com with SMTP id y20so16014828ier.0
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 09:04:16 -0800 (PST)
+In-Reply-To: <1421156505-16600-4-git-send-email-semen.protsenko@globallogic.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Semen Protsenko <semen.protsenko@globallogic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marc Zyngier <maz@misterjones.org>, Grygorii Strashko <grygorii.strashko@globallogic.com>, Illia Smyrnov <illia.smyrnov@globallogic.com>
 
-Hello.
+On Tue, Jan 13, 2015 at 2:41 PM, Semen Protsenko
+<semen.protsenko@globallogic.com> wrote:
 
-On 01/15/2015 07:10 PM, Linus Walleij wrote:
+> This patch was derived from next one:
+> "gpio: fix pca953x set_type 'scheduling while atomic' bug".
+>
+> After adding entry that consumes max732x GPIO as interrupt line to dts
+> file, deadlock appears somewhere in max732x probe function.
 
->> The R8A7791 manual sometimes calls the signal MLB_CLK and sometimes MLB_CK; the
->> latter can only be encountered in the PFC section and  is probably  just a typo
->> (this  signal is always called MLB_CLK in the R8A7790  manual). Fix occurences
->> of MLB_CK throughout the R8A7791 PFC driver.
+Patch applied.
 
->> Based on original patch by Andrey Gusakov <andrey.gusakov@cogentembedded.com>.
-
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-> Patch applied with the ACKs.
-
-    Thanks. But to which tree/branch? I'm not seeing it anywhere...
-
-> Yours,
-> Linus Walleij
-
-WBR, Sergei
-
+Yours,
+Linus Walleij
