@@ -1,97 +1,63 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCHv5 1/2] gpio: sch: Consolidate similar algorithms
-Date: Thu, 15 Jan 2015 19:11:48 +0900
-Message-ID: <CAAVeFuJ+rus5+tjdYxUwGahNCSR1RnoFt=8XEHZ-jznvFj+L4g@mail.gmail.com>
-References: <1418031490-17716-1-git-send-email-rebecca.swee.fun.chang@intel.com>
- <1418031490-17716-2-git-send-email-rebecca.swee.fun.chang@intel.com> <CACRpkdbOz0VAH1RzaXdDyfDxzTtAuBNA_yGQoS8G_y8JxCFJiw@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] Documentation: gpio: fix bindings document
+Date: Thu, 15 Jan 2015 16:00:31 +0200
+Message-ID: <6060230.fRgRe49Afg@avalon>
+References: <1421311960-4120-1-git-send-email-yamada.m@jp.panasonic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:47213 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752147AbbAOKMJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 05:12:09 -0500
-In-Reply-To: <CACRpkdbOz0VAH1RzaXdDyfDxzTtAuBNA_yGQoS8G_y8JxCFJiw@mail.gmail.com>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51440 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751613AbbAOOAF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 09:00:05 -0500
+In-Reply-To: <1421311960-4120-1-git-send-email-yamada.m@jp.panasonic.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>, Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denis Turischev <denis.turischev@compulab.co.il>
+To: Masahiro Yamada <yamada.m@jp.panasonic.com>
+Cc: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Alexandre Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org
 
-On Thu, Jan 15, 2015 at 6:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Dec 8, 2014 at 10:38 AM, Chang Rebecca Swee Fun
-> <rebecca.swee.fun.chang@intel.com> wrote:
->
->> Consolidating similar algorithms into common functions to make
->> GPIO SCH simpler and manageable.
->>
->> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
->> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->
-> I have removed this patch from the tree. It breaks completely
-> in build and looks strange:
->
->> +static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
->> +                            int val)
->
-> Takes struct gpio_chip * as argument...
->
->> +static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
->> +{
->> +       struct sch_gpio *sch = to_sch_gpio(gc);
->>
->> +       spin_lock(&sch->lock);
->> +       sch_gpio_reg_set(sch, gpio_num, GIO, 1);
->
-> Passes something else as argument.
->
->>  static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
->>  {
->>         struct sch_gpio *sch = to_sch_gpio(gc);
->> -       u8 curr_vals;
->> -       unsigned short offset, bit;
->>
->>         spin_lock(&sch->lock);
->> -
->> -       offset = sch_gpio_offset(sch, gpio_num, GLV);
->> -       bit = sch_gpio_bit(sch, gpio_num);
->> -
->> -       curr_vals = inb(sch->iobase + offset);
->> -
->> -       if (val)
->> -               outb(curr_vals | (1 << bit), sch->iobase + offset);
->> -       else
->> -               outb((curr_vals & ~(1 << bit)), sch->iobase + offset);
->> -
->> +       sch_gpio_reg_set(gc, gpio_num, GLV, val);
->
-> Here it is correct.
->
->> @@ -139,18 +123,9 @@ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
->>                                   int val)
->>  {
->>         struct sch_gpio *sch = to_sch_gpio(gc);
->> -       u8 curr_dirs;
->> -       unsigned short offset, bit;
->>
->>         spin_lock(&sch->lock);
->> -
->> -       offset = sch_gpio_offset(sch, gpio_num, GIO);
->> -       bit = sch_gpio_bit(sch, gpio_num);
->> -
->> -       curr_dirs = inb(sch->iobase + offset);
->> -       if (curr_dirs & (1 << bit))
->> -               outb(curr_dirs & ~(1 << bit), sch->iobase + offset);
->> -
->> +       sch_gpio_reg_set(sch, gpio_num, GIO, 0);
->
-> Wrong again. Etc.
->
-> Makes me suspect that this patch is not tested at all, so dropped.
+Hi Yamada-san,
 
-IIRC at least one of the previous versions had the same issue and at
-that time I already pointed out that *compiling and testing* patches
-before sending them in the wild is common sense.
+Thank you for the patch.
 
-Ironically the cover letter says "The patches has been verifed and
-tested working on Galileo Board". One may wonder...
+On Thursday 15 January 2015 17:52:40 Masahiro Yamada wrote:
+> Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> 
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt
+> b/Documentation/devicetree/bindings/gpio/gpio.txt index b9bd1d6..f7a158d
+> 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -69,7 +69,8 @@ GPIO pin number, and GPIO flags as accepted by the
+> "qe_pio_e" gpio-controller. ----------------------------------
+> 
+>  A gpio-specifier should contain a flag indicating the GPIO polarity;
+> active- -high or active-low. If it does, the follow best practices should
+> be followed: +high or active-low. If it does, the following best practices
+> should be +followed:
+> 
+>  The gpio-specifier's polarity flag should represent the physical level at
+> the GPIO controller that achieves (or represents, for inputs) a logically
+> asserted @@ -147,7 +148,7 @@ contains information structures as follows:
+>  	numeric-gpio-range ::=
+>  			<pinctrl-phandle> <gpio-base> <pinctrl-base> <count>
+>  	named-gpio-range ::= <pinctrl-phandle> <gpio-base> '<0 0>'
+> -	gpio-phandle : phandle to pin controller node.
+> +	pinctrl-phandle : phandle to pin controller node
+>  	gpio-base : Base GPIO ID in the GPIO controller
+>  	pinctrl-base : Base pinctrl pin ID in the pin controller
+>  	count : The number of GPIOs/pins in this range
+
+-- 
+Regards,
+
+Laurent Pinchart
+
