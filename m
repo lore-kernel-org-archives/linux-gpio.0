@@ -1,73 +1,97 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
-Date: Thu, 15 Jan 2015 10:52:51 +0100
-Message-ID: <CACRpkda_guCTyivDB5z8jisxYvnsE-1vrvt+N_k1Kp_f+nhQFg@mail.gmail.com>
-References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
-	<1420846493-31647-4-git-send-email-andrew@lunn.ch>
-	<CACRpkdZe2BMtTPU6wkd+gk5mttz3GdL_zYCTPQOaubwRAHbDgg@mail.gmail.com>
-	<20150113024256.GH19533@lunn.ch>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCHv5 1/2] gpio: sch: Consolidate similar algorithms
+Date: Thu, 15 Jan 2015 19:11:48 +0900
+Message-ID: <CAAVeFuJ+rus5+tjdYxUwGahNCSR1RnoFt=8XEHZ-jznvFj+L4g@mail.gmail.com>
+References: <1418031490-17716-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <1418031490-17716-2-git-send-email-rebecca.swee.fun.chang@intel.com> <CACRpkdbOz0VAH1RzaXdDyfDxzTtAuBNA_yGQoS8G_y8JxCFJiw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:58994 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751840AbbAOJww (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 04:52:52 -0500
-Received: by mail-ie0-f179.google.com with SMTP id rp18so13867491iec.10
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 01:52:51 -0800 (PST)
-In-Reply-To: <20150113024256.GH19533@lunn.ch>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:47213 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752147AbbAOKMJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 05:12:09 -0500
+In-Reply-To: <CACRpkdbOz0VAH1RzaXdDyfDxzTtAuBNA_yGQoS8G_y8JxCFJiw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Thierry Reding <thierry.reding@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Imre Kaloz <kaloz@openwrt.org>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>, Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denis Turischev <denis.turischev@compulab.co.il>
 
-On Tue, Jan 13, 2015 at 3:42 AM, Andrew Lunn <andrew@lunn.ch> wrote:
-
-> So i thought about this some more. What would an MFD based solution
-> look like?
+On Thu, Jan 15, 2015 at 6:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Dec 8, 2014 at 10:38 AM, Chang Rebecca Swee Fun
+> <rebecca.swee.fun.chang@intel.com> wrote:
 >
-> First issue is backwards compatibility. There are currently around 90
-> .dts files using this gpio driver. I could imagine a few of these
-> being changed to make use of an MFD based driver to make us of the new
-> features, but the rest expect backwards compatibility.
-
-Good point.
-
-> I think the only sensible way to achieve this is that the gpio driver
-> keeps its existing binding.
-
-Yup.
-
-> This does not really describe the hardware. The hardware is more like:
+>> Consolidating similar algorithms into common functions to make
+>> GPIO SCH simpler and manageable.
+>>
+>> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+>> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 >
->         gpio: gpio {
->                 compatible = "marvell,orion-gpio";
->                 reg = <0xd0018100 0x40>;
->                 ngpios = <32>;
->                 gio-controller;
->                 #gpio-cells = <2>;
->                 interrupt-controller;
->                 #interrupt-cells = <2>;
->                 interrupts = <16>, <17>, <18>, <19>;
->                 clocks = <&coreclk 0>;
+> I have removed this patch from the tree. It breaks completely
+> in build and looks strange:
 >
->                 pwm: pwm {
->                         compatible = "marvell,armada-pwm";
->                         reg = <0xd00181c0 0x08>;
->                         #pwm-cells = <2>;
->                         clocks = <&coreclk 0>;
->                 };
->         };
+>> +static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
+>> +                            int val)
 >
-> but i don't think MFD supports that sort of structure?
+> Takes struct gpio_chip * as argument...
+>
+>> +static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+>> +{
+>> +       struct sch_gpio *sch = to_sch_gpio(gc);
+>>
+>> +       spin_lock(&sch->lock);
+>> +       sch_gpio_reg_set(sch, gpio_num, GIO, 1);
+>
+> Passes something else as argument.
+>
+>>  static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+>>  {
+>>         struct sch_gpio *sch = to_sch_gpio(gc);
+>> -       u8 curr_vals;
+>> -       unsigned short offset, bit;
+>>
+>>         spin_lock(&sch->lock);
+>> -
+>> -       offset = sch_gpio_offset(sch, gpio_num, GLV);
+>> -       bit = sch_gpio_bit(sch, gpio_num);
+>> -
+>> -       curr_vals = inb(sch->iobase + offset);
+>> -
+>> -       if (val)
+>> -               outb(curr_vals | (1 << bit), sch->iobase + offset);
+>> -       else
+>> -               outb((curr_vals & ~(1 << bit)), sch->iobase + offset);
+>> -
+>> +       sch_gpio_reg_set(gc, gpio_num, GLV, val);
+>
+> Here it is correct.
+>
+>> @@ -139,18 +123,9 @@ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+>>                                   int val)
+>>  {
+>>         struct sch_gpio *sch = to_sch_gpio(gc);
+>> -       u8 curr_dirs;
+>> -       unsigned short offset, bit;
+>>
+>>         spin_lock(&sch->lock);
+>> -
+>> -       offset = sch_gpio_offset(sch, gpio_num, GIO);
+>> -       bit = sch_gpio_bit(sch, gpio_num);
+>> -
+>> -       curr_dirs = inb(sch->iobase + offset);
+>> -       if (curr_dirs & (1 << bit))
+>> -               outb(curr_dirs & ~(1 << bit), sch->iobase + offset);
+>> -
+>> +       sch_gpio_reg_set(sch, gpio_num, GIO, 0);
+>
+> Wrong again. Etc.
+>
+> Makes me suspect that this patch is not tested at all, so dropped.
 
-No it would have to be some custom DT code in the GPIO driver
-spawning the PWM platform device.
+IIRC at least one of the previous versions had the same issue and at
+that time I already pointed out that *compiling and testing* patches
+before sending them in the wild is common sense.
 
-I think it's better if we either go with the first solution of a combined
-GPIO+PWM node (it's also elegant in a way, and perfectly
-OK with device tree I think) but I want the PWM maintainer to
-say if it's OK to have a PWM driver inside a GPIO driver.
-
-Yours,
-Linus Walleij
+Ironically the cover letter says "The patches has been verifed and
+tested working on Galileo Board". One may wonder...
