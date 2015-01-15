@@ -1,48 +1,34 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH RESEND v3] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Thu, 15 Jan 2015 08:37:36 -0800
-Message-ID: <3ac0072cbc4a4efaa7eaf071bbc321a1@BL2FFO11FD055.protection.gbl>
-References: <1420481779-22841-1-git-send-email-soren.brinkmann@xilinx.com>
- <CACRpkdYJ_kZw3UfYc5vGd0cxwDJD5WR69c6Q5xTvmFnb7NOfkA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/4] gpio: max732x: Add device tree support
+Date: Thu, 15 Jan 2015 17:52:45 +0100
+Message-ID: <CACRpkdZupHVxmLZYerpYABHM+yCnzjLjPZb4sumsuddyi9uR9g@mail.gmail.com>
+References: <1421156505-16600-1-git-send-email-semen.protsenko@globallogic.com>
+	<1421156505-16600-2-git-send-email-semen.protsenko@globallogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYJ_kZw3UfYc5vGd0cxwDJD5WR69c6Q5xTvmFnb7NOfkA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, linux-api@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:37187 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752994AbbAOQwq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 11:52:46 -0500
+Received: by mail-ig0-f177.google.com with SMTP id z20so15491195igj.4
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 08:52:46 -0800 (PST)
+In-Reply-To: <1421156505-16600-2-git-send-email-semen.protsenko@globallogic.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Semen Protsenko <semen.protsenko@globallogic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marc Zyngier <maz@misterjones.org>, Grygorii Strashko <grygorii.strashko@globallogic.com>, Illia Smyrnov <illia.smyrnov@globallogic.com>
 
-On Thu, 2015-01-15 at 05:34PM +0100, Linus Walleij wrote:
-> On Mon, Jan 5, 2015 at 7:16 PM, Soren Brinkmann
-> <soren.brinkmann@xilinx.com> wrote:
->=20
-> > Add an attribute 'wakeup' to the GPIO sysfs interface which allows
-> > marking/unmarking a GPIO as wake IRQ.
-> > The file 'wakeup' is created in each exported GPIOs directory, if a=
-n IRQ
-> > is associated with that GPIO and the irqchip implements set_wake().
-> > Writing 'enabled' to that file will enable wake for that GPIO, whil=
-e
-> > writing 'disabled' will disable wake.
-> > Reading that file will return either 'disabled' or 'enabled' depeni=
-ng on
-> > the currently set flag for the GPIO's IRQ.
-> >
-> > Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
-> > Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> > ---
-> > v3:
-> >  - add documentation
->=20
-> As per discussion with Johan Hovold I have had to remove this patch
-> from the development tree.
->=20
-> Please rebase as indicated on the "fixes" branch, fix any resource
-> leaks, include Johan Hovold on CC for review and resend.
+On Tue, Jan 13, 2015 at 2:41 PM, Semen Protsenko
+<semen.protsenko@globallogic.com> wrote:
 
-Is that public somewhere? What are the issues?
+> Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
 
-	S=C3=B6ren
+Patch applied.
+
+Thanks for working on this driver, would you consider sending
+a patch setting yourself as maintainer in the MAINTAINERS
+file for this driver?
+
+Yours,
+Linus Walleij
