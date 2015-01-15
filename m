@@ -1,33 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] sh-pfc: r8a7791: add MLB+ pin group
-Date: Thu, 15 Jan 2015 17:11:50 +0100
-Message-ID: <CACRpkdaTBsKhVWOdL_wvSh=c7-HOoL2bcwvL4dN7QxZzE2kh6w@mail.gmail.com>
-References: <1771436.VTFsboh7mX@wasted.cogentembedded.com>
+Subject: Re: [PATCH v5 3/7] gpio/xilinx: Add support for X86 Arch
+Date: Thu, 15 Jan 2015 17:13:13 +0100
+Message-ID: <CACRpkdbvwKich5Lp3WDckRnRpb93=CF3yCkRCzXV4NQqGLENvg@mail.gmail.com>
+References: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
+	<1418831474-24428-4-git-send-email-ricardo.ribalda@gmail.com>
+	<1421139747.22660.76.camel@x220>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:40433 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754053AbbAOQLv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 11:11:51 -0500
-Received: by mail-ie0-f180.google.com with SMTP id rp18so15649696iec.11
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 08:11:51 -0800 (PST)
-In-Reply-To: <1771436.VTFsboh7mX@wasted.cogentembedded.com>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:47035 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752505AbbAOQNO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 11:13:14 -0500
+Received: by mail-ie0-f175.google.com with SMTP id x19so15651197ier.6
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 08:13:13 -0800 (PST)
+In-Reply-To: <1421139747.22660.76.camel@x220>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Valentin Rothberg <valentinrothberg@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Jan 10, 2015 at 7:22 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-
-> Add MLB+ 3-pin mode pin group to R8A7791 PFC driver.
+On Tue, Jan 13, 2015 at 10:02 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
+> On Wed, 2014-12-17 at 16:51 +0100, Ricardo Ribalda Delgado wrote:
+>> Core can be accessed via PCIe on X86 platform.
+>> This patch also allows the driver to be used as module.
+>>
+>> Acked-by: Michal Simek <michal.simek@xilinx.com>
+>> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+>> ---
+>>  drivers/gpio/Kconfig       | 4 ++--
+>>  drivers/gpio/gpio-xilinx.c | 2 +-
+>>  2 files changed, 3 insertions(+), 3 deletions(-)
 >
-> Based on original patch by Andrey Gusakov <andrey.gusakov@cogentembedded.com>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> This patch became c586b3075d5b ("gpio/xilinx: Add support for X86 Arch")
+> in today's linux-next (next-20150113). I noticed because a script I use
+> to check linux-next spotted a problem in it.
 
-Patch applied with the ACKs.
+Yes the topic line was way too long so I just took my axe
+and chopped of a string.
 
 Yours,
 Linus Walleij
