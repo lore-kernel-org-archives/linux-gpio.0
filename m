@@ -1,43 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 3/7] gpio/xilinx: Add support for X86 Arch
-Date: Thu, 15 Jan 2015 17:13:13 +0100
-Message-ID: <CACRpkdbvwKich5Lp3WDckRnRpb93=CF3yCkRCzXV4NQqGLENvg@mail.gmail.com>
-References: <1418831474-24428-1-git-send-email-ricardo.ribalda@gmail.com>
-	<1418831474-24428-4-git-send-email-ricardo.ribalda@gmail.com>
-	<1421139747.22660.76.camel@x220>
+Subject: Re: [PATCH v2 RESEND 2/3] Documentation: gpio: Add APM X-Gene standby
+ GPIO controller DTS binding
+Date: Thu, 15 Jan 2015 17:16:01 +0100
+Message-ID: <CACRpkdaQWf6jOFkX1Lq0NWm_wfxw1NuajOwpJwA5_sZ8CdAa4Q@mail.gmail.com>
+References: <1418793050-26927-1-git-send-email-yvo@apm.com>
+	<1418793050-26927-3-git-send-email-yvo@apm.com>
+	<CACRpkdbcdf7Ub9uYbeqUe1La1dnVeWCxK8N7=iVZuBtuKHFHFA@mail.gmail.com>
+	<CAL4ahLfcMsu2i2efiwq96a3YD4dChBEuJeEnQ7tsZH6et8H=sw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:47035 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752505AbbAOQNO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 11:13:14 -0500
-Received: by mail-ie0-f175.google.com with SMTP id x19so15651197ier.6
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 08:13:13 -0800 (PST)
-In-Reply-To: <1421139747.22660.76.camel@x220>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:45442 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754187AbbAOQQC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 11:16:02 -0500
+Received: by mail-ig0-f178.google.com with SMTP id b16so15304123igk.5
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 08:16:01 -0800 (PST)
+In-Reply-To: <CAL4ahLfcMsu2i2efiwq96a3YD4dChBEuJeEnQ7tsZH6et8H=sw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Valentin Rothberg <valentinrothberg@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Y Vo <yvo@apm.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
 
-On Tue, Jan 13, 2015 at 10:02 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
-> On Wed, 2014-12-17 at 16:51 +0100, Ricardo Ribalda Delgado wrote:
->> Core can be accessed via PCIe on X86 platform.
->> This patch also allows the driver to be used as module.
->>
->> Acked-by: Michal Simek <michal.simek@xilinx.com>
->> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
->> ---
->>  drivers/gpio/Kconfig       | 4 ++--
->>  drivers/gpio/gpio-xilinx.c | 2 +-
->>  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> This patch became c586b3075d5b ("gpio/xilinx: Add support for X86 Arch")
-> in today's linux-next (next-20150113). I noticed because a script I use
-> to check linux-next spotted a problem in it.
+On Tue, Jan 13, 2015 at 10:41 AM, Y Vo <yvo@apm.com> wrote:
+> Yes, exactly 6 interrupts. As I describe before:
+> - There are 22 GPIO_DSs.
+> - Only 6 GPIO_DSs from 0x08..0xD which supports interrupts
 
-Yes the topic line was way too long so I just took my axe
-and chopped of a string.
+What I'm saying is that you need to describe this in the binding
+document itself.
+
+If you described it somewhere else doesn't count.
+
+So update the patch.
 
 Yours,
 Linus Walleij
