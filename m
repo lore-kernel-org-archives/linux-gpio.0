@@ -1,38 +1,41 @@
-From: Jamal Mohammad <md.jamalmohiuddin@gmail.com>
-Subject: Re: [PATCH] gpio: gpio-dln2: Added a Blank line after declaration
-Date: Fri, 16 Jan 2015 10:22:56 +0530
-Message-ID: <CAP8vtK+vHR_7h_SYWfBNDZkAqUbtEdSDqw+AteZWGqoY37tYTQ@mail.gmail.com>
-References: <1421161778-5671-1-git-send-email-md.jamalmohiuddin@gmail.com>
-	<CACRpkdb2=YyVtFFMqMQrWCVFhtnBOdmw57W0tktYn1c2fS8uQw@mail.gmail.com>
-	<20150115181032.GD30960@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Y Vo <yvo@apm.com>
+Subject: [PATCH v3 0/3] gpio: Add APM X-Gene standy platform GPIO driver
+Date: Fri, 16 Jan 2015 14:34:18 +0700
+Message-ID: <1421393661-4311-1-git-send-email-yvo@apm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:51828 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754355AbbAPEw6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jan 2015 23:52:58 -0500
-In-Reply-To: <20150115181032.GD30960@localhost>
+Received: from exprod5og105.obsmtp.com ([64.18.0.180]:57736 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751192AbbAPHei (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jan 2015 02:34:38 -0500
+Received: by mail-pa0-f41.google.com with SMTP id rd3so22720715pab.0
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 23:34:37 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches@apm.com
 
-I think you are write ... checkpatch.pl was giving the error at the
-line so i added a blank line... i will send an updated patch..
+This patch add the GPIO standby controller in the APM X-Gene platform.
 
-On Thu, Jan 15, 2015 at 11:40 PM, Johan Hovold <johan@kernel.org> wrote:
-> On Thu, Jan 15, 2015 at 06:20:43PM +0100, Linus Walleij wrote:
->> On Tue, Jan 13, 2015 at 4:09 PM, Mohammad Jamal
->> <md.jamalmohiuddin@gmail.com> wrote:
->>
->> > Fix the coding style issue by adding a blank line after declaration
->> >
->> > Signed-off-by: Mohammad Jamal <md.jamalmohiuddin@gmail.com>
->>
->> Patch applied.
->
-> This one looks bogus; it's adding a random newline within the
-> declarations not after.
->
-> Johan
+v3 Change:
+	1. Using GPIO_GENERIC.
+
+v2 Change:
+	1. Do not access GIC register from driver.
+	2. Duplicate gpio probe funtion.
+	3. Function gpiochip_remove doesn't return value.
+
+Y Vo (3):
+  gpio: Add APM X-Gene standby GPIO controller driver
+  Documentation: gpio: Add APM X-Gene standby GPIO controller DTS
+    binding
+  arm64: dts: Add APM X-Gene standby GPIO controller DTS entries
+
+ .../devicetree/bindings/gpio/gpio-xgene-sb.txt     |   31 ++++
+ arch/arm64/boot/dts/apm/apm-storm.dtsi             |   13 ++
+ drivers/gpio/Kconfig                               |    7 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-xgene-sb.c                       |  163 ++++++++++++++++++++
+ 5 files changed, 215 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+ create mode 100644 drivers/gpio/gpio-xgene-sb.c
+
