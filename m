@@ -1,57 +1,63 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [Patch v5 2/2] gpio: Document GPIO hogging mechanism
-Date: Fri, 16 Jan 2015 11:20:56 +0100
-Message-ID: <CACRpkdbkBt5o1hZhJf4ao9f=nBdCupP45-YLvxym7gB7H5h_Bg@mail.gmail.com>
-References: <1419019671-25377-1-git-send-email-bparrot@ti.com>
-	<1419019671-25377-3-git-send-email-bparrot@ti.com>
-	<CACRpkdb7Wq7-rBypqPkefejY5Qfq_KKx91H+DxKWv-TM2y04bg@mail.gmail.com>
-	<20150112163902.GE5834@ti.com>
-	<CAAVeFuLF7EVR-Xta=eNegmGWX9AFu9xmyhXisGCTwc1ds3t1cA@mail.gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v4] gpio: lib-sysfs: Add 'wakeup' attribute
+Date: Fri, 16 Jan 2015 12:11:08 +0100
+Message-ID: <20150116111108.GG30960@localhost>
+References: <1421351389-11660-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuLF7EVR-Xta=eNegmGWX9AFu9xmyhXisGCTwc1ds3t1cA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jiri Prchal <jiri.prchal-cKCO0sOKHLPtwjQa/ONI9g@public.gmane.org>, Pantelis Antoniou <panto-wVdstyuyKrO8r51toPun2/C9HSW9iNxf@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1421351389-11660-1-git-send-email-soren.brinkmann@xilinx.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 12, 2015 at 10:43 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Tue, Jan 13, 2015 at 1:39 AM, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org> wrote:
->> Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote on Mon [2015-Jan-12 11:20:14 +0100]:
+On Thu, Jan 15, 2015 at 11:49:49AM -0800, Soren Brinkmann wrote:
+> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
+> marking/unmarking a GPIO as wake IRQ.
+> The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
+> is associated with that GPIO and the irqchip implements set_wake().
+> Writing 'enabled' to that file will enable wake for that GPIO, while
+> writing 'disabled' will disable wake.
+> Reading that file will return either 'disabled' or 'enabled' depening on
+> the currently set flag for the GPIO's IRQ.
+> 
+> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> Hi Linus, Johan,
+> 
+> I rebased my patch. And things look good.
 
->>> line_b {
->>>     gpio-hog;
->>>     gpios = <6 0>;
->>>     output-low;
->>>     line-name = "foo-bar-gpio";
->>> }
->>>
->>> Then use of_property_read_bool() in the code to check which
->>> state is to be selected intially. You can check that no mutually
->>> exclusive state are selected, I don't like that an arbitrary string
->>> select the state like that, if we do it that way an enumerator would
->>> be better, I prefer bools.
->>
->> I am sorry but that is how it was originally in the first patch.
->> Alexandre's review comment suggested this method in [1] and [2] (below).
->>
->> Alexandre, any comments?
->>
->> [1] http://marc.info/?l=linux-gpio&m=141456662426151&w=2
->>
->> [2] http://marc.info/?l=linux-gpio&m=141715982424744&w=2
->
-> When Linus and I are in conflict, follow Linus. Arnd's suggestion of
-> having enums defined in (IIUC) include/dt-bindings/gpio and using them
-> sounds good to me too and might make everyone happy (no possibility of
-> conflicting definitions + no strings). Linus, could you comment on it?
+I took at closer look at this patch now and I really don't think it
+should be merged at all.
 
-I'm fine with bools or enums, just not strings, sorry for the mess.
+We have a mechanism for handling wake-up sources (documented in
+Documentation/power/devices.txt) as well as an ABI to enable/disable
+them using the power/wakeup device attribute from userspace.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Implementing proper wakeup support for unclaimed GPIOs would take some
+work (if at all desired), but that is not a reason to be adding custom
+implementations that violates the kernel's power policies and new ABIs
+that would need to be maintained forever.
+
+[ And we really shouldn't be adding anything to the broken gpio sysfs
+interface until it's been redesigned. ]
+
+Meanwhile you can (should) use gpio-keys if you need to wake your system
+on gpio events.
+
+> But the 'is_visible' things does not behave the way I expected it to.
+> It seems to be only triggered on an export but not when attributes
+> change. Hence, in my case, everything was visiible since the inital
+> state matches that, but even when changing the direction or things
+> like that, attributes don't disappear. Is that something still worked
+> on? Expected
+
+That's expected. We generally don't want attributes to appear or
+disappear after the device has been registered (although there is a
+mechanism for cases were it makes sense). This is no different from
+how your v3 patch worked either.
+
+Johan
