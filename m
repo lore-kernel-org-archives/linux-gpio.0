@@ -1,38 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: fix up device tree bindings
-Date: Fri, 16 Jan 2015 13:28:20 +0100
-Message-ID: <CACRpkda9YXi2MJnC_r_CWcfHM7i10oZ2d6VZUQnkix9r_M8fhg@mail.gmail.com>
-References: <1420924457-12730-1-git-send-email-linus.walleij@linaro.org>
-	<CAL_JsqKQJzUOWE2oJsABH3Aa1cCD+526L0G7-WRH=LbKFxesyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 RESEND 1/3] gpio: Add APM X-Gene standby GPIO
+ controller driver
+Date: Fri, 16 Jan 2015 16:19:13 +0100
+Message-ID: <CACRpkdYjsQFgbZMSE6v1vQRP5OK-4vvDzOrk07NHxywXZ-4sGg@mail.gmail.com>
+References: <1418793050-26927-1-git-send-email-yvo@apm.com>
+	<1418793050-26927-2-git-send-email-yvo@apm.com>
+	<CACRpkdZe7Huiruu-iSNU4MWaiLo_qL=QAab1crummuuVOEJ0zQ@mail.gmail.com>
+	<CAL4ahLfGNc1sL-hr7bZi_pcxjz7CNHjPRSPnJf_TUCGsbweaDA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:59901 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751595AbbAPM2V (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jan 2015 07:28:21 -0500
-Received: by mail-ig0-f180.google.com with SMTP id h15so2998281igd.1
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Jan 2015 04:28:20 -0800 (PST)
-In-Reply-To: <CAL_JsqKQJzUOWE2oJsABH3Aa1cCD+526L0G7-WRH=LbKFxesyQ@mail.gmail.com>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:63422 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751717AbbAPPTO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jan 2015 10:19:14 -0500
+Received: by mail-ie0-f174.google.com with SMTP id at20so21180483iec.5
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Jan 2015 07:19:13 -0800 (PST)
+In-Reply-To: <CAL4ahLfGNc1sL-hr7bZi_pcxjz7CNHjPRSPnJf_TUCGsbweaDA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Y Vo <yvo@apm.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches <patches@apm.com>
 
-On Tue, Jan 13, 2015 at 9:06 PM, Rob Herring <robherring2@gmail.com> wrote:
-> On Sat, Jan 10, 2015 at 3:14 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> After the Nomadik pin controller was force migrated to generic pin
->> control bindings, some leftovers in the documentation need to be
->> cleaned up. The code and device trees are already migrated.
->>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Wed, Jan 14, 2015 at 9:27 AM, Y Vo <yvo@apm.com> wrote:
+> On Tue, Jan 13, 2015 at 4:40 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+>> This looks very much like a memory-mapped standard GPIO controller,
+>> use drivers/gpio/gpio-generic.c with some IRQ add-on, compare
+>> to any other driver selecting GPIO_GENERIC for guidance:
+>> drivers/gpio/gpio-74xx-mmio.c, gpio-dwapb.c etc.
 >
-> Applied for 3.20. Thanks.
+> You mean I must rewrite to use GPIO_GENERIC follow gpio-74xx-mmio.c,
+> gpio-dwapb.c ?
 
-Oh thanks! :)
-
-I was thinking I'd take it through the pinctrl tree but the
-DT tree is even better.
+Yes.
 
 Yours,
 Linus Walleij
