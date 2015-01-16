@@ -1,91 +1,79 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 2/3] gpio: Cygnus: add GPIO driver
-Date: Fri, 16 Jan 2015 11:14:56 +0100
-Message-ID: <CACRpkdZef8S-EAbShjJ1eg+-3wQKn+yx4u1k_Mf8F7uFkJYdFw@mail.gmail.com>
-References: <rjui@broadcom.com>
-	<1418696307-19392-1-git-send-email-rjui@broadcom.com>
-	<1418696307-19392-3-git-send-email-rjui@broadcom.com>
-	<CACRpkdYGksEseGaO49=1rUi5WBdOxwAd-F1gpgZn+BFatRCdDg@mail.gmail.com>
-	<54B55068.8050500@broadcom.com>
+Subject: Re: [PATCH v5 1/3] gpio: Cygnus: define Broadcom Cygnus GPIO binding
+Date: Fri, 16 Jan 2015 11:18:37 +0100
+Message-ID: <CACRpkdYNU8MgnZz2kqLFQMiDSeMCuWRkAVXW4BVcMqLT2muBVw@mail.gmail.com>
+References: <1418342706-14755-2-git-send-email-rjui@broadcom.com>
+	<1918116.UxUgDPTmcq@wuerfel>
+	<CAAVeFuL2MKRA7YLm_wsyftNy-sxgEYPrmqBm8XTRZQb66YF-qw@mail.gmail.com>
+	<1628217.66frkAqHMc@wuerfel>
+	<CAAVeFuJhiten-eVLCa2sMG-nsRwjPMiZap8UJM1kNCuRyK-b1w@mail.gmail.com>
+	<20141217104428.GV11285@n2100.arm.linux.org.uk>
+	<CACRpkdZbGjNecrggrFr_18zjobXMBpkrSjBMAUfyfs2ZCebB0w@mail.gmail.com>
+	<20150113114101.GO12302@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:33629 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751041AbbAPKO5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jan 2015 05:14:57 -0500
-Received: by mail-ie0-f182.google.com with SMTP id x19so19870833ier.13
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Jan 2015 02:14:57 -0800 (PST)
-In-Reply-To: <54B55068.8050500@broadcom.com>
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:62405 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752393AbbAPKSh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jan 2015 05:18:37 -0500
+Received: by mail-ie0-f181.google.com with SMTP id rl12so19912189iec.12
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Jan 2015 02:18:37 -0800 (PST)
+In-Reply-To: <20150113114101.GO12302@n2100.arm.linux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Joe Perches <joe@perches.com>, Scott Branden <sbranden@broadcom.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Jan 13, 2015 at 6:05 PM, Ray Jui <rjui@broadcom.com> wrote:
-> On 1/13/2015 12:53 AM, Linus Walleij wrote:
->> On Tue, Dec 16, 2014 at 3:18 AM, Ray Jui <rjui@broadcom.com> wrote:
+On Tue, Jan 13, 2015 at 12:41 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Tue, Jan 13, 2015 at 09:06:15AM +0100, Linus Walleij wrote:
+>> On Wed, Dec 17, 2014 at 11:44 AM, Russell King - ARM Linux
+>> <linux@arm.linux.org.uk> wrote:
+>> > On Wed, Dec 17, 2014 at 11:45:01AM +0900, Alexandre Courbot wrote:
+>> >> Actually we are not that far from being able to do completely without
+>> >> any GPIO number, and maybe that's what we should aim for. I think the
+>> >> only remaining offender is the sysfs interface.
+>> >
+>> > And that is a user API, and there's lots of users of it (eg, on Raspberry
+>> > Pi platforms.)  So changing it isn't going to be easy - I'd say that it's
+>> > impractical.
+>> >
+>> > What you're suggesting would be like re-numbering Linux syscalls.
 >>
->>> +/* drive strength control for ASIU GPIO */
->>> +#define CYGNUS_GPIO_ASIU_DRV0_CTRL_OFFSET 0x58
->>> +
->>> +/* drive strength control for CCM GPIO */
->>> +#define CYGNUS_GPIO_CCM_DRV0_CTRL_OFFSET  0x00
+>> The problem is that right now if we set the .base of a gpio_chip
+>> to -1 for dynamic allocation of GPIO numbers and we have more
+>> than one GPIO chip in the system, the numbers basically depend
+>> on probe order, and may theoretically even differ between two boots.
 >>
->> This stuff (drive strength) is pin control, pin config.
->> It does not belong in a pure GPIO driver. If you're
->> making a combined pin control + GPIO driver, it
->> shall be put in drivers/pinctrl/*
+>> So in these cases preserving the ABI means preserving the
+>> unpredictability of these assigned numbers or something.
 >>
-> Okay, I have some questions here. Are you suggesting me to register this
-> driver to both the pinctrl subsystem and gpiolib and move it to under
-> drivers/pinctrl/*?
-
-Either you can have a combined driver in drivers/pinctrl/*
-which has one probe() function calling pinctrl_register(),
-gpiochip_add(), gpiochip_add_pin_range(), having the gpio
-parts call into the pin control backend with
-pinctrl_request_gpio(), pinctrl_free_gpio(),
-pinctrl_gpio_direction_input(), pinctrl_gpio_direction_output().
-
-Or you can split it in one driver in drivers/pinctrl/*
-dealing with just the pin control stuff, and another driver
-in drivers/gpio/* dealing with the GPIO stuff, each with one
-probe() function.
-
-If they are using the same register range, the first approach
-is probably most intuitive. If the pin control and GPIO parts
-are separated in different register ranges, probably the
-second approach is the best.
-
-> Or Are you suggesting me to combine this driver with the other Cygnus
-> pinctrl driver (which only supports pinmux)?
-
-Depends on which hardware block the pin control-like
-registers belongs in. See per above.
-
-> Note in Cygnus, all pinmux logic is done in the pinmux block. And there
-> are 3 GPIO controllers, that handle GPIO, drive strength of the GPIO
-> pins, internal pull up/down of the GPIO pins, which are handled in this
-> driver. So this driver is generic to all 3 GPIO controllers, as you can
-> see from the device tree bindings, there are 3 nodes.
+>> For the old usecases with a single GPIO controller and a fixed
+>> base offset of e.g. 0 (which I suspect was implicit in the initial
+>> design of the subsystem) things work fine as always, it's these new
+>> dynamic use cases that destabilize the ABI.
 >
-> Therefore, I think it makes sense to have one pinmux driver that handles
-> the pinmux block, and one generic pinctrl + gpio driver that handles
-> functions supported by all 3 GPIO controllers. Does this make sense to you?
+> Since GPIOs are exported through sysfs into userland by GPIO number,
+> and we know that there are users of it (see
+> https://github.com/pilight/wiringX) which hard encode GPIO numbers,
+> so this is *really* something that we as kernel developers can't
+> change without breaking such users.
 
-Yep.
+I agree.
 
-Some hardware designs put the software-controlled biasing
-resistors in the GPIO block electronically connected to the actual
-pins, so that e.g. the biasing will be available if some MMC or
-whatever is using the same pins in another muxing. In such
-situations it's quite evident that they need to be a combined
-GPIO and pin controller.
+In some other thread I came up with the idea that if
+we add enumerated aliases for the GPIO controllers in the
+device tree (so that each can be assigned a sequence number,
+like we do on the PL011 ttys) we can assign them numbers
+starting from 0.
 
-I have some regrets that bolting a second pin controller to the
-GPIO chip make things a bit complex but it's a price we have
-to pay for getting some kind of generic interface.
+The only reason that dynamic GPIO start from some random
+high offset is that the on-chip GPIOs are assumed to be present
+at offset 0+, so this is done so that the dynamic controllers
+avoid colliding with them. (At least that is how I understand it.)
+So on a fully DT-enabled system assigning numbers starting
+from 0 should be kind of default.
 
 Yours,
 Linus Walleij
