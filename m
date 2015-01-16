@@ -1,67 +1,33 @@
-From: Y Vo <yvo@apm.com>
-Subject: [PATCH v3 2/3] Documentation: gpio: Add APM X-Gene standby GPIO controller DTS binding
-Date: Fri, 16 Jan 2015 14:34:20 +0700
-Message-ID: <1421393661-4311-3-git-send-email-yvo@apm.com>
-References: <1421393661-4311-1-git-send-email-yvo@apm.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] gpio: gpio-dln2: Added a Blank line after declaration
+Date: Fri, 16 Jan 2015 09:51:42 +0100
+Message-ID: <20150116085142.GF30960@localhost>
+References: <1421161778-5671-1-git-send-email-md.jamalmohiuddin@gmail.com>
+ <CACRpkdb2=YyVtFFMqMQrWCVFhtnBOdmw57W0tktYn1c2fS8uQw@mail.gmail.com>
+ <20150115181032.GD30960@localhost>
+ <CAP8vtK+vHR_7h_SYWfBNDZkAqUbtEdSDqw+AteZWGqoY37tYTQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og106.obsmtp.com ([64.18.0.182]:51486 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751405AbbAPHen (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 16 Jan 2015 02:34:43 -0500
-Received: by mail-pd0-f172.google.com with SMTP id y13so21196299pdi.3
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2015 23:34:43 -0800 (PST)
-In-Reply-To: <1421393661-4311-1-git-send-email-yvo@apm.com>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:38181 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753748AbbAPIvc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jan 2015 03:51:32 -0500
+Content-Disposition: inline
+In-Reply-To: <CAP8vtK+vHR_7h_SYWfBNDZkAqUbtEdSDqw+AteZWGqoY37tYTQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches@apm.com
+To: Jamal Mohammad <md.jamalmohiuddin@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Documentation for APM X-Gene standby GPIO controller DTS binding.
+[ Please do not top-post. ]
 
-Signed-off-by: Y Vo <yvo@apm.com>
----
- .../devicetree/bindings/gpio/gpio-xgene-sb.txt     |   31 ++++++++++++++++++++
- 1 files changed, 31 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+On Fri, Jan 16, 2015 at 10:22:56AM +0530, Jamal Mohammad wrote:
+> I think you are write ... checkpatch.pl was giving the error at the
+> line so i added a blank line... i will send an updated patch..
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-new file mode 100644
-index 0000000..3215e4d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-@@ -0,0 +1,31 @@
-+APM X-Gene Standby GPIO controller bindings
-+
-+This is a gpio controller in standby domain.
-+
-+There are 20 GPIO pins from 0..21. There is no GPIO_DS14 and GPIO_DS15. 
-+Only GPIO_DS8..GPIO_DS13 support interrupt. IRQ mapping 0x28..0x2d.
-+
-+Required properties:
-+- compatible: "apm,xgene-gpio-sb" for X-Gene Standby GPIO controller
-+- reg: Physical base address and size of the controller's registers
-+- #gpio-cells: Should be two.
-+	- first cell is the pin number
-+	- second cell is used to specify the gpio polarity:
-+		0 = active high
-+		1 = active low
-+- gpio-controller: Marks the device node as a GPIO controller.
-+- interrupts: Shall contains the interrupts.
-+
-+Example:
-+	sbgpio: sbgpio@17001000 {
-+		compatible = "apm,xgene-gpio-sb";
-+		reg = <0x0 0x17001000 0x0 0x400>;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		interrupts = 	<0x0 0x28 0x1>,
-+				<0x0 0x29 0x1>,
-+				<0x0 0x2a 0x1>,
-+				<0x0 0x2b 0x1>,
-+				<0x0 0x2c 0x1>,
-+				<0x0 0x2d 0x1>;
-+	};
--- 
-1.7.1
+You should not trust checkpatch.pl blindly, and not run it on in-kernel
+files either. Use it on your own patches as a way to find (possible)
+mistakes before submission.
 
+Johan
