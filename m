@@ -1,96 +1,127 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Fri, 16 Jan 2015 08:49:17 -0800
-Message-ID: <a4610e13d0094d40b7e0574992509ec6@BN1AFFO11FD044.protection.gbl>
-References: <1421351389-11660-1-git-send-email-soren.brinkmann@xilinx.com>
- <20150116111108.GG30960@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150116111108.GG30960@localhost>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 1/1] gpio: omap: Fix bad device access with setup_irq()
+Date: Fri, 16 Jan 2015 14:50:50 -0800
+Message-ID: <1421448650-15904-1-git-send-email-tony@atomide.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Felipe Balbi <balbi@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Santosh Shilimkar <ssantosh@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 2015-01-16 at 12:11PM +0100, Johan Hovold wrote:
-> On Thu, Jan 15, 2015 at 11:49:49AM -0800, Soren Brinkmann wrote:
-> > Add an attribute 'wakeup' to the GPIO sysfs interface which allows
-> > marking/unmarking a GPIO as wake IRQ.
-> > The file 'wakeup' is created in each exported GPIOs directory, if a=
-n IRQ
-> > is associated with that GPIO and the irqchip implements set_wake().
-> > Writing 'enabled' to that file will enable wake for that GPIO, whil=
-e
-> > writing 'disabled' will disable wake.
-> > Reading that file will return either 'disabled' or 'enabled' depeni=
-ng on
-> > the currently set flag for the GPIO's IRQ.
-> >=20
-> > Signed-off-by: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> > Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Hi Linus, Johan,
-> >=20
-> > I rebased my patch. And things look good.
->=20
-> I took at closer look at this patch now and I really don't think it
-> should be merged at all.
->=20
-> We have a mechanism for handling wake-up sources (documented in
-> Documentation/power/devices.txt) as well as an ABI to enable/disable
-> them using the power/wakeup device attribute from userspace.
+Similar to omap_gpio_irq_type() let's make sure that the GPIO
+is usable as an interrupt if the platform init code did not
+call gpio_request(). Otherwise we can get invalid device access
+after setup_irq():
 
-Doesn't work for GPIOs AFAIK.
+WARNING: CPU: 0 PID: 1 at drivers/bus/omap_l3_noc.c:147 l3_interrupt_handler+0x214/0x340()
+44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4CFG (Idle): Data Access in Supervisor mode during Functional access
+...
+[<c05f21e4>] (__irq_svc) from [<c05f1974>] (_raw_spin_unlock_irqrestore+0x34/0x44)
+[<c05f1974>] (_raw_spin_unlock_irqrestore) from [<c00914a8>] (__setup_irq+0x244/0x530)
+[<c00914a8>] (__setup_irq) from [<c00917d4>] (setup_irq+0x40/0x8c)
+[<c00917d4>] (setup_irq) from [<c0039c8c>] (omap_system_dma_probe+0x1d4/0x2b4)
+[<c0039c8c>] (omap_system_dma_probe) from [<c03b2200>] (platform_drv_probe+0x44/0xa4)
+...
 
->=20
-> Implementing proper wakeup support for unclaimed GPIOs would take som=
-e
-> work (if at all desired), but that is not a reason to be adding custo=
-m
-> implementations that violates the kernel's power policies and new ABI=
-s
-> that would need to be maintained forever.
+We can fix this the same way omap_gpio_irq_type() is handling it.
 
-These are claimed, by the sysfs interface.
+Note that the long term solution is to change the gpio-omap driver
+to handle the banks as separate driver instances. This will allow
+us to rely on just runtime PM for tracking the bank specific state.
 
->=20
-> [ And we really shouldn't be adding anything to the broken gpio sysfs
-> interface until it's been redesigned. ]
->=20
-> Meanwhile you can (should) use gpio-keys if you need to wake your sys=
-tem
-> on gpio events.
+Reported-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Felipe Balbi <balbi@ti.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Kevin Hilman <khilman@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/gpio/gpio-omap.c | 39 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 6 deletions(-)
 
-We had that discussion and I don't think GPIO keys is the right solutio=
-n
-for every use-case.
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 30646cf..f476ae2 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -88,6 +88,8 @@ struct gpio_bank {
+ #define BANK_USED(bank) (bank->mod_usage || bank->irq_usage)
+ #define LINE_USED(line, offset) (line & (BIT(offset)))
+ 
++static void omap_gpio_unmask_irq(struct irq_data *d);
++
+ static int omap_irq_to_gpio(struct gpio_bank *bank, unsigned int gpio_irq)
+ {
+ 	return bank->chip.base + gpio_irq;
+@@ -477,6 +479,16 @@ static int omap_gpio_is_input(struct gpio_bank *bank, int mask)
+ 	return readl_relaxed(reg) & mask;
+ }
+ 
++static void omap_gpio_init_irq(struct gpio_bank *bank, unsigned gpio,
++			       unsigned offset)
++{
++	if (!LINE_USED(bank->mod_usage, offset)) {
++		omap_enable_gpio_module(bank, offset);
++		omap_set_gpio_direction(bank, offset, 1);
++	}
++	bank->irq_usage |= BIT(GPIO_INDEX(bank, gpio));
++}
++
+ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+@@ -506,15 +518,11 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	offset = GPIO_INDEX(bank, gpio);
+ 	retval = omap_set_gpio_triggering(bank, offset, type);
+-	if (!LINE_USED(bank->mod_usage, offset)) {
+-		omap_enable_gpio_module(bank, offset);
+-		omap_set_gpio_direction(bank, offset, 1);
+-	} else if (!omap_gpio_is_input(bank, BIT(offset))) {
++	omap_gpio_init_irq(bank, gpio, offset);
++	if (!omap_gpio_is_input(bank, BIT(offset))) {
+ 		spin_unlock_irqrestore(&bank->lock, flags);
+ 		return -EINVAL;
+ 	}
+-
+-	bank->irq_usage |= BIT(GPIO_INDEX(bank, gpio));
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+ 
+ 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+@@ -792,6 +800,24 @@ exit:
+ 	pm_runtime_put(bank->dev);
+ }
+ 
++static unsigned int omap_gpio_irq_startup(struct irq_data *d)
++{
++	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	unsigned int gpio = omap_irq_to_gpio(bank, d->hwirq);
++	unsigned long flags;
++	unsigned offset = GPIO_INDEX(bank, gpio);
++
++	if (!BANK_USED(bank))
++		pm_runtime_get_sync(bank->dev);
++
++	spin_lock_irqsave(&bank->lock, flags);
++	omap_gpio_init_irq(bank, gpio, offset);
++	spin_unlock_irqrestore(&bank->lock, flags);
++	omap_gpio_unmask_irq(d);
++
++	return 0;
++}
++
+ static void omap_gpio_irq_shutdown(struct irq_data *d)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+@@ -1181,6 +1207,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	if (!irqc)
+ 		return -ENOMEM;
+ 
++	irqc->irq_startup = omap_gpio_irq_startup,
+ 	irqc->irq_shutdown = omap_gpio_irq_shutdown,
+ 	irqc->irq_ack = omap_gpio_ack_irq,
+ 	irqc->irq_mask = omap_gpio_mask_irq,
+-- 
+2.1.4
 
->=20
-> > But the 'is_visible' things does not behave the way I expected it t=
-o.
-> > It seems to be only triggered on an export but not when attributes
-> > change. Hence, in my case, everything was visiible since the inital
-> > state matches that, but even when changing the direction or things
-> > like that, attributes don't disappear. Is that something still work=
-ed
-> > on? Expected
->=20
-> That's expected. We generally don't want attributes to appear or
-> disappear after the device has been registered (although there is a
-> mechanism for cases were it makes sense). This is no different from
-> how your v3 patch worked either.
-
-Sure, but the is_visible thing is effectively broken for GPIO. I think =
-a
-GPIO is in a defined state when exported and the checks all work on tha=
-t
-state during export. But then this state can be changed through the
-sysfs interface. So, if the initial state hides something it becomes
-unavailable for all times and, vice versa, if the initial state makes
-something visible, it will stay even when it is no longer a valid
-property to change.
-
-	S=C3=B6ren
