@@ -1,63 +1,38 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v4] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Fri, 16 Jan 2015 12:11:08 +0100
-Message-ID: <20150116111108.GG30960@localhost>
-References: <1421351389-11660-1-git-send-email-soren.brinkmann@xilinx.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: fix up device tree bindings
+Date: Fri, 16 Jan 2015 13:28:20 +0100
+Message-ID: <CACRpkda9YXi2MJnC_r_CWcfHM7i10oZ2d6VZUQnkix9r_M8fhg@mail.gmail.com>
+References: <1420924457-12730-1-git-send-email-linus.walleij@linaro.org>
+	<CAL_JsqKQJzUOWE2oJsABH3Aa1cCD+526L0G7-WRH=LbKFxesyQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1421351389-11660-1-git-send-email-soren.brinkmann@xilinx.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:59901 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751595AbbAPM2V (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jan 2015 07:28:21 -0500
+Received: by mail-ig0-f180.google.com with SMTP id h15so2998281igd.1
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Jan 2015 04:28:20 -0800 (PST)
+In-Reply-To: <CAL_JsqKQJzUOWE2oJsABH3Aa1cCD+526L0G7-WRH=LbKFxesyQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jan 15, 2015 at 11:49:49AM -0800, Soren Brinkmann wrote:
-> Add an attribute 'wakeup' to the GPIO sysfs interface which allows
-> marking/unmarking a GPIO as wake IRQ.
-> The file 'wakeup' is created in each exported GPIOs directory, if an IRQ
-> is associated with that GPIO and the irqchip implements set_wake().
-> Writing 'enabled' to that file will enable wake for that GPIO, while
-> writing 'disabled' will disable wake.
-> Reading that file will return either 'disabled' or 'enabled' depening on
-> the currently set flag for the GPIO's IRQ.
-> 
-> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> Hi Linus, Johan,
-> 
-> I rebased my patch. And things look good.
+On Tue, Jan 13, 2015 at 9:06 PM, Rob Herring <robherring2@gmail.com> wrote:
+> On Sat, Jan 10, 2015 at 3:14 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> After the Nomadik pin controller was force migrated to generic pin
+>> control bindings, some leftovers in the documentation need to be
+>> cleaned up. The code and device trees are already migrated.
+>>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Applied for 3.20. Thanks.
 
-I took at closer look at this patch now and I really don't think it
-should be merged at all.
+Oh thanks! :)
 
-We have a mechanism for handling wake-up sources (documented in
-Documentation/power/devices.txt) as well as an ABI to enable/disable
-them using the power/wakeup device attribute from userspace.
+I was thinking I'd take it through the pinctrl tree but the
+DT tree is even better.
 
-Implementing proper wakeup support for unclaimed GPIOs would take some
-work (if at all desired), but that is not a reason to be adding custom
-implementations that violates the kernel's power policies and new ABIs
-that would need to be maintained forever.
-
-[ And we really shouldn't be adding anything to the broken gpio sysfs
-interface until it's been redesigned. ]
-
-Meanwhile you can (should) use gpio-keys if you need to wake your system
-on gpio events.
-
-> But the 'is_visible' things does not behave the way I expected it to.
-> It seems to be only triggered on an export but not when attributes
-> change. Hence, in my case, everything was visiible since the inital
-> state matches that, but even when changing the direction or things
-> like that, attributes don't disappear. Is that something still worked
-> on? Expected
-
-That's expected. We generally don't want attributes to appear or
-disappear after the device has been registered (although there is a
-mechanism for cases were it makes sense). This is no different from
-how your v3 patch worked either.
-
-Johan
+Yours,
+Linus Walleij
