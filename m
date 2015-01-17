@@ -1,44 +1,34 @@
-From: Beniamino Galvani <b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 2/3] ARM: meson: select PINCTRL_MESON and ARCH_REQUIRE_GPIOLIB
-Date: Sat, 17 Jan 2015 19:15:15 +0100
-Message-ID: <1421518516-26976-3-git-send-email-b.galvani@gmail.com>
-References: <1421518516-26976-1-git-send-email-b.galvani@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1421518516-26976-1-git-send-email-b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jerry Cao <jerry.cao-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, Victor Wan <victor.wan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, Beniamino Galvani <b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
+Date: Sat, 17 Jan 2015 21:04:16 +0100
+Message-ID: <20150117200416.GB19604@lunn.ch>
+References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
+ <1420846493-31647-4-git-send-email-andrew@lunn.ch>
+ <CACRpkdZe2BMtTPU6wkd+gk5mttz3GdL_zYCTPQOaubwRAHbDgg@mail.gmail.com>
+ <20150113024256.GH19533@lunn.ch>
+ <CACRpkda_guCTyivDB5z8jisxYvnsE-1vrvt+N_k1Kp_f+nhQFg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from vps0.lunn.ch ([178.209.37.122]:57300 "EHLO vps0.lunn.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751352AbbAQUG1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 17 Jan 2015 15:06:27 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkda_guCTyivDB5z8jisxYvnsE-1vrvt+N_k1Kp_f+nhQFg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Imre Kaloz <kaloz@openwrt.org>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Make sure that the Meson pinctrl driver is built whenever Meson
-support is enabled.
+> I think it's better if we either go with the first solution of a combined
+> GPIO+PWM node (it's also elegant in a way, and perfectly
+> OK with device tree I think) but I want the PWM maintainer to
+> say if it's OK to have a PWM driver inside a GPIO driver.
 
-Signed-off-by: Beniamino Galvani <b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- arch/arm/mach-meson/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Hi Thierry
 
-diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
-index 18301dc..0743e20 100644
---- a/arch/arm/mach-meson/Kconfig
-+++ b/arch/arm/mach-meson/Kconfig
-@@ -1,8 +1,11 @@
- menuconfig ARCH_MESON
- 	bool "Amlogic Meson SoCs" if ARCH_MULTI_V7
-+	select ARCH_REQUIRE_GPIOLIB
- 	select GENERIC_IRQ_CHIP
- 	select ARM_GIC
- 	select CACHE_L2X0
-+	select PINCTRL
-+	select PINCTRL_MESON
- 
- if ARCH_MESON
- 
--- 
-2.1.4
+Please could you comment on this. I would like to get moving forward
+with getting these patches accepted.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks
+	Andrew
