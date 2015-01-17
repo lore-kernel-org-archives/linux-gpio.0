@@ -1,44 +1,52 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/1] gpio: omap: Fix bad device access with setup_irq()
-Date: Sat, 17 Jan 2015 10:10:57 +0000
-Message-ID: <20150117101057.GZ11502@n2100.arm.linux.org.uk>
-References: <1421448650-15904-1-git-send-email-tony@atomide.com>
- <54B9AA9D.7080300@oracle.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [RESEND PATCH 0/6] Add support for the WM8280 and WM8281 codecs
+Date: Sat, 17 Jan 2015 15:21:21 +0000
+Message-ID: <1421508087-22311-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:46732 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753132AbbAQKLX (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42015 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751344AbbAQP0J (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 17 Jan 2015 05:11:23 -0500
-Content-Disposition: inline
-In-Reply-To: <54B9AA9D.7080300@oracle.com>
+	Sat, 17 Jan 2015 10:26:09 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: santosh shilimkar <santosh.shilimkar@oracle.com>
-Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Felipe Balbi <balbi@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>
+To: lee.jones@linaro.org
+Cc: broonie@kernel.org, cw00.choi@samsung.com, linus.walleij@linaro.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rf@opensource.wolfsonmicro.com
 
-On Fri, Jan 16, 2015 at 04:19:41PM -0800, santosh shilimkar wrote:
-> On 1/16/2015 2:50 PM, Tony Lindgren wrote:
-> >Similar to omap_gpio_irq_type() let's make sure that the GPIO
-> >is usable as an interrupt if the platform init code did not
-> >call gpio_request(). Otherwise we can get invalid device access
-> >after setup_irq():
-> >
-> I let Linus W comment on it but IIRC we chewed this issue last
-> time and the conclusion was the gpio_request() must have to be called
-> directly or indirectly in case of irq line.
+This set of patches adds support for the WM8280 and WM8281
+codecs to the Wolfson Arizona drivers.
 
-That's really not the issue here.
+I made one small correction to the first patch to removed a
+potentially uninitialised variable, but otherwise just a
+resend of Richard's work. I would suggest we put the whole
+series through the MFD tree I believe we have all the required
+Acks and I don't believe there arn't any other patches making
+their way through at the moment that this should conflict with.
 
-The issue is that it's possible to claim the interrupt, and then the
-driver goes wrong - not only does it attempt in that case to access
-hardware which is runtime suspended, if the interrupt is subsequently
-freed, it will then do a pm_runtime_put().
+Thanks,
+Charles
 
-The interrupt code is wrong there, plain and simple.
+Richard Fitzgerald (6):
+  mfd: arizona: Add support for WM8280/WM8281
+  Documentation: devicetree: arizona: Add bindings for WM8280
+  regulator: arizona-micsupp: Add support for WM8280/WM8281
+  gpio: arizona: Add support for WM8280/WM8281
+  extcon: arizona: Add support for WM8280/WM8281
+  ASoC: arizona: Add support for WM8280/WM8281
+
+ Documentation/devicetree/bindings/mfd/arizona.txt |   15 +++++++++++----
+ drivers/extcon/extcon-arizona.c                   |    1 +
+ drivers/gpio/gpio-arizona.c                       |    1 +
+ drivers/mfd/Kconfig                               |    5 +++--
+ drivers/mfd/arizona-core.c                        |   15 +++++++++++++--
+ drivers/mfd/arizona-i2c.c                         |    2 ++
+ drivers/mfd/arizona-irq.c                         |    1 +
+ drivers/mfd/arizona-spi.c                         |    2 ++
+ drivers/regulator/arizona-micsupp.c               |    1 +
+ include/linux/mfd/arizona/core.h                  |    1 +
+ sound/soc/codecs/arizona.c                        |    2 ++
+ 11 files changed, 38 insertions(+), 8 deletions(-)
 
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+1.7.2.5
+
