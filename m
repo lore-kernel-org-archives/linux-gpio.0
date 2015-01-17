@@ -1,47 +1,71 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [RESEND PATCH 4/6] gpio: arizona: Add support for
-	WM8280/WM8281
-Date: Sat, 17 Jan 2015 15:21:25 +0000
-Message-ID: <1421508087-22311-5-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <1421508087-22311-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1421508087-22311-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, broonie@kernel.org, rf@opensource.wolfsonmicro.com
+From: Beniamino Galvani <b.galvani@gmail.com>
+Subject: [PATCH v4 0/3] Amlogic Meson pinctrl driver
+Date: Sat, 17 Jan 2015 19:15:13 +0100
+Message-ID: <1421518516-26976-1-git-send-email-b.galvani@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f54.google.com ([74.125.82.54]:53537 "EHLO
+	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750994AbbAQSQ1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Jan 2015 13:16:27 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Soren Brinkmann <soren.brinkmann@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jerry Cao <jerry.cao@amlogic.com>, Victor Wan <victor.wan@amlogic.com>, Beniamino Galvani <b.galvani@gmail.com>
 
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Hi,
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
- drivers/gpio/gpio-arizona.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+this series adds a pinctrl driver for Amlogic Meson, providing common
+code for all the SoCs of the family and configuration data specific
+for Meson8.
 
-diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
-index fe369f5..9665d0a 100644
---- a/drivers/gpio/gpio-arizona.c
-+++ b/drivers/gpio/gpio-arizona.c
-@@ -116,6 +116,7 @@ static int arizona_gpio_probe(struct platform_device *pdev)
- 	switch (arizona->type) {
- 	case WM5102:
- 	case WM5110:
-+	case WM8280:
- 	case WM8997:
- 		arizona_gpio->gpio_chip.ngpio = 5;
- 		break;
+DT binding documentation for the driver has already been merged and is
+not included in the series. The first patch is for the pinctrl/devel
+tree, the others for Carlo's meson tree.
+
+Thanks,
+Beniamino
+
+Changes since v3 [ https://lkml.org/lkml/2014/11/16/171 ]
+ - add 'static' to meson8 structs and arrays
+ - use ERR_CAST() to avoid sparse warning in meson_map_resource()
+ - declare group list as 'const char * const *'
+
+Changes since v2 [ https://lkml.org/lkml/2014/10/14/423 ]
+ - move modifications to mach-meson Kconfig to a separate patch
+ - use regmap_mmio
+ - use generic gpio xlate function
+ - don't hardcode gpio base number
+ - use gpiochip_add_pin_range()
+ - add kerneldoc documentation
+ - use plain module_platform_driver() instead of postcore_initcall
+ - avoid unneeded copies of platform data
+
+Changes since v1 [ https://lkml.org/lkml/2014/10/7/712 ]
+ - added missing checks of return values
+ - indentation fixes
+ - added missing definitions of groups and functions for Meson8
+
+Beniamino Galvani (3):
+  pinctrl: add driver for Amlogic Meson SoCs
+  ARM: meson: select PINCTRL_MESON and ARCH_REQUIRE_GPIOLIB
+  ARM: dts: meson8: add pinctrl node
+
+ arch/arm/boot/dts/meson8.dtsi          |   68 ++
+ arch/arm/mach-meson/Kconfig            |    3 +
+ drivers/pinctrl/Kconfig                |    8 +
+ drivers/pinctrl/Makefile               |    1 +
+ drivers/pinctrl/meson/Makefile         |    2 +
+ drivers/pinctrl/meson/pinctrl-meson.c  |  761 ++++++++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-meson.h  |  209 ++++++
+ drivers/pinctrl/meson/pinctrl-meson8.c | 1089 ++++++++++++++++++++++++++++++++
+ include/dt-bindings/gpio/meson8-gpio.h |  157 +++++
+ 9 files changed, 2298 insertions(+)
+ create mode 100644 drivers/pinctrl/meson/Makefile
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson.c
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson.h
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson8.c
+ create mode 100644 include/dt-bindings/gpio/meson8-gpio.h
+
 -- 
-1.7.2.5
+2.1.4
+
