@@ -1,13 +1,13 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH 6/8] gpio/zevio: Use of_mm_gpiochip_remove
-Date: Sun, 18 Jan 2015 12:39:31 +0100
-Message-ID: <1421581173-28416-7-git-send-email-ricardo.ribalda@gmail.com>
+Subject: [PATCH 5/8] gpio/gpio-mm-lantiq: Use of_mm_gpiochip_remove
+Date: Sun, 18 Jan 2015 12:39:30 +0100
+Message-ID: <1421581173-28416-6-git-send-email-ricardo.ribalda@gmail.com>
 References: <1421581173-28416-1-git-send-email-ricardo.ribalda@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1421581173-28416-1-git-send-email-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Fabian Vogt <fabian@ritter-vogt.de>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, John Crispin <blogic@openwrt.org>
 List-Id: linux-gpio@vger.kernel.org
 
 Since d621e8bae5ac9c67 (Create of_mm_gpiochip_remove), there is a
@@ -18,48 +18,58 @@ it.
 
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Fabian Vogt <fabian@ritter-vogt.de>
+Cc: John Crispin <blogic@openwrt.org>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/gpio/gpio-zevio.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpio/gpio-mm-lantiq.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
-index f769cd5..6f02d7c 100644
---- a/drivers/gpio/gpio-zevio.c
-+++ b/drivers/gpio/gpio-zevio.c
-@@ -181,6 +181,8 @@ static int zevio_gpio_probe(struct platform_device *pdev)
- 	if (!controller)
+diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
+index b511a6b..082c1d5 100644
+--- a/drivers/gpio/gpio-mm-lantiq.c
++++ b/drivers/gpio/gpio-mm-lantiq.c
+@@ -110,6 +110,8 @@ static int ltq_mm_probe(struct platform_device *pdev)
+ 	if (!chip)
  		return -ENOMEM;
  
-+	platform_set_drvdata(pdev, controller);
++	platform_set_drvdata(pdev, chip);
 +
- 	/* Copy our reference */
- 	controller->chip.gc = zevio_gpio_chip;
- 	controller->chip.gc.dev = &pdev->dev;
-@@ -202,6 +204,15 @@ static int zevio_gpio_probe(struct platform_device *pdev)
- 	return 0;
+ 	chip->mmchip.gc.ngpio = 16;
+ 	chip->mmchip.gc.direction_output = ltq_mm_dir_out;
+ 	chip->mmchip.gc.set = ltq_mm_set;
+@@ -122,6 +124,15 @@ static int ltq_mm_probe(struct platform_device *pdev)
+ 	return of_mm_gpiochip_add(pdev->dev.of_node, &chip->mmchip);
  }
  
-+static int zevio_gpio_remove(struct platform_device *pdev)
++static int ltq_mm_remove(struct platform_device *pdev)
 +{
-+	struct zevio_gpio *controller = platform_get_drvdata(pdev);
++	struct ltq_mm *chip = platform_get_drvdata(pdev);
 +
-+	of_mm_gpiochip_remove(&controller->chip);
++	of_mm_gpiochip_remove(&chip->mmchip);
 +
 +	return 0;
 +}
 +
- static const struct of_device_id zevio_gpio_of_match[] = {
- 	{ .compatible = "lsi,zevio-gpio", },
- 	{ },
-@@ -215,6 +226,7 @@ static struct platform_driver zevio_gpio_driver = {
- 		.of_match_table = zevio_gpio_of_match,
- 	},
- 	.probe		= zevio_gpio_probe,
-+	.remove		= zevio_gpio_remove,
- };
- module_platform_driver(zevio_gpio_driver);
+ static const struct of_device_id ltq_mm_match[] = {
+ 	{ .compatible = "lantiq,gpio-mm" },
+ 	{},
+@@ -130,6 +141,7 @@ MODULE_DEVICE_TABLE(of, ltq_mm_match);
  
+ static struct platform_driver ltq_mm_driver = {
+ 	.probe = ltq_mm_probe,
++	.remove = ltq_mm_remove,
+ 	.driver = {
+ 		.name = "gpio-mm-ltq",
+ 		.of_match_table = ltq_mm_match,
+@@ -142,3 +154,9 @@ static int __init ltq_mm_init(void)
+ }
+ 
+ subsys_initcall(ltq_mm_init);
++
++static void __exit ltq_mm_exit(void)
++{
++	platform_driver_unregister(&ltq_mm_driver);
++}
++module_exit(ltq_mm_exit);
 -- 
 2.1.4
