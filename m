@@ -1,178 +1,164 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] gpio: stmpe: enforce device tree only mode
-Date: Sun, 18 Jan 2015 16:46:10 +0000
-Message-ID: <20150118164609.GA3574@x1>
-References: <1421132429-6947-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 3/4] mfd: dln2: add start/stop RX URBs helpers
+Date: Sun, 18 Jan 2015 17:49:34 +0000
+Message-ID: <20150118174934.GH3574@x1>
+References: <1418745435-2851-1-git-send-email-octavian.purdila@intel.com>
+ <1418745435-2851-4-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:44625 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751261AbbARQqS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Jan 2015 11:46:18 -0500
-Received: by mail-ig0-f171.google.com with SMTP id h15so2046077igd.4
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Jan 2015 08:46:17 -0800 (PST)
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:55756 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751609AbbARRtj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Jan 2015 12:49:39 -0500
+Received: by mail-ig0-f179.google.com with SMTP id l13so9980920iga.0
+        for <linux-gpio@vger.kernel.org>; Sun, 18 Jan 2015 09:49:39 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1421132429-6947-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1418745435-2851-4-git-send-email-octavian.purdila@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: linus.walleij@linaro.org, johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, 13 Jan 2015, Linus Walleij wrote:
+On Tue, 16 Dec 2014, Octavian Purdila wrote:
 
-> Require that device tree be used with STMPE (all platforms use this)
-> and enforce OF_GPIO, then delete the platform data.
->=20
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> This is in preparation for adding suspend / resume support.
+
+Please re-submit this set with the Acks you have received.
+
+Also draft a cover-letter with the current status of set, what you
+need next etc.
+
+> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
 > ---
-> MFD: folks: please ACK this so I can funnel it through the GPIO
-> tree.
-> ---
->  drivers/gpio/Kconfig      |  1 +
->  drivers/gpio/gpio-stmpe.c | 23 +++--------------------
->  include/linux/mfd/stmpe.h | 16 ----------------
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
->  3 files changed, 4 insertions(+), 36 deletions(-)
+>  drivers/mfd/dln2.c | 51 +++++++++++++++++++++++++++++++++++++++++---=
+-------
+>  1 file changed, 41 insertions(+), 10 deletions(-)
 >=20
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 633ec216e185..5b1821daa1bd 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -624,6 +624,7 @@ config GPIO_SX150X
->  config GPIO_STMPE
->  	bool "STMPE GPIOs"
->  	depends on MFD_STMPE
-> +	depends on OF_GPIO
->  	select GPIOLIB_IRQCHIP
->  	help
->  	  This enables support for the GPIOs found on the STMPE I/O
-> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-> index 359536eaca0d..926502145492 100644
-> --- a/drivers/gpio/gpio-stmpe.c
-> +++ b/drivers/gpio/gpio-stmpe.c
-> @@ -30,7 +30,7 @@ struct stmpe_gpio {
->  	struct stmpe *stmpe;
->  	struct device *dev;
->  	struct mutex irq_lock;
-> -	unsigned norequest_mask;
-> +	u32 norequest_mask;
->  	/* Caches of interrupt control registers for bus_lock */
->  	u8 regs[CACHE_NR_REGS][CACHE_NR_BANKS];
->  	u8 oldregs[CACHE_NR_REGS][CACHE_NR_BANKS];
-> @@ -350,13 +350,10 @@ static int stmpe_gpio_probe(struct platform_dev=
-ice *pdev)
->  {
->  	struct stmpe *stmpe =3D dev_get_drvdata(pdev->dev.parent);
->  	struct device_node *np =3D pdev->dev.of_node;
-> -	struct stmpe_gpio_platform_data *pdata;
->  	struct stmpe_gpio *stmpe_gpio;
->  	int ret;
->  	int irq =3D 0;
+> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+> index 6d49685..75358d2 100644
+> --- a/drivers/mfd/dln2.c
+> +++ b/drivers/mfd/dln2.c
+> @@ -587,12 +587,19 @@ static void dln2_free_rx_urbs(struct dln2_dev *=
+dln2)
+>  	int i;
 > =20
-> -	pdata =3D stmpe->pdata->gpio;
-> -
->  	irq =3D platform_get_irq(pdev, 0);
-> =20
->  	stmpe_gpio =3D kzalloc(sizeof(struct stmpe_gpio), GFP_KERNEL);
-> @@ -370,19 +367,14 @@ static int stmpe_gpio_probe(struct platform_dev=
-ice *pdev)
->  	stmpe_gpio->chip =3D template_chip;
->  	stmpe_gpio->chip.ngpio =3D stmpe->num_gpios;
->  	stmpe_gpio->chip.dev =3D &pdev->dev;
-> -#ifdef CONFIG_OF
->  	stmpe_gpio->chip.of_node =3D np;
-> -#endif
->  	stmpe_gpio->chip.base =3D -1;
-> =20
->  	if (IS_ENABLED(CONFIG_DEBUG_FS))
->                  stmpe_gpio->chip.dbg_show =3D stmpe_dbg_show;
-> =20
-> -	if (pdata)
-> -		stmpe_gpio->norequest_mask =3D pdata->norequest_mask;
-> -	else if (np)
-> -		of_property_read_u32(np, "st,norequest-mask",
-> -				&stmpe_gpio->norequest_mask);
-> +	of_property_read_u32(np, "st,norequest-mask",
-> +			&stmpe_gpio->norequest_mask);
-> =20
->  	if (irq < 0)
->  		dev_info(&pdev->dev,
-> @@ -424,9 +416,6 @@ static int stmpe_gpio_probe(struct platform_devic=
-e *pdev)
->  					     NULL);
+>  	for (i =3D 0; i < DLN2_MAX_URBS; i++) {
+> -		usb_kill_urb(dln2->rx_urb[i]);
+>  		usb_free_urb(dln2->rx_urb[i]);
+>  		kfree(dln2->rx_buf[i]);
 >  	}
+>  }
 > =20
-> -	if (pdata && pdata->setup)
-> -		pdata->setup(stmpe, stmpe_gpio->chip.base);
-> -
->  	platform_set_drvdata(pdev, stmpe_gpio);
-> =20
->  	return 0;
-> @@ -443,15 +432,9 @@ static int stmpe_gpio_remove(struct platform_dev=
-ice *pdev)
+> +static void dln2_stop_rx_urbs(struct dln2_dev *dln2)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < DLN2_MAX_URBS; i++)
+> +		usb_kill_urb(dln2->rx_urb[i]);
+> +}
+> +
+>  static void dln2_free(struct dln2_dev *dln2)
 >  {
->  	struct stmpe_gpio *stmpe_gpio =3D platform_get_drvdata(pdev);
->  	struct stmpe *stmpe =3D stmpe_gpio->stmpe;
-> -	struct stmpe_gpio_platform_data *pdata =3D stmpe->pdata->gpio;
-> -
-> -	if (pdata && pdata->remove)
-> -		pdata->remove(stmpe, stmpe_gpio->chip.base);
+>  	dln2_free_rx_urbs(dln2);
+> @@ -604,9 +611,7 @@ static int dln2_setup_rx_urbs(struct dln2_dev *dl=
+n2,
+>  			      struct usb_host_interface *hostif)
+>  {
+>  	int i;
+> -	int ret;
+>  	const int rx_max_size =3D DLN2_RX_BUF_SIZE;
+> -	struct device *dev =3D &dln2->interface->dev;
 > =20
->  	gpiochip_remove(&stmpe_gpio->chip);
-> -
->  	stmpe_disable(stmpe, STMPE_BLOCK_GPIO);
-> -
->  	kfree(stmpe_gpio);
+>  	for (i =3D 0; i < DLN2_MAX_URBS; i++) {
+>  		dln2->rx_buf[i] =3D kmalloc(rx_max_size, GFP_KERNEL);
+> @@ -621,7 +626,19 @@ static int dln2_setup_rx_urbs(struct dln2_dev *d=
+ln2,
+>  				  usb_rcvbulkpipe(dln2->usb_dev, dln2->ep_in),
+>  				  dln2->rx_buf[i], rx_max_size, dln2_rx, dln2);
 > =20
->  	return 0;
-> diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
-> index dd908fea8c5b..23a9722c8176 100644
-> --- a/include/linux/mfd/stmpe.h
-> +++ b/include/linux/mfd/stmpe.h
-> @@ -119,20 +119,6 @@ extern int stmpe_disable(struct stmpe *stmpe, un=
-signed int blocks);
->  #define STMPE_GPIO_NOREQ_811_TOUCH	(0xf0)
-> =20
->  /**
-> - * struct stmpe_gpio_platform_data - STMPE GPIO platform data
-> - * @norequest_mask: bitmask specifying which GPIOs should _not_ be
-> - *		    requestable due to different usage (e.g. touch, keypad)
-> - *		    STMPE_GPIO_NOREQ_* macros can be used here.
-> - * @setup: board specific setup callback.
-> - * @remove: board specific remove callback
-> - */
-> -struct stmpe_gpio_platform_data {
-> -	unsigned norequest_mask;
-> -	void (*setup)(struct stmpe *stmpe, unsigned gpio_base);
-> -	void (*remove)(struct stmpe *stmpe, unsigned gpio_base);
-> -};
-> -
-> -/**
->   * struct stmpe_ts_platform_data - stmpe811 touch screen controller =
-platform
->   * data
->   * @sample_time: ADC converstion time in number of clock.
-> @@ -183,7 +169,6 @@ struct stmpe_ts_platform_data {
->   * @irq_over_gpio: true if gpio is used to get irq
->   * @irq_gpio: gpio number over which irq will be requested (signific=
-ant only if
->   *	      irq_over_gpio is true)
-> - * @gpio: GPIO-specific platform data
->   * @ts: touchscreen-specific platform data
->   */
->  struct stmpe_platform_data {
-> @@ -195,7 +180,6 @@ struct stmpe_platform_data {
->  	int irq_gpio;
->  	int autosleep_timeout;
-> =20
-> -	struct stmpe_gpio_platform_data *gpio;
->  	struct stmpe_ts_platform_data *ts;
+> -		ret =3D usb_submit_urb(dln2->rx_urb[i], GFP_KERNEL);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int dln2_start_rx_urbs(struct dln2_dev *dln2, gfp_t gfp)
+> +{
+> +	struct device *dev =3D &dln2->interface->dev;
+> +	int ret;
+> +	int i;
+> +
+> +	for (i =3D 0; i < DLN2_MAX_URBS; i++) {
+> +		ret =3D usb_submit_urb(dln2->rx_urb[i], gfp);
+>  		if (ret < 0) {
+>  			dev_err(dev, "failed to submit RX URB: %d\n", ret);
+>  			return ret;
+> @@ -665,9 +682,8 @@ static const struct mfd_cell dln2_devs[] =3D {
+>  	},
 >  };
 > =20
+> -static void dln2_disconnect(struct usb_interface *interface)
+> +static void dln2_stop(struct dln2_dev *dln2)
+>  {
+> -	struct dln2_dev *dln2 =3D usb_get_intfdata(interface);
+>  	int i, j;
+> =20
+>  	/* don't allow starting new transfers */
+> @@ -696,6 +712,14 @@ static void dln2_disconnect(struct usb_interface=
+ *interface)
+>  	/* wait for transfers to end */
+>  	wait_event(dln2->disconnect_wq, !dln2->active_transfers);
+> =20
+> +	dln2_stop_rx_urbs(dln2);
+> +}
+> +static void dln2_disconnect(struct usb_interface *interface)
+> +{
+> +	struct dln2_dev *dln2 =3D usb_get_intfdata(interface);
+> +
+> +	dln2_stop(dln2);
+> +
+>  	mfd_remove_devices(&interface->dev);
+> =20
+>  	dln2_free(dln2);
+> @@ -738,23 +762,30 @@ static int dln2_probe(struct usb_interface *int=
+erface,
+> =20
+>  	ret =3D dln2_setup_rx_urbs(dln2, hostif);
+>  	if (ret)
+> -		goto out_cleanup;
+> +		goto out_free;
+> +
+> +	ret =3D dln2_start_rx_urbs(dln2, GFP_KERNEL);
+> +	if (ret)
+> +		goto out_stop_rx;
+> =20
+>  	ret =3D dln2_hw_init(dln2);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to initialize hardware\n");
+> -		goto out_cleanup;
+> +		goto out_stop_rx;
+>  	}
+> =20
+>  	ret =3D mfd_add_hotplug_devices(dev, dln2_devs, ARRAY_SIZE(dln2_dev=
+s));
+>  	if (ret !=3D 0) {
+>  		dev_err(dev, "failed to add mfd devices to core\n");
+> -		goto out_cleanup;
+> +		goto out_stop_rx;
+>  	}
+> =20
+>  	return 0;
+> =20
+> -out_cleanup:
+> +out_stop_rx:
+> +	dln2_stop_rx_urbs(dln2);
+> +
+> +out_free:
+>  	dln2_free(dln2);
+> =20
+>  	return ret;
 
 --=20
 Lee Jones
