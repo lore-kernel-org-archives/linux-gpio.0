@@ -1,55 +1,107 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Mon, 19 Jan 2015 13:53:55 +0200
-Message-ID: <20150119115355.GA21244@kuha.fi.intel.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
- <CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
- <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
+Date: Mon, 19 Jan 2015 13:59:06 +0100
+Message-ID: <20150119125905.GE7312@ulmo.nvidia.com>
+References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
+ <1420846493-31647-4-git-send-email-andrew@lunn.ch>
+ <CACRpkdZe2BMtTPU6wkd+gk5mttz3GdL_zYCTPQOaubwRAHbDgg@mail.gmail.com>
+ <20150113024256.GH19533@lunn.ch>
+ <CACRpkda_guCTyivDB5z8jisxYvnsE-1vrvt+N_k1Kp_f+nhQFg@mail.gmail.com>
+ <20150118100438.GC3574@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:1971 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751687AbbASLyJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 19 Jan 2015 06:54:09 -0500
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="brEuL7wsLY8+TuWz"
+Return-path: <linux-pwm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20150118100438.GC3574@x1>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andrew Lunn <andrew@lunn.ch>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Imre Kaloz <kaloz@openwrt.org>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jan 19, 2015 at 02:59:54PM +0900, Alexandre Courbot wrote:
-> I am not really fond of this idea since it adds complexity to the
-> (already too complex) GPIO lookup, and only solves to a local level
-> (GPIO) what is a more global problem (bad ACPI tables that can affect
-> any subsystem).
-> 
-> Also I don't think any new functions is actually needed: on an ACPI
-> system we can safely assume that the platform lookup tables are not
-> used at all. So, although it is a hack as well, you can just call
-> gpiod_add_lookup_table() with a runtime-built table from the driver
-> that needs to pass the GPIO so the receipient can receive it through
-> the lookup table fallback gpiod_get() uses if no GPIO is defined via
-> ACPI.
 
-Unfortunately that would require us to determine details about the
-gpios in the consumer driver, details like the chip_label, chip_hwnum
-and flags. Stuff that I don't think the consumers should touch.
+--brEuL7wsLY8+TuWz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In order to dig those out of the gpio description, the driver would
-either need to include linux/gpio/machine.h, linux/gpio/driver.h and
-linux/gpio/consumer.h or we would need to add helper functions to
-gpiolib.c that do the digging for us. Most likely it would not be
-possible to avoid the helpers. We would in any case have to add
-removal function for the lookups and gpiod_add_lookup_table would need
-to be exported.
+On Sun, Jan 18, 2015 at 10:04:38AM +0000, Lee Jones wrote:
+> On Thu, 15 Jan 2015, Linus Walleij wrote:
+>=20
+> > On Tue, Jan 13, 2015 at 3:42 AM, Andrew Lunn <andrew@lunn.ch> wrote:
+> >=20
+> > > So i thought about this some more. What would an MFD based solution
+> > > look like?
+> > >
+> > > First issue is backwards compatibility. There are currently around 90
+> > > .dts files using this gpio driver. I could imagine a few of these
+> > > being changed to make use of an MFD based driver to make us of the new
+> > > features, but the rest expect backwards compatibility.
+> >=20
+> > Good point.
+> >=20
+> > > I think the only sensible way to achieve this is that the gpio driver
+> > > keeps its existing binding.
+> >=20
+> > Yup.
+> >=20
+> > > This does not really describe the hardware. The hardware is more like:
+> > >
+> > >         gpio: gpio {
+> > >                 compatible =3D "marvell,orion-gpio";
+> > >                 reg =3D <0xd0018100 0x40>;
+> > >                 ngpios =3D <32>;
+> > >                 gio-controller;
+> > >                 #gpio-cells =3D <2>;
+> > >                 interrupt-controller;
+> > >                 #interrupt-cells =3D <2>;
+> > >                 interrupts =3D <16>, <17>, <18>, <19>;
+> > >                 clocks =3D <&coreclk 0>;
+> > >
+> > >                 pwm: pwm {
+> > >                         compatible =3D "marvell,armada-pwm";
+> > >                         reg =3D <0xd00181c0 0x08>;
+> > >                         #pwm-cells =3D <2>;
+> > >                         clocks =3D <&coreclk 0>;
+> > >                 };
+> > >         };
 
-It simply ended up being less of a hack to add the simple function
-explicitly for consumers to be used in a case like this for creating
-the lookups.
+I think you technically need an (empty) ranges property in the gpio node
+so that the address can be properly translated.
 
-Br,
+> > >
+> > > but i don't think MFD supports that sort of structure?
+> >=20
+> > No it would have to be some custom DT code in the GPIO driver
+> > spawning the PWM platform device.
+>=20
+> of_platform_populate()?
 
--- 
-heikki
+Huh? I was under the impression that mfd_add_devices() would already
+deal with this situation? Isn't that what's parsed based on the cells
+parameter?
+
+Thierry
+
+--brEuL7wsLY8+TuWz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUvP+ZAAoJEN0jrNd/PrOhAxoP/iR/ISvOr3AlZkAdb8TbJTNP
+Ifta2m3K56uIODJ5FM4avhH9sJKiuRKHc5cO55ZzqbJgXWX0nxDuxQKOgVz+Ew7g
+nsDa4QnehPT7ySluO92nGpMPvlkvN/ZafE8QuGvPvKxX7WVLmHb9kiLnZbQDnbIJ
+Qi8rLwir4Uahh2jjK1OrnlgN41nhYTC8fVmEOQDSWmubHRrXi3M6aiaOxLVO4+rx
+t5YF1gDXDEwFvurkLBVOfLEPb9Aqyz4pu7KEQJIkU2iYRXsQShJixJcZlmrDZoq3
+YYbUexNbZxg7yTg3d+dz4dQyIhLi+okd97e26H8g7mq7dgD9Xh7Gh9LGYTQ8Zx+D
+N/bvCEbzBDH2bebnN2hl63WCgI5WAqZysmi75dLyS/KR0mj04pc5MYyRIHUdOWU+
+BqKzKl1P9TStesHAk4d3Aa2ngKKcKxLoNnzAUnkdxeykFtTAXn+oG62vgCtbZBZN
+Itn6r1Pek4KpcbS7nrbCvlRt3BOrX3Pm8NmIi8Bf+oF1O8BaNi/EwC9vjJenqA+O
+NvA4COCumWE1OKNSRYrzryUhDp/V9kK0a1DLijsR5ORYmwg/22jBlx5Rfk2ww7TH
+w6oeRbOnhNb+AJBETy64KxHXV8a7/e+HYamUw8Ey5W6DFukjTr/XIAbZJoKNStXb
+8I300R9/dDHPBEZnZYHd
+=7HmQ
+-----END PGP SIGNATURE-----
+
+--brEuL7wsLY8+TuWz--
