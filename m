@@ -1,119 +1,190 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: gpio-mcp23sxx driver stopped working
-Date: Mon, 19 Jan 2015 15:08:50 +0900
-Message-ID: <CAAVeFuJtx6wV3ij-93Vk97ftZBU3ZYmneF+sNrM4CRnX+q=peg@mail.gmail.com>
-References: <CAEmm_TYh-B7dfGtaKTFcqDK-xAdp5XdGLJt7YE9fzu66u-yWGg@mail.gmail.com>
- <CAAVeFuLJJKrcPSXCf8H5_rU530bsUF6WvS18xqg14NHDUoNgSA@mail.gmail.com>
- <CAEmm_Tb5wRYCHxYtdHiLoL-SQAcf8WsvKKJTkJASZXoL=qT_Aw@mail.gmail.com>
- <CAEmm_Tb80QtZuPEzZ6mJ-Yzzjydqxik3qmvpi5v_daZu_TxW6g@mail.gmail.com> <B168F8A49F4BCF4C84FD23DA5F6363EE61231F37@NWD2MBX7.ad.analog.com>
+Subject: Re: [PATCH V6 3/8] MIPS: Cleanup Loongson-2F's gpio driver
+Date: Mon, 19 Jan 2015 15:17:56 +0900
+Message-ID: <CAAVeFu+-m98_O1poRaxurDiUFkFu6t93On4ZM6xMWVW0-3Uvzw@mail.gmail.com>
+References: <1419742654-15094-1-git-send-email-chenhc@lemote.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:56409 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752001AbbASGJL convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 01:09:11 -0500
-Received: by mail-ig0-f170.google.com with SMTP id l13so11580144iga.1
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Jan 2015 22:09:10 -0800 (PST)
-In-Reply-To: <B168F8A49F4BCF4C84FD23DA5F6363EE61231F37@NWD2MBX7.ad.analog.com>
+Received: from mail-ie0-f171.google.com ([209.85.223.171]:37680 "EHLO
+	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751864AbbASGSR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 01:18:17 -0500
+Received: by mail-ie0-f171.google.com with SMTP id tr6so1212345ieb.2
+        for <linux-gpio@vger.kernel.org>; Sun, 18 Jan 2015 22:18:16 -0800 (PST)
+In-Reply-To: <1419742654-15094-1-git-send-email-chenhc@lemote.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Zhang, Sonic" <Sonic.Zhang@analog.com>
-Cc: =?UTF-8?Q?Antonio_Fiol_Bonn=C3=ADn?= <antonio@fiol.es>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Huacai Chen <chenhc@lemote.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, John Crispin <john@phrozen.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips <linux-mips@linux-mips.org>, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Jan 19, 2015 at 1:01 PM, Zhang, Sonic <Sonic.Zhang@analog.com> =
-wrote:
-> Hi Antonio,
+On Sun, Dec 28, 2014 at 1:57 PM, Huacai Chen <chenhc@lemote.com> wrote:
+> This cleanup is prepare to move the driver to drivers/gpio. Custom
+> definitions of gpio_get_value()/gpio_set_value() are dropped.
 >
->>-----Original Message-----
->>From: Antonio Fiol Bonn=C3=ADn [mailto:antonio@fiol.es]
->>Sent: Sunday, January 18, 2015 7:32 PM
->>To: Alexandre Courbot; Zhang, Sonic
->>Cc: Linus Walleij; Grant Likely; Rob Herring; linux-gpio@vger.kernel.=
-org
->>Subject: Re: gpio-mcp23sxx driver stopped working
->>
->>And I have some more news...
->>
->>On Sun, Jan 18, 2015 at 9:34 AM, Antonio Fiol Bonn=C3=ADn <antonio@fi=
-ol.es> wrote:
->>> On Sun, Jan 18, 2015 at 7:04 AM, Alexandre Courbot <gnurou@gmail.co=
-m> wrote:
->>>> On Sat, Jan 17, 2015 at 3:28 AM, Antonio Fiol Bonn=C3=ADn
->>>> <antonio@fiol.es>
->>>> wrote:
->>>> > I am writing to you as the maintainers for the gpio-mcp23sxx dri=
-ver
->>>> > (and open firmware maintainers) according to the kernel
->>>> > documentation, before writing to the linux-kernel, linux-gpio or
->>>> > devicetree mailing list, as recommeded by the FAQ.  If you belie=
-ve
->>>> > I should proceed otherwise, I will be pleased to do so.
->>>>
->>>> Thanks for reporting that issue and your detailed report. AFAICT y=
-ou
->>>> did everything well - you could maybe also have included the
->>>> linux-gpio ML to reach a wider audience.
->>
->>OK, Adding the list now that I have some more info.
->>
->>>> > I was using that module on a raspberry pi on kernel 3.15.2,
->>>> > successfully.
->>>> > When I upgraded to 3.18.2, the module stopped working.
->>>> > Specifically, the probes for a MCP23017 device fail with -EINVAL=
- (-22).
->>>> >
->>>> > Some background:
->>>> > The setup is as follows:
->>>> > Some RPi GPIO pins drive leds. These continue working. Unrelated=
- to
->>>> > the failing module.
->>>> > RPi GPIO port 4 is used as the master for a w1 bus holding a cou=
-ple
->>>> > temperature sensors. Still working properly. This is relevant
->>>> > because I am upgrading after observing some kernel oops related =
-to
->>>> > the w1_therm module, but still unrelated to the failing module.
->>>> >
->>>> > The issue:
->>>> > RPI I2C port connected to a MCP23017 which, in turn, has 16 I/O
->>>> > pins configured to drive some more leds. This is still working a=
-t
->>>> > the I2C level, but the gpio-mcp23sxx module fails to probe the
->>>> > chip, and this means it fails to create the
->>>> > /sys/bus/gpio/gpiochip240 so I can't export the pins which I lat=
-er
->>>> > use to change the led state, all this using sysfs.
->>>> >
->>>> > Some debugging:
->>>> > I checked that the driver is rejecting the probe because of
->>>> > "invalid platform data". I tracked it down to be "inexistent"
->>>> > platform data, as pdata is null when the test is performed.
->>>> > That code path is reached both when the kernel is configured wit=
-h
->>>> > CONFIG_OF and when it is configured without it.
->>>> > Without it, I can understand, but with, I can't.
->>>> > The OF matching does not succeed because dev.of_node is null too=
-=2E
->>>> >
-> Have you added the gpio node for mcp23sxx in the device tree file of =
-your raspberry pi board? And have you rebuilt your dtb file?
+> Signed-off-by: Huacai Chen <chenhc@lemote.com>
+> ---
+>  arch/mips/include/asm/mach-loongson/gpio.h |   15 +++---
+>  arch/mips/loongson/common/gpio.c           |   82 +++++++++++-----------------
+>  2 files changed, 39 insertions(+), 58 deletions(-)
+>
+> diff --git a/arch/mips/include/asm/mach-loongson/gpio.h b/arch/mips/include/asm/mach-loongson/gpio.h
+> index 211a7b7..b3b2169 100644
+> --- a/arch/mips/include/asm/mach-loongson/gpio.h
+> +++ b/arch/mips/include/asm/mach-loongson/gpio.h
+> @@ -1,8 +1,9 @@
+>  /*
+> - * STLS2F GPIO Support
+> + * Loongson GPIO Support
+>   *
+>   * Copyright (c) 2008  Richard Liu, STMicroelectronics <richard.liu@st.com>
+>   * Copyright (c) 2008-2010  Arnaud Patard <apatard@mandriva.com>
+> + * Copyright (c) 2014  Huacai Chen <chenhc@lemote.com>
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License as published by
+> @@ -10,14 +11,14 @@
+>   * (at your option) any later version.
+>   */
+>
+> -#ifndef __STLS2F_GPIO_H
+> -#define __STLS2F_GPIO_H
+> +#ifndef __LOONGSON_GPIO_H
+> +#define __LOONGSON_GPIO_H
+>
+>  #include <asm-generic/gpio.h>
+>
+> -extern void gpio_set_value(unsigned gpio, int value);
+> -extern int gpio_get_value(unsigned gpio);
+> -extern int gpio_cansleep(unsigned gpio);
+> +#define gpio_get_value __gpio_get_value
+> +#define gpio_set_value __gpio_set_value
+> +#define gpio_cansleep __gpio_cansleep
+>
+>  /* The chip can do interrupt
+>   * but it has not been tested and doc not clear
+> @@ -32,4 +33,4 @@ static inline int irq_to_gpio(int gpio)
+>         return -EINVAL;
+>  }
+>
+> -#endif                         /* __STLS2F_GPIO_H */
+> +#endif /* __LOONGSON_GPIO_H */
+> diff --git a/arch/mips/loongson/common/gpio.c b/arch/mips/loongson/common/gpio.c
+> index 29dbaa2..087aac3 100644
+> --- a/arch/mips/loongson/common/gpio.c
+> +++ b/arch/mips/loongson/common/gpio.c
+> @@ -24,55 +24,6 @@
+>
+>  static DEFINE_SPINLOCK(gpio_lock);
+>
+> -int gpio_get_value(unsigned gpio)
+> -{
+> -       u32 val;
+> -       u32 mask;
+> -
+> -       if (gpio >= STLS2F_N_GPIO)
+> -               return __gpio_get_value(gpio);
+> -
+> -       mask = 1 << (gpio + STLS2F_GPIO_IN_OFFSET);
+> -       spin_lock(&gpio_lock);
+> -       val = LOONGSON_GPIODATA;
+> -       spin_unlock(&gpio_lock);
+> -
+> -       return (val & mask) != 0;
+> -}
+> -EXPORT_SYMBOL(gpio_get_value);
+> -
+> -void gpio_set_value(unsigned gpio, int state)
+> -{
+> -       u32 val;
+> -       u32 mask;
+> -
+> -       if (gpio >= STLS2F_N_GPIO) {
+> -               __gpio_set_value(gpio, state);
+> -               return ;
+> -       }
+> -
+> -       mask = 1 << gpio;
+> -
+> -       spin_lock(&gpio_lock);
+> -       val = LOONGSON_GPIODATA;
+> -       if (state)
+> -               val |= mask;
+> -       else
+> -               val &= (~mask);
+> -       LOONGSON_GPIODATA = val;
+> -       spin_unlock(&gpio_lock);
+> -}
+> -EXPORT_SYMBOL(gpio_set_value);
+> -
+> -int gpio_cansleep(unsigned gpio)
+> -{
+> -       if (gpio < STLS2F_N_GPIO)
+> -               return 0;
+> -       else
+> -               return __gpio_cansleep(gpio);
+> -}
+> -EXPORT_SYMBOL(gpio_cansleep);
+> -
+>  static int ls2f_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+>  {
+>         u32 temp;
+> @@ -113,13 +64,41 @@ static int ls2f_gpio_direction_output(struct gpio_chip *chip,
+>
+>  static int ls2f_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
+>  {
+> -       return gpio_get_value(gpio);
+> +       u32 val;
+> +       u32 mask;
+> +
+> +       if (gpio >= STLS2F_N_GPIO)
+> +               return __gpio_get_value(gpio);
+> +
+> +       mask = 1 << (gpio + STLS2F_GPIO_IN_OFFSET);
+> +       spin_lock(&gpio_lock);
+> +       val = LOONGSON_GPIODATA;
+> +       spin_unlock(&gpio_lock);
 
-It seems like Antonio's device is using platform data (Antonio, can
-you confirm?), so is DT relevant at all here?
+Careful, you are not anymore dealing with absolute GPIO numbers like
+your former custom gpio_get_value() function did.
 
-By the look of it this patch might have broken platform support for
-this driver. According to the trace given by Antonio, the following
-condition in probe() is met:
+This function will be called by the gpiolib core after it has matched
+the GPIO to your chip. So testing for gpio >= STLS2F_N_GPIO is not
+needed.
 
-        if (!pdata || !gpio_is_valid(pdata->base)) {
+Furthermore, the passed GPIO number will be relative to the chip's
+base index. In your case it seems like the base is 0, so this doesn't
+change anything, but be aware of this fact.
 
-Antonio, could you display both pdata and pdata->base right before
-this test so we understand why this is happening? Does the platform
-data in your board file specify a base GPIO for your chip?
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +
+> +       return (val & mask) != 0;
+>  }
+>
+>  static void ls2f_gpio_set_value(struct gpio_chip *chip,
+>                 unsigned gpio, int value)
+>  {
+> -       gpio_set_value(gpio, value);
+> +       u32 val;
+> +       u32 mask;
+> +
+> +       if (gpio >= STLS2F_N_GPIO) {
+> +               __gpio_set_value(gpio, value);
+> +               return;
+> +       }
+> +
+> +       mask = 1 << gpio;
+> +
+> +       spin_lock(&gpio_lock);
+> +       val = LOONGSON_GPIODATA;
+> +       if (value)
+> +               val |= mask;
+> +       else
+> +               val &= (~mask);
+> +       LOONGSON_GPIODATA = val;
+
+Same thing here.
+
+Since this is a potentially dangerous refactoring of this driver, I'd
+like a statement that confirms it is still working properly after
+patches 3, 4, and 5 of this series. IOW, please test your driver after
+each of these patches to ensure the refactoring is done properly.
