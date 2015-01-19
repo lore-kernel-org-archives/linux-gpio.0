@@ -1,82 +1,52 @@
-From: Peter Korsgaard <peter@korsgaard.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 Subject: Re: [PATCH 8/8] gpio/mpc8xxx: Use of_mm_gpiochip_remove
-Date: Mon, 19 Jan 2015 23:52:11 +0100
-Message-ID: <87fvb69yec.fsf@dell.be.48ers.dk>
+Date: Tue, 20 Jan 2015 00:10:34 +0100
+Message-ID: <CAPybu_0nyzS6gYBBEEX7VY2t+xtsJ_uVjd=TEuuQGmSmUmboGA@mail.gmail.com>
 References: <1421581173-28416-1-git-send-email-ricardo.ribalda@gmail.com>
-	<1421581173-28416-9-git-send-email-ricardo.ribalda@gmail.com>
+ <1421581173-28416-9-git-send-email-ricardo.ribalda@gmail.com> <87fvb69yec.fsf@dell.be.48ers.dk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:65075 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751614AbbASWwQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 17:52:16 -0500
-In-Reply-To: <1421581173-28416-9-git-send-email-ricardo.ribalda@gmail.com>
-	(Ricardo Ribalda Delgado's message of "Sun, 18 Jan 2015 12:39:33
-	+0100")
+Received: from mail-la0-f51.google.com ([209.85.215.51]:56373 "EHLO
+	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751517AbbASXK4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 18:10:56 -0500
+In-Reply-To: <87fvb69yec.fsf@dell.be.48ers.dk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>
+To: Peter Korsgaard <peter@korsgaard.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>
 
->>>>> "Ricardo" == Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> writes:
-
- > Since d621e8bae5ac9c67 (Create of_mm_gpiochip_remove), there is a
- > counterpart for of_mm_gpiochip_add.
-
- > This patch implements the remove function of the driver making use of
- > it.
-
- > Cc: Linus Walleij <linus.walleij@linaro.org>
- > Cc: Alexandre Courbot <gnurou@gmail.com>
- > Cc: Peter Korsgaard <jacmet@sunsite.dk>
- > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
- > ---
- >  drivers/gpio/gpio-mpc8xxx.c | 28 +++++++++++++++++++++++-----
- >  1 file changed, 23 insertions(+), 5 deletions(-)
-
- > diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
- > index 57eb794..a6952ba3 100644
- > --- a/drivers/gpio/gpio-mpc8xxx.c
- > +++ b/drivers/gpio/gpio-mpc8xxx.c
- > @@ -40,6 +40,7 @@ struct mpc8xxx_gpio_chip {
- >  	 */
- >  	u32 data;
- >  	struct irq_domain *irq;
- > +	unsigned int irqn;
- >  	const void *of_dev_id_data;
- >  };
- 
- > @@ -350,13 +351,14 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- >  	struct of_mm_gpio_chip *mm_gc;
- >  	struct gpio_chip *gc;
- >  	const struct of_device_id *id;
- > -	unsigned hwirq;
- >  	int ret;
- 
- >  	mpc8xxx_gc = devm_kzalloc(&pdev->dev, sizeof(*mpc8xxx_gc), GFP_KERNEL);
- >  	if (!mpc8xxx_gc)
- >  		return -ENOMEM;
- 
- > +	platform_set_drvdata(pdev, mpc8xxx_gc);
- > +
- >  	spin_lock_init(&mpc8xxx_gc->lock);
- 
- >  	mm_gc = &mpc8xxx_gc->mm_gc;
- > @@ -377,8 +379,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- >  	if (ret)
- >  		return ret;
- 
- > -	hwirq = irq_of_parse_and_map(np, 0);
- > -	if (hwirq == NO_IRQ)
- > +	mpc8xxx_gc->irqn = irq_of_parse_and_map(np, 0);
- > +	if (mpc8xxx_gc->irqn == NO_IRQ)
- >  		return 0;
+Hello Peter
 
 
-With this return 0 converted to do of_mm_gpiochip_remove():
+>
+>  > -    hwirq = irq_of_parse_and_map(np, 0);
+>  > -    if (hwirq == NO_IRQ)
+>  > +    mpc8xxx_gc->irqn = irq_of_parse_and_map(np, 0);
+>  > +    if (mpc8xxx_gc->irqn == NO_IRQ)
+>  >              return 0;
+>
+>
+> With this return 0 converted to do of_mm_gpiochip_remove():
 
-Acked-by: Peter Korsgaard <peter@korsgaard.com>
+Are you sure? The driver can still work as a normal gpio without the
+irq domain part and the remove function consider this option. The
+original code did also continue....
+
+If you still want to abort if no irq I can of course make the change.
+
+Regards!
+
+>
+> Acked-by: Peter Korsgaard <peter@korsgaard.com>
+>
+> --
+> Bye, Peter Korsgaard
+
+Regards
+
+
 
 -- 
-Bye, Peter Korsgaard
+Ricardo Ribalda
