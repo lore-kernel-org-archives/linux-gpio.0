@@ -1,170 +1,181 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 3/4] mfd: dln2: add start/stop RX URBs helpers
-Date: Sun, 18 Jan 2015 17:49:34 +0000
-Message-ID: <20150118174934.GH3574@x1>
-References: <1418745435-2851-1-git-send-email-octavian.purdila@intel.com>
- <1418745435-2851-4-git-send-email-octavian.purdila@intel.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: basic-mmio-gpio: add DT support
+Date: Mon, 19 Jan 2015 12:37:18 +0900
+Message-ID: <CAAVeFu+sv9XGus0QXpamkRaGebTsgWcpfCRY50Q0F3xb2psGrg@mail.gmail.com>
+References: <5490B528.2020305@gmail.com> <CAAVeFuLoZPptaqnN8s6r_aN_rpBj+MpmT=5Xc2-iO3kGKZfctw@mail.gmail.com>
+ <54B65110.8030509@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f179.google.com ([209.85.213.179]:55756 "EHLO
-	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751609AbbARRtj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Jan 2015 12:49:39 -0500
-Received: by mail-ig0-f179.google.com with SMTP id l13so9980920iga.0
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Jan 2015 09:49:39 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1418745435-2851-4-git-send-email-octavian.purdila@intel.com>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:39992 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750937AbbASDhj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Jan 2015 22:37:39 -0500
+In-Reply-To: <54B65110.8030509@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: linus.walleij@linaro.org, johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, 16 Dec 2014, Octavian Purdila wrote:
+On Wed, Jan 14, 2015 at 8:20 PM, =C3=81lvaro Fern=C3=A1ndez Rojas
+<noltari@gmail.com> wrote:
+> El 14/01/2015 a las 6:32, Alexandre Courbot escribi=C3=B3:
+>> On Wed, Dec 17, 2014 at 7:41 AM, =C3=81lvaro Fern=C3=A1ndez Rojas
+>> <noltari@gmail.com> wrote:
+>>> Add DT support while keeping legacy support.
+>>>
+>>> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+>>> ---
+>>> diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generi=
+c.c
+>>
+>> There is no documentation for these new bindings?
+>
+> Actually, I was waiting for this patch (by kamlakant.patel@linaro.org=
+) to be accepted before: "[PATCH v1 5/5] gpio: document basic mmio gpio=
+ library".
+> Anyway, I will add documentation on the next version of this patch.
+>
+>>
+>>> index 16f6115..9792783 100644
+>>> --- a/drivers/gpio/gpio-generic.c
+>>> +++ b/drivers/gpio/gpio-generic.c
+>>> @@ -61,6 +61,9 @@ o        `                     ~~~~\___/~~~~    `=
+ controller in FPGA is ,.`
+>>>  #include <linux/platform_device.h>
+>>>  #include <linux/mod_devicetable.h>
+>>>  #include <linux/basic_mmio_gpio.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/of_device.h>
+>>> +#include <linux/of_gpio.h>
+>>>
+>>>  static void bgpio_write8(void __iomem *reg, unsigned long data)
+>>>  {
+>>> @@ -488,8 +491,58 @@ static void __iomem *bgpio_map(struct platform=
+_device *pdev,
+>>>         return ret;
+>>>  }
+>>>
+>>> +#ifdef CONFIG_OF
+>>> +static const struct of_device_id bgpio_dt_ids[] =3D {
+>>> +       { .compatible =3D "basic-mmio-gpio" },
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, bgpio_dt_ids);
+>>> +
+>>> +static int bgpio_probe_dt(struct platform_device *pdev)
+>>> +{
+>>> +       u32 tmp;
+>>> +       struct bgpio_pdata *pdata;
+>>> +       struct device_node *np;
+>>> +
+>>> +       np =3D pdev->dev.of_node;
+>>> +       if (!np)
+>>> +               return 0;
+>>> +
+>>> +       pdata =3D devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERN=
+EL);
+>>> +       if (!pdata)
+>>> +               return -ENOMEM;
+>>> +
+>>> +       pdata->label =3D dev_name(&pdev->dev);
+>>> +       pdata->base =3D -1;
+>>> +       if (of_find_property(np, "byte-be", NULL)) {
+>>> +               pdata->flags |=3D BGPIOF_BIG_ENDIAN_BYTE_ORDER;
+>>> +       }
+>>> +       if (of_find_property(np, "bit-be", NULL)) {
+>>> +               pdata->flags |=3D BGPIOF_BIG_ENDIAN;
+>>> +       }
+>>> +       if (of_find_property(np, "regset-nr", NULL)) {
+>>> +               pdata->flags |=3D BGPIOF_UNREADABLE_REG_SET;
+>>> +       }
+>>> +       if (of_find_property(np, "regdir-nr", NULL)) {
+>>> +               pdata->flags |=3D BGPIOF_UNREADABLE_REG_DIR;
+>>> +       }
+>>> +       if (!of_property_read_u32(np, "num-gpios", &tmp)) {
+>>> +               pdata->ngpio =3D tmp;
+>>> +       }
+>>
+>> I don't think this is acceptable. gpio-generic is designed to be use=
+d
+>> as a framework for other drivers to build upon. These drivers should
+>> have their own compatible strings, which should be enough to infer a=
+ll
+>> the properties you defined here.
+>>
+>
+> gpio-generic is not only designed as a framework for other drivers, i=
+t can also be used directly by registering the driver through platform =
+device (basic-mmio-gpio/basic-mmio-gpio-be).
 
-> This is in preparation for adding suspend / resume support.
+This works for platform drivers which stay confined to the kernel, but
+DT is a firmware definition where such generic bindings are much less
+desirable.
 
-Please re-submit this set with the Acks you have received.
+> My intention is to make it DT compatible as a generic driver, which c=
+an be used for different hardware, by selecting different DT properties=
+ as configuration.
+>
+>> Device Tree identifies hardware precisely (vendor and model), and th=
+is
+>> new binding is just not that. You *could* however have a very simple
+>> driver that associates compatible strings to static tables containin=
+g
+>> the values of the properties you wanted to see passed through the DT=
+,
+>> and have one single driver that covers many mmio-based GPIO devices.
+>> But I'm afraid "basic-mmio-gpio" is *way* to vague to describe
+>> hardware.
+>>
+>
+> I don't think making a new driver mapping different compatible string=
+s to static tables containing the values of the properties passed throu=
+gh DT is a sane way of doing it, since it will require multiple combina=
+tions to cover all the possibilites.
+>
+> My plan is to be able to do something like this (btw, I actually test=
+ed this patch on BCM63xx and works perfectly):
+> gpio-controller@10000084 {
+>         compatible =3D "basic-mmio-gpio", "brcm,brcm6368";
 
-Also draft a cover-letter with the current status of set, what you
-need next etc.
+Here your compatible string should be
 
-> Signed-off-by: Octavian Purdila <octavian.purdila@intel.com>
-> ---
->  drivers/mfd/dln2.c | 51 +++++++++++++++++++++++++++++++++++++++++---=
--------
->  1 file changed, 41 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-> index 6d49685..75358d2 100644
-> --- a/drivers/mfd/dln2.c
-> +++ b/drivers/mfd/dln2.c
-> @@ -587,12 +587,19 @@ static void dln2_free_rx_urbs(struct dln2_dev *=
-dln2)
->  	int i;
-> =20
->  	for (i =3D 0; i < DLN2_MAX_URBS; i++) {
-> -		usb_kill_urb(dln2->rx_urb[i]);
->  		usb_free_urb(dln2->rx_urb[i]);
->  		kfree(dln2->rx_buf[i]);
->  	}
->  }
-> =20
-> +static void dln2_stop_rx_urbs(struct dln2_dev *dln2)
-> +{
-> +	int i;
-> +
-> +	for (i =3D 0; i < DLN2_MAX_URBS; i++)
-> +		usb_kill_urb(dln2->rx_urb[i]);
-> +}
-> +
->  static void dln2_free(struct dln2_dev *dln2)
->  {
->  	dln2_free_rx_urbs(dln2);
-> @@ -604,9 +611,7 @@ static int dln2_setup_rx_urbs(struct dln2_dev *dl=
-n2,
->  			      struct usb_host_interface *hostif)
->  {
->  	int i;
-> -	int ret;
->  	const int rx_max_size =3D DLN2_RX_BUF_SIZE;
-> -	struct device *dev =3D &dln2->interface->dev;
-> =20
->  	for (i =3D 0; i < DLN2_MAX_URBS; i++) {
->  		dln2->rx_buf[i] =3D kmalloc(rx_max_size, GFP_KERNEL);
-> @@ -621,7 +626,19 @@ static int dln2_setup_rx_urbs(struct dln2_dev *d=
-ln2,
->  				  usb_rcvbulkpipe(dln2->usb_dev, dln2->ep_in),
->  				  dln2->rx_buf[i], rx_max_size, dln2_rx, dln2);
-> =20
-> -		ret =3D usb_submit_urb(dln2->rx_urb[i], GFP_KERNEL);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int dln2_start_rx_urbs(struct dln2_dev *dln2, gfp_t gfp)
-> +{
-> +	struct device *dev =3D &dln2->interface->dev;
-> +	int ret;
-> +	int i;
-> +
-> +	for (i =3D 0; i < DLN2_MAX_URBS; i++) {
-> +		ret =3D usb_submit_urb(dln2->rx_urb[i], gfp);
->  		if (ret < 0) {
->  			dev_err(dev, "failed to submit RX URB: %d\n", ret);
->  			return ret;
-> @@ -665,9 +682,8 @@ static const struct mfd_cell dln2_devs[] =3D {
->  	},
->  };
-> =20
-> -static void dln2_disconnect(struct usb_interface *interface)
-> +static void dln2_stop(struct dln2_dev *dln2)
->  {
-> -	struct dln2_dev *dln2 =3D usb_get_intfdata(interface);
->  	int i, j;
-> =20
->  	/* don't allow starting new transfers */
-> @@ -696,6 +712,14 @@ static void dln2_disconnect(struct usb_interface=
- *interface)
->  	/* wait for transfers to end */
->  	wait_event(dln2->disconnect_wq, !dln2->active_transfers);
-> =20
-> +	dln2_stop_rx_urbs(dln2);
-> +}
-> +static void dln2_disconnect(struct usb_interface *interface)
-> +{
-> +	struct dln2_dev *dln2 =3D usb_get_intfdata(interface);
-> +
-> +	dln2_stop(dln2);
-> +
->  	mfd_remove_devices(&interface->dev);
-> =20
->  	dln2_free(dln2);
-> @@ -738,23 +762,30 @@ static int dln2_probe(struct usb_interface *int=
-erface,
-> =20
->  	ret =3D dln2_setup_rx_urbs(dln2, hostif);
->  	if (ret)
-> -		goto out_cleanup;
-> +		goto out_free;
-> +
-> +	ret =3D dln2_start_rx_urbs(dln2, GFP_KERNEL);
-> +	if (ret)
-> +		goto out_stop_rx;
-> =20
->  	ret =3D dln2_hw_init(dln2);
->  	if (ret < 0) {
->  		dev_err(dev, "failed to initialize hardware\n");
-> -		goto out_cleanup;
-> +		goto out_stop_rx;
->  	}
-> =20
->  	ret =3D mfd_add_hotplug_devices(dev, dln2_devs, ARRAY_SIZE(dln2_dev=
-s));
->  	if (ret !=3D 0) {
->  		dev_err(dev, "failed to add mfd devices to core\n");
-> -		goto out_cleanup;
-> +		goto out_stop_rx;
->  	}
-> =20
->  	return 0;
-> =20
-> -out_cleanup:
-> +out_stop_rx:
-> +	dln2_stop_rx_urbs(dln2);
-> +
-> +out_free:
->  	dln2_free(dln2);
-> =20
->  	return ret;
+        compatible =3D "brcm,brcm6368", "basic-mmio-gpio";
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+I.e. from more precise to less precise. A dedicated BRCM6368 driver
+should take precedence over your generic one.
+
+>         reg =3D <0x10000084 0x4>, <0x1000008c 0x4>;
+>         reg-names =3D "dirout", "dat";
+>
+>         num-gpios =3D <32>;
+>         byte-be;
+>
+>         gpio-controller;
+>         #gpio-cells =3D <2>;
+> };
+> And for other hardware you could do:
+> gpio-controller@10000180 {
+>         compatible =3D "basic-mmio-gpio", "foo,bar";
+>         reg =3D <0x10000180 0x4>, <0x10000184 0x4>, <0x10000188 0x4>;
+>         reg-names =3D "dirin", "dirout", "dat";
+>
+>         num-gpios =3D <20>;
+>         bit-be;
+>         byte-be;
+>         regdir-nr;
+>
+>         gpio-controller;
+>         #gpio-cells =3D <2>;
+> };
+> This way you wouldn't need to add a wrapper for each specific hardwar=
+e using basic-mmio-gpio, and you would save time by using the generic d=
+river.
+
+I understand the intent but IIUC the history of DT speaks  against
+such generic bindings. On the other hand I can see some instances of
+them like "simple-bus" for instance. Added the DT maintainers and
+mailing list to get more informed opinions on the matter.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
