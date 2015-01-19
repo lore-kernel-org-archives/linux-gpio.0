@@ -1,206 +1,160 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: basic-mmio-gpio: add DT support
-Date: Mon, 19 Jan 2015 10:45:46 +0000
-Message-ID: <20150119104546.GB21553@leverpostej>
-References: <5490B528.2020305@gmail.com>
- <CAAVeFuLoZPptaqnN8s6r_aN_rpBj+MpmT=5Xc2-iO3kGKZfctw@mail.gmail.com>
- <54B65110.8030509@gmail.com>
- <CAAVeFu+sv9XGus0QXpamkRaGebTsgWcpfCRY50Q0F3xb2psGrg@mail.gmail.com>
+From: =?UTF-8?Q?Antonio_Fiol_Bonn=C3=ADn?= <antonio@fiol.es>
+Subject: Re: gpio-mcp23sxx driver stopped working
+Date: Mon, 19 Jan 2015 11:54:54 +0100
+Message-ID: <CAEmm_TYfr5SAWQyH-Rn2kYeGBT5qf5P+K0kDnX0r02m7z5hOag@mail.gmail.com>
+References: <CAEmm_TYh-B7dfGtaKTFcqDK-xAdp5XdGLJt7YE9fzu66u-yWGg@mail.gmail.com>
+	<CAAVeFuLJJKrcPSXCf8H5_rU530bsUF6WvS18xqg14NHDUoNgSA@mail.gmail.com>
+	<CAEmm_Tb5wRYCHxYtdHiLoL-SQAcf8WsvKKJTkJASZXoL=qT_Aw@mail.gmail.com>
+	<CAEmm_Tb80QtZuPEzZ6mJ-Yzzjydqxik3qmvpi5v_daZu_TxW6g@mail.gmail.com>
+	<B168F8A49F4BCF4C84FD23DA5F6363EE61231F37@NWD2MBX7.ad.analog.com>
+	<CAAVeFuJtx6wV3ij-93Vk97ftZBU3ZYmneF+sNrM4CRnX+q=peg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss-mx-na.foss.arm.com ([217.140.108.86]:37707 "EHLO
-	foss-mx-na.foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752462AbbASKqY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 05:46:24 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAVeFu+sv9XGus0QXpamkRaGebTsgWcpfCRY50Q0F3xb2psGrg@mail.gmail.com>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:41156 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752436AbbASKyz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 05:54:55 -0500
+Received: by mail-ob0-f181.google.com with SMTP id gq1so28285822obb.12
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Jan 2015 02:54:54 -0800 (PST)
+In-Reply-To: <CAAVeFuJtx6wV3ij-93Vk97ftZBU3ZYmneF+sNrM4CRnX+q=peg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Alexandre Courbot <gnurou@gmail.com>
-Cc: =?utf-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= Rojas <noltari@gmail.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "Zhang, Sonic" <Sonic.Zhang@analog.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Jan 19, 2015 at 03:37:18AM +0000, Alexandre Courbot wrote:
-> On Wed, Jan 14, 2015 at 8:20 PM, =C3=81lvaro Fern=C3=A1ndez Rojas
-> <noltari@gmail.com> wrote:
-> > El 14/01/2015 a las 6:32, Alexandre Courbot escribi=C3=B3:
-> >> On Wed, Dec 17, 2014 at 7:41 AM, =C3=81lvaro Fern=C3=A1ndez Rojas
-> >> <noltari@gmail.com> wrote:
-> >>> Add DT support while keeping legacy support.
-> >>>
-> >>> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.co=
-m>
-> >>> ---
-> >>> diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-gene=
-ric.c
-> >>
-> >> There is no documentation for these new bindings?
-> >
-> > Actually, I was waiting for this patch (by kamlakant.patel@linaro.o=
-rg) to be accepted before: "[PATCH v1 5/5] gpio: document basic mmio gp=
-io library".
-> > Anyway, I will add documentation on the next version of this patch.
-> >
-> >>
-> >>> index 16f6115..9792783 100644
-> >>> --- a/drivers/gpio/gpio-generic.c
-> >>> +++ b/drivers/gpio/gpio-generic.c
-> >>> @@ -61,6 +61,9 @@ o        `                     ~~~~\___/~~~~   =
- ` controller in FPGA is ,.`
-> >>>  #include <linux/platform_device.h>
-> >>>  #include <linux/mod_devicetable.h>
-> >>>  #include <linux/basic_mmio_gpio.h>
-> >>> +#include <linux/of.h>
-> >>> +#include <linux/of_device.h>
-> >>> +#include <linux/of_gpio.h>
-> >>>
-> >>>  static void bgpio_write8(void __iomem *reg, unsigned long data)
-> >>>  {
-> >>> @@ -488,8 +491,58 @@ static void __iomem *bgpio_map(struct platfo=
-rm_device *pdev,
-> >>>         return ret;
-> >>>  }
-> >>>
-> >>> +#ifdef CONFIG_OF
-> >>> +static const struct of_device_id bgpio_dt_ids[] =3D {
-> >>> +       { .compatible =3D "basic-mmio-gpio" },
-> >>> +};
-> >>> +MODULE_DEVICE_TABLE(of, bgpio_dt_ids);
-> >>> +
-> >>> +static int bgpio_probe_dt(struct platform_device *pdev)
-> >>> +{
-> >>> +       u32 tmp;
-> >>> +       struct bgpio_pdata *pdata;
-> >>> +       struct device_node *np;
-> >>> +
-> >>> +       np =3D pdev->dev.of_node;
-> >>> +       if (!np)
-> >>> +               return 0;
-> >>> +
-> >>> +       pdata =3D devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KE=
-RNEL);
-> >>> +       if (!pdata)
-> >>> +               return -ENOMEM;
-> >>> +
-> >>> +       pdata->label =3D dev_name(&pdev->dev);
-> >>> +       pdata->base =3D -1;
-> >>> +       if (of_find_property(np, "byte-be", NULL)) {
-> >>> +               pdata->flags |=3D BGPIOF_BIG_ENDIAN_BYTE_ORDER;
-> >>> +       }
-> >>> +       if (of_find_property(np, "bit-be", NULL)) {
-> >>> +               pdata->flags |=3D BGPIOF_BIG_ENDIAN;
-> >>> +       }
-> >>> +       if (of_find_property(np, "regset-nr", NULL)) {
-> >>> +               pdata->flags |=3D BGPIOF_UNREADABLE_REG_SET;
-> >>> +       }
-> >>> +       if (of_find_property(np, "regdir-nr", NULL)) {
-> >>> +               pdata->flags |=3D BGPIOF_UNREADABLE_REG_DIR;
-> >>> +       }
-> >>> +       if (!of_property_read_u32(np, "num-gpios", &tmp)) {
-> >>> +               pdata->ngpio =3D tmp;
-> >>> +       }
-> >>
-> >> I don't think this is acceptable. gpio-generic is designed to be u=
-sed
-> >> as a framework for other drivers to build upon. These drivers shou=
-ld
-> >> have their own compatible strings, which should be enough to infer=
- all
-> >> the properties you defined here.
-> >>
-> >
-> > gpio-generic is not only designed as a framework for other drivers,=
- it can also be used directly by registering the driver through platfor=
-m device (basic-mmio-gpio/basic-mmio-gpio-be).
->=20
-> This works for platform drivers which stay confined to the kernel, bu=
-t
-> DT is a firmware definition where such generic bindings are much less
-> desirable.
->=20
-> > My intention is to make it DT compatible as a generic driver, which=
- can be used for different hardware, by selecting different DT properti=
-es as configuration.
-> >
-> >> Device Tree identifies hardware precisely (vendor and model), and =
-this
-> >> new binding is just not that. You *could* however have a very simp=
-le
-> >> driver that associates compatible strings to static tables contain=
-ing
-> >> the values of the properties you wanted to see passed through the =
-DT,
-> >> and have one single driver that covers many mmio-based GPIO device=
-s.
-> >> But I'm afraid "basic-mmio-gpio" is *way* to vague to describe
-> >> hardware.
-> >>
-> >
-> > I don't think making a new driver mapping different compatible stri=
-ngs to static tables containing the values of the properties passed thr=
-ough DT is a sane way of doing it, since it will require multiple combi=
-nations to cover all the possibilites.
-> >
-> > My plan is to be able to do something like this (btw, I actually te=
-sted this patch on BCM63xx and works perfectly):
-> > gpio-controller@10000084 {
-> >         compatible =3D "basic-mmio-gpio", "brcm,brcm6368";
->=20
-> Here your compatible string should be
->=20
->         compatible =3D "brcm,brcm6368", "basic-mmio-gpio";
->=20
-> I.e. from more precise to less precise. A dedicated BRCM6368 driver
-> should take precedence over your generic one.
->=20
-> >         reg =3D <0x10000084 0x4>, <0x1000008c 0x4>;
-> >         reg-names =3D "dirout", "dat";
-> >
-> >         num-gpios =3D <32>;
-> >         byte-be;
-> >
-> >         gpio-controller;
-> >         #gpio-cells =3D <2>;
-> > };
-> > And for other hardware you could do:
-> > gpio-controller@10000180 {
-> >         compatible =3D "basic-mmio-gpio", "foo,bar";
-> >         reg =3D <0x10000180 0x4>, <0x10000184 0x4>, <0x10000188 0x4=
->;
-> >         reg-names =3D "dirin", "dirout", "dat";
-> >
-> >         num-gpios =3D <20>;
-> >         bit-be;
-> >         byte-be;
-> >         regdir-nr;
-> >
-> >         gpio-controller;
-> >         #gpio-cells =3D <2>;
-> > };
-> > This way you wouldn't need to add a wrapper for each specific hardw=
-are using basic-mmio-gpio, and you would save time by using the generic=
- driver.
->=20
-> I understand the intent but IIUC the history of DT speaks  against
-> such generic bindings. On the other hand I can see some instances of
-> them like "simple-bus" for instance. Added the DT maintainers and
-> mailing list to get more informed opinions on the matter.
+On Mon, Jan 19, 2015 at 7:08 AM, Alexandre Courbot <gnurou@gmail.com> w=
+rote:
+> On Mon, Jan 19, 2015 at 1:01 PM, Zhang, Sonic <Sonic.Zhang@analog.com=
+> wrote:
+>> Hi Antonio,
+>>
+>>>-----Original Message-----
+>>>From: Antonio Fiol Bonn=C3=ADn [mailto:antonio@fiol.es]
+>>>Sent: Sunday, January 18, 2015 7:32 PM
+>>>To: Alexandre Courbot; Zhang, Sonic
+>>>Cc: Linus Walleij; Grant Likely; Rob Herring; linux-gpio@vger.kernel=
+=2Eorg
+>>>Subject: Re: gpio-mcp23sxx driver stopped working
+>>>
+>>>And I have some more news...
+>>>
+>>>On Sun, Jan 18, 2015 at 9:34 AM, Antonio Fiol Bonn=C3=ADn <antonio@f=
+iol.es> wrote:
+>>>> On Sun, Jan 18, 2015 at 7:04 AM, Alexandre Courbot <gnurou@gmail.c=
+om> wrote:
+>>>>> On Sat, Jan 17, 2015 at 3:28 AM, Antonio Fiol Bonn=C3=ADn
+>>>>> <antonio@fiol.es>
+>>>>> wrote:
+>>>>> > I am writing to you as the maintainers for the gpio-mcp23sxx dr=
+iver
+>>>>> > (and open firmware maintainers) according to the kernel
+>>>>> > documentation, before writing to the linux-kernel, linux-gpio o=
+r
+>>>>> > devicetree mailing list, as recommeded by the FAQ.  If you beli=
+eve
+>>>>> > I should proceed otherwise, I will be pleased to do so.
+>>>>>
+>>>>> Thanks for reporting that issue and your detailed report. AFAICT =
+you
+>>>>> did everything well - you could maybe also have included the
+>>>>> linux-gpio ML to reach a wider audience.
+>>>
+>>>OK, Adding the list now that I have some more info.
+>>>
+>>>>> > I was using that module on a raspberry pi on kernel 3.15.2,
+>>>>> > successfully.
+>>>>> > When I upgraded to 3.18.2, the module stopped working.
+>>>>> > Specifically, the probes for a MCP23017 device fail with -EINVA=
+L (-22).
+>>>>> >
+>>>>> > Some background:
+>>>>> > The setup is as follows:
+>>>>> > Some RPi GPIO pins drive leds. These continue working. Unrelate=
+d to
+>>>>> > the failing module.
+>>>>> > RPi GPIO port 4 is used as the master for a w1 bus holding a co=
+uple
+>>>>> > temperature sensors. Still working properly. This is relevant
+>>>>> > because I am upgrading after observing some kernel oops related=
+ to
+>>>>> > the w1_therm module, but still unrelated to the failing module.
+>>>>> >
+>>>>> > The issue:
+>>>>> > RPI I2C port connected to a MCP23017 which, in turn, has 16 I/O
+>>>>> > pins configured to drive some more leds. This is still working =
+at
+>>>>> > the I2C level, but the gpio-mcp23sxx module fails to probe the
+>>>>> > chip, and this means it fails to create the
+>>>>> > /sys/bus/gpio/gpiochip240 so I can't export the pins which I la=
+ter
+>>>>> > use to change the led state, all this using sysfs.
+>>>>> >
+>>>>> > Some debugging:
+>>>>> > I checked that the driver is rejecting the probe because of
+>>>>> > "invalid platform data". I tracked it down to be "inexistent"
+>>>>> > platform data, as pdata is null when the test is performed.
+>>>>> > That code path is reached both when the kernel is configured wi=
+th
+>>>>> > CONFIG_OF and when it is configured without it.
+>>>>> > Without it, I can understand, but with, I can't.
+>>>>> > The OF matching does not succeed because dev.of_node is null to=
+o.
+>>>>> >
+>> Have you added the gpio node for mcp23sxx in the device tree file of=
+ your raspberry pi board? And have you rebuilt your dtb file?
 
-While generic bindings can be ok, they either need to be incredibly
-simple (e.g. simple-bus, which has no configuration whatsoever), or nee=
-d
-to be rigorously specified (e.g. the generic PCI host controller
-binding, which follows an existing specification).
+No, I have not.
 
-=46rom the context above, this looks relatively complex. At the least, =
-a
-full binding document is required along with a rationale, so that can b=
-e
-reviewed.
+> It seems like Antonio's device is using platform data (Antonio, can
+> you confirm?), so is DT relevant at all here?
 
-Thanks,
-Mark.
+Well, both device tree and platform data are new concepts to me. So I
+don't quite know...
+
+> By the look of it this patch might have broken platform support for
+> this driver. According to the trace given by Antonio, the following
+> condition in probe() is met:
+>
+>         if (!pdata || !gpio_is_valid(pdata->base)) {
+>
+> Antonio, could you display both pdata and pdata->base right before
+> this test so we understand why this is happening?
+
+In the original failing version, as I explained above, pdata was NULL
+("pdata is null when the test is performed")
+
+With the 3.15.2, when I
+echo mcp23017 0x27 > /sys/bus/i2c/devices/i2c-1/new_device
+it automatically created a "gpiochip240" under /sys/classes/gpio, and
+I could export the gpio pins 240-255.
+
+With 3.18.2 and the driver right before Sonic's patch (the latest
+working scenario), when I
+echo mcp23017 0x27 > /sys/bus/i2c/devices/i2c-1/new_device
+it automatically creates a "gpiochip496" under /sys/classes/gpio, and
+I can export the gpio pins 496-511.
+
+It seems like someone is assigning the "base" automatically, down from
+a certain maximum, that may have been increased since 3.15.2.
+
+> Does the platform
+> data in your board file specify a base GPIO for your chip?
+
+I do not have a "board file" that includes my MCP23017 setup. Should
+I? The RPi itself does not have that chip, I'm just hooking it to the
+I2C bus, on a prototype board. It seems I am clearly missing
+something... even if I managed to get it working in the past and even
+managed to find the latest point in the kernel where that was working.
+
+I'm eager to learn more, and to work on this to improve how easy it is
+for makers to extend the RPi. Any advice is welcome!
+
+Thanks again!
+
+--=20
+Antonio
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
