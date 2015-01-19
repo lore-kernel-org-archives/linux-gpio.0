@@ -1,93 +1,119 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Mon, 19 Jan 2015 14:59:54 +0900
-Message-ID: <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
- <CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
+Subject: Re: gpio-mcp23sxx driver stopped working
+Date: Mon, 19 Jan 2015 15:08:50 +0900
+Message-ID: <CAAVeFuJtx6wV3ij-93Vk97ftZBU3ZYmneF+sNrM4CRnX+q=peg@mail.gmail.com>
+References: <CAEmm_TYh-B7dfGtaKTFcqDK-xAdp5XdGLJt7YE9fzu66u-yWGg@mail.gmail.com>
+ <CAAVeFuLJJKrcPSXCf8H5_rU530bsUF6WvS18xqg14NHDUoNgSA@mail.gmail.com>
+ <CAEmm_Tb5wRYCHxYtdHiLoL-SQAcf8WsvKKJTkJASZXoL=qT_Aw@mail.gmail.com>
+ <CAEmm_Tb80QtZuPEzZ6mJ-Yzzjydqxik3qmvpi5v_daZu_TxW6g@mail.gmail.com> <B168F8A49F4BCF4C84FD23DA5F6363EE61231F37@NWD2MBX7.ad.analog.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:56409 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752001AbbASGJL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 01:09:11 -0500
+Received: by mail-ig0-f170.google.com with SMTP id l13so11580144iga.1
+        for <linux-gpio@vger.kernel.org>; Sun, 18 Jan 2015 22:09:10 -0800 (PST)
+In-Reply-To: <B168F8A49F4BCF4C84FD23DA5F6363EE61231F37@NWD2MBX7.ad.analog.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Zhang, Sonic" <Sonic.Zhang@analog.com>
+Cc: =?UTF-8?Q?Antonio_Fiol_Bonn=C3=ADn?= <antonio@fiol.es>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Jan 14, 2015 at 9:58 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Dec 18, 2014 at 9:23 AM, Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
+On Mon, Jan 19, 2015 at 1:01 PM, Zhang, Sonic <Sonic.Zhang@analog.com> =
+wrote:
+> Hi Antonio,
 >
->> This makes it possible to assign GPIOs at runtime. The
->> motivation for it is because of need to forward GPIOs from
->> one device to an other. That feature may be useful for
->> example with some mfd devices, but initially it is needed
->> because on some Intel Braswell based ACPI platforms the GPIO
->> resources controlling signals of the USB PHY are given to
->> the controller device object for whatever reason, so the
->> driver of that controller needs be able to pass them to the
->> PHY device somehow.
+>>-----Original Message-----
+>>From: Antonio Fiol Bonn=C3=ADn [mailto:antonio@fiol.es]
+>>Sent: Sunday, January 18, 2015 7:32 PM
+>>To: Alexandre Courbot; Zhang, Sonic
+>>Cc: Linus Walleij; Grant Likely; Rob Herring; linux-gpio@vger.kernel.=
+org
+>>Subject: Re: gpio-mcp23sxx driver stopped working
 >>
->> So basically this is meant to allow patching of bad (bad
->> from Linux kernels point of view) hardware descriptions
->> provided by system fw in the drivers.
+>>And I have some more news...
 >>
->> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->> ---
+>>On Sun, Jan 18, 2015 at 9:34 AM, Antonio Fiol Bonn=C3=ADn <antonio@fi=
+ol.es> wrote:
+>>> On Sun, Jan 18, 2015 at 7:04 AM, Alexandre Courbot <gnurou@gmail.co=
+m> wrote:
+>>>> On Sat, Jan 17, 2015 at 3:28 AM, Antonio Fiol Bonn=C3=ADn
+>>>> <antonio@fiol.es>
+>>>> wrote:
+>>>> > I am writing to you as the maintainers for the gpio-mcp23sxx dri=
+ver
+>>>> > (and open firmware maintainers) according to the kernel
+>>>> > documentation, before writing to the linux-kernel, linux-gpio or
+>>>> > devicetree mailing list, as recommeded by the FAQ.  If you belie=
+ve
+>>>> > I should proceed otherwise, I will be pleased to do so.
+>>>>
+>>>> Thanks for reporting that issue and your detailed report. AFAICT y=
+ou
+>>>> did everything well - you could maybe also have included the
+>>>> linux-gpio ML to reach a wider audience.
 >>
->> Hi,
+>>OK, Adding the list now that I have some more info.
 >>
->> I'm sending this first as a RFC in case you guys have some better
->> idea how to solve our problem. I actually already have couple
->> platforms where the GPIO resources are given to the "wrong" device
->> objects now.
->>
->> Originally we were thinking about simply handling our problem with
->> hacks to the PHY drivers, basically also checking if the parent has
->> GPIOs. That would only work if the controller is always the parent,
->> which it's not, but even if it was, it would be too risky. The PHY
->> drivers don't know which controller they are attached to, so what is
->> to say that the GPIOs aren't really attached to the controller.
->>
->> So the safest way to handle our problem is to deal with it in quirks
->> in the controller drivers. Solving it by bouncing the GPIOs did not
->> feel ideal there doesn't seem to be any other way. The API is copied
->> from clkdev (clk_register_clkdev). In the end it's really only one
->> function for adding the lookups and one for removing them.
->>
->> The way it's implemented is by modifying the current style of handling
->> the lookups a little bit. The per device lookup table is basically
->> reverted back to the single linked-list format since it seems that
->> these lookups may have to be assigned from several sources.
->
-> Oh ain't that great.
->
-> So now we start patching around the kernel because the ACPI
-> tables are erroneous for GPIOs. I'd like some feedback from
-> Rafael &| Darren on this patch, i.e. if you two think this is a good
-> way of accounting for bad GPIO descriptions in ACPI tables then
-> ACK this patch.
->
-> I guess the other option would be to fix up the ACPI DSDT
-> itself to put resources right, correct? Is this not possible?
->
-> Alexandre also need to ACK it before I dare do anything with
-> it.
+>>>> > I was using that module on a raspberry pi on kernel 3.15.2,
+>>>> > successfully.
+>>>> > When I upgraded to 3.18.2, the module stopped working.
+>>>> > Specifically, the probes for a MCP23017 device fail with -EINVAL=
+ (-22).
+>>>> >
+>>>> > Some background:
+>>>> > The setup is as follows:
+>>>> > Some RPi GPIO pins drive leds. These continue working. Unrelated=
+ to
+>>>> > the failing module.
+>>>> > RPi GPIO port 4 is used as the master for a w1 bus holding a cou=
+ple
+>>>> > temperature sensors. Still working properly. This is relevant
+>>>> > because I am upgrading after observing some kernel oops related =
+to
+>>>> > the w1_therm module, but still unrelated to the failing module.
+>>>> >
+>>>> > The issue:
+>>>> > RPI I2C port connected to a MCP23017 which, in turn, has 16 I/O
+>>>> > pins configured to drive some more leds. This is still working a=
+t
+>>>> > the I2C level, but the gpio-mcp23sxx module fails to probe the
+>>>> > chip, and this means it fails to create the
+>>>> > /sys/bus/gpio/gpiochip240 so I can't export the pins which I lat=
+er
+>>>> > use to change the led state, all this using sysfs.
+>>>> >
+>>>> > Some debugging:
+>>>> > I checked that the driver is rejecting the probe because of
+>>>> > "invalid platform data". I tracked it down to be "inexistent"
+>>>> > platform data, as pdata is null when the test is performed.
+>>>> > That code path is reached both when the kernel is configured wit=
+h
+>>>> > CONFIG_OF and when it is configured without it.
+>>>> > Without it, I can understand, but with, I can't.
+>>>> > The OF matching does not succeed because dev.of_node is null too=
+=2E
+>>>> >
+> Have you added the gpio node for mcp23sxx in the device tree file of =
+your raspberry pi board? And have you rebuilt your dtb file?
 
-I am not really fond of this idea since it adds complexity to the
-(already too complex) GPIO lookup, and only solves to a local level
-(GPIO) what is a more global problem (bad ACPI tables that can affect
-any subsystem).
+It seems like Antonio's device is using platform data (Antonio, can
+you confirm?), so is DT relevant at all here?
 
-Also I don't think any new functions is actually needed: on an ACPI
-system we can safely assume that the platform lookup tables are not
-used at all. So, although it is a hack as well, you can just call
-gpiod_add_lookup_table() with a runtime-built table from the driver
-that needs to pass the GPIO so the receipient can receive it through
-the lookup table fallback gpiod_get() uses if no GPIO is defined via
-ACPI.
+By the look of it this patch might have broken platform support for
+this driver. According to the trace given by Antonio, the following
+condition in probe() is met:
 
-So I think that even with the current state of the code you can
-achieve what you need. Should you do it, that's another question - it
-seems more to-the-point to find a way to fix/patch the ACPI tables at
-runtime, if that is possible at all, to provide a more general
-solution to this issue.
+        if (!pdata || !gpio_is_valid(pdata->base)) {
+
+Antonio, could you display both pdata and pdata->base right before
+this test so we understand why this is happening? Does the platform
+data in your board file specify a base GPIO for your chip?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
