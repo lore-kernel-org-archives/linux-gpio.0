@@ -1,39 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: MAINTAINERS: add git tree reference
-Date: Mon, 19 Jan 2015 11:28:19 +0100
-Message-ID: <1421663299-7391-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:32884 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751671AbbASK2a (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 05:28:30 -0500
-Received: by mail-lb0-f172.google.com with SMTP id l4so14484770lbv.3
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Jan 2015 02:28:26 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: Re: [PATCH 1/2] sh-pfc: r8a7791: fix typo in MLB_CLK
+Date: Mon, 19 Jan 2015 11:28:59 +0100
+Message-ID: <CACRpkdaym1Z6ryvis9nrXOG72YYKdP0-9RfW2CBWF=Cqb0ZzgQ@mail.gmail.com>
+References: <1479250.GJuNxlSkHs@wasted.cogentembedded.com>
+	<CACRpkdYo0Jf5yXrwHsPL+L-6VH7OkpYMi6UtsmrHEG1qmzCCsA@mail.gmail.com>
+	<54B7F2F5.6060207@cogentembedded.com>
+	<CACRpkdaud0NbfnFshSfRbexG1iAPoO7EPPxyN9eECE5NJcxAkg@mail.gmail.com>
+	<54B7FE82.8070903@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <54B7FE82.8070903@cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Reference my pinctrl GIT tree @kernel.org
+On Thu, Jan 15, 2015 at 6:53 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
-Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+>    I thought that maybe I'm looking at the wrong repo (linux-pinctrl.git is
+> still not mentioned in MAINTAINERS).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3589d67437f8..cdc238c3d8cc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7400,6 +7400,7 @@ F:	drivers/crypto/picoxcell*
- PIN CONTROL SUBSYSTEM
- M:	Linus Walleij <linus.walleij@linaro.org>
- L:	linux-gpio@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- S:	Maintained
- F:	drivers/pinctrl/
- F:	include/linux/pinctrl/
--- 
-1.9.3
+Ooops sloppy of me, sent a patch for it now.
 
+Yours,
+Linus Walleij
