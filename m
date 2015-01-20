@@ -1,49 +1,32 @@
 From: Peter Korsgaard <peter@korsgaard.com>
-Subject: Re: [PATCH 8/8] gpio/mpc8xxx: Use of_mm_gpiochip_remove
-Date: Tue, 20 Jan 2015 11:40:07 +0100
-Message-ID: <87d26991mg.fsf@dell.be.48ers.dk>
+Subject: Re: [PATCH 7/8] gpio/mpc8xxx: Convert to platform device interface.
+Date: Tue, 20 Jan 2015 11:41:27 +0100
+Message-ID: <8761c191k8.fsf@dell.be.48ers.dk>
 References: <1421581173-28416-1-git-send-email-ricardo.ribalda@gmail.com>
-	<1421581173-28416-9-git-send-email-ricardo.ribalda@gmail.com>
-	<87fvb69yec.fsf@dell.be.48ers.dk>
-	<CAPybu_0nyzS6gYBBEEX7VY2t+xtsJ_uVjd=TEuuQGmSmUmboGA@mail.gmail.com>
+	<1421581173-28416-8-git-send-email-ricardo.ribalda@gmail.com>
+	<87k30i9ykv.fsf@dell.be.48ers.dk>
+	<CAPybu_180vMPMx4yhFAoL9H2b34+tWtqQCTHjxqkTRt9e_VA5g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:34244 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752198AbbATKkL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 05:40:11 -0500
-In-Reply-To: <CAPybu_0nyzS6gYBBEEX7VY2t+xtsJ_uVjd=TEuuQGmSmUmboGA@mail.gmail.com>
-	(Ricardo Ribalda Delgado's message of "Tue, 20 Jan 2015 00:10:34
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAPybu_180vMPMx4yhFAoL9H2b34+tWtqQCTHjxqkTRt9e_VA5g@mail.gmail.com>
+	(Ricardo Ribalda Delgado's message of "Tue, 20 Jan 2015 00:37:07
 	+0100")
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Peter Korsgaard <jacmet@sunsite.dk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
 >>>>> "Ricardo" == Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> writes:
 
  > Hello Peter
- >> 
- >> > -    hwirq = irq_of_parse_and_map(np, 0);
- >> > -    if (hwirq == NO_IRQ)
- >> > +    mpc8xxx_gc->irqn = irq_of_parse_and_map(np, 0);
- >> > +    if (mpc8xxx_gc->irqn == NO_IRQ)
- >> >              return 0;
- >> 
- >> 
- >> With this return 0 converted to do of_mm_gpiochip_remove():
+ > I thought the logic behind the original driver was:
 
- > Are you sure? The driver can still work as a normal gpio without the
- > irq domain part and the remove function consider this option. The
- > original code did also continue....
+ > 1) Create gpiochip so it can be used by other modules/userland
+ > 2) if there is also a irq available for it, create a irqdomain.
+ > otherwise continue.
 
-Ahh yes, you are right. Sorry, it's been a while since I wrote that code
-(2008).
-
- > If you still want to abort if no irq I can of course make the change.
-
-No, it is fine.
+Indeed - Sorry, I must have been confused yesterday.
 
 -- 
 Bye, Peter Korsgaard
