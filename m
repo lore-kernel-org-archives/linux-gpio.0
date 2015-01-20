@@ -1,60 +1,49 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Peter Korsgaard <peter@korsgaard.com>
 Subject: Re: [PATCH 8/8] gpio/mpc8xxx: Use of_mm_gpiochip_remove
-Date: Tue, 20 Jan 2015 11:31:58 +0100
-Message-ID: <CAPybu_0oYX-tErXqGi=nNm=Nm-=uW-0vN+4B=-Wsn_sDrycFQA@mail.gmail.com>
+Date: Tue, 20 Jan 2015 11:40:07 +0100
+Message-ID: <87d26991mg.fsf@dell.be.48ers.dk>
 References: <1421581173-28416-1-git-send-email-ricardo.ribalda@gmail.com>
- <1421581173-28416-9-git-send-email-ricardo.ribalda@gmail.com> <CACRpkdZ+FYQveP-ervZ5NWv0NYeYmsTwpB0jXYyUFNK4TotNSQ@mail.gmail.com>
+	<1421581173-28416-9-git-send-email-ricardo.ribalda@gmail.com>
+	<87fvb69yec.fsf@dell.be.48ers.dk>
+	<CAPybu_0nyzS6gYBBEEX7VY2t+xtsJ_uVjd=TEuuQGmSmUmboGA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:55244 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752547AbbATKcU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 05:32:20 -0500
-In-Reply-To: <CACRpkdZ+FYQveP-ervZ5NWv0NYeYmsTwpB0jXYyUFNK4TotNSQ@mail.gmail.com>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:34244 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752198AbbATKkL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 05:40:11 -0500
+In-Reply-To: <CAPybu_0nyzS6gYBBEEX7VY2t+xtsJ_uVjd=TEuuQGmSmUmboGA@mail.gmail.com>
+	(Ricardo Ribalda Delgado's message of "Tue, 20 Jan 2015 00:10:34
+	+0100")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>
 
-Hello Linus
+>>>>> "Ricardo" == Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> writes:
 
-I am waiting from the confirmation of Peter if that is what he really needs.
+ > Hello Peter
+ >> 
+ >> > -    hwirq = irq_of_parse_and_map(np, 0);
+ >> > -    if (hwirq == NO_IRQ)
+ >> > +    mpc8xxx_gc->irqn = irq_of_parse_and_map(np, 0);
+ >> > +    if (mpc8xxx_gc->irqn == NO_IRQ)
+ >> >              return 0;
+ >> 
+ >> 
+ >> With this return 0 converted to do of_mm_gpiochip_remove():
 
-It seems to me that the code should continue even if there is no
-irqdomain created.
+ > Are you sure? The driver can still work as a normal gpio without the
+ > irq domain part and the remove function consider this option. The
+ > original code did also continue....
 
-If we need to abort if there is no irqdomain I would rather create a
-new patch with this change,  since it it is a change of the current
-behaviour, so if something explodes the bisect will be easier.
+Ahh yes, you are right. Sorry, it's been a while since I wrote that code
+(2008).
 
-I will attach to this mail a patch.
+ > If you still want to abort if no irq I can of course make the change.
 
-Regards
-
-On Tue, Jan 20, 2015 at 11:17 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Sun, Jan 18, 2015 at 12:39 PM, Ricardo Ribalda Delgado
-> <ricardo.ribalda@gmail.com> wrote:
->
->> Since d621e8bae5ac9c67 (Create of_mm_gpiochip_remove), there is a
->> counterpart for of_mm_gpiochip_add.
->>
->> This patch implements the remove function of the driver making use of
->> it.
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Cc: Peter Korsgaard <jacmet@sunsite.dk>
->> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
->
-> Waiting for a v2 addressing the issues pointed out by Peter on this
-> patch.
->
-> Yours,
-> Linus Walleij
-
-
+No, it is fine.
 
 -- 
-Ricardo Ribalda
+Bye, Peter Korsgaard
