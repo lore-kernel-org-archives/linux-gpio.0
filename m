@@ -1,90 +1,79 @@
-From: =?UTF-8?Q?Antonio_Fiol_Bonn=C3=ADn?= <antonio@fiol.es>
-Subject: Re: [PATCH] gpio: mcp23s08: create default gpio base if neither
- device node nor platform data is defined
-Date: Tue, 20 Jan 2015 17:03:00 +0100
-Message-ID: <CAEmm_TY6ophCi-3bhQJfaH+QXqxRfzdmL5G9c18rnQib_yd8tA@mail.gmail.com>
-References: <1421744408-8837-1-git-send-email-sonic.adi@gmail.com>
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH v6 2/3] gpio: Cygnus: add GPIO driver
+Date: Tue, 20 Jan 2015 11:17:03 -0800
+Message-ID: <54BEA9AF.7070209@broadcom.com>
+References: <rjui@broadcom.com>	<1418696307-19392-1-git-send-email-rjui@broadcom.com>	<1418696307-19392-3-git-send-email-rjui@broadcom.com>	<CACRpkdYGksEseGaO49=1rUi5WBdOxwAd-F1gpgZn+BFatRCdDg@mail.gmail.com>	<54B55068.8050500@broadcom.com>	<CACRpkdZef8S-EAbShjJ1eg+-3wQKn+yx4u1k_Mf8F7uFkJYdFw@mail.gmail.com>	<54B9A8A2.6090209@broadcom.com> <CACRpkdYydCO9Wu3fMyh0qt=e_hxT5ch2gqNhEsfQpf5WYUS-kQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:54954 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753746AbbATQDB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 11:03:01 -0500
-Received: by mail-oi0-f46.google.com with SMTP id a141so7061431oig.5
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jan 2015 08:03:00 -0800 (PST)
-In-Reply-To: <1421744408-8837-1-git-send-email-sonic.adi@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYydCO9Wu3fMyh0qt=e_hxT5ch2gqNhEsfQpf5WYUS-kQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sonic Zhang <sonic.adi@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>
 
-On Tue, Jan 20, 2015 at 10:00 AM, Sonic Zhang <sonic.adi@gmail.com> wrote:
-> From: Sonic Zhang <sonic.zhang@analog.com>
->
-> Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
 
-Tested-by: Antonio Fiol <antonio@fiol.es>
 
-> ---
->  drivers/gpio/gpio-mcp23s08.c |   17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-> index da9c316..eea5d7e 100644
-> --- a/drivers/gpio/gpio-mcp23s08.c
-> +++ b/drivers/gpio/gpio-mcp23s08.c
-> @@ -801,9 +801,11 @@ static int mcp230xx_probe(struct i2c_client *client,
->                 client->irq = irq_of_parse_and_map(client->dev.of_node, 0);
->         } else {
->                 pdata = dev_get_platdata(&client->dev);
-> -               if (!pdata || !gpio_is_valid(pdata->base)) {
-> -                       dev_dbg(&client->dev, "invalid platform data\n");
-> -                       return -EINVAL;
-> +               if (!pdata) {
-> +                       pdata = devm_kzalloc(&client->dev,
-> +                                       sizeof(struct mcp23s08_platform_data),
-> +                                       GFP_KERNEL);
-> +                       pdata->base = -1;
->                 }
->         }
->
-> @@ -924,10 +926,11 @@ static int mcp23s08_probe(struct spi_device *spi)
->         } else {
->                 type = spi_get_device_id(spi)->driver_data;
->                 pdata = dev_get_platdata(&spi->dev);
-> -               if (!pdata || !gpio_is_valid(pdata->base)) {
-> -                       dev_dbg(&spi->dev,
-> -                                       "invalid or missing platform data\n");
-> -                       return -EINVAL;
-> +               if (!pdata) {
-> +                       pdata = devm_kzalloc(&spi->dev,
-> +                                       sizeof(struct mcp23s08_platform_data),
-> +                                       GFP_KERNEL);
-> +                       pdata->base = -1;
->                 }
->
->                 for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
-> --
-> 1.7.9.5
->
+On 1/20/2015 1:53 AM, Linus Walleij wrote:
+> On Sat, Jan 17, 2015 at 1:11 AM, Ray Jui <rjui@broadcom.com> wrote:
+>> On 1/16/2015 2:14 AM, Linus Walleij wrote:
+> 
+>>> Some hardware designs put the software-controlled biasing
+>>> resistors in the GPIO block electronically connected to the actual
+>>> pins, so that e.g. the biasing will be available if some MMC or
+>>> whatever is using the same pins in another muxing. In such
+>>> situations it's quite evident that they need to be a combined
+>>> GPIO and pin controller.
+>>>
+>>> I have some regrets that bolting a second pin controller to the
+>>> GPIO chip make things a bit complex but it's a price we have
+>>> to pay for getting some kind of generic interface.
+>>
+>> Okay. In summary, I think both of us think the following approach makes
+>> sense in my situation:
+>> - leave pinmux in pinctrl-bcm-cygnus.c
+>> - leave pinctrl + gpio in pinctrl-bcm-cygnus-gpio.c under drivers/pinctrl/*
+>>
+>> But by thinking about this more, I thought this would create duplicated
+>> pinctrl descriptors in our system, one from the pinmux driver, and the
+>> other from this pinctrl+gpio driver. That is probably undesirable?
+> 
+> No, there are several systems with multiple pin controllers and the
+> framework easily handles multiple pin controllers in the same
+> system just as well as we handle multiple GPIO chips.
+> 
+>> By reviewing various drivers in the pinctrl directory, I found what
+>> pinctrl-u300.c and pinctrl-coh901.c does seems to serve as a good model
+>> for me to follow:
+>> - pinctrl-u300.c is the pinmux driver
+>> - pinctrl-coh901.c is the gpio+pinctrl driver
+> 
+> Yeah, I don't know if the separation between them is as beautiful
+> as it should be. I used it when developing the pin control
+> subsystem.
+> 
+>> The GPIO pinctrl logic is in the coh901 block, so pinctrl-coh901.c
+>> exposed two public functions u300_gpio_config_get, u300_gpio_config_set
+>> that pinctrl-u300.c can use. The u300 populates all pinmux/pinctrl
+>> related functions into the subsystem. This way there's only one pinctrl
+>> descriptor, populated through pinctrl-u300.c.
+>>
+>> Does that model make more sense to you?
+> 
+> Yeah I wrote it myself so I'm maybe blind for any dumbness in
+> the code. But I think it's kind of elegant. But it is not using the
+> generic pinctrl device tree bindings so it's kind of oldstyle and
+> bloated in that sense.
+> 
+> Yours,
+> Linus Walleij
+> 
+Okay. I think I have a pretty good idea of what you expect. Regarding
+whether or not to keep pinctrl-bcm-cygnus.c and
+pinctrl-bcm-cygnus-gpio.c completely independent with each other and
+therefore have two pinctrl in the system, I'll play with it a bit more
+and make a decision.
 
-Thank you Sonic for the patch, and Alexander for your patience,
-understanding and guidance.
-
-This patch is working in my scenario. It is assigning the same base as
-it was on the version before the patch that broke the behavior in the
-past.
-
-If you wish me to test in other scenarios (e.g. creating a device tree
-file, or using platform data), I'd appreciate pointers to learn the
-basics, or some help preparing the kernel tree to build with the
-needed definitions (if that's what needs to be done).
-
-I am saying this because seeing the commit logs it appears that effort
-is being put into the driver to work in scenarios that differ from
-mine, and I definitely do not want to break them.
-
-Kind regards,
--- 
-Antonio
+Thanks a lot for spending all these time explaining it to me. Really
+appreciate it!
