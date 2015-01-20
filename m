@@ -1,38 +1,43 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: Re: [PATCH 7/8] gpio/mpc8xxx: Convert to platform device interface.
-Date: Tue, 20 Jan 2015 11:54:55 +0100
-Message-ID: <CAPybu_0qdumx91RFERp5Ft2HXs6rYv5H0WTFxiiyT4oiGjmzhA@mail.gmail.com>
-References: <1421581173-28416-1-git-send-email-ricardo.ribalda@gmail.com>
- <1421581173-28416-8-git-send-email-ricardo.ribalda@gmail.com>
- <87k30i9ykv.fsf@dell.be.48ers.dk> <CAPybu_180vMPMx4yhFAoL9H2b34+tWtqQCTHjxqkTRt9e_VA5g@mail.gmail.com>
- <8761c191k8.fsf@dell.be.48ers.dk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Tue, 20 Jan 2015 13:16:06 +0100
+Message-ID: <CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
+	<CACRpkdY-yFKsYbCrMpnViMFoQEugyGQivaV0M+GDzLrbDO7i6Q@mail.gmail.com>
+	<CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8761c191k8.fsf@dell.be.48ers.dk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Korsgaard <peter@korsgaard.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Peter Korsgaard <jacmet@sunsite.dk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:42733 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752396AbbATMQH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 07:16:07 -0500
+Received: by mail-ie0-f181.google.com with SMTP id vy18so12261618iec.12
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jan 2015 04:16:06 -0800 (PST)
+In-Reply-To: <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 
-No worries :)
+On Mon, Jan 19, 2015 at 6:59 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
 
-On Tue, Jan 20, 2015 at 11:41 AM, Peter Korsgaard <peter@korsgaard.com> wrote:
->>>>>> "Ricardo" == Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> writes:
->
->  > Hello Peter
->  > I thought the logic behind the original driver was:
->
->  > 1) Create gpiochip so it can be used by other modules/userland
->  > 2) if there is also a irq available for it, create a irqdomain.
->  > otherwise continue.
->
-> Indeed - Sorry, I must have been confused yesterday.
->
-> --
-> Bye, Peter Korsgaard
+> I am not really fond of this idea since it adds complexity to the
+> (already too complex) GPIO lookup, and only solves to a local level
+> (GPIO) what is a more global problem (bad ACPI tables that can affect
+> any subsystem).
+(...)
+> it
+> seems more to-the-point to find a way to fix/patch the ACPI tables at
+> runtime, if that is possible at all, to provide a more general
+> solution to this issue.
 
+This is my position as well, until proven that this cannot be done.
+In device tree the same mechanism is called "device tree overlays"
+and I just have some vague feeling that such stuff is patched around in
+some Intel platforms already, but maybe that involves replacing
+the whole DSDT from userspace, surely the mechanism can be
+refined?
 
-
--- 
-Ricardo Ribalda
+Yours,
+Linus Walleij
