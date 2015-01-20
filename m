@@ -1,78 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 2/3] gpio: Cygnus: add GPIO driver
-Date: Tue, 20 Jan 2015 10:53:07 +0100
-Message-ID: <CACRpkdYydCO9Wu3fMyh0qt=e_hxT5ch2gqNhEsfQpf5WYUS-kQ@mail.gmail.com>
-References: <rjui@broadcom.com>
-	<1418696307-19392-1-git-send-email-rjui@broadcom.com>
-	<1418696307-19392-3-git-send-email-rjui@broadcom.com>
-	<CACRpkdYGksEseGaO49=1rUi5WBdOxwAd-F1gpgZn+BFatRCdDg@mail.gmail.com>
-	<54B55068.8050500@broadcom.com>
-	<CACRpkdZef8S-EAbShjJ1eg+-3wQKn+yx4u1k_Mf8F7uFkJYdFw@mail.gmail.com>
-	<54B9A8A2.6090209@broadcom.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 1/3] pinctrl: add driver for Amlogic Meson SoCs
+Date: Tue, 20 Jan 2015 10:59:08 +0100
+Message-ID: <CACRpkdZ6CX1XePa0sOY-0B9He9jYPNLqUtkk3LEGeT6eSQW9ew@mail.gmail.com>
+References: <1421518516-26976-1-git-send-email-b.galvani@gmail.com>
+	<1421518516-26976-2-git-send-email-b.galvani@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:46630 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751694AbbATJxI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 04:53:08 -0500
-Received: by mail-ig0-f173.google.com with SMTP id a13so16460625igq.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jan 2015 01:53:07 -0800 (PST)
-In-Reply-To: <54B9A8A2.6090209@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1421518516-26976-2-git-send-email-b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Beniamino Galvani <b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jerry Cao <jerry.cao-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, Victor Wan <victor.wan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Sat, Jan 17, 2015 at 1:11 AM, Ray Jui <rjui@broadcom.com> wrote:
-> On 1/16/2015 2:14 AM, Linus Walleij wrote:
+On Sat, Jan 17, 2015 at 7:15 PM, Beniamino Galvani <b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
->> Some hardware designs put the software-controlled biasing
->> resistors in the GPIO block electronically connected to the actual
->> pins, so that e.g. the biasing will be available if some MMC or
->> whatever is using the same pins in another muxing. In such
->> situations it's quite evident that they need to be a combined
->> GPIO and pin controller.
->>
->> I have some regrets that bolting a second pin controller to the
->> GPIO chip make things a bit complex but it's a price we have
->> to pay for getting some kind of generic interface.
+> This is a driver for the pinmux and GPIO controller available in
+> Amlogic Meson SoCs. It currently supports only Meson8, however the
+> common code should be generic enough to work also for other SoCs after
+> having defined the proper set of functions and groups.
 >
-> Okay. In summary, I think both of us think the following approach makes
-> sense in my situation:
-> - leave pinmux in pinctrl-bcm-cygnus.c
-> - leave pinctrl + gpio in pinctrl-bcm-cygnus-gpio.c under drivers/pinctrl/*
+> GPIO interrupts are not supported at the moment due to lack of
+> documentation.
 >
-> But by thinking about this more, I thought this would create duplicated
-> pinctrl descriptors in our system, one from the pinmux driver, and the
-> other from this pinctrl+gpio driver. That is probably undesirable?
+> Signed-off-by: Beniamino Galvani <b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-No, there are several systems with multiple pin controllers and the
-framework easily handles multiple pin controllers in the same
-system just as well as we handle multiple GPIO chips.
-
-> By reviewing various drivers in the pinctrl directory, I found what
-> pinctrl-u300.c and pinctrl-coh901.c does seems to serve as a good model
-> for me to follow:
-> - pinctrl-u300.c is the pinmux driver
-> - pinctrl-coh901.c is the gpio+pinctrl driver
-
-Yeah, I don't know if the separation between them is as beautiful
-as it should be. I used it when developing the pin control
-subsystem.
-
-> The GPIO pinctrl logic is in the coh901 block, so pinctrl-coh901.c
-> exposed two public functions u300_gpio_config_get, u300_gpio_config_set
-> that pinctrl-u300.c can use. The u300 populates all pinmux/pinctrl
-> related functions into the subsystem. This way there's only one pinctrl
-> descriptor, populated through pinctrl-u300.c.
->
-> Does that model make more sense to you?
-
-Yeah I wrote it myself so I'm maybe blind for any dumbness in
-the code. But I think it's kind of elegant. But it is not using the
-generic pinctrl device tree bindings so it's kind of oldstyle and
-bloated in that sense.
+Patch applied. Great work Beniamino!
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
