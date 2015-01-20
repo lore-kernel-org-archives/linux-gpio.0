@@ -1,119 +1,184 @@
-From: "Zhang, Sonic" <Sonic.Zhang@analog.com>
-Subject: RE: gpio-mcp23sxx driver stopped working
-Date: Tue, 20 Jan 2015 02:58:20 +0000
-Message-ID: <B168F8A49F4BCF4C84FD23DA5F6363EE61232134@NWD2MBX7.ad.analog.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: gpio-mcp23sxx driver stopped working
+Date: Tue, 20 Jan 2015 12:08:43 +0900
+Message-ID: <CAAVeFu+Oua54COytTDP9ZprsnkHKZcYjxojgqQRxzih01YQ9Cw@mail.gmail.com>
 References: <CAEmm_TYh-B7dfGtaKTFcqDK-xAdp5XdGLJt7YE9fzu66u-yWGg@mail.gmail.com>
-	<CAAVeFuLJJKrcPSXCf8H5_rU530bsUF6WvS18xqg14NHDUoNgSA@mail.gmail.com>
-	<CAEmm_Tb5wRYCHxYtdHiLoL-SQAcf8WsvKKJTkJASZXoL=qT_Aw@mail.gmail.com>
-	<CAEmm_Tb80QtZuPEzZ6mJ-Yzzjydqxik3qmvpi5v_daZu_TxW6g@mail.gmail.com>
-	<B168F8A49F4BCF4C84FD23DA5F6363EE61231F37@NWD2MBX7.ad.analog.com>
-	<CAAVeFuJtx6wV3ij-93Vk97ftZBU3ZYmneF+sNrM4CRnX+q=peg@mail.gmail.com>
- <CAEmm_TYfr5SAWQyH-Rn2kYeGBT5qf5P+K0kDnX0r02m7z5hOag@mail.gmail.com>
+ <CAAVeFuLJJKrcPSXCf8H5_rU530bsUF6WvS18xqg14NHDUoNgSA@mail.gmail.com>
+ <CAEmm_Tb5wRYCHxYtdHiLoL-SQAcf8WsvKKJTkJASZXoL=qT_Aw@mail.gmail.com>
+ <CAEmm_Tb80QtZuPEzZ6mJ-Yzzjydqxik3qmvpi5v_daZu_TxW6g@mail.gmail.com>
+ <B168F8A49F4BCF4C84FD23DA5F6363EE61231F37@NWD2MBX7.ad.analog.com>
+ <CAAVeFuJtx6wV3ij-93Vk97ftZBU3ZYmneF+sNrM4CRnX+q=peg@mail.gmail.com>
+ <CAEmm_TYfr5SAWQyH-Rn2kYeGBT5qf5P+K0kDnX0r02m7z5hOag@mail.gmail.com> <B168F8A49F4BCF4C84FD23DA5F6363EE61232134@NWD2MBX7.ad.analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1on0087.outbound.protection.outlook.com ([157.56.110.87]:4065
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751966AbbATC7g (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 19 Jan 2015 21:59:36 -0500
-In-Reply-To: <CAEmm_TYfr5SAWQyH-Rn2kYeGBT5qf5P+K0kDnX0r02m7z5hOag@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:47487 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752938AbbATDJE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jan 2015 22:09:04 -0500
+Received: by mail-ig0-f172.google.com with SMTP id l13so15500465iga.5
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Jan 2015 19:09:04 -0800 (PST)
+In-Reply-To: <B168F8A49F4BCF4C84FD23DA5F6363EE61232134@NWD2MBX7.ad.analog.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?utf-8?B?QW50b25pbyBGaW9sIEJvbm7DrW4=?= <antonio@fiol.es>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "Zhang, Sonic" <Sonic.Zhang@analog.com>
+Cc: =?UTF-8?Q?Antonio_Fiol_Bonn=C3=ADn?= <antonio@fiol.es>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-SGkgQW50b25pbywNCg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogQW50b25p
-byBGaW9sIEJvbm7DrW4gW21haWx0bzphbnRvbmlvQGZpb2wuZXNdDQo+U2VudDogTW9uZGF5LCBK
-YW51YXJ5IDE5LCAyMDE1IDY6NTUgUE0NCj5UbzogQWxleGFuZHJlIENvdXJib3QNCj5DYzogWmhh
-bmcsIFNvbmljOyBMaW51cyBXYWxsZWlqOyBHcmFudCBMaWtlbHk7IFJvYiBIZXJyaW5nOyBsaW51
-eC1ncGlvQHZnZXIua2VybmVsLm9yZw0KPlN1YmplY3Q6IFJlOiBncGlvLW1jcDIzc3h4IGRyaXZl
-ciBzdG9wcGVkIHdvcmtpbmcNCj4NCj5PbiBNb24sIEphbiAxOSwgMjAxNSBhdCA3OjA4IEFNLCBB
-bGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4gd3JvdGU6DQo+PiBPbiBNb24sIEph
-biAxOSwgMjAxNSBhdCAxOjAxIFBNLCBaaGFuZywgU29uaWMgPFNvbmljLlpoYW5nQGFuYWxvZy5j
-b20+IHdyb3RlOg0KPj4+IEhpIEFudG9uaW8sDQo+Pj4NCj4+Pj4tLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQ0KPj4+PkZyb206IEFudG9uaW8gRmlvbCBCb25uw61uIFttYWlsdG86YW50b25pb0Bm
-aW9sLmVzXQ0KPj4+PlNlbnQ6IFN1bmRheSwgSmFudWFyeSAxOCwgMjAxNSA3OjMyIFBNDQo+Pj4+
-VG86IEFsZXhhbmRyZSBDb3VyYm90OyBaaGFuZywgU29uaWMNCj4+Pj5DYzogTGludXMgV2FsbGVp
-ajsgR3JhbnQgTGlrZWx5OyBSb2IgSGVycmluZzsNCj4+Pj5saW51eC1ncGlvQHZnZXIua2VybmVs
-Lm9yZw0KPj4+PlN1YmplY3Q6IFJlOiBncGlvLW1jcDIzc3h4IGRyaXZlciBzdG9wcGVkIHdvcmtp
-bmcNCj4+Pj4NCj4+Pj5BbmQgSSBoYXZlIHNvbWUgbW9yZSBuZXdzLi4uDQo+Pj4+DQo+Pj4+T24g
-U3VuLCBKYW4gMTgsIDIwMTUgYXQgOTozNCBBTSwgQW50b25pbyBGaW9sIEJvbm7DrW4gPGFudG9u
-aW9AZmlvbC5lcz4gd3JvdGU6DQo+Pj4+PiBPbiBTdW4sIEphbiAxOCwgMjAxNSBhdCA3OjA0IEFN
-LCBBbGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4gd3JvdGU6DQo+Pj4+Pj4gT24g
-U2F0LCBKYW4gMTcsIDIwMTUgYXQgMzoyOCBBTSwgQW50b25pbyBGaW9sIEJvbm7DrW4NCj4+Pj4+
-PiA8YW50b25pb0BmaW9sLmVzPg0KPj4+Pj4+IHdyb3RlOg0KPj4+Pj4+ID4gSSBhbSB3cml0aW5n
-IHRvIHlvdSBhcyB0aGUgbWFpbnRhaW5lcnMgZm9yIHRoZSBncGlvLW1jcDIzc3h4DQo+Pj4+Pj4g
-PiBkcml2ZXIgKGFuZCBvcGVuIGZpcm13YXJlIG1haW50YWluZXJzKSBhY2NvcmRpbmcgdG8gdGhl
-IGtlcm5lbA0KPj4+Pj4+ID4gZG9jdW1lbnRhdGlvbiwgYmVmb3JlIHdyaXRpbmcgdG8gdGhlIGxp
-bnV4LWtlcm5lbCwgbGludXgtZ3BpbyBvcg0KPj4+Pj4+ID4gZGV2aWNldHJlZSBtYWlsaW5nIGxp
-c3QsIGFzIHJlY29tbWVkZWQgYnkgdGhlIEZBUS4gIElmIHlvdQ0KPj4+Pj4+ID4gYmVsaWV2ZSBJ
-IHNob3VsZCBwcm9jZWVkIG90aGVyd2lzZSwgSSB3aWxsIGJlIHBsZWFzZWQgdG8gZG8gc28uDQo+
-Pj4+Pj4NCj4+Pj4+PiBUaGFua3MgZm9yIHJlcG9ydGluZyB0aGF0IGlzc3VlIGFuZCB5b3VyIGRl
-dGFpbGVkIHJlcG9ydC4gQUZBSUNUDQo+Pj4+Pj4geW91IGRpZCBldmVyeXRoaW5nIHdlbGwgLSB5
-b3UgY291bGQgbWF5YmUgYWxzbyBoYXZlIGluY2x1ZGVkIHRoZQ0KPj4+Pj4+IGxpbnV4LWdwaW8g
-TUwgdG8gcmVhY2ggYSB3aWRlciBhdWRpZW5jZS4NCj4+Pj4NCj4+Pj5PSywgQWRkaW5nIHRoZSBs
-aXN0IG5vdyB0aGF0IEkgaGF2ZSBzb21lIG1vcmUgaW5mby4NCj4+Pj4NCj4+Pj4+PiA+IEkgd2Fz
-IHVzaW5nIHRoYXQgbW9kdWxlIG9uIGEgcmFzcGJlcnJ5IHBpIG9uIGtlcm5lbCAzLjE1LjIsDQo+
-Pj4+Pj4gPiBzdWNjZXNzZnVsbHkuDQo+Pj4+Pj4gPiBXaGVuIEkgdXBncmFkZWQgdG8gMy4xOC4y
-LCB0aGUgbW9kdWxlIHN0b3BwZWQgd29ya2luZy4NCj4+Pj4+PiA+IFNwZWNpZmljYWxseSwgdGhl
-IHByb2JlcyBmb3IgYSBNQ1AyMzAxNyBkZXZpY2UgZmFpbCB3aXRoIC1FSU5WQUwgKC0yMikuDQo+
-Pj4+Pj4gPg0KPj4+Pj4+ID4gU29tZSBiYWNrZ3JvdW5kOg0KPj4+Pj4+ID4gVGhlIHNldHVwIGlz
-IGFzIGZvbGxvd3M6DQo+Pj4+Pj4gPiBTb21lIFJQaSBHUElPIHBpbnMgZHJpdmUgbGVkcy4gVGhl
-c2UgY29udGludWUgd29ya2luZy4gVW5yZWxhdGVkDQo+Pj4+Pj4gPiB0byB0aGUgZmFpbGluZyBt
-b2R1bGUuDQo+Pj4+Pj4gPiBSUGkgR1BJTyBwb3J0IDQgaXMgdXNlZCBhcyB0aGUgbWFzdGVyIGZv
-ciBhIHcxIGJ1cyBob2xkaW5nIGENCj4+Pj4+PiA+IGNvdXBsZSB0ZW1wZXJhdHVyZSBzZW5zb3Jz
-LiBTdGlsbCB3b3JraW5nIHByb3Blcmx5LiBUaGlzIGlzDQo+Pj4+Pj4gPiByZWxldmFudCBiZWNh
-dXNlIEkgYW0gdXBncmFkaW5nIGFmdGVyIG9ic2VydmluZyBzb21lIGtlcm5lbCBvb3BzDQo+Pj4+
-Pj4gPiByZWxhdGVkIHRvIHRoZSB3MV90aGVybSBtb2R1bGUsIGJ1dCBzdGlsbCB1bnJlbGF0ZWQg
-dG8gdGhlIGZhaWxpbmcgbW9kdWxlLg0KPj4+Pj4+ID4NCj4+Pj4+PiA+IFRoZSBpc3N1ZToNCj4+
-Pj4+PiA+IFJQSSBJMkMgcG9ydCBjb25uZWN0ZWQgdG8gYSBNQ1AyMzAxNyB3aGljaCwgaW4gdHVy
-biwgaGFzIDE2IEkvTw0KPj4+Pj4+ID4gcGlucyBjb25maWd1cmVkIHRvIGRyaXZlIHNvbWUgbW9y
-ZSBsZWRzLiBUaGlzIGlzIHN0aWxsIHdvcmtpbmcNCj4+Pj4+PiA+IGF0IHRoZSBJMkMgbGV2ZWws
-IGJ1dCB0aGUgZ3Bpby1tY3AyM3N4eCBtb2R1bGUgZmFpbHMgdG8gcHJvYmUNCj4+Pj4+PiA+IHRo
-ZSBjaGlwLCBhbmQgdGhpcyBtZWFucyBpdCBmYWlscyB0byBjcmVhdGUgdGhlDQo+Pj4+Pj4gPiAv
-c3lzL2J1cy9ncGlvL2dwaW9jaGlwMjQwIHNvIEkgY2FuJ3QgZXhwb3J0IHRoZSBwaW5zIHdoaWNo
-IEkNCj4+Pj4+PiA+IGxhdGVyIHVzZSB0byBjaGFuZ2UgdGhlIGxlZCBzdGF0ZSwgYWxsIHRoaXMg
-dXNpbmcgc3lzZnMuDQo+Pj4+Pj4gPg0KPj4+Pj4+ID4gU29tZSBkZWJ1Z2dpbmc6DQo+Pj4+Pj4g
-PiBJIGNoZWNrZWQgdGhhdCB0aGUgZHJpdmVyIGlzIHJlamVjdGluZyB0aGUgcHJvYmUgYmVjYXVz
-ZSBvZg0KPj4+Pj4+ID4gImludmFsaWQgcGxhdGZvcm0gZGF0YSIuIEkgdHJhY2tlZCBpdCBkb3du
-IHRvIGJlICJpbmV4aXN0ZW50Ig0KPj4+Pj4+ID4gcGxhdGZvcm0gZGF0YSwgYXMgcGRhdGEgaXMg
-bnVsbCB3aGVuIHRoZSB0ZXN0IGlzIHBlcmZvcm1lZC4NCj4+Pj4+PiA+IFRoYXQgY29kZSBwYXRo
-IGlzIHJlYWNoZWQgYm90aCB3aGVuIHRoZSBrZXJuZWwgaXMgY29uZmlndXJlZA0KPj4+Pj4+ID4g
-d2l0aCBDT05GSUdfT0YgYW5kIHdoZW4gaXQgaXMgY29uZmlndXJlZCB3aXRob3V0IGl0Lg0KPj4+
-Pj4+ID4gV2l0aG91dCBpdCwgSSBjYW4gdW5kZXJzdGFuZCwgYnV0IHdpdGgsIEkgY2FuJ3QuDQo+
-Pj4+Pj4gPiBUaGUgT0YgbWF0Y2hpbmcgZG9lcyBub3Qgc3VjY2VlZCBiZWNhdXNlIGRldi5vZl9u
-b2RlIGlzIG51bGwgdG9vLg0KPj4+Pj4+ID4NCj4+PiBIYXZlIHlvdSBhZGRlZCB0aGUgZ3BpbyBu
-b2RlIGZvciBtY3AyM3N4eCBpbiB0aGUgZGV2aWNlIHRyZWUgZmlsZSBvZiB5b3VyIHJhc3BiZXJy
-eSBwaSBib2FyZD8gQW5kIGhhdmUgeW91IHJlYnVpbHQgeW91cg0KPmR0YiBmaWxlPw0KPg0KPk5v
-LCBJIGhhdmUgbm90Lg0KPg0KPj4gSXQgc2VlbXMgbGlrZSBBbnRvbmlvJ3MgZGV2aWNlIGlzIHVz
-aW5nIHBsYXRmb3JtIGRhdGEgKEFudG9uaW8sIGNhbg0KPj4geW91IGNvbmZpcm0/KSwgc28gaXMg
-RFQgcmVsZXZhbnQgYXQgYWxsIGhlcmU/DQo+DQo+V2VsbCwgYm90aCBkZXZpY2UgdHJlZSBhbmQg
-cGxhdGZvcm0gZGF0YSBhcmUgbmV3IGNvbmNlcHRzIHRvIG1lLiBTbyBJIGRvbid0IHF1aXRlIGtu
-b3cuLi4NCj4NCj4+IEJ5IHRoZSBsb29rIG9mIGl0IHRoaXMgcGF0Y2ggbWlnaHQgaGF2ZSBicm9r
-ZW4gcGxhdGZvcm0gc3VwcG9ydCBmb3INCj4+IHRoaXMgZHJpdmVyLiBBY2NvcmRpbmcgdG8gdGhl
-IHRyYWNlIGdpdmVuIGJ5IEFudG9uaW8sIHRoZSBmb2xsb3dpbmcNCj4+IGNvbmRpdGlvbiBpbiBw
-cm9iZSgpIGlzIG1ldDoNCj4+DQo+PiAgICAgICAgIGlmICghcGRhdGEgfHwgIWdwaW9faXNfdmFs
-aWQocGRhdGEtPmJhc2UpKSB7DQo+Pg0KPj4gQW50b25pbywgY291bGQgeW91IGRpc3BsYXkgYm90
-aCBwZGF0YSBhbmQgcGRhdGEtPmJhc2UgcmlnaHQgYmVmb3JlDQo+PiB0aGlzIHRlc3Qgc28gd2Ug
-dW5kZXJzdGFuZCB3aHkgdGhpcyBpcyBoYXBwZW5pbmc/DQo+DQo+SW4gdGhlIG9yaWdpbmFsIGZh
-aWxpbmcgdmVyc2lvbiwgYXMgSSBleHBsYWluZWQgYWJvdmUsIHBkYXRhIHdhcyBOVUxMICgicGRh
-dGEgaXMgbnVsbCB3aGVuIHRoZSB0ZXN0IGlzIHBlcmZvcm1lZCIpDQo+DQo+V2l0aCB0aGUgMy4x
-NS4yLCB3aGVuIEkNCj5lY2hvIG1jcDIzMDE3IDB4MjcgPiAvc3lzL2J1cy9pMmMvZGV2aWNlcy9p
-MmMtMS9uZXdfZGV2aWNlDQo+aXQgYXV0b21hdGljYWxseSBjcmVhdGVkIGEgImdwaW9jaGlwMjQw
-IiB1bmRlciAvc3lzL2NsYXNzZXMvZ3BpbywgYW5kIEkgY291bGQgZXhwb3J0IHRoZSBncGlvIHBp
-bnMgMjQwLTI1NS4NCj4NCj5XaXRoIDMuMTguMiBhbmQgdGhlIGRyaXZlciByaWdodCBiZWZvcmUg
-U29uaWMncyBwYXRjaCAodGhlIGxhdGVzdCB3b3JraW5nIHNjZW5hcmlvKSwgd2hlbiBJIGVjaG8g
-bWNwMjMwMTcgMHgyNyA+DQo+L3N5cy9idXMvaTJjL2RldmljZXMvaTJjLTEvbmV3X2RldmljZQ0K
-Pml0IGF1dG9tYXRpY2FsbHkgY3JlYXRlcyBhICJncGlvY2hpcDQ5NiIgdW5kZXIgL3N5cy9jbGFz
-c2VzL2dwaW8sIGFuZCBJIGNhbiBleHBvcnQgdGhlIGdwaW8gcGlucyA0OTYtNTExLg0KPg0KPkl0
-IHNlZW1zIGxpa2Ugc29tZW9uZSBpcyBhc3NpZ25pbmcgdGhlICJiYXNlIiBhdXRvbWF0aWNhbGx5
-LCBkb3duIGZyb20gYSBjZXJ0YWluIG1heGltdW0sIHRoYXQgbWF5IGhhdmUgYmVlbiBpbmNyZWFz
-ZWQNCj5zaW5jZSAzLjE1LjIuDQpJdCBzZWVtcyB0aGUgZm9ybWVyIG1jcDIzMDE3IGRyaXZlciBj
-cmVhdGUgYSBkZWZhdWx0IGdwaW8gYmFzZSBhZGRyZXNzIGFuZCBhbiBpcnEgbnVtYmVyIGlmIHlv
-dSBoYXZlIG5laXRoZXIgYSBkZXZpY2Ugbm9kZSBub3IgYSBwbGF0Zm9ybSBkYXRhIGRlZmluZWQu
-IElzIGl0IGNvcnJlY3QgdG8gc2tpcCBib3RoIHRoZSBkZXZpY2Ugbm9kZSBhbmQgdGhlIHBsYXRm
-b3JtIGRhdGEgZm9yIGEgcGxhdGZvcm0gZHJpdmVyPyBJZiB5ZXMsIEkgY2FuIHNlbmQgYSBwYXRj
-aCB0byBzdXBwb3J0IHRoaXMgYmVoYXZpb3IuDQoNCg0KUmVnYXJkcywNCg0KU29uaWMNCg==
+On Tue, Jan 20, 2015 at 11:58 AM, Zhang, Sonic <Sonic.Zhang@analog.com>=
+ wrote:
+> Hi Antonio,
+>
+>>-----Original Message-----
+>>From: Antonio Fiol Bonn=C3=ADn [mailto:antonio@fiol.es]
+>>Sent: Monday, January 19, 2015 6:55 PM
+>>To: Alexandre Courbot
+>>Cc: Zhang, Sonic; Linus Walleij; Grant Likely; Rob Herring; linux-gpi=
+o@vger.kernel.org
+>>Subject: Re: gpio-mcp23sxx driver stopped working
+>>
+>>On Mon, Jan 19, 2015 at 7:08 AM, Alexandre Courbot <gnurou@gmail.com>=
+ wrote:
+>>> On Mon, Jan 19, 2015 at 1:01 PM, Zhang, Sonic <Sonic.Zhang@analog.c=
+om> wrote:
+>>>> Hi Antonio,
+>>>>
+>>>>>-----Original Message-----
+>>>>>From: Antonio Fiol Bonn=C3=ADn [mailto:antonio@fiol.es]
+>>>>>Sent: Sunday, January 18, 2015 7:32 PM
+>>>>>To: Alexandre Courbot; Zhang, Sonic
+>>>>>Cc: Linus Walleij; Grant Likely; Rob Herring;
+>>>>>linux-gpio@vger.kernel.org
+>>>>>Subject: Re: gpio-mcp23sxx driver stopped working
+>>>>>
+>>>>>And I have some more news...
+>>>>>
+>>>>>On Sun, Jan 18, 2015 at 9:34 AM, Antonio Fiol Bonn=C3=ADn <antonio=
+@fiol.es> wrote:
+>>>>>> On Sun, Jan 18, 2015 at 7:04 AM, Alexandre Courbot <gnurou@gmail=
+=2Ecom> wrote:
+>>>>>>> On Sat, Jan 17, 2015 at 3:28 AM, Antonio Fiol Bonn=C3=ADn
+>>>>>>> <antonio@fiol.es>
+>>>>>>> wrote:
+>>>>>>> > I am writing to you as the maintainers for the gpio-mcp23sxx
+>>>>>>> > driver (and open firmware maintainers) according to the kerne=
+l
+>>>>>>> > documentation, before writing to the linux-kernel, linux-gpio=
+ or
+>>>>>>> > devicetree mailing list, as recommeded by the FAQ.  If you
+>>>>>>> > believe I should proceed otherwise, I will be pleased to do s=
+o.
+>>>>>>>
+>>>>>>> Thanks for reporting that issue and your detailed report. AFAIC=
+T
+>>>>>>> you did everything well - you could maybe also have included th=
+e
+>>>>>>> linux-gpio ML to reach a wider audience.
+>>>>>
+>>>>>OK, Adding the list now that I have some more info.
+>>>>>
+>>>>>>> > I was using that module on a raspberry pi on kernel 3.15.2,
+>>>>>>> > successfully.
+>>>>>>> > When I upgraded to 3.18.2, the module stopped working.
+>>>>>>> > Specifically, the probes for a MCP23017 device fail with -EIN=
+VAL (-22).
+>>>>>>> >
+>>>>>>> > Some background:
+>>>>>>> > The setup is as follows:
+>>>>>>> > Some RPi GPIO pins drive leds. These continue working. Unrela=
+ted
+>>>>>>> > to the failing module.
+>>>>>>> > RPi GPIO port 4 is used as the master for a w1 bus holding a
+>>>>>>> > couple temperature sensors. Still working properly. This is
+>>>>>>> > relevant because I am upgrading after observing some kernel o=
+ops
+>>>>>>> > related to the w1_therm module, but still unrelated to the fa=
+iling module.
+>>>>>>> >
+>>>>>>> > The issue:
+>>>>>>> > RPI I2C port connected to a MCP23017 which, in turn, has 16 I=
+/O
+>>>>>>> > pins configured to drive some more leds. This is still workin=
+g
+>>>>>>> > at the I2C level, but the gpio-mcp23sxx module fails to probe
+>>>>>>> > the chip, and this means it fails to create the
+>>>>>>> > /sys/bus/gpio/gpiochip240 so I can't export the pins which I
+>>>>>>> > later use to change the led state, all this using sysfs.
+>>>>>>> >
+>>>>>>> > Some debugging:
+>>>>>>> > I checked that the driver is rejecting the probe because of
+>>>>>>> > "invalid platform data". I tracked it down to be "inexistent"
+>>>>>>> > platform data, as pdata is null when the test is performed.
+>>>>>>> > That code path is reached both when the kernel is configured
+>>>>>>> > with CONFIG_OF and when it is configured without it.
+>>>>>>> > Without it, I can understand, but with, I can't.
+>>>>>>> > The OF matching does not succeed because dev.of_node is null =
+too.
+>>>>>>> >
+>>>> Have you added the gpio node for mcp23sxx in the device tree file =
+of your raspberry pi board? And have you rebuilt your
+>>dtb file?
+>>
+>>No, I have not.
+>>
+>>> It seems like Antonio's device is using platform data (Antonio, can
+>>> you confirm?), so is DT relevant at all here?
+>>
+>>Well, both device tree and platform data are new concepts to me. So I=
+ don't quite know...
+>>
+>>> By the look of it this patch might have broken platform support for
+>>> this driver. According to the trace given by Antonio, the following
+>>> condition in probe() is met:
+>>>
+>>>         if (!pdata || !gpio_is_valid(pdata->base)) {
+>>>
+>>> Antonio, could you display both pdata and pdata->base right before
+>>> this test so we understand why this is happening?
+>>
+>>In the original failing version, as I explained above, pdata was NULL=
+ ("pdata is null when the test is performed")
+>>
+>>With the 3.15.2, when I
+>>echo mcp23017 0x27 > /sys/bus/i2c/devices/i2c-1/new_device
+>>it automatically created a "gpiochip240" under /sys/classes/gpio, and=
+ I could export the gpio pins 240-255.
+>>
+>>With 3.18.2 and the driver right before Sonic's patch (the latest wor=
+king scenario), when I echo mcp23017 0x27 >
+>>/sys/bus/i2c/devices/i2c-1/new_device
+>>it automatically creates a "gpiochip496" under /sys/classes/gpio, and=
+ I can export the gpio pins 496-511.
+>>
+>>It seems like someone is assigning the "base" automatically, down fro=
+m a certain maximum, that may have been increased
+>>since 3.15.2.
+> It seems the former mcp23017 driver create a default gpio base addres=
+s and an irq number if you have neither a device node nor a platform da=
+ta defined. Is it correct to skip both the device node and the platform=
+ data for a platform driver? If yes, I can send a patch to support this=
+ behavior.
+
+If this configuration was working before it is desirable to preserve
+this behavior in order to avoid regressions. And indeed, in 3.15 the
+driver was doing this:
+
+       if (match || !pdata) {
+                base =3D -1;
+                pullups =3D 0;
+       }
+
+which assigns the base number dynamically and allows the driver to
+probe successfully if neither DT nor pdata are provided.
+
+Could you send a patch that restores this?
+
+Antonio, once the patch is sent, could you check it and give us your
+Tested-by on it?
+
+Thanks!
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
