@@ -1,79 +1,84 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH v6 2/3] gpio: Cygnus: add GPIO driver
-Date: Tue, 20 Jan 2015 11:17:03 -0800
-Message-ID: <54BEA9AF.7070209@broadcom.com>
-References: <rjui@broadcom.com>	<1418696307-19392-1-git-send-email-rjui@broadcom.com>	<1418696307-19392-3-git-send-email-rjui@broadcom.com>	<CACRpkdYGksEseGaO49=1rUi5WBdOxwAd-F1gpgZn+BFatRCdDg@mail.gmail.com>	<54B55068.8050500@broadcom.com>	<CACRpkdZef8S-EAbShjJ1eg+-3wQKn+yx4u1k_Mf8F7uFkJYdFw@mail.gmail.com>	<54B9A8A2.6090209@broadcom.com> <CACRpkdYydCO9Wu3fMyh0qt=e_hxT5ch2gqNhEsfQpf5WYUS-kQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Tue, 20 Jan 2015 22:25:17 +0100
+Message-ID: <4078818.ecVtLF3hjd@vostro.rjw.lan>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com> <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com> <CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYydCO9Wu3fMyh0qt=e_hxT5ch2gqNhEsfQpf5WYUS-kQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:56235 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753848AbbATVCm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 16:02:42 -0500
+In-Reply-To: <CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+
+On Tuesday, January 20, 2015 01:16:06 PM Linus Walleij wrote:
+> On Mon, Jan 19, 2015 at 6:59 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> 
+> > I am not really fond of this idea since it adds complexity to the
+> > (already too complex) GPIO lookup, and only solves to a local level
+> > (GPIO) what is a more global problem (bad ACPI tables that can affect
+> > any subsystem).
+> (...)
+> > it
+> > seems more to-the-point to find a way to fix/patch the ACPI tables at
+> > runtime, if that is possible at all, to provide a more general
+> > solution to this issue.
+> 
+> This is my position as well, until proven that this cannot be done.
+
+Well, that goes against the current practice, mind you, which *is* to put
+workarounds for buggy ACPI tables into the kernel.  I'm not going to defend
+that, but it has been done for several years now.
+
+Also someone may say to that: "Why don't *you* demonstrate that it can be done
+in the first place?"  And what if it can be done, but is too complex to be
+practical or similar?
+
+My personal opinion is that having a way to apply a fix on top of broken ACPI
+tables (or an extension on top of correct ones for that matter) without touching
+the kernel would be very useful indeed, but making it secure may be somewhat
+challenging, because in principle there's no reason why the kernel should trust
+such "external" fixes.
+
+> In device tree the same mechanism is called "device tree overlays"
+> and I just have some vague feeling that such stuff is patched around in
+> some Intel platforms already, but maybe that involves replacing
+> the whole DSDT from userspace,
+
+>From initramfs rather than from user space, but yes, it does.
+
+> surely the mechanism can be refined?
+
+Yes, it can (in principle).  In fact, we have a plan to refine it, but it is
+going to take some time.  Once we've done that, we'll see how painful it is to
+"patch" ACPI tables this way in practice.
+
+Also there is an ecosystem problem related to distributing such "patches".
+Today, distributions don't need to worry about patching buggy platform
+firmware, because they get workarounds in the kernel, but if we switch over
+to the model in which platform firmware "overlays" need to be provided in
+addition to it, then suddenly questions arise about who should be responsible
+for making them available, how to avoid duplication of efforts between
+distributions etc.
+
+All of that needs to be clarified before we start making hard statements like
+"No in-kernel workarounds for that!"
+
+And, of course, there's the question of what the kernel should do if the given
+firmware patch is not effective, so it doesn't really fix the problem it is
+supposed to fix or it fixes that problem only partially or, worse yet, it
+introuces more bugs than it fixes.  Should the kernel simply fail then (and
+in what way if so) or should it try to carry out some default "sanitization"
+of what the firmare (and patch) tells it and try to continue on the best
+effort basis?
 
 
-
-On 1/20/2015 1:53 AM, Linus Walleij wrote:
-> On Sat, Jan 17, 2015 at 1:11 AM, Ray Jui <rjui@broadcom.com> wrote:
->> On 1/16/2015 2:14 AM, Linus Walleij wrote:
-> 
->>> Some hardware designs put the software-controlled biasing
->>> resistors in the GPIO block electronically connected to the actual
->>> pins, so that e.g. the biasing will be available if some MMC or
->>> whatever is using the same pins in another muxing. In such
->>> situations it's quite evident that they need to be a combined
->>> GPIO and pin controller.
->>>
->>> I have some regrets that bolting a second pin controller to the
->>> GPIO chip make things a bit complex but it's a price we have
->>> to pay for getting some kind of generic interface.
->>
->> Okay. In summary, I think both of us think the following approach makes
->> sense in my situation:
->> - leave pinmux in pinctrl-bcm-cygnus.c
->> - leave pinctrl + gpio in pinctrl-bcm-cygnus-gpio.c under drivers/pinctrl/*
->>
->> But by thinking about this more, I thought this would create duplicated
->> pinctrl descriptors in our system, one from the pinmux driver, and the
->> other from this pinctrl+gpio driver. That is probably undesirable?
-> 
-> No, there are several systems with multiple pin controllers and the
-> framework easily handles multiple pin controllers in the same
-> system just as well as we handle multiple GPIO chips.
-> 
->> By reviewing various drivers in the pinctrl directory, I found what
->> pinctrl-u300.c and pinctrl-coh901.c does seems to serve as a good model
->> for me to follow:
->> - pinctrl-u300.c is the pinmux driver
->> - pinctrl-coh901.c is the gpio+pinctrl driver
-> 
-> Yeah, I don't know if the separation between them is as beautiful
-> as it should be. I used it when developing the pin control
-> subsystem.
-> 
->> The GPIO pinctrl logic is in the coh901 block, so pinctrl-coh901.c
->> exposed two public functions u300_gpio_config_get, u300_gpio_config_set
->> that pinctrl-u300.c can use. The u300 populates all pinmux/pinctrl
->> related functions into the subsystem. This way there's only one pinctrl
->> descriptor, populated through pinctrl-u300.c.
->>
->> Does that model make more sense to you?
-> 
-> Yeah I wrote it myself so I'm maybe blind for any dumbness in
-> the code. But I think it's kind of elegant. But it is not using the
-> generic pinctrl device tree bindings so it's kind of oldstyle and
-> bloated in that sense.
-> 
-> Yours,
-> Linus Walleij
-> 
-Okay. I think I have a pretty good idea of what you expect. Regarding
-whether or not to keep pinctrl-bcm-cygnus.c and
-pinctrl-bcm-cygnus-gpio.c completely independent with each other and
-therefore have two pinctrl in the system, I'll play with it a bit more
-and make a decision.
-
-Thanks a lot for spending all these time explaining it to me. Really
-appreciate it!
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
