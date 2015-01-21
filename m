@@ -1,41 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] pinctrl: Qualcomm msm8916 pinctrl driver
-Date: Wed, 21 Jan 2015 17:43:46 +0100
-Message-ID: <CACRpkdY31g+qBumZzWgHj7ZC9rROTwE3AgLhJGB+FPtmMk6iTg@mail.gmail.com>
-References: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com>
+Subject: Re: [PATCH 8/8] gpio/mpc8xxx: Use of_mm_gpiochip_remove
+Date: Wed, 21 Jan 2015 17:45:40 +0100
+Message-ID: <CACRpkdbd8xK3PQ34EBc8=2ekMb+RggfY2Oh3Jg-K4gvnLfDZRA@mail.gmail.com>
+References: <1421581173-28416-1-git-send-email-ricardo.ribalda@gmail.com>
+	<1421581173-28416-9-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:35869 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753334AbbAUQnq convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jan 2015 11:43:46 -0500
-Received: by mail-ig0-f172.google.com with SMTP id l13so23300846iga.5
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2015 08:43:46 -0800 (PST)
-In-Reply-To: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:52668 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752306AbbAUQpl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jan 2015 11:45:41 -0500
+Received: by mail-ig0-f170.google.com with SMTP id l13so22436530iga.1
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2015 08:45:41 -0800 (PST)
+In-Reply-To: <1421581173-28416-9-git-send-email-ricardo.ribalda@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stanimir Varbanov <svarbanov@mm-sol.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Joonwoo Park <joonwoop@codeaurora.org>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>
 
-On Tue, Jan 20, 2015 at 10:17 AM, Stanimir Varbanov
-<svarbanov@mm-sol.com> wrote:
+On Sun, Jan 18, 2015 at 12:39 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-> This series adds a pinctrl driver for Snapdragon 410 (msm8916) SoC. T=
-he first
-> patch increase the register address variable size, next adds a bindin=
-g document
-> and the last patch adds the pinctrl driver
+> Since d621e8bae5ac9c67 (Create of_mm_gpiochip_remove), there is a
+> counterpart for of_mm_gpiochip_add.
 >
-> Comments are welcome!
+> This patch implements the remove function of the driver making use of
+> it.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Peter Korsgaard <jacmet@sunsite.dk>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-Bj=C3=B6rn can you look at this?
+Patch applied.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
