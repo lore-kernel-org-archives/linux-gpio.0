@@ -1,48 +1,50 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH RESEND] gpio: tz1090-pdc: Use resource_size to fix
- off-by-one resource size calculation
-Date: Wed, 21 Jan 2015 09:52:01 +0800
-Message-ID: <1421805121.9831.3.camel@phoenix>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Y Vo <yvo@apm.com>
+Subject: [PATCH v3 3/3] arm64: dts: Add APM X-Gene standby GPIO controller DTS entries
+Date: Wed, 21 Jan 2015 09:59:25 +0700
+Message-ID: <1421809165-8520-1-git-send-email-yvo@apm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:40201 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750801AbbAUBwG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 20:52:06 -0500
-Received: by mail-pa0-f45.google.com with SMTP id lf10so49510626pab.4
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jan 2015 17:52:05 -0800 (PST)
+Received: from exprod5og107.obsmtp.com ([64.18.0.184]:48793 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751533AbbAUC7i (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jan 2015 21:59:38 -0500
+Received: by mail-pa0-f50.google.com with SMTP id bj1so49801898pad.9
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jan 2015 18:59:38 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: James Hogan <james.hogan@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches@apm.com
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: James Hogan <james.hogan@imgtec.com>
+Add standby domain gpio controller for APM X-Gene SoC platform.
+
+Signed-off-by: Y Vo <yvo@apm.com>
 ---
-Hi Linus,
-Seems this one was missed.
-Thanks,
-Axel
- drivers/gpio/gpio-tz1090-pdc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/apm/apm-storm.dtsi |   13 +++++++++++++
+ 1 files changed, 13 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tz1090-pdc.c b/drivers/gpio/gpio-tz1090-pdc.c
-index d753622..ede7e40 100644
---- a/drivers/gpio/gpio-tz1090-pdc.c
-+++ b/drivers/gpio/gpio-tz1090-pdc.c
-@@ -190,7 +190,7 @@ static int tz1090_pdc_gpio_probe(struct platform_device *pdev)
+diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+index f1ad9c2..2e1c438 100644
+--- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
++++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+@@ -587,6 +587,19 @@
+ 			phy-names = "sata-phy";
+ 		};
  
- 	/* Ioremap the registers */
- 	priv->reg = devm_ioremap(&pdev->dev, res_regs->start,
--				 res_regs->end - res_regs->start);
-+				 resource_size(res_regs));
- 	if (!priv->reg) {
- 		dev_err(&pdev->dev, "unable to ioremap registers\n");
- 		return -ENOMEM;
++		sbgpio: sbgpio@17001000{
++			compatible = "apm,xgene-gpio-sb";
++			reg = <0x0 0x17001000 0x0 0x400>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			interrupts = 	<0x0 0x28 0x1>,
++					<0x0 0x29 0x1>,
++					<0x0 0x2a 0x1>,
++					<0x0 0x2b 0x1>,
++					<0x0 0x2c 0x1>,
++					<0x0 0x2d 0x1>;
++		};
++
+ 		rtc: rtc@10510000 {
+ 			compatible = "apm,xgene-rtc";
+ 			reg = <0x0 0x10510000 0x0 0x400>;
 -- 
-1.9.1
-
-
+1.7.1
 
