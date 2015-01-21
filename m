@@ -1,86 +1,42 @@
-From: Mans Rullgard <mans@mansr.com>
-Subject: [PATCH] gpio: max732x: add set_multiple function
-Date: Wed, 21 Jan 2015 17:17:49 +0000
-Message-ID: <1421860669-9217-1-git-send-email-mans@mansr.com>
+From: Olliver Schinagl <o.schinagl@ultimaker.com>
+Subject: [PATCH] gpio: correctly use const char * const
+Date: Wed, 21 Jan 2015 21:35:37 +0100
+Message-ID: <1421872537-18587-1-git-send-email-o.schinagl@ultimaker.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from unicorn.mansr.com ([81.2.72.234]:45536 "EHLO unicorn.mansr.com"
+Received: from 7of9.schinagl.nl ([88.159.158.68]:38959 "EHLO 7of9.schinagl.nl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753965AbbAURWS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 21 Jan 2015 12:22:18 -0500
+	id S1751526AbbAUUle (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 21 Jan 2015 15:41:34 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, Olliver Schinagl <oliver@schinagl.nl>
 
-This adds a set_multiple function to the MAX732x GPIO driver,
-allowing for performance gains when using gpiod_set_array().
+From: Olliver Schinagl <oliver@schinagl.nl>
 
-Signed-off-by: Mans Rullgard <mans@mansr.com>
+On my previous patch I was overly hasty and made the suffixes string
+array
+const char const *suffixes, instaed of const char * const suffixes. This
+patch corrects that
+
+Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 ---
- drivers/gpio/gpio-max732x.c | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-index f860837..ef7eef8 100644
---- a/drivers/gpio/gpio-max732x.c
-+++ b/drivers/gpio/gpio-max732x.c
-@@ -210,10 +210,11 @@ static int max732x_gpio_get_value(struct gpio_chip *gc, unsigned off)
- 	return reg_val & (1u << (off & 0x7));
- }
- 
--static void max732x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
-+static void max732x_gpio_set_mask(struct gpio_chip *gc, unsigned off, int mask,
-+				  int val)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 9d2a371..c926641 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1657,7 +1657,7 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 				      unsigned int idx,
+ 				      enum gpio_lookup_flags *flags)
  {
- 	struct max732x_chip *chip;
--	uint8_t reg_out, mask = 1u << (off & 0x7);
-+	uint8_t reg_out;
- 	int ret;
- 
- 	chip = container_of(gc, struct max732x_chip, gpio_chip);
-@@ -221,7 +222,7 @@ static void max732x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
- 	mutex_lock(&chip->lock);
- 
- 	reg_out = (off > 7) ? chip->reg_out[1] : chip->reg_out[0];
--	reg_out = (val) ? reg_out | mask : reg_out & ~mask;
-+	reg_out = (reg_out & ~mask) | (val & mask);
- 
- 	ret = max732x_writeb(chip, is_group_a(chip, off), reg_out);
- 	if (ret < 0)
-@@ -236,6 +237,26 @@ out:
- 	mutex_unlock(&chip->lock);
- }
- 
-+static void max732x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
-+{
-+	unsigned base = off & ~0x7;
-+	uint8_t mask = 1u << (off & 0x7);
-+
-+	max732x_gpio_set_mask(gc, base, mask, val << (off & 0x7));
-+}
-+
-+static void max732x_gpio_set_multiple(struct gpio_chip *gc,
-+				      unsigned long *mask, unsigned long *bits)
-+{
-+	unsigned mask_lo = mask[0] & 0xff;
-+	unsigned mask_hi = (mask[0] >> 8) & 0xff;
-+
-+	if (mask_lo)
-+		max732x_gpio_set_mask(gc, 0, mask_lo, bits[0] & 0xff);
-+	if (mask_hi)
-+		max732x_gpio_set_mask(gc, 8, mask_hi, (bits[0] >> 8) & 0xff);
-+}
-+
- static int max732x_gpio_direction_input(struct gpio_chip *gc, unsigned off)
- {
- 	struct max732x_chip *chip;
-@@ -579,6 +600,7 @@ static int max732x_setup_gpio(struct max732x_chip *chip,
- 	if (chip->dir_output) {
- 		gc->direction_output = max732x_gpio_direction_output;
- 		gc->set = max732x_gpio_set_value;
-+		gc->set_multiple = max732x_gpio_set_multiple;
- 	}
- 	gc->get = max732x_gpio_get_value;
- 	gc->can_sleep = true;
+-	static const char const *suffixes[] = { "gpios", "gpio" };
++	static const char * const suffixes[] = { "gpios", "gpio" };
+ 	char prop_name[32]; /* 32 is max size of property name */
+ 	enum of_gpio_flags of_flags;
+ 	struct gpio_desc *desc;
 -- 
-2.0.5
+2.1.4
 
