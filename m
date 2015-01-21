@@ -1,54 +1,56 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/1] gpio: omap: Fix bad device access with setup_irq()
-Date: Wed, 21 Jan 2015 22:39:54 +0100
-Message-ID: <CABxcv=nE8F7Jjy3Ojf_PE6LEDi_H2tZSbAwpeu+3spP4zF==RQ@mail.gmail.com>
-References: <1421448650-15904-1-git-send-email-tony@atomide.com>
+From: Olliver Schinagl <oliver@schinagl.nl>
+Subject: Re: [PATCH v1 2/4] gpio: add parameter to allow the use named gpios
+Date: Wed, 21 Jan 2015 22:44:49 +0100
+Message-ID: <54C01DD1.8040704@schinagl.nl>
+References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl> <1420621722-7428-3-git-send-email-oliver+list@schinagl.nl> <CAAVeFuLwTsX8HByCVyEucYJ_DhhCOP=tEDprmi9pBwx+a7zzJg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:35346 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751751AbbAUVj4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jan 2015 16:39:56 -0500
-Received: by mail-we0-f179.google.com with SMTP id q59so22028600wes.10
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2015 13:39:54 -0800 (PST)
-In-Reply-To: <1421448650-15904-1-git-send-email-tony@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuLwTsX8HByCVyEucYJ_DhhCOP=tEDprmi9pBwx+a7zzJg@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, Olliver Schinagl <oliver+list@schinagl.nl>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>linux
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Felipe Balbi <balbi@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Santosh Shilimkar <ssantosh@kernel.org>
 
-Hello Tony,
+Hey Alexandre,
 
-On Fri, Jan 16, 2015 at 11:50 PM, Tony Lindgren <tony@atomide.com> wrote:
-> Similar to omap_gpio_irq_type() let's make sure that the GPIO
-> is usable as an interrupt if the platform init code did not
-> call gpio_request(). Otherwise we can get invalid device access
-> after setup_irq():
+On 01/19/2015 05:04 AM, Alexandre Courbot wrote:
+> On Wed, Jan 7, 2015 at 6:08 PM, Olliver Schinagl
+> <oliver+list@schinagl.nl> wrote:
+>> From: Olliver Schinagl <oliver@schinagl.nl>
+>>
+>> The gpio binding document says that new code should always use named
+>> gpios. Patch 40b73183 added support to parse a list of gpios from child
+>> nodes, but does not make it possible to use named gpios. This patch adds
+>> the con_id property and implements it is done in gpiolib.c, where the
+>> old-style of using unnamed gpios still works.
+> This is absolutely correct - thanks for spotting this.
 >
-> WARNING: CPU: 0 PID: 1 at drivers/bus/omap_l3_noc.c:147 l3_interrupt_handler+0x214/0x340()
-> 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4CFG (Idle): Data Access in Supervisor mode during Functional access
-> ...
-> [<c05f21e4>] (__irq_svc) from [<c05f1974>] (_raw_spin_unlock_irqrestore+0x34/0x44)
-> [<c05f1974>] (_raw_spin_unlock_irqrestore) from [<c00914a8>] (__setup_irq+0x244/0x530)
-> [<c00914a8>] (__setup_irq) from [<c00917d4>] (setup_irq+0x40/0x8c)
-> [<c00917d4>] (setup_irq) from [<c0039c8c>] (omap_system_dma_probe+0x1d4/0x2b4)
-> [<c0039c8c>] (omap_system_dma_probe) from [<c03b2200>] (platform_drv_probe+0x44/0xa4)
-> ...
+> <snip>
+> ... since it looks like this part has been mostly copy/pasted from
+> of_find_gpio(), can you add another patch that fixes it there as well?
+Yeah, since it has the same functionality, i copy pasted it. Wasn't sure 
+if it was worth to macro it or anything. I've sent a v2 with that patch 
+added to the mix :)
 >
-> We can fix this the same way omap_gpio_irq_type() is handling it.
+> Also in the case of ACPI this will prove to be an incomplete lookup
+> since acpi_find_gpio() has an additional fallback if the named lookup
+> fails.
+I'm not very familiar (or at all) how ACPI falls into all of this, I'm 
+just starting to get a hang of the DT, but since this is how the dts is 
+being parsed, where is the relation here? Or did I misunderstand?
 >
-
-I see that Linus already picked this patch but fwiw:
-
-Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
-
-> Note that the long term solution is to change the gpio-omap driver
-> to handle the banks as separate driver instances. This will allow
-> us to rely on just runtime PM for tracking the bank specific state.
+> In that respect, I wonder if it would not be better for
+> devm_get_gpiod_from_child() to call of_find_gpio() and
+> acpi_find_gpio() (after making them non-static) followed by
+> gpiod_request() instead of calling fwnode_get_named_gpiod(). But in
+> that case it will have to do the OF/ACPI handling by itself.
 >
+> I'm not really sure about which way is better. I'd appreciate if you
+> could give a thought to a possible refactoring that would improve the
+> situation ; otherwise feel free to ignore what I have written above
+> and to duplicate the property name building code.
+I'm afraid I'm a little too inexperienced to follow exactly what you say ;)
 
-Agreed.
-
-Best regards,
-Javier
+Olliver
