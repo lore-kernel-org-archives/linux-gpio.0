@@ -1,177 +1,56 @@
-From: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Subject: [PATCH 1/1] gpio: sch: Consolidate similar algorithms
-Date: Wed, 21 Jan 2015 18:32:21 +0800
-Message-ID: <1421836341-2036-2-git-send-email-rebecca.swee.fun.chang@intel.com>
-References: <1421836341-2036-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1] gpio: omap: Fix bad device access with setup_irq()
+Date: Wed, 21 Jan 2015 17:41:51 +0100
+Message-ID: <CACRpkdZ9pjyH0ZZ3GXOagGDPTa=LhuK5bG+wi2tsgP7=OQTGqw@mail.gmail.com>
+References: <1421448650-15904-1-git-send-email-tony@atomide.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:45244 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752461AbbAUKcy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 21 Jan 2015 05:32:54 -0500
-In-Reply-To: <1421836341-2036-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:38909 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752581AbbAUQlw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jan 2015 11:41:52 -0500
+Received: by mail-ig0-f180.google.com with SMTP id b16so15908606igk.1
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2015 08:41:52 -0800 (PST)
+In-Reply-To: <1421448650-15904-1-git-send-email-tony@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@intel.com>
-Cc: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Felipe Balbi <balbi@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Santosh Shilimkar <ssantosh@kernel.org>
 
-Consolidating similar algorithms into common functions to make
-GPIO SCH simpler and manageable.
+On Fri, Jan 16, 2015 at 11:50 PM, Tony Lindgren <tony@atomide.com> wrote:
 
-Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
----
- drivers/gpio/gpio-sch.c | 83 +++++++++++++++++--------------------------------
- 1 file changed, 29 insertions(+), 54 deletions(-)
+> Similar to omap_gpio_irq_type() let's make sure that the GPIO
+> is usable as an interrupt if the platform init code did not
+> call gpio_request(). Otherwise we can get invalid device access
+> after setup_irq():
+>
+> WARNING: CPU: 0 PID: 1 at drivers/bus/omap_l3_noc.c:147 l3_interrupt_handler+0x214/0x340()
+> 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4CFG (Idle): Data Access in Supervisor mode during Functional access
+> ...
+> [<c05f21e4>] (__irq_svc) from [<c05f1974>] (_raw_spin_unlock_irqrestore+0x34/0x44)
+> [<c05f1974>] (_raw_spin_unlock_irqrestore) from [<c00914a8>] (__setup_irq+0x244/0x530)
+> [<c00914a8>] (__setup_irq) from [<c00917d4>] (setup_irq+0x40/0x8c)
+> [<c00917d4>] (setup_irq) from [<c0039c8c>] (omap_system_dma_probe+0x1d4/0x2b4)
+> [<c0039c8c>] (omap_system_dma_probe) from [<c03b2200>] (platform_drv_probe+0x44/0xa4)
+> ...
+>
+> We can fix this the same way omap_gpio_irq_type() is handling it.
+>
+> Note that the long term solution is to change the gpio-omap driver
+> to handle the banks as separate driver instances. This will allow
+> us to rely on just runtime PM for tracking the bank specific state.
+>
+> Reported-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> Cc: Felipe Balbi <balbi@ti.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 
-diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-index 0271022..b72906f 100644
---- a/drivers/gpio/gpio-sch.c
-+++ b/drivers/gpio/gpio-sch.c
-@@ -41,7 +41,7 @@ struct sch_gpio {
- 	unsigned short resume_base;
- };
- 
--#define to_sch_gpio(c)	container_of(c, struct sch_gpio, chip)
-+#define to_sch_gpio(gc)	container_of(gc, struct sch_gpio, chip)
- 
- static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
- 				unsigned reg)
-@@ -63,75 +63,59 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
- 	return gpio % 8;
- }
- 
--static void sch_gpio_enable(struct sch_gpio *sch, unsigned gpio)
-+static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
- {
-+	struct sch_gpio *sch = to_sch_gpio(gc);
- 	unsigned short offset, bit;
--	u8 enable;
--
--	spin_lock(&sch->lock);
-+	u8 reg_val;
- 
--	offset = sch_gpio_offset(sch, gpio, GEN);
-+	offset = sch_gpio_offset(sch, gpio, reg);
- 	bit = sch_gpio_bit(sch, gpio);
- 
--	enable = inb(sch->iobase + offset);
--	if (!(enable & (1 << bit)))
--		outb(enable | (1 << bit), sch->iobase + offset);
-+	reg_val = !!(inb(sch->iobase + offset) & BIT(bit));
- 
--	spin_unlock(&sch->lock);
-+	return reg_val;
- }
- 
--static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned  gpio_num)
-+static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
-+			     int val)
- {
- 	struct sch_gpio *sch = to_sch_gpio(gc);
--	u8 curr_dirs;
- 	unsigned short offset, bit;
-+	u8 reg_val;
- 
--	spin_lock(&sch->lock);
-+	offset = sch_gpio_offset(sch, gpio, reg);
-+	bit = sch_gpio_bit(sch, gpio);
- 
--	offset = sch_gpio_offset(sch, gpio_num, GIO);
--	bit = sch_gpio_bit(sch, gpio_num);
-+	reg_val = inb(sch->iobase + offset);
- 
--	curr_dirs = inb(sch->iobase + offset);
-+	if (val)
-+		outb(reg_val | BIT(bit), sch->iobase + offset);
-+	else
-+		outb((reg_val & ~BIT(bit)), sch->iobase + offset);
-+}
- 
--	if (!(curr_dirs & (1 << bit)))
--		outb(curr_dirs | (1 << bit), sch->iobase + offset);
-+static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
-+{
-+	struct sch_gpio *sch = to_sch_gpio(gc);
- 
-+	spin_lock(&sch->lock);
-+	sch_gpio_reg_set(gc, gpio_num, GIO, 1);
- 	spin_unlock(&sch->lock);
- 	return 0;
- }
- 
- static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
- {
--	struct sch_gpio *sch = to_sch_gpio(gc);
--	int res;
--	unsigned short offset, bit;
--
--	offset = sch_gpio_offset(sch, gpio_num, GLV);
--	bit = sch_gpio_bit(sch, gpio_num);
--
--	res = !!(inb(sch->iobase + offset) & (1 << bit));
--
--	return res;
-+	return sch_gpio_reg_get(gc, gpio_num, GLV);
- }
- 
- static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
- {
- 	struct sch_gpio *sch = to_sch_gpio(gc);
--	u8 curr_vals;
--	unsigned short offset, bit;
- 
- 	spin_lock(&sch->lock);
--
--	offset = sch_gpio_offset(sch, gpio_num, GLV);
--	bit = sch_gpio_bit(sch, gpio_num);
--
--	curr_vals = inb(sch->iobase + offset);
--
--	if (val)
--		outb(curr_vals | (1 << bit), sch->iobase + offset);
--	else
--		outb((curr_vals & ~(1 << bit)), sch->iobase + offset);
--
-+	sch_gpio_reg_set(gc, gpio_num, GLV, val);
- 	spin_unlock(&sch->lock);
- }
- 
-@@ -139,18 +123,9 @@ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
- 				  int val)
- {
- 	struct sch_gpio *sch = to_sch_gpio(gc);
--	u8 curr_dirs;
--	unsigned short offset, bit;
- 
- 	spin_lock(&sch->lock);
--
--	offset = sch_gpio_offset(sch, gpio_num, GIO);
--	bit = sch_gpio_bit(sch, gpio_num);
--
--	curr_dirs = inb(sch->iobase + offset);
--	if (curr_dirs & (1 << bit))
--		outb(curr_dirs & ~(1 << bit), sch->iobase + offset);
--
-+	sch_gpio_reg_set(gc, gpio_num, GIO, 0);
- 	spin_unlock(&sch->lock);
- 
- 	/*
-@@ -209,13 +184,13 @@ static int sch_gpio_probe(struct platform_device *pdev)
- 		 * GPIO7 is configured by the CMC as SLPIOVR
- 		 * Enable GPIO[9:8] core powered gpios explicitly
- 		 */
--		sch_gpio_enable(sch, 8);
--		sch_gpio_enable(sch, 9);
-+		sch_gpio_reg_set(&sch->chip, 8, GEN, 1);
-+		sch_gpio_reg_set(&sch->chip, 9, GEN, 1);
- 		/*
- 		 * SUS_GPIO[2:0] enabled by default
- 		 * Enable SUS_GPIO3 resume powered gpio explicitly
- 		 */
--		sch_gpio_enable(sch, 13);
-+		sch_gpio_reg_set(&sch->chip, 13, GEN, 1);
- 		break;
- 
- 	case PCI_DEVICE_ID_INTEL_ITC_LPC:
--- 
-1.9.1
+Patch applied for fixes with Felipe's Tested-by.
 
+Yours,
+Linus Walleij
