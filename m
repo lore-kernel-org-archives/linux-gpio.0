@@ -1,56 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: omap: Fix bad device access with setup_irq()
-Date: Wed, 21 Jan 2015 17:41:51 +0100
-Message-ID: <CACRpkdZ9pjyH0ZZ3GXOagGDPTa=LhuK5bG+wi2tsgP7=OQTGqw@mail.gmail.com>
-References: <1421448650-15904-1-git-send-email-tony@atomide.com>
+Subject: Re: [PATCH 0/3] pinctrl: Qualcomm msm8916 pinctrl driver
+Date: Wed, 21 Jan 2015 17:43:46 +0100
+Message-ID: <CACRpkdY31g+qBumZzWgHj7ZC9rROTwE3AgLhJGB+FPtmMk6iTg@mail.gmail.com>
+References: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:38909 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752581AbbAUQlw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jan 2015 11:41:52 -0500
-Received: by mail-ig0-f180.google.com with SMTP id b16so15908606igk.1
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2015 08:41:52 -0800 (PST)
-In-Reply-To: <1421448650-15904-1-git-send-email-tony@atomide.com>
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:35869 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753334AbbAUQnq convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jan 2015 11:43:46 -0500
+Received: by mail-ig0-f172.google.com with SMTP id l13so23300846iga.5
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2015 08:43:46 -0800 (PST)
+In-Reply-To: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Felipe Balbi <balbi@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Santosh Shilimkar <ssantosh@kernel.org>
+To: Stanimir Varbanov <svarbanov@mm-sol.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Joonwoo Park <joonwoop@codeaurora.org>
 
-On Fri, Jan 16, 2015 at 11:50 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Tue, Jan 20, 2015 at 10:17 AM, Stanimir Varbanov
+<svarbanov@mm-sol.com> wrote:
 
-> Similar to omap_gpio_irq_type() let's make sure that the GPIO
-> is usable as an interrupt if the platform init code did not
-> call gpio_request(). Otherwise we can get invalid device access
-> after setup_irq():
+> This series adds a pinctrl driver for Snapdragon 410 (msm8916) SoC. T=
+he first
+> patch increase the register address variable size, next adds a bindin=
+g document
+> and the last patch adds the pinctrl driver
 >
-> WARNING: CPU: 0 PID: 1 at drivers/bus/omap_l3_noc.c:147 l3_interrupt_handler+0x214/0x340()
-> 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4CFG (Idle): Data Access in Supervisor mode during Functional access
-> ...
-> [<c05f21e4>] (__irq_svc) from [<c05f1974>] (_raw_spin_unlock_irqrestore+0x34/0x44)
-> [<c05f1974>] (_raw_spin_unlock_irqrestore) from [<c00914a8>] (__setup_irq+0x244/0x530)
-> [<c00914a8>] (__setup_irq) from [<c00917d4>] (setup_irq+0x40/0x8c)
-> [<c00917d4>] (setup_irq) from [<c0039c8c>] (omap_system_dma_probe+0x1d4/0x2b4)
-> [<c0039c8c>] (omap_system_dma_probe) from [<c03b2200>] (platform_drv_probe+0x44/0xa4)
-> ...
->
-> We can fix this the same way omap_gpio_irq_type() is handling it.
->
-> Note that the long term solution is to change the gpio-omap driver
-> to handle the banks as separate driver instances. This will allow
-> us to rely on just runtime PM for tracking the bank specific state.
->
-> Reported-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> Cc: Felipe Balbi <balbi@ti.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Comments are welcome!
 
-Patch applied for fixes with Felipe's Tested-by.
+Bj=C3=B6rn can you look at this?
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
