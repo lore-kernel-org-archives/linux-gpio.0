@@ -1,48 +1,104 @@
-From: Mike Krinkin <krinkin.m.u@gmail.com>
-Subject: gpio-sx150x.c build error
-Date: Wed, 21 Jan 2015 12:29:41 +0300
-Message-ID: <20150121092941.GA14840@kmu-tp-x230>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Subject: [PATCH 0/1] Consolidate similar algorithms in gpio-sch
+Date: Wed, 21 Jan 2015 18:32:20 +0800
+Message-ID: <1421836341-2036-1-git-send-email-rebecca.swee.fun.chang@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:57715 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750813AbbAUJ3p (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jan 2015 04:29:45 -0500
-Content-Disposition: inline
+Received: from mga02.intel.com ([134.134.136.20]:45244 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752234AbbAUKcu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 21 Jan 2015 05:32:50 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@intel.com>
+Cc: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hello,=20
+Hi,
 
-i failed to build linux-next for 20 Jan, because of the following build=
- error:
+Some background about this patch:
+This patch come from the previous threads on enabling Quark X1000 support in
+gpio-sch. The patches were found to break the build on devel branch.
+Refer to: https://lists.01.org/pipermail/kbuild-all/2015-January/008513.html
 
-drivers/gpio/gpio-sx150x.c:487:17: error: =E2=80=98struct gpio_chip=E2=80=
-=99 has no member named =E2=80=98of_node=E2=80=99
-  chip->gpio_chip.of_node          =3D client->dev.of_node;
-                 ^
-drivers/gpio/gpio-sx150x.c:488:17: error: =E2=80=98struct gpio_chip=E2=80=
-=99 has no member named =E2=80=98of_gpio_n_cells=E2=80=99
-  chip->gpio_chip.of_gpio_n_cells  =3D 2;
-                 ^
-make[2]: *** [drivers/gpio/gpio-sx150x.o] Error 1
-make[1]: *** [drivers/gpio] Error 2
-make: *** [drivers] Error 2
+One of the patch (mentioned below) was already applied in devel branch.
+(Patch 2/2) 9202149 gpio: sch: Add support for Intel Quark X1000 SoC.
+Meanwhile the patch that breaks the build was removed from devel branch.
 
-This change introduced by Wei Chen commit 04d2264c3bf0 ("gpio: sx150x: =
-add dts
-support for sx150x driver"). Maybe `#ifndef CONFIG_OF_GPIO` should be h=
-ere?
+So, in this email, I've attached a patch that contains the algorithms
+consolidation together with the fix for build warnings on wrong arguments
+passing in sch_gpio_reg_set().
 
-=46IY: i don't use this gpio, just happened to notice, and i have disab=
-led this
-in my config.
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The patch was built with the configurations provided in the mail by
+Wu, Fengguang:
+https://lists.01.org/pipermail/kbuild-all/2015-January/008511.html
+
+Procedures for build test on devel branch:
+$ cp ATT23421.config .config
+$ make ARCH=x86_64 oldconfig
+$ make ARCH=x86_64
+Same procedures applied for ARCH=x86 and no build warnings was found on
+gpio-sch.
+
+Driver test procedures on Galileo board using Yocto Project as reference OS:
+
+Check driver availability:
+$ ls /sys/bus/platform/drivers/
+Result: Driver sch_gpio available
+
+Check device availability:
+$ ls /sys/bus/platform/devices/
+Result: Device sch_gpio.2398 available
+
+Check the driver binded with the device successfully through sysfs:
+$ ls -al /sys/class/gpio/gpiochip0/device
+Result: gpiochip0/device/ -> ../../../sch_gpio.2398
+
+Check using sysfs debug:
+$ cat /sys/kernel/debug/gpio
+GPIOs 0-7, platform/sch_gpio.2398, sch_gpio.2398:
+Result: Both driver and device are available
+
+The driver should allow user to export GPIO pin.
+$ echo 3 > export
+Result: gpio3 create with no error message
+
+The driver should allow user to configure GPIO pin direction and pin value.
+Since gpio3 (on sysfs for Galileo) is connected to an LED, we will use this as
+our test equipment.
+$ echo out > gpio3/direction
+$ cat gpio3/direction
+out
+Result: Pin direction was set without error prompts.
+
+$ echo 1 > gpio3/value
+$ cat gpio3/value
+1
+Result: LED will turn on
+
+$ echo 0 > gpio3/value
+$ cat gpio3/value
+0
+Result: LED will turn off
+
+$ echo in > gpio3/direction
+$ cat gpio3/direction
+in
+Result: Pin direction was set without error prompts.
+
+The driver should allow user to do unexport for unused pin.
+$ echo 3 > unexport
+Result: gpio3 directory was wiped out without error logs.
+
+Please review the patch and provide feedback if any. Thanks.
+
+Regards,
+Rebecca
+
+Chang Rebecca Swee Fun (1):
+  gpio: sch: Consolidate similar algorithms
+
+ drivers/gpio/gpio-sch.c | 83 +++++++++++++++++--------------------------------
+ 1 file changed, 29 insertions(+), 54 deletions(-)
+
+-- 
+1.9.1
+
