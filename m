@@ -1,37 +1,61 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [RFC PATCH v2 1/4] tty: serial_mctrl_gpio: Add irqs helpers for
- input lines
-Date: Thu, 22 Jan 2015 09:37:23 -0200
-Message-ID: <CAOMZO5CeF9h+E_WiDMUz2Ms_U77QiBJFeAZtfHtgHZYemAy45g@mail.gmail.com>
-References: <1420900366-9169-1-git-send-email-j.uzycki@elproma.com.pl>
-	<54C0D1F2.1020806@elproma.com.pl>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Thu, 22 Jan 2015 17:12:07 +0100
+Message-ID: <4006695.qV8Mor20ru@vostro.rjw.lan>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com> <4078818.ecVtLF3hjd@vostro.rjw.lan> <CACRpkdZpUU71suzt9JhiBZez2VuJ6-Zm3D1uvmn71bjdn=oU_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:46915 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750811AbbAVLhZ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Jan 2015 06:37:25 -0500
-In-Reply-To: <54C0D1F2.1020806@elproma.com.pl>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZpUU71suzt9JhiBZez2VuJ6-Zm3D1uvmn71bjdn=oU_A@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Janusz_U=C5=BCycki?= <j.uzycki@elproma.com.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Alexander Shiyan <shc_work@mail.ru>, Fabio Estevam <fabio.estevam@freescale.com>, Richard Genoud <richard.genoud@gmail.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Janusz,
+On Thursday, January 22, 2015 09:17:38 AM Linus Walleij wrote:
+> On Tue, Jan 20, 2015 at 10:25 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> 
+> > Yes, it can (in principle).  In fact, we have a plan to refine it, but it is
+> > going to take some time.  Once we've done that, we'll see how painful it is to
+> > "patch" ACPI tables this way in practice.
+> >
+> > Also there is an ecosystem problem related to distributing such "patches".
+> > Today, distributions don't need to worry about patching buggy platform
+> > firmware, because they get workarounds in the kernel, but if we switch over
+> > to the model in which platform firmware "overlays" need to be provided in
+> > addition to it, then suddenly questions arise about who should be responsible
+> > for making them available, how to avoid duplication of efforts between
+> > distributions etc.
+> >
+> > All of that needs to be clarified before we start making hard statements like
+> > "No in-kernel workarounds for that!"
+> 
+> OK so why can't the patching happen in the kernel?
+> 
+> If the kernel anyway has to supply some kind of workaround for
+> the issue, it is more a question of where to place it. Whether it does
+> so by patching the ACPI tables or by detecting a bad ACPI thing
+> and working around it at runtime in a certain driver doesn't really
+> matter, does it?
 
-On Thu, Jan 22, 2015 at 8:33 AM, Janusz U=C5=BCycki <j.uzycki@elproma.c=
-om.pl> wrote:
-> Hi,
->
-> v3 is almost ready but on the moment I have no time to finish. I thin=
-k I'll
-> do it for 1-2 weeks.
+It needs to know what to patch and how so the result is still consistent.
 
-When you send v3, please remove RFC from the subject. Thanks
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+How do you think the kernel is going to figure that out?
+
+> They are both in-kernel ACPI fixes, just that one
+> of the mechanisms is generic.
+
+I'm not following you here, sorry.
+
+> I don't understand why this obsession with userspace having
+> to do the ACPI table patching - if kernels should "just work" then
+> put this stuff behind Kconfig and have it in the kernel.
+
+This is not an obsession and your suggestion here leads to having custom
+per-board kernels which is not supportable in the long term.
+
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
