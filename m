@@ -1,66 +1,33 @@
-From: Olliver Schinagl <o.schinagl@ultimaker.com>
-Subject: Re: [PATCH v2 4/4] leds: no longer use unnamed gpios
-Date: Thu, 22 Jan 2015 10:37:46 +0100
-Message-ID: <54C0C4EA.5020404@ultimaker.com>
-References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com> <1421876028-22799-5-git-send-email-o.schinagl@ultimaker.com> <2355733.gZvsF3iKWH@pcimr>
+From: Mika Westerberg <mika.westerberg@intel.com>
+Subject: Re: [PATCH 1/1] gpio: sch: Consolidate similar algorithms
+Date: Thu, 22 Jan 2015 11:46:03 +0200
+Message-ID: <20150122094603.GW1850@lahna.fi.intel.com>
+References: <1421836341-2036-1-git-send-email-rebecca.swee.fun.chang@intel.com>
+ <1421836341-2036-2-git-send-email-rebecca.swee.fun.chang@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 7of9.schinagl.nl ([88.159.158.68]:46657 "EHLO 7of9.schinagl.nl"
+Received: from mga03.intel.com ([134.134.136.65]:33809 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750897AbbAVJhx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 22 Jan 2015 04:37:53 -0500
-In-Reply-To: <2355733.gZvsF3iKWH@pcimr>
+	id S1750759AbbAVJqH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 22 Jan 2015 04:46:07 -0500
+Content-Disposition: inline
+In-Reply-To: <1421836341-2036-2-git-send-email-rebecca.swee.fun.chang@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org
+To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hey Rojhalat,
+On Wed, Jan 21, 2015 at 06:32:21PM +0800, Chang Rebecca Swee Fun wrote:
+> Consolidating similar algorithms into common functions to make
+> GPIO SCH simpler and manageable.
+> 
+> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
 
-On 22-01-15 10:32, Rojhalat Ibrahim wrote:
-> On Wednesday 21 January 2015 22:33:48 Olliver Schinagl wrote:
->> From: Olliver Schinagl <oliver@schinagl.nl>
->>
->> The gpio document says we should not use unnamed bindings for gpios.
->> This patch uses the 'led-' prefix to the gpios and updates code and
->> documents. Because the devm_get_gpiod_from_child() falls back to usi=
-ng
->> old-style unnamed gpios, we can update the code first, and update
->> dts files as time allows.
->>
->> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-> Where does devm_get_gpiod_from_child() fall back "to using old-style
-> unnamed gpios"?
-Your absolutly right, I accidentally forgot a patch that was supposed t=
-o=20
-get squashed into this patchset. The idea is to do the same as in=20
-gpio-keys-polled.c. I'll make sure it sits in v3 of the set! My appolog=
-ies!
+Like Alexandre said, you can carry the Reviewed-by: tags with the patch
+if you only fixed build warning.
 
-Olliver
->
-> After applying this patch the leds defined in my devicetree do not
-> work anymore.
->
->     Rojhalat
->
->
->
+In future please make sure that patches compile without warnings and
+that they have proper testing done beforehand. Thanks.
 
---=20
-Met vriendelijke groeten, Kind regards, =E4=B8=8E=E4=BA=B2=E5=88=87=E7=9A=
-=84=E9=97=AE=E5=80=99
-
-Olliver Schinagl
-Research & Development
-Ultimaker B.V.
-http://www.ultimaker.com
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
