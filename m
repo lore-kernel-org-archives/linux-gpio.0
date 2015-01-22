@@ -1,49 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Thu, 22 Jan 2015 09:17:38 +0100
-Message-ID: <CACRpkdZpUU71suzt9JhiBZez2VuJ6-Zm3D1uvmn71bjdn=oU_A@mail.gmail.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
-	<CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
-	<CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
-	<4078818.ecVtLF3hjd@vostro.rjw.lan>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: Re: [PATCH v4 1/3] pinctrl: add driver for Amlogic Meson SoCs
+Date: Thu, 22 Jan 2015 09:37:30 +0100
+Message-ID: <CACRpkdb=9K62kJbQHWK=Bqfcz7zVckKcF3riC-9RDdd-8vG7bg@mail.gmail.com>
+References: <1421518516-26976-1-git-send-email-b.galvani@gmail.com>
+	<1421518516-26976-2-git-send-email-b.galvani@gmail.com>
+	<CACRpkdZ6CX1XePa0sOY-0B9He9jYPNLqUtkk3LEGeT6eSQW9ew@mail.gmail.com>
+	<2015012211022773401912@163.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <4078818.ecVtLF3hjd@vostro.rjw.lan>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <2015012211022773401912-9Onoh4P/yGk@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 48169172 <48169172-9Onoh4P/yGk@public.gmane.org>
+Cc: "b.galvani" <b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Victor Wan <victor.wan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org" <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Jerry Cao <jerry.cao-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 20, 2015 at 10:25 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+On Thu, Jan 22, 2015 at 4:02 AM, 48169172 <48169172-9Onoh4P/yGk@public.gmane.org> wrote:
 
-> Yes, it can (in principle).  In fact, we have a plan to refine it, but it is
-> going to take some time.  Once we've done that, we'll see how painful it is to
-> "patch" ACPI tables this way in practice.
->
-> Also there is an ecosystem problem related to distributing such "patches".
-> Today, distributions don't need to worry about patching buggy platform
-> firmware, because they get workarounds in the kernel, but if we switch over
-> to the model in which platform firmware "overlays" need to be provided in
-> addition to it, then suddenly questions arise about who should be responsible
-> for making them available, how to avoid duplication of efforts between
-> distributions etc.
->
-> All of that needs to be clarified before we start making hard statements like
-> "No in-kernel workarounds for that!"
+> Hi  linus,
+> How could I get these code?
 
-OK so why can't the patching happen in the kernel?
-
-If the kernel anyway has to supply some kind of workaround for
-the issue, it is more a question of where to place it. Whether it does
-so by patching the ACPI tables or by detecting a bad ACPI thing
-and working around it at runtime in a certain driver doesn't really
-matter, does it? They are both in-kernel ACPI fixes, just that one
-of the mechanisms is generic.
-
-I don't understand why this obsession with userspace having
-to do the ACPI table patching - if kernels should "just work" then
-put this stuff behind Kconfig and have it in the kernel.
+git clone git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+git checkout devel
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
