@@ -1,68 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: sx150x: fixup OF support
-Date: Thu, 22 Jan 2015 09:47:01 +0100
-Message-ID: <1421916421-11716-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:48801 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752033AbbAVIrI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Jan 2015 03:47:08 -0500
-Received: by mail-lb0-f176.google.com with SMTP id z12so325766lbi.7
-        for <linux-gpio@vger.kernel.org>; Thu, 22 Jan 2015 00:47:07 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: Re: [PATCH v2 4/4] leds: no longer use unnamed gpios
+Date: Thu, 22 Jan 2015 10:32:35 +0100
+Message-ID: <2355733.gZvsF3iKWH@pcimr>
+References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com> <1421876028-22799-5-git-send-email-o.schinagl@ultimaker.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <1421876028-22799-5-git-send-email-o.schinagl@ultimaker.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Olliver Schinagl <o.schinagl@ultimaker.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Wei Chen <Wei.Chen@csr.com>
 
-Make OF conditional on CONFIG_OF_GPIO, rename and register
-the match table.
+On Wednesday 21 January 2015 22:33:48 Olliver Schinagl wrote:
+> From: Olliver Schinagl <oliver@schinagl.nl>
+> 
+> The gpio document says we should not use unnamed bindings for gpios.
+> This patch uses the 'led-' prefix to the gpios and updates code and
+> documents. Because the devm_get_gpiod_from_child() falls back to using
+> old-style unnamed gpios, we can update the code first, and update
+> dts files as time allows.
+> 
+> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 
-Reported-by: Mike Krinkin <krinkin.m.u@gmail.com>
-Cc: Wei Chen <Wei.Chen@csr.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-sx150x.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Where does devm_get_gpiod_from_child() fall back "to using old-style
+unnamed gpios"?
 
-diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
-index 88012e2b5b15..458d9d7952b8 100644
---- a/drivers/gpio/gpio-sx150x.c
-+++ b/drivers/gpio/gpio-sx150x.c
-@@ -152,12 +152,13 @@ static const struct i2c_device_id sx150x_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, sx150x_id);
- 
--static const struct of_device_id sx150x_dt_id[] = {
-+static const struct of_device_id sx150x_of_match[] = {
- 	{ .compatible = "semtech,sx1508q" },
- 	{ .compatible = "semtech,sx1509q" },
- 	{ .compatible = "semtech,sx1506q" },
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, sx150x_of_match);
- 
- static s32 sx150x_i2c_write(struct i2c_client *client, u8 reg, u8 val)
- {
-@@ -484,8 +485,10 @@ static void sx150x_init_chip(struct sx150x_chip *chip,
- 	chip->gpio_chip.base             = pdata->gpio_base;
- 	chip->gpio_chip.can_sleep        = true;
- 	chip->gpio_chip.ngpio            = chip->dev_cfg->ngpios;
-+#ifdef CONFIG_OF_GPIO
- 	chip->gpio_chip.of_node          = client->dev.of_node;
- 	chip->gpio_chip.of_gpio_n_cells  = 2;
-+#endif
- 	if (pdata->oscio_is_gpo)
- 		++chip->gpio_chip.ngpio;
- 
-@@ -681,7 +684,7 @@ static struct i2c_driver sx150x_driver = {
- 	.driver = {
- 		.name = "sx150x",
- 		.owner = THIS_MODULE,
--		.of_match_table = of_match_ptr(sx150x_dt_id),
-+		.of_match_table = of_match_ptr(sx150x_of_match),
- 	},
- 	.probe    = sx150x_probe,
- 	.remove   = sx150x_remove,
--- 
-1.9.3
+After applying this patch the leds defined in my devicetree do not
+work anymore.
 
+   Rojhalat
