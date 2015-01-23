@@ -1,208 +1,72 @@
-From: Huacai Chen <chenhc@lemote.com>
-Subject: [PATCH V7 3/8] MIPS: Cleanup Loongson-2F's gpio driver
-Date: Fri, 23 Jan 2015 16:56:07 +0800
-Message-ID: <1422003369-3019-1-git-send-email-chenhc@lemote.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v1 2/4] gpio: add parameter to allow the use named gpios
+Date: Fri, 23 Jan 2015 18:16:02 +0900
+Message-ID: <CAAVeFu+26pFFHyEfd=cwuCdtMurLWriaHKSixb-EMd_yWb0B1A@mail.gmail.com>
+References: <1420621722-7428-1-git-send-email-oliver+list@schinagl.nl>
+ <1420621722-7428-3-git-send-email-oliver+list@schinagl.nl>
+ <CAAVeFuLwTsX8HByCVyEucYJ_DhhCOP=tEDprmi9pBwx+a7zzJg@mail.gmail.com> <54C01DD1.8040704@schinagl.nl>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mips-bounce@linux-mips.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: John Crispin <john@phrozen.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, linux-gpio@vger.kernel.org, Huacai Chen <chenhc@lemote.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <54C01DD1.8040704@schinagl.nl>
+Sender: linux-leds-owner@vger.kernel.org
+To: Olliver Schinagl <oliver@schinagl.nl>
+Cc: Olliver Schinagl <oliver+list@schinagl.nl>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Robin Gong <b38343@freescale.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Alexander Shiyan <shc_work@mail.ru>, Jingoo Han <jg1.han@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>Linu
 List-Id: linux-gpio@vger.kernel.org
 
-This cleanup is prepare to move the driver to drivers/gpio. Custom
-definitions of gpio_get_value()/gpio_set_value() are dropped.
+On Thu, Jan 22, 2015 at 6:44 AM, Olliver Schinagl <oliver@schinagl.nl> wrote:
+> Hey Alexandre,
+>
+> On 01/19/2015 05:04 AM, Alexandre Courbot wrote:
+>>
+>> On Wed, Jan 7, 2015 at 6:08 PM, Olliver Schinagl
+>> <oliver+list@schinagl.nl> wrote:
+>>>
+>>> From: Olliver Schinagl <oliver@schinagl.nl>
+>>>
+>>> The gpio binding document says that new code should always use named
+>>> gpios. Patch 40b73183 added support to parse a list of gpios from child
+>>> nodes, but does not make it possible to use named gpios. This patch adds
+>>> the con_id property and implements it is done in gpiolib.c, where the
+>>> old-style of using unnamed gpios still works.
+>>
+>> This is absolutely correct - thanks for spotting this.
+>>
+>> <snip>
+>> ... since it looks like this part has been mostly copy/pasted from
+>> of_find_gpio(), can you add another patch that fixes it there as well?
+>
+> Yeah, since it has the same functionality, i copy pasted it. Wasn't sure if
+> it was worth to macro it or anything. I've sent a v2 with that patch added
+> to the mix :)
+>>
+>>
+>> Also in the case of ACPI this will prove to be an incomplete lookup
+>> since acpi_find_gpio() has an additional fallback if the named lookup
+>> fails.
+>
+> I'm not very familiar (or at all) how ACPI falls into all of this, I'm just
+> starting to get a hang of the DT, but since this is how the dts is being
+> parsed, where is the relation here? Or did I misunderstand?
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
----
- arch/mips/include/asm/mach-loongson/gpio.h |   15 +++---
- arch/mips/loongson/common/gpio.c           |   80 ++++++++------------=
---------
- 2 files changed, 31 insertions(+), 64 deletions(-)
+GPIO mappings can be provided by DT or by ACPI. In the latter case
+there is a fallback method if the name does not match (see
+acpi_find_gpio()). fwnode_get_named_gpiod() does not check it though,
+so maybe we can just ignore that.
 
-diff --git a/arch/mips/include/asm/mach-loongson/gpio.h b/arch/mips/inc=
-lude/asm/mach-loongson/gpio.h
-index 211a7b7..b3b2169 100644
---- a/arch/mips/include/asm/mach-loongson/gpio.h
-+++ b/arch/mips/include/asm/mach-loongson/gpio.h
-@@ -1,8 +1,9 @@
- /*
-- * STLS2F GPIO Support
-+ * Loongson GPIO Support
-  *
-  * Copyright (c) 2008  Richard Liu, STMicroelectronics <richard.liu@st=
-=2Ecom>
-  * Copyright (c) 2008-2010  Arnaud Patard <apatard@mandriva.com>
-+ * Copyright (c) 2014  Huacai Chen <chenhc@lemote.com>
-  *
-  * This program is free software; you can redistribute it and/or modif=
-y
-  * it under the terms of the GNU General Public License as published b=
-y
-@@ -10,14 +11,14 @@
-  * (at your option) any later version.
-  */
-=20
--#ifndef __STLS2F_GPIO_H
--#define __STLS2F_GPIO_H
-+#ifndef __LOONGSON_GPIO_H
-+#define __LOONGSON_GPIO_H
-=20
- #include <asm-generic/gpio.h>
-=20
--extern void gpio_set_value(unsigned gpio, int value);
--extern int gpio_get_value(unsigned gpio);
--extern int gpio_cansleep(unsigned gpio);
-+#define gpio_get_value __gpio_get_value
-+#define gpio_set_value __gpio_set_value
-+#define gpio_cansleep __gpio_cansleep
-=20
- /* The chip can do interrupt
-  * but it has not been tested and doc not clear
-@@ -32,4 +33,4 @@ static inline int irq_to_gpio(int gpio)
- 	return -EINVAL;
- }
-=20
--#endif				/* __STLS2F_GPIO_H */
-+#endif	/* __LOONGSON_GPIO_H */
-diff --git a/arch/mips/loongson/common/gpio.c b/arch/mips/loongson/comm=
-on/gpio.c
-index 29dbaa2..b4e69e0 100644
---- a/arch/mips/loongson/common/gpio.c
-+++ b/arch/mips/loongson/common/gpio.c
-@@ -24,63 +24,11 @@
-=20
- static DEFINE_SPINLOCK(gpio_lock);
-=20
--int gpio_get_value(unsigned gpio)
--{
--	u32 val;
--	u32 mask;
--
--	if (gpio >=3D STLS2F_N_GPIO)
--		return __gpio_get_value(gpio);
--
--	mask =3D 1 << (gpio + STLS2F_GPIO_IN_OFFSET);
--	spin_lock(&gpio_lock);
--	val =3D LOONGSON_GPIODATA;
--	spin_unlock(&gpio_lock);
--
--	return (val & mask) !=3D 0;
--}
--EXPORT_SYMBOL(gpio_get_value);
--
--void gpio_set_value(unsigned gpio, int state)
--{
--	u32 val;
--	u32 mask;
--
--	if (gpio >=3D STLS2F_N_GPIO) {
--		__gpio_set_value(gpio, state);
--		return ;
--	}
--
--	mask =3D 1 << gpio;
--
--	spin_lock(&gpio_lock);
--	val =3D LOONGSON_GPIODATA;
--	if (state)
--		val |=3D mask;
--	else
--		val &=3D (~mask);
--	LOONGSON_GPIODATA =3D val;
--	spin_unlock(&gpio_lock);
--}
--EXPORT_SYMBOL(gpio_set_value);
--
--int gpio_cansleep(unsigned gpio)
--{
--	if (gpio < STLS2F_N_GPIO)
--		return 0;
--	else
--		return __gpio_cansleep(gpio);
--}
--EXPORT_SYMBOL(gpio_cansleep);
--
- static int ls2f_gpio_direction_input(struct gpio_chip *chip, unsigned =
-gpio)
- {
- 	u32 temp;
- 	u32 mask;
-=20
--	if (gpio >=3D STLS2F_N_GPIO)
--		return -EINVAL;
--
- 	spin_lock(&gpio_lock);
- 	mask =3D 1 << gpio;
- 	temp =3D LOONGSON_GPIOIE;
-@@ -97,9 +45,6 @@ static int ls2f_gpio_direction_output(struct gpio_chi=
-p *chip,
- 	u32 temp;
- 	u32 mask;
-=20
--	if (gpio >=3D STLS2F_N_GPIO)
--		return -EINVAL;
--
- 	gpio_set_value(gpio, level);
- 	spin_lock(&gpio_lock);
- 	mask =3D 1 << gpio;
-@@ -113,13 +58,33 @@ static int ls2f_gpio_direction_output(struct gpio_=
-chip *chip,
-=20
- static int ls2f_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
- {
--	return gpio_get_value(gpio);
-+	u32 val;
-+	u32 mask;
-+
-+	mask =3D 1 << (gpio + STLS2F_GPIO_IN_OFFSET);
-+	spin_lock(&gpio_lock);
-+	val =3D LOONGSON_GPIODATA;
-+	spin_unlock(&gpio_lock);
-+
-+	return (val & mask) !=3D 0;
- }
-=20
- static void ls2f_gpio_set_value(struct gpio_chip *chip,
- 		unsigned gpio, int value)
- {
--	gpio_set_value(gpio, value);
-+	u32 val;
-+	u32 mask;
-+
-+	mask =3D 1 << gpio;
-+
-+	spin_lock(&gpio_lock);
-+	val =3D LOONGSON_GPIODATA;
-+	if (value)
-+		val |=3D mask;
-+	else
-+		val &=3D (~mask);
-+	LOONGSON_GPIODATA =3D val;
-+	spin_unlock(&gpio_lock);
- }
-=20
- static struct gpio_chip ls2f_chip =3D {
-@@ -130,6 +95,7 @@ static struct gpio_chip ls2f_chip =3D {
- 	.set			=3D ls2f_gpio_set_value,
- 	.base			=3D 0,
- 	.ngpio			=3D STLS2F_N_GPIO,
-+	.can_sleep		=3D false,
- };
-=20
- static int __init ls2f_gpio_setup(void)
---=20
-1.7.7.3
+>> In that respect, I wonder if it would not be better for
+>> devm_get_gpiod_from_child() to call of_find_gpio() and
+>> acpi_find_gpio() (after making them non-static) followed by
+>> gpiod_request() instead of calling fwnode_get_named_gpiod(). But in
+>> that case it will have to do the OF/ACPI handling by itself.
+>>
+>> I'm not really sure about which way is better. I'd appreciate if you
+>> could give a thought to a possible refactoring that would improve the
+>> situation ; otherwise feel free to ignore what I have written above
+>> and to duplicate the property name building code.
+>
+> I'm afraid I'm a little too inexperienced to follow exactly what you say ;)
 
-
-
-=CE=F7=81=06
+Don't worry about it then, this patch is already an improvement. GPIO
+mappings lookup from firmware has become kind of messy, and I'm just
+trying to enroll people to clean it instead of doing it myself. ;)
