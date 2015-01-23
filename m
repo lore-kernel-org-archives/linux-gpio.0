@@ -1,28 +1,96 @@
-From: =?ISO-8859-1?Q?Murilo_Opsfelder_Ara=FAjo?= <mopsfelder@gmail.com>
-Subject: Re: [PATCH] gpio: sx150x: Fix compile issue when CONFIG_OF_GPIO is
- not defined
-Date: Thu, 22 Jan 2015 22:58:01 -0200
-Message-ID: <CA+LKeY5MD61dqMsf_zGRz2a8qY-1773vvbBfy6FDoQ73D+V2hg@mail.gmail.com>
-References: <1421973429-9663-1-git-send-email-mopsfelder@gmail.com> <CAAVeFuJxSmdP09s_kLMx2_+qc=XLHX65jMbAWy66vmADsswRgg@mail.gmail.com>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: Re: [PATCH 3/4] mfd: dln2: add support for ACPI
+Date: Fri, 23 Jan 2015 08:47:58 +0200
+Message-ID: <CAE1zotKyJ70ZqNoogC0ozjUsyRrTCe=oohFfawt0FqpCkRkotg@mail.gmail.com>
+References: <1418746353-3481-1-git-send-email-octavian.purdila@intel.com>
+	<2755822.qV1ICgGMEY@vostro.rjw.lan>
+	<CAE1zotL9LsMjW6YC9E3iq-6Zf4u2=CpB1nh=LDUroQS9k5dTsQ@mail.gmail.com>
+	<1879413.uF8phu1QrE@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:34137 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752527AbbAWA6m (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Jan 2015 19:58:42 -0500
-In-Reply-To: <CAAVeFuJxSmdP09s_kLMx2_+qc=XLHX65jMbAWy66vmADsswRgg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1879413.uF8phu1QrE@vostro.rjw.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "wei.chen" <Wei.Chen@csr.com>, "baohua.song" <Baohua.Song@csr.com>
 
-On Thu, Jan 22, 2015 at 10:45 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-[...]
-> Linus just sent a patch to fix this, see
-> http://patchwork.ozlabs.org/patch/431704/
+On Fri, Jan 23, 2015 at 12:09 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Thursday, January 22, 2015 12:13:13 PM Octavian Purdila wrote:
+>> On Thu, Jan 22, 2015 at 4:00 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+<snip>
+>> The idea here is to set the companion for the MFD sub-devices. Mika's
+>> commit "mfd: Add ACPI support" propagates the parent's companion to
+>> the MFD sub-devices, so it is sufficient to set the ACPI companion to
+>> the USB device.
+>
+> For the USB device itself you'll then end up with an incomplete binding (you
+> can't get back to the USB device from the ACPI object), so no, it isn't
+> sufficient.
+>
+>> Then, the companion will be propagated to the sub-devices after which
+>> acpi_bind_one() will be called for the sub-devices from
+>> mfd_add_devices (via platform_device_add -> device_add ->
+>> platform_notify).
+>
+> In fact, your use case doesn't seem to cover any of the use cases that
+> the Mika's commit addressed.  Namely, your parent device doesn't have
+> an ACPI companion to start with and you want your MFD cells to be bound
+> to the "DLN2000" thing.  That's why you're setting the ACPI companion
+> for the USB device, isn't it?
+>
+>> It is true that the USB dev will have its ACPI companion set without
+>> having acpi_bind_one called but I do not see any harm in that. Even
+>> though acpi_unbind_one() is called it will not find the USB dev on the
+>> physical node list so no put_device() imbalance is caused.
+>
+> Well, there are places where it matters.  Some links in sysfs will be missing
+> for one example.  Also please see the changelog of commit 52870786ff5d (ACPI:
+> Use ACPI companion to match only the first physical device).
+>
+> Bottom line: You really should be using acpi_bind_one() here and
+> acpi_unbind_one() on disconnect if you have to.
+>
 
-Nice to know it has already been addressed.  Thanks for the link, Alexandre.
+OK, I understand now.
 
--- 
-Murilo
+>> > And no, "Let's come up with a patch that sort of works, throw it at the maintainers
+>> > and see what happens" is not an acceptable approach, sorry.
+>>
+>> This patch is based on your feedback of the previous RFC patch set:
+>
+> Oh, is it?  I can't recall advising you to use request_firmware() for
+> uploading ACPI tables or some other questionable things that the patch is
+> doing.
+>
+> And if it still was an RFC, that wouldn't be a problem, but if you just send
+> non-RFC patches out, that means you want people to merge them.  This is bad
+> if the patches in question are not in a good enough shape and this one isn't.
+>
+
+Yes, this should have been tagged with RFC, sorry about that.
+
+> Now, why is this a bad idea to load ACPI tables from a driver using
+> request_firmware()?  Because those tables are not device firmare.  They are
+> not firmware that you load into a device to make it work (which then works
+> with all instances of the given hardware), they are part of system configuration
+> information and have to match what's there in the system.  For instance, if you
+> ship your example SSDT with a general-purpose distro, it may just not match the
+> hardware configuration of systems that people will try to use it with.
+>
+> So, while it is sort of OK to look up "DLN2000" and bind the USB device to
+> that by hand (although this looks ugly to me), it is not OK to load a random
+> custom SSDT if it is missing.
+>
+> We need to add a generic mechanism for loading custom SSDTs not present in the
+> firmware image and maybe even to load them on demand, but that cannot happen in
+> an ad-hoc way.  So the entire table loading-unloading code in your patch can go
+> away for now and you need to fail probing if the "DLN2000" ACPI object is not
+> present.
+>
+
+That sounds interesting, I like the idea of a generic mechanism for
+loading custom SSDTs. Do you have any initial thoughts/pointers for
+starting that?
+
+Thanks for the review and feedback.
