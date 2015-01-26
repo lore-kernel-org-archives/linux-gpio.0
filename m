@@ -1,85 +1,141 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Mon, 26 Jan 2015 15:06:47 +0200
-Message-ID: <20150126130647.GC28539@kuha.fi.intel.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
- <1564228.rcRekIyDUd@vostro.rjw.lan>
- <20150123112122.GD30522@kuha.fi.intel.com>
- <4300012.3cqZ9mP0gj@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:13221 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753803AbbAZNJY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 26 Jan 2015 08:09:24 -0500
-Content-Disposition: inline
-In-Reply-To: <4300012.3cqZ9mP0gj@vostro.rjw.lan>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] pinctrl: rockchip: Only mask interrupts; never disable
+Date: Mon, 26 Jan 2015 08:24:03 -0800
+Message-ID: <1422289444-15142-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, Doug Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 
-On Fri, Jan 23, 2015 at 04:14:13PM +0100, Rafael J. Wysocki wrote:
-> > That actually makes me think that we could then drop the lookup tables
-> > completely and use device properties instead with the help of "generic
-> > property" (attached):
-> 
-> Which reminds me that I've lost track of this one.
-> 
-> Can you please resend it and CC something like linux-acpi?
+The Rockchip GPIO interrupt controller totally throws away all status
+about an interrupt when you "disable" the interrupt.  That has
+unfortunate consequences in the following situation:
 
-OK, I'll resend it.
+1. An edge-triggered interrupt is enabled and should wake the system.
+2. System suspend happens: interrupt is disabled and marked for wake.
+3. rockchip_irq_suspend() reenables the interrupt so we can wake.
+4. Interrupt happens when asleep.
+5. rockchip_irq_resume() redisables the interrupt.
+6. Disabling the interrupt throws away all status about it.
+7. Normal system resume happens and we enable the interrupt again,
+   since we threw away status about the interrupt we don't know it
+   fired while suspended.  Even worse: if we need both edges of the
+   interrupt the logic to swap edges never runs.
 
-> Also I'm not sure what you mean by "drop the lookup tables completely".
+Note: even if we somehow can post the status about wakeup interrupts
+in rockchip_irq_resume() we would still have a window of losing any
+edges that came in while interrupts were disabled.
 
-So I meant removing struct gpio_lookup and struct gpio_lookup_table.
+If we use mask only then we don't need to worry.  The GPIO Interrupt
+controller keeps track of pending interrupts that are enabled and just
+masked.
 
-> > We would just need to agree on the format how to describe a gpio
-> > property, document it and of course convert the current users as
-> > usual. The format could be something like this as an example (I'm
-> > writing this out of my head so don't shoot me if you can see it would
-> > not work. Just an example):
-> > 
-> > static const u32 example_gpio[] = { <gpio>, <flags>, };
-> > 
-> > static struct dev_gen_prop example_prop[] =
-> >         {
-> >                 .type = DEV_PROP_U32,
-> >                 .name = "gpio,<con_id>",
-> >                 .nval = 2,
-> >                 .num = &example_gpio,
-> >         },
-> >         { },
-> > };
-> > 
-> > static struct platform_device example_pdev = {
-> >         ...
-> >         .dev = {
-> >                 .gen_prop = &example_prop,
-> >         },
-> > }
-> > 
-> > 
-> > In gpiolib.c we would then, instead of going through the lookups,
-> > simply ask for that property:
-> > 
-> >         ...
-> >         sprintf(propname, "gpio,%s", con_id);
-> >         device_property_read_u32_array(dev, propname, &val, 2);
-> >         ...
-> >         desc = gpio_to_desc(val[0]);
-> >         flags = val[1];
-> >         ...
-> > 
-> > 
-> > So this is just and idea. I think it would be relatively easy to
-> > implement. What do you guys think?
-> 
-> Well, I need some time to think about that.
+There was no real strong reason to support the enable/disable
+functionality (other than that it seemed right), so let's go back to
+just supporting mask/unmask but actually map it to the real
+mask/unmask.  This ends up with slightly different (and more correct)
+behavior than before (f2dd028 pinctrl: rockchip: Fix
+enable/disable/mask/unmask).
 
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+ drivers/pinctrl/pinctrl-rockchip.c | 48 +++++++++++---------------------------
+ 1 file changed, 13 insertions(+), 35 deletions(-)
 
-Cheers,
-
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index d144330..dee7d5f 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -89,7 +89,7 @@ struct rockchip_iomux {
+  * @reg_pull: optional separate register for additional pull settings
+  * @clk: clock of the gpio bank
+  * @irq: interrupt of the gpio bank
+- * @saved_enables: Saved content of GPIO_INTEN at suspend time.
++ * @saved_masks: Saved content of GPIO_INTEN at suspend time.
+  * @pin_base: first pin number
+  * @nr_pins: number of pins in this bank
+  * @name: name of the bank
+@@ -108,7 +108,7 @@ struct rockchip_pin_bank {
+ 	struct regmap			*regmap_pull;
+ 	struct clk			*clk;
+ 	int				irq;
+-	u32				saved_enables;
++	u32				saved_masks;
+ 	u32				pin_base;
+ 	u8				nr_pins;
+ 	char				*name;
+@@ -1545,8 +1545,8 @@ static void rockchip_irq_suspend(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct rockchip_pin_bank *bank = gc->private;
+ 
+-	bank->saved_enables = irq_reg_readl(gc, GPIO_INTEN);
+-	irq_reg_writel(gc, gc->wake_active, GPIO_INTEN);
++	bank->saved_masks = irq_reg_readl(gc, GPIO_INTMASK);
++	irq_reg_writel(gc, ~gc->wake_active, GPIO_INTMASK);
+ }
+ 
+ static void rockchip_irq_resume(struct irq_data *d)
+@@ -1554,35 +1554,7 @@ static void rockchip_irq_resume(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct rockchip_pin_bank *bank = gc->private;
+ 
+-	irq_reg_writel(gc, bank->saved_enables, GPIO_INTEN);
+-}
+-
+-static void rockchip_irq_disable(struct irq_data *d)
+-{
+-	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+-	u32 val;
+-
+-	irq_gc_lock(gc);
+-
+-	val = irq_reg_readl(gc, GPIO_INTEN);
+-	val &= ~d->mask;
+-	irq_reg_writel(gc, val, GPIO_INTEN);
+-
+-	irq_gc_unlock(gc);
+-}
+-
+-static void rockchip_irq_enable(struct irq_data *d)
+-{
+-	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+-	u32 val;
+-
+-	irq_gc_lock(gc);
+-
+-	val = irq_reg_readl(gc, GPIO_INTEN);
+-	val |= d->mask;
+-	irq_reg_writel(gc, val, GPIO_INTEN);
+-
+-	irq_gc_unlock(gc);
++	irq_reg_writel(gc, bank->saved_masks, GPIO_INTMASK);
+ }
+ 
+ static int rockchip_interrupts_register(struct platform_device *pdev,
+@@ -1620,6 +1592,14 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 			continue;
+ 		}
+ 
++		/*
++		 * Linux assumes that all interrupts start out disabled/masked.
++		 * Our driver only uses the concept of masked and always keeps
++		 * things enabled, so for us that's all masked and all enabled.
++		 */
++		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTMASK);
++		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTEN);
++
+ 		gc = irq_get_domain_generic_chip(bank->domain, 0);
+ 		gc->reg_base = bank->reg_base;
+ 		gc->private = bank;
+@@ -1628,8 +1608,6 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 		gc->chip_types[0].chip.irq_ack = irq_gc_ack_set_bit;
+ 		gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
+ 		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_clr_bit;
+-		gc->chip_types[0].chip.irq_enable = rockchip_irq_enable;
+-		gc->chip_types[0].chip.irq_disable = rockchip_irq_disable;
+ 		gc->chip_types[0].chip.irq_set_wake = irq_gc_set_wake;
+ 		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
+ 		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
 -- 
-heikki
+2.2.0.rc0.207.ga3a616c
