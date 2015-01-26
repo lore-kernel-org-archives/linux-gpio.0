@@ -1,39 +1,42 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH 2/2] gpio: sysfs: fix memory leak in gpiod_sysfs_set_active_low
-Date: Mon, 26 Jan 2015 12:02:46 +0100
-Message-ID: <1422270166-17525-3-git-send-email-johan@kernel.org>
+Subject: [PATCH 1/2] gpio: sysfs: fix memory leak in gpiod_export_link
+Date: Mon, 26 Jan 2015 12:02:45 +0100
+Message-ID: <1422270166-17525-2-git-send-email-johan@kernel.org>
 References: <1422270166-17525-1-git-send-email-johan@kernel.org>
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f48.google.com ([209.85.215.48]:63470 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753854AbbAZLEW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Jan 2015 06:04:22 -0500
 In-Reply-To: <1422270166-17525-1-git-send-email-johan@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable <stable@vger.kernel.org>
-List-Id: linux-gpio@vger.kernel.org
 
 Fix memory leak in the gpio sysfs interface due to failure to drop
-reference to device returned by class_find_device when setting the
-gpio-line polarity.
+reference to device returned by class_find_device when creating a link.
 
-Fixes: 0769746183ca ("gpiolib: add support for changing value polarity
-in sysfs")
-Cc: stable <stable@vger.kernel.org>	# v2.6.33
+Fixes: a4177ee7f1a8 ("gpiolib: allow exported GPIO nodes to be named
+using sysfs links")
+Cc: stable <stable@vger.kernel.org>	# v2.6.32
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/gpio/gpiolib-sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib-sysfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 820b1e70ddfe..4908d09873e5 100644
+index 14c4f94813eb..820b1e70ddfe 100644
 --- a/drivers/gpio/gpiolib-sysfs.c
 +++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -696,7 +696,7 @@ int gpiod_sysfs_set_active_low(struct gpio_desc *desc, int value)
- 	}
- 
- 	status = sysfs_set_active_low(desc, dev, value);
--
-+	put_device(dev);
- unlock:
- 	mutex_unlock(&sysfs_lock);
- 
+@@ -648,6 +648,7 @@ int gpiod_export_link(struct device *dev, const char *name,
+ 		if (tdev != NULL) {
+ 			status = sysfs_create_link(&dev->kobj, &tdev->kobj,
+ 						name);
++			put_device(tdev);
+ 		} else {
+ 			status = -ENODEV;
+ 		}
 -- 
 2.0.5
+
