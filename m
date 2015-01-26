@@ -1,53 +1,35 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] pinctrl: rockchip: Only mask interrupts; never disable
-Date: Mon, 26 Jan 2015 17:56:19 +0100
-Message-ID: <1844800.Wx1PProku3@diego>
-References: <1422289444-15142-1-git-send-email-dianders@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422289444-15142-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jeffy Chen <jeffy.chen@rock-chips.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Johan Hovold <johan@kernel.org>
+Subject: [PATCH 0/2] gpio: sysfs: backports of memleak fixes to 3.12
+Date: Mon, 26 Jan 2015 19:04:54 +0100
+Message-ID: <1422295496-6194-1-git-send-email-johan@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:48307 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755586AbbAZSF0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Jan 2015 13:05:26 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
 
-Am Montag, 26. Januar 2015, 08:24:03 schrieb Doug Anderson:
-> The Rockchip GPIO interrupt controller totally throws away all status
-> about an interrupt when you "disable" the interrupt.  That has
-> unfortunate consequences in the following situation:
-> 
-> 1. An edge-triggered interrupt is enabled and should wake the system.
-> 2. System suspend happens: interrupt is disabled and marked for wake.
-> 3. rockchip_irq_suspend() reenables the interrupt so we can wake.
-> 4. Interrupt happens when asleep.
-> 5. rockchip_irq_resume() redisables the interrupt.
-> 6. Disabling the interrupt throws away all status about it.
-> 7. Normal system resume happens and we enable the interrupt again,
->    since we threw away status about the interrupt we don't know it
->    fired while suspended.  Even worse: if we need both edges of the
->    interrupt the logic to swap edges never runs.
-> 
-> Note: even if we somehow can post the status about wakeup interrupts
-> in rockchip_irq_resume() we would still have a window of losing any
-> edges that came in while interrupts were disabled.
-> 
-> If we use mask only then we don't need to worry.  The GPIO Interrupt
-> controller keeps track of pending interrupts that are enabled and just
-> masked.
-> 
-> There was no real strong reason to support the enable/disable
-> functionality (other than that it seemed right), so let's go back to
-> just supporting mask/unmask but actually map it to the real
-> mask/unmask.  This ends up with slightly different (and more correct)
-> behavior than before (f2dd028 pinctrl: rockchip: Fix
-> enable/disable/mask/unmask).
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+Hi Greg,
 
-I talked with Doug about it and this looks sane, so
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Here are backports of two fixes for memory leaks in the gpio sysfs
+interface that are needed in the stable trees.
+
+Tested on 3.12, but will not compile on 3.10 or earlier which lacks
+device_create_with_groups. I'll send a second version for these kernels.
+
+Johan
 
 
-Heiko
+Johan Hovold (2):
+  gpio: sysfs: fix gpio-chip device-attribute leak
+  gpio: sysfs: fix gpio device-attribute leak
+
+ drivers/gpio/gpiolib.c | 46 +++++++++++++++++++++-------------------------
+ 1 file changed, 21 insertions(+), 25 deletions(-)
+
+-- 
+2.0.5
+
