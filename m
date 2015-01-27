@@ -1,186 +1,149 @@
-From: Chaotian Jing <chaotian.jing@mediatek.com>
-Subject: [PATCH 7/7] arm64: dts: mediatek: Add MT8173 MMC dts
-Date: Tue, 27 Jan 2015 14:15:32 +0800
-Message-ID: <1422339332-27498-8-git-send-email-chaotian.jing@mediatek.com>
-References: <1422339332-27498-1-git-send-email-chaotian.jing@mediatek.com>
+From: Stanimir Varbanov <svarbanov@mm-sol.com>
+Subject: Re: [PATCH] pinctrl: qcom: enable generic support and input-enable
+ pinctrl conf
+Date: Tue, 27 Jan 2015 15:28:47 +0200
+Message-ID: <54C7928F.9090407@mm-sol.com>
+References: <1422289494-31461-1-git-send-email-svarbanov@mm-sol.com> <54C6E753.606@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1422339332-27498-1-git-send-email-chaotian.jing@mediatek.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream@mediatek.com, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chaotian Jing <chaotian.jing@mediatek.com>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, bin.zhang@mediatek.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54C6E753.606@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Add node mmc0 and mmc1
+Hi Stephen,
 
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8173-evb.dts | 115 ++++++++++++++++++++++++++++
- arch/arm64/boot/dts/mediatek/mt8173.dtsi    |  19 ++++-
- 2 files changed, 133 insertions(+), 1 deletion(-)
+Thanks for the comments!
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
-index a58ea20..bfbe18d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
-@@ -235,3 +235,118 @@
- 		};
- 	};
- };
-+
-+&pio {
-+	mmc0_pins_default: mmc0default {
-+		pins_cmd_dat {
-+			pins = <MT8173_PIN_64_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
-+				<MT8173_PIN_63_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
-+				<MT8173_PIN_62_MSDC0_DAT5__FUNC_MSDC0_DAT5>,
-+				<MT8173_PIN_61_MSDC0_DAT4__FUNC_MSDC0_DAT4>,
-+				<MT8173_PIN_66_MSDC0_CMD__FUNC_MSDC0_CMD>,
-+				<MT8173_PIN_60_MSDC0_DAT3__FUNC_MSDC0_DAT3>,
-+				<MT8173_PIN_59_MSDC0_DAT2__FUNC_MSDC0_DAT2>,
-+				<MT8173_PIN_58_MSDC0_DAT1__FUNC_MSDC0_DAT1>,
-+				<MT8173_PIN_57_MSDC0_DAT0__FUNC_MSDC0_DAT0>,
-+				<MT8173_PIN_68_MSDC0_RST___FUNC_MSDC0_RSTB>;
-+				bias-pull-up;
-+		};
-+		pins_clk {
-+			pins =  <MT8173_PIN_65_MSDC0_CLK__FUNC_MSDC0_CLK>;
-+				bias-pull-down;
-+		};
-+	};
-+
-+	mmc1_pins_default: mmc1default {
-+		pins_cmd_dat {
-+			pins = <MT8173_PIN_73_MSDC1_DAT0__FUNC_MSDC1_DAT0>,
-+			     <MT8173_PIN_74_MSDC1_DAT1__FUNC_MSDC1_DAT1>,
-+			     <MT8173_PIN_78_MSDC1_CMD__FUNC_MSDC1_CMD>,
-+			     <MT8173_PIN_75_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
-+			     <MT8173_PIN_76_MSDC1_DAT3__FUNC_MSDC1_DAT3>;
-+			input-enable;
-+			drive-strength = <MTK_DRIVE_4mA>;
-+			bias-pull-up = <MTK_PUPD_SET_R1R0_10>;
-+		};
-+
-+		pins_clk {
-+			pins = <MT8173_PIN_77_MSDC1_CLK__FUNC_MSDC1_CLK>;
-+			bias-pull-down;
-+			drive-strength = <MTK_DRIVE_4mA>;
-+		};
-+
-+		pins_insert {
-+			pins= <MT8173_PIN_132_I2S0_DATA1__FUNC_GPIO132>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	mmc0_pins_uhs: mmc0@0{
-+		pins_cmd_dat {
-+			pins = <MT8173_PIN_64_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
-+			     <MT8173_PIN_63_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
-+			     <MT8173_PIN_62_MSDC0_DAT5__FUNC_MSDC0_DAT5>,
-+			     <MT8173_PIN_61_MSDC0_DAT4__FUNC_MSDC0_DAT4>,
-+			     <MT8173_PIN_66_MSDC0_CMD__FUNC_MSDC0_CMD>,
-+			     <MT8173_PIN_60_MSDC0_DAT3__FUNC_MSDC0_DAT3>,
-+			     <MT8173_PIN_59_MSDC0_DAT2__FUNC_MSDC0_DAT2>,
-+			     <MT8173_PIN_58_MSDC0_DAT1__FUNC_MSDC0_DAT1>,
-+			     <MT8173_PIN_57_MSDC0_DAT0__FUNC_MSDC0_DAT0>,
-+			     <MT8173_PIN_68_MSDC0_RST___FUNC_MSDC0_RSTB>;
-+			input-enable;
-+			drive-strength = <MTK_DRIVE_2mA>;
-+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
-+		};
-+
-+		pins_clk {
-+			pins = <MT8173_PIN_65_MSDC0_CLK__FUNC_MSDC0_CLK>;
-+			drive-strength = <MTK_DRIVE_2mA>;
-+			bias-pull-down = <MTK_PUPD_SET_R1R0_01>;
-+		};
-+	};
-+
-+	mmc1_pins_uhs: mmc1@0 {
-+		pins_cmd_dat {
-+			pins = <MT8173_PIN_73_MSDC1_DAT0__FUNC_MSDC1_DAT0>,
-+			     <MT8173_PIN_74_MSDC1_DAT1__FUNC_MSDC1_DAT1>,
-+			     <MT8173_PIN_78_MSDC1_CMD__FUNC_MSDC1_CMD>,
-+			     <MT8173_PIN_75_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
-+			     <MT8173_PIN_76_MSDC1_DAT3__FUNC_MSDC1_DAT3>;
-+			input-enable;
-+			drive-strength = <MTK_DRIVE_4mA>;
-+			bias-pull-up = <MTK_PUPD_SET_R1R0_10>;
-+		};
-+
-+		pins_clk {
-+			pins = <MT8173_PIN_77_MSDC1_CLK__FUNC_MSDC1_CLK>;
-+			drive-strength = <MTK_DRIVE_4mA>;
-+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
-+		};
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default", "state_uhs";
-+	pinctrl-0 = <&mmc0_pins_default>;
-+	pinctrl-1 = <&mmc0_pins_uhs>;
-+	status = "okay";
-+	bus-width = <8>;
-+	max-frequency = <50000000>;
-+	cap-mmc-highspeed;
-+	core-power-supply = <&mt6397_vemc_3v3_reg>;
-+	non-removable;
-+};
-+
-+&mmc1 {
-+	pinctrl-names = "default", "state_uhs";
-+	pinctrl-0 = <&mmc1_pins_default>;
-+	pinctrl-1 = <&mmc1_pins_uhs>;
-+	status = "okay";
-+	bus-width = <4>;
-+	max-frequency = <50000000>;
-+	cap-sd-highspeed;
-+	sd-uhs-sdr25;
-+	cd-gpios = <&pio 132 0>;
-+	core-power-supply = <&mt6397_vmch_reg>;
-+	io-power-supply = <&mt6397_vmc_reg>;
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index c2a057f..64a8a03 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -249,7 +249,24 @@
- 			interrupts = <0 86 8>;
- 			clocks = <&uart_clk>;
- 		};
--	};
- 
-+		mmc0: mmc@11230000 {
-+			compatible = "mediatek,mt8173-mmc","mediatek,mt8135-mmc";
-+			reg = <0 0x11230000 0 0x108>;
-+			interrupts = <0 71 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&perisys PERI_MSDC30_0>;
-+			clock-names = "source";
-+			status = "disabled";
-+		};
-+
-+		mmc1: mmc@11240000 {
-+			compatible = "mediatek,mt8173-mmc","mediatek,mt8135-mmc";
-+			reg = <0 0x11240000 0 0x108>;
-+			interrupts = <0 72 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&perisys PERI_MSDC30_1>;
-+			clock-names = "source";
-+			status = "disabled";
-+		};
-+	};
- };
- 
+On 01/27/2015 03:18 AM, Stephen Boyd wrote:
+> On 01/26/15 08:24, Stanimir Varbanov wrote:
+>> Enables generic pinconf support and add handling for 'input-enable'
+>> pinconf property.
+>>
+>> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+>> ---
+>>  drivers/pinctrl/qcom/pinctrl-msm.c |   17 ++++++++++++-----
+>>  1 files changed, 12 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+>> index e730935..4a47eb1 100644
+>> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+>> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+>> @@ -193,11 +193,11 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
+>>  		*mask = 7;
+>>  		break;
+>>  	case PIN_CONFIG_OUTPUT:
+>> +	case PIN_CONFIG_INPUT_ENABLE:
+>>  		*bit = g->oe_bit;
+>>  		*mask = 1;
+>>  		break;
+>>  	default:
+>> -		dev_err(pctrl->dev, "Invalid config param %04x\n", param);
+> 
+> Is this removed because the generic framework already takes care of
+> printing this information on such errors?
+
+yes, more or less. These error messages just floods the screen when
+using debugfs entries. Even more ENOTSUPP is legal error for generic
+pinconf.
+
+> 
+>>  		return -ENOTSUPP;
+>>  	}
+>>  
+>> @@ -208,14 +208,12 @@ static int msm_config_get(struct pinctrl_dev *pctldev,
+>>  			  unsigned int pin,
+>>  			  unsigned long *config)
+>>  {
+>> -	dev_err(pctldev->dev, "pin_config_set op not supported\n");
+> 
+> Same for here.
+> 
+>>  	return -ENOTSUPP;
+>>  }
+>>  
+>>  static int msm_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>>  				unsigned long *configs, unsigned num_configs)
+>>  {
+>> -	dev_err(pctldev->dev, "pin_config_set op not supported\n");
+> 
+> And here.
+> 
+>>  	return -ENOTSUPP;
+>>  }
+>>  
+>> @@ -276,9 +274,11 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
+>>  		val = readl(pctrl->regs + g->io_reg);
+>>  		arg = !!(val & BIT(g->in_bit));
+>>  		break;
+>> +	case PIN_CONFIG_INPUT_ENABLE:
+>> +		val = readl(pctrl->regs + g->io_reg);
+>> +		arg = !!(val & BIT(g->in_bit));
+>> +		break;
+> 
+> This bit is used to read the value of the gpio. If the gpio is high,
+> this bit will read back as a 1. If the gpio is low, this bit will read
+> back as a 0. I don't see how this is related to input-enable? Doesn't
+
+Maybe I had to split on few patches. The change in .pin_config_group_get
+is related to debugfs dump. The change which adds input-enable support
+is in .pin_config_group_set.
+
+> input-enable mean we configure the pin to accept input? In that sense,
+> configuring the pin to accept input would sort of be like configuring
+> the pin for function "gpio" so that we can read this bit and see if the
+> pin is high or low, but I don't know if we care to support that. I think
+> we rely on users configuring the pin for the gpio function though.
+
+Why you do not care, because you think that tlmm doesn't support it or
+because it is a driver responsibility to set up gpio function plus
+input/output configuration?
+
+I can imagine usecase where the driver implements an 'idle' pinctrl
+state which configure its pins to be gpio input enabled to save power
+assuming that the previous 'default' pinctrl state it was gpio output.
+In that case the driver doesn't need to call gpio_direction_input() for
+every gpio, only call pinctrl_select_state('idle').
+
+What's wrong with this?
+
+> 
+>>  	default:
+>> -		dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
+>> -			param);
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> @@ -348,6 +348,10 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
+>>  			/* enable output */
+>>  			arg = 1;
+>>  			break;
+>> +		case PIN_CONFIG_INPUT_ENABLE:
+>> +			/* disable output */
+>> +			arg = 0;
+>> +			break;
+>>  		default:
+>>  			dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
+>>  				param);
+>> @@ -372,6 +376,9 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
+>>  }
+>>  
+>>  static const struct pinconf_ops msm_pinconf_ops = {
+>> +#ifdef CONFIG_GENERIC_PINCONF
+>> +	.is_generic		= true,
+>> +#endif
+> 
+> Shouldn't we have set this when we started this driver? I guess this
+> only makes debugfs output change, but it seems like this is a "fix" of
+> some kind that is different from input-enable support.
+> 
+
+yes, it should be different fix, I will split this on separate patch.
+
+
 -- 
-1.8.1.1.dirty
+regards,
+Stan
