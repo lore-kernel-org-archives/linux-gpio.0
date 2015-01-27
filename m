@@ -1,39 +1,69 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] usb: phy-generic: Don't fail on missing gpio reset
-Date: Tue, 27 Jan 2015 16:24:10 +0100
-Message-ID: <1488241.JRB4nxvr9q@wuerfel>
-References: <1422323129-20969-1-git-send-email-soren.brinkmann@xilinx.com>
+From: Bjorn <bjorn@sonymobile.com>
+Subject: Re: [PATCH 1/3] pinctrl: qcom: increase variable size for register
+ addresses
+Date: Tue, 27 Jan 2015 08:59:38 -0800
+Message-ID: <20150127165937.GC11960@sonymobile.com>
+References: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com>
+ <1421745476-6276-2-git-send-email-svarbanov@mm-sol.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:54147 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753027AbbA0PYT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jan 2015 10:24:19 -0500
-In-Reply-To: <1422323129-20969-1-git-send-email-soren.brinkmann@xilinx.com>
+Received: from seldrel01.sonyericsson.com ([212.209.106.2]:9270 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932352AbbA0Q7o (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 Jan 2015 11:59:44 -0500
+Content-Disposition: inline
+In-Reply-To: <1421745476-6276-2-git-send-email-svarbanov@mm-sol.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Soren Brinkmann <soren.brinkmann@xilinx.com>, Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>, devicetree@vger.kernel.org, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, Ola Jeppson <ola@adapteva.com>, linux-usb@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Joonwoo Park <joonwoop@codeaurora.org>
 
-On Monday 26 January 2015 17:45:29 Soren Brinkmann wrote:
-> diff --git a/drivers/usb/phy/phy-generic.c b/drivers/usb/phy/phy-generic.c
-> index dd05254241fb..a73d4c738f0b 100644
-> --- a/drivers/usb/phy/phy-generic.c
-> +++ b/drivers/usb/phy/phy-generic.c
-> @@ -241,10 +241,8 @@ int usb_phy_gen_create_phy(struct device *dev, struct usb_phy_generic *nop,
+On Tue 20 Jan 01:17 PST 2015, Stanimir Varbanov wrote:
+
+> From: Joonwoo Park <joonwoop@codeaurora.org>
+> 
+> Newer MSM SoCs have TLMM hardware block upper than 16 bit.  Increase to
+> 32 bit registers to hold addresses correctly.
+> 
+
+It's not the addresses but rather the offsets and the reason is that the
+registers are now spread so we need offsets >16 bit to address them. And this
+is to be able to benefit from page based access control.
+
+Could you please update the subject and commit message to be slightly more
+accurate?
+
+> Signed-off-by: Joonwoo Park <joonwoop@codeaurora.org>
+> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.h |   10 +++++-----
+>  1 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+> index b952c4b..54fdd04 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.h
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+> @@ -70,11 +70,11 @@ struct msm_pingroup {
+>  	unsigned *funcs;
+>  	unsigned nfuncs;
 >  
->         if (err == -EPROBE_DEFER)
->                 return -EPROBE_DEFER;
-> -       if (err) {
-> -               dev_err(dev, "Error requesting RESET GPIO\n");
-> -               return err;
-> -       }
-> +       if (err)
-> +               nop->gpiod_reset = NULL;
+> -	s16 ctl_reg;
+> -	s16 io_reg;
+> -	s16 intr_cfg_reg;
+> -	s16 intr_status_reg;
+> -	s16 intr_target_reg;
+> +	u32 ctl_reg;
+> +	u32 io_reg;
+> +	u32 intr_cfg_reg;
+> +	u32 intr_status_reg;
+> +	u32 intr_target_reg;
+>  
+>  	unsigned mux_bit:5;
+>  
 
-You might want to distinguish between a missing property and a
-reset gpio that was specified but for some reason cannot be used.
+The patch itself looks good!
 
-	Arnd
+Regards,
+Bjorn
