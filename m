@@ -1,48 +1,31 @@
-From: Stanimir Varbanov <svarbanov@mm-sol.com>
-Subject: Re: [PATCH] pinctrl: qcom: enable generic support and input-enable
- pinctrl conf
-Date: Tue, 27 Jan 2015 15:28:51 +0200
-Message-ID: <54C79293.8030103@mm-sol.com>
-References: <1422289494-31461-1-git-send-email-svarbanov@mm-sol.com> <54C6E753.606@codeaurora.org> <54C6E89E.2050701@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/3] pinctrl: Qualcomm msm8916 pinctrl driver
+Date: Tue, 27 Jan 2015 14:52:35 +0100
+Message-ID: <CACRpkdbEpd6jn6-CepNnZBWdLa1SygT_96tj3ww8rU8ZKx2j7g@mail.gmail.com>
+References: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54C6E89E.2050701@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stanimir Varbanov <svarbanov@mm-sol.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Joonwoo Park <joonwoop@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 01/27/2015 03:23 AM, Stephen Boyd wrote:
-> On 01/26/15 17:18, Stephen Boyd wrote:
->> On 01/26/15 08:24, Stanimir Varbanov wrote:
->>
->>>  		return -ENOTSUPP;
->>>  	}
->>>  
->>> @@ -208,14 +208,12 @@ static int msm_config_get(struct pinctrl_dev *pctldev,
->>>  			  unsigned int pin,
->>>  			  unsigned long *config)
->>>  {
->>> -	dev_err(pctldev->dev, "pin_config_set op not supported\n");
->> Same for here.
->>
->>>  	return -ENOTSUPP;
->>>  }
->>>  
->>>  static int msm_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
->>>  				unsigned long *configs, unsigned num_configs)
->>>  {
->>> -	dev_err(pctldev->dev, "pin_config_set op not supported\n");
->> And here.
-> 
-> Actually it looks like we can just remove these two functions and the
-> core does the right thing and prints errors. That would be a good patch.
-> 
+On Tue, Jan 20, 2015 at 10:17 AM, Stanimir Varbanov
+<svarbanov@mm-sol.com> wrote:
 
-Agreed.
+> This series adds a pinctrl driver for Snapdragon 410 (msm8916) SoC. T=
+he first
+> patch increase the register address variable size, next adds a bindin=
+g document
+> and the last patch adds the pinctrl driver
+>
+> Comments are welcome!
 
--- 
-regards,
-Stan
+Stephen, Bj=C3=B6rn seems to be unavailable to review this patch set
+right now, can you have a look at it so it doesn't stall?
+
+Yours,
+Linus Walleij
