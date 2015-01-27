@@ -1,57 +1,36 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
 	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH RESENT#2] pinctrl: pinctrl-imx: don't use invalid value of conf_reg
-Date: Wed, 28 Jan 2015 00:13:00 +0100
-Message-ID: <1422400380-10956-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH RESENT] pinctrl: pinctrl-imx: don't use invalid value of
+ conf_reg
+Date: Wed, 28 Jan 2015 00:14:10 +0100
+Message-ID: <20150127231410.GI29856@pengutronix.de>
+References: <1422399953-6259-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:39136 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:39152 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751882AbbA0XNN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jan 2015 18:13:13 -0500
+	with ESMTP id S1752403AbbA0XOL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jan 2015 18:14:11 -0500
+Content-Disposition: inline
+In-Reply-To: <1422399953-6259-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dong Aisheng <b29396@freescale.com>
-Cc: linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawn.guo@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 
-The right check for conf_reg to be invalid it testing against -1 not 0
-as is done in the rest of the driver.
+On Wed, Jan 28, 2015 at 12:05:53AM +0100, Uwe Kleine-K=F6nig wrote:
+>     Resent to fix email address of Dong Aisheng
+I failed here and reused his old address again, please disregard this
+mail. Sorry for the noise (again, sigh).
 
-This fixes an oops that can be triggered by:
+Uwe
 
-	cat /sys/kernel/debug/pinctrl/43fac000.iomuxc/*
-
-=46ixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driv=
-er")
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
-
-Notes:
-    Resent to fix email address of Dong Aisheng
-
- drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/=
-freescale/pinctrl-imx.c
-index 52f2b9404fe0..448f10986c28 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -437,7 +437,7 @@ static void imx_pinconf_dbg_show(struct pinctrl_dev=
- *pctldev,
- 	const struct imx_pin_reg *pin_reg =3D &info->pin_regs[pin_id];
- 	unsigned long config;
-=20
--	if (!pin_reg || !pin_reg->conf_reg) {
-+	if (!pin_reg || pin_reg->conf_reg =3D=3D -1) {
- 		seq_printf(s, "N/A");
- 		return;
- 	}
 --=20
-2.1.4
-
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
