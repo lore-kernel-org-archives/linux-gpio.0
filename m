@@ -1,99 +1,44 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [PATCH 3/3] gpio: pxa: add PXA1928 gpio type support
-Date: Mon, 26 Jan 2015 22:46:06 -0600
-Message-ID: <1422333966-18338-4-git-send-email-robh@kernel.org>
-References: <1422333966-18338-1-git-send-email-robh@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422333966-18338-1-git-send-email-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Jing Xiang <jxiang@marvell.com>, Xiangzhan Meng <mengxzh@marvell.com>
+From: Chaotian Jing <chaotian.jing@mediatek.com>
+Subject: [PATCH 4/7] arm64: mediatek: Add Mediatek MMC support in defconfig
+Date: Tue, 27 Jan 2015 14:15:29 +0800
+Message-ID: <1422339332-27498-5-git-send-email-chaotian.jing@mediatek.com>
+References: <1422339332-27498-1-git-send-email-chaotian.jing@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1422339332-27498-1-git-send-email-chaotian.jing@mediatek.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream@mediatek.com, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chaotian Jing <chaotian.jing@mediatek.com>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, bin.zhang@mediatek.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add support for PXA1928 GPIOs. The PXA1928 adds a 6th bank from previous
-generations.
+Add CONFIG_MMC_MTK=y in defconfig
 
-Signed-off-by: Jing Xiang <jxiang@marvell.com>
-Signed-off-by: Xiangzhan Meng <mengxzh@marvell.com>
-[robh: ported to 3.19 from vendor kernel]
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
+Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
 ---
- drivers/gpio/gpio-pxa.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index b4fb8de..2fdb04b 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -41,9 +41,12 @@
-  * BANK 4 - 0x0104  0x0110  0x011C  0x0128  0x0134  0x0140  0x014C
-  * BANK 5 - 0x0108  0x0114  0x0120  0x012C  0x0138  0x0144  0x0150
-  *
-+ * BANK 6 - 0x0200  0x020C  0x0218  0x0224  0x0230  0x023C  0x0248
-+ *
-  * NOTE:
-  *   BANK 3 is only available on PXA27x and later processors.
-- *   BANK 4 and 5 are only available on PXA935
-+ *   BANK 4 and 5 are only available on PXA935, PXA1928
-+ *   BANK 6 is only available on PXA1928
-  */
- 
- #define GPLR_OFFSET	0x00
-@@ -56,7 +59,8 @@
- #define GAFR_OFFSET	0x54
- #define ED_MASK_OFFSET	0x9C	/* GPIO edge detection for AP side */
- 
--#define BANK_OFF(n)	(((n) < 3) ? (n) << 2 : 0x100 + (((n) - 3) << 2))
-+#define BANK_OFF(n)	(((n) < 3) ? (n) << 2 : ((n) > 5 ? 0x200 : 0x100)	\
-+			+ (((n) % 3) << 2))
- 
- int pxa_last_gpio;
- static int irq_base;
-@@ -92,6 +96,7 @@ enum pxa_gpio_type {
- 	PXA93X_GPIO,
- 	MMP_GPIO = 0x10,
- 	MMP2_GPIO,
-+	PXA1928_GPIO,
- };
- 
- struct pxa_gpio_id {
-@@ -139,6 +144,11 @@ static struct pxa_gpio_id mmp2_id = {
- 	.gpio_nums	= 192,
- };
- 
-+static struct pxa_gpio_id pxa1928_id = {
-+	.type		= PXA1928_GPIO,
-+	.gpio_nums	= 224,
-+};
-+
- #define for_each_gpio_chip(i, c)			\
- 	for (i = 0, c = &pxa_gpio_chips[0]; i <= pxa_last_gpio; i += 32, c++)
- 
-@@ -486,6 +496,7 @@ static int pxa_gpio_nums(struct platform_device *pdev)
- 	case PXA93X_GPIO:
- 	case MMP_GPIO:
- 	case MMP2_GPIO:
-+	case PXA1928_GPIO:
- 		gpio_type = pxa_id->type;
- 		count = pxa_id->gpio_nums - 1;
- 		break;
-@@ -505,6 +516,7 @@ static const struct of_device_id pxa_gpio_dt_ids[] = {
- 	{ .compatible = "marvell,pxa93x-gpio",	.data = &pxa93x_id, },
- 	{ .compatible = "marvell,mmp-gpio",	.data = &mmp_id, },
- 	{ .compatible = "marvell,mmp2-gpio",	.data = &mmp2_id, },
-+	{ .compatible = "marvell,pxa1928-gpio",	.data = &pxa1928_id, },
- 	{}
- };
- 
-@@ -666,6 +678,7 @@ static const struct platform_device_id gpio_id_table[] = {
- 	{ "pxa93x-gpio",	(unsigned long)&pxa93x_id },
- 	{ "mmp-gpio",		(unsigned long)&mmp_id },
- 	{ "mmp2-gpio",		(unsigned long)&mmp2_id },
-+	{ "pxa1928-gpio",	(unsigned long)&pxa1928_id },
- 	{ },
- };
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5afda35..678c583 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -121,6 +121,7 @@ CONFIG_MMC_ARMMMCI=y
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_SPI=y
++CONFIG_MMC_MTK=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_EFI=y
+ CONFIG_RTC_DRV_XGENE=y
 -- 
-2.1.0
+1.8.1.1.dirty
