@@ -1,34 +1,87 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/7] pinctrl: mediatek: emulate GPIO interrupt on both-edges
-Date: Tue, 27 Jan 2015 15:21:10 +0100
-Message-ID: <CACRpkdbncsDJ3pP0dETpho5+j+OVuaYr=YTsH8pAs7vuT_9OLw@mail.gmail.com>
-References: <1422339332-27498-1-git-send-email-chaotian.jing@mediatek.com>
-	<1422339332-27498-2-git-send-email-chaotian.jing@mediatek.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH] usb: phy-generic: Don't fail on missing gpio reset
+Date: Tue, 27 Jan 2015 09:20:47 -0600
+Message-ID: <20150127152047.GA13776@saruman.tx.rr.com>
+References: <1422323129-20969-1-git-send-email-soren.brinkmann@xilinx.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422339332-27498-2-git-send-email-chaotian.jing@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chaotian Jing <chaotian.jing@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Eddie Huang <eddie.huang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, "Joe.C" <yingjoe.chen@mediatek.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bin.zhang@mediatek.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:45921 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751737AbbA0PVZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 Jan 2015 10:21:25 -0500
+Content-Disposition: inline
+In-Reply-To: <1422323129-20969-1-git-send-email-soren.brinkmann@xilinx.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ola Jeppson <ola@adapteva.com>, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 
-On Tue, Jan 27, 2015 at 7:15 AM, Chaotian Jing
-<chaotian.jing@mediatek.com> wrote:
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Yingjoe Chen <yingjoe.chen@mediatek.com>
->
-> MTK EINT does not support generating interrupt on both edges.
-> Emulate this by changing edge polarity while enable irq,
-> set types and interrupt handling. This follows an example of
-> drivers/gpio/gpio-mxc.c.
->
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+On Mon, Jan 26, 2015 at 05:45:29PM -0800, Soren Brinkmann wrote:
+> A reset through a GPIO is optional. Don't fail probing when it is
+> missing.
+>=20
+> Reported-by: Andreas F=E4rber <afaerber@suse.de>
+> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> ---
+> Hi Andreas,
+>=20
+> does this do the trick?
+>=20
+> 	Thanks,
+> 	S=F6ren
+>=20
+>  drivers/usb/phy/phy-generic.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/usb/phy/phy-generic.c b/drivers/usb/phy/phy-generic.c
+> index dd05254241fb..a73d4c738f0b 100644
+> --- a/drivers/usb/phy/phy-generic.c
+> +++ b/drivers/usb/phy/phy-generic.c
+> @@ -241,10 +241,8 @@ int usb_phy_gen_create_phy(struct device *dev, struc=
+t usb_phy_generic *nop,
+> =20
+>  	if (err =3D=3D -EPROBE_DEFER)
+>  		return -EPROBE_DEFER;
+> -	if (err) {
+> -		dev_err(dev, "Error requesting RESET GPIO\n");
+> -		return err;
+> -	}
+> +	if (err)
+> +		nop->gpiod_reset =3D NULL;
 
-Hongzhu, if you're fine with this patch can you ACK it as maintainer
-of the pinctrl driver so I can merge it immediately on top of your
-drivern whenever we consider it finished (and if it applies still...)
+there's a better patch to use gpiod_get_optional(), instead.
 
-Yours,
-Linus Walleij
+--=20
+balbi
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUx6zPAAoJEIaOsuA1yqREIZsQAKqQcHbwfPNixQ93RQPXhV3x
+au60/mtVkYNza+ZtJgPakyLMR06f/j8xuZXirVC3qzPq8mmugpqUTTzKf5I3kNtv
+3Rdt9DvrVY+hGOxiCPmd+gjKe1BLvosjuUa6DzF+6LQulQEDFIhq6pOfYlbPm79I
+XGahyK0/BWhBMzQsjX3/Vto7kgVOe5W899yU70K1qIqjUOnwZGGyYOifa0yIGkjM
+2uU3fYryeAD03cmyN5E/4MnHmDnGai6xakoNBZFBaLH3FQX9B02jPPOa3tXGatvi
++KIB1GBHqiTWo7lDldlpM2+HB9RNBdVzdEXm/uRu2OYY/wq0KpoxryZ8Vozs4BIU
+jq5SH6Bt/5TyXmUzQNqbQ6J2KPzD6x0tMrp9a4kfKStN2OCXJN3hdleCYY+z52j0
+XBQWDvZ3IhkGeYQmbYDBITVeuYV7WcX6LNkUexpyh3h+EK1qRHP3jwksAo1Y2J7R
+jXyG0Df1ozUiROgTQyDFYLvRFeXNyhmCYp1nwlOBNbbtXkxmI/l7b/2fImov/Pnp
+Utu0GXzGfAfI+cCkci7hc37FnGCnRXMEjfbzuSwvy6ASBGBbK4nK6mXI0/xRj8gO
+DrFPR4hxvUYjz+fihh/yUr7i7iIOLamdcvMpWLRol4gTcpVFtVGofdz4b8de38jh
+t+fNXkMMRA8fZZU+ERir
+=CBzx
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
