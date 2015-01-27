@@ -1,44 +1,50 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: qcom: enable generic support and input-enable
- pinctrl conf
-Date: Mon, 26 Jan 2015 17:23:42 -0800
-Message-ID: <54C6E89E.2050701@codeaurora.org>
-References: <1422289494-31461-1-git-send-email-svarbanov@mm-sol.com> <54C6E753.606@codeaurora.org>
+From: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Subject: [PATCH] usb: phy-generic: Don't fail on missing gpio reset
+Date: Mon, 26 Jan 2015 17:45:29 -0800
+Message-ID: <1422323129-20969-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <54C6E753.606@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stanimir Varbanov <svarbanov@mm-sol.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Cc: Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ola Jeppson <ola@adapteva.com>, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Soren Brinkmann <soren.brinkmann@xilinx.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 01/26/15 17:18, Stephen Boyd wrote:
-> On 01/26/15 08:24, Stanimir Varbanov wrote:
->
->>  		return -ENOTSUPP;
->>  	}
->>  
->> @@ -208,14 +208,12 @@ static int msm_config_get(struct pinctrl_dev *pctldev,
->>  			  unsigned int pin,
->>  			  unsigned long *config)
->>  {
->> -	dev_err(pctldev->dev, "pin_config_set op not supported\n");
-> Same for here.
->
->>  	return -ENOTSUPP;
->>  }
->>  
->>  static int msm_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
->>  				unsigned long *configs, unsigned num_configs)
->>  {
->> -	dev_err(pctldev->dev, "pin_config_set op not supported\n");
-> And here.
+A reset through a GPIO is optional. Don't fail probing when it is
+missing.
 
-Actually it looks like we can just remove these two functions and the
-core does the right thing and prints errors. That would be a good patch.
+Reported-by: Andreas F=C3=A4rber <afaerber@suse.de>
+Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+---
+Hi Andreas,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+does this do the trick?
+
+	Thanks,
+	S=C3=B6ren
+
+ drivers/usb/phy/phy-generic.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/phy/phy-generic.c b/drivers/usb/phy/phy-generi=
+c.c
+index dd05254241fb..a73d4c738f0b 100644
+--- a/drivers/usb/phy/phy-generic.c
++++ b/drivers/usb/phy/phy-generic.c
+@@ -241,10 +241,8 @@ int usb_phy_gen_create_phy(struct device *dev, str=
+uct usb_phy_generic *nop,
+=20
+ 	if (err =3D=3D -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+-	if (err) {
+-		dev_err(dev, "Error requesting RESET GPIO\n");
+-		return err;
+-	}
++	if (err)
++		nop->gpiod_reset =3D NULL;
+=20
+ 	nop->phy.otg =3D devm_kzalloc(dev, sizeof(*nop->phy.otg),
+ 			GFP_KERNEL);
+--=20
+2.2.2.1.g63c5777
