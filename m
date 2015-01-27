@@ -1,160 +1,68 @@
-From: Bjorn <bjorn@sonymobile.com>
-Subject: Re: [PATCH] pinctrl: qcom: enable generic support and input-enable
- pinctrl conf
-Date: Tue, 27 Jan 2015 10:05:04 -0800
-Message-ID: <20150127180503.GG11960@sonymobile.com>
-References: <1422289494-31461-1-git-send-email-svarbanov@mm-sol.com>
- <54C6E753.606@codeaurora.org>
- <54C7928F.9090407@mm-sol.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH] usb: phy-generic: Don't fail on missing gpio reset
+Date: Tue, 27 Jan 2015 11:13:08 -0800
+Message-ID: <19e48726b36942cfb0430fc625b41e1b@BY2FFO11FD043.protection.gbl>
+References: <1422323129-20969-1-git-send-email-soren.brinkmann@xilinx.com>
+ <20150127152047.GA13776@saruman.tx.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2on0088.outbound.protection.outlook.com ([65.55.169.88]:19776
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1758210AbbA0TNV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 Jan 2015 14:13:21 -0500
 Content-Disposition: inline
-In-Reply-To: <54C7928F.9090407@mm-sol.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+In-Reply-To: <20150127152047.GA13776@saruman.tx.rr.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ola Jeppson <ola@adapteva.com>, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org
 
-On Tue 27 Jan 05:28 PST 2015, Stanimir Varbanov wrote:
+On Tue, 2015-01-27 at 09:20AM -0600, Felipe Balbi wrote:
+> On Mon, Jan 26, 2015 at 05:45:29PM -0800, Soren Brinkmann wrote:
+> > A reset through a GPIO is optional. Don't fail probing when it is
+> > missing.
+> >=20
+> > Reported-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> > Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> > ---
+> > Hi Andreas,
+> >=20
+> > does this do the trick?
+> >=20
+> > 	Thanks,
+> > 	S=C3=B6ren
+> >=20
+> >  drivers/usb/phy/phy-generic.c | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/usb/phy/phy-generic.c b/drivers/usb/phy/phy-ge=
+neric.c
+> > index dd05254241fb..a73d4c738f0b 100644
+> > --- a/drivers/usb/phy/phy-generic.c
+> > +++ b/drivers/usb/phy/phy-generic.c
+> > @@ -241,10 +241,8 @@ int usb_phy_gen_create_phy(struct device *dev,=
+ struct usb_phy_generic *nop,
+> > =20
+> >  	if (err =3D=3D -EPROBE_DEFER)
+> >  		return -EPROBE_DEFER;
+> > -	if (err) {
+> > -		dev_err(dev, "Error requesting RESET GPIO\n");
+> > -		return err;
+> > -	}
+> > +	if (err)
+> > +		nop->gpiod_reset =3D NULL;
+>=20
+> there's a better patch to use gpiod_get_optional(), instead.
 
-> Hi Stephen,
-> 
-> Thanks for the comments!
-> 
-> On 01/27/2015 03:18 AM, Stephen Boyd wrote:
-> > On 01/26/15 08:24, Stanimir Varbanov wrote:
-> >> Enables generic pinconf support and add handling for 'input-enable'
-> >> pinconf property.
-> >>
-> >> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-> >> ---
+Great, apparently that wasn't in linux-next yesterday. I'll give it a
+shot once it arrives there.
 
-Hi Stanimir,
-
-Good stuff, but please split this into (although I think you already figured it out):
-* one patch that introduces input-enable
-* one that enable the usage of pinconf-generic debugfs (is_generic + drop the prints)
-* one that drops the msm_config_get/msm_config_set
-
-> >>  drivers/pinctrl/qcom/pinctrl-msm.c |   17 ++++++++++++-----
-> >>  1 files changed, 12 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> >> index e730935..4a47eb1 100644
-> >> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> >> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> >> @@ -193,11 +193,11 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
-> >>  		*mask = 7;
-> >>  		break;
-> >>  	case PIN_CONFIG_OUTPUT:
-> >> +	case PIN_CONFIG_INPUT_ENABLE:
-
-Looks good.
-
-> >>  		*bit = g->oe_bit;
-> >>  		*mask = 1;
-> >>  		break;
-> >>  	default:
-> >> -		dev_err(pctrl->dev, "Invalid config param %04x\n", param);
-> > 
-> > Is this removed because the generic framework already takes care of
-> > printing this information on such errors?
-> 
-> yes, more or less. These error messages just floods the screen when
-> using debugfs entries. Even more ENOTSUPP is legal error for generic
-> pinconf.
-> 
-> > 
-
-[..]
-
-> >>  
-> >> @@ -276,9 +274,11 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
-> >>  		val = readl(pctrl->regs + g->io_reg);
-> >>  		arg = !!(val & BIT(g->in_bit));
-> >>  		break;
-> >> +	case PIN_CONFIG_INPUT_ENABLE:
-> >> +		val = readl(pctrl->regs + g->io_reg);
-> >> +		arg = !!(val & BIT(g->in_bit));
-> >> +		break;
-> > 
-> > This bit is used to read the value of the gpio. If the gpio is high,
-> > this bit will read back as a 1. If the gpio is low, this bit will read
-> > back as a 0. I don't see how this is related to input-enable? Doesn't
-> 
-> Maybe I had to split on few patches. The change in .pin_config_group_get
-> is related to debugfs dump. The change which adds input-enable support
-> is in .pin_config_group_set.
-> 
-> > input-enable mean we configure the pin to accept input? In that sense,
-> > configuring the pin to accept input would sort of be like configuring
-> > the pin for function "gpio" so that we can read this bit and see if the
-> > pin is high or low, but I don't know if we care to support that. I think
-> > we rely on users configuring the pin for the gpio function though.
-> 
-> Why you do not care, because you think that tlmm doesn't support it or
-> because it is a driver responsibility to set up gpio function plus
-> input/output configuration?
-> 
-> I can imagine usecase where the driver implements an 'idle' pinctrl
-> state which configure its pins to be gpio input enabled to save power
-> assuming that the previous 'default' pinctrl state it was gpio output.
-> In that case the driver doesn't need to call gpio_direction_input() for
-> every gpio, only call pinctrl_select_state('idle').
-> 
-> What's wrong with this?
-> 
-
-It makes a lot of sense to be able to have a input-enabled state that you can
-switch to. Such state would specify function = "gpio" and input-enable;
-
-I do however think that querying PIN_CONFIG_INPUT_ENABLE should not return the
-value of the pin, but rather !(readl(g->ctl_reg) & BIT(g->oe_bit)) to indicate
-if the pin is configured in input enable or not.
-
-> > 
-> >>  	default:
-> >> -		dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
-> >> -			param);
-
-Is this part of the debugfs cleanup?
-
-> >>  		return -EINVAL;
-> >>  	}
-> >>  
-> >> @@ -348,6 +348,10 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
-> >>  			/* enable output */
-> >>  			arg = 1;
-> >>  			break;
-> >> +		case PIN_CONFIG_INPUT_ENABLE:
-> >> +			/* disable output */
-> >> +			arg = 0;
-> >> +			break;
-
-Looks good.
-
-> >>  		default:
-> >>  			dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
-> >>  				param);
-> >> @@ -372,6 +376,9 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
-> >>  }
-> >>  
-> >>  static const struct pinconf_ops msm_pinconf_ops = {
-> >> +#ifdef CONFIG_GENERIC_PINCONF
-> >> +	.is_generic		= true,
-> >> +#endif
-> > 
-> > Shouldn't we have set this when we started this driver? I guess this
-> > only makes debugfs output change, but it seems like this is a "fix" of
-> > some kind that is different from input-enable support.
-> > 
-> 
-> yes, it should be different fix, I will split this on separate patch.
-> 
-
-PINCTRL_MSM does "select GENERIC_PINCONF", so the #ifdef is not needed. And
-Stephen you're right, it should have been there in my original version.
-
-Regards,
-Bjorn
+	S=C3=B6ren
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
