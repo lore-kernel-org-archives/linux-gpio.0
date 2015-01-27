@@ -1,47 +1,59 @@
 From: Bjorn <bjorn@sonymobile.com>
-Subject: Re: [PATCH 3/3] pinctrl: qcom: Add msm8916 pinctrl driver
-Date: Tue, 27 Jan 2015 09:31:08 -0800
-Message-ID: <20150127173107.GE11960@sonymobile.com>
-References: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com>
- <1421745476-6276-4-git-send-email-svarbanov@mm-sol.com>
+Subject: Re: [PATCH] pinctrl: qcom: enable generic support and input-enable
+ pinctrl conf
+Date: Tue, 27 Jan 2015 09:44:31 -0800
+Message-ID: <20150127174430.GF11960@sonymobile.com>
+References: <1422289494-31461-1-git-send-email-svarbanov@mm-sol.com>
+ <54C6E753.606@codeaurora.org>
+ <54C6E89E.2050701@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from seldrel01.sonyericsson.com ([212.209.106.2]:4667 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751020AbbA0Rof (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 27 Jan 2015 12:44:35 -0500
 Content-Disposition: inline
-In-Reply-To: <1421745476-6276-4-git-send-email-svarbanov@mm-sol.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Joonwoo Park <joonwoop@codeaurora.org>
+In-Reply-To: <54C6E89E.2050701@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Stanimir Varbanov <svarbanov@mm-sol.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue 20 Jan 01:17 PST 2015, Stanimir Varbanov wrote:
+On Mon 26 Jan 17:23 PST 2015, Stephen Boyd wrote:
 
-> From: Joonwoo Park <joonwoop@codeaurora.org>
+> On 01/26/15 17:18, Stephen Boyd wrote:
+> > On 01/26/15 08:24, Stanimir Varbanov wrote:
+> >
+> >>  		return -ENOTSUPP;
+> >>  	}
+> >>  
+> >> @@ -208,14 +208,12 @@ static int msm_config_get(struct pinctrl_dev *pctldev,
+> >>  			  unsigned int pin,
+> >>  			  unsigned long *config)
+> >>  {
+> >> -	dev_err(pctldev->dev, "pin_config_set op not supported\n");
+> > Same for here.
+> >
+> >>  	return -ENOTSUPP;
+> >>  }
+> >>  
+> >>  static int msm_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+> >>  				unsigned long *configs, unsigned num_configs)
+> >>  {
+> >> -	dev_err(pctldev->dev, "pin_config_set op not supported\n");
+> > And here.
 > 
-> Add initial pinctrl driver to support pin configuration with
-> pinctrl framework for msm8916.
+> Actually it looks like we can just remove these two functions and the
+> core does the right thing and prints errors. That would be a good patch.
 > 
-> Signed-off-by: Joonwoo Park <joonwoop@codeaurora.org>
-> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-> ---
-[..]
-> +
-> +static const struct msm_pingroup msm8916_groups[] = {
-> +       PINGROUP(0, blsp_spi1, blsp_uart1, blsp_uim1, dmic0_clk, NA, NA, NA, NA,
-> +                NA),
 
-It's totally okay not to line break these things...
+Yeah, seems c420619d51 ("pinctrl: pinconf: remove checks on
+ops->pin_config_get") introduced in 3.14 reduced the requirements here.
 
-> +       PINGROUP(1, blsp_spi1, blsp_uart1, blsp_uim1, dmic0_data, NA, NA, NA,
-> +                NA, NA),
-> +       PINGROUP(2, blsp_spi1, blsp_uart1, blsp_i2c1, NA, NA, NA, NA, NA, NA),
-[..]
-> +};
-> +
-[..]
-
-My documentation is lacking the pingroup table, the rest is:
-Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Seems like there is a whole bunch of drivers that would benefit from this
+cleanup still.
 
 Regards,
 Bjorn
