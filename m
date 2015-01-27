@@ -1,19 +1,19 @@
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
 	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH RESENT] pinctrl: pinctrl-imx: don't use invalid value of conf_reg
-Date: Wed, 28 Jan 2015 00:05:53 +0100
-Message-ID: <1422399953-6259-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH RESENT#2] pinctrl: pinctrl-imx: don't use invalid value of conf_reg
+Date: Wed, 28 Jan 2015 00:13:00 +0100
+Message-ID: <1422400380-10956-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:51559 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:39136 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753524AbbA0XGL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jan 2015 18:06:11 -0500
+	with ESMTP id S1751882AbbA0XNN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jan 2015 18:13:13 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dong Aisheng <dong.aisheng@linaro.org>
+To: Dong Aisheng <b29396@freescale.com>
 Cc: linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawn.guo@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
 The right check for conf_reg to be invalid it testing against -1 not 0
