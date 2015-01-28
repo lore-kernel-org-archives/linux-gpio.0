@@ -1,47 +1,77 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] final pin control fix for v3.19
-Date: Wed, 28 Jan 2015 10:25:21 +0100
-Message-ID: <CACRpkdZfWmO324Jk5Bv4Mi15eZ=pMiOuUzT=oOoaU150Jo6Nnw@mail.gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] pinctrl: qcom: enable generic support and input-enable
+ pinctrl conf
+Date: Wed, 28 Jan 2015 12:48:30 -0800
+Message-ID: <54C94B1E.7050304@codeaurora.org>
+References: <1422289494-31461-1-git-send-email-svarbanov@mm-sol.com> <54C6E753.606@codeaurora.org> <54C7928F.9090407@mm-sol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54C7928F.9090407@mm-sol.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+To: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On 01/27/15 05:28, Stanimir Varbanov wrote:
+> Hi Stephen,
+>
+> Thanks for the comments!
+>
+> On 01/27/2015 03:18 AM, Stephen Boyd wrote:
+>> On 01/26/15 08:24, Stanimir Varbanov wrote:
+>>
+>>>  	return -ENOTSUPP;
+>>>  }
+>>>  
+>>> @@ -276,9 +274,11 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
+>>>  		val = readl(pctrl->regs + g->io_reg);
+>>>  		arg = !!(val & BIT(g->in_bit));
+>>>  		break;
+>>> +	case PIN_CONFIG_INPUT_ENABLE:
+>>> +		val = readl(pctrl->regs + g->io_reg);
+>>> +		arg = !!(val & BIT(g->in_bit));
+>>> +		break;
+>> This bit is used to read the value of the gpio. If the gpio is high,
+>> this bit will read back as a 1. If the gpio is low, this bit will read
+>> back as a 0. I don't see how this is related to input-enable? Doesn't
+> Maybe I had to split on few patches. The change in .pin_config_group_get
+> is related to debugfs dump. The change which adds input-enable support
+> is in .pin_config_group_set.
+>
+>> input-enable mean we configure the pin to accept input? In that sense,
+>> configuring the pin to accept input would sort of be like configuring
+>> the pin for function "gpio" so that we can read this bit and see if the
+>> pin is high or low, but I don't know if we care to support that. I think
+>> we rely on users configuring the pin for the gpio function though.
+> Why you do not care, because you think that tlmm doesn't support it or
+> because it is a driver responsibility to set up gpio function plus
+> input/output configuration?
 
-here is a (hopefully) final pin control fix for the v3.19 series.
-This affects the AT91 driver only and is tagged for stable as
-well.
+Ah ok, I see that the driver clears the output enable bit for
+gpio_direction_input(). Technically that isn't even required because
+from what I can recall the output enable bit only controls if the OE bit
+is driven out on the line. We can always read what's there by reading
+the IN bit even when the output is enabled.
 
-Please pull it in!
+>
+> I can imagine usecase where the driver implements an 'idle' pinctrl
+> state which configure its pins to be gpio input enabled to save power
+> assuming that the previous 'default' pinctrl state it was gpio output.
+> In that case the driver doesn't need to call gpio_direction_input() for
+> every gpio, only call pinctrl_select_state('idle').
+>
+> What's wrong with this?
 
-Yours,
-Linus Walleij
+Yes that's fine. It sounds like you want to disabled the output and the
+way that works today is by switching the gpio direction to input. I just
+got caught up because in my mind the input is always enabled because we
+can always read what's on the pin. I guess output-disable ==
+input-enable. Either way, the implementation doesn't look right for this
+part where we want to see if the input is enabled. Looks like Bjorn has
+the right idea, so let's see how v2 goes.
 
-The following changes since commit 26bc420b59a38e4e6685a73345a0def461136dce:
-
-  Linux 3.19-rc6 (2015-01-25 20:04:41 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v3.19-4
-
-for you to fetch changes up to a0b957f306fa4d0a39f4ffe5e5e25e856e6be46e:
-
-  pinctrl: at91: allow to have disabled gpio bank (2015-01-26 09:13:36 +0100)
-
-----------------------------------------------------------------
-A late pin control fix for the v3.19 series:
-The AT91 gpio controller would miss wakeup events, this
-single fix make it work properly.
-
-----------------------------------------------------------------
-Jean-Christophe PLAGNIOL-VILLARD (1):
-      pinctrl: at91: allow to have disabled gpio bank
-
- drivers/pinctrl/pinctrl-at91.c | 108 +++++++++++++++++++++--------------------
- 1 file changed, 55 insertions(+), 53 deletions(-)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
