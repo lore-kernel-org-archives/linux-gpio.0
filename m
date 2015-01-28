@@ -1,113 +1,31 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH] gpio: mmp: add GPIO driver for Marvell MMP series
-Date: Wed, 28 Jan 2015 09:14:29 +0530
-Message-ID: <CAEUmHyaNEO_kZ1+m2JKbWEwMvujkkQRdQqKwbZyad_8eqWvM8Q@mail.gmail.com>
-References: <1422412229-23640-1-git-send-email-chao.xie@marvell.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: board.txt: Fix the gpio name example
+Date: Wed, 28 Jan 2015 15:16:39 +0900
+Message-ID: <CAAVeFuLpm5WZOF_hvZORTK1TVZVhubfj_A3sqdR7YijpqF9png@mail.gmail.com>
+References: <1422318639-20995-1-git-send-email-festevam@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422412229-23640-1-git-send-email-chao.xie@marvell.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Xie <chao.xie@marvell.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, xiechao_mail@163.com, haojian.zhuang@gmail.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:52556 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754837AbbA1GRA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jan 2015 01:17:00 -0500
+Received: by mail-ie0-f173.google.com with SMTP id tr6so19854209ieb.4
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2015 22:16:59 -0800 (PST)
+In-Reply-To: <1422318639-20995-1-git-send-email-festevam@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Wed, Jan 28, 2015 at 8:00 AM, Chao Xie <chao.xie@marvell.com> wrote:
-> From: Chao Xie <chao.xie@marvell.com>
+On Tue, Jan 27, 2015 at 9:30 AM, Fabio Estevam <festevam@gmail.com> wrote:
+> From: Fabio Estevam <fabio.estevam@freescale.com>
 >
-> For some old PXA series, they used PXA GPIO driver.
-> The IP of GPIO changes since PXA988 which is Marvell MMP
-> series.
-> It will use new way to control the GPIO level, direction
-> and edge status.
+> As explained in this file:
 >
-> Signed-off-by: Chao Xie <chao.xie@marvell.com>
-> ---
->  drivers/gpio/Kconfig    |   7 +
->  drivers/gpio/Makefile   |   1 +
->  drivers/gpio/gpio-mmp.c | 444 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 452 insertions(+)
->  create mode 100644 drivers/gpio/gpio-mmp.c
+> "GPIOs mappings are defined in the consumer device's node, in a property named
+> <function>-gpios"
+>
+> So fix the example to match the convention.
 
-(...)
-
-> +static int mmp_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct mmp_gpio_platform_data *pdata;
-> +       struct device_node *np;
-> +       struct mmp_gpio_chip *mmp_chip;
-> +       struct mmp_gpio_bank *bank;
-> +       struct resource *res;
-> +       struct irq_domain *domain;
-> +       struct clk *clk;
-> +       int irq, i, ret;
-> +       void __iomem *base;
-> +
-> +       pdata = dev_get_platdata(dev);
-> +       np = pdev->dev.of_node;
-> +       if (!np && !pdata)
-> +               return -EINVAL;
-> +
-> +       mmp_chip = devm_kzalloc(dev, sizeof(*mmp_chip), GFP_KERNEL);
-> +       if (mmp_chip == NULL)
-> +               return -ENOMEM;
-> +
-
-Using ! operator preffred instead of comparing with NULL.
-
-> +       irq = platform_get_irq(pdev, 0);
-> +       if (irq < 0)
-> +               return irq;
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res)
-> +               return -EINVAL;
-
-This check is not required.. Check on resource happenning with
-devm_ioremap_resource.
-
-> +       base = devm_ioremap_resource(dev, res);
-> +       if (!base)
-> +               return -EINVAL;
-
-I dont think this the correct return value.. return PTR_ERR(base)
-
-> +
-> +       mmp_chip->irq = irq;
-> +       mmp_chip->reg_base = base;
-> +
-> +       if (pdata)
-> +               ret = mmp_gpio_probe_pdata(pdev, mmp_chip, pdata);
-> +       else
-> +               ret = mmp_gpio_probe_dt(pdev, mmp_chip);
-> +
-> +       if (ret) {
-> +               dev_err(dev, "Fail to initialize gpio unit, error %d.\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       clk = devm_clk_get(dev, NULL);
-> +       if (IS_ERR(clk)) {
-> +               dev_err(dev, "Fail to get gpio clock, error %ld.\n",
-> +                       PTR_ERR(clk));
-> +               return PTR_ERR(clk);
-> +       }
-> +       ret = clk_prepare_enable(clk);
-> +       if (ret) {
-> +               dev_err(dev, "Fail to enable gpio clock, error %d.\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       domain = irq_domain_add_linear(np, mmp_chip->ngpio,
-> +                                       &mmp_gpio_irq_domain_ops, mmp_chip);
-> +       if (domain == NULL)
-
-Using ! operator preferred instead of comparing with NULL.
-
-
-
-
--- 
-Thanks and Regards,
-Varka Bhadram.
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
