@@ -1,337 +1,46 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] pinctrl: imx25: fix numbering for pins
-Date: Wed, 28 Jan 2015 00:45:56 +0100
-Message-ID: <1422402356-12171-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH] pinctrl: imx25: fix numbering for pins
+Date: Tue, 27 Jan 2015 22:39:40 -0200
+Message-ID: <CAOMZO5BZ=N=kEbLp-pZjMWcTHGaAXLQ612qm-v2qpwDzn_eQNA@mail.gmail.com>
 References: <20150127232440.GK29856@pengutronix.de>
+	<1422402356-12171-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:32935 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754148AbbA0XqI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jan 2015 18:46:08 -0500
-In-Reply-To: <20150127232440.GK29856@pengutronix.de>
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:39561 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751299AbbA1Ajm convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jan 2015 19:39:42 -0500
+Received: by mail-lb0-f180.google.com with SMTP id b6so15967791lbj.11
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2015 16:39:40 -0800 (PST)
+In-Reply-To: <1422402356-12171-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dong Aisheng <b29396@freescale.com>, Denis Carikli <denis@eukrea.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Dong Aisheng <b29396@freescale.com>, Denis Carikli <denis@eukrea.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-The pin id for a given tuple listed in a fsl,pins property is calculate=
-d
-by dividing the first entry (which is also a register offset) by 4.
-As the first available register is at offset 0x8 and configures the pad
-MX25_PAD_A10 the right id for this pin is 2. All other pins are off by
-one, too.
-
-This patch drops the definition MX25_PAD_RESERVE1 (together with its
-only use) and decrements all following values by 1.
-
-=46ixes: b4a87c9b966f ("pinctrl: pinctrl-imx: add imx25 pinctrl driver"=
+On Tue, Jan 27, 2015 at 9:45 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> The pin id for a given tuple listed in a fsl,pins property is calcula=
+ted
+> by dividing the first entry (which is also a register offset) by 4.
+> As the first available register is at offset 0x8 and configures the p=
+ad
+> MX25_PAD_A10 the right id for this pin is 2. All other pins are off b=
+y
+> one, too.
+>
+> This patch drops the definition MX25_PAD_RESERVE1 (together with its
+> only use) and decrements all following values by 1.
+>
+> Fixes: b4a87c9b966f ("pinctrl: pinctrl-imx: add imx25 pinctrl driver"=
 )
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
- drivers/pinctrl/freescale/pinctrl-imx25.c | 276 +++++++++++++++-------=
---------
- 1 file changed, 137 insertions(+), 139 deletions(-)
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx25.c b/drivers/pinctr=
-l/freescale/pinctrl-imx25.c
-index 8d1013a040c9..faf635654312 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx25.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx25.c
-@@ -27,150 +27,148 @@
-=20
- enum imx25_pads {
- 	MX25_PAD_RESERVE0 =3D 1,
--	MX25_PAD_RESERVE1 =3D 2,
--	MX25_PAD_A10 =3D 3,
--	MX25_PAD_A13 =3D 4,
--	MX25_PAD_A14 =3D 5,
--	MX25_PAD_A15 =3D 6,
--	MX25_PAD_A16 =3D 7,
--	MX25_PAD_A17 =3D 8,
--	MX25_PAD_A18 =3D 9,
--	MX25_PAD_A19 =3D 10,
--	MX25_PAD_A20 =3D 11,
--	MX25_PAD_A21 =3D 12,
--	MX25_PAD_A22 =3D 13,
--	MX25_PAD_A23 =3D 14,
--	MX25_PAD_A24 =3D 15,
--	MX25_PAD_A25 =3D 16,
--	MX25_PAD_EB0 =3D 17,
--	MX25_PAD_EB1 =3D 18,
--	MX25_PAD_OE =3D 19,
--	MX25_PAD_CS0 =3D 20,
--	MX25_PAD_CS1 =3D 21,
--	MX25_PAD_CS4 =3D 22,
--	MX25_PAD_CS5 =3D 23,
--	MX25_PAD_NF_CE0 =3D 24,
--	MX25_PAD_ECB =3D 25,
--	MX25_PAD_LBA =3D 26,
--	MX25_PAD_BCLK =3D 27,
--	MX25_PAD_RW =3D 28,
--	MX25_PAD_NFWE_B =3D 29,
--	MX25_PAD_NFRE_B =3D 30,
--	MX25_PAD_NFALE =3D 31,
--	MX25_PAD_NFCLE =3D 32,
--	MX25_PAD_NFWP_B =3D 33,
--	MX25_PAD_NFRB =3D 34,
--	MX25_PAD_D15 =3D 35,
--	MX25_PAD_D14 =3D 36,
--	MX25_PAD_D13 =3D 37,
--	MX25_PAD_D12 =3D 38,
--	MX25_PAD_D11 =3D 39,
--	MX25_PAD_D10 =3D 40,
--	MX25_PAD_D9 =3D 41,
--	MX25_PAD_D8 =3D 42,
--	MX25_PAD_D7 =3D 43,
--	MX25_PAD_D6 =3D 44,
--	MX25_PAD_D5 =3D 45,
--	MX25_PAD_D4 =3D 46,
--	MX25_PAD_D3 =3D 47,
--	MX25_PAD_D2 =3D 48,
--	MX25_PAD_D1 =3D 49,
--	MX25_PAD_D0 =3D 50,
--	MX25_PAD_LD0 =3D 51,
--	MX25_PAD_LD1 =3D 52,
--	MX25_PAD_LD2 =3D 53,
--	MX25_PAD_LD3 =3D 54,
--	MX25_PAD_LD4 =3D 55,
--	MX25_PAD_LD5 =3D 56,
--	MX25_PAD_LD6 =3D 57,
--	MX25_PAD_LD7 =3D 58,
--	MX25_PAD_LD8 =3D 59,
--	MX25_PAD_LD9 =3D 60,
--	MX25_PAD_LD10 =3D 61,
--	MX25_PAD_LD11 =3D 62,
--	MX25_PAD_LD12 =3D 63,
--	MX25_PAD_LD13 =3D 64,
--	MX25_PAD_LD14 =3D 65,
--	MX25_PAD_LD15 =3D 66,
--	MX25_PAD_HSYNC =3D 67,
--	MX25_PAD_VSYNC =3D 68,
--	MX25_PAD_LSCLK =3D 69,
--	MX25_PAD_OE_ACD =3D 70,
--	MX25_PAD_CONTRAST =3D 71,
--	MX25_PAD_PWM =3D 72,
--	MX25_PAD_CSI_D2 =3D 73,
--	MX25_PAD_CSI_D3 =3D 74,
--	MX25_PAD_CSI_D4 =3D 75,
--	MX25_PAD_CSI_D5 =3D 76,
--	MX25_PAD_CSI_D6 =3D 77,
--	MX25_PAD_CSI_D7 =3D 78,
--	MX25_PAD_CSI_D8 =3D 79,
--	MX25_PAD_CSI_D9 =3D 80,
--	MX25_PAD_CSI_MCLK =3D 81,
--	MX25_PAD_CSI_VSYNC =3D 82,
--	MX25_PAD_CSI_HSYNC =3D 83,
--	MX25_PAD_CSI_PIXCLK =3D 84,
--	MX25_PAD_I2C1_CLK =3D 85,
--	MX25_PAD_I2C1_DAT =3D 86,
--	MX25_PAD_CSPI1_MOSI =3D 87,
--	MX25_PAD_CSPI1_MISO =3D 88,
--	MX25_PAD_CSPI1_SS0 =3D 89,
--	MX25_PAD_CSPI1_SS1 =3D 90,
--	MX25_PAD_CSPI1_SCLK =3D 91,
--	MX25_PAD_CSPI1_RDY =3D 92,
--	MX25_PAD_UART1_RXD =3D 93,
--	MX25_PAD_UART1_TXD =3D 94,
--	MX25_PAD_UART1_RTS =3D 95,
--	MX25_PAD_UART1_CTS =3D 96,
--	MX25_PAD_UART2_RXD =3D 97,
--	MX25_PAD_UART2_TXD =3D 98,
--	MX25_PAD_UART2_RTS =3D 99,
--	MX25_PAD_UART2_CTS =3D 100,
--	MX25_PAD_SD1_CMD =3D 101,
--	MX25_PAD_SD1_CLK =3D 102,
--	MX25_PAD_SD1_DATA0 =3D 103,
--	MX25_PAD_SD1_DATA1 =3D 104,
--	MX25_PAD_SD1_DATA2 =3D 105,
--	MX25_PAD_SD1_DATA3 =3D 106,
--	MX25_PAD_KPP_ROW0 =3D 107,
--	MX25_PAD_KPP_ROW1 =3D 108,
--	MX25_PAD_KPP_ROW2 =3D 109,
--	MX25_PAD_KPP_ROW3 =3D 110,
--	MX25_PAD_KPP_COL0 =3D 111,
--	MX25_PAD_KPP_COL1 =3D 112,
--	MX25_PAD_KPP_COL2 =3D 113,
--	MX25_PAD_KPP_COL3 =3D 114,
--	MX25_PAD_FEC_MDC =3D 115,
--	MX25_PAD_FEC_MDIO =3D 116,
--	MX25_PAD_FEC_TDATA0 =3D 117,
--	MX25_PAD_FEC_TDATA1 =3D 118,
--	MX25_PAD_FEC_TX_EN =3D 119,
--	MX25_PAD_FEC_RDATA0 =3D 120,
--	MX25_PAD_FEC_RDATA1 =3D 121,
--	MX25_PAD_FEC_RX_DV =3D 122,
--	MX25_PAD_FEC_TX_CLK =3D 123,
--	MX25_PAD_RTCK =3D 124,
--	MX25_PAD_DE_B =3D 125,
--	MX25_PAD_GPIO_A =3D 126,
--	MX25_PAD_GPIO_B =3D 127,
--	MX25_PAD_GPIO_C =3D 128,
--	MX25_PAD_GPIO_D =3D 129,
--	MX25_PAD_GPIO_E =3D 130,
--	MX25_PAD_GPIO_F =3D 131,
--	MX25_PAD_EXT_ARMCLK =3D 132,
--	MX25_PAD_UPLL_BYPCLK =3D 133,
--	MX25_PAD_VSTBY_REQ =3D 134,
--	MX25_PAD_VSTBY_ACK =3D 135,
--	MX25_PAD_POWER_FAIL  =3D 136,
--	MX25_PAD_CLKO =3D 137,
--	MX25_PAD_BOOT_MODE0 =3D 138,
--	MX25_PAD_BOOT_MODE1 =3D 139,
-+	MX25_PAD_A10 =3D 2,
-+	MX25_PAD_A13 =3D 3,
-+	MX25_PAD_A14 =3D 4,
-+	MX25_PAD_A15 =3D 5,
-+	MX25_PAD_A16 =3D 6,
-+	MX25_PAD_A17 =3D 7,
-+	MX25_PAD_A18 =3D 8,
-+	MX25_PAD_A19 =3D 9,
-+	MX25_PAD_A20 =3D 10,
-+	MX25_PAD_A21 =3D 11,
-+	MX25_PAD_A22 =3D 12,
-+	MX25_PAD_A23 =3D 13,
-+	MX25_PAD_A24 =3D 14,
-+	MX25_PAD_A25 =3D 15,
-+	MX25_PAD_EB0 =3D 16,
-+	MX25_PAD_EB1 =3D 17,
-+	MX25_PAD_OE =3D 18,
-+	MX25_PAD_CS0 =3D 19,
-+	MX25_PAD_CS1 =3D 20,
-+	MX25_PAD_CS4 =3D 21,
-+	MX25_PAD_CS5 =3D 22,
-+	MX25_PAD_NF_CE0 =3D 23,
-+	MX25_PAD_ECB =3D 24,
-+	MX25_PAD_LBA =3D 25,
-+	MX25_PAD_BCLK =3D 26,
-+	MX25_PAD_RW =3D 27,
-+	MX25_PAD_NFWE_B =3D 28,
-+	MX25_PAD_NFRE_B =3D 29,
-+	MX25_PAD_NFALE =3D 30,
-+	MX25_PAD_NFCLE =3D 31,
-+	MX25_PAD_NFWP_B =3D 32,
-+	MX25_PAD_NFRB =3D 33,
-+	MX25_PAD_D15 =3D 34,
-+	MX25_PAD_D14 =3D 35,
-+	MX25_PAD_D13 =3D 36,
-+	MX25_PAD_D12 =3D 37,
-+	MX25_PAD_D11 =3D 38,
-+	MX25_PAD_D10 =3D 39,
-+	MX25_PAD_D9 =3D 40,
-+	MX25_PAD_D8 =3D 41,
-+	MX25_PAD_D7 =3D 42,
-+	MX25_PAD_D6 =3D 43,
-+	MX25_PAD_D5 =3D 44,
-+	MX25_PAD_D4 =3D 45,
-+	MX25_PAD_D3 =3D 46,
-+	MX25_PAD_D2 =3D 47,
-+	MX25_PAD_D1 =3D 48,
-+	MX25_PAD_D0 =3D 49,
-+	MX25_PAD_LD0 =3D 50,
-+	MX25_PAD_LD1 =3D 51,
-+	MX25_PAD_LD2 =3D 52,
-+	MX25_PAD_LD3 =3D 53,
-+	MX25_PAD_LD4 =3D 54,
-+	MX25_PAD_LD5 =3D 55,
-+	MX25_PAD_LD6 =3D 56,
-+	MX25_PAD_LD7 =3D 57,
-+	MX25_PAD_LD8 =3D 58,
-+	MX25_PAD_LD9 =3D 59,
-+	MX25_PAD_LD10 =3D 60,
-+	MX25_PAD_LD11 =3D 61,
-+	MX25_PAD_LD12 =3D 62,
-+	MX25_PAD_LD13 =3D 63,
-+	MX25_PAD_LD14 =3D 64,
-+	MX25_PAD_LD15 =3D 65,
-+	MX25_PAD_HSYNC =3D 66,
-+	MX25_PAD_VSYNC =3D 67,
-+	MX25_PAD_LSCLK =3D 68,
-+	MX25_PAD_OE_ACD =3D 69,
-+	MX25_PAD_CONTRAST =3D 70,
-+	MX25_PAD_PWM =3D 71,
-+	MX25_PAD_CSI_D2 =3D 72,
-+	MX25_PAD_CSI_D3 =3D 73,
-+	MX25_PAD_CSI_D4 =3D 74,
-+	MX25_PAD_CSI_D5 =3D 75,
-+	MX25_PAD_CSI_D6 =3D 76,
-+	MX25_PAD_CSI_D7 =3D 77,
-+	MX25_PAD_CSI_D8 =3D 78,
-+	MX25_PAD_CSI_D9 =3D 79,
-+	MX25_PAD_CSI_MCLK =3D 80,
-+	MX25_PAD_CSI_VSYNC =3D 81,
-+	MX25_PAD_CSI_HSYNC =3D 82,
-+	MX25_PAD_CSI_PIXCLK =3D 83,
-+	MX25_PAD_I2C1_CLK =3D 84,
-+	MX25_PAD_I2C1_DAT =3D 85,
-+	MX25_PAD_CSPI1_MOSI =3D 86,
-+	MX25_PAD_CSPI1_MISO =3D 87,
-+	MX25_PAD_CSPI1_SS0 =3D 88,
-+	MX25_PAD_CSPI1_SS1 =3D 89,
-+	MX25_PAD_CSPI1_SCLK =3D 90,
-+	MX25_PAD_CSPI1_RDY =3D 91,
-+	MX25_PAD_UART1_RXD =3D 92,
-+	MX25_PAD_UART1_TXD =3D 93,
-+	MX25_PAD_UART1_RTS =3D 94,
-+	MX25_PAD_UART1_CTS =3D 95,
-+	MX25_PAD_UART2_RXD =3D 96,
-+	MX25_PAD_UART2_TXD =3D 97,
-+	MX25_PAD_UART2_RTS =3D 98,
-+	MX25_PAD_UART2_CTS =3D 99,
-+	MX25_PAD_SD1_CMD =3D 100,
-+	MX25_PAD_SD1_CLK =3D 101,
-+	MX25_PAD_SD1_DATA0 =3D 102,
-+	MX25_PAD_SD1_DATA1 =3D 103,
-+	MX25_PAD_SD1_DATA2 =3D 104,
-+	MX25_PAD_SD1_DATA3 =3D 105,
-+	MX25_PAD_KPP_ROW0 =3D 106,
-+	MX25_PAD_KPP_ROW1 =3D 107,
-+	MX25_PAD_KPP_ROW2 =3D 108,
-+	MX25_PAD_KPP_ROW3 =3D 109,
-+	MX25_PAD_KPP_COL0 =3D 110,
-+	MX25_PAD_KPP_COL1 =3D 111,
-+	MX25_PAD_KPP_COL2 =3D 112,
-+	MX25_PAD_KPP_COL3 =3D 113,
-+	MX25_PAD_FEC_MDC =3D 114,
-+	MX25_PAD_FEC_MDIO =3D 115,
-+	MX25_PAD_FEC_TDATA0 =3D 116,
-+	MX25_PAD_FEC_TDATA1 =3D 117,
-+	MX25_PAD_FEC_TX_EN =3D 118,
-+	MX25_PAD_FEC_RDATA0 =3D 119,
-+	MX25_PAD_FEC_RDATA1 =3D 120,
-+	MX25_PAD_FEC_RX_DV =3D 121,
-+	MX25_PAD_FEC_TX_CLK =3D 122,
-+	MX25_PAD_RTCK =3D 123,
-+	MX25_PAD_DE_B =3D 124,
-+	MX25_PAD_GPIO_A =3D 125,
-+	MX25_PAD_GPIO_B =3D 126,
-+	MX25_PAD_GPIO_C =3D 127,
-+	MX25_PAD_GPIO_D =3D 128,
-+	MX25_PAD_GPIO_E =3D 129,
-+	MX25_PAD_GPIO_F =3D 130,
-+	MX25_PAD_EXT_ARMCLK =3D 131,
-+	MX25_PAD_UPLL_BYPCLK =3D 132,
-+	MX25_PAD_VSTBY_REQ =3D 133,
-+	MX25_PAD_VSTBY_ACK =3D 134,
-+	MX25_PAD_POWER_FAIL  =3D 135,
-+	MX25_PAD_CLKO =3D 136,
-+	MX25_PAD_BOOT_MODE0 =3D 137,
-+	MX25_PAD_BOOT_MODE1 =3D 138,
- };
-=20
- /* Pad names for the pinmux subsystem */
- static const struct pinctrl_pin_desc imx25_pinctrl_pads[] =3D {
- 	IMX_PINCTRL_PIN(MX25_PAD_RESERVE0),
--	IMX_PINCTRL_PIN(MX25_PAD_RESERVE1),
- 	IMX_PINCTRL_PIN(MX25_PAD_A10),
- 	IMX_PINCTRL_PIN(MX25_PAD_A13),
- 	IMX_PINCTRL_PIN(MX25_PAD_A14),
---=20
-2.1.4
+Tested-by: Fabio Estevam <fabio.estevam@freescale.com>
 
+Thanks
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
