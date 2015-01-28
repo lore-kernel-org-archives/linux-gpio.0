@@ -1,16 +1,11 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: [PATCH 1/7] pinctrl: mediatek: emulate GPIO interrupt on
- both-edges
-Date: Wed, 28 Jan 2015 17:24:18 +0800
-Message-ID: <1422437058.32212.38.camel@mtksdaap41>
-References: <1422339332-27498-1-git-send-email-chaotian.jing@mediatek.com>
- <1422339332-27498-2-git-send-email-chaotian.jing@mediatek.com>
- <CACRpkdbncsDJ3pP0dETpho5+j+OVuaYr=YTsH8pAs7vuT_9OLw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: hide PCONFDUMP in #ifdef
+Date: Wed, 28 Jan 2015 17:08:44 +0100
+Message-ID: <4217929.mzU2TuSLSj@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdbncsDJ3pP0dETpho5+j+OVuaYr=YTsH8pAs7vuT_9OLw@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,36 +15,79 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, Ulf Hansson <ulf.hansson@linaro.org>, Arnd Bergmann <arnd@arndb.de>, srv_heupstream@mediatek.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, bin.zhang@mediatek.com, Will Deacon <will.deacon@arm.com>, Chris Ball <chris@printf.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Eddie Huang <eddie.huang@mediatek.com>, Chaotian Jing <chaotian.jing@mediatek.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 2015-01-27 at 15:21 +0100, Linus Walleij wrote:
-> On Tue, Jan 27, 2015 at 7:15 AM, Chaotian Jing
-> <chaotian.jing@mediatek.com> wrote:
-> 
-> > From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> >
-> > MTK EINT does not support generating interrupt on both edges.
-> > Emulate this by changing edge polarity while enable irq,
-> > set types and interrupt handling. This follows an example of
-> > drivers/gpio/gpio-mxc.c.
-> >
-> > Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> > Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
-> 
-> Hongzhu, if you're fine with this patch can you ACK it as maintainer
-> of the pinctrl driver so I can merge it immediately on top of your
-> drivern whenever we consider it finished (and if it applies still...)
+The zynq and qcom-spmi pinctrl drivers both use pin_config_item arrays
+to provide extra interfaces in debugfs. This structure and the
+PCONFDUMP macro are not defined if CONFIG_DEBUG_FS is turned off,
+so we get build errors like:
 
-Hi Linus,
+pinctrl/qcom/pinctrl-spmi-gpio.c:139:37: error: array type has incomplete element type
+ static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
+                                     ^
+pinctrl/qcom/pinctrl-spmi-gpio.c:140:2: error: implicit declaration of function 'PCONFDUMP' [-Werror=implicit-function-declaration]
+  PCONFDUMP(PMIC_GPIO_CONF_PULL_UP,  "pull up strength", NULL, true),
+  ^
+pinctrl/qcom/pinctrl-spmi-gpio.c:139:37: warning: 'pmic_conf_items' defined but not used [-Wunused-variable]
+ static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
 
-Thanks for reviewing.
-Please note this patch depends on mt8173 pinctrl driver patch[1], and
-modify files introduced in that patch. So this patch should be merged
-after that series.
+Lacking any better idea to solve this nicely, this patch uses #ifdef
+to hide the structures, just like the pinctrl core does.
 
-Joe.C
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-[1]
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/320066.html
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
+index 8aa05e2eb705..36252df3c737 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -924,9 +924,11 @@ static const struct pinconf_generic_params zynq_dt_params[] = {
+ 	{"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
+ };
+ 
++#ifdef CONFIG_DEBUG_FS
+ static const struct pin_config_item zynq_conf_items[ARRAY_SIZE(zynq_dt_params)] = {
+ 	PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
+ };
++#endif
+ 
+ static unsigned int zynq_pinconf_iostd_get(u32 reg)
+ {
+@@ -1101,7 +1103,9 @@ static struct pinctrl_desc zynq_desc = {
+ 	.confops = &zynq_pinconf_ops,
+ 	.num_custom_params = ARRAY_SIZE(zynq_dt_params),
+ 	.custom_params = zynq_dt_params,
++#ifdef CONFIG_DEBUG_FS
+ 	.custom_conf_items = zynq_conf_items,
++#endif
+ 	.owner = THIS_MODULE,
+ };
+ 
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index bbf99a715b63..0f11a26d932b 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -136,10 +136,12 @@ static const struct pinconf_generic_params pmic_gpio_bindings[] = {
+ 	{"qcom,drive-strength",		PMIC_GPIO_CONF_STRENGTH,	0},
+ };
+ 
++#ifdef CONFIG_DEBUG_FS
+ static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
+ 	PCONFDUMP(PMIC_GPIO_CONF_PULL_UP,  "pull up strength", NULL, true),
+ 	PCONFDUMP(PMIC_GPIO_CONF_STRENGTH, "drive-strength", NULL, true),
+ };
++#endif
+ 
+ static const char *const pmic_gpio_groups[] = {
+ 	"gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7", "gpio8",
+@@ -744,7 +746,9 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 	pctrldesc->npins = npins;
+ 	pctrldesc->num_custom_params = ARRAY_SIZE(pmic_gpio_bindings);
+ 	pctrldesc->custom_params = pmic_gpio_bindings;
++#ifdef CONFIG_DEBUG_FS
+ 	pctrldesc->custom_conf_items = pmic_conf_items;
++#endif
+ 
+ 	for (i = 0; i < npins; i++, pindesc++) {
+ 		pad = &pads[i];
