@@ -1,47 +1,51 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] sh-pfc: emev2 - Fix mangled author name
-Date: Thu, 29 Jan 2015 11:12:56 +0100
-Message-ID: <1422526376-12146-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] pinctrl: cherryview: Configure HiZ pins to be input when requested as GPIOs
+Date: Thu, 29 Jan 2015 12:44:48 +0200
+Message-ID: <1422528288-84076-1-git-send-email-mika.westerberg@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niso@kth.se>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jerome Blin <jerome.blin@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-=46ixes: 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support")
+If the pin is in HiZ mode when it is requested as GPIO its value cannot be
+read (it always returns 0). In order to cope with the Linux GPIO subsystem
+where we do not have such state at all, turn the pin to be input instead.
+
+Reported-by: Jerome Blin <jerome.blin@intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
-Looks like the original UTF-8 was interpreted as ISO-8859-1, and the
-resulting characters being converted to UTF-8 again.
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-BTW, the same issue is present in the SoB-lines of both
-1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support") and
-4c9e473541c52453 ("sh-pfc: add macro to define pinmux without function"=
-)
-Perhaps they can still be fixed while squashing this in?
----
- drivers/pinctrl/sh-pfc/pfc-emev2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pf=
-c/pfc-emev2.c
-index 9b3ce5d1265b391f..849c6943ed308ee0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-@@ -1,7 +1,7 @@
- /*
-  * Pin Function Controller Support
-  *
-- * Copyright (C) 2015 Niklas S=C3=83=C2=B6derlund
-+ * Copyright (C) 2015 Niklas S=C3=B6derlund
-  *
-  * This file is subject to the terms and conditions of the GNU General=
- Public
-  * License.  See the file "COPYING" in the main directory of this arch=
-ive
---=20
-1.9.1
-
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index dde67d425e9c..abe18960933d 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -880,9 +880,22 @@ static int chv_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 		value &= ~CHV_PADCTRL1_INVRXTX_MASK;
+ 		chv_writel(value, reg);
+ 
+-		/* Switch to a GPIO mode */
+ 		reg = chv_padreg(pctrl, offset, CHV_PADCTRL0);
+-		value = readl(reg) | CHV_PADCTRL0_GPIOEN;
++		value = readl(reg);
++
++		/*
++		 * If the pin is in HiZ mode (both TX and RX buffers are
++		 * disabled) we turn it to be input now.
++		 */
++		if ((value & CHV_PADCTRL0_GPIOCFG_MASK) ==
++		     (CHV_PADCTRL0_GPIOCFG_HIZ << CHV_PADCTRL0_GPIOCFG_SHIFT)) {
++			value &= ~CHV_PADCTRL0_GPIOCFG_MASK;
++			value |= CHV_PADCTRL0_GPIOCFG_GPI <<
++				CHV_PADCTRL0_GPIOCFG_SHIFT;
++		}
++
++		/* Switch to a GPIO mode */
++		value |= CHV_PADCTRL0_GPIOEN;
+ 		chv_writel(value, reg);
+ 	}
+ 
+-- 
+2.1.4
