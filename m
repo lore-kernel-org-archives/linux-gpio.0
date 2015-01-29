@@ -1,33 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: sch: Consolidate similar algorithms
-Date: Thu, 29 Jan 2015 13:48:05 +0100
-Message-ID: <CACRpkdZE9akRDBmj2GNGMNxYFCAr=w8madmaV4xrQf8T2n-nkw@mail.gmail.com>
-References: <1421836341-2036-1-git-send-email-rebecca.swee.fun.chang@intel.com>
-	<1421836341-2036-2-git-send-email-rebecca.swee.fun.chang@intel.com>
+From: Stanimir Varbanov <svarbanov@mm-sol.com>
+Subject: Re: [PATCH 3/3] pinctrl: qcom: Add msm8916 pinctrl driver
+Date: Thu, 29 Jan 2015 16:27:03 +0200
+Message-ID: <54CA4337.6070500@mm-sol.com>
+References: <1421745476-6276-1-git-send-email-svarbanov@mm-sol.com> <1421745476-6276-4-git-send-email-svarbanov@mm-sol.com> <20150128231847.GC17315@qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:41634 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752205AbbA2MsH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jan 2015 07:48:07 -0500
-Received: by mail-ie0-f176.google.com with SMTP id rd18so32932822iec.7
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jan 2015 04:48:06 -0800 (PST)
-In-Reply-To: <1421836341-2036-2-git-send-email-rebecca.swee.fun.chang@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150128231847.GC17315@qualcomm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Gross <agross@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Joonwoo Park <joonwoop@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@intel.com>, GPIO Subsystem Mailing List <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Jan 21, 2015 at 11:32 AM, Chang Rebecca Swee Fun
-<rebecca.swee.fun.chang@intel.com> wrote:
+Hi Andy,
 
-> Consolidating similar algorithms into common functions to make
-> GPIO SCH simpler and manageable.
->
-> Signed-off-by: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
+On 01/29/2015 01:18 AM, Andy Gross wrote:
+> On Tue, Jan 20, 2015 at 11:17:56AM +0200, Stanimir Varbanov wrote:
+> 
+> <snip>
+> 
+>> +	MSM_MUX_blsp1_spi,
+>> +	MSM_MUX_blsp2_spi,
+>> +	MSM_MUX_blsp3_spi,
+> 
+> The above three need to be renamed to blsp_spiX_csX to denote which SPI and chip
+> select they modify.
 
-Applied again, with the review-tags.
+I catch the idea, thanks for the tips. I will address all comments.
 
-Yours,
-Linus Walleij
+-- 
+regards,
+Stan
