@@ -1,132 +1,43 @@
 From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Subject: Re: [PATCH 1/2] gpio: max732x: use an inline function for container cast
-Date: Fri, 30 Jan 2015 12:03:44 +0000
-Message-ID: <yw1xd25wbhlr.fsf@unicorn.mansr.com>
-References: <1422614754-5391-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: max732x: add set_multiple function
+Date: Fri, 30 Jan 2015 12:13:42 +0000
+Message-ID: <yw1x8ugkbh55.fsf@unicorn.mansr.com>
+References: <1421860669-9217-1-git-send-email-mans@mansr.com>
+	<CACRpkdZ4ZjLM4jUA=1kEv_3bJzRgpfcnogiKHWvfwHUP9DM6ug@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from unicorn.mansr.com ([81.2.72.234]:56129 "EHLO unicorn.mansr.com"
+Received: from unicorn.mansr.com ([81.2.72.234]:56145 "EHLO unicorn.mansr.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752796AbbA3MDw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jan 2015 07:03:52 -0500
-In-Reply-To: <1422614754-5391-1-git-send-email-linus.walleij@linaro.org>
-	(Linus Walleij's message of "Fri, 30 Jan 2015 11:45:54 +0100")
+	id S1754744AbbA3MNn convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jan 2015 07:13:43 -0500
+In-Reply-To: <CACRpkdZ4ZjLM4jUA=1kEv_3bJzRgpfcnogiKHWvfwHUP9DM6ug@mail.gmail.com>
+	(Linus Walleij's message of "Fri, 30 Jan 2015 11:29:54 +0100")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Semen Protsenko <semen.protsenko@globallogic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
 Linus Walleij <linus.walleij@linaro.org> writes:
 
-> Cast the struct gpio_chip into a max732x_chip using an inline
-> macro and move the assignment to the variable declaration
-> to save lines and simplify things.
+> On Wed, Jan 21, 2015 at 6:17 PM, Mans Rullgard <mans@mansr.com> wrote=
+:
 >
-> Cc: Semen Protsenko <semen.protsenko@globallogic.com>
-> Cc: Mans Rullgard <mans@mansr.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> This adds a set_multiple function to the MAX732x GPIO driver,
+>> allowing for performance gains when using gpiod_set_array().
+>>
+>> Signed-off-by: Mans Rullgard <mans@mansr.com>
+>
+> Patch applied, thanks M=E5ns!
+> BTW: are you interested in maintaining this driver?
+>
+> It needs converting to GPIOLIB_IRQCHIP so I'll cook a patch set for
+> this, if you're using IRQs with this driver, can you pls help out
+> testing it? Thanks a lot with sugar on top.
 
-Acked-by: Mans Rullgard <mans@mansr.com>
-
-> --- drivers/gpio/gpio-max732x.c | 25 ++++++++++--------------- 1 file
-> changed, 10 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.=
-c
-> index 745698d977a5..a095b2393fe9 100644
-> --- a/drivers/gpio/gpio-max732x.c
-> +++ b/drivers/gpio/gpio-max732x.c
-> @@ -161,6 +161,11 @@ struct max732x_chip {
->  #endif
->  };
->
-> +static inline struct max732x_chip *to_max732x(struct gpio_chip *gc)
-> +{
-> +	return container_of(gc, struct max732x_chip, gpio_chip);
-> +}
-> +
->  static int max732x_writeb(struct max732x_chip *chip, int group_a, ui=
-nt8_t val)
->  {
->  	struct i2c_client *client;
-> @@ -199,12 +204,10 @@ static inline int is_group_a(struct max732x_chi=
-p *chip, unsigned off)
->
->  static int max732x_gpio_get_value(struct gpio_chip *gc, unsigned off=
-)
->  {
-> -	struct max732x_chip *chip;
-> +	struct max732x_chip *chip =3D to_max732x(gc);
->  	uint8_t reg_val;
->  	int ret;
->
-> -	chip =3D container_of(gc, struct max732x_chip, gpio_chip);
-> -
->  	ret =3D max732x_readb(chip, is_group_a(chip, off), &reg_val);
->  	if (ret < 0)
->  		return 0;
-> @@ -215,12 +218,10 @@ static int max732x_gpio_get_value(struct gpio_c=
-hip *gc, unsigned off)
->  static void max732x_gpio_set_mask(struct gpio_chip *gc, unsigned off=
-, int mask,
->  				  int val)
->  {
-> -	struct max732x_chip *chip;
-> +	struct max732x_chip *chip =3D to_max732x(gc);
->  	uint8_t reg_out;
->  	int ret;
->
-> -	chip =3D container_of(gc, struct max732x_chip, gpio_chip);
-> -
->  	mutex_lock(&chip->lock);
->
->  	reg_out =3D (off > 7) ? chip->reg_out[1] : chip->reg_out[0];
-> @@ -261,11 +262,9 @@ static void max732x_gpio_set_multiple(struct gpi=
-o_chip *gc,
->
->  static int max732x_gpio_direction_input(struct gpio_chip *gc, unsign=
-ed off)
->  {
-> -	struct max732x_chip *chip;
-> +	struct max732x_chip *chip =3D to_max732x(gc);
->  	unsigned int mask =3D 1u << off;
->
-> -	chip =3D container_of(gc, struct max732x_chip, gpio_chip);
-> -
->  	if ((mask & chip->dir_input) =3D=3D 0) {
->  		dev_dbg(&chip->client->dev, "%s port %d is output only\n",
->  			chip->client->name, off);
-> @@ -285,11 +284,9 @@ static int max732x_gpio_direction_input(struct g=
-pio_chip *gc, unsigned off)
->  static int max732x_gpio_direction_output(struct gpio_chip *gc,
->  		unsigned off, int val)
->  {
-> -	struct max732x_chip *chip;
-> +	struct max732x_chip *chip =3D to_max732x(gc);
->  	unsigned int mask =3D 1u << off;
->
-> -	chip =3D container_of(gc, struct max732x_chip, gpio_chip);
-> -
->  	if ((mask & chip->dir_output) =3D=3D 0) {
->  		dev_dbg(&chip->client->dev, "%s port %d is input only\n",
->  			chip->client->name, off);
-> @@ -361,9 +358,7 @@ static void max732x_irq_update_mask(struct max732=
-x_chip *chip)
->
->  static int max732x_gpio_to_irq(struct gpio_chip *gc, unsigned off)
->  {
-> -	struct max732x_chip *chip;
-> -
-> -	chip =3D container_of(gc, struct max732x_chip, gpio_chip);
-> +	struct max732x_chip *chip =3D to_max732x(gc);
->
->  	if (chip->irq_domain) {
->  		return irq_create_mapping(chip->irq_domain,
-> --=20
-> 1.9.3
->
+I don't have one with the interrupt line connected, so I can't really
+help with that.
 
 --=20
 M=E5ns Rullg=E5rd
