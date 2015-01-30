@@ -1,37 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: hide PCONFDUMP in #ifdef
-Date: Fri, 30 Jan 2015 14:31:25 +0100
-Message-ID: <CACRpkdZD-LHQaNOH_b+WWvo8RrbVKj5DB7q_m-aNq=W-sEfvtw@mail.gmail.com>
-References: <4217929.mzU2TuSLSj@wuerfel>
+Subject: Re: [PATCH v3 1/3] pinctrl: qcom: increase variable size for register offsets
+Date: Fri, 30 Jan 2015 14:33:08 +0100
+Message-ID: <CACRpkda-y8WpOmnFn0rgjJTo2VeX1nXX+ViRyO0G-q75zcvnEw@mail.gmail.com>
+References: <1422612241-12944-1-git-send-email-svarbanov@mm-sol.com>
+	<1422612241-12944-2-git-send-email-svarbanov@mm-sol.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <4217929.mzU2TuSLSj@wuerfel>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1422612241-12944-2-git-send-email-svarbanov@mm-sol.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Joonwoo Park <joonwoop@codeaurora.org>, Andy Gross <agross@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 28, 2015 at 5:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, Jan 30, 2015 at 11:03 AM, Stanimir Varbanov
+<svarbanov@mm-sol.com> wrote:
 
-> The zynq and qcom-spmi pinctrl drivers both use pin_config_item arrays
-> to provide extra interfaces in debugfs. This structure and the
-> PCONFDUMP macro are not defined if CONFIG_DEBUG_FS is turned off,
-> so we get build errors like:
+> From: Joonwoo Park <joonwoop@codeaurora.org>
 >
-> pinctrl/qcom/pinctrl-spmi-gpio.c:139:37: error: array type has incomplete element type
->  static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
->                                      ^
-> pinctrl/qcom/pinctrl-spmi-gpio.c:140:2: error: implicit declaration of function 'PCONFDUMP' [-Werror=implicit-function-declaration]
->   PCONFDUMP(PMIC_GPIO_CONF_PULL_UP,  "pull up strength", NULL, true),
->   ^
-> pinctrl/qcom/pinctrl-spmi-gpio.c:139:37: warning: 'pmic_conf_items' defined but not used [-Wunused-variable]
->  static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
+> On newer TLMM hardware blocks the registers are spread and
+> we need an offsets upper than 16 bits to address them. Increase
+> the register offset variables to 32 bits size.
 >
-> Lacking any better idea to solve this nicely, this patch uses #ifdef
-> to hide the structures, just like the pinctrl core does.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Joonwoo Park <joonwoop@codeaurora.org>
+> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
 Patch applied.
 
