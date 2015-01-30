@@ -1,93 +1,44 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH 3/3] pinctrl: qcom: handle input-enable pinconf property
-Date: Fri, 30 Jan 2015 08:20:05 -0800
-Message-ID: <20150130162004.GT11960@sonymobile.com>
-References: <1422613644-13060-1-git-send-email-svarbanov@mm-sol.com>
- <1422613644-13060-4-git-send-email-svarbanov@mm-sol.com>
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH v2 2/4] gpio: add parameter to allow the use named gpios
+Date: Fri, 30 Jan 2015 11:12:53 -0800
+Message-ID: <CAK5ve-KqC2gojeFx_hSwR6Riv1YPkhO49eqaa2bOxVhChLDtXw@mail.gmail.com>
+References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
+ <1421876028-22799-3-git-send-email-o.schinagl@ultimaker.com> <CACRpkdbywy3Nrg+d8YAGTYH_Z-AB=UDB7zyq85rD8WoCwAk5eA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([212.209.106.2]:13220 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751976AbbA3QUI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 30 Jan 2015 11:20:08 -0500
-Content-Disposition: inline
-In-Reply-To: <1422613644-13060-4-git-send-email-svarbanov@mm-sol.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbywy3Nrg+d8YAGTYH_Z-AB=UDB7zyq85rD8WoCwAk5eA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Olliver Schinagl <o.schinagl@ultimaker.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Stanimir Varbanov <svarbanov@mm-sol.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
 
-On Fri 30 Jan 02:27 PST 2015, Stanimir Varbanov wrote:
+On Fri, Jan 30, 2015 at 5:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
+> <o.schinagl@ultimaker.com> wrote:
+>
+>> From: Olliver Schinagl <oliver@schinagl.nl>
+>>
+>> The gpio binding document says that new code should always use named
+>> gpios. Patch 40b73183 added support to parse a list of gpios from child
+>> nodes, but does not make it possible to use named gpios. This patch adds
+>> the con_id property and implements it is done in gpiolib.c, where the
+>> old-style of using unnamed gpios still works.
+>>
+>> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+>> ---
+>>  drivers/gpio/devres.c                     | 18 +++++++++++++++++-
+>>  drivers/input/keyboard/gpio_keys_polled.c |  2 +-
+>>  drivers/leds/leds-gpio.c                  |  2 +-
+>>  include/linux/gpio/consumer.h             |  1 +
+>
+> Alexandre: does this match your vision of how it should work, i.e. ACK?
+>
+> Bryan/Dmitry: can you ACK the oneliners in your subsystems?
 
-> This enables support of 'input-enable' pinconf generic property in
-> the pinctrl driver.
+Sure, please take my Ack
+Acked-by: Bryan Wu <cooloney@gmail.com>
 
-Patch looks good, but I think the api is broken for boolean properties.
-
-> 
-> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c |   11 +++++++++++
->  1 files changed, 11 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index b66cd58..55a64ea 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -193,6 +193,7 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
->  		*mask = 7;
->  		break;
->  	case PIN_CONFIG_OUTPUT:
-> +	case PIN_CONFIG_INPUT_ENABLE:
->  		*bit = g->oe_bit;
->  		*mask = 1;
->  		break;
-> @@ -260,6 +261,12 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
->  		val = readl(pctrl->regs + g->io_reg);
->  		arg = !!(val & BIT(g->in_bit));
->  		break;
-> +	case PIN_CONFIG_INPUT_ENABLE:
-> +		/* Pin is output */
-> +		if (arg)
-> +			return -EINVAL;
-> +		arg = 1;
-> +		break;
-
-My idea of this function is to query if we have the specific option
-enabled, so I don't like the fact that we're returning an error here, we
-should just return 0 with arg 0 (or something like that).
-
-However, that would not give the results we expect and your patch is
-"correct".
-
-Linus, conf_items in pinconf_generic_dump_one() seems to represent
-boolean properties of the pins. Returning 0 from pin_config_*_get()
-should in my view then be treated as it not being active.
-
-Is this in line with your view and should we modify
-pinconf_generic_dump_one() to continue for these values if the getter
-returns 0?
-
-
-If not, at least all the bias properties here should return -EINVAL as
-well. (which I think is wrong)
-
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -330,6 +337,10 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
->  			/* enable output */
->  			arg = 1;
->  			break;
-> +		case PIN_CONFIG_INPUT_ENABLE:
-> +			/* disable output */
-> +			arg = 0;
-> +			break;
->  		default:
->  			dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
->  				param);
-
-Regards,
-Bjorn
+>
+> Yours,
+> Linus Walleij
