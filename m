@@ -1,61 +1,92 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2 2/4] gpio: add parameter to allow the use named gpios
-Date: Fri, 30 Jan 2015 14:22:04 -0800
-Message-ID: <20150130222204.GA23203@dtor-ws>
-References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
- <1421876028-22799-3-git-send-email-o.schinagl@ultimaker.com>
- <CACRpkdbywy3Nrg+d8YAGTYH_Z-AB=UDB7zyq85rD8WoCwAk5eA@mail.gmail.com>
- <CAK5ve-KqC2gojeFx_hSwR6Riv1YPkhO49eqaa2bOxVhChLDtXw@mail.gmail.com>
- <20150130221600.GB11695@dtor-ws>
+From: Michael Welling <mwelling@ieee.org>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Fri, 30 Jan 2015 17:45:52 -0600
+Message-ID: <20150130234552.GA20407@sysresccd>
+References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:47702 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751726AbbA3Xp7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jan 2015 18:45:59 -0500
+Received: by mail-ig0-f177.google.com with SMTP id z20so6378024igj.4
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Jan 2015 15:45:58 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20150130221600.GB11695@dtor-ws>
-Sender: linux-input-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Olliver Schinagl <o.schinagl@ultimaker.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>lin
+In-Reply-To: <20150129152902.GX21469@belle.intranet.vanheusden.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: folkert <folkert@vanheusden.com>
+Cc: linux-gpio@vger.kernel.org
 
-On Fri, Jan 30, 2015 at 02:16:00PM -0800, Dmitry Torokhov wrote:
-> On Fri, Jan 30, 2015 at 11:12:53AM -0800, Bryan Wu wrote:
-> > On Fri, Jan 30, 2015 at 5:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > > On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
-> > > <o.schinagl@ultimaker.com> wrote:
-> > >
-> > >> From: Olliver Schinagl <oliver@schinagl.nl>
-> > >>
-> > >> The gpio binding document says that new code should always use named
-> > >> gpios. Patch 40b73183 added support to parse a list of gpios from child
-> > >> nodes, but does not make it possible to use named gpios. This patch adds
-> > >> the con_id property and implements it is done in gpiolib.c, where the
-> > >> old-style of using unnamed gpios still works.
-> > >>
-> > >> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-> > >> ---
-> > >>  drivers/gpio/devres.c                     | 18 +++++++++++++++++-
-> > >>  drivers/input/keyboard/gpio_keys_polled.c |  2 +-
-> > >>  drivers/leds/leds-gpio.c                  |  2 +-
-> > >>  include/linux/gpio/consumer.h             |  1 +
-> > >
-> > > Alexandre: does this match your vision of how it should work, i.e. ACK?
-> > >
-> > > Bryan/Dmitry: can you ACK the oneliners in your subsystems?
-> > 
-> > Sure, please take my Ack
-> > Acked-by: Bryan Wu <cooloney@gmail.com>
+On Thu, Jan 29, 2015 at 04:29:02PM +0100, folkert wrote:
+> Hi,
 > 
-> Mine as well:
+> For timekeeping I wrote a program which waits for interrupts on
+> gpio-pins and then tells the local ntp daemon the clock offset.
+> I'm aware of the pps support in recent kernel but that does not work
+> (yet) on all platforms (eg cubieboard 1).
 > 
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> This has worked for quite some time but no longer.
+> 
+> Until at least kernel 3.12 I could do:
+> 
+> // export gpio pin
+> // set direction to in
+> // set direction to rising
+> int fd = open("/sys.../value", O_RDONLY);
+> fdset[0].fd = fd;
+> fdset[0].events = POLLPRI;
+> fdset[0].revents = 0;
+> poll(fdset, 1, -1);
+> // at this point pin went high
 
-Forgot to mention: the ack is for this patch only; the patch #4 is
-NAKed because:
+Try using lseek before reading the data after the poll.
 
-1. The logic of handling old and new name AFAICS is broken and
-2. gpio_keys_polled-gpios as name is plain ugly.
+EX.
+	if (fdset[0].revents & POLLPRI) {
+		lseek(fdset[0].fd, 0, SEEK_SET);
+		len = read(fdset[0].fd, buf, MAX_BUF);
+		.
+		.
+	}
 
-Thanks.
+See if this helps.
 
--- 
-Dmitry
+> 
+> So: I would setup a gpio-pin using /sys-files, and then use poll() to
+> wait for the interrupt triggered by the level of the gpio pin going
+> high.
+> This worked fine on all raspberry pi's I tried, a nanos g20, a beagle
+> bone black and a cubieboard 1.
+> 
+> Since kernel 3.18.3 (.4 as well) this no longer works: 
+> 
+> 1422542104.894908947] interrupt #2459, offset -0.105091s
+> 1422542104.895162937] interrupt #2460, offset -0.104837s
+> 1422542104.895408928] interrupt #2461, offset -0.104591s
+> 1422542104.895650919] interrupt #2462, offset -0.104349s
+> 1422542104.896293896] interrupt #2463, offset -0.103706s
+> ...
+> 
+> As you can see suddenly the poll returns immediately.
+> 
+> strace learns me:
+> poll([{fd=3, events=POLLPRI}], 1, -1)   = 1 ([{fd=3, revents=POLLPRI|POLLERR}])
+> 
+> So apparently somewhere between 3.12 and 3.18 it is no longer
+> allowed/possible to do poll() on a gpio-pin value device.
+> 
+> Am I right that something broke the abi? Or have I been doing it wrong
+> and did that became visible?
+> Please advise.
+> 
+> thanks
+> 
+> Folkert van Heusden
+> 
+> -- 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
