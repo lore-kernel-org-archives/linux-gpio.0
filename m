@@ -1,107 +1,93 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Fri, 30 Jan 2015 17:17:05 +0100
-Message-ID: <2116821.DVmvasqCz1@vostro.rjw.lan>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com> <4006695.qV8Mor20ru@vostro.rjw.lan> <CACRpkdZWEq_6eNf_rj2rje0KzAKQZ7DeB6L5PW-nacE6=rzmEQ@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH 3/3] pinctrl: qcom: handle input-enable pinconf property
+Date: Fri, 30 Jan 2015 08:20:05 -0800
+Message-ID: <20150130162004.GT11960@sonymobile.com>
+References: <1422613644-13060-1-git-send-email-svarbanov@mm-sol.com>
+ <1422613644-13060-4-git-send-email-svarbanov@mm-sol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZWEq_6eNf_rj2rje0KzAKQZ7DeB6L5PW-nacE6=rzmEQ@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from seldrel01.sonyericsson.com ([212.209.106.2]:13220 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751976AbbA3QUI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 30 Jan 2015 11:20:08 -0500
+Content-Disposition: inline
+In-Reply-To: <1422613644-13060-4-git-send-email-svarbanov@mm-sol.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stanimir Varbanov <svarbanov@mm-sol.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
 
-On Friday, January 30, 2015 03:48:30 PM Linus Walleij wrote:
-> On Thu, Jan 22, 2015 at 5:12 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > On Thursday, January 22, 2015 09:17:38 AM Linus Walleij wrote:
+On Fri 30 Jan 02:27 PST 2015, Stanimir Varbanov wrote:
+
+> This enables support of 'input-enable' pinconf generic property in
+> the pinctrl driver.
+
+Patch looks good, but I think the api is broken for boolean properties.
+
 > 
-> >> If the kernel anyway has to supply some kind of workaround for
-> >> the issue, it is more a question of where to place it. Whether it does
-> >> so by patching the ACPI tables or by detecting a bad ACPI thing
-> >> and working around it at runtime in a certain driver doesn't really
-> >> matter, does it?
-> >
-> > It needs to know what to patch and how so the result is still consistent.
-> >
-> > How do you think the kernel is going to figure that out?
+> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c |   11 +++++++++++
+>  1 files changed, 11 insertions(+), 0 deletions(-)
 > 
-> Isn't every DSDT (etc) unique?
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index b66cd58..55a64ea 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -193,6 +193,7 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
+>  		*mask = 7;
+>  		break;
+>  	case PIN_CONFIG_OUTPUT:
+> +	case PIN_CONFIG_INPUT_ENABLE:
+>  		*bit = g->oe_bit;
+>  		*mask = 1;
+>  		break;
+> @@ -260,6 +261,12 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
+>  		val = readl(pctrl->regs + g->io_reg);
+>  		arg = !!(val & BIT(g->in_bit));
+>  		break;
+> +	case PIN_CONFIG_INPUT_ENABLE:
+> +		/* Pin is output */
+> +		if (arg)
+> +			return -EINVAL;
+> +		arg = 1;
+> +		break;
 
-Formally, it doesn't have to be.
+My idea of this function is to query if we have the specific option
+enabled, so I don't like the fact that we're returning an error here, we
+should just return 0 with arg 0 (or something like that).
 
-And it doesn't have to be a DSDT, it may be an SSDT too or even a plain
-table that's buggy.
+However, that would not give the results we expect and your patch is
+"correct".
 
-> So you could detect one by making a checksum of the binary or something.
-> 
-> And then you'd know that the table with this checksum needs patching?
+Linus, conf_items in pinconf_generic_dump_one() seems to represent
+boolean properties of the pins. Returning 0 from pin_config_*_get()
+should in my view then be treated as it not being active.
 
-At a single table level it is generally difficult to say whether or not
-things are going to work.
-
-What needs to work is the namespace which is built from all of the tables
-provided combined.  So the namespace needs to be populated first and then
-fixes applied on top of that (presumably by deleting, adding or replacing
-objects).
-
-Now, in theory, you *may* be able to figure out that combination of tables
-A produces namespace B which then will require fix X if the system is Y,
-but quite frankly I wouldn't count on that.
-
-Moreover, fixups (or "patches" as I called them, but that wasn't exactly
-correct) need to be provided in the form of AML definition blocks to apply on
-top of an already populated namespace and if you want to use a binary kernel image,
-you can't really afford putting all that stuff for all systems it can possibly
-run on into it.  This means that distros need to be able to combine a fixup for
-the ACPI tables with the binary kernel and install the result into the system's
-boot medium (whatever it is).  Also it should be possible to update the fixup
-and the kernel image separately if necessary.
-
-Now from the kernel's perspective that raises the question: "What if the
-ACPI tables fixup provided by the distro is not sufficient?"
-
-That needs to be addressed somehow in the code.
-
-> >> They are both in-kernel ACPI fixes, just that one
-> >> of the mechanisms is generic.
-> >
-> > I'm not following you here, sorry.
-> 
-> As per above? Fix the firmware table, not work around the
-> fact that it is buggy.
-> 
-> >> I don't understand why this obsession with userspace having
-> >> to do the ACPI table patching - if kernels should "just work" then
-> >> put this stuff behind Kconfig and have it in the kernel.
-> >
-> > This is not an obsession and your suggestion here leads to having custom
-> > per-board kernels which is not supportable in the long term.
-> 
-> Not at all. The other suggestion leads to having custom per-board
-> fixes in every driver for which broken ACPI descriptions exists,
-
-So I'm not arguing for that.
-
-> which is just as bad, isn't it? Instead of collecting the problem
-> in one place (patch any broken ACPI table) it is distrubuted across
-> N drivers, where each and every one has to detect that it is
-> being malinformed by a broken ACPI table.
-
-In the general-purpose binary kernel image distribution model drivers generally
-need to treat information provided by the platform firmware, be it ACPI or a DT
-or what-not, as untrusted input that needs to be validated if possible.  That
-is not always possible and in those cases we have no choice but to try to use
-that information, fingers crossed.  Sometimes we can validate it, though, and
-then we should and do something if it turns out to be invalid.
-
-Overall, my view on that is that (1) there needs to be a way for a distro to
-provide an ACPI tables fixup for the kernel to apply on top of the already
-populated ACPI namespace on a given system and (2) drivers need to be careful
-about using firmware data and possibly be able to recover from errors in there.
+Is this in line with your view and should we modify
+pinconf_generic_dump_one() to continue for these values if the getter
+returns 0?
 
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+If not, at least all the bias properties here should return -EINVAL as
+well. (which I think is wrong)
+
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -330,6 +337,10 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
+>  			/* enable output */
+>  			arg = 1;
+>  			break;
+> +		case PIN_CONFIG_INPUT_ENABLE:
+> +			/* disable output */
+> +			arg = 0;
+> +			break;
+>  		default:
+>  			dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
+>  				param);
+
+Regards,
+Bjorn
