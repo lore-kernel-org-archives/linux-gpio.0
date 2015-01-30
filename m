@@ -1,81 +1,68 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH v4] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Thu, 29 Jan 2015 09:23:14 -0800
-Message-ID: <bb967ff02726449ab6525d33bccde7e4@BL2FFO11FD014.protection.gbl>
-References: <1421351389-11660-1-git-send-email-soren.brinkmann@xilinx.com>
- <20150116111108.GG30960@localhost>
- <a4610e13d0094d40b7e0574992509ec6@BN1AFFO11FD044.protection.gbl>
- <CAAVeFu+K0W96mi0=QR8JGSe9BpH2nC5WV_9qbSvm6LJGA8gc7Q@mail.gmail.com>
- <CACRpkdZ4CekD2xeJYM+UUtuGuwS2uB++XprSueWnshEVk=79Fw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Subject: Re: [PATCH 1/4] ACPICA: take ACPI_MTX_INTERPRETER in acpi_unload_table_id
+Date: Fri, 30 Jan 2015 01:03:48 +0100
+Message-ID: <2246788.mX5nmqqL2I@vostro.rjw.lan>
+References: <1418746353-3481-1-git-send-email-octavian.purdila@intel.com> <1418746353-3481-2-git-send-email-octavian.purdila@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2on0055.outbound.protection.outlook.com ([65.55.169.55]:46067
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754220AbbA2RXT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 29 Jan 2015 12:23:19 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ4CekD2xeJYM+UUtuGuwS2uB++XprSueWnshEVk=79Fw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1418746353-3481-2-git-send-email-octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, heikki.krogerus-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Johan Hovold <johan@kernel.org>, linux-api@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-Hi Linus,
+On Tuesday, December 16, 2014 06:12:30 PM Octavian Purdila wrote:
+> acpi_tb_delete_namespace_by_owner expects ACPI_MTX_INTERPRETER to be
+> taken. This fixes the following issue:
+> 
+> ACPI Error: Mutex [0x0] is not acquired, cannot release (20141107/utmutex-322)
+> Call Trace:
+>   [<ffffffff81b0bd28>] dump_stack+0x4f/0x7b
+>   [<ffffffff81546bfc>] acpi_ut_release_mutex+0x47/0x67
+>   [<ffffffff81542cf1>] acpi_tb_delete_namespace_by_owner+0x57/0x8d
+>   [<ffffffff81543ef1>] acpi_unload_table_id+0x3a/0x5e
+> 
+> Signed-off-by: Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
-On Mon, 2015-01-19 at 09:54AM +0100, Linus Walleij wrote:
-> On Mon, Jan 19, 2015 at 5:20 AM, Alexandre Courbot <gnurou@gmail.com>=
- wrote:
-> > On Sat, Jan 17, 2015 at 1:49 AM, S=C3=B6ren Brinkmann <soren.brinkm=
-ann@xilinx.com> wrote:
-> >> On Fri, 2015-01-16 at 12:11PM +0100, Johan Hovold wrote:
->=20
-> >>> Implementing proper wakeup support for unclaimed GPIOs would take=
- some
-> >>> work (if at all desired), but that is not a reason to be adding c=
-ustom
-> >>> implementations that violates the kernel's power policies and new=
- ABIs
-> >>> that would need to be maintained forever.
-> (...)
-> >>> Meanwhile you can (should) use gpio-keys if you need to wake your=
- system
-> >>> on gpio events.
-> >>
-> >> We had that discussion and I don't think GPIO keys is the right so=
-lution
-> >> for every use-case.
-> >
-> > Sorry, it has been a while - can you remind us of why?
->=20
-> There are such cases. Of course keys should be handled by GPIO-keys
-> and these will trigger the right wakeup events in such cases.
->=20
-> This is for more esoteric cases: we cannot have a kernel module for
-> everything people want to do with GPIOs, and the use case I accept
-> is GPIOs used in automatic control etc, think factory lines or doors.
-> We can't have a "door" driver or "punch arm" or "fire alarm" driver
-> in the kernel. Those are userspace things.
->=20
-> Still such embedded systems need to be able to go to idle and
-> sleep to conerve power, and then they need to put wakeups on
-> these GPIOs.
->=20
-> So it is a feature userspace needs, though as with much of the
-> sysfs ABI it is very often abused for things like keys and LEDs which
-> is an abomination but we can't do much about it :(
+I've queued up this one for 3.20.
 
-Thanks for clearing that up.
-What does that mean for this patch? Are we going ahead, accepting the
-extension of this API or do all these use-cases have to wait for the
-rewrite of a proper GPIO userspace interface?
+> ---
+>  drivers/acpi/acpica/tbxface.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/acpi/acpica/tbxface.c b/drivers/acpi/acpica/tbxface.c
+> index 6482b0d..9520ae1 100644
+> --- a/drivers/acpi/acpica/tbxface.c
+> +++ b/drivers/acpi/acpica/tbxface.c
+> @@ -281,6 +281,11 @@ acpi_status acpi_unload_table_id(acpi_owner_id id)
+>  
+>  	ACPI_FUNCTION_TRACE(acpi_unload_table_id);
+>  
+> +	status = acpi_ut_acquire_mutex(ACPI_MTX_INTERPRETER);
+> +	if (ACPI_FAILURE(status)) {
+> +		return_ACPI_STATUS(status);
+> +	}
+> +
+>  	/* Find table in the global table list */
+>  	for (i = 0; i < acpi_gbl_root_table_list.current_table_count; ++i) {
+>  		if (id != acpi_gbl_root_table_list.tables[i].owner_id) {
+> @@ -297,6 +302,8 @@ acpi_status acpi_unload_table_id(acpi_owner_id id)
+>  		acpi_tb_set_table_loaded_flag(i, FALSE);
+>  		break;
+>  	}
+> +
+> +	(void)acpi_ut_release_mutex(ACPI_MTX_INTERPRETER);
+>  	return_ACPI_STATUS(status);
+>  }
+>  
+> 
 
-	Thanks,
-	S=C3=B6ren
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
