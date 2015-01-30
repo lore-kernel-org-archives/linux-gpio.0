@@ -1,31 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: max732x: add set_multiple function
-Date: Fri, 30 Jan 2015 11:29:54 +0100
-Message-ID: <CACRpkdZ4ZjLM4jUA=1kEv_3bJzRgpfcnogiKHWvfwHUP9DM6ug@mail.gmail.com>
-References: <1421860669-9217-1-git-send-email-mans@mansr.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Stanimir Varbanov <svarbanov@mm-sol.com>
+Subject: [PATCH 2/3] pinctrl: qcom: enable generic pinconf
+Date: Fri, 30 Jan 2015 12:27:23 +0200
+Message-ID: <1422613644-13060-3-git-send-email-svarbanov@mm-sol.com>
+References: <1422613644-13060-1-git-send-email-svarbanov@mm-sol.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421860669-9217-1-git-send-email-mans@mansr.com>
+In-Reply-To: <1422613644-13060-1-git-send-email-svarbanov@mm-sol.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mans Rullgard <mans@mansr.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Stephen Boyd <sboyd@codeaurora.org>, Stanimir Varbanov <svarbanov@mm-sol.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 21, 2015 at 6:17 PM, Mans Rullgard <mans@mansr.com> wrote:
+This makes the pinctrl driver to use the generic pinconf
+interface. Mainly it gives us a way to use debugfs to dump
+group configurations.
 
-> This adds a set_multiple function to the MAX732x GPIO driver,
-> allowing for performance gains when using gpiod_set_array().
->
-> Signed-off-by: Mans Rullgard <mans@mansr.com>
+Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-Patch applied, thanks M=C3=A5ns!
-BTW: are you interested in maintaining this driver?
-
-It needs converting to GPIOLIB_IRQCHIP so I'll cook a patch set for
-this, if you're using IRQs with this driver, can you pls help out
-testing it? Thanks a lot with sugar on top.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 49d3f4f..b66cd58 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -197,7 +197,6 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
+ 		*mask = 1;
+ 		break;
+ 	default:
+-		dev_err(pctrl->dev, "Invalid config param %04x\n", param);
+ 		return -ENOTSUPP;
+ 	}
+ 
+@@ -262,8 +261,6 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
+ 		arg = !!(val & BIT(g->in_bit));
+ 		break;
+ 	default:
+-		dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
+-			param);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -357,6 +354,7 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
+ }
+ 
+ static const struct pinconf_ops msm_pinconf_ops = {
++	.is_generic		= true,
+ 	.pin_config_group_get	= msm_config_group_get,
+ 	.pin_config_group_set	= msm_config_group_set,
+ };
+-- 
+1.7.0.4
