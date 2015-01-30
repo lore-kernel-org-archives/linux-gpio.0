@@ -1,38 +1,51 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 1/3][v2] gpiolib: add gpiod_get_array and gpiod_put_array functions
-Date: Fri, 30 Jan 2015 19:02:55 +0900
-Message-ID: <CAAVeFuJn1rvq1cw4tSqQy_LjCp6kiJqMFDgHp6zifS5q2AH0rA@mail.gmail.com>
-References: <1485356.H0CQOKK5aG@pcimr> <CACRpkdb6RZLP-Cv=UvDcO+_pZb34fDeigtABLmKLPpLkPAWfQg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Stanimir Varbanov <svarbanov@mm-sol.com>
+Subject: [PATCH v3 0/3] pinctrl: Qualcomm msm8916 pinctrl driver
+Date: Fri, 30 Jan 2015 12:03:58 +0200
+Message-ID: <1422612241-12944-1-git-send-email-svarbanov@mm-sol.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:65366 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752543AbbA3KDQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jan 2015 05:03:16 -0500
-Received: by mail-ie0-f180.google.com with SMTP id rl12so2313695iec.11
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Jan 2015 02:03:16 -0800 (PST)
-In-Reply-To: <CACRpkdb6RZLP-Cv=UvDcO+_pZb34fDeigtABLmKLPpLkPAWfQg@mail.gmail.com>
+Received: from ns.mm-sol.com ([37.157.136.199]:60261 "EHLO extserv.mm-sol.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753072AbbA3KEk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 30 Jan 2015 05:04:40 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rojhalat Ibrahim <imr@rtschenk.de>, Alexandre Courbot <acourbot@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Joonwoo Park <joonwoop@codeaurora.org>, Andy Gross <agross@codeaurora.org>, Stanimir Varbanov <svarbanov@mm-sol.com>
 
-On Fri, Jan 30, 2015 at 6:44 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Jan 21, 2015 at 5:46 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
->
->> Introduce new functions for conveniently obtaining and disposing of an entire
->> array of GPIOs with one function call.
->>
->> Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
->> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
->> ---
->> v2: change interface
->>
->> The ACPI and platform stuff is only compile-tested.
->
-> I'm waiting for Alexandre to review this before any merging,
-> it's too big a change for me to dare it without his review.
+Changes since v2:
+ - addressed all Andy's comments
+ 
+-------------------------------------------------------------------------------
 
-Sorry for taking so long - I have to prep some slides for FOSDEM this
-weekend, will review this series right after that.
+Changes since v1:
+ - correct the subject and description in 1/3
+ - not break the fields in msm8916_groups[] array in 3/3
+ - added Reviewed-by tags on all three patches
+
+-------------------------------------------------------------------------------
+
+This series adds a pinctrl driver for Snapdragon 410 (msm8916) SoC. The first
+patch increase the register address variable size, next adds a binding document
+and the last patch adds the pinctrl driver
+
+Comments are welcome!
+
+regards,
+Stan
+
+Joonwoo Park (2):
+  pinctrl: qcom: increase variable size for register offsets
+  pinctrl: qcom: Add msm8916 pinctrl driver
+
+Stanimir Varbanov (1):
+  DT: pinctrl: Document Qualcomm MSM8916 pinctrl binding
+
+ .../bindings/pinctrl/qcom,msm8916-pinctrl.txt      |  186 ++++
+ drivers/pinctrl/qcom/Kconfig                       |    8 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm.h                 |   10 +-
+ drivers/pinctrl/qcom/pinctrl-msm8916.c             | 1005 ++++++++++++++++++++
+ 5 files changed, 1205 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-msm8916.c
+
