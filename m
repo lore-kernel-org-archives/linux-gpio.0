@@ -1,49 +1,39 @@
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Subject: Re: [PATCH] gpio: max732x: add set_multiple function
-Date: Fri, 30 Jan 2015 12:13:42 +0000
-Message-ID: <yw1x8ugkbh55.fsf@unicorn.mansr.com>
-References: <1421860669-9217-1-git-send-email-mans@mansr.com>
-	<CACRpkdZ4ZjLM4jUA=1kEv_3bJzRgpfcnogiKHWvfwHUP9DM6ug@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: hide PCONFDUMP in #ifdef
+Date: Fri, 30 Jan 2015 14:31:25 +0100
+Message-ID: <CACRpkdZD-LHQaNOH_b+WWvo8RrbVKj5DB7q_m-aNq=W-sEfvtw@mail.gmail.com>
+References: <4217929.mzU2TuSLSj@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from unicorn.mansr.com ([81.2.72.234]:56145 "EHLO unicorn.mansr.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754744AbbA3MNn convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jan 2015 07:13:43 -0500
-In-Reply-To: <CACRpkdZ4ZjLM4jUA=1kEv_3bJzRgpfcnogiKHWvfwHUP9DM6ug@mail.gmail.com>
-	(Linus Walleij's message of "Fri, 30 Jan 2015 11:29:54 +0100")
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <4217929.mzU2TuSLSj@wuerfel>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Linus Walleij <linus.walleij@linaro.org> writes:
+On Wed, Jan 28, 2015 at 5:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> On Wed, Jan 21, 2015 at 6:17 PM, Mans Rullgard <mans@mansr.com> wrote=
-:
+> The zynq and qcom-spmi pinctrl drivers both use pin_config_item arrays
+> to provide extra interfaces in debugfs. This structure and the
+> PCONFDUMP macro are not defined if CONFIG_DEBUG_FS is turned off,
+> so we get build errors like:
 >
->> This adds a set_multiple function to the MAX732x GPIO driver,
->> allowing for performance gains when using gpiod_set_array().
->>
->> Signed-off-by: Mans Rullgard <mans@mansr.com>
+> pinctrl/qcom/pinctrl-spmi-gpio.c:139:37: error: array type has incomplete element type
+>  static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
+>                                      ^
+> pinctrl/qcom/pinctrl-spmi-gpio.c:140:2: error: implicit declaration of function 'PCONFDUMP' [-Werror=implicit-function-declaration]
+>   PCONFDUMP(PMIC_GPIO_CONF_PULL_UP,  "pull up strength", NULL, true),
+>   ^
+> pinctrl/qcom/pinctrl-spmi-gpio.c:139:37: warning: 'pmic_conf_items' defined but not used [-Wunused-variable]
+>  static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
 >
-> Patch applied, thanks M=E5ns!
-> BTW: are you interested in maintaining this driver?
+> Lacking any better idea to solve this nicely, this patch uses #ifdef
+> to hide the structures, just like the pinctrl core does.
 >
-> It needs converting to GPIOLIB_IRQCHIP so I'll cook a patch set for
-> this, if you're using IRQs with this driver, can you pls help out
-> testing it? Thanks a lot with sugar on top.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I don't have one with the interrupt line connected, so I can't really
-help with that.
+Patch applied.
 
---=20
-M=E5ns Rullg=E5rd
-mans@mansr.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
