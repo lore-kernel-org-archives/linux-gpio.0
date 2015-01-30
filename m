@@ -1,53 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: rockchip: Only mask interrupts; never disable
-Date: Fri, 30 Jan 2015 10:39:56 +0100
-Message-ID: <CACRpkdb-=brQmJT9oUwD1bqNLGHX9i+4LSuR4_Vi6BtKgaRKqQ@mail.gmail.com>
-References: <1422289444-15142-1-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH 1/3][v2] gpiolib: add gpiod_get_array and gpiod_put_array functions
+Date: Fri, 30 Jan 2015 10:44:00 +0100
+Message-ID: <CACRpkdb6RZLP-Cv=UvDcO+_pZb34fDeigtABLmKLPpLkPAWfQg@mail.gmail.com>
+References: <1485356.H0CQOKK5aG@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422289444-15142-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Jeffy Chen <jeffy.chen@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f173.google.com ([209.85.213.173]:49502 "EHLO
+	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751419AbbA3JoB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jan 2015 04:44:01 -0500
+Received: by mail-ig0-f173.google.com with SMTP id a13so1959923igq.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Jan 2015 01:44:00 -0800 (PST)
+In-Reply-To: <1485356.H0CQOKK5aG@pcimr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rojhalat Ibrahim <imr@rtschenk.de>, Alexandre Courbot <acourbot@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Jan 26, 2015 at 5:24 PM, Doug Anderson <dianders@chromium.org> wrote:
+On Wed, Jan 21, 2015 at 5:46 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 
-> The Rockchip GPIO interrupt controller totally throws away all status
-> about an interrupt when you "disable" the interrupt.  That has
-> unfortunate consequences in the following situation:
+> Introduce new functions for conveniently obtaining and disposing of an entire
+> array of GPIOs with one function call.
 >
-> 1. An edge-triggered interrupt is enabled and should wake the system.
-> 2. System suspend happens: interrupt is disabled and marked for wake.
-> 3. rockchip_irq_suspend() reenables the interrupt so we can wake.
-> 4. Interrupt happens when asleep.
-> 5. rockchip_irq_resume() redisables the interrupt.
-> 6. Disabling the interrupt throws away all status about it.
-> 7. Normal system resume happens and we enable the interrupt again,
->    since we threw away status about the interrupt we don't know it
->    fired while suspended.  Even worse: if we need both edges of the
->    interrupt the logic to swap edges never runs.
+> Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> ---
+> v2: change interface
 >
-> Note: even if we somehow can post the status about wakeup interrupts
-> in rockchip_irq_resume() we would still have a window of losing any
-> edges that came in while interrupts were disabled.
->
-> If we use mask only then we don't need to worry.  The GPIO Interrupt
-> controller keeps track of pending interrupts that are enabled and just
-> masked.
->
-> There was no real strong reason to support the enable/disable
-> functionality (other than that it seemed right), so let's go back to
-> just supporting mask/unmask but actually map it to the real
-> mask/unmask.  This ends up with slightly different (and more correct)
-> behavior than before (f2dd028 pinctrl: rockchip: Fix
-> enable/disable/mask/unmask).
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> The ACPI and platform stuff is only compile-tested.
 
-Patch applied with Heiko's review tag, but not as a fix at this point,
-it will be for v3.20.
+I'm waiting for Alexandre to review this before any merging,
+it's too big a change for me to dare it without his review.
 
 Yours,
 Linus Walleij
