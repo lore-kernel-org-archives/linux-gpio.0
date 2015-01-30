@@ -1,65 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: qcom: enable generic pinconf
-Date: Fri, 30 Jan 2015 14:39:01 +0100
-Message-ID: <CACRpkdYqGBigqfuYgBQTji2-tJR7avtgMxLQZAmMzP8zkp-0EA@mail.gmail.com>
-References: <1422613644-13060-1-git-send-email-svarbanov@mm-sol.com>
-	<1422613644-13060-3-git-send-email-svarbanov@mm-sol.com>
+Subject: Re: [PATCH v2 1/4] gpio: use sizeof() instead of hardcoded values
+Date: Fri, 30 Jan 2015 14:43:30 +0100
+Message-ID: <CACRpkdZHoeO1+mOhBh01i4D1KOCn2KAJO7v+UBQnHOXbZY_QKQ@mail.gmail.com>
+References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
+	<1421876028-22799-2-git-send-email-o.schinagl@ultimaker.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:45014 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752866AbbA3NjC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jan 2015 08:39:02 -0500
-Received: by mail-ie0-f171.google.com with SMTP id tr6so3388982ieb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Jan 2015 05:39:01 -0800 (PST)
-In-Reply-To: <1422613644-13060-3-git-send-email-svarbanov@mm-sol.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1421876028-22799-2-git-send-email-o.schinagl@ultimaker.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Olliver Schinagl <o.schinagl@ultimaker.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, linux-leds@vger
 List-Id: linux-gpio@vger.kernel.org
-To: Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Stephen Boyd <sboyd@codeaurora.org>
 
-On Fri, Jan 30, 2015 at 11:27 AM, Stanimir Varbanov
-<svarbanov@mm-sol.com> wrote:
+On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
+<o.schinagl@ultimaker.com> wrote:
 
-> This makes the pinctrl driver to use the generic pinconf
-> interface. Mainly it gives us a way to use debugfs to dump
-> group configurations.
+> From: Olliver Schinagl <oliver@schinagl.nl>
 >
-> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-
-Nice! Looking for Bj=C3=B6rn's review though.
-
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -197,7 +197,6 @@ static int msm_config_reg(struct msm_pinctrl *pct=
-rl,
->                 *mask =3D 1;
->                 break;
->         default:
-> -               dev_err(pctrl->dev, "Invalid config param %04x\n", pa=
-ram);
->                 return -ENOTSUPP;
->         }
+> gpiolib uses a fixed string for the suffixes and defines it at 32 bytes.
+> Later in the code snprintf is used with this fixed value of 32. Using
+> sizeof() is safer in case the size for the suffixes is ever changed.
 >
-> @@ -262,8 +261,6 @@ static int msm_config_group_get(struct pinctrl_de=
-v *pctldev,
->                 arg =3D !!(val & BIT(g->in_bit));
->                 break;
->         default:
-> -               dev_err(pctrl->dev, "Unsupported config parameter: %x=
-\n",
-> -                       param);
->                 return -EINVAL;
+> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 
-Please change this one to -ENOTSUPP as well in this patch.
+OK looks nice.
 
-Apart from that it looks good to me.
+Patch applied.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
