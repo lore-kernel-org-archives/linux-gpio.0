@@ -1,70 +1,80 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for v3.19 last take
-Date: Mon, 2 Feb 2015 14:53:38 +0100
-Message-ID: <CACRpkdZCkfNW1XO7BKhHZAERNZ8DjmECsiyAx+KE=1jgcr+MWA@mail.gmail.com>
+From: Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v6 0/2] gpio: add GPIO hogging mechanism
+Date: Mon, 2 Feb 2015 11:44:43 -0600
+Message-ID: <1422899085-678-1-git-send-email-bparrot@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:39091 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754233AbbBBNxk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Feb 2015 08:53:40 -0500
-Received: by mail-ob0-f176.google.com with SMTP id wo20so7971089obc.7
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Feb 2015 05:53:39 -0800 (PST)
+Received: from devils.ext.ti.com ([198.47.26.153]:43113 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753968AbbBBRpE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Feb 2015 12:45:04 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Sonic Zhang <sonic.adi@gmail.com>, Tony Lindgren <tony@atomide.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>, Benoit Parrot <bparrot@ti.com>
 
-Hi Linus,
+This patch set re-introduces the gpio hogging concept first 
+presented by Boris Brezillion.
+This patch set provides a way to initially configure specific GPIO
+when the GPIO controller is probed.
 
-there is a high bug-spot activity in GPIO this merge window, much
-due to Johan Hovolds spearheading into actually exercising the
-removal path for GPIO chips, something that was never really
-exercised before.
+The actual DT scanning to collect the GPIO specific data is performed
+as part of of_gpiochip_add().
 
-The other two fixes are augmenting erroneous behaviours in two
-specific drivers for minor systems.
+The purpose of this is to allow specific GPIOs to be configured
+without any driver specific code.
+This is particularly useful because board design are getting
+increasingly complex and given SoC pins can now have more
+than 10 mux values a lot of connections are now dependent on
+external IO muxes to switch various modes.
 
-I know it's late, but please pull this in for v3.19.
+Specific drivers should not necessarily need to be aware of
+what accounts to a specific board implementation. This board level
+"description" should be best kept as part of the dts file.
 
-Yours,
-Linus Walleij
+Changes since v5:
+ * Addressed review comment from Linus Walleij
+ * Replace "state" property back with separate boolean properties
+ * Renamed helper function
+ * Refactored pr_* calls to remove "__func__"
 
-The following changes since commit 26bc420b59a38e4e6685a73345a0def461136dce:
+Changes since v4:
+ * Addressed review comments from Alexandre Courbot
 
-  Linux 3.19-rc6 (2015-01-25 20:04:41 -0800)
+Changes since v3:
+ * Relocated the non-DT "hog" function to gpiolib.c.
+ * Rename some of the function to be clearer and remove _ prefixes.
+ * Replace the gpiod_request/gpiod_put usage with
+   gpiochip_request_own_desc/free_own_desc version instead.
+ * Refactor some of the logic to better handle error condition/reporting
+ * Renamed the "direction" DT properties to "state".
 
-are available in the git repository at:
+Changes since v2:
+ * Refactor the gpio-hog mechanism to split the DT related action
+   from the actual "hogging" operation.
+ * This allows non-DT providers to implement hogs as well.
+ * Added FLAG_IS_HOGGED to mark hogged gpio and make gpiochip removal
+   able to release hogged gpio.
+ * Similarly to the hogging, the cleanup is performed as part of
+   of_gpiochip_remove
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v3.19-5
+Changes since v1:
+ * Split the devicetree bindings documentation in its own patch.
+ * Refactor the gpio-hog mechanism as private functions meant to
+   be to invoked from of_gpiochip_add().
 
-for you to fetch changes up to 49d2ca84e433dab854c7a866bc6add09cfab682d:
 
-  gpio: sysfs: fix memory leak in gpiod_sysfs_set_active_low
-(2015-01-30 10:29:33 +0100)
+Benoit Parrot (2):
+  gpio: add GPIO hogging mechanism
+  gpio: Document GPIO hogging mechanism
 
-----------------------------------------------------------------
-Yet more GPIO fixes for the v3.19 series:
-- Two fixes stabilizing that which was never stable before:
-  removal of GPIO chips, now let's stop leaking memory.
-- Make sure OMAP IRQs are usable when the irqchip API
-  is used orthogonally to the gpiochip API.
-- Provide a default GPIO base for the mcp23s08 driver.
+ Documentation/devicetree/bindings/gpio/gpio.txt |  30 ++++++
+ drivers/gpio/gpiolib-of.c                       | 111 +++++++++++++++++++++
+ drivers/gpio/gpiolib.c                          | 124 ++++++++++++++++++++----
+ drivers/gpio/gpiolib.h                          |   3 +
+ 4 files changed, 249 insertions(+), 19 deletions(-)
 
-----------------------------------------------------------------
-Johan Hovold (2):
-      gpio: sysfs: fix memory leak in gpiod_export_link
-      gpio: sysfs: fix memory leak in gpiod_sysfs_set_active_low
+-- 
+1.8.5.1
 
-Sonic Zhang (1):
-      gpio: mcp23s08: handle default gpio base
-
-Tony Lindgren (1):
-      gpio: omap: Fix bad device access with setup_irq()
-
- drivers/gpio/gpio-mcp23s08.c | 17 ++++++++++-------
- drivers/gpio/gpio-omap.c     | 39 +++++++++++++++++++++++++++++++++------
- drivers/gpio/gpiolib-sysfs.c |  3 ++-
- 3 files changed, 45 insertions(+), 14 deletions(-)
