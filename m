@@ -1,85 +1,70 @@
-From: folkert <folkert@vanheusden.com>
-Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
-Date: Sat, 31 Jan 2015 14:53:53 +0100
-Message-ID: <20150131135353.GB21469@belle.intranet.vanheusden.com>
-References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
- <20150130234552.GA20407@sysresccd>
- <20150131083300.GZ21469@belle.intranet.vanheusden.com>
- <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v3.19 last take
+Date: Mon, 2 Feb 2015 14:53:38 +0100
+Message-ID: <CACRpkdZCkfNW1XO7BKhHZAERNZ8DjmECsiyAx+KE=1jgcr+MWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from keetweej.vanheusden.com ([80.101.105.103]:51803 "EHLO
-	keetweej.vanheusden.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751939AbbAaNxz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 31 Jan 2015 08:53:55 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:39091 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754233AbbBBNxk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Feb 2015 08:53:40 -0500
+Received: by mail-ob0-f176.google.com with SMTP id wo20so7971089obc.7
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Feb 2015 05:53:39 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michael Welling <mwelling@ieee.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Sonic Zhang <sonic.adi@gmail.com>, Tony Lindgren <tony@atomide.com>
 
-> >> > For timekeeping I wrote a program which waits for interrupts on
-> >> > gpio-pins and then tells the local ntp daemon the clock offset.
-> >> > I'm aware of the pps support in recent kernel but that does not work
-> >> > (yet) on all platforms (eg cubieboard 1).
-> >> >
-> >> > This has worked for quite some time but no longer.
-> >> >
-> >> > Until at least kernel 3.12 I could do:
-> >> >
-> >> > // export gpio pin
-> >> > // set direction to in
-> >> > // set direction to rising
-> >> > int fd = open("/sys.../value", O_RDONLY);
-> >> > fdset[0].fd = fd;
-> >> > fdset[0].events = POLLPRI;
-> >> > fdset[0].revents = 0;
-> >> > poll(fdset, 1, -1);
-> >> > // at this point pin went high
-> >>
-> >> Try using lseek before reading the data after the poll.
-> >>
-> >> EX.
-> >>       if (fdset[0].revents & POLLPRI) {
-> >>               lseek(fdset[0].fd, 0, SEEK_SET);
-> >>               len = read(fdset[0].fd, buf, MAX_BUF);
-> >>               .
-> >>               .
-> >>       }
-> >>
-> >> See if this helps.
-> >
-> > Yes, that fixed it!
-> 
-> Still, shouldn't we consider this as a regression, especially if not
-> using lseek worked for kernel 3.12 and before?
-> 
-> Linus, what do you think?
+Hi Linus,
 
-In case it is relevant, my code with 3.12 was:
+there is a high bug-spot activity in GPIO this merge window, much
+due to Johan Hovolds spearheading into actually exercising the
+removal path for GPIO chips, something that was never really
+exercised before.
 
-	for(;;)
-        {
-                  char dummy;
-  
-                  read(gpio_pps_in_fd, &dummy, 1);
-  
-                  fdset[0].fd = gpio_pps_in_fd;
-                  fdset[0].events = POLLPRI;
-                  fdset[0].revents = 0;
-  
-                  if (poll(fdset, 1, -1) <= 0)
-                          error_exit("poll() failed");
-  
-                  if (likely(fdset[0].revents & POLLPRI))
-		  { /* notify ntp */ {
-	}
+The other two fixes are augmenting erroneous behaviours in two
+specific drivers for minor systems.
 
-Now with 3.18 I added an lseek before that read and all is fine.
+I know it's late, but please pull this in for v3.19.
 
+Yours,
+Linus Walleij
 
-Folkert van Heusden
+The following changes since commit 26bc420b59a38e4e6685a73345a0def461136dce:
 
--- 
+  Linux 3.19-rc6 (2015-01-25 20:04:41 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.19-5
+
+for you to fetch changes up to 49d2ca84e433dab854c7a866bc6add09cfab682d:
+
+  gpio: sysfs: fix memory leak in gpiod_sysfs_set_active_low
+(2015-01-30 10:29:33 +0100)
+
+----------------------------------------------------------------
+Yet more GPIO fixes for the v3.19 series:
+- Two fixes stabilizing that which was never stable before:
+  removal of GPIO chips, now let's stop leaking memory.
+- Make sure OMAP IRQs are usable when the irqchip API
+  is used orthogonally to the gpiochip API.
+- Provide a default GPIO base for the mcp23s08 driver.
+
+----------------------------------------------------------------
+Johan Hovold (2):
+      gpio: sysfs: fix memory leak in gpiod_export_link
+      gpio: sysfs: fix memory leak in gpiod_sysfs_set_active_low
+
+Sonic Zhang (1):
+      gpio: mcp23s08: handle default gpio base
+
+Tony Lindgren (1):
+      gpio: omap: Fix bad device access with setup_irq()
+
+ drivers/gpio/gpio-mcp23s08.c | 17 ++++++++++-------
+ drivers/gpio/gpio-omap.c     | 39 +++++++++++++++++++++++++++++++++------
+ drivers/gpio/gpiolib-sysfs.c |  3 ++-
+ 3 files changed, 45 insertions(+), 14 deletions(-)
