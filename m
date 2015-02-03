@@ -1,72 +1,63 @@
-From: Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v6 2/2] gpio: Document GPIO hogging mechanism
-Date: Mon, 2 Feb 2015 11:44:45 -0600
-Message-ID: <1422899085-678-3-git-send-email-bparrot@ti.com>
-References: <1422899085-678-1-git-send-email-bparrot@ti.com>
+From: Ray Jui <rjui@broadcom.com>
+Subject: [PATCH v3 0/4] Add pinctrl support to Broadcom Cygnus SoC
+Date: Mon, 2 Feb 2015 18:01:30 -0800
+Message-ID: <1422928894-20716-1-git-send-email-rjui@broadcom.com>
+References: <Ray Jui <rjui@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422899085-678-1-git-send-email-bparrot@ti.com>
+In-Reply-To: <Ray Jui <rjui@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>, Benoit Parrot <bparrot@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>
+Cc: Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, Ray Jui <rjui@broadcom.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Add GPIO hogging documentation to gpio.txt
+This patchset contains the initial pinctrl (IOMUX) support for the Broadcom
+Cygnus SoC. The Cygnus IOMUX controller supports group based mux configuration
+and allows certain pins to be muxed to GPIO function individually
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
----
- Documentation/devicetree/bindings/gpio/gpio.txt | 30 +++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Changes from v2:
+ - Consolidate all Broadcom pinctrl drivers into drivers/pinctrl/bcm/*
+ - Change the Cygnus IOMUX driver to use standard Linux pinctrl subnode
+properties such as "function" and "groups" for pinmux configuration, instead
+of non-standard properties such as "brcm,function" and "brcm,group"
+ - Use real function names like "spi0", "lcd", "key", and etc. instead of HW
+specific mux names like "alt1", "alt2", "alt3", and etc.
+ - Add suffix "grp" to all group names
+ - Add support to allow individual pins to be muxed to GPIO function through
+subsystem callbacks "gpio_request_enable" and "gpio_disable_free", and get rid
+of all GPIO groups
+ - Other minor improvements in the driver
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index b9bd1d6..a0ce2bd 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -115,6 +115,29 @@ Every GPIO controller node must contain both an empty "gpio-controller"
- property, and a #gpio-cells integer property, which indicates the number of
- cells in a gpio-specifier.
- 
-+The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
-+providing automatic GPIO request and configuration as part of the
-+gpio-controller's driver probe function.
-+
-+Each GPIO hog definition is represented as a child node of the GPIO controller.
-+Required properties:
-+- gpio-hog:   A property specifying that this child node represent a GPIO hog.
-+- gpios:      Store the GPIO information (id, flags, ...). Shall contain the
-+	      number of cells specified in its parent node (GPIO controller
-+	      node).
-+Only one of the following properties scanned in the order shown below.
-+This means that when multiple properties are present they will be searched
-+in the order presented below and the first match is taken as the intended
-+configuration.
-+- input:      A property specifying to set the GPIO direction as input.
-+- output-low  A property specifying to set the GPIO direction as output with
-+	      the value low.
-+- output-high A property specifying to set the GPIO direction as output with
-+	      the value high.
-+
-+Optional properties:
-+- line-name:  The GPIO label name. If not present the node name is used.
-+
- Example of two SOC GPIO banks defined as gpio-controller nodes:
- 
- 	qe_pio_a: gpio-controller@1400 {
-@@ -122,6 +145,13 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
- 		reg = <0x1400 0x18>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+
-+		line_b {
-+			gpio-hog;
-+			gpios = <6 0>;
-+			output-low;
-+			line-name = "foo-bar-gpio";
-+		};
- 	};
- 
- 	qe_pio_e: gpio-controller@1460 {
+Changes from v1:
+ - Fix a typo in device tree binding document
+
+Ray Jui (4):
+  pinctrl: bcm: consolidate Broadcom pinctrl drivers
+  pinctrl: Broadcom Cygnus pinctrl device tree binding
+  pinctrl: cygnus: add initial IOMUX driver support
+  ARM: dts: enable IOMUX for Broadcom Cygnus
+
+ .../bindings/pinctrl/brcm,cygnus-pinmux.txt        |  159 +++
+ arch/arm/boot/dts/bcm-cygnus.dtsi                  |    6 +
+ drivers/pinctrl/Kconfig                            |   19 +-
+ drivers/pinctrl/Makefile                           |    4 +-
+ drivers/pinctrl/bcm/Kconfig                        |   34 +
+ drivers/pinctrl/bcm/Makefile                       |    5 +
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c             | 1455 ++++++++++++++++++++
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c              | 1072 ++++++++++++++
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c           | 1087 +++++++++++++++
+ drivers/pinctrl/pinctrl-bcm281xx.c                 | 1455 --------------------
+ drivers/pinctrl/pinctrl-bcm2835.c                  | 1072 --------------
+ 11 files changed, 3821 insertions(+), 2547 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinmux.txt
+ create mode 100644 drivers/pinctrl/bcm/Kconfig
+ create mode 100644 drivers/pinctrl/bcm/Makefile
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm2835.c
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
+ delete mode 100644 drivers/pinctrl/pinctrl-bcm281xx.c
+ delete mode 100644 drivers/pinctrl/pinctrl-bcm2835.c
+
 -- 
-1.8.5.1
+1.7.9.5
