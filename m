@@ -1,196 +1,1235 @@
-From: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH v3 2/4] pinctrl: Broadcom Cygnus pinctrl device tree binding
-Date: Mon, 2 Feb 2015 18:01:32 -0800
-Message-ID: <1422928894-20716-3-git-send-email-rjui@broadcom.com>
-References: <Ray Jui <rjui@broadcom.com>
- <1422928894-20716-1-git-send-email-rjui@broadcom.com>
+From: Ken Xue <Ken.Xue@amd.com>
+Subject: pinctrl: add AMD GPIO driver support.
+Date: Tue, 3 Feb 2015 15:49:48 +0800
+Message-ID: <1422949788.18208.4.camel@kxue-X58A-UD3R>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1422928894-20716-1-git-send-email-rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Dmitry Torokhov <dtor-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Anatol Pomazau <anatol-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bn1on0141.outbound.protection.outlook.com ([157.56.110.141]:61370
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753605AbbBCIQk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 3 Feb 2015 03:16:40 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org
 
-Device tree binding documentation for Broadcom Cygnus IOMUX driver
+>From 5b3a2d45214ae263f7ca284291ef3fc2577f19f7 Mon Sep 17 00:00:00 2001
+From: Ken Xue <Ken.Xue@amd.com>
+Date: Tue, 3 Feb 2015 15:42:17 +0800
+Subject: [PATCH] pinctrl: add AMD GPIO driver support.
 
-Signed-off-by: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Reviewed-by: Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+KERNCZ GPIO is a new IP from AMD. it can be implemented in both x86 and ARM.
+Current driver patch only support GPIO in x86.
+
+Signed-off-by: Ken Xue <Ken.Xue@amd.com>
 ---
- .../bindings/pinctrl/brcm,cygnus-pinmux.txt        |  159 ++++++++++++++++++++
- 1 file changed, 159 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinmux.txt
+ drivers/pinctrl/Kconfig       |  15 +
+ drivers/pinctrl/Makefile      |   1 +
+ drivers/pinctrl/pinctrl-amd.c | 875 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-amd.h | 269 +++++++++++++
+ 4 files changed, 1160 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-amd.c
+ create mode 100644 drivers/pinctrl/pinctrl-amd.h
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinmux.txt
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index d014f22..2210dcf 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -67,6 +67,21 @@ config PINCTRL_AT91
+ 	help
+ 	  Say Y here to enable the at91 pinctrl driver
+ 
++config PINCTRL_AMD
++        bool "AMD GPIO pin control"
++        depends on GPIOLIB
++        select IRQ_DOMAIN
++        select PINCONF
++        select GENERIC_PINCONF
++        help
++          driver for memory mapped GPIO functionality on AMD platforms
++          (x86 or arm).Most pins are usually muxed to some other
++          functionality by firmware,so only a small amount is available
++          for GPIO use.
++
++          Requires ACPI/FDT device enumeration code to set up a platform
++          device.
++
+ config PINCTRL_BCM2835
+ 	bool
+ 	select PINMUX
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index c030b3d..cf493c0 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_PINCTRL_AS3722)	+= pinctrl-as3722.o
+ obj-$(CONFIG_PINCTRL_BF54x)	+= pinctrl-adi2-bf54x.o
+ obj-$(CONFIG_PINCTRL_BF60x)	+= pinctrl-adi2-bf60x.o
+ obj-$(CONFIG_PINCTRL_AT91)	+= pinctrl-at91.o
++obj-$(CONFIG_PINCTRL_AMD)      += pinctrl-amd.o
+ obj-$(CONFIG_PINCTRL_BCM2835)	+= pinctrl-bcm2835.o
+ obj-$(CONFIG_PINCTRL_BCM281XX)	+= pinctrl-bcm281xx.o
+ obj-$(CONFIG_PINCTRL_FALCON)	+= pinctrl-falcon.o
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
 new file mode 100644
-index 0000000..1082b8b
+index 0000000..3e236e1
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinmux.txt
-@@ -0,0 +1,159 @@
-+Broadcom Cygnus IOMUX Controller
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -0,0 +1,875 @@
++/*
++ * GPIO driver for AMD
++ *
++ * Copyright (c) 2014,2015 Ken Xue <Ken.Xue@amd.com>
++ *				Jeff Wu <Jeff.Wu@amd.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ */
 +
-+The Cygnus IOMUX controller supports group based mux configuration. In
-+addition, certain pins can be muxed to GPIO function individually.
++#include <linux/err.h>
++#include <linux/bug.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/spinlock.h>
++#include <linux/compiler.h>
++#include <linux/types.h>
++#include <linux/errno.h>
++#include <linux/log2.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/irqchip/chained_irq.h>
++#include <linux/irqdomain.h>
++#include <linux/gpio.h>
++#include <linux/slab.h>
++#include <linux/platform_device.h>
++#include <linux/mutex.h>
++#include <linux/acpi.h>
++#include <linux/seq_file.h>
++#include <linux/interrupt.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/list.h>
++#include "pinctrl-utils.h"
++#include "pinctrl-amd.h"
 +
-+Required properties:
++static int amd_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
++{
++	int ret = 0;
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = container_of(gc, struct amd_gpio, gc);
 +
-+- compatible:
-+    Must be "brcm,cygnus-pinmux"
-+
-+- reg:
-+    Define the base and range of the I/O address space that contains the Cygnus
-+IOMUX registers
-+
-+Required properties in child nodes:
-+
-+- function:
-+    The mux function to select
-+
-+- groups:
-+    The list of groups to select with a given function
-+
-+Each child node represents a configuration. Client devices reference the child
-+node to enable a mux configuration
-+
-+For more details, refer to
-+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+
-+For example:
-+
-+	pinmux: pinmux@0x0301d0c8 {
-+		compatible = "brcm,cygnus-pinmux";
-+		reg = <0x0301d0c8 0x1b0>;
-+
-+		i2s_0: i2s_0 {
-+			function = "i2s0";
-+			groups = "i2s0_0_grp", "i2s0_1_grp";
-+		};
-+
-+		i2s_1: i2s_1 {
-+			function = "i2s1";
-+			groups = "i2s1_0_grp", "i2s1_1_grp";
-+		};
-+
-+		i2s_2: i2s_2 {
-+			function = "i2s2";
-+			groups = "i2s2_0_grp", "i2s2_1_grp", "i2s2_2_grp",
-+				 "i2s2_3_grp", "i2s2_4_grp";
-+		};
-+
-+		spi_0: spi_0 {
-+			function = "spi0";
-+			groups = "spi0_grp";
-+		};
++	if (offset >= gpio_dev->gc.ngpio) {
++		dev_err(&gpio_dev->pdev->dev, "offset(%d) > ngpio\n", offset);
++		ret = -EINVAL;
++		goto exit;
 +	}
 +
-+	spi0@18028000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x18028000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&spi_0>;
-+			clocks = <&axi81_clk>;
-+			clock-names = "apb_pclk";
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + offset * 4);
++	/*
++		Suppose BIOS or Bootloader sets specific debounce for the
++		GPIO. if not, set debounce to be  2.75ms and remove glitch.
++	*/
++	if (pin.debounce_tmr_out == 0) {
++		pin.debounce_tmr_out = 0xf;
++		pin.debounce_tmr_out_unit = 1;
++		pin.debounce_tmr_large = 0;
++		pin.debounce_cntrl = DEBOUNCE_TYPE_REMOVE_GLITCH;
++	}
++
++	pin.output_enable = 0;
++	writel(pin.reg_u32, gpio_dev->base + offset * 4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++exit:
++	return ret;
++}
++
++static int amd_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
++		int value)
++{
++	int ret = 0;
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = container_of(gc, struct amd_gpio, gc);
++
++	if (offset >= gpio_dev->gc.ngpio) {
++		dev_err(&gpio_dev->pdev->dev, "offset(%d) > ngpio\n", offset);
++		ret = -EINVAL;
++		goto exit;
++	}
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++
++	pin.reg_u32 = readl(gpio_dev->base + offset * 4);
++	pin.output_enable = 1;
++	pin.output_value = !!value;
++	writel(pin.reg_u32, gpio_dev->base + offset * 4);
++
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++exit:
++	return ret;
++}
++
++static int amd_gpio_get_value(struct gpio_chip *gc, unsigned offset)
++{
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = container_of(gc, struct amd_gpio, gc);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + offset * 4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++	return pin.pin_sts;
++}
++
++static void amd_gpio_set_value(struct gpio_chip *gc, unsigned offset, int value)
++{
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = container_of(gc, struct amd_gpio, gc);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + offset * 4);
++	pin.output_value = !!value;
++	writel(pin.reg_u32, gpio_dev->base + offset * 4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++}
++
++static int amd_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
++{
++	unsigned int  ret;
++	struct amd_gpio *gpio_dev = container_of(gc, struct amd_gpio, gc);
++
++	ret = irq_create_mapping(gpio_dev->domain, offset);
++
++	return ret;
++}
++
++static int amd_gpio_set_debounce(struct gpio_chip *gc, unsigned offset,
++		unsigned debounce)
++{
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = container_of(gc, struct amd_gpio, gc);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + offset * 4);
++
++	if (debounce) {
++		pin.debounce_cntrl = DEBOUNCE_TYPE_REMOVE_GLITCH;
++		/*
++		Debounce	Debounce	Timer	Max
++		TmrLarge	TmrOutUnit	Unit	Debounce
++							Time
++		0	0	61 usec (2 RtcClk)	976 usec
++		0	1	244 usec (8 RtcClk)	3.9 msec
++		1	0	15.6 msec (512 RtcClk)	250 msec
++		1	1	62.5 msec (2048 RtcClk)	1 sec
++		*/
++
++		if (debounce < 61) {
++			pin.debounce_tmr_out = 1;
++			pin.debounce_tmr_out_unit = 0;
++			pin.debounce_tmr_large = 0;
++		} else if (debounce < 976) {
++			pin.debounce_tmr_out = debounce / 61;
++			pin.debounce_tmr_out_unit = 0;
++			pin.debounce_tmr_large = 0;
++		} else if (debounce < 3900) {
++			pin.debounce_tmr_out = debounce / 244;
++			pin.debounce_tmr_out_unit = 1;
++			pin.debounce_tmr_large = 0;
++		} else if (debounce < 250000) {
++			pin.debounce_tmr_out = debounce / 15600;
++			pin.debounce_tmr_out_unit = 0;
++			pin.debounce_tmr_large = 1;
++		} else if (debounce < 1000000) {
++			pin.debounce_tmr_out = debounce / 62500;
++			pin.debounce_tmr_out_unit = 1;
++			pin.debounce_tmr_large = 1;
++		} else {
++			pin.debounce_cntrl = DEBOUNCE_TYPE_NO_DEBOUNCE;
++			return -EINVAL;
++		}
++	} else {
++		pin.debounce_tmr_out_unit = 0;
++		pin.debounce_tmr_large = 0;
++		pin.debounce_tmr_out = 0;
++		pin.debounce_cntrl = DEBOUNCE_TYPE_NO_DEBOUNCE;
++	}
++	writel(pin.reg_u32, gpio_dev->base + offset * 4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++	return 0;
++}
++
++#ifdef CONFIG_DEBUG_FS
++static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
++{
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	unsigned int bank, i, pin_count;
++	struct amd_gpio *gpio_dev = container_of(gc, struct amd_gpio, gc);
++
++	const char *level_trig = "Edge trigger ";
++	const char *active_level = "Active high ";
++	const char *interrupt_enable0 = " ";
++	const char *interrupt_enable1 = " ";
++	const char *wake_cntrl0 = " ";
++	const char *wake_cntrl1 = " ";
++	const char *wake_cntrl2 = " ";
++	const char *pin_sts = "Pin is low ";
++	const char *pull_up_sel = "4k pull-up ";
++	const char *pull_up_enable = "Pull-up is disabled ";
++	const char *pull_down_enable = "Pull-down is disabled ";
++	const char *output_value = "Output value low ";
++	const char *output_enable = "Output is disabled ";
++	const char *sw_cntrl_en = "Disabled SW controlled GPIO in ";
++
++	for (bank = 0; bank < AMD_GPIO_TOTAL_BANKS; bank++) {
++		seq_printf(s, "GPIO bank%d\t", bank);
++
++		switch (bank) {
++		case 0:
++			pin_count = AMD_GPIO_PINS_BANK0;
++			break;
++		case 1:
++			pin_count = AMD_GPIO_PINS_BANK1;
++			break;
++		case 2:
++			pin_count = AMD_GPIO_PINS_BANK2;
++			break;
++		}
++
++		for (i = 0; i < pin_count; i++) {
++			seq_printf(s, "pin%d\t", i);
++			spin_lock_irqsave(&gpio_dev->lock, flags);
++			pin.reg_u32 = readl(gpio_dev->base + i * 4);
++			spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++			if (pin.level_trig & BIT(0))
++				level_trig = "Level trigger ";
++
++			if (pin.active_level & BIT(0))
++				active_level = "Active low ";
++			else if (pin.active_level & BIT(1))
++				active_level = "Active on both ";
++			else
++				active_level = "";
++
++			if (pin.interrupt_enable)
++				interrupt_enable0 =
++					"Enable interrupt status ";
++			else if (pin.interrupt_mask)
++				interrupt_enable1 =
++					"Enable interrupt delivery ";
++			else {
++				interrupt_enable0 = "";
++				interrupt_enable1 = "";
++			}
++
++			if (pin.wake_cntrl & BIT(0))
++				wake_cntrl0 = "Enable wake in S0i3 state ";
++			else if (pin.wake_cntrl & BIT(1))
++				wake_cntrl1 = "Enable wake in S3 state ";
++			else if (pin.wake_cntrl & BIT(2))
++				wake_cntrl2 = "Enable wake in S4/S5 state ";
++			else {
++				wake_cntrl0 = "";
++				wake_cntrl1 = "";
++				wake_cntrl2 = "";
++			}
++
++			if (pin.pin_sts & BIT(0))
++				pin_sts = "Pin is high ";
++
++			if (pin.pull_up_sel & BIT(0))
++				pull_up_sel = "8k pull-up ";
++
++			if (pin.pull_up_enable & BIT(0))
++				pull_up_enable = "pull-up is enabled ";
++
++			if (pin.pull_down_enable & BIT(0))
++				pull_down_enable = "pull-down is enabled ";
++
++			if (pin.output_value & BIT(0))
++				output_value = "output value high ";
++
++			if (pin.output_enable & BIT(0))
++				output_enable = "output is enabled ";
++
++			if (pin.sw_cntrl_en & BIT(0))
++				sw_cntrl_en = "Enable SW controlled GPIO in ";
++
++			seq_printf(s, "%s %s %s %s %s %s\n"
++				" %s %s %s %s %s %s %s %s\n",
++				level_trig, active_level, interrupt_enable0,
++				interrupt_enable1, wake_cntrl0, wake_cntrl1,
++				wake_cntrl2, pin_sts, pull_up_sel,
++				pull_up_enable, pull_down_enable,
++				output_value, output_enable, sw_cntrl_en);
++		}
++	}
++}
++#else
++#define amd_gpio_dbg_show NULL
++#endif
++
++static void amd_gpio_irq_enable(struct irq_data *d)
++{
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = irq_data_get_irq_chip_data(d);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + (d->hwirq)*4);
++	/*
++		Suppose BIOS or Bootloader sets specific debounce for the
++		GPIO. if not, set debounce to be  2.75ms.
++	*/
++	if (pin.debounce_tmr_out == 0) {
++		pin.debounce_tmr_out = 0xf;
++		pin.debounce_tmr_out_unit = 1;
++		pin.debounce_tmr_large = 0;
++	}
++	pin.interrupt_enable = ENABLE_INTERRUPT;
++	pin.interrupt_mask = DISABLE_INTERRUPT_MASK;
++	writel(pin.reg_u32, gpio_dev->base + (d->hwirq)*4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++}
++
++static void amd_gpio_irq_disable(struct irq_data *d)
++{
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = irq_data_get_irq_chip_data(d);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + (d->hwirq)*4);
++	pin.interrupt_enable = DISABLE_INTERRUPT;
++	pin.interrupt_mask =  ENABLE_INTERRUPT_MASK;
++	writel(pin.reg_u32, gpio_dev->base + (d->hwirq)*4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++}
++
++static void amd_gpio_irq_mask(struct irq_data *d)
++{
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = irq_data_get_irq_chip_data(d);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + (d->hwirq)*4);
++	pin.interrupt_mask =  ENABLE_INTERRUPT_MASK;
++	writel(pin.reg_u32, gpio_dev->base + (d->hwirq)*4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++}
++
++static void amd_gpio_irq_unmask(struct irq_data *d)
++{
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = irq_data_get_irq_chip_data(d);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + (d->hwirq)*4);
++	pin.interrupt_mask = DISABLE_INTERRUPT_MASK;
++	writel(pin.reg_u32, gpio_dev->base + (d->hwirq)*4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++}
++
++static void amd_gpio_irq_eoi(struct irq_data *d)
++{
++	u32 reg;
++	unsigned long flags;
++	struct amd_gpio *gpio_dev = irq_data_get_irq_chip_data(d);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	reg = readl(gpio_dev->base + WAKE_INT_MASTER_REG);
++	reg |= EOI_MASK;
++	writel(reg, gpio_dev->base + WAKE_INT_MASTER_REG);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++}
++
++static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
++{
++	int ret = 0;
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct amd_gpio *gpio_dev = irq_data_get_irq_chip_data(d);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin.reg_u32 = readl(gpio_dev->base + (d->hwirq)*4);
++
++	switch (type & IRQ_TYPE_SENSE_MASK) {
++	case IRQ_TYPE_EDGE_RISING:
++		pin.level_trig = EDGE_TRAGGER;
++		pin.active_level = ACTIVE_HIGH;
++		pin.debounce_cntrl = DEBOUNCE_TYPE_REMOVE_GLITCH;
++		__irq_set_handler_locked(d->irq, handle_edge_irq);
++		break;
++
++	case IRQ_TYPE_EDGE_FALLING:
++		pin.level_trig = EDGE_TRAGGER;
++		pin.active_level = ACTIVE_LOW;
++		pin.debounce_cntrl = DEBOUNCE_TYPE_REMOVE_GLITCH;
++		__irq_set_handler_locked(d->irq, handle_edge_irq);
++		break;
++
++	case IRQ_TYPE_EDGE_BOTH:
++		pin.level_trig = EDGE_TRAGGER;
++		pin.active_level = BOTH_EADGE;
++		pin.debounce_cntrl = DEBOUNCE_TYPE_REMOVE_GLITCH;
++		__irq_set_handler_locked(d->irq, handle_edge_irq);
++		break;
++
++	case IRQ_TYPE_LEVEL_HIGH:
++		pin.level_trig = LEVEL_TRIGGER;
++		pin.active_level = ACTIVE_HIGH;
++		pin.debounce_cntrl = DEBOUNCE_TYPE_PRESERVE_LOW_GLITCH;
++		__irq_set_handler_locked(d->irq, handle_level_irq);
++		break;
++
++	case IRQ_TYPE_LEVEL_LOW:
++		pin.level_trig = LEVEL_TRIGGER;
++		pin.active_level = ACTIVE_LOW;
++		pin.debounce_cntrl = DEBOUNCE_TYPE_PRESERVE_HIGH_GLITCH;
++		__irq_set_handler_locked(d->irq, handle_level_irq);
++		break;
++
++	case IRQ_TYPE_NONE:
++		break;
++
++	default:
++		dev_err(&gpio_dev->pdev->dev, "Invalid type value\n");
++		ret = -EINVAL;
++		goto exit;
++	}
++
++	pin.interrupt_sts = CLR_INTR_STAT;
++	writel(pin.reg_u32, gpio_dev->base + (d->hwirq)*4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++exit:
++	return ret;
++}
++
++static void amd_irq_ack(struct irq_data *d)
++{
++	/* based on HW design,there is no need to ack HW
++	before handle current irq. But this routine is
++	necessary for handle_edge_irq */
++}
++
++static struct irq_chip amd_gpio_irqchip = {
++	.name         = "amd_gpio",
++	.irq_ack      = amd_irq_ack,
++	.irq_enable   = amd_gpio_irq_enable,
++	.irq_disable  = amd_gpio_irq_disable,
++	.irq_mask     = amd_gpio_irq_mask,
++	.irq_unmask   = amd_gpio_irq_unmask,
++	.irq_eoi      = amd_gpio_irq_eoi,
++	.irq_set_type = amd_gpio_irq_set_type,
++};
++
++static void amd_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
++{
++	u32 reg;
++	int handled = 0;
++	unsigned long flags;
++	union gpio_pin_reg pin;
++	struct list_head *pos, *nx;
++	struct amd_gpio_irq_pin *irq_pin;
++	struct irq_chip *chip = irq_get_chip(irq);
++	struct amd_gpio *gpio_dev = irq_desc_get_handler_data(desc);
++
++	chained_irq_enter(chip, desc);
++	/*enable GPIO interrupt again*/
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	reg = readl(gpio_dev->base + WAKE_INT_MASTER_REG);
++	reg |= EOI_MASK;
++	writel(reg, gpio_dev->base + WAKE_INT_MASTER_REG);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++	list_for_each_safe(pos, nx, &gpio_dev->irq_list) {
++		irq_pin = list_entry(pos, struct amd_gpio_irq_pin, list);
++		pin.reg_u32 = readl(gpio_dev->base + irq_pin->pin_num * 4);
++		if (pin.interrupt_sts || pin.wake_sts) {
++			irq = irq_find_mapping(gpio_dev->domain,
++						irq_pin->pin_num);
++			generic_handle_irq(irq);
++			writel(pin.reg_u32,
++				gpio_dev->base + irq_pin->pin_num * 4);
++			handled++;
++		}
++	}
++
++	/* No interrupts were flagged.
++	* there are two cases for bad irq.
++	* 1. pin_X interrupt sts is set during handling another pin's irq.
++	* then bad irq will be reported, when handle pin_X interrupt. But
++	* it is acceptable, beacuse pin_X interrupt was already handled
++	* correctlly during privous amd_gpio_irq_handler.
++	* 2. GPIO interrupt pin is not listed in irq_list. Maybe a issue.
++	*/
++	if (handled == 0)
++		handle_bad_irq(irq, desc);
++
++	chained_irq_exit(chip, desc);
++}
++
++static int amd_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
++
++	return gpio_dev->ngroups;
++}
++
++static const char *amd_get_group_name(struct pinctrl_dev *pctldev,
++				      unsigned group)
++{
++	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
++
++	return gpio_dev->groups[group].name;
++}
++
++static int amd_get_group_pins(struct pinctrl_dev *pctldev,
++			      unsigned group,
++			      const unsigned **pins,
++			      unsigned *num_pins)
++{
++	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
++
++	*pins = gpio_dev->groups[group].pins;
++	*num_pins = gpio_dev->groups[group].npins;
++	return 0;
++}
++
++static const struct pinctrl_ops amd_pinctrl_ops = {
++	.get_groups_count	= amd_get_groups_count,
++	.get_group_name		= amd_get_group_name,
++	.get_group_pins		= amd_get_group_pins,
++#ifdef CONFIG_OF
++	.dt_node_to_map		= pinconf_generic_dt_node_to_map_group,
++	.dt_free_map		= pinctrl_utils_dt_free_map,
++#endif
++};
++
++static int amd_pinconf_get(struct pinctrl_dev *pctldev,
++			  unsigned int pin,
++			  unsigned long *config)
++{
++	unsigned arg;
++	unsigned long flags;
++	union gpio_pin_reg gpio_pin;
++	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
++	enum pin_config_param param = pinconf_to_config_param(*config);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	gpio_pin.reg_u32 = readl(gpio_dev->base + pin*4);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++	switch (param) {
++	case PIN_CONFIG_INPUT_DEBOUNCE:
++		arg = gpio_pin.debounce_tmr_out;
++		break;
++
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		arg = gpio_pin.pull_down_enable;
++		break;
++
++	case PIN_CONFIG_BIAS_PULL_UP:
++		arg = gpio_pin.pull_up_sel | (gpio_pin.pull_up_enable<<1);
++		break;
++
++	case PIN_CONFIG_DRIVE_STRENGTH:
++		arg = gpio_pin.drv_strength_sel;
++		break;
++
++	default:
++		dev_err(&gpio_dev->pdev->dev, "Invalid config param %04x\n",
++			param);
++		return -ENOTSUPP;
++	}
++
++	*config = pinconf_to_config_packed(param, arg);
++
++	return 0;
++}
++
++static int amd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
++				unsigned long *configs, unsigned num_configs)
++{
++	int i;
++	unsigned arg;
++	unsigned long flags;
++	enum pin_config_param param;
++	union gpio_pin_reg gpio_pin;
++	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
++
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++		gpio_pin.reg_u32 = readl(gpio_dev->base + pin*4);
++
++		switch (param) {
++		case PIN_CONFIG_INPUT_DEBOUNCE:
++			gpio_pin.debounce_tmr_out = arg;
++			break;
++
++		case PIN_CONFIG_BIAS_PULL_DOWN:
++			gpio_pin.pull_down_enable = arg;
++			break;
++
++		case PIN_CONFIG_BIAS_PULL_UP:
++			gpio_pin.pull_up_sel = arg & BIT(0);
++			gpio_pin.pull_up_enable = (arg>>1) & BIT(0);
++			break;
++
++		case PIN_CONFIG_DRIVE_STRENGTH:
++			gpio_pin.drv_strength_sel = arg;
++			break;
++
++		default:
++			dev_err(&gpio_dev->pdev->dev,
++				"Invalid config param %04x\n", param);
++			return -ENOTSUPP;
++		}
++
++		writel(gpio_pin.reg_u32, gpio_dev->base + pin*4);
++	}
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++	return 0;
++}
++
++static int amd_pinconf_group_get(struct pinctrl_dev *pctldev,
++				unsigned int group,
++				unsigned long *config)
++{
++	const unsigned *pins;
++	unsigned npins;
++	int i, ret;
++
++	ret = amd_get_group_pins(pctldev, group, &pins, &npins);
++	if (ret)
++		return ret;
++
++	if (amd_pinconf_get(pctldev, pins[0], config))
++			return -ENOTSUPP;
++
++	return 0;
++}
++
++static int amd_pinconf_group_set(struct pinctrl_dev *pctldev,
++				unsigned group, unsigned long *configs,
++				unsigned num_configs)
++{
++	const unsigned *pins;
++	unsigned npins;
++	int i, ret;
++
++	ret = amd_get_group_pins(pctldev, group, &pins, &npins);
++	if (ret)
++		return ret;
++	for (i = 0; i < npins; i++) {
++		if (amd_pinconf_set(pctldev, pins[i], configs, num_configs))
++			return -ENOTSUPP;
++	}
++	return 0;
++}
++
++static const struct pinconf_ops amd_pinconf_ops = {
++	.pin_config_get		= amd_pinconf_get,
++	.pin_config_set		= amd_pinconf_set,
++	.pin_config_group_get = amd_pinconf_group_get,
++	.pin_config_group_set = amd_pinconf_group_set,
++};
++
++static struct pinctrl_desc amd_pinctrl_desc = {
++	.pins	= kerncz_pins,
++	.npins = ARRAY_SIZE(kerncz_pins),
++	.pctlops = &amd_pinctrl_ops,
++	.confops = &amd_pinconf_ops,
++	.owner = THIS_MODULE,
++};
++
++static int amd_gpio_irq_map(struct irq_domain *d, unsigned int virq,
++			    irq_hw_number_t hw)
++{
++	unsigned long flags;
++	struct list_head *pos, *nx;
++	struct amd_gpio_irq_pin *irq_pin;
++	struct amd_gpio *gpio_dev = d->host_data;
++
++	list_for_each_safe(pos, nx, &gpio_dev->irq_list) {
++		irq_pin = list_entry(pos, struct amd_gpio_irq_pin, list);
++		if (irq_pin->pin_num == hw)
++			return 0;
++	}
++
++	irq_pin = devm_kzalloc(&gpio_dev->pdev->dev,
++				sizeof(struct amd_gpio_irq_pin), GFP_KERNEL);
++	irq_pin->pin_num = hw;
++	spin_lock_irqsave(&gpio_dev->lock, flags);
++	list_add_tail(&irq_pin->list, &gpio_dev->irq_list);
++	spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++	irq_set_chip_and_handler_name(virq, &amd_gpio_irqchip,
++					handle_simple_irq, "amdgpio");
++	irq_set_chip_data(virq, gpio_dev);
++
++	return 0;
++}
++
++static void amd_gpio_irq_unmap(struct irq_domain *d, unsigned int virq)
++{
++	unsigned long flags;
++	struct irq_data *data;
++	struct list_head *pos, *nx;
++	struct amd_gpio_irq_pin *irq_pin;
++	struct amd_gpio *gpio_dev = d->host_data;
++
++	data = irq_get_irq_data(virq);
++
++	list_for_each_safe(pos, nx, &gpio_dev->irq_list) {
++		irq_pin = list_entry(pos, struct amd_gpio_irq_pin, list);
++		if (data->hwirq == irq_pin->pin_num) {
++			spin_lock_irqsave(&gpio_dev->lock, flags);
++			list_del(pos);
++			spin_unlock_irqrestore(&gpio_dev->lock, flags);
++			devm_kfree(&gpio_dev->pdev->dev, irq_pin);
++		}
++	}
++}
++
++static const struct irq_domain_ops amd_gpio_irq_ops = {
++	.map = amd_gpio_irq_map,
++	.unmap = amd_gpio_irq_unmap,
++	.xlate = irq_domain_xlate_onetwocell,
++};
++
++static int amd_gpio_probe(struct platform_device *pdev)
++{
++	int ret = 0;
++	struct resource *res;
++	struct amd_gpio *gpio_dev;
++
++	gpio_dev = devm_kzalloc(&pdev->dev,
++				sizeof(struct amd_gpio), GFP_KERNEL);
++	if (!gpio_dev)
++		return -ENOMEM;
++
++	spin_lock_init(&gpio_dev->lock);
++	INIT_LIST_HEAD(&gpio_dev->irq_list);
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		dev_err(&pdev->dev, "Failed to get gpio io resource.\n");
++		return -EINVAL;
++	}
++
++	gpio_dev->base = devm_ioremap_nocache(&pdev->dev, res->start,
++						resource_size(res));
++	if (IS_ERR(gpio_dev->base))
++		return PTR_ERR(gpio_dev->base);
++
++	gpio_dev->irq = platform_get_irq(pdev, 0);
++	if (gpio_dev->irq < 0) {
++		dev_err(&pdev->dev, "Failed to get gpio IRQ.\n");
++		return -EINVAL;
++	}
++
++	gpio_dev->pdev = pdev;
++	gpio_dev->gc.direction_input	= amd_gpio_direction_input;
++	gpio_dev->gc.direction_output	= amd_gpio_direction_output;
++	gpio_dev->gc.get			= amd_gpio_get_value;
++	gpio_dev->gc.set			= amd_gpio_set_value;
++	gpio_dev->gc.set_debounce	= amd_gpio_set_debounce;
++	gpio_dev->gc.to_irq			= amd_gpio_to_irq;
++	gpio_dev->gc.dbg_show		= amd_gpio_dbg_show;
++
++	gpio_dev->gc.base			= 0;
++	gpio_dev->gc.label			= pdev->name;
++	gpio_dev->gc.owner			= THIS_MODULE;
++	gpio_dev->gc.dev			= &pdev->dev;
++	gpio_dev->gc.ngpio			= TOTAL_NUMBER_OF_PINS;
++#if defined(CONFIG_OF_GPIO)
++	gpio_dev->gc.of_node			= pdev->dev.of_node;
++#endif
++
++	gpio_dev->groups = kerncz_groups;
++	gpio_dev->ngroups = ARRAY_SIZE(kerncz_groups);
++
++	amd_pinctrl_desc.name = dev_name(&pdev->dev);
++	gpio_dev->pctrl = pinctrl_register(&amd_pinctrl_desc,
++					&pdev->dev, gpio_dev);
++	if (!gpio_dev->pctrl) {
++		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
++		return -ENODEV;
++	}
++
++	gpio_dev->domain = irq_domain_add_linear(pdev->dev.of_node,
++						TOTAL_NUMBER_OF_PINS,
++					      &amd_gpio_irq_ops, gpio_dev);
++	if (!gpio_dev->domain) {
++		ret = -ENOSYS;
++		dev_err(&pdev->dev, "Failed to register irq domain\n");
++		goto out1;
++	}
++
++	ret = gpiochip_add(&gpio_dev->gc);
++	if (ret)
++		goto out2;
++
++	ret = gpiochip_add_pin_range(&gpio_dev->gc, dev_name(&pdev->dev),
++				0, 0, TOTAL_NUMBER_OF_PINS);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add pin range\n");
++		goto out3;
++	}
++
++	irq_set_handler_data(gpio_dev->irq, gpio_dev);
++	irq_set_chained_handler(gpio_dev->irq, amd_gpio_irq_handler);
++
++	platform_set_drvdata(pdev, gpio_dev);
++
++	dev_dbg(&pdev->dev, "amd gpio driver loaded\n");
++	return ret;
++
++out3:
++	gpiochip_remove(&gpio_dev->gc);
++
++out2:
++	irq_domain_remove(gpio_dev->domain);
++
++out1:
++	pinctrl_unregister(gpio_dev->pctrl);
++	return ret;
++}
++
++static int amd_gpio_remove(struct platform_device *pdev)
++{
++	int ret;
++	struct amd_gpio *gpio_dev;
++
++	gpio_dev = platform_get_drvdata(pdev);
++
++	irq_set_chained_handler(gpio_dev->irq, NULL);
++	gpiochip_remove(&gpio_dev->gc);
++
++	irq_domain_remove(gpio_dev->domain);
++	pinctrl_unregister(gpio_dev->pctrl);
++
++	return 0;
++}
++
++static const struct acpi_device_id amd_gpio_acpi_match[] = {
++	{ "AMD0030", 0 },
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, amd_gpio_acpi_match);
++
++static struct platform_driver amd_gpio_driver = {
++	.driver		= {
++		.name	= "amd_gpio",
++		.owner	= THIS_MODULE,
++		.acpi_match_table = ACPI_PTR(amd_gpio_acpi_match),
++	},
++	.probe		= amd_gpio_probe,
++	.remove		= amd_gpio_remove,
++};
++
++module_platform_driver(amd_gpio_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Ken Xue <Ken.Xue@amd.com>, Jeff Wu <Jeff.Wu@amd.com>");
++MODULE_DESCRIPTION("AMD GPIO pinctrl driver");
+diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
+new file mode 100644
+index 0000000..0667c7b
+--- /dev/null
++++ b/drivers/pinctrl/pinctrl-amd.h
+@@ -0,0 +1,269 @@
++/*
++ * GPIO driver for AMD
++ *
++ * Copyright (c) 2014,2015 Ken Xue <Ken.Xue@amd.com>
++ *		Jeff Wu <Jeff.Wu@amd.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ */
++
++#ifndef _PINCTRL_AMD_H
++#define _PINCTRL_AMD_H
++
++#define TOTAL_NUMBER_OF_PINS	192
++#define AMD_GPIO_PINS_PER_BANK  64
++#define AMD_GPIO_TOTAL_BANKS    3
++
++#define AMD_GPIO_PINS_BANK0     63
++#define AMD_GPIO_PINS_BANK1     64
++#define AMD_GPIO_PINS_BANK2     56
++
++#define WAKE_INT_MASTER_REG 0xfc
++#define EOI_MASK (1 << 29)
++
++union gpio_pin_reg {
++	struct {
++	u32 debounce_tmr_out:4;
++	u32 debounce_tmr_out_unit:1;
++#define DEBOUNCE_TYPE_NO_DEBOUNCE               0x0
++#define DEBOUNCE_TYPE_PRESERVE_LOW_GLITCH       0x1
++#define DEBOUNCE_TYPE_PRESERVE_HIGH_GLITCH      0x2
++#define DEBOUNCE_TYPE_REMOVE_GLITCH             0x3
++	u32 debounce_cntrl:2;
++	u32 debounce_tmr_large:1;
++
++#define EDGE_TRAGGER	0x0
++#define LEVEL_TRIGGER	0x1
++	u32 level_trig:1;
++
++#define ACTIVE_HIGH	0x0
++#define ACTIVE_LOW	0x1
++#define BOTH_EADGE	0x1
++	u32 active_level:2;
++
++#define ENABLE_INTERRUPT	0x1
++#define DISABLE_INTERRUPT	0x0
++	u32 interrupt_enable:1;
++#define ENABLE_INTERRUPT_MASK	0x0
++#define DISABLE_INTERRUPT_MASK	0x1
++	u32 interrupt_mask:1;
++
++	u32 wake_cntrl:3;
++	u32 pin_sts:1;
++
++	u32 drv_strength_sel:2;
++	u32 pull_up_sel:1;
++	u32 pull_up_enable:1;
++	u32 pull_down_enable:1;
++
++	u32 output_value:1;
++	u32 output_enable:1;
++	u32 sw_cntrl_in:1;
++	u32 sw_cntrl_en:1;
++	u32 reserved0:2;
++
++#define CLR_INTR_STAT	1
++	u32 interrupt_sts:1;
++	u32 wake_sts:1;
++	u32 reserved1:2;
 +	};
++	u32 reg_u32;
++};
 +
-+List of supported functions and groups in Cygnus:
++struct amd_pingroup {
++	const char *name;
++	const unsigned *pins;
++	unsigned npins;
++};
 +
-+"gpio": N/A (to be removed for A0)
++struct amd_function {
++	const char *name;
++	const char * const *groups;
++	unsigned ngroups;
++};
 +
-+"i2s0": "i2s0_0_grp", "i2s0_1_grp"
++struct amd_gpio_irq_pin {
++	struct list_head	list;
++	u32	pin_num;
++};
 +
-+"i2s1": "i2s1_0_grp", "i2s1_1_grp"
++struct amd_gpio {
++	spinlock_t              lock;
++	struct list_head	irq_list;/* mapped irq pin list */
++	void __iomem            *base;
++	int                     irq;
 +
-+"i2s2": "i2s2_0_grp", "i2s2_1_grp", "i2s2_2_grp", "i2s2_3_grp", "i2s2_4_grp"
++	const struct amd_pingroup *groups;
++	u32 ngroups;
++	struct pinctrl_dev *pctrl;
++	struct irq_domain *domain;
++	struct gpio_chip        gc;
++	struct resource         *res;
++	struct platform_device  *pdev;
++};
 +
-+"spdif": "spdif_grp"
++/*  KERNCZ configuration*/
++static const struct pinctrl_pin_desc kerncz_pins[] = {
++	PINCTRL_PIN(0, "GPIO_0"),
++	PINCTRL_PIN(1, "GPIO_1"),
++	PINCTRL_PIN(2, "GPIO_2"),
++	PINCTRL_PIN(3, "GPIO_3"),
++	PINCTRL_PIN(4, "GPIO_4"),
++	PINCTRL_PIN(5, "GPIO_5"),
++	PINCTRL_PIN(6, "GPIO_6"),
++	PINCTRL_PIN(7, "GPIO_7"),
++	PINCTRL_PIN(8, "GPIO_8"),
++	PINCTRL_PIN(9, "GPIO_9"),
++	PINCTRL_PIN(10, "GPIO_10"),
++	PINCTRL_PIN(11, "GPIO_11"),
++	PINCTRL_PIN(12, "GPIO_12"),
++	PINCTRL_PIN(13, "GPIO_13"),
++	PINCTRL_PIN(14, "GPIO_14"),
++	PINCTRL_PIN(15, "GPIO_15"),
++	PINCTRL_PIN(16, "GPIO_16"),
++	PINCTRL_PIN(17, "GPIO_17"),
++	PINCTRL_PIN(18, "GPIO_18"),
++	PINCTRL_PIN(19, "GPIO_19"),
++	PINCTRL_PIN(20, "GPIO_20"),
++	PINCTRL_PIN(23, "GPIO_23"),
++	PINCTRL_PIN(24, "GPIO_24"),
++	PINCTRL_PIN(25, "GPIO_25"),
++	PINCTRL_PIN(26, "GPIO_26"),
++	PINCTRL_PIN(39, "GPIO_39"),
++	PINCTRL_PIN(40, "GPIO_40"),
++	PINCTRL_PIN(43, "GPIO_42"),
++	PINCTRL_PIN(46, "GPIO_46"),
++	PINCTRL_PIN(47, "GPIO_47"),
++	PINCTRL_PIN(48, "GPIO_48"),
++	PINCTRL_PIN(49, "GPIO_49"),
++	PINCTRL_PIN(50, "GPIO_50"),
++	PINCTRL_PIN(51, "GPIO_51"),
++	PINCTRL_PIN(52, "GPIO_52"),
++	PINCTRL_PIN(53, "GPIO_53"),
++	PINCTRL_PIN(54, "GPIO_54"),
++	PINCTRL_PIN(55, "GPIO_55"),
++	PINCTRL_PIN(56, "GPIO_56"),
++	PINCTRL_PIN(57, "GPIO_57"),
++	PINCTRL_PIN(58, "GPIO_58"),
++	PINCTRL_PIN(59, "GPIO_59"),
++	PINCTRL_PIN(60, "GPIO_60"),
++	PINCTRL_PIN(61, "GPIO_61"),
++	PINCTRL_PIN(62, "GPIO_62"),
++	PINCTRL_PIN(64, "GPIO_64"),
++	PINCTRL_PIN(65, "GPIO_65"),
++	PINCTRL_PIN(66, "GPIO_66"),
++	PINCTRL_PIN(68, "GPIO_68"),
++	PINCTRL_PIN(69, "GPIO_69"),
++	PINCTRL_PIN(70, "GPIO_70"),
++	PINCTRL_PIN(71, "GPIO_71"),
++	PINCTRL_PIN(72, "GPIO_72"),
++	PINCTRL_PIN(74, "GPIO_74"),
++	PINCTRL_PIN(75, "GPIO_75"),
++	PINCTRL_PIN(76, "GPIO_76"),
++	PINCTRL_PIN(84, "GPIO_84"),
++	PINCTRL_PIN(85, "GPIO_85"),
++	PINCTRL_PIN(86, "GPIO_86"),
++	PINCTRL_PIN(87, "GPIO_87"),
++	PINCTRL_PIN(88, "GPIO_88"),
++	PINCTRL_PIN(89, "GPIO_89"),
++	PINCTRL_PIN(90, "GPIO_90"),
++	PINCTRL_PIN(91, "GPIO_91"),
++	PINCTRL_PIN(92, "GPIO_92"),
++	PINCTRL_PIN(93, "GPIO_93"),
++	PINCTRL_PIN(95, "GPIO_95"),
++	PINCTRL_PIN(96, "GPIO_96"),
++	PINCTRL_PIN(97, "GPIO_97"),
++	PINCTRL_PIN(98, "GPIO_98"),
++	PINCTRL_PIN(99, "GPIO_99"),
++	PINCTRL_PIN(100, "GPIO_100"),
++	PINCTRL_PIN(101, "GPIO_101"),
++	PINCTRL_PIN(102, "GPIO_102"),
++	PINCTRL_PIN(113, "GPIO_113"),
++	PINCTRL_PIN(114, "GPIO_114"),
++	PINCTRL_PIN(115, "GPIO_115"),
++	PINCTRL_PIN(116, "GPIO_116"),
++	PINCTRL_PIN(117, "GPIO_117"),
++	PINCTRL_PIN(118, "GPIO_118"),
++	PINCTRL_PIN(119, "GPIO_119"),
++	PINCTRL_PIN(120, "GPIO_120"),
++	PINCTRL_PIN(121, "GPIO_121"),
++	PINCTRL_PIN(122, "GPIO_122"),
++	PINCTRL_PIN(126, "GPIO_126"),
++	PINCTRL_PIN(129, "GPIO_129"),
++	PINCTRL_PIN(130, "GPIO_130"),
++	PINCTRL_PIN(131, "GPIO_131"),
++	PINCTRL_PIN(132, "GPIO_132"),
++	PINCTRL_PIN(133, "GPIO_133"),
++	PINCTRL_PIN(135, "GPIO_135"),
++	PINCTRL_PIN(136, "GPIO_136"),
++	PINCTRL_PIN(137, "GPIO_137"),
++	PINCTRL_PIN(138, "GPIO_138"),
++	PINCTRL_PIN(139, "GPIO_139"),
++	PINCTRL_PIN(140, "GPIO_140"),
++	PINCTRL_PIN(141, "GPIO_141"),
++	PINCTRL_PIN(142, "GPIO_142"),
++	PINCTRL_PIN(143, "GPIO_143"),
++	PINCTRL_PIN(144, "GPIO_144"),
++	PINCTRL_PIN(145, "GPIO_145"),
++	PINCTRL_PIN(146, "GPIO_146"),
++	PINCTRL_PIN(147, "GPIO_147"),
++	PINCTRL_PIN(148, "GPIO_148"),
++	PINCTRL_PIN(166, "GPIO_166"),
++	PINCTRL_PIN(167, "GPIO_167"),
++	PINCTRL_PIN(168, "GPIO_168"),
++	PINCTRL_PIN(169, "GPIO_169"),
++	PINCTRL_PIN(170, "GPIO_170"),
++	PINCTRL_PIN(171, "GPIO_171"),
++	PINCTRL_PIN(172, "GPIO_172"),
++	PINCTRL_PIN(173, "GPIO_173"),
++	PINCTRL_PIN(174, "GPIO_174"),
++	PINCTRL_PIN(175, "GPIO_175"),
++	PINCTRL_PIN(176, "GPIO_176"),
++	PINCTRL_PIN(177, "GPIO_177"),
++};
 +
-+"pwm0": "pwm0_grp"
++const unsigned i2c0_pins[] = {145, 146};
++const unsigned i2c1_pins[] = {147, 148};
++const unsigned i2c2_pins[] = {113, 114};
++const unsigned i2c3_pins[] = {19, 20};
 +
-+"pwm1": "pwm1_grp"
++const unsigned uart0_pins[] = {135, 136, 137, 138, 139};
++const unsigned uart1_pins[] = {140, 141, 142, 143, 144};
 +
-+"pwm2": "pwm2_grp"
++static const struct amd_pingroup kerncz_groups[] = {
++	{
++		.name = "i2c0",
++		.pins = i2c0_pins,
++		.npins = 2,
++	},
++	{
++		.name = "i2c1",
++		.pins = i2c1_pins,
++		.npins = 2,
++	},
++	{
++		.name = "i2c2",
++		.pins = i2c2_pins,
++		.npins = 2,
++	},
++	{
++		.name = "i2c3",
++		.pins = i2c3_pins,
++		.npins = 2,
++	},
++	{
++		.name = "uart0",
++		.pins = uart0_pins,
++		.npins = 9,
++	},
++	{
++		.name = "uart1",
++		.pins = uart1_pins,
++		.npins = 5,
++	},
++};
 +
-+"pwm3": "pwm3_grp"
-+
-+"pwm4": "pwm4_grp"
-+
-+"pwm5": "pwm5_grp"
-+
-+"key": "key0_grp", "key1_grp", "key2_grp", "key3_grp", "key4_grp", "key5_grp",
-+"key6_grp", "key7_grp", "key8_grp", "key9_grp", "key10_grp", "key11_grp",
-+"key12_grp", "key13_grp", "key14_grp", "key15_grp"
-+
-+"audio_dte": "audio_dte0_grp", "audio_dte1_grp", "audio_dte2_grp", "audio_dte3_grp"
-+
-+"smart_card0": "smart_card0_grp", "smart_card0_fcb_grp"
-+
-+"smart_card1": "smart_card1_grp", "smart_card1_fcb_grp"
-+
-+"spi0": "spi0_grp"
-+
-+"spi1": "spi1_grp"
-+
-+"spi2": "spi2_grp"
-+
-+"spi3": "spi3_grp"
-+
-+"spi4": "spi4_0_grp", "spi4_1_grp"
-+
-+"spi5": "spi5_grp"
-+
-+"sw_led0": "sw_led0_0_grp", "sw_led0_1_grp"
-+
-+"sw_led1": "sw_led1_grp"
-+
-+"sw_led2": "sw_led2_0_grp", "sw_led2_1_grp"
-+
-+"d1w": "d1w_grp"
-+
-+"lcd": "lcd_grp"
-+
-+"sram": "sram_0_grp", "sram_1_grp"
-+
-+"uart0": "uart0_grp"
-+
-+"uart1": "uart1_grp", "uart1_dte_grp"
-+
-+"uart2": "uart2_grp"
-+
-+"uart3": "uart3_grp"
-+
-+"uart4": "uart4_grp"
-+
-+"qspi": "qspi_0_grp", "qspi_1_grp"
-+
-+"nand": "nand_grp"
-+
-+"sdio0": "sdio0_grp", "sdio0_cd_grp", "sdio0_mmc_grp"
-+
-+"sdio1": "sdio1_data_0_grp", "sdio1_data_1_grp", "sdio1_cd_grp",
-+"sdio1_led_grp", "sdio1_mmc_grp"
-+
-+"can0": "can0_grp"
-+
-+"can1": "can1_grp"
-+
-+"cam": "cam_led_grp", "cam_0_grp", "cam_1_grp"
-+
-+"bsc1": "bsc1_grp"
-+
-+"pcie_clkreq": "pcie_clkreq_grp"
-+
-+"usb0_oc": "usb0_oc_grp"
-+
-+"usb1_oc": "usb1_oc_grp"
-+
-+"usb2_oc": "usb2_oc_grp"
++#endif
 -- 
-1.7.9.5
+1.9.1
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
