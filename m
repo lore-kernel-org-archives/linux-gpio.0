@@ -1,52 +1,39 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/3] gpio: pxa: add PXA1928 gpio type support
-Date: Tue, 3 Feb 2015 07:44:27 -0600
-Message-ID: <CAL_Jsq+aSgPceu-9Uyx_FqfAEMaSpmFD0JCVnydQNTm2G6_u0Q@mail.gmail.com>
-References: <1422333966-18338-1-git-send-email-robh@kernel.org>
- <1422333966-18338-4-git-send-email-robh@kernel.org> <CACRpkdbTSh2ZOEpVkCk_QtH44C-hq=8qw-EanHUyD_6fSU_sog@mail.gmail.com>
+From: Andy Gross <agross@codeaurora.org>
+Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Add msm8916 pinctrl driver
+Date: Tue, 3 Feb 2015 10:47:48 -0600
+Message-ID: <20150203164748.GA29190@qualcomm.com>
+References: <1422612241-12944-1-git-send-email-svarbanov@mm-sol.com>
+ <1422612241-12944-4-git-send-email-svarbanov@mm-sol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:62548 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751684AbbBCNos (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Feb 2015 08:44:48 -0500
-In-Reply-To: <CACRpkdbTSh2ZOEpVkCk_QtH44C-hq=8qw-EanHUyD_6fSU_sog@mail.gmail.com>
+Received: from smtp.codeaurora.org ([198.145.11.231]:50011 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965362AbbBCQrv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Feb 2015 11:47:51 -0500
+Content-Disposition: inline
+In-Reply-To: <1422612241-12944-4-git-send-email-svarbanov@mm-sol.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jing Xiang <jxiang@marvell.com>, Xiangzhan Meng <mengxzh@marvell.com>
+To: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Joonwoo Park <joonwoop@codeaurora.org>
 
-On Tue, Feb 3, 2015 at 6:41 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Jan 27, 2015 at 5:46 AM, Rob Herring <robh@kernel.org> wrote:
->
->> Add support for PXA1928 GPIOs. The PXA1928 adds a 6th bank from previous
->> generations.
->>
->> Signed-off-by: Jing Xiang <jxiang@marvell.com>
->> Signed-off-by: Xiangzhan Meng <mengxzh@marvell.com>
->> [robh: ported to 3.19 from vendor kernel]
->> Signed-off-by: Rob Herring <robh@kernel.org>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->
-> Patch applied...
->
->> -#define BANK_OFF(n)    (((n) < 3) ? (n) << 2 : 0x100 + (((n) - 3) << 2))
->> +#define BANK_OFF(n)    (((n) < 3) ? (n) << 2 : ((n) > 5 ? 0x200 : 0x100)       \
->> +                       + (((n) % 3) << 2))
->
-> While this is a bit convoluted.
->
-> Someone care to send a patch converting it to something like a
-> parseable static inline?
+On Fri, Jan 30, 2015 at 12:04:01PM +0200, Stanimir Varbanov wrote:
+> From: Joonwoo Park <joonwoop@codeaurora.org>
+> 
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for msm8916.
+> 
+> Signed-off-by: Joonwoo Park <joonwoop@codeaurora.org>
+> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-I should have looked more closely than just taking the vendor code.
-This was needlessly convoluted before and this just added on to it. It
-can be simplified down to this:
+Looks good.
 
-#define BANK_OFF(n) (((n) / 3) << 8) + (((n) % 3) << 2)
+Reviewed-by: Andy Gross <agross@codeaurora.org>
 
-I'll send a fix unless you want to fix up this patch.
+-- 
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-Rob
