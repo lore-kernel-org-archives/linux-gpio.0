@@ -1,38 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: max732x: convert to GPIOLIB_IRQCHIP
-Date: Tue, 3 Feb 2015 13:35:13 +0100
-Message-ID: <CACRpkdYYdRpx2RfHEnkA9gatCYEt-Qv+i2PkGOaLUNi2+xgxfg@mail.gmail.com>
-References: <1422614764-5430-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] gpio: pxa: remove mach IRQ includes
+Date: Tue, 3 Feb 2015 13:38:39 +0100
+Message-ID: <CACRpkdYnm+EpgfNKayZSwOXR_F8FTYk=fLirf61kUtbH2QEhWQ@mail.gmail.com>
+References: <1422333966-18338-1-git-send-email-robh@kernel.org>
+	<1422333966-18338-2-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:53906 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751365AbbBCMfO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Feb 2015 07:35:14 -0500
-Received: by mail-oi0-f49.google.com with SMTP id a3so48719255oib.8
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2015 04:35:13 -0800 (PST)
-In-Reply-To: <1422614764-5430-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:44106 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932250AbbBCMij (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Feb 2015 07:38:39 -0500
+Received: by mail-ob0-f182.google.com with SMTP id nt9so18170360obb.13
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2015 04:38:39 -0800 (PST)
+In-Reply-To: <1422333966-18338-2-git-send-email-robh@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sam Protsenko <semen.protsenko@globallogic.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Mans Rullgard <mans@mansr.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jan 30, 2015 at 11:46 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
+On Tue, Jan 27, 2015 at 5:46 AM, Rob Herring <robh@kernel.org> wrote:
 
-> Take a sweep to bring the irq support for the MAX732x expanders
-> into the gpiolib core to cut down on duplicated code.
+> In preparation to enable ARCH_MMP on ARM64, the include of mach/irqs.h
+> must be eliminated. mach/irqs.h was being included for IRQ_GPIO{0,1},
+> but these IRQs are always passed in as resources now. We can use irq0
+> and irq1 and get rid of IRQ_GPIOx. Get rid of the ifdef in the process
+> as it is no longer needed.
 >
-> Only compile tested! I need some feedback from people using this
-> expander with interrupts to tell me if things go right or
-> wrong when I do this.
->
-> Cc: Semen Protsenko <semen.protsenko@globallogic.com>
-> Cc: Mans Rullgard <mans@mansr.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
 
-Semen can you test this patch?
+Nice cleanup, patch applied.
 
 Yours,
 Linus Walleij
