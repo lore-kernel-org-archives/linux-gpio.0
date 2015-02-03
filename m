@@ -1,46 +1,63 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: pxa: add PXA1928 gpio type support
-Date: Tue, 3 Feb 2015 13:41:57 +0100
-Message-ID: <CACRpkdbTSh2ZOEpVkCk_QtH44C-hq=8qw-EanHUyD_6fSU_sog@mail.gmail.com>
-References: <1422333966-18338-1-git-send-email-robh@kernel.org>
-	<1422333966-18338-4-git-send-email-robh@kernel.org>
+Subject: Re: [PATCH] pinctrl: pinctrl-imx: don't use invalid value of conf_reg
+Date: Tue, 3 Feb 2015 14:01:09 +0100
+Message-ID: <CACRpkdbtpGU57-tPn9Z0rNvY4zLk+QE6A9Pd87vLUHOmRiB2yg@mail.gmail.com>
+References: <1422399025-25636-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:40641 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667AbbBCMl5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Feb 2015 07:41:57 -0500
-Received: by mail-oi0-f49.google.com with SMTP id a3so48741298oib.8
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2015 04:41:57 -0800 (PST)
-In-Reply-To: <1422333966-18338-4-git-send-email-robh@kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:64070 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965313AbbBCNBK convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Feb 2015 08:01:10 -0500
+Received: by mail-ob0-f180.google.com with SMTP id vb8so21845703obc.11
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2015 05:01:09 -0800 (PST)
+In-Reply-To: <1422399025-25636-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jing Xiang <jxiang@marvell.com>, Xiangzhan Meng <mengxzh@marvell.com>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Dong Aisheng <dong.aisheng@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jan 27, 2015 at 5:46 AM, Rob Herring <robh@kernel.org> wrote:
+On Tue, Jan 27, 2015 at 11:50 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
-> Add support for PXA1928 GPIOs. The PXA1928 adds a 6th bank from previous
-> generations.
+> The right check for conf_reg to be invalid it testing against -1 not =
+0
+> as is done in the rest of the driver.
 >
-> Signed-off-by: Jing Xiang <jxiang@marvell.com>
-> Signed-off-by: Xiangzhan Meng <mengxzh@marvell.com>
-> [robh: ported to 3.19 from vendor kernel]
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
+> This fixes an oops that can be triggered by:
+>
+>         cat /sys/kernel/debug/pinctrl/43fac000.iomuxc/*
+>
+> Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driv=
+er")
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-Patch applied...
+Patch applied.
 
-> -#define BANK_OFF(n)    (((n) < 3) ? (n) << 2 : 0x100 + (((n) - 3) << 2))
-> +#define BANK_OFF(n)    (((n) < 3) ? (n) << 2 : ((n) > 5 ? 0x200 : 0x100)       \
-> +                       + (((n) % 3) << 2))
+But...
 
-While this is a bit convoluted.
+> -       if (!pin_reg || !pin_reg->conf_reg) {
+> +       if (!pin_reg || pin_reg->conf_reg =3D=3D -1) {
 
-Someone care to send a patch converting it to something like a
-parseable static inline?
+I can see that the other code checks for -1 in this variable.
+But where is conf_reg ever set to -1?
+
+freescale]$ git grep "\-1"
+pinctrl-imx.c:          if (pin_reg->mux_reg =3D=3D -1) {
+pinctrl-imx.c:  if (pin_reg->mux_reg =3D=3D -1)
+pinctrl-imx.c:  if (pin_reg->mux_reg =3D=3D -1)
+pinctrl-imx.c:  if (pin_reg->conf_reg =3D=3D -1) {
+pinctrl-imx.c:  if (pin_reg->conf_reg =3D=3D -1) {
+pinctrl-imx.c:  if (!pin_reg || pin_reg->conf_reg =3D=3D -1) {
+
+Only checked for, never assigned.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
