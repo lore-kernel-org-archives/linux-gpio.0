@@ -1,187 +1,96 @@
-From: "Chao Xie" <xiechao_mail@163.com>
-Subject: Re:Re: [PATCH] gpio: mmp: add GPIO driver for Marvell MMP series
-Date: Wed, 4 Feb 2015 10:10:02 +0800 (CST)
-Message-ID: <17285839.2a29.14b5259f780.Coremail.xiechao_mail@163.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Re: [PATCH] gpio: mmp: add GPIO driver for Marvell MMP series
+Date: Wed, 4 Feb 2015 09:24:13 +0100
+Message-ID: <CACRpkdbOws5a8uBe+yf8d5wvF3_Ym-5xehjyW9YKnVSUw7gOGg@mail.gmail.com>
 References: <1422412229-23640-1-git-send-email-chao.xie@marvell.com>
- <CACRpkdbUqCQZiSDbiD994ecF4h6xHShE8yfdrE2vNVNW+082zw@mail.gmail.com>
+	<CACRpkdbUqCQZiSDbiD994ecF4h6xHShE8yfdrE2vNVNW+082zw@mail.gmail.com>
+	<17285839.2a29.14b5259f780.Coremail.xiechao_mail@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GBK
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from m13-135.163.com ([220.181.13.135]:40513 "EHLO m13-135.163.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752544AbbBDC0i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 3 Feb 2015 21:26:38 -0500
-In-Reply-To: <CACRpkdbUqCQZiSDbiD994ecF4h6xHShE8yfdrE2vNVNW+082zw@mail.gmail.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:36159 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754253AbbBDIYO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Feb 2015 03:24:14 -0500
+Received: by mail-oi0-f52.google.com with SMTP id h136so166287oig.11
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Feb 2015 00:24:14 -0800 (PST)
+In-Reply-To: <17285839.2a29.14b5259f780.Coremail.xiechao_mail@163.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
+To: Chao Xie <xiechao_mail@163.com>
 Cc: Chao Xie <chao.xie@marvell.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@gmail.com>
 
-CkF0IDIwMTUtMDItMDMgMjE6MjE6NDMsICJMaW51cyBXYWxsZWlqIiA8bGludXMud2FsbGVpakBs
-aW5hcm8ub3JnPiB3cm90ZToKPk9uIFdlZCwgSmFuIDI4LCAyMDE1IGF0IDM6MzAgQU0sIENoYW8g
-WGllIDxjaGFvLnhpZUBtYXJ2ZWxsLmNvbT4gd3JvdGU6Cj4KPj4gRnJvbTogQ2hhbyBYaWUgPGNo
-YW8ueGllQG1hcnZlbGwuY29tPgo+Pgo+PiBGb3Igc29tZSBvbGQgUFhBIHNlcmllcywgdGhleSB1
-c2VkIFBYQSBHUElPIGRyaXZlci4KPj4gVGhlIElQIG9mIEdQSU8gY2hhbmdlcyBzaW5jZSBQWEE5
-ODggd2hpY2ggaXMgTWFydmVsbCBNTVAKPj4gc2VyaWVzLgo+PiBJdCB3aWxsIHVzZSBuZXcgd2F5
-IHRvIGNvbnRyb2wgdGhlIEdQSU8gbGV2ZWwsIGRpcmVjdGlvbgo+PiBhbmQgZWRnZSBzdGF0dXMu
-Cj4+Cj4+IFNpZ25lZC1vZmYtYnk6IENoYW8gWGllIDxjaGFvLnhpZUBtYXJ2ZWxsLmNvbT4KPgo+
-KC4uLikKPgo+PiArY29uZmlnIEdQSU9fTU1QCj4+ICsgICAgICAgYm9vbCAiTU1QIEdQSU8gc3Vw
-cG9ydCIKPj4gKyAgICAgICBkZXBlbmRzIG9uIEFSQ0hfTU1QCj4KPkFsbCBuZXcgc2ltcGxlIGRy
-aXZlcnMgd2l0aCBJUlEgc2hvdWxkCj4KPnNlbGVjdCBHUElPTElCX0lSUUNISVAKPgoKVGhhbmtz
-IGZvciByZXZpZXcuCgpJIHdpbGwgY2hlY2sgR1BJT0xJQl9JUlFDSElQIGFuZCBtYWtlIHVzZSBv
-ZiBpdC4KCj5TaW5jZSB0aGlzIGxvb2tzIGxpa2UgYSBiYXNpYyBNTUlPIGRyaXZlciBJIHRoaW5r
-Cj55b3Ugc2hvdWxkIGFsc28gdXNlOgo+Cj5zZWxlY3QgR1BJT19HRU5FUklDCj4KCkkgdGhpbmsg
-dGhlIGdwaW8tbW1wIGlzIG5vdCBzYW1lIGFzIGdwaW8tZ2VuZXJpYy4KZ3Bpby1tbXAgbmVlZCBj
-b250cm9sIHRoZSBsZXZlbC9kaXJlY3Rpb24vcmlzaW5nIGVkZ2UgZGV0ZWN0IGVuYWJsZS9mYWxs
-aW5nIGVkZ2UgZGV0ZWN0IGVuYWJsZS4KRm9yIGVhY2ggb2YgdGhlbSwgdGhlcmUgYXJlIHRocmVl
-IHJlZ2lzdGVyczogc3RhdHVzIHJlZ2lzdGVyLCAgc2V0dGluZyByZWdpc3RlciBhbmQgY2xlYXIg
-cmVnaXN0ZXIuCkZvciBleGFtcGxlLCBmb3IgZGlyZWN0aW9uLCBpZiB5b3UgY29uZmlndXJlIGl0
-IGFzIG91dHB1dC4KWW91IG5lZWQgU0VUIHRoZSBiaXQgaW4gc2V0dGluZyByZWdpc3Rlci4KSWYg
-eW91IHdhbnQgdG8gY29uZmlndXJlIGl0IGFzIGlucHV0CllvdSBuZWVkIFNFVCB0aGUgYml0IGlu
-IGNsZWFyIHJlZ2lzdGVyLgpUaGUgYml0cyB3aWxsIGJlIGNsZWFyZWQgYnkgaGFyZHdhcmUgaWYg
-dGhlIG9wZXJhdGlvbiBpcyBjb21wbGV0ZWQgYnkgaGFyZHdhcmUuCgpJdCBpcyBzYW1lIGZvciBs
-ZXZlbC9yaXNpbmcgZWRlZ2UgZGV0ZWN0IGVuYWJsZS9mYWxsaW5nIGVkZ2UgZGV0ZWN0IGVuYWJs
-ZS4KCklmIHlvdSB3YW50IHRvIHJlYWQgdGhlIHN0YXR1cyBvZiB0aGUgcGluLiBGb3IgZXhhbXBs
-ZSwgdGhlIGN1cnJlbnQgbGV2ZWwgb2YgdGhlIHBpbi4KWW91IENBTiBOT1QgcmVhZCB0aGUgc2V0
-dGluZy9jbGVhciByZWdpc3Rlci4gWW91IG5lZWQgcmVhZCB0aGUgbGV2ZWwgc3RhdHVzIHJlZ2lz
-dGVyLgoKPkFuZCBzZXQgdXAgc2ltcGxlIGdldHRlci9zZXR0ZXIgZnVuY3Rpb25zIHdpdGggYQo+
-Cj4KPj4gKyAgICAgICBoZWxwCj4+ICsgICAgICAgICBTYXkgeWVzIGhlcmUgdG8gc3VwcG9ydCB0
-aGUgTU1QIEdQSU8gZGV2aWNlIGF0IFBYQTEwODgvUFhBMTkwOC9QWEExOTI4Lgo+PiArICAgICAg
-ICAgQ29tcGFyaW5nIHdpdGggUFhBIEdQSU8gZGV2aWNlLCB0aGUgSVAgb2YgTU1QIEdQSU8gY2hh
-bmdlcyBhIGxvdC4KPj4gKwo+Cj4oLi4uKQo+Cj4+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvLW1t
-cC5jCj4KPj4gKyNpbmNsdWRlIDxsaW51eC9lcnIuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9pbml0
-Lmg+Cj4+ICsjaW5jbHVkZSA8bGludXgvaXJxLmg+Cj4KPllvdSBkb24ndCBuZWVkIHRoaXMgaW5j
-bHVkZSB3aXRoIEdQSU9MSUJfSVJRQ0hJUAo+CgpJIHdpbGwgZml4IGl0LgoKPj4gKyNpbmNsdWRl
-IDxsaW51eC9pbnRlcnJ1cHQuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9pby5oPgo+PiArI2luY2x1
-ZGUgPGxpbnV4L2dwaW8uaD4KPgo+I2luY2x1ZGUgPGxpbnV4L2dwaW8vZHJpdmVyLmg+Cj4KPj4g
-KyNpbmNsdWRlIDxsaW51eC9jbGsuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4K
-Pj4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KPj4gKyNpbmNsdWRlIDxsaW51
-eC9tb2R1bGUuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9pcnFkb21haW4uaD4KPj4gKyNpbmNsdWRl
-IDxsaW51eC9pcnFjaGlwL2NoYWluZWRfaXJxLmg+Cj4KPmdldCByaWQgb2YgdGhlc2UgdHdvIGlu
-Y2x1ZGVzIGluIGZhdm9yIG9mIHVzaW5nIEdQSU9MSUJfSVJRQ0hJUAo+CgpJIHdpbGwgZml4IGl0
-LgoKPj4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kYXRhL2dwaW8tbW1wLmg+Cj4KPkFkZDoK
-PiNpbmNsdWRlIDxsaW51eC9iYXNpY19tbWlvX2dwaW8uaD4KPgo+QW5kIGltcGxlbWVudCBnZW5l
-cmljIEdQSU8gdXNpbmcgYmdwaW9faW5pdCgpCj4KPiguLi4pCgpUaGUgcmVhc29ucyBhcmUgbGlz
-dGVkIGFib3ZlCgo+PiArI2RlZmluZSBHUExSICAgICAgICAgICAweDAKPj4gKyNkZWZpbmUgR1BE
-UiAgICAgICAgICAgMHhjCj4+ICsjZGVmaW5lIEdQU1IgICAgICAgICAgIDB4MTgKPj4gKyNkZWZp
-bmUgR1BDUiAgICAgICAgICAgMHgyNAo+PiArI2RlZmluZSBHUkVSICAgICAgICAgICAweDMwCj4+
-ICsjZGVmaW5lIEdGRVIgICAgICAgICAgIDB4M2MKPj4gKyNkZWZpbmUgR0VEUiAgICAgICAgICAg
-MHg0OAo+PiArI2RlZmluZSBHU0RSICAgICAgICAgICAweDU0Cj4+ICsjZGVmaW5lIEdDRFIgICAg
-ICAgICAgIDB4NjAKPj4gKyNkZWZpbmUgR1NSRVIgICAgICAgICAgMHg2Ywo+PiArI2RlZmluZSBH
-Q1JFUiAgICAgICAgICAweDc4Cj4+ICsjZGVmaW5lIEdTRkVSICAgICAgICAgIDB4ODQKPj4gKyNk
-ZWZpbmUgR0NGRVIgICAgICAgICAgMHg5MAo+PiArI2RlZmluZSBHQVBNQVNLICAgICAgICAgICAg
-ICAgIDB4OWMKPj4gKyNkZWZpbmUgR0NQTUFTSyAgICAgICAgICAgICAgICAweGE4Cj4+ICsKPj4g
-Ky8qIEJhbmsgd2lsbCBoYXZlIDJebiBHUElPZXMsIGFuZCBmb3IgbW1wLWdwaW8gbiA9IDUgKi8K
-Pj4gKyNkZWZpbmUgQkFOS19HUElPX09SREVSICAgICAgICAgICAgICAgIDUKPj4gKyNkZWZpbmUg
-QkFOS19HUElPX05VTUJFUiAgICAgICAoMSA8PCBCQU5LX0dQSU9fT1JERVIpCj4+ICsjZGVmaW5l
-IEJBTktfR1BJT19NQVNLICAgICAgICAgKEJBTktfR1BJT19OVU1CRVIgLSAxKQo+PiArCj4+ICsj
-ZGVmaW5lIG1tcF9ncGlvX3RvX2JhbmtfaWR4KGdwaW8pICAgICAoKGdwaW8pID4+IEJBTktfR1BJ
-T19PUkRFUikKPj4gKyNkZWZpbmUgbW1wX2dwaW9fdG9fYmFua19vZmZzZXQoZ3BpbykgICgoZ3Bp
-bykgJiBCQU5LX0dQSU9fTUFTSykKPj4gKyNkZWZpbmUgbW1wX2JhbmtfdG9fZ3BpbyhpZHgsIG9m
-ZnNldCkgICgoKGlkeCkgPDwgQkFOS19HUElPX09SREVSKSAgICAgXAo+PiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICgob2Zmc2V0KSAmIEJBTktfR1BJ
-T19NQVNLKSkKPj4gKwo+Cj5UaGlzIGxvb2tzIGNvbnZvbHV0ZWQuIFdoeSBub3QganVzdCByZWdp
-c3RlciBlYWNoIGJhbmsgYXMgYSBzZXBhcmF0ZQo+ZGV2aWNlIGluc3RlYWQgb2YgdHJ5aW5nIHRv
-IGZpZ3VyZSBvdXQgYmFuayBpbmRleCBsaWtlIHRoaXM/Cj4KClRoZXJlIGFyZSB0aGUgZm9sbG93
-aW5nIHJlYXNvbnMKMS4gVGhlcmUgaXMgb25seSBvbmUgSVJRIGZvciB0aGUgd2hvbGUgR1BJTywg
-ZXZlbiB0aGVyZSBhcmUgMyBvciBtb3JlIGJhbmtzLgoyLiBUaGUgcmVnaXN0ZXJzIGFyZSBub3Qg
-Zm9ybWF0dGVkIGludG8gZ3JvdXAuIFRoZXkgYXJlIGludGVybGVhdmVkLgogICAgRm9yIGV4YW1w
-bGUsIHRoZXJlIGFyZSB0aHJlZSBiYW5rcywgU28gZm9yIHRoZSByZWdpc3RlcnMgb3JkZXIgYXJl
-CiAgICBMRVZFTF9TVEFUVVNfQkFOSzAsIExFVkVMX1NUQVNUVVNfQkFOSzEsIExFVkVMX1NUQVRV
-U19CQU5LMgogICAgRElSRUNUSU9OX1NUQVRVU19CQU5LMCwgRElSRUNUSU9OX1NUQVRVU19CQU5L
-MSwgRElSRUNUSU9OX1NUQVRVU19CQU5LMgozLiBlYWNoIGJhbmsgaGFzIDMyIGJpdHMuIEZvcm1h
-dHRpbmcgdGhlbSBpbnRvIG9uZSBkcml2ZXIgd2lsbCBtYWtlIG90aGVyIGRyaXZlciBlYXNpZXIu
-CiAgICBGb3IgZXhhbXBsZSwgdGhlIE1NQyBkcml2ZXIgaGFzIEdQSU8gZGV0ZWN0aW9uIGZvciBj
-YXJkLiBTbyBpdCBrbm93cyB0aGUgR1BJTyBpcyBHUElPNTYuCiAgICBJbiB0aGUgZGV2aWNlIHRy
-ZWUgb2YgTU1DIGRyaXZlciwgeW91IGNhbiBzaW1wbGUgYWRkIGFzCiAgICBjZC1ncGlvcyA9IDwm
-Z3BpbyA1NiBYPgogICAgaWYgeW91IGZvcm1hdCB0aGVtIGludG8gZGlmZmVyZW50IGRldmljZXMs
-IHRoZSBtbWMgZHJpdmVyIG93bmVyIG5lZWQgdG8ga25vdyBob3cgbXVjaCBiaXRzIGEgYmFuayBp
-cywgYW5kIGNhbGN1bGF0ZSBvdXQgY29ycmVjdCBHUElPeCBhbmQgb2Zmc2V0CiAgICBjZC1ncGlv
-cyA9IDwmZ3BpbzEgMjQgWD4KCj4+ICtzdHJ1Y3QgbW1wX2dwaW9fYmFuayB7Cj4+ICsgICAgICAg
-dm9pZCBfX2lvbWVtICpyZWdfYmFuazsKPj4gKyAgICAgICB1MzIgaXJxX21hc2s7Cj4+ICsgICAg
-ICAgdTMyIGlycV9yaXNpbmdfZWRnZTsKPj4gKyAgICAgICB1MzIgaXJxX2ZhbGxpbmdfZWRnZTsK
-Pj4gK307Cj4+ICsKPj4gK3N0cnVjdCBtbXBfZ3Bpb19jaGlwIHsKPj4gKyAgICAgICBzdHJ1Y3Qg
-Z3Bpb19jaGlwIGNoaXA7Cj4KPlRoYXQgc2hvdWxkIHRoZW4gYmUKPnN0cnVjdCBiZ3Bpb19jaGlw
-ICAgICAgIGJnYzsKPgo+Rm9yIGdlbmVyaWMgR1BJTy4KPgo+PiArICAgICAgIHZvaWQgX19pb21l
-bSAqcmVnX2Jhc2U7Cj4+ICsgICAgICAgaW50IGlycTsKPj4gKyAgICAgICBzdHJ1Y3QgaXJxX2Rv
-bWFpbiAqZG9tYWluOwo+Cj5UaGVzZSB0d28gd2lsbCBub3QgYmUgbmVjZXNzYXJ5IHRvIGtlZXAg
-YXJvdW5kIHdpdGgKPkdQSU9MSUJfSVJRQ0hJUAo+Cj4+ICsgICAgICAgdW5zaWduZWQgaW50IG5n
-cGlvOwo+Cj5UaGlzIGlzIHBhcnQgb2Ygc3RydWN0IGdwaW9fY2hpcCBzbyBkbyBub3QgZHVwbGlj
-YXRlIGl0Lgo+Cj4+ICsgICAgICAgdW5zaWduZWQgaW50IG5iYW5rOwo+PiArICAgICAgIHN0cnVj
-dCBtbXBfZ3Bpb19iYW5rICpiYW5rczsKPgo+QW5kIHRob3NlIHR3byBJIHRoaW5rIHlvdSBzaG91
-bGQgZ2V0IHJpZCBvZiBieSBjcmVhdGluZyBvbmUKPmNoaXAgcGVyIGJhbmsuCj4KPj4gK307Cj4K
-PlNvIG1lcmdlIHRoZXNlIHR3byBpbnRvIG9uZSBzdHJ1Y3QgYW5kIGluc3RhbnRpYXRlIG9uZSBk
-ZXZpY2UgZm9yCj5lYWNoIGJhbmsuCj4KClRoZSByZWFzb25zIG9mIHdoeSBjYW4gbm90IHNlcGFy
-YXRlIHRoZSBiYW5rcyBhcmUgZGVzY3JpYmVkIGFib3ZlLgoKPj4gK3N0YXRpYyBpbnQgbW1wX2dw
-aW9fdG9faXJxKHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIG9mZnNldCkKPj4gK3sK
-Pj4gKyAgICAgICBzdHJ1Y3QgbW1wX2dwaW9fY2hpcCAqbW1wX2NoaXAgPQo+PiArICAgICAgICAg
-ICAgICAgICAgICAgICBjb250YWluZXJfb2YoY2hpcCwgc3RydWN0IG1tcF9ncGlvX2NoaXAsIGNo
-aXApOwo+PiArCj4+ICsgICAgICAgcmV0dXJuIGlycV9jcmVhdGVfbWFwcGluZyhtbXBfY2hpcC0+
-ZG9tYWluLCBvZmZzZXQpOwo+PiArfQo+Cj5UaGlzIGZ1bmN0aW9uIGdvZXMgYXdheSB3aXRoIEdQ
-SU9MSUJfSVJRQ0hJUC4KPkp1c3QgbGVhdmUgaXQgdW5hc3NpZ25lZCBhbmQgbGV0IHRoZSBjb3Jl
-IGhhbmRsZSB0aGlzIHRyYW5zbGF0aW9uLgo+CgpJIHdpbGwgY2hlY2sgR1BJT0xJQl9JUlFDSElQ
-LgoKPj4gK3N0YXRpYyBpbnQgbW1wX2dwaW9fZGlyZWN0aW9uX2lucHV0KHN0cnVjdCBncGlvX2No
-aXAgKmNoaXAsIHVuc2lnbmVkIG9mZnNldCkKPj4gK3sKPj4gKyAgICAgICBzdHJ1Y3QgbW1wX2dw
-aW9fY2hpcCAqbW1wX2NoaXAgPQo+PiArICAgICAgICAgICAgICAgICAgICAgICBjb250YWluZXJf
-b2YoY2hpcCwgc3RydWN0IG1tcF9ncGlvX2NoaXAsIGNoaXApOwo+Cj5DcmVhdGUgYSBzdGF0aWMg
-aW5saW5lIHRvIGNhc3QgdGhlIGdwaW9fY2hpcCB0byBhIG1tcF9jaGlwIGxpa2UKPnRoaXM6Cj4K
-PnN0YXRpYyBpbmxpbmUgc3RydWN0IG1tcF9ncGlvX2NoaXAgKnRvX21tcChzdHJ1Y3QgZ3Bpb19j
-aGlwICpnYykKPnsKPiAgICByZXR1cm4gY29udGFpbmVyX29mKGNoaXAsIHN0cnVjdCBtbXBfZ3Bp
-b19jaGlwLCBjaGlwKTsKPn0KPgo+VXNlIHRoYXQgZXZlcnl3aGVyZSB0byBzaW1wbGlmeS4KPgo+
-PiArICAgICAgIHN0cnVjdCBtbXBfZ3Bpb19iYW5rICpiYW5rID0KPj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgJm1tcF9jaGlwLT5iYW5rc1ttbXBfZ3Bpb190b19iYW5rX2lkeChvZmZzZXQpXTsK
-Pj4gKyAgICAgICB1MzIgYml0ID0gKDEgPDwgbW1wX2dwaW9fdG9fYmFua19vZmZzZXQob2Zmc2V0
-KSk7Cj4KPkFuZCBnZXQgcmlkIG9mIHRoaXMgYnkgdXNpbmcgb25lIGRldmljZSBwZXIgYmFuay4K
-Pgo+PiArc3RhdGljIGludCBtbXBfZ3Bpb19kaXJlY3Rpb25fb3V0cHV0KHN0cnVjdCBncGlvX2No
-aXAgKmNoaXAsCj4+ICtzdGF0aWMgaW50IG1tcF9ncGlvX2dldChzdHJ1Y3QgZ3Bpb19jaGlwICpj
-aGlwLCB1bnNpZ25lZCBvZmZzZXQpCj4+ICtzdGF0aWMgdm9pZCBtbXBfZ3Bpb19zZXQoc3RydWN0
-IGdwaW9fY2hpcCAqY2hpcCwgdW5zaWduZWQgb2Zmc2V0LCBpbnQgdmFsdWUpCj4KPkxvb2tzIGxp
-a2UgZ2VuZXJpYyBHUElPIHdpbGwgZG8gdGhlIGpvYi4KPgo+PiArI2lmZGVmIENPTkZJR19PRl9H
-UElPCj4+ICtzdGF0aWMgaW50IG1tcF9ncGlvX29mX3hsYXRlKHN0cnVjdCBncGlvX2NoaXAgKmNo
-aXAsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IG9mX3BoYW5k
-bGVfYXJncyAqZ3Bpb3NwZWMsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgdTMyICpm
-bGFncykKPj4gK3sKPj4gKyAgICAgICBzdHJ1Y3QgbW1wX2dwaW9fY2hpcCAqbW1wX2NoaXAgPQo+
-PiArICAgICAgICAgICAgICAgICAgICAgICBjb250YWluZXJfb2YoY2hpcCwgc3RydWN0IG1tcF9n
-cGlvX2NoaXAsIGNoaXApOwo+PiArCj4+ICsgICAgICAgLyogR1BJTyBpbmRleCBzdGFydCBmcm9t
-IDAuICovCj4+ICsgICAgICAgaWYgKGdwaW9zcGVjLT5hcmdzWzBdID49IG1tcF9jaGlwLT5uZ3Bp
-bykKPj4gKyAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOwo+PiArCj4+ICsgICAgICAgaWYg
-KGZsYWdzKQo+PiArICAgICAgICAgICAgICAgKmZsYWdzID0gZ3Bpb3NwZWMtPmFyZ3NbMV07Cj4+
-ICsKPj4gKyAgICAgICByZXR1cm4gZ3Bpb3NwZWMtPmFyZ3NbMF07Cj4+ICt9Cj4+ICsjZW5kaWYK
-Pgo+VGhpcyBhbHNvIGdvZXMgdG8gdGhlIGdlbmVyaWMgeGxhdGUgd2l0aCBvbmUgZGV2aWNlIHBl
-ciBiYW5rLgo+CgpZZXMsIGl0IGlzIGRvbmUgYnkgR1BJT0xJQl9JUlFDSElQLgoKPj4gK3N0YXRp
-YyBpbnQgbW1wX2dwaW9faXJxX3R5cGUoc3RydWN0IGlycV9kYXRhICpkLCB1bnNpZ25lZCBpbnQg
-dHlwZSkKPj4gK3N0YXRpYyB2b2lkIG1tcF9ncGlvX2RlbXV4X2hhbmRsZXIodW5zaWduZWQgaW50
-IGlycSwgc3RydWN0IGlycV9kZXNjICpkZXNjKQo+PiArc3RhdGljIHZvaWQgbW1wX2Fja19tdXhl
-ZF9ncGlvKHN0cnVjdCBpcnFfZGF0YSAqZCkKPj4gK3N0YXRpYyB2b2lkIG1tcF9tYXNrX211eGVk
-X2dwaW8oc3RydWN0IGlycV9kYXRhICpkKQo+PiArc3RhdGljIHZvaWQgbW1wX3VubWFza19tdXhl
-ZF9ncGlvKHN0cnVjdCBpcnFfZGF0YSAqZCkKPgo+TG9va3MgT0sgYnV0IG1ha2Ugc3VyZSB0byBj
-b252ZXJ0IHRvIEdQSU9MSUJfSVJRQ0hJUCBhbmQgY29udmVydCBmcm9tCj5zdHJ1Y3QgZ3Bpb19j
-aGlwICogcGFzc2VkIGFzIGlycV9kYXRhICpkIHRvIHRoZSBpbnRlcm5hbCBjaGlwIHR5cGUKPndp
-dGggdGhlIG5ldyB0b19tbXAoKS4KPgo+KC4uLikKPgo+RnJvbSBoZXJlOgo+Cj4+ICtzdGF0aWMg
-aW50IG1tcF9pcnFfZG9tYWluX21hcChzdHJ1Y3QgaXJxX2RvbWFpbiAqZCwgdW5zaWduZWQgaW50
-IGlycSwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaXJxX2h3X251bWJlcl90IGh3
-KQo+PiArewo+PiArICAgICAgIGlycV9zZXRfY2hpcF9hbmRfaGFuZGxlcihpcnEsICZtbXBfbXV4
-ZWRfZ3Bpb19jaGlwLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBoYW5kbGVf
-ZWRnZV9pcnEpOwo+PiArICAgICAgIGlycV9zZXRfY2hpcF9kYXRhKGlycSwgZC0+aG9zdF9kYXRh
-KTsKPj4gKyAgICAgICBzZXRfaXJxX2ZsYWdzKGlycSwgSVJRX1RZUEVfTk9ORSk7Cj4+ICsKPj4g
-KyAgICAgICByZXR1cm4gMDsKPj4gK30KPj4gKwo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBpcnFf
-ZG9tYWluX29wcyBtbXBfZ3Bpb19pcnFfZG9tYWluX29wcyA9IHsKPj4gKyAgICAgICAubWFwICAg
-ID0gbW1wX2lycV9kb21haW5fbWFwLAo+PiArICAgICAgIC54bGF0ZSAgPSBpcnFfZG9tYWluX3hs
-YXRlX3R3b2NlbGwsCj4+ICt9Owo+Cj4KPlRvIGhlcmUgZ29lcyBhd2F5IHdpdGggR1BJT0xJQl9J
-UlFDSElQIChtb3ZlZCB0byBjb3JlKS4KPgoKSSB3aWxsIGNoZWNrIEdQSU9MSUJfSVJRQ0hJUC4K
-Cj4+ICsjaWZkZWYgQ09ORklHX09GX0dQSU8KPj4gKyAgICAgICBtbXBfY2hpcC0+Y2hpcC5vZl9u
-b2RlID0gbnA7Cj4+ICsgICAgICAgbW1wX2NoaXAtPmNoaXAub2ZfeGxhdGUgPSBtbXBfZ3Bpb19v
-Zl94bGF0ZTsKPj4gKyAgICAgICBtbXBfY2hpcC0+Y2hpcC5vZl9ncGlvX25fY2VsbHMgPSAyOwo+
-PiArI2VuZGlmCj4KPkNhbid0IHdlIGp1c3Qgc2VsZWN0IG9yIGRlcGVuZCBvbiBPRl9HUElPIGZv
-ciB0aGlzCj5kcml2ZXIgYW5kIGdldCByaWQgb2YgdGhlICNmaWRlZjpzPwo+ClN1cmUsIHdlIGNh
-biBkZXBlbmQgb24gT0ZfR1BJTy4KCj4+ICtzdGF0aWMgaW50IF9faW5pdCBtbXBfZ3Bpb19pbml0
-KHZvaWQpCj4+ICt7Cj4+ICsgICAgICAgcmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9yZWdpc3Rlcigm
-bW1wX2dwaW9fZHJpdmVyKTsKPj4gK30KPj4gK3Bvc3Rjb3JlX2luaXRjYWxsKG1tcF9ncGlvX2lu
-aXQpOwo+Cj5XaHkgZG9lcyB0aGlzIG5lZXMgdG8gYmUgcG9zdGNvcmU/IEEgbm9ybWFsIG1vZHVs
-ZQo+d291bGQgYmUgbmljZS4KPgoKSSB3YW50IHRvIG1ha2UgaXQgYXMgbW9kdWxlLCBidXQgc29t
-ZSBkZXZpY2VzIG5lZWQgY29udHJvbCB0aGUgR1BJTywgZm9yIGV4YW1wbGUsIFBNSUMgd2lsbCBt
-YWtlIHVzZSBvZiBHUElPIHRvIGNvbnRyb2wgdm9sdGFnZS4KVGhlIHZvbHRhZ2Ugc2V0dGluZyB3
-aWxsIGJlIGRvbmUgYmVmb3JlIEdQSU8gZHJpdmVyIGlzIGluaXRpYWxpemVkLiBTbyBpdCBuZWVk
-IG1ha2Ugc3VyZSB0aGF0IHRoZSBHUElPIEFQSXMgY2FuIHdvcmsuCgo+WW91cnMsCj5MaW51cyBX
-YWxsZWlqCg==
+On Wed, Feb 4, 2015 at 3:10 AM, Chao Xie <xiechao_mail@163.com> wrote:
+> At 2015-02-03 21:21:43, "Linus Walleij" <linus.walleij@linaro.org> wrote:
+
+>>Since this looks like a basic MMIO driver I think
+>>you should also use:
+>>
+>>select GPIO_GENERIC
+>>
+>
+> I think the gpio-mmp is not same as gpio-generic.
+> gpio-mmp need control the level/direction/rising edge detect enable/falling edge detect enable.
+> For each of them, there are three registers: status register,  setting register and clear register.
+
+This is quite common. Notice that GPIO_GENERIC does not require
+you to use the library for *all* reading/writing of registers. Just those
+that you select.
+
+> For example, for direction, if you configure it as output.
+> You need SET the bit in setting register.
+
+The library function bgpio_dir_out first calls gc->set()
+(which may also be a generic implementation) and then
+sets the direction bit.
+
+This is the nominal behaviour.
+
+> If you want to configure it as input
+> You need SET the bit in clear register.
+
+OK this is different from the default implementation so
+override the dirin function to get the right behaviour.
+You may still use the library for everything else.
+
+> It is same for level/rising edege detect enable/falling edge detect enable.
+
+irqchip is completely orthogonal and implemented
+separately in the struct irq_chip callbacks.
+
+> If you want to read the status of the pin. For example, the current level of the pin.
+> You CAN NOT read the setting/clear register. You need read
+> the level status register.
+
+That's cool. You pass a separate register for reading.
+Check how it actually works.
+
+>>> +#define mmp_gpio_to_bank_idx(gpio)     ((gpio) >> BANK_GPIO_ORDER)
+>>> +#define mmp_gpio_to_bank_offset(gpio)  ((gpio) & BANK_GPIO_MASK)
+>>> +#define mmp_bank_to_gpio(idx, offset)  (((idx) << BANK_GPIO_ORDER)     \
+>>> +                                               | ((offset) & BANK_GPIO_MASK))
+>>
+>>This looks convoluted. Why not just register each bank as a separate
+>>device instead of trying to figure out bank index like this?
+>>
+>
+> There are the following reasons
+> 1. There is only one IRQ for the whole GPIO, even there are 3 or more banks.
+> 2. The registers are not formatted into group. They are interleaved.
+>     For example, there are three banks, So for the registers order are
+>     LEVEL_STATUS_BANK0, LEVEL_STASTUS_BANK1, LEVEL_STATUS_BANK2
+>     DIRECTION_STATUS_BANK0, DIRECTION_STATUS_BANK1, DIRECTION_STATUS_BANK2
+> 3. each bank has 32 bits. Formatting them into one driver will make other driver easier.
+>     For example, the MMC driver has GPIO detection for card. So it knows the GPIO is GPIO56.
+>     In the device tree of MMC driver, you can simple add as
+>     cd-gpios = <&gpio 56 X>
+>     if you format them into different devices, the mmc driver owner need to know how much bits a bank is, and calculate out correct GPIOx and offset
+>     cd-gpios = <&gpio1 24 X>
+
+OK I buy this, atleast points 1 & 2.
+
+I think you can still use GPIOLIB_IRQCHIP though,
+since it's just one linear array of GPIO numbers.
+
+Yours,
+Linus Walleij
