@@ -1,42 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: Configure HiZ pins to be input when
- requested as GPIOs
-Date: Wed, 4 Feb 2015 10:01:49 +0100
-Message-ID: <CACRpkdYBnE18CJ6DZDnRQxJi9XEpVdE3UTcAqwCgrb8ewPR3jQ@mail.gmail.com>
-References: <1422528288-84076-1-git-send-email-mika.westerberg@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] sh-pfc: emev2 - Fix mangled author name
+Date: Wed, 4 Feb 2015 10:02:54 +0100
+Message-ID: <CAMuHMdU=T4jhhcoJJBp2CTsup3kz+Vzm_Vc5X1H+xZO6=Vk_JA@mail.gmail.com>
+References: <1422526376-12146-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdaY+fiYMt4MGQFTdyRAMXnhNj6tJQckst5ECrKREOQ6gw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:56240 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932981AbbBDJBu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Feb 2015 04:01:50 -0500
-Received: by mail-oi0-f50.google.com with SMTP id h136so290878oig.9
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Feb 2015 01:01:49 -0800 (PST)
-In-Reply-To: <1422528288-84076-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaY+fiYMt4MGQFTdyRAMXnhNj6tJQckst5ECrKREOQ6gw@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niso@kth.se>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Jerome Blin <jerome.blin@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 29, 2015 at 11:44 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+Hi Linus,
 
-> If the pin is in HiZ mode when it is requested as GPIO its value cannot be
-> read (it always returns 0). In order to cope with the Linux GPIO subsystem
-> where we do not have such state at all, turn the pin to be input instead.
+On Wed, Feb 4, 2015 at 9:54 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Jan 29, 2015 at 11:12 AM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
 >
-> Reported-by: Jerome Blin <jerome.blin@intel.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Fixes: 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support")
+>> ---
+>> Looks like the original UTF-8 was interpreted as ISO-8859-1, and the
+>> resulting characters being converted to UTF-8 again.
+>>
+>> BTW, the same issue is present in the SoB-lines of both
+>> 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support") and
+>> 4c9e473541c52453 ("sh-pfc: add macro to define pinmux without function")
+>> Perhaps they can still be fixed while squashing this in?
+>
+> This is painful, your patch arrives with this header:
+>
+> Content-Type: text/plain; charset=y
+> Content-Transfer-Encoding: 8bit
+>
+> When I try to apply it git am says:
+>
+> $ git am --signoff geert1.patch
+> fatal: cannot convert from y to UTF-8
+>
+> Wut? I never heard of an encoding named "y", and SMTP is
+> not my strongest subject anyway.
 
-Patch applied.
+Oops, I'm afraid automatic-I replied "y" to the git-send-email question
+"Which 8bit encoding should I declare [UTF-8]?"
+(happened before with the In-Reply-To questions ;-(
 
-Since putting a pin into GPIO mode start poking around in essentially pin
-control registers, we may need to revisit the issue of the pin control subsystem
-not denying simultaneous use of a pin for a device muxing and GPIO.
-Maybe the "strict" setting forcing a pin to be either one or the other on
-a per-driver basis would enforce a better policy on this driver (and some
-others).
+Sorry, resent by private email...
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
