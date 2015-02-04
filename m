@@ -1,40 +1,44 @@
-From: Stanimir Varbanov <svarbanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Add msm8916 pinctrl driver
-Date: Wed, 04 Feb 2015 16:39:01 +0200
-Message-ID: <54D22F05.9050403@mm-sol.com>
-References: <1422612241-12944-1-git-send-email-svarbanov@mm-sol.com> <1422612241-12944-4-git-send-email-svarbanov@mm-sol.com> <20150203164748.GA29190@qualcomm.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Configure HiZ pins to be input when
+ requested as GPIOs
+Date: Wed, 4 Feb 2015 17:37:56 +0200
+Message-ID: <20150204153756.GJ18758@lahna.fi.intel.com>
+References: <1422528288-84076-1-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkdYBnE18CJ6DZDnRQxJi9XEpVdE3UTcAqwCgrb8ewPR3jQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150203164748.GA29190-zC7DfRvBq/JWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Andy Gross <agross-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>, Joonwoo Park <joonwoop-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:63930 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S966573AbbBDPiA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 4 Feb 2015 10:38:00 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYBnE18CJ6DZDnRQxJi9XEpVdE3UTcAqwCgrb8ewPR3jQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jerome Blin <jerome.blin@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 02/03/2015 06:47 PM, Andy Gross wrote:
-> On Fri, Jan 30, 2015 at 12:04:01PM +0200, Stanimir Varbanov wrote:
->> From: Joonwoo Park <joonwoop-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
->>
->> Add initial pinctrl driver to support pin configuration with
->> pinctrl framework for msm8916.
->>
->> Signed-off-by: Joonwoo Park <joonwoop-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
->> Signed-off-by: Stanimir Varbanov <svarbanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+On Wed, Feb 04, 2015 at 10:01:49AM +0100, Linus Walleij wrote:
+> On Thu, Jan 29, 2015 at 11:44 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
 > 
-> Looks good.
+> > If the pin is in HiZ mode when it is requested as GPIO its value cannot be
+> > read (it always returns 0). In order to cope with the Linux GPIO subsystem
+> > where we do not have such state at all, turn the pin to be input instead.
+> >
+> > Reported-by: Jerome Blin <jerome.blin@intel.com>
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > 
-> Reviewed-by: Andy Gross <agross-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> 
+> Patch applied.
 
-Linus, do you want me to resend the patchset including this Reviewed-by tag?
+Thanks.
 
--- 
-regards,
-Stan
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Since putting a pin into GPIO mode start poking around in essentially pin
+> control registers, we may need to revisit the issue of the pin control subsystem
+> not denying simultaneous use of a pin for a device muxing and GPIO.
+> Maybe the "strict" setting forcing a pin to be either one or the other on
+> a per-driver basis would enforce a better policy on this driver (and some
+> others).
+
+Yes, something like that sounds reasonable.
