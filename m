@@ -1,58 +1,97 @@
 From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH v3 3/4] pinctrl: cygnus: add initial IOMUX driver support
-Date: Tue, 3 Feb 2015 12:16:04 -0800
-Message-ID: <54D12C84.9020505@broadcom.com>
-References: <rjui@broadcom.com> <1422928894-20716-1-git-send-email-rjui@broadcom.com> <1422928894-20716-4-git-send-email-rjui@broadcom.com> <20150203174042.GA15969@dtor-ws> <54D121A0.6070602@broadcom.com> <20150203200009.GB15969@dtor-ws>
+Subject: [PATCH v7 0/4] Add gpio/pinconf support to Broadcom Cygnus SoC
+Date: Tue, 3 Feb 2015 17:09:04 -0800
+Message-ID: <1423012148-22560-1-git-send-email-rjui@broadcom.com>
+References: <Ray Jui <rjui@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:64732 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756285AbbBCUQI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Feb 2015 15:16:08 -0500
-In-Reply-To: <20150203200009.GB15969@dtor-ws>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:42475 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752542AbbBDBHu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Feb 2015 20:07:50 -0500
+In-Reply-To: <Ray Jui <rjui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dtor@google.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Scott Branden <sbranden@broadcom.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, Ray Jui <rjui@broadcom.com>
 
+This patchset contains the initial GPIO/PINCONF support for the Broadcom
+Cygnus SoC.
 
+Cygnus has 3 GPIO controllers: 1) the ASIU GPIO; 2) the chipCommonG GPIO;
+and 3) the ALWAYS-ON GPIO. All 3 types of GPIO controllers are supported by
+the this driver.
 
-On 2/3/2015 12:00 PM, Dmitry Torokhov wrote:
-> On Tue, Feb 03, 2015 at 11:29:36AM -0800, Ray Jui wrote:
->> On 2/3/2015 9:40 AM, Dmitry Torokhov wrote:
->>> On Mon, Feb 02, 2015 at 06:01:33PM -0800, Ray Jui wrote:
->>>> +
->>>> +/*
->>>> + * List of pins in Cygnus
->>>> + */
->>>> +static struct cygnus_pin cygnus_pins[] = {
->>>
->>> const?
->>>
->> I cannot make it const here, since the address of "gpio_mux" is later
->> passed to pinctrl_pin_desc's private data:
->>
->> pins[i].drv_data = &cygnus_pins[i].gpio_mux;
-> 
-> The pinctrl code says:
-> 
-> "@drv_data: driver-defined per-pin data. pinctrl core does not touch
-> this"
-> 
-> so we could theoretically cast away the constness and restore it when
-> we access drv_data in pin control methods, but I won't insist. I am
-> not sure which way looks nicer.
-> 
-> Thanks.
-> 
-Yeah, I agreed that by declaring the cygnus_pins array const, it makes
-it more obvious that "we do not expect any of its parameters to change."
-But later if we cast &gpio_mux to void * before assigned to drv_data of
-pinctrl_pin_desc, we sort of break it up...I'll keep this part of code
-as it is for now.
+All 3 Cygnus GPIO controllers support basic PINCONF functions such as bias
+pull up, pull down, and drive strength configurations, when these pins are
+muxed to GPIO.
 
-Thanks,
+Pins from the ASIU GPIO can be individually muxed to GPIO function, through
+interaction with the Cygnus IOMUX controller.
 
-Ray
+Note this patchset has a dependency on the other patchset "Add pinctrl support
+to Broadcom Cygnus SoC" that is also under review
+
+Changes from v6:
+ - Move the driver from drivers/gpio/* to drivers/pinctrl/* since this driver
+   supports both GPIO and some basic PINCONF features
+ - Support PINCONF features through standard DT subnodes properties including
+   "bias-disable", "bias-pull-up", "bias-pull-down", and "drive-strength", by
+   creating local PINCONF controller
+ - Add support to allow individual ASIU GPIO pins to be muxed as GPIO, through
+   interactions with the Cygnus IOMUX driver
+ - Convert the driver to use standard GPIOCHIP_IRQ APIs. This helps to reduce
+   customized code in the driver
+ - Other miscellaneous imrpovements in the driver
+ - Enable GPIO based phone hook detection support for BCM911360 phone factor
+   board
+
+Changes from v5:
+ - Get rid of DT property "linux,gpio-base". Use dynamic allocation for GPIO base
+   number
+
+Changes from v4:
+ - Use DT property "linux,gpio-base" to define GPIO base number
+ - factorize common code to improve code readability and reduce code size
+ - remove "bcm_" prefix on function and struct names
+ - improve debugging prints
+ - default GPIO_BCM_CYGNUS to y in Kconfig (it still depends on
+   ARCH_BCM_CYGNUS). This way we do not need to select it from the
+   arch/arm/mach-bcm/Kconfig
+ - Get rid of redundant MAINTAINER entry for this driver. It will be maintained
+   by Broadcom iProc/Cygnus maintainers
+ - Update device tree document based on driver changes
+
+Changes from v3:
+ - Fix dt property tpyo
+ - Fix incorrect GPIO compatible ID in device tree binding document example
+
+Changes from v2:
+ - Consolidate different compatible IDs into "brcm,cygnus-gpio"
+ - Get rid of redundant "no-interrupt" property
+
+Changes from v1:
+ - Get rid of inline qualifier
+ - Get rid of redundant check in the ISR
+ - Other minor fixes to imrove code readability
+
+Ray Jui (4):
+  pinctrl: Cygnus: define Broadcom Cygnus GPIO/PINCONF binding
+  pinctrl: cygnus: add gpio/pinconf driver
+  ARM: dts: enable GPIO for Broadcom Cygnus
+  ARM: dts: cygnus: enable GPIO based hook detection
+
+ .../bindings/pinctrl/brcm,cygnus-gpio.txt          |  102 +++
+ arch/arm/boot/dts/bcm-cygnus.dtsi                  |   33 +
+ arch/arm/boot/dts/bcm911360_entphn.dts             |   13 +
+ drivers/pinctrl/bcm/Kconfig                        |   22 +
+ drivers/pinctrl/bcm/Makefile                       |    1 +
+ drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c          |  920 ++++++++++++++++++++
+ 6 files changed, 1091 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+
+-- 
+1.7.9.5
+
