@@ -1,56 +1,77 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Wed, 4 Feb 2015 10:51:27 +0100
-Message-ID: <CACRpkdbpJXHih0-Yhpi=AjvVjxZwEAhqe_iBWbd=5Cjz+sQZxQ@mail.gmail.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
-	<4006695.qV8Mor20ru@vostro.rjw.lan>
-	<CACRpkdZWEq_6eNf_rj2rje0KzAKQZ7DeB6L5PW-nacE6=rzmEQ@mail.gmail.com>
-	<2116821.DVmvasqCz1@vostro.rjw.lan>
+Subject: Re: [PATCH 3/3] pinctrl: qcom: handle input-enable pinconf property
+Date: Wed, 4 Feb 2015 11:03:36 +0100
+Message-ID: <CACRpkdYsy5R60NKhDvCUuyq-oV2FnuF1GQBvyNfr0YECUXn7zw@mail.gmail.com>
+References: <1422613644-13060-1-git-send-email-svarbanov@mm-sol.com>
+	<1422613644-13060-4-git-send-email-svarbanov@mm-sol.com>
+	<20150130162004.GT11960@sonymobile.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <2116821.DVmvasqCz1@vostro.rjw.lan>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:32820 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933365AbbBDKDh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Feb 2015 05:03:37 -0500
+Received: by mail-ob0-f176.google.com with SMTP id wo20so534244obc.7
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Feb 2015 02:03:36 -0800 (PST)
+In-Reply-To: <20150130162004.GT11960@sonymobile.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: Stanimir Varbanov <svarbanov@mm-sol.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
 
-On Fri, Jan 30, 2015 at 5:17 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Friday, January 30, 2015 03:48:30 PM Linus Walleij wrote:
+On Fri, Jan 30, 2015 at 5:20 PM, Bjorn Andersson
+<bjorn.andersson@sonymobile.com> wrote:
+> On Fri 30 Jan 02:27 PST 2015, Stanimir Varbanov wrote:
+>
+>> +     case PIN_CONFIG_INPUT_ENABLE:
+>> +             /* Pin is output */
+>> +             if (arg)
+>> +                     return -EINVAL;
+>> +             arg = 1;
+>> +             break;
+>
+> My idea of this function is to query if we have the specific option
+> enabled, so I don't like the fact that we're returning an error here, we
+> should just return 0 with arg 0 (or something like that).
+>
+> However, that would not give the results we expect and your patch is
+> "correct".
+>
+> Linus, conf_items in pinconf_generic_dump_one() seems to represent
+> boolean properties of the pins. Returning 0 from pin_config_*_get()
+> should in my view then be treated as it not being active.
+>
+> Is this in line with your view and should we modify
+> pinconf_generic_dump_one() to continue for these values if the getter
+> returns 0?
+>
+> If not, at least all the bias properties here should return -EINVAL as
+> well. (which I think is wrong)
 
->> So you could detect one by making a checksum of the binary or something.
->>
->> And then you'd know that the table with this checksum needs patching?
->
-> At a single table level it is generally difficult to say whether or not
-> things are going to work.
->
-> What needs to work is the namespace which is built from all of the tables
-> provided combined.  So the namespace needs to be populated first and then
-> fixes applied on top of that (presumably by deleting, adding or replacing
-> objects).
->
-> Now, in theory, you *may* be able to figure out that combination of tables
-> A produces namespace B which then will require fix X if the system is Y,
-> but quite frankly I wouldn't count on that.
->
-> Moreover, fixups (or "patches" as I called them, but that wasn't exactly
-> correct) need to be provided in the form of AML definition blocks to apply on
-> top of an already populated namespace and if you want to use a binary kernel image,
-> you can't really afford putting all that stuff for all systems it can possibly
-> run on into it.  This means that distros need to be able to combine a fixup for
-> the ACPI tables with the binary kernel and install the result into the system's
-> boot medium (whatever it is).  Also it should be possible to update the fixup
-> and the kernel image separately if necessary.
->
-> Now from the kernel's perspective that raises the question: "What if the
-> ACPI tables fixup provided by the distro is not sufficient?"
->
-> That needs to be addressed somehow in the code.
+Well currently the semantics are:
 
-Yeah I guess I'm convinced that we need to handle this particular
-weirdness in the gpio-acpi code... if it can be contained there as
-expressed by Alexandre.
+- ENOTSUPP = this property is not even supported
+- EINVAL       = this value exists but can not be determined
+
+It has this form primarily to serve the non-boolean properties.
+For example pull-up can return -EINVAL if pull-up is supported
+but pull-down is currently active, so it cannot say what
+resistance it is pulled up with, as it is "infinite" (NAN,
+thus translated -EINVAL).
+
+It just folds over to the boolean props doing things in the
+same way to simplify things... -EINVAL just means
+"false". If we should return 1/0 from boolean props we need
+to handle them as a special case in the pinconf-generic.
+code, by extending the struct pinconf_generic_params,
+which is possible of course.
+
+Further: as of now pinconf_generic_dump_one() doesn't print
+anything for inactive pulls etc return -EINVAL, but maybe
+it should? It was just handy on some system to only see
+the stuff that was really active, not to get a list of stuff that
+was not active as well.
 
 Yours,
 Linus Walleij
