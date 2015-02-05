@@ -1,48 +1,147 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4] gpio: lib-sysfs: Add 'wakeup' attribute
-Date: Thu, 5 Feb 2015 11:33:04 +0100
-Message-ID: <20150205103304.GH13757@localhost>
-References: <1421351389-11660-1-git-send-email-soren.brinkmann@xilinx.com>
- <20150116111108.GG30960@localhost>
- <a4610e13d0094d40b7e0574992509ec6@BN1AFFO11FD044.protection.gbl>
- <CAAVeFu+K0W96mi0=QR8JGSe9BpH2nC5WV_9qbSvm6LJGA8gc7Q@mail.gmail.com>
- <CACRpkdZ4CekD2xeJYM+UUtuGuwS2uB++XprSueWnshEVk=79Fw@mail.gmail.com>
- <bb967ff02726449ab6525d33bccde7e4@BL2FFO11FD014.protection.gbl>
- <CACRpkdYuHdbQ7aaeCQTwZO63LjWpKyZnPQRNCBmRybntXYJxFQ@mail.gmail.com>
- <ce91ced9e1f0481f8af03a168eda48b9@BN1AFFO11FD048.protection.gbl>
+From: Tien Hock Loh <thloh-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v8 2/2] drivers/gpio: Altera soft IP GPIO driver
+Date: Thu, 5 Feb 2015 02:32:02 -0800
+Message-ID: <1423132322.1110.13.camel@ubuntu>
+References: <1419409345-8297-1-git-send-email-thloh@altera.com>
+	 <1419409345-8297-3-git-send-email-thloh@altera.com>
+	 <1419419050.6157.11.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <ce91ced9e1f0481f8af03a168eda48b9-reflc3kr++M/rzWiRNbYG+hlVc3/7hDbVaz/vdPVXQ4@public.gmane.org>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1419419050.6157.11.camel-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Cc: thloh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 04, 2015 at 10:27:15AM -0800, S=F6ren Brinkmann wrote:
-> On Wed, 2015-02-04 at 10:19AM +0100, Linus Walleij wrote:
+On Wed, 2014-12-24 at 03:04 -0800, Joe Perches wrote:
+> On Wed, 2014-12-24 at 00:22 -0800, thloh-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org wrote:
+> > Adds a new driver for Altera soft GPIO IP. The driver is able to
+> > do read/write and allows GPIO to be a interrupt controller.
+> 
+> Some trivial comments, some not quite so trivial.
+> 
+> > diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+> []
+> > +static int altera_gpio_irq_set_type(struct irq_data *d,
+> > +				   unsigned int type)
+> > +{
+> > +	struct altera_gpio_chip *altera_gc = irq_data_get_irq_chip_data(d);
+> > +
+> > +	altera_gc = irq_data_get_irq_chip_data(d);
+> 
+> I presume this multiple initialization of altera_gc
+> is unnecessary duplication.
 
-> > What needs to happen (IMHO) is to make gpio_chips properly obeying
-> > the device model, and then add the attributes for fiddling around w=
-ith
-> > GPIOs to either the *real* device or create a new char device inter=
-face.
-> > Whatever works best. These mock devices are fragile and never
-> > worked properly especially in the removal path as Johans recent
-> > fixes has shown.
->=20
-> Sure, that would be a nice long-term solution. But until then this pa=
-tch
-> would probably be welcomed by some people, without making the brokenn=
-ess
-> of this interface much worse.
+I'll remove this.
 
-We don't knowingly add broken functionality, and especially not when it
-will become ABI that needs to be maintained forever.
+> 
+> > +static void altera_gpio_irq_edge_handler(unsigned int irq,
+> > +					struct irq_desc *desc)
+> > +{
+> > +	struct altera_gpio_chip *altera_gc;
+> > +	struct irq_chip *chip;
+> > +	struct of_mm_gpio_chip *mm_gc;
+> > +	unsigned long status;
+> > +	int i;
+> > +
+> > +	altera_gc = irq_desc_get_handler_data(desc);
+> > +	chip = irq_desc_get_chip(desc);
+> > +	mm_gc = &altera_gc->mmchip;
+> > +
+> > +	chained_irq_enter(chip, desc);
+> > +
+> > +	while ((status =
+> > +	      (readl(mm_gc->regs + ALTERA_GPIO_EDGE_CAP) &
+> > +	      readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK)))) {
+> > +		writel(status, mm_gc->regs + ALTERA_GPIO_EDGE_CAP);
+> > +		for_each_set_bit(i, &status, mm_gc->gc.ngpio) {
+> > +			generic_handle_irq(
+> > +				irq_find_mapping(altera_gc->mmchip.gc.irqdomain
+> > +						, i));
+> 
+> That's kind of unpleasant to read.
+> It might be better to use a separate these statements
+> and use a temporary for irq_find_mapping()
+> 
 
-And "this might be useful for someone at some point" is certainly not a
-reason to break that rule.
+OK I'll fix it.
 
-Johan
+> > +static void altera_gpio_irq_leveL_high_handler(unsigned int irq,
+> > +					      struct irq_desc *desc)
+> > +{
+> > +	struct altera_gpio_chip *altera_gc;
+> > +	struct irq_chip *chip;
+> > +	struct of_mm_gpio_chip *mm_gc;
+> > +	unsigned long status;
+> > +	int i;
+> > +
+> > +	altera_gc = irq_desc_get_handler_data(desc);
+> > +	chip = irq_desc_get_chip(desc);
+> > +	mm_gc = &altera_gc->mmchip;
+> > +
+> > +	chained_irq_enter(chip, desc);
+> > +
+> > +	status = readl(mm_gc->regs + ALTERA_GPIO_DATA);
+> > +	status &= readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
+> > +
+> > +	for_each_set_bit(i, &status, mm_gc->gc.ngpio) {
+> > +		generic_handle_irq(
+> > +			irq_find_mapping(altera_gc->mmchip.gc.irqdomain, i));
+> 
+> Maybe a temporary here too
+> 
+
+Yup 
+
+> > +int altera_gpio_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device_node *node = pdev->dev.of_node;
+> > +	int id, reg, ret;
+> > +	struct altera_gpio_chip *altera_gc;
+> > +
+> > +	altera_gc = devm_kzalloc(&pdev->dev, sizeof(*altera_gc), GFP_KERNEL);
+> > +
+> > +	if (altera_gc == NULL)
+> > +		return -ENOMEM;
+> 
+> No blank line after the devm_kzalloc please and
+> 	if (!altera_gc)
+> is more common.
+> 
+> 
+
+OK noted. 
+
+> > +	if (altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH) {
+> > +		gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
+> > +			&altera_irq_chip,
+> > +			altera_gc->mapped_irq,
+> > +			altera_gpio_irq_leveL_high_handler);
+> > +	} else {
+> > +		gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
+> > +			&altera_irq_chip,
+> > +			altera_gc->mapped_irq,
+> > +			altera_gpio_irq_edge_handler);
+> > +	}
+> 
+> Sometimes using a ?: ternary is smaller code
+> 
+> 	gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
+> 				     &altera_irq_chip,
+> 				     altera_gc->mapped_irq,
+> 				     altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH ?
+> 				     altera_gpio_irq_leveL_high_handler :
+> 				     altera_gpio_irq_edge_handler);
+> > 
+> 
+Yup I'll fix it.
+
+Regards,
+Tien Hock Loh
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
