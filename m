@@ -1,7 +1,7 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] gpio: pcf857x: Propagate wake-up setting to parent irq controller
-Date: Thu,  5 Feb 2015 16:49:09 +0100
-Message-ID: <1423151349-10579-3-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 1/2] [RFC] gpio: pcf857x: Switch to use gpiolib irqchip helpers
+Date: Thu,  5 Feb 2015 16:49:08 +0100
+Message-ID: <1423151349-10579-2-git-send-email-geert+renesas@glider.be>
 References: <1423151349-10579-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1423151349-10579-1-git-send-email-geert+renesas@glider.be>
@@ -10,98 +10,220 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-The pcf857x GPIO and interrupt controller uses dummy_irq_chip, which
-does not implement irq_chip.irq_set_wake() and does not set
-IRQCHIP_SKIP_SET_WAKE.
+Switch the PCF857x GPIO driver to use the gpiolib irqchip helpers.
+This driver uses a nested threaded interrupt, hence handle_nested_irq()
+and gpiochip_set_chained_irqchip() must be used.
 
-This causes two s2ram issues if wake-up is enabled for the pcf857x GPIO
-pins:
-  1. During resume from s2ram, the following warning is printed:
-
-     WARNING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
-     Unbalanced IRQ 113 wake disable
-
-  2. Wake-up through the pcf857x GPIO pins may fail, as the parent
-     interrupt controller may be suspended.
-
-Migrate the pcf857x GPIO and interrupt controller from dummy_irq_chip to
-its own irq_chip. This irq chip implements irq_chip.irq_set_wake() to
-propagate its wake-up setting to the parent interrupt controller.
-
-This fixes wake-up through gpio-keys on sh73a0/kzm9g, where the pcf857x
-interrupt is cascaded to irq-renesas-intc-irqpin, and the latter must
-not be suspended when wake-up is enabled.
+Note that this removes the checks added in commit 21fd3cd1874a2ac8
+("gpio: pcf857x: call the gpio user handler iff gpio_to_irq is done"),
+as the interrupt mappings are no longer created on-demand by the driver,
+but by gpiochip_irqchip_add() during initialization.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - Rebased on top of "gpio: pcf857x: Switch to use gpiolib irqchip
-    helpers".
+Does the removal of the checks cause problems for anyone?
 ---
- drivers/gpio/gpio-pcf857x.c | 37 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 34 insertions(+), 3 deletions(-)
+ drivers/gpio/Kconfig        |   1 +
+ drivers/gpio/gpio-pcf857x.c | 121 ++++++++++----------------------------------
+ 2 files changed, 28 insertions(+), 94 deletions(-)
 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index ae5cb4d517c69885..9343b4cd20b459c6 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -604,6 +604,7 @@ config GPIO_PCA953X_IRQ
+ config GPIO_PCF857X
+ 	tristate "PCF857x, PCA{85,96}7x, and MAX732[89] I2C GPIO expanders"
+ 	depends on I2C
++	select GPIOLIB_IRQCHIP
+ 	select IRQ_DOMAIN
+ 	help
+ 	  Say yes here to provide access to most "quasi-bidirectional" I2C
 diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 126c937321013445..945f0cda8529d38a 100644
+index 236708ad0a5ba0ab..126c937321013445 100644
 --- a/drivers/gpio/gpio-pcf857x.c
 +++ b/drivers/gpio/gpio-pcf857x.c
-@@ -204,6 +204,36 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
+@@ -88,11 +88,9 @@ struct pcf857x {
+ 	struct gpio_chip	chip;
+ 	struct i2c_client	*client;
+ 	struct mutex		lock;		/* protect 'out' */
+-	struct irq_domain	*irq_domain;	/* for irq demux  */
+ 	spinlock_t		slock;		/* protect irq demux */
+ 	unsigned		out;		/* software latch */
+ 	unsigned		status;		/* current status */
+-	unsigned		irq_mapped;	/* mapped gpio irqs */
+ 
+ 	int (*write)(struct i2c_client *client, unsigned data);
+ 	int (*read)(struct i2c_client *client);
+@@ -182,18 +180,6 @@ static void pcf857x_set(struct gpio_chip *chip, unsigned offset, int value)
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-static int pcf857x_to_irq(struct gpio_chip *chip, unsigned offset)
+-{
+-	struct pcf857x *gpio = container_of(chip, struct pcf857x, chip);
+-	int ret;
+-
+-	ret = irq_create_mapping(gpio->irq_domain, offset);
+-	if (ret > 0)
+-		gpio->irq_mapped |= (1 << offset);
+-
+-	return ret;
+-}
+-
+ static irqreturn_t pcf857x_irq(int irq, void *data)
+ {
+ 	struct pcf857x  *gpio = data;
+@@ -208,9 +194,9 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
+ 	 * interrupt source, just to avoid bad irqs
+ 	 */
+ 
+-	change = ((gpio->status ^ status) & gpio->irq_mapped);
++	change = (gpio->status ^ status);
+ 	for_each_set_bit(i, &change, gpio->chip.ngpio)
+-		generic_handle_irq(irq_find_mapping(gpio->irq_domain, i));
++		handle_nested_irq(irq_find_mapping(gpio->chip.irqdomain, i));
+ 	gpio->status = status;
+ 
+ 	spin_unlock_irqrestore(&gpio->slock, flags);
+@@ -218,66 +204,6 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
  	return IRQ_HANDLED;
  }
  
-+/*
-+ * NOP functions
-+ */
-+static void noop(struct irq_data *data) { }
-+
-+static unsigned int noop_ret(struct irq_data *data)
-+{
-+	return 0;
-+}
-+
-+static int pcf857x_irq_set_wake(struct irq_data *data, unsigned int on)
-+{
-+	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
-+
-+	irq_set_irq_wake(gpio->client->irq, on);
-+	return 0;
-+}
-+
-+static struct irq_chip pcf857x_irq_chip = {
-+	.name		= "pcf857x",
-+	.irq_startup	= noop_ret,
-+	.irq_shutdown	= noop,
-+	.irq_enable	= noop,
-+	.irq_disable	= noop,
-+	.irq_ack	= noop,
-+	.irq_mask	= noop,
-+	.irq_unmask	= noop,
-+	.irq_set_wake	= pcf857x_irq_set_wake,
-+};
-+
+-static int pcf857x_irq_domain_map(struct irq_domain *domain, unsigned int irq,
+-				 irq_hw_number_t hw)
+-{
+-	struct pcf857x *gpio = domain->host_data;
+-
+-	irq_set_chip_and_handler(irq,
+-				 &dummy_irq_chip,
+-				 handle_level_irq);
+-#ifdef CONFIG_ARM
+-	set_irq_flags(irq, IRQF_VALID);
+-#else
+-	irq_set_noprobe(irq);
+-#endif
+-	gpio->irq_mapped |= (1 << hw);
+-
+-	return 0;
+-}
+-
+-static struct irq_domain_ops pcf857x_irq_domain_ops = {
+-	.map	= pcf857x_irq_domain_map,
+-};
+-
+-static void pcf857x_irq_domain_cleanup(struct pcf857x *gpio)
+-{
+-	if (gpio->irq_domain)
+-		irq_domain_remove(gpio->irq_domain);
+-
+-}
+-
+-static int pcf857x_irq_domain_init(struct pcf857x *gpio,
+-				   struct i2c_client *client)
+-{
+-	int status;
+-
+-	gpio->irq_domain = irq_domain_add_linear(client->dev.of_node,
+-						 gpio->chip.ngpio,
+-						 &pcf857x_irq_domain_ops,
+-						 gpio);
+-	if (!gpio->irq_domain)
+-		goto fail;
+-
+-	/* enable real irq */
+-	status = devm_request_threaded_irq(&client->dev, client->irq,
+-				NULL, pcf857x_irq, IRQF_ONESHOT |
+-				IRQF_TRIGGER_FALLING | IRQF_SHARED,
+-				dev_name(&client->dev), gpio);
+-
+-	if (status)
+-		goto fail;
+-
+-	/* enable gpio_to_irq() */
+-	gpio->chip.to_irq	= pcf857x_to_irq;
+-
+-	return 0;
+-
+-fail:
+-	pcf857x_irq_domain_cleanup(gpio);
+-	return -EINVAL;
+-}
+-
  /*-------------------------------------------------------------------------*/
  
  static int pcf857x_probe(struct i2c_client *client,
-@@ -317,8 +347,9 @@ static int pcf857x_probe(struct i2c_client *client,
+@@ -314,15 +240,6 @@ static int pcf857x_probe(struct i2c_client *client,
+ 	gpio->chip.direction_output	= pcf857x_output;
+ 	gpio->chip.ngpio		= id->driver_data;
  
- 	/* Enable irqchip if we have an interrupt */
- 	if (client->irq) {
--		status = gpiochip_irqchip_add(&gpio->chip, &dummy_irq_chip, 0,
--					      handle_level_irq, IRQ_TYPE_NONE);
-+		status = gpiochip_irqchip_add(&gpio->chip, &pcf857x_irq_chip,
-+					      0, handle_level_irq,
-+					      IRQ_TYPE_NONE);
- 		if (status) {
- 			dev_err(&client->dev, "cannot add irqchip\n");
- 			goto fail_irq;
-@@ -331,7 +362,7 @@ static int pcf857x_probe(struct i2c_client *client,
- 		if (status)
- 			goto fail_irq;
+-	/* enable gpio_to_irq() if platform has settings */
+-	if (client->irq) {
+-		status = pcf857x_irq_domain_init(gpio, client);
+-		if (status < 0) {
+-			dev_err(&client->dev, "irq_domain init failed\n");
+-			goto fail_irq_domain;
+-		}
+-	}
+-
+ 	/* NOTE:  the OnSemi jlc1562b is also largely compatible with
+ 	 * these parts, notably for output.  It has a low-resolution
+ 	 * DAC instead of pin change IRQs; and its inputs can be the
+@@ -398,6 +315,26 @@ static int pcf857x_probe(struct i2c_client *client,
+ 	if (status < 0)
+ 		goto fail;
  
--		gpiochip_set_chained_irqchip(&gpio->chip, &dummy_irq_chip,
-+		gpiochip_set_chained_irqchip(&gpio->chip, &pcf857x_irq_chip,
- 					     client->irq, NULL);
++	/* Enable irqchip if we have an interrupt */
++	if (client->irq) {
++		status = gpiochip_irqchip_add(&gpio->chip, &dummy_irq_chip, 0,
++					      handle_level_irq, IRQ_TYPE_NONE);
++		if (status) {
++			dev_err(&client->dev, "cannot add irqchip\n");
++			goto fail_irq;
++		}
++
++		status = devm_request_threaded_irq(&client->dev, client->irq,
++					NULL, pcf857x_irq, IRQF_ONESHOT |
++					IRQF_TRIGGER_FALLING | IRQF_SHARED,
++					dev_name(&client->dev), gpio);
++		if (status)
++			goto fail_irq;
++
++		gpiochip_set_chained_irqchip(&gpio->chip, &dummy_irq_chip,
++					     client->irq, NULL);
++	}
++
+ 	/* Let platform code set up the GPIOs and their users.
+ 	 * Now is the first time anyone could use them.
+ 	 */
+@@ -413,13 +350,12 @@ static int pcf857x_probe(struct i2c_client *client,
+ 
+ 	return 0;
+ 
+-fail:
+-	if (client->irq)
+-		pcf857x_irq_domain_cleanup(gpio);
++fail_irq:
++	gpiochip_remove(&gpio->chip);
+ 
+-fail_irq_domain:
+-	dev_dbg(&client->dev, "probe error %d for '%s'\n",
+-		status, client->name);
++fail:
++	dev_dbg(&client->dev, "probe error %d for '%s'\n", status,
++		client->name);
+ 
+ 	return status;
+ }
+@@ -441,9 +377,6 @@ static int pcf857x_remove(struct i2c_client *client)
+ 		}
  	}
  
+-	if (client->irq)
+-		pcf857x_irq_domain_cleanup(gpio);
+-
+ 	gpiochip_remove(&gpio->chip);
+ 	return status;
+ }
 -- 
 1.9.1
