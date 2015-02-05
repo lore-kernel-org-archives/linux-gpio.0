@@ -1,147 +1,74 @@
-From: Tien Hock Loh <thloh-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v8 2/2] drivers/gpio: Altera soft IP GPIO driver
-Date: Thu, 5 Feb 2015 02:32:02 -0800
-Message-ID: <1423132322.1110.13.camel@ubuntu>
-References: <1419409345-8297-1-git-send-email-thloh@altera.com>
-	 <1419409345-8297-3-git-send-email-thloh@altera.com>
-	 <1419419050.6157.11.camel@perches.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: pinctrl-imx: don't use invalid value of conf_reg
+Date: Thu, 5 Feb 2015 14:53:34 +0100
+Message-ID: <CACRpkdYXW5X7bSiRPTC3uHT=s+hjxj+jS0YJCBWrcmzHWkpqHg@mail.gmail.com>
+References: <1422399025-25636-1-git-send-email-u.kleine-koenig@pengutronix.de>
+	<CACRpkdbtpGU57-tPn9Z0rNvY4zLk+QE6A9Pd87vLUHOmRiB2yg@mail.gmail.com>
+	<20150203190141.GE10842@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1419419050.6157.11.camel-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Cc: thloh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:45986 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757417AbbBENxf convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Feb 2015 08:53:35 -0500
+Received: by mail-ob0-f178.google.com with SMTP id uz6so7051898obc.9
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Feb 2015 05:53:34 -0800 (PST)
+In-Reply-To: <20150203190141.GE10842@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Dong Aisheng <dong.aisheng@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, 2014-12-24 at 03:04 -0800, Joe Perches wrote:
-> On Wed, 2014-12-24 at 00:22 -0800, thloh-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org wrote:
-> > Adds a new driver for Altera soft GPIO IP. The driver is able to
-> > do read/write and allows GPIO to be a interrupt controller.
-> 
-> Some trivial comments, some not quite so trivial.
-> 
-> > diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
-> []
-> > +static int altera_gpio_irq_set_type(struct irq_data *d,
-> > +				   unsigned int type)
-> > +{
-> > +	struct altera_gpio_chip *altera_gc = irq_data_get_irq_chip_data(d);
-> > +
-> > +	altera_gc = irq_data_get_irq_chip_data(d);
-> 
-> I presume this multiple initialization of altera_gc
-> is unnecessary duplication.
+On Tue, Feb 3, 2015 at 8:01 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> On Tue, Feb 03, 2015 at 02:01:09PM +0100, Linus Walleij wrote:
+>> On Tue, Jan 27, 2015 at 11:50 PM, Uwe Kleine-K=C3=B6nig
+>> <u.kleine-koenig@pengutronix.de> wrote:
+>>
+>> > The right check for conf_reg to be invalid it testing against -1 n=
+ot 0
+>> > as is done in the rest of the driver.
+>> >
+>> > This fixes an oops that can be triggered by:
+>> >
+>> >         cat /sys/kernel/debug/pinctrl/43fac000.iomuxc/*
+>> >
+>> > Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core d=
+river")
+>> > Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.=
+de>
+>>
+>> Patch applied.
+>>
+>> But...
+>>
+>> > -       if (!pin_reg || !pin_reg->conf_reg) {
+>> > +       if (!pin_reg || pin_reg->conf_reg =3D=3D -1) {
+>>
+>> I can see that the other code checks for -1 in this variable.
+>> But where is conf_reg ever set to -1?
+>>
+>> freescale]$ git grep "\-1"
+>> pinctrl-imx.c:          if (pin_reg->mux_reg =3D=3D -1) {
+>> pinctrl-imx.c:  if (pin_reg->mux_reg =3D=3D -1)
+>> pinctrl-imx.c:  if (pin_reg->mux_reg =3D=3D -1)
+>> pinctrl-imx.c:  if (pin_reg->conf_reg =3D=3D -1) {
+>> pinctrl-imx.c:  if (pin_reg->conf_reg =3D=3D -1) {
+>> pinctrl-imx.c:  if (!pin_reg || pin_reg->conf_reg =3D=3D -1) {
+> Uah, ugly. This member gets -1 by means of:
+>
+>         memset(info->pin_regs, 0xff, sizeof(*info->pin_regs) * info->=
+npins);
 
-I'll remove this.
+OMG. Uwe can you make a patch changing that initialization
+code to something sane? We can't have it like this.
 
-> 
-> > +static void altera_gpio_irq_edge_handler(unsigned int irq,
-> > +					struct irq_desc *desc)
-> > +{
-> > +	struct altera_gpio_chip *altera_gc;
-> > +	struct irq_chip *chip;
-> > +	struct of_mm_gpio_chip *mm_gc;
-> > +	unsigned long status;
-> > +	int i;
-> > +
-> > +	altera_gc = irq_desc_get_handler_data(desc);
-> > +	chip = irq_desc_get_chip(desc);
-> > +	mm_gc = &altera_gc->mmchip;
-> > +
-> > +	chained_irq_enter(chip, desc);
-> > +
-> > +	while ((status =
-> > +	      (readl(mm_gc->regs + ALTERA_GPIO_EDGE_CAP) &
-> > +	      readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK)))) {
-> > +		writel(status, mm_gc->regs + ALTERA_GPIO_EDGE_CAP);
-> > +		for_each_set_bit(i, &status, mm_gc->gc.ngpio) {
-> > +			generic_handle_irq(
-> > +				irq_find_mapping(altera_gc->mmchip.gc.irqdomain
-> > +						, i));
-> 
-> That's kind of unpleasant to read.
-> It might be better to use a separate these statements
-> and use a temporary for irq_find_mapping()
-> 
-
-OK I'll fix it.
-
-> > +static void altera_gpio_irq_leveL_high_handler(unsigned int irq,
-> > +					      struct irq_desc *desc)
-> > +{
-> > +	struct altera_gpio_chip *altera_gc;
-> > +	struct irq_chip *chip;
-> > +	struct of_mm_gpio_chip *mm_gc;
-> > +	unsigned long status;
-> > +	int i;
-> > +
-> > +	altera_gc = irq_desc_get_handler_data(desc);
-> > +	chip = irq_desc_get_chip(desc);
-> > +	mm_gc = &altera_gc->mmchip;
-> > +
-> > +	chained_irq_enter(chip, desc);
-> > +
-> > +	status = readl(mm_gc->regs + ALTERA_GPIO_DATA);
-> > +	status &= readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
-> > +
-> > +	for_each_set_bit(i, &status, mm_gc->gc.ngpio) {
-> > +		generic_handle_irq(
-> > +			irq_find_mapping(altera_gc->mmchip.gc.irqdomain, i));
-> 
-> Maybe a temporary here too
-> 
-
-Yup 
-
-> > +int altera_gpio_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device_node *node = pdev->dev.of_node;
-> > +	int id, reg, ret;
-> > +	struct altera_gpio_chip *altera_gc;
-> > +
-> > +	altera_gc = devm_kzalloc(&pdev->dev, sizeof(*altera_gc), GFP_KERNEL);
-> > +
-> > +	if (altera_gc == NULL)
-> > +		return -ENOMEM;
-> 
-> No blank line after the devm_kzalloc please and
-> 	if (!altera_gc)
-> is more common.
-> 
-> 
-
-OK noted. 
-
-> > +	if (altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH) {
-> > +		gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
-> > +			&altera_irq_chip,
-> > +			altera_gc->mapped_irq,
-> > +			altera_gpio_irq_leveL_high_handler);
-> > +	} else {
-> > +		gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
-> > +			&altera_irq_chip,
-> > +			altera_gc->mapped_irq,
-> > +			altera_gpio_irq_edge_handler);
-> > +	}
-> 
-> Sometimes using a ?: ternary is smaller code
-> 
-> 	gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
-> 				     &altera_irq_chip,
-> 				     altera_gc->mapped_irq,
-> 				     altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH ?
-> 				     altera_gpio_irq_leveL_high_handler :
-> 				     altera_gpio_irq_edge_handler);
-> > 
-> 
-Yup I'll fix it.
-
-Regards,
-Tien Hock Loh
-
+Yours,
+Linus Walleij
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
