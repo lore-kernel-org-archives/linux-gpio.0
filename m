@@ -1,453 +1,130 @@
-From: Janusz Uzycki <j.uzycki@elproma.com.pl>
-Subject: [PATCH v3 1/4] tty: serial_mctrl_gpio: Add irqs helpers for input lines
-Date: Fri,  6 Feb 2015 17:55:32 +0100
-Message-ID: <1423241735-30387-1-git-send-email-j.uzycki@elproma.com.pl>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH 03/10] devicetree: bindings: add Device Tree bindings for
+ Armada 39x pin-muxing controller
+Date: Fri, 6 Feb 2015 18:05:21 +0100
+Message-ID: <20150206170521.GX25985@lunn.ch>
+References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1423238276-9206-4-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from v032797.home.net.pl ([89.161.177.31]:51038 "HELO
-	v032797.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753655AbbBFQxs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Feb 2015 11:53:48 -0500
+Received: from vps0.lunn.ch ([178.209.37.122]:39435 "EHLO vps0.lunn.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752809AbbBFRIF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 6 Feb 2015 12:08:05 -0500
+Content-Disposition: inline
+In-Reply-To: <1423238276-9206-4-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Cc: fabio.estevam@freescale.com, Richard Genoud <richard.genoud@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org, Janusz Uzycki <j.uzycki@elproma.com.pl>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-A driver using mctrl_gpio called gpiod_get_direction() to check if
-gpio is input line. However .get_direction callback is not available
-for all platforms. The patch allows to avoid the function.
-The patch introduces the following helpers:
-- mctrl_gpio_request_irqs
-- mctrl_gpio_free_irqs
-- mctrl_gpio_enable_ms
-- mctrl_gpio_disable_ms
-They allow to:
-- simplify drivers which use mctrl_gpio
-- hide irq table in mctrl_gpio
-- use default irq handler for gpios
-- better separate code for gpio modem lines from uart's code
-In addition mctrl_gpio_init() has been renamed to mctrl_gpio_init_dt()
-to focus DT usage. Also mctrl_gpio_init_dt() initializes irq table for
-gpios now and passes struct uart_port into struct mctrl_gpios.
-This resulted in changed mctrl_gpio_init_dt() parameter.
-It also requires port->dev is set before the function is called.
+On Fri, Feb 06, 2015 at 04:57:49PM +0100, Thomas Petazzoni wrote:
+> This commit adds the Device Tree binding documentation to describe the
+> pin-muxing controller of the Marvell Armada 39x processors. Two
+> variants are supported for the moment: the 88F6920 (Armada 390) and
+> 88F6928 (Armada 398).
+> 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
+>  .../pinctrl/marvell,armada-39x-pinctrl.txt         | 78 ++++++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-39x-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-39x-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-39x-pinctrl.txt
+> new file mode 100644
+> index 0000000..5b1a9dc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-39x-pinctrl.txt
+> @@ -0,0 +1,78 @@
+> +* Marvell Armada 39x SoC pinctrl driver for mpp
+> +
+> +Please refer to marvell,mvebu-pinctrl.txt in this directory for common binding
+> +part and usage.
+> +
+> +Required properties:
+> +- compatible: "marvell,88f6920-pinctrl", "marvell,88f6928-pinctrl"
+> +  depending on the specific variant of the SoC being used.
+> +- reg: register specifier of MPP registers
+> +
+> +Available mpp pins/groups and functions:
+> +Note: brackets (x) are not part of the mpp name for marvell,function and given
+> +only for more detailed description in this document.
+> +
+> +name    pins    functions
+> +================================================================================
+> +mpp0	0	gpio, ua0(rxd)
+> +mpp1	1	gpio, ua0(txd)
+> +mpp2	2	gpio, i2c0(sck)
+> +mpp3	3	gpio, i2c0(sda)
+> +mpp4	4	gpio, ua1(txd), ua0(rts), smi(mdc)
+> +mpp5	5	gpio, ua1(rxd), ua0(cts), smi(mdio)
+> +mpp6	6	gpio, dev(cs3), xsmi(mdio)
+> +mpp7	7	gpio, dev(ad9), xsmi(mdc)
+> +mpp8	8	gpio, dev(ad10), ptp(trig)
+> +mpp9	9	gpio, dev(ad11), ptp(clk)
 
-There were also fixed:
-- irq =3D 0 means invalid/unused (-EINVAL no more used)
-- mctrl_gpio_request_irqs() doesn't use negative enum value
-  if request_irq() failed.
+Hi Thomas
 
-The mctrl_gpio_is_gpio() inline function is under discussion
-and likely it can replace exported mctrl_gpio_to_gpiod() function.
+I wondering if there should be an explanation for the less common
+names here. I'm guessing dev is a device bus of some sort? What is
+xsmi? Some sort of extended System Management Interface? And m?
 
-Signed-off-by: Janusz Uzycki <j.uzycki@elproma.com.pl>
----
+Thanks
+	Andrewy
 
-The patch requires to update the drivers which use mctrl_gpio:
-- atmel_serial
-- mxs-auart
-- clps711x
-
-Please test it again on the platforms above.
-Compile tests (next-20150204) and a test on mxs (i.mx28)
-hardware were done only.
-
-Changes since RFC v2:
- - fixed mctrl_gpio_request_irqs(): just calling mctrl_gpio_free_irqs()
-   on failure was wrong idea because free_irq() would be called for not
-   requested irqs yet and kernel/irq/manage.c: free_irq(): __free_irq()=
-:
-   WARN: "Trying to free already-free IRQ %d" would appear
- - fixed mctrl_gpio_is_gpio() inline function:
-   1. allow to compile when CONFIG_GPIOLIB is not defined
-      (inline is not broken, reported by Richard Genoud),
-   2. now a serial driver also can be a module
-      (exported function used),
-   3. gpios can be NULL (protected in mctrl_gpio_to_gpiod())
-   It calls mctrl_gpio_to_gpiod() which likely can be removed and
-   replaced by simpler mctrl_gpio_is_gpio()
- - IRQ_NOAUTOEN setting and request_irq() atomic issue commented in the
-   code (thanks to Uwe Kleine-K=C3=B6nig) despite other drivers do the =
-same
- - removed (clean up) useless comment "return -ENOTSUP" from
-   mctrl_gpio_request_irqs() inline function, it shouldn't return any
-   error if serial_mctrl_gpio.h is just a stub, ie. CONFIG_GPIOLIB not =
-defined
- - fixed mctrl_gpio_request_irqs(), mctrl_gpio_free_irqs(),
-   mctrl_gpio_enable_ms(), mctrl_gpio_disable_ms:
-   if "gpios" is NULL just return without any error. Serial drivers don=
-'t fail
-   on probe(), just warns, if mctrl_gpio_init_dt() returns NULL or an e=
-rror.
- - updated the documentation on mctrl_ helpers: Documentation/serial/dr=
-iver
-
----
- Documentation/serial/driver            |  22 +++++-
- drivers/tty/serial/serial_mctrl_gpio.c | 132 +++++++++++++++++++++++++=
-+++++++-
- drivers/tty/serial/serial_mctrl_gpio.h |  61 ++++++++++++++-
- 3 files changed, 209 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/serial/driver b/Documentation/serial/driver
-index c415b0e..7a0811c 100644
---- a/Documentation/serial/driver
-+++ b/Documentation/serial/driver
-@@ -439,7 +439,7 @@ Modem control lines via GPIO
-=20
- Some helpers are provided in order to set/get modem control lines via =
-GPIO.
-=20
--mctrl_gpio_init(dev, idx):
-+mctrl_gpio_init_dt(port, idx)
- 	This will get the {cts,rts,...}-gpios from device tree if they are
- 	present and request them, set direction etc, and return an
- 	allocated structure. devm_* functions are used, so there's no need
-@@ -453,8 +453,28 @@ mctrl_gpio_free(dev, gpios):
- mctrl_gpio_to_gpiod(gpios, gidx)
- 	This returns the gpio structure associated to the modem line index.
-=20
-+mctrl_gpio_is_gpio(gpios, gidx)
-+	This returns true if the given modem line index is initialized and
-+	handled by mtrl_gpio, ie. the line is a gpio line.
-+
- mctrl_gpio_set(gpios, mctrl):
- 	This will sets the gpios according to the mctrl state.
-=20
- mctrl_gpio_get(gpios, mctrl):
- 	This will update mctrl with the gpios values.
-+
-+mctrl_gpio_request_irqs(gpios)
-+	This requests an interrupt of each input gpio line. The interupts
-+	are set disabled and triggered on both edges.
-+	It returns an error code or zero if success.
-+
-+mctrl_gpio_free_irqs(gpios)
-+	This will free the requested interrupts of gpio lines.
-+
-+mctrl_gpio_enable_ms(gpios)
-+	This enables modem status interrupts assigned to gpio lines.
-+	It should be called by enable_ms() of an uart driver.
-+
-+mctrl_gpio_disable_ms(gpios)
-+	This disables modem status interrupts assigned to gpio lines.
-+	It should be called by disable_ms() of an uart driver.
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/seria=
-l/serial_mctrl_gpio.c
-index a38596c..7c43d15 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -19,11 +19,15 @@
- #include <linux/device.h>
- #include <linux/gpio/consumer.h>
- #include <linux/termios.h>
-+#include <linux/irq.h>
-=20
- #include "serial_mctrl_gpio.h"
-=20
- struct mctrl_gpios {
-+	struct uart_port *port;
- 	struct gpio_desc *gpio[UART_GPIO_MAX];
-+	int irq[UART_GPIO_MAX];
-+	unsigned int mctrl_prev;
- };
-=20
- static const struct {
-@@ -96,8 +100,9 @@ unsigned int mctrl_gpio_get(struct mctrl_gpios *gpio=
-s, unsigned int *mctrl)
- }
- EXPORT_SYMBOL_GPL(mctrl_gpio_get);
-=20
--struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int i=
-dx)
-+struct mctrl_gpios *mctrl_gpio_init_dt(struct uart_port *port, unsigne=
-d int idx)
- {
-+	struct device *dev =3D port->dev;
- 	struct mctrl_gpios *gpios;
- 	enum mctrl_gpio_idx i;
- 	int err;
-@@ -106,6 +111,7 @@ struct mctrl_gpios *mctrl_gpio_init(struct device *=
-dev, unsigned int idx)
- 	if (!gpios)
- 		return ERR_PTR(-ENOMEM);
-=20
-+	gpios->port =3D port;
- 	for (i =3D 0; i < UART_GPIO_MAX; i++) {
- 		gpios->gpio[i] =3D devm_gpiod_get_index(dev,
- 						      mctrl_gpios_desc[i].name,
-@@ -128,11 +134,13 @@ struct mctrl_gpios *mctrl_gpio_init(struct device=
- *dev, unsigned int idx)
- 			devm_gpiod_put(dev, gpios->gpio[i]);
- 			gpios->gpio[i] =3D NULL;
- 		}
-+		if (gpios->gpio[i] && !mctrl_gpios_desc[i].dir_out)
-+			gpios->irq[i] =3D gpiod_to_irq(gpios->gpio[i]);
- 	}
-=20
- 	return gpios;
- }
--EXPORT_SYMBOL_GPL(mctrl_gpio_init);
-+EXPORT_SYMBOL_GPL(mctrl_gpio_init_dt);
-=20
- void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios)
- {
-@@ -147,3 +155,123 @@ void mctrl_gpio_free(struct device *dev, struct m=
-ctrl_gpios *gpios)
- 	devm_kfree(dev, gpios);
- }
- EXPORT_SYMBOL_GPL(mctrl_gpio_free);
-+
-+/*
-+ * Dealing with GPIO interrupt
-+ */
-+#define MCTRL_ANY_DELTA        (TIOCM_RI | TIOCM_DSR | TIOCM_CD | TIOC=
-M_CTS)
-+static irqreturn_t mctrl_gpio_irq_handle(int irq, void *context)
-+{
-+	struct mctrl_gpios *gpios =3D context;
-+	struct uart_port *port =3D gpios->port;
-+	u32 mctrl =3D gpios->mctrl_prev;
-+	u32 mctrl_diff;
-+
-+	mctrl_gpio_get(gpios, &mctrl);
-+
-+	mctrl_diff =3D mctrl ^ gpios->mctrl_prev;
-+	gpios->mctrl_prev =3D mctrl;
-+	if (mctrl_diff & MCTRL_ANY_DELTA && port->state !=3D NULL) {
-+		if (mctrl_diff & TIOCM_RI)
-+			port->icount.rng++;
-+		if (mctrl_diff & TIOCM_DSR)
-+			port->icount.dsr++;
-+		if (mctrl_diff & TIOCM_CD)
-+			uart_handle_dcd_change(port, mctrl & TIOCM_CD);
-+		if (mctrl_diff & TIOCM_CTS)
-+			uart_handle_cts_change(port, mctrl & TIOCM_CTS);
-+
-+		wake_up_interruptible(&port->state->port.delta_msr_wait);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+int mctrl_gpio_request_irqs(struct mctrl_gpios *gpios)
-+{
-+	struct uart_port *port =3D gpios->port;
-+	int *irq =3D gpios->irq;
-+	enum mctrl_gpio_idx i;
-+	int err =3D 0;
-+
-+	/* When gpios is NULL just gpio irqs are also never set
-+	 * so return without any error */
-+	if (IS_ERR_OR_NULL(gpios))
-+		return err;
-+
-+	for (i =3D 0; i < UART_GPIO_MAX; i++) {
-+		if (irq[i] <=3D 0)
-+			continue;
-+
-+		/*
-+		 * FIXME IRQ_NOAUTOEN:
-+		 * This is not undone in the error path. To be fixed
-+		 * properly this needs to be set atomically together with
-+		 * request_irq.
-+		 */
-+		irq_set_status_flags(irq[i], IRQ_NOAUTOEN);
-+		err =3D request_irq(irq[i], mctrl_gpio_irq_handle,
-+				  IRQ_TYPE_EDGE_BOTH,
-+				  dev_name(port->dev), gpios);
-+		if (err) {
-+			dev_err(port->dev, "%s: Can't get %d irq\n",
-+				__func__, irq[i]);
-+			break;
-+		}
-+	}
-+
-+	/*
-+	 * If something went wrong, rollback avoiding
-+	 * negative enum values.
-+	 */
-+	while (err && i > 0) {
-+		i--;
-+		if (irq[i] > 0)
-+			free_irq(irq[i], gpios);
-+	}
-+
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(mctrl_gpio_request_irqs);
-+
-+void mctrl_gpio_free_irqs(struct mctrl_gpios *gpios)
-+{
-+	enum mctrl_gpio_idx i;
-+
-+	if (IS_ERR_OR_NULL(gpios))
-+		return;
-+
-+	for (i =3D 0; i < UART_GPIO_MAX; i++)
-+		if (gpios->irq[i] > 0)
-+			free_irq(gpios->irq[i], gpios);
-+}
-+EXPORT_SYMBOL_GPL(mctrl_gpio_free_irqs);
-+
-+void mctrl_gpio_enable_ms(struct mctrl_gpios *gpios)
-+{
-+	enum mctrl_gpio_idx i;
-+
-+	if (IS_ERR_OR_NULL(gpios))
-+		return;
-+
-+	/* get initial status of modem lines GPIOs */
-+	mctrl_gpio_get(gpios, &gpios->mctrl_prev);
-+
-+	for (i =3D 0; i < UART_GPIO_MAX; i++)
-+		if (gpios->irq[i] > 0)
-+			enable_irq(gpios->irq[i]);
-+}
-+EXPORT_SYMBOL_GPL(mctrl_gpio_enable_ms);
-+
-+void mctrl_gpio_disable_ms(struct mctrl_gpios *gpios)
-+{
-+	enum mctrl_gpio_idx i;
-+
-+	if (IS_ERR_OR_NULL(gpios))
-+		return;
-+
-+	for (i =3D 0; i < UART_GPIO_MAX; i++)
-+		if (gpios->irq[i] > 0)
-+			disable_irq(gpios->irq[i]);
-+}
-+EXPORT_SYMBOL_GPL(mctrl_gpio_disable_ms);
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.h b/drivers/tty/seria=
-l/serial_mctrl_gpio.h
-index 400ba04..1f79be3 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.h
-+++ b/drivers/tty/serial/serial_mctrl_gpio.h
-@@ -21,6 +21,7 @@
- #include <linux/err.h>
- #include <linux/device.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/serial_core.h>
-=20
- enum mctrl_gpio_idx {
- 	UART_GPIO_CTS,
-@@ -40,6 +41,7 @@ enum mctrl_gpio_idx {
-  */
- struct mctrl_gpios;
-=20
-+
- #ifdef CONFIG_GPIOLIB
-=20
- /*
-@@ -60,12 +62,13 @@ struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_=
-gpios *gpios,
- 				      enum mctrl_gpio_idx gidx);
-=20
- /*
-- * Request and set direction of modem control lines GPIOs.
-+ * Request and set direction of modem control lines GPIOs. DT is used.
-+ * Initialize irq table for GPIOs.
-  * devm_* functions are used, so there's no need to call mctrl_gpio_fr=
-ee().
-  * Returns a pointer to the allocated mctrl structure if ok, -ENOMEM o=
-n
-  * allocation error.
-  */
--struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int i=
-dx);
-+struct mctrl_gpios *mctrl_gpio_init_dt(struct uart_port *port, unsigne=
-d int idx);
-=20
- /*
-  * Free the mctrl_gpios structure.
-@@ -74,6 +77,28 @@ struct mctrl_gpios *mctrl_gpio_init(struct device *d=
-ev, unsigned int idx);
-  */
- void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios);
-=20
-+/*
-+ * Request irqs for input lines GPIOs. The irqs are set disabled
-+ * and triggered on both edges.
-+ * Returns zero if OK, otherwise an error code.
-+ */
-+int mctrl_gpio_request_irqs(struct mctrl_gpios *gpios);
-+
-+/*
-+ * Free irqs for input lines GPIOs.
-+ */
-+void mctrl_gpio_free_irqs(struct mctrl_gpios *gpios);
-+
-+/*
-+ * Disable modem status interrupts assigned to GPIOs
-+ */
-+void mctrl_gpio_enable_ms(struct mctrl_gpios *gpios);
-+
-+/*
-+ * Enable modem status interrupts assigned to GPIOs
-+ */
-+void mctrl_gpio_disable_ms(struct mctrl_gpios *gpios);
-+
- #else /* GPIOLIB */
-=20
- static inline
-@@ -95,7 +120,7 @@ struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_g=
-pios *gpios,
- }
-=20
- static inline
--struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int i=
-dx)
-+struct mctrl_gpios *mctrl_gpio_init_dt(struct uart_port *port, unsigne=
-d int idx)
- {
- 	return ERR_PTR(-ENOSYS);
- }
-@@ -105,6 +130,36 @@ void mctrl_gpio_free(struct device *dev, struct mc=
-trl_gpios *gpios)
- {
- }
-=20
-+static inline
-+int mctrl_gpio_request_irqs(struct mctrl_gpios *gpios)
-+{
-+	return 0;
-+}
-+
-+static inline
-+void mctrl_gpio_free_irqs(struct mctrl_gpios *gpios)
-+{
-+}
-+
-+static inline
-+void mctrl_gpio_enable_ms(struct mctrl_gpios *gpios)
-+{
-+}
-+
-+static inline
-+void mctrl_gpio_disable_ms(struct mctrl_gpios *gpios)
-+{
-+}
-+
- #endif /* GPIOLIB */
-=20
-+/*
-+ * Return true if gidx is GPIO line, otherwise false.
-+ */
-+static inline
-+bool mctrl_gpio_is_gpio(struct mctrl_gpios *gpios, enum mctrl_gpio_idx=
- gidx)
-+{
-+	return !IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, gidx));
-+}
-+
- #endif
---=20
-1.7.11.3
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +mpp10	10	gpio, dev(ad12), ptp(event)
+> +mpp11	11	gpio, dev(ad13), led(clk)
+> +mpp12	12	gpio, pcie0(rstout), dev(ad14), led(stb)
+> +mpp13	13	gpio, dev(ad15), led(data)
+> +mpp14	14	gpio, m(vtt), dev(wen1), ua1(txd)
+> +mpp15	15	gpio, pcie0(rstout), spi0(mosi), i2c1(sck)
+> +mpp16	16	gpio, m(decc), spi0(miso), i2c1(sda)
+> +mpp17	17	gpio, ua1(rxd), spi0(sck), smi(mdio)
+> +mpp18	18	gpio, ua1(txd), spi0(cs0), i2c2(sck)
+> +mpp19	19	gpio, sata1(present) [1], ua0(cts), ua1(rxd), i2c2(sda)
+> +mpp20	20	gpio, sata0(present) [1], ua0(rts), ua1(txd), smi(mdc)
+> +mpp21	21	gpio, spi0(cs1), sata0(present) [1], sd(cmd), dev(bootcs), ge(rxd0)
+> +mpp22	22	gpio, spi0(mosi), dev(ad0)
+> +mpp23	23	gpio, spi0(sck), dev(ad2)
+> +mpp24	24	gpio, spi0(miso), ua0(cts), ua1(rxd), sd(d4), dev(readyn)
+> +mpp25	25	gpio, spi0(cs0), ua0(rts), ua1(txd), sd(d5), dev(cs0)
+> +mpp26	26	gpio, spi0(cs2), i2c1(sck), sd(d6), dev(cs1)
+> +mpp27	27	gpio, spi0(cs3), i2c1(sda), sd(d7), dev(cs2), ge(txclkout)
+> +mpp28	28	gpio, sd(clk), dev(ad5), ge(txd0)
+> +mpp29	29	gpio, dev(ale0), ge(txd1)
+> +mpp30	30	gpio, dev(oen), ge(txd2)
+> +mpp31	31	gpio, dev(ale1), ge(txd3)
+> +mpp32	32	gpio, dev(wen0), ge(txctl)
+> +mpp33	33	gpio, m(decc), dev(ad3)
+> +mpp34	34	gpio, dev(ad1)
+> +mpp35	35	gpio, ref(clk), dev(a1)
+> +mpp36	36	gpio, dev(a0)
+> +mpp37	37	gpio, sd(d3), dev(ad8), ge(rxclk)
+> +mpp38	38	gpio, ref(clk), sd(d0), dev(ad4), ge(rxd1)
+> +mpp39	39	gpio, i2c1(sck), ua0(cts), sd(d1), dev(a2), ge(rxd2)
+> +mpp40	40	gpio, i2c1(sda), ua0(rts), sd(d2), dev(ad6), ge(rxd3)
+> +mpp41	41	gpio, ua1(rxd), ua0(cts), spi1(cs3), dev(burstn), nd(rbn0), ge(rxctl)
+> +mpp42	42	gpio, ua1(txd), ua0(rts), dev(ad7)
+> +mpp43	43	gpio, pcie0(clkreq), m(vtt), m(decc), spi1(cs2), dev(clkout), nd(rbn1)
+> +mpp44	44	gpio, sata0(present) [1], sata1(present) [1], led(clk)
+> +mpp45	45	gpio, ref(clk), pcie0(rstout), ua1(rxd)
+> +mpp46	46	gpio, ref(clk), pcie0(rstout), ua1(txd), led(stb)
+> +mpp47	47	gpio, sata0(present) [1], sata1(present) [1], led(data)
+> +mpp48	48	gpio, sata0(present) [1], m(vtt), tdm(pclk) [1], audio(mclk) [1], sd(d4), pcie0(clkreq), ua1(txd)
+> +mpp49	49	gpio, tdm(fsync) [1], audio(lrclk) [1], sd(d5), ua2(rxd)
+> +mpp50	50	gpio, pcie0(rstout), tdm(drx) [1], audio(extclk) [1], sd(cmd), ua2(rxd)
+> +mpp51	51	gpio, tdm(dtx) [1], audio(sdo) [1], m(decc), ua2(txd)
+> +mpp52	52	gpio, pcie0(rstout), tdm(intn) [1], audio(sdi) [1], sd(d6), i2c3(sck)
+> +mpp53	53	gpio, sata1(present) [1], sata0(present) [1], tdm(rstn) [1], audio(bclk) [1], sd(d7), i2c3(sda)
+> +mpp54	54	gpio, sata0(present) [1], sata1(present) [1], pcie0(rstout), sd(d3), ua3(txd)
+> +mpp55	55	gpio, ua1(cts), spi1(cs1), sd(d0), ua1(rxd), ua3(rxd)
+> +mpp56	56	gpio, ua1(rts), m(decc), spi1(mosi), ua1(txd)
+> +mpp57	57	gpio, spi1(sck), sd(clk), ua1(txd)
+> +mpp58	58	gpio, i2c1(sck), pcie2(clkreq), spi1(miso), sd(d1), ua1(rxd)
+> +mpp59	59	gpio, pcie0(rstout), i2c1(sda), spi1(cs0), sd(d2)
+> +
+> +[1]: only available on 88F6928
+> -- 
+> 2.1.0
+> 
