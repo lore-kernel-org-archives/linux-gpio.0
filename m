@@ -1,51 +1,84 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 Subject: Re: [PATCH 08/10] ARM: mvebu: add core support for Armada 39x
-Date: Fri, 06 Feb 2015 11:57:58 -0800
-Message-ID: <54D51CC6.2070908@codeaurora.org>
-References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com> <1423238276-9206-9-git-send-email-thomas.petazzoni@free-electrons.com>
+Date: Fri, 6 Feb 2015 21:31:37 +0100
+Message-ID: <20150206203137.GH2079@lukather>
+References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1423238276-9206-9-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:54076 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751191AbbBFT6B (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Feb 2015 14:58:01 -0500
-In-Reply-To: <1423238276-9206-9-git-send-email-thomas.petazzoni@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BXr400anF0jyguTS"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1423238276-9206-9-git-send-email-thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tawfik Bayouk <tawfik-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Lior Amsalem <alior-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On 02/06/15 07:57, Thomas Petazzoni wrote:
-> diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
-> index 89a139e..d88438f 100644
-> --- a/arch/arm/mach-mvebu/board-v7.c
-> +++ b/arch/arm/mach-mvebu/board-v7.c
-> @@ -232,3 +232,17 @@ DT_MACHINE_START(ARMADA_38X_DT, "Marvell Armada 380/385 (Device Tree)")
->  	.restart	= mvebu_restart,
->  	.dt_compat	= armada_38x_dt_compat,
->  MACHINE_END
-> +
-> +static const char * const armada_39x_dt_compat[] = {
 
- __initconst?
+--BXr400anF0jyguTS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +	"marvell,armada390",
-> +	"marvell,armada398",
-> +	NULL,
-> +};
-> +
-> +DT_MACHINE_START(ARMADA_39X_DT, "Marvell Armada 39x (Device Tree)")
-> +	.l2c_aux_val	= 0,
-> +	.l2c_aux_mask	= ~0,
-> +	.init_irq       = mvebu_init_irq,
-> +	.restart	= mvebu_restart,
-> +	.dt_compat	= armada_39x_dt_compat,
-> +MACHINE_END
->
+Hi Thomas,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Fri, Feb 06, 2015 at 04:57:54PM +0100, Thomas Petazzoni wrote:
+> This commit adds the core support for Armada 39x, which is quite
+> simple:
+>=20
+>  - a new Kconfig option which selects the appropriate clock and
+>    pinctrl drivers as well as other common features (GIC, L2 cache,
+>    SMP, etc.)
+>=20
+>  - a new DT_MACHINE_START which references the top-level compatible
+>    strings supported for the Marvell Armada 39x.
+>=20
+>  - a new SMP enable-method. The mechanism to enable CPUs for Armada
+>    39x appears to be the same as Armada 38x. However, we do want to
 
+                                                              ^ not?
+
+>    use marvell,armada-380-smp in the Device Tree, in the case of the
+>    discovery of a subtle difference in the future, which would require
+>    changing the Device Tree. And the enable-method isn't a compatible
+>    string: you can't specify several values and expect a fallback on
+>    the second string if the first one isn't supported. Therefore, we
+>    simply declare the SMP enable method "marvell,armada-390-smp" as
+>    doing the same thing as the "marvell,armada-380-smp" one.
+>=20
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--BXr400anF0jyguTS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJU1SSpAAoJEBx+YmzsjxAggyIQAMI92aUAgZ4/yZfqXAzUAbCE
+Y/fzYAGHpdw3v5kMLtEfglPiZdQxwHDRmj1ToIJryU2UcQQ19L0FaP3ciKZeznHo
+kJ0DNDfQMHoDAos3zcxCY+SQ0wwyuwPWpEXPFPe5/zXTIvtUaU5Pbx+d5fdbOwiW
+vwghYLW22S1NKkZiMz+sm58gfOjlN6ae+bXrGIRuMXSZY9Dw1pKjVw1Bgex9X4MM
+tyV2pS/vrgvOPm4ReHeb67S89cjUkoyAVZ2T8RVtKbR8wjVy2wnwLr3n4JvynrcX
+6Wq6NzpkgktVecD7R5Zt98qgO2nYA4KLx0FRDOhB46VXpn9dA8NV/iqApDZ7uHVI
+4z6zoH1rrlMOJfpQzLRyFVO33pjx5BZnQzHc15EAc7OjxUMOMhPCq125uBUWF2jm
+940DBUFP3h0ylQXlgYrXGgpvLpg3udqqYhLSriPIBUq1JlmDrRJ85XfZ5wiRlY2u
+/Y31ghadKjCr6PbQAYAtUWZT5TEPpjVkrxFWQzaJ9+i78Axxdg3r7Kj/QJRibW93
+xTB4uYQsufIZv+Mba2fqZM3vweYi5HdGoI6iNh/QBQvRTMSZKbr0KUPPnviJsZxs
+H+zQ+XHJ2chruG040D7W9Q6R3mzSlO1KR09j3XSV90u9UjdCzr41crvI6RNP8AKw
+g33JKthxMnrT3nwF7oqW
+=fQg7
+-----END PGP SIGNATURE-----
+
+--BXr400anF0jyguTS--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
