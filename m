@@ -1,46 +1,51 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH] pinctrl: imx: do not implicitly set pin regs to -1
-Date: Fri, 06 Feb 2015 20:40:43 +0100
-Message-ID: <93e8f8135f2c459b7694ef1a22636f7b@agner.ch>
-References: <1423240256-27210-1-git-send-email-stefan@agner.ch>
- <20150206192121.GD10842@pengutronix.de>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 08/10] ARM: mvebu: add core support for Armada 39x
+Date: Fri, 06 Feb 2015 11:57:58 -0800
+Message-ID: <54D51CC6.2070908@codeaurora.org>
+References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com> <1423238276-9206-9-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:54959 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754785AbbBFTlM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Feb 2015 14:41:12 -0500
-In-Reply-To: <20150206192121.GD10842@pengutronix.de>
+Received: from smtp.codeaurora.org ([198.145.11.231]:54076 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751191AbbBFT6B (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Feb 2015 14:58:01 -0500
+In-Reply-To: <1423238276-9206-9-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, shawn.guo@linaro.org, linux-arm-kernel@lists.infradead.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On 2015-02-06 20:21, Uwe Kleine-K=C3=B6nig wrote:
-> Hallo Stefan,
->=20
-> On Fri, Feb 06, 2015 at 05:30:56PM +0100, Stefan Agner wrote:
->> -	memset(info->pin_regs, 0xff, sizeof(*info->pin_regs) * info->npins=
-);
->> +
->> +	for (i =3D 0; i < info->npins; i++) {
->> +		info->pin_regs[i].mux_reg =3D -1;
->> +		info->pin_regs[i].conf_reg =3D -1;
->> +	}
-> looks definitely better. Just out of interest, did you check if it
-> changes the generated code?
+On 02/06/15 07:57, Thomas Petazzoni wrote:
+> diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
+> index 89a139e..d88438f 100644
+> --- a/arch/arm/mach-mvebu/board-v7.c
+> +++ b/arch/arm/mach-mvebu/board-v7.c
+> @@ -232,3 +232,17 @@ DT_MACHINE_START(ARMADA_38X_DT, "Marvell Armada 380/385 (Device Tree)")
+>  	.restart	= mvebu_restart,
+>  	.dt_compat	= armada_38x_dt_compat,
+>  MACHINE_END
+> +
+> +static const char * const armada_39x_dt_compat[] = {
 
-Just checked quickly, before it branched to memset. The object file is
-24 bytes larger. I guess memset might be a bit faster due to optimized
-memory access. But not worth for some error handling relevant
-initialization code IMHO...
+ __initconst?
 
---
-Stefan
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +	"marvell,armada390",
+> +	"marvell,armada398",
+> +	NULL,
+> +};
+> +
+> +DT_MACHINE_START(ARMADA_39X_DT, "Marvell Armada 39x (Device Tree)")
+> +	.l2c_aux_val	= 0,
+> +	.l2c_aux_mask	= ~0,
+> +	.init_irq       = mvebu_init_irq,
+> +	.restart	= mvebu_restart,
+> +	.dt_compat	= armada_39x_dt_compat,
+> +MACHINE_END
+>
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
