@@ -1,85 +1,114 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH] pinctrl: pinctrl-imx: don't use invalid value of
- =?UTF-8?Q?conf=5Freg?=
-Date: Fri, 06 Feb 2015 15:23:50 +0100
-Message-ID: <8c67105fcfe76ae1dd86e8c65954275d@agner.ch>
-References: <1422399025-25636-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdbtpGU57-tPn9Z0rNvY4zLk+QE6A9Pd87vLUHOmRiB2yg@mail.gmail.com>
- <20150203190141.GE10842@pengutronix.de>
- <CACRpkdYXW5X7bSiRPTC3uHT=s+hjxj+jS0YJCBWrcmzHWkpqHg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 03/10] devicetree: bindings: add Device Tree bindings for Armada 39x pin-muxing controller
+Date: Fri,  6 Feb 2015 16:57:49 +0100
+Message-ID: <1423238276-9206-4-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:53749 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752096AbbBFOYR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Feb 2015 09:24:17 -0500
-In-Reply-To: <CACRpkdYXW5X7bSiRPTC3uHT=s+hjxj+jS0YJCBWrcmzHWkpqHg@mail.gmail.com>
+Received: from down.free-electrons.com ([37.187.137.238]:42379 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756427AbbBFP6f (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Feb 2015 10:58:35 -0500
+In-Reply-To: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Dong Aisheng <dong.aisheng@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, linux-arm-kernel@lists.infradead.org, Shawn Guo <shawn.guo@linaro.org>
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-On 2015-02-05 14:53, Linus Walleij wrote:
-> On Tue, Feb 3, 2015 at 8:01 PM, Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
->> On Tue, Feb 03, 2015 at 02:01:09PM +0100, Linus Walleij wrote:
->>> On Tue, Jan 27, 2015 at 11:50 PM, Uwe Kleine-K=C3=B6nig
->>> <u.kleine-koenig@pengutronix.de> wrote:
->>>
->>> > The right check for conf_reg to be invalid it testing against -1 =
-not 0
->>> > as is done in the rest of the driver.
->>> >
->>> > This fixes an oops that can be triggered by:
->>> >
->>> >         cat /sys/kernel/debug/pinctrl/43fac000.iomuxc/*
->>> >
->>> > Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core =
-driver")
+This commit adds the Device Tree binding documentation to describe the
+pin-muxing controller of the Marvell Armada 39x processors. Two
+variants are supported for the moment: the 88F6920 (Armada 390) and
+88F6928 (Armada 398).
 
-This was actually introduce by me in 3dac1918a491 ("pinctrl: imx: detec=
-t
-uninitialized pins").
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ .../pinctrl/marvell,armada-39x-pinctrl.txt         | 78 ++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-39x-pinctrl.txt
 
->>> > Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix=
-=2Ede>
->>>
->>> Patch applied.
->>>
->>> But...
->>>
->>> > -       if (!pin_reg || !pin_reg->conf_reg) {
->>> > +       if (!pin_reg || pin_reg->conf_reg =3D=3D -1) {
->>>
->>> I can see that the other code checks for -1 in this variable.
->>> But where is conf_reg ever set to -1?
->>>
->>> freescale]$ git grep "\-1"
->>> pinctrl-imx.c:          if (pin_reg->mux_reg =3D=3D -1) {
->>> pinctrl-imx.c:  if (pin_reg->mux_reg =3D=3D -1)
->>> pinctrl-imx.c:  if (pin_reg->mux_reg =3D=3D -1)
->>> pinctrl-imx.c:  if (pin_reg->conf_reg =3D=3D -1) {
->>> pinctrl-imx.c:  if (pin_reg->conf_reg =3D=3D -1) {
->>> pinctrl-imx.c:  if (!pin_reg || pin_reg->conf_reg =3D=3D -1) {
->> Uah, ugly. This member gets -1 by means of:
->>
->>         memset(info->pin_regs, 0xff, sizeof(*info->pin_regs) * info-=
->npins);
->=20
-> OMG. Uwe can you make a patch changing that initialization
-> code to something sane? We can't have it like this.
+diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-39x-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-39x-pinctrl.txt
+new file mode 100644
+index 0000000..5b1a9dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-39x-pinctrl.txt
+@@ -0,0 +1,78 @@
++* Marvell Armada 39x SoC pinctrl driver for mpp
++
++Please refer to marvell,mvebu-pinctrl.txt in this directory for common binding
++part and usage.
++
++Required properties:
++- compatible: "marvell,88f6920-pinctrl", "marvell,88f6928-pinctrl"
++  depending on the specific variant of the SoC being used.
++- reg: register specifier of MPP registers
++
++Available mpp pins/groups and functions:
++Note: brackets (x) are not part of the mpp name for marvell,function and given
++only for more detailed description in this document.
++
++name    pins    functions
++================================================================================
++mpp0	0	gpio, ua0(rxd)
++mpp1	1	gpio, ua0(txd)
++mpp2	2	gpio, i2c0(sck)
++mpp3	3	gpio, i2c0(sda)
++mpp4	4	gpio, ua1(txd), ua0(rts), smi(mdc)
++mpp5	5	gpio, ua1(rxd), ua0(cts), smi(mdio)
++mpp6	6	gpio, dev(cs3), xsmi(mdio)
++mpp7	7	gpio, dev(ad9), xsmi(mdc)
++mpp8	8	gpio, dev(ad10), ptp(trig)
++mpp9	9	gpio, dev(ad11), ptp(clk)
++mpp10	10	gpio, dev(ad12), ptp(event)
++mpp11	11	gpio, dev(ad13), led(clk)
++mpp12	12	gpio, pcie0(rstout), dev(ad14), led(stb)
++mpp13	13	gpio, dev(ad15), led(data)
++mpp14	14	gpio, m(vtt), dev(wen1), ua1(txd)
++mpp15	15	gpio, pcie0(rstout), spi0(mosi), i2c1(sck)
++mpp16	16	gpio, m(decc), spi0(miso), i2c1(sda)
++mpp17	17	gpio, ua1(rxd), spi0(sck), smi(mdio)
++mpp18	18	gpio, ua1(txd), spi0(cs0), i2c2(sck)
++mpp19	19	gpio, sata1(present) [1], ua0(cts), ua1(rxd), i2c2(sda)
++mpp20	20	gpio, sata0(present) [1], ua0(rts), ua1(txd), smi(mdc)
++mpp21	21	gpio, spi0(cs1), sata0(present) [1], sd(cmd), dev(bootcs), ge(rxd0)
++mpp22	22	gpio, spi0(mosi), dev(ad0)
++mpp23	23	gpio, spi0(sck), dev(ad2)
++mpp24	24	gpio, spi0(miso), ua0(cts), ua1(rxd), sd(d4), dev(readyn)
++mpp25	25	gpio, spi0(cs0), ua0(rts), ua1(txd), sd(d5), dev(cs0)
++mpp26	26	gpio, spi0(cs2), i2c1(sck), sd(d6), dev(cs1)
++mpp27	27	gpio, spi0(cs3), i2c1(sda), sd(d7), dev(cs2), ge(txclkout)
++mpp28	28	gpio, sd(clk), dev(ad5), ge(txd0)
++mpp29	29	gpio, dev(ale0), ge(txd1)
++mpp30	30	gpio, dev(oen), ge(txd2)
++mpp31	31	gpio, dev(ale1), ge(txd3)
++mpp32	32	gpio, dev(wen0), ge(txctl)
++mpp33	33	gpio, m(decc), dev(ad3)
++mpp34	34	gpio, dev(ad1)
++mpp35	35	gpio, ref(clk), dev(a1)
++mpp36	36	gpio, dev(a0)
++mpp37	37	gpio, sd(d3), dev(ad8), ge(rxclk)
++mpp38	38	gpio, ref(clk), sd(d0), dev(ad4), ge(rxd1)
++mpp39	39	gpio, i2c1(sck), ua0(cts), sd(d1), dev(a2), ge(rxd2)
++mpp40	40	gpio, i2c1(sda), ua0(rts), sd(d2), dev(ad6), ge(rxd3)
++mpp41	41	gpio, ua1(rxd), ua0(cts), spi1(cs3), dev(burstn), nd(rbn0), ge(rxctl)
++mpp42	42	gpio, ua1(txd), ua0(rts), dev(ad7)
++mpp43	43	gpio, pcie0(clkreq), m(vtt), m(decc), spi1(cs2), dev(clkout), nd(rbn1)
++mpp44	44	gpio, sata0(present) [1], sata1(present) [1], led(clk)
++mpp45	45	gpio, ref(clk), pcie0(rstout), ua1(rxd)
++mpp46	46	gpio, ref(clk), pcie0(rstout), ua1(txd), led(stb)
++mpp47	47	gpio, sata0(present) [1], sata1(present) [1], led(data)
++mpp48	48	gpio, sata0(present) [1], m(vtt), tdm(pclk) [1], audio(mclk) [1], sd(d4), pcie0(clkreq), ua1(txd)
++mpp49	49	gpio, tdm(fsync) [1], audio(lrclk) [1], sd(d5), ua2(rxd)
++mpp50	50	gpio, pcie0(rstout), tdm(drx) [1], audio(extclk) [1], sd(cmd), ua2(rxd)
++mpp51	51	gpio, tdm(dtx) [1], audio(sdo) [1], m(decc), ua2(txd)
++mpp52	52	gpio, pcie0(rstout), tdm(intn) [1], audio(sdi) [1], sd(d6), i2c3(sck)
++mpp53	53	gpio, sata1(present) [1], sata0(present) [1], tdm(rstn) [1], audio(bclk) [1], sd(d7), i2c3(sda)
++mpp54	54	gpio, sata0(present) [1], sata1(present) [1], pcie0(rstout), sd(d3), ua3(txd)
++mpp55	55	gpio, ua1(cts), spi1(cs1), sd(d0), ua1(rxd), ua3(rxd)
++mpp56	56	gpio, ua1(rts), m(decc), spi1(mosi), ua1(txd)
++mpp57	57	gpio, spi1(sck), sd(clk), ua1(txd)
++mpp58	58	gpio, i2c1(sck), pcie2(clkreq), spi1(miso), sd(d1), ua1(rxd)
++mpp59	59	gpio, pcie0(rstout), i2c1(sda), spi1(cs0), sd(d2)
++
++[1]: only available on 88F6928
+-- 
+2.1.0
 
-Oh sorry, this was actually me, in the commit mentioned above. That's
-ugly, I agree. I'm wondering how I came to that idea....
-
-Will send a patch for that.
-
---
-Stefan
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
