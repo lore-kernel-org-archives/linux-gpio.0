@@ -1,229 +1,318 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] [RFC] gpio: pcf857x: Switch to use gpiolib irqchip helpers
-Date: Thu,  5 Feb 2015 16:49:08 +0100
-Message-ID: <1423151349-10579-2-git-send-email-geert+renesas@glider.be>
-References: <1423151349-10579-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423151349-10579-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, George Cherian <george.cherian@ti.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Tien Hock Loh <thloh-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v8 2/2] drivers/gpio: Altera soft IP GPIO driver
+Date: Thu, 5 Feb 2015 18:54:59 -0800
+Message-ID: <1423191299.1110.17.camel@ubuntu>
+References: <1419409345-8297-1-git-send-email-thloh@altera.com>
+	 <1419409345-8297-3-git-send-email-thloh@altera.com>
+	 <CACRpkdZ1kTjq979RbxzUSsb88v8XKjXRhRCpPkgS2wHrCcPGkg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdZ1kTjq979RbxzUSsb88v8XKjXRhRCpPkgS2wHrCcPGkg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Switch the PCF857x GPIO driver to use the gpiolib irqchip helpers.
-This driver uses a nested threaded interrupt, hence handle_nested_irq()
-and gpiochip_set_chained_irqchip() must be used.
+On Wed, 2015-01-14 at 10:58 +0100, Linus Walleij wrote:
+> On Wed, Dec 24, 2014 at 9:22 AM,  <thloh-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org> wrote:
+> 
+> > From: Tien Hock Loh <thloh-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+> >
+> > Adds a new driver for Altera soft GPIO IP. The driver is able to
+> > do read/write and allows GPIO to be a interrupt controller.
+> >
+> > Tested on Altera GHRD on interrupt handling and IO.
+> >
+> > Signed-off-by: Tien Hock Loh <thloh-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+> 
+> (...)
+> > +config GPIO_ALTERA
+> > +       tristate "Altera GPIO"
+> > +       depends on OF_GPIO
+> 
+> select GPIOLIB_IRQCHIP
+> 
+> Also, I think (see below)
+> 
+> select GENERIC_GPIO
+> 
+> > +#include <linux/gpio.h>
+> 
+> #include <linux/gpio/driver.h>
+> 
+> should be just fine instead of this old header.
+> 
+> > +#include <linux/init.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/io.h>
+> > +#include <linux/irq.h>
+> 
+> Should not be needed.
+> 
+> > +#include <linux/irqchip/chained_irq.h>
+> > +#include <linux/irqdomain.h>
+> 
+> None of these should be needed.
+> 
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_irq.h>
+> > +#include <linux/of_gpio.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/slab.h>
+> 
+> #include <linux/basic_mmio_gpio.h>
+> 
+> with GENERIC_GPIO (see below).
 
-Note that this removes the checks added in commit 21fd3cd1874a2ac8
-("gpio: pcf857x: call the gpio user handler iff gpio_to_irq is done"),
-as the interrupt mappings are no longer created on-demand by the driver,
-but by gpiochip_irqchip_add() during initialization.
+OK
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Does the removal of the checks cause problems for anyone?
----
- drivers/gpio/Kconfig        |   1 +
- drivers/gpio/gpio-pcf857x.c | 121 ++++++++++----------------------------------
- 2 files changed, 28 insertions(+), 94 deletions(-)
+> > +
+> > +#define ALTERA_GPIO_MAX_NGPIO          32
+> > +#define ALTERA_GPIO_DATA               0x0
+> > +#define ALTERA_GPIO_DIR                        0x4
+> > +#define ALTERA_GPIO_IRQ_MASK           0x8
+> > +#define ALTERA_GPIO_EDGE_CAP           0xc
+> > +
+> > +/**
+> > +* struct altera_gpio_chip
+> > +* @mmchip              : memory mapped chip structure.
+> > +* @gpio_lock           : synchronization lock so that new irq/set/get requests
+> > +                         will be blocked until the current one completes.
+> > +* @interrupt_trigger   : specifies the hardware configured IRQ trigger type
+> > +                         (rising, falling, both, high)
+> > +* @mapped_irq          : kernel mapped irq number.
+> > +*/
+> > +struct altera_gpio_chip {
+> > +       struct of_mm_gpio_chip mmchip;
+> > +       spinlock_t gpio_lock;
+> > +       int interrupt_trigger;
+> > +       int mapped_irq;
+> > +};
+> > +
+> > +static void altera_gpio_irq_unmask(struct irq_data *d)
+> > +{
+> > +       struct altera_gpio_chip *altera_gc;
+> > +       struct of_mm_gpio_chip *mm_gc;
+> > +       unsigned long flags;
+> > +       u32 intmask;
+> > +
+> > +       altera_gc = irq_data_get_irq_chip_data(d);
+> > +       mm_gc = &altera_gc->mmchip;
+> > +
+> > +       spin_lock_irqsave(&altera_gc->gpio_lock, flags);
+> > +       intmask = readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
+> > +       /* Set ALTERA_GPIO_IRQ_MASK bit to unmask */
+> > +       intmask |= BIT(irqd_to_hwirq(d));
+> > +       writel(intmask, mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
+> > +       spin_unlock_irqrestore(&altera_gc->gpio_lock, flags);
+> > +}
+> > +
+> > +static void altera_gpio_irq_mask(struct irq_data *d)
+> > +{
+> > +       struct altera_gpio_chip *altera_gc;
+> > +       struct of_mm_gpio_chip *mm_gc;
+> > +       unsigned long flags;
+> > +       u32 intmask;
+> > +
+> > +       altera_gc = irq_data_get_irq_chip_data(d);
+> > +       mm_gc = &altera_gc->mmchip;
+> > +
+> > +       spin_lock_irqsave(&altera_gc->gpio_lock, flags);
+> > +       intmask = readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
+> > +       /* Clear ALTERA_GPIO_IRQ_MASK bit to mask */
+> > +       intmask &= ~BIT(irqd_to_hwirq(d));
+> > +       writel(intmask, mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
+> > +       spin_unlock_irqrestore(&altera_gc->gpio_lock, flags);
+> > +}
+> > +
+> > +static int altera_gpio_irq_set_type(struct irq_data *d,
+> > +                                  unsigned int type)
+> > +{
+> > +       struct altera_gpio_chip *altera_gc = irq_data_get_irq_chip_data(d);
+> > +
+> > +       altera_gc = irq_data_get_irq_chip_data(d);
+> > +
+> > +       if (type == IRQ_TYPE_NONE)
+> > +               return 0;
+> > +       if (type == IRQ_TYPE_LEVEL_HIGH &&
+> > +               altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH)
+> > +               return 0;
+> > +       if (type == IRQ_TYPE_EDGE_RISING &&
+> > +               altera_gc->interrupt_trigger == IRQ_TYPE_EDGE_RISING)
+> > +               return 0;
+> > +       if (type == IRQ_TYPE_EDGE_FALLING &&
+> > +               altera_gc->interrupt_trigger == IRQ_TYPE_EDGE_FALLING)
+> > +               return 0;
+> > +       if (type == IRQ_TYPE_EDGE_BOTH &&
+> > +               altera_gc->interrupt_trigger == IRQ_TYPE_EDGE_BOTH)
+> > +               return 0;
+> > +
+> > +       return -EINVAL;
+> > +}
+> 
+> It took me a while to understand this. Write in a comment that
+> this is a hardware that is synthesized for a specific trigger
+> type, and that there is no way to software-configure the
+> trigger type.
+> 
+OK noted. 
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ae5cb4d517c69885..9343b4cd20b459c6 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -604,6 +604,7 @@ config GPIO_PCA953X_IRQ
- config GPIO_PCF857X
- 	tristate "PCF857x, PCA{85,96}7x, and MAX732[89] I2C GPIO expanders"
- 	depends on I2C
-+	select GPIOLIB_IRQCHIP
- 	select IRQ_DOMAIN
- 	help
- 	  Say yes here to provide access to most "quasi-bidirectional" I2C
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 236708ad0a5ba0ab..126c937321013445 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -88,11 +88,9 @@ struct pcf857x {
- 	struct gpio_chip	chip;
- 	struct i2c_client	*client;
- 	struct mutex		lock;		/* protect 'out' */
--	struct irq_domain	*irq_domain;	/* for irq demux  */
- 	spinlock_t		slock;		/* protect irq demux */
- 	unsigned		out;		/* software latch */
- 	unsigned		status;		/* current status */
--	unsigned		irq_mapped;	/* mapped gpio irqs */
- 
- 	int (*write)(struct i2c_client *client, unsigned data);
- 	int (*read)(struct i2c_client *client);
-@@ -182,18 +180,6 @@ static void pcf857x_set(struct gpio_chip *chip, unsigned offset, int value)
- 
- /*-------------------------------------------------------------------------*/
- 
--static int pcf857x_to_irq(struct gpio_chip *chip, unsigned offset)
--{
--	struct pcf857x *gpio = container_of(chip, struct pcf857x, chip);
--	int ret;
--
--	ret = irq_create_mapping(gpio->irq_domain, offset);
--	if (ret > 0)
--		gpio->irq_mapped |= (1 << offset);
--
--	return ret;
--}
--
- static irqreturn_t pcf857x_irq(int irq, void *data)
- {
- 	struct pcf857x  *gpio = data;
-@@ -208,9 +194,9 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
- 	 * interrupt source, just to avoid bad irqs
- 	 */
- 
--	change = ((gpio->status ^ status) & gpio->irq_mapped);
-+	change = (gpio->status ^ status);
- 	for_each_set_bit(i, &change, gpio->chip.ngpio)
--		generic_handle_irq(irq_find_mapping(gpio->irq_domain, i));
-+		handle_nested_irq(irq_find_mapping(gpio->chip.irqdomain, i));
- 	gpio->status = status;
- 
- 	spin_unlock_irqrestore(&gpio->slock, flags);
-@@ -218,66 +204,6 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static int pcf857x_irq_domain_map(struct irq_domain *domain, unsigned int irq,
--				 irq_hw_number_t hw)
--{
--	struct pcf857x *gpio = domain->host_data;
--
--	irq_set_chip_and_handler(irq,
--				 &dummy_irq_chip,
--				 handle_level_irq);
--#ifdef CONFIG_ARM
--	set_irq_flags(irq, IRQF_VALID);
--#else
--	irq_set_noprobe(irq);
--#endif
--	gpio->irq_mapped |= (1 << hw);
--
--	return 0;
--}
--
--static struct irq_domain_ops pcf857x_irq_domain_ops = {
--	.map	= pcf857x_irq_domain_map,
--};
--
--static void pcf857x_irq_domain_cleanup(struct pcf857x *gpio)
--{
--	if (gpio->irq_domain)
--		irq_domain_remove(gpio->irq_domain);
--
--}
--
--static int pcf857x_irq_domain_init(struct pcf857x *gpio,
--				   struct i2c_client *client)
--{
--	int status;
--
--	gpio->irq_domain = irq_domain_add_linear(client->dev.of_node,
--						 gpio->chip.ngpio,
--						 &pcf857x_irq_domain_ops,
--						 gpio);
--	if (!gpio->irq_domain)
--		goto fail;
--
--	/* enable real irq */
--	status = devm_request_threaded_irq(&client->dev, client->irq,
--				NULL, pcf857x_irq, IRQF_ONESHOT |
--				IRQF_TRIGGER_FALLING | IRQF_SHARED,
--				dev_name(&client->dev), gpio);
--
--	if (status)
--		goto fail;
--
--	/* enable gpio_to_irq() */
--	gpio->chip.to_irq	= pcf857x_to_irq;
--
--	return 0;
--
--fail:
--	pcf857x_irq_domain_cleanup(gpio);
--	return -EINVAL;
--}
--
- /*-------------------------------------------------------------------------*/
- 
- static int pcf857x_probe(struct i2c_client *client,
-@@ -314,15 +240,6 @@ static int pcf857x_probe(struct i2c_client *client,
- 	gpio->chip.direction_output	= pcf857x_output;
- 	gpio->chip.ngpio		= id->driver_data;
- 
--	/* enable gpio_to_irq() if platform has settings */
--	if (client->irq) {
--		status = pcf857x_irq_domain_init(gpio, client);
--		if (status < 0) {
--			dev_err(&client->dev, "irq_domain init failed\n");
--			goto fail_irq_domain;
--		}
--	}
--
- 	/* NOTE:  the OnSemi jlc1562b is also largely compatible with
- 	 * these parts, notably for output.  It has a low-resolution
- 	 * DAC instead of pin change IRQs; and its inputs can be the
-@@ -398,6 +315,26 @@ static int pcf857x_probe(struct i2c_client *client,
- 	if (status < 0)
- 		goto fail;
- 
-+	/* Enable irqchip if we have an interrupt */
-+	if (client->irq) {
-+		status = gpiochip_irqchip_add(&gpio->chip, &dummy_irq_chip, 0,
-+					      handle_level_irq, IRQ_TYPE_NONE);
-+		if (status) {
-+			dev_err(&client->dev, "cannot add irqchip\n");
-+			goto fail_irq;
-+		}
-+
-+		status = devm_request_threaded_irq(&client->dev, client->irq,
-+					NULL, pcf857x_irq, IRQF_ONESHOT |
-+					IRQF_TRIGGER_FALLING | IRQF_SHARED,
-+					dev_name(&client->dev), gpio);
-+		if (status)
-+			goto fail_irq;
-+
-+		gpiochip_set_chained_irqchip(&gpio->chip, &dummy_irq_chip,
-+					     client->irq, NULL);
-+	}
-+
- 	/* Let platform code set up the GPIOs and their users.
- 	 * Now is the first time anyone could use them.
- 	 */
-@@ -413,13 +350,12 @@ static int pcf857x_probe(struct i2c_client *client,
- 
- 	return 0;
- 
--fail:
--	if (client->irq)
--		pcf857x_irq_domain_cleanup(gpio);
-+fail_irq:
-+	gpiochip_remove(&gpio->chip);
- 
--fail_irq_domain:
--	dev_dbg(&client->dev, "probe error %d for '%s'\n",
--		status, client->name);
-+fail:
-+	dev_dbg(&client->dev, "probe error %d for '%s'\n", status,
-+		client->name);
- 
- 	return status;
- }
-@@ -441,9 +377,6 @@ static int pcf857x_remove(struct i2c_client *client)
- 		}
- 	}
- 
--	if (client->irq)
--		pcf857x_irq_domain_cleanup(gpio);
--
- 	gpiochip_remove(&gpio->chip);
- 	return status;
- }
--- 
-1.9.1
+> > +
+> > +static unsigned int altera_gpio_irq_startup(struct irq_data *d)
+> > +{
+> > +       altera_gpio_irq_unmask(d);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void altera_gpio_irq_shutdown(struct irq_data *d)
+> > +{
+> > +       altera_gpio_irq_mask(d);
+> > +}
+> 
+> Instead of those pointless functions just assign
+> the unmask/mask functions in the vtable right below.
+> 
+OK
+
+> > +
+> > +static struct irq_chip altera_irq_chip = {
+> > +       .name           = "altera-gpio",
+> > +       .irq_mask       = altera_gpio_irq_mask,
+> > +       .irq_unmask     = altera_gpio_irq_unmask,
+> > +       .irq_set_type   = altera_gpio_irq_set_type,
+> > +       .irq_startup    = altera_gpio_irq_startup,
+> > +       .irq_shutdown   = altera_gpio_irq_shutdown,
+> 
+> i.e. here.
+> 
+> > +static int altera_gpio_get(struct gpio_chip *gc, unsigned offset)
+> > +{
+> > +       struct of_mm_gpio_chip *mm_gc;
+> > +
+> > +       mm_gc = to_of_mm_gpio_chip(gc);
+> > +
+> > +       return !!(readl(mm_gc->regs + ALTERA_GPIO_DATA) >> offset);
+> > +}
+> > +
+> > +static void altera_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
+> > +{
+> > +       struct of_mm_gpio_chip *mm_gc;
+> > +       struct altera_gpio_chip *chip;
+> > +       unsigned long flags;
+> > +       unsigned int data_reg;
+> > +
+> > +       mm_gc = to_of_mm_gpio_chip(gc);
+> > +       chip = container_of(mm_gc, struct altera_gpio_chip, mmchip);
+> > +
+> > +       spin_lock_irqsave(&chip->gpio_lock, flags);
+> > +       data_reg = readl(mm_gc->regs + ALTERA_GPIO_DATA);
+> > +       if (value)
+> > +               data_reg |= BIT(offset);
+> > +       else
+> > +               data_reg &= ~BIT(offset);
+> > +       writel(data_reg, mm_gc->regs + ALTERA_GPIO_DATA);
+> > +       spin_unlock_irqrestore(&chip->gpio_lock, flags);
+> > +}
+> > +
+> > +static int altera_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+> > +{
+> > +       struct of_mm_gpio_chip *mm_gc;
+> > +       struct altera_gpio_chip *chip;
+> > +       unsigned long flags;
+> > +       unsigned int gpio_ddr;
+> > +
+> > +       mm_gc = to_of_mm_gpio_chip(gc);
+> > +       chip = container_of(mm_gc, struct altera_gpio_chip, mmchip);
+> > +
+> > +       spin_lock_irqsave(&chip->gpio_lock, flags);
+> > +       /* Set pin as input, assumes software controlled IP */
+> > +       gpio_ddr = readl(mm_gc->regs + ALTERA_GPIO_DIR);
+> > +       gpio_ddr &= ~BIT(offset);
+> > +       writel(gpio_ddr, mm_gc->regs + ALTERA_GPIO_DIR);
+> > +       spin_unlock_irqrestore(&chip->gpio_lock, flags);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int altera_gpio_direction_output(struct gpio_chip *gc,
+> > +               unsigned offset, int value)
+> > +{
+> > +       struct of_mm_gpio_chip *mm_gc;
+> > +       struct altera_gpio_chip *chip;
+> > +       unsigned long flags;
+> > +       unsigned int data_reg, gpio_ddr;
+> > +
+> > +       mm_gc = to_of_mm_gpio_chip(gc);
+> > +       chip = container_of(mm_gc, struct altera_gpio_chip, mmchip);
+> > +
+> > +       spin_lock_irqsave(&chip->gpio_lock, flags);
+> > +       /* Sets the GPIO value */
+> > +       data_reg = readl(mm_gc->regs + ALTERA_GPIO_DATA);
+> > +       if (value)
+> > +               data_reg |= BIT(offset);
+> > +       else
+> > +               data_reg &= ~BIT(offset);
+> > +       writel(data_reg, mm_gc->regs + ALTERA_GPIO_DATA);
+> > +
+> > +       /* Set pin as output, assumes software controlled IP */
+> > +       gpio_ddr = readl(mm_gc->regs + ALTERA_GPIO_DIR);
+> > +       gpio_ddr |= BIT(offset);
+> > +       writel(gpio_ddr, mm_gc->regs + ALTERA_GPIO_DIR);
+> > +       spin_unlock_irqrestore(&chip->gpio_lock, flags);
+> > +
+> > +       return 0;
+> > +}
+> 
+> These calls seem like pretty vanilla generic GPIO functions.
+> Use GENERIC_GPIO with bgpio_init() and override the default
+> functions only when really needed.
+> 
+> See e.g. drivers/gpio/gpio-74xx-mmio.c
+> 
+OK, I'll update this.
+
+> > +static int altera_gpio_irq_map(struct irq_domain *h, unsigned int irq,
+> > +                             irq_hw_number_t hw_irq_num)
+> > +{
+> > +       irq_set_chip_data(irq, h->host_data);
+> > +       irq_set_chip_and_handler(irq, &altera_irq_chip, handle_level_irq);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static const struct irq_domain_ops altera_gpio_irq_ops = {
+> > +       .map    = altera_gpio_irq_map,
+> > +       .xlate = irq_domain_xlate_onecell,
+> > +};
+> 
+> This looks like some leftover garbage. You don't need them with
+> GPIOLIB_IRQCHIP so delete these two.
+> 
+OK
+
+> > +static int altera_gpio_remove(struct platform_device *pdev)
+> > +{
+> > +       struct altera_gpio_chip *altera_gc = platform_get_drvdata(pdev);
+> > +
+> > +       gpiochip_remove(&altera_gc->mmchip.gc);
+> > +
+> > +       irq_set_handler_data(altera_gc->mapped_irq, NULL);
+> > +       irq_set_chained_handler(altera_gc->mapped_irq, NULL);
+> 
+> These two calls should not be needed either.
+> 
+OK
+
+> Yours,
+> Linus Walleij
+
+Regards,
+Tien Hock Loh
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
