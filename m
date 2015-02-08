@@ -1,60 +1,82 @@
-From: Tyler Hall <tylerwhall@gmail.com>
-Subject: gpio-pxa: getting GPIOs by devicetree phandle broken
-Date: Fri, 6 Feb 2015 16:28:09 -0500
-Message-ID: <CAOjnSCajhwdRVZUO99KL-9PF6HitZen04MoLKoDUDr_5=iS7kw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into request/release resources methods
+Date: Sun,  8 Feb 2015 19:23:42 +0100
+Message-ID: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:56217 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754021AbbBFV2b (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Feb 2015 16:28:31 -0500
+Received: from down.free-electrons.com ([37.187.137.238]:48653 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756233AbbBHSXs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Feb 2015 13:23:48 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Daniel Mack <zonque@gmail.com>, Hans Holmberg <hans.holmberg@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, Howard Cochran <cochran@lexmark.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Hi,
+The gpiochip_lock_as_irq call can fail and return an error, while the
+irq_startup is not expected to fail (returns an unsigned int which is not
+checked by irq core code).
 
-Commit 7b8792b ("gpiolib: of: Correct error handling in
-of_get_named_gpiod_flags") seems to break the ability to use DT
-bindings to reference this driver's GPIOs by phandle for banks above
-the first.
+irq_request/release_resources functions have been created to address this
+problem.
 
-The issue is that gpio-pxa registers multiple gpio chips - one for
-each bank - but they're all associated with the same DT node. The new
-behavior in of_gpiochip_find_and_xlate() causes gpiochip_find() to
-bail after the first chip matches and its xlate function fails.
-Previously it would try all chips associated with the phandle and
-pxa_gpio_of_xlate() would fail until it was called with the correct
-gpiochip.
+Move gpiochip_lock/unlock_as_irq calls into
+irq_request/release_resources functions to prevent using a gpio as an irq
+if the gpiochip_lock_as_irq call failed.
 
-I think the new behavior of of_gpiochip_find_and_xlate() is reasonable,
-so I see a couple ways of fixing gpio-pxa.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pinctrl/pinctrl-at91.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-1. Require child nodes in DT for each bank
-2. Refactor gpio-pxa to only register one gpiochip
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index f4cd0b9..a481406 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1477,28 +1477,25 @@ static void gpio_irq_ack(struct irq_data *d)
+ 	/* the interrupt is already cleared before by reading ISR */
+ }
+ 
+-static unsigned int gpio_irq_startup(struct irq_data *d)
++static int gpio_irq_request_res(struct irq_data *d)
+ {
+ 	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
+ 	unsigned	pin = d->hwirq;
+ 	int ret;
+ 
+ 	ret = gpiochip_lock_as_irq(&at91_gpio->chip, pin);
+-	if (ret) {
++	if (ret)
+ 		dev_err(at91_gpio->chip.dev, "unable to lock pind %lu IRQ\n",
+ 			d->hwirq);
+-		return ret;
+-	}
+-	gpio_irq_unmask(d);
+-	return 0;
++
++	return ret;
+ }
+ 
+-static void gpio_irq_shutdown(struct irq_data *d)
++static void gpio_irq_release_res(struct irq_data *d)
+ {
+ 	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
+ 	unsigned	pin = d->hwirq;
+ 
+-	gpio_irq_mask(d);
+ 	gpiochip_unlock_as_irq(&at91_gpio->chip, pin);
+ }
+ 
+@@ -1577,8 +1574,8 @@ void at91_pinctrl_gpio_resume(void)
+ static struct irq_chip gpio_irqchip = {
+ 	.name		= "GPIO",
+ 	.irq_ack	= gpio_irq_ack,
+-	.irq_startup	= gpio_irq_startup,
+-	.irq_shutdown	= gpio_irq_shutdown,
++	.irq_request_resources = gpio_irq_request_res,
++	.irq_release_resources = gpio_irq_release_res,
+ 	.irq_disable	= gpio_irq_mask,
+ 	.irq_mask	= gpio_irq_mask,
+ 	.irq_unmask	= gpio_irq_unmask,
+-- 
+1.9.1
 
-There was a previously undocumented binding that required child nodes
-but it was removed by 5dbb7c6 ("gpio: pxa: remove dead code"). It's
-still present in the DT files that use "marvell,mmp-gpio." Here's an
-example from pxa168.dtsi.
-
-            gpio@d4019000 {
-                compatible = "marvell,mmp-gpio";
-                #address-cells = <1>;
-                #size-cells = <1>;
-
-                ...
-
-                gcb0: gpio@d4019000 {
-                    reg = <0xd4019000 0x4>;
-                };
-                ...
-            };
-
-I may proceed with option 1 since there's some precedent, but I'd
-appreciate any input.
-
-Thanks,
-Tyler
