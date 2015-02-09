@@ -1,74 +1,93 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] pinctrl: consumer: use correct retval for placeholder
- functions
-Date: Mon, 9 Feb 2015 16:00:05 +0100
-Message-ID: <20150209150005.GB8024@katana>
-References: <1418723959-10253-1-git-send-email-wsa@the-dreams.de>
- <CACRpkdZi8+6v02kjZrLt3XGeZMdHtZwDyB_FohNeBtbDC8RpsA@mail.gmail.com>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH v3 1/4] gpiolib: define gpio suffixes globally
+Date: Mon, 09 Feb 2015 18:07:02 +0100
+Message-ID: <6473685.Mym42fyUcn@pcimr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:52192 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750928AbbBIPAK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 Feb 2015 10:00:10 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZi8+6v02kjZrLt3XGeZMdHtZwDyB_FohNeBtbDC8RpsA@mail.gmail.com>
+Received: from mail-out.m-online.net ([212.18.0.10]:39647 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932903AbbBIRHG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Feb 2015 12:07:06 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+
+Avoid multiple identical definitions of the gpio suffix strings by putting
+them into a global constant array.
+
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+---
+v3: add this change as a separate patch
+
+ drivers/gpio/gpiolib.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index bf6016d..ff2b80d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -53,6 +53,9 @@ static DEFINE_MUTEX(gpio_lookup_lock);
+ static LIST_HEAD(gpio_lookup_list);
+ LIST_HEAD(gpio_chips);
+ 
++/* gpio suffixes used for ACPI and device tree lookup */
++static const char * const gpio_suffixes[] = { "gpios", "gpio" };
++
+ static inline void desc_set_label(struct gpio_desc *d, const char *label)
+ {
+ 	d->label = label;
+@@ -1657,19 +1660,18 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 				      unsigned int idx,
+ 				      enum gpio_lookup_flags *flags)
+ {
+-	static const char * const suffixes[] = { "gpios", "gpio" };
+ 	char prop_name[32]; /* 32 is max size of property name */
+ 	enum of_gpio_flags of_flags;
+ 	struct gpio_desc *desc;
+ 	unsigned int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(suffixes); i++) {
++	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+ 		if (con_id)
+ 			snprintf(prop_name, sizeof(prop_name), "%s-%s", con_id,
+-							       suffixes[i]);
++				 gpio_suffixes[i]);
+ 		else
+ 			snprintf(prop_name, sizeof(prop_name), "%s",
+-							       suffixes[i]);
++				 gpio_suffixes[i]);
+ 
+ 		desc = of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
+ 						&of_flags);
+@@ -1690,7 +1692,6 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
+ 					unsigned int idx,
+ 					enum gpio_lookup_flags *flags)
+ {
+-	static const char * const suffixes[] = { "gpios", "gpio" };
+ 	struct acpi_device *adev = ACPI_COMPANION(dev);
+ 	struct acpi_gpio_info info;
+ 	struct gpio_desc *desc;
+@@ -1698,13 +1699,13 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
+ 	int i;
+ 
+ 	/* Try first from _DSD */
+-	for (i = 0; i < ARRAY_SIZE(suffixes); i++) {
++	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+ 		if (con_id && strcmp(con_id, "gpios")) {
+ 			snprintf(propname, sizeof(propname), "%s-%s",
+-				 con_id, suffixes[i]);
++				 con_id, gpio_suffixes[i]);
+ 		} else {
+ 			snprintf(propname, sizeof(propname), "%s",
+-				 suffixes[i]);
++				 gpio_suffixes[i]);
+ 		}
+ 
+ 		desc = acpi_get_gpiod_by_index(adev, propname, idx, &info);
+-- 
+2.0.5
 
 
---tsOsTdHNUZQcU9Ye
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Linus,
-
-> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >
-> > These functions are supposed to return an error pointer, not NULL.
-> >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> Worried that some driver may depend on this behaviour, but
-> patch applied anyway, let's deal with it.
-
-I sent a similar patch to Russell for the clk API and he rightfully
-NAKed it. NULL is a valid cookie from clk_get and the whole clk API is
-able to deal with NULL. That ensures that for !HAVE_CLK, clk_get is
-still successful and won't fail driver_probe while the other clk API
-functions don't really do anything. If the gpio API is similar to that,
-we should revert my patch.
-
-Sorry for the nuisance,
-
-   Wolfram
-
-
---tsOsTdHNUZQcU9Ye
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJU2Mt1AAoJEBQN5MwUoCm2DvkQAIfebrvWlPhVXdA57DcY9jeI
-cBqIMufqllCsUTaDrzlLV7BwJccCdT86NueJZoMfdaFU+wYSQlubCaam689Bd1gS
-2yIxksbVrewRjq7KlX44VAUoU7vxq211VN9Ap8ObRpkW3BRp/U8vZbEG6SgOThr7
-gv5zVmIryS8s8vUNrAxHJ3VEIN7AWMqvvJqsMxzeK91mwaESoh39uKH9oXz9Hcb2
-VmAarB+lt/LNsSlD5MvWS4F5vWnIhB/Nxfcxw5SorPhNXYMRkxnFOegLvwkeqFWJ
-gkImmlRF//Q7PbwXqK0/IKPPCSg14fSqhQmyMCe7pcfvEJAIAH9xQagZWUNNhuGi
-3iJXSvpH3OVxK4B2DpzuNoghZUTbhR+eVRigksprR8hMXZ9gGtciiEhnAj2ZWwmC
-tFptZq4UgKl6IpJbAXYMnSBYzXhi8dtb7MHhVZUMuf4IOv556C/c8pe0aebrYBtv
-Ge21HzYrxteyQtgJccJ/G693NXvLy/rdwwak1DkK3rs2iTTQLvqnCl9ADUK6hvzd
-yZuUOOoysefi9fDDeoANxWxnM/Yllnwbtc4NEOjtmOObENTsAwKUc6er51lpw3D9
-/iJ3etbVZ4oNRRbVm16mzExhcKmysfS9GwNgIgX9xDc/XrP+8qH5RaT4T80qHjgy
-torXAIWMu8nIh93VpMpY
-=5MTe
------END PGP SIGNATURE-----
-
---tsOsTdHNUZQcU9Ye--
