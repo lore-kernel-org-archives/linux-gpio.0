@@ -1,78 +1,55 @@
-From: Alexandre Courbot <gnurou@gmail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
 Subject: Re: gpio-pxa: getting GPIOs by devicetree phandle broken
-Date: Mon, 9 Feb 2015 15:11:23 +0900
-Message-ID: <CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
+Date: Mon, 09 Feb 2015 09:02:51 +0100
+Message-ID: <87r3tz7bro.fsf@free.fr>
 References: <CAOjnSCajhwdRVZUO99KL-9PF6HitZen04MoLKoDUDr_5=iS7kw@mail.gmail.com>
+	<CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:57703 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752801AbbBIGLo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Feb 2015 01:11:44 -0500
-In-Reply-To: <CAOjnSCajhwdRVZUO99KL-9PF6HitZen04MoLKoDUDr_5=iS7kw@mail.gmail.com>
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:24533 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932398AbbBIICz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Feb 2015 03:02:55 -0500
+In-Reply-To: <CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
+	(Alexandre Courbot's message of "Mon, 9 Feb 2015 15:11:23 +0900")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tyler Hall <tylerwhall@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Mack <zonque@gmail.com>, Hans Holmberg <hans.holmberg@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>, Robert Jarzmik <robert.jarzmik@free.fr>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Tyler Hall <tylerwhall@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Mack <zonque@gmail.com>, Hans Holmberg <hans.holmberg@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>
 
-Adding Robert who reported the same thing.
+Alexandre Courbot <gnurou@gmail.com> writes:
 
-On Sat, Feb 7, 2015 at 6:28 AM, Tyler Hall <tylerwhall@gmail.com> wrote:
-> Hi,
+> Adding Robert who reported the same thing.
 >
-> Commit 7b8792b ("gpiolib: of: Correct error handling in
-> of_get_named_gpiod_flags") seems to break the ability to use DT
-> bindings to reference this driver's GPIOs by phandle for banks above
-> the first.
+> On Sat, Feb 7, 2015 at 6:28 AM, Tyler Hall <tylerwhall@gmail.com> wrote:
+>> 1. Require child nodes in DT for each bank
 >
-> The issue is that gpio-pxa registers multiple gpio chips - one for
-> each bank - but they're all associated with the same DT node. The new
-> behavior in of_gpiochip_find_and_xlate() causes gpiochip_find() to
-> bail after the first chip matches and its xlate function fails.
-> Previously it would try all chips associated with the phandle and
-> pxa_gpio_of_xlate() would fail until it was called with the correct
-> gpiochip.
+> This would break DT compatibility.
+Agreed.
+
 >
-> I think the new behavior of of_gpiochip_find_and_xlate() is reasonable,
-> so I see a couple ways of fixing gpio-pxa.
+>> 2. Refactor gpio-pxa to only register one gpiochip
 >
-> 1. Require child nodes in DT for each bank
+> Sounds better, especially since this would reflect the hardware more
+> accurately. One DT node should translate into one GPIO chip.
+Could I know where "should translate into _one_ GPIO chip" comes from ? Is it a
+specification, or is it a new rule we're creating ?
 
-This would break DT compatibility.
+And if it's a new rule, I'd like to know what backs it up .
 
-> 2. Refactor gpio-pxa to only register one gpiochip
+> problem is that I'm afraid several other drivers are doing the same
+> thing and thus are now similarly broken.
+That's also what I'm afraid of.
 
-Sounds better, especially since this would reflect the hardware more
-accurately. One DT node should translate into one GPIO chip. The
-problem is that I'm afraid several other drivers are doing the same
-thing and thus are now similarly broken.
+> The following is also likely to work as a workaround, but I would not
+> go as far as saying this should be taken as a fix. Hans, since you
+> wrote 7b8792b, could we have your input on this?
+I was going to suggest the very same approach. If this one (or a similar one)
+doesn't meet success, then my weekend of revert queries is not over ... and I
+don't like reverts.
 
-The following is also likely to work as a workaround, but I would not
-go as far as saying this should be taken as a fix. Hans, since you
-wrote 7b8792b, could we have your input on this?
+Cheers.
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 08261f2b3a82..a09095531b00 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -45,14 +45,16 @@ static int of_gpiochip_find_and_xlate(struct
-gpio_chip *gc, void *data)
-                return false;
-
-        ret = gc->of_xlate(gc, &gg_data->gpiospec, gg_data->flags);
--       if (ret < 0) {
-+       if (ret == -EPROBE_DEFER) {
-                /* We've found the gpio chip, but the translation failed.
-                 * Return true to stop looking and return the translation
-                 * error via out_gpio
-                 */
-                gg_data->out_gpio = ERR_PTR(ret);
-                return true;
--        }
-+       } else if (ret < 0) {
-+               return false;
-+       }
-
-        gg_data->out_gpio = gpiochip_get_desc(gc, ret);
-        return true;
+-- 
+Robert
