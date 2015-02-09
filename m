@@ -1,147 +1,58 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH v3 4/4] mdio-mux-gpio: use new gpiod_get_array and gpiod_put_array functions
-Date: Mon, 09 Feb 2015 18:07:18 +0100
-Message-ID: <2799887.8ZynysBVJj@pcimr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: gpio-pxa: getting GPIOs by devicetree phandle broken
+Date: Mon, 09 Feb 2015 18:38:39 +0100
+Message-ID: <87mw4n6l40.fsf@free.fr>
+References: <CAOjnSCajhwdRVZUO99KL-9PF6HitZen04MoLKoDUDr_5=iS7kw@mail.gmail.com>
+	<CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
+	<4B6D6D87A8FB62428BE0A3E38461A1AB18D6B200@irsmsx105.ger.corp.intel.com>
+	<CAOjnSCZgx5H75t8QrXj1WQ_SaU_4HDYeK+_XdBRmwUXzHW=iJw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:53589 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933169AbbBIRHW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Feb 2015 12:07:22 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOjnSCZgx5H75t8QrXj1WQ_SaU_4HDYeK+_XdBRmwUXzHW=iJw@mail.gmail.com>
+	(Tyler Hall's message of "Mon, 9 Feb 2015 09:41:17 -0500")
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Holmberg, Hans" <hans.holmberg@intel.com>, Tyler Hall <tylerwhall@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Mack <zonque@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
-disposing of GPIO descriptors.
+Tyler Hall <tylerwhall@gmail.com> writes:
 
-Cc: David Miller <davem@davemloft.net>
-Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
----
-Change log:
-  v3: no change
-  v2: use the new interface
+>> The issue with multiple gpiochips per of-node could be worked around as followed I believe, comments?
+>>
+>> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+>> index 08261f2..43984ab 100644
+>> --- a/drivers/gpio/gpiolib-of.c
+>> +++ b/drivers/gpio/gpiolib-of.c
+>> @@ -47,11 +47,12 @@ static int of_gpiochip_find_and_xlate(struct gpio_chip *gc, void *data)
+>>         ret = gc->of_xlate(gc, &gg_data->gpiospec, gg_data->flags);
+>>         if (ret < 0) {
+>>                 /* We've found the gpio chip, but the translation failed.
+>> -                * Return true to stop looking and return the translation
+>> -                * error via out_gpio
+>> +                * Store translation error in out_gpio.
+>> +                * Return false to keep looking, as more than one GPIO chip
+>> +                * could be registered per of-node.
+>>                  */
+>>                 gg_data->out_gpio = ERR_PTR(ret);
+>> -               return true;
+>> +               return false;
+>>          }
+>>
+>>         gg_data->out_gpio = gpiochip_get_desc(gc, ret);
+>
+> As long as we're ok with multiple gpiochips per of-node, this would
+> work for me. It'll change the preference of which chip returns the
+> error in the case of multiple chips, but that's already undefined
+> behavior.
 
- drivers/net/phy/mdio-mux-gpio.c | 61 ++++++++++++-----------------------------
- 1 file changed, 18 insertions(+), 43 deletions(-)
+Looks good to me too, this will solve my issue, and the global behavior would be
+consistent with the former one.
 
-diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
-index 320eb15..3f6929c 100644
---- a/drivers/net/phy/mdio-mux-gpio.c
-+++ b/drivers/net/phy/mdio-mux-gpio.c
-@@ -12,33 +12,31 @@
- #include <linux/module.h>
- #include <linux/phy.h>
- #include <linux/mdio-mux.h>
--#include <linux/of_gpio.h>
-+#include <linux/gpio/consumer.h>
- 
- #define DRV_VERSION "1.1"
- #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
- 
--#define MDIO_MUX_GPIO_MAX_BITS 8
--
- struct mdio_mux_gpio_state {
--	struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
--	unsigned int num_gpios;
-+	struct gpio_descs *gpios;
- 	void *mux_handle;
- };
- 
- static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
- 				   void *data)
- {
--	int values[MDIO_MUX_GPIO_MAX_BITS];
--	unsigned int n;
- 	struct mdio_mux_gpio_state *s = data;
-+	int values[s->gpios->array_size];
-+	unsigned int n;
- 
- 	if (current_child == desired_child)
- 		return 0;
- 
--	for (n = 0; n < s->num_gpios; n++) {
-+	for (n = 0; n < s->gpios->array_size; n++)
- 		values[n] = (desired_child >> n) & 1;
--	}
--	gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
-+
-+	gpiod_set_array_cansleep(s->gpios->array_size, s->gpios->desc_array,
-+				 values);
- 
- 	return 0;
- }
-@@ -46,56 +44,33 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
- static int mdio_mux_gpio_probe(struct platform_device *pdev)
- {
- 	struct mdio_mux_gpio_state *s;
--	int num_gpios;
--	unsigned int n;
- 	int r;
- 
--	if (!pdev->dev.of_node)
--		return -ENODEV;
--
--	num_gpios = of_gpio_count(pdev->dev.of_node);
--	if (num_gpios <= 0 || num_gpios > MDIO_MUX_GPIO_MAX_BITS)
--		return -ENODEV;
--
- 	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
- 	if (!s)
- 		return -ENOMEM;
- 
--	s->num_gpios = num_gpios;
--
--	for (n = 0; n < num_gpios; ) {
--		struct gpio_desc *gpio = gpiod_get_index(&pdev->dev, NULL, n,
--							 GPIOD_OUT_LOW);
--		if (IS_ERR(gpio)) {
--			r = PTR_ERR(gpio);
--			goto err;
--		}
--		s->gpio[n] = gpio;
--		n++;
--	}
-+	s->gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
-+	if (IS_ERR(s->gpios))
-+		return PTR_ERR(s->gpios);
- 
- 	r = mdio_mux_init(&pdev->dev,
- 			  mdio_mux_gpio_switch_fn, &s->mux_handle, s);
- 
--	if (r == 0) {
--		pdev->dev.platform_data = s;
--		return 0;
--	}
--err:
--	while (n) {
--		n--;
--		gpiod_put(s->gpio[n]);
-+	if (r != 0) {
-+		gpiod_put_array(s->gpios);
-+		return r;
- 	}
--	return r;
-+
-+	pdev->dev.platform_data = s;
-+	return 0;
- }
- 
- static int mdio_mux_gpio_remove(struct platform_device *pdev)
- {
--	unsigned int n;
- 	struct mdio_mux_gpio_state *s = dev_get_platdata(&pdev->dev);
- 	mdio_mux_uninit(s->mux_handle);
--	for (n = 0; n < s->num_gpios; n++)
--		gpiod_put(s->gpio[n]);
-+	gpiod_put_array(s->gpios);
- 	return 0;
- }
- 
+Would you care submitting a proper patch so that we can apply our Reviewed-by,
+Tested-by etc ... ?
+
+Cheers.
+
 -- 
-2.0.5
-
-
+Robert
