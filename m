@@ -1,71 +1,106 @@
-From: "Holmberg, Hans" <hans.holmberg@intel.com>
-Subject: RE: gpio-pxa: getting GPIOs by devicetree phandle broken
-Date: Mon, 9 Feb 2015 09:42:02 +0000
-Message-ID: <4B6D6D87A8FB62428BE0A3E38461A1AB18D6B200@irsmsx105.ger.corp.intel.com>
-References: <CAOjnSCajhwdRVZUO99KL-9PF6HitZen04MoLKoDUDr_5=iS7kw@mail.gmail.com>
- <CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/3][v2] gpiolib: add gpiod_get_array and gpiod_put_array
+ functions
+Date: Mon, 9 Feb 2015 14:09:26 +0200
+Message-ID: <20150209120926.GC1480@lahna.fi.intel.com>
+References: <1485356.H0CQOKK5aG@pcimr>
+ <CAAVeFu+Z+ExaCimgB-7gT0zZspNLmpKPC+C_+wzYTYb2UMBJUQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:7244 "EHLO mga01.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:24934 "EHLO mga11.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760488AbbBIJmO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 Feb 2015 04:42:14 -0500
-In-Reply-To: <CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
-Content-Language: en-US
+	id S932488AbbBIMLi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 9 Feb 2015 07:11:38 -0500
+Content-Disposition: inline
+In-Reply-To: <CAAVeFu+Z+ExaCimgB-7gT0zZspNLmpKPC+C_+wzYTYb2UMBJUQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Tyler Hall <tylerwhall@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Mack <zonque@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>, Robert Jarzmik <robert.jarzmik@free.fr>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Rojhalat Ibrahim <imr@rtschenk.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-DQo+ID4gMS4gUmVxdWlyZSBjaGlsZCBub2RlcyBpbiBEVCBmb3IgZWFjaCBiYW5rDQo+IA0KPiBU
-aGlzIHdvdWxkIGJyZWFrIERUIGNvbXBhdGliaWxpdHkuDQo+IA0KPiA+IDIuIFJlZmFjdG9yIGdw
-aW8tcHhhIHRvIG9ubHkgcmVnaXN0ZXIgb25lIGdwaW9jaGlwDQo+IA0KPiBTb3VuZHMgYmV0dGVy
-LCBlc3BlY2lhbGx5IHNpbmNlIHRoaXMgd291bGQgcmVmbGVjdCB0aGUgaGFyZHdhcmUgbW9yZQ0K
-PiBhY2N1cmF0ZWx5LiBPbmUgRFQgbm9kZSBzaG91bGQgdHJhbnNsYXRlIGludG8gb25lIEdQSU8g
-Y2hpcC4gVGhlIHByb2JsZW0gaXMNCj4gdGhhdCBJJ20gYWZyYWlkIHNldmVyYWwgb3RoZXIgZHJp
-dmVycyBhcmUgZG9pbmcgdGhlIHNhbWUgdGhpbmcgYW5kIHRodXMgYXJlDQo+IG5vdyBzaW1pbGFy
-bHkgYnJva2VuLg0KDQpUaGlzIHNvdW5kcyByZWFzb25hYmxlIHRvIG1lLg0KDQo+IFRoZSBmb2xs
-b3dpbmcgaXMgYWxzbyBsaWtlbHkgdG8gd29yayBhcyBhIHdvcmthcm91bmQsIGJ1dCBJIHdvdWxk
-IG5vdCBnbyBhcw0KPiBmYXIgYXMgc2F5aW5nIHRoaXMgc2hvdWxkIGJlIHRha2VuIGFzIGEgZml4
-LiBIYW5zLCBzaW5jZSB5b3Ugd3JvdGUgN2I4NzkyYiwNCj4gY291bGQgd2UgaGF2ZSB5b3VyIGlu
-cHV0IG9uIHRoaXM/DQoNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMg
-Yi9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi1vZi5jIGluZGV4DQo+IDA4MjYxZjJiM2E4Mi4uYTA5MDk1
-NTMxYjAwIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi1vZi5jDQo+ICsrKyBi
-L2RyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMNCj4gQEAgLTQ1LDE0ICs0NSwxNiBAQCBzdGF0aWMg
-aW50IG9mX2dwaW9jaGlwX2ZpbmRfYW5kX3hsYXRlKHN0cnVjdA0KPiBncGlvX2NoaXAgKmdjLCB2
-b2lkICpkYXRhKQ0KPiAgICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOw0KPiANCj4gICAgICAg
-ICByZXQgPSBnYy0+b2ZfeGxhdGUoZ2MsICZnZ19kYXRhLT5ncGlvc3BlYywgZ2dfZGF0YS0+Zmxh
-Z3MpOw0KPiAtICAgICAgIGlmIChyZXQgPCAwKSB7DQo+ICsgICAgICAgaWYgKHJldCA9PSAtRVBS
-T0JFX0RFRkVSKSB7DQo+ICAgICAgICAgICAgICAgICAvKiBXZSd2ZSBmb3VuZCB0aGUgZ3BpbyBj
-aGlwLCBidXQgdGhlIHRyYW5zbGF0aW9uIGZhaWxlZC4NCj4gICAgICAgICAgICAgICAgICAqIFJl
-dHVybiB0cnVlIHRvIHN0b3AgbG9va2luZyBhbmQgcmV0dXJuIHRoZSB0cmFuc2xhdGlvbg0KPiAg
-ICAgICAgICAgICAgICAgICogZXJyb3IgdmlhIG91dF9ncGlvDQo+ICAgICAgICAgICAgICAgICAg
-Ki8NCj4gICAgICAgICAgICAgICAgIGdnX2RhdGEtPm91dF9ncGlvID0gRVJSX1BUUihyZXQpOw0K
-PiAgICAgICAgICAgICAgICAgcmV0dXJuIHRydWU7DQo+IC0gICAgICAgIH0NCj4gKyAgICAgICB9
-IGVsc2UgaWYgKHJldCA8IDApIHsNCj4gKyAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCj4g
-KyAgICAgICB9DQo+IA0KPiAgICAgICAgIGdnX2RhdGEtPm91dF9ncGlvID0gZ3Bpb2NoaXBfZ2V0
-X2Rlc2MoZ2MsIHJldCk7DQo+ICAgICAgICAgcmV0dXJuIHRydWU7DQoNClRoZSBwcm9ibGVtIG15
-IHBhdGNoIHNvbHZlZCB3YXMgdGhhdCAtRVBST0JFX0RFRkVSIHdhcyByZXR1cm5lZCByZWdhcmRs
-ZXNzIG9mIGxvb2t1cC1lcnJvciBpbiBvZl9nZXRfbmFtZWRfZ3Bpb2RfZmxhZ3MsIG5vdCB0aGF0
-IC1FUFJPQkVfREVGRVIgZXJyb3Igd2FzIG5vdCBwYXNzZWQgb24uDQoNClRoZSBpc3N1ZSB3aXRo
-IG11bHRpcGxlIGdwaW9jaGlwcyBwZXIgb2Ytbm9kZSBjb3VsZCBiZSB3b3JrZWQgYXJvdW5kIGFz
-IGZvbGxvd2VkIEkgYmVsaWV2ZSwgY29tbWVudHM/DQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-aW8vZ3Bpb2xpYi1vZi5jIGIvZHJpdmVycy9ncGlvL2dwaW9saWItb2YuYw0KaW5kZXggMDgyNjFm
-Mi4uNDM5ODRhYiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMNCisrKyBi
-L2RyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMNCkBAIC00NywxMSArNDcsMTIgQEAgc3RhdGljIGlu
-dCBvZl9ncGlvY2hpcF9maW5kX2FuZF94bGF0ZShzdHJ1Y3QgZ3Bpb19jaGlwICpnYywgdm9pZCAq
-ZGF0YSkNCiAgICAgICAgcmV0ID0gZ2MtPm9mX3hsYXRlKGdjLCAmZ2dfZGF0YS0+Z3Bpb3NwZWMs
-IGdnX2RhdGEtPmZsYWdzKTsNCiAgICAgICAgaWYgKHJldCA8IDApIHsNCiAgICAgICAgICAgICAg
-ICAvKiBXZSd2ZSBmb3VuZCB0aGUgZ3BpbyBjaGlwLCBidXQgdGhlIHRyYW5zbGF0aW9uIGZhaWxl
-ZC4NCi0gICAgICAgICAgICAgICAgKiBSZXR1cm4gdHJ1ZSB0byBzdG9wIGxvb2tpbmcgYW5kIHJl
-dHVybiB0aGUgdHJhbnNsYXRpb24NCi0gICAgICAgICAgICAgICAgKiBlcnJvciB2aWEgb3V0X2dw
-aW8NCisgICAgICAgICAgICAgICAgKiBTdG9yZSB0cmFuc2xhdGlvbiBlcnJvciBpbiBvdXRfZ3Bp
-by4NCisgICAgICAgICAgICAgICAgKiBSZXR1cm4gZmFsc2UgdG8ga2VlcCBsb29raW5nLCBhcyBt
-b3JlIHRoYW4gb25lIEdQSU8gY2hpcA0KKyAgICAgICAgICAgICAgICAqIGNvdWxkIGJlIHJlZ2lz
-dGVyZWQgcGVyIG9mLW5vZGUuDQogICAgICAgICAgICAgICAgICovDQogICAgICAgICAgICAgICAg
-Z2dfZGF0YS0+b3V0X2dwaW8gPSBFUlJfUFRSKHJldCk7DQotICAgICAgICAgICAgICAgcmV0dXJu
-IHRydWU7DQorICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOw0KICAgICAgICAgfQ0KIA0KICAg
-ICAgICBnZ19kYXRhLT5vdXRfZ3BpbyA9IGdwaW9jaGlwX2dldF9kZXNjKGdjLCByZXQpOw0KLS0N
-Cg0KQmVzdCByZWdhcmRzLA0KSGFucw0K
+On Mon, Feb 09, 2015 at 02:12:39PM +0900, Alexandre Courbot wrote:
+> > +#ifdef CONFIG_ACPI
+> > +
+> > +static int acpi_find_gpio_count(struct acpi_resource *ares, void *data)
+> > +{
+> > +       unsigned int *count = data;
+> > +
+> > +       if (ares->type == ACPI_RESOURCE_TYPE_GPIO)
+> > +               *count = ares->data.gpio.pin_table_length;
+> > +
+> > +       return 1;
+> > +}
+> > +
+> > +static unsigned int acpi_gpio_count(struct device *dev, const char *con_id)
+> > +{
+> > +       struct acpi_device *adev = ACPI_COMPANION(dev);
+> > +       const union acpi_object *obj;
+> > +       const struct acpi_gpio_mapping *gm;
+> > +       unsigned int count = 0;
+> > +       int ret;
+> > +       char propname[32];
+> > +       unsigned int i;
+> > +
+> > +       /* Try first from _DSD */
+> > +       for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+> > +               if (con_id && strcmp(con_id, "gpios"))
+> > +                       snprintf(propname, sizeof(propname), "%s-%s",
+> > +                                con_id, gpio_suffixes[i]);
+> > +               else
+> > +                       snprintf(propname, sizeof(propname), "%s",
+> > +                                gpio_suffixes[i]);
+> > +
+> > +               ret = acpi_dev_get_property(adev, propname, ACPI_TYPE_ANY,
+> > +                                           &obj);
+> > +               if (ret == 0) {
+> > +                       if (obj->type == ACPI_TYPE_LOCAL_REFERENCE)
+> > +                               count = 1;
+> > +                       else if (obj->type == ACPI_TYPE_PACKAGE)
+> > +                               count = obj->package.count;
+> > +               } else if (adev->driver_gpios) {
+> > +                       for (gm = adev->driver_gpios; gm->name; gm++)
+> > +                               if (strcmp(propname, gm->name) == 0) {
+> > +                                       count = gm->size;
+> > +                                       break;
+> > +                               }
+> > +               }
+> > +               if (count)
+> > +                       break;
+> > +       }
+> > +
+> > +       /* Then from plain _CRS GPIOs */
+> > +       if (!count) {
+> > +               struct list_head resource_list;
+> > +
+> > +               INIT_LIST_HEAD(&resource_list);
+> > +               acpi_dev_get_resources(adev, &resource_list,
+> > +                                      acpi_find_gpio_count, &count);
+> > +               acpi_dev_free_resource_list(&resource_list);
+> > +       }
+> > +       return count;
+> > +}
+> 
+> I'd really like to have an acked-by from some of the ACPI people
+> (Mika?) for this part.
+
+If I understand correctly the new interface allows requesting all GPIOs
+for a given device?
+
+In that case the above code will not work. In ACPI a device may have
+several GpioIo/GpioInt resources and each can hold several pins. If I
+read the above code right, it re-assigns 'count' for each GPIO instead
+of adding to it.
+
+The _DSD path also seems to return number of elements in a package:
+
+	Package () {"reset-gpios", Package() {^BTH, 1, 1, 0}},
+
+Here for example it returns 4 which is not what is expected. I think in
+this case the correct value is 1.
+
+Also there may be several GPIOs for a single property like:
+
+	Package () {"reset-gpios", Package() {^BTH, 1, 1, 0, ^BTH, 1, 2, 0}},
+
+I'm not sure if that is handled correctly here.
