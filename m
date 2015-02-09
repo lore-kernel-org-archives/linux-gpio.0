@@ -1,53 +1,46 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 3/3][v2] mdio-mux-gpio: use new gpiod_get_array and
- gpiod_put_array functions
-Date: Mon, 9 Feb 2015 22:53:32 +0900
-Message-ID: <CAAVeFuLqwL9VWMComyVj0odMfQnJvEVOwDMb672iUXRfjRoJtg@mail.gmail.com>
-References: <2017147.PF4WHTmJS4@pcimr> <CAAVeFu+bfTbvbaZ0EVrZzH_zNWDJjfM4oi13g8D+aH_8x6BqaQ@mail.gmail.com>
- <2302857.SIRJpJWX1o@pcimr>
+From: Tyler Hall <tylerwhall@gmail.com>
+Subject: Re: gpio-pxa: getting GPIOs by devicetree phandle broken
+Date: Mon, 9 Feb 2015 09:41:17 -0500
+Message-ID: <CAOjnSCZgx5H75t8QrXj1WQ_SaU_4HDYeK+_XdBRmwUXzHW=iJw@mail.gmail.com>
+References: <CAOjnSCajhwdRVZUO99KL-9PF6HitZen04MoLKoDUDr_5=iS7kw@mail.gmail.com>
+ <CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com> <4B6D6D87A8FB62428BE0A3E38461A1AB18D6B200@irsmsx105.ger.corp.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:38974 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760660AbbBINxx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Feb 2015 08:53:53 -0500
-In-Reply-To: <2302857.SIRJpJWX1o@pcimr>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:50954 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932842AbbBIOli (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Feb 2015 09:41:38 -0500
+In-Reply-To: <4B6D6D87A8FB62428BE0A3E38461A1AB18D6B200@irsmsx105.ger.corp.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+To: "Holmberg, Hans" <hans.holmberg@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Mack <zonque@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-On Mon, Feb 9, 2015 at 6:14 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> On Monday 09 February 2015 14:18:14 Alexandre Courbot wrote:
->> On Thu, Jan 22, 2015 at 1:46 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
->> > Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
->> > disposing of GPIO descriptors.
->> >
->> > Cc: David Miller <davem@davemloft.net>
->> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
->> > ---
->> > This patch depends on my previous patch "gpiolib: add gpiod_get_array and
->> > gpiod_put_array functions".
->> >
->> > v2: use the new interface
->> >
->> > Only compile-tested.
->> >
->> >  drivers/net/phy/mdio-mux-gpio.c |   61 +++++++++++-----------------------------
->> >  1 file changed, 18 insertions(+), 43 deletions(-)
->>
->> Oh yeah.
->>
->> It would be great to have a tested-by for the next revision though.
->>
->> Rojhalat, have you been able to test these new interfaces outside of
->> this driver?
->>
+> The issue with multiple gpiochips per of-node could be worked around as followed I believe, comments?
 >
-> I have tested the new interface with my FPGA configuration driver (which I
-> plan to submit eventually). I cannot test the mdio-mux-gpio driver because
-> I lack the necessary hardware.
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 08261f2..43984ab 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -47,11 +47,12 @@ static int of_gpiochip_find_and_xlate(struct gpio_chip *gc, void *data)
+>         ret = gc->of_xlate(gc, &gg_data->gpiospec, gg_data->flags);
+>         if (ret < 0) {
+>                 /* We've found the gpio chip, but the translation failed.
+> -                * Return true to stop looking and return the translation
+> -                * error via out_gpio
+> +                * Store translation error in out_gpio.
+> +                * Return false to keep looking, as more than one GPIO chip
+> +                * could be registered per of-node.
+>                  */
+>                 gg_data->out_gpio = ERR_PTR(ret);
+> -               return true;
+> +               return false;
+>          }
+>
+>         gg_data->out_gpio = gpiochip_get_desc(gc, ret);
 
-That's good enough - I just want to make sure the interface has
-undergone some testing. :P
+As long as we're ok with multiple gpiochips per of-node, this would
+work for me. It'll change the preference of which chip returns the
+error in the case of multiple chips, but that's already undefined
+behavior.
