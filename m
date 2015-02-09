@@ -1,69 +1,74 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into
- request/release resources methods
-Date: Mon, 9 Feb 2015 22:50:56 +0800
-Message-ID: <BC36A77B-9986-495E-8F86-C80E9D0F0C63@jcrosoft.com>
-References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2070.6\))
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, Nicolas FERRE <nicolas.ferre@atmel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] pinctrl: consumer: use correct retval for placeholder
+ functions
+Date: Mon, 9 Feb 2015 16:00:05 +0100
+Message-ID: <20150209150005.GB8024@katana>
+References: <1418723959-10253-1-git-send-email-wsa@the-dreams.de>
+ <CACRpkdZi8+6v02kjZrLt3XGeZMdHtZwDyB_FohNeBtbDC8RpsA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:52192 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750928AbbBIPAK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 9 Feb 2015 10:00:10 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZi8+6v02kjZrLt3XGeZMdHtZwDyB_FohNeBtbDC8RpsA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-Cj4gT24gRmViIDksIDIwMTUsIGF0IDI6MjMgQU0sIEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJl
-emlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4gd3JvdGU6Cj4gCj4gVGhlIGdwaW9jaGlwX2xvY2tf
-YXNfaXJxIGNhbGwgY2FuIGZhaWwgYW5kIHJldHVybiBhbiBlcnJvciwgd2hpbGUgdGhlCj4gaXJx
-X3N0YXJ0dXAgaXMgbm90IGV4cGVjdGVkIHRvIGZhaWwgKHJldHVybnMgYW4gdW5zaWduZWQgaW50
-IHdoaWNoIGlzIG5vdAo+IGNoZWNrZWQgYnkgaXJxIGNvcmUgY29kZSkuCj4gCj4gaXJxX3JlcXVl
-c3QvcmVsZWFzZV9yZXNvdXJjZXMgZnVuY3Rpb25zIGhhdmUgYmVlbiBjcmVhdGVkIHRvIGFkZHJl
-c3MgdGhpcwo+IHByb2JsZW0uCj4gCj4gTW92ZSBncGlvY2hpcF9sb2NrL3VubG9ja19hc19pcnEg
-Y2FsbHMgaW50bwo+IGlycV9yZXF1ZXN0L3JlbGVhc2VfcmVzb3VyY2VzIGZ1bmN0aW9ucyB0byBw
-cmV2ZW50IHVzaW5nIGEgZ3BpbyBhcyBhbiBpcnEKPiBpZiB0aGUgZ3Bpb2NoaXBfbG9ja19hc19p
-cnEgY2FsbCBmYWlsZWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jp
-cy5icmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tPgo+IOKAlAoKSeKAmW0gdHJhdmVsbGluZyB3
-aWxsIHRha2UgYSBsb29rIGVuZCBvZiB0aGUgd2VlawoKQmVzdCBSZWdhcmRzLApKLgo+IGRyaXZl
-cnMvcGluY3RybC9waW5jdHJsLWF0OTEuYyB8IDE3ICsrKysrKystLS0tLS0tLS0tCj4gMSBmaWxl
-IGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEuYyBiL2RyaXZlcnMvcGluY3RybC9waW5j
-dHJsLWF0OTEuYwo+IGluZGV4IGY0Y2QwYjkuLmE0ODE0MDYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9waW5jdHJsL3BpbmN0cmwtYXQ5MS5jCj4gKysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwt
-YXQ5MS5jCj4gQEAgLTE0NzcsMjggKzE0NzcsMjUgQEAgc3RhdGljIHZvaWQgZ3Bpb19pcnFfYWNr
-KHN0cnVjdCBpcnFfZGF0YSAqZCkKPiAJLyogdGhlIGludGVycnVwdCBpcyBhbHJlYWR5IGNsZWFy
-ZWQgYmVmb3JlIGJ5IHJlYWRpbmcgSVNSICovCj4gfQo+IAo+IC1zdGF0aWMgdW5zaWduZWQgaW50
-IGdwaW9faXJxX3N0YXJ0dXAoc3RydWN0IGlycV9kYXRhICpkKQo+ICtzdGF0aWMgaW50IGdwaW9f
-aXJxX3JlcXVlc3RfcmVzKHN0cnVjdCBpcnFfZGF0YSAqZCkKPiB7Cj4gCXN0cnVjdCBhdDkxX2dw
-aW9fY2hpcCAqYXQ5MV9ncGlvID0gaXJxX2RhdGFfZ2V0X2lycV9jaGlwX2RhdGEoZCk7Cj4gCXVu
-c2lnbmVkCXBpbiA9IGQtPmh3aXJxOwo+IAlpbnQgcmV0Owo+IAo+IAlyZXQgPSBncGlvY2hpcF9s
-b2NrX2FzX2lycSgmYXQ5MV9ncGlvLT5jaGlwLCBwaW4pOwo+IC0JaWYgKHJldCkgewo+ICsJaWYg
-KHJldCkKPiAJCWRldl9lcnIoYXQ5MV9ncGlvLT5jaGlwLmRldiwgInVuYWJsZSB0byBsb2NrIHBp
-bmQgJWx1IElSUVxuIiwKPiAJCQlkLT5od2lycSk7Cj4gLQkJcmV0dXJuIHJldDsKPiAtCX0KPiAt
-CWdwaW9faXJxX3VubWFzayhkKTsKPiAtCXJldHVybiAwOwo+ICsKPiArCXJldHVybiByZXQ7Cj4g
-fQo+IAo+IC1zdGF0aWMgdm9pZCBncGlvX2lycV9zaHV0ZG93bihzdHJ1Y3QgaXJxX2RhdGEgKmQp
-Cj4gK3N0YXRpYyB2b2lkIGdwaW9faXJxX3JlbGVhc2VfcmVzKHN0cnVjdCBpcnFfZGF0YSAqZCkK
-PiB7Cj4gCXN0cnVjdCBhdDkxX2dwaW9fY2hpcCAqYXQ5MV9ncGlvID0gaXJxX2RhdGFfZ2V0X2ly
-cV9jaGlwX2RhdGEoZCk7Cj4gCXVuc2lnbmVkCXBpbiA9IGQtPmh3aXJxOwo+IAo+IC0JZ3Bpb19p
-cnFfbWFzayhkKTsKPiAJZ3Bpb2NoaXBfdW5sb2NrX2FzX2lycSgmYXQ5MV9ncGlvLT5jaGlwLCBw
-aW4pOwo+IH0KPiAKPiBAQCAtMTU3Nyw4ICsxNTc0LDggQEAgdm9pZCBhdDkxX3BpbmN0cmxfZ3Bp
-b19yZXN1bWUodm9pZCkKPiBzdGF0aWMgc3RydWN0IGlycV9jaGlwIGdwaW9faXJxY2hpcCA9IHsK
-PiAJLm5hbWUJCT0gIkdQSU8iLAo+IAkuaXJxX2Fjawk9IGdwaW9faXJxX2FjaywKPiAtCS5pcnFf
-c3RhcnR1cAk9IGdwaW9faXJxX3N0YXJ0dXAsCj4gLQkuaXJxX3NodXRkb3duCT0gZ3Bpb19pcnFf
-c2h1dGRvd24sCj4gKwkuaXJxX3JlcXVlc3RfcmVzb3VyY2VzID0gZ3Bpb19pcnFfcmVxdWVzdF9y
-ZXMsCj4gKwkuaXJxX3JlbGVhc2VfcmVzb3VyY2VzID0gZ3Bpb19pcnFfcmVsZWFzZV9yZXMsCj4g
-CS5pcnFfZGlzYWJsZQk9IGdwaW9faXJxX21hc2ssCj4gCS5pcnFfbWFzawk9IGdwaW9faXJxX21h
-c2ssCj4gCS5pcnFfdW5tYXNrCT0gZ3Bpb19pcnFfdW5tYXNrLAo+IC0tIAo+IDEuOS4xCj4gCgoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJt
-LWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
-Cmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtl
-cm5lbAo=
+
+--tsOsTdHNUZQcU9Ye
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Linus,
+
+> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >
+> > These functions are supposed to return an error pointer, not NULL.
+> >
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Worried that some driver may depend on this behaviour, but
+> patch applied anyway, let's deal with it.
+
+I sent a similar patch to Russell for the clk API and he rightfully
+NAKed it. NULL is a valid cookie from clk_get and the whole clk API is
+able to deal with NULL. That ensures that for !HAVE_CLK, clk_get is
+still successful and won't fail driver_probe while the other clk API
+functions don't really do anything. If the gpio API is similar to that,
+we should revert my patch.
+
+Sorry for the nuisance,
+
+   Wolfram
+
+
+--tsOsTdHNUZQcU9Ye
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJU2Mt1AAoJEBQN5MwUoCm2DvkQAIfebrvWlPhVXdA57DcY9jeI
+cBqIMufqllCsUTaDrzlLV7BwJccCdT86NueJZoMfdaFU+wYSQlubCaam689Bd1gS
+2yIxksbVrewRjq7KlX44VAUoU7vxq211VN9Ap8ObRpkW3BRp/U8vZbEG6SgOThr7
+gv5zVmIryS8s8vUNrAxHJ3VEIN7AWMqvvJqsMxzeK91mwaESoh39uKH9oXz9Hcb2
+VmAarB+lt/LNsSlD5MvWS4F5vWnIhB/Nxfcxw5SorPhNXYMRkxnFOegLvwkeqFWJ
+gkImmlRF//Q7PbwXqK0/IKPPCSg14fSqhQmyMCe7pcfvEJAIAH9xQagZWUNNhuGi
+3iJXSvpH3OVxK4B2DpzuNoghZUTbhR+eVRigksprR8hMXZ9gGtciiEhnAj2ZWwmC
+tFptZq4UgKl6IpJbAXYMnSBYzXhi8dtb7MHhVZUMuf4IOv556C/c8pe0aebrYBtv
+Ge21HzYrxteyQtgJccJ/G693NXvLy/rdwwak1DkK3rs2iTTQLvqnCl9ADUK6hvzd
+yZuUOOoysefi9fDDeoANxWxnM/Yllnwbtc4NEOjtmOObENTsAwKUc6er51lpw3D9
+/iJ3etbVZ4oNRRbVm16mzExhcKmysfS9GwNgIgX9xDc/XrP+8qH5RaT4T80qHjgy
+torXAIWMu8nIh93VpMpY
+=5MTe
+-----END PGP SIGNATURE-----
+
+--tsOsTdHNUZQcU9Ye--
