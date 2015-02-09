@@ -1,44 +1,71 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: Re: [PATCH 3/3][v2] mdio-mux-gpio: use new gpiod_get_array and gpiod_put_array functions
-Date: Mon, 09 Feb 2015 10:14:47 +0100
-Message-ID: <2302857.SIRJpJWX1o@pcimr>
-References: <2017147.PF4WHTmJS4@pcimr> <CAAVeFu+bfTbvbaZ0EVrZzH_zNWDJjfM4oi13g8D+aH_8x6BqaQ@mail.gmail.com>
+From: "Holmberg, Hans" <hans.holmberg@intel.com>
+Subject: RE: gpio-pxa: getting GPIOs by devicetree phandle broken
+Date: Mon, 9 Feb 2015 09:42:02 +0000
+Message-ID: <4B6D6D87A8FB62428BE0A3E38461A1AB18D6B200@irsmsx105.ger.corp.intel.com>
+References: <CAOjnSCajhwdRVZUO99KL-9PF6HitZen04MoLKoDUDr_5=iS7kw@mail.gmail.com>
+ <CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFu+bfTbvbaZ0EVrZzH_zNWDJjfM4oi13g8D+aH_8x6BqaQ@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:7244 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760488AbbBIJmO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 9 Feb 2015 04:42:14 -0500
+In-Reply-To: <CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, Tyler Hall <tylerwhall@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Mack <zonque@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-On Monday 09 February 2015 14:18:14 Alexandre Courbot wrote:
-> On Thu, Jan 22, 2015 at 1:46 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> > Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
-> > disposing of GPIO descriptors.
-> >
-> > Cc: David Miller <davem@davemloft.net>
-> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-> > ---
-> > This patch depends on my previous patch "gpiolib: add gpiod_get_array and
-> > gpiod_put_array functions".
-> >
-> > v2: use the new interface
-> >
-> > Only compile-tested.
-> >
-> >  drivers/net/phy/mdio-mux-gpio.c |   61 +++++++++++-----------------------------
-> >  1 file changed, 18 insertions(+), 43 deletions(-)
-> 
-> Oh yeah.
-> 
-> It would be great to have a tested-by for the next revision though.
-> 
-> Rojhalat, have you been able to test these new interfaces outside of
-> this driver?
-> 
-
-I have tested the new interface with my FPGA configuration driver (which I
-plan to submit eventually). I cannot test the mdio-mux-gpio driver because
-I lack the necessary hardware.
+DQo+ID4gMS4gUmVxdWlyZSBjaGlsZCBub2RlcyBpbiBEVCBmb3IgZWFjaCBiYW5rDQo+IA0KPiBU
+aGlzIHdvdWxkIGJyZWFrIERUIGNvbXBhdGliaWxpdHkuDQo+IA0KPiA+IDIuIFJlZmFjdG9yIGdw
+aW8tcHhhIHRvIG9ubHkgcmVnaXN0ZXIgb25lIGdwaW9jaGlwDQo+IA0KPiBTb3VuZHMgYmV0dGVy
+LCBlc3BlY2lhbGx5IHNpbmNlIHRoaXMgd291bGQgcmVmbGVjdCB0aGUgaGFyZHdhcmUgbW9yZQ0K
+PiBhY2N1cmF0ZWx5LiBPbmUgRFQgbm9kZSBzaG91bGQgdHJhbnNsYXRlIGludG8gb25lIEdQSU8g
+Y2hpcC4gVGhlIHByb2JsZW0gaXMNCj4gdGhhdCBJJ20gYWZyYWlkIHNldmVyYWwgb3RoZXIgZHJp
+dmVycyBhcmUgZG9pbmcgdGhlIHNhbWUgdGhpbmcgYW5kIHRodXMgYXJlDQo+IG5vdyBzaW1pbGFy
+bHkgYnJva2VuLg0KDQpUaGlzIHNvdW5kcyByZWFzb25hYmxlIHRvIG1lLg0KDQo+IFRoZSBmb2xs
+b3dpbmcgaXMgYWxzbyBsaWtlbHkgdG8gd29yayBhcyBhIHdvcmthcm91bmQsIGJ1dCBJIHdvdWxk
+IG5vdCBnbyBhcw0KPiBmYXIgYXMgc2F5aW5nIHRoaXMgc2hvdWxkIGJlIHRha2VuIGFzIGEgZml4
+LiBIYW5zLCBzaW5jZSB5b3Ugd3JvdGUgN2I4NzkyYiwNCj4gY291bGQgd2UgaGF2ZSB5b3VyIGlu
+cHV0IG9uIHRoaXM/DQoNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMg
+Yi9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi1vZi5jIGluZGV4DQo+IDA4MjYxZjJiM2E4Mi4uYTA5MDk1
+NTMxYjAwIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi1vZi5jDQo+ICsrKyBi
+L2RyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMNCj4gQEAgLTQ1LDE0ICs0NSwxNiBAQCBzdGF0aWMg
+aW50IG9mX2dwaW9jaGlwX2ZpbmRfYW5kX3hsYXRlKHN0cnVjdA0KPiBncGlvX2NoaXAgKmdjLCB2
+b2lkICpkYXRhKQ0KPiAgICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOw0KPiANCj4gICAgICAg
+ICByZXQgPSBnYy0+b2ZfeGxhdGUoZ2MsICZnZ19kYXRhLT5ncGlvc3BlYywgZ2dfZGF0YS0+Zmxh
+Z3MpOw0KPiAtICAgICAgIGlmIChyZXQgPCAwKSB7DQo+ICsgICAgICAgaWYgKHJldCA9PSAtRVBS
+T0JFX0RFRkVSKSB7DQo+ICAgICAgICAgICAgICAgICAvKiBXZSd2ZSBmb3VuZCB0aGUgZ3BpbyBj
+aGlwLCBidXQgdGhlIHRyYW5zbGF0aW9uIGZhaWxlZC4NCj4gICAgICAgICAgICAgICAgICAqIFJl
+dHVybiB0cnVlIHRvIHN0b3AgbG9va2luZyBhbmQgcmV0dXJuIHRoZSB0cmFuc2xhdGlvbg0KPiAg
+ICAgICAgICAgICAgICAgICogZXJyb3IgdmlhIG91dF9ncGlvDQo+ICAgICAgICAgICAgICAgICAg
+Ki8NCj4gICAgICAgICAgICAgICAgIGdnX2RhdGEtPm91dF9ncGlvID0gRVJSX1BUUihyZXQpOw0K
+PiAgICAgICAgICAgICAgICAgcmV0dXJuIHRydWU7DQo+IC0gICAgICAgIH0NCj4gKyAgICAgICB9
+IGVsc2UgaWYgKHJldCA8IDApIHsNCj4gKyAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCj4g
+KyAgICAgICB9DQo+IA0KPiAgICAgICAgIGdnX2RhdGEtPm91dF9ncGlvID0gZ3Bpb2NoaXBfZ2V0
+X2Rlc2MoZ2MsIHJldCk7DQo+ICAgICAgICAgcmV0dXJuIHRydWU7DQoNClRoZSBwcm9ibGVtIG15
+IHBhdGNoIHNvbHZlZCB3YXMgdGhhdCAtRVBST0JFX0RFRkVSIHdhcyByZXR1cm5lZCByZWdhcmRs
+ZXNzIG9mIGxvb2t1cC1lcnJvciBpbiBvZl9nZXRfbmFtZWRfZ3Bpb2RfZmxhZ3MsIG5vdCB0aGF0
+IC1FUFJPQkVfREVGRVIgZXJyb3Igd2FzIG5vdCBwYXNzZWQgb24uDQoNClRoZSBpc3N1ZSB3aXRo
+IG11bHRpcGxlIGdwaW9jaGlwcyBwZXIgb2Ytbm9kZSBjb3VsZCBiZSB3b3JrZWQgYXJvdW5kIGFz
+IGZvbGxvd2VkIEkgYmVsaWV2ZSwgY29tbWVudHM/DQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+aW8vZ3Bpb2xpYi1vZi5jIGIvZHJpdmVycy9ncGlvL2dwaW9saWItb2YuYw0KaW5kZXggMDgyNjFm
+Mi4uNDM5ODRhYiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMNCisrKyBi
+L2RyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMNCkBAIC00NywxMSArNDcsMTIgQEAgc3RhdGljIGlu
+dCBvZl9ncGlvY2hpcF9maW5kX2FuZF94bGF0ZShzdHJ1Y3QgZ3Bpb19jaGlwICpnYywgdm9pZCAq
+ZGF0YSkNCiAgICAgICAgcmV0ID0gZ2MtPm9mX3hsYXRlKGdjLCAmZ2dfZGF0YS0+Z3Bpb3NwZWMs
+IGdnX2RhdGEtPmZsYWdzKTsNCiAgICAgICAgaWYgKHJldCA8IDApIHsNCiAgICAgICAgICAgICAg
+ICAvKiBXZSd2ZSBmb3VuZCB0aGUgZ3BpbyBjaGlwLCBidXQgdGhlIHRyYW5zbGF0aW9uIGZhaWxl
+ZC4NCi0gICAgICAgICAgICAgICAgKiBSZXR1cm4gdHJ1ZSB0byBzdG9wIGxvb2tpbmcgYW5kIHJl
+dHVybiB0aGUgdHJhbnNsYXRpb24NCi0gICAgICAgICAgICAgICAgKiBlcnJvciB2aWEgb3V0X2dw
+aW8NCisgICAgICAgICAgICAgICAgKiBTdG9yZSB0cmFuc2xhdGlvbiBlcnJvciBpbiBvdXRfZ3Bp
+by4NCisgICAgICAgICAgICAgICAgKiBSZXR1cm4gZmFsc2UgdG8ga2VlcCBsb29raW5nLCBhcyBt
+b3JlIHRoYW4gb25lIEdQSU8gY2hpcA0KKyAgICAgICAgICAgICAgICAqIGNvdWxkIGJlIHJlZ2lz
+dGVyZWQgcGVyIG9mLW5vZGUuDQogICAgICAgICAgICAgICAgICovDQogICAgICAgICAgICAgICAg
+Z2dfZGF0YS0+b3V0X2dwaW8gPSBFUlJfUFRSKHJldCk7DQotICAgICAgICAgICAgICAgcmV0dXJu
+IHRydWU7DQorICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOw0KICAgICAgICAgfQ0KIA0KICAg
+ICAgICBnZ19kYXRhLT5vdXRfZ3BpbyA9IGdwaW9jaGlwX2dldF9kZXNjKGdjLCByZXQpOw0KLS0N
+Cg0KQmVzdCByZWdhcmRzLA0KSGFucw0K
