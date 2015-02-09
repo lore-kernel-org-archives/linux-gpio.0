@@ -1,58 +1,123 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: gpio-pxa: getting GPIOs by devicetree phandle broken
-Date: Mon, 09 Feb 2015 18:38:39 +0100
-Message-ID: <87mw4n6l40.fsf@free.fr>
-References: <CAOjnSCajhwdRVZUO99KL-9PF6HitZen04MoLKoDUDr_5=iS7kw@mail.gmail.com>
-	<CAAVeFu+yf6Wf6MspiDLiWwQkMwMvimNa0SpMK_yO_9X07UecEw@mail.gmail.com>
-	<4B6D6D87A8FB62428BE0A3E38461A1AB18D6B200@irsmsx105.ger.corp.intel.com>
-	<CAOjnSCZgx5H75t8QrXj1WQ_SaU_4HDYeK+_XdBRmwUXzHW=iJw@mail.gmail.com>
+From: Dmitry Torokhov <dtor@chromium.org>
+Subject: Re: [PATCH v8 2/4] pinctrl: cygnus: add gpio/pinconf driver
+Date: Mon, 9 Feb 2015 11:20:13 -0800
+Message-ID: <20150209191951.GA15709@dtor-ws>
+References: <rjui@broadcom.com>
+ <1423070463-24483-1-git-send-email-rjui@broadcom.com>
+ <1423070463-24483-3-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOjnSCZgx5H75t8QrXj1WQ_SaU_4HDYeK+_XdBRmwUXzHW=iJw@mail.gmail.com>
-	(Tyler Hall's message of "Mon, 9 Feb 2015 09:41:17 -0500")
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Holmberg, Hans" <hans.holmberg@intel.com>, Tyler Hall <tylerwhall@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Mack <zonque@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:45933 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760103AbbBITUZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Feb 2015 14:20:25 -0500
+Received: by pdbnh10 with SMTP id nh10so30614020pdb.12
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Feb 2015 11:20:24 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1423070463-24483-3-git-send-email-rjui@broadcom.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ray Jui <rjui@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-Tyler Hall <tylerwhall@gmail.com> writes:
+Hi Ray,
 
->> The issue with multiple gpiochips per of-node could be worked around as followed I believe, comments?
->>
->> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
->> index 08261f2..43984ab 100644
->> --- a/drivers/gpio/gpiolib-of.c
->> +++ b/drivers/gpio/gpiolib-of.c
->> @@ -47,11 +47,12 @@ static int of_gpiochip_find_and_xlate(struct gpio_chip *gc, void *data)
->>         ret = gc->of_xlate(gc, &gg_data->gpiospec, gg_data->flags);
->>         if (ret < 0) {
->>                 /* We've found the gpio chip, but the translation failed.
->> -                * Return true to stop looking and return the translation
->> -                * error via out_gpio
->> +                * Store translation error in out_gpio.
->> +                * Return false to keep looking, as more than one GPIO chip
->> +                * could be registered per of-node.
->>                  */
->>                 gg_data->out_gpio = ERR_PTR(ret);
->> -               return true;
->> +               return false;
->>          }
->>
->>         gg_data->out_gpio = gpiochip_get_desc(gc, ret);
->
-> As long as we're ok with multiple gpiochips per of-node, this would
-> work for me. It'll change the preference of which chip returns the
-> error in the case of multiple chips, but that's already undefined
-> behavior.
+On Wed, Feb 04, 2015 at 09:21:01AM -0800, Ray Jui wrote:
+> +static int cygnus_gpio_pinmux_add_range(struct cygnus_gpio *chip)
+> +{
+> +	struct device_node *node = chip->dev->of_node;
+> +	struct device_node *pinmux_node;
+> +	struct platform_device *pinmux_pdev;
+> +	struct gpio_chip *gc = &chip->gc;
+> +	int i, ret;
+> +
+> +	/* parse DT to find the phandle to the pinmux controller */
+> +	pinmux_node = of_parse_phandle(node, "pinmux", 0);
+> +	if (!pinmux_node)
+> +		return -ENODEV;
+> +
+> +	pinmux_pdev = of_find_device_by_node(pinmux_node);
+> +	if (!pinmux_pdev) {
+> +		dev_err(chip->dev, "failed to get pinmux device\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* now need to create the mapping between local GPIO and PINMUX pins */
+> +	for (i = 0; i < ARRAY_SIZE(cygnus_gpio_pintable); i++) {
+> +		ret = gpiochip_add_pin_range(gc, dev_name(&pinmux_pdev->dev),
+> +					     cygnus_gpio_pintable[i].offset,
+> +					     cygnus_gpio_pintable[i].pin_base,
+> +					     cygnus_gpio_pintable[i].num_pins);
+> +		if (ret) {
+> +			dev_err(chip->dev, "unable to add GPIO pin range\n");
+> +			goto err_put_device;
+> +		}
+> +	}
+> +
+> +	chip->pinmux_is_supported = true;
+> +
+> +	/* no need for pinmux_pdev device reference anymore */
+> +	put_device(&pinmux_pdev->dev);
 
-Looks good to me too, this will solve my issue, and the global behavior would be
-consistent with the former one.
+Sorry I did not notice it before, but of_parse_phandle() takes reference
+to the returned device node, so you need to "put" it here and in error
+path as well. Actually you can do:
 
-Would you care submitting a proper patch so that we can apply our Reviewed-by,
-Tested-by etc ... ?
+	int ret = 0;
 
-Cheers.
+	pinmux_node = of_parse_phandle(node, "pinmux", 0);
+	if (!pinmux_node)
+		return -ENODEV;
+
+	pinmux_pdev = of_find_device_by_node(pinmux_node);
+	/* We do not longer need pinmux node */
+	of_node_put(pinmux_node);
+
+	if (!pinmux_dev)
+		....
+
+	for (..) {
+		...
+		if (ret) {
+			dev_err(...);
+			break;
+		}
+	}
+
+	chip->pinmux_is_supported = (ret == 0);
+	put_device(..);
+	return ret;
+}
+
+This way you free resources in the same path.
+
+...
+
+> +
+> +static struct platform_driver cygnus_gpio_driver = {
+> +	.driver = {
+> +		.name = "cygnus-gpio",
+> +		.of_match_table = cygnus_gpio_of_match,
+> +		.suppress_bind_attrs = true,
+> +	},
+> +	.probe = cygnus_gpio_probe,
+> +};
+> +
+> +static int __init cygnus_gpio_init(void)
+> +{
+> +	return platform_driver_probe(&cygnus_gpio_driver, cygnus_gpio_probe);
+
+When I asked you to add ".suppress_bind_attrs = true" I missed the fact
+that you were using platform_driver_probe() which already does this
+internally. However platform_driver_probe() can't handle deferred
+probing, which may or may not be OK. Is there a chance that any of the
+resources needed by the driver return -EPROBE_DEFER? If not then it is
+safe to continue using platform_driver_probe() and you can drop
+suppress_bind_attrs assignment, otherwise it may be better to switch to
+platform_driver_register().
+
+Thanks.
 
 -- 
-Robert
+Dmitry
