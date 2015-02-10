@@ -1,123 +1,222 @@
-From: Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH v8 2/4] pinctrl: cygnus: add gpio/pinconf driver
-Date: Mon, 9 Feb 2015 11:20:13 -0800
-Message-ID: <20150209191951.GA15709@dtor-ws>
-References: <rjui@broadcom.com>
- <1423070463-24483-1-git-send-email-rjui@broadcom.com>
- <1423070463-24483-3-git-send-email-rjui@broadcom.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] bulk GPIO changes for v3.20
+Date: Tue, 10 Feb 2015 10:35:58 +0800
+Message-ID: <CACRpkdb7QnJk1V1EahQk-Hhq=X-hu=OB5F9cd4YE04JR24FyJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:45933 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760103AbbBITUZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Feb 2015 14:20:25 -0500
-Received: by pdbnh10 with SMTP id nh10so30614020pdb.12
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Feb 2015 11:20:24 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1423070463-24483-3-git-send-email-rjui@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-Hi Ray,
+Hi Linus,
 
-On Wed, Feb 04, 2015 at 09:21:01AM -0800, Ray Jui wrote:
-> +static int cygnus_gpio_pinmux_add_range(struct cygnus_gpio *chip)
-> +{
-> +	struct device_node *node = chip->dev->of_node;
-> +	struct device_node *pinmux_node;
-> +	struct platform_device *pinmux_pdev;
-> +	struct gpio_chip *gc = &chip->gc;
-> +	int i, ret;
-> +
-> +	/* parse DT to find the phandle to the pinmux controller */
-> +	pinmux_node = of_parse_phandle(node, "pinmux", 0);
-> +	if (!pinmux_node)
-> +		return -ENODEV;
-> +
-> +	pinmux_pdev = of_find_device_by_node(pinmux_node);
-> +	if (!pinmux_pdev) {
-> +		dev_err(chip->dev, "failed to get pinmux device\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* now need to create the mapping between local GPIO and PINMUX pins */
-> +	for (i = 0; i < ARRAY_SIZE(cygnus_gpio_pintable); i++) {
-> +		ret = gpiochip_add_pin_range(gc, dev_name(&pinmux_pdev->dev),
-> +					     cygnus_gpio_pintable[i].offset,
-> +					     cygnus_gpio_pintable[i].pin_base,
-> +					     cygnus_gpio_pintable[i].num_pins);
-> +		if (ret) {
-> +			dev_err(chip->dev, "unable to add GPIO pin range\n");
-> +			goto err_put_device;
-> +		}
-> +	}
-> +
-> +	chip->pinmux_is_supported = true;
-> +
-> +	/* no need for pinmux_pdev device reference anymore */
-> +	put_device(&pinmux_pdev->dev);
+here is the bulk of GPIO subsystem changes accumulated for the v3.20
+series. Nothing is very remarkable, there is a lot of cleanup and driver
+churn as usual. Lots of authors and patches.
 
-Sorry I did not notice it before, but of_parse_phandle() takes reference
-to the returned device node, so you need to "put" it here and in error
-path as well. Actually you can do:
+Please pull it in!
 
-	int ret = 0;
+Yours,
+Linus Walleij
 
-	pinmux_node = of_parse_phandle(node, "pinmux", 0);
-	if (!pinmux_node)
-		return -ENODEV;
+The following changes since commit ec6f34e5b552fb0a52e6aae1a5afbbb1605cc6cc:
 
-	pinmux_pdev = of_find_device_by_node(pinmux_node);
-	/* We do not longer need pinmux node */
-	of_node_put(pinmux_node);
+  Linux 3.19-rc5 (2015-01-18 18:02:20 +1200)
 
-	if (!pinmux_dev)
-		....
+are available in the git repository at:
 
-	for (..) {
-		...
-		if (ret) {
-			dev_err(...);
-			break;
-		}
-	}
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v3.20-1
 
-	chip->pinmux_is_supported = (ret == 0);
-	put_device(..);
-	return ret;
-}
+for you to fetch changes up to 0a4a3529df40c4be163b3909942b16c6c46b9d03:
 
-This way you free resources in the same path.
+  gpio: kconfig: replace PPC_OF with PPC (2015-02-04 11:06:45 +0100)
 
-...
+----------------------------------------------------------------
+This is the GPIO bulk changes for the v3.20 series:
+- GPIOLIB core changes:
+  - Create and use of_mm_gpiochip_remove() for removing
+    memory-mapped OF GPIO chips
+  - GPIO MMIO library suppports bgpio_set_multiple for
+    switching several lines at once, a feature merged in
+    the last cycle.
+- New drivers:
+  - New driver for the APM X-gene standby GPIO controller
+  - New driver for the Fujitsu MB86S7x GPIO controller
+- Cleanups:
+  - Moved rcar driver to use gpiolib irqchip
+  - Moxart converted to the GPIO MMIO library
+  - GE driver converted to GPIO MMIO library
+  - Move sx150x to irqdomain
+  - Move max732x to irqdomain
+  - Move vx855 to use managed resources
+  - Move dwapb to use managed resources
+  - Clean tc3589x from platform data
+  - Clean stmpe driver to use device tree only probe
+- New subtypes:
+  - sx1506 support in the sx150x driver
+  - Quark 1000 SoC support in the SCH driver
+  - Support X86 in the Xilinx driver
+  - Support PXA1928 in the PXA driver
+- Extended drivers:
+  - max732x supports device tree probe
+  - sx150x supports device tree probe
+- Various minor cleanups and bug fixes
 
-> +
-> +static struct platform_driver cygnus_gpio_driver = {
-> +	.driver = {
-> +		.name = "cygnus-gpio",
-> +		.of_match_table = cygnus_gpio_of_match,
-> +		.suppress_bind_attrs = true,
-> +	},
-> +	.probe = cygnus_gpio_probe,
-> +};
-> +
-> +static int __init cygnus_gpio_init(void)
-> +{
-> +	return platform_driver_probe(&cygnus_gpio_driver, cygnus_gpio_probe);
+----------------------------------------------------------------
+Andrew Lunn (2):
+      gpio: mvebu: checkpatch fixes
+      gpio: mvebu: Fix probe cleanup on error
 
-When I asked you to add ".suppress_bind_attrs = true" I missed the fact
-that you were using platform_driver_probe() which already does this
-internally. However platform_driver_probe() can't handle deferred
-probing, which may or may not be OK. Is there a chance that any of the
-resources needed by the driver return -EPROBE_DEFER? If not then it is
-safe to continue using platform_driver_probe() and you can drop
-suppress_bind_attrs assignment, otherwise it may be better to switch to
-platform_driver_register().
+Axel Lin (6):
+      gpio: vx855: Switch to use managed resources APIs
+      gpio: sx150x: Fix comparing wrong value with chip->irq_masked
+      gpio: tz1090: Use resource_size to fix off-by-one
+      gpio: dwapb: Convert to use resource managed APIs
+      gpio: ge: Convert to use devm_kstrdup
+      gpio: tz1090-pdc: Use resource_size to fix off-by-one resource
+size calculation
 
-Thanks.
+Chang Rebecca Swee Fun (2):
+      gpio: sch: Add support for Intel Quark X1000 SoC
+      gpio: sch: Consolidate similar algorithms
 
--- 
-Dmitry
+Dan Carpenter (1):
+      gpio: grgpio: off by one in grgpio_to_irq()
+
+Geert Uytterhoeven (2):
+      gpio: rcar: Fix error path for devm_kzalloc() failure
+      gpio: rcar: Switch to use gpiolib irqchip helpers
+
+Jassi Brar (1):
+      gpio: Add Fujitsu MB86S7x GPIO driver
+
+Kamlakant Patel (3):
+      gpio: moxart: convert to use basic mmio gpio library
+      gpio: ge: convert to use basic mmio gpio library
+      gpio: ge: fix compilation error
+
+Kevin Hao (1):
+      gpio: kconfig: replace PPC_OF with PPC
+
+Linus Walleij (5):
+      gpio: tc3589x: get rid of platform data
+      Merge tag 'v3.19-rc5' into devel
+      gpio: stmpe: enforce device tree only mode
+      gpio: sx150x: fixup OF support
+      gpio: max732x: use an inline function for container cast
+
+Mans Rullgard (1):
+      gpio: max732x: add set_multiple function
+
+Masahiro Yamada (1):
+      Documentation: gpio: fix bindings document
+
+Mohammad Jamal (1):
+      gpio: gpio-dln2: Added a Blank line after declaration
+
+Olliver Schinagl (4):
+      gpio: Make the vararg hacks not pass magic values
+      gpio:gpiolib: use static const char const * for a suffixes array
+      gpio: correctly use const char * const
+      gpio: use sizeof() instead of hardcoded values
+
+Ricardo Ribalda Delgado (16):
+      gpio/xilinx: Remove offset property
+      gpio/xilinx: Convert the driver to platform device interface
+      gpio/xilinx: Add support for X86 Arch
+      gpio/xilinx: Fix kernel-doc
+      gpio/xilinx: Create a single gpio chip on dual cores
+      gpio/gpiolib-of: Create of_mm_gpiochip_remove
+      gpio/xilinx: Use of_mm_gpiochip_remove
+      gpio/Kconfig: Fix X86 arch name
+      gpio: mpc5200: Use of_mm_gpiochip_remove
+      gpio :gpio-mm-lantiq: Use devm_kzalloc
+      gpio: gpio-mm-lantiq: Do not replicate code
+      gpio: gpio-mm-lantiq: Use of_property_read_u32
+      gpio: gpio-mm-lantiq: Use of_mm_gpiochip_remove
+      gpio: zevio: Use of_mm_gpiochip_remove
+      gpio: mpc8xxx: Convert to platform device interface.
+      gpio: mpc8xxx: Use of_mm_gpiochip_remove
+
+Rob Herring (3):
+      gpio: pxa: remove mach IRQ includes
+      dt/bindings: gpio: add compatible string for marvell,pxa1928-gpio
+      gpio: pxa: add PXA1928 gpio type support
+
+Rojhalat Ibrahim (1):
+      gpio-generic: add bgpio_set_multiple functions
+
+Semen Protsenko (4):
+      gpio: max732x: Add device tree support
+      gpio: max732x: Rewrite IRQ code to use irq_domain API
+      gpio: max732x: Fix possible deadlock
+      gpio: max732x: Add DT binding documentation
+
+Varka Bhadram (2):
+      gpio-amd8111: check ioport_map return value
+      gpio-amd8111: add release_region on ioport_map failure
+
+Wei Chen (3):
+      gpio: sx150x: move to irqdomain framework for sx150x driver
+      gpio: sx150x: add support for sx1506 gpio expander device
+      gpio: sx150x: add dts support for sx150x driver
+
+Wolfram Sang (1):
+      gpio: drop owner assignment from platform_drivers
+
+Y Vo (2):
+      gpio: Add APM X-Gene standby GPIO controller driver
+      Documentation: gpio: Add APM X-Gene standby GPIO controller DTS binding
+
+ .../bindings/gpio/fujitsu,mb86s70-gpio.txt         |  20 ++
+ .../devicetree/bindings/gpio/gpio-max732x.txt      |  59 +++++
+ .../devicetree/bindings/gpio/gpio-sx150x.txt       |  40 +++
+ .../devicetree/bindings/gpio/gpio-xgene-sb.txt     |  32 +++
+ Documentation/devicetree/bindings/gpio/gpio.txt    |   5 +-
+ .../devicetree/bindings/gpio/mrvl-gpio.txt         |   4 +-
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ drivers/gpio/Kconfig                               |  35 ++-
+ drivers/gpio/Makefile                              |   2 +
+ drivers/gpio/gpio-amd8111.c                        |   6 +
+ drivers/gpio/gpio-dln2.c                           |   1 +
+ drivers/gpio/gpio-dwapb.c                          |  53 +---
+ drivers/gpio/gpio-ge.c                             |  98 +++----
+ drivers/gpio/gpio-generic.c                        |  76 ++++++
+ drivers/gpio/gpio-grgpio.c                         |   2 +-
+ drivers/gpio/gpio-max732x.c                        | 225 +++++++++++-----
+ drivers/gpio/gpio-mb86s7x.c                        | 232 +++++++++++++++++
+ drivers/gpio/gpio-mm-lantiq.c                      |  42 +--
+ drivers/gpio/gpio-moxart.c                         | 101 +++-----
+ drivers/gpio/gpio-mpc5200.c                        |  23 +-
+ drivers/gpio/gpio-mpc8xxx.c                        |  70 +++--
+ drivers/gpio/gpio-mvebu.c                          | 100 +++++---
+ drivers/gpio/gpio-pxa.c                            |  55 ++--
+ drivers/gpio/gpio-rcar.c                           |  75 ++----
+ drivers/gpio/gpio-sch.c                            |  89 +++----
+ drivers/gpio/gpio-stmpe.c                          |  23 +-
+ drivers/gpio/gpio-sx150x.c                         | 251 ++++++++++--------
+ drivers/gpio/gpio-tc3589x.c                        |  15 +-
+ drivers/gpio/gpio-tz1090-pdc.c                     |   2 +-
+ drivers/gpio/gpio-tz1090.c                         |   2 +-
+ drivers/gpio/gpio-vf610.c                          |   1 -
+ drivers/gpio/gpio-vx855.c                          |  44 +---
+ drivers/gpio/gpio-xgene-sb.c                       | 160 ++++++++++++
+ drivers/gpio/gpio-xilinx.c                         | 284 ++++++++++++---------
+ drivers/gpio/gpio-zevio.c                          |  12 +
+ drivers/gpio/gpiolib-of.c                          |  17 ++
+ drivers/gpio/gpiolib.c                             |   8 +-
+ include/linux/gpio/consumer.h                      |  17 +-
+ include/linux/mfd/stmpe.h                          |  16 --
+ include/linux/mfd/tc3589x.h                        |  12 -
+ include/linux/of_gpio.h                            |   1 +
+ 41 files changed, 1518 insertions(+), 793 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max732x.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sx150x.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+ create mode 100644 drivers/gpio/gpio-mb86s7x.c
+ create mode 100644 drivers/gpio/gpio-xgene-sb.c
