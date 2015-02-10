@@ -1,90 +1,551 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Tue, 10 Feb 2015 18:44:34 +0900
-Message-ID: <CAAVeFu+JHMf__s0hfCJq31kZP-mp02bbzVywq+eZ9JVyP9boSw@mail.gmail.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
- <4006695.qV8Mor20ru@vostro.rjw.lan> <CACRpkdZWEq_6eNf_rj2rje0KzAKQZ7DeB6L5PW-nacE6=rzmEQ@mail.gmail.com>
- <2116821.DVmvasqCz1@vostro.rjw.lan> <CACRpkdbpJXHih0-Yhpi=AjvVjxZwEAhqe_iBWbd=5Cjz+sQZxQ@mail.gmail.com>
- <20150204141151.GB18189@kuha.fi.intel.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3 2/4] gpiolib: add gpiod_get_array and gpiod_put_array
+ functions
+Date: Tue, 10 Feb 2015 12:40:34 +0200
+Message-ID: <20150210104034.GP1480@lahna.fi.intel.com>
+References: <5520672.Jf0M3ih51r@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:41057 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752640AbbBJJoz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Feb 2015 04:44:55 -0500
-In-Reply-To: <20150204141151.GB18189@kuha.fi.intel.com>
+Received: from mga02.intel.com ([134.134.136.20]:17518 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751185AbbBJKmq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 10 Feb 2015 05:42:46 -0500
+Content-Disposition: inline
+In-Reply-To: <5520672.Jf0M3ih51r@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-On Wed, Feb 4, 2015 at 11:11 PM, Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
-> On Wed, Feb 04, 2015 at 10:51:27AM +0100, Linus Walleij wrote:
->> On Fri, Jan 30, 2015 at 5:17 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> > On Friday, January 30, 2015 03:48:30 PM Linus Walleij wrote:
->>
->> >> So you could detect one by making a checksum of the binary or something.
->> >>
->> >> And then you'd know that the table with this checksum needs patching?
->> >
->> > At a single table level it is generally difficult to say whether or not
->> > things are going to work.
->> >
->> > What needs to work is the namespace which is built from all of the tables
->> > provided combined.  So the namespace needs to be populated first and then
->> > fixes applied on top of that (presumably by deleting, adding or replacing
->> > objects).
->> >
->> > Now, in theory, you *may* be able to figure out that combination of tables
->> > A produces namespace B which then will require fix X if the system is Y,
->> > but quite frankly I wouldn't count on that.
->> >
->> > Moreover, fixups (or "patches" as I called them, but that wasn't exactly
->> > correct) need to be provided in the form of AML definition blocks to apply on
->> > top of an already populated namespace and if you want to use a binary kernel image,
->> > you can't really afford putting all that stuff for all systems it can possibly
->> > run on into it.  This means that distros need to be able to combine a fixup for
->> > the ACPI tables with the binary kernel and install the result into the system's
->> > boot medium (whatever it is).  Also it should be possible to update the fixup
->> > and the kernel image separately if necessary.
->> >
->> > Now from the kernel's perspective that raises the question: "What if the
->> > ACPI tables fixup provided by the distro is not sufficient?"
->> >
->> > That needs to be addressed somehow in the code.
->>
->> Yeah I guess I'm convinced that we need to handle this particular
->> weirdness in the gpio-acpi code... if it can be contained there as
->> expressed by Alexandre.
->
-> I'm still fine if we want to confine this "gpio forwarding" to acpi
-> if you guys want it, but I was looking at the Sound SoC drivers and I
-> realised that we do have places which pass gpio descriptors to other
-> devices in platform data. And these of course aren't always used on
-> acpi platforms. By greping gpio_desc I saw at least these files are
-> passing it in platform data structures:
->
-> include/sound/soc.h
-> include/linux/leds.h
-> include/linux/usb/usb_phy_generic.h
->
-> There are probable others but I checked those. And of course now there
-> is nothing preventing people from adding more of them.
+[+Rafael]
 
-For sound/soc.h, the member is indeed public but I don't see it being
-used to pass descriptors around between drivers.
+On Mon, Feb 09, 2015 at 06:07:10PM +0100, Rojhalat Ibrahim wrote:
+> Introduce new functions for conveniently obtaining and disposing of a=
+n entire
+> array of GPIOs with one function call.
+>=20
+> Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
 
-For linux/leds.h, I think this is the reason why we introduced
-devm_get_gpiod_from_child()
+Can you please next time CC me the whole series? Now it fails with:
 
-These looks more like a bad usage of GPIO descriptors, but AFAICT they
-can be fixed by fixing the drivers and, by all means, this is where we
-should do it.
+drivers/gpio/gpiolib.c: In function =E2=80=98dt_gpio_count=E2=80=99:
+drivers/gpio/gpiolib.c:1812:29: error: =E2=80=98gpio_suffixes=E2=80=99 =
+undeclared (first
+use in this function)
+  for (i =3D 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+                             ^
+include/linux/kernel.h:54:33: note: in definition of macro =E2=80=98ARR=
+AY_SIZE=E2=80=99
+ #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
+__must_be_array(arr))
 
-This is a different situation from yours where we are trying to deal
-with broken firmware and need to resort to tricks at one point or the
-other.
+and so on.
 
-Or am I missing your point?
+> ---
+> Change log:
+>   v3: - rebase on current linux-gpio devel branch
+>       - fix ACPI GPIO counting
+>       - allow for zero-sized arrays
+>       - make the flags argument mandatory for the new functions
+>       - clarify documentation
+>   v2: change interface
+>=20
+>  Documentation/gpio/consumer.txt |  33 +++++-
+>  drivers/gpio/gpiolib.c          | 231 ++++++++++++++++++++++++++++++=
+++++++++++
+>  include/linux/gpio/consumer.h   |  46 ++++++++
+>  3 files changed, 307 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/con=
+sumer.txt
+> index d85fbae..85a7e30 100644
+> --- a/Documentation/gpio/consumer.txt
+> +++ b/Documentation/gpio/consumer.txt
+> @@ -58,7 +58,6 @@ pattern where a GPIO is optional, the gpiod_get_opt=
+ional() and
+>  gpiod_get_index_optional() functions can be used. These functions re=
+turn NULL
+>  instead of -ENOENT if no GPIO has been assigned to the requested fun=
+ction:
+> =20
+> -
+>  	struct gpio_desc *gpiod_get_optional(struct device *dev,
+>  					     const char *con_id,
+>  					     enum gpiod_flags flags)
+> @@ -68,6 +67,27 @@ instead of -ENOENT if no GPIO has been assigned to=
+ the requested function:
+>  						   unsigned int index,
+>  						   enum gpiod_flags flags)
+> =20
+> +For a function using multiple GPIOs all of those can be obtained wit=
+h one call:
+> +
+> +	struct gpio_descs *gpiod_get_array(struct device *dev,
+> +					   const char *con_id,
+> +					   enum gpiod_flags flags)
+> +
+> +This function returns a struct gpio_descs which contains an array of
+> +descriptors:
+> +
+> +	struct gpio_descs {
+> +		unsigned int array_size;
+> +		struct gpio_desc *desc_array[];
+> +	}
+> +
+> +The following function returns NULL instead of -ENOENT if no GPIOs h=
+ave been
+> +assigned to the requested function:
+> +
+> +	struct gpio_descs *gpiod_get_array_optional(struct device *dev,
+> +						    const char *con_id,
+> +						    enum gpiod_flags flags)
+> +
+>  Device-managed variants of these functions are also defined:
+> =20
+>  	struct gpio_desc *devm_gpiod_get(struct device *dev, const char *co=
+n_id,
+> @@ -91,8 +111,15 @@ A GPIO descriptor can be disposed of using the gp=
+iod_put() function:
+> =20
+>  	void gpiod_put(struct gpio_desc *desc)
+> =20
+> -It is strictly forbidden to use a descriptor after calling this func=
+tion. The
+> -device-managed variant is, unsurprisingly:
+> +For an array of GPIOs this function can be used:
+> +
+> +	void gpiod_put_array(struct gpio_descs *descs)
+> +
+> +It is strictly forbidden to use a descriptor after calling these fun=
+ctions.
+> +It is also not allowed to individually release descriptors (using gp=
+iod_put())
+> +from an array acquired with gpiod_get_array().
+> +
+> +The device-managed variant is, unsurprisingly:
+> =20
+>  	void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
+> =20
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index ff2b80d..d4153e0 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1804,6 +1804,158 @@ static struct gpio_desc *gpiod_find(struct de=
+vice *dev, const char *con_id,
+>  	return desc;
+>  }
+> =20
+> +static int dt_gpio_count(struct device *dev, const char *con_id)
+> +{
+> +	int ret;
+> +	char propname[32];
+> +	unsigned int i;
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+> +		if (con_id)
+> +			snprintf(propname, sizeof(propname), "%s-%s",
+> +				 con_id, gpio_suffixes[i]);
+> +		else
+> +			snprintf(propname, sizeof(propname), "%s",
+> +				 gpio_suffixes[i]);
+> +
+> +		ret =3D of_gpio_named_count(dev->of_node, propname);
+> +		if (ret >=3D 0)
+> +			break;
+> +	}
+> +	return ret;
+> +}
+> +
+> +#ifdef CONFIG_ACPI
+> +
+> +static unsigned int acpi_gpio_package_count(const union acpi_object =
+*obj)
+> +{
+> +	const union acpi_object *element =3D obj->package.elements;
+> +	const union acpi_object *end =3D element + obj->package.count;
+> +	unsigned int count =3D 0;
+> +
+> +	while (element < end) {
+> +		if (element->type =3D=3D ACPI_TYPE_LOCAL_REFERENCE)
+> +			count++;
+> +
+> +		element++;
+> +	}
+> +	return count;
+> +}
+> +
+> +static int acpi_find_gpio_count(struct acpi_resource *ares, void *da=
+ta)
+> +{
+> +	unsigned int *count =3D data;
+> +
+> +	if (ares->type =3D=3D ACPI_RESOURCE_TYPE_GPIO)
+> +		*count +=3D ares->data.gpio.pin_table_length;
+> +
+> +	return 1;
+> +}
+> +
+> +static int acpi_gpio_count(struct device *dev, const char *con_id)
+> +{
+> +	struct acpi_device *adev =3D ACPI_COMPANION(dev);
+
+Should you check that the ACPI companion device actually exists here or
+is it checked somewhere before already?
+
+> +	const union acpi_object *obj;
+> +	const struct acpi_gpio_mapping *gm;
+> +	int count =3D -ENOENT;
+> +	int ret;
+> +	char propname[32];
+> +	unsigned int i;
+> +
+> +	/* Try first from _DSD */
+> +	for (i =3D 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+> +		if (con_id && strcmp(con_id, "gpios"))
+> +			snprintf(propname, sizeof(propname), "%s-%s",
+> +				 con_id, gpio_suffixes[i]);
+
+I'm assuming some previous patch added gpio_suffixes[].
+
+> +		else
+> +			snprintf(propname, sizeof(propname), "%s",
+> +				 gpio_suffixes[i]);
+> +
+> +		ret =3D acpi_dev_get_property(adev, propname, ACPI_TYPE_ANY,
+> +					    &obj);
+> +		if (ret =3D=3D 0) {
+> +			if (obj->type =3D=3D ACPI_TYPE_LOCAL_REFERENCE)
+> +				count =3D 1;
+> +			else if (obj->type =3D=3D ACPI_TYPE_PACKAGE)
+> +				count =3D acpi_gpio_package_count(obj);
+> +		} else if (adev->driver_gpios) {
+> +			for (gm =3D adev->driver_gpios; gm->name; gm++)
+> +				if (strcmp(propname, gm->name) =3D=3D 0) {
+> +					count =3D gm->size;
+> +					break;
+> +				}
+> +		}
+> +		if (count >=3D 0)
+> +			break;
+> +	}
+> +
+> +	/* Then from plain _CRS GPIOs */
+> +	if (count < 0) {
+> +		struct list_head resource_list;
+> +		unsigned int crs_count =3D 0;
+> +
+> +		INIT_LIST_HEAD(&resource_list);
+> +		acpi_dev_get_resources(adev, &resource_list,
+> +				       acpi_find_gpio_count, &crs_count);
+> +		acpi_dev_free_resource_list(&resource_list);
+> +		if (crs_count > 0)
+> +			count =3D crs_count;
+> +	}
+> +	return count;
+> +}
+
+Otherwise the ACPI parts look good to me. I still want to test this,
+though.
+
+> +
+> +#else
+> +
+> +static int acpi_gpio_count(struct device *dev, const char *con_id)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +#endif
+> +
+> +static int lut_gpio_count(struct device *dev, const char *con_id)
+> +{
+> +	struct gpiod_lookup_table *table;
+> +	struct gpiod_lookup *p;
+> +	unsigned int count =3D 0;
+> +
+> +	table =3D gpiod_find_lookup_table(dev);
+> +	if (!table)
+> +		return -ENOENT;
+> +
+> +	for (p =3D &table->table[0]; p->chip_label; p++) {
+> +		if ((con_id && p->con_id && !strcmp(con_id, p->con_id)) ||
+> +		    (!con_id && !p->con_id))
+> +			count++;
+> +	}
+> +	if (!count)
+> +		return -ENOENT;
+> +
+> +	return count;
+> +}
+> +
+> +/**
+> + * gpiod_count - return the number of GPIOs associated with a device=
+ / function
+> + *		or -ENOENT if no GPIO has been assigned to the requested functio=
+n
+> + * @dev:	GPIO consumer, can be NULL for system-global GPIOs
+> + * @con_id:	function within the GPIO consumer
+> + */
+> +int gpiod_count(struct device *dev, const char *con_id)
+> +{
+> +	int count =3D -ENOENT;
+> +
+> +	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
+> +		count =3D dt_gpio_count(dev, con_id);
+> +	else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev))
+> +		count =3D acpi_gpio_count(dev, con_id);
+
+Aha, so you here you checked for the ACPI compation, all right then.
+
+> +
+> +	if (count < 0)
+> +		count =3D lut_gpio_count(dev, con_id);
+> +
+> +	return count;
+> +}
+> +EXPORT_SYMBOL_GPL(gpiod_count);
+> +
+>  /**
+>   * gpiod_get - obtain a GPIO for a given GPIO function
+>   * @dev:	GPIO consumer, can be NULL for system-global GPIOs
+> @@ -2005,6 +2157,70 @@ struct gpio_desc *__must_check __gpiod_get_ind=
+ex_optional(struct device *dev,
+>  EXPORT_SYMBOL_GPL(__gpiod_get_index_optional);
+> =20
+>  /**
+> + * gpiod_get_array - obtain multiple GPIOs from a multi-index GPIO f=
+unction
+> + * @dev:	GPIO consumer, can be NULL for system-global GPIOs
+> + * @con_id:	function within the GPIO consumer
+> + * @flags:	optional GPIO initialization flags
+> + *
+> + * This function acquires all the GPIOs defined under a given functi=
+on.
+> + *
+> + * Return a struct gpio_descs containing an array of descriptors, -E=
+NOENT if
+> + * no GPIO has been assigned to the requested function, or another I=
+S_ERR()
+> + * code if an error occurred while trying to acquire the GPIOs.
+> + */
+> +struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
+> +						const char *con_id,
+> +						enum gpiod_flags flags)
+> +{
+> +	struct gpio_desc *desc;
+> +	struct gpio_descs *descs;
+> +	int count;
+> +
+> +	count =3D gpiod_count(dev, con_id);
+> +	if (count < 0)
+> +		return ERR_PTR(count);
+> +
+> +	descs =3D kzalloc(sizeof(*descs) + sizeof(descs->desc_array[0]) * c=
+ount,
+> +			GFP_KERNEL);
+
+Should you return ERR_PTR(-ENOMEM) here if the allocation fails?
+
+> +
+> +	for (descs->array_size =3D 0; descs->array_size < count; ) {
+                                                              ^
+                                                              |
+                                                              +-- extra=
+ whitespace
+
+> +		desc =3D gpiod_get_index(dev, con_id, descs->array_size, flags);
+> +		if (IS_ERR(desc)) {
+> +			gpiod_put_array(descs);
+> +			return ERR_PTR(PTR_ERR(desc));
+
+Uh, why not
+
+	return desc
+
+?
+
+> +		}
+> +		descs->desc_array[descs->array_size] =3D desc;
+> +		descs->array_size++;
+> +	}
+> +	return descs;
+> +}
+> +EXPORT_SYMBOL_GPL(gpiod_get_array);
+> +
+> +/**
+> + * gpiod_get_array_optional - obtain multiple GPIOs from a multi-ind=
+ex GPIO
+> + *                            function
+> + * @dev:	GPIO consumer, can be NULL for system-global GPIOs
+> + * @con_id:	function within the GPIO consumer
+> + * @flags:	optional GPIO initialization flags
+> + *
+> + * This is equivalent to gpiod_get_array(), except that when no GPIO=
+ was
+> + * assigned to the requested function it will return NULL.
+> + */
+> +struct gpio_descs *__must_check gpiod_get_array_optional(struct devi=
+ce *dev,
+> +							const char *con_id,
+> +							enum gpiod_flags flags)
+> +{
+> +	struct gpio_descs *descs;
+> +
+> +	descs =3D gpiod_get_array(dev, con_id, flags);
+> +	if (IS_ERR(descs) && (PTR_ERR(descs) =3D=3D -ENOENT))
+> +		return NULL;
+
+The caller still needs to handle other error codes (than -ENOENT), so
+would it be better to just have only gpiod_get_array()?
+
+> +
+> +	return descs;
+> +}
+> +EXPORT_SYMBOL_GPL(gpiod_get_array_optional);
+> +
+> +/**
+>   * gpiod_put - dispose of a GPIO descriptor
+>   * @desc:	GPIO descriptor to dispose of
+>   *
+> @@ -2016,6 +2232,21 @@ void gpiod_put(struct gpio_desc *desc)
+>  }
+>  EXPORT_SYMBOL_GPL(gpiod_put);
+> =20
+> +/**
+> + * gpiod_put_array - dispose of multiple GPIO descriptors
+> + * @descs:	struct gpio_descs containing an array of descriptors
+> + */
+> +void gpiod_put_array(struct gpio_descs *descs)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i =3D 0; i < descs->array_size; i++)
+> +		gpiod_put(descs->desc_array[i]);
+> +
+> +	kfree(descs);
+> +}
+> +EXPORT_SYMBOL_GPL(gpiod_put_array);
+> +
+>  #ifdef CONFIG_DEBUG_FS
+> =20
+>  static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *c=
+hip)
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consu=
+mer.h
+> index 45afc2d..6b1c389 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -16,6 +16,15 @@ struct device;
+>   */
+>  struct gpio_desc;
+> =20
+> +/**
+> + * Struct containing an array of descriptors that can be obtained us=
+ing
+> + * gpiod_get_array().
+> + */
+> +struct gpio_descs {
+> +	unsigned int array_size;
+> +	struct gpio_desc *desc_array[];
+> +};
+> +
+>  #define GPIOD_FLAGS_BIT_DIR_SET		BIT(0)
+>  #define GPIOD_FLAGS_BIT_DIR_OUT		BIT(1)
+>  #define GPIOD_FLAGS_BIT_DIR_VAL		BIT(2)
+> @@ -34,6 +43,9 @@ enum gpiod_flags {
+> =20
+>  #ifdef CONFIG_GPIOLIB
+> =20
+> +/* Return the number of GPIOs associated with a device / function */
+> +int gpiod_count(struct device *dev, const char *con_id);
+> +
+>  /* Acquire and dispose GPIOs */
+>  struct gpio_desc *__must_check __gpiod_get(struct device *dev,
+>  					 const char *con_id,
+> @@ -49,7 +61,14 @@ struct gpio_desc *__must_check __gpiod_get_index_o=
+ptional(struct device *dev,
+>  							const char *con_id,
+>  							unsigned int index,
+>  							enum gpiod_flags flags);
+> +struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
+> +						const char *con_id,
+> +						enum gpiod_flags flags);
+> +struct gpio_descs *__must_check gpiod_get_array_optional(struct devi=
+ce *dev,
+> +							const char *con_id,
+> +							enum gpiod_flags flags);
+>  void gpiod_put(struct gpio_desc *desc);
+> +void gpiod_put_array(struct gpio_descs *descs);
+> =20
+>  struct gpio_desc *__must_check __devm_gpiod_get(struct device *dev,
+>  					      const char *con_id,
+> @@ -113,6 +132,11 @@ struct gpio_desc *devm_get_gpiod_from_child(stru=
+ct device *dev,
+>  					    struct fwnode_handle *child);
+>  #else /* CONFIG_GPIOLIB */
+> =20
+> +static inline int gpiod_count(struct device *dev, const char *con_id=
+)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline struct gpio_desc *__must_check __gpiod_get(struct devi=
+ce *dev,
+>  						const char *con_id,
+>  						enum gpiod_flags flags)
+> @@ -142,6 +166,20 @@ __gpiod_get_index_optional(struct device *dev, c=
+onst char *con_id,
+>  	return ERR_PTR(-ENOSYS);
+>  }
+> =20
+> +static inline struct gpio_descs *__must_check
+> +gpiod_get_array(struct device *dev, const char *con_id,
+> +		enum gpiod_flags flags)
+> +{
+> +	return ERR_PTR(-ENOSYS);
+
+That should be -ENXIO.
+
+> +}
+> +
+> +static inline struct gpio_descs *__must_check
+> +gpiod_get_array_optional(struct device *dev, const char *con_id,
+> +			 enum gpiod_flags flags)
+> +{
+> +	return ERR_PTR(-ENOSYS);
+
+Ditto.
+
+> +}
+> +
+>  static inline void gpiod_put(struct gpio_desc *desc)
+>  {
+>  	might_sleep();
+> @@ -150,6 +188,14 @@ static inline void gpiod_put(struct gpio_desc *d=
+esc)
+>  	WARN_ON(1);
+>  }
+> =20
+> +static inline void gpiod_put_array(struct gpio_descs *descs)
+> +{
+> +	might_sleep();
+> +
+> +	/* GPIO can never have been requested */
+> +	WARN_ON(1);
+> +}
+> +
+>  static inline struct gpio_desc *__must_check
+>  __devm_gpiod_get(struct device *dev,
+>  		 const char *con_id,
+> --=20
+> 2.0.5
+>=20
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
