@@ -1,96 +1,141 @@
 From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH v4 1/4] gpiolib: define gpio suffixes globally
-Date: Tue, 10 Feb 2015 14:40:49 +0100
-Message-ID: <2387772.RYJ6BOfkAj@pcimr>
+Subject: [PATCH v4 4/4] mdio-mux-gpio: use new gpiod_get_array and gpiod_put_array functions
+Date: Tue, 10 Feb 2015 14:40:58 +0100
+Message-ID: <4565966.R0UFgefA8f@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:48296 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756042AbbBJNkz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Feb 2015 08:40:55 -0500
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
 To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Avoid multiple identical definitions of the gpio suffix strings by putting
-them into a global constant array.
+Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
+disposing of GPIO descriptors.
 
+Cc: David Miller <davem@davemloft.net>
 Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
 Change log:
-  v4: no change
-  v3: add this change as a separate patch
+  v4: use shorter names for members of struct gpio_descs
+  v3: no change
+  v2: use the new interface
 
- drivers/gpio/gpiolib.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/net/phy/mdio-mux-gpio.c | 60 ++++++++++++-----------------------------
+ 1 file changed, 17 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bf6016d..ff2b80d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -53,6 +53,9 @@ static DEFINE_MUTEX(gpio_lookup_lock);
- static LIST_HEAD(gpio_lookup_list);
- LIST_HEAD(gpio_chips);
+diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+index 320eb15..c49ad09 100644
+--- a/drivers/net/phy/mdio-mux-gpio.c
++++ b/drivers/net/phy/mdio-mux-gpio.c
+@@ -12,33 +12,30 @@
+ #include <linux/module.h>
+ #include <linux/phy.h>
+ #include <linux/mdio-mux.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio/consumer.h>
  
-+/* gpio suffixes used for ACPI and device tree lookup */
-+static const char * const gpio_suffixes[] = { "gpios", "gpio" };
+ #define DRV_VERSION "1.1"
+ #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
+ 
+-#define MDIO_MUX_GPIO_MAX_BITS 8
+-
+ struct mdio_mux_gpio_state {
+-	struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
+-	unsigned int num_gpios;
++	struct gpio_descs *gpios;
+ 	void *mux_handle;
+ };
+ 
+ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ 				   void *data)
+ {
+-	int values[MDIO_MUX_GPIO_MAX_BITS];
+-	unsigned int n;
+ 	struct mdio_mux_gpio_state *s = data;
++	int values[s->gpios->ndescs];
++	unsigned int n;
+ 
+ 	if (current_child == desired_child)
+ 		return 0;
+ 
+-	for (n = 0; n < s->num_gpios; n++) {
++	for (n = 0; n < s->gpios->ndescs; n++)
+ 		values[n] = (desired_child >> n) & 1;
+-	}
+-	gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
 +
- static inline void desc_set_label(struct gpio_desc *d, const char *label)
++	gpiod_set_array_cansleep(s->gpios->ndescs, s->gpios->desc, values);
+ 
+ 	return 0;
+ }
+@@ -46,56 +43,33 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ static int mdio_mux_gpio_probe(struct platform_device *pdev)
  {
- 	d->label = label;
-@@ -1657,19 +1660,18 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 				      unsigned int idx,
- 				      enum gpio_lookup_flags *flags)
+ 	struct mdio_mux_gpio_state *s;
+-	int num_gpios;
+-	unsigned int n;
+ 	int r;
+ 
+-	if (!pdev->dev.of_node)
+-		return -ENODEV;
+-
+-	num_gpios = of_gpio_count(pdev->dev.of_node);
+-	if (num_gpios <= 0 || num_gpios > MDIO_MUX_GPIO_MAX_BITS)
+-		return -ENODEV;
+-
+ 	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
+ 	if (!s)
+ 		return -ENOMEM;
+ 
+-	s->num_gpios = num_gpios;
+-
+-	for (n = 0; n < num_gpios; ) {
+-		struct gpio_desc *gpio = gpiod_get_index(&pdev->dev, NULL, n,
+-							 GPIOD_OUT_LOW);
+-		if (IS_ERR(gpio)) {
+-			r = PTR_ERR(gpio);
+-			goto err;
+-		}
+-		s->gpio[n] = gpio;
+-		n++;
+-	}
++	s->gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
++	if (IS_ERR(s->gpios))
++		return PTR_ERR(s->gpios);
+ 
+ 	r = mdio_mux_init(&pdev->dev,
+ 			  mdio_mux_gpio_switch_fn, &s->mux_handle, s);
+ 
+-	if (r == 0) {
+-		pdev->dev.platform_data = s;
+-		return 0;
+-	}
+-err:
+-	while (n) {
+-		n--;
+-		gpiod_put(s->gpio[n]);
++	if (r != 0) {
++		gpiod_put_array(s->gpios);
++		return r;
+ 	}
+-	return r;
++
++	pdev->dev.platform_data = s;
++	return 0;
+ }
+ 
+ static int mdio_mux_gpio_remove(struct platform_device *pdev)
  {
--	static const char * const suffixes[] = { "gpios", "gpio" };
- 	char prop_name[32]; /* 32 is max size of property name */
- 	enum of_gpio_flags of_flags;
- 	struct gpio_desc *desc;
- 	unsigned int i;
+-	unsigned int n;
+ 	struct mdio_mux_gpio_state *s = dev_get_platdata(&pdev->dev);
+ 	mdio_mux_uninit(s->mux_handle);
+-	for (n = 0; n < s->num_gpios; n++)
+-		gpiod_put(s->gpio[n]);
++	gpiod_put_array(s->gpios);
+ 	return 0;
+ }
  
--	for (i = 0; i < ARRAY_SIZE(suffixes); i++) {
-+	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
- 		if (con_id)
- 			snprintf(prop_name, sizeof(prop_name), "%s-%s", con_id,
--							       suffixes[i]);
-+				 gpio_suffixes[i]);
- 		else
- 			snprintf(prop_name, sizeof(prop_name), "%s",
--							       suffixes[i]);
-+				 gpio_suffixes[i]);
- 
- 		desc = of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
- 						&of_flags);
-@@ -1690,7 +1692,6 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
- 					unsigned int idx,
- 					enum gpio_lookup_flags *flags)
- {
--	static const char * const suffixes[] = { "gpios", "gpio" };
- 	struct acpi_device *adev = ACPI_COMPANION(dev);
- 	struct acpi_gpio_info info;
- 	struct gpio_desc *desc;
-@@ -1698,13 +1699,13 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
- 	int i;
- 
- 	/* Try first from _DSD */
--	for (i = 0; i < ARRAY_SIZE(suffixes); i++) {
-+	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
- 		if (con_id && strcmp(con_id, "gpios")) {
- 			snprintf(propname, sizeof(propname), "%s-%s",
--				 con_id, suffixes[i]);
-+				 con_id, gpio_suffixes[i]);
- 		} else {
- 			snprintf(propname, sizeof(propname), "%s",
--				 suffixes[i]);
-+				 gpio_suffixes[i]);
- 		}
- 
- 		desc = acpi_get_gpiod_by_index(adev, propname, idx, &info);
 -- 
 2.0.5
-
-
