@@ -1,120 +1,44 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Tue, 10 Feb 2015 16:10:04 +0100
-Message-ID: <16561596.EbsEtszXvm@vostro.rjw.lan>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com> <20150123112122.GD30522@kuha.fi.intel.com> <CAAVeFuJUdigJC+WcriOi+SEYDz0HCzU=KatDPfmzdA6ytBOd_A@mail.gmail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH] gpiolib: of: allow of_gpiochip_find_and_xlate to find more than one chip per node
+Date: Tue, 10 Feb 2015 18:08:26 +0100
+Message-ID: <87a90l7kz9.fsf@free.fr>
+References: <1423558107-23264-1-git-send-email-hans.holmberg@intel.com>
+	<CAAVeFu+F1oy4AZqWmMkGqiVxz5YF1y-qMxyHObWjjVXp8PuGcg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuJUdigJC+WcriOi+SEYDz0HCzU=KatDPfmzdA6ytBOd_A@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:49376 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751609AbbBJRIa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Feb 2015 12:08:30 -0500
+In-Reply-To: <CAAVeFu+F1oy4AZqWmMkGqiVxz5YF1y-qMxyHObWjjVXp8PuGcg@mail.gmail.com>
+	(Alexandre Courbot's message of "Tue, 10 Feb 2015 17:50:22 +0900")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Hans Holmberg <hans.holmberg@intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>, Daniel Mack <zonque@gmail.com>, Tyler Hall <tylerwhall@gmail.com>
 
-On Tuesday, February 10, 2015 06:32:46 PM Alexandre Courbot wrote:
-> On Fri, Jan 23, 2015 at 8:21 PM, Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> > Hi guys,
-> >
-> > On Thu, Jan 22, 2015 at 05:14:22PM +0100, Rafael J. Wysocki wrote:
-> >> On Thursday, January 22, 2015 11:57:55 AM Alexandre Courbot wrote:
-> >> > If we decide to go ahead with the solution proposed by this patc=
-h for
-> >> > practical reasons (which are good reasons indeed), I still have =
-one
-> >> > problem with its current form.
-> >> >
-> >> > As the discussion highlighted, this is an ACPI problem, so I'd v=
-ery
-> >> > much like it to be confined to the ACPI GPIO code, to be enabled=
- only
-> >> > when ACPI is, and to use function names that start with acpi_gpi=
-o.
-> >>
-> >> I can agree with that.
-> >>
-> >> > The current implementation leverages platform lookup, making sai=
-d lookup
-> >> > less efficient in the process and bringing confusion about its
-> >> > purpose. Although the two processes are indeed similar, they are
-> >> > separate things: one is a legitimate way to map GPIOs, the other=
- is a
-> >> > fixup for broken firmware.
-> >> >
-> >> > I suppose we all agree this is a hackish fix, so let's confine i=
-t as
-> >> > much as we can.
-> >>
-> >> OK
-> >>
-> >> Heikki, any comments?
-> >
-> > I'm fine with that.
-> >
-> > That actually makes me think that we could then drop the lookup tab=
-les
-> > completely and use device properties instead with the help of "gene=
-ric
-> > property" (attached):
-> >
-> > We would just need to agree on the format how to describe a gpio
-> > property, document it and of course convert the current users as
-> > usual. The format could be something like this as an example (I'm
-> > writing this out of my head so don't shoot me if you can see it wou=
-ld
-> > not work. Just an example):
-> >
-> > static const u32 example_gpio[] =3D { <gpio>, <flags>,=E7=88=99;
-> >
-> > static struct dev_gen_prop example_prop[] =3D
-> >         {
-> >                 .type =3D DEV_PROP_U32,
-> >                 .name =3D "gpio,<con_id>",
-> >                 .nval =3D 2,
-> >                 .num =3D &example_gpio,
-> >         },
-> >         { },
-> > };
-> >
-> > static struct platform_device example_pdev =3D {
-> >         ...
-> >         .dev =3D {
-> >                 .gen_prop =3D &example_prop,
-> >         },
-> > }
-> >
-> >
-> > In gpiolib.c we would then, instead of going through the lookups,
-> > simply ask for that property:
-> >
-> >         ...
-> >         sprintf(propname, "gpio,%s", con_id);
-> >         device_property_read_u32_array(dev, propname, &val, 2);
-> >         ...
-> >         desc =3D gpio_to_desc(val[0]);
-> >         flags =3D val[1];
-> >         ...
-> >
-> >
-> > So this is just and idea. I think it would be relatively easy to
-> > implement. What do you guys think?
->=20
-> At first sight, that looks like a very good idea and a great use of
-> the device properties API. Are you willing to explore it further?
+Alexandre Courbot <gnurou@gmail.com> writes:
 
-I guess Heikki is waiting for my feedback on his core patch that I'm
-going to provide later today.
+> On Tue, Feb 10, 2015 at 5:48 PM, Hans Holmberg <hans.holmberg@intel.com> wrote:
+>> The change:
+>>
+>> 7b8792bbdffdff3abda704f89c6a45ea97afdc62
+>> gpiolib: of: Correct error handling in of_get_named_gpiod_flags
+>>
+>> assumed that only one gpio-chip is registred per of-node.
+>> Some drivers register more than one chip per of-node, so
+>> adjust the matching function of_gpiochip_find_and_xlate to
+>> not stop looking for chips if a node-match is found and
+>> the translation fails.
+>>
+>> Signed-off-by: Hans Holmberg <hans.holmberg@intel.com>
+>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
+  (on arm pxa architecture)
 
-And yes, this is an interesting idea.
+Cheers.
 
-
---=20
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Robert
