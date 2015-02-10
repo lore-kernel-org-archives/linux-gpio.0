@@ -1,44 +1,127 @@
-From: Tyler Hall <tylerwhall@gmail.com>
-Subject: Re: [PATCH] gpiolib: of: allow of_gpiochip_find_and_xlate to find
- more than one chip per node
-Date: Tue, 10 Feb 2015 15:30:56 -0500
-Message-ID: <CAOjnSCaLY1HM+DLPQ4H6Xd6wfrvvzpJe1DEE2kjX0eNX7AMDBQ@mail.gmail.com>
-References: <1423558107-23264-1-git-send-email-hans.holmberg@intel.com>
- <CAAVeFu+F1oy4AZqWmMkGqiVxz5YF1y-qMxyHObWjjVXp8PuGcg@mail.gmail.com> <87a90l7kz9.fsf@free.fr>
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH v8 2/4] pinctrl: cygnus: add gpio/pinconf driver
+Date: Tue, 10 Feb 2015 13:47:37 -0800
+Message-ID: <54DA7C79.2010606@broadcom.com>
+References: <rjui@broadcom.com> <1423070463-24483-1-git-send-email-rjui@broadcom.com> <1423070463-24483-3-git-send-email-rjui@broadcom.com> <20150209191951.GA15709@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:55852 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750763AbbBJUbR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Feb 2015 15:31:17 -0500
-In-Reply-To: <87a90l7kz9.fsf@free.fr>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150209191951.GA15709@dtor-ws>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dtor@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Hans Holmberg <hans.holmberg@intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Howard Cochran <cochran@lexmark.com>, Daniel Mack <zonque@gmail.com>
 
-On Tue, Feb 10, 2015 at 12:08 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
-> Alexandre Courbot <gnurou@gmail.com> writes:
->
->> On Tue, Feb 10, 2015 at 5:48 PM, Hans Holmberg <hans.holmberg@intel.com> wrote:
->>> The change:
->>>
->>> 7b8792bbdffdff3abda704f89c6a45ea97afdc62
->>> gpiolib: of: Correct error handling in of_get_named_gpiod_flags
->>>
->>> assumed that only one gpio-chip is registred per of-node.
->>> Some drivers register more than one chip per of-node, so
->>> adjust the matching function of_gpiochip_find_and_xlate to
->>> not stop looking for chips if a node-match is found and
->>> the translation fails.
->>>
->>> Signed-off-by: Hans Holmberg <hans.holmberg@intel.com>
->>
->> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
->   (on arm pxa architecture)
-Tested-by: Tyler Hall <tylerwhall@gmail.com>
 
-With gpio-pxa (multiple chips per of node) and on arm-mvebu with
-mvebu-gpio (one chip per of-node).
+
+On 2/9/2015 11:20 AM, Dmitry Torokhov wrote:
+> Hi Ray,
+> 
+> On Wed, Feb 04, 2015 at 09:21:01AM -0800, Ray Jui wrote:
+>> +static int cygnus_gpio_pinmux_add_range(struct cygnus_gpio *chip)
+>> +{
+>> +	struct device_node *node = chip->dev->of_node;
+>> +	struct device_node *pinmux_node;
+>> +	struct platform_device *pinmux_pdev;
+>> +	struct gpio_chip *gc = &chip->gc;
+>> +	int i, ret;
+>> +
+>> +	/* parse DT to find the phandle to the pinmux controller */
+>> +	pinmux_node = of_parse_phandle(node, "pinmux", 0);
+>> +	if (!pinmux_node)
+>> +		return -ENODEV;
+>> +
+>> +	pinmux_pdev = of_find_device_by_node(pinmux_node);
+>> +	if (!pinmux_pdev) {
+>> +		dev_err(chip->dev, "failed to get pinmux device\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	/* now need to create the mapping between local GPIO and PINMUX pins */
+>> +	for (i = 0; i < ARRAY_SIZE(cygnus_gpio_pintable); i++) {
+>> +		ret = gpiochip_add_pin_range(gc, dev_name(&pinmux_pdev->dev),
+>> +					     cygnus_gpio_pintable[i].offset,
+>> +					     cygnus_gpio_pintable[i].pin_base,
+>> +					     cygnus_gpio_pintable[i].num_pins);
+>> +		if (ret) {
+>> +			dev_err(chip->dev, "unable to add GPIO pin range\n");
+>> +			goto err_put_device;
+>> +		}
+>> +	}
+>> +
+>> +	chip->pinmux_is_supported = true;
+>> +
+>> +	/* no need for pinmux_pdev device reference anymore */
+>> +	put_device(&pinmux_pdev->dev);
+> 
+> Sorry I did not notice it before, but of_parse_phandle() takes reference
+> to the returned device node, so you need to "put" it here and in error
+> path as well. Actually you can do:
+> 
+> 	int ret = 0;
+> 
+> 	pinmux_node = of_parse_phandle(node, "pinmux", 0);
+> 	if (!pinmux_node)
+> 		return -ENODEV;
+> 
+> 	pinmux_pdev = of_find_device_by_node(pinmux_node);
+> 	/* We do not longer need pinmux node */
+> 	of_node_put(pinmux_node);
+> 
+> 	if (!pinmux_dev)
+> 		....
+> 
+> 	for (..) {
+> 		...
+> 		if (ret) {
+> 			dev_err(...);
+> 			break;
+> 		}
+> 	}
+> 
+> 	chip->pinmux_is_supported = (ret == 0);
+> 	put_device(..);
+> 	return ret;
+> }
+> 
+> This way you free resources in the same path.
+> 
+
+Thanks. I'll make the change.
+
+> ...
+> 
+>> +
+>> +static struct platform_driver cygnus_gpio_driver = {
+>> +	.driver = {
+>> +		.name = "cygnus-gpio",
+>> +		.of_match_table = cygnus_gpio_of_match,
+>> +		.suppress_bind_attrs = true,
+>> +	},
+>> +	.probe = cygnus_gpio_probe,
+>> +};
+>> +
+>> +static int __init cygnus_gpio_init(void)
+>> +{
+>> +	return platform_driver_probe(&cygnus_gpio_driver, cygnus_gpio_probe);
+> 
+> When I asked you to add ".suppress_bind_attrs = true" I missed the fact
+> that you were using platform_driver_probe() which already does this
+> internally. However platform_driver_probe() can't handle deferred
+> probing, which may or may not be OK. Is there a chance that any of the
+> resources needed by the driver return -EPROBE_DEFER? If not then it is
+> safe to continue using platform_driver_probe() and you can drop
+> suppress_bind_attrs assignment, otherwise it may be better to switch to
+> platform_driver_register().
+> 
+> Thanks.
+> 
+
+No I do not expect any resource that this driver depends on to return
+-EPROBE_DEFER. The IOMUX driver that this driver depends on should be
+initialized before this driver.
+
+I'll drop .suppress_bind_attrs then. Thanks.
+
+Ray
