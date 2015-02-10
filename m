@@ -1,127 +1,110 @@
 From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH v8 2/4] pinctrl: cygnus: add gpio/pinconf driver
-Date: Tue, 10 Feb 2015 13:47:37 -0800
-Message-ID: <54DA7C79.2010606@broadcom.com>
-References: <rjui@broadcom.com> <1423070463-24483-1-git-send-email-rjui@broadcom.com> <1423070463-24483-3-git-send-email-rjui@broadcom.com> <20150209191951.GA15709@dtor-ws>
+Subject: [PATCH v9 0/4] Add gpio/pinconf support to Broadcom Cygnus SoC
+Date: Tue, 10 Feb 2015 14:16:20 -0800
+Message-ID: <1423606584-21795-1-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150209191951.GA15709@dtor-ws>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dtor@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:1579 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752103AbbBJWO7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Feb 2015 17:14:59 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, Ray Jui <rjui@broadcom.com>
 
+This patchset contains the initial GPIO/PINCONF support for the Broadcom
+Cygnus SoC.
 
+Cygnus has 3 GPIO controllers: 1) the ASIU GPIO; 2) the chipCommonG GPIO;
+and 3) the ALWAYS-ON GPIO. All 3 types of GPIO controllers are supported by
+the this driver.
 
-On 2/9/2015 11:20 AM, Dmitry Torokhov wrote:
-> Hi Ray,
-> 
-> On Wed, Feb 04, 2015 at 09:21:01AM -0800, Ray Jui wrote:
->> +static int cygnus_gpio_pinmux_add_range(struct cygnus_gpio *chip)
->> +{
->> +	struct device_node *node = chip->dev->of_node;
->> +	struct device_node *pinmux_node;
->> +	struct platform_device *pinmux_pdev;
->> +	struct gpio_chip *gc = &chip->gc;
->> +	int i, ret;
->> +
->> +	/* parse DT to find the phandle to the pinmux controller */
->> +	pinmux_node = of_parse_phandle(node, "pinmux", 0);
->> +	if (!pinmux_node)
->> +		return -ENODEV;
->> +
->> +	pinmux_pdev = of_find_device_by_node(pinmux_node);
->> +	if (!pinmux_pdev) {
->> +		dev_err(chip->dev, "failed to get pinmux device\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* now need to create the mapping between local GPIO and PINMUX pins */
->> +	for (i = 0; i < ARRAY_SIZE(cygnus_gpio_pintable); i++) {
->> +		ret = gpiochip_add_pin_range(gc, dev_name(&pinmux_pdev->dev),
->> +					     cygnus_gpio_pintable[i].offset,
->> +					     cygnus_gpio_pintable[i].pin_base,
->> +					     cygnus_gpio_pintable[i].num_pins);
->> +		if (ret) {
->> +			dev_err(chip->dev, "unable to add GPIO pin range\n");
->> +			goto err_put_device;
->> +		}
->> +	}
->> +
->> +	chip->pinmux_is_supported = true;
->> +
->> +	/* no need for pinmux_pdev device reference anymore */
->> +	put_device(&pinmux_pdev->dev);
-> 
-> Sorry I did not notice it before, but of_parse_phandle() takes reference
-> to the returned device node, so you need to "put" it here and in error
-> path as well. Actually you can do:
-> 
-> 	int ret = 0;
-> 
-> 	pinmux_node = of_parse_phandle(node, "pinmux", 0);
-> 	if (!pinmux_node)
-> 		return -ENODEV;
-> 
-> 	pinmux_pdev = of_find_device_by_node(pinmux_node);
-> 	/* We do not longer need pinmux node */
-> 	of_node_put(pinmux_node);
-> 
-> 	if (!pinmux_dev)
-> 		....
-> 
-> 	for (..) {
-> 		...
-> 		if (ret) {
-> 			dev_err(...);
-> 			break;
-> 		}
-> 	}
-> 
-> 	chip->pinmux_is_supported = (ret == 0);
-> 	put_device(..);
-> 	return ret;
-> }
-> 
-> This way you free resources in the same path.
-> 
+All 3 Cygnus GPIO controllers support basic PINCONF functions such as bias
+pull up, pull down, and drive strength configurations, when these pins are
+muxed to GPIO.
 
-Thanks. I'll make the change.
+Pins from the ASIU GPIO can be individually muxed to GPIO function, through
+interaction with the Cygnus IOMUX controller.
 
-> ...
-> 
->> +
->> +static struct platform_driver cygnus_gpio_driver = {
->> +	.driver = {
->> +		.name = "cygnus-gpio",
->> +		.of_match_table = cygnus_gpio_of_match,
->> +		.suppress_bind_attrs = true,
->> +	},
->> +	.probe = cygnus_gpio_probe,
->> +};
->> +
->> +static int __init cygnus_gpio_init(void)
->> +{
->> +	return platform_driver_probe(&cygnus_gpio_driver, cygnus_gpio_probe);
-> 
-> When I asked you to add ".suppress_bind_attrs = true" I missed the fact
-> that you were using platform_driver_probe() which already does this
-> internally. However platform_driver_probe() can't handle deferred
-> probing, which may or may not be OK. Is there a chance that any of the
-> resources needed by the driver return -EPROBE_DEFER? If not then it is
-> safe to continue using platform_driver_probe() and you can drop
-> suppress_bind_attrs assignment, otherwise it may be better to switch to
-> platform_driver_register().
-> 
-> Thanks.
-> 
+Note this patchset has a dependency on the other patchset "Add pinctrl support
+to Broadcom Cygnus SoC" that is also under review
 
-No I do not expect any resource that this driver depends on to return
--EPROBE_DEFER. The IOMUX driver that this driver depends on should be
-initialized before this driver.
+Changes from v8:
+ - Add code in function 'cygnus_gpio_pinmux_add_range' to free pinmux
+   node resource by calling of_node_put
+ - Drop .suppress_bind_attrs = true, since this is already done in
+   platform_driver_probe
 
-I'll drop .suppress_bind_attrs then. Thanks.
+Changes from v7:
+ - Use 'bool' instead of 'int' for flag that indicates pinmux support in the
+   driver
+ - Call put_device to drop reference to the pinmux dev after call to
+   of_find_device_by_node
+ - Replace kasprintf with devm_kasprintf and remove memory deallocation logic
+   in the driver
+ - Set suppress_bind_attrs to true for the driver
 
-Ray
+Changes from v6:
+ - Move the driver from drivers/gpio/* to drivers/pinctrl/* since this driver
+   supports both GPIO and some basic PINCONF features
+ - Support PINCONF features through standard DT subnodes properties including
+   "bias-disable", "bias-pull-up", "bias-pull-down", and "drive-strength", by
+   creating local PINCONF controller
+ - Add support to allow individual ASIU GPIO pins to be muxed as GPIO, through
+   interactions with the Cygnus IOMUX driver
+ - Convert the driver to use standard GPIOCHIP_IRQ APIs. This helps to reduce
+   customized code in the driver
+ - Other miscellaneous imrpovements in the driver
+ - Enable GPIO based phone hook detection support for BCM911360 phone factor
+   board
+
+Changes from v5:
+ - Get rid of DT property "linux,gpio-base". Use dynamic allocation for GPIO base
+   number
+
+Changes from v4:
+ - Use DT property "linux,gpio-base" to define GPIO base number
+ - factorize common code to improve code readability and reduce code size
+ - remove "bcm_" prefix on function and struct names
+ - improve debugging prints
+ - default GPIO_BCM_CYGNUS to y in Kconfig (it still depends on
+   ARCH_BCM_CYGNUS). This way we do not need to select it from the
+   arch/arm/mach-bcm/Kconfig
+ - Get rid of redundant MAINTAINER entry for this driver. It will be maintained
+   by Broadcom iProc/Cygnus maintainers
+ - Update device tree document based on driver changes
+
+Changes from v3:
+ - Fix dt property tpyo
+ - Fix incorrect GPIO compatible ID in device tree binding document example
+
+Changes from v2:
+ - Consolidate different compatible IDs into "brcm,cygnus-gpio"
+ - Get rid of redundant "no-interrupt" property
+
+Changes from v1:
+ - Get rid of inline qualifier
+ - Get rid of redundant check in the ISR
+ - Other minor fixes to imrove code readability
+
+Ray Jui (4):
+  pinctrl: Cygnus: define Broadcom Cygnus GPIO/PINCONF binding
+  pinctrl: cygnus: add gpio/pinconf driver
+  ARM: dts: enable GPIO for Broadcom Cygnus
+  ARM: dts: cygnus: enable GPIO based hook detection
+
+ .../bindings/pinctrl/brcm,cygnus-gpio.txt          |  102 +++
+ arch/arm/boot/dts/bcm-cygnus.dtsi                  |   33 +
+ arch/arm/boot/dts/bcm911360_entphn.dts             |   13 +
+ drivers/pinctrl/bcm/Kconfig                        |   22 +
+ drivers/pinctrl/bcm/Makefile                       |    1 +
+ drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c          |  908 ++++++++++++++++++++
+ 6 files changed, 1079 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+
+-- 
+1.7.9.5
+
