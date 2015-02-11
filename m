@@ -1,82 +1,102 @@
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
-Subject: [PATCH 07/11] pinctrl: berlin: use proper compatibles
-Date: Wed, 11 Feb 2015 17:15:28 +0100
-Message-ID: <1423671332-24580-8-git-send-email-antoine.tenart@free-electrons.com>
-References: <1423671332-24580-1-git-send-email-antoine.tenart@free-electrons.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423671332-24580-1-git-send-email-antoine.tenart@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, jszhang@marvell.com, zmxu@marvell.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH v5 1/4] gpiolib: define gpio suffixes globally
+Date: Wed, 11 Feb 2015 17:27:55 +0100
+Message-ID: <13969625.rHfHuA5z02@pcimr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:57043 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752200AbbBKQ2D (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Feb 2015 11:28:03 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-The Berlin pin-controller driver was sharing the chip and system
-controller nodes with the clock and the reset drivers. They all shared
-the same compatible. With the introduction of the Marvell Berlin MFD
-controller, the Berlin pin-controller driver has now its own node.
-Update its compatibles to not share anymore the ones of the chip and
-system controllers.
+Avoid multiple identical definitions of the gpio suffix strings by putting
+them into a global constant array.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/pinctrl/berlin/berlin-bg2.c   | 4 ++--
- drivers/pinctrl/berlin/berlin-bg2cd.c | 4 ++--
- drivers/pinctrl/berlin/berlin-bg2q.c  | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+Change log:
+  v5: move the global definition to drivers/gpio/gpiolib.h
+  v4: no change
+  v3: add this change as a separate patch
 
-diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
-index 368ec0b9b8ba..3769eaedf519 100644
---- a/drivers/pinctrl/berlin/berlin-bg2.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2.c
-@@ -218,11 +218,11 @@ static const struct berlin_pinctrl_desc berlin2_sysmgr_pinctrl_data = {
+ drivers/gpio/gpiolib.c | 14 ++++++--------
+ drivers/gpio/gpiolib.h |  3 +++
+ 2 files changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index bf6016d..b71c351 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1657,19 +1657,18 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 				      unsigned int idx,
+ 				      enum gpio_lookup_flags *flags)
+ {
+-	static const char * const suffixes[] = { "gpios", "gpio" };
+ 	char prop_name[32]; /* 32 is max size of property name */
+ 	enum of_gpio_flags of_flags;
+ 	struct gpio_desc *desc;
+ 	unsigned int i;
  
- static const struct of_device_id berlin2_pinctrl_match[] = {
- 	{
--		.compatible = "marvell,berlin2-chip-ctrl",
-+		.compatible = "marvell,berlin2-soc-pinctrl",
- 		.data = &berlin2_soc_pinctrl_data
- 	},
- 	{
--		.compatible = "marvell,berlin2-system-ctrl",
-+		.compatible = "marvell,berlin2-system-pinctrl",
- 		.data = &berlin2_sysmgr_pinctrl_data
- 	},
- 	{}
-diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
-index 6b9cae029ef7..9e11f191d643 100644
---- a/drivers/pinctrl/berlin/berlin-bg2cd.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
-@@ -161,11 +161,11 @@ static const struct berlin_pinctrl_desc berlin2cd_sysmgr_pinctrl_data = {
+-	for (i = 0; i < ARRAY_SIZE(suffixes); i++) {
++	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+ 		if (con_id)
+ 			snprintf(prop_name, sizeof(prop_name), "%s-%s", con_id,
+-							       suffixes[i]);
++				 gpio_suffixes[i]);
+ 		else
+ 			snprintf(prop_name, sizeof(prop_name), "%s",
+-							       suffixes[i]);
++				 gpio_suffixes[i]);
  
- static const struct of_device_id berlin2cd_pinctrl_match[] = {
- 	{
--		.compatible = "marvell,berlin2cd-chip-ctrl",
-+		.compatible = "marvell,berlin2cd-soc-pinctrl",
- 		.data = &berlin2cd_soc_pinctrl_data
- 	},
- 	{
--		.compatible = "marvell,berlin2cd-system-ctrl",
-+		.compatible = "marvell,berlin2cd-system-pinctrl",
- 		.data = &berlin2cd_sysmgr_pinctrl_data
- 	},
- 	{}
-diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
-index 11aa10cc0e3e..ba7a8a8ad010 100644
---- a/drivers/pinctrl/berlin/berlin-bg2q.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2q.c
-@@ -380,11 +380,11 @@ static const struct berlin_pinctrl_desc berlin2q_sysmgr_pinctrl_data = {
+ 		desc = of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
+ 						&of_flags);
+@@ -1690,7 +1689,6 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
+ 					unsigned int idx,
+ 					enum gpio_lookup_flags *flags)
+ {
+-	static const char * const suffixes[] = { "gpios", "gpio" };
+ 	struct acpi_device *adev = ACPI_COMPANION(dev);
+ 	struct acpi_gpio_info info;
+ 	struct gpio_desc *desc;
+@@ -1698,13 +1696,13 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
+ 	int i;
  
- static const struct of_device_id berlin2q_pinctrl_match[] = {
- 	{
--		.compatible = "marvell,berlin2q-chip-ctrl",
-+		.compatible = "marvell,berlin2q-soc-pinctrl",
- 		.data = &berlin2q_soc_pinctrl_data,
- 	},
- 	{
--		.compatible = "marvell,berlin2q-system-ctrl",
-+		.compatible = "marvell,berlin2q-system-pinctrl",
- 		.data = &berlin2q_sysmgr_pinctrl_data,
- 	},
- 	{}
+ 	/* Try first from _DSD */
+-	for (i = 0; i < ARRAY_SIZE(suffixes); i++) {
++	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+ 		if (con_id && strcmp(con_id, "gpios")) {
+ 			snprintf(propname, sizeof(propname), "%s-%s",
+-				 con_id, suffixes[i]);
++				 con_id, gpio_suffixes[i]);
+ 		} else {
+ 			snprintf(propname, sizeof(propname), "%s",
+-				 suffixes[i]);
++				 gpio_suffixes[i]);
+ 		}
+ 
+ 		desc = acpi_get_gpiod_by_index(adev, propname, idx, &info);
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index e3a5211..3cbf3dd 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -27,6 +27,9 @@ struct acpi_gpio_info {
+ 	bool active_low;
+ };
+ 
++/* gpio suffixes used for ACPI and device tree lookup */
++static const char * const gpio_suffixes[] = { "gpios", "gpio" };
++
+ #ifdef CONFIG_ACPI
+ void acpi_gpiochip_add(struct gpio_chip *chip);
+ void acpi_gpiochip_remove(struct gpio_chip *chip);
 -- 
-2.3.0
+2.0.5
+
+
