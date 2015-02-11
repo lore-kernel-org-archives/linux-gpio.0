@@ -1,141 +1,159 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v4 2/4] gpiolib: add gpiod_get_array and gpiod_put_array functions
-Date: Wed, 11 Feb 2015 23:24:50 +0900
-Message-ID: <CAAVeFu+PGceYEvUmFKLW3NfPoomeTaeZ678o2nHn--bP0RJcwA@mail.gmail.com>
-References: <1592036.ZMHnOUhaPf@pcimr> <3291115.YxVM983FZu@pcimr>
- <CAAVeFuL-P3RbZEhr5pLPxdeiyq0dBe_vXJA90-nD+Df67Jdxiw@mail.gmail.com> <6594257.m7JYREYCDP@pcimr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:41239 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751829AbbBKOZL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Feb 2015 09:25:11 -0500
-Received: by iecrd18 with SMTP id rd18so4167537iec.8
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Feb 2015 06:25:11 -0800 (PST)
-In-Reply-To: <6594257.m7JYREYCDP@pcimr>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Antoine Tenart <antoine.tenart@free-electrons.com>
+Subject: [PATCH 06/11] pinctrl: berlin: use the regmap provided by syscon
+Date: Wed, 11 Feb 2015 17:15:27 +0100
+Message-ID: <1423671332-24580-7-git-send-email-antoine.tenart@free-electrons.com>
+References: <1423671332-24580-1-git-send-email-antoine.tenart@free-electrons.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1423671332-24580-1-git-send-email-antoine.tenart@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, jszhang@marvell.com, zmxu@marvell.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-On Wed, Feb 11, 2015 at 11:00 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> On Wednesday 11 February 2015 22:31:12 Alexandre Courbot wrote:
->> On Wed, Feb 11, 2015 at 9:14 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
->> > On Wednesday 11 February 2015 12:30:01 Mika Westerberg wrote:
->> >> On Tue, Feb 10, 2015 at 02:40:52PM +0100, Rojhalat Ibrahim wrote:
->> >> > +#ifdef CONFIG_ACPI
->> >> > +
->> >> > +static unsigned int acpi_gpio_package_count(const union acpi_object *obj)
->> >> > +{
->> >> > +   const union acpi_object *element = obj->package.elements;
->> >> > +   const union acpi_object *end = element + obj->package.count;
->> >> > +   unsigned int count = 0;
->> >> > +
->> >> > +   while (element < end) {
->> >> > +           if (element->type == ACPI_TYPE_LOCAL_REFERENCE)
->> >> > +                   count++;
->> >> > +
->> >> > +           element++;
->> >> > +   }
->> >> > +   return count;
->> >> > +}
->> >> > +
->> >> > +static int acpi_find_gpio_count(struct acpi_resource *ares, void *data)
->> >> > +{
->> >> > +   unsigned int *count = data;
->> >> > +
->> >> > +   if (ares->type == ACPI_RESOURCE_TYPE_GPIO)
->> >> > +           *count += ares->data.gpio.pin_table_length;
->> >> > +
->> >> > +   return 1;
->> >> > +}
->> >> > +
->> >> > +static int acpi_gpio_count(struct device *dev, const char *con_id)
->> >> > +{
->> >> > +   struct acpi_device *adev = ACPI_COMPANION(dev);
->> >> > +   const union acpi_object *obj;
->> >> > +   const struct acpi_gpio_mapping *gm;
->> >> > +   int count = -ENOENT;
->> >> > +   int ret;
->> >> > +   char propname[32];
->> >> > +   unsigned int i;
->> >> > +
->> >> > +   /* Try first from _DSD */
->> >> > +   for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
->> >> > +           if (con_id && strcmp(con_id, "gpios"))
->> >> > +                   snprintf(propname, sizeof(propname), "%s-%s",
->> >> > +                            con_id, gpio_suffixes[i]);
->> >> > +           else
->> >> > +                   snprintf(propname, sizeof(propname), "%s",
->> >> > +                            gpio_suffixes[i]);
->> >> > +
->> >> > +           ret = acpi_dev_get_property(adev, propname, ACPI_TYPE_ANY,
->> >> > +                                       &obj);
->> >> > +           if (ret == 0) {
->> >> > +                   if (obj->type == ACPI_TYPE_LOCAL_REFERENCE)
->> >> > +                           count = 1;
->> >> > +                   else if (obj->type == ACPI_TYPE_PACKAGE)
->> >> > +                           count = acpi_gpio_package_count(obj);
->> >> > +           } else if (adev->driver_gpios) {
->> >> > +                   for (gm = adev->driver_gpios; gm->name; gm++)
->> >> > +                           if (strcmp(propname, gm->name) == 0) {
->> >> > +                                   count = gm->size;
->> >> > +                                   break;
->> >> > +                           }
->> >> > +           }
->> >> > +           if (count >= 0)
->> >> > +                   break;
->> >> > +   }
->> >> > +
->> >> > +   /* Then from plain _CRS GPIOs */
->> >> > +   if (count < 0) {
->> >> > +           struct list_head resource_list;
->> >> > +           unsigned int crs_count = 0;
->> >> > +
->> >> > +           INIT_LIST_HEAD(&resource_list);
->> >> > +           acpi_dev_get_resources(adev, &resource_list,
->> >> > +                                  acpi_find_gpio_count, &crs_count);
->> >> > +           acpi_dev_free_resource_list(&resource_list);
->> >> > +           if (crs_count > 0)
->> >> > +                   count = crs_count;
->> >> > +   }
->> >> > +   return count;
->> >> > +}
->> >> > +
->> >> > +#else
->> >> > +
->> >> > +static int acpi_gpio_count(struct device *dev, const char *con_id)
->> >> > +{
->> >> > +   return -ENODEV;
->> >> > +}
->> >> > +
->> >> > +#endif
->> >>
->> >> It just occured to me that it would be better to put this code to
->> >> gpiolib-acpi.c and declare acpi_gpio_count() in drivers/gpio/gpiolib.h.
->> >>
->> >
->> > Ok. I will also have to move the definition of gpio_suffixes[] (PATCH 1/4)
->> > to drivers/gpio/gpiolib.h since it is needed by both the OF and the ACPI
->> > portions of the code.
->>
->> We will really need to factorize this lookup code. I will give it a
->> look, but first I'd like to merge this good stuff.
->>
->> I am mixed about moving these declarations into gpiolib.h - maybe have
->> one static declaration per file instead, especially since lookup on
->> ACPI is not necessarily the same as lookup on DT. It makes sense to
->> have it that way.
->>
->
-> If we do one static declaration per file then acpi_find_gpio() in gpiolib.c
-> is going to use potentially different suffixes from acpi_gpio_count() in
-> gpiolib-acpi.c. That can't be good.
+The Berlin pin controller nodes are now sub-nodes of the soc-controller
+and the system-controller nodes. The register bank is managed by syscon,
+which provides a regmap.
 
-Yeah it's a bit of a mess, I really need to reorganize that code...
+Remove the regmap setup from the Berlin pinctrl driver and use the one
+provided by syscon.
 
-I'm not going to mind how you do it - just do whatever seems good to
-you, I will revisit it later anyway. For now I'd like this
-well-implemented and tested interface to be merged for everyone to
-enjoy.
+Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+---
+ drivers/pinctrl/berlin/berlin-bg2.c   | 22 ----------------------
+ drivers/pinctrl/berlin/berlin-bg2cd.c | 22 ----------------------
+ drivers/pinctrl/berlin/berlin-bg2q.c  | 22 ----------------------
+ drivers/pinctrl/berlin/berlin.c       |  9 ++++++---
+ 4 files changed, 6 insertions(+), 69 deletions(-)
+
+diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
+index b71a6fffef1b..368ec0b9b8ba 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2.c
++++ b/drivers/pinctrl/berlin/berlin-bg2.c
+@@ -233,28 +233,6 @@ static int berlin2_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match =
+ 		of_match_device(berlin2_pinctrl_match, &pdev->dev);
+-	struct regmap_config *rmconfig;
+-	struct regmap *regmap;
+-	struct resource *res;
+-	void __iomem *base;
+-
+-	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
+-	if (!rmconfig)
+-		return -ENOMEM;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	rmconfig->reg_bits = 32,
+-	rmconfig->val_bits = 32,
+-	rmconfig->reg_stride = 4,
+-	rmconfig->max_register = resource_size(res);
+-
+-	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
+-	if (IS_ERR(regmap))
+-		return PTR_ERR(regmap);
+ 
+ 	return berlin_pinctrl_probe(pdev, match->data);
+ }
+diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
+index 19ac5a22c947..6b9cae029ef7 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2cd.c
++++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
+@@ -176,28 +176,6 @@ static int berlin2cd_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match =
+ 		of_match_device(berlin2cd_pinctrl_match, &pdev->dev);
+-	struct regmap_config *rmconfig;
+-	struct regmap *regmap;
+-	struct resource *res;
+-	void __iomem *base;
+-
+-	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
+-	if (!rmconfig)
+-		return -ENOMEM;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	rmconfig->reg_bits = 32,
+-	rmconfig->val_bits = 32,
+-	rmconfig->reg_stride = 4,
+-	rmconfig->max_register = resource_size(res);
+-
+-	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
+-	if (IS_ERR(regmap))
+-		return PTR_ERR(regmap);
+ 
+ 	return berlin_pinctrl_probe(pdev, match->data);
+ }
+diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
+index bd9662e57ad3..11aa10cc0e3e 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2q.c
++++ b/drivers/pinctrl/berlin/berlin-bg2q.c
+@@ -395,28 +395,6 @@ static int berlin2q_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match =
+ 		of_match_device(berlin2q_pinctrl_match, &pdev->dev);
+-	struct regmap_config *rmconfig;
+-	struct regmap *regmap;
+-	struct resource *res;
+-	void __iomem *base;
+-
+-	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
+-	if (!rmconfig)
+-		return -ENOMEM;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	rmconfig->reg_bits = 32,
+-	rmconfig->val_bits = 32,
+-	rmconfig->reg_stride = 4,
+-	rmconfig->max_register = resource_size(res);
+-
+-	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
+-	if (IS_ERR(regmap))
+-		return PTR_ERR(regmap);
+ 
+ 	return berlin_pinctrl_probe(pdev, match->data);
+ }
+diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
+index 7f0b0f93242b..2e3a8b8858ec 100644
+--- a/drivers/pinctrl/berlin/berlin.c
++++ b/drivers/pinctrl/berlin/berlin.c
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+@@ -295,13 +296,15 @@ int berlin_pinctrl_probe(struct platform_device *pdev,
+ 			 const struct berlin_pinctrl_desc *desc)
+ {
+ 	struct device *dev = &pdev->dev;
++	struct device_node *parent_np = of_get_parent(dev->of_node);
+ 	struct berlin_pinctrl *pctrl;
+ 	struct regmap *regmap;
+ 	int ret;
+ 
+-	regmap = dev_get_regmap(&pdev->dev, NULL);
+-	if (!regmap)
+-		return -ENODEV;
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
+ 
+ 	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
+ 	if (!pctrl)
+-- 
+2.3.0
