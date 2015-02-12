@@ -1,49 +1,73 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 08/14] pinctrl: Add pinctrl driver for STM32 MCUs
-Date: Thu, 12 Feb 2015 21:37:53 +0100
-Message-ID: <CAMuHMdXfAENN5EB6nFJdf3bJPJ+=41Po22NKrQWdwkyf5nFXpw@mail.gmail.com>
-References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1423763164-5606-9-git-send-email-mcoquelin.stm32@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH] gpio: mpc8xxx: Fix section mistmatch(es)
+Date: Thu, 12 Feb 2015 22:59:41 +0100
+Message-ID: <CAPybu_0o-oru5CnBESQqOrijGCuNCZPBqK0WGt1hwDMnc_TT=A@mail.gmail.com>
+References: <1423777994-17925-1-git-send-email-Emilian.Medve@Freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1423763164-5606-9-git-send-email-mcoquelin.stm32@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, Kees
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f42.google.com ([209.85.215.42]:46016 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751522AbbBLWAE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Feb 2015 17:00:04 -0500
+Received: by labge10 with SMTP id ge10so12689474lab.12
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Feb 2015 14:00:01 -0800 (PST)
+In-Reply-To: <1423777994-17925-1-git-send-email-Emilian.Medve@Freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Emil Medve <Emilian.Medve@freescale.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peter Korsgaard <jacmet@sunsite.dk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Thu, Feb 12, 2015 at 6:45 PM, Maxime Coquelin
-<mcoquelin.stm32@gmail.com> wrote:
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -125,6 +125,15 @@ config PINCTRL_ST
->         select PINCONF
->         select GPIOLIB_IRQCHIP
+Looks good to me
+
+Reviewed-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+
+On Thu, Feb 12, 2015 at 10:53 PM, Emil Medve
+<Emilian.Medve@freescale.com> wrote:
+> WARNING: drivers/gpio/built-in.o(.text+0x3962): Section mismatch in reference from the function mpc8xxx_probe() to the variable .init.data:mpc8xxx_gpio_ids
+> The function mpc8xxx_probe() references
+> the variable __initdata mpc8xxx_gpio_ids.
+> This is often because mpc8xxx_probe lacks a __initdata
+> annotation or the annotation of mpc8xxx_gpio_ids is wrong.
 >
-> +config PINCTRL_STM32
-> +       bool "STMicroelectronics STM32 pinctrl driver"
-> +       depends on OF
+> WARNING: drivers/gpio/built-in.o(.text+0x396a): Section mismatch in reference from the function mpc8xxx_probe() to the variable .init.data:mpc8xxx_gpio_ids
+> The function mpc8xxx_probe() references
+> the variable __initdata mpc8xxx_gpio_ids.
+> This is often because mpc8xxx_probe lacks a __initdata
+> annotation or the annotation of mpc8xxx_gpio_ids is wrong.
+>
+> WARNING: drivers/gpio/built-in.o(.data+0x48): Section mismatch in reference from the variable mpc8xxx_plat_driver to the variable .init.data:mpc8xxx_gpio_ids
+> The variable mpc8xxx_plat_driver references
+> the variable __initdata mpc8xxx_gpio_ids
+> If the reference is valid then annotate the
+> variable with __init* or __refdata (see linux/init.h) or name the variable:
+> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+>
+> Introduced in '98686d9a5 gpio: mpc8xxx: Convert to platform device interface'
+>
+> Signed-off-by: Emil Medve <Emilian.Medve@Freescale.com>
+> ---
+>  drivers/gpio/gpio-mpc8xxx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+> index a6952ba3..59c4c11 100644
+> --- a/drivers/gpio/gpio-mpc8xxx.c
+> +++ b/drivers/gpio/gpio-mpc8xxx.c
+> @@ -334,7 +334,7 @@ static struct irq_domain_ops mpc8xxx_gpio_irq_ops = {
+>         .xlate  = irq_domain_xlate_twocell,
+>  };
+>
+> -static struct of_device_id mpc8xxx_gpio_ids[] __initdata = {
+> +static const struct of_device_id mpc8xxx_gpio_ids[] = {
+>         { .compatible = "fsl,mpc8349-gpio", },
+>         { .compatible = "fsl,mpc8572-gpio", },
+>         { .compatible = "fsl,mpc8610-gpio", },
+> --
+> 2.3.0
+>
 
-depends on ARCH_STM32 || COMPILE_TEST
 
-> +       select PINMUX
-> +       select PINCONF
-> +       select GPIOLIB_IRQCHIP
-> +       help
-> +         This selects the device tree based generic pinctrl driver for STM32.
-> +
->  config PINCTRL_TEGRA
->         bool
->         select PINMUX
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Ricardo Ribalda
