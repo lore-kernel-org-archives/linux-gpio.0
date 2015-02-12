@@ -1,47 +1,89 @@
-From: Kevin Hao <haokexin@gmail.com>
-Subject: [PATCH] gpio: mpc8xxx: remove __initdata annotation for mpc8xxx_gpio_ids[]
-Date: Thu, 12 Feb 2015 14:52:49 +0800
-Message-ID: <1423723969-26931-1-git-send-email-haokexin@gmail.com>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] RFC: let gpiod_get_optional et all return NULL when GPIOLIB is not enabled
+Date: Thu, 12 Feb 2015 10:03:29 +0100
+Message-ID: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yh0-f44.google.com ([209.85.213.44]:37086 "EHLO
-	mail-yh0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750834AbbBLGxQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Feb 2015 01:53:16 -0500
-Received: by mail-yh0-f44.google.com with SMTP id f73so3715753yha.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Feb 2015 22:53:16 -0800 (PST)
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:40658 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755096AbbBLJDi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Feb 2015 04:03:38 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-Since commit 98686d9a52ee ("gpio: mpc8xxx: Convert to platform device
-interface"), we get the following section mismatch warning. Remove the
-__initdata annotation to fix it.
-  WARNING: vmlinux.o(.data+0xbc28): Section mismatch in reference from the variable mpc8xxx_plat_driver to the variable .init.data:mpc8xxx_gpio_ids
-  The variable mpc8xxx_plat_driver references
-  the variable __initdata mpc8xxx_gpio_ids
-  If the reference is valid then annotate the
-  variable with __init* or __refdata (see linux/init.h) or name the variable:
-  *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+If you look for example at sound/soc/codecs/adau1977.c it has:
 
-Signed-off-by: Kevin Hao <haokexin@gmail.com>
+	adau1977->reset_gpio = devm_gpiod_get(dev, "reset");
+	if (IS_ERR(adau1977->reset_gpio)) {
+		ret = PTR_ERR(adau1977->reset_gpio);
+		if (ret != -ENOENT && ret != -ENOSYS)
+			return PTR_ERR(adau1977->reset_gpio);
+		adau1977->reset_gpio = NULL;
+	}
+
+This code could better make use of devm_gpiod_get_optional like:
+
+	adau1977->reset_gpio = devm_gpiod_get_optional(dev, "reset",
+						       GPIOD_OUT_LOW);
+	if (IS_ERR(adau1977->reset_gpio))
+		return PTR_ERR(adau1977->reset_gpio);
+
+but this slightly changes semantics. I.e. if GPIOLIB is not enabled
+devm_gpiod_get_optional unconditionally returns -ENOSYS which is ignored
+explicitly above but an error in the changed code.
+
+I wonder if gpiod_get_optional et all should be changed to return NULL
+instead. The obvious downside is that if the device tree specifies a
+reset-gpio and the kernel just fails to use it because there is some
+code missing, this should better be an error. (The adau1977 code has
+this problem already know, but when changing devm_gpiod_get_optional all
+callers are affected.)
+
+What do you think?
 ---
- drivers/gpio/gpio-mpc8xxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/gpio/consumer.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index a6952ba343a8..a65b75161aa4 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -334,7 +334,7 @@ static struct irq_domain_ops mpc8xxx_gpio_irq_ops = {
- 	.xlate	= irq_domain_xlate_twocell,
- };
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index fd85cb120ee0..f68244ffd3a9 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -132,14 +132,14 @@ static inline struct gpio_desc *__must_check
+ __gpiod_get_optional(struct device *dev, const char *con_id,
+ 		     enum gpiod_flags flags)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return NULL;
+ }
  
--static struct of_device_id mpc8xxx_gpio_ids[] __initdata = {
-+static struct of_device_id mpc8xxx_gpio_ids[] = {
- 	{ .compatible = "fsl,mpc8349-gpio", },
- 	{ .compatible = "fsl,mpc8572-gpio", },
- 	{ .compatible = "fsl,mpc8610-gpio", },
+ static inline struct gpio_desc *__must_check
+ __gpiod_get_index_optional(struct device *dev, const char *con_id,
+ 			   unsigned int index, enum gpiod_flags flags)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return NULL;
+ }
+ 
+ static inline void gpiod_put(struct gpio_desc *desc)
+@@ -171,14 +171,14 @@ static inline struct gpio_desc *__must_check
+ __devm_gpiod_get_optional(struct device *dev, const char *con_id,
+ 			  enum gpiod_flags flags)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return NULL;
+ }
+ 
+ static inline struct gpio_desc *__must_check
+ __devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
+ 				unsigned int index, enum gpiod_flags flags)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return NULL;
+ }
+ 
+ static inline void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
 -- 
-1.9.3
+2.1.4
 
