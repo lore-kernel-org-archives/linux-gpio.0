@@ -1,70 +1,59 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 04/14] reset: Add reset_controller_of_init() function
-Date: Fri, 13 Feb 2015 12:49:04 +0100
-Message-ID: <1423828144.4182.18.camel@pengutronix.de>
-References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com>
-	 <1423763164-5606-5-git-send-email-mcoquelin.stm32@gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: vf610: Replaces comma between expression statements
+ by semicolon
+Date: Fri, 13 Feb 2015 21:04:42 +0800
+Message-ID: <1423832682.6895.1.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1423763164-5606-5-git-send-email-mcoquelin.stm32@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, Kees Cook <keescook@chromium.org>, Michal
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:34812 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752466AbbBMNEs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Feb 2015 08:04:48 -0500
+Received: by mail-pa0-f45.google.com with SMTP id rd3so12027687pab.4
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Feb 2015 05:04:48 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stefan Agner <stefan@agner.ch>, Shawn Guo <shawn.guo@freescale.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Maxime,
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-vf610.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Am Donnerstag, den 12.02.2015, 18:45 +0100 schrieb Maxime Coquelin:
-> Some platforms need to initialize the reset controller before the timers.
-> 
-> This patch introduces a reset_controller_of_init() function that can be
-> called before the timers intialization.
-> 
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> ---
->  drivers/reset/core.c              | 20 ++++++++++++++++++++
->  include/asm-generic/vmlinux.lds.h |  4 +++-
->  include/linux/reset-controller.h  |  6 ++++++
->  3 files changed, 29 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 7955e00..18ee579 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -86,6 +86,26 @@ void reset_controller_unregister(struct reset_controller_dev *rcdev)
->  }
->  EXPORT_SYMBOL_GPL(reset_controller_unregister);
->  
-> +extern struct of_device_id __reset_ctrl_of_table[];
-> +
-> +static const struct of_device_id __reset_ctrl_of_table_sentinel
-> +	__used __section(__reset_ctrl_of_table_end);
-> +
-> +void __init reset_controller_of_init(void)
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 971c739..7bd9f20 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -244,16 +244,16 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	gc = &port->gc;
+ 	gc->of_node = np;
+ 	gc->dev = dev;
+-	gc->label = "vf610-gpio",
+-	gc->ngpio = VF610_GPIO_PER_PORT,
++	gc->label = "vf610-gpio";
++	gc->ngpio = VF610_GPIO_PER_PORT;
+ 	gc->base = of_alias_get_id(np, "gpio") * VF610_GPIO_PER_PORT;
+ 
+-	gc->request = vf610_gpio_request,
+-	gc->free = vf610_gpio_free,
+-	gc->direction_input = vf610_gpio_direction_input,
+-	gc->get = vf610_gpio_get,
+-	gc->direction_output = vf610_gpio_direction_output,
+-	gc->set = vf610_gpio_set,
++	gc->request = vf610_gpio_request;
++	gc->free = vf610_gpio_free;
++	gc->direction_input = vf610_gpio_direction_input;
++	gc->get = vf610_gpio_get;
++	gc->direction_output = vf610_gpio_direction_output;
++	gc->set = vf610_gpio_set;
+ 
+ 	ret = gpiochip_add(gc);
+ 	if (ret < 0)
+-- 
+1.9.1
 
-The patch looks fine to me, but this function is missing a kerneldoc
-comment.
 
-> +{
-> +	struct device_node *np;
-> +	const struct of_device_id *match;
-> +	of_init_fn_1 init_func;
-> +
-> +	for_each_matching_node_and_match(np, __reset_ctrl_of_table, &match) {
-> +		if (!of_device_is_available(np))
-> +			continue;
-> +
-> +		init_func = match->data;
-> +		init_func(np);
-> +	}
-> +}
-> +
->  /**
->   * reset_control_reset - reset the controlled device
->   * @rstc: reset controller
-
-regards
-Philipp
 
