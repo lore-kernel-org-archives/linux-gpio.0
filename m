@@ -1,59 +1,69 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: vf610: Replaces comma between expression statements
- by semicolon
-Date: Fri, 13 Feb 2015 21:04:42 +0800
-Message-ID: <1423832682.6895.1.camel@phoenix>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH 12/14] ARM: dts: Introduce STM32F429 MCU
+Date: Fri, 13 Feb 2015 16:59:01 +0100
+Message-ID: <CALszF6D+5mXajUWarwq8M4yL_Nc+x1Bmu4D7_HxDRy2kGRXNVQ@mail.gmail.com>
+References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1423763164-5606-13-git-send-email-mcoquelin.stm32@gmail.com>
+	<1423828078.4182.17.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:34812 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466AbbBMNEs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Feb 2015 08:04:48 -0500
-Received: by mail-pa0-f45.google.com with SMTP id rd3so12027687pab.4
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Feb 2015 05:04:48 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <1423828078.4182.17.camel@pengutronix.de>
+Sender: linux-arch-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, Kees Cook <keescook@chromium.org>, Michal
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stefan Agner <stefan@agner.ch>, Shawn Guo <shawn.guo@freescale.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-vf610.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Hi Philipp,
 
-diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 971c739..7bd9f20 100644
---- a/drivers/gpio/gpio-vf610.c
-+++ b/drivers/gpio/gpio-vf610.c
-@@ -244,16 +244,16 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	gc = &port->gc;
- 	gc->of_node = np;
- 	gc->dev = dev;
--	gc->label = "vf610-gpio",
--	gc->ngpio = VF610_GPIO_PER_PORT,
-+	gc->label = "vf610-gpio";
-+	gc->ngpio = VF610_GPIO_PER_PORT;
- 	gc->base = of_alias_get_id(np, "gpio") * VF610_GPIO_PER_PORT;
- 
--	gc->request = vf610_gpio_request,
--	gc->free = vf610_gpio_free,
--	gc->direction_input = vf610_gpio_direction_input,
--	gc->get = vf610_gpio_get,
--	gc->direction_output = vf610_gpio_direction_output,
--	gc->set = vf610_gpio_set,
-+	gc->request = vf610_gpio_request;
-+	gc->free = vf610_gpio_free;
-+	gc->direction_input = vf610_gpio_direction_input;
-+	gc->get = vf610_gpio_get;
-+	gc->direction_output = vf610_gpio_direction_output;
-+	gc->set = vf610_gpio_set;
- 
- 	ret = gpiochip_add(gc);
- 	if (ret < 0)
--- 
-1.9.1
+2015-02-13 12:47 GMT+01:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> Hi Maxime,
+>
+> Am Donnerstag, den 12.02.2015, 18:46 +0100 schrieb Maxime Coquelin:
+> [...]
+>> +     soc {
+>> +             reset_ahb1: reset@40023810 {
+>> +                     #reset-cells = <1>;
+>> +                     compatible = "st,stm32-reset";
+>> +                     reg = <0x40023810 0x4>;
+>> +             };
+>> +
+>> +             reset_ahb2: reset@40023814 {
+>> +                     #reset-cells = <1>;
+>> +                     compatible = "st,stm32-reset";
+>> +                     reg = <0x40023814 0x4>;
+>> +             };
+>> +
+>> +             reset_ahb3: reset@40023818 {
+>> +                     #reset-cells = <1>;
+>> +                     compatible = "st,stm32-reset";
+>> +                     reg = <0x40023818 0x4>;
+>> +             };
+>> +
+>> +             reset_apb1: reset@40023820 {
+>> +                     #reset-cells = <1>;
+>> +                     compatible = "st,stm32-reset";
+>> +                     reg = <0x40023820 0x4>;
+>> +             };
+>> +
+>> +             reset_apb2: reset@40023824 {
+>> +                     #reset-cells = <1>;
+>> +                     compatible = "st,stm32-reset";
+>> +                     reg = <0x40023824 0x4>;
+>> +             };
+>
+> These are mostly consecutive, single registers. I wonder if these are
+> part of the same IP block and thus should be grouped together into the
+> same reset controller node?
 
+What I could to is to have two instances. One for AHB and one for APB domain.
+Doing this, I will have one instance per domain, and only consecutive registers.
+Is it fine for you?
 
+Thanks,
+Maxime
 
+>
+> regards
+> Philipp
+>
