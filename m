@@ -1,130 +1,67 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2] sh-pfc: add R8A7794 PFC support
-Date: Sun, 15 Feb 2015 18:06:42 +0200
-Message-ID: <1974835.KMEIIiPVsr@avalon>
-References: <5262485.fuAdzVmykl@wasted.cogentembedded.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 05/14] ARM: call reset_controller_of_init from default
+ time_init handler
+Date: Sun, 15 Feb 2015 16:17:31 -0600
+Message-ID: <CAL_Jsq+Sk0C-1UHCKE18fEVwBbV=quV9mrJSKTO_UPXWcaYfCw@mail.gmail.com>
+References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com> <1423763164-5606-6-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40679 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754629AbbBOQFv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Feb 2015 11:05:51 -0500
-In-Reply-To: <5262485.fuAdzVmykl@wasted.cogentembedded.com>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:44787 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbbBOWRz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Feb 2015 17:17:55 -0500
+In-Reply-To: <1423763164-5606-6-git-send-email-mcoquelin.stm32@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, Kees
 
-Hi Sergei,
+On Thu, Feb 12, 2015 at 11:45 AM, Maxime Coquelin
+<mcoquelin.stm32@gmail.com> wrote:
+> Some DT ARM platforms need the reset controllers to be initialized before
+> the timers.
+> This is the case of the stm32 and sunxi platforms.
 
-Thank you for the patch.
+I would say this is the exception, not the rule and therefore should
+be handled in a machine desc function. Or it could be part of your
+timer setup. Or is the bootloader's problem (like arch timer setup).
 
-On Thursday 12 February 2015 00:01:18 Sergei Shtylyov wrote:
-> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
-> 
-> Add PFC support for  the  R8A7794 SoC  including pin groups for some on-chip
-> devices such as ETH, I2C, INTC, MSIOF, QSPI, [H]SCIF...
-> 
-> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
-> [Sergei: squashed together several patches, fixed the MLB_CLK typo, added
-> IRQ4.. IRQ9 pin groups,  fixed IRQn comments, added ETH B pin group names,
-> removed stray new line and fixed typos in the  comments in the
-> pinmux_config_regs[] initializer, added reasonable and removed unreasonable
-> copyrights, modified the bindings document, renamed, added changelog.]
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
+We just want to limit how much this mechanism gets used.
+
+Rob
+
+>
+> This patch adds a call to reset_controller_of_init() to the default
+> .init_time callback when RESET_CONTROLLER is used by the platform.
+>
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 > ---
-> The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git'
-> repo.
-> 
-> Changes in version 2:
-> - rebased the patch.
-> 
->  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt |    1
->  drivers/pinctrl/sh-pfc/Kconfig                                    |    5
->  drivers/pinctrl/sh-pfc/Makefile                                   |    1
->  drivers/pinctrl/sh-pfc/core.c                                     |    9
->  drivers/pinctrl/sh-pfc/core.h                                     |    1
->  drivers/pinctrl/sh-pfc/pfc-r8a7794.c                              | 3989 ++
->  6 files changed, 4006 insertions(+)
-
-[snip]
-
-> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/core.c
-> ===================================================================
-> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/core.c
-> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/core.c
-> @@ -481,6 +481,12 @@ static const struct of_device_id sh_pfc_
->  		.data = &r8a7791_pinmux_info,
->  	},
->  #endif
-> +#ifdef CONFIG_PINCTRL_PFC_R8A7794
-> +	{
-> +		.compatible = "renesas,pfc-r8a7794",
-> +		.data = &r8a7794_pinmux_info,
-> +	},
+>  arch/arm/kernel/time.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
+> index 0cc7e58..4601b1e 100644
+> --- a/arch/arm/kernel/time.c
+> +++ b/arch/arm/kernel/time.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/irq.h>
+>  #include <linux/kernel.h>
+>  #include <linux/profile.h>
+> +#include <linux/reset-controller.h>
+>  #include <linux/sched.h>
+>  #include <linux/sched_clock.h>
+>  #include <linux/smp.h>
+> @@ -117,6 +118,9 @@ void __init time_init(void)
+>         if (machine_desc->init_time) {
+>                 machine_desc->init_time();
+>         } else {
+> +#ifdef CONFIG_RESET_CONTROLLER
+> +               reset_controller_of_init();
 > +#endif
->  #ifdef CONFIG_PINCTRL_PFC_SH73A0
->  	{
->  		.compatible = "renesas,pfc-sh73a0",
-> @@ -600,6 +606,9 @@ static const struct platform_device_id s
->  #ifdef CONFIG_PINCTRL_PFC_R8A7791
->  	{ "pfc-r8a7791", (kernel_ulong_t)&r8a7791_pinmux_info },
+>  #ifdef CONFIG_COMMON_CLK
+>                 of_clk_init(NULL);
 >  #endif
-> +#ifdef CONFIG_PINCTRL_PFC_R8A7794
-> +	{ "pfc-r8a7794", (kernel_ulong_t)&r8a7794_pinmux_info },
-
-R-Car E2 is DT-only, so there's no need for a platform_device_id entry.
-
-> +#endif
->  #ifdef CONFIG_PINCTRL_PFC_SH7203
->  	{ "pfc-sh7203", (kernel_ulong_t)&sh7203_pinmux_info },
->  #endif
-
-[snip]
-
-> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-> ===================================================================
-> --- /dev/null
-> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-> @@ -0,0 +1,3989 @@
-> +/*
-> + * r8a7794 processor support - PFC hardware block.
-> + *
-> + * Copyright (C) 2014 Renesas Electronics Corporation
-> + * Copyright (C) 2015 Renesas Solutions Corp.
-> + * Copyright (C) 2015 Cogent  Embedded, Inc., <source@cogentembedded.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2
-> + * as published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/platform_data/gpio-rcar.h>
-> +
-> +#include "core.h"
-> +#include "sh_pfc.h"
-> +
-> +#define CPU_ALL_PORT(fn, sfx)						\
-> +	PORT_GP_32(0, fn, sfx),						\
-> +	PORT_GP_32(1, fn, sfx),						\
-> +	PORT_GP_32(2, fn, sfx),						\
-> +	PORT_GP_32(3, fn, sfx),						\
-> +	PORT_GP_32(4, fn, sfx),						\
-> +	PORT_GP_32(5, fn, sfx),						\
-> +	PORT_GP_32(6, fn, sfx)
-
-If I'm not mistaken port GP1 has 26 pins only, GP5 28 pins and GP6 26 pins.
-
-[snip]
-
-I haven't checked all pins in details, but the pin groups look sensible to me.
-
--- 
-Regards,
-
-Laurent Pinchart
-
+> --
+> 1.9.1
+>
