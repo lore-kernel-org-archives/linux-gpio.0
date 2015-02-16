@@ -1,36 +1,113 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: Remove non existing GPIO pins
-Date: Mon, 16 Feb 2015 20:59:11 +0100
-Message-ID: <CAMuHMdVEK7SaiqXQfv6fn0gJ5UExob9Ee3RZwQVEUbM=cVvjdg@mail.gmail.com>
-References: <1424115661-21928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<1424115661-21928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] sh-pfc: r8a7794: add MMCIF pin groups
+Date: Tue, 17 Feb 2015 01:33:14 +0300
+Message-ID: <2352429.FfRv9a1MoB@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1424115661-21928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:44778 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751541AbbBPWdT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Feb 2015 17:33:19 -0500
+Received: by lams18 with SMTP id s18so32500722lam.11
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Feb 2015 14:33:17 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
+Cc: shinobu.uehara.xc@renesas.com
 
-Hi Laurent,
+From: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
 
-On Mon, Feb 16, 2015 at 8:41 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> GPIO banks 1 and 7 are missing pins 26 to 31. Remove them.
+Add MMCIF pin groups to R8A7794 PFC driver.
 
-BTW, one intriguing thing is that the description for GPSR7 seems to suggest
-that GP-7-26 to GP-7-31 do exist, but cannot be configured for a peripheral
-function. But I cannot find an actual pin on the chip's package these GPIOs
-are connected to.
+Signed-off-by: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
+[Sergei: rebased, renamed, added changelog.]
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo
+plus the R8A7794 PFC support patch posted last week.
 
-                        Geert
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   46 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -1900,6 +1900,40 @@ static const unsigned int intc_irq9_pins
+ static const unsigned int intc_irq9_mux[] = {
+ 	IRQ9_MARK,
+ };
++/* - MMCIF ------------------------------------------------------------------ */
++static const unsigned int mmc_data1_pins[] = {
++	/* D[0] */
++	RCAR_GP_PIN(6, 18),
++};
++static const unsigned int mmc_data1_mux[] = {
++	MMC_D0_MARK,
++};
++static const unsigned int mmc_data4_pins[] = {
++	/* D[0:3] */
++	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
++	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
++};
++static const unsigned int mmc_data4_mux[] = {
++	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
++};
++static const unsigned int mmc_data8_pins[] = {
++	/* D[0:7] */
++	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
++	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
++	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
++	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
++};
++static const unsigned int mmc_data8_mux[] = {
++	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
++	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_MARK, MMC_D7_MARK,
++};
++static const unsigned int mmc_ctrl_pins[] = {
++	/* CLK, CMD */
++	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 17),
++};
++static const unsigned int mmc_ctrl_mux[] = {
++	MMC_CLK_MARK, MMC_CMD_MARK,
++};
+ /* - MSIOF0 ----------------------------------------------------------------- */
+ static const unsigned int msiof0_clk_pins[] = {
+ 	/* SCK */
+@@ -2664,6 +2698,10 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(intc_irq7),
+ 	SH_PFC_PIN_GROUP(intc_irq8),
+ 	SH_PFC_PIN_GROUP(intc_irq9),
++	SH_PFC_PIN_GROUP(mmc_data1),
++	SH_PFC_PIN_GROUP(mmc_data4),
++	SH_PFC_PIN_GROUP(mmc_data8),
++	SH_PFC_PIN_GROUP(mmc_ctrl),
+ 	SH_PFC_PIN_GROUP(msiof0_clk),
+ 	SH_PFC_PIN_GROUP(msiof0_sync),
+ 	SH_PFC_PIN_GROUP(msiof0_ss1),
+@@ -2850,6 +2888,13 @@ static const char * const intc_groups[]
+ 	"intc_irq9",
+ };
+ 
++static const char * const mmc_groups[] = {
++	"mmc_data1",
++	"mmc_data4",
++	"mmc_data8",
++	"mmc_ctrl",
++};
++
+ static const char * const msiof0_groups[] = {
+ 	"msiof0_clk",
+ 	"msiof0_sync",
+@@ -3016,6 +3061,7 @@ static const struct sh_pfc_function pinm
+ 	SH_PFC_FUNCTION(i2c3),
+ 	SH_PFC_FUNCTION(i2c4),
+ 	SH_PFC_FUNCTION(intc),
++	SH_PFC_FUNCTION(mmc),
+ 	SH_PFC_FUNCTION(msiof0),
+ 	SH_PFC_FUNCTION(msiof1),
+ 	SH_PFC_FUNCTION(msiof2),
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
