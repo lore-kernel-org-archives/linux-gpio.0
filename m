@@ -1,90 +1,72 @@
-From: =?windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH 06/14] drivers: reset: Add STM32 reset driver
-Date: Mon, 16 Feb 2015 00:59:18 +0100
-Message-ID: <54E132D6.6010608@suse.de>
-References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com> <1423763164-5606-7-git-send-email-mcoquelin.stm32@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFC] gpio: rcar: Add clock support
+Date: Mon, 16 Feb 2015 09:48:21 +0100
+Message-ID: <CAMuHMdXCAQTqD-UHB=uLgPNMc7RbDnOkLbLcXXyiM140EzsbxA@mail.gmail.com>
+References: <1424015182-20447-1-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:52005 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751546AbbBOX70 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 15 Feb 2015 18:59:26 -0500
-In-Reply-To: <1423763164-5606-7-git-send-email-mcoquelin.stm32@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1424015182-20447-1-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>, Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, Kees
 
-Am 12.02.2015 um 18:45 schrieb Maxime Coquelin:
-> The STM32 MCUs family IP can be reset by accessing some shared regist=
-ers.
->=20
-> The specificity is that some reset lines are used by the timers.
-> At timer initialization time, the timer has to be reset, that's why
-> we cannot use a regular driver.
->=20
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> ---
->  .../devicetree/bindings/reset/st,stm32-reset.txt   |  19 ++++
->  drivers/reset/Makefile                             |   1 +
->  drivers/reset/reset-stm32.c                        | 124 +++++++++++=
-++++++++++
->  3 files changed, 144 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/st,stm32-=
-reset.txt
->  create mode 100644 drivers/reset/reset-stm32.c
->=20
-> diff --git a/Documentation/devicetree/bindings/reset/st,stm32-reset.t=
-xt b/Documentation/devicetree/bindings/reset/st,stm32-reset.txt
-> new file mode 100644
-> index 0000000..add1298
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/st,stm32-reset.txt
-> @@ -0,0 +1,19 @@
-> +STMicroelectronics STM32 Peripheral Reset Controller
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
+Hi Kaneko-san, Matsuoka-san,
+
+On Sun, Feb 15, 2015 at 4:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>
+> The clock of GPIO is an initial value of enable. However,
+> since correction which sets the clock to disable was added
+> by the boot loader, the clock control was added.
+
+Thanks for your patch!
+
+Are you sure you this is really needed to enable the GPIO module clocks?
+
+While I'm still using the original U-Boot that doesn't disable (almost) all
+MSTP clocks, I do use my own early startup code that disables (almost) all
+MSTP clocks to make sure I don't miss enabling any clocks, and the GPIO
+clocks are enabled by the call to pm_runtime_get_sync() in gpio_rcar_probe(),
+added in commit df0c6c80232f ("gpio: rcar: Add minimal runtime PM support").
+
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index c49522e..6d4a0bc 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+
+> @@ -367,6 +369,13 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+>
+>         platform_set_drvdata(pdev, p);
+>
+> +       p->clk = devm_clk_get(&pdev->dev, NULL);
+> +       if (IS_ERR(p->clk)) {
+> +               dev_err(&pdev->dev, "failed to get access to GPIO clock\n");
+> +               return PTR_ERR(p->clk);
+> +       }
+> +       clk_prepare_enable(p->clk);
 > +
-> +Please also refer to reset.txt in this directory for common reset
-> +controller binding usage.
-> +
-> +Required properties:
-> +- compatible: Should be "st,stm32-reset"
-> +- reg: should be register base and length as documented in the
-> +  datasheet
-> +- #reset-cells: 1, see below
-> +
-> +example:
-> +
-> +reset_ahb1: reset@40023810 {
-> +	#reset-cells =3D <1>;
-> +	compatible =3D "st,stm32-reset";
-> +	reg =3D <0x40023810 0x4>;
-> +};
-[snip]
+>         pm_runtime_enable(dev);
+>         pm_runtime_get_sync(dev);
 
-RM0090 has two different chapters on the RCC IP:
-* Reset and clock control for STM32F42xxx and STM32F43xxx (RCC)
-* Reset and clock control for STM32F405xx/07xx and STM32F415xx/17xx(RCC=
-)
+With some extra debugging code on Koelsch:
 
-I therefore feel it is wrong to use "stm32-" here; instead I used
-"st,stm32f429-rcc" (also relates to 12/14 discussion). This may apply t=
-o
-other identifiers, too.
+    gpio_rcar_probe:370
+--> MSTP gpio0 ON
+    gpio_rcar_probe:373
+    gpiochip_find_base: found new base at 992
+    GPIO chip e6050000.gpio: created GPIO range 0->31 ==> e6060000.pfc PIN 0->31
+    gpiochip_add: registered GPIOs 992 to 1023 on device: e6050000.gpio
+    gpio_rcar e6050000.gpio: driving 32 GPIOs
 
-Regards,
-Andreas
+Gr{oetje,eeting}s,
 
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Felix Imend=F6rffer, Jane Smithard, Jennifer Guild, Dilip Upmanyu,
-Graham Norton; HRB 21284 (AG N=FCrnberg)
+                        Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
