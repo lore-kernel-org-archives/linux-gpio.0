@@ -1,70 +1,66 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] gpio: omap: use raw locks for locking
-Date: Mon, 16 Feb 2015 09:54:24 +0100
-Message-ID: <CABxcv=mikHw7Tp+9e+=4xbjNqKKAoN=CkszPEzKo0jBWz+wenQ@mail.gmail.com>
-References: <1423757436-18986-1-git-send-email-bigeasy@linutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] sh-pfc: add R8A7794 PFC support
+Date: Mon, 16 Feb 2015 09:57:09 +0100
+Message-ID: <CAMuHMdX-U-JdWhsg9qiA8okKOjQxqLmusah3kcJbzSjzvhbmnA@mail.gmail.com>
+References: <5262485.fuAdzVmykl@wasted.cogentembedded.com>
+	<1974835.KMEIIiPVsr@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f53.google.com ([74.125.82.53]:33357 "EHLO
-	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751827AbbBPIy0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Feb 2015 03:54:26 -0500
-Received: by mail-wg0-f53.google.com with SMTP id a1so11383944wgh.12
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Feb 2015 00:54:25 -0800 (PST)
-In-Reply-To: <1423757436-18986-1-git-send-email-bigeasy@linutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1974835.KMEIIiPVsr@avalon>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
 
-Hello Sebastian,
-
-Thanks a lot for your patch.
-
-On Thu, Feb 12, 2015 at 5:10 PM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> This patch converts gpio_bank.lock from a spin_lock into a
-> raw_spin_lock. The call path to access this lock is always under a
-> raw_spin_lock, for instance
-> - __setup_irq() holds &desc->lock with irq off
->   + __irq_set_trigger()
->    + omap_gpio_irq_type()
+On Sun, Feb 15, 2015 at 5:06 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>> --- /dev/null
+>> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+>> @@ -0,0 +1,3989 @@
+>> +/*
+>> + * r8a7794 processor support - PFC hardware block.
+>> + *
+>> + * Copyright (C) 2014 Renesas Electronics Corporation
+>> + * Copyright (C) 2015 Renesas Solutions Corp.
+>> + * Copyright (C) 2015 Cogent  Embedded, Inc., <source@cogentembedded.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2
+>> + * as published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/platform_data/gpio-rcar.h>
+>> +
+>> +#include "core.h"
+>> +#include "sh_pfc.h"
+>> +
+>> +#define CPU_ALL_PORT(fn, sfx)                                                \
+>> +     PORT_GP_32(0, fn, sfx),                                         \
+>> +     PORT_GP_32(1, fn, sfx),                                         \
+>> +     PORT_GP_32(2, fn, sfx),                                         \
+>> +     PORT_GP_32(3, fn, sfx),                                         \
+>> +     PORT_GP_32(4, fn, sfx),                                         \
+>> +     PORT_GP_32(5, fn, sfx),                                         \
+>> +     PORT_GP_32(6, fn, sfx)
 >
-> - handle_level_irq() (runs with irqs off therefore raw locks)
->   + mask_ack_irq()
->    + omap_gpio_mask_irq()
->
+> If I'm not mistaken port GP1 has 26 pins only, GP5 28 pins and GP6 26 pins.
 
-Agreed that raw_spin_lock should be used instead of spin_lock since
-afaiu those are converted to a rt-mutex in PREEMPT_RT and so they
-might sleep.
+That's correct.
 
-> This fixes the obvious backtrace on -RT. However I noticed two cases
-> where it looks wrong and this is not limited to -RT:
-> - omap_gpio_irq_type() is called with IRQ off and has an conditional
->   call to pm_runtime_get_sync() which may sleep. Either it may happen or
->   it may not happen but pm_runtime_get_sync() should not be called in an
->   atomic section.
->
-> - omap_gpio_debounce() is holding the lock with IRQs off.
->   + omap2_set_gpio_debounce()
->    + clk_prepare_enable()
->     + clk_prepare() this one might sleep.
->   The number of users of gpiod_set_debounce() / gpio_set_debounce()
->   looks low but still this is not good.
->
+If that has to be reflected in the CPU_ALL_PORT() macro, a few existing pfc
+drivers should be modified, too:
+  - on r8a7790, port GP1 and GP2 have 30 pins only,
+  - on r8a7791, port GP1 has 26 pins only.
 
-Right, those are bugs regardless of PREEMPT_RT or not as you said.
-I'll add it to my TODO list, thanks for finding those.
+Gr{oetje,eeting}s,
 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  drivers/gpio/gpio-omap.c | 78 ++++++++++++++++++++++++------------------------
->  1 file changed, 39 insertions(+), 39 deletions(-)
->
+                        Geert
 
-Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Best regards,
-Javier
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
