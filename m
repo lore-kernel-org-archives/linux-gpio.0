@@ -1,58 +1,67 @@
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7790: Remove non existing GPIO pins
-Date: Mon, 16 Feb 2015 21:41:00 +0200
-Message-ID: <1424115661-21928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42036 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751459AbbBPTkL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Feb 2015 14:40:11 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2] sh-pfc: add R8A7794 PFC support
+Date: Mon, 16 Feb 2015 21:41:31 +0200
+Message-ID: <33139732.2SupcF0KCS@avalon>
+References: <5262485.fuAdzVmykl@wasted.cogentembedded.com> <1974835.KMEIIiPVsr@avalon> <CAMuHMdX-U-JdWhsg9qiA8okKOjQxqLmusah3kcJbzSjzvhbmnA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdX-U-JdWhsg9qiA8okKOjQxqLmusah3kcJbzSjzvhbmnA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-sh@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-GPIO banks 1 and 2 are missing pins 30 and 31. Remove them.
+Hi Geert,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+On Monday 16 February 2015 09:57:09 Geert Uytterhoeven wrote:
+> On Sun, Feb 15, 2015 at 5:06 PM, Laurent Pinchart wrote:
+> >> --- /dev/null
+> >> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+> >> @@ -0,0 +1,3989 @@
+> >> +/*
+> >> + * r8a7794 processor support - PFC hardware block.
+> >> + *
+> >> + * Copyright (C) 2014 Renesas Electronics Corporation
+> >> + * Copyright (C) 2015 Renesas Solutions Corp.
+> >> + * Copyright (C) 2015 Cogent  Embedded, Inc.,
+> >> <source@cogentembedded.com>
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or modify
+> >> + * it under the terms of the GNU General Public License version 2
+> >> + * as published by the Free Software Foundation.
+> >> + */
+> >> +
+> >> +#include <linux/kernel.h>
+> >> +#include <linux/platform_data/gpio-rcar.h>
+> >> +
+> >> +#include "core.h"
+> >> +#include "sh_pfc.h"
+> >> +
+> >> +#define CPU_ALL_PORT(fn, sfx)                                           
+> >>     \ +     PORT_GP_32(0, fn, sfx),                                     
+> >>    \ +     PORT_GP_32(1, fn, sfx),                                      
+> >>   \ +     PORT_GP_32(2, fn, sfx),                                       
+> >>  \ +     PORT_GP_32(3, fn, sfx),                                        
+> >> \ +     PORT_GP_32(4, fn, sfx),                                        
+> >> \ +     PORT_GP_32(5, fn, sfx),                                        
+> >> \ +     PORT_GP_32(6, fn, sfx)
+> > 
+> > If I'm not mistaken port GP1 has 26 pins only, GP5 28 pins and GP6 26
+> > pins.
+> 
+> That's correct.
+> 
+> If that has to be reflected in the CPU_ALL_PORT() macro, a few existing pfc
+> drivers should be modified, too:
+>   - on r8a7790, port GP1 and GP2 have 30 pins only,
+>   - on r8a7791, port GP1 has 26 pins only.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index 80c1843bb6ad..ee8f52c073f5 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -27,10 +27,27 @@
- #include "core.h"
- #include "sh_pfc.h"
- 
-+#define PORT_GP_30(bank, fn, sfx)					\
-+	PORT_GP_1(bank, 0,  fn, sfx), PORT_GP_1(bank, 1,  fn, sfx),	\
-+	PORT_GP_1(bank, 2,  fn, sfx), PORT_GP_1(bank, 3,  fn, sfx),	\
-+	PORT_GP_1(bank, 4,  fn, sfx), PORT_GP_1(bank, 5,  fn, sfx),	\
-+	PORT_GP_1(bank, 6,  fn, sfx), PORT_GP_1(bank, 7,  fn, sfx),	\
-+	PORT_GP_1(bank, 8,  fn, sfx), PORT_GP_1(bank, 9,  fn, sfx),	\
-+	PORT_GP_1(bank, 10, fn, sfx), PORT_GP_1(bank, 11, fn, sfx),	\
-+	PORT_GP_1(bank, 12, fn, sfx), PORT_GP_1(bank, 13, fn, sfx),	\
-+	PORT_GP_1(bank, 14, fn, sfx), PORT_GP_1(bank, 15, fn, sfx),	\
-+	PORT_GP_1(bank, 16, fn, sfx), PORT_GP_1(bank, 17, fn, sfx),	\
-+	PORT_GP_1(bank, 18, fn, sfx), PORT_GP_1(bank, 19, fn, sfx),	\
-+	PORT_GP_1(bank, 20, fn, sfx), PORT_GP_1(bank, 21, fn, sfx),	\
-+	PORT_GP_1(bank, 22, fn, sfx), PORT_GP_1(bank, 23, fn, sfx),	\
-+	PORT_GP_1(bank, 24, fn, sfx), PORT_GP_1(bank, 25, fn, sfx),	\
-+	PORT_GP_1(bank, 26, fn, sfx), PORT_GP_1(bank, 27, fn, sfx),	\
-+	PORT_GP_1(bank, 28, fn, sfx), PORT_GP_1(bank, 29, fn, sfx)
-+
- #define CPU_ALL_PORT(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
--	PORT_GP_32(1, fn, sfx),						\
--	PORT_GP_32(2, fn, sfx),						\
-+	PORT_GP_30(1, fn, sfx),						\
-+	PORT_GP_30(2, fn, sfx),						\
- 	PORT_GP_32(3, fn, sfx),						\
- 	PORT_GP_32(4, fn, sfx),						\
- 	PORT_GP_32(5, fn, sfx)
+Done :-)
+
 -- 
-2.0.5
+Regards,
+
+Laurent Pinchart
 
