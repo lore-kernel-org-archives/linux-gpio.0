@@ -1,99 +1,35 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into
- request/release resources methods
-Date: Wed, 18 Feb 2015 11:41:00 +0100
-Message-ID: <20150218104100.GC32600@odux.rfo.atmel.com>
-References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: of: allow of_gpiochip_find_and_xlate to find
+ more than one chip per node
+Date: Wed, 18 Feb 2015 18:15:10 +0100
+Message-ID: <CACRpkdZ1Enp5vKJk=9VwDrOaM+n_mAoX_jSBcLBbZEQpsyYGeA@mail.gmail.com>
+References: <1423558107-23264-1-git-send-email-hans.holmberg@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:32983 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750981AbbBRKlR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Feb 2015 05:41:17 -0500
-Content-Disposition: inline
-In-Reply-To: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1423558107-23264-1-git-send-email-hans.holmberg@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hans Holmberg <hans.holmberg@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, cochran@lexmark.com, Daniel Mack <zonque@gmail.com>, tylerwhall@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Sun, Feb 08, 2015 at 07:23:42PM +0100, Boris Brezillon wrote:
-> The gpiochip_lock_as_irq call can fail and return an error, while the
-> irq_startup is not expected to fail (returns an unsigned int which is not
-> checked by irq core code).
-> 
-> irq_request/release_resources functions have been created to address this
-> problem.
-> 
-> Move gpiochip_lock/unlock_as_irq calls into
-> irq_request/release_resources functions to prevent using a gpio as an irq
-> if the gpiochip_lock_as_irq call failed.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+On Tue, Feb 10, 2015 at 9:48 AM, Hans Holmberg <hans.holmberg@intel.com> wrote:
 
-It sounds good for me, you can add my
+> The change:
+>
+> 7b8792bbdffdff3abda704f89c6a45ea97afdc62
+> gpiolib: of: Correct error handling in of_get_named_gpiod_flags
+>
+> assumed that only one gpio-chip is registred per of-node.
+> Some drivers register more than one chip per of-node, so
+> adjust the matching function of_gpiochip_find_and_xlate to
+> not stop looking for chips if a node-match is found and
+> the translation fails.
+>
+> Signed-off-by: Hans Holmberg <hans.holmberg@intel.com>
 
-Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+OK this patch applied for stable and pushed for testing
+in -next.
 
-> ---
->  drivers/pinctrl/pinctrl-at91.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-> index f4cd0b9..a481406 100644
-> --- a/drivers/pinctrl/pinctrl-at91.c
-> +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -1477,28 +1477,25 @@ static void gpio_irq_ack(struct irq_data *d)
->  	/* the interrupt is already cleared before by reading ISR */
->  }
->  
-> -static unsigned int gpio_irq_startup(struct irq_data *d)
-> +static int gpio_irq_request_res(struct irq_data *d)
->  {
->  	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
->  	unsigned	pin = d->hwirq;
->  	int ret;
->  
->  	ret = gpiochip_lock_as_irq(&at91_gpio->chip, pin);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(at91_gpio->chip.dev, "unable to lock pind %lu IRQ\n",
->  			d->hwirq);
-> -		return ret;
-> -	}
-> -	gpio_irq_unmask(d);
-> -	return 0;
-> +
-> +	return ret;
->  }
->  
-> -static void gpio_irq_shutdown(struct irq_data *d)
-> +static void gpio_irq_release_res(struct irq_data *d)
->  {
->  	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
->  	unsigned	pin = d->hwirq;
->  
-> -	gpio_irq_mask(d);
->  	gpiochip_unlock_as_irq(&at91_gpio->chip, pin);
->  }
->  
-> @@ -1577,8 +1574,8 @@ void at91_pinctrl_gpio_resume(void)
->  static struct irq_chip gpio_irqchip = {
->  	.name		= "GPIO",
->  	.irq_ack	= gpio_irq_ack,
-> -	.irq_startup	= gpio_irq_startup,
-> -	.irq_shutdown	= gpio_irq_shutdown,
-> +	.irq_request_resources = gpio_irq_request_res,
-> +	.irq_release_resources = gpio_irq_release_res,
->  	.irq_disable	= gpio_irq_mask,
->  	.irq_mask	= gpio_irq_mask,
->  	.irq_unmask	= gpio_irq_unmask,
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Yours,
+Linus Walleij
