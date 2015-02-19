@@ -1,92 +1,74 @@
-From: Benoit Parrot <bparrot@ti.com>
-Subject: Re: [Patch v6 0/2] gpio: add GPIO hogging mechanism
-Date: Wed, 18 Feb 2015 11:23:42 -0600
-Message-ID: <20150218172341.GA3851@ti.com>
-References: <AAE35E953C746D4784A1A0C604EFEA714DFBD819@DLEE10.ent.ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <AAE35E953C746D4784A1A0C604EFEA714DFBD819@DLEE10.ent.ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>, Benoit Parrot <bparrot@ti.com>
+From: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+Subject: [PATCH] gpio: tps65912: fix wrong container_of arguments
+Date: Thu, 19 Feb 2015 01:52:25 +0000
+Message-ID: <1424310745-28101-1-git-send-email-nicolassaenzj@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:57150 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751382AbbBSBwj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Feb 2015 20:52:39 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
 
-Gentle ping.
+The gpio_chip operations receive a pointer the gpio_chip struct which is
+contained in the driver's private struct, yet the container_of call in those
+functions point to the mfd struct defined in include/linux/mfd/tps65912.h.
 
-Is there any chance this will make it in 3.21?
+Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+---
+ drivers/gpio/gpio-tps65912.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Benoit
+diff --git a/drivers/gpio/gpio-tps65912.c b/drivers/gpio/gpio-tps65912.c
+index 472fb5b..9cdbc0c 100644
+--- a/drivers/gpio/gpio-tps65912.c
++++ b/drivers/gpio/gpio-tps65912.c
+@@ -26,9 +26,12 @@ struct tps65912_gpio_data {
+ 	struct gpio_chip gpio_chip;
+ };
+ 
++#define to_tgd(gc) container_of(gc, struct tps65912_gpio_data, gpio_chip)
++
+ static int tps65912_gpio_get(struct gpio_chip *gc, unsigned offset)
+ {
+-	struct tps65912 *tps65912 = container_of(gc, struct tps65912, gpio);
++	struct tps65912_gpio_data *tps65912_gpio = to_tgd(gc);
++	struct tps65912 *tps65912 = tps65912_gpio->tps65912;
+ 	int val;
+ 
+ 	val = tps65912_reg_read(tps65912, TPS65912_GPIO1 + offset);
+@@ -42,7 +45,8 @@ static int tps65912_gpio_get(struct gpio_chip *gc, unsigned offset)
+ static void tps65912_gpio_set(struct gpio_chip *gc, unsigned offset,
+ 			      int value)
+ {
+-	struct tps65912 *tps65912 = container_of(gc, struct tps65912, gpio);
++	struct tps65912_gpio_data *tps65912_gpio = to_tgd(gc);
++	struct tps65912 *tps65912 = tps65912_gpio->tps65912;
+ 
+ 	if (value)
+ 		tps65912_set_bits(tps65912, TPS65912_GPIO1 + offset,
+@@ -55,7 +59,8 @@ static void tps65912_gpio_set(struct gpio_chip *gc, unsigned offset,
+ static int tps65912_gpio_output(struct gpio_chip *gc, unsigned offset,
+ 				int value)
+ {
+-	struct tps65912 *tps65912 = container_of(gc, struct tps65912, gpio);
++	struct tps65912_gpio_data *tps65912_gpio = to_tgd(gc);
++	struct tps65912 *tps65912 = tps65912_gpio->tps65912;
+ 
+ 	/* Set the initial value */
+ 	tps65912_gpio_set(gc, offset, value);
+@@ -66,7 +71,8 @@ static int tps65912_gpio_output(struct gpio_chip *gc, unsigned offset,
+ 
+ static int tps65912_gpio_input(struct gpio_chip *gc, unsigned offset)
+ {
+-	struct tps65912 *tps65912 = container_of(gc, struct tps65912, gpio);
++	struct tps65912_gpio_data *tps65912_gpio = to_tgd(gc);
++	struct tps65912 *tps65912 = tps65912_gpio->tps65912;
+ 
+ 	return tps65912_clear_bits(tps65912, TPS65912_GPIO1 + offset,
+ 								GPIO_CFG_MASK);
+-- 
+2.1.0
 
-Parrot, Benoit <bparrot@ti.com> wrote on Wed [2015-Feb-02 17:44:43 -0600]:
-> This patch set re-introduces the gpio hogging concept first
-> presented by Boris Brezillion.
-> This patch set provides a way to initially configure specific GPIO
-> when the GPIO controller is probed.
->  
-> The actual DT scanning to collect the GPIO specific data is performed
-> as part of of_gpiochip_add().
->  
-> The purpose of this is to allow specific GPIOs to be configured
-> without any driver specific code.
-> This is particularly useful because board design are getting
-> increasingly complex and given SoC pins can now have more
-> than 10 mux values a lot of connections are now dependent on
-> external IO muxes to switch various modes.
->  
-> Specific drivers should not necessarily need to be aware of
-> what accounts to a specific board implementation. This board level
-> "description" should be best kept as part of the dts file.
->  
-> Changes since v5:
-> * Addressed review comment from Linus Walleij
-> * Replace "state" property back with separate boolean properties
-> * Renamed helper function
-> * Refactored pr_* calls to remove "__func__"
->  
-> Changes since v4:
-> * Addressed review comments from Alexandre Courbot
->  
-> Changes since v3:
-> * Relocated the non-DT "hog" function to gpiolib.c.
-> * Rename some of the function to be clearer and remove _ prefixes.
-> * Replace the gpiod_request/gpiod_put usage with
->    gpiochip_request_own_desc/free_own_desc version instead.
-> * Refactor some of the logic to better handle error condition/reporting
-> * Renamed the "direction" DT properties to "state".
->  
-> Changes since v2:
-> * Refactor the gpio-hog mechanism to split the DT related action
->    from the actual "hogging" operation.
-> * This allows non-DT providers to implement hogs as well.
-> * Added FLAG_IS_HOGGED to mark hogged gpio and make gpiochip removal
->    able to release hogged gpio.
-> * Similarly to the hogging, the cleanup is performed as part of
->    of_gpiochip_remove
->  
-> Changes since v1:
-> * Split the devicetree bindings documentation in its own patch.
-> * Refactor the gpio-hog mechanism as private functions meant to
->    be to invoked from of_gpiochip_add().
->  
->  
-> Benoit Parrot (2):
->   gpio: add GPIO hogging mechanism
->   gpio: Document GPIO hogging mechanism
->  
-> Documentation/devicetree/bindings/gpio/gpio.txt |  30 ++++++
-> drivers/gpio/gpiolib-of.c                       | 111 +++++++++++++++++++++
-> drivers/gpio/gpiolib.c                          | 124 ++++++++++++++++++++----
-> drivers/gpio/gpiolib.h                          |   3 +
-> 4 files changed, 249 insertions(+), 19 deletions(-)
->  
-> --
-> 1.8.5.1
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->  
-> 
