@@ -1,85 +1,44 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 02/14] ARM: ARMv7M: Enlarge vector table to 256 entries
-Date: Thu, 19 Feb 2015 10:35:49 -0600
-Message-ID: <CAL_Jsq+WPbUE7mqmyfi2kUreis0cXM2EC8dJLTD3HOBXsFAzuA@mail.gmail.com>
-References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com>
- <1423763164-5606-3-git-send-email-mcoquelin.stm32@gmail.com>
- <CAMuHMdWESyPktOSBfVoZCb35stUbhNpbbpzSW4JfORdObgg5jw@mail.gmail.com>
- <CALszF6BDa9pUb534YN2z9DbYA+hPCnG8XYy5YbjJwSiseKz4xg@mail.gmail.com>
- <CAL_Jsq+rHFPXmWqByvdG435tpbO_+ODByiMcdxboULYpUfDUmg@mail.gmail.com> <CALszF6DyVqaE6DLKSQHeuYWgSChzhEtCbmOsbjoTkvipquBivw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Thu, 19 Feb 2015 17:52:41 +0100
+Message-ID: <CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
+References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
+	<20150130234552.GA20407@sysresccd>
+	<20150131083300.GZ21469@belle.intranet.vanheusden.com>
+	<CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+	<20150203090325.GA29693@deathray>
+	<CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+	<20150219085303.GI21469@belle.intranet.vanheusden.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CALszF6DyVqaE6DLKSQHeuYWgSChzhEtCbmOsbjoTkvipquBivw@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>R
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:47314 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751903AbbBSQwl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Feb 2015 11:52:41 -0500
+Received: by mail-ob0-f182.google.com with SMTP id nt9so16149356obb.13
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Feb 2015 08:52:41 -0800 (PST)
+In-Reply-To: <20150219085303.GI21469@belle.intranet.vanheusden.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: folkert <folkert@vanheusden.com>
+Cc: Michael Welling <mwelling@ieee.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 19, 2015 at 10:13 AM, Maxime Coquelin
-<mcoquelin.stm32@gmail.com> wrote:
-> Hi Rob,
->
-> 2015-02-15 23:42 GMT+01:00 Rob Herring <robherring2@gmail.com>:
->> On Fri, Feb 13, 2015 at 2:42 AM, Maxime Coquelin
->> <mcoquelin.stm32@gmail.com> wrote:
->>> Hi Geert,
->>>
->>> 2015-02-12 21:34 GMT+01:00 Geert Uytterhoeven <geert@linux-m68k.org>:
->>>> On Thu, Feb 12, 2015 at 6:45 PM, Maxime Coquelin
->>>> <mcoquelin.stm32@gmail.com> wrote:
->>>>> From Cortex-M4 and M7 reference manuals, the nvic supports up to 240
->>>>> interrupts. So the number of entries in vectors table is 256.
->>>>>
->>>>> This patch adds the missing entries, and change the alignement, so that
->>>>> vector_table remains naturally aligned.
->>>>
->>>> Shouldn't this depend on ARCH_STM32, or some other M4 or M7 specific
->>>> Kconfig option, to avoid wasting the space on other CPUs?
->>>
->>> Actually, the STM32F429 has 90 interrupts, so it would need 106
->>> entries in the vector table.
->>> The maximum of supported interrupts is not only for Cortex-M4 and M7,
->>> this is also true for Cortex-M3.
->>>
->>> I see two possibilities:
->>>  1 - We declare the vector table for the maximum supported number of
->>> IRQs, as this patch does.
->>>         - Pro: it will be functionnal with all Cortex-M MCUs
->>>         - Con: Waste of less than 1KB for memory
->>
->> The waste depends on the alignment size as well and could be up to
->> almost 2KB worst case. It varies depending on the padding. We should
->> try to place it so it always aligned and the wasted space is
->> minimized.
->
-> Sorry, I just notice I didn't replied to all. That was my question:
->
-> Do you mean by forcing its location in the arch/arm/kernel/vmlinux.lds.S file?
+On Thu, Feb 19, 2015 at 9:53 AM, folkert <folkert@vanheusden.com> wrote:
 
-Yes, that is one way. Or we might be able to just be smarter about how
-we arrange the code. The first thing to do is figure out how much
-space we waste and what comes before it.
+> I also think that this interface is cumbersome. I did not measure it(!)
+> but I think adding this open/seek + read construction may add all kinds
+> of overhead. Especially since my use-case requires the lowest latency
+> possible. Not to forget that conversion of the measured value to ascii
+> and back.
 
-Rob
+Yes this interface sucks.
 
->
-> Regards,
-> Maxime
->
->>
->> Rob
->>
->>>  2 - We introduce a config flag that provides the number of interrupts
->>>         - Pro: No more memory waste
->>>         - Con: Need to declare a per MCU model config flag.
->>>
->>> Then, regarding the natural alignment, is there a way to ensure it
->>> depending on the value of a config flag?
->>> Or we should keep it at the maximum value possible?
->>>
->>> Any feedback will be appreciated, especially from Uwe who maintains
->>> the efm32 machine.
->>>
->>> Kind regards,
->>> Maxime
+The tentative long-term plan is to replace it with something like
+a char device that can handle a quick context switch and also
+issuing calls to set multiple pins at once, as we now have an
+in-kernel interface for that (that I totally refuse to support from
+sysfs).
+
+Yours,
+Linus Walleij
