@@ -1,81 +1,80 @@
-From: folkert <folkert@vanheusden.com>
-Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
-Date: Thu, 19 Feb 2015 09:53:03 +0100
-Message-ID: <20150219085303.GI21469@belle.intranet.vanheusden.com>
-References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
- <20150130234552.GA20407@sysresccd>
- <20150131083300.GZ21469@belle.intranet.vanheusden.com>
- <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
- <20150203090325.GA29693@deathray>
- <CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH 02/14] ARM: ARMv7M: Enlarge vector table to 256 entries
+Date: Thu, 19 Feb 2015 17:13:32 +0100
+Message-ID: <CALszF6DyVqaE6DLKSQHeuYWgSChzhEtCbmOsbjoTkvipquBivw@mail.gmail.com>
+References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1423763164-5606-3-git-send-email-mcoquelin.stm32@gmail.com>
+	<CAMuHMdWESyPktOSBfVoZCb35stUbhNpbbpzSW4JfORdObgg5jw@mail.gmail.com>
+	<CALszF6BDa9pUb534YN2z9DbYA+hPCnG8XYy5YbjJwSiseKz4xg@mail.gmail.com>
+	<CAL_Jsq+rHFPXmWqByvdG435tpbO_+ODByiMcdxboULYpUfDUmg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from keetweej.vanheusden.com ([80.101.105.103]:37976 "EHLO
-	keetweej.vanheusden.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752335AbbBSIxG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Feb 2015 03:53:06 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+Received: from mail-we0-f180.google.com ([74.125.82.180]:41570 "EHLO
+	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751996AbbBSQNe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Feb 2015 11:13:34 -0500
+In-Reply-To: <CAL_Jsq+rHFPXmWqByvdG435tpbO_+ODByiMcdxboULYpUfDUmg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Welling <mwelling@ieee.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Rob Herring <robherring2@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>R
 
-> >> >> Try using lseek before reading the data after the poll.
-> >> >>
-> >> >> EX.
-> >> >>       if (fdset[0].revents & POLLPRI) {
-> >> >>               lseek(fdset[0].fd, 0, SEEK_SET);
-> >> >>               len =3D read(fdset[0].fd, buf, MAX_BUF);
-> >> >>               .
-> >> >>               .
-> >> >>       }
-> >> >>
-> >> >> See if this helps.
-> >> >
-> >> > Yes, that fixed it!
-> >>
-> >> Still, shouldn't we consider this as a regression, especially if n=
-ot
-> >> using lseek worked for kernel 3.12 and before?
-> >
-> > Perhaps this is a side effect of the sysfs to kernfs change over to=
- happened in
-> > 3.14.
-> >
-> > Looking at 'kernfs_fop_poll' my guess is that 'kernfs_get_active' i=
-s returning NULL
-> > immediately returning from the poll command and causing described b=
-ehavior.
-> >
-> > http://lxr.free-electrons.com/source/fs/kernfs/file.c#L763
->=20
-> I think this looks plausible.
-> Folkert what do you say about this?
+Hi Rob,
 
-That looks indeed to be the current situation. It worked different
-before though.
+2015-02-15 23:42 GMT+01:00 Rob Herring <robherring2@gmail.com>:
+> On Fri, Feb 13, 2015 at 2:42 AM, Maxime Coquelin
+> <mcoquelin.stm32@gmail.com> wrote:
+>> Hi Geert,
+>>
+>> 2015-02-12 21:34 GMT+01:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+>>> On Thu, Feb 12, 2015 at 6:45 PM, Maxime Coquelin
+>>> <mcoquelin.stm32@gmail.com> wrote:
+>>>> From Cortex-M4 and M7 reference manuals, the nvic supports up to 240
+>>>> interrupts. So the number of entries in vectors table is 256.
+>>>>
+>>>> This patch adds the missing entries, and change the alignement, so that
+>>>> vector_table remains naturally aligned.
+>>>
+>>> Shouldn't this depend on ARCH_STM32, or some other M4 or M7 specific
+>>> Kconfig option, to avoid wasting the space on other CPUs?
+>>
+>> Actually, the STM32F429 has 90 interrupts, so it would need 106
+>> entries in the vector table.
+>> The maximum of supported interrupts is not only for Cortex-M4 and M7,
+>> this is also true for Cortex-M3.
+>>
+>> I see two possibilities:
+>>  1 - We declare the vector table for the maximum supported number of
+>> IRQs, as this patch does.
+>>         - Pro: it will be functionnal with all Cortex-M MCUs
+>>         - Con: Waste of less than 1KB for memory
+>
+> The waste depends on the alignment size as well and could be up to
+> almost 2KB worst case. It varies depending on the padding. We should
+> try to place it so it always aligned and the wasted space is
+> minimized.
 
-I also think that this interface is cumbersome. I did not measure it(!)
-but I think adding this open/seek + read construction may add all kinds
-of overhead. Especially since my use-case requires the lowest latency
-possible. Not to forget that conversion of the measured value to ascii
-and back.
+Sorry, I just notice I didn't replied to all. That was my question:
 
+Do you mean by forcing its location in the arch/arm/kernel/vmlinux.lds.S file?
 
-=46olkert van Heusden
+Regards,
+Maxime
 
---=20
-Multitail es una herramienta flexible que permite visualizar los "log
-file" y seguir la ejecuci=F3n de comandos. Permite filtrar, a=F1adir
-colores, combinar archivos, la visualizaci=F3n de diferencias (diff-
-view), etc.  http://www.vanheusden.com/multitail/
-----------------------------------------------------------------------
-Phone: +31-6-41278122, PGP-key: 1F28D8AE, www.vanheusden.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Rob
+>
+>>  2 - We introduce a config flag that provides the number of interrupts
+>>         - Pro: No more memory waste
+>>         - Con: Need to declare a per MCU model config flag.
+>>
+>> Then, regarding the natural alignment, is there a way to ensure it
+>> depending on the value of a config flag?
+>> Or we should keep it at the maximum value possible?
+>>
+>> Any feedback will be appreciated, especially from Uwe who maintains
+>> the efm32 machine.
+>>
+>> Kind regards,
+>> Maxime
