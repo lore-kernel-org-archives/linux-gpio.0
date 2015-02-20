@@ -1,45 +1,41 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCHv2 15/15] Documentation: arm: update supported Marvell EBU processors
-Date: Fri, 20 Feb 2015 18:04:34 +0100
-Message-ID: <1424451874-25375-16-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: [PATCH v2 15/18] ARM: dts: Add ARM System timer as clockevent in armv7m
+Date: Fri, 20 Feb 2015 19:01:14 +0100
+Message-ID: <1424455277-29983-16-git-send-email-mcoquelin.stm32__12200.5419726067$1424455409$gmane$org@gmail.com>
+References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:51757 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754725AbbBTRFZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 12:05:25 -0500
-In-Reply-To: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Received: from mail-wi0-f195.google.com ([209.85.212.195]:61464 "EHLO
+	mail-wi0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932089AbbBTSCt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 13:02:49 -0500
+In-Reply-To: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: u.kleine-koenig@pengutronix.de, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will
 
-Now that we support Armada 39x, let's add this family of SoC to the
-Marvell documentation, and a reference to a link with more details
-about those processors. Unfortunately, no datasheet is publicly
-available at this time.
-
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 ---
- Documentation/arm/Marvell/README | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/armv7-m.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/arm/Marvell/README b/Documentation/arm/Marvell/README
-index 1745379..18a775d 100644
---- a/Documentation/arm/Marvell/README
-+++ b/Documentation/arm/Marvell/README
-@@ -96,6 +96,11 @@ EBU Armada family
- 	88F6820
- 	88F6828
+diff --git a/arch/arm/boot/dts/armv7-m.dtsi b/arch/arm/boot/dts/armv7-m.dtsi
+index 5a660d0..78a0549 100644
+--- a/arch/arm/boot/dts/armv7-m.dtsi
++++ b/arch/arm/boot/dts/armv7-m.dtsi
+@@ -8,6 +8,13 @@
+ 		reg = <0xe000e100 0xc00>;
+ 	};
  
-+  Armada 390/398 Flavors:
-+	88F6920
-+	88F6928
-+    Product infos: http://www.marvell.com/embedded-processors/armada-39x/
++	systick: timer@e000e010 {
++		compatible = "arm,armv7m-systick";
++		reg = <0xe000e010 0x10>;
 +
-   Armada XP Flavors:
-         MV78230
-         MV78260
++		status = "disabled";
++	};
++
+ 	soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 -- 
-2.1.0
+1.9.1
 
