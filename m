@@ -1,70 +1,216 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH v2 04/18] clocksource: Add ARM System timer driver
-Date: Fri, 20 Feb 2015 22:48:28 +0100
-Message-ID: <1424468908.24292.10.camel@x220>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	 <1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
-	 <20150220195437.GT19388@pengutronix.de>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] sh-pfc: r8a7794: add SDHI pin groups
+Date: Sat, 21 Feb 2015 02:04:53 +0300
+Message-ID: <2355038.irqYpO1ia4@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20150220195437.GT19388@pengutronix.de>
-Sender: linux-doc-owner@vger.kernel.org
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nik
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
+Cc: shinobu.uehara.xc@renesas.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 2015-02-20 at 20:54 +0100, Uwe Kleine-K=C3=B6nig wrote:
-> On Fri, Feb 20, 2015 at 07:01:03PM +0100, Maxime Coquelin wrote:
-> > This patch adds clocksource support for ARMv7-M's System timer,
-> > also known as SysTick.
-> >=20
-> > Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> > ---
-> >  drivers/clocksource/Kconfig          |  7 ++++
-> >  drivers/clocksource/Makefile         |  1 +
-> >  drivers/clocksource/armv7m_systick.c | 78 ++++++++++++++++++++++++=
-++++++++++++
-> >  3 files changed, 86 insertions(+)
-> >  create mode 100644 drivers/clocksource/armv7m_systick.c
-> >=20
-> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kcon=
-fig
-> > index fc01ec2..fb6011e 100644
-> > --- a/drivers/clocksource/Kconfig
-> > +++ b/drivers/clocksource/Kconfig
-> > @@ -124,6 +124,13 @@ config CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
-> >  	help
-> >  	 Use ARM global timer clock source as sched_clock
-> > =20
-> > +config ARMV7M_SYSTICK
-> > +	bool
-> I assume this symbol is enabled later in the series.
+From: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
 
-Yes, I noticed it was selected in 14/18 ("ARM: Add STM32 family
-machine").
+Add SDHI0/1/2 pin groups to R8A7794 PFC driver.
 
-> Would it make sense
-> to allow enabing the symbol for compile test coverage?
->=20
-> > +	select CLKSRC_OF if OF
-> What happens if ARMV7M_SYSTICK=3Dy but OF=3Dn? Doesn't the driver fai=
-l to
-> compile?
->=20
-> > +	select CLKSRC_MMIO
-> > +	help
-> > +	  This options enables support for the ARMv7M system timer unit
-> the right spelling is ARMv7-M.
+Signed-off-by: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
+[Sergei: renamed SD data pins to match the driver, rebased, renamed, added
+changelog.]
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This Kconfig entry has no prompt, so no one is going to see this text
-during make *config. Perhaps this should be made a comment. In that cas=
-e
-the right spelling should still be used.
+---
+The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo
+plus  the R8A7794 PFC support patch posted last week and the R8A7794 MMCIF pin
+group patch posted this week.
 
-Thanks,
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  153 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 153 insertions(+)
 
-
-Paul Bolle
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -2640,6 +2640,117 @@ static const unsigned int scifb2_ctrl_pi
+ static const unsigned int scifb2_ctrl_mux[] = {
+ 	SCIFB2_RTS_N_MARK, SCIFB2_CTS_N_MARK,
+ };
++/* - SDHI0 ------------------------------------------------------------------ */
++static const unsigned int sdhi0_data1_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 2),
++};
++static const unsigned int sdhi0_data1_mux[] = {
++	SD0_DATA0_MARK,
++};
++static const unsigned int sdhi0_data4_pins[] = {
++	/* D[0:3] */
++	RCAR_GP_PIN(6, 2), RCAR_GP_PIN(6, 3),
++	RCAR_GP_PIN(6, 4), RCAR_GP_PIN(6, 5),
++};
++static const unsigned int sdhi0_data4_mux[] = {
++	SD0_DATA0_MARK, SD0_DATA1_MARK, SD0_DATA2_MARK, SD0_DATA3_MARK,
++};
++static const unsigned int sdhi0_ctrl_pins[] = {
++	/* CLK, CMD */
++	RCAR_GP_PIN(6, 0), RCAR_GP_PIN(6, 1),
++};
++static const unsigned int sdhi0_ctrl_mux[] = {
++	SD0_CLK_MARK, SD0_CMD_MARK,
++};
++static const unsigned int sdhi0_cd_pins[] = {
++	/* CD */
++	RCAR_GP_PIN(6, 6),
++};
++static const unsigned int sdhi0_cd_mux[] = {
++	SD0_CD_MARK,
++};
++static const unsigned int sdhi0_wp_pins[] = {
++	/* WP */
++	RCAR_GP_PIN(6, 7),
++};
++static const unsigned int sdhi0_wp_mux[] = {
++	SD0_WP_MARK,
++};
++/* - SDHI1 ------------------------------------------------------------------ */
++static const unsigned int sdhi1_data1_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 10),
++};
++static const unsigned int sdhi1_data1_mux[] = {
++	SD1_DATA0_MARK,
++};
++static const unsigned int sdhi1_data4_pins[] = {
++	/* D[0:3] */
++	RCAR_GP_PIN(6, 10), RCAR_GP_PIN(6, 11),
++	RCAR_GP_PIN(6, 12), RCAR_GP_PIN(6, 13),
++};
++static const unsigned int sdhi1_data4_mux[] = {
++	SD1_DATA0_MARK, SD1_DATA1_MARK, SD1_DATA2_MARK, SD1_DATA3_MARK,
++};
++static const unsigned int sdhi1_ctrl_pins[] = {
++	/* CLK, CMD */
++	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
++};
++static const unsigned int sdhi1_ctrl_mux[] = {
++	SD1_CLK_MARK, SD1_CMD_MARK,
++};
++static const unsigned int sdhi1_cd_pins[] = {
++	/* CD */
++	RCAR_GP_PIN(6, 14),
++};
++static const unsigned int sdhi1_cd_mux[] = {
++	SD1_CD_MARK,
++};
++static const unsigned int sdhi1_wp_pins[] = {
++	/* WP */
++	RCAR_GP_PIN(6, 15),
++};
++static const unsigned int sdhi1_wp_mux[] = {
++	SD1_WP_MARK,
++};
++/* - SDHI2 ------------------------------------------------------------------ */
++static const unsigned int sdhi2_data1_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 18),
++};
++static const unsigned int sdhi2_data1_mux[] = {
++	SD2_DATA0_MARK,
++};
++static const unsigned int sdhi2_data4_pins[] = {
++	/* D[0:3] */
++	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
++	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
++};
++static const unsigned int sdhi2_data4_mux[] = {
++	SD2_DATA0_MARK, SD2_DATA1_MARK, SD2_DATA2_MARK, SD2_DATA3_MARK,
++};
++static const unsigned int sdhi2_ctrl_pins[] = {
++	/* CLK, CMD */
++	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 17),
++};
++static const unsigned int sdhi2_ctrl_mux[] = {
++	SD2_CLK_MARK, SD2_CMD_MARK,
++};
++static const unsigned int sdhi2_cd_pins[] = {
++	/* CD */
++	RCAR_GP_PIN(6, 22),
++};
++static const unsigned int sdhi2_cd_mux[] = {
++	SD2_CD_MARK,
++};
++static const unsigned int sdhi2_wp_pins[] = {
++	/* WP */
++	RCAR_GP_PIN(6, 23),
++};
++static const unsigned int sdhi2_wp_mux[] = {
++	SD2_WP_MARK,
++};
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(eth_link),
+@@ -2800,6 +2911,21 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(scifb2_data),
+ 	SH_PFC_PIN_GROUP(scifb2_clk),
+ 	SH_PFC_PIN_GROUP(scifb2_ctrl),
++	SH_PFC_PIN_GROUP(sdhi0_data1),
++	SH_PFC_PIN_GROUP(sdhi0_data4),
++	SH_PFC_PIN_GROUP(sdhi0_ctrl),
++	SH_PFC_PIN_GROUP(sdhi0_cd),
++	SH_PFC_PIN_GROUP(sdhi0_wp),
++	SH_PFC_PIN_GROUP(sdhi1_data1),
++	SH_PFC_PIN_GROUP(sdhi1_data4),
++	SH_PFC_PIN_GROUP(sdhi1_ctrl),
++	SH_PFC_PIN_GROUP(sdhi1_cd),
++	SH_PFC_PIN_GROUP(sdhi1_wp),
++	SH_PFC_PIN_GROUP(sdhi2_data1),
++	SH_PFC_PIN_GROUP(sdhi2_data4),
++	SH_PFC_PIN_GROUP(sdhi2_ctrl),
++	SH_PFC_PIN_GROUP(sdhi2_cd),
++	SH_PFC_PIN_GROUP(sdhi2_wp),
+ };
+ 
+ static const char * const eth_groups[] = {
+@@ -3050,6 +3176,30 @@ static const char * const scifb2_groups[
+ 	"scifb2_ctrl",
+ };
+ 
++static const char * const sdhi0_groups[] = {
++	"sdhi0_data1",
++	"sdhi0_data4",
++	"sdhi0_ctrl",
++	"sdhi0_cd",
++	"sdhi0_wp",
++};
++
++static const char * const sdhi1_groups[] = {
++	"sdhi1_data1",
++	"sdhi1_data4",
++	"sdhi1_ctrl",
++	"sdhi1_cd",
++	"sdhi1_wp",
++};
++
++static const char * const sdhi2_groups[] = {
++	"sdhi2_data1",
++	"sdhi2_data4",
++	"sdhi2_ctrl",
++	"sdhi2_cd",
++	"sdhi2_wp",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(eth),
+ 	SH_PFC_FUNCTION(hscif0),
+@@ -3081,6 +3231,9 @@ static const struct sh_pfc_function pinm
+ 	SH_PFC_FUNCTION(scifb0),
+ 	SH_PFC_FUNCTION(scifb1),
+ 	SH_PFC_FUNCTION(scifb2),
++	SH_PFC_FUNCTION(sdhi0),
++	SH_PFC_FUNCTION(sdhi1),
++	SH_PFC_FUNCTION(sdhi2),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 
