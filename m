@@ -1,37 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: Fix build error in Mediatek pinctrl driver.
-Date: Fri, 20 Feb 2015 11:04:55 +0100
-Message-ID: <CACRpkdYNTT=qojYs8+vaXPFCSbHcUXJhzpWsM6Fga2erMKzPeQ@mail.gmail.com>
-References: <1423727771-24112-1-git-send-email-hongzhou.yang@mediatek.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH 03/10] devicetree: bindings: add Device Tree bindings
+ for Armada 39x pin-muxing controller
+Date: Fri, 20 Feb 2015 12:11:34 +0100
+Message-ID: <20150220121134.25cb865c@free-electrons.com>
+References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1423238276-9206-4-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20150206170521.GX25985@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1423727771-24112-1-git-send-email-hongzhou.yang@mediatek.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawn.guo@freescale.com>, Stefan Agner <stefan@agner.ch>, Stephen Warren <swarren@nvidia.com>, Fabio Estevam <fabio.estevam@freescale.com>, Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Martin Fuzzey <mfuzzey@parkeon.com>, Kiran Padwal <kiran.padwal21@gmail.com>, Thierry Reding <treding@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:49665 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754039AbbBTLLj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 06:11:39 -0500
+In-Reply-To: <20150206170521.GX25985@lunn.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Gregory Clement <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tawfik Bayouk <tawfik@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Thu, Feb 12, 2015 at 8:56 AM, Hongzhou Yang
-<hongzhou.yang@mediatek.com> wrote:
+Dear Andrew Lunn,
 
-> Since pinconf relate API changes in pinctrl devel branch, a build error happened.
-> Send this small patch to fix it.
->
-> ---
-> Due to pinconf_generic_parse_dt_config() API changes in pinctrl devel branch,
-> add one parameter to fix build error.
->
-> Also fix warning:
-> drivers/pinctrl/mediatek/pinctrl-mtk-common.c:718:3: warning: too many arguments for format [-Wformat-extra-args]
->       dev_err(&pdev->dev, "only support pins-are-numbered format\n", ret);
->       ^
->
-> by removing extra parameter when calling dev_err in mtk_pctrl_init.
->
-> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+On Fri, 6 Feb 2015 18:05:21 +0100, Andrew Lunn wrote:
 
-Patch applied.
+> I wondering if there should be an explanation for the less common
+> names here. I'm guessing dev is a device bus of some sort? What is
+> xsmi? Some sort of extended System Management Interface? And m?
 
-Yours,
-Linus Walleij
+"dev" is the Device Bus indeed, used for example for NOR or NAND.
+
+"m" stands for memory. The m(decc) signal is asserted when a memory ECC
+error occurred, while the m(vtt) signal is the DRAM VTT Power Control
+signal. No idea what this is.
+
+"xsmi" is indeed some other SMI bus, not clear yet how it compares to
+the regular SMI bus.
+
+Both "dev" and "m" are already used by many of the existing pinctrl DT
+bindings for Marvell platforms, so I'm not sure documenting them
+specifically in the Armada 39x pinctrl DT binding document makes a lot
+of sense. Where should we document them, then? In the generic
+'marvell,mvebu-pinctrl.txt' DT binding file ?
+
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
