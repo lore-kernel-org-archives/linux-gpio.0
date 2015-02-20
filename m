@@ -1,29 +1,75 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: return NULL from gpiod_get_optional when GPIOLIB is disabled
-Date: Fri, 20 Feb 2015 14:37:47 +0900
-Message-ID: <CAAVeFuKrdcSmsS5S4eiQRDVeEZ2ks9J475jDFV7uH9cMCuthLg@mail.gmail.com>
-References: <20150220003035.GA22334@dtor-glaptop> <CAAVeFu+Ys44Y0mcBYqoUEVST+TZuGXKUX5qQe9z9sDZCXdOZfQ@mail.gmail.com>
- <20150220053344.GA5518@dtor-glaptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150220053344.GA5518@dtor-glaptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into
+ request/release resources methods
+Date: Fri, 20 Feb 2015 15:50:36 +0800
+Message-ID: <95765FA2-E9BF-4A66-B46D-2491869B0A14@jcrosoft.com>
+References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
+ <BC36A77B-9986-495E-8F86-C80E9D0F0C63@jcrosoft.com>
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2070.6\))
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <BC36A77B-9986-495E-8F86-C80E9D0F0C63@jcrosoft.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, Nicolas FERRE <nicolas.ferre@atmel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 20, 2015 at 2:33 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->> I should have commented at that time, but let's do it now: I agree
->> with the idea, but this leaves the door open to confusing situations
->> in case gpiolib was unintentionally disabled. Could you also add a
->> note in the documentation of this function to explain this behavior,
->> to spare a few headaches to users of this function?
->
-> You mean the inline documentation in drivers/gpio/gpiolib.c and
-> drivers/gpio/devres.c? I can certainly mention there that is GPIOLIB is disabled
-> thy will return NULL unlike the non-optional variants.
-
-I was thinking about Documentation/gpio/consumer.txt, but having a
-note in the inline documentation as well certainly makes sense.
+Cj4gT24gRmViIDksIDIwMTUsIGF0IDEwOjUwIFBNLCBKZWFuLUNocmlzdG9waGUgUExBR05JT0wt
+VklMTEFSRCA8cGxhZ25pb2pAamNyb3NvZnQuY29tPiB3cm90ZToKPiAKPiAKPj4gT24gRmViIDks
+IDIwMTUsIGF0IDI6MjMgQU0sIEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUt
+ZWxlY3Ryb25zLmNvbT4gd3JvdGU6Cj4+IAo+PiBUaGUgZ3Bpb2NoaXBfbG9ja19hc19pcnEgY2Fs
+bCBjYW4gZmFpbCBhbmQgcmV0dXJuIGFuIGVycm9yLCB3aGlsZSB0aGUKPj4gaXJxX3N0YXJ0dXAg
+aXMgbm90IGV4cGVjdGVkIHRvIGZhaWwgKHJldHVybnMgYW4gdW5zaWduZWQgaW50IHdoaWNoIGlz
+IG5vdAo+PiBjaGVja2VkIGJ5IGlycSBjb3JlIGNvZGUpLgo+PiAKPj4gaXJxX3JlcXVlc3QvcmVs
+ZWFzZV9yZXNvdXJjZXMgZnVuY3Rpb25zIGhhdmUgYmVlbiBjcmVhdGVkIHRvIGFkZHJlc3MgdGhp
+cwo+PiBwcm9ibGVtLgo+PiAKPj4gTW92ZSBncGlvY2hpcF9sb2NrL3VubG9ja19hc19pcnEgY2Fs
+bHMgaW50bwo+PiBpcnFfcmVxdWVzdC9yZWxlYXNlX3Jlc291cmNlcyBmdW5jdGlvbnMgdG8gcHJl
+dmVudCB1c2luZyBhIGdwaW8gYXMgYW4gaXJxCj4+IGlmIHRoZSBncGlvY2hpcF9sb2NrX2FzX2ly
+cSBjYWxsIGZhaWxlZC4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9y
+aXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KPj4g4oCUCj4gCj4gSeKAmW0gdHJhdmVs
+bGluZyB3aWxsIHRha2UgYSBsb29rIGVuZCBvZiB0aGUgd2VlawoKanVzdCBnZXQgYmFjayBmcm9t
+IHRyYXZlbGxpbmcgd2lsbCB0YWtlIGEgbG9vayBhZnRlciBDaGluZXNlIG5ldyB5ZWFyCmFzIGFs
+bCBteSBodyBhcmUgYXQgdGhlIG9mZmljZQoKQmVzdCBSZWdhcmRzLApKLgo+IAo+IEJlc3QgUmVn
+YXJkcywKPiBKLgo+PiBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLmMgfCAxNyArKysrKysr
+LS0tLS0tLS0tLQo+PiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlv
+bnMoLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLmMg
+Yi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLmMKPj4gaW5kZXggZjRjZDBiOS4uYTQ4MTQw
+NiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXQ5MS5jCj4+ICsrKyBi
+L2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEuYwo+PiBAQCAtMTQ3NywyOCArMTQ3NywyNSBA
+QCBzdGF0aWMgdm9pZCBncGlvX2lycV9hY2soc3RydWN0IGlycV9kYXRhICpkKQo+PiAJLyogdGhl
+IGludGVycnVwdCBpcyBhbHJlYWR5IGNsZWFyZWQgYmVmb3JlIGJ5IHJlYWRpbmcgSVNSICovCj4+
+IH0KPj4gCj4+IC1zdGF0aWMgdW5zaWduZWQgaW50IGdwaW9faXJxX3N0YXJ0dXAoc3RydWN0IGly
+cV9kYXRhICpkKQo+PiArc3RhdGljIGludCBncGlvX2lycV9yZXF1ZXN0X3JlcyhzdHJ1Y3QgaXJx
+X2RhdGEgKmQpCj4+IHsKPj4gCXN0cnVjdCBhdDkxX2dwaW9fY2hpcCAqYXQ5MV9ncGlvID0gaXJx
+X2RhdGFfZ2V0X2lycV9jaGlwX2RhdGEoZCk7Cj4+IAl1bnNpZ25lZAlwaW4gPSBkLT5od2lycTsK
+Pj4gCWludCByZXQ7Cj4+IAo+PiAJcmV0ID0gZ3Bpb2NoaXBfbG9ja19hc19pcnEoJmF0OTFfZ3Bp
+by0+Y2hpcCwgcGluKTsKPj4gLQlpZiAocmV0KSB7Cj4+ICsJaWYgKHJldCkKPj4gCQlkZXZfZXJy
+KGF0OTFfZ3Bpby0+Y2hpcC5kZXYsICJ1bmFibGUgdG8gbG9jayBwaW5kICVsdSBJUlFcbiIsCj4+
+IAkJCWQtPmh3aXJxKTsKPj4gLQkJcmV0dXJuIHJldDsKPj4gLQl9Cj4+IC0JZ3Bpb19pcnFfdW5t
+YXNrKGQpOwo+PiAtCXJldHVybiAwOwo+PiArCj4+ICsJcmV0dXJuIHJldDsKPj4gfQo+PiAKPj4g
+LXN0YXRpYyB2b2lkIGdwaW9faXJxX3NodXRkb3duKHN0cnVjdCBpcnFfZGF0YSAqZCkKPj4gK3N0
+YXRpYyB2b2lkIGdwaW9faXJxX3JlbGVhc2VfcmVzKHN0cnVjdCBpcnFfZGF0YSAqZCkKPj4gewo+
+PiAJc3RydWN0IGF0OTFfZ3Bpb19jaGlwICphdDkxX2dwaW8gPSBpcnFfZGF0YV9nZXRfaXJxX2No
+aXBfZGF0YShkKTsKPj4gCXVuc2lnbmVkCXBpbiA9IGQtPmh3aXJxOwo+PiAKPj4gLQlncGlvX2ly
+cV9tYXNrKGQpOwo+PiAJZ3Bpb2NoaXBfdW5sb2NrX2FzX2lycSgmYXQ5MV9ncGlvLT5jaGlwLCBw
+aW4pOwo+PiB9Cj4+IAo+PiBAQCAtMTU3Nyw4ICsxNTc0LDggQEAgdm9pZCBhdDkxX3BpbmN0cmxf
+Z3Bpb19yZXN1bWUodm9pZCkKPj4gc3RhdGljIHN0cnVjdCBpcnFfY2hpcCBncGlvX2lycWNoaXAg
+PSB7Cj4+IAkubmFtZQkJPSAiR1BJTyIsCj4+IAkuaXJxX2Fjawk9IGdwaW9faXJxX2FjaywKPj4g
+LQkuaXJxX3N0YXJ0dXAJPSBncGlvX2lycV9zdGFydHVwLAo+PiAtCS5pcnFfc2h1dGRvd24JPSBn
+cGlvX2lycV9zaHV0ZG93biwKPj4gKwkuaXJxX3JlcXVlc3RfcmVzb3VyY2VzID0gZ3Bpb19pcnFf
+cmVxdWVzdF9yZXMsCj4+ICsJLmlycV9yZWxlYXNlX3Jlc291cmNlcyA9IGdwaW9faXJxX3JlbGVh
+c2VfcmVzLAo+PiAJLmlycV9kaXNhYmxlCT0gZ3Bpb19pcnFfbWFzaywKPj4gCS5pcnFfbWFzawk9
+IGdwaW9faXJxX21hc2ssCj4+IAkuaXJxX3VubWFzawk9IGdwaW9faXJxX3VubWFzaywKPj4gLS0g
+Cj4+IDEuOS4xCj4+IAo+IAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxA
+bGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
