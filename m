@@ -1,58 +1,70 @@
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH 09/10] ARM: mvebu: add Device Tree files for Armada 39x
- SoC and board
-Date: Fri, 20 Feb 2015 16:46:26 +0100
-Message-ID: <20150220164626.5843fcda@free-electrons.com>
-References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1423238276-9206-10-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20150206172153.GY25985@lunn.ch>
-	<20150220151455.461b97bb@free-electrons.com>
-	<20150220144547.GB13797@lunn.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: [PATCHv2 02/15] ARM: mvebu: fix usb@ unit address on Armada 38x to match register address
+Date: Fri, 20 Feb 2015 18:04:21 +0100
+Message-ID: <1424451874-25375-3-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:51002 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:51601 "EHLO
 	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752804AbbBTPqk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 10:46:40 -0500
-In-Reply-To: <20150220144547.GB13797@lunn.ch>
+	with ESMTP id S1754941AbbBTRE4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 12:04:56 -0500
+In-Reply-To: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Gregory Clement <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tawfik Bayouk <tawfik@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Dear Andrew Lunn,
+On Marvell Armada 38x, the USB2 controller registers are at 0x58000,
+so the corresponding Device Tree node should have a unit address of
+58000, and not 50000. We were using 50000 due to an incorrect
+copy/pastebin of Armada 370/XP code.
 
-On Fri, 20 Feb 2015 15:45:47 +0100, Andrew Lunn wrote:
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ arch/arm/boot/dts/armada-388-db.dts | 2 +-
+ arch/arm/boot/dts/armada-388-gp.dts | 2 +-
+ arch/arm/boot/dts/armada-38x.dtsi   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-> Lets look at this from the perspective of lies, damn lies, and
-> statistics:
-> 
-> Kirkwood has a default pinmux configuration in kirkwood.dtsi. Two of
-> the sixty six .dts files overwrite the defaults.
-> 
-> Dove has a default pinmux of uart1, but none for uart0.  None of the
-> .dts files define a pinmux for uart0 and none overwrite the defaults
-> for uart1.
-> 
-> Armanda XP has a default pinmux for uart2 and uart2 in armada-xp.dtsi,
-> but none for uart0 or uart1. None of the .dts files define a pinmux
-> for uart0 or uart1, and none overwrite the defaults for uart2 or
-> uart3.
-> 
-> Armada 370 has default pinmux for uart0 and uart1. None of the .dts
-> files overwrite the defaults.
-> 
-> I'm too lazy to look at 375, 380, and 385.
-> 
-> We have over 80 dts files here with defaults from a .dtsi file, and
-> only two need anything other than defaults.
-
-Fair enough :)
-
-Thomas
+diff --git a/arch/arm/boot/dts/armada-388-db.dts b/arch/arm/boot/dts/armada-388-db.dts
+index 16512ef..af6c74e 100644
+--- a/arch/arm/boot/dts/armada-388-db.dts
++++ b/arch/arm/boot/dts/armada-388-db.dts
+@@ -99,7 +99,7 @@
+ 				phy-mode = "rgmii-id";
+ 			};
+ 
+-			usb@50000 {
++			usb@58000 {
+ 				status = "ok";
+ 			};
+ 
+diff --git a/arch/arm/boot/dts/armada-388-gp.dts b/arch/arm/boot/dts/armada-388-gp.dts
+index 590b383..3ff0573 100644
+--- a/arch/arm/boot/dts/armada-388-gp.dts
++++ b/arch/arm/boot/dts/armada-388-gp.dts
+@@ -135,7 +135,7 @@
+ 			};
+ 
+ 			/* CON4 */
+-			usb@50000 {
++			usb@58000 {
+ 				vcc-supply = <&reg_usb2_0_vbus>;
+ 				status = "okay";
+ 			};
+diff --git a/arch/arm/boot/dts/armada-38x.dtsi b/arch/arm/boot/dts/armada-38x.dtsi
+index 54ebce7..96d7cf0 100644
+--- a/arch/arm/boot/dts/armada-38x.dtsi
++++ b/arch/arm/boot/dts/armada-38x.dtsi
+@@ -435,7 +435,7 @@
+ 				status = "disabled";
+ 			};
+ 
+-			usb@50000 {
++			usb@58000 {
+ 				compatible = "marvell,orion-ehci";
+ 				reg = <0x58000 0x500>;
+ 				interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.1.0
+
