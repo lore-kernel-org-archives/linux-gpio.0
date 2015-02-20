@@ -1,125 +1,97 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: [PATCH v2 00/18] Add support to STMicroelectronics STM32 family
-Date: Fri, 20 Feb 2015 19:00:59 +0100
-Message-ID: <1424455277-29983-1-git-send-email-mcoquelin.stm32__1093.96214033968$1424455728$gmane$org@gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCHv2 10/15] clk: mvebu: extend common code to allow an optional
+ refclk
+Date: Fri, 20 Feb 2015 10:21:34 -0800
+Message-ID: <20150220182134.421.95366@quantum>
+References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1424451874-25375-11-git-send-email-thomas.petazzoni@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f195.google.com ([209.85.212.195]:50066 "EHLO
-	mail-wi0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752165AbbBTSBa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 13:01:30 -0500
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:47817 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752301AbbBTSVs convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 13:21:48 -0500
+Received: by mail-ig0-f172.google.com with SMTP id l13so5038004iga.5
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Feb 2015 10:21:47 -0800 (PST)
+In-Reply-To: <1424451874-25375-11-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: u.kleine-koenig@pengutronix.de, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Thanks for the first round of reviews.
-Most of the comments made have been taken into account (see below for details),
-except that I failed to find an easy/clean way to move vector_table location in
-order to limit the waste of memory.
-If you have any idea/example to do that, I will be pleased to add it in next
-version of the series.
+Quoting Thomas Petazzoni (2015-02-20 09:04:29)
+> The Armada 39x, contrary to its predecessor, has a configurable
+> reference clock frequency, of either 25 Mhz, or 40 Mhz. For the
+> previous SoCs, it was fixed to 25 Mhz and described directly as such
+> in the Device Tree.
+> 
+> For Armada 39x, we need to read certain registers to know whether the
+> frequency is 25 or 40 Mhz. Therefore, this commit extends the common
+> mvebu clock code to allow the SoC-specific code to say it wants to
+> register a reference clock, by giving a non-NULL ->get_refclk_freq()
+> function pointer in its coreclk_soc_desc structure.
+> 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-STM32 MCUs are Cortex-M CPU, used in various applications (consumer
-electronics, industrial applications, hobbyists...).
-Datasheets, user and programming manuals are publicly available on
-STMicroelectronics website.
+Looks fine to me. I'll apply after -rc1 drops.
 
-With this series applied, the STM32F419 Discovery can boot succesfully.
+Regards,
+Mike
 
-Changes since v1:
------------------
- - Move bindings documentation in their own patches (Andreas)
- - Rename ARM System timer to armv7m-systick (Rob)
- - Add clock-frequency property handling in armv7m-systick (Rob)
- - Re-factor the reset controllers into a single controller (Philipp)
- - Add kerneldoc to reset_controller_of_init (Philipp)
- - Add named constants in include/dt-bindings/reset/ (Philipp)
- - Make pinctrl driver to depend on ARCH_STM32 or COMPILE_TEST (Geert)
- - Introduce CPUV7M_NUM_IRQ config flag to indicate the number of interrupts
-supported by the MCU, in order to limit memory waste in vectors' table (Uwe)
-
-
-Maxime Coquelin (18):
-  scripts: link-vmlinux: Don't pass page offset to kallsyms if XIP
-    Kernel
-  ARM: ARMv7M: Enlarge vector table to 256 entries
-  dt-bindings: Document the ARM System timer bindings
-  clocksource: Add ARM System timer driver
-  reset: Add reset_controller_of_init() function
-  dt-bindings: Document the STM32 reset bindings
-  drivers: reset: Add STM32 reset driver
-  dt-bindings: Document the STM32 timer bindings
-  clockevent: Add STM32 Timer driver
-  dt-bindings: Document the STM32 pin controller
-  pinctrl: Add pinctrl driver for STM32 MCUs
-  dt-bindings: Document the STM32 USART bindings
-  serial: stm32-usart: Add STM32 USART Driver
-  ARM: Add STM32 family machine
-  ARM: dts: Add ARM System timer as clockevent in armv7m
-  ARM: dts: Introduce STM32F429 MCU
-  ARM: configs: Add STM32 defconfig
-  MAINTAINERS: Add entry for STM32 MCUs
-
- Documentation/arm/stm32/overview.txt               |  32 +
- Documentation/arm/stm32/stm32f429-overview.txt     |  22 +
- .../devicetree/bindings/arm/armv7m_systick.txt     |  26 +
- .../devicetree/bindings/pinctrl/pinctrl-stm32.txt  |  99 +++
- .../devicetree/bindings/reset/st,stm32-reset.txt   |  36 +
- .../devicetree/bindings/serial/st,stm32-usart.txt  |  18 +
- .../devicetree/bindings/timer/st,stm32-timer.txt   |  19 +
- MAINTAINERS                                        |   7 +
- arch/arm/Kconfig                                   |  22 +
- arch/arm/Makefile                                  |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/armv7-m.dtsi                     |   7 +
- arch/arm/boot/dts/stm32f429-disco.dts              |  41 ++
- arch/arm/boot/dts/stm32f429.dtsi                   | 396 +++++++++++
- arch/arm/configs/stm32_defconfig                   |  72 ++
- arch/arm/kernel/entry-v7m.S                        |  13 +-
- arch/arm/mach-stm32/Makefile                       |   1 +
- arch/arm/mach-stm32/Makefile.boot                  |   0
- arch/arm/mach-stm32/board-dt.c                     |  31 +
- arch/arm/mm/Kconfig                                |  15 +
- drivers/clocksource/Kconfig                        |  16 +
- drivers/clocksource/Makefile                       |   2 +
- drivers/clocksource/armv7m_systick.c               |  78 +++
- drivers/clocksource/timer-stm32.c                  | 187 +++++
- drivers/pinctrl/Kconfig                            |  10 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-stm32.c                    | 779 +++++++++++++++++++++
- drivers/reset/Makefile                             |   1 +
- drivers/reset/core.c                               |  27 +
- drivers/reset/reset-stm32.c                        | 124 ++++
- drivers/tty/serial/Kconfig                         |  17 +
- drivers/tty/serial/Makefile                        |   1 +
- drivers/tty/serial/stm32-usart.c                   | 695 ++++++++++++++++++
- include/asm-generic/vmlinux.lds.h                  |   4 +-
- include/dt-bindings/pinctrl/pinctrl-stm32.h        |  43 ++
- include/dt-bindings/reset/st,stm32f429.h           |  85 +++
- include/linux/reset-controller.h                   |   6 +
- include/uapi/linux/serial_core.h                   |   3 +
- scripts/link-vmlinux.sh                            |   2 +-
- 39 files changed, 2934 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/arm/stm32/overview.txt
- create mode 100644 Documentation/arm/stm32/stm32f429-overview.txt
- create mode 100644 Documentation/devicetree/bindings/arm/armv7m_systick.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stm32.txt
- create mode 100644 Documentation/devicetree/bindings/reset/st,stm32-reset.txt
- create mode 100644 Documentation/devicetree/bindings/serial/st,stm32-usart.txt
- create mode 100644 Documentation/devicetree/bindings/timer/st,stm32-timer.txt
- create mode 100644 arch/arm/boot/dts/stm32f429-disco.dts
- create mode 100644 arch/arm/boot/dts/stm32f429.dtsi
- create mode 100644 arch/arm/configs/stm32_defconfig
- create mode 100644 arch/arm/mach-stm32/Makefile
- create mode 100644 arch/arm/mach-stm32/Makefile.boot
- create mode 100644 arch/arm/mach-stm32/board-dt.c
- create mode 100644 drivers/clocksource/armv7m_systick.c
- create mode 100644 drivers/clocksource/timer-stm32.c
- create mode 100644 drivers/pinctrl/pinctrl-stm32.c
- create mode 100644 drivers/reset/reset-stm32.c
- create mode 100644 drivers/tty/serial/stm32-usart.c
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-stm32.h
- create mode 100644 include/dt-bindings/reset/st,stm32f429.h
-
--- 
-1.9.1
-
+> ---
+>  drivers/clk/mvebu/common.c | 17 +++++++++++++++++
+>  drivers/clk/mvebu/common.h |  1 +
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+> index 0d4d121..15b370f 100644
+> --- a/drivers/clk/mvebu/common.c
+> +++ b/drivers/clk/mvebu/common.c
+> @@ -121,6 +121,11 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+>  
+>         /* Allocate struct for TCLK, cpu clk, and core ratio clocks */
+>         clk_data.clk_num = 2 + desc->num_ratios;
+> +
+> +       /* One more clock for the optional refclk */
+> +       if (desc->get_refclk_freq)
+> +               clk_data.clk_num += 1;
+> +
+>         clk_data.clks = kzalloc(clk_data.clk_num * sizeof(struct clk *),
+>                                 GFP_KERNEL);
+>         if (WARN_ON(!clk_data.clks)) {
+> @@ -162,6 +167,18 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+>                 WARN_ON(IS_ERR(clk_data.clks[2+n]));
+>         };
+>  
+> +       /* Register optional refclk */
+> +       if (desc->get_refclk_freq) {
+> +               const char *name = "refclk";
+> +               of_property_read_string_index(np, "clock-output-names",
+> +                                             2 + desc->num_ratios, &name);
+> +               rate = desc->get_refclk_freq(base);
+> +               clk_data.clks[2 + desc->num_ratios] =
+> +                       clk_register_fixed_rate(NULL, name, NULL,
+> +                                               CLK_IS_ROOT, rate);
+> +               WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
+> +       }
+> +
+>         /* SAR register isn't needed anymore */
+>         iounmap(base);
+>  
+> diff --git a/drivers/clk/mvebu/common.h b/drivers/clk/mvebu/common.h
+> index 783b563..f0de6c8 100644
+> --- a/drivers/clk/mvebu/common.h
+> +++ b/drivers/clk/mvebu/common.h
+> @@ -30,6 +30,7 @@ struct coreclk_soc_desc {
+>         u32 (*get_tclk_freq)(void __iomem *sar);
+>         u32 (*get_cpu_freq)(void __iomem *sar);
+>         void (*get_clk_ratio)(void __iomem *sar, int id, int *mult, int *div);
+> +       u32 (*get_refclk_freq)(void __iomem *sar);
+>         bool (*is_sscg_enabled)(void __iomem *sar);
+>         u32 (*fix_sscg_deviation)(u32 system_clk);
+>         const struct coreclk_ratio *ratios;
+> -- 
+> 2.1.0
+> 
