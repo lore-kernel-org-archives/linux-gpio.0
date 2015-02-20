@@ -1,97 +1,87 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCHv2 10/15] clk: mvebu: extend common code to allow an optional
- refclk
-Date: Fri, 20 Feb 2015 10:21:34 -0800
-Message-ID: <20150220182134.421.95366@quantum>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1424451874-25375-11-git-send-email-thomas.petazzoni@free-electrons.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] gpio: return NULL from gpiod_get_optional when GPIOLIB
+ is disabled
+Date: Fri, 20 Feb 2015 19:54:02 +0100
+Message-ID: <20150220185402.GQ19388@pengutronix.de>
+References: <20150220003035.GA22334@dtor-glaptop>
+ <CAAVeFu+Ys44Y0mcBYqoUEVST+TZuGXKUX5qQe9z9sDZCXdOZfQ@mail.gmail.com>
+ <20150220053344.GA5518@dtor-glaptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:47817 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752301AbbBTSVs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 13:21:48 -0500
-Received: by mail-ig0-f172.google.com with SMTP id l13so5038004iga.5
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Feb 2015 10:21:47 -0800 (PST)
-In-Reply-To: <1424451874-25375-11-git-send-email-thomas.petazzoni@free-electrons.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:51721 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754530AbbBTSyF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 13:54:05 -0500
+Content-Disposition: inline
+In-Reply-To: <20150220053344.GA5518@dtor-glaptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Quoting Thomas Petazzoni (2015-02-20 09:04:29)
-> The Armada 39x, contrary to its predecessor, has a configurable
-> reference clock frequency, of either 25 Mhz, or 40 Mhz. For the
-> previous SoCs, it was fixed to 25 Mhz and described directly as such
-> in the Device Tree.
-> 
-> For Armada 39x, we need to read certain registers to know whether the
-> frequency is 25 or 40 Mhz. Therefore, this commit extends the common
-> mvebu clock code to allow the SoC-specific code to say it wants to
-> register a reference clock, by giving a non-NULL ->get_refclk_freq()
-> function pointer in its coreclk_soc_desc structure.
-> 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Hello,
 
-Looks fine to me. I'll apply after -rc1 drops.
+On Thu, Feb 19, 2015 at 09:33:44PM -0800, Dmitry Torokhov wrote:
+> On Fri, Feb 20, 2015 at 01:59:43PM +0900, Alexandre Courbot wrote:
+> > On Fri, Feb 20, 2015 at 9:30 AM, Dmitry Torokhov
+> > <dmitry.torokhov@gmail.com> wrote:
+> > > Given the intent behind gpiod_get_optional() and friends it does =
+not make
+> > > sense to return -ENOSYS when GPIOLIB is disabled: the driver is e=
+xpected to
+> > > work just fine without gpio so let's behave as if gpio was not fo=
+und.
+> > > Otherwise we have to special-case -ENOSYS in drivers.
+> >=20
+> > Interestingly Uwe sent a RFC for this one week ago:
+> >=20
+> > http://patchwork.ozlabs.org/patch/439135/
+> >=20
+> > Maybe credit him with a Suggested-by.?
+>=20
+> I certainly am fine with crediting him with Suggested-by even though =
+I did not
+> see that Uwe's e-mail but this patch was prompted by his other patch =
+changing a
+> few input drivers to use gpiod_get_optional() and me recalling that I
+> explicitly did not use it as it made no difference from gpiod_get() s=
+ince I had
+> to handle -ENOSYS anyway.
+Note that I'm not convinced any more this is a good idea. Consider you
+have a device tree entry specifying=20
 
-Regards,
-Mike
+	reset-gpio =3D <&gpio5 4 0>;
 
-> ---
->  drivers/clk/mvebu/common.c | 17 +++++++++++++++++
->  drivers/clk/mvebu/common.h |  1 +
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-> index 0d4d121..15b370f 100644
-> --- a/drivers/clk/mvebu/common.c
-> +++ b/drivers/clk/mvebu/common.c
-> @@ -121,6 +121,11 @@ void __init mvebu_coreclk_setup(struct device_node *np,
->  
->         /* Allocate struct for TCLK, cpu clk, and core ratio clocks */
->         clk_data.clk_num = 2 + desc->num_ratios;
-> +
-> +       /* One more clock for the optional refclk */
-> +       if (desc->get_refclk_freq)
-> +               clk_data.clk_num += 1;
-> +
->         clk_data.clks = kzalloc(clk_data.clk_num * sizeof(struct clk *),
->                                 GFP_KERNEL);
->         if (WARN_ON(!clk_data.clks)) {
-> @@ -162,6 +167,18 @@ void __init mvebu_coreclk_setup(struct device_node *np,
->                 WARN_ON(IS_ERR(clk_data.clks[2+n]));
->         };
->  
-> +       /* Register optional refclk */
-> +       if (desc->get_refclk_freq) {
-> +               const char *name = "refclk";
-> +               of_property_read_string_index(np, "clock-output-names",
-> +                                             2 + desc->num_ratios, &name);
-> +               rate = desc->get_refclk_freq(base);
-> +               clk_data.clks[2 + desc->num_ratios] =
-> +                       clk_register_fixed_rate(NULL, name, NULL,
-> +                                               CLK_IS_ROOT, rate);
-> +               WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
-> +       }
-> +
->         /* SAR register isn't needed anymore */
->         iounmap(base);
->  
-> diff --git a/drivers/clk/mvebu/common.h b/drivers/clk/mvebu/common.h
-> index 783b563..f0de6c8 100644
-> --- a/drivers/clk/mvebu/common.h
-> +++ b/drivers/clk/mvebu/common.h
-> @@ -30,6 +30,7 @@ struct coreclk_soc_desc {
->         u32 (*get_tclk_freq)(void __iomem *sar);
->         u32 (*get_cpu_freq)(void __iomem *sar);
->         void (*get_clk_ratio)(void __iomem *sar, int id, int *mult, int *div);
-> +       u32 (*get_refclk_freq)(void __iomem *sar);
->         bool (*is_sscg_enabled)(void __iomem *sar);
->         u32 (*fix_sscg_deviation)(u32 system_clk);
->         const struct coreclk_ratio *ratios;
-> -- 
-> 2.1.0
-> 
+for your device.
+
+With
+
+	gpiod_get_optional(dev, "reset", GPIO_OUT_LOW);
+
+the drivers tells that some of the devices it can handle have a reset
+gpio. If the device in question does have such a gpio the driver must
+know and do something with it. If the device doesn't have such a gpio
+that's fine, too.
+
+But if GPIOLIB is off and the device has a reset-gpio specified you
+certainly want to error out, right?
+
+So IMHO the right thing to do is to return NULL iff there is no
+reset-gpio specified. Otherwise -ENOSYS is the right thing to return.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
