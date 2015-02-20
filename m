@@ -1,39 +1,81 @@
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH 08/10] ARM: mvebu: add core support for Armada 39x
-Date: Fri, 20 Feb 2015 14:05:49 +0100
-Message-ID: <20150220140549.2a2d4336@free-electrons.com>
+Subject: Re: [PATCH 09/10] ARM: mvebu: add Device Tree files for Armada 39x
+ SoC and board
+Date: Fri, 20 Feb 2015 15:14:55 +0100
+Message-ID: <20150220151455.461b97bb@free-electrons.com>
 References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1423238276-9206-9-git-send-email-thomas.petazzoni@free-electrons.com>
-	<54D51CC6.2070908@codeaurora.org>
+	<1423238276-9206-10-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20150206172153.GY25985@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:50177 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:50539 "EHLO
 	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754499AbbBTNFy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 08:05:54 -0500
-In-Reply-To: <54D51CC6.2070908@codeaurora.org>
+	with ESMTP id S1752566AbbBTOPA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 09:15:00 -0500
+In-Reply-To: <20150206172153.GY25985@lunn.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lior Amsalem <alior@marvell.com>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Gregory Clement <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tawfik Bayouk <tawfik@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-Dear Stephen Boyd,
+Dear Andrew Lunn,
 
-On Fri, 06 Feb 2015 11:57:58 -0800, Stephen Boyd wrote:
+On Fri, 6 Feb 2015 18:21:53 +0100, Andrew Lunn wrote:
 
-> > +static const char * const armada_39x_dt_compat[] = {
+> > +	chosen {
+> > +		bootargs = "console=ttyS0,115200 earlyprintk";
+> > +	};
+> > +
 > 
->  __initconst?
+> Arnd has been encouraging people not use earlyprintk here.  Also a
+> stdout-path would be nice. We also seem to be missing aliases for the
+> serial ports.
 
-Good idea. This wasn't done for the other mach-mvebu dt_compat tables,
-so I've added a patch to do this as well for the other mach-mvebu
-dt_compat tables.
+Right.
 
-Will be in v2.
 
-Thanks!
+> > +		internal-regs {
+> > +                        i2c@11000 {
+> > +				pinctrl-0 = <&i2c0_pins>;
+> > +				pinctrl-names = "default";
+> > +                                status = "okay";
+> > +                                clock-frequency = <100000>;
+> > +                        };
+> > +
+> > +			serial@12000 {
+> > +				pinctrl-0 = <&uart0_pins>;
+> > +				pinctrl-names = "default";
+> > +				status = "okay";
+> > +			};
+> > +
+> 
+> Tab vs space issue here somewhere? Probably the i2c node.
+
+Yes, fixed.
+
+> > +			pinctrl@18000 {
+> > +				uart0_pins: uart0-pins {
+> > +					marvell,pins = "mpp0", "mpp1";
+> > +					marvell,function = "ua0";
+> > +				};
+> > +
+> > +				uart1_pins: uart1-pins {
+> > +					marvell,pins = "mpp19", "mpp20";
+> > +					marvell,function = "ua1";
+> > +				};
+> 
+> Does it make sense to put there in the .dtsi file? I know there are
+> other choices, but generally board manufacturers tend to follow the
+> reference design.
+
+I am not really convinced here: there are really many possible pin
+muxing possibilities. Various pins for UART0 and UART1, whether you use
+CTS/RTS or not, etc. I believe this is really the sort of pin mux
+configuration that is best left at the board level.
+
+Best regards,
 
 Thomas
 -- 
