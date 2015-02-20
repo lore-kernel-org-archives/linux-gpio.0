@@ -1,69 +1,58 @@
-From: Andrew Lunn <andrew@lunn.ch>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Subject: Re: [PATCH 09/10] ARM: mvebu: add Device Tree files for Armada 39x
  SoC and board
-Date: Fri, 20 Feb 2015 15:45:47 +0100
-Message-ID: <20150220144547.GB13797@lunn.ch>
+Date: Fri, 20 Feb 2015 16:46:26 +0100
+Message-ID: <20150220164626.5843fcda@free-electrons.com>
 References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1423238276-9206-10-git-send-email-thomas.petazzoni@free-electrons.com>
- <20150206172153.GY25985@lunn.ch>
- <20150220151455.461b97bb@free-electrons.com>
+	<1423238276-9206-10-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20150206172153.GY25985@lunn.ch>
+	<20150220151455.461b97bb@free-electrons.com>
+	<20150220144547.GB13797@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:46675 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754121AbbBTOsq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 20 Feb 2015 09:48:46 -0500
-Content-Disposition: inline
-In-Reply-To: <20150220151455.461b97bb@free-electrons.com>
+Received: from down.free-electrons.com ([37.187.137.238]:51002 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752804AbbBTPqk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 10:46:40 -0500
+In-Reply-To: <20150220144547.GB13797@lunn.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Andrew Lunn <andrew@lunn.ch>
 Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Gregory Clement <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tawfik Bayouk <tawfik@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-> > > +			pinctrl@18000 {
-> > > +				uart0_pins: uart0-pins {
-> > > +					marvell,pins = "mpp0", "mpp1";
-> > > +					marvell,function = "ua0";
-> > > +				};
-> > > +
-> > > +				uart1_pins: uart1-pins {
-> > > +					marvell,pins = "mpp19", "mpp20";
-> > > +					marvell,function = "ua1";
-> > > +				};
-> > 
-> > Does it make sense to put there in the .dtsi file? I know there are
-> > other choices, but generally board manufacturers tend to follow the
-> > reference design.
+Dear Andrew Lunn,
+
+On Fri, 20 Feb 2015 15:45:47 +0100, Andrew Lunn wrote:
+
+> Lets look at this from the perspective of lies, damn lies, and
+> statistics:
 > 
-> I am not really convinced here: there are really many possible pin
-> muxing possibilities. Various pins for UART0 and UART1, whether you use
-> CTS/RTS or not, etc. I believe this is really the sort of pin mux
-> configuration that is best left at the board level.
+> Kirkwood has a default pinmux configuration in kirkwood.dtsi. Two of
+> the sixty six .dts files overwrite the defaults.
+> 
+> Dove has a default pinmux of uart1, but none for uart0.  None of the
+> .dts files define a pinmux for uart0 and none overwrite the defaults
+> for uart1.
+> 
+> Armanda XP has a default pinmux for uart2 and uart2 in armada-xp.dtsi,
+> but none for uart0 or uart1. None of the .dts files define a pinmux
+> for uart0 or uart1, and none overwrite the defaults for uart2 or
+> uart3.
+> 
+> Armada 370 has default pinmux for uart0 and uart1. None of the .dts
+> files overwrite the defaults.
+> 
+> I'm too lazy to look at 375, 380, and 385.
+> 
+> We have over 80 dts files here with defaults from a .dtsi file, and
+> only two need anything other than defaults.
 
-Hi Thomas
+Fair enough :)
 
-Lets look at this from the perspective of lies, damn lies, and
-statistics:
-
-Kirkwood has a default pinmux configuration in kirkwood.dtsi. Two of
-the sixty six .dts files overwrite the defaults.
-
-Dove has a default pinmux of uart1, but none for uart0.  None of the
-.dts files define a pinmux for uart0 and none overwrite the defaults
-for uart1.
-
-Armanda XP has a default pinmux for uart2 and uart2 in armada-xp.dtsi,
-but none for uart0 or uart1. None of the .dts files define a pinmux
-for uart0 or uart1, and none overwrite the defaults for uart2 or
-uart3.
-
-Armada 370 has default pinmux for uart0 and uart1. None of the .dts
-files overwrite the defaults.
-
-I'm too lazy to look at 375, 380, and 385.
-
-We have over 80 dts files here with defaults from a .dtsi file, and
-only two need anything other than defaults.
-
-	 Andrew
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
