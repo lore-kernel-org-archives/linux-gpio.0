@@ -1,87 +1,125 @@
 From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: [PATCH v2 02/18] ARM: ARMv7M: Enlarge vector table to 256 entries
-Date: Fri, 20 Feb 2015 19:01:01 +0100
-Message-ID: <1424455277-29983-3-git-send-email-mcoquelin.stm32__25321.0858711556$1424455716$gmane$org@gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
+Subject: [PATCH v2 00/18] Add support to STMicroelectronics STM32 family
+Date: Fri, 20 Feb 2015 19:00:59 +0100
+Message-ID: <1424455277-29983-1-git-send-email-mcoquelin.stm32__1093.96214033968$1424455728$gmane$org@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f194.google.com ([209.85.212.194]:35029 "EHLO
-	mail-wi0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754265AbbBTSBg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 13:01:36 -0500
-In-Reply-To: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
+Received: from mail-wi0-f195.google.com ([209.85.212.195]:50066 "EHLO
+	mail-wi0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752165AbbBTSBa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 13:01:30 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: u.kleine-koenig@pengutronix.de, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will
 
->From Cortex-M reference manuals, the nvic supports up to 240 interrupts.
-So the number of entries in vectors table is up to 256.
+Thanks for the first round of reviews.
+Most of the comments made have been taken into account (see below for details),
+except that I failed to find an easy/clean way to move vector_table location in
+order to limit the waste of memory.
+If you have any idea/example to do that, I will be pleased to add it in next
+version of the series.
 
-This patch adds a new config flag to specify the number of external interrupts.
-Some ifdeferies are added in order to respect the natural alignment without
-wasting too much space on smaller systems.
+STM32 MCUs are Cortex-M CPU, used in various applications (consumer
+electronics, industrial applications, hobbyists...).
+Datasheets, user and programming manuals are publicly available on
+STMicroelectronics website.
 
-Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
----
- arch/arm/kernel/entry-v7m.S | 13 +++++++++----
- arch/arm/mm/Kconfig         | 15 +++++++++++++++
- 2 files changed, 24 insertions(+), 4 deletions(-)
+With this series applied, the STM32F419 Discovery can boot succesfully.
 
-diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7m.S
-index 8944f49..68cde36 100644
---- a/arch/arm/kernel/entry-v7m.S
-+++ b/arch/arm/kernel/entry-v7m.S
-@@ -117,9 +117,14 @@ ENTRY(__switch_to)
- ENDPROC(__switch_to)
- 
- 	.data
--	.align	8
-+#if CONFIG_CPUV7M_NUM_IRQ <= 112
-+	.align	9
-+#else
-+	.align	10
-+#endif
-+
- /*
-- * Vector table (64 words => 256 bytes natural alignment)
-+ * Vector table (Natural alignment need to be ensured)
-  */
- ENTRY(vector_table)
- 	.long	0			@ 0 - Reset stack pointer
-@@ -138,6 +143,6 @@ ENTRY(vector_table)
- 	.long	__invalid_entry		@ 13 - Reserved
- 	.long	__pendsv_entry		@ 14 - PendSV
- 	.long	__invalid_entry		@ 15 - SysTick
--	.rept	64 - 16
--	.long	__irq_entry		@ 16..64 - External Interrupts
-+	.rept	CONFIG_CPUV7M_NUM_IRQ
-+	.long	__irq_entry		@ External Interrupts
- 	.endr
-diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index c43c714..27eb835 100644
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@ -604,6 +604,21 @@ config CPU_USE_DOMAINS
- 	  This option enables or disables the use of domain switching
- 	  via the set_fs() function.
- 
-+config CPUV7M_NUM_IRQ
-+	int "Number of external interrupts connected to the NVIC"
-+	depends on CPU_V7M
-+	default 90 if ARCH_STM32
-+	default 38 if ARCH_EFM32
-+	default 240
-+	help
-+	  This option indicates the number of interrupts connected to the NVIC.
-+	  The value can be larger than the real number of interrupts supported
-+	  by the system, but must not be lower.
-+	  The default value is 240, corresponding to the maximum number of
-+	  interrupts supported by the NVIC on Cortex-M family.
-+
-+	  If unsure, keep default value.
-+
- #
- # CPU supports 36-bit I/O
- #
+Changes since v1:
+-----------------
+ - Move bindings documentation in their own patches (Andreas)
+ - Rename ARM System timer to armv7m-systick (Rob)
+ - Add clock-frequency property handling in armv7m-systick (Rob)
+ - Re-factor the reset controllers into a single controller (Philipp)
+ - Add kerneldoc to reset_controller_of_init (Philipp)
+ - Add named constants in include/dt-bindings/reset/ (Philipp)
+ - Make pinctrl driver to depend on ARCH_STM32 or COMPILE_TEST (Geert)
+ - Introduce CPUV7M_NUM_IRQ config flag to indicate the number of interrupts
+supported by the MCU, in order to limit memory waste in vectors' table (Uwe)
+
+
+Maxime Coquelin (18):
+  scripts: link-vmlinux: Don't pass page offset to kallsyms if XIP
+    Kernel
+  ARM: ARMv7M: Enlarge vector table to 256 entries
+  dt-bindings: Document the ARM System timer bindings
+  clocksource: Add ARM System timer driver
+  reset: Add reset_controller_of_init() function
+  dt-bindings: Document the STM32 reset bindings
+  drivers: reset: Add STM32 reset driver
+  dt-bindings: Document the STM32 timer bindings
+  clockevent: Add STM32 Timer driver
+  dt-bindings: Document the STM32 pin controller
+  pinctrl: Add pinctrl driver for STM32 MCUs
+  dt-bindings: Document the STM32 USART bindings
+  serial: stm32-usart: Add STM32 USART Driver
+  ARM: Add STM32 family machine
+  ARM: dts: Add ARM System timer as clockevent in armv7m
+  ARM: dts: Introduce STM32F429 MCU
+  ARM: configs: Add STM32 defconfig
+  MAINTAINERS: Add entry for STM32 MCUs
+
+ Documentation/arm/stm32/overview.txt               |  32 +
+ Documentation/arm/stm32/stm32f429-overview.txt     |  22 +
+ .../devicetree/bindings/arm/armv7m_systick.txt     |  26 +
+ .../devicetree/bindings/pinctrl/pinctrl-stm32.txt  |  99 +++
+ .../devicetree/bindings/reset/st,stm32-reset.txt   |  36 +
+ .../devicetree/bindings/serial/st,stm32-usart.txt  |  18 +
+ .../devicetree/bindings/timer/st,stm32-timer.txt   |  19 +
+ MAINTAINERS                                        |   7 +
+ arch/arm/Kconfig                                   |  22 +
+ arch/arm/Makefile                                  |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/armv7-m.dtsi                     |   7 +
+ arch/arm/boot/dts/stm32f429-disco.dts              |  41 ++
+ arch/arm/boot/dts/stm32f429.dtsi                   | 396 +++++++++++
+ arch/arm/configs/stm32_defconfig                   |  72 ++
+ arch/arm/kernel/entry-v7m.S                        |  13 +-
+ arch/arm/mach-stm32/Makefile                       |   1 +
+ arch/arm/mach-stm32/Makefile.boot                  |   0
+ arch/arm/mach-stm32/board-dt.c                     |  31 +
+ arch/arm/mm/Kconfig                                |  15 +
+ drivers/clocksource/Kconfig                        |  16 +
+ drivers/clocksource/Makefile                       |   2 +
+ drivers/clocksource/armv7m_systick.c               |  78 +++
+ drivers/clocksource/timer-stm32.c                  | 187 +++++
+ drivers/pinctrl/Kconfig                            |  10 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-stm32.c                    | 779 +++++++++++++++++++++
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/core.c                               |  27 +
+ drivers/reset/reset-stm32.c                        | 124 ++++
+ drivers/tty/serial/Kconfig                         |  17 +
+ drivers/tty/serial/Makefile                        |   1 +
+ drivers/tty/serial/stm32-usart.c                   | 695 ++++++++++++++++++
+ include/asm-generic/vmlinux.lds.h                  |   4 +-
+ include/dt-bindings/pinctrl/pinctrl-stm32.h        |  43 ++
+ include/dt-bindings/reset/st,stm32f429.h           |  85 +++
+ include/linux/reset-controller.h                   |   6 +
+ include/uapi/linux/serial_core.h                   |   3 +
+ scripts/link-vmlinux.sh                            |   2 +-
+ 39 files changed, 2934 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/arm/stm32/overview.txt
+ create mode 100644 Documentation/arm/stm32/stm32f429-overview.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/armv7m_systick.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stm32.txt
+ create mode 100644 Documentation/devicetree/bindings/reset/st,stm32-reset.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/st,stm32-usart.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/st,stm32-timer.txt
+ create mode 100644 arch/arm/boot/dts/stm32f429-disco.dts
+ create mode 100644 arch/arm/boot/dts/stm32f429.dtsi
+ create mode 100644 arch/arm/configs/stm32_defconfig
+ create mode 100644 arch/arm/mach-stm32/Makefile
+ create mode 100644 arch/arm/mach-stm32/Makefile.boot
+ create mode 100644 arch/arm/mach-stm32/board-dt.c
+ create mode 100644 drivers/clocksource/armv7m_systick.c
+ create mode 100644 drivers/clocksource/timer-stm32.c
+ create mode 100644 drivers/pinctrl/pinctrl-stm32.c
+ create mode 100644 drivers/reset/reset-stm32.c
+ create mode 100644 drivers/tty/serial/stm32-usart.c
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-stm32.h
+ create mode 100644 include/dt-bindings/reset/st,stm32f429.h
+
 -- 
 1.9.1
 
