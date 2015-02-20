@@ -1,49 +1,39 @@
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH 03/10] devicetree: bindings: add Device Tree bindings
- for Armada 39x pin-muxing controller
-Date: Fri, 20 Feb 2015 12:11:34 +0100
-Message-ID: <20150220121134.25cb865c@free-electrons.com>
+Subject: Re: [PATCH 08/10] ARM: mvebu: add core support for Armada 39x
+Date: Fri, 20 Feb 2015 14:05:49 +0100
+Message-ID: <20150220140549.2a2d4336@free-electrons.com>
 References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1423238276-9206-4-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20150206170521.GX25985@lunn.ch>
+	<1423238276-9206-9-git-send-email-thomas.petazzoni@free-electrons.com>
+	<54D51CC6.2070908@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:49665 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:50177 "EHLO
 	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754039AbbBTLLj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 06:11:39 -0500
-In-Reply-To: <20150206170521.GX25985@lunn.ch>
+	with ESMTP id S1754499AbbBTNFy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Feb 2015 08:05:54 -0500
+In-Reply-To: <54D51CC6.2070908@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Gregory Clement <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tawfik Bayouk <tawfik@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lior Amsalem <alior@marvell.com>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org
 
-Dear Andrew Lunn,
+Dear Stephen Boyd,
 
-On Fri, 6 Feb 2015 18:05:21 +0100, Andrew Lunn wrote:
+On Fri, 06 Feb 2015 11:57:58 -0800, Stephen Boyd wrote:
 
-> I wondering if there should be an explanation for the less common
-> names here. I'm guessing dev is a device bus of some sort? What is
-> xsmi? Some sort of extended System Management Interface? And m?
+> > +static const char * const armada_39x_dt_compat[] = {
+> 
+>  __initconst?
 
-"dev" is the Device Bus indeed, used for example for NOR or NAND.
+Good idea. This wasn't done for the other mach-mvebu dt_compat tables,
+so I've added a patch to do this as well for the other mach-mvebu
+dt_compat tables.
 
-"m" stands for memory. The m(decc) signal is asserted when a memory ECC
-error occurred, while the m(vtt) signal is the DRAM VTT Power Control
-signal. No idea what this is.
+Will be in v2.
 
-"xsmi" is indeed some other SMI bus, not clear yet how it compares to
-the regular SMI bus.
-
-Both "dev" and "m" are already used by many of the existing pinctrl DT
-bindings for Marvell platforms, so I'm not sure documenting them
-specifically in the Armada 39x pinctrl DT binding document makes a lot
-of sense. Where should we document them, then? In the generic
-'marvell,mvebu-pinctrl.txt' DT binding file ?
-
-Best regards,
+Thanks!
 
 Thomas
 -- 
