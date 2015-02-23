@@ -1,78 +1,89 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 02/18] ARM: ARMv7M: Enlarge vector table to 256 entries
-Date: Mon, 23 Feb 2015 11:33:31 +0100
-Message-ID: <CALszF6CB9YU7ashQ-y_zx58Mkf=sbrBfa2dAOdQm7FkmcuE7PA@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1424455277-29983-3-git-send-email-mcoquelin.stm32@gmail.com>
-	<20150220194756.GS19388@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <20150220194756.GS19388@pengutronix.de>
-Sender: linux-arch-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 2/4] pinctrl: baytrail: Clear interrupt triggering from pins that are in GPIO mode
+Date: Mon, 23 Feb 2015 14:53:11 +0200
+Message-ID: <1424695993-43707-3-git-send-email-mika.westerberg@linux.intel.com>
+References: <1424695993-43707-1-git-send-email-mika.westerberg@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1424695993-43707-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Hans Holmberg <hans.holmberg@intel.com>, Benjamin Adler <benadler@gmx.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-2015-02-20 20:47 GMT+01:00 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengu=
-tronix.de>:
-> On Fri, Feb 20, 2015 at 07:01:01PM +0100, Maxime Coquelin wrote:
->> From Cortex-M reference manuals, the nvic supports up to 240 interru=
-pts.
->> So the number of entries in vectors table is up to 256.
->>
->> This patch adds a new config flag to specify the number of external =
-interrupts.
->> Some ifdeferies are added in order to respect the natural alignment =
-without
->> wasting too much space on smaller systems.
->>
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> ---
->>  arch/arm/kernel/entry-v7m.S | 13 +++++++++----
->>  arch/arm/mm/Kconfig         | 15 +++++++++++++++
->>  2 files changed, 24 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7m=
-=2ES
->> index 8944f49..68cde36 100644
->> --- a/arch/arm/kernel/entry-v7m.S
->> +++ b/arch/arm/kernel/entry-v7m.S
->> @@ -117,9 +117,14 @@ ENTRY(__switch_to)
->>  ENDPROC(__switch_to)
->>
->>       .data
->> -     .align  8
->> +#if CONFIG_CPUV7M_NUM_IRQ <=3D 112
-> I would have called this CONFIG_CPU_V7M_NUM_IRQ to match the already
-> existing CPU_V7M symbol.
+If the pin is already configured as GPIO and it has any of the triggering
+flags set, we may get spurious interrupts depending on the state of the
+pin.
 
-That's better indeed.
-It will be changed in v3.
+Prevent this by clearing the triggering flags on such pins. However, if the
+pin is also configured as "direct IRQ" we leave the flags as is. Otherwise
+it will prevent interrupts that are routed directly to IO-APIC.
 
->
->> +     .align  9
->> +#else
->> +     .align  10
->> +#endif
->> +
->
-> Other than that:
-> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
->
-> Who do you target to apply this series?
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 36 +++++++++++++++++++++++++-------
+ 1 file changed, 29 insertions(+), 7 deletions(-)
 
-I guess it should go through Russell's Patch Tracking System?
-
-Thanks,
-Maxime
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig   =
-         |
-> Industrial Linux Solutions                 | http://www.pengutronix.d=
-e/  |
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index e44f2fd6753f..d264b099182d 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -158,6 +158,19 @@ static void __iomem *byt_gpio_reg(struct gpio_chip *chip, unsigned offset,
+ 	return vg->reg_base + reg_offset + reg;
+ }
+ 
++static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned offset)
++{
++	void __iomem *reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
++	unsigned long flags;
++	u32 value;
++
++	spin_lock_irqsave(&vg->lock, flags);
++	value = readl(reg);
++	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
++	writel(value, reg);
++	spin_unlock_irqrestore(&vg->lock, flags);
++}
++
+ static u32 byt_get_gpio_mux(struct byt_gpio *vg, unsigned offset)
+ {
+ 	/* SCORE pin 92-93 */
+@@ -211,14 +224,8 @@ static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
+ static void byt_gpio_free(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct byt_gpio *vg = to_byt_gpio(chip);
+-	void __iomem *reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
+-	u32 value;
+-
+-	/* clear interrupt triggering */
+-	value = readl(reg);
+-	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
+-	writel(value, reg);
+ 
++	byt_gpio_clear_triggering(vg, offset);
+ 	pm_runtime_put(&vg->pdev->dev);
+ }
+ 
+@@ -481,6 +488,21 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ {
+ 	void __iomem *reg;
+ 	u32 base, value;
++	int i;
++
++	/*
++	 * Clear interrupt triggers for all pins that are GPIOs and
++	 * do not use direct IRQ mode. This will prevent spurious
++	 * interrupts from misconfigured pins.
++	 */
++	for (i = 0; i < vg->chip.ngpio; i++) {
++		value = readl(byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG));
++		if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i) &&
++		    !(value & BYT_DIRECT_IRQ_EN)) {
++			byt_gpio_clear_triggering(vg, i);
++			dev_dbg(&vg->pdev->dev, "disabling GPIO %d\n", i);
++		}
++	}
+ 
+ 	/* clear interrupt status trigger registers */
+ 	for (base = 0; base < vg->chip.ngpio; base += 32) {
+-- 
+2.1.4
