@@ -1,110 +1,120 @@
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCHv2 10/15] clk: mvebu: extend common code to allow an optional
- refclk
-Date: Mon, 23 Feb 2015 19:06:24 +0100
-Message-ID: <54EB6C20.8070102@free-electrons.com>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com> <1424451874-25375-11-git-send-email-thomas.petazzoni@free-electrons.com> <20150220182134.421.95366@quantum>
+Subject: Re: [PATCHv2 13/15] ARM: mvebu: add core support for Armada 39x
+Date: Mon, 23 Feb 2015 19:16:07 +0100
+Message-ID: <54EB6E67.5070400@free-electrons.com>
+References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com> <1424451874-25375-14-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:34301 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:34408 "EHLO
 	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752331AbbBWSGa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 13:06:30 -0500
-In-Reply-To: <20150220182134.421.95366@quantum>
+	with ESMTP id S1752234AbbBWSQL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 13:16:11 -0500
+In-Reply-To: <1424451874-25375-14-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Hi Mike,
+Hi Thomas,
 
-On 20/02/2015 19:21, Mike Turquette wrote:
-> Quoting Thomas Petazzoni (2015-02-20 09:04:29)
->> The Armada 39x, contrary to its predecessor, has a configurable
->> reference clock frequency, of either 25 Mhz, or 40 Mhz. For the
->> previous SoCs, it was fixed to 25 Mhz and described directly as such
->> in the Device Tree.
->>
->> For Armada 39x, we need to read certain registers to know whether the
->> frequency is 25 or 40 Mhz. Therefore, this commit extends the common
->> mvebu clock code to allow the SoC-specific code to say it wants to
->> register a reference clock, by giving a non-NULL ->get_refclk_freq()
->> function pointer in its coreclk_soc_desc structure.
->>
->> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+
+On 20/02/2015 18:04, Thomas Petazzoni wrote:
+> This commit adds the core support for Armada 39x, which is quite
+> simple:
 > 
-> Looks fine to me. I'll apply after -rc1 drops.
+>  - a new Kconfig option which selects the appropriate clock and
+>    pinctrl drivers as well as other common features (GIC, L2 cache,
+>    SMP, etc.)
+> 
+>  - a new DT_MACHINE_START which references the top-level compatible
+>    strings supported for the Marvell Armada 39x.
+> 
+>  - a new SMP enable-method. The mechanism to enable CPUs for Armada
+>    39x appears to be the same as Armada 38x. However, we do not want
+>    to use marvell,armada-380-smp in the Device Tree, in the case of
+>    the discovery of a subtle difference in the future, which would
+>    require changing the Device Tree. And the enable-method isn't a
+>    compatible string: you can't specify several values and expect a
+>    fallback on the second string if the first one isn't
+>    supported. Therefore, we simply declare the SMP enable method
+>    "marvell,armada-390-smp" as doing the same thing as the
+>    "marvell,armada-380-smp" one.
+> 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
+>  arch/arm/mach-mvebu/Kconfig      | 14 ++++++++++++++
+>  arch/arm/mach-mvebu/board-v7.c   | 14 ++++++++++++++
+>  arch/arm/mach-mvebu/platsmp-a9.c |  2 ++
+>  3 files changed, 30 insertions(+)
+> 
+> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+> index c1e4567..9747316 100644
+> --- a/arch/arm/mach-mvebu/Kconfig
+> +++ b/arch/arm/mach-mvebu/Kconfig
+> @@ -64,6 +64,20 @@ config MACH_ARMADA_38X
+>  	  Say 'Y' here if you want your kernel to support boards based
+>  	  on the Marvell Armada 380/385 SoC with device tree.
+>  
+> +config MACH_ARMADA_39X
+> +	bool "Marvell Armada 39x boards" if ARCH_MULTI_V7
 
-What about the other clock related patch: "clk: mvebu: add Marvell
-Armada 39x driver" ? Will you apply it too, or do you expect a pull request
-for the mvebu related clocks ?
-
+As you don't select it by default we should update the mvebu_v7_defconfig
+with this symbol.
 
 Thanks,
 
 Gregory
 
+> +	select ARM_GIC
+> +	select ARMADA_39X_CLK
+> +	select CACHE_L2X0
+> +	select HAVE_ARM_SCU
+> +	select HAVE_ARM_TWD if SMP
+> +	select HAVE_SMP
+> +	select MACH_MVEBU_V7
+> +	select PINCTRL_ARMADA_39X
+> +	help
+> +	  Say 'Y' here if you want your kernel to support boards based
+> +	  on the Marvell Armada 39x SoC with device tree.
+> +
+>  config MACH_ARMADA_XP
+>  	bool "Marvell Armada XP boards" if ARCH_MULTI_V7
+>  	select ARMADA_XP_CLK
+> diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
+> index 31b66f2..afee908 100644
+> --- a/arch/arm/mach-mvebu/board-v7.c
+> +++ b/arch/arm/mach-mvebu/board-v7.c
+> @@ -232,3 +232,17 @@ DT_MACHINE_START(ARMADA_38X_DT, "Marvell Armada 380/385 (Device Tree)")
+>  	.restart	= mvebu_restart,
+>  	.dt_compat	= armada_38x_dt_compat,
+>  MACHINE_END
+> +
+> +static const char * const armada_39x_dt_compat[] __initconst = {
+> +	"marvell,armada390",
+> +	"marvell,armada398",
+> +	NULL,
+> +};
+> +
+> +DT_MACHINE_START(ARMADA_39X_DT, "Marvell Armada 39x (Device Tree)")
+> +	.l2c_aux_val	= 0,
+> +	.l2c_aux_mask	= ~0,
+> +	.init_irq       = mvebu_init_irq,
+> +	.restart	= mvebu_restart,
+> +	.dt_compat	= armada_39x_dt_compat,
+> +MACHINE_END
+> diff --git a/arch/arm/mach-mvebu/platsmp-a9.c b/arch/arm/mach-mvebu/platsmp-a9.c
+> index 2ec1a42..df0a9cc 100644
+> --- a/arch/arm/mach-mvebu/platsmp-a9.c
+> +++ b/arch/arm/mach-mvebu/platsmp-a9.c
+> @@ -110,3 +110,5 @@ CPU_METHOD_OF_DECLARE(mvebu_armada_375_smp, "marvell,armada-375-smp",
+>  		      &mvebu_cortex_a9_smp_ops);
+>  CPU_METHOD_OF_DECLARE(mvebu_armada_380_smp, "marvell,armada-380-smp",
+>  		      &armada_38x_smp_ops);
+> +CPU_METHOD_OF_DECLARE(mvebu_armada_390_smp, "marvell,armada-390-smp",
+> +		      &armada_38x_smp_ops);
 > 
-> Regards,
-> Mike
-> 
->> ---
->>  drivers/clk/mvebu/common.c | 17 +++++++++++++++++
->>  drivers/clk/mvebu/common.h |  1 +
->>  2 files changed, 18 insertions(+)
->>
->> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
->> index 0d4d121..15b370f 100644
->> --- a/drivers/clk/mvebu/common.c
->> +++ b/drivers/clk/mvebu/common.c
->> @@ -121,6 +121,11 @@ void __init mvebu_coreclk_setup(struct device_node *np,
->>  
->>         /* Allocate struct for TCLK, cpu clk, and core ratio clocks */
->>         clk_data.clk_num = 2 + desc->num_ratios;
->> +
->> +       /* One more clock for the optional refclk */
->> +       if (desc->get_refclk_freq)
->> +               clk_data.clk_num += 1;
->> +
->>         clk_data.clks = kzalloc(clk_data.clk_num * sizeof(struct clk *),
->>                                 GFP_KERNEL);
->>         if (WARN_ON(!clk_data.clks)) {
->> @@ -162,6 +167,18 @@ void __init mvebu_coreclk_setup(struct device_node *np,
->>                 WARN_ON(IS_ERR(clk_data.clks[2+n]));
->>         };
->>  
->> +       /* Register optional refclk */
->> +       if (desc->get_refclk_freq) {
->> +               const char *name = "refclk";
->> +               of_property_read_string_index(np, "clock-output-names",
->> +                                             2 + desc->num_ratios, &name);
->> +               rate = desc->get_refclk_freq(base);
->> +               clk_data.clks[2 + desc->num_ratios] =
->> +                       clk_register_fixed_rate(NULL, name, NULL,
->> +                                               CLK_IS_ROOT, rate);
->> +               WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
->> +       }
->> +
->>         /* SAR register isn't needed anymore */
->>         iounmap(base);
->>  
->> diff --git a/drivers/clk/mvebu/common.h b/drivers/clk/mvebu/common.h
->> index 783b563..f0de6c8 100644
->> --- a/drivers/clk/mvebu/common.h
->> +++ b/drivers/clk/mvebu/common.h
->> @@ -30,6 +30,7 @@ struct coreclk_soc_desc {
->>         u32 (*get_tclk_freq)(void __iomem *sar);
->>         u32 (*get_cpu_freq)(void __iomem *sar);
->>         void (*get_clk_ratio)(void __iomem *sar, int id, int *mult, int *div);
->> +       u32 (*get_refclk_freq)(void __iomem *sar);
->>         bool (*is_sscg_enabled)(void __iomem *sar);
->>         u32 (*fix_sscg_deviation)(u32 system_clk);
->>         const struct coreclk_ratio *ratios;
->> -- 
->> 2.1.0
->>
 
 
 -- 
