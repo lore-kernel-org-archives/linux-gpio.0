@@ -1,154 +1,81 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 4/4] pinctrl: baytrail: Save pin context over system sleep
-Date: Mon, 23 Feb 2015 14:53:13 +0200
-Message-ID: <1424695993-43707-5-git-send-email-mika.westerberg@linux.intel.com>
-References: <1424695993-43707-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1424695993-43707-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Hans Holmberg <hans.holmberg@intel.com>, Benjamin Adler <benadler@gmx.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH 0/7] Add PWM support to mvebu gpio driver
+Date: Mon, 23 Feb 2015 15:09:32 +0100
+Message-ID: <54EB349C.2070700@free-electrons.com>
+References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:60639 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751071AbbBWOJw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 09:09:52 -0500
+In-Reply-To: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linus.walleij@linaro.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, kaloz@openwrt.org, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org
 
-The BIOS might reconfigure pins as it needs when S3 is entered. This might
-cause drivers using the GPIOs to fail because the state was wrong or
-interrupts stopped working.
+Hi Andrew,
 
-Fix this by saving and restoring enough pin context over system sleep.
+On 10/01/2015 00:34, Andrew Lunn wrote:
+> This patchset starts out with some cleanups and fixes for the mvebu
+> gpio driver. Then new functionality is added. The Armada 370 and XP
+> SoC has the ability to "blink" the gpio lines at a configuration on
+> and off duration. So simple PWM support is added. However only a
+> single gpio line per gpio chip can be used as a PWM line due to
+> limitations of the hardware. The last patch shows one example of how
+> this could be used, converting a gpio-fan into a pwm-fan, so allowing
+> finer control over its rotation speed, and hence noise. This last
+> patch is not expected to be accepted, since the device is not yet in
+> mainline.
+> 
+> Andrew Lunn (7):
+>   gpio: mvebu: checkpatch fixes
+>   gpio: mvebu: Fix probe cleanup on error
+>   gpio: mvebu: Add limited PWM support
+>   DT: bindings: Extend mvebu gpio documentation with PWM
+>   mvebu: xp: Add pwm properties to .dtsi files
+>   arm: mvebu: Enable PWM in defconfig
+>   mvebu: wrt1900ac: Use pwm-fan rather than gpio-fan
+> 
 
-Reported-by: Hans Holmberg <hans.holmberg@intel.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 83 +++++++++++++++++++++++++++++++-
- 1 file changed, 81 insertions(+), 2 deletions(-)
+What is the status of this series?
+I saw that the 2 first patches have been merged but what about the patch 3 and 4?
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 2318057a309b..2062c224e32f 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -66,6 +66,10 @@
- #define BYT_DIR_MASK		(BIT(1) | BIT(2))
- #define BYT_TRIG_MASK		(BIT(26) | BIT(25) | BIT(24))
- 
-+#define BYT_CONF0_RESTORE_MASK	(BYT_DIRECT_IRQ_EN | BYT_TRIG_MASK | \
-+				 BYT_PIN_MUX)
-+#define BYT_VAL_RESTORE_MASK	(BYT_DIR_MASK | BYT_LEVEL)
-+
- #define BYT_NGPIO_SCORE		102
- #define BYT_NGPIO_NCORE		28
- #define BYT_NGPIO_SUS		44
-@@ -134,12 +138,18 @@ static struct pinctrl_gpio_range byt_ranges[] = {
- 	},
- };
- 
-+struct byt_gpio_pin_context {
-+	u32 conf0;
-+	u32 val;
-+};
-+
- struct byt_gpio {
- 	struct gpio_chip		chip;
- 	struct platform_device		*pdev;
- 	spinlock_t			lock;
- 	void __iomem			*reg_base;
- 	struct pinctrl_gpio_range	*range;
-+	struct byt_gpio_pin_context	*saved_context;
- };
- 
- #define to_byt_gpio(c)	container_of(c, struct byt_gpio, chip)
-@@ -584,6 +594,11 @@ static int byt_gpio_probe(struct platform_device *pdev)
- 	gc->can_sleep = false;
- 	gc->dev = dev;
- 
-+#ifdef CONFIG_PM_SLEEP
-+	vg->saved_context = devm_kcalloc(&pdev->dev, gc->ngpio,
-+				       sizeof(*vg->saved_context), GFP_KERNEL);
-+#endif
-+
- 	ret = gpiochip_add(gc);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed adding byt-gpio chip\n");
-@@ -612,6 +627,69 @@ static int byt_gpio_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int byt_gpio_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < vg->chip.ngpio; i++) {
-+		void __iomem *reg;
-+		u32 value;
-+
-+		reg = byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG);
-+		value = readl(reg) & BYT_CONF0_RESTORE_MASK;
-+		vg->saved_context[i].conf0 = value;
-+
-+		reg = byt_gpio_reg(&vg->chip, i, BYT_VAL_REG);
-+		value = readl(reg) & BYT_VAL_RESTORE_MASK;
-+		vg->saved_context[i].val = value;
-+	}
-+
-+	return 0;
-+}
-+
-+static int byt_gpio_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < vg->chip.ngpio; i++) {
-+		void __iomem *reg;
-+		u32 value;
-+
-+		reg = byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG);
-+		value = readl(reg);
-+		if ((value & BYT_CONF0_RESTORE_MASK) !=
-+		     vg->saved_context[i].conf0) {
-+			value &= ~BYT_CONF0_RESTORE_MASK;
-+			value |= vg->saved_context[i].conf0;
-+			writel(value, reg);
-+			dev_info(dev, "restored pin %d conf0 %#08x", i, value);
-+		}
-+
-+		reg = byt_gpio_reg(&vg->chip, i, BYT_VAL_REG);
-+		value = readl(reg);
-+		if ((value & BYT_VAL_RESTORE_MASK) !=
-+		     vg->saved_context[i].val) {
-+			u32 v;
-+
-+			v = value & ~BYT_VAL_RESTORE_MASK;
-+			v |= vg->saved_context[i].val;
-+			if (v != value) {
-+				writel(v, reg);
-+				dev_dbg(dev, "restored pin %d val %#08x\n",
-+					i, v);
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
- static int byt_gpio_runtime_suspend(struct device *dev)
- {
- 	return 0;
-@@ -623,8 +701,9 @@ static int byt_gpio_runtime_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops byt_gpio_pm_ops = {
--	.runtime_suspend = byt_gpio_runtime_suspend,
--	.runtime_resume = byt_gpio_runtime_resume,
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(byt_gpio_suspend, byt_gpio_resume)
-+	SET_RUNTIME_PM_OPS(byt_gpio_runtime_suspend, byt_gpio_runtime_resume,
-+			   NULL)
- };
- 
- static const struct acpi_device_id byt_gpio_acpi_match[] = {
+Do you plan to send a new series?
+
+The patches 5 and 6 are good candidates to for to the mvebu tree but of course only
+if the patch 3 is merged.
+
+Thanks,
+
+Gregory
+
+
+
+
+>  .../devicetree/bindings/gpio/gpio-mvebu.txt        |  31 ++++
+>  arch/arm/boot/dts/armada-370.dtsi                  |  10 +-
+>  arch/arm/boot/dts/armada-xp-mv78230.dtsi           |  10 +-
+>  arch/arm/boot/dts/armada-xp-mv78260.dtsi           |   8 +-
+>  arch/arm/boot/dts/armada-xp-mv78460.dtsi           |  10 +-
+>  arch/arm/boot/dts/armada-xp-wrt1900ac.dts          |   8 +-
+>  arch/arm/configs/mvebu_v7_defconfig                |   1 +
+>  drivers/gpio/Kconfig                               |   5 +
+>  drivers/gpio/Makefile                              |   1 +
+>  drivers/gpio/gpio-mvebu-pwm.c                      | 202 +++++++++++++++++++++
+>  drivers/gpio/gpio-mvebu.c                          | 133 +++++++-------
+>  drivers/gpio/gpio-mvebu.h                          |  79 ++++++++
+>  12 files changed, 421 insertions(+), 77 deletions(-)
+>  create mode 100644 drivers/gpio/gpio-mvebu-pwm.c
+>  create mode 100644 drivers/gpio/gpio-mvebu.h
+> 
+
+
 -- 
-2.1.4
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
