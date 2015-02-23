@@ -1,65 +1,114 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCHv2 05/15] ARM: mvebu: add stdout-path to all armada-*.dts
-Date: Mon, 23 Feb 2015 17:13:34 +0000
-Message-ID: <20150223171334.GP9714@leverpostej>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCHv2 10/15] clk: mvebu: extend common code to allow an optional
+ refclk
+Date: Mon, 23 Feb 2015 19:06:24 +0100
+Message-ID: <54EB6C20.8070102@free-electrons.com>
+References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com> <1424451874-25375-11-git-send-email-thomas.petazzoni@free-electrons.com> <20150220182134.421.95366@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss-mx-na.foss.arm.com ([217.140.108.86]:44397 "EHLO
-	foss-mx-na.foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751974AbbBWRON (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 12:14:13 -0500
-Content-Disposition: inline
-In-Reply-To: <1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
+Received: from down.free-electrons.com ([37.187.137.238]:34301 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752331AbbBWSGa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 13:06:30 -0500
+In-Reply-To: <20150220182134.421.95366@quantum>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Fri, Feb 20, 2015 at 05:04:24PM +0000, Thomas Petazzoni wrote:
-> This commit adds the stdout-path property in /chosen for all Armada
-> boards that were not yet carrying this property.
+Hi Mike,
+
+On 20/02/2015 19:21, Mike Turquette wrote:
+> Quoting Thomas Petazzoni (2015-02-20 09:04:29)
+>> The Armada 39x, contrary to its predecessor, has a configurable
+>> reference clock frequency, of either 25 Mhz, or 40 Mhz. For the
+>> previous SoCs, it was fixed to 25 Mhz and described directly as such
+>> in the Device Tree.
+>>
+>> For Armada 39x, we need to read certain registers to know whether the
+>> frequency is 25 or 40 Mhz. Therefore, this commit extends the common
+>> mvebu clock code to allow the SoC-specific code to say it wants to
+>> register a reference clock, by giving a non-NULL ->get_refclk_freq()
+>> function pointer in its coreclk_soc_desc structure.
+>>
+>> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 > 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->  arch/arm/boot/dts/armada-370-db.dts              | 1 +
->  arch/arm/boot/dts/armada-370-mirabox.dts         | 1 +
->  arch/arm/boot/dts/armada-370-netgear-rn102.dts   | 1 +
->  arch/arm/boot/dts/armada-370-netgear-rn104.dts   | 1 +
->  arch/arm/boot/dts/armada-370-rd.dts              | 1 +
->  arch/arm/boot/dts/armada-375-db.dts              | 1 +
->  arch/arm/boot/dts/armada-388-db.dts              | 1 +
->  arch/arm/boot/dts/armada-388-rd.dts              | 1 +
->  arch/arm/boot/dts/armada-xp-axpwifiap.dts        | 1 +
->  arch/arm/boot/dts/armada-xp-db.dts               | 1 +
->  arch/arm/boot/dts/armada-xp-gp.dts               | 1 +
->  arch/arm/boot/dts/armada-xp-matrix.dts           | 1 +
->  arch/arm/boot/dts/armada-xp-netgear-rn2120.dts   | 1 +
->  arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts | 1 +
->  14 files changed, 14 insertions(+)
+> Looks fine to me. I'll apply after -rc1 drops.
+
+What about the other clock related patch: "clk: mvebu: add Marvell
+Armada 39x driver" ? Will you apply it too, or do you expect a pull request
+for the mvebu related clocks ?
+
+
+Thanks,
+
+Gregory
+
 > 
-> diff --git a/arch/arm/boot/dts/armada-370-db.dts b/arch/arm/boot/dts/armada-370-db.dts
-> index e993c46..286bedd 100644
-> --- a/arch/arm/boot/dts/armada-370-db.dts
-> +++ b/arch/arm/boot/dts/armada-370-db.dts
-> @@ -56,6 +56,7 @@
->  
->  	chosen {
->  		bootargs = "console=ttyS0,115200 earlyprintk";
-> +		stdout-path = &uart0;
+> Regards,
+> Mike
+> 
+>> ---
+>>  drivers/clk/mvebu/common.c | 17 +++++++++++++++++
+>>  drivers/clk/mvebu/common.h |  1 +
+>>  2 files changed, 18 insertions(+)
+>>
+>> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+>> index 0d4d121..15b370f 100644
+>> --- a/drivers/clk/mvebu/common.c
+>> +++ b/drivers/clk/mvebu/common.c
+>> @@ -121,6 +121,11 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+>>  
+>>         /* Allocate struct for TCLK, cpu clk, and core ratio clocks */
+>>         clk_data.clk_num = 2 + desc->num_ratios;
+>> +
+>> +       /* One more clock for the optional refclk */
+>> +       if (desc->get_refclk_freq)
+>> +               clk_data.clk_num += 1;
+>> +
+>>         clk_data.clks = kzalloc(clk_data.clk_num * sizeof(struct clk *),
+>>                                 GFP_KERNEL);
+>>         if (WARN_ON(!clk_data.clks)) {
+>> @@ -162,6 +167,18 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+>>                 WARN_ON(IS_ERR(clk_data.clks[2+n]));
+>>         };
+>>  
+>> +       /* Register optional refclk */
+>> +       if (desc->get_refclk_freq) {
+>> +               const char *name = "refclk";
+>> +               of_property_read_string_index(np, "clock-output-names",
+>> +                                             2 + desc->num_ratios, &name);
+>> +               rate = desc->get_refclk_freq(base);
+>> +               clk_data.clks[2 + desc->num_ratios] =
+>> +                       clk_register_fixed_rate(NULL, name, NULL,
+>> +                                               CLK_IS_ROOT, rate);
+>> +               WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
+>> +       }
+>> +
+>>         /* SAR register isn't needed anymore */
+>>         iounmap(base);
+>>  
+>> diff --git a/drivers/clk/mvebu/common.h b/drivers/clk/mvebu/common.h
+>> index 783b563..f0de6c8 100644
+>> --- a/drivers/clk/mvebu/common.h
+>> +++ b/drivers/clk/mvebu/common.h
+>> @@ -30,6 +30,7 @@ struct coreclk_soc_desc {
+>>         u32 (*get_tclk_freq)(void __iomem *sar);
+>>         u32 (*get_cpu_freq)(void __iomem *sar);
+>>         void (*get_clk_ratio)(void __iomem *sar, int id, int *mult, int *div);
+>> +       u32 (*get_refclk_freq)(void __iomem *sar);
+>>         bool (*is_sscg_enabled)(void __iomem *sar);
+>>         u32 (*fix_sscg_deviation)(u32 system_clk);
+>>         const struct coreclk_ratio *ratios;
+>> -- 
+>> 2.1.0
+>>
 
-stdout-path can now take a config too (including the rate), which will
-avoid any reliance on the serial core choosing the right rate by
-default.
 
-If you have an alias serial0, this could be:
-
-	stdout-path = "serial0:115200n8";
-
-Otherwise you can use the full path instead of serial0.
-
-That's documented in Documentation/devicetree/bindings/chosen.txt
-
-Mark.
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
