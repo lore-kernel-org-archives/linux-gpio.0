@@ -1,18 +1,18 @@
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCHv2 03/15] ARM: mvebu: add missing UART alias on Armada
- 38x
-Date: Mon, 23 Feb 2015 16:16:39 +0100
-Message-ID: <54EB4457.50208@free-electrons.com>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com> <1424451874-25375-4-git-send-email-thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCHv2 04/15] ARM: mvebu: use IRQ macros to define the SDHCI
+ interrupt on Armada 38x
+Date: Mon, 23 Feb 2015 16:27:02 +0100
+Message-ID: <54EB46C6.6020506@free-electrons.com>
+References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com> <1424451874-25375-5-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:32909 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:33032 "EHLO
 	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752143AbbBWPQn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 10:16:43 -0500
-In-Reply-To: <1424451874-25375-4-git-send-email-thomas.petazzoni@free-electrons.com>
+	with ESMTP id S1752257AbbBWP1G (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 10:27:06 -0500
+In-Reply-To: <1424451874-25375-5-git-send-email-thomas.petazzoni@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
@@ -21,13 +21,15 @@ Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian
 Hi Thomas,
 
 On 20/02/2015 18:04, Thomas Petazzoni wrote:
-> The Armada 38x had an alias for UART0, but not UART1. This commit
-> fixes that.
+> The Armada 38x SDHCI controller definition in the SoC Device Tree file
+> is using hardcoded values instead of the nice GIC and IRQ macros
+> provided by DT header files. This commit fixes that, which allows the
+> SDHCI interrupt definition to be consistent with was is done in the
+> rest of the file.
 > 
 > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
+I already submitted this fix as part of the "fixes and improvements for SDHCI" series.
 
 Thanks,
 
@@ -38,18 +40,18 @@ Gregory
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/arch/arm/boot/dts/armada-38x.dtsi b/arch/arm/boot/dts/armada-38x.dtsi
-> index 96d7cf0..8c76a8d 100644
+> index 8c76a8d..0f0cc41 100644
 > --- a/arch/arm/boot/dts/armada-38x.dtsi
 > +++ b/arch/arm/boot/dts/armada-38x.dtsi
-> @@ -216,7 +216,7 @@
+> @@ -542,7 +542,7 @@
+>  			sdhci@d8000 {
+>  				compatible = "marvell,armada-380-sdhci";
+>  				reg = <0xd8000 0x1000>, <0xdc000 0x100>;
+> -				interrupts = <0 25 0x4>;
+> +				interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+>  				clocks = <&gateclk 17>;
+>  				mrvl,clk-delay-cycles = <0x1F>;
 >  				status = "disabled";
->  			};
->  
-> -			serial@12100 {
-> +			uart1: serial@12100 {
->  				compatible = "snps,dw-apb-uart";
->  				reg = <0x12100 0x100>;
->  				reg-shift = <2>;
 > 
 
 
