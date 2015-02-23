@@ -1,50 +1,230 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 0/7] Add PWM support to mvebu gpio driver
-Date: Mon, 23 Feb 2015 16:48:11 +0100
-Message-ID: <20150223154811.GA27057@lunn.ch>
-References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
- <54EB349C.2070700@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCHv2 05/15] ARM: mvebu: add stdout-path to all armada-*.dts
+Date: Mon, 23 Feb 2015 17:00:27 +0100
+Message-ID: <54EB4E9B.6010001@free-electrons.com>
+References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com> <1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54EB349C.2070700@free-electrons.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: linus.walleij@linaro.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, kaloz@openwrt.org, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:33286 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752336AbbBWQAc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 11:00:32 -0500
+In-Reply-To: <1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Mon, Feb 23, 2015 at 03:09:32PM +0100, Gregory CLEMENT wrote:
-> Hi Andrew,
-> 
-> On 10/01/2015 00:34, Andrew Lunn wrote:
-> > This patchset starts out with some cleanups and fixes for the mvebu
-> > gpio driver. Then new functionality is added. The Armada 370 and XP
-> > SoC has the ability to "blink" the gpio lines at a configuration on
-> > and off duration. So simple PWM support is added. However only a
-> > single gpio line per gpio chip can be used as a PWM line due to
-> > limitations of the hardware. The last patch shows one example of how
-> > this could be used, converting a gpio-fan into a pwm-fan, so allowing
-> > finer control over its rotation speed, and hence noise. This last
-> > patch is not expected to be accepted, since the device is not yet in
-> > mainline.
-> > 
-> > Andrew Lunn (7):
-> >   gpio: mvebu: checkpatch fixes
-> >   gpio: mvebu: Fix probe cleanup on error
-> >   gpio: mvebu: Add limited PWM support
-> >   DT: bindings: Extend mvebu gpio documentation with PWM
-> >   mvebu: xp: Add pwm properties to .dtsi files
-> >   arm: mvebu: Enable PWM in defconfig
-> >   mvebu: wrt1900ac: Use pwm-fan rather than gpio-fan
-> > 
-> 
-> What is the status of this series?
-> I saw that the 2 first patches have been merged but what about the patch 3 and 4?
-> 
-> Do you plan to send a new series?
+Hi Thomas,
 
-Yes, i plan to rebase onto -rc and resend, addressing the comments i
-received.
+On 20/02/2015 18:04, Thomas Petazzoni wrote:
+> This commit adds the stdout-path property in /chosen for all Armada
+> boards that were not yet carrying this property.
 
-	Andrew
+I though the main motivation for using the stdout-path property was
+for removing the earlyprintk in the command line. Arnd told that there
+should be a mean to use stdout-path instead of earlyprintk.
+
+So what about going further and removing "earlyprintk" in the same time?
+
+Thanks,
+
+Gregory
+
+> 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/armada-370-db.dts              | 1 +
+>  arch/arm/boot/dts/armada-370-mirabox.dts         | 1 +
+>  arch/arm/boot/dts/armada-370-netgear-rn102.dts   | 1 +
+>  arch/arm/boot/dts/armada-370-netgear-rn104.dts   | 1 +
+>  arch/arm/boot/dts/armada-370-rd.dts              | 1 +
+>  arch/arm/boot/dts/armada-375-db.dts              | 1 +
+>  arch/arm/boot/dts/armada-388-db.dts              | 1 +
+>  arch/arm/boot/dts/armada-388-rd.dts              | 1 +
+>  arch/arm/boot/dts/armada-xp-axpwifiap.dts        | 1 +
+>  arch/arm/boot/dts/armada-xp-db.dts               | 1 +
+>  arch/arm/boot/dts/armada-xp-gp.dts               | 1 +
+>  arch/arm/boot/dts/armada-xp-matrix.dts           | 1 +
+>  arch/arm/boot/dts/armada-xp-netgear-rn2120.dts   | 1 +
+>  arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts | 1 +
+>  14 files changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/armada-370-db.dts b/arch/arm/boot/dts/armada-370-db.dts
+> index e993c46..286bedd 100644
+> --- a/arch/arm/boot/dts/armada-370-db.dts
+> +++ b/arch/arm/boot/dts/armada-370-db.dts
+> @@ -56,6 +56,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-370-mirabox.dts b/arch/arm/boot/dts/armada-370-mirabox.dts
+> index b10ceb4..ec77b86 100644
+> --- a/arch/arm/boot/dts/armada-370-mirabox.dts
+> +++ b/arch/arm/boot/dts/armada-370-mirabox.dts
+> @@ -52,6 +52,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-370-netgear-rn102.dts b/arch/arm/boot/dts/armada-370-netgear-rn102.dts
+> index 7c5c4ff..8c786cf 100644
+> --- a/arch/arm/boot/dts/armada-370-netgear-rn102.dts
+> +++ b/arch/arm/boot/dts/armada-370-netgear-rn102.dts
+> @@ -54,6 +54,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-370-netgear-rn104.dts b/arch/arm/boot/dts/armada-370-netgear-rn104.dts
+> index 1de53b5..1d64532 100644
+> --- a/arch/arm/boot/dts/armada-370-netgear-rn104.dts
+> +++ b/arch/arm/boot/dts/armada-370-netgear-rn104.dts
+> @@ -54,6 +54,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-370-rd.dts b/arch/arm/boot/dts/armada-370-rd.dts
+> index 6ae36a3..f40d35b 100644
+> --- a/arch/arm/boot/dts/armada-370-rd.dts
+> +++ b/arch/arm/boot/dts/armada-370-rd.dts
+> @@ -65,6 +65,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-375-db.dts b/arch/arm/boot/dts/armada-375-db.dts
+> index 0440891..033665c 100644
+> --- a/arch/arm/boot/dts/armada-375-db.dts
+> +++ b/arch/arm/boot/dts/armada-375-db.dts
+> @@ -56,6 +56,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-388-db.dts b/arch/arm/boot/dts/armada-388-db.dts
+> index af6c74e..c56ccd74 100644
+> --- a/arch/arm/boot/dts/armada-388-db.dts
+> +++ b/arch/arm/boot/dts/armada-388-db.dts
+> @@ -55,6 +55,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-388-rd.dts b/arch/arm/boot/dts/armada-388-rd.dts
+> index d99baac..e17edbb 100644
+> --- a/arch/arm/boot/dts/armada-388-rd.dts
+> +++ b/arch/arm/boot/dts/armada-388-rd.dts
+> @@ -56,6 +56,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-xp-axpwifiap.dts b/arch/arm/boot/dts/armada-xp-axpwifiap.dts
+> index c1fbab2..a7fd474 100644
+> --- a/arch/arm/boot/dts/armada-xp-axpwifiap.dts
+> +++ b/arch/arm/boot/dts/armada-xp-axpwifiap.dts
+> @@ -60,6 +60,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-xp-db.dts b/arch/arm/boot/dts/armada-xp-db.dts
+> index 48bdafe..a12e159 100644
+> --- a/arch/arm/boot/dts/armada-xp-db.dts
+> +++ b/arch/arm/boot/dts/armada-xp-db.dts
+> @@ -65,6 +65,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-xp-gp.dts b/arch/arm/boot/dts/armada-xp-gp.dts
+> index 206aebb..8a2e49e 100644
+> --- a/arch/arm/boot/dts/armada-xp-gp.dts
+> +++ b/arch/arm/boot/dts/armada-xp-gp.dts
+> @@ -66,6 +66,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-xp-matrix.dts b/arch/arm/boot/dts/armada-xp-matrix.dts
+> index 56f958e..3e81f22 100644
+> --- a/arch/arm/boot/dts/armada-xp-matrix.dts
+> +++ b/arch/arm/boot/dts/armada-xp-matrix.dts
+> @@ -53,6 +53,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-xp-netgear-rn2120.dts b/arch/arm/boot/dts/armada-xp-netgear-rn2120.dts
+> index a7ceafd..508a395 100644
+> --- a/arch/arm/boot/dts/armada-xp-netgear-rn2120.dts
+> +++ b/arch/arm/boot/dts/armada-xp-netgear-rn2120.dts
+> @@ -54,6 +54,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> diff --git a/arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts b/arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts
+> index 0c76d9f..7b2ea2060 100644
+> --- a/arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts
+> +++ b/arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts
+> @@ -55,6 +55,7 @@
+>  
+>  	chosen {
+>  		bootargs = "console=ttyS0,115200 earlyprintk";
+> +		stdout-path = &uart0;
+>  	};
+>  
+>  	memory {
+> 
+
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
