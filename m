@@ -1,56 +1,42 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 0/2] gpio: pcf857x: Use gpiolib irqchip helpers and fix wake-up
-Date: Tue, 24 Feb 2015 11:41:03 +0100
-Message-ID: <CAMuHMdVsFqB-yyvDA_XZUScdPD7MbdzfPyFG5xgsH2y0csszqw@mail.gmail.com>
-References: <1423151349-10579-1-git-send-email-geert+renesas@glider.be>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Tue, 24 Feb 2015 12:34:59 -0800
+Message-ID: <20150224203459.GC13094@psi-dev26.jf.intel.com>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
+ <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
+ <CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
+ <4078818.ecVtLF3hjd@vostro.rjw.lan>
+ <CAAVeFuJjMDfz7TZexkYnYrCGkAmRwubs32UhSPO-4qZWbMJjuQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1423151349-10579-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, George Cherian <george.cherian@ti.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuJjMDfz7TZexkYnYrCGkAmRwubs32UhSPO-4qZWbMJjuQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 5, 2015 at 4:49 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> This patch series switches the PCF857x GPIO driver to use the gpiolib
-> irqchip helpers, as requested by Linus Walleij, and fixes wake-up by
-> propagating the wake-up setting to the parent irq controller.
->
-> Note that the conversion to gpiolib irqchip helpers removes the checks
-> added in commit 21fd3cd1874a2ac8 ("gpio: pcf857x: call the gpio user
-> handler iff gpio_to_irq is done"), as the interrupt mappings are no
-> longer created on-demand by the driver, but by gpiochip_irqchip_add()
-> during initialization.  I marked the first patch "RFC" because of
-> this.  Does the removal of the checks cause problems for anyone?
->
-> The second patch was sent before, and rebased on top of the
-> conversion to gpiolib irqchip helpers.
->
-> This was tested on sh73a0/kzm9g, where I don't see the issue addressed
-> by commit 21fd3cd1874a2ac8 ("gpio: pcf857x: call the gpio user handler
-> iff gpio_to_irq is done").
->
-> Thanks for your comments!
+Hi,
 
-No comments?
+> If we decide to go ahead with the solution proposed by this patch for
+> practical reasons (which are good reasons indeed), I still have one
+> problem with its current form.
+> 
+> As the discussion highlighted, this is an ACPI problem, so I'd very
+> much like it to be confined to the ACPI GPIO code, to be enabled only
+> when ACPI is, and to use function names that start with acpi_gpio. The
+> current implementation leverages platform lookup, making said lookup
+> less efficient in the process and bringing confusion about its
+> purpose. Although the two processes are indeed similar, they are
+> separate things: one is a legitimate way to map GPIOs, the other is a
+> fixup for broken firmware.
+> 
+> I suppose we all agree this is a hackish fix, so let's confine it as
+> much as we can.
 
-> Geert Uytterhoeven (2):
->   [RFC] gpio: pcf857x: Switch to use gpiolib irqchip helpers
->   gpio: pcf857x: Propagate wake-up setting to parent irq controller
->
->  drivers/gpio/Kconfig        |   1 +
->  drivers/gpio/gpio-pcf857x.c | 134 ++++++++++++++++----------------------------
->  2 files changed, 50 insertions(+), 85 deletions(-)
+Are we considering MFD cases hackish as well?
+i.e. if we have a driver that needs to register children devices and this
+driver needs to pass GPIO to a child.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Br, David
