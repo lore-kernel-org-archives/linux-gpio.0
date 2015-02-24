@@ -1,124 +1,44 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCHv2 13/15] ARM: mvebu: add core support for Armada 39x
-Date: Mon, 23 Feb 2015 19:16:07 +0100
-Message-ID: <54EB6E67.5070400@free-electrons.com>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com> <1424451874-25375-14-git-send-email-thomas.petazzoni@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:34408 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752234AbbBWSQL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Feb 2015 13:16:11 -0500
-In-Reply-To: <1424451874-25375-14-git-send-email-thomas.petazzoni@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH 0/2] pinctrl: Support for IMG Pistachio
+Date: Mon, 23 Feb 2015 18:15:02 -0800
+Message-ID: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Hi Thomas,
+This series adds support for the pin and GPIO controllers on the IMG
+Pistachio SoC.  Pistachio's pin controller manages 99 pins, 90 of
+which are MFIOs which can be muxed between multiple functions or used
+as GPIOs.  The GPIO control for the 90 MFIOs is broken up into banks
+of 16.  While this driver supports only Pistachio, it should hopefully
+be easy to extend it to support future IMG SoCs.
 
+Test on an IMG Pistachio BuB.  Based on 4.0-rc1 + my series adding
+Pistachio platform support [1], which introduces the MACH_PISTACHIO
+Kconfig symbol.  A branch with this series and the dependent patches
+is available at [2].  I'd like this to go through the MIPS tree with
+Linus'/Alex's ACKs if possible.
 
-On 20/02/2015 18:04, Thomas Petazzoni wrote:
-> This commit adds the core support for Armada 39x, which is quite
-> simple:
-> 
->  - a new Kconfig option which selects the appropriate clock and
->    pinctrl drivers as well as other common features (GIC, L2 cache,
->    SMP, etc.)
-> 
->  - a new DT_MACHINE_START which references the top-level compatible
->    strings supported for the Marvell Armada 39x.
-> 
->  - a new SMP enable-method. The mechanism to enable CPUs for Armada
->    39x appears to be the same as Armada 38x. However, we do not want
->    to use marvell,armada-380-smp in the Device Tree, in the case of
->    the discovery of a subtle difference in the future, which would
->    require changing the Device Tree. And the enable-method isn't a
->    compatible string: you can't specify several values and expect a
->    fallback on the second string if the first one isn't
->    supported. Therefore, we simply declare the SMP enable method
->    "marvell,armada-390-smp" as doing the same thing as the
->    "marvell,armada-380-smp" one.
-> 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->  arch/arm/mach-mvebu/Kconfig      | 14 ++++++++++++++
->  arch/arm/mach-mvebu/board-v7.c   | 14 ++++++++++++++
->  arch/arm/mach-mvebu/platsmp-a9.c |  2 ++
->  3 files changed, 30 insertions(+)
-> 
-> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
-> index c1e4567..9747316 100644
-> --- a/arch/arm/mach-mvebu/Kconfig
-> +++ b/arch/arm/mach-mvebu/Kconfig
-> @@ -64,6 +64,20 @@ config MACH_ARMADA_38X
->  	  Say 'Y' here if you want your kernel to support boards based
->  	  on the Marvell Armada 380/385 SoC with device tree.
->  
-> +config MACH_ARMADA_39X
-> +	bool "Marvell Armada 39x boards" if ARCH_MULTI_V7
+Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Cc: James Hartley <james.hartley@imgtec.com>
+Cc: James Hogan <james.hogan@imgtec.com>
 
-As you don't select it by default we should update the mvebu_v7_defconfig
-with this symbol.
+[1] https://lkml.org/lkml/2015/2/23/694
+[2] https://github.com/abrestic/linux/tree/pistachio-pinctrl-v1
 
-Thanks,
+Andrew Bresticker (2):
+  pinctrl: Add Pistachio SoC pin control binding document
+  pinctrl: Add Pistachio SoC pin control driver
 
-Gregory
-
-> +	select ARM_GIC
-> +	select ARMADA_39X_CLK
-> +	select CACHE_L2X0
-> +	select HAVE_ARM_SCU
-> +	select HAVE_ARM_TWD if SMP
-> +	select HAVE_SMP
-> +	select MACH_MVEBU_V7
-> +	select PINCTRL_ARMADA_39X
-> +	help
-> +	  Say 'Y' here if you want your kernel to support boards based
-> +	  on the Marvell Armada 39x SoC with device tree.
-> +
->  config MACH_ARMADA_XP
->  	bool "Marvell Armada XP boards" if ARCH_MULTI_V7
->  	select ARMADA_XP_CLK
-> diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
-> index 31b66f2..afee908 100644
-> --- a/arch/arm/mach-mvebu/board-v7.c
-> +++ b/arch/arm/mach-mvebu/board-v7.c
-> @@ -232,3 +232,17 @@ DT_MACHINE_START(ARMADA_38X_DT, "Marvell Armada 380/385 (Device Tree)")
->  	.restart	= mvebu_restart,
->  	.dt_compat	= armada_38x_dt_compat,
->  MACHINE_END
-> +
-> +static const char * const armada_39x_dt_compat[] __initconst = {
-> +	"marvell,armada390",
-> +	"marvell,armada398",
-> +	NULL,
-> +};
-> +
-> +DT_MACHINE_START(ARMADA_39X_DT, "Marvell Armada 39x (Device Tree)")
-> +	.l2c_aux_val	= 0,
-> +	.l2c_aux_mask	= ~0,
-> +	.init_irq       = mvebu_init_irq,
-> +	.restart	= mvebu_restart,
-> +	.dt_compat	= armada_39x_dt_compat,
-> +MACHINE_END
-> diff --git a/arch/arm/mach-mvebu/platsmp-a9.c b/arch/arm/mach-mvebu/platsmp-a9.c
-> index 2ec1a42..df0a9cc 100644
-> --- a/arch/arm/mach-mvebu/platsmp-a9.c
-> +++ b/arch/arm/mach-mvebu/platsmp-a9.c
-> @@ -110,3 +110,5 @@ CPU_METHOD_OF_DECLARE(mvebu_armada_375_smp, "marvell,armada-375-smp",
->  		      &mvebu_cortex_a9_smp_ops);
->  CPU_METHOD_OF_DECLARE(mvebu_armada_380_smp, "marvell,armada-380-smp",
->  		      &armada_38x_smp_ops);
-> +CPU_METHOD_OF_DECLARE(mvebu_armada_390_smp, "marvell,armada-390-smp",
-> +		      &armada_38x_smp_ops);
-> 
-
+ .../bindings/pinctrl/img,pistachio-pinctrl.txt     |  217 +++
+ drivers/pinctrl/Kconfig                            |    6 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-pistachio.c                | 1513 ++++++++++++++++++++
+ 4 files changed, 1737 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-pistachio.c
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.2.0.rc0.207.ga3a616c
