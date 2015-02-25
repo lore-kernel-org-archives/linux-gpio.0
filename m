@@ -1,105 +1,47 @@
-From: Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH v9 0/4] Add gpio/pinconf support to Broadcom Cygnus SoC
-Date: Wed, 25 Feb 2015 11:30:59 -0800
-Message-ID: <20150225193059.GC3215@dtor-ws>
-References: <1423606584-21795-1-git-send-email-rjui@broadcom.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v3] sh-pfc: add R8A7794 PFC support
+Date: Wed, 25 Feb 2015 23:03:52 +0300
+Message-ID: <54EE2AA8.9000604@cogentembedded.com>
+References: <2084538.pWCX8EzoLe@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:36996 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752966AbbBYTbE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Feb 2015 14:31:04 -0500
-Received: by iecrl12 with SMTP id rl12so7869538iec.4
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Feb 2015 11:31:03 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1423606584-21795-1-git-send-email-rjui@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <2084538.pWCX8EzoLe@wasted.cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-On Tue, Feb 10, 2015 at 02:16:20PM -0800, Ray Jui wrote:
-> This patchset contains the initial GPIO/PINCONF support for the Broadcom
-> Cygnus SoC.
-> 
-> Cygnus has 3 GPIO controllers: 1) the ASIU GPIO; 2) the chipCommonG GPIO;
-> and 3) the ALWAYS-ON GPIO. All 3 types of GPIO controllers are supported by
-> the this driver.
-> 
-> All 3 Cygnus GPIO controllers support basic PINCONF functions such as bias
-> pull up, pull down, and drive strength configurations, when these pins are
-> muxed to GPIO.
-> 
-> Pins from the ASIU GPIO can be individually muxed to GPIO function, through
-> interaction with the Cygnus IOMUX controller.
-> 
-> Note this patchset has a dependency on the other patchset "Add pinctrl support
-> to Broadcom Cygnus SoC" that is also under review
-> 
-> Changes from v8:
->  - Add code in function 'cygnus_gpio_pinmux_add_range' to free pinmux
->    node resource by calling of_node_put
->  - Drop .suppress_bind_attrs = true, since this is already done in
->    platform_driver_probe
-> 
-> Changes from v7:
->  - Use 'bool' instead of 'int' for flag that indicates pinmux support in the
->    driver
->  - Call put_device to drop reference to the pinmux dev after call to
->    of_find_device_by_node
->  - Replace kasprintf with devm_kasprintf and remove memory deallocation logic
->    in the driver
->  - Set suppress_bind_attrs to true for the driver
-> 
-> Changes from v6:
->  - Move the driver from drivers/gpio/* to drivers/pinctrl/* since this driver
->    supports both GPIO and some basic PINCONF features
->  - Support PINCONF features through standard DT subnodes properties including
->    "bias-disable", "bias-pull-up", "bias-pull-down", and "drive-strength", by
->    creating local PINCONF controller
->  - Add support to allow individual ASIU GPIO pins to be muxed as GPIO, through
->    interactions with the Cygnus IOMUX driver
->  - Convert the driver to use standard GPIOCHIP_IRQ APIs. This helps to reduce
->    customized code in the driver
->  - Other miscellaneous imrpovements in the driver
->  - Enable GPIO based phone hook detection support for BCM911360 phone factor
->    board
-> 
-> Changes from v5:
->  - Get rid of DT property "linux,gpio-base". Use dynamic allocation for GPIO base
->    number
-> 
-> Changes from v4:
->  - Use DT property "linux,gpio-base" to define GPIO base number
->  - factorize common code to improve code readability and reduce code size
->  - remove "bcm_" prefix on function and struct names
->  - improve debugging prints
->  - default GPIO_BCM_CYGNUS to y in Kconfig (it still depends on
->    ARCH_BCM_CYGNUS). This way we do not need to select it from the
->    arch/arm/mach-bcm/Kconfig
->  - Get rid of redundant MAINTAINER entry for this driver. It will be maintained
->    by Broadcom iProc/Cygnus maintainers
->  - Update device tree document based on driver changes
-> 
-> Changes from v3:
->  - Fix dt property tpyo
->  - Fix incorrect GPIO compatible ID in device tree binding document example
-> 
-> Changes from v2:
->  - Consolidate different compatible IDs into "brcm,cygnus-gpio"
->  - Get rid of redundant "no-interrupt" property
-> 
-> Changes from v1:
->  - Get rid of inline qualifier
->  - Get rid of redundant check in the ISR
->  - Other minor fixes to imrove code readability
+Hello.
 
-FWIW I tested this series on BCM958305K SVK.
+On 02/23/2015 12:33 AM, Sergei Shtylyov wrote:
 
-Tested-by: Dmitry Torokhov <dtor@chromium.org>
+> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
 
-Thanks.
+> Add PFC support for  the  R8A7794 SoC  including pin groups for some on-chip
+> devices such as ETH, I2C, INTC, MSIOF, QSPI, [H]SCIF...
 
--- 
-Dmitry
+> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+> [Sergei: squashed together several patches, fixed the MLB_CLK typo, added IRQ4..
+> IRQ9 pin groups,  fixed IRQn comments, added ETH B pin group names, removed
+> stray new line and fixed typos in the  comments in the pinmux_config_regs[]
+> initializer, removed the platform device ID, took into account limited number of
+> signals in the GPIO1/5/6 controllers, added reasonable and removed unreasonable
+> copyrights, modified the bindings document, renamed, added changelog.]
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+> ---
+> Changes in version 3:
+> - removed the platform device ID;
+> - added PORT_GP_26() and PORT_GP_28() macros, used them for GPIO1/5/6 in the
+>    CPU_ALL_PORT() macto.
+
+    Don't apply this patch! The change above causes the driver to fail probing 
+and the eventual kernel hang somehow... :-(
+
+> Changes in version 2:
+> - rebased the patch.
+
+WBR, Sergei
+
