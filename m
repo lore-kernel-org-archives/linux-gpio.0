@@ -1,44 +1,47 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Wed, 25 Feb 2015 10:34:45 +0900
-Message-ID: <CAAVeFuKhD2VBf3EOCjHqJK5CLx4qC8Quire2My9nMqboZzSNZQ@mail.gmail.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
- <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
- <CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
- <4078818.ecVtLF3hjd@vostro.rjw.lan> <CAAVeFuJjMDfz7TZexkYnYrCGkAmRwubs32UhSPO-4qZWbMJjuQ@mail.gmail.com>
- <20150224203459.GC13094@psi-dev26.jf.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: "advanced" LED controllers
+Date: Wed, 25 Feb 2015 09:25:24 +0100
+Message-ID: <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
+References: <20150219211424.GN13603@saruman.tx.rr.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150224203459.GC13094@psi-dev26.jf.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <20150219211424.GN13603@saruman.tx.rr.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 25, 2015 at 5:34 AM, David Cohen
-<david.a.cohen@linux.intel.com> wrote:
-> Hi,
->
->> If we decide to go ahead with the solution proposed by this patch for
->> practical reasons (which are good reasons indeed), I still have one
->> problem with its current form.
->>
->> As the discussion highlighted, this is an ACPI problem, so I'd very
->> much like it to be confined to the ACPI GPIO code, to be enabled only
->> when ACPI is, and to use function names that start with acpi_gpio. The
->> current implementation leverages platform lookup, making said lookup
->> less efficient in the process and bringing confusion about its
->> purpose. Although the two processes are indeed similar, they are
->> separate things: one is a legitimate way to map GPIOs, the other is a
->> fixup for broken firmware.
->>
->> I suppose we all agree this is a hackish fix, so let's confine it as
->> much as we can.
->
-> Are we considering MFD cases hackish as well?
-> i.e. if we have a driver that needs to register children devices and this
-> driver needs to pass GPIO to a child.
+CC linux-gpio, as this looks like the LED equivalent of bulk gpio?
 
-In that case wouldn't the GPIO be best defined in the child node
-itself, for the child device's driver to directly probe?
+On Thu, Feb 19, 2015 at 10:14 PM, Felipe Balbi <balbi@ti.com> wrote:
+> Do we have support for LED controllers which can handle patterns of
+> different kinds ? I mean, currently, if we have an LED controller such
+> as TPIC2810 [1] which can control 8 different leds and each LED
+> corresponds to one bit on register 0x44, we could control leds by just
+> "playing" a wave file on the controller and create easy patterns with
+> that.
+>
+> AFAICT, in linux today we would have to register each of the 8 LEDs as a
+> different LED and have driver magic to write the proper bits on register
+> 0x44, that seems a bit overkill, specially when we want to make
+> patterns: instead of writing 0xff we would have to write 0x80, 0x40,
+> 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 separately and have the driver cache
+> the previous results so we don't end up switching off other LEDs.
+>
+> IOW, what could be handled with a single write, currently needs 8.
+>
+> I wonder if there's any work happening to support these slightly more
+> inteligent LED engines.
+>
+> regards
+>
+> [1] http://www.ti.com/product/tpic2810
+>
+> ps: tpic2810 is probably the simplest example, lp551, lp5523 and others
+> have even more advanced pattern engines which can even handle RGB leds.
+>
+> Currently the driver loads patterns as if it was a firmware blob and
+> registers each of R, G and B components as separate LEDs. Each component
+> also has its own brightness controls (something tpic2810 doesn't have,
+> it's either on or off).
