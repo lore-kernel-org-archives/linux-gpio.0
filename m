@@ -1,154 +1,44 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH 2/4] pinctrl: tegra: some bits move between registers
-Date: Tue, 24 Feb 2015 14:00:49 -0700
-Message-ID: <1424811651-18660-2-git-send-email-swarren@wwwdotorg.org>
-References: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:35792 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752309AbbBXVA0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Feb 2015 16:00:26 -0500
-In-Reply-To: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Wed, 25 Feb 2015 10:34:45 +0900
+Message-ID: <CAAVeFuKhD2VBf3EOCjHqJK5CLx4qC8Quire2My9nMqboZzSNZQ@mail.gmail.com>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
+ <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
+ <CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
+ <4078818.ecVtLF3hjd@vostro.rjw.lan> <CAAVeFuJjMDfz7TZexkYnYrCGkAmRwubs32UhSPO-4qZWbMJjuQ@mail.gmail.com>
+ <20150224203459.GC13094@psi-dev26.jf.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150224203459.GC13094@psi-dev26.jf.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-From: Stephen Warren <swarren@nvidia.com>
+On Wed, Feb 25, 2015 at 5:34 AM, David Cohen
+<david.a.cohen@linux.intel.com> wrote:
+> Hi,
+>
+>> If we decide to go ahead with the solution proposed by this patch for
+>> practical reasons (which are good reasons indeed), I still have one
+>> problem with its current form.
+>>
+>> As the discussion highlighted, this is an ACPI problem, so I'd very
+>> much like it to be confined to the ACPI GPIO code, to be enabled only
+>> when ACPI is, and to use function names that start with acpi_gpio. The
+>> current implementation leverages platform lookup, making said lookup
+>> less efficient in the process and bringing confusion about its
+>> purpose. Although the two processes are indeed similar, they are
+>> separate things: one is a legitimate way to map GPIOs, the other is a
+>> fixup for broken firmware.
+>>
+>> I suppose we all agree this is a hackish fix, so let's confine it as
+>> much as we can.
+>
+> Are we considering MFD cases hackish as well?
+> i.e. if we have a driver that needs to register children devices and this
+> driver needs to pass GPIO to a child.
 
-Some of the pinmux configuration bits that exist in "drive group"
-registers in Tegra30..Tegra124 move to the "pinmux" registers on future
-chips. Add a flag to support this.
-
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
- drivers/pinctrl/pinctrl-tegra.c    | 27 +++++++++++++++++++++------
- drivers/pinctrl/pinctrl-tegra.h    |  3 +++
- drivers/pinctrl/pinctrl-tegra114.c |  3 +++
- drivers/pinctrl/pinctrl-tegra124.c |  3 +++
- drivers/pinctrl/pinctrl-tegra20.c  |  3 +++
- drivers/pinctrl/pinctrl-tegra30.c  |  3 +++
- 6 files changed, 36 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-index e5949d51bc52..6cd651a88398 100644
---- a/drivers/pinctrl/pinctrl-tegra.c
-+++ b/drivers/pinctrl/pinctrl-tegra.c
-@@ -348,14 +348,24 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
- 		*width = 1;
- 		break;
- 	case TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE:
--		*bank = g->drv_bank;
--		*reg = g->drv_reg;
-+		if (pmx->soc->hsm_in_mux) {
-+			*bank = g->mux_bank;
-+			*reg = g->mux_reg;
-+		} else {
-+			*bank = g->drv_bank;
-+			*reg = g->drv_reg;
-+		}
- 		*bit = g->hsm_bit;
- 		*width = 1;
- 		break;
- 	case TEGRA_PINCONF_PARAM_SCHMITT:
--		*bank = g->drv_bank;
--		*reg = g->drv_reg;
-+		if (pmx->soc->schmitt_in_mux) {
-+			*bank = g->mux_bank;
-+			*reg = g->mux_reg;
-+		} else {
-+			*bank = g->drv_bank;
-+			*reg = g->drv_reg;
-+		}
- 		*bit = g->schmitt_bit;
- 		*width = 1;
- 		break;
-@@ -390,8 +400,13 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
- 		*width = g->slwr_width;
- 		break;
- 	case TEGRA_PINCONF_PARAM_DRIVE_TYPE:
--		*bank = g->drv_bank;
--		*reg = g->drv_reg;
-+		if (pmx->soc->drvtype_in_mux) {
-+			*bank = g->mux_bank;
-+			*reg = g->mux_reg;
-+		} else {
-+			*bank = g->drv_bank;
-+			*reg = g->drv_reg;
-+		}
- 		*bit = g->drvtype_bit;
- 		*width = 2;
- 		break;
-diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
-index 8d94d1332e7b..d54ab9d38792 100644
---- a/drivers/pinctrl/pinctrl-tegra.h
-+++ b/drivers/pinctrl/pinctrl-tegra.h
-@@ -182,6 +182,9 @@ struct tegra_pinctrl_soc_data {
- 	unsigned nfunctions;
- 	const struct tegra_pingroup *groups;
- 	unsigned ngroups;
-+	bool hsm_in_mux;
-+	bool schmitt_in_mux;
-+	bool drvtype_in_mux;
- };
- 
- int tegra_pinctrl_probe(struct platform_device *pdev,
-diff --git a/drivers/pinctrl/pinctrl-tegra114.c b/drivers/pinctrl/pinctrl-tegra114.c
-index 0740cdba7508..05e49d5137ab 100644
---- a/drivers/pinctrl/pinctrl-tegra114.c
-+++ b/drivers/pinctrl/pinctrl-tegra114.c
-@@ -1841,6 +1841,9 @@ static const struct tegra_pinctrl_soc_data tegra114_pinctrl = {
- 	.nfunctions = ARRAY_SIZE(tegra114_functions),
- 	.groups = tegra114_groups,
- 	.ngroups = ARRAY_SIZE(tegra114_groups),
-+	.hsm_in_mux = false,
-+	.schmitt_in_mux = false,
-+	.drvtype_in_mux = false,
- };
- 
- static int tegra114_pinctrl_probe(struct platform_device *pdev)
-diff --git a/drivers/pinctrl/pinctrl-tegra124.c b/drivers/pinctrl/pinctrl-tegra124.c
-index b7ba26064dbf..7cd44c7c296d 100644
---- a/drivers/pinctrl/pinctrl-tegra124.c
-+++ b/drivers/pinctrl/pinctrl-tegra124.c
-@@ -2053,6 +2053,9 @@ static const struct tegra_pinctrl_soc_data tegra124_pinctrl = {
- 	.nfunctions = ARRAY_SIZE(tegra124_functions),
- 	.groups = tegra124_groups,
- 	.ngroups = ARRAY_SIZE(tegra124_groups),
-+	.hsm_in_mux = false,
-+	.schmitt_in_mux = false,
-+	.drvtype_in_mux = false,
- };
- 
- static int tegra124_pinctrl_probe(struct platform_device *pdev)
-diff --git a/drivers/pinctrl/pinctrl-tegra20.c b/drivers/pinctrl/pinctrl-tegra20.c
-index d3a5722e4acb..4833db4433d9 100644
---- a/drivers/pinctrl/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/pinctrl-tegra20.c
-@@ -2221,6 +2221,9 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
- 	.nfunctions = ARRAY_SIZE(tegra20_functions),
- 	.groups = tegra20_groups,
- 	.ngroups = ARRAY_SIZE(tegra20_groups),
-+	.hsm_in_mux = false,
-+	.schmitt_in_mux = false,
-+	.drvtype_in_mux = false,
- };
- 
- static int tegra20_pinctrl_probe(struct platform_device *pdev)
-diff --git a/drivers/pinctrl/pinctrl-tegra30.c b/drivers/pinctrl/pinctrl-tegra30.c
-index 77c0768d5bd8..47b2fd8bb2e9 100644
---- a/drivers/pinctrl/pinctrl-tegra30.c
-+++ b/drivers/pinctrl/pinctrl-tegra30.c
-@@ -2476,6 +2476,9 @@ static const struct tegra_pinctrl_soc_data tegra30_pinctrl = {
- 	.nfunctions = ARRAY_SIZE(tegra30_functions),
- 	.groups = tegra30_groups,
- 	.ngroups = ARRAY_SIZE(tegra30_groups),
-+	.hsm_in_mux = false,
-+	.schmitt_in_mux = false,
-+	.drvtype_in_mux = false,
- };
- 
- static int tegra30_pinctrl_probe(struct platform_device *pdev)
--- 
-1.9.1
-
+In that case wouldn't the GPIO be best defined in the child node
+itself, for the child device's driver to directly probe?
