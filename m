@@ -1,47 +1,33 @@
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v3] sh-pfc: add R8A7794 PFC support
-Date: Wed, 25 Feb 2015 23:03:52 +0300
-Message-ID: <54EE2AA8.9000604@cogentembedded.com>
-References: <2084538.pWCX8EzoLe@wasted.cogentembedded.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: Remove non existing GPIO
+ pins
+Date: Wed, 25 Feb 2015 23:58:42 +0300
+Message-ID: <54EE3782.5040108@cogentembedded.com>
+References: <1424115661-21928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1424115661-21928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <2084538.pWCX8EzoLe@wasted.cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:40640 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753370AbbBYU6r (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Feb 2015 15:58:47 -0500
+Received: by lbdu10 with SMTP id u10so6637492lbd.7
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Feb 2015 12:58:45 -0800 (PST)
+In-Reply-To: <1424115661-21928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-sh@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-gpio@vger.kernel.org
 
-Hello.
+On 02/16/2015 10:41 PM, Laurent Pinchart wrote:
 
-On 02/23/2015 12:33 AM, Sergei Shtylyov wrote:
+> GPIO banks 1 and 7 are missing pins 26 to 31. Remove them.
 
-> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-> Add PFC support for  the  R8A7794 SoC  including pin groups for some on-chip
-> devices such as ETH, I2C, INTC, MSIOF, QSPI, [H]SCIF...
-
-> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
-> [Sergei: squashed together several patches, fixed the MLB_CLK typo, added IRQ4..
-> IRQ9 pin groups,  fixed IRQn comments, added ETH B pin group names, removed
-> stray new line and fixed typos in the  comments in the pinmux_config_regs[]
-> initializer, removed the platform device ID, took into account limited number of
-> signals in the GPIO1/5/6 controllers, added reasonable and removed unreasonable
-> copyrights, modified the bindings document, renamed, added changelog.]
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-> ---
-> Changes in version 3:
-> - removed the platform device ID;
-> - added PORT_GP_26() and PORT_GP_28() macros, used them for GPIO1/5/6 in the
->    CPU_ALL_PORT() macto.
-
-    Don't apply this patch! The change above causes the driver to fail probing 
-and the eventual kernel hang somehow... :-(
-
-> Changes in version 2:
-> - rebased the patch.
+    This patch breaks the boot as well, please don't apply it yet. The same 
+about R8A7790 patch. We're thinking about a proper fix...
 
 WBR, Sergei
 
