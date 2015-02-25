@@ -1,78 +1,66 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 14/18] ARM: Add STM32 family machine
-Date: Wed, 25 Feb 2015 13:04:47 +0100
-Message-ID: <CALszF6CGT35V71QKTrDx+1Ltrctv5F7t8Zq6Tq15zn2bZGQXwQ@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1424455277-29983-15-git-send-email-mcoquelin.stm32@gmail.com>
-	<20150220200019.GU19388@pengutronix.de>
-	<1424468240.24292.5.camel@x220>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Wed, 25 Feb 2015 10:25:02 -0800
+Message-ID: <20150225182502.GA7586@psi-dev26.jf.intel.com>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
+ <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
+ <CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
+ <4078818.ecVtLF3hjd@vostro.rjw.lan>
+ <CAAVeFuJjMDfz7TZexkYnYrCGkAmRwubs32UhSPO-4qZWbMJjuQ@mail.gmail.com>
+ <20150224203459.GC13094@psi-dev26.jf.intel.com>
+ <CAAVeFuKhD2VBf3EOCjHqJK5CLx4qC8Quire2My9nMqboZzSNZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1424468240.24292.5.camel@x220>
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuKhD2VBf3EOCjHqJK5CLx4qC8Quire2My9nMqboZzSNZQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2015-02-20 22:37 GMT+01:00 Paul Bolle <pebolle@tiscali.nl>:
-> On Fri, 2015-02-20 at 21:00 +0100, Uwe Kleine-K=C3=B6nig wrote:
->> On Fri, Feb 20, 2015 at 07:01:13PM +0100, Maxime Coquelin wrote:
->> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->> > index 97d07ed..cfd9532 100644
->> > --- a/arch/arm/Kconfig
->> > +++ b/arch/arm/Kconfig
->> > @@ -774,6 +774,28 @@ config ARCH_OMAP1
->> >     help
->> >       Support for older TI OMAP1 (omap7xx, omap15xx or omap16xx)
->> >
->> > +config ARCH_STM32
->> > +   bool "STMicrolectronics STM32"
->> > +   depends on !MMU
->> > +   select ARCH_REQUIRE_GPIOLIB
->> > +   select ARM_NVIC
->> > +   select AUTO_ZRELADDR
->> > +   select ARCH_HAS_RESET_CONTROLLER
->> > +   select RESET_CONTROLLER
->> > +   select PINCTRL
->> > +   select PINCTRL_STM32
->> > +   select CLKSRC_OF
->> > +   select ARMV7M_SYSTICK
->> > +   select COMMON_CLK
->> > +   select CPU_V7M
->> > +   select GENERIC_CLOCKEVENTS
->> > +   select NO_DMA
->> > +   select NO_IOPORT_MAP
->> > +   select SPARSE_IRQ
->> > +   select USE_OF
->> Please sort this list alphabetically.
->
-> And drop
->     select NO_DMA
->
-> You copied that from ARCH_EFM32, but it's pointless on arm (as arch/a=
-rm/
-> doesn't provide a NO_DMA Kconfig symbol).
+On Wed, Feb 25, 2015 at 10:34:45AM +0900, Alexandre Courbot wrote:
+> On Wed, Feb 25, 2015 at 5:34 AM, David Cohen
+> <david.a.cohen@linux.intel.com> wrote:
+> > Hi,
+> >
+> >> If we decide to go ahead with the solution proposed by this patch for
+> >> practical reasons (which are good reasons indeed), I still have one
+> >> problem with its current form.
+> >>
+> >> As the discussion highlighted, this is an ACPI problem, so I'd very
+> >> much like it to be confined to the ACPI GPIO code, to be enabled only
+> >> when ACPI is, and to use function names that start with acpi_gpio. The
+> >> current implementation leverages platform lookup, making said lookup
+> >> less efficient in the process and bringing confusion about its
+> >> purpose. Although the two processes are indeed similar, they are
+> >> separate things: one is a legitimate way to map GPIOs, the other is a
+> >> fixup for broken firmware.
+> >>
+> >> I suppose we all agree this is a hackish fix, so let's confine it as
+> >> much as we can.
+> >
+> > Are we considering MFD cases hackish as well?
+> > i.e. if we have a driver that needs to register children devices and this
+> > driver needs to pass GPIO to a child.
+> 
+> In that case wouldn't the GPIO be best defined in the child node
+> itself, for the child device's driver to directly probe?
 
-You are right, I will drop NO_DMA in v3.
+In my case [1] I need 2 "virtual devices" (and more in future) to be
+part of an USB OTG port control. I call it virtual because they are too
+simple components connected to no bus and controlled by GPIOs:
+- a fixed regulator controlled by GPIO
+- a generic mux controlled by GPIO
 
-Thanks,
-Maxime
+I'd need to request official ACPI HID for them in order to make them
+self-sufficient.
 
->
-> I submitted a patch last year to drop it from ARCH_EFM32, which Uwe
-> Acked, but then nothing happened. I'm to blame, as I should have sent=
- a
-> reminder.
->
->> > +   help
->> > +     Support for STMicorelectronics STM32 processors.
->> > +
->> >  endchoice
->> >
->> >  menu "Multiple platform selection"
->
->
-> Paul Bolle
->
+I can go ahead with this approach, but we have many examples of drivers
+on upstream that are platform driver expecting to receive gpio via
+platform data (e.g. extcon-gpio). The ACPI table of some products on
+market were defined following this concept and won't change anymore.
+
+Br, David
+
+[1] https://lkml.org/lkml/2015/2/19/411
