@@ -1,66 +1,55 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
-Date: Wed, 25 Feb 2015 10:25:02 -0800
-Message-ID: <20150225182502.GA7586@psi-dev26.jf.intel.com>
-References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
- <CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
- <CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
- <4078818.ecVtLF3hjd@vostro.rjw.lan>
- <CAAVeFuJjMDfz7TZexkYnYrCGkAmRwubs32UhSPO-4qZWbMJjuQ@mail.gmail.com>
- <20150224203459.GC13094@psi-dev26.jf.intel.com>
- <CAAVeFuKhD2VBf3EOCjHqJK5CLx4qC8Quire2My9nMqboZzSNZQ@mail.gmail.com>
+From: Dmitry Torokhov <dtor@chromium.org>
+Subject: Re: [PATCH v4 0/4] Add pinctrl support to Broadcom Cygnus SoC
+Date: Wed, 25 Feb 2015 11:29:56 -0800
+Message-ID: <20150225192956.GB3215@dtor-ws>
+References: <rjui@broadcom.com>
+ <1423015801-26967-1-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:33521 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752856AbbBYTaA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Feb 2015 14:30:00 -0500
+Received: by mail-ig0-f180.google.com with SMTP id b16so8677198igk.1
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Feb 2015 11:29:59 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <CAAVeFuKhD2VBf3EOCjHqJK5CLx4qC8Quire2My9nMqboZzSNZQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+In-Reply-To: <1423015801-26967-1-git-send-email-rjui@broadcom.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ray Jui <rjui@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Scott Branden <sbranden@broadcom.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-On Wed, Feb 25, 2015 at 10:34:45AM +0900, Alexandre Courbot wrote:
-> On Wed, Feb 25, 2015 at 5:34 AM, David Cohen
-> <david.a.cohen@linux.intel.com> wrote:
-> > Hi,
-> >
-> >> If we decide to go ahead with the solution proposed by this patch for
-> >> practical reasons (which are good reasons indeed), I still have one
-> >> problem with its current form.
-> >>
-> >> As the discussion highlighted, this is an ACPI problem, so I'd very
-> >> much like it to be confined to the ACPI GPIO code, to be enabled only
-> >> when ACPI is, and to use function names that start with acpi_gpio. The
-> >> current implementation leverages platform lookup, making said lookup
-> >> less efficient in the process and bringing confusion about its
-> >> purpose. Although the two processes are indeed similar, they are
-> >> separate things: one is a legitimate way to map GPIOs, the other is a
-> >> fixup for broken firmware.
-> >>
-> >> I suppose we all agree this is a hackish fix, so let's confine it as
-> >> much as we can.
-> >
-> > Are we considering MFD cases hackish as well?
-> > i.e. if we have a driver that needs to register children devices and this
-> > driver needs to pass GPIO to a child.
+On Tue, Feb 03, 2015 at 06:09:57PM -0800, Ray Jui wrote:
+> This patchset contains the initial pinctrl (IOMUX) support for the Broadcom
+> Cygnus SoC. The Cygnus IOMUX controller supports group based mux configuration
+> and allows certain pins to be muxed to GPIO function individually
 > 
-> In that case wouldn't the GPIO be best defined in the child node
-> itself, for the child device's driver to directly probe?
+> Changes from v3:
+>  - Fix the driver to have more proper use of "const" in various places
+>  - Other minor improvements
+> 
+> Changes from v2:
+>  - Consolidate all Broadcom pinctrl drivers into drivers/pinctrl/bcm/*
+>  - Change the Cygnus IOMUX driver to use standard Linux pinctrl subnode
+> properties such as "function" and "groups" for pinmux configuration, instead
+> of non-standard properties such as "brcm,function" and "brcm,group"
+>  - Use real function names like "spi0", "lcd", "key", and etc. instead of HW
+> specific mux names like "alt1", "alt2", "alt3", and etc.
+>  - Add suffix "grp" to all group names
+>  - Add support to allow individual pins to be muxed to GPIO function through
+> subsystem callbacks "gpio_request_enable" and "gpio_disable_free", and get rid
+> of all GPIO groups
+>  - Other minor improvements in the driver
+> 
+> Changes from v1:
+>  - Fix a typo in device tree binding document
 
-In my case [1] I need 2 "virtual devices" (and more in future) to be
-part of an USB OTG port control. I call it virtual because they are too
-simple components connected to no bus and controlled by GPIOs:
-- a fixed regulator controlled by GPIO
-- a generic mux controlled by GPIO
+FWIW I tested this series on BCM958305K SVK.
 
-I'd need to request official ACPI HID for them in order to make them
-self-sufficient.
+Tested-by: Dmitry Torokhov <dtor@chromium.org>
 
-I can go ahead with this approach, but we have many examples of drivers
-on upstream that are platform driver expecting to receive gpio via
-platform data (e.g. extcon-gpio). The ACPI table of some products on
-market were defined following this concept and won't change anymore.
+Thanks.
 
-Br, David
-
-[1] https://lkml.org/lkml/2015/2/19/411
+-- 
+Dmitry
