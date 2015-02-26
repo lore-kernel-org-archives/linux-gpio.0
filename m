@@ -1,53 +1,81 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v2 02/18] ARM: ARMv7M: Enlarge vector table to 256 entries
-Date: Thu, 26 Feb 2015 11:43:04 +0100
-Message-ID: <20150226104304.GK7789@pengutronix.de>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
- <1424455277-29983-3-git-send-email-mcoquelin.stm32@gmail.com>
- <20150220194756.GS19388@pengutronix.de>
- <CALszF6CB9YU7ashQ-y_zx58Mkf=sbrBfa2dAOdQm7FkmcuE7PA@mail.gmail.com>
- <CALszF6B6A=de_TK0e-iJHuW4MfD9xbd-yHZHaD-JmZXwZ9CW2A@mail.gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: Re: [PATCH/RFC] gpio: rcar: Add clock support
+Date: Thu, 26 Feb 2015 21:42:48 +0900
+Message-ID: <CAH1o70KrEur6uhz-0QWa9UP_x=XeGTvpVK-gLYHew5aLme950Q@mail.gmail.com>
+References: <1424015182-20447-1-git-send-email-ykaneko0929@gmail.com>
+	<CAMuHMdXCAQTqD-UHB=uLgPNMc7RbDnOkLbLcXXyiM140EzsbxA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CALszF6B6A=de_TK0e-iJHuW4MfD9xbd-yHZHaD-JmZXwZ9CW2A@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@a>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdXCAQTqD-UHB=uLgPNMc7RbDnOkLbLcXXyiM140EzsbxA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Koji Matsuoka <koji.matsuoka.xm@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 26, 2015 at 11:29:52AM +0100, Maxime Coquelin wrote:
-> 2015-02-23 11:33 GMT+01:00 Maxime Coquelin <mcoquelin.stm32@gmail.com=
->:
-> > 2015-02-20 20:47 GMT+01:00 Uwe Kleine-K=F6nig <u.kleine-koenig@peng=
-utronix.de>:
-> >> Who do you target to apply this series?
-> >
-> > I guess it should go through Russell's Patch Tracking System?
->=20
-> Sorry, I answered your question too quickly.
-> I meant this patch should go through Russell's Patch Tracking System.
->=20
-> For the other patches, I think it should be picked by their respectiv=
-e
-> maintainers.
-> Or I can create an immutable tag (on github or kernel.org?) that will
-> be merged by the different sub-systems?
-> What would you advise?
-Depends on the interdependencies of your patches. If each maintainer ca=
-n
-just pick up the patches affecting his area on top of (say) 4.0-rc1 tha=
-t
-would be good.
+Hi Geert-san,
 
-Best regards
-Uwe
+2015-02-16 17:48 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+> Hi Kaneko-san, Matsuoka-san,
+>
+> On Sun, Feb 15, 2015 at 4:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>>
+>> The clock of GPIO is an initial value of enable. However,
+>> since correction which sets the clock to disable was added
+>> by the boot loader, the clock control was added.
+>
+> Thanks for your patch!
+>
+> Are you sure you this is really needed to enable the GPIO module clocks?
+>
+> While I'm still using the original U-Boot that doesn't disable (almost) all
+> MSTP clocks, I do use my own early startup code that disables (almost) all
+> MSTP clocks to make sure I don't miss enabling any clocks, and the GPIO
+> clocks are enabled by the call to pm_runtime_get_sync() in gpio_rcar_probe(),
+> added in commit df0c6c80232f ("gpio: rcar: Add minimal runtime PM support").
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Thanks, with that in mind I'd like to withdraw this patch.
+
+Kaneko
+
+>
+>> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+>> index c49522e..6d4a0bc 100644
+>> --- a/drivers/gpio/gpio-rcar.c
+>> +++ b/drivers/gpio/gpio-rcar.c
+>
+>> @@ -367,6 +369,13 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+>>
+>>         platform_set_drvdata(pdev, p);
+>>
+>> +       p->clk = devm_clk_get(&pdev->dev, NULL);
+>> +       if (IS_ERR(p->clk)) {
+>> +               dev_err(&pdev->dev, "failed to get access to GPIO clock\n");
+>> +               return PTR_ERR(p->clk);
+>> +       }
+>> +       clk_prepare_enable(p->clk);
+>> +
+>>         pm_runtime_enable(dev);
+>>         pm_runtime_get_sync(dev);
+>
+> With some extra debugging code on Koelsch:
+>
+>     gpio_rcar_probe:370
+> --> MSTP gpio0 ON
+>     gpio_rcar_probe:373
+>     gpiochip_find_base: found new base at 992
+>     GPIO chip e6050000.gpio: created GPIO range 0->31 ==> e6060000.pfc PIN 0->31
+>     gpiochip_add: registered GPIOs 992 to 1023 on device: e6050000.gpio
+>     gpio_rcar e6050000.gpio: driving 32 GPIOs
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
