@@ -1,100 +1,35 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into request/release
- resources methods
-Date: Thu, 26 Feb 2015 14:32:02 +0100
-Message-ID: <54EF2052.6030909@atmel.com>
-References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: Re: [PATCH V7 3/8] MIPS: Cleanup Loongson-2F's gpio driver
+Date: Thu, 26 Feb 2015 22:48:14 +0900
+Message-ID: <CAAVeFuJM8zxvAx_+00ezWCe5aD+bjY=a7WgoBrAEn56pS_dCeA@mail.gmail.com>
+References: <tencent_5337E0085A0993E56C99045F@qq.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:40498 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932105AbbBZNse convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Feb 2015 08:48:34 -0500
+Received: by iebtr6 with SMTP id tr6so15214437ieb.7
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2015 05:48:34 -0800 (PST)
+In-Reply-To: <tencent_5337E0085A0993E56C99045F@qq.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, John Crispin <john@phrozen.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips <linux-mips@linux-mips.org>, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Le 08/02/2015 19:23, Boris Brezillon a =E9crit :
-> The gpiochip_lock_as_irq call can fail and return an error, while the
-> irq_startup is not expected to fail (returns an unsigned int which is=
- not
-> checked by irq core code).
->=20
-> irq_request/release_resources functions have been created to address =
-this
-> problem.
->=20
-> Move gpiochip_lock/unlock_as_irq calls into
-> irq_request/release_resources functions to prevent using a gpio as an=
- irq
-> if the gpiochip_lock_as_irq call failed.
->=20
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+On Thu, Feb 26, 2015 at 10:35 PM, =E9=99=88=E5=8D=8E=E6=89=8D <chenhc@l=
+emote.com> wrote:
+> I have tested, could I add myself?
 
-If it can speed up things:
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+No. :) But it's good to know that you have tested, too many patches
+get submitted without care.
 
-Linus,
-can we schedule this fix during the 4.0-rc phase?
-
-Bye,
-
-> ---
->  drivers/pinctrl/pinctrl-at91.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl=
--at91.c
-> index f4cd0b9..a481406 100644
-> --- a/drivers/pinctrl/pinctrl-at91.c
-> +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -1477,28 +1477,25 @@ static void gpio_irq_ack(struct irq_data *d)
->  	/* the interrupt is already cleared before by reading ISR */
->  }
-> =20
-> -static unsigned int gpio_irq_startup(struct irq_data *d)
-> +static int gpio_irq_request_res(struct irq_data *d)
->  {
->  	struct at91_gpio_chip *at91_gpio =3D irq_data_get_irq_chip_data(d);
->  	unsigned	pin =3D d->hwirq;
->  	int ret;
-> =20
->  	ret =3D gpiochip_lock_as_irq(&at91_gpio->chip, pin);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(at91_gpio->chip.dev, "unable to lock pind %lu IRQ\n",
->  			d->hwirq);
-> -		return ret;
-> -	}
-> -	gpio_irq_unmask(d);
-> -	return 0;
-> +
-> +	return ret;
->  }
-> =20
-> -static void gpio_irq_shutdown(struct irq_data *d)
-> +static void gpio_irq_release_res(struct irq_data *d)
->  {
->  	struct at91_gpio_chip *at91_gpio =3D irq_data_get_irq_chip_data(d);
->  	unsigned	pin =3D d->hwirq;
-> =20
-> -	gpio_irq_mask(d);
->  	gpiochip_unlock_as_irq(&at91_gpio->chip, pin);
->  }
-> =20
-> @@ -1577,8 +1574,8 @@ void at91_pinctrl_gpio_resume(void)
->  static struct irq_chip gpio_irqchip =3D {
->  	.name		=3D "GPIO",
->  	.irq_ack	=3D gpio_irq_ack,
-> -	.irq_startup	=3D gpio_irq_startup,
-> -	.irq_shutdown	=3D gpio_irq_shutdown,
-> +	.irq_request_resources =3D gpio_irq_request_res,
-> +	.irq_release_resources =3D gpio_irq_release_res,
->  	.irq_disable	=3D gpio_irq_mask,
->  	.irq_mask	=3D gpio_irq_mask,
->  	.irq_unmask	=3D gpio_irq_unmask,
->=20
-
-
---=20
-Nicolas Ferre
+What I would like to get is an ack from a MIPS maintainer so we can
+move this code away from that architecture
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
