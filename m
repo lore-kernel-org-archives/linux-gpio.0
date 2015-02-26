@@ -1,83 +1,45 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v5 4/4] mdio-mux-gpio: use new gpiod_get_array and
- gpiod_put_array functions
-Date: Thu, 26 Feb 2015 18:54:53 +0900
-Message-ID: <CAAVeFuLnHQpsduHRsEkSC31+HDiApNoB3DNDQLzZxng=OVx6eg@mail.gmail.com>
-References: <1521782.cXqN30N6pA@pcimr>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Thu, 26 Feb 2015 19:27:55 +0900
+Message-ID: <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
+References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
+ <20150130234552.GA20407@sysresccd> <20150131083300.GZ21469@belle.intranet.vanheusden.com>
+ <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+ <20150203090325.GA29693@deathray> <CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+ <20150219085303.GI21469@belle.intranet.vanheusden.com> <CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1521782.cXqN30N6pA@pcimr>
-Sender: netdev-owner@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:39302 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752696AbbBZK2R (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Feb 2015 05:28:17 -0500
+Received: by iecvy18 with SMTP id vy18so12893456iec.6
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2015 02:28:16 -0800 (PST)
+In-Reply-To: <CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: folkert <folkert@vanheusden.com>, Michael Welling <mwelling@ieee.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 12, 2015 at 1:28 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
-> disposing of GPIO descriptors.
+On Fri, Feb 20, 2015 at 1:52 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Feb 19, 2015 at 9:53 AM, folkert <folkert@vanheusden.com> wrote:
 >
-> Cc: David Miller <davem@davemloft.net>
-> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-> ---
-> Change log:
->   v5: no change
->   v4: use shorter names for members of struct gpio_descs
->   v3: no change
->   v2: use the new interface
+>> I also think that this interface is cumbersome. I did not measure it(!)
+>> but I think adding this open/seek + read construction may add all kinds
+>> of overhead. Especially since my use-case requires the lowest latency
+>> possible. Not to forget that conversion of the measured value to ascii
+>> and back.
 >
->  drivers/net/phy/mdio-mux-gpio.c | 60 ++++++++++++-----------------------------
->  1 file changed, 17 insertions(+), 43 deletions(-)
+> Yes this interface sucks.
 >
-> diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
-> index 320eb15..c49ad09 100644
-> --- a/drivers/net/phy/mdio-mux-gpio.c
-> +++ b/drivers/net/phy/mdio-mux-gpio.c
-> @@ -12,33 +12,30 @@
->  #include <linux/module.h>
->  #include <linux/phy.h>
->  #include <linux/mdio-mux.h>
-> -#include <linux/of_gpio.h>
-> +#include <linux/gpio/consumer.h>
->
->  #define DRV_VERSION "1.1"
->  #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
->
-> -#define MDIO_MUX_GPIO_MAX_BITS 8
-> -
->  struct mdio_mux_gpio_state {
-> -       struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
-> -       unsigned int num_gpios;
-> +       struct gpio_descs *gpios;
->         void *mux_handle;
->  };
->
->  static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
->                                    void *data)
->  {
-> -       int values[MDIO_MUX_GPIO_MAX_BITS];
-> -       unsigned int n;
->         struct mdio_mux_gpio_state *s = data;
-> +       int values[s->gpios->ndescs];
-> +       unsigned int n;
->
->         if (current_child == desired_child)
->                 return 0;
->
-> -       for (n = 0; n < s->num_gpios; n++) {
-> +       for (n = 0; n < s->gpios->ndescs; n++)
->                 values[n] = (desired_child >> n) & 1;
-> -       }
-> -       gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
-> +
-> +       gpiod_set_array_cansleep(s->gpios->ndescs, s->gpios->desc, values);
+> The tentative long-term plan is to replace it with something like
+> a char device that can handle a quick context switch and also
+> issuing calls to set multiple pins at once, as we now have an
+> in-kernel interface for that (that I totally refuse to support from
+> sysfs).
 
-One suggestion for a possible further improvement: it would be great
-if the gpiod_set/get_array() functions would work on a struct
-gpio_descs so users don't have to pass both the number of GPIOs and
-the array.
+Mmm, I was thinking it would be nice to have a (new, redesigned) sysfs
+interface for this. :P
 
-I don't know whether it would be desirable to keep alternative
-functions that preserve the current form, for users who want to set
-multiple GPIOs but cannot use gpiod_get_array(). struct gpiod_descs is
-easy to build, so maybe we don't need them?
+Aren't we going to make things less accessible if we use a char device?
