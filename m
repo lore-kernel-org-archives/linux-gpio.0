@@ -1,81 +1,70 @@
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: Re: [PATCH/RFC] gpio: rcar: Add clock support
-Date: Thu, 26 Feb 2015 21:42:48 +0900
-Message-ID: <CAH1o70KrEur6uhz-0QWa9UP_x=XeGTvpVK-gLYHew5aLme950Q@mail.gmail.com>
-References: <1424015182-20447-1-git-send-email-ykaneko0929@gmail.com>
-	<CAMuHMdXCAQTqD-UHB=uLgPNMc7RbDnOkLbLcXXyiM140EzsbxA@mail.gmail.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into
+ request/release resources methods
+Date: Thu, 26 Feb 2015 14:12:01 +0100
+Message-ID: <20150226141201.670e6e18@bbrezillon>
+References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
+	<BC36A77B-9986-495E-8F86-C80E9D0F0C63@jcrosoft.com>
+	<95765FA2-E9BF-4A66-B46D-2491869B0A14@jcrosoft.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXCAQTqD-UHB=uLgPNMc7RbDnOkLbLcXXyiM140EzsbxA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Koji Matsuoka <koji.matsuoka.xm@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:43929 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932078AbbBZNME convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Feb 2015 08:12:04 -0500
+In-Reply-To: <95765FA2-E9BF-4A66-B46D-2491869B0A14@jcrosoft.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: Nicolas FERRE <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-Hi Geert-san,
+On Fri, 20 Feb 2015 15:50:36 +0800
+Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com> wrote:
 
-2015-02-16 17:48 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> Hi Kaneko-san, Matsuoka-san,
+>=20
+> > On Feb 9, 2015, at 10:50 PM, Jean-Christophe PLAGNIOL-VILLARD <plag=
+nioj@jcrosoft.com> wrote:
+> >=20
+> >=20
+> >> On Feb 9, 2015, at 2:23 AM, Boris Brezillon <boris.brezillon@free-=
+electrons.com> wrote:
+> >>=20
+> >> The gpiochip_lock_as_irq call can fail and return an error, while =
+the
+> >> irq_startup is not expected to fail (returns an unsigned int which=
+ is not
+> >> checked by irq core code).
+> >>=20
+> >> irq_request/release_resources functions have been created to addre=
+ss this
+> >> problem.
+> >>=20
+> >> Move gpiochip_lock/unlock_as_irq calls into
+> >> irq_request/release_resources functions to prevent using a gpio as=
+ an irq
+> >> if the gpiochip_lock_as_irq call failed.
+> >>=20
+> >> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com=
 >
-> On Sun, Feb 15, 2015 at 4:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
->>
->> The clock of GPIO is an initial value of enable. However,
->> since correction which sets the clock to disable was added
->> by the boot loader, the clock control was added.
->
-> Thanks for your patch!
->
-> Are you sure you this is really needed to enable the GPIO module clocks?
->
-> While I'm still using the original U-Boot that doesn't disable (almost) all
-> MSTP clocks, I do use my own early startup code that disables (almost) all
-> MSTP clocks to make sure I don't miss enabling any clocks, and the GPIO
-> clocks are enabled by the call to pm_runtime_get_sync() in gpio_rcar_probe(),
-> added in commit df0c6c80232f ("gpio: rcar: Add minimal runtime PM support").
+> >> =E2=80=94
+> >=20
+> > I=E2=80=99m travelling will take a look end of the week
+>=20
+> just get back from travelling will take a look after Chinese new year
+> as all my hw are at the office
 
-Thanks, with that in mind I'd like to withdraw this patch.
+Ping
 
-Kaneko
 
->
->> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
->> index c49522e..6d4a0bc 100644
->> --- a/drivers/gpio/gpio-rcar.c
->> +++ b/drivers/gpio/gpio-rcar.c
->
->> @@ -367,6 +369,13 @@ static int gpio_rcar_probe(struct platform_device *pdev)
->>
->>         platform_set_drvdata(pdev, p);
->>
->> +       p->clk = devm_clk_get(&pdev->dev, NULL);
->> +       if (IS_ERR(p->clk)) {
->> +               dev_err(&pdev->dev, "failed to get access to GPIO clock\n");
->> +               return PTR_ERR(p->clk);
->> +       }
->> +       clk_prepare_enable(p->clk);
->> +
->>         pm_runtime_enable(dev);
->>         pm_runtime_get_sync(dev);
->
-> With some extra debugging code on Koelsch:
->
->     gpio_rcar_probe:370
-> --> MSTP gpio0 ON
->     gpio_rcar_probe:373
->     gpiochip_find_base: found new base at 992
->     GPIO chip e6050000.gpio: created GPIO range 0->31 ==> e6060000.pfc PIN 0->31
->     gpiochip_add: registered GPIOs 992 to 1023 on device: e6050000.gpio
->     gpio_rcar e6050000.gpio: driving 32 GPIOs
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+
+--=20
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
