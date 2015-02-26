@@ -1,57 +1,51 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v3] sh-pfc: add R8A7794 PFC support
-Date: Thu, 26 Feb 2015 02:06:54 +0300
-Message-ID: <54EE558E.2020507@cogentembedded.com>
-References: <2084538.pWCX8EzoLe@wasted.cogentembedded.com> <54EE2AA8.9000604@cogentembedded.com>
+From: "Westerberg, Mika" <mika.westerberg@intel.com>
+Subject: Re: [PATCH] Fix one issue in pinctrl-cherryview.c
+Date: Thu, 26 Feb 2015 09:11:09 +0200
+Message-ID: <20150226071109.GY1758@lahna.fi.intel.com>
+References: <C6287702A945AC47BE5DB5DFD4B5C6DD01841877@SHSMSX104.ccr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f169.google.com ([209.85.217.169]:45714 "EHLO
-	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752885AbbBYXG6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Feb 2015 18:06:58 -0500
-Received: by lbjb6 with SMTP id b6so7216869lbj.12
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Feb 2015 15:06:57 -0800 (PST)
-In-Reply-To: <54EE2AA8.9000604@cogentembedded.com>
+Received: from mga11.intel.com ([192.55.52.93]:26892 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750983AbbBZHNU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 26 Feb 2015 02:13:20 -0500
+Content-Disposition: inline
+In-Reply-To: <C6287702A945AC47BE5DB5DFD4B5C6DD01841877@SHSMSX104.ccr.corp.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
+To: "Zha, Qipeng" <qipeng.zha@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 'Linus Walleij' <linus.walleij@linaro.org>
 
-On 02/25/2015 11:03 PM, Sergei Shtylyov wrote:
+On Thu, Feb 26, 2015 at 05:10:13AM +0200, Zha, Qipeng wrote:
+>    Hi
+> 
+>    Please check below patch(or attached), thanks.
+> 
+>    this is verified on Intel cherrytrail platform on linux 3.19-rc6.
 
->> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+In general you should send your patches inline and plain text to the
+interested parties. Please take some time reading Documentation/SubmittingPatches.
 
->> Add PFC support for  the  R8A7794 SoC  including pin groups for some on-chip
->> devices such as ETH, I2C, INTC, MSIOF, QSPI, [H]SCIF...
+Then do this:
 
->> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
->> [Sergei: squashed together several patches, fixed the MLB_CLK typo, added
->> IRQ4..
->> IRQ9 pin groups,  fixed IRQn comments, added ETH B pin group names, removed
->> stray new line and fixed typos in the  comments in the pinmux_config_regs[]
->> initializer, removed the platform device ID, took into account limited
->> number of
->> signals in the GPIO1/5/6 controllers, added reasonable and removed unreasonable
->> copyrights, modified the bindings document, renamed, added changelog.]
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
->> ---
->> Changes in version 3:
->> - removed the platform device ID;
->> - added PORT_GP_26() and PORT_GP_28() macros, used them for GPIO1/5/6 in the
->>    CPU_ALL_PORT() macto.
+ 1) git format-patch -1
 
->     Don't apply this patch! The change above causes the driver to fail probing
-> and the eventual kernel hang somehow... :-(
+This results 0001-pinctrl-update-direction_output-function-of-cherryvi.patch
 
-    OK, I think I fixed it now. But I'm going to submit the new version of 
-this patch after that, in order to reuse PORT_GP_26() when defining 
-PORT_GP_28()...
+ 2) git send-email --dry-run --to self 0001-pinctrl-update-direction_output-function-of-cherryvi.patch
 
->> Changes in version 2:
->> - rebased the patch.
+Verify that it sends the patch only to you
 
-WBR, Sergei
+ 3) git send-email --to self 0001-pinctrl-update-direction_output-function-of-cherryvi.patch
 
+Verify that the patch formatting and content is ok. If not, apply fixes
+and start from 1).
+
+Once you are happy with the result you can then send the patch like:
+
+ 4) git send-email --to ... --cc ...
+
+and everyone is happy :)
+
+The patch itself looks good to me.
