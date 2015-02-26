@@ -1,45 +1,94 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
-Date: Thu, 26 Feb 2015 19:27:55 +0900
-Message-ID: <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
-References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
- <20150130234552.GA20407@sysresccd> <20150131083300.GZ21469@belle.intranet.vanheusden.com>
- <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
- <20150203090325.GA29693@deathray> <CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
- <20150219085303.GI21469@belle.intranet.vanheusden.com> <CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 02/18] ARM: ARMv7M: Enlarge vector table to 256 entries
+Date: Thu, 26 Feb 2015 11:29:52 +0100
+Message-ID: <CALszF6B6A=de_TK0e-iJHuW4MfD9xbd-yHZHaD-JmZXwZ9CW2A@mail.gmail.com>
+References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1424455277-29983-3-git-send-email-mcoquelin.stm32@gmail.com>
+	<20150220194756.GS19388@pengutronix.de>
+	<CALszF6CB9YU7ashQ-y_zx58Mkf=sbrBfa2dAOdQm7FkmcuE7PA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:39302 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752696AbbBZK2R (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Feb 2015 05:28:17 -0500
-Received: by iecvy18 with SMTP id vy18so12893456iec.6
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2015 02:28:16 -0800 (PST)
-In-Reply-To: <CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CALszF6CB9YU7ashQ-y_zx58Mkf=sbrBfa2dAOdQm7FkmcuE7PA@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: folkert <folkert@vanheusden.com>, Michael Welling <mwelling@ieee.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Feb 20, 2015 at 1:52 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Feb 19, 2015 at 9:53 AM, folkert <folkert@vanheusden.com> wrote:
+2015-02-23 11:33 GMT+01:00 Maxime Coquelin <mcoquelin.stm32@gmail.com>:
+> 2015-02-20 20:47 GMT+01:00 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pen=
+gutronix.de>:
+>> On Fri, Feb 20, 2015 at 07:01:01PM +0100, Maxime Coquelin wrote:
+>>> From Cortex-M reference manuals, the nvic supports up to 240 interr=
+upts.
+>>> So the number of entries in vectors table is up to 256.
+>>>
+>>> This patch adds a new config flag to specify the number of external=
+ interrupts.
+>>> Some ifdeferies are added in order to respect the natural alignment=
+ without
+>>> wasting too much space on smaller systems.
+>>>
+>>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>>> ---
+>>>  arch/arm/kernel/entry-v7m.S | 13 +++++++++----
+>>>  arch/arm/mm/Kconfig         | 15 +++++++++++++++
+>>>  2 files changed, 24 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7=
+m.S
+>>> index 8944f49..68cde36 100644
+>>> --- a/arch/arm/kernel/entry-v7m.S
+>>> +++ b/arch/arm/kernel/entry-v7m.S
+>>> @@ -117,9 +117,14 @@ ENTRY(__switch_to)
+>>>  ENDPROC(__switch_to)
+>>>
+>>>       .data
+>>> -     .align  8
+>>> +#if CONFIG_CPUV7M_NUM_IRQ <=3D 112
+>> I would have called this CONFIG_CPU_V7M_NUM_IRQ to match the already
+>> existing CPU_V7M symbol.
 >
->> I also think that this interface is cumbersome. I did not measure it(!)
->> but I think adding this open/seek + read construction may add all kinds
->> of overhead. Especially since my use-case requires the lowest latency
->> possible. Not to forget that conversion of the measured value to ascii
->> and back.
+> That's better indeed.
+> It will be changed in v3.
 >
-> Yes this interface sucks.
+>>
+>>> +     .align  9
+>>> +#else
+>>> +     .align  10
+>>> +#endif
+>>> +
+>>
+>> Other than that:
+>> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+>>
+>> Who do you target to apply this series?
 >
-> The tentative long-term plan is to replace it with something like
-> a char device that can handle a quick context switch and also
-> issuing calls to set multiple pins at once, as we now have an
-> in-kernel interface for that (that I totally refuse to support from
-> sysfs).
+> I guess it should go through Russell's Patch Tracking System?
 
-Mmm, I was thinking it would be nice to have a (new, redesigned) sysfs
-interface for this. :P
+Sorry, I answered your question too quickly.
+I meant this patch should go through Russell's Patch Tracking System.
 
-Aren't we going to make things less accessible if we use a char device?
+=46or the other patches, I think it should be picked by their respectiv=
+e
+maintainers.
+Or I can create an immutable tag (on github or kernel.org?) that will
+be merged by the different sub-systems?
+What would you advise?
+
+Thanks,
+Maxime
+
+>
+> Thanks,
+> Maxime
+>>
+>> Best regards
+>> Uwe
+>>
+>> --
+>> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig  =
+          |
+>> Industrial Linux Solutions                 | http://www.pengutronix.=
+de/  |
