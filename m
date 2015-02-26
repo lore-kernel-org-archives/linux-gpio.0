@@ -1,66 +1,53 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
-Date: Thu, 26 Feb 2015 19:29:54 +0900
-Message-ID: <CAAVeFuKQ5dckVyhhsZb+m+bsQyqvSMAVA7KSStky2BoZRcqszw@mail.gmail.com>
-References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
- <20150130234552.GA20407@sysresccd> <20150131083300.GZ21469@belle.intranet.vanheusden.com>
- <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
- <20150203090325.GA29693@deathray> <CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
- <20150219085303.GI21469@belle.intranet.vanheusden.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v2 02/18] ARM: ARMv7M: Enlarge vector table to 256 entries
+Date: Thu, 26 Feb 2015 11:43:04 +0100
+Message-ID: <20150226104304.GK7789@pengutronix.de>
+References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1424455277-29983-3-git-send-email-mcoquelin.stm32@gmail.com>
+ <20150220194756.GS19388@pengutronix.de>
+ <CALszF6CB9YU7ashQ-y_zx58Mkf=sbrBfa2dAOdQm7FkmcuE7PA@mail.gmail.com>
+ <CALszF6B6A=de_TK0e-iJHuW4MfD9xbd-yHZHaD-JmZXwZ9CW2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:36490 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753303AbbBZKaP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Feb 2015 05:30:15 -0500
-Received: by ierx19 with SMTP id x19so12976809ier.3
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2015 02:30:14 -0800 (PST)
-In-Reply-To: <20150219085303.GI21469@belle.intranet.vanheusden.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CALszF6B6A=de_TK0e-iJHuW4MfD9xbd-yHZHaD-JmZXwZ9CW2A@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@a>
 List-Id: linux-gpio@vger.kernel.org
-To: folkert <folkert@vanheusden.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michael Welling <mwelling@ieee.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 19, 2015 at 5:53 PM, folkert <folkert@vanheusden.com> wrote:
->> >> >> Try using lseek before reading the data after the poll.
->> >> >>
->> >> >> EX.
->> >> >>       if (fdset[0].revents & POLLPRI) {
->> >> >>               lseek(fdset[0].fd, 0, SEEK_SET);
->> >> >>               len = read(fdset[0].fd, buf, MAX_BUF);
->> >> >>               .
->> >> >>               .
->> >> >>       }
->> >> >>
->> >> >> See if this helps.
->> >> >
->> >> > Yes, that fixed it!
->> >>
->> >> Still, shouldn't we consider this as a regression, especially if not
->> >> using lseek worked for kernel 3.12 and before?
->> >
->> > Perhaps this is a side effect of the sysfs to kernfs change over to happened in
->> > 3.14.
->> >
->> > Looking at 'kernfs_fop_poll' my guess is that 'kernfs_get_active' is returning NULL
->> > immediately returning from the poll command and causing described behavior.
->> >
->> > http://lxr.free-electrons.com/source/fs/kernfs/file.c#L763
->>
->> I think this looks plausible.
->> Folkert what do you say about this?
->
-> That looks indeed to be the current situation. It worked different
-> before though.
->
-> I also think that this interface is cumbersome. I did not measure it(!)
-> but I think adding this open/seek + read construction may add all kinds
-> of overhead. Especially since my use-case requires the lowest latency
-> possible. Not to forget that conversion of the measured value to ascii
-> and back.
+On Thu, Feb 26, 2015 at 11:29:52AM +0100, Maxime Coquelin wrote:
+> 2015-02-23 11:33 GMT+01:00 Maxime Coquelin <mcoquelin.stm32@gmail.com=
+>:
+> > 2015-02-20 20:47 GMT+01:00 Uwe Kleine-K=F6nig <u.kleine-koenig@peng=
+utronix.de>:
+> >> Who do you target to apply this series?
+> >
+> > I guess it should go through Russell's Patch Tracking System?
+>=20
+> Sorry, I answered your question too quickly.
+> I meant this patch should go through Russell's Patch Tracking System.
+>=20
+> For the other patches, I think it should be picked by their respectiv=
+e
+> maintainers.
+> Or I can create an immutable tag (on github or kernel.org?) that will
+> be merged by the different sub-systems?
+> What would you advise?
+Depends on the interdependencies of your patches. If each maintainer ca=
+n
+just pick up the patches affecting his area on top of (say) 4.0-rc1 tha=
+t
+would be good.
 
-Folkert, since you have code that can reproduce the issue, could you
-see whether you could come with a patch that restores the original
-behavior? Maybe by introducing a in-kernel lseek() as soon as the file
-is opened?
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
