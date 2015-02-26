@@ -1,94 +1,66 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 02/18] ARM: ARMv7M: Enlarge vector table to 256 entries
-Date: Thu, 26 Feb 2015 11:29:52 +0100
-Message-ID: <CALszF6B6A=de_TK0e-iJHuW4MfD9xbd-yHZHaD-JmZXwZ9CW2A@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1424455277-29983-3-git-send-email-mcoquelin.stm32@gmail.com>
-	<20150220194756.GS19388@pengutronix.de>
-	<CALszF6CB9YU7ashQ-y_zx58Mkf=sbrBfa2dAOdQm7FkmcuE7PA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Thu, 26 Feb 2015 19:29:54 +0900
+Message-ID: <CAAVeFuKQ5dckVyhhsZb+m+bsQyqvSMAVA7KSStky2BoZRcqszw@mail.gmail.com>
+References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
+ <20150130234552.GA20407@sysresccd> <20150131083300.GZ21469@belle.intranet.vanheusden.com>
+ <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+ <20150203090325.GA29693@deathray> <CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+ <20150219085303.GI21469@belle.intranet.vanheusden.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CALszF6CB9YU7ashQ-y_zx58Mkf=sbrBfa2dAOdQm7FkmcuE7PA@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:36490 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753303AbbBZKaP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Feb 2015 05:30:15 -0500
+Received: by ierx19 with SMTP id x19so12976809ier.3
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2015 02:30:14 -0800 (PST)
+In-Reply-To: <20150219085303.GI21469@belle.intranet.vanheusden.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: folkert <folkert@vanheusden.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michael Welling <mwelling@ieee.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-2015-02-23 11:33 GMT+01:00 Maxime Coquelin <mcoquelin.stm32@gmail.com>:
-> 2015-02-20 20:47 GMT+01:00 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pen=
-gutronix.de>:
->> On Fri, Feb 20, 2015 at 07:01:01PM +0100, Maxime Coquelin wrote:
->>> From Cortex-M reference manuals, the nvic supports up to 240 interr=
-upts.
->>> So the number of entries in vectors table is up to 256.
->>>
->>> This patch adds a new config flag to specify the number of external=
- interrupts.
->>> Some ifdeferies are added in order to respect the natural alignment=
- without
->>> wasting too much space on smaller systems.
->>>
->>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->>> ---
->>>  arch/arm/kernel/entry-v7m.S | 13 +++++++++----
->>>  arch/arm/mm/Kconfig         | 15 +++++++++++++++
->>>  2 files changed, 24 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7=
-m.S
->>> index 8944f49..68cde36 100644
->>> --- a/arch/arm/kernel/entry-v7m.S
->>> +++ b/arch/arm/kernel/entry-v7m.S
->>> @@ -117,9 +117,14 @@ ENTRY(__switch_to)
->>>  ENDPROC(__switch_to)
->>>
->>>       .data
->>> -     .align  8
->>> +#if CONFIG_CPUV7M_NUM_IRQ <=3D 112
->> I would have called this CONFIG_CPU_V7M_NUM_IRQ to match the already
->> existing CPU_V7M symbol.
+On Thu, Feb 19, 2015 at 5:53 PM, folkert <folkert@vanheusden.com> wrote:
+>> >> >> Try using lseek before reading the data after the poll.
+>> >> >>
+>> >> >> EX.
+>> >> >>       if (fdset[0].revents & POLLPRI) {
+>> >> >>               lseek(fdset[0].fd, 0, SEEK_SET);
+>> >> >>               len = read(fdset[0].fd, buf, MAX_BUF);
+>> >> >>               .
+>> >> >>               .
+>> >> >>       }
+>> >> >>
+>> >> >> See if this helps.
+>> >> >
+>> >> > Yes, that fixed it!
+>> >>
+>> >> Still, shouldn't we consider this as a regression, especially if not
+>> >> using lseek worked for kernel 3.12 and before?
+>> >
+>> > Perhaps this is a side effect of the sysfs to kernfs change over to happened in
+>> > 3.14.
+>> >
+>> > Looking at 'kernfs_fop_poll' my guess is that 'kernfs_get_active' is returning NULL
+>> > immediately returning from the poll command and causing described behavior.
+>> >
+>> > http://lxr.free-electrons.com/source/fs/kernfs/file.c#L763
+>>
+>> I think this looks plausible.
+>> Folkert what do you say about this?
 >
-> That's better indeed.
-> It will be changed in v3.
+> That looks indeed to be the current situation. It worked different
+> before though.
 >
->>
->>> +     .align  9
->>> +#else
->>> +     .align  10
->>> +#endif
->>> +
->>
->> Other than that:
->> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
->>
->> Who do you target to apply this series?
->
-> I guess it should go through Russell's Patch Tracking System?
+> I also think that this interface is cumbersome. I did not measure it(!)
+> but I think adding this open/seek + read construction may add all kinds
+> of overhead. Especially since my use-case requires the lowest latency
+> possible. Not to forget that conversion of the measured value to ascii
+> and back.
 
-Sorry, I answered your question too quickly.
-I meant this patch should go through Russell's Patch Tracking System.
-
-=46or the other patches, I think it should be picked by their respectiv=
-e
-maintainers.
-Or I can create an immutable tag (on github or kernel.org?) that will
-be merged by the different sub-systems?
-What would you advise?
-
-Thanks,
-Maxime
-
->
-> Thanks,
-> Maxime
->>
->> Best regards
->> Uwe
->>
->> --
->> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig  =
-          |
->> Industrial Linux Solutions                 | http://www.pengutronix.=
-de/  |
+Folkert, since you have code that can reproduce the issue, could you
+see whether you could come with a patch that restores the original
+behavior? Maybe by introducing a in-kernel lseek() as soon as the file
+is opened?
