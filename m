@@ -1,36 +1,39 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: shmobile: ape6evm dts: Configure the custom switch as wake-up source
-Date: Fri, 27 Feb 2015 18:48:39 +0100
-Message-ID: <1425059319-13403-3-git-send-email-geert+renesas@glider.be>
-References: <1425059319-13403-1-git-send-email-geert+renesas@glider.be>
+From: =?UTF-8?Q?Andreas_Bofj=C3=A4ll?= <andreas@gazonk.org>
+Subject: Re: [PATCH 0/3] Add Fintek F71869 and F71869A gpio support
+Date: Fri, 27 Feb 2015 23:33:29 +0100 (CET)
+Message-ID: <alpine.LNX.2.20.1502272332400.22486@gazonk.org>
+References: <1422206179-11464-1-git-send-email-andreas@gazonk.org> <CAAVeFuLgnLquniryQYV3VJfyV5JMOQimhzLsJjV4DcWNhUaDoQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:43119 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755018AbbB0Rsp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Feb 2015 12:48:45 -0500
-In-Reply-To: <1425059319-13403-1-git-send-email-geert+renesas@glider.be>
+Received: from foo.gazonk.org ([212.247.24.42]:58072 "HELO gazonk.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S932494AbbB0WkN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 27 Feb 2015 17:40:13 -0500
+In-Reply-To: <CAAVeFuLgnLquniryQYV3VJfyV5JMOQimhzLsJjV4DcWNhUaDoQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a73a4-ape6evm.dts | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, 26 Feb 2015, Alexandre Courbot wrote:
+> On Mon, Jan 26, 2015 at 2:16 AM, Andreas Bofjall <andreas@gazonk.org> wrote:
+>> this series adds support for the gpio pins on the Fintek F71869 and F71869A
+>> SuperI/O chips to the gpio-f7188x driver. The chips are used on for example
+>> Jetway motherboards.
+>>
+>> The driver has been tested on two different boards: a JNF99-525 with F71869A,
+>> and by Les Schaffer on a Jetway NF96u-525 with F71869.
+>
+> The series,
+>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>
+> Apologies for taking so long to check it out!
 
-diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-index 5baada97bc715838..81a38ceee098087e 100644
---- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-+++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-@@ -110,6 +110,7 @@
- 			gpios = <&pfc 324 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_0>;
- 			label = "S16";
-+			gpio-key,wakeup;
- 		};
- 
- 		menu-key {
--- 
-1.9.1
+Hi and thanks!
 
+How do you normally handle this, would you like me to re-spin the patchset 
+with the Reviewed-by set?
+
+/Andreas
