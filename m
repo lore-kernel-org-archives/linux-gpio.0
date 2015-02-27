@@ -1,79 +1,56 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] pinctrl: sh-pfc: Do not overwrite bias configuration
-Date: Fri, 27 Feb 2015 18:38:02 +0100
-Message-ID: <1425058685-12956-2-git-send-email-geert+renesas@glider.be>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 0/4] pinctrl: sh-pfc: Fix pin bias and cleanups
+Date: Fri, 27 Feb 2015 18:38:01 +0100
+Message-ID: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-sh-owner@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-After the last user of the in_pd/in_pu bias parameters of the _PCRH()
-macro was removed in commit 80da8e02d22caaef ("sh-pfc: r8a7740: Add bias
-(pull-up/down) pinconf support"), bias parameters are supposed to be
-configured using the generic pinctl mechanism, which calls the
-.set_bias() method.
+	Hi,
 
-However, the PORTCR() macro still represents the control register as
-consisting of two 4-bit fields. Hence the bias configuration in the
-uppermost 2 bits is always overwritten with zeroes when a pin is
-configured for GPIO, disabling any previously configured bias.
+This patch series fixes bias (pull up/down) for Renesas R-Mobile and
+SH-Mobile SoCs, and does some code (type) cleanups.
 
-Use the variable config register macro instead, to represent the
-register as having 4 fields, and to make sure only the input/output
-control and function fields are touched.
+  - Patch 1 fixes the overwriting of the bias field in the port control
+    register when configuring a pin for GPIO,
+  - Patch 2 changes the types used for storing register and field widths
+    in the pinctrl data tables, shrinking them by an average of ca. 4
+    KiB per SoC,
+  - Patches 3 and 4 do some more cleanups w.r.t. the choice of types.
 
-This affects R-Mobile APE6 (r8a73a4), R-Mobile A1 (r8a7740), SH-Mobile
-AP4 (sh7372), and SH-Mobile AG5 (sh73a0).
+Bias pull up/down was tested on r8a73a4/ape6evm, which requires a
+pull-up bias for the GPIO switches.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on r8a73a4/ape6evm, which requires a pull-up bias for the
-GPIO switches.
----
- drivers/pinctrl/sh-pfc/sh_pfc.h | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+Boot-tested on r8a7740/armadillo, r8a7791/koelsch, and sh73a0/kzm9g.
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index c83728626906c16c..ed5cf4192fa1a2d0 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -302,20 +302,21 @@ struct sh_pfc_soc_info {
- /*
-  * PORTnCR macro
-  */
--#define _PCRH(in, in_pd, in_pu, out)	\
--	0, (out), (in), 0,		\
--	0, 0, 0, 0,			\
--	0, 0, (in_pd), 0,		\
--	0, 0, (in_pu), 0
--
- #define PORTCR(nr, reg)							\
- 	{								\
--		PINMUX_CFG_REG("PORT" nr "CR", reg, 8, 4) {		\
--			_PCRH(PORT##nr##_IN, 0, 0, PORT##nr##_OUT),	\
--				PORT##nr##_FN0, PORT##nr##_FN1,		\
--				PORT##nr##_FN2, PORT##nr##_FN3,		\
--				PORT##nr##_FN4, PORT##nr##_FN5,		\
--				PORT##nr##_FN6, PORT##nr##_FN7 }	\
-+		PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8, 2, 2, 1, 3) {\
-+			/* PULMD[1:0], handled by .set_bias() */	\
-+			0, 0, 0, 0,					\
-+			/* IE and OE */					\
-+			0, PORT##nr##_OUT, PORT##nr##_IN, 0,		\
-+			/* SEC, not supported */			\
-+			0, 0,						\
-+			/* PTMD[2:0] */					\
-+			PORT##nr##_FN0, PORT##nr##_FN1,			\
-+			PORT##nr##_FN2, PORT##nr##_FN3,			\
-+			PORT##nr##_FN4, PORT##nr##_FN5,			\
-+			PORT##nr##_FN6, PORT##nr##_FN7			\
-+		}							\
- 	}
- 
- #endif /* __SH_PFC_H */
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  pinctrl: sh-pfc: Do not overwrite bias configuration
+  pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned
+    long
+  pinctrl: sh-pfc: Use u32 to store register data
+  pinctrl: sh-pfc: Use unsigned int for register/field widths and
+    offsets
+
+ drivers/pinctrl/sh-pfc/core.c   | 36 ++++++++++++++++++------------------
+ drivers/pinctrl/sh-pfc/core.h   |  7 +++----
+ drivers/pinctrl/sh-pfc/gpio.c   | 19 ++++++++-----------
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 35 +++++++++++++++++++----------------
+ 4 files changed, 48 insertions(+), 49 deletions(-)
+
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
