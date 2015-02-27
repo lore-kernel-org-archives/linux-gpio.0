@@ -1,118 +1,73 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCHv2 05/15] ARM: mvebu: add stdout-path to all armada-*.dts
-Date: Fri, 27 Feb 2015 17:48:51 +0100
-Message-ID: <20150227174851.390d9f58@free-electrons.com>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
-	<54EB4E9B.6010001@free-electrons.com>
-	<CAL_JsqJZJMkH953hq0_sOvEEu9o4pXxs0sdP5=7c2EXXNSyA9A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:51786 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752280AbbB0Qs4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Feb 2015 11:48:56 -0500
-In-Reply-To: <CAL_JsqJZJMkH953hq0_sOvEEu9o4pXxs0sdP5=7c2EXXNSyA9A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
+Date: Fri, 27 Feb 2015 18:38:03 +0100
+Message-ID: <1425058685-12956-3-git-send-email-geert+renesas@glider.be>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Tawfik Bayouk <tawfik@marvell.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth>
 
-Rob, Mark,
+Register and field widths are in the range 1..32. Storing them in the
+pinctrl data in (arrays of) unsigned long wastes space.
 
-On Mon, 23 Feb 2015 10:50:26 -0600, Rob Herring wrote:
-> On Mon, Feb 23, 2015 at 10:00 AM, Gregory CLEMENT
+This decreases the size of a (32-bit) shmobile_defconfig kernel
+supporting 7 SoCs by 26460 bytes.
 
-> Not exactly, stdout-path allows for removing "console" from the
-> command line. earlyprintk is a debug/developer option, so it should
-> not be in a default command line IMO.
-> 
-> So bootargs should be removed entirely.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/core.c   |  2 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 10 ++++++----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-Unfortunately, this doesn't seem to work at all:
-
- - Setting /chosen/stdout-path = &uart0; and still console=ttyS0,115200
-   in /chosen/bootargs works fine. I see a call to
-   add_preferred_console fairly early in the boot:
-
-[    0.000000] Kernel command line: loglevel=8 ubi.mtd=2 root=ubi0:rootfs rootfstype=ubifs console=ttyS0,115200 earlyprintk
-[    0.000000] ------> name=ttyS, idx=0, options=115200, brl_options=(null)
-[    0.000000] PID hash table entries: 4096 (order: 2, 16384 bytes)
-
-   But of course, this is not the case we're interested in. Note that
-   the line "------>" is printed in __add_preferred_console().
-
- - Setting just /chosen/stdout-path = &uart0; and removing
-   completely /chosen/bootargs, there are no kernel messages displayed
-   at all. Fortunately, my userspace hooks up on ttyS0, so I can run
-   "dmesg" and see when add_preferred_console gets called, and with
-   what arguments. It gets called much, much later, i.e only when the
-   serial port itself is initialized:
-
-[    0.484951] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
-[    0.486822] ------> name=ttyS, idx=0, options=(null), brl_options=(null)
-[    0.506838] f1012000.serial: ttyS0 at MMIO 0xf1012000 (irq = 21, base_baud = 12500000) is a 16550A
-[    9.106098] console [ttyS0] enabled
-
-   So it gets the right port name, the right idx, just the options are
-   null. It shouldn't be an issue since the serial port is already
-   initialized by the bootloader.
-
- - So I tried something like stdout-path = "serial0@12000:115200n8";
-   and here the result is even more interesting: it simply crashes the
-   kernel! So some random data in DT makes the stuff crash.
-
-[    0.000000]  ==> of_alias_scan: serial0@12000:115200n8
-[    0.000000] Unable to handle kernel NULL pointer dereference at virtual address 0000000c
-[    0.000000] pgd = c0004000
-[    0.000000] [0000000c] *pgd=00000000
-[    0.000000] Internal error: Oops: 5 [#1] SMP ARM
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.0.0-rc1-00016-g0d60469-dirty #466
-[    0.000000] Hardware name: Marvell Armada 39x (Device Tree)
-[    0.000000] task: c088b468 ti: c0886000 task.ti: c0886000
-[    0.000000] PC is at of_alias_scan+0xa4/0x2bc
-[    0.000000] LR is at of_find_node_opts_by_path+0xac/0x230
-[    0.000000] pc : [<c03b62b4>]    lr : [<c03b4b68>]    psr: 600001d3
-[    0.000000] sp : c0887f38  ip : 00000000  fp : c08e05a4
-[    0.000000] r10: 80000200  r9 : c05df908  r8 : c06aec30
-[    0.000000] r7 : c088c3a4  r6 : c0890728  r5 : c253dba0  r4 : c08eb334
-[    0.000000] r3 : 00000000  r2 : c253dbae  r1 : 00000000  r0 : c0630594
-[    0.000000] Flags: nZCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment kernel
-[    0.000000] Control: 10c5387d  Table: 0000404a  DAC: 00000015
-[    0.000000] Process swapper (pid: 0, stack limit = 0xc0886220)
-[    0.000000] Stack: (0xc0887f38 to 0xc0888000)
-[    0.000000] 7f20:                                                       00000000 0002f7ff
-[    0.000000] 7f40: 00001000 00002370 00000001 c0888408 c06b8a2c c0890728 c088c3a4 ef7fce40
-[    0.000000] 7f60: c05df908 80000200 c08e05a4 c06942bc ffffffff 10c5387d c08c2e00 c0887fd4
-[    0.000000] 7f80: 00000000 00000000 00000000 c0053f98 c05de48c c0887fb4 00000000 00000000
-[    0.000000] 7fa0: c08c2cc0 c0888400 ffffffff c08c2cc0 00000000 00000000 00000000 c0691960
-[    0.000000] 7fc0: 00000000 00000000 00000000 00000000 00000000 c06c3a78 c08c2f54 c0888480
-[    0.000000] 7fe0: c06c3a74 c088c4b4 0000406a 414fc091 00000000 00008074 00000000 00000000
-[    0.000000] [<c03b62b4>] (of_alias_scan) from [<c06942bc>] (setup_arch+0x6bc/0x8b8)
-[    0.000000] [<c06942bc>] (setup_arch) from [<c0691960>] (start_kernel+0xa0/0x3a0)
-[    0.000000] [<c0691960>] (start_kernel) from [<00008074>] (0x8074)
-[    0.000000] Code: e594300c e3000594 e5942010 e34c0063 (e593100c) 
-[    0.000000] ---[ end trace cb88537fdc8fa200 ]---
-[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-[    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task!
-
-It is worth mentioning that this also happens with
-
-     stdout-path = "uart0:115200n8";
-
-which was explicitly suggested by Mark in his e-mail. uart0 is an alias
-to the proper DT node, since stdout-path = &uart0; works almost fine.
-
-This is all on v4.0-rc1. Seems like this stdout-path feature is not
-quite working in all situations yet.
-
-Best regards,
-
-Thomas
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index a56280814a3f884b..466b899ec78b15d7 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -210,7 +210,7 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
+ 	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
+ 
+ 	dev_dbg(pfc->dev, "write_reg addr = %lx, value = %ld, field = %ld, "
+-		"r_width = %ld, f_width = %ld\n",
++		"r_width = %u, f_width = %u\n",
+ 		crp->reg, value, field, crp->reg_width, crp->field_width);
+ 
+ 	mask = ~(mask << pos);
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index ed5cf4192fa1a2d0..6aeec8152ea674cf 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -69,9 +69,10 @@ struct pinmux_func {
+ };
+ 
+ struct pinmux_cfg_reg {
+-	unsigned long reg, reg_width, field_width;
++	unsigned long reg;
++	u8 reg_width, field_width;
+ 	const u16 *enum_ids;
+-	const unsigned long *var_field_width;
++	const u8 *var_field_width;
+ };
+ 
+ #define PINMUX_CFG_REG(name, r, r_width, f_width) \
+@@ -80,12 +81,13 @@ struct pinmux_cfg_reg {
+ 
+ #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
+ 	.reg = r, .reg_width = r_width,	\
+-	.var_field_width = (const unsigned long [r_width]) \
++	.var_field_width = (const u8 [r_width]) \
+ 		{ var_fw0, var_fwn, 0 }, \
+ 	.enum_ids = (const u16 [])
+ 
+ struct pinmux_data_reg {
+-	unsigned long reg, reg_width;
++	unsigned long reg;
++	u8 reg_width;
+ 	const u16 *enum_ids;
+ };
+ 
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.9.1
+
