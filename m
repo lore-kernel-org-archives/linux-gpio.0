@@ -1,173 +1,122 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] pinctrl: sh-pfc: Use u32 to store register data
-Date: Fri, 27 Feb 2015 18:38:04 +0100
-Message-ID: <1425058685-12956-4-git-send-email-geert+renesas@glider.be>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:42109 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754780AbbB0RiL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Feb 2015 12:38:11 -0500
-In-Reply-To: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv2 05/15] ARM: mvebu: add stdout-path to all armada-*.dts
+Date: Fri, 27 Feb 2015 11:42:43 -0600
+Message-ID: <CAL_Jsq+tP6wBcDti7x-B6ar8esE=65Ymg_CKANeOKSe=yYhNnw@mail.gmail.com>
+References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
+ <54EB4E9B.6010001@free-electrons.com> <CAL_JsqJZJMkH953hq0_sOvEEu9o4pXxs0sdP5=7c2EXXNSyA9A@mail.gmail.com>
+ <20150227174851.390d9f58@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150227174851.390d9f58-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lior Amsalem <alior-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Tawfik Bayouk <tawfik-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth>
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-As PFC registers are either 8, 16, or 32 bits wide, use u32 (mostly
-replacing unsigned long) to store (parts of) register values and masks.
+On Fri, Feb 27, 2015 at 10:48 AM, Thomas Petazzoni
+<thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> Rob, Mark,
+>
+> On Mon, 23 Feb 2015 10:50:26 -0600, Rob Herring wrote:
+>> On Mon, Feb 23, 2015 at 10:00 AM, Gregory CLEMENT
+>
+>> Not exactly, stdout-path allows for removing "console" from the
+>> command line. earlyprintk is a debug/developer option, so it should
+>> not be in a default command line IMO.
+>>
+>> So bootargs should be removed entirely.
+>
+> Unfortunately, this doesn't seem to work at all:
 
-Switch the shadow register operations from {set,clear}_bit() to plain C
-bit operations, as the former can operate on long data only.
+This must have all been tested on QEMU (or Fast Models?) which ignores
+baud rate.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/core.c | 25 +++++++++++++------------
- drivers/pinctrl/sh-pfc/core.h |  5 ++---
- drivers/pinctrl/sh-pfc/gpio.c | 13 ++++++-------
- 3 files changed, 21 insertions(+), 22 deletions(-)
+>  - Setting /chosen/stdout-path = &uart0; and still console=ttyS0,115200
+>    in /chosen/bootargs works fine. I see a call to
+>    add_preferred_console fairly early in the boot:
+>
+> [    0.000000] Kernel command line: loglevel=8 ubi.mtd=2 root=ubi0:rootfs rootfstype=ubifs console=ttyS0,115200 earlyprintk
+> [    0.000000] ------> name=ttyS, idx=0, options=115200, brl_options=(null)
+> [    0.000000] PID hash table entries: 4096 (order: 2, 16384 bytes)
+>
+>    But of course, this is not the case we're interested in. Note that
+>    the line "------>" is printed in __add_preferred_console().
+>
+>  - Setting just /chosen/stdout-path = &uart0; and removing
+>    completely /chosen/bootargs, there are no kernel messages displayed
+>    at all. Fortunately, my userspace hooks up on ttyS0, so I can run
+>    "dmesg" and see when add_preferred_console gets called, and with
+>    what arguments. It gets called much, much later, i.e only when the
+>    serial port itself is initialized:
+>
+> [    0.484951] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+> [    0.486822] ------> name=ttyS, idx=0, options=(null), brl_options=(null)
+> [    0.506838] f1012000.serial: ttyS0 at MMIO 0xf1012000 (irq = 21, base_baud = 12500000) is a 16550A
+> [    9.106098] console [ttyS0] enabled
+>
+>    So it gets the right port name, the right idx, just the options are
+>    null. It shouldn't be an issue since the serial port is already
+>    initialized by the bootloader.
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 466b899ec78b15d7..1758043cfcec253b 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -144,8 +144,7 @@ static int sh_pfc_enum_in_range(u16 enum_id, const struct pinmux_range *r)
- 	return 1;
- }
- 
--unsigned long sh_pfc_read_raw_reg(void __iomem *mapped_reg,
--				  unsigned long reg_width)
-+u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width)
- {
- 	switch (reg_width) {
- 	case 8:
-@@ -161,7 +160,7 @@ unsigned long sh_pfc_read_raw_reg(void __iomem *mapped_reg,
- }
- 
- void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
--			  unsigned long data)
-+			  u32 data)
- {
- 	switch (reg_width) {
- 	case 8:
-@@ -181,8 +180,7 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
- static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
- 				     const struct pinmux_cfg_reg *crp,
- 				     unsigned long in_pos,
--				     void __iomem **mapped_regp,
--				     unsigned long *maskp,
-+				     void __iomem **mapped_regp, u32 *maskp,
- 				     unsigned long *posp)
- {
- 	unsigned int k;
-@@ -202,14 +200,15 @@ static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
- 
- static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
- 				    const struct pinmux_cfg_reg *crp,
--				    unsigned long field, unsigned long value)
-+				    unsigned long field, u32 value)
- {
- 	void __iomem *mapped_reg;
--	unsigned long mask, pos, data;
-+	unsigned long pos;
-+	u32 mask, data;
- 
- 	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
- 
--	dev_dbg(pfc->dev, "write_reg addr = %lx, value = %ld, field = %ld, "
-+	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %ld, "
- 		"r_width = %u, f_width = %u\n",
- 		crp->reg, value, field, crp->reg_width, crp->field_width);
- 
-@@ -230,11 +229,12 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
- 
- static int sh_pfc_get_config_reg(struct sh_pfc *pfc, u16 enum_id,
- 				 const struct pinmux_cfg_reg **crp, int *fieldp,
--				 int *valuep)
-+				 u32 *valuep)
- {
- 	const struct pinmux_cfg_reg *config_reg;
--	unsigned long r_width, f_width, curr_width, ncomb;
--	unsigned int k, m, n, pos, bit_pos;
-+	unsigned long r_width, f_width, curr_width;
-+	unsigned int k, m, pos, bit_pos;
-+	u32 ncomb, n;
- 
- 	k = 0;
- 	while (1) {
-@@ -300,7 +300,8 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type)
- 	const struct pinmux_cfg_reg *cr = NULL;
- 	u16 enum_id;
- 	const struct pinmux_range *range;
--	int in_range, pos, field, value;
-+	int in_range, pos, field;
-+	u32 value;
- 	int ret;
- 
- 	switch (pinmux_type) {
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 6b59d63b9c01e7a6..8a10dd50ccdd2e0c 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -57,10 +57,9 @@ int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc);
- int sh_pfc_register_pinctrl(struct sh_pfc *pfc);
- int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc);
- 
--unsigned long sh_pfc_read_raw_reg(void __iomem *mapped_reg,
--				  unsigned long reg_width);
-+u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width);
- void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
--			  unsigned long data);
-+			  u32 data);
- 
- int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
- int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index 80f641ee4dea3146..f2bb7d7398cdfc24 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -21,7 +21,7 @@
- 
- struct sh_pfc_gpio_data_reg {
- 	const struct pinmux_data_reg *info;
--	unsigned long shadow;
-+	u32 shadow;
- };
- 
- struct sh_pfc_gpio_pin {
-@@ -59,8 +59,8 @@ static void gpio_get_data_reg(struct sh_pfc_chip *chip, unsigned int offset,
- 	*bit = gpio_pin->dbit;
- }
- 
--static unsigned long gpio_read_data_reg(struct sh_pfc_chip *chip,
--					const struct pinmux_data_reg *dreg)
-+static u32 gpio_read_data_reg(struct sh_pfc_chip *chip,
-+			      const struct pinmux_data_reg *dreg)
- {
- 	void __iomem *mem = dreg->reg - chip->mem->phys + chip->mem->virt;
- 
-@@ -68,8 +68,7 @@ static unsigned long gpio_read_data_reg(struct sh_pfc_chip *chip,
- }
- 
- static void gpio_write_data_reg(struct sh_pfc_chip *chip,
--				const struct pinmux_data_reg *dreg,
--				unsigned long value)
-+				const struct pinmux_data_reg *dreg, u32 value)
- {
- 	void __iomem *mem = dreg->reg - chip->mem->phys + chip->mem->virt;
- 
-@@ -162,9 +161,9 @@ static void gpio_pin_set_value(struct sh_pfc_chip *chip, unsigned offset,
- 	pos = reg->info->reg_width - (bit + 1);
- 
- 	if (value)
--		set_bit(pos, &reg->shadow);
-+		reg->shadow |= BIT(pos);
- 	else
--		clear_bit(pos, &reg->shadow);
-+		reg->shadow &= ~BIT(pos);
- 
- 	gpio_write_data_reg(chip, reg->info, reg->shadow);
- }
--- 
-1.9.1
+I think the default baudrate is 9600, not what the bootloader set.
 
+>  - So I tried something like stdout-path = "serial0@12000:115200n8";
+>    and here the result is even more interesting: it simply crashes the
+>    kernel! So some random data in DT makes the stuff crash.
+
+You need the full path here though. But garbage should not crash things.
+
+Peter Hurley found just yesterday that the path parsing doesn't work
+right with options. Only alias parsing works.
+
+> [    0.000000]  ==> of_alias_scan: serial0@12000:115200n8
+> [    0.000000] Unable to handle kernel NULL pointer dereference at virtual address 0000000c
+> [    0.000000] pgd = c0004000
+> [    0.000000] [0000000c] *pgd=00000000
+> [    0.000000] Internal error: Oops: 5 [#1] SMP ARM
+> [    0.000000] Modules linked in:
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.0.0-rc1-00016-g0d60469-dirty #466
+> [    0.000000] Hardware name: Marvell Armada 39x (Device Tree)
+> [    0.000000] task: c088b468 ti: c0886000 task.ti: c0886000
+> [    0.000000] PC is at of_alias_scan+0xa4/0x2bc
+> [    0.000000] LR is at of_find_node_opts_by_path+0xac/0x230
+> [    0.000000] pc : [<c03b62b4>]    lr : [<c03b4b68>]    psr: 600001d3
+> [    0.000000] sp : c0887f38  ip : 00000000  fp : c08e05a4
+> [    0.000000] r10: 80000200  r9 : c05df908  r8 : c06aec30
+> [    0.000000] r7 : c088c3a4  r6 : c0890728  r5 : c253dba0  r4 : c08eb334
+> [    0.000000] r3 : 00000000  r2 : c253dbae  r1 : 00000000  r0 : c0630594
+> [    0.000000] Flags: nZCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment kernel
+> [    0.000000] Control: 10c5387d  Table: 0000404a  DAC: 00000015
+> [    0.000000] Process swapper (pid: 0, stack limit = 0xc0886220)
+> [    0.000000] Stack: (0xc0887f38 to 0xc0888000)
+> [    0.000000] 7f20:                                                       00000000 0002f7ff
+> [    0.000000] 7f40: 00001000 00002370 00000001 c0888408 c06b8a2c c0890728 c088c3a4 ef7fce40
+> [    0.000000] 7f60: c05df908 80000200 c08e05a4 c06942bc ffffffff 10c5387d c08c2e00 c0887fd4
+> [    0.000000] 7f80: 00000000 00000000 00000000 c0053f98 c05de48c c0887fb4 00000000 00000000
+> [    0.000000] 7fa0: c08c2cc0 c0888400 ffffffff c08c2cc0 00000000 00000000 00000000 c0691960
+> [    0.000000] 7fc0: 00000000 00000000 00000000 00000000 00000000 c06c3a78 c08c2f54 c0888480
+> [    0.000000] 7fe0: c06c3a74 c088c4b4 0000406a 414fc091 00000000 00008074 00000000 00000000
+> [    0.000000] [<c03b62b4>] (of_alias_scan) from [<c06942bc>] (setup_arch+0x6bc/0x8b8)
+> [    0.000000] [<c06942bc>] (setup_arch) from [<c0691960>] (start_kernel+0xa0/0x3a0)
+> [    0.000000] [<c0691960>] (start_kernel) from [<00008074>] (0x8074)
+> [    0.000000] Code: e594300c e3000594 e5942010 e34c0063 (e593100c)
+> [    0.000000] ---[ end trace cb88537fdc8fa200 ]---
+> [    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
+> [    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task!
+>
+> It is worth mentioning that this also happens with
+>
+>      stdout-path = "uart0:115200n8";
+>
+> which was explicitly suggested by Mark in his e-mail. uart0 is an alias
+> to the proper DT node, since stdout-path = &uart0; works almost fine.
+
+Mark forgot the '&'. So does 'stdout-path = "&uart0:115200n8";' work?
+
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
