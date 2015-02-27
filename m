@@ -1,128 +1,68 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCHv2 10/15] clk: mvebu: extend common code to allow an
- optional refclk
-Date: Thu, 26 Feb 2015 16:05:38 -0800
-Message-ID: <20150227000538.421.75566@quantum>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1424451874-25375-11-git-send-email-thomas.petazzoni@free-electrons.com>
- <20150220182134.421.95366@quantum> <54EB6C20.8070102@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Fri, 27 Feb 2015 14:15:02 +0100
+Message-ID: <CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
+References: <20150129152902.GX21469@belle.intranet.vanheusden.com>
+	<20150130234552.GA20407@sysresccd>
+	<20150131083300.GZ21469@belle.intranet.vanheusden.com>
+	<CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+	<20150203090325.GA29693@deathray>
+	<CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+	<20150219085303.GI21469@belle.intranet.vanheusden.com>
+	<CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
+	<CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <54EB6C20.8070102@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Tawfik Bayouk <tawfik@marvell.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:59534 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752318AbbB0NPD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Feb 2015 08:15:03 -0500
+Received: by mail-oi0-f47.google.com with SMTP id i138so15433614oig.6
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Feb 2015 05:15:02 -0800 (PST)
+In-Reply-To: <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: folkert <folkert@vanheusden.com>, Michael Welling <mwelling@ieee.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Quoting Gregory CLEMENT (2015-02-23 10:06:24)
-> Hi Mike,
-> 
-> On 20/02/2015 19:21, Mike Turquette wrote:
-> > Quoting Thomas Petazzoni (2015-02-20 09:04:29)
-> >> The Armada 39x, contrary to its predecessor, has a configurable
-> >> reference clock frequency, of either 25 Mhz, or 40 Mhz. For the
-> >> previous SoCs, it was fixed to 25 Mhz and described directly as such
-> >> in the Device Tree.
-> >>
-> >> For Armada 39x, we need to read certain registers to know whether the
-> >> frequency is 25 or 40 Mhz. Therefore, this commit extends the common
-> >> mvebu clock code to allow the SoC-specific code to say it wants to
-> >> register a reference clock, by giving a non-NULL ->get_refclk_freq()
-> >> function pointer in its coreclk_soc_desc structure.
-> >>
-> >> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> > 
-> > Looks fine to me. I'll apply after -rc1 drops.
-> 
-> What about the other clock related patch: "clk: mvebu: add Marvell
-> Armada 39x driver" ? Will you apply it too, or do you expect a pull request
-> for the mvebu related clocks ?
+On Thu, Feb 26, 2015 at 11:27 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Fri, Feb 20, 2015 at 1:52 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Thu, Feb 19, 2015 at 9:53 AM, folkert <folkert@vanheusden.com> wrote:
+>>
+>>> I also think that this interface is cumbersome. I did not measure it(!)
+>>> but I think adding this open/seek + read construction may add all kinds
+>>> of overhead. Especially since my use-case requires the lowest latency
+>>> possible. Not to forget that conversion of the measured value to ascii
+>>> and back.
+>>
+>> Yes this interface sucks.
+>>
+>> The tentative long-term plan is to replace it with something like
+>> a char device that can handle a quick context switch and also
+>> issuing calls to set multiple pins at once, as we now have an
+>> in-kernel interface for that (that I totally refuse to support from
+>> sysfs).
+>
+> Mmm, I was thinking it would be nice to have a (new, redesigned) sysfs
+> interface for this. :P
+>
+> Aren't we going to make things less accessible if we use a char device?
 
-Both look fine to me, but a PR would be nice in case you have any other
-mvebu clk stuff besides these two patches.
+Since sysfs has a "one value per file" paradigm, it also has a
+"one context switch per operation" paradigm, meaning any
+efficiency-oriented use cases where a lot of stuff needs to be
+changed in one context switch are by the very construction
+not suitable for sysfs IMO. That is the use case for ioctl()
+operations that can pass an entire struct of stuff over.
 
-Regards,
-Mike
+And things like bit-banging a clock+data line which would in
+a sysfs case involve two context switches (one per value, since
+that is one file per GPIO line) in an ioctl() case it would be
+just one, already 50% less context switches for a very basic
+use case.
 
-> 
-> 
-> Thanks,
-> 
-> Gregory
-> 
-> > 
-> > Regards,
-> > Mike
-> > 
-> >> ---
-> >>  drivers/clk/mvebu/common.c | 17 +++++++++++++++++
-> >>  drivers/clk/mvebu/common.h |  1 +
-> >>  2 files changed, 18 insertions(+)
-> >>
-> >> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-> >> index 0d4d121..15b370f 100644
-> >> --- a/drivers/clk/mvebu/common.c
-> >> +++ b/drivers/clk/mvebu/common.c
-> >> @@ -121,6 +121,11 @@ void __init mvebu_coreclk_setup(struct device_node *np,
-> >>  
-> >>         /* Allocate struct for TCLK, cpu clk, and core ratio clocks */
-> >>         clk_data.clk_num = 2 + desc->num_ratios;
-> >> +
-> >> +       /* One more clock for the optional refclk */
-> >> +       if (desc->get_refclk_freq)
-> >> +               clk_data.clk_num += 1;
-> >> +
-> >>         clk_data.clks = kzalloc(clk_data.clk_num * sizeof(struct clk *),
-> >>                                 GFP_KERNEL);
-> >>         if (WARN_ON(!clk_data.clks)) {
-> >> @@ -162,6 +167,18 @@ void __init mvebu_coreclk_setup(struct device_node *np,
-> >>                 WARN_ON(IS_ERR(clk_data.clks[2+n]));
-> >>         };
-> >>  
-> >> +       /* Register optional refclk */
-> >> +       if (desc->get_refclk_freq) {
-> >> +               const char *name = "refclk";
-> >> +               of_property_read_string_index(np, "clock-output-names",
-> >> +                                             2 + desc->num_ratios, &name);
-> >> +               rate = desc->get_refclk_freq(base);
-> >> +               clk_data.clks[2 + desc->num_ratios] =
-> >> +                       clk_register_fixed_rate(NULL, name, NULL,
-> >> +                                               CLK_IS_ROOT, rate);
-> >> +               WARN_ON(IS_ERR(clk_data.clks[2 + desc->num_ratios]));
-> >> +       }
-> >> +
-> >>         /* SAR register isn't needed anymore */
-> >>         iounmap(base);
-> >>  
-> >> diff --git a/drivers/clk/mvebu/common.h b/drivers/clk/mvebu/common.h
-> >> index 783b563..f0de6c8 100644
-> >> --- a/drivers/clk/mvebu/common.h
-> >> +++ b/drivers/clk/mvebu/common.h
-> >> @@ -30,6 +30,7 @@ struct coreclk_soc_desc {
-> >>         u32 (*get_tclk_freq)(void __iomem *sar);
-> >>         u32 (*get_cpu_freq)(void __iomem *sar);
-> >>         void (*get_clk_ratio)(void __iomem *sar, int id, int *mult, int *div);
-> >> +       u32 (*get_refclk_freq)(void __iomem *sar);
-> >>         bool (*is_sscg_enabled)(void __iomem *sar);
-> >>         u32 (*fix_sscg_deviation)(u32 system_clk);
-> >>         const struct coreclk_ratio *ratios;
-> >> -- 
-> >> 2.1.0
-> >>
-> 
-> 
-> -- 
-> Gregory Clement, Free Electrons
-> Kernel, drivers, real-time and embedded Linux
-> development, consulting, training and support.
-> http://free-electrons.com
+But I may be just so wrong ... input welcome.
+
+Yours,
+Linus Walleij
