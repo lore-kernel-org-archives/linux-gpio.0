@@ -1,150 +1,79 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] pinctrl: sh-pfc: Use unsigned int for register/field widths and offsets
-Date: Fri, 27 Feb 2015 18:38:05 +0100
-Message-ID: <1425058685-12956-5-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 1/4] pinctrl: sh-pfc: Do not overwrite bias configuration
+Date: Fri, 27 Feb 2015 18:38:02 +0100
+Message-ID: <1425058685-12956-2-git-send-email-geert+renesas@glider.be>
 References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:60817 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754785AbbB0RiL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Feb 2015 12:38:11 -0500
+Return-path: <linux-sh-owner@vger.kernel.org>
 In-Reply-To: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-sh-owner@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: linux-gpio@vger.kernel.org
 
-As register and field widths and offsets are in the range 0..32, use
-unsigned int (mostly replacing unsigned long) to store them in local
-variables and for passing them around.
+After the last user of the in_pd/in_pu bias parameters of the _PCRH()
+macro was removed in commit 80da8e02d22caaef ("sh-pfc: r8a7740: Add bias
+(pull-up/down) pinconf support"), bias parameters are supposed to be
+configured using the generic pinctl mechanism, which calls the
+.set_bias() method.
+
+However, the PORTCR() macro still represents the control register as
+consisting of two 4-bit fields. Hence the bias configuration in the
+uppermost 2 bits is always overwritten with zeroes when a pin is
+configured for GPIO, disabling any previously configured bias.
+
+Use the variable config register macro instead, to represent the
+register as having 4 fields, and to make sure only the input/output
+control and function fields are touched.
+
+This affects R-Mobile APE6 (r8a73a4), R-Mobile A1 (r8a7740), SH-Mobile
+AP4 (sh7372), and SH-Mobile AG5 (sh73a0).
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/core.c | 25 ++++++++++++-------------
- drivers/pinctrl/sh-pfc/core.h |  4 ++--
- drivers/pinctrl/sh-pfc/gpio.c |  6 ++----
- 3 files changed, 16 insertions(+), 19 deletions(-)
+Tested on r8a73a4/ape6evm, which requires a pull-up bias for the
+GPIO switches.
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 1758043cfcec253b..0350c64229ea0734 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -144,7 +144,7 @@ static int sh_pfc_enum_in_range(u16 enum_id, const struct pinmux_range *r)
- 	return 1;
- }
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index c83728626906c16c..ed5cf4192fa1a2d0 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -302,20 +302,21 @@ struct sh_pfc_soc_info {
+ /*
+  * PORTnCR macro
+  */
+-#define _PCRH(in, in_pd, in_pu, out)	\
+-	0, (out), (in), 0,		\
+-	0, 0, 0, 0,			\
+-	0, 0, (in_pd), 0,		\
+-	0, 0, (in_pu), 0
+-
+ #define PORTCR(nr, reg)							\
+ 	{								\
+-		PINMUX_CFG_REG("PORT" nr "CR", reg, 8, 4) {		\
+-			_PCRH(PORT##nr##_IN, 0, 0, PORT##nr##_OUT),	\
+-				PORT##nr##_FN0, PORT##nr##_FN1,		\
+-				PORT##nr##_FN2, PORT##nr##_FN3,		\
+-				PORT##nr##_FN4, PORT##nr##_FN5,		\
+-				PORT##nr##_FN6, PORT##nr##_FN7 }	\
++		PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8, 2, 2, 1, 3) {\
++			/* PULMD[1:0], handled by .set_bias() */	\
++			0, 0, 0, 0,					\
++			/* IE and OE */					\
++			0, PORT##nr##_OUT, PORT##nr##_IN, 0,		\
++			/* SEC, not supported */			\
++			0, 0,						\
++			/* PTMD[2:0] */					\
++			PORT##nr##_FN0, PORT##nr##_FN1,			\
++			PORT##nr##_FN2, PORT##nr##_FN3,			\
++			PORT##nr##_FN4, PORT##nr##_FN5,			\
++			PORT##nr##_FN6, PORT##nr##_FN7			\
++		}							\
+ 	}
  
--u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width)
-+u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width)
- {
- 	switch (reg_width) {
- 	case 8:
-@@ -159,7 +159,7 @@ u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width)
- 	return 0;
- }
- 
--void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
-+void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
- 			  u32 data)
- {
- 	switch (reg_width) {
-@@ -179,9 +179,9 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
- 
- static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
- 				     const struct pinmux_cfg_reg *crp,
--				     unsigned long in_pos,
-+				     unsigned int in_pos,
- 				     void __iomem **mapped_regp, u32 *maskp,
--				     unsigned long *posp)
-+				     unsigned int *posp)
- {
- 	unsigned int k;
- 
-@@ -200,15 +200,15 @@ static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
- 
- static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
- 				    const struct pinmux_cfg_reg *crp,
--				    unsigned long field, u32 value)
-+				    unsigned int field, u32 value)
- {
- 	void __iomem *mapped_reg;
--	unsigned long pos;
-+	unsigned int pos;
- 	u32 mask, data;
- 
- 	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
- 
--	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %ld, "
-+	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %u, "
- 		"r_width = %u, f_width = %u\n",
- 		crp->reg, value, field, crp->reg_width, crp->field_width);
- 
-@@ -228,12 +228,11 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
- }
- 
- static int sh_pfc_get_config_reg(struct sh_pfc *pfc, u16 enum_id,
--				 const struct pinmux_cfg_reg **crp, int *fieldp,
--				 u32 *valuep)
-+				 const struct pinmux_cfg_reg **crp,
-+				 unsigned int *fieldp, u32 *valuep)
- {
- 	const struct pinmux_cfg_reg *config_reg;
--	unsigned long r_width, f_width, curr_width;
--	unsigned int k, m, pos, bit_pos;
-+	unsigned int r_width, f_width, curr_width, k, m, pos, bit_pos;
- 	u32 ncomb, n;
- 
- 	k = 0;
-@@ -300,9 +299,9 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type)
- 	const struct pinmux_cfg_reg *cr = NULL;
- 	u16 enum_id;
- 	const struct pinmux_range *range;
--	int in_range, pos, field;
-+	int in_range, pos, ret;
-+	unsigned int field;
- 	u32 value;
--	int ret;
- 
- 	switch (pinmux_type) {
- 	case PINMUX_TYPE_GPIO:
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 8a10dd50ccdd2e0c..6dc8a6fc27468b39 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -57,8 +57,8 @@ int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc);
- int sh_pfc_register_pinctrl(struct sh_pfc *pfc);
- int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc);
- 
--u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width);
--void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
-+u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width);
-+void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
- 			  u32 data);
- 
- int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index f2bb7d7398cdfc24..b68d24099593d3b8 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -153,8 +153,7 @@ static void gpio_pin_set_value(struct sh_pfc_chip *chip, unsigned offset,
- 			       int value)
- {
- 	struct sh_pfc_gpio_data_reg *reg;
--	unsigned long pos;
--	unsigned int bit;
-+	unsigned int pos, bit;
- 
- 	gpio_get_data_reg(chip, offset, &reg, &bit);
- 
-@@ -185,8 +184,7 @@ static int gpio_pin_get(struct gpio_chip *gc, unsigned offset)
- {
- 	struct sh_pfc_chip *chip = gpio_to_pfc_chip(gc);
- 	struct sh_pfc_gpio_data_reg *reg;
--	unsigned long pos;
--	unsigned int bit;
-+	unsigned int pos, bit;
- 
- 	gpio_get_data_reg(chip, offset, &reg, &bit);
- 
+ #endif /* __SH_PFC_H */
 -- 
 1.9.1
 
