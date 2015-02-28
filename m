@@ -1,69 +1,39 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCHv2 05/15] ARM: mvebu: add stdout-path to all armada-*.dts
-Date: Sat, 28 Feb 2015 10:55:51 +0100
-Message-ID: <20150228105551.7b6532f8@free-electrons.com>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
-	<54EB4E9B.6010001@free-electrons.com>
-	<CAL_JsqJZJMkH953hq0_sOvEEu9o4pXxs0sdP5=7c2EXXNSyA9A@mail.gmail.com>
-	<20150227174851.390d9f58@free-electrons.com>
-	<CAL_Jsq+tP6wBcDti7x-B6ar8esE=65Ymg_CKANeOKSe=yYhNnw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: sirf: fix typo in kernel warning on a bad interruot
+Date: Sat, 28 Feb 2015 20:22:27 +0000
+Message-ID: <1425154947-7855-1-git-send-email-colin.king@canonical.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:54752 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750728AbbB1Jz6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Feb 2015 04:55:58 -0500
-In-Reply-To: <CAL_Jsq+tP6wBcDti7x-B6ar8esE=65Ymg_CKANeOKSe=yYhNnw@mail.gmail.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:37152 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750829AbbB1UYL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Feb 2015 15:24:11 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Tawfik Bayouk <tawfik@marvell.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth>
+To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>, Stephen Warren <swarren@nvidia.com>, Fan Wu <fwu@marvell.com>, Bin Shi <Bin.Shi@csr.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 
-Dear Rob Herring,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Fri, 27 Feb 2015 11:42:43 -0600, Rob Herring wrote:
+Fix typo, "flaged" -> "flagged"
 
-> > Unfortunately, this doesn't seem to work at all:
-> 
-> This must have all been tested on QEMU (or Fast Models?) which ignores
-> baud rate.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/sirf/pinctrl-sirf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Ok.
-
-> >    So it gets the right port name, the right idx, just the options are
-> >    null. It shouldn't be an issue since the serial port is already
-> >    initialized by the bootloader.
-> 
-> I think the default baudrate is 9600, not what the bootloader set.
-
-That might explain the issue then.
-
-> You need the full path here though. But garbage should not crash things.
-
-Indeed, I was surprised that a different DT string was crashing the
-kernel.
-
-
-> > It is worth mentioning that this also happens with
-> >
-> >      stdout-path = "uart0:115200n8";
-> >
-> > which was explicitly suggested by Mark in his e-mail. uart0 is an alias
-> > to the proper DT node, since stdout-path = &uart0; works almost fine.
-> 
-> Mark forgot the '&'. So does 'stdout-path = "&uart0:115200n8";' work?
-
-I don't have the board at hand right now, will try this on Tuesday when
-coming back to the office. Thanks for the suggestion!
-
-Best regards,
-
-Thomas
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index 2a1f072..abc5c47 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -568,7 +568,7 @@ static void sirfsoc_gpio_handle_irq(unsigned int irq, struct irq_desc *desc)
+ 	status = readl(sgpio->chip.regs + SIRFSOC_GPIO_INT_STATUS(bank->id));
+ 	if (!status) {
+ 		printk(KERN_WARNING
+-			"%s: gpio id %d status %#x no interrupt is flaged\n",
++			"%s: gpio id %d status %#x no interrupt is flagged\n",
+ 			__func__, bank->id, status);
+ 		handle_bad_irq(irq, desc);
+ 		return;
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.1.4
+
