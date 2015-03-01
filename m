@@ -1,34 +1,38 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][v2] pinctrl: sirf: fix typo in kernel warning on a bad interrupt
-Date: Sat, 28 Feb 2015 20:46:24 +0000
-Message-ID: <1425156384-9114-1-git-send-email-colin.king@canonical.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>, Stephen Warren <swarren@nvidia.com>, Bin Shi <Bin.Shi@csr.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: Remove non existing GPIO
+ pins
+Date: Sun, 01 Mar 2015 20:15:54 +0300
+Message-ID: <54F3494A.1050604@cogentembedded.com>
+References: <1424115661-21928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1424115661-21928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <54EE3782.5040108@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f47.google.com ([209.85.215.47]:35580 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751844AbbCARP5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 Mar 2015 12:15:57 -0500
+Received: by labgm9 with SMTP id gm9so26082040lab.2
+        for <linux-gpio@vger.kernel.org>; Sun, 01 Mar 2015 09:15:56 -0800 (PST)
+In-Reply-To: <54EE3782.5040108@cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-sh@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-gpio@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello.
 
-Fix typo, "flaged" -> "flagged"
+On 2/25/2015 11:58 PM, Sergei Shtylyov wrote:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/sirf/pinctrl-sirf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> GPIO banks 1 and 7 are missing pins 26 to 31. Remove them.
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
-index 2a1f072..abc5c47 100644
---- a/drivers/pinctrl/sirf/pinctrl-sirf.c
-+++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
-@@ -568,7 +568,7 @@ static void sirfsoc_gpio_handle_irq(unsigned int irq, struct irq_desc *desc)
- 	status = readl(sgpio->chip.regs + SIRFSOC_GPIO_INT_STATUS(bank->id));
- 	if (!status) {
- 		printk(KERN_WARNING
--			"%s: gpio id %d status %#x no interrupt is flaged\n",
-+			"%s: gpio id %d status %#x no interrupt is flagged\n",
- 			__func__, bank->id, status);
- 		handle_bad_irq(irq, desc);
- 		return;
--- 
-2.1.4
+>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+>     This patch breaks the boot as well, please don't apply it yet. The same
+> about R8A7790 patch. We're thinking about a proper fix...
+
+    Hopefully, such fix has been found and posted. You can now apply this 
+series *after* that fix.
+
+WBR, Sergei
+
