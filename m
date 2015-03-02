@@ -1,54 +1,90 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] pinctrl: imx: do not implicitly set pin regs to -1
-Date: Mon, 2 Mar 2015 16:53:15 +0100
-Message-ID: <20150302155315.GD7865@pengutronix.de>
-References: <1423240256-27210-1-git-send-email-stefan@agner.ch>
- <20150302114516.GC3040@dragon>
- <20150302125935.GC7865@pengutronix.de>
- <43491e2cb2c520d8f15d90ae99a82f28@agner.ch>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 04/18] clocksource: Add ARM System timer driver
+Date: Mon, 2 Mar 2015 17:53:09 +0100
+Message-ID: <CALszF6Bm_Y4ZLednjpmP-hMix3gA23FwLm5hViEjr1QojUY+Mg@mail.gmail.com>
+References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
+	<20150220195437.GT19388@pengutronix.de>
+	<1424468908.24292.10.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <43491e2cb2c520d8f15d90ae99a82f28@agner.ch>
+In-Reply-To: <1424468908.24292.10.camel@x220>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Shawn Guo <shawn.guo@linaro.org>, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+To: Paul Bolle <pebolle@tiscali.nl>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+Hi Paul, Uwe,
 
-On Mon, Mar 02, 2015 at 02:42:01PM +0100, Stefan Agner wrote:
-> On 2015-03-02 13:59, Uwe Kleine-K=F6nig wrote:
-> > On Mon, Mar 02, 2015 at 07:45:17PM +0800, Shawn Guo wrote:
-> >> On Fri, Feb 06, 2015 at 05:30:56PM +0100, Stefan Agner wrote:
-> >> > Commit 3dac1918a491 ("pinctrl: imx: detect uninitialized pins") =
-needs
-> >> > the values in struct imx_pin_reg to be -1. This has been done in=
- a
-> >> > rather unorthodox way by setting the memory to 0xff using memset=
-=2E..
-> >> > Use a proper for loop to initialize the whole array with -1.
-> >> >
-> >> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >>
-> >> Acked-by: Shawn Guo <shawn.guo@linaro.org>
-> > too late. This patch is part of 4.0-rc1 (4ff0f034e95d).
->=20
-> This is not the same patch. The patch you are mentioning is actually
-> fixing a bug introduce in the change where we set -1 for uninitialize=
-d
-> pins. This patch is solving the weird assignment of the initial value=
-=2E..
-ah right.
+2015-02-20 22:48 GMT+01:00 Paul Bolle <pebolle@tiscali.nl>:
+> On Fri, 2015-02-20 at 20:54 +0100, Uwe Kleine-K=C3=B6nig wrote:
+>> On Fri, Feb 20, 2015 at 07:01:03PM +0100, Maxime Coquelin wrote:
+>> > This patch adds clocksource support for ARMv7-M's System timer,
+>> > also known as SysTick.
+>> >
+>> > Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> > ---
+>> >  drivers/clocksource/Kconfig          |  7 ++++
+>> >  drivers/clocksource/Makefile         |  1 +
+>> >  drivers/clocksource/armv7m_systick.c | 78 +++++++++++++++++++++++=
++++++++++++++
+>> >  3 files changed, 86 insertions(+)
+>> >  create mode 100644 drivers/clocksource/armv7m_systick.c
+>> >
+>> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kco=
+nfig
+>> > index fc01ec2..fb6011e 100644
+>> > --- a/drivers/clocksource/Kconfig
+>> > +++ b/drivers/clocksource/Kconfig
+>> > @@ -124,6 +124,13 @@ config CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
+>> >     help
+>> >      Use ARM global timer clock source as sched_clock
+>> >
+>> > +config ARMV7M_SYSTICK
+>> > +   bool
+>> I assume this symbol is enabled later in the series.
+>
+> Yes, I noticed it was selected in 14/18 ("ARM: Add STM32 family
+> machine").
+>
+>> Would it make sense
+>> to allow enabing the symbol for compile test coverage?
+>>
+>> > +   select CLKSRC_OF if OF
+>> What happens if ARMV7M_SYSTICK=3Dy but OF=3Dn? Doesn't the driver fa=
+il to
+>> compile?
+>>
+>> > +   select CLKSRC_MMIO
+>> > +   help
+>> > +     This options enables support for the ARMv7M system timer uni=
+t
+>> the right spelling is ARMv7-M.
+>
+> This Kconfig entry has no prompt, so no one is going to see this text
+> during make *config. Perhaps this should be made a comment. In that c=
+ase
+> the right spelling should still be used.
 
-Best regards
-Uwe
+Yes, you are right.
+Do you agree if I define it like this:
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+config ARMV7M_SYSTICK
+    bool "Clocksource driver for ARMv7-M System timer"
+    depends on OF && (CPU_V7M || COMPILE_TEST)
+    select CLKSRC_OF
+    select CLKSRC_MMIO
+    help
+      This options enables clocksource support for the ARMv7-M system
+      timer unit.
+
+Thanks,
+Maxime
+>
+> Thanks,
+>
+>
+> Paul Bolle
+>
