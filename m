@@ -1,38 +1,64 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: Remove non existing GPIO
- pins
-Date: Sun, 01 Mar 2015 20:15:54 +0300
-Message-ID: <54F3494A.1050604@cogentembedded.com>
-References: <1424115661-21928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1424115661-21928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <54EE3782.5040108@cogentembedded.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 0/3] Add Fintek F71869 and F71869A gpio support
+Date: Mon, 2 Mar 2015 14:51:34 +0900
+Message-ID: <CAAVeFuK4K5z2MaedUTMKXBNcbFsPWYaeObnA1w3LE-EDg8B6_g@mail.gmail.com>
+References: <1422206179-11464-1-git-send-email-andreas@gazonk.org>
+ <CAAVeFuLgnLquniryQYV3VJfyV5JMOQimhzLsJjV4DcWNhUaDoQ@mail.gmail.com> <alpine.LNX.2.20.1502272332400.22486@gazonk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:35580 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751844AbbCARP5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 Mar 2015 12:15:57 -0500
-Received: by labgm9 with SMTP id gm9so26082040lab.2
-        for <linux-gpio@vger.kernel.org>; Sun, 01 Mar 2015 09:15:56 -0800 (PST)
-In-Reply-To: <54EE3782.5040108@cogentembedded.com>
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:36588 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751092AbbCBFvz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Mar 2015 00:51:55 -0500
+Received: by ierx19 with SMTP id x19so45272566ier.3
+        for <linux-gpio@vger.kernel.org>; Sun, 01 Mar 2015 21:51:54 -0800 (PST)
+In-Reply-To: <alpine.LNX.2.20.1502272332400.22486@gazonk.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-sh@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?Andreas_Bofj=C3=A4ll?= <andreas@gazonk.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello.
+On Sat, Feb 28, 2015 at 7:33 AM, Andreas Bofj=C3=A4ll <andreas@gazonk.o=
+rg> wrote:
+> On Thu, 26 Feb 2015, Alexandre Courbot wrote:
+>>
+>> On Mon, Jan 26, 2015 at 2:16 AM, Andreas Bofjall <andreas@gazonk.org=
+>
+>> wrote:
+>>>
+>>> this series adds support for the gpio pins on the Fintek F71869 and
+>>> F71869A
+>>> SuperI/O chips to the gpio-f7188x driver. The chips are used on for
+>>> example
+>>> Jetway motherboards.
+>>>
+>>> The driver has been tested on two different boards: a JNF99-525 wit=
+h
+>>> F71869A,
+>>> and by Les Schaffer on a Jetway NF96u-525 with F71869.
+>>
+>>
+>> The series,
+>>
+>> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>>
+>> Apologies for taking so long to check it out!
+>
+>
+> Hi and thanks!
+>
+> How do you normally handle this, would you like me to re-spin the pat=
+chset
+> with the Reviewed-by set?
 
-On 2/25/2015 11:58 PM, Sergei Shtylyov wrote:
-
->> GPIO banks 1 and 7 are missing pins 26 to 31. Remove them.
-
->> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
->     This patch breaks the boot as well, please don't apply it yet. The same
-> about R8A7790 patch. We're thinking about a proper fix...
-
-    Hopefully, such fix has been found and posted. You can now apply this 
-series *after* that fix.
-
-WBR, Sergei
-
+No, the maintainer will add the tags you received when applying the
+patches. Unless you are explicitly asked to re-send a version for
+other reasons, then it is a good idea to append the tags yourself or
+they might get lost.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
