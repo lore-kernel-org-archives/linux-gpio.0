@@ -1,34 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/4] leds: Let the binding document example for
- leds-gpio follow the gpio bindings
-Date: Mon, 2 Mar 2015 12:24:43 +0100
-Message-ID: <CACRpkdZGXQ0ktwLu80ALaQuwB_RFQjpHitiEp+vcnnb0Hv1mKg@mail.gmail.com>
-References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
-	<1421876028-22799-4-git-send-email-o.schinagl@ultimaker.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH RESEND] pinctrl: freescale: make of_device_id array const
+Date: Mon, 2 Mar 2015 19:38:28 +0800
+Message-ID: <20150302113826.GB3040@dragon>
+References: <1425281101-6033-1-git-send-email-sanjeev_sharma@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <1421876028-22799-4-git-send-email-o.schinagl@ultimaker.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Olliver Schinagl <o.schinagl@ultimaker.com>, Bryan Wu <cooloney@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.ke>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:43168 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751537AbbCBLio (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Mar 2015 06:38:44 -0500
+Received: by pdjp10 with SMTP id p10so1810320pdj.10
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Mar 2015 03:38:44 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1425281101-6033-1-git-send-email-sanjeev_sharma@mentor.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sanjeev Sharma <sanjeev_sharma@mentor.com>
+Cc: linus.walleij@linaro.org, stefan@agner.ch, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
-<o.schinagl@ultimaker.com> wrote:
+On Mon, Mar 02, 2015 at 12:55:01PM +0530, Sanjeev Sharma wrote:
+> Make of_device_id array const.
+> 
+> Signed-off-by: Sanjeev Sharma <Sanjeev_Sharma@mentor.com>
 
-> From: Olliver Schinagl <oliver@schinagl.nl>
->
-> In the gpio bindings documents it is requested to use the marco's in
-> include/dt-bindings/gpio/gpio.h whenever possible. The gpios in the led
-> drivers don't seem to form an exception, so update the example in the
-> document bindings.
->
-> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
 
-Bryan: please merge this patch to the LED git tree.
-
-Yours,
-Linus Walleij
+> ---
+>  drivers/pinctrl/freescale/pinctrl-vf610.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/freescale/pinctrl-vf610.c b/drivers/pinctrl/freescale/pinctrl-vf610.c
+> index fc86276..37a0375 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
+> @@ -302,7 +302,7 @@ static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
+>  	.flags = SHARE_MUX_CONF_REG,
+>  };
+>  
+> -static struct of_device_id vf610_pinctrl_of_match[] = {
+> +static const struct of_device_id vf610_pinctrl_of_match[] = {
+>  	{ .compatible = "fsl,vf610-iomuxc", },
+>  	{ /* sentinel */ }
+>  };
+> -- 
+> 1.7.11.7
+> 
