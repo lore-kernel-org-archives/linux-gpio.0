@@ -1,43 +1,37 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH RESEND] pinctrl: freescale: make
- =?UTF-8?Q?of=5Fdevice=5Fid=20array=20const?=
-Date: Mon, 02 Mar 2015 08:57:05 +0100
-Message-ID: <e6665bd30a3308df0f321936e94154d6@agner.ch>
-References: <1425281101-6033-1-git-send-email-sanjeev_sharma@mentor.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: "advanced" LED controllers
+Date: Mon, 2 Mar 2015 10:21:11 +0100
+Message-ID: <20150302092111.GA19233@amd>
+References: <20150219211424.GN13603@saruman.tx.rr.com>
+ <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
+ <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1425281101-6033-1-git-send-email-sanjeev_sharma@mentor.com>
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sanjeev Sharma <sanjeev_sharma@mentor.com>
-Cc: linus.walleij@linaro.org, shawn.guo@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2015-03-02 08:25, Sanjeev Sharma wrote:
-> Make of_device_id array const.
+On Wed 2015-02-25 18:06:07, Alexandre Courbot wrote:
+> On Wed, Feb 25, 2015 at 5:25 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > CC linux-gpio, as this looks like the LED equivalent of bulk gpio?
 > 
-> Signed-off-by: Sanjeev Sharma <Sanjeev_Sharma@mentor.com>
-> ---
->  drivers/pinctrl/freescale/pinctrl-vf610.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Indeed. The LED core could implement something similar to
+> gpiod_set_array() to allow several LEDs to be set in one call. If the
+> controller supports it, it would then set all the LEDs at once,
+> otherwise the core would apply the values serially.
 > 
-> diff --git a/drivers/pinctrl/freescale/pinctrl-vf610.c
-> b/drivers/pinctrl/freescale/pinctrl-vf610.c
-> index fc86276..37a0375 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
-> @@ -302,7 +302,7 @@ static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
->  	.flags = SHARE_MUX_CONF_REG,
->  };
->  
-> -static struct of_device_id vf610_pinctrl_of_match[] = {
-> +static const struct of_device_id vf610_pinctrl_of_match[] = {
->  	{ .compatible = "fsl,vf610-iomuxc", },
->  	{ /* sentinel */ }
->  };
+> In leds-gpio.c, this multiple LED setting could be implemented by a
+> single call to gpiod_set_array() and the right thing would happen.
 
-Acked-by: Stefan Agner <stefan@agner.ch>
+Actually, there are two issues: some controlles can set all LEDs at
+once, and some can program pwm level smoothly using given program (and
+handle multiple leds in the process).
 
---
-Stefan
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
