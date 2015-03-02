@@ -1,60 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v4.0 series, take one
-Date: Mon, 2 Mar 2015 12:57:59 +0100
-Message-ID: <CACRpkdbQKcmGAOdqsKN3O9Xh8TXbt2UTYec75t1Rc-B3ZNuMmA@mail.gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] pinctrl: imx: do not implicitly set pin regs to -1
+Date: Mon, 2 Mar 2015 13:59:35 +0100
+Message-ID: <20150302125935.GC7865@pengutronix.de>
+References: <1423240256-27210-1-git-send-email-stefan@agner.ch>
+ <20150302114516.GC3040@dragon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:45787 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751241AbbCBL6A (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Mar 2015 06:58:00 -0500
-Received: by mail-oi0-f50.google.com with SMTP id v1so26524813oia.9
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Mar 2015 03:57:59 -0800 (PST)
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:43280 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751258AbbCBM7n (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Mar 2015 07:59:43 -0500
+Content-Disposition: inline
+In-Reply-To: <20150302114516.GC3040@dragon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Stefan Agner <stefan@agner.ch>, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 
-Hi Linus,
+Hello Shawn
 
-here are some two GPIO fixes for the v4.0 kernel series.
-I'm lagging behind on mail so more may follow but these
-need to get upstream now.
+On Mon, Mar 02, 2015 at 07:45:17PM +0800, Shawn Guo wrote:
+> On Fri, Feb 06, 2015 at 05:30:56PM +0100, Stefan Agner wrote:
+> > Commit 3dac1918a491 ("pinctrl: imx: detect uninitialized pins") nee=
+ds
+> > the values in struct imx_pin_reg to be -1. This has been done in a
+> > rather unorthodox way by setting the memory to 0xff using memset...
+> > Use a proper for loop to initialize the whole array with -1.
+> >=20
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+>=20
+> Acked-by: Shawn Guo <shawn.guo@linaro.org>
+too late. This patch is part of 4.0-rc1 (4ff0f034e95d).
 
-Details in the signed tag.
+Best regards
+Uwe
 
-Yours,
-Linus Walleij
-
-The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
-
-  Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.0-2
-
-for you to fetch changes up to 2f97c20e5f7c3582c7310f65a04465bfb0fd0e85:
-
-  gpio: tps65912: fix wrong container_of arguments (2015-02-23 15:40:32 +0100)
-
-----------------------------------------------------------------
-Two GPIO fixes for the v4.0 kernel series:
-
-- Fix a translation problem in of_get_named_gpiod_flags()
-- Fix a long standing container_of() mistake in the TPS65912
-  driver.
-
-----------------------------------------------------------------
-Hans Holmberg (1):
-      gpiolib: of: allow of_gpiochip_find_and_xlate to find more than
-one chip per node
-
-Nicolas Saenz Julienne (1):
-      gpio: tps65912: fix wrong container_of arguments
-
- drivers/gpio/gpio-tps65912.c | 14 ++++++++++----
- drivers/gpio/gpiolib-of.c    |  9 +++++----
- 2 files changed, 15 insertions(+), 8 deletions(-)
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
