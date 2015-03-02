@@ -1,60 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: pxa: add PXA1928 gpio type support
-Date: Mon, 2 Mar 2015 15:46:27 +0100
-Message-ID: <CACRpkdbrHwBWT2jAvDY6YHAuigjUFu_XWJU859kVk84yd8Fhnw@mail.gmail.com>
-References: <1422333966-18338-1-git-send-email-robh@kernel.org>
-	<1422333966-18338-4-git-send-email-robh@kernel.org>
-	<CACRpkdbTSh2ZOEpVkCk_QtH44C-hq=8qw-EanHUyD_6fSU_sog@mail.gmail.com>
-	<CAL_Jsq+aSgPceu-9Uyx_FqfAEMaSpmFD0JCVnydQNTm2G6_u0Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH] pinctrl: remove maxpin from documentation
+Date: Mon,  2 Mar 2015 16:55:02 +0200
+Message-ID: <61439260263299de5969469fac565051db478bdb.1425308102.git.baruch@tkos.co.il>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33431 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751241AbbCBOq2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Mar 2015 09:46:28 -0500
-Received: by mail-oi0-f46.google.com with SMTP id x69so27321166oia.5
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Mar 2015 06:46:27 -0800 (PST)
-In-Reply-To: <CAL_Jsq+aSgPceu-9Uyx_FqfAEMaSpmFD0JCVnydQNTm2G6_u0Q@mail.gmail.com>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:58232 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753984AbbCBOzq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 2 Mar 2015 09:55:46 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jing Xiang <jxiang@marvell.com>, Xiangzhan Meng <mengxzh@marvell.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>
 
-On Tue, Feb 3, 2015 at 2:44 PM, Rob Herring <robh@kernel.org> wrote:
-> On Tue, Feb 3, 2015 at 6:41 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Jan 27, 2015 at 5:46 AM, Rob Herring <robh@kernel.org> wrote:
->>
->>> Add support for PXA1928 GPIOs. The PXA1928 adds a 6th bank from previous
->>> generations.
->>>
->>> Signed-off-by: Jing Xiang <jxiang@marvell.com>
->>> Signed-off-by: Xiangzhan Meng <mengxzh@marvell.com>
->>> [robh: ported to 3.19 from vendor kernel]
->>> Signed-off-by: Rob Herring <robh@kernel.org>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: Alexandre Courbot <gnurou@gmail.com>
->>
->> Patch applied...
->>
->>> -#define BANK_OFF(n)    (((n) < 3) ? (n) << 2 : 0x100 + (((n) - 3) << 2))
->>> +#define BANK_OFF(n)    (((n) < 3) ? (n) << 2 : ((n) > 5 ? 0x200 : 0x100)       \
->>> +                       + (((n) % 3) << 2))
->>
->> While this is a bit convoluted.
->>
->> Someone care to send a patch converting it to something like a
->> parseable static inline?
->
-> I should have looked more closely than just taking the vendor code.
-> This was needlessly convoluted before and this just added on to it. It
-> can be simplified down to this:
->
-> #define BANK_OFF(n) (((n) / 3) << 8) + (((n) % 3) << 2)
->
-> I'll send a fix unless you want to fix up this patch.
+struct pinctrl_desc does not contain the maxpin member since commit 0d2006bbf0
+(pinctrl: remove unnecessary max pin number).
 
-I never saw a fixup patch, so if you have time... please tend to it.
+Fixes: 0d2006bbf0 ('pinctrl: remove unnecessary max pin number')
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ Documentation/pinctrl.txt | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/pinctrl.txt b/Documentation/pinctrl.txt
+index b8f2147b96dd..348a8af8d06c 100644
+--- a/Documentation/pinctrl.txt
++++ b/Documentation/pinctrl.txt
+@@ -72,7 +72,6 @@ static struct pinctrl_desc foo_desc = {
+ 	.name = "foo",
+ 	.pins = foo_pins,
+ 	.npins = ARRAY_SIZE(foo_pins),
+-	.maxpin = 63,
+ 	.owner = THIS_MODULE,
+ };
+ 
+-- 
+2.1.4
+
