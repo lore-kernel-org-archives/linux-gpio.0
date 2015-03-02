@@ -1,37 +1,45 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [PATCH v2 3/4] leds: Let the binding document example for
- leds-gpio follow the gpio bindings
-Date: Mon, 2 Mar 2015 12:03:48 -0800
-Message-ID: <CAK5ve-Lu6=guYAoU1BMWYWtrocxq+8Kc4W7GsuTZTDtNp8N3xg@mail.gmail.com>
-References: <1421876028-22799-1-git-send-email-o.schinagl@ultimaker.com>
- <1421876028-22799-4-git-send-email-o.schinagl@ultimaker.com> <CACRpkdZGXQ0ktwLu80ALaQuwB_RFQjpHitiEp+vcnnb0Hv1mKg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZGXQ0ktwLu80ALaQuwB_RFQjpHitiEp+vcnnb0Hv1mKg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Olliver Schinagl <o.schinagl@ultimaker.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Olliver Schinagl <oliver@schinagl.nl>, Robin Gong <b38343@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Aaron Lu <aaron.lu@intel.com>, Grant Likely <grant.likely@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH] gpio: pxa: simplify BANK_OFF macro offset calculation
+Date: Mon,  2 Mar 2015 15:30:58 -0600
+Message-ID: <1425331858-6018-1-git-send-email-robh@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:58276 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753942AbbCBVcA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Mar 2015 16:32:00 -0500
+Received: by mail-oi0-f42.google.com with SMTP id h136so29522387oig.1
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Mar 2015 13:32:00 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Mon, Mar 2, 2015 at 3:24 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Jan 21, 2015 at 10:33 PM, Olliver Schinagl
-> <o.schinagl@ultimaker.com> wrote:
->
->> From: Olliver Schinagl <oliver@schinagl.nl>
->>
->> In the gpio bindings documents it is requested to use the marco's in
->> include/dt-bindings/gpio/gpio.h whenever possible. The gpios in the led
->> drivers don't seem to form an exception, so update the example in the
->> document bindings.
->>
->> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
->> Acked-by: Rob Herring <robh@kernel.org>
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Bryan: please merge this patch to the LED git tree.
->
+The macro BANK_OFF which calculates the base offset for each GPIO port.
+The macro is needlessly complex and unreadable. Simplify the
+calculation to a simple math operation.
 
-Merged, thanks
+Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/gpio/gpio-pxa.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
--Bryan
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index e45637b..d2324b9 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -61,8 +61,7 @@
+ #define GAFR_OFFSET	0x54
+ #define ED_MASK_OFFSET	0x9C	/* GPIO edge detection for AP side */
+ 
+-#define BANK_OFF(n)	(((n) < 3) ? (n) << 2 : ((n) > 5 ? 0x200 : 0x100)	\
+-			+ (((n) % 3) << 2))
++#define BANK_OFF(n)	(((n) / 3) << 8) + (((n) % 3) << 2)
+ 
+ int pxa_last_gpio;
+ static int irq_base;
+-- 
+2.1.0
+
