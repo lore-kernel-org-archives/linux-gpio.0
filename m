@@ -1,30 +1,49 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 4/4] pinctrl: tegra: add a driver for Tegra210
-Date: Tue, 3 Mar 2015 14:47:38 +0900
-Message-ID: <CAAVeFu+LG86k+QwB2oZHbLSsVrVTtJmzd9odMbTSjpeOJ2Q3KQ@mail.gmail.com>
-References: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org> <1424811651-18660-4-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] gpio: pxa: simplify BANK_OFF macro offset calculation
+Date: Tue, 3 Mar 2015 16:50:04 +0900
+Message-ID: <CAAVeFuLz-7r53YJ5Xqh3bydyyi+0jXhVQOO24FM+AuRfvObnTA@mail.gmail.com>
+References: <1425331858-6018-1-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:44785 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751500AbbCCFr7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 00:47:59 -0500
-In-Reply-To: <1424811651-18660-4-git-send-email-swarren@wwwdotorg.org>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:36988 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751475AbbCCHuZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 02:50:25 -0500
+Received: by igbhn18 with SMTP id hn18so24355120igb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Mar 2015 23:50:25 -0800 (PST)
+In-Reply-To: <1425331858-6018-1-git-send-email-robh@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Feb 25, 2015 at 6:00 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> From: Stephen Warren <swarren@nvidia.com>
+On Tue, Mar 3, 2015 at 6:30 AM, Rob Herring <robh@kernel.org> wrote:
+> The macro BANK_OFF which calculates the base offset for each GPIO port.
+> The macro is needlessly complex and unreadable. Simplify the
+> calculation to a simple math operation.
 >
-> Tegra210's pinmux supports a different set of pins/options than earlier
-> SoCs, so requires its own driver (well, table of pin-specific data).
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> ---
+>  drivers/gpio/gpio-pxa.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+> index e45637b..d2324b9 100644
+> --- a/drivers/gpio/gpio-pxa.c
+> +++ b/drivers/gpio/gpio-pxa.c
+> @@ -61,8 +61,7 @@
+>  #define GAFR_OFFSET    0x54
+>  #define ED_MASK_OFFSET 0x9C    /* GPIO edge detection for AP side */
+>
+> -#define BANK_OFF(n)    (((n) < 3) ? (n) << 2 : ((n) > 5 ? 0x200 : 0x100)       \
+> -                       + (((n) % 3) << 2))
+> +#define BANK_OFF(n)    (((n) / 3) << 8) + (((n) % 3) << 2)
 
-The series, and this patch in particular,
+Seems to indeed compute the same output as the previous macro in a
+more readable way.
 
-Tested-by: Alexandre Courbot <acourbot@nvidia.com>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
