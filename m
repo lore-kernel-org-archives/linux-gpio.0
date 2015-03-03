@@ -1,49 +1,35 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: pxa: simplify BANK_OFF macro offset calculation
-Date: Tue, 3 Mar 2015 16:50:04 +0900
-Message-ID: <CAAVeFuLz-7r53YJ5Xqh3bydyyi+0jXhVQOO24FM+AuRfvObnTA@mail.gmail.com>
-References: <1425331858-6018-1-git-send-email-robh@kernel.org>
+Subject: Re: "advanced" LED controllers
+Date: Tue, 3 Mar 2015 17:15:29 +0900
+Message-ID: <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
+References: <20150219211424.GN13603@saruman.tx.rr.com> <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
+ <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com> <20150302092111.GA19233@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f182.google.com ([209.85.213.182]:36988 "EHLO
-	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751475AbbCCHuZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 02:50:25 -0500
-Received: by igbhn18 with SMTP id hn18so24355120igb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Mar 2015 23:50:25 -0800 (PST)
-In-Reply-To: <1425331858-6018-1-git-send-email-robh@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150302092111.GA19233@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 3, 2015 at 6:30 AM, Rob Herring <robh@kernel.org> wrote:
-> The macro BANK_OFF which calculates the base offset for each GPIO port.
-> The macro is needlessly complex and unreadable. Simplify the
-> calculation to a simple math operation.
+On Mon, Mar 2, 2015 at 6:21 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Wed 2015-02-25 18:06:07, Alexandre Courbot wrote:
+>> On Wed, Feb 25, 2015 at 5:25 PM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>> > CC linux-gpio, as this looks like the LED equivalent of bulk gpio?
+>>
+>> Indeed. The LED core could implement something similar to
+>> gpiod_set_array() to allow several LEDs to be set in one call. If the
+>> controller supports it, it would then set all the LEDs at once,
+>> otherwise the core would apply the values serially.
+>>
+>> In leds-gpio.c, this multiple LED setting could be implemented by a
+>> single call to gpiod_set_array() and the right thing would happen.
 >
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> ---
->  drivers/gpio/gpio-pxa.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-> index e45637b..d2324b9 100644
-> --- a/drivers/gpio/gpio-pxa.c
-> +++ b/drivers/gpio/gpio-pxa.c
-> @@ -61,8 +61,7 @@
->  #define GAFR_OFFSET    0x54
->  #define ED_MASK_OFFSET 0x9C    /* GPIO edge detection for AP side */
->
-> -#define BANK_OFF(n)    (((n) < 3) ? (n) << 2 : ((n) > 5 ? 0x200 : 0x100)       \
-> -                       + (((n) % 3) << 2))
-> +#define BANK_OFF(n)    (((n) / 3) << 8) + (((n) % 3) << 2)
+> Actually, there are two issues: some controlles can set all LEDs at
+> once, and some can program pwm level smoothly using given program (and
+> handle multiple leds in the process).
 
-Seems to indeed compute the same output as the previous macro in a
-more readable way.
-
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+In any case, that would be handled at the controller level and should
+work with a function similar to gpiod_set_array(), wouldn't it?
