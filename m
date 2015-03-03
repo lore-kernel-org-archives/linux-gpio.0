@@ -1,35 +1,146 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: "advanced" LED controllers
-Date: Tue, 3 Mar 2015 17:15:29 +0900
-Message-ID: <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
-References: <20150219211424.GN13603@saruman.tx.rr.com> <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
- <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com> <20150302092111.GA19233@amd>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Tue, 3 Mar 2015 17:27:01 +0900
+Message-ID: <CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
+References: <20150130234552.GA20407@sysresccd> <20150131083300.GZ21469@belle.intranet.vanheusden.com>
+ <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+ <20150203090325.GA29693@deathray> <CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+ <20150219085303.GI21469@belle.intranet.vanheusden.com> <CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
+ <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
+ <CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
+ <CAAVeFuJxki5mqY91ugumpDEuq9BMbBin4ypr1H2qcA_uzWGT9Q@mail.gmail.com> <20150302072655.GA17089@deathray>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150302092111.GA19233@amd>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f171.google.com ([209.85.223.171]:47030 "EHLO
+	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751369AbbCCI1W (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 03:27:22 -0500
+Received: by iery20 with SMTP id y20so1644780ier.13
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Mar 2015 00:27:22 -0800 (PST)
+In-Reply-To: <20150302072655.GA17089@deathray>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Michael Welling <mwelling@ieee.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, folkert <folkert@vanheusden.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Mar 2, 2015 at 6:21 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Wed 2015-02-25 18:06:07, Alexandre Courbot wrote:
->> On Wed, Feb 25, 2015 at 5:25 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->> > CC linux-gpio, as this looks like the LED equivalent of bulk gpio?
->>
->> Indeed. The LED core could implement something similar to
->> gpiod_set_array() to allow several LEDs to be set in one call. If the
->> controller supports it, it would then set all the LEDs at once,
->> otherwise the core would apply the values serially.
->>
->> In leds-gpio.c, this multiple LED setting could be implemented by a
->> single call to gpiod_set_array() and the right thing would happen.
+On Mon, Mar 2, 2015 at 4:27 PM, Michael Welling <mwelling@ieee.org> wrote:
+> On Mon, Mar 02, 2015 at 03:16:06PM +0900, Alexandre Courbot wrote:
+>> On Fri, Feb 27, 2015 at 10:15 PM, Linus Walleij
+>> <linus.walleij@linaro.org> wrote:
+>> > On Thu, Feb 26, 2015 at 11:27 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+>> >> On Fri, Feb 20, 2015 at 1:52 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> >>> On Thu, Feb 19, 2015 at 9:53 AM, folkert <folkert@vanheusden.com> wrote:
+>> >>>
+>> >>>> I also think that this interface is cumbersome. I did not measure it(!)
+>> >>>> but I think adding this open/seek + read construction may add all kinds
+>> >>>> of overhead. Especially since my use-case requires the lowest latency
+>> >>>> possible. Not to forget that conversion of the measured value to ascii
+>> >>>> and back.
 >
-> Actually, there are two issues: some controlles can set all LEDs at
-> once, and some can program pwm level smoothly using given program (and
-> handle multiple leds in the process).
+> I may have opened this can of worms so I figured I should chime in.
+>
+> The context switches probably of more concern than string conversion.
 
-In any case, that would be handled at the controller level and should
-work with a function similar to gpiod_set_array(), wouldn't it?
+I concur that point.
+
+>
+>> >>>
+>> >>> Yes this interface sucks.
+>> >>>
+>> >>> The tentative long-term plan is to replace it with something like
+>> >>> a char device that can handle a quick context switch and also
+>> >>> issuing calls to set multiple pins at once, as we now have an
+>> >>> in-kernel interface for that (that I totally refuse to support from
+>> >>> sysfs).
+>> >>
+>> >> Mmm, I was thinking it would be nice to have a (new, redesigned) sysfs
+>> >> interface for this. :P
+>> >>
+>> >> Aren't we going to make things less accessible if we use a char device?
+>> >
+>> > Since sysfs has a "one value per file" paradigm, it also has a
+>> > "one context switch per operation" paradigm, meaning any
+>> > efficiency-oriented use cases where a lot of stuff needs to be
+>> > changed in one context switch are by the very construction
+>> > not suitable for sysfs IMO. That is the use case for ioctl()
+>> > operations that can pass an entire struct of stuff over.
+>> >
+>> > And things like bit-banging a clock+data line which would in
+>> > a sysfs case involve two context switches (one per value, since
+>> > that is one file per GPIO line) in an ioctl() case it would be
+>> > just one, already 50% less context switches for a very basic
+>> > use case.
+>>
+>> These are absolutely legitimate concerns, but couldn't the desired
+>> result be achieved using an interface like this (warning: raw and
+>> dirty draft):
+>>
+>>     cd /sys/class/gpio
+>>     echo "gpiochip0:12 gpiochip0:13 gpiochip1:7 lcd_gpios" >export   #
+>> exports GPIOs 12 and 13 of chip0 and 7 of chip 1 under the node
+>> "lcd_gpios"
+>>     echo 5 >lcd_gpios/value # sets gpiochip0:12 and gpiochip1:7
+>>
+>> ... or we could request the user to export each GPIO individually,
+>> then have a "group" node allowing to create a group of GPIOs from
+>> already-exported ones. This idea might actually work better as it
+>> would allow finer control over the properties of individual GPIO (e.g.
+>> active-low status).
+>>
+>
+> It may be beneficial and easier to perform the grouping in the device tree.
+> Then the system could come up with the groups pre-exported in /sys/class/gpio.
+>
+> The GPIOs would be self consumed like with the proposed pin hogging mechanism
+> but then available as a single group in the sysfs layer.
+>
+> What do you guys think?
+
+That's tempting as a convenience, but since there are many obscure
+use-cases involving GPIOs I'd like to have a more generic and flexible
+way before anything else. Not all GPIO users are backed by
+device-tree.
+
+>
+>> I understand that even this way sysfs might be slower than a character
+>> device, but when you need that level of performance don't you just
+>> need a dedicated driver? The ioctls might also get complex as it also
+>> needs to be able to set all the GPIO properties.
+>>
+>> Independently of this issue, I think it would be worth to create
+>> alternative "export" nodes at the chip-level, like the pwm subsystem
+>> has:
+>>
+>>     pwm/pwmchip0/export
+>>     pwm/pwmchip0/pwm1
+>>     pwm/pwmchip0/pwm1/duty_cycle
+>>
+>> This is much saner and would provide a sysfs interface that does not
+>> rely on the global GPIO numberspace, which cannot be relied upon as
+>> shown by countless evidence.
+>>
+>> IMHO this is needed regardless of whether we decide to provide a
+>> character device as well, so I thought we might also add the ability
+>> to set multiple GPIOs in one call to it. Maintaining two user-space
+>> ABIs (sysfs and char device) sounds a little bit overkill for
+>> something as simple as GPIOs.
+>
+> Perhaps an ioctl would be overkill seeing as the right way to emulate a bus
+> or whatever timing critical would be in a kernel driver.
+>
+> String conversion sucks but I could deal with it if more IOs were acessible
+> with a single system call.
+
+It really comes down to how user-space wants to access GPIOs. I
+suspect the majority of sysfs accesses is done by scripts and other
+simple programs. If we introduce a char device that takes requires
+ioctls, it is then customary to add a small user-space library to
+abstract that (for both convenience and safety - think libdrm). Do we
+want to maintain libgpio? If not, aren't we going to frustrate users
+who will wonder why on earth they need to use an ioctl just to change
+the value of a GPIO?
+
+sysfs requires to manipulate and sometimes build strings indeed, but
+as Michael pointed out this is a neglectible overhead and it is much
+more accessible. open, write, close, you're done.
