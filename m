@@ -1,40 +1,30 @@
-From: "qipeng.zha" <qipeng.zha@intel.com>
-Subject: [PATCH] pinctrl: update direction_output function of cherryview driver
-Date: Tue,  3 Mar 2015 18:13:22 +0800
-Message-ID: <1425377602-6649-1-git-send-email-qipeng.zha@intel.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 4/4] pinctrl: tegra: add a driver for Tegra210
+Date: Tue, 3 Mar 2015 14:47:38 +0900
+Message-ID: <CAAVeFu+LG86k+QwB2oZHbLSsVrVTtJmzd9odMbTSjpeOJ2Q3KQ@mail.gmail.com>
+References: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org> <1424811651-18660-4-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:29268 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751241AbbCCCLl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 2 Mar 2015 21:11:41 -0500
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:44785 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751500AbbCCFr7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 00:47:59 -0500
+In-Reply-To: <1424811651-18660-4-git-send-email-swarren@wwwdotorg.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, qipeng.zha@intel.com, "jason.cj.chen" <jason.cj.chen@intel.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-From: "qipeng.zha" <qipeng.zha@intel.com>
+On Wed, Feb 25, 2015 at 6:00 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>
+> Tegra210's pinmux supports a different set of pins/options than earlier
+> SoCs, so requires its own driver (well, table of pin-specific data).
+>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 
->From the comments of gpiod_direction_output(), need to set @value
-as initial output, so update the lowlevel routine to make it work.
+The series, and this patch in particular,
 
-Signed-off-by: jason.cj.chen<jason.cj.chen@intel.com>
-Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index e9f8b39..ee6a6de 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1206,6 +1206,7 @@ static int chv_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- static int chv_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 				     int value)
- {
-+	chv_gpio_set(chip, offset, value);
- 	return pinctrl_gpio_direction_output(chip->base + offset);
- }
- 
--- 
-1.8.3.2
-
+Tested-by: Alexandre Courbot <acourbot@nvidia.com>
