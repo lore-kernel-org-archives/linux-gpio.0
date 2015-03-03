@@ -1,116 +1,49 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: Re: [PATCH v5 4/4] mdio-mux-gpio: use new gpiod_get_array and gpiod_put_array functions
-Date: Tue, 03 Mar 2015 10:45:10 +0100
-Message-ID: <1842407.4EyTjGZBVF@pcimr>
-References: <1521782.cXqN30N6pA@pcimr> <CAAVeFuLnHQpsduHRsEkSC31+HDiApNoB3DNDQLzZxng=OVx6eg@mail.gmail.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCHv2 05/15] ARM: mvebu: add stdout-path to all armada-*.dts
+Date: Tue, 3 Mar 2015 10:45:41 +0100
+Message-ID: <20150303104541.345608b4@free-electrons.com>
+References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
+	<54EB4E9B.6010001@free-electrons.com>
+	<CAL_JsqJZJMkH953hq0_sOvEEu9o4pXxs0sdP5=7c2EXXNSyA9A@mail.gmail.com>
+	<20150227174851.390d9f58@free-electrons.com>
+	<CAL_Jsq+tP6wBcDti7x-B6ar8esE=65Ymg_CKANeOKSe=yYhNnw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:36761 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755585AbbCCJpP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 04:45:15 -0500
-In-Reply-To: <CAAVeFuLnHQpsduHRsEkSC31+HDiApNoB3DNDQLzZxng=OVx6eg@mail.gmail.com>
+Received: from down.free-electrons.com ([37.187.137.238]:36519 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755781AbbCCJpr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 04:45:47 -0500
+In-Reply-To: <CAL_Jsq+tP6wBcDti7x-B6ar8esE=65Ymg_CKANeOKSe=yYhNnw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+To: Rob Herring <robherring2@gmail.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Tawfik Bayouk <tawfik@marvell.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth>
 
-On Thursday 26 February 2015 18:54:53 Alexandre Courbot wrote:
-> On Thu, Feb 12, 2015 at 1:28 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> > Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
-> > disposing of GPIO descriptors.
+Dear Rob Herring,
+
+On Fri, 27 Feb 2015 11:42:43 -0600, Rob Herring wrote:
+
+> > It is worth mentioning that this also happens with
 > >
-> > Cc: David Miller <davem@davemloft.net>
-> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-> > ---
-> > Change log:
-> >   v5: no change
-> >   v4: use shorter names for members of struct gpio_descs
-> >   v3: no change
-> >   v2: use the new interface
+> >      stdout-path = "uart0:115200n8";
 > >
-> >  drivers/net/phy/mdio-mux-gpio.c | 60 ++++++++++++-----------------------------
-> >  1 file changed, 17 insertions(+), 43 deletions(-)
-> >
-> > diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
-> > index 320eb15..c49ad09 100644
-> > --- a/drivers/net/phy/mdio-mux-gpio.c
-> > +++ b/drivers/net/phy/mdio-mux-gpio.c
-> > @@ -12,33 +12,30 @@
-> >  #include <linux/module.h>
-> >  #include <linux/phy.h>
-> >  #include <linux/mdio-mux.h>
-> > -#include <linux/of_gpio.h>
-> > +#include <linux/gpio/consumer.h>
-> >
-> >  #define DRV_VERSION "1.1"
-> >  #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
-> >
-> > -#define MDIO_MUX_GPIO_MAX_BITS 8
-> > -
-> >  struct mdio_mux_gpio_state {
-> > -       struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
-> > -       unsigned int num_gpios;
-> > +       struct gpio_descs *gpios;
-> >         void *mux_handle;
-> >  };
-> >
-> >  static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
-> >                                    void *data)
-> >  {
-> > -       int values[MDIO_MUX_GPIO_MAX_BITS];
-> > -       unsigned int n;
-> >         struct mdio_mux_gpio_state *s = data;
-> > +       int values[s->gpios->ndescs];
-> > +       unsigned int n;
-> >
-> >         if (current_child == desired_child)
-> >                 return 0;
-> >
-> > -       for (n = 0; n < s->num_gpios; n++) {
-> > +       for (n = 0; n < s->gpios->ndescs; n++)
-> >                 values[n] = (desired_child >> n) & 1;
-> > -       }
-> > -       gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
-> > +
-> > +       gpiod_set_array_cansleep(s->gpios->ndescs, s->gpios->desc, values);
+> > which was explicitly suggested by Mark in his e-mail. uart0 is an alias
+> > to the proper DT node, since stdout-path = &uart0; works almost fine.
 > 
-> One suggestion for a possible further improvement: it would be great
-> if the gpiod_set/get_array() functions would work on a struct
-> gpio_descs so users don't have to pass both the number of GPIOs and
-> the array.
-> 
-> I don't know whether it would be desirable to keep alternative
-> functions that preserve the current form, for users who want to set
-> multiple GPIOs but cannot use gpiod_get_array(). struct gpiod_descs is
-> easy to build, so maybe we don't need them?
-> 
+> Mark forgot the '&'. So does 'stdout-path = "&uart0:115200n8";' work?
 
-I thought about that, but didn't want to change the interface in this
-patch series.
+Nah, there is really no '&' needed, Mark was right. What was wrong in
+my setup was that uart0 was a *label* for the serial port DT node, and
+not an alias. Once I created an alias 'serial0' for '&uart0', things
+started working all right.
 
-Furthermore there is this use case (my use case):
+Thanks,
 
-I acquire a descriptor array for multiple data outputs and (among others) a
-single descriptor for a clock output. Afterwards I want to set the data bits
-and simultaneously clear the clock bit (using gpiod_set_array) before setting
-only the clock output (using gpiod_set_value).
-
-Therefore I need an array containing the data bits and the clock bit which
-is easy to build.
-
-I could also create a struct gpiod_descs but it would be more complicated
-since I would have to allocate a new struct before populating it with the
-descriptors and also free the allocated memory afterwards. It's not really
-a big deal but more complicated than before.
-
-But this might not be a very common use case.
-
-If we can assume that for the common use case the group of descriptors that
-can be acquired using gpiod_get_array() is the same group that should be
-set using gpiod_set_array(), it might make sense to change the interface.
-
-   Rojhalat
-
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
