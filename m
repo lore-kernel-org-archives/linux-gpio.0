@@ -1,49 +1,57 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCHv2 05/15] ARM: mvebu: add stdout-path to all armada-*.dts
-Date: Tue, 3 Mar 2015 10:45:41 +0100
-Message-ID: <20150303104541.345608b4@free-electrons.com>
-References: <1424451874-25375-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1424451874-25375-6-git-send-email-thomas.petazzoni@free-electrons.com>
-	<54EB4E9B.6010001@free-electrons.com>
-	<CAL_JsqJZJMkH953hq0_sOvEEu9o4pXxs0sdP5=7c2EXXNSyA9A@mail.gmail.com>
-	<20150227174851.390d9f58@free-electrons.com>
-	<CAL_Jsq+tP6wBcDti7x-B6ar8esE=65Ymg_CKANeOKSe=yYhNnw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Tue, 3 Mar 2015 11:31:08 +0100
+Message-ID: <CACRpkdZRXAokttK7uc6PtfOGvRa74ydQRo6Kn1V1ofGUcGbSiQ@mail.gmail.com>
+References: <20150130234552.GA20407@sysresccd>
+	<20150131083300.GZ21469@belle.intranet.vanheusden.com>
+	<CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+	<20150203090325.GA29693@deathray>
+	<CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+	<20150219085303.GI21469@belle.intranet.vanheusden.com>
+	<CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
+	<CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
+	<CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
+	<CAAVeFuJxki5mqY91ugumpDEuq9BMbBin4ypr1H2qcA_uzWGT9Q@mail.gmail.com>
+	<20150302072655.GA17089@deathray>
+	<CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:36519 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755781AbbCCJpr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 04:45:47 -0500
-In-Reply-To: <CAL_Jsq+tP6wBcDti7x-B6ar8esE=65Ymg_CKANeOKSe=yYhNnw@mail.gmail.com>
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:43626 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751535AbbCCKbJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2015 05:31:09 -0500
+Received: by iebtr6 with SMTP id tr6so55941051ieb.10
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Mar 2015 02:31:08 -0800 (PST)
+In-Reply-To: <CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Mike Turquette <mturquette@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lior Amsalem <alior@marvell.com>, Rob Herring <robh+dt@kernel.org>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Tawfik Bayouk <tawfik@marvell.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Michael Welling <mwelling@ieee.org>, folkert <folkert@vanheusden.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Dear Rob Herring,
+On Tue, Mar 3, 2015 at 9:27 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
 
-On Fri, 27 Feb 2015 11:42:43 -0600, Rob Herring wrote:
+> It really comes down to how user-space wants to access GPIOs. I
+> suspect the majority of sysfs accesses is done by scripts and other
+> simple programs. If we introduce a char device that takes requires
+> ioctls, it is then customary to add a small user-space library to
+> abstract that (for both convenience and safety - think libdrm). Do we
+> want to maintain libgpio?
 
-> > It is worth mentioning that this also happens with
-> >
-> >      stdout-path = "uart0:115200n8";
-> >
-> > which was explicitly suggested by Mark in his e-mail. uart0 is an alias
-> > to the proper DT node, since stdout-path = &uart0; works almost fine.
-> 
-> Mark forgot the '&'. So does 'stdout-path = "&uart0:115200n8";' work?
+Good point.
 
-Nah, there is really no '&' needed, Mark was right. What was wrong in
-my setup was that uart0 was a *label* for the serial port DT node, and
-not an alias. Once I created an alias 'serial0' for '&uart0', things
-started working all right.
+We have no clue about how the majority out there use the GPIO
+sysfs, but I have heard of mission-critical systems just hammering
+GPIOs from userspace.
 
-Thanks,
+Sadly many of these industrial users are "I just want it to work, now"
+types and they don't step forward much on these mailing lists.
+(Learned from private conversations...)
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Maybe if noone voice their opinion and offer to help with this, we can
+assume they don't exist (well obviously a community does not exist)
+and their specific needs be ignored until they put their money where
+their mouth is.
+
+Yours,
+Linus Walleij
