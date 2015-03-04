@@ -1,100 +1,115 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into
- request/release resources methods
-Date: Wed, 4 Mar 2015 22:30:03 +0100
-Message-ID: <20150304213003.GD14457@ns203013.ovh.net>
-References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 2/2] pinctrl: Introduce TI IOdelay configuration driver
+Date: Wed, 04 Mar 2015 23:58:46 +0100
+Message-ID: <1425509926.2090.56.camel@tiscali.nl>
+References: <1425427237-11511-1-git-send-email-nm@ti.com>
+	 <1425427237-11511-3-git-send-email-nm@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1425427237-11511-3-git-send-email-nm@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Lokesh Vutla <lokeshvutla@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 19:23 Sun 08 Feb     , Boris Brezillon wrote:
-> The gpiochip_lock_as_irq call can fail and return an error, while the
-> irq_startup is not expected to fail (returns an unsigned int which is not
-> checked by irq core code).
-> 
-> irq_request/release_resources functions have been created to address this
-> problem.
-> 
-> Move gpiochip_lock/unlock_as_irq calls into
-> irq_request/release_resources functions to prevent using a gpio as an irq
-> if the gpiochip_lock_as_irq call failed.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Linus
-
-Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-
-Best Regards,
-J.
-> ---
->  drivers/pinctrl/pinctrl-at91.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-> index f4cd0b9..a481406 100644
-> --- a/drivers/pinctrl/pinctrl-at91.c
-> +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -1477,28 +1477,25 @@ static void gpio_irq_ack(struct irq_data *d)
->  	/* the interrupt is already cleared before by reading ISR */
->  }
+Nishanth Menon schreef op di 03-03-2015 om 18:00 [-0600]:
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index ee9f44ad7f02..8e463d75fbb2 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -160,6 +160,17 @@ config PINCTRL_TEGRA_XUSB
+>  	select PINCONF
+>  	select PINMUX
 >  
-> -static unsigned int gpio_irq_startup(struct irq_data *d)
-> +static int gpio_irq_request_res(struct irq_data *d)
->  {
->  	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
->  	unsigned	pin = d->hwirq;
->  	int ret;
->  
->  	ret = gpiochip_lock_as_irq(&at91_gpio->chip, pin);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(at91_gpio->chip.dev, "unable to lock pind %lu IRQ\n",
->  			d->hwirq);
-> -		return ret;
-> -	}
-> -	gpio_irq_unmask(d);
-> -	return 0;
+> +config PINCTRL_TI_IODELAY
+> +	bool "TI IODelay Module pinconf driver"
+
+This adds a boolean Kconfig symbol.
+
+> +	depends on OF
+> +	select PINCONF
+> +	select GENERIC_PINCONF
+> +	select REGMAP_MMIO
+> +	help
+> +	  Say Y here to support Texas Instruments' IODelay pinconf driver.
+> +	  IODelay module is used for the DRA7 SoC family. This driver is in
+> +	  addition to PINCTRL_SINGLE which controls the mux.
 > +
-> +	return ret;
->  }
->  
-> -static void gpio_irq_shutdown(struct irq_data *d)
-> +static void gpio_irq_release_res(struct irq_data *d)
->  {
->  	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
->  	unsigned	pin = d->hwirq;
->  
-> -	gpio_irq_mask(d);
->  	gpiochip_unlock_as_irq(&at91_gpio->chip, pin);
->  }
->  
-> @@ -1577,8 +1574,8 @@ void at91_pinctrl_gpio_resume(void)
->  static struct irq_chip gpio_irqchip = {
->  	.name		= "GPIO",
->  	.irq_ack	= gpio_irq_ack,
-> -	.irq_startup	= gpio_irq_startup,
-> -	.irq_shutdown	= gpio_irq_shutdown,
-> +	.irq_request_resources = gpio_irq_request_res,
-> +	.irq_release_resources = gpio_irq_release_res,
->  	.irq_disable	= gpio_irq_mask,
->  	.irq_mask	= gpio_irq_mask,
->  	.irq_unmask	= gpio_irq_unmask,
-> -- 
-> 1.9.1
-> 
+>  config PINCTRL_TZ1090
+>  	bool "Toumaz Xenif TZ1090 pin control driver"
+>  	depends on SOC_TZ1090
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index 0475206dd600..e441cd71aedf 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -28,6 +28,7 @@ obj-$(CONFIG_PINCTRL_TEGRA30)	+= pinctrl-tegra30.o
+>  obj-$(CONFIG_PINCTRL_TEGRA114)	+= pinctrl-tegra114.o
+>  obj-$(CONFIG_PINCTRL_TEGRA124)	+= pinctrl-tegra124.o
+>  obj-$(CONFIG_PINCTRL_TEGRA_XUSB)	+= pinctrl-tegra-xusb.o
+> +obj-$(CONFIG_PINCTRL_TI_IODELAY)	+= pinctrl-ti-iodelay.o
+
+So this objectfile will either be built-in or not be built at all.
+
+>  obj-$(CONFIG_PINCTRL_TZ1090)	+= pinctrl-tz1090.o
+>  obj-$(CONFIG_PINCTRL_TZ1090_PDC)	+= pinctrl-tz1090-pdc.o
+>  obj-$(CONFIG_PINCTRL_U300)	+= pinctrl-u300.o
+> diff --git a/drivers/pinctrl/pinctrl-ti-iodelay.c b/drivers/pinctrl/pinctrl-ti-iodelay.c
+> new file mode 100644
+> index 000000000000..e4c6e25a781c
+> --- /dev/null
+> +++ b/drivers/pinctrl/pinctrl-ti-iodelay.c
+> @@ -0,0 +1,963 @@
+>[...]
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/list.h>
+> +#include <linux/module.h>
+
+This is, I think, a bit of a red flag.
+
+> +#include <linux/of_device.h>
+> +#include <linux/of.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+> +#include <linux/pinctrl/pinconf.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+
+[...]
+
+> +static const struct of_device_id ti_iodelay_of_match[] = {
+> +	{.compatible = "ti,dra7-iodelay", .data = &dra7_iodelay_data},
+> +	{ /* Hopefully no more.. */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, ti_iodelay_of_match);
+> +
+> +static struct platform_driver ti_iodelay_driver = {
+> +	.probe = ti_iodelay_probe,
+> +	.remove = ti_iodelay_remove,
+> +	.driver = {
+> +		   .owner = THIS_MODULE,
+
+So THIS_MODULE will, basically, be NULL.
+
+> +		   .name = DRIVER_NAME,
+> +		   .of_match_table = ti_iodelay_of_match,
+> +		   },
+> +};
+> +module_platform_driver(ti_iodelay_driver);
+> +
+> +MODULE_AUTHOR("Texas Instruments, Inc.");
+> +MODULE_DESCRIPTION("Pinconf driver for TI's IO Delay module");
+> +MODULE_LICENSE("GPL v2");
+
+And these three macros will be preprocessed away.
+
+(Perhaps there are non-modular alternatives to MODULE_DEVICE_TABLE and
+module_platform_driver, but I'm not sure how those two macros actually
+work.)
+
+
+Paul Bolle
+
