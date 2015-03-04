@@ -1,40 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [Patch v6 0/2] gpio: add GPIO hogging mechanism
-Date: Wed, 4 Mar 2015 10:53:06 +0100
-Message-ID: <CACRpkdb+vo9BvFaG1ZBLLm9HqpQ89ckTwkXKmR5vwXNKWWrtrQ@mail.gmail.com>
-References: <AAE35E953C746D4784A1A0C604EFEA714DFBD819@DLEE10.ent.ti.com>
-	<20150218172341.GA3851@ti.com>
-	<20150219214639.GB8656@deathray>
+Subject: Re: [Patch v6 1/2] gpio: add GPIO hogging mechanism
+Date: Wed, 4 Mar 2015 11:09:53 +0100
+Message-ID: <CACRpkdYKuobhTJQ062+8srQ_nCZsnyuMbiM2gVp=u47Zi_jF6Q@mail.gmail.com>
+References: <1422899085-678-1-git-send-email-bparrot@ti.com>
+	<1422899085-678-2-git-send-email-bparrot@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150219214639.GB8656@deathray>
+In-Reply-To: <1422899085-678-2-git-send-email-bparrot@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>
-Cc: Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>
+To: Benoit Parrot <bparrot@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jiri Prchal <jiri.prchal@aksignal.cz>, Pantelis Antoniou <panto@antoniou-consulting.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 19, 2015 at 10:46 PM, Michael Welling <mwelling@ieee.org> wrote:
-> On Wed, Feb 18, 2015 at 11:23:42AM -0600, Benoit Parrot wrote:
->> Gentle ping.
->>
->> Is there any chance this will make it in 3.21?
->>
->> Benoit
->>
->
-> Is there a reason that the pin has to be "hogged"?
->
-> Couldn't the pin be released after configuration for eventual use in the userspace?
+On Mon, Feb 2, 2015 at 6:44 PM, Benoit Parrot <bparrot@ti.com> wrote:
 
-That can be added on later when/if we add support for
-mapping pins to userspace.
+> Based on Boris Brezillion's work this is a reworked patch
+> of his initial GPIO hogging mechanism.
+> This patch provides a way to initially configure specific GPIO
+> when the GPIO controller is probed.
+>
+> The actual DT scanning to collect the GPIO specific data is performed
+> as part of gpiochip_add().
+>
+> The purpose of this is to allow specific GPIOs to be configured
+> without any driver specific code.
+> This is particularly useful because board design are getting
+> increasingly complex and given SoC pins can now have more
+> than 10 mux values, a lot of connections are now dependent on
+> external IO muxes to switch various modes.
+>
+> Specific drivers should not necessarily need to be aware of
+> what accounts to a specific board implementation. This board level
+> "description" should be best kept as part of the dts file.
+>
+> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
-If you know you want to give it to userspace and how to set
-it up properly you certainly know what to name it too, so for
-pins explicitly exported to userspace we need a mechanism
-to name them and export them explicitly (without having userspace
-exporting them to itself with that brain-damaged sysfs interface).
+Patch applied.
+
+Good to have this in place for Linux 4.1!
 
 Yours,
 Linus Walleij
