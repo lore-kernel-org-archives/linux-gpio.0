@@ -1,63 +1,54 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v3 00/20] ARM: mvebu: Armada 39x basic support, and
- preparatory cleanups
-Date: Wed, 4 Mar 2015 16:20:08 +0100
-Message-ID: <20150304162008.1d337e6e@free-electrons.com>
-References: <1425393675-17820-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<54F71F45.3060503@free-electrons.com>
+From: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v4 1/4] pinctrl: bcm: consolidate Broadcom pinctrl drivers
+Date: Wed, 4 Mar 2015 09:31:15 -0800
+Message-ID: <54F74163.8060801@broadcom.com>
+References: <rjui@broadcom.com>	<1423015801-26967-1-git-send-email-rjui@broadcom.com>	<1423015801-26967-2-git-send-email-rjui@broadcom.com> <CACRpkdaiM+mqGg43BT1Kr-CNi8+_U4KgZM4iZocv9+ovHL5hLQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:48043 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756745AbbCDPUO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 10:20:14 -0500
-In-Reply-To: <54F71F45.3060503@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdaiM+mqGg43BT1Kr-CNi8+_U4KgZM4iZocv9+ovHL5hLQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Dmitry Torokhov <dtor-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Anatol Pomazau <anatol-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Gregory,
+Hi Linus,
 
-On Wed, 04 Mar 2015 16:05:41 +0100, Gregory CLEMENT wrote:
-
-> Patches 1 applied to mvebu/cleanup
-> Patches 2 to 8 and patch 17 applied to mvebu/dt
-> Patches 9,12,16 and 18 applied to mvebu/soc
-> Patch 19 applied to mvebu/defconfig
+On 3/4/2015 1:07 AM, Linus Walleij wrote:
+> On Wed, Feb 4, 2015 at 3:09 AM, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
 > 
-> and
+>> Consolidate Broadcom pinctrl drivers into drivers/pinctrl/bcm/*
+>>
+>> Signed-off-by: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 > 
-> Patches 10,13 and 14 applied to mvebu/clk as requested by Mike.
+> This patch doesn't apply so it needs to be rebased on v4.0-rc1 and resent.
 > 
-> I had to amend the patch "ARM: mvebu: fix unit address of MPIC nodes"
-> by removing the armada-38x related part which was already applied by the
-> patch "ARM: mvebu: Fix MPIC unit address".
+> And also when just moving files, always do this:
 > 
-> Patch 20 should be directly taken by the arm-soc maintainer.
+> git format-patch -M ...
+> 
+> So that file movement is detected, and the patch will apply nicely even
+> if the contents of the file(s) have changed.
+> 
+> Can you also combine this series with the v9 GPIO etc series and
+> send out ONE big patch set that I can look at because right now I'm
+> getting really confused ...
+> 
+> I'll look over the rest and see if there is some remaining technical
+> comments (hopefully mainly patch mechanics remains).
+> 
+> Yours,
+> Linus Walleij
+> 
 
-Thanks!
+Okay. I'll rebase to v4.0-rc1 and consolidate both pinmux and gpio
+pinctrl patch series into one, which will be PATCH v5.
 
-So this leaves only:
+Thanks,
 
-  [PATCH v3 11/20] devicetree: bindings: add Device Tree bindings for Armada 39x pin-muxing controller
-  [PATCH v3 15/20] pinctrl: mvebu: add pinctrl driver for Marvell Armada 39x
-
-to be applied, right? Patch 15/20 has been applied by Linus Walleij
-already, but from the v1 of the series. I also asked him to merge PATCH
-v3 11/20.
-
-With this done, and PATCH v2 20/20 merged by the arm-soc maintainers, I
-guess we should be all set with this patch series.
-
-Thanks again!
-
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Ray
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
