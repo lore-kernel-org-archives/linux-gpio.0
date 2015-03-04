@@ -1,33 +1,100 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: handle input-enable pinconf property
-Date: Wed, 04 Mar 2015 10:28:20 -0800
-Message-ID: <54F74EC4.60404@codeaurora.org>
-References: <1425465717-27747-1-git-send-email-svarbanov@mm-sol.com> <1425465717-27747-3-git-send-email-svarbanov@mm-sol.com>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into
+ request/release resources methods
+Date: Wed, 4 Mar 2015 22:30:03 +0100
+Message-ID: <20150304213003.GD14457@ns203013.ovh.net>
+References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:40804 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758301AbbCDS2W (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 13:28:22 -0500
-In-Reply-To: <1425465717-27747-3-git-send-email-svarbanov@mm-sol.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stanimir Varbanov <svarbanov@mm-sol.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-On 03/04/15 02:41, Stanimir Varbanov wrote:
-> This enables support of 'input-enable' pinconf generic property in
-> the pinctrl driver.
->
-> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
->
+On 19:23 Sun 08 Feb     , Boris Brezillon wrote:
+> The gpiochip_lock_as_irq call can fail and return an error, while the
+> irq_startup is not expected to fail (returns an unsigned int which is not
+> checked by irq core code).
+> 
+> irq_request/release_resources functions have been created to address this
+> problem.
+> 
+> Move gpiochip_lock/unlock_as_irq calls into
+> irq_request/release_resources functions to prevent using a gpio as an irq
+> if the gpiochip_lock_as_irq call failed.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Linus
 
+Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Best Regards,
+J.
+> ---
+>  drivers/pinctrl/pinctrl-at91.c | 17 +++++++----------
+>  1 file changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+> index f4cd0b9..a481406 100644
+> --- a/drivers/pinctrl/pinctrl-at91.c
+> +++ b/drivers/pinctrl/pinctrl-at91.c
+> @@ -1477,28 +1477,25 @@ static void gpio_irq_ack(struct irq_data *d)
+>  	/* the interrupt is already cleared before by reading ISR */
+>  }
+>  
+> -static unsigned int gpio_irq_startup(struct irq_data *d)
+> +static int gpio_irq_request_res(struct irq_data *d)
+>  {
+>  	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
+>  	unsigned	pin = d->hwirq;
+>  	int ret;
+>  
+>  	ret = gpiochip_lock_as_irq(&at91_gpio->chip, pin);
+> -	if (ret) {
+> +	if (ret)
+>  		dev_err(at91_gpio->chip.dev, "unable to lock pind %lu IRQ\n",
+>  			d->hwirq);
+> -		return ret;
+> -	}
+> -	gpio_irq_unmask(d);
+> -	return 0;
+> +
+> +	return ret;
+>  }
+>  
+> -static void gpio_irq_shutdown(struct irq_data *d)
+> +static void gpio_irq_release_res(struct irq_data *d)
+>  {
+>  	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
+>  	unsigned	pin = d->hwirq;
+>  
+> -	gpio_irq_mask(d);
+>  	gpiochip_unlock_as_irq(&at91_gpio->chip, pin);
+>  }
+>  
+> @@ -1577,8 +1574,8 @@ void at91_pinctrl_gpio_resume(void)
+>  static struct irq_chip gpio_irqchip = {
+>  	.name		= "GPIO",
+>  	.irq_ack	= gpio_irq_ack,
+> -	.irq_startup	= gpio_irq_startup,
+> -	.irq_shutdown	= gpio_irq_shutdown,
+> +	.irq_request_resources = gpio_irq_request_res,
+> +	.irq_release_resources = gpio_irq_release_res,
+>  	.irq_disable	= gpio_irq_mask,
+>  	.irq_mask	= gpio_irq_mask,
+>  	.irq_unmask	= gpio_irq_unmask,
+> -- 
+> 1.9.1
+> 
