@@ -1,55 +1,57 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 04/18] clocksource: Add ARM System timer driver
-Date: Wed, 4 Mar 2015 13:08:02 +0100
-Message-ID: <CALszF6AEThPrRe7c7nJ6q7yb2fhLMFuHJUV10sf=w0TMcqVVaw@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
-	<20150220195437.GT19388@pengutronix.de>
-	<1424468908.24292.10.camel@x220>
-	<CALszF6Bm_Y4ZLednjpmP-hMix3gA23FwLm5hViEjr1QojUY+Mg@mail.gmail.com>
-	<1425411786.2606.24.camel@tiscali.nl>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Wed, 4 Mar 2015 21:43:41 +0900
+Message-ID: <CAAVeFuJ+T-4ew+ACJpestMtH4D+ggcwOD3SumAwYNO5yGT=jiQ@mail.gmail.com>
+References: <20150130234552.GA20407@sysresccd> <20150131083300.GZ21469@belle.intranet.vanheusden.com>
+ <CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+ <20150203090325.GA29693@deathray> <CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+ <20150219085303.GI21469@belle.intranet.vanheusden.com> <CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
+ <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
+ <CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
+ <CAAVeFuJxki5mqY91ugumpDEuq9BMbBin4ypr1H2qcA_uzWGT9Q@mail.gmail.com>
+ <20150302072655.GA17089@deathray> <CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
+ <CACRpkdZRXAokttK7uc6PtfOGvRa74ydQRo6Kn1V1ofGUcGbSiQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f53.google.com ([74.125.82.53]:44964 "EHLO
-	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753818AbbCDMIF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 07:08:05 -0500
-In-Reply-To: <1425411786.2606.24.camel@tiscali.nl>
+Received: from mail-ig0-f169.google.com ([209.85.213.169]:46631 "EHLO
+	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755172AbbCDMoC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 07:44:02 -0500
+Received: by igbhl2 with SMTP id hl2so36288611igb.5
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2015 04:44:01 -0800 (PST)
+In-Reply-To: <CACRpkdZRXAokttK7uc6PtfOGvRa74ydQRo6Kn1V1ofGUcGbSiQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Welling <mwelling@ieee.org>, folkert <folkert@vanheusden.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-2015-03-03 20:43 GMT+01:00 Paul Bolle <pebolle@tiscali.nl>:
-> Maxime Coquelin schreef op ma 02-03-2015 om 17:53 [+0100]:
->> Do you agree if I define it like this:
->>
->> config ARMV7M_SYSTICK
->>     bool "Clocksource driver for ARMv7-M System timer"
->>     depends on OF && (CPU_V7M || COMPILE_TEST)
->>     select CLKSRC_OF
->>     select CLKSRC_MMIO
->>     help
->>       This options enables clocksource support for the ARMv7-M system
->>       timer unit.
+On Tue, Mar 3, 2015 at 7:31 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Mar 3, 2015 at 9:27 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
 >
-> I don't really have strong feelings on whatever way you choose to fix
-> the, well, minor problem I pointed out.
+>> It really comes down to how user-space wants to access GPIOs. I
+>> suspect the majority of sysfs accesses is done by scripts and other
+>> simple programs. If we introduce a char device that takes requires
+>> ioctls, it is then customary to add a small user-space library to
+>> abstract that (for both convenience and safety - think libdrm). Do we
+>> want to maintain libgpio?
 >
-> Having said that, if a Kconfig entry without a prompt (and therefor,
-> without help) actually does what you want it to do, why bother adding a
-> prompt and a one line help text?
+> Good point.
+>
+> We have no clue about how the majority out there use the GPIO
+> sysfs, but I have heard of mission-critical systems just hammering
+> GPIOs from userspace.
+>
+> Sadly many of these industrial users are "I just want it to work, now"
+> types and they don't step forward much on these mailing lists.
+> (Learned from private conversations...)
+>
+> Maybe if noone voice their opinion and offer to help with this, we can
+> assume they don't exist (well obviously a community does not exist)
+> and their specific needs be ignored until they put their money where
+> their mouth is.
 
-This is because I added also support for COMPILE_TEST coverage as per
-Uwe advice,
-and thought it was necessary to have an entry for this.
-Maybe I'm just wrong?
-
-Thanks,
-Maxime
-
->
->
-> Paul Bolle
->
+That's the only way we can handle the situation if people don't
+manifest their needs. But does this mean that you would agree with a
+cleaner, multi-GPIO friendly sysfs-based solution, or I am
+misunderstanding you?
