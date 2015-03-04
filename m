@@ -1,49 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: pcf857x: Propagate wake-up setting to parent
- irq controller
-Date: Wed, 4 Mar 2015 13:51:21 +0100
-Message-ID: <CACRpkdbv_Z=VBNniS=5oqzQnRg85e7g19AZ3wm5vzyuk=2WqHw@mail.gmail.com>
-References: <1423151349-10579-1-git-send-email-geert+renesas@glider.be>
-	<1423151349-10579-3-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 07/10] pinctrl: mvebu: add pinctrl driver for Marvell
+ Armada 39x
+Date: Wed, 4 Mar 2015 13:54:42 +0100
+Message-ID: <CACRpkdZH9vUPR65Yw65LKHns8_b3vM+1ARoks2j73WV2WmAExQ@mail.gmail.com>
+References: <1423238276-9206-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1423238276-9206-8-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1423151349-10579-3-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, George Cherian <george.cherian@ti.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:36545 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751589AbbCDMym (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 07:54:42 -0500
+Received: by obbnt9 with SMTP id nt9so6554637obb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2015 04:54:42 -0800 (PST)
+In-Reply-To: <1423238276-9206-8-git-send-email-thomas.petazzoni@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Thu, Feb 5, 2015 at 4:49 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Feb 6, 2015 at 4:57 PM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
 
-> The pcf857x GPIO and interrupt controller uses dummy_irq_chip, which
-> does not implement irq_chip.irq_set_wake() and does not set
-> IRQCHIP_SKIP_SET_WAKE.
+> This commit adds a new pinctrl driver for the Marvell Armada 39x
+> family of processors, which hooks into the existing infrastructure to
+> support pin-muxing on Marvell EBU processors. Two variants of the
+> Armada 39x are supported: 88F6920 (Armada 390) and 88F6928 (Armada
+> 398), which have a few differences in the available functions for
+> certain pins.
 >
-> This causes two s2ram issues if wake-up is enabled for the pcf857x GPIO
-> pins:
->   1. During resume from s2ram, the following warning is printed:
->
->      WARNING: CPU: 0 PID: 1046 at kernel/irq/manage.c:537 irq_set_irq_wake+0x9c/0xf8()
->      Unbalanced IRQ 113 wake disable
->
->   2. Wake-up through the pcf857x GPIO pins may fail, as the parent
->      interrupt controller may be suspended.
->
-> Migrate the pcf857x GPIO and interrupt controller from dummy_irq_chip to
-> its own irq_chip. This irq chip implements irq_chip.irq_set_wake() to
-> propagate its wake-up setting to the parent interrupt controller.
->
-> This fixes wake-up through gpio-keys on sh73a0/kzm9g, where the pcf857x
-> interrupt is cascaded to irq-renesas-intc-irqpin, and the latter must
-> not be suspended when wake-up is enabled.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Rebased on top of "gpio: pcf857x: Switch to use gpiolib irqchip
->     helpers".
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
 Patch applied.
 
