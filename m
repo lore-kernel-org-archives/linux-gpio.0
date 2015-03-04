@@ -1,148 +1,64 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v5 4/4] mdio-mux-gpio: use new gpiod_get_array and
- gpiod_put_array functions
-Date: Wed, 4 Mar 2015 22:22:24 +0900
-Message-ID: <CAAVeFuLt0Oy9QK+BJ5zAb-CugKi0n4ruy6=+CWQwgS9J0=dfrQ@mail.gmail.com>
-References: <1521782.cXqN30N6pA@pcimr> <CAAVeFuLnHQpsduHRsEkSC31+HDiApNoB3DNDQLzZxng=OVx6eg@mail.gmail.com>
- <1842407.4EyTjGZBVF@pcimr>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH] pinctrl: at91: simplify probe error handling
+Date: Wed, 4 Mar 2015 14:32:45 +0100
+Message-ID: <20150304133245.GF9132@odux.rfo.atmel.com>
+References: <2adab2d9a86d0e44051541052ace08527bdcc045.1425317325.git.baruch@tkos.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:34896 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750832AbbCDNWq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 08:22:46 -0500
-In-Reply-To: <1842407.4EyTjGZBVF@pcimr>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:51184 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751425AbbCDNde (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 08:33:34 -0500
+Content-Disposition: inline
+In-Reply-To: <2adab2d9a86d0e44051541052ace08527bdcc045.1425317325.git.baruch@tkos.co.il>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Mar 3, 2015 at 6:45 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> On Thursday 26 February 2015 18:54:53 Alexandre Courbot wrote:
->> On Thu, Feb 12, 2015 at 1:28 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
->> > Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
->> > disposing of GPIO descriptors.
->> >
->> > Cc: David Miller <davem@davemloft.net>
->> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
->> > ---
->> > Change log:
->> >   v5: no change
->> >   v4: use shorter names for members of struct gpio_descs
->> >   v3: no change
->> >   v2: use the new interface
->> >
->> >  drivers/net/phy/mdio-mux-gpio.c | 60 ++++++++++++-----------------------------
->> >  1 file changed, 17 insertions(+), 43 deletions(-)
->> >
->> > diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
->> > index 320eb15..c49ad09 100644
->> > --- a/drivers/net/phy/mdio-mux-gpio.c
->> > +++ b/drivers/net/phy/mdio-mux-gpio.c
->> > @@ -12,33 +12,30 @@
->> >  #include <linux/module.h>
->> >  #include <linux/phy.h>
->> >  #include <linux/mdio-mux.h>
->> > -#include <linux/of_gpio.h>
->> > +#include <linux/gpio/consumer.h>
->> >
->> >  #define DRV_VERSION "1.1"
->> >  #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
->> >
->> > -#define MDIO_MUX_GPIO_MAX_BITS 8
->> > -
->> >  struct mdio_mux_gpio_state {
->> > -       struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
->> > -       unsigned int num_gpios;
->> > +       struct gpio_descs *gpios;
->> >         void *mux_handle;
->> >  };
->> >
->> >  static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
->> >                                    void *data)
->> >  {
->> > -       int values[MDIO_MUX_GPIO_MAX_BITS];
->> > -       unsigned int n;
->> >         struct mdio_mux_gpio_state *s = data;
->> > +       int values[s->gpios->ndescs];
->> > +       unsigned int n;
->> >
->> >         if (current_child == desired_child)
->> >                 return 0;
->> >
->> > -       for (n = 0; n < s->num_gpios; n++) {
->> > +       for (n = 0; n < s->gpios->ndescs; n++)
->> >                 values[n] = (desired_child >> n) & 1;
->> > -       }
->> > -       gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
->> > +
->> > +       gpiod_set_array_cansleep(s->gpios->ndescs, s->gpios->desc, values);
->>
->> One suggestion for a possible further improvement: it would be great
->> if the gpiod_set/get_array() functions would work on a struct
->> gpio_descs so users don't have to pass both the number of GPIOs and
->> the array.
->>
->> I don't know whether it would be desirable to keep alternative
->> functions that preserve the current form, for users who want to set
->> multiple GPIOs but cannot use gpiod_get_array(). struct gpiod_descs is
->> easy to build, so maybe we don't need them?
->>
+On Mon, Mar 02, 2015 at 07:28:45PM +0200, Baruch Siach wrote:
+> There is no code ender the 'err' label. Just return the error code directly.
 >
-> I thought about that, but didn't want to change the interface in this
-> patch series.
->
-> Furthermore there is this use case (my use case):
->
-> I acquire a descriptor array for multiple data outputs and (among others) a
-> single descriptor for a clock output. Afterwards I want to set the data bits
-> and simultaneously clear the clock bit (using gpiod_set_array) before setting
-> only the clock output (using gpiod_set_value).
->
-> Therefore I need an array containing the data bits and the clock bit which
-> is easy to build.
->
-> I could also create a struct gpiod_descs but it would be more complicated
-> since I would have to allocate a new struct before populating it with the
-> descriptors and also free the allocated memory afterwards. It's not really
-> a big deal but more complicated than before.
->
-> But this might not be a very common use case.
->
-> If we can assume that for the common use case the group of descriptors that
-> can be acquired using gpiod_get_array() is the same group that should be
-> set using gpiod_set_array(), it might make sense to change the interface.
 
-Ah, thanks for sharing your use-case. I wish I had heard it earlier as
-it seems we should make things more flexible than they currently are.
+Probably a remainder of pre managed resources time.
 
-If I followed you correctly, you need to call gpiod_get_array() to
-obtain the data lines, and gpiod_get() for the clock line. Then you
-need to allocate a new array of gpio_desc * and copy all the
-descriptors there before calling gpiod_set_array(). So simply put, the
-struct gpio_descs you obtained is just useless to you.
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
 
-It seems like we have been doing things wrong. Maybe gpiod_get_array()
-should simply take a pointer to a gpio_desc * array that it would
-fill, as you originally proposed?
-
-So now, the question is: do we need struct gpiod_descs at all? It can
-help reducing the number of arguments passed to functions, but also
-makes the whole API more rigid. Use it with gpiod_get_array(), and you
-end up with unneeded copies and memory allocations. Pass it to
-gpiod_set_array() and you cannot do things like setting only part of
-the GPIOs you requested.
-
-Argh, and looking closer there is some possible confusion between
-gpiod_set_array() and gpiod_get_array(). One might expect the latter
-to return the *values* of the GPIOs, considering the name of the
-former, while it actually is the array counterpart of gpiod_get(). To
-be consistent with the single descriptor API, I suppose we should
-rename gpiod_set_array() to gpiod_set_array_value(). But that's a
-separate issue.
-
-For now, since you are the main user of the array API, what is your
-opinion about gpiod_descs? Do you think it is worth making the API
-less flexible just to not have to carry an array lengh separately?
-Should we just get rid of it?
+> ---
+>  drivers/pinctrl/pinctrl-at91.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+> index f4cd0b9b2438..6cfe534ab27e 100644
+> --- a/drivers/pinctrl/pinctrl-at91.c
+> +++ b/drivers/pinctrl/pinctrl-at91.c
+> @@ -1240,8 +1240,7 @@ static int at91_pinctrl_probe(struct platform_device *pdev)
+>  
+>  	if (!info->pctl) {
+>  		dev_err(&pdev->dev, "could not register AT91 pinctrl driver\n");
+> -		ret = -EINVAL;
+> -		goto err;
+> +		return -EINVAL;
+>  	}
+>  
+>  	/* We will handle a range of GPIO pins */
+> @@ -1252,9 +1251,6 @@ static int at91_pinctrl_probe(struct platform_device *pdev)
+>  	dev_info(&pdev->dev, "initialized AT91 pinctrl driver\n");
+>  
+>  	return 0;
+> -
+> -err:
+> -	return ret;
+>  }
+>  
+>  static int at91_pinctrl_remove(struct platform_device *pdev)
+> -- 
+> 2.1.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
