@@ -1,40 +1,56 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/4] pinctrl: tegra: driver layout/consistency fixes
-Date: Tue, 03 Mar 2015 13:21:01 -0700
-Message-ID: <54F617AD.6070208@wwwdotorg.org>
-References: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>
+From: Nishanth Menon <nm@ti.com>
+Subject: [PATCH 0/2] pinctrl: Introduce support for iodelay module in TI SoCs
+Date: Tue, 3 Mar 2015 18:00:35 -0600
+Message-ID: <1425427237-11511-1-git-send-email-nm@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Lokesh Vutla <lokeshvutla@ti.com>, Nishanth Menon <nm@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 02/24/2015 02:00 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->
-> Various non-semantic tweaks and layout/consistency fixes for existing
-> Tegra pinctrl drivers.
->
-> Move the definition of DRV_PINGROUP_REG() before the definition of
-> PINGROUP() so that a future SoC driver can invoke the former from the
-> latter.
->
-> PINGROUP_BIT_Y(n) is just n, so replace it with n.
->
-> Re-wrap the parameters to *PINGROUP().
->
-> Keep various enums sorted in the Tegra124 driver.
->
-> Various white-space consistency fixes.
->
-> These changes aim to update existing drivers to be consistent with future
-> SoC drivers. While we could ignore these tweaks to the existing drivers,
-> I'd like to keep everything as consistent as possible for easy comparison.
-> Besides, I auto-generate the drivers, and maintaining special-cases to
-> keep the differences in place is annoying.
+Hi,
 
-Linus, does this series look OK?
+SoCs such as DRA7 family from Texas Instruments also include a highly
+configurable hardware block called the IOdelay block. This block
+allows very specific custom fine tuning for electrical characteristics
+of IO pins that are necessary for functionality and device lifetime
+requirements.
+
+IODelay module exists on it's own register space with registers
+allocated for various pins. A set of values (derived from either
+automated tools OR from device datasheet) is then computed on a
+per-chip basis(to account for die specific variations) to generate a
+set of delay parameters that are programmed to one or more registers
+for the delay path of the io line. This is used in specific instances
+such as MMC to achieve high-throughput modes, and most pins dont
+usually need tweaking functionality provided by this driver.
+
+Even though this kind of operates similar to a pinctrl model,
+functionally, it is a characteristics tuning which does not completely
+fit the standard pinconf model either.
+
+In addition to the regular pin muxing modes supported by the
+pinctrl-single, additional configuration for this block for specific
+pins may also be mandatory in certain cases.
+
+Series based on v4.0-rc1
+
+Nishanth Menon (2):
+  pinctrl: bindings: pinctrl: Add support for TI's IODelay
+    configuration
+  pinctrl: Introduce TI IOdelay configuration driver
+
+ .../bindings/pinctrl/ti,iodelay-pinctrl.txt        |   86 ++
+ drivers/pinctrl/Kconfig                            |   11 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-ti-iodelay.c               |  963 ++++++++++++++++++++
+ include/dt-bindings/pinctrl/dra.h                  |    6 +
+ 5 files changed, 1067 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,iodelay-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-ti-iodelay.c
+
+-- 
+1.7.9.5
+
