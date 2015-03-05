@@ -1,40 +1,98 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 3/4] gpiolib: add devm_gpiod_get_array and
- devm_gpiod_put_array functions
-Date: Thu, 5 Mar 2015 09:56:26 +0100
-Message-ID: <CACRpkda7VkZ_QXHoK6eH9HM1Ec3Vt4KsUFSFWcnEbaq3LZZuNg@mail.gmail.com>
-References: <71195660.CBS4fRPfXg@pcimr>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 1/4] pinctrl: sh-pfc: Do not overwrite bias configuration
+Date: Thu, 05 Mar 2015 10:57:38 +0200
+Message-ID: <3714484.i8UOlazLrF@avalon>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <1425058685-12956-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:34435 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751170AbbCEI41 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:56:27 -0500
-Received: by oigh136 with SMTP id h136so10550474oig.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 00:56:26 -0800 (PST)
-In-Reply-To: <71195660.CBS4fRPfXg@pcimr>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60620 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753767AbbCEI5g (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:57:36 -0500
+In-Reply-To: <1425058685-12956-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org
 
-On Wed, Feb 11, 2015 at 5:28 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+Hi Geert,
 
-> Add device managed variants of gpiod_get_array() / gpiod_put_array()
-> functions for conveniently obtaining and disposing of an entire array
-> of GPIOs with one function call.
->
-> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Thank you for the patch.
+
+On Friday 27 February 2015 18:38:02 Geert Uytterhoeven wrote:
+> After the last user of the in_pd/in_pu bias parameters of the _PCRH()
+> macro was removed in commit 80da8e02d22caaef ("sh-pfc: r8a7740: Add bias
+> (pull-up/down) pinconf support"), bias parameters are supposed to be
+> configured using the generic pinctl mechanism, which calls the
+> .set_bias() method.
+> 
+> However, the PORTCR() macro still represents the control register as
+> consisting of two 4-bit fields. Hence the bias configuration in the
+> uppermost 2 bits is always overwritten with zeroes when a pin is
+> configured for GPIO, disabling any previously configured bias.
+> 
+> Use the variable config register macro instead, to represent the
+> register as having 4 fields, and to make sure only the input/output
+> control and function fields are touched.
+> 
+> This affects R-Mobile APE6 (r8a73a4), R-Mobile A1 (r8a7740), SH-Mobile
+> AP4 (sh7372), and SH-Mobile AG5 (sh73a0).
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
-> Change log:
->   v5: no change
->   v4: no change
->   v3: make the flags argument mandatory for the new functions
->   v2: add this patch to the set
+> Tested on r8a73a4/ape6evm, which requires a pull-up bias for the
+> GPIO switches.
+> ---
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index c83728626906c16c..ed5cf4192fa1a2d0
+> 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -302,20 +302,21 @@ struct sh_pfc_soc_info {
+>  /*
+>   * PORTnCR macro
+>   */
+> -#define _PCRH(in, in_pd, in_pu, out)	\
+> -	0, (out), (in), 0,		\
+> -	0, 0, 0, 0,			\
+> -	0, 0, (in_pd), 0,		\
+> -	0, 0, (in_pu), 0
+> -
+>  #define PORTCR(nr, reg)							\
+>  	{								\
+> -		PINMUX_CFG_REG("PORT" nr "CR", reg, 8, 4) {		\
+> -			_PCRH(PORT##nr##_IN, 0, 0, PORT##nr##_OUT),	\
+> -				PORT##nr##_FN0, PORT##nr##_FN1,		\
+> -				PORT##nr##_FN2, PORT##nr##_FN3,		\
+> -				PORT##nr##_FN4, PORT##nr##_FN5,		\
+> -				PORT##nr##_FN6, PORT##nr##_FN7 }	\
+> +		PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8, 2, 2, 1, 3) {\
+> +			/* PULMD[1:0], handled by .set_bias() */	\
+> +			0, 0, 0, 0,					\
+> +			/* IE and OE */					\
+> +			0, PORT##nr##_OUT, PORT##nr##_IN, 0,		\
+> +			/* SEC, not supported */			\
+> +			0, 0,						\
+> +			/* PTMD[2:0] */					\
+> +			PORT##nr##_FN0, PORT##nr##_FN1,			\
+> +			PORT##nr##_FN2, PORT##nr##_FN3,			\
+> +			PORT##nr##_FN4, PORT##nr##_FN5,			\
+> +			PORT##nr##_FN6, PORT##nr##_FN7			\
+> +		}							\
+>  	}
+> 
+>  #endif /* __SH_PFC_H */
 
-Patch applied.
+-- 
+Regards,
 
-Yours,
-Linus Walleij
+Laurent Pinchart
+
