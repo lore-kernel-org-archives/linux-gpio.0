@@ -1,77 +1,87 @@
 From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH v5 3/8] pinctrl: cygnus: add initial IOMUX driver support
-Date: Thu, 05 Mar 2015 09:03:32 +0100
-Message-ID: <1425542612.24292.180.camel@x220>
+Subject: Re: [PATCH v5 6/8] pinctrl: cygnus: add gpio/pinconf driver
+Date: Thu, 05 Mar 2015 09:11:44 +0100
+Message-ID: <1425543104.24292.185.camel@x220>
 References: <1425515756-321-1-git-send-email-rjui@broadcom.com>
-	 <1425515756-321-4-git-send-email-rjui@broadcom.com>
+	 <1425515756-321-7-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cpsmtpb-ews01.kpnxchange.com ([213.75.39.4]:50769 "EHLO
+Received: from cpsmtpb-ews01.kpnxchange.com ([213.75.39.4]:52977 "EHLO
 	cpsmtpb-ews01.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754484AbbCEIDf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:03:35 -0500
-In-Reply-To: <1425515756-321-4-git-send-email-rjui@broadcom.com>
+	by vger.kernel.org with ESMTP id S1752587AbbCEILr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:11:47 -0500
+In-Reply-To: <1425515756-321-7-git-send-email-rjui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Ray Jui <rjui@broadcom.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
 On Wed, 2015-03-04 at 16:35 -0800, Ray Jui wrote:
-> diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
-> index bc6d048..eb13201 100644
 > --- a/drivers/pinctrl/bcm/Kconfig
 > +++ b/drivers/pinctrl/bcm/Kconfig
-> @@ -19,3 +19,16 @@ config PINCTRL_BCM2835
->  	bool
+> @@ -20,6 +20,28 @@ config PINCTRL_BCM2835
 >  	select PINMUX
 >  	select PINCONF
-> +
-> +config PINCTRL_CYGNUS_MUX
-> +	bool "Broadcom Cygnus IOMUX driver"
+>  
+> +config PINCTRL_CYGNUS_GPIO
+> +	bool "Broadcom Cygnus GPIO (with PINCONF) driver"
 
 bool type.
 
-> +	depends on (ARCH_BCM_CYGNUS || COMPILE_TEST)
-> +	select PINMUX
+> +	depends on OF_GPIO && ARCH_BCM_CYGNUS
+> +	select GPIOLIB_IRQCHIP
+> +	select PINCONF
 > +	select GENERIC_PINCONF
 > +	default ARCH_BCM_CYGNUS
 > +	help
-> +	  Say yes here to enable the Broadcom Cygnus IOMUX driver.
+> +	  Say yes here to enable the Broadcom Cygnus GPIO driver.
 > +
-> +	  The Broadcom Cygnus IOMUX driver supports group based IOMUX
-> +	  configuration, with the exception that certain individual pins
-> +	  can be overrided to GPIO function
+> +	  The Broadcom Cygnus SoC has 3 GPIO controllers including the ASIU
+> +	  GPIO controller (ASIU), the chipCommonG GPIO controller (CCM), and
+> +	  the always-ON GPIO controller (CRMU/AON). All 3 GPIO controllers are
+> +	  supported by this driver.
+> +
+> +	  All 3 Cygnus GPIO controllers support basic PINCONF functions such
+> +	  as bias pull up, pull down, and drive strength configurations, when
+> +	  these pins are muxed to GPIO.
+> +
+> +	  Pins from the ASIU GPIO can be individually muxed to GPIO function,
+> +	  through interaction with the Cygnus IOMUX controller.
+> +
+>  config PINCTRL_CYGNUS_MUX
+>  	bool "Broadcom Cygnus IOMUX driver"
+>  	depends on (ARCH_BCM_CYGNUS || COMPILE_TEST)
 > diff --git a/drivers/pinctrl/bcm/Makefile b/drivers/pinctrl/bcm/Makefile
-> index 7ba80a3..bb6beb6 100644
+> index bb6beb6..2b2f70e 100644
 > --- a/drivers/pinctrl/bcm/Makefile
 > +++ b/drivers/pinctrl/bcm/Makefile
-> @@ -1,4 +1,5 @@
->  # Broadcom pinctrl support
+> @@ -2,4 +2,5 @@
 >  
-> -obj-$(CONFIG_PINCTRL_BCM281XX)	+= pinctrl-bcm281xx.o
-> -obj-$(CONFIG_PINCTRL_BCM2835)	+= pinctrl-bcm2835.o
-> +obj-$(CONFIG_PINCTRL_BCM281XX)		+= pinctrl-bcm281xx.o
-> +obj-$(CONFIG_PINCTRL_BCM2835)		+= pinctrl-bcm2835.o
-> +obj-$(CONFIG_PINCTRL_CYGNUS_MUX)	+= pinctrl-cygnus-mux.o
+>  obj-$(CONFIG_PINCTRL_BCM281XX)		+= pinctrl-bcm281xx.o
+>  obj-$(CONFIG_PINCTRL_BCM2835)		+= pinctrl-bcm2835.o
+> +obj-$(CONFIG_PINCTRL_CYGNUS_GPIO)	+= pinctrl-cygnus-gpio.o
 
-So pinctrl-cygnus-mux.o will be built-in (or not built, of course).
+So pinctrl-cygnus-gpio. will be built-in or not built at all.
 
-> diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
+>  obj-$(CONFIG_PINCTRL_CYGNUS_MUX)	+= pinctrl-cygnus-mux.o
+> diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
 > new file mode 100644
-> index 0000000..f9a9283
+> index 0000000..4687284
 > --- /dev/null
-> +++ b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-> @@ -0,0 +1,1022 @@
->[...]
+> +++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> @@ -0,0 +1,884 @@
+
+[...]
+
 > +MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
-> +MODULE_DESCRIPTION("Broadcom Cygnus IOMUX driver");
+> +MODULE_DESCRIPTION("Broadcom Cygnus GPIO Driver");
 > +MODULE_LICENSE("GPL v2");
 
-These three macros will be preprocessed away. (And I guess you could
-also drop the linux/module.h include, but I haven't actually tested that
-guess.)
+These three macros will be preprocessed away. (There's also
+MODULE_DEVICE_TABLE. I don't yet know how that is handled in a
+non-modular build, sorry.)
 
 
 Paul Bolle
