@@ -1,35 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 1/4] gpiolib: define gpio suffixes globally
-Date: Thu, 5 Mar 2015 09:50:05 +0100
-Message-ID: <CACRpkdbGBzDx6u84t54kpr6r1dDSQDUyu5xhRrZEQD0xf4QpzA@mail.gmail.com>
-References: <13969625.rHfHuA5z02@pcimr>
-	<CAAVeFuKPOu530pGAnYi0M1Mfr0nn=LayWzrOA1bvbS5qU01PJA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] gpiolib: add gpiod_get_array and gpiod_put_array functions
+Date: Thu, 5 Mar 2015 09:55:09 +0100
+Message-ID: <CACRpkdZS5N62zoD-zPeYM3KOJp1zUWE8yUGXTpZ4msoAXgVj9Q@mail.gmail.com>
+References: <3417970.NJsESPLFsD@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:46744 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751963AbbCEIuG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:50:06 -0500
-Received: by oiav63 with SMTP id v63so10541125oia.13
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 00:50:05 -0800 (PST)
-In-Reply-To: <CAAVeFuKPOu530pGAnYi0M1Mfr0nn=LayWzrOA1bvbS5qU01PJA@mail.gmail.com>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:37361 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754112AbbCEIzK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:55:10 -0500
+Received: by oigi138 with SMTP id i138so10563680oig.4
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 00:55:09 -0800 (PST)
+In-Reply-To: <3417970.NJsESPLFsD@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Rojhalat Ibrahim <imr@rtschenk.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On Thu, Feb 26, 2015 at 10:46 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Thu, Feb 12, 2015 at 1:27 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
->> Avoid multiple identical definitions of the gpio suffix strings by putting
->> them into a global constant array.
->>
->> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
->> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+On Wed, Feb 11, 2015 at 5:27 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+
+> Introduce new functions for conveniently obtaining and disposing of an entire
+> array of GPIOs with one function call.
 >
-> Linus, let's get this good stuff in while it still applies to your tree! :)
+> Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>
+> ACPI part:
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>
+> DT part:
+> Tested-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> ---
+> Change log:
+>   v5: move the ACPI functions to gpiolib-acpi.c
+>   v4: - use shorter names for members of struct gpio_descs
+>       - rename lut_gpio_count to platform_gpio_count for clarity
+>       - add check for successful memory allocation
+>       - use ERR_CAST()
+>   v3: - rebase on current linux-gpio devel branch
+>       - fix ACPI GPIO counting
+>       - allow for zero-sized arrays
+>       - make the flags argument mandatory for the new functions
+>       - clarify documentation
+>   v2: change interface
 
-Yeah it's in... been moving and conferencing and stuff, sorry.
+Patch applied with some fuzzing, check that it ended up correctly
+in my git (or linux-next).
 
 Yours,
 Linus Walleij
