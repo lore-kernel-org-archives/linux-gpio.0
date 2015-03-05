@@ -1,48 +1,78 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH v9 2/4] pinctrl: cygnus: add gpio/pinconf driver
-Date: Wed, 4 Mar 2015 21:01:45 -0800
-Message-ID: <54F7E339.50902@broadcom.com>
-References: <1423606584-21795-1-git-send-email-rjui@broadcom.com>	<1423606584-21795-3-git-send-email-rjui@broadcom.com> <CACRpkda-C1upKfa4FKLcVF9sxL4T=B+eG9ndun4fS6DZ9TfCSw@mail.gmail.com> <54F742CA.7080500@broadcom.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH v5 3/8] pinctrl: cygnus: add initial IOMUX driver support
+Date: Thu, 05 Mar 2015 09:03:32 +0100
+Message-ID: <1425542612.24292.180.camel@x220>
+References: <1425515756-321-1-git-send-email-rjui@broadcom.com>
+	 <1425515756-321-4-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54F742CA.7080500@broadcom.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from cpsmtpb-ews01.kpnxchange.com ([213.75.39.4]:50769 "EHLO
+	cpsmtpb-ews01.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754484AbbCEIDf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:03:35 -0500
+In-Reply-To: <1425515756-321-4-git-send-email-rjui@broadcom.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ray Jui <rjui@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-Hi Linus,
+On Wed, 2015-03-04 at 16:35 -0800, Ray Jui wrote:
+> diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
+> index bc6d048..eb13201 100644
+> --- a/drivers/pinctrl/bcm/Kconfig
+> +++ b/drivers/pinctrl/bcm/Kconfig
+> @@ -19,3 +19,16 @@ config PINCTRL_BCM2835
+>  	bool
+>  	select PINMUX
+>  	select PINCONF
+> +
+> +config PINCTRL_CYGNUS_MUX
+> +	bool "Broadcom Cygnus IOMUX driver"
 
->>> +#include <linux/kernel.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/module.h>
->>> +#include <linux/interrupt.h>
->>> +#include <linux/io.h>
->>> +#include <linux/gpio.h>
->>
->> This should be:
->> #include <linux/gpio/driver.h>
+bool type.
 
-In fact, just by trying it out I found I need linux/gpio.h for APIs like
-gpiochip_add_pin_range, and etc.
+> +	depends on (ARCH_BCM_CYGNUS || COMPILE_TEST)
+> +	select PINMUX
+> +	select GENERIC_PINCONF
+> +	default ARCH_BCM_CYGNUS
+> +	help
+> +	  Say yes here to enable the Broadcom Cygnus IOMUX driver.
+> +
+> +	  The Broadcom Cygnus IOMUX driver supports group based IOMUX
+> +	  configuration, with the exception that certain individual pins
+> +	  can be overrided to GPIO function
+> diff --git a/drivers/pinctrl/bcm/Makefile b/drivers/pinctrl/bcm/Makefile
+> index 7ba80a3..bb6beb6 100644
+> --- a/drivers/pinctrl/bcm/Makefile
+> +++ b/drivers/pinctrl/bcm/Makefile
+> @@ -1,4 +1,5 @@
+>  # Broadcom pinctrl support
+>  
+> -obj-$(CONFIG_PINCTRL_BCM281XX)	+= pinctrl-bcm281xx.o
+> -obj-$(CONFIG_PINCTRL_BCM2835)	+= pinctrl-bcm2835.o
+> +obj-$(CONFIG_PINCTRL_BCM281XX)		+= pinctrl-bcm281xx.o
+> +obj-$(CONFIG_PINCTRL_BCM2835)		+= pinctrl-bcm2835.o
+> +obj-$(CONFIG_PINCTRL_CYGNUS_MUX)	+= pinctrl-cygnus-mux.o
 
->>
->>
-> 
-> Great! I will address all comments and re-send a BIG patch series with
-> the other pinctrl patch series consolidated.
-> 
-> Thanks!
-> 
-> Ray
-> 
+So pinctrl-cygnus-mux.o will be built-in (or not built, of course).
 
-I've consolidated this patch series with the IOMUX and sent out a
-combined patch series earlier. I believe all other comments have been
-addressed except the above include header one.
+> diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
+> new file mode 100644
+> index 0000000..f9a9283
+> --- /dev/null
+> +++ b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
+> @@ -0,0 +1,1022 @@
+>[...]
+> +MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
+> +MODULE_DESCRIPTION("Broadcom Cygnus IOMUX driver");
+> +MODULE_LICENSE("GPL v2");
 
-Thanks,
+These three macros will be preprocessed away. (And I guess you could
+also drop the linux/module.h include, but I haven't actually tested that
+guess.)
 
-Ray
+
+Paul Bolle
+
