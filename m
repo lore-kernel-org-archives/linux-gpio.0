@@ -1,33 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/4] gpiolib: define gpio suffixes globally
-Date: Thu, 5 Mar 2015 09:47:52 +0100
-Message-ID: <CACRpkdbi832P1inRWPeQ4BF-LxDWse9NytEn_c4ub4C=Hf7AXA@mail.gmail.com>
-References: <6473685.Mym42fyUcn@pcimr>
+Subject: Re: [PATCH v5 1/4] gpiolib: define gpio suffixes globally
+Date: Thu, 5 Mar 2015 09:49:31 +0100
+Message-ID: <CACRpkdanVgq3V7gmOtQWLbzPnL4WQBTfULtze3yWtSSOALCAHw@mail.gmail.com>
+References: <13969625.rHfHuA5z02@pcimr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:35763 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754699AbbCEIrx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:47:53 -0500
-Received: by oifz81 with SMTP id z81so10504117oif.2
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 00:47:52 -0800 (PST)
-In-Reply-To: <6473685.Mym42fyUcn@pcimr>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:46650 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753422AbbCEItc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:49:32 -0500
+Received: by oiav63 with SMTP id v63so10539059oia.13
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 00:49:31 -0800 (PST)
+In-Reply-To: <13969625.rHfHuA5z02@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On Mon, Feb 9, 2015 at 6:07 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+On Wed, Feb 11, 2015 at 5:27 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 
 > Avoid multiple identical definitions of the gpio suffix strings by putting
 > them into a global constant array.
 >
 > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
-> v3: add this change as a separate patch
+> Change log:
+>   v5: move the global definition to drivers/gpio/gpiolib.h
+>   v4: no change
+>   v3: add this change as a separate patch
 
-Patch applied, now I'm not even a month behind on my mail, yay.
+Patch applied. This v5 version. Sorry about the other fuzzy message.
 
 Yours,
 Linus Walleij
