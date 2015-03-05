@@ -1,88 +1,52 @@
-From: Paul Bolle <pebolle@tiscali.nl>
+From: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
 Subject: Re: [PATCH v5 6/8] pinctrl: cygnus: add gpio/pinconf driver
-Date: Thu, 05 Mar 2015 09:11:44 +0100
-Message-ID: <1425543104.24292.185.camel@x220>
+Date: Thu, 05 Mar 2015 09:36:21 +0100
+Message-ID: <1425544581.24292.194.camel@x220>
 References: <1425515756-321-1-git-send-email-rjui@broadcom.com>
 	 <1425515756-321-7-git-send-email-rjui@broadcom.com>
+	 <1425543104.24292.185.camel@x220>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cpsmtpb-ews01.kpnxchange.com ([213.75.39.4]:52977 "EHLO
-	cpsmtpb-ews01.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752587AbbCEILr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:11:47 -0500
-In-Reply-To: <1425515756-321-7-git-send-email-rjui@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1425543104.24292.185.camel@x220>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Dmitry Torokhov <dtor-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Anatol Pomazau <anatol-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-On Wed, 2015-03-04 at 16:35 -0800, Ray Jui wrote:
-> --- a/drivers/pinctrl/bcm/Kconfig
-> +++ b/drivers/pinctrl/bcm/Kconfig
-> @@ -20,6 +20,28 @@ config PINCTRL_BCM2835
->  	select PINMUX
->  	select PINCONF
->  
-> +config PINCTRL_CYGNUS_GPIO
-> +	bool "Broadcom Cygnus GPIO (with PINCONF) driver"
+On Thu, 2015-03-05 at 09:11 +0100, Paul Bolle wrote:
+> On Wed, 2015-03-04 at 16:35 -0800, Ray Jui wrote:
+> > +MODULE_AUTHOR("Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>");
+> > +MODULE_DESCRIPTION("Broadcom Cygnus GPIO Driver");
+> > +MODULE_LICENSE("GPL v2");
+> 
+> These three macros will be preprocessed away. (There's also
+> MODULE_DEVICE_TABLE. I don't yet know how that is handled in a
+> non-modular build, sorry.)
 
-bool type.
+It turns out MODULE_DEVICE_TABLE is _really_ preprocessed away. See
+include/linux/module.h:
+    #ifdef MODULE
+    /* Creates an alias so file2alias.c can find device table. */
+    #define MODULE_DEVICE_TABLE(type, name)                                 \
+    extern const typeof(name) __mod_##type##__##name##_device_table         \
+      __attribute__ ((unused, alias(__stringify(name))))
+    #else  /* !MODULE */
+    #define MODULE_DEVICE_TABLE(type, name)
+    #endif
 
-> +	depends on OF_GPIO && ARCH_BCM_CYGNUS
-> +	select GPIOLIB_IRQCHIP
-> +	select PINCONF
-> +	select GENERIC_PINCONF
-> +	default ARCH_BCM_CYGNUS
-> +	help
-> +	  Say yes here to enable the Broadcom Cygnus GPIO driver.
-> +
-> +	  The Broadcom Cygnus SoC has 3 GPIO controllers including the ASIU
-> +	  GPIO controller (ASIU), the chipCommonG GPIO controller (CCM), and
-> +	  the always-ON GPIO controller (CRMU/AON). All 3 GPIO controllers are
-> +	  supported by this driver.
-> +
-> +	  All 3 Cygnus GPIO controllers support basic PINCONF functions such
-> +	  as bias pull up, pull down, and drive strength configurations, when
-> +	  these pins are muxed to GPIO.
-> +
-> +	  Pins from the ASIU GPIO can be individually muxed to GPIO function,
-> +	  through interaction with the Cygnus IOMUX controller.
-> +
->  config PINCTRL_CYGNUS_MUX
->  	bool "Broadcom Cygnus IOMUX driver"
->  	depends on (ARCH_BCM_CYGNUS || COMPILE_TEST)
-> diff --git a/drivers/pinctrl/bcm/Makefile b/drivers/pinctrl/bcm/Makefile
-> index bb6beb6..2b2f70e 100644
-> --- a/drivers/pinctrl/bcm/Makefile
-> +++ b/drivers/pinctrl/bcm/Makefile
-> @@ -2,4 +2,5 @@
->  
->  obj-$(CONFIG_PINCTRL_BCM281XX)		+= pinctrl-bcm281xx.o
->  obj-$(CONFIG_PINCTRL_BCM2835)		+= pinctrl-bcm2835.o
-> +obj-$(CONFIG_PINCTRL_CYGNUS_GPIO)	+= pinctrl-cygnus-gpio.o
 
-So pinctrl-cygnus-gpio. will be built-in or not built at all.
+Did I get that right?
 
->  obj-$(CONFIG_PINCTRL_CYGNUS_MUX)	+= pinctrl-cygnus-mux.o
-> diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-> new file mode 100644
-> index 0000000..4687284
-> --- /dev/null
-> +++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-> @@ -0,0 +1,884 @@
-
-[...]
-
-> +MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
-> +MODULE_DESCRIPTION("Broadcom Cygnus GPIO Driver");
-> +MODULE_LICENSE("GPL v2");
-
-These three macros will be preprocessed away. (There's also
-MODULE_DEVICE_TABLE. I don't yet know how that is handled in a
-non-modular build, sorry.)
+(I knew the other three MODULE_* macros are handled in slightly more
+complicated way, but the effect is basically that they are preprocessed
+away.)
 
 
 Paul Bolle
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
