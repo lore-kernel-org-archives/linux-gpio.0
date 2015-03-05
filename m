@@ -1,53 +1,58 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 0/2] ARM: shmobile: ape6evm: Fix GPIO keys and wake-up
-Date: Thu, 05 Mar 2015 12:42:07 +0200
-Message-ID: <5844551.UVahD0ukvm@avalon>
-References: <1425059319-13403-1-git-send-email-geert+renesas@glider.be> <20150305003432.GA3011@verge.net.au>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: Re: [PATCH v5 2/4] gpiolib: add gpiod_get_array and gpiod_put_array functions
+Date: Thu, 05 Mar 2015 12:52:43 +0100
+Message-ID: <9200350.WRsxatTQK5@pcimr>
+References: <3417970.NJsESPLFsD@pcimr> <CACRpkdZS5N62zoD-zPeYM3KOJp1zUWE8yUGXTpZ4msoAXgVj9Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60773 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792AbbCEKmD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 05:42:03 -0500
-In-Reply-To: <20150305003432.GA3011@verge.net.au>
+Received: from mail-out.m-online.net ([212.18.0.9]:41826 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752592AbbCELwt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 06:52:49 -0500
+In-Reply-To: <CACRpkdZS5N62zoD-zPeYM3KOJp1zUWE8yUGXTpZ4msoAXgVj9Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-Hi Simon,
-
-On Thursday 05 March 2015 09:34:33 Simon Horman wrote:
-> On Fri, Feb 27, 2015 at 06:48:37PM +0100, Geert Uytterhoeven wrote:
-> > 	Hi Simon, Magnus,
-> > 
-> > This patch series adds the missing pull-up bias configuration for the
-> > switches on the r8a73a4/ape6evm development board, and configures the
-> > custom switch as a wake-up source.
-> > 
-> > After this, the keys actually work, and the system can be resumed from
-> > s2ram by pressing the custom switch.
-> > 
-> > This depends functionally on "[PATCH 1/4] pinctrl: sh-pfc: Do not
-> > overwrite bias configuration" in the series "[PATCH 0/4] pinctrl:
-> > sh-pfc: Fix pin bias and cleanups" which I've just sent. But as this is
-> > DTS, it can be applied independently.
-> > 
-> > Thanks for your comments!
+On Thursday 05 March 2015 09:55:09 Linus Walleij wrote:
+> On Wed, Feb 11, 2015 at 5:27 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 > 
-> Hi Geert,
+> > Introduce new functions for conveniently obtaining and disposing of an entire
+> > array of GPIOs with one function call.
+> >
+> > Suggested-by: Alexandre Courbot <acourbot@nvidia.com>
+> > Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> > Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> >
+> > ACPI part:
+> > Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> >
+> > DT part:
+> > Tested-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> > ---
+> > Change log:
+> >   v5: move the ACPI functions to gpiolib-acpi.c
+> >   v4: - use shorter names for members of struct gpio_descs
+> >       - rename lut_gpio_count to platform_gpio_count for clarity
+> >       - add check for successful memory allocation
+> >       - use ERR_CAST()
+> >   v3: - rebase on current linux-gpio devel branch
+> >       - fix ACPI GPIO counting
+> >       - allow for zero-sized arrays
+> >       - make the flags argument mandatory for the new functions
+> >       - clarify documentation
+> >   v2: change interface
 > 
-> this seems fine to me. But I am reluctant to queue it up before the PFC
-> changes are accepted, lest there be some change in direction.
+> Patch applied with some fuzzing, check that it ended up correctly
+> in my git (or linux-next).
 > 
-> Please repost once the PFC changes have been accepted.
 
-I've acked the dependency, but we should probably wait for Linus to apply it.
+Looks good to me.
 
--- 
-Regards,
-
-Laurent Pinchart
+Thanks.
+   Rojhalat
 
