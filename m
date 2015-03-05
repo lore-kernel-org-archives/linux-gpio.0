@@ -1,52 +1,33 @@
-From: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
-Subject: Re: [PATCH v5 6/8] pinctrl: cygnus: add gpio/pinconf driver
-Date: Thu, 05 Mar 2015 09:36:21 +0100
-Message-ID: <1425544581.24292.194.camel@x220>
-References: <1425515756-321-1-git-send-email-rjui@broadcom.com>
-	 <1425515756-321-7-git-send-email-rjui@broadcom.com>
-	 <1425543104.24292.185.camel@x220>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/4] gpiolib: define gpio suffixes globally
+Date: Thu, 5 Mar 2015 09:47:52 +0100
+Message-ID: <CACRpkdbi832P1inRWPeQ4BF-LxDWse9NytEn_c4ub4C=Hf7AXA@mail.gmail.com>
+References: <6473685.Mym42fyUcn@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1425543104.24292.185.camel@x220>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Dmitry Torokhov <dtor-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Anatol Pomazau <anatol-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:35763 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754699AbbCEIrx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:47:53 -0500
+Received: by oifz81 with SMTP id z81so10504117oif.2
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 00:47:52 -0800 (PST)
+In-Reply-To: <6473685.Mym42fyUcn@pcimr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>
 
-On Thu, 2015-03-05 at 09:11 +0100, Paul Bolle wrote:
-> On Wed, 2015-03-04 at 16:35 -0800, Ray Jui wrote:
-> > +MODULE_AUTHOR("Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>");
-> > +MODULE_DESCRIPTION("Broadcom Cygnus GPIO Driver");
-> > +MODULE_LICENSE("GPL v2");
-> 
-> These three macros will be preprocessed away. (There's also
-> MODULE_DEVICE_TABLE. I don't yet know how that is handled in a
-> non-modular build, sorry.)
+On Mon, Feb 9, 2015 at 6:07 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 
-It turns out MODULE_DEVICE_TABLE is _really_ preprocessed away. See
-include/linux/module.h:
-    #ifdef MODULE
-    /* Creates an alias so file2alias.c can find device table. */
-    #define MODULE_DEVICE_TABLE(type, name)                                 \
-    extern const typeof(name) __mod_##type##__##name##_device_table         \
-      __attribute__ ((unused, alias(__stringify(name))))
-    #else  /* !MODULE */
-    #define MODULE_DEVICE_TABLE(type, name)
-    #endif
+> Avoid multiple identical definitions of the gpio suffix strings by putting
+> them into a global constant array.
+>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+> ---
+> v3: add this change as a separate patch
 
+Patch applied, now I'm not even a month behind on my mail, yay.
 
-Did I get that right?
-
-(I knew the other three MODULE_* macros are handled in slightly more
-complicated way, but the effect is basically that they are preprocessed
-away.)
-
-
-Paul Bolle
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
