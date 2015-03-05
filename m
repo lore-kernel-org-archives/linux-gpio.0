@@ -1,60 +1,154 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH] pinctrl: imx: do not implicitly set pin regs to -1
-Date: Thu, 05 Mar 2015 00:23:09 +0100
-Message-ID: <89abf03242a4e5a39fab1373c62dce13@agner.ch>
-References: <1423240256-27210-1-git-send-email-stefan@agner.ch>
- <20150302114516.GC3040@dragon> <20150302125935.GC7865@pengutronix.de>
- <43491e2cb2c520d8f15d90ae99a82f28@agner.ch>
- <20150302155315.GD7865@pengutronix.de>
+From: Ray Jui <rjui@broadcom.com>
+Subject: [PATCH v5 1/8] pinctrl: bcm: consolidate Broadcom pinctrl drivers
+Date: Wed, 4 Mar 2015 16:35:49 -0800
+Message-ID: <1425515756-321-2-git-send-email-rjui@broadcom.com>
+References: <1425515756-321-1-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:54776 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751066AbbCDXXQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 18:23:16 -0500
-In-Reply-To: <20150302155315.GD7865@pengutronix.de>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:48823 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751179AbbCEAeI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2015 19:34:08 -0500
+In-Reply-To: <1425515756-321-1-git-send-email-rjui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linus.walleij@linaro.org
-Cc: Shawn Guo <shawn.guo@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Cc: Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, Ray Jui <rjui@broadcom.com>
 
-On 2015-03-02 16:53, Uwe Kleine-K=C3=B6nig wrote:
-> Hello,
->=20
-> On Mon, Mar 02, 2015 at 02:42:01PM +0100, Stefan Agner wrote:
->> On 2015-03-02 13:59, Uwe Kleine-K=C3=B6nig wrote:
->> > On Mon, Mar 02, 2015 at 07:45:17PM +0800, Shawn Guo wrote:
->> >> On Fri, Feb 06, 2015 at 05:30:56PM +0100, Stefan Agner wrote:
->> >> > Commit 3dac1918a491 ("pinctrl: imx: detect uninitialized pins")=
- needs
->> >> > the values in struct imx_pin_reg to be -1. This has been done i=
-n a
->> >> > rather unorthodox way by setting the memory to 0xff using memse=
-t...
->> >> > Use a proper for loop to initialize the whole array with -1.
->> >> >
->> >> > Signed-off-by: Stefan Agner <stefan@agner.ch>
->> >>
->> >> Acked-by: Shawn Guo <shawn.guo@linaro.org>
->> > too late. This patch is part of 4.0-rc1 (4ff0f034e95d).
->>
->> This is not the same patch. The patch you are mentioning is actually
->> fixing a bug introduce in the change where we set -1 for uninitializ=
-ed
->> pins. This patch is solving the weird assignment of the initial valu=
-e...
-> ah right.
+Consolidate Broadcom pinctrl drivers into drivers/pinctrl/bcm/*
 
-Do you generally agree to that change?
+Signed-off-by: Ray Jui <rjui@broadcom.com>
+---
+ drivers/pinctrl/Kconfig                      |   19 +------------------
+ drivers/pinctrl/Makefile                     |    3 +--
+ drivers/pinctrl/bcm/Kconfig                  |   21 +++++++++++++++++++++
+ drivers/pinctrl/bcm/Makefile                 |    4 ++++
+ drivers/pinctrl/{ => bcm}/pinctrl-bcm281xx.c |    4 ++--
+ drivers/pinctrl/{ => bcm}/pinctrl-bcm2835.c  |    0
+ 6 files changed, 29 insertions(+), 22 deletions(-)
+ create mode 100644 drivers/pinctrl/bcm/Kconfig
+ create mode 100644 drivers/pinctrl/bcm/Makefile
+ rename drivers/pinctrl/{ => bcm}/pinctrl-bcm281xx.c (99%)
+ rename drivers/pinctrl/{ => bcm}/pinctrl-bcm2835.c (100%)
 
-@Linus Walleij, anything holding this patch back from getting merged?
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index ee9f44a..1a9143d 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -67,24 +67,6 @@ config PINCTRL_AT91
+ 	help
+ 	  Say Y here to enable the at91 pinctrl driver
+ 
+-config PINCTRL_BCM2835
+-	bool
+-	select PINMUX
+-	select PINCONF
+-
+-config PINCTRL_BCM281XX
+-	bool "Broadcom BCM281xx pinctrl driver"
+-	depends on OF && (ARCH_BCM_MOBILE || COMPILE_TEST)
+-	select PINMUX
+-	select PINCONF
+-	select GENERIC_PINCONF
+-	select REGMAP_MMIO
+-	help
+-	  Say Y here to support Broadcom BCM281xx pinctrl driver, which is used
+-	  for the BCM281xx SoC family, including BCM11130, BCM11140, BCM11351,
+-	  BCM28145, and BCM28155 SoCs.  This driver requires the pinctrl
+-	  framework.  GPIO is provided by a separate GPIO driver.
+-
+ config PINCTRL_LANTIQ
+ 	bool
+ 	depends on LANTIQ
+@@ -207,6 +189,7 @@ config PINCTRL_ZYNQ
+ 	help
+ 	  This selectes the pinctrl driver for Xilinx Zynq.
+ 
++source "drivers/pinctrl/bcm/Kconfig"
+ source "drivers/pinctrl/berlin/Kconfig"
+ source "drivers/pinctrl/freescale/Kconfig"
+ source "drivers/pinctrl/intel/Kconfig"
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 0475206..c14ce05 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -14,8 +14,6 @@ obj-$(CONFIG_PINCTRL_AS3722)	+= pinctrl-as3722.o
+ obj-$(CONFIG_PINCTRL_BF54x)	+= pinctrl-adi2-bf54x.o
+ obj-$(CONFIG_PINCTRL_BF60x)	+= pinctrl-adi2-bf60x.o
+ obj-$(CONFIG_PINCTRL_AT91)	+= pinctrl-at91.o
+-obj-$(CONFIG_PINCTRL_BCM2835)	+= pinctrl-bcm2835.o
+-obj-$(CONFIG_PINCTRL_BCM281XX)	+= pinctrl-bcm281xx.o
+ obj-$(CONFIG_PINCTRL_FALCON)	+= pinctrl-falcon.o
+ obj-$(CONFIG_PINCTRL_MESON)	+= meson/
+ obj-$(CONFIG_PINCTRL_PALMAS)	+= pinctrl-palmas.o
+@@ -38,6 +36,7 @@ obj-$(CONFIG_PINCTRL_TB10X)	+= pinctrl-tb10x.o
+ obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
+ obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
+ 
++obj-$(CONFIG_ARCH_BCM)		+= bcm/
+ obj-$(CONFIG_ARCH_BERLIN)	+= berlin/
+ obj-y				+= freescale/
+ obj-$(CONFIG_X86)		+= intel/
+diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
+new file mode 100644
+index 0000000..bc6d048
+--- /dev/null
++++ b/drivers/pinctrl/bcm/Kconfig
+@@ -0,0 +1,21 @@
++#
++# Broadcom pinctrl drivers
++#
++
++config PINCTRL_BCM281XX
++	bool "Broadcom BCM281xx pinctrl driver"
++	depends on OF && (ARCH_BCM_MOBILE || COMPILE_TEST)
++	select PINMUX
++	select PINCONF
++	select GENERIC_PINCONF
++	select REGMAP_MMIO
++	help
++	  Say Y here to support Broadcom BCM281xx pinctrl driver, which is used
++	  for the BCM281xx SoC family, including BCM11130, BCM11140, BCM11351,
++	  BCM28145, and BCM28155 SoCs.  This driver requires the pinctrl
++	  framework.  GPIO is provided by a separate GPIO driver.
++
++config PINCTRL_BCM2835
++	bool
++	select PINMUX
++	select PINCONF
+diff --git a/drivers/pinctrl/bcm/Makefile b/drivers/pinctrl/bcm/Makefile
+new file mode 100644
+index 0000000..7ba80a3
+--- /dev/null
++++ b/drivers/pinctrl/bcm/Makefile
+@@ -0,0 +1,4 @@
++# Broadcom pinctrl support
++
++obj-$(CONFIG_PINCTRL_BCM281XX)	+= pinctrl-bcm281xx.o
++obj-$(CONFIG_PINCTRL_BCM2835)	+= pinctrl-bcm2835.o
+diff --git a/drivers/pinctrl/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+similarity index 99%
+rename from drivers/pinctrl/pinctrl-bcm281xx.c
+rename to drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+index b88cfe5..9641f1c 100644
+--- a/drivers/pinctrl/pinctrl-bcm281xx.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+@@ -21,8 +21,8 @@
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+-#include "core.h"
+-#include "pinctrl-utils.h"
++#include "../core.h"
++#include "../pinctrl-utils.h"
+ 
+ /* BCM281XX Pin Control Registers Definitions */
+ 
+diff --git a/drivers/pinctrl/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+similarity index 100%
+rename from drivers/pinctrl/pinctrl-bcm2835.c
+rename to drivers/pinctrl/bcm/pinctrl-bcm2835.c
+-- 
+1.7.9.5
 
---
-Stefan
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
