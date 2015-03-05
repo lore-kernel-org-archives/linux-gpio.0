@@ -1,51 +1,61 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/1] gpio: dwapb: enable for Quark
-Date: Thu,  5 Mar 2015 19:05:53 +0200
-Message-ID: <1425575153-19453-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:21368 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758236AbbCERGO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 5 Mar 2015 12:06:14 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH v5 6/8] pinctrl: cygnus: add gpio/pinconf driver
+Date: Thu, 5 Mar 2015 09:13:28 -0800
+Message-ID: <54F88EB8.3020208@broadcom.com>
+References: <1425515756-321-1-git-send-email-rjui@broadcom.com>	 <1425515756-321-7-git-send-email-rjui@broadcom.com>	 <1425543104.24292.185.camel@x220> <1425544581.24292.194.camel@x220>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1425544581.24292.194.camel@x220>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Raymond Tan <raymond.tan@intel.com>, "Ong, Boon Leong" <boon.leong.ong@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-The Intel Quark SoC contains the DW GPIO on board. While fixing the build error
-the commit 1972c97db5b0 (gpio: dwapb: fix compile errors) disables the
-possibility to build the driver on X86, i.e. Intel Quark.
+Hi Paul,
 
-The patch reenables it for Intel Quark as well.
+On 3/5/2015 12:36 AM, Paul Bolle wrote:
+> On Thu, 2015-03-05 at 09:11 +0100, Paul Bolle wrote:
+>> On Wed, 2015-03-04 at 16:35 -0800, Ray Jui wrote:
+>>> +MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
+>>> +MODULE_DESCRIPTION("Broadcom Cygnus GPIO Driver");
+>>> +MODULE_LICENSE("GPL v2");
+>>
+>> These three macros will be preprocessed away. (There's also
+>> MODULE_DEVICE_TABLE. I don't yet know how that is handled in a
+>> non-modular build, sorry.)
+> 
+> It turns out MODULE_DEVICE_TABLE is _really_ preprocessed away. See
+> include/linux/module.h:
+>     #ifdef MODULE
+>     /* Creates an alias so file2alias.c can find device table. */
+>     #define MODULE_DEVICE_TABLE(type, name)                                 \
+>     extern const typeof(name) __mod_##type##__##name##_device_table         \
+>       __attribute__ ((unused, alias(__stringify(name))))
+>     #else  /* !MODULE */
+>     #define MODULE_DEVICE_TABLE(type, name)
+>     #endif
+> 
+> 
+> Did I get that right?
+> 
+> (I knew the other three MODULE_* macros are handled in slightly more
+> complicated way, but the effect is basically that they are preprocessed
+> away.)
+> 
+> 
+> Paul Bolle
+> 
 
-Since we have Intel Quark SoC introduced in 4.0-rc1 I would like to make this
-fix available there as well, though the actual MFD driver [1] is not yet
-applied.
+Even these module macros will be pre-processed away when the driver is
+statically linked (and yes, I'm not planning to ever make these driver
+built as module), I'm not too sure about the convention here. I thought
+that they are still good to be in the driver for information purpose.
+I'm seeing other pinctrl drivers doing this as well.
 
-[1] https://lkml.org/lkml/2015/2/1/217
+Maybe Linus can help to clarify this?
 
-Fixes: 1972c97db5b0 (gpio: dwapb: fix compile errors)
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-Changelog v2:
-- fix typo of parens location
- drivers/gpio/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks,
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index c1e2ca3..6ba5464 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -148,8 +148,7 @@ config GPIO_GENERIC_PLATFORM
- 
- config GPIO_DWAPB
- 	tristate "Synopsys DesignWare APB GPIO driver"
--	depends on ARM
--	depends on OF_GPIO
-+	depends on (ARM && OF_GPIO) || X86_INTEL_QUARK
- 	select GPIO_GENERIC
- 	select GENERIC_IRQ_CHIP
- 	help
--- 
-2.1.4
-
+Ray
