@@ -1,61 +1,170 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8
- instead of unsigned long
-Date: Thu, 5 Mar 2015 10:19:33 +0100
-Message-ID: <CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
-	<1425058685-12956-3-git-send-email-geert+renesas@glider.be>
-	<12083025.CFMfs0EISD@avalon>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 4/4] pinctrl: sh-pfc: Use unsigned int for register/field widths and offsets
+Date: Thu, 05 Mar 2015 11:20:55 +0200
+Message-ID: <9833485.4LcIhc9qJb@avalon>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <1425058685-12956-5-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <12083025.CFMfs0EISD@avalon>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60647 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754433AbbCEJUu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 04:20:50 -0500
+In-Reply-To: <1425058685-12956-5-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org
 
-Hi Laurent,
+Hi Geert,
 
-On Thu, Mar 5, 2015 at 10:03 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
->> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
->> @@ -69,9 +69,10 @@ struct pinmux_func {
->>  };
->>
->>  struct pinmux_cfg_reg {
->> -     unsigned long reg, reg_width, field_width;
->> +     unsigned long reg;
->
-> How about making reg a u32 ? It won't make a difference in practice on 32-bit
-> systems, but it would be more explicit.
->
-> We could also save space by making reg a u16 and storing the register offset
-> only instead of the full address (assuming it can always fit in 16 bits, which
-> should be checked). We'll also need to support 64-bit systems at some point,
-> and making reg a u64 would increase space waste.
+Thank you for the patch.
 
-That would be more intrusive (and definitely needs to be in a separate patch),
-as reg is used here to store a physical register address, for conversion between
-physical and virtual addresses. I didn't want to go that far yet.
+On Friday 27 February 2015 18:38:05 Geert Uytterhoeven wrote:
+> As register and field widths and offsets are in the range 0..32, use
+> unsigned int (mostly replacing unsigned long) to store them in local
+> variables and for passing them around.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/pinctrl/sh-pfc/core.c | 25 ++++++++++++-------------
+>  drivers/pinctrl/sh-pfc/core.h |  4 ++--
+>  drivers/pinctrl/sh-pfc/gpio.c |  6 ++----
+>  3 files changed, 16 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+> index 1758043cfcec253b..0350c64229ea0734 100644
+> --- a/drivers/pinctrl/sh-pfc/core.c
+> +++ b/drivers/pinctrl/sh-pfc/core.c
+> @@ -144,7 +144,7 @@ static int sh_pfc_enum_in_range(u16 enum_id, const
+> struct pinmux_range *r) return 1;
+>  }
+> 
+> -u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width)
+> +u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width)
+>  {
+>  	switch (reg_width) {
+>  	case 8:
+> @@ -159,7 +159,7 @@ u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg,
+> unsigned long reg_width) return 0;
+>  }
+> 
+> -void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long
+> reg_width,
+> +void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned
+> int reg_width, u32 data)
+>  {
+>  	switch (reg_width) {
+> @@ -179,9 +179,9 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg,
+> unsigned long reg_width,
+> 
+>  static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
+>  				     const struct pinmux_cfg_reg *crp,
+> -				     unsigned long in_pos,
+> +				     unsigned int in_pos,
+>  				     void __iomem **mapped_regp, u32 *maskp,
+> -				     unsigned long *posp)
+> +				     unsigned int *posp)
+>  {
+>  	unsigned int k;
+> 
+> @@ -200,15 +200,15 @@ static void sh_pfc_config_reg_helper(struct sh_pfc
+> *pfc,
+> 
+>  static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
+>  				    const struct pinmux_cfg_reg *crp,
+> -				    unsigned long field, u32 value)
+> +				    unsigned int field, u32 value)
+>  {
+>  	void __iomem *mapped_reg;
+> -	unsigned long pos;
+> +	unsigned int pos;
+>  	u32 mask, data;
+> 
+>  	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
+> 
+> -	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %ld, "
+> +	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %u, "
+>  		"r_width = %u, f_width = %u\n",
+>  		crp->reg, value, field, crp->reg_width, crp->field_width);
+> 
+> @@ -228,12 +228,11 @@ static void sh_pfc_write_config_reg(struct sh_pfc
+> *pfc, }
+> 
+>  static int sh_pfc_get_config_reg(struct sh_pfc *pfc, u16 enum_id,
+> -				 const struct pinmux_cfg_reg **crp, int *fieldp,
+> -				 u32 *valuep)
+> +				 const struct pinmux_cfg_reg **crp,
+> +				 unsigned int *fieldp, u32 *valuep)
+>  {
+>  	const struct pinmux_cfg_reg *config_reg;
+> -	unsigned long r_width, f_width, curr_width;
+> -	unsigned int k, m, pos, bit_pos;
+> +	unsigned int r_width, f_width, curr_width, k, m, pos, bit_pos;
 
-u16 would indeed be nice, as it means reg, reg_width, and field_width
-would fit in one 32-bit word, which I hadn't realized. That means we can reduce
-each entry by 2 words instead of 1.
+I find declaring multiple variables per line quite difficult to read. I know 
+it's the current coding style in this driver, but I'd like to fix it at some 
+point. I would move to one variable per line as part of this patch for the 
+code that it touches. Alternatively could you at least not make it worse (here 
+and below) ? :-)
 
-For 64-bit that would still be suboptimal, as pointers are aligned to 8 bytes,
-leading to gaps.
-Perhaps we do want __packed here, too? I don't think the performance drop of
-doing some unaligned accesses would be significant. This isn't a hot path.
+>  	u32 ncomb, n;
+> 
+>  	k = 0;
+> @@ -300,9 +299,9 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark,
+> int pinmux_type) const struct pinmux_cfg_reg *cr = NULL;
+>  	u16 enum_id;
+>  	const struct pinmux_range *range;
+> -	int in_range, pos, field;
+> +	int in_range, pos, ret;
+> +	unsigned int field;
+>  	u32 value;
+> -	int ret;
+> 
+>  	switch (pinmux_type) {
+>  	case PINMUX_TYPE_GPIO:
+> diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
+> index 8a10dd50ccdd2e0c..6dc8a6fc27468b39 100644
+> --- a/drivers/pinctrl/sh-pfc/core.h
+> +++ b/drivers/pinctrl/sh-pfc/core.h
+> @@ -57,8 +57,8 @@ int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc);
+>  int sh_pfc_register_pinctrl(struct sh_pfc *pfc);
+>  int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc);
+> 
+> -u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width);
+> -void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long
+> reg_width, +u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int
+> reg_width); +void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned
+> int reg_width, u32 data);
+> 
+>  int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
+> diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+> index f2bb7d7398cdfc24..b68d24099593d3b8 100644
+> --- a/drivers/pinctrl/sh-pfc/gpio.c
+> +++ b/drivers/pinctrl/sh-pfc/gpio.c
+> @@ -153,8 +153,7 @@ static void gpio_pin_set_value(struct sh_pfc_chip *chip,
+> unsigned offset, int value)
+>  {
+>  	struct sh_pfc_gpio_data_reg *reg;
+> -	unsigned long pos;
+> -	unsigned int bit;
+> +	unsigned int pos, bit;
+> 
+>  	gpio_get_data_reg(chip, offset, &reg, &bit);
+> 
+> @@ -185,8 +184,7 @@ static int gpio_pin_get(struct gpio_chip *gc, unsigned
+> offset) {
+>  	struct sh_pfc_chip *chip = gpio_to_pfc_chip(gc);
+>  	struct sh_pfc_gpio_data_reg *reg;
+> -	unsigned long pos;
+> -	unsigned int bit;
+> +	unsigned int pos, bit;
+> 
+>  	gpio_get_data_reg(chip, offset, &reg, &bit);
 
-Gr{oetje,eeting}s,
+-- 
+Regards,
 
-                        Geert
+Laurent Pinchart
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
