@@ -1,45 +1,80 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: Use u32 to store register data
-Date: Thu, 5 Mar 2015 10:28:13 +0100
-Message-ID: <CAMuHMdUcA6CW_7nVh5yUCnoUVGi-D91sj=zew5nG95bVDhADDg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] pinctrl: sh-pfc: Use unsigned int for register/field
+ widths and offsets
+Date: Thu, 5 Mar 2015 10:34:18 +0100
+Message-ID: <CAMuHMdWk-XWJz9PswNfkyG6yKctH0Jnf7uPLZ8i1X_umhbO+sA@mail.gmail.com>
 References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
-	<1425058685-12956-4-git-send-email-geert+renesas@glider.be>
-	<2378036.Aimhfrhzzn@avalon>
+	<1425058685-12956-5-git-send-email-geert+renesas@glider.be>
+	<9833485.4LcIhc9qJb@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <2378036.Aimhfrhzzn@avalon>
-Sender: linux-sh-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:46141 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754711AbbCEJeT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 04:34:19 -0500
+In-Reply-To: <9833485.4LcIhc9qJb@avalon>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
-List-Id: linux-gpio@vger.kernel.org
 
 Hi Laurent,
 
-On Thu, Mar 5, 2015 at 10:14 AM, Laurent Pinchart
+On Thu, Mar 5, 2015 at 10:20 AM, Laurent Pinchart
 <laurent.pinchart@ideasonboard.com> wrote:
->> @@ -230,11 +229,12 @@ static void sh_pfc_write_config_reg(struct sh_pfc
->> *pfc,
+>> @@ -228,12 +228,11 @@ static void sh_pfc_write_config_reg(struct sh_pfc
+>> *pfc, }
 >>
 >>  static int sh_pfc_get_config_reg(struct sh_pfc *pfc, u16 enum_id,
->>                                const struct pinmux_cfg_reg **crp, int *fieldp,
->> -                              int *valuep)
->> +                              u32 *valuep)
+>> -                              const struct pinmux_cfg_reg **crp, int *fieldp,
+>> -                              u32 *valuep)
+>> +                              const struct pinmux_cfg_reg **crp,
+>> +                              unsigned int *fieldp, u32 *valuep)
 >>  {
 >>       const struct pinmux_cfg_reg *config_reg;
->> -     unsigned long r_width, f_width, curr_width, ncomb;
->> -     unsigned int k, m, n, pos, bit_pos;
->> +     unsigned long r_width, f_width, curr_width;
->> +     unsigned int k, m, pos, bit_pos;
->> +     u32 ncomb, n;
+>> -     unsigned long r_width, f_width, curr_width;
+>> -     unsigned int k, m, pos, bit_pos;
+>> +     unsigned int r_width, f_width, curr_width, k, m, pos, bit_pos;
 >
-> Nitpicking, strictly speaking ncomb and n are not register data, but using u32
-> for them seems good to me.
+> I find declaring multiple variables per line quite difficult to read. I know
+> it's the current coding style in this driver, but I'd like to fix it at some
+> point. I would move to one variable per line as part of this patch for the
+> code that it touches. Alternatively could you at least not make it worse (here
+> and below) ? :-)
 
-n is assigned to the (partial) register value output parameter, so it is.
-ncomb is an upper boundary for n.
+There are just too many variables ;-)
 
-And I didn't want to split this off to yet another patch ;-)
+I usually declare variables in the order of appearance, but try to
+keep variables
+of the same type together.
+
+Some declarations could move inside the while, e.g.
+
+        while (1) {
+                const struct pinmux_cfg_reg *config_reg =
+pfc->info->cfg_regs + k;
+                unsigned int r_width = config_reg->reg_width;
+                unsigned int f_width = config_reg->field_width;
+                unsigned int pos = 0, m= 0;
+
+                if (!r_width)
+                        break;
+
+Would you like that?
+
+>>       u32 ncomb, n;
+>>
+>>       k = 0;
+>> @@ -300,9 +299,9 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark,
+>> int pinmux_type) const struct pinmux_cfg_reg *cr = NULL;
+>>       u16 enum_id;
+>>       const struct pinmux_range *range;
+>> -     int in_range, pos, field;
+>> +     int in_range, pos, ret;
+>> +     unsigned int field;
+>>       u32 value;
+>> -     int ret;
 
 Gr{oetje,eeting}s,
 
