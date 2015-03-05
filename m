@@ -1,59 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 4/4] mdio-mux-gpio: use new gpiod_get_array and
- gpiod_put_array functions
-Date: Thu, 5 Mar 2015 10:04:20 +0100
-Message-ID: <CACRpkdaU7cK1LNdhDMBnir0WX92JnT=s6BV-jidNH3i-Ty6HgQ@mail.gmail.com>
-References: <1521782.cXqN30N6pA@pcimr>
-	<1842407.4EyTjGZBVF@pcimr>
-	<CAAVeFuLt0Oy9QK+BJ5zAb-CugKi0n4ruy6=+CWQwgS9J0=dfrQ@mail.gmail.com>
-	<7922544.OK5CjAi0mG@pcimr>
+Subject: Re: [PATCH] pinctrl: consumer: use correct retval for placeholder functions
+Date: Thu, 5 Mar 2015 10:10:10 +0100
+Message-ID: <CACRpkdb2pV9NpQ+_M3h=27dyPRJRQocEvqfy160QYk0b4_ZNoQ@mail.gmail.com>
+References: <1418723959-10253-1-git-send-email-wsa@the-dreams.de>
+	<CACRpkdZi8+6v02kjZrLt3XGeZMdHtZwDyB_FohNeBtbDC8RpsA@mail.gmail.com>
+	<20150209150005.GB8024@katana>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:38511 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754386AbbCEJEV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 04:04:21 -0500
-Received: by oiax69 with SMTP id x69so10584394oia.5
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 01:04:20 -0800 (PST)
-In-Reply-To: <7922544.OK5CjAi0mG@pcimr>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:41243 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753980AbbCEJKK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 04:10:10 -0500
+Received: by oiav63 with SMTP id v63so10607455oia.8
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 01:10:10 -0800 (PST)
+In-Reply-To: <20150209150005.GB8024@katana>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-On Wed, Mar 4, 2015 at 3:33 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-
-> And the interface as proposed in this series is very convenient for obtaining
-> all the GPIOs belonging to a group with a single function call and without
-> having to know the number of GPIOs within the group beforehand.
+On Mon, Feb 9, 2015 at 4:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> Hi Linus,
 >
-> So if we want to support different use cases, I think it's quite good as it is.
-> People who want to set a group of GPIOs as obtained by gpiod_get_array() can
-> do so with a single call to gpiod_set_array(), the only overhead being that
-> they have to specify the two elements of struct gpiod_descs explicitly.
-> Likewise people who want to set a group of GPIOs obtained with a combination
-> of calls to gpiod_get_array() and gpiod_get() can do so too. They just have
-> to create that group first.
+>> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> >
+>> > These functions are supposed to return an error pointer, not NULL.
+>> >
+>> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>
+>> Worried that some driver may depend on this behaviour, but
+>> patch applied anyway, let's deal with it.
 >
-> On the other hand if gpiod_set_array() would require a struct gpiod_descs as
-> argument the creation of a group for the second use case would become more
-> complicated as you would have to allocate a struct instead of an array, etc.
->
-> So let's just keep it the way it is and get this series merged.
+> I sent a similar patch to Russell for the clk API and he rightfully
+> NAKed it. NULL is a valid cookie from clk_get and the whole clk API is
+> able to deal with NULL. That ensures that for !HAVE_CLK, clk_get is
+> still successful and won't fail driver_probe while the other clk API
+> functions don't really do anything. If the gpio API is similar to that,
+> we should revert my patch.
 
-I've merged it.
-
-But can you make a separate patch to Documentation/gpio/consumer.txt
-describing the array usecase(s) a bit in detail so people realize when it's
-good to use these functions?
-
-> About the confusing function names: I would be happy to submit a patch
-> renaming gpiod_set_array() to gpiod_set_array_value(), once this has been
-> merged. I'm a little concerned about the length of some function names though.
-> Isn't gpiod_set_raw_array_value_cansleep() a bit long?
-
-Just patch it and we'll discuss it... :)
+OK reverted for fixes, no big deal.
 
 Yours,
 Linus Walleij
