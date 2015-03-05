@@ -1,61 +1,70 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH v5 6/8] pinctrl: cygnus: add gpio/pinconf driver
-Date: Thu, 5 Mar 2015 09:13:28 -0800
-Message-ID: <54F88EB8.3020208@broadcom.com>
-References: <1425515756-321-1-git-send-email-rjui@broadcom.com>	 <1425515756-321-7-git-send-email-rjui@broadcom.com>	 <1425543104.24292.185.camel@x220> <1425544581.24292.194.camel@x220>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8
+ instead of unsigned long
+Date: Thu, 5 Mar 2015 19:02:10 +0100
+Message-ID: <CAMuHMdXNEcrtYge=EcNhAXnm8367h7=7SAg0AkiE1gvSJTxJpw@mail.gmail.com>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
+	<1425058685-12956-3-git-send-email-geert+renesas@glider.be>
+	<12083025.CFMfs0EISD@avalon>
+	<CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1425544581.24292.194.camel@x220>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Paul,
+Hi Laurent,
 
-On 3/5/2015 12:36 AM, Paul Bolle wrote:
-> On Thu, 2015-03-05 at 09:11 +0100, Paul Bolle wrote:
->> On Wed, 2015-03-04 at 16:35 -0800, Ray Jui wrote:
->>> +MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
->>> +MODULE_DESCRIPTION("Broadcom Cygnus GPIO Driver");
->>> +MODULE_LICENSE("GPL v2");
+On Thu, Mar 5, 2015 at 10:19 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, Mar 5, 2015 at 10:03 AM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+>>> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+>>> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+>>> @@ -69,9 +69,10 @@ struct pinmux_func {
+>>>  };
+>>>
+>>>  struct pinmux_cfg_reg {
+>>> -     unsigned long reg, reg_width, field_width;
+>>> +     unsigned long reg;
 >>
->> These three macros will be preprocessed away. (There's also
->> MODULE_DEVICE_TABLE. I don't yet know how that is handled in a
->> non-modular build, sorry.)
-> 
-> It turns out MODULE_DEVICE_TABLE is _really_ preprocessed away. See
-> include/linux/module.h:
->     #ifdef MODULE
->     /* Creates an alias so file2alias.c can find device table. */
->     #define MODULE_DEVICE_TABLE(type, name)                                 \
->     extern const typeof(name) __mod_##type##__##name##_device_table         \
->       __attribute__ ((unused, alias(__stringify(name))))
->     #else  /* !MODULE */
->     #define MODULE_DEVICE_TABLE(type, name)
->     #endif
-> 
-> 
-> Did I get that right?
-> 
-> (I knew the other three MODULE_* macros are handled in slightly more
-> complicated way, but the effect is basically that they are preprocessed
-> away.)
-> 
-> 
-> Paul Bolle
-> 
+>> How about making reg a u32 ? It won't make a difference in practice on 32-bit
+>> systems, but it would be more explicit.
+>>
+>> We could also save space by making reg a u16 and storing the register offset
+>> only instead of the full address (assuming it can always fit in 16 bits, which
+>> should be checked). We'll also need to support 64-bit systems at some point,
 
-Even these module macros will be pre-processed away when the driver is
-statically linked (and yes, I'm not planning to ever make these driver
-built as module), I'm not too sure about the convention here. I thought
-that they are still good to be in the driver for information purpose.
-I'm seeing other pinctrl drivers doing this as well.
+Unfortunately there's a (single) exception: sh7734 has two register blocks, at
+0xFFFC0000 and 0xFFC40000, which is more than 64 KiB apart.
+And we also can't say that all config registers are in the first
+block, and all data
+registers are in the second block (for SoCs with multiple blocks).
 
-Maybe Linus can help to clarify this?
+We could use u32 instead of u16 if CONFIG_PINCTRL_PFC_SH7734 is set, though.
 
-Thanks,
+>> and making reg a u64 would increase space waste.
+>
+> That would be more intrusive (and definitely needs to be in a separate patch),
+> as reg is used here to store a physical register address, for conversion between
+> physical and virtual addresses. I didn't want to go that far yet.
 
-Ray
+I had a quick check, and using 16-bit register offsets instead of 32-bit
+registers addresses would save ca. 3 KiB in a shmobile_defconfig kernel.
+Which is a saving of less than 2% of the current pinctrl binary size.
+
+Of course it's something to keep in mind for future 64-bit SoCs...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
