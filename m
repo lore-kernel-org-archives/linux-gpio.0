@@ -1,36 +1,93 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 4/4] mdio-mux-gpio: use new gpiod_get_array and
- gpiod_put_array functions
-Date: Thu, 5 Mar 2015 09:58:00 +0100
-Message-ID: <CACRpkdZdiV8tt6ixcwpafr3eQCB4Kesh1XcKyyYaZToLunhVpw@mail.gmail.com>
-References: <1521782.cXqN30N6pA@pcimr>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
+Date: Thu, 05 Mar 2015 11:03:23 +0200
+Message-ID: <12083025.CFMfs0EISD@avalon>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <1425058685-12956-3-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:38644 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753767AbbCEI6B (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Mar 2015 03:58:01 -0500
-Received: by obcwo20 with SMTP id wo20so12542299obc.5
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2015 00:58:01 -0800 (PST)
-In-Reply-To: <1521782.cXqN30N6pA@pcimr>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1425058685-12956-3-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>, David Miller <davem@davemloft.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On Wed, Feb 11, 2015 at 5:28 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+Hi Geert,
 
-> Use the new gpiod_get_array and gpiod_put_array functions for obtaining and
-> disposing of GPIO descriptors.
->
-> Cc: David Miller <davem@davemloft.net>
-> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+Thank you for the patch.
 
-This looks good to me, but I need David's ACK before I can
-merge it through the GPIO tree.
+On Friday 27 February 2015 18:38:03 Geert Uytterhoeven wrote:
+> Register and field widths are in the range 1..32. Storing them in the
+> pinctrl data in (arrays of) unsigned long wastes space.
+> 
+> This decreases the size of a (32-bit) shmobile_defconfig kernel
+> supporting 7 SoCs by 26460 bytes.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/pinctrl/sh-pfc/core.c   |  2 +-
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 10 ++++++----
+>  2 files changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+> index a56280814a3f884b..466b899ec78b15d7 100644
+> --- a/drivers/pinctrl/sh-pfc/core.c
+> +++ b/drivers/pinctrl/sh-pfc/core.c
+> @@ -210,7 +210,7 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
+>  	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
+> 
+>  	dev_dbg(pfc->dev, "write_reg addr = %lx, value = %ld, field = %ld, "
+> -		"r_width = %ld, f_width = %ld\n",
+> +		"r_width = %u, f_width = %u\n",
+>  		crp->reg, value, field, crp->reg_width, crp->field_width);
+> 
+>  	mask = ~(mask << pos);
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index ed5cf4192fa1a2d0..6aeec8152ea674cf
+> 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -69,9 +69,10 @@ struct pinmux_func {
+>  };
+> 
+>  struct pinmux_cfg_reg {
+> -	unsigned long reg, reg_width, field_width;
+> +	unsigned long reg;
 
-David: is this OK with you?
+How about making reg a u32 ? It won't make a difference in practice on 32-bit 
+systems, but it would be more explicit.
 
-Yours,
-Linus Walleij
+We could also save space by making reg a u16 and storing the register offset 
+only instead of the full address (assuming it can always fit in 16 bits, which 
+should be checked). We'll also need to support 64-bit systems at some point, 
+and making reg a u64 would increase space waste.
+
+> +	u8 reg_width, field_width;
+>  	const u16 *enum_ids;
+> -	const unsigned long *var_field_width;
+> +	const u8 *var_field_width;
+>  };
+> 
+>  #define PINMUX_CFG_REG(name, r, r_width, f_width) \
+> @@ -80,12 +81,13 @@ struct pinmux_cfg_reg {
+> 
+>  #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
+>  	.reg = r, .reg_width = r_width,	\
+> -	.var_field_width = (const unsigned long [r_width]) \
+> +	.var_field_width = (const u8 [r_width]) \
+>  		{ var_fw0, var_fwn, 0 }, \
+>  	.enum_ids = (const u16 [])
+> 
+>  struct pinmux_data_reg {
+> -	unsigned long reg, reg_width;
+> +	unsigned long reg;
+> +	u8 reg_width;
+>  	const u16 *enum_ids;
+>  };
+
+-- 
+Regards,
+
+Laurent Pinchart
+
