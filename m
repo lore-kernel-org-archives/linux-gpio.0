@@ -1,35 +1,91 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 07/14] clockevent: Add STM32 Timer driver
-Date: Fri, 6 Mar 2015 09:57:12 +0100
-Message-ID: <CACRpkdZ4MeAR14W+Jr6GYY+oeVJZgKEu+Sr=OXriUPAC43ur-Q@mail.gmail.com>
-References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1423763164-5606-8-git-send-email-mcoquelin.stm32@gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] RFC: let gpiod_get_optional et all return NULL when
+ GPIOLIB is not enabled
+Date: Fri, 6 Mar 2015 09:59:57 +0100
+Message-ID: <20150306085957.GC10717@pengutronix.de>
+References: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:37056 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751959AbbCFI5N (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 03:57:13 -0500
-Received: by obcwp4 with SMTP id wp4so12486251obc.4
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 00:57:12 -0800 (PST)
-In-Reply-To: <1423763164-5606-8-git-send-email-mcoquelin.stm32@gmail.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:43264 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750926AbbCFJAY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 04:00:24 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, Kees Cook <keescook@chromium.org>, Michal
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, kernel@pengutronix.de, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 12, 2015 at 6:45 PM, Maxime Coquelin
-<mcoquelin.stm32@gmail.com> wrote:
+Hello,
 
-> STM32 MCUs feature 16 and 32 bits general purpose timers with prescalers.
-> The drivers detects whether the time is 16 or 32 bits, and applies a
-> 1024 prescaler value if it is 16 bits.
->
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+On Fri, Mar 06, 2015 at 09:26:26AM +0100, Linus Walleij wrote:
+> On Thu, Feb 12, 2015 at 10:03 AM, Uwe Kleine-K=F6nig
+> <u.kleine-koenig@pengutronix.de> wrote:
+>=20
+> > I wonder if gpiod_get_optional et all should be changed to return N=
+ULL
+> > instead.
+>=20
+> This is actually the norm in most subsystems returning cookie
+> pointers, clk, regulator, pinctrl... a NULL pointer is a functional
+> noop. But normally then NULL is returned from all stubs, not
+> just optional.
+>=20
+> Alexandre, what do you say?
+>=20
+> > The obvious downside is that if the device tree specifies a
+> > reset-gpio and the kernel just fails to use it because there is som=
+e
+> > code missing, this should better be an error. (The adau1977 code ha=
+s
+> > this problem already know, but when changing devm_gpiod_get_optiona=
+l all
+> > callers are affected.)
+>=20
+> Device Tree-specific problems is not something we design
+> subsystems for, we try to just accomodate them. I'm not
+> sure I fully understand what you mean here.
+Consider you have a device that has:
 
-This is a nice driver.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+	enable-gpio =3D <&gpio3 12 0>;
 
-Yours,
-Linus Walleij
+and you do in your driver:
+
+	enablegpio =3D devm_gpiod_get_optional(... "enable" ...);
+
+=2E If GPIOLIB is off, enablegpio gets assigned NULL and the driver
+continues happily without enabling the device which most likely is a
+bug.
+
+So IMHO the logic in devm_gpiod_get_optional for the GPIOLIB=3Dn case
+should be:
+
+	if (device_has_gpio())
+		return ERR_PTR(-ENOSYS);
+	else
+		return NULL;
+
+=2E device_has_gpio should use similar logic like gpiod_get_index to ch=
+eck
+if there is a gpio. If this is considered to be too complicated for a
+disabled subsystem, returning -ENOSYS unconditionally is better than
+NULL.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
