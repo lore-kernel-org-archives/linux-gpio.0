@@ -1,59 +1,57 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Subject: "gpioN" named functions for GPIO pins
-Date: Fri, 6 Mar 2015 12:26:00 +0100
-Message-ID: <CAOiHx==ZVc8z-zPqn4iPr-9Z_hmg95vrWGiexhZp_LJYg5NQSw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8
+ instead of unsigned long
+Date: Fri, 6 Mar 2015 12:26:57 +0100
+Message-ID: <CAMuHMdVhD2e2Q9bTwu_r30AUCq4=-GzH=RWp2TFL7tXXz3prJA@mail.gmail.com>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
+	<1425058685-12956-3-git-send-email-geert+renesas@glider.be>
+	<CACRpkdbv8V2DY6DniY5fOaSQNkNZtZQ6G_hrm-vcG9cjFTSAEA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arrakis.dune.hu ([78.24.191.176]:41418 "EHLO arrakis.dune.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754201AbbCFL0a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 6 Mar 2015 06:26:30 -0500
-Received: from localhost (localhost [127.0.0.1])
-	by arrakis.dune.hu (Postfix) with ESMTP id D296C28BCF0
-	for <linux-gpio@vger.kernel.org>; Fri,  6 Mar 2015 12:26:06 +0100 (CET)
-Received: from mail-qg0-f52.google.com (mail-qg0-f52.google.com [209.85.192.52])
-	by arrakis.dune.hu (Postfix) with ESMTPSA id C66F8280950
-	for <linux-gpio@vger.kernel.org>; Fri,  6 Mar 2015 12:26:04 +0100 (CET)
-Received: by qgfl89 with SMTP id l89so11730297qgf.11
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 03:26:21 -0800 (PST)
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:44756 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754201AbbCFL06 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 06:26:58 -0500
+In-Reply-To: <CACRpkdbv8V2DY6DniY5fOaSQNkNZtZQ6G_hrm-vcG9cjFTSAEA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-Hello Linus,
+Hi Linus, Laurent,
 
+On Fri, Mar 6, 2015 at 11:48 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Feb 27, 2015 at 6:38 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>
+>> Register and field widths are in the range 1..32. Storing them in the
+>> pinctrl data in (arrays of) unsigned long wastes space.
+>>
+>> This decreases the size of a (32-bit) shmobile_defconfig kernel
+>> supporting 7 SoCs by 26460 bytes.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> This 2/4 is not ACKed so pausing application after 1/4.
+>
+> Is 3,4/4 independent of this patch?
 
-according to your Documentation/pinctrl.txt:
+Unfortunately not, as there are contextual dependencies.
 
-"Pin control interaction with the GPIO subsystem
-===============================================
-...
-For this reason there are two functions a pin control driver can implement
-to enable only GPIO on an individual pin: .gpio_request_enable() and
-.gpio_disable_free().
-...
-Alternatively to using these special functions, it is fully allowed to use
-named functions for each GPIO pin, the pinctrl_request_gpio() will attempt to
-obtain the function "gpioN" where "N" is the global GPIO pin number if no
-special GPIO-handler is registered."
+Laurent: Is 2/4 OK for you as-is? Your comments about the size of reg are
+not related to "Store register/field widths in u8 instead of unsigned long",
+and thus an area for future improvement.
 
-As far as I understand the second paragraph, it should suffice to
-define functions named "gpio0", "gpio1", etc. instead of adding a
-gpio_request_enable().
+Thanks!
 
-But I fail to see in pinctrl_request_gpio() where this happens:
+Gr{oetje,eeting}s,
 
-pinctrl_request_gpio() calls pinmux_request_gpio(), which calls
-pin_request(); pin_request() then calls ops->gpio_request_enable() if
-present and a gpiorange is given, or ops->request() if present.
-Nowhere I can see that any "gpio%d" function is even looked for, at
-least that was the heuristic I used to find that place where
-pinctrl_request_gpio was supposed to obtain the function "gpioN".
+                        Geert
 
-Am I just overlooking something, or is this actually not implemented?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-Regards
-Jonas
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
