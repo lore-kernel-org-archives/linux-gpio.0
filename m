@@ -1,136 +1,34 @@
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
-Subject: [PATCH v2 07/10] Documentation: bindings: move the Berlin pinctrl documentation
-Date: Fri,  6 Mar 2015 16:05:25 +0100
-Message-ID: <1425654328-26298-8-git-send-email-antoine.tenart@free-electrons.com>
-References: <1425654328-26298-1-git-send-email-antoine.tenart@free-electrons.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1425654328-26298-1-git-send-email-antoine.tenart@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, jszhang@marvell.com, zmxu@marvell.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 0/2] pinctrl: Support for IMG Pistachio
+Date: Fri, 6 Mar 2015 10:07:40 -0800
+Message-ID: <CAL1qeaEqcL24DM=w4jgboAvDRi93AidkC9soXPAV9uF4C18JCg@mail.gmail.com>
+References: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
+	<CACRpkdbCOHNPs5Y58h--X6pOVvYyxTrgcFhFyk5dWE+JLo=rhg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdbCOHNPs5Y58h--X6pOVvYyxTrgcFhFyk5dWE+JLo=rhg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux MIPS <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, James Hartley <james.hartley-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The Berlin pinctrl documentation was part of the Marvell Berlin SoC
-documentation because the Berlin pinctrl configuration was inside the
-chip and the system controllers. With the recent rework of the chip and
-system controller handling (now an MFD driver registers all sub-devices
-of the two soc and system controller nodes and each device has its own
-sub-node), the documentation of the Berlin pinctrl driver can be moved
-to the generic pinctrl documentation directory.
+On Fri, Mar 6, 2015 at 3:29 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Tue, Feb 24, 2015 at 3:15 AM, Andrew Bresticker
+> <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>
+>>  I'd like this to go through the MIPS tree with
+>> Linus'/Alex's ACKs if possible.
+>
+> Why? It will only help creating merge conflicts.
+> There seem to be no compile-related dependencies, just Kconfig
+> symbols, so patches using this can go in orthogonally.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
----
- .../devicetree/bindings/arm/marvell,berlin.txt     | 37 -------------------
- .../devicetree/bindings/pinctrl/berlin,pinctrl.txt | 43 ++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 37 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
+Ah, ok.  If the missing Kconfig symbol is not a big deal, then let's
+take them through your tree.
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell,berlin.txt b/Documentation/devicetree/bindings/arm/marvell,berlin.txt
-index 8bf3f2075233..ece73c6ad973 100644
---- a/Documentation/devicetree/bindings/arm/marvell,berlin.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell,berlin.txt
-@@ -95,23 +95,6 @@ Clocks provided by core clocks shall be referenced by a clock specifier
- indexing one of the provided clocks. Refer to dt-bindings/clock/berlin<soc>.h
- for the corresponding index mapping.
- 
--* Pin controller binding
--
--Pin control registers are part of both register sets, chip control and system
--control. The pins controlled are organized in groups, so no actual pin
--information is needed.
--
--A pin-controller node should contain subnodes representing the pin group
--configurations, one per function. Each subnode has the group name and the muxing
--function used.
--
--Be aware the Marvell Berlin datasheets use the keyword 'mode' for what is called
--a 'function' in the pin-controller subsystem.
--
--Required subnode-properties:
--- groups: a list of strings describing the group names.
--- function: a string describing the function used to mux the groups.
--
- Example:
- 
- chip: chip-control@ea0000 {
-@@ -120,29 +103,9 @@ chip: chip-control@ea0000 {
- 	reg = <0xea0000 0x400>;
- 	clocks = <&refclk>, <&externaldev 0>;
- 	clock-names = "refclk", "video_ext0";
--
--	spi1_pmux: spi1-pmux {
--		groups = "G0";
--		function = "spi1";
--	};
- };
- 
- sysctrl: system-controller@d000 {
- 	compatible = "marvell,berlin2-system-ctrl", "simple-mfd", "syscon";
- 	reg = <0xd000 0x100>;
--
--	uart0_pmux: uart0-pmux {
--		groups = "GSM4";
--		function = "uart0";
--	};
--
--	uart1_pmux: uart1-pmux {
--		groups = "GSM5";
--		function = "uart1";
--	};
--
--	uart2_pmux: uart2-pmux {
--		groups = "GSM3";
--		function = "uart2";
--	};
- };
-diff --git a/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
-new file mode 100644
-index 000000000000..a8bb5e26019c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
-@@ -0,0 +1,43 @@
-+* Pin-controller driver for the Marvell Berlin SoCs
-+
-+Pin control registers are part of both chip controller and system
-+controller register sets. Pin controller nodes should be a sub-node of
-+either the chip controller or system controller node. The pins
-+controlled are organized in groups, so no actual pin information is
-+needed.
-+
-+A pin-controller node should contain subnodes representing the pin group
-+configurations, one per function. Each subnode has the group name and
-+the muxing function used.
-+
-+Be aware the Marvell Berlin datasheets use the keyword 'mode' for what
-+is called a 'function' in the pin-controller subsystem.
-+
-+Required properties:
-+- compatible: should be one of:
-+	"marvell,berlin2-soc-pinctrl",
-+	"marvell,berlin2-system-pinctrl",
-+	"marvell,berlin2cd-soc-pinctrl",
-+	"marvell,berlin2cd-system-pinctrl",
-+	"marvell,berlin2q-soc-pinctrl",
-+	"marvell,berlin2q-system-pinctrl"
-+
-+Required subnode-properties:
-+- groups: a list of strings describing the group names.
-+- function: a string describing the function used to mux the groups.
-+
-+Example:
-+
-+sys_pinctrl: pin-controller {
-+	compatible = "marvell,berlin2q-system-pinctrl";
-+
-+	uart0_pmux: uart0-pmux {
-+		groups = "GSM12";
-+		function = "uart0";
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_pmux>;
-+	pinctrl-names = "default";
-+};
--- 
-2.3.1
+-Andrew
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
