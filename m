@@ -1,79 +1,56 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 4/4] pinctrl: sh-pfc: Use unsigned int for register/field widths and offsets
-Date: Fri, 06 Mar 2015 12:57:29 +0200
-Message-ID: <1895404.raPFfQG332@avalon>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <9833485.4LcIhc9qJb@avalon> <CAMuHMdWk-XWJz9PswNfkyG6yKctH0Jnf7uPLZ8i1X_umhbO+sA@mail.gmail.com>
+Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
+Date: Fri, 06 Mar 2015 12:58:31 +0200
+Message-ID: <1498074.6jEVhizFNe@avalon>
+References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com> <CACRpkdbMzGXeK6fX-h09-3F+jzxNLNsJwzLSeQrLT0MmJDRnWg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWk-XWJz9PswNfkyG6yKctH0Jnf7uPLZ8i1X_umhbO+sA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33632 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755853AbbCFK60 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 05:58:26 -0500
+In-Reply-To: <CACRpkdbMzGXeK6fX-h09-3F+jzxNLNsJwzLSeQrLT0MmJDRnWg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Geert,
+Hi Linus,
 
-On Thursday 05 March 2015 10:34:18 Geert Uytterhoeven wrote:
-> On Thu, Mar 5, 2015 at 10:20 AM, Laurent Pinchart wrote:
-> >> @@ -228,12 +228,11 @@ static void sh_pfc_write_config_reg(struct sh_pfc
-> >> *pfc,
-> >>  }
-> >> 
-> >>  static int sh_pfc_get_config_reg(struct sh_pfc *pfc, u16 enum_id,
-> >> -                              const struct pinmux_cfg_reg **crp, int
-> >> *fieldp,
-> >> -                              u32 *valuep)
-> >> +                              const struct pinmux_cfg_reg **crp,
-> >> +                              unsigned int *fieldp, u32 *valuep)
-> >>  {
-> >>       const struct pinmux_cfg_reg *config_reg;
-> >> -     unsigned long r_width, f_width, curr_width;
-> >> -     unsigned int k, m, pos, bit_pos;
-> >> +     unsigned int r_width, f_width, curr_width, k, m, pos, bit_pos;
+On Friday 06 March 2015 11:43:45 Linus Walleij wrote:
+> On Sat, Feb 28, 2015 at 12:39 AM, Sergei Shtylyov wrote:
+> > The  pin array handled by sh_pfc_map_pins() may contain holes representing
+> > non- existing pins. We have to first count the valid pins in order to
+> > calculate the size  of the memory to be allocated, then to skip over the
+> > non-existing pins when  initializing the allocated arrays, and then to
+> > return the number of valid pins  from sh_pfc_map_pins() instead of 0 on
+> > success.
 > > 
-> > I find declaring multiple variables per line quite difficult to read. I
-> > know it's the current coding style in this driver, but I'd like to fix it
-> > at some point. I would move to one variable per line as part of this
-> > patch for the code that it touches. Alternatively could you at least not
-> > make it worse (here and below) ? :-)
+> > As we have to touch devm_kzalloc() calls anyway, use more fitting
+> > devm_kcalloc() instead which additionally checks the array size. And
+> > since PINMUX_TYPE_NONE is #define'd as 0, stop re-initializing already
+> > zeroed out 'pmx->configs' array.
+> > 
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > ---
+> > The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git'
+> > repo. This patch should be applied before my R8A7794 PFC support patch
+> > and before Laurent's patches removing non-existent GPIOs for R8A779[01],
+> > otherwise they would cause the kernel  to hang while booting!
 > 
-> There are just too many variables ;-)
+> OK not applying this until ACKed by Laurent,
+> and in the meantime I'm taking the three applied R8A7794 patches
+> out of my tree again.
 
-Well, if we need them, we need them :-)
+Could you also drop "pinctrl: sh-pfc: r8a7790: Remove non existing GPIO pins" 
+and "pinctrl: sh-pfc: r8a7791: Remove non existing GPIO pins" for the same 
+reason ? Sorry for the trouble.
 
-> I usually declare variables in the order of appearance, but try to
-> keep variables of the same type together.
-> 
-> Some declarations could move inside the while, e.g.
-> 
->         while (1) {
->                 const struct pinmux_cfg_reg *config_reg =
-> pfc->info->cfg_regs + k;
->                 unsigned int r_width = config_reg->reg_width;
->                 unsigned int f_width = config_reg->field_width;
->                 unsigned int pos = 0, m= 0;
-> 
->                 if (!r_width)
->                         break;
-> 
-> Would you like that?
-
-Yes, but please split pos and m on two different lines :-)
-
-> >>       u32 ncomb, n;
-> >>       
-> >>       k = 0;
-> >> @@ -300,9 +299,9 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned
-> >> mark, int pinmux_type) const struct pinmux_cfg_reg *cr = NULL;
-> >>       u16 enum_id;
-> >>       const struct pinmux_range *range;
-> >> -     int in_range, pos, field;
-> >> +     int in_range, pos, ret;
-> >> +     unsigned int field;
-> >>       u32 value;
-> >> -     int ret;
+> Can you please send these depending patches as a series with this
+> patch as 1/4 and the three R8A7794 patches as 2,3,4/4? Thanks.
 
 -- 
 Regards,
