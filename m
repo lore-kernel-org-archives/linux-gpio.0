@@ -1,56 +1,54 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
-Date: Fri, 06 Mar 2015 12:58:31 +0200
-Message-ID: <1498074.6jEVhizFNe@avalon>
-References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com> <CACRpkdbMzGXeK6fX-h09-3F+jzxNLNsJwzLSeQrLT0MmJDRnWg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
+Date: Fri, 06 Mar 2015 13:05:24 +0200
+Message-ID: <2354666.zjhAAbqIil@avalon>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <12083025.CFMfs0EISD@avalon> <CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33632 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755853AbbCFK60 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 05:58:26 -0500
-In-Reply-To: <CACRpkdbMzGXeK6fX-h09-3F+jzxNLNsJwzLSeQrLT0MmJDRnWg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+Hi Geert,
 
-On Friday 06 March 2015 11:43:45 Linus Walleij wrote:
-> On Sat, Feb 28, 2015 at 12:39 AM, Sergei Shtylyov wrote:
-> > The  pin array handled by sh_pfc_map_pins() may contain holes representing
-> > non- existing pins. We have to first count the valid pins in order to
-> > calculate the size  of the memory to be allocated, then to skip over the
-> > non-existing pins when  initializing the allocated arrays, and then to
-> > return the number of valid pins  from sh_pfc_map_pins() instead of 0 on
-> > success.
+On Thursday 05 March 2015 10:19:33 Geert Uytterhoeven wrote:
+> On Thu, Mar 5, 2015 at 10:03 AM, Laurent Pinchart wrote:
+> >> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> >> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> >> @@ -69,9 +69,10 @@ struct pinmux_func {
+> >>  };
+> >>  
+> >>  struct pinmux_cfg_reg {
+> >> -     unsigned long reg, reg_width, field_width;
+> >> +     unsigned long reg;
 > > 
-> > As we have to touch devm_kzalloc() calls anyway, use more fitting
-> > devm_kcalloc() instead which additionally checks the array size. And
-> > since PINMUX_TYPE_NONE is #define'd as 0, stop re-initializing already
-> > zeroed out 'pmx->configs' array.
-> > 
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > 
-> > ---
-> > The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git'
-> > repo. This patch should be applied before my R8A7794 PFC support patch
-> > and before Laurent's patches removing non-existent GPIOs for R8A779[01],
-> > otherwise they would cause the kernel  to hang while booting!
+> > How about making reg a u32 ? It won't make a difference in practice on
+> > 32-bit systems, but it would be more explicit.
+
+You might have missed this comment.
+
+> > We could also save space by making reg a u16 and storing the register
+> > offset only instead of the full address (assuming it can always fit in 16
+> > bits, which should be checked). We'll also need to support 64-bit systems
+> > at some point, and making reg a u64 would increase space waste.
 > 
-> OK not applying this until ACKed by Laurent,
-> and in the meantime I'm taking the three applied R8A7794 patches
-> out of my tree again.
-
-Could you also drop "pinctrl: sh-pfc: r8a7790: Remove non existing GPIO pins" 
-and "pinctrl: sh-pfc: r8a7791: Remove non existing GPIO pins" for the same 
-reason ? Sorry for the trouble.
-
-> Can you please send these depending patches as a series with this
-> patch as 1/4 and the three R8A7794 patches as 2,3,4/4? Thanks.
+> That would be more intrusive (and definitely needs to be in a separate
+> patch), as reg is used here to store a physical register address, for
+> conversion between physical and virtual addresses. I didn't want to go that
+> far yet.
+> 
+> u16 would indeed be nice, as it means reg, reg_width, and field_width
+> would fit in one 32-bit word, which I hadn't realized. That means we can
+> reduce each entry by 2 words instead of 1.
+> 
+> For 64-bit that would still be suboptimal, as pointers are aligned to 8
+> bytes, leading to gaps.
+> Perhaps we do want __packed here, too? I don't think the performance drop of
+> doing some unaligned accesses would be significant. This isn't a hot path.
 
 -- 
 Regards,
