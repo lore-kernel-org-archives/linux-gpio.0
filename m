@@ -1,70 +1,79 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
-Date: Fri, 06 Mar 2015 12:55:13 +0200
-Message-ID: <1467324.hsXv6mAIiy@avalon>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com> <CAMuHMdXNEcrtYge=EcNhAXnm8367h7=7SAg0AkiE1gvSJTxJpw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] pinctrl: sh-pfc: Use unsigned int for register/field widths and offsets
+Date: Fri, 06 Mar 2015 12:57:29 +0200
+Message-ID: <1895404.raPFfQG332@avalon>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <9833485.4LcIhc9qJb@avalon> <CAMuHMdWk-XWJz9PswNfkyG6yKctH0Jnf7uPLZ8i1X_umhbO+sA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33623 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754227AbbCFKzJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 05:55:09 -0500
-In-Reply-To: <CAMuHMdXNEcrtYge=EcNhAXnm8367h7=7SAg0AkiE1gvSJTxJpw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdWk-XWJz9PswNfkyG6yKctH0Jnf7uPLZ8i1X_umhbO+sA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
 Hi Geert,
 
-On Thursday 05 March 2015 19:02:10 Geert Uytterhoeven wrote:
-> On Thu, Mar 5, 2015 at 10:19 AM, Geert Uytterhoeven wrote:
-> > On Thu, Mar 5, 2015 at 10:03 AM, Laurent Pinchart
-> > 
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> >>> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> >>> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> >>> @@ -69,9 +69,10 @@ struct pinmux_func {
-> >>>  };
-> >>>  
-> >>>  struct pinmux_cfg_reg {
-> >>> -     unsigned long reg, reg_width, field_width;
-> >>> +     unsigned long reg;
+On Thursday 05 March 2015 10:34:18 Geert Uytterhoeven wrote:
+> On Thu, Mar 5, 2015 at 10:20 AM, Laurent Pinchart wrote:
+> >> @@ -228,12 +228,11 @@ static void sh_pfc_write_config_reg(struct sh_pfc
+> >> *pfc,
+> >>  }
 > >> 
-> >> How about making reg a u32 ? It won't make a difference in practice on
-> >> 32-bit systems, but it would be more explicit.
-> >> 
-> >> We could also save space by making reg a u16 and storing the register
-> >> offset only instead of the full address (assuming it can always fit in
-> >> 16 bits, which should be checked). We'll also need to support 64-bit
-> >> systems at some point,
->
-> Unfortunately there's a (single) exception: sh7734 has two register blocks,
-> at 0xFFFC0000 and 0xFFC40000, which is more than 64 KiB apart.
-> And we also can't say that all config registers are in the first
-> block, and all data registers are in the second block (for SoCs with
-> multiple blocks).
-> 
-> We could use u32 instead of u16 if CONFIG_PINCTRL_PFC_SH7734 is set, though.
-
-Or drop arch/sh support ;-)
-
-> >> and making reg a u64 would increase space waste.
+> >>  static int sh_pfc_get_config_reg(struct sh_pfc *pfc, u16 enum_id,
+> >> -                              const struct pinmux_cfg_reg **crp, int
+> >> *fieldp,
+> >> -                              u32 *valuep)
+> >> +                              const struct pinmux_cfg_reg **crp,
+> >> +                              unsigned int *fieldp, u32 *valuep)
+> >>  {
+> >>       const struct pinmux_cfg_reg *config_reg;
+> >> -     unsigned long r_width, f_width, curr_width;
+> >> -     unsigned int k, m, pos, bit_pos;
+> >> +     unsigned int r_width, f_width, curr_width, k, m, pos, bit_pos;
 > > 
-> > That would be more intrusive (and definitely needs to be in a separate
-> > patch), as reg is used here to store a physical register address, for
-> > conversion between physical and virtual addresses. I didn't want to go
-> > that far yet.
+> > I find declaring multiple variables per line quite difficult to read. I
+> > know it's the current coding style in this driver, but I'd like to fix it
+> > at some point. I would move to one variable per line as part of this
+> > patch for the code that it touches. Alternatively could you at least not
+> > make it worse (here and below) ? :-)
 > 
-> I had a quick check, and using 16-bit register offsets instead of 32-bit
-> registers addresses would save ca. 3 KiB in a shmobile_defconfig kernel.
-> Which is a saving of less than 2% of the current pinctrl binary size.
-> 
-> Of course it's something to keep in mind for future 64-bit SoCs...
+> There are just too many variables ;-)
 
-Let's do that for now then, just keep it in mind.
+Well, if we need them, we need them :-)
+
+> I usually declare variables in the order of appearance, but try to
+> keep variables of the same type together.
+> 
+> Some declarations could move inside the while, e.g.
+> 
+>         while (1) {
+>                 const struct pinmux_cfg_reg *config_reg =
+> pfc->info->cfg_regs + k;
+>                 unsigned int r_width = config_reg->reg_width;
+>                 unsigned int f_width = config_reg->field_width;
+>                 unsigned int pos = 0, m= 0;
+> 
+>                 if (!r_width)
+>                         break;
+> 
+> Would you like that?
+
+Yes, but please split pos and m on two different lines :-)
+
+> >>       u32 ncomb, n;
+> >>       
+> >>       k = 0;
+> >> @@ -300,9 +299,9 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned
+> >> mark, int pinmux_type) const struct pinmux_cfg_reg *cr = NULL;
+> >>       u16 enum_id;
+> >>       const struct pinmux_range *range;
+> >> -     int in_range, pos, field;
+> >> +     int in_range, pos, ret;
+> >> +     unsigned int field;
+> >>       u32 value;
+> >> -     int ret;
 
 -- 
 Regards,
