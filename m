@@ -1,32 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: Remove non existing GPIO pins
-Date: Fri, 6 Mar 2015 11:27:38 +0100
-Message-ID: <CACRpkdYOoMC23294uzrNAzwT7uTYmu1hr+UKDdj375tqu59Mpg@mail.gmail.com>
-References: <1424115661-21928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<1424115661-21928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v3] sh-pfc: add R8A7794 PFC support
+Date: Fri, 6 Mar 2015 11:34:23 +0100
+Message-ID: <CACRpkdbjhyhci_O8ecCTM3du+k8NRTyw026mie5OTorXJO1P+Q@mail.gmail.com>
+References: <2084538.pWCX8EzoLe@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:44502 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932661AbbCFK1j (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 05:27:39 -0500
-Received: by oifu20 with SMTP id u20so16879340oif.11
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 02:27:38 -0800 (PST)
-In-Reply-To: <1424115661-21928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:44496 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933306AbbCFKeY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 05:34:24 -0500
+Received: by oifu20 with SMTP id u20so16901659oif.11
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 02:34:23 -0800 (PST)
+In-Reply-To: <2084538.pWCX8EzoLe@wasted.cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Mon, Feb 16, 2015 at 8:41 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
+On Sun, Feb 22, 2015 at 10:33 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
-> GPIO banks 1 and 7 are missing pins 26 to 31. Remove them.
+> From: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
 >
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Add PFC support for  the  R8A7794 SoC  including pin groups for some on-chip
+> devices such as ETH, I2C, INTC, MSIOF, QSPI, [H]SCIF...
+>
+> Signed-off-by: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>
+> [Sergei: squashed together several patches, fixed the MLB_CLK typo, added IRQ4..
+> IRQ9 pin groups,  fixed IRQn comments, added ETH B pin group names, removed
+> stray new line and fixed typos in the  comments in the pinmux_config_regs[]
+> initializer, removed the platform device ID, took into account limited number of
+> signals in the GPIO1/5/6 controllers, added reasonable and removed unreasonable
+> copyrights, modified the bindings document, renamed, added changelog.]
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> ---
+> Changes in version 3:
 
-Patch applied with Geert's ACK.
+This v3 applied with Laurent's ACK.
 
 Yours,
 Linus Walleij
