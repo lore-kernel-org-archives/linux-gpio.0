@@ -1,83 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Add initial driver data for Alphascale asm9260
-Date: Fri, 6 Mar 2015 09:38:28 +0100
-Message-ID: <CACRpkdbKLkMB6WP0zp2xN+gM4ytvs=3V5hh8uKt8e=YE4gAAqQ@mail.gmail.com>
-References: <CACRpkdZMX=HSpusLtPREufJpXuHOwH2MCtHrViASDR7Vbu_eMw@mail.gmail.com>
-	<1423740753-1221-1-git-send-email-linux@rempel-privat.de>
+Subject: Re: [PATCH 07/14] clockevent: Add STM32 Timer driver
+Date: Fri, 6 Mar 2015 09:57:12 +0100
+Message-ID: <CACRpkdZ4MeAR14W+Jr6GYY+oeVJZgKEu+Sr=OXriUPAC43ur-Q@mail.gmail.com>
+References: <1423763164-5606-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1423763164-5606-8-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:41789 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932276AbbCFIi3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 03:38:29 -0500
-Received: by obcva8 with SMTP id va8so8129680obc.8
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 00:38:28 -0800 (PST)
-In-Reply-To: <1423740753-1221-1-git-send-email-linux@rempel-privat.de>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:37056 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751959AbbCFI5N (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 03:57:13 -0500
+Received: by obcwp4 with SMTP id wp4so12486251obc.4
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 00:57:12 -0800 (PST)
+In-Reply-To: <1423763164-5606-8-git-send-email-mcoquelin.stm32@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Oleksij Rempel <linux@rempel-privat.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, Kees Cook <keescook@chromium.org>, Michal
 
-Hi Oleksij,
+On Thu, Feb 12, 2015 at 6:45 PM, Maxime Coquelin
+<mcoquelin.stm32@gmail.com> wrote:
 
-Thanks for your patch.
-
-On Thu, Feb 12, 2015 at 12:32 PM, Oleksij Rempel <linux@rempel-privat.de> wrote:
-
-Also send the patch to linux-kernel@vger.kernel.org as that is the
-default pin control mailing list.
-
-Split off Device Tree bindings in its own file and send that also to
-devicetree@vger.kernel.org for review.
-
-> This patch adds initial driver data for Alphascale asm9260 pinctrl support.
+> STM32 MCUs feature 16 and 32 bits general purpose timers with prescalers.
+> The drivers detects whether the time is 16 or 32 bits, and applies a
+> 1024 prescaler value if it is 16 bits.
 >
-> Signed-off-by: Oleksij Rempel <linux@rempel-privat.de>
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 
-A bit terse description, tell us a bit more about the system in the initial
-commit, and what silicon it lives in etc.
-
-> +The pinctrl driver enables Alphascale ASM9260 to configure the multi-purpose pins
-> +(MPP) to a specific function.
-
-MPP? That is a new name again for pin multiplexing, alternate function,
-mission mode etc... apparently people have a problem with what to
-call this.
-
-(...)
-> +Please refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning of the
-> +phrase "pin configuration node".
-
-Nice. Good that you use generic bindings.
-
-> +The following generic properties as defined in pinctrl-bindings.txt are valid
-> +to specify in a pin configuration subnode:
-> +pins                   - the list of pins that properties in the node
-> +                         apply to (either this or "group" has to be
-> +                         specified)
-
-Should be "groups" not "group". Several groups can map to one
-function.
-
-> +function               - the mux function to select
-> +bias-disable           - disable any pin bias
-> +bias-pull-up           - pull up the pin. Supported only on GPIO0_* pins.
-> +bias-pull-down         - pull down the pin. Supported on all pins except of GPIO0_*.
-
-Nice, good details.
-
-(...)
-> +struct asm9260_function {
-> +       const char              *name;
-> +       const char              **groups;
-> +       unsigned int            ngroups;
-> +};
-
-Yes, see one function, many groups.
-
-The driver looks simple and nice.
+This is a nice driver.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
