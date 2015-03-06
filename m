@@ -1,47 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] pinctrl: baytrail: Relax GPIO request rules
-Date: Fri, 6 Mar 2015 12:20:19 +0100
-Message-ID: <CACRpkdYiC6cgkQ3x4TrZiuisF+nKu-xtwXLnJfy8Ev-g-gaR_Q@mail.gmail.com>
-References: <1424695993-43707-1-git-send-email-mika.westerberg@linux.intel.com>
-	<1424695993-43707-2-git-send-email-mika.westerberg@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8
+ instead of unsigned long
+Date: Fri, 6 Mar 2015 12:21:29 +0100
+Message-ID: <CAMuHMdWyKYMav=duATEvyuuh32WMvJQj8F51BO2CrzJFmZ8Q_w@mail.gmail.com>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
+	<12083025.CFMfs0EISD@avalon>
+	<CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
+	<2354666.zjhAAbqIil@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:45818 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755362AbbCFLUU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 06:20:20 -0500
-Received: by oifu20 with SMTP id u20so17040202oif.12
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 03:20:19 -0800 (PST)
-In-Reply-To: <1424695993-43707-2-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <2354666.zjhAAbqIil@avalon>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Hans Holmberg <hans.holmberg@intel.com>, Benjamin Adler <benadler@gmx.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Feb 23, 2015 at 1:53 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+Hi Laurent,
 
-> Zotac ZBOX PI320, a Baytrail based mini-PC, has power button connected to a
-> GPIO pin and it is exposed to the operating system as Windows 8 button
-> array. This is implemented in Linux as a driver using gpio_keys.
+On Fri, Mar 6, 2015 at 12:05 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thursday 05 March 2015 10:19:33 Geert Uytterhoeven wrote:
+>> On Thu, Mar 5, 2015 at 10:03 AM, Laurent Pinchart wrote:
+>> >> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+>> >> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+>> >> @@ -69,9 +69,10 @@ struct pinmux_func {
+>> >>  };
+>> >>
+>> >>  struct pinmux_cfg_reg {
+>> >> -     unsigned long reg, reg_width, field_width;
+>> >> +     unsigned long reg;
+>> >
+>> > How about making reg a u32 ? It won't make a difference in practice on
+>> > 32-bit systems, but it would be more explicit.
 >
-> However, BIOS on this particula machine forgot to mux the pin to be a GPIO
-> instead of native function, which results following message to be seen on
-> the console:
->
->  byt_gpio INT33FC:02: pin 16 cannot be used as GPIO.
->
-> This causes power button to not work as the driver was not able to request
-> the GPIO it needs.
->
-> So instead of completely preventing this we allow turning the pin as GPIO
-> but issue warning that something might be wrong.
->
-> Reported-by: Benjamin Adler <benadler@gmx.net>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> You might have missed this comment.
 
-Patch applied for fixes.
+I intended to, with "reg is used here to store a physical register address",
+but probably didn't make it sufficiently clear. Before the advent of PAE and
+phys_addr_t, unsigned long was used to store physical addresses.
 
-Yours,
-Linus Walleij
+We could indeed use u32, as the PFC regs are (currently) inside the 32-bit
+part of the address space.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
