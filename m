@@ -1,55 +1,33 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8
- instead of unsigned long
-Date: Fri, 6 Mar 2015 12:21:29 +0100
-Message-ID: <CAMuHMdWyKYMav=duATEvyuuh32WMvJQj8F51BO2CrzJFmZ8Q_w@mail.gmail.com>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
-	<12083025.CFMfs0EISD@avalon>
-	<CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
-	<2354666.zjhAAbqIil@avalon>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/4] pinctrl: baytrail: Clear interrupt triggering from
+ pins that are in GPIO mode
+Date: Fri, 6 Mar 2015 12:21:50 +0100
+Message-ID: <CACRpkdZNOjty9=nigA+SKk3yC5vVjohwjd2Kg+KWV2EYixJ+ag@mail.gmail.com>
+References: <1424695993-43707-1-git-send-email-mika.westerberg@linux.intel.com>
+	<1424695993-43707-3-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <2354666.zjhAAbqIil@avalon>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1424695993-43707-3-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Hans Holmberg <hans.holmberg@intel.com>, Benjamin Adler <benadler@gmx.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laurent,
+On Mon, Feb 23, 2015 at 1:53 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-On Fri, Mar 6, 2015 at 12:05 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Thursday 05 March 2015 10:19:33 Geert Uytterhoeven wrote:
->> On Thu, Mar 5, 2015 at 10:03 AM, Laurent Pinchart wrote:
->> >> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
->> >> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
->> >> @@ -69,9 +69,10 @@ struct pinmux_func {
->> >>  };
->> >>
->> >>  struct pinmux_cfg_reg {
->> >> -     unsigned long reg, reg_width, field_width;
->> >> +     unsigned long reg;
->> >
->> > How about making reg a u32 ? It won't make a difference in practice on
->> > 32-bit systems, but it would be more explicit.
+> If the pin is already configured as GPIO and it has any of the triggering
+> flags set, we may get spurious interrupts depending on the state of the
+> pin.
 >
-> You might have missed this comment.
+> Prevent this by clearing the triggering flags on such pins. However, if the
+> pin is also configured as "direct IRQ" we leave the flags as is. Otherwise
+> it will prevent interrupts that are routed directly to IO-APIC.
+>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-I intended to, with "reg is used here to store a physical register address",
-but probably didn't make it sufficiently clear. Before the advent of PAE and
-phys_addr_t, unsigned long was used to store physical addresses.
+Patch applied for fixes.
 
-We could indeed use u32, as the PFC regs are (currently) inside the 32-bit
-part of the address space.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
