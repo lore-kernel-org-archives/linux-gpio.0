@@ -1,7 +1,7 @@
 From: Antoine Tenart <antoine.tenart@free-electrons.com>
-Subject: [PATCH v2 05/10] pinctrl: berlin: use the regmap provided by syscon
-Date: Fri,  6 Mar 2015 16:05:23 +0100
-Message-ID: <1425654328-26298-6-git-send-email-antoine.tenart@free-electrons.com>
+Subject: [PATCH v2 07/10] Documentation: bindings: move the Berlin pinctrl documentation
+Date: Fri,  6 Mar 2015 16:05:25 +0100
+Message-ID: <1425654328-26298-8-git-send-email-antoine.tenart@free-electrons.com>
 References: <1425654328-26298-1-git-send-email-antoine.tenart@free-electrons.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1425654328-26298-1-git-send-email-antoine.tenart@free-electrons.com>
@@ -10,150 +10,127 @@ To: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org
 Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, jszhang@marvell.com, zmxu@marvell.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The Berlin pin controller nodes are now sub-nodes of the soc-controller
-and the system-controller nodes. The register bank is managed by syscon,
-which provides a regmap.
-
-Remove the regmap setup from the Berlin pinctrl driver and use the one
-provided by syscon.
+The Berlin pinctrl documentation was part of the Marvell Berlin SoC
+documentation because the Berlin pinctrl configuration was inside the
+chip and the system controllers. With the recent rework of the chip and
+system controller handling (now an MFD driver registers all sub-devices
+of the two soc and system controller nodes and each device has its own
+sub-node), the documentation of the Berlin pinctrl driver can be moved
+to the generic pinctrl documentation directory.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
 ---
- drivers/pinctrl/berlin/berlin-bg2.c   | 22 ----------------------
- drivers/pinctrl/berlin/berlin-bg2cd.c | 22 ----------------------
- drivers/pinctrl/berlin/berlin-bg2q.c  | 22 ----------------------
- drivers/pinctrl/berlin/berlin.c       |  9 ++++++---
- 4 files changed, 6 insertions(+), 69 deletions(-)
+ .../devicetree/bindings/arm/marvell,berlin.txt     | 37 -------------------
+ .../devicetree/bindings/pinctrl/berlin,pinctrl.txt | 43 ++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
 
-diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
-index b71a6fffef1b..368ec0b9b8ba 100644
---- a/drivers/pinctrl/berlin/berlin-bg2.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2.c
-@@ -233,28 +233,6 @@ static int berlin2_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match =
- 		of_match_device(berlin2_pinctrl_match, &pdev->dev);
--	struct regmap_config *rmconfig;
--	struct regmap *regmap;
--	struct resource *res;
--	void __iomem *base;
--
--	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
--	if (!rmconfig)
--		return -ENOMEM;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
--
--	rmconfig->reg_bits = 32,
--	rmconfig->val_bits = 32,
--	rmconfig->reg_stride = 4,
--	rmconfig->max_register = resource_size(res);
--
--	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
--	if (IS_ERR(regmap))
--		return PTR_ERR(regmap);
+diff --git a/Documentation/devicetree/bindings/arm/marvell,berlin.txt b/Documentation/devicetree/bindings/arm/marvell,berlin.txt
+index 8bf3f2075233..ece73c6ad973 100644
+--- a/Documentation/devicetree/bindings/arm/marvell,berlin.txt
++++ b/Documentation/devicetree/bindings/arm/marvell,berlin.txt
+@@ -95,23 +95,6 @@ Clocks provided by core clocks shall be referenced by a clock specifier
+ indexing one of the provided clocks. Refer to dt-bindings/clock/berlin<soc>.h
+ for the corresponding index mapping.
  
- 	return berlin_pinctrl_probe(pdev, match->data);
- }
-diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
-index 19ac5a22c947..6b9cae029ef7 100644
---- a/drivers/pinctrl/berlin/berlin-bg2cd.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
-@@ -176,28 +176,6 @@ static int berlin2cd_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match =
- 		of_match_device(berlin2cd_pinctrl_match, &pdev->dev);
--	struct regmap_config *rmconfig;
--	struct regmap *regmap;
--	struct resource *res;
--	void __iomem *base;
+-* Pin controller binding
 -
--	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
--	if (!rmconfig)
--		return -ENOMEM;
+-Pin control registers are part of both register sets, chip control and system
+-control. The pins controlled are organized in groups, so no actual pin
+-information is needed.
 -
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
+-A pin-controller node should contain subnodes representing the pin group
+-configurations, one per function. Each subnode has the group name and the muxing
+-function used.
 -
--	rmconfig->reg_bits = 32,
--	rmconfig->val_bits = 32,
--	rmconfig->reg_stride = 4,
--	rmconfig->max_register = resource_size(res);
+-Be aware the Marvell Berlin datasheets use the keyword 'mode' for what is called
+-a 'function' in the pin-controller subsystem.
 -
--	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
--	if (IS_ERR(regmap))
--		return PTR_ERR(regmap);
+-Required subnode-properties:
+-- groups: a list of strings describing the group names.
+-- function: a string describing the function used to mux the groups.
+-
+ Example:
  
- 	return berlin_pinctrl_probe(pdev, match->data);
- }
-diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
-index bd9662e57ad3..11aa10cc0e3e 100644
---- a/drivers/pinctrl/berlin/berlin-bg2q.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2q.c
-@@ -395,28 +395,6 @@ static int berlin2q_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match =
- 		of_match_device(berlin2q_pinctrl_match, &pdev->dev);
--	struct regmap_config *rmconfig;
--	struct regmap *regmap;
--	struct resource *res;
--	void __iomem *base;
+ chip: chip-control@ea0000 {
+@@ -120,29 +103,9 @@ chip: chip-control@ea0000 {
+ 	reg = <0xea0000 0x400>;
+ 	clocks = <&refclk>, <&externaldev 0>;
+ 	clock-names = "refclk", "video_ext0";
 -
--	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
--	if (!rmconfig)
--		return -ENOMEM;
+-	spi1_pmux: spi1-pmux {
+-		groups = "G0";
+-		function = "spi1";
+-	};
+ };
+ 
+ sysctrl: system-controller@d000 {
+ 	compatible = "marvell,berlin2-system-ctrl", "simple-mfd", "syscon";
+ 	reg = <0xd000 0x100>;
 -
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
+-	uart0_pmux: uart0-pmux {
+-		groups = "GSM4";
+-		function = "uart0";
+-	};
 -
--	rmconfig->reg_bits = 32,
--	rmconfig->val_bits = 32,
--	rmconfig->reg_stride = 4,
--	rmconfig->max_register = resource_size(res);
+-	uart1_pmux: uart1-pmux {
+-		groups = "GSM5";
+-		function = "uart1";
+-	};
 -
--	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
--	if (IS_ERR(regmap))
--		return PTR_ERR(regmap);
- 
- 	return berlin_pinctrl_probe(pdev, match->data);
- }
-diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
-index 7f0b0f93242b..2e3a8b8858ec 100644
---- a/drivers/pinctrl/berlin/berlin.c
-+++ b/drivers/pinctrl/berlin/berlin.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -295,13 +296,15 @@ int berlin_pinctrl_probe(struct platform_device *pdev,
- 			 const struct berlin_pinctrl_desc *desc)
- {
- 	struct device *dev = &pdev->dev;
-+	struct device_node *parent_np = of_get_parent(dev->of_node);
- 	struct berlin_pinctrl *pctrl;
- 	struct regmap *regmap;
- 	int ret;
- 
--	regmap = dev_get_regmap(&pdev->dev, NULL);
--	if (!regmap)
--		return -ENODEV;
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
- 
- 	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
- 	if (!pctrl)
+-	uart2_pmux: uart2-pmux {
+-		groups = "GSM3";
+-		function = "uart2";
+-	};
+ };
+diff --git a/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
+new file mode 100644
+index 000000000000..a8bb5e26019c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
+@@ -0,0 +1,43 @@
++* Pin-controller driver for the Marvell Berlin SoCs
++
++Pin control registers are part of both chip controller and system
++controller register sets. Pin controller nodes should be a sub-node of
++either the chip controller or system controller node. The pins
++controlled are organized in groups, so no actual pin information is
++needed.
++
++A pin-controller node should contain subnodes representing the pin group
++configurations, one per function. Each subnode has the group name and
++the muxing function used.
++
++Be aware the Marvell Berlin datasheets use the keyword 'mode' for what
++is called a 'function' in the pin-controller subsystem.
++
++Required properties:
++- compatible: should be one of:
++	"marvell,berlin2-soc-pinctrl",
++	"marvell,berlin2-system-pinctrl",
++	"marvell,berlin2cd-soc-pinctrl",
++	"marvell,berlin2cd-system-pinctrl",
++	"marvell,berlin2q-soc-pinctrl",
++	"marvell,berlin2q-system-pinctrl"
++
++Required subnode-properties:
++- groups: a list of strings describing the group names.
++- function: a string describing the function used to mux the groups.
++
++Example:
++
++sys_pinctrl: pin-controller {
++	compatible = "marvell,berlin2q-system-pinctrl";
++
++	uart0_pmux: uart0-pmux {
++		groups = "GSM12";
++		function = "uart0";
++	};
++};
++
++&uart0 {
++	pinctrl-0 = <&uart0_pmux>;
++	pinctrl-names = "default";
++};
 -- 
 2.3.1
