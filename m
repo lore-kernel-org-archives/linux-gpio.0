@@ -1,50 +1,68 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
-Date: Fri, 06 Mar 2015 13:34:59 +0200
-Message-ID: <5341607.ysC4Tafd3h@avalon>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <CACRpkdbv8V2DY6DniY5fOaSQNkNZtZQ6G_hrm-vcG9cjFTSAEA@mail.gmail.com> <CAMuHMdVhD2e2Q9bTwu_r30AUCq4=-GzH=RWp2TFL7tXXz3prJA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] pinctrl: Add Pistachio SoC pin control binding document
+Date: Fri, 6 Mar 2015 12:37:09 +0100
+Message-ID: <CACRpkdbCavYLk-Uo8hjTrGcGLJe6NEB9dVPVNm_fyd3eGccnEw@mail.gmail.com>
+References: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
+	<1424744104-14151-2-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVhD2e2Q9bTwu_r30AUCq4=-GzH=RWp2TFL7tXXz3prJA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1424744104-14151-2-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert,
+On Tue, Feb 24, 2015 at 3:15 AM, Andrew Bresticker
+<abrestic@chromium.org> wrote:
 
-On Friday 06 March 2015 12:26:57 Geert Uytterhoeven wrote:
-> On Fri, Mar 6, 2015 at 11:48 AM, Linus Walleij wrote:
-> > On Fri, Feb 27, 2015 at 6:38 PM, Geert Uytterhoeven wrote:
-> >> Register and field widths are in the range 1..32. Storing them in the
-> >> pinctrl data in (arrays of) unsigned long wastes space.
-> >> 
-> >> This decreases the size of a (32-bit) shmobile_defconfig kernel
-> >> supporting 7 SoCs by 26460 bytes.
-> >> 
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > 
-> > This 2/4 is not ACKed so pausing application after 1/4.
-> > 
-> > Is 3,4/4 independent of this patch?
-> 
-> Unfortunately not, as there are contextual dependencies.
-> 
-> Laurent: Is 2/4 OK for you as-is? Your comments about the size of reg are
-> not related to "Store register/field widths in u8 instead of unsigned long",
-> and thus an area for future improvement.
+> Add a device-tree binding document for the pin controller present
+> on the IMG Pistachio SoC.
+>
+> Signed-off-by: Damien Horsley <Damien.Horsley@imgtec.com>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+(...)
+> +Note that the GPIO bank sub-nodes *must* be listed in order.
 
-As just stated in a different reply to this patch, if you change reg to a u32 
-in a separate patch (maybe as a v2 of 3/4 ?),
+Usually we use aliases to mark the order of things. e.g.:
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        aliases {
+                gpio0 = &gpio0;
+                gpio1 = &gpio1;
+                gpio2 = &gpio2;
+                ethernet0 = &eth0;
+                ethernet1 = &eth1;
+        };
 
-for this patch.
+(arch/arm/boot/dts/armada-375.dtsi)
 
--- 
-Regards,
+> +Required properties for pin configuration sub-nodes:
+> +----------------------------------------------------
+> + - pins: List of pins to which the configuration applies. See below for a
+> +   list of possible pins.
+> +
+> +Optional properties for pin configuration sub-nodes:
+> +----------------------------------------------------
+> + - function: Mux function for the specified pins. This is not applicable for
+> +   non-MFIO pins. See below for a list of valid functions for each pin.
+> + - bias-high-impedance: Enable high-impedance mode.
+> + - bias-pull-up: Enable weak pull-up.
+> + - bias-pull-down: Enable weak pull-down.
+> + - bias-bus-hold: Enable bus-keeper mode.
+> + - drive-strength: Drive strength in mA. Supported values: 2, 4, 8, 12.
+> + - input-schmitt-enable: Enable Schmitt trigger.
+> + - input-schmitt-disable: Disable Schmitt trigger.
+> + - slew-rate: Slew rate control. 0 for slow, 1 for fast.
 
-Laurent Pinchart
+We actually haven't specified that function+pins is a valid pattern,
+a lot of drivers just started doing that :(
 
+function+groups is documented for muxing.
+
+group + config opts is documented for config.
+
+Please consider patching the generic bindings to reflect this
+mux use of pins... We need to discuss it.
+
+Yours,
+Linus Walleij
